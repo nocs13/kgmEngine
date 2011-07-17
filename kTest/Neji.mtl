@@ -1,0 +1,4 @@
+ambient		1.0 1.0 1.0 1.0
+diffuse		1.0 1.0 1.0 1.0
+texture  	texNeji01.bmp
+shader		skin

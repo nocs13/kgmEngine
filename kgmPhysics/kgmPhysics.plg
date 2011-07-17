@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: kgmPhysics - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP156.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/kgmPhysics.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmPhysics\kgmPhysics.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP156.tmp" 
+Creating command line "link.exe -lib /nologo /out:".\kgmPhysics.lib"  .\Debug\kgmCollision.obj .\Debug\kgmIntersection.obj .\Debug\kgmPhysical.obj .\Debug\kgmPhysics.obj .\Debug\kgmSimulation.obj \Wark\Projects\kgmEngine\kgmMath\kgmMath.lib "
+<h3>Output Window</h3>
+Compiling...
+kgmPhysics.cpp
+D:\Wark\Projects\kgmEngine\kgmPhysics\kgmPhysics.cpp(267) : warning C4305: '+=' : truncation from 'const double' to 'float'
+D:\Wark\Projects\kgmEngine\kgmPhysics\kgmPhysics.cpp(285) : warning C4305: '+=' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmmain\kgmlist.h(126) : warning C4018: '>=' : signed/unsigned mismatch
+        d:\wark\projects\kgmengine\kgmmain\kgmlist.h(124) : while compiling class-template member function 'void __thiscall kgmList<class kgmPhysical *>::erase(int)'
+Creating library...
+
+
+
+<h3>Results</h3>
+kgmPhysics.lib - 0 error(s), 3 warning(s)
+</pre>
+</body>
+</html>

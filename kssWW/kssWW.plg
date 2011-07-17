@@ -1,0 +1,196 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: kgmGame - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP6F.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fp"Debug/kgmGame.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmController.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmDoor.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameAI.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameApp.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameBase.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGamePhysics.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameResources.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameScene.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameWindow.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmParticles.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmPawn.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameTools.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP6F.tmp" 
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP70.tmp" with contents
+[
+/nologo /out:".\kgmGame.lib" 
+.\Debug\kgmActor.obj
+.\Debug\kgmBarrier.obj
+.\Debug\kgmBomb.obj
+.\Debug\kgmCase.obj
+.\Debug\kgmController.obj
+.\Debug\kgmDeformer.obj
+.\Debug\kgmDestruction.obj
+.\Debug\kgmDoor.obj
+.\Debug\kgmEffect.obj
+.\Debug\kgmGameAI.obj
+.\Debug\kgmGameApp.obj
+.\Debug\kgmGameBase.obj
+.\Debug\kgmGameLogic.obj
+.\Debug\kgmGamePhysics.obj
+.\Debug\kgmGameResources.obj
+.\Debug\kgmGameScene.obj
+.\Debug\kgmGameWindow.obj
+.\Debug\kgmInventory.obj
+.\Debug\kgmItem.obj
+.\Debug\kgmKey.obj
+.\Debug\kgmLandscape.obj
+.\Debug\kgmLock.obj
+.\Debug\kgmParticles.obj
+.\Debug\kgmPawn.obj
+.\Debug\kgmSurface.obj
+.\Debug\kgmSwitch.obj
+.\Debug\kgmTransporter.obj
+.\Debug\kgmTrigger.obj
+.\Debug\kgmWeapon.obj
+.\Debug\kgmGameTools.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP70.tmp"
+<h3>Output Window</h3>
+Compiling...
+Skipping... (no relevant changes detected)
+kgmController.cpp
+kgmDoor.cpp
+kgmGameAI.cpp
+kgmGameApp.cpp
+kgmGameBase.cpp
+kgmGamePhysics.cpp
+kgmGameResources.cpp
+kgmGameScene.cpp
+kgmGameWindow.cpp
+kgmParticles.cpp
+kgmPawn.cpp
+kgmGameTools.cpp
+Creating library...
+<h3>
+--------------------Configuration: kgmAI - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP71.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/kgmAI.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmAI\AI.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP71.tmp" 
+Creating command line "link.exe -lib /nologo /out:".\kgmAI.lib"  .\Debug\AI.obj .\Debug\AIGroup.obj .\Debug\AINode.obj "
+<h3>Output Window</h3>
+Compiling...
+Skipping... (no relevant changes detected)
+AI.cpp
+Creating library...
+<h3>
+--------------------Configuration: kgmGraphics - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP72.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/kgmGraphics.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmGraphics\kgmShader.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGraphics\kgmTexture.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP72.tmp" 
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP73.tmp" with contents
+[
+/nologo /out:".\kgmGraphics.lib" 
+.\Debug\kgmGraphics.obj
+.\Debug\kgmMaterial.obj
+.\Debug\kgmMesh.obj
+.\Debug\kgmShader.obj
+.\Debug\kgmTerrain.obj
+.\Debug\kgmTexture.obj
+.\Debug\kgmGui.obj
+.\Debug\kgmGuiButton.obj
+.\Debug\kgmGuiCombo.obj
+.\Debug\kgmGuiList.obj
+.\Debug\kgmGuiScroll.obj
+.\Debug\kgmGuiSlider.obj
+.\Debug\kgmGuiStatic.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP73.tmp"
+<h3>Output Window</h3>
+Compiling...
+Skipping... (no relevant changes detected)
+kgmShader.cpp
+kgmTexture.cpp
+Creating library...
+Build : warning : failed to (or don't know how to) build 'D:\Wark\Projects\kgmEngine\kgmGraphics\kgmTerrain.cpp'
+
+<h3>
+--------------------Configuration: kgmMain - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP74.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"Debug/kgmMain.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmMain\kgmWindow.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP74.tmp" 
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP75.tmp" with contents
+[
+/nologo /out:".\kgmMain.lib" 
+.\Debug\kgmApp.obj
+.\Debug\kgmArchive.obj
+.\Debug\kgmFile.obj
+.\Debug\kgmFileMemory.obj
+.\Debug\kgmMain.obj
+.\Debug\kgmMemory.obj
+.\Debug\kgmObject.obj
+.\Debug\kgmOctTree.obj
+.\Debug\kgmResource.obj
+.\Debug\kgmSystem.obj
+.\Debug\kgmWindow.obj
+.\Debug\kgmOAL.obj
+.\Debug\kgmOGL.obj
+.\Debug\kgmOGLExt.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP75.tmp"
+<h3>Output Window</h3>
+Compiling...
+kgmWindow.cpp
+D:\Wark\Projects\kgmEngine\kgmMain\kgmWindow.cpp(637) : warning C4101: 'r' : unreferenced local variable
+Creating library...
+<h3>
+--------------------Configuration: kssWW - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP76.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/kssWW.pdb" /debug /machine:I386 /out:"./kssWW.exe" /pdbtype:sept 
+.\Debug\kAI.obj
+.\Debug\kBaseAI.obj
+.\Debug\kGame.obj
+.\Debug\kssWW.obj
+\Wark\Projects\kgmEngine\kgmGame\kgmGame.lib
+\Wark\Projects\kgmEngine\kgmAI\kgmAI.lib
+\Wark\Projects\kgmEngine\kgmGraphics\kgmGraphics.lib
+\Wark\Projects\kgmEngine\kgmMain\kgmMain.lib
+\Wark\Projects\kgmEngine\kgmMath\kgmMath.lib
+\Wark\Projects\kgmEngine\kgmPhysics\kgmPhysics.lib
+\Wark\Projects\kgmEngine\kgmScript\Debug\kgmScript.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP76.tmp"
+<h3>Output Window</h3>
+Linking...
+LINK : LNK6004: ./kssWW.exe not found or not built by the last incremental link; performing full link
+LINK : fatal error LNK1104: cannot open file "../kgmAudio/kgmAudio.lib"
+Error executing link.exe.
+
+
+
+<h3>Results</h3>
+kssWW.exe - 1 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

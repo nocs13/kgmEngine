@@ -1,0 +1,12 @@
+CC = g++
+DEFS = -DLINUX
+FLAGS = -ansi
+INCS = -I./ -I./inc -I../kgmMath 
+LIBS = -L./ -L./lib 	-L../
+LIBA = libkgmMain.a
+
+all:
+	$(CC) -g -c $(DEFS) $(FLAGS) *.cpp
+	ar    -rs $(LIBA) *.o
+	cp $(LIBA) ../
+	

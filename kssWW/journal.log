@@ -1,0 +1,29 @@
+**ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz**************************
+**PARASOLID !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~0123456789**************************
+**PART1;
+MC=unknown;
+MC_MODEL=unknown;
+MC_ID=unknown;
+OS=unknown;
+OS_RELEASE=unknown;
+FRU=sdl_parasolid_customer_support;
+APPL=parasolid_acceptance_tests;
+SITE=unknown;
+USER=unknown;
+FORMAT=text;
+GUISE=journal;
+KEY=journal.log;
+FILE=journal.log;
+DATE=unknown;
+**PART2;
+SCH=SCH_1901151_19008;
+USFLD_SIZE=8;
+**PART3;
+**END_OF_HEADER*****************************************************************
+: JOURNAL FILE created by modeller version 1901151
+<PK_ERROR_clear_last
+      ; F
+<STAMOD %1 11 "journal.log" 8
+      ; #1 1901151 %0
+<PK_SESSION_set_journalling F
+: end of journal file

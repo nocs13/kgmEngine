@@ -1,0 +1,19 @@
+# Microsoft Developer Studio Generated Dependency File, included by kgmMath.mak
+
+.\kgmMath.cpp : \
+	".\kgmBase.h"\
+	".\kgmBox2d.h"\
+	".\kgmBox3d.h"\
+	".\kgmCylinder3d.h"\
+	".\kgmLine3d.h"\
+	".\kgmMath.h"\
+	".\kgmMatrix3d.h"\
+	".\kgmPlane3d.h"\
+	".\kgmQuaternion.h"\
+	".\kgmRay3d.h"\
+	".\kgmSphere3d.h"\
+	".\kgmTriangle3d.h"\
+	".\kgmVector2d.h"\
+	".\kgmVector3d.h"\
+	".\kgmVector4d.h"\
+	

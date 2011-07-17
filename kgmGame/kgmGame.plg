@@ -1,0 +1,108 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: kgmGame - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP277.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fp"Debug/kgmGame.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmCase.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmController.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmDoor.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmEffect.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameAI.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameApp.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameBase.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGamePhysics.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameResources.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameScene.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameTools.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmGameWindow.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmParticles.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmPawn.cpp"
+"D:\Wark\Projects\kgmEngine\kgmGame\kgmSurface.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP277.tmp" 
+Creating temporary file "C:\DOCUME~1\goga\LOCALS~1\Temp\RSP278.tmp" with contents
+[
+/nologo /out:".\kgmGame.lib" 
+.\Debug\kgmActor.obj
+.\Debug\kgmBarrier.obj
+.\Debug\kgmBomb.obj
+.\Debug\kgmCase.obj
+.\Debug\kgmController.obj
+.\Debug\kgmDeformer.obj
+.\Debug\kgmDestruction.obj
+.\Debug\kgmDoor.obj
+.\Debug\kgmEffect.obj
+.\Debug\kgmGameAI.obj
+.\Debug\kgmGameApp.obj
+.\Debug\kgmGameBase.obj
+.\Debug\kgmGameLogic.obj
+.\Debug\kgmGamePhysics.obj
+.\Debug\kgmGameResources.obj
+.\Debug\kgmGameScene.obj
+.\Debug\kgmGameTools.obj
+.\Debug\kgmGameWindow.obj
+.\Debug\kgmInventory.obj
+.\Debug\kgmItem.obj
+.\Debug\kgmKey.obj
+.\Debug\kgmLandscape.obj
+.\Debug\kgmLock.obj
+.\Debug\kgmParticles.obj
+.\Debug\kgmPawn.obj
+.\Debug\kgmSurface.obj
+.\Debug\kgmSwitch.obj
+.\Debug\kgmTransporter.obj
+.\Debug\kgmTrigger.obj
+.\Debug\kgmWeapon.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\goga\LOCALS~1\Temp\RSP278.tmp"
+<h3>Output Window</h3>
+Compiling...
+kgmGameTools.cpp
+d:\wark\projects\kgmengine\kgmmath\kgmbase.h(82) : warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+d:\wark\projects\kgmengine\kgmmath\kgmbase.h(82) : warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+d:\wark\projects\kgmengine\kgmmath\kgmbase.h(85) : warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+d:\wark\projects\kgmengine\kgmmath\kgmbase.h(85) : warning C4244: 'argument' : conversion from 'unsigned int' to 'float', possible loss of data
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(27) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(27) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(27) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(28) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(28) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(28) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(29) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(29) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgraphics\kgmlight.h(29) : warning C4305: 'argument' : truncation from 'const double' to 'float'
+d:\wark\projects\kgmengine\kgmgame\kgmgametools.cpp(50) : error C2065: 'clip' : undeclared identifier
+d:\wark\projects\kgmengine\kgmgame\kgmgametools.cpp(50) : error C2228: left of '.x' must have class/struct/union type
+d:\wark\projects\kgmengine\kgmgame\kgmgametools.cpp(50) : error C2228: left of '.y' must have class/struct/union type
+d:\wark\projects\kgmengine\kgmgame\kgmgametools.cpp(60) : error C2228: left of '.x' must have class/struct/union type
+d:\wark\projects\kgmengine\kgmgame\kgmgametools.cpp(66) : error C2228: left of '.inRect' must have class/struct/union type
+Skipping... (no relevant changes detected)
+kgmCase.cpp
+kgmController.cpp
+kgmDoor.cpp
+kgmEffect.cpp
+kgmGameAI.cpp
+kgmGameApp.cpp
+kgmGameBase.cpp
+kgmGamePhysics.cpp
+kgmGameResources.cpp
+kgmGameScene.cpp
+kgmGameWindow.cpp
+kgmParticles.cpp
+kgmPawn.cpp
+kgmSurface.cpp
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+kgmGame.lib - 5 error(s), 13 warning(s)
+</pre>
+</body>
+</html>

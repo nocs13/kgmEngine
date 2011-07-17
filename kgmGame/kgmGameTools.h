@@ -1,0 +1,55 @@
+#pragma once
+#include "../kgmMain/kgmIGraphics.h"
+#include "../kgmMain/kgmString.h"
+#include "../kgmMain/kgmSound.h"
+#include "../kgmMain/kgmWave.h"
+#include "../kgmMain/kgmXml.h"
+#include "../kgmMain/kgmMemory.h"
+
+#include "../kgmGraphics/kgmFont.h"
+#include "../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmPolygon.h"
+#include "../kgmGraphics/kgmMaterial.h"
+#include "../kgmGraphics/kgmLight.h"
+#include "../kgmGraphics/kgmAnimation.h"
+#include "../kgmGraphics/kgmSkeleton.h"
+
+class kgmPicture;
+class kgmActor;
+class kgmGameMap;
+
+class kgmGameTools{
+public:
+ kgmGameTools();
+ virtual ~kgmGameTools();
+//  DRAWING 
+ static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, uint col, void* tex);
+ static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, uint col, kgmString& text);
+
+//  PICTURE & TEXTURE & FONT
+ static kgmPicture* genPicture(kgmMemory<char>& m);
+ static kgmPicture* genPictureFromBmp(kgmMemory<char>& m);
+ static kgmPicture* genPictureFromTga(kgmMemory<char>& m);
+ static kgmTexture* genTexture(kgmIGraphics* gc, kgmMemory<char>& m);
+ static kgmFont*    genFont(kgmIGraphics* gc, uint w, uint h, uint r, uint c, kgmMemory<char>& m);
+
+// SHADER & MATERIAL
+ static kgmMaterial*  genMaterial(kgmMemory<char>& m);
+ static kgmMaterial*  genMaterial(kgmXml& x);
+ static kgmShader*    genShader(kgmIGraphics* gc, kgmString& s);
+
+//////////// SKELETON
+ static kgmSkeleton*  genSkeleton(kgmMemory<char>& m);
+ static kgmSkeleton*  genSkeleton(kgmXml& x);
+
+//ANIMATION
+ static kgmAnimation* genAnimation(kgmMemory<char>& m);
+ static kgmAnimation* genAnimation(kgmXml& x);
+
+//MESHES
+ static kgmMesh*  genMesh(kgmMemory<char>& m);
+ static kgmMesh*  genMesh(kgmXml& x);
+
+//SOUNDS
+ static kgmSound* genSound(kgmIAudio* snd, kgmMemory<char>& m);
+};

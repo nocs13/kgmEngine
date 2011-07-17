@@ -1,0 +1,85 @@
+# Microsoft Developer Studio Generated Dependency File, included by kgmRender.mak
+
+.\kgmMaterial.cpp : \
+	"..\kgmMain\kgmMemory.h"\
+	"..\kgmMain\kgmObject.h"\
+	"..\kgmMain\kgmResource.h"\
+	"..\kgmMain\kgmTab.h"\
+	"..\kgmMain\kgmTypes.h"\
+	"..\kgmMath\kgmBase.h"\
+	"..\kgmMath\kgmBox2d.h"\
+	"..\kgmMath\kgmBox3d.h"\
+	"..\kgmMath\kgmCylinder3d.h"\
+	"..\kgmMath\kgmLine3d.h"\
+	"..\kgmMath\kgmMath.h"\
+	"..\kgmMath\kgmMatrix3d.h"\
+	"..\kgmMath\kgmPlane3d.h"\
+	"..\kgmMath\kgmQuaternion.h"\
+	"..\kgmMath\kgmRay3d.h"\
+	"..\kgmMath\kgmSphere3d.h"\
+	"..\kgmMath\kgmTriangle3d.h"\
+	"..\kgmMath\kgmVector2d.h"\
+	"..\kgmMath\kgmVector3d.h"\
+	"..\kgmMath\kgmVector4d.h"\
+	".\kgm4Color.h"\
+	".\kgmIRender.h"\
+	".\kgmMaterial.h"\
+	".\kgmShader.h"\
+	".\kgmTexture.h"\
+	
+
+.\kgmMesh.cpp : \
+	"..\kgmMain\kgmMemory.h"\
+	"..\kgmMain\kgmObject.h"\
+	"..\kgmMain\kgmResource.h"\
+	"..\kgmMain\kgmTab.h"\
+	"..\kgmMain\kgmTypes.h"\
+	"..\kgmMath\kgmBase.h"\
+	"..\kgmMath\kgmBox2d.h"\
+	"..\kgmMath\kgmBox3d.h"\
+	"..\kgmMath\kgmCylinder3d.h"\
+	"..\kgmMath\kgmLine3d.h"\
+	"..\kgmMath\kgmMath.h"\
+	"..\kgmMath\kgmMatrix3d.h"\
+	"..\kgmMath\kgmPlane3d.h"\
+	"..\kgmMath\kgmQuaternion.h"\
+	"..\kgmMath\kgmRay3d.h"\
+	"..\kgmMath\kgmSphere3d.h"\
+	"..\kgmMath\kgmTriangle3d.h"\
+	"..\kgmMath\kgmVector2d.h"\
+	"..\kgmMath\kgmVector3d.h"\
+	"..\kgmMath\kgmVector4d.h"\
+	".\kgm4Color.h"\
+	".\kgmAnimation.h"\
+	".\kgmIRender.h"\
+	".\kgmMaterial.h"\
+	".\kgmMesh.h"\
+	".\kgmShader.h"\
+	".\kgmSkeleton.h"\
+	
+
+.\kgmShader.cpp : \
+	"..\kgmMain\kgmMemory.h"\
+	"..\kgmMain\kgmObject.h"\
+	"..\kgmMain\kgmResource.h"\
+	"..\kgmMain\kgmTypes.h"\
+	"..\kgmMath\kgmBase.h"\
+	"..\kgmMath\kgmBox2d.h"\
+	"..\kgmMath\kgmBox3d.h"\
+	"..\kgmMath\kgmCylinder3d.h"\
+	"..\kgmMath\kgmLine3d.h"\
+	"..\kgmMath\kgmMath.h"\
+	"..\kgmMath\kgmMatrix3d.h"\
+	"..\kgmMath\kgmPlane3d.h"\
+	"..\kgmMath\kgmQuaternion.h"\
+	"..\kgmMath\kgmRay3d.h"\
+	"..\kgmMath\kgmSphere3d.h"\
+	"..\kgmMath\kgmTriangle3d.h"\
+	"..\kgmMath\kgmVector2d.h"\
+	"..\kgmMath\kgmVector3d.h"\
+	"..\kgmMath\kgmVector4d.h"\
+	"..\kgmSystem\kgmApp.h"\
+	".\kgmIRender.h"\
+	".\kgmShader.h"\
+	".\kgmTexture.h"\
+	

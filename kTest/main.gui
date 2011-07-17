@@ -1,0 +1,71 @@
+<!xml version="1.0">
+<Gui id="main" x="0.0" y="0.0" w="1.0" h="1.0">
+ <Show data="true"/>
+ <Bgcolor data="FF00AAFF"/>
+ <GuiButton id="btnGame" x="0.0" y="0.0" w="0.161" h="0.1">
+  <Text data="Game"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+ <GuiButton id="btnGraphics" x="0.161" y="0.0" w="0.161" h="0.1">
+  <Text data="Graphics"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+ <GuiButton id="btnSound" x="0.32" y="0.0" w="0.161" h="0.1">
+  <Text data="Sound"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+ <GuiButton id="btnInput" x="0.48" y="0.0" w="0.161" h="0.1">
+  <Text data="Input"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+ <GuiButton id="btnNetwork" x="0.64" y="0.0" w="0.161" h="0.1">
+  <Text data="Network"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+ <GuiButton id="btnQuit" x="0.80" y="0.0" w="0.21" h="0.1">
+  <Text data="Quit"/>
+  <Show data="true"/>
+  <Bgcolor data="FFFF0000"/>
+  <Textcolor data="FFFFFFFF"/>
+ </GuiButton>
+
+ <GuiTab id="tab" x="0.0" y="0.25" w="1.0" h="0.75">
+  <Bgcolor data="FFAA00FF"/>
+  <Gui id="game" x="0.0" y="0.25" w="1.0" h="0.75">
+   <Bgcolor data="FF00FF00"/>
+   <Show data="true"/>
+   <GuiList id="maps" x="0.3" y="0.4" w="0.3" h="0.3">
+    <Addtext data="map001"/>
+    <Addtext data="map002"/>
+    <Addtext data="map003"/>
+    <Bgcolor data="FF3377AA"/>
+    <Show data="true"/>
+   </GuiList>
+  </Gui>
+  <Gui id="graphics" x="0.0" y="0.25" w="1.0" h=".75">
+   <Bgcolor data="FF3377AA"/>
+  </Gui>
+  <Gui id="audio" x="0.0" y="0.25" w="1.0" h=".75">
+   <Bgcolor data="FF3377AA"/>
+  </Gui>
+  <Gui id="input" x="0.0" y="0.25" w="1.0" h=".75">
+   <Bgcolor data="FF3377AA"/>
+  </Gui>
+  <Gui id="network" x="0.0" y="0.25" w="1.0" h=".75">
+   <Bgcolor data="FF3377AA"/>
+  </Gui>
+  <Tab data="0"/>
+ </GuiTab>
+</Gui>
+
+

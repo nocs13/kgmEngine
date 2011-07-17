@@ -1,0 +1,100 @@
+#pragma once
+#include "kgmTypes.h"
+#include "kgmActions.h"
+#include <stdlib.h>
+#include <string.h>
+#include <fstream.h>
+
+#ifdef LINUX
+#include <fstream>
+#endif
+
+
+class kgmFont;
+
+class kgmEnvironment{
+public:
+ uint wnd_width, wnd_height, 
+	  wnd_bpp, wnd_fscreen;
+
+ char* dir_cwd;
+ char* dir_data;
+
+ float time_per_frame;
+
+ char *map_keyboard,
+	  *map_joystick,
+	  *map_mouse;
+
+ kgmFont* m_font;
+public:
+ kgmEnvironment(){
+  dir_cwd = new char[256]; memset(dir_cwd, 0, 256);
+  dir_data = new char[256]; memset(dir_data, 0, 256);
+  wnd_width = 800;
+  wnd_height = 600;
+  wnd_bpp = 16;
+  wnd_fscreen = 0;
+
+  time_per_frame = 0.0f;
+
+  map_keyboard = new char[128]; memset(map_keyboard, 0, 128);
+  map_joystick = new char[32]; memset(map_joystick, 0, 32);
+  map_mouse    = new char[8]; memset(map_mouse, 0, 8);
+ }
+ ~kgmEnvironment(){
+  delete [] dir_data;
+  delete [] dir_cwd;
+  delete [] map_keyboard;
+  delete [] map_joystick;
+  delete [] map_mouse;
+ }
+
+ bool load(char* path){
+  ifstream in;
+  in.open(path);
+  if(in.fail())
+	  return false;
+  while(!in.fail() || !in.eof())
+  {
+   char key[64];
+//   char val[64];
+
+   in >> key;
+   if(!strcmp(key, "WndWidth"))
+	in >> wnd_width;
+   if(!strcmp(key, "WndHeight"))
+	in >> wnd_height;
+   if(!strcmp(key, "WndBpp"))
+	in >> wnd_bpp;
+   if(!strcmp(key, "WndFScreen"))
+	in >> wnd_fscreen;
+   if(!strcmp(key, "FolderData"))
+	in >> dir_data;
+  }
+  in.close();
+  return true;
+ }
+ bool store(char* path){
+  ofstream out;
+  out.open(path);
+  if(out.fail())
+	  return false;
+  out << "WndWidth"   << '\t' << wnd_width << "\r\n";
+  out << "WndHeight"  << '\t' << wnd_height << "\r\n";
+  out << "WndBpp"     << '\t' << wnd_bpp << "\r\n";
+  out << "WndFScreen" << '\t' << wnd_fscreen << "\r\n";
+
+  out << "FolderData" << '\t' << dir_data << "\r\n";
+  out.close();
+  return true;
+ }
+
+ void reset(){
+  wnd_width = 800;
+  wnd_height = 600;
+  wnd_bpp = 16;
+  wnd_fscreen = 0;
+  strcpy(dir_data, "data");
+ }
+};

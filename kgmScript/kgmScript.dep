@@ -1,0 +1,10 @@
+# Microsoft Developer Studio Generated Dependency File, included by kgmScript.mak
+
+.\kgmScript.cpp : \
+	"..\kgmlua\lauxlib.h"\
+	"..\kgmlua\lua.h"\
+	"..\kgmlua\lua.hpp"\
+	"..\kgmlua\luaconf.h"\
+	"..\kgmlua\lualib.h"\
+	".\kgmScript.h"\
+	

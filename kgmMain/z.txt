@@ -1,0 +1,2 @@
+g++ -g -c *.cpp -DLINUX -I./ -I./inc -I../kgmMath
+g++ -g -c *.cpp -DLINUX -I./ -I./inc -I../kgmMath

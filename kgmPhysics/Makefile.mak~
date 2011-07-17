@@ -1,0 +1,11 @@
+CC = cl.exe /c
+LN = link.exe
+DEF = /DWIN32
+INC = /I "C:\Program Files\MSVS8\VC\PlatformSDK\Include" /I "C:\Program Files\MSVS8\VC\Include"
+LIB = /LIBPATH:"C:\Program Files\MSVS8\VC\lib" /LIBPATH:"C:\Program Files\MSVS8\VC\PlatformSDK\lib"
+libs = user32.lib 
+
+all:
+	$(CC) *.cpp $(INC) $(DEF)
+	
+

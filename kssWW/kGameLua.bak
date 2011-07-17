@@ -1,0 +1,889 @@
+#include "../kgmGame/kgmGameApp.h"
+#include "../kgmGame/kgmGameBase.h"
+
+#include "../kgmGame/kgmActor.h"
+#include "../kgmGame/kgmTrigger.h"
+#include "../kgmGame/kgmController.h"
+#include "../kgmGame/kgmPawn.h"
+
+#include "../kgmGame/kgmKey.h"
+#include "../kgmGame/kgmLock.h"
+#include "../kgmGame/kgmDoor.h"
+
+#include "../kgmGame/kgmGameResources.h"
+
+#include "../kgmPhysics/kgmIntersection.h"
+
+extern uint cmd_input;
+
+void kgmAI_LoadLibrary(lua_State*);
+
+//Global
+int  kgmAI_MsgBox(lua_State*);
+int  kgmAI_MsgBeep(lua_State*);
+int  kgmAI_SendEvent(lua_State*);
+int  kgmAI_Ticks(lua_State*);
+//Audio
+int	 kgmAudio_PlaySound(lua_State*);
+//Actor
+int	 kgmAI_Uid(lua_State*);
+int	 kgmAI_Enable(lua_State*);
+int	 kgmAI_Visible(lua_State*);
+int	 kgmAI_InsideSpace(lua_State*);
+int  kgmAI_GetPosition(lua_State*);
+int  kgmAI_Location(lua_State*);
+int  kgmAI_Rotation(lua_State*);
+int  kgmAI_Locate(lua_State*);
+int  kgmAI_Rotate(lua_State*);
+int  kgmAI_Nearest(lua_State*);
+int	 kgmAI_Distance(lua_State* lua);
+//Door & Lock & Key
+int	 kgmAI_DoorOpen(lua_State*);
+int	 kgmAI_DoorClose(lua_State*);
+int  kgmAI_DoorUnlock(lua_State*);
+int  kgmAI_DoorLock(lua_State*);
+int  kgmAI_DoorKey(lua_State* lua);
+int  kgmAI_KeyCode(lua_State* lua);
+int  kgmAI_LockCode(lua_State* lua);
+int  kgmAI_LockLocked(lua_State* lua);
+//Trigger
+int  kgmAI_Trigger(lua_State*);
+//Weapon
+int  kgmAI_Weapon(lua_State*);
+//Pawn
+int  kgmAI_GetState(lua_State*);
+int  kgmAI_SetState(lua_State*);
+int  kgmAI_SwitchWeapon(lua_State*);
+int  kgmAI_Damage(lua_State*);
+int  kgmAI_Punch(lua_State*);
+int  kgmAI_Kick(lua_State*);
+int  kgmAI_Life(lua_State*);
+int  kgmAI_Jump(lua_State*);
+int  kgmAI_Upstare(lua_State* lua);
+int  kgmAI_Fall(lua_State*);
+int  kgmAI_Stay(lua_State*);
+int  kgmAI_Walk(lua_State*);
+int  kgmAI_Run(lua_State*);
+int  kgmAI_Turn(lua_State*);
+int  kgmAI_TurnCamera(lua_State*);
+int  kgmAI_TurnToCamera(lua_State* lua);
+int  kgmAI_PawnCamera(lua_State*);
+int  kgmAI_FixCamera(lua_State*);
+int  kgmAI_WalkBack(lua_State*);
+int  kgmAI_GetInput(lua_State*);
+int  kgmAI_DoneState(lua_State*);
+int  kgmAI_TimeState(lua_State*);
+int  kgmAI_MoveToEnemy(lua_State*);
+int  kgmAI_FindEnemy(lua_State*);
+int  kgmAI_DistanceEnemy(lua_State*);
+int  kgmAI_Interogate(lua_State*);
+int  kgmAI_IsGamePlayer(lua_State*);
+int  kgmAI_GamePlayer(lua_State*);
+int  kgmAI_EnemyCount(lua_State*);
+int  kgmAI_InsideBound(lua_State*);
+//Spawn
+int	 kgmAI_Spawn(lua_State*);
+
+//Non Sctript
+kgmActorTab& kgmGetActors(){
+ return ((kgmGameBase*)kgmGameApp::getGame())->m_actors;
+}
+int kgmGetNearActors(kgmActorTab& at, kgmActor* a, float radius, char* c){
+ int count = 0;
+ kgmActorTab& all = kgmGetActors();
+ for(int i = 0; i < all.size(); i++){
+  kgmActor* c = all[i];
+  if(a == c) 
+	  continue;
+  float dist = a->m_position.distance(c->m_position);
+  if(dist < radius){
+    at.add(c);
+    count++;
+  }
+ }
+ return count;
+}
+kgmActor* kgmGetNearestActor(kgmActor* a, float r, char* c){
+ kgmActor*   ar = 0;
+ kgmActorTab at;
+ float		 rn = r;
+ int cnt = kgmGetNearActors(at, a, r, c);
+ for(int i = 0; i < cnt; i++){
+  float dist = a->m_position.distance(at[i]->m_position);
+  if(dist <= rn){
+   ar = at[i];
+   rn = dist;
+  }
+ }
+ return ar;
+}
+
+///////////////////////////////////////
+
+void kgmAI_LoadLibrary(lua_State* lua){
+//Pawn
+ lua_register(lua, "Interogate",	kgmAI_Interogate);
+ lua_register(lua, "DistanceEnemy",	kgmAI_DistanceEnemy);
+ lua_register(lua, "MoveToEnemy",	kgmAI_MoveToEnemy);
+ lua_register(lua, "FindEnemy",		kgmAI_FindEnemy);
+ lua_register(lua, "DoneState",		kgmAI_DoneState);
+ lua_register(lua, "TimeState",		kgmAI_TimeState);
+ lua_register(lua, "Punch",			kgmAI_Punch);
+ lua_register(lua, "Kick",			kgmAI_Kick);
+ lua_register(lua, "Life",			kgmAI_Life);
+ lua_register(lua, "Fall",			kgmAI_Fall);
+ lua_register(lua, "Upstare",		kgmAI_Upstare);
+ lua_register(lua, "Jump",			kgmAI_Jump);
+ lua_register(lua, "Stay",			kgmAI_Stay);
+ lua_register(lua, "Walk",			kgmAI_Walk);
+ lua_register(lua, "Run",			kgmAI_Run);
+ lua_register(lua, "Turn",			kgmAI_Turn);
+ lua_register(lua, "TurnCamera",	kgmAI_TurnCamera);
+ lua_register(lua, "TurnToCamera",	kgmAI_TurnToCamera);
+ lua_register(lua, "PawnCamera",	kgmAI_PawnCamera);
+ lua_register(lua, "FixCamera",		kgmAI_FixCamera);
+ lua_register(lua, "WalkBack",		kgmAI_WalkBack);
+ lua_register(lua, "Damage",		kgmAI_Damage);
+ lua_register(lua, "SwitchWeapon",	kgmAI_SwitchWeapon);
+ lua_register(lua, "GetState",		kgmAI_GetState);
+ lua_register(lua, "SetState",		kgmAI_SetState);
+ lua_register(lua, "GamePlayer",	kgmAI_GamePlayer);
+ lua_register(lua, "EnemyCount",	kgmAI_EnemyCount);
+ lua_register(lua, "InsideBound",	kgmAI_InsideBound);
+
+ //Global
+ lua_register(lua, "MsgBeep",		kgmAI_MsgBeep);
+ lua_register(lua, "MsgBox",		kgmAI_MsgBox);
+ lua_register(lua, "Ticks",			kgmAI_Ticks);
+ lua_register(lua, "SendEvent",		kgmAI_SendEvent);
+ lua_register(lua, "GetInput",		kgmAI_GetInput);
+ //Audio
+ lua_register(lua, "PlaySound",		kgmAudio_PlaySound);
+ //Actor
+ lua_register(lua, "Uid",			kgmAI_Uid);
+ lua_register(lua, "Enable",		kgmAI_Enable);
+ lua_register(lua, "Visible",		kgmAI_Visible);
+ lua_register(lua, "InsideSpace",	kgmAI_InsideSpace);
+ lua_register(lua, "GetPosition",	kgmAI_GetPosition);
+// lua_register(lua, "Nearest",		kgmAI_Nearest);
+ lua_register(lua, "Distance",		kgmAI_Distance);
+ lua_register(lua, "Location",		kgmAI_Location);
+ lua_register(lua, "Rotation",		kgmAI_Rotation);
+ lua_register(lua, "Locate",		kgmAI_Locate);
+ lua_register(lua, "Rotate",		kgmAI_Rotate);
+ //Trigger
+ lua_register(lua, "Trigger",		kgmAI_Trigger);
+ //Door & Lock & Key
+ lua_register(lua, "DoorOpen",		kgmAI_DoorOpen);
+ lua_register(lua, "DoorClose",		kgmAI_DoorClose);
+ lua_register(lua, "DoorUnlock",	kgmAI_DoorUnlock);
+ lua_register(lua, "DoorLock",		kgmAI_DoorLock);
+ lua_register(lua, "DoorKey",		kgmAI_DoorKey);
+ lua_register(lua, "KeyCode",		kgmAI_KeyCode);
+ lua_register(lua, "LockCode",		kgmAI_LockCode);
+ lua_register(lua, "LockLocked",	kgmAI_LockLocked);
+ //Weapon
+ lua_register(lua, "Weapon",		kgmAI_Weapon);
+ //Spawn
+ lua_register(lua, "Spawn",			kgmAI_Spawn);
+}
+
+
+//Global
+int kgmAI_MsgBox(lua_State* lua){
+ const char* message = 0;
+ int len;
+ message = lua_tostring(lua, 1);
+// const char* idsnd = lua_tostring(lua, 2);
+#ifdef WIN32
+// message = lua_tostring(lua, 1, &len);
+ MessageBox(0, message, "lua", 0);
+#endif
+#ifdef LINUX
+ printf("msg: %s", message);
+#endif
+ return 0;
+}
+int kgmAI_MsgBeep(lua_State* lua){
+ const char* message = 0;
+// int len;
+// message = lua_tostring(lua, 1, &len);
+#ifdef WIN32
+ MessageBeep(0xffff);
+#endif
+ return 0;
+}
+int kgmAI_Ticks(lua_State* lua){
+ lua_pushnumber(lua, (double)kgmTime::getTicks());
+ return 1;
+}
+int kgmAI_SendEvent(lua_State* lua){
+ kgmActor*  a = (kgmActor*)lua_topointer(lua, 1);
+ kgmActor*  to = (kgmActor*)lua_topointer(lua, 2);
+ int		e = lua_tointeger(lua, 3);		
+ void*		v = (void*)lua_topointer(lua, 4);		
+ if(to)
+	 to->doEvent(a, e);
+ else
+	 kgmGameApp::getGame()->gEvent(a, e, (void*)v);
+ return 0;
+}
+int kgmAI_GetInput(lua_State* lua){
+ lua_pushnumber(lua, cmd_input);
+ return 1;
+}
+//Actor
+int kgmAI_Uid(lua_State* lua){
+ kgmActor*  a = (kgmActor*)lua_topointer(lua, 1);
+ uint		uid = 0;
+ if(a) lua_pushinteger(lua, a->m_uid);
+ return 1;
+}
+int kgmAI_Enable(lua_State* lua){
+ kgmActor*  a = (kgmActor*)lua_topointer(lua, 1);
+ bool		v = lua_toboolean(lua, 2);
+ if(a) a->enable(v);
+ return 1;
+}
+int kgmAI_Visible(lua_State* lua){
+ kgmActor*  a = (kgmActor*)lua_topointer(lua, 1);
+ bool		v = lua_toboolean(lua, 2);
+ if(a) a->visible(v);
+ return 1;
+}
+int kgmAI_Location(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ lua_pushnumber(lua, a->m_position.x);
+ lua_pushnumber(lua, a->m_position.y);
+ lua_pushnumber(lua, a->m_position.z);
+ return 3;
+}
+int kgmAI_Rotation(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ lua_pushnumber(lua, a->m_rotation.x);
+ lua_pushnumber(lua, a->m_rotation.y);
+ lua_pushnumber(lua, a->m_rotation.z);
+ return 3;
+}
+int kgmAI_Locate(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ vec3 pos(lua_tonumber(lua, 2),lua_tonumber(lua, 3),lua_tonumber(lua, 4));
+ a->setPosition(pos);
+ return 0;
+}
+int kgmAI_Rotate(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ vec3 rot(lua_tonumber(lua, 2),lua_tonumber(lua, 3),lua_tonumber(lua, 4));
+ a->setRotation(rot);
+ return 3;
+}
+int kgmAI_GetPosition(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+
+ lua_pushnumber(lua, a->m_position.x);
+ lua_pushnumber(lua, a->m_position.y);
+ lua_pushnumber(lua, a->m_position.z);
+
+ return 3;
+}
+
+int kgmAI_InsideSpace(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ kgmActor* b = (kgmActor*)lua_topointer(lua, 2);
+ double	r = lua_tonumber(lua, 3);
+
+ sphere s(a->m_position, r);
+ bool res = s.isin(b->m_position);
+ lua_pushboolean(lua, res);
+
+ return 1;
+}
+
+int kgmAI_Nearest(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ double	r = lua_tonumber(lua, 2);
+ char*  c = (char*)lua_tostring(lua, 3);
+
+ kgmActor* na = kgmGetNearestActor(a, r, c);
+ lua_pushlightuserdata(lua, na);
+ return 1;
+}
+
+int kgmAI_Distance(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ kgmActor* b = (kgmActor*)lua_topointer(lua, 2);
+ double	d = a->m_position.distance(b->m_position);
+
+ lua_pushnumber(lua, d);
+ return 1;
+}
+/////////
+//Trigger
+int kgmAI_Trigger(lua_State* lua){
+ kgmTrigger* t = (kgmTrigger*)lua_topointer(lua, 1);
+ if(!t) return 0;
+ lua_pushlightuserdata(lua, t->m_actor);
+ lua_pushlightuserdata(lua, t->m_target);
+ lua_pushinteger(lua, t->m_type);
+ lua_pushinteger(lua, t->m_event);
+ lua_pushinteger(lua, t->m_action);
+ return 5;
+}
+/////////
+//Weapon
+int kgmAI_Weapon(lua_State* lua){
+ kgmPawn* p = (kgmPawn*)lua_topointer(lua, 1);
+ if(!p) return 0;
+ kgmWeapon* w = 0; //p->m_weapon;
+ if(!w) return 0;
+ lua_pushinteger(lua, w->m_type);
+ lua_pushinteger(lua, w->m_id);
+ lua_pushnumber(lua,  w->m_power);
+
+ return 3;
+}
+//Door
+int	 kgmAI_DoorOpen(lua_State* lua){
+ kgmDoor* d = (kgmDoor*)lua_topointer(lua, 1);
+ bool r = d->open();
+ lua_pushboolean(lua, r);
+ return 1;
+}
+int	 kgmAI_DoorClose(lua_State* lua){
+ kgmDoor* d = (kgmDoor*)lua_topointer(lua, 1);
+ bool r = d->close();
+ lua_pushboolean(lua, r);
+ return 1;
+}
+int  kgmAI_DoorUnlock(lua_State* lua){
+ kgmDoor* d = (kgmDoor*)lua_topointer(lua, 1);
+ int	k = lua_tointeger(lua, 2);
+ bool r = d->unlock(k);
+ lua_pushboolean(lua, r);
+ return 1;
+}
+int  kgmAI_DoorLock(lua_State* lua){
+ kgmDoor* d = (kgmDoor*)lua_topointer(lua, 1);
+ int	k = lua_tointeger(lua, 2);
+ bool r = d->lock(k);
+ lua_pushboolean(lua, r);
+ return 1;
+}
+int  kgmAI_DoorKey(lua_State* lua){
+ kgmDoor* d = (kgmDoor*)lua_topointer(lua, 1);
+ int	k = d->m_key;
+ lua_pushinteger(lua, k);
+ return 1;
+}
+//Key & Lock
+int  kgmAI_KeyCode(lua_State* lua){
+ kgmKey* k = (kgmKey*)lua_topointer(lua, 1);
+ lua_pushinteger(lua, k->m_code);
+ return 1;
+}
+int  kgmAI_LockCode(lua_State* lua){
+ kgmLock* l = (kgmLock*)lua_topointer(lua, 1);
+ lua_pushinteger(lua, l->m_code);
+ return 1;
+}
+int  kgmAI_LockLocked(lua_State* lua){
+ kgmLock* l = (kgmLock*)lua_topointer(lua, 1);
+ lua_pushinteger(lua, l->m_locked);
+ return 1;
+}
+//Audio
+int	 kgmAudio_PlaySound(lua_State* lua){
+ kgmActor*	 a = (kgmDoor*)lua_topointer(lua, 1);
+ const char* idsnd = lua_tostring(lua, 2);
+
+ kgmSound* snd = kgmApp::getResources()->getSound((char*)idsnd);
+ if(snd){
+  kgmGameBase* g =  (kgmGameBase*)kgmApp::getGame();
+  vec3 pos = (a)?(a->m_position):(vec3(0, 0, 0));
+  vec3 dir = vec3(0, 0, 0);
+  kgmGameApp::getAudio()->emitter(snd, pos, dir);
+  kgmGameApp::getAudio()->volume(snd, 1.0);
+  kgmGameApp::getAudio()->play(snd, false);
+ }
+ return 0;
+}
+//Pawn
+int kgmAI_DistanceEnemy(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+
+ vec3 v;
+ double d = 99999.0;
+ if(pawn->m_enemy ){
+  v = pawn->m_enemy->m_position - pawn->m_position;
+  d = v.length();
+ }
+
+ lua_pushnumber(lua, d);
+ return 1;
+}
+int  kgmAI_Interogate(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ double   dist = lua_tonumber(lua, 2);
+ if(!pawn) return 0;
+ kgmGameBase* g = (kgmGameBase*)kgmGameApp::getGame();
+ if(!g) return 0;
+
+ kgmActor* actor = 0;
+ kgmTab<kgmActor*>& actors = g->gActors();
+ for(int i = 0; i < actors.size(); i++){
+  kgmActor* cactor = actors[i];
+  if(pawn == cactor) 
+	  continue;
+  float cdist = pawn->m_position.distance(cactor->m_position);
+  if(cdist > dist)
+	  continue;
+  vec3 vactor = cactor->m_position - pawn->m_position;
+  vactor.normalize();
+  float fdot = vactor.dot(pawn->m_direction);
+  if(fdot < 0)
+	  continue;
+  if(fdot < 0.7f)
+	  continue;
+  if(cdist < dist)
+	  dist = cdist;
+  actor = cactor;
+ }
+ lua_pushlightuserdata(lua, actor);
+
+ return 1;
+}
+int kgmAI_MoveToEnemy(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ kgmPawn* enemy = (kgmPawn*)lua_topointer(lua, 2);
+ if(!pawn || !enemy) return 0;
+
+ {
+  vec3 dir = enemy->m_position - pawn->m_position;
+  float alpha = dir.angle(pawn->m_direction);
+  float x = dir.x * cos(alpha) - dir.y * sin(alpha);
+  float y = dir.x * sin(alpha) + dir.y * cos(alpha);
+//  pawn->m_direction = dir;
+//  if(y < 0.0) alpha *= -1;
+//  pawn->rotate(0, 0, alpha);
+  float nalpha = dir.angle(pawn->m_direction);
+  if((nalpha > 0.1) && (nalpha < 3.13))
+   pawn->rotate(0, 0, 2 * (PI - alpha));
+  pawn->setForce(2000.0f);
+ }
+ return 0;
+}
+
+int kgmAI_FindEnemy(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ double   length = lua_tonumber(lua, 2);
+ kgmActorTab at;
+
+ kgmPawn* enemy = 0;
+ kgmGetNearActors(at, pawn, length, 0);
+
+ for(int i = 0; i < at.size(); i++){
+  if(at[i]->instanceof(kgmPawn::Class)){
+   kgmPawn* cpawn =  kgmPawn::cast(at[i]);
+//   if((cpawn->m_team != kgmPawn::PawnTeam_None) && (cpawn->m_team != pawn->m_team))
+   if((cpawn->m_team != pawn->m_team))
+	 if(!enemy)
+		 pawn->m_enemy = enemy = cpawn;
+	 else if(pawn->m_position.distance(cpawn->m_position) < pawn->m_position.distance(enemy->m_position))
+		 pawn->m_enemy = enemy = cpawn;
+  }
+ }  
+ 
+ at.clear();
+ lua_pushlightuserdata(lua, enemy);
+ return 1;
+}
+
+int  kgmAI_Punch(lua_State* lua){
+ kgmIntersection ins;
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ kgmWeapon* wpn = pawn->m_weapon;
+ if(!wpn)  return 0;
+ kgmActorTab at;
+ kgmGetNearActors(at, pawn, 10, 0);
+ bool damage = false;
+ for(int i = 0; i < at.size(); i++){
+  kgmActor* a = at[i];
+  if(a->instanceof(kgmPawn::Class)){
+   mtx4 mjt; 
+//   pawn->getJointTransform("Bip01 L Hand", mjt);
+   vec3 vinit = vec3(0, 0, 0);
+   vec3 pos = mjt * vinit;
+   cylinder cyl;
+   cyl.position = a->m_position;
+   cyl.radius = 2.0f;
+   cyl.height = 20.0f;
+   switch(wpn->m_type){
+   case kgmWeapon::TypeNone:
+   case kgmWeapon::TypeFist:
+	   {
+		if(cyl.isInside(pos)){
+	     ((kgmPawn*)a)->m_life -= 0.1f;
+#ifdef WIN32	     
+		 MessageBeep(0xffff);
+#endif
+		 damage = true;
+		}
+	   }
+	   break;
+   case kgmWeapon::TypeKnife:
+   case kgmWeapon::TypeSword:
+   case kgmWeapon::TypeLance:
+	   {
+		line     w_ln;
+		w_ln.s = vec3(0, 0, -10); w_ln.s = wpn->m_transform * w_ln.s;
+		w_ln.e = vec3(0, 0, 10); w_ln.e = wpn->m_transform * w_ln.e;
+		if(ins.intersection(w_ln, cyl)){
+		 ((kgmPawn*)a)->m_life -= 0.15f;
+#ifdef WIN32		 
+		 MessageBeep(0xffff);
+#endif		 
+		 damage = true;
+		}
+	   }
+	   break;
+   case kgmWeapon::TypeGun:
+   case kgmWeapon::TypeShotgun:
+	   break;
+   }
+  }else if(a->instanceof(kgmTrigger::Class)){
+
+  }
+ }
+ at.clear();
+ lua_pushboolean(lua, damage);
+ return 1;
+}
+int  kgmAI_Kick(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ return 0;
+}
+int kgmAI_Life(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ double life = pawn->m_life;
+ lua_pushnumber(lua, life);
+ return 1;
+}
+
+int kgmAI_Jump(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ double   value = lua_tonumber(lua, 2);
+ if(value > 0.0)
+  pawn->m_upforce = value;
+ else
+  pawn->m_upforce = 10;
+ return 0;
+}
+
+int kgmAI_Fall(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) 
+	 return 0;
+ lua_pushboolean(lua, pawn->m_falling);
+ return 1;
+}
+
+int kgmAI_Upstare(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ if(pawn->m_upforce > 1.0f)
+  lua_pushboolean(lua, true);
+ else
+  lua_pushboolean(lua, false);
+ return 1;
+}
+
+int kgmAI_Walk(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ double   value = lua_tonumber(lua, 2);
+ if(!pawn) return 0;
+ if(value != 0.0f)
+  pawn->m_velocity = value;
+ else
+  pawn->m_velocity = 10;
+ return 0;
+}
+
+int kgmAI_Run(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ double   value = lua_tonumber(lua, 2);
+ if(!pawn) return 0;
+ if(value > 0.0)
+  pawn->m_velocity = value;
+ else
+  pawn->m_velocity = 40;
+ return 0;
+}
+
+int kgmAI_Stay(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ pawn->m_velocity = 0.0;
+ return 0;
+}
+
+int kgmAI_Turn(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ double angle = lua_tonumber(lua, 2);
+ float  fangle = DEGTORAD(angle);
+ pawn->rotate(0, 0, pawn->m_rotation.z + fangle);
+ return 0;
+}
+
+int kgmAI_TurnCamera(lua_State* lua){
+ kgmGameBase* g = (kgmGameBase*)kgmApp::getGame();
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ int angle = lua_tointeger(lua, 2);
+ float fangle = DEGTORAD(angle);
+
+ if(pawn){
+  if(pawn->m_force){
+   
+  }else{
+   float fov = g->m_camera.mFov;
+   float asp = g->m_camera.mAspect;
+   float zn  = g->m_camera.mNear;
+   float zf  = g->m_camera.mFar = 100000;
+
+   vec3 pos = g->m_camera.mPos;
+   pos.x += cos((float)angle);
+   pos.y += sin((float)angle);
+   vec3 dir = pawn->m_position - pos;
+   vec3 up(0, 0, 1);
+
+   g->m_camera.set(fov, asp, zn, zf, pos, dir, up);
+  }
+ }else{
+  g->m_camera.rotate(0, 0, fangle);
+ }
+ return 0;
+}
+
+int kgmAI_TurnToCamera(lua_State* lua){
+ kgmGameBase* g = (kgmGameBase*)kgmApp::getGame();
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ double angle = lua_tonumber(lua, 2);
+ float fangle = DEGTORAD(angle);
+// g->m_camera.rotate(0, 0, fangle);
+ pawn->rotate(0, 0, g->m_camera.mRot.z + fangle + PI);
+ return 0;
+}
+
+int kgmAI_PawnCamera(lua_State* lua){
+ kgmGameBase* g = (kgmGameBase*)kgmApp::getGame();
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) 
+	 return 0;
+ 
+#ifdef WIN32
+ kgmCamera& camera = g->gCamera();
+
+ vec3 look;
+ vec3 rot;
+ vec3 pos = camera.mPos;
+ vec3 up  = camera.mUp;
+ vec3 dir = camera.mDir;
+
+ float rad = 1.0f;
+
+ dir = pawn->m_direction;
+ if(dir.y < 0.0f)
+  camera.mRot.z = PI - acos(dir.x);
+ else
+  camera.mRot.z = PI + acos(dir.x);
+ float aa = RADTODEG(camera.mRot.z);
+#endif 
+ return 0;
+}
+
+int kgmAI_FixCamera(lua_State* lua){
+ kgmGameBase* g = (kgmGameBase*)kgmApp::getGame();
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+
+ if(!pawn) 
+	 return 0;
+  float fov = g->m_camera.mFov;
+  float asp = g->m_camera.mAspect;
+  float zn  = g->m_camera.mNear;
+  float zf  = g->m_camera.mFar = 100000;
+  vec3 look;
+  vec3 rot;
+  vec3 pos = g->m_camera.mPos;
+  vec3 up  = g->m_camera.mUp;
+  vec3 dir = g->m_camera.mDir;
+  vec3 oldpos = pos;
+
+  float rad = 1.0f;
+
+  dir = pawn->m_direction;
+  rot = pawn->m_rotation;
+  look  = pawn->m_position; 
+  look.z = look.z + 15.0f;
+  dir.normalize();
+  pos = pawn->m_position - dir * 25.f;
+  pos.z = pawn->m_position.z + 20.0f;
+  dir = look - pos;
+  rot = g->m_camera.mRot;
+  dir = look - pos;
+  dir.normalize();
+//   m_physics->checkCollision(m_camera.mPos, pos, rad, pos);
+  g->m_camera.set(fov, asp, zn, zf, pos, dir, up);
+ return 0;
+}
+
+int kgmAI_WalkBack(lua_State* lua){
+ kgmGameBase* g = (kgmGameBase*)kgmApp::getGame();
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ double   value = lua_tonumber(lua, 2);
+ if(!pawn) 
+	 return 0;
+ if(value > 0.0)
+  pawn->m_velocity = value;
+ else
+  pawn->m_velocity = 10;
+ vec3 c_dir = g->m_camera.mDir; c_dir.z = 0.0f;
+ vec3 p_dir = pawn->m_direction; p_dir.z = 0.0f;
+ c_dir.invert();
+ pawn->setDirection(c_dir);
+ return 0;
+}
+
+int  kgmAI_Damage(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ return 0;
+}
+
+int  kgmAI_SwitchWeapon(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn || !pawn->m_weapon || (pawn->m_inventory.size() < 1)) 
+	 return 0;
+ for(int i = 0; i < pawn->m_inventory.size(); i++){
+  if(pawn->m_inventory[i]->instanceof(kgmWeapon::Class)){
+   if(pawn->m_weapon == 0){
+    pawn->m_weapon = (kgmWeapon*)pawn->m_inventory[i];
+	pawn->m_weapon->enable(true);
+	pawn->m_weapon->activate(true);
+	break;
+   }
+   if(pawn->m_weapon == (kgmWeapon*)pawn->m_inventory[i]){
+	pawn->m_weapon->activate(false);
+	pawn->m_weapon->enable(false);
+	pawn->m_weapon = 0;
+   }
+  }
+  if((i + 1) >= pawn->m_inventory.size()){
+	  i = -1;
+  }
+ }
+ return 0;
+}
+
+int kgmAI_GetState(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+
+ lua_pushnumber(lua, pawn->m_state);
+ return 1;
+}
+
+int kgmAI_SetState(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ int state = lua_tointeger(lua, 2);
+ char* anim = (char*)lua_tostring(lua, 3);
+ char* song = (char*)lua_tostring(lua, 4);
+ int   time = lua_tointeger(lua, 5);
+ bool  loop = lua_toboolean(lua, 6);
+
+ if(!pawn) return 0;
+ pawn->state(state, anim, song, time, loop);
+ if(state == 0)
+  pawn->setForce(0.0f);
+ return 0;
+}
+
+int kgmAI_DoneState(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ uint done = pawn->doneState();
+ lua_pushboolean(lua, done);
+ return 1;
+}
+
+int kgmAI_TimeState(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ uint stime = pawn->getStateTime();
+ lua_pushnumber(lua, stime);
+ return 1;
+}
+
+int kgmAI_HaveBearing(lua_State* lua){
+ kgmPawn* pawn = (kgmPawn*)lua_topointer(lua, 1);
+ if(!pawn) return 0;
+ uint stime = pawn->getStateTime();
+ lua_pushnumber(lua, stime);
+ return 1;
+}
+
+int  kgmAI_GamePlayer(lua_State* lua){
+ kgmGameBase* game = (kgmGameBase*)kgmApp::getGame();
+ lua_pushlightuserdata(lua, game->gplayer);
+ return 1;
+}
+int  kgmAI_EnemyCount(lua_State* lua){
+ kgmGameBase* game = (kgmGameBase*)kgmApp::getGame();
+ kgmList<kgmActor*>& a = game->gActors();
+ uint enemies = 0;
+ for(int i = 0; i < a.size(); i++){
+  if(a[i]->instanceof(kgmPawn::Class) && (kgmPawn::cast(a[i])->m_team == kgmPawn::PawnTeam_Enemy))
+   enemies++;
+ }
+ lua_pushnumber(lua, enemies);
+ return 1;
+}
+int kgmAI_InsideBound(lua_State* lua){
+ kgmActor* a = (kgmActor*)lua_topointer(lua, 1);
+ kgmActor* b = (kgmActor*)lua_topointer(lua, 2);
+ bool inside = false;
+ mtx4 t;
+ box  bound = a->m_bound;
+
+ t.translate(a->m_position);
+ bound.min = t * bound.min;
+ bound.max = t * bound.max;
+ if(bound.isin(b->m_position))
+	 inside = true;
+ lua_pushboolean(lua, inside);
+ return 1;
+}
+//Spawn
+int	 kgmAI_Spawn(lua_State* lua){
+ char*  a = (char*)lua_tostring(lua, 1);
+ double x = lua_tonumber(lua, 2);
+ double y = lua_tonumber(lua, 3);
+ double z = lua_tonumber(lua, 4);
+// double t = lua_tonumber(lua, 5);
+ bool   s = false;
+ kgmGameBase*	g = (kgmGameBase*)kgmApp::getGame();
+ kgmActor*		act = 0;//g->gSpawn(a);
+ if(act != 0){
+  s = true;
+  act->translate(x, y, z);
+ }
+ lua_pushboolean(lua, s);
+ return 1;
+}
+
+
