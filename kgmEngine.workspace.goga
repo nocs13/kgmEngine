@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Workspace>
-  <Environment Name="&lt;Use Active Set&gt;"/>
-  <WorkspaceParserPaths>
-    <Exclude Path="/home/goga/Projects/kgmEngine"/>
-    <Include Path="/home/goga/Projects/kgmEngine"/>
-  </WorkspaceParserPaths>
-</Workspace>

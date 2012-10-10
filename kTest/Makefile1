@@ -1,7 +1,0 @@
-CC = gcc
-
-
-all:
-	$(CC)  -c test.1.cpp
-	$(CC)  -o test.1.bin test.1.o
-	./test.1.bin

@@ -1,9 +1,0 @@
-<kgmGui id="gMain" rect="0 0 100 100">
- <kgmGuiButton id="btGame" text = "Game"    rect="1 1  33 30"/>
- <kgmGuiButton id="btOpts" text = "Options" rect="1 33 33 30"/>
- <kgmGuiButton id="btQuit" text = "Quit"    rect="1 66 33 30"/>
- <kgmGui id="gGame" rect="1 35 100 65">
- </kgmGui>
- <kgmGui id="gOptions" rect="1 35 100 65">
- </kgmGui>
-</kgmGui>

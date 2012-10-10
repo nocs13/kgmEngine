@@ -1,2 +1,0 @@
-..\..\..\bin\Dev-cpp\bin\g++.exe -g -c *.cpp -DWIN32 -I..\..\..\bin\Dev-cpp\include -I.\ -I.\inc -I..\kgmMath -L..\..\..\bin\Dev-cpp\lib
-ar crs ../libkgmEngine.a *.o
