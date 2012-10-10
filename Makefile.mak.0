@@ -1,0 +1,64 @@
+CPATH = ..\..\..\bin\Dev-cpp
+CC = $(CPATH)\bin\g++.exe
+AR = $(CPATH)\bin\ar.exe
+DEFS = -DWIN32
+#FLGS = -ansi
+DIRS = -I$(CPATH)\include -I.\ -I.\inc  -L$(CPATH)\lib -L./kgmSystem/lib
+LIBS = -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32 
+OBJS = kgmMath/*.o kgmBase/*.o kgmSystem/*.o kgmPhysics/*.o kgmGraphics/*.o kgmGame/*.o
+
+all:
+	echo compiling...
+	make -C kgmMath -f Makefile.mak
+	make -C kgmBase -f Makefile.mak
+	make -C kgmGraphics -f Makefile.mak
+	make -C kgmPhysics -f Makefile.mak
+	make -C kgmSystem -f Makefile.mak
+	make -C kgmGame -f Makefile.mak
+
+	echo linking...
+	ar crs libkgmEngine.lib.a kgmMath/*.o
+	ar crs libkgmEngine.lib.a kgmBase/*.o
+	ar crs libkgmEngine.lib.a kgmSystem/*.o
+	ar crs libkgmEngine.lib.a kgmPhysics/*.o
+	ar crs libkgmEngine.lib.a kgmGraphics/*.o
+	ar crs libkgmEngine.lib.a kgmGame/*.o
+
+	
+	echo "building"
+	$(CC) -shared -o libkgmEngine.dll $(DEFS) $(OBJS) $(DIRS)  $(LIBS) --out-implib,libkgmEngine.dll.a
+	
+
+clean:
+	echo "clear all..."
+	rm -f kgmMath/*.o
+	rm -f kgmBase/*.o
+	rm -f kgmGraphics/*.o
+	rm -f kgmPhysics/*.o
+	rm -f kgmSystem/*.o
+	rm -f kgmGame/*.o
+	rm -f libkgmEngine.a
+
+kgmMath:
+	make -C kgmMath -f Makefile
+	ar crs libkgmEngine.lib kgmMath/*.o
+
+kgmBase:	
+	make -C kgmBase -f Makefile
+	ar crs libkgmEngine.lib kgmBase/*.o
+
+kgmGraphics:
+	make -C kgmGraphics -f Makefile
+	ar crs libkgmEngine.lib kgmAI/*.o
+
+kgmPhysics:
+	make -C kgmPhysics -f Makefile
+	ar crs libkgmEngine.lib kgmPhysics/*.o
+
+kgmGame:
+	make -C kgmGame -f Makefile
+	ar crs libkgmEngine.lib kgmGame/*.o
+
+kgmSystem:
+	make -C kgmSystem -f Makefile
+	ar crs libkgmEngine.lib kgmSystem/*.o

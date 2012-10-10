@@ -1,0 +1,15 @@
+include Makefile.mac
+
+libkgmEngine.a: %.o
+	mkdir objs
+	ar crs libkgmEngine.a objs/*.o
+	rm -rf objs
+
+clean:
+	rm -fr *.o
+	
+force_look:
+	true
+
+
+

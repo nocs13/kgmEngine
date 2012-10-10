@@ -1,0 +1,9 @@
+CC = g++
+AR = ar
+DEFS = -DLINUX
+
+FLGS = -ansi -g -O0 -c -fpermissive -fPIC
+DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L./kgmSystem/lib
+LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal -llua5.1
+OBJS = kgmBase/*.o kgmMath/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
+#OBJS = *.o
