@@ -1,9 +1,21 @@
+OS = $(shell uname -s)
+RM = 
+
 CC = g++
 AR = ar
 DEFS = -DLINUX
 
-FLGS = -ansi -g -O0 -c -fpermissive -fPIC
+FLGS = 
 DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L./kgmSystem/lib
-LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal -llua5.1
+LIBS = 
 OBJS = kgmBase/*.o kgmMath/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
-#OBJS = *.o
+
+ifeq ($(OS), Linux)
+	FLGS = -ansi -g -O0 -c -fpermissive -fPIC
+	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal -llua5.1
+	RM = rm
+else 
+	FLGS = -ansi -g -O0 -c
+	LIBS = -lpthread -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32
+	RM = del
+endif
