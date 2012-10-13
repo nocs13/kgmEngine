@@ -87,7 +87,7 @@ void kgmGui::setParent(kgmGui* pr){
 void kgmGui::setRect(kgmGui::Rect& rc){
   m_rect = m_base.rect = rc;
 }
-void kgmGui::setRect(uint x, uint y, uint w, uint h){
+void kgmGui::setRect(u32 x, u32 y, u32 w, u32 h){
   m_rect = m_base.rect = Rect(x, y, w, h);
 }
 
@@ -99,7 +99,7 @@ void kgmGui::getRect(kgmGui::Rect& rc, bool abs){
   }
 }
 
-void kgmGui::getRect(uint& x, uint& y, uint& w, uint& h, bool abs){
+void kgmGui::getRect(u32& x, u32& y, u32& w, u32& h, bool abs){
   if(abs){
     Rect rc = toAbsolute(this->m_rect);  
     x = rc.x;
@@ -130,7 +130,7 @@ void kgmGui::onEvent(kgmEvent::Event* e){
   kgmEvent::onEvent(e);
 }
 
-void kgmGui::onAction(kgmGui* from, uint type){
+void kgmGui::onAction(kgmGui* from, u32 type){
   if(m_parent)
    m_parent->onAction(from, type);
 }

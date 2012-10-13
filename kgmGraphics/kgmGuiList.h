@@ -13,12 +13,12 @@ class kgmGuiList: public kgmGui{
 public:
  Items     m_items;
  int       m_itemSel;
- uint      m_itemStart;
- uint      m_itemHeight;
+ u32      m_itemStart;
+ u32      m_itemHeight;
 
  kgmGuiScroll *m_scroll;
- uint          m_position;
- uint          m_range;
+ u32          m_position;
+ u32          m_range;
  
 public:
  kgmGuiList();
@@ -33,7 +33,7 @@ public:
  char* getSelectedItem();
  void clear();
 
- virtual void onSelect(uint);
+ virtual void onSelect(u32);
 protected:
  void onMsLeftUp(int k, int x, int y);
  void onMsMove(int k, int x, int y);

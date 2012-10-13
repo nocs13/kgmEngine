@@ -23,7 +23,7 @@ class kgmGameLua: public kgmLua, public kgmIGame::InputEventListener{
     lua_State* glua;
   public:
     luaGui(lua_State* lua, kgmGui* par, int x, int y, int w, int h);
-    void onAction(kgmGui* g, uint t);
+    void onAction(kgmGui* g, u32 t);
   };
 
   //  class luaGameAction: public kgmIGame::GameSensor::Action{

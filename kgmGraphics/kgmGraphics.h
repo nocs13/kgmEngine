@@ -126,8 +126,8 @@ public:
   void* tdepth;
   void* shader;
 
-  kgmTab<ushort, kgmShader*> shaders;
-  kgmTab<ushort, void*> textures;
+  kgmTab<u16, kgmShader*> shaders;
+  kgmTab<u16, void*> textures;
 
   kgmList<kgmLight*> a_lights;
 
@@ -161,7 +161,7 @@ public:
   setDefaultFont(kgmFont*);
 
   bool
-  registration(uint id, kgmShader* sh)
+  registration(u32 id, kgmShader* sh)
   {
     shaders.add((u16) id, sh);
     return true;
@@ -184,7 +184,7 @@ protected:
   void
   set(kgmMaterial*);
   void
-  set(kgmShader*, uint);
+  set(kgmShader*, u32);
 
   void
   render(kgmNode*);
@@ -203,8 +203,8 @@ protected:
 
   //
   void
-  gcDrawRect(kgmGui::Rect rc, uint col, void* tex);
+  gcDrawRect(kgmGui::Rect rc, u32 col, void* tex);
   void
-  gcDrawText(kgmFont* font, uint fwidth, uint fheight, uint fcolor,
+  gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     kgmGui::Rect clip, kgmString& text);
 };

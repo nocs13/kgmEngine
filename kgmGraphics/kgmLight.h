@@ -15,7 +15,7 @@ public:
 
 
  vec3  direction;
- uint  type;
+ u32  type;
  bool  ison;		//light switched on
  bool  shadows;
  bool  shadesmooth;

@@ -50,7 +50,7 @@ class kgmGui: public kgmEvent
   Guis	    m_childs;
 
  public:
-  uint       m_id;
+  u32       m_id;
   kgmGui*    m_parent;  //parent window whom send messages
   kgmGui*    m_focus;   //current child active window
   Rect       m_rect;    //rect of window
@@ -77,9 +77,9 @@ public:
  void repaint(kgmGui*);
  void setParent(kgmGui*);
  void setRect(Rect&);
- void setRect(uint, uint, uint, uint);
+ void setRect(u32, u32, u32, u32);
  void getRect(Rect&, bool abs = false);
- void getRect(uint&, uint&, uint&, uint&, bool abs = false);
+ void getRect(u32&, u32&, u32&, u32&, bool abs = false);
  void setText(kgmString&);
  void getText(kgmString&);
 
@@ -91,7 +91,7 @@ public:
 
  // MESSAGE MANAGER
  virtual void onEvent(kgmEvent::Event* e);
- virtual void onAction(kgmGui* from, uint type);
+ virtual void onAction(kgmGui* from, u32 type);
  virtual void onIdle();
 
 public: //static
@@ -127,8 +127,8 @@ protected:
  kgmGui*       getFocus(Point pos);
 
  //*************** DRAWING ***************
- //void gcDrawRect(kgmIGraphics* gc, Rect rc, uint col, void* tex);
- //void gcDrawText(kgmIGraphics* gc, kgmFont* font, uint fwidth, uint fheight, uint fcolor, Rect clip, kgmString& text);
+ //void gcDrawRect(kgmIGraphics* gc, Rect rc, u32 col, void* tex);
+ //void gcDrawText(kgmIGraphics* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, Rect clip, kgmString& text);
 };
 
 

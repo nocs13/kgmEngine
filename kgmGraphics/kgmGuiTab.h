@@ -7,16 +7,16 @@ class kgmGuiTab: public kgmGui
   KGM_OBJECT(kgmGuiTab);
 
 private:
-  uint	  m_index;
+  u32	  m_index;
 
 public:
  kgmGuiTab();
- kgmGuiTab(kgmGui *par, int x, int y, uint w, uint h);
+ kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h);
  virtual ~kgmGuiTab();
 
- uint set(uint i);
- uint next();
- uint previous();
+ u32 set(u32 i);
+ u32 next();
+ u32 previous();
 };
 
 

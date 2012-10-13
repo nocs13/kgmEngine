@@ -20,7 +20,7 @@
 
 #include "kgmActor.h"
 
-#include "../kgmGraphics/kgmDraw.inl"
+//#include "../kgmGraphics/kgmDraw.inl"
 #include "../kgmGraphics/kgmGuiTab.h"
 #include "../kgmGraphics/kgmGraphics.h"
 /////////////////////////
@@ -48,8 +48,8 @@ float hcoef = 1.0f;
 
 char str_buf[1024];
 
-uint cmd_input = 0;
-std::stack<uint> stack_input;
+u32 cmd_input = 0;
+std::stack<u32> stack_input;
 
 int   cc_value = 0;
 float m_camDistance = 10.0f;
@@ -119,7 +119,7 @@ kgmGameBase::kgmGameBase()
 //  while(!m_paths.eof()){
 //    kgmString s;
 //    s.alloc(128);
-//    uint len = m_paths.reads(s.data(), 127, "\n", 1);
+//    u32 len = m_paths.reads(s.data(), 127, "\n", 1);
 //    if(len < 1)
 //      break;
 //    kgmString st(s.data(), len);
@@ -437,7 +437,7 @@ int kgmGameBase::gLoad(kgmString s)
 
 int kgmGameBase::gUnload()
 {
-  uint state = m_state;
+  u32 state = m_state;
   state = State_Stop;
   
   if(m_render)
@@ -487,14 +487,14 @@ int kgmGameBase::gQuit(){
  return 1;
 }
 
-uint kgmGameBase::gState(){
+u32 kgmGameBase::gState(){
  return m_state;
 }
 
 void kgmGameBase::gLogic(){
- static uint s_time = kgmTime::getTime();
- uint   d_time = kgmTime::getTime() - s_time;
- uint	c_time = 30;
+ static u32 s_time = kgmTime::getTime();
+ u32   d_time = kgmTime::getTime() - s_time;
+ u32	c_time = 30;
 
  if(m_state != State_Play){
   return;
@@ -613,7 +613,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
     return false;
   }
   
-  uint            type = 0;
+  u32            type = 0;
   kgmMesh*        msh = 0;
   kgmCamera*      cam = 0;
   kgmLight*       lgt = 0;
@@ -621,7 +621,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
   
   kgmList<kgmNode*> nodes;
   
-  uint            vts = 0, fcs = 0;
+  u32            vts = 0, fcs = 0;
   
   kgmGameNode* scn = new kgmGameNode();
   kgmGameNode* act = 0;
@@ -693,7 +693,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
 		 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
 		 &v[i].uv.x, &v[i].uv.y, &n);
 	  v[i].col = 0xffffffff;
-	  (pdata) += (uint)n;
+	  (pdata) += (u32)n;
 	}
       }else if(id == "Faces"){
 	int len = 0, n = 0;
@@ -704,12 +704,12 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
 	cnode->data(data);
 	char* pdata = data.data();
 	for(int i = 0; i < len; i++){
-	  uint fs[4];
+	  u32 fs[4];
 	  sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
 	  f[i].f[0] = fs[0];
 	  f[i].f[1] = fs[1];
 	  f[i].f[2] = fs[2];
-	  (pdata) += (uint)n;
+	  (pdata) += (u32)n;
 	}
       }else if(id == "Position"){
 	vec3 v;
@@ -769,7 +769,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     return false;
   }
 
-  uint            type = TypeNone;
+  u32            type = TypeNone;
   kgmMesh*        msh = 0;
   kgmCamera*      cam = 0;
   kgmLight*       lgt = 0;
@@ -777,7 +777,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
   kgmActor*       act = 0;
   kgmObject*      obj = 0;
 
-  uint            vts = 0, fcs = 0;
+  u32            vts = 0, fcs = 0;
 
   for(int i = 0; i < xml.m_node->nodes(); i++){
     kgmString id, t;
@@ -843,7 +843,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
           &v[i].uv.x, &v[i].uv.y, &n);
           v[i].col = 0xffffffff;
-          (pdata) += (uint)n;
+          (pdata) += (u32)n;
         }
       }else if(id == "Faces"){
         int len = 0, n = 0;
@@ -854,12 +854,12 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         cnode->data(data);
         char* pdata = data.data();
         for(int i = 0; i < len; i++){
-          uint fs[4];
+          u32 fs[4];
           sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
           f[i].f[0] = fs[0];
           f[i].f[1] = fs[1];
           f[i].f[2] = fs[2];
-          (pdata) += (uint)n;
+          (pdata) += (u32)n;
         }
       }else if(id == "Position"){
         vec3 v;
@@ -921,7 +921,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
     if(id == "Section"){
       actor->addSection();
-      uint cpart = actor->sections() - 1;
+      u32 cpart = actor->sections() - 1;
 
       for(int j = 0; j < xml.m_node->node(i)->nodes(); j++){
         xml.m_node->node(i)->node(j)->id(id);

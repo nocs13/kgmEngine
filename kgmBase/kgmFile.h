@@ -1,7 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include "kgmString.h"
-typedef unsigned int uint;
+typedef unsigned int u32;
 
 class kgmFile{
 public:
@@ -17,16 +17,16 @@ public:
  kgmFile();
  ~kgmFile();
 //////FUNCTIONS
- bool open(kgmCString& path, uint mode);//open create,read,write
+ bool open(kgmCString& path, u32 mode);//open create,read,write
  void close();
- uint read(void *dst, uint cnt);
- uint write(void *src, uint cnt);
- uint append(void *src, uint cnt);
- uint erase(uint from, uint size);
- uint length();
- uint length(uint len);
- uint position();
- uint seek(uint pos);
+ u32 read(void *dst, u32 cnt);
+ u32 write(void *src, u32 cnt);
+ u32 append(void *src, u32 cnt);
+ u32 erase(u32 from, u32 size);
+ u32 length();
+ u32 length(u32 len);
+ u32 position();
+ u32 seek(u32 pos);
  bool eof();
  void* mmap();
  void munmap(void* v);

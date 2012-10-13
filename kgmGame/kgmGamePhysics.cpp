@@ -1,5 +1,5 @@
 #include "kgmGamePhysics.h"
-#include "kgmGameCollision.inl"
+//#include "kgmGameCollision.inl"
 
 #include "../kgmPhysics/kgmCollision.h"
 #include "../kgmPhysics/kgmIntersection.h"

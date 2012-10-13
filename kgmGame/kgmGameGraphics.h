@@ -60,8 +60,8 @@ class kgmGameGraphics: public kgmObject
   void* tdepth;
   void* shader;
 
-  kgmTab<ushort, kgmShader*> shaders;
-  kgmTab<ushort, kgmTexture*> textures;
+  kgmTab<u16, kgmShader*> shaders;
+  kgmTab<u16, kgmTexture*> textures;
 
 public:
   kgmGameGraphics(kgmIGraphics*, kgmIResources*);
@@ -78,10 +78,10 @@ private:
   void render(kgmGui*);
   void render(kgmMesh*);
   void render(kgmActor*);
-  void render(kgmShader*, uint);
+  void render(kgmShader*, u32);
   void render(kgmMaterial*);
-  void gcDrawText(kgmFont*, uint, uint, uint, kgmGui::Rect, kgmString&);
-  void gcDrawRect(kgmGui::Rect, uint, void*);
+  void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
+  void gcDrawRect(kgmGui::Rect, u32, void*);
 
   void trash();
 public:

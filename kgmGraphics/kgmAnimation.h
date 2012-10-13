@@ -47,11 +47,11 @@ public:
   m_nodes.clear();
  }
 
- uint count(){
+ u32 count(){
   return m_nodes.length();
  }
 
- uint getFullTime(){
+ u32 getFullTime(){
   return m_fps * (m_end - m_start);
  }
 
@@ -62,32 +62,32 @@ public:
   return true;
  }
 
- Animation* getNode(uint id){
+ Animation* getNode(u32 id){
    if(id >= m_nodes.length())
      return 0;
    return m_nodes[id];
  }
 
  Animation* getNode(char* id){
-  for(uint i = 0; i < m_nodes.length(); i++)
+  for(u32 i = 0; i < m_nodes.length(); i++)
    if(!strcmp(id, m_nodes[i]->m_name))
     return m_nodes[i];
   return 0;
  }
 
  Animation* getNode(kgmString id){
-  for(uint i = 0; i < m_nodes.length(); i++)
+  for(u32 i = 0; i < m_nodes.length(); i++)
    if(id == m_nodes[i]->m_name)
     return m_nodes[i];
   return 0;
  }
 
- bool getFrames(mtx4 *pmtx, uint mtx_cnt, uint time)
+ bool getFrames(mtx4 *pmtx, u32 mtx_cnt, u32 time)
  {
-  uint n = (m_nodes.length() < mtx_cnt)?(m_nodes.length()):(mtx_cnt);
+  u32 n = (m_nodes.length() < mtx_cnt)?(m_nodes.length()):(mtx_cnt);
   if(!pmtx)
 	 return false;
-  for(uint i = 0; i < n; i++){
+  for(u32 i = 0; i < n; i++){
    m_nodes[i]->getFrame(time, pmtx[i]);
   }
   return true;

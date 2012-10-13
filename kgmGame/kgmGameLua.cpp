@@ -36,7 +36,7 @@ kgmGameLua::luaGui::luaGui(lua_State* lua, kgmGui* par, int x, int y, int w, int
       glua = ((luaGui*)par)->glua;
 }
 
-void kgmGameLua::luaGui::onAction(kgmGui* g, uint t)
+void kgmGameLua::luaGui::onAction(kgmGui* g, u32 t)
 {
   if (glua)
   {

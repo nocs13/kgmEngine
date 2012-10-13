@@ -10,7 +10,7 @@ kgmTexture::kgmTexture(){
  m_gc = 0;
 }
 
-kgmTexture::kgmTexture(kgmIGraphics* gc, uint type){
+kgmTexture::kgmTexture(kgmIGraphics* gc, u32 type){
  m_texture = 0;
  m_type = type;
  m_flags = 0;
@@ -22,7 +22,7 @@ kgmTexture::~kgmTexture(){
   m_gc->gcFreeTexture(m_texture);
 }
 
-void kgmTexture::start(uint s){
+void kgmTexture::start(u32 s){
  m_stage = s;
  m_gc->gcSetTexture(m_stage, m_texture);
 }
@@ -31,10 +31,10 @@ void kgmTexture::stop(){
  m_gc->gcSetTexture(m_stage, 0);
 }
 
-void kgmTexture::setFlags(uint f){
+void kgmTexture::setFlags(u32 f){
  m_flags = f;
 }
 
-void kgmTexture::addFlags(uint f){
+void kgmTexture::addFlags(u32 f){
  m_flags |= f;
 }

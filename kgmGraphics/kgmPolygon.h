@@ -9,7 +9,7 @@ public:
 struct Vertex{
  vec3 pos, 
       nor;
- uint col;
+ u32 col;
  vec2 uv[2];
 }; 
 public:
@@ -35,14 +35,14 @@ public:
   int i = 0;
   if(!verts)
    return;
-  min = max = verts[(uint)0].pos;
+  min = max = verts[(u32)0].pos;
   for(i = 0; i < verts.length(); i++){
-   min.x = MIN(min.x, verts[(uint)i].pos.x);
-    min.y = MIN(min.y, verts[(uint)i].pos.y);
-     min.z = MIN(min.z, verts[(uint)i].pos.z);
-   max.x = MAX(max.x, verts[(uint)i].pos.x);
-    max.y = MAX(max.y, verts[(uint)i].pos.y);
-     max.z = MAX(max.z, verts[(uint)i].pos.z);
+   min.x = MIN(min.x, verts[(u32)i].pos.x);
+    min.y = MIN(min.y, verts[(u32)i].pos.y);
+     min.z = MIN(min.z, verts[(u32)i].pos.z);
+   max.x = MAX(max.x, verts[(u32)i].pos.x);
+    max.y = MAX(max.y, verts[(u32)i].pos.y);
+     max.z = MAX(max.z, verts[(u32)i].pos.z);
   }
   m_box.min = min;
   m_box.max = max;

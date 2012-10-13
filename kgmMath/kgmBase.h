@@ -31,21 +31,21 @@ typedef kgmQuaternion<f32> quat;
 
 typedef kgmVector3d<f32>   vec3;
 typedef kgmVector3d<f32>   float3;
-typedef kgmVector3d<u32>    uint3;
+typedef kgmVector3d<u32>    u323;
 typedef kgmVector3d<u8>   uchar3;
-typedef kgmVector3d<u16>  ushort3;
+typedef kgmVector3d<u16>  u163;
 
 typedef kgmVector2d<f32> float2;
 typedef kgmVector2d<f32> vec2;
-typedef kgmVector2d<u32>  uint2;
+typedef kgmVector2d<u32>  u322;
 typedef kgmVector2d<s32>   int2;
 typedef kgmVector2d<s8>  char2;
 
 typedef kgmVector4d<s32>   vec4;
 typedef kgmVector4d<f32>   float4;
-typedef kgmVector4d<u32>    uint4;
+typedef kgmVector4d<u32>    u324;
 typedef kgmVector4d<u8>   uchar4;
-typedef kgmVector4d<u16>  ushort4;
+typedef kgmVector4d<u16>  u164;
 
 typedef kgmMatrix3d<f32> mtx4;
 typedef kgmMatrix3d<f32> kgmTransform;

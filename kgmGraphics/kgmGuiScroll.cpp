@@ -11,15 +11,15 @@ kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
 :kgmGui(par, x, y, w, h){
   m_range = 1;
   m_position  = 0;
-  m_dimension = uint2(w, h / m_range);
+  m_dimension = u322(w, h / m_range);
 }
 
 kgmGuiScroll::~kgmGuiScroll(){
 }
 
-void kgmGuiScroll::setRange(uint r){
+void kgmGuiScroll::setRange(u32 r){
   m_range = r;
-  m_dimension = uint2(m_rect.w, m_rect.h / m_range);
+  m_dimension = u322(m_rect.w, m_rect.h / m_range);
 }
 
 /*void kgmGuiScroll::onPaint(kgmIGraphics* gc){
@@ -31,7 +31,7 @@ void kgmGuiScroll::setRange(uint r){
   gcDrawRect(gc, rect, m_colors[3], 0);
   }*/
 
-void kgmGuiScroll::onMsMove(int key, uint x, uint y){
+void kgmGuiScroll::onMsMove(int key, u32 x, u32 y){
   if(!(m_view) ||
 	 !m_focus ||
 	 !m_rect.inside(x, y))

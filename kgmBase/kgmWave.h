@@ -7,32 +7,32 @@
 #include <string.h>
 #include <stdio.h>
 
-typedef unsigned int uint;
-typedef unsigned short ushort;
+typedef unsigned int u32;
+typedef unsigned short u16;
 typedef unsigned char uchar;
 
 
 struct WAVE_FMT{
- ushort wFormatTag; 
- ushort nChannels; 
- uint nSamplesPerSec; 
- uint nAvgBytesPerSec; 
- ushort nBlockAlign; 
- ushort wBitsPerSample; 
- ushort cbSize; 
+ u16 wFormatTag; 
+ u16 nChannels; 
+ u32 nSamplesPerSec; 
+ u32 nAvgBytesPerSec; 
+ u16 nBlockAlign; 
+ u16 wBitsPerSample; 
+ u16 cbSize; 
 }; 
 
 class kgmWave  
 {
 public:
-uint      riff_id;
-uint      riff_size;
-uint      riff_format;
-uint      fmt_id;
-uint      fmt_size;
+u32      riff_id;
+u32      riff_size;
+u32      riff_format;
+u32      fmt_id;
+u32      fmt_size;
 WAVE_FMT  fmt_format;
-uint      data_id;
-uint      data_size;
+u32      data_id;
+u32      data_size;
 char*     data; 
 
 public:
@@ -84,7 +84,7 @@ bool openWav(char *file)
 	return true;
 }
 
-bool from_mem(char *mem, uint msize)
+bool from_mem(char *mem, u32 msize)
 {
  if(!mem)
  	return false;

@@ -12,7 +12,7 @@ public:
 
   kgmGuiProgress();
 
-  kgmGuiProgress(kgmGui *par, int x, int y, uint w, uint h);
+  kgmGuiProgress(kgmGui *par, int x, int y, u32 w, u32 h);
 
   virtual ~kgmGuiProgress();
 

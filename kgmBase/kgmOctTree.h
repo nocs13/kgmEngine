@@ -10,7 +10,7 @@ template <class T> class kgmOctTree{
 class Node{
  public:
   box3 box;
-  uint index;
+  u32 index;
   Node *parent;
   Node *childs[8];
   bool active;
@@ -31,7 +31,7 @@ class Node{
  };
 ////////////////////////
  Node *root;
- uint depth;
+ u32 depth;
  box3 box;
 private:
 	bool insert(Node* node, T obj, box3& box){
@@ -44,7 +44,7 @@ private:
      node->objects.add(obj);
 	 return true;
 	}
-	void divide(Node* node, uint dep){
+	void divide(Node* node, u32 dep){
 	 if(!node || !dep)
 		 return;
 	 kgmVector3d<float> v = node->box.max - node->box.min;
@@ -95,7 +95,7 @@ public:
 		root = 0;
 		depth = 0;
 	}
-	bool build(box3& b, uint dep){
+	bool build(box3& b, u32 dep){
 		if(root)
 			clear();
 		root = new Node();

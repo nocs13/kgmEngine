@@ -716,41 +716,41 @@ typedef void ( * PFNGLXFREEMEMORYNVPROC) (GLvoid *pointer);
 #define GLX_NV_swap_group 1
 #ifdef GLX_GLXEXT_PROTOTYPES
 extern Bool glXJoinSwapGroupNV(Display *dpy, GLXDrawable drawable,
-                               GLuint group);
+                               GLu32 group);
 
-extern Bool glXBindSwapBarrierNV(Display *dpy, GLuint group, GLuint barrier);
+extern Bool glXBindSwapBarrierNV(Display *dpy, GLu32 group, GLu32 barrier);
 
 extern Bool glXQuerySwapGroupNV(Display *dpy, GLXDrawable drawable,
-                                GLuint *group, GLuint *barrier);
+                                GLu32 *group, GLu32 *barrier);
 
 extern Bool glXQueryMaxSwapGroupsNV(Display *dpy, int screen,
-                                    GLuint *maxGroups, GLuint *maxBarriers);
+                                    GLu32 *maxGroups, GLu32 *maxBarriers);
 
-extern Bool glXQueryFrameCountNV(Display *dpy, int screen, GLuint *count);
+extern Bool glXQueryFrameCountNV(Display *dpy, int screen, GLu32 *count);
 
 extern Bool glXResetFrameCountNV(Display *dpy, int screen);
 #endif
 typedef Bool ( * PFNGLXJOINSWAPGROUPNVPROC) (Display *dpy,
                                              GLXDrawable drawable,
-                                             GLuint group);
+                                             GLu32 group);
 
 typedef Bool ( * PFNGLXBINDSWAPBARRIERNVPROC) (Display *dpy,
-                                               GLuint group,
-                                               GLuint barrier);
+                                               GLu32 group,
+                                               GLu32 barrier);
 
 typedef Bool ( * PFNGLXQUERYSWAPGROUPNVPROC) (Display *dpy,
                                               GLXDrawable drawable,
-                                              GLuint *group,
-                                              GLuint *barrier);
+                                              GLu32 *group,
+                                              GLu32 *barrier);
 
 typedef Bool ( * PFNGLXQUERYMAXSWAPGROUPSNVPROC) (Display *dpy,
                                                   int screen,
-                                                  GLuint *maxGroups,
-                                                  GLuint *maxBarriers);
+                                                  GLu32 *maxGroups,
+                                                  GLu32 *maxBarriers);
 
 typedef Bool ( * PFNGLXQUERYFRAMECOUNTNVPROC) (Display *dpy,
                                                int screen,
-                                               GLuint *count);
+                                               GLu32 *count);
 
 typedef Bool ( * PFNGLXRESETFRAMECOUNTNVPROC) (Display *dpy, int screen);
 #endif

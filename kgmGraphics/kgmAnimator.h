@@ -9,13 +9,13 @@ class kgmAnimator: public kgmObject
 {
  KGM_OBJECT(kgmAnimator)
 public:
- uint			   m_type;
+ u32			   m_type;
  kgmMesh*          m_mesh;
  mtx4*             m_imtx;
  kgmAnimation*     m_canim; // current animation
  kgmArray<vec3>    m_mverts;
- uint              m_stick, m_atick;
- uint              m_objects;     //animated objects count
+ u32              m_stick, m_atick;
+ u32              m_objects;     //animated objects count
  kgmAnimation::Framed** m_oframed; //animated objects
 public:
  kgmAnimator(kgmMesh* m){
@@ -56,8 +56,8 @@ public:
  }
  ///*
  void animate(){
-  uint ctick = kgmTime::getTicks();
-  uint dtick = ctick - m_stick;
+  u32 ctick = kgmTime::getTicks();
+  u32 dtick = ctick - m_stick;
   mtx4 *mtx;
 
   if(!m_mesh || !m_canim)
@@ -99,7 +99,7 @@ public:
    }
    
    m_mesh->v[i].pos = v;
-//   uint bi = m_mesh->sv[i].i[0];
+//   u32 bi = m_mesh->sv[i].i[0];
 //   if(bi >= m_objects)
 //	   continue;
 //   mtx4 m  = m_imtx[bi] * mtx[bi];

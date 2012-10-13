@@ -8,9 +8,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-static uint error = 0;
+static u32 error = 0;
 
-kgmOAL::_Sound::_Sound(uint buf, uint src){
+kgmOAL::_Sound::_Sound(u32 buf, u32 src){
   buffer = buf;
   source = src;
 }
@@ -65,7 +65,7 @@ kgmOAL::~kgmOAL()
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
-kgmIAudio::Sound* kgmOAL::create(FMT fmt, ushort freq, uint size, void* data)
+kgmIAudio::Sound* kgmOAL::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   ALenum _fmt;
 
@@ -84,7 +84,7 @@ kgmIAudio::Sound* kgmOAL::create(FMT fmt, ushort freq, uint size, void* data)
 	break;
   }
 
-  uint buf = 0, src = 0;
+  u32 buf = 0, src = 0;
   alGenBuffers(1, &buf);
   alGenSources(1, &src);
   alBufferData(buf, _fmt, data, size, freq);

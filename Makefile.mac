@@ -13,9 +13,10 @@ OBJS = kgmBase/*.o kgmMath/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmG
 ifeq ($(OS), Linux)
 	FLGS = -ansi -g -O0 -c -fpermissive -fPIC
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal -llua5.1
-	RM = rm
+	RM = rm -f
 else 
-	FLGS = -ansi -g -O0 -c
-	LIBS = -lpthread -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32
+        DEFS = -DWIN32
+    	FLGS = -ansi -g -O0 -c
+	LIBS = -lpthread -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32 -lglu32
 	RM = del
 endif

@@ -115,7 +115,7 @@ class kgmEvent: public kgmObject{
   KGM_OBJECT(kgmEvent);
 public:
 typedef struct{
- uint  event;		//event id
+ u32  event;		//event id
  int x, y,
      width, height; //for rect
  int msx, msy, msz;	//mouse coordinates

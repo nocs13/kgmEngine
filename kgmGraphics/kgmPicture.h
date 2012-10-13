@@ -140,7 +140,7 @@ public:
   pm += idl;
   pdata = new char[r_size];
   memcpy(pdata, pm, r_size);
-  u32 k = (uint)((uint*)pdata)[0];
+  u32 k = (u32)((u32*)pdata)[0];
   width = w;
   height = h;
   bpp = btcnt;
@@ -155,17 +155,17 @@ public:
 class kgmBmpPicture: public kgmPicture
 {
 public:
- kgmBmpPicture(void* mem, uint size){
-  ushort f_type;
-  uint   f_size;
-  ushort f_res0,f_res1;
-  uint   f_boffs;
-  uint   b_size;
+ kgmBmpPicture(void* mem, u32 size){
+  u16 f_type;
+  u32   f_size;
+  u16 f_res0,f_res1;
+  u32   f_boffs;
+  u32   b_size;
   long   b_width,b_height;
-  ushort b_planes,b_btcnt;
-  uint   b_compr,b_sizeimg;
+  u16 b_planes,b_btcnt;
+  u32   b_compr,b_sizeimg;
   long   b_xppm,b_yppm;
-  uint   b_clus,b_climp;
+  u32   b_clus,b_climp;
   char*  pm = (char*)mem;
 
   width = height = bpp = 0;
@@ -198,14 +198,14 @@ public:
    return;
 
   if(b_btcnt == 8){
-   uint r_size = b_width * b_height;
-   pdata = new uint[r_size];
-   uint *pal = new uint[256];
+   u32 r_size = b_width * b_height;
+   pdata = new u32[r_size];
+   u32 *pal = new u32[256];
    memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
-   for(uint i = 0; i < r_size; i++){
+   for(u32 i = 0; i < r_size; i++){
     uchar ind = 0;
     memcpy(&ind, pm, 1);	pm += 1;
-	((uint*)pdata)[i] = pal[ind];
+	((u32*)pdata)[i] = pal[ind];
    }
    width = b_width;
    height = b_height;
@@ -215,7 +215,7 @@ public:
   }
   
 
-  uint r_size = b_width * b_height * (b_btcnt/8);
+  u32 r_size = b_width * b_height * (b_btcnt/8);
   pdata = new char[r_size];
   memcpy(pdata, pm, r_size);//////
   width = b_width;
@@ -223,10 +223,10 @@ public:
   bpp = b_btcnt;
 
   return;
-  uint* p1 = (uint*)pdata;
-  uint* p2 = (uint*)((uint*)pdata + r_size - 4);
+  u32* p1 = (u32*)pdata;
+  u32* p2 = (u32*)((u32*)pdata + r_size - 4);
   while(p1 < p2){
-   uint a = *p1;
+   u32 a = *p1;
 //   *p1 = *p2;
 //   *p2 = a;
    p1++;
@@ -244,10 +244,10 @@ public:
 class kgmTgaPicture: public kgmPicture
 {
 public:
- kgmTgaPicture(void* mem, uint size){
+ kgmTgaPicture(void* mem, u32 size){
   uchar idl, cmp, dt, btcnt, dsc;
   uchar clmap[5];
-  ushort  xorgn, yorgn, w, h;
+  u16  xorgn, yorgn, w, h;
   char* pm = (char*)mem;
 
   width = height = bpp = 0;
@@ -271,11 +271,11 @@ public:
     if((btcnt != 32))
 	  return;
 
-  uint r_size = w * h * (btcnt/8);
+  u32 r_size = w * h * (btcnt/8);
   pm += idl;
   pdata = new char[r_size];
   memcpy(pdata, pm, r_size);
-  uint k = (uint)((uint*)pdata)[0];
+  u32 k = (u32)((u32*)pdata)[0];
   width = w;
   height = h;
   bpp = btcnt;

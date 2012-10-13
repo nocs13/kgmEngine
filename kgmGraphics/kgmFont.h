@@ -11,7 +11,7 @@ class kgmFont: public kgmTexture{
 public:
  int  m_twidth, m_theight,
       m_fwidth, m_fheight;
- uint m_rows, m_cols, m_base;
+ u32 m_rows, m_cols, m_base;
 public:
  kgmFont(){
   m_twidth = m_theight = 

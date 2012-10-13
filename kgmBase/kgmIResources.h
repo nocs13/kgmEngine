@@ -87,5 +87,5 @@ public:
  virtual kgmSound*        getSound(char*) = 0;
  virtual kgmMesh*         getMesh(char*) = 0;
  virtual kgmSkeleton*     getSkeleton(char*) = 0;
- virtual kgmFont*         getFont(char*, uint r, uint c) = 0;
+ virtual kgmFont*         getFont(char*, u32 r, u32 c) = 0;
 };

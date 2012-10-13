@@ -2,7 +2,7 @@
 #include "kgmObject.h"
 #include "malloc.h"
 
-typedef unsigned int uint;
+typedef unsigned int u32;
 
 template <class T> class kgmList;
 template <class T> class kgmArray;
@@ -50,7 +50,7 @@ public:
 //// *********************
  protected:
  _Node *_First;
- uint csize;
+ u32 csize;
 
 
  _Node *_first(){

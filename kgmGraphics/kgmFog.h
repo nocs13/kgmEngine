@@ -6,8 +6,8 @@ class kgmFog: public kgmObject{
  KGM_OBJECT(kgmFog)
 
 public:
- uint  m_type;
- uint  m_mode;
+ u32  m_type;
+ u32  m_mode;
  float m_density;
  float m_start;
  float m_end;

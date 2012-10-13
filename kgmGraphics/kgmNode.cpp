@@ -92,7 +92,7 @@ bool kgmNode::erase(kgmNode* node){
   return false;
 }
 
-kgmNode* kgmNode::find(uint type, void* o)
+kgmNode* kgmNode::find(u32 type, void* o)
 {
   if( (type == this->type) && (o == (void*)object))
     return this;

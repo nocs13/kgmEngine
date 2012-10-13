@@ -29,18 +29,18 @@ class kgmOGL: public kgmIGraphics{
 public:
 //VERTEX & INDEX BUFFER 
 struct VBO{
- GLuint vb, ib;
- uint   vsize, isize;
+ GLu32 vb, ib;
+ u32   vsize, isize;
 };
 //FRAME BUFFER 
 struct RenderBuffer{
-  GLuint frame, color, depth, stencil;
+  GLu32 frame, color, depth, stencil;
   u16 width, height;
 };
 
 struct Texture{
  u32   type;
- GLuint buffer, texture;
+ GLu32 buffer, texture;
  u16 width,  height, format;
 };
 private:
@@ -58,7 +58,7 @@ public:
 //RENDER
  void  gcSetParameter(u32 param, void* value);
  void  gcGetParameter(u32 param, void* value);
- void  gcClear(uint flag, u32 col, f32 depth, u32 sten);
+ void  gcClear(u32 flag, u32 col, f32 depth, u32 sten);
  void  gcBegin();
  void  gcEnd();
  void  gcRender();
@@ -67,46 +67,46 @@ public:
  void  gc2DMode();
  void  gc3DMode();
 //DRAW
- void  gcDraw(u32 pmt, u32 v_fmt, uint v_size, uint v_cnt, void *v_pnt, uint i_size, uint i_cnt, void *i_pnt);
- void  gcDrawRect(int x, int y, int w, int h, uint col);
- //void  gcDrawText(lRect clip, float w, float h, uint col, char *text, uint tlen);
- void  gcDrawBillboard(vec3 v, float w, float h, uint col);
+ void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
+ void  gcDrawRect(int x, int y, int w, int h, u32 col);
+ //void  gcDrawText(lRect clip, float w, float h, u32 col, char *text, u32 tlen);
+ void  gcDrawBillboard(vec3 v, float w, float h, u32 col);
 //TEXTURE
- void* gcGenTexture(void *mf, uint w, uint h, uint bpp, uint type);
+ void* gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);
  void  gcFreeTexture(void* tex);
- void  gcSetTexture(uint stage, void* tex);
+ void  gcSetTexture(u32 stage, void* tex);
 //MATRIX
- void  gcSetMatrix(uint mm, float* mtx);
- void  gcGetMatrix(uint mm, float* mtx);
+ void  gcSetMatrix(u32 mm, float* mtx);
+ void  gcGetMatrix(u32 mm, float* mtx);
 //VIEWPORT
  void  gcSetViewport(int x, int y, int w, int h, float n, float f);
  //BLEND
- void  gcBlend(bool enabla, uint fnsrc, uint fndst);
+ void  gcBlend(bool enabla, u32 fnsrc, u32 fndst);
  //ALPHA
- void  gcAlpha(bool en, uint fn, float ref);
+ void  gcAlpha(bool en, u32 fn, float ref);
  //CULL
- void  gcCull(uint mode);
+ void  gcCull(u32 mode);
  //DEPTH
- void  gcDepth(bool en, bool mask, uint mode);
+ void  gcDepth(bool en, bool mask, u32 mode);
  //CLIP PLANE
- void  gcClipPlane(bool, uint id, float*);
+ void  gcClipPlane(bool, u32 id, float*);
  //STENCIL
- void  gcStencil(bool en, uint func, uint mask, uint ref, 
-		 uint fail, uint zfail, uint zpass); 
+ void  gcStencil(bool en, u32 func, u32 mask, u32 ref, 
+		 u32 fail, u32 zfail, u32 zpass); 
  //VERTEX & INDEX BUFFER 
- void* gcGenVertexBuffer(void* vdata, uint vsize, void* idata, uint isize);
+ void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
  void  gcFreeVertexBuffer(void*);
- void  gcDrawVertexBuffer(void* buf, uint pmt, uint vfmt, uint vsize, uint vcnt, uint isize, uint icnt, uint ioff);
+ void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
  // SHADER
  void* gcGenShader(const char*, const char*);
  void  gcFreeShader(void* s);
  void  gcSetShader(void* s);
- void  gcUniform(void* s, uint type, uint cnt, const char* par, void* val);
- void  gcUniformMatrix(void* s, uint, uint, const char*, void*);
+ void  gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val);
+ void  gcUniformMatrix(void* s, u32, u32, const char*, void*);
  void  gcUniformSampler(void* s, const char*, void*);
 
  //////////////////////////// inlines
- GLenum gl_enum(uint e){
+ GLenum gl_enum(u32 e){
   switch(e){
   case gccmp_always:    return GL_ALWAYS;
   case gccmp_never:	return GL_NEVER;

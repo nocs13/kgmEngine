@@ -21,11 +21,11 @@ box3 kgmMesh::bound(){
  if(!m_vertices)
   return m_bound;
 
- Vertex v   = m_vertices[(uint)0];
+ Vertex v   = m_vertices[(u32)0];
  vec3   max = v.pos, 
         min = v.pos;
 
- uint i    = 0;
+ u32 i    = 0;
  int  size = 0;
 
  for(i = 0; i < m_vcount; i++){
@@ -45,7 +45,7 @@ box3 kgmMesh::bound(){
 }
 
 
-kgmMesh::Vertex* kgmMesh::vAlloc(uint count, FVF f){
+kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
  if(m_vertices)
   delete m_vertices;
  switch(f){
@@ -70,7 +70,7 @@ kgmMesh::Vertex* kgmMesh::vAlloc(uint count, FVF f){
  return m_vertices;
 }
 
-kgmMesh::Face*	kgmMesh::fAlloc(uint count, FFF f){
+kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
  if(m_faces)
   delete m_faces;
  switch(f){
@@ -87,7 +87,7 @@ kgmMesh::Face*	kgmMesh::fAlloc(uint count, FFF f){
  return m_faces;
 }
 
-uint kgmMesh::fvf(){
+u32 kgmMesh::fvf(){
  switch(m_fvf){
  case FVF_P_N_C_T_BW_BI:
    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv_f4);
@@ -105,7 +105,7 @@ uint kgmMesh::fvf(){
  return 0;
 }
 
-uint kgmMesh::fff(){
+u32 kgmMesh::fff(){
  switch(m_fvf){
  case FFF_16:
    return 16;
@@ -117,7 +117,7 @@ uint kgmMesh::fff(){
  return 0;
 }
 
-uint kgmMesh::vsize(){
+u32 kgmMesh::vsize(){
   switch(m_fvf){
   case FVF_P_N_C_T_BW_BI:
     return sizeof(Vertex_P_N_C_T_BW_BI);
@@ -135,7 +135,7 @@ uint kgmMesh::vsize(){
   return 0;
 }
 
-uint kgmMesh::fsize(){
+u32 kgmMesh::fsize(){
   switch(m_fvf){
   case FFF_16:
     return 16;

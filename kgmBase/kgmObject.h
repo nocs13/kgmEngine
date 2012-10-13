@@ -10,7 +10,7 @@ class kgmObject;
 
 struct kgmRuntime{
   const char* nClass; //class id
-  uint        sClass; //size of class
+  u32        sClass; //size of class
   kgmRuntime* pClass; //parent class
 };
 
@@ -77,7 +77,7 @@ public:
    return false;
   }
 
- uint references(){
+ u32 references(){
   return m_references;
  }
 

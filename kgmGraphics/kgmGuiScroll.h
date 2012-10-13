@@ -3,16 +3,16 @@
 
 class kgmGuiScroll: public kgmGui{
   KGM_OBJECT(kgmGuiScroll);
-  uint  m_range;
-  uint  m_position;
-  uint2 m_dimension;
+  u32  m_range;
+  u32  m_position;
+  u322 m_dimension;
 
-  uint  m_colScroll;
+  u32  m_colScroll;
  public:
   kgmGuiScroll();
   kgmGuiScroll(kgmGui *par, int x, int y, int w, int h);
   ~kgmGuiScroll();
 
-  void setRange(uint r);
-  void onMsMove(int key, uint x, uint y);
+  void setRange(u32 r);
+  void onMsMove(int key, u32 x, u32 y);
 };

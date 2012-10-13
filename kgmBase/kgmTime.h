@@ -8,33 +8,33 @@
 #include <sys/time.h>
 #endif
 
-typedef unsigned int uint;
+typedef unsigned int u32;
 
 class kgmTime
 {
 public:
 
-static uint getTicks(){
+static u32 getTicks(){
 #ifdef WIN32
- return (uint)GetTickCount();
+ return (u32)GetTickCount();
 #endif
 
 #ifdef LINUX
  timeval tv;
  gettimeofday(&tv, 0);
- return (uint)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+ return (u32)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 #endif
 }
 
-static uint getTime(){
+static u32 getTime(){
 #ifdef WIN32
- return (uint)GetTickCount();
+ return (u32)GetTickCount();
 #endif
 
 #ifdef LINUX
  timeval tv;
  gettimeofday(&tv, 0);
- return (uint)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+ return (u32)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 #endif
 }
 

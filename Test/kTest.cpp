@@ -96,7 +96,7 @@ class kGame: public kgmGameBase{
    kGui(int x, int y, int w, int h)
    :kgmGui(0, x, y, w, h){
    }
-   void onAction(kgmGui* g, uint a){
+   void onAction(kgmGui* g, u32 a){
     ((kGame*)kgmIGame::getGame())->guiAction(g, a);
    }
   };
@@ -212,7 +212,7 @@ public:
    lua_register(lua, "setActorProperty", luaSetActorProperty);
   }
 
-  void keyAction(uint k, bool s){
+  void keyAction(u32 k, bool s){
    lua_State* lua = m_script.m_lua.m_lua;
    lua_getfield(lua, LUA_GLOBALSINDEX, "onKeyboard");
    if( !lua_isfunction(lua,-1) )
@@ -222,7 +222,7 @@ public:
    lua_pcall(lua, 2, 0, 0);
   }
 
-  void guiAction(kgmGui* g, uint a){
+  void guiAction(kgmGui* g, u32 a){
    lua_State* lua = m_script.m_lua.m_lua;
    lua_getfield(lua, LUA_GLOBALSINDEX, "onGuiAction");
    if( !lua_isfunction(lua,-1) )

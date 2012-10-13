@@ -11,7 +11,7 @@ class kgmWindow;
 #define cWndClass "cWndClass"
 //#define WM_MOUSEWHEEL   0x020A
 
-inline ushort keyTranslate(int);
+inline u16 keyTranslate(int);
 
 void kgmRegisterWindowClass();
 void kgmUnregisterWindowClass();
@@ -28,7 +28,7 @@ void kgmUnregisterWindowClass();
 // #include <GL/glu.h>
  #include <GL/glx.h>
 
- ushort keyTranslate(KeySym);
+ u16 keyTranslate(KeySym);
 #endif
 
 enum{
@@ -82,7 +82,7 @@ public:
  virtual kgmIGraphics* getGC();
 
 #ifdef WIN32
- static long CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+ static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
 #endif
 #ifdef LINUX
  static int WndProc(kgmWindow*, XEvent*);

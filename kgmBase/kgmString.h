@@ -17,13 +17,13 @@ public:
  kgmTString(const T* str){
   if(!str)
    return;
-  uint len = 0;
+  u32 len = 0;
   while(str[len] && (len < KGM_TSTRING_MAX_COPY))
    len++;
   alloc((T*)str, len);
  }
 
- kgmTString(const T* str, uint len){
+ kgmTString(const T* str, u32 len){
   alloc((T*)str, len);
  }
 
@@ -40,7 +40,7 @@ public:
   kgmArray<T>::clear();
   if(!str)
    return *this;
-  uint len = 0;
+  u32 len = 0;
   while(str[len] && (len < KGM_TSTRING_MAX_COPY))
    len++;
   alloc((T*)str, len);
@@ -73,7 +73,7 @@ public:
   return r; 
  }
 
- T&  operator[](uint i){
+ T&  operator[](u32 i){
   return kgmArray<T>::m_data[i];
  }
 
@@ -95,14 +95,14 @@ public:
  }
 
 ////////////////////
- void alloc(uint len){
+ void alloc(u32 len){
   kgmArray<T>::clear();
   kgmArray<T>::m_length = len;
   kgmArray<T>::m_data   = new T[kgmArray<T>::m_length + 1];
   kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
  }
 
- void alloc(T* m, uint len){
+ void alloc(T* m, u32 len){
   kgmArray<T>::clear();
   kgmArray<T>::m_length = len;
   kgmArray<T>::m_data = new T[kgmArray<T>::m_length + 1];
@@ -116,7 +116,7 @@ public:
 
   const T diff = (T)'a' - (T)'A';
 
-  for(uint i = 0; i <= kgmArray<T>::m_length; i++)
+  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
    if(kgmArray<T>::m_data[i] >= 'A' && kgmArray<T>::m_data[i] <= 'Z')
     kgmArray<T>::m_data[i] += diff;
  }
@@ -127,19 +127,19 @@ public:
 
   const T diff = (T)'a' - (T)'A';
 
-  for(uint i = 0; i <= kgmArray<T>::m_length; i++)
+  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
    if(kgmArray<T>::m_data[i] >= 'a' && kgmArray<T>::m_data[i] <= 'z')
     kgmArray<T>::m_data[i] -= diff;
  }
 
  int exist(T& t){
-  for(uint i = 0; i <= kgmArray<T>::m_length; i++)
+  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
    if(kgmArray<T>::m_data[i] == t)
     return i;
   return -1;
  }
  
- T* pointer(uint i){
+ T* pointer(u32 i){
   if(i > kgmArray<T>::m_length)
     return 0;
   return &kgmArray<T>::m_data[i];
@@ -207,7 +207,7 @@ typedef kgmTString<short>		kgmString;
 #endif  
 
 //string between symbols 
-inline void str_syms(char* src, char* dst, char sch, char ech){
+/*inline void str_syms(char* src, char* dst, char sch, char ech){
  char* pst = strchr(src, sch);
  if(!pst) return;
  char* pen = strchr(++pst, ech);
@@ -222,3 +222,4 @@ inline void str_close(char* str){
  if(ptr_r) *ptr_r = '\0';
  if(ptr_n) *ptr_n = '\0';
 }
+*/

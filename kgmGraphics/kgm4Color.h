@@ -1,7 +1,7 @@
 #pragma once
 #include "../kgmMath/kgmMath.h"
 typedef unsigned char uchar;
-typedef unsigned int  uint;
+typedef unsigned int  u32;
 
 class kgm4Color{
 public:
@@ -9,7 +9,7 @@ public:
   struct{
    uchar r, g, b, a;
   };
-  uint color;
+  u32 color;
  };
 public:
  kgm4Color(){
@@ -19,7 +19,7 @@ public:
  kgm4Color(uchar x, uchar y, uchar z, uchar w){
   r = x, g = y, b = z, a = w;
  }
- kgm4Color(uint c){
+ kgm4Color(u32 c){
   color = c;
  }
  void get(vec4& v){

@@ -11,9 +11,9 @@
  #pragma comment(lib, "glu32.lib")
 #endif
 
-GLuint          m_rendertarget = 0;
+GLu32          m_rendertarget = 0;
 
-inline void framebuffer_status(GLuint stat){
+inline void framebuffer_status(GLu32 stat){
    switch(stat){
    case GL_FRAMEBUFFER_COMPLETE_EXT:
 	   break;
@@ -88,7 +88,7 @@ kgmOGL::~kgmOGL(){
  m_rendertarget = 0;
 }
 
-void kgmOGL::gcSetParameter(uint param, void* value){
+void kgmOGL::gcSetParameter(u32 param, void* value){
  switch(param)
  {
  case gcpar_lighting:
@@ -145,11 +145,11 @@ void kgmOGL::gcSetParameter(uint param, void* value){
 	 break;
  }
 }
-void kgmOGL::gcGetParameter(uint param, void* value){
+void kgmOGL::gcGetParameter(u32 param, void* value){
 
 }
-void kgmOGL::gcClear(uint flag, uint col, float depth, uint sten){
- GLuint cl = 0;		
+void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten){
+ GLu32 cl = 0;		
  
  if(flag & gcflag_color){
   cl |= GL_COLOR_BUFFER_BIT;
@@ -213,7 +213,7 @@ void kgmOGL::gcSetTarget(void* t){
 //  glReadBuffer(GL_BACK);
 }
 
-void kgmOGL::gcSetMatrix(uint mode, float* mtx){
+void kgmOGL::gcSetMatrix(u32 mode, float* mtx){
  switch(mode){
  case gcmtx_proj:
 	  glMatrixMode(GL_PROJECTION);
@@ -228,7 +228,7 @@ void kgmOGL::gcSetMatrix(uint mode, float* mtx){
  glLoadMatrixf(mtx);
 }
 
-void kgmOGL::gcGetMatrix(uint mode, float* mtx){
+void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
  switch(mode){
  case gcmtx_proj:
 	  glGetFloatv(GL_PROJECTION_MATRIX, mtx);
@@ -357,7 +357,7 @@ void kgmOGL::gcFog(kgmFog* fog){
 }
 */
 //BLEND
-void  kgmOGL::gcBlend(bool en, uint fnsrc, uint fndst){
+void  kgmOGL::gcBlend(bool en, u32 fnsrc, u32 fndst){
  if(!en){
   glDisable(GL_BLEND);
   return;
@@ -368,7 +368,7 @@ void  kgmOGL::gcBlend(bool en, uint fnsrc, uint fndst){
 }
 
 //ALPHA
-void  kgmOGL::gcAlpha(bool en, uint fn, float ref){
+void  kgmOGL::gcAlpha(bool en, u32 fn, float ref){
  if(!en){
   glDisable(GL_ALPHA_TEST); 
   return;
@@ -378,7 +378,7 @@ void  kgmOGL::gcAlpha(bool en, uint fn, float ref){
 }
 
 //CULL
-void kgmOGL::gcCull(uint mode){
+void kgmOGL::gcCull(u32 mode){
  if(!mode){
   glDisable(GL_CULL_FACE);
   return;
@@ -393,7 +393,7 @@ void kgmOGL::gcCull(uint mode){
  }
 }
 //DEPTH
-void kgmOGL::gcDepth(bool depth, bool mask, uint mode){
+void kgmOGL::gcDepth(bool depth, bool mask, u32 mode){
  if(depth)
   glEnable(GL_DEPTH_TEST);
  else
@@ -430,11 +430,11 @@ void kgmOGL::gc3DMode()
 }
 
 //TEXTURE
-void* kgmOGL::gcGenTexture(void *pd, uint w, uint h, uint fmt, uint type)
+void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 {
- GLuint tex = 0, frame = 0;
+ GLu32 tex = 0, frame = 0;
  GLenum pic_fmt;
- GLuint fmt_bt = 0;
+ GLu32 fmt_bt = 0;
 
  switch(fmt){
  case gctex_fmt8:
@@ -562,7 +562,7 @@ void* kgmOGL::gcGenTexture(void *pd, uint w, uint h, uint fmt, uint type)
 
  err = glGetError();
  if(GL_NO_ERROR != err){
-	 uint k = 0;
+	 u32 k = 0;
 	 switch(err){
 	 case GL_INVALID_ENUM:
 		 k = 1;
@@ -598,7 +598,7 @@ void kgmOGL::gcFreeTexture(void *t){
  delete (Texture*)t;
 }
 
-void kgmOGL::gcSetTexture(uint stage, void* t){
+void kgmOGL::gcSetTexture(u32 stage, void* t){
  if(!t){
   glActiveTextureARB(GL_TEXTURE0_ARB + stage);
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -610,7 +610,7 @@ void kgmOGL::gcSetTexture(uint stage, void* t){
 
 /*
 //RENDER BUFFER 
-void* kgmOGL::gcGenRenderTarget(uint w, uint h, uint flags){
+void* kgmOGL::gcGenRenderTarget(u32 w, u32 h, u32 flags){
  GLenum stat = 0;
  RenderBuffer* rb = new RenderBuffer;
  memset(rb, 0, sizeof(RenderBuffer));
@@ -694,7 +694,7 @@ void kgmOGL::gcSetRenderTarget(void* rb){
 //  glReadBuffer(GL_BACK);
 }
 
-void kgmOGL::gcSetRenderTexture(void* rb, uint stage, uint flags){
+void kgmOGL::gcSetRenderTexture(void* rb, u32 stage, u32 flags){
  if(!rb || !((RenderBuffer*)rb)->frame){
   gcSetTexture(stage, 0);
   return;
@@ -711,7 +711,7 @@ void kgmOGL::gcSetRenderTexture(void* rb, uint stage, uint flags){
 }
 */
 /*
-void kgmOGL::gcCoordTexture(uint coord, uint mode, void* par){
+void kgmOGL::gcCoordTexture(u32 coord, u32 mode, void* par){
  static GLenum   gl_coord = 0;
  static GLenum   gl_mode = 0;
  static GLenum	 gl_gen = 0;
@@ -758,7 +758,7 @@ void kgmOGL::gcCoordTexture(uint coord, uint mode, void* par){
  }
 
  if(gl_mode == GL_TEXTURE_GEN_MODE){
-  switch((uint)par){
+  switch((u32)par){
   case gctex_sphere:
 	  gl_ipar = GL_SPHERE_MAP;
 	  break;
@@ -779,18 +779,18 @@ void kgmOGL::gcCoordTexture(uint coord, uint mode, void* par){
 }
 */
 //CLIP PLANE
-void kgmOGL::gcClipPlane(bool en, uint id, float* par){
+void kgmOGL::gcClipPlane(bool en, u32 id, float* par){
  GLdouble c[4] = {par[0], par[1], par[2], par[3]};
  glClipPlane(GL_CLIP_PLANE0 + id, c);
 }
 //STENCIL
-void gcStencil(bool en, uint func, uint mask, uint ref, 
-			   uint fail, uint zfail, uint zpass){
+void gcStencil(bool en, u32 func, u32 mask, u32 ref, 
+			   u32 fail, u32 zfail, u32 zpass){
 
 }
 //Drawing
-void kgmOGL::gcDraw(uint pmt, uint v_fmt, uint v_size, uint v_cnt, void *v_pnt,
-						  uint i_size, uint i_cnt, void *i_pnt){
+void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
+						  u32 i_size, u32 i_cnt, void *i_pnt){
  if(!v_pnt) return;
 
  unsigned char *pM = (unsigned char*)v_pnt;
@@ -815,12 +815,12 @@ void kgmOGL::gcDraw(uint pmt, uint v_fmt, uint v_size, uint v_cnt, void *v_pnt,
  if(v_fmt & gcv_col){
   glEnableClientState(GL_COLOR_ARRAY);
    glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-  pM += sizeof(uint);  
+  pM += sizeof(u32);  
  }
 // if(v_fmt & gcv_spc){
 //  glEnableClientState(GL_COLOR_ARRAY);
 //   glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-//  pM += sizeof(uint);  
+//  pM += sizeof(u32);  
 // }
  if(v_fmt & gcv_uv0){
   glClientActiveTextureARB(GL_TEXTURE0_ARB);
@@ -881,8 +881,8 @@ void kgmOGL::gcDraw(uint pmt, uint v_fmt, uint v_size, uint v_cnt, void *v_pnt,
 }
 
 
-void kgmOGL::gcDrawRect(int x, int y, int w, int h, uint col){
-  typedef struct{  vec3 pos;  uint col;  vec2 uv; } V;
+void kgmOGL::gcDrawRect(int x, int y, int w, int h, u32 col){
+  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
   gc2DMode();
@@ -904,8 +904,8 @@ void kgmOGL::gcDrawRect(int x, int y, int w, int h, uint col){
 }
 
 /*
-void kgmOGL::gcDrawText(lRect clip, float w, float h, uint col, char *text, uint tlen){
-  typedef struct{ vec3 pos; uint col; vec2 uv; } V;
+void kgmOGL::gcDrawText(lRect clip, float w, float h, u32 col, char *text, u32 tlen){
+  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
 
   if(!text || !tlen || !m_font || !m_font->m_texture) 
@@ -924,7 +924,7 @@ void kgmOGL::gcDrawText(lRect clip, float w, float h, uint col, char *text, uint
   gcSetTexture(0, m_font);
 
 
-  for(uint i = 0; i < tlen; i++){
+  for(u32 i = 0; i < tlen; i++){
    char ch = text[i];
   
    if(ch == '\n'){ cx = (float)clip.min.x, cy += h; continue; }
@@ -952,10 +952,10 @@ void kgmOGL::gcDrawText(lRect clip, float w, float h, uint col, char *text, uint
 }
 */
 
-void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, uint col){
+void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
   mtx4 mv, mp, m; 
   vec3 rv, uv;
-  typedef struct{ vec3 pos; uint dif; vec2 uv; } V;
+  typedef struct{ vec3 pos; u32 dif; vec2 uv; } V;
 //  typedef struct{ vec3 pos; vec2 uv; } V;
 
   V v[4];
@@ -993,7 +993,7 @@ void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, uint col){
 }
 
 //VERTEX & INDEX BUFFER 
-void* kgmOGL::gcGenVertexBuffer(void* vdata, uint vsize, void* idata, uint isize){
+void* kgmOGL::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize){
  VBO* vbo = new VBO;
  memset(vbo, 0, sizeof(VBO));
 
@@ -1022,11 +1022,11 @@ void  kgmOGL::gcFreeVertexBuffer(void* b){
  delete vbo;
 }
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
-void  kgmOGL::gcDrawVertexBuffer(void* b, uint pmt, uint vfmt, uint vsize, uint vcnt,
-									   uint isize, uint icnt, uint ioff){
+void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt,
+									   u32 isize, u32 icnt, u32 ioff){
  VBO* vbo = (VBO*)b;
- uint offset = 0;
- uint uvt = (vfmt & gcv_uv_f4)?(4):(2);
+ u32 offset = 0;
+ u32 uvt = (vfmt & gcv_uv_f4)?(4):(2);
 
  if(!vbo)
 	 return;
@@ -1048,12 +1048,12 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, uint pmt, uint vfmt, uint vsize, uint 
  if(vfmt & gcv_col){
   glEnableClientState(GL_COLOR_ARRAY);
    glColorPointer(4,GL_UNSIGNED_BYTE, vsize, (void*)offset);
-    offset = offset + sizeof(uint);
+    offset = offset + sizeof(u32);
  }
 // if(vfmt & gcv_spc){
 //  glEnableClientState(GL_COLOR_ARRAY);
 //   glColorPointer(4,GL_UNSIGNED_BYTE, vsize, (void*)offset);
-//    offset = offset + sizeof(uint);
+//    offset = offset + sizeof(u32);
 // }
  if(vfmt & gcv_uv0){
   glClientActiveTextureARB(GL_TEXTURE0_ARB);
@@ -1216,7 +1216,7 @@ void kgmOGL::gcSetShader(void* s){
  }
 }
 
-void kgmOGL::gcUniform(void* s, uint type, uint cnt, const char* par, void* val)
+void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 { 
  GLint link = glGetUniformLocationARB((GLhandleARB)s, par);
  if(link < 0)
@@ -1255,7 +1255,7 @@ void kgmOGL::gcUniform(void* s, uint type, uint cnt, const char* par, void* val)
  }
 }
 
-void kgmOGL::gcUniformMatrix(void* s, uint cnt, uint trn, const char* par, void* val)
+void kgmOGL::gcUniformMatrix(void* s, u32 cnt, u32 trn, const char* par, void* val)
 { 
  GLint link = glGetUniformLocationARB((GLhandleARB)s, par);
  if(link < 0)
@@ -1278,6 +1278,6 @@ void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
  if(link < 0)
 	 return;
 // glUniform1ivARB(link, 1, (const int*)val);
- glUniform1iARB(link, (GLuint)val);
+ glUniform1iARB(link, (GLu32)val);
 }
 

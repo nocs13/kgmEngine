@@ -21,7 +21,7 @@ class kgmGuiButton: public kgmGui
   State  m_state;
 public:
   kgmGuiButton();
-  kgmGuiButton(kgmGui *par, uint x, uint y, uint w, uint h);
+  kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
   virtual ~kgmGuiButton();
   
   virtual void onClick();

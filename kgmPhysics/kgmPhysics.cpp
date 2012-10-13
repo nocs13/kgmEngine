@@ -93,7 +93,7 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos){
 
 void kgmPhysics::doCollision(float dtime){
  float G = 1.0f;
- uint  stime = kgmTime::getTicks();
+ u32  stime = kgmTime::getTicks();
 
  //active collisions  
  kgmList<Triangle>	triangles;
@@ -106,7 +106,7 @@ void kgmPhysics::doCollision(float dtime){
   bool  holddown = false;
   bool	upstare	 = false;
   bool  insect   = false;
-  uint	ccount	 = 0;
+  u32	ccount	 = 0;
   cylinder  cbound;
   sphere	sbound;
   sphere	sinteract;

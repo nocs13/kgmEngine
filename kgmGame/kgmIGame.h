@@ -125,13 +125,13 @@ class kgmIGame: public kgmInterface{
 public:
   struct Event
   {
-    uint	  evt_id;
+    u32	  evt_id;
     kgmActor* evt_from;
     kgmActor* evt_to;
   };
 
   struct Input{
-    uint action;
+    u32 action;
     int  state;
     int  value;
   };

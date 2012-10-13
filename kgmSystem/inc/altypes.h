@@ -39,10 +39,10 @@ typedef unsigned char ALubyte;
 typedef short ALshort;
 
 /** OpenAL 16bit unsigned short integer type. */
-typedef unsigned short ALushort;
+typedef unsigned short ALu16;
 
 /** OpenAL 32bit unsigned integer type. */
-typedef unsigned ALuint;
+typedef unsigned ALu32;
 
 /** OpenAL 32bit signed integer type. */
 typedef int ALint;
@@ -136,7 +136,7 @@ typedef int ALenum;
 
 /**
  * Indicate the buffer to provide sound samples. 
- * Type: ALuint.
+ * Type: ALu32.
  * Range: any valid Buffer id.
  */
 #define AL_BUFFER                                0x1009
@@ -214,7 +214,7 @@ typedef int ALenum;
 
 /**
  * Specify the channel mask. (Creative)
- * Type:	 ALuint
+ * Type:	 ALu32
  * Range:	 [0 - 255]
  */
 #define AL_CHANNEL_MASK							 0x3000

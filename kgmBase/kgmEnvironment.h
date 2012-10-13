@@ -10,7 +10,7 @@ class kgmFont;
 
 class kgmEnvironment{
 public:
- uint wnd_width, wnd_height, 
+ u32 wnd_width, wnd_height, 
       wnd_bpp, wnd_fscreen;
 
  kgmString dir_cwd, dir_data;

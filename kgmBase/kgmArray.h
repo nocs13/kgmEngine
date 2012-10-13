@@ -9,7 +9,7 @@ public:
  :kgmMemory<T>(){ 
  }
 
- kgmArray(uint len)
+ kgmArray(u32 len)
  :kgmMemory<T>(len){
  }
 
@@ -28,14 +28,14 @@ public:
   return *this;
  }
 
- //T& operator[](uint i){
+ //T& operator[](u32 i){
  // return kgmMemory<T>::m_data[i];
  //}
 
 
- void realloc(uint len){
+ void realloc(u32 len){
   T*   old  = kgmMemory<T>::m_data;
-  uint scpy = (kgmMemory<T>::m_length < len)?(kgmMemory<T>::m_length):(len);
+  u32 scpy = (kgmMemory<T>::m_length < len)?(kgmMemory<T>::m_length):(len);
 
   kgmMemory<T>::m_data = new T[len];
   kgmMemory<T>::m_length = len;
@@ -50,7 +50,7 @@ public:
   kgmMemory<T>::m_data[kgmMemory<T>::m_length - 1] = el;
  }
 
- void erase(uint index){
+ void erase(u32 index){
    //not implemented yet
  }
 };

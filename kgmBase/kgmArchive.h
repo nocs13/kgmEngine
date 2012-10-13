@@ -37,13 +37,13 @@ class kgmArchive{
   struct Header{
     char  signature[6];
     short version;
-    uint  numEntries;
+    u32  numEntries;
   };
   
   struct Entry{
     char name[64];
-    uint size;
-    uint offset;
+    u32 size;
+    u32 offset;
     bool valid;
  };
   
@@ -100,7 +100,7 @@ public:
     return true;
   }
 
-  uint scan(){
+  u32 scan(){
     if(!archive.m_file)
       return 0;
     entry.clear();
@@ -156,7 +156,7 @@ public:
   
   bool erase(char *id)
   {
-    uint i = 0;
+    u32 i = 0;
     Entry *pe = 0;
     if(!id || !archive.m_file)
       return false;
@@ -169,7 +169,7 @@ public:
     if(!pe)
       return false;
     archive.seek(pe->offset - 68);
-    uint DP = archive.position();
+    u32 DP = archive.position();
     if(i == (entry.size() - 1)){
       archive.length(DP);
       scan();
@@ -178,7 +178,7 @@ public:
     for(i++; i < entry.size(); i++){
       Entry *ce = &entry[i];
       char *pmem = (char*)malloc(sizeof(char) * ce->size + 68);
-      uint SP = ce->offset - 68;
+      u32 SP = ce->offset - 68;
       archive.seek(SP);
       archive.read(pmem, ce->size + 68);
       archive.seek(DP);
@@ -191,12 +191,12 @@ public:
     return true;
   }
   
-  void* mmap(char *id, uint *psize)
+  void* mmap(char *id, u32 *psize)
   {
     if(!id || !archive.m_file || !psize)
       return 0;
     Entry *pe = 0;
-    for(uint i = 0; i < entry.size(); i++){
+    for(u32 i = 0; i < entry.size(); i++){
       if(!strcmp(id, entry[i].name))
 	pe = &entry[i];
     }
@@ -223,7 +223,7 @@ public:
     if(!id || !archive.m_file)
       return false;
     
-    for(uint i = 0; i < entry.size(); i++){
+    for(u32 i = 0; i < entry.size(); i++){
       if(!strcmp(id, entry[i].name))
 	pe = &entry[i];
     }

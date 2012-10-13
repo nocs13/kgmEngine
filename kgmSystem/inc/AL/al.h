@@ -62,13 +62,13 @@ typedef unsigned char ALubyte;
 typedef short ALshort;
 
 /** unsigned 16-bit integer */
-typedef unsigned short ALushort;
+typedef unsigned short ALu16;
 
 /** signed 32-bit 2's complement integer */
 typedef int ALint;
 
 /** unsigned 32-bit integer */
-typedef unsigned int ALuint;
+typedef unsigned int ALu32;
 
 /** non-negative 32-bit binary integer size */
 typedef int ALsizei;
@@ -152,7 +152,7 @@ typedef void ALvoid;
 
 /**
  * Indicate the buffer to provide sound samples. 
- * Type: ALuint.
+ * Type: ALu32.
  * Range: any valid Buffer id.
  */
 #define AL_BUFFER                                 0x1009
@@ -489,43 +489,43 @@ AL_API void AL_APIENTRY alGetListeneriv( ALenum param, ALint* values );
  */
 
 /* Create Source objects */
-AL_API void AL_APIENTRY alGenSources( ALsizei n, ALuint* sources ); 
+AL_API void AL_APIENTRY alGenSources( ALsizei n, ALu32* sources ); 
 
 /* Delete Source objects */
-AL_API void AL_APIENTRY alDeleteSources( ALsizei n, const ALuint* sources );
+AL_API void AL_APIENTRY alDeleteSources( ALsizei n, const ALu32* sources );
 
 /* Verify a handle is a valid Source */ 
-AL_API ALboolean AL_APIENTRY alIsSource( ALuint sid ); 
+AL_API ALboolean AL_APIENTRY alIsSource( ALu32 sid ); 
 
 /*
  * Set Source parameters
  */
-AL_API void AL_APIENTRY alSourcef( ALuint sid, ALenum param, ALfloat value ); 
+AL_API void AL_APIENTRY alSourcef( ALu32 sid, ALenum param, ALfloat value ); 
 
-AL_API void AL_APIENTRY alSource3f( ALuint sid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
+AL_API void AL_APIENTRY alSource3f( ALu32 sid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
 
-AL_API void AL_APIENTRY alSourcefv( ALuint sid, ALenum param, const ALfloat* values ); 
+AL_API void AL_APIENTRY alSourcefv( ALu32 sid, ALenum param, const ALfloat* values ); 
 
-AL_API void AL_APIENTRY alSourcei( ALuint sid, ALenum param, ALint value ); 
+AL_API void AL_APIENTRY alSourcei( ALu32 sid, ALenum param, ALint value ); 
 
-AL_API void AL_APIENTRY alSource3i( ALuint sid, ALenum param, ALint value1, ALint value2, ALint value3 );
+AL_API void AL_APIENTRY alSource3i( ALu32 sid, ALenum param, ALint value1, ALint value2, ALint value3 );
 
-AL_API void AL_APIENTRY alSourceiv( ALuint sid, ALenum param, const ALint* values );
+AL_API void AL_APIENTRY alSourceiv( ALu32 sid, ALenum param, const ALint* values );
 
 /*
  * Get Source parameters
  */
-AL_API void AL_APIENTRY alGetSourcef( ALuint sid, ALenum param, ALfloat* value );
+AL_API void AL_APIENTRY alGetSourcef( ALu32 sid, ALenum param, ALfloat* value );
 
-AL_API void AL_APIENTRY alGetSource3f( ALuint sid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
+AL_API void AL_APIENTRY alGetSource3f( ALu32 sid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
 
-AL_API void AL_APIENTRY alGetSourcefv( ALuint sid, ALenum param, ALfloat* values );
+AL_API void AL_APIENTRY alGetSourcefv( ALu32 sid, ALenum param, ALfloat* values );
 
-AL_API void AL_APIENTRY alGetSourcei( ALuint sid,  ALenum param, ALint* value );
+AL_API void AL_APIENTRY alGetSourcei( ALu32 sid,  ALenum param, ALint* value );
 
-AL_API void AL_APIENTRY alGetSource3i( ALuint sid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
+AL_API void AL_APIENTRY alGetSource3i( ALu32 sid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
 
-AL_API void AL_APIENTRY alGetSourceiv( ALuint sid,  ALenum param, ALint* values );
+AL_API void AL_APIENTRY alGetSourceiv( ALu32 sid,  ALenum param, ALint* values );
 
 
 /*
@@ -533,39 +533,39 @@ AL_API void AL_APIENTRY alGetSourceiv( ALuint sid,  ALenum param, ALint* values 
  */
 
 /* Play, replay, or resume (if paused) a list of Sources */
-AL_API void AL_APIENTRY alSourcePlayv( ALsizei ns, const ALuint *sids );
+AL_API void AL_APIENTRY alSourcePlayv( ALsizei ns, const ALu32 *sids );
 
 /* Stop a list of Sources */
-AL_API void AL_APIENTRY alSourceStopv( ALsizei ns, const ALuint *sids );
+AL_API void AL_APIENTRY alSourceStopv( ALsizei ns, const ALu32 *sids );
 
 /* Rewind a list of Sources */
-AL_API void AL_APIENTRY alSourceRewindv( ALsizei ns, const ALuint *sids );
+AL_API void AL_APIENTRY alSourceRewindv( ALsizei ns, const ALu32 *sids );
 
 /* Pause a list of Sources */
-AL_API void AL_APIENTRY alSourcePausev( ALsizei ns, const ALuint *sids );
+AL_API void AL_APIENTRY alSourcePausev( ALsizei ns, const ALu32 *sids );
 
 /*
  * Source based playback calls
  */
 
 /* Play, replay, or resume a Source */
-AL_API void AL_APIENTRY alSourcePlay( ALuint sid );
+AL_API void AL_APIENTRY alSourcePlay( ALu32 sid );
 
 /* Stop a Source */
-AL_API void AL_APIENTRY alSourceStop( ALuint sid );
+AL_API void AL_APIENTRY alSourceStop( ALu32 sid );
 
 /* Rewind a Source (set playback postiton to beginning) */
-AL_API void AL_APIENTRY alSourceRewind( ALuint sid );
+AL_API void AL_APIENTRY alSourceRewind( ALu32 sid );
 
 /* Pause a Source */
-AL_API void AL_APIENTRY alSourcePause( ALuint sid );
+AL_API void AL_APIENTRY alSourcePause( ALu32 sid );
 
 /*
  * Source Queuing 
  */
-AL_API void AL_APIENTRY alSourceQueueBuffers( ALuint sid, ALsizei numEntries, const ALuint *bids );
+AL_API void AL_APIENTRY alSourceQueueBuffers( ALu32 sid, ALsizei numEntries, const ALu32 *bids );
 
-AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALuint sid, ALsizei numEntries, ALuint *bids );
+AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALu32 sid, ALsizei numEntries, ALu32 *bids );
 
 
 /**
@@ -583,46 +583,46 @@ AL_API void AL_APIENTRY alSourceUnqueueBuffers( ALuint sid, ALsizei numEntries, 
  */
 
 /* Create Buffer objects */
-AL_API void AL_APIENTRY alGenBuffers( ALsizei n, ALuint* buffers );
+AL_API void AL_APIENTRY alGenBuffers( ALsizei n, ALu32* buffers );
 
 /* Delete Buffer objects */
-AL_API void AL_APIENTRY alDeleteBuffers( ALsizei n, const ALuint* buffers );
+AL_API void AL_APIENTRY alDeleteBuffers( ALsizei n, const ALu32* buffers );
 
 /* Verify a handle is a valid Buffer */
-AL_API ALboolean AL_APIENTRY alIsBuffer( ALuint bid );
+AL_API ALboolean AL_APIENTRY alIsBuffer( ALu32 bid );
 
 /* Specify the data to be copied into a buffer */
-AL_API void AL_APIENTRY alBufferData( ALuint bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq );
+AL_API void AL_APIENTRY alBufferData( ALu32 bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq );
 
 /*
  * Set Buffer parameters
  */
-AL_API void AL_APIENTRY alBufferf( ALuint bid, ALenum param, ALfloat value );
+AL_API void AL_APIENTRY alBufferf( ALu32 bid, ALenum param, ALfloat value );
 
-AL_API void AL_APIENTRY alBuffer3f( ALuint bid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
+AL_API void AL_APIENTRY alBuffer3f( ALu32 bid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
 
-AL_API void AL_APIENTRY alBufferfv( ALuint bid, ALenum param, const ALfloat* values );
+AL_API void AL_APIENTRY alBufferfv( ALu32 bid, ALenum param, const ALfloat* values );
 
-AL_API void AL_APIENTRY alBufferi( ALuint bid, ALenum param, ALint value );
+AL_API void AL_APIENTRY alBufferi( ALu32 bid, ALenum param, ALint value );
 
-AL_API void AL_APIENTRY alBuffer3i( ALuint bid, ALenum param, ALint value1, ALint value2, ALint value3 );
+AL_API void AL_APIENTRY alBuffer3i( ALu32 bid, ALenum param, ALint value1, ALint value2, ALint value3 );
 
-AL_API void AL_APIENTRY alBufferiv( ALuint bid, ALenum param, const ALint* values );
+AL_API void AL_APIENTRY alBufferiv( ALu32 bid, ALenum param, const ALint* values );
 
 /*
  * Get Buffer parameters
  */
-AL_API void AL_APIENTRY alGetBufferf( ALuint bid, ALenum param, ALfloat* value );
+AL_API void AL_APIENTRY alGetBufferf( ALu32 bid, ALenum param, ALfloat* value );
 
-AL_API void AL_APIENTRY alGetBuffer3f( ALuint bid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
+AL_API void AL_APIENTRY alGetBuffer3f( ALu32 bid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
 
-AL_API void AL_APIENTRY alGetBufferfv( ALuint bid, ALenum param, ALfloat* values );
+AL_API void AL_APIENTRY alGetBufferfv( ALu32 bid, ALenum param, ALfloat* values );
 
-AL_API void AL_APIENTRY alGetBufferi( ALuint bid, ALenum param, ALint* value );
+AL_API void AL_APIENTRY alGetBufferi( ALu32 bid, ALenum param, ALint* value );
 
-AL_API void AL_APIENTRY alGetBuffer3i( ALuint bid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
+AL_API void AL_APIENTRY alGetBuffer3i( ALu32 bid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
 
-AL_API void AL_APIENTRY alGetBufferiv( ALuint bid, ALenum param, ALint* values );
+AL_API void AL_APIENTRY alGetBufferiv( ALu32 bid, ALenum param, ALint* values );
 
 
 /*
@@ -667,47 +667,47 @@ typedef void           (AL_APIENTRY *LPALGETLISTENERFV)( ALenum param, ALfloat* 
 typedef void           (AL_APIENTRY *LPALGETLISTENERI)( ALenum param, ALint* value );
 typedef void           (AL_APIENTRY *LPALGETLISTENER3I)( ALenum param, ALint *value1, ALint *value2, ALint *value3 );
 typedef void           (AL_APIENTRY *LPALGETLISTENERIV)( ALenum param, ALint* values );
-typedef void           (AL_APIENTRY *LPALGENSOURCES)( ALsizei n, ALuint* sources ); 
-typedef void           (AL_APIENTRY *LPALDELETESOURCES)( ALsizei n, const ALuint* sources );
-typedef ALboolean      (AL_APIENTRY *LPALISSOURCE)( ALuint sid ); 
-typedef void           (AL_APIENTRY *LPALSOURCEF)( ALuint sid, ALenum param, ALfloat value); 
-typedef void           (AL_APIENTRY *LPALSOURCE3F)( ALuint sid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
-typedef void           (AL_APIENTRY *LPALSOURCEFV)( ALuint sid, ALenum param, const ALfloat* values );
-typedef void           (AL_APIENTRY *LPALSOURCEI)( ALuint sid, ALenum param, ALint value); 
-typedef void           (AL_APIENTRY *LPALSOURCE3I)( ALuint sid, ALenum param, ALint value1, ALint value2, ALint value3 );
-typedef void           (AL_APIENTRY *LPALSOURCEIV)( ALuint sid, ALenum param, const ALint* values );
-typedef void           (AL_APIENTRY *LPALGETSOURCEF)( ALuint sid, ALenum param, ALfloat* value );
-typedef void           (AL_APIENTRY *LPALGETSOURCE3F)( ALuint sid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
-typedef void           (AL_APIENTRY *LPALGETSOURCEFV)( ALuint sid, ALenum param, ALfloat* values );
-typedef void           (AL_APIENTRY *LPALGETSOURCEI)( ALuint sid, ALenum param, ALint* value );
-typedef void           (AL_APIENTRY *LPALGETSOURCE3I)( ALuint sid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
-typedef void           (AL_APIENTRY *LPALGETSOURCEIV)( ALuint sid, ALenum param, ALint* values );
-typedef void           (AL_APIENTRY *LPALSOURCEPLAYV)( ALsizei ns, const ALuint *sids );
-typedef void           (AL_APIENTRY *LPALSOURCESTOPV)( ALsizei ns, const ALuint *sids );
-typedef void           (AL_APIENTRY *LPALSOURCEREWINDV)( ALsizei ns, const ALuint *sids );
-typedef void           (AL_APIENTRY *LPALSOURCEPAUSEV)( ALsizei ns, const ALuint *sids );
-typedef void           (AL_APIENTRY *LPALSOURCEPLAY)( ALuint sid );
-typedef void           (AL_APIENTRY *LPALSOURCESTOP)( ALuint sid );
-typedef void           (AL_APIENTRY *LPALSOURCEREWIND)( ALuint sid );
-typedef void           (AL_APIENTRY *LPALSOURCEPAUSE)( ALuint sid );
-typedef void           (AL_APIENTRY *LPALSOURCEQUEUEBUFFERS)(ALuint sid, ALsizei numEntries, const ALuint *bids );
-typedef void           (AL_APIENTRY *LPALSOURCEUNQUEUEBUFFERS)(ALuint sid, ALsizei numEntries, ALuint *bids );
-typedef void           (AL_APIENTRY *LPALGENBUFFERS)( ALsizei n, ALuint* buffers );
-typedef void           (AL_APIENTRY *LPALDELETEBUFFERS)( ALsizei n, const ALuint* buffers );
-typedef ALboolean      (AL_APIENTRY *LPALISBUFFER)( ALuint bid );
-typedef void           (AL_APIENTRY *LPALBUFFERDATA)( ALuint bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq );
-typedef void           (AL_APIENTRY *LPALBUFFERF)( ALuint bid, ALenum param, ALfloat value);
-typedef void           (AL_APIENTRY *LPALBUFFER3F)( ALuint bid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
-typedef void           (AL_APIENTRY *LPALBUFFERFV)( ALuint bid, ALenum param, const ALfloat* values );
-typedef void           (AL_APIENTRY *LPALBUFFERI)( ALuint bid, ALenum param, ALint value);
-typedef void           (AL_APIENTRY *LPALBUFFER3I)( ALuint bid, ALenum param, ALint value1, ALint value2, ALint value3 );
-typedef void           (AL_APIENTRY *LPALBUFFERIV)( ALuint bid, ALenum param, const ALint* values );
-typedef void           (AL_APIENTRY *LPALGETBUFFERF)( ALuint bid, ALenum param, ALfloat* value );
-typedef void           (AL_APIENTRY *LPALGETBUFFER3F)( ALuint bid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
-typedef void           (AL_APIENTRY *LPALGETBUFFERFV)( ALuint bid, ALenum param, ALfloat* values );
-typedef void           (AL_APIENTRY *LPALGETBUFFERI)( ALuint bid, ALenum param, ALint* value );
-typedef void           (AL_APIENTRY *LPALGETBUFFER3I)( ALuint bid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
-typedef void           (AL_APIENTRY *LPALGETBUFFERIV)( ALuint bid, ALenum param, ALint* values );
+typedef void           (AL_APIENTRY *LPALGENSOURCES)( ALsizei n, ALu32* sources ); 
+typedef void           (AL_APIENTRY *LPALDELETESOURCES)( ALsizei n, const ALu32* sources );
+typedef ALboolean      (AL_APIENTRY *LPALISSOURCE)( ALu32 sid ); 
+typedef void           (AL_APIENTRY *LPALSOURCEF)( ALu32 sid, ALenum param, ALfloat value); 
+typedef void           (AL_APIENTRY *LPALSOURCE3F)( ALu32 sid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
+typedef void           (AL_APIENTRY *LPALSOURCEFV)( ALu32 sid, ALenum param, const ALfloat* values );
+typedef void           (AL_APIENTRY *LPALSOURCEI)( ALu32 sid, ALenum param, ALint value); 
+typedef void           (AL_APIENTRY *LPALSOURCE3I)( ALu32 sid, ALenum param, ALint value1, ALint value2, ALint value3 );
+typedef void           (AL_APIENTRY *LPALSOURCEIV)( ALu32 sid, ALenum param, const ALint* values );
+typedef void           (AL_APIENTRY *LPALGETSOURCEF)( ALu32 sid, ALenum param, ALfloat* value );
+typedef void           (AL_APIENTRY *LPALGETSOURCE3F)( ALu32 sid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
+typedef void           (AL_APIENTRY *LPALGETSOURCEFV)( ALu32 sid, ALenum param, ALfloat* values );
+typedef void           (AL_APIENTRY *LPALGETSOURCEI)( ALu32 sid, ALenum param, ALint* value );
+typedef void           (AL_APIENTRY *LPALGETSOURCE3I)( ALu32 sid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
+typedef void           (AL_APIENTRY *LPALGETSOURCEIV)( ALu32 sid, ALenum param, ALint* values );
+typedef void           (AL_APIENTRY *LPALSOURCEPLAYV)( ALsizei ns, const ALu32 *sids );
+typedef void           (AL_APIENTRY *LPALSOURCESTOPV)( ALsizei ns, const ALu32 *sids );
+typedef void           (AL_APIENTRY *LPALSOURCEREWINDV)( ALsizei ns, const ALu32 *sids );
+typedef void           (AL_APIENTRY *LPALSOURCEPAUSEV)( ALsizei ns, const ALu32 *sids );
+typedef void           (AL_APIENTRY *LPALSOURCEPLAY)( ALu32 sid );
+typedef void           (AL_APIENTRY *LPALSOURCESTOP)( ALu32 sid );
+typedef void           (AL_APIENTRY *LPALSOURCEREWIND)( ALu32 sid );
+typedef void           (AL_APIENTRY *LPALSOURCEPAUSE)( ALu32 sid );
+typedef void           (AL_APIENTRY *LPALSOURCEQUEUEBUFFERS)(ALu32 sid, ALsizei numEntries, const ALu32 *bids );
+typedef void           (AL_APIENTRY *LPALSOURCEUNQUEUEBUFFERS)(ALu32 sid, ALsizei numEntries, ALu32 *bids );
+typedef void           (AL_APIENTRY *LPALGENBUFFERS)( ALsizei n, ALu32* buffers );
+typedef void           (AL_APIENTRY *LPALDELETEBUFFERS)( ALsizei n, const ALu32* buffers );
+typedef ALboolean      (AL_APIENTRY *LPALISBUFFER)( ALu32 bid );
+typedef void           (AL_APIENTRY *LPALBUFFERDATA)( ALu32 bid, ALenum format, const ALvoid* data, ALsizei size, ALsizei freq );
+typedef void           (AL_APIENTRY *LPALBUFFERF)( ALu32 bid, ALenum param, ALfloat value);
+typedef void           (AL_APIENTRY *LPALBUFFER3F)( ALu32 bid, ALenum param, ALfloat value1, ALfloat value2, ALfloat value3 );
+typedef void           (AL_APIENTRY *LPALBUFFERFV)( ALu32 bid, ALenum param, const ALfloat* values );
+typedef void           (AL_APIENTRY *LPALBUFFERI)( ALu32 bid, ALenum param, ALint value);
+typedef void           (AL_APIENTRY *LPALBUFFER3I)( ALu32 bid, ALenum param, ALint value1, ALint value2, ALint value3 );
+typedef void           (AL_APIENTRY *LPALBUFFERIV)( ALu32 bid, ALenum param, const ALint* values );
+typedef void           (AL_APIENTRY *LPALGETBUFFERF)( ALu32 bid, ALenum param, ALfloat* value );
+typedef void           (AL_APIENTRY *LPALGETBUFFER3F)( ALu32 bid, ALenum param, ALfloat* value1, ALfloat* value2, ALfloat* value3);
+typedef void           (AL_APIENTRY *LPALGETBUFFERFV)( ALu32 bid, ALenum param, ALfloat* values );
+typedef void           (AL_APIENTRY *LPALGETBUFFERI)( ALu32 bid, ALenum param, ALint* value );
+typedef void           (AL_APIENTRY *LPALGETBUFFER3I)( ALu32 bid, ALenum param, ALint* value1, ALint* value2, ALint* value3);
+typedef void           (AL_APIENTRY *LPALGETBUFFERIV)( ALu32 bid, ALenum param, ALint* values );
 typedef void           (AL_APIENTRY *LPALDOPPLERFACTOR)( ALfloat value );
 typedef void           (AL_APIENTRY *LPALDOPPLERVELOCITY)( ALfloat value );
 typedef void           (AL_APIENTRY *LPALSPEEDOFSOUND)( ALfloat value );

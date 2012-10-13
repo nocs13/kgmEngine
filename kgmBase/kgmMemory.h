@@ -7,14 +7,14 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-typedef unsigned int uint;
+typedef unsigned int u32;
 
 template <class T> 
 class kgmMemory{
 protected:
  T    *m_data;
- uint  m_length;
- uint  m_position;  //for seek, read, write
+ u32  m_length;
+ u32  m_position;  //for seek, read, write
 public:
 
  kgmMemory(){ 
@@ -23,7 +23,7 @@ public:
   m_position = 0;
  }
 
- kgmMemory(uint len){
+ kgmMemory(u32 len){
   alloc(len);
  }
 
@@ -45,7 +45,7 @@ public:
   return *this;
  }
 
- T& operator[](uint i){
+ T& operator[](u32 i){
   return m_data[i];
  }
 
@@ -73,7 +73,7 @@ public:
   return m_data;
  }
 
- bool alloc(uint len){
+ bool alloc(u32 len){
   clear();
   if(!len)
    return false;
@@ -82,7 +82,7 @@ public:
   return true;
  }
 
- bool alloc(T* data, uint len){
+ bool alloc(T* data, u32 len){
   clear();
   if(!data || !len)
    return false;
@@ -102,7 +102,7 @@ public:
   return (m_position >= (m_length - 1));
  } 
 
- uint read(T* data, uint size){
+ u32 read(T* data, u32 size){
   if(!m_data || !m_length || !data || !size)
    return -1;
   if(m_position == (m_length -1))
@@ -114,7 +114,7 @@ public:
   return size; 
  }
 
- uint write(T* data, uint size){
+ u32 write(T* data, u32 size){
   if(!m_data || !m_length || !data || !size)
    return -1;
   if(m_position == (m_length -1))
@@ -126,7 +126,7 @@ public:
   return size; 
  }
 
- uint seek(uint size){
+ u32 seek(u32 size){
   if(!m_data || !m_length)
    return -1;
   if(size < m_length)
@@ -134,12 +134,12 @@ public:
   return (m_position = m_length - 1); 
  }
 
- uint position(){
+ u32 position(){
   return m_position;
  }
 
- uint reads(T *dst, uint cnt, T* sym, ushort scnt){
-   uint rs = 0;
+ u32 reads(T *dst, u32 cnt, T* sym, u16 scnt){
+   u32 rs = 0;
    bool loop = true;
 
    if(!dst || !sym)

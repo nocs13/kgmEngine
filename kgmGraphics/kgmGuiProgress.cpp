@@ -7,7 +7,7 @@ kgmGuiProgress::kgmGuiProgress()
 
 }
 
-kgmGuiProgress::kgmGuiProgress(kgmGui *par, int x, int y, uint w, uint h)
+kgmGuiProgress::kgmGuiProgress(kgmGui *par, int x, int y, u32 w, u32 h)
 {
 
 }

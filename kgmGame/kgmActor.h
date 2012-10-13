@@ -24,7 +24,7 @@ class kgmActor: public kgmObject{
 public:
   struct Mesh{
     void* mesh;
-    uint vertices,
+    u32 vertices,
          faces,
          vsize,
          fsize,
@@ -50,10 +50,10 @@ protected:
   kgmList<kgmActor*> m_childs;
 
 public:
-  uint	 m_uid;
-  uint	 m_type;
-  uint	 m_state;
-  uint	 m_bearing;
+  u32	 m_uid;
+  u32	 m_type;
+  u32	 m_state;
+  u32	 m_bearing;
 
   bool   m_enable;
   bool   m_visible;
@@ -111,7 +111,7 @@ public:
     m_sections.add(sec);
   }
 
-  void set(uint sid, kgmSkeleton* s){
+  void set(u32 sid, kgmSkeleton* s){
     if(!s || sid >= m_sections.size())
       return;
 
@@ -122,14 +122,14 @@ public:
     //  p.mjoints.add(mtx4());
   }
 
-  void set(uint sid, kgmAnimation* a){
+  void set(u32 sid, kgmAnimation* a){
     if(!a || sid >= m_sections.size())
       return;
 
     m_sections[sid].animation = a;
   }
 
-  void set(uint sid, kgmMaterial* m){
+  void set(u32 sid, kgmMaterial* m){
     if(!m || sid >= m_sections.size())
       return;
 
@@ -141,7 +141,7 @@ public:
       m_dummies.add(m);
   }
 
-  void add(uint sid, kgmMesh* m){
+  void add(u32 sid, kgmMesh* m){
     if(!m || sid >= m_sections.size())
       return;
 
@@ -155,11 +155,11 @@ public:
    m_animation         = true;
   }
 
-  uint sections(){
+  u32 sections(){
     return m_sections.size();
   }
 
-  Section& section(uint i){
+  Section& section(u32 i){
     return m_sections[i];
   }
 };

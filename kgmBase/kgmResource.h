@@ -17,8 +17,8 @@ public:
  };
 public:
  kgmString  m_id;
- uint	    m_uid;
- uint       m_type;
+ u32	    m_uid;
+ u32       m_type;
 
 protected:
  ~kgmResource();

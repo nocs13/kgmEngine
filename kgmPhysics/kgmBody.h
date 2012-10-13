@@ -22,8 +22,8 @@ public:
  };
 
 
- uint	m_type;
- uint	m_shape;
+ u32	m_type;
+ u32	m_shape;
 
  bool	m_physics;		//valid physics object
  bool	m_collision;	//calculate collisions for this body

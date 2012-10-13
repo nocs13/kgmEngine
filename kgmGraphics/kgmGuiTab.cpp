@@ -6,7 +6,7 @@ kgmGuiTab::kgmGuiTab(){
   m_index  = 0;
 }
 
-kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, uint w, uint h)
+kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
 :kgmGui(par, x, y, w, h){
   m_index  = 0;
 }
@@ -15,7 +15,7 @@ kgmGuiTab::~kgmGuiTab(){
 }
 
 
-uint kgmGuiTab::set(uint k){
+u32 kgmGuiTab::set(u32 k){
   if((k < 0) || (k >= m_childs.size()))
     return m_index;
   
@@ -30,11 +30,11 @@ uint kgmGuiTab::set(uint k){
   return m_index;
 }
 
-uint kgmGuiTab::next(){
+u32 kgmGuiTab::next(){
   return set(m_index + 1);
 }
 
-uint kgmGuiTab::previous(){
+u32 kgmGuiTab::previous(){
   return set(m_index - 1);
 }
 

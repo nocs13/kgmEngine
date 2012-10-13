@@ -67,7 +67,7 @@ public:
    double y = (double)h / (double)rc.h;
    align(this, x, y);
   }
-  void onAction(kgmGui* g, uint a){
+  void onAction(kgmGui* g, u32 a){
   }
 };
 const char Gui::className[] = "Gui";

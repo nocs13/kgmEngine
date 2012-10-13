@@ -6,8 +6,8 @@
 class kgmSystem: public kgmInterface, public kgmObject
 {
 public:
- static void sleep(uint ms);
- static void getDesktopDimension(uint& w, uint& h);
+ static void sleep(u32 ms);
+ static void getDesktopDimension(u32& w, u32& h);
  static void getCurrentDirectory(kgmString&);
  static void setCurrentDirectory(kgmString&);
  static void getTemporaryDirectory(kgmString&);

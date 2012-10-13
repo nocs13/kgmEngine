@@ -39,10 +39,10 @@ typedef unsigned char ALCubyte;
 typedef short ALCshort;
 
 /** ALC 16bit unsigned short integer type. */
-typedef unsigned short ALCushort;
+typedef unsigned short ALCu16;
 
 /** ALC 32bit unsigned integer type. */
-typedef unsigned ALCuint;
+typedef unsigned ALCu32;
 
 /** ALC 32bit signed integer type. */
 typedef int ALCint;

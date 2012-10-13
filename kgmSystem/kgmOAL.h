@@ -22,10 +22,10 @@
 class kgmOAL: public kgmIAudio  
 {
   class _Sound: public Sound{
-    uint	buffer;
-    uint	source;
+    u32	buffer;
+    u32	source;
   public:
-    _Sound(uint buf, uint src);
+    _Sound(u32 buf, u32 src);
     virtual ~_Sound();
     void stop();
     void play(bool loop);
@@ -40,7 +40,7 @@ public:
   kgmOAL();
   virtual ~kgmOAL();
 
-  Sound* create(FMT fmt, ushort freq, uint size, void* data);
+  Sound* create(FMT fmt, u16 freq, u32 size, void* data);
   void 	 listener(vec3& pos, vec3& vel, vec3& ort);
 };
 

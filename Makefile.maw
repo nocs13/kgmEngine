@@ -1,6 +1,0 @@
-CC  = g++.exe
-DEFS = -DWIN32 
-FLGS = -ansi -g -c 
-DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem/inc -I./kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L$(CPATH)\lib -L./kgmSystem/lib
-LIBS = -lpthread -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32
-OBJS = *.o

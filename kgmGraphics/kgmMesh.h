@@ -34,7 +34,7 @@ public:
  struct Vertex{
    vec3 pos;
    vec3 nor;
-   uint col;
+   u32 col;
  };
 
  struct Vertex_P_N_C_T: public Vertex{
@@ -56,25 +56,25 @@ public:
 
  struct Face_16: public Face{
   union{
-   struct{ ushort a, b, c; };
-   ushort f[3];
+   struct{ u16 a, b, c; };
+   u16 f[3];
   };
  };
 
  struct Face_32: public Face{
   union{
-   struct{ uint a, b, c; };
-   uint f[3];
+   struct{ u32 a, b, c; };
+   u32 f[3];
   };
  };
 
 public:
  Vertex*	        	m_vertices;		//vertex buffer
- uint                           m_vcount;               //vertex count
+ u32                           m_vcount;               //vertex count
  Face*  			m_faces;		//face buffer
- uint                           m_fcount;               //face count
- uint				m_fvf;			//flexible vertex format
- uint                           m_fff;                  //flexible face format
+ u32                           m_fcount;               //face count
+ u32				m_fvf;			//flexible vertex format
+ u32                           m_fff;                  //flexible face format
 
 public:
  kgmMesh();
@@ -82,18 +82,18 @@ public:
 
  box3 bound();		//recalculate boundes(box, sphere, ...)
 
- Vertex*	vAlloc(uint count, FVF f=FVF_P_N_C);
- Face*		fAlloc(uint count, FFF f=FFF_16);
- uint		vsize();
- uint		fsize();
- uint		fvf();
- uint           fff();
+ Vertex*	vAlloc(u32 count, FVF f=FVF_P_N_C);
+ Face*		fAlloc(u32 count, FFF f=FFF_16);
+ u32		vsize();
+ u32		fsize();
+ u32		fvf();
+ u32           fff();
 
  ////
  Vertex*	vertices(){ return m_vertices; }
  Face*		faces(){ return m_faces; }
- uint           vcount(){ return m_vcount; }
- uint           fcount(){ return m_fcount; }
+ u32           vcount(){ return m_vcount; }
+ u32           fcount(){ return m_fcount; }
 };
 
 typedef kgmList<kgmMesh*> kgmMeshList;

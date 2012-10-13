@@ -22,8 +22,8 @@ inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
  }
 }
 
-inline uint WPARAM_KEY(WPARAM wPar){
- uint key = 0;
+inline u32 WPARAM_KEY(WPARAM wPar){
+ u32 key = 0;
  if(LOWORD(wPar) & MK_CONTROL) key |= KB_KEYCTRL;
  if(LOWORD(wPar) & MK_SHIFT)   key |= KB_KEYSHFT;
  if(LOWORD(wPar) & MK_ALT)     key |= KB_KEYALT;
@@ -32,7 +32,7 @@ inline uint WPARAM_KEY(WPARAM wPar){
  return key;
 }
 
-inline ushort keyTranslate(int key){
+inline u16 keyTranslate(int key){
  switch(key){
  case VK_ESCAPE:
 	 return KEY_ESCAPE;
@@ -129,7 +129,7 @@ inline ushort keyTranslate(int key){
 }
 
 
-long CALLBACK kgmWindow::WndProc(HWND hWnd, UINT msg, WPARAM wPar, LPARAM lPar){
+long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
  static bool set_cursor = false;
   kgmWindow* wnd = (kgmWindow*)GetWindowLong(hWnd, GWL_USERDATA);
   kgmEvent::Event evt;
@@ -303,7 +303,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
     None 
 };
 
-ushort keyTranslate(KeySym key){
+u16 keyTranslate(KeySym key){
  switch(key){
  case XK_Escape:
 	 return KEY_ESCAPE;
@@ -545,7 +545,7 @@ void kgmWindow::fullscreen(bool fs){
   return;
 
 #ifdef WIN32
- UINT iWidth, iHeight;
+ u32 iWidth, iHeight;
  DEVMODE Mode;
 
  iWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -670,7 +670,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h){
 #ifdef LINUX
  unsigned int  width, height, border, depth;
  Window dummy;
- XGetGeometry(m_dpy, m_wnd, &dummy, &x, &y, (uint*)&w, (uint*)&h, &border, &depth);
+ XGetGeometry(m_dpy, m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
 #endif
 }
 

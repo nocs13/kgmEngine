@@ -53,46 +53,46 @@ protected:
 
 public:
  void* m_texture;
- uint m_stage;
- uint m_type;
- uint m_flags;
+ u32 m_stage;
+ u32 m_type;
+ u32 m_flags;
 
- uint m_bpp;
- uint m_width;
- uint m_height;
+ u32 m_bpp;
+ u32 m_width;
+ u32 m_height;
 
- uint m_mag_filter;
- uint m_min_filter;
- uint m_wrap_s;
- uint m_wrap_t;
- uint m_border;
- uint m_priority;
+ u32 m_mag_filter;
+ u32 m_min_filter;
+ u32 m_wrap_s;
+ u32 m_wrap_t;
+ u32 m_border;
+ u32 m_priority;
 
- uint m_environment;
+ u32 m_environment;
 
- uint m_cmode_s;
- uint m_const_s;
+ u32 m_cmode_s;
+ u32 m_const_s;
  vec4 m_param_s;
- uint m_cmode_t;
- uint m_const_t;
+ u32 m_cmode_t;
+ u32 m_const_t;
  vec4 m_param_t;
- uint m_cmode_r;
- uint m_const_r;
+ u32 m_cmode_r;
+ u32 m_const_r;
  vec4 m_param_r;
- uint m_cmode_q;
- uint m_const_q;
+ u32 m_cmode_q;
+ u32 m_const_q;
  vec4 m_param_q;
 
  mtx4 m_transform;
 
 public:
  kgmTexture();
- kgmTexture(kgmIGraphics*, uint type);
+ kgmTexture(kgmIGraphics*, u32 type);
  ~kgmTexture();
 
- void start(uint);
+ void start(u32);
  void stop();
 
- void setFlags(uint f);
- void addFlags(uint f);
+ void setFlags(u32 f);
+ void addFlags(u32 f);
 };

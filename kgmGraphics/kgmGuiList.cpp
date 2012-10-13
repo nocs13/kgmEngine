@@ -72,7 +72,7 @@ void kgmGuiList::clear(){
  m_items.clear();
 }
 
-void kgmGuiList::onSelect(uint sel){
+void kgmGuiList::onSelect(u32 sel){
  m_parent->onAction(this, sel);
 }
 

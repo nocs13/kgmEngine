@@ -61,13 +61,13 @@ typedef unsigned char ALCubyte;
 typedef short ALCshort;
 
 /** unsigned 16-bit integer */
-typedef unsigned short ALCushort;
+typedef unsigned short ALCu16;
 
 /** signed 32-bit 2's complement integer */
 typedef int ALCint;
 
 /** unsigned 32-bit integer */
-typedef unsigned int ALCuint;
+typedef unsigned int ALCu32;
 
 /** non-negative 32-bit binary integer size */
 typedef int ALCsizei;
@@ -231,7 +231,7 @@ ALC_API void            ALC_APIENTRY alcGetIntegerv( ALCdevice *device, ALCenum 
 /*
  * Capture functions
  */
-ALC_API ALCdevice*      ALC_APIENTRY alcCaptureOpenDevice( const ALCchar *devicename, ALCuint frequency, ALCenum format, ALCsizei buffersize );
+ALC_API ALCdevice*      ALC_APIENTRY alcCaptureOpenDevice( const ALCchar *devicename, ALCu32 frequency, ALCenum format, ALCsizei buffersize );
 
 ALC_API ALCboolean      ALC_APIENTRY alcCaptureCloseDevice( ALCdevice *device );
 
@@ -259,7 +259,7 @@ typedef void *         (ALC_APIENTRY *LPALCGETPROCADDRESS)(ALCdevice *device, co
 typedef ALCenum        (ALC_APIENTRY *LPALCGETENUMVALUE)(ALCdevice *device, const ALCchar *enumname );
 typedef const ALCchar* (ALC_APIENTRY *LPALCGETSTRING)( ALCdevice *device, ALCenum param );
 typedef void           (ALC_APIENTRY *LPALCGETINTEGERV)( ALCdevice *device, ALCenum param, ALCsizei size, ALCint *dest );
-typedef ALCdevice *    (ALC_APIENTRY *LPALCCAPTUREOPENDEVICE)( const ALCchar *devicename, ALCuint frequency, ALCenum format, ALCsizei buffersize );
+typedef ALCdevice *    (ALC_APIENTRY *LPALCCAPTUREOPENDEVICE)( const ALCchar *devicename, ALCu32 frequency, ALCenum format, ALCsizei buffersize );
 typedef ALCboolean     (ALC_APIENTRY *LPALCCAPTURECLOSEDEVICE)( ALCdevice *device );
 typedef void           (ALC_APIENTRY *LPALCCAPTURESTART)( ALCdevice *device );
 typedef void           (ALC_APIENTRY *LPALCCAPTURESTOP)( ALCdevice *device );

@@ -307,7 +307,7 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id){
  return skel;
 }
 
-kgmFont* kgmGameResources::getFont(char* id, uint r, uint c){
+kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c){
  for(int i = 0; i < m_resources.size(); i++){
   if(!strcmp(id, m_resources[i]->m_id)){
    m_resources[i]->increment();

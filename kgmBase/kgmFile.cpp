@@ -14,7 +14,7 @@ kgmFile::~kgmFile(){
 }
 
 //////FUNCTIONS
-bool kgmFile::open(kgmCString& file, uint mode){
+bool kgmFile::open(kgmCString& file, u32 mode){
  if(mode & 0x01)
   m_file = fopen(file, "r+b");
  else
@@ -30,41 +30,41 @@ void kgmFile::close(){
  m_file = 0;
 }
 
-uint kgmFile::read(void *dst, uint cnt){
+u32 kgmFile::read(void *dst, u32 cnt){
  return fread(dst, 1, cnt, m_file);
 }
 
-uint kgmFile::write(void *src, uint cnt){
+u32 kgmFile::write(void *src, u32 cnt){
  return fwrite(src, 1, cnt, m_file);
 }
 
-uint kgmFile::append(void *src, uint cnt){
+u32 kgmFile::append(void *src, u32 cnt){
  return 0;
 }
 
-uint kgmFile::erase(uint from, uint size){
+u32 kgmFile::erase(u32 from, u32 size){
  return 0;
 }
 
-uint kgmFile::length(){
+u32 kgmFile::length(){
  long size = 0;
  long cpos = 0;
  cpos = ftell(m_file);
  fseek(m_file, 0, SEEK_END);
  size = ftell(m_file);
  fseek(m_file, cpos, SEEK_SET);
- return (uint)size;
+ return (u32)size;
 }
 
-uint kgmFile::length(uint len){
+u32 kgmFile::length(u32 len){
  return 0;
 }
 
-uint kgmFile::position(){
- return (uint)ftell(m_file);
+u32 kgmFile::position(){
+ return (u32)ftell(m_file);
 }
 
-uint kgmFile::seek(uint pos){
+u32 kgmFile::seek(u32 pos){
  return fseek(m_file, pos, SEEK_SET);
 }
 
@@ -72,7 +72,7 @@ bool kgmFile::eof(){
  return feof(m_file);
 }
 void* kgmFile::mmap(){
- uint size = 0;
+ u32 size = 0;
 
  if(!m_file)
   return 0;

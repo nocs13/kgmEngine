@@ -168,39 +168,39 @@ ALAPI ALvoid	ALAPIENTRY alGetListenerfv( ALenum param, ALfloat* values );
 
 
 /** Create Source objects. */
-ALAPI ALvoid	ALAPIENTRY alGenSources( ALsizei n, ALuint* sources ); 
+ALAPI ALvoid	ALAPIENTRY alGenSources( ALsizei n, ALu32* sources ); 
 
 /** Delete Source objects. */
-ALAPI ALvoid	ALAPIENTRY alDeleteSources( ALsizei n, ALuint* sources );
+ALAPI ALvoid	ALAPIENTRY alDeleteSources( ALsizei n, ALu32* sources );
 
 /** Verify a handle is a valid Source. */ 
-ALAPI ALboolean ALAPIENTRY alIsSource( ALuint id ); 
+ALAPI ALboolean ALAPIENTRY alIsSource( ALu32 id ); 
 
 /** Set an integer parameter for a Source object. */
-ALAPI ALvoid	ALAPIENTRY alSourcei( ALuint source, ALenum param, ALint value ); 
-ALAPI ALvoid	ALAPIENTRY alSourcef( ALuint source, ALenum param, ALfloat value ); 
-ALAPI ALvoid	ALAPIENTRY alSource3f( ALuint source, ALenum param, ALfloat v1, ALfloat v2, ALfloat v3 );
-ALAPI ALvoid	ALAPIENTRY alSourcefv( ALuint source, ALenum param, ALfloat* values ); 
+ALAPI ALvoid	ALAPIENTRY alSourcei( ALu32 source, ALenum param, ALint value ); 
+ALAPI ALvoid	ALAPIENTRY alSourcef( ALu32 source, ALenum param, ALfloat value ); 
+ALAPI ALvoid	ALAPIENTRY alSource3f( ALu32 source, ALenum param, ALfloat v1, ALfloat v2, ALfloat v3 );
+ALAPI ALvoid	ALAPIENTRY alSourcefv( ALu32 source, ALenum param, ALfloat* values ); 
 
 /** Get an integer parameter for a Source object. */
-ALAPI ALvoid	ALAPIENTRY alGetSourcei( ALuint source,  ALenum param, ALint* value );
-ALAPI ALvoid	ALAPIENTRY alGetSourcef( ALuint source,  ALenum param, ALfloat* value );
-ALAPI ALvoid	ALAPIENTRY alGetSource3f( ALuint source,  ALenum param, ALfloat* v1, ALfloat* v2, ALfloat* v3 );
-ALAPI ALvoid	ALAPIENTRY alGetSourcefv( ALuint source, ALenum param, ALfloat* values );
+ALAPI ALvoid	ALAPIENTRY alGetSourcei( ALu32 source,  ALenum param, ALint* value );
+ALAPI ALvoid	ALAPIENTRY alGetSourcef( ALu32 source,  ALenum param, ALfloat* value );
+ALAPI ALvoid	ALAPIENTRY alGetSource3f( ALu32 source,  ALenum param, ALfloat* v1, ALfloat* v2, ALfloat* v3 );
+ALAPI ALvoid	ALAPIENTRY alGetSourcefv( ALu32 source, ALenum param, ALfloat* values );
 
-ALAPI ALvoid	ALAPIENTRY alSourcePlayv( ALsizei n, ALuint *sources );
-ALAPI ALvoid	ALAPIENTRY alSourcePausev( ALsizei n, ALuint *sources );
-ALAPI ALvoid	ALAPIENTRY alSourceStopv( ALsizei n, ALuint *sources );
-ALAPI ALvoid	ALAPIENTRY alSourceRewindv(ALsizei n,ALuint *sources);
+ALAPI ALvoid	ALAPIENTRY alSourcePlayv( ALsizei n, ALu32 *sources );
+ALAPI ALvoid	ALAPIENTRY alSourcePausev( ALsizei n, ALu32 *sources );
+ALAPI ALvoid	ALAPIENTRY alSourceStopv( ALsizei n, ALu32 *sources );
+ALAPI ALvoid	ALAPIENTRY alSourceRewindv(ALsizei n,ALu32 *sources);
 
 /** Activate a source, start replay. */
-ALAPI ALvoid	ALAPIENTRY alSourcePlay( ALuint source );
+ALAPI ALvoid	ALAPIENTRY alSourcePlay( ALu32 source );
 
 /**
  * Pause a source, 
  *  temporarily remove it from the mixer list.
  */
-ALAPI ALvoid	ALAPIENTRY alSourcePause( ALuint source );
+ALAPI ALvoid	ALAPIENTRY alSourcePause( ALu32 source );
 
 /**
  * Stop a source,
@@ -209,14 +209,14 @@ ALAPI ALvoid	ALAPIENTRY alSourcePause( ALuint source );
  * To remove a Source completely, it has to be
  *  deleted following Stop, or before Play.
  */
-ALAPI ALvoid	ALAPIENTRY alSourceStop( ALuint source );
+ALAPI ALvoid	ALAPIENTRY alSourceStop( ALu32 source );
 
 /**
  * Rewinds a source, 
  *  temporarily remove it from the mixer list,
  *  and reset its internal state to pre-Play.
  */
-ALAPI ALvoid	ALAPIENTRY alSourceRewind( ALuint source );
+ALAPI ALvoid	ALAPIENTRY alSourceRewind( ALu32 source );
 
 
 
@@ -234,22 +234,22 @@ ALAPI ALvoid	ALAPIENTRY alSourceRewind( ALuint source );
 
 
 /** Buffer object generation. */
-ALAPI ALvoid 	ALAPIENTRY alGenBuffers( ALsizei n, ALuint* buffers );
-ALAPI ALvoid	ALAPIENTRY alDeleteBuffers( ALsizei n, ALuint* buffers );
-ALAPI ALboolean ALAPIENTRY alIsBuffer( ALuint buffer );
+ALAPI ALvoid 	ALAPIENTRY alGenBuffers( ALsizei n, ALu32* buffers );
+ALAPI ALvoid	ALAPIENTRY alDeleteBuffers( ALsizei n, ALu32* buffers );
+ALAPI ALboolean ALAPIENTRY alIsBuffer( ALu32 buffer );
 
 /**
  * Specify the data to be filled into a buffer.
  */
-ALAPI ALvoid	ALAPIENTRY alBufferData( ALuint   buffer,
+ALAPI ALvoid	ALAPIENTRY alBufferData( ALu32   buffer,
 										 ALenum   format,
 										 ALvoid*  data,
 										 ALsizei  size,
 										 ALsizei  freq );
 
 
-ALAPI ALvoid	ALAPIENTRY alGetBufferi( ALuint buffer, ALenum param, ALint*   value );
-ALAPI ALvoid	ALAPIENTRY alGetBufferf( ALuint buffer, ALenum param, ALfloat* value );
+ALAPI ALvoid	ALAPIENTRY alGetBufferi( ALu32 buffer, ALenum param, ALint*   value );
+ALAPI ALvoid	ALAPIENTRY alGetBufferf( ALu32 buffer, ALenum param, ALfloat* value );
 
 
 
@@ -258,8 +258,8 @@ ALAPI ALvoid	ALAPIENTRY alGetBufferf( ALuint buffer, ALenum param, ALfloat* valu
  * Queue stuff
  */
 
-ALAPI ALvoid	ALAPIENTRY alSourceQueueBuffers( ALuint source, ALsizei n, ALuint* buffers );
-ALAPI ALvoid	ALAPIENTRY alSourceUnqueueBuffers( ALuint source, ALsizei n, ALuint* buffers );
+ALAPI ALvoid	ALAPIENTRY alSourceQueueBuffers( ALu32 source, ALsizei n, ALu32* buffers );
+ALAPI ALvoid	ALAPIENTRY alSourceUnqueueBuffers( ALu32 source, ALsizei n, ALu32* buffers );
 
 /**
  * Knobs and dials
@@ -388,36 +388,36 @@ ALAPI ALvoid	ALAPIENTRY (*alGetListenerfv)( ALenum param, ALfloat* values );
 
 
 /** Create Source objects. */
-ALAPI ALvoid	ALAPIENTRY (*alGenSources)( ALsizei n, ALuint* sources ); 
+ALAPI ALvoid	ALAPIENTRY (*alGenSources)( ALsizei n, ALu32* sources ); 
 
 /** Delete Source objects. */
-ALAPI ALvoid	ALAPIENTRY (*alDeleteSources)( ALsizei n, ALuint* sources );
+ALAPI ALvoid	ALAPIENTRY (*alDeleteSources)( ALsizei n, ALu32* sources );
 
 /** Verify a handle is a valid Source. */ 
-ALAPI ALboolean ALAPIENTRY (*alIsSource)( ALuint id ); 
+ALAPI ALboolean ALAPIENTRY (*alIsSource)( ALu32 id ); 
 
 /** Set an integer parameter for a Source object. */
-ALAPI ALvoid	ALAPIENTRY (*alSourcei)( ALuint source, ALenum param, ALint value ); 
-ALAPI ALvoid	ALAPIENTRY (*alSourcef)( ALuint source, ALenum param, ALfloat value ); 
-ALAPI ALvoid	ALAPIENTRY (*alSource3f)( ALuint source, ALenum param, ALfloat v1, ALfloat v2, ALfloat v3 );
-ALAPI ALvoid	ALAPIENTRY (*alSourcefv)( ALuint source, ALenum param, ALfloat* values ); 
+ALAPI ALvoid	ALAPIENTRY (*alSourcei)( ALu32 source, ALenum param, ALint value ); 
+ALAPI ALvoid	ALAPIENTRY (*alSourcef)( ALu32 source, ALenum param, ALfloat value ); 
+ALAPI ALvoid	ALAPIENTRY (*alSource3f)( ALu32 source, ALenum param, ALfloat v1, ALfloat v2, ALfloat v3 );
+ALAPI ALvoid	ALAPIENTRY (*alSourcefv)( ALu32 source, ALenum param, ALfloat* values ); 
 
 /** Get an integer parameter for a Source object. */
-ALAPI ALvoid	ALAPIENTRY (*alGetSourcei)( ALuint source,  ALenum param, ALint* value );
-ALAPI ALvoid	ALAPIENTRY (*alGetSourcef)( ALuint source,  ALenum param, ALfloat* value );
-ALAPI ALvoid	ALAPIENTRY (*alGetSourcefv)( ALuint source, ALenum param, ALfloat* values );
+ALAPI ALvoid	ALAPIENTRY (*alGetSourcei)( ALu32 source,  ALenum param, ALint* value );
+ALAPI ALvoid	ALAPIENTRY (*alGetSourcef)( ALu32 source,  ALenum param, ALfloat* value );
+ALAPI ALvoid	ALAPIENTRY (*alGetSourcefv)( ALu32 source, ALenum param, ALfloat* values );
 
-ALAPI ALvoid	ALAPIENTRY (*alSourcePlayv)( ALsizei n, ALuint *sources );
-ALAPI ALvoid	ALAPIENTRY (*alSourceStopv)( ALsizei n, ALuint *sources );
+ALAPI ALvoid	ALAPIENTRY (*alSourcePlayv)( ALsizei n, ALu32 *sources );
+ALAPI ALvoid	ALAPIENTRY (*alSourceStopv)( ALsizei n, ALu32 *sources );
 
 /** Activate a source, start replay. */
-ALAPI ALvoid	ALAPIENTRY (*alSourcePlay)( ALuint source );
+ALAPI ALvoid	ALAPIENTRY (*alSourcePlay)( ALu32 source );
 
 /**
  * Pause a source, 
  *  temporarily remove it from the mixer list.
  */
-ALAPI ALvoid	ALAPIENTRY (*alSourcePause)( ALuint source );
+ALAPI ALvoid	ALAPIENTRY (*alSourcePause)( ALu32 source );
 
 /**
  * Stop a source,
@@ -426,7 +426,7 @@ ALAPI ALvoid	ALAPIENTRY (*alSourcePause)( ALuint source );
  * To remove a Source completely, it has to be
  *  deleted following Stop, or before Play.
  */
-ALAPI ALvoid	ALAPIENTRY (*alSourceStop)( ALuint source );
+ALAPI ALvoid	ALAPIENTRY (*alSourceStop)( ALu32 source );
 
 
 
@@ -444,21 +444,21 @@ ALAPI ALvoid	ALAPIENTRY (*alSourceStop)( ALuint source );
 
 
 /** Buffer object generation. */
-ALAPI ALvoid 	ALAPIENTRY (*alGenBuffers)( ALsizei n, ALuint* buffers );
-ALAPI ALvoid	ALAPIENTRY (*alDeleteBuffers)( ALsizei n, ALuint* buffers );
-ALAPI ALboolean ALAPIENTRY (*alIsBuffer)( ALuint buffer );
+ALAPI ALvoid 	ALAPIENTRY (*alGenBuffers)( ALsizei n, ALu32* buffers );
+ALAPI ALvoid	ALAPIENTRY (*alDeleteBuffers)( ALsizei n, ALu32* buffers );
+ALAPI ALboolean ALAPIENTRY (*alIsBuffer)( ALu32 buffer );
 
 /**
  * Specify the data to be filled into a buffer.
  */
-ALAPI ALvoid	ALAPIENTRY (*alBufferData)( ALuint   buffer,
+ALAPI ALvoid	ALAPIENTRY (*alBufferData)( ALu32   buffer,
 											ALenum   format,
 											ALvoid*  data,
 											ALsizei  size,
 											ALsizei  freq );
 
-ALAPI ALvoid	ALAPIENTRY (*alGetBufferi)( ALuint buffer, ALenum param, ALint*   value );
-ALAPI ALvoid	ALAPIENTRY (*alGetBufferf)( ALuint buffer, ALenum param, ALfloat* value );
+ALAPI ALvoid	ALAPIENTRY (*alGetBufferi)( ALu32 buffer, ALenum param, ALint*   value );
+ALAPI ALvoid	ALAPIENTRY (*alGetBufferf)( ALu32 buffer, ALenum param, ALfloat* value );
 
 
 
@@ -466,8 +466,8 @@ ALAPI ALvoid	ALAPIENTRY (*alGetBufferf)( ALuint buffer, ALenum param, ALfloat* v
 /**
  * Queue stuff
  */
-ALAPI ALvoid	ALAPIENTRY (*alSourceQueueBuffers)( ALuint source, ALsizei n, ALuint* buffers );
-ALAPI ALvoid	ALAPIENTRY (*alSourceUnqueueBuffers)( ALuint source, ALsizei n, ALuint* buffers );
+ALAPI ALvoid	ALAPIENTRY (*alSourceQueueBuffers)( ALu32 source, ALsizei n, ALu32* buffers );
+ALAPI ALvoid	ALAPIENTRY (*alSourceUnqueueBuffers)( ALu32 source, ALsizei n, ALu32* buffers );
 
 /**
  * Knobs and dials

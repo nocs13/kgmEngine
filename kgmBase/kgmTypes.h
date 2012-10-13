@@ -5,12 +5,9 @@
   #define null 0L
 #endif
 
-typedef bool boolean;
-
-typedef char                byte;
-typedef unsigned char       uchar;
-typedef unsigned short      ushort;
-typedef unsigned int        uint;
+#ifndef nil
+  #define nil 0L
+#endif
 
 typedef unsigned char			u8;
 typedef unsigned short			u16;
@@ -24,7 +21,7 @@ typedef float				f32;
 typedef double				f64;
 
 typedef int64_t				s64;
-typedef uint64_t			u64;
+typedef int64_t         		u64;
 
 /*#ifdef WIN32
  typedef __int64		u64;

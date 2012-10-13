@@ -24,7 +24,7 @@ public:
 
 public:
  kgmList<Particle*> m_particles;
- uint				m_count;
+ u32				m_count;
  bool				m_loop;
  bool				m_fade;
  bool				m_alpha;

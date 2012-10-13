@@ -75,7 +75,7 @@ public:
             *m_tex_normal;
 
  Shader      m_shader;
- uint        m_flags;            //render specisific flags enable/disable
+ u32        m_flags;            //render specisific flags enable/disable
 public:
  kgmMaterial();
  ~kgmMaterial();

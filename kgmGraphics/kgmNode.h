@@ -54,7 +54,7 @@ public:
     mtx4*         transform;
   };
 
-  uint              type;
+  u32              type;
   kgmList<kgmNode*> nodes;
 
 public:
@@ -73,7 +73,7 @@ public:
 
   void     print();
   bool     erase(kgmNode* node);
-  kgmNode* find(uint type, void* o);
+  kgmNode* find(u32 type, void* o);
   
   //virtual void add(kgmNode* n) { nodes.add(n); }
   virtual void     add(kgmNode* n);

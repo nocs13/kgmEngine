@@ -178,13 +178,13 @@ void kgmGameGraphics::render(kgmMaterial* m){
     tspecular = m->m_tex_specular->m_texture;
   }
 
-  kgmShader* s = shaders[(ushort)m->m_shader];
+  kgmShader* s = shaders[(u16)m->m_shader];
   if(!s)
     s = shaders[kgmMaterial::ShaderNone];
   render(s, m->m_shader);
 }
 
-void kgmGameGraphics::render(kgmShader* s, uint t){
+void kgmGameGraphics::render(kgmShader* s, u32 t){
   vec4 vAmbient(1, 1, 1, 1);
   vec4 vLight(1, 1, 1, 1);
 
@@ -235,11 +235,11 @@ void kgmGameGraphics::render(kgmGui* gui){
     gui->getText(text);
 
     if(gui->isClass(kgmGuiButton::Class)){
-      uint fwidth = (uint)((float)rect.w / (float)(text.length() + 1));
-      uint fheight = (uint)((float)rect.h * (float)0.75f);
-      uint tlen = text.length();
-      uint fw = (tlen) * fwidth;
-      uint fh = fheight;
+      u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
+      u32 fheight = (u32)((float)rect.h * (float)0.75f);
+      u32 tlen = text.length();
+      u32 fw = (tlen) * fwidth;
+      u32 fh = fheight;
       kgmGui::Rect tClip = rect;
 
       tClip.x = rect.x + rect.w / 2 - fw / 2;
@@ -261,9 +261,9 @@ void kgmGameGraphics::render(kgmGui* gui){
       gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, tClip, text);
     }else if(gui->isClass(kgmGuiScroll::Class)){
     }else if(gui->isClass(kgmGuiList::Class)){
-      uint fontHeight = ((kgmGuiList*)gui)->m_itemHeight - 2;
-      uint item_cnt = ((kgmGuiList*)gui)->m_items.size();
-      uint item_view = ((kgmGuiList*)gui)->m_itemHeight;
+      u32 fontHeight = ((kgmGuiList*)gui)->m_itemHeight - 2;
+      u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
+      u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
       kgmGui::Rect frect;
 
       //Draw Main Rect
@@ -278,7 +278,7 @@ void kgmGameGraphics::render(kgmGui* gui){
       for(int i = ((kgmGuiList*)gui)->m_position; i < (((kgmGuiList*)gui)->m_position + item_view); i++){
         if(i >= item_cnt) continue;
         kgmString item; item = ((kgmGuiList*)gui)->m_items[i];
-        uint a = (i - ((kgmGuiList*)gui)->m_position);
+        u32 a = (i - ((kgmGuiList*)gui)->m_position);
         kgmGui::Rect clip(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a,
                           rect.w, ((kgmGuiList*)gui)->m_itemHeight);
 
@@ -305,8 +305,8 @@ void kgmGameGraphics::render(kgmGui* gui){
 }
 
 //*************** DRAWING ***************
-void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, uint col, void* tex){
-  typedef struct{  vec3 pos;  uint col;  vec2 uv; } V;
+void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, void* tex){
+  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
   v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 0);
@@ -321,10 +321,10 @@ void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, uint col, void* tex){
    gc->gcSetTexture(0, 0);
 }
 
-void kgmGameGraphics::gcDrawText(kgmFont* font, uint fwidth, uint fheight, uint fcolor, kgmGui::Rect clip, kgmString& text){
-  typedef struct{ vec3 pos; uint col; vec2 uv; } V;
+void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text){
+  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
-  uint tlen = text.length();
+  u32 tlen = text.length();
 
   if(tlen < 1)
    return;
@@ -341,7 +341,7 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, uint fwidth, uint fheight, uint 
   gc->gcBlend(true, gcblend_one, gcblend_one);
   gc->gcSetTexture(0, font->m_texture);
 
-  for(uint i = 0; i < tlen; i++){
+  for(u32 i = 0; i < tlen; i++){
    char ch = text[i];
 
    if(ch == '\n'){ cx = (float)clip.x, cy += fheight; continue; }

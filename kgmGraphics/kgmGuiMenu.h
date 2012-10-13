@@ -15,7 +15,7 @@ public:
  class Item{
  protected:
   ItemType   type;
-  uint       id;
+  u32       id;
   kgmString  title;
   
   bool active;

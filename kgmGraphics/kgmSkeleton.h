@@ -39,21 +39,21 @@ public:
  void update(){
   m_matrices.clear();
   m_imatrices.clear();
-  for(uint i = 0; i < m_joints.size(); i++){
+  for(u32 i = 0; i < m_joints.size(); i++){
    mtx4 m = mtx4(m_joints[i]->r, m_joints[i]->v);
    m_matrices.add(m);
    m.invert();
    m_imatrices.add(m);
   }
  }
- void getTMBones(mtx4 *pbm, uint cnt){
+ void getTMBones(mtx4 *pbm, u32 cnt){
   if(!pbm || (cnt != m_joints.size())) 
 	return;
-  for(uint i = 0; i < m_joints.size(); i++){
+  for(u32 i = 0; i < m_joints.size(); i++){
    pbm[i] = mtx4(m_joints[i]->r, m_joints[i]->v);
   }
  }
- void getTM(mtx4& m, uint i){
+ void getTM(mtx4& m, u32 i){
  
  }
 };

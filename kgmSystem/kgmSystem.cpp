@@ -29,7 +29,7 @@ struct CPU
 
 #endif
 
-void kgmSystem::sleep(uint ms){
+void kgmSystem::sleep(u32 ms){
 #ifdef WIN32
   Sleep(ms);
 #elif defined LINUX
@@ -104,7 +104,7 @@ bool kgmSystem::getCpuData(int& cpu_count, int& cpu_cores){
   return true;
 }
 
-void kgmSystem::getDesktopDimension(uint& w, uint& h){
+void kgmSystem::getDesktopDimension(u32& w, u32& h){
 #ifdef WIN32
   w = GetDeviceCaps(GetDC(GetDesktopWindow()), HORZRES);
   h = GetDeviceCaps(GetDC(GetDesktopWindow()), VERTRES);

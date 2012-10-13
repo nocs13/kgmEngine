@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-typedef unsigned int uint;
+typedef unsigned int u32;
 
 class kgmXml  
 {

@@ -2,7 +2,7 @@
 #include "kgmObject.h"
 #include "malloc.h"
 
-typedef unsigned int uint;
+typedef unsigned int u32;
 ////////// Hash Tab
 
 template<class Key, class Value> 
@@ -44,7 +44,7 @@ public:
   return len;
  }
 
- bool get(uint index, Key& key, Value& value){
+ bool get(u32 index, Key& key, Value& value){
   _Node* node = _index(index);
   if(node == 0)
     return false;
@@ -81,9 +81,9 @@ private:
   return node;
  }
 
- _Node* _index(uint i){
+ _Node* _index(u32 i){
   _Node* node = m_nodes;
-  uint index = 0;
+  u32 index = 0;
   while(node){
    if(i == index)
     return node;

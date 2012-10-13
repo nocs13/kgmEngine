@@ -1,22 +1,14 @@
-OS = $(shell uname -s)
-RM = 
+include Makefile.mac
+#OS = $(shell uname -s)
+#RM = 
 
-ifeq ($(OS), Linux)
-	RM = rm
-else
-	RM = del
-endif
+#ifeq ($(OS), Linux)
+#	RM = rm
+#else
+#	RM = del
+#endif
 
 all:
-	echo "clear all..."
-	$(RM) -f kgmBase/*.o
-	$(RM) -f kgmMath/*.o
-	$(RM) -f kgmGraphics/*.o
-	$(RM) -f kgmPhysics/*.o
-	$(RM) -f kgmGame/*.o
-	$(RM) -f libkgmEngine.a
-	$(RM) -f libkgmEngine.so
-
 	echo "compiling..."
 	make -C kgmBase -f Makefile
 	make -C kgmMath -f Makefile
@@ -36,25 +28,18 @@ all:
 	echo "building"
 	$(CC) -shared -o libkgmEngine.so $(DEFS) $(OBJS) $(DIRS) $(LIBS)
 
-	echo "clear..."
-	$(RM) -f kgmMath/*.o
-	$(RM) -f kgmBase/*.o
-	$(RM) -f kgmSystem/*.o
-	$(RM) -f kgmGraphics/*.o
-	$(RM) -f kgmPhysics/*.o
-	$(RM) -f kgmGame/*.o
-	$(RM) -f *.o
-
 clean:
 	echo "clear all..."
-	$(RM) -f kgmBase/*.o
-	$(RM) -f kgmMath/*.o
-	$(RM) -f kgmSystem/*.o
-	$(RM) -f kgmGraphics/*.o
-	$(RM) -f kgmPhysics/*.o
-	$(RM) -f kgmGame/*.o
-	$(RM) -f libkgmEngine.a
-	$(RM) -f libkgmEngine.so
+	$(RM) kgmBase/*.o
+	$(RM) kgmMath/*.o
+	$(RM) kgmSystem/*.o
+	$(RM) kgmGraphics/*.o
+	$(RM) kgmPhysics/*.o
+	$(RM) kgmGame/*.o
+	
+distclean: clean	
+	$(RM) libkgmEngine.a
+	$(RM) libkgmEngine.so
 
 kgmBase:	
 	make -C kgmBase -f Makefile

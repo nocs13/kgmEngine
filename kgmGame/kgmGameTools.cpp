@@ -17,8 +17,8 @@ kgmGameTools::~kgmGameTools(){
 }
 
 //*************** DRAWING ***************
-void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, uint col, void* tex){
-  typedef struct{  vec3 pos;  uint col;  vec2 uv; } V;
+void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex){
+  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
   v[0].pos = vec3(x,     y,     0); v[0].col = col; v[0].uv = vec2(0, 0);
@@ -35,8 +35,8 @@ void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, uint
    gc->gcSetTexture(0, 0);
 }
 
-void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, uint col, kgmString& text){
-  typedef struct{ vec3 pos; uint col; vec2 uv; } V;
+void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
+  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
   kgmRect<int> clip(x, y, x + w, y + h);
 
@@ -46,7 +46,7 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
   if(!font || !font->m_texture)
    return;
 
-  uint tlen = text.length();
+  u32 tlen = text.length();
   float tx = 0.0f, ty = 0.0f;
   float tdx = (float)(1.f / font->m_cols),
 	tdy = (float)(1.f / font->m_rows);
@@ -58,7 +58,7 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
   gc->gcSetTexture(0, font->m_texture);
 
 
-  for(uint i = 0; i < tlen; i++){
+  for(u32 i = 0; i < tlen; i++){
    char ch = text[i];
 
    if(ch == '\n'){ 
@@ -91,7 +91,7 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
 
 kgmPicture* kgmGameTools::genPicture(kgmMemory<char>& m)
 {
- uint id_tga = 0x00020000;
+ u32 id_tga = 0x00020000;
  if(m.empty())
   return 0;
  if(!memcmp("BM", m.data(), 2))
@@ -106,16 +106,16 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
   if(m.empty())
     return 0;
 
-  ushort f_type;
-  uint   f_size;
-  ushort f_res0,f_res1;
-  uint   f_boffs;
-  uint   b_size;
+  u16 f_type;
+  u32   f_size;
+  u16 f_res0,f_res1;
+  u32   f_boffs;
+  u32   b_size;
   long   b_width,b_height;
-  ushort b_planes,b_btcnt;
-  uint   b_compr,b_sizeimg;
+  u16 b_planes,b_btcnt;
+  u32   b_compr,b_sizeimg;
   long   b_xppm,b_yppm;
-  uint   b_clus,b_climp;
+  u32   b_clus,b_climp;
   char*  pm = (char*)m.data();
 
   int   width = 0;
@@ -151,14 +151,14 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
    return 0;
 
   if(b_btcnt == 8){
-   uint r_size = b_width * b_height;
-   pdata = new uint[r_size];
-   uint *pal = new uint[256];
+   u32 r_size = b_width * b_height;
+   pdata = new u32[r_size];
+   u32 *pal = new u32[256];
    memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
-   for(uint i = 0; i < r_size; i++){
+   for(u32 i = 0; i < r_size; i++){
     uchar ind = 0;
     memcpy(&ind, pm, 1);	pm += 1;
-	((uint*)pdata)[i] = pal[ind];
+	((u32*)pdata)[i] = pal[ind];
    }
    width = b_width;
    height = b_height;
@@ -167,7 +167,7 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
    return new kgmPicture(width, height, bpp, frames, pdata);
   }
 
-  uint r_size = b_width * b_height * (b_btcnt/8);
+  u32 r_size = b_width * b_height * (b_btcnt/8);
   pdata = new char[r_size];
   memcpy(pdata, pm, r_size);//////
   width = b_width;
@@ -184,7 +184,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
 
   uchar   idl, cmp, dt, btcnt, dsc;
   uchar   clmap[5];
-  ushort  xorgn, yorgn, w, h;
+  u16  xorgn, yorgn, w, h;
   char*   pm = (char*)m.data();
 
   int   width = 0;
@@ -211,11 +211,11 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
    if((btcnt != 32))
     return 0;
 
-  uint r_size = w * h * (btcnt/8);
+  u32 r_size = w * h * (btcnt/8);
   pm += idl;
   pdata = new char[r_size];
   memcpy(pdata, pm, r_size);
-  uint k = (uint)((uint*)pdata)[0];
+  u32 k = (u32)((u32*)pdata)[0];
   width = w;
   height = h;
   bpp = btcnt;
@@ -228,7 +228,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
  kgmPicture* pic = genPicture(m);
  if(!pic)
 	 return 0;
- uint fmt = gctex_fmt32;
+ u32 fmt = gctex_fmt32;
  switch(pic->bpp){
  case 8:
 	 fmt = gctex_fmt8;
@@ -253,12 +253,12 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
  return tex;
 }
 
-kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, uint w, uint h, uint r, uint c, kgmMemory<char>& m)
+kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m)
 {
  kgmPicture* pic = genPicture(m);
  if(!pic)
 	 return 0;
- uint fmt = gctex_fmt32;
+ u32 fmt = gctex_fmt32;
  switch(pic->bpp){
  case 8:
 	 fmt = gctex_fmt8;
@@ -295,7 +295,7 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
 
   mem_fsh = (char*)strstr((char*)s, "//Fragment Shader");
   if(mem_fsh){
-   uint sh_s = (uint)mem_fsh - (uint)s.data();
+   u32 sh_s = (u32)mem_fsh - (u32)s.data();
    mem_vsh = (char*)malloc(sh_s + 1);
    memcpy(mem_vsh, s.data(), sh_s);
    mem_vsh[sh_s] = '\0';
@@ -327,7 +327,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<char>& m){
  char* key = 0;
  char* val = 0;
  char* p   = (char*)m.data();
- uint  i   = 0;
+ u32  i   = 0;
  float farr[4];
 
  if(m.empty())
@@ -430,7 +430,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<char>& m){
  char* key = 0;
  char* val = 0;
  char* p   = (char*)m;
- uint  i   = 0;
+ u32  i   = 0;
 
  if(m.empty())
   return 0;
@@ -678,8 +678,8 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
     strcpy(m->m_id, val);
    }
    if(!strcmp(key, "Vertices")){
-    uint count = 0;
-    uint maps  = 0;
+    u32 count = 0;
+    u32 maps  = 0;
     kgmMesh::Vertex_P_N_C_T2*  v = 0;
     sscanf(str, "%s %i %i", key, &count, &maps);
     v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
@@ -693,14 +693,14 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
     }
    }
    if(!strcmp(key, "Faces")){
-    uint count = 0;
+    u32 count = 0;
 	kgmMesh::Face_16*   f = 0;
-	kgmArray<ushort> fmaps;
+	kgmArray<u16> fmaps;
         sscanf(str, "%s %i", key, &count);
 	f = (kgmMesh::Face_16*)m->fAlloc(count);
 	fmaps.realloc(count);
 	for(int i = 0; i < count; i++){
-          uint fi[3];
+          u32 fi[3];
           mm.reads(str, 512, "\n", 1);
           sscanf(str, "%i %i %i %i", &fi[0], &fi[1], &fi[2]);
 	  f[i].a = fi[0];
@@ -709,14 +709,14 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
 	}
    }
    if(!strcmp(key, "Skin")){
-   	uint count = 0;
+   	u32 count = 0;
         sscanf(str, "%s %i", key, &count);
         kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
         memcpy(v, m->vertices(), m->vcount() * m->vsize());
         kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
 	for(int i = 0; i < count; i++){
-	 uint  nw = 0;
-	 uint  bi[4] = {0};
+	 u32  nw = 0;
+	 u32  bi[4] = {0};
 	 float bw[4] = {0.0f};
 	 mm.reads(str, 512, "\n", 1);
          sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
@@ -766,7 +766,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
     mnode->node(i)->id(id);
 
     if(id == "Vertices"){
-      uint count = 0;
+      u32 count = 0;
       kgmMesh::Vertex_P_N_C_T2*  v = 0;
 
       mnode->node(i)->attribute("length", val);
@@ -775,17 +775,17 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	uint rd;
+	u32 rd;
 	sscanf(p, "%f %f %f %f %f %f %f %f %n",
 	       &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
 	       &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
 	       &v[i].uv[0].x, &v[i].uv[0].y, &rd);
 	v[i].col = 0xffffffff;
-	p = (char*)((uint)p + rd);
+	p = (char*)((u32)p + rd);
       }
       fprintf(stderr, "\nEnd vertices");
     }else if(id == "Faces"){
-      uint count = 0;
+      u32 count = 0;
       kgmMesh::Face_16*   f = 0;
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
@@ -793,16 +793,16 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	uint fi[3], rd;
+	u32 fi[3], rd;
 	sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
 	f[i].a = fi[0];
 	f[i].b = fi[1];
 	f[i].c = fi[2];
-	p = (char*)((uint)p + rd);
+	p = (char*)((u32)p + rd);
       }
       fprintf(stderr, "\nEnd faces");
     }else if(id == "Skin"){
-      uint count = 0;
+      u32 count = 0;
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
       kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
@@ -811,8 +811,8 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	uint  nw = 0, rd = 0;
-	uint  bi[4] = {0};
+	u32  nw = 0, rd = 0;
+	u32  bi[4] = {0};
 	float bw[4] = {0.0f};
 	sscanf(p, "%i %i %i %i %f %f %f %f %n", &nw,
 	       &bi[0], &bi[1], &bi[2], &bi[3],
@@ -829,7 +829,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 	s[i].nor = v[i].nor;
 	s[i].col = v[i].col;
 	s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
-	p = (char*)((uint)p + rd);
+	p = (char*)((u32)p + rd);
       }
       delete [] v;
       fprintf(stderr, "\nEnd skin");

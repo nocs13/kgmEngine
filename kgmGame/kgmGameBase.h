@@ -54,10 +54,10 @@ protected:
  kgmSystem*         m_system;
  //kgmGraphics*       m_render;
 
- uint		    m_width;
- uint		    m_height;
- uint		    m_bpp;
- uint		    m_fullscreen;
+ u32		    m_width;
+ u32		    m_height;
+ u32		    m_bpp;
+ u32		    m_fullscreen;
 
  kgmFont*       m_font;
  kgmString      m_paths;
@@ -108,7 +108,7 @@ public:
  void onMsMove(int k, int x, int y);
  void onResize(int w, int h);
  void onPaint(kgmIGraphics*);
- void onAction(kgmGui* e, uint arg);
+ void onAction(kgmGui* e, u32 arg);
 
  void onInputAction(int action, int argument);
 
@@ -117,7 +117,7 @@ public:
  int  gUnload();     //load game level
  int  gCommand(kgmString);  //do string command
  int  gQuit();              //quit from level
- uint gState();             //check game state
+ u32 gState();             //check game state
  void gRender();            //render game scene
  void gLogic();             //do game logic  & Physics
 

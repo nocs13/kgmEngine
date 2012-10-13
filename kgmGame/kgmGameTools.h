@@ -23,15 +23,15 @@ public:
  kgmGameTools();
  virtual ~kgmGameTools();
 //  DRAWING 
- static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, uint col, void* tex);
- static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, uint col, kgmString& text);
+ static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex);
+ static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
 
 //  PICTURE & TEXTURE & FONT
  static kgmPicture* genPicture(kgmMemory<char>& m);
  static kgmPicture* genPictureFromBmp(kgmMemory<char>& m);
  static kgmPicture* genPictureFromTga(kgmMemory<char>& m);
  static kgmTexture* genTexture(kgmIGraphics* gc, kgmMemory<char>& m);
- static kgmFont*    genFont(kgmIGraphics* gc, uint w, uint h, uint r, uint c, kgmMemory<char>& m);
+ static kgmFont*    genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m);
 
 // SHADER & MATERIAL
  static kgmMaterial*  genMaterial(kgmMemory<char>& m);

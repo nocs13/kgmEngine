@@ -18,7 +18,7 @@
 KGMOBJECT_IMPLEMENT(kgmFrustum,		kgmObject);
 KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
-const uint  m_mapdim = 512;
+const u32  m_mapdim = 512;
 const float m_lfov = DEGTORAD(190.0);//default 120
 
 uchar     g_azero[] = {0x00, 0x00, 0x00, 0x00};
@@ -54,7 +54,7 @@ kgmGraphics::kgmGraphics(kgmWindow* w, kgmIResources* r)
   textures.add((u16)0, gc->gcGenTexture(txd, 2, 2, 32, 0) );
   //generic white texture
   memset(txd, 0xffffffff, sizeof(txd));
-  textures.add((ushort)1, gc->gcGenTexture(txd, 2, 2, 32, 0) );
+  textures.add((u16)1, gc->gcGenTexture(txd, 2, 2, 32, 0) );
 
   //create nessessary shaders
   registration(kgmMaterial::ShaderNone, rc->getShader((const char*)"light.glsl"));
@@ -83,14 +83,14 @@ kgmGraphics::~kgmGraphics()
   }
   
   for(int i = 0; i < textures.length(); i++){
-    ushort k;
+    u16 k;
     void* v;
     textures.get(i, k, v);
     gc->gcFreeTexture(v);
   }
 
   for(int i = 0; i < shaders.length(); i++){
-    ushort k;
+    u16 k;
     kgmShader* v;
     shaders.get(i, k, v);
     rc->remove(v);
@@ -292,11 +292,11 @@ void kgmGraphics::render(kgmGuiButton* gui){
   gui->getRect(rect, true);
   gui->getText(text);
 
-  uint fwidth = (uint)((float)rect.w / (float)(text.length() + 1));
-  uint fheight = (uint)((float)rect.h * (float)0.75f);
-  uint tlen = text.length();
-  uint fw = (tlen) * fwidth;
-  uint fh = fheight;
+  u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
+  u32 fheight = (u32)((float)rect.h * (float)0.75f);
+  u32 tlen = text.length();
+  u32 fw = (tlen) * fwidth;
+  u32 fh = fheight;
   kgmGui::Rect tClip = rect;
 
   tClip.x = rect.x + rect.w / 2 - fw / 2;
@@ -325,9 +325,9 @@ void kgmGraphics::render(kgmGuiList* gui){
   gui->getRect(rect, true);
   gui->getText(text);
 
-  uint fontHeight = gui->m_itemHeight - 2;
-  uint item_cnt = gui->m_items.size();
-  uint item_view = gui->m_itemHeight;
+  u32 fontHeight = gui->m_itemHeight - 2;
+  u32 item_cnt = gui->m_items.size();
+  u32 item_view = gui->m_itemHeight;
   kgmGui::Rect frect;
 
   //Draw Main Rect
@@ -341,7 +341,7 @@ void kgmGraphics::render(kgmGuiList* gui){
   for(int i = gui->m_position; i < (gui->m_position + item_view); i++){
    if(i >= item_cnt) continue;
    kgmString item; item = gui->m_items[i];
-   uint a = (i - gui->m_position);
+   u32 a = (i - gui->m_position);
    kgmGui::Rect clip(rect.x, rect.y + gui->m_itemHeight * a,
          rect.w, gui->m_itemHeight);
 
@@ -438,13 +438,13 @@ void kgmGraphics::set(kgmMaterial* m){
     tspecular = m->m_tex_specular->m_texture;
   }
 
-  kgmShader* s = shaders[(ushort)m->m_shader];
+  kgmShader* s = shaders[(u16)m->m_shader];
   if(!s)
     s = shaders[kgmMaterial::ShaderNone];
   set(s, m->m_shader);
 }
 
-void kgmGraphics::set(kgmShader* s, uint t){
+void kgmGraphics::set(kgmShader* s, u32 t){
   s->start();
   switch(t){
     default:
@@ -458,8 +458,8 @@ void kgmGraphics::set(kgmShader* s, uint t){
 }
 
 //*************** DRAWING ***************
-void kgmGraphics::gcDrawRect(kgmGui::Rect rc, uint col, void* tex){
-  typedef struct{  vec3 pos;  uint col;  vec2 uv; } V;
+void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, void* tex){
+  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
   v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 0);
@@ -474,10 +474,10 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, uint col, void* tex){
    gc->gcSetTexture(0, 0);
 }
 
-void kgmGraphics::gcDrawText(kgmFont* font, uint fwidth, uint fheight, uint fcolor, kgmGui::Rect clip, kgmString& text){
-  typedef struct{ vec3 pos; uint col; vec2 uv; } V;
+void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text){
+  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
-  uint tlen = text.length();
+  u32 tlen = text.length();
 
   if(tlen < 1)
    return;
@@ -494,7 +494,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, uint fwidth, uint fheight, uint fcol
   gc->gcBlend(true, gcblend_one, gcblend_one);
   gc->gcSetTexture(0, font->m_texture);
 
-  for(uint i = 0; i < tlen; i++){
+  for(u32 i = 0; i < tlen; i++){
    char ch = text[i];
 
    if(ch == '\n'){ cx = (float)clip.x, cy += fheight; continue; }

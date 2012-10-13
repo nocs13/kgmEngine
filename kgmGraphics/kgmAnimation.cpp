@@ -58,8 +58,8 @@ bool kgmAnimation::Animation::getFrame(float time, mtx4& m)
 
 bool kgmAnimation::Animation::getFrame(float time, vec3& pos, quat& rot){
  Frame frm;
- uint an_time = m_frames[m_frames.size() - 1].time - m_frames[0].time;
- uint c_time = 0;
+ u32 an_time = m_frames[m_frames.size() - 1].time - m_frames[0].time;
+ u32 c_time = 0;
  int  c_frame = 0;
  int  i = 0;
 
@@ -93,9 +93,9 @@ bool kgmAnimation::Animation::getFrame(float time, vec3& pos, quat& rot){
 bool kgmAnimation::Animation::getFrameSlerp(float time, mtx4& m)
 {
   Frame frm;
-  uint keys = m_frames.size();
-  uint utime = time;
-  uint vtime = (uint)(time) % (uint)(m_frames[m_frames.size() - 1].time - m_frames[0].time);
+  u32 keys = m_frames.size();
+  u32 utime = time;
+  u32 vtime = (u32)(time) % (u32)(m_frames[m_frames.size() - 1].time - m_frames[0].time);
   if(!keys)
     return false;
 
@@ -109,7 +109,7 @@ bool kgmAnimation::Animation::getFrameSlerp(float time, mtx4& m)
     return true;
   }
 
-  for(uint i = 0; i < (keys); i++)
+  for(u32 i = 0; i < (keys); i++)
   {
     if(time == m_frames[i].time){
       m = mtx4(m_frames[i].rot, m_frames[i].pos);
@@ -117,8 +117,8 @@ bool kgmAnimation::Animation::getFrameSlerp(float time, mtx4& m)
     }
 
     if((time > m_frames[i].time) && (time < m_frames[i + 1].time)){
-      uint dt = m_frames[i+1].time - m_frames[i].time;
-      uint dtm = time - m_frames[i].time;
+      u32 dt = m_frames[i+1].time - m_frames[i].time;
+      u32 dtm = time - m_frames[i].time;
       float f_tm = dtm * (1.0f / dt);
       frm.pos = m_frames[i].pos.slerp(m_frames[i+1].pos, f_tm);
       frm.rot = m_frames[i].rot.slerp(m_frames[i+1].rot, f_tm);

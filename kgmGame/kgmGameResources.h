@@ -18,7 +18,7 @@ protected:
  //enum PathType { None, Folder, Archive, File, };
  struct Path{
 
-  uint       type;    
+  u32       type;    
   kgmString  path;
   kgmFile    file;
   kgmArchive archive;
@@ -58,5 +58,5 @@ public:
  kgmSound*      getSound(char*);
  kgmMesh*       getMesh(char* id);
  kgmSkeleton*   getSkeleton(char* id);
- kgmFont*       getFont(char* id, uint r, uint c);
+ kgmFont*       getFont(char* id, u32 r, u32 c);
 };

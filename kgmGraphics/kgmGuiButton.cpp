@@ -8,7 +8,7 @@ kgmGuiButton::kgmGuiButton(){
   m_state = StateNone;
 }
 
-kgmGuiButton::kgmGuiButton(kgmGui *par, uint x, uint y, uint w, uint h)
+kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
  :kgmGui(par, x, y, w, h){
   m_type = TypeNormal;
   m_state = StateNone;
@@ -23,11 +23,11 @@ void kgmGuiButton::onClick(){
 }
 
 /*void kgmGuiButton::onPaint(kgmIGraphics* gc){
-  uint fwidth = m_rect.w / 15;
-  uint fheight = m_rect.h / 2; 
-  uint tlen = m_text.length();
-  uint fw = (tlen + 1) * fwidth;
-  uint fh = (fheight + 2);
+  u32 fwidth = m_rect.w / 15;
+  u32 fheight = m_rect.h / 2; 
+  u32 tlen = m_text.length();
+  u32 fw = (tlen + 1) * fwidth;
+  u32 fh = (fheight + 2);
   Rect tClip = m_rect;
 
   tClip.x = m_rect.x + m_rect.w / 2 - fw / 2;
