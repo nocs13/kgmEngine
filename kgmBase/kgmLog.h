@@ -1,50 +1,48 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
 #include <time.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include "kgmString.h"
-
-using namespace std;
 
 class kgmLog{
 public:
     static kgmLog log;
 
 private:
-    ofstream out;
+    FILE* out;
 
 public:
     kgmLog(){
-      out.open("kgmLog.log", ios_base::app);
+      out = fopen("kgmLog.log", "a");
     }
 
     kgmLog(const char* path){
-      out.open(path, ios_base::app);
+      out = fopen(path, "a");
     }
 
     ~kgmLog(){
-      out.close();
+      fclose(out);
     }
 
     kgmLog& operator << (kgmString& s){
-      return *this << (char*)s.data();
+      fprintf(out, (char*)s);
+      return *this;
     }
 
     kgmLog& operator << (kgmString s){
-      return *this << (char*)s.data();
+      fprintf(out, (char*)s);
+      return *this;
     }
     
     kgmLog& operator << (const char* s){
-      return *this << (char*)s;
+      fprintf(out, s);
+      return *this;
     }
     
     
     kgmLog& operator << (char* s){
-      if(s && out.is_open()){
-        out << s;
-      }
+      fprintf(out, s);
       return *this;
     }
 };

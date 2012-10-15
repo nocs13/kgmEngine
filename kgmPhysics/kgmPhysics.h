@@ -7,8 +7,6 @@
 #include "kgmBody.h"
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
-#include <vector>
-
 
 class kgmPhysics: public kgmIPhysics, public kgmObject{
  typedef kgmTriangle3d<float> Triangle;

@@ -57,7 +57,7 @@ kgmGraphics::kgmGraphics(kgmWindow* w, kgmIResources* r)
   textures.add((u16)1, gc->gcGenTexture(txd, 2, 2, 32, 0) );
 
   //create nessessary shaders
-  registration(kgmMaterial::ShaderNone, rc->getShader((const char*)"light.glsl"));
+  registration(kgmMaterial::ShaderNone, rc->getShader((char*)"light.glsl"));
 
   //fbo_lightmapcamera  = gc->gcGenTexture(0, m_mapdim, m_mapdim, gctex_fmt24, gctype_textarget);//gc->gcGenRenderTarget(m_mapdim, m_mapdim, 0x01);
   //fbo_colormapcamera  = gc->gcGenRenderTarget(m_mapdim, m_mapdim, 0x01);

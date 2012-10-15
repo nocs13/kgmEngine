@@ -1,7 +1,6 @@
 #pragma once
 #include "kgmMain.h"
 #include "kgmTypes.h"
-#include <vector>
 #include <stdlib.h>
 #include <string.h>
 
@@ -10,7 +9,7 @@ class kgmObject;
 
 struct kgmRuntime{
   const char* nClass; //class id
-  u32        sClass; //size of class
+  u32         sClass; //size of class
   kgmRuntime* pClass; //parent class
 };
 
@@ -75,7 +74,7 @@ public:
     r = r->pClass;
    }
    return false;
-  }
+ }
 
  u32 references(){
   return m_references;

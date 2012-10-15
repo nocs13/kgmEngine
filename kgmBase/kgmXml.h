@@ -5,8 +5,6 @@
 #include "kgmList.h"
 #include "kgmString.h"
 #include "kgmMemory.h"
-#include <vector>
-#include <string>
 
 typedef unsigned int u32;
 

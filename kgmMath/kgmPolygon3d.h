@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vector>
-
-
 //TRIANGLE 3D
 template <class T> class kgmPolygon3d{
  kgmVector3d<T>*	m_points;
@@ -12,12 +9,14 @@ public:
 	 m_points = 0;
 	 m_count  = 0;
  }
+
  kgmPolygon3d(int cnt){
 	 m_points = 0;
 	 if(cnt > 0)
-		 m_points = new kgmVector3d<T>[cnt];
+	   m_points = new kgmVector3d<T>[cnt];
 	 m_count  = cnt;
  }
+
  kgmPolygon3d(int cnt, kgmVector3d<T>* pts){
 	 m_points = 0;
 	 if(cnt > 0)
@@ -26,6 +25,7 @@ public:
 		 memcpy(m_points, pts, cnt * sizeof(kgmVector3d<T>));
 	 m_count  = cnt;
  }
+
  ~kgmPolygon3d(){
 	 if(m_points)
 		 delete [] m_points;
@@ -42,6 +42,7 @@ public:
 	 m_count = 0;
   
  }
+
  bool isin(kgmVector3d<T> v, float pres = 0.1){
   kgmVector3d<T> v0, v1, v2;
   T a0, a1, a2, an;
@@ -66,6 +67,7 @@ public:
    return true;
   return false;
  }
+
  bool intersect(kgmVector3d<T> v, float r){
   return false;
  }

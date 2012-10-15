@@ -1,7 +1,7 @@
 #include "kgmObject.h"
-#include <vector>
+#include "kgmList.h"
 
-static std::vector<kgmObject*> g_objects;
+static kgmList<kgmObject*> g_objects;
 
 KGMOBJECT_IMPLEMENT(kgmObject, kgmObject)
 
@@ -13,9 +13,13 @@ void* kgmObject::operator new(size_t size){
 
 void kgmObject::operator delete(void* p){
  int i;
- for(i = 0; i < g_objects.size(); i++)
-  if((kgmObject*)p == g_objects[i])
-   g_objects.erase(g_objects.begin() + i);
+
+ for(i = 0; i < g_objects.size(); i++){
+   if((kgmObject*)p == g_objects[i]){
+     g_objects.erase(i);
+   }
+ }
+
  free(p);
 }
 

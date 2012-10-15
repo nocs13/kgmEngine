@@ -10,6 +10,8 @@
 
 static u32 error = 0;
 
+#ifndef ANDROID
+
 kgmOAL::_Sound::_Sound(u32 buf, u32 src){
   buffer = buf;
   source = src;
@@ -107,3 +109,5 @@ void kgmOAL::listener(vec3& pos, vec3& vel, vec3& ort)
  alListener3f(AL_VELOCITY, vel.x, vel.y, vel.z);
  alListenerfv(AL_ORIENTATION, dirort);
 }
+
+#endif

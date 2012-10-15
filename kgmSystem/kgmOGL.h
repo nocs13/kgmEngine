@@ -11,15 +11,14 @@
 #elif defined LINUX
 #endif
 
+#ifdef ANDROID
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
-//#include "inc/glext.h"
-
-#ifdef WIN32
- #pragma comment(lib, "opengl32.lib")
- #pragma comment(lib, "glu32.lib")
 #endif
+
+//#include "inc/glext.h"
 
 
 class kgmOGLWindow;

@@ -1,7 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
-#include <vector>
 
 class kgmBody{
 public:
@@ -44,7 +43,7 @@ public:
  vec3	m_V;			//additional velocity
  vec3	m_P;			//current impulse
  vec3	m_F;			//current superposed, applied, imposed force
- vec3 m_EF;  //external force
+ vec3   m_EF;  //external force
 
  box3	m_bound;		//bound box
 

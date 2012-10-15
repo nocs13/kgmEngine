@@ -19,6 +19,8 @@
 #include <AL/alext.h>
 #endif
 
+#ifndef ANDROID
+
 class kgmOAL: public kgmIAudio  
 {
   class _Sound: public Sound{
@@ -44,3 +46,4 @@ public:
   void 	 listener(vec3& pos, vec3& vel, vec3& ort);
 };
 
+#endif

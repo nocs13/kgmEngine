@@ -7,6 +7,8 @@
 
 #include "kgmLua.h"
 
+#ifndef ANDROID
+
 kgmLua::kgmLua() {
  m_lua = lua_open();
  if(m_lua){
@@ -115,3 +117,5 @@ void kgmLua::push(char* arg){
 void kgmLua::push(void* arg){
  lua_pushlightuserdata(m_lua, arg);
 }
+
+#endif

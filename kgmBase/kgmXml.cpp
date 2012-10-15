@@ -141,15 +141,15 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
    p++;
    if(*p == '?' || *p == '!'){
     unsigned char schar = *p;
-    p = toSyms(p, ">\0");
+    p = toSyms(p, (char*)">\0");
     continue;
    }else if(*p == '/'){
     unsigned char* cp;
     unsigned char* cn = p - 1;
     p++;
-    p  = exeptSyms(p, " \t\r\n");
+    p  = exeptSyms(p, (char*)" \t\r\n");
     cp = p;
-    p  = toSyms(p, " \t\r\n>");
+    p  = toSyms(p, (char*)" \t\r\n>");
     if(node){
       if(!memcmp(m_name_ref, cp, m_name_len))
 	isNode = false;
@@ -171,15 +171,15 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
     isNode = true;
     node = n;
 
-    p = exeptSyms(p, " \t\r\n");
+    p = exeptSyms(p, (char*)" \t\r\n");
     m_name_ref = p;
-    p = toSyms(p, " \t/>");
+    p = toSyms(p, (char*)" \t/>");
     m_name_len = (int)p - (int)m_name_ref;
     n->m_name.alloc((char*)m_name_ref, m_name_len);
 
     while(*p != '>'){
      if(!isNode){
-      p = toSyms(p, ">\0");
+       p = toSyms(p, (char*)">\0");
       break;
      }else if(isNode && (*p == '/')){
       if(!memcmp(p, "/>", 2)){
@@ -187,7 +187,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
        node = node->parent();
       }
      }else if(isNode && (*p == ' ' || *p == '\t')){
-      p = exeptSyms(p, " \t");
+       p = exeptSyms(p, (char*)" \t");
       if(*p != '/' && *p != '>'){
        Attribute* a = new Attribute;
        void* m_name_ref = 0;
@@ -197,10 +197,10 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
 
        node->add(a);
        m_name_ref = p;
-       p = toSyms(p, " \t=");
+       p = toSyms(p, (char*)" \t=");
        m_name_len = (int)p - (int)m_name_ref;
-       p = toSyms(p, "=");
-       p = toSyms(p, "'\"");
+       p = toSyms(p, (char*)"=");
+       p = toSyms(p, (char*)"'\"");
        char csyms[2] = {*p, '\0'};
        m_data_ref = ++p;
        p = toSyms(p, csyms);
