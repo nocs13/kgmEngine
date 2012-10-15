@@ -6,17 +6,17 @@ AR = ar
 DEFS = -DLINUX
 
 FLGS = 
-DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L./kgmSystem/lib
+DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmNet -I../kgmGame -I../kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L./kgmSystem/lib
 LIBS = 
-OBJS = kgmBase/*.o kgmMath/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
+OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
-	FLGS = -ansi -g -O0 -c -fpermissive -fPIC
+	FLGS = -ansi -g -c -fpermissive -fPIC -O2
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal -llua5.1
 	RM = rm -f
 else 
         DEFS = -DWIN32
-    	FLGS = -ansi -g -O0 -c
+    	FLGS = -ansi -g -O2 -c
 	LIBS = -lpthread -llua5.1.w -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32 -lglu32
 	RM = del
 endif
