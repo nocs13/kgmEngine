@@ -8,8 +8,9 @@
  #include <GL/glx.h>
 #endif
 
+#ifndef ANDROID
+
 #include <GL/gl.h>
-//#include <GL/glu.h>
 #include "inc/glext.h"
 
 #ifdef WIN32
@@ -69,10 +70,13 @@ extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fvARB;
 extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
 extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
 
+#endif 
+
 #ifdef WIN32
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
 extern  PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 #endif
+
 #ifdef LINUX
 extern PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 #endif

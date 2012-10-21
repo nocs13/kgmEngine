@@ -12,6 +12,8 @@
 #endif
 
 #ifdef ANDROID
+#include <GLES/gl.h>
+#include <GLES/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
