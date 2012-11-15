@@ -1,5 +1,13 @@
 #compiled files
 *.o
+*.d
+*.so
 *.exe
 *.bin
-
+*.creator
+*.config
+*.files
+*.includes
+.cproject
+.directory
+.dep.inc
