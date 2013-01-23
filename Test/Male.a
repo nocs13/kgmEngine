@@ -1,0 +1,8 @@
+actor kgmPawn
+mesh Male.mesh
+skeleton Male.skel
+texture texMaleA.bmp
+mass 80.0
+bound 5 5 20
+state 0 animMaleIdle.anim none 1000
+

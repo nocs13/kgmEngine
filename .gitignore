@@ -4,10 +4,12 @@
 *.so
 *.exe
 *.bin
+*.lib
 *.creator
 *.config
 *.files
 *.includes
 .cproject
 .directory
-.dep.inc
+.dep
+.inc

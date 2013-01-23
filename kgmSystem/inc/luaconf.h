@@ -1,5 +1,5 @@
 /*
-** $Id: luaconf.h,v 1.82.1.6 2008/01/18 17:07:48 roberto Exp $
+** $Id: luaconf.h,v 1.82.1.7 2008/02/11 16:25:08 roberto Exp $
 ** Configuration file for Lua
 ** See Copyright Notice in lua.h
 */
@@ -399,7 +399,7 @@
 
 
 /*
-@@ LUAI_u3232 is an unsigned integer with at least 32 bits.
+@@ LUAI_UINT32 is an unsigned integer with at least 32 bits.
 @@ LUAI_INT32 is an signed integer with at least 32 bits.
 @@ LUAI_UMEM is an unsigned integer big enough to count the total
 @* memory used by Lua.
@@ -411,14 +411,14 @@
 ** longs.) Probably you do not need to change this.
 */
 #if LUAI_BITSINT >= 32
-#define LUAI_u3232	unsigned int
+#define LUAI_UINT32	unsigned int
 #define LUAI_INT32	int
 #define LUAI_MAXINT32	INT_MAX
 #define LUAI_UMEM	size_t
 #define LUAI_MEM	ptrdiff_t
 #else
 /* 16-bit ints */
-#define LUAI_u3232	unsigned long
+#define LUAI_UINT32	unsigned long
 #define LUAI_INT32	long
 #define LUAI_MAXINT32	LONG_MAX
 #define LUAI_UMEM	unsigned long
@@ -440,10 +440,10 @@
 @* can use.
 ** CHANGE it if you need lots of (Lua) stack space for your C
 ** functions. This limit is arbitrary; its only purpose is to stop C
-** functions to consume unlimited stack space.
+** functions to consume unlimited stack space. (must be smaller than
+** -LUA_REGISTRYINDEX)
 */
-#define LUAI_MCS_AUX	((int)(INT_MAX / (4*sizeof(LUA_NUMBER))))
-#define LUAI_MAXCSTACK	(LUAI_MCS_AUX > SHRT_MAX ? SHRT_MAX : LUAI_MCS_AUX)
+#define LUAI_MAXCSTACK	8000
 
 
 

@@ -1,0 +1,17 @@
+Level = {}
+
+function Level.doAI(a)
+ local g = GamePlayer()
+ local inside = false
+ local dist = Distance(a['id'], g)
+ local l = Life(g)
+ inside = InsideBound(a['id'], g)
+ if l < 0.0 then
+  GameOverFail()
+ end
+-- if inside ~= false then
+ if dist < 30.0 then
+  MsgBeep()
+  GameOverSuccess()
+ end
+end

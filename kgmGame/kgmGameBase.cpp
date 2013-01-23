@@ -766,6 +766,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
   kgmXml xml(mem);
   if(!xml.m_node){
     fprintf(stderr, "\nNot valid xml %s", (char*)path);
+    kgm_log() << "Error: " << "Not valid xml " << (char*)path << "\n";
     return false;
   }
 
@@ -783,6 +784,8 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     kgmString id, t;
     kgmXml::Node* node = xml.m_node->node(i);
     node->id(id);
+
+    kgm_log() << "Node: " << (char*)node->m_name << "\n";
 
     if(id == "kgmMaterial"){
       kgmString id;

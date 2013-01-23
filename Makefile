@@ -2,6 +2,8 @@ include Makefile.mac
 
 all:
 	echo "compiling..."
+	make -C kgmExtern -f Makefile
+
 	make -C kgmBase -f Makefile
 	make -C kgmMath -f Makefile
 	make -C kgmNet -f Makefile

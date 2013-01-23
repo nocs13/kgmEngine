@@ -8,7 +8,9 @@
 #ifndef KGMLUA_H_
 #define KGMLUA_H_
 
-#include "inc/lua.hpp"
+#include "inc/lua.h"
+#include "inc/lualib.h"
+#include "inc/lauxlib.h"
 #include "kgmScript.h"
 
 template <typename T> class kgmLuaBind {
