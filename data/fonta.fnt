@@ -1,0 +1,6 @@
+<!xml version="1.0">
+<Font>
+ <Texture>fonta.tga</Texture>
+ <Rows>16</Rows>
+ <Columns>16</Columns>
+</Font>

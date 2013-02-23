@@ -1,0 +1,56 @@
+kgmPawn Neji Player
+	Uid 44
+	Position -49.1371 -29.8011 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 46
+	Position -73.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 47
+	Position -83.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 48
+	Position -93.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 49
+	Position -103.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 50
+	Position -13.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 51
+	Position -23.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 52
+	Position -33.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 53
+	Position -43.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 54
+	Position -53.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 55
+	Position -63.2422 -79.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 46
+	Position -73.2422 -179.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 47
+	Position -83.2422 -179.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
+kgmPawn Male Enemy
+	Uid 48
+	Position -93.2422 -179.8539 0.0
+	Rotation 0.0 0.0 0.0 1.0
