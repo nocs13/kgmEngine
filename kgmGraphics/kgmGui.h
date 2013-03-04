@@ -51,9 +51,10 @@ class kgmGui: public kgmEvent
 
  public:
   u32       m_id;
-  kgmGui*    m_parent;  //parent window whom send messages
-  kgmGui*    m_focus;   //current child active window
-  Rect       m_rect;    //rect of window
+  kgmString m_sid;     //string id
+  kgmGui*   m_parent;  //parent window whom send messages
+  kgmGui*   m_focus;   //current child active window
+  Rect      m_rect;    //rect of window
   bool      m_view;    //view status of window
   bool      m_hasMouse; //is mouse inside widget
   bool      m_hasInput; //is input(keyboard/joystick) inside widget

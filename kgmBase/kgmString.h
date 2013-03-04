@@ -53,6 +53,12 @@ public:
   return *this;
  }
 
+ //kgmTString<T>& operator=(int str){
+ //}
+
+ //kgmTString<T>& operator=(double str){
+ //}
+
  kgmTString<T>& operator+=(const kgmTString<T>& s){
   int len = kgmArray<T>::m_length + s.m_length;
   if(len <= kgmArray<T>::m_length)

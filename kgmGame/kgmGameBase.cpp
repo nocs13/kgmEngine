@@ -148,7 +148,7 @@ kgmGameBase::kgmGameBase()
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-:kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false){
+:kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 

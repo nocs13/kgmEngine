@@ -1,0 +1,22 @@
+#compiled files
+*.o
+*.d
+*.so
+*.exe
+*.bin
+*.lib
+*.creator
+*.config
+*.files
+*.includes
+.cproject
+.directory
+.dep
+.inc
+.user
+~*
+*~
+bin/
+lib/
+obj/
+nbproject/
