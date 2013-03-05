@@ -12,8 +12,31 @@
 #include "../kgmGraphics/kgmGui.h"
 
 class kgmGameGui: public kgmGui{
-    class Gui: public kgmGui{
-    };
+  class Base{
+    kgmString m_sid;
+
+  public:
+    Base(kgmString& sid){
+      m_sid = sid;
+    }
+
+    kgmString& sid() const{
+      return m_sid;
+    }
+  };
+
+  class Gui: public kgmGui, public Base{
+  };
+
+  class GuiTab: public kgmGuiTab, public Base{
+  };
+
+  class GuiList: public kgmGuiList, public Base{
+  };
+
+  class GuiButton: public kgmGuiButton, public Base{
+  };
+
 public:
     kgmGameGui();
     kgmGameGui(const kgmGameGui& orig);
