@@ -10,6 +10,11 @@
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmGraphics/kgmGui.h"
+#include "../kgmGraphics/kgmGuiTab.h"
+#include "../kgmGraphics/kgmGuiList.h"
+#include "../kgmGraphics/kgmGuiButton.h"
+
+#include "kgmIGame.h"
 
 class kgmGameGui: public kgmGui{
   class Base{
@@ -20,7 +25,7 @@ class kgmGameGui: public kgmGui{
       m_sid = sid;
     }
 
-    kgmString& sid() const{
+    kgmString& sid(){
       return m_sid;
     }
   };
@@ -37,14 +42,13 @@ class kgmGameGui: public kgmGui{
   class GuiButton: public kgmGuiButton, public Base{
   };
 
+  kgmIGame* m_game;
 public:
-    kgmGameGui();
-    kgmGameGui(const kgmGameGui& orig);
+    kgmGameGui(kgmIGame* game, kgmXml& xml);
     virtual ~kgmGameGui();
-    
-    static kgmGameGui* build(kgmXml& xml);
 private:
 
+  void build(kgmGui*, kgmXml::Node*);
 };
 
 #endif	/* KGMGAMEGUI_H */

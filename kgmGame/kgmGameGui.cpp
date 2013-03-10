@@ -7,12 +7,24 @@
 
 #include "kgmGameGui.h"
 
-kgmGameGui::kgmGameGui() {
-}
+kgmGameGui::kgmGameGui(kgmIGame* game, kgmXml& xml) {
+  m_game = NULL;
 
-kgmGameGui::kgmGameGui(const kgmGameGui& orig) {
+  if (game == NULL){
+      return;
+  }else{
+      m_game = game;
+  }
+
+  if (!xml.m_node)
+    return;
+
+  build(this, xml.m_node);
 }
 
 kgmGameGui::~kgmGameGui() {
 }
 
+void kgmGameGui::build(kgmGui* gui, kgmXml::Node* xnode){
+
+}

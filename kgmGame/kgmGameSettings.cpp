@@ -1,4 +1,5 @@
 #include "kgmGameSettings.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -14,12 +15,55 @@ kgmGameSettings::~kgmGameSettings(){
 }
 
 void kgmGameSettings::load(){
- FILE* file = fopen(m_name, "rb");
+ FILE* file = fopen("kgmEngine.conf", "rb");
+
  if(!file)
 	 return;
- fread(&m_gsid, 2, 1, file);
- fread(&m_width, 4, 1, file);
- fread(&m_height, 4, 1, file);
+
+ char* str = new char[2048];
+
+ while(!feof(file))
+ {
+   memset(str, 0, 2048);
+
+   if(!fgets(str, 2048, file))
+     break;
+
+   if(strlen(str) == 0)
+     continue;
+
+   int si;
+
+   for(int si = 0; si < strlen(str); si++)
+     if(!isspace(str[si]))
+       break;
+
+   if(str[si] == '#')
+     continue;
+
+   char *s1 = &str[si];
+   char *s2 = strchr(s1, ' ');
+
+   if(!s2)
+     continue;
+
+   kgmString key(s1, (u32)(s2 - s1));
+
+   while(*s2 != '\0'){
+       if(isspace(*s2))
+         s2++;
+   }
+
+   if(strlen(s2) > 0)
+   {
+       kgmString value(s2, strlen(s2));
+
+       m_parameters.add(key, value);
+   }
+ }
+
+ delete [] str;
+
  fclose(file);
 }
 void kgmGameSettings::save(){

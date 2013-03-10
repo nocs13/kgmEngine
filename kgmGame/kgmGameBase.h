@@ -7,6 +7,8 @@
 #include "kgmActor.h"
 #include "kgmGameNode.h"
 
+#include "kgmGameSettings.h"
+
 #include "../kgmBase/kgmQuadTree.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"
@@ -48,6 +50,7 @@ protected:
  kgmIGraphics*		m_graphics;
  kgmGamePhysics*	m_physics;
  kgmGameResources*	m_resources;
+ kgmGameSettings* m_settings;
 
  kgmSystem*         m_system;
  //kgmGraphics*       m_render;
@@ -97,7 +100,6 @@ public:
 
  void quit();
  void log(const char* msg);
- void settings(bool save = false);
 
  void onEvent(kgmEvent::Event*);
  void onIdle();
@@ -115,7 +117,7 @@ public:
  int  gUnload();     //load game level
  int  gCommand(kgmString);  //do string command
  int  gQuit();              //quit from level
- u32 gState();             //check game state
+ u32  gState();             //check game state
  void gRender();            //render game scene
  void gLogic();             //do game logic  & Physics
 

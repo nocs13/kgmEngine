@@ -78,6 +78,9 @@ kgmGameBase::kgmGameBase()
   prev_width = 640;
   prev_height = 480;
     
+  log("open settings...");
+  m_settings = new kgmGameSettings();
+
   log("open system...");
   m_system = new kgmSystem();
     
@@ -104,9 +107,6 @@ kgmGameBase::kgmGameBase()
   log("open renderer...");
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
-  
-  log("open settings...");
-  settings();
   
 //  log("open data...");
 //  kgmString s;
@@ -216,7 +216,7 @@ void kgmGameBase::log(const char* msg){
 	kgm_log() << msg << "\n";
 }
 
-void kgmGameBase::settings(bool save){
+/*void kgmGameBase::settings(bool save){
  FILE* file;
  if(save){
   //Saving...      
@@ -269,6 +269,7 @@ void kgmGameBase::settings(bool save){
   delete [] buf;
  }
 }
+*/
 
 //
 void kgmGameBase::onIdle(){

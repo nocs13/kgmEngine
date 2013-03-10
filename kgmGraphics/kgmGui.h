@@ -50,12 +50,12 @@ class kgmGui: public kgmEvent
   Guis	    m_childs;
 
  public:
-  u32       m_id;
+  u32       m_id;	     //numeric id
   kgmString m_sid;     //string id
   kgmGui*   m_parent;  //parent window whom send messages
   kgmGui*   m_focus;   //current child active window
   Rect      m_rect;    //rect of window
-  bool      m_view;    //view status of window
+  bool      m_view;     //view status of window
   bool      m_hasMouse; //is mouse inside widget
   bool      m_hasInput; //is input(keyboard/joystick) inside widget
   kgmString  m_text;    //gui text
@@ -126,6 +126,11 @@ protected:
  void          delChild(kgmGui *e);
  bool          isChild(kgmGui *e);
  kgmGui*       getFocus(Point pos);
+
+ void          setId(u32 id){ this->m_id = id; };
+ u32           getId(){ return this->m_id; };
+ void          setSid(kgmString&  sid){ this->m_sid = sid; };
+ kgmString&    getSid(){ return this->m_sid; };
 
  //*************** DRAWING ***************
  //void gcDrawRect(kgmIGraphics* gc, Rect rc, u32 col, void* tex);
