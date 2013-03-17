@@ -15,7 +15,7 @@ kgmGameSettings::~kgmGameSettings(){
 }
 
 void kgmGameSettings::load(){
- FILE* file = fopen("kgmEngine.conf", "rb");
+ FILE* file = fopen("kgmEngine.conf", "r");
 
  if(!file)
 	 return;

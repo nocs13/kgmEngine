@@ -17,3 +17,6 @@ all:
 
 clean:	
 	rm -f kTest *.o
+	
+run: 
+	./kTest	

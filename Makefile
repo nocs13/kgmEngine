@@ -41,6 +41,9 @@ clean:
 distclean: clean	
 	$(RM) libkgmEngine.a
 	$(RM) libkgmEngine.so
+	
+run:
+	make -C Test -f Makefile run
 
 kgmBase:	
 	make -C kgmBase -f Makefile
