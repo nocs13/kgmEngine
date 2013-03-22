@@ -7,6 +7,19 @@ static short g_gsid = 0x0101;
 
 kgmGameSettings::kgmGameSettings(){
  m_gsid = 0xf0f0f0f0;
+ m_name = "kgmEngine.conf";
+
+ load();
+}
+
+kgmGameSettings::kgmGameSettings(const char* path){
+ m_gsid = 0xf0f0f0f0;
+
+ if(path && strlen(path) < 128)
+   m_name = path;
+  else
+   m_name = "kgmEngine.conf";
+
  load();
 }
 
@@ -15,7 +28,7 @@ kgmGameSettings::~kgmGameSettings(){
 }
 
 void kgmGameSettings::load(){
- FILE* file = fopen("kgmEngine.conf", "r");
+ FILE* file = fopen(m_name.data(), "r");
 
  if(!file)
 	 return;
@@ -42,7 +55,7 @@ void kgmGameSettings::load(){
 }
 
 void kgmGameSettings::save(){
- FILE* file = fopen("kgmEngine.conf", "wb");
+ FILE* file = fopen(m_name.data(), "w");
 
  if(!file)
 	 return;
