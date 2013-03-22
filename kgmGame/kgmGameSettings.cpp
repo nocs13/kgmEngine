@@ -24,51 +24,37 @@ void kgmGameSettings::load(){
 
  while(!feof(file))
  {
-   memset(str, 0, 2048);
+   char key[64] = {0};
+   char val[128] = {0};
 
-   if(!fgets(str, 2048, file))
-     break;
+   fscanf(file, "%s %s", key, val);
 
-   if(strlen(str) == 0)
+   if(!strlen(key) || key[0] == '#')
      continue;
 
-   int si;
+   kgmString s_key(key);
+   kgmString s_val(val);
 
-   for(int si = 0; si < strlen(str); si++)
-     if(!isspace(str[si]))
-       break;
-
-   if(str[si] == '#')
-     continue;
-
-   char *s1 = &str[si];
-   char *s2 = strchr(s1, ' ');
-
-   if(!s2)
-     continue;
-
-   kgmString key(s1, (u32)(s2 - s1));
-
-   while(*s2 != '\0'){
-       if(isspace(*s2))
-         s2++;
-   }
-
-   if(strlen(s2) > 0)
-   {
-       kgmString value(s2, strlen(s2));
-
-       m_parameters.add(key, value);
-   }
+   m_parameters.add(s_key, s_val);
  }
-
- delete [] str;
 
  fclose(file);
 }
+
 void kgmGameSettings::save(){
- FILE* file = fopen(m_name, "wb");
+ FILE* file = fopen("kgmEngine.conf", "wb");
+
  if(!file)
 	 return;
+
+ for(int i = 0; i < m_parameters.length(); i++)
+ {
+   kgmString key, val;
+
+   m_parameters.get(i, key, val);
+
+   fprintf(file, "%s %s", (char*)key, (char*)val);
+ }
+
  fclose(file);
 }
