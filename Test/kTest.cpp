@@ -4,15 +4,14 @@
 
 #include "../kgmBase/kgmXml.h"
 
+#include "kGui.h"
+
 class kGame: public kgmGameBase{
-  class kGui: public kgmGui{
-  public:
-   kGui(int x, int y, int w, int h)
-   :kgmGui(0, x, y, w, h){
-   }
-  };
+  kGui* gui;
+
 public:
   kGame(){
+      gui = new kGui(this);
   }
 
   ~kGame(){
