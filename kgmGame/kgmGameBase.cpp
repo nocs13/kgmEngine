@@ -66,6 +66,7 @@ kgmGameBase::kgmGameBase()
  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false){
   m_game = this;
   kgmString sdata;
+  kgmString spath;
   
   m_resources = 0;
   m_graphics = 0;
@@ -80,6 +81,7 @@ kgmGameBase::kgmGameBase()
     
   log("open settings...");
   m_settings = new kgmGameSettings();
+  spath = m_settings->get("Path");
 
   log("open system...");
   m_system = new kgmSystem();
@@ -92,6 +94,7 @@ kgmGameBase::kgmGameBase()
   
   log("open resources");
   m_resources = new kgmGameResources();
+  m_resources->addPath(spath);
   
   log("open graphics...");
   m_graphics = getGC();
@@ -125,10 +128,13 @@ kgmGameBase::kgmGameBase()
 //  }
 //  m_paths.seek(0);
 
-//  log("open font...");
-//  m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
-//  if(!m_font)
-//    log("can't load font");
+  log("open font...");
+  m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
+
+  if(!m_font)
+    log("can't load font");
+  else
+    m_render->setDefaultFont(m_font );
   
   log("set input map...");
   for(int i = 0; i < sizeof(m_keymap); i++)
