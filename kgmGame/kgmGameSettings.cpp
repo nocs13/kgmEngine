@@ -24,7 +24,7 @@ kgmGameSettings::kgmGameSettings(const char* path){
 }
 
 kgmGameSettings::~kgmGameSettings(){
- save();
+ //save();
 }
 
 void kgmGameSettings::load(){
@@ -71,3 +71,12 @@ void kgmGameSettings::save(){
 
  fclose(file);
 }
+
+kgmString kgmGameSettings::get(char* key)
+{
+  kgmString val;
+  m_parameters.get(key, val);
+
+  return val;
+}
+

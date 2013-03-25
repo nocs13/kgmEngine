@@ -156,6 +156,7 @@ public:
  virtual void onEvent(kgmEvent::Event* e){
   for(int i = 0; i < m_listens.length(); i++)
    m_listens[i]->onEvent(e);
+
   switch(e->event){
   case evtCreate:
 	  onCreate();
@@ -194,6 +195,12 @@ public:
 	  onKeyUp(e->key);
 	  break;
   }
+ }
+
+ virtual void onAction(kgmEvent* e, int a)
+ {
+   for(int i = 0; i < m_listens.length(); i++)
+    m_listens[i]->onAction(e, a);
  }
 
 protected:

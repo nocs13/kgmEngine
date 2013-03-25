@@ -127,12 +127,15 @@ void kgmGui::getText(kgmString& s){
 void kgmGui::onEvent(kgmEvent::Event* e){
   if(!e)
    return;
+
   kgmEvent::onEvent(e);
 }
 
 void kgmGui::onAction(kgmGui* from, u32 type){
   if(m_parent)
    m_parent->onAction(from, type);
+  else
+    kgmEvent::onAction((kgmEvent*)from, (int)type);
 }
 
 void kgmGui::onMsWheel(int k, int x, int y, int z){
@@ -153,6 +156,8 @@ void kgmGui::onMsMove(int k, int x, int y)
   {
     if (m_childs[i]->m_view)
     {
+      m_childs[i]->onMsMove(k, x, y);
+
       if(m_childs[i]->m_rect.inside(x, y))
       {
         if(!m_childs[i]->m_hasMouse)

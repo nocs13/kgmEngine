@@ -84,8 +84,8 @@ public:
  void setText(kgmString&);
  void getText(kgmString&);
 
- //void setStyle(u32, void*);
- //void getStyle(u32, void*);
+ void         setSid(kgmString  sid){ this->m_sid = sid; };
+ kgmString    getSid(){ return this->m_sid; };
 
  void  setXdata(void* x){ m_xdata = x; }
  void* getXdata(){ return m_xdata; }
@@ -129,8 +129,6 @@ protected:
 
  void          setId(u32 id){ this->m_id = id; };
  u32           getId(){ return this->m_id; };
- void          setSid(kgmString&  sid){ this->m_sid = sid; };
- kgmString&    getSid(){ return this->m_sid; };
 
  //*************** DRAWING ***************
  //void gcDrawRect(kgmIGraphics* gc, Rect rc, u32 col, void* tex);

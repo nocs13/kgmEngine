@@ -15,9 +15,12 @@ public:
  kgmTab<kgmString, kgmString> m_parameters;
 public:
  kgmGameSettings();
+ kgmGameSettings(const char* path);
  virtual ~kgmGameSettings();
 
  void load();
  void save();
+
+ kgmString get(char*);
 };
 
