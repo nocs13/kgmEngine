@@ -258,7 +258,7 @@ void kgmGraphics::render(kgmGui* gui){
     return;
 
   gui->getRect(rect, true);
-  gui->getText(text);
+  text = gui->getText();
   
   if(gui->isClass(kgmGuiButton::Class)){
     render((kgmGuiButton*)gui);
@@ -290,7 +290,7 @@ void kgmGraphics::render(kgmGuiButton* gui){
   kgmString text;
 
   gui->getRect(rect, true);
-  gui->getText(text);
+  text = gui->getText();
 
   u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
   u32 fheight = (u32)((float)rect.h * (float)0.75f);
@@ -323,7 +323,7 @@ void kgmGraphics::render(kgmGuiList* gui){
   kgmString text;
 
   gui->getRect(rect, true);
-  gui->getText(text);
+  text = gui->getText();
 
   u32 fontHeight = gui->m_itemHeight - 2;
   u32 item_cnt = gui->m_items.size();
@@ -356,7 +356,7 @@ void kgmGraphics::render(kgmGuiTab* gui){
   kgmString text;
 
   gui->getRect(rect);
-  gui->getText(text);
+  text = gui->getText();
 }
 
 void kgmGraphics::render(kgmGuiScroll* gui){
@@ -364,7 +364,7 @@ void kgmGraphics::render(kgmGuiScroll* gui){
   kgmString text;
 
   gui->getRect(rect);
-  gui->getText(text);
+  text = gui->getText();
 }
 
 void kgmGraphics::render(kgmGuiProgress* gui){
@@ -372,7 +372,7 @@ void kgmGraphics::render(kgmGuiProgress* gui){
   kgmString text;
 
   gui->getRect(rect);
-  gui->getText(text);
+  text = gui->getText();
 }
 void kgmGraphics::resize(int w, int h)
 {

@@ -81,11 +81,15 @@ public:
  void setRect(u32, u32, u32, u32);
  void getRect(Rect&, bool abs = false);
  void getRect(u32&, u32&, u32&, u32&, bool abs = false);
- void setText(kgmString&);
- void getText(kgmString&);
+
+ void      setText(kgmString);
+ kgmString getText();
 
  void         setSid(kgmString  sid){ this->m_sid = sid; };
  kgmString    getSid(){ return this->m_sid; };
+
+ kgmGui*      getById(u32 id);
+ kgmGui*      getBySid(kgmString sid);
 
  void  setXdata(void* x){ m_xdata = x; }
  void* getXdata(){ return m_xdata; }

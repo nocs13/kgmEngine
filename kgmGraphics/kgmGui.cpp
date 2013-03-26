@@ -114,14 +114,45 @@ void kgmGui::getRect(u32& x, u32& y, u32& w, u32& h, bool abs){
   }
 }
 
-void kgmGui::setText(kgmString& s){
+void kgmGui::setText(kgmString s){
   m_text = s;
 }
 
-void kgmGui::getText(kgmString& s){
-  s = m_text;
+kgmString kgmGui::getText(){
+  return m_text;
 }
 
+kgmGui* kgmGui::getById(u32 id)
+{
+  if(m_id == id)
+      return this;
+
+  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
+  {
+      kgmGui* g = (*i)->getById(id);
+
+      if(g)
+          return g;
+  }
+
+  return null;
+}
+
+kgmGui* kgmGui::getBySid(kgmString sid)
+{\
+    if(m_sid == sid)
+        return this;
+
+    for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
+    {
+        kgmGui* g = (*i)->getBySid(sid);
+
+        if(g)
+            return g;
+    }
+
+    return null;
+}
 
 // MESSAGE MANAGER
 void kgmGui::onEvent(kgmEvent::Event* e){

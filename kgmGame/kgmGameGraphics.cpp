@@ -232,7 +232,7 @@ void kgmGameGraphics::render(kgmGui* gui){
       return;
 
     gui->getRect(rect, true);
-    gui->getText(text);
+    text = gui->getText();
 
     if(gui->isClass(kgmGuiButton::Class)){
       u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));

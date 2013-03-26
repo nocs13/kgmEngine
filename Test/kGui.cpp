@@ -30,7 +30,25 @@ kGui::kGui(kgmGameBase* game)
   btn->setText(text);
   btn->setSid("quit");
 
+  gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
+  gui->hide();
+
+  gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
+  btn = new kgmGuiButton(gui, 1, 10, 100, 30);
+  text = "Start";
+  btn->setText(text);
+  btn = new kgmGuiButton(gui, 1, 50, 100, 30);
+  text = "Continue";
+  btn->setText(text);
+
+  kgmGuiList* lst = new kgmGuiList(gui, 0, 100, 200, 200);
+  gui->show();
+
   game->addGui(m_guiMain);
+}
+
+kGui::~kGui()
+{
 }
 
 void kGui::onAction(kgmEvent* e, int a)
