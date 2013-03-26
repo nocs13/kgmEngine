@@ -12,6 +12,7 @@ public:
 
 public:
     kGui(kgmGameBase*);
+    virtual ~kGui();
     void onAction(kgmEvent*, int);
 };
 
