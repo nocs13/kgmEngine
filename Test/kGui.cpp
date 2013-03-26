@@ -31,9 +31,11 @@ kGui::kGui(kgmGameBase* game)
   btn->setSid("quit");
 
   gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
+  gui->setSid("settings");
   gui->hide();
 
   gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
+  gui->setSid("game");
   btn = new kgmGuiButton(gui, 1, 10, 100, 30);
   text = "Start";
   btn->setText(text);
@@ -42,6 +44,8 @@ kGui::kGui(kgmGameBase* game)
   btn->setText(text);
 
   kgmGuiList* lst = new kgmGuiList(gui, 0, 100, 200, 200);
+  lst->setSid("levels");
+  lst->addItem("level01");
   gui->show();
 
   game->addGui(m_guiMain);
@@ -58,5 +62,20 @@ void kGui::onAction(kgmEvent* e, int a)
   kgmString sid = gui->getSid();
 
   if(sid == "quit")
+  {
     m_game->gQuit();
+  }
+  else if(sid == "levels")
+  {
+    kgmGuiList* lst = (kgmGuiList*)gui;
+    int i = lst->getSel();
+
+    kgmString map = lst->getItem(i);
+    int res = m_game->gLoad(map);
+
+    if(res == kgmIGame::State_Play)
+    {
+      m_guiMain->hide();
+    }
+  }
 }
