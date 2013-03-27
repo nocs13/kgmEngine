@@ -59,15 +59,11 @@ kgmNet:
 
 kgmGraphics:
 	make -C kgmGraphics -f Makefile
-	ar crs libkgmEngine.a kgmAI/*.o
+        ar crs libkgmEngine.a kgmGraphics/*.o
 
 kgmPhysics:
 	make -C kgmPhysics -f Makefile
 	ar crs libkgmEngine.a kgmPhysics/*.o
-
-kgmAI:
-	make -C kgmAI -f Makefile
-	ar crs libkgmEngine.a kgmGraphics/*.o
 
 kgmGame:
 	make -C kgmGame -f Makefile
