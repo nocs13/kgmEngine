@@ -34,11 +34,14 @@ kgmActor::~kgmActor(){
   m_childs.clear();
 }
 
-void kgmActor::update(float time){
+void kgmActor::exit(){
 }
 
-void kgmActor::prepare(){
+void kgmActor::init(){
  m_transform.translate(m_body.m_position);
+}
+
+void kgmActor::tick(u32 time){
 }
 
 void kgmActor::remove(){

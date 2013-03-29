@@ -7,6 +7,27 @@
 class kgmGameLogic : public kgmObject
 {
 public:
+
+  class AI
+  {
+  public:
+    virtual void logic(kgmActor* a){}
+  };
+
+  class Sensor
+  {
+    kgmActor* actor;
+
+  public:
+    Sensor(kgmActor* a)
+    {
+      actor = a;
+    }
+
+    virtual void sense(){}
+  };
+
+public:
     kgmGameLogic();
 };
 

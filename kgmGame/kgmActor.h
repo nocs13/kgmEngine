@@ -47,7 +47,7 @@ public:
 
 protected:
   kgmActor* 	        m_parent;
-  kgmList<kgmActor*> m_childs;
+  kgmList<kgmActor*>  m_childs;
 
 public:
   u32	 m_uid;
@@ -55,8 +55,8 @@ public:
   u32	 m_state;
   u32	 m_bearing;
 
-  bool   m_enable;
-  bool   m_visible;
+  bool    m_enable;
+  bool    m_visible;
   bool	  m_active;
   bool	  m_remove;
   bool	  m_culled;
@@ -81,13 +81,16 @@ public:
   kgmActor();
   virtual ~kgmActor();
 
-  virtual void update(float time);
-  virtual void prepare();		//call before game level starting
+  virtual void init();
+  virtual void exit();
+  virtual void tick(u32);
 
   void remove();
+
   void enable(bool s);
   void active(bool a);
   void visible(bool a);
+
   bool enabled();
   bool removed();
 

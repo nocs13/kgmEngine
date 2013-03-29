@@ -63,7 +63,7 @@ kgmCamera g_cam;
 ////////////////////////////////////
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
- :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false){
+  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false){
   m_game = this;
   kgmString sdata;
   kgmString spath;
@@ -71,24 +71,24 @@ kgmGameBase::kgmGameBase()
   m_resources = 0;
   m_graphics = 0;
   m_physics = 0;
-  m_system = 0; 
+  m_system = 0;
   m_audio = 0;
   
   m_node = 0;
 
   prev_width = 640;
   prev_height = 480;
-    
+
   log("open settings...");
   m_settings = new kgmGameSettings();
   spath = m_settings->get("Path");
 
   log("open system...");
   m_system = new kgmSystem();
-    
+
   log("check desktop dimensions...");
   m_system->getDesktopDimension(m_width, m_height);
- 
+
   log("size window...");
   //setRect(0, 0, m_width,	m_height);
   
@@ -111,22 +111,22 @@ kgmGameBase::kgmGameBase()
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
   
-//  log("open data...");
-//  kgmString s;
-//  int       i = 0;
+  //  log("open data...");
+  //  kgmString s;
+  //  int       i = 0;
   
-//  m_paths.seek(0);
-//  while(!m_paths.eof()){
-//    kgmString s;
-//    s.alloc(128);
-//    u32 len = m_paths.reads(s.data(), 127, "\n", 1);
-//    if(len < 1)
-//      break;
-//    kgmString st(s.data(), len);
-//    m_resources->addPath(st);
-//    m_paths.seek(m_paths.position() + 1);
-//  }
-//  m_paths.seek(0);
+  //  m_paths.seek(0);
+  //  while(!m_paths.eof()){
+  //    kgmString s;
+  //    s.alloc(128);
+  //    u32 len = m_paths.reads(s.data(), 127, "\n", 1);
+  //    if(len < 1)
+  //      break;
+  //    kgmString st(s.data(), len);
+  //    m_resources->addPath(st);
+  //    m_paths.seek(m_paths.position() + 1);
+  //  }
+  //  m_paths.seek(0);
 
   log("open font...");
   m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
@@ -147,85 +147,85 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_UP]    = m_keymap[KEY_W] = (char)gbtn_up;
   m_keymap[KEY_DOWN]  = m_keymap[KEY_S] = (char)gbtn_down;
   m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
-  m_keymap[KEY_ENTER]  = (char)gbtn_start;  
+  m_keymap[KEY_ENTER]  = (char)gbtn_start;
 
   m_keymap[KEY_X] = (char)gbtn_x;
   m_keymap[KEY_Z] = (char)gbtn_z;
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-:kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false)
+  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 
 
 kgmGameBase::~kgmGameBase(){
- log("free graphics renderer...");
- if(m_render)
-   m_render->release();
+  log("free graphics renderer...");
+  if(m_render)
+    m_render->release();
 
- log("free scenes...");
+  log("free scenes...");
 
- log("free gui...");
- for(int i = 0; i < m_guis.size(); i++)
-   m_guis[i]->release();
- m_guis.clear();
+  log("free gui...");
+  for(int i = 0; i < m_guis.size(); i++)
+    m_guis[i]->release();
+  m_guis.clear();
 
   log("free resources...");
- if(m_resources)
-   m_resources->release();
+  if(m_resources)
+    m_resources->release();
 
- log("free physics...");
- if(m_physics)
-   m_physics->release();
+  log("free physics...");
+  if(m_physics)
+    m_physics->release();
 
- log("free audio...");
- //if(m_audio)
- //  m_audio->release();
+  log("free audio...");
+  //if(m_audio)
+  //  m_audio->release();
 
- log("free system...");
- if(m_system)
-   m_system->release();
+  log("free system...");
+  if(m_system)
+    m_system->release();
 
- m_eventListeners.clear();
+  m_eventListeners.clear();
 }
 
 kgmIGraphics* kgmGameBase::getGraphics(){
- return m_game->m_graphics;
+  return m_game->m_graphics;
 }
 
 kgmIPhysics* kgmGameBase::getPhysics(){
- return m_game->m_physics;
+  return m_game->m_physics;
 }
 
 kgmISpawner* kgmGameBase::getSpawner(){
- return m_game->m_spawner;
+  return m_game->m_spawner;
 }
 
 kgmIAudio*  kgmGameBase::getAudio(){
- return m_game->m_audio;
+  return m_game->m_audio;
 }
 
 kgmIVideo*  kgmGameBase::getVideo(){
- return m_game->m_video;
+  return m_game->m_video;
 }
 
 kgmIResources* kgmGameBase::getResources(){
- return m_game->m_resources;
+  return m_game->m_resources;
 }
 
 kgmSystem*  kgmGameBase::getSystem(){
- return m_game->m_system;
+  return m_game->m_system;
 }
 
 void kgmGameBase::log(const char* msg){
-	kgm_log() << msg << "\n";
+  kgm_log() << msg << "\n";
 }
 
 /*void kgmGameBase::settings(bool save){
  FILE* file;
  if(save){
-  //Saving...      
+  //Saving...
   file = fopen(set_file, "w");
   if(!file)
    return;
@@ -234,7 +234,7 @@ void kgmGameBase::log(const char* msg){
   fprintf(file, "Bpp\t\t\t%i\n", m_bpp);
   fprintf(file, "Fullscreen\t\t\t%i\n", m_fullscreen);
  }else{
-  //Reading...   
+  //Reading...
   file = fopen(set_file, "r");
   if(!file)
    return;
@@ -253,7 +253,7 @@ void kgmGameBase::log(const char* msg){
     this->fullscreen((bool)m_fullscreen);
    }else if(!strcmp(buf, "BaseFont")){
     char* sbuf = new char[128];
-    int r = 0, c = 0;    
+    int r = 0, c = 0;
     memset(sbuf, 0, 128);
     fscanf(file, "%s %i %i ", sbuf, &r, &c);
     kgmString path(sbuf, strlen(sbuf));
@@ -261,14 +261,14 @@ void kgmGameBase::log(const char* msg){
     m_font = m_resources->getFont((char*)sbuf, r, c);
     m_render->setDefaultFont(m_font);
     if(!m_font)
-     log("can't load font");        
+     log("can't load font");
     delete [] sbuf;
    }else if(!strcmp(buf, "Data")){
-    char* sbuf = new char[128]; 
+    char* sbuf = new char[128];
     memset(sbuf, 0, 128);
     fscanf(file, "%s", sbuf);
     kgmString path(sbuf, strlen(sbuf));
-    m_resources->addPath(path);    
+    m_resources->addPath(path);
     delete [] sbuf;
    }
   }
@@ -279,7 +279,7 @@ void kgmGameBase::log(const char* msg){
 
 //
 void kgmGameBase::onIdle(){
-/*
+  /*
  static int tick = kgmTime::getTicks();
  static int frames = 0;
  static int fps = 0;
@@ -289,7 +289,7 @@ void kgmGameBase::onIdle(){
   fps = (frames > 0)?(frames):(1);
   frames = 0;
   getEnvironment()->time_per_frame = 1.0f / fps;
-  sprintf(buf, "FPS: %i TPF: %f\0", fps, 
+  sprintf(buf, "FPS: %i TPF: %f\0", fps,
           getEnvironment()->time_per_frame);
   tick =  kgmTime::getTicks();
  }else{
@@ -297,7 +297,7 @@ void kgmGameBase::onIdle(){
  }
 //*/
 
-/* static float alpha = 0.0;
+  /* static float alpha = 0.0;
  static float m_time[4];
  vec3 v[2];
  mtx4 m;
@@ -329,7 +329,7 @@ void kgmGameBase::onIdle(){
   //gcDrawPlane(gc, vec3(0, 0, -1), 10, 10, 0xFFFF00FF);
   gc->gcRender();
   return;*/
- //if(fps > 60) return;
+  //if(fps > 60) return;
   switch(m_state){
   case State_None:
     break;
@@ -356,23 +356,23 @@ void kgmGameBase::onPaint(kgmIGraphics* gc){
 }
 
 void kgmGameBase::onKeyUp(int k){
- m_input[m_keymap[k]] = 0;
- onInputAction(m_keymap[k], 0);
+  m_input[m_keymap[k]] = 0;
+  onInputAction(m_keymap[k], 0);
 }
 
 void kgmGameBase::onKeyDown(int k){
- m_input[m_keymap[k]] = 1;
+  m_input[m_keymap[k]] = 1;
 
- if(k == KEY_UP)
-   g_cam.move(0.1);
- else if(k == KEY_DOWN)
-   g_cam.move(-0.1);
- else if(k == KEY_LEFT)
-   g_cam.rotate(-0.01, 0);
- else if(k == KEY_RIGHT)
-   g_cam.rotate(0.01, 0);
- 
- onInputAction(m_keymap[k], 1);
+  if(k == KEY_UP)
+    g_cam.move(0.1);
+  else if(k == KEY_DOWN)
+    g_cam.move(-0.1);
+  else if(k == KEY_LEFT)
+    g_cam.rotate(-0.01, 0);
+  else if(k == KEY_RIGHT)
+    g_cam.rotate(0.01, 0);
+
+  onInputAction(m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y){
@@ -392,13 +392,13 @@ void kgmGameBase::onResize(int w, int h){
   float sh = (float)h / (float)prev_height;
   for(int i = 0; i < m_guis.size(); i++)
     m_guis[i]->scale(sw, sh);
-    //m_guis[i]->resize(w, h);
+  //m_guis[i]->resize(w, h);
 }
 
 void kgmGameBase::onEvent(kgmEvent::Event* e){
- kgmWindow::onEvent(e);
- for(int i = 0; i < m_guis.size(); i++) 
-   m_guis[i]->onEvent(e);
+  kgmWindow::onEvent(e);
+  for(int i = 0; i < m_guis.size(); i++)
+    m_guis[i]->onEvent(e);
 }
 
 void kgmGameBase::onInputAction(int action, int argument){
@@ -477,61 +477,61 @@ int kgmGameBase::gCommand(kgmString s)
 }
 
 int kgmGameBase::gQuit(){
- m_state = State_Quit;
- m_quit = true;
- m_msAbs = true;
- m_loop = false;
- m_state = State_None;
- return 1;
+  m_state = State_Quit;
+  m_quit = true;
+  m_msAbs = true;
+  m_loop = false;
+  m_state = State_None;
+  return 1;
 }
 
 u32 kgmGameBase::gState(){
- return m_state;
+  return m_state;
 }
 
 void kgmGameBase::gLogic(){
- static u32 s_time = kgmTime::getTime();
- u32   d_time = kgmTime::getTime() - s_time;
- u32	c_time = 30;
+  static u32 s_time = kgmTime::getTime();
+  u32   d_time = kgmTime::getTime() - s_time;
+  u32	c_time = 30;
 
- if(m_state != State_Play){
-  return;
- }
+  if(m_state != State_Play){
+    return;
+  }
 
- //m_input[grot_x] = 0;
- //m_input[grot_y] = 0;
- //m_input[grot_z] = 0;
+  //m_input[grot_x] = 0;
+  //m_input[grot_y] = 0;
+  //m_input[grot_z] = 0;
 
- if(m_quit){
-   gQuit();
-   return;
- }
+  if(m_quit){
+    gQuit();
+    return;
+  }
 
- if(d_time > c_time){
-  s_time = kgmTime::getTime();
-  m_physics->update(d_time / 1000.0);
- }
+  if(d_time > c_time){
+    s_time = kgmTime::getTime();
+    m_physics->update(d_time / 1000.0);
+  }
 }
 
 ///////////////////////////////////////
 kgmTexture* kgmGameBase::getTexture(char* id){
- return kgmIGame::getGame()->getResources()->getTexture(id);
+  return kgmIGame::getGame()->getResources()->getTexture(id);
 }
 
 kgmShader* kgmGameBase::getShader(char* id){
- return kgmIGame::getGame()->getResources()->getShader(id);
+  return kgmIGame::getGame()->getResources()->getShader(id);
 }
 
 kgmMesh* kgmGameBase::getMesh(char* id){
- return kgmIGame::getGame()->getResources()->getMesh(id);
+  return kgmIGame::getGame()->getResources()->getMesh(id);
 }
 
 kgmAnimation* kgmGameBase::getAnimation(char* id){
- return kgmIGame::getGame()->getResources()->getAnimation(id);
+  return kgmIGame::getGame()->getResources()->getAnimation(id);
 }
 
 kgmActor* kgmGameBase::getActor(kgmString id){
- return gSpawn(id);
+  return gSpawn(id);
 }
 
 /////////////////////////
@@ -594,10 +594,10 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
   
 #define AttrString(node, id, val)		\
   {						\
-    kgmString sid;				\
-    sid = id;					\
-    node->attribute(sid, val);			\
-  }
+  kgmString sid;				\
+  sid = id;					\
+  node->attribute(sid, val);			\
+}
   
   kgmMemory<char> mem;
   if(!kgmIGame::getGame()->getResources()->getFile(path, mem)){
@@ -621,9 +621,10 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
   
   u32            vts = 0, fcs = 0;
   
-  kgmGameNode* scn = new kgmGameNode();
-  kgmGameNode* act = 0;
-  
+  //kgmGameNode* scn = new kgmGameNode();
+  //kgmGameNode* act = 0;
+  kgmActor* act = 0;
+
   for(int i = 0; i < xml.m_node->nodes(); i++){
     kgmString id, t;
     kgmXml::Node* node = xml.m_node->node(i);
@@ -631,25 +632,26 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
     if(id == "kgmMaterial"){
       kgmString id;
       xmlAttr(node, "name", id);
-      scn->add(act = new kgmGameNode(new kgmMaterial()));
+      //scn->add(act = new kgmGameNode(new kgmMaterial()));
       ((kgmMaterial*)act)->setId(id);
-      mtl = (kgmMaterial*)act->material;
+      //mtl = (kgmMaterial*)act->material;
     }else if(id == "kgmCamera"){
-      scn->add(act = new kgmGameNode(new kgmCamera()));
-      cam = (kgmCamera*)act->camera;
+      //scn->add(act = new kgmGameNode(new kgmCamera()));
+      //cam = (kgmCamera*)act->camera;
     }else if(id == "kgmLight"){
-      scn->add(act = new kgmGameNode(new kgmLight()));
-      lgt = (kgmLight*)act->light;
+      //scn->add(act = new kgmGameNode(new kgmLight()));
+      //lgt = (kgmLight*)act->light;
     }else if(id == "kgmMesh"){
-      scn->add(act = new kgmGameNode(new kgmMesh()));
-      msh = (kgmMesh*)act->mesh;
+      //scn->add(act = new kgmGameNode(new kgmMesh()));
+      //msh = (kgmMesh*)act->mesh;
     }else if(id == "kgmActor"){
       kgmString s;
       xmlAttr(node, "type", s);
-      act = new kgmGameNode();
-      if(act){
-        scn->add(act);  
-      }
+      //act = new kgmGameNode();
+      //if(act)
+      //{
+      //  scn->add(act);
+      //}
     }
     
     for(int j = 0; j < node->nodes(); j++){
@@ -665,70 +667,70 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
       }else if(id == "Texture"){
       }else if(id == "Shader"){
       }else if(id == "Material"){
-	kgmString data;
-	xmlAttr(cnode, "name", data);
-	kgmMaterial* mtl = 0;
-	//for(int i = 0; i < scn->objects.size(); i++){
-	//  if(scn->objects[i]->isClass(kgmMaterial::Class) && ((kgmMaterial*)scn->objects[i])->m_id == data){
-	//    mtl = (kgmMaterial*)scn->objects[i];
-	//    break;
-	//  }
-	//}
-	//kgmNode* mn = scn->node->find(kgmNode::NodeMaterial, mtl);
-	//if(mn)
-	//mn->add(new kgmNode(msh));
+        kgmString data;
+        xmlAttr(cnode, "name", data);
+        kgmMaterial* mtl = 0;
+        //for(int i = 0; i < scn->objects.size(); i++){
+        //  if(scn->objects[i]->isClass(kgmMaterial::Class) && ((kgmMaterial*)scn->objects[i])->m_id == data){
+        //    mtl = (kgmMaterial*)scn->objects[i];
+        //    break;
+        //  }
+        //}
+        //kgmNode* mn = scn->node->find(kgmNode::NodeMaterial, mtl);
+        //if(mn)
+        //mn->add(new kgmNode(msh));
       }else if(id == "Vertices"){
-	int len = 0, n = 0;
-	kgmString data;
-	
-	xmlAttr(cnode, "length", len);
-	kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
-	cnode->data(data);
-	char* pdata = data.data();
-	for(int i = 0; i < len; i++){
-	  sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
-		 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
-		 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-		 &v[i].uv.x, &v[i].uv.y, &n);
-	  v[i].col = 0xffffffff;
-	  (pdata) += (u32)n;
-	}
+        int len = 0, n = 0;
+        kgmString data;
+
+        xmlAttr(cnode, "length", len);
+        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
+        cnode->data(data);
+        char* pdata = data.data();
+        for(int i = 0; i < len; i++){
+          sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
+                 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+                 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+                 &v[i].uv.x, &v[i].uv.y, &n);
+          v[i].col = 0xffffffff;
+          (pdata) += (u32)n;
+        }
       }else if(id == "Faces"){
-	int len = 0, n = 0;
-	kgmString data;
-	
-	xmlAttr(cnode, "length", len);
-	kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
-	cnode->data(data);
-	char* pdata = data.data();
-	for(int i = 0; i < len; i++){
-	  u32 fs[4];
-	  sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
-	  f[i].f[0] = fs[0];
-	  f[i].f[1] = fs[1];
-	  f[i].f[2] = fs[2];
-	  (pdata) += (u32)n;
-	}
+        int len = 0, n = 0;
+        kgmString data;
+
+        xmlAttr(cnode, "length", len);
+        kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
+        cnode->data(data);
+        char* pdata = data.data();
+        for(int i = 0; i < len; i++){
+          u32 fs[4];
+          sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
+          f[i].f[0] = fs[0];
+          f[i].f[1] = fs[1];
+          f[i].f[2] = fs[2];
+          (pdata) += (u32)n;
+        }
       }else if(id == "Position"){
-	vec3 v;
-	xmlAttr(cnode, "value", v);
-	if(act)
-	  act->setPosition(v);
+        vec3 v;
+        xmlAttr(cnode, "value", v);
+        //if(act)
+        //act->setPosition(v);
       }else if(id == "Rotation"){
-	vec3 v;
-	xmlAttr(cnode, "value", v);
-	if(act)
-	  act->setRotation(v);
+        vec3 v;
+        xmlAttr(cnode, "value", v);
+        //if(act)
+          //act->setRotation(v);
       }else if(id == "Quaternion"){
-	quat q;
-	xmlAttr(cnode, "value", q);
-	if(act)
-	  act->setRotation(q);
+        quat q;
+        xmlAttr(cnode, "value", q);
+        //if(act)
+        //act->setRotation(q);
       }
     }
   }
 
-  return scn;
+  return 0; //scn;
 }
 
 //
@@ -750,10 +752,10 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
 #define AttrString(node, id, val)		\
   {						\
-    kgmString sid;				\
-    sid = id;					\
-    node->attribute(sid, val);			\
-  }
+  kgmString sid;				\
+  sid = id;					\
+  node->attribute(sid, val);			\
+}
 
   kgmMemory<char> mem;
   if(!kgmIGame::getGame()->getResources()->getFile(path, mem)){
@@ -840,9 +842,9 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         char* pdata = data.data();
         for(int i = 0; i < len; i++){
           sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
-          &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
-          &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-          &v[i].uv.x, &v[i].uv.y, &n);
+                 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+                 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+                 &v[i].uv.x, &v[i].uv.y, &n);
           v[i].col = 0xffffffff;
           (pdata) += (u32)n;
         }
@@ -910,7 +912,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   fprintf(stderr, "\nSpawning Actor: %s", a.data());
   if(!m_resources->getFile(a, mem))
     return 0;
- 
+
   kgmXml xml(mem);
   if(!xml.m_node)
     return 0;
@@ -985,7 +987,7 @@ void kgmGameBase::gRender(kgmIGraphics* gc){
   gcDrawGridlines(gc, 10, 20, 0x55555555);
   //gcDrawPlane(gc, vec3(0, 0, -1), 10, 10, 0xFFFF00FF);
   if(m_state == State_Play)
-	  m_render.render();
+    m_render.render();
 
   //For last step draw gui
   gc->gc2DMode();
