@@ -21,7 +21,7 @@
 class kgmGameScene
 {
 public:
-  class Node : public kgmNode, public kgmBody
+/*  class Node : public kgmNode, public kgmBody
   {
   public:
     Node() :
@@ -69,7 +69,7 @@ public:
     {
     }
   };
-
+*/
 public:
   kgmGameScene();
   virtual

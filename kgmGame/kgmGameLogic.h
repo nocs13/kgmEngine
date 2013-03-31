@@ -29,6 +29,8 @@ public:
 
 public:
     kgmGameLogic();
+
+    void clear();
 };
 
 #endif // KGMGAMELOGIC_H

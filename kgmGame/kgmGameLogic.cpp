@@ -3,3 +3,7 @@
 kgmGameLogic::kgmGameLogic()
 {
 }
+
+void kgmGameLogic::clear()
+{
+}

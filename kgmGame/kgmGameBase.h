@@ -4,6 +4,7 @@
 #include "kgmGameResources.h"
 #include "kgmGameGraphics.h"
 #include "kgmGamePhysics.h"
+#include "kgmGameLogic.h"
 #include "kgmActor.h"
 
 #include "kgmGameSettings.h"
@@ -23,22 +24,6 @@
 
 class kgmGameBase: public kgmIGame, public kgmOGLWindow
 {
- 
-public:
-  class Scene{
-    kgmList<kgmObject*> objects;
-
-  public:
-    Scene(){
-    }
-    ~Scene(){
-      for(int i = 0; i < objects.size(); i++){
-        objects[i]->release();
-      }
-      objects.clear();
-    }
-  };
-
 public:
  static kgmGameBase*	m_game;
 
@@ -68,20 +53,15 @@ protected:
  kgmList<Idle*> m_idles;
  kgmList<GameSensor*> m_sensors;
  kgmList<InputEventListener*> m_eventListeners;
+
 public:
  int		    m_state;	//game state
- bool		   m_result;	//game over result
+ bool		    m_result;	//game over result
 
+ kgmGameLogic*         m_logic;
  kgmGameGraphics*      m_render;
- kgmList<kgmObject*>   m_world;
-
- //kgmList<Scene*>    m_scenes;
-
-private:
- //Display data
- kgmList<kgmGui*>   m_guis;     //game or nongame guis
-public:
- kgmGameNode*    m_node;   //game nodes
+ kgmList<kgmObject*>   m_objects;
+ kgmList<kgmGui*>      m_guis;     //game or nongame guis
 
  ////////////////
 public:
@@ -125,7 +105,7 @@ public:
  bool gMapXml(kgmString&);
 
  kgmActor*    gSpawn(kgmString);	//spawns and add the actor
- kgmGameNode* gMainNode(){ return m_node; }
+ kgmGameNode* gMainNode(){ return null; }
 
 ///////////////////////////////////////
 protected:

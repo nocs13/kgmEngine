@@ -74,8 +74,6 @@ kgmGameBase::kgmGameBase()
   m_system = 0;
   m_audio = 0;
   
-  m_node = 0;
-
   prev_width = 640;
   prev_height = 480;
 
@@ -415,7 +413,7 @@ void kgmGameBase::onInputAction(int action, int argument){
 //Game Functions
 int kgmGameBase::gLoad(kgmString s)
 {
-  if(m_node)
+  if(m_objects.size())
     gUnload();
 
   kgm_log() << kgm_log_label() << " " << "Loading game map " << (char*)s << "..." << "\n";
@@ -423,13 +421,17 @@ int kgmGameBase::gLoad(kgmString s)
   
 
   loadXml_II(s);
-  if(m_node){
+
+  if(m_objects.size()){
     //m_node->add(new kgmGameNode(new kgmCamera()));
     //m_render->add(m_node);
   }
+
   m_render->build();
+  m_physics->build();
 
   m_state = State_Play;
+
   return m_state;
 }
 
@@ -444,19 +446,15 @@ int kgmGameBase::gUnload()
   if(m_physics)
     m_physics->clear();
 
-  if(m_world.length() > 0){
-    for(int i = 0; i < m_world.length(); i++)
-      m_world[i]->release();
-    m_world.clear();
+  if(m_logic)
+      m_logic->clear();
+
+  if(m_objects.length() > 0){
+    for(int i = 0; i < m_objects.length(); i++)
+      m_objects[i]->release();
+    m_objects.clear();
   }
 
-  if(m_sensors.length() > 0)
-  {
-    for(int i = 0; i < m_sensors.length(); i++)
-      m_sensors[i]->release();
-    m_sensors.clear();
-  }
-  
   m_state = state;
 
   return 0;
@@ -621,8 +619,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
   
   u32            vts = 0, fcs = 0;
   
-  //kgmGameNode* scn = new kgmGameNode();
-  //kgmGameNode* act = 0;
+  kgmObject* obj = 0;
   kgmActor* act = 0;
 
   for(int i = 0; i < xml.m_node->nodes(); i++){
@@ -632,26 +629,23 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
     if(id == "kgmMaterial"){
       kgmString id;
       xmlAttr(node, "name", id);
-      //scn->add(act = new kgmGameNode(new kgmMaterial()));
-      ((kgmMaterial*)act)->setId(id);
-      //mtl = (kgmMaterial*)act->material;
+      obj = mtl = new kgmMaterial();
+      ((kgmMaterial*)obj)->setId(id);
+      m_objects.add(obj);
     }else if(id == "kgmCamera"){
-      //scn->add(act = new kgmGameNode(new kgmCamera()));
-      //cam = (kgmCamera*)act->camera;
+      obj = cam = new kgmCamera();
+      m_objects.add(obj);
     }else if(id == "kgmLight"){
-      //scn->add(act = new kgmGameNode(new kgmLight()));
-      //lgt = (kgmLight*)act->light;
+      obj = lgt = new kgmLight();
+        m_objects.add(obj);
     }else if(id == "kgmMesh"){
-      //scn->add(act = new kgmGameNode(new kgmMesh()));
-      //msh = (kgmMesh*)act->mesh;
+      obj = msh = new kgmMesh();
+        m_objects.add(obj);
     }else if(id == "kgmActor"){
       kgmString s;
       xmlAttr(node, "type", s);
-      //act = new kgmGameNode();
-      //if(act)
-      //{
-      //  scn->add(act);
-      //}
+      obj = act = new kgmActor();
+      m_objects.add(obj);
     }
     
     for(int j = 0; j < node->nodes(); j++){
@@ -670,15 +664,12 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
         kgmString data;
         xmlAttr(cnode, "name", data);
         kgmMaterial* mtl = 0;
-        //for(int i = 0; i < scn->objects.size(); i++){
-        //  if(scn->objects[i]->isClass(kgmMaterial::Class) && ((kgmMaterial*)scn->objects[i])->m_id == data){
-        //    mtl = (kgmMaterial*)scn->objects[i];
-        //    break;
-        //  }
-        //}
-        //kgmNode* mn = scn->node->find(kgmNode::NodeMaterial, mtl);
-        //if(mn)
-        //mn->add(new kgmNode(msh));
+        for(int i = 0; i < m_objects.size(); i++){
+          if(m_objects[i]->isClass(kgmMaterial::Class) && ((kgmMaterial*)m_objects[i])->m_id == data){
+            mtl = (kgmMaterial*)m_objects[i];
+            break;
+          }
+        }
       }else if(id == "Vertices"){
         int len = 0, n = 0;
         kgmString data;
@@ -714,23 +705,23 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
       }else if(id == "Position"){
         vec3 v;
         xmlAttr(cnode, "value", v);
-        //if(act)
-        //act->setPosition(v);
+        if(act)
+            act->setPosition(v);
       }else if(id == "Rotation"){
         vec3 v;
         xmlAttr(cnode, "value", v);
-        //if(act)
-          //act->setRotation(v);
+        if(act)
+          act->setRotation(v);
       }else if(id == "Quaternion"){
         quat q;
         xmlAttr(cnode, "value", q);
-        //if(act)
-        //act->setRotation(q);
+        if(act)
+            act->setRotation(q);
       }
     }
   }
 
-  return 0; //scn;
+  return m_objects.size();
 }
 
 //
@@ -794,16 +785,15 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       obj = mtl = new kgmMaterial();
       mtl->setId(id);
       m_render->add(mtl);
-      m_world.add(obj);
+      m_objects.add(obj);
     }else if(id == "kgmCamera"){
       type = TypeCamera;
-      //scn->add(act = new kgmGameNode(new kgmCamera()));
-      //cam = (kgmCamera*)act->camera;
+      //obj = cam = (kgmCamera*)act->camera;
     }else if(id == "kgmLight"){
       type = TypeLight;
       obj = lgt = new kgmLight();
       m_render->add(lgt);
-      m_world.add(obj);
+      m_objects.add(obj);
     }else if(id == "kgmMesh"){
       type = TypeMesh;
       obj = msh = new kgmMesh();
@@ -815,7 +805,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       obj = act = gSpawn(s);
       if(act){
         m_render->add(act);
-        m_world.add(obj);
+        m_objects.add(obj);
       }
     }
 
@@ -910,6 +900,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgmMemory<char> mem;
 
   fprintf(stderr, "\nSpawning Actor: %s", a.data());
+
   if(!m_resources->getFile(a, mem))
     return 0;
 
@@ -947,7 +938,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       }
     }
   }
+
   fprintf(stderr, "\nActor: %s", actor->m_name.data());
+
   return actor;
 }
 
@@ -997,5 +990,4 @@ void kgmGameBase::gRender(kgmIGraphics* gc){
 
   gc->gcRender();
 }
-
- */
+*/
