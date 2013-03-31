@@ -45,7 +45,7 @@ kGui::kGui(kgmGameBase* game)
 
   kgmGuiList* lst = new kgmGuiList(gui, 0, 100, 200, 200);
   lst->setSid("levels");
-  lst->addItem("level01");
+  lst->addItem("level01.kgm");
   gui->show();
 
   game->addGui(m_guiMain);
