@@ -133,16 +133,6 @@ kgmList<kgmMesh*>  c_meshes;  //statuc meshes
 inline void collect(kgmNode* n){
   if(!n)
     return;
-  for(int i = 0; i < n->count(); i++){
-    kgmNode* node = n->node(i);
-      if(node->type == kgmNode::NodeCamera && !c_camera){
-          c_camera = node->camera;
-      }else if(node->type == kgmNode::NodeLight){
-
-      }else if(node->type == kgmNode::NodeMesh){
-
-      }
-  }
 }
 
 void kgmGraphics::render()
@@ -186,7 +176,23 @@ void kgmGraphics::render()
   gc->gcBegin();
 
   //render 3D
-  render(node);
+
+  for(kgmList<kgmMesh*>::iterator i = meshes.begin(); i != meshes.end(); i++)
+  {
+    kgmMesh* mesh = (*i);
+
+    gc->gcDraw(gcpmt_triangles, mesh->fvf(), mesh->vsize(),
+               mesh->vcount(), mesh->vertices(),
+               2, 3 * mesh->fcount(),  mesh->faces());
+
+  }
+
+  for(kgmList<kgmNode*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  {
+    kgmNode* node = (*i);
+
+    render(node);
+  }
   
   //For last step draw gui
   gc->gc2DMode();
@@ -215,39 +221,15 @@ void kgmGraphics::render(kgmNode* n)
   if(!n)
     return;
 
-  switch(n->type){
-  case kgmNode::NodeCamera:
-    if(n->camera){
-      mtx4 mvw;
-      mvw.identity();
-      //gc->gcSetMatrix(gcmtx_proj, ((NodeCamera*)n)->camera->mVwPj.m);
-      gc->gcSetMatrix(gcmtx_proj, n->camera->mProj.m);
-      gc->gcSetMatrix(gcmtx_view, n->camera->mView.m);
-      //gc->gcSetMatrix(gcmtx_view, mvw.m);
-      camera = n->camera;
-    }else{
-      mtx4 mvw, mpr;
-      mvw.identity();
-      mpr.identity();
-      gc->gcSetMatrix(gcmtx_proj, mpr.m);
-      gc->gcSetMatrix(gcmtx_view, mvw.m);
-    }
-    break;
-  case kgmNode::NodeMaterial:
-    set(n->material);
-    break;
-  case kgmNode::NodeMesh:
-    gc->gcDraw(gcpmt_triangles, n->mesh->fvf(), n->mesh->vsize(),
-               n->mesh->vcount(), n->mesh->vertices(),
-               2, 3 * n->mesh->fcount(),  n->mesh->faces());
-    printf("Draw mesh: \n");
-    break;
-  default:
-    break;
+  if(n->mesh)
+  {
+      gc->gcDraw(gcpmt_triangles, n->mesh->fvf(), n->mesh->vsize(),
+                 n->mesh->vcount(), n->mesh->vertices(),
+                 2, 3 * n->mesh->fcount(),  n->mesh->faces());
   }
 
-  for(int i = 0; i < n->count(); i++)
-    render(n->node(i));
+//  for(int i = 0; i < n->count(); i++)
+//    render(n->node(i));
 }
 
 void kgmGraphics::render(kgmGui* gui){
@@ -388,23 +370,6 @@ void kgmGraphics::resize(int w, int h)
   gc->gcSetMatrix(gcmtx_proj, mpr.m);
 }
 
-
-void kgmGraphics::add(kgmNode* n)
-{
- if(!n)
-   return;
- node->add(n);
-}
-
-void kgmGraphics::erase(kgmNode* n)
-{
- node->erase(n);
-}
-
-void kgmGraphics::add(kgmGui* g)
-{
-  guis.add(g);
-}
 
 void kgmGraphics::erase(kgmGui* g)
 {

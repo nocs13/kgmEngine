@@ -15,111 +15,38 @@
 #include "kgmGuiStyle.h"
 #include "kgmIGuiDraw.h"
 
+#include "kgmLight.h"
 #include "kgmCamera.h"
 
 
 class kgmGraphics : public kgmInterface, public kgmIGuiDraw, public kgmObject
 {
 public:
-  /*class Node
-  {
-  public:
-    enum Type
-    {
-      TypeNone,
-      TypeGroup,
-      TypeMesh,
-      TypeLight,
-      TypeCamera,
-      TypeMaterial,
-      TypeTransform,
-      TypeAnimation,
-    };
-    Type type;
-
-    union
-    {
-      kgmMesh* mesh;
-      kgmTransform* transform;
-      kgmCamera* camera;
-      kgmAnimation* animation;
-      kgmMaterial* material;
-      kgmLight* light;
-    };
-
-  private:
-    kgmList<Node*> m_nodes;
-
-  public:
-    Node() :
-      type(TypeNone)
-    {
-    }
-
-    Node(kgmMesh* m) :
-      type(TypeMesh), mesh(m)
-    {
-    }
-
-    Node(kgmLight* m) :
-      type(TypeLight), light(m)
-    {
-    }
-
-    Node(kgmMaterial* m) :
-      type(TypeMaterial), material(m)
-    {
-    }
-
-    Node(kgmTransform* m) :
-      type(TypeTransform), transform(m)
-    {
-    }
-
-    Node(kgmCamera* m) :
-      type(TypeCamera), camera(m)
-    {
-    }
-
-    Node(kgmAnimation* m) :
-      type(TypeAnimation), animation(m)
-    {
-    }
-
-    virtual
-    ~Node()
-    {
-      for (int i = 0; i < m_nodes.size(); i++)
-        delete m_nodes[i];
-      m_nodes.clear();
-    }
-
-    virtual void add(Node* n) { m_nodes.add(n); }
-
-    virtual void erase(Node* n) { }
-
-    virtual int nodes() { return m_nodes.size(); }
-
-    virtual Node* node(int i) { return (i < m_nodes.size()) ? (m_nodes[i]) : (0); }
-  };*/
-
   kgmIResources* rc;
   kgmIGraphics* gc;
   kgmWindow* wnd;
   kgmFont* font;
 
   kgmNode* node;
-  kgmList<kgmGui*> guis;
-  kgmGuiStyle* gui_style;
+
+  kgmList<kgmMaterial*> materials;
+  kgmList<kgmLight*>    lights;
+  kgmList<kgmMesh*>     meshes;
+  kgmList<kgmNode*>     nodes;
+  kgmList<kgmGui*>      guis;
+  kgmGuiStyle*          gui_style;
 
   int fwidth, fheight;
   float znear, zfar;
 
-  kgmCamera* camera;
-  kgmMaterial* material;
+  kgmLight*     light;
+  kgmCamera*    camera;
+  kgmMaterial*  material;
+  kgmSkeleton*  skeleton;
   kgmAnimation* animation;
-  kgmSkeleton* skeleton;
+
   mtx4 mtransform;
+
   void* tdiffuse;
   void* tspecular;
   void* tnormal;
@@ -128,8 +55,6 @@ public:
 
   kgmTab<u16, kgmShader*> shaders;
   kgmTab<u16, void*> textures;
-
-  kgmList<kgmLight*> a_lights;
 
   kgmCamera  mcamera;
 
@@ -144,13 +69,6 @@ public:
   void
   resize(int, int);
 
-  void
-  add(kgmNode*);
-  void
-  erase(kgmNode*);
-
-  void
-  add(kgmGui*);
   void
   erase(kgmGui*);
 
@@ -177,6 +95,12 @@ public:
   kgmCamera& mainCamera(){
       return mcamera;
   }
+
+  void add(kgmGui* g){ guis.add(g); }
+  void add(kgmNode* n){ if(n) this->nodes.add(n); }
+  void add(kgmMesh* m){ if(m) this->meshes.add(m); }
+  void add(kgmLight* l){ if(l) this->lights.add(l); }
+  void add(kgmMaterial* m){ if(m) this->materials.add(m); }
 
 protected:
   void
