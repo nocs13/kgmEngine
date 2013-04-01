@@ -8,7 +8,8 @@ class kGui : public kgmObject, kgmEvent
 {
 public:
     kgmGameBase* m_game;
-    kgmGui* m_guiMain;
+    kgmGui*      m_guiMain;
+    kgmGui*      m_guiPause;
 
 public:
     kGui(kgmGameBase*);
