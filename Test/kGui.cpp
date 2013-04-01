@@ -49,6 +49,21 @@ kGui::kGui(kgmGameBase* game)
   gui->show();
 
   game->addGui(m_guiMain);
+
+
+  m_guiPause = new kgmGui(null, w / 2 - 100, h / 2 - 100, 200, 200);
+  m_guiPause->addListener(this);
+  m_guiPause->hide();
+
+  btn = new kgmGuiButton(m_guiPause, 1, 10, 100, 30);
+  btn->setText("Resume");
+  btn->setSid("gameResume");
+
+  btn = new kgmGuiButton(m_guiPause, 1, 50, 100, 30);
+  btn->setText("Exit");
+  btn->setSid("gameExit");
+
+  game->addGui(m_guipause);
 }
 
 kGui::~kGui()

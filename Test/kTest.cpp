@@ -17,6 +17,25 @@ public:
   ~kGame(){
   }
 
+  void onKeyUp(int k){
+    kgmGameBase::onKeyUp(k);
+
+    if(k == KEY_ESCAPE)
+    {
+      if(gState() == State_Play)
+      {
+        gPause(true);
+        gui->m_guiPause->show();
+      }
+      else if(gState() == State_Pause)
+      {
+        gPause(false);
+        gui->m_guiPause->hide();
+      }
+
+    }
+  }
+
 };
 
 
