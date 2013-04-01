@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stack>
 
 kgmGameBase* kgmGameBase::m_game;
 kgmIGame* kgmIGame::getGame(){
@@ -49,7 +48,6 @@ float hcoef = 1.0f;
 char str_buf[1024];
 
 u32 cmd_input = 0;
-std::stack<u32> stack_input;
 
 int   cc_value = 0;
 float m_camDistance = 10.0f;
@@ -487,6 +485,18 @@ u32 kgmGameBase::gState(){
   return m_state;
 }
 
+void kgmGameBase::gPause(bool s){
+  if(s && m_state == State_Play)
+  {
+    m_state = State_Pause;
+  }
+
+  if(!s && m_state == State_Pause)
+  {
+    m_state = State_Play;
+  }
+}
+
 void kgmGameBase::gLogic(){
   static u32 s_time = kgmTime::getTime();
   u32   d_time = kgmTime::getTime() - s_time;
@@ -721,7 +731,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
     }
   }
 
-  return m_objects.size();
+  return null; //m_objects.size();
 }
 
 //

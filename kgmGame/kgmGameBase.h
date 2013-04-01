@@ -97,6 +97,7 @@ public:
  int  gCommand(kgmString);  //do string command
  int  gQuit();              //quit from level
  u32  gState();             //check game state
+ void gPause(bool);            //render game scene
  void gRender();            //render game scene
  void gLogic();             //do game logic  & Physics
 
@@ -111,13 +112,13 @@ public:
 protected:
 // Game Resources
  kgmTexture*    getTexture(char*);
- kgmShader*	getShader(char*);
- kgmMesh*	getMesh(char*);
- kgmActor*	getActor(kgmString);
+ kgmShader*	    getShader(char*);
+ kgmMesh*	      getMesh(char*);
+ kgmActor*	    getActor(kgmString);
  kgmAnimation*	getAnimation(char*);
 
- kgmGameNode* loadXml(kgmString& path);
- bool loadXml_II(kgmString& path);
+ kgmGameNode*   loadXml(kgmString& path);
+ bool           loadXml_II(kgmString& path);
 
 
 public:
