@@ -55,6 +55,11 @@ public:
  Atom                 m_wmDelete;
  int                  m_screen;
 #endif
+
+#ifdef ANDROID
+ void* m_wnd;
+#endif
+
  kgmWindow*	m_parent;		 
 // int  m_x, m_y, m_w, m_h;
 // int  m_msx, m_msy;

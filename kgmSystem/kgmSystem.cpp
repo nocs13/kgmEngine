@@ -1,13 +1,14 @@
 #include "kgmSystem.h"
 #include "../kgmBase/kgmList.h"
 
-#ifdef WIN32
-#include <stdio.h>
-#include <windows.h>
-#endif
-#ifdef LINUX
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#ifdef LINUX
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>

@@ -706,6 +706,7 @@ void kgmWindow::getMouse(int& x, int& y)
 // ScreenToClient(m_hWnd, &pt);
 // SetCursorPos(pt.x, pt.y);
 #endif
+
 #ifdef LINUX
 #endif
 }
@@ -714,6 +715,7 @@ void kgmWindow::setTitle(char* title){
 #ifdef WIN32
  SetWindowText(m_wnd, title);
 #endif
+
 #ifdef LINUX
  XStoreName(m_dpy, m_wnd, title);
 #endif
