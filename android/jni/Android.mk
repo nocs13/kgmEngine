@@ -27,11 +27,12 @@ FILE_LIST := $(wildcard $(LOCAL_PATH)/../../kgm*/*.cpp)
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 LOCAL_MODULE    := libkgmEngine
-LOCAL_CFLAGS    := -DANDROID -fpermissive #-Werror
+LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g -std=c99#-Werror
 #LOCAL_SRC_FILES := $(BUILD_FILES)
-LOCAL_LDLIBS    := -llog -lGLESv2 -lm -lz
+LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++
 
-#../../kgmMath/*.cpp ../../kgmGraphics/*.cpp
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
-include $(BUILD_SHARED_LIBRARY)
-#include $(BUILD_STATIC_LIBRARY)
+
+#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)

@@ -59,7 +59,7 @@ kgmNet:
 
 kgmGraphics:
 	make -C kgmGraphics -f Makefile
-        ar crs libkgmEngine.a kgmGraphics/*.o
+	ar crs libkgmEngine.a kgmGraphics/*.o
 
 kgmPhysics:
 	make -C kgmPhysics -f Makefile

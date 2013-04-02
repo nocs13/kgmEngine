@@ -7,7 +7,7 @@
 #ifdef WIN32
  #include <windows.h>
  #include <process.h>
-#elif defined LINUX
+#else
  #include <stdlib.h>
  #include <unistd.h>
  #include <pthread.h>
@@ -18,8 +18,7 @@ class kgmThread{
 public:
 #ifdef WIN32
  void* m_thread;
-#endif 
-#ifdef LINUX
+#else
  pthread_t m_thread;
 #endif 
 public:

@@ -4,6 +4,7 @@ RM =
 CC = g++
 AR = ar
 DEFS = -DLINUX
+DSND = -OAL
 
 FLGS = 
 DIRS = -I./ -I../kgmBase -I../kgmMath -I../kgmNet -I../kgmGame -I../kgmSystem/inc -I../kgmGraphics -I../kgmPhysics -L./kgmSystem/lib
@@ -11,11 +12,12 @@ LIBS =
 OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
+     DEFS = -DLINUX -DOAL          
 	FLGS = -ansi -g -c -fpermissive -fPIC -O2
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else 
-        DEFS = -DWIN32
+        DEFS = -DWIN32 -DOAL
     	FLGS = -ansi -g -O2 -c
 	LIBS = -lpthread -llua -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32 -lglu32
 	RM = del
