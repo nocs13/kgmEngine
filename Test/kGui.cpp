@@ -63,7 +63,7 @@ kGui::kGui(kgmGameBase* game)
   btn->setText("Exit");
   btn->setSid("gameExit");
 
-  game->addGui(m_guipause);
+  game->addGui(m_guiPause);
 }
 
 kGui::~kGui()

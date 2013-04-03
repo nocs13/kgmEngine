@@ -90,7 +90,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 
 #ifdef WIN32
  const kgmString delim((const char*)"\\", 1);
-#elif defined LINUX
+#else
  const kgmString delim((const char*)"/", 1);
 #endif
 

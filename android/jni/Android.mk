@@ -16,23 +16,20 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-BUILD_FILES := $(wildcard ../../kgmBase/*.cpp)
-BUILD_FILES += $(wildcard ../../kgmMath/*.cpp)
-BUILD_FILES += $(wildcard ../../kgmNet/*.cpp)
-BUILD_FILES += $(wildcard ../../kgmPhysics/*.cpp)
-BUILD_FILES += $(wildcard ../../kgmGraphics/*.cpp)
-BUILD_FILES += $(wildcard ../../kgmGame/*.cpp)
-
-FILE_LIST := $(wildcard $(LOCAL_PATH)/../../kgm*/*.cpp)
+FILE_LIST       := $(wildcard $(LOCAL_PATH)/../../kgm*/*.cpp)
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 LOCAL_MODULE    := libkgmEngine
-LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g -std=c99#-Werror
-#LOCAL_SRC_FILES := $(BUILD_FILES)
-LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++
+LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g -std=c99 #-Werror
 
+include $(BUILT_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := kgm
+LOCAL_STATIC_LIBRARIES := kgmEngine 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++
+include $(BUILD_SHARED_LIBRARY)
 
 
-#include $(BUILD_SHARED_LIBRARY)
-include $(BUILD_STATIC_LIBRARY)

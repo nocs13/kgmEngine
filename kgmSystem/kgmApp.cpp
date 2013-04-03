@@ -75,6 +75,7 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 
 //FOR LINUX
 #ifdef LINUX
+
 int main(int argc, char** argv){
  int rValue = 0;
 
@@ -82,8 +83,40 @@ int main(int argc, char** argv){
    kgmApp::application()->main();
 
  kgmObject::releaseObjects();
+
  return rValue;
 }
+
+#endif
+
+//FOR ANDROID
+#ifdef ANDROID
+
+#include <jni.h>
+#include <android/log.h>
+
+#define  LOG_TAG    "libkgmEngine"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+extern "C"
+{
+    JNIEXPORT int JNICALL Java_com_android_kgmEngine_kgmEngine_main(JNIEnv * env, jobject obj,  jint width, jint height);
+};
+
+JNIEXPORT int JNICALL Java_com_android_kgmEngine_kgmEngine_main(JNIEnv * env, jobject obj,  jint width, jint height)
+{
+  int rValue = 0;
+
+  if(kgmApp::application())
+    kgmApp::application()->main();
+
+  kgmObject::releaseObjects();
+
+  return rValue;
+}
+
+
 #endif
 /////////
 

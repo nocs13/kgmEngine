@@ -5,8 +5,6 @@
 
 #include "../kgmMath/kgmTriangle3d.h"
 
-#include <vector>
-
 
 class kgmGamePhysics: public kgmPhysics{
 public:
