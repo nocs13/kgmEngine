@@ -1,0 +1,7 @@
+#http://developer.android.com/tools/building/building-cmdline.html
+
+android update project -p . -t <your target level>
+ant debug
+android avd
+adb install <path_to_your_bin>.apk
+#adb -s emulator-5554 install path/to/your/app.apk

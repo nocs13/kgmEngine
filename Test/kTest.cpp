@@ -40,6 +40,9 @@ public:
 
 
 class kApp: public kgmApp{
+#ifdef ANDROID
+public:
+#endif
  kGame*	m_game;	 
 public:
  kApp(){
@@ -51,6 +54,7 @@ public:
  void print_xml(kgmXml::Node* n){
   if(!n)
    return;
+
   kgmString s, d;
   n->id(s);
   n->data(d);
@@ -83,6 +87,7 @@ public:
   //printf_xml("map001.kgm");
   m_game = new kGame();
   m_game->loop();
+
   delete m_game;
   //kgmOGLWindow* w = new kgmOGLWindow(0, "", 0, 0, 100, 100, 16, false); 
   //w->loop();
@@ -94,3 +99,38 @@ public:
 //main object
 kApp theApp;
 //////////////
+
+//FOR ANDROID
+#ifdef ANDROID
+
+#include <jni.h>
+#include <android/log.h>
+
+#define  LOG_TAG    "libkgmEngine"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+extern "C"
+{
+  JNIEXPORT void  JNICALL Java_com_android_Test_Test_main(JNIEnv * env, jobject obj,  jint width, jint height);
+  JNIEXPORT void  JNICALL Java_com_android_Test_Test_msMove(JNIEnv * env, jobject obj,  jint width, jint height);
+};
+
+JNIEXPORT void JNICALL Java_com_android_Test_Test_main(JNIEnv * env, jobject obj,  jint width, jint height)
+{
+  theApp.m_game->onMsMove(0, 0, 0);
+}
+
+JNIEXPORT void JNICALL Java_com_android_Test_Test_msMove(JNIEnv * env, jobject obj,  jint width, jint height)
+{
+  theApp.main();
+}
+
+jstring
+Java_com_example_Test_Test_stringFromJNI( JNIEnv* env, jobject this_)
+{
+    return (env)->NewStringUTF("Hello from TEST JNI !");
+}
+
+
+#endif
