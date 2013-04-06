@@ -110,25 +110,42 @@ kApp theApp;
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+kGame*	m_game = null;
+
 extern "C"
 {
-  JNIEXPORT void  JNICALL Java_com_android_Test_Test_main(JNIEnv * env, jobject obj,  jint width, jint height);
-  JNIEXPORT void  JNICALL Java_com_android_Test_Test_msMove(JNIEnv * env, jobject obj,  jint width, jint height);
+  JNIEXPORT void  JNICALL Java_com_example_Test_Test_init(JNIEnv * env, jobject obj,  jint width, jint height);
+  JNIEXPORT void  JNICALL Java_com_example_Test_Test_quit(JNIEnv * env, jobject obj);
+  JNIEXPORT void  JNICALL Java_com_example_Test_Test_idle(JNIEnv * env, jobject obj);
+  JNIEXPORT void  JNICALL Java_com_example_Test_Test_msMove(JNIEnv * env, jobject obj,  jint x, jint y);
+  JNIEXPORT jstring  JNICALL Java_com_example_Test_Test_stringFromJNI(JNIEnv * env, jobject obj);
 };
 
-JNIEXPORT void JNICALL Java_com_android_Test_Test_main(JNIEnv * env, jobject obj,  jint width, jint height)
+JNIEXPORT void JNICALL Java_com_example_Test_Test_init(JNIEnv * env, jobject obj,  jint width, jint height)
 {
-  theApp.m_game->onMsMove(0, 0, 0);
+    m_game = new kGame();
 }
 
-JNIEXPORT void JNICALL Java_com_android_Test_Test_msMove(JNIEnv * env, jobject obj,  jint width, jint height)
+JNIEXPORT void JNICALL Java_com_example_Test_Test_quit(JNIEnv * env, jobject obj)
 {
-  theApp.main();
+    if(m_game)
+      m_game->release();
+    m_game = null;
 }
 
-jstring
-Java_com_example_Test_Test_stringFromJNI( JNIEnv* env, jobject this_)
+JNIEXPORT void JNICALL Java_com_example_Test_Test_idle(JNIEnv * env, jobject obj)
 {
+    if(m_game)
+      m_game->onIdle();
+}
+
+JNIEXPORT void JNICALL Java_com_example_Test_Test_msMove(JNIEnv * env, jobject obj,  jint x, jint y)
+{
+    if(m_game)
+      m_game->onMsMove(0, x, y);
+}
+
+JNIEXPORT jstring  JNICALL Java_com_example_Test_Test_stringFromJNI(JNIEnv * env, jobject obj){
     return (env)->NewStringUTF("Hello from TEST JNI !");
 }
 
