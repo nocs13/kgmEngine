@@ -33,6 +33,7 @@ package com.example.Test;
 
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
@@ -67,10 +68,14 @@ import javax.microedition.khronos.opengles.GL10;
 class GL2JNIView extends GLSurfaceView {
     private static String TAG = "GL2JNIView";
     private static final boolean DEBUG = false;
+    private static AssetManager assMan = null;
+    
+    public static Context ctx = null;
 
     public GL2JNIView(Context context) {
         super(context);
         init(false, 0, 0);
+        ctx = context;
     }
 
     public GL2JNIView(Context context, boolean translucent, int depth, int stencil) {
@@ -151,7 +156,8 @@ class GL2JNIView extends GLSurfaceView {
             EGL10.EGL_RED_SIZE, 4,
             EGL10.EGL_GREEN_SIZE, 4,
             EGL10.EGL_BLUE_SIZE, 4,
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+//            EGL10.EGL_RENDERABLE_TYPE, 
+//            EGL_OPENGL_ES2_BIT,
             EGL10.EGL_NONE
         };
 
@@ -165,7 +171,7 @@ class GL2JNIView extends GLSurfaceView {
             int numConfigs = num_config[0];
 
             if (numConfigs <= 0) {
-                throw new IllegalArgumentException("No configs match configSpec");
+//                throw new IllegalArgumentException("No configs match configSpec");
             }
 
             /* Allocate then read the array of minimally matching EGL configs
@@ -329,7 +335,8 @@ class GL2JNIView extends GLSurfaceView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-//            TestLib.init(width, height);
+        	assMan = GL2JNIView.ctx.getAssets();
+            TestLib.init(width, height, assMan);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
