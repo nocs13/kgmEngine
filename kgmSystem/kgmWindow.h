@@ -24,8 +24,6 @@ void kgmUnregisterWindowClass();
  #include <X11/Xutil.h>
  #include <X11/keysym.h>
  #include <X11/extensions/xf86vmode.h>
- #include <GL/gl.h>
-// #include <GL/glu.h>
  #include <GL/glx.h>
 
  u16 keyTranslate(KeySym);

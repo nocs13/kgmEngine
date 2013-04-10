@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "kgmString.h"
+#include "kgmConvert.h"
 
 class kgmLog;
 class kgmLogError;
@@ -12,44 +13,53 @@ class kgmLogWarning;
 
 class kgmLog{
 public:
-    static kgmLog log;
-
-private:
-    FILE* out;
+    static kgmLog LOG;
 
 public:
     kgmLog(){
-        out = fopen("kgmLog.log", "a");
     }
 
     kgmLog(const char* path){
-        out = fopen(path, "a");
     }
 
     ~kgmLog(){
-        fclose(out);
     }
 
     kgmLog& operator << (kgmString& s){
-        fprintf(out, (char*)s);
+        log_(s);
         return *this;
     }
 
     kgmLog& operator << (kgmString s){
-        fprintf(out, (char*)s);
+        log_(s);
         return *this;
     }
     
     kgmLog& operator << (const char* s){
-        fprintf(out, s);
+        log_(s);
         return *this;
     }
     
     
     kgmLog& operator << (char* s){
-        fprintf(out, s);
+        log_(s);
         return *this;
     }
+
+    kgmLog& operator << (s32 s){
+        log_(kgmConvert::toString(s));
+        return *this;
+    }
+
+    kgmLog& operator << (f64 s){
+        log_(kgmConvert::toString(s));
+        return *this;
+    }
+
+    static void log(kgmString s);
+
+private:
+    static void log_(kgmString s);
 };
 
 inline kgmLog& kgm_log()
@@ -57,19 +67,13 @@ inline kgmLog& kgm_log()
     //  kgmLog log;
     //  va_list vl;
     //  va_start(vl, a);
-    return kgmLog::log;
+    return kgmLog::LOG;
 }
 
 inline void kgm_log(const char* s)
 {
-    kgmLog log;
-    time_t rawtime;
-    struct tm * timeinfo;
-
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
     if(s)
-        log << asctime (timeinfo) << "\t" << s << "\n";
+        kgmLog::log(s);
 }
 
 inline const char* kgm_log_label(){

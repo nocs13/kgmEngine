@@ -72,7 +72,7 @@ public:
  kgmIGraphics*		 getGraphics();
  kgmIPhysics*		  getPhysics();
  kgmISpawner*		  getSpawner();
- kgmIAudio*	     getAudio();
+ kgmIAudio*	        getAudio();
  kgmIVideo*		    getVideo();
  kgmIResources*		getResources();
  kgmSystem*		    getSystem();

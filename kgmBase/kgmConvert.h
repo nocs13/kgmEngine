@@ -1,4 +1,5 @@
 #pragma once
+#include "kgmTypes.h"
 #include "kgmObject.h"
 #include "kgmString.h"
 #include <stdlib.h>
@@ -6,14 +7,14 @@
 class kgmConvert: public kgmObject{
  public:
   static s32 toInteger(kgmString& s){
-    return atoi(s.data()));
+    return atoi(s.data());
   }
 
   static f64 toDouble(kgmString& s){
-    return atof(s.data()));
+    return atof(s.data());
   }
 
-  static kgmString toString(i32 i){
+  static kgmString toString(s32 i){
     char* a = new char[17];
     memset(a, 0, 17);
     sprintf(a, "%i", i);

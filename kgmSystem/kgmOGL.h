@@ -12,16 +12,26 @@
 #endif
 
 #ifdef ANDROID
-#include <GLES/gl.h>
+
+#ifdef GLES_2
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <GLES2/gl2platform.h>
+#else
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+#include <GLES/glplatform.h>
+#endif
+
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <EGL/eglplatform.h>
 
 typedef u32 GLu32;
+
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
-//  #include <GL/glext.h>
 #include "inc/glext.h"
 
 #ifndef GL_OBJECT_COMPILE_STATUS
@@ -33,9 +43,15 @@ typedef u32 GLu32;
 #endif
 #endif
 
-#ifdef GLES
+#ifdef ANDROID
+
+#ifdef GLES_1
 #define glClearDepth           glClearDepthf
 #define glOrtho                glOrthof
+#endif
+
+#ifdef GLES_2
+#define glClearDepth           glClearDepthf
 #define glCreateProgramObject  glCreateProgram
 #define glCreateShaderObject   glCreateShader
 #define glUseProgramObject     glUseProgram
@@ -44,12 +60,15 @@ typedef u32 GLu32;
 #define glGetInfoLog           glGetProgramInfoLog
 #define glGetObjectParameteriv glGetProgramiv
 
-#define GL_RED                   0x1903
-#define GL_BGR_EXT               GL_RGB
-#define GL_INTENSITY             GL_UNSIGNED_BYTE
 #define GL_DEPTH_TEXTURE_MODE    GL_DEPTH_COMPONENT
 #define GL_OBJECT_COMPILE_STATUS GL_ATTACHED_SHADERS
 #define GL_OBJECT_LINK_STATUS    GL_LINK_STATUS
+#define GL_GENERATE_MIPMAP       GL_GENERATE_MIPMAP_HINT
+#endif
+
+#define GL_RED                   0x1903
+#define GL_BGR_EXT               GL_RGB
+#define GL_INTENSITY             GL_UNSIGNED_BYTE
 #define GL_CLAMP                 GL_CLAMP_TO_EDGE
 
 #define GLdouble  GLfloat

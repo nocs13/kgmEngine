@@ -13,7 +13,6 @@
  #include <X11/keysym.h>
  #include <X11/extensions/xf86vmode.h>
  #include <GL/gl.h>
-// #include <GL/glu.h>
  #include <GL/glx.h>
 #endif
 
