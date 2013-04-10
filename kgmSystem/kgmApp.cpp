@@ -91,7 +91,7 @@ int main(int argc, char** argv){
 
 //FOR ANDROID
 #ifdef ANDROID
-
+/*
 #include <jni.h>
 #include <android/log.h>
 
@@ -116,7 +116,10 @@ JNIEXPORT int JNICALL Java_com_android_kgmEngine_kgmEngine_main(JNIEnv * env, jo
   return rValue;
 }
 
-
+int main()
+{
+  return 0;
+}*/
 #endif
 /////////
 

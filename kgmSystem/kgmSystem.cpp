@@ -18,6 +18,13 @@
 #include <X11/extensions/xf86vmode.h>
 #endif
 
+#ifdef ANDROID
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 #ifdef LINUX
 
 struct CPU
@@ -123,13 +130,12 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h){
 }
 
 void kgmSystem::getCurrentDirectory(kgmString& s){
-  kgmMemory<char> buf(256);
+  kgmMemory<char> buf(1024);
   buf.zero();
 #ifdef WIN32
-  GetCurrentDirectory(256, buf);
-#endif
-#ifdef LINUX
-  getcwd(buf, 256);
+  GetCurrentDirectory(1024, buf);
+#else
+  getcwd(buf, 1024);
 #endif
   s = buf;
 }

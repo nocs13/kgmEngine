@@ -215,7 +215,7 @@ kgmSystem*  kgmGameBase::getSystem(){
 }
 
 void kgmGameBase::log(const char* msg){
-  kgm_log() << msg << "\n";
+  kgmLog::log(msg);
 }
 
 /*void kgmGameBase::settings(bool save){
@@ -609,13 +609,13 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
   
   kgmMemory<char> mem;
   if(!kgmIGame::getGame()->getResources()->getFile(path, mem)){
-    fprintf(stderr, "\nCan't find map %s", (char*)path);
+    kgmLog::log(kgmString("Can't find map %s") + kgmString(path));
     return false;
   }
   
   kgmXml xml(mem);
   if(!xml.m_node){
-    fprintf(stderr, "\nNot valid xml %s", (char*)path);
+    kgmLog::log(kgmString("Not valid xml ") + kgmString(path));
     return false;
   }
   
@@ -760,13 +760,13 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
   kgmMemory<char> mem;
   if(!kgmIGame::getGame()->getResources()->getFile(path, mem)){
-    fprintf(stderr, "\nCan't find map %s", (char*)path);
+    kgm_log() << "\nCan't find map " << (char*)path;
     return false;
   }
 
   kgmXml xml(mem);
   if(!xml.m_node){
-    fprintf(stderr, "\nNot valid xml %s", (char*)path);
+    kgm_log() << "\nNot valid xml %s" << (char*)path;
     kgm_log() << "Error: " << "Not valid xml " << (char*)path << "\n";
     return false;
   }
@@ -909,7 +909,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgmActor*       actor = 0;
   kgmMemory<char> mem;
 
-  fprintf(stderr, "\nSpawning Actor: %s", a.data());
+  kgm_log() << "\nSpawning Actor: " << a.data();
 
   if(!m_resources->getFile(a, mem))
     return 0;
@@ -932,7 +932,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         if(id == "Material"){
           xml.m_node->node(i)->attribute("value", val);
           actor->set(cpart, m_resources->getMaterial(val));
-          fprintf(stderr, "\nMaterial: %s", val.data());
+          kgm_log() << "\nMaterial: " << val.data();
         }else if(id == "Mesh"){
           xml.m_node->node(i)->attribute("value", val);
           actor->add(0, m_resources->getMesh(val));
@@ -949,7 +949,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     }
   }
 
-  fprintf(stderr, "\nActor: %s", actor->m_name.data());
+  kgm_log() << "\nActor: " << actor->m_name.data();
 
   return actor;
 }

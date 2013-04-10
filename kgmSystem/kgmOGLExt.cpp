@@ -1,6 +1,6 @@
 #include "kgmOGLExt.h"
 
-#ifndef GLES
+#ifndef ANDROID
 //DRAW ELEMENTS
 PFNGLDRAWRANGEELEMENTSPROC		  glDrawRangeElements = 0;
 //TEXTURE EXTENTIONS
@@ -63,7 +63,7 @@ PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fv = 0;
 
 
 bool glInitExt(){
-#ifndef GLES
+#ifndef ANDROID
  GLEXT_FN(glDrawRangeElements,		PFNGLDRAWRANGEELEMENTSPROC);
  GLEXT_FN(glActiveTexture,       PFNGLACTIVETEXTUREARBPROC);
  GLEXT_FN(glClientActiveTexture, PFNGLCLIENTACTIVETEXTUREARBPROC);

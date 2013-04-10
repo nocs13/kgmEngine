@@ -7,10 +7,18 @@
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmIAudio.h"
 #include "../kgmBase/kgmXml.h"
+#include "../kgmBase/kgmLog.h"
 
 #include "../kgmSystem/kgmSystem.h"
 
 #include "kgmActor.h"
+
+#ifdef ANDROID
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
+extern AAssetManager* kgm_getAssetManager();
+#endif
 
 static char 	 str_buf[256];
 
@@ -86,7 +94,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
  bool  res = false;
  int   i = 0;
 
- fprintf(stderr, "\nLoad resource: %s", id);
+ kgm_log() << "\nLoading resource: " << id << " ...";
 
 #ifdef WIN32
  const kgmString delim((const char*)"\\", 1);
@@ -94,6 +102,27 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
  const kgmString delim((const char*)"/", 1);
 #endif
 
+#ifdef ANDROID
+ kgm_log() << "\nkgmEngine android loading file " << id;
+ AAsset* asset = AAssetManager_open(kgm_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
+
+ if (NULL == asset)
+ {
+   kgmLog::log("_ASSET_NOT_FOUND_");
+
+   return false;
+ }
+
+ long size = AAsset_getLength(asset);
+ //char* buffer = (char*) malloc (sizeof(char)*size);
+ m.alloc(size);
+ AAsset_read (asset, (char*)m, size);
+ //__android_log_print(ANDROID_LOG_ERROR, NF_LOG_TAG, buffer);
+ kgm_log() << "\nkgmEngine android file size: " << (s32)size;
+ //free(buffer);
+ AAsset_close(asset);
+ return true;
+#else
  for(i = 0; i < m_paths.size(); i++){
   kgmFile file;
   if(m_paths[i]->type == 2){
@@ -110,8 +139,9 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
    }
   }
  }
+#endif
 
- //fprintf(stderr, "\nCan't load file: %s", id);
+ kgm_log() << "\nCan't load file: " << id;
  return false;
 }
 
@@ -201,7 +231,7 @@ kgmShader* kgmGameResources::getShader(char* id){
    shader->m_id = id;
    m_resources.add(shader);
 #ifdef DEBUG
-   fprintf(stderr, "\nShader: %s successfully loaded", (char*)id);
+   kgmLog::log("\nShader: %s successfully loaded", (char*)id);
 #endif
  }
  return shader;

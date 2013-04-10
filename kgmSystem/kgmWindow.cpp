@@ -2,6 +2,7 @@
 // kgmWindow
 #include "kgmWindow.h"
 #include "kgmApp.h"
+#include "../kgmBase/kgmLog.h"
 
 
 
@@ -510,6 +511,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
  m_msf = false;
  m_fs = false;
 
+ kgmLog::log("init screen");
+
 #ifdef WIN32
   WNDCLASS wcl;
   if(!GetClassInfo(0, cWndClass, &wcl))
@@ -534,6 +537,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
  XStoreName(m_dpy, m_wnd, wname);
  XFlush(m_dpy);
 #endif
+
 }
 
 kgmWindow::~kgmWindow(){

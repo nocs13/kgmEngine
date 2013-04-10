@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "kgmOAL.h"
+#include "../kgmBase/kgmLog.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -52,10 +53,10 @@ kgmOAL::kgmOAL()
   m_context = alcCreateContext(m_device, NULL);
   alcMakeContextCurrent(m_context);
   if(!m_context){
-     printf("Can't Create ALC Context\n");
+     kgmLog::log("Can't Create ALC Context\n");
   }
  }else{
-     printf("Can't Open ALC Device\n");
+     kgmLog::log("Can't Open ALC Device\n");
  }
 }
 

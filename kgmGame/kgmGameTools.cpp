@@ -5,6 +5,7 @@
 #include "../kgmBase/kgmMemory.h"
 #include "../kgmBase/kgmIAudio.h"
 #include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmLog.h"
 #include "../kgmMath/kgmRect.h"
 #include "../kgmGraphics/kgmPicture.h"
 
@@ -783,7 +784,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 	v[i].col = 0xffffffff;
 	p = (char*)((u32)p + rd);
       }
-      fprintf(stderr, "\nEnd vertices");
+      kgmLog::log("\nEnd vertices");
     }else if(id == "Faces"){
       u32 count = 0;
       kgmMesh::Face_16*   f = 0;
@@ -800,7 +801,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 	f[i].c = fi[2];
 	p = (char*)((u32)p + rd);
       }
-      fprintf(stderr, "\nEnd faces");
+      kgmLog::log("\nEnd faces");
     }else if(id == "Skin"){
       u32 count = 0;
       mnode->node(i)->attribute("length", val);
@@ -832,7 +833,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 	p = (char*)((u32)p + rd);
       }
       delete [] v;
-      fprintf(stderr, "\nEnd skin");
+      kgmLog::log("\nEnd skin");
     }
   }
 

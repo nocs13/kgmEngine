@@ -2,6 +2,8 @@
 // kgmWindow
 #include "kgmOGLWindow.h"
 #include "kgmOGL.h"
+#include "../kgmBase/kgmLog.h"
+
 
 //kgmOGLWindow::kgmOGLWindow()
 //:kgmWindow(0, "", 10, 10, 500, 400, 16, false){
@@ -10,6 +12,9 @@
 kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
 :kgmWindow(0, "", x, y, w, h, bpp, fs){
  m_gc = 0;
+
+ kgmLog::log("init ogl screen");
+
 #ifdef WIN32
  PIXELFORMATDESCRIPTOR pfd = {0};
  pfd.nSize = sizeof(pfd);
@@ -82,17 +87,17 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   }
   vi = glXChooseVisual(m_dpy, m_screen, attrDbl);
   if(vi == 0){
-   printf("\nNo Doublebuffered Visual");
+   kgmLog::log("No Doublebuffered Visual");
    vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
    if(vi == 0){
-    printf("\nNo Singlebuffered Visual");
+    kgmLog::log("No Singlebuffered Visual");
     return;
    }
    else
-    printf("\nGot Singlebuffered Visual");
+    kgmLog::log("\nGot Singlebuffered Visual");
   }
   else
-   printf("\nGot Doublebuffered Visual");
+   kgmLog::log("\nGot Doublebuffered Visual");
 
   m_glctx = glXCreateContext(m_dpy, vi, 0, GL_TRUE);
   cmap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
@@ -109,9 +114,9 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
 	 	0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
   glXMakeCurrent(m_dpy, m_wnd, m_glctx);
   if(glXIsDirect(m_dpy, m_glctx))
-   printf("\nDirect Rendering!");
+   kgmLog::log("\nDirect Rendering!");
   else
-   printf("\nNo Direct Rendering!\n");
+   kgmLog::log("\nNo Direct Rendering!\n");
   XMapWindow(m_dpy, m_wnd);
   XFlush(m_dpy);
   XFree(modes);
@@ -140,7 +145,7 @@ kgmOGLWindow::~kgmOGLWindow(){
  if (m_glctx)
  {
   if(!glXMakeCurrent(m_dpy, None, NULL))
-   printf("Could not release drawing context.\n");
+   kgmLog::log("Could not release drawing context.\n");
   glXDestroyContext(m_dpy, m_glctx);
   m_glctx = NULL;
  }
