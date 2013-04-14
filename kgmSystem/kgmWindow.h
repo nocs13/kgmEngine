@@ -56,6 +56,7 @@ public:
 
 #ifdef ANDROID
  void* m_wnd;
+ int   m_wRect[4];
 #endif
 
  kgmWindow*	m_parent;		 

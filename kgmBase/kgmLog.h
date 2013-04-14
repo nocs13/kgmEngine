@@ -70,12 +70,6 @@ inline kgmLog& kgm_log()
     return kgmLog::LOG;
 }
 
-inline void kgm_log(const char* s)
-{
-    if(s)
-        kgmLog::log(s);
-}
-
 inline const char* kgm_log_label(){
     time_t rawtime;
     struct tm * timeinfo;

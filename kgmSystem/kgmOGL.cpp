@@ -15,11 +15,60 @@
 
 GLu32          m_rendertarget = 0;
 
+#ifdef ANDROID
+EGLDisplay  m_display = EGL_NO_DISPLAY;
+EGLSurface  m_renderSurface = EGL_NO_SURFACE;
+EGLContext m_context = EGL_NO_CONTEXT;
+#endif
+
 kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   if(!wnd)
     return;
   
   this->m_wnd = wnd;
+
+#ifdef ANDROIDXXXX
+  const EGLint RGBX_8888_ATTRIBS[] =
+      {
+    #ifdef GLES_2
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+    #endif
+        EGL_SURFACE_TYPE,
+        EGL_WINDOW_BIT, EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
+        EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE };
+
+  const EGLint RGB_565_ATTRIBS[] =
+      {
+    #ifdef GLES_2
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+    #endif
+        EGL_SURFACE_TYPE,
+        EGL_WINDOW_BIT, EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
+        EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE };
+
+  const EGLint* attribList;
+
+  m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  assert(m_display);
+  EGLBoolean res = eglInitialize(m_display, NULL, NULL);
+  assert(res);
+
+  EGLConfig config;
+  EGLint numConfigs;
+  res = eglChooseConfig(m_display, RGBX_8888_ATTRIBS, &config, 1, &numConfigs);
+  if(!res){
+      res = eglChooseConfig(m_display, RGB_565_ATTRIBS, &config, 1, &numConfigs);
+      assert(res);
+  }
+
+  EGLint format;
+  res = eglGetConfigAttrib(m_display, config, EGL_NATIVE_VISUAL_ID, &format);
+  assert(res);
+#endif
+
+  GLubyte* oglVersion = glGetString(GL_VERSION);
+  kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
+
 
   glInitExt();
   glEnable(GL_ACTIVE_TEXTURE);
@@ -28,11 +77,11 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
-#ifdef glShadeModel
+#ifdef GL_SMOOTH
   glShadeModel(GL_SMOOTH);
 #endif
 
-#ifdef glMatrixMode
+#ifdef GL_PROJECTION
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glMatrixMode(GL_MODELVIEW);
@@ -197,7 +246,7 @@ void kgmOGL::gcSetTarget(void* t){
 }
 
 void kgmOGL::gcSetMatrix(u32 mode, float* mtx){
-#ifdef glMatrixMode
+#ifdef GL_PROJECTION
   switch(mode){
   case gcmtx_proj:
     glMatrixMode(GL_PROJECTION);
@@ -214,7 +263,7 @@ void kgmOGL::gcSetMatrix(u32 mode, float* mtx){
 }
 
 void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
-#ifdef glMatrixMode
+#ifdef GL_PROJECTION
   switch(mode){
   case gcmtx_proj:
     glGetFloatv(GL_PROJECTION_MATRIX, mtx);
@@ -230,6 +279,7 @@ void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
 }
 
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
+  kgm_log() << "Viewport: " << w << " " << h << " .";
   glViewport(x, y, w, h);
 #ifndef ANDROID
   glDepthRange(n, f);
@@ -403,7 +453,7 @@ void kgmOGL::gcDepth(bool depth, bool mask, u32 mode){
 void kgmOGL::gc2DMode(){
   int  x, y, w, h;
 
-#ifdef glMatrixMode
+#ifdef GL_PROJECTION
   m_wnd->getRect(x, y, w, h);
   glMatrixMode(GL_PROJECTION);
   glGetFloatv(GL_PROJECTION_MATRIX, mtx_mode_proj);
@@ -416,7 +466,7 @@ void kgmOGL::gc2DMode(){
 }
 void kgmOGL::gc3DMode()
 {
-#ifdef glMatrixMode
+#ifdef GL_PROJECTION
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(mtx_mode_proj);
   glMatrixMode(GL_MODELVIEW);
@@ -430,7 +480,9 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLu32 tex = 0, frame = 0;
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
-  kgm_log() << "gcGenTexture ";
+
+  kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << ".";
+
   switch(fmt){
   case gctex_fmt8:
     pic_fmt = GL_RED;
@@ -445,7 +497,11 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     fmt_bt = 3;
     break;
   case gctex_fmt32:
+#ifdef ANDROID
     pic_fmt = GL_BGRA_EXT;
+#else
+    pic_fmt = GL_BGRA_EXT;
+#endif
     fmt_bt = 4;
     break;
 #ifdef GL_DEPTH_COMPONENT
@@ -459,6 +515,9 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     fmt_bt = 3;
   }
   kgm_log() << "gcGenTexture " << (s32)fmt_bt;
+#ifdef ANDROID
+   glActiveTexture(GL_TEXTURE0);
+#endif
   switch(type){
   case gctype_tex2d:
     glGenTextures(1, &tex);
@@ -591,6 +650,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
       k = 3;
       break;
     }
+    kgm_log() << "gcGenTexture has error: " << (s32)err;
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -816,7 +876,8 @@ void gcStencil(bool en, u32 func, u32 mask, u32 ref,
 //Drawing
 void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
                     u32 i_size, u32 i_cnt, void *i_pnt){
-  if(!v_pnt) return;
+  if(!v_pnt)
+      return;
 
   unsigned char *pM = (unsigned char*)v_pnt;
   unsigned int  p_size  = sizeof(float) * 3;
@@ -827,19 +888,38 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   if(v_fmt & gcv_uv_f4)
     uv_size = sizeof(float) * 4;
 
-  if(v_fmt & gcv_xyz){
+  if(v_fmt & gcv_xyz)
+  {
+#ifdef GLES_2
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, v_size, pM);
+#endif
     pM += (sizeof(float) * 3);
   }
-  if(v_fmt & gcv_nor){
+  if(v_fmt & gcv_nor)
+  {
+#ifdef GLES_2
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(GL_FLOAT,v_size,pM);
+#endif
     pM += (sizeof(float)*3);
   }
-  if(v_fmt & gcv_col){
+
+  if(v_fmt & gcv_col)
+  {
+#ifdef GLES_2
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, v_size, pM);
+#else
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
+#endif
     pM += sizeof(u32);
   }
   // if(v_fmt & gcv_spc){
@@ -847,45 +927,76 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   //   glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
   //  pM += sizeof(u32);
   // }
-  if(v_fmt & gcv_uv0){
+  if(v_fmt & gcv_uv0)
+  {
+#ifdef GLES_2
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE0);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv1){
+#ifdef GLES_2
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE1);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv2){
+#ifdef GLES_2
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE2);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv3){
+#ifdef GLES_2
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE3);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv4){
+#ifdef GLES_2
+    glEnableVertexAttribArray(7);
+    glVertexAttribPointer(7, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE4);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv5){
+#ifdef GLES_2
+    glEnableVertexAttribArray(8);
+    glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
     glClientActiveTexture(GL_TEXTURE5);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#endif
     pM += (uv_size);
   }
 
@@ -910,10 +1021,19 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glDrawArrays(gl_enum(pmt), 0, v_cnt);
   }
 
+#ifdef GLES_2
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(2);
+  glDisableVertexAttribArray(3);
+  glDisableVertexAttribArray(4);
+  glDisableVertexAttribArray(5);
+#else
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 }
 
 
@@ -1074,6 +1194,9 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   if(vbo->vb){
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vb);
   }
+
+#ifdef GLES_2
+#else
   if(vfmt & gcv_xyz){
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, vsize, (void*)offset);
@@ -1174,6 +1297,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif
 
 #ifndef ANDROID
   glPopClientAttrib();

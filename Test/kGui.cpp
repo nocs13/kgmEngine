@@ -1,4 +1,5 @@
 #include "kGui.h"
+#include "../kgmBase/kgmLog.h"
 
 kGui::kGui(kgmGameBase* game)
 {
@@ -13,6 +14,7 @@ kGui::kGui(kgmGameBase* game)
   int x, y, w, h;
 
   game->getRect(x, y, w, h);
+  kgm_log() << "GameRect: " << w << " " << h << ".";
 
   m_guiMain = new kgmGui(null, 0, 0, w, h);
   m_guiMain->addListener(this);

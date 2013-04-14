@@ -86,15 +86,10 @@ public:
   }
 
  void main(){
-  //printf_xml("map001.kgm");
   m_game = new kGame();
   m_game->loop();
 
   delete m_game;
-  //kgmOGLWindow* w = new kgmOGLWindow(0, "", 0, 0, 100, 100, 16, false); 
-  //w->loop();
-  //delete w;
-   kgmLog::log("hello\n");
  } 
 };
 
@@ -139,7 +134,8 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject 
 
     kgmString spath;
     m_game = new kGame();
-    m_game->onResize(width, height);
+    m_game->setRect(0, 0, width, height);
+//    m_game->onResize(width, height);
     LOGI("kgmTest inited\n");
 }
 

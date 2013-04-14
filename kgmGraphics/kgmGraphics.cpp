@@ -476,7 +476,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     v[3].pos = vec3(cx+fwidth, cy+fheight, 0),v[3].col = fcolor, v[3].uv = vec2(tx+tdx, ty-tdy);
     gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
    }else{
-    kgmLog::log("\nText: %s Not clipped fheight: %i fwidth: %i");
+    kgmLog::log("Text: Not clipped");
    }
 
    cx += fwidth;

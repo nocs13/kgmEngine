@@ -26,8 +26,12 @@ include $(CLEAR_VARS)
 	LOCAL_C_INCLUDES := ../../../
 	LOCAL_STATIC_LIBRARIES := kgmEngine
 	#LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-	LOCAL_LDLIBS    := -llog -ldl -lm -lz -lstdc++ -lGLESv1_CM -landroid #-lGLESv2 
-	LOCAL_CFLAGS    := -DANDROID -DGLES_1 -fpermissive -Wall -g #-Werror
+	LOCAL_LDLIBS    := -llog -ldl -lm -lz -lstdc++ -landroid #-lGLESv2 -lGLESv1_CM
+#	LOCAL_LDLIBS    += -lGLESv2
+	LOCAL_LDLIBS    += -lGLESv1_CM
+	LOCAL_CFLAGS    := -DANDROID -fpermissive -Wall -g #-Werror
+#	LOCAL_CFLAGS    += -DGLES_2
+	LOCAL_CFLAGS    += -DGLES_1
         LOCAL_CFLAGS    += -frtti
 include $(BUILD_SHARED_LIBRARY)
 

@@ -359,7 +359,7 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fco
     v[3].pos = vec3(cx+fwidth, cy+fheight, 0),v[3].col = fcolor, v[3].uv = vec2(tx+tdx, ty-tdy);
     gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
    }else{
-       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W" << (s32)fheight << " " << (s32)fwidth;
+       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W" << (s32)fheight << " " << (s32)fwidth << " end!";
    }
 
    cx += fwidth;

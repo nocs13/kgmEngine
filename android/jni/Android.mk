@@ -19,17 +19,19 @@ include $(CLEAR_VARS)
 FILE_LIST       := $(wildcard $(LOCAL_PATH)/../../kgm*/*.cpp)
 LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
-LOCAL_MODULE    := libkgmEngine
-LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g -std=c99 #-Werror
+LOCAL_MODULE    := kgmEngine
+LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g #-Werror
+LOCAL_LDLIBS    := -llog -lGLESv2 -lGLESv1_CM -ldl -lm -lz -lstdc++
 
-include $(BUILT_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := kgm
-LOCAL_STATIC_LIBRARIES := kgmEngine 
-LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++
 include $(BUILD_SHARED_LIBRARY)
+#include $(BUILT_STATIC_LIBRARY)
 
+
+#include $(CLEAR_VARS)
+#LOCAL_MODULE    := kgm
+#LOCAL_STATIC_LIBRARIES := kgmEngine 
+#LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+#LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++ -lkgmEngine
+#include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_EXECUTABLE)
 

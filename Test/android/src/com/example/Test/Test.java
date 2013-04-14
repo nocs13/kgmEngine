@@ -16,6 +16,7 @@
 package com.example.Test;
 
 import android.app.Activity;
+import android.view.MotionEvent;
 import android.widget.TextView;
 import android.os.Bundle;
 
@@ -37,6 +38,15 @@ public class Test extends Activity
         //setContentView(tv);
         mView = new GL2JNIView(getApplication());
         setContentView(mView);        
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent me)
+    {
+    	
+    	TestLib.onMsMove(0, (int)me.getX(), (int)me.getY());
+    	
+    	return true;
     }
 
     /* A native method that is implemented by the

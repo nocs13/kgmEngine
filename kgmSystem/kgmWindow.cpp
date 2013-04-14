@@ -538,6 +538,13 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
  XFlush(m_dpy);
 #endif
 
+#ifdef ANDROID
+ kgm_log() << "Init window rect: " << w << " " << h << ".";
+ m_wRect[0] = x;
+ m_wRect[1] = y;
+ m_wRect[2] = w;
+ m_wRect[3] = h;
+#endif
 }
 
 kgmWindow::~kgmWindow(){
@@ -676,6 +683,12 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h){
  Window dummy;
  XGetGeometry(m_dpy, m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
 #endif
+#ifdef ANDROID
+ x = m_wRect[0];
+ y = m_wRect[1];
+ w = m_wRect[2];
+ h = m_wRect[3];
+#endif
 }
 
 void kgmWindow::setRect(int x, int y, int w, int h){
@@ -683,10 +696,19 @@ void kgmWindow::setRect(int x, int y, int w, int h){
  RECT r;		
 // GetClientRect(m_hWnd, (LPRECT)&r);
 #endif
+
 #ifdef LINUX
  XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
  XMapWindow(m_dpy, m_wnd);
  XFlush(m_dpy);
+#endif
+
+#ifdef ANDROID
+ m_wRect[0] = x;
+ m_wRect[1] = y;
+ m_wRect[2] = w;
+ m_wRect[3] = h;
+ onResize(w, h);
 #endif
 }
 
