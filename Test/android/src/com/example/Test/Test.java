@@ -44,7 +44,8 @@ public class Test extends Activity
     public boolean onTouchEvent(MotionEvent me)
     {
     	
-    	TestLib.onMsMove(0, (int)me.getX(), (int)me.getY());
+    	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
+    	TestLib.onMsMove();
     	
     	return true;
     }

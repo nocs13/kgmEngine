@@ -332,7 +332,7 @@ class GL2JNIView extends GLSurfaceView {
 
     private static class Renderer implements GLSurfaceView.Renderer {
         public void onDrawFrame(GL10 gl) {
-            //TestLib.idle();
+            TestLib.idle();
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {

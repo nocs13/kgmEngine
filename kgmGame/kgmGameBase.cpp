@@ -388,13 +388,15 @@ void kgmGameBase::onResize(int w, int h){
   float sh = (float)h / (float)prev_height;
   for(int i = 0; i < m_guis.size(); i++)
     m_guis[i]->scale(sw, sh);
-  //m_guis[i]->resize(w, h);
 }
 
 void kgmGameBase::onEvent(kgmEvent::Event* e){
   kgmWindow::onEvent(e);
   for(int i = 0; i < m_guis.size(); i++)
+  {
+    kgm_log() << "kgmGameBase::onEvent .\n";
     m_guis[i]->onEvent(e);
+  }
 }
 
 void kgmGameBase::onInputAction(int action, int argument){

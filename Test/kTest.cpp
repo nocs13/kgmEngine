@@ -149,13 +149,15 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject 
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj)
 {
-    LOGI("kgmTest idle\n");
+    //LOGI("kgmTest idle\n");
     if(m_game)
       m_game->onIdle();
 }
 
-JNIEXPORT void JNICALL Java_com_example_Test_TestLib_msMove(JNIEnv * env, jobject obj,  jint x, jint y)
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj)
 {
+    int x = 0, y = 0;
+    LOGI("kgmTest msMove %i %i\n", x, y);
     if(m_game)
       m_game->onMsMove(0, x, y);
 }
