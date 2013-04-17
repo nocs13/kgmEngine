@@ -40,6 +40,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -71,6 +73,7 @@ class GL2JNIView extends GLSurfaceView {
     private static AssetManager assMan = null;
     
     public static Context ctx = null;
+    public static Surface srf = null;
 
     public GL2JNIView(Context context) {
         super(context);
@@ -110,6 +113,24 @@ class GL2JNIView extends GLSurfaceView {
 
         /* Set the renderer responsible for frame rendering */
         setRenderer(new Renderer());
+        
+        this.getHolder().addCallback(new SurfaceHolder.Callback() {
+
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                Log.v(TAG, "surfaceChanged format=" + format + ", width=" + width + ", height="
+                        + height);
+            }
+
+            public void surfaceCreated(SurfaceHolder holder) {
+                Log.v(TAG, "surfaceCreated");
+                GL2JNIView.srf = holder.getSurface();
+            }
+
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                Log.v(TAG, "surfaceDestroyed");
+            }
+
+        });
     }
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
@@ -337,7 +358,7 @@ class GL2JNIView extends GLSurfaceView {
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
         	assMan = GL2JNIView.ctx.getAssets();
-            TestLib.init(width, height, assMan);
+            TestLib.init(width, height, assMan, GL2JNIView.srf);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {

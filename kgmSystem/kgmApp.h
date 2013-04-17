@@ -8,6 +8,11 @@ class kgmApp{
 private:
  static kgmApp* m_app;
 
+#ifdef ANDROID
+public:
+ void* m_nativeWindow;
+#endif
+
 public:
  kgmApp();
  ~kgmApp();

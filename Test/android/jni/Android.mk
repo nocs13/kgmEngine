@@ -29,6 +29,7 @@ include $(CLEAR_VARS)
 	LOCAL_LDLIBS    := -llog -ldl -lm -lz -lstdc++ -landroid #-lGLESv2 -lGLESv1_CM
 #	LOCAL_LDLIBS    += -lGLESv2
 	LOCAL_LDLIBS    += -lGLESv1_CM
+	LOCAL_LDLIBS    += -lEGL
 	LOCAL_CFLAGS    := -DANDROID -fpermissive -Wall -g #-Werror
 #	LOCAL_CFLAGS    += -DGLES_2
 	LOCAL_CFLAGS    += -DGLES_1

@@ -103,26 +103,39 @@ kApp theApp;
 #include <jni.h>
 #include <sys/types.h>
 #include <android/log.h>
+#include <android/input.h>
+#include <android/sensor.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <android/native_window_jni.h>
 
 #define  LOG_TAG    "kgmEngine"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-kGame*	m_game = null;
+class KApp: public kgmApp{
+public:
+  void main(){
+
+  }
+};
+
+KApp*          m_app  = null;
+kGame*	       m_game = null;
 AAssetManager* g_assetManager = NULL;
 
 extern "C"
 {
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height, jobject am);
+  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height,
+                                                             jobject am, jobject surface);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_msMove(JNIEnv * env, jobject obj,  jint x, jint y);
+  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj,  jint x, jint y);
   JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj);
 };
 
-JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height, jobject am)
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height, jobject am,
+                                                          jobject surface)
 {
     LOGI("kgmTest init\n");
     AAssetManager* mgr = AAssetManager_fromJava(env, am);
@@ -131,11 +144,13 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject 
     env->NewGlobalRef(am);
     LOGI("kgmTest init asset manager\n");
 
+    m_app = new KApp();
+    m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
+    LOGI("kgmTest init native widnow\n");
 
     kgmString spath;
     m_game = new kGame();
     m_game->setRect(0, 0, width, height);
-//    m_game->onResize(width, height);
     LOGI("kgmTest inited\n");
 }
 
@@ -144,6 +159,8 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject 
     LOGI("kgmTest quit\n");
     if(m_game)
       m_game->release();
+    if(m_app)
+      delete m_app;
     m_game = null;
 }
 
@@ -151,12 +168,40 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
 {
     //LOGI("kgmTest idle\n");
     if(m_game)
+    {
       m_game->onIdle();
+
+      /*struct AInputQueue queue;
+      struct AInputEvent events[1];
+
+      ASensorManager* sm = ASensorManager_getInstance();
+      while(AInputQueue_hasEvents(&queue))
+      {
+        AInputEvent event;
+
+        LOGI("kgmTest idle hasEvents\n");
+
+        AInputQueue_getEvent(&queue, (AInputEvent**)&events);
+        int32_t input_type = AInputEvent_getType(&event);
+
+        switch(input_type)
+        {
+        case AINPUT_EVENT_TYPE_KEY:
+          LOGI("kgmTest idle AINPUT_EVENT_TYPE_KEY\n");
+          break;
+        case AINPUT_EVENT_TYPE_MOTION:
+          LOGI("kgmTest idle AINPUT_EVENT_TYPE_MOTION\n");
+          break;
+        default:
+          break;
+        }
+      }*/
+    }
 }
 
-JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj)
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj, jint x, jint y)
 {
-    int x = 0, y = 0;
+    //int x = 0, y = 0;
     LOGI("kgmTest msMove %i %i\n", x, y);
     if(m_game)
       m_game->onMsMove(0, x, y);

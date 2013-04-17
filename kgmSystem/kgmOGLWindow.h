@@ -16,6 +16,15 @@
  #include <GL/glx.h>
 #endif
 
+#ifdef ANDROID
+ #include <jni.h>
+ #include <errno.h>
+ #include <EGL/egl.h>
+ #include <android/native_window.h>
+
+extern ANativeWindow* kgm_getNativeWindow();
+#endif
+
 class kgmOGL;
 
 class kgmOGLWindow: public kgmWindow{
@@ -27,6 +36,12 @@ public:
 
 #ifdef LINUX
  GLXContext m_glctx;
+#endif
+
+#ifdef ANDROID
+ EGLSurface surface;
+ EGLContext context;
+ EGLDisplay display;
 #endif
 
  kgmOGL *m_gc;

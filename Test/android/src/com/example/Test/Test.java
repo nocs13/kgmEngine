@@ -17,13 +17,15 @@ package com.example.Test;
 
 import android.app.Activity;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.widget.TextView;
 import android.os.Bundle;
 
 
 public class Test extends Activity
 {
-    GL2JNIView mView;
+    //GL2JNIView mView;
+	SurfaceView mView;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -36,7 +38,8 @@ public class Test extends Activity
          */
         //TextView  tv = new TextView(this);
         //setContentView(tv);
-        mView = new GL2JNIView(getApplication());
+        //mView = new GL2JNIView(getApplication());
+        mView = new TestView(getApplication());
         setContentView(mView);        
     }
     
@@ -44,8 +47,8 @@ public class Test extends Activity
     public boolean onTouchEvent(MotionEvent me)
     {
     	
-    	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
-    	TestLib.onMsMove();
+    	TestLib.onMsMove((int)me.getX(), (int)me.getY());
+    	//TestLib.onMsMove();
     	
     	return true;
     }

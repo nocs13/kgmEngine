@@ -2,6 +2,7 @@
 // kgmWindow
 #include "kgmOGLWindow.h"
 #include "kgmOGL.h"
+#include "kgmApp.h"
 #include "../kgmBase/kgmLog.h"
 
 
@@ -20,8 +21,8 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
  pfd.nSize = sizeof(pfd);
  pfd.nVersion = 1;
  pfd.dwFlags = PFD_DRAW_TO_WINDOW | 
-	            PFD_SUPPORT_OPENGL | 
-				 PFD_DOUBLEBUFFER;// |
+               PFD_SUPPORT_OPENGL |
+               PFD_DOUBLEBUFFER;// |
 //				  PFD_GENERIC_ACCELERATED | 
 //				   PFD_SWAP_LAYER_BUFFERS;
  pfd.cColorBits = 24;
@@ -128,13 +129,62 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
    fullscreen(true);
 #endif
 
+#ifdef ANDROID
+  const EGLint attribs[] = {
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_BLUE_SIZE, 5,
+    EGL_GREEN_SIZE, 6,
+    EGL_RED_SIZE, 5,
+    EGL_DEPTH_SIZE, 8,
+    EGL_NONE
+  };
+  EGLint    dummy, format;
+  EGLint    numConfigs;
+  EGLConfig config;
+
+  display = EGL_NO_DISPLAY;
+  context = EGL_NO_CONTEXT;
+  surface = EGL_NO_SURFACE;
+
+  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  kgm_log() << "kgmEngine: eglGetDisplay\n";
+
+  eglInitialize(display, 0, 0);
+  kgm_log() << "kgmEngine: eglInitialize\n";
+
+  eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+  kgm_log() << "kgmEngine: eglChooseConfig\n";
+
+  eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+  kgm_log() << "kgmEngine: eglGetConfigAttrib\n";
+
+  ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
+  kgm_log() << "kgmEngine: ANativeWindow_setBuffersGeometry\n";
+
+  surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
+  kgm_log() << "kgmEngine: eglCreateWindowSurface\n";
+  context = eglCreateContext(display, config, NULL, NULL);
+  kgm_log() << "kgmEngine: eglCreateContext\n";
+
+  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+    kgm_log() << "kgmEngine: Unable to eglMakeCurrent \n";
+
+    return;
+  }
+
+  eglQuerySurface(display, surface, EGL_WIDTH, &w);
+  eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+#endif
+
  m_gc = new kgmOGL(this);
 }
 
 kgmOGLWindow::~kgmOGLWindow(){
  if(m_gc)
    delete m_gc;
+
  m_gc = 0;
+
 #ifdef WIN32
  wglDeleteContext(m_hrc);
  wglMakeCurrent(m_hdc, 0);
@@ -149,6 +199,23 @@ kgmOGLWindow::~kgmOGLWindow(){
   glXDestroyContext(m_dpy, m_glctx);
   m_glctx = NULL;
  }
+#endif
+
+#ifdef ANDROID
+ if (display != EGL_NO_DISPLAY) {
+   eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if (context != EGL_NO_CONTEXT) {
+     eglDestroyContext(display, context);
+   }
+   if (surface != EGL_NO_SURFACE) {
+     eglDestroySurface(display, surface);
+   }
+   eglTerminate(display);
+ }
+
+ display = EGL_NO_DISPLAY;
+ context = EGL_NO_CONTEXT;
+ surface = EGL_NO_SURFACE;
 #endif
 }
 

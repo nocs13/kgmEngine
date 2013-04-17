@@ -35,9 +35,10 @@ public class TestLib {
      * @param height the current view height
      */
      public static native String   stringFromJNI();
-     public static native void    init(int width, int height, Object asset);
+     public static native void    init(int width, int height, Object asset, 
+    		 							  Object surface);
      public static native void    idle();
      public static native void    quit();
-     public static native void    onMsMove();
-//     public static native void    onMsMove(int x, int y);   
+//     public static native void    onMsMove();
+     public static native void    onMsMove(int x, int y);   
 }
