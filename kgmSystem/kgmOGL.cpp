@@ -27,45 +27,6 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   
   this->m_wnd = wnd;
 
-#ifdef ANDROIDXXXX
-  const EGLint RGBX_8888_ATTRIBS[] =
-      {
-    #ifdef GLES_2
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    #endif
-        EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT, EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
-        EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE };
-
-  const EGLint RGB_565_ATTRIBS[] =
-      {
-    #ifdef GLES_2
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    #endif
-        EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT, EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
-        EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE };
-
-  const EGLint* attribList;
-
-  m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  assert(m_display);
-  EGLBoolean res = eglInitialize(m_display, NULL, NULL);
-  assert(res);
-
-  EGLConfig config;
-  EGLint numConfigs;
-  res = eglChooseConfig(m_display, RGBX_8888_ATTRIBS, &config, 1, &numConfigs);
-  if(!res){
-      res = eglChooseConfig(m_display, RGB_565_ATTRIBS, &config, 1, &numConfigs);
-      assert(res);
-  }
-
-  EGLint format;
-  res = eglGetConfigAttrib(m_display, config, EGL_NATIVE_VISUAL_ID, &format);
-  assert(res);
-#endif
-
   GLubyte* oglVersion = glGetString(GL_VERSION);
   kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
 
@@ -219,6 +180,7 @@ void kgmOGL::gcRender(){
 #endif
 
 #ifdef ANDROID
+  kgm_log() << "gcRender: " << (s32)m_wnd->display << " " << (s32)m_wnd->surface << ".";
   eglSwapBuffers(m_wnd->display, m_wnd->surface);
 #endif
 }

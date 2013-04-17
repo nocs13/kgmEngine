@@ -39,6 +39,6 @@ public class TestLib {
     		 							  Object surface);
      public static native void    idle();
      public static native void    quit();
-//     public static native void    onMsMove();
      public static native void    onMsMove(int x, int y);   
+     public static native void    onTouch(int a, int x, int y);   
 }

@@ -34,10 +34,18 @@ public:
         gPause(false);
         gui->m_guiPause->hide();
       }
-
-    }
+    }    
   }
 
+  void onMsLeftUp(int k, int x, int y)
+  {
+    kgmGameBase::onMsLeftUp(k, x, y);
+  }
+
+  void onMsLeftDown(int k, int x, int y)
+  {
+    kgmGameBase::onMsLeftDown(k, x, y);
+  }
 };
 
 
@@ -131,6 +139,7 @@ extern "C"
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj,  jint x, jint y);
+  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj,  jint act, jint x, jint y);
   JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj);
 };
 
@@ -205,6 +214,29 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobj
     LOGI("kgmTest msMove %i %i\n", x, y);
     if(m_game)
       m_game->onMsMove(0, x, y);
+}
+
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)
+{
+    //int x = 0, y = 0;
+    LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
+    if(m_game)
+    {
+      switch(a)
+      {
+      case 0:
+        m_game->onMsMove(0, x, y);
+        break;
+      case 1:
+        m_game->onMsLeftDown(0, x, y);
+        break;
+      case 2:
+        m_game->onMsLeftUp(0, x, y);
+        break;
+      default:
+        break;
+      }
+    }
 }
 
 JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj){

@@ -64,7 +64,7 @@ void kgmGameGraphics::render(){
 
     kgmMaterial mbase;
 
-    gc->gcClear(gcflag_color | gcflag_depth, 0xFF555555, 1.0, 0);
+    gc->gcClear(gcflag_color | gcflag_depth, 0xFFFFFFFF, 1.0, 0);
     gc->gcCull(0);
 
     /*if(camera){

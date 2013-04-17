@@ -46,8 +46,19 @@ public class Test extends Activity
     @Override
     public boolean onTouchEvent(MotionEvent me)
     {
-    	
-    	TestLib.onMsMove((int)me.getX(), (int)me.getY());
+    	switch(me.getAction())
+    	{
+    	case MotionEvent.ACTION_MOVE:
+        	TestLib.onTouch(0, (int)me.getX(), (int)me.getY());
+    		break;
+    	case MotionEvent.ACTION_DOWN:
+        	TestLib.onTouch(1, (int)me.getX(), (int)me.getY());
+    		break;
+    	case MotionEvent.ACTION_UP:
+        	TestLib.onTouch(2, (int)me.getX(), (int)me.getY());
+    		break;
+    	}
+    	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
     	//TestLib.onMsMove();
     	
     	return true;

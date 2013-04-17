@@ -130,14 +130,26 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
 #endif
 
 #ifdef ANDROID
-  const EGLint attribs[] = {
+  const EGLint RGBX_888_ATTRIBS[] =
+  {
+  #ifdef GLES_2
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+  #endif
     EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 5,
-    EGL_GREEN_SIZE, 6,
-    EGL_RED_SIZE, 5,
-    EGL_DEPTH_SIZE, 8,
-    EGL_NONE
+    EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
+    EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE
   };
+
+  const EGLint RGB_565_ATTRIBS[] =
+  {
+  #ifdef GLES_2
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+  #endif
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
+    EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE
+  };
+
   EGLint    dummy, format;
   EGLint    numConfigs;
   EGLConfig config;
@@ -152,7 +164,13 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   eglInitialize(display, 0, 0);
   kgm_log() << "kgmEngine: eglInitialize\n";
 
-  eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+  if(eglChooseConfig(display, RGBX_888_ATTRIBS, &config, 1, &numConfigs) == 0)
+  {
+    if(eglChooseConfig(display, RGB_565_ATTRIBS, &config, 1, &numConfigs) == 0)
+    {
+      return;
+    }
+  }
   kgm_log() << "kgmEngine: eglChooseConfig\n";
 
   eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
@@ -174,6 +192,15 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
 
   eglQuerySurface(display, surface, EGL_WIDTH, &w);
   eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+
+  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+  //glEnable(GL_CULL_FACE);
+  //glShadeModel(GL_SMOOTH);
+  //glDisable(GL_DEPTH_TEST);
+  //glClearColor(1, 1, 1, 1);
+  //glClear(GL_COLOR_BUFFER_BIT);
+
+  //eglSwapBuffers(display, surface);
 #endif
 
  m_gc = new kgmOGL(this);
