@@ -222,19 +222,30 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobje
     LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
     if(m_game)
     {
+      kgmEvent::Event evt;
+
       switch(a)
       {
       case 0:
-        m_game->onMsMove(0, x, y);
-        break;
+          evt.event = evtMsMove;
+          evt.msx = x;
+          evt.msy = y;
+          m_game->onEvent(&evt);
+          break;
       case 1:
-        m_game->onMsLeftDown(0, x, y);
-        break;
+          evt.event = evtMsLeftDown;
+          evt.msx = x;
+          evt.msy = y;
+          m_game->onEvent(&evt);
+          break;
       case 2:
-        m_game->onMsLeftUp(0, x, y);
-        break;
+          evt.event = evtMsLeftUp;
+          evt.msx = x;
+          evt.msy = y;
+          m_game->onEvent(&evt);
+          break;
       default:
-        break;
+          break;
       }
     }
 }

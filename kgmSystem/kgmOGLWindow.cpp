@@ -129,7 +129,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
    fullscreen(true);
 #endif
 
-#ifdef ANDROID
+#ifdef ANDROIDXXX
   const EGLint RGBX_888_ATTRIBS[] =
   {
   #ifdef GLES_2
@@ -228,7 +228,7 @@ kgmOGLWindow::~kgmOGLWindow(){
  }
 #endif
 
-#ifdef ANDROID
+#ifdef ANDROIDXXX
  if (display != EGL_NO_DISPLAY) {
    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (context != EGL_NO_CONTEXT) {

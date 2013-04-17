@@ -50,14 +50,6 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
 #endif
 
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
-  /*FILE* out = fopen("glExt.txt", "w");
-  for(int i = 0; i < strlen((char*)ext); i++){
-   if(ext[i] == ' ')
-     fprintf(out, "\n");
-   else
-     fprintf(out, "%c", ext[i]);
-  }
-  fclose(out);*/
 
 #ifdef WIN32
   if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
@@ -179,8 +171,7 @@ void kgmOGL::gcRender(){
   glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);
 #endif
 
-#ifdef ANDROID
-  kgm_log() << "gcRender: " << (s32)m_wnd->display << " " << (s32)m_wnd->surface << ".";
+#ifdef ANDROIDXXX
   eglSwapBuffers(m_wnd->display, m_wnd->surface);
 #endif
 }

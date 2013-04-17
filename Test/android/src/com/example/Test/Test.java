@@ -18,7 +18,10 @@ package com.example.Test;
 import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 
 
@@ -30,17 +33,23 @@ public class Test extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+    	super.onCreate(savedInstanceState);
 
-        /* Create a TextView and set its content.
-         * the text is retrieved by calling a native
-         * function.
-         */
-        //TextView  tv = new TextView(this);
-        //setContentView(tv);
-        //mView = new GL2JNIView(getApplication());
-        mView = new TestView(getApplication());
-        setContentView(mView);        
+    	/* Create a TextView and set its content.
+    	 * the text is retrieved by calling a native
+    	 * function.
+    	 */
+    	// requesting to turn the title OFF
+    	requestWindowFeature(Window.FEATURE_NO_TITLE);
+    	// making it full screen
+    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+    			WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+    	mView = new GL2JNIView(getApplication(), true, 1, 0);
+    	//mView = new TestView(getApplication());
+    	//mView = new GLSurfaceView(this);
+    	setContentView(mView);        
     }
     
     @Override
