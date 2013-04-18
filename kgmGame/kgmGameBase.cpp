@@ -125,7 +125,7 @@ kgmGameBase::kgmGameBase()
   //  m_paths.seek(0);
 
   log("open font...");
-  m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
+  m_font = m_resources->getFont((char*)"arial1.tga", 16, 16);
 
   if(!m_font)
     log("can't load font");
@@ -394,7 +394,6 @@ void kgmGameBase::onEvent(kgmEvent::Event* e){
   kgmWindow::onEvent(e);
   for(int i = 0; i < m_guis.size(); i++)
   {
-    kgm_log() << "kgmGameBase::onEvent .\n";
     m_guis[i]->onEvent(e);
   }
 }

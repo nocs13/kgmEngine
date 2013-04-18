@@ -130,6 +130,7 @@ protected:
  void          delChild(kgmGui *e);
  bool          isChild(kgmGui *e);
  kgmGui*       getFocus(Point pos);
+ kgmGui*       getPointed();
 
  void          setId(u32 id){ this->m_id = id; };
  u32           getId(){ return this->m_id; };

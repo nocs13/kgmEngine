@@ -185,10 +185,10 @@ void kgmGui::onMsMove(int k, int x, int y)
   
   for (int i = 0; i < m_childs.size(); i++)
   {
+    kgmGui* guiPointed = null;
+
     if (m_childs[i]->m_view)
     {
-      m_childs[i]->onMsMove(k, x, y);
-
       if(m_childs[i]->m_rect.inside(x, y))
       {
         if(!m_childs[i]->m_hasMouse)
@@ -202,6 +202,9 @@ void kgmGui::onMsMove(int k, int x, int y)
       {
         m_childs[i]->onMsOutside();
         m_childs[i]->m_hasMouse = false;
+      }else if(guiPointed = m_childs[i]->getPointed()){
+        guiPointed->onMsOutside();
+        guiPointed->m_hasMouse = false;
       }
     }
   }
@@ -329,5 +332,20 @@ kgmGui* kgmGui::getFocus(Point pos){
    }
   }
   return 0;
+}
+
+kgmGui* kgmGui::getPointed(){
+  if(m_hasMouse)
+    return this;
+
+  for(int i = 0; i < m_childs.size(); i++)
+  {
+    if(m_childs[i]->getPointed())
+    {
+     return m_childs[i];
+    }
+  }
+
+  return null;
 }
 

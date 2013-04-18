@@ -7,8 +7,8 @@ kgmGuiStyle::kgmGuiStyle()
   
   sgui.tx_color = 0xff000000;
   sgui.bg_color = 0xffffffff;
-  sgui.ac_color = 0xff888888;
-  sgui.fg_color= 0xffaaaaaa;
+  sgui.ac_color = 0xffffffff;
+  sgui.fg_color = 0xffffffff;
   sgui.bg_image = 0;
 
   //gui button

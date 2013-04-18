@@ -237,7 +237,6 @@ void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
 }
 
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
-  kgm_log() << "Viewport: " << w << " " << h << " .";
   glViewport(x, y, w, h);
 #ifndef ANDROID
   glDepthRange(n, f);
@@ -439,8 +438,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
 
-  kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << ".";
-
   switch(fmt){
   case gctex_fmt8:
     pic_fmt = GL_RED;
@@ -476,7 +473,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     pic_fmt = GL_RGB;
     fmt_bt = 3;
   }
-  kgm_log() << "gcGenTexture " << (s32)fmt_bt;
+
 #ifdef ANDROID
    glActiveTexture(GL_TEXTURE0);
 #endif
@@ -504,9 +501,10 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
   }
-  kgm_log() << "gcGenTexture " << (s32)type;
-  if(tex == 0){
-    return 0;
+
+  if(tex == 0)
+  {
+    return null;
   }
 
 
