@@ -38,54 +38,97 @@
 #endif
 
 //DRAW ELEMENTS
-extern PFNGLDRAWRANGEELEMENTSPROC       glDrawRangeElements;
+extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 //TEXTURE EXTENTIONS
-extern PFNGLACTIVETEXTUREARBPROC		    glActiveTexture;
-extern PFNGLCLIENTACTIVETEXTUREARBPROC	glClientActiveTexture;
+extern PFNGLACTIVETEXTUREARBPROC		glActiveTextureARB;
+extern PFNGLCLIENTACTIVETEXTUREARBPROC	glClientActiveTextureARB;
 //VERTEX BUFFER EXTENTIONS
-extern PFNGLGENBUFFERSARBPROC			glGenBuffers;
-extern PFNGLDELETEBUFFERSARBPROC		glDeleteBuffers;
-extern PFNGLBINDBUFFERARBPROC			glBindBuffer;
-extern PFNGLBUFFERDATAARBPROC			glBufferData;
-extern PFNGLBUFFERSUBDATAARBPROC		glBufferSubData;
-extern PFNGLGETBUFFERSUBDATAARBPROC		glGetBufferSubData;
-extern PFNGLMAPBUFFERARBPROC			glMapBuffer;
-extern PFNGLUNMAPBUFFERARBPROC			glUnmapBuffer;
+extern PFNGLGENBUFFERSARBPROC			glGenBuffersARB;
+extern PFNGLDELETEBUFFERSARBPROC		glDeleteBuffersARB;
+extern PFNGLBINDBUFFERARBPROC			glBindBufferARB;
+extern PFNGLBUFFERDATAARBPROC			glBufferDataARB;
+extern PFNGLBUFFERSUBDATAARBPROC		glBufferSubDataARB;
+extern PFNGLGETBUFFERSUBDATAARBPROC		glGetBufferSubDataARB;
+extern PFNGLMAPBUFFERARBPROC			glMapBufferARB;
+extern PFNGLUNMAPBUFFERARBPROC			glUnmapBufferARB;
 //FRAME BUFFER EXTENTIONS
-extern PFNGLGENFRAMEBUFFERSEXTPROC			  glGenFramebuffers;
-extern PFNGLDELETEFRAMEBUFFERSEXTPROC		  glDeleteFramebuffers;
-extern PFNGLBINDFRAMEBUFFEREXTPROC			  glBindFramebuffer;
-extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC		glFramebufferTexture2D;
-extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC	glCheckFramebufferStatus;
+extern PFNGLGENFRAMEBUFFERSEXTPROC        glGenFramebuffersEXT;
+extern PFNGLDELETEFRAMEBUFFERSEXTPROC     glDeleteFramebuffersEXT;
+extern PFNGLBINDFRAMEBUFFEREXTPROC        glBindFramebufferEXT;
+extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC   glFramebufferTexture2DEXT;
+extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT;
 
 //GLSL SHADER EXTENTIONS
-extern PFNGLCREATESHADEROBJECTARBPROC   glCreateShaderObject;
-extern PFNGLCREATEPROGRAMOBJECTARBPROC  glCreateProgramObject;
-extern PFNGLDELETEOBJECTARBPROC         glDeleteObject;
-extern PFNGLSHADERSOURCEARBPROC         glShaderSource;
-extern PFNGLCOMPILESHADERARBPROC        glCompileShader;
-extern PFNGLATTACHOBJECTARBPROC         glAttachObject;
-extern PFNGLDETACHOBJECTARBPROC         glDetachObject;
-extern PFNGLLINKPROGRAMARBPROC          glLinkProgram;
-extern PFNGLVALIDATEPROGRAMARBPROC      glValidateProgram;
-extern PFNGLUSEPROGRAMOBJECTARBPROC     glUseProgramObject;
-extern PFNGLGETOBJECTPARAMETERFVARBPROC glGetObjectParameterfv;
-extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameteriv;
-extern PFNGLGETINFOLOGARBPROC           glGetInfoLog;
-extern PFNGLGETUNIFORMLOCATIONARBPROC   glGetUniformLocation;
-extern PFNGLUNIFORM1IARBPROC            glUniform1i;
-extern PFNGLUNIFORM1IVARBPROC           glUniform1iv;
-extern PFNGLUNIFORM2IVARBPROC           glUniform2iv;
-extern PFNGLUNIFORM3IVARBPROC           glUniform3iv;
-extern PFNGLUNIFORM4IVARBPROC           glUniform4iv;
-extern PFNGLUNIFORM1FVARBPROC           glUniform1fv;
-extern PFNGLUNIFORM2FVARBPROC           glUniform2fv;
-extern PFNGLUNIFORM3FVARBPROC           glUniform3fv;
-extern PFNGLUNIFORM4FVARBPROC           glUniform4fv;
-extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fv;
-extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fv;
-extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fv;
-#endif 
+extern PFNGLCREATESHADEROBJECTARBPROC   glCreateShaderObjectARB;
+extern PFNGLCREATEPROGRAMOBJECTARBPROC  glCreateProgramObjectARB;
+extern PFNGLDELETEOBJECTARBPROC         glDeleteObjectARB;
+extern PFNGLSHADERSOURCEARBPROC         glShaderSourceARB;
+extern PFNGLCOMPILESHADERARBPROC        glCompileShaderARB;
+extern PFNGLATTACHOBJECTARBPROC         glAttachObjectARB;
+extern PFNGLDETACHOBJECTARBPROC         glDetachObjectARB;
+extern PFNGLLINKPROGRAMARBPROC          glLinkProgramARB;
+extern PFNGLVALIDATEPROGRAMARBPROC      glValidateProgramARB;
+extern PFNGLUSEPROGRAMOBJECTARBPROC     glUseProgramObjectARB;
+extern PFNGLGETOBJECTPARAMETERFVARBPROC glGetObjectParameterfvARB;
+extern PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
+extern PFNGLGETINFOLOGARBPROC           glGetInfoLogARB;
+extern PFNGLGETUNIFORMLOCATIONARBPROC   glGetUniformLocationARB;
+extern PFNGLUNIFORM1IARBPROC            glUniform1iARB;
+extern PFNGLUNIFORM1IVARBPROC           glUniform1ivARB;
+extern PFNGLUNIFORM2IVARBPROC           glUniform2ivARB;
+extern PFNGLUNIFORM3IVARBPROC           glUniform3ivARB;
+extern PFNGLUNIFORM4IVARBPROC           glUniform4ivARB;
+extern PFNGLUNIFORM1FVARBPROC           glUniform1fvARB;
+extern PFNGLUNIFORM2FVARBPROC           glUniform2fvARB;
+extern PFNGLUNIFORM3FVARBPROC           glUniform3fvARB;
+extern PFNGLUNIFORM4FVARBPROC           glUniform4fvARB;
+extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fvARB;
+extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
+extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
+
+
+#define glActiveTexture          glActiveTextureARB
+#define glClientActiveTexture    glClientActiveTextureARB
+#define glGenBuffers             glGenBuffersARB
+#define glDeleteBuffers          glDeleteBuffersARB
+#define glBindBuffer             glBindBufferARB
+#define glBufferData             glBufferDataARB
+#define glBufferSubData          glBufferSubDataARB
+#define glGetBufferSubData       glGetBufferSubDataARB
+#define glMapBuffer              glMapBufferARB
+#define glUnmapBuffer            glUnmapBufferARB
+#define glGenFramebuffers        glGenFramebuffersEXT
+#define glDeleteFramebuffers     glDeleteFramebuffersEXT
+#define glBindFramebuffer        glBindFramebufferEXT
+#define glFramebufferTexture2D   glFramebufferTexture2DEXT
+#define glCheckFramebufferStatus glCheckFramebufferStatusEXT
+#define glCreateShaderObject   glCreateShaderObjectARB
+#define glCreateProgramObject  glCreateProgramObjectARB
+#define glDeleteObject         glDeleteObjectARB
+#define glShaderSource         glShaderSourceARB
+#define glCompileShader        glCompileShaderARB
+#define glAttachObject         glAttachObjectARB
+#define glDetachObject         glDetachObjectARB
+#define glLinkProgram          glLinkProgramARB
+#define glValidateProgram      glValidateProgramARB
+#define glUseProgramObject     glUseProgramObjectARB
+#define glGetObjectParameterfv glGetObjectParameterfvARB
+#define glGetObjectParameteriv glGetObjectParameterivARB
+#define glGetInfoLog           glGetInfoLogARB
+#define glGetUniformLocation   glGetUniformLocationARB
+#define glUniform1i            glUniform1iARB
+#define glUniform1iv           glUniform1ivARB
+#define glUniform2iv           glUniform2ivARB
+#define glUniform3iv           glUniform3ivARB
+#define glUniform4iv           glUniform4ivARB
+#define glUniform1fv           glUniform1fvARB
+#define glUniform2fv           glUniform2fvARB
+#define glUniform3fv           glUniform3fvARB
+#define glUniform4fv           glUniform4fvARB
+#define glUniformMatrix2fv     glUniformMatrix2fvARB
+#define glUniformMatrix3fv     glUniformMatrix3fvARB
+#define glUniformMatrix4fv     glUniformMatrix4fvARB
+#endif
 
 #ifdef WIN32
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
@@ -95,6 +138,5 @@ extern  PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 #ifdef LINUX
 extern PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 #endif
-
 
 bool glInitExt();

@@ -1,4 +1,4 @@
-ANDROID_NDK_BIN:=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86_64/bin
+ANDROID_NDK_BIN:=$(NDK_ROOT)/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/bin
 
 # Compilation Tools
 CC  := $(ANDROID_NDK_BIN)/arm-linux-androideabi-gcc
