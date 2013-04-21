@@ -96,17 +96,24 @@ bool  kgmXml::Node::attribute(kgmString id, kgmString& value){
 kgmXml::kgmXml()
 {
  m_node = 0;
+ m_position = null;
 }
 
 kgmXml::kgmXml(void* mem, int size){
+ m_node = 0;
+ m_position = null;
  m_node = parse(mem, size);
 }
 
 kgmXml::kgmXml(kgmMemory<char>& m){
+ m_node = 0;
+ m_position = null;
  m_node = parse(m.data(), m.length());
 }
 
 kgmXml::kgmXml(kgmString& s){
+ m_node = 0;
+ m_position = null;
  m_node = parse(s.data(), s.length());
 }
 
@@ -224,18 +231,87 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
  return base;
 }
 
+XmlState kgmXml::open(kgmMemory<char>& m)
+{
+  m_position = null;
+
+  if(m_xmlString.length())
+      m_xmlString.clear();
+
+  if(m.length() < 1)
+      return XML_ERROR;
+
+  m_xmlString.alloc(m.data(), m.length());
+  m_position = m_xmlString.data();
+
+  if(*m_position != '<' && *(++m_position) != '?')
+  {
+      m_xmlString.clear();
+
+      return XML_ERROR;
+  }
+  else
+  {
+    m_position = toSyms(m_position, ">");
+
+    if(!m_position)
+        return XML_ERROR;
+
+    char* c = m_position - 1;
+
+    if(*c != '?')
+        return XML_ERROR;
+  }
+
+  return XML_NONE;
+}
+
+XmlState kgmXml::next()
+{
+    if(!m_position)
+        return XML_ERROR;
+
+    while(true)
+    {
+        if(*m_position == '0')
+            return XML_ERROR;
+
+        if(*m_position == ' ' || *m_position == '\t')
+            m_position++;
+        else
+            break;
+    }
+}
+
+XmlState kgmXml::close()
+{
+  m_position = null;
+
+  if(m_xmlString.length())
+      m_xmlString.clear();
+
+  return XML_NONE;
+}
+
 unsigned char* kgmXml::toSyms(unsigned char* m, char* to){
  bool loop = true;
- while(loop){
+
+ while(loop)
+ {
   char* c = to;
-  for(int i = 0; i < strlen(to); i++, c++){
-   if(*m == *c){
+
+  for(int i = 0; i < strlen(to); i++, c++)
+  {
+   if(*m == *c)
+   {
     loop = false;
    }
   }
+
   if(loop)
    m++;
  }
+
  return m;
 }
 

@@ -11,6 +11,15 @@ typedef unsigned int u32;
 class kgmXml  
 {
 public:
+ enum XmlState
+ {
+     XML_NONE,
+     XML_ERROR,
+     XML_FINISH,
+     XML_TAG_OPEN,
+     XML_TAG_CLOSE,
+     XML_TAG_DATA
+ };
  struct Attribute{
    kgmString m_name;
    kgmString m_data;
@@ -44,6 +53,10 @@ public:
 public:
  Node*	m_node;
 
+private:
+ kgmString m_xmlString;
+ char*     m_position;
+
 public:
  kgmXml();
  kgmXml(void* mem, int size);
@@ -51,6 +64,11 @@ public:
  kgmXml(kgmString& s);
  virtual ~kgmXml();
  void print(Node*);
+
+ XmlState open(kgmMemory<char>& m);
+ XmlState next();
+ XmlState close();
+
 protected:
  Node* parse(void* mem, int size);
 

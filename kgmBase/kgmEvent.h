@@ -203,11 +203,16 @@ public:
     m_listens[i]->onAction(e, a);
  }
 
+ virtual void onIdle()
+ {
+   for(int i = 0; i < m_listens.length(); i++)
+    m_listens[i]->onIdle();
+ }
+
 protected:
   
  virtual void onCreate(){}
  virtual void onClose(){}
- virtual void onIdle(){}
  virtual void onPaint(){}
  virtual void onResize(int w, int h){}
  virtual void onMsWheel(int k, int x, int y, int z){}

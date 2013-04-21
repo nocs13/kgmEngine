@@ -787,7 +787,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     kgmXml::Node* node = xml.m_node->node(i);
     node->id(id);
 
-    kgm_log() << "Node: " << (char*)node->m_name << "\n";
+    kgm_log() << "Node: " << (char*)node->m_name << " type: " << (char*)id << "\n";
 
     if(id == "kgmMaterial"){
       kgmString id;
