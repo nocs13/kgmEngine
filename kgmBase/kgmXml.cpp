@@ -231,12 +231,12 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
  return base;
 }
 
-XmlState kgmXml::open(kgmMemory<char>& m)
+kgmXml::XmlState kgmXml::open(kgmMemory<char>& m)
 {
   m_position = null;
 
   if(m_xmlString.length())
-      m_xmlString.clear();
+      close();
 
   if(m.length() < 1)
       return XML_ERROR;
@@ -246,46 +246,158 @@ XmlState kgmXml::open(kgmMemory<char>& m)
 
   if(*m_position != '<' && *(++m_position) != '?')
   {
-      m_xmlString.clear();
+      close();
 
       return XML_ERROR;
   }
   else
   {
-    m_position = toSyms(m_position, ">");
+    m_position = toSyms(m_position, ">", m.length());
 
     if(!m_position)
+    {
+        close();
+
         return XML_ERROR;
+    }
 
     char* c = m_position - 1;
 
     if(*c != '?')
+    {
+        close();
+
         return XML_ERROR;
+    }
   }
+
+  if(*m_position == '>')
+    m_position++;
 
   return XML_NONE;
 }
 
-XmlState kgmXml::next()
+kgmXml::XmlState kgmXml::next()
 {
+  m_tagData.clear();
+  m_tagName.clear();
+  m_attributes.clear();
+
     if(!m_position)
-        return XML_ERROR;
-
-    while(true)
     {
-        if(*m_position == '0')
-            return XML_ERROR;
+        close();
 
-        if(*m_position == ' ' || *m_position == '\t')
-            m_position++;
-        else
-            break;
+        return XML_ERROR;
+    }
+
+    char* pt = m_position;
+
+    int size = (int)(pt - m_xmlString.data());
+
+    if(size >= m_xmlString.length())
+    {
+        close();
+
+        return XML_ERROR;
+    }
+
+    pt = toSyms(pt, '<', size);
+
+    if(!pt)
+    {
+      close();
+
+      return XML_ERROR;
+    }
+
+    if((pt != m_position) && pt != exeptSyms(m_position, (char*)" \t\r\n"))
+    {
+      m_tagData.alloc(m_position, (s32)(pt - m_position));
+
+      m_position = pt;
+
+      return XML_TAG_DATA;
+    }
+
+    //got tag start position
+    m_position = ++pt;
+
+    if(*pt == '>' || *pt == ' ' || *pt == '\t')
+    {
+      close();
+
+      return XML_ERROR;
+    }
+    else if(*pt == '/')
+    {
+      m_position = ++pt;
+
+      pt = toSyms(pt, (char*)" \t/>");
+
+      if(*pt != '>' || (pt == m_position))
+      {
+        close();
+
+        return XML_ERROR;
+      }
+      else
+      {
+        m_tagName.alloc(m_position, (int)(pt - m_position));
+
+        return XML_TAG_CLOSE;
+      }
+    }
+
+    pt = toSyms(pt, " \t/>");
+
+    m_tagName.alloc(m_position, (int)(pt - m_position));
+    Attribute* attr = null;
+
+    while(pt=exeptSyms(pt, " \t"))
+    {
+        if(*pt == '0')
+        {
+            close();
+
+            return XML_FINISH;
+        }
+
+        if(*pt == '>')
+        {
+          m_position = (char*)(pt + 1);
+
+          if(*(--pt) == '/')
+          {
+            return XML_TAG_CLOSE;
+          }
+          else
+          {
+            return XML_TAG_OPEN;
+          }
+        }
+        else if(*pt == '=')
+        {
+          if(!attr)
+          {
+            close();
+
+            return XML_FINISH;
+          }
+        }
+        else if((*pt >= 'a' && *pt <= 'z') || (*pt >= 'A' && *pt <= 'Z'))
+        {
+          m_position = pt;
+          pt = toSyms(pt, (char*)" \t=>");
+        }
     }
 }
 
-XmlState kgmXml::close()
+kgmXml::XmlState kgmXml::close()
 {
   m_position = null;
+  m_tagData.clear();
+  m_tagName.clear();
+  m_attributes.clear();
 
   if(m_xmlString.length())
       m_xmlString.clear();
@@ -293,10 +405,14 @@ XmlState kgmXml::close()
   return XML_NONE;
 }
 
-unsigned char* kgmXml::toSyms(unsigned char* m, char* to){
- bool loop = true;
+unsigned char* kgmXml::toSyms(unsigned char* m, char* to, int max){
 
- while(loop)
+ if(max < 0)
+ {
+  max = 1 * 1024 * 1024 * 1024;
+ }
+
+ while(--max)
  {
   char* c = to;
 
@@ -304,15 +420,14 @@ unsigned char* kgmXml::toSyms(unsigned char* m, char* to){
   {
    if(*m == *c)
    {
-    loop = false;
+    return m;
    }
   }
 
-  if(loop)
-   m++;
+  m++;
  }
 
- return m;
+ return null;
 }
 
 unsigned char* kgmXml::toStr(unsigned char* m, char* to){

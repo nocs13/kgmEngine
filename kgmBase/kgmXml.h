@@ -20,6 +20,7 @@ public:
      XML_TAG_CLOSE,
      XML_TAG_DATA
  };
+
  struct Attribute{
    kgmString m_name;
    kgmString m_data;
@@ -54,8 +55,11 @@ public:
  Node*	m_node;
 
 private:
- kgmString m_xmlString;
- char*     m_position;
+ char*               m_position;
+ kgmString           m_xmlString;
+ kgmString           m_tagName;
+ kgmString           m_tagData;
+ kgmList<Attribute*> m_attributes;
 
 public:
  kgmXml();
@@ -72,7 +76,7 @@ public:
 protected:
  Node* parse(void* mem, int size);
 
- unsigned char* toSyms(unsigned char* m, char* to);
+ unsigned char* toSyms(unsigned char* m, char* to, int max = -1);
  unsigned char* toStr(unsigned char* m, char* to);
  unsigned char* exeptSyms(unsigned char* m, char* to);
 };
