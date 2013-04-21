@@ -99,4 +99,15 @@ void kGui::onAction(kgmEvent* e, int a)
       m_guiMain->hide();
     }
   }
+  else if(sid == "gameExit")
+  {
+    m_game->gUnload();
+    m_guiPause->hide();
+    m_guiMain->show();
+  }
+  else if(sid == "gameResume")
+  {
+    m_guiPause->hide();
+    m_game->gPause(false);
+  }
 }

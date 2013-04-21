@@ -377,6 +377,13 @@ void kgmGameBase::onMsMove(int k, int x, int y){
   g_cam.rotate(0.01 * (x - sx), 0.01 * (y - sy));
   m_input[grot_x] = x - sx; sx = x;
   m_input[grot_y] = y - sy; sy = y;
+
+  if(m_state == State_Play)
+  {
+    kgmCamera cam = m_render->camera();
+
+    cam.rotate(m_input[grot_x], m_input[grot_y]);
+  }
 }
 
 void kgmGameBase::onResize(int w, int h){
@@ -765,10 +772,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     return false;
   }
 
-  kgmXml xml(mem);
-  if(!xml.m_node){
+  kgmXml xml;
+  if(kgmXml::XML_ERROR == xml.open(mem)){
     kgm_log() << "\nNot valid xml %s" << (char*)path;
     kgm_log() << "Error: " << "Not valid xml " << (char*)path << "\n";
+
     return false;
   }
 
@@ -782,92 +790,113 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
   u32            vts = 0, fcs = 0;
 
-  for(int i = 0; i < xml.m_node->nodes(); i++){
-    kgmString id, t;
-    kgmXml::Node* node = xml.m_node->node(i);
-    node->id(id);
+  kgmString      m_data = "";
 
-    kgm_log() << "Node: " << (char*)node->m_name << " type: " << (char*)id << "\n";
+  while(kgmXml::XmlState xstate = xml.next()){
 
-    if(id == "kgmMaterial"){
-      kgmString id;
-      xmlAttr(node, "name", id);
-      type = TypeMaterial;
-      obj = mtl = new kgmMaterial();
-      mtl->setId(id);
-      m_render->add(mtl);
-      m_objects.add(obj);
-    }else if(id == "kgmCamera"){
-      type = TypeCamera;
-      //obj = cam = (kgmCamera*)act->camera;
-    }else if(id == "kgmLight"){
-      type = TypeLight;
-      obj = lgt = new kgmLight();
-      m_render->add(lgt);
-      m_objects.add(obj);
-    }else if(id == "kgmMesh"){
-      type = TypeMesh;
-      obj = msh = new kgmMesh();
-      m_render->add(msh, 0);
-    }else if(id == "kgmActor"){
-      type = TypeActor;
-      kgmString s;
-      xmlAttr(node, "id", s);
-      obj = act = gSpawn(s);
-      if(act){
-        m_render->add(act);
+    if(xstate == kgmXml::XML_ERROR)
+    {
+      break;
+    }
+    else if(xstate == kgmXml::XML_FINISH)
+    {
+      break;
+    }
+    else if(xstate == kgmXml::XML_TAG_OPEN)
+    {
+      kgmString id, value, t;
+
+      kgm_log() << "Node: " << (char*)id << "\n";
+      id = xml.m_tagName;
+
+      if(id == "kgmMaterial")
+      {
+        kgmString id;
+        xml.attribute("name", id);
+        type = TypeMaterial;
+        obj = mtl = new kgmMaterial();
+        mtl->setId(id);
+        m_render->add(mtl);
         m_objects.add(obj);
       }
-    }
-
-    for(int j = 0; j < node->nodes(); j++){
-      kgmString id;
-      kgmXml::Node* cnode = node->node(j);
-      cnode->id(id);
-
-      if(id == "Color"){
-      }else if(id == "Ambient"){
-      }else if(id == "Specular"){
-      }else if(id == "Shininess"){
-      }else if(id == "Transparency"){
-      }else if(id == "Texture"){
-      }else if(id == "Shader"){
-      }else if(id == "Material"){
-      }else if(id == "Vertices"){
+      else if(id == "kgmCamera")
+      {
+        type = TypeCamera;
+        //obj = cam = (kgmCamera*)act->camera;
+      }
+      else if(id == "kgmLight")
+      {
+        type = TypeLight;
+        obj = lgt = new kgmLight();
+        m_render->add(lgt);
+        m_objects.add(obj);
+      }
+      else if(id == "kgmMesh")
+      {
+        type = TypeMesh;
+        obj = msh = new kgmMesh();
+        m_render->add(msh, 0);
+      }
+      else if(id == "kgmActor")
+      {
+        type = TypeActor;
+        kgmString s;
+        xml.attribute("id", s);
+        obj = act = gSpawn(s);
+        if(act){
+          m_render->add(act);
+          m_objects.add(obj);
+        }
+      }
+      else if(id == "Color")
+      {
+      }
+      else if(id == "Ambient")
+      {
+      }
+      else if(id == "Specular")
+      {
+      }
+      else if(id == "Shininess")
+      {
+      }
+      else if(id == "Transparency")
+      {
+      }
+      else if(id == "Texture")
+      {
+      }
+      else if(id == "Shader")
+      {
+      }
+      else if(id == "Material")
+      {
+      }
+      else if(id == "Vertices")
+      {
         int len = 0, n = 0;
         kgmString data;
 
-        xmlAttr(cnode, "length", len);
+        xml.attribute("length", value);
+        sscanf(value.data(), "%i", &len);
         kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
-        cnode->data(data);
-        char* pdata = data.data();
-        for(int i = 0; i < len; i++){
-          sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
-                 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
-                 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-                 &v[i].uv.x, &v[i].uv.y, &n);
-          v[i].col = 0xffffffff;
-          (pdata) += (u32)n;
-        }
-      }else if(id == "Faces"){
+        m_data = "vertices";
+      }
+      else if(id == "Faces")
+      {
         int len = 0, n = 0;
         kgmString data;
 
-        xmlAttr(cnode, "length", len);
+        xml.attribute("length", value);
+        sscanf(value.data(), "%i", &len);
         kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
-        cnode->data(data);
-        char* pdata = data.data();
-        for(int i = 0; i < len; i++){
-          u32 fs[4];
-          sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
-          f[i].f[0] = fs[0];
-          f[i].f[1] = fs[1];
-          f[i].f[2] = fs[2];
-          (pdata) += (u32)n;
-        }
-      }else if(id == "Position"){
+        m_data = "faces";
+      }
+      else if(id == "Position")
+      {
         vec3 v;
-        xmlAttr(cnode, "value", v);
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
         switch(type){
         case TypeCamera:
@@ -877,16 +906,63 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           if(act)
             act->setPosition(v);
         }
-      }else if(id == "Rotation"){
+      }
+      else if(id == "Rotation")
+      {
         vec3 v;
-        xmlAttr(cnode, "value", v);
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
         if(act)
           act->setRotation(v);
-      }else if(id == "Quaternion"){
+      }
+      else if(id == "Quaternion")
+      {
         quat q;
-        xmlAttr(cnode, "value", q);
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
+
         if(act)
           act->setRotation(q);
+      }
+    }
+    else if(xstate == kgmXml::XML_TAG_CLOSE)
+    {
+
+    }
+    else if(xstate == kgmXml::XML_TAG_DATA)
+    {
+      if(m_data == "vertices")
+      {
+        int n = 0;
+        char* pdata = xml.m_tagData.data();
+        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vertices();
+        for(int i = 0; i < msh->vcount(); i++){
+          sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
+                 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+                 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+                 &v[i].uv.x, &v[i].uv.y, &n);
+          v[i].col = 0xffffffff;
+          (pdata) += (u32)n;
+        }
+      }
+      else if(m_data == "faces")
+      {
+        int n = 0;
+        char* pdata = xml.m_tagData.data();
+        kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->faces();
+        for(int i = 0; i < msh->fcount(); i++){
+          u32 fs[4];
+          sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
+          f[i].f[0] = fs[0];
+          f[i].f[1] = fs[1];
+          f[i].f[2] = fs[2];
+          (pdata) += (u32)n;
+        }
+      }
+      else if(m_data == "skin")
+      {
+        char* pdata = xml.m_tagData.data();
       }
     }
   }

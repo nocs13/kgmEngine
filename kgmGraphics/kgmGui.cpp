@@ -5,7 +5,8 @@
 
 KGMOBJECT_IMPLEMENT(kgmGui, kgmEvent)
 
-kgmGui::kgmGui(){
+kgmGui::kgmGui()
+{
   m_id = 0;
   m_parent = 0;
   m_view = false;
@@ -173,6 +174,12 @@ void kgmGui::onMsWheel(int k, int x, int y, int z){
   if(!m_view)  
       return;
   
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
+
   for(int i = 0; i < m_childs.size(); i++)
    if(m_childs[i]->m_view)
     m_childs[i]->onMsWheel(k, x, y, z);
@@ -182,6 +189,12 @@ void kgmGui::onMsMove(int k, int x, int y)
 {
   if(!m_view)  
       return;
+
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
   
   for (int i = 0; i < m_childs.size(); i++)
   {
@@ -215,6 +228,12 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
   if(!m_view)  
       return;
   
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
+
   for (int i = 0; i < m_childs.size(); i++)
   {
     if (m_childs[i]->m_view)
@@ -231,6 +250,12 @@ void kgmGui::onMsLeftUp(int k, int x, int y){
   if(!m_view)  
       return;
   
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
+
   for (int i = 0; i < m_childs.size(); i++)
   {
     if (m_childs[i]->m_view)
@@ -247,6 +272,12 @@ void kgmGui::onMsRightDown(int k, int x, int y){
   if(!m_view)  
       return;
   
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
+
   for (int i = 0; i < m_childs.size(); i++)
   {
     if (m_childs[i]->m_view)
@@ -263,6 +294,12 @@ void kgmGui::onMsRightUp(int k, int x, int y){
   if(!m_view)  
       return;
   
+  if(!m_parent)
+  {
+    x = x - m_rect.x;
+    y = y - m_rect.y;
+  }
+
   for (int i = 0; i < m_childs.size(); i++)
   {
     if (m_childs[i]->m_view)

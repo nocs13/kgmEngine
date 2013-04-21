@@ -299,7 +299,7 @@ kgmXml::XmlState kgmXml::next()
     {
         close();
 
-        return XML_ERROR;
+        return XML_FINISH;
     }
 
     //Find tag start symbol
@@ -309,7 +309,7 @@ kgmXml::XmlState kgmXml::next()
     {
         close();
 
-        return XML_ERROR;
+        return XML_FINISH;
     }
 
     //Check if before was some ascii, it will be identified as data
@@ -505,6 +505,23 @@ bool kgmXml::attribute(int i, kgmString& key, kgmString& value)
     value = attr->m_data;
 
     return true;
+}
+
+bool kgmXml::attribute(kgmString key, kgmString& value)
+{
+
+  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
+  {
+
+    if(key == (*i)->m_name)
+    {
+      value = (*i)->m_data;
+
+      return true;
+    }
+  }
+
+  return false;
 }
 
 unsigned char* kgmXml::toSyms(unsigned char* m, char* to, int max){

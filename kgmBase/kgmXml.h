@@ -76,6 +76,7 @@ public:
  XmlState close();
  int      attributes();
  bool     attribute(int i, kgmString& key, kgmString& value);
+ bool     attribute(kgmString key, kgmString& value);
 
 protected:
  Node* parse(void* mem, int size);

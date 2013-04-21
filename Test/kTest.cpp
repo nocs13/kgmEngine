@@ -134,7 +134,7 @@ public:
  }
 
  void main(){
-  print_xml("Data/map001.kgm");
+  //print_xml("Data/level01.kgm");
   m_game = new kGame();
   m_game->loop();
 

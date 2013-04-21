@@ -72,6 +72,7 @@ public:
   void render();
   void resize(float, float);
   void setDefaultFont(kgmFont*);
+  void update();
 
 private:
   void render(Mesh*);

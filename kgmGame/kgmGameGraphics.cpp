@@ -96,7 +96,8 @@ void kgmGameGraphics::render(){
 
       render(&m_meshes[i]);
 
-      if(s_def){
+      if(s_def)
+      {
         render(s_def, 1);
       }
     }
