@@ -36,12 +36,12 @@ clean:
 	$(RM) kgmGraphics/*.o
 	$(RM) kgmPhysics/*.o
 	$(RM) kgmGame/*.o
-	$(RM) Test/*.o
+	$(RM) Test/*.o Test/kTest Test/kTest.exe
 
 distclean: clean	
 	$(RM) libkgmEngine.a
 	$(RM) libkgmEngine.so
-	
+
 run:
 	make -C Test -f Makefile run
 

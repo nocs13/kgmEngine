@@ -13,8 +13,8 @@ class kgmXml
 public:
  enum XmlState
  {
-     XML_NONE,
-     XML_ERROR,
+     XML_NONE = 0,
+     XML_ERROR = 1,
      XML_FINISH,
      XML_TAG_OPEN,
      XML_TAG_CLOSE,
@@ -57,6 +57,8 @@ public:
 private:
  char*               m_position;
  kgmString           m_xmlString;
+
+public:
  kgmString           m_tagName;
  kgmString           m_tagData;
  kgmList<Attribute*> m_attributes;
@@ -72,6 +74,8 @@ public:
  XmlState open(kgmMemory<char>& m);
  XmlState next();
  XmlState close();
+ int      attributes();
+ bool     attribute(int i, kgmString& key, kgmString& value);
 
 protected:
  Node* parse(void* mem, int size);

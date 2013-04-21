@@ -81,7 +81,7 @@ public:
    print_xml(n->node(i));
  }
  
-  void print_xml(char* path){
+  /*void print_xml(char* path){
    kgmString s(path, strlen(path));
    kgmFile f;
    f.open(s, kgmFile::Read);
@@ -91,9 +91,50 @@ public:
    f.close();
    kgmXml xml(m);
    print_xml(xml.m_node);
+  }*/
+
+ void print_xml(char* path){
+  kgmString s(path, strlen(path));
+  kgmFile f;
+  f.open(s, kgmFile::Read);
+  kgmMemory<char> m;
+  m.alloc(f.length());
+  f.read(m.data(), f.length());
+  f.close();
+  kgmXml xml;
+  kgmXml::XmlState state;
+
+  xml.open(m);
+
+  while(state = xml.next())
+  {
+      if(state == kgmXml::XML_ERROR)
+      {
+          kgm_log() << "xml error \n";
+          break;
+      }
+      else if(state == kgmXml::XML_FINISH)
+      {
+          kgm_log() << "xml finish \n";
+          break;
+      }
+      else if(state == kgmXml::XML_TAG_OPEN)
+      {
+          kgm_log() << "xml tag open " << (char*)xml.m_tagName << "\n";
+      }
+      else if(state == kgmXml::XML_TAG_CLOSE)
+      {
+          kgm_log() << "xml tag close " << (char*)xml.m_tagName << "\n";
+      }
+      else if(state == kgmXml::XML_TAG_DATA)
+      {
+          kgm_log() << "xml data " << (char*)xml.m_tagData << "\n";
+      }
   }
+ }
 
  void main(){
+  print_xml("Data/map001.kgm");
   m_game = new kGame();
   m_game->loop();
 
