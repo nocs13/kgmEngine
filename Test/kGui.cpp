@@ -57,15 +57,15 @@ kGui::kGui(kgmGameBase* game)
   game->addGui(m_guiMain);
 
 
-  m_guiPause = new kgmGui(null, w / 2 - 100, h / 2 - 100, 200, 200);
+  m_guiPause = new kgmGui(null, w / 2 - 50, h / 2 - 50, 100, 100);
   m_guiPause->addListener(this);
   m_guiPause->hide();
 
-  btn = new kgmGuiButton(m_guiPause, 1, 10, 100, 30);
+  btn = new kgmGuiButton(m_guiPause, 1, 1, 98, 48);
   btn->setText("Resume");
   btn->setSid("gameResume");
 
-  btn = new kgmGuiButton(m_guiPause, 1, 50, 100, 30);
+  btn = new kgmGuiButton(m_guiPause, 1, 51, 98, 48);
   btn->setText("Exit");
   btn->setSid("gameExit");
 
@@ -85,6 +85,11 @@ void kGui::onAction(kgmEvent* e, int a)
   if(sid == "quit")
   {
     m_game->gQuit();
+#ifdef ANDROID
+    extern kgm_android_exit();
+
+    kgm_android_exit();
+#endif
   }
   else if(sid == "levels")
   {

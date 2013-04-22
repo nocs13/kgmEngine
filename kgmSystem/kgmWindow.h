@@ -29,6 +29,11 @@ void kgmUnregisterWindowClass();
  u16 keyTranslate(KeySym);
 #endif
 
+#ifdef ANDROID
+#include <android/keycodes.h>
+ u16 keyTranslate(int key);
+#endif
+
 enum{
  KGMWINDOWOPENGL     = 0X00001111,
  KGMWINDOWDIRECT3D8  = 0X00002222,

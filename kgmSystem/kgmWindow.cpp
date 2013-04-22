@@ -498,6 +498,53 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
 }
 #endif
 
+#ifdef ANDROID
+
+u16 keyTranslate(int key)
+{
+  switch(key)
+  {
+  case AKEYCODE_UNKNOWN:
+    return KEY_NONE;
+  case AKEYCODE_BACK:
+    return KEY_ESCAPE;
+  case AKEYCODE_DPAD_UP:
+    return KEY_UP;
+  case AKEYCODE_DPAD_DOWN:
+    return KEY_DOWN;
+  case AKEYCODE_DPAD_LEFT:
+    return KEY_LEFT;
+  case AKEYCODE_DPAD_RIGHT:
+    return KEY_RIGHT;
+//  case AKEYCODE_DPAD_CENTER:
+  case AKEYCODE_0:
+    return KEY_0;
+  case AKEYCODE_1:
+    return KEY_1;
+  case AKEYCODE_2:
+    return KEY_2;
+  case AKEYCODE_3:
+    return KEY_3;
+  case AKEYCODE_4:
+    return KEY_4;
+  case AKEYCODE_5:
+    return KEY_5;
+  case AKEYCODE_6:
+    return KEY_6;
+  case AKEYCODE_7:
+    return KEY_7;
+  case AKEYCODE_8:
+    return KEY_8;
+  case AKEYCODE_9:
+    return KEY_9;
+  default:
+    return -1;
+  }
+
+  return -1;
+}
+#endif
+
 kgmWindow::kgmWindow(){
  m_parent = 0;
  m_msAbs = true;

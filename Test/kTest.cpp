@@ -169,9 +169,28 @@ public:
   }
 };
 
+
 KApp*          m_app  = null;
 kGame*	       m_game = null;
 AAssetManager* g_assetManager = NULL;
+static JavaVM* jvm;
+
+kgm_android_exit()
+{
+  LOGI("kgmTest quit\n");
+
+  if(m_game)
+    m_game->release();
+
+  if(m_app)
+    delete m_app;
+
+  JNIEnv* env;
+  jvm->AttachCurrentThread(&env, NULL);
+  jclass cls = env->FindClass("com/example/Test/Test");
+  jmethodID mid = env->GetStaticMethodID(cls, "TestFinish", "(V)J");
+  env->CallStaticVoidMethod(cls, mid);
+}
 
 extern "C"
 {
@@ -179,12 +198,12 @@ extern "C"
                                                              jobject am, jobject surface);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj,  jint x, jint y);
+  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key);
   JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj,  jint act, jint x, jint y);
   JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj);
 };
 
-JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height, jobject am,
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv* env, jobject obj,  jint width, jint height, jobject am,
                                                           jobject surface)
 {
     LOGI("kgmTest init\n");
@@ -193,6 +212,7 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject 
     g_assetManager = mgr;
     env->NewGlobalRef(am);
     LOGI("kgmTest init asset manager\n");
+    env->GetJavaVM(&jvm);
 
     m_app = new KApp();
     m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
@@ -249,12 +269,30 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
     }
 }
 
-JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onMsMove(JNIEnv * env, jobject obj, jint x, jint y)
+JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key)
 {
     //int x = 0, y = 0;
-    LOGI("kgmTest msMove %i %i\n", x, y);
+    LOGI("kgmTest onKeyboard %i %i\n", a, key);
     if(m_game)
-      m_game->onMsMove(0, x, y);
+    {
+      kgmEvent::Event evt;
+
+      switch(a)
+      {
+      case 0:
+          evt.event = evtKeyDown;
+          evt.key = keyTranslate(key);
+          m_game->onEvent(&evt);
+          break;
+      case 1:
+          evt.event = evtKeyUp;
+          evt.key = keyTranslate(key);
+          m_game->onEvent(&evt);
+          break;
+      default:
+          break;
+      }
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)

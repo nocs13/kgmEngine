@@ -16,6 +16,7 @@
 package com.example.Test;
 
 import android.app.Activity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.Window;
@@ -27,8 +28,17 @@ import android.os.Bundle;
 
 public class Test extends Activity
 {
+    public static Test m_test = null;
+
     //GL2JNIView mView;
-	SurfaceView mView;
+    SurfaceView mView;
+
+    public static void TestFinish()
+    {
+      if(m_test != null)
+	m_test.finish();
+    }
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -49,7 +59,9 @@ public class Test extends Activity
     	mView = new GL2JNIView(getApplication(), true, 1, 0);
     	//mView = new TestView(getApplication());
     	//mView = new GLSurfaceView(this);
-    	setContentView(mView);        
+    	setContentView(mView);
+
+	m_test = this;
     }
     
     @Override
@@ -70,6 +82,22 @@ public class Test extends Activity
     	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
     	//TestLib.onMsMove();
     	
+    	return true;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        TestLib.onKeyboard(0, keyCode);
+
+    	return true;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event)
+    {
+        TestLib.onKeyboard(1, keyCode);
+
     	return true;
     }
 
