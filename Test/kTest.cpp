@@ -188,7 +188,7 @@ kgm_android_exit()
   JNIEnv* env;
   jvm->AttachCurrentThread(&env, NULL);
   jclass cls = env->FindClass("com/example/Test/Test");
-  jmethodID mid = env->GetStaticMethodID(cls, "TestFinish", "(V)J");
+  jmethodID mid = env->GetStaticMethodID(cls, "TestFinish", "()V");
   env->CallStaticVoidMethod(cls, mid);
 }
 

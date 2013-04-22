@@ -35,8 +35,10 @@ public class Test extends Activity
 
     public static void TestFinish()
     {
-      if(m_test != null)
-	m_test.finish();
+	System.out.println("Test Finishing");	
+
+	if(m_test != null)
+	    m_test.finish();
     }
 
     /** Called when the activity is first created. */

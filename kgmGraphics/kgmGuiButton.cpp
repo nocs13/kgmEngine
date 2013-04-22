@@ -55,27 +55,32 @@ void kgmGuiButton::onClick(){
   }*/
 
 void kgmGuiButton::onMsLeftUp(int key, int x, int y){
-  if(m_state == StateFocus){
+  //if(m_state == StateFocus)
+  {
     onClick();
+    m_state = StateFocus;
   }
 }
 
 void kgmGuiButton::onMsLeftDown(int key, int x, int y){
-  if(m_state == StateFocus){
-    m_state == StateClick;
+  //if(m_state == StateFocus)
+  {
+    m_state = StateClick;
   }
 }
 
 void kgmGuiButton::onMsInside()
 {
-  if(m_state == StateNone){
+  if(m_state == StateNone)
+  {
     m_state = StateFocus;
   }
 }
 
 void kgmGuiButton::onMsOutside()
 {
-  if(m_state != StateNone){
+  if(m_state != StateNone)
+  {
       m_state = StateNone;
   }
 }
