@@ -227,10 +227,16 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv* env, jobject o
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj)
 {
     LOGI("kgmTest quit\n");
+
     if(m_game)
+    {
+      m_game->onClose();
       m_game->release();
+    }
+
     if(m_app)
       delete m_app;
+
     m_game = null;
 }
 
