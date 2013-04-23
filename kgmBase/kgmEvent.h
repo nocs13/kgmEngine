@@ -111,7 +111,8 @@ enum EVENTS{
 };
 
 //base class for system and user events
-class kgmEvent: public kgmObject{
+class kgmEvent: public kgmObject
+{
   KGM_OBJECT(kgmEvent);
 public:
 typedef struct{

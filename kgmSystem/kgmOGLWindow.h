@@ -50,5 +50,6 @@ public:
  kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);
  virtual ~kgmOGLWindow();
  
+ void onClose();
  kgmIGraphics* getGC();
 };

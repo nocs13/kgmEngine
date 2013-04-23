@@ -180,14 +180,15 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
 */
   switch(msg){
   case WM_DESTROY:
-	  wnd->close();
-	  break;
+    //wnd->close();
+    evt.event = evtClose;
+    break;
   case WM_SIZE:
-  	  evt.event = evtResize;
-	  evt.width = LOWORD(lPar);
-	  evt.height = HIWORD(wPar);
-	  //wnd->onSize(LOWORD(lPar), HIWORD(wPar));
-	  break;
+    evt.event = evtResize;
+    evt.width = LOWORD(lPar);
+    evt.height = HIWORD(wPar);
+  //wnd->onSize(LOWORD(lPar), HIWORD(wPar));
+  break;
   case WM_PAINT:
   	  evt.event = evtPaint;
 	  evt.gc = 0;
@@ -484,7 +485,8 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
         //if(evt->xclient.data.l[0] == wnd->m_wmDelete)
         //  wnd->m_loop = false;
         if (*XGetAtomName(wnd->m_dpy, (Atom)&evt->xclient.message_type) == *"WM_PROTOCOLS")
-          wnd->m_loop = false;
+          m_evt.event = evtClose;
+        kgm_log() << "got close event" << "\n";
         break;
  default:
 	m_evt.event = evtNone;
@@ -595,7 +597,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 }
 
 kgmWindow::~kgmWindow(){
-  close();
+  //close();
 }
 
 void kgmWindow::fullscreen(bool fs){
@@ -619,6 +621,7 @@ void kgmWindow::fullscreen(bool fs){
  else
   ChangeDisplaySettings(NULL, 0);
 #endif
+
 #ifdef LINUX
  XEvent xev;
  Atom wm_state = XInternAtom(m_dpy, "_NET_WM_STATE", False);
@@ -635,6 +638,7 @@ void kgmWindow::fullscreen(bool fs){
 
  XSendEvent(m_dpy, DefaultRootWindow(m_dpy), False, SubstructureNotifyMask, &xev);
 #endif
+
  m_fs = fs;
 }
 
@@ -690,32 +694,33 @@ void kgmWindow::loop(){
 #endif
   
   m_loop = false;
-  close();
+  //close();
 }
 
 void kgmWindow::close()
-{
- if(!m_wnd)   
-     return;
- 
- if(m_loop){
-     m_loop = false;
-     return;
- }    
- 
+{ 
 //Prepae to close window
  onClose();
  
 #ifdef WIN32
  DestroyWindow(m_wnd);
- m_wnd = 0;
 #endif
  
 #ifdef LINUX
- XDestroyWindow(m_dpy, m_wnd);		
- if(!m_parent)	
-  XCloseDisplay(m_dpy);
- m_dpy = 0;
+//XDestroyWindow(m_dpy, m_wnd);
+// if(!m_parent)
+//  XCloseDisplay(m_dpy);
+ XEvent ev;
+
+ memset(&ev, 0, sizeof (ev));
+
+ ev.xclient.type = ClientMessage;
+ ev.xclient.window = m_wnd;
+ ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", true);
+ ev.xclient.format = 32;
+ ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
+ ev.xclient.data.l[1] = CurrentTime;
+ XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);
 #endif
 }
 
@@ -784,7 +789,8 @@ void kgmWindow::getMouse(int& x, int& y)
 #endif
 }
 
-void kgmWindow::setTitle(char* title){
+void kgmWindow::setTitle(char* title)
+{
 #ifdef WIN32
  SetWindowText(m_wnd, title);
 #endif
@@ -794,7 +800,22 @@ void kgmWindow::setTitle(char* title){
 #endif
 }
 
-kgmIGraphics* kgmWindow::getGC(){
+void kgmWindow::onClose()
+{
+  kgm_log() << "onClose" << "\n";
+
+#ifdef WIN32
+#endif
+
+#ifdef LINUX
+    XDestroyWindow(m_dpy, m_wnd);
+    if(!m_parent)
+      XCloseDisplay(m_dpy);
+#endif
+}
+
+kgmIGraphics* kgmWindow::getGC()
+{
  return 0;
 }
 

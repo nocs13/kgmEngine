@@ -207,45 +207,50 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
 }
 
 kgmOGLWindow::~kgmOGLWindow(){
- if(m_gc)
-   delete m_gc;
-
- m_gc = 0;
-
-#ifdef WIN32
- wglDeleteContext(m_hrc);
- wglMakeCurrent(m_hdc, 0);
- ReleaseDC(m_wnd,m_hdc);
-#endif
-
-#ifdef LINUX
- if (m_glctx)
- {
-  if(!glXMakeCurrent(m_dpy, None, NULL))
-   kgmLog::log("Could not release drawing context.\n");
-  glXDestroyContext(m_dpy, m_glctx);
-  m_glctx = NULL;
- }
-#endif
-
-#ifdef ANDROIDXXX
- if (display != EGL_NO_DISPLAY) {
-   eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (context != EGL_NO_CONTEXT) {
-     eglDestroyContext(display, context);
-   }
-   if (surface != EGL_NO_SURFACE) {
-     eglDestroySurface(display, surface);
-   }
-   eglTerminate(display);
- }
-
- display = EGL_NO_DISPLAY;
- context = EGL_NO_CONTEXT;
- surface = EGL_NO_SURFACE;
-#endif
 }
 
+void kgmOGLWindow::onClose()
+{
+  if(m_gc)
+    delete m_gc;
+
+  m_gc = 0;
+
+ #ifdef WIN32
+  wglDeleteContext(m_hrc);
+  wglMakeCurrent(m_hdc, 0);
+  ReleaseDC(m_wnd,m_hdc);
+ #endif
+
+ #ifdef LINUX
+  if (m_glctx)
+  {
+   if(!glXMakeCurrent(m_dpy, None, NULL))
+    kgmLog::log("Could not release drawing context.\n");
+   glXDestroyContext(m_dpy, m_glctx);
+   m_glctx = NULL;
+  }
+ #endif
+
+ #ifdef ANDROIDXXX
+  if (display != EGL_NO_DISPLAY) {
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    if (context != EGL_NO_CONTEXT) {
+      eglDestroyContext(display, context);
+    }
+    if (surface != EGL_NO_SURFACE) {
+      eglDestroySurface(display, surface);
+    }
+    eglTerminate(display);
+  }
+
+  display = EGL_NO_DISPLAY;
+  context = EGL_NO_CONTEXT;
+  surface = EGL_NO_SURFACE;
+ #endif
+
+  kgmWindow::onClose();
+}
 
 kgmIGraphics* kgmOGLWindow::getGC(){
   return m_gc;

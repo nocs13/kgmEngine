@@ -76,11 +76,11 @@ public:
  kgmWindow();
  kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);
  virtual ~kgmWindow();
- // functions
- void	loop();	
- void	close();	
- void	show(bool);
- void   fullscreen(bool);	
+
+ void   loop();
+ void   close();
+ void   show(bool);
+ void   fullscreen(bool);
  void   setRect(int x, int y, int w, int h);
  void   getRect(int& x, int& y, int& w, int& h);
  void   setMouse(int x, int y);
@@ -98,6 +98,7 @@ public:
 #endif
 
  // Virtual Functions
+ virtual void onClose();
  virtual void onIdle(){
  }
  virtual void onMenu(int id){

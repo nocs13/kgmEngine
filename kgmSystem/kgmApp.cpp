@@ -82,7 +82,7 @@ int main(int argc, char** argv){
  if(kgmApp::application())
    kgmApp::application()->main();
 
- kgmObject::releaseObjects();
+// kgmObject::releaseObjects();
 
  return rValue;
 }

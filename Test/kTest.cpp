@@ -53,7 +53,7 @@ class kApp: public kgmApp{
 #ifdef ANDROID
 public:
 #endif
- kGame*	m_game;	 
+ kGame*	m_game;
 public:
  kApp(){
  }
@@ -133,12 +133,12 @@ public:
   }
  }
 
- void main(){
+ void main()
+ {
   //print_xml("Data/level01.kgm");
   m_game = new kGame();
   m_game->loop();
-
-  delete m_game;
+  m_game->release();
  } 
 };
 
