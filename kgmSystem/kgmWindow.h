@@ -71,7 +71,10 @@ public:
  bool m_fs;
  bool m_msAbs;
  bool m_msf;
+
+private:
  bool m_loop;
+
 public:
  kgmWindow();
  kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);

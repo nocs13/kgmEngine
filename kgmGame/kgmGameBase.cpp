@@ -156,33 +156,6 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 
 kgmGameBase::~kgmGameBase(){
-  log("free graphics renderer...");
-  if(m_render)
-    m_render->release();
-
-  log("free scenes...");
-
-  log("free gui...");
-  for(int i = 0; i < m_guis.size(); i++)
-    m_guis[i]->release();
-  m_guis.clear();
-
-  log("free resources...");
-  if(m_resources)
-    m_resources->release();
-
-  log("free physics...");
-  if(m_physics)
-    m_physics->release();
-
-  log("free audio...");
-  //if(m_audio)
-  //  m_audio->release();
-
-  log("free system...");
-  if(m_system)
-    m_system->release();
-
   m_eventListeners.clear();
 }
 
@@ -351,6 +324,38 @@ void kgmGameBase::onIdle(){
 void kgmGameBase::onPaint(kgmIGraphics* gc){
 }
 
+void kgmGameBase::onClose()
+{
+  log("free graphics renderer...");
+  if(m_render)
+    m_render->release();
+
+  log("free scenes...");
+
+  log("free gui...");
+  for(int i = 0; i < m_guis.size(); i++)
+    m_guis[i]->release();
+  m_guis.clear();
+
+  log("free resources...");
+  if(m_resources)
+    m_resources->release();
+
+  log("free physics...");
+  if(m_physics)
+    m_physics->release();
+
+  log("free audio...");
+  //if(m_audio)
+  //  m_audio->release();
+
+  log("free system...");
+  if(m_system)
+    m_system->release();
+
+  kgmOGLWindow::onClose();
+}
+
 void kgmGameBase::onKeyUp(int k){
   m_input[m_keymap[k]] = 0;
   onInputAction(m_keymap[k], 0);
@@ -484,8 +489,8 @@ int kgmGameBase::gQuit(){
   m_state = State_Quit;
   m_quit = true;
   m_msAbs = true;
-  m_loop = false;
   m_state = State_None;
+  close();
   return 1;
 }
 

@@ -482,10 +482,11 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
         m_evt.key = ksym;
 	break;
  case ClientMessage:
+   m_evt.event = evtClose;
         //if(evt->xclient.data.l[0] == wnd->m_wmDelete)
         //  wnd->m_loop = false;
-        if (*XGetAtomName(wnd->m_dpy, (Atom)&evt->xclient.message_type) == *"WM_PROTOCOLS")
-          m_evt.event = evtClose;
+//        if (*XGetAtomName(wnd->m_dpy, (Atom)&evt->xclient.message_type) == *"WM_PROTOCOLS")
+//          m_evt.event = evtClose;
         kgm_log() << "got close event" << "\n";
         break;
  default:
@@ -580,6 +581,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
  m_screen = (wp)?(wp->m_screen):DefaultScreen(m_dpy);
  m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
      						 x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+ Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
+ XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
  XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
      		  ButtonReleaseMask | PointerMotionMask|StructureNotifyMask );
  XMapWindow(m_dpy, m_wnd);
@@ -686,21 +689,24 @@ void kgmWindow::loop(){
    while(XPending(m_dpy) > 0){
     XNextEvent(m_dpy, &evt);
     WndProc(this, &evt);
-    //XSync(m_dpy, false);
+    if(!m_loop || !m_dpy)
+      break;
    }
-   onIdle();
+
+   if(m_dpy)
+    onIdle();
+
    usleep(0);
   }
 #endif
   
   m_loop = false;
-  //close();
 }
 
 void kgmWindow::close()
 { 
 //Prepae to close window
- onClose();
+//onClose();
  
 #ifdef WIN32
  DestroyWindow(m_wnd);
@@ -710,17 +716,24 @@ void kgmWindow::close()
 //XDestroyWindow(m_dpy, m_wnd);
 // if(!m_parent)
 //  XCloseDisplay(m_dpy);
- XEvent ev;
+ //XEvent ev;
+ XClientMessageEvent ev;
 
  memset(&ev, 0, sizeof (ev));
 
- ev.xclient.type = ClientMessage;
+ /*ev.xclient.type = ClientMessage;
  ev.xclient.window = m_wnd;
- ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", true);
+ ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", false);
  ev.xclient.format = 32;
  ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
  ev.xclient.data.l[1] = CurrentTime;
- XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);
+ XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);*/
+
+ ev.type = ClientMessage;
+ ev.window = m_wnd;
+ ev.format = 32;
+ XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);
+
 #endif
 }
 
@@ -810,8 +823,13 @@ void kgmWindow::onClose()
 #ifdef LINUX
     XDestroyWindow(m_dpy, m_wnd);
     if(!m_parent)
+    {
       XCloseDisplay(m_dpy);
+      m_dpy = null;
+    }
 #endif
+
+    m_loop = 0;
 }
 
 kgmIGraphics* kgmWindow::getGC()

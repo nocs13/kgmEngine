@@ -113,6 +113,8 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
   m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, vi->screen),  x, y, w, h,
 	 	0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
+  Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
+  XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
   glXMakeCurrent(m_dpy, m_wnd, m_glctx);
   if(glXIsDirect(m_dpy, m_glctx))
    kgmLog::log("\nDirect Rendering!");

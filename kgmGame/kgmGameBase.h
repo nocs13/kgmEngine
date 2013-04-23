@@ -82,6 +82,7 @@ public:
 
  void onEvent(kgmEvent::Event*);
  void onIdle();
+ void onClose();
  void onKeyUp(int k);
  void onKeyDown(int k);
  void onMsMove(int k, int x, int y);
