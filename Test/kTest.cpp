@@ -46,6 +46,16 @@ public:
   {
     kgmGameBase::onMsLeftDown(k, x, y);
   }
+
+  void onMsMove(int k, int x, int y)
+  {
+    kgmGameBase::onMsMove(k, x, y);
+
+    if(gState() == State_Play)
+    {
+      m_render->camera().rotate(0.2f, 0.01f);
+    }
+  }
 };
 
 

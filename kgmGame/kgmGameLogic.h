@@ -28,6 +28,10 @@ public:
   };
 
 public:
+  kgmTab<kgmString, AI*> m_ais;
+  kgmList<kgmActor*>     m_actors;
+
+public:
     kgmGameLogic();
 
     void clear();
