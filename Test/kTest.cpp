@@ -14,6 +14,7 @@ class kGame: public kgmGameBase{
 public:
   kGame(){
       gui = new kGui(this);
+      m_msAbs = false;
   }
 
   ~kGame(){
@@ -28,11 +29,13 @@ public:
       {
         gPause(true);
         gui->m_guiPause->show();
+        m_msAbs = false;
       }
       else if(gState() == State_Pause)
       {
         gPause(false);
         gui->m_guiPause->hide();
+        m_msAbs = true;
       }
     }    
   }
@@ -53,7 +56,8 @@ public:
 
     if(gState() == State_Play)
     {
-      m_render->camera().rotate(0.2f, 0.01f);
+      m_render->camera().rotate(0.02f * x, 0.02f * y);
+      kgm_log() << "Ms pos: " << (s32)x << " " << (s32)y << "\n";
     }
   }
 };

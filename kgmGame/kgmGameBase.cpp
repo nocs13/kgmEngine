@@ -377,18 +377,8 @@ void kgmGameBase::onKeyDown(int k){
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y){
-  static int sx = 0, sy = 0;
-
-  g_cam.rotate(0.01 * (x - sx), 0.01 * (y - sy));
-  m_input[grot_x] = x - sx; sx = x;
-  m_input[grot_y] = y - sy; sy = y;
-
-  if(m_state == State_Play)
-  {
-    kgmCamera cam = m_render->camera();
-
-    cam.rotate(m_input[grot_x], m_input[grot_y]);
-  }
+  m_input[grot_x] = x;
+  m_input[grot_y] = y;
 }
 
 void kgmGameBase::onResize(int w, int h){

@@ -210,8 +210,21 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
 	  msPoint.x = LOWORD(lPar);
 	  msPoint.y = HIWORD(lPar);
 	  ClientToScreen(hWnd, &msPoint);
-	  evt.msx = msPoint.x;
-	  evt.msy = msPoint.y;
+
+    if(wnd->m_msAbs)
+    {
+      RECT rc;
+      GetClientRect(m_wnd, (LPRECT)&rc);
+
+      evt.msx = (rc.right - rc.left) / 2 - msPoint.x;
+      evt.msy = (rc.bottom - rc.top) / 2 - msPoint.y;
+      SetCursorPos((rc.right - rc.left) / 2, (rc.bottom - rc.top) / 2);
+    }
+    else
+    {
+     evt.msx = msPoint.x;
+     evt.msy = msPoint.y;
+    }
 	  //wnd->onMsMove(keyTranslate(wPar), msPoint.x, msPoint.y);
 	  break;
   case WM_LBUTTONDOWN:
@@ -432,8 +445,34 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
  case MotionNotify:
 	XQueryPointer(wnd->m_dpy, wnd->m_wnd, &wroot, &wchild, &rx, &ry, &cx, &cy, &mask);
 	m_evt.event = evtMsMove;
+
+  if(wnd->m_msAbs)
+  {
+    unsigned int  x, y, w, h, border, depth;
+
+    Window dummy;
+    XGetGeometry(wnd->m_dpy, wnd->m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
+
+    m_evt.msx = w / 2 - evt->xbutton.x;
+    m_evt.msy = h / 2 - evt->xbutton.y;
+
+    static bool seted = false;
+
+    if(seted)
+    {
+      seted = false;
+    }
+    else
+    {
+      XWarpPointer(wnd->m_dpy, wnd->m_wnd, wnd->m_wnd, 0, 0, w, h, w / 2, h / 2);
+      seted = true;
+    }
+  }
+  else
+  {
     m_evt.msx = evt->xbutton.x;
     m_evt.msy = evt->xbutton.y;
+  }
 	break;
  case MappingNotify:
    XRefreshKeyboardMapping (&evt->xmapping) ;
@@ -786,6 +825,9 @@ void kgmWindow::setMouse(int x, int y)
  SetCursorPos(pt.x, pt.y);
 #endif
 #ifdef LINUX
+ int cx, cy, w, h;
+ getRect(cx, cy, w, h);
+ XWarpPointer(m_dpy, m_wnd, m_wnd, 0, 0, w, h, x, y);
 #endif
 }
 
