@@ -46,6 +46,20 @@ void kgmGameGraphics::setDefaultFont(kgmFont* f){
   gui_style->gui_font = f;
 }
 
+void kgmGameGraphics::setGuiTheme(kgmString s){
+  if(gui_style)
+    gui_style->release();
+
+  kgmMemory<char> m;
+
+  if(rc->getFile((char*)s, m))
+  {
+    kgmXml xml(m);
+    gui_style = new kgmGuiStyle(xml);
+  }
+}
+
+
 void kgmGameGraphics::resize(float width, float height){
   //wnd->getRect(rect[0], rect[1], rect[2], rect[3]);
   gc->gcSetViewport(0, 0, width, height, 1.0, 1000.0);

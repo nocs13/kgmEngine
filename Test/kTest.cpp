@@ -37,7 +37,23 @@ public:
         gui->m_guiPause->hide();
         m_msAbs = true;
       }
-    }    
+    }
+    else if(k == KEY_LEFT)
+    {
+      m_render->camera().rotate(0.0f, 0.02f);
+    }
+    else if(k == KEY_RIGHT)
+    {
+      m_render->camera().rotate(0.0f, -0.02f);
+    }
+    else if(k == KEY_UP)
+    {
+      m_render->camera().move(1.0f);
+    }
+    else if(k == KEY_DOWN)
+    {
+      m_render->camera().move(-1.0f);
+    }
   }
 
   void onMsLeftUp(int k, int x, int y)

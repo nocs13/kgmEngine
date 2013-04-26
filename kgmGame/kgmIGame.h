@@ -5,14 +5,16 @@
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmList.h"
 
-enum game_condition{
+enum game_condition
+{
  gcnd_none,
  gcnd_pawnkilled,
  gcnd_pawnproximity,
  gcnd_anyproximity,
 };
 
-enum game_action{
+enum game_action
+{
  gact_none,
  gact_gamepause,
  gact_gameresume,
@@ -99,7 +101,8 @@ enum game_button{
 };
 
 
-enum game_event{
+enum game_event
+{
  gevt_none,
 };
 

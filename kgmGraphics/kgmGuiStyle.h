@@ -11,16 +11,16 @@
 
 class kgmGuiStyle: public kgmObject{
  public:
-  typedef u32 color;
-  typedef kgmTexture* image;
-  typedef kgmFont* font;
+  typedef u32         Color;
+  typedef kgmTexture* Image;
+  typedef kgmFont*    Font;
 
   struct SGui{
-    color tx_color;
-    color bg_color;
-    color fg_color;
-    color ac_color;
-    image bg_image;
+    Color tx_color; // Text color
+    Color bg_color; // Background color
+    Color fg_color; // Foreground color
+    Color ac_color; // Active color
+    Image image;    // Background image
   };
 
   struct SGuiButton: SGui{
@@ -34,13 +34,15 @@ class kgmGuiStyle: public kgmObject{
   struct SGuiProgress: SGui{
 
   };
+
   //gui
-  font  gui_font;
+  Font  gui_font;
   
   SGui sgui;
   SGuiList slist;
   SGuiButton sbutton;
   SGuiProgress sprogess;
+
  public:
   kgmGuiStyle();
   kgmGuiStyle(kgmXml&);

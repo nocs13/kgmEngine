@@ -106,6 +106,7 @@ kgmGameBase::kgmGameBase()
   log("open renderer...");
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
+  m_render->setGuiTheme("gui_style.kgm");
   
   //  log("open data...");
   //  kgmString s;
@@ -801,8 +802,8 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     {
       kgmString id, value, t;
 
-      kgm_log() << "Node: " << (char*)id << "\n";
       id = xml.m_tagName;
+      kgm_log() << "Node: " << (char*)id << "\n";
 
       if(id == "kgmMaterial")
       {
