@@ -448,19 +448,11 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     fmt_bt = 2;
     break;
   case gctex_fmt24:
-#ifdef ANDROID
     pic_fmt = GL_RGB;
-#else
-    pic_fmt = GL_BGR_EXT;
-#endif
     fmt_bt = 3;
     break;
   case gctex_fmt32:
-#ifdef ANDROID
     pic_fmt = GL_RGBA;
-#else
-    pic_fmt = GL_BGRA_EXT;
-#endif
     fmt_bt = 4;
     break;
 #ifdef GL_DEPTH_COMPONENT

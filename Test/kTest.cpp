@@ -9,6 +9,37 @@
 #include "kGui.h"
 
 class kGame: public kgmGameBase{
+  class SnsInput: public kgmGameLogic::Sensor
+  {
+    kGame* game;
+  public:
+    SnsInput(kgmActor* a, kGame* g)
+    :kgmGameLogic::Sensor(a)
+    {
+      game = g;
+    }
+
+    void sense()
+    {
+      if(game->m_input[gbtn_up])
+      {
+        game->m_render->camera().move(.1f);
+      }
+      else if(game->m_input[gbtn_down])
+      {
+        game->m_render->camera().move(-.1f);
+      }
+      else if(game->m_input[gbtn_left])
+      {
+        game->m_render->camera().rotate(0.02f, 0.0f);
+      }
+      else if(game->m_input[gbtn_right])
+      {
+        game->m_render->camera().rotate(0.02f, 0.0f);
+      }
+    }
+  };
+
   kGui* gui;
 
 public:
@@ -40,19 +71,15 @@ public:
     }
     else if(k == KEY_LEFT)
     {
-      m_render->camera().rotate(0.0f, 0.02f);
     }
     else if(k == KEY_RIGHT)
     {
-      m_render->camera().rotate(0.0f, -0.02f);
     }
     else if(k == KEY_UP)
     {
-      m_render->camera().move(1.0f);
     }
     else if(k == KEY_DOWN)
     {
-      m_render->camera().move(-1.0f);
     }
   }
 
@@ -73,8 +100,20 @@ public:
     if(gState() == State_Play)
     {
       m_render->camera().rotate(0.02f * x, 0.02f * y);
-      kgm_log() << "Ms pos: " << (s32)x << " " << (s32)y << "\n";
     }
+  }
+
+  int gLoad(kgmString s)
+  {
+    int res = kgmGameBase::gLoad(s);
+
+    if(m_state == State_Play)
+    {
+      if(m_logic)
+        m_logic->m_sensors.add(new SnsInput(null, this));
+    }
+
+    return res;
   }
 };
 
@@ -260,7 +299,8 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jo
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)
 {
-    //int x = 0, y = 0;
+    static int  prev_x = 0, prev_y = 0;
+    static bool set = false;
     LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
     if(m_game)
     {
@@ -270,8 +310,19 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobje
       {
       case 0:
           evt.event = evtMsMove;
-          evt.msx = x;
-          evt.msy = y;
+
+          if(m_game->m_msAbs)
+          {
+            evt.msx = x - prev_x;
+            evt.msy = y - prev_y;
+            prev_x = x;
+            prev_y = y;
+          }
+          else
+          {
+           evt.msx = x;
+           evt.msy = y;
+          }
           m_game->onEvent(&evt);
           break;
       case 1:

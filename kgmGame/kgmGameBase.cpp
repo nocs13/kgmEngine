@@ -34,8 +34,8 @@ kgmIGame* kgmIGame::getGame(){
   return kgmGameBase::m_game;
 }
 
-#define		BWIDTH		1280
-#define		BHEIGHT		1024
+#define		BWIDTH		640
+#define		BHEIGHT		480
 
 const char *log_file = "kgmLog.txt";
 const char *set_file = "kgmEngine.conf";
@@ -107,7 +107,11 @@ kgmGameBase::kgmGameBase()
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
-  
+
+
+  log("init game logic...");
+  initLogic();
+
   //  log("open data...");
   //  kgmString s;
   //  int       i = 0;
@@ -249,57 +253,26 @@ void kgmGameBase::log(const char* msg){
 
 //
 void kgmGameBase::onIdle(){
-  /*
+
  static int tick = kgmTime::getTicks();
  static int frames = 0;
  static int fps = 0;
  static char buf[128];
 
- if(kgmTime::getTicks() - tick > 1000){
-  fps = (frames > 0)?(frames):(1);
-  frames = 0;
-  getEnvironment()->time_per_frame = 1.0f / fps;
-  sprintf(buf, "FPS: %i TPF: %f\0", fps,
-          getEnvironment()->time_per_frame);
-  tick =  kgmTime::getTicks();
- }else{
+ if(kgmTime::getTicks() - tick > 1000)
+ {
+   fps = frames;
+   frames = 0;
+   tick =  kgmTime::getTicks();
+ }
+ else
+ {
    frames++;
  }
-//*/
 
-  /* static float alpha = 0.0;
- static float m_time[4];
- vec3 v[2];
- mtx4 m;
- vec4 myvar;
- int i = 0;
+// if(fps > 60)
+//  return;
 
-  mtx4 mvw, mpr;
-  int  rc[4];
-  kgmIGraphics* gc = m_graphics;
-
-  getRect(rc[0], rc[1], rc[2], rc[3]);
-  gc->gcSetViewport(0, 0, rc[2], rc[3], 1.0, 1000.0);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xff0000ff, 1, 0);
-
-  mpr.perspective(0.25 * PI, (float)rc[2]/(float)rc[3], 0.1, 10000000.0);
-  mvw.lookat(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 0, 1));
-  //gc->gcSetMatrix(gcmtx_view, mvw.m);
-  //gc->gcSetMatrix(gcmtx_proj, mpr.m);
-  gc->gcSetMatrix(gcmtx_view, g_cam.mView.m);
-  gc->gcSetMatrix(gcmtx_proj, g_cam.mProj.m);
-
-  //  mvw.identity();
-  //  mpr.identity();
-  //  gc->gcSetMatrix(gcmtx_view, mvw.m);
-  //  gc->gcSetMatrix(gcmtx_proj, mpr.m);
-
-  gc->gcBegin();
-  gcDrawGridlines(gc, 10, 20, 0x55555555);
-  //gcDrawPlane(gc, vec3(0, 0, -1), 10, 10, 0xFFFF00FF);
-  gc->gcRender();
-  return;*/
-  //if(fps > 60) return;
   switch(m_state){
   case State_None:
     break;
@@ -308,11 +281,14 @@ void kgmGameBase::onIdle(){
   case State_Pause:
     break;
   case State_Play:
-    for(int i = 0; i < m_sensors.size(); i++)
-      m_sensors[i]->sense();
-
     for(int i = 0; i < m_idles.size(); i++)
       m_idles[i]->idle();
+
+    if(m_physics && fps > 0)
+      m_physics->update(1000 / fps);
+
+    if(m_logic && fps > 0)
+      m_logic->update(1000 / fps);
     break;
   default:
     break;
@@ -359,20 +335,12 @@ void kgmGameBase::onClose()
 
 void kgmGameBase::onKeyUp(int k){
   m_input[m_keymap[k]] = 0;
+
   onInputAction(m_keymap[k], 0);
 }
 
 void kgmGameBase::onKeyDown(int k){
   m_input[m_keymap[k]] = 1;
-
-  if(k == KEY_UP)
-    g_cam.move(0.1);
-  else if(k == KEY_DOWN)
-    g_cam.move(-0.1);
-  else if(k == KEY_LEFT)
-    g_cam.rotate(-0.01, 0);
-  else if(k == KEY_RIGHT)
-    g_cam.rotate(0.01, 0);
 
   onInputAction(m_keymap[k], 1);
 }

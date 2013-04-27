@@ -111,6 +111,9 @@ public:
 
 ///////////////////////////////////////
 protected:
+//init interfaces
+ virtual void initLogic(){ m_logic = new kgmGameLogic(); }
+
 // Game Resources
  kgmTexture*    getTexture(char*);
  kgmShader*	    getShader(char*);

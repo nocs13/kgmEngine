@@ -220,6 +220,14 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
   width = w;
   height = h;
   bpp = btcnt;
+
+  for(int i = 0; i < (w * h); i++)
+  {
+    char* pt = (char*)(((char*)pdata) + i * btcnt / 8);
+    char  t  = pt[0];
+    pt[0] = pt[2];
+    pt[2] = t;
+  }
   
   return new kgmPicture(width, height, bpp, frames, pdata);
 }

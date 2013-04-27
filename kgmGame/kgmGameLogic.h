@@ -30,11 +30,14 @@ public:
 public:
   kgmTab<kgmString, AI*> m_ais;
   kgmList<kgmActor*>     m_actors;
+  kgmList<Sensor*>       m_sensors;
 
 public:
     kgmGameLogic();
 
     void clear();
+
+    virtual void update(u32 milliseconds);
 };
 
 #endif // KGMGAMELOGIC_H
