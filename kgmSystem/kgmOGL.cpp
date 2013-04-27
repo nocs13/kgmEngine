@@ -27,7 +27,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   
   this->m_wnd = wnd;
 
-  GLubyte* oglVersion = glGetString(GL_VERSION);
+  GLubyte* oglVersion = (GLubyte*)glGetString(GL_VERSION);
   kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
 
 
@@ -1285,7 +1285,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
   if(vsrc){
     size = strlen(vsrc);
     v_shad = vshad = glCreateShaderObject(GL_VERTEX_SHADER);
-    glShaderSource(vshad, 1, (GLcharARB**)&vsrc, &size);
+    glShaderSource(vshad, 1, (const GLcharARB**)&vsrc, &size);
     glCompileShader(vshad);
     glGetObjectParameteriv(vshad, GL_OBJECT_COMPILE_STATUS, stat);
 
@@ -1348,7 +1348,7 @@ void kgmOGL::gcSetShader(void* s){
     if(err != GL_NO_ERROR){
 #ifndef ANDROID
       const GLubyte* ers = gluErrorString(err);
-      kgmLog::log(kgmString("some error fixed ") + kgmString(ers));
+      kgmLog::log(kgmString("some error fixed ") + kgmString((const char*)ers));
 #endif
     }
   }

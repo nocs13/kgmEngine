@@ -62,8 +62,6 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
  int argc = 0;
  char **argv = 0;
 
- ::SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)kgmDumper);
-
  if(kgmApp::application())
    kgmApp::application()->main();
 

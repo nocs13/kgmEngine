@@ -180,20 +180,17 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
 */
   switch(msg){
   case WM_DESTROY:
-    //wnd->close();
     evt.event = evtClose;
     break;
   case WM_SIZE:
     evt.event = evtResize;
     evt.width = LOWORD(lPar);
-    evt.height = HIWORD(wPar);
-  //wnd->onSize(LOWORD(lPar), HIWORD(wPar));
+    evt.height = HIWORD(lPar);
   break;
   case WM_PAINT:
   	  evt.event = evtPaint;
 	  evt.gc = 0;
 	  ValidateRect(hWnd, NULL);
-	  //wnd->onPaint();
       break;
   case WM_MOUSEWHEEL:
   	  evt.event = evtMsWheel;
@@ -203,7 +200,6 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
 	  evt.msx = msPoint.x;
 	  evt.msy = msPoint.y;
 	  evt.msz = HIWORD(wPar);
-	  //wnd->onMsWheel(WPARAM_KEY(wPar), LOWORD(lPar), HIWORD(lPar), HIWORD(wPar)); 
 	  break;
   case WM_MOUSEMOVE:
   	  evt.event = evtMsMove;
@@ -214,56 +210,61 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
     if(wnd->m_msAbs)
     {
       RECT rc;
-      GetClientRect(m_wnd, (LPRECT)&rc);
+      GetClientRect(wnd->m_wnd, (LPRECT)&rc);
 
       evt.msx = (rc.right - rc.left) / 2 - msPoint.x;
       evt.msy = (rc.bottom - rc.top) / 2 - msPoint.y;
-      SetCursorPos((rc.right - rc.left) / 2, (rc.bottom - rc.top) / 2);
+
+      static bool seted = false;
+
+      if(seted)
+      {
+        seted = false;
+      }
+      else
+      {
+        //XWarpPointer(wnd->m_dpy, wnd->m_wnd, wnd->m_wnd, 0, 0, w, h, w / 2, h / 2);
+        SetCursorPos((rc.right - rc.left) / 2, (rc.bottom - rc.top) / 2);
+        seted = true;
+      }
     }
     else
     {
      evt.msx = msPoint.x;
      evt.msy = msPoint.y;
     }
-	  //wnd->onMsMove(keyTranslate(wPar), msPoint.x, msPoint.y);
 	  break;
   case WM_LBUTTONDOWN:
   	  evt.event = evtMsLeftDown;
 	  evt.key = keyTranslate(WPARAM_KEY(wPar));
 	  evt.msx = LOWORD(lPar);
 	  evt.msy = HIWORD(lPar);
-	  //wnd->onMsLeftDown(WPARAM_KEY(wPar), LOWORD(lPar), HIWORD(lPar));
 	  break;
   case WM_LBUTTONUP:
   	  evt.event = evtMsLeftUp;
 	  evt.key = keyTranslate(WPARAM_KEY(wPar));
 	  evt.msx = LOWORD(lPar);
 	  evt.msy = HIWORD(lPar);
-	  //wnd->onMsLeftUp(WPARAM_KEY(wPar), LOWORD(lPar), HIWORD(lPar));
 	  break;
   case WM_RBUTTONDOWN:
   	  evt.event = evtMsRightDown;
 	  evt.key = keyTranslate(WPARAM_KEY(wPar));
 	  evt.msx = LOWORD(lPar);
 	  evt.msy = HIWORD(lPar);
-	  //wnd->onMsRightDown(WPARAM_KEY(wPar), LOWORD(lPar), HIWORD(lPar));
 	  break;
   case WM_RBUTTONUP:
   	  evt.event = evtMsRightUp;
 	  evt.key = keyTranslate(WPARAM_KEY(wPar));
 	  evt.msx = LOWORD(lPar);
 	  evt.msy = HIWORD(lPar);
-	  //wnd->onMsRightUp(WPARAM_KEY(wPar), LOWORD(lPar), HIWORD(lPar));
 	  break;
   case WM_KEYDOWN:
   	  evt.event = evtKeyDown;
 	  evt.key = keyTranslate(wPar);
-	  //wnd->onKeyDown(keyTranslate(wPar));
 	  break;
   case WM_KEYUP:
   	  evt.event = evtKeyUp;
 	  evt.key = keyTranslate(wPar);
-	  //wnd->onKeyUp(keyTranslate(wPar));
 	  break;
   default:
 	  return DefWindowProc(hWnd, msg, wPar, lPar);
@@ -607,7 +608,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
   if(!GetClassInfo(0, cWndClass, &wcl))
    kgmRegisterWindowClass();
   m_wnd = CreateWindow(cWndClass, wname,
-					    (fs)?(WS_POPUP):(WS_OVERLAPPEDWINDOW),
+                        //WS_POPUP,
+                        (fs)?(WS_POPUP):(WS_OVERLAPPEDWINDOW),
 						x, y, w, h, 
 						(wp)?(wp->m_wnd):(0), 0, 0, 0);
   SetWindowLong(m_wnd, GWL_USERDATA, (LONG)this);
@@ -695,6 +697,7 @@ void kgmWindow::show(bool sh){
 	 return;
  }
 #endif
+
 #ifdef LINUX
  if(sh)
      XMapWindow(m_dpy, m_wnd);
@@ -781,6 +784,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h){
  RECT r;		
  GetClientRect(m_wnd, (LPRECT)&r);
  x = r.left, y = r.top, w = r.right - x, h = r.bottom - y;
+ kgm_log() << "wrc: " << (s32)w << " " << (s32)h << "\n";
 #endif
 #ifdef LINUX
  unsigned int  width, height, border, depth;

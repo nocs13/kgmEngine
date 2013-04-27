@@ -253,7 +253,7 @@ kgmXml::XmlState kgmXml::open(kgmMemory<char>& m)
     }
     else
     {
-        m_position = toSyms(m_position, ">", m.length());
+        m_position = (char*)toSyms((unsigned char*)m_position, ">", m.length());
 
         if(!m_position)
         {
@@ -303,7 +303,7 @@ kgmXml::XmlState kgmXml::next()
     }
 
     //Find tag start symbol
-    pt = exeptSyms(pt, " \t\r\n");
+    pt = (char*)exeptSyms((unsigned char*)pt, " \t\r\n");
 
     if(!pt)
     {
@@ -315,7 +315,7 @@ kgmXml::XmlState kgmXml::next()
     //Check if before was some ascii, it will be identified as data
     if(*pt != '<')
     {
-        pt = toSyms(pt, "<");
+        pt = (char*)toSyms((unsigned char*)pt, "<");
 
         if(!pt)
         {
@@ -344,7 +344,7 @@ kgmXml::XmlState kgmXml::next()
     {
         m_position = ++pt;
 
-        pt = toSyms(pt, (char*)" \t/>");
+        pt = (char*)toSyms((unsigned char*)pt, (char*)" \t/>");
 
         if(*pt != '>' || (pt == m_position))
         {
@@ -361,12 +361,12 @@ kgmXml::XmlState kgmXml::next()
         }
     }
 
-    pt = toSyms(pt, " \t/>");
+    pt = (char*)toSyms((unsigned char*)pt, " \t/>");
 
     m_tagName.alloc(m_position, (int)(pt - m_position));
     Attribute* attr = null;
 
-    while(pt=exeptSyms(pt, " \t"))
+    while(pt=(char*)exeptSyms((unsigned char*)pt, " \t"))
     {
         if(*pt == '0')
         {
@@ -407,7 +407,7 @@ kgmXml::XmlState kgmXml::next()
                 return XML_ERROR;
             }
 
-            pt = exeptSyms(++pt, " \t");
+            pt = (char*)exeptSyms((unsigned char*)(++pt), " \t");
 
             if(*pt == '/' || *pt == '>' )
             {
@@ -417,10 +417,10 @@ kgmXml::XmlState kgmXml::next()
             }
             else if(*pt == '\'' || *pt == '"')
             {
-                char* sym = (*pt == '"') ? ("\"") : ("'");
+                char* sym = (char*)((*pt == '"') ? ("\"") : ("'"));
 
                 m_position = ++pt;
-                pt = toSyms(pt, sym);
+                pt = (char*)toSyms((unsigned char*)pt, sym);
 
                 if(!pt)
                 {
@@ -436,7 +436,7 @@ kgmXml::XmlState kgmXml::next()
             }
             else
             {
-                pt = toSyms(pt, " \t/>");
+                pt = (char*)toSyms((unsigned char*)pt, " \t/>");
 
                 if(!pt)
                 {
@@ -453,7 +453,7 @@ kgmXml::XmlState kgmXml::next()
         else if((*pt >= 'a' && *pt <= 'z') || (*pt >= 'A' && *pt <= 'Z'))
         {
             m_position = pt;
-            pt = toSyms(pt, (char*)" \t=/>");
+            pt = (char*)toSyms((unsigned char*)pt, (char*)" \t=/>");
 
             if(!pt || attr)
             {

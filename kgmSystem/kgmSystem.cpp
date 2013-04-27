@@ -117,6 +117,7 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h){
   w = GetDeviceCaps(GetDC(GetDesktopWindow()), HORZRES);
   h = GetDeviceCaps(GetDC(GetDesktopWindow()), VERTRES);
 #endif
+
 #ifdef LINUX
   Display* dpy = XOpenDisplay(0);
   int   screen = DefaultScreen(dpy);
@@ -126,6 +127,9 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h){
 
   w = attr.width; h = attr.height;
   XCloseDisplay(dpy);
+#endif
+
+#ifdef ANDROID
 #endif
 }
 

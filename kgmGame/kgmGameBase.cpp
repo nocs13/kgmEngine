@@ -34,8 +34,8 @@ kgmIGame* kgmIGame::getGame(){
   return kgmGameBase::m_game;
 }
 
-#define		BWIDTH		640
-#define		BHEIGHT		480
+#define		BWIDTH		1280
+#define		BHEIGHT		1024
 
 const char *log_file = "kgmLog.txt";
 const char *set_file = "kgmEngine.conf";
@@ -61,7 +61,7 @@ kgmCamera g_cam;
 ////////////////////////////////////
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
-  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false){
+  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false){
   m_game = this;
   kgmString sdata;
   kgmString spath;
@@ -72,8 +72,8 @@ kgmGameBase::kgmGameBase()
   m_system = 0;
   m_audio = 0;
   
-  prev_width = 640;
-  prev_height = 480;
+  prev_width = BWIDTH;
+  prev_height = BHEIGHT;
 
   log("open settings...");
   m_settings = new kgmGameSettings();

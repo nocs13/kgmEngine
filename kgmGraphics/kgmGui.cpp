@@ -128,7 +128,7 @@ kgmGui* kgmGui::getById(u32 id)
   if(m_id == id)
       return this;
 
-  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
+  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
   {
       kgmGui* g = (*i)->getById(id);
 
@@ -144,7 +144,7 @@ kgmGui* kgmGui::getBySid(kgmString sid)
     if(m_sid == sid)
         return this;
 
-    for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
+    for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
     {
         kgmGui* g = (*i)->getBySid(sid);
 

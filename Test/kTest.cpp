@@ -91,81 +91,8 @@ public:
  ~kApp(){
  }
 
- void print_xml(kgmXml::Node* n){
-  if(!n)
-   return;
-
-  kgmString s, d;
-  n->id(s);
-  n->data(d);
-  kgm_log() << "\n id=%s" << (char*)s;
-  kgm_log() << "\n data=%s" << (char*)d;
-  
-  for(int i = 0; i < n->attributes(); i++){
-    kgmString s, d;
-    n->attribute(i, s, d);
-    kgm_log() << "\n   attr: %s=%s" << (char*)s << " " << (char*)d;
-  }
-  
-  for(int i = 0; i < n->nodes(); i++)
-   print_xml(n->node(i));
- }
- 
-  /*void print_xml(char* path){
-   kgmString s(path, strlen(path));
-   kgmFile f;
-   f.open(s, kgmFile::Read);
-   kgmMemory<char> m;
-   m.alloc(f.length());
-   f.read(m.data(), f.length());
-   f.close();
-   kgmXml xml(m);
-   print_xml(xml.m_node);
-  }*/
-
- void print_xml(char* path){
-  kgmString s(path, strlen(path));
-  kgmFile f;
-  f.open(s, kgmFile::Read);
-  kgmMemory<char> m;
-  m.alloc(f.length());
-  f.read(m.data(), f.length());
-  f.close();
-  kgmXml xml;
-  kgmXml::XmlState state;
-
-  xml.open(m);
-
-  while(state = xml.next())
-  {
-      if(state == kgmXml::XML_ERROR)
-      {
-          kgm_log() << "xml error \n";
-          break;
-      }
-      else if(state == kgmXml::XML_FINISH)
-      {
-          kgm_log() << "xml finish \n";
-          break;
-      }
-      else if(state == kgmXml::XML_TAG_OPEN)
-      {
-          kgm_log() << "xml tag open " << (char*)xml.m_tagName << "\n";
-      }
-      else if(state == kgmXml::XML_TAG_CLOSE)
-      {
-          kgm_log() << "xml tag close " << (char*)xml.m_tagName << "\n";
-      }
-      else if(state == kgmXml::XML_TAG_DATA)
-      {
-          kgm_log() << "xml data " << (char*)xml.m_tagData << "\n";
-      }
-  }
- }
-
  void main()
  {
-  //print_xml("Data/level01.kgm");
   m_game = new kGame();
   m_game->loop();
   m_game->release();

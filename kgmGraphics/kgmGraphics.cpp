@@ -177,7 +177,7 @@ void kgmGraphics::render()
 
   //render 3D
 
-  for(kgmList<kgmMesh*>::iterator i = meshes.begin(); i != meshes.end(); i++)
+  for(kgmList<kgmMesh*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
     kgmMesh* mesh = (*i);
 
@@ -187,7 +187,7 @@ void kgmGraphics::render()
 
   }
 
-  for(kgmList<kgmNode*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  for(kgmList<kgmNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     kgmNode* node = (*i);
 
