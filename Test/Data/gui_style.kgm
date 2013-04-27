@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<GuiTheme>
+<Font name='font.tga' />  
+<Gui bg_color='0xff555555' fg_color='0xff555555' ac_color='0xff555555' tx_color='0xffffffff'   image='gui_btn_img.tga'/>
+<GuiList bg_color='0xff666666' fg_color='0xff555555' ac_color='0xff777777' tx_color='0xffffffff'   image='gui_btn_img.tga'/>
+<GuiButton bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  image='gui_btn_img.tga'/>
+</GuiTheme>
