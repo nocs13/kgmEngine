@@ -26,31 +26,3 @@ kgmGuiStyle::kgmGuiStyle()
   slist.image    = null;
 
 }
-
-kgmGuiStyle::kgmGuiStyle(kgmXml& x)
-{
-  if(!x.m_node)
-    return;
-
-  for(int i = 0; i < x.m_node->m_nodes.size(); i++)
-  {
-    kgmXml::Node* n = x.m_node->m_nodes[i];
-
-    if(n->m_name == "Font")
-    {
-
-    }
-    else if(n->m_name == "Gui")
-    {
-
-    }
-    else if(n->m_name == "GuiList")
-    {
-
-    }
-    else if(n->m_name == "GuiButton")
-    {
-
-    }
-  }
-}

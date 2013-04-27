@@ -46,17 +46,14 @@ void kgmGameGraphics::setDefaultFont(kgmFont* f){
   gui_style->gui_font = f;
 }
 
-void kgmGameGraphics::setGuiTheme(kgmString s){
+void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
+  if(!s)
+    return;
+
   if(gui_style)
     gui_style->release();
 
-  kgmMemory<char> m;
-
-  if(rc->getFile((char*)s, m))
-  {
-    kgmXml xml(m);
-    gui_style = new kgmGuiStyle(xml);
-  }
+  gui_style = s;
 }
 
 
@@ -250,7 +247,8 @@ void kgmGameGraphics::render(kgmGui* gui){
     gui->getRect(rect, true);
     text = gui->getText();
 
-    if(gui->isClass(kgmGuiButton::Class)){
+    if(gui->isClass(kgmGuiButton::Class))
+    {
       u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
       u32 fheight = (u32)((float)rect.h * (float)0.75f);
       u32 tlen = text.length();
@@ -263,33 +261,38 @@ void kgmGameGraphics::render(kgmGui* gui){
       tClip.w = fw;
       tClip.h = fh;
 
-      switch(((kgmGuiButton*)gui)->getState()){
+      switch(((kgmGuiButton*)gui)->getState())
+      {
         case kgmGuiButton::StateFocus:
-        gcDrawRect(rect, gui_style->sbutton.ac_color, 0);
+        gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
         break;
       case kgmGuiButton::StateClick:
-        gcDrawRect(rect, gui_style->sbutton.fg_color, 0);
+        gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
         break;
       case kgmGuiButton::StateNone:
       default:
-        gcDrawRect(rect, gui_style->sbutton.bg_color, 0);
+        gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
       }
       gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, tClip, text);
-    }else if(gui->isClass(kgmGuiScroll::Class)){
-    }else if(gui->isClass(kgmGuiList::Class)){
+    }
+    else if(gui->isClass(kgmGuiScroll::Class))
+    {
+    }
+    else if(gui->isClass(kgmGuiList::Class))
+    {
       u32 fontHeight = ((kgmGuiList*)gui)->m_itemHeight - 2;
       u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
       u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
       kgmGui::Rect frect;
 
       //Draw Main Rect
-      gcDrawRect(rect, gui_style->slist.bg_color, 0);
+      gcDrawRect(rect, gui_style->slist.bg_color, gui_style->slist.image);
 
       //Draw Focused Rect
       if((((kgmGuiList*)gui)->m_itemSel >= 0) &&
          (((kgmGuiList*)gui)->m_itemSel < ((kgmGuiList*)gui)->m_items.size()))
         gcDrawRect(kgmGui::Rect(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemSel * ((kgmGuiList*)gui)->m_itemHeight,
-                   rect.w, ((kgmGuiList*)gui)->m_itemHeight), gui_style->sbutton.fg_color, 0);
+                   rect.w, ((kgmGuiList*)gui)->m_itemHeight), gui_style->sbutton.fg_color, gui_style->slist.image);
       //Draw Items Rects
       for(int i = ((kgmGuiList*)gui)->m_position; i < (((kgmGuiList*)gui)->m_position + item_view); i++){
         if(i >= item_cnt) continue;
@@ -299,18 +302,26 @@ void kgmGameGraphics::render(kgmGui* gui){
                           rect.w, ((kgmGuiList*)gui)->m_itemHeight);
 
         clip.h ++;
-        //gcDrawText(gc, getFont(), 10, m_fontHeight, m_colors[kgmGui::TEXT], clip, item);
-        gcDrawText(gui_style->gui_font, 10, clip.height(), 0xFFFFFFFF, clip, item);
+        gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
       }
-    }else if(gui->isClass(kgmGuiTab::Class)){
+    }
+    else if(gui->isClass(kgmGuiTab::Class))
+    {
       render((kgmGuiTab*)gui);
-    }else if(gui->isClass(kgmGuiProgress::Class)){
+    }
+    else if(gui->isClass(kgmGuiProgress::Class))
+    {
       render((kgmGuiProgress*)gui);
-    }else if(gui->isClass(kgmGui::Class)){
-      if(gui->m_hasMouse ){
-        gcDrawRect(rect, gui_style->sgui.fg_color, 0);
-      }else{
-        gcDrawRect(rect, gui_style->sgui.bg_color, 0);
+    }
+    else if(gui->isClass(kgmGui::Class))
+    {
+      if(gui->m_hasMouse )
+      {
+        gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+      }
+      else
+      {
+        gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
       }
     }
 
@@ -321,7 +332,7 @@ void kgmGameGraphics::render(kgmGui* gui){
 }
 
 //*************** DRAWING ***************
-void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, void* tex){
+void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
@@ -330,9 +341,11 @@ void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, void* tex){
   v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 0);
   v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 1);
 
-  if(tex)
-   gc->gcSetTexture(0, tex);
+  if(tex && tex->m_texture)
+   gc->gcSetTexture(0, tex->m_texture);
+
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+
   if(tex)
    gc->gcSetTexture(0, 0);
 }

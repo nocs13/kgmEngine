@@ -518,7 +518,6 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
   return skel;
 }
 
-
 //ANIMATION
 kgmAnimation* kgmGameTools::genAnimation(kgmMemory<char>& m){
  kgmAnimation* anim = 0;
@@ -844,19 +843,95 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
   return m;
 }
 
+kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
+{
+#define KGM_STRHEX_TO_INT(s, i) if(s.length() > 0) sscanf(s, "%x", &i)
+
+  kgmMemory<char> m;
+
+  if(rc->getFile((char*)id, m))
+  {
+    kgmXml xml(m);
+
+    if(!xml.m_node)
+      return null;
+
+    kgmGuiStyle* gs = new kgmGuiStyle();
+
+    for(int i = 0; i < xml.m_node->m_nodes.size(); i++)
+    {
+      kgmXml::Node* n = xml.m_node->m_nodes[i];
+      kgmString     attr;
+
+      if(n->m_name == "Font")
+      {
+        n->attribute("name", attr);
+        gs->gui_font = rc->getFont(attr, 16, 16);
+      }
+      else if(n->m_name == "Gui")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sgui.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sgui.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sgui.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sgui.tx_color);
+        n->attribute("image", attr);
+        gs->sgui.image = rc->getTexture(attr);
+      }
+      else if(n->m_name == "GuiList")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slist.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slist.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slist.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slist.tx_color);
+        n->attribute("image", attr);
+        gs->slist.image = rc->getTexture(attr);
+      }
+      else if(n->m_name == "GuiButton")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sbutton.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sbutton.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sbutton.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sbutton.tx_color);
+        n->attribute("image", attr);
+        gs->sbutton.image = rc->getTexture(attr);
+      }
+    }
+
+    return gs;
+  }
+
+  return null;
+
+#undef KGM_STRHEX_TO_INT
+}
 
 //SOUNDS
 kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
  kgmWave wav;
- //return 0;//////////////////////////////
+
  if(!wav.from_mem((char*)m.data(), m.length()))
 	 return 0;
+
  kgmIAudio::FMT fmt;
+
  switch(wav.fmt_format.nChannels){
  case 1:
 	if(wav.fmt_format.wBitsPerSample == 8){
          fmt = kgmIAudio::FMT_MONO8;
 	}
+
 	if(wav.fmt_format.wBitsPerSample == 16){
 	 fmt = kgmIAudio::FMT_MONO16;
 	}
@@ -865,6 +940,7 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
 	if(wav.fmt_format.wBitsPerSample == 8){
  	 fmt = kgmIAudio::FMT_STEREO8;
 	}
+
 	if(wav.fmt_format.wBitsPerSample == 16){
 	 fmt = kgmIAudio::FMT_STEREO16;
 	}
@@ -877,9 +953,12 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
 				  wav.fmt_format.nSamplesPerSec,
 				  wav.data_size,
 				  wav.data);
+
  if(!s)
    return 0;
+
  kgmSound* snd = new kgmSound();
  snd->m_sound = s;
+
  return snd;
 }

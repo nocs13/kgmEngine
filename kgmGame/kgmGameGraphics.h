@@ -70,10 +70,11 @@ public:
   void clean();
   void build();
   void render();
-  void resize(float, float);
-  void setDefaultFont(kgmFont*);
-  void setGuiTheme(kgmString);
   void update();
+  void resize(float, float);
+
+  void setGuiStyle(kgmGuiStyle*);
+  void setDefaultFont(kgmFont*);
 
 private:
   void render(Mesh*);
@@ -83,7 +84,7 @@ private:
   void render(kgmShader*, u32);
   void render(kgmMaterial*);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
-  void gcDrawRect(kgmGui::Rect, u32, void*);
+  void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
 
   void trash();
 public:

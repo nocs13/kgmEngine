@@ -106,7 +106,7 @@ kgmGameBase::kgmGameBase()
   log("open renderer...");
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
-  m_render->setGuiTheme("gui_style.kgm");
+  m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
   
   //  log("open data...");
   //  kgmString s;
