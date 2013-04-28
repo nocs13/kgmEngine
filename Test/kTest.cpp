@@ -46,6 +46,12 @@ public:
   kGame(){
       gui = new kGui(this);
       m_msAbs = false;
+
+      kgmSound* snd = m_game->getResources()->getSound("1.wav");
+      if(snd && snd->getSound())
+      {
+        snd->getSound()->play(false);
+      }
   }
 
   ~kGame(){
@@ -133,11 +139,6 @@ public:
  void main()
  {
   m_game = new kGame();
-  kgmSound* snd = m_game->getResources()->getSound("1.wav");
-  if(snd && snd->getSound())
-  {
-    snd->getSound()->play(false);
-  }
   m_game->loop();
   m_game->release();
  } 

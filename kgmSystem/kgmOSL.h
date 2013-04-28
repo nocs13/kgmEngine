@@ -13,11 +13,18 @@
 class kgmOSL: public kgmIAudio
 {
     class _Sound: public Sound{
-        SLBufferQueueItf audioPlayerBufferQueue;
+    public:
+      SLObjectItf audioPlayerObject;
+      SLPlayItf   audioPlayer;
+#ifdef ANDROID
+      SLAndroidSimpleBufferQueueItf audioPlayerQueue;
+#else
+      SLBufferQueueItf audioPlayerQueue;
+#endif
         void* buffer;
         uint  length;
     public:
-        _Sound(SLBufferQueueItf, void*, u32);
+        _Sound();
         virtual ~_Sound();
         void stop();
         void play(bool loop);
@@ -29,13 +36,6 @@ class kgmOSL: public kgmIAudio
     SLObjectItf engineObject;
     SLEngineItf engineEngine;
     SLObjectItf outputMixObject;
-    SLObjectItf audioPlayerObject;
-    SLPlayItf   audioPlayer;
-#ifdef ANDROID
-    SLAndroidSimpleBufferQueueItf audioPlayerBufferQueue;
-#else
-    SLBufferQueueItf audioPlayerBufferQueue;
-#endif
 public:
     kgmOSL();
     virtual ~kgmOSL();

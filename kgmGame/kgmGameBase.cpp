@@ -12,6 +12,7 @@
 #include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmOAL.h"
+#include "../kgmSystem/kgmOSL.h"
 
 #include "kgmIGame.h"
 #include "kgmGameBase.h"
@@ -194,8 +195,10 @@ void kgmGameBase::initSystem()
 void kgmGameBase::initAudio(){
 #ifdef OAL
   log("init game audio...");
-    m_audio	= new kgmOAL();
+  m_audio	= new kgmOAL();
 #elif defined(OSL)
+  log("init game audio...");
+  m_audio	= new kgmOSL();
 #elif defined(D3DS)
 #endif
 }
@@ -337,8 +340,8 @@ void kgmGameBase::onClose()
     m_physics->release();
 
   log("free audio...");
-  //if(m_audio)
-  //  m_audio->release();
+  if(m_audio)
+    delete m_audio;
 
   log("free system...");
   if(m_system)
