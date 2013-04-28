@@ -12,27 +12,36 @@
 
 class kgmOSL: public kgmIAudio
 {
-  class _Sound: public Sound{
-    u32	buffer;
-    u32	source;
-  public:
-    _Sound(u32 buf, u32 src);
-    virtual ~_Sound();
-    void stop();
-    void play(bool loop);
-    void pause();
-    void volume(float vol);
-    void emit(vec3& pos, vec3& vel);
-  };
+    class _Sound: public Sound{
+        SLBufferQueueItf audioPlayerBufferQueue;
+        void* buffer;
+        uint  length;
+    public:
+        _Sound(SLBufferQueueItf, void*, u32);
+        virtual ~_Sound();
+        void stop();
+        void play(bool loop);
+        void pause();
+        void volume(float vol);
+        void emit(vec3& pos, vec3& vel);
+    };
 
-  SLObjectItf engineObject;
-  SLEngineItf engineEngine;
+    SLObjectItf engineObject;
+    SLEngineItf engineEngine;
+    SLObjectItf outputMixObject;
+    SLObjectItf audioPlayerObject;
+    SLPlayItf   audioPlayer;
+#ifdef ANDROID
+    SLAndroidSimpleBufferQueueItf audioPlayerBufferQueue;
+#else
+    SLBufferQueueItf audioPlayerBufferQueue;
+#endif
 public:
-  kgmOSL();
-  virtual ~kgmOSL();
+    kgmOSL();
+    virtual ~kgmOSL();
 
-  Sound* create(FMT fmt, u16 freq, u32 size, void* data);
-  void 	 listener(vec3& pos, vec3& vel, vec3& ort);
+    Sound* create(FMT fmt, u16 freq, u32 size, void* data);
+    void 	 listener(vec3& pos, vec3& vel, vec3& ort);
 };
 #endif
 
