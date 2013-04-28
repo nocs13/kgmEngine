@@ -4,15 +4,11 @@ KGMOBJECT_IMPLEMENT(kgmSound, kgmResource);
 
 kgmSound::kgmSound()
 :kgmResource(){
- m_sound = 0;
- m_volume = 0.0f;
- m_pan = 0.0f;
+ m_sound = null;
 }
 
-kgmSound::kgmSound(void* s)
+kgmSound::kgmSound(kgmIAudio::Sound* s)
 :kgmResource(){
- m_volume = 0.0f;
- m_pan = 0.0f;
  m_sound = s;
 }
 

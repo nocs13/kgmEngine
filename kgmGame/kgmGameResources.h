@@ -13,9 +13,11 @@
 
 #include "kgmGameTools.h"
 
+class kgmIGame;
+
 class kgmGameResources: public kgmIResources{
 protected:
- //enum PathType { None, Folder, Archive, File, };
+
  struct Path{
 
   u32       type;    
@@ -34,6 +36,8 @@ protected:
   }
  };
 
+ kgmIGame*              m_game;
+
  kgmList<kgmResource*>  m_resources;
  kgmList<Path*>         m_paths;
  kgmGameTools           m_tools;
@@ -47,7 +51,7 @@ public:
  void		add(kgmResource*);
  void		remove(kgmResource*);
 
- void		addPath(kgmString& s);
+ void		addPath(kgmString s);
  bool		getFile(char* id, kgmMemory<char>& m);
 
  kgmPicture*    getPicture(char* id);

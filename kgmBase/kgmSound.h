@@ -1,15 +1,19 @@
 #pragma once
+#include "kgmIAudio.h"
 #include "kgmResource.h"
 
 class kgmSound: public kgmResource{
  KGM_OBJECT(kgmSound)
 public:
- void*	m_sound;
- float	m_volume, 
-		m_pan;
+ kgmIAudio::Sound* m_sound;
+
 public:
  kgmSound();
- kgmSound(void* s);
+ kgmSound(kgmIAudio::Sound* s);
+
+ kgmIAudio::Sound*  getSound(){
+   return m_sound;
+ }
 private:
  ~kgmSound();
 };

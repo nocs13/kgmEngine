@@ -19,7 +19,7 @@
 #include <AL/alext.h>
 #endif
 
-#ifndef ANDROID
+#ifdef OAL
 
 class kgmOAL: public kgmIAudio  
 {
@@ -36,8 +36,8 @@ class kgmOAL: public kgmIAudio
     void emit(vec3& pos, vec3& vel);
   };
 
-  ALCdevice*		m_device;
-  ALCcontext*		m_context;
+  ALCdevice*   m_device;
+  ALCcontext*  m_context;
 public:
   kgmOAL();
   virtual ~kgmOAL();

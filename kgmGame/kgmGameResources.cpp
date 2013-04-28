@@ -72,13 +72,16 @@ void kgmGameResources::remove(kgmResource* r){
  }
 }
 
-void kgmGameResources::addPath(kgmString& s){
+void kgmGameResources::addPath(kgmString s){
  Path* path = 0;
- if(kgmSystem::isDirectory(s)){
+ if(kgmSystem::isDirectory(s))
+ {
   path = new Path();
   path->type = 2;
   path->path = s;
- }else if(kgmSystem::isFile(s)){
+ }
+ else if(kgmSystem::isFile(s))
+ {
   path = new Path();
   path->type = 1;
   path->path = s;

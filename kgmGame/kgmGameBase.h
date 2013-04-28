@@ -69,13 +69,13 @@ public:
  kgmGameBase(kgmString &conf);
  virtual ~kgmGameBase();
 
- kgmIGraphics*		 getGraphics();
- kgmIPhysics*		  getPhysics();
- kgmISpawner*		  getSpawner();
- kgmIAudio*	        getAudio();
- kgmIVideo*		    getVideo();
- kgmIResources*		getResources();
- kgmSystem*		    getSystem();
+ kgmIGraphics*      getGraphics();
+ kgmIPhysics*       getPhysics();
+ kgmISpawner*       getSpawner();
+ kgmIAudio*         getAudio();
+ kgmIVideo*         getVideo();
+ kgmIResources*     getResources();
+ kgmSystem*         getSystem();
 
  void quit();
  void log(const char* msg);
@@ -112,7 +112,12 @@ public:
 ///////////////////////////////////////
 protected:
 //init interfaces
- virtual void initLogic(){ m_logic = new kgmGameLogic(); }
+ virtual void initResources();
+ virtual void initGraphycs();
+ virtual void initPhysics();
+ virtual void initSystem();
+ virtual void initAudio();
+ virtual void initLogic();
 
 // Game Resources
  kgmTexture*    getTexture(char*);

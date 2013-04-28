@@ -88,46 +88,22 @@ kgmGameBase::kgmGameBase()
   log("size window...");
   //setRect(0, 0, m_width,	m_height);
   
-  log("open resources");
-  m_resources = new kgmGameResources();
-  m_resources->addPath(spath);
-  
+  initResources();
+
   log("open graphics...");
   m_graphics = getGC();
   if(!m_graphics)
     return;
   
-  log("open physics...");
-  m_physics = new kgmGamePhysics();
-  
-  log("open audio...");
-  //m_audio	= new kgmOAL();
-  
+  initPhysics();
+
   log("open renderer...");
   m_render = new kgmGameGraphics(m_graphics, m_resources);
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
-
-  log("init game logic...");
+  initAudio();
   initLogic();
-
-  //  log("open data...");
-  //  kgmString s;
-  //  int       i = 0;
-  
-  //  m_paths.seek(0);
-  //  while(!m_paths.eof()){
-  //    kgmString s;
-  //    s.alloc(128);
-  //    u32 len = m_paths.reads(s.data(), 127, "\n", 1);
-  //    if(len < 1)
-  //      break;
-  //    kgmString st(s.data(), len);
-  //    m_resources->addPath(st);
-  //    m_paths.seek(m_paths.position() + 1);
-  //  }
-  //  m_paths.seek(0);
 
   log("open font...");
   m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
@@ -191,6 +167,44 @@ kgmIResources* kgmGameBase::getResources(){
 kgmSystem*  kgmGameBase::getSystem(){
   return m_game->m_system;
 }
+
+void kgmGameBase::initResources()
+{
+  log("init resources");
+  m_resources = new kgmGameResources();
+  m_resources->addPath(m_settings->get("Path"));
+}
+
+void kgmGameBase::initGraphycs()
+{
+
+}
+
+void kgmGameBase::initPhysics()
+{
+  log("init physics...");
+  m_physics = new kgmGamePhysics();
+}
+
+void kgmGameBase::initSystem()
+{
+
+}
+
+void kgmGameBase::initAudio(){
+#ifdef OAL
+  log("init game audio...");
+    m_audio	= new kgmOAL();
+#elif defined(OSL)
+#elif defined(D3DS)
+#endif
+}
+
+void kgmGameBase::initLogic(){
+  log("init game logic...");
+  m_logic = new kgmGameLogic();
+}
+
 
 void kgmGameBase::log(const char* msg){
   kgmLog::log(msg);

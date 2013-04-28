@@ -133,7 +133,8 @@ public:
     kgmActor* evt_to;
   };
 
-  struct Input{
+  struct Input
+  {
     u32 action;
     int  state;
     int  value;

@@ -11,7 +11,7 @@
 
 static u32 error = 0;
 
-#ifndef ANDROID
+#ifdef OAL
 
 kgmOAL::_Sound::_Sound(u32 buf, u32 src){
   buffer = buf;
@@ -45,17 +45,21 @@ void kgmOAL::_Sound::emit(vec3& pos, vec3& vel){
   alSource3f(source, AL_VELOCITY, vel.x, vel.y, vel.z);
 }
 
-
 kgmOAL::kgmOAL()
 {
  m_device = alcOpenDevice(NULL);
- if(m_device){
+
+ if(m_device)
+ {
   m_context = alcCreateContext(m_device, NULL);
   alcMakeContextCurrent(m_context);
-  if(!m_context){
+  if(!m_context)
+  {
      kgmLog::log("Can't Create ALC Context\n");
   }
- }else{
+ }
+ else
+ {
      kgmLog::log("Can't Open ALC Device\n");
  }
 }
@@ -92,7 +96,9 @@ kgmIAudio::Sound* kgmOAL::create(FMT fmt, u16 freq, u32 size, void* data)
   alGenSources(1, &src);
   alBufferData(buf, _fmt, data, size, freq);
   alSourceQueueBuffers(src, 1, &buf);
-  if((error = alGetError()) != AL_NO_ERROR){
+
+  if((error = alGetError()) != AL_NO_ERROR)
+  {
     int k = 0;
   }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmTime.h"
 
 #include "../kgmGraphics/kgmGraphical.h"
@@ -31,7 +32,8 @@ public:
          fvf;
   };
 
-  struct Section{
+  struct Section
+  {
     kgmMaterial*      material;
     //kgmList<Mesh>     meshes;
     kgmMesh* mesh;
@@ -45,26 +47,35 @@ public:
     }
   };
 
+  class State
+  {
+   public:
+    kgmString id;
+    u32       priopity;
+
+    kgmTab<kgmString, kgmString> options;
+  };
+
 protected:
   kgmActor* 	        m_parent;
   kgmList<kgmActor*>  m_childs;
 
 public:
-  u32	 m_uid;
-  u32	 m_type;
-  u32	 m_state;
-  u32	 m_bearing;
+  u32  m_uid;
+  u32  m_type;
+  u32  m_state;
+  u32  m_bearing;
 
   bool    m_enable;
   bool    m_visible;
-  bool	  m_active;
-  bool	  m_remove;
-  bool	  m_culled;
+  bool    m_active;
+  bool    m_remove;
+  bool    m_culled;
 
-  float	 m_life;
-  float  m_birth;
+  float   m_life;
+  float   m_birth;
 
-  mtx4   m_transform;
+  mtx4    m_transform;
 
   kgmString m_id;
   kgmString m_name;
