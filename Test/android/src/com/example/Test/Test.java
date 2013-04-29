@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.content.res.Configuration;
 
 
 public class Test extends Activity
@@ -38,7 +39,10 @@ public class Test extends Activity
 	System.out.println("Test Finishing");	
 
 	if(m_test != null)
+        {
+            TestLib.quit();
 	    m_test.finish();
+        }
     }
 
     /** Called when the activity is first created. */
@@ -66,6 +70,16 @@ public class Test extends Activity
 	m_test = this;
     }
     
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+       //super.onConfigurationChanged(newConfig);
+
+       // Checks the orientation of the screen
+       if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+       } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+       }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent me)
     {

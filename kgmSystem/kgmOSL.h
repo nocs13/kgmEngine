@@ -16,6 +16,7 @@ class kgmOSL: public kgmIAudio
     public:
       SLObjectItf audioPlayerObject;
       SLPlayItf   audioPlayer;
+      SLVolumeItf audioVolume;
 #ifdef ANDROID
       SLAndroidSimpleBufferQueueItf audioPlayerQueue;
 #else
@@ -36,12 +37,13 @@ class kgmOSL: public kgmIAudio
     SLObjectItf engineObject;
     SLEngineItf engineEngine;
     SLObjectItf outputMixObject;
+    SLObjectItf listenerObject;
 public:
     kgmOSL();
     virtual ~kgmOSL();
 
     Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
-    void 	 listener(vec3& pos, vec3& vel, vec3& ort);
+    void 	   listener(vec3& pos, vec3& vel, vec3& ort);
     void     release();
 };
 #endif

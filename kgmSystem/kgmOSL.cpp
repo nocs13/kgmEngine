@@ -4,11 +4,15 @@
 #ifdef OSL
 
 kgmOSL::_Sound::_Sound(){
+  audioPlayerObject = null;
+  audioPlayer = null;
+  audioVolume = null;
 }
 
 kgmOSL::_Sound::~_Sound(){
   if(audioPlayerObject)
   {
+    stop();
     (*audioPlayerObject)->Destroy(audioPlayerObject);
   }
 
@@ -21,7 +25,7 @@ kgmOSL::_Sound::~_Sound(){
 void kgmOSL::_Sound::stop(){
   SLresult result;
 
-  result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PLAYING);
+  result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED);
 }
 
 void kgmOSL::_Sound::play(bool loop){
@@ -37,6 +41,9 @@ void kgmOSL::_Sound::volume(float vol){
 }
 
 void kgmOSL::_Sound::pause(){
+  SLresult result;
+
+  result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PAUSED);
 }
 
 void kgmOSL::_Sound::emit(vec3& pos, vec3& vel){
@@ -52,6 +59,7 @@ kgmOSL::kgmOSL()
   engineObject = null;
   engineEngine = null;
   outputMixObject = null;
+  listenerObject = null;
 
   kgm_log() << "OSL init engineObject \n";
   result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -82,6 +90,12 @@ kgmOSL::kgmOSL()
   if(result != SL_RESULT_SUCCESS)
     return;
 
+  const SLInterfaceID listener_ids[] = {SL_IID_3DLOCATION, SL_IID_3DSOURCE};
+  const SLboolean     listener_req[] = {SL_BOOLEAN_TRUE,  SL_BOOLEAN_TRUE};
+  result = (*mEngine)->CreateListener(engineEngine, &listenerObject, 1, listener_ids, listener_req);
+
+  if(result != SL_RESULT_SUCCESS)
+    return;
 }
 
 kgmOSL::~kgmOSL()
@@ -227,6 +241,15 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     return  null;
   }
 
+  kgm_log() << "OSL init audioVolume \n";
+  result = (*sound->audioPlayerObject)->GetInterface(sound->audioPlayerObject, SL_IID_VOLUME,  &sound->audioVolume);
+
+  if(result != SL_RESULT_SUCCESS)
+  {
+    delete sound;
+    return  null;
+  }
+
   kgm_log() << "OSL SetPlayState audioPlayer \n";
   result = (*sound->audioPlayer)->SetPlayState(sound->audioPlayer, SL_PLAYSTATE_PLAYING);
 
@@ -236,6 +259,10 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     return  null;
   }
 
+  if(listenerObject)
+  {
+
+  }
 
   return sound;
 }
@@ -244,9 +271,6 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
 {
   float l = vel.length();
   float dirort[6] = {vel.x, vel.y, vel.z, ort.x, ort.y, ort.z};
-  //alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
-  //alListener3f(AL_VELOCITY, vel.x, vel.y, vel.z);
-  //alListenerfv(AL_ORIENTATION, dirort);
 }
 
 void kgmOSL::release()

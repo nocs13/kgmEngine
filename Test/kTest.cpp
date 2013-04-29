@@ -208,6 +208,11 @@ extern "C"
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv* env, jobject obj,  jint width, jint height, jobject am,
                                                           jobject surface)
 {
+    if(m_game)
+    {
+      return;
+    }
+
     LOGI("kgmTest init\n");
     AAssetManager* mgr = AAssetManager_fromJava(env, am);
     assert(NULL != mgr);
@@ -232,6 +237,7 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject 
 
     if(m_game)
     {
+      LOGI("kgmTest release gamet\n");
       m_game->onClose();
       m_game->release();
     }
