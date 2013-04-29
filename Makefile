@@ -1,6 +1,8 @@
 include Makefile.mac
 
-all:
+all:    clean build
+
+build:
 	echo "compiling..."
 #	make -C kgmExtern -f Makefile
 
@@ -45,6 +47,24 @@ distclean: clean
 run:
 	make -C Test -f Makefile run
 
+library: clean build
+	mkdir -p kgmEngine
+	mkdir -p kgmEngine/kgmBase
+	mkdir -p kgmEngine/kgmMath
+	mkdir -p kgmEngine/kgmSystem
+	mkdir -p kgmEngine/kgmPhysics
+	mkdir -p kgmEngine/kgmGraphics
+	mkdir -p kgmEngine/kgmGame
+	mkdir -p kgmEngine/kgmNet
+	cp kgmBase/*.h      kgmEngine/kgmBase/.
+	cp kgmMath/*.h      kgmEngine/kgmMath/.
+	cp kgmSystem/*.h    kgmEngine/kgmSystem/.
+	cp kgmPhysics/*.h   kgmEngine/kgmPhysics/.
+	cp kgmGraphics/*.h  kgmEngine/kgmGraphics/.
+	cp kgmNet/*.h       kgmEngine/kgmNet/.
+	cp kgmGame/*.h      kgmEngine/kgmGame/.
+	cp libkgmEngine.a   kgmEngine/.
+
 kgmBase:	
 	make -C kgmBase -f Makefile
 	ar crs libkgmEngine.a kgmBase/*.o
@@ -70,6 +90,7 @@ kgmGame:
 	ar crs libkgmEngine.a kgmGame/*.o
 
 android:
+	make -C android clean && make -C android
 
 
 
