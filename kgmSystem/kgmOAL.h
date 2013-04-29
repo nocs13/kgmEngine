@@ -44,6 +44,7 @@ public:
 
   Sound* create(FMT fmt, u16 freq, u32 size, void* data);
   void 	 listener(vec3& pos, vec3& vel, vec3& ort);
+  void   release();
 };
 
 #endif

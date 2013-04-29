@@ -117,4 +117,10 @@ void kgmOAL::listener(vec3& pos, vec3& vel, vec3& ort)
  alListenerfv(AL_ORIENTATION, dirort);
 }
 
+void kgmOAL::release()
+{
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(m_context);
+    alcCloseDevice(m_device);
+}
 #endif

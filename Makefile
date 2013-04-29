@@ -47,7 +47,7 @@ distclean: clean
 run:
 	make -C Test -f Makefile run
 
-library: clean build
+sdk: clean build
 	mkdir -p kgmEngine
 	mkdir -p kgmEngine/kgmBase
 	mkdir -p kgmEngine/kgmMath

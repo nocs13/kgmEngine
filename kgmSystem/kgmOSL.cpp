@@ -86,17 +86,6 @@ kgmOSL::kgmOSL()
 
 kgmOSL::~kgmOSL()
 {
-  if(outputMixObject)
-  {
-    kgm_log() << "OSL delete outputMixObject \n";
-    (*outputMixObject)->Destroy(outputMixObject);
-  }
-
-  if(engineObject)
-  {
-    kgm_log() << "OSL delete engineObject \n";
-    (*engineObject)->Destroy(engineObject);
-  }
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
@@ -258,6 +247,21 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
   //alListener3f(AL_POSITION, pos.x, pos.y, pos.z);
   //alListener3f(AL_VELOCITY, vel.x, vel.y, vel.z);
   //alListenerfv(AL_ORIENTATION, dirort);
+}
+
+void kgmOSL::release()
+{
+    if(outputMixObject)
+    {
+      kgm_log() << "OSL delete outputMixObject \n";
+      (*outputMixObject)->Destroy(outputMixObject);
+    }
+
+    if(engineObject)
+    {
+      kgm_log() << "OSL delete engineObject \n";
+      (*engineObject)->Destroy(engineObject);
+    }
 }
 
 #endif
