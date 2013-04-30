@@ -3,10 +3,12 @@
 
 #ifdef OSL
 
-kgmOSL::_Sound::_Sound(){
+kgmOSL::_Sound::_Sound(kgmOSL* sl){
   audioPlayerObject = null;
   audioPlayer = null;
   audioVolume = null;
+
+  osl = sl;
 }
 
 kgmOSL::_Sound::~_Sound(){
@@ -19,6 +21,11 @@ kgmOSL::_Sound::~_Sound(){
   if(buffer)
   {
     free(buffer);
+  }
+
+  if(osl)
+  {
+      osl->remove(this);
   }
 }
 
@@ -47,6 +54,8 @@ void kgmOSL::_Sound::pause(){
 }
 
 void kgmOSL::_Sound::emit(vec3& pos, vec3& vel){
+  position = pos;
+  velosity = vel;
   //alSource3f(source, AL_POSITION, pos.x, pos.y, pos.z);
   //alSource3f(source, AL_VELOCITY, vel.x, vel.y, vel.z);
 }
@@ -238,6 +247,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   if(result != SL_RESULT_SUCCESS)
   {
     delete sound;
+
     return  null;
   }
 
@@ -247,6 +257,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   if(result != SL_RESULT_SUCCESS)
   {
     delete sound;
+
     return  null;
   }
 
@@ -256,6 +267,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   if(result != SL_RESULT_SUCCESS)
   {
     delete sound;
+
     return  null;
   }
 
@@ -263,6 +275,8 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   {
 
   }
+
+  sounds.add(sound);
 
   return sound;
 }
@@ -285,6 +299,19 @@ void kgmOSL::release()
     {
       kgm_log() << "OSL delete engineObject \n";
       (*engineObject)->Destroy(engineObject);
+    }
+}
+
+void kgmOSL::remove(_Sound* s)
+{
+    for(int i = 0; i < sounds.length(); i++)
+    {
+        if(sounds[i] == s)
+        {
+            sounds.erase(i);
+
+            return;
+        }
     }
 }
 

@@ -13,6 +13,7 @@
 class kgmOSL: public kgmIAudio
 {
     class _Sound: public Sound{
+      kgmOSL*     osl;
     public:
       SLObjectItf audioPlayerObject;
       SLPlayItf   audioPlayer;
@@ -24,8 +25,11 @@ class kgmOSL: public kgmIAudio
 #endif
         void* buffer;
         uint  length;
+
+        vec3  position;
+        vec3  velosity;
     public:
-        _Sound();
+        _Sound(kgmOSL*);
         virtual ~_Sound();
         void stop();
         void play(bool loop);
@@ -38,13 +42,16 @@ class kgmOSL: public kgmIAudio
     SLEngineItf engineEngine;
     SLObjectItf outputMixObject;
     SLObjectItf listenerObject;
+
+    kgmList<_Sound*> sounds;
 public:
     kgmOSL();
     virtual ~kgmOSL();
 
     Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
-    void 	   listener(vec3& pos, vec3& vel, vec3& ort);
+    void 	 listener(vec3& pos, vec3& vel, vec3& ort);
     void     release();
+    void     remove(_Sound*);
 };
 #endif
 
