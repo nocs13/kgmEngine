@@ -20,13 +20,15 @@ public:
  void* m_thread;
 #else
  pthread_t m_thread;
-#endif 
+#endif
+ 
 public:
  kgmThread();
  ~kgmThread();
 
  bool exec();
  void exit();
+ void join();
 
 protected: 
  virtual void run() = 0;
