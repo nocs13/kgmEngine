@@ -44,7 +44,14 @@ void kgmOSL::_Sound::play(bool loop){
     return;
 }
 
-void kgmOSL::_Sound::volume(float vol){
+void kgmOSL::_Sound::volume(float vol)
+{
+  SLresult result;
+
+  if(audioVolume)
+  {
+    result = (*audioVolume)->SetVolumeLevel(audioVolume, vol);
+  }
 }
 
 void kgmOSL::_Sound::pause(){
@@ -56,8 +63,6 @@ void kgmOSL::_Sound::pause(){
 void kgmOSL::_Sound::emit(vec3& pos, vec3& vel){
   position = pos;
   velosity = vel;
-  //alSource3f(source, AL_POSITION, pos.x, pos.y, pos.z);
-  //alSource3f(source, AL_VELOCITY, vel.x, vel.y, vel.z);
 }
 
 //
@@ -140,8 +145,8 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     break;
   }
 
-  SLuint32 samplingRate = 0xffffffff;
-  switch(freq)
+  SLuint32 samplingRate = freq * 1000;
+  /*switch(freq)
   {
   case 8000:
     samplingRate = SL_SAMPLINGRATE_8;
@@ -182,7 +187,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   case 192000:
     samplingRate = SL_SAMPLINGRATE_192;
     break;
-  }
+  }*/
 
   if(!data || !size ||
       (samplingRate == 0xffffffff) ||
