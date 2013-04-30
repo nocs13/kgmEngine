@@ -53,3 +53,77 @@ void kgmThread::join()
 #endif 
  m_thread = 0;
 }
+
+kgmThread::Mutex kgmThread::mutex()
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  pthread_mutex_t* mutex = malloc(sizeof(pthread_mutex_t));
+  *mutex = PTHREAD_MUTEX_INITIALIZER;
+
+  return mutex;
+#endif
+  return NULL;
+}
+
+void  kgmThread::free(kgmThread::Mutex m)
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  if(m)
+  {
+    pthread_mutex_destroy((pthread_mutex_t*)m);
+    free(m);
+  }
+#endif
+}
+
+void  kgmThread::lock(kgmThread::Mutex m)
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  if(m)
+  {
+    int rc = pthread_mutex_lock((pthread_mutex_t*)m);
+  }
+#endif
+}
+
+void  kgmThread::unlock(kgmThread::Mutex m)
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  if(m)
+  {
+    int rc = pthread_mutex_unlock((pthread_mutex_t*)m);
+  }
+#endif
+}
+
+bool  kgmThread::lockable(Mutex m)
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  if(m)
+  {
+    if(!pthread_mutex_trylock((pthread_mutex_t*)m))
+    {
+      pthread_mutex_unlock((pthread_mutex_t*)m);
+
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+#endif
+
+  return false;
+}
+

@@ -15,23 +15,26 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+	LOCAL_MODULE    := kgmEngine 
+	LOCAL_SRC_FILES := ../../../android/libkgmEngine_android.a
+include $(PREBUILT_STATIC_LIBRARY)
 
-FILE_LIST       := $(wildcard $(LOCAL_PATH)/../../kgm*/*.cpp)
-LOCAL_SRC_FILES := $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
-LOCAL_MODULE    := kgmEngine
-LOCAL_CFLAGS    := -DANDROID -DGLES -fpermissive -Wall -g #-Werror
-LOCAL_LDLIBS    := -llog -lGLESv2 -lGLESv1_CM -ldl -lm -lz -lstdc++
-
+include $(CLEAR_VARS)
+	LOCAL_MODULE    := Test
+	LOCAL_SRC_FILES := ../../kTest.cpp ../../kGui.cpp 
+	LOCAL_C_INCLUDES := ../../../
+	LOCAL_STATIC_LIBRARIES := kgmEngine
+	#LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+	LOCAL_LDLIBS    := -llog -ldl -lm -lz -lstdc++ -landroid #-lGLESv2 -lGLESv1_CM
+#	LOCAL_LDLIBS    += -lGLESv2
+	LOCAL_LDLIBS    += -lGLESv1_CM
+	LOCAL_LDLIBS    += -lEGL
+	LOCAL_LDLIBS    += -lOpenSLES
+	LOCAL_CFLAGS    := -DANDROID -DOSL -fpermissive -Wall -g #-Werror
+#	LOCAL_CFLAGS    += -DGLES_2
+	LOCAL_CFLAGS    += -DGLES_1
+        LOCAL_CFLAGS    += -frtti
 include $(BUILD_SHARED_LIBRARY)
-#include $(BUILT_STATIC_LIBRARY)
 
-
-#include $(CLEAR_VARS)
-#LOCAL_MODULE    := kgm
-#LOCAL_STATIC_LIBRARIES := kgmEngine 
-#LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-#LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lm -lz -lstdc++ -lkgmEngine
-#include $(BUILD_SHARED_LIBRARY)
-#include $(BUILD_EXECUTABLE)
 

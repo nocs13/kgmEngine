@@ -12,7 +12,7 @@ subdirs := $(wildcard ../kgm*/)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
 objects := $(patsubst %.cpp,%.o,$(sources))
 
-OUT = libkgmEngine.a
+OUT = ../libkgmEngine_android.a
 
 all: $(OUT)
 

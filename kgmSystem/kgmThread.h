@@ -15,7 +15,10 @@
 
 
 class kgmThread{
+
 public:
+typedef void* Mutex;
+
 #ifdef WIN32
  void* m_thread;
 #else
@@ -30,8 +33,15 @@ public:
  void exit();
  void join();
 
+ static Mutex mutex();
+ static void  free(Mutex);
+ static void  lock(Mutex);
+ static void  unlock(Mutex);
+ static bool  lockable(Mutex);
+
 protected: 
  virtual void run() = 0;
+
 private:
  static void thread(kgmThread *p);
 };
