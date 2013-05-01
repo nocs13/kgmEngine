@@ -1,5 +1,7 @@
 #include "kgmOSL.h"
 #include "../kgmBase/kgmLog.h"
+#include "kgmThread.h"
+#include "kgmSystem.h"
 
 #ifdef OSL
 
@@ -106,14 +108,18 @@ kgmOSL::kgmOSL()
 
   const SLInterfaceID listener_ids[] = {SL_IID_3DLOCATION, SL_IID_3DSOURCE};
   const SLboolean     listener_req[] = {SL_BOOLEAN_TRUE,  SL_BOOLEAN_TRUE};
-  result = (*mEngine)->CreateListener(engineEngine, &listenerObject, 1, listener_ids, listener_req);
+  result = (*engineEngine)->CreateListener(engineEngine, &listenerObject, 1, listener_ids, listener_req);
 
   if(result != SL_RESULT_SUCCESS)
     return;
+
+  mux = mutex();
+  exec();
 }
 
 kgmOSL::~kgmOSL()
 {
+  free(mux);
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
@@ -194,7 +200,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
         (bitsPerSample == 0xffffffff))
     return null;
 
-  _Sound*  sound = new _Sound();
+  _Sound*  sound = new _Sound(this);
   SLresult result;
 
   sound->buffer = malloc(size);
@@ -294,6 +300,9 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
 
 void kgmOSL::release()
 {
+  active = false;
+  join();
+
     if(outputMixObject)
     {
       kgm_log() << "OSL delete outputMixObject \n";
@@ -318,6 +327,27 @@ void kgmOSL::remove(_Sound* s)
             return;
         }
     }
+}
+
+void kgmOSL::run()
+{
+  active = true;
+
+  while(active)
+  {
+    lock(mux);
+
+    for(int i = 0; i < sounds.length(); i++)
+    {
+      _Sound* s = sounds[i];
+
+      float dst = s->position.distance(position);
+      s->volume(100 / (dst + 1));
+    }
+
+    unlock(mux);
+    kgmSystem::sleep(200);
+  }
 }
 
 #endif

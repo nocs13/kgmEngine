@@ -1,4 +1,6 @@
 #include "kgmGameApp.h"
+#include "../kgmBase/kgmEvent.h"
+#include "../kgmSystem/kgmWindow.h"
 
 //FOR ANDROID
 #ifdef ANDROID
@@ -22,7 +24,14 @@ AAssetManager* g_assetManager = NULL;
 static JavaVM* jvm;
 
 //Game object create function. Should be run from outside.
-extern kgmIGame* kgm_android_initGame();
+extern kgmIGame* kgm_android_init();
+extern void      kgm_android_quit();
+extern void      kgm_android_idle();
+extern void      kgm_android_input(kgmEvent::Event*);
+extern void      kgm_android_resize(int, int);
+extern void      kgm_android_close();
+extern void      kgm_android_release();
+extern bool      kgm_android_msabsolute();
 
 kgm_android_exit()
 {
@@ -55,14 +64,13 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv* env, jobject
 {
     if(g_game)
     {
-      g_game->setRect(0, 0, width, height);
+      kgm_android_resize(width, height);
 
       return;
     }
 
     LOGI("kgmTest init\n");
     AAssetManager* mgr = AAssetManager_fromJava(env, am);
-    assert(NULL != mgr);
     g_assetManager = mgr;
     env->NewGlobalRef(am);
     LOGI("kgmEngine init asset manager\n");
@@ -73,11 +81,11 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv* env, jobject
     //LOGI("kgmTest init native widnow\n");
 
     kgmString spath;
-    g_game = kgm_android_initGame();
+    g_game = kgm_android_init();
     
     if(g_game)
     {
-      g_game->setRect(0, 0, width, height);
+      kgm_android_resize(width, height);
 
       LOGI("kgmEngine inited\n");
     }
@@ -90,8 +98,8 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_quit(JNIEnv * env, jobjec
     if(g_game)
     {
       LOGI("kgmEngine release game\n");
-      g_game->onClose();
-      g_game->release();
+      kgm_android_close();
+      kgm_android_release();
     }
 
     g_game = null;
@@ -101,7 +109,7 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_idle(JNIEnv * env, jobjec
 {
     if(g_game)
     {
-      g_game->onIdle();
+      kgm_android_idle();
     }
 }
 
@@ -120,12 +128,12 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onKeyboard(JNIEnv * env, 
       case 0:
           evt.event = evtKeyDown;
           evt.key = keyTranslate(key);
-          g_game->onEvent(&evt);
+          kgm_android_input(&evt);
           break;
       case 1:
           evt.event = evtKeyUp;
           evt.key = keyTranslate(key);
-          g_game->onEvent(&evt);
+          kgm_android_input(&evt);
           break;
       default:
           break;
@@ -151,7 +159,7 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
       case 0:
           evt.event = evtMsMove;
 
-          if(g_game->m_msAbs)
+          if(kgm_android_msabsolute())
           {
             evt.msx = x - prev_x;
             evt.msy = y - prev_y;
@@ -163,19 +171,19 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
            evt.msx = x;
            evt.msy = y;
           }
-          g_game->onEvent(&evt);
+          kgm_android_input(&evt);
           break;
       case 1:
           evt.event = evtMsLeftDown;
           evt.msx = x;
           evt.msy = y;
-          g_game->onEvent(&evt);
+          kgm_android_input(&evt);
           break;
       case 2:
           evt.event = evtMsLeftUp;
           evt.msx = x;
           evt.msy = y;
-          g_game->onEvent(&evt);
+          kgm_android_input(&evt);
           break;
       default:
           break;

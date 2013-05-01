@@ -2,6 +2,8 @@
 #define KGMOSL_H
 
 #include "../kgmBase/kgmIAudio.h"
+#include "../kgmBase/kgmList.h"
+#include "kgmThread.h"
 
 #ifdef OSL
 #include <SLES/OpenSLES.h>
@@ -10,7 +12,7 @@
 #include <SLES/OpenSLES_Android.h>
 #endif
 
-class kgmOSL: public kgmIAudio
+class kgmOSL: public kgmIAudio, public kgmThread
 {
     class _Sound: public Sound{
       kgmOSL*     osl;
@@ -44,14 +46,22 @@ class kgmOSL: public kgmIAudio
     SLObjectItf listenerObject;
 
     kgmList<_Sound*> sounds;
+    Mutex            mux;
+    bool             active;
+
+    vec3  position;
+    vec3  velosity;
+    vec3  orientation;
 public:
     kgmOSL();
     virtual ~kgmOSL();
 
     Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
-    void 	 listener(vec3& pos, vec3& vel, vec3& ort);
+    void     listener(vec3& pos, vec3& vel, vec3& ort);
     void     release();
     void     remove(_Sound*);
+
+    void     run();
 };
 #endif
 

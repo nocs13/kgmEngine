@@ -17,6 +17,7 @@
 class kgmThread{
 
 public:
+typedef long  TID;
 typedef void* Mutex;
 
 #ifdef WIN32
@@ -38,6 +39,8 @@ public:
  static void  lock(Mutex);
  static void  unlock(Mutex);
  static bool  lockable(Mutex);
+
+ static TID   idThread();
 
 protected: 
  virtual void run() = 0;

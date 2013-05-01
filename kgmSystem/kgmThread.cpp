@@ -1,4 +1,5 @@
 #include "kgmThread.h"
+#include "kgmSystem.h"
 
 void kgmThread::thread(kgmThread *p)
 {
@@ -39,9 +40,10 @@ void kgmThread::exit()
 #ifdef WIN32 
  _endthread();
 #else
- pthread_cancel(m_thread);
+ //pthread_cancel(m_thread);
+ pthread_kill(m_thread, 9);
 #endif 
- m_thread = 0;
+ m_thread = null;
 }
 
 void kgmThread::join()
@@ -125,5 +127,16 @@ bool  kgmThread::lockable(Mutex m)
 #endif
 
   return false;
+}
+
+kgmThread::TID  kgmThread::idThread()
+{
+#ifdef WIN32
+  //_endthread();
+#else
+  return pthread_self();
+#endif
+
+  return -1;
 }
 
