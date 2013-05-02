@@ -26,14 +26,17 @@ class kgmOAL: public kgmIAudio
   class _Sound: public Sound{
     u32	buffer;
     u32	source;
+
+    virtual ~_Sound();
   public:
     _Sound(u32 buf, u32 src);
-    virtual ~_Sound();
     void stop();
     void play(bool loop);
     void pause();
     void volume(float vol);
     void emit(vec3& pos, vec3& vel);
+
+    void drop();
   };
 
   ALCdevice*   m_device;

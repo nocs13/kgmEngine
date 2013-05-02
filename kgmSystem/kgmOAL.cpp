@@ -45,6 +45,11 @@ void kgmOAL::_Sound::emit(vec3& pos, vec3& vel){
   alSource3f(source, AL_VELOCITY, vel.x, vel.y, vel.z);
 }
 
+void kgmOAL::_Sound::drop()
+{
+    delete this;
+}
+
 kgmOAL::kgmOAL()
 {
  m_device = alcOpenDevice(NULL);

@@ -39,9 +39,10 @@ void kgmThread::exit()
 {
 #ifdef WIN32 
  _endthread();
-#else
- //pthread_cancel(m_thread);
+#elif defined ANDROID
  pthread_kill(m_thread, 9);
+#else
+ pthread_cancel(m_thread);
 #endif 
  m_thread = null;
 }
