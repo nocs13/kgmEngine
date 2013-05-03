@@ -1,5 +1,5 @@
 #pragma once
-#include "kgmInterface.h"
+#include "../kgmBase/kgmInterface.h"
 #include "../kgmMath/kgmMath.h"
 
 //class kgmWave;

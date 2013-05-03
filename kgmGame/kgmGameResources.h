@@ -4,7 +4,7 @@
 #include "../kgmBase/kgmArchive.h"
 #include "../kgmBase/kgmResource.h"
 #include "../kgmBase/kgmMemory.h"
-#include "../kgmBase/kgmSound.h"
+#include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmAnimation.h"
 #include "../kgmGraphics/kgmPicture.h"
 #include "../kgmGraphics/kgmTexture.h"

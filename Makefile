@@ -12,6 +12,7 @@ build:
 	make -C kgmSystem -f Makefile
 	make -C kgmGraphics -f Makefile
 	make -C kgmPhysics -f Makefile
+	make -C kgmMedia -f Makefile
 	make -C kgmGame -f Makefile
 
 	echo "linking..."
@@ -21,6 +22,7 @@ build:
 	ar crs libkgmEngine.a kgmSystem/*.o
 	ar crs libkgmEngine.a kgmPhysics/*.o
 	ar crs libkgmEngine.a kgmGraphics/*.o
+	ar crs libkgmEngine.a kgmMedia/*.o
 	ar crs libkgmEngine.a kgmGame/*.o
 
 	echo "building"
@@ -37,6 +39,7 @@ clean:
 	$(RM) kgmSystem/*.o
 	$(RM) kgmGraphics/*.o
 	$(RM) kgmPhysics/*.o
+	$(RM) kgmMedia/*.o
 	$(RM) kgmGame/*.o
 	$(RM) Test/*.o Test/kTest Test/kTest.exe
 
@@ -64,30 +67,6 @@ sdk: clean build
 	cp kgmNet/*.h       kgmEngine/kgmNet/.
 	cp kgmGame/*.h      kgmEngine/kgmGame/.
 	cp libkgmEngine.a   kgmEngine/.
-
-kgmBase:	
-	make -C kgmBase -f Makefile
-	ar crs libkgmEngine.a kgmBase/*.o
-
-kgmMath:
-	make -C kgmMath -f Makefile
-	ar crs libkgmEngine.a kgmMath/*.o
-
-kgmNet:
-	make -C kgmNet -f Makefile
-	ar crs libkgmEngine.a kgmNet/*.o
-
-kgmGraphics:
-	make -C kgmGraphics -f Makefile
-	ar crs libkgmEngine.a kgmGraphics/*.o
-
-kgmPhysics:
-	make -C kgmPhysics -f Makefile
-	ar crs libkgmEngine.a kgmPhysics/*.o
-
-kgmGame:
-	make -C kgmGame -f Makefile
-	ar crs libkgmEngine.a kgmGame/*.o
 
 android:
 	make -C android clean && make -C android

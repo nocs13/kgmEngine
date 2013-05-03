@@ -35,7 +35,9 @@ void kgmOAL::_Sound::stop(){
 void kgmOAL::_Sound::play(bool loop){
   alSourcei(source, AL_LOOPING, (loop)?(AL_TRUE):(AL_FALSE));
   alSourcePlay(source);
-  if((error = alGetError()) != AL_NO_ERROR){
+  if((error = alGetError()) != AL_NO_ERROR)
+  {
+      int k = 0;
   }
 }
 

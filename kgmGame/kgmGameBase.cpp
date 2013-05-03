@@ -3,10 +3,11 @@
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmTime.h"
-#include "../kgmBase/kgmIAudio.h"
-#include "../kgmBase/kgmSound.h"
 #include "../kgmBase/kgmBase.h"
 #include "../kgmBase/kgmLog.h"
+
+#include "../kgmMedia/kgmIAudio.h"
+#include "../kgmMedia/kgmSound.h"
 
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmSystem/kgmThread.h"

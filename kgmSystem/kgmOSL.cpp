@@ -150,6 +150,7 @@ kgmOSL::kgmOSL()
   mux = mutex();
   kgm_log() << "OSL start control thread\n";
   exec();
+  priority(-2);
 }
 
 kgmOSL::~kgmOSL()

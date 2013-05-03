@@ -13,7 +13,7 @@
 #include "../kgmGraphics/kgmDummy.h"
 #include "../kgmGraphics/kgmCamera.h"
 
-#include "../kgmBase/kgmSound.h"
+#include "../kgmMedia/kgmSound.h"
 
 #include "../kgmPhysics/kgmBody.h"
 #include "kgmGamePhysics.h"

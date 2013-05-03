@@ -1,8 +1,8 @@
 #ifndef KGMOSL_H
 #define KGMOSL_H
 
-#include "../kgmBase/kgmIAudio.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmMedia/kgmIAudio.h"
 #include "kgmThread.h"
 
 #ifdef OSL

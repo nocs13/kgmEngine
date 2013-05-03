@@ -5,9 +5,9 @@
 
 #include "../kgmBase/kgmEnvironment.h"
 #include "../kgmBase/kgmFile.h"
-#include "../kgmBase/kgmIAudio.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmMedia/kgmSound.h"
 
 #include "../kgmSystem/kgmSystem.h"
 

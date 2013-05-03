@@ -57,6 +57,49 @@ void kgmThread::join()
  m_thread = 0;
 }
 
+void kgmThread::priority(int prio)
+{
+  if(!m_thread)
+    return;
+
+#ifdef WIN32
+  //_endthread();
+#else
+
+#ifdef ANDROID
+#define SCHED_BATCH SCHED_NORMAL
+#define SCHED_IDLE  SCHED_NORMAL
+#endif
+
+  int policy = SCHED_OTHER;
+  sched_param param{0};
+
+  switch(prio)
+  {
+  case -1:
+      policy = SCHED_BATCH;
+      break;
+  case -2:
+      policy = SCHED_IDLE;
+      break;
+  case 1:
+      policy = SCHED_RR;
+      param.sched_priority = 20;
+      break;
+  case 2:
+      policy = SCHED_RR;
+      param.sched_priority = 50;
+      break;
+  default:
+      pthread_getschedparam(0, &policy, &param);
+      break;
+  }
+
+  pthread_setschedparam(m_thread, policy, &param);
+#endif
+ m_thread = 0;
+}
+
 kgmThread::Mutex kgmThread::mutex()
 {
 #ifdef WIN32

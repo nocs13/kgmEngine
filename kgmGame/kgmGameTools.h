@@ -2,11 +2,10 @@
 #include "../kgmBase/kgmIGraphics.h"
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmString.h"
-#include "../kgmBase/kgmSound.h"
-#include "../kgmBase/kgmWave.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmMemory.h"
-
+#include "../kgmMedia/kgmSound.h"
+#include "../kgmMedia/kgmWave.h"
 #include "../kgmGraphics/kgmFont.h"
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmPolygon.h"

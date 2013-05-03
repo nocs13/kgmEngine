@@ -1,6 +1,6 @@
 #pragma once
 #include "kgmIAudio.h"
-#include "kgmResource.h"
+#include "../kgmBase/kgmResource.h"
 
 class kgmSound: public kgmResource{
  KGM_OBJECT(kgmSound)

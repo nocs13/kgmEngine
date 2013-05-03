@@ -3,9 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "../kgmBase/kgmIAudio.h"
-#include "../kgmBase/kgmSound.h"
-#include "../kgmBase/kgmWave.h"
+#include "../kgmMedia/kgmIAudio.h"
+#include "../kgmMedia/kgmSound.h"
+#include "../kgmMedia/kgmWave.h"
 #include "../kgmMath/kgmMath.h"
 
 #ifdef WIN32

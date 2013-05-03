@@ -11,6 +11,7 @@
  #include <stdlib.h>
  #include <unistd.h>
  #include <pthread.h>
+ #include <sched.h>
 #endif
 
 
@@ -33,6 +34,7 @@ public:
  bool exec();
  void exit();
  void join();
+ void priority(int);
 
  static Mutex mutex();
  static void  free(Mutex);

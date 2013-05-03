@@ -3,10 +3,10 @@
 
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmMemory.h"
-#include "../kgmBase/kgmIAudio.h"
 #include "../kgmBase/kgmIGraphics.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmMath/kgmRect.h"
+#include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmPicture.h"
 
 static char str_buf[1024];
