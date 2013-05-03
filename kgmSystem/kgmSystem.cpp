@@ -40,7 +40,7 @@ struct CPU
 void kgmSystem::sleep(u32 ms){
 #ifdef WIN32
   Sleep(ms);
-#elif defined LINUX
+#else
   usleep(ms);
 #endif
 }

@@ -17,6 +17,7 @@ public:
  
   class Sound{
   public:
+    virtual void release()                  = 0;
     virtual void stop()                     = 0;
     virtual void play(bool loop)            = 0;
     virtual void pause()                    = 0;
@@ -25,6 +26,6 @@ public:
   }; 
 public:
   virtual Sound* create(FMT fmt, u16 freq, u32 size, void* data) = 0; //create sound object from .wav ...
-  virtual void   listener(vec3& pos, vec3& vel, vec3& ort) = 0;
-  virtual void   release() = 0;
+  virtual void   listener(vec3& pos, vec3& vel, vec3& ort)       = 0;
+  virtual void   release()                                       = 0;
 };

@@ -41,16 +41,17 @@ class kGame: public kgmGameBase{
   };
 
   kGui* gui;
+  kgmSound* snd;
 
 public:
   kGame(){
       gui = new kGui(this);
       m_msAbs = false;
 
-      kgmSound* snd = m_game->getResources()->getSound("1.wav");
+      snd = m_game->getResources()->getSound("1.wav");
       if(snd && snd->getSound())
       {
-        snd->getSound()->play(false);
+        snd->getSound()->play(true);
       }
   }
 
@@ -106,6 +107,12 @@ public:
     if(gState() == State_Play)
     {
       m_render->camera().rotate(0.02f * x, 0.02f * y);
+    }
+
+    if(snd)
+    {
+      vec3 pos(x, y, 0), vel(0,0,0);
+      snd->getSound()->emit(pos, vel);
     }
   }
 

@@ -20,6 +20,7 @@ class kgmOSL: public kgmIAudio, public kgmThread
       SLObjectItf audioPlayerObject;
       SLPlayItf   audioPlayer;
       SLVolumeItf audioVolume;
+      SLSeekItf   audioSeek;
 #ifdef ANDROID
       SLAndroidSimpleBufferQueueItf audioPlayerQueue;
 #else
@@ -29,10 +30,16 @@ class kgmOSL: public kgmIAudio, public kgmThread
         uint  length;
 
         vec3  position;
-        vec3  velosity;
+        vec3  velocity;
+
+        bool  remove;
+        bool  loop;
+        float vol;
+    protected:
     public:
         _Sound(kgmOSL*);
         virtual ~_Sound();
+        void release();
         void stop();
         void play(bool loop);
         void pause();
@@ -50,8 +57,8 @@ class kgmOSL: public kgmIAudio, public kgmThread
     bool             active;
 
     vec3  position;
-    vec3  velosity;
-    vec3  orientation;
+    vec3  velocity;
+    vec3  orient;
 public:
     kgmOSL();
     virtual ~kgmOSL();
@@ -59,9 +66,10 @@ public:
     Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
     void     listener(vec3& pos, vec3& vel, vec3& ort);
     void     release();
-    void     remove(_Sound*);
 
     void     run();
+
+    static void OSL_sound_bufferQueue_callback(SLBufferQueueItf,void*);
 };
 #endif
 

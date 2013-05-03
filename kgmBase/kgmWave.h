@@ -30,10 +30,10 @@ u32      riff_size;
 u32      riff_format;
 u32      fmt_id;
 u32      fmt_size;
-WAVE_FMT  fmt_format;
+WAVE_FMT fmt_format;
 u32      data_id;
 u32      data_size;
-char*     data; 
+char*    data;
 
 public:
 

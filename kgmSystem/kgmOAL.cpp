@@ -19,8 +19,13 @@ kgmOAL::_Sound::_Sound(u32 buf, u32 src){
 }
 
 kgmOAL::_Sound::~_Sound(){
+}
+
+void kgmOAL::_Sound::release(){
   alDeleteSources(1, &source);
   alDeleteBuffers(1, &buffer);
+
+  delete this;
 }
 
 void kgmOAL::_Sound::stop(){

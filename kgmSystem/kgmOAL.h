@@ -30,6 +30,7 @@ class kgmOAL: public kgmIAudio
     virtual ~_Sound();
   public:
     _Sound(u32 buf, u32 src);
+    void release();
     void stop();
     void play(bool loop);
     void pause();
