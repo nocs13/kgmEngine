@@ -18,95 +18,102 @@
 #include "../kgmPhysics/kgmBody.h"
 #include "kgmGamePhysics.h"
 
-class kgmActor: public kgmObject{
-  KGM_OBJECT(kgmActor)
+class kgmActor: public kgmObject
+{
+    KGM_OBJECT(kgmActor);
 public:
-  class State
-  {
-   public:
-    kgmString id;
-    u32       priopity;
+    class State
+    {
+    public:
+        kgmString id;
+        kgmString type;
+        kgmString switchto;
 
-    kgmTab<kgmString, kgmString> options;
-  };
+        u32       priopity;
+        u32       animation;
+        u32       sound;
+        u32       time;
+
+        kgmTab<kgmString, kgmString> options;
+    };
 
 protected:
-  kgmActor* 	        m_parent;
-  kgmList<kgmActor*>  m_childs;
+    kgmActor* 	        m_parent;
+    kgmList<kgmActor*>  m_childs;
 
 public:
-  u32     m_uid;
-  u32     m_type;
-  u32     m_state;
-  u32     m_bearing;
+    u32     m_uid;
+    u32     m_type;
+    u32     m_state;
+    u32     m_bearing;
 
-  bool    m_enable;
-  bool    m_visible;
-  bool    m_active;
-  bool    m_remove;
-  bool    m_culled;
+    bool    m_enable;
+    bool    m_visible;
+    bool    m_active;
+    bool    m_remove;
+    bool    m_culled;
 
-  u32     m_group;
-  u32     m_birth;
-  u32     m_health;
-  u32     m_attack;
-  u32     m_defence;
-  u32     m_evasion;
-  u32     m_accuracy;
-  u32     m_timeout;
+    u32     m_group;
+    u32     m_birth;
+    u32     m_health;
+    u32     m_attack;
+    u32     m_defence;
+    u32     m_evasion;
+    u32     m_accuracy;
+    u32     m_timeout;
 
-  mtx4    m_transform;
+    mtx4    m_transform;
 
-  kgmString m_id;
-  kgmString m_name;
-  kgmString m_class;
+    kgmString m_id;
+    kgmString m_name;
+    kgmString m_class;
 
-  kgmBody*            m_body;
-  kgmVisual*          m_visual;
+    kgmBody*            m_body;
+    kgmVisual*          m_visual;
 
-  kgmList<kgmDummy*>  m_dummies;
+    kgmList<kgmDummy*>  m_dummies;
 
-  bool                m_animation, m_animation_loop;
-  float               m_animation_start, m_animation_end, m_animation_frame;
+    bool                m_animation, m_animation_loop;
+    float               m_animation_start, m_animation_end, m_animation_frame;
 
 public:
-  kgmActor();
-  virtual ~kgmActor();
+    kgmActor();
+    virtual ~kgmActor();
 
-  virtual void init();
-  virtual void exit();
-  virtual void tick(u32);
+    virtual void init();
+    virtual void exit();
+    virtual void tick(u32);
 
-  void remove();
+    void remove();
 
-  void enable(bool s);
-  void active(bool a);
-  void visible(bool a);
+    void enable(bool s);
+    void active(bool a);
+    void visible(bool a);
 
-  bool enabled();
-  bool removed();
+    bool enabled();
+    bool removed();
 
-  void setPosition(vec3& v);
-  void setRotation(vec3& r);
-  void setRotation(quat& r);
-  void setDirection(vec3& d);
-  void setForce(float f, vec3& dir);
+    void setPosition(vec3& v);
+    void setRotation(vec3& r);
+    void setRotation(quat& r);
+    void setDirection(vec3& d);
+    void setForce(float f, vec3& dir);
 
-  void setParent(kgmActor* a);
-  void addChild(kgmActor* a);
-  void delChild(kgmActor* a);
+    void setParent(kgmActor* a);
+    void addChild(kgmActor* a);
+    void delChild(kgmActor* a);
 
-  void add(kgmDummy* m){
-    if(m)
-      m_dummies.add(m);
-  }
+    void add(kgmDummy* m){
+        if(m)
+            m_dummies.add(m);
+    }
 
-  void animate(float sf=0, float ef=0, bool loop=false){
-   m_animation_start   = m_animation_frame = sf;
-   m_animation_end     = ef;
-   m_animation_loop    = loop;
-   m_animation         = true;
-  }
+    void animate(float sf=0, float ef=0, bool loop=false){
+        m_animation_start   = m_animation_frame = sf;
+        m_animation_end     = ef;
+        m_animation_loop    = loop;
+        m_animation         = true;
+    }
 
 };
 
