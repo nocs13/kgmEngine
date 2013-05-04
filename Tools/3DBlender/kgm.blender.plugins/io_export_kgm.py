@@ -163,11 +163,12 @@ class kgmFace:
 
 
 class kgmMesh:
-#
  def __init__(self, o):
-  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
+#  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
+  mesh = o.data
   mtx = o.matrix_local
 
+  print('Current mesh: ' + mesh.name)
   self.name = mesh.name
   self.vertices = []
   self.faces = []
@@ -175,7 +176,6 @@ class kgmMesh:
   self.mtls = []
   self.hasvgroups = True if len(o.vertex_groups) > 0 else False
   print('VertexGroups: ' + str(len(o.vertex_groups)))
-
 
   for m in mesh.materials:
    b = False
@@ -190,6 +190,7 @@ class kgmMesh:
   uvcoord = len(mesh.uv_textures)
 
   if hasattr(mesh, 'faces'):
+    print('Faces: ' + str(len(mesh.faces)))
     for i in range(0, len(mesh.faces)):
      face = mesh.faces[i]
      iface = [-1, -1, -1, -1]
@@ -228,7 +229,6 @@ class kgmMesh:
   for i in range(0, len(self.vertices)):
    v = self.vertices[i]
    if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
-#    iv = i
     if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
      iv = i
      if (v.n[0] != vx.n[0]) or (v.n[1] != vx.n[1]) or (v.n[2] != vx.n[2]):
@@ -303,33 +303,14 @@ class kgmBoneAnimation(kgmAnimation):
    currentScene.frame_set(frame)
    allBones = currentScene.objects[a.name].pose.bones
    for bn in allBones:
-    #print("Bone: " + bn.name + " " + o.name) 
     if bn.name == o.name:
-     print("Bone " + " name: " + bn.name + " frame: " + str(frame) +  " mtx: " + str(bn.matrix))
-#     mtx = mathutils.Matrix(((o.matrix[1],  o.matrix[2],  o.matrix[3],  o.matrix[4]), 
-#                             (o.matrix[5],  o.matrix[6],  o.matrix[7],  o.matrix[8]), 
-#                             (o.matrix[9],  o.matrix[10], o.matrix[11], o.matrix[12]), 
-#                             (o.matrix[13], o.matrix[14], o.matrix[15], o.matrix[16]))).to_4x4()
+     #print("Bone " + " name: " + bn.name + " frame: " + str(frame) +  " mtx: " + str(bn.matrix))
      mtx = bn.matrix.to_4x4()
      pos = mtx.to_translation()
      rot = mtx.to_quaternion()
-    
-#  frameCount = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
-#  for frame in range(0, frameCount):
-#    print("frame: " + str(frame))
-#    bpy.context.scene.frame_set(bpy.context.scene.frame_start + frame)
-#    bpy.context.scene.update()
-#    mtx = o.matrix_local
-#    pos = mtx.to_translation()
-#    rot = mtx.to_quaternion()
-
-#   if o.bone.parent:
-#    p_pos = mathutils.Vector((0, 0, 0)) * o.bone.parent.matrix_local
-#    p_rot = o.bone.parent.matrix_local.to_quaternion()
-#    pos = pos - p_pos
-#    rot = rot - p_rot
      f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
      self.frames.append(f)
+  currentScene.frame_set(startFrame)
 
 
 class kgmActor:
@@ -365,8 +346,8 @@ class kgmExport(bpy.types.Operator):
  exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
  exp_lights = BoolProperty(name="Export Lights", description="", default=True)
  exp_materials = BoolProperty(name="Export Materials", description="", default=True)
- exp_cameras = BoolProperty(name="Export Cameras", description="", default=True)
- exp_armatures = BoolProperty(name="Export Armatures", description="", default=True)
+ exp_cameras = BoolProperty(name="Export Cameras", description="", default=False)
+ exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
  exp_kgmactors = BoolProperty(name="Export kgmActors", description="", default=True)
  is_selection = BoolProperty(name="Selected only", description="", default=False)
@@ -382,9 +363,6 @@ class kgmExport(bpy.types.Operator):
  #if not self.is_property_set("filepath"):
  #raise Exception("filename not set")
 
-#  if bpy.ops.object.mode_set.poll():
-#   bpy.ops.object.mode_set(mode='OBJECT')
-
   scene = context.scene
   for o in scene.objects:
    print(o.name + o.type)
@@ -394,7 +372,7 @@ class kgmExport(bpy.types.Operator):
   else:
    objects = [ob for ob in scene.objects if ob.is_visible(scene)]
 
-  cFrame = bpy.context.scene.frame_current
+  #cFrame = bpy.context.scene.frame_current
 
   print("Collect Objects...")
   meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes]
@@ -405,30 +383,15 @@ class kgmExport(bpy.types.Operator):
   actors = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
 #  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
   animations = []
+  
   if self.exp_animations:
     armatures = [ob for ob in objects if ob.type == 'ARMATURE']
     for armature in armatures:
       print("scan armature")
-      #bpy.ops.object.mode_set(mode='POSE')
       for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
-#      bpy.ops.object.mode_set(mode='OBJECT')
-#   if hasattr(bpy.context, 'visible_pose_bones') and (type(bpy.context.visible_pose_bones) == bpy.types.PoseBone):
-#    print('Have pose bones' + bpy.context.visible_pose_bones.Type + ' \n')
-#    for b in bpy.context.visible_pose_bones:
-#     animations.append(kgmBoneAnimation(b, None))
-  '''
-  animations = []
-  if self.exp_animations:
-   for ob in objects:
-    if ob.type == 'ARMATURE':
-     for bn in ob.data.bones:
-      animations.append(kgmAnimation(bn))
-    else:
-     animations.append(kgmAnimation(ob))
-  '''
 
-  bpy.context.scene.frame_current = cFrame
+  #bpy.context.scene.frame_current = cFrame
 
   print("Animations: " + str(len(animations)))
   print("Objects: " + str(len(objects)))
@@ -494,6 +457,9 @@ class kgmExport(bpy.types.Operator):
   #meshes
   for o in meshes:
    file.write(" <kgmMesh name='" + o.name + "'>\n")
+   if len(o.mtls) > 0:
+    file.write("  <Material name='" + o.mtls[0] + "' />\n")
+     
    file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
    for v in o.vertices:
     file.write("   " + str(v.v[0]) + " " + str(v.v[1]) + " " + str(v.v[2]))

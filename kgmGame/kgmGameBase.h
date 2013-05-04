@@ -56,7 +56,7 @@ public:
 
  kgmGameLogic*         m_logic;
  kgmGameGraphics*      m_render;
- kgmList<kgmObject*>   m_objects;
+ //kgmList<kgmObject*>   m_objects;
  kgmList<kgmGui*>      m_guis;     //game or nongame guis
 
  ////////////////

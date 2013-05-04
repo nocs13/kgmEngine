@@ -194,10 +194,17 @@ void kgmGameGraphics::render(kgmMaterial* m){
     tspecular = m->m_tex_specular->m_texture;
   }
 
-  kgmShader* s = shaders[(u16)m->m_shader];
-  if(!s)
-    s = shaders[kgmMaterial::ShaderNone];
-  render(s, m->m_shader);
+  if(shaders.length() > (u16)m->m_shader)
+  {
+    kgmShader* s = shaders[(u16)m->m_shader];
+    if(!s)
+      s = shaders[kgmMaterial::ShaderNone];
+    render(s, m->m_shader);
+  }
+  else
+  {
+    gc->gcSetShader(null);
+  }
 }
 
 void kgmGameGraphics::render(kgmShader* s, u32 t){

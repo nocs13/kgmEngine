@@ -386,7 +386,7 @@ void kgmGameBase::onEvent(kgmEvent::Event* e){
 //Game Functions
 int kgmGameBase::gLoad(kgmString s)
 {
-    if(m_objects.size())
+    //if(m_objects.size())
         gUnload();
 
     kgm_log() << kgm_log_label() << " " << "Loading game map " << (char*)s << "..." << "\n";
@@ -395,10 +395,10 @@ int kgmGameBase::gLoad(kgmString s)
 
     loadXml_II(s);
 
-    if(m_objects.size()){
+    //if(m_objects.size()){
         //m_node->add(new kgmGameNode(new kgmCamera()));
         //m_render->add(m_node);
-    }
+    //}
 
     m_render->build();
     m_physics->build();
@@ -422,11 +422,11 @@ int kgmGameBase::gUnload()
     if(m_logic)
         m_logic->clear();
 
-    if(m_objects.length() > 0){
+    /*if(m_objects.length() > 0){
         for(int i = 0; i < m_objects.length(); i++)
             m_objects[i]->release();
         m_objects.clear();
-    }
+    }*/
 
     m_state = state;
 
@@ -616,21 +616,21 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
             xmlAttr(node, "name", id);
             obj = mtl = new kgmMaterial();
             ((kgmMaterial*)obj)->setId(id);
-            m_objects.add(obj);
+            //m_objects.add(obj);
         }else if(id == "kgmCamera"){
             obj = cam = new kgmCamera();
-            m_objects.add(obj);
+            //m_objects.add(obj);
         }else if(id == "kgmLight"){
             obj = lgt = new kgmLight();
-            m_objects.add(obj);
+            //m_objects.add(obj);
         }else if(id == "kgmMesh"){
             obj = msh = new kgmMesh();
-            m_objects.add(obj);
+            //m_objects.add(obj);
         }else if(id == "kgmActor"){
             kgmString s;
             xmlAttr(node, "type", s);
             obj = act = new kgmActor();
-            m_objects.add(obj);
+            //m_objects.add(obj);
         }
 
         for(int j = 0; j < node->nodes(); j++){
@@ -649,12 +649,12 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
                 kgmString data;
                 xmlAttr(cnode, "name", data);
                 kgmMaterial* mtl = 0;
-                for(int i = 0; i < m_objects.size(); i++){
+                /*for(int i = 0; i < m_objects.size(); i++){
                     if(m_objects[i]->isClass(kgmMaterial::Class) && ((kgmMaterial*)m_objects[i])->m_id == data){
                         mtl = (kgmMaterial*)m_objects[i];
                         break;
                     }
-                }
+                }*/
             }else if(id == "Vertices"){
                 int len = 0, n = 0;
                 kgmString data;
@@ -759,7 +759,9 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
     kgmString      m_data = "";
 
-    while(kgmXml::XmlState xstate = xml.next()){
+    while(kgmXml::XmlState xstate = xml.next())
+    {
+        kgmString id, value, t;
 
         if(xstate == kgmXml::XML_ERROR)
         {
@@ -771,8 +773,6 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         }
         else if(xstate == kgmXml::XML_TAG_OPEN)
         {
-            kgmString id, value, t;
-
             id = xml.m_tagName;
             kgm_log() << "Node: " << (char*)id << "\n";
 
@@ -784,7 +784,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 obj = mtl = new kgmMaterial();
                 mtl->setId(id);
                 m_render->add(mtl);
-                m_objects.add(obj);
+                //m_objects.add(obj);
             }
             else if(id == "kgmCamera")
             {
@@ -796,7 +796,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 type = TypeLight;
                 obj = lgt = new kgmLight();
                 m_render->add(lgt);
-                m_objects.add(obj);
+                //m_objects.add(obj);
             }
             else if(id == "kgmMesh")
             {
@@ -816,30 +816,6 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                     m_physics->add(act->m_body);
                     //m_objects.add(obj);
                 }
-            }
-            else if(id == "Color")
-            {
-            }
-            else if(id == "Ambient")
-            {
-            }
-            else if(id == "Specular")
-            {
-            }
-            else if(id == "Shininess")
-            {
-            }
-            else if(id == "Transparency")
-            {
-            }
-            else if(id == "Texture")
-            {
-            }
-            else if(id == "Shader")
-            {
-            }
-            else if(id == "Material")
-            {
             }
             else if(id == "Vertices")
             {
@@ -861,43 +837,87 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
                 m_data = "faces";
             }
-            else if(id == "Position")
-            {
-                vec3 v;
-                xml.attribute("value", value);
-                sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-
-                switch(type){
-                case TypeCamera:
-                    m_render->camera().mPos = v;
-                    break;
-                default:
-                    if(act)
-                        act->setPosition(v);
-                }
-            }
-            else if(id == "Rotation")
-            {
-                vec3 v;
-                xml.attribute("value", value);
-                sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-
-                if(act)
-                    act->setRotation(v);
-            }
-            else if(id == "Quaternion")
-            {
-                quat q;
-                xml.attribute("value", value);
-                sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
-
-                if(act)
-                    act->setRotation(q);
-            }
         }
         else if(xstate == kgmXml::XML_TAG_CLOSE)
         {
+          id = xml.m_tagName;
+          kgm_log() << "Node: " << (char*)id << "\n";
 
+          if(id == "Color")
+          {
+          }
+          else if(id == "Ambient")
+          {
+          }
+          else if(id == "Specular")
+          {
+          }
+          else if(id == "Shininess")
+          {
+          }
+          else if(id == "Transparency")
+          {
+          }
+          else if(id == "Texture")
+          {
+            kgmString data;
+
+            if(xml.attribute("value", data))
+            {
+              mtl->m_tex_ambient = mtl->m_tex_diffuse =
+              m_resources->getTexture(data);
+            }
+          }
+          else if(id == "Shader")
+          {
+          }
+          else if(id == "Material")
+          {
+            if(type == TypeMesh)
+            {
+              kgmString data;
+              kgmMaterial* mtl = null;
+
+              if(xml.attribute("name", data))
+              {
+               m_render->get(data, &mtl);
+               m_render->set(msh, mtl);
+              }
+            }
+          }
+          else if(id == "Position")
+          {
+              vec3 v;
+              xml.attribute("value", value);
+              sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+              switch(type){
+              case TypeCamera:
+                  m_render->camera().mPos = v;
+                  break;
+              default:
+                  if(act)
+                      act->setPosition(v);
+              }
+          }
+          else if(id == "Rotation")
+          {
+              vec3 v;
+              xml.attribute("value", value);
+              sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+              if(act)
+                  act->setRotation(v);
+          }
+          else if(id == "Quaternion")
+          {
+              quat q;
+              xml.attribute("value", value);
+              sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
+
+              if(act)
+                  act->setRotation(q);
+          }
         }
         else if(xstate == kgmXml::XML_TAG_DATA)
         {

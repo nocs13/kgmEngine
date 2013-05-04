@@ -134,6 +134,40 @@ public:
     }
   }
 
+  bool get(kgmString name, kgmMaterial** mtl)
+  {
+    for(int i = 0; i < m_materials.size(); i++)
+    {
+      kgmMaterial* m = m_materials[i];
+
+      if(m && m->m_id == name)
+      {
+        *mtl = m;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool set(kgmMesh* msh, kgmMaterial* mtl)
+  {
+    for(int i = 0; i < m_meshes.size(); i++)
+    {
+      kgmMesh* m = m_meshes[i].mesh;
+
+      if(m == msh)
+      {
+        m_meshes[i].material = mtl;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   void setTo(kgmMesh* mesh, kgmMaterial* mtl){
     if(!mesh || !mtl)
       return;
