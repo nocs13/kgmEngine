@@ -74,7 +74,7 @@ kgmGameBase::kgmGameBase()
     m_system = 0;
     m_audio = 0;
 
-    prev_width = BWIDTH;
+    prev_width  = BWIDTH;
     prev_height = BHEIGHT;
 
     log("open settings...");
@@ -139,7 +139,6 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 
 kgmGameBase::~kgmGameBase(){
-    m_eventListeners.clear();
 }
 
 kgmIGraphics* kgmGameBase::getGraphics(){
@@ -299,9 +298,6 @@ void kgmGameBase::onIdle(){
     case State_Pause:
         break;
     case State_Play:
-        for(int i = 0; i < m_idles.size(); i++)
-            m_idles[i]->idle();
-
         if(m_physics && fps > 0)
             m_physics->update(1000 / fps);
 
@@ -356,14 +352,10 @@ void kgmGameBase::onClose()
 
 void kgmGameBase::onKeyUp(int k){
     m_input[m_keymap[k]] = 0;
-
-    onInputAction(m_keymap[k], 0);
 }
 
 void kgmGameBase::onKeyDown(int k){
     m_input[m_keymap[k]] = 1;
-
-    onInputAction(m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y){
@@ -384,20 +376,10 @@ void kgmGameBase::onResize(int w, int h){
 
 void kgmGameBase::onEvent(kgmEvent::Event* e){
     kgmWindow::onEvent(e);
+
     for(int i = 0; i < m_guis.size(); i++)
     {
         m_guis[i]->onEvent(e);
-    }
-}
-
-void kgmGameBase::onInputAction(int action, int argument){
-    for(int i = 0; i < m_eventListeners.length(); i++){
-        if(m_eventListeners[i]->getMask() & InputEventListener::EventInput){
-            m_eventListeners[i]->eventType = InputEventListener::EventInput;
-            m_eventListeners[i]->eventAction = action;
-            m_eventListeners[i]->eventArgument = argument;
-            m_eventListeners[i]->onEvent();
-        }
     }
 }
 

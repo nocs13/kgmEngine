@@ -28,13 +28,13 @@ public:
  static kgmGameBase*	m_game;
 
 protected:
- kgmIAudio*		m_audio;
- kgmIVideo*		m_video;
+ kgmIAudio*		    m_audio;
+ kgmIVideo*		    m_video;
  kgmISpawner*		m_spawner;
  kgmIGraphics*		m_graphics;
  kgmGamePhysics*	m_physics;
  kgmGameResources*	m_resources;
- kgmGameSettings* m_settings;
+ kgmGameSettings*   m_settings;
 
  kgmSystem*         m_system;
  //kgmGraphics*       m_render;
@@ -49,10 +49,6 @@ protected:
 
  char           m_input[gbtn_end];
  char           m_keymap[150];
-
- kgmList<Idle*> m_idles;
- kgmList<GameSensor*> m_sensors;
- kgmList<InputEventListener*> m_eventListeners;
 
 public:
  int		    m_state;	//game state
@@ -92,13 +88,13 @@ public:
 
  void onInputAction(int action, int argument);
 
- void gStart();		    //start game
+ void gStart();		        //start game
  int  gLoad(kgmString);     //load game level
- int  gUnload();     //load game level
+ int  gUnload();            //load game level
  int  gCommand(kgmString);  //do string command
  int  gQuit();              //quit from level
  u32  gState();             //check game state
- void gPause(bool);            //render game scene
+ void gPause(bool);         //render game scene
  void gRender();            //render game scene
  void gLogic();             //do game logic  & Physics
 
@@ -145,23 +141,6 @@ public:
    }
  }
  
- void addGameSensor(GameSensor* g){
-   if(g)
-     m_sensors.add(g);
- }
-
- void addGameIdle(Idle* i){
-   if(i)
-     m_idles.add(i);
- }
-
- bool addInputEventListener(InputEventListener* gel){
-   if(gel)
-     m_eventListeners.add(gel);
-
-   return true;
- }
-
  kgmGraphics* getRender(){
      return 0; //m_render;
  }

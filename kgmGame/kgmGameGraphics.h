@@ -33,6 +33,11 @@ class kgmGameGraphics: public kgmObject
     kgmLight* light;
   };
 
+  struct Group
+  {
+
+  };
+
   class GMesh{
     kgmMaterial* material;
     kgmList<Mesh> meshes;

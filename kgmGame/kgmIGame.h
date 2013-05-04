@@ -126,80 +126,13 @@ class kgmGameNode;
 
 class kgmIGame: public kgmInterface{
 public:
-  struct Event
-  {
-    u32	  evt_id;
-    kgmActor* evt_from;
-    kgmActor* evt_to;
-  };
-
-  struct Input
-  {
-    u32 action;
-    int  state;
-    int  value;
-  };
-
-
-  class GameSensor: public kgmObject{
-  public:
-    class Action: public kgmObject{
-    public:
-      virtual void action(GameSensor*) = 0;
-    };  
-      
-    kgmString        m_id;
-    kgmList<Action*> m_actions;
-
-  public:
-    virtual ~GameSensor(){
-      for(int i = 0; i < m_actions.size(); i++)
-        m_actions[i]->release();
-      m_actions.clear();
-    }
-    
-    void addAction(Action* a){
-      m_actions.add(a);
-    }
-
-    virtual void  sense() = 0;
-  };
-
-  class InputEventListener{
-  public:
-    enum{
-      EventNone = 0,
-      EventInput = 1,
-      EventRunScript = 1 << 1L,
-      EventAll = 0xffffffff
-    };
-
-  protected:
-    int eventMask;
-
-  public:
-    int eventType;
-    int eventAction;
-    int eventArgument;
-    kgmString eventSargument;
-
-    virtual void onEvent() = 0;
-    int getMask() { return eventMask; }
-  };
-
-  class Idle{
-  public:
-    virtual void idle() = 0;
-  };
-
-public:
   enum State{
     State_None,
     State_Play,
     State_Quit,
     State_Load,
     State_Pause,
-    State_Stop,
+    State_Stop
   };
 
 
@@ -213,18 +146,15 @@ public:  //virtuals
   virtual kgmGameNode*  gMainNode() = 0;
 
   virtual void          addGui(kgmGui* g) = 0;
-  virtual void          addGameIdle(Idle*  i) = 0;
-  virtual void          addGameSensor(GameSensor* g) = 0;
-  virtual bool          addInputEventListener(InputEventListener* iel) = 0;
 
  //usefull interfaces
  virtual kgmIGraphics*	getGraphics() = 0;
  virtual kgmIPhysics*	getPhysics() = 0;
  virtual kgmISpawner*	getSpawner() = 0;
- virtual kgmIAudio*	getAudio() = 0;
- virtual kgmIVideo*	getVideo() = 0;
+ virtual kgmIAudio*	    getAudio() = 0;
+ virtual kgmIVideo*	    getVideo() = 0;
  virtual kgmIResources* getResources() = 0;
- virtual kgmSystem*	getSystem() = 0;
+ virtual kgmSystem*	    getSystem() = 0;
 
 public:		//statics for help
  static kgmIGame*		getGame();

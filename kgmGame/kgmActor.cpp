@@ -18,18 +18,14 @@ kgmActor::kgmActor(){
 
  m_transform.identity();
 
- m_life = 1.0f;
  m_birth = kgmTime::getTicks();
- m_parent = 0;
+ m_health = 1.0f;
+ m_parent = null;
 }
 
 kgmActor::~kgmActor(){
   for(int i = 0; i < m_childs.length(); i++)
     m_childs[i]->release();
-
-  for(int i = 0; i < m_sections.length(); i++){
-    m_sections[i].clear();
-  }
 
   m_childs.clear();
 }

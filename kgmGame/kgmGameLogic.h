@@ -11,7 +11,7 @@ public:
   class AI
   {
   public:
-    virtual void logic(kgmActor* a){}
+    virtual void ai(kgmActor* a){}
   };
 
   class Sensor
@@ -36,6 +36,11 @@ public:
     kgmGameLogic();
 
     void clear();
+    void addAI(kgmString, AI*);
+    void addActor(kgmActor*);
+    void addSensor(Sensor*);
+
+    void onInput(int, int);
 
     virtual void update(u32 milliseconds);
 };
