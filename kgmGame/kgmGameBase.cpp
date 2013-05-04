@@ -810,9 +810,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 kgmString s;
                 xml.attribute("id", s);
                 obj = act = gSpawn(s);
+
                 if(act){
-                    m_render->add(act);
-                    m_objects.add(obj);
+                    m_render->add(act->m_visual);
+                    m_physics->add(act->m_body);
+                    //m_objects.add(obj);
                 }
             }
             else if(id == "Color")
@@ -968,27 +970,35 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         xml.m_node->node(i)->id(id);
 
         if(id == "Section"){
-            actor->addSection();
-            u32 cpart = actor->sections() - 1;
+            kgmMesh*      msh = 0;
+            kgmMaterial*  mtl = 0;
+            kgmSkeleton*  skl = 0;
+            kgmAnimation* anm = 0;
 
-            for(int j = 0; j < xml.m_node->node(i)->nodes(); j++){
+            for(int j = 0; j < xml.m_node->node(i)->nodes(); j++)
+            {
                 xml.m_node->node(i)->node(j)->id(id);
                 if(id == "Material"){
                     xml.m_node->node(i)->attribute("value", val);
-                    actor->set(cpart, m_resources->getMaterial(val));
+                    mtl = m_resources->getMaterial(val);
                     kgm_log() << "\nMaterial: " << val.data();
                 }else if(id == "Mesh"){
                     xml.m_node->node(i)->attribute("value", val);
-                    actor->add(0, m_resources->getMesh(val));
+                    msh = m_resources->getMesh(val);
                 }else if(id == "Animation"){
                     xml.m_node->node(i)->attribute("value", val);
-                    actor->set(0, m_resources->getAnimation(val));
+                    anm = m_resources->getAnimation(val);
                 }else if(id == "Skeleton"){
                     xml.m_node->node(i)->attribute("value", val);
-                    actor->set(0, m_resources->getSkeleton(val));
+                    skl = m_resources->getSkeleton(val);
                 }else if(id == "Dummy"){
                     xml.m_node->node(i)->attribute("value", val);
                 }
+            }
+
+            if(msh)
+            {
+              actor->m_visual->addGroup(msh, mtl, skl, 0);
             }
         }
     }

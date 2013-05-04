@@ -294,22 +294,42 @@ class kgmBoneAnimation(kgmAnimation):
   self.type = 'BONE'
   self.frames = []
 
-  frameCount = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
-  for frame in range(0, frameCount):
-    print("frame: " + str(frame))
-    bpy.context.scene.frame_set(bpy.context.scene.frame_start + frame)
-    bpy.context.scene.update()
-    mtx = o.bone.matrix_local
-    pos = mtx.to_translation()
-    rot = mtx.to_quaternion()
+  currentScene = bpy.context.scene
+  startFrame = currentScene.frame_start
+  endFrame = currentScene.frame_end
+
+  for frame in range(startFrame, endFrame+1, 1):
+   currentScene.frame_current = frame
+   currentScene.frame_set(frame)
+   allBones = currentScene.objects[a.name].pose.bones
+   for bn in allBones:
+    #print("Bone: " + bn.name + " " + o.name) 
+    if bn.name == o.name:
+     print("Bone " + " name: " + bn.name + " frame: " + str(frame) +  " mtx: " + str(bn.matrix))
+#     mtx = mathutils.Matrix(((o.matrix[1],  o.matrix[2],  o.matrix[3],  o.matrix[4]), 
+#                             (o.matrix[5],  o.matrix[6],  o.matrix[7],  o.matrix[8]), 
+#                             (o.matrix[9],  o.matrix[10], o.matrix[11], o.matrix[12]), 
+#                             (o.matrix[13], o.matrix[14], o.matrix[15], o.matrix[16]))).to_4x4()
+     mtx = bn.matrix.to_4x4()
+     pos = mtx.to_translation()
+     rot = mtx.to_quaternion()
+    
+#  frameCount = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
+#  for frame in range(0, frameCount):
+#    print("frame: " + str(frame))
+#    bpy.context.scene.frame_set(bpy.context.scene.frame_start + frame)
+#    bpy.context.scene.update()
+#    mtx = o.matrix_local
+#    pos = mtx.to_translation()
+#    rot = mtx.to_quaternion()
 
 #   if o.bone.parent:
 #    p_pos = mathutils.Vector((0, 0, 0)) * o.bone.parent.matrix_local
 #    p_rot = o.bone.parent.matrix_local.to_quaternion()
 #    pos = pos - p_pos
 #    rot = rot - p_rot
-    f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
-    self.frames.append(f)
+     f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
+     self.frames.append(f)
 
 
 class kgmActor:
@@ -376,19 +396,21 @@ class kgmExport(bpy.types.Operator):
 
   cFrame = bpy.context.scene.frame_current
 
+  print("Collect Objects...")
   meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes]
   materials = [ob for ob in scene_materials if self.exp_materials]
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
   actors = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
-  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
-
+#  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
+  animations = []
   if self.exp_animations:
     armatures = [ob for ob in objects if ob.type == 'ARMATURE']
     for armature in armatures:
-      bpy.ops.object.mode_set(mode='POSE')
-      for bone in armature.pose.bones:
+      print("scan armature")
+      #bpy.ops.object.mode_set(mode='POSE')
+      for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
 #      bpy.ops.object.mode_set(mode='OBJECT')
 #   if hasattr(bpy.context, 'visible_pose_bones') and (type(bpy.context.visible_pose_bones) == bpy.types.PoseBone):
@@ -408,6 +430,7 @@ class kgmExport(bpy.types.Operator):
 
   bpy.context.scene.frame_current = cFrame
 
+  print("Animations: " + str(len(animations)))
   print("Objects: " + str(len(objects)))
   print("Mehses: " + str(len(meshes)))
   print("Lights: " + str(len(lights)))

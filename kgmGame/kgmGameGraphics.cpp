@@ -113,9 +113,9 @@ void kgmGameGraphics::render(){
       }
     }
 
-    for(int i = 0; i < m_actors.size(); i++)
+    for(int i = 0; i < m_visuals.size(); i++)
     {
-      render(m_actors[i]);
+      render(m_visuals[i]);
     }
 
     //For last step draw gui
@@ -155,15 +155,18 @@ void kgmGameGraphics::render(Mesh *m){
   }
 }
 
-void kgmGameGraphics::render(kgmActor* actor){
-  if(!actor)
+void kgmGameGraphics::render(kgmVisual* visual){
+  if(!visual)
     return;
 
-  for(int i = 0; i < actor->m_sections.size(); i++){
-    render(actor->m_sections[i].material);
-    render(actor->m_sections[i].mesh);
+  kgmVisual::Group* group = visual->getGroup();
+
+  if(!group)
+    return;
+
+    render(group->material);
+    render(group->mesh);
     render((kgmMaterial*)0);
-  }
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){

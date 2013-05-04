@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmTime.h"
 
-#include "../kgmGraphics/kgmGraphical.h"
+#include "../kgmGraphics/kgmVisual.h"
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmPolygon.h"
 #include "../kgmGraphics/kgmTexture.h"
@@ -31,7 +31,7 @@ public:
   };
 
 protected:
-  kgmActor* 	      m_parent;
+  kgmActor* 	        m_parent;
   kgmList<kgmActor*>  m_childs;
 
 public:
@@ -61,7 +61,8 @@ public:
   kgmString m_name;
   kgmString m_class;
 
-  kgmBody             m_body;
+  kgmBody*            m_body;
+  kgmVisual*          m_visual;
 
   kgmList<kgmDummy*>  m_dummies;
 

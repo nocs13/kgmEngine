@@ -6,6 +6,7 @@
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmLight.h"
 #include "../kgmGraphics/kgmCamera.h"
+#include "../kgmGraphics/kgmVisual.h"
 #include "../kgmGraphics/kgmMaterial.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
@@ -24,18 +25,14 @@ class kgmGameGraphics: public kgmObject
 
   struct Mesh
   {
-    kgmMesh* mesh;
+    kgmMesh*     mesh;
     kgmMaterial* material;
-    box3 box;
+    box3         box;
   };
 
-  struct Light{
-    kgmLight* light;
-  };
-
-  struct Group
+  struct Light
   {
-
+    kgmLight* light;
   };
 
   class GMesh{
@@ -51,11 +48,11 @@ class kgmGameGraphics: public kgmObject
 
   kgmCamera m_camera;
 
-  kgmList<Mesh> m_meshes;
+  kgmList<Mesh>         m_meshes;
   kgmList<kgmMaterial*> m_materials;
-  kgmList<Light> m_lights;
-  kgmList<kgmActor*> m_actors;
-  kgmList<kgmGui*> m_guis, m_tguis;
+  kgmList<Light>        m_lights;
+  kgmList<kgmVisual*>   m_visuals;
+  kgmList<kgmGui*>      m_guis, m_tguis;
 
   kgmGuiStyle* gui_style;
 
@@ -85,7 +82,7 @@ private:
   void render(Mesh*);
   void render(kgmGui*);
   void render(kgmMesh*);
-  void render(kgmActor*);
+  void render(kgmVisual*);
   void render(kgmShader*, u32);
   void render(kgmMaterial*);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
@@ -121,10 +118,10 @@ public:
     m_lights.add(light);
   }
 
-  void add(kgmActor* a){
+  void add(kgmVisual* a){
     if(a)
         a->increment();
-    m_actors.add(a);
+    m_visuals.add(a);
   }
 
   void add(kgmGui* gui, bool tmp = false){

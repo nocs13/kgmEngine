@@ -1,23 +1,26 @@
 #include "kgmActor.h"
 KGMOBJECT_IMPLEMENT(kgmActor,	kgmObject);
 
-kgmActor::kgmActor(){
+kgmActor::kgmActor()
+{
  m_enable = true;
  m_visible = true;
  m_active = true;
  m_remove = false;
  m_culled = false;
 
- m_body.m_udata = this;
- m_body.m_mass = 1.0f;
- m_body.m_position = vec3(0, 0, 1);
- m_body.m_rotation = vec3(0, 0, 0);
- m_body.m_direction = vec3(1, 0, 0);
- m_body.m_bound.min = vec3(-1, -1, 0);
- m_body.m_bound.max = vec3(1, 1, 2);
+ m_visual = new kgmVisual();
+
+ m_body = new kgmBody();
+ m_body->m_udata = this;
+ m_body->m_mass = 1.0f;
+ m_body->m_position = vec3(0, 0, 1);
+ m_body->m_rotation = vec3(0, 0, 0);
+ m_body->m_direction = vec3(1, 0, 0);
+ m_body->m_bound.min = vec3(-1, -1, 0);
+ m_body->m_bound.max = vec3(1, 1, 2);
 
  m_transform.identity();
-
  m_birth = kgmTime::getTicks();
  m_health = 1.0f;
  m_parent = null;
@@ -28,13 +31,16 @@ kgmActor::~kgmActor(){
     m_childs[i]->release();
 
   m_childs.clear();
+
+  delete m_body;
+  m_visual->release();
 }
 
 void kgmActor::exit(){
 }
 
 void kgmActor::init(){
- m_transform.translate(m_body.m_position);
+ m_transform.translate(m_body->m_position);
 }
 
 void kgmActor::tick(u32 time){
@@ -65,29 +71,28 @@ bool kgmActor::removed(){
 }
 
 void kgmActor::setPosition(vec3& v){
- //m_body.m_position = v;
- m_body.translate(v.x, v.y, v.z);
+ m_body->translate(v.x, v.y, v.z);
 }
 
 void kgmActor::setRotation(vec3& r){
- m_body.rotate(r.x, r.y, r.z);
+ m_body->rotate(r.x, r.y, r.z);
 }
 
 void kgmActor::setRotation(quat& r){
- m_body.rotate(r);
+ m_body->rotate(r);
 }
 
 void kgmActor::setDirection(vec3& d){
- m_body.m_direction = d;
- m_body.m_direction.normalize();
- m_body.m_rotation.z = (float)acos(m_body.m_direction.x);
+ m_body->m_direction = d;
+ m_body->m_direction.normalize();
+ m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
 }
 
 void kgmActor::setForce(float f, vec3& d){
   if(d.length() == 0.0f)
-    m_body.m_EF = m_body.m_direction * f;
+    m_body->m_EF = m_body->m_direction * f;
   else
-    m_body.m_EF = d * f;
+    m_body->m_EF = d * f;
 }
 
 void kgmActor::setParent(kgmActor* a){
