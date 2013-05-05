@@ -45,20 +45,24 @@ public:
   
   void rotate(float pitch, float yaw){
     mRot.z += pitch;
-    mRot.y += yaw;
+    //mRot.y += yaw;
     //mRot.x += x;
     
     //if((mRot.z >= 2.0f * PI) || (mRot.z <= - 2.0f * PI))  mRot.z = 0.0;
     
-    //    if(mRot.x <= -PI) mRot.x = -PI;
-    //    if(mRot.x >=  PI) mRot.x =  PI;
+    //if(mRot.x <= -PI) mRot.x = -PI;
+    //if(mRot.x >=  PI) mRot.x =  PI;
     
     //if(mRot.y <=  (-0.5 * PI)) mRot.y = -0.5 * PI;
     //if(mRot.y >=  ( 0.5 * PI)) mRot.y =  0.5 * PI;
     
     vec3 dz(cos(mRot.z), sin(mRot.z), 0);
     vec3 dy(cos(mRot.y), 0, sin(mRot.y));
-    mDir = dz + dy;
+
+    dz.normalize();
+    dy.normalize();
+
+    mDir = dz;
 
     mtx4 mr;
     //mr.rotate(mRot);

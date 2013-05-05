@@ -58,8 +58,7 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
 
 
 void kgmGameGraphics::resize(float width, float height){
-  //wnd->getRect(rect[0], rect[1], rect[2], rect[3]);
-  gc->gcSetViewport(0, 0, width, height, 1.0, 1000.0);
+  gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
 }
 
 void kgmGameGraphics::render(){
@@ -75,8 +74,8 @@ void kgmGameGraphics::render(){
 
     kgmMaterial mbase;
 
-    gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1.0, 0);
-    gc->gcCull(0);
+    gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1, 0);
+    gc->gcCull(1);
 
     /*if(camera){
        //gc->gcSetMatrix(gcmtx_proj, camera->mVwPj.m);
@@ -95,21 +94,25 @@ void kgmGameGraphics::render(){
 
     gc->gcSetMatrix(gcmtx_proj, m_camera.mProj.m);
     gc->gcSetMatrix(gcmtx_view, m_camera.mView.m);
+    //mvw.identity();
+    //gc->gcSetMatrix(gcmtx_proj, m_camera.mVwPj.m);
+    //gc->gcSetMatrix(gcmtx_view, mvw.m);
 
     gc->gcBegin();
+    gc->gcDepth(true, 1, gccmp_equal);
 
     //render 3D
     for(int i = 0; i < m_meshes.size(); i++)
     {
       if(s_def){
-        render(s_def, 0);
+        //render(s_def, 0);
       }
 
       render(&m_meshes[i]);
 
       if(s_def)
       {
-        render(s_def, 1);
+        //render(s_def, 1);
       }
     }
 
@@ -120,13 +123,21 @@ void kgmGameGraphics::render(){
 
     //For last step draw gui
     gc->gc2DMode();
+    gc->gcDepth(true, 1, gccmp_lequal);
+
     for(int i = 0; i < m_guis.size(); i++)
     {
       if(m_guis[i]->m_view)
       {
-        render (m_guis[i]);
+        render(m_guis[i]);
       }
     }
+
+    char info[4096] = {0};
+    sprintf(info, "camera direction: %f %f %f \n",
+            m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z);
+    kgmString text(info);
+    gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 600, 200), text);
 
     gc->gc3DMode();
     gc->gcEnd();
@@ -138,6 +149,7 @@ void kgmGameGraphics::render(){
     gc->gcSetTexture(1, 0);
     gc->gcSetTexture(2, 0);
     gc->gcSetTexture(3, 0);
+    gc->gcDepth(false, 0, 0);
 }
 
 void kgmGameGraphics::render(Mesh *m){
@@ -176,6 +188,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
     gc->gcSetTexture(1, 0);
     gc->gcSetTexture(2, 0);
     gc->gcSetTexture(3, 0);
+
     return;
   }
 
@@ -396,8 +409,10 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fco
     v[2].pos = vec3(cx+fwidth, cy, 0),  v[2].col = fcolor, v[2].uv = vec2(tx+tdx, ty);
     v[3].pos = vec3(cx+fwidth, cy+fheight, 0),v[3].col = fcolor, v[3].uv = vec2(tx+tdx, ty-tdy);
     gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-   }else{
-       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W" << (s32)fheight << " " << (s32)fwidth << " end!";
+   }
+   else
+   {
+       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!";
    }
 
    cx += fwidth;

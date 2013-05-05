@@ -35,7 +35,7 @@ class kGame: public kgmGameBase{
       }
       else if(game->m_input[gbtn_right])
       {
-        game->m_render->camera().rotate(0.02f, 0.0f);
+        game->m_render->camera().rotate(-0.02f, 0.0f);
       }
     }
   };

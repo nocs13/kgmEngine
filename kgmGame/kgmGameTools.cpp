@@ -28,12 +28,12 @@ void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 
   v[3].pos = vec3(x + w, y + h, 0); v[3].col = col; v[3].uv = vec2(1, 1);
 
   if(tex)
-   gc->gcSetTexture(0, tex);
+    gc->gcSetTexture(0, tex);
   gc->gc2DMode();
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
   gc->gc3DMode();
   if(tex)
-   gc->gcSetTexture(0, 0);
+    gc->gcSetTexture(0, 0);
 }
 
 void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
@@ -42,15 +42,15 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
   kgmRect<int> clip(x, y, x + w, y + h);
 
   if(text.length() < 1)
-   return;
+    return;
 
   if(!font || !font->m_texture)
-   return;
+    return;
 
   u32 tlen = text.length();
   float tx = 0.0f, ty = 0.0f;
   float tdx = (float)(1.f / font->m_cols),
-	tdy = (float)(1.f / font->m_rows);
+  tdy = (float)(1.f / font->m_rows);
 
   float cx = (float)x, cy = (float)y;
 
@@ -60,29 +60,29 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
 
 
   for(u32 i = 0; i < tlen; i++){
-   char ch = text[i];
+    char ch = text[i];
 
-   if(ch == '\n'){ 
-	cx = (float)x; 
-	cy += fh; 
-	continue; 
-   }
-   if((ch == ' ') || ((ch == '\t')))  
-	   tx = 0.0f, ty = 0.0f;
+    if(ch == '\n'){
+      cx = (float)x;
+      cy += fh;
+      continue;
+    }
+    if((ch == ' ') || ((ch == '\t')))
+      tx = 0.0f, ty = 0.0f;
 
-   tx = (float)(tdx * (ch % font->m_rows));
-   ty = 1.0f - (float)(tdy * (ch / font->m_rows));
+    tx = (float)(tdx * (ch % font->m_rows));
+    ty = 1.0f - (float)(tdy * (ch / font->m_rows));
 
-   if(clip.inside(cx + fw, cy + fh))
-   {
-    v[0].pos = vec3(cx, cy, 0),    v[0].col = col, v[0].uv = vec2(tx, ty);
-    v[1].pos = vec3(cx, cy+fh, 0),  v[1].col = col, v[1].uv = vec2(tx, ty-tdy);
-    v[2].pos = vec3(cx+fw, cy, 0),  v[2].col = col, v[2].uv = vec2(tx+tdx, ty);
-    v[3].pos = vec3(cx+fw, cy+fh, 0),v[3].col = col, v[3].uv = vec2(tx+tdx, ty-tdy);
-    gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-   }
+    if(clip.inside(cx + fw, cy + fh))
+    {
+      v[0].pos = vec3(cx, cy, 0),    v[0].col = col, v[0].uv = vec2(tx, ty);
+      v[1].pos = vec3(cx, cy+fh, 0),  v[1].col = col, v[1].uv = vec2(tx, ty-tdy);
+      v[2].pos = vec3(cx+fw, cy, 0),  v[2].col = col, v[2].uv = vec2(tx+tdx, ty);
+      v[3].pos = vec3(cx+fw, cy+fh, 0),v[3].col = col, v[3].uv = vec2(tx+tdx, ty-tdy);
+      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+    }
 
-   cx += fw;
+    cx += fw;
   }
 
   gc->gcAlpha(false, 0, 0.0);
@@ -92,14 +92,14 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
 
 kgmPicture* kgmGameTools::genPicture(kgmMemory<char>& m)
 {
- u32 id_tga = 0x00020000;
- if(m.empty())
+  u32 id_tga = 0x00020000;
+  if(m.empty())
+    return 0;
+  if(!memcmp("BM", m.data(), 2))
+    return genPictureFromBmp(m);
+  if(!memcmp(&id_tga, m.data(), 4))
+    return genPictureFromTga(m);
   return 0;
- if(!memcmp("BM", m.data(), 2))
-  return genPictureFromBmp(m);
- if(!memcmp(&id_tga, m.data(), 4))
-  return genPictureFromTga(m);
- return 0;
 }
 
 kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
@@ -143,45 +143,56 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
   memcpy(&b_climp, pm, 4);  pm += 4;
 
   if(memcmp("BM",&f_type,2))
-   return 0;
+    return 0;
 
   if(!b_width || !b_height)
-   return 0;
+    return 0;
 
   if(b_btcnt < 8)
-   return 0;
+    return 0;
 
   if(b_btcnt == 8){
-   u32 r_size = b_width * b_height;
-   pdata = new u32[r_size];
-   u32 *pal = new u32[256];
-   memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
-   for(u32 i = 0; i < r_size; i++){
-    uchar ind = 0;
-    memcpy(&ind, pm, 1);	pm += 1;
-	((u32*)pdata)[i] = pal[ind];
-   }
-   width = b_width;
-   height = b_height;
-   bpp = 32;
-   delete pal;
-   return new kgmPicture(width, height, bpp, frames, pdata);
+    u32 r_size = b_width * b_height;
+    pdata = new u32[r_size];
+    u32 *pal = new u32[256];
+    memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
+
+    for(u32 i = 0; i < r_size; i++)
+    {
+      uchar ind = 0;
+      memcpy(&ind, pm, 1);	pm += 1;
+      ((u32*)pdata)[i] = pal[ind];
+    }
+    width = b_width;
+    height = b_height;
+    bpp = 32;
+    delete pal;
+
+    return new kgmPicture(width, height, bpp, frames, pdata);
   }
 
-  u32 r_size = b_width * b_height * (b_btcnt/8);
+  u32 r_size = b_width * b_height * (b_btcnt / 8);
   pdata = new char[r_size];
-  memcpy(pdata, pm, r_size);//////
+  memcpy(pdata, pm, r_size);
   width = b_width;
   height = b_height;
   bpp = b_btcnt;
   
+  for(int i = 0; i < (width * height); i++)
+  {
+    char* pt = (char*)(((char*)pdata) + i * b_btcnt / 8);
+    char  t  = pt[0];
+    pt[0] = pt[2];
+    pt[2] = t;
+  }
+
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
 
 kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
 {
   if(m.empty())
-   return 0;
+    return 0;
 
   uchar   idl, cmp, dt, btcnt, dsc;
   uchar   clmap[5];
@@ -206,11 +217,11 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
   memcpy(&dsc, pm, 1);      pm += 1;
 
   if(dt != 2)
-   return 0;
+    return 0;
 
   if((btcnt != 24))
-   if((btcnt != 32))
-    return 0;
+    if((btcnt != 32))
+      return 0;
 
   u32 r_size = w * h * (btcnt/8);
   pm += idl;
@@ -234,64 +245,64 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
 
 kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
 {
- kgmPicture* pic = genPicture(m);
- if(!pic)
-	 return 0;
- u32 fmt = gctex_fmt32;
- switch(pic->bpp){
- case 8:
-	 fmt = gctex_fmt8;
-	 break;
- case 16:
-	 fmt = gctex_fmt16;
-	 break;
- case 24:
-	 fmt = gctex_fmt24;
-	 break;
- case 32:
-	 fmt = gctex_fmt32;
-	 break;
- };
- kgmTexture* tex = new kgmTexture;
- tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
- pic->release();
- if(!tex->m_texture){
-  delete tex;
-  return 0;
- }
- return tex;
+  kgmPicture* pic = genPicture(m);
+  if(!pic)
+    return 0;
+  u32 fmt = gctex_fmt32;
+  switch(pic->bpp){
+  case 8:
+    fmt = gctex_fmt8;
+    break;
+  case 16:
+    fmt = gctex_fmt16;
+    break;
+  case 24:
+    fmt = gctex_fmt24;
+    break;
+  case 32:
+    fmt = gctex_fmt32;
+    break;
+  };
+  kgmTexture* tex = new kgmTexture;
+  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+  pic->release();
+  if(!tex->m_texture){
+    delete tex;
+    return 0;
+  }
+  return tex;
 }
 
 kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m)
 {
- kgmPicture* pic = genPicture(m);
- if(!pic)
-	 return 0;
- u32 fmt = gctex_fmt32;
- switch(pic->bpp){
- case 8:
-	 fmt = gctex_fmt8;
-	 break;
- case 16:
-	 fmt = gctex_fmt16;
-	 break;
- case 24:
-	 fmt = gctex_fmt24;
-	 break;
- case 32:
-	 fmt = gctex_fmt32;
-	 break;
- };
- kgmFont* font = new kgmFont();
- font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
- delete pic;
- if(!font->m_texture){
-  delete font;
-  return 0;
- }
- font->m_rows = r;
- font->m_cols = c;
- return font;
+  kgmPicture* pic = genPicture(m);
+  if(!pic)
+    return 0;
+  u32 fmt = gctex_fmt32;
+  switch(pic->bpp){
+  case 8:
+    fmt = gctex_fmt8;
+    break;
+  case 16:
+    fmt = gctex_fmt16;
+    break;
+  case 24:
+    fmt = gctex_fmt24;
+    break;
+  case 32:
+    fmt = gctex_fmt32;
+    break;
+  };
+  kgmFont* font = new kgmFont();
+  font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+  delete pic;
+  if(!font->m_texture){
+    delete font;
+    return 0;
+  }
+  font->m_rows = r;
+  font->m_cols = c;
+  return font;
 }
 
 // SHADER
@@ -300,23 +311,23 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
   char* mem_fsh = 0;
 
   if(!gc || s.empty())
-	 return 0;
+    return 0;
 
   mem_fsh = (char*)strstr((char*)s, "//Fragment Shader");
   if(mem_fsh){
-   u32 sh_s = (u32)mem_fsh - (u32)s.data();
-   mem_vsh = (char*)malloc(sh_s + 1);
-   memcpy(mem_vsh, s.data(), sh_s);
-   mem_vsh[sh_s] = '\0';
-   sh_s = s.length() - sh_s;
-   char* fsh = mem_fsh;
-   mem_fsh = (char*)malloc(sh_s + 1);
-   memcpy(mem_fsh, fsh, sh_s);
-   mem_fsh[sh_s] = '\0';
+    u32 sh_s = (u32)mem_fsh - (u32)s.data();
+    mem_vsh = (char*)malloc(sh_s + 1);
+    memcpy(mem_vsh, s.data(), sh_s);
+    mem_vsh[sh_s] = '\0';
+    sh_s = s.length() - sh_s;
+    char* fsh = mem_fsh;
+    mem_fsh = (char*)malloc(sh_s + 1);
+    memcpy(mem_fsh, fsh, sh_s);
+    mem_fsh[sh_s] = '\0';
   }else{
-   mem_vsh = (char*)malloc(s.length() + 1);
-   memcpy(mem_vsh, s.data(), s.length());
-   mem_vsh[s.length()] = '\0';
+    mem_vsh = (char*)malloc(s.length() + 1);
+    memcpy(mem_vsh, s.data(), s.length());
+    mem_vsh[s.length()] = '\0';
   }
 
   kgmShader* shader = new kgmShader(gc);
@@ -324,66 +335,66 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
   if(mem_vsh) free(mem_vsh);
   if(mem_fsh) free(mem_fsh);
   if(!shader->m_shader){
-   delete shader;
-   shader = 0;
+    delete shader;
+    shader = 0;
   }
- return shader;
+  return shader;
 }
 
 kgmMaterial* kgmGameTools::genMaterial(kgmMemory<char>& m){
- kgmMaterial* mtl = 0;
- char* str = 0;
- char* key = 0;
- char* val = 0;
- char* p   = (char*)m.data();
- u32  i   = 0;
- float farr[4];
+  kgmMaterial* mtl = 0;
+  char* str = 0;
+  char* key = 0;
+  char* val = 0;
+  char* p   = (char*)m.data();
+  u32  i   = 0;
+  float farr[4];
 
- if(m.empty())
-  return 0;
+  if(m.empty())
+    return 0;
 
- mtl = new kgmMaterial;
- str = new char[1024];
- key = new char[128];
- val = new char[128];
+  mtl = new kgmMaterial;
+  str = new char[1024];
+  key = new char[128];
+  val = new char[128];
 
- while(!m.eof()){
-  memset(str, 0, 1024);
-  memset(key, 0, 128);
-  memset(val, 0, 128);
+  while(!m.eof()){
+    memset(str, 0, 1024);
+    memset(key, 0, 128);
+    memset(val, 0, 128);
 
-  m.reads(str, 1024, "\n", 1);
-  sscanf(str, "%s %s", key, val);
+    m.reads(str, 1024, "\n", 1);
+    sscanf(str, "%s %s", key, val);
 
-  if(!strcmp(key, "ambient")){
-   sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
-   mtl->m_ambient = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
+    if(!strcmp(key, "ambient")){
+      sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
+      mtl->m_ambient = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
+    }
+    if(!strcmp(key, "diffuse")){
+      sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
+      mtl->m_diffuse = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
+    }
+    if(!strcmp(key, "texture")){
+      mtl->m_tex_diffuse = kgmIGame::getGame()->getResources()->getTexture(val);
+    }
+    if(!strcmp(key, "shader")){
+      if(val == "SKIN")
+        mtl->m_shader = kgmMaterial::ShaderSkin;
+      else if(val == "WATER")
+        mtl->m_shader = kgmMaterial::ShaderWater;
+      else if(val == "MIRROR")
+        mtl->m_shader = kgmMaterial::ShaderMirror;
+      else if(val == "ICE")
+        mtl->m_shader = kgmMaterial::ShaderIce;
+      //mtl->m_shader = kgmIGame::getGame()->getResources()->getShader(val);
+    }
   }
-  if(!strcmp(key, "diffuse")){
-   sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
-   mtl->m_diffuse = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
-  }
-  if(!strcmp(key, "texture")){
-   mtl->m_tex_diffuse = kgmIGame::getGame()->getResources()->getTexture(val);
-  }
-  if(!strcmp(key, "shader")){
-    if(val == "SKIN")
-      mtl->m_shader = kgmMaterial::ShaderSkin;
-    else if(val == "WATER")
-      mtl->m_shader = kgmMaterial::ShaderWater;
-    else if(val == "MIRROR")
-      mtl->m_shader = kgmMaterial::ShaderMirror;
-    else if(val == "ICE")
-      mtl->m_shader = kgmMaterial::ShaderIce;
-    //mtl->m_shader = kgmIGame::getGame()->getResources()->getShader(val);
-  }
- }
 
- delete str;
- delete key;
- delete val;
+  delete str;
+  delete key;
+  delete val;
 
- return mtl;
+  return mtl;
 }
 
 kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
@@ -417,13 +428,13 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     if(id == "Shader"){
       mnode->node(i)->attribute("value", val);
       if(val == "SKIN")
-	mtl->m_shader = kgmMaterial::ShaderSkin;
+        mtl->m_shader = kgmMaterial::ShaderSkin;
       else if(val == "WATER")
-	mtl->m_shader = kgmMaterial::ShaderWater;
+        mtl->m_shader = kgmMaterial::ShaderWater;
       else if(val == "MIRROR")
-	mtl->m_shader = kgmMaterial::ShaderMirror;
+        mtl->m_shader = kgmMaterial::ShaderMirror;
       else if(val == "ICE")
-	mtl->m_shader = kgmMaterial::ShaderIce;
+        mtl->m_shader = kgmMaterial::ShaderIce;
       //      mtl->m_shader = kgmIGame::getGame()->getResources()->getShader(val);
     }
   }
@@ -434,58 +445,58 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
 
 //SKELETON
 kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<char>& m){
- kgmSkeleton* skel;
- char* str = 0;
- char* key = 0;
- char* val = 0;
- char* p   = (char*)m;
- u32  i   = 0;
+  kgmSkeleton* skel;
+  char* str = 0;
+  char* key = 0;
+  char* val = 0;
+  char* p   = (char*)m;
+  u32  i   = 0;
 
- if(m.empty())
-  return 0;
+  if(m.empty())
+    return 0;
 
- skel = new kgmSkeleton;
- str = new char[1024];
- key = new char[128];
- val = new char[128];
+  skel = new kgmSkeleton;
+  str = new char[1024];
+  key = new char[128];
+  val = new char[128];
 
- while(!m.eof()){
-  memset(str, 0, 1024);
-  memset(key, 0, 128);
-  memset(val, 0, 128);
+  while(!m.eof()){
+    memset(str, 0, 1024);
+    memset(key, 0, 128);
+    memset(val, 0, 128);
 
-  if(0 == m.reads(str, 1024, "\n", 1))
-    break;
+    if(0 == m.reads(str, 1024, "\n", 1))
+      break;
 
-  sscanf(str, "%s %s", key, val);
+    sscanf(str, "%s %s", key, val);
 
-  if(!strcmp(key, "Bone")){
-   kgmSkeleton::Joint* joint = new kgmSkeleton::Joint;
-   char* c = strstr(str, "Bone");
-   if(c){
-	c += 5;
-    strncpy(joint->n, c, sizeof(joint->n));
-   }
-   memset(str, 0, 1024);
-   if(0 == m.reads(str, 1024, "\n", 1))
-     break;
-   sscanf(str, "%i %f %f %f %f %f %f %f", &joint->i,
-	      &joint->v.x, &joint->v.y, &joint->v.z,
-  	      &joint->r.x, &joint->r.y, &joint->r.z, &joint->r.w);
-   skel->m_joints.add(joint);
+    if(!strcmp(key, "Bone")){
+      kgmSkeleton::Joint* joint = new kgmSkeleton::Joint;
+      char* c = strstr(str, "Bone");
+      if(c){
+        c += 5;
+        strncpy(joint->n, c, sizeof(joint->n));
+      }
+      memset(str, 0, 1024);
+      if(0 == m.reads(str, 1024, "\n", 1))
+        break;
+      sscanf(str, "%i %f %f %f %f %f %f %f", &joint->i,
+      &joint->v.x, &joint->v.y, &joint->v.z,
+      &joint->r.x, &joint->r.y, &joint->r.z, &joint->r.w);
+      skel->m_joints.add(joint);
+    }
   }
- }
 
- delete str;
- delete key;
- delete val;
+  delete str;
+  delete key;
+  delete val;
 
- if(skel->m_joints.size() < 1){
-  delete skel;
-  skel = 0;
- }
- skel->update();
- return skel;
+  if(skel->m_joints.size() < 1){
+    delete skel;
+    skel = 0;
+  }
+  skel->update();
+  return skel;
 }
 
 kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
@@ -528,70 +539,70 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
 
 //ANIMATION
 kgmAnimation* kgmGameTools::genAnimation(kgmMemory<char>& m){
- kgmAnimation* anim = 0;
- kgmAnimation::Animation*   f = 0;
- int tick = 0;
- char* str = 0;
- char* key = 0;
+  kgmAnimation* anim = 0;
+  kgmAnimation::Animation*   f = 0;
+  int tick = 0;
+  char* str = 0;
+  char* key = 0;
 
- if(m.empty())
-  return anim;
+  if(m.empty())
+    return anim;
 
- anim = new kgmAnimation;
- str = new char[1024];
- key = new char[512];
+  anim = new kgmAnimation;
+  str = new char[1024];
+  key = new char[512];
 
- while(!m.eof()){
-   memset(str, 0, 1024);
-   memset(key, 0, 512);
+  while(!m.eof()){
+    memset(str, 0, 1024);
+    memset(key, 0, 512);
 
-   if(0 == m.reads(str, 512, "\n", 1))
-     break;
-//   str_close(str);
-   sscanf(str, "%s", key);
-//   continue;
+    if(0 == m.reads(str, 512, "\n", 1))
+      break;
+    //   str_close(str);
+    sscanf(str, "%s", key);
+    //   continue;
 
-   if(!strcmp(key, "FrameStart")){
-    sscanf(str, "FrameStart %i", &anim->m_start);
-	continue;
-   }
-   if(!strcmp(key, "FrameEnd")){
-    sscanf(str, "FrameEnd %i",   &anim->m_end);
-	continue;
-   }
-   if(!strcmp(key, "FPS")){
-    sscanf(str, "FPS %i",   &anim->m_fps);
-	anim->m_fps = 45.0;
-	continue;
-   }
+    if(!strcmp(key, "FrameStart")){
+      sscanf(str, "FrameStart %i", &anim->m_start);
+      continue;
+    }
+    if(!strcmp(key, "FrameEnd")){
+      sscanf(str, "FrameEnd %i",   &anim->m_end);
+      continue;
+    }
+    if(!strcmp(key, "FPS")){
+      sscanf(str, "FPS %i",   &anim->m_fps);
+      anim->m_fps = 45.0;
+      continue;
+    }
 
-  if(!strcmp(key, "Frames")){
-    f = new kgmAnimation::Animation;
-    f->m_name =  &str[7];
-    anim->addNode(f);
-    tick = 0;
-  }
-  if(!strcmp(key, "Key")){
-    int time;
-    vec3 pos;
-    quat rot;
-    sscanf(str, "%s %i %f %f %f %f %f %f %f", key, &time,
-	   &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &rot.w);
-    if(tick <= time){
-      f->addFrame(time, pos, rot);
-      tick = time;
+    if(!strcmp(key, "Frames")){
+      f = new kgmAnimation::Animation;
+      f->m_name =  &str[7];
+      anim->addNode(f);
+      tick = 0;
+    }
+    if(!strcmp(key, "Key")){
+      int time;
+      vec3 pos;
+      quat rot;
+      sscanf(str, "%s %i %f %f %f %f %f %f %f", key, &time,
+      &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &rot.w);
+      if(tick <= time){
+        f->addFrame(time, pos, rot);
+        tick = time;
+      }
     }
   }
- }
 
- if(anim->count() < 1){
-   delete anim;
-   anim = 0;
- }
+  if(anim->count() < 1){
+    delete anim;
+    anim = 0;
+  }
 
- delete [] str;
- delete [] key;
- return anim;
+  delete [] str;
+  delete [] key;
+  return anim;
 }
 
 kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
@@ -626,30 +637,30 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
       anim->addNode(f);
       tick = 0;
       for(int j = 0; j < anode->node(i)->nodes(); j++){
-	int  time;
-	vec3 pos;
-	quat rot;
-	kgmString id, tm, ps, rt;
-	anode->node(i)->node(j)->id(id);
-	if(id == "Frame"){
-	  anode->node(i)->node(j)->attribute("time", tm);
-	  anode->node(i)->node(j)->attribute("position", ps);
-	  anode->node(i)->node(j)->attribute("quaternion", rt);
-	  sscanf(tm.data(), "%i", &time);
-	  sscanf(ps.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
-	  sscanf(rt.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.w);
-	  if(tick <= time){
-	    f->addFrame(time, pos, rot);
-	    tick = time;
-	  }
-	}
+        int  time;
+        vec3 pos;
+        quat rot;
+        kgmString id, tm, ps, rt;
+        anode->node(i)->node(j)->id(id);
+        if(id == "Frame"){
+          anode->node(i)->node(j)->attribute("time", tm);
+          anode->node(i)->node(j)->attribute("position", ps);
+          anode->node(i)->node(j)->attribute("quaternion", rt);
+          sscanf(tm.data(), "%i", &time);
+          sscanf(ps.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
+          sscanf(rt.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.w);
+          if(tick <= time){
+            f->addFrame(time, pos, rot);
+            tick = time;
+          }
+        }
       }
     }
   }
 
   if(anim->count() < 1){
-   delete anim;
-   anim = 0;
+    delete anim;
+    anim = 0;
   }
   return anim;
 }
@@ -657,97 +668,97 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
 
 //MESHES
 kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
- kgmList<kgmMaterial*> materials;
- kgmMaterial* mtl = 0;
+  kgmList<kgmMaterial*> materials;
+  kgmMaterial* mtl = 0;
 
- kgmMesh* m = 0;
- char* key = 0;
- char* val = 0;
- char* str = 0;
- int   col[4] = {0};
+  kgmMesh* m = 0;
+  char* key = 0;
+  char* val = 0;
+  char* str = 0;
+  int   col[4] = {0};
 
- if(mm.empty())
-  return 0;
- key = new char[128];
- val = new char[128];
- str = new char[512];
+  if(mm.empty())
+    return 0;
+  key = new char[128];
+  val = new char[128];
+  str = new char[512];
 
   while(!mm.eof()){
-   memset(key, 0, 128);
-   memset(val, 0, 128);
-   memset(str, 0, 512);
-   mm.reads(str, 512, "\n", 1);
-   sscanf(str, "%s", key);
-   if(!strcmp(key, "Mesh")){
-    sscanf(str, "%s %s", key, val);
-    if(m)
-     break;
-    m = new kgmMesh();
-    strcpy(m->m_id, val);
-   }
-   if(!strcmp(key, "Vertices")){
-    u32 count = 0;
-    u32 maps  = 0;
-    kgmMesh::Vertex_P_N_C_T2*  v = 0;
-    sscanf(str, "%s %i %i", key, &count, &maps);
-    v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
-    for(int i = 0; i < count; i++){
-      mm.reads(str, 512, "\n", 1);
-      sscanf(str, "%f %f %f %f %f %f %f %f",
-	        &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
-	        &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-	        &v[i].uv[0].x, &v[i].uv[0].y);
-       v[i].col = 0xffffffff;
+    memset(key, 0, 128);
+    memset(val, 0, 128);
+    memset(str, 0, 512);
+    mm.reads(str, 512, "\n", 1);
+    sscanf(str, "%s", key);
+    if(!strcmp(key, "Mesh")){
+      sscanf(str, "%s %s", key, val);
+      if(m)
+        break;
+      m = new kgmMesh();
+      strcpy(m->m_id, val);
     }
-   }
-   if(!strcmp(key, "Faces")){
-    u32 count = 0;
-	kgmMesh::Face_16*   f = 0;
-	kgmArray<u16> fmaps;
-        sscanf(str, "%s %i", key, &count);
-	f = (kgmMesh::Face_16*)m->fAlloc(count);
-	fmaps.realloc(count);
-	for(int i = 0; i < count; i++){
-          u32 fi[3];
-          mm.reads(str, 512, "\n", 1);
-          sscanf(str, "%i %i %i %i", &fi[0], &fi[1], &fi[2]);
-	  f[i].a = fi[0];
-	  f[i].b = fi[1];
-	  f[i].c = fi[2];
-	}
-   }
-   if(!strcmp(key, "Skin")){
-   	u32 count = 0;
-        sscanf(str, "%s %i", key, &count);
-        kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
-        memcpy(v, m->vertices(), m->vcount() * m->vsize());
-        kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
-	for(int i = 0; i < count; i++){
-	 u32  nw = 0;
-	 u32  bi[4] = {0};
-	 float bw[4] = {0.0f};
-	 mm.reads(str, 512, "\n", 1);
-         sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
-		    &bi[0], &bi[1], &bi[2], &bi[3],
-		    &bw[0], &bw[1], &bw[2], &bw[3]);
-         s[i].bw.x = bw[0];
-	 s[i].bi.x = bi[0];
-         s[i].bw.y = bw[1];
-	 s[i].bi.y = bi[1];
-         s[i].bw.z = bw[2];
-	 s[i].bi.z = bi[2];
-         s[i].bw.w = bw[3];
-	 s[i].bi.w = bi[3];
-	 s[i].pos = v[i].pos;
-         s[i].nor = v[i].nor;
-         s[i].col = v[i].col;
-         s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
-	}
-	delete [] v;
-   }
+    if(!strcmp(key, "Vertices")){
+      u32 count = 0;
+      u32 maps  = 0;
+      kgmMesh::Vertex_P_N_C_T2*  v = 0;
+      sscanf(str, "%s %i %i", key, &count, &maps);
+      v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
+      for(int i = 0; i < count; i++){
+        mm.reads(str, 512, "\n", 1);
+        sscanf(str, "%f %f %f %f %f %f %f %f",
+        &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+        &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+        &v[i].uv[0].x, &v[i].uv[0].y);
+        v[i].col = 0xffffffff;
+      }
+    }
+    if(!strcmp(key, "Faces")){
+      u32 count = 0;
+      kgmMesh::Face_16*   f = 0;
+      kgmArray<u16> fmaps;
+      sscanf(str, "%s %i", key, &count);
+      f = (kgmMesh::Face_16*)m->fAlloc(count);
+      fmaps.realloc(count);
+      for(int i = 0; i < count; i++){
+        u32 fi[3];
+        mm.reads(str, 512, "\n", 1);
+        sscanf(str, "%i %i %i %i", &fi[0], &fi[1], &fi[2]);
+        f[i].a = fi[0];
+        f[i].b = fi[1];
+        f[i].c = fi[2];
+      }
+    }
+    if(!strcmp(key, "Skin")){
+      u32 count = 0;
+      sscanf(str, "%s %i", key, &count);
+      kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
+      memcpy(v, m->vertices(), m->vcount() * m->vsize());
+      kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
+      for(int i = 0; i < count; i++){
+        u32  nw = 0;
+        u32  bi[4] = {0};
+        float bw[4] = {0.0f};
+        mm.reads(str, 512, "\n", 1);
+        sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
+        &bi[0], &bi[1], &bi[2], &bi[3],
+        &bw[0], &bw[1], &bw[2], &bw[3]);
+        s[i].bw.x = bw[0];
+        s[i].bi.x = bi[0];
+        s[i].bw.y = bw[1];
+        s[i].bi.y = bi[1];
+        s[i].bw.z = bw[2];
+        s[i].bi.z = bi[2];
+        s[i].bw.w = bw[3];
+        s[i].bi.w = bi[3];
+        s[i].pos = v[i].pos;
+        s[i].nor = v[i].nor;
+        s[i].col = v[i].col;
+        s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
+      }
+      delete [] v;
+    }
   }
   for(int i = 0; i < materials.size(); i++)
-	materials[i]->release();
+    materials[i]->release();
   materials.clear();
   delete [] key;
   delete [] val;
@@ -783,13 +794,13 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	u32 rd;
-	sscanf(p, "%f %f %f %f %f %f %f %f %n",
-	       &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
-	       &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-	       &v[i].uv[0].x, &v[i].uv[0].y, &rd);
-	v[i].col = 0xffffffff;
-	p = (char*)((u32)p + rd);
+        u32 rd;
+        sscanf(p, "%f %f %f %f %f %f %f %f %n",
+        &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+        &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+        &v[i].uv[0].x, &v[i].uv[0].y, &rd);
+        v[i].col = 0xffffffff;
+        p = (char*)((u32)p + rd);
       }
       kgmLog::log("\nEnd vertices");
     }else if(id == "Faces"){
@@ -801,12 +812,12 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	u32 fi[3], rd;
-	sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
-	f[i].a = fi[0];
-	f[i].b = fi[1];
-	f[i].c = fi[2];
-	p = (char*)((u32)p + rd);
+        u32 fi[3], rd;
+        sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
+        f[i].a = fi[0];
+        f[i].b = fi[1];
+        f[i].c = fi[2];
+        p = (char*)((u32)p + rd);
       }
       kgmLog::log("\nEnd faces");
     }else if(id == "Skin"){
@@ -819,25 +830,25 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
-	u32  nw = 0, rd = 0;
-	u32  bi[4] = {0};
-	float bw[4] = {0.0f};
-	sscanf(p, "%i %i %i %i %f %f %f %f %n", &nw,
-	       &bi[0], &bi[1], &bi[2], &bi[3],
-	       &bw[0], &bw[1], &bw[2], &bw[3], &rd);
-	s[i].bw.x = bw[0];
-	s[i].bi.x = bi[0];
-	s[i].bw.y = bw[1];
-	s[i].bi.y = bi[1];
-	s[i].bw.z = bw[2];
-	s[i].bi.z = bi[2];
-	s[i].bw.w = bw[3];
-	s[i].bi.w = bi[3];
-	s[i].pos = v[i].pos;
-	s[i].nor = v[i].nor;
-	s[i].col = v[i].col;
-	s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
-	p = (char*)((u32)p + rd);
+        u32  nw = 0, rd = 0;
+        u32  bi[4] = {0};
+        float bw[4] = {0.0f};
+        sscanf(p, "%i %i %i %i %f %f %f %f %n", &nw,
+        &bi[0], &bi[1], &bi[2], &bi[3],
+        &bw[0], &bw[1], &bw[2], &bw[3], &rd);
+        s[i].bw.x = bw[0];
+        s[i].bi.x = bi[0];
+        s[i].bw.y = bw[1];
+        s[i].bi.y = bi[1];
+        s[i].bw.z = bw[2];
+        s[i].bi.z = bi[2];
+        s[i].bw.w = bw[3];
+        s[i].bi.w = bi[3];
+        s[i].pos = v[i].pos;
+        s[i].nor = v[i].nor;
+        s[i].col = v[i].col;
+        s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
+        p = (char*)((u32)p + rd);
       }
       delete [] v;
       kgmLog::log("\nEnd skin");
@@ -927,46 +938,46 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
 
 //SOUNDS
 kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
- kgmWave wav;
+  kgmWave wav;
 
- if(!wav.from_mem((char*)m.data(), m.length()))
-	 return 0;
+  if(!wav.from_mem((char*)m.data(), m.length()))
+    return 0;
 
- kgmIAudio::FMT fmt;
+  kgmIAudio::FMT fmt;
 
- switch(wav.fmt_format.nChannels){
- case 1:
-	if(wav.fmt_format.wBitsPerSample == 8){
-         fmt = kgmIAudio::FMT_MONO8;
-	}
+  switch(wav.fmt_format.nChannels){
+  case 1:
+    if(wav.fmt_format.wBitsPerSample == 8){
+      fmt = kgmIAudio::FMT_MONO8;
+    }
 
-	if(wav.fmt_format.wBitsPerSample == 16){
-	 fmt = kgmIAudio::FMT_MONO16;
-	}
-	break;
- case 2:
-	if(wav.fmt_format.wBitsPerSample == 8){
- 	 fmt = kgmIAudio::FMT_STEREO8;
-	}
+    if(wav.fmt_format.wBitsPerSample == 16){
+      fmt = kgmIAudio::FMT_MONO16;
+    }
+    break;
+  case 2:
+    if(wav.fmt_format.wBitsPerSample == 8){
+      fmt = kgmIAudio::FMT_STEREO8;
+    }
 
-	if(wav.fmt_format.wBitsPerSample == 16){
-	 fmt = kgmIAudio::FMT_STEREO16;
-	}
-	break;
- default:
-	return 0;
- }
+    if(wav.fmt_format.wBitsPerSample == 16){
+      fmt = kgmIAudio::FMT_STEREO16;
+    }
+    break;
+  default:
+    return 0;
+  }
 
- kgmIAudio::Sound* s = au->create(fmt, 
-				  wav.fmt_format.nSamplesPerSec,
-				  wav.data_size,
-				  wav.data);
+  kgmIAudio::Sound* s = au->create(fmt,
+  wav.fmt_format.nSamplesPerSec,
+  wav.data_size,
+  wav.data);
 
- if(!s)
-   return 0;
+  if(!s)
+    return 0;
 
- kgmSound* snd = new kgmSound();
- snd->m_sound = s;
+  kgmSound* snd = new kgmSound();
+  snd->m_sound = s;
 
- return snd;
+  return snd;
 }

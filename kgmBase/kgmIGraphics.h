@@ -137,6 +137,8 @@ public:
  virtual void  gcAlpha(bool, u32, float) = 0;
  //CULL
  virtual void  gcCull(u32 mode) = 0;
+ //DEPTH
+ virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
  //VERTEX & INDEX BUFFERS
  virtual void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
  virtual void  gcFreeVertexBuffer(void*) = 0;
