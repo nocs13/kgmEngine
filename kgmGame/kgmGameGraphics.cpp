@@ -99,7 +99,7 @@ void kgmGameGraphics::render(){
     //gc->gcSetMatrix(gcmtx_view, mvw.m);
 
     gc->gcBegin();
-    gc->gcDepth(true, 1, gccmp_equal);
+    gc->gcDepth(true, 1, gccmp_less);
 
     //render 3D
     for(int i = 0; i < m_meshes.size(); i++)
@@ -123,7 +123,8 @@ void kgmGameGraphics::render(){
 
     //For last step draw gui
     gc->gc2DMode();
-    gc->gcDepth(true, 1, gccmp_lequal);
+    gc->gcDepth(false, 0, 0);
+    //gc->gcDepth(true, 1, gccmp_lequal);
 
     for(int i = 0; i < m_guis.size(); i++)
     {

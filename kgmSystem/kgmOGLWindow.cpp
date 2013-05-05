@@ -66,7 +66,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
     GLX_RED_SIZE, 4,
     GLX_GREEN_SIZE, 4,
     GLX_BLUE_SIZE, 4,
-    GLX_DEPTH_SIZE, 8,
+    GLX_DEPTH_SIZE, 16,
     None
 };
 

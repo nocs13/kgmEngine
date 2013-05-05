@@ -34,7 +34,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   glInitExt();
   glEnable(GL_ACTIVE_TEXTURE);
   glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
+  glDepthFunc(GL_GEQUAL);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
@@ -96,12 +96,12 @@ void kgmOGL::gcSetParameter(u32 param, void* value){
     else
       glDisable(GL_TEXTURE_2D);
     break;
-  case gcpar_depth:
+  /*case gcpar_depth:
     if(value)
       glEnable(GL_DEPTH_TEST);
     else
       glDisable(GL_DEPTH_TEST);
-    break;
+    break;*/
 #ifdef GL_ALPHA_TEST
   case gcpar_alpha:
     if(value)
@@ -389,6 +389,7 @@ void kgmOGL::gcCull(u32 mode){
     glCullFace(GL_FRONT);
     break;
   }
+  glEnable(GL_CULL_FACE);
 }
 //DEPTH
 void kgmOGL::gcDepth(bool depth, bool mask, u32 mode){
