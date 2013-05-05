@@ -895,9 +895,16 @@ bool kgmGameBase::loadXml_II(kgmString& path)
               case TypeCamera:
                   m_render->camera().mPos = v;
                   break;
-              default:
+              case TypeLight:
+                  if(lgt)
+                      lgt->position = v;
+                  break;
+              case TypeActor:
                   if(act)
                       act->setPosition(v);
+                  break;
+              default:
+                  break;
               }
           }
           else if(id == "Rotation")

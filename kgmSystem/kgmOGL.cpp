@@ -238,37 +238,33 @@ void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
 
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
   glViewport(x, y, w, h);
-#ifndef ANDROID
-  //glDepthRange(n, f);
-  //glDepthRange(0.01, 10.0);
-#endif
 }
 
 //Light
-/*
-void kgmOGL::gcSetLight(int i, kgmLight *light){
+
+void kgmOGL::gcSetLight(int i, float* pos, float range){
  if(i > GL_MAX_LIGHTS)
    return;
 
- if(!light && (i >= 0)){
-  if(glIsEnabled(GL_LIGHT0 + i))
-   glDisable(GL_LIGHT0 + i);
+ if(i < 0)
+ {
+  int l = (int)fabs(i) - 1;
+
+  if(glIsEnabled(GL_LIGHT0 + l))
+   glDisable(GL_LIGHT0 + l);
+
   return;
  }
 
  if(!glIsEnabled(GL_LIGHT0 + i))
   glEnable(GL_LIGHT0 + i);
 
-
- glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)&light->position);
- glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)&light->ambient);
- glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)&light->diffuse);
- glLightfv(GL_LIGHT0 + i, GL_SPECULAR, (float*)&light->specular);
- glLightf(GL_LIGHT0  + i, GL_CONSTANT_ATTENUATION, 1.0f);
-// glLightf(GL_LIGHT0  + i, GL_CONSTANT_ATTENUATION, 1.0f / (light->range));
- glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f / (light->range));
+ float col[] = {1, 1, 1, 1};
+ glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
+ glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
+ glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f / range);
 }
-*/
+
 //Material
 /*
 void kgmOGL::gcSetMaterial(kgmMaterial* m){

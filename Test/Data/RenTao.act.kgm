@@ -18,11 +18,11 @@
   	<Sound value="uloop" />
   	<Sensor value="" />
   	<Action value="idle" />
-  	<Animation value="0" />
+  	<Animation id="0"  start='0' end='20'/>
   	<Option type="float" name="speed" value="0.0" />
   </State>
 
-  <State id="walk_right" priority="1" time="-1" type="motion">
+  <State id="walk" priority="1" time="-1" type="motion">
   	<Sound value="uloop" />
   	<Sensor value="input_right" />
   	<Action value="walk_right" />
@@ -31,7 +31,7 @@
   	<Option type="vec2" name="direction" value="1.0f 0.0f" />
   </State>
 
-  <State id="walk_left" priority="1" time="-1" type="motion">
+  <State id="walk_back" priority="1" time="-1" type="motion">
   	<Sound value="uloop" />
   	<Sensor value="input_left" />
   	<Action value="walk_left" />
@@ -40,22 +40,13 @@
   	<Option type="vec2" name="direction" value="-1.0 0.0" />
   </State>
 
-  <State id="run_right" priority="1" time="-1" type="motion">
+  <State id="run" priority="1" time="-1" type="motion">
   	<Sound value="uloop" />
   	<Sensor value="input_dright" />
   	<Action value="run_right" />
   	<Animation value="1" />
   	<Option type="float" name="speed" value="8.0" />
   	<Option type="vec2" name="direction" value="1.0 0.0" />
-  </State>
-
-  <State id="run_left" priority="1" time="-1" type="motion">
-  	<Sound value="uloop" />
-  	<Sensor value="input_dleft" />
-  	<Action value="run_left" />
-  	<Animation value="1" />
-  	<Option type="float" name="speed" value="8.0" />
-  	<Option type="vec2" name="direction" value="-1.0 0.0" />
   </State>
 
   <State id="jump" priority="2" time="-1" type="motion" switch="fall">

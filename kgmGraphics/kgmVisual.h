@@ -47,12 +47,21 @@ public:
  kgmList<Group*>        m_groups;
  Group*                 m_group;
 
+ kgmAnimation*          m_animation;
+ bool                   m_floop;
+ u32                    m_fstart;
+ u32                    m_fend;
+
 public:
  kgmVisual()
  {
   m_visible = true;
   m_typeshadow = ShadowNone;
   m_typerender = RenderMesh;
+
+  m_animation = null;
+  m_fstart    = m_fend = 0;
+  m_floop     = false;
  }
 
  virtual ~kgmVisual()
@@ -90,6 +99,14 @@ public:
 
   return true;
  }	
+
+ void setAnimation(kgmAnimation* a, u32 start, u32 end, bool loop)
+ {
+     m_animation = a;
+     m_fstart    = start;
+     m_fend      = end;
+     m_floop     = loop;
+ }
 
  bool setGroup(u32 i)
  {

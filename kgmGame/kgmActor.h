@@ -30,11 +30,20 @@ public:
         kgmString switchto;
 
         u32       priopity;
-        u32       animation;
-        u32       sound;
         u32       time;
 
+        kgmSound*     sound;
+        kgmAnimation* animation;
+        u32           fstart, fend;
+
         kgmTab<kgmString, kgmString> options;
+    };
+
+    struct Animation
+    {
+        kgmAnimation* animation;
+        u32           start;
+        u32           end;
     };
 
 protected:
@@ -44,7 +53,6 @@ protected:
 public:
     u32     m_uid;
     u32     m_type;
-    u32     m_state;
     u32     m_bearing;
 
     bool    m_enable;
@@ -71,10 +79,12 @@ public:
     kgmBody*            m_body;
     kgmVisual*          m_visual;
 
+    kgmList<State*>     m_states;
+    kgmList<kgmSound*>  m_sounds;
     kgmList<kgmDummy*>  m_dummies;
+    kgmList<Animation*> m_animations;
 
-    bool                m_animation, m_animation_loop;
-    float               m_animation_start, m_animation_end, m_animation_frame;
+    State*              m_state;
 
 public:
     kgmActor();
@@ -103,18 +113,13 @@ public:
     void addChild(kgmActor* a);
     void delChild(kgmActor* a);
 
-    void add(kgmDummy* m){
+    void add(kgmDummy* m)
+    {
         if(m)
             m_dummies.add(m);
     }
 
-    void animate(float sf=0, float ef=0, bool loop=false){
-        m_animation_start   = m_animation_frame = sf;
-        m_animation_end     = ef;
-        m_animation_loop    = loop;
-        m_animation         = true;
-    }
-
+    bool setState(kgmString s, bool force = false);
 };
 
 typedef kgmList<kgmActor*> kgmActors;

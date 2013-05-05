@@ -70,6 +70,7 @@ void kgmGameGraphics::render(){
     mtx4 m;
     vec4 myvar;
     int i = 0;
+    bool lighting = false;
 
     mtx4 mvw, mpr;
 
@@ -82,6 +83,22 @@ void kgmGameGraphics::render(){
     gc->gcBegin();
     gc->gcDepth(true, 1, gccmp_lequal);
     gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1, 0);
+
+    if(this->m_lights.size() > 0)
+    {
+        gc->gcSetParameter(gcpar_lighting, (void*)true);
+        lighting = true;
+
+        for(int i = 0; i < m_lights.size(); i++)
+        {
+            Light l = m_lights[i];
+
+            if(l.light)
+            {
+                gc->gcSetLight(i, (float*)&l.light->position, l.light->range);
+            }
+        }
+    }
 
     //render 3D
     for(int i = 0; i < m_meshes.size(); i++)
@@ -104,8 +121,11 @@ void kgmGameGraphics::render(){
     }
 
     //For last step draw gui
-    gc->gc2DMode();
     gc->gcDepth(false, 0, 0);
+    gc->gc2DMode();
+
+    if(lighting)
+        gc->gcSetParameter(gcpar_lighting, null);
 
     for(int i = 0; i < m_guis.size(); i++)
     {
@@ -131,7 +151,6 @@ void kgmGameGraphics::render(){
     gc->gcSetTexture(1, 0);
     gc->gcSetTexture(2, 0);
     gc->gcSetTexture(3, 0);
-    gc->gcDepth(false, 0, 0);
 }
 
 void kgmGameGraphics::render(Mesh *m){

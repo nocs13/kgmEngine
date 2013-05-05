@@ -19,7 +19,7 @@
  <kgmLight name='Lamp'>
   <Type value='Point'/>
   <Color value='1.0 1.0 1.0'/>
-  <Position value='4.076245307922363 1.0054539442062378 5.903861999511719'/>
+  <Position value='4.076245307922363 1.0054539442062378 50.903861999511719'/>
   <Rotation value='0.6503279805183411 0.055217109620571136 1.8663908243179321'/>
   <Intensity value='1.0'/>
   <Shadows value='Yes'/>

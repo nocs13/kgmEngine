@@ -11,11 +11,11 @@ kgmActor::kgmActor()
 
  m_visual = new kgmVisual();
 
- m_body = new kgmBody();
- m_body->m_udata = this;
- m_body->m_mass = 1.0f;
- m_body->m_position = vec3(0, 0, 1);
- m_body->m_rotation = vec3(0, 0, 0);
+ m_body              = new kgmBody();
+ m_body->m_udata     = this;
+ m_body->m_mass      = 1.0f;
+ m_body->m_position  = vec3(0, 0, 1);
+ m_body->m_rotation  = vec3(0, 0, 0);
  m_body->m_direction = vec3(1, 0, 0);
  m_body->m_bound.min = vec3(-1, -1, 0);
  m_body->m_bound.max = vec3(1, 1, 2);
@@ -24,6 +24,8 @@ kgmActor::kgmActor()
  m_birth = kgmTime::getTicks();
  m_health = 1.0f;
  m_parent = null;
+
+ m_state = null;
 }
 
 kgmActor::~kgmActor(){
@@ -109,10 +111,49 @@ void kgmActor::addChild(kgmActor* a){
 void kgmActor::delChild(kgmActor* a){
  if(!a)
   return;
+
  for(int i = 0; i < m_childs.length(); i++)
-  if(a == m_childs[i]){
+ {
+  if(a == m_childs[i])
+  {
    a->release();
    m_childs.erase(i);
    return;
   }
+ }
+}
+
+bool kgmActor::setState(kgmString s, bool force)
+{
+    State* state = null;
+
+    for(kgmList<State*>::iterator i; i != m_states.end(); ++i)
+    {
+        if((*i)->id == s)
+            state = (*i);
+    }
+
+    if(!state)
+        return false;
+
+    if(!m_state || force || (state->priopity >= m_state->priopity))
+    {
+        m_state = state;
+
+        if(state->sound != -1)
+        {
+            if(state->sound && state->sound->m_sound)
+                state->sound->m_sound->play((state->time == -1)?(true):(false));
+
+            if(state->animation)
+                m_visual->setAnimation(state->animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
+        }
+
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
 }

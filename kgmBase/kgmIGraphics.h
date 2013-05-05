@@ -124,7 +124,7 @@ public:
  virtual void* gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) = 0;
  virtual void  gcFreeTexture(void *t) = 0;
  virtual void  gcSetTexture(u32 stage, void *t) = 0;
- //MODE 
+ // MODE
  virtual void  gc2DMode() = 0;
  virtual void  gc3DMode() = 0;
  // MATRIX 
@@ -139,6 +139,8 @@ public:
  virtual void  gcCull(u32 mode) = 0;
  //DEPTH
  virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
+ //LIGHT
+ virtual void gcSetLight(int i, float* pos, float range) = 0;
  //VERTEX & INDEX BUFFERS
  virtual void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
  virtual void  gcFreeVertexBuffer(void*) = 0;
