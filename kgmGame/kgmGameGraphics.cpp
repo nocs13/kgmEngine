@@ -27,8 +27,8 @@ kgmGameGraphics::~kgmGameGraphics(){
 
 void kgmGameGraphics::clean(){
   for(int i = 0; i < m_meshes.size(); i++){
-    //m_meshes[i].mesh->release();
-    //m_meshes[i].material->release();
+    m_meshes[i].mesh->release();
+    m_meshes[i].material->release();
   }
 
   m_meshes.clear();
@@ -56,9 +56,10 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
   gui_style = s;
 }
 
-
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
+  m_camera.set(PI / 6, width / height, .1f, 10000.0,
+               m_camera.mPos, m_camera.mDir, m_camera.mUp);
 }
 
 void kgmGameGraphics::render(){
@@ -74,32 +75,13 @@ void kgmGameGraphics::render(){
 
     kgmMaterial mbase;
 
-    gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1, 0);
     gc->gcCull(1);
-
-    /*if(camera){
-       //gc->gcSetMatrix(gcmtx_proj, camera->mVwPj.m);
-       gc->gcSetMatrix(gcmtx_proj, camera->mProj.m);
-       gc->gcSetMatrix(gcmtx_view, camera->mView.m);
-    }else{
-       mtx4 mvw, mpr;
-       mvw.identity();
-       mpr.identity();
-       //mvw.lookat(vec3(0, 0, 100 * sin(k)),
-       //           vec3(0, 0, -100 * sin(k)),
-       //           vec3(0, 0, 1));
-       gc->gcSetMatrix(gcmtx_proj, mpr.m);
-       gc->gcSetMatrix(gcmtx_view, mvw.m);
-       }*/
-
     gc->gcSetMatrix(gcmtx_proj, m_camera.mProj.m);
     gc->gcSetMatrix(gcmtx_view, m_camera.mView.m);
-    //mvw.identity();
-    //gc->gcSetMatrix(gcmtx_proj, m_camera.mVwPj.m);
-    //gc->gcSetMatrix(gcmtx_view, mvw.m);
 
     gc->gcBegin();
-    gc->gcDepth(true, 1, gccmp_less);
+    gc->gcDepth(true, 1, gccmp_lequal);
+    gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1, 0);
 
     //render 3D
     for(int i = 0; i < m_meshes.size(); i++)
@@ -124,7 +106,6 @@ void kgmGameGraphics::render(){
     //For last step draw gui
     gc->gc2DMode();
     gc->gcDepth(false, 0, 0);
-    //gc->gcDepth(true, 1, gccmp_lequal);
 
     for(int i = 0; i < m_guis.size(); i++)
     {

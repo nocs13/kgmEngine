@@ -34,7 +34,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   glInitExt();
   glEnable(GL_ACTIVE_TEXTURE);
   glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_GEQUAL);
+  glDepthFunc(GL_LEQUAL);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
@@ -239,7 +239,8 @@ void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
   glViewport(x, y, w, h);
 #ifndef ANDROID
-  glDepthRange(n, f);
+  //glDepthRange(n, f);
+  //glDepthRange(0.01, 10.0);
 #endif
 }
 
