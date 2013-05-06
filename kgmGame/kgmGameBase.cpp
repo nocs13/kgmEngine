@@ -719,12 +719,13 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
 
 bool kgmGameBase::loadXml_II(kgmString& path)
 {
-#define TypeNone     0
-#define TypeMaterial 1
-#define TypeCamera   2
-#define TypeLight    3
-#define TypeMesh     4
-#define TypeActor    5
+#define TypeNone      0
+#define TypeMaterial  1
+#define TypeCamera    2
+#define TypeLight     3
+#define TypeMesh      4
+#define TypeActor     5
+#define TypeCollision 6
 
 #define AttrString(node, id, val)		\
     {						\
@@ -755,7 +756,8 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     kgmActor*       act = 0;
     kgmObject*      obj = 0;
 
-    u32            vts = 0, fcs = 0;
+    u32             vts = 0,
+                    fcs = 0;
 
     kgmString      m_data = "";
 
@@ -836,6 +838,14 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 sscanf(value.data(), "%i", &len);
                 kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
                 m_data = "faces";
+            }
+            else if(id == "Polygon")
+            {
+              kgmString data;
+
+              xml.attribute("vertices", value);
+              sscanf(value.data(), "%i", &vts);
+              m_data = "polygon";
             }
         }
         else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -941,6 +951,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                     v[i].col = 0xffffffff;
                     (pdata) += (u32)n;
                 }
+                m_data = "";
             }
             else if(m_data == "faces")
             {
@@ -955,10 +966,36 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                     f[i].f[2] = fs[2];
                     (pdata) += (u32)n;
                 }
+                m_data = "";
             }
             else if(m_data == "skin")
             {
                 char* pdata = xml.m_tagData.data();
+                m_data = "";
+            }
+            else if(m_data == "polygon")
+            {
+                int n = 0;
+                char* pdata = xml.m_tagData.data();
+
+                if(vts > 2)
+                {
+                  vec3* v = new vec3[vts];
+
+                  for(int i = 0; i < vts; i++)
+                  {
+                      sscanf(pdata, "%f %f %f %n", &v[i].x, &v[i].y, &v[i].z, &n);
+                      (pdata) += (u32)n;
+                  }
+
+                  for(int i = 1; i < vts - 1; i++)
+                  {
+                    m_physics->add(v[0], v[i], v[i+1]);
+                  }
+
+                  delete [] v;
+                }
+                m_data = "";
             }
         }
     }

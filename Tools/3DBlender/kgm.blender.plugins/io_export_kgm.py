@@ -323,6 +323,27 @@ class kgmActor:
   self.rot = self.mtx.to_euler()
   self.quat = self.mtx.to_quaternion()
 
+class kgmCollision:
+ def __init__(self, o):
+  mesh = o.data 
+  mtx = o.matrix_local
+  self.name = mesh.name
+  self.faces = []
+
+  if hasattr(mesh, 'faces'):
+    for i in range(0, len(mesh.faces)):
+     face = mesh.faces[i]
+     iface = []
+
+     for j in range(0, len(face.vertices)):
+      vi = face.vertices[j]
+      c = mesh.vertices[vi].co * mtx
+      iface.append(c)
+
+     self.faces.append(iface)
+  
+  
+
 import threading
 class kgmThread(threading.Thread):
   def __init__(self, c):
@@ -350,6 +371,7 @@ class kgmExport(bpy.types.Operator):
  exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
  exp_kgmactors = BoolProperty(name="Export kgmActors", description="", default=True)
+ exp_kgmphysics = BoolProperty(name="Export kgmPhysics", description="", default=True)
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
@@ -375,7 +397,8 @@ class kgmExport(bpy.types.Operator):
   #cFrame = bpy.context.scene.frame_current
 
   print("Collect Objects...")
-  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes]
+  collision = None
+  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.name != 'kgm_collision']
   materials = [ob for ob in scene_materials if self.exp_materials]
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
@@ -390,8 +413,11 @@ class kgmExport(bpy.types.Operator):
       print("scan armature")
       for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
-
-  #bpy.context.scene.frame_current = cFrame
+        
+  if self.exp_kgmphysics == True:
+    o = context.scene.objects['kgm_collision']
+    if o != None:
+      collision = kgmCollision(o)
 
   print("Animations: " + str(len(animations)))
   print("Objects: " + str(len(objects)))
@@ -505,6 +531,15 @@ class kgmExport(bpy.types.Operator):
    file.write("  <Rotation value='" + str(a.rot[0]) + " " + str(a.rot[1]) + " " + str(a.rot[2]) + "'/>\n")
    file.write("  <State value='" + a.state + "'/>\n")
    file.write(" </kgmActor>\n")
+   
+  if collision != None:
+   file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
+   for face in collision.faces:
+     file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
+     for v in face:
+      file.write("   " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n")
+     file.write("  </Polygon>\n")
+   file.write(" </kgmCollision>\n")
 
   file.write("</kgm>\n")
   file.close()

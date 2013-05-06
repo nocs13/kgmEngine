@@ -27,10 +27,16 @@ public:
     virtual void sense(){}
   };
 
+  class Trigger
+  {
+
+  };
+
 public:
   kgmTab<kgmString, AI*> m_ais;
   kgmList<kgmActor*>     m_actors;
   kgmList<Sensor*>       m_sensors;
+  kgmList<Trigger*>      m_triggers;
 
 public:
     kgmGameLogic();
@@ -39,6 +45,7 @@ public:
     void addAI(kgmString, AI*);
     void addActor(kgmActor*);
     void addSensor(Sensor*);
+    void addTrigger(Trigger*);
 
     void onInput(int, int);
 
