@@ -22,6 +22,7 @@ public:
 
 protected:
  ~kgmResource();
+
 public:
  kgmResource();
  void setId(kgmString id){ m_id = id; }

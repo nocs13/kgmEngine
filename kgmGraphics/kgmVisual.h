@@ -62,6 +62,8 @@ public:
   m_animation = null;
   m_fstart    = m_fend = 0;
   m_floop     = false;
+
+  m_group = null;
  }
 
  virtual ~kgmVisual()

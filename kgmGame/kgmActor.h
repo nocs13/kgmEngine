@@ -86,6 +86,7 @@ public:
 
     State*              m_state;
 
+    bool                m_gameplayer;
 public:
     kgmActor();
     virtual ~kgmActor();

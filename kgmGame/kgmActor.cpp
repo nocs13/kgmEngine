@@ -25,7 +25,8 @@ kgmActor::kgmActor()
  m_health = 1.0f;
  m_parent = null;
 
- m_state = null;
+ m_state      = null;
+ m_gameplayer = false;
 }
 
 kgmActor::~kgmActor(){

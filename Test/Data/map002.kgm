@@ -80,7 +80,7 @@
   </Faces>
  </kgmMesh>
  <kgmActor name='kgmActor' type='RenTao.act.kgm'>
-  <Position value='16.9996477365493774 -14.439688205718994 1.0'/>
+  <Position value='6.9996477365493774 -4.439688205718994 0.0'/>
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='idle'/>
  </kgmActor>

@@ -12,7 +12,7 @@
   	<Sound value="uloop" />
   	<Sensor value="" />
   	<Action value="idle" />
-  	<Animation value="RenTao.anm.kgm"  start='0' end='20'/>
+  	<Animation value="0"  start='0' end='20'/>
   	<Option type="float" name="speed" value="0.0" />
   </State>
 
@@ -20,25 +20,16 @@
   	<Sound value="uloop" />
   	<Sensor value="input_right" />
   	<Action value="walk_right" />
-  	<Animation value="1" />
+        <Animation value="0"  start='20' end='40'/>
   	<Option type="float" name="speed" value="4.0" />
   	<Option type="vec2" name="direction" value="1.0f 0.0f" />
-  </State>
-
-  <State id="walk_back" priority="1" time="-1" type="motion">
-  	<Sound value="uloop" />
-  	<Sensor value="input_left" />
-  	<Action value="walk_left" />
-  	<Animation value="1" />
-  	<Option type="float" name="speed" value="4.0" />
-  	<Option type="vec2" name="direction" value="-1.0 0.0" />
   </State>
 
   <State id="run" priority="1" time="-1" type="motion">
   	<Sound value="uloop" />
   	<Sensor value="input_dright" />
   	<Action value="run_right" />
-  	<Animation value="1" />
+        <Animation value="0"  start='40' end='60'/>
   	<Option type="float" name="speed" value="8.0" />
   	<Option type="vec2" name="direction" value="1.0 0.0" />
   </State>
@@ -47,7 +38,7 @@
   	<Sound value="uloop" />
   	<Sensor value="input_up" />
   	<Action value="jump" />
-  	<Animation value="0" />
+        <Animation value="0"  start='60' end='80'/>
   	<Option type="float" name="speed" value="14.0" />
   	<Option type="vec2" name="direction" value="NaN -1.0" />
   </State>
@@ -56,32 +47,32 @@
   	<Sound value="uloop" />
   	<Sensor value="fall" />
   	<Action value="fall" />
-  	<Animation value="0" />
+        <Animation value="0"  start='20' end='40'/>
   	<Option type="vec2" name="direction" value="NaN NaN" />
   </State>
 
   <State id="dying" priority="10" time="20" type="die" switch="die">
   	<Sound value="uloop" />
-  	<Animation value="0" />
+        <Animation value="0"  start='20' end='40'/>
   </State>
 
   <State id="die" priority="10" time="-1" type="die">
   	<Sound value="uloop" />
   	<Action value="died" />
-  	<Animation value="0" />
+        <Animation value="0"  start='20' end='40'/>
   </State>
 
   <State id="punch" priority="2" time="8" type="attack" switch="idle">
   	<Sound value="uloop" />
   	<Action value="attack" />
-  	<Animation value="0" />
+        <Animation value="0"  start='20' end='40'/>
   	<Option type="float" name="attack" value="3" />
   	<Option type="float" name="attack_range" value="300" />
   </State>
 
   <State id="topunch" priority="2" time="10" type="idle" switch="punch">
   	<Sound value="uloop" />
-  	<Animation value="0" />
+        <Animation value="0"  start='20' end='40'/>
   </State>
  </kgmActor>
 </kgm>

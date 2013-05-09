@@ -7,6 +7,7 @@
 #include "../kgmBase/kgmLog.h"
 
 #include "kGui.h"
+#include "kLogic.h"
 
 class kGame: public kgmGameBase{
   class SnsInput: public kgmGameLogic::Sensor
@@ -40,7 +41,7 @@ class kGame: public kgmGameBase{
     }
   };
 
-  kGui* gui;
+  kGui*   gui;
   //kgmSound* snd;
 
 public:
@@ -56,6 +57,11 @@ public:
   }
 
   ~kGame(){
+  }
+
+  void initLogic()
+  {
+    m_logic = new kLogic(this);
   }
 
   void onKeyUp(int k){

@@ -32,10 +32,20 @@ void kgmGameGraphics::clean(){
   }
   m_meshes.clear();
 
+  for(int i = 0; i < m_materials.size(); i++){
+    m_materials[i]->release();
+  }
+  m_materials.clear();
+
   for(int i = 0; i < m_visuals.size(); i++){
     m_visuals[i]->release();
   }
   m_visuals.clear();
+
+  for(int i = 0; i < m_lights.size(); i++){
+    m_lights[i].light->release();
+  }
+  m_lights.clear();
 }
 
 kgmShader* s_def = null;
@@ -125,6 +135,15 @@ void kgmGameGraphics::render(){
     }
 
     //For last step draw gui
+    gc->gcSetLight(-1, null, 0.0);
+    gc->gcSetLight(-2, null, 0.0);
+    gc->gcSetLight(-3, null, 0.0);
+    gc->gcSetLight(-4, null, 0.0);
+    gc->gcSetLight(-5, null, 0.0);
+    gc->gcSetLight(-6, null, 0.0);
+    gc->gcSetLight(-7, null, 0.0);
+    gc->gcSetLight(-8, null, 0.0);
+    gc->gcSetLight(-9, null, 0.0);
     gc->gcDepth(false, 0, 0);
     gc->gc2DMode();
 
@@ -187,8 +206,8 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
     mtx4 tr = visual->m_transform * m_camera.mView;
     gc->gcSetMatrix(gcmtx_view, tr.m);
-    render(group->material);
-    render(group->mesh);
+    if(group->material) render(group->material);
+    if(group->mesh) render(group->mesh);
     render((kgmMaterial*)0);
 }
 

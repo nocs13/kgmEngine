@@ -60,7 +60,9 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   //init local values
 
   glEnable(GL_TEXTURE_2D);
+
   m_renderbuffer = 0;
+  m_lights       = 0;
 }
 
 kgmOGL::~kgmOGL(){
@@ -70,14 +72,6 @@ kgmOGL::~kgmOGL(){
 void kgmOGL::gcSetParameter(u32 param, void* value){
   switch(param)
   {
-#ifdef GL_LIGHTING
-  case gcpar_lighting:
-    if(value)
-      glEnable(GL_LIGHTING);
-    else
-      glDisable(GL_LIGHTING);
-    break;
-#endif
   case gcpar_blending:
     if(value)
       glEnable(GL_BLEND);
@@ -96,12 +90,12 @@ void kgmOGL::gcSetParameter(u32 param, void* value){
     else
       glDisable(GL_TEXTURE_2D);
     break;
-  /*case gcpar_depth:
+  case gcpar_depth:
     if(value)
       glEnable(GL_DEPTH_TEST);
     else
       glDisable(GL_DEPTH_TEST);
-    break;*/
+    break;
 #ifdef GL_ALPHA_TEST
   case gcpar_alpha:
     if(value)
@@ -251,17 +245,30 @@ void kgmOGL::gcSetLight(int i, float* pos, float range){
   int l = (int)fabs(i) - 1;
 
   if(glIsEnabled(GL_LIGHT0 + l))
+  {
    glDisable(GL_LIGHT0 + l);
+   m_lights--;
+  }
+
+  if(m_lights < 1)
+    glDisable(GL_LIGHTING);
 
   return;
  }
 
  if(!glIsEnabled(GL_LIGHT0 + i))
+ {
   glEnable(GL_LIGHT0 + i);
+  m_lights++;
+
+  if(!glIsEnabled(GL_LIGHTING))
+    glEnable(GL_LIGHTING);
+ }
 
  float col[] = {1, 1, 1, 1};
  glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
  glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
+ glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
  glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f / range);
 }
 
