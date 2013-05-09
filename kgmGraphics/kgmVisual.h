@@ -132,6 +132,8 @@ public:
    if(mtl)  { group->material = mtl; mtl->increment(); }
    if(skel) { group->skeleton = skel; skel->increment(); }
    if(tran) { group->transform = new mtx4(); *group->transform = *tran; }
+
+   m_groups.add(group);
  }
 };
 

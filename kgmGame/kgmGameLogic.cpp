@@ -19,9 +19,14 @@ void kgmGameLogic::update(u32 milliseconds)
 
   for(kgmList<kgmActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
   {
-      AI* ai = m_ais[(*i)->m_class];
+      if((*i)->m_class.length() < 1)
+          continue;
 
-      if(ai)
+      (*i)->update(milliseconds);
+
+      AI* ai = null;
+
+      if(m_ais.get((*i)->m_class, ai) && ai)
           ai->ai((*i));
   }
 }

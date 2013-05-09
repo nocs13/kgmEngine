@@ -92,7 +92,7 @@ public:
 
     virtual void init();
     virtual void exit();
-    virtual void tick(u32);
+    virtual void update(u32);
 
     void remove();
 

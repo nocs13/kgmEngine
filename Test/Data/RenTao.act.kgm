@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
 <kgm>
  <kgmActor id='RenTao'>
-   <Animations id='Base'>
-     <Animation start='0' end='20'>
-     <Animation start='21' end='40'>
-     <Animation start='41' end='60'>
-   </Animations>
-
   <Visual id='Base'>
    <Mesh value="RenTao.msh.kgm" />
    <Material value="RenTao.mtl.kgm" />
@@ -18,7 +12,7 @@
   	<Sound value="uloop" />
   	<Sensor value="" />
   	<Action value="idle" />
-  	<Animation id="0"  start='0' end='20'/>
+  	<Animation value="RenTao.anm.kgm"  start='0' end='20'/>
   	<Option type="float" name="speed" value="0.0" />
   </State>
 

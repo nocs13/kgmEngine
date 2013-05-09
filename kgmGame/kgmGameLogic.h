@@ -42,10 +42,10 @@ public:
     kgmGameLogic();
 
     void clear();
-    void addAI(kgmString, AI*);
-    void addActor(kgmActor*);
-    void addSensor(Sensor*);
-    void addTrigger(Trigger*);
+    void add(kgmString, AI*);
+    void add(kgmActor* a) { if(a) m_actors.add(a); }
+    void add(Sensor*);
+    void add(Trigger*);
 
     void onInput(int, int);
 

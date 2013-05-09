@@ -414,10 +414,13 @@ class kgmExport(bpy.types.Operator):
       for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
         
-  if self.exp_kgmphysics == True:
-    o = context.scene.objects['kgm_collision']
-    if o != None:
-      collision = kgmCollision(o)
+  try:      
+    if self.exp_kgmphysics == True:
+      o = context.scene.objects['kgm_collision']
+      if o != None:
+        collision = kgmCollision(o)
+  except:
+    pass
 
   print("Animations: " + str(len(animations)))
   print("Objects: " + str(len(objects)))

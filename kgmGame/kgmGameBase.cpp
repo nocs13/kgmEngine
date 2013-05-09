@@ -422,12 +422,6 @@ int kgmGameBase::gUnload()
     if(m_logic)
         m_logic->clear();
 
-    /*if(m_objects.length() > 0){
-        for(int i = 0; i < m_objects.length(); i++)
-            m_objects[i]->release();
-        m_objects.clear();
-    }*/
-
     m_state = state;
 
     return 0;
@@ -810,12 +804,16 @@ bool kgmGameBase::loadXml_II(kgmString& path)
             {
                 type = TypeActor;
                 kgmString s;
-                xml.attribute("id", s);
+                xml.attribute("type", s);
                 obj = act = gSpawn(s);
 
-                if(act){
+                if(act)
+                {
+                    xml.attribute("name", s);
+                    act->m_name = s;
                     m_render->add(act->m_visual);
                     m_physics->add(act->m_body);
+                    m_logic->add(act);
                     //m_objects.add(obj);
                 }
             }
@@ -923,7 +921,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
               xml.attribute("value", value);
               sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-              if(act)
+              if(act && type == TypeActor)
                   act->setRotation(v);
           }
           else if(id == "Quaternion")
@@ -932,8 +930,16 @@ bool kgmGameBase::loadXml_II(kgmString& path)
               xml.attribute("value", value);
               sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
 
-              if(act)
+              if(act && type == TypeActor)
                   act->setRotation(q);
+          }
+          else if(id == "State")
+          {
+              kgmString s;
+              xml.attribute("value", s);
+
+              if(act && type == TypeActor)
+                  act->setState(s);
           }
         }
         else if(xstate == kgmXml::XML_TAG_DATA)
@@ -1025,38 +1031,59 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         return 0;
 
     kgmXml xml(mem);
+
     if(!xml.m_node)
         return 0;
 
-    actor = new kgmActor();
+    kgmXml::Node* a_node = null;
+
     for(int i = 0; i < xml.m_node->nodes(); i++){
-        kgmString id, val;
+        kgmString id;
         xml.m_node->node(i)->id(id);
 
-        if(id == "Section"){
+        if(id == "kgmActor")
+        {
+            a_node = xml.m_node->node(i);
+
+            break;
+        }
+    }
+
+    if(!a_node)
+        return null;
+
+    actor = new kgmActor();
+    a_node->attribute("id", actor->m_class);
+
+    for(int i = 0; i < a_node->nodes(); i++){
+        kgmString id, val;
+        a_node->node(i)->id(id);
+
+        if(id == "Visual")
+        {
             kgmMesh*      msh = 0;
             kgmMaterial*  mtl = 0;
             kgmSkeleton*  skl = 0;
             kgmAnimation* anm = 0;
 
-            for(int j = 0; j < xml.m_node->node(i)->nodes(); j++)
+            for(int j = 0; j < a_node->node(i)->nodes(); j++)
             {
-                xml.m_node->node(i)->node(j)->id(id);
+                a_node->node(i)->node(j)->id(id);
                 if(id == "Material"){
-                    xml.m_node->node(i)->attribute("value", val);
+                    a_node->node(i)->node(j)->attribute("value", val);
                     mtl = m_resources->getMaterial(val);
                     kgm_log() << "\nMaterial: " << val.data();
                 }else if(id == "Mesh"){
-                    xml.m_node->node(i)->attribute("value", val);
+                    a_node->node(i)->node(j)->attribute("value", val);
                     msh = m_resources->getMesh(val);
                 }else if(id == "Animation"){
-                    xml.m_node->node(i)->attribute("value", val);
+                    a_node->node(i)->node(j)->attribute("value", val);
                     anm = m_resources->getAnimation(val);
                 }else if(id == "Skeleton"){
-                    xml.m_node->node(i)->attribute("value", val);
+                    a_node->node(i)->node(j)->attribute("value", val);
                     skl = m_resources->getSkeleton(val);
                 }else if(id == "Dummy"){
-                    xml.m_node->node(i)->attribute("value", val);
+                    a_node->node(i)->node(j)->attribute("value", val);
                 }
             }
 
@@ -1065,6 +1092,48 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
               actor->m_visual->addGroup(msh, mtl, skl, 0);
             }
         }
+        else if(id == "State")
+        {
+            kgmString s;
+            kgmActor::State* state = new kgmActor::State();
+            a_node->node(i)->attribute("id", state->id);
+            a_node->node(i)->attribute("type", state->type);
+            a_node->node(i)->attribute("switch", state->switchto);
+
+            a_node->node(i)->attribute("time", s);
+            if(s.length() > 0) sscanf(s, "%i", &state->time);
+
+            a_node->node(i)->attribute("priority", s);
+            if(s.length() > 0) sscanf(s, "%i", &state->priopity);
+
+            for(int j = 0; j < a_node->node(i)->nodes(); j++)
+            {
+                a_node->node(i)->node(j)->id(id);
+
+                if(id == "Sound")
+                {
+                    a_node->node(i)->node(j)->attribute("value", s);
+                    state->sound = m_resources->getSound(s);
+                }
+                else if(s == "Animation")
+                {
+                    a_node->node(i)->node(j)->attribute("value", s);
+                    state->animation = m_resources->getAnimation(s);
+                    a_node->node(i)->node(j)->attribute("start", s);
+                    if(s.length() > 0) sscanf(s, "%i", &state->fstart);
+                    a_node->node(i)->node(j)->attribute("end", s);
+                    if(s.length() > 0) sscanf(s, "%i", &state->fend);
+                }
+                else if(s == "Option")
+                {
+                    kgmString k, v;
+                    a_node->node(i)->node(j)->attribute("key", k);
+                    a_node->node(i)->node(j)->attribute("value", v);
+                    state->options.add(k,v);
+                }
+            }
+            actor->m_states.add(state);
+        }
     }
 
     kgm_log() << "\nActor: " << actor->m_name.data();
@@ -1072,50 +1141,3 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     return actor;
 }
 
-/*
-void kgmGameBase::gRender(kgmIGraphics* gc){
- static float alpha = 0.0;
- static float m_time[4];
- vec3 v[2];
- mtx4 m;
- vec4 myvar;
- int i = 0;
-
-  mtx4 mvw, mpr;
-  int  rc[4];
-
-  getRect(rc[0], rc[1], rc[2], rc[3]);
-  gc->gcSetViewport(0, 0, rc[2], rc[3], 1.0, 1000.0);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xff0000ff, 1, 0);
-
-  mpr.perspective(0.25 * PI, (float)rc[2]/(float)rc[3], 0.1, 10000000.0);
-  mvw.lookat(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 0, 1));
-  gc->gcSetMatrix(gcmtx_view, mvw.m);
-  gc->gcSetMatrix(gcmtx_proj, mpr.m);
-
-  if(m_map.camera){
-    gc->gcSetMatrix(gcmtx_proj, m_map.camera->mProj.m);
-    gc->gcSetMatrix(gcmtx_view, m_map.camera->mView.m);
-  }else{
-    mvw.identity();
-    mpr.identity();
-    gc->gcSetMatrix(gcmtx_view, mvw.m);
-    gc->gcSetMatrix(gcmtx_proj, mpr.m);
-  }
-
-  gc->gcBegin();
-
-  gcDrawGridlines(gc, 10, 20, 0x55555555);
-  //gcDrawPlane(gc, vec3(0, 0, -1), 10, 10, 0xFFFF00FF);
-  if(m_state == State_Play)
-    m_render.render();
-
-  //For last step draw gui
-  gc->gc2DMode();
-  for(int i = 0; i < m_guis.size(); i++)
-    m_guis[i]->repaint(gc);
-  gc->gc3DMode();
-
-  gc->gcRender();
-}
-*/

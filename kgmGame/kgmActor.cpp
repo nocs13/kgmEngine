@@ -45,7 +45,8 @@ void kgmActor::init(){
  m_transform.translate(m_body->m_position);
 }
 
-void kgmActor::tick(u32 time){
+void kgmActor::update(u32 time){
+    m_body->transform(m_visual->m_transform);
 }
 
 void kgmActor::remove(){
@@ -72,7 +73,8 @@ bool kgmActor::removed(){
  return m_remove;
 }
 
-void kgmActor::setPosition(vec3& v){
+void kgmActor::setPosition(vec3& v)
+{
  m_body->translate(v.x, v.y, v.z);
 }
 

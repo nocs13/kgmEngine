@@ -30,8 +30,12 @@ void kgmGameGraphics::clean(){
     m_meshes[i].mesh->release();
     m_meshes[i].material->release();
   }
-
   m_meshes.clear();
+
+  for(int i = 0; i < m_visuals.size(); i++){
+    m_visuals[i]->release();
+  }
+  m_visuals.clear();
 }
 
 kgmShader* s_def = null;
@@ -175,8 +179,14 @@ void kgmGameGraphics::render(kgmVisual* visual){
   kgmVisual::Group* group = visual->getGroup();
 
   if(!group)
-    return;
+  {
+    visual->setGroup(0);
 
+    return;
+  }
+
+    mtx4 tr = visual->m_transform * m_camera.mView;
+    gc->gcSetMatrix(gcmtx_view, tr.m);
     render(group->material);
     render(group->mesh);
     render((kgmMaterial*)0);
