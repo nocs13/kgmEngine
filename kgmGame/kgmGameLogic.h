@@ -7,6 +7,11 @@
 class kgmGameLogic : public kgmObject
 {
 public:
+  enum ACTION
+  {
+      ACTION_INPUT,
+      ACTION_OBJECT
+  };
 
   class AI
   {
@@ -38,17 +43,19 @@ public:
   kgmList<Sensor*>       m_sensors;
   kgmList<Trigger*>      m_triggers;
 
+  kgmActor*              m_player;
+
 public:
     kgmGameLogic();
 
     void clear();
     void add(kgmString, AI*);
-    void add(kgmActor* a) { if(a) m_actors.add(a); }
+    void add(kgmActor* a) { if(a){ m_actors.add(a); if(a->m_gameplayer) m_player = a; } }
     void add(Sensor*);
     void add(Trigger*);
 
-    void onInput(int, int);
-
+    virtual void action(ACTION, void* src, int arg){}
+    virtual void input(int, int);
     virtual void update(u32 milliseconds);
 };
 

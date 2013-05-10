@@ -97,6 +97,7 @@ kgmGameBase::kgmGameBase()
     if(!m_graphics)
         return;
 
+    log("init physics...");
     initPhysics();
 
     log("open renderer...");
@@ -104,7 +105,9 @@ kgmGameBase::kgmGameBase()
     m_render->resize(m_width, m_height);
     m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
+    log("init game audio...");
     initAudio();
+    log("init game logic...");
     initLogic();
 
     log("open font...");
@@ -183,7 +186,6 @@ void kgmGameBase::initGraphycs()
 
 void kgmGameBase::initPhysics()
 {
-    log("init physics...");
     m_physics = new kgmGamePhysics();
 }
 
@@ -194,20 +196,16 @@ void kgmGameBase::initSystem()
 
 void kgmGameBase::initAudio(){
 #ifdef OAL
-    log("init game audio...");
     m_audio	= new kgmOAL();
 #elif defined(OSL)
-    log("init game audio...");
     m_audio	= new kgmOSL();
 #elif defined(D3DS)
 #endif
 }
 
 void kgmGameBase::initLogic(){
-    log("init game logic...");
     m_logic = new kgmGameLogic();
 }
-
 
 void kgmGameBase::log(const char* msg){
     kgmLog::log(msg);
@@ -361,6 +359,12 @@ void kgmGameBase::onKeyDown(int k){
 void kgmGameBase::onMsMove(int k, int x, int y){
     m_input[grot_x] = x;
     m_input[grot_y] = y;
+
+    if(m_state == State_Play)
+    {
+      m_logic->input(grot_x, x);
+      m_logic->input(grot_y, y);
+    }
 }
 
 void kgmGameBase::onResize(int w, int h){
@@ -811,10 +815,14 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                 {
                     xml.attribute("name", s);
                     act->m_name = s;
+                    xml.attribute("player", s);
+
+                    if(s == "on")
+                        act->m_gameplayer = true;
+
                     m_render->add(act->m_visual);
                     m_physics->add(act->m_body);
                     m_logic->add(act);
-                    //m_objects.add(obj);
                 }
             }
             else if(id == "Vertices")

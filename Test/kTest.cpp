@@ -59,11 +59,13 @@ public:
   ~kGame(){
   }
 
-  void initLogic()
+protected:
+  virtual void initLogic()
   {
     m_logic = new kLogic(this);
   }
 
+public:
   void onKeyUp(int k){
     kgmGameBase::onKeyUp(k);
 

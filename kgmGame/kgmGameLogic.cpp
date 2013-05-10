@@ -31,7 +31,7 @@ void kgmGameLogic::update(u32 milliseconds)
   }
 }
 
-void kgmGameLogic::onInput(int btn, int state)
+void kgmGameLogic::input(int btn, int state)
 {
 
 }
