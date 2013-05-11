@@ -7,6 +7,7 @@
 
 #include "kgmGameGraphics.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmTime.h"
 #include "../kgmGraphics/kgmGuiProgress.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGuiScroll.h"
@@ -16,7 +17,10 @@
 kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
   rc = r;
+
   gui_style = new kgmGuiStyle();
+
+  linkCamera(null, 0, 0);
 }
 
 kgmGameGraphics::~kgmGameGraphics(){
@@ -72,8 +76,8 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
 
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
-  m_camera.set(PI / 6, width / height, .1f, 10000.0,
-               m_camera.mPos, m_camera.mDir, m_camera.mUp);
+  m_camera.camera.set(PI / 6, width / height, .1f, 10000.0,
+               m_camera.camera.mPos, m_camera.camera.mDir, m_camera.camera.mUp);
 }
 
 void kgmGameGraphics::render(){
@@ -91,8 +95,15 @@ void kgmGameGraphics::render(){
     kgmMaterial mbase;
 
     gc->gcCull(1);
-    gc->gcSetMatrix(gcmtx_proj, m_camera.mProj.m);
-    gc->gcSetMatrix(gcmtx_view, m_camera.mView.m);
+
+    if(m_camera.object)
+    {
+    }
+    else
+    {
+      gc->gcSetMatrix(gcmtx_proj, m_camera.camera.mProj.m);
+      gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
+    }
 
     gc->gcBegin();
     gc->gcDepth(true, 1, gccmp_lequal);
@@ -160,7 +171,7 @@ void kgmGameGraphics::render(){
 
     char info[4096] = {0};
     sprintf(info, "camera direction: %f %f %f \n",
-            m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z);
+            m_camera.camera.mDir.x, m_camera.camera.mDir.y, m_camera.camera.mDir.z);
     kgmString text(info);
     gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 600, 200), text);
 
@@ -204,7 +215,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
     return;
   }
 
-    mtx4 tr = visual->m_transform * m_camera.mView;
+    mtx4 tr = visual->m_transform * m_camera.camera.mView;
     gc->gcSetMatrix(gcmtx_view, tr.m);
     if(group->material) render(group->material);
     if(group->mesh) render(group->mesh);
@@ -260,16 +271,16 @@ void kgmGameGraphics::render(kgmShader* s, u32 t){
       break;
     default:
       s->start();
-      s->set("g_fTime", kgmTime::getTime());
+      s->set("g_fTime",   kgmTime::getTime());
       s->set("g_fRandom", (float)rand()/(float)RAND_MAX);
 
-      s->set("g_mView", m_camera.mView);
-      s->set("g_mProj", m_camera.mProj);
-      s->set("g_mViewProj", m_camera.mVwPj);
-      s->set("g_vAmbient", vAmbient);
-      s->set("g_vLight", vLight);
-      s->set("g_vEye", m_camera.mPos);
-      s->set("g_vEyeLook", m_camera.mDir);
+      s->set("g_mView",     m_camera.camera.mView);
+      s->set("g_mProj",     m_camera.camera.mProj);
+      s->set("g_mViewProj", m_camera.camera.mVwPj);
+      s->set("g_vAmbient",  vAmbient);
+      s->set("g_vLight",    vLight);
+      s->set("g_vEye",      m_camera.camera.mPos);
+      s->set("g_vEyeLook",  m_camera.camera.mDir);
   };
 }
 

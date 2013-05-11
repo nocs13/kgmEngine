@@ -7,10 +7,9 @@
 #include "../kgmBase/kgmLog.h"
 
 #include "kGui.h"
-#include "kLogic.h"
 
 class kGame: public kgmGameBase{
-  class SnsInput: public kgmGameLogic::Sensor
+  /*class SnsInput: public kgmGameLogic::Sensor
   {
     kGame* game;
   public:
@@ -39,7 +38,7 @@ class kGame: public kgmGameBase{
         game->m_render->camera().rotate(-0.02f, 0.0f);
       }
     }
-  };
+  };*/
 
   kGui*   gui;
   //kgmSound* snd;
@@ -62,7 +61,7 @@ public:
 protected:
   virtual void initLogic()
   {
-    m_logic = new kLogic(this);
+    m_logic = null; //new kLogic(this);
   }
 
 public:
@@ -130,8 +129,8 @@ public:
 
     if(m_state == State_Play)
     {
-      if(m_logic)
-        m_logic->m_sensors.add(new SnsInput(null, this));
+      //if(m_logic)
+      //  m_logic->m_sensors.add(new SnsInput(null, this));
     }
 
     return res;

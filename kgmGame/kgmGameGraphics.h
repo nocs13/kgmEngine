@@ -1,4 +1,5 @@
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmOctTree.h"
 
 #include "../kgmGraphics/kgmGui.h"
 #include "../kgmGraphics/kgmGuiStyle.h"
@@ -10,7 +11,6 @@
 #include "../kgmGraphics/kgmMaterial.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
-#include "kgmActor.h"
 #include "kgmEffect.h"
 
 class kgmGameGraphics: public kgmObject
@@ -35,6 +35,13 @@ class kgmGameGraphics: public kgmObject
     kgmLight* light;
   };
 
+  struct Camera
+  {
+    kgmCamera  camera;
+    kgmVisual* object;
+    float      zdiff, dist;
+  };
+
   class GMesh{
     kgmMaterial* material;
     kgmList<Mesh> meshes;
@@ -46,7 +53,7 @@ class kgmGameGraphics: public kgmObject
 
   kgmFont* font;
 
-  kgmCamera m_camera;
+  Camera   m_camera;
 
   kgmList<Mesh>         m_meshes;
   kgmList<kgmMaterial*> m_materials;
@@ -62,7 +69,7 @@ class kgmGameGraphics: public kgmObject
   void* tdepth;
   void* shader;
 
-  kgmTab<u16, kgmShader*> shaders;
+  kgmTab<u16, kgmShader*>  shaders;
   kgmTab<u16, kgmTexture*> textures;
 
 public:
@@ -181,6 +188,23 @@ public:
   }
 
   kgmCamera& camera(){
-    return m_camera;
+    return m_camera.camera;
+  }
+
+  void linkCamera(kgmVisual* o, float zdiff, float dist)
+  {
+    if(o)
+    {
+      m_camera.object = o;
+      m_camera.zdiff  = zdiff;
+      m_camera.dist   = dist;
+    }
+    else
+    {
+      m_camera.object = null;
+      m_camera.zdiff  = 0.0f;
+      m_camera.dist   = 0.0f;
+      m_camera.camera.set(PI / 6, 1, 1, 1000, vec3(1, 0, 0), vec3(-1, 0, 0), vec3(0, 0, 1));
+    }
   }
 };
