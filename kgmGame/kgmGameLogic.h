@@ -16,7 +16,8 @@ public:
   class AI
   {
   public:
-    virtual void ai(kgmActor* a){}
+    virtual void update(kgmActor* a, u32 milliseconds){}
+    virtual void input(kgmActor* a, int btn, int state){}
   };
 
   class Sensor
@@ -38,21 +39,24 @@ public:
   };
 
 public:
-  kgmTab<kgmString, AI*> m_ais;
-  kgmList<kgmActor*>     m_actors;
-  kgmList<Sensor*>       m_sensors;
-  kgmList<Trigger*>      m_triggers;
+  kgmTab<kgmString, AI*>  m_ais;
+  kgmTab<kgmActor*, AI*>  m_actors;
+  kgmList<Sensor*>        m_sensors;
+  kgmList<Trigger*>       m_triggers;
 
-  kgmActor*              m_player;
+  kgmActor*               m_gameplayer;
+
+  kgmActor*               m_player;
 
 public:
     kgmGameLogic();
+    virtual ~kgmGameLogic();
 
     void clear();
-    void add(kgmString, AI*);
-    void add(kgmActor* a) { if(a){ m_actors.add(a); if(a->m_gameplayer) m_player = a; } }
-    void add(Sensor*);
-    void add(Trigger*);
+    bool add(kgmString, AI*);
+    bool add(kgmActor* a);
+    bool add(Sensor*);
+    bool add(Trigger*);
 
     virtual void action(ACTION, void* src, int arg){}
     virtual void input(int, int);

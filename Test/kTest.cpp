@@ -7,6 +7,7 @@
 #include "../kgmBase/kgmLog.h"
 
 #include "kGui.h"
+#include "AI/AITaoRen.h"
 
 class kGame: public kgmGameBase{
   /*class SnsInput: public kgmGameLogic::Sensor
@@ -48,6 +49,7 @@ public:
       gui = new kGui(this);
       m_msAbs = false;
 
+      m_logic->add("RenTao", new AITaoRen());
       /*snd = m_game->getResources()->getSound("1.wav");
       if(snd && snd->getSound())
       {
