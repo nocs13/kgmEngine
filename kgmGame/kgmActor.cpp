@@ -93,13 +93,6 @@ void kgmActor::setDirection(vec3& d){
  m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
 }
 
-void kgmActor::setForce(float f, vec3& d){
-  if(d.length() == 0.0f)
-    m_body->m_EF = m_body->m_direction * f;
-  else
-    m_body->m_EF = d * f;
-}
-
 void kgmActor::setParent(kgmActor* a){
  m_parent = a;
 }

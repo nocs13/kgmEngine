@@ -14,7 +14,7 @@ kgmBody::kgmBody(){
 
  m_position = 
  m_direction = vec3(0, 0, 0);
- m_V = m_F = m_P = vec3(0, 0, 0);
+ //m_V = m_F = m_P = vec3(0, 0, 0);
 
  m_shape = ShapeCylinder;
 
@@ -62,38 +62,9 @@ void kgmBody::transform(mtx4& mtr){
  mtr = rt * tr;
 }
 
-
-void kgmBody::setForce(vec3 f){
- m_F = f;
-}
-
-void kgmBody::setForce(float f){
- m_F = m_direction * f;
- m_force = f;
-}
-
-void kgmBody::addForce(vec3 f){
- m_F = m_F + f;
-}
-
-void kgmBody::addForce(float f){
- m_F = m_F + m_direction * f;
- m_force += f;
-}
-
 void kgmBody::setPosition(vec3& v){
  m_position = v;
  translate(v.x, v.y, v.z);
-}
-
-void kgmBody::setRotation(vec3& r){
- rotate(r.x, r.y, r.z);
-}
-
-void kgmBody::setRotation(quat& r){
- //Rotation = r.;
- //rotate(r.x, r.y, r.z);
- //rotate(r);
 }
 
 void kgmBody::setDirection(vec3& d){

@@ -782,7 +782,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                         act->m_gameplayer = true;
 
                         if(m_gamemode)
-                          m_render->linkCamera(act->m_visual, 1.0f, 10.0f);
+                          m_render->linkCamera(act->m_visual, 10.0f, 10.0f);
                     }
 
                     m_render->add(act->m_visual);

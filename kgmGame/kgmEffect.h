@@ -1,3 +1,4 @@
+#pragma once
 #include "../kgmBase/kgmObject.h"
 
 class kgmEffect : public kgmObject

@@ -10,37 +10,6 @@
 #include "AI/AITaoRen.h"
 
 class kGame: public kgmGameBase{
-  /*class SnsInput: public kgmGameLogic::Sensor
-  {
-    kGame* game;
-  public:
-    SnsInput(kgmActor* a, kGame* g)
-    :kgmGameLogic::Sensor(a)
-    {
-      game = g;
-    }
-
-    void sense()
-    {
-      if(game->m_input[gbtn_up])
-      {
-        game->m_render->camera().move(.1f);
-      }
-      else if(game->m_input[gbtn_down])
-      {
-        game->m_render->camera().move(-.1f);
-      }
-      else if(game->m_input[gbtn_left])
-      {
-        game->m_render->camera().rotate(0.02f, 0.0f);
-      }
-      else if(game->m_input[gbtn_right])
-      {
-        game->m_render->camera().rotate(-0.02f, 0.0f);
-      }
-    }
-  };*/
-
   kGui*   gui;
   //kgmSound* snd;
 
@@ -48,9 +17,9 @@ public:
   kGame(){
       gui = new kGui(this);
       m_msAbs = false;
-      m_gamemode = false;
+      m_gamemode = true;
 
-      m_logic->add("RenTao", new AITaoRen());
+      m_logic->add("RenTao", new AITaoRen(this));
       /*snd = m_game->getResources()->getSound("1.wav");
       if(snd && snd->getSound())
       {
@@ -115,7 +84,7 @@ public:
       if(m_state == State_Play)
       {
         m_render->camera().move(.1f);
-        m_logic->gameplayer(0)->m_body->m_velocity = 1.0f;
+        m_logic->gameplayer(0)->m_body->m_velocity = .001f;
       }
     }
     else if(k == KEY_DOWN)
@@ -123,6 +92,7 @@ public:
       if(m_state == State_Play)
       {
         m_render->camera().move(-.1f);
+        m_logic->gameplayer(0)->m_body->m_velocity = .0f;
       }
     }
   }

@@ -1,3 +1,4 @@
+#pragma once
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmOctTree.h"
 

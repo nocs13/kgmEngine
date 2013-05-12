@@ -40,10 +40,10 @@ public:
  vec3	m_direction;	//current direction
  quat	m_quaternion;	//current rotation(in quaternions)
 
- vec3	m_V;			//additional velocity
- vec3	m_P;			//current impulse
- vec3	m_F;			//current superposed, applied, imposed force
- vec3   m_EF;  //external force
+ //vec3	m_V;			//additional velocity
+ //vec3	m_P;			//current impulse
+ //vec3	m_F;			//current superposed, applied, imposed force
+ //vec3   m_EF;  //external force
 
  box3	m_bound;		//bound box
 
@@ -67,18 +67,11 @@ public:
  void rotate(quat& q);
  void transform(mtx4& mtr);
 
- void setForce(vec3 f);
- void setForce(float f);
- void addForce(vec3 f);
- void addForce(float f);
-
  void setShape(box3& b);
 // void setShape(sphere3& s);
 // void setShape(cylinder& c);
  void setShape(int c, polygon3* p);
  
  void setPosition(vec3& v);
- void setRotation(vec3& r);
- void setRotation(quat& r);
  void setDirection(vec3& d);
 };

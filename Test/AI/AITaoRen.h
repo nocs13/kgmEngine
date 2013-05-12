@@ -3,38 +3,52 @@
 
 #include "../../kgmGame/kgmIGame.h"
 #include "../../kgmGame/kgmGameLogic.h"
+#include "../../kgmGame/kgmGameGraphics.h"
 
 class AITaoRen: public kgmGameLogic::AI
 {
+  kgmIGame* game;
 public:
-    void update(kgmActor* a, u32 mls)
+  AITaoRen(kgmIGame* g)
+  {
+    game = g;
+  }
+  void update(kgmActor* a, u32 mls)
+  {
+    a->update(mls);
+
+    if(a->m_gameplayer)
     {
-        a->update(mls);
+      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
+      vec3 cpos = a->m_body->m_position - a->m_body->m_direction * 3.5f;
+      cpos.z += 1.0f;
+      cam.mPos = cpos;
+      cam.mDir = a->m_body->m_direction;
+      cam.update();
     }
+  }
 
-    void input(kgmActor* a, u32 btn, int state)
+  void input(kgmActor* a, u32 btn, int state)
+  {
+    vec3 vt;
+
+    if(!a && !a->m_gameplayer)
+      return;
+
+    switch(btn)
     {
-      vec3 vt;
-
-      if(!a)
-        return;
-
-      switch(btn)
-      {
-      case grot_z:
-        vt = a->m_body->m_rotation;
-        vt.z += (0.2f * state);
-        a->m_body->setRotation(vt);
-        break;
-      case gbtn_down:
-        vt = a->m_body->m_direction;
-        a->setForce(10.f, vt);
-        break;
-      case gbtn_up:
-        //a->m_body->m_position.x += 0.5f;
-        break;
-      }
+    case grot_z:
+      vt = a->m_body->m_rotation;
+      vt.z += (0.2f * state);
+      break;
+    case gbtn_down:
+      vt = a->m_body->m_direction;
+      break;
+    case gbtn_up:
+      //a->m_body->m_position.x += 0.5f;
+      break;
     }
+  }
 };
 
 #endif // AITAOREN_H

@@ -98,17 +98,8 @@ void kgmGameGraphics::render(){
 
     gc->gcCull(1);
 
-    if(m_camera.object)
-    {
-      vec3 vnull(0, 0, 0);
-      vec3 pos = m_camera.object->m_transform * vnull;
-      m_camera.camera.mPos = pos;
-    }
-    else
-    {
-      gc->gcSetMatrix(gcmtx_proj, m_camera.camera.mProj.m);
-      gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
-    }
+    gc->gcSetMatrix(gcmtx_proj, m_camera.camera.mProj.m);
+    gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
 
     gc->gcBegin();
     gc->gcDepth(true, 1, gccmp_lequal);
@@ -175,8 +166,9 @@ void kgmGameGraphics::render(){
     }
 
     char info[4096] = {0};
-    sprintf(info, "camera direction: %f %f %f \n",
-            m_camera.camera.mDir.x, m_camera.camera.mDir.y, m_camera.camera.mDir.z);
+    sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \n",
+            m_camera.camera.mDir.x, m_camera.camera.mDir.y, m_camera.camera.mDir.z,
+            m_camera.camera.mPos.x, m_camera.camera.mPos.y, m_camera.camera.mPos.z);
     kgmString text(info);
     gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 600, 200), text);
 

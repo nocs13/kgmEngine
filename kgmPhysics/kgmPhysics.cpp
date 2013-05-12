@@ -120,9 +120,9 @@ void kgmPhysics::doCollision(float dtime){
   if(!body->m_collision)
 	  continue;
 
-  body->m_V.z = 0.0f;
+  //body->m_V.z = 0.0f;
   vec3 bdPos = m_ptCurrent = body->m_position;
-  vec3 v = body->m_direction * body->m_velocity + body->m_V;
+  vec3 v = body->m_direction * body->m_velocity;// + body->m_V;
   float gdist = 5 * ctime * body->m_mass;
   vec3  spos = body->m_position;
   vec3  epos = body->m_position + v * (ctime); 
@@ -134,7 +134,7 @@ void kgmPhysics::doCollision(float dtime){
 	    ry = 0.5f * (body->m_bound.max.y - body->m_bound.min.y),//crad, 
 		rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
 
-  body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
+  //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
   if(body->m_upforce > 0.0f){
    upstare = true;
    epos.z = spos.z + body->m_upforce * ctime;
@@ -232,7 +232,7 @@ void kgmPhysics::doCollision(float dtime){
    if(binsect){
     collision(body, cbody);
 	if(cbody->m_velocity > 0.0f){
-	 body->m_V = body->m_V + cbody->m_direction * cbody->m_velocity;
+   //body->m_V = body->m_V + cbody->m_direction * cbody->m_velocity;
 	}
    }
   }

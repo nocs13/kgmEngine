@@ -108,7 +108,6 @@ public:
     void setRotation(vec3& r);
     void setRotation(quat& r);
     void setDirection(vec3& d);
-    void setForce(float f, vec3& dir);
 
     void setParent(kgmActor* a);
     void addChild(kgmActor* a);
