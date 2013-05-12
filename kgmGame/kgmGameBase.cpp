@@ -361,12 +361,6 @@ void kgmGameBase::onKeyDown(int k){
 void kgmGameBase::onMsMove(int k, int x, int y){
     m_input[grot_x] = x;
     m_input[grot_y] = y;
-
-    if(m_state == State_Play)
-    {
-      m_logic->input(grot_x, x);
-      m_logic->input(grot_y, y);
-    }
 }
 
 void kgmGameBase::onResize(int w, int h){
@@ -392,19 +386,12 @@ void kgmGameBase::onEvent(kgmEvent::Event* e){
 //Game Functions
 int kgmGameBase::gLoad(kgmString s)
 {
-    //if(m_objects.size())
-        gUnload();
+    gUnload();
 
     kgm_log() << kgm_log_label() << " " << "Loading game map " << (char*)s << "..." << "\n";
     m_state = State_Load;
 
-
     loadXml_II(s);
-
-    //if(m_objects.size()){
-        //m_node->add(new kgmGameNode(new kgmCamera()));
-        //m_render->add(m_node);
-    //}
 
     m_render->build();
     m_physics->build();
@@ -419,14 +406,9 @@ int kgmGameBase::gUnload()
     u32 state = m_state;
     state = State_Stop;
 
-    if(m_render)
-        m_render->clean();
-
-    if(m_physics)
-        m_physics->clear();
-
-    if(m_logic)
-        m_logic->clear();
+    m_render->clear();
+    m_physics->clear();
+    m_logic->clear();
 
     m_state = state;
 
@@ -469,30 +451,6 @@ void kgmGameBase::gPause(bool s){
     if(!s && m_state == State_Pause)
     {
         m_state = State_Play;
-    }
-}
-
-void kgmGameBase::gLogic(){
-    static u32 s_time = kgmTime::getTime();
-    u32   d_time = kgmTime::getTime() - s_time;
-    u32	c_time = 30;
-
-    if(m_state != State_Play){
-        return;
-    }
-
-    //m_input[grot_x] = 0;
-    //m_input[grot_y] = 0;
-    //m_input[grot_z] = 0;
-
-    if(m_quit){
-        gQuit();
-        return;
-    }
-
-    if(d_time > c_time){
-        s_time = kgmTime::getTime();
-        m_physics->update(d_time / 1000.0);
     }
 }
 
@@ -820,14 +778,17 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                     xml.attribute("player", s);
 
                     if(s == "on")
+                    {
                         act->m_gameplayer = true;
+
+                        if(m_gamemode)
+                          m_render->linkCamera(act->m_visual, 1.0f, 10.0f);
+                    }
 
                     m_render->add(act->m_visual);
                     m_physics->add(act->m_body);
                     m_logic->add(act);
 
-                    if(m_gamemode && act->m_gameplayer)
-                      m_render->linkCamera(act->m_visual, 1.0f, 10.0f);
                 }
             }
             else if(id == "Vertices")

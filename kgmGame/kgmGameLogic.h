@@ -59,8 +59,12 @@ public:
     bool add(Trigger*);
 
     virtual void action(ACTION, void* src, int arg){}
-    virtual void input(int, int);
+    //virtual void input(int, int);
     virtual void update(u32 milliseconds);
+
+    kgmActor* gameplayer(u8 i){
+        return m_gameplayer;
+    }
 };
 
 #endif // KGMGAMELOGIC_H

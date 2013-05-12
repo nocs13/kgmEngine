@@ -57,8 +57,8 @@ void kgmBody::rotate(quat& q){
 
 void kgmBody::transform(mtx4& mtr){
  mtx4 tr(m_position), rt(m_quaternion);
- tr.translate(m_position);
- rt.rotate(m_rotation.x, m_rotation.y, -m_rotation.z);
+ //tr.translate(m_position);
+ //rt.rotate(m_rotation.x, m_rotation.y, -m_rotation.z);
  mtr = rt * tr;
 }
 

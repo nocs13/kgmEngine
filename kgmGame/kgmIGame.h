@@ -137,11 +137,11 @@ public:
 
 
 public:  //virtuals
-  virtual int           gLoad(kgmString) = 0;       //load game map
+  virtual int           gLoad(kgmString) = 0;      //load game map
   virtual int           gUnload() = 0;             //load game map
   virtual int           gCommand(kgmString) = 0;   //do command
-  virtual int           gQuit() = 0;                //close game
-  virtual u32           gState() = 0;               //check game active  state
+  virtual int           gQuit() = 0;               //close game
+  virtual u32           gState() = 0;              //check game active  state
   virtual kgmActor*     gSpawn(kgmString) = 0;
   virtual kgmGameNode*  gMainNode() = 0;
 

@@ -96,7 +96,6 @@ public:
  u32  gState();             //check game state
  void gPause(bool);         //render game scene
  void gRender();            //render game scene
- void gLogic();             //do game logic  & Physics
 
  bool gMapBinary(kgmString&);
  bool gMapAscii(kgmString&);

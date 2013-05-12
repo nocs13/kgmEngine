@@ -26,10 +26,10 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 kgmGameGraphics::~kgmGameGraphics(){
   gui_style->release();
   m_guis.clear();
-  clean();
+  clear();
 }
 
-void kgmGameGraphics::clean(){
+void kgmGameGraphics::clear(){
   for(int i = 0; i < m_meshes.size(); i++){
     m_meshes[i].mesh->release();
     m_meshes[i].material->release();

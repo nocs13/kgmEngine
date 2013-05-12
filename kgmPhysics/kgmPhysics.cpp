@@ -111,7 +111,7 @@ void kgmPhysics::doCollision(float dtime){
   sphere	sbound;
   sphere	sinteract;
 
-  float ctime	 = dtime + kgmTime::getTicks() - stime;
+  float ctime	 = dtime;// + kgmTime::getTicks() - stime;
 
   kgmBody* body = m_bodies[i];
   if(!body->m_physics)

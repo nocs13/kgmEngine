@@ -68,6 +68,16 @@ protected:
   }
 
 public:
+  void onIdle()
+  {
+      kgmGameBase::onIdle();
+
+      if(m_state == State_Play)
+      {
+
+      }
+  }
+
   void onKeyUp(int k){
     kgmGameBase::onKeyUp(k);
 
@@ -105,6 +115,7 @@ public:
       if(m_state == State_Play)
       {
         m_render->camera().move(.1f);
+        m_logic->gameplayer(0)->m_body->m_velocity = 1.0f;
       }
     }
     else if(k == KEY_DOWN)

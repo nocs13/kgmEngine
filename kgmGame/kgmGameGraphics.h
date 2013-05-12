@@ -76,7 +76,7 @@ public:
   kgmGameGraphics(kgmIGraphics*, kgmIResources*);
   ~kgmGameGraphics();
 
-  void clean();
+  void clear();
   void build();
   void render();
   void update();
@@ -96,6 +96,7 @@ private:
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
 
   void trash();
+
 public:
   void add(kgmMesh* mesh, kgmMaterial* material){
     if(mesh)
@@ -204,7 +205,7 @@ public:
       m_camera.object = null;
       m_camera.zdiff  = 0.0f;
       m_camera.dist   = 0.0f;
-      m_camera.camera.set(PI / 6, 1, 1, 1000, vec3(1, 0, 0), vec3(-1, 0, 0), vec3(0, 0, 1));
+      m_camera.camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
     }
   }
 };

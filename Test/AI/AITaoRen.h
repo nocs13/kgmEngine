@@ -9,7 +9,7 @@ class AITaoRen: public kgmGameLogic::AI
 public:
     void update(kgmActor* a, u32 mls)
     {
-
+        a->update(mls);
     }
 
     void input(kgmActor* a, u32 btn, int state)
