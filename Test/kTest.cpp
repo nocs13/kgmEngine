@@ -48,6 +48,7 @@ public:
   kGame(){
       gui = new kGui(this);
       m_msAbs = false;
+      m_gamemode = false;
 
       m_logic->add("RenTao", new AITaoRen());
       /*snd = m_game->getResources()->getSound("1.wav");
@@ -87,15 +88,31 @@ public:
     }
     else if(k == KEY_LEFT)
     {
+      if(m_state == State_Play)
+      {
+        m_render->camera().rotate(0.02f, 0.0f);
+      }
     }
     else if(k == KEY_RIGHT)
     {
+      if(m_state == State_Play)
+      {
+        m_render->camera().rotate(-0.02f, 0.0f);
+      }
     }
     else if(k == KEY_UP)
     {
+      if(m_state == State_Play)
+      {
+        m_render->camera().move(.1f);
+      }
     }
     else if(k == KEY_DOWN)
     {
+      if(m_state == State_Play)
+      {
+        m_render->camera().move(-.1f);
+      }
     }
   }
 

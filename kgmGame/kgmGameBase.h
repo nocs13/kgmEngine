@@ -37,7 +37,6 @@ protected:
  kgmGameSettings*   m_settings;
 
  kgmSystem*         m_system;
- //kgmGraphics*       m_render;
 
  u32		    m_width;
  u32		    m_height;
@@ -50,6 +49,7 @@ protected:
  char           m_input[gbtn_end];
  char           m_keymap[150];
 
+ bool       m_gamemode;
 public:
  int		    m_state;	//game state
  bool		    m_result;	//game over result

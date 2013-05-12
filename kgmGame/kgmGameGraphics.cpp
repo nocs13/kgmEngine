@@ -50,6 +50,8 @@ void kgmGameGraphics::clean(){
     m_lights[i].light->release();
   }
   m_lights.clear();
+
+  linkCamera(null, 0, 0);
 }
 
 kgmShader* s_def = null;
@@ -98,6 +100,9 @@ void kgmGameGraphics::render(){
 
     if(m_camera.object)
     {
+      vec3 vnull(0, 0, 0);
+      vec3 pos = m_camera.object->m_transform * vnull;
+      m_camera.camera.mPos = pos;
     }
     else
     {

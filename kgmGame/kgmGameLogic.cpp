@@ -1,4 +1,5 @@
 #include "kgmGameLogic.h"
+#include "kgmIGame.h"
 
 kgmGameLogic::kgmGameLogic()
 {
@@ -61,5 +62,8 @@ void kgmGameLogic::input(int btn, int state)
     {
         AI* ai = m_actors[m_gameplayer];
         ai->input(m_gameplayer, btn, state);
+    }
+    else
+    {
     }
 }

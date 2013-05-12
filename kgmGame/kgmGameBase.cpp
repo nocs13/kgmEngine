@@ -133,6 +133,8 @@ kgmGameBase::kgmGameBase()
 
     m_keymap[KEY_X] = (char)gbtn_x;
     m_keymap[KEY_Z] = (char)gbtn_z;
+
+    m_gamemode = true;
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
@@ -823,6 +825,9 @@ bool kgmGameBase::loadXml_II(kgmString& path)
                     m_render->add(act->m_visual);
                     m_physics->add(act->m_body);
                     m_logic->add(act);
+
+                    if(m_gamemode && act->m_gameplayer)
+                      m_render->linkCamera(act->m_visual, 1.0f, 10.0f);
                 }
             }
             else if(id == "Vertices")
