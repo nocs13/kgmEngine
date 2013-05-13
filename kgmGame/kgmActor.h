@@ -71,6 +71,7 @@ public:
     u32     m_timeout;
 
     mtx4    m_transform;
+    mtx4    m_dvisual;      //visual transform
 
     kgmString m_id;
     kgmString m_name;

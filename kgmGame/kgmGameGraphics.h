@@ -49,6 +49,36 @@ class kgmGameGraphics: public kgmObject
     kgmOctTree<Mesh*> tree;
   };
 
+  class ModAnimation
+  {
+  public:
+      kgmMesh*      m_mesh;
+      kgmSkeleton*  m_skel;
+      kgmAnimation* m_anim;
+
+      ModAnimation(kgmMesh* m, kgmAnimation* a, kgmSkeleton* s)
+      {
+         m_mesh = null;
+         m_skel = null;
+         m_anim = null;
+
+         if(m)
+             m_mesh = (kgmMesh*)m->clone();
+         m_skel = s;
+         m_anim = a;
+      }
+
+      void animate(u32 frame)
+      {
+
+      }
+
+      kgmMesh* getAnimated()
+      {
+          return m_mesh;
+      }
+  };
+
   kgmIGraphics* gc;
   kgmIResources* rc;
 

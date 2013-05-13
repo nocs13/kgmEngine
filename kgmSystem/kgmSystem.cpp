@@ -11,6 +11,7 @@
 #ifdef LINUX
 #include <unistd.h>
 #include <dirent.h>
+#include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <X11/Xlib.h>
@@ -23,6 +24,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <pwd.h>
 #endif
 
 #ifdef LINUX
@@ -170,7 +172,19 @@ void kgmSystem::getTemporaryDirectory(kgmString& s){
   if(dir != 0){
     closedir(dir);
     s = (char*)"~/tmp";
+  }else{
+      s = "/tmp";
   }
+#endif
+}
+
+void kgmSystem::getHomeDirectory(kgmString& s){
+#ifdef WIN32
+  s = getenv("HOME");
+#endif
+#ifdef LINUX
+  struct passwd *pw = getpwuid(getuid());
+  s = pw->pw_dir;
 #endif
 }
 

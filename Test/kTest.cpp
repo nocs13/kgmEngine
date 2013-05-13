@@ -65,36 +65,10 @@ public:
         m_msAbs = true;
       }
     }
-    else if(k == KEY_LEFT)
-    {
-      if(m_state == State_Play)
-      {
-        m_render->camera().rotate(0.02f, 0.0f);
-      }
-    }
-    else if(k == KEY_RIGHT)
-    {
-      if(m_state == State_Play)
-      {
-        m_render->camera().rotate(-0.02f, 0.0f);
-      }
-    }
-    else if(k == KEY_UP)
-    {
-      if(m_state == State_Play)
-      {
-        m_render->camera().move(.1f);
-        m_logic->gameplayer(0)->m_body->m_velocity = .001f;
-      }
-    }
-    else if(k == KEY_DOWN)
-    {
-      if(m_state == State_Play)
-      {
-        m_render->camera().move(-.1f);
-        m_logic->gameplayer(0)->m_body->m_velocity = .0f;
-      }
-    }
+  }
+
+  void onKeyDown(int k){
+    kgmGameBase::onKeyDown(k);
   }
 
   void onMsLeftUp(int k, int x, int y)
@@ -111,11 +85,6 @@ public:
   {
     kgmGameBase::onMsMove(k, x, y);
 
-    if(gState() == State_Play)
-    {
-      m_render->camera().rotate(0.02f * x, 0.02f * y);
-    }
-
     /*if(snd)
     {
       vec3 pos(x, y, 0), vel(0,0,0);
@@ -126,12 +95,6 @@ public:
   int gLoad(kgmString s)
   {
     int res = kgmGameBase::gLoad(s);
-
-    if(m_state == State_Play)
-    {
-      //if(m_logic)
-      //  m_logic->m_sensors.add(new SnsInput(null, this));
-    }
 
     return res;
   }

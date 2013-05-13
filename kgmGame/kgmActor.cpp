@@ -3,6 +3,8 @@ KGMOBJECT_IMPLEMENT(kgmActor,	kgmObject);
 
 kgmActor::kgmActor()
 {
+ vec3 tv(0, 0, 1);
+
  m_enable = true;
  m_visible = true;
  m_active = true;
@@ -21,6 +23,8 @@ kgmActor::kgmActor()
  m_body->m_bound.max = vec3(1, 1, 2);
 
  m_transform.identity();
+ m_dvisual.identity();
+ m_dvisual.rotate(-0.5f * PI, tv);
  m_birth = kgmTime::getTicks();
  m_health = 1.0f;
  m_parent = null;
@@ -47,7 +51,10 @@ void kgmActor::init(){
 }
 
 void kgmActor::update(u32 time){
-    m_body->transform(m_visual->m_transform);
+    mtx4 tm;
+
+    m_body->transform(tm);
+    m_visual->m_transform = m_dvisual * tm;
 }
 
 void kgmActor::remove(){

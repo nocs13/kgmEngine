@@ -352,15 +352,27 @@ void kgmGameBase::onClose()
 
 void kgmGameBase::onKeyUp(int k){
     m_input[m_keymap[k]] = 0;
+
+    if(m_logic && m_state == State_Play)
+        m_logic->input(m_keymap[k], 0);
 }
 
 void kgmGameBase::onKeyDown(int k){
     m_input[m_keymap[k]] = 1;
+
+    if(m_logic && m_state == State_Play)
+        m_logic->input(m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y){
     m_input[grot_x] = x;
     m_input[grot_y] = y;
+
+    if(m_logic && m_state == State_Play)
+    {
+        m_logic->input(grot_x, x);
+        m_logic->input(grot_y, y);
+    }
 }
 
 void kgmGameBase::onResize(int w, int h){

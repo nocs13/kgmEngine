@@ -56,7 +56,7 @@ void kgmGameLogic::update(u32 milliseconds)
     }
 }
 
-/*void kgmGameLogic::input(int btn, int state)
+void kgmGameLogic::input(int btn, int state)
 {
     if(m_gameplayer)
     {
@@ -66,4 +66,4 @@ void kgmGameLogic::update(u32 milliseconds)
     else
     {
     }
-}*/
+}

@@ -37,15 +37,19 @@ public:
 
     switch(btn)
     {
-    case grot_z:
+    case grot_x:
       vt = a->m_body->m_rotation;
       vt.z += (0.2f * state);
+      a->m_body->rotate(0, 0, vt.z);
       break;
     case gbtn_down:
       vt = a->m_body->m_direction;
       break;
     case gbtn_up:
-      //a->m_body->m_position.x += 0.5f;
+        if(state)
+            a->m_body->m_velocity = 0.01f;
+        else
+            a->m_body->m_velocity = 0.0f;
       break;
     }
   }

@@ -16,8 +16,8 @@ public:
   class AI
   {
   public:
-    virtual void update(kgmActor* a, u32 milliseconds){}
-    virtual void input(kgmActor* a, int btn, int state){}
+    virtual void update(kgmActor* a, u32 milliseconds) = 0;
+    virtual void input(kgmActor* a, u32 btn, int state) = 0;
   };
 
   class Sensor
@@ -59,7 +59,7 @@ public:
     bool add(Trigger*);
 
     virtual void action(ACTION, void* src, int arg){}
-    //virtual void input(int, int);
+    virtual void input(int, int);
     virtual void update(u32 milliseconds);
 
     kgmActor* gameplayer(u8 i){
