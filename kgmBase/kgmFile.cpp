@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+#ifdef WIN32
+#else
+ #include <unistd.h>
+ #include <sys/types.h>
+#endif
+
 
 kgmFile::kgmFile(){
  m_file = 0;
@@ -13,7 +19,7 @@ kgmFile::~kgmFile(){
  close();
 }
 
-//////FUNCTIONS
+//FUNCTIONS
 bool kgmFile::open(kgmCString& file, u32 mode){
  if(mode & 0x01)
   m_file = fopen(file, "r+b");
@@ -57,6 +63,12 @@ u32 kgmFile::length(){
 }
 
 u32 kgmFile::length(u32 len){
+#ifdef WIN32
+  return _chsize_s(m_file->_fileno, len);
+#else
+  return ftruncate(m_file->_fileno, len);
+#endif
+
  return 0;
 }
 
@@ -94,5 +106,20 @@ void kgmFile::munmap(void* v){
   free(v);
 }
 
+bool kgmFile::remove(kgmString path)
+{
+  if(remove(path.data()))
+    return false;
+
+  return true;
+}
+
+bool kgmFile::rename(kgmString oname, kgmString nname)
+{
+  if(rename(oname.data(), nname.data()))
+    return false;
+
+  return true;
+}
 
 

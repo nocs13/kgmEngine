@@ -12,6 +12,7 @@ kgmArchive::kgmArchive(){
 
 }
 
-kgmArchive::~kgmArchive(){
-
+kgmArchive::~kgmArchive()
+{
+  close();
 }

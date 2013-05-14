@@ -13,11 +13,12 @@ public:
  
  FILE* m_file;
 public:
-///// CONSTRUCTOR/DESTRUCTOR
+//CONSTRUCTOR-DESTRUCTOR
  kgmFile();
  ~kgmFile();
-//////FUNCTIONS
- bool open(kgmCString& path, u32 mode);//open create,read,write
+
+//FUNCTIONS
+ bool open(kgmCString& path, u32 mode); //open create,read,write
  void close();
  u32 read(void *dst, u32 cnt);
  u32 write(void *src, u32 cnt);
@@ -30,6 +31,10 @@ public:
  bool eof();
  void* mmap();
  void munmap(void* v);
+
+//STATIC
+ static bool remove(kgmString path);
+ static bool rename(kgmString oname, kgmString nname);
 };
 
 

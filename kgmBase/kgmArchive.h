@@ -9,19 +9,22 @@
 #include "kgmFile.h"
 #include "kgmMemory.h"
 
+#define   KGMPAK_SIG  "kgmpak"
+#define   KGMPAK_VER  0x0101
+
 class kgmArchive{
-//kgmArchive descriptor: kgmArchive
-/*
+  //kgmArchive descriptor: kgmArchive
+  /*
  10 - bytes: kgmArchive
  1	- bytes: minor version
  1	- bytes: major vesion
  64	- bytes: archived file name
  4	- bytes: archived file size
- N	- bytes: archived file data N size defend from size 
-			* * *
+ N	- bytes: archived file data N size defend from size
+   * * *
 */
 
-/*
+  /*
  struct Node{
   unsigned	char	name[64];
   unsigned	int		size;
@@ -37,100 +40,188 @@ class kgmArchive{
   struct Header{
     char  signature[6];
     short version;
-    u32  numEntries;
+    u32   entries;
   };
   
   struct Entry{
-    char name[64];
-    u32 size;
-    u32 offset;
+    char name[128];   //entry file path
+    u32  size;        //entry file size
+    u32  offset;      //entry file offset from TOC end
     bool valid;
- };
+  };
   
 public:
 
-  Header head;
-  kgmList<Entry> entry;
-  bool changed;
+  kgmList<Entry> toc;
+  Header         head;
+  bool           changed;
   
-  kgmFile archive;
+  kgmFile        archive;
+  kgmString      path;
+
+  u32            start;
 public:
-  kgmArchive();           
+  kgmArchive();
   virtual ~kgmArchive();
 
   void close()
   {
-    entry.clear();
+    if(changed)
+      flush();
+
+    toc.clear();
     archive.close();
+    changed = false;
   }
   
-  bool open(kgmCString& pakf)
+  bool open(kgmString pakf)
   {
     Header head = {0};
+
     if(pakf.length() < 1)
       return false;
+
     if(!archive.open(pakf, 0))
       return false;
+
     archive.seek(0);
     archive.read(head.signature, 6);
     archive.read(&head.version, 2);
-    archive.read(&head.numEntries, 4);
-    if(memcmp(head.signature, "kgmpak", 6) || 
-       (head.version != 0x0101)){
+    archive.read(&head.entries, 4);
+
+    if(memcmp(head.signature, KGMPAK_SIG, 6) ||
+       (head.version != KGMPAK_VER))
+    {
       archive.close();
+
       return false;
     }
     
-    scan();
+    for(int i = 0; i < head.entries; i++)
+    {
+      Entry entry = {0};
+      archive.read(entry.name,    128);
+      archive.read(&entry.size,   4);
+      archive.read(&entry.offset, 4);
+      entry.valid = true;
+
+      toc.add(entry);
+    }
+
+    path    = pakf;
+    changed = false;
+    start   = archive.position();
+
     return true;
   }
 
-  bool create(kgmCString& pakf){
+  bool create(kgmString pakf){
     Header head = {0};
-    head.version = 0x0101;
-    memcpy(head.signature, "kgmpak", 6);
+    head.version = KGMPAK_VER;
+    memcpy(head.signature, KGMPAK_SIG, 6);
     
     if(!archive.open(pakf, 0))
       return false;
+
     archive.write(head.signature, 6);
     archive.write(&head.version, 2);
-    archive.write(&head.numEntries, 4);
+    archive.write(&head.entries, 4);
     archive.close();
-    open(pakf);
-    return true;
+
+    return open(pakf);
   }
 
-  u32 scan(){
-    if(!archive.m_file)
-      return 0;
-    entry.clear();
-    archive.seek(12);
-    while(archive.position() < archive.length()){
-      Entry e;
-      archive.read(e.name, 64);
-      archive.read(&e.size, 4);
-      e.offset = archive.position();
-      e.valid = true;
-      archive.seek(archive.position() + e.size);
-      entry.add(e);
+  bool flush()
+  {
+    kgmString narch_s = path + "~~";
+    kgmFile   narch;
+
+    if(!narch.open(narch_s, kgmFile::Write | kgmFile::Create))
+      return false;
+
+    kgmList<Entry> n_toc;
+
+    for(int i = 0; i < toc.size(); i++)
+    {
+      Entry e   = toc[i];
+      u32   off = 0;
+
+      if(!e.valid)
+        continue;
+
+      n_toc.add(e);
     }
-    return entry.size();
+
+    u32 t_offset  = sizeof(Header) + sizeof(Entry) * n_toc.size();
+    u32 t_entries = n_toc.size();
+    narch.write(&head.signature, 6);
+    narch.write(&head.version,   2);
+    narch.write(&t_entries,      4);
+
+    for(int i = 0; i < n_toc.size(); i++)
+    {
+      Entry e = n_toc[i];
+      narch.write(e.name,    128);
+      narch.write(&e.size,   4);
+      narch.write(&t_offset, 4);
+      u32 cpos = narch.position();
+      narch.seek(t_offset);
+      kgmMemory<char> m;
+      copy(e.name, m);
+      narch.write(m.data(), m.length());
+      m.clear();
+      t_offset += m.length();
+      narch.seek(cpos);
+    }
+
+    changed = false;
+
+    archive.length(0);
+    archive.seek(0);
+    narch.seek(0);
+
+    char* buf = new char[4096];
+    int   res = 0;
+
+    while(res = narch.read(buf, 4096))
+      archive.write(buf, res);
+
+    narch.close();
+    kgmFile::remove(narch_s);
+
+    archive.seek(0);
+    toc.clear();
+    head.entries = n_toc.size();
+
+    for(int i = 0; i < n_toc.size(); i++)
+      toc.add(n_toc[i]);
+
+    return true;
   }
   
-  bool append(kgmCString& f)
+  bool append(kgmString f)
   {
     kgmFile  ff;
-    if(!archive.m_file || (f.length() < 1))  
+
+    if(!archive.m_file || (f.length() < 1))
       return false;
+
     //check if alredy exist this name
-    for(int i = 0; i < entry.size(); i++)
-      if(!strcmp(f, entry[i].name))
-	return false;
+    for(int i = 0; i < toc.size(); i++)
+    {
+      if(!strcmp(f, toc[i].name))
+        return false;
+    }
+
     if(!ff.open(f, 0))
       return false;
+
     char *pn = strrchr((char*)f, '\\');
-    if(pn) pn++;
-    else   pn = f;
+
+    if(pn)
+      pn++;
+    else
+      pn = f;
     
     Entry e;
     strcpy(e.name, pn);
@@ -138,101 +229,59 @@ public:
     e.valid = true;
     e.offset = archive.length();
     archive.seek(archive.length());
-    archive.write(e.name, 64);
-    archive.write(&e.size, 4);
-    e.offset = archive.position();
     char *pmem = new char[e.size];
+
     if(!pmem)
       return false;
     
     archive.seek(archive.length());
     ff.read(pmem, e.size);
     archive.write(pmem, e.size);
-    delete pmem;
+    delete [] pmem;
     
-    entry.add(e);
+    toc.add(e);
+    changed = true;
+
     return true;
   }
   
-  bool erase(char *id)
+  bool erase(kgmString id)
   {
     u32 i = 0;
     Entry *pe = 0;
-    if(!id || !archive.m_file)
+
+    if(!id.length() || !archive.m_file)
       return false;
-    for(i = 0; i < entry.size(); i++){
-      if(!strcmp(id, entry[i].name)){
-	pe = &entry[i];
-	break;
+
+    for(i = 0; i < toc.size(); i++)
+    {
+      if(id == (const char*)toc[i].name)
+      {
+        toc[i].valid = false;
+        break;
       }
     }
-    if(!pe)
-      return false;
-    archive.seek(pe->offset - 68);
-    u32 DP = archive.position();
-    if(i == (entry.size() - 1)){
-      archive.length(DP);
-      scan();
-      return true;
-    }
-    for(i++; i < entry.size(); i++){
-      Entry *ce = &entry[i];
-      char *pmem = (char*)malloc(sizeof(char) * ce->size + 68);
-      u32 SP = ce->offset - 68;
-      archive.seek(SP);
-      archive.read(pmem, ce->size + 68);
-      archive.seek(DP);
-      archive.write(pmem, ce->size + 68);
-      DP = archive.position();
-      free(pmem);
-    }
-    archive.length(DP);
-    scan();
+
     return true;
   }
   
-  void* mmap(char *id, u32 *psize)
-  {
-    if(!id || !archive.m_file || !psize)
-      return 0;
-    Entry *pe = 0;
-    for(u32 i = 0; i < entry.size(); i++){
-      if(!strcmp(id, entry[i].name))
-	pe = &entry[i];
-    }
-    if(!pe)
-      return 0;
-    void* mem = malloc(sizeof(char) * pe->size);
-    if(!mem)
-      return 0;
-    archive.seek(pe->offset);
-    archive.read(mem, pe->size);
-    *psize = pe->size;
-    return mem;
-  }
-
-  void munmap(void* mem)
-  {
-    if(mem)
-  free(mem);
-  }
-
-  bool copy(char *id, kgmMemory<char>& m){
+  bool copy(kgmString id, kgmMemory<char>& m){
     Entry *pe = 0;
     
-    if(!id || !archive.m_file)
+    if(!id.length() || !archive.m_file || changed)
       return false;
     
-    for(u32 i = 0; i < entry.size(); i++){
-      if(!strcmp(id, entry[i].name))
-	pe = &entry[i];
+    for(u32 i = 0; i < toc.size(); i++)
+    {
+      if(!strcmp(id, toc[i].name))
+        pe = &toc[i];
     }
     
     if(!pe)
       return false;
     
     m.alloc(pe->size);
-    archive.seek(pe->offset);
+    archive.seek(pe->offset + sizeof(Header) + sizeof(Entry) * toc.length());
     archive.read(m.data(), pe->size);
     
     return true;

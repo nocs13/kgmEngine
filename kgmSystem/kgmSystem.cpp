@@ -180,7 +180,10 @@ void kgmSystem::getTemporaryDirectory(kgmString& s){
 
 void kgmSystem::getHomeDirectory(kgmString& s){
 #ifdef WIN32
-  s = getenv("HOME");
+  if(getenv("HOMEPATH"))
+    s = getenv("HOMEPATH");
+  else
+    s = getenv("HOME");
 #endif
 #ifdef LINUX
   struct passwd *pw = getpwuid(getuid());
