@@ -66,7 +66,8 @@ u32 kgmFile::length(u32 len){
 #ifdef WIN32
   return _chsize_s(m_file->_fileno, len);
 #else
-  return ftruncate(m_file->_fileno, len);
+  if(m_file && m_file->_fileno)
+    return ftruncate(m_file->_fileno, len);
 #endif
 
  return 0;
@@ -77,12 +78,16 @@ u32 kgmFile::position(){
 }
 
 u32 kgmFile::seek(u32 pos){
- return fseek(m_file, pos, SEEK_SET);
+  if(!m_file)
+    return -1;
+
+  return fseek(m_file, pos, SEEK_SET);
 }
 
 bool kgmFile::eof(){
  return feof(m_file);
 }
+
 void* kgmFile::mmap(){
  u32 size = 0;
 

@@ -76,12 +76,15 @@ public:
   
   bool open(kgmString pakf)
   {
-    Header head = {0};
+    if(archive.m_file)
+      return false;
+
+    memset(&head, 0, sizeof(head));
 
     if(pakf.length() < 1)
       return false;
 
-    if(!archive.open(pakf, 0))
+    if(!archive.open(pakf, kgmFile::Write))
       return false;
 
     archive.seek(0);
@@ -116,19 +119,21 @@ public:
   }
 
   bool create(kgmString pakf){
-    Header head = {0};
-    head.version = KGMPAK_VER;
+    memset(&head, 0, sizeof(head));
     memcpy(head.signature, KGMPAK_SIG, 6);
+    head.version = KGMPAK_VER;
     
-    if(!archive.open(pakf, 0))
+    if(!archive.open(pakf, kgmFile::Write))
       return false;
 
     archive.write(head.signature, 6);
     archive.write(&head.version, 2);
     archive.write(&head.entries, 4);
-    archive.close();
 
-    return open(pakf);
+    toc.clear();
+    changed = false;
+
+    return true;
   }
 
   bool flush()
