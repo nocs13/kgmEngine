@@ -44,7 +44,7 @@ class kgmArchive{
   };
   
   struct Entry{
-    char name[128];   //entry file path
+    char name[64];    //entry file path
     u32  size;        //entry file size
     u32  offset;      //entry file offset from TOC end
     bool valid;
@@ -103,7 +103,7 @@ public:
     for(int i = 0; i < head.entries; i++)
     {
       Entry entry = {0};
-      archive.read(entry.name,    128);
+      archive.read(entry.name,    64);
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);
       entry.valid = true;
@@ -140,50 +140,59 @@ public:
   {
     kgmString narch_s = path + "~~";
     kgmFile   narch;
-
-    if(!narch.open(narch_s, kgmFile::Create))
-      return false;
-
-    kgmList<Entry> n_toc;
+    int       entries = 0;
 
     for(int i = 0; i < toc.size(); i++)
     {
-      Entry e   = toc[i];
-      u32   off = 0;
+      Entry e = toc[i];
 
       if(!e.valid)
         continue;
 
-      n_toc.add(e);
+      entries ++;
     }
 
-    u32 t_offset  = sizeof(Header) + sizeof(Entry) * n_toc.size();
-    u32 t_entries = n_toc.size();
+    if(!narch.open(narch_s, kgmFile::Create))
+      return false;
+
+    u32 t_offset  = sizeof(Header) + 72 * entries;
     narch.write(&head.signature, 6);
     narch.write(&head.version,   2);
-    narch.write(&t_entries,      4);
+    narch.write(&entries,      4);
 
-    for(int i = 0; i < n_toc.size(); i++)
+    for(int i = 0; i < toc.size(); i++)
     {
-      Entry e = n_toc[i];
-      narch.write(e.name,    128);
+      Entry e = toc[i];
+
+      if(!e.valid)
+        continue;
+
+      narch.write(e.name,    sizeof(e.name));
       narch.write(&e.size,   4);
       narch.write(&t_offset, 4);
-      u32 cpos = narch.position();
-      narch.seek(t_offset);
-      kgmMemory<char> m;
-      copy(e.name, m);
-      narch.write(m.data(), m.length());
-      m.clear();
-      t_offset += m.length();
-      narch.seek(cpos);
+      t_offset += e.size;
     }
 
-    changed = false;
+    for(int i = 0; i < toc.size(); i++)
+    {
+      Entry e = toc[i];
 
+      if(!e.valid)
+        continue;
+
+      kgmMemory<char> m;
+      m.alloc(e.size);
+      archive.seek(e.offset);
+      archive.read(m.data(), m.length());
+      narch.write(m.data(), m.length());
+      m.clear();
+    }
+
+    narch.flush();
     narch.seek(0);
     archive.seek(0);
     archive.length(0);
+    archive.flush();
 
     char  buf[64];
     int   res = 0;
@@ -198,10 +207,31 @@ public:
 
     archive.seek(0);
     toc.clear();
-    head.entries = n_toc.size();
 
-    for(int i = 0; i < n_toc.size(); i++)
-      toc.add(n_toc[i]);
+    archive.read(head.signature, 6);
+    archive.read(&head.version, 2);
+    archive.read(&head.entries, 4);
+
+    if(memcmp(head.signature, KGMPAK_SIG, 6) ||
+       (head.version != KGMPAK_VER))
+    {
+      archive.close();
+
+      return false;
+    }
+
+    for(int i = 0; i < head.entries; i++)
+    {
+      Entry entry = {0};
+      archive.read(entry.name,    sizeof(entry.name));
+      archive.read(&entry.size,   4);
+      archive.read(&entry.offset, 4);
+      entry.valid = true;
+
+      toc.add(entry);
+    }
+
+    changed = false;
 
     return true;
   }
@@ -242,11 +272,11 @@ public:
     while(int res = ff.read(buf, 64))
     {
       res = archive.write(buf, res);
-      int k = 0;
     }
 
-    archive.flush();
     toc.add(e);
+    archive.flush();
+
     changed = true;
 
     return true;
@@ -265,6 +295,7 @@ public:
       if(id == (const char*)toc[i].name)
       {
         toc[i].valid = false;
+        changed = true;
         break;
       }
     }
@@ -292,6 +323,20 @@ public:
     archive.read(m.data(), pe->size);
     
     return true;
+  }
+
+  u32 count()
+  {
+    return toc.size();
+  }
+
+  void info(u32 i, kgmString& name, u32& size)
+  {
+    if(i < 0 || i >= toc.size())
+      return;
+
+    name = toc[i].name;
+    size = toc[i].size;
   }
 };
 

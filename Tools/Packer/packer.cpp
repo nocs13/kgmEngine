@@ -20,12 +20,24 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  if(!strncmp(argv[1], "create", 6))
+  if(!strncmp(argv[1], "list", 6))
+  {
+    if(!arch.open(argv[2]))
+      return 1;
+
+    for(int i = 0; i < arch.count(); i++)
+    {
+      kgmString file;
+      u32       size;
+      arch.info(i, file, size);
+
+      printf("%s size: %i\n", (char*)file, size);
+    }
+  }
+  else if(!strncmp(argv[1], "create", 6))
   {
     if(!arch.create(argv[2]))
       return 1;
-
-    arch.close();
   }
   else if(!strncmp(argv[1], "remove", 6))
   {
@@ -36,8 +48,6 @@ int main(int argc, char **argv)
     {
       arch.erase(argv[i]);
     }
-
-    arch.close();
   }
   else if(!strncmp(argv[1], "append", 6))
   {
@@ -48,8 +58,6 @@ int main(int argc, char **argv)
     {
       arch.append(argv[i]);
     }
-
-    arch.close();
   }
   else
   {
