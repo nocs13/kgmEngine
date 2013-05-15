@@ -123,7 +123,7 @@ public:
     memcpy(head.signature, KGMPAK_SIG, 6);
     head.version = KGMPAK_VER;
     
-    if(!archive.open(pakf, kgmFile::Write))
+    if(!archive.open(pakf, kgmFile::Create))
       return false;
 
     archive.write(head.signature, 6);
@@ -141,7 +141,7 @@ public:
     kgmString narch_s = path + "~~";
     kgmFile   narch;
 
-    if(!narch.open(narch_s, kgmFile::Write | kgmFile::Create))
+    if(!narch.open(narch_s, kgmFile::Create))
       return false;
 
     kgmList<Entry> n_toc;
@@ -181,18 +181,20 @@ public:
 
     changed = false;
 
-    archive.length(0);
-    archive.seek(0);
     narch.seek(0);
+    archive.seek(0);
+    archive.length(0);
 
-    char* buf = new char[4096];
+    char  buf[64];
     int   res = 0;
 
-    while(res = narch.read(buf, 4096))
-      archive.write(buf, res);
+    while(res = narch.read(buf, 64))
+    {
+      res = archive.write(buf, res);
+    }
 
     narch.close();
-    kgmFile::remove(narch_s);
+    kgmFile::remove_file(narch_s);
 
     archive.seek(0);
     toc.clear();
@@ -228,22 +230,22 @@ public:
     else
       pn = f;
     
-    Entry e;
+    Entry e = {0};
     strcpy(e.name, pn);
     e.size = ff.length();
     e.valid = true;
     e.offset = archive.length();
-    archive.seek(archive.length());
-    char *pmem = new char[e.size];
+    char buf[64];
 
-    if(!pmem)
-      return false;
-    
     archive.seek(archive.length());
-    ff.read(pmem, e.size);
-    archive.write(pmem, e.size);
-    delete [] pmem;
-    
+
+    while(int res = ff.read(buf, 64))
+    {
+      res = archive.write(buf, res);
+      int k = 0;
+    }
+
+    archive.flush();
     toc.add(e);
     changed = true;
 

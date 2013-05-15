@@ -31,8 +31,8 @@ kgmGameGraphics::~kgmGameGraphics(){
 
 void kgmGameGraphics::clear(){
   for(int i = 0; i < m_meshes.size(); i++){
-    m_meshes[i].mesh->release();
-    m_meshes[i].material->release();
+    m_meshes[i].m_mesh->release();
+    m_meshes[i].m_mtrl->release();
   }
   m_meshes.clear();
 
@@ -188,14 +188,14 @@ void kgmGameGraphics::render(Mesh *m){
   if(!m)
     return;
 
-  if(m->material){
-    render(m->material);
+  if(m->m_mtrl){
+    render(m->m_mtrl);
   }
 
-  if(m->mesh){
-    gc->gcDraw(gcpmt_triangles, m->mesh->fvf(), m->mesh->vsize(),
-               m->mesh->vcount(), m->mesh->vertices(),
-               2, 3 * m->mesh->fcount(), m->mesh->faces());
+  if(m->m_mesh){
+    gc->gcDraw(gcpmt_triangles, m->m_mesh->fvf(), m->m_mesh->vsize(),
+               m->m_mesh->vcount(), m->m_mesh->vertices(),
+               2, 3 * m->m_mesh->fcount(), m->m_mesh->faces());
   }
 }
 

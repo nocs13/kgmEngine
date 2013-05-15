@@ -24,13 +24,6 @@ class kgmGameGraphics: public kgmObject
      box3 box;
   };
 
-  struct Mesh
-  {
-    kgmMesh*     mesh;
-    kgmMaterial* material;
-    box3         box;
-  };
-
   struct Light
   {
     kgmLight* light;
@@ -43,29 +36,70 @@ class kgmGameGraphics: public kgmObject
     float      zdiff, dist;
   };
 
-  class GMesh{
-    kgmMaterial* material;
-    kgmList<Mesh> meshes;
-    kgmOctTree<Mesh*> tree;
+  class Mesh
+  {
+  public:
+    kgmMesh*     m_mesh;
+    kgmMaterial* m_mtrl;
+    box3         m_box;
+
+    Mesh()
+    {
+      m_mesh = null;
+      m_mtrl = null;
+    }
+
+    Mesh(kgmMesh* m, kgmMaterial *l)
+    {
+      m_mesh = m;
+      m_mtrl = l;
+    }
   };
 
-  class ModAnimation
+  class MeshMove: public Mesh
+  {
+  public:
+    mtx4* m_tran;
+
+    MeshMove(kgmMesh* m, kgmMaterial *l, mtx4* t)
+      :Mesh(m, l)
+    {
+      m_tran = t;
+    }
+  };
+
+  class MeshSkinned: public MeshMove
   {
   public:
       kgmMesh*      m_mesh;
+      kgmMaterial*  m_mtrl;
       kgmSkeleton*  m_skel;
       kgmAnimation* m_anim;
 
-      ModAnimation(kgmMesh* m, kgmAnimation* a, kgmSkeleton* s)
+      mtx4*         m_tran;
+
+      kgmMesh::Vertex_P_N_C_T_BW_BI* m_verts;
+
+      MeshSkinned(kgmMesh* m, kgmMaterial* l,  mtx4* t, kgmAnimation* a, kgmSkeleton* s)
+        :MeshMove(m, l, t)
       {
          m_mesh = null;
          m_skel = null;
          m_anim = null;
+         m_mtrl = null;
+         m_tran = null;
 
-         if(m)
-             m_mesh = (kgmMesh*)m->clone();
+
+         m_mesh = m;
          m_skel = s;
          m_anim = a;
+         m_mtrl = l;
+         m_tran = t;
+      }
+
+      ~MeshSkinned()
+      {
+
       }
 
       void animate(u32 frame)
@@ -73,10 +107,16 @@ class kgmGameGraphics: public kgmObject
 
       }
 
-      kgmMesh* getAnimated()
+      kgmMesh::Vertex* getVertices()
       {
-          return m_mesh;
+          return m_verts;
       }
+  };
+
+  class GMesh{
+    kgmMaterial* material;
+    kgmList<Mesh> meshes;
+    kgmOctTree<Mesh*> tree;
   };
 
   kgmIGraphics* gc;
@@ -87,6 +127,8 @@ class kgmGameGraphics: public kgmObject
   Camera   m_camera;
 
   kgmList<Mesh>         m_meshes;
+  kgmList<MeshMove>     m_mmeshes;
+  kgmList<MeshSkinned>  m_smeshes;
   kgmList<kgmMaterial*> m_materials;
   kgmList<Light>        m_lights;
   kgmList<kgmVisual*>   m_visuals;
@@ -135,10 +177,8 @@ public:
     if(material)
       material->increment();
 
-    Mesh m;
-    m.mesh = mesh;
-    m.material = material;
-    m.box = mesh->bound();
+    Mesh m(mesh, material);
+    m.m_box = mesh->bound();
     m_meshes.add(m);
   }
 
@@ -158,9 +198,25 @@ public:
   }
 
   void add(kgmVisual* a){
-    if(a)
-        a->increment();
+    if(!a)
+      return;
+
+    a->increment();
     m_visuals.add(a);
+
+    for(int i = 0; ; i++)
+    {
+      a->setGroup(i);
+      kgmVisual::Group* group = a->getGroup();
+
+      if(!group)
+        break;
+
+      if(group->skeleton)
+      {
+
+      }
+    }
   }
 
   void add(kgmGui* gui, bool tmp = false){
@@ -194,11 +250,11 @@ public:
   {
     for(int i = 0; i < m_meshes.size(); i++)
     {
-      kgmMesh* m = m_meshes[i].mesh;
+      kgmMesh* m = m_meshes[i].m_mesh;
 
       if(m == msh)
       {
-        m_meshes[i].material = mtl;
+        m_meshes[i].m_mtrl = mtl;
 
         return true;
       }
@@ -212,8 +268,8 @@ public:
       return;
 
     for(int i = 0; i < m_meshes.size(); i++){
-      if(mesh == m_meshes[i].mesh){
-        m_meshes[i].material = mtl;
+      if(mesh == m_meshes[i].m_mesh){
+        m_meshes[i].m_mtrl = mtl;
         break;
       }
     }
