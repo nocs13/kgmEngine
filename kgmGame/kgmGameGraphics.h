@@ -73,6 +73,11 @@ class kgmGameGraphics: public kgmObject
     {
       return m_mesh->vertices();
     }
+
+    virtual kgmMesh::Face* getFaces()
+    {
+      return m_mesh->faces();
+    }
   };
 
   class MeshMove: public Mesh
@@ -103,9 +108,12 @@ class kgmGameGraphics: public kgmObject
 
       kgmMesh::Vertex_P_N_C_T_BW_BI* m_verts;
 
+      u32 frame;
+
       MeshSkinned()
       {
         m_verts = null;
+        frame   = 0;
       }
 
       MeshSkinned(kgmMesh* m, kgmMaterial* l,  mtx4* t, kgmSkeleton* s, kgmAnimation* a)
@@ -124,6 +132,8 @@ class kgmGameGraphics: public kgmObject
          m_tran = t;
 
          m_verts = new kgmMesh::Vertex_P_N_C_T_BW_BI[m_mesh->vcount()];
+         memcpy(m_verts, m_mesh->vertices(),
+                sizeof(kgmMesh::Vertex_P_N_C_T_BW_BI) * m_mesh->vcount());
       }
 
       ~MeshSkinned()
@@ -133,11 +143,53 @@ class kgmGameGraphics: public kgmObject
 
       void animate(u32 frame)
       {
+        if(!m_skel || !m_anim)
+          return;
+
+         kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->vertices();
+         mtx4* j_anim = new mtx4[m_skel->m_joints.size()];
+
+         for(int i = 0; i < m_skel->m_joints.size(); i++)
+         {
+           kgmAnimation::Animation* a = m_anim->getNode(m_skel->m_joints[i]->n);
+
+           if(!a)
+           {
+             j_anim[i].identity();
+
+             continue;
+           }
+
+           mtx4 jframe;
+           a->getFrame(frame, jframe);
+
+           j_anim[i] = m_skel->m_matrices[i] * m_skel->m_imatrices[i] * jframe;
+         }
+
+         for(int i = 0; i < m_mesh->vcount(); i++)
+         {
+           vec3   bpos(0, 0, 0);
+           float* wght = (float*)(&vbase[i].bw);
+           int*   indx = (int*)(&vbase[i].bi);
+
+           for(int j = 0; j < 4; j++)
+           {
+             if(indx[j] < 0)
+               break;
+
+             bpos = bpos + j_anim[indx[j]] * vbase[i].pos * wght[j];
+           }
+
+           m_verts[i].pos = bpos;
+         }
+
+         delete [] j_anim;
       }
 
       kgmMesh::Vertex* getVertices()
       {
-        return m_mesh->vertices();
+        return m_verts;
+        //return m_mesh->vertices();
       }
   };
 

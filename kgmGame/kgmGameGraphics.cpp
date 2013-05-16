@@ -150,6 +150,23 @@ void kgmGameGraphics::render(){
       mtx4 tr = (*m_smeshes[i]->m_tran) * m_camera.camera.mView;
       gc->gcSetMatrix(gcmtx_view, tr.m);
       render(m_smeshes[i]);
+
+      //update animation if has some
+      if(m_smeshes[i]->m_anim)
+      {
+        static uint anim_time = kgmTime::getTicks();
+        kgmAnimation* anim = m_smeshes[i]->m_anim;
+
+        if(kgmTime::getTicks() - anim_time > 1000)
+        {
+          if(m_smeshes[i]->frame > anim->m_end)
+          {
+            m_smeshes[i]->frame = 0;
+            m_smeshes[i]->animate(m_smeshes[i]->frame);
+            m_smeshes[i]->frame++;
+          }
+        }
+      }
     }
 
     //For last step draw gui

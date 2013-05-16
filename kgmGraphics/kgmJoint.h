@@ -1,10 +1,10 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmList.h"
-#include "../kgmMath/kgmVector3.h"
+#include "../kgmMath/kgmVector3d.h"
 #include "../kgmMath/kgmQuaternion.h"
 
-class kgmJoint public kgmObject
+class kgmJoint: public kgmObject
 {
   kgmString         name;
   kgmJoint*         parent;
