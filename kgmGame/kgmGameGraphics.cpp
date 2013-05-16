@@ -30,9 +30,23 @@ kgmGameGraphics::~kgmGameGraphics(){
 }
 
 void kgmGameGraphics::clear(){
-  for(int i = 0; i < m_meshes.size(); i++){
-    m_meshes[i].m_mesh->release();
-    m_meshes[i].m_mtrl->release();
+  for(int i = 0; i < m_meshes.size(); i++)
+    delete m_meshes[i];
+  m_meshes.clear();
+
+  for(int i = 0; i < m_mmeshes.size(); i++)
+    delete m_mmeshes[i];
+  m_mmeshes.clear();
+
+  for(int i = 0; i < m_smeshes.size(); i++)
+    delete m_smeshes[i];
+  m_smeshes.clear();
+
+  for(int i = 0; i < m_meshes.size(); i++)
+  {
+    m_meshes[i]->m_mesh->release();
+    m_meshes[i]->m_mtrl->release();
+    delete m_meshes[i];
   }
   m_meshes.clear();
 
@@ -122,23 +136,20 @@ void kgmGameGraphics::render(){
     }
 
     //render 3D
-    for(int i = 0; i < m_meshes.size(); i++)
-    {
-      if(s_def){
-        //render(s_def, 0);
-      }
-
-      render(&m_meshes[i]);
-
-      if(s_def)
-      {
-        //render(s_def, 1);
-      }
+    for(int i = 0; i < m_meshes.size(); i++){
+      render(m_meshes[i]);
     }
 
-    for(int i = 0; i < m_visuals.size(); i++)
-    {
-      render(m_visuals[i]);
+    for(int i = 0; i < m_mmeshes.size(); i++){
+      mtx4 tr = (*m_mmeshes[i]->m_tran) * m_camera.camera.mView;
+      gc->gcSetMatrix(gcmtx_view, tr.m);
+      render(m_mmeshes[i]);
+    }
+
+    for(int i = 0; i < m_smeshes.size(); i++){
+      mtx4 tr = (*m_smeshes[i]->m_tran) * m_camera.camera.mView;
+      gc->gcSetMatrix(gcmtx_view, tr.m);
+      render(m_smeshes[i]);
     }
 
     //For last step draw gui
@@ -194,7 +205,7 @@ void kgmGameGraphics::render(Mesh *m){
 
   if(m->m_mesh){
     gc->gcDraw(gcpmt_triangles, m->m_mesh->fvf(), m->m_mesh->vsize(),
-               m->m_mesh->vcount(), m->m_mesh->vertices(),
+               m->m_mesh->vcount(), m->getVertices(),
                2, 3 * m->m_mesh->fcount(), m->m_mesh->faces());
   }
 }

@@ -752,7 +752,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
-        s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
+        s[i].uv = vec2(v[i].uv[0].x, v[i].uv[0].y);
       }
       delete [] v;
     }
@@ -847,7 +847,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
-        s[i].uv = vec4(v[i].uv[0].x, v[i].uv[0].y, 0, 0);
+        s[i].uv = vec2(v[i].uv[0].x, v[i].uv[0].y);
         p = (char*)((u32)p + rd);
       }
       delete [] v;

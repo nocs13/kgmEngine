@@ -51,8 +51,27 @@ class kgmGameGraphics: public kgmObject
 
     Mesh(kgmMesh* m, kgmMaterial *l)
     {
-      m_mesh = m;
-      m_mtrl = l;
+      if(m){
+        m_mesh = m;
+        m_box  = m->bound();
+        m->increment();
+      }
+
+      if(l){
+        m_mtrl = l;
+        l->increment();
+      }
+    }
+
+    virtual ~Mesh()
+    {
+      if(m_mesh) m_mesh->release();
+      if(m_mtrl) m_mtrl->release();
+    }
+
+    virtual kgmMesh::Vertex* getVertices()
+    {
+      return m_mesh->vertices();
     }
   };
 
@@ -60,6 +79,10 @@ class kgmGameGraphics: public kgmObject
   {
   public:
     mtx4* m_tran;
+
+    MeshMove()
+    {
+    }
 
     MeshMove(kgmMesh* m, kgmMaterial *l, mtx4* t)
       :Mesh(m, l)
@@ -80,7 +103,12 @@ class kgmGameGraphics: public kgmObject
 
       kgmMesh::Vertex_P_N_C_T_BW_BI* m_verts;
 
-      MeshSkinned(kgmMesh* m, kgmMaterial* l,  mtx4* t, kgmAnimation* a, kgmSkeleton* s)
+      MeshSkinned()
+      {
+        m_verts = null;
+      }
+
+      MeshSkinned(kgmMesh* m, kgmMaterial* l,  mtx4* t, kgmSkeleton* s, kgmAnimation* a)
         :MeshMove(m, l, t)
       {
          m_mesh = null;
@@ -89,27 +117,27 @@ class kgmGameGraphics: public kgmObject
          m_mtrl = null;
          m_tran = null;
 
-
          m_mesh = m;
          m_skel = s;
          m_anim = a;
          m_mtrl = l;
          m_tran = t;
+
+         m_verts = new kgmMesh::Vertex_P_N_C_T_BW_BI[m_mesh->vcount()];
       }
 
       ~MeshSkinned()
       {
-
+        if(m_verts) delete [] m_verts;
       }
 
       void animate(u32 frame)
       {
-
       }
 
       kgmMesh::Vertex* getVertices()
       {
-          return m_verts;
+        return m_mesh->vertices();
       }
   };
 
@@ -126,9 +154,9 @@ class kgmGameGraphics: public kgmObject
 
   Camera   m_camera;
 
-  kgmList<Mesh>         m_meshes;
-  kgmList<MeshMove>     m_mmeshes;
-  kgmList<MeshSkinned>  m_smeshes;
+  kgmList<Mesh*>        m_meshes;
+  kgmList<MeshMove*>    m_mmeshes;
+  kgmList<MeshSkinned*> m_smeshes;
   kgmList<kgmMaterial*> m_materials;
   kgmList<Light>        m_lights;
   kgmList<kgmVisual*>   m_visuals;
@@ -141,6 +169,7 @@ class kgmGameGraphics: public kgmObject
   void* tnormal;
   void* tdepth;
   void* shader;
+  mtx4  location;
 
   kgmTab<u16, kgmShader*>  shaders;
   kgmTab<u16, kgmTexture*> textures;
@@ -165,23 +194,13 @@ private:
   void render(kgmVisual*);
   void render(kgmShader*, u32);
   void render(kgmMaterial*);
+  void transform(mtx4&);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
 
   void trash();
 
 public:
-  void add(kgmMesh* mesh, kgmMaterial* material){
-    if(mesh)
-      mesh->increment();
-    if(material)
-      material->increment();
-
-    Mesh m(mesh, material);
-    m.m_box = mesh->bound();
-    m_meshes.add(m);
-  }
-
   void add(kgmMaterial* mtl){
     if(mtl){
       m_materials.add(mtl);
@@ -197,6 +216,11 @@ public:
     m_lights.add(light);
   }
 
+  void add(kgmMesh* mesh, kgmMaterial* material){
+    Mesh* m = new Mesh(mesh, material);
+    m_meshes.add(m);
+  }
+
   void add(kgmVisual* a){
     if(!a)
       return;
@@ -204,7 +228,7 @@ public:
     a->increment();
     m_visuals.add(a);
 
-    for(int i = 0; ; i++)
+    for(int i = 0; i < 1; i++)
     {
       a->setGroup(i);
       kgmVisual::Group* group = a->getGroup();
@@ -212,9 +236,16 @@ public:
       if(!group)
         break;
 
-      if(group->skeleton)
+      if(group->mesh && group->skeleton)
       {
-
+        MeshSkinned* m = new MeshSkinned(group->mesh, group->material, &a->m_transform,
+                      group->skeleton, a->m_animation);
+        m_smeshes.add(m);
+      }
+      else if(group->mesh)
+      {
+        MeshMove* m = new MeshMove(group->mesh, group->material, &a->m_transform);
+        m_mmeshes.add(m);
       }
     }
   }
@@ -250,11 +281,11 @@ public:
   {
     for(int i = 0; i < m_meshes.size(); i++)
     {
-      kgmMesh* m = m_meshes[i].m_mesh;
+      kgmMesh* m = m_meshes[i]->m_mesh;
 
       if(m == msh)
       {
-        m_meshes[i].m_mtrl = mtl;
+        m_meshes[i]->m_mtrl = mtl;
 
         return true;
       }
@@ -268,8 +299,8 @@ public:
       return;
 
     for(int i = 0; i < m_meshes.size(); i++){
-      if(mesh == m_meshes[i].m_mesh){
-        m_meshes[i].m_mtrl = mtl;
+      if(mesh == m_meshes[i]->m_mesh){
+        m_meshes[i]->m_mtrl = mtl;
         break;
       }
     }
