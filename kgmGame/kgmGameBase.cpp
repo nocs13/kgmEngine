@@ -1080,8 +1080,8 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       if(msh)
       {
-        actor->m_visual->addGroup(msh, mtl, skl, 0);
-        actor->m_animation = anm;
+        actor->m_visual->addVisual(msh, mtl, 0);
+        actor->m_visual->setAnimation(anm);
       }
     }
     else if(id == "State")

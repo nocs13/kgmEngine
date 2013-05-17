@@ -43,13 +43,10 @@ class kgmGameGraphics: public kgmObject
     kgmMaterial* m_mtrl;
     box3         m_box;
 
-    kgmVisual::Group* group;
-
     Mesh()
     {
       m_mesh = null;
       m_mtrl = null;
-      group  = null;
     }
 
     Mesh(kgmMesh* m, kgmMaterial *l)
@@ -282,29 +279,6 @@ public:
 
     a->increment();
     m_visuals.add(a);
-
-    for(int i = 0; i < 1; i++)
-    {
-      a->setGroup(i);
-      kgmVisual::Group* group = a->getGroup();
-
-      if(!group)
-        break;
-
-      if(group->mesh && group->skeleton)
-      {
-        MeshSkinned* m = new MeshSkinned(group->mesh, group->material, &a->m_transform,
-                      group->skeleton, a->m_animation);
-        m->group = group;
-        m_smeshes.add(m);
-      }
-      else if(group->mesh)
-      {
-        MeshMove* m = new MeshMove(group->mesh, group->material, &a->m_transform);
-        m->group = group;
-        m_mmeshes.add(m);
-      }
-    }
   }
 
   void add(kgmGui* gui, bool tmp = false){
