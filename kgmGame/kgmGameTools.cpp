@@ -608,29 +608,29 @@ kgmAnimation* kgmGameTools::genAnimation(kgmMemory<char>& m){
 kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
   kgmAnimation* anim = 0;
   kgmAnimation::Animation* f = 0;
+  kgmString id, val;
   int tick = 0;
   
   kgmXml::Node* anode = 0;
-  if(x.m_node || !(anode = x.m_node->node("kgmAnimation")))
-    return anim;
+
+  if(!x.m_node || !(anode = x.m_node->node("kgmAnimation")))
+    return null;
 
   anim = new kgmAnimation;
+
+  anode->attribute("fstart", val);
+  sscanf(val.data(), "%i", &anim->m_start);
+  anode->attribute("fend", val);
+  sscanf(val.data(), "%i", &anim->m_end);
+  anode->attribute("fps", val);
+  sscanf(val.data(), "%i", &anim->m_fps);
+
 
   for(int i = 0; i < anode->nodes(); i++){
     kgmString id, val;
     anode->node(i)->id(id);
 
-    if(id == "FrameStart"){
-      anode->node(i)->attribute("value", val);
-      sscanf(val.data(), "%i", &anim->m_start);
-    }else if(id == "FrameEnd"){
-      anode->node(i)->attribute("value", val);
-      sscanf(val.data(), "%i", &anim->m_end);
-    }else if(id == "FPS"){
-      anode->node(i)->attribute("value", val);
-      sscanf(val.data(), "%i", &anim->m_fps);
-      continue;
-    }else if(id == "Animation"){
+    if(id == "Animation"){
       f = new kgmAnimation::Animation;
       anode->node(i)->attribute("value", val);
       f->m_name = val;
@@ -643,7 +643,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
         kgmString id, tm, ps, rt;
         anode->node(i)->node(j)->id(id);
         if(id == "Frame"){
-          anode->node(i)->node(j)->attribute("time", tm);
+          anode->node(i)->node(j)->attribute("key", tm);
           anode->node(i)->node(j)->attribute("position", ps);
           anode->node(i)->node(j)->attribute("quaternion", rt);
           sscanf(tm.data(), "%i", &time);

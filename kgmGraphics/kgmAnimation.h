@@ -31,7 +31,7 @@ public:
   };
  
 public:
- float m_start, m_end, m_fps;
+ u32   m_start, m_end, m_fps;
  kgmList<Animation*> m_nodes;
 
  kgmAnimation():kgmResource(){

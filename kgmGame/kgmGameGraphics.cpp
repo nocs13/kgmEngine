@@ -147,6 +147,8 @@ void kgmGameGraphics::render(){
     }
 
     for(int i = 0; i < m_smeshes.size(); i++){
+      MeshSkinned *m = m_smeshes[i];
+
       mtx4 tr = (*m_smeshes[i]->m_tran) * m_camera.camera.mView;
       gc->gcSetMatrix(gcmtx_view, tr.m);
       render(m_smeshes[i]);

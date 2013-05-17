@@ -83,7 +83,9 @@ public:
     kgmList<State*>     m_states;
     kgmList<kgmSound*>  m_sounds;
     kgmList<kgmDummy*>  m_dummies;
-    kgmList<Animation*> m_animations;
+
+    kgmAnimation*       m_animation;
+    kgmSkeleton*        m_skeleton;
 
     State*              m_state;
 

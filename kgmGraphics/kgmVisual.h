@@ -29,12 +29,23 @@ public:
   ShadowFull,
  };
 
+ struct Mesh
+ {
+   kgmMesh::Vertex* vertices;
+   kgmMesh::Face*   faces;
+
+   u32              vcount;
+   u32              vcount;
+   u32              fvf;
+   u32              fff;
+ };
+
  struct Group
  {
    kgmMaterial*  material;
    kgmMesh*      mesh;
-   kgmSkeleton*  skeleton;
    mtx4*         transform;
+   bool          skin;
  };
 
 public:
@@ -43,10 +54,11 @@ public:
  TypeShadow   m_typeshadow;
  TypeRender   m_typerender;
 
- kgmList<kgmMaterial*>	m_materials;	//material maps
+ kgmList<kgmMaterial*>	 m_materials;	//material maps
  kgmList<Group*>        m_groups;
  Group*                 m_group;
 
+ kgmSkeleton*           m_skeleton;
  kgmAnimation*          m_animation;
  bool                   m_floop;
  u32                    m_fstart;
@@ -82,6 +94,8 @@ public:
     if(g->material)  g->material->release();
     if(g->skeleton)  g->skeleton->release();
     if(g->transform) delete g->transform;
+
+    delete g;
   }
   m_groups.clear();
 }
@@ -110,29 +124,22 @@ public:
      m_floop     = loop;
  }
 
- bool setGroup(u32 i)
+ void setSkeleton(kgmSkeleton* skel)
  {
-   if(i > m_groups.size() || i == m_groups.size())
+   if(skel)
    {
-     return false;
+     m_skeleton = skel;
+     skel->increment();
    }
-
-   m_group = m_groups[i];
  }
 
- Group* getGroup()
- {
-   return m_group;
- }
-
- void addGroup(kgmMesh* msh, kgmMaterial* mtl, kgmSkeleton* skel, mtx4* tran)
+ void addGroup(kgmMesh* msh, kgmMaterial* mtl, mtx4* tran)
  {
    Group* group = new Group();
    memset(group, 0, sizeof(Group));
 
    if(msh)  { group->mesh = msh; msh->increment(); }
    if(mtl)  { group->material = mtl; mtl->increment(); }
-   if(skel) { group->skeleton = skel; skel->increment(); }
    if(tran) { group->transform = new mtx4(); *group->transform = *tran; }
 
    m_groups.add(group);

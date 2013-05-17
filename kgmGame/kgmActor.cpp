@@ -25,9 +25,13 @@ kgmActor::kgmActor()
  m_transform.identity();
  m_dvisual.identity();
  m_dvisual.rotate(-0.5f * PI, tv);
- m_birth = kgmTime::getTicks();
+
+ m_birth  = kgmTime::getTicks();
  m_health = 1.0f;
  m_parent = null;
+
+ m_animation = null;
+ m_skeleton  = null;
 
  m_state      = null;
  m_gameplayer = false;
@@ -130,10 +134,14 @@ bool kgmActor::setState(kgmString s, bool force)
 {
     State* state = null;
 
-    for(kgmList<State*>::iterator i; i != m_states.end(); ++i)
+    for(kgmList<State*>::iterator i = m_states.begin(); i != m_states.end(); ++i)
     {
         if((*i)->id == s)
+        {
             state = (*i);
+
+            break;
+        }
     }
 
     if(!state)
@@ -148,8 +156,8 @@ bool kgmActor::setState(kgmString s, bool force)
             if(state->sound && state->sound->m_sound)
                 state->sound->m_sound->play((state->time == -1)?(true):(false));
 
-            if(state->animation)
-                m_visual->setAnimation(state->animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
+            if(m_animation)
+                m_visual->setAnimation(m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
         }
 
     }
