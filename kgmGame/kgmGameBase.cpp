@@ -1080,8 +1080,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       if(msh)
       {
-        actor->m_visual->addVisual(msh, mtl, 0);
+        actor->m_visual->addVisual(msh, mtl);
         actor->m_visual->setAnimation(anm);
+        actor->m_visual->setSkeleton(skl);
       }
     }
     else if(id == "State")
@@ -1107,7 +1108,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
           a_node->node(i)->node(j)->attribute("value", s);
           state->sound = m_resources->getSound(s);
         }
-        else if(s == "Animation")
+        else if(id == "Animation")
         {
           a_node->node(i)->node(j)->attribute("value", s);
           state->animation = m_resources->getAnimation(s);
@@ -1116,7 +1117,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
           a_node->node(i)->node(j)->attribute("end", s);
           if(s.length() > 0) sscanf(s, "%i", &state->fend);
         }
-        else if(s == "Option")
+        else if(id == "Option")
         {
           kgmString k, v;
           a_node->node(i)->node(j)->attribute("key", k);

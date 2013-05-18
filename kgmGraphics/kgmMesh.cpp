@@ -47,7 +47,7 @@ box3 kgmMesh::bound(){
 
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
  if(m_vertices)
-  delete m_vertices;
+  delete [] m_vertices;
  switch(f){
  case FVF_P_N_C_T_BW_BI:
    m_vertices = new Vertex_P_N_C_T_BW_BI[count];
@@ -72,7 +72,7 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
 
 kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
  if(m_faces)
-  delete m_faces;
+  delete [] m_faces;
  switch(f){
  case FFF_32:
    m_faces = new Face_32[count];

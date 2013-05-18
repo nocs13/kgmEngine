@@ -122,6 +122,15 @@ public:
             m_dummies.add(m);
     }
 
+    void setAnimation(kgmAnimation* a)
+    {
+      if(a)
+      {
+        m_animation = a;
+        m_visual->setAnimation(a);
+      }
+    }
+
     bool setState(kgmString s, bool force = false);
 };
 

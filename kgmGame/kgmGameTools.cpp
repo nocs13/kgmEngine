@@ -632,7 +632,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
 
     if(id == "Animation"){
       f = new kgmAnimation::Animation;
-      anode->node(i)->attribute("value", val);
+      anode->node(i)->attribute("name", val);
       f->m_name = val;
       anim->addNode(f);
       tick = 0;

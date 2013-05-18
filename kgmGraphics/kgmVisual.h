@@ -63,7 +63,7 @@ public:
 
       if(mesh)
       {
-        if(mesh->fvf() == kgmMesh::FVF_P_N_C_T_BW_BI)
+        if(mesh->fvf() & gcv_uv_f4) //== kgmMesh::FVF_P_N_C_T_BW_BI)
         {
           vertices = new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
           memcpy(vertices, mesh->vertices(),
@@ -197,8 +197,8 @@ public:
   {
     m_animation = a;
     m_fstart    = start;
+    m_fset      = start;
     m_fend      = end;
-    m_fset      = end;
     m_floop     = loop;
   }
 
@@ -231,7 +231,11 @@ public:
 
   void update()
   {
+    if(kgmTime::getTicks() - m_last_update < 50)
+      return;
 
+    animate();
+    m_last_update = kgmTime::getTicks();
   }
 
 private:
@@ -291,6 +295,8 @@ private:
         v->vertices[i].pos = bpos;
       }
     }
+
+    m_fset++;
   }
 };
 

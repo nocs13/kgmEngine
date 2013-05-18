@@ -220,6 +220,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
   }
 
   render((kgmMaterial*)0);
+  visual->update();
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){

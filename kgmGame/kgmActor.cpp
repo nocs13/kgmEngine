@@ -155,11 +155,9 @@ bool kgmActor::setState(kgmString s, bool force)
         {
             if(state->sound && state->sound->m_sound)
                 state->sound->m_sound->play((state->time == -1)?(true):(false));
-
-            if(m_animation)
-                m_visual->setAnimation(m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
         }
 
+        m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
     }
     else
     {
