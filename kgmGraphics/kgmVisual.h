@@ -142,7 +142,7 @@ public:
   u32                    m_fend;
   u32                    m_fset;
 
-private:
+//private:
   mtx4*                  m_tm_joints;
   u32                    m_last_update;
 
@@ -264,7 +264,11 @@ private:
       mtx4 jframe;
       a->getFrame(m_fset, jframe);
 
-      m_tm_joints[i] = m_skeleton->m_matrices[i] * m_skeleton->m_imatrices[i] * jframe;
+      mtx4 rc;
+      vec3 ra(1, 0, 0);
+      rc.rotate(-PI / 4, ra);
+
+      m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ rc * jframe;
     }
 
     for(int j = 0; j < m_visuals.size(); j++)
@@ -278,21 +282,25 @@ private:
 
       for(int i = 0; i < v->mesh->vcount(); i++)
       {
-        vec3   bpos(0, 0, 0);
-        float* wght = (float*)(&vbase[i].bw);
-        float* indx = (float*)(&vbase[i].bi);
+        vec3   pos(0, 0, 0);
+        vec3   bpos = vbase[i].pos;
+        float* wght = (float*)(&vbase[i].bw.x);
+        float* indx = (float*)(&vbase[i].bi.x);
 
         for(int j = 0; j < 4; j++)
         {
-          int bi = (int)indx[j];
+          int   bi = (int)indx[j];
+          float w  = wght[j];
 
           if(bi < 0)
             break;
 
-          bpos = bpos + m_tm_joints[bi] * vbase[i].pos * wght[j];
+          mtx4 m = m_tm_joints[bi];
+
+          pos = pos + m_tm_joints[bi] * m_skeleton->m_imatrices[bi] * vbase[i].pos * wght[j];
         }
 
-        v->vertices[i].pos = bpos;
+        v->vertices[i].pos = pos;
       }
     }
 

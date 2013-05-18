@@ -34,22 +34,6 @@ void kgmGameGraphics::clear(){
     delete m_meshes[i];
   m_meshes.clear();
 
-  for(int i = 0; i < m_mmeshes.size(); i++)
-    delete m_mmeshes[i];
-  m_mmeshes.clear();
-
-  for(int i = 0; i < m_smeshes.size(); i++)
-    delete m_smeshes[i];
-  m_smeshes.clear();
-
-  for(int i = 0; i < m_meshes.size(); i++)
-  {
-    m_meshes[i]->m_mesh->release();
-    m_meshes[i]->m_mtrl->release();
-    delete m_meshes[i];
-  }
-  m_meshes.clear();
-
   for(int i = 0; i < m_materials.size(); i++){
     m_materials[i]->release();
   }
@@ -214,13 +198,35 @@ void kgmGameGraphics::render(kgmVisual* visual){
     kgmVisual::Visual* v = visual->m_visuals[i];
 
     render(v->getMaterial());
-    gc->gcDraw(gcpmt_triangles, v->getFvf(),
+    ///*
+     gc->gcDraw(gcpmt_triangles, v->getFvf(),
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());
+//*/
   }
 
   render((kgmMaterial*)0);
   visual->update();
+
+  if(visual->m_tm_joints)
+  {
+    struct Vert{
+      vec3 v;
+      u32 c;
+    };
+
+    Vert box[] = {{{0.1, 0.1, -0.1}, 0xffffffff}, {{0.1, -0.1, -0.1}, 0xffffffff}, {{-0.1, 0.1, -0.1}, 0xffffffff}, {{-0.1, -0.1, -0.1}, 0xffffffff}, {{0, 0, 0.1}, 0xffff0000}};
+    u16  ind[] = {0, 2, 1,  2, 3, 1,  4, 0, 1,  4, 1, 3,  4, 3, 2,  4, 2, 0};
+
+    int joints = visual->m_skeleton->m_joints.size();
+
+    for(int i = 0; i < joints; i++)
+    {
+      mtx4 m = visual->m_tm_joints[i] * visual->m_transform * m_camera.camera.mView;
+      gc->gcSetMatrix(gcmtx_view, m.m);
+      gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col, sizeof(Vert), 5, box, 2, 18, ind);
+    }
+  }
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){

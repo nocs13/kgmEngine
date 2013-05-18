@@ -831,9 +831,9 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       char* p = data.data();
       for(int i = 0; i < count; i++){
         u32  nw = 0, rd = 0;
-        u32  bi[4] = {0};
+        int   bi[4] = {0};
         float bw[4] = {0.0f};
-        sscanf(p, "%i %i %i %i %f %f %f %f %n", &nw,
+        sscanf(p, "%i %i %i %i %f %f %f %f %n", //&nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3], &rd);
         s[i].bw.x = bw[0];

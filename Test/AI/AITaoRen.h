@@ -19,12 +19,12 @@ public:
 
     if(a->m_gameplayer)
     {
-      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = a->m_body->m_position - a->m_body->m_direction * 3.5f;
-      cpos.z += 1.0f;
-      cam.mPos = cpos;
-      cam.mDir = a->m_body->m_direction;
-      cam.update();
+      //kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
+      //vec3 cpos = a->m_body->m_position - a->m_body->m_direction * 15.f;
+      //cpos.z += 2.0f;
+      //cam.mPos = cpos;
+      //cam.mDir = a->m_body->m_direction;
+      //cam.update();
     }
   }
 
@@ -38,18 +38,38 @@ public:
     switch(btn)
     {
     case grot_x:
-      vt = a->m_body->m_rotation;
-      vt.z += (0.2f * state);
-      a->m_body->rotate(0, 0, vt.z);
+    {
+      static float alpha = 0.0f;
+      alpha += (0.05f * state);
+//      vt = a->m_body->m_rotation;
+//      vt.z += (0.2f * state);
+//      a->m_body->rotate(0, 0, vt.z);
+      vec3 vr(cos(alpha), sin(alpha), 0);
+      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
+      vec3 cpos = a->m_body->m_position + vr * 5.f;
+      cpos.z += 1.0f;
+      vec3 cdir = a->m_body->m_position - cpos;
+      cdir.normalize();
+      cam.mPos = cpos;
+      cam.mDir = cdir;
+      cam.update();
       break;
+    }
     case gbtn_down:
-      vt = a->m_body->m_direction;
+      if(state)
+          a->m_body->m_velocity = -0.01f;
+      else
+          a->m_body->m_velocity = 0.0f;
       break;
     case gbtn_up:
         if(state)
             a->m_body->m_velocity = 0.01f;
         else
             a->m_body->m_velocity = 0.0f;
+      break;
+    case gbtn_left:
+      break;
+    case gbtn_right:
       break;
     }
   }

@@ -15,12 +15,12 @@ class kGame: public kgmGameBase{
 
 public:
   kGame(){
-      gui = new kGui(this);
-      m_msAbs = false;
-      m_gamemode = true;
+    gui = new kGui(this);
+    m_msAbs = false;
+    m_gamemode = true;
 
-      m_logic->add("RenTao", new AITaoRen(this));
-      /*snd = m_game->getResources()->getSound("1.wav");
+    m_logic->add("RenTao", new AITaoRen(this));
+    /*snd = m_game->getResources()->getSound("1.wav");
       if(snd && snd->getSound())
       {
         snd->getSound()->play(true);
@@ -39,12 +39,12 @@ protected:
 public:
   void onIdle()
   {
-      kgmGameBase::onIdle();
+    kgmGameBase::onIdle();
 
-      if(m_state == State_Play)
-      {
+    if(m_state == State_Play)
+    {
 
-      }
+    }
   }
 
   void onKeyUp(int k){
@@ -105,20 +105,23 @@ class kApp: public kgmApp{
 #ifdef ANDROID
 public:
 #endif
- kGame*	m_game;
+  kGame*	m_game;
 public:
- kApp(){
- }
- 
- ~kApp(){
- }
+  kApp(){
+  }
 
- void main()
- {
-  m_game = new kGame();
-  m_game->loop();
-  m_game->release();
- } 
+  ~kApp(){
+  }
+
+  void main()
+  {
+    u32 w, h;
+    kgmSystem::getDesktopDimension(w, h);
+    m_game = new kGame();
+    m_game->setRect(0, 0, w, h);
+    m_game->loop();
+    m_game->release();
+  }
 };
 
 //main object
@@ -173,66 +176,66 @@ kgm_android_exit()
 
 extern "C"
 {
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height,
-                                                             jobject am, jobject surface);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key);
-  JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj,  jint act, jint x, jint y);
-  JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj);
+JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_init(JNIEnv * env, jobject obj,  jint width, jint height,
+jobject am, jobject surface);
+JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj);
+JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj);
+JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key);
+JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj,  jint act, jint x, jint y);
+JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj);
 };
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv* env, jobject obj,  jint width, jint height, jobject am,
-                                                          jobject surface)
+jobject surface)
 {
-    if(m_game)
-    {
-      return;
-    }
+  if(m_game)
+  {
+    return;
+  }
 
-    LOGI("kgmTest init\n");
-    AAssetManager* mgr = AAssetManager_fromJava(env, am);
-    assert(NULL != mgr);
-    g_assetManager = mgr;
-    env->NewGlobalRef(am);
-    LOGI("kgmTest init asset manager\n");
-    env->GetJavaVM(&jvm);
+  LOGI("kgmTest init\n");
+  AAssetManager* mgr = AAssetManager_fromJava(env, am);
+  assert(NULL != mgr);
+  g_assetManager = mgr;
+  env->NewGlobalRef(am);
+  LOGI("kgmTest init asset manager\n");
+  env->GetJavaVM(&jvm);
 
-    m_app = new KApp();
-    m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
-    LOGI("kgmTest init native widnow\n");
+  m_app = new KApp();
+  m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
+  LOGI("kgmTest init native widnow\n");
 
-    kgmString spath;
-    m_game = new kGame();
-    m_game->setRect(0, 0, width, height);
-    LOGI("kgmTest inited\n");
+  kgmString spath;
+  m_game = new kGame();
+  m_game->setRect(0, 0, width, height);
+  LOGI("kgmTest inited\n");
 }
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject obj)
 {
-    LOGI("kgmTest quit\n");
+  LOGI("kgmTest quit\n");
 
-    if(m_game)
-    {
-      LOGI("kgmTest release gamet\n");
-      m_game->onClose();
-      m_game->release();
-    }
+  if(m_game)
+  {
+    LOGI("kgmTest release gamet\n");
+    m_game->onClose();
+    m_game->release();
+  }
 
-    if(m_app)
-      delete m_app;
+  if(m_app)
+    delete m_app;
 
-    m_game = null;
+  m_game = null;
 }
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj)
 {
-    //LOGI("kgmTest idle\n");
-    if(m_game)
-    {
-      m_game->onIdle();
+  //LOGI("kgmTest idle\n");
+  if(m_game)
+  {
+    m_game->onIdle();
 
-      /*struct AInputQueue queue;
+    /*struct AInputQueue queue;
       struct AInputEvent events[1];
 
       ASensorManager* sm = ASensorManager_getInstance();
@@ -257,88 +260,88 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
           break;
         }
       }*/
-    }
+  }
 }
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key)
 {
-    //int x = 0, y = 0;
-    LOGI("kgmTest onKeyboard %i %i\n", a, key);
-    if(m_game)
-    {
-      kgmEvent::Event evt;
+  //int x = 0, y = 0;
+  LOGI("kgmTest onKeyboard %i %i\n", a, key);
+  if(m_game)
+  {
+    kgmEvent::Event evt;
 
-      switch(a)
-      {
-      case 0:
-          evt.event = evtKeyDown;
-          evt.key = keyTranslate(key);
-          m_game->onEvent(&evt);
-          break;
-      case 1:
-          evt.event = evtKeyUp;
-          evt.key = keyTranslate(key);
-          m_game->onEvent(&evt);
-          break;
-      default:
-          break;
-      }
+    switch(a)
+    {
+    case 0:
+      evt.event = evtKeyDown;
+      evt.key = keyTranslate(key);
+      m_game->onEvent(&evt);
+      break;
+    case 1:
+      evt.event = evtKeyUp;
+      evt.key = keyTranslate(key);
+      m_game->onEvent(&evt);
+      break;
+    default:
+      break;
     }
+  }
 }
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)
 {
-    static int  prev_x = 0, prev_y = 0;
-    static bool set = false;
-    LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
-    if(m_game)
+  static int  prev_x = 0, prev_y = 0;
+  static bool set = false;
+  LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
+  if(m_game)
+  {
+    kgmEvent::Event evt;
+
+    switch(a)
     {
-      kgmEvent::Event evt;
+    case 0:
+      evt.event = evtMsMove;
 
-      switch(a)
+      if(m_game->m_msAbs)
       {
-      case 0:
-          evt.event = evtMsMove;
-
-          if(m_game->m_msAbs)
-          {
-            evt.msx = x - prev_x;
-            evt.msy = y - prev_y;
-            prev_x = x;
-            prev_y = y;
-          }
-          else
-          {
-           evt.msx = x;
-           evt.msy = y;
-          }
-          m_game->onEvent(&evt);
-          break;
-      case 1:
-          evt.event = evtMsLeftDown;
-          evt.msx = x;
-          evt.msy = y;
-          m_game->onEvent(&evt);
-          break;
-      case 2:
-          evt.event = evtMsLeftUp;
-          evt.msx = x;
-          evt.msy = y;
-          m_game->onEvent(&evt);
-          break;
-      default:
-          break;
+        evt.msx = x - prev_x;
+        evt.msy = y - prev_y;
+        prev_x = x;
+        prev_y = y;
       }
+      else
+      {
+        evt.msx = x;
+        evt.msy = y;
+      }
+      m_game->onEvent(&evt);
+      break;
+    case 1:
+      evt.event = evtMsLeftDown;
+      evt.msx = x;
+      evt.msy = y;
+      m_game->onEvent(&evt);
+      break;
+    case 2:
+      evt.event = evtMsLeftUp;
+      evt.msx = x;
+      evt.msy = y;
+      m_game->onEvent(&evt);
+      break;
+    default:
+      break;
     }
+  }
 }
 
 JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj){
-    return (env)->NewStringUTF("Hello from TEST JNI !");
+  return (env)->NewStringUTF("Hello from TEST JNI !");
 }
 
 AAssetManager* kgm_getAssetManager()
 {
-    return g_assetManager;
+  return g_assetManager;
 }
 
 #endif

@@ -17,14 +17,14 @@
 
 
 class kgmMesh: public kgmResource{
-  KGM_OBJECT(kgmMesh)
-  public:
-    enum FVF{
-           FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-           FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-           FVF_P_N_C_T2,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-           FVF_P_N_C_T_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
-};
+  KGM_OBJECT(kgmMesh);
+public:
+  enum FVF{
+    FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_C_T2,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_C_T_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+  };
 
   enum FFF{
     FFF_16,
@@ -33,15 +33,21 @@ class kgmMesh: public kgmResource{
 
   struct Vertex{
     vec3 pos;
+  };
+
+  struct Vertex_P_N: public Vertex{
     vec3 nor;
+  };
+
+  struct Vertex_P_N_C: public Vertex_P_N{
     u32  col;
   };
 
-  struct Vertex_P_N_C_T: public Vertex{
+  struct Vertex_P_N_C_T: public Vertex_P_N_C{
     vec2 uv;
   };
 
-  struct Vertex_P_N_C_T2: public Vertex{
+  struct Vertex_P_N_C_T2: public Vertex_P_N_C{
     vec2 uv[2];
   };
 

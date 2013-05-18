@@ -39,6 +39,7 @@ public:
     m_imatrices.clear();
     for(u32 i = 0; i < m_joints.size(); i++){
       mtx4 m = mtx4(m_joints[i]->r, m_joints[i]->v);
+      //mtx4 m = mtx4(m_joints[i]->v);
       m_matrices.add(m);
       m.invert();
       m_imatrices.add(m);

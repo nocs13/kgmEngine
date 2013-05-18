@@ -55,7 +55,6 @@ class kgm_actor(bpy.types.Operator):
      return {'FINISHED'}
 
 
-
 scene_materials = []
 
 class kgmMaterial:
@@ -101,14 +100,17 @@ class kgmCamera:
 
 #skeleton
 class kgmBone:
- def __init__(self, bone, gmtx):
+ def __init__(self, bone, gmtx, arm):
   self.parent = bone.parent.name if bone.parent else 'None'
   self.name = bone.name
-  self.mtx = gmtx * bone.matrix_local
+  self.mtx = bone.matrix_local
   #self.pos = mathutils.Vector((0, 0, 0)) * bone.matrix_local
   par_pos = bone.parent.matrix_local * mathutils.Vector((0, 0, 0)) if bone.parent else mathutils.Vector((0, 0, 0))
   par_quat = bone.parent.matrix_local.to_quaternion() if bone.parent else mathutils.Quaternion((0, 0, 0, 1))
   loc_pos = bone.matrix_local * mathutils.Vector((0, 0, 0))
+  
+  pose_bone = bpy.context.scene.objects[arm.name].pose.bones[bone.name]
+  self.mtx *= pose_bone.matrix
 
   self.pos = self.mtx.to_translation()
   self.quat = self.mtx.to_quaternion()
@@ -124,29 +126,25 @@ class kgmSkeleton:
   self.bones = []
 
   #if bpy.ops.object.mode_set.poll():
-  bpy.ops.object.mode_set(mode='POSE')
+  #bpy.ops.object.mode_set(mode='POSE')
 
-  armature = o.data
+  self.arm = armature = o.data
   self.mtx = o.matrix_local
   self.pos = o.matrix_local.to_translation() # * mathutils.Vector((0, 0, 0))
   self.quat = o.matrix_local.to_quaternion()
   self.euler = o.matrix_local.to_euler('XYZ')
   list = [bone for bone in armature.bones if bone.parent == None]
-  print(o.name)
-  print(list)
   for o in list:
    self.collect(o)
 
   #if bpy.ops.object.mode_set.poll():
-  bpy.ops.object.mode_set(mode='OBJECT')
+  #bpy.ops.object.mode_set(mode='OBJECT')
 
 
  def collect(self, o):
-  self.bones.append(kgmBone(o, self.mtx))
+  self.bones.append(kgmBone(o, self.mtx, self.arm))
   for bone in o.children:
    self.collect(bone)
-
-
 
 class kgmVertex:
  def __init__(self):
@@ -305,7 +303,7 @@ class kgmBoneAnimation(kgmAnimation):
    for bn in allBones:
     if bn.name == o.name:
      #print("Bone " + " name: " + bn.name + " frame: " + str(frame) +  " mtx: " + str(bn.matrix))
-     mtx = bn.matrix.to_4x4()
+     mtx = a.matrix_local + bn.matrix.to_4x4()
      pos = mtx.to_translation()
      rot = mtx.to_quaternion()
      f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
@@ -523,7 +521,7 @@ class kgmExport(bpy.types.Operator):
     file.write(" position='" + str(b.pos.x) + " " + str(b.pos.y) + " " + str(b.pos.z) + "'")
     #file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
     file.write(" quaternion='" + str(b.quat.x) + " " + str(b.quat.y) + " " + str(b.quat.z) + " " + str(b.quat.w) + "'")
-#    file.write(" euler='" + str(toGrad(b.euler.x)) + " " + str(toGrad(b.euler.y)) + " " + str(toGrad(b.euler.z)) + "'")
+    file.write(" euler='" + str(toGrad(b.euler.x)) + " " + str(toGrad(b.euler.y)) + " " + str(toGrad(b.euler.z)) + "'")
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
 
