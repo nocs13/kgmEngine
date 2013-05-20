@@ -298,8 +298,8 @@ void kgmGameBase::onIdle(){
   case State_Pause:
     break;
   case State_Play:
-    if(m_physics && fps > 0)
-      m_physics->update(1000 / fps);
+    //if(m_physics && fps > 0)
+    //  m_physics->update(1000 / fps);
 
     if(m_logic && fps > 0)
       m_logic->update(1000 / fps);

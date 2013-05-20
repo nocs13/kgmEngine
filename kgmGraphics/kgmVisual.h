@@ -268,7 +268,7 @@ private:
       vec3 ra(1, 0, 0);
       rc.rotate(-PI / 4, ra);
 
-      m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ rc * jframe;
+      m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ jframe;
     }
 
     for(int j = 0; j < m_visuals.size(); j++)
@@ -300,7 +300,7 @@ private:
           pos = pos + m_tm_joints[bi] * m_skeleton->m_imatrices[bi] * vbase[i].pos * wght[j];
         }
 
-        v->vertices[i].pos = pos;
+        //v->vertices[i].pos = pos;
       }
     }
 

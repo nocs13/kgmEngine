@@ -25,10 +25,10 @@ bl_info = {
 
 import os
 import bpy
-import mathutils
+from mathutils import *
 
 def toGrad(a):
-  return a * 180.0 / 3.14
+  return a * 180.0 / 3.1415
 
 class kgm_panel(bpy.types.Panel):
  def draw(self, context):
@@ -100,25 +100,24 @@ class kgmCamera:
 
 #skeleton
 class kgmBone:
- def __init__(self, bone, gmtx, arm):
+ def __init__(self, bone, mtx):
   self.parent = bone.parent.name if bone.parent else 'None'
   self.name = bone.name
-  self.mtx = bone.matrix_local
-  #self.pos = mathutils.Vector((0, 0, 0)) * bone.matrix_local
-  par_pos = bone.parent.matrix_local * mathutils.Vector((0, 0, 0)) if bone.parent else mathutils.Vector((0, 0, 0))
-  par_quat = bone.parent.matrix_local.to_quaternion() if bone.parent else mathutils.Quaternion((0, 0, 0, 1))
-  loc_pos = bone.matrix_local * mathutils.Vector((0, 0, 0))
+  self.mtx = mtx + bone.matrix_local
   
-  pose_bone = bpy.context.scene.objects[arm.name].pose.bones[bone.name]
-  self.mtx *= pose_bone.matrix
-
-  self.pos = self.mtx.to_translation()
-  self.quat = self.mtx.to_quaternion()
-  self.euler = self.mtx.to_euler('XYZ')
-  #self.pos = bone.matrix_local * mathutils.Vector((0, 0, 0)) - par_pos
-  #self.quat = bone.matrix_local.to_quaternion() - par_quat
-  #self.euler = bone.matrix_local.to_euler('XYZ')
-  print(bone.name + " " + str(par_pos) + " " + str(loc_pos))
+  self.pos   = bone.matrix_local.to_translation()
+  self.quat  = bone.matrix_local.to_quaternion()
+  self.euler = self.quat.to_euler()   #bone.matrix.to_euler()
+#  self.euler = mtx.to_euler()       + bone.matrix.to_euler()
+  pose_bone = bpy.context.scene.objects[0].pose.bones[bone.name]
+  if bone.parent:
+    mtx_bone = mtx * pose_bone.parent.matrix.inverted()
+  else:
+    mtx_bone = mtx * Matrix()
+  mtx_bone *= pose_bone.matrix
+  self.pos   = mtx_bone.to_translation()
+  self.quat  = mtx_bone.to_quaternion()
+  self.euler = self.quat.to_euler()
 
 class kgmSkeleton:
  def __init__(self, o):
@@ -132,7 +131,7 @@ class kgmSkeleton:
   self.mtx = o.matrix_local
   self.pos = o.matrix_local.to_translation() # * mathutils.Vector((0, 0, 0))
   self.quat = o.matrix_local.to_quaternion()
-  self.euler = o.matrix_local.to_euler('XYZ')
+  self.euler = o.matrix_local.to_euler()
   list = [bone for bone in armature.bones if bone.parent == None]
   for o in list:
    self.collect(o)
@@ -142,7 +141,7 @@ class kgmSkeleton:
 
 
  def collect(self, o):
-  self.bones.append(kgmBone(o, self.mtx, self.arm))
+  self.bones.append(kgmBone(o, self.mtx))
   for bone in o.children:
    self.collect(bone)
 
@@ -268,8 +267,9 @@ class kgmMesh:
 class kgmFrame:
  def __init__(self, t, x, y, z, rx, ry, rz, rw):
   self.key = t
-  self.pos = [x, y, z]
+  self.pos = [x,  y,  z]
   self.rot = [rx, ry, rz, rw]
+  self.eul = [x,  y,  z]
 
 class kgmAnimation:
  def __init__(self, o):
@@ -283,6 +283,7 @@ class kgmAnimation:
    pos = o.matrix_world.to_translation()
    rot = o.matrix_world.to_quaternion()
    f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
+   f.eul = o.matrix.to_euler()
    self.frames.append(f)
 
 
@@ -303,10 +304,12 @@ class kgmBoneAnimation(kgmAnimation):
    for bn in allBones:
     if bn.name == o.name:
      #print("Bone " + " name: " + bn.name + " frame: " + str(frame) +  " mtx: " + str(bn.matrix))
-     mtx = a.matrix_local + bn.matrix.to_4x4()
+     #mtx = a.matrix_local + bn.matrix.to_4x4()
+     mtx = bn.matrix.to_4x4()
      pos = mtx.to_translation()
      rot = mtx.to_quaternion()
      f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
+     f.eul = rot.to_euler()
      self.frames.append(f)
   currentScene.frame_set(startFrame)
 
@@ -362,14 +365,14 @@ class kgmExport(bpy.types.Operator):
    # TODO, add better example props
  filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
    #use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default= True)
- exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
- exp_lights = BoolProperty(name="Export Lights", description="", default=True)
- exp_materials = BoolProperty(name="Export Materials", description="", default=True)
+ exp_meshes = BoolProperty(name="Export Meshes", description="", default=False)
+ exp_lights = BoolProperty(name="Export Lights", description="", default=False)
+ exp_materials = BoolProperty(name="Export Materials", description="", default=False)
  exp_cameras = BoolProperty(name="Export Cameras", description="", default=False)
- exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
+ exp_armatures = BoolProperty(name="Export Armatures", description="", default=True)
  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
- exp_kgmactors = BoolProperty(name="Export kgmActors", description="", default=True)
- exp_kgmphysics = BoolProperty(name="Export kgmPhysics", description="", default=True)
+ exp_kgmactors = BoolProperty(name="Export kgmActors", description="", default=False)
+ exp_kgmphysics = BoolProperty(name="Export kgmPhysics", description="", default=False)
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
@@ -444,7 +447,11 @@ class kgmExport(bpy.types.Operator):
    for o in animations:
     file.write("  <Animation name='" + o.name + "'>\n")
     for f in o.frames:
-     file.write("   <Frame key='" + str(f.key) + "' position='" + str(f.pos[0]) + " " + str(f.pos[1]) + " " + str(f.pos[2]) + "' quaternion='" + str(f.rot[0]) + " " + str(f.rot[1]) + " " + str(f.rot[2]) + " " + str(f.rot[3]) + "' />\n")
+     file.write("   <Frame key='" + str(f.key) + "' position='" + str(f.pos[0]) + " " + str(f.pos[1]) + " " + str(f.pos[2]) + "'")
+     file.write(" quaternion='" + str(f.rot[0]) + " " + str(f.rot[1]) + " " + str(f.rot[2]) + " " + str(f.rot[3]) + "'")
+#     file.write(" euler='" + str(toGrad(f.eul[0])) + " " + str(toGrad(f.eul[1])) + " " + str(toGrad(f.eul[2])) + "'")
+     file.write(" euler='" + str(f.eul[0]) + " " + str(f.eul[1]) + " " + str(f.eul[2]) + "'")
+     file.write(" />\n")
     file.write("  </Animation>\n")
    file.write(" </kgmAnimation>\n")
 
@@ -520,8 +527,9 @@ class kgmExport(bpy.types.Operator):
     file.write("  <Bone name='" + b.name + "' parent='" + b.parent + "'")
     file.write(" position='" + str(b.pos.x) + " " + str(b.pos.y) + " " + str(b.pos.z) + "'")
     #file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
-    file.write(" quaternion='" + str(b.quat.x) + " " + str(b.quat.y) + " " + str(b.quat.z) + " " + str(b.quat.w) + "'")
+    file.write(" quaternion='" + str(b.quat[1]) + " " + str(b.quat[2]) + " " + str(b.quat[3]) + " " + str(b.quat[0]) + "'")
     file.write(" euler='" + str(toGrad(b.euler.x)) + " " + str(toGrad(b.euler.y)) + " " + str(toGrad(b.euler.z)) + "'")
+    #file.write(" euler='" + str(b.euler.x) + " " + str(b.euler.y) + " " + str(b.euler.z) + "'")
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
 

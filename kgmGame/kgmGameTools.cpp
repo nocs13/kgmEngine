@@ -512,17 +512,25 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
     kgmString id;
     snode->node(i)->id(id);
     if(id == "Bone"){
-      kgmString name, par, pos, rot;
+      kgmString name, par, pos, rot, eul;
       kgmSkeleton::Joint* joint = new kgmSkeleton::Joint;
+
       snode->node(i)->attribute("name", name);
       snode->node(i)->attribute("parent", par);
       snode->node(i)->attribute("position", pos);
       snode->node(i)->attribute("quaternion", rot);
+      snode->node(i)->attribute("euler", eul);
+
+      vec3 vrot;
 
       strcpy(joint->n, name.data());
       sscanf(par.data(), "%i %f %f %f %f", &joint->i);
       sscanf(pos.data(), "%f %f %f", &joint->v.x, &joint->v.y, &joint->v.z);
       sscanf(rot.data(), "%f %f %f %f", &joint->r.x, &joint->r.y, &joint->r.z, &joint->r.w);
+      sscanf(eul.data(), "%f %f %f", &vrot.x, &vrot.y, &vrot.z);
+
+      joint->r.euler(vrot);
+
       skel->m_joints.add(joint);
     }
   }
@@ -638,17 +646,33 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
       tick = 0;
       for(int j = 0; j < anode->node(i)->nodes(); j++){
         int  time;
-        vec3 pos;
+        vec3 pos, eul;
         quat rot;
-        kgmString id, tm, ps, rt;
+        kgmString id, tm, ps, rt, el;
         anode->node(i)->node(j)->id(id);
         if(id == "Frame"){
           anode->node(i)->node(j)->attribute("key", tm);
           anode->node(i)->node(j)->attribute("position", ps);
           anode->node(i)->node(j)->attribute("quaternion", rt);
+          anode->node(i)->node(j)->attribute("euler", el);
           sscanf(tm.data(), "%i", &time);
           sscanf(ps.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
+          sscanf(el.data(), "%f %f %f", &eul.x, &eul.y, &eul.z);
           sscanf(rt.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.w);
+          /*rot.euler(eul);
+          eul.y += PI / 2;
+          mtx4 mtx(rot);
+          vec3 ang, axis;
+          mtx.angles(ang);
+          axis = vec3(-1, 0, 0);
+          quat q1(axis, PI / 2);
+          rot = rot + q1;
+          rot.normalize();
+          axis = vec3(0, 1, 0);
+          q1 = quat(axis, -PI);
+          rot = rot + q1;
+          rot.normalize();
+          rot.euler(eul);*/
           if(tick <= time){
             f->addFrame(time, pos, rot);
             tick = time;

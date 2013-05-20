@@ -46,7 +46,7 @@ public:
 //      a->m_body->rotate(0, 0, vt.z);
       vec3 vr(cos(alpha), sin(alpha), 0);
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = a->m_body->m_position + vr * 5.f;
+      vec3 cpos = a->m_body->m_position + vr * 15.f;
       cpos.z += 1.0f;
       vec3 cdir = a->m_body->m_position - cpos;
       cdir.normalize();

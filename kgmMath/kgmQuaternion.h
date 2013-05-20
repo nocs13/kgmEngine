@@ -42,6 +42,16 @@ public:
   return r;
  }
 
+ void normalize()
+ {
+   T n = 1 / sqrt(x*x + y*y + z*z + w*w);
+
+   x *= n;
+   y *= n;
+   z *= n;
+   w *= n;
+ }
+
  void euler(kgmVector3d<T> &r){
   kgmVector3d<T> vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
   kgmQuaternion<T> qx(vx, r.x), qy(vy, r.y), qz(vz, r.z);
@@ -70,9 +80,9 @@ public:
    T sqy = y*y;
    T sqz = z*z;
 
-   v.x = (T) (atan2(2.0 * (x*y + z*w),(sqx - sqy - sqz + sqw)));
-   v.y = (T) (atan2(2.0 * (y*z + x*w),(-sqx - sqy + sqz + sqw)));
-   v.z = (T) (asin(-2.0 * (x*z - y*w)));
+   v.z = (T) (atan2(2.0 * (x*y + z*w), (sqx - sqy - sqz + sqw)));
+   v.y = (T) (asin(-2.0 * (x*z - y*w)));
+   v.x = (T) (atan2(2.0 * (y*z + x*w), (-sqx - sqy + sqz + sqw)));
  }
 
  kgmQuaternion<T> slerp(kgmQuaternion<T> &q, T t){
