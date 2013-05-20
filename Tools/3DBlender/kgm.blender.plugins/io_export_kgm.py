@@ -104,17 +104,17 @@ class kgmBone:
   self.parent = bone.parent.name if bone.parent else 'None'
   self.name = bone.name
   self.mtx = mtx + bone.matrix_local
-  
+
   self.pos   = bone.matrix_local.to_translation()
   self.quat  = bone.matrix_local.to_quaternion()
   self.euler = self.quat.to_euler()   #bone.matrix.to_euler()
 #  self.euler = mtx.to_euler()       + bone.matrix.to_euler()
   pose_bone = bpy.context.scene.objects[0].pose.bones[bone.name]
   if bone.parent:
-    mtx_bone = pose_bone.parent.matrix.inverted() * mtx
+    mtx_bone = pose_bone.parent.matrix.inverted()
   else:
-    mtx_bone = Matrix() * mtx
-  mtx_bone *= (mtx * pose_bone.matrix)
+    mtx_bone = Matrix()
+  mtx_bone *= (pose_bone.matrix)
   self.pos   = mtx_bone.to_translation()
   self.quat  = mtx_bone.to_quaternion()
   self.euler = self.quat.to_euler()
@@ -132,6 +132,7 @@ class kgmSkeleton:
   self.pos = o.matrix_local.to_translation() # * mathutils.Vector((0, 0, 0))
   self.quat = o.matrix_local.to_quaternion()
   self.euler = o.matrix_local.to_euler()
+  self.scale = o.matrix_local.to_scale()
   list = [bone for bone in armature.bones if bone.parent == None]
   for o in list:
    self.collect(o)
@@ -332,7 +333,7 @@ class kgmActor:
 
 class kgmCollision:
  def __init__(self, o):
-  mesh = o.data 
+  mesh = o.data
   mtx = o.matrix_local
   self.name = mesh.name
   self.faces = []
@@ -348,8 +349,8 @@ class kgmCollision:
       iface.append(c)
 
      self.faces.append(iface)
-  
-  
+
+
 
 import threading
 class kgmThread(threading.Thread):
@@ -413,15 +414,15 @@ class kgmExport(bpy.types.Operator):
   actors = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
 #  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
   animations = []
-  
+
   if self.exp_animations:
     armatures = [ob for ob in objects if ob.type == 'ARMATURE']
     for armature in armatures:
       print("scan armature")
       for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
-        
-  try:      
+
+  try:
     if self.exp_kgmphysics == True:
       o = context.scene.objects['kgm_collision']
       if o != None:
@@ -499,7 +500,7 @@ class kgmExport(bpy.types.Operator):
    file.write(" <kgmMesh name='" + o.name + "'>\n")
    if len(o.mtls) > 0:
     file.write("  <Material name='" + o.mtls[0] + "' />\n")
-     
+
    file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
    for v in o.vertices:
     file.write("   " + str(v.v[0]) + " " + str(v.v[1]) + " " + str(v.v[2]))
@@ -525,16 +526,17 @@ class kgmExport(bpy.types.Operator):
   #skeletons
   for s in skeletons:
    file.write(" <kgmSkeleton name='" + s.name +
-              "' position='" + str(s.pos.x) + " " + str(s.pos.y) + " " + str(s.pos.z) +
-              "' quaternion='" + str(s.quat.x) + " " + str(s.quat.y) + " " + str(s.quat.z) + " " + str(s.quat.w) +
+              "' position='" + str("%.5f" % s.pos.x) + " " + str("%.5f" % s.pos.y) + " " + str("%.5f" % s.pos.z) +
+              "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str("%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
 #              "' euler='" + str(toGrad(s.euler.x)) + " " + str(toGrad(s.euler.y)) + " " + str(toGrad(s.euler.z)) +
+              "' scale='" + str("%.5f" % s.scale.x) + " " + str("%.5f" % s.scale.y) + " " + str("%.5f" % s.scale.z) +
               "'>\n")
    for b in s.bones:
     file.write("  <Bone name='" + b.name + "' parent='" + b.parent + "'")
-    file.write(" position='" + str(b.pos.x) + " " + str(b.pos.y) + " " + str(b.pos.z) + "'")
+    file.write(" position='" + str("%.5f" % b.pos.x) + " " + str("%.5f" % b.pos.y) + " " + str("%.5f" % b.pos.z) + "'")
     #file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
-    file.write(" quaternion='" + str(b.quat[1]) + " " + str(b.quat[2]) + " " + str(b.quat[3]) + " " + str(b.quat[0]) + "'")
-    file.write(" euler='" + str(toGrad(b.euler.x)) + " " + str(toGrad(b.euler.y)) + " " + str(toGrad(b.euler.z)) + "'")
+    file.write(" quaternion='" + str("%.5f" % b.quat[1]) + " " + str("%.5f" % b.quat[2]) + " " + str("%.5f" % b.quat[3]) + " " + str("%.5f" % b.quat[0]) + "'")
+    file.write(" euler='" + str("%.5f" % toGrad(b.euler.x)) + " " + str("%.5f" % toGrad(b.euler.y)) + " " + str("%.5f" % toGrad(b.euler.z)) + "'")
     #file.write(" euler='" + str(b.euler.x) + " " + str(b.euler.y) + " " + str(b.euler.z) + "'")
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
@@ -546,7 +548,7 @@ class kgmExport(bpy.types.Operator):
    file.write("  <Rotation value='" + str(a.rot[0]) + " " + str(a.rot[1]) + " " + str(a.rot[2]) + "'/>\n")
    file.write("  <State value='" + a.state + "'/>\n")
    file.write(" </kgmActor>\n")
-   
+
   if collision != None:
    file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
    for face in collision.faces:
