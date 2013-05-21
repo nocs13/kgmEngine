@@ -100,21 +100,23 @@ class kgmCamera:
 
 #skeleton
 class kgmBone:
- def __init__(self, bone, mtx):
+ def __init__(self, bone, aname):
   self.parent = bone.parent.name if bone.parent else 'None'
   self.name = bone.name
-  self.mtx = mtx + bone.matrix_local
+  self.mtx = bone.matrix_local
 
   self.pos   = bone.matrix_local.to_translation()
   self.quat  = bone.matrix_local.to_quaternion()
   self.euler = self.quat.to_euler()   #bone.matrix.to_euler()
 #  self.euler = mtx.to_euler()       + bone.matrix.to_euler()
-  pose_bone = bpy.context.scene.objects[0].pose.bones[bone.name]
+  pose_bone = bpy.context.scene.objects[aname].pose.bones[bone.name]
   if bone.parent:
     mtx_bone = pose_bone.parent.matrix.inverted()
+    mtx_bone = bone.matrix_local * bone.parent.matrix_local.inverted()
   else:
     mtx_bone = Matrix()
-  mtx_bone *= (pose_bone.matrix)
+    mtx_bone = bone.matrix_local
+  #mtx_bone *= (pose_bone.matrix)
   self.pos   = mtx_bone.to_translation()
   self.quat  = mtx_bone.to_quaternion()
   self.euler = self.quat.to_euler()
@@ -142,7 +144,7 @@ class kgmSkeleton:
 
 
  def collect(self, o):
-  self.bones.append(kgmBone(o, self.mtx))
+  self.bones.append(kgmBone(o, self.name))
   for bone in o.children:
    self.collect(bone)
 
@@ -269,8 +271,8 @@ class kgmFrame:
  def __init__(self, t, x, y, z, rx, ry, rz, rw):
   self.key = t
   self.pos = [x,  y,  z]
-  self.rot = [rx, ry, rz, rw]
-  self.eul = [x,  y,  z]
+  self.quat = [rx, ry, rz, rw]
+  self.euler = [x,  y,  z]
 
 class kgmAnimation:
  def __init__(self, o):
@@ -284,7 +286,7 @@ class kgmAnimation:
    pos = o.matrix_world.to_translation()
    rot = o.matrix_world.to_quaternion()
    f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
-   f.eul = o.matrix.to_euler()
+   f.euler = o.matrix.to_euler()
    self.frames.append(f)
 
 
@@ -304,9 +306,10 @@ class kgmBoneAnimation(kgmAnimation):
    allBones = currentScene.objects[a.name].pose.bones
    for bone in allBones:
     if bone.name == o.name:
-     #mtx = bn.matrix.to_4x4()
-     #pos = mtx.to_translation()
-     #rot = mtx.to_quaternion()
+     mtx = bone.matrix.to_4x4()
+     pos = mtx.to_translation()
+     quat = mtx.to_quaternion()
+     pose_bone = bpy.context.scene.objects[a.name].pose.bones[bone.name]
      if bone.parent:
       mtx_bone = a.matrix_local * pose_bone.parent.matrix.inverted()
      else:
@@ -314,10 +317,11 @@ class kgmBoneAnimation(kgmAnimation):
      mtx_bone *= pose_bone.matrix
      pos   = mtx_bone.to_translation()
      quat  = mtx_bone.to_quaternion()
+     
      euler = quat.to_euler()
+     f = kgmFrame(frame, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w)
+     f.euler = quat.to_euler()
      self.frames.append(f)
-     f = kgmFrame(frame, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z, rot.w)
-     f.eul = rot.to_euler()
   currentScene.frame_set(startFrame)
 
 
@@ -328,8 +332,8 @@ class kgmActor:
   self.state = o.kgmState
   self.mtx = o.matrix_world
   self.pos = mathutils.Vector((0, 0, 0)) * self.mtx
-  self.rot = self.mtx.to_euler()
   self.quat = self.mtx.to_quaternion()
+  self.euler = self.mtx.to_euler()
 
 class kgmCollision:
  def __init__(self, o):
@@ -454,10 +458,9 @@ class kgmExport(bpy.types.Operator):
    for o in animations:
     file.write("  <Animation name='" + o.name + "'>\n")
     for f in o.frames:
-     file.write("   <Frame key='" + str(f.key) + "' position='" + str(f.pos[0]) + " " + str(f.pos[1]) + " " + str(f.pos[2]) + "'")
-     file.write(" quaternion='" + str(f.rot[0]) + " " + str(f.rot[1]) + " " + str(f.rot[2]) + " " + str(f.rot[3]) + "'")
-#     file.write(" euler='" + str(toGrad(f.eul[0])) + " " + str(toGrad(f.eul[1])) + " " + str(toGrad(f.eul[2])) + "'")
-     file.write(" euler='" + str(f.eul[0]) + " " + str(f.eul[1]) + " " + str(f.eul[2]) + "'")
+     file.write("   <Frame key='" + str(f.key) + "' position='" + str("%.5f" % f.pos[0]) + " " + str("%.5f" % f.pos[1]) + " " + str("%.5f" % f.pos[2]) + "'")
+     file.write(" quaternion='" + str("%.5f" % f.quat[0]) + " " + str("%.5f" % f.quat[1]) + " " + str("%.5f" % f.quat[2]) + " " + str("%.5f" % f.quat[3]) + "'")
+     file.write(" euler='" + str(toGrad(f.euler[0])) + " " + str(toGrad(f.euler[1])) + " " + str(toGrad(f.euler[2])) + "'")
      file.write(" />\n")
     file.write("  </Animation>\n")
    file.write(" </kgmAnimation>\n")
@@ -545,7 +548,7 @@ class kgmExport(bpy.types.Operator):
   for a in actors:
    file.write(" <kgmActor name='" + a.name + "' type='" + a.type + "'>\n")
    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(a.rot[0]) + " " + str(a.rot[1]) + " " + str(a.rot[2]) + "'/>\n")
+   file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
    file.write("  <State value='" + a.state + "'/>\n")
    file.write(" </kgmActor>\n")
 
