@@ -24,6 +24,7 @@ bl_info = {
     "category": "Import-Export"}
 
 import os
+from math import radians
 import bpy
 from mathutils import *
 
@@ -309,15 +310,16 @@ class kgmBoneAnimation(kgmAnimation):
      mtx = bone.matrix.to_4x4()
      pos = mtx.to_translation()
      quat = mtx.to_quaternion()
+
      pose_bone = bpy.context.scene.objects[a.name].pose.bones[bone.name]
      if bone.parent:
-      mtx_bone = a.matrix_local * pose_bone.parent.matrix.inverted()
+      mtx_bone =  pose_bone.parent.matrix.inverted()
      else:
-      mtx_bone = a.matrix_local * Matrix()
+      mtx_bone = Matrix()
      mtx_bone *= pose_bone.matrix
      pos   = mtx_bone.to_translation()
      quat  = mtx_bone.to_quaternion()
-     
+
      euler = quat.to_euler()
      f = kgmFrame(frame, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w)
      f.euler = quat.to_euler()
