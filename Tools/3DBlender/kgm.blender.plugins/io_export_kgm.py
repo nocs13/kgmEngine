@@ -118,9 +118,9 @@ class kgmBone:
     mtx_bone = Matrix()
     mtx_bone = bone.matrix_local
   #mtx_bone *= (pose_bone.matrix)
-  self.pos   = mtx_bone.to_translation()
-  self.quat  = mtx_bone.to_quaternion()
-  self.euler = self.quat.to_euler()
+  #self.pos   = mtx_bone.to_translation()
+  #self.quat  = mtx_bone.to_quaternion()
+  #self.euler = self.quat.to_euler()
 
 class kgmSkeleton:
  def __init__(self, o):
@@ -304,7 +304,8 @@ class kgmBoneAnimation(kgmAnimation):
   for frame in range(startFrame, endFrame+1, 1):
    currentScene.frame_current = frame
    currentScene.frame_set(frame)
-   allBones = currentScene.objects[a.name].pose.bones
+#   allBones = currentScene.objects[a.name].pose.bones
+   allBones = currentScene.objects[a.name].data.bones
    for bone in allBones:
     if bone.name == o.name:
      if bone.parent:
@@ -315,8 +316,9 @@ class kgmBoneAnimation(kgmAnimation):
      else:
        mtx = Matrix()
        pass
-#     mtx = bone.matrix.to_4x4()
-     mtx *= bone.matrix.to_4x4()
+     mtx = bone.matrix_local
+#     mtx *= bone.matrix.to_4x4()
+#     pos = mtx.to_translation()
      pos = mtx.to_translation()
      quat = mtx.to_quaternion()
 
