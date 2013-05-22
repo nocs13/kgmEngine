@@ -307,18 +307,29 @@ class kgmBoneAnimation(kgmAnimation):
    allBones = currentScene.objects[a.name].pose.bones
    for bone in allBones:
     if bone.name == o.name:
-     mtx = bone.matrix.to_4x4()
+     if bone.parent:
+       mtx = bone.parent.matrix.to_4x4().inverted()
+       mtx *= Matrix.Rotation(radians(90), 4, "X")
+       mtx *= Matrix.Scale(-1, 4, Vector((0, 1, 0)))
+       pass
+     else:
+       mtx = Matrix()
+       pass
+#     mtx = bone.matrix.to_4x4()
+     mtx *= bone.matrix.to_4x4()
      pos = mtx.to_translation()
      quat = mtx.to_quaternion()
 
-     pose_bone = bpy.context.scene.objects[a.name].pose.bones[bone.name]
+     pose_bone = currentScene.objects[a.name].pose.bones[bone.name]
      if bone.parent:
       mtx_bone =  pose_bone.parent.matrix.inverted()
      else:
       mtx_bone = Matrix()
      mtx_bone *= pose_bone.matrix
-     pos   = mtx_bone.to_translation()
-     quat  = mtx_bone.to_quaternion()
+     mtx_bone = Matrix.Rotation(radians(90), 4, "X") * mtx_bone
+     mtx_bone = Matrix.Scale(-1, 4, Vector((0, 1, 0))) * mtx_bone
+     #pos   = mtx_bone.to_translation()
+     #quat  = mtx_bone.to_quaternion()
 
      euler = quat.to_euler()
      f = kgmFrame(frame, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w)
@@ -462,7 +473,7 @@ class kgmExport(bpy.types.Operator):
     for f in o.frames:
      file.write("   <Frame key='" + str(f.key) + "' position='" + str("%.5f" % f.pos[0]) + " " + str("%.5f" % f.pos[1]) + " " + str("%.5f" % f.pos[2]) + "'")
      file.write(" quaternion='" + str("%.5f" % f.quat[0]) + " " + str("%.5f" % f.quat[1]) + " " + str("%.5f" % f.quat[2]) + " " + str("%.5f" % f.quat[3]) + "'")
-     file.write(" euler='" + str(toGrad(f.euler[0])) + " " + str(toGrad(f.euler[1])) + " " + str(toGrad(f.euler[2])) + "'")
+     file.write(" euler='" + str("%.5f" % toGrad(f.euler[0])) + " " + str("%.5f" % toGrad(f.euler[1])) + " " + str("%.5f" % toGrad(f.euler[2])) + "'")
      file.write(" />\n")
     file.write("  </Animation>\n")
    file.write(" </kgmAnimation>\n")
