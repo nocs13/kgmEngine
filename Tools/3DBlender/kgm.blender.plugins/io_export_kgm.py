@@ -106,21 +106,21 @@ class kgmBone:
   self.name = bone.name
   self.mtx = bone.matrix_local
 
+  #take bone armature relative position
   self.pos   = bone.matrix_local.to_translation()
   self.quat  = bone.matrix_local.to_quaternion()
-  self.euler = self.quat.to_euler()   #bone.matrix.to_euler()
-#  self.euler = mtx.to_euler()       + bone.matrix.to_euler()
+  self.euler = self.quat.to_euler()
+  
+  #take bone reltive to parent position
   pose_bone = bpy.context.scene.objects[aname].pose.bones[bone.name]
   if bone.parent:
     mtx_bone = pose_bone.parent.matrix.inverted()
-    mtx_bone = bone.matrix_local * bone.parent.matrix_local.inverted()
   else:
     mtx_bone = Matrix()
-    mtx_bone = bone.matrix_local
-  #mtx_bone *= (pose_bone.matrix)
-  #self.pos   = mtx_bone.to_translation()
-  #self.quat  = mtx_bone.to_quaternion()
-  #self.euler = self.quat.to_euler()
+  mtx_bone  *= (pose_bone.matrix)
+  self.pos   = mtx_bone.to_translation()
+  self.quat  = mtx_bone.to_quaternion()
+  self.euler = mtx_bone.to_euler()
 
 class kgmSkeleton:
  def __init__(self, o):
@@ -301,39 +301,26 @@ class kgmBoneAnimation(kgmAnimation):
   startFrame = currentScene.frame_start
   endFrame = currentScene.frame_end
 
-  for frame in range(startFrame, endFrame+1, 1):
-   currentScene.frame_current = frame
+  for frame in range(startFrame, endFrame + 1, 1):
+#   currentScene.frame_current = frame
    currentScene.frame_set(frame)
-#   allBones = currentScene.objects[a.name].pose.bones
-   allBones = currentScene.objects[a.name].data.bones
+   allBones = currentScene.objects[a.name].pose.bones
    for bone in allBones:
     if bone.name == o.name:
      if bone.parent:
-       mtx = bone.parent.matrix.to_4x4().inverted()
-       mtx *= Matrix.Rotation(radians(90), 4, "X")
-       mtx *= Matrix.Scale(-1, 4, Vector((0, 1, 0)))
-       pass
+       #mtx   = bone.matrix
+       mtx   = bone.matrix * bone.parent.matrix.inverted()
+       #mtx  *= Matrix.Rotation(radians(-90), 4, "X")
+       #mtx  *= Matrix.Scale(-1, 4, Vector((0, 1, 0)))
      else:
        mtx = Matrix()
-       pass
-     mtx = bone.matrix_local
-#     mtx *= bone.matrix.to_4x4()
-#     pos = mtx.to_translation()
-     pos = mtx.to_translation()
-     quat = mtx.to_quaternion()
-
-     pose_bone = currentScene.objects[a.name].pose.bones[bone.name]
-     if bone.parent:
-      mtx_bone =  pose_bone.parent.matrix.inverted()
-     else:
-      mtx_bone = Matrix()
-     mtx_bone *= pose_bone.matrix
-     mtx_bone = Matrix.Rotation(radians(90), 4, "X") * mtx_bone
-     mtx_bone = Matrix.Scale(-1, 4, Vector((0, 1, 0))) * mtx_bone
-     #pos   = mtx_bone.to_translation()
-     #quat  = mtx_bone.to_quaternion()
-
+       mtx = bone.matrix
+#     mtx = bone.matrix_local
+     pos   = mtx.to_translation()
+     quat  = mtx.to_quaternion()
      euler = quat.to_euler()
+     
+
      f = kgmFrame(frame, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w)
      f.euler = quat.to_euler()
      self.frames.append(f)
