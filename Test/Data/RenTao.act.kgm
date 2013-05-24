@@ -2,10 +2,10 @@
 <kgm>
  <kgmActor id='RenTao'>
   <Visual id='Base'>
-   <Mesh value="RenTao.msh.kgm" />
+   <Mesh value="mesh_1.kgm" />
    <Material value="RenTao.mtl.kgm" />
-   <Skeleton value="RenTao.skl.kgm" />
-   <Animation value="RenTao.anm.kgm" />
+   <Skeleton value="skel_1.kgm" />
+   <Animation value="anim_1.kgm" />
   </Visual>
 
   <State id="idle" priority="1" time="-1" type="idle">

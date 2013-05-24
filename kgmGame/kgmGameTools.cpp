@@ -524,12 +524,17 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
       vec3 vrot;
 
       strcpy(joint->n, name.data());
-      sscanf(par.data(), "%i %f %f %f %f", &joint->i);
+
+      if(par == "None")
+        joint->i = -1;
+      else
+        joint->i = skel->getJointIndex(par.data());
+
       sscanf(pos.data(), "%f %f %f", &joint->v.x, &joint->v.y, &joint->v.z);
       sscanf(rot.data(), "%f %f %f %f", &joint->r.x, &joint->r.y, &joint->r.z, &joint->r.w);
       sscanf(eul.data(), "%f %f %f", &vrot.x, &vrot.y, &vrot.z);
 
-      joint->r.euler(vrot);
+      //joint->r.euler(vrot);
 
       skel->m_joints.add(joint);
     }

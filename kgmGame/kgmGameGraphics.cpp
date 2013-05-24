@@ -211,7 +211,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
     kgmVisual::Visual* v = visual->m_visuals[i];
 
     render(v->getMaterial());
-  ///*
+  /*
      gc->gcDraw(gcpmt_triangles, v->getFvf(),
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());

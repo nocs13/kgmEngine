@@ -80,7 +80,7 @@ class kgmMaterial:
 class kgmLight:
  def __init__(self, o):
   self.name = o.name
-  self.pos = mathutils.Vector((0, 0, 0)) * o.matrix_local
+  self.pos = Vector((0, 0, 0)) * o.matrix_local
   self.rot = o.matrix_local.to_euler()
   lamp = o.data
   self.intensity = lamp.energy
@@ -93,7 +93,7 @@ class kgmLight:
 class kgmCamera:
  def __init__(self, o):
   self.name = o.name
-  self.pos = mathutils.Vector((0, 0, 0)) * o.matrix_local
+  self.pos = Vector((0, 0, 0)) * o.matrix_local
   self.rot = o.matrix_local.to_euler()
   self.angle = o.data.angle
   self.near = o.data.clip_start
@@ -233,8 +233,8 @@ class kgmMesh:
     if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
      iv = i
      if (v.n[0] != vx.n[0]) or (v.n[1] != vx.n[1]) or (v.n[2] != vx.n[2]):
-      n1 = mathutils.Vector((v.n[0], v.n[1], v.n[2]))
-      n2 = mathutils.Vector((vx.n[0], vx.n[1], vx.n[2]))
+      n1 = Vector((v.n[0], v.n[1], v.n[2]))
+      n2 = Vector((vx.n[0], vx.n[1], vx.n[2]))
       n = n1 + n2
       n.normalize()
       v.n = [n.x, n.y, n.z]
@@ -333,7 +333,7 @@ class kgmActor:
   self.type = o.kgmType
   self.state = o.kgmState
   self.mtx = o.matrix_world
-  self.pos = mathutils.Vector((0, 0, 0)) * self.mtx
+  self.pos = Vector((0, 0, 0)) * self.mtx
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
 

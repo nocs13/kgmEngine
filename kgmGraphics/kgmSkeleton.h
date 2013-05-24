@@ -27,25 +27,33 @@ public:
 public:
   kgmSkeleton(){
   }
-  virtual ~kgmSkeleton(){
+
+  virtual ~kgmSkeleton()
+  {
     for(int i = 0; i < m_joints.size(); i++)
       delete m_joints[i];
     m_joints.clear();
     m_matrices.clear();
     m_imatrices.clear();
   }
-  void update(){
+
+  void update()
+  {
     m_matrices.clear();
     m_imatrices.clear();
+
     for(u32 i = 0; i < m_joints.size(); i++){
-      mtx4 m = mtx4(m_joints[i]->r, m_joints[i]->v);
+      Joint* j = m_joints[i];
+      mtx4 m = mtx4(j->r, j->v);
       //mtx4 m = mtx4(m_joints[i]->v);
       m_matrices.add(m);
       m.invert();
       m_imatrices.add(m);
     }
   }
-  void getTMBones(mtx4 *pbm, u32 cnt){
+
+  void getTMBones(mtx4 *pbm, u32 cnt)
+  {
     if(!pbm || (cnt != m_joints.size()))
       return;
 
@@ -54,7 +62,19 @@ public:
     }
   }
 
-  void getTM(mtx4& m, u32 i){
+  void getTM(mtx4& m, u32 i)
+  {
 
+  }
+
+  int getJointIndex(char* n)
+  {
+    for(u32 i = 0; i < m_joints.size(); i++)
+    {
+      if(!strncmp(n, m_joints[i]->n, 31))
+        return i;
+    }
+
+    return -1;
   }
 };

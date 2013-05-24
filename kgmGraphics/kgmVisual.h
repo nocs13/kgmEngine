@@ -252,7 +252,8 @@ private:
 
     for(int i = 0; i < m_skeleton->m_joints.size(); i++)
     {
-      kgmAnimation::Animation* a = m_animation->getNode(m_skeleton->m_joints[i]->n);
+      kgmSkeleton::Joint* joint = m_skeleton->m_joints[i];
+      kgmAnimation::Animation* a = m_animation->getNode(joint->n);
 
       if(!a)
       {
@@ -268,7 +269,10 @@ private:
       vec3 ra(1, 0, 0);
       rc.rotate(-PI / 4, ra);
 
-      m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ jframe;
+      if(joint->i == -1)
+        m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ jframe;
+      else
+        m_tm_joints[i] = m_tm_joints[joint->i] * /*m_skeleton->m_imatrices[i] */ jframe;
     }
 
     for(int j = 0; j < m_visuals.size(); j++)
