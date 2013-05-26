@@ -23,7 +23,7 @@ enum gc_flags{
  gcv_uv5 = 1L << 9,
  gcv_uv6 = 1L << 10,
  gcv_uv7 = 1L << 11, //vertex texture coord 8
- gcv_uv_f4 = 1L << 12, //vertex texture size float4 else float2
+ gcv_bn0  = 1L << 12, //vertex bone weight&index float[4], int[4]
 };
 
 enum gc_enum{

@@ -132,6 +132,7 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_ENTER]  = (char)gbtn_start;
 
   m_keymap[KEY_X] = (char)gbtn_x;
+  m_keymap[KEY_Y] = (char)gbtn_y;
   m_keymap[KEY_Z] = (char)gbtn_z;
 
   m_gamemode = true;
@@ -298,8 +299,8 @@ void kgmGameBase::onIdle(){
   case State_Pause:
     break;
   case State_Play:
-    //if(m_physics && fps > 0)
-    //  m_physics->update(1000 / fps);
+    if(m_physics && fps > 0)
+      m_physics->update(1000 / fps);
 
     if(m_logic && fps > 0)
       m_logic->update(1000 / fps);
@@ -372,6 +373,18 @@ void kgmGameBase::onMsMove(int k, int x, int y){
   {
     m_logic->input(grot_x, x);
     m_logic->input(grot_y, y);
+  }
+}
+
+void kgmGameBase::onMsWheel(int k, int x, int y, int z)
+{
+  m_input[grot_x] = x;
+  m_input[grot_y] = y;
+  m_input[grot_z] = z;
+
+  if(m_logic && m_state == State_Play)
+  {
+    m_logic->input(grot_z, z);
   }
 }
 

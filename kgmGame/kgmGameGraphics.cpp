@@ -107,7 +107,7 @@ void kgmGameGraphics::render(){
 
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xFF666666, 1, 0);
+  gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
 
 //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
@@ -127,14 +127,15 @@ void kgmGameGraphics::render(){
 
       if(l.light)
       {
-        //gc->gcSetLight(i, (float*)&l.light->position, l.light->range);
+        gc->gcSetLight(i, (float*)&l.light->position, l.light->range);
       }
     }
   }
 
+
   //render 3D
   for(int i = 0; i < m_meshes.size(); i++){
-    //render(m_meshes[i]);
+    render(m_meshes[i]);
   }
 
   for(int i = 0; i < m_visuals.size(); i++){
@@ -206,12 +207,16 @@ void kgmGameGraphics::render(kgmVisual* visual){
   mtx4 tr = visual->m_transform * m_camera.camera.mView;
   gc->gcSetMatrix(gcmtx_view, tr.m);
 
+  //gc->gc2DMode();
+  //gcDrawText(gui_style->gui_font, 10, 20, 0xFFFFFFFF, kgmGui::Rect(1, 10, 400, 500), visual->m_info);
+  //gc->gc3DMode();
+
   for(int i = 0; i < visual->m_visuals.size(); i++)
   {
     kgmVisual::Visual* v = visual->m_visuals[i];
 
     render(v->getMaterial());
-  /*
+  // /*
      gc->gcDraw(gcpmt_triangles, v->getFvf(),
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());
@@ -221,25 +226,27 @@ void kgmGameGraphics::render(kgmVisual* visual){
   render((kgmMaterial*)0);
   visual->update();
 
+  /*
   if(visual->m_tm_joints)
   {
-    Vert box[] = {{{-0.1, 0.1, 0.1}, 0xffffffff}, {{-0.1, -0.1, 0.1}, 0xffffffff}, {{-0.1, 0.1, -0.1}, 0xffffffff}, {{-0.1, -0.1, -0.1}, 0xffffffff}, {{0.1, 0, 0}, 0xffff0000}};
-    u16  ind[] = {0, 2, 1,  2, 3, 1,  4, 0, 1,  4, 1, 3,  4, 3, 2,  4, 2, 0};
-
     int joints = visual->m_skeleton->m_joints.size();
 
     for(int i = 0; i < joints; i++)
     {
-      mtx4 m = visual->m_tm_joints[i] * visual->m_transform * m_camera.camera.mView;
-      gc->gcSetMatrix(gcmtx_view, m.m);
-      gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col, sizeof(Vert), 5, box, 2, 18, ind);
+      vec3 v(0, 0, 0);
+      Vert line[2];
+      int  ipar = visual->m_skeleton->m_joints[i]->i;
 
-      Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1, 0, 0}, 0xff0000ff},
-                      {{0, 0, 0}, 0xff00ff00},   {{0, 1, 0}, 0xff00ff00},
-                      {{0, 0, 0}, 0xffff0000},   {{0, 0, 1}, 0xffff0000}};
-      gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
+      if(ipar < 0 || ipar >= visual->m_skeleton->m_joints.size())
+        continue;
+
+      line[0].v = visual->m_tm_joints[ipar] * v;
+      line[1].v = visual->m_tm_joints[i] * v;
+      line[0].c = line[1].c = 0xffffffff;
+      gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 2, line, 0, 0, null);
     }
   }
+  //*/
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){

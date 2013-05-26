@@ -41,7 +41,6 @@ public:
     bool          skin;
 
     kgmMesh::Vertex* vertices;
-
   public:
 
     Visual()
@@ -63,7 +62,7 @@ public:
 
       if(mesh)
       {
-        if(mesh->fvf() & gcv_uv_f4) //== kgmMesh::FVF_P_N_C_T_BW_BI)
+        if(mesh->fvf() & gcv_bn0) //== kgmMesh::FVF_P_N_C_T_BW_BI)
         {
           vertices = new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
           memcpy(vertices, mesh->vertices(),
@@ -265,14 +264,8 @@ private:
       mtx4 jframe;
       a->getFrame(m_fset, jframe);
 
-      mtx4 rc;
-      vec3 ra(1, 0, 0);
-      rc.rotate(-PI / 4, ra);
-
-      if(joint->i == -1)
-        m_tm_joints[i] = /*m_skeleton->m_imatrices[i] */ jframe;
-      else
-        m_tm_joints[i] = m_tm_joints[joint->i] * /*m_skeleton->m_imatrices[i] */ jframe;
+      m_tm_joints[i] = m_skeleton->m_imatrices[i] * jframe;
+      //m_tm_joints[i] = jframe;
     }
 
     for(int j = 0; j < m_visuals.size(); j++)
@@ -283,13 +276,14 @@ private:
         continue;
 
       kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
+      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
 
       for(int i = 0; i < v->mesh->vcount(); i++)
       {
         vec3   pos(0, 0, 0);
         vec3   bpos = vbase[i].pos;
-        float* wght = (float*)(&vbase[i].bw.x);
-        float* indx = (float*)(&vbase[i].bi.x);
+        float* wght = (float*)(vbase[i].bw);
+        int*   indx = (int*)(vbase[i].bi);
 
         for(int j = 0; j < 4; j++)
         {
@@ -297,14 +291,17 @@ private:
           float w  = wght[j];
 
           if(bi < 0)
+          {
+            if(j < 1)
+              pos = bpos;
             break;
+          }
 
-          mtx4 m = m_tm_joints[bi];
 
-          pos = pos + m_tm_joints[bi] * m_skeleton->m_imatrices[bi] * vbase[i].pos * wght[j];
+          pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
         }
 
-        //v->vertices[i].pos = pos;
+        verts[i].pos = pos;
       }
     }
 

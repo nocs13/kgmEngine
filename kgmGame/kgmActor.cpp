@@ -52,13 +52,14 @@ void kgmActor::exit(){
 
 void kgmActor::init(){
  m_transform.translate(m_body->m_position);
+ m_body->m_gravity = true;
 }
 
 void kgmActor::update(u32 time){
     mtx4 tm;
 
     m_body->transform(tm);
-    m_visual->m_transform = m_dvisual * tm;
+    m_visual->m_transform = tm;
 }
 
 void kgmActor::remove(){

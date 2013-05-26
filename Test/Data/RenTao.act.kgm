@@ -2,17 +2,17 @@
 <kgm>
  <kgmActor id='RenTao'>
   <Visual id='Base'>
-   <Mesh value="mesh_1.kgm" />
+   <Mesh value="RenTao.msh.kgm" />
    <Material value="RenTao.mtl.kgm" />
-   <Skeleton value="skel_1.kgm" />
-   <Animation value="anim_1.kgm" />
+   <Skeleton value="RenTao.skl.kgm" />
+   <Animation value="RenTao.anm.kgm" />
   </Visual>
 
   <State id="idle" priority="1" time="-1" type="idle">
   	<Sound value="uloop" />
   	<Sensor value="" />
   	<Action value="idle" />
-  	<Animation value="0"  start='0' end='100'/>
+  	<Animation value="0"  start='0' end='167'/>
   	<Option type="float" name="speed" value="0.0" />
   </State>
 

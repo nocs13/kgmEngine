@@ -89,8 +89,11 @@ kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
 
 u32 kgmMesh::fvf(){
  switch(m_fvf){
+ case FVF_P_N_C_T2_BW_BI:
+   return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_bn0);
+   break;
  case FVF_P_N_C_T_BW_BI:
-   return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv_f4);
+   return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_bn0);
    break;
  case FVF_P_N_C_T2:
    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1);
@@ -119,6 +122,9 @@ u32 kgmMesh::fff(){
 
 u32 kgmMesh::vsize(){
   switch(m_fvf){
+  case FVF_P_N_C_T2_BW_BI:
+    return sizeof(Vertex_P_N_C_T2_BW_BI);
+    break;
   case FVF_P_N_C_T_BW_BI:
     return sizeof(Vertex_P_N_C_T_BW_BI);
     break;

@@ -23,7 +23,8 @@ public:
     FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T2,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+    FVF_P_N_C_T_BW_BI,      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+    FVF_P_N_C_T2_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
   };
 
   enum FFF{
@@ -52,13 +53,13 @@ public:
   };
 
   struct Vertex_P_N_C_T_BW_BI: public Vertex_P_N_C_T{
-    vec4 bw,
-    bi;
+    float bw[4];
+    int   bi[4];
   };
 
   struct Vertex_P_N_C_T2_BW_BI: public Vertex_P_N_C_T2{
-    vec4 bw,
-    bi;
+    float bw[4];
+    int   bi[4];
   };
 
   struct Face{

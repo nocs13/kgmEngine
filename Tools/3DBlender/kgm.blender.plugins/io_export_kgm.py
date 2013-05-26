@@ -117,7 +117,8 @@ class kgmBone:
     mtx_bone = pose_bone.parent.matrix.inverted()
   else:
     mtx_bone = Matrix()
-  mtx_bone  *= (pose_bone.matrix)
+  mtx_bone  *= pose_bone.matrix
+  mtx_bone   = pose_bone.matrix
   self.pos   = mtx_bone.to_translation()
   self.quat  = mtx_bone.to_quaternion()
   self.euler = mtx_bone.to_euler()
@@ -176,7 +177,16 @@ class kgmMesh:
   self.skin = False
   self.mtls = []
   self.hasvgroups = True if len(o.vertex_groups) > 0 else False
-  print('VertexGroups: ' + str(len(o.vertex_groups)))
+  
+  if self.hasvgroups:
+    self.vgroups = o.vertex_groups
+  else:    
+    self.vgroups = None
+
+  armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+  if armatures:
+   self.armature = armatures[0].object
+   self.bones = self.armature.data.bones
 
   for m in mesh.materials:
    b = False
@@ -208,7 +218,8 @@ class kgmMesh:
       if self.hasvgroups == True:
        for g in range(0, len(mesh.vertices[vi].groups)):
         if g < 4:
-         v.ib[g] = mesh.vertices[vi].groups[g].group
+         #print(mesh.vertices[vi].groups[g].id) 
+         v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
          v.wb[g] = mesh.vertices[vi].groups[g].weight
 
       if uvface:
@@ -267,6 +278,16 @@ class kgmMesh:
      maxInfluennces = len(boneInfluences)
     for bone in boneInfluences:
      usedBones.add(bone)
+     
+ def getBoneIndex(self, name):
+  if self.armature == None:
+    return -1
+  
+  for i in range(0, len(self.armature.data.bones)):
+    if name == self.armature.data.bones[i].name:
+      return i
+    
+  return -1  
 
 class kgmFrame:
  def __init__(self, t, x, y, z, rx, ry, rz, rw):
@@ -315,7 +336,7 @@ class kgmBoneAnimation(kgmAnimation):
      else:
        mtx = Matrix()
        mtx = bone.matrix
-#     mtx = bone.matrix_local
+     mtx   = bone.matrix
      pos   = mtx.to_translation()
      quat  = mtx.to_quaternion()
      euler = quat.to_euler()

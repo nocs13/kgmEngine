@@ -770,14 +770,14 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<char>& mm){
         sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3]);
-        s[i].bw.x = bw[0];
-        s[i].bi.x = bi[0];
-        s[i].bw.y = bw[1];
-        s[i].bi.y = bi[1];
-        s[i].bw.z = bw[2];
-        s[i].bi.z = bi[2];
-        s[i].bw.w = bw[3];
-        s[i].bi.w = bi[3];
+        s[i].bw[0] = bw[0];
+        s[i].bi[0] = bi[0];
+        s[i].bw[1] = bw[1];
+        s[i].bi[1] = bi[1];
+        s[i].bw[2] = bw[2];
+        s[i].bi[2] = bi[2];
+        s[i].bw[3] = bw[3];
+        s[i].bi[4] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
@@ -865,14 +865,14 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         sscanf(p, "%i %i %i %i %f %f %f %f %n", //&nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3], &rd);
-        s[i].bw.x = bw[0];
-        s[i].bi.x = bi[0];
-        s[i].bw.y = bw[1];
-        s[i].bi.y = bi[1];
-        s[i].bw.z = bw[2];
-        s[i].bi.z = bi[2];
-        s[i].bw.w = bw[3];
-        s[i].bi.w = bi[3];
+        s[i].bw[0] = bw[0];
+        s[i].bi[0] = bi[0];
+        s[i].bw[1] = bw[1];
+        s[i].bi[1] = bi[1];
+        s[i].bw[2] = bw[2];
+        s[i].bi[2] = bi[2];
+        s[i].bw[3] = bw[3];
+        s[i].bi[3] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;

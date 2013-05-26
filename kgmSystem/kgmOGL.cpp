@@ -847,9 +847,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   unsigned int  c_size  = sizeof(unsigned );
   unsigned int  uv_size = sizeof(float) * 2;
 
-  if(v_fmt & gcv_uv_f4)
-    uv_size = sizeof(float) * 4;
-
   if(v_fmt & gcv_xyz)
   {
 #ifdef GLES_2
@@ -859,6 +856,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, v_size, pM);
 #endif
+    vec3 pos = *((vec3*)pM);
     pM += (sizeof(float) * 3);
   }
   if(v_fmt & gcv_nor)
@@ -1144,7 +1142,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
                                  u32 isize, u32 icnt, u32 ioff){
   VBO* vbo = (VBO*)b;
   u32 offset = 0;
-  u32 uvt = (vfmt & gcv_uv_f4)?(4):(2);
+  u32 uvt = 2;
 
   if(!vbo)
     return;

@@ -54,7 +54,6 @@ bool kgmAnimation::Animation::getFrame(float time, mtx4& m)
  }
 
  m = mtx4(m_frames[i].rot, m_frames[i].pos);
- //m = mtx4(m_frames[i].pos);
 
  return true;
 }

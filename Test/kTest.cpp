@@ -25,6 +25,9 @@ public:
       {
         snd->getSound()->play(true);
       }*/
+
+    if(m_physics)
+      m_physics->m_gravity = 1.0f;
   }
 
   ~kGame(){

@@ -8,10 +8,15 @@
 class AITaoRen: public kgmGameLogic::AI
 {
   kgmIGame* game;
+
+  float     c_dist;
+  float     z_dist;
 public:
   AITaoRen(kgmIGame* g)
   {
     game = g;
+    c_dist = 5.0f;
+    z_dist = 2.0f;
   }
   void update(kgmActor* a, u32 mls)
   {
@@ -19,12 +24,12 @@ public:
 
     if(a->m_gameplayer)
     {
-      //kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      //vec3 cpos = a->m_body->m_position - a->m_body->m_direction * 15.f;
-      //cpos.z += 2.0f;
-      //cam.mPos = cpos;
-      //cam.mDir = a->m_body->m_direction;
-      //cam.update();
+      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
+      vec3 cpos = a->m_body->m_position - a->m_body->m_direction * c_dist;
+      cpos.z = z_dist;
+      cam.mPos = cpos;
+      cam.mDir = a->m_body->m_direction;
+      cam.update();
     }
   }
 
@@ -40,19 +45,33 @@ public:
     case grot_x:
     {
       static float alpha = 0.0f;
-      alpha += (0.05f * state);
-//      vt = a->m_body->m_rotation;
-//      vt.z += (0.2f * state);
-//      a->m_body->rotate(0, 0, vt.z);
-      vec3 vr(cos(alpha), sin(alpha), 0);
+      alpha += (0.005f * state);
+      vt = a->m_body->m_rotation;
+      vt.z += (0.02f * state);
+      a->m_body->rotate(0, 0, vt.z);
+      /*vec3 vr(cos(alpha), sin(alpha), 0);
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = a->m_body->m_position + vr * 15.f;
+      vec3 cpos = a->m_body->m_position + vr * c_dist;
       cpos.z += 1.0f;
       vec3 cdir = a->m_body->m_position - cpos;
       cdir.normalize();
       cam.mPos = cpos;
       cam.mDir = cdir;
-      cam.update();
+      cam.update();*/
+      break;
+    }
+    case grot_y:
+    {
+      z_dist -= (state * 0.05f);
+      z_dist = (z_dist > 2.0)?(2.0):(z_dist);
+      z_dist = (z_dist < .1)?(.1):(z_dist);
+
+      break;
+    }
+    case grot_z:
+    {
+      c_dist += (state * 0.1f);
+
       break;
     }
     case gbtn_down:
