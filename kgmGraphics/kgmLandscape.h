@@ -6,7 +6,12 @@
 #include "../kgmBase/kgmObject.h"
 
 class kgmLandscape: public kgmObject{
- KGM_OBJECT(kgmLandscape)
+ KGM_OBJECT(kgmLandscape);
+private:
+ struct Heightmap
+ {
+   kgmPicture* map;
+ };
 public:
 	kgmLandscape();
 	virtual ~kgmLandscape();

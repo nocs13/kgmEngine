@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <kgm>
  <kgmActor id='RenTao'>
+
+  <Mass value='1.0' />
+  <Bound height='1.0'  />
+  <Gravity value='true' />
+
   <Visual id='Base'>
    <Mesh value="RenTao.msh.kgm" />
    <Material value="RenTao.mtl.kgm" />

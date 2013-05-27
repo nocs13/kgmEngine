@@ -83,6 +83,12 @@ public:
     };
   };
 
+  struct LOD
+  {
+    kgmArray vertices;
+    kgmArray faces;
+  };
+
 public:
   Vertex* m_vertices; //vertex buffer
   u32     m_vcount;   //vertex count
@@ -90,6 +96,8 @@ public:
   u32     m_fcount;   //face count
   u32     m_fvf;      //flexible vertex format
   u32     m_fff;      //flexible face format
+
+  kgmList<LOD*> m_lods;
 
 public:
   kgmMesh();
@@ -109,6 +117,8 @@ public:
   Face*   faces()   { return m_faces; }
   u32     vcount()  { return m_vcount; }
   u32     fcount()  { return m_fcount; }
+
+  int     genLods(int);
 };
 
 typedef kgmList<kgmMesh*> kgmMeshList;
