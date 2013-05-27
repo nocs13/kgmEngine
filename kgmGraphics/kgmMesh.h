@@ -85,8 +85,8 @@ public:
 
   struct LOD
   {
-    kgmArray vertices;
-    kgmArray faces;
+    //kgmArray vertices;
+    //kgmArray faces;
   };
 
 public:

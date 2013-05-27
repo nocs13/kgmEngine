@@ -47,22 +47,13 @@ public:
       static float alpha = 0.0f;
       alpha += (0.005f * state);
       vt = a->m_body->m_rotation;
-      vt.z += (0.02f * state);
+      vt.z += (0.002f * state);
       a->m_body->rotate(0, 0, vt.z);
-      /*vec3 vr(cos(alpha), sin(alpha), 0);
-      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = a->m_body->m_position + vr * c_dist;
-      cpos.z += 1.0f;
-      vec3 cdir = a->m_body->m_position - cpos;
-      cdir.normalize();
-      cam.mPos = cpos;
-      cam.mDir = cdir;
-      cam.update();*/
       break;
     }
     case grot_y:
     {
-      z_dist -= (state * 0.05f);
+      z_dist -= (state * 0.005f);
       z_dist = (z_dist > 2.0)?(2.0):(z_dist);
       z_dist = (z_dist < .1)?(.1):(z_dist);
 

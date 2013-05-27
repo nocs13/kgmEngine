@@ -1063,7 +1063,29 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     kgmString id, val;
     a_node->node(i)->id(id);
 
-    if(id == "Visual")
+    if(id == "Mass")
+    {
+      a_node->node(i)->attribute("value", val);
+      sscanf(val.data(), "%f", &actor->m_body->m_mass);
+    }
+    else if(id == "Bound")
+    {
+      float a[3];
+      a_node->node(i)->attribute("value", val);
+      sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
+      actor->m_body->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      actor->m_body->m_bound.max = vec3(0.5 * a[0], 0.5 * a[1], a[2]);
+    }
+    else if(id == "Gravity")
+    {
+      a_node->node(i)->attribute("value", val);
+
+      if(val == "true")
+        actor->m_body->m_gravity = true;
+      else
+        actor->m_body->m_gravity = false;
+    }
+    else if(id == "Visual")
     {
       kgmMesh*      msh = 0;
       kgmMaterial*  mtl = 0;

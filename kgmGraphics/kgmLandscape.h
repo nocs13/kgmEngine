@@ -10,7 +10,7 @@ class kgmLandscape: public kgmObject{
 private:
  struct Heightmap
  {
-   kgmPicture* map;
+   //kgmPicture* map;
  };
 public:
 	kgmLandscape();

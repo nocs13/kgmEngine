@@ -3,7 +3,7 @@
  <kgmActor id='RenTao'>
 
   <Mass value='1.0' />
-  <Bound height='1.0'  />
+  <Bound value='0.5 0.5 1.0' />
   <Gravity value='true' />
 
   <Visual id='Base'>

@@ -237,19 +237,6 @@ public:
     m_last_update = kgmTime::getTicks();
   }
 
-  box3 bound()
-  {
-    box3 b;
-
-    for(int i = 0; i < m_visuals.size(); i++)
-    {
-      Visual* v = m_visuals[i];
-
-      b = v->mesh->bound();
-    }
-
-    return b;
-  }
 private:
   void animate()
   {
