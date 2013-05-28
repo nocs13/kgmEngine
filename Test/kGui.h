@@ -9,6 +9,8 @@ class kGui : public kgmObject, kgmEvent
 public:
     kgmGameBase* m_game;
     kgmGui*      m_guiMain;
+    kgmGui*      m_guiGame;
+    kgmGui*      m_guiSettings;
     kgmGui*      m_guiPause;
 
 public:

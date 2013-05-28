@@ -16,6 +16,19 @@
 
 class kgmGameGraphics: public kgmObject
 {
+  struct LightPoint
+  {
+    vec3 pos;
+    vec3 col;
+  };
+
+  struct LightSpot
+  {
+    vec3 pos;
+    vec3 dir;
+    vec3 col;
+  };
+
   struct VBMesh
   {
     int   id;
@@ -111,6 +124,8 @@ class kgmGameGraphics: public kgmObject
   kgmTab<u16, kgmShader*>  shaders;
   kgmTab<u16, kgmTexture*> textures;
 
+  bool  m_has_shaders;
+  bool  m_has_buffers;
 public:
   kgmGameGraphics(kgmIGraphics*, kgmIResources*);
   ~kgmGameGraphics();
@@ -131,12 +146,10 @@ private:
   void render(kgmVisual*);
   void render(kgmShader*, u32);
   void render(kgmMaterial*);
-  void transform(mtx4&);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
 
   void trash();
-
 public:
   void add(kgmMaterial* mtl){
     if(mtl){

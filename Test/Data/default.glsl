@@ -81,7 +81,7 @@ void main( void )
  
  vec3  v_lp = posLight - Position.xyz;
  float rangle = rngLight;
-// intensity *= rangle / length(posLight - Position.xyz);
+ intensity *= rangle / length(posLight - Position.xyz);
  color *= intensity;
  color.a = alpha;              
  //gl_FragColor = color;

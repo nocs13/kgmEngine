@@ -14,15 +14,24 @@
 #include "../kgmGraphics/kgmGuiList.h"
 #include "../kgmGraphics/kgmGuiTab.h"
 
-struct Vert{
+struct Vert
+{
   vec3 v;
   u32  c;
 };
 
 
+mtx4   g_mtx_world;
+mtx4*  g_mtx_bone = null;
+u32    g_mtx_bone_count = 0;
+vec4   g_light_omni;
+
 kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
   rc = r;
+
+  m_has_shaders = false;
+  m_has_buffers = false;
 
   gui_style = new kgmGuiStyle();
 
@@ -33,6 +42,21 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
     int val;
 
     g->gcGetParameter(gcsup_shaders, &val);
+
+    if(val != 0)
+      m_has_shaders = true;
+
+    g->gcGetParameter(gcsup_fbuffers, &val);
+
+    if(val != 0)
+      m_has_buffers = true;
+  }
+
+  if(m_has_shaders)
+  {
+    if(rc != null){
+      shaders.add(0, rc->getShader("base.glsl"));
+    }
   }
 }
 
@@ -67,9 +91,6 @@ void kgmGameGraphics::clear(){
 
 kgmShader* s_def = null;
 void kgmGameGraphics::build(){
-  if(rc != null){
-    s_def = rc->getShader("base.glsl");
-  }
 }
 
 void kgmGameGraphics::setDefaultFont(kgmFont* f){
@@ -141,6 +162,8 @@ void kgmGameGraphics::render(){
 
 
   //render 3D
+  g_mtx_world.identity();
+
   for(int i = 0; i < m_meshes.size(); i++){
     render(m_meshes[i]);
   }
@@ -213,6 +236,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
   mtx4 tr = visual->m_transform * m_camera.camera.mView;
   gc->gcSetMatrix(gcmtx_view, tr.m);
+  g_mtx_world = visual->m_transform;
 
   //gc->gc2DMode();
   //gcDrawText(gui_style->gui_font, 10, 20, 0xFFFFFFFF, kgmGui::Rect(1, 10, 400, 500), visual->m_info);
@@ -296,8 +320,9 @@ void kgmGameGraphics::render(kgmMaterial* m){
 }
 
 void kgmGameGraphics::render(kgmShader* s, u32 t){
-  vec4 vAmbient(1, 1, 1, 1);
-  vec4 vLight(1, 1, 1, 1);
+  vec4  vAmbient(1, 1, 1, 1);
+  vec4  vLight(1, 1, 1, 1);
+  float mtx[16];
 
   switch(t){
   case 1:
@@ -307,10 +332,9 @@ void kgmGameGraphics::render(kgmShader* s, u32 t){
     s->start();
     s->set("g_fTime",   kgmTime::getTime());
     s->set("g_fRandom", (float)rand()/(float)RAND_MAX);
-
     s->set("g_mView",     m_camera.camera.mView);
     s->set("g_mProj",     m_camera.camera.mProj);
-    s->set("g_mViewProj", m_camera.camera.mVwPj);
+    s->set("g_mWorld",    g_mtx_world);
     s->set("g_vAmbient",  vAmbient);
     s->set("g_vLight",    vLight);
     s->set("g_vEye",      m_camera.camera.mPos);

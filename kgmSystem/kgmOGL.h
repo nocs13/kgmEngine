@@ -109,9 +109,13 @@ private:
   //Current Render Buffer
   RenderBuffer* m_renderbuffer;
   // Mode Matrices
-  float mtx_mode_view[16], mtx_mode_proj[16];
+  float mtx_mode_view[16],
+        mtx_mode_proj[16];
   // Active lights
   int m_lights;
+
+  int m_is_shader;
+  int m_is_framebuffer;
 public:
   kgmOGL(kgmOGLWindow* wnd);
   virtual ~kgmOGL();

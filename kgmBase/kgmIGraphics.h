@@ -104,7 +104,7 @@ enum gc_enum{
 
   //hardware support
   gcsup_shaders = 1024, // vertex,format shaders
-  gcsup_rbuffers,       // render buffers
+  gcsup_fbuffers,       // frame buffers
 };
 
 

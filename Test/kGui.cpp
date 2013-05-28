@@ -23,9 +23,11 @@ kGui::kGui(kgmGameBase* game)
 
   kgmGuiButton* btn = new kgmGuiButton(gui, 0, 0, w/3, 50);
   text = "Game";
+  btn->setSid("game");
   btn->setText(text);
   btn = new kgmGuiButton(gui, w/3, 0, w/3, 50);
   text = "Settings";
+  btn->setSid("settings");
   btn->setText(text);
   btn = new kgmGuiButton(gui, 2 * w/3, 0, w/3, 50);
   text = "Quit";
@@ -33,11 +35,13 @@ kGui::kGui(kgmGameBase* game)
   btn->setSid("quit");
 
   gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
-  gui->setSid("settings");
+  gui->setSid("guiSettings");
   gui->hide();
+  m_guiSettings = gui;
 
   gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
-  gui->setSid("game");
+  gui->setSid("guiGame");
+  m_guiGame = gui;
   btn = new kgmGuiButton(gui, 1, 10, 100, 30);
   text = "Start";
   btn->setText(text);
@@ -91,6 +95,16 @@ void kGui::onAction(kgmEvent* e, int a)
 
     kgm_android_exit();
 #endif
+  }
+  else if(sid == "game")
+  {
+    m_guiGame->show();
+    m_guiSettings->hide();
+  }
+  else if(sid == "settings")
+  {
+    m_guiGame->hide();
+    m_guiSettings->show();
   }
   else if(sid == "levels")
   {

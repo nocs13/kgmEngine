@@ -22,6 +22,9 @@ EGLContext m_context = EGL_NO_CONTEXT;
 #endif
 
 kgmOGL::kgmOGL(kgmOGLWindow *wnd){
+  m_is_shader      = 0;
+  m_is_framebuffer = 0;
+
   if(!wnd)
     return;
   
@@ -50,17 +53,25 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
 #endif
 
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
+  //const GLubyte* ext = glGetString(GL_SHADING_LANGUAGE_VERSION);
   //FILE* f = fopen("/tmp/glext", "w");
   //fprintf(f, "%s", ext);
   //fclose(f);
+
   if(strstr((char*)ext, "GL_ARB_shader_objects"))
   {
+    m_is_shader = 1;
+  }
 
+  if(strstr((char*)ext, "GL_ARB_framebuffer_object"))
+  {
+    m_is_framebuffer = 1;
   }
 
 #ifdef WIN32
   if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
 #endif
+
 #ifdef LINUX
   // if(glxSwapIntervalSGI) glxSwapIntervalSGI(0);
 #endif
@@ -133,22 +144,10 @@ void kgmOGL::gcGetParameter(u32 param, void* value){
   switch(param)
   {
   case gcsup_shaders:
-  {
-    const GLubyte* ext = glGetString(GL_SHADING_LANGUAGE_VERSION);
-    if(strlen(ext) < 1)
-    {
-      *((u32*)value) = 0;
-    }
-    else
-    {
-      if(strchr((char*)ext, '.'))
-      {
-
-      }
-    }
+    *((u32*)value) = m_is_shader;
     break;
-  }
-  case gcsup_rbuffers:
+  case gcsup_fbuffers:
+    *((u32*)value) = m_is_framebuffer;
     break;
   }
 }
@@ -262,7 +261,6 @@ void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
 }
 
 //Light
-
 void kgmOGL::gcSetLight(int i, float* pos, float range){
  if(i > GL_MAX_LIGHTS)
    return;
@@ -298,74 +296,6 @@ void kgmOGL::gcSetLight(int i, float* pos, float range){
  glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
  glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f / range);
 }
-
-//Material
-/*
-void kgmOGL::gcSetMaterial(kgmMaterial* m){
- if(!m){
-  glColor4ub(0xff, 0xff, 0xff, 0xff);
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH);
-  gcSetTexture(0, 0);
-  gcSetTexture(1, 0);
-  gcSetTexture(2, 0);
-  gcSetTexture(3, 0);
-  gcSetTexture(4, 0);
-  gcSetTexture(5, 0);
-  gcSetTexture(6, 0);
-  gcSetTexture(7, 0);
-  return;
- }
- if(m->m_flags & kgmMaterial::MF_Blend){
-  if(m->m_blend)
-    glEnable(GL_BLEND);
-  else
-    glDisable(GL_BLEND);
-  glBlendFunc(gl_enum(m->m_blend_src), gl_enum(m->m_blend_dst));
- }
- if(m->m_flags & kgmMaterial::MF_Alpha){
-  if(m->m_alpha){
-   glEnable(GL_ALPHA_TEST);
-   glAlphaFunc(GL_GREATER, .6f);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   glEnable(GL_BLEND);
-  }else
-   glDisable(GL_ALPHA_TEST);
- }
- if(m->m_flags & kgmMaterial::MF_Cull){
-  if(m->m_cull)
-    glEnable(GL_CULL_FACE);
-  else
-    glDisable(GL_CULL_FACE);
- }
- if(m->m_flags & kgmMaterial::MF_Depth){
-  if(m->m_depth)
-    glEnable(GL_DEPTH);
-  else
-    glDisable(GL_DEPTH);
- }
- if(m->m_flags & kgmMaterial::MF_Material){
-  vec4  vc(1, 1, 1, 1);
-  m->ambient.get(vc);
-  glMaterialfv(GL_FRONT, GL_AMBIENT, (float*)&vc);
-  m->diffuse.get(vc);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, (float*)&vc);
-  m->specular.get(vc);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, (float*)&vc);
-  m->emision.get(vc);
-  glMaterialfv(GL_FRONT, GL_EMISSION, (float*)&vc);
-  glMaterialf(GL_FRONT, GL_SHININESS, m->shininess);
- }
- if(m->m_flags & kgmMaterial::MF_Textures){
-  gcSetTexture(0, (m->m_texbase)?(m->m_texbase):(0));
-  gcSetTexture(1, (m->m_texbump)?(m->m_texbump):(0));
-  gcSetTexture(2, (m->m_texlight)?(m->m_texlight):(0));
-  gcSetTexture(3, (m->m_texshadow)?(m->m_texshadow):(0));
- }
-}
-*/
 
 //FOG
 /*
