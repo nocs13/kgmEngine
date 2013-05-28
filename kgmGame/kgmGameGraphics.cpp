@@ -27,6 +27,13 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gui_style = new kgmGuiStyle();
 
   linkCamera(null, 0, 0);
+
+  if(g)
+  {
+    int val;
+
+    g->gcGetParameter(gcsup_shaders, &val);
+  }
 }
 
 kgmGameGraphics::~kgmGameGraphics(){

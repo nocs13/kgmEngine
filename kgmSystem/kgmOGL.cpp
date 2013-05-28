@@ -50,6 +50,13 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
 #endif
 
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
+  //FILE* f = fopen("/tmp/glext", "w");
+  //fprintf(f, "%s", ext);
+  //fclose(f);
+  if(strstr((char*)ext, "GL_ARB_shader_objects"))
+  {
+
+  }
 
 #ifdef WIN32
   if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
@@ -123,7 +130,27 @@ void kgmOGL::gcSetParameter(u32 param, void* value){
   }
 }
 void kgmOGL::gcGetParameter(u32 param, void* value){
+  switch(param)
+  {
+  case gcsup_shaders:
+  {
+    const GLubyte* ext = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    if(strlen(ext) < 1)
+    {
+      *((u32*)value) = 0;
+    }
+    else
+    {
+      if(strchr((char*)ext, '.'))
+      {
 
+      }
+    }
+    break;
+  }
+  case gcsup_rbuffers:
+    break;
+  }
 }
 void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten){
   GLu32 cl = 0;

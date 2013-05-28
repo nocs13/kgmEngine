@@ -23,7 +23,7 @@ enum gc_flags{
  gcv_uv5 = 1L << 9,
  gcv_uv6 = 1L << 10,
  gcv_uv7 = 1L << 11, //vertex texture coord 8
- gcv_bn0  = 1L << 12, //vertex bone weight&index float[4], int[4]
+ gcv_bn0 = 1L << 12, //vertex bone weight&index float[4], int[4]
 };
 
 enum gc_enum{
@@ -101,6 +101,10 @@ enum gc_enum{
 
  gccull_back,
  gccull_front,
+
+  //hardware support
+  gcsup_shaders = 1024, // vertex,format shaders
+  gcsup_rbuffers,       // render buffers
 };
 
 
