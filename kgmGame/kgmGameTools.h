@@ -39,6 +39,7 @@ public:
  static kgmMaterial*  genMaterial(kgmMemory<char>& m);
  static kgmMaterial*  genMaterial(kgmXml& x);
  static kgmShader*    genShader(kgmIGraphics* gc, kgmString& s);
+ static kgmShader*    genShader(kgmIGraphics* gc, kgmXml& s);
 
 //////////// SKELETON
  static kgmSkeleton*  genSkeleton(kgmMemory<char>& m);

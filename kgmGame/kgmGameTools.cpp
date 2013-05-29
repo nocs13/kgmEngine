@@ -341,6 +341,34 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
   return shader;
 }
 
+kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmXml& xml){
+  char* mem_vsh = 0;
+  char* mem_fsh = 0;
+
+  if(!gc || !xml.m_node)
+    return 0;
+
+  if(xml.m_node->node(0) && xml.m_node->node(0)->m_name == "VertexShader")
+    mem_vsh = xml.m_node->node(0)->m_data.data();
+  else if(xml.m_node->node(0) && xml.m_node->node(0)->m_name == "FragmentShader")
+    mem_fsh = xml.m_node->node(0)->m_data.data();
+
+  if(xml.m_node->node(1) && xml.m_node->node(1)->m_name == "VertexShader")
+    mem_vsh = xml.m_node->node(1)->m_data.data();
+  else if(xml.m_node->node(1) && xml.m_node->node(1)->m_name == "FragmentShader")
+    mem_fsh = xml.m_node->node(1)->m_data.data();
+
+  kgmShader* shader = new kgmShader(gc);
+  shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
+
+  if(!shader->m_shader){
+    delete shader;
+    shader = null;
+  }
+
+  return shader;
+}
+
 kgmMaterial* kgmGameTools::genMaterial(kgmMemory<char>& m){
   kgmMaterial* mtl = 0;
   char* str = 0;
