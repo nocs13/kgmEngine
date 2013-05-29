@@ -21,10 +21,11 @@ struct Vert
 };
 
 
-mtx4   g_mtx_world;
-mtx4*  g_mtx_bone = null;
-u32    g_mtx_bone_count = 0;
-vec4   g_light_omni;
+mtx4       g_mtx_world;
+mtx4*      g_mtx_bone = null;
+u32        g_mtx_bone_count = 0;
+vec4       g_light_omni;
+kgmShader* g_shd_active = null;
 
 kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
@@ -236,7 +237,13 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
   mtx4 tr = visual->m_transform * m_camera.camera.mView;
   gc->gcSetMatrix(gcmtx_view, tr.m);
-  g_mtx_world = visual->m_transform;
+  g_mtx_world      = visual->m_transform;
+
+  if(visual->m_tm_joints)
+  {
+    g_mtx_bone       = visual->m_tm_joints;
+    g_mtx_bone_count = visual->m_skeleton->m_joints.size();
+  }
 
   //gc->gc2DMode();
   //gcDrawText(gui_style->gui_font, 10, 20, 0xFFFFFFFF, kgmGui::Rect(1, 10, 400, 500), visual->m_info);
@@ -254,7 +261,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
   //*/
   }
 
-  render((kgmMaterial*)0);
+  render((kgmMaterial*)null);
   visual->update();
 
   /*
@@ -288,6 +295,8 @@ void kgmGameGraphics::render(kgmMaterial* m){
     gc->gcSetTexture(2, 0);
     gc->gcSetTexture(3, 0);
 
+    render((kgmShader*)null);
+
     return;
   }
 
@@ -311,35 +320,40 @@ void kgmGameGraphics::render(kgmMaterial* m){
     kgmShader* s = shaders[(u16)m->m_shader];
     if(!s)
       s = shaders[kgmMaterial::ShaderNone];
-    render(s, m->m_shader);
+    render(s);
   }
   else
   {
-    gc->gcSetShader(null);
+    render((kgmShader*)null);
   }
 }
 
-void kgmGameGraphics::render(kgmShader* s, u32 t){
+void kgmGameGraphics::render(kgmShader* s){
   vec4  vAmbient(1, 1, 1, 1);
   vec4  vLight(1, 1, 1, 1);
   float mtx[16];
 
-  switch(t){
-  case 1:
-    s->stop();
-    break;
-  default:
-    s->start();
-    s->set("g_fTime",   kgmTime::getTime());
-    s->set("g_fRandom", (float)rand()/(float)RAND_MAX);
+  //send default parameters
+  if(s)
+  {
+    s->set("g_fTime",     kgmTime::getTime());
+    s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);
     s->set("g_mView",     m_camera.camera.mView);
     s->set("g_mProj",     m_camera.camera.mProj);
-    s->set("g_mWorld",    g_mtx_world);
+    s->set("g_mTran",     g_mtx_world);
     s->set("g_vAmbient",  vAmbient);
     s->set("g_vLight",    vLight);
     s->set("g_vEye",      m_camera.camera.mPos);
     s->set("g_vEyeLook",  m_camera.camera.mDir);
-  };
+
+    gc->gcSetShader(s->m_shader);
+    g_shd_active = s;
+  }
+  else
+  {
+    gc->gcSetShader(null);
+    g_shd_active = null;
+  }
 }
 
 void kgmGameGraphics::render(kgmMesh *m){

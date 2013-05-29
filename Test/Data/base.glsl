@@ -1,6 +1,6 @@
 uniform mat4  g_mView;
 uniform mat4  g_mProj;
-uniform mat4  g_mWorld;
+uniform mat4  g_mTran;
 uniform vec4  g_vAmbient;
 uniform vec4  g_vLight;
 uniform vec3  g_vEye;
@@ -27,9 +27,9 @@ const float shininess = 1.0;
 
 void main(void)
 {
-   N  = normalize(vec3(g_mWorld * vec4(gl_Normal,0.0)));
-   L  = normalize(g_vLight.xyz - vec4(g_mWorld * gl_Vertex).xyz);
-   gl_Position = g_mProj * g_mView * g_mWorld * gl_Vertex;
+   N  = normalize(vec3(g_mTran * vec4(gl_Normal,0.0)));
+   L  = normalize(g_vLight.xyz - vec4(g_mTran * gl_Vertex).xyz);
+   gl_Position = g_mProj * g_mView * g_mTran * gl_Vertex;
    Texcoord    = gl_MultiTexCoord0.xy;
 }
 

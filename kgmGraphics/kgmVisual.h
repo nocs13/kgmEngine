@@ -62,7 +62,7 @@ public:
 
       if(mesh)
       {
-        if(mesh->fvf() & gcv_bn0) //== kgmMesh::FVF_P_N_C_T_BW_BI)
+        if(mesh->fvf() & gcv_bn0)
         {
           vertices = new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
           memcpy(vertices, mesh->vertices(),
