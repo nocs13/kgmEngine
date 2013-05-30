@@ -18,7 +18,7 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-
+kgmApp         g_app;
 kgmIGame*      g_game = null;
 AAssetManager* g_assetManager = NULL;
 static JavaVM* jvm;
@@ -64,42 +64,40 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv* env, jobject
 {
     if(g_game)
     {
-      kgm_android_resize(width, height);
+      m_game->getWindow()->setRect(0, 0, width, height);
 
       return;
     }
 
-    LOGI("kgmTest init\n");
+    LOGI("Game init\n");
     AAssetManager* mgr = AAssetManager_fromJava(env, am);
     g_assetManager = mgr;
     env->NewGlobalRef(am);
-    LOGI("kgmEngine init asset manager\n");
+    LOGI("Game init asset manager\n");
     env->GetJavaVM(&jvm);
 
-    //m_app = new KApp();
-    //m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
-    //LOGI("kgmTest init native widnow\n");
+    g_app.m_nativeWindow = ANativeWindow_fromSurface(env, surface);
+    LOGI("Game init native widnow\n");
 
     kgmString spath;
-    g_game = kgm_android_init();
+    g_game = kgm_android_init_game();
     
     if(g_game)
     {
-      kgm_android_resize(width, height);
+      m_game->getWindow()->setRect(0, 0, width, height);
 
-      LOGI("kgmEngine inited\n");
+      LOGI("Game inited\n");
     }
 }
 
 JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_quit(JNIEnv * env, jobject obj)
 {
-    LOGI("kgmEngine quit\n");
+    LOGI("Game quit\n");
 
     if(g_game)
     {
-      LOGI("kgmEngine release game\n");
-      kgm_android_close();
-      kgm_android_release();
+      LOGI("Game release game\n");
+      m_game->getWindow()->onClose();
     }
 
     g_game = null;
@@ -109,14 +107,14 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_idle(JNIEnv * env, jobjec
 {
     if(g_game)
     {
-      kgm_android_idle();
+      g_game->getWindow()->onIdle();
     }
 }
 
 JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key)
 {
 #ifdef DEBUG
-    LOGI("kgmTest onKeyboard %i %i\n", a, key);
+    LOGI("Game onKeyboard %i %i\n", a, key);
 #endif
 
     if(g_game)
@@ -128,12 +126,12 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onKeyboard(JNIEnv * env, 
       case 0:
           evt.event = evtKeyDown;
           evt.key = keyTranslate(key);
-          kgm_android_input(&evt);
+          m_game->getWindow()->onEvent(&evt);
           break;
       case 1:
           evt.event = evtKeyUp;
           evt.key = keyTranslate(key);
-          kgm_android_input(&evt);
+          m_game->getWindow()->onEvent(&evt);
           break;
       default:
           break;
@@ -147,7 +145,7 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
     static bool set = false;
 
 #ifdef DEBUG
-    LOGI("kgmTest onTouch %i %i %i\n", a, x, y);
+    LOGI("Game onTouch %i %i %i\n", a, x, y);
 #endif
 
     if(g_game)
@@ -171,19 +169,19 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
            evt.msx = x;
            evt.msy = y;
           }
-          kgm_android_input(&evt);
+          m_game->getWindow()->onEvent(&evt);
           break;
       case 1:
           evt.event = evtMsLeftDown;
           evt.msx = x;
           evt.msy = y;
-          kgm_android_input(&evt);
+          m_game->getWindow()->onEvent(&evt);
           break;
       case 2:
           evt.event = evtMsLeftUp;
           evt.msx = x;
           evt.msy = y;
-          kgm_android_input(&evt);
+          m_game->getWindow()->onEvent(&evt);
           break;
       default:
           break;
