@@ -78,6 +78,9 @@ u32 kgmFile::length(){
 u32 kgmFile::length(u32 len){
 #ifdef WIN32
   return _chsize_s(m_file->_fileno, len);
+#elif defined ANDROID
+  if(m_file && m_file->_file)
+    return ftruncate(m_file->_file, len);
 #else
   if(m_file && m_file->_fileno)
     return ftruncate(m_file->_fileno, len);

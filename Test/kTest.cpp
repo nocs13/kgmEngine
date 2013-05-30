@@ -154,18 +154,22 @@ public:
   }
 };
 
-
 KApp*          m_app  = null;
-kGame*	       m_game = null;
+kgmIGame*      m_game = null;
 AAssetManager* g_assetManager = NULL;
 static JavaVM* jvm;
+
+kgmIGame* kgm_android_init_game()
+{
+  return new kGame();
+}
 
 kgm_android_exit()
 {
   LOGI("kgmTest quit\n");
 
   if(m_game)
-    m_game->release();
+    delete m_game;
 
   if(m_app)
     delete m_app;
@@ -209,8 +213,8 @@ jobject surface)
   LOGI("kgmTest init native widnow\n");
 
   kgmString spath;
-  m_game = new kGame();
-  m_game->setRect(0, 0, width, height);
+  m_game = kgm_android_init_game();
+  m_game->getWindow()->setRect(0, 0, width, height);
   LOGI("kgmTest inited\n");
 }
 
@@ -221,12 +225,12 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject 
   if(m_game)
   {
     LOGI("kgmTest release gamet\n");
-    m_game->onClose();
-    m_game->release();
+    m_game->getWindow()->onClose();
+    //m_game->release();
   }
 
-  if(m_app)
-    delete m_app;
+//  if(m_app)
+//    delete m_app;
 
   m_game = null;
 }
@@ -236,7 +240,7 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
   //LOGI("kgmTest idle\n");
   if(m_game)
   {
-    m_game->onIdle();
+    m_game->getWindow()->onIdle();
 
     /*struct AInputQueue queue;
       struct AInputEvent events[1];
@@ -279,12 +283,12 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jo
     case 0:
       evt.event = evtKeyDown;
       evt.key = keyTranslate(key);
-      m_game->onEvent(&evt);
+      m_game->getWindow()->onEvent(&evt);
       break;
     case 1:
       evt.event = evtKeyUp;
       evt.key = keyTranslate(key);
-      m_game->onEvent(&evt);
+      m_game->getWindow()->onEvent(&evt);
       break;
     default:
       break;
@@ -306,7 +310,7 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobje
     case 0:
       evt.event = evtMsMove;
 
-      if(m_game->m_msAbs)
+      if(m_game->getWindow()->m_msAbs)
       {
         evt.msx = x - prev_x;
         evt.msy = y - prev_y;
@@ -318,19 +322,19 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobje
         evt.msx = x;
         evt.msy = y;
       }
-      m_game->onEvent(&evt);
+      m_game->getWindow()->onEvent(&evt);
       break;
     case 1:
       evt.event = evtMsLeftDown;
       evt.msx = x;
       evt.msy = y;
-      m_game->onEvent(&evt);
+      m_game->getWindow()->onEvent(&evt);
       break;
     case 2:
       evt.event = evtMsLeftUp;
       evt.msx = x;
       evt.msy = y;
-      m_game->onEvent(&evt);
+      m_game->getWindow()->onEvent(&evt);
       break;
     default:
       break;

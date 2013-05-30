@@ -72,6 +72,7 @@ public:
  kgmIVideo*         getVideo();
  kgmIResources*     getResources();
  kgmSystem*         getSystem();
+ kgmWindow*         getWindow();
 
  void quit();
  void log(const char* msg);

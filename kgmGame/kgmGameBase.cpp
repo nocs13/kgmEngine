@@ -175,6 +175,10 @@ kgmSystem*  kgmGameBase::getSystem(){
   return m_game->m_system;
 }
 
+kgmWindow*  kgmGameBase::getWindow(){
+  return (kgmWindow*)this;
+}
+
 void kgmGameBase::initResources()
 {
   log("init resources");
