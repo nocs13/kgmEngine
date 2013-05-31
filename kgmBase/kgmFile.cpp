@@ -77,7 +77,18 @@ u32 kgmFile::length(){
 
 u32 kgmFile::length(u32 len){
 #ifdef WIN32
-  return _chsize_s(m_file->_fileno, len);
+  HANDLE hFile = (HANDLE)_get_osfhandle(m_file->_fileno);
+
+  if(hFile)
+  {
+    SetFilePointer(hFile, (LONG)len, NULL, FILE_BEGIN);
+
+    if(SetEndOfFile(hFile))
+      return len;
+    else
+      return 0;
+  }
+  //return _chsize_s(m_file->_fileno, len);
 #elif defined ANDROID
   if(m_file && m_file->_file)
     return ftruncate(m_file->_file, len);
