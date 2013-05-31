@@ -6,21 +6,26 @@ class kgmEnvironment;
 
 class kgmApp{
 private:
- static kgmApp* m_app;
+  static kgmApp* m_app;
 
-#ifdef ANDROID
-public:
- void* m_nativeWindow;
-#endif
+  void* m_mainWindow;
 
 public:
- kgmApp();
- ~kgmApp();
+  kgmApp();
+  ~kgmApp();
 
- virtual void main();
+  virtual void main();
 
- static kgmApp*  application(){
-  return kgmApp::m_app;
- }
+  void setMainWindow(void* w){
+    if(w) m_mainWindow = w;
+  }
+
+  void* getMainWindow(){
+    return m_mainWindow;
+  }
+
+  //static
+  static kgmApp*  application(){
+    return kgmApp::m_app;
+  }
 };
-

@@ -209,7 +209,7 @@ jobject surface)
   env->GetJavaVM(&jvm);
 
   m_app = new KApp();
-  m_app->m_nativeWindow = ANativeWindow_fromSurface(env, surface);
+  m_app->setMainWindow(ANativeWindow_fromSurface(env, surface));
   LOGI("kgmTest init native widnow\n");
 
   kgmString spath;
