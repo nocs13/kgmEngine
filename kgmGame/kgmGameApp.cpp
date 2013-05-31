@@ -47,7 +47,7 @@ AAssetManager* kgm_android_getAssetManager()
 {
     return g_assetManager;
 }
-
+/*
 extern "C"
 {
   JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv * env, jobject obj,  jint width, jint height,
@@ -187,5 +187,5 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
       }
     }
 }
-
+*/
 #endif

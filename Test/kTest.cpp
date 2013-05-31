@@ -147,7 +147,131 @@ kApp theApp;
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-class KApp: public kgmApp{
+/////////////////////
+/// \brief The KApp class
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
+struct ANativeWindow{
+  int width, height, format;
+
+  ANativeWindow()
+  {
+    width  = 400;
+    height = 177;
+    format = 1;
+  }
+};
+NativeWindowType displayWindow;
+
+const EGLint config16bpp[] =
+{
+EGL_RED_SIZE, 5,
+EGL_GREEN_SIZE, 6,
+EGL_BLUE_SIZE, 5,
+EGL_NONE
+};
+
+GLfloat colors[3][4] =
+{
+    {1.0f, 0.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 0.0f, 1.0f},
+    {0.0f, 0.0f, 1.0f, 1.0f}
+};
+
+GLfloat vertices[3][3] =
+{
+    {0.0f, 0.7f, 0.0f},
+    {-0.7f, -0.7f, 0.0f},
+    {0.7f, -0.7f, 0.0f}
+};
+
+
+void draw_tri()
+{
+    glViewport(0,0,displayWindow->width,displayWindow->height);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glColorPointer(4, GL_FLOAT, 0, colors);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+
+    // Draw the triangle (3 vertices)
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+}
+
+
+int main(int argc, char** argv)
+{
+    EGLint majorVersion, minorVersion;
+    EGLContext eglContext;
+    EGLSurface eglSurface;
+    EGLConfig eglConfig;
+    EGLDisplay eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    int numConfigs;
+
+    // Window surface that covers the entire screen, from libui.
+    //displayWindow = android_createDisplaySurface();
+    displayWindow = new ANativeWindow();
+
+    eglInitialize(eglDisplay, &majorVersion, &minorVersion);
+    printf("GL version: %d.%d\n",majorVersion,minorVersion);
+
+
+    printf("Window specs: %d*%d format=%d\n",
+     displayWindow->width,
+     displayWindow->height,
+     displayWindow->format);
+
+    if (!eglChooseConfig(eglDisplay, config16bpp, &eglConfig, 1, &numConfigs))
+    {
+     printf("eglChooseConfig failed\n");
+     if (eglContext==0) printf("Error code: %x\n", eglGetError());
+    }
+
+    eglContext = eglCreateContext(eglDisplay,
+     eglConfig,
+     EGL_NO_CONTEXT,
+     NULL);
+    printf("GL context: %x\n", eglContext);
+    if (eglContext==0) printf("Error code: %x\n", eglGetError());
+
+    eglSurface = eglCreateWindowSurface(eglDisplay,
+     eglConfig,
+     displayWindow,
+     NULL);
+    printf("GL surface: %x\n", eglSurface);
+    if (eglSurface==0) printf("Error code: %x\n", eglGetError());
+
+    eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+
+
+    while (1)
+    {
+     draw_tri();
+     eglSwapBuffers(eglDisplay, eglSurface);
+    }
+
+
+    return 0;
+}
+
+extern "C" jint JNI_OnLoad(JavaVM* vm,void* reserved) {
+    return JNI_VERSION_1_6;
+}
+/////////////////////////
+
+/*class KApp: public kgmApp{
 public:
   void main(){
 
@@ -242,7 +366,8 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
   {
     m_game->getWindow()->onIdle();
 
-    /*struct AInputQueue queue;
+    /*
+      struct AInputQueue queue;
       struct AInputEvent events[1];
 
       ASensorManager* sm = ASensorManager_getInstance();
@@ -266,7 +391,8 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject 
         default:
           break;
         }
-      }*/
+      }
+     //*/ /*
   }
 }
 
@@ -345,10 +471,12 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobje
 JNIEXPORT jstring  JNICALL Java_com_example_Test_TestLib_stringFromJNI(JNIEnv * env, jobject obj){
   return (env)->NewStringUTF("Hello from TEST JNI !");
 }
+*/
 
 AAssetManager* kgm_getAssetManager()
 {
-  return g_assetManager;
+  return null;
+  //return g_assetManager;
 }
 
 #endif
