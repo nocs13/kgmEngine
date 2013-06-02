@@ -54,6 +54,9 @@ public:
 
     Visual(kgmMesh* msh, kgmMaterial* mtl)
     {
+      mesh      = null;
+      material  = null;
+
       if(msh)  { mesh = msh; msh->increment(); }
       if(mtl)  { material = mtl; mtl->increment(); }
 

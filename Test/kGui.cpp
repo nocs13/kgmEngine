@@ -56,6 +56,7 @@ kGui::kGui(kgmGameBase* game)
   lst->addItem("map001.kgm");
   lst->addItem("map002.kgm");
   lst->addItem("map003.kgm");
+  lst->addItem("map004.kgm");
   lst->addItem("map005.kgm");
   gui->show();
 

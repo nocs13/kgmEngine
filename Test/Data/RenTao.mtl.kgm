@@ -6,7 +6,7 @@
   <Specular value='0.5 0.5 0.5'/>
   <Shininess value='1.0'/>
   <Alpha value='1.0'/>
-  <Texture value='RenTao.tga'/>
+  <map_color value='RenTao.tga'/>
 
   <Shader value="light"/>
  </kgmMaterial>

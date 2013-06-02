@@ -4,7 +4,7 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmGame/kgmGameBase.h"
 
-class kGui : public kgmObject, kgmEvent
+class kGui : public kgmEvent
 {
 public:
     kgmGameBase* m_game;

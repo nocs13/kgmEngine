@@ -2,14 +2,14 @@
 #ifdef WIN32
  #include <windows.h>
  #include <GL/gl.h>
- #include "inc/glext.h"
+ #include <GL/glext.h>
 #elif defined LINUX
  #include <X11/Xlib.h>
  #include <X11/keysym.h>
  #include <X11/extensions/xf86vmode.h>
  #include <GL/glx.h>
  #include <GL/gl.h>
- #include "inc/glext.h"
+ #include "inc/GL/glext.h"
 #elif defined ANDROID
 #endif
 

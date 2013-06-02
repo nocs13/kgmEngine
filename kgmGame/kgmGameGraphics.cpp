@@ -24,8 +24,12 @@ struct Vert
 mtx4       g_mtx_world;
 mtx4*      g_mtx_bone = null;
 u32        g_mtx_bone_count = 0;
-vec4       g_light_omni;
+vec4       g_vec_light = vec4(0, 0, 0, 1);
+vec4       g_vec_ambient = vec4(1, 1, 1, 1);
 kgmShader* g_shd_active = null;
+
+void*      m_tex_black = null;
+void*      m_tex_white = null;
 
 kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
@@ -41,6 +45,20 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   if(g)
   {
     int val;
+
+    char txd[16] = {0};
+
+    if(!gc)
+      return;
+
+    //generic black texture
+    memset(txd, 0x00, sizeof(txd));
+    m_tex_black = gc->gcGenTexture(txd, 2, 2, 32, 0);
+
+    //generic white texture
+    memset(txd, 0xffffffff, sizeof(txd));
+    m_tex_white = gc->gcGenTexture(txd, 2, 2, 32, 0);
+
 
     g->gcGetParameter(gcsup_shaders, &val);
 
@@ -62,6 +80,12 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 }
 
 kgmGameGraphics::~kgmGameGraphics(){
+  if(m_tex_black)
+    gc->gcFreeTexture(m_tex_black);
+
+  if(m_tex_white)
+    gc->gcFreeTexture(m_tex_white);
+
   gui_style->release();
   m_guis.clear();
   clear();
@@ -133,6 +157,7 @@ void kgmGameGraphics::render(){
 
   gc->gcSetMatrix(gcmtx_proj, m_camera.camera.mProj.m);
   gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
+  g_mtx_world.identity();
 
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
@@ -157,6 +182,8 @@ void kgmGameGraphics::render(){
       if(l.light)
       {
         gc->gcSetLight(i, (float*)&l.light->position, l.light->range);
+        g_vec_light = vec4(l.light->position.x, l.light->position.y,
+                           l.light->position.z, l.light->intensity);
       }
     }
   }
@@ -169,9 +196,13 @@ void kgmGameGraphics::render(){
     render(m_meshes[i]);
   }
 
+  g_mtx_world.identity();
+
   for(int i = 0; i < m_visuals.size(); i++){
-    render(m_visuals[i]);
+   render(m_visuals[i]);
   }
+
+  g_mtx_world.identity();
 
   //For last step draw gui
   gc->gcSetLight(-1, null, 0.0);
@@ -263,6 +294,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
   render((kgmMaterial*)null);
   visual->update();
+  g_mtx_world.identity();
 
   /*
   if(visual->m_tm_joints)
@@ -300,19 +332,29 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
-  if(m->m_tex_diffuse){
-    gc->gcSetTexture(0, m->m_tex_diffuse->m_texture);
-    tdiffuse = m->m_tex_diffuse->m_texture;
+  if(m->m_tex_color){
+    gc->gcSetTexture(0, m->m_tex_color->m_texture);
+    tdiffuse = m->m_tex_color->m_texture;
   }
 
   if(m->m_tex_normal){
     gc->gcSetTexture(1, m->m_tex_normal->m_texture);
     tnormal = m->m_tex_normal->m_texture;
   }
+  else
+  {
+    gc->gcSetTexture(1, m_tex_black);
+    tnormal = m_tex_black;
+  }
 
   if(m->m_tex_specular){
-    gc->gcSetTexture(1, m->m_tex_specular->m_texture);
+    gc->gcSetTexture(2, m->m_tex_specular->m_texture);
     tspecular = m->m_tex_specular->m_texture;
+  }
+  else
+  {
+    gc->gcSetTexture(2, m_tex_black);
+    tspecular = m_tex_black;
   }
 
   if(shaders.length() > (u16)m->m_shader)
@@ -329,10 +371,6 @@ void kgmGameGraphics::render(kgmMaterial* m){
 }
 
 void kgmGameGraphics::render(kgmShader* s){
-  vec4  vAmbient(1, 1, 1, 1);
-  vec4  vLight(1, 1, 1, 1);
-  float mtx[16];
-
   //send default parameters
   if(s)
   {
@@ -341,10 +379,10 @@ void kgmGameGraphics::render(kgmShader* s){
     s->set("g_mView",     m_camera.camera.mView);
     s->set("g_mProj",     m_camera.camera.mProj);
     s->set("g_mTran",     g_mtx_world);
-    s->set("g_vAmbient",  vAmbient);
-    s->set("g_vLight",    vLight);
+    s->set("g_vAmbient",  g_vec_ambient);
+    s->set("g_vLight",    g_vec_light);
     s->set("g_vEye",      m_camera.camera.mPos);
-    s->set("g_vEyeLook",  m_camera.camera.mDir);
+    s->set("g_vEyeDir",   m_camera.camera.mDir);
 
     gc->gcSetShader(s->m_shader);
     g_shd_active = s;

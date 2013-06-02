@@ -66,9 +66,29 @@ class kgmMaterial:
   self.specular = mtl.specular_color
   self.shine = 1.0
   self.alpha = mtl.alpha
-  self.textures = [mtl.texture_slots[TextureSlot].texture for TextureSlot in mtl.texture_slots.keys() if mtl.texture_slots[TextureSlot].texture.type == "IMAGE"]
+  self.map_color = ''
+  self.map_normal = ''
+  self.map_specular = ''
+  self.images = ()
+  #self.textures = [mtl.texture_slots[TextureSlot].texture for TextureSlot in mtl.texture_slots.keys() if mtl.texture_slots[TextureSlot].texture.type == "IMAGE"]
   #Refine a new list with only image textures that have a file source
-  self.images = [os.path.basename(Texture.image.filepath) for Texture in self.textures if Texture.image.source == "FILE"]
+  #self.images = [os.path.basename(Texture.image.filepath) for Texture in self.textures if Texture.image.source == "FILE"]
+  for TS in mtl.texture_slots.keys():
+    TextureSlot = mtl.texture_slots[TS]
+    if TextureSlot.texture.type == "IMAGE" and TextureSlot.texture.image.source == "FILE":
+      print("TPATH: " + TextureSlot.texture.image.filepath)
+      tf_path = os.path.basename(TextureSlot.texture.image.filepath)
+      if tf_path != "":
+        if TextureSlot.use_map_normal != 0.0:
+          self.map_normal = tf_path
+          self.map_normal_strength = TextureSlot.normal_factor
+        elif TextureSlot.use_map_specular != 0.0:
+          self.map_specular = tf_path
+          self.map_specular_strength = TextureSlot.normal_factor
+        else:
+          self.map_color = tf_path
+      
+      
 
   if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
    self.shader = bpy.data.materials[mtl.name]['Shader']
@@ -496,8 +516,14 @@ class kgmExport(bpy.types.Operator):
    file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
    file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
    file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
-   if(o.images):
-    file.write("  <Texture value='" + o.images[0] + "'/>\n")
+#   if(o.images):
+#    file.write("  <Texture value='" + o.images[0] + "'/>\n")
+   if o.map_color != "":
+     file.write("  <map_color value='" + o.map_color + "'/>\n")
+   if o.map_normal != "":
+     file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
+   if o.map_specular != "":
+     file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
    if(hasattr(o, 'shader')):
     file.write("  <Shader value='" + o.shader + "'/>\n")
    file.write(" </kgmMaterial>\n")

@@ -394,16 +394,12 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<char>& m){
     m.reads(str, 1024, "\n", 1);
     sscanf(str, "%s %s", key, val);
 
-    if(!strcmp(key, "ambient")){
+    if(!strcmp(key, "color")){
       sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
-      mtl->m_ambient = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
+      mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
     }
-    if(!strcmp(key, "diffuse")){
-      sscanf(str, "%s %f %f %f %f", key, &farr[0], &farr[1], &farr[2], &farr[3]);
-      mtl->m_diffuse = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
-    }
-    if(!strcmp(key, "texture")){
-      mtl->m_tex_diffuse = kgmIGame::getGame()->getResources()->getTexture(val);
+    if(!strcmp(key, "map_texture")){
+      mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
     }
     if(!strcmp(key, "shader")){
       if(val == "SKIN")
@@ -439,19 +435,22 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     kgmString id, val;
     mnode->node(i)->id(id);
 
-    if(id == "Ambient"){
-      mnode->node(i)->attribute("value", val);
-      sscanf(val.data(), "%f %f %f", &farr[0], &farr[1], &farr[2]);
-      mtl->m_ambient = kgmMaterial::Color(farr[0], farr[1], farr[2], 1);
-    }
-    if(id == "Diffuse"){
+    if(id == "Color"){
       mnode->node(i)->attribute("value", val);
       sscanf(val.data(), "%f %f %f ", &farr[0], &farr[1], &farr[2]);
-      mtl->m_diffuse = kgmMaterial::Color(farr[0], farr[1], farr[2], 1.0);
+      mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], 1.0);
     }
-    if(id == "Texture"){
+    if(id == "map_color"){
       mnode->node(i)->attribute("value", val);
-      mtl->m_tex_diffuse = kgmIGame::getGame()->getResources()->getTexture(val);
+      mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
+    }
+    if(id == "map_normal"){
+      mnode->node(i)->attribute("value", val);
+      mtl->m_tex_normal = kgmIGame::getGame()->getResources()->getTexture(val);
+    }
+    if(id == "map_specular"){
+      mnode->node(i)->attribute("value", val);
+      mtl->m_tex_specular = kgmIGame::getGame()->getResources()->getTexture(val);
     }
     if(id == "Shader"){
       mnode->node(i)->attribute("value", val);

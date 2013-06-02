@@ -452,7 +452,7 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
     unsigned int  x, y, w, h, border, depth;
 
     Window dummy;
-    XGetGeometry(wnd->m_dpy, wnd->m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
+    XGetGeometry(wnd->m_dpy, wnd->m_wnd, &dummy, (int*)&x, (int*)&y, (u32*)&w, (u32*)&h, &border, &depth);
 
     m_evt.msx = w / 2 - evt->xbutton.x;
     m_evt.msy = h / 2 - evt->xbutton.y;

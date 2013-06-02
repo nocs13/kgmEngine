@@ -880,8 +880,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->m_tex_ambient = mtl->m_tex_diffuse =
-              m_resources->getTexture(data);
+          mtl->m_tex_color = m_resources->getTexture(data);
         }
       }
       else if(id == "Shader")
@@ -1036,7 +1035,15 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgm_log() << "\nSpawning Actor: " << a.data();
 
   if(!m_resources->getFile(a, mem))
-    return 0;
+  {
+    if(!m_resources->getFile(a += ".act", mem))
+    {
+      if(!m_resources->getFile(a += ".kgm", mem))
+      {
+        return 0;
+      }
+    }
+  }
 
   kgmXml xml(mem);
 
@@ -1060,8 +1067,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   if(!a_node)
     return null;
 
-  actor = new kgmActor();
-  a_node->attribute("id", actor->m_class);
+  kgmString sid;
+  a_node->attribute("id", sid);
+  actor = (m_logic)?(m_logic->createActor(sid)):(new kgmActor());
 
   for(int i = 0; i < a_node->nodes(); i++){
     kgmString id, val;

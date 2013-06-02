@@ -20,7 +20,7 @@
 
 class kgmActor: public kgmObject
 {
-    KGM_OBJECT(kgmActor);
+    KGM_OBJECT(kgmActor)
 public:
     class State
     {
@@ -97,6 +97,7 @@ public:
     virtual void init();
     virtual void exit();
     virtual void update(u32);
+    virtual void input(u32, int);
 
     void remove();
 

@@ -105,7 +105,7 @@ kgmThread::Mutex kgmThread::mutex()
 #ifdef WIN32
   //_endthread();
 #else
-  pthread_mutex_t* mutex = malloc(sizeof(pthread_mutex_t));
+  pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
   *mutex = PTHREAD_MUTEX_INITIALIZER;
 
   return mutex;

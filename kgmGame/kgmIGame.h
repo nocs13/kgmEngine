@@ -125,7 +125,7 @@ class kgmEnvironment;
 
 class kgmGameNode;
 
-class kgmIGame: public kgmInterface{
+class kgmIGame{
 public:
   enum State{
     State_None,
@@ -137,29 +137,30 @@ public:
   };
 
 public:  //virtuals
-  virtual ~kgmIGame(){}
+  //virtual kgmActor*      genActor(kgmString) = 0;
 
-  virtual int           gLoad(kgmString) = 0;      //load game map
-  virtual int           gUnload() = 0;             //load game map
-  virtual int           gCommand(kgmString) = 0;   //do command
-  virtual int           gQuit() = 0;               //close game
-  virtual u32           gState() = 0;              //check game active  state
-  virtual kgmActor*     gSpawn(kgmString) = 0;
-  virtual kgmGameNode*  gMainNode() = 0;
+  virtual int            gLoad(kgmString) = 0;      //load game map
+  virtual int            gUnload() = 0;             //load game map
+  virtual int            gCommand(kgmString) = 0;   //do command
+  virtual int            gQuit() = 0;               //close game
+  virtual u32            gState() = 0;              //check game active  state
+  virtual kgmActor*      gSpawn(kgmString) = 0;
 
-  virtual void          addGui(kgmGui* g) = 0;
+  virtual void           addGui(kgmGui* g) = 0;
 
   //usefull interfaces
-  virtual kgmIGraphics*   getGraphics() = 0;
-  virtual kgmIPhysics*    getPhysics() = 0;
-  virtual kgmISpawner*    getSpawner() = 0;
-  virtual kgmIAudio*      getAudio() = 0;
-  virtual kgmIVideo*      getVideo() = 0;
-  virtual kgmIResources*  getResources() = 0;
-  virtual kgmWindow*      getWindow() = 0;
-  virtual kgmSystem*      getSystem() = 0;
+  virtual kgmIGraphics*  getGraphics() = 0;
+  virtual kgmIPhysics*   getPhysics() = 0;
+  virtual kgmISpawner*   getSpawner() = 0;
+  virtual kgmIAudio*     getAudio() = 0;
+  virtual kgmIVideo*     getVideo() = 0;
+  virtual kgmIResources* getResources() = 0;
+  virtual kgmWindow*     getWindow() = 0;
+  virtual kgmSystem*     getSystem() = 0;
+
+//protected:
 
 public:		//statics for help
-  static kgmIGame*		    getGame();
+  static kgmIGame*       getGame();
 };
 

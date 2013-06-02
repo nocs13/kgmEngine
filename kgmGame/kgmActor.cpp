@@ -67,6 +67,11 @@ void kgmActor::update(u32 time){
     m_visual->m_transform = tm;
 }
 
+void kgmActor::input(u32 btn, int state)
+{
+
+}
+
 void kgmActor::remove(){
  m_remove = true;
 }
@@ -157,7 +162,7 @@ bool kgmActor::setState(kgmString s, bool force)
     {
         m_state = state;
 
-        if(state->sound != -1)
+        if(state->sound != (kgmSound*)-1)
         {
             if(state->sound && state->sound->m_sound)
                 state->sound->m_sound->play((state->time == -1)?(true):(false));

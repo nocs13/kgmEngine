@@ -90,7 +90,6 @@ public:
 
  void onInputAction(int action, int argument);
 
- void gStart();		        //start game
  int  gLoad(kgmString);     //load game level
  int  gUnload();            //load game level
  int  gCommand(kgmString);  //do string command
@@ -99,22 +98,23 @@ public:
  void gPause(bool);         //render game scene
  void gRender();            //render game scene
 
+ kgmActor*    gSpawn(kgmString); //spawns and add the actor
+
  bool gMapBinary(kgmString&);
  bool gMapAscii(kgmString&);
  bool gMapXml(kgmString&);
 
- kgmActor*    gSpawn(kgmString);	//spawns and add the actor
- kgmGameNode* gMainNode(){ return null; }
-
 ///////////////////////////////////////
-protected:
+
+private:
 //init interfaces
- virtual void initResources();
- virtual void initGraphycs();
- virtual void initPhysics();
- virtual void initSystem();
- virtual void initAudio();
- virtual void initLogic();
+ virtual void  initResources();
+ virtual void  initGraphycs();
+ virtual void  initPhysics();
+ virtual void  initSystem();
+ virtual void  initAudio();
+ virtual void  initLogic();
+protected:
 
 // Game Resources
  kgmTexture*    getTexture(char*);
@@ -145,8 +145,4 @@ public:
  kgmGraphics* getRender(){
      return 0; //m_render;
  }
-public:
-/////// inlines
 };
-
-

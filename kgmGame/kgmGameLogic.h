@@ -13,13 +13,6 @@ public:
       ACTION_OBJECT
   };
 
-  class AI
-  {
-  public:
-    virtual void update(kgmActor* a, u32 milliseconds) = 0;
-    virtual void input(kgmActor* a, u32 btn, int state) = 0;
-  };
-
   class Sensor
   {
     kgmActor* actor;
@@ -39,8 +32,7 @@ public:
   };
 
 public:
-  kgmTab<kgmString, AI*>  m_ais;
-  kgmTab<kgmActor*, AI*>  m_actors;
+  kgmList<kgmActor*>      m_actors;
   kgmList<Sensor*>        m_sensors;
   kgmList<Trigger*>       m_triggers;
 
@@ -53,7 +45,6 @@ public:
     virtual ~kgmGameLogic();
 
     void clear();
-    bool add(kgmString, AI*);
     bool add(kgmActor* a);
     bool add(Sensor*);
     bool add(Trigger*);
@@ -61,6 +52,10 @@ public:
     virtual void action(ACTION, void* src, int arg){}
     virtual void input(int, int);
     virtual void update(u32 milliseconds);
+
+    virtual kgmActor*  createActor(kgmString t){
+      return null;
+    }
 
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;

@@ -12,7 +12,7 @@ public:
  enum Attach{
   AttachToNone = 0,
   AttachToDummy,
-  AttachToJoint,
+  AttachToJoint
  };
 
 public:

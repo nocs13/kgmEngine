@@ -154,7 +154,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
       }else if(*p == '!'){
         p++;
 
-        if(strncmp(p, "[CDATA[", 7))
+        if(strncmp((const char*)p, "[CDATA[", 7))
         {
           char*     cdata = (char*)p;
           kgmString sdata;
@@ -170,7 +170,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
           p += 2;
           continue;
         }
-        else if(strncmp(p, "--", 2))
+        else if(strncmp((const char*)p, "--", 2))
         {
           p = toSyms(p, (char*)"-->\0");
           p += 2;

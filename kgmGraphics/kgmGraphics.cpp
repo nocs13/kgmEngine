@@ -388,9 +388,9 @@ void kgmGraphics::set(kgmMaterial* m){
     return;
   }
 
-  if(m->m_tex_diffuse){
-    gc->gcSetTexture(0, m->m_tex_diffuse->m_texture);
-    tdiffuse = m->m_tex_diffuse->m_texture;
+  if(m->m_tex_color){
+    gc->gcSetTexture(0, m->m_tex_color->m_texture);
+    tdiffuse = m->m_tex_color->m_texture;
   }
 
   if(m->m_tex_normal){

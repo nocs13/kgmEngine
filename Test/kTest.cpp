@@ -1,16 +1,51 @@
 #include "../kgmSystem/kgmApp.h"
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmGame/kgmGameBase.h"
-//#include "../kgmGame/kgmGameLogic.h"
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
 
 #include "kGui.h"
-#include "AI/AITaoRen.h"
+#include "Actors/ATaoRen.h"
+#include "Actors/AKomble.h"
+#include "Actors/ASpacer.h"
+
+class kLogic: public kgmGameLogic
+{
+  kgmIGame* game;
+public:
+  kLogic(kgmIGame* g)
+  :kgmGameLogic()
+  {
+    game = g;
+  }
+
+  kgmActor* createActor(kgmString t)
+  {
+    if(t == "RenTao")
+    {
+      return new ATaoRen(game);
+    }
+    else if(t == "HyugaNeji")
+    {
+
+    }
+    else if(t == "Komble")
+    {
+      return new AKomble(game);
+    }
+    else if(t == "KSpacer")
+    {
+      return new ASpacer(game);
+    }
+
+    return kgmGameLogic::createActor(t);
+  }
+};
 
 class kGame: public kgmGameBase{
-  kGui*   gui;
+  kGui*      gui;
+  kLogic*    logic;
   //kgmSound* snd;
 
 public:
@@ -19,7 +54,7 @@ public:
     m_msAbs = false;
     m_gamemode = true;
 
-    m_logic->add("RenTao", new AITaoRen(this));
+    //m_logic->add("RenTao", new AITaoRen(this));
     /*snd = m_game->getResources()->getSound("1.wav");
       if(snd && snd->getSound())
       {
@@ -28,15 +63,21 @@ public:
 
     if(m_physics)
       m_physics->m_gravity = 1.0f;
+
+    if(m_logic)
+    {
+      m_logic->release();
+      m_logic = new kLogic(this);
+    }
   }
 
   ~kGame(){
   }
 
-protected:
-  virtual void initLogic()
+private:
+  void  initLogic()
   {
-    m_logic = null; //new kLogic(this);
+    m_logic = new kLogic(this);
   }
 
 public:
