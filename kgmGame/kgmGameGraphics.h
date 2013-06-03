@@ -125,9 +125,9 @@ private:
 
   kgmGuiStyle* gui_style;
 
-  void* tdiffuse;
-  void* tspecular;
+  void* tcolor;
   void* tnormal;
+  void* tspecular;
   void* tdepth;
   void* shader;
   mtx4  location;

@@ -1,4 +1,5 @@
-#define JOINTS	35
+#version 120
+#define JOINTS  35
 #define EPSILON 0.001
 
 

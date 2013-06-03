@@ -20,14 +20,14 @@ struct Vert
   u32  c;
 };
 
-inline float paccRgbToFloat(vec4 v)
+inline float packRgbToFloat(vec4 v)
 {
   return ((char)(v.x * 255) << 24) +
-         ((char)(v.y * 255) << 16) +
-         ((char)(v.z * 255) << 8) +
-          (char)(v.w * 255);
+      ((char)(v.y * 255) << 16) +
+      ((char)(v.z * 255) << 8) +
+      (char)(v.w * 255);
 
-/* decode in shader
+  /* decode in shader
 float r = (temp & 0xf000)/255.0;
 float g = (temp & 0x0f00)/255.0;
 float b = (temp & 0x00f0)/255.0;
@@ -149,7 +149,9 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
   m_camera.camera.set(PI / 6, width / height, .1f, 10000.0,
-                      m_camera.camera.mPos, m_camera.camera.mDir, m_camera.camera.mUp);
+                      m_camera.camera.mPos,
+                      m_camera.camera.mDir,
+                      m_camera.camera.mUp);
 }
 
 void kgmGameGraphics::render(){
@@ -176,7 +178,7 @@ void kgmGameGraphics::render(){
   gc->gcDepth(true, 1, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
 
-//Grid
+  //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
@@ -201,23 +203,19 @@ void kgmGameGraphics::render(){
     }
   }
 
-
   //render 3D
-  g_mtx_world.identity();
+  //gc->gcSetShader(null);
 
   for(int i = 0; i < m_meshes.size(); i++){
     render(m_meshes[i]);
   }
 
-  g_mtx_world.identity();
-
   for(int i = 0; i < m_visuals.size(); i++){
-   render(m_visuals[i]);
+    render(m_visuals[i]);
   }
 
-  g_mtx_world.identity();
-
   //For last step draw gui
+  gc->gcSetShader(null);
   gc->gcSetLight(-1, null, 0.0);
   gc->gcSetLight(-2, null, 0.0);
   gc->gcSetLight(-3, null, 0.0);
@@ -231,7 +229,9 @@ void kgmGameGraphics::render(){
   gc->gc2DMode();
 
   if(lighting)
+  {
     gc->gcSetParameter(gcpar_lighting, null);
+  }
 
   for(int i = 0; i < m_guis.size(); i++)
   {
@@ -249,11 +249,12 @@ void kgmGameGraphics::render(){
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 600, 200), text);
 
   gc->gc3DMode();
+
   gc->gcEnd();
+
   gc->gcRender();
 
   //clear&reset
-  gc->gcSetShader(0);
   gc->gcSetTexture(0, 0);
   gc->gcSetTexture(1, 0);
   gc->gcSetTexture(2, 0);
@@ -264,7 +265,8 @@ void kgmGameGraphics::render(Mesh *m){
   if(!m)
     return;
 
-  if(m->m_mtrl){
+  if(m->m_mtrl)
+  {
     render(m->m_mtrl);
   }
 
@@ -272,6 +274,10 @@ void kgmGameGraphics::render(Mesh *m){
     gc->gcDraw(gcpmt_triangles, m->m_mesh->fvf(), m->m_mesh->vsize(),
                m->m_mesh->vcount(), m->getVertices(),
                2, 3 * m->m_mesh->fcount(), m->m_mesh->faces());
+  }
+
+  if(m->m_mtrl){
+    //render((kgmMaterial*)null);
   }
 }
 
@@ -298,16 +304,15 @@ void kgmGameGraphics::render(kgmVisual* visual){
     kgmVisual::Visual* v = visual->m_visuals[i];
 
     render(v->getMaterial());
-  // /*
-     gc->gcDraw(gcpmt_triangles, v->getFvf(),
+    // /*
+    gc->gcDraw(gcpmt_triangles, v->getFvf(),
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());
-  //*/
+    // */
+    //render((kgmMaterial*)null);
   }
 
-  render((kgmMaterial*)null);
   visual->update();
-  g_mtx_world.identity();
 
   /*
   if(visual->m_tm_joints)
@@ -334,7 +339,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
 void kgmGameGraphics::render(kgmMaterial* m){
   if(!m){
-    gc->gcSetShader(0);
+    gc->gcSetShader(null);
     gc->gcSetTexture(0, 0);
     gc->gcSetTexture(1, 0);
     gc->gcSetTexture(2, 0);
@@ -345,9 +350,21 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
+  if(shaders.length() > (u16)m->m_shader)
+  {
+    kgmShader* s = shaders[(u16)m->m_shader];
+    if(!s)
+      s = shaders[kgmMaterial::ShaderNone];
+    render(s);
+  }
+  else
+  {
+    render((kgmShader*)null);
+  }
+
   if(m->m_tex_color){
     gc->gcSetTexture(0, m->m_tex_color->m_texture);
-    tdiffuse = m->m_tex_color->m_texture;
+    tcolor = m->m_tex_color->m_texture;
   }
 
   if(m->m_tex_normal){
@@ -369,24 +386,15 @@ void kgmGameGraphics::render(kgmMaterial* m){
     gc->gcSetTexture(2, m_tex_black);
     tspecular = m_tex_black;
   }
-
-  if(shaders.length() > (u16)m->m_shader)
-  {
-    kgmShader* s = shaders[(u16)m->m_shader];
-    if(!s)
-      s = shaders[kgmMaterial::ShaderNone];
-    render(s);
-  }
-  else
-  {
-    render((kgmShader*)null);
-  }
 }
 
 void kgmGameGraphics::render(kgmShader* s){
   //send default parameters
+
   if(s)
   {
+    //g_mtx_world.identity();
+    s->start();
     s->set("g_fTime",     kgmTime::getTime());
     s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);
     s->set("g_mView",     m_camera.camera.mView);
@@ -397,7 +405,15 @@ void kgmGameGraphics::render(kgmShader* s){
     s->set("g_vEye",      m_camera.camera.mPos);
     s->set("g_vEyeDir",   m_camera.camera.mDir);
 
-    gc->gcSetShader(s->m_shader);
+    if(tcolor)
+      s->set("g_txColor", 0);
+
+    if(tnormal)
+      s->set("g_txNormal", 1);
+
+    if(tspecular)
+      s->set("g_txSpecular", 2);
+
     g_shd_active = s;
   }
   else
@@ -585,4 +601,3 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fco
   gc->gcBlend(0, 0, 0);
   gc->gcSetTexture(0, 0);
 }
-

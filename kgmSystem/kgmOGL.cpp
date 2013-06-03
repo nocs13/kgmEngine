@@ -294,7 +294,7 @@ void kgmOGL::gcSetLight(int i, float* pos, float range){
  glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
  glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
  glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
- glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f / range);
+ glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f - range);
 }
 
 //FOG
@@ -600,13 +600,22 @@ void kgmOGL::gcFreeTexture(void *t){
 }
 
 void kgmOGL::gcSetTexture(u32 stage, void* t){
-  if(!t){
+  if(!t)
+  {
     glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
     return;
   }
+
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
+
+  GLenum err = glGetError();
+
+  if(err != GL_NO_ERROR)
+  {
+    kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
+  }
 }
 
 /*
