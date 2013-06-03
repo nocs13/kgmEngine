@@ -783,14 +783,12 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       else if(id == "kgmCamera")
       {
         type = TypeCamera;
-        //obj = cam = (kgmCamera*)act->camera;
       }
       else if(id == "kgmLight")
       {
         type = TypeLight;
         obj = lgt = new kgmLight();
         m_render->add(lgt);
-        //m_objects.add(obj);
       }
       else if(id == "kgmMesh")
       {
@@ -874,13 +872,31 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       else if(id == "Transparency")
       {
       }
-      else if(id == "Texture")
+      else if(id == "map_color")
       {
         kgmString data;
 
         if(xml.attribute("value", data))
         {
           mtl->m_tex_color = m_resources->getTexture(data);
+        }
+      }
+      else if(id == "map_normal")
+      {
+        kgmString data;
+
+        if(xml.attribute("value", data))
+        {
+          mtl->m_tex_normal = m_resources->getTexture(data);
+        }
+      }
+      else if(id == "map_specular")
+      {
+        kgmString data;
+
+        if(xml.attribute("value", data))
+        {
+          mtl->m_tex_specular = m_resources->getTexture(data);
         }
       }
       else if(id == "Shader")
@@ -929,7 +945,13 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
         if(act && type == TypeActor)
+        {
           act->setRotation(v);
+        }
+        else if(type == TypeLight)
+        {
+
+        }
       }
       else if(id == "Quaternion")
       {

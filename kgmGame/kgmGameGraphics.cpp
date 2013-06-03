@@ -20,6 +20,19 @@ struct Vert
   u32  c;
 };
 
+inline float paccRgbToFloat(vec4 v)
+{
+  return ((char)(v.x * 255) << 24) +
+         ((char)(v.y * 255) << 16) +
+         ((char)(v.z * 255) << 8) +
+          (char)(v.w * 255);
+
+/* decode in shader
+float r = (temp & 0xf000)/255.0;
+float g = (temp & 0x0f00)/255.0;
+float b = (temp & 0x00f0)/255.0;
+float a = (temp & 0x000f)/255.0;*/
+}
 
 mtx4       g_mtx_world;
 mtx4*      g_mtx_bone = null;
@@ -181,7 +194,7 @@ void kgmGameGraphics::render(){
 
       if(l.light)
       {
-        gc->gcSetLight(i, (float*)&l.light->position, l.light->range);
+        gc->gcSetLight(i, (float*)&l.light->position, l.light->intensity);
         g_vec_light = vec4(l.light->position.x, l.light->position.y,
                            l.light->position.z, l.light->intensity);
       }

@@ -16,6 +16,7 @@
 
 class kgmGameGraphics: public kgmObject
 {
+
   struct LightPoint
   {
     vec3 pos;
@@ -99,6 +100,16 @@ class kgmGameGraphics: public kgmObject
     kgmOctTree<Mesh*> tree;
   };
 
+public:
+  struct Settings
+  {
+    char texture_quality;
+    char shadow_quality;
+
+    bool lods;
+  };
+
+private:
   kgmIGraphics* gc;
   kgmIResources* rc;
 

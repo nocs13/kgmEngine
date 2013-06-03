@@ -7,32 +7,26 @@ class kgmLight: public kgmObject{
  KGM_OBJECT(kgmLight)
 public:
  vec3  position;
- vec4  ambient, 
-       diffuse, 
+ vec4  color,
        specular;
- float range;
  float intensity;
 
 
  vec3  direction;
- u32  type;
+ u32   type;
  bool  ison;		//light switched on
  bool  shadows;
- bool  shadesmooth;
  
  kgmTexture shadowmap;
 
  kgmString m_id;
 public:
  kgmLight(){
-  position = vec3(0, 0, 0);
-  ambient  = vec4(.7, .7, .7, 1);
-  diffuse  = vec4(.7, .7, .7, 1);
-  specular = vec4(.7, .7, .7, 1);
-  range = 1000.0f;
+  position  = vec3(0, 0, 0);
+  color     = vec4(.7, .7, .7, 1);
+  specular  = vec4(.7, .7, .7, 1);
   intensity = 1.0f;
   direction = vec3(0, 0, -1);
-  shadesmooth = true;
   shadows = true;
   ison = true;
 

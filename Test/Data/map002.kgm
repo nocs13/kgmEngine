@@ -6,7 +6,7 @@
   <Specular value='1.0 1.0 1.0'/>
   <Shininess value='1.0'/>
   <Alpha value='1.0'/>
-  <Texture value='floor_a.bmp'/>
+  <map_color value='floor_a.bmp'/>
  </kgmMaterial>
  <kgmMaterial name='Material'>
   <Color value='0.800000011920929 0.800000011920929 0.800000011920929'/>
@@ -14,7 +14,7 @@
   <Specular value='1.0 1.0 1.0'/>
   <Shininess value='1.0'/>
   <Alpha value='1.0'/>
-  <Texture value='font.tga'/>
+  <map_color value='font.tga'/>
  </kgmMaterial>
  <kgmLight name='Lamp'>
   <Type value='Point'/>

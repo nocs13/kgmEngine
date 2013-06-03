@@ -44,9 +44,13 @@ void main( void )
 
  normal.xyz = normalize(N + normal.xyz);
 
- float intensity   = max(dot(normal.xyz, L), 0.2);
- intensity        += dot(normal, g_vEyeDir);
- gl_FragColor = (color ) * intensity;
+ float intensity   = 1.0;
+       intensity = clamp(dot(normal.xyz, L), 0.2, 1.0);
+ //intensity        += dot(normal, g_vEyeDir);
+ gl_FragColor = vec4(clamp(color.x  * intensity, 0.0, 1.0),
+                     clamp(color.y  * intensity, 0.0, 1.0),
+                     clamp(color.z  * intensity, 0.0, 1.0),
+                     color.w);
  //gl_FragColor = color;
  //gl_FragColor = vec4(1, 0, 0, 1);
 }
