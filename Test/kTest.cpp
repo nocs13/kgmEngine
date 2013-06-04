@@ -41,6 +41,29 @@ public:
 
     return kgmGameLogic::createActor(t);
   }
+
+  kgmObject*  createGameObject(kgmString t)
+  {
+    if(t == "RenTao")
+    {
+      return new ATaoRen(game);
+    }
+    else if(t == "HyugaNeji")
+    {
+
+    }
+    else if(t == "Komble")
+    {
+      return new AKomble(game);
+    }
+    else if(t == "KSpacer")
+    {
+      return new ASpacer(game);
+    }
+
+    return kgmGameLogic::createGameObject(t);
+  }
+
 };
 
 class kGame: public kgmGameBase{

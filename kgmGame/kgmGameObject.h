@@ -12,8 +12,11 @@ class kgmGameObject : public kgmObject
 private:
   kgmBody*    m_body;
   kgmVisual*  m_visual;
+
 public:
   kgmGameObject();
+
+  void update(u32 mls);
 };
 
 #endif // KGMGAMEOBJECT_H

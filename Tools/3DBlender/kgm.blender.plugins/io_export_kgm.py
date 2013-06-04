@@ -32,8 +32,15 @@ def toGrad(a):
   return a * 180.0 / 3.1415
 
 class kgm_panel(bpy.types.Panel):
+ bl_idname = "KGM_PANEL"
+ bl_label  = "kgm panel"
+ bl_space_type = 'PROPERTIES'
+ bl_region_type = 'WINDOW'
+ bl_context = "object"
+ 
  def draw(self, context):
-  self.layout.prop(bpy.context.active_object, "object")
+#  self.layout.prop(bpy.context.active_object, "object")
+   self.layout.label(text="WOW")
 
 
 class kgm_dummy(bpy.types.Operator):
@@ -416,7 +423,11 @@ class kgmDummy:
   self.pos = Vector((0, 0, 0)) * self.mtx
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
-  self.size  = 1.0; #o.data.size
+  self.size  = 1.0;
+  self.linked = 'None'
+  
+  if o.parent != None:
+    self.linked = o.parent.name
 
 class kgmActor:
  def __init__(self, o):
@@ -665,7 +676,7 @@ class kgmExport(bpy.types.Operator):
 
   #dummies
   for a in dummies:
-   file.write(" <kgmDummy name='" + a.name + "' object='" + a.object + "'>\n")
+   file.write(" <kgmDummy name='" + a.name + "' object='" + a.object + "' linked='" + a.linked + "' >\n")
    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
    file.write("  <State value='" + a.state + "'/>\n")
@@ -711,18 +722,22 @@ def menu_func(self, context):
     #self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
 
 def menu_func_a(self, context):
-    self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='PLUGIN')
     self.layout.operator(kgm_actor.bl_idname, text="kgmActor", icon='PLUGIN')
-#    self.layout.operator(kgm_game_object.bl_idname, text="kgmGameObject", icon='PLUGIN')
+
+def menu_func_b(self, context):
+    self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='PLUGIN')
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
+    bpy.types.INFO_MT_add.append(menu_func_b)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.INFO_MT_add.remove(menu_func_a)
+    bpy.types.INFO_MT_add.remove(menu_func_b)
 
 if __name__ == "__main__":
     register()

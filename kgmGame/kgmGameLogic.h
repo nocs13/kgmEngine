@@ -57,6 +57,10 @@ public:
       return null;
     }
 
+    virtual kgmObject* createGameObject(kgmString t){
+      return null;
+    }
+
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;
     }

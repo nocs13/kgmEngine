@@ -1,5 +1,5 @@
 #include "kgmGameObject.h"
-KGMOBJECT_IMPLEMENT(kgmGameObject,	kgmObject);
+KGMOBJECT_IMPLEMENT(kgmGameObject, kgmObject);
 
 kgmGameObject::kgmGameObject()
  :m_visual(0),
