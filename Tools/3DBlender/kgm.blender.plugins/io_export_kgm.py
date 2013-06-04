@@ -36,6 +36,25 @@ class kgm_panel(bpy.types.Panel):
   self.layout.prop(bpy.context.active_object, "object")
 
 
+class kgm_dummy(bpy.types.Operator):
+ ''' Add kgmDummy '''
+ bl_idname = "object.kgm_dummy_add"
+ bl_label = "Add kgmDummy"
+ bl_options = {'REGISTER', 'UNDO'}
+
+
+ def execute(self, context):
+     bpy.types.Object.dummy = bpy.props.BoolProperty()
+     bpy.types.Object.kgmState = bpy.props.StringProperty()
+     bpy.types.Object.kgmObject = bpy.props.StringProperty()
+     bpy.ops.object.add()
+     a = bpy.context.object
+     a.name = "kgmDummy"
+     a.dummy = True
+     a.kgmState = "None"
+     a.kgmObject = "None"
+     return {'FINISHED'}
+
 class kgm_actor(bpy.types.Operator):
  ''' Add kgmActor '''
  bl_idname = "object.kgm_actor_add"
@@ -55,6 +74,26 @@ class kgm_actor(bpy.types.Operator):
      a.kgmState = "None"
      return {'FINISHED'}
 
+class kgm_game_object(bpy.types.Operator):
+ ''' Add kgmGameObject '''
+ bl_idname = "object.kgm_game_object_add"
+ bl_label = "Add kgmGameObject"
+ bl_options = {'REGISTER', 'UNDO'}
+
+
+ def execute(self, context):
+     bpy.types.Object.kgm = bpy.props.BoolProperty()
+     bpy.types.Object.kgmType = bpy.props.StringProperty()
+     bpy.types.Object.kgmState = bpy.props.StringProperty()
+     bpy.ops.object.add()
+     a = bpy.context.object
+     a.name = "kgmGameObject"
+     a.kgm = True
+     a.kgmType = "None"
+     a.kgmState = "None"
+     return {'FINISHED'}
+
+#
 
 scene_materials = []
 
@@ -368,7 +407,28 @@ class kgmBoneAnimation(kgmAnimation):
   currentScene.frame_set(startFrame)
 
 
+class kgmDummy:
+ def __init__(self, o):
+  self.name = o.name
+  self.state = o.kgmState
+  self.object = o.kgmObject
+  self.mtx = o.matrix_world
+  self.pos = Vector((0, 0, 0)) * self.mtx
+  self.quat = self.mtx.to_quaternion()
+  self.euler = self.mtx.to_euler()
+  self.size  = 1.0; #o.data.size
+
 class kgmActor:
+ def __init__(self, o):
+  self.name = o.name
+  self.type = o.kgmType
+  self.state = o.kgmState
+  self.mtx = o.matrix_world
+  self.pos = Vector((0, 0, 0)) * self.mtx
+  self.quat = self.mtx.to_quaternion()
+  self.euler = self.mtx.to_euler()
+
+class kgmGameObject:
  def __init__(self, o):
   self.name = o.name
   self.type = o.kgmType
@@ -459,6 +519,8 @@ class kgmExport(bpy.types.Operator):
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
   actors = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
+  dummies = [kgmDummy(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'dummy')]
+  #gobjects = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
 #  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
   animations = []
 
@@ -593,7 +655,7 @@ class kgmExport(bpy.types.Operator):
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
 
-  #skeletons
+  #actors
   for a in actors:
    file.write(" <kgmActor name='" + a.name + "' type='" + a.type + "'>\n")
    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
@@ -601,6 +663,16 @@ class kgmExport(bpy.types.Operator):
    file.write("  <State value='" + a.state + "'/>\n")
    file.write(" </kgmActor>\n")
 
+  #dummies
+  for a in dummies:
+   file.write(" <kgmDummy name='" + a.name + "' object='" + a.object + "'>\n")
+   file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+   file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+   file.write("  <State value='" + a.state + "'/>\n")
+   file.write("  <Size value='" + str(a.size) + "'/>\n")
+   file.write(" </kgmDummy>\n")
+
+  #collisions   
   if collision != None:
    file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
    for face in collision.faces:
@@ -639,7 +711,9 @@ def menu_func(self, context):
     #self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
 
 def menu_func_a(self, context):
+    self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='PLUGIN')
     self.layout.operator(kgm_actor.bl_idname, text="kgmActor", icon='PLUGIN')
+#    self.layout.operator(kgm_game_object.bl_idname, text="kgmGameObject", icon='PLUGIN')
 
 def register():
     bpy.utils.register_module(__name__)
