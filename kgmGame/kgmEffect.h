@@ -1,7 +1,7 @@
 #pragma once
-#include "../kgmBase/kgmObject.h"
+#include "kgmGameObject.h"
 
-class kgmEffect : public kgmObject
+class kgmEffect : public kgmGameObject
 {
   KGM_OBJECT(kgmEffect)
 public:

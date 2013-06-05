@@ -1,5 +1,5 @@
 #include "kgmEffect.h"
-KGMOBJECT_IMPLEMENT(kgmEffect, kgmObject);
+KGMOBJECT_IMPLEMENT(kgmEffect, kgmGameObject);
 
 kgmEffect::kgmEffect()
 {

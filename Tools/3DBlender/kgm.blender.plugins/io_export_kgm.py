@@ -42,62 +42,25 @@ class kgm_panel(bpy.types.Panel):
 #  self.layout.prop(bpy.context.active_object, "object")
    self.layout.label(text="WOW")
 
-
-class kgm_dummy(bpy.types.Operator):
- ''' Add kgmDummy '''
- bl_idname = "object.kgm_dummy_add"
- bl_label = "Add kgmDummy"
+class kgm_object(bpy.types.Operator):
+ ''' Add kgmObject '''
+# bl_idname = "object.kgm_object_add"
+ bl_idname = "object.kgm_object"
+ bl_label = "Add kgmObject"
  bl_options = {'REGISTER', 'UNDO'}
 
 
  def execute(self, context):
-     bpy.types.Object.dummy = bpy.props.BoolProperty()
-     bpy.types.Object.kgmState = bpy.props.StringProperty()
-     bpy.types.Object.kgmObject = bpy.props.StringProperty()
-     bpy.ops.object.add()
-     a = bpy.context.object
-     a.name = "kgmDummy"
-     a.dummy = True
-     a.kgmState = "None"
-     a.kgmObject = "None"
-     return {'FINISHED'}
-
-class kgm_actor(bpy.types.Operator):
- ''' Add kgmActor '''
- bl_idname = "object.kgm_actor_add"
- bl_label = "Add kgmActor"
- bl_options = {'REGISTER', 'UNDO'}
-
-
- def execute(self, context):
+     print("Exec object \n")
      bpy.types.Object.kgm = bpy.props.BoolProperty()
-     bpy.types.Object.kgmType = bpy.props.StringProperty()
-     bpy.types.Object.kgmState = bpy.props.StringProperty()
+     bpy.types.Object.kgm_state = bpy.props.StringProperty()
+     bpy.types.Object.kgm_object = bpy.props.StringProperty()
      bpy.ops.object.add()
      a = bpy.context.object
-     a.name = "kgmActor"
+     a.name = "kgmObject"
      a.kgm = True
-     a.kgmType = "None"
-     a.kgmState = "None"
-     return {'FINISHED'}
-
-class kgm_game_object(bpy.types.Operator):
- ''' Add kgmGameObject '''
- bl_idname = "object.kgm_game_object_add"
- bl_label = "Add kgmGameObject"
- bl_options = {'REGISTER', 'UNDO'}
-
-
- def execute(self, context):
-     bpy.types.Object.kgm = bpy.props.BoolProperty()
-     bpy.types.Object.kgmType = bpy.props.StringProperty()
-     bpy.types.Object.kgmState = bpy.props.StringProperty()
-     bpy.ops.object.add()
-     a = bpy.context.object
-     a.name = "kgmGameObject"
-     a.kgm = True
-     a.kgmType = "None"
-     a.kgmState = "None"
+     a.kgm_state = "None"
+     a.kgm_object = "None"
      return {'FINISHED'}
 
 #
@@ -414,40 +377,19 @@ class kgmBoneAnimation(kgmAnimation):
   currentScene.frame_set(startFrame)
 
 
-class kgmDummy:
+class kgmObject:
  def __init__(self, o):
   self.name = o.name
-  self.state = o.kgmState
-  self.object = o.kgmObject
+  self.state = o.kgm_state
+  self.gobject = o.kgm_object
   self.mtx = o.matrix_world
   self.pos = Vector((0, 0, 0)) * self.mtx
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
-  self.size  = 1.0;
   self.linked = 'None'
   
   if o.parent != None:
     self.linked = o.parent.name
-
-class kgmActor:
- def __init__(self, o):
-  self.name = o.name
-  self.type = o.kgmType
-  self.state = o.kgmState
-  self.mtx = o.matrix_world
-  self.pos = Vector((0, 0, 0)) * self.mtx
-  self.quat = self.mtx.to_quaternion()
-  self.euler = self.mtx.to_euler()
-
-class kgmGameObject:
- def __init__(self, o):
-  self.name = o.name
-  self.type = o.kgmType
-  self.state = o.kgmState
-  self.mtx = o.matrix_world
-  self.pos = Vector((0, 0, 0)) * self.mtx
-  self.quat = self.mtx.to_quaternion()
-  self.euler = self.mtx.to_euler()
 
 class kgmCollision:
  def __init__(self, o):
@@ -529,9 +471,7 @@ class kgmExport(bpy.types.Operator):
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
-  actors = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
-  dummies = [kgmDummy(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'dummy')]
-  #gobjects = [kgmActor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and hasattr(ob, 'kgm')]
+  gobjects = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and (hasattr(ob, 'kgm') )]
 #  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
   animations = []
 
@@ -666,22 +606,13 @@ class kgmExport(bpy.types.Operator):
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
 
-  #actors
-  for a in actors:
-   file.write(" <kgmActor name='" + a.name + "' type='" + a.type + "'>\n")
+  #kgm_objects
+  for a in gobjects:
+   file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
    file.write("  <State value='" + a.state + "'/>\n")
-   file.write(" </kgmActor>\n")
-
-  #dummies
-  for a in dummies:
-   file.write(" <kgmDummy name='" + a.name + "' object='" + a.object + "' linked='" + a.linked + "' >\n")
-   file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-   file.write("  <State value='" + a.state + "'/>\n")
-   file.write("  <Size value='" + str(a.size) + "'/>\n")
-   file.write(" </kgmDummy>\n")
+   file.write(" </kgmGameObject>\n")
 
   #collisions   
   if collision != None:
@@ -719,25 +650,20 @@ class kgmExport(bpy.types.Operator):
 def menu_func(self, context):
     self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='PLUGIN')
     #default_path = os.path.splitext(bpy.data.filepath)[0] + ".kgm"
-    #self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
+    self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
 
 def menu_func_a(self, context):
-    self.layout.operator(kgm_actor.bl_idname, text="kgmActor", icon='PLUGIN')
-
-def menu_func_b(self, context):
-    self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='PLUGIN')
+    self.layout.operator(kgm_object.bl_idname, text="kgmObject", icon='PLUGIN')
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
-    bpy.types.INFO_MT_add.append(menu_func_b)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.types.INFO_MT_add.remove(menu_func_a)
-    bpy.types.INFO_MT_add.remove(menu_func_b)
 
 if __name__ == "__main__":
     register()

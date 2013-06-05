@@ -16,9 +16,11 @@
 #include "../kgmMedia/kgmSound.h"
 
 #include "../kgmPhysics/kgmBody.h"
+
+#include "kgmGameObject.h"
 #include "kgmGamePhysics.h"
 
-class kgmActor: public kgmObject
+class kgmActor: public kgmGameObject
 {
     KGM_OBJECT(kgmActor)
 public:
@@ -46,20 +48,10 @@ public:
         u32           end;
     };
 
-protected:
-    kgmActor* 	        m_parent;
-    kgmList<kgmActor*>  m_childs;
-
 public:
     u32     m_uid;
     u32     m_type;
     u32     m_bearing;
-
-    bool    m_enable;
-    bool    m_visible;
-    bool    m_active;
-    bool    m_remove;
-    bool    m_culled;
 
     u32     m_group;
     u32     m_birth;

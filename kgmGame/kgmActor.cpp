@@ -1,15 +1,9 @@
 #include "kgmActor.h"
-KGMOBJECT_IMPLEMENT(kgmActor,	kgmObject);
+KGMOBJECT_IMPLEMENT(kgmActor,	kgmGameObject);
 
 kgmActor::kgmActor()
 {
  vec3 tv(0, 0, 1);
-
- m_enable = true;
- m_visible = true;
- m_active = true;
- m_remove = false;
- m_culled = false;
 
  m_visual = new kgmVisual();
 
@@ -28,7 +22,6 @@ kgmActor::kgmActor()
 
  m_birth  = kgmTime::getTicks();
  m_health = 1.0f;
- m_parent = null;
 
  m_animation = null;
  m_skeleton  = null;

@@ -49,7 +49,7 @@ void main( void )
 //       intensity += dot(normal.xyz, g_vEyeDir);
        intensity  = clamp(intensity, 0.1, 1.0);
 
- vec3  col = (color.xyz/* + specular.xyz*/) * intensity;
+ vec3  col = (color.xyz + specular.xyz) * intensity;
 
  col = clamp(col, 0.0, 1.0);
 
