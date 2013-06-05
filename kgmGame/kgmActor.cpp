@@ -40,10 +40,12 @@ kgmActor::~kgmActor(){
   m_visual->release();
 }
 
-void kgmActor::exit(){
+void kgmActor::exit()
+{
 }
 
-void kgmActor::init(){
+void kgmActor::init()
+{
  m_transform.translate(m_body->m_position);
  m_body->m_gravity = true;
 
@@ -53,7 +55,8 @@ void kgmActor::init(){
  }
 }
 
-void kgmActor::update(u32 time){
+void kgmActor::update(u32 time)
+{
     mtx4 tm;
 
     m_body->transform(tm);
@@ -63,19 +66,6 @@ void kgmActor::update(u32 time){
 void kgmActor::input(u32 btn, int state)
 {
 
-}
-
-void kgmActor::setPosition(vec3& v)
-{
- m_body->translate(v.x, v.y, v.z);
-}
-
-void kgmActor::setRotation(vec3& r){
- m_body->rotate(r.x, r.y, r.z);
-}
-
-void kgmActor::setRotation(quat& r){
- m_body->rotate(r);
 }
 
 void kgmActor::setDirection(vec3& d){

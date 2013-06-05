@@ -20,6 +20,7 @@
 #include "kgmGamePhysics.h"
 #include "kgmGameResources.h"
 
+#include "kgmGameObject.h"
 #include "kgmActor.h"
 
 //#include "../kgmGraphics/kgmDraw.inl"
@@ -711,13 +712,14 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
 
 bool kgmGameBase::loadXml_II(kgmString& path)
 {
-#define TypeNone      0
-#define TypeMaterial  1
-#define TypeCamera    2
-#define TypeLight     3
-#define TypeMesh      4
-#define TypeActor     5
-#define TypeCollision 6
+#define TypeNone       0
+#define TypeMaterial   1
+#define TypeCamera     2
+#define TypeLight      3
+#define TypeMesh       4
+#define TypeActor      5
+#define TypeCollision  6
+#define TypeGameObject 7
 
 #define AttrString(node, id, val)		\
   {						\
@@ -740,12 +742,13 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     return false;
   }
 
-  u32            type = TypeNone;
+  u32             type = TypeNone;
   kgmMesh*        msh = 0;
   kgmCamera*      cam = 0;
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
   kgmActor*       act = 0;
+  kgmGameObject*  gob = 0;
   kgmObject*      obj = 0;
 
   u32             vts = 0,
@@ -822,6 +825,13 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           m_logic->add(act);
 
         }
+      }
+      else if(id == "kgmGameObject")
+      {
+        type = TypeGameObject;
+        kgmString s;
+        xml.attribute("type", s);
+        obj = gob = m_logic->createGameObject(s);
       }
       else if(id == "Vertices")
       {
@@ -1091,7 +1101,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
   kgmString sid;
   a_node->attribute("id", sid);
-  actor = (m_logic)?(m_logic->createActor(sid)):(new kgmActor());
+  actor = (m_logic)?((kgmActor*)m_logic->createGameObject(sid)):(new kgmActor());
 
   for(int i = 0; i < a_node->nodes(); i++){
     kgmString id, val;

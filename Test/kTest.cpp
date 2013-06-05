@@ -39,7 +39,7 @@ public:
       return new ASpacer(game);
     }
 
-    return kgmGameLogic::createActor(t);
+    return null;//kgmGameLogic::createActor(t);
   }
 
   kgmObject*  createGameObject(kgmString t)

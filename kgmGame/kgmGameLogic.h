@@ -53,13 +53,7 @@ public:
     virtual void input(int, int);
     virtual void update(u32 milliseconds);
 
-    virtual kgmActor*  createActor(kgmString t){
-      return null;
-    }
-
-    virtual kgmObject* createGameObject(kgmString t){
-      return null;
-    }
+    virtual kgmObject* createGameObject(kgmString t);
 
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;

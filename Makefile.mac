@@ -13,12 +13,12 @@ LIBS =
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DOAL          
-        FLGS = -g -c -fPIC -O0 -fpermissive  -ansi -std=c++0x
+        FLGS = -g -fPIC -O0 -fpermissive  -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else 
         DEFS = -DWIN32 -DOAL
-        FLGS = -g -O0 -c -mwindows
+        FLGS = -g -O0 -mwindows
         LIBS = -lpthread -lopengl32 -lOpenAL32 -luser32 -lkernel32 -lgdi32 -lglu32
 	RM = del
 endif
