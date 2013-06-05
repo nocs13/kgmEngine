@@ -37,10 +37,30 @@ class kgm_panel(bpy.types.Panel):
  bl_space_type = 'PROPERTIES'
  bl_region_type = 'WINDOW'
  bl_context = "object"
- 
+
+ @classmethod
+ def poll(cls, context):
+  return (context.object is not None)
+
+ def draw_header(self, context):
+  layout = self.layout
+  obj = context.object
+  layout.prop(obj, "select", text="")
+
  def draw(self, context):
 #  self.layout.prop(bpy.context.active_object, "object")
-   self.layout.label(text="WOW")
+  self.layout.label(text="kgmObject")
+  layout = self.layout
+  obj = context.object
+  row = layout.row()
+  row.prop(obj, "hide_select")
+  row.prop(obj, "hide_render")
+  box = layout.box()
+  box.label("Selection Tools")
+  box.operator("object.select_all")
+  row = box.row()
+  row.operator("object.select_inverse")
+  row.operator("object.select_random")
 
 class kgm_object(bpy.types.Operator):
  ''' Add kgmObject '''
@@ -53,12 +73,14 @@ class kgm_object(bpy.types.Operator):
  def execute(self, context):
      print("Exec object \n")
      bpy.types.Object.kgm = bpy.props.BoolProperty()
+     bpy.types.Object.kgm_actor = bpy.props.BoolProperty()
      bpy.types.Object.kgm_state = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
      bpy.ops.object.add()
      a = bpy.context.object
      a.name = "kgmObject"
      a.kgm = True
+     a.kgm_actor = False
      a.kgm_state = "None"
      a.kgm_object = "None"
      return {'FINISHED'}
@@ -96,8 +118,8 @@ class kgmMaterial:
           self.map_specular_strength = TextureSlot.normal_factor
         else:
           self.map_color = tf_path
-      
-      
+
+
 
   if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
    self.shader = bpy.data.materials[mtl.name]['Shader']
@@ -139,7 +161,7 @@ class kgmBone:
   self.pos   = bone.matrix_local.to_translation()
   self.quat  = bone.matrix_local.to_quaternion()
   self.euler = self.quat.to_euler()
-  
+
   #take bone reltive to parent position
   pose_bone = bpy.context.scene.objects[aname].pose.bones[bone.name]
   if bone.parent:
@@ -206,10 +228,10 @@ class kgmMesh:
   self.skin = False
   self.mtls = []
   self.hasvgroups = True if len(o.vertex_groups) > 0 else False
-  
+
   if self.hasvgroups:
     self.vgroups = o.vertex_groups
-  else:    
+  else:
     self.vgroups = None
 
   armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
@@ -247,7 +269,7 @@ class kgmMesh:
       if self.hasvgroups == True:
        for g in range(0, len(mesh.vertices[vi].groups)):
         if g < 4:
-         #print(mesh.vertices[vi].groups[g].id) 
+         #print(mesh.vertices[vi].groups[g].id)
          v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
          v.wb[g] = mesh.vertices[vi].groups[g].weight
 
@@ -307,16 +329,16 @@ class kgmMesh:
      maxInfluennces = len(boneInfluences)
     for bone in boneInfluences:
      usedBones.add(bone)
-     
+
  def getBoneIndex(self, name):
   if self.armature == None:
     return -1
-  
+
   for i in range(0, len(self.armature.data.bones)):
     if name == self.armature.data.bones[i].name:
       return i
-    
-  return -1  
+
+  return -1
 
 class kgmFrame:
  def __init__(self, t, x, y, z, rx, ry, rz, rw):
@@ -369,7 +391,7 @@ class kgmBoneAnimation(kgmAnimation):
      pos   = mtx.to_translation()
      quat  = mtx.to_quaternion()
      euler = quat.to_euler()
-     
+
 
      f = kgmFrame(frame, pos.x, pos.y, pos.z, quat.x, quat.y, quat.z, quat.w)
      f.euler = quat.to_euler()
@@ -380,6 +402,7 @@ class kgmBoneAnimation(kgmAnimation):
 class kgmObject:
  def __init__(self, o):
   self.name = o.name
+  self.actor = o.kgm_actor
   self.state = o.kgm_state
   self.gobject = o.kgm_object
   self.mtx = o.matrix_world
@@ -387,7 +410,7 @@ class kgmObject:
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
   self.linked = 'None'
-  
+
   if o.parent != None:
     self.linked = o.parent.name
 
@@ -608,13 +631,19 @@ class kgmExport(bpy.types.Operator):
 
   #kgm_objects
   for a in gobjects:
-   file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
-   file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-   file.write("  <State value='" + a.state + "'/>\n")
-   file.write(" </kgmGameObject>\n")
+   if a.actor:
+    file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
+    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+    file.write("  <State value='" + a.state + "'/>\n")
+    file.write(" </kgmActor>\n")
+   else:
+    file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
+    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+    file.write(" </kgmGameObject>\n")
 
-  #collisions   
+  #collisions
   if collision != None:
    file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
    for face in collision.faces:

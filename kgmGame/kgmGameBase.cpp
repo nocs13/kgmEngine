@@ -814,11 +814,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
             act->m_gameplayer = true;
 
             if(m_gamemode)
-              m_render->linkCamera(act->m_visual, 10.0f, 10.0f);
+              m_render->linkCamera(act->getVisual(), 10.0f, 10.0f);
           }
 
-          m_render->add(act->m_visual);
-          m_physics->add(act->m_body);
+          m_render->add(act->getVisual());
+          m_physics->add(act->getBody());
           m_logic->add(act);
 
         }
@@ -1100,24 +1100,24 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     if(id == "Mass")
     {
       a_node->node(i)->attribute("value", val);
-      sscanf(val.data(), "%f", &actor->m_body->m_mass);
+      sscanf(val.data(), "%f", &actor->getBody()->m_mass);
     }
     else if(id == "Bound")
     {
       float a[3];
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
-      actor->m_body->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
-      actor->m_body->m_bound.max = vec3(0.5 * a[0], 0.5 * a[1], a[2]);
+      actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      actor->getBody()->m_bound.max = vec3(0.5 * a[0], 0.5 * a[1], a[2]);
     }
     else if(id == "Gravity")
     {
       a_node->node(i)->attribute("value", val);
 
       if(val == "true")
-        actor->m_body->m_gravity = true;
+        actor->getBody()->m_gravity = true;
       else
-        actor->m_body->m_gravity = false;
+        actor->getBody()->m_gravity = false;
     }
     else if(id == "Visual")
     {
@@ -1149,9 +1149,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       if(msh)
       {
-        actor->m_visual->addVisual(msh, mtl);
-        actor->m_visual->setAnimation(anm);
-        actor->m_visual->setSkeleton(skl);
+        actor->getVisual()->addVisual(msh, mtl);
+        actor->getVisual()->setAnimation(anm);
+        actor->getVisual()->setSkeleton(skl);
       }
     }
     else if(id == "State")

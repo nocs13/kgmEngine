@@ -69,18 +69,12 @@ public:
     kgmString m_name;
     kgmString m_class;
 
-    kgmBody*            m_body;
-    kgmVisual*          m_visual;
-
     kgmList<State*>     m_states;
-    kgmList<kgmSound*>  m_sounds;
     kgmList<kgmDummy*>  m_dummies;
 
     kgmAnimation*       m_animation;
     kgmSkeleton*        m_skeleton;
-
     State*              m_state;
-
     bool                m_gameplayer;
 public:
     kgmActor();

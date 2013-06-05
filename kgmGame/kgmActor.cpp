@@ -65,30 +65,6 @@ void kgmActor::input(u32 btn, int state)
 
 }
 
-void kgmActor::remove(){
- m_remove = true;
-}
-
-void kgmActor::enable(bool s){
- m_enable = s;
-}
-
-void kgmActor::active(bool a){
- m_active = a;
-}
-
-void kgmActor::visible(bool a){
- m_visible = a;
-}
-
-bool kgmActor::enabled(){
- return m_enable;
-}
-
-bool kgmActor::removed(){
- return m_remove;
-}
-
 void kgmActor::setPosition(vec3& v)
 {
  m_body->translate(v.x, v.y, v.z);
@@ -106,32 +82,6 @@ void kgmActor::setDirection(vec3& d){
  m_body->m_direction = d;
  m_body->m_direction.normalize();
  m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
-}
-
-void kgmActor::setParent(kgmActor* a){
- m_parent = a;
-}
-
-void kgmActor::addChild(kgmActor* a){
- if(!a)
-  return;
- m_childs.add(a);
- a->increment();
-}
-
-void kgmActor::delChild(kgmActor* a){
- if(!a)
-  return;
-
- for(int i = 0; i < m_childs.length(); i++)
- {
-  if(a == m_childs[i])
-  {
-   a->release();
-   m_childs.erase(i);
-   return;
-  }
- }
 }
 
 bool kgmActor::setState(kgmString s, bool force)
