@@ -153,6 +153,7 @@ public:
  virtual void* gcGenShader(const char*, const char*) = 0;
  virtual void  gcFreeShader(void* s) = 0;
  virtual void  gcSetShader(void* s) = 0;
+ virtual void  gcBindAttribute(void* s, int, const char*) = 0;
  virtual void  gcUniform(void* s, u32, u32, const char*, void*) = 0;
  virtual void  gcUniformMatrix(void* s, u32, u32, const char*, void*) = 0;
  virtual void  gcUniformSampler(void* s, const char*, void*) = 0;

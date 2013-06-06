@@ -86,8 +86,11 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
   if(m_has_shaders)
   {
+    kgmVisual::AnimateVertices = false;
+
     if(rc != null){
       shaders.add(0, rc->getShader("base.glsl"));
+      shaders.add(1, rc->getShader("skin.glsl"));
     }
   }
 }
@@ -394,6 +397,11 @@ void kgmGameGraphics::render(kgmShader* s){
   if(s)
   {
     //g_mtx_world.identity();
+//#ifdef GLES2
+    s->attr(0, "g_Vertex");
+    s->attr(1, "g_Normal");
+    s->attr(2, "g_Texcoord");
+//#endif
     s->start();
     s->set("g_fTime",     kgmTime::getTime());
     s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);

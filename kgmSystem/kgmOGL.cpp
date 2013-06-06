@@ -614,7 +614,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t){
 
   if(err != GL_NO_ERROR)
   {
-    kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
+    //kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
   }
 }
 
@@ -985,55 +985,6 @@ void kgmOGL::gcDrawRect(int x, int y, int w, int h, u32 col){
   gc3DMode();
 }
 
-/*
-void kgmOGL::gcDrawText(lRect clip, float w, float h, u32 col, char *text, u32 tlen){
-  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
-  V v[4];
-
-  if(!text || !tlen || !m_font || !m_font->m_texture)
-   return;
-
-  float tx = 0.0f, ty = 0.0f;
-  float tdx = (float)(1.f / m_font->m_cols),
-      tdy = (float)(1.f / m_font->m_rows);
-
-  float cx = (float)clip.min.x, cy = (float)clip.min.y;
-
-  gc2DMode();
-
-//  gcBlend(true, gcblend_one, gcblend_one);
-  gcAlpha(true, gccmp_great, 0.5f);
-  gcSetTexture(0, m_font);
-
-
-  for(u32 i = 0; i < tlen; i++){
-   char ch = text[i];
-
-   if(ch == '\n'){ cx = (float)clip.min.x, cy += h; continue; }
-   if(ch == ' ')  tx = 0.0f, ty = 0.0f;
-
-   tx = (float)(tdx * (ch % m_font->m_rows));
-   ty = 1.0f - (float)(tdy * (ch / m_font->m_rows));
-
-   if(clip.InRect(long2(cx+w, cy+h)))
-   {
-    v[0].pos = vec3(cx, cy, 0),    v[0].col = col, v[0].uv = vec2(tx, ty);
-    v[1].pos = vec3(cx, cy+h, 0),  v[1].col = col, v[1].uv = vec2(tx, ty-tdy);
-    v[2].pos = vec3(cx+w, cy, 0),  v[2].col = col, v[2].uv = vec2(tx+tdx, ty);
-    v[3].pos = vec3(cx+w, cy+h, 0),v[3].col = col, v[3].uv = vec2(tx+tdx, ty-tdy);
-    gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-   }
-
-   cx += w;
-  }
-
-//  gcBlend(0, 0, 0);
-  gcAlpha(false, 0, 0);
-  gcSetTexture(0, 0);
-  gc3DMode();
-}
-*/
-
 void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
   mtx4 mv, mp, m;
   vec3 rv, uv;
@@ -1315,6 +1266,20 @@ void kgmOGL::gcSetShader(void* s){
   }
   else{
     glUseProgramObject(0);
+  }
+#endif
+}
+
+void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
+{
+#ifdef GL_VERTEX_SHADER
+  if(s)
+  {
+    glBindAttribLocation((GLhandle)s, i, attr);
+    GLenum err = glGetError();
+
+    if(err != GL_NO_ERROR)
+      kgm_log() << "Error glBindAttribLocation: " << (s32)err << "\n";
   }
 #endif
 }

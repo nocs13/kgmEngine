@@ -14,9 +14,15 @@ varying vec3   V;
 varying vec3   L;
 varying vec2   Texcoord;
 
+attribute vec3 g_Vertex;
+attribute vec3 g_Normal;
+attribute vec2 g_Texcoord;
+
 void main(void)
 {
+   vec3 vvv = g_Vertex;
    V = vec4(g_mTran * gl_Vertex).xyz;
+//   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
    N  = normalize(vec3(g_mTran * vec4(gl_Normal, 0.0)));
    L  = normalize(g_vLight.xyz - V);
 
@@ -41,7 +47,7 @@ void main( void )
  vec4 normal    = texture2D(g_txNormal,   Texcoord);
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- normal.xyz += N;
+ normal.xyz = normal.xyz + N;
  normal.xyz = normalize(normal.xyz);
 
  float intensity  = 1.0;

@@ -42,6 +42,7 @@ public:
  void set(const char*, mtx4&);
  void set(const char*, int);
  void set(const char*, void*);
+ void attr(int, const char*);
 
  kgmIGraphics* gc(){ return m_gc; }
 };

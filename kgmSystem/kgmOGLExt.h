@@ -85,6 +85,7 @@ extern PFNGLUNIFORM4FVARBPROC           glUniform4fvARB;
 extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fvARB;
 extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
 extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
+extern PFNGLBINDATTRIBLOCATIONPROC      glBindAttribLocation;
 
 
 #define glActiveTexture          glActiveTextureARB

@@ -5,10 +5,6 @@
 class kgmGameSettings{
 public:
  short  m_gsid;
-// int	m_width;
-// int	m_height;
-// int	m_bpp;
-// bool	m_fullscreen;
 
  kgmString m_name;
 

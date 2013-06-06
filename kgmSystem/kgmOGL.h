@@ -169,6 +169,7 @@ public:
   void* gcGenShader(const char*, const char*);
   void  gcFreeShader(void* s);
   void  gcSetShader(void* s);
+  void  gcBindAttribute(void* s, int i, const char* attr);
   void  gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val);
   void  gcUniformMatrix(void* s, u32, u32, const char*, void*);
   void  gcUniformSampler(void* s, const char*, void*);

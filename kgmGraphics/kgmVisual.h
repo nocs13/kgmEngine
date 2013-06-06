@@ -148,6 +148,7 @@ public:
   mtx4*                  m_tm_joints;
   u32                    m_last_update;
 
+  static  bool           AnimateVertices;
 public:
   kgmVisual()
   {
@@ -271,40 +272,43 @@ private:
       //m_tm_joints[i] = jframe;
     }
 
-    for(int j = 0; j < m_visuals.size(); j++)
+    if(AnimateVertices)
     {
-      Visual* v = m_visuals[j];
-
-      if(!v->skin)
-        continue;
-
-      kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
-      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
-
-      for(int i = 0; i < v->mesh->vcount(); i++)
+      for(int j = 0; j < m_visuals.size(); j++)
       {
-        vec3   pos(0, 0, 0);
-        vec3   bpos = vbase[i].pos;
-        float* wght = (float*)(vbase[i].bw);
-        int*   indx = (int*)(vbase[i].bi);
+        Visual* v = m_visuals[j];
 
-        for(int j = 0; j < 4; j++)
+        if(!v->skin)
+          continue;
+
+        kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
+        kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
+
+        for(int i = 0; i < v->mesh->vcount(); i++)
         {
-          int   bi = (int)indx[j];
-          float w  = wght[j];
+          vec3   pos(0, 0, 0);
+          vec3   bpos = vbase[i].pos;
+          float* wght = (float*)(vbase[i].bw);
+          int*   indx = (int*)(vbase[i].bi);
 
-          if(bi < 0)
+          for(int j = 0; j < 4; j++)
           {
-            if(j < 1)
-              pos = bpos;
-            break;
+            int   bi = (int)indx[j];
+            float w  = wght[j];
+
+            if(bi < 0)
+            {
+              if(j < 1)
+                pos = bpos;
+              break;
+            }
+
+
+            pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
           }
 
-
-          pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
+          verts[i].pos = pos;
         }
-
-        verts[i].pos = pos;
       }
     }
 
