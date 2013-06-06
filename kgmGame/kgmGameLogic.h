@@ -3,6 +3,8 @@
 
 #include "../kgmBase/kgmObject.h"
 #include "kgmActor.h"
+#include "kgmSensor.h"
+#include "kgmTrigger.h"
 
 class kgmGameLogic : public kgmObject
 {
@@ -13,31 +15,13 @@ public:
       ACTION_OBJECT
   };
 
-  class Sensor
-  {
-    kgmActor* actor;
-
-  public:
-    Sensor(kgmActor* a)
-    {
-      actor = a;
-    }
-
-    virtual void sense(){}
-  };
-
-  class Trigger
-  {
-
-  };
-
 public:
-  kgmList<kgmActor*>      m_actors;
-  kgmList<Sensor*>        m_sensors;
-  kgmList<Trigger*>       m_triggers;
+  kgmList<kgmActor*>       m_actors;
+  kgmList<kgmSensor*>      m_sensors;
+  kgmList<kgmTrigger*>     m_triggers;
+  kgmList<kgmGameObject*>  m_objects;
 
   kgmActor*               m_gameplayer;
-
   kgmActor*               m_player;
 
 public:
@@ -45,15 +29,16 @@ public:
     virtual ~kgmGameLogic();
 
     void clear();
-    bool add(kgmActor* a);
-    bool add(Sensor*);
-    bool add(Trigger*);
+    bool add(kgmActor*);
+    bool add(kgmGameObject*);
+    bool add(kgmSensor*);
+    bool add(kgmTrigger*);
 
     virtual void action(ACTION, void* src, int arg){}
     virtual void input(int, int);
     virtual void update(u32 milliseconds);
 
-    virtual kgmObject* createGameObject(kgmString t);
+    virtual kgmGameObject* createGameObject(kgmString t);
 
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;

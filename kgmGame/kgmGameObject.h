@@ -76,7 +76,6 @@ public:
       m_body->rotate(q);
   }
 
-
   void setParent(kgmGameObject* a)
   {
     if(!a)

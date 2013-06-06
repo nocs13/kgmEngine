@@ -42,7 +42,7 @@ public:
     return null;//kgmGameLogic::createActor(t);
   }
 
-  kgmObject*  createGameObject(kgmString t)
+  kgmGameObject*  createGameObject(kgmString t)
   {
     if(t == "RenTao")
     {

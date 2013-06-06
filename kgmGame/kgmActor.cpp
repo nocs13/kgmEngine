@@ -47,7 +47,7 @@ void kgmActor::exit()
 void kgmActor::init()
 {
  m_transform.translate(m_body->m_position);
- m_body->m_gravity = true;
+ //m_body->m_gravity = true;
 
  if(m_visual && m_visual->m_visuals.size() > 0)
  {

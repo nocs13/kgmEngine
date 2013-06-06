@@ -689,7 +689,7 @@ kgmGameNode* kgmGameBase::loadXml(kgmString& path)
         quat q;
         xmlAttr(cnode, "value", q);
         if(act)
-          act->setRotation(q);
+          act->setQuaternion(q);
       }else if(id == "State"){
         kgmString s;
         xmlAttr(cnode, "value", s);
@@ -970,7 +970,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
 
         if(act && type == TypeActor)
-          act->setRotation(q);
+          act->setQuaternion(q);
       }
       else if(id == "State")
       {

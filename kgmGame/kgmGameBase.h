@@ -5,6 +5,8 @@
 #include "kgmGameGraphics.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameLogic.h"
+
+#include "kgmGameObject.h"
 #include "kgmActor.h"
 
 #include "kgmGameSettings.h"

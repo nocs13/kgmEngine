@@ -22,103 +22,104 @@
 
 class kgmActor: public kgmGameObject
 {
-    KGM_OBJECT(kgmActor)
-public:
-    class State
-    {
-    public:
-        kgmString id;
-        kgmString type;
-        kgmString switchto;
-
-        u32       priopity;
-        u32       time;
-
-        kgmSound*     sound;
-        kgmAnimation* animation;
-        u32           fstart, fend;
-
-        kgmTab<kgmString, kgmString> options;
-    };
-
-    struct Animation
-    {
-        kgmAnimation* animation;
-        u32           start;
-        u32           end;
-    };
+  KGM_OBJECT(kgmActor);
 
 public:
-    u32     m_uid;
-    u32     m_type;
-    u32     m_bearing;
+  class State
+  {
+  public:
+    kgmString id;
+    kgmString type;
+    kgmString switchto;
 
-    u32     m_group;
-    u32     m_birth;
-    u32     m_health;
-    u32     m_attack;
-    u32     m_defence;
-    u32     m_evasion;
-    u32     m_accuracy;
-    u32     m_timeout;
+    u32       priopity;
+    u32       time;
 
-    mtx4    m_transform;
-    mtx4    m_dvisual;      //visual transform
+    kgmSound*     sound;
+    kgmAnimation* animation;
+    u32           fstart, fend;
 
-    kgmString m_id;
-    kgmString m_name;
-    kgmString m_class;
+    kgmTab<kgmString, kgmString> options;
+  };
 
-    kgmList<State*>     m_states;
-    kgmList<kgmDummy*>  m_dummies;
+  struct Animation
+  {
+    kgmAnimation* animation;
+    u32           start;
+    u32           end;
+  };
 
-    kgmAnimation*       m_animation;
-    kgmSkeleton*        m_skeleton;
-    State*              m_state;
-    bool                m_gameplayer;
 public:
-    kgmActor();
-    virtual ~kgmActor();
+  u32     m_uid;
+  u32     m_type;
+  u32     m_bearing;
 
-    virtual void init();
-    virtual void exit();
-    virtual void update(u32);
-    virtual void input(u32, int);
+  u32     m_group;
+  u32     m_birth;
+  u32     m_health;
+  u32     m_attack;
+  u32     m_defence;
+  u32     m_evasion;
+  u32     m_accuracy;
+  u32     m_timeout;
 
-    void remove();
+  mtx4    m_transform;
+  mtx4    m_dvisual;      //visual transform
 
-    void enable(bool s);
-    void active(bool a);
-    void visible(bool a);
+  kgmString m_id;
+  kgmString m_name;
+  kgmString m_class;
 
-    bool enabled();
-    bool removed();
+  kgmList<State*>     m_states;
+  kgmList<kgmDummy*>  m_dummies;
 
-    void setPosition(vec3& v);
-    void setRotation(vec3& r);
-    void setRotation(quat& r);
-    void setDirection(vec3& d);
+  kgmAnimation*       m_animation;
+  kgmSkeleton*        m_skeleton;
+  State*              m_state;
+  bool                m_gameplayer;
+public:
+  kgmActor();
+  virtual ~kgmActor();
 
-    void setParent(kgmActor* a);
-    void addChild(kgmActor* a);
-    void delChild(kgmActor* a);
+  virtual void init();
+  virtual void exit();
+  virtual void update(u32);
+  virtual void input(u32, int);
 
-    void add(kgmDummy* m)
+  void remove();
+
+  void enable(bool s);
+  void active(bool a);
+  void visible(bool a);
+
+  bool enabled();
+  bool removed();
+
+  //void setPosition(vec3& v);
+  //void setRotation(vec3& r);
+  //void setRotation(quat& r);
+  void setDirection(vec3& d);
+
+  void setParent(kgmActor* a);
+  void addChild(kgmActor* a);
+  void delChild(kgmActor* a);
+
+  void add(kgmDummy* m)
+  {
+    if(m)
+      m_dummies.add(m);
+  }
+
+  void setAnimation(kgmAnimation* a)
+  {
+    if(a)
     {
-        if(m)
-            m_dummies.add(m);
+      m_animation = a;
+      m_visual->setAnimation(a);
     }
+  }
 
-    void setAnimation(kgmAnimation* a)
-    {
-      if(a)
-      {
-        m_animation = a;
-        m_visual->setAnimation(a);
-      }
-    }
-
-    bool setState(kgmString s, bool force = false);
+  bool setState(kgmString s, bool force = false);
 };
 
 typedef kgmList<kgmActor*> kgmActors;
