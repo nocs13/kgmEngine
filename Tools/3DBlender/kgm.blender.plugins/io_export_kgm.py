@@ -72,15 +72,24 @@ class kgm_object(bpy.types.Operator):
 
  def execute(self, context):
      print("Exec object \n")
+     
+     animaniacs = [  ( "dummy", "dummy", "kgmDummy object" ), 
+                     ( "actor", "actor", "kgmActor object" ),
+                     ( "object", "object", "kgmGameObject object" )]
+     
      bpy.types.Object.kgm = bpy.props.BoolProperty()
-     bpy.types.Object.kgm_actor = bpy.props.BoolProperty()
+     bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm object', items=animaniacs, description='select kgm object')
+#     bpy.types.Object.kgm_actor = bpy.props.BoolProperty()
+#     bpy.types.Object.kgm_dummy = bpy.props.BoolProperty()
      bpy.types.Object.kgm_state = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
      bpy.ops.object.add()
      a = bpy.context.object
      a.name = "kgmObject"
      a.kgm = True
-     a.kgm_actor = False
+     a.kgm_type = "object";
+#     a.kgm_actor = False
+#     a.kgm_dummy = False
      a.kgm_state = "None"
      a.kgm_object = "None"
      return {'FINISHED'}
@@ -402,7 +411,8 @@ class kgmBoneAnimation(kgmAnimation):
 class kgmObject:
  def __init__(self, o):
   self.name = o.name
-  self.actor = o.kgm_actor
+  self.gtype = o.kgm_type
+#  self.actor = o.kgm_actor
   self.state = o.kgm_state
   self.gobject = o.kgm_object
   self.mtx = o.matrix_world
@@ -631,12 +641,17 @@ class kgmExport(bpy.types.Operator):
 
   #kgm_objects
   for a in gobjects:
-   if a.actor:
+   if a.gtype == "actor":
     file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
     file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
     file.write("  <State value='" + a.state + "'/>\n")
     file.write(" </kgmActor>\n")
+   elif a.gtype == "dummy":
+    file.write(" <kgmDummy name='" + a.name + "' parent='" + a.linked + "'>\n")
+    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+    file.write(" </kgmDummy>\n")
    else:
     file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")

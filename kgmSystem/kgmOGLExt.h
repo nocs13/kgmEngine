@@ -85,7 +85,7 @@ extern PFNGLUNIFORM4FVARBPROC           glUniform4fvARB;
 extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fvARB;
 extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
 extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
-extern PFNGLBINDATTRIBLOCATIONPROC      glBindAttribLocation;
+extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
 
 
 #define glActiveTexture          glActiveTextureARB
@@ -103,32 +103,33 @@ extern PFNGLBINDATTRIBLOCATIONPROC      glBindAttribLocation;
 #define glBindFramebuffer        glBindFramebufferEXT
 #define glFramebufferTexture2D   glFramebufferTexture2DEXT
 #define glCheckFramebufferStatus glCheckFramebufferStatusEXT
-#define glCreateShaderObject   glCreateShaderObjectARB
-#define glCreateProgramObject  glCreateProgramObjectARB
-#define glDeleteObject         glDeleteObjectARB
-#define glShaderSource         glShaderSourceARB
-#define glCompileShader        glCompileShaderARB
-#define glAttachObject         glAttachObjectARB
-#define glDetachObject         glDetachObjectARB
-#define glLinkProgram          glLinkProgramARB
-#define glValidateProgram      glValidateProgramARB
-#define glUseProgramObject     glUseProgramObjectARB
-#define glGetObjectParameterfv glGetObjectParameterfvARB
-#define glGetObjectParameteriv glGetObjectParameterivARB
-#define glGetInfoLog           glGetInfoLogARB
-#define glGetUniformLocation   glGetUniformLocationARB
-#define glUniform1i            glUniform1iARB
-#define glUniform1iv           glUniform1ivARB
-#define glUniform2iv           glUniform2ivARB
-#define glUniform3iv           glUniform3ivARB
-#define glUniform4iv           glUniform4ivARB
-#define glUniform1fv           glUniform1fvARB
-#define glUniform2fv           glUniform2fvARB
-#define glUniform3fv           glUniform3fvARB
-#define glUniform4fv           glUniform4fvARB
-#define glUniformMatrix2fv     glUniformMatrix2fvARB
-#define glUniformMatrix3fv     glUniformMatrix3fvARB
-#define glUniformMatrix4fv     glUniformMatrix4fvARB
+#define glCreateShaderObject     glCreateShaderObjectARB
+#define glCreateProgramObject    glCreateProgramObjectARB
+#define glDeleteObject           glDeleteObjectARB
+#define glShaderSource           glShaderSourceARB
+#define glCompileShader          glCompileShaderARB
+#define glAttachObject           glAttachObjectARB
+#define glDetachObject           glDetachObjectARB
+#define glLinkProgram            glLinkProgramARB
+#define glValidateProgram        glValidateProgramARB
+#define glUseProgramObject       glUseProgramObjectARB
+#define glGetObjectParameterfv   glGetObjectParameterfvARB
+#define glGetObjectParameteriv   glGetObjectParameterivARB
+#define glGetInfoLog             glGetInfoLogARB
+#define glGetUniformLocation     glGetUniformLocationARB
+#define glUniform1i              glUniform1iARB
+#define glUniform1iv             glUniform1ivARB
+#define glUniform2iv             glUniform2ivARB
+#define glUniform3iv             glUniform3ivARB
+#define glUniform4iv             glUniform4ivARB
+#define glUniform1fv             glUniform1fvARB
+#define glUniform2fv             glUniform2fvARB
+#define glUniform3fv             glUniform3fvARB
+#define glUniform4fv             glUniform4fvARB
+#define glUniformMatrix2fv       glUniformMatrix2fvARB
+#define glUniformMatrix3fv       glUniformMatrix3fvARB
+#define glUniformMatrix4fv       glUniformMatrix4fvARB
+#define glBindAttribLocation     glBindAttribLocationARB
 #endif
 
 #ifdef WIN32
