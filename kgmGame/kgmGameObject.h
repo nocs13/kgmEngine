@@ -10,11 +10,14 @@ class kgmGameObject : public kgmObject
   KGM_OBJECT(kgmGameObject);
 
 private:
-  bool    m_enable;
-  bool    m_active;
-  bool    m_remove;
-  bool    m_culled;
-  bool    m_visible;
+  kgmString m_id;
+  kgmString m_class;
+
+  bool      m_enable;
+  bool      m_active;
+  bool      m_remove;
+  bool      m_culled;
+  bool      m_visible;
 
 protected:
   vec3        m_position;
@@ -51,6 +54,16 @@ public:
   void deactivate() { m_active = false;  }
   void show()       { m_visible = true;  }
   void hide()       { m_visible = false; }
+
+  void setId(kgmString s)
+  {
+    m_id = s;
+  }
+
+  kgmString getId()
+  {
+    return m_id;
+  }
 
   void setPosition(vec3& v)
   {

@@ -20,6 +20,8 @@ class kgmMesh: public kgmResource{
   KGM_OBJECT(kgmMesh);
 public:
   enum FVF{
+    FVF_P,        // = (gcv_xyz) ,
+    FVF_P_T,        // = (gcv_xyz|gcv_uv0) ,
     FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T2,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
@@ -34,6 +36,10 @@ public:
 
   struct Vertex{
     vec3 pos;
+  };
+
+  struct Vertex_P_T: public Vertex{
+    vec2 uv;
   };
 
   struct Vertex_P_N: public Vertex{

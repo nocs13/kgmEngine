@@ -136,13 +136,13 @@ void kgmPhysics::doCollision(float dtime){
     rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
 
     //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
-    if(body->m_upforce > 0.0f){
+    if(body->m_speed_up > 0.0f){
       upstare = true;
-      epos.z  = spos.z + body->m_upforce * ctime;
-      body->m_upforce -= (body->m_upforce * 0.2);
+      epos.z  = spos.z + body->m_speed_up * ctime;
+      body->m_speed_up -= (body->m_speed_up * 0.2);
 
-      if(body->m_upforce < 1.0f)
-        body->m_upforce = 0.0f;
+      if(body->m_speed_up < 1.0f)
+        body->m_speed_up = 0.0f;
     }
 
     if(m_gravity && body->m_gravity && !upstare){
@@ -223,7 +223,7 @@ void kgmPhysics::doCollision(float dtime){
           epos.z = z - rz;
       }
       ///*
-      if(m_gravity && body->m_gravity && (!upstare) && (body->m_upforce <= 0.0f)){
+      if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f)){
         d.z -= gdist;
         //if(m_collision.collision(d, g, 0.1f, b, mtr)){
         m_collision.reset();

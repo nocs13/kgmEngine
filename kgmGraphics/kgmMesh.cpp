@@ -61,6 +61,14 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
    m_vertices = new Vertex_P_N_C_T[count];
    m_fvf = FVF_P_N_C_T;
    break;
+ case FVF_P_T:
+   m_vertices = new Vertex_P_T[count];
+   m_fvf = FVF_P_T;
+   break;
+ case FVF_P:
+   m_vertices = new Vertex[count];
+   m_fvf = FVF_P;
+   break;
  default:
    m_vertices = new Vertex[count];
    m_fvf = FVF_P_N_C;

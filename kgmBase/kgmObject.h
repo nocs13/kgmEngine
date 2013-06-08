@@ -22,9 +22,9 @@ struct kgmRuntime{
   
 
 #define KGMOBJECT_IMPLEMENT(o_class, o_parent)	\
- kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class} ;	\
- o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }	\
- kgmRuntime& o_class::runtime() { return o_class::Class; }	
+ kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class}; \
+ o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; } \
+ kgmRuntime& o_class::runtime() { return o_class::Class; }
 
 //base class for kgm_engine project objects
 class kgmObject{

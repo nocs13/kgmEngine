@@ -9,6 +9,7 @@
 #include "Actors/ATaoRen.h"
 #include "Actors/AKomble.h"
 #include "Actors/ASpacer.h"
+#include "Actors/ASpacerObjects.h"
 
 class kLogic: public kgmGameLogic
 {
@@ -20,27 +21,6 @@ public:
     game = g;
   }
 
-  kgmActor* createActor(kgmString t)
-  {
-    if(t == "RenTao")
-    {
-      return new ATaoRen(game);
-    }
-    else if(t == "HyugaNeji")
-    {
-
-    }
-    else if(t == "Komble")
-    {
-      return new AKomble(game);
-    }
-    else if(t == "KSpacer")
-    {
-      return new ASpacer(game);
-    }
-
-    return null;//kgmGameLogic::createActor(t);
-  }
 
   kgmGameObject*  createGameObject(kgmString t)
   {
@@ -59,6 +39,10 @@ public:
     else if(t == "KSpacer")
     {
       return new ASpacer(game);
+    }
+    else if(t == "MotorA")
+    {
+      return new ASp_MotorA(game);
     }
 
     return kgmGameLogic::createGameObject(t);

@@ -10,21 +10,24 @@ class kgmShader;
 #define KGM_TEXTURES_PER_MATERIAL 8
 
 class kgmMaterial: public kgmResource{
-  KGM_OBJECT(kgmMaterial)
-  protected:
+  KGM_OBJECT(kgmMaterial);
+protected:
   kgmIGraphics*  m_gc;
+
 public:
-  enum Flags{
-    MF_Color		= 1 << 0L,
-    MF_Depth		= 1 << 1L,
-    MF_Stencil	        = 1 << 2L,
-    MF_Blend		= 1 << 3L,
-    MF_Alpha		= 1 << 4L,
-    MF_Cull		= 1 << 5L,
-    MF_Textures	  = 1 << 6L,
+  enum Flags
+  {
+    MF_Color     = 1 << 0L,
+    MF_Depth     = 1 << 1L,
+    MF_Stencil   = 1 << 2L,
+    MF_Blend     = 1 << 3L,
+    MF_Alpha     = 1 << 4L,
+    MF_Cull      = 1 << 5L,
+    MF_Textures  = 1 << 6L,
   };
 
-  enum Shader{
+  enum Shader
+  {
     ShaderNone,
     ShaderBase,
     ShaderSkin,
@@ -36,7 +39,8 @@ public:
     ShaderIce
   };
 
-  class Color{
+  class Color
+  {
   public:
     union{
       struct{ float r, g, b, a; };
@@ -61,19 +65,18 @@ public:
 
 
 public:
-  Color  m_color,
-  m_specular,
-  m_emision;
-  float  m_shininess,
-  m_transparency;
+  Color  m_color, m_specular, m_emision;
+  float  m_shininess, m_alpha, m_transparency;
 
 
-  kgmTexture *m_tex_color,
-  *m_tex_normal,
-  *m_tex_specular;
+  kgmTexture *m_tex_color, *m_tex_normal, *m_tex_specular;
 
   Shader      m_shader;
   u32         m_flags;            //render specisific flags enable/disable
+
+  bool        m_2side;
+
+  kgmString   m_type;
 public:
   kgmMaterial();
   ~kgmMaterial();

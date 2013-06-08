@@ -50,6 +50,8 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
   m_has_shaders = false;
   m_has_buffers = false;
+  m_alpha       = false;
+  m_culling     = true;
 
   gui_style = new kgmGuiStyle();
 
@@ -280,7 +282,7 @@ void kgmGameGraphics::render(Mesh *m){
   }
 
   if(m->m_mtrl){
-    //render((kgmMaterial*)null);
+    render((kgmMaterial*)null);
   }
 }
 
@@ -312,7 +314,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());
     // */
-    //render((kgmMaterial*)null);
+    render((kgmMaterial*)null);
   }
 
   visual->update();
@@ -350,6 +352,18 @@ void kgmGameGraphics::render(kgmMaterial* m){
 
     render((kgmShader*)null);
 
+    if(!m_culling)
+    {
+      gc->gcCull(1);
+      m_culling = true;
+    }
+
+    if(m_alpha)
+    {
+      gc->gcAlpha(false, 0, 0);
+      m_alpha = false;
+    }
+
     return;
   }
 
@@ -363,6 +377,18 @@ void kgmGameGraphics::render(kgmMaterial* m){
   else
   {
     render((kgmShader*)null);
+  }
+
+  if(m->m_transparency > 0)
+  {
+    gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
+    m_alpha = true;
+  }
+
+  if(m->m_2side)
+  {
+    gc->gcCull(0);
+    m_culling = false;
   }
 
   if(m->m_tex_color){

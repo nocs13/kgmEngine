@@ -137,6 +137,9 @@ private:
 
   bool  m_has_shaders;
   bool  m_has_buffers;
+
+  bool  m_alpha;
+  bool  m_culling;
 public:
   kgmGameGraphics(kgmIGraphics*, kgmIResources*);
   ~kgmGameGraphics();

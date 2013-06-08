@@ -31,6 +31,24 @@ public:
       mtx4 m;
       m.rotate(0.5 * PI, v);
       m_visual->m_transform = m * m_visual->m_transform;
+
+      for(int i = 0; i < m_dummies.length(); i++)
+      {
+        kgmDummy*       dm = m_dummies[i];
+        kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
+
+        if(go && go->getVisual())
+        {
+          mtx4 m;
+          vec3 v = dm->m_shift;
+
+          v.x -= 2.0f;
+          m.identity();
+          m.translate(v);
+
+          go->getVisual()->m_transform = m * m_visual->m_transform;
+        }
+      }
     }
 
     if(m_gameplayer)

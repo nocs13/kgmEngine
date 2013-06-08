@@ -1,11 +1,14 @@
 #include "kgmBody.h"
+KGMOBJECT_IMPLEMENT(kgmBody, kgmObject);
 
 kgmBody::kgmBody(){
   m_mass = 1.0f;
   m_friction = 0.0f;
-  m_force = 0.0f;
-  m_upforce = 0.0f;
-  m_velocity = 0.0f;
+//  m_force = 0.0f;
+  m_velocity      = 0.0f;
+  m_speed_forward = 0.0f;
+  m_speed_side    = 0.0f;
+  m_speed_up      = 0.0f;
 
   m_physics   = true;
   m_collision = true;

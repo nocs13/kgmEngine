@@ -809,7 +809,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         if(act)
         {
           xml.attribute("name", s);
-          act->m_name = s;
+          act->setId(s);
           xml.attribute("player", s);
 
           if(s == "on")
@@ -864,6 +864,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
     {
+      kgmString data;
       id = xml.m_tagName;
       kgm_log() << "Node: " << (char*)id << "\n";
 
@@ -879,13 +880,22 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       else if(id == "Shininess")
       {
       }
-      else if(id == "Transparency")
+      else if(id == "Alpha")
       {
+        if(xml.attribute("value", data))
+        {
+          float a;
+
+          sscanf(data, "%f", &a);
+          mtl->m_transparency = 1.0f - a;
+        }
+      }
+      else if(id == "Cull")
+      {
+        mtl->m_2side = true;
       }
       else if(id == "map_color")
       {
-        kgmString data;
-
         if(xml.attribute("value", data))
         {
           mtl->m_tex_color = m_resources->getTexture(data);
@@ -1129,6 +1139,78 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       else
         actor->getBody()->m_gravity = false;
     }
+    else if(id == "Dummies")
+    {
+      kgmMemory<char> mem;
+      a_node->node(i)->attribute("value", val);
+
+      if((val.length() > 0) && m_resources->getFile(val, mem))
+      {
+        kgmXml xml(mem);
+
+        if(xml.m_node)
+        {
+          for(int i = 0; i < xml.m_node->nodes(); i++)
+          {
+            kgmXml::Node* node = xml.m_node->node(i);
+
+            if(node->m_name == "kgmDummy")
+            {
+              kgmDummy* dummy = new kgmDummy();
+
+              actor->add(dummy);
+              node->attribute("name", dummy->m_id);
+
+              for(int j = 0; j < node->nodes(); j++)
+              {
+                kgmXml::Node* jnode = node->node(j);
+
+                if(jnode->m_name == "Position")
+                {
+                  kgmString spos;
+                  vec3      v;
+
+                  jnode->attribute("value", spos);
+                  sscanf(spos, "%f %f %f", &v.x, &v.y, &v.z);
+                  dummy->setShift(v);
+                }
+              }
+            }
+          }
+
+          xml.close();
+        }
+
+        mem.clear();
+      }
+    }
+    else if(id == "GameObject")
+    {
+      kgmString id, type, dummy;
+
+      a_node->node(i)->attribute("id",    id);
+      a_node->node(i)->attribute("type",  type);
+      a_node->node(i)->attribute("dummy", dummy);
+
+      kgmGameObject* go = m_logic->createGameObject(type);
+
+      if(go)
+      {
+        go->setId(id);
+        actor->addChild(go);
+
+        kgmDummy* dm = actor->dummy(dummy);
+
+        if(dm)
+          dm->attach(go, kgmDummy::AttachToObject);
+
+        if(go->getBody())
+          m_physics->add(go->getBody());
+
+        if(go->getVisual())
+          m_render->add(go->getVisual());
+      }
+    }
     else if(id == "Visual")
     {
       kgmMesh*      msh = 0;
@@ -1208,7 +1290,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     }
   }
 
-  kgm_log() << "\nActor: " << actor->m_name.data();
+  kgm_log() << "\nActor: " << actor->getId();
 
   return actor;
 }

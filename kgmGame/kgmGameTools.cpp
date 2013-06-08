@@ -440,19 +440,37 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
       sscanf(val.data(), "%f %f %f ", &farr[0], &farr[1], &farr[2]);
       mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], 1.0);
     }
-    if(id == "map_color"){
+    else if(id == "Alpha")
+    {
+      if(mnode->node(i)->attribute("value", val))
+      {
+        float a;
+
+        sscanf(val, "%f", &a);
+        mtl->m_transparency = 1.0f - a;
+      }
+    }
+    else if(id == "Cull")
+    {
+      mtl->m_2side = true;
+    }
+    else if(id == "map_color")
+    {
       mnode->node(i)->attribute("value", val);
       mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
     }
-    if(id == "map_normal"){
+    else if(id == "map_normal")
+    {
       mnode->node(i)->attribute("value", val);
       mtl->m_tex_normal = kgmIGame::getGame()->getResources()->getTexture(val);
     }
-    if(id == "map_specular"){
+    else if(id == "map_specular")
+    {
       mnode->node(i)->attribute("value", val);
       mtl->m_tex_specular = kgmIGame::getGame()->getResources()->getTexture(val);
     }
-    if(id == "Shader"){
+    else if(id == "Shader")
+    {
       mnode->node(i)->attribute("value", val);
       if(val == "SKIN")
         mtl->m_shader = kgmMaterial::ShaderSkin;

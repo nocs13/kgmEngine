@@ -8,6 +8,7 @@
 #include "kgmMesh.h"
 #include "kgmLight.h"
 #include "kgmSkeleton.h"
+#include "kgmParticles.h"
 
 //Graphical Object
 class kgmVisual: public kgmObject
@@ -134,7 +135,8 @@ public:
   TypeRender   m_typerender;
 
   kgmList<kgmMaterial*>  m_materials;   //material maps
-  kgmList<Visual*>       m_visuals;     //
+  kgmList<Visual*>       m_visuals;     //render geometry
+  kgmParticles*          m_particles;   //particle effect
 
 
   kgmSkeleton*           m_skeleton;
@@ -162,6 +164,8 @@ public:
 
     m_tm_joints = null;
     m_last_update = kgmTime::getTicks();
+
+    m_particles = null;
   }
 
   virtual ~kgmVisual()
@@ -178,6 +182,9 @@ public:
 
     if(m_tm_joints)
       delete [] m_tm_joints;
+
+    if(m_particles)
+      m_particles->release();
   }
 
   //Materials

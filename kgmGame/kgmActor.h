@@ -66,10 +66,6 @@ public:
   mtx4    m_transform;
   mtx4    m_dvisual;      //visual transform
 
-  kgmString m_id;
-  kgmString m_name;
-  kgmString m_class;
-
   kgmList<State*>     m_states;
   kgmList<kgmDummy*>  m_dummies;
 
@@ -100,14 +96,21 @@ public:
   //void setRotation(quat& r);
   void setDirection(vec3& d);
 
-  void setParent(kgmActor* a);
-  void addChild(kgmActor* a);
-  void delChild(kgmActor* a);
-
   void add(kgmDummy* m)
   {
     if(m)
       m_dummies.add(m);
+  }
+
+  kgmDummy* dummy(kgmString id)
+  {
+    for(int i = 0; i < m_dummies.length(); i++)
+    {
+      if(m_dummies[i]->m_id == id)
+        return m_dummies[i];
+    }
+
+    return null;
   }
 
   void setAnimation(kgmAnimation* a)

@@ -7,14 +7,17 @@ KGMOBJECT_IMPLEMENT(kgmMaterial, kgmResource);
 kgmMaterial::kgmMaterial(){
   m_flags = MF_Textures | MF_Depth | MF_Color;
 
-  m_color = Color(1.0, 1.0, 1.0, 1.0);
-  m_specular = Color(1.0, 1.0, 1.0, 1.0);
-  m_shininess = 1.0;
+  m_color        = Color(1.0, 1.0, 1.0, 1.0);
+  m_specular     = Color(1.0, 1.0, 1.0, 1.0);
+  m_alpha        = 1.0;
+  m_shininess    = 1.0;
   m_transparency = 0.0;
 
-  m_tex_color = m_tex_specular = m_tex_normal = 0;
+  m_2side        = false;
 
-  m_shader = ShaderNone;
+  m_tex_color    = m_tex_specular = m_tex_normal = 0;
+
+  m_shader       = ShaderNone;
 }
 
 kgmMaterial::~kgmMaterial(){
