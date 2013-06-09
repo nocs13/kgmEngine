@@ -2,7 +2,8 @@
 KGMOBJECT_IMPLEMENT(kgmGameObject, kgmObject);
 
 kgmGameObject::kgmGameObject()
- :m_visual(null),
+  :kgmObject(),
+  m_visual(null),
   m_body(null),
   m_parent(null)
 {
@@ -42,7 +43,23 @@ void kgmGameObject::update(u32 mls)
 
     remove();
 
+    for(int i = 0; i < m_childs.length(); i++)
+    {
+      m_childs[i]->remove();
+    }
+
     return;
+  }
+
+  for(int i = m_childs.length(); i > 0; i--)
+  {
+    kgmGameObject* child = m_childs[i - 1];
+
+    if(child->removed())
+    {
+      child->release();
+      m_childs.erase(i - 1);
+    }
   }
 
   if(getBody())

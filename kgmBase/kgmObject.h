@@ -105,6 +105,7 @@ public:
  friend class kgmApp;
 //private:
  static void releaseObjects();
+ static int  objectCount();
 };
 ///////////////////
 

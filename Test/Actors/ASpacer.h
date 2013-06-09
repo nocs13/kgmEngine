@@ -148,7 +148,11 @@ public:
   void action_shoot_laser()
   {
     kgmGameObject* go = new ASp_LaserA(game, 1000, m_body->m_position, m_body->m_direction);
-    game->gAppend(go);
+    if(game->gAppend(go))
+    {
+      addChild(go);
+      go->release();
+    }
   }
 
   void action_shoot_rocket()

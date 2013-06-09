@@ -39,3 +39,8 @@ void kgmObject::releaseObjects(void)
  g_objects.clear();
 }
 
+int kgmObject::objectCount()
+{
+  return g_objects.length();
+}
+
