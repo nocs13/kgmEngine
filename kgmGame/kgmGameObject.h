@@ -13,12 +13,13 @@ private:
   kgmString m_id;
   kgmString m_class;
 
-  bool      m_enable;
-  bool      m_active;
+  bool      m_valid;
   bool      m_remove;
   bool      m_culled;
   bool      m_visible;
 
+  u32       m_birth;
+  u32       m_timeout;
 protected:
   vec3        m_position;
   vec3        m_rotation;
@@ -37,23 +38,22 @@ public:
 
   virtual void         exit(){}
   virtual void         init(){}
-  virtual void         update(u32 mls){}
+  virtual void         update(u32 mls);
   virtual kgmBody*     getBody(){ return m_body; }
   virtual kgmVisual*   getVisual(){ return m_visual; }
 
-  bool isEnable()   { return m_enable;   }
-  bool isActive()   { return m_active;   }
-  bool isRemove()   { return m_remove;   }
-  bool isCulled()   { return m_culled;   }
-  bool isVisible()  { return m_visible;  }
+  bool valid()      { return m_valid;    }
+  bool removed()    { return m_remove;   }
+  bool culled()     { return m_culled;   }
+  bool visible()    { return m_visible;  }
 
   void remove()     { m_remove = true;   }
-  void enable()     { m_enable = true;   }
-  void disable()    { m_enable = false;  }
-  void activate()   { m_active = true;   }
-  void deactivate() { m_active = false;  }
+  void enable()     { m_valid  = true;   }
+  void disable()    { m_valid  = false;  }
   void show()       { m_visible = true;  }
   void hide()       { m_visible = false; }
+
+  void timeout(u32 t){ m_timeout = t;    }
 
   void setId(kgmString s)
   {

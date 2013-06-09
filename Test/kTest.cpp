@@ -8,8 +8,8 @@
 #include "kGui.h"
 #include "Actors/ATaoRen.h"
 #include "Actors/AKomble.h"
-#include "Actors/ASpacer.h"
 #include "Actors/ASpacerObjects.h"
+#include "Actors/ASpacer.h"
 
 class kLogic: public kgmGameLogic
 {

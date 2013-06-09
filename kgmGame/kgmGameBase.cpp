@@ -357,17 +357,20 @@ void kgmGameBase::onClose()
 }
 
 void kgmGameBase::onKeyUp(int k){
-  m_input[m_keymap[k]] = 0;
-
-  if(m_logic && m_state == State_Play)
+  if(m_logic && m_state == State_Play && m_input[m_keymap[k]] != 0)
+  {
     m_logic->input(m_keymap[k], 0);
+    m_input[m_keymap[k]] = 0;
+  }
 }
 
 void kgmGameBase::onKeyDown(int k){
-  m_input[m_keymap[k]] = 1;
-
-  if(m_logic && m_state == State_Play)
+  if(m_logic && m_state == State_Play && m_input[m_keymap[k]] != 1)
+  {
     m_logic->input(m_keymap[k], 1);
+    m_input[m_keymap[k]] = 1;
+
+  }
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y){
@@ -484,6 +487,24 @@ void kgmGameBase::gPause(bool s){
   }
 }
 
+bool kgmGameBase::gAppend(kgmGameObject* go)
+{
+  if(!go || m_state != State_Play)
+    return false;
+
+  if(m_render && go->getVisual())
+    m_render->add(go->getVisual());
+
+  if(m_physics && go->getBody())
+    m_physics->add(go->getBody());
+
+  if(m_logic)
+    m_logic->add(go);
+
+  return true;
+}
+
+
 ///////////////////////////////////////
 kgmTexture* kgmGameBase::getTexture(char* id){
   return kgmIGame::getGame()->getResources()->getTexture(id);
@@ -555,7 +576,7 @@ inline void xmlAttr(kgmXml::Node* node, const char* id, quat& val)
 // Load XML and generate kgmGameNode object
 //
 
-kgmGameNode* kgmGameBase::loadXml(kgmString& path)
+void* kgmGameBase::loadXml(kgmString& path)
 {
 #define None     0
 #define Material 1
@@ -1245,6 +1266,17 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         actor->getVisual()->setAnimation(anm);
         actor->getVisual()->setSkeleton(skl);
       }
+    }
+    else if(id == "Input")
+    {
+      u32 btn, stat;
+      kgmString state;
+
+      a_node->node(i)->attribute("button",  val); sscanf(val, "%i", &btn);
+      a_node->node(i)->attribute("status",  val); sscanf(val, "%i", &stat);
+      a_node->node(i)->attribute("state",  state);
+
+      actor->add(btn, stat, state);
     }
     else if(id == "State")
     {

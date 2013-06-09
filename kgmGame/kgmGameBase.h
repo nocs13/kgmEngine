@@ -92,15 +92,15 @@ public:
 
  void onInputAction(int action, int argument);
 
- int  gLoad(kgmString);     //load game level
- int  gUnload();            //load game level
- int  gCommand(kgmString);  //do string command
- int  gQuit();              //quit from level
- u32  gState();             //check game state
- void gPause(bool);         //render game scene
- void gRender();            //render game scene
-
- kgmActor*    gSpawn(kgmString); //spawns and add the actor
+ int        gLoad(kgmString);        //load game level
+ int        gUnload();               //unload game level
+ int        gCommand(kgmString);     //do string command
+ int        gQuit();                 //quit from level
+ u32        gState();                //check game state
+ void       gPause(bool);            //render game scene
+ void       gRender();               //render game scene
+ kgmActor*  gSpawn(kgmString);       //spawns the actor
+ bool       gAppend(kgmGameObject*); //add game object in scene
 
  bool gMapBinary(kgmString&);
  bool gMapAscii(kgmString&);
@@ -122,10 +122,10 @@ protected:
  kgmTexture*    getTexture(char*);
  kgmShader*	    getShader(char*);
  kgmMesh*	      getMesh(char*);
- kgmActor*	    getActor(kgmString);
- kgmAnimation*	getAnimation(char*);
+ kgmActor*	     getActor(kgmString);
+ kgmAnimation*	 getAnimation(char*);
 
- kgmGameNode*   loadXml(kgmString& path);
+ void*          loadXml(kgmString& path);
  bool           loadXml_II(kgmString& path);
 
 

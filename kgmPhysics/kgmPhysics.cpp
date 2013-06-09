@@ -115,11 +115,15 @@ void kgmPhysics::doCollision(float dtime){
     float ctime  = dtime;// + kgmTime::getTicks() - stime;
 
     kgmBody* body = m_bodies[i];
-    if(!body->m_physics)
+    if(!body->m_valid)
       continue;
 
     if(!body->m_collision)
+    {
+      body->m_position = body->m_position + body->m_direction * body->m_velocity * dtime;
+
       continue;
+    }
 
     //body->m_V.z = 0.0f;
     vec3 bdPos = m_ptCurrent = body->m_position;
@@ -163,7 +167,7 @@ void kgmPhysics::doCollision(float dtime){
       kgmBody* cbody = m_bodies[k];
       if(cbody == body)
         continue;
-      if(!cbody || !cbody->m_physics)
+      if(!cbody || !cbody->m_valid)
         continue;
       /*
    box	 a = body->m_bound;

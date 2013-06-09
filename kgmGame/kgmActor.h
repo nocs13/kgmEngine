@@ -25,7 +25,7 @@ class kgmActor: public kgmGameObject
   KGM_OBJECT(kgmActor);
 
 public:
-  class Input
+  struct Input
   {
     u32        input;
     u32        status;
@@ -37,6 +37,7 @@ public:
   public:
     kgmString id;
     kgmString type;
+    kgmString action;
     kgmString switchto;
 
     u32       priopity;
@@ -62,13 +63,11 @@ public:
   u32     m_bearing;
 
   u32     m_group;
-  u32     m_birth;
   u32     m_health;
   u32     m_attack;
   u32     m_defence;
   u32     m_evasion;
   u32     m_accuracy;
-  u32     m_timeout;
 
   mtx4    m_transform;
   mtx4    m_dvisual;      //visual transform
@@ -90,6 +89,7 @@ public:
   virtual void exit();
   virtual void update(u32);
   virtual void input(u32, int);
+  virtual void action(kgmString s);
 
   void remove();
 
@@ -120,6 +120,15 @@ public:
     }
 
     return null;
+  }
+
+  void add(u32 btn, u32 stat, kgmString state)
+  {
+    Input inp;
+    inp.input = btn;
+    inp.state = state;
+    inp.status = stat;
+    m_inputs.add(inp);
   }
 
   void setAnimation(kgmAnimation* a)

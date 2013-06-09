@@ -123,7 +123,7 @@ class kgmSystem;
 class kgmWindow;
 class kgmEnvironment;
 
-class kgmGameNode;
+class kgmGameObject;
 
 class kgmIGame{
 public:
@@ -139,12 +139,13 @@ public:
 public:  //virtuals
   //virtual kgmActor*      genActor(kgmString) = 0;
 
-  virtual int            gLoad(kgmString) = 0;      //load game map
-  virtual int            gUnload() = 0;             //load game map
-  virtual int            gCommand(kgmString) = 0;   //do command
-  virtual int            gQuit() = 0;               //close game
-  virtual u32            gState() = 0;              //check game active  state
-  virtual kgmActor*      gSpawn(kgmString) = 0;
+  virtual int            gLoad(kgmString) = 0;            //load game map
+  virtual int            gUnload() = 0;                   //load game map
+  virtual int            gCommand(kgmString) = 0;         //do command
+  virtual int            gQuit() = 0;                     //close game
+  virtual u32            gState() = 0;                    //check game active  state
+  virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
+  virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
 
   virtual void           addGui(kgmGui* g) = 0;
 

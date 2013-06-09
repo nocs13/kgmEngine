@@ -69,6 +69,8 @@ public:
     if(!m_gameplayer)
       return;
 
+    kgmActor::input(btn, state);
+
     switch(btn)
     {
     case grot_x:
@@ -96,21 +98,44 @@ public:
     }
     case gbtn_down:
       if(state)
-          m_body->m_velocity = -0.01f;
+        m_body->m_velocity = -0.01f;
       else
-          m_body->m_velocity = 0.0f;
+        m_body->m_velocity = 0.0f;
       break;
     case gbtn_up:
-        if(state)
-            m_body->m_velocity = 0.01f;
-        else
-            m_body->m_velocity = 0.0f;
+      if(state)
+        m_body->m_velocity = 0.01f;
+      else
+        m_body->m_velocity = 0.0f;
       break;
     case gbtn_left:
       break;
     case gbtn_right:
       break;
     }
+  }
+
+  void action(kgmString action)
+  {
+    if(action == "laser")
+    {
+      action_shoot_laser();
+    }
+    else if(action == "rocket")
+    {
+      action_shoot_rocket();
+    }
+  }
+
+  void action_shoot_laser()
+  {
+    kgmGameObject* go = new ASp_LaserA(game, 1000, m_body->m_position, m_body->m_direction);
+    game->gAppend(go);
+  }
+
+  void action_shoot_rocket()
+  {
+
   }
 };
 

@@ -128,6 +128,8 @@ public:
     }
   };
 
+  bool         m_valid;
+  bool         m_remove;
 public:
   bool         m_visible;
   mtx4         m_transform;
@@ -154,6 +156,8 @@ public:
 public:
   kgmVisual()
   {
+    m_valid = true;
+    m_remove = false;
     m_visible = true;
     m_typeshadow = ShadowNone;
     m_typerender = RenderMesh;
@@ -185,6 +189,26 @@ public:
 
     if(m_particles)
       m_particles->release();
+  }
+
+  void enable(){
+    m_valid = false;
+  }
+
+  void disable(){
+    m_valid = false;
+  }
+
+  bool valid(){
+    return m_valid;
+  }
+
+  void remove(){
+    m_remove = true;
+  }
+
+  bool removed(){
+    return m_remove;
   }
 
   //Materials

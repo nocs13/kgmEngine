@@ -20,7 +20,6 @@ kgmActor::kgmActor()
   m_dvisual.identity();
   m_dvisual.rotate(-0.5f * PI, tv);
 
-  m_birth  = kgmTime::getTicks();
   m_health = 1.0f;
 
   m_animation = null;
@@ -60,6 +59,19 @@ void kgmActor::update(u32 time)
 
 void kgmActor::input(u32 btn, int state)
 {
+  for(int i = 0; i < m_inputs.length(); i++)
+  {
+    Input in = m_inputs[i];
+
+    if(btn == in.input && state == (int)in.status)
+    {
+      setState(in.state);
+    }
+  }
+}
+
+void kgmActor::action(kgmString s)
+{
 
 }
 
@@ -97,6 +109,8 @@ bool kgmActor::setState(kgmString s, bool force)
     }
 
     m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
+
+    action(state->id);
   }
   else
   {

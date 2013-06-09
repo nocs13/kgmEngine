@@ -6,11 +6,13 @@ kgmGameObject::kgmGameObject()
   m_body(null),
   m_parent(null)
 {
+  m_valid  = true;
   m_remove  = false;
   m_culled  = false;
-  m_enable  = true;
-  m_active  = true;
   m_visible = true;
+
+  m_birth   = kgmTime::getTicks();
+  m_timeout = -1;
 }
 
 kgmGameObject::~kgmGameObject()
@@ -24,4 +26,23 @@ kgmGameObject::~kgmGameObject()
 
   if(m_visible)
     m_visual->release();
+}
+
+void kgmGameObject::update(u32 mls)
+{
+  u32 ct = kgmTime::getTicks();
+
+  if((m_timeout != -1) && ((ct - m_birth) > m_timeout))
+  {
+    if(getBody())
+      getBody()->remove();
+
+    if(getVisual())
+      getVisual()->remove();
+
+    remove();
+    disable();
+
+    return;
+  }
 }

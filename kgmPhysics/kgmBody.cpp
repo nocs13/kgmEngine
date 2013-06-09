@@ -10,7 +10,8 @@ kgmBody::kgmBody(){
   m_speed_side    = 0.0f;
   m_speed_up      = 0.0f;
 
-  m_physics   = true;
+  m_valid     = true;
+  m_remove    = false;
   m_collision = true;
   m_gravity   = true;
   m_falling   = false;
@@ -32,10 +33,6 @@ kgmBody::~kgmBody(){
 }
 
 void kgmBody::collision(kgmBody* body){
-}
-
-void kgmBody::enable(bool e){
-  m_physics = e;
 }
 
 void kgmBody::translate(float x, float y, float z){

@@ -23,34 +23,35 @@ public:
   };
 
 
-  u32	m_type;
-  u32	m_shape;
+  u32	    m_type;
+  u32	    m_shape;
 
-  bool    m_physics;		//valid physics object
-  bool    m_collision;	//calculate collisions for this body
-  bool    m_gravity;		//gravity object or gravitation required
-  bool    m_falling;		//additional information of falling
+  bool    m_valid;		    //valid physics object
+  bool    m_remove;		   //physics object should removed
+  bool    m_collision;	 //calculate collisions for this body
+  bool    m_gravity;		  //gravity object or gravitation required
+  bool    m_falling;		  //additional information of falling
 
-  float  m_mass;			//mass of body
-  float  m_friction;		//friction of a body
+  float   m_mass;			//mass of body
+  float   m_friction;		//friction of a body
 //  float  m_force;		//persistent force  to body
 //  float  m_upforce;		//upstear force
-  float  m_velocity;		//persistent speed
-  float  m_speed_forward;
-  float  m_speed_side;
-  float  m_speed_up;
+  float   m_velocity;		//persistent speed
+  float   m_speed_forward;
+  float   m_speed_side;
+  float   m_speed_up;
 
-  vec3	m_position;		//current position
-  vec3	m_rotation;		//current rotation
-  vec3	m_direction;	//current direction
-  quat	m_quaternion;	//current rotation(in quaternions)
+  vec3	   m_position;		//current position
+  vec3	   m_rotation;		//current rotation
+  vec3	   m_direction;	//current direction
+  quat	   m_quaternion;	//current rotation(in quaternions)
 
-  box3	m_bound;		//bound box
+  box3	   m_bound;		//bound box
 
   Constraint m_constraint;
 
-  void*	    m_extra;		//extended data
-  void*	    m_udata;		//user data
+  void*	  m_extra;		//extended data
+  void*	  m_udata;		//user data
 
 private:
   kgmList<polygon3*> m_convex;	//convex shape sides for simulation(collision, ...)
@@ -61,7 +62,11 @@ public:
 
   virtual void collision(kgmBody*); //callback when collision
 
-  void enable(bool);
+  bool valid()  { return m_valid;  }
+  void remove() { m_remove = true; }
+  void enable() { m_valid = true;  }
+  void disable(){ m_valid = false; }
+
   void translate(float x, float y, float z);
   void rotate(float x, float y, float z);
   void rotate(quat& q);
