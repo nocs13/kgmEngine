@@ -15,6 +15,15 @@ kgmPhysics::~kgmPhysics(){
 //virtual 
 void kgmPhysics::update(float time){
   doCollision(time);
+
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+      m_bodies.erase(i);
+    }
+  }
 }
 
 void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
@@ -23,6 +32,11 @@ void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
 
 ///////////////////////// 
 void kgmPhysics::clear(){
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+  {
+    (*i)->release();
+  }
+
   m_bodies.clear();
   m_triangles.clear();
   m_collision.reset();
@@ -43,6 +57,7 @@ void kgmPhysics::add(kgmBody* body){
   if(!body)
     return;
   m_bodies.add(body);
+  body->increment();
 }
 
 //remove body

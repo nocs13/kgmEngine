@@ -8,12 +8,15 @@ class ASpacer: public kgmActor
   float     c_dist;
   float     z_dist;
 
+  bool      gbtns[65];
 public:
   ASpacer(kgmIGame* g)
   {
     game = g;
     c_dist = 5.0f;
     z_dist = 2.0f;
+
+    memset(gbtns, false, sizeof(gbtns));
   }
 
   ~ASpacer()
@@ -59,11 +62,25 @@ public:
       cam.mPos = cpos;
       cam.mDir = m_body->m_direction;
       cam.update();
+
+      if(gbtns[gbtn_left])
+      {
+        vec3 vt = m_body->m_rotation;
+        vt.z += (0.02f);
+        m_body->rotate(0, 0, vt.z);
+      }
+      else if(gbtns[gbtn_right])
+      {
+        vec3 vt = m_body->m_rotation;
+        vt.z -= (0.02f);
+        m_body->rotate(0, 0, vt.z);
+      }
     }
   }
 
   void input(u32 btn, int state)
   {
+    static float alpha = 0.0f;
     vec3 vt;
 
     if(!m_gameplayer)
@@ -75,7 +92,6 @@ public:
     {
     case grot_x:
     {
-      static float alpha = 0.0f;
       alpha += (0.005f * state);
       vt = m_body->m_rotation;
       vt.z += (0.002f * state);
@@ -109,8 +125,10 @@ public:
         m_body->m_velocity = 0.0f;
       break;
     case gbtn_left:
+      gbtns[gbtn_left] = (state)?(true):(false);
       break;
     case gbtn_right:
+      gbtns[gbtn_right] = (state)?(true):(false);
       break;
     }
   }

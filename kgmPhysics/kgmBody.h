@@ -62,8 +62,9 @@ public:
 
   virtual void collision(kgmBody*); //callback when collision
 
-  bool valid()  { return m_valid;  }
+  bool removed(){ return m_remove; }
   void remove() { m_remove = true; }
+  bool valid()  { return m_valid;  }
   void enable() { m_valid = true;  }
   void disable(){ m_valid = false; }
 

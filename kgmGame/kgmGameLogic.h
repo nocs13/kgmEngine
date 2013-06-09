@@ -16,13 +16,13 @@ public:
   };
 
 public:
-  kgmList<kgmActor*>       m_actors;
-  kgmList<kgmSensor*>      m_sensors;
-  kgmList<kgmTrigger*>     m_triggers;
+  //kgmList<kgmActor*>       m_actors;
+  //kgmList<kgmSensor*>      m_sensors;
+  //kgmList<kgmTrigger*>     m_triggers;
   kgmList<kgmGameObject*>  m_objects;
 
   kgmActor*               m_gameplayer;
-  kgmActor*               m_player;
+  //kgmActor*               m_player;
 
 public:
     kgmGameLogic();

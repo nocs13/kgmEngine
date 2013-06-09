@@ -91,8 +91,9 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
     kgmVisual::AnimateVertices = false;
 
     if(rc != null){
-      shaders.add(0, rc->getShader("base.glsl"));
-      shaders.add(1, rc->getShader("skin.glsl"));
+      shaders.add(0, rc->getShader("none.glsl"));
+      shaders.add(1, rc->getShader("base.glsl"));
+      shaders.add(2, rc->getShader("skin.glsl"));
     }
   }
 }
@@ -267,6 +268,15 @@ void kgmGameGraphics::render(){
   gc->gcSetTexture(1, 0);
   gc->gcSetTexture(2, 0);
   gc->gcSetTexture(3, 0);
+
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+      m_visuals.erase(i);
+    }
+  }
 }
 
 void kgmGameGraphics::render(Mesh *m){
