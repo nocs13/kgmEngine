@@ -51,10 +51,10 @@ void kgmActor::init()
 
 void kgmActor::update(u32 time)
 {
-  mtx4 tm;
-
-  m_body->transform(tm);
-  m_visual->m_transform = tm;
+  kgmGameObject::update(time);
+//  mtx4 tm;
+//  m_body->transform(tm);
+//  m_visual->m_transform = tm;
 }
 
 void kgmActor::input(u32 btn, int state)

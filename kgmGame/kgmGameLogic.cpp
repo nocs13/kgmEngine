@@ -63,10 +63,10 @@ bool kgmGameLogic::add(kgmGameObject *o)
 
 void kgmGameLogic::update(u32 milliseconds)
 {
-  /*for(kgmList<Sensor*>::iterator i = m_sensors.begin(); i != m_sensors.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    (*i)->sense();
-  }*/
+    (*i)->update(milliseconds);
+  }
 
   for(kgmList<kgmActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
   {

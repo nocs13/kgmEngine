@@ -41,8 +41,18 @@ void kgmGameObject::update(u32 mls)
       getVisual()->remove();
 
     remove();
-    disable();
 
     return;
+  }
+
+  if(getBody())
+  {
+    mtx4 tm;
+
+    if(getVisual())
+    {
+      m_body->transform(tm);
+      m_visual->m_transform = tm;
+    }
   }
 }

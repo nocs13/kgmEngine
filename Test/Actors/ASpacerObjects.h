@@ -115,7 +115,9 @@ public:
     body->m_collision = false;
     body->m_position  = pos;
     body->m_direction = dir;
-    body->m_velocity  = 10.0f;
+    body->m_velocity  = 0.1f;
+
+    m_body = body;
   }
 
   ~ASp_LaserA()
