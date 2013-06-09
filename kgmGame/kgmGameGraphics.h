@@ -160,6 +160,7 @@ private:
   void render(kgmVisual*);
   void render(kgmShader*);
   void render(kgmMaterial*);
+  void render(kgmParticles*);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
 

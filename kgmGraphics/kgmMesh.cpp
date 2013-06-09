@@ -112,6 +112,12 @@ u32 kgmMesh::fvf(){
  case FVF_P_N_C:
    return (gcv_xyz|gcv_nor|gcv_col);
    break;
+ case FVF_P_T:
+   return (gcv_xyz|gcv_uv0);
+   break;
+ case FVF_P:
+   return (gcv_xyz);
+   break;
  }
  return 0;
 }
@@ -142,7 +148,10 @@ u32 kgmMesh::vsize(){
   case FVF_P_N_C_T:
     return sizeof(Vertex_P_N_C_T);
     break;
-  case FVF_P_N_C:
+  case FVF_P_T:
+    return sizeof(Vertex_P_T);
+    break;
+  case FVF_P:
     return sizeof(Vertex);
     break;
   }

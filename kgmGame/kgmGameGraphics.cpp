@@ -172,6 +172,9 @@ void kgmGameGraphics::render(){
   mtx4 mvw, mpr;
 
   kgmMaterial mbase;
+  kgmList<kgmVisual*> visuals;
+
+  //for(int i = 0; i < )
 
   gc->gcCull(1);
 
@@ -215,8 +218,8 @@ void kgmGameGraphics::render(){
     render(m_meshes[i]);
   }
 
-  for(int i = 0; i < m_visuals.size(); i++){
-    render(m_visuals[i]);
+  for(int i = m_visuals.size(); i > 0;  i--){
+    render(m_visuals[i - 1]);
   }
 
   //For last step draw gui
@@ -342,6 +345,12 @@ void kgmGameGraphics::render(kgmVisual* visual){
   //*/
 }
 
+void kgmGameGraphics::render(kgmParticles* p)
+{
+  if(!p)
+    return;
+}
+
 void kgmGameGraphics::render(kgmMaterial* m){
   if(!m){
     gc->gcSetShader(null);
@@ -361,6 +370,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
     if(m_alpha)
     {
       gc->gcAlpha(false, 0, 0);
+      gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
       m_alpha = false;
     }
 
@@ -381,7 +391,8 @@ void kgmGameGraphics::render(kgmMaterial* m){
 
   if(m->m_transparency > 0)
   {
-    gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+    //gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
     m_alpha = true;
   }
 

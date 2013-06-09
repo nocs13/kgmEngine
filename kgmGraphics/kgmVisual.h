@@ -203,6 +203,22 @@ public:
     return true;
   }
 
+  void set(kgmParticles* par)
+  {
+    if(!par)
+      return;
+
+    if(m_particles)
+      m_particles->release();
+
+    m_particles = par;
+  }
+
+  kgmParticles* getParticles()
+  {
+    return m_particles;
+  }
+
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
   {
     m_animation = a;

@@ -42,7 +42,7 @@ public:
           mtx4 m;
           vec3 v = dm->m_shift;
 
-          v.x -= 2.0f;
+          //v.x -= 2.0f;
           m.identity();
           m.translate(v);
 
