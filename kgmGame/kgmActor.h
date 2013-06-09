@@ -25,6 +25,13 @@ class kgmActor: public kgmGameObject
   KGM_OBJECT(kgmActor);
 
 public:
+  class Input
+  {
+    u32        input;
+    u32        status;
+    kgmString  state;
+  };
+
   class State
   {
   public:
@@ -66,6 +73,7 @@ public:
   mtx4    m_transform;
   mtx4    m_dvisual;      //visual transform
 
+  kgmList<Input>      m_inputs;
   kgmList<State*>     m_states;
   kgmList<kgmDummy*>  m_dummies;
 
@@ -73,6 +81,7 @@ public:
   kgmSkeleton*        m_skeleton;
   State*              m_state;
   bool                m_gameplayer;
+
 public:
   kgmActor();
   virtual ~kgmActor();

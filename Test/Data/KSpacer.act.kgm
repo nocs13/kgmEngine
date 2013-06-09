@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<kgm>
+ <kgmActor id='KSpacer'>
+
+  <Mass value='1.0' />
+  <Bound value='0.5 0.5 1.0' />
+  <Gravity value='false' />
+  <Dummies value="kspacer_o1.dum.kgm" />
+
+  <GameObject id="Motor.1" type="MotorA" dummy="Motor.1" />
+  <GameObject id="Motor.2" type="MotorA" dummy="Motor.2" />
+  <GameObject id="GunA.1"  type="GunA"   dummy="Gun.1"   />
+  <GameObject id="GunA.2"  type="GunA"   dummy="Gun.2"   />
+  <GameObject id="GunB"    type="GunB"   dummy="Gun.3"   />
+  
+  <Input button="" status="1" state="laser" />
+  <Input button="" status="1" state="rocket" />
+
+  <Visual id='Base'>
+   <Mesh value="kspacer_o1.kgm" />
+   <Material value="kspacer_o1.kgm" />
+  </Visual>
+
+  <State id="idle" priority="1" time="-1" type="idle">
+  	<Sound value="uloop" />
+  	<Action value="idle" />
+  </State>
+
+  <State id="fly" priority="1" time="-1" type="motion">
+  	<Sound value="uloop" />
+  	<Action value="fly" />
+  </State>
+
+  <State id="fall" priority="2" time="-1" type="motion" switch="idle">
+  	<Sound value="uloop" />
+  	<Action value="fall" />
+  </State>
+
+  <State id="dying" priority="10" time="20" type="die" switch="die">
+  	<Sound value="uloop" />
+  </State>
+
+  <State id="die" priority="10" time="-1" type="die">
+  	<Sound value="uloop" />
+  	<Action value="died" />
+  </State>
+
+  <State id="laser" priority="2" time="8" type="attack" switch="idle">
+  	<Sound value="uloop" />
+  	<Action value="attack" />
+  </State>
+
+  <State id="rocket" priority="2" time="10" type="idle" switch="punch">
+  	<Sound value="uloop" />
+        <Action value="attack" />
+  </State>
+ </kgmActor>
+</kgm>
+
