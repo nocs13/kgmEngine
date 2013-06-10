@@ -33,7 +33,7 @@ private:
  unsigned int m_references;
 
 protected:
- ~kgmObject(){
+ virtual ~kgmObject(){
  }
 
 private:

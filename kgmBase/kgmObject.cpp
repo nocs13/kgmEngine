@@ -8,15 +8,19 @@ KGMOBJECT_IMPLEMENT(kgmObject, kgmObject)
 void* kgmObject::operator new(size_t size){
  kgmObject* p = (kgmObject*)malloc(size);
  g_objects.push_back(p);
+
  return p;
 }
 
 void kgmObject::operator delete(void* p){
  int i;
 
- for(i = 0; i < g_objects.size(); i++){
-   if((kgmObject*)p == g_objects[i]){
+ for(i = 0; i < g_objects.size(); i++)
+ {
+   if((kgmObject*)p == g_objects[i])
+   {
      g_objects.erase(i);
+     break;
    }
  }
 

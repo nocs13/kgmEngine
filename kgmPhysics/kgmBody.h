@@ -58,7 +58,7 @@ private:
 
 public:
   kgmBody();
-  ~kgmBody();
+  virtual ~kgmBody();
 
   virtual void collision(kgmBody*); //callback when collision
 

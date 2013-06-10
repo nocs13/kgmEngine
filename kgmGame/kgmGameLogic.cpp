@@ -41,6 +41,7 @@ bool kgmGameLogic::add(kgmActor *a)
 
     //m_actors.add(a);
     m_objects.add(a);
+    a->increment();
     a->init();
 
     return true;
@@ -54,6 +55,7 @@ bool kgmGameLogic::add(kgmGameObject *o)
   if(o)
   {
     m_objects.add(o);
+    o->increment();
     o->init();
 
     return true;
@@ -64,6 +66,9 @@ bool kgmGameLogic::add(kgmGameObject *o)
 
 void kgmGameLogic::update(u32 milliseconds)
 {
+  if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
+    return;
+
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     if((*i)->removed())

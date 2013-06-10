@@ -56,6 +56,7 @@ void kgmPhysics::add(vec3& a, vec3& b, vec3& c){
 void kgmPhysics::add(kgmBody* body){
   if(!body)
     return;
+
   m_bodies.add(body);
   body->increment();
 }

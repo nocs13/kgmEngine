@@ -845,6 +845,7 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           m_physics->add(act->getBody());
           m_logic->add(act);
 
+          act->release();
         }
       }
       else if(id == "kgmGameObject")
