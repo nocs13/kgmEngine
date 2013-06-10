@@ -71,7 +71,7 @@ class ASp_LaserA: public kgmGameObject
   kgmMesh*      mesh;
   kgmMaterial*  mtl;
 public:
-  ASp_LaserA(kgmIGame* g, u32 time, vec3 pos, vec3 dir)
+  ASp_LaserA(kgmIGame* g, u32 time, vec3& pos, vec3& dir)
   {
     timeout(time);
     m_visual  = new kgmVisual();
@@ -116,6 +116,7 @@ public:
     body->m_position  = pos;
     body->m_direction = dir;
     body->m_velocity  = 0.1f;
+    body->m_gravity   = false;
 
     m_body = body;
   }
@@ -133,7 +134,7 @@ public:
     {
       vec3 v(0, 0, 1);
       mtx4 m;
-      m.rotate(-0.5 * PI, v);
+      //m.rotate(-0.5 * PI, v);
       //m_visual->m_transform = m * m_visual->m_transform;
     }
   }

@@ -20,29 +20,29 @@ public:
  }
  kgmMatrix3d(kgmQuaternion<T> &q){
   T x2 = q.x + q.x,
-	y2 = q.y + q.y,
-	z2 = q.z + q.z,
-	xx = q.x * x2,
-	yy = q.y * y2,
-	zz = q.z * z2,
-	xy = q.x * y2,
-	yz = q.y * z2,
-	zx = q.z * x2,
-	wx = q.w * x2,
-	wy = q.w * y2,
-	wz = q.w * z2;
+  y2 = q.y + q.y,
+  z2 = q.z + q.z,
+  xx = q.x * x2,
+  yy = q.y * y2,
+  zz = q.z * z2,
+  xy = q.x * y2,
+  yz = q.y * z2,
+  zx = q.z * x2,
+  wx = q.w * x2,
+  wy = q.w * y2,
+  wz = q.w * z2;
   m[0] = 1.0f - (yy + zz);
-   m[1] = xy + wz; 
+   m[1] = xy + wz;
     m[2] = zx - wy;
   m[4] = xy - wz;
    m[5] = 1.0f - (xx + zz);
-    m[6] = yz + wx; 
-  m[8] = zx + wy; 
-   m[9] = yz - wx; 
+    m[6] = yz + wx;
+  m[8] = zx + wy;
+   m[9] = yz - wx;
     m[10] = 1.0f - (xx + yy);
-  m[3] = m[7] = m[11] = 
+  m[3] = m[7] = m[11] =
   m[12] = m[13] = m[14] = 0.0f;
-  m[15] = 1.0f; 
+  m[15] = 1.0f;
  }
  kgmMatrix3d(kgmQuaternion<T> &q, kgmVector3d<T> &v){
   kgmMatrix3d mrt(q);
@@ -51,11 +51,11 @@ public:
  }
 
  T& operator[](int i){
-	 return m[i];
+   return m[i];
  }
  T& operator()(int row, int col){
   return m[col * 4 + row];
- } 
+ }
  kgmMatrix3d operator+(kgmMatrix3d& a){
   kgmMatrix3d r;
   r.m[0] = m[0]+a.m[0];
@@ -158,7 +158,7 @@ public:
  }
 
  void identity(){
-  m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = 
+  m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] =
   m[9] = m[11] = m[12] = m[13] = m[14] = 0;
 
   m[0] = m[5] = m[10] = m[15] = 1;
@@ -170,17 +170,17 @@ public:
   r.z = (T)asin(m[1]);
 
   angle_y = -asin(m[2]);
-  c		 =  cos(angle_y); 
+  c		 =  cos(angle_y);
   if(fabs(c) > 0.005){
-   tr_x      =  m[10] / c;          
+   tr_x      =  m[10] / c;
    tr_y      = -m[6]  / c;
    angle_x  = atan2( tr_y, tr_x );
-   tr_x      =  m[0] / c;           
+   tr_x      =  m[0] / c;
    tr_y      = -m[1] / c;
    angle_z  = atan2( tr_y, tr_x );
   }else{
-   angle_x  = 0;                     
-   tr_x      = m[5];               
+   angle_x  = 0;
+   tr_x      = m[5];
    tr_y      = m[4];
    angle_z  = atan2( tr_y, tr_x );
   }
@@ -196,28 +196,28 @@ public:
   r.y = (T)angle_y;
   r.z = (T)angle_z;
   /*
-	angle_y = D = -asin( mat[2]);        
+  angle_y = D = -asin( mat[2]);
     C           =  cos( angle_y );
     angle_y    *= RADIANS;
-    if ( fabs( C ) > 0.005 )            
+    if ( fabs( C ) > 0.005 )
     {
-     trx      =  mat[10] / C;          
+     trx      =  mat[10] / C;
      try      = -mat[6]  / C;
      angle_x  = atan2( try, trx ) * RADIANS;
-     trx      =  mat[0] / C;           
+     trx      =  mat[0] / C;
      try      = -mat[1] / C;
      angle_z  = atan2( try, trx ) * RADIANS;
     }else{
-     angle_x  = 0;                     
-     trx      = mat[5];               
+     angle_x  = 0;
+     trx      = mat[5];
      try      = mat[4];
      angle_z  = atan2( try, trx ) * RADIANS;
     }
     angle_x = clamp( angle_x, 0, 360 );
     angle_y = clamp( angle_y, 0, 360 );
-    angle_z = clamp( angle_z, 0, 360 );  
+    angle_z = clamp( angle_z, 0, 360 );
   */
- } 
+ }
  void translate(T x, T y, T z){
   m[12] = x,  m[13] = y,  m[14] = z;
  }
@@ -287,8 +287,8 @@ public:
  }
 
  T determine(){
-  return det(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], 
-	         m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
+  return det(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7],
+           m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
  }
 
  void invert(){
@@ -296,9 +296,9 @@ public:
   kgmMatrix3d<T> out;
 
   T d = (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1)) * (m(2, 2) * m(3, 3) - m(3, 2) * m(2, 3))	- (m(0, 0) * m(2, 1) - m(2, 0) * m(0, 1)) * (m(1, 2) * m(3, 3) - m(3, 2) * m(1, 3))
-   	  + (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3))	+ (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3))
-	  - (m(1, 0) * m(3, 1) - m(3, 0) * m(1, 1)) * (m(0, 2) * m(2, 3) - m(2, 2) * m(0, 3))	+ (m(2, 0) * m(3, 1) - m(3, 0) * m(2, 1)) * (m(0, 2) * m(1, 3) - m(1, 2) * m(0, 3));
-		
+      + (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3))	+ (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3))
+    - (m(1, 0) * m(3, 1) - m(3, 0) * m(1, 1)) * (m(0, 2) * m(2, 3) - m(2, 2) * m(0, 3))	+ (m(2, 0) * m(3, 1) - m(3, 0) * m(2, 1)) * (m(0, 2) * m(1, 3) - m(1, 2) * m(0, 3));
+
   if (d == 0)
    return;
 
@@ -368,7 +368,7 @@ public:
  {
    kgmVector3d<T> x, y, z, ieye = eye;
    kgmMatrix3d<T> m0, m1;
-   z = dir * (-1); 
+   z = dir * (-1);
    z.normalize();
    x = up.cross(z);
    x.normalize();
@@ -386,7 +386,7 @@ public:
 
 //matrix lookat for 3D
  void lookat(T x, T y, T z,
-              T lx, T ly, T lz, 
+              T lx, T ly, T lz,
               T ux, T uy, T uz)
  {
      kgmVector3d<T> dir(lx - x, ly - y, lz - z);
@@ -445,8 +445,8 @@ inline T det(T& a00, T& a01, T& a10, T& a11){
 }
 
 inline T det(T& a00, T& a01, T& a02,
-		     T& a10, T& a11, T& a12,
-		     T& a20, T& a21, T& a22){
+         T& a10, T& a11, T& a12,
+         T& a20, T& a21, T& a22){
  T mn0, mn1, mn2;
  mn0 = det(a11, a12, a21, a22);
  mn1 = det(a10, a12, a20, a22);
@@ -455,9 +455,9 @@ inline T det(T& a00, T& a01, T& a02,
 }
 
 inline T det(T& a00, T& a01, T& a02, T& a03,
-			 T& a10, T& a11, T& a12, T& a13,
-			 T& a20, T& a21, T& a22, T& a23,
-			 T& a30, T& a31, T& a32, T& a33){
+       T& a10, T& a11, T& a12, T& a13,
+       T& a20, T& a21, T& a22, T& a23,
+       T& a30, T& a31, T& a32, T& a33){
  T mn0, mn1, mn2, mn3;
  mn0 = det(a11, a12, a13, a21, a22, a23, a31, a32, a33);
  mn1 = det(a10, a12, a13, a20, a22, a23, a30, a32, a33);

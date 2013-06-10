@@ -147,12 +147,41 @@ public:
 
   void action_shoot_laser()
   {
-    kgmGameObject* go = new ASp_LaserA(game, 1000, m_body->m_position, m_body->m_direction);
-    if(game->gAppend(go))
-    {
-      addChild(go);
-      go->release();
-    }
+    vec3 v(0, 0, 1);
+    mtx4 m;
+    m.rotate(0.5 * PI, v);
+
+    vec3      pos;
+    kgmDummy* dmy = null;
+
+    dmy = dummy("Gun.1");
+
+    if(dmy)
+      pos = m_body->m_position + m * dmy->m_shift;
+    else
+      pos = m_body->m_position;
+
+    kgmGameObject* go1 = new ASp_LaserA(game, 1000,
+                                       pos,
+                                       m_body->m_direction);
+
+    dmy = dummy("Gun.2");
+
+    if(dmy)
+      pos = m_body->m_position + m * dmy->m_shift;
+    else
+      pos = m_body->m_position;
+
+    kgmGameObject* go2 = new ASp_LaserA(game, 1000,
+                                       pos,
+                                       m_body->m_direction);
+
+    game->gAppend(go1);
+    game->gAppend(go2);
+    addChild(go1);
+    addChild(go2);
+    go1->release();
+    go2->release();
   }
 
   void action_shoot_rocket()

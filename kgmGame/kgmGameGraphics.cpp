@@ -85,14 +85,14 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
     if(val != 0)
       m_has_buffers = true;
   }
-
+  //m_has_shaders = false;
   if(m_has_shaders)
   {
     kgmVisual::AnimateVertices = false;
 
     if(rc != null){
-      shaders.add(0, rc->getShader("none.glsl"));
-      shaders.add(1, rc->getShader("base.glsl"));
+      shaders.add(0, rc->getShader("base.glsl"));
+      shaders.add(1, rc->getShader("none.glsl"));
       shaders.add(2, rc->getShader("skin.glsl"));
     }
   }
