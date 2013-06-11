@@ -489,7 +489,7 @@ void kgmGameBase::gPause(bool s){
 
 bool kgmGameBase::gAppend(kgmGameObject* go)
 {
-  if(!go || m_state != State_Play)
+  if(!go || m_state == State_None || m_state == State_Quit)
     return false;
 
   if(m_render && go->getVisual())

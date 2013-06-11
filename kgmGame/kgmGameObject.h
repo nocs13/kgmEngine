@@ -108,6 +108,7 @@ public:
       return;
 
     m_childs.add(a);
+    a->m_parent = this;
     a->increment();
   }
 
@@ -120,8 +121,9 @@ public:
     {
       if(a == m_childs[i])
       {
-        a->release();
+        a->m_parent = null;
         m_childs.erase(i);
+        a->release();
 
         return;
       }

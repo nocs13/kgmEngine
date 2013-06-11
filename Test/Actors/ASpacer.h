@@ -24,6 +24,18 @@ public:
 
   }
 
+  void init()
+  {
+    ASp_Skybox* sb = new ASp_Skybox(game);
+    game->gAppend(sb);
+    addChild(sb);
+  }
+
+  void exit()
+  {
+
+  }
+
   void update(u32 mls)
   {
     kgmActor::update(mls);

@@ -153,7 +153,7 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
 }
 
 void kgmGameGraphics::resize(float width, float height){
-  gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
+  gc->gcSetViewport(0, 0, width, height, 1.0, 10000.0);
   m_camera.camera.set(PI / 6, width / height, .1f, 10000.0,
                       m_camera.camera.mPos,
                       m_camera.camera.mDir,
