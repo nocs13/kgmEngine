@@ -159,7 +159,7 @@ public:
 
   void action_shoot_laser()
   {
-    vec3 v(0, 0, 1);
+    vec3 r, v(0, 0, 1);
     mtx4 m;
     m.rotate(0.5 * PI, v);
 
@@ -167,6 +167,9 @@ public:
     kgmDummy* dmy = null;
 
     dmy = dummy("Gun.1");
+
+    m_visual->m_transform.angles(r);
+    m.rotate(r);
 
     if(dmy)
       pos = m_body->m_position + m * dmy->m_shift;

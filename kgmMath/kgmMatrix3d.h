@@ -218,13 +218,25 @@ public:
     angle_z = clamp( angle_z, 0, 360 );
   */
  }
+
+ void quaternion(kgmQuaternion<T>& q){
+   float t = 1 + m[0] + m[5] + m[10];
+
+   if( t > 0.00000001f ){
+     T S = (T)sqrt(t) * 2;
+     q.x = ( m[9] - m[6] ) / S;
+     q.y = ( m[2] - m[8] ) / S;
+     q.z = ( m[4] - m[1] ) / S;
+     q.w = 0.25f * S;
+   }
+ }
+
  void translate(T x, T y, T z){
   m[12] = x,  m[13] = y,  m[14] = z;
  }
  void translate(kgmVector3d<T>& v){
   translate(v.x, v.y, v.z);
  }
-
 
  void rotate(T x, T y, T z){
   T cp = (T)cos(x);

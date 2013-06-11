@@ -173,9 +173,32 @@ void kgmGameGraphics::render(){
   mtx4 mvw, mpr;
 
   kgmMaterial mbase;
-  kgmList<kgmVisual*> visuals;
+  kgmList<kgmMesh*>   meshes;
+  kgmList<kgmVisual*> visuals_blend, visuals_norm;
 
-  //for(int i = 0; i < )
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i++)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+      m_visuals.erase(i);
+
+      continue;
+    }
+    else if(!(*i)->valid())
+    {
+      continue;
+    }
+    else
+    {
+      kgmMaterial* mtl = (*i)->m_visuals[0]->getMaterial();
+
+      if(mtl->m_transparency > 0.0 || mtl->m_alpha < 1.0)
+        visuals_blend.add((*i));
+      else
+        visuals_norm.add((*i));
+    }
+  }
 
   gc->gcCull(1);
 
@@ -219,8 +242,12 @@ void kgmGameGraphics::render(){
     render(m_meshes[i]);
   }
 
-  for(int i = m_visuals.size(); i > 0;  i--){
-    render(m_visuals[i - 1]);
+  for(int i = visuals_norm.size(); i > 0;  i--){
+    render(visuals_norm[i - 1]);
+  }
+
+  for(int i = visuals_blend.size(); i > 0;  i--){
+    render(visuals_blend[i - 1]);
   }
 
   //For last step draw gui
@@ -269,6 +296,9 @@ void kgmGameGraphics::render(){
   gc->gcSetTexture(1, 0);
   gc->gcSetTexture(2, 0);
   gc->gcSetTexture(3, 0);
+
+  visuals_blend.clear();
+  visuals_norm.clear();
 
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
   {
