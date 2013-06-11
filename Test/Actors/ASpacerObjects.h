@@ -19,35 +19,15 @@ class ASp_Skybox: public kgmGameObject
 public:
   ASp_Skybox(kgmIGame* game)
   {
-    kgmMesh*      mesh = new kgmMesh();
+    //kgmMesh*      mesh = new kgmMesh();
     kgmMaterial*  mtl  = new kgmMaterial();
 
     mtl->m_type        = "simple";
+    mtl->m_shader      = kgmMaterial::ShaderNone;
     mtl->m_2side       = true;
-    mtl->m_tex_color   = game->getResources()->getTexture("sky_a.tga");
+    mtl->m_tex_color   = game->getResources()->getTexture("sky_1.tga");
 
-    ASp_Vertex* v = (ASp_Vertex*)mesh->vAlloc(36, kgmMesh::FVF_P_T);
-    v[0]   = { {-100, -100, -100}, {0, 1}};
-    v[1]   = { { 100, -100, -100}, {1, 1}};
-    v[2]   = { { 100,  100, -100}, {1, 0}};
-    v[3]   = { {-100,  100, -100}, {1, 0}};
-    v[4]   = { {-100, -100,  100}, {0, 0}};
-    v[5]   = { { 100, -100,  100}, {1, 0}};
-    v[6]   = { { 100,  100,  100}, {1, 0}};
-    v[7]   = { {-100,  100,  100}, {1, 0}};
-    /*ASp_Face*   f = (ASp_Face*)mesh->fAlloc(12, kgmMesh::FFF_16);
-    f[0]   = {0, 1, 2};
-    f[1]   = {2, 3, 0};
-    f[2]   = {4, 5, 6};
-    f[3]   = {6, 7, 4};
-    f[4]   = {0, 3, 7};
-    f[5]   = {7, 4, 0};
-    f[6]   = {1, 5, 6};
-    f[7]   = {6, 2, 1};
-    f[8]   = {0, 4, 5};
-    f[9]   = {5, 1, 0};
-    f[10]  = {2, 6, 7};
-    f[11]  = {7, 3, 2};*/
+    kgmMesh* mesh = game->getResources()->getMesh("skybox_1.kgm");
 
     m_visual = new kgmVisual();
     m_visual->addVisual(mesh, mtl);
@@ -67,10 +47,11 @@ public:
 
     if(m_parent && m_parent->getBody())
     {
-      mtx4 m;
+      mtx4 m, msc;
 
+      msc.scale(50, 50, 50);
       m.translate(m_parent->getBody()->m_position);
-      m_visual->m_transform = m;
+      m_visual->m_transform = msc * m;
     }
   }
 };
@@ -91,6 +72,7 @@ public:
     mtl->m_alpha = 0.5;
     mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
     mtl->m_type = "simple";
+    mtl->m_shader = kgmMaterial::ShaderNone;
 
     mesh = new kgmMesh();
     ASp_Vertex* v = (ASp_Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_T);
@@ -149,6 +131,7 @@ public:
     mtl->m_transparency = 0.5;
     mtl->m_alpha = 0.5;
     mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
+    mtl->m_shader = kgmMaterial::ShaderNone;
 
     mesh = new kgmMesh();
     Vertex* v = (Vertex*)mesh->vAlloc(12, kgmMesh::FVF_P_T);

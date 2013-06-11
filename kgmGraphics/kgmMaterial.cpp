@@ -17,7 +17,7 @@ kgmMaterial::kgmMaterial(){
 
   m_tex_color    = m_tex_specular = m_tex_normal = 0;
 
-  m_shader       = ShaderNone;
+  m_shader       = ShaderBase;
 }
 
 kgmMaterial::~kgmMaterial(){
