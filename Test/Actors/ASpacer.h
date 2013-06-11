@@ -7,14 +7,20 @@ class ASpacer: public kgmActor
 
   float     c_dist;
   float     z_dist;
+  float     speed_max;
+  float     speed_min;
+  float     roll;
 
   bool      gbtns[65];
 public:
   ASpacer(kgmIGame* g)
   {
-    game = g;
-    c_dist = 5.0f;
-    z_dist = 2.0f;
+    game      = g;
+    c_dist    = 5.0f;
+    z_dist    = 2.0f;
+    speed_max = 0.5;
+    speed_max = 0.05;
+    roll      = 0.0;
 
     memset(gbtns, false, sizeof(gbtns));
   }
@@ -42,10 +48,13 @@ public:
 
     if(m_visual)
     {
-      vec3 v(0, 0, 1);
-      mtx4 m;
-      m.rotate(0.5 * PI, v);
-      m_visual->m_transform = m * m_visual->m_transform;
+      vec3 vz(0, 0, 1), vx(1, 0, 0);
+      mtx4 mz, mx;
+
+      mz.rotate(0.5 * PI, vz);
+      mx.rotate(roll, vx);
+
+      m_visual->m_transform = mx * mz * m_visual->m_transform;
 
       for(int i = 0; i < m_dummies.length(); i++)
       {
@@ -80,12 +89,42 @@ public:
         vec3 vt = m_body->m_rotation;
         vt.z += (0.02f);
         m_body->rotate(0, 0, vt.z);
+
+        if(roll > -PI/4)
+          roll -= 0.01f;
       }
       else if(gbtns[gbtn_right])
       {
         vec3 vt = m_body->m_rotation;
         vt.z -= (0.02f);
         m_body->rotate(0, 0, vt.z);
+
+        if(roll < PI/4)
+          roll += 0.01f;
+      }
+      else if(!gbtns[gbtn_left] && !gbtns[gbtn_left] && roll != 0.0f)
+      {
+        if(roll > 0.0f)
+          roll -= 0.02f;
+        else
+          roll += 0.02f;
+      }
+      else if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
+      {
+        m_body->m_velocity += 0.001;
+
+        if(m_body->m_velocity > speed_max)
+          m_body->m_velocity = speed_max;      }
+      else if(!gbtns[gbtn_up] && m_body->m_velocity > speed_min)
+      {
+        m_body->m_velocity -= 0.001f;
+
+        if(m_body->m_velocity < speed_min)
+          m_body->m_velocity = speed_min;
+      }
+      else if(gbtns[gbtn_down])
+      {
+
       }
     }
   }
@@ -125,16 +164,10 @@ public:
       break;
     }
     case gbtn_down:
-      if(state)
-        m_body->m_velocity = -0.01f;
-      else
-        m_body->m_velocity = 0.0f;
+      gbtns[gbtn_down] = (state)?(true):(false);
       break;
     case gbtn_up:
-      if(state)
-        m_body->m_velocity = 0.01f;
-      else
-        m_body->m_velocity = 0.0f;
+      gbtns[gbtn_up] = (state)?(true):(false);
       break;
     case gbtn_left:
       gbtns[gbtn_left] = (state)?(true):(false);
