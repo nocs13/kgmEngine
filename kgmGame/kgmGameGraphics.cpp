@@ -92,8 +92,8 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
     if(rc != null){
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
-      shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      //shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
+      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
     }
   }
 }

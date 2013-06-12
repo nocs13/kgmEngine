@@ -1321,6 +1321,15 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       }
       actor->m_states.add(state);
     }
+    else
+    {
+      kgmString val;
+
+      if(a_node->node(i)->attribute("value", val))
+      {
+        actor->m_options.add(id, val);
+      }
+    }
   }
 
   kgm_log() << "\nActor: " << actor->getId();

@@ -417,6 +417,7 @@ class kgmObject:
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
   self.linked = 'None'
+  self.props = {}
 
   if o.parent != None:
     self.linked = o.parent.name
@@ -425,6 +426,17 @@ class kgmObject:
     self.player = "on"    
   else:  
     self.player = "off"    
+    
+  preds = ['kgm', 'kgm_type', 'kgm_object', 'kgm_player', 'kgm_state']  
+  
+  for k in o.keys():
+    tk = str(k)
+    
+    if tk.find('kgm_') == -1 or tk in preds:
+#      next
+      pass
+    else:
+      self.props[tk] = o.get(k)
 
 class kgmCollision:
  def __init__(self, o):
@@ -648,6 +660,8 @@ class kgmExport(bpy.types.Operator):
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
     file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
     file.write("  <State value='" + a.state + "'/>\n")
+    for k in a.props.keys():
+     file.write("  <" + str(k) + " value='" + str(a.props[k]) + "'/>\n")
     file.write(" </kgmActor>\n")
    elif a.gtype == "dummy":
     file.write(" <kgmDummy name='" + a.name + "' parent='" + a.linked + "'>\n")

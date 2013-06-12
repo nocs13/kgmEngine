@@ -81,6 +81,7 @@ public:
   State*              m_state;
   bool                m_gameplayer;
 
+  kgmTab<kgmString, kgmString> m_options;
 public:
   kgmActor();
   virtual ~kgmActor();

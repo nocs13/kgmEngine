@@ -183,17 +183,29 @@ public:
 
 class ASp_Asteroid: public kgmGameObject
 {
+public:
+  ASp_Asteroid(kgmIGame* g)
+  {
 
+  }
 };
 
 class ASp_AsteroidSpawner: public kgmGameObject
 {
+public:
+  ASp_AsteroidSpawner(kgmIGame* g)
+  {
 
+  }
 };
 
 class ASp_SpacerSpawner: public kgmGameObject
 {
+public:
+  ASp_SpacerSpawner(kgmIGame* g)
+  {
 
+  }
 };
 
 #endif // ASPACEROBJECTS_H
