@@ -32,9 +32,12 @@ public:
 
   void init()
   {
-    ASp_Skybox* sb = new ASp_Skybox(game);
-    game->gAppend(sb);
-    addChild(sb);
+    if(m_gameplayer)
+    {
+      ASp_Skybox* sb = new ASp_Skybox(game);
+      game->gAppend(sb);
+      addChild(sb);
+    }
   }
 
   void exit()

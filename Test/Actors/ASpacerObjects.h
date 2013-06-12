@@ -180,4 +180,20 @@ public:
     kgmGameObject::update(t);
   }
 };
+
+class ASp_Asteroid: public kgmGameObject
+{
+
+};
+
+class ASp_AsteroidSpawner: public kgmGameObject
+{
+
+};
+
+class ASp_SpacerSpawner: public kgmGameObject
+{
+
+};
+
 #endif // ASPACEROBJECTS_H

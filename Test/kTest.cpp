@@ -40,9 +40,29 @@ public:
     {
       return new ASpacer(game);
     }
+    else if(t == "KSpacerA")
+    {
+      return new ASpacer(game);
+    }
+    else if(t == "KSpacerB")
+    {
+      return new ASpacer(game);
+    }
+    else if(t == "KSpacerC")
+    {
+      return new ASpacer(game);
+    }
     else if(t == "MotorA")
     {
       return new ASp_MotorA(game);
+    }
+    else if(t == "SpawnAsteroid")
+    {
+      return new ASp_AsteroidSpawner(game);
+    }
+    else if(t == "SpawnSpacer")
+    {
+      return new ASp_SpacerSpawner(game);
     }
 
     return kgmGameLogic::createGameObject(t);
