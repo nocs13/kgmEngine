@@ -11,7 +11,7 @@ attribute vec2 g_Texcoord;
 
 void main(void)
 {
-   gl_Position  = g_mProj * g_mView * gl_Vertex;
+   gl_Position  = g_mProj * g_mView * g_mTran * gl_Vertex;
    Texcoord     = gl_MultiTexCoord0.xy;
 }
 

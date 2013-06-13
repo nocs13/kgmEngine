@@ -926,6 +926,26 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     pM += (uv_size);
   }
 
+  if(v_fmt & gcv_bn0){
+#ifdef GLES_2
+//    glEnableVertexAttribArray(8);
+//    glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#else
+    u32 k = ((u32)pM - (u32)v_pnt);
+    float* f1 = (float*)pM;
+    glClientActiveTexture(GL_TEXTURE1);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(4, GL_FLOAT, v_size, pM);
+    pM += (4 * sizeof(float));
+    k = ((u32)pM - (u32)v_pnt);
+    float* f2 = (float*)pM;
+    glClientActiveTexture(GL_TEXTURE2);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(4, GL_FLOAT, v_size, pM);
+    pM += (4 * sizeof(float));
+#endif
+  }
+
 //  glColor3f(1, 1, 1);
   if(i_pnt && i_cnt){
     switch(i_size){
@@ -1348,9 +1368,9 @@ void kgmOGL::gcUniformMatrix(void* s, u32 cnt, u32 trn, const char* par, void* v
 void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
 #ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)s, par);
+
   if(link < 0)
     return;
-  // glUniform1iv(link, 1, (const int*)val);
   glUniform1i(link, (GLu32)val);
 #endif
 }

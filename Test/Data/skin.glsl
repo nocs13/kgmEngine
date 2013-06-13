@@ -18,13 +18,15 @@ varying vec3 V;
 varying vec3 L;
 varying vec2 Texcoord;
 
+varying float tmp;
+
 void main(void)
 {
     //mat3 mnor = mat3(g_mTran._11, g_mTran._12, g_mTran._13,
     //                 g_mTran._21, g_mTran._22, g_mTran._23,
     //                 g_mTran._31, g_mTran._32, g_mTran._33);
     //build skin
-    int   index  = 0;
+    int   index  = 10;
     float weight = 1.0;
 
     vec4 epos = vec4(0.0, 0.0, 0.0, 0.0);
@@ -32,9 +34,9 @@ void main(void)
 
     weight = gl_MultiTexCoord1.x;
     index  = int(gl_MultiTexCoord2.x);
-    epos   = g_mJoints[index] * spos * weight;
+    epos   = g_mJoints[index] * spos;// * weight;
 
-    weight = gl_MultiTexCoord1.y;
+/*    weight = gl_MultiTexCoord1.y;
     index  = int(gl_MultiTexCoord2.y);
     epos += g_mJoints[index] * spos * weight;
 
@@ -44,7 +46,7 @@ void main(void)
 
     weight = gl_MultiTexCoord1.w;
     index  = int(gl_MultiTexCoord2.w);
-    epos += g_mJoints[index] * spos * weight;
+    epos += g_mJoints[index] * spos * weight;    */
 
     epos.w = 1.0;
     ////////////
@@ -64,7 +66,7 @@ void main(void)
     L = normalize(l);
     V = normalize(c);
 
-    gl_FrontColor.xyzw = vec4(1, 1.0, 1.0, 1.0);
+    gl_FrontColor = vec4(1.0, 1.0, 1.0, 1.0);
     gl_Position = g_mProj * g_mView * pos;
 //    gl_Position = g_mProj * g_mView * g_mTran * epos;
 //    gl_Position = g_mProj * g_mView * g_mTran * gl_Vertex;
@@ -78,6 +80,7 @@ varying vec2 Texcoord;
 varying vec3 N;
 varying vec3 V;
 varying vec3 L;
+varying float tmp;
 
 void main( void )
 {

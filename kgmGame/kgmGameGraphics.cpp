@@ -320,6 +320,7 @@ void kgmGameGraphics::render(Mesh *m){
   if(m->m_mtrl)
   {
     render(m->m_mtrl);
+    render(shaders[1]);
   }
 
   if(m->m_mesh){
@@ -329,6 +330,7 @@ void kgmGameGraphics::render(Mesh *m){
   }
 
   if(m->m_mtrl){
+    render((kgmShader*)null);
     render((kgmMaterial*)null);
   }
 }
@@ -355,9 +357,13 @@ void kgmGameGraphics::render(kgmVisual* visual){
   {
     kgmVisual::Visual* v = visual->m_visuals[i];
 
-    render(v->getMaterial());
+    kgmMaterial* mtl = v->getMaterial();
+    render(mtl);
+
     if(visual->m_tm_joints)
       render((kgmShader*)this->shaders[2]);
+    else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
+      render((kgmShader*)this->shaders[0]);
     else
       render((kgmShader*)this->shaders[1]);
 
