@@ -19,7 +19,7 @@ public:
     c_dist    = 5.0f;
     z_dist    = 2.0f;
     speed_max = 0.5;
-    speed_max = 0.05;
+    speed_min = 0.1;
     roll      = 0.0;
 
     memset(gbtns, false, sizeof(gbtns));
@@ -112,12 +112,14 @@ public:
         else
           roll += 0.02f;
       }
-      else if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
+
+      if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
       {
         m_body->m_velocity += 0.001;
 
         if(m_body->m_velocity > speed_max)
-          m_body->m_velocity = speed_max;      }
+          m_body->m_velocity = speed_max;
+      }
       else if(!gbtns[gbtn_up] && m_body->m_velocity > speed_min)
       {
         m_body->m_velocity -= 0.001f;

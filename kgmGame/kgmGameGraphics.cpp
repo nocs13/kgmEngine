@@ -189,7 +189,7 @@ void kgmGameGraphics::render(){
     {
       continue;
     }
-    else
+    else if((*i)->m_visuals.length() > 0)
     {
       kgmMaterial* mtl = (*i)->m_visuals[0]->getMaterial();
 
