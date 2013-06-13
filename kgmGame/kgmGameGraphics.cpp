@@ -35,14 +35,17 @@ float a = (temp & 0x000f)/255.0;*/
 }
 
 mtx4       g_mtx_world;
-mtx4*      g_mtx_bone = null;
-u32        g_mtx_bone_count = 0;
-vec4       g_vec_light = vec4(0, 0, 0, 1);
+mtx4*      g_mtx_joints = null;
+
+u32        g_mtx_joints_count = 0;
+
+vec4       g_vec_light   = vec4(0, 0, 0, 1);
 vec4       g_vec_ambient = vec4(1, 1, 1, 1);
+
 kgmShader* g_shd_active = null;
 
-void*      m_tex_black = null;
-void*      m_tex_white = null;
+void*      g_tex_black = null;
+void*      g_tex_white = null;
 
 kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
@@ -68,11 +71,11 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
     //generic black texture
     memset(txd, 0x00, sizeof(txd));
-    m_tex_black = gc->gcGenTexture(txd, 2, 2, 32, 0);
+    g_tex_black = gc->gcGenTexture(txd, 2, 2, 32, 0);
 
     //generic white texture
     memset(txd, 0xffffffff, sizeof(txd));
-    m_tex_white = gc->gcGenTexture(txd, 2, 2, 32, 0);
+    g_tex_white = gc->gcGenTexture(txd, 2, 2, 32, 0);
 
 
     g->gcGetParameter(gcsup_shaders, &val);
@@ -92,18 +95,18 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
     if(rc != null){
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
-      //shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
     }
   }
 }
 
 kgmGameGraphics::~kgmGameGraphics(){
-  if(m_tex_black)
-    gc->gcFreeTexture(m_tex_black);
+  if(g_tex_black)
+    gc->gcFreeTexture(g_tex_black);
 
-  if(m_tex_white)
-    gc->gcFreeTexture(m_tex_white);
+  if(g_tex_white)
+    gc->gcFreeTexture(g_tex_white);
 
   gui_style->release();
   m_guis.clear();
@@ -340,8 +343,8 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
   if(visual->m_tm_joints)
   {
-    g_mtx_bone       = visual->m_tm_joints;
-    g_mtx_bone_count = visual->m_skeleton->m_joints.size();
+    g_mtx_joints       = visual->m_tm_joints;
+    g_mtx_joints_count = visual->m_skeleton->m_joints.size();
   }
 
   //gc->gc2DMode();
@@ -353,14 +356,22 @@ void kgmGameGraphics::render(kgmVisual* visual){
     kgmVisual::Visual* v = visual->m_visuals[i];
 
     render(v->getMaterial());
+    if(visual->m_tm_joints)
+      render((kgmShader*)this->shaders[2]);
+    else
+      render((kgmShader*)this->shaders[1]);
+
     // /*
     gc->gcDraw(gcpmt_triangles, v->getFvf(),
                v->getVsize(), v->getVcount(), v->getVertices(),
                2, 3 * v->getFcount(), v->getFaces());
     // */
+    render((kgmShader*)null);
     render((kgmMaterial*)null);
   }
 
+  g_mtx_joints       = null;
+  g_mtx_joints_count = 0;
   visual->update();
 
   /*
@@ -393,14 +404,12 @@ void kgmGameGraphics::render(kgmParticles* p)
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){
-  if(!m){
-    gc->gcSetShader(null);
+  if(!m)
+  {
     gc->gcSetTexture(0, 0);
     gc->gcSetTexture(1, 0);
     gc->gcSetTexture(2, 0);
     gc->gcSetTexture(3, 0);
-
-    render((kgmShader*)null);
 
     if(!m_culling)
     {
@@ -416,18 +425,6 @@ void kgmGameGraphics::render(kgmMaterial* m){
     }
 
     return;
-  }
-
-  if(shaders.length() > (u16)m->m_shader)
-  {
-    kgmShader* s = shaders[(u16)m->m_shader];
-    if(!s)
-      s = shaders[kgmMaterial::ShaderNone];
-    render(s);
-  }
-  else
-  {
-    render((kgmShader*)null);
   }
 
   if(m->m_transparency > 0)
@@ -454,8 +451,8 @@ void kgmGameGraphics::render(kgmMaterial* m){
   }
   else
   {
-    gc->gcSetTexture(1, m_tex_black);
-    tnormal = m_tex_black;
+    gc->gcSetTexture(1, g_tex_black);
+    tnormal = g_tex_black;
   }
 
   if(m->m_tex_specular){
@@ -464,8 +461,8 @@ void kgmGameGraphics::render(kgmMaterial* m){
   }
   else
   {
-    gc->gcSetTexture(2, m_tex_black);
-    tspecular = m_tex_black;
+    gc->gcSetTexture(2, g_tex_black);
+    tspecular = g_tex_black;
   }
 }
 
@@ -474,12 +471,10 @@ void kgmGameGraphics::render(kgmShader* s){
 
   if(s)
   {
-    //g_mtx_world.identity();
-//#ifdef GLES2
     s->attr(0, "g_Vertex");
     s->attr(1, "g_Normal");
     s->attr(2, "g_Texcoord");
-//#endif
+
     s->start();
     s->set("g_fTime",     kgmTime::getTime());
     s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);
@@ -499,6 +494,17 @@ void kgmGameGraphics::render(kgmShader* s){
 
     if(tspecular)
       s->set("g_txSpecular", 2);
+
+    if(g_mtx_joints)
+    {
+      for(int i = 0; i < g_mtx_joints_count; i++)
+      {
+        char buf[16];
+
+        sprintf(buf, "g_mJoints[%i]\0", i);
+        s->set(buf, g_mtx_joints[i]);
+      }
+    }
 
     g_shd_active = s;
   }

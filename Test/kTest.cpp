@@ -56,11 +56,11 @@ public:
     {
       return new ASp_MotorA(game);
     }
-    else if(t == "SpawnAsteroid")
+    else if(t == "KAsteroidSpawner")
     {
       return new ASp_AsteroidSpawner(game);
     }
-    else if(t == "SpawnSpacer")
+    else if(t == "KSpacerSpawner")
     {
       return new ASp_SpacerSpawner(game);
     }

@@ -357,22 +357,18 @@ void kgmGameBase::onClose()
 }
 
 void kgmGameBase::onKeyUp(int k){
-  kgm_log() << "before release key: " << k << " " << m_input[m_keymap[k]] <<"\n";
   if(m_logic && m_state == State_Play && m_input[m_keymap[k]] != 0)
   {
     m_logic->input(m_keymap[k], 0);
     m_input[m_keymap[k]] = 0;
-    kgm_log() << "release key: " << k << " " << m_input[m_keymap[k]] <<"\n";
   }
 }
 
 void kgmGameBase::onKeyDown(int k){
-  kgm_log() << "before print key: " << k << " " << m_input[m_keymap[k]] <<"\n";
   if(m_logic && (m_state == State_Play) && (m_input[m_keymap[k]] != 1))
   {
     m_logic->input(m_keymap[k], 1);
     m_input[m_keymap[k]] = 1;
-    kgm_log() << "print key: " << k << " " << m_input[m_keymap[k]] <<"\n";
   }
 }
 

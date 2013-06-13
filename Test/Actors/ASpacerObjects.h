@@ -119,7 +119,7 @@ class ASp_LaserA: public kgmGameObject
   kgmMaterial*  mtl;
 
 public:
-  ASp_LaserA(kgmIGame* g, u32 time, vec3& pos, vec3& dir)
+  ASp_LaserA(kgmIGame* g, u32 time, vec3& pos, vec3& dir, float speed)
   {
     timeout(time);
     m_visual  = new kgmVisual();
@@ -163,7 +163,7 @@ public:
     body->m_collision = false;
     body->m_position  = pos;
     body->m_direction = dir;
-    body->m_velocity  = 0.1f;
+    body->m_velocity  = speed;
     body->m_gravity   = false;
 
     m_body = body;
@@ -184,18 +184,34 @@ public:
 class ASp_Asteroid: public kgmGameObject
 {
 public:
-  ASp_Asteroid(kgmIGame* g)
+  ASp_Asteroid(kgmIGame* g, u32 type)
   {
-
+    m_visual = new kgmVisual();
+    m_body   = new kgmBody();
   }
 };
 
-class ASp_AsteroidSpawner: public kgmGameObject
+class ASp_AsteroidSpawner: public kgmActor
 {
+  kgmIGame*  game;
+  u32 m_time_prev;
 public:
   ASp_AsteroidSpawner(kgmIGame* g)
   {
+    game = g;
+    m_time_prev = kgmTime::getTicks();
+  }
 
+  void update(u32 ms)
+  {
+    u32 ctick = kgmTime::getTicks();
+
+    if((ctick - m_time_prev > 1000) && (m_childs.size() < 10))
+    {
+      ASp_Asteroid* as = new ASp_Asteroid(game, 0);
+
+      as->timeout(1000);
+    }
   }
 };
 

@@ -18,8 +18,8 @@ public:
     game      = g;
     c_dist    = 5.0f;
     z_dist    = 2.0f;
-    speed_max = 0.5;
-    speed_min = 0.1;
+    speed_max = 0.30;
+    speed_min = 0.05;
     roll      = 0.0;
 
     memset(gbtns, false, sizeof(gbtns));
@@ -94,7 +94,7 @@ public:
         m_body->rotate(0, 0, vt.z);
 
         if(roll > -PI/4)
-          roll -= 0.01f;
+          roll -= 0.02f;
       }
       else if(gbtns[gbtn_right])
       {
@@ -103,7 +103,7 @@ public:
         m_body->rotate(0, 0, vt.z);
 
         if(roll < PI/4)
-          roll += 0.01f;
+          roll += 0.02f;
       }
       else if(!gbtns[gbtn_left] && !gbtns[gbtn_left] && roll != 0.0f)
       {
@@ -115,7 +115,7 @@ public:
 
       if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
       {
-        m_body->m_velocity += 0.001;
+        m_body->m_velocity += 0.001f;
 
         if(m_body->m_velocity > speed_max)
           m_body->m_velocity = speed_max;
@@ -216,7 +216,8 @@ public:
 
     kgmGameObject* go1 = new ASp_LaserA(game, 1000,
                                        pos,
-                                       m_body->m_direction);
+                                       m_body->m_direction,
+                                       m_body->m_velocity + 0.1f);
 
     dmy = dummy("Gun.2");
 
@@ -227,7 +228,8 @@ public:
 
     kgmGameObject* go2 = new ASp_LaserA(game, 1000,
                                        pos,
-                                       m_body->m_direction);
+                                       m_body->m_direction,
+                                       m_body->m_velocity + 0.1f);
 
     game->gAppend(go1);
     game->gAppend(go2);
