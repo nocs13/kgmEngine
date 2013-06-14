@@ -10,6 +10,7 @@ class ASpacer: public kgmActor
   float     speed_max;
   float     speed_min;
   float     roll;
+  float     yaaw;
 
   bool      gbtns[65];
 public:
@@ -21,6 +22,7 @@ public:
     speed_max = 0.30;
     speed_min = 0.05;
     roll      = 0.0;
+    yaaw      = 0.0;
 
     memset(gbtns, false, sizeof(gbtns));
   }
@@ -51,13 +53,18 @@ public:
 
     if(m_visual)
     {
-      vec3 vz(0, 0, 1), vx(1, 0, 0);
-      mtx4 mz, mx;
+      vec3 vz(0, 0, 1), vy(0, 0, 0), vx(1, 0, 0);
+      mtx4 mz, mx, my, mr;
+      float pich = 0.5 * PI;
 
       mz.rotate(0.5 * PI, vz);
       mx.rotate(roll, vx);
+      my.rotate(yaaw, vy);
 
-      m_visual->m_transform = mx * mz * m_visual->m_transform;
+      mr = my * mx;
+//      mr = mz * mr;
+      mr.rotate(-roll, yaaw, -pich);
+      m_visual->m_transform = mr * m_visual->m_transform;
 
       for(int i = 0; i < m_dummies.length(); i++)
       {
@@ -87,7 +94,7 @@ public:
       cam.mDir = m_body->m_direction;
       cam.update();
 
-      if(gbtns[gbtn_left])
+      if(gbtns[gbtn_left] && yaaw == 0.0)
       {
         vec3 vt = m_body->m_rotation;
         vt.z += (0.02f);
@@ -96,7 +103,7 @@ public:
         if(roll > -PI/4)
           roll -= 0.02f;
       }
-      else if(gbtns[gbtn_right])
+      else if(gbtns[gbtn_right] && yaaw == 0.0)
       {
         vec3 vt = m_body->m_rotation;
         vt.z -= (0.02f);
@@ -111,9 +118,16 @@ public:
           roll -= 0.02f;
         else
           roll += 0.02f;
+
+        if(fabs(roll) < 0.02f)
+          roll = 0.0f;
       }
 
-      if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
+      if(gbtns[gbtn_up] && gbtns[gbtn_n] && yaaw < PI/6 && roll == 0.0)
+      {
+        yaaw += 0.02f;
+      }
+      else if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
       {
         m_body->m_velocity += 0.001f;
 
@@ -126,6 +140,20 @@ public:
 
         if(m_body->m_velocity < speed_min)
           m_body->m_velocity = speed_min;
+      }
+      else if(gbtns[gbtn_down] && gbtns[gbtn_n] && yaaw > -PI/6 && roll == 0.0)
+      {
+        yaaw -= 0.02f;
+      }
+      else if(!gbtns[gbtn_up] && !gbtns[gbtn_down] && yaaw != 0.0)
+      {
+        if(yaaw > 0.0f)
+          yaaw -= 0.02f;
+        else
+          yaaw += 0.02f;
+
+        if(fabs(yaaw) < 0.02f)
+          yaaw = 0.0f;
       }
       else if(gbtns[gbtn_down])
       {
@@ -179,6 +207,9 @@ public:
       break;
     case gbtn_right:
       gbtns[gbtn_right] = (state)?(true):(false);
+      break;
+    case gbtn_n:
+      gbtns[gbtn_n] = (state)?(true):(false);
       break;
     }
   }

@@ -130,7 +130,9 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_UP]    = m_keymap[KEY_W] = (char)gbtn_up;
   m_keymap[KEY_DOWN]  = m_keymap[KEY_S] = (char)gbtn_down;
   m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
-  m_keymap[KEY_ENTER]  = (char)gbtn_start;
+  m_keymap[KEY_ENTER]   = (char)gbtn_start;
+  m_keymap[KEY_LSHIFT]  = (char)gbtn_n;
+  m_keymap[KEY_RSHIFT]  = (char)gbtn_n;
 
   m_keymap[KEY_X] = (char)gbtn_x;
   m_keymap[KEY_Y] = (char)gbtn_y;
