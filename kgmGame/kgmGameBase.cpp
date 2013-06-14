@@ -853,6 +853,12 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         kgmString s;
         xml.attribute("type", s);
         obj = gob = m_logic->createGameObject(s);
+
+        m_render->add(gob->getVisual());
+        m_physics->add(gob->getBody());
+        m_logic->add(gob);
+
+        gob->release();
       }
       else if(id == "Vertices")
       {
@@ -974,6 +980,10 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         case TypeActor:
           if(act)
             act->setPosition(v);
+          break;
+        case TypeGameObject:
+          if(gob)
+            gob->setPosition(v);
           break;
         default:
           break;

@@ -69,7 +69,7 @@ void kgmGameLogic::update(u32 milliseconds)
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
   {
     if((*i)->removed())
     {

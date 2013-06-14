@@ -188,6 +188,15 @@ public:
   {
     m_visual = new kgmVisual();
     m_body   = new kgmBody();
+
+    kgmMesh* msh = g->getResources()->getMesh("kasteroid_o1.msh.kgm");
+    kgmMaterial* mtl = new kgmMaterial();
+    mtl->m_shader = kgmMaterial::ShaderBase;
+    mtl->m_tex_color = g->getResources()->getTexture("font.tga");
+
+    m_visual->addVisual(msh, mtl);
+    msh->release();
+    mtl->release();
   }
 };
 
@@ -200,6 +209,8 @@ public:
   {
     game = g;
     m_time_prev = kgmTime::getTicks();
+
+    m_body = new kgmBody;
   }
 
   void update(u32 ms)
@@ -210,7 +221,16 @@ public:
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
 
-      as->timeout(1000);
+      as->timeout(5000);
+      as->setPosition(m_body->m_position);
+
+      vec3  v(0, 0, 1.0f / (1 + rand()));
+      as->setRotation(v);
+
+      if(game->gAppend(as))
+        addChild(as);
+      else
+        as->release();
     }
   }
 };
