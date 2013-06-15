@@ -44,14 +44,18 @@ void kgmBody::rotate(float x, float y, float z){
   m_rotation.y = y;
   m_rotation.z = z;
   m_quaternion.euler(m_rotation);
-  m_direction = vec3(-sin(m_rotation.z), cos(m_rotation.z), 0);
+  mtx4 m(m_quaternion);
+  vec3 v(0, 1, 0);
+  m_direction = m * v;
+  m_direction.normalize();
+  //m_direction = vec3(-sin(m_rotation.z), cos(m_rotation.z), 0);
 }
 
 void kgmBody::rotate(quat& q){
   m_quaternion = q;
   mtx4 m(m_quaternion);
   m.angles(m_rotation);
-  m_direction = vec3(sin(m_rotation.z), cos(m_rotation.z), 0);
+  //m_direction = vec3(sin(m_rotation.z), cos(m_rotation.z), 0);
 }
 
 void kgmBody::transform(mtx4& mtr){

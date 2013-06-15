@@ -19,8 +19,8 @@ public:
     game      = g;
     c_dist    = 5.0f;
     z_dist    = 2.0f;
-    speed_max = 0.30;
-    speed_min = 0.05;
+    speed_max = 0.05;
+    speed_min = 0.01;
     roll      = 0.0;
     yaaw      = 0.0;
 
@@ -36,9 +36,9 @@ public:
   {
     if(m_gameplayer)
     {
-      ASp_Skybox* sb = new ASp_Skybox(game);
+      /*ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
-      addChild(sb);
+      addChild(sb); */
     }
   }
 
@@ -89,7 +89,7 @@ public:
     {
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
       vec3 cpos = m_body->m_position - m_body->m_direction * c_dist;
-      cpos.z = z_dist;
+      cpos.z = m_body->m_position.z + z_dist;
       cam.mPos = cpos;
       cam.mDir = m_body->m_direction;
       cam.update();
@@ -98,7 +98,7 @@ public:
       {
         vec3 vt = m_body->m_rotation;
         vt.z += (0.02f);
-        m_body->rotate(0, 0, vt.z);
+        m_body->rotate(vt.x, vt.y, vt.z);
 
         if(roll > -PI/4)
           roll -= 0.02f;
@@ -107,7 +107,7 @@ public:
       {
         vec3 vt = m_body->m_rotation;
         vt.z -= (0.02f);
-        m_body->rotate(0, 0, vt.z);
+        m_body->rotate(vt.x, vt.y, vt.z);
 
         if(roll < PI/4)
           roll += 0.02f;
@@ -126,6 +126,10 @@ public:
       if(gbtns[gbtn_up] && gbtns[gbtn_n] && yaaw < PI/6 && roll == 0.0)
       {
         yaaw += 0.02f;
+
+        vec3 vt = m_body->m_rotation;
+        vt.y += (0.02f);
+        m_body->rotate(vt.y, 0, vt.z);
       }
       else if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
       {
@@ -144,6 +148,10 @@ public:
       else if(gbtns[gbtn_down] && gbtns[gbtn_n] && yaaw > -PI/6 && roll == 0.0)
       {
         yaaw -= 0.02f;
+
+        vec3 vt = m_body->m_rotation;
+        vt.y -= (0.02f);
+        m_body->rotate(vt.y, 0, vt.z);
       }
       else if(!gbtns[gbtn_up] && !gbtns[gbtn_down] && yaaw != 0.0)
       {

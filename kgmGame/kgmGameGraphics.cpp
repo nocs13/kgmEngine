@@ -239,7 +239,6 @@ void kgmGameGraphics::render(){
   }
 
   //render 3D
-  //gc->gcSetShader(null);
 
   for(int i = 0; i < m_meshes.size(); i++){
     render(m_meshes[i]);

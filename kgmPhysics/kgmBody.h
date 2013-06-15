@@ -34,8 +34,6 @@ public:
 
   float   m_mass;			//mass of body
   float   m_friction;		//friction of a body
-//  float  m_force;		//persistent force  to body
-//  float  m_upforce;		//upstear force
   float   m_velocity;		//persistent speed
   float   m_speed_forward;
   float   m_speed_side;
