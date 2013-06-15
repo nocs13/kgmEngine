@@ -35,6 +35,16 @@ void kgmGameObject::update(u32 mls)
 
   if((m_timeout != -1) && ((ct - m_birth) > m_timeout))
   {
+    for(int i = 0; i < m_childs.length(); i++)
+    {
+      m_childs[i]->remove();
+    }
+
+    m_childs.clear();
+
+    if(m_parent)
+      m_parent->removeChild(this);
+
     if(getBody())
       getBody()->remove();
 
@@ -43,23 +53,7 @@ void kgmGameObject::update(u32 mls)
 
     remove();
 
-    for(int i = 0; i < m_childs.length(); i++)
-    {
-      m_childs[i]->remove();
-    }
-
     return;
-  }
-
-  for(int i = m_childs.length(); i > 0; i--)
-  {
-    kgmGameObject* child = m_childs[i - 1];
-
-    if(child->removed())
-    {
-      child->release();
-      m_childs.erase(i - 1);
-    }
   }
 
   if(getBody())

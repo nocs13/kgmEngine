@@ -15,7 +15,7 @@
  </kgmActor>
  <kgmGameObject name='aster' type='KAsteroidSpawner'  >
   <Position value='0.0 0.0 0.0'/>
-  <Rotation value='0.0 -0.0 0.0'/>
+  <Rotation value='0.0 0.0 0.0'/>
   <State value='idle'/>
  </kgmGameObject>
 </kgm>

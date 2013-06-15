@@ -117,9 +117,9 @@ public:
     if(!a)
       return;
 
-    for(int i = 0; i < m_childs.length(); i++)
+    for(int i = m_childs.length(); i > 0; i--)
     {
-      if(a == m_childs[i])
+      if(a == m_childs[i - 1])
       {
         a->m_parent = null;
         m_childs.erase(i);

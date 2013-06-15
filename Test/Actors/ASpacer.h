@@ -20,7 +20,7 @@ public:
     c_dist    = 5.0f;
     z_dist    = 2.0f;
     speed_max = 0.05;
-    speed_min = 0.01;
+    speed_min = 0.0;
     roll      = 0.0;
     yaaw      = 0.0;
 

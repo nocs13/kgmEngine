@@ -187,21 +187,32 @@ public:
   ASp_Asteroid(kgmIGame* g, u32 type)
   {
     m_visual = new kgmVisual();
-    m_body   = new kgmBody();
-
-    kgmMesh* msh = g->getResources()->getMesh("kasteroid_o2.msh.kgm");
+    kgmMesh* msh = g->getResources()->getMesh("kasteroid_o2.kgm");
     kgmMaterial* mtl = new kgmMaterial();
-    mtl->m_shader = kgmMaterial::ShaderNone;
+    mtl->m_shader = kgmMaterial::ShaderBase;
     mtl->m_tex_color = g->getResources()->getTexture("asteroid_0.tga");
 
     m_visual->addVisual(msh, mtl);
     msh->release();
     mtl->release();
+
+    m_body   = new kgmBody();
+    m_body->m_gravity = false;
+    m_body->m_velocity = 0.01 + 0.02 * 1.0f / (1 + rand()%30);
+    m_body->m_direction = vec3(1.0f / (1 + rand()%30),
+                               1.0f / (1 + rand()%30),
+                               1.0f / (1 + rand()%30));
+    m_body->m_direction.normalize();
   }
 
   ~ASp_Asteroid()
   {
 
+  }
+
+  void update(u32 t)
+  {
+    kgmGameObject::update(t);
   }
 };
 
@@ -212,10 +223,11 @@ class ASp_AsteroidSpawner: public kgmActor
 public:
   ASp_AsteroidSpawner(kgmIGame* g)
   {
-    game = g;
+    game        = g;
     m_time_prev = kgmTime::getTicks();
 
-    m_body = new kgmBody;
+    m_body            = new kgmBody;
+    m_body->m_gravity = false;
   }
 
   void update(u32 ms)
@@ -226,11 +238,8 @@ public:
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
 
-      //as->timeout(5000);
+      as->timeout(1000);
       as->setPosition(m_body->m_position);
-
-      vec3  v(0, 0, 1.0f / (1 + rand()));
-      as->setRotation(v);
 
       if(game->gAppend(as))
       {

@@ -860,11 +860,11 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 
     if(id == "Vertices"){
       u32 count = 0;
-      kgmMesh::Vertex_P_N_C_T2*  v = 0;
+      kgmMesh::Vertex_P_N_C_T*  v = 0;
 
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
-      v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
+      v = (kgmMesh::Vertex_P_N_C_T*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T);
       mnode->node(i)->data(data);
       char* p = data.data();
       for(int i = 0; i < count; i++){
@@ -872,7 +872,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         sscanf(p, "%f %f %f %f %f %f %f %f %n",
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
-        &v[i].uv[0].x, &v[i].uv[0].y, &rd);
+        &v[i].uv.x, &v[i].uv.y, &rd);
         v[i].col = 0xffffffff;
         p = (char*)((u32)p + rd);
       }
@@ -898,7 +898,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       u32 count = 0;
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
-      kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
+      kgmMesh::Vertex_P_N_C_T* v = new kgmMesh::Vertex_P_N_C_T[ m->vcount() ];
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
       kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
       mnode->node(i)->data(data);
@@ -921,7 +921,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
-        s[i].uv = vec2(v[i].uv[0].x, v[i].uv[0].y);
+        s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
         p = (char*)((u32)p + rd);
       }
       delete [] v;
