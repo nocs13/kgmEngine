@@ -107,6 +107,10 @@ public:
     if(!a)
       return;
 
+    for(int i = 0; i < m_childs.size(); i++)
+      if(a == m_childs[i])
+        return;
+
     m_childs.add(a);
     a->m_parent = this;
     a->increment();
@@ -122,7 +126,7 @@ public:
       if(a == m_childs[i - 1])
       {
         a->m_parent = null;
-        m_childs.erase(i);
+        m_childs.erase(i - 1);
         a->release();
 
         return;

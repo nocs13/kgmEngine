@@ -42,9 +42,6 @@ void kgmGameObject::update(u32 mls)
 
     m_childs.clear();
 
-    if(m_parent)
-      m_parent->removeChild(this);
-
     if(getBody())
       getBody()->remove();
 
@@ -52,6 +49,9 @@ void kgmGameObject::update(u32 mls)
       getVisual()->remove();
 
     remove();
+
+    if(m_parent)
+      m_parent->removeChild(this);
 
     return;
   }

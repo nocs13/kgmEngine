@@ -234,11 +234,11 @@ public:
   {
     u32 ctick = kgmTime::getTicks();
 
-    if((ctick - m_time_prev > 1000) && (m_childs.size() < 10))
+    if((ctick - m_time_prev > 500) && (m_childs.size() < 10))
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
 
-      as->timeout(1000);
+      as->timeout(100);
       as->setPosition(m_body->m_position);
 
       if(game->gAppend(as))
@@ -253,6 +253,12 @@ public:
 
       m_time_prev = kgmTime::getTicks();
     }
+
+//    for(int i = m_childs.size(); i > 0; i--)
+//    {
+//      if(m_childs[i - 1]->removed())
+//        m_childs.erase(i - 1);
+//      }
   }
 };
 
