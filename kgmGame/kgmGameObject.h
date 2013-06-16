@@ -108,8 +108,12 @@ public:
       return;
 
     for(int i = 0; i < m_childs.size(); i++)
+    {
+      kgmGameObject* go = m_childs[i];
+
       if(a == m_childs[i])
         return;
+    }
 
     m_childs.add(a);
     a->m_parent = this;

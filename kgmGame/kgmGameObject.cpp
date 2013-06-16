@@ -33,11 +33,29 @@ void kgmGameObject::update(u32 mls)
 {
   u32 ct = kgmTime::getTicks();
 
+  if(m_childs.size())
+  {
+    for(int i = m_childs.length(); i > 0; i--)
+    {
+      kgmGameObject* go = m_childs[i - 1];
+
+      if(go->removed())
+      {
+        //m_childs.erase(i - 1);
+
+        go->setParent(null);
+        go->release();
+      }
+    }
+  }
+
   if((m_timeout != -1) && ((ct - m_birth) > m_timeout))
   {
     for(int i = 0; i < m_childs.length(); i++)
     {
+      m_childs[i]->disable();
       m_childs[i]->remove();
+      m_childs[i]->release();
     }
 
     m_childs.clear();
@@ -48,10 +66,8 @@ void kgmGameObject::update(u32 mls)
     if(getVisual())
       getVisual()->remove();
 
+    disable();
     remove();
-
-    if(m_parent)
-      m_parent->removeChild(this);
 
     return;
   }

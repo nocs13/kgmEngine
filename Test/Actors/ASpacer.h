@@ -20,10 +20,11 @@ public:
     c_dist    = 5.0f;
     z_dist    = 2.0f;
     speed_max = 0.05;
-    speed_min = 0.0;
+    speed_min = 0.01;
     roll      = 0.0;
     yaaw      = 0.0;
 
+    m_body->m_gravity = false;
     memset(gbtns, false, sizeof(gbtns));
   }
 
@@ -36,9 +37,9 @@ public:
   {
     if(m_gameplayer)
     {
-      /*ASp_Skybox* sb = new ASp_Skybox(game);
+      ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
-      addChild(sb); */
+      addChild(sb);
     }
   }
 
@@ -61,8 +62,7 @@ public:
       mx.rotate(roll, vx);
       my.rotate(yaaw, vy);
 
-      mr = my * mx;
-//      mr = mz * mr;
+//      mr = my * mx;
       mr.rotate(-roll, yaaw, -pich);
       m_visual->m_transform = mr * m_visual->m_transform;
 

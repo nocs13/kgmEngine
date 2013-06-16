@@ -12,13 +12,6 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
-  /*for(kgmList<kgmActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
-  {
-
-    (*i)->exit();
-    (*i)->release();
-  }*/
-
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
 
@@ -26,7 +19,6 @@ void kgmGameLogic::clear()
     (*i)->release();
   }
 
-  //m_actors.clear();
   m_objects.clear();
 
   m_gameplayer = null;
@@ -39,7 +31,6 @@ bool kgmGameLogic::add(kgmActor *a)
     if(a->m_gameplayer)
       m_gameplayer = a;
 
-    //m_actors.add(a);
     m_objects.add(a);
     a->increment();
     a->init();
@@ -81,12 +72,6 @@ void kgmGameLogic::update(u32 milliseconds)
       (*i)->update(milliseconds);
     }
   }
-
-  /*for(kgmList<kgmActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
-  {
-
-    (*i)->update(milliseconds);
-  }*/
 }
 
 void kgmGameLogic::input(int btn, int state)

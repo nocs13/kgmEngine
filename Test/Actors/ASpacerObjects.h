@@ -193,15 +193,15 @@ public:
     mtl->m_tex_color = g->getResources()->getTexture("asteroid_0.tga");
 
     m_visual->addVisual(msh, mtl);
-    msh->release();
+    //msh->release();
     mtl->release();
 
     m_body   = new kgmBody();
     m_body->m_gravity = false;
     m_body->m_velocity = 0.01 + 0.02 * 1.0f / (1 + rand()%30);
-    m_body->m_direction = vec3(1.0f / (1 + rand()%30),
-                               1.0f / (1 + rand()%30),
-                               1.0f / (1 + rand()%30));
+    m_body->m_direction = vec3((float)pow(-1, rand() % 2) / (1 + rand()%30),
+                               (float)pow(-1, rand() % 2) / (1 + rand()%30),
+                               (float)pow(-1, rand() % 2) / (1 + rand()%30));
     m_body->m_direction.normalize();
   }
 
@@ -232,19 +232,20 @@ public:
 
   void update(u32 ms)
   {
+    kgmGameObject::update(ms);
+
     u32 ctick = kgmTime::getTicks();
 
-    if((ctick - m_time_prev > 500) && (m_childs.size() < 10))
+    if((ctick - m_time_prev > 5000) && (m_childs.size() < 50))
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
 
-      as->timeout(100);
+      as->timeout(10000 + rand() % 10000);
       as->setPosition(m_body->m_position);
 
       if(game->gAppend(as))
       {
         addChild(as);
-        as->release();
       }
       else
       {
