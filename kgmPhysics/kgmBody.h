@@ -44,7 +44,7 @@ public:
   vec3	   m_direction;	//current direction
   quat	   m_quaternion;	//current rotation(in quaternions)
 
-  box3	   m_bound;		//bound box
+  box3	   m_bound;  //bound box
 
   Constraint m_constraint;
 

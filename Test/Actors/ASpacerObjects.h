@@ -166,6 +166,8 @@ public:
     m_body->m_velocity  = speed;
     m_body->m_gravity   = false;
     m_body->m_udata     = this;
+    m_body->m_bound.min = vec3(-.1, -.1, -.1);
+    m_body->m_bound.max = vec3( .1,  .1,  .1);
   }
 
   ~ASp_LaserA()
@@ -182,31 +184,35 @@ public:
 
 class ASp_Asteroid: public kgmGameObject
 {
+  kgmMesh* msh;
+  kgmMaterial* mtl;
 public:
   ASp_Asteroid(kgmIGame* g, u32 type)
   {
     m_visual = new kgmVisual();
-    kgmMesh* msh = g->getResources()->getMesh("kasteroid_o2.kgm");
-    kgmMaterial* mtl = new kgmMaterial();
+    msh = g->getResources()->getMesh("kasteroid_o2.kgm");
+    mtl = new kgmMaterial();
     mtl->m_shader = kgmMaterial::ShaderBase;
     mtl->m_tex_color = g->getResources()->getTexture("asteroid_0.tga");
 
     m_visual->addVisual(msh, mtl);
-    //msh->release();
-    mtl->release();
 
     m_body   = new kgmBody();
+    m_body->m_udata = this;
     m_body->m_gravity = false;
     m_body->m_velocity = 0.01 + 0.02 * 1.0f / (1 + rand()%30);
     m_body->m_direction = vec3((float)pow(-1, rand() % 2) / (1 + rand()%30),
                                (float)pow(-1, rand() % 2) / (1 + rand()%30),
                                (float)pow(-1, rand() % 2) / (1 + rand()%30));
     m_body->m_direction.normalize();
+    m_body->m_bound.min = vec3(-1, -1, -1);
+    m_body->m_bound.max = vec3( 1,  1,  1);
   }
 
   ~ASp_Asteroid()
   {
-
+    //msh->release();
+    mtl->release();
   }
 
   void update(u32 t)

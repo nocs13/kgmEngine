@@ -102,6 +102,11 @@ public:
     m_parent = a;
   }
 
+  kgmGameObject* getParent()
+  {
+    return m_parent;
+  }
+
   void addChild(kgmGameObject* a)
   {
     if(!a)

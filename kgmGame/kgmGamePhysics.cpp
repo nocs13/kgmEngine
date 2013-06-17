@@ -11,19 +11,32 @@
 #include <windows.h>
 #endif
 
-kgmGamePhysics::kgmGamePhysics(){
+kgmGamePhysics::kgmGamePhysics()
+{
 }
 
-kgmGamePhysics::~kgmGamePhysics(){
+kgmGamePhysics::~kgmGamePhysics()
+{
 }
 
-void kgmGamePhysics::update(float dtime){
+void kgmGamePhysics::update(float dtime)
+{
   kgmPhysics::update(dtime);
 }
 
-void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody){
+void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
+{
   kgmGameBase* game = (kgmGameBase*)kgmIGame::getGame();
 
-  int k = 0;
+  if(!body || !tobody || !body->m_udata || !tobody->m_udata)
+    return;
+
+  kgmGameObject* go_body   = (kgmGameObject*)body->m_udata;
+  kgmGameObject* go_tobody = (kgmGameObject*)tobody->m_udata;
+
+  if(go_body->getParent() == go_tobody)
+  {
+    int k = 0;
+  }
 }
 

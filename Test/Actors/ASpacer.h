@@ -25,6 +25,9 @@ public:
     yaaw      = 0.0;
 
     m_body->m_gravity = false;
+    m_body->m_bound.min = vec3(-1, -1, -1);
+    m_body->m_bound.max = vec3( 1,  1,  1);
+
     memset(gbtns, false, sizeof(gbtns));
   }
 
