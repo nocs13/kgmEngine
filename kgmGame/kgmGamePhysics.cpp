@@ -34,9 +34,16 @@ void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
   kgmGameObject* go_body   = (kgmGameObject*)body->m_udata;
   kgmGameObject* go_tobody = (kgmGameObject*)tobody->m_udata;
 
-  if(go_body->getParent() == go_tobody)
+  if(go_body->getParent() == go_tobody ||
+     go_tobody->getParent() == go_body)
   {
     int k = 0;
+  }
+  else
+  {
+    go_body->remove();
+    go_body->getBody()->remove();
+    go_body->getVisual()->remove();
   }
 }
 
