@@ -143,10 +143,9 @@ void kgmPhysics::doCollision(float dtime){
 
     //body->m_V.z = 0.0f;
     vec3 bdPos = m_ptCurrent = body->m_position;
-    vec3 v = body->m_direction * body->m_velocity;// + body->m_V;
     float gdist = 5 * ctime * body->m_mass;
     vec3  spos = body->m_position;
-    vec3  epos = body->m_position + v * (ctime);
+    vec3  epos = body->m_position + body->m_direction * (body->m_velocity * ctime);
 
     vec3 b_min = body->m_bound.min;
     vec3 b_max = body->m_bound.max;

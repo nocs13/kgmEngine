@@ -1,5 +1,4 @@
 #include "kgmGamePhysics.h"
-//#include "kgmGameCollision.inl"
 
 #include "../kgmPhysics/kgmCollision.h"
 #include "../kgmPhysics/kgmIntersection.h"
@@ -20,12 +19,11 @@ kgmGamePhysics::~kgmGamePhysics(){
 
 void kgmGamePhysics::update(float dtime){
   kgmPhysics::update(dtime);
- //this->doCollision(dtime);
 }
 
 void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody){
-#ifdef WIN32
-#endif
- kgmGameBase* game = (kgmGameBase*)kgmIGame::getGame();
+  kgmGameBase* game = (kgmGameBase*)kgmIGame::getGame();
+
+  int k = 0;
 }
 

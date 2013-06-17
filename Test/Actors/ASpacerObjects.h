@@ -158,15 +158,14 @@ public:
 
     m_visual->addVisual(mesh, mtl);
 
-    kgmBody* body = new kgmBody();
+    m_body = new kgmBody();
 
-    body->m_collision = false;
-    body->m_position  = pos;
-    body->m_direction = dir;
-    body->m_velocity  = speed;
-    body->m_gravity   = false;
-
-    m_body = body;
+    //body->m_collision = false;
+    m_body->m_position  = pos;
+    m_body->m_direction = dir;
+    m_body->m_velocity  = speed;
+    m_body->m_gravity   = false;
+    m_body->m_udata     = this;
   }
 
   ~ASp_LaserA()

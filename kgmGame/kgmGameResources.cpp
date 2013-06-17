@@ -181,10 +181,13 @@ kgmTexture* kgmGameResources::getTexture(char* id){
  if(!getFile(id, mem))
   return 0;
  texture = m_tools.genTexture(kgmIGame::getGame()->getGraphics(), mem);
+
  if(texture){
   texture->m_id = id;
+  texture->increment();
   m_resources.add(texture);
  }
+
  return texture;
 }
 

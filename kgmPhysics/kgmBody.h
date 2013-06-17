@@ -48,14 +48,14 @@ public:
 
   Constraint m_constraint;
 
-  void*	  m_extra;		//extended data
-  void*	  m_udata;		//user data
+  void*	  m_udata;		//user data of linked object
 
 private:
   kgmList<polygon3*> m_convex;	//convex shape sides for simulation(collision, ...)
 
 public:
   kgmBody();
+  kgmBody(void* udata);
   virtual ~kgmBody();
 
   virtual void collision(kgmBody*); //callback when collision
