@@ -20,6 +20,7 @@ private:
 
   u32       m_birth;
   u32       m_timeout;
+
 protected:
   vec3        m_position;
   vec3        m_rotation;

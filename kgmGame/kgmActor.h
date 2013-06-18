@@ -47,7 +47,7 @@ public:
     kgmAnimation* animation;
     u32           fstart, fend;
 
-    kgmTab<kgmString, kgmString> options;
+    //kgmTab<kgmString, kgmString> options;
   };
 
   struct Animation
@@ -82,6 +82,7 @@ public:
   bool                m_gameplayer;
 
   kgmTab<kgmString, kgmString> m_options;
+
 public:
   kgmActor();
   virtual ~kgmActor();
@@ -101,9 +102,6 @@ public:
   bool enabled();
   bool removed();
 
-  //void setPosition(vec3& v);
-  //void setRotation(vec3& r);
-  //void setRotation(quat& r);
   void setDirection(vec3& d);
 
   void add(kgmDummy* m)
@@ -142,6 +140,30 @@ public:
   }
 
   bool setState(kgmString s, bool force = false);
+
+  // options
+  void setOption(kgmString key, kgmString value)
+  {
+    kgmString opt;
+
+    if(m_options.get(key, opt))
+    {
+      m_options[key] = value;
+    }
+    else
+    {
+      m_options.add(key, value);
+    }
+  }
+
+  kgmString getOption(kgmString key)
+  {
+    kgmString opt;
+
+    m_options.get(key, opt);
+
+    return opt;
+  }
 };
 
 typedef kgmList<kgmActor*> kgmActors;

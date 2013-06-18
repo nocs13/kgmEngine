@@ -1327,7 +1327,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
           kgmString k, v;
           a_node->node(i)->node(j)->attribute("key", k);
           a_node->node(i)->node(j)->attribute("value", v);
-          state->options.add(k,v);
+          //state->options.add(k,v);
         }
       }
       actor->m_states.add(state);
