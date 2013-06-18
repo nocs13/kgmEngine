@@ -95,14 +95,13 @@ bool kgmActor::setState(kgmString s, bool force)
   if(!state)
     return false;
 
-  if(!m_state || force || (state->priopity >= m_state->priopity))
+  if(!m_state || force || (state->priopity > m_state->priopity))
   {
     m_state = state;
 
-    if(state->sound != (kgmSound*)-1)
+    if(state->sound && state->sound->m_sound)
     {
-      if(state->sound && state->sound->m_sound)
-        state->sound->m_sound->play((state->time == -1)?(true):(false));
+      state->sound->m_sound->play((state->time == -1)?(true):(false));
     }
 
     m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));

@@ -287,4 +287,13 @@ public:
   }
 };
 
+class ASp_SpacerA: public ASpacer
+{
+public:
+  ASp_SpacerA(kgmIGame* g)
+  :ASpacer(g)
+  {
+
+  }
+};
 #endif // ASPACER_H

@@ -25,9 +25,21 @@ class kgmActor: public kgmGameObject
   KGM_OBJECT(kgmActor);
 
 public:
+  struct Action
+  {
+    kgmString name;
+
+    virtual void action()
+    {
+
+    }
+  };
+
   struct Input
   {
     u32        input;
+    u32        input1;
+    u32        input2;
     u32        status;
     kgmString  state;
   };
@@ -70,7 +82,7 @@ public:
   u32     m_accuracy;
 
   mtx4    m_transform;
-  mtx4    m_dvisual;      //visual transform
+  mtx4    m_dvisual;      //visual transform relative to object transform
 
   kgmList<Input>      m_inputs;
   kgmList<State*>     m_states;
@@ -121,11 +133,13 @@ public:
     return null;
   }
 
-  void add(u32 btn, u32 stat, kgmString state)
+  void add(u32 btn, u32 stat, kgmString state, u32 btn1 = 0, u32 btn2 = 0)
   {
     Input inp;
-    inp.input = btn;
-    inp.state = state;
+    inp.input  = btn;
+    inp.input1 = btn1;
+    inp.input2 = btn2;
+    inp.state  = state;
     inp.status = stat;
     m_inputs.add(inp);
   }

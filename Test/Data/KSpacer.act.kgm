@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <kgm>
  <kgmActor id='KSpacer'>
-
   <Mass value='1.0' />
   <Bound value='0.5 0.5 1.0' />
   <Gravity value='false' />
@@ -22,38 +21,42 @@
   </Visual>
 
   <State id="idle" priority="1" time="-1" type="idle">
-  	<Sound value="uloop" />
-  	<Action value="idle" />
+   <Sound value="uloop" />
+   <Action value="idle" />
   </State>
 
   <State id="fly" priority="1" time="-1" type="motion">
-  	<Sound value="uloop" />
-  	<Action value="fly" />
+   <Sound value="uloop" />
+   <Action value="fly" />
+  </State>
+
+  <State id="fly" priority="1" time="-1" type="motion">
+   <Sound value="uloop" />
+   <Action value="fly" />
   </State>
 
   <State id="fall" priority="2" time="-1" type="motion" switch="idle">
-  	<Sound value="uloop" />
-  	<Action value="fall" />
+   <Sound value="uloop" />
+   <Action value="fall" />
   </State>
 
   <State id="dying" priority="10" time="20" type="die" switch="die">
-  	<Sound value="uloop" />
+   <Sound value="uloop" />
   </State>
 
   <State id="die" priority="10" time="-1" type="die">
-  	<Sound value="uloop" />
-  	<Action value="died" />
+   <Sound value="uloop" />
+   <Action value="died" />
   </State>
 
   <State id="laser" priority="2" time="8" type="attack" switch="idle">
-        <Sound value="laser_a.wav.x" />
-  	<Action value="attack" />
+   <Sound value="laser_a.wav.x" />
+   <Action value="attack" />
   </State>
 
   <State id="rocket" priority="2" time="10" type="idle" switch="punch">
-        <Sound value="laser_a.wav.x" />
-        <Action value="attack" />
+   <Sound value="laser_a.wav.x" />
+   <Action value="attack" />
   </State>
  </kgmActor>
 </kgm>
-
