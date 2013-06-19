@@ -42,7 +42,7 @@ public:
     {
       ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
-      addChild(sb);
+      //addChild(sb);
     }
   }
 
@@ -88,6 +88,81 @@ public:
       }
     }
 
+    if(m_state)
+    {
+      if(m_state->id == "idle")
+      {
+        if(m_body->m_velocity > speed_min)
+        {
+          m_body->m_velocity -= 0.001f;
+
+          if(m_body->m_velocity < speed_min)
+            m_body->m_velocity = speed_min;
+        }
+      }
+      else if(m_state->id == "left")
+      {
+        vec3 vt = m_body->m_rotation;
+        vt.z += (0.02f);
+        m_body->rotate(vt.x, vt.y, vt.z);
+
+        if(roll > -PI/4)
+          roll -= 0.02f;
+      }
+      else if(m_state->id == "right")
+      {
+        vec3 vt = m_body->m_rotation;
+        vt.z -= (0.02f);
+        m_body->rotate(vt.x, vt.y, vt.z);
+
+        if(roll < PI/4)
+          roll += 0.02f;
+      }
+      else if(m_state->id == "up")
+      {
+        if(yaaw < PI/6)
+          yaaw += 0.02f;
+      }
+      else if(m_state->id == "down")
+      {
+        if(yaaw > PI/6)
+          yaaw -= 0.02f;
+      }
+      else if(m_state->id == "fast")
+      {
+        if(m_body->m_velocity < speed_max)
+        {
+          m_body->m_velocity += 0.001f;
+
+          if(m_body->m_velocity > speed_max)
+            m_body->m_velocity = speed_max;
+        }
+      }
+      else if(m_state->id == "correct")
+      {
+        if(roll > 0.0f)
+          roll -= 0.02f;
+        else
+          roll += 0.02f;
+
+        if(fabs(roll) < 0.05f)
+          roll = 0.0f;
+
+        if(yaaw > 0.0f)
+          yaaw -= 0.02f;
+        else
+          yaaw += 0.02f;
+
+        if(fabs(yaaw) < 0.05f)
+          yaaw = 0.0f;
+
+        if(yaaw == 0.0 && roll == 0.0)
+        {
+          setState("idle", true);
+        }
+      }
+    }
+
     if(m_gameplayer)
     {
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
@@ -97,6 +172,7 @@ public:
       cam.mDir = m_body->m_direction;
       cam.update();
 
+      /*
       if(gbtns[gbtn_left] && yaaw == 0.0)
       {
         vec3 vt = m_body->m_rotation;
@@ -170,6 +246,7 @@ public:
       {
 
       }
+      */
     }
   }
 
@@ -207,6 +284,7 @@ public:
 
       break;
     }
+      /*
     case gbtn_down:
       gbtns[gbtn_down] = (state)?(true):(false);
       break;
@@ -222,6 +300,7 @@ public:
     case gbtn_n:
       gbtns[gbtn_n] = (state)?(true):(false);
       break;
+      */
     }
   }
 
@@ -275,8 +354,10 @@ public:
 
     game->gAppend(go1);
     game->gAppend(go2);
-    addChild(go1);
-    addChild(go2);
+    go1->setParent(this);
+    go2->setParent(this);
+    //addChild(go1);
+    //addChild(go2);
     go1->release();
     go2->release();
   }

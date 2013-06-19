@@ -66,6 +66,9 @@ void kgmGameLogic::update(u32 milliseconds)
     {
       (*i)->release();
       m_objects.erase(i);
+
+      if(m_gameplayer == (*i))
+        m_gameplayer = null;
     }
     else if((*i)->valid())
     {

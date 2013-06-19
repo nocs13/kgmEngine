@@ -16,16 +16,19 @@ public:
 
   virtual void main();
 
-  void setMainWindow(void* w){
+  void setMainWindow(void* w)
+  {
     if(w) m_mainWindow = w;
   }
 
-  void* getMainWindow(){
+  void* getMainWindow()
+  {
     return m_mainWindow;
   }
 
   //static
-  static kgmApp*  application(){
+  static kgmApp*  application()
+  {
     return kgmApp::m_app;
   }
 };

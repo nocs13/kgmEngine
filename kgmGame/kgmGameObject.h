@@ -29,9 +29,7 @@ protected:
   kgmBody*    m_body;
   kgmVisual*  m_visual;
 
-  kgmGameObject* 	         m_parent;
-  kgmList<kgmGameObject*>  m_childs;
-
+  kgmGameObject* m_parent;
 
 public:
   kgmGameObject();
@@ -92,56 +90,12 @@ public:
 
   void setParent(kgmGameObject* a)
   {
-    if(!a)
-      return;
-
-    if(m_parent)
-    {
-      m_parent->removeChild(this);
-    }
-
     m_parent = a;
   }
 
   kgmGameObject* getParent()
   {
     return m_parent;
-  }
-
-  void addChild(kgmGameObject* a)
-  {
-    if(!a)
-      return;
-
-    for(int i = 0; i < m_childs.size(); i++)
-    {
-      kgmGameObject* go = m_childs[i];
-
-      if(a == m_childs[i])
-        return;
-    }
-
-    m_childs.add(a);
-    a->m_parent = this;
-    a->increment();
-  }
-
-  void removeChild(kgmGameObject* a)
-  {
-    if(!a)
-      return;
-
-    for(int i = m_childs.length(); i > 0; i--)
-    {
-      if(a == m_childs[i - 1])
-      {
-        a->m_parent = null;
-        m_childs.erase(i - 1);
-        a->release();
-
-        return;
-      }
-    }
   }
 };
 

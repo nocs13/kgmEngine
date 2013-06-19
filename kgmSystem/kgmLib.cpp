@@ -1,42 +1,50 @@
 #include "kgmLib.h"
+#include "../kgmBase/kgmTypes.h"
 
-kgmLib::kgmLib(){
- handle = 0;
+kgmLib::kgmLib()
+{
+  handle = 0;
 }
-kgmLib::~kgmLib(){
- if(handle)
-	 close();
+
+kgmLib::~kgmLib()
+{
+  if(handle)
+    close();
 }
 
 bool kgmLib::open(char *p)
 {
 #ifdef WIN32
-	handle = (void*)LoadLibrary(p);
+  handle = (void*)LoadLibrary(p);
 #elif LINUX
-	handle = dlopen(p,RTLD_NOW);
+  handle = dlopen(p, RTLD_NOW);
 #endif
- return (handle)?(true):(false);
+
+  return (handle)?(true):(false);
 }
 
 void kgmLib::close()
 {
- if(!handle)
-  return;
+  if(!handle)
+    return;
 #ifdef WIN32
- FreeLibrary((HINSTANCE)handle);
+  FreeLibrary((HINSTANCE)handle);
 #elif LINUX
- dlclose(handle);
+  dlclose(handle);
 #endif
- handle = 0;
+  handle = 0;
 }
 
 void* kgmLib::get(char *sym)
 {
 #ifdef WIN32
-	return (void*)GetProcAddress((HINSTANCE)handle,sym);
+  return (void*)GetProcAddress((HINSTANCE)handle,sym);
 #endif
+
 #ifdef LINUX
-	return dlsym(handle, sym);
+  return dlsym(handle, sym);
 #endif
+
+  return null;
 }
 

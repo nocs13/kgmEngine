@@ -95,7 +95,7 @@ bool kgmActor::setState(kgmString s, bool force)
   if(!state)
     return false;
 
-  if(!m_state || force || (state->priopity > m_state->priopity))
+  if(!m_state || force || (state->priopity >= m_state->priopity))
   {
     m_state = state;
 

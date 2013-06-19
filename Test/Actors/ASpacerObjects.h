@@ -16,9 +16,12 @@ struct ASp_Face
 
 class ASp_Skybox: public kgmGameObject
 {
+  kgmIGame* game;
+
 public:
-  ASp_Skybox(kgmIGame* game)
+  ASp_Skybox(kgmIGame* g)
   {
+    game = g;
     kgmMaterial*  mtl  = new kgmMaterial();
 
     mtl->m_type        = "simple";
@@ -44,12 +47,13 @@ public:
   {
     kgmGameObject::update(ms);
 
-    if(m_parent && m_parent->getBody())
+    if(game)
     {
+      kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
       mtx4 m, msc;
 
       msc.scale(50, 50, 50);
-      m.translate(m_parent->getBody()->m_position);
+      m.translate(cam.mPos);
       m_visual->m_transform = msc * m;
     }
   }
@@ -238,10 +242,11 @@ public:
   void update(u32 ms)
   {
     kgmGameObject::update(ms);
+    return;
 
     u32 ctick = kgmTime::getTicks();
 
-    if((ctick - m_time_prev > 5000) && (m_childs.size() < 50))
+    if((ctick - m_time_prev > 5000) /*&& (m_childs.size() < 50)*/)
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
 
@@ -250,7 +255,7 @@ public:
 
       if(game->gAppend(as))
       {
-        addChild(as);
+        //addChild(as);
       }
       else
       {
@@ -259,12 +264,6 @@ public:
 
       m_time_prev = kgmTime::getTicks();
     }
-
-//    for(int i = m_childs.size(); i > 0; i--)
-//    {
-//      if(m_childs[i - 1]->removed())
-//        m_childs.erase(i - 1);
-//      }
   }
 };
 

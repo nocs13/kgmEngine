@@ -1230,18 +1230,14 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       if(go)
       {
         go->setId(id);
-        actor->addChild(go);
+        go->setParent(actor);
 
         kgmDummy* dm = actor->dummy(dummy);
 
         if(dm)
           dm->attach(go, kgmDummy::AttachToObject);
 
-        if(go->getBody())
-          m_physics->add(go->getBody());
-
-        if(go->getVisual())
-          m_render->add(go->getVisual());
+        gAppend(go);
       }
     }
     else if(id == "Visual")
