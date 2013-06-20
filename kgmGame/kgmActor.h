@@ -53,7 +53,8 @@ public:
     kgmString switchto;
 
     u32       priopity;
-    u32       time;
+    u32       timeout;
+    u32       stime;
 
     kgmSound*     sound;
     kgmAnimation* animation;

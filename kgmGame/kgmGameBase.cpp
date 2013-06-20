@@ -1314,7 +1314,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       a_node->node(i)->attribute("switch", state->switchto);
 
       a_node->node(i)->attribute("time", s);
-      if(s.length() > 0) sscanf(s, "%i", &state->time);
+      if(s.length() > 0) sscanf(s, "%i", &state->timeout);
 
       a_node->node(i)->attribute("priority", s);
       if(s.length() > 0) sscanf(s, "%i", &state->priopity);

@@ -18,6 +18,7 @@ template <class T> class kgmMatrix3d;
 template <class T> class kgmQuaternion;
 template <class T> class kgmBox3d;
 template <class T> class kgmBox2d;
+template <class T> class kgmRect2d;
 template <class T> class kgmLine3d;
 template <class T> class kgmRay3d;
 template <class T> class kgmPlane3d;
@@ -66,10 +67,11 @@ typedef kgmLine3d<f32> line3;
 typedef kgmSphere3d<f32> sphere;
 typedef kgmSphere3d<f32> sphere3;
 
-typedef kgmBox2d<f32> box2;
-typedef kgmBox2d<s32>   iRect;
-typedef kgmBox2d<u32>  uRect;
-typedef kgmBox2d<f32> fRect;
+typedef kgmBox2d<f32>   box2;
+
+typedef kgmRect2d<s32>   iRect;
+typedef kgmRect2d<u32>   uRect;
+typedef kgmRect2d<f32>   fRect;
 
 
 

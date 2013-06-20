@@ -5,7 +5,7 @@
 #include "../kgmBase/kgmMemory.h"
 #include "../kgmBase/kgmIGraphics.h"
 #include "../kgmBase/kgmLog.h"
-#include "../kgmMath/kgmRect.h"
+#include "../kgmMath/kgmRect2d.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmPicture.h"
 
@@ -39,7 +39,7 @@ void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 
 void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
   typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
-  kgmRect<int> clip(x, y, x + w, y + h);
+  kgmRect2d<int> clip(x, y, x + w, y + h);
 
   if(text.length() < 1)
     return;

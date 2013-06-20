@@ -41,7 +41,6 @@ void kgmActor::exit()
 void kgmActor::init()
 {
   m_transform.translate(m_body->m_position);
-  //m_body->m_gravity = true;
 
   if(m_visual && m_visual->m_visuals.size() > 0)
   {
@@ -52,6 +51,20 @@ void kgmActor::init()
 void kgmActor::update(u32 time)
 {
   kgmGameObject::update(time);
+
+  if(m_state && m_state->timeout != 0xffffffff)
+  {
+    u32 tick = kgmTime::getTicks();
+    u32 dtick = tick - m_state->stime;
+
+    if(m_state->timeout < dtick)
+    {
+      if(m_state->switchto.length() < 1)
+        setState("idle", true);
+      else
+        setState(m_state->switchto, true);
+    }
+  }
 }
 
 void kgmActor::input(u32 btn, int state)
@@ -69,7 +82,6 @@ void kgmActor::input(u32 btn, int state)
 
 void kgmActor::action(kgmString s)
 {
-
 }
 
 void kgmActor::setDirection(vec3& d){
@@ -101,11 +113,11 @@ bool kgmActor::setState(kgmString s, bool force)
 
     if(state->sound && state->sound->m_sound)
     {
-      state->sound->m_sound->play((state->time == -1)?(true):(false));
+      state->sound->m_sound->play((state->timeout == -1) ? (true) : (false));
     }
 
-    m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->time == -1)?(true):(false));
-
+    m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == -1)?(true):(false));
+    state->stime = kgmTime::getTicks();
     action(state->id);
   }
   else

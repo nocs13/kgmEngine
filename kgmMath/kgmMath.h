@@ -6,7 +6,7 @@
 #include "kgmVector2d.h"
 #include "kgmVector3d.h"
 #include "kgmVector4d.h"
-#include "kgmRect.h"
+#include "kgmRect2d.h"
 #include "kgmBox2d.h"
 #include "kgmBox3d.h"
 #include "kgmPlane3d.h"

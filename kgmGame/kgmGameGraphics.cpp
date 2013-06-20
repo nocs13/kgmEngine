@@ -128,6 +128,11 @@ void kgmGameGraphics::clear(){
   }
   m_visuals.clear();
 
+  for(int i = 0; i < m_vis_blend.size(); i++){
+    m_vis_blend[i]->release();
+  }
+  m_vis_blend.clear();
+
   for(int i = 0; i < m_lights.size(); i++){
     m_lights[i].light->release();
   }
@@ -175,10 +180,12 @@ void kgmGameGraphics::render(){
 
   mtx4 mvw, mpr;
 
-  kgmMaterial mbase;
-  kgmList<kgmMesh*>   meshes;
-  kgmList<kgmVisual*> visuals_blend, visuals_norm;
+  kgmMaterial           mbase;
+  kgmList<kgmMesh*>     meshes;
+  kgmList<kgmVisual*>   visuals_norm,
+                        visuals_blend;
 
+  // parse visible objects
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i++)
   {
     if((*i)->removed())
@@ -194,14 +201,38 @@ void kgmGameGraphics::render(){
     }
     else if((*i)->m_visuals.length() > 0)
     {
-      kgmMaterial* mtl = (*i)->m_visuals[0]->getMaterial();
-
-      if(mtl->m_transparency > 0.0 || mtl->m_alpha < 1.0)
-        visuals_blend.add((*i));
-      else
-        visuals_norm.add((*i));
+      visuals_norm.add((*i));
     }
   }
+
+  for(kgmList<kgmVisual*>::iterator i = m_vis_blend.begin(); i != m_vis_blend.end(); i++)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+      m_vis_blend.erase(i);
+
+      continue;
+    }
+    else if(!(*i)->valid())
+    {
+      continue;
+    }
+    else if((*i)->m_visuals.length() > 0)
+    {
+      visuals_blend.add((*i));
+    }
+  }
+
+  for(kgmList<kgmVisual*>::iterator i = m_vis_text.begin(); i != m_vis_text.end(); i++)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+      m_vis_text.erase(i);
+    }
+  }
+  //---
 
   gc->gcCull(1);
 
@@ -271,6 +302,7 @@ void kgmGameGraphics::render(){
     gc->gcSetParameter(gcpar_lighting, null);
   }
 
+  // render guis
   for(int i = 0; i < m_guis.size(); i++)
   {
     if(m_guis[i]->m_view)
@@ -278,6 +310,17 @@ void kgmGameGraphics::render(){
       render(m_guis[i]);
     }
   }
+  //---
+
+  //render text's
+  for(int i = 0; i < m_vis_text.size(); i++)
+  {
+    kgmText* text = m_vis_text[i]->getText();
+    kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
+                    text->m_rect.w, text->m_rect.h);
+    gcDrawText(font, 10, 15, text->m_color, rc, text->m_text);
+  }
+  //---
 
   char info[4096] = {0};
   sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i\n",
@@ -539,7 +582,7 @@ uniform vec3 g_vEyeLook;
 */
 void kgmGameGraphics::render(kgmGui* gui){
   kgmGui::Rect rect;
-  kgmString text;
+  kgmString    text;
 
   if(!gui)
     return;

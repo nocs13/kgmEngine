@@ -3,32 +3,51 @@
 //BOX 2D
 template <class T> class kgmRect2d{
 public:
-  T m_x, m_y, m_w, m_h;
+  T x, y, w, h;
 
 public:
   kgmRect2d(){
   }
+
   kgmRect2d(T x, T y, T w, T h){
-    m_x = x, m_y = y, m_w = w, m_h = h;
+    this->x = x, this->y = y,
+    this->w = w, this->h = h;
   }
-  T Width(){
-    return m_w;
+
+  T width(){
+    return w;
   }
-  T Height(){
-    return m_h;
+
+  T height(){
+    return h;
   }
-  kgmVector2d<T> Center(){
-    return kgmVector2d<T>(m_x +  m_w / 2, m_y + m_h / 2);
+
+  kgmVector2d<T> center(){
+    return kgmVector2d<T>(x +  w / 2, y + h / 2);
   }
-  bool InRect(kgmVector2d<T> pt){
-    if((pt.x >= m_x) && (pt.x <= (m_x + m_w)) &&
-       (pt.y >= m_y) && (pt.y <= (m_y + m_h)))
+
+  void center(T& cx, T& cy){
+    cx = x + w / 2;
+    cy = y + h / 2;
+  }
+
+  bool inside(kgmVector2d<T> pt){
+    if((pt.x >= x) && (pt.x <= (x + w)) &&
+       (pt.y >= y) && (pt.y <= (y + h)))
       return true;
     return false;
   }
-  bool EntyreIn(kgmRect2d<T> rc){
-    if((rc.m_x > m_x) && ((rc.m_x + rc.m_w) < (m_x + m_w)) &&
-       (rc.m_y > m_y) && ((rc.m_x + rc.m_w) < (m_x + m_w)))
+
+  bool inside(T cx, T cy){
+    if((cx >= x) && (cx <= (x + w)) &&
+       (cy >= y) && (cy <= (y + h)))
+      return true;
+    return false;
+  }
+
+  bool inside(kgmRect2d<T> rc){
+    if((rc.x > x) && ((rc.x + rc.w) < (x + w)) &&
+       (rc.y > y) && ((rc.y + rc.h) < (y + h)))
       return true;
     return false;
   }

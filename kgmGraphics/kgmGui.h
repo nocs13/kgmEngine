@@ -15,10 +15,11 @@ class   kgmIGuiDraw;
 class kgmGui: public kgmEvent
 {
   KGM_OBJECT(kgmGui);
+
  public:
-  typedef void*            Option;
-  typedef kgmVector2d<s32> Point;
-  typedef kgmRect<s32>     Rect;
+  typedef void*             Option;
+  typedef kgmVector2d<s32>  Point;
+  typedef kgmRect2d<s32>    Rect;
   
   struct Styles{
     u32 fgColor;
@@ -104,6 +105,7 @@ public: //static
     Point pt = toAbsolute (Point(rect.x, rect.y));
     return Rect(pt.x, pt.y, rect.w, rect.h);
   }
+
   Point toAbsolute(Point pt){
     kgmGui* parent = m_parent;
     while(parent){

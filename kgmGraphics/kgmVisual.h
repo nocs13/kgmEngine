@@ -6,7 +6,9 @@
 #include "../kgmBase/kgmIGraphics.h"
 
 #include "kgmMesh.h"
+#include "kgmText.h"
 #include "kgmLight.h"
+#include "kgmSprite.h"
 #include "kgmSkeleton.h"
 #include "kgmParticles.h"
 
@@ -18,6 +20,7 @@ class kgmVisual: public kgmObject
 public:
   enum TypeRender
   {
+    RenderNone,
     RenderMesh,
     RenderText,
     RenderSprite,
@@ -128,17 +131,20 @@ public:
     }
   };
 
-  bool         m_valid;
-  bool         m_remove;
+  bool                   m_valid;
+  bool                   m_remove;
+
 public:
-  bool         m_visible;
-  mtx4         m_transform;
-  TypeShadow   m_typeshadow;
-  TypeRender   m_typerender;
+  bool                   m_visible;
+  mtx4                   m_transform;
+  TypeShadow             m_typeshadow;
+  TypeRender             m_typerender;
 
   kgmList<kgmMaterial*>  m_materials;   //material maps
   kgmList<Visual*>       m_visuals;     //render geometry
   kgmParticles*          m_particles;   //particle effect
+  kgmSprite*             m_sprite;      //render sprite
+  kgmText*               m_text;        //render text
 
 
   kgmSkeleton*           m_skeleton;
@@ -156,17 +162,18 @@ public:
 public:
   kgmVisual()
   {
-    m_valid = true;
-    m_remove = false;
+    m_valid   = true;
+    m_remove  = false;
     m_visible = true;
+
     m_typeshadow = ShadowNone;
-    m_typerender = RenderMesh;
+    m_typerender = RenderNone;
 
     m_animation = null;
     m_fstart    = m_fend = 0;
     m_floop     = false;
 
-    m_tm_joints = null;
+    m_tm_joints   = null;
     m_last_update = kgmTime::getTicks();
 
     m_particles = null;
@@ -189,6 +196,9 @@ public:
 
     if(m_particles)
       m_particles->release();
+
+    if(m_text)
+      m_text->release();
   }
 
   void enable(){
@@ -232,15 +242,43 @@ public:
     if(!par)
       return;
 
-    if(m_particles)
-      m_particles->release();
+    if(m_typerender == RenderNone || m_typerender == RenderParticles)
+    {
 
-    m_particles = par;
+      if(m_particles)
+        m_particles->release();
+
+      par->increment();
+      m_particles = par;
+      m_typerender = RenderParticles;
+    }
   }
 
   kgmParticles* getParticles()
   {
     return m_particles;
+  }
+
+  void set(kgmText* text)
+  {
+    if(!text)
+      return;
+
+    if(m_typerender == RenderNone || m_typerender == RenderText)
+    {
+
+      if(m_text)
+        m_text->release();
+
+      text->increment();
+      m_text = text;
+      m_typerender = RenderText;
+    }
+  }
+
+  kgmText* getText()
+  {
+    return m_text;
   }
 
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)

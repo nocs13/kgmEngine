@@ -121,6 +121,11 @@ private:
   kgmList<kgmMaterial*> m_materials;
   kgmList<Light>        m_lights;
   kgmList<kgmVisual*>   m_visuals;
+  kgmList<kgmVisual*>   m_vis_mesh;
+  kgmList<kgmVisual*>   m_vis_text;
+  kgmList<kgmVisual*>   m_vis_blend;
+  kgmList<kgmVisual*>   m_vis_sprite;
+  kgmList<kgmVisual*>   m_vis_particles;
   kgmList<kgmGui*>      m_guis, m_tguis;
 
   kgmGuiStyle* gui_style;
@@ -191,7 +196,28 @@ public:
       return;
 
     a->increment();
-    m_visuals.add(a);
+
+    switch(a->m_typerender)
+    {
+    case kgmVisual::RenderNone:
+    case kgmVisual::RenderMesh:
+      if(a->m_visuals.size() > 0 &&
+         (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
+          a->m_visuals[0]->getMaterial()->m_alpha < 1.0))
+        m_vis_blend.add(a);
+      else
+        m_visuals.add(a);
+    break;
+    case kgmVisual::RenderText:
+      m_vis_text.add(a);
+    break;
+    case kgmVisual::RenderSprite:
+      m_vis_sprite.add(a);
+    break;
+    case kgmVisual::RenderParticles:
+      m_vis_particles.add(a);
+    break;
+    };
   }
 
   void add(kgmGui* gui, bool tmp = false){

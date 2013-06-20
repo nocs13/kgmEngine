@@ -13,6 +13,8 @@ class ASpacer: public kgmActor
   float     yaaw;
 
   bool      gbtns[65];
+
+  kgmVisual* vtext;
 public:
   ASpacer(kgmIGame* g)
   {
@@ -29,20 +31,29 @@ public:
     m_body->m_bound.max = vec3( 1,  1,  1);
 
     memset(gbtns, false, sizeof(gbtns));
+
+    vtext = new kgmVisual();
   }
 
   ~ASpacer()
   {
-
+    vtext->remove();
+    vtext->release();
   }
 
   void init()
   {
+    kgmText* text = new kgmText();
+    text->m_rect  = uRect(10, 100, 300, 200);
+
+    vtext->set(text);
+    ((kgmGameBase*)game)->m_render->add(vtext);
+    text->release();
+
     if(m_gameplayer)
     {
       ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
-      //addChild(sb);
     }
   }
 
@@ -86,19 +97,21 @@ public:
           go->getVisual()->m_transform = m * m_visual->m_transform;
         }
       }
+
+      kgmString ts = "ASpacer state: ";
+
+      if(m_state)
+        vtext->getText()->m_text = ts + m_state->id;
+      else
+        vtext->getText()->m_text = ts;
     }
 
     if(m_state)
     {
+      bool ainput = false;
+
       if(m_state->id == "idle")
       {
-        if(roll != 0.0 || yaaw != 0.0)
-        {
-          setState("correct");
-
-          return;
-        }
-
         for(int i = 0; i < m_ainputs.size(); i++)
         {
           Input inp = m_ainputs[i];
@@ -106,15 +119,20 @@ public:
           if(gbtns[inp.input])
           {
             setState(inp.state);
+            ainput = true;
           }
+        }
+
+        if(!ainput && (roll != 0.0 || yaaw != 0.0))
+        {
+          setState("correct");
+
+          return;
         }
 
         if(m_body->m_velocity > speed_min)
         {
-          m_body->m_velocity -= 0.001f;
-
-          if(m_body->m_velocity < speed_min)
-            m_body->m_velocity = speed_min;
+          setState("slow");
         }
       }
       else if(m_state->id == "left")
@@ -138,12 +156,24 @@ public:
       else if(m_state->id == "up")
       {
         if(yaaw < PI/6)
+        {
+          vec3 vt = m_body->m_rotation;
+          vt.x    = yaaw;
+          m_body->rotate(vt.x, vt.y, vt.z);
+
           yaaw += 0.02f;
+        }
       }
       else if(m_state->id == "down")
       {
-        if(yaaw > PI/6)
+        if(yaaw > -PI/6)
+        {
+          vec3 vt = m_body->m_rotation;
+          vt.x    = yaaw;
+          m_body->rotate(vt.x, vt.y, vt.z);
+
           yaaw -= 0.02f;
+        }
       }
       else if(m_state->id == "fast")
       {
@@ -154,6 +184,18 @@ public:
           if(m_body->m_velocity > speed_max)
             m_body->m_velocity = speed_max;
         }
+      }
+      else if(m_state->id == "slow")
+      {
+        if(m_body->m_velocity > speed_min)
+        {
+          m_body->m_velocity -= 0.001f;
+
+          if(m_body->m_velocity < speed_min)
+            m_body->m_velocity = speed_min;
+        }
+        else if(m_body->m_velocity <= speed_min)
+          setState(m_state->switchto);
       }
       else if(m_state->id == "correct")
       {
@@ -188,82 +230,6 @@ public:
       cam.mPos = cpos;
       cam.mDir = m_body->m_direction;
       cam.update();
-
-      /*
-      if(gbtns[gbtn_left] && yaaw == 0.0)
-      {
-        vec3 vt = m_body->m_rotation;
-        vt.z += (0.02f);
-        m_body->rotate(vt.x, vt.y, vt.z);
-
-        if(roll > -PI/4)
-          roll -= 0.02f;
-      }
-      else if(gbtns[gbtn_right] && yaaw == 0.0)
-      {
-        vec3 vt = m_body->m_rotation;
-        vt.z -= (0.02f);
-        m_body->rotate(vt.x, vt.y, vt.z);
-
-        if(roll < PI/4)
-          roll += 0.02f;
-      }
-      else if(!gbtns[gbtn_left] && !gbtns[gbtn_left] && roll != 0.0f)
-      {
-        if(roll > 0.0f)
-          roll -= 0.02f;
-        else
-          roll += 0.02f;
-
-        if(fabs(roll) < 0.02f)
-          roll = 0.0f;
-      }
-
-      if(gbtns[gbtn_up] && gbtns[gbtn_n] && yaaw < PI/6 && roll == 0.0)
-      {
-        yaaw += 0.02f;
-
-        vec3 vt = m_body->m_rotation;
-        vt.y += (0.02f);
-        m_body->rotate(vt.y, 0, vt.z);
-      }
-      else if(gbtns[gbtn_up] && m_body->m_velocity < speed_max)
-      {
-        m_body->m_velocity += 0.001f;
-
-        if(m_body->m_velocity > speed_max)
-          m_body->m_velocity = speed_max;
-      }
-      else if(!gbtns[gbtn_up] && m_body->m_velocity > speed_min)
-      {
-        m_body->m_velocity -= 0.001f;
-
-        if(m_body->m_velocity < speed_min)
-          m_body->m_velocity = speed_min;
-      }
-      else if(gbtns[gbtn_down] && gbtns[gbtn_n] && yaaw > -PI/6 && roll == 0.0)
-      {
-        yaaw -= 0.02f;
-
-        vec3 vt = m_body->m_rotation;
-        vt.y -= (0.02f);
-        m_body->rotate(vt.y, 0, vt.z);
-      }
-      else if(!gbtns[gbtn_up] && !gbtns[gbtn_down] && yaaw != 0.0)
-      {
-        if(yaaw > 0.0f)
-          yaaw -= 0.02f;
-        else
-          yaaw += 0.02f;
-
-        if(fabs(yaaw) < 0.02f)
-          yaaw = 0.0f;
-      }
-      else if(gbtns[gbtn_down])
-      {
-
-      }
-      */
     }
   }
 
@@ -303,23 +269,6 @@ public:
 
       break;
     }
-      /*
-    case gbtn_down:
-      gbtns[gbtn_down] = (state)?(true):(false);
-      break;
-    case gbtn_up:
-      gbtns[gbtn_up] = (state)?(true):(false);
-      break;
-    case gbtn_left:
-      gbtns[gbtn_left] = (state)?(true):(false);
-      break;
-    case gbtn_right:
-      gbtns[gbtn_right] = (state)?(true):(false);
-      break;
-    case gbtn_n:
-      gbtns[gbtn_n] = (state)?(true):(false);
-      break;
-      */
     }
   }
 
@@ -375,8 +324,6 @@ public:
     game->gAppend(go2);
     go1->setParent(this);
     go2->setParent(this);
-    //addChild(go1);
-    //addChild(go2);
     go1->release();
     go2->release();
   }
