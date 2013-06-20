@@ -267,6 +267,20 @@ public:
   }
 };
 
+class ASp_Spacer: public kgmActor
+{
+public:
+  ASp_Spacer()
+  {
+
+  }
+
+  virtual ~ASp_Spacer()
+  {
+
+  }
+};
+
 class ASp_SpacerSpawner: public kgmGameObject
 {
 public:
