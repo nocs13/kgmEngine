@@ -21,6 +21,9 @@
   <Input button="31" status="1" state="laser" />
   <Input button="33" status="1" state="rocket" />
 
+  <InputActive button="3" state="left" />
+  <InputActive button="4" state="right" />
+
   <Visual id='Base'>
    <Mesh value="kspacer_o1.kgm" />
    <Material value="kspacer_o1.kgm" />
@@ -66,7 +69,7 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="laser" priority="2" time="1" type="attack" switch="idle">
+  <State id="laser" priority="1" time="1" type="attack" switch="idle">
    <Sound value="laser_a.wav.x" />
   </State>
 

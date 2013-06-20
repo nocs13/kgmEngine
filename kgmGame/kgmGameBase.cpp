@@ -1291,6 +1291,20 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       actor->add(btn, stat, state, btn1, btn2);
     }
+    else if(id == "InputActive")
+    {
+      u32 btn = 0, btn1 = 0, btn2 = 0, stat = 1;
+      kgmString state;
+
+      a_node->node(i)->attribute("button",  val);  sscanf(val, "%i", &btn);
+      val = "";
+      a_node->node(i)->attribute("button1", val);  sscanf(val, "%i", &btn1);
+      val = "";
+      a_node->node(i)->attribute("button2", val);  sscanf(val, "%i", &btn2);
+      a_node->node(i)->attribute("state",   state);
+
+      actor->add(btn, stat, state, btn1, btn2, true);
+    }
     else if(id == "State")
     {
       kgmString s;

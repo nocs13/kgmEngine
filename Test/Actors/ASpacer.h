@@ -92,6 +92,23 @@ public:
     {
       if(m_state->id == "idle")
       {
+        if(roll != 0.0 || yaaw != 0.0)
+        {
+          setState("correct");
+
+          return;
+        }
+
+        for(int i = 0; i < m_ainputs.size(); i++)
+        {
+          Input inp = m_ainputs[i];
+
+          if(gbtns[inp.input])
+          {
+            setState(inp.state);
+          }
+        }
+
         if(m_body->m_velocity > speed_min)
         {
           m_body->m_velocity -= 0.001f;
@@ -259,6 +276,8 @@ public:
       return;
 
     kgmActor::input(btn, state);
+
+    gbtns[btn] = state;
 
     switch(btn)
     {

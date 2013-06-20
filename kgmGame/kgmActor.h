@@ -58,8 +58,6 @@ public:
     kgmSound*     sound;
     kgmAnimation* animation;
     u32           fstart, fend;
-
-    //kgmTab<kgmString, kgmString> options;
   };
 
   struct Animation
@@ -84,8 +82,9 @@ public:
   mtx4    m_transform;
   mtx4    m_dvisual;      //visual transform relative to object transform
 
-  kgmList<Input>      m_inputs;
   kgmList<State*>     m_states;
+  kgmList<Input>      m_inputs;
+  kgmList<Input>      m_ainputs;
   kgmList<kgmDummy*>  m_dummies;
 
   kgmAnimation*       m_animation;
@@ -133,7 +132,7 @@ public:
     return null;
   }
 
-  void add(u32 btn, u32 stat, kgmString state, u32 btn1 = 0, u32 btn2 = 0)
+  void add(u32 btn, u32 stat, kgmString state, u32 btn1 = 0, u32 btn2 = 0, bool active = false)
   {
     Input inp;
     inp.input  = btn;
@@ -141,7 +140,11 @@ public:
     inp.input2 = btn2;
     inp.state  = state;
     inp.status = stat;
-    m_inputs.add(inp);
+
+    if(active)
+      m_ainputs.add(inp);
+    else
+      m_inputs.add(inp);
   }
 
   void setAnimation(kgmAnimation* a)
