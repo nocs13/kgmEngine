@@ -238,9 +238,6 @@ public:
     static float alpha = 0.0f;
     vec3 vt;
 
-    if(!m_gameplayer)
-      return;
-
     kgmActor::input(btn, state);
 
     gbtns[btn] = state;
@@ -320,10 +317,14 @@ public:
                                        m_body->m_direction,
                                        m_body->m_velocity + 0.1f);
 
+    go1->setId("laser1");
+    go1->setParent(this);
+    go2->setId("laser2");
+    go2->setParent(this);
+
     game->gAppend(go1);
     game->gAppend(go2);
-    go1->setParent(this);
-    go2->setParent(this);
+
     go1->release();
     go2->release();
   }

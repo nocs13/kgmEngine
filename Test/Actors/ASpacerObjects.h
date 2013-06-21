@@ -190,6 +190,7 @@ class ASp_Asteroid: public kgmGameObject
 {
   kgmMesh* msh;
   kgmMaterial* mtl;
+
 public:
   ASp_Asteroid(kgmIGame* g, u32 type)
   {
@@ -207,7 +208,8 @@ public:
     m_body->m_velocity = 0.01 + 0.02 * 1.0f / (1 + rand()%30);
     m_body->m_direction = vec3((float)pow(-1, rand() % 2) / (1 + rand()%30),
                                (float)pow(-1, rand() % 2) / (1 + rand()%30),
-                               (float)pow(-1, rand() % 2) / (1 + rand()%30));
+                               //(float)pow(-1, rand() % 2) / (1 + rand()%30)
+                               0);
     m_body->m_direction.normalize();
     m_body->m_bound.min = vec3(-1, -1, -1);
     m_body->m_bound.max = vec3( 1,  1,  1);
@@ -215,7 +217,7 @@ public:
 
   ~ASp_Asteroid()
   {
-    //msh->release();
+    msh->release();
     mtl->release();
   }
 
@@ -242,25 +244,20 @@ public:
   void update(u32 ms)
   {
     kgmGameObject::update(ms);
-    return;
+    //return;
 
     u32 ctick = kgmTime::getTicks();
 
     if((ctick - m_time_prev > 5000) /*&& (m_childs.size() < 50)*/)
     {
       ASp_Asteroid* as = new ASp_Asteroid(game, 0);
+      as->setId("asteroid");
 
       as->timeout(10000 + rand() % 10000);
       as->setPosition(m_body->m_position);
-
-      if(game->gAppend(as))
-      {
-        //addChild(as);
-      }
-      else
-      {
-        as->release();
-      }
+      as->setParent(this);
+      game->gAppend(as);
+      as->release();
 
       m_time_prev = kgmTime::getTicks();
     }

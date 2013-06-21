@@ -62,17 +62,19 @@ void kgmGameLogic::update(u32 milliseconds)
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
   {
-    if((*i)->removed())
+    kgmGameObject* go = (*i);
+
+    if(go->removed())
     {
-      (*i)->release();
+      go->release();
       m_objects.erase(i);
 
-      if(m_gameplayer == (*i))
+      if(m_gameplayer == go)
         m_gameplayer = null;
     }
-    else if((*i)->valid())
+    else if(go->valid())
     {
-      (*i)->update(milliseconds);
+      go->update(milliseconds);
     }
   }
 }

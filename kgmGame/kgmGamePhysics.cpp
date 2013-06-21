@@ -41,9 +41,9 @@ void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
   }
   else
   {
-    go_body->remove();
-    go_body->getBody()->remove();
-    go_body->getVisual()->remove();
+    //go_body->remove();
+    //go_body->getBody()->remove();
+    //go_body->getVisual()->remove();
   }
 }
 
