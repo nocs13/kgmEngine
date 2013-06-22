@@ -72,6 +72,7 @@ public:
  kgmISpawner*       getSpawner();
  kgmIAudio*         getAudio();
  kgmIVideo*         getVideo();
+ kgmILogic*         getLogic();
  kgmIResources*     getResources();
  kgmSystem*         getSystem();
  kgmWindow*         getWindow();
@@ -122,8 +123,8 @@ protected:
  kgmTexture*    getTexture(char*);
  kgmShader*	    getShader(char*);
  kgmMesh*	      getMesh(char*);
- kgmActor*	     getActor(kgmString);
- kgmAnimation*	 getAnimation(char*);
+ kgmActor*      getActor(kgmString);
+ kgmAnimation*  getAnimation(char*);
 
  void*          loadXml(kgmString& path);
  bool           loadXml_II(kgmString& path);

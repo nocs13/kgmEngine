@@ -41,6 +41,16 @@ bool kgmGameLogic::add(kgmActor *a)
   return false;
 }
 
+bool kgmGameLogic::add(kgmSensor *a)
+{
+  return false;
+}
+
+bool kgmGameLogic::add(kgmTrigger *a)
+{
+  return false;
+}
+
 bool kgmGameLogic::add(kgmGameObject *o)
 {
   if(o)
@@ -88,6 +98,11 @@ void kgmGameLogic::input(int btn, int state)
   else
   {
   }
+}
+
+void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
+{
+
 }
 
 kgmGameObject* kgmGameLogic::createGameObject(kgmString t)

@@ -18,16 +18,17 @@ private:
   bool      m_culled;
   bool      m_visible;
 
+  u32       m_group;
   u32       m_birth;
   u32       m_timeout;
 
 protected:
-  vec3        m_position;
-  vec3        m_rotation;
-  quat        m_quaternion;
+  vec3           m_position;
+  vec3           m_rotation;
+  quat           m_quaternion;
 
-  kgmBody*    m_body;
-  kgmVisual*  m_visual;
+  kgmBody*       m_body;
+  kgmVisual*     m_visual;
 
   kgmGameObject* m_parent;
 
@@ -38,7 +39,7 @@ public:
   virtual void         exit(){}
   virtual void         init(){}
   virtual void         update(u32 mls);
-  virtual kgmBody*     getBody(){ return m_body; }
+  virtual kgmBody*     getBody(){   return m_body;   }
   virtual kgmVisual*   getVisual(){ return m_visual; }
 
   bool valid()      { return m_valid;    }
@@ -62,6 +63,16 @@ public:
   kgmString getId()
   {
     return m_id;
+  }
+
+  void setGroup(u32 g)
+  {
+    m_group = g;
+  }
+
+  u32 getGroup()
+  {
+    return m_group;
   }
 
   void setPosition(vec3& v)

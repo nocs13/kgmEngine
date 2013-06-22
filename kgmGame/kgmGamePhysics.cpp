@@ -37,10 +37,10 @@ void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
   if(go_body->getParent() == go_tobody ||
      go_tobody->getParent() == go_body)
   {
-    int k = 0;
   }
   else
   {
+    kgmIGame::getGame()->getLogic()->collide(go_body, go_tobody);
     //go_body->remove();
     //go_body->getBody()->remove();
     //go_body->getVisual()->remove();

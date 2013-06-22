@@ -114,6 +114,7 @@ class kgmGui;
 class kgmActor;
 class kgmIAudio;
 class kgmIVideo;
+class kgmILogic;
 class kgmISpawner;
 class kgmIPhysics;
 class kgmIGraphics;
@@ -145,6 +146,7 @@ public:  //virtuals
   virtual int            gQuit() = 0;                     //close game
   virtual u32            gState() = 0;                    //check game active  state
   virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
+//  virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
   virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
 
   virtual void           addGui(kgmGui* g) = 0;
@@ -155,6 +157,7 @@ public:  //virtuals
   virtual kgmISpawner*   getSpawner() = 0;
   virtual kgmIAudio*     getAudio() = 0;
   virtual kgmIVideo*     getVideo() = 0;
+  virtual kgmILogic*     getLogic() = 0;
   virtual kgmIResources* getResources() = 0;
   virtual kgmWindow*     getWindow() = 0;
   virtual kgmSystem*     getSystem() = 0;

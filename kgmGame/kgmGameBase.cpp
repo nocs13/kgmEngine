@@ -170,6 +170,10 @@ kgmIVideo*  kgmGameBase::getVideo(){
   return m_game->m_video;
 }
 
+kgmILogic*  kgmGameBase::getLogic(){
+  return m_game->m_logic;
+}
+
 kgmIResources* kgmGameBase::getResources(){
   return m_game->m_resources;
 }
