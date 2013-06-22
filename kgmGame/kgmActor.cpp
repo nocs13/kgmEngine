@@ -80,6 +80,10 @@ void kgmActor::input(u32 btn, int state)
   }
 }
 
+void kgmActor::logic(kgmString s)
+{
+}
+
 void kgmActor::action(kgmString s)
 {
 }

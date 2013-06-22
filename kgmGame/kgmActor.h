@@ -103,6 +103,7 @@ public:
   virtual void exit();
   virtual void update(u32);
   virtual void input(u32, int);
+  virtual void logic(kgmString s);
   virtual void action(kgmString s);
 
   void remove();

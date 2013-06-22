@@ -509,6 +509,10 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
   return true;
 }
 
+kgmGameObject* kgmGameBase::gObject(kgmString s)
+{
+  return null;
+}
 
 ///////////////////////////////////////
 kgmTexture* kgmGameBase::getTexture(char* id){

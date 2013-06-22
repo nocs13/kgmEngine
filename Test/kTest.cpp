@@ -68,6 +68,9 @@ public:
     return kgmGameLogic::createGameObject(t);
   }
 
+  void collide(kgmGameObject *os, kgmGameObject *od)
+  {
+  }
 };
 
 class kGame: public kgmGameBase{

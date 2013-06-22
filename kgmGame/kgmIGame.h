@@ -146,7 +146,7 @@ public:  //virtuals
   virtual int            gQuit() = 0;                     //close game
   virtual u32            gState() = 0;                    //check game active  state
   virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
-//  virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
+  virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
   virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
 
   virtual void           addGui(kgmGui* g) = 0;
