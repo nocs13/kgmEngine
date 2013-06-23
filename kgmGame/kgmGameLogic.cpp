@@ -105,7 +105,7 @@ void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 
 }
 
-kgmGameObject* kgmGameLogic::createGameObject(kgmString t)
+/*kgmGameObject* kgmGameLogic::createGameObject(kgmString t)
 {
   return null;
-}
+}*/

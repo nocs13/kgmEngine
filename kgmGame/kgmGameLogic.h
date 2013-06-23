@@ -40,7 +40,7 @@ public:
     virtual void update(u32 milliseconds);
     virtual void collide(kgmGameObject*, kgmGameObject*);
 
-    virtual kgmGameObject* createGameObject(kgmString t);
+    //virtual kgmGameObject* createGameObject(kgmString t);
 
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;

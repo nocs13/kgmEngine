@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <kgm>
- <kgmActor type="KSpacer">
+ <kgmActor type="ASp_SpacerA">
   <Mass value='1.0' />
   <Bound value='0.5 0.5 1.0' />
   <Gravity value='false' />
@@ -12,18 +12,6 @@
   <GameObject id="GunA.2"  type="GunA"   dummy="Gun.2"   />
   <GameObject id="GunB"    type="GunB"   dummy="Gun.3"   />
   
-  <Input button="1" status="1" state="fast" />
-  <Input button="1" status="0" state="slow" />
-  <Input button="3" status="1" state="left" />
-  <Input button="3" status="0" state="correct" />
-  <Input button="4" status="1" state="right" />
-  <Input button="4" status="0" state="correct" />
-  <Input button="31" status="1" state="laser" />
-  <Input button="33" status="1" state="rocket" />
-
-  <InputActive button="3" state="left" />
-  <InputActive button="4" state="right" />
-
   <Visual id='Base'>
    <Mesh value="kspacer_o1.kgm" />
    <Material value="kspacer_o1.kgm" />

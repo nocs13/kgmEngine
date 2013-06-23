@@ -832,8 +832,9 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       else if(id == "kgmActor")
       {
         type = TypeActor;
-        kgmString s;
+        kgmString s, sgrp;
         xml.attribute("type", s);
+        xml.attribute("group", sgrp);
         obj = act = gSpawn(s);
 
         if(act)
@@ -850,6 +851,9 @@ bool kgmGameBase::loadXml_II(kgmString& path)
               m_render->linkCamera(act->getVisual(), 10.0f, 10.0f);
           }
 
+          if(sgrp.length() > 0)
+            act->setGroup(kgmConvert::toInteger(sgrp));
+
           m_render->add(act->getVisual());
           m_physics->add(act->getBody());
           m_logic->add(act);
@@ -860,9 +864,14 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       else if(id == "kgmGameObject")
       {
         type = TypeGameObject;
-        kgmString s;
+        kgmString s, sgrp;
+
         xml.attribute("type", s);
-        obj = gob = m_logic->createGameObject(s);
+        xml.attribute("group", sgrp);
+        obj = gob = gObject(s);
+
+        if(sgrp.length() > 0)
+          gob->setGroup(kgmConvert::toInteger(sgrp));
 
         m_render->add(gob->getVisual());
         m_physics->add(gob->getBody());
@@ -1120,6 +1129,7 @@ bool kgmGameBase::gMapBinary(kgmString& path)
 /////////////////
 kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgmActor*       actor = 0;
+  kgmString       type = a;
   kgmMemory<char> mem;
 
   kgm_log() << "\nSpawning Actor: " << a.data();
@@ -1130,7 +1140,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     {
       if(!m_resources->getFile(a += ".kgm", mem))
       {
-        return 0;
+        return gObject(type);
       }
     }
   }
@@ -1157,9 +1167,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   if(!a_node)
     return null;
 
-  kgmString sid;
-  a_node->attribute("id", sid);
-  actor = (m_logic)?((kgmActor*)m_logic->createGameObject(sid)):(new kgmActor());
+  kgmString stype;
+  a_node->attribute("type", stype);
+  actor = (m_logic)?((kgmActor*)gObject(stype)):(new kgmActor());
 
   for(int i = 0; i < a_node->nodes(); i++){
     kgmString id, val;
@@ -1240,7 +1250,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       a_node->node(i)->attribute("type",  type);
       a_node->node(i)->attribute("dummy", dummy);
 
-      kgmGameObject* go = m_logic->createGameObject(type);
+      kgmGameObject* go = gObject(type);
 
       if(go)
       {

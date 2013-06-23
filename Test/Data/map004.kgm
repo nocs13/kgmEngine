@@ -8,19 +8,19 @@
   <Intensity value='1.0'/>
   <Shadows value='Yes'/>
  </kgmLight>
- <kgmActor name='main_spacer' type='KSpacer' player='on' >
+ <kgmActor name='main_spacer' type='KSpacer' player='on' group='0' >
   <Position value='0.0 0.0 0.0'/>
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='idle'/>
  </kgmActor>
- <kgmActor name='spacer_1' type='ASp_SpacerA' >
-  <Position value='10.0 10.0 0.0'/>
+ <kgmActor name='spacer_1' type='ASp_SpacerA' group='1' >
+  <Position value='1.0 1.0 0.0'/>
   <Rotation value='0.0 0.0 0.0'/>
   <State value='idle'/>
   <Aim value='attack' />
   <Target value='main_spacer' />
  </kgmGameObject>
- <kgmGameObject name='aspawner_1' type='KAsteroidSpawner' >
+ <kgmGameObject name='aspawner_1' type='KAsteroidSpawner' group='1' >
   <Position value='0.0 0.0 0.0'/>
   <Rotation value='0.0 0.0 0.0'/>
   <State value='idle'/>

@@ -22,57 +22,6 @@ public:
     game = g;
   }
 
-
-  kgmGameObject*  createGameObject(kgmString t)
-  {
-    if(t == "RenTao")
-    {
-      return new ATaoRen(game);
-    }
-    else if(t == "HyugaNeji")
-    {
-
-    }
-    else if(t == "Komble")
-    {
-      return new AKomble(game);
-    }
-    else if(t == "KSpacer")
-    {
-      return new ASpacer(game);
-    }
-    else if(t == "KSpacerA")
-    {
-      return new ASpacer(game);
-    }
-    else if(t == "KSpacerB")
-    {
-      return new ASpacer(game);
-    }
-    else if(t == "KSpacerC")
-    {
-      return new ASpacer(game);
-    }
-    else if(t == "MotorA")
-    {
-      return new ASp_MotorA(game);
-    }
-    else if(t == "KAsteroidSpawner")
-    {
-      return new ASp_AsteroidSpawner(game);
-    }
-    else if(t == "ASp_SpacerA")
-    {
-      return new ASp_SpacerA(game);
-    }
-    else if(t == "KSpacerSpawner")
-    {
-      return new ASp_SpacerSpawner(game);
-    }
-
-    return kgmGameLogic::createGameObject(t);
-  }
-
   void collide(kgmGameObject *os, kgmGameObject *od)
   {
   }
@@ -176,6 +125,56 @@ public:
     int res = kgmGameBase::gLoad(s);
 
     return res;
+  }
+
+  kgmGameObject* gObject(kgmString t)
+  {
+    if(t == "RenTao")
+    {
+      return new ATaoRen(this);
+    }
+    else if(t == "HyugaNeji")
+    {
+
+    }
+    else if(t == "Komble")
+    {
+      return new AKomble(this);
+    }
+    else if(t == "KSpacer")
+    {
+      return new ASpacer(this);
+    }
+    else if(t == "KSpacerA")
+    {
+      return new ASpacer(this);
+    }
+    else if(t == "KSpacerB")
+    {
+      return new ASpacer(this);
+    }
+    else if(t == "KSpacerC")
+    {
+      return new ASpacer(this);
+    }
+    else if(t == "MotorA")
+    {
+      return new ASp_MotorA(this);
+    }
+    else if(t == "KAsteroidSpawner")
+    {
+      return new ASp_AsteroidSpawner(this);
+    }
+    else if(t == "ASp_SpacerA")
+    {
+      return new ASp_SpacerA(this);
+    }
+    else if(t == "KSpacerSpawner")
+    {
+      return new ASp_SpacerSpawner(this);
+    }
+
+    return kgmGameBase::gObject(t);
   }
 };
 
