@@ -10,6 +10,7 @@
 #include "Actors/AKomble.h"
 #include "Actors/ASpacerObjects.h"
 #include "Actors/ASpacer.h"
+#include "Actors/ASp_Spacer.h"
 
 class kLogic: public kgmGameLogic
 {
@@ -59,6 +60,10 @@ public:
     else if(t == "KAsteroidSpawner")
     {
       return new ASp_AsteroidSpawner(game);
+    }
+    else if(t == "ASp_SpacerA")
+    {
+      return new ASp_SpacerA(game);
     }
     else if(t == "KSpacerSpawner")
     {

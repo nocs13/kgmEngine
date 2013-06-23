@@ -1031,6 +1031,13 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         if(act && type == TypeActor)
           act->setState(s);
       }
+      else
+      {
+        kgmString s;
+
+        if(act && type == TypeActor && xml.attribute("value", s))
+          act->setOption(id, s);
+      }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
     {
