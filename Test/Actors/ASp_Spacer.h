@@ -82,8 +82,6 @@ public:
 
     if(m_state)
     {
-      logic(m_state->id);
-
       if(m_state->id == "idle")
       {
         if(m_body->m_velocity > speed_min)
@@ -176,6 +174,8 @@ public:
           setState("idle", true);
         }
       }
+
+      logic(m_state->id);
     }
   }
 };
@@ -224,11 +224,43 @@ public:
         float dist  = tdir.length();
         float angle = m_body->m_direction.angle(tdir.normal());
 
-        if(angle < (PI / 100))
-          setState("laser");
+        if(dist < chase_min)
+          aim = "Evade";
+        else if(dist < chase_max)
+          aim = "Chase";
         else
-          setState("left");
+          aim = "Patrool";
+
+        if(angle < (PI / 60) && aim == "Chase")
+          setState("laser");
+        else if(aim != "Patrool")
+          if(rand() % 2)
+            setState("left");
+          else
+            setState("right");
       }
+    }
+    else if(s == "left" || s == "right")
+    {
+      vec3 tpos   = target->getBody()->m_position;
+      vec3 tdir   = tpos - m_body->m_position;
+      float dist  = tdir.length();
+      float angle = m_body->m_direction.angle(tdir.normal());
+
+      if(angle < (PI / 60) && aim == "Chase")
+        setState("laser");
+      else if(angle > (PI / 6) && aim == "Evade")
+        setState("fly");
+    }
+    else if(s == "fly")
+    {
+      vec3 tpos   = target->getBody()->m_position;
+      vec3 tdir   = tpos - m_body->m_position;
+      float dist  = tdir.length();
+      float angle = m_body->m_direction.angle(tdir.normal());
+
+      if(dist > chase_min)
+        setState("correct");
     }
   }
 
