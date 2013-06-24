@@ -39,8 +39,7 @@ public:
     virtual void input(int, int);
     virtual void update(u32 milliseconds);
     virtual void collide(kgmGameObject*, kgmGameObject*);
-
-    //virtual kgmGameObject* createGameObject(kgmString t);
+    virtual kgmGameObject* getObjectById(kgmString);
 
     kgmActor* gameplayer(u8 i){
         return m_gameplayer;

@@ -27,13 +27,16 @@ struct kgmRuntime{
  kgmRuntime& o_class::runtime() { return o_class::Class; }
 
 //base class for kgm_engine project objects
+
 class kgmObject{
- KGM_OBJECT(kgmObject)
+ KGM_OBJECT(kgmObject);
+
 private:
  unsigned int m_references;
 
 protected:
- virtual ~kgmObject(){
+ virtual ~kgmObject()
+ {
  }
 
 private:
@@ -52,8 +55,10 @@ public:
   return !strcmp(runtime().nClass, o.nClass);
  }
 
- bool isType(kgmObject& o){
-  kgmRuntime* r = &Class; 
+ bool isType(kgmObject& o)
+ {
+  kgmRuntime* r = &Class;
+
   while(r != 0){
    if(!strcmp(r->nClass, o.runtime().nClass))
 	   return true;

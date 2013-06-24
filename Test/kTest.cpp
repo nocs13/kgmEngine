@@ -12,6 +12,17 @@
 #include "Actors/ASpacer.h"
 #include "Actors/ASp_Spacer.h"
 
+KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
+KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_Spacer, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_SpacerA, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_Skybox, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_MotorA, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_LaserA, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_Asteroid, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
+
 class kLogic: public kgmGameLogic
 {
   kgmIGame* game;
@@ -24,6 +35,19 @@ public:
 
   void collide(kgmGameObject *os, kgmGameObject *od)
   {
+    if(os->isType(ASp_LaserA::Class))
+    {
+      if(os->getGroup() != od->getGroup())
+      {
+        os->remove();
+
+        if(os->getBody())
+          os->getBody()->remove();
+
+        if(os->getVisual())
+          os->getVisual()->remove();
+      }
+    }
   }
 };
 

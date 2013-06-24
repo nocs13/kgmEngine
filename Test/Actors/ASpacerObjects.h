@@ -16,6 +16,8 @@ struct ASp_Face
 
 class ASp_Skybox: public kgmGameObject
 {
+  KGM_OBJECT(ASp_Skybox);
+
   kgmIGame* game;
 
 public:
@@ -61,6 +63,8 @@ public:
 
 class ASp_MotorA: public kgmGameObject
 {
+  KGM_OBJECT(ASp_MotorA);
+
   kgmMesh*      mesh;
   kgmMaterial*  mtl;
 public:
@@ -113,6 +117,8 @@ public:
 
 class ASp_LaserA: public kgmGameObject
 {
+  KGM_OBJECT(ASp_LaserA);
+
   struct Vertex
   {
     vec3 v;
@@ -188,6 +194,8 @@ public:
 
 class ASp_Asteroid: public kgmGameObject
 {
+  KGM_OBJECT(ASp_Asteroid);
+
   kgmMesh* msh;
   kgmMaterial* mtl;
 
@@ -227,8 +235,10 @@ public:
   }
 };
 
-class ASp_AsteroidSpawner: public kgmActor
+class ASp_AsteroidSpawner: public kgmGameObject
 {
+  KGM_OBJECT(ASp_AsteroidSpawner);
+
   kgmIGame*  game;
   u32 m_time_prev;
 public:
@@ -244,7 +254,7 @@ public:
   void update(u32 ms)
   {
     kgmGameObject::update(ms);
-    //return;
+    return;
 
     u32 ctick = kgmTime::getTicks();
 
@@ -266,6 +276,8 @@ public:
 
 class ASp_SpacerSpawner: public kgmGameObject
 {
+  KGM_OBJECT(ASp_SpacerSpawner);
+
 public:
   ASp_SpacerSpawner(kgmIGame* g)
   {

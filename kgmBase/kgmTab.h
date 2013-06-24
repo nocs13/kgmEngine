@@ -108,6 +108,16 @@ public:
     }
   }
 
+  bool hasKey(Key key)
+  {
+    _Node* node = _find(key);
+
+    if(node == null)
+      return false;
+
+    return true;
+  }
+
   iterator begin(){
    iterator i;
    i._Ptr = m_nodes;

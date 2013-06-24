@@ -3,13 +3,19 @@
 
 class ASp_Spacer: public kgmActor
 {
+  KGM_OBJECT(ASp_Spacer);
+
 protected:
   kgmIGame* game;
 
   float     speed_max;
   float     speed_min;
+  float     chase_max;
+  float     chase_min;
   float     roll;
   float     yaaw;
+
+  bool      chase;
 
   kgmGameObject*  target;
 
@@ -18,7 +24,14 @@ public:
   {
     game = g;
 
-    roll = yaaw = 0.0f;
+    speed_max = 0.05;
+    speed_min = 0.01;
+    chase_max = 70.0;
+    chase_min = 5.00;
+    roll      = 0.0;
+    yaaw      = 0.0;
+
+    chase     = false;
 
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
@@ -169,22 +182,55 @@ public:
 
 class ASp_SpacerA: public ASp_Spacer
 {
+  KGM_OBJECT(ASp_SpacerA);
+
+  kgmString       aim;
   kgmGameObject*  target;
 
 public:
   ASp_SpacerA(kgmIGame* g)
   :ASp_Spacer(g)
   {
+    target = null;
 
+    m_body->m_velocity = speed_min;
+  }
+
+  void update(u32 ms)
+  {
+    ASp_Spacer::update(ms);
   }
 
   void logic(kgmString s)
   {
-
     if(s == "idle")
     {
+      if(target == null || aim.length() < 1)
+      {
+        kgmString sgo, saim;
 
+        m_options.get("Aim", saim);
+        m_options.get("Target", sgo);
+
+        aim = saim;
+
+        if(sgo.length() > 0)
+          target = game->getLogic()->getObjectById(sgo);
+      }
+      else if(target)
+      {
+        vec3 tpos   = target->getBody()->m_position;
+        vec3 tdir   = tpos - m_body->m_position;
+        float dist  = tdir.length();
+        float angle = m_body->m_direction.angle(tdir.normal());
+
+        if(angle < (PI / 100))
+          setState("laser");
+        else
+          setState("left");
+      }
     }
   }
+
 };
 #endif // ASP_SPACER_H

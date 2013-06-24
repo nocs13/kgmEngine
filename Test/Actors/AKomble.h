@@ -3,6 +3,8 @@
 
 class AKomble: public kgmActor
 {
+  KGM_OBJECT(AKomble);
+
   kgmIGame* game;
   float     z_dist;
 

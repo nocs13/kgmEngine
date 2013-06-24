@@ -3,6 +3,8 @@
 
 class ASpacer: public kgmActor
 {
+  KGM_OBJECT(ASpacer);
+
   kgmIGame* game;
 
   float     c_dist;
@@ -133,6 +135,7 @@ public:
         if(m_body->m_velocity > speed_min)
         {
           setState("slow");
+          m_body->m_position.z = 0.0f;
         }
       }
       else if(m_state->id == "left")
@@ -319,8 +322,10 @@ public:
 
     go1->setId("laser1");
     go1->setParent(this);
+    go1->setGroup(getGroup());
     go2->setId("laser2");
     go2->setParent(this);
+    go2->setGroup(getGroup());
 
     game->gAppend(go1);
     game->gAppend(go2);

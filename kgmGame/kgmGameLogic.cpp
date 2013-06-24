@@ -105,7 +105,21 @@ void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 
 }
 
-/*kgmGameObject* kgmGameLogic::createGameObject(kgmString t)
+kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
 {
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
+  {
+    kgmGameObject* go = (*i);
+
+    if(go->removed() || !go->valid())
+    {
+      continue;
+    }
+    else if(id == go->getId())
+    {
+      return go;
+    }
+  }
+
   return null;
-}*/
+}

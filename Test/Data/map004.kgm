@@ -14,7 +14,7 @@
   <State value='idle'/>
  </kgmActor>
  <kgmActor name='spacer_1' type='ASp_SpacerA' group='1' >
-  <Position value='1.0 1.0 0.0'/>
+  <Position value='5.0 5.0 0.0'/>
   <Rotation value='0.0 0.0 0.0'/>
   <State value='idle'/>
   <Aim value='attack' />
