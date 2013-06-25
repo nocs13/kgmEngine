@@ -19,6 +19,8 @@ protected:
 
   kgmGameObject*  target;
 
+  kgmVisual* vtext;
+
 public:
   ASp_Spacer(kgmIGame* g)
   {
@@ -27,7 +29,7 @@ public:
     speed_max = 0.05;
     speed_min = 0.01;
     chase_max = 70.0;
-    chase_min = 5.00;
+    chase_min = 15.0;
     roll      = 0.0;
     yaaw      = 0.0;
 
@@ -38,11 +40,20 @@ public:
     m_body->m_bound.max = vec3( 1,  1,  1);
 
     target = null;
+    vtext = new kgmVisual();
+
+    kgmText* text = new kgmText();
+    text->m_rect  = uRect(10, 150, 500, 200);
+
+    vtext->set(text);
+    ((kgmGameBase*)game)->m_render->add(vtext);
+    text->release();
   }
 
   virtual ~ASp_Spacer()
   {
-
+    vtext->remove();
+    vtext->release();
   }
 
   void update(u32 ms)
@@ -78,6 +89,13 @@ public:
           go->getVisual()->m_transform = m * m_visual->m_transform;
         }
       }
+
+      kgmString ts = "ASp_Spacer state: ";
+
+      if(m_state)
+        vtext->getText()->m_text = ts + m_state->id;
+      else
+        vtext->getText()->m_text = ts;
     }
 
     if(m_state)
@@ -203,6 +221,9 @@ public:
 
   void logic(kgmString s)
   {
+    kgmString ts = "ASp_Spacer state x aim: ";
+    vtext->getText()->m_text = ts + s + aim;
+
     if(s == "idle")
     {
       if(target == null || aim.length() < 1)
@@ -224,20 +245,33 @@ public:
         float dist  = tdir.length();
         float angle = m_body->m_direction.angle(tdir.normal());
 
-        if(dist < chase_min)
+        if(angle < (PI / 4) && dist < chase_min)
+        {
           aim = "Evade";
-        else if(dist < chase_max)
-          aim = "Chase";
-        else
-          aim = "Patrool";
 
-        if(angle < (PI / 60) && aim == "Chase")
-          setState("laser");
-        else if(aim != "Patrool")
-          if(rand() % 2)
-            setState("left");
+          //if(angle < PI / 6)
+            if(rand() % 2)
+              setState("left");
+            else
+              setState("right");
+        }
+        else if(dist < chase_max)
+        {
+          aim = "Chase";
+
+          if(angle < (PI / 60))
+            setState("laser");
           else
-            setState("right");
+            if(rand() % 2)
+              setState("left");
+            else
+              setState("right");
+        }
+        else if(yaaw != 0.0 || roll != 0.0)
+        {
+//          if(angle > (PI / 4))
+          setState("correct");
+        }
       }
     }
     else if(s == "left" || s == "right")
@@ -247,19 +281,9 @@ public:
       float dist  = tdir.length();
       float angle = m_body->m_direction.angle(tdir.normal());
 
-      if(angle < (PI / 60) && aim == "Chase")
-        setState("laser");
+      if(angle < (PI / 6) && aim == "Chase")
+        setState("idle");
       else if(angle > (PI / 6) && aim == "Evade")
-        setState("fly");
-    }
-    else if(s == "fly")
-    {
-      vec3 tpos   = target->getBody()->m_position;
-      vec3 tdir   = tpos - m_body->m_position;
-      float dist  = tdir.length();
-      float angle = m_body->m_direction.angle(tdir.normal());
-
-      if(dist > chase_min)
         setState("correct");
     }
   }
