@@ -202,7 +202,6 @@ class ASp_SpacerA: public ASp_Spacer
 {
   KGM_OBJECT(ASp_SpacerA);
 
-  kgmString       aim;
   kgmGameObject*  target;
 
 public:
@@ -222,18 +221,16 @@ public:
   void logic(kgmString s)
   {
     kgmString ts = "ASp_Spacer state x aim: ";
-    vtext->getText()->m_text = ts + s + aim;
+    vtext->getText()->m_text = ts + s;
 
     if(s == "idle")
     {
-      if(target == null || aim.length() < 1)
+      if(target == null)
       {
         kgmString sgo, saim;
 
         m_options.get("Aim", saim);
         m_options.get("Target", sgo);
-
-        aim = saim;
 
         if(sgo.length() > 0)
           target = game->getLogic()->getObjectById(sgo);
@@ -247,26 +244,14 @@ public:
 
         if(dist < chase_min)
         {
-          aim = "Evade";
-
-          if(rand() % 2)
-            setState("left");
-          else
-            setState("right");
+          setState("evade");
         }
         else if(dist < chase_max)
         {
-          aim = "Chase";
-
           if(angle < (PI / 10))
             setState("laser");
-          else if(angle < (PI / 6))
-            setState("fly");
           else
-            if(rand() % 2)
-              setState("left");
-            else
-              setState("right");
+            setState("chase");
         }
         else if(yaaw != 0.0 || roll != 0.0)
         {
@@ -283,14 +268,86 @@ public:
 
       if(dist < chase_min)
       {
-        aim == "Evade";
-        setState("correct");
+        setState("idle");
       }
-      else if((angle < (PI / 6) && aim == "Chase") ||
-         (angle > (PI / 6) && aim == "Evade"))
-        setState("correct");
+      else if(angle < (PI / 6))
+      {
+        setState("laser");
+      }
+    }
+    else if(s == "chase")
+    {
+    }
+    else if(s == "evade")
+    {
     }
   }
 
+  void action(kgmString action)
+  {
+    if(action == "laser")
+    {
+      action_shoot_laser();
+    }
+    else if(action == "rocket")
+    {
+      action_shoot_rocket();
+    }
+  }
+
+  void action_shoot_laser()
+  {
+    vec3 r, v(0, 0, 1);
+    mtx4 m;
+    m.rotate(0.5 * PI, v);
+
+    vec3      pos;
+    kgmDummy* dmy = null;
+
+    dmy = dummy("Gun.1");
+
+    m_visual->m_transform.angles(r);
+    m.rotate(r);
+
+    if(dmy)
+      pos = m_body->m_position + m * dmy->m_shift;
+    else
+      pos = m_body->m_position;
+
+    kgmGameObject* go1 = new ASp_LaserA(game, 1000,
+                                       pos,
+                                       m_body->m_direction,
+                                       m_body->m_velocity + 0.1f);
+
+    dmy = dummy("Gun.2");
+
+    if(dmy)
+      pos = m_body->m_position + m * dmy->m_shift;
+    else
+      pos = m_body->m_position;
+
+    kgmGameObject* go2 = new ASp_LaserA(game, 1000,
+                                       pos,
+                                       m_body->m_direction,
+                                       m_body->m_velocity + 0.1f);
+
+    go1->setId("laser1");
+    go1->setParent(this);
+    go1->setGroup(getGroup());
+    go2->setId("laser2");
+    go2->setParent(this);
+    go2->setGroup(getGroup());
+
+    game->gAppend(go1);
+    game->gAppend(go2);
+
+    go1->release();
+    go2->release();
+  }
+
+  void action_shoot_rocket()
+  {
+
+  }
 };
 #endif // ASP_SPACER_H

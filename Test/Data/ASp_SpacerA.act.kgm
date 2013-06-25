@@ -45,11 +45,19 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="fly" priority="1" time="10" type="motion" switch='idle'>
+  <State id="down" priority="1" time="-1" type="motion">
    <Sound value="uloop" />
   </State>
 
-  <State id="down" priority="1" time="-1" type="motion" switch="idle">
+  <State id="chase" priority="1" time="-1" type="motion">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="evade" priority="1" time="-1" type="motion">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="fly" priority="1" time="10" type="motion" switch='idle'>
    <Sound value="uloop" />
   </State>
 
