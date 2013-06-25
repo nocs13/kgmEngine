@@ -45,7 +45,7 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="fly" priority="1" time="-1" type="motion">
+  <State id="fly" priority="1" time="10" type="motion" switch='idle'>
    <Sound value="uloop" />
   </State>
 

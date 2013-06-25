@@ -245,22 +245,23 @@ public:
         float dist  = tdir.length();
         float angle = m_body->m_direction.angle(tdir.normal());
 
-        if(angle < (PI / 4) && dist < chase_min)
+        if(dist < chase_min)
         {
           aim = "Evade";
 
-          //if(angle < PI / 6)
-            if(rand() % 2)
-              setState("left");
-            else
-              setState("right");
+          if(rand() % 2)
+            setState("left");
+          else
+            setState("right");
         }
         else if(dist < chase_max)
         {
           aim = "Chase";
 
-          if(angle < (PI / 60))
+          if(angle < (PI / 10))
             setState("laser");
+          else if(angle < (PI / 6))
+            setState("fly");
           else
             if(rand() % 2)
               setState("left");
@@ -269,7 +270,6 @@ public:
         }
         else if(yaaw != 0.0 || roll != 0.0)
         {
-//          if(angle > (PI / 4))
           setState("correct");
         }
       }
@@ -281,9 +281,13 @@ public:
       float dist  = tdir.length();
       float angle = m_body->m_direction.angle(tdir.normal());
 
-      if(angle < (PI / 6) && aim == "Chase")
-        setState("idle");
-      else if(angle > (PI / 6) && aim == "Evade")
+      if(dist < chase_min)
+      {
+        aim == "Evade";
+        setState("correct");
+      }
+      else if((angle < (PI / 6) && aim == "Chase") ||
+         (angle > (PI / 6) && aim == "Evade"))
         setState("correct");
     }
   }
