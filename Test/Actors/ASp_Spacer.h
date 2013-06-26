@@ -220,66 +220,75 @@ public:
 
   void logic(kgmString s)
   {
+    float dist = 0, angle = 0;
     kgmString ts = "ASp_Spacer state x aim: ";
     vtext->getText()->m_text = ts + s;
 
+    if(target)
+    {
+      vec3 tpos   = target->getBody()->m_position;
+      vec3 tdir   = tpos - m_body->m_position;
+      dist  = tdir.length();
+      angle = m_body->m_direction.angle(tdir.normal());
+    }
+    else
+    {
+      kgmString sgo, saim;
+
+      m_options.get("Aim", saim);
+      m_options.get("Target", sgo);
+
+      if(sgo.length() > 0)
+        target = game->getLogic()->getObjectById(sgo);
+    }
+
     if(s == "idle")
     {
-      if(target == null)
+      if(dist < chase_min)
       {
-        kgmString sgo, saim;
-
-        m_options.get("Aim", saim);
-        m_options.get("Target", sgo);
-
-        if(sgo.length() > 0)
-          target = game->getLogic()->getObjectById(sgo);
+        setState("evade");
       }
-      else if(target)
+      else if(dist < chase_max)
       {
-        vec3 tpos   = target->getBody()->m_position;
-        vec3 tdir   = tpos - m_body->m_position;
-        float dist  = tdir.length();
-        float angle = m_body->m_direction.angle(tdir.normal());
-
-        if(dist < chase_min)
-        {
-          setState("evade");
-        }
-        else if(dist < chase_max)
-        {
-          if(angle < (PI / 10))
-            setState("laser");
-          else
-            setState("chase");
-        }
-        else if(yaaw != 0.0 || roll != 0.0)
-        {
-          setState("correct");
-        }
+        if(angle < (PI / 10))
+          setState("laser");
+        else
+          setState("chase");
+      }
+      else if(yaaw != 0.0 || roll != 0.0)
+      {
+        setState("correct");
       }
     }
     else if(s == "left" || s == "right")
     {
-      vec3 tpos   = target->getBody()->m_position;
-      vec3 tdir   = tpos - m_body->m_position;
-      float dist  = tdir.length();
-      float angle = m_body->m_direction.angle(tdir.normal());
-
       if(dist < chase_min)
       {
         setState("idle");
       }
-      else if(angle < (PI / 6))
+      else if(angle < (PI / 10))
       {
         setState("laser");
       }
     }
     else if(s == "chase")
     {
+      if(dist < chase_min)
+      {
+        setState("correct");
+      }
+      else if(angle > (PI / 6))
+      {
+        if(rand() % 2)
+          setState("left");
+        else
+          setState("right");
+      }
     }
     else if(s == "evade")
     {
+      if(dist > chase_min)
+        setState("idle");
     }
   }
 
