@@ -467,6 +467,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
 
     if(m_alpha)
     {
+      //gc->gcDepth(true, true, gccmp_less);
       gc->gcAlpha(false, 0, 0);
       gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
       m_alpha = false;
@@ -477,7 +478,9 @@ void kgmGameGraphics::render(kgmMaterial* m){
 
   if(m->m_transparency > 0)
   {
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+    //gc->gcDepth(false, true, gccmp_less);
+    //gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
     //gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
     m_alpha = true;
   }
