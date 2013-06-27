@@ -78,33 +78,48 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos){
   float dist = 0.0f;
   vec3  pt_ins;
   vec3  n = vec3(0, 0, 0);
-  for(int j = 0; j < m_triangles.size(); j++){
+
+  for(int j = 0; j < m_triangles.size(); j++)
+  {
     plane pln(m_triangles[j].a,
     m_triangles[j].b,
     m_triangles[j].c);
     Triangle  trn(m_triangles[j].a,
     m_triangles[j].b,
     m_triangles[j].c);
-    if(m_collision.collision(spos, epos, rad, trn.a, trn.b, trn.c, pt_ins)){
+
+    if(m_collision.collision(spos, epos, rad, trn.a, trn.b, trn.c, pt_ins))
+    {
       insect = true;
       dist = pln.distance(epos);
       n = pln.normal();
+
       break;
     }
   }
-  if(insect){
+
+  if(insect)
+  {
     float len = 0.0f;
-    if(dist >= 0.0){
+
+    if(dist >= 0.0)
+    {
       len = (float)fabs(rad - dist);
-    }else{
+    }
+    else
+    {
       len = rad + (float)fabs(dist);
     }
-    if(n.z < 0.0f){
+
+    if(n.z < 0.0f)
+    {
       n.z = 0.0f;
     }
+
     n.normalize();
     rpos = epos + n * (len + 0.01f);
   }
+
   return insect;
 }
 
@@ -119,7 +134,8 @@ void kgmPhysics::doCollision(float dtime){
 
 
   //iterate by all dynamic objects
-  for(int i = 0; i < m_bodies.size(); i++){
+  for(int i = 0; i < m_bodies.size(); i++)
+  {
     bool  holddown = false;
     bool  upstare  = false;
     bool  insect   = false;
@@ -131,6 +147,7 @@ void kgmPhysics::doCollision(float dtime){
     float ctime  = dtime;// + kgmTime::getTicks() - stime;
 
     kgmBody* body = m_bodies[i];
+
     if(!body->m_valid)
       continue;
 
@@ -155,7 +172,8 @@ void kgmPhysics::doCollision(float dtime){
     rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
 
     //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
-    if(body->m_speed_up > 0.0f){
+    if(body->m_speed_up > 0.0f)
+    {
       upstare = true;
       epos.z  = spos.z + body->m_speed_up * ctime;
       body->m_speed_up -= (body->m_speed_up * 0.2);
@@ -164,7 +182,8 @@ void kgmPhysics::doCollision(float dtime){
         body->m_speed_up = 0.0f;
     }
 
-    if(m_gravity && body->m_gravity && !upstare){
+    if(m_gravity && body->m_gravity && !upstare)
+    {
       epos.z -= gdist;
     }
 
@@ -178,10 +197,13 @@ void kgmPhysics::doCollision(float dtime){
     //getBodies(bodies, sinteract);
 
     //check collision to dynamic objects
-    for(int k = i + 1; k < m_bodies.size(); k++){
+    for(int k = i + 1; k < m_bodies.size(); k++)
+    {
       kgmBody* cbody = m_bodies[k];
+
       if(cbody == body)
         continue;
+
       if(!cbody || !cbody->m_valid)
         continue;
       /*
@@ -209,9 +231,12 @@ void kgmPhysics::doCollision(float dtime){
       //   d.z += crad;
       if(d.z < s.z)
         d.z = s.z;
+
       m_collision.reset();
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
-      if(m_collision.collision(s, d, rx, ry, rz, b, mtr)){
+
+      if(m_collision.collision(s, d, rx, ry, rz, b, mtr))
+      {
         int  k = 0;
         insect = binsect = true;
         pt_ins = m_collision.m_point;
@@ -220,42 +245,61 @@ void kgmPhysics::doCollision(float dtime){
         vec3 pr_end = pln.projection(d);
         float dist = pln.distance(d);
         ccount++;
-        if(dist >= 0.0){
+
+        if(dist >= 0.0)
+        {
           len = (float)fabs(crad - dist);
-        }else{
+        }
+        else
+        {
           len = crad + (float)fabs(dist);
         }
+
         vec3 n = m_collision.m_normal;
         n = pln.normal();
         n.normalize();
-        if(n.z < 0.0f){
+
+        if(n.z < 0.0f)
+        {
           n.z = 0.0f;
         }
-        if(n.z > 0.01f) {
+
+        if(n.z > 0.01f)
+        {
           upstare = true;
         }
+
         n.normalize();
         epos.x = pr_end.x + n.x * rx;//fabs(pr_end.x - d.x);
         epos.y = pr_end.y + n.y * ry;//fabs(pr_end.y - d.y);
         float z = pr_end.z + n.z * rz;//fabs(pr_end.z - d.z);;
+
         if((z - rz) > (epos.z))
           epos.z = z - rz;
       }
       ///*
-      if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f)){
+      if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f))
+      {
         d.z -= gdist;
         //if(m_collision.collision(d, g, 0.1f, b, mtr)){
         m_collision.reset();
-        if(m_collision.collision(s, d, rx, ry, rz, b, mtr)){
+
+        if(m_collision.collision(s, d, rx, ry, rz, b, mtr))
+        {
           if((m_collision.m_normal.z > 0.01f) && (m_collision.m_point.z > epos.z))
             epos.z = m_collision.m_point.z + 0.1f;
+
           upstare = true;
           binsect = true;
         }
       }//*/
-      if(binsect){
+
+      if(binsect)
+      {
         collision(body, cbody);
-        if(cbody->m_velocity > 0.0f){
+
+        if(cbody->m_velocity > 0.0f)
+        {
           //body->m_V = body->m_V + cbody->m_direction * cbody->m_velocity;
         }
       }

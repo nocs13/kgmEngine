@@ -266,7 +266,7 @@ public:
       {
         setState("idle");
       }
-      else if(angle < (PI / 10))
+      else if(angle < (PI / 20))
       {
         setState("laser");
       }
@@ -276,6 +276,10 @@ public:
       if(dist < chase_min)
       {
         setState("correct");
+      }
+      else if(angle < (PI / 20))
+      {
+        setState("laser");
       }
       else if(angle > (PI / 6))
       {

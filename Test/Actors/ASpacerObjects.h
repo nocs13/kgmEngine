@@ -176,6 +176,7 @@ public:
     m_body->m_velocity  = speed;
     m_body->m_gravity   = false;
     m_body->m_udata     = this;
+    m_body->m_mass      = 0.0f;
     m_body->m_bound.min = vec3(-.1, -.1, -.1);
     m_body->m_bound.max = vec3( .1,  .1,  .1);
   }

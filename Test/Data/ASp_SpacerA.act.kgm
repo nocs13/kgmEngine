@@ -69,7 +69,7 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="laser" priority="1" time="1" type="attack" switch="idle">
+  <State id="laser" priority="1" time="500" type="attack" switch="idle">
    <Sound value="laser_a.wav.x" />
   </State>
 
