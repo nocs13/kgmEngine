@@ -266,6 +266,10 @@ public:
       {
         setState("idle");
       }
+      else if(dist > chase_max && angle < (PI / 10))
+      {
+        setState("fast");
+      }
       else if(angle < (PI / 20))
       {
         setState("laser");
@@ -293,6 +297,11 @@ public:
     {
       if(dist > chase_min)
         setState("idle");
+    }
+    else if(s == "fast")
+    {
+      if(dist < chase_max)
+        setState("slow");
     }
   }
 
