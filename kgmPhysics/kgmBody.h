@@ -10,7 +10,6 @@ public:
     ShapeNone,
     ShapeBox,
     ShapeSphere,
-    ShapeCylinder,
     ShapePolyhedron,
   };
 

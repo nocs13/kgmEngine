@@ -94,7 +94,8 @@ class kgmGameGraphics: public kgmObject
     }
   };
 
-  class GMesh{
+  class GMesh
+  {
     kgmMaterial* material;
     kgmList<Mesh> meshes;
     kgmOctTree<Mesh*> tree;
@@ -171,13 +172,16 @@ private:
 
   void trash();
 public:
-  void add(kgmMaterial* mtl){
-    if(mtl){
+  void add(kgmMaterial* mtl)
+  {
+    if(mtl)
+    {
       m_materials.add(mtl);
     }
   }
 
-  void add(kgmLight* lgt){
+  void add(kgmLight* lgt)
+  {
     if(lgt)
       lgt->increment();
 
@@ -186,8 +190,10 @@ public:
     m_lights.add(light);
   }
 
-  void add(kgmMesh* mesh, kgmMaterial* material){
+  void add(kgmMesh* mesh, kgmMaterial* material)
+  {
     Mesh* m = new Mesh(mesh, material);
+
     m_meshes.add(m);
   }
 
@@ -203,7 +209,7 @@ public:
     case kgmVisual::RenderMesh:
       if(a->m_visuals.size() > 0 &&
          (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
-          a->m_visuals[0]->getMaterial()->m_alpha < 1.0))
+          a->m_visuals[0]->getMaterial()->m_alpha))
         m_vis_blend.add(a);
       else
         m_visuals.add(a);

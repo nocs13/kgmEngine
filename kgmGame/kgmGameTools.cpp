@@ -448,6 +448,11 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
 
         sscanf(val, "%f", &a);
         mtl->m_transparency = 1.0f - a;
+
+        if(a < 1.0f)
+        {
+          mtl->m_alpha = true;
+        }
       }
     }
     else if(id == "Cull")

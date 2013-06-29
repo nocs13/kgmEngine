@@ -66,14 +66,14 @@ public:
 
 public:
   Color  m_color, m_specular, m_emision;
-  float  m_shininess, m_alpha, m_transparency;
-
+  float  m_shininess, m_transparency;
 
   kgmTexture *m_tex_color, *m_tex_normal, *m_tex_specular;
 
   Shader      m_shader;
   u32         m_flags;            //render specisific flags enable/disable
 
+  bool        m_alpha;
   bool        m_2side;
 
   kgmString   m_type;

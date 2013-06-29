@@ -248,6 +248,10 @@ public:
       {
         setState("evade");
       }
+      else if(dist > chase_max)
+      {
+        setState("chase");
+      }
       else if(dist < chase_max)
       {
         if(angle < (PI / 10))
@@ -280,6 +284,10 @@ public:
       if(dist < chase_min)
       {
         setState("correct");
+      }
+      if(dist > chase_max)
+      {
+        setState("idle");
       }
       else if(angle < (PI / 20))
       {

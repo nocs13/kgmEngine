@@ -20,7 +20,7 @@ kgmBody::kgmBody()
   m_position = vec3(0, 0, 0);
   m_direction = vec3(0, 1, 0);
 
-  m_shape = ShapeCylinder;
+  m_shape = ShapeBox;
 
   //m_extra = 0;
   m_udata = 0;
@@ -45,7 +45,7 @@ kgmBody::kgmBody(void* udata)
   m_position = vec3(0, 0, 0);
   m_direction = vec3(0, 1, 0);
 
-  m_shape = ShapeCylinder;
+  m_shape = ShapeBox;
 
   m_udata = udata;
 }

@@ -206,24 +206,30 @@ void kgmPhysics::doCollision(float dtime){
 
       if(!cbody || !cbody->m_valid)
         continue;
-      /*
-   box	 a = body->m_bound;
+
+      //continue;
+
+     /*
+     box	 a = body->m_bound;
      a.min = a.min + body->m_position; a.max = a.max + body->m_position;
-   box   b = cbody->m_bound;
+     box   b = cbody->m_bound;
      b.min = b.min + cbody->m_position;
      b.max = b.max + cbody->m_position;
-   cylinder cyla(body->m_position, 3, body->m_bound.max.z - body->m_bound.min.z),
-      cylb(cbody->m_position, 10, cbody->m_bound.max.z - cbody->m_bound.min.z);
-   */
+     cylinder cyla(body->m_position, 3, body->m_bound.max.z - body->m_bound.min.z),
+     cylb(cbody->m_position, 10, cbody->m_bound.max.z - cbody->m_bound.min.z);
+     */
+
       vec3	 pt_ins, nr_ins;
       box  b = cbody->m_bound;
       vec3 s = body->m_position;
       vec3 d = epos;
+
       //		npos.z = zpos;
+
       bool	 binsect = false;
       mtx4  mtr;
-      //   cbody->transform(mtr);
-      //   b = cbody->m_bound;
+      cbody->transform(mtr);
+      b = cbody->m_bound;
 
       s.z += rz;
       d.z += rz;
@@ -269,13 +275,16 @@ void kgmPhysics::doCollision(float dtime){
           upstare = true;
         }
 
-        n.normalize();
-        epos.x = pr_end.x + n.x * rx;//fabs(pr_end.x - d.x);
-        epos.y = pr_end.y + n.y * ry;//fabs(pr_end.y - d.y);
-        float z = pr_end.z + n.z * rz;//fabs(pr_end.z - d.z);;
+        if(body->m_mass > 0.0 && cbody->m_mass > 0.0)
+        {
+          n.normalize();
+          epos.x = pr_end.x + n.x * rx;//fabs(pr_end.x - d.x);
+          epos.y = pr_end.y + n.y * ry;//fabs(pr_end.y - d.y);
+          float z = pr_end.z + n.z * rz;//fabs(pr_end.z - d.z);;
 
-        if((z - rz) > (epos.z))
-          epos.z = z - rz;
+          if((z - rz) > (epos.z))
+            epos.z = z - rz;
+        }
       }
       ///*
       if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f))

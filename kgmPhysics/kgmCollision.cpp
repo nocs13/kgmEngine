@@ -8,8 +8,6 @@ inline bool crossLineSphere(line3& ln, sphere3& sp){
   vec3 ctpr = proj - sp.center;
   if((ctpr.length() < sp.radius) && (ln.ison(proj)))
     return true;
-  // if((proj.distance(ln.s) < sp.radius) || (proj.distance(ln.e) < sp.radius))
-  //	 return true;
   return false;
 }
 

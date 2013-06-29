@@ -9,10 +9,10 @@ kgmMaterial::kgmMaterial(){
 
   m_color        = Color(1.0, 1.0, 1.0, 1.0);
   m_specular     = Color(1.0, 1.0, 1.0, 1.0);
-  m_alpha        = 1.0;
   m_shininess    = 1.0;
   m_transparency = 0.0;
 
+  m_alpha        = false;
   m_2side        = false;
 
   m_tex_color    = m_tex_specular = m_tex_normal = 0;

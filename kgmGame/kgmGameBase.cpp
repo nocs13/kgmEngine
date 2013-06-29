@@ -934,6 +934,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 
           sscanf(data, "%f", &a);
           mtl->m_transparency = 1.0f - a;
+
+          if(a < 1.0f)
+          {
+            mtl->m_alpha = true;
+          }
         }
       }
       else if(id == "Cull")
