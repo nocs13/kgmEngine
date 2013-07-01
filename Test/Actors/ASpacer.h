@@ -13,6 +13,7 @@ class ASpacer: public kgmActor
   float     speed_min;
   float     roll;
   float     yaaw;
+  float     pich;
 
   bool      gbtns[65];
 
@@ -27,6 +28,7 @@ public:
     speed_min = 0.00;
     roll      = 0.0;
     yaaw      = 0.0;
+    pich      = 0.5 * PI;
 
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
@@ -72,14 +74,14 @@ public:
     {
       vec3 vz(0, 0, 1), vy(0, 0, 0), vx(1, 0, 0);
       mtx4 mz, mx, my, mr;
-      float pich = 0.0; //0.5 * PI;
+      pich = 0.0; //0.5 * PI;
 
-      mz.rotate(0.5 * PI, vz);
+      mz.rotate(pich, vz);
       mx.rotate(roll, vx);
       my.rotate(yaaw, vy);
 
-//      mr = my * mx;
-      mr.rotate(-roll, yaaw, -pich);
+      mr = my * mx;
+      //mr.rotate(-roll, yaaw, -pich);
       m_visual->m_transform = mr * m_visual->m_transform;
 
       for(int i = 0; i < m_dummies.length(); i++)

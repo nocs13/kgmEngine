@@ -220,7 +220,7 @@ void kgmPhysics::doCollision(float dtime){
      */
 
       vec3 pt_ins, nr_ins;
-      box  b = cbody->m_bound;
+      vec3 cs = cbody->m_position;
       vec3 cd = cbody->m_position + cbody->m_direction;
       vec3 s = body->m_position;
       vec3 d = epos;
@@ -239,9 +239,39 @@ void kgmPhysics::doCollision(float dtime){
         d.z = s.z;
 
       m_collision.reset();
+
+      //build bodies move bounds
+      box3 box_body;
+      box3 box_cbody;
+
+      box_body.min.x = (s.x < d.x) ? (s.x) : (d.x);
+      box_body.min.y = (s.y < d.y) ? (s.y) : (d.y);
+      box_body.min.z = (s.z < d.z) ? (s.z) : (d.z);
+      box_body.max.x = (s.x > d.x) ? (s.x) : (d.x);
+      box_body.max.y = (s.y > d.y) ? (s.y) : (d.y);
+      box_body.max.z = (s.z > d.z) ? (s.z) : (d.z);
+      box_cbody.min.x = (cs.x < cd.x) ? (cs.x) : (cd.x);
+      box_cbody.min.y = (cs.y < cd.y) ? (cs.y) : (cd.y);
+      box_cbody.min.z = (cs.z < cd.z) ? (cs.z) : (cd.z);
+      box_cbody.max.x = (cs.x > cd.x) ? (cs.x) : (cd.x);
+      box_cbody.max.y = (cs.y > cd.y) ? (cs.y) : (cd.y);
+      box_cbody.max.z = (cs.z > cd.z) ? (cs.z) : (cd.z);
+
+      box_body.min.x -= 0.5 * body->m_bound.dimension().x;
+      box_body.min.y -= 0.5 * body->m_bound.dimension().y;
+      box_body.min.z -= 0.5 * body->m_bound.dimension().z;
+      box_body.max.x += 0.5 * body->m_bound.dimension().x;
+      box_body.max.y += 0.5 * body->m_bound.dimension().y;
+      box_body.max.z += 0.5 * body->m_bound.dimension().z;
+      box_cbody.min.x -= 0.5 * cbody->m_bound.dimension().x;
+      box_cbody.min.y -= 0.5 * cbody->m_bound.dimension().y;
+      box_cbody.min.z -= 0.5 * cbody->m_bound.dimension().z;
+      box_cbody.max.x += 0.5 * cbody->m_bound.dimension().x;
+      box_cbody.max.y += 0.5 * cbody->m_bound.dimension().y;
+      box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
-      if(m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd))
+      if(box_body.intersect(box_cbody)/* && m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)*/)
       {
         int  k = 0;
         insect = binsect = true;
@@ -286,6 +316,7 @@ void kgmPhysics::doCollision(float dtime){
             epos.z = z - rz;
         }
       }
+
       ///*
       if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f))
       {
@@ -293,7 +324,7 @@ void kgmPhysics::doCollision(float dtime){
         //if(m_collision.collision(d, g, 0.1f, b, mtr)){
         m_collision.reset();
 
-        if(m_collision.collision(s, d, rx, ry, rz, b, mtr))
+        if(m_collision.collision(s, d, rx, ry, rz, cbody->m_bound, mtr))
         {
           if((m_collision.m_normal.z > 0.01f) && (m_collision.m_point.z > epos.z))
             epos.z = m_collision.m_point.z + 0.1f;
