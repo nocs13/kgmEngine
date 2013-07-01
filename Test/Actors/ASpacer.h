@@ -72,7 +72,7 @@ public:
     {
       vec3 vz(0, 0, 1), vy(0, 0, 0), vx(1, 0, 0);
       mtx4 mz, mx, my, mr;
-      float pich = 0.5 * PI;
+      float pich = 0.0; //0.5 * PI;
 
       mz.rotate(0.5 * PI, vz);
       mx.rotate(roll, vx);

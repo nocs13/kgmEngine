@@ -27,22 +27,47 @@ public:
     min.x = mnx, min.y = mny, min.z = mnz;
     max.x = mxx, max.y = mxy, max.z = mxz;
   }
+
+  void dimension(kgmVector3d<T> &dim)
+  {
+    dim = max - min;
+  }
+
+  kgmVector3d<T> dimension()
+  {
+    return  (max - min);
+  }
+
   void points(kgmVector3d<T> v[]){
     kgmVector3d<T> d = max - min;
 
     v[0] = min;
-    v[1] = kgmVector3d<T>(min.x + d.x, min.y, min.z);
-    v[2] = kgmVector3d<T>(min.x, min.y + d.y, min.z);
-    v[3] = kgmVector3d<T>(min.x + d.x, min.y + d.y, min.z);
-    v[4] = kgmVector3d<T>(min.x, min.y,        min.z + d.z);
-    v[5] = kgmVector3d<T>(min.x + d.x, min.y, min.z + d.z);
-    v[6] = kgmVector3d<T>(min.x, min.y + d.y, min.z + d.z);
-    v[7] = max;
+    v[1] = kgmVector3d<T>(min.x + d.x, min.y,       min.z);
+    v[2] = kgmVector3d<T>(min.x + d.x, min.y + d.y, min.z);
+    v[3] = kgmVector3d<T>(min.x,       min.y + d.y, min.z);
+    v[4] = kgmVector3d<T>(min.x,       min.y,       min.z + d.z);
+    v[5] = kgmVector3d<T>(min.x + d.x, min.y,       min.z + d.z);
+    v[6] = max;
+    v[7] = kgmVector3d<T>(min.x,       min.y + d.y, min.z + d.z);
   }
+
+  void planes(kgmPlane3d<T>  plane[])
+  {
+    kgmVector3d<T> pts[8];
+
+    points(pts);
+    plane[0] = kgmPlane3d<T>(pts[0], pts[2], pts[1]);
+    plane[1] = kgmPlane3d<T>(pts[0], pts[4], pts[3]);
+    plane[2] = kgmPlane3d<T>(pts[1], pts[2], pts[5]);
+    plane[3] = kgmPlane3d<T>(pts[0], pts[1], pts[5]);
+    plane[4] = kgmPlane3d<T>(pts[2], pts[3], pts[7]);
+    plane[5] = kgmPlane3d<T>(pts[4], pts[5], pts[6]);
+  }
+
   bool intersect(kgmRay3d<T> &r, kgmVector3d<T> &cp){
     kgmVector3d<T> rect[6][4];
-    kgmPlane3d<T> plane;
-    kgmBox3d<T>   box;
+    kgmPlane3d<T>  plane;
+    kgmBox3d<T>    box;
 
     rect[0][0] = kgmVector3d<T>(min.x, min.y, min.z);
     rect[0][1] = kgmVector3d<T>(min.x, max.y, min.z);
@@ -50,6 +75,7 @@ public:
     rect[0][3] = kgmVector3d<T>(max.x, min.y, min.z);
     plane = kgmPlane3d<T>(rect[0][0], rect[0][1], rect[0][2]);
     box = kgmBox3d(rect[0], 4);
+
     if(plane.intersect(r, cp) && box.isin(cp))
       return true;
 

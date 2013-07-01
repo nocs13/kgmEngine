@@ -13,9 +13,10 @@ class kgmPhysics: public kgmIPhysics, public kgmObject{
 
 public:
  float			m_gravity;
- bool			m_isgravity;
- kgmList<triangle3>	m_triangles;
- kgmList<kgmBody*>	m_bodies;
+ bool			 m_isgravity;
+
+ kgmList<triangle3>	   m_triangles;
+ kgmList<kgmBody*>	    m_bodies;
  kgmOctTree<Triangle*>	m_treestatic;
 
  vec3		m_ptCurrent;

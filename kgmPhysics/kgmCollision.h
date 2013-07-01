@@ -4,8 +4,9 @@
 class kgmCollision{
 public:
   bool m_collision;    //collision occured
-  vec3 m_point;		  //intersection point
+  vec3 m_point;		      //intersection point
   vec3 m_normal;       //intersection pormal
+
 public:
   //constructor
   kgmCollision();
@@ -37,4 +38,7 @@ public:
 
   //collision move box to static box
   bool collision(vec3& start, vec3& end, box3& box, box3& sbox, vec3& rpt);
+
+  //collision oobb boxes
+  bool ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d_box, vec3& d_start, vec3& d_end);
 };

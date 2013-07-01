@@ -1,4 +1,5 @@
 #pragma once
+#include <stdlib.h>
 #include <math.h>
 #include <float.h>
 
@@ -19,9 +20,4 @@
 #include "kgmMatrix3d.h"
 #include "kgmTrajectory3d.h"
 #include "kgmQuaternion.h"
-
-
-
-
-
-
+#include "kgmOBox3d.h"

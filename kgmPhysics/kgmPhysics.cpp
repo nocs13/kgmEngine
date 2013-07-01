@@ -197,7 +197,7 @@ void kgmPhysics::doCollision(float dtime){
     //getBodies(bodies, sinteract);
 
     //check collision to dynamic objects
-    for(int k = i + 1; k < m_bodies.size(); k++)
+    for(int k = 0; k < m_bodies.size(); k++)
     {
       kgmBody* cbody = m_bodies[k];
 
@@ -219,17 +219,17 @@ void kgmPhysics::doCollision(float dtime){
      cylb(cbody->m_position, 10, cbody->m_bound.max.z - cbody->m_bound.min.z);
      */
 
-      vec3	 pt_ins, nr_ins;
+      vec3 pt_ins, nr_ins;
       box  b = cbody->m_bound;
+      vec3 cd = cbody->m_position + cbody->m_direction;
       vec3 s = body->m_position;
       vec3 d = epos;
 
       //		npos.z = zpos;
 
-      bool	 binsect = false;
+      bool  binsect = false;
       mtx4  mtr;
       cbody->transform(mtr);
-      b = cbody->m_bound;
 
       s.z += rz;
       d.z += rz;
@@ -241,7 +241,7 @@ void kgmPhysics::doCollision(float dtime){
       m_collision.reset();
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
-      if(m_collision.collision(s, d, rx, ry, rz, b, mtr))
+      if(m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd))
       {
         int  k = 0;
         insect = binsect = true;

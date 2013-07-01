@@ -18,7 +18,7 @@ kgmBody::kgmBody()
   m_falling   = false;
 
   m_position = vec3(0, 0, 0);
-  m_direction = vec3(0, 1, 0);
+  m_direction = vec3(1, 0, 0);
 
   m_shape = ShapeBox;
 
@@ -70,7 +70,7 @@ void kgmBody::rotate(float x, float y, float z){
   m_rotation.z = z;
   m_quaternion.euler(m_rotation);
   mtx4 m(m_quaternion);
-  vec3 v(0, 1, 0);
+  vec3 v(1, 0, 0);
   m_direction = m * v;
   m_direction.normalize();
   //m_direction = vec3(-sin(m_rotation.z), cos(m_rotation.z), 0);

@@ -33,7 +33,7 @@ public:
   T mr = (x*v.x + y*v.y + z*v.z + w);
   T mn = (T)sqrt(x*x + y*y + z*z);
   if(mn == 0){
-    return 1;
+    return 99999999999999999999999999999.9;
   }
   return  (mr / mn);
  }

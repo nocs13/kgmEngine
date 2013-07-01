@@ -25,20 +25,39 @@ KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 
 class kLogic: public kgmGameLogic
 {
-  kgmIGame* game;
+  kgmIGame*  game;
+  kgmVisual* vtext;
 public:
   kLogic(kgmIGame* g)
   :kgmGameLogic()
   {
-    game = g;
+    game  = g;
+    vtext = null;
   }
 
   void collide(kgmGameObject *os, kgmGameObject *od)
   {
+    if(!vtext)
+    {
+      vtext = new kgmVisual();
+
+      kgmText* text = new kgmText();
+      text->m_rect  = uRect(10, 250, 500, 200);
+
+      vtext->set(text);
+      ((kgmGameBase*)game)->m_render->add(vtext);
+    }
+    else
+    {
+    }
+
     if(os->isType(ASp_LaserA::Class))
     {
       if(os->getGroup() != od->getGroup())
       {
+        kgmString t = kgmString("Logic: ") + os->getId() + kgmString(" ") + od->getId();
+        vtext->m_text->m_text = t;
+
         os->remove();
 
         if(os->getBody())

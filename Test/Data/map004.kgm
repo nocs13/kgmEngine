@@ -20,23 +20,4 @@
   <Aim value='attack' />
   <Target value='main_spacer' />
  </kgmGameObject>
- <kgmActor name='spacer_1' type='ASp_SpacerA' group='1' >
-  <Position value='5.0 15.0 0.0'/>
-  <Rotation value='0.0 0.0 0.0'/>
-  <State value='idle'/>
-  <Aim value='attack' />
-  <Target value='main_spacer' />
- </kgmGameObject>
- <kgmActor name='spacer_1' type='ASp_SpacerA' group='1' >
-  <Position value='15.0 15.0 0.0'/>
-  <Rotation value='0.0 0.0 0.0'/>
-  <State value='idle'/>
-  <Aim value='attack' />
-  <Target value='main_spacer' />
- </kgmGameObject>
- <kgmGameObject name='aspawner_1' type='KAsteroidSpawner' group='1' >
-  <Position value='0.0 0.0 0.0'/>
-  <Rotation value='0.0 0.0 0.0'/>
-  <State value='idle'/>
- </kgmGameObject>
 </kgm>
