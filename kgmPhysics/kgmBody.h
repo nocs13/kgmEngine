@@ -5,15 +5,18 @@
 class kgmBody: public kgmObject
 {
   KGM_OBJECT(kgmBody);
+
 public:
-  enum{
+  enum
+  {
     ShapeNone,
     ShapeBox,
     ShapeSphere,
     ShapePolyhedron,
   };
 
-  struct Constraint{
+  struct Constraint
+  {
     bool      position,
     rotation,
     scale;
@@ -25,12 +28,14 @@ public:
   u32	    m_type;
   u32	    m_shape;
 
-  bool    m_valid;		    //valid physics object
-  bool    m_remove;		   //physics object should removed
-  bool    m_collision;	 //calculate collisions for this body
-  bool    m_gravity;		  //gravity object or gravitation required
-  bool    m_falling;		  //additional information of falling
-
+  bool    m_valid;      //valid physics object
+  bool    m_remove;     //physics object should removed
+  bool    m_collision;  //calculate collisions for this body
+  bool    m_gravity;    //gravity object or gravitation required
+  bool    m_falling;    //additional information of falling
+#ifdef TEST
+  bool    m_intersect;  //have intersection
+#endif
   float   m_mass;			//mass of body
   float   m_friction;		//friction of a body
   float   m_velocity;		//persistent speed

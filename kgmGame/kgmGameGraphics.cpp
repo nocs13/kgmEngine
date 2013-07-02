@@ -292,6 +292,8 @@ void kgmGameGraphics::render(){
   }
 
 #ifdef TEST
+  gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
+
   for(int i = m_bodies.size(); i > 0;  i--)
   {
     kgmBody* body = m_bodies[i - 1];
@@ -301,6 +303,10 @@ void kgmGameGraphics::render(){
       body->release();
       m_bodies.erase(i - 1);
 
+      continue;
+    }
+    else if(body->m_intersect)
+    {
       continue;
     }
 

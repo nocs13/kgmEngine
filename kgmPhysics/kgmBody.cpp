@@ -16,6 +16,9 @@ kgmBody::kgmBody()
   m_collision = true;
   m_gravity   = true;
   m_falling   = false;
+#ifdef TEST
+  m_intersect = false;
+#endif
 
   m_position = vec3(0, 0, 0);
   m_direction = vec3(1, 0, 0);

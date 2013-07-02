@@ -158,6 +158,10 @@ void kgmPhysics::doCollision(float dtime){
       continue;
     }
 
+#ifdef TEST
+    body->m_intersect = false;
+#endif
+
     //body->m_V.z = 0.0f;
     vec3 bdPos = m_ptCurrent = body->m_position;
     float gdist = 5 * ctime * body->m_mass;
@@ -273,6 +277,9 @@ void kgmPhysics::doCollision(float dtime){
 
       if(box_body.intersect(box_cbody)/* && m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)*/)
       {
+#ifdef TEST
+        body->m_intersect = true;
+#endif
         int  k = 0;
         insect = binsect = true;
         pt_ins = m_collision.m_point;

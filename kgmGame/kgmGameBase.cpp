@@ -506,6 +506,11 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
   if(m_logic)
     m_logic->add(go);
 
+#ifdef TEST
+  if(m_render && go->getBody())
+    m_render->add(go->getBody());
+#endif
+
   return true;
 }
 
