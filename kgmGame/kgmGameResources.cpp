@@ -237,7 +237,7 @@ kgmShader* kgmGameResources::getShader(char* id){
    shader->m_id = id;
    m_resources.add(shader);
 #ifdef DEBUG
-   kgmLog::log("\nShader: %s successfully loaded", (char*)id);
+   //kgmLog::log("\nShader: %s successfully loaded", (char*)id);
 #endif
  }
  return shader;

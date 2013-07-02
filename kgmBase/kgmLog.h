@@ -81,7 +81,7 @@ inline const char* kgm_log_label(){
 
 inline void kgm_log_print(const char* s){
 #ifdef DEBUG
-    kgm_log(s);
+    //kgm_log(s);
     fprintf(stderr, "%s\n", s);
 #endif
 }

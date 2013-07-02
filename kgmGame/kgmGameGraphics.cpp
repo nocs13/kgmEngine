@@ -138,6 +138,14 @@ void kgmGameGraphics::clear(){
   }
   m_lights.clear();
 
+#ifdef TEST
+  for(int i = 0; i < m_bodies.size(); i++)
+  {
+    m_bodies[i]->release();
+  }
+  m_bodies.clear();
+#endif
+
   linkCamera(null, 0, 0);
 }
 
@@ -282,6 +290,33 @@ void kgmGameGraphics::render(){
   for(int i = visuals_blend.size(); i > 0;  i--){
     render(visuals_blend[i - 1]);
   }
+
+#ifdef TEST
+  for(int i = m_bodies.size(); i > 0;  i--)
+  {
+    kgmBody* body = m_bodies[i - 1];
+
+    if(!body->valid() || body->removed())
+    {
+      body->release();
+      m_bodies.erase(i - 1);
+
+      continue;
+    }
+
+    mtx4 mtx_tr;
+    vec3 vec_points[8];
+    s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
+
+    body->m_bound.points(vec_points);
+    body->transform(mtx_tr);
+
+    for(int i = 0; i < 8; i++)
+      vec_points[i] = mtx_tr * vec_points[i];
+
+    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+  }
+#endif
 
   //For last step draw gui
   gc->gcSetShader(null);

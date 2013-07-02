@@ -129,6 +129,10 @@ private:
   kgmList<kgmVisual*>   m_vis_particles;
   kgmList<kgmGui*>      m_guis, m_tguis;
 
+#ifdef TEST
+  kgmList<kgmBody*>     m_bodies;
+#endif
+
   kgmGuiStyle* gui_style;
 
   void* tcolor;
@@ -235,6 +239,17 @@ public:
         m_guis.add(gui);
     }
   }
+
+#ifdef TEST
+  void add(kgmBody* a)
+  {
+    if(a)
+    {
+      m_bodies.add(a);
+      a->increment();
+    }
+  }
+#endif
 
   bool get(kgmString name, kgmMaterial** mtl)
   {

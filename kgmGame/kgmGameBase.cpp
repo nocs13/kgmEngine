@@ -858,6 +858,10 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           m_physics->add(act->getBody());
           m_logic->add(act);
 
+#ifdef TEST
+          m_render->add(act->getBody());
+#endif
+
           act->release();
         }
       }
@@ -876,6 +880,10 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         m_render->add(gob->getVisual());
         m_physics->add(gob->getBody());
         m_logic->add(gob);
+
+#ifdef TEST
+          m_render->add(act->getBody());
+#endif
 
         gob->release();
       }
