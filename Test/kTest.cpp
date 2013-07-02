@@ -51,7 +51,7 @@ public:
     {
     }
 
-    if(os->isType(ASp_LaserA::Class))
+    if(os->isClass(ASp_LaserA::Class))
     {
       if(os->getGroup() != od->getGroup())
       {

@@ -274,7 +274,7 @@ public:
       {
         setState("fast");
       }
-      else if(angle < (PI / 20))
+      else if(angle < (PI / 30))
       {
         setState("laser");
       }
@@ -289,7 +289,7 @@ public:
       {
         setState("idle");
       }
-      else if(angle < (PI / 20))
+      else if(angle < (PI / 30))
       {
         setState("laser");
       }
