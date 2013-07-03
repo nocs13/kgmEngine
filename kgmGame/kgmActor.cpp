@@ -12,7 +12,6 @@ kgmActor::kgmActor()
   m_body->m_mass      = 1.0f;
   m_body->m_position  = vec3(0, 0, 1);
   m_body->m_rotation  = vec3(0, 0, 0);
-  m_body->m_direction = vec3(1, 0, 0);
   m_body->m_bound.min = vec3(-1, -1, 0);
   m_body->m_bound.max = vec3(1, 1, 2);
 
@@ -89,9 +88,9 @@ void kgmActor::action(kgmString s)
 }
 
 void kgmActor::setDirection(vec3& d){
-  m_body->m_direction = d;
-  m_body->m_direction.normalize();
-  m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
+  //m_body->m_direction = d;
+  //m_body->m_direction.normalize();
+  //m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
 }
 
 bool kgmActor::setState(kgmString s, bool force)

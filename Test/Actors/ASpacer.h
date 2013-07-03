@@ -230,10 +230,10 @@ public:
     if(m_gameplayer)
     {
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = m_body->m_position - m_body->m_direction * c_dist;
+      vec3 cpos = m_body->position() - m_body->direction() * c_dist;
       cpos.z = m_body->m_position.z + z_dist;
       cam.mPos = cpos;
-      cam.mDir = m_body->m_direction;
+      cam.mDir = m_body->direction();
       cam.update();
     }
   }
@@ -306,9 +306,9 @@ public:
       pos = m_body->m_position;
 
     kgmGameObject* go1 = new ASp_LaserA(game, 1000,
-                                       pos,
-                                       m_body->m_direction,
-                                       m_body->m_velocity + 0.1f);
+                                        pos,
+                                        m_body->rotation(),
+                                        m_body->m_velocity + 0.1f);
 
     dmy = dummy("Gun.2");
 
@@ -319,7 +319,7 @@ public:
 
     kgmGameObject* go2 = new ASp_LaserA(game, 1000,
                                        pos,
-                                       m_body->m_direction,
+                                       m_body->rotation(),
                                        m_body->m_velocity + 0.1f);
 
     go1->setId("laser1");

@@ -36,26 +36,26 @@ public:
 #ifdef TEST
   bool    m_intersect;  //have intersection
 #endif
-  float   m_mass;			//mass of body
-  float   m_friction;		//friction of a body
-  float   m_velocity;		//persistent speed
+  float   m_mass;          //mass of body
+  float   m_friction;      //friction of a body
+  float   m_velocity;      //persistent speed
   float   m_speed_forward;
   float   m_speed_side;
   float   m_speed_up;
 
-  vec3	   m_position;		//current position
-  vec3	   m_rotation;		//current rotation
-  vec3	   m_direction;	//current direction
-  quat	   m_quaternion;	//current rotation(in quaternions)
+  vec3     m_position;    //current position
+  vec3     m_rotation;    //current rotation
+  quat     m_quaternion;  //current rotation(in quaternions)
 
-  box3	   m_bound;  //bound box
+  box3     m_bound;  //bound box
 
   Constraint m_constraint;
 
   void*	  m_udata;		//user data of linked object
 
 private:
-  kgmList<polygon3*> m_convex;	//convex shape sides for simulation(collision, ...)
+  vec3     m_direction;        //current direction
+  kgmList<polygon3*> m_convex; //convex shape sides for simulation(collision, ...)
 
 public:
   kgmBody();
@@ -64,22 +64,72 @@ public:
 
   virtual void collision(kgmBody*); //callback when collision
 
-  bool removed(){ return m_remove; }
-  void remove() { m_remove = true; }
-  bool valid()  { return m_valid;  }
-  void enable() { m_valid = true;  }
-  void disable(){ m_valid = false; }
+  bool removed() { return m_remove; }
+  void remove()  { m_remove = true; }
+  bool valid()   { return m_valid;  }
+  void enable()  { m_valid = true;  }
+  void disable() { m_valid = false; }
 
-  void translate(float x, float y, float z);
-  void rotate(float x, float y, float z);
-  void rotate(quat& q);
-  void transform(mtx4& mtr);
+  void translate(float x, float y, float z)
+  {
+    m_position.set(x, y, z);
+  }
+
+  void translate(vec3 v)
+  {
+    m_position = v;
+  }
+
+  void rotate(float x, float y, float z)
+  {
+    m_rotation.x = x;
+    m_rotation.y = y;
+    m_rotation.z = z;
+    m_quaternion.euler(m_rotation);
+
+    mtx4 m(m_quaternion);
+    vec3 v(1, 0, 0);
+
+    m_direction = m * v;
+    m_direction.normalize();
+  }
+
+  void rotate(vec3 r)
+  {
+    m_rotation.x = r.x;
+    m_rotation.y = r.y;
+    m_rotation.z = r.z;
+    m_quaternion.euler(m_rotation);
+
+    mtx4 m(m_quaternion);
+    vec3 v(1, 0, 0);
+
+    m_direction = m * v;
+    m_direction.normalize();
+  }
+
+  void rotate(quat& q)
+  {
+    m_quaternion = q;
+    mtx4 m(m_quaternion);
+    m.angles(m_rotation);
+  }
+
+  void transform(mtx4& mtr)
+  {
+    mtx4 tr(m_position), rt(m_quaternion);
+    mtr = rt * tr;
+  }
 
   void setShape(box3& b);
-  // void setShape(sphere3& s);
-  // void setShape(cylinder& c);
+  void setShape(sphere3& s);
   void setShape(int c, polygon3* p);
 
-  void setPosition(vec3& v);
-  void setDirection(vec3& d);
+  vec3 position()  { return m_position;  }
+  vec3 rotation()  { return m_rotation;  }
+  vec3 direction() { return m_direction; }
+  mtx4 transform() {
+
+    return m_direction;
+  }
 };

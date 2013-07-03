@@ -129,7 +129,7 @@ class ASp_LaserA: public kgmGameObject
   kgmMaterial*  mtl;
 
 public:
-  ASp_LaserA(kgmIGame* g, u32 time, vec3& pos, vec3& dir, float speed)
+  ASp_LaserA(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed)
   {
     timeout(time);
     m_visual  = new kgmVisual();
@@ -171,8 +171,8 @@ public:
     m_body = new kgmBody();
 
     //body->m_collision = false;
-    m_body->m_position  = pos;
-    m_body->m_direction = dir;
+    m_body->translate(pos);
+    m_body->rotate(rot);
     m_body->m_velocity  = speed;
     m_body->m_gravity   = false;
     m_body->m_udata     = this;
@@ -215,11 +215,11 @@ public:
     m_body->m_udata = this;
     m_body->m_gravity = false;
     m_body->m_velocity = 0.01 + 0.02 * 1.0f / (1 + rand()%30);
-    m_body->m_direction = vec3((float)pow(-1, rand() % 2) / (1 + rand()%30),
-                               (float)pow(-1, rand() % 2) / (1 + rand()%30),
+    //m_body->m_direction = vec3((float)pow(-1, rand() % 2) / (1 + rand()%30),
+    //                           (float)pow(-1, rand() % 2) / (1 + rand()%30),
                                //(float)pow(-1, rand() % 2) / (1 + rand()%30)
-                               0);
-    m_body->m_direction.normalize();
+    //                           0);
+    //m_body->m_direction.normalize();
     m_body->m_bound.min = vec3(-1, -1, -1);
     m_body->m_bound.max = vec3( 1,  1,  1);
   }

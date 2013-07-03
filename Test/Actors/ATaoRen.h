@@ -27,10 +27,10 @@ public:
     if(m_gameplayer)
     {
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
-      vec3 cpos = m_body->m_position - m_body->m_direction * c_dist;
+      vec3 cpos = m_body->m_position - m_body->direction() * c_dist;
       cpos.z = z_dist;
       cam.mPos = cpos;
-      cam.mDir = m_body->m_direction;
+      cam.mDir = m_body->direction();
       cam.update();
     }
   }

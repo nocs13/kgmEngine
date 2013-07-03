@@ -153,7 +153,7 @@ void kgmPhysics::doCollision(float dtime){
 
     if(!body->m_collision)
     {
-      body->m_position = body->m_position + body->m_direction * body->m_velocity * dtime;
+      body->m_position = body->m_position + body->direction() * body->m_velocity * dtime;
 
       continue;
     }
@@ -166,7 +166,7 @@ void kgmPhysics::doCollision(float dtime){
     vec3 bdPos = m_ptCurrent = body->m_position;
     float gdist = 5 * ctime * body->m_mass;
     vec3  spos = body->m_position;
-    vec3  epos = body->m_position + body->m_direction * (body->m_velocity * ctime);
+    vec3  epos = body->m_position + body->direction() * (body->m_velocity * ctime);
 
     vec3 b_min = body->m_bound.min;
     vec3 b_max = body->m_bound.max;
@@ -225,7 +225,7 @@ void kgmPhysics::doCollision(float dtime){
 
       vec3 pt_ins, nr_ins;
       vec3 cs = cbody->m_position;
-      vec3 cd = cbody->m_position + cbody->m_direction;
+      vec3 cd = cbody->m_position + cbody->direction();
       vec3 s = body->m_position;
       vec3 d = epos;
 
@@ -275,7 +275,9 @@ void kgmPhysics::doCollision(float dtime){
       box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
-      if(box_body.intersect(box_cbody)/* && m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)*/)
+      if(box_body.intersect(box_cbody)
+         && m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
+         )
       {
 #ifdef TEST
         body->m_intersect = true;

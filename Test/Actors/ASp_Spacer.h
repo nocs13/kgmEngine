@@ -229,7 +229,7 @@ public:
       vec3 tpos   = target->getBody()->m_position;
       vec3 tdir   = tpos - m_body->m_position;
       dist  = tdir.length();
-      angle = m_body->m_direction.angle(tdir.normal());
+      angle = m_body->direction().angle(tdir.normal());
     }
     else
     {
@@ -346,7 +346,7 @@ public:
 
     kgmGameObject* go1 = new ASp_LaserA(game, 1000,
                                        pos,
-                                       m_body->m_direction,
+                                       m_body->rotation(),
                                        m_body->m_velocity + 0.1f);
 
     dmy = dummy("Gun.2");
@@ -358,7 +358,7 @@ public:
 
     kgmGameObject* go2 = new ASp_LaserA(game, 1000,
                                        pos,
-                                       m_body->m_direction,
+                                       m_body->rotation(),
                                        m_body->m_velocity + 0.1f);
 
     go1->setId("laser1");
