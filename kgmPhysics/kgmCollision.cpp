@@ -466,8 +466,8 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d
   return false;
 }
 
-bool ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s_len,
-                    box3& d_box, vec3& d_start, vec3& d_rot, float d_len)
+bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s_len,
+                                 box3& d_box, vec3& d_start, vec3& d_rot, float d_len)
 {
   box3 sbox = s_box;
   quat squat;
@@ -500,7 +500,50 @@ bool ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s_len,
   }
 
   plane3 splanes[3];
-  splanes[0] = plane3();
 
-  return false;
+  splanes[0] = plane3(spts[0], spts[3], spts[1]);
+  splanes[1] = plane3(spts[0], spts[1], spts[4]);
+  splanes[2] = plane3(spts[0], spts[4], spts[3]);
+
+  sphere3 dsphere(d_start, d_box.dimension().length() + d_len);
+  float   sdim[] = {sbox.dimension().z, sbox.dimension().y, sbox.dimension().x + s_len};
+
+  for(int i = 0; i < 3; i++)
+  {
+    float distance = splanes[i].distance(dsphere.center);
+
+    if((distance > dsphere.radius) || (fabs(distance) > (dsphere.radius + sdim[i])))
+    {
+      return false;
+    }
+    else
+    {
+      int  sides = 0;
+      bool cross = false;
+
+      for(int j = 0; j < 8; j++)
+      {
+        distance = splanes[i].distance(dpts[j]);
+
+        if(distance < 0.0)
+          sides--;
+        else
+          sides++;
+
+        if((distance < 0.0) && (fabs(distance) < sdim[i]))
+        {
+          cross = true;
+
+          break;
+        }
+      }
+
+      if(!cross && (abs(sides) == 8))
+      {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }

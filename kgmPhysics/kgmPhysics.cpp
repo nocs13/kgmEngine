@@ -226,8 +226,10 @@ void kgmPhysics::doCollision(float dtime){
       vec3 pt_ins, nr_ins;
       vec3 cs = cbody->m_position;
       vec3 cd = cbody->m_position + cbody->direction();
+      vec3 cr = cbody->rotation();
       vec3 s = body->m_position;
       vec3 d = epos;
+      vec3 r = body->rotation();
 
       //		npos.z = zpos;
 
@@ -275,8 +277,11 @@ void kgmPhysics::doCollision(float dtime){
       box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
-      if(box_body.intersect(box_cbody)
-         && m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
+      if(box_body.intersect(box_cbody))
+      if(
+         m_collision.ob_collision(body->m_bound, s, r, 2.0f,
+                                  cbody->m_bound, s, cr, 1.0f)
+         //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
          )
       {
 #ifdef TEST
