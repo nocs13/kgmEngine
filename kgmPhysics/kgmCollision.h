@@ -41,4 +41,7 @@ public:
 
   //collision oobb boxes
   bool ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d_box, vec3& d_start, vec3& d_end);
+
+  bool ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s_len,
+                      box3& d_box, vec3& d_start, vec3& d_rot, float d_len);
 };

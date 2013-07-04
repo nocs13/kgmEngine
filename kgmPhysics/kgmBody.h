@@ -96,16 +96,7 @@ public:
 
   void rotate(vec3 r)
   {
-    m_rotation.x = r.x;
-    m_rotation.y = r.y;
-    m_rotation.z = r.z;
-    m_quaternion.euler(m_rotation);
-
-    mtx4 m(m_quaternion);
-    vec3 v(1, 0, 0);
-
-    m_direction = m * v;
-    m_direction.normalize();
+    rotate(r.x, r.y, r.z);
   }
 
   void rotate(quat& q)
