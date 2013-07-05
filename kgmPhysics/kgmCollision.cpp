@@ -487,6 +487,15 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
   dmrt = mtx4(dquat);
   dmtr = dmrt * dmtl;
 
+  vec3 sdim = sbox.max - sbox.min;
+  vec3 ddim = dbox.max - dbox.min;
+  kgmOBox3d<f32> s_obox(s_start, s_rot, sdim);
+  kgmOBox3d<f32> d_obox(d_start, d_rot, ddim);
+
+  if(!s_obox.intersect(d_obox) || !d_obox.intersect(s_obox))
+    return false;
+
+  /*
   vec3 spts[8];
   vec3 dpts[8];
 
@@ -544,6 +553,7 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
       }
     }
   }
+*/
 
   return true;
 }

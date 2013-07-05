@@ -3,7 +3,7 @@
 template <class T> class kgmOBox3d{
 public:
   kgmVector3d<T> position,
-                 direction,  // default should be x positive direction
+                 rotation,
                  dimension;  // space resolution of box(length, width, height)
 
 public:
@@ -11,37 +11,37 @@ public:
   {
   }
 
-  kgmOBox3d(const kgmVector3d<T> &pos, const kgmVector3d<T> &dir, const kgmVector3d<T> &dim)
+  kgmOBox3d(const kgmVector3d<T> &pos, const kgmVector3d<T> &rot, const kgmVector3d<T> &dim)
   {
-    position = pos, direction = dir.normal(), dimension = dim;
+    position = pos, rotation = rot, dimension = dim;
   }
 
-  kgmOBox3d(T pos_x, T pos_y, T pos_z, T dir_x, T dir_y, T dir_z, T dim_x, T dim_y, T dim_z)
+  kgmOBox3d(T pos_x, T pos_y, T pos_z, T rot_x, T rot_y, T rot_z, T dim_x, T dim_y, T dim_z)
   {
     position.x = pos_x,
      position.y = pos_y,
       position.z = pos_z;
-    direction.x = dir_x,
-     direction.y = dir_y,
-      direction.z = dir_z;
+    rotation.x = rot_x,
+     rotation.y = rot_y,
+      rotation.z = rot_z;
     dimension.x = dim_x,
      dimension.y = dim_y,
       dimension.z = dim_z;
   }
 
-  void set(const kgmVector3d<T> &pos, const kgmVector3d<T> &dir, const kgmVector3d<T> &dim)
+  void set(const kgmVector3d<T> &pos, const kgmVector3d<T> &rot, const kgmVector3d<T> &dim)
   {
-    position = pos, direction = dir.normal(), dimension = dim;
+    position = pos, rotation = rot, dimension = dim;
   }
 
-  void set(T pos_x, T pos_y, T pos_z, T dir_x, T dir_y, T dir_z, T dim_x, T dim_y, T dim_z)
+  void set(T pos_x, T pos_y, T pos_z, T rot_x, T rot_y, T rot_z, T dim_x, T dim_y, T dim_z)
   {
     position.x = pos_x,
      position.y = pos_y,
       position.z = pos_z;
-    direction.x = dir_x,
-     direction.y = dir_y,
-      direction.z = dir_z;
+    rotation.x = rot_x,
+     rotation.y = rot_y,
+      rotation.z = rot_z;
     dimension.x = dim_x,
      dimension.y = dim_y,
       dimension.z = dim_z;
@@ -49,35 +49,30 @@ public:
 
   void points(kgmVector3d<T> v[])
   {
-    T  z_angle = acos(direction.x);
+    quat q;
+    q.euler(rotation);
 
-    mtx4  m_rot;
-
-    m_rot.rotate(0, 0, z_angle);
-    //m_rot.rotate(0, direction);
+    mtx4  mrt(q);
+    mtx4  mtl(position);
+    mtx4  mtr = mrt * mtl;
 
     kgmVector3d<T> dim(0.5 * dimension.x,
                        0.5 * dimension.y,
                        0.5 * dimension.z);
-    kgmVector3d<T> min(position.x - dim.x,
-                       position.y - dim.y,
-                       position.z - dim.z),
-                   max(position.x + dim.x,
-                       position.y + dim.y,
-                       position.z + dim.z);
-    kgmVector3d<T> d = max - min;
+    kgmVector3d<T> min(-dim.x, -dim.y, -dim.z),
+                   max( dim.x,  dim.y,  dim.z);
 
     v[0] = min;
-    v[1] = kgmVector3d<T>(min.x + d.x, min.y,       min.z);
-    v[2] = kgmVector3d<T>(min.x + d.x, min.y + d.y, min.z);
-    v[3] = kgmVector3d<T>(min.x,       min.y + d.y, min.z);
-    v[4] = kgmVector3d<T>(min.x,       min.y,       min.z + d.z);
-    v[5] = kgmVector3d<T>(min.x + d.x, min.y,       min.z + d.z);
+    v[1] = kgmVector3d<T>(min.x + dimension.x, min.y,               min.z);
+    v[2] = kgmVector3d<T>(min.x + dimension.x, min.y + dimension.y, min.z);
+    v[3] = kgmVector3d<T>(min.x,               min.y + dimension.y, min.z);
+    v[4] = kgmVector3d<T>(min.x,               min.y,               min.z + dimension.z);
+    v[5] = kgmVector3d<T>(min.x + dimension.x, min.y,               min.z + dimension.z);
     v[6] = max;
-    v[7] = kgmVector3d<T>(min.x,       min.y + d.y, min.z + d.z);
+    v[7] = kgmVector3d<T>(min.x,               min.y + dimension.y, min.z + dimension.z);
 
     for(int i = 0; i < 8; i++)
-      v[i] = m_rot * v[i];
+      v[i] = mtr * v[i];
   }
 
   void planes(kgmPlane3d<T>  plane[])
