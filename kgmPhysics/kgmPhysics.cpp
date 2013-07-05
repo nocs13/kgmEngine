@@ -213,7 +213,7 @@ void kgmPhysics::doCollision(float dtime){
 
       //continue;
 
-     /*
+      /*
      box	 a = body->m_bound;
      a.min = a.min + body->m_position; a.max = a.max + body->m_position;
      box   b = cbody->m_bound;
@@ -277,12 +277,11 @@ void kgmPhysics::doCollision(float dtime){
       box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
-      if(box_body.intersect(box_cbody))
       if(
-         m_collision.ob_collision(body->m_bound, s, r, 2.0f,
-                                  cbody->m_bound, s, cr, 1.0f)
-         //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
-         )
+      box_body.intersect(box_cbody) &&
+      m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 0.0f)
+      //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
+      )
       {
 #ifdef TEST
         body->m_intersect = true;
@@ -429,13 +428,17 @@ void kgmPhysics::doCollision(float dtime){
     //**********************************
 
     triangles.clear();
+
     //select position
-    if(!upstare){
+    if(!upstare)
+    {
       if(holddown)
         body->m_falling = false;
       else
         body->m_falling = true;
-    }else{
+    }
+    else
+    {
       body->m_falling = false;
     }
     if(epos.z <= (spos.z - gdist))
@@ -468,6 +471,7 @@ void kgmPhysics::getTriangles(kgmList<Triangle>& triangles, sphere& s){
       triangles.add(t);
   }
 }
+
 void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s){
   int i = 0;
   int count = m_bodies.size();
