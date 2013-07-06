@@ -278,7 +278,6 @@ void kgmGameGraphics::render(){
   }
 
   //render 3D
-
   for(int i = 0; i < m_meshes.size(); i++){
     render(m_meshes[i]);
   }
@@ -319,6 +318,9 @@ void kgmGameGraphics::render(){
 
     for(int i = 0; i < 8; i++)
       vec_points[i] = mtx_tr * vec_points[i];
+
+    obox3 ob = body->getOBox();
+    ob.points(vec_points);
 
     gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
   }
