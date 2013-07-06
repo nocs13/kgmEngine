@@ -470,29 +470,21 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
                                  box3& d_box, vec3& d_start, vec3& d_rot, float d_len)
 {
   box3 sbox = s_box;
-  quat squat;
-  mtx4 smtr, smtl, smrt;
   sbox.max.x += s_len;
-  squat.euler(s_rot);
-  smtl.translate(s_start);
-  smrt = mtx4(squat);
-  smtr = smrt * smtl;
 
   box3 dbox = d_box;
-  quat dquat;
-  mtx4 dmtr, dmtl, dmrt;
   dbox.max.x += d_len;
-  dquat.euler(d_rot);
-  dmtl.translate(d_start);
-  dmrt = mtx4(dquat);
-  dmtr = dmrt * dmtl;
 
   vec3 sdim = sbox.max - sbox.min;
   vec3 ddim = dbox.max - dbox.min;
+
   kgmOBox3d<f32> s_obox(s_start, s_rot, sdim);
   kgmOBox3d<f32> d_obox(d_start, d_rot, ddim);
 
-  if(!s_obox.intersect(d_obox) || !d_obox.intersect(s_obox))
+  if(
+     !s_obox.intersect(d_obox)
+     //|| !d_obox.intersect(s_obox)
+     )
     return false;
 
   /*

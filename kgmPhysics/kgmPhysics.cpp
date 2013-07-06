@@ -279,7 +279,7 @@ void kgmPhysics::doCollision(float dtime){
 
       if(
       box_body.intersect(box_cbody) &&
-      m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 0.0f)
+      m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
       //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
       )
       {
