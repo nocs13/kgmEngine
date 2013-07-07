@@ -269,8 +269,11 @@ void kgmPhysics::doCollision(float dtime){
       obox3 ob_cbody = cbody->getOBox();
 
       if(
-      box_body.intersect(box_cbody)
-      && ob_body.intersect(ob_cbody)
+         box_body.intersect(box_cbody) &&
+         ( (cbody->m_shape == kgmBody::ShapeBox && ob_body.intersect(ob_cbody) && ob_cbody.intersect(ob_body))
+           || (cbody->m_shape == kgmBody::ShapePolyhedron && ob_body.intersect(ob_cbody) && ob_cbody.intersect(ob_body))
+         )
+      //&& ob_body.intersect(ob_cbody)
       //&& ob_cbody.intersect(ob_body)
       //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
       //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
@@ -279,6 +282,10 @@ void kgmPhysics::doCollision(float dtime){
 #ifdef TEST
         body->m_intersect = true;
 #endif
+        if(cbody->m_shape == kgmBody::ShapePolyhedron)
+        {
+
+        }
         int  k = 0;
         insect = binsect = true;
         pt_ins = m_collision.m_point;
