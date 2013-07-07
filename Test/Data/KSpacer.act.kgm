@@ -2,7 +2,7 @@
 <kgm>
  <kgmActor type="KSpacer">
   <Mass value='1.0' />
-  <Bound value='0.5 0.5 1.0' />
+  <Bound value='1.5 1.5 1.0' />
   <Gravity value='false' />
   <Dummies value="kspacer_o1.dum.kgm" />
 

@@ -43,9 +43,9 @@ public:
   virtual kgmVisual*   getVisual(){ return m_visual; }
 
   bool valid()      { return m_valid;    }
-  bool removed()    { return m_remove;   }
   bool culled()     { return m_culled;   }
   bool visible()    { return m_visible;  }
+  bool removed()    { return m_remove;   }
 
   void remove()     { m_remove = true;   }
   void enable()     { m_valid  = true;   }

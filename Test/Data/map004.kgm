@@ -19,5 +19,5 @@
   <State value='idle'/>
   <Aim value='attack' />
   <Target value='main_spacer' />
- </kgmGameObject>
+ </kgmActor>
 </kgm>

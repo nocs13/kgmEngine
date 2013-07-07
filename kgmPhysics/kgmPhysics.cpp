@@ -211,18 +211,6 @@ void kgmPhysics::doCollision(float dtime){
       if(!cbody || !cbody->m_valid)
         continue;
 
-      //continue;
-
-      /*
-     box	 a = body->m_bound;
-     a.min = a.min + body->m_position; a.max = a.max + body->m_position;
-     box   b = cbody->m_bound;
-     b.min = b.min + cbody->m_position;
-     b.max = b.max + cbody->m_position;
-     cylinder cyla(body->m_position, 3, body->m_bound.max.z - body->m_bound.min.z),
-     cylb(cbody->m_position, 10, cbody->m_bound.max.z - cbody->m_bound.min.z);
-     */
-
       vec3 pt_ins, nr_ins;
       vec3 cs = cbody->m_position;
       vec3 cd = cbody->m_position + cbody->direction();
@@ -277,9 +265,14 @@ void kgmPhysics::doCollision(float dtime){
       box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
       //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
+      obox3 ob_body = body->getOBox();
+      obox3 ob_cbody = cbody->getOBox();
+
       if(
-      box_body.intersect(box_cbody) &&
-      m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
+      box_body.intersect(box_cbody)
+      && ob_body.intersect(ob_cbody)
+      //&& ob_cbody.intersect(ob_body)
+      //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
       //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
       )
       {

@@ -76,11 +76,11 @@ void kgmGameLogic::update(u32 milliseconds)
 
     if(go->removed())
     {
-      go->release();
-      m_objects.erase(i);
-
       if(m_gameplayer == go)
         m_gameplayer = null;
+
+      go->release();
+      m_objects.erase(i);
     }
     else if(go->valid())
     {

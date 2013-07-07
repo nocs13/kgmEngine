@@ -313,12 +313,6 @@ void kgmGameGraphics::render(){
     vec3 vec_points[8];
     s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
 
-    body->m_bound.points(vec_points);
-    body->transform(mtx_tr);
-
-    for(int i = 0; i < 8; i++)
-      vec_points[i] = mtx_tr * vec_points[i];
-
     obox3 ob = body->getOBox();
     ob.points(vec_points);
 

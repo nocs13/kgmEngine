@@ -20,7 +20,7 @@ public:
     v1 = b - a;
     v2 = c - a; //c - b;
     nor = v1.cross(v2);
-    //  nor.normalize();
+    nor.normalize();
     w = -(nor.x*a.x + nor.y*a.y + nor.z*a.z);
     x = nor.x, y = nor.y, z = nor.z;
   }
@@ -36,7 +36,7 @@ public:
     v1 = b - a;
     v2 = c - a; //c - b;
     nor = v1.cross(v2);
-    //  nor.normalize();
+    nor.normalize();
     w = -(nor.x*a.x + nor.y*a.y + nor.z*a.z);
     x = nor.x, y = nor.y, z = nor.z;
   }

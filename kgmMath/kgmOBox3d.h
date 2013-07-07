@@ -103,22 +103,25 @@ public:
     box.points(b_points);
 
     kgmSphere3d<T> b_sphere(b_points, 8);
+    kgmSphere3d<T> c_sphere(c_points, 8);
 
     plane[0] = kgmPlane3d<T>(c_points[0], c_points[2], c_points[1]);
     plane[1] = kgmPlane3d<T>(c_points[0], c_points[4], c_points[3]);
     plane[2] = kgmPlane3d<T>(c_points[0], c_points[1], c_points[5]);
 
-    T dims[3] = {dimension.z, dimension.x, dimension.y};
+    T    dims[3] = {dimension.z, dimension.x, dimension.y};
+    int  sides = 0;
+    bool cross = false;
 
     for(int I = 0; I < 3; I++)
     {
       T distance = plane[I].distance(b_sphere.center);
 
-      if((distance > 0.0 && distance < b_sphere.radius) ||
-         (distance < 0.0 && fabs(distance) < (b_sphere.radius + dims[I])))
+      //if((distance > 0.0 && distance < b_sphere.radius) ||
+      //   (distance < 0.0 && fabs(distance) < (b_sphere.radius + dims[I])))
       {
-        int  sides = 0;
-        bool cross = false;
+        sides = 0;
+        cross = false;
 
         for(int i = 0; i < 8; i++)
         {
@@ -128,8 +131,8 @@ public:
             sides--;
           else
             sides++;
-          T too = fabs(distance);
-          if((distance < 0.0) && (fabs(distance) < dims[I]))
+
+          if((distance < 0.0) && (fabs(distance) <= dims[I]))
           {
             cross = true;
 
@@ -140,10 +143,10 @@ public:
         if(!cross && (abs(sides) == 8))
           return false;
       }
-      else
-      {
-        return false;
-      }
+      //else
+      //{
+      //  return false;
+      //}
     }
 
     return true;
