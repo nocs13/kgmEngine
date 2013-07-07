@@ -426,6 +426,14 @@ bool kgmCollision::collision(vec3& start, vec3& end,
   return true;
 }
 
+bool kgmCollision::ob_collision(obox3& s_box, obox3& d_box)
+{
+  if(s_box.intersect(d_box) && d_box.intersect(s_box))
+    return true;
+
+  return true;
+}
+
 bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d_box, vec3& d_start, vec3& d_end)
 {
   vec3 s_dir = s_end - s_start;
@@ -548,4 +556,9 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
 */
 
   return true;
+}
+
+bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& d_tran)
+{
+  return false;
 }

@@ -7,17 +7,24 @@
 template <class T> class kgmMatrix3d{
 public:
  T m[16];
+
 public:
- kgmMatrix3d(){
+ kgmMatrix3d()
+ {
   identity();
  }
- kgmMatrix3d(T *f){
+
+ kgmMatrix3d(T *f)
+ {
   memcpy(m, f, sizeof(T) * 16);
  }
- kgmMatrix3d(kgmVector3d<T>& v){
+
+ kgmMatrix3d(kgmVector3d<T>& v)
+ {
   identity();
   translate(v);
  }
+
  kgmMatrix3d(kgmQuaternion<T> &q){
   T x2 = q.x + q.x,
   y2 = q.y + q.y,
@@ -44,7 +51,9 @@ public:
   m[12] = m[13] = m[14] = 0.0f;
   m[15] = 1.0f;
  }
- kgmMatrix3d(kgmQuaternion<T> &q, kgmVector3d<T> &v){
+
+ kgmMatrix3d(kgmQuaternion<T> &q, kgmVector3d<T> &v)
+ {
   kgmMatrix3d mrt(q);
   kgmMatrix3d mtr(v);
   *this = mrt * mtr;

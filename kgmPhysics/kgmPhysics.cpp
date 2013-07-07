@@ -263,15 +263,16 @@ void kgmPhysics::doCollision(float dtime){
       box_cbody.max.x += 0.5 * cbody->m_bound.dimension().x;
       box_cbody.max.y += 0.5 * cbody->m_bound.dimension().y;
       box_cbody.max.z += 0.5 * cbody->m_bound.dimension().z;
-      //   if((s.distance(s) > 0.1f) && (m_collision.collision(s, d, crad, b, mtr))){
 
       obox3 ob_body = body->getOBox();
       obox3 ob_cbody = cbody->getOBox();
+      mtx4  mtx_cbody(cbody->m_quaternion, cbody->m_position);
 
       if(
          box_body.intersect(box_cbody) &&
-         ( (cbody->m_shape == kgmBody::ShapeBox && ob_body.intersect(ob_cbody) && ob_cbody.intersect(ob_body))
-           || (cbody->m_shape == kgmBody::ShapePolyhedron && ob_body.intersect(ob_cbody) && ob_cbody.intersect(ob_body))
+         ( (cbody->m_shape == kgmBody::ShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
+           || (cbody->m_shape == kgmBody::ShapePolyhedron && m_collision.ob_collision(ob_body, ob_cbody)
+               && m_collision.ob_collision(ob_cbody, cbody->m_convex, mtx_cbody))
          )
       //&& ob_body.intersect(ob_cbody)
       //&& ob_cbody.intersect(ob_body)
