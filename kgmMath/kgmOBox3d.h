@@ -59,17 +59,17 @@ public:
     kgmVector3d<T> dim(0.5 * dimension.x,
                        0.5 * dimension.y,
                        0.5 * dimension.z);
-    kgmVector3d<T> min(-dim.x, -dim.y, -dim.z),
-                   max( dim.x,  dim.y,  dim.z);
+    kgmVector3d<T> min_(-dim.x, -dim.y, -dim.z);
+    kgmVector3d<T> max_( dim.x,  dim.y,  dim.z);
 
-    v[0] = min;
-    v[1] = kgmVector3d<T>(min.x + dimension.x, min.y,               min.z);
-    v[2] = kgmVector3d<T>(min.x + dimension.x, min.y + dimension.y, min.z);
-    v[3] = kgmVector3d<T>(min.x,               min.y + dimension.y, min.z);
-    v[4] = kgmVector3d<T>(min.x,               min.y,               min.z + dimension.z);
-    v[5] = kgmVector3d<T>(min.x + dimension.x, min.y,               min.z + dimension.z);
-    v[6] = max;
-    v[7] = kgmVector3d<T>(min.x,               min.y + dimension.y, min.z + dimension.z);
+    v[0] = min_;
+    v[1] = kgmVector3d<T>(min_.x + dimension.x, min_.y,               min_.z);
+    v[2] = kgmVector3d<T>(min_.x + dimension.x, min_.y + dimension.y, min_.z);
+    v[3] = kgmVector3d<T>(min_.x,               min_.y + dimension.y, min_.z);
+    v[4] = kgmVector3d<T>(min_.x,               min_.y,               min_.z + dimension.z);
+    v[5] = kgmVector3d<T>(min_.x + dimension.x, min_.y,               min_.z + dimension.z);
+    v[6] = max_;
+    v[7] = kgmVector3d<T>(min_.x,               min_.y + dimension.y, min_.z + dimension.z);
 
     for(int i = 0; i < 8; i++)
       v[i] = mtr * v[i];

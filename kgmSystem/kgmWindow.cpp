@@ -787,7 +787,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h){
   RECT r;
   GetClientRect(m_wnd, (LPRECT)&r);
   x = r.left, y = r.top, w = r.right - x, h = r.bottom - y;
-  kgm_log() << "wrc: " << (s32)w << " " << (s32)h << "\n";
+  //kgm_log() << "wrc: " << (s32)w << " " << (s32)h << "\n";
 #endif
 #ifdef LINUX
   unsigned int  width, height, border, depth;

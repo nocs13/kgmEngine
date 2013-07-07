@@ -70,7 +70,7 @@ void kgmGameLogic::update(u32 milliseconds)
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -107,7 +107,7 @@ void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 
 kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 

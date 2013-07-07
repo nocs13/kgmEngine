@@ -1158,7 +1158,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     {
       if(!m_resources->getFile(a += ".kgm", mem))
       {
-        return gObject(type);
+        return (kgmActor*)gObject(type);
       }
     }
   }

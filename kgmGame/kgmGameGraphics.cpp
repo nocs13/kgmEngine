@@ -194,7 +194,7 @@ void kgmGameGraphics::render(){
                         visuals_blend;
 
   // parse visible objects
-  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i++)
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
   {
     if((*i)->removed())
     {
@@ -213,7 +213,7 @@ void kgmGameGraphics::render(){
     }
   }
 
-  for(kgmList<kgmVisual*>::iterator i = m_vis_blend.begin(); i != m_vis_blend.end(); i++)
+  for(kgmList<kgmVisual*>::iterator i = m_vis_blend.begin(); i != m_vis_blend.end(); ++i)
   {
     if((*i)->removed())
     {
@@ -232,7 +232,7 @@ void kgmGameGraphics::render(){
     }
   }
 
-  for(kgmList<kgmVisual*>::iterator i = m_vis_text.begin(); i != m_vis_text.end(); i++)
+  for(kgmList<kgmVisual*>::iterator i = m_vis_text.begin(); i != m_vis_text.end(); ++i)
   {
     if((*i)->removed())
     {
@@ -772,7 +772,9 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fco
     }
     else
     {
+#ifdef TEST
       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!";
+#endif
     }
 
     cx += fwidth;
