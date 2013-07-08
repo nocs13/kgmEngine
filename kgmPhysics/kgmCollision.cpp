@@ -489,10 +489,7 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
   kgmOBox3d<f32> s_obox(s_start, s_rot, sdim);
   kgmOBox3d<f32> d_obox(d_start, d_rot, ddim);
 
-  if(
-     !s_obox.intersect(d_obox)
-     //|| !d_obox.intersect(s_obox)
-     )
+  if(!s_obox.intersect(d_obox) || !d_obox.intersect(s_obox))
     return false;
 
   /*
@@ -560,5 +557,33 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s
 
 bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& d_tran)
 {
+  vec3               s_points[8];
+  kgmPlane3d<float>  s_planes[3];
+
+  s_box.points(s_points);
+
+  s_planes[0] = kgmPlane3d<float>(s_points[0], s_points[2], s_points[1]);
+  s_planes[1] = kgmPlane3d<float>(s_points[0], s_points[4], s_points[3]);
+  s_planes[2] = kgmPlane3d<float>(s_points[0], s_points[1], s_points[5]);
+
+  float    dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
+
+  int  sides = 0;
+  bool cross = false;
+
+  for(kgmList<polygon3*>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
+  {
+    polygon3* poly = (*i);
+    vec3*     points = new vec3[poly->m_count];
+
+    for(int j = 0; j < poly->m_count; j++)
+    {
+      points[j] = d_tran * poly->m_points[j];
+    }
+
+    plane3 d_plane(points[0], points[1], points[2]);
+
+  }
+
   return false;
 }
