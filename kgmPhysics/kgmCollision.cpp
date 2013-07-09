@@ -583,6 +583,31 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
 
     plane3 d_plane(points[0], points[1], points[2]);
 
+    sides = 0;
+
+    for(int j = 0; j < 8; j++)
+    {
+      float dist = d_plane.distance(s_points[j]);
+
+      if(dist < 0)
+        sides--;
+      else
+        sides++;
+    }
+
+    if(abs(sides) == 8)
+    {
+      continue;
+    }
+    else
+    {
+      cross = false;
+
+      for(j = 0; j < 3; j++)
+      {
+
+      }
+    }
   }
 
   return false;
