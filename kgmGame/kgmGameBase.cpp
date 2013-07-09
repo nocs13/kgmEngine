@@ -1189,6 +1189,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   a_node->attribute("type", stype);
   actor = (m_logic)?((kgmActor*)gObject(stype)):(new kgmActor());
 
+  if(!actor)
+    return null;
+
   for(int i = 0; i < a_node->nodes(); i++){
     kgmString id, val;
     a_node->node(i)->id(id);
