@@ -41,7 +41,8 @@ public:
     virtual void collide(kgmGameObject*, kgmGameObject*);
     virtual kgmGameObject* getObjectById(kgmString);
 
-    kgmActor* gameplayer(u8 i){
+    kgmActor* gameplayer(u8 i)
+    {
         return m_gameplayer;
     }
 };
