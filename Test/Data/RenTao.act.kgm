@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <kgm>
- <kgmActor id='RenTao'>
+ <kgmActor id='RenTao' type='RenTao'>
 
   <Mass value='1.0' />
   <Bound value='0.5 0.5 1.0' />
