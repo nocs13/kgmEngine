@@ -85,6 +85,7 @@ public:
 
 class ASp_SpaceshipA: public ASp_Spaceship
 {
+  KGM_OBJECT(ASp_SpaceshipA);
 public:
   ASp_SpaceshipA(kgmIGame* g)
     :ASp_Spaceship(g)

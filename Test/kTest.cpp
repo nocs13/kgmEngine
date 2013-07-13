@@ -10,11 +10,14 @@
 #include "Actors/AKomble.h"
 #include "Actors/ASpacerObjects.h"
 #include "Actors/ASpacer.h"
+#include "Actors/ASp_Gun.h"
 #include "Actors/ASp_Spacer.h"
 #include "Actors/ASp_Spaceship.h"
 
 KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
 KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_Gun, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_GunA, ASp_Gun);
 KGMOBJECT_IMPLEMENT(ASp_Spacer, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpacerA, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_Skybox, kgmGameObject);
@@ -24,6 +27,7 @@ KGMOBJECT_IMPLEMENT(ASp_Asteroid, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
 
 class kLogic: public kgmGameLogic
 {
@@ -209,6 +213,10 @@ public:
     else if(t == "KAsteroidSpawner")
     {
       return new ASp_AsteroidSpawner(this);
+    }
+    else if(t == "ASp_GunA")
+    {
+      return new ASp_GunA(this);
     }
     else if(t == "ASp_SpacerA")
     {
