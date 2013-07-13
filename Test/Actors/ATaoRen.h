@@ -33,6 +33,11 @@ public:
       cam.mDir = m_body->direction();
       cam.update();
     }
+
+    mtx4 mr;
+    mr.rotate(0, 0, PI * 0.5);
+    m_visual->m_transform = mr * m_visual->m_transform;
+
   }
 
   void input(u32 btn, int state)
@@ -46,8 +51,8 @@ public:
     {
     case grot_x:
     {
-      static float alpha = 0.0f;
-      alpha += (0.005f * state);
+      //static float alpha = 0.0f;
+      //alpha += (0.005f * state);
       vt = m_body->m_rotation;
       vt.z += (0.002f * state);
       m_body->rotate(0, 0, vt.z);
