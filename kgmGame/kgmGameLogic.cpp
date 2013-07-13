@@ -3,6 +3,8 @@
 
 kgmGameLogic::kgmGameLogic()
 {
+  m_levlogic   = null;
+  m_gameplayer = null;
 }
 
 kgmGameLogic::~kgmGameLogic()
@@ -19,9 +21,13 @@ void kgmGameLogic::clear()
     (*i)->release();
   }
 
+  if(m_levlogic)
+    delete m_levlogic;
+
   m_objects.clear();
 
   m_gameplayer = null;
+  m_levlogic   = null;
 }
 
 bool kgmGameLogic::add(kgmActor *a)
@@ -65,10 +71,28 @@ bool kgmGameLogic::add(kgmGameObject *o)
   return false;
 }
 
+bool kgmGameLogic::chooseLogic(kgmString s)
+{
+  LogicOfLevel* ll = getLogic(s);
+
+  if(!ll)
+    return false;
+
+  if(m_levlogic)
+    delete m_levlogic;
+
+  m_levlogic = ll;
+
+  return true;
+}
+
 void kgmGameLogic::update(u32 milliseconds)
 {
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
+
+  if(m_levlogic)
+    m_levlogic->logic();
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
@@ -122,4 +146,9 @@ kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
   }
 
   return null;
+}
+
+kgmGameLogic::LogicOfLevel* kgmGameLogic::getLogic(kgmString)
+{
+
 }

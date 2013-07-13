@@ -11,6 +11,7 @@
 #include "Actors/ASpacerObjects.h"
 #include "Actors/ASpacer.h"
 #include "Actors/ASp_Spacer.h"
+#include "Actors/ASp_Spaceship.h"
 
 KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
 KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
@@ -22,6 +23,7 @@ KGMOBJECT_IMPLEMENT(ASp_LaserA, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Asteroid, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
 
 class kLogic: public kgmGameLogic
 {
@@ -211,6 +213,10 @@ public:
     else if(t == "ASp_SpacerA")
     {
       return new ASp_SpacerA(this);
+    }
+    else if(t == "ASp_SpaceshipA")
+    {
+      return new ASp_SpaceshipA(this);
     }
     else if(t == "KSpacerSpawner")
     {
