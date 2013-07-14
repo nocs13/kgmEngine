@@ -21,6 +21,7 @@ public:
   kgmString    m_id;
   Attach       m_type;
   vec3         m_shift;
+  vec3         m_orient;
   kgmObject*   m_linked;
 
 public:
@@ -32,6 +33,8 @@ public:
   {
     m_linked = 0;
     m_type   = AttachToNone;
+
+    m_shift = m_orient = vec3(0, 0, 0);
   }
 
   void attach(kgmObject* o = null, Attach t = AttachToNone)
@@ -48,5 +51,10 @@ public:
   void setShift(vec3& v)
   {
     m_shift = v;
+  }
+
+  void setOrient(vec3& r)
+  {
+    m_orient = r;
   }
 };

@@ -1,5 +1,5 @@
 #include "kgmActor.h"
-KGMOBJECT_IMPLEMENT(kgmActor,	kgmGameObject);
+KGMOBJECT_IMPLEMENT(kgmActor, kgmGameObject);
 
 kgmActor::kgmActor()
 {
@@ -62,6 +62,21 @@ void kgmActor::update(u32 time)
         setState("idle", true);
       else
         setState(m_state->switchto, true);
+    }
+  }
+
+  for(int i = 0; i < m_dummies.size(); i++)
+  {
+    kgmDummy* dummy = m_dummies[i];
+
+    if(dummy->m_linked)
+    {
+      kgmGameObject* go = (kgmGameObject*)dummy->m_linked;
+
+      if(go->getBody())
+      {
+        go->getBody()->translate();
+      }
     }
   }
 }

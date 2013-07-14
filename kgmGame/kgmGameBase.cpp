@@ -1311,6 +1311,15 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
                   sscanf(spos, "%f %f %f", &v.x, &v.y, &v.z);
                   dummy->setShift(v);
                 }
+                else if(jnode->m_name == "Rotation")
+                {
+                  kgmString srot;
+                  vec3      r;
+
+                  jnode->attribute("value", srot);
+                  sscanf(srot, "%f %f %f", &r.x, &r.y, &r.z);
+                  dummy->setOrient(r);
+                }
               }
             }
           }

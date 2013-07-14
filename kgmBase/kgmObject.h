@@ -14,103 +14,108 @@ struct kgmRuntime{
 };
 
 #define KGM_OBJECT(o_class)                     \
- public:                                	\
+  public:                                	\
   static  kgmRuntime   Class;			\
   static  o_class*     cast(kgmObject*);	\
-  virtual kgmRuntime&  runtime();	
-	
-  
+  virtual kgmRuntime&  runtime();
+
+
 
 #define KGMOBJECT_IMPLEMENT(o_class, o_parent)	\
- kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class}; \
- o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; } \
- kgmRuntime& o_class::runtime() { return o_class::Class; }
+  kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class}; \
+  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; } \
+  kgmRuntime& o_class::runtime() { return o_class::Class; }
 
 //base class for kgm_engine project objects
 
 class kgmObject{
- KGM_OBJECT(kgmObject);
+  KGM_OBJECT(kgmObject);
 
 private:
- unsigned int m_references;
+  unsigned int m_references;
 
 protected:
- virtual ~kgmObject()
- {
- }
+  virtual ~kgmObject()
+  {
+  }
 
 private:
- bool isValid();
+  bool isValid();
 
 public:
- kgmObject(){
-  m_references = 1;
- }
-
- bool isClass(kgmObject& o){
-  return !strcmp(runtime().nClass, o.runtime().nClass);
- }
-
- bool isClass(kgmRuntime& o){
-  return !strcmp(runtime().nClass, o.nClass);
- }
-
- bool isType(kgmObject& o)
- {
-  kgmRuntime* r = &Class;
-
-  while(r != 0){
-   if(!strcmp(r->nClass, o.runtime().nClass))
-	   return true;
-   if(r == r->pClass)
-	   break;
-   r = r->pClass;
+  kgmObject(){
+    m_references = 1;
   }
-  return false;
- }
 
- bool isType(kgmRuntime& o){
-   kgmRuntime* r = &Class;
-   while(r != 0){
-    if(!strcmp(r->nClass, o.nClass))
-            return true;
-    if(r == r->pClass)
-            break;
-    r = r->pClass;
-   }
-   return false;
- }
+  bool isClass(kgmObject& o){
+    return !strcmp(runtime().nClass, o.runtime().nClass);
+  }
 
- u32 references(){
-  return m_references;
- }
+  bool isClass(kgmRuntime& o){
+    return !strcmp(runtime().nClass, o.nClass);
+  }
 
- void increment(){
-  m_references += 1;
- }
+  bool isType(kgmObject& o)
+  {
+    kgmRuntime* r = &Class;
 
- void release(){
-   if(!isValid())
-     return;
+    while(r != 0){
+      if(!strcmp(r->nClass, o.runtime().nClass))
+        return true;
 
-   m_references--;
+      if(r == r->pClass)
+        break;
+      r = r->pClass;
+    }
+    return false;
+  }
 
-   if(m_references < 1)
-     delete this;
- }
+  bool isType(kgmRuntime& o){
+    kgmRuntime* r = &Class;
 
- virtual kgmObject* clone(){
+    while(r != 0){
+      if(!strcmp(r->nClass, o.nClass))
+        return true;
 
-  return new kgmObject();
- }
+      if(r == r->pClass)
+        break;
 
- void* operator new(size_t size);
- void  operator delete(void* p);
+      r = r->pClass;
+    }
 
- friend class kgmApp;
-//private:
- static void releaseObjects();
- static int  objectCount();
+    return false;
+  }
+
+  u32 references(){
+    return m_references;
+  }
+
+  void increment(){
+    m_references += 1;
+  }
+
+  void release(){
+    if(!isValid())
+      return;
+
+    m_references--;
+
+    if(m_references < 1)
+      delete this;
+  }
+
+  virtual kgmObject* clone(){
+
+    return new kgmObject();
+  }
+
+  void* operator new(size_t size);
+  void  operator delete(void* p);
+
+  friend class kgmApp;
+  //private:
+  static void releaseObjects();
+  static int  objectCount();
 };
 ///////////////////
 
