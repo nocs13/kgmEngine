@@ -66,11 +66,11 @@ void main(void)
     L = normalize(l);
     V = normalize(c);
 
-    gl_FrontColor = vec4(1.0, 1.0, 1.0, 1.0);
+    gl_FrontColor = vec4(1.0, .0, .0, 1.0);
     gl_Position = g_mProj * g_mView * pos;
 //    gl_Position = g_mProj * g_mView * g_mTran * epos;
 //    gl_Position = g_mProj * g_mView * g_mTran * gl_Vertex;
-    Texcoord    = gl_MultiTexCoord0.xy;
+    Texcoord    = gl_MultiTexCoord1.xy;
 }
 
 //Fragment Shader

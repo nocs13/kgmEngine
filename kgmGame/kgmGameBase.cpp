@@ -1207,7 +1207,65 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
       actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
-      actor->getBody()->m_bound.max = vec3(0.5 * a[0], 0.5 * a[1], a[2]);
+      actor->getBody()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+    }
+    else if(id == "Shape")
+    {
+      a_node->node(i)->attribute("value", val);
+
+      if(val == "convex")
+      {
+        kgmMemory<s8> mem;
+        kgmString     dfile;
+
+        a_node->node(i)->attribute("data", dfile);
+
+        if(m_resources->getFile(dfile, mem))
+        {
+          kgmXml xml(mem);
+
+          if(xml.m_node)
+          {
+            for(int i = 0; i < xml.m_node->nodes(); i++)
+            {
+              kgmXml::Node* node = xml.m_node->node(i);
+
+              if(node->m_name == "kgmCollision")
+              {
+                node->attribute("polygons", val);
+
+                for(int j = 0; j < xml.m_node->node(i)->nodes(); j++)
+                {
+                  kgmXml::Node* node = xml.m_node->node(i)->node(j);
+
+                  if(node->m_name == "Polygon")
+                  {
+                    kgmString scount;
+                    u32       count;
+
+                    node->attribute("vertices", scount);
+                    count = kgmConvert::toInteger(scount);
+
+                    polygon3* pol = new polygon3(count);
+                    vec3      v;
+                    int       n = 0;
+                    char*     pdata = node->m_data.data();
+
+                    for(int k = 0; k < count; k++)
+                    {
+                      sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
+                      (pdata) += (u32)n;
+                      pol->m_points[k] = v;
+                    }
+
+                    actor->getBody()->m_convex.add(pol);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
     else if(id == "Gravity")
     {
@@ -1272,6 +1330,29 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       a_node->node(i)->attribute("dummy", dummy);
 
       kgmGameObject* go = gObject(type);
+
+      if(go)
+      {
+        go->setId(id);
+        go->setParent(actor);
+
+        kgmDummy* dm = actor->dummy(dummy);
+
+        if(dm)
+          dm->attach(go, kgmDummy::AttachToObject);
+
+        gAppend(go);
+      }
+    }
+    else if(id == "Actor")
+    {
+      kgmString id, type, dummy;
+
+      a_node->node(i)->attribute("id",    id);
+      a_node->node(i)->attribute("type",  type);
+      a_node->node(i)->attribute("dummy", dummy);
+
+      kgmGameObject* go = gSpawn(type);
 
       if(go)
       {

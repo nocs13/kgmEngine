@@ -18,6 +18,7 @@ KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
 KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_Gun, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_GunA, ASp_Gun);
+KGMOBJECT_IMPLEMENT(ASp_GunFA, ASp_Gun);
 KGMOBJECT_IMPLEMENT(ASp_Spacer, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpacerA, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_Skybox, kgmGameObject);
@@ -218,11 +219,17 @@ public:
     {
       return new ASp_GunA(this);
     }
+    else if(t == "ASp_GunFA" ||
+            t == "GunFA")
+    {
+      return new ASp_GunFA(this);
+    }
     else if(t == "ASp_SpacerA")
     {
       return new ASp_SpacerA(this);
     }
-    else if(t == "ASp_SpaceshipA")
+    else if(t == "ASp_SpaceshipA" ||
+            t == "KSpaceshipA")
     {
       return new ASp_SpaceshipA(this);
     }

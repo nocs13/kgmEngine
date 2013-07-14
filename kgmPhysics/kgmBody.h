@@ -52,7 +52,7 @@ public:
   Constraint         m_constraint;
   kgmList<polygon3*> m_convex; //convex shape sides for simulation(collision, ...)
 
-  void*	  m_udata;		//user data of linked object
+  void*	  m_udata;   //user data of linked object
 
 private:
   vec3     m_direction;        //current direction

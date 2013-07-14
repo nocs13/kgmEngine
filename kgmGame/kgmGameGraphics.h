@@ -211,7 +211,7 @@ public:
     {
     case kgmVisual::RenderNone:
     case kgmVisual::RenderMesh:
-      if(a->m_visuals.size() > 0 &&
+      if(a->m_visuals.size() > 0 && a->m_visuals[0]->getMaterial() &&
          (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
           a->m_visuals[0]->getMaterial()->m_alpha))
         m_vis_blend.add(a);

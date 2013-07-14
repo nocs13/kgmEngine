@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <kgm>
- <kgmActor id='KSpaceshipA' type="">
+ <kgmActor id='KSpaceshipA' type="KSpaceshipA">
   <Mass value='1.0' />
   <Bound value='0.5 0.5 1.0' />
   <Gravity value='false' />
   <Shape value='convex' data='KSpaceshipA.cls.kgm' />
   <Dummies value="KSpaceshipA.dms.kgm" />
 
-  <GameObject id="GunFA.001"  type="GunFA"   dummy="GunFA.001"   />
-  <GameObject id="GunFA.002"  type="GunFA"   dummy="GunFA.002"   />
-  <GameObject id="GunFA.003"  type="GunFA"   dummy="GunFA.003"   />
-  <GameObject id="GunFA.004"  type="GunFA"   dummy="GunFA.004"   />
+  <Actor id="GunFA.001"  type="GunFA"   dummy="GunFA.001"   />
+  <Actor id="GunFA.002"  type="GunFA"   dummy="GunFA.002"   />
+  <Actor id="GunFA.003"  type="GunFA"   dummy="GunFA.003"   />
+  <Actor id="GunFA.004"  type="GunFA"   dummy="GunFA.004"   />
 
   <Visual id='Base'>
    <Mesh value="KSpaceshipA.msh.kgm" />

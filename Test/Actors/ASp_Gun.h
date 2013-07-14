@@ -94,4 +94,15 @@ public:
   }
 };
 
+class ASp_GunFA: public ASp_Gun
+{
+  KGM_OBJECT(ASp_GunFA);
+public:
+  ASp_GunFA(kgmIGame* g)
+    :ASp_Gun(g)
+  {
+
+  }
+};
+
 #endif // ASP_GUN_H
