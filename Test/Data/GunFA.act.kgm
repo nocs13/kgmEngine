@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<kgm>
+ <kgmActor id='GunFA' type="GunFA">
+  <Mass value='1.0' />
+  <Bound value='0.5 0.5 1.0' />
+  <Gravity value='false' />
+  <Dummies value="GunFA.dms.kgm" />
+
+  <Visual id='Base'>
+   <Mesh value="GunFA.msh.kgm" />
+   <Material value="GunFA.mtl.kgm" />
+  </Visual>
+
+  <State id="idle" priority="1" time="-1" type="idle">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="aiming" priority="1" time="-1" type="idle">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="shoot" priority="1" time="30" type="attack" switch="idle">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="dying" priority="10" time="20" type="die" switch="die">
+   <Sound value="uloop" />
+  </State>
+
+  <State id="die" priority="11" time="-1" type="die" switch='died'>
+   <Sound value="uloop" />
+  </State>
+ </kgmActor>
+</kgm>
