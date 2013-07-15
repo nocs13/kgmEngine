@@ -7,10 +7,10 @@
   <Shape value='convex' data='KSpaceshipA.cls.kgm' />
   <Dummies value="KSpaceshipA.dms.kgm" />
 
-  <Actor id="GunFA.001"  type="GunFA"   dummy="GunFA.001" />
-  <Actor id="GunFA.002"  type="GunFA"   dummy="GunFA.002" />
-  <Actor id="GunFA.003"  type="GunFA"   dummy="GunFA.003" />
-  <Actor id="GunFA.004"  type="GunFA"   dummy="GunFA.004" />
+  <Actor id="GunFA.001"  type="GunFA"   dummy="GunFA.000" />
+  <Actor id="GunFA.002"  type="GunFA"   dummy="GunFA.001" />
+  <Actor id="GunFA.003"  type="GunFA"   dummy="GunFA.002" />
+  <Actor id="GunFA.004"  type="GunFA"   dummy="GunFA.003" />
 
   <Visual id='Base'>
    <Mesh value="KSpaceshipA.msh.kgm" />

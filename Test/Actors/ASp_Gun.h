@@ -104,6 +104,11 @@ public:
   {
 
   }
+
+  void update(u32 ms)
+  {
+    ASp_Gun::update(ms);
+  }
 };
 
 #endif // ASP_GUN_H
