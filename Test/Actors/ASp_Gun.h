@@ -1,5 +1,6 @@
 #ifndef ASP_GUN_H
 #define ASP_GUN_H
+
 class ASp_Gun: public kgmActor
 {
   KGM_OBJECT(ASp_Gun);

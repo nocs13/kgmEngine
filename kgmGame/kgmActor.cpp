@@ -75,7 +75,7 @@ void kgmActor::update(u32 time)
 
       if(go->getBody())
       {
-        go->getBody()->translate();
+        //go->getBody()->translate();
       }
     }
   }

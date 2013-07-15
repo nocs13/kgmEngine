@@ -52,15 +52,13 @@ public:
         kgmDummy*       dm = m_dummies[i];
         kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
 
-        if(go && go->getVisual())
+        if(go && go->getBody())
         {
-          mtx4 m;
-          vec3 v = dm->m_shift;
+          vec3 v = getBody()->m_position +  dm->m_shift;
+          vec3 r = getBody()->m_rotation +  dm->m_orient;
 
-          m.identity();
-          m.translate(v);
-
-          go->getVisual()->m_transform = m * m_visual->m_transform;
+          go->getBody()->translate(v);
+          go->getBody()->rotate(r);
         }
       }
 
@@ -89,6 +87,16 @@ class ASp_SpaceshipA: public ASp_Spaceship
 public:
   ASp_SpaceshipA(kgmIGame* g)
     :ASp_Spaceship(g)
+  {
+
+  }
+
+  void init()
+  {
+    ASp_Spaceship::init();
+  }
+
+  void exit()
   {
 
   }

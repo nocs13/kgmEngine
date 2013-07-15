@@ -1330,42 +1330,20 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         mem.clear();
       }
     }
-    else if(id == "GameObject")
+    else if(id == "GameObject" || id == "Actor")
     {
-      kgmString id, type, dummy;
+      kgmString cid, type, dummy;
+      bool isactor = (id == "Actor") ? (true) : (false);
 
-      a_node->node(i)->attribute("id",    id);
+      a_node->node(i)->attribute("id",    cid);
       a_node->node(i)->attribute("type",  type);
       a_node->node(i)->attribute("dummy", dummy);
 
-      kgmGameObject* go = gObject(type);
+      kgmGameObject* go = (isactor) ? (gSpawn(type)) : (gObject(type));
 
       if(go)
       {
-        go->setId(id);
-        go->setParent(actor);
-
-        kgmDummy* dm = actor->dummy(dummy);
-
-        if(dm)
-          dm->attach(go, kgmDummy::AttachToObject);
-
-        gAppend(go);
-      }
-    }
-    else if(id == "Actor")
-    {
-      kgmString id, type, dummy;
-
-      a_node->node(i)->attribute("id",    id);
-      a_node->node(i)->attribute("type",  type);
-      a_node->node(i)->attribute("dummy", dummy);
-
-      kgmGameObject* go = gSpawn(type);
-
-      if(go)
-      {
-        go->setId(id);
+        go->setId(cid);
         go->setParent(actor);
 
         kgmDummy* dm = actor->dummy(dummy);
