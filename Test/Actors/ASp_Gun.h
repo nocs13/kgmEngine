@@ -8,12 +8,17 @@ class ASp_Gun: public kgmActor
 protected:
   kgmIGame* game;
 
-  kgmVisual* vtext;
+  kgmVisual*      vtext;
+  kgmGameObject*  target;
 
+  float           shoot_distance;
 public:
   ASp_Gun(kgmIGame* g)
   {
     game = g;
+    target = null;
+
+    shoot_distance = 20.0;
 
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
@@ -78,8 +83,45 @@ public:
       if(m_state->id == "idle")
       {
       }
+      else if(m_state->id == "shoot")
+      {
+
+      }
 
       logic(m_state->id);
+    }
+  }
+
+  void logic(kgmString s)
+  {
+    float dist = 0, angle = 0;
+    kgmString ts = "ASp_Spacer state x aim: ";
+    vtext->getText()->m_text = ts + s;
+
+    if(target)
+    {
+      vec3 tpos   = target->getBody()->m_position;
+      vec3 tdir   = tpos - m_body->m_position;
+      dist  = tdir.length();
+      angle = m_body->direction().angle(tdir.normal());
+    }
+    else
+    {
+      kgmString sgo, saim;
+
+      m_options.get("Aim", saim);
+      m_options.get("Target", sgo);
+
+      if(sgo.length() > 0)
+        target = game->getLogic()->getObjectById(sgo);
+    }
+
+    if(s == "idle")
+    {
+      if(dist < shoot_distance && angle < (PI / 5))
+      {
+        setState("aiming");
+      }
     }
   }
 };
@@ -89,7 +131,7 @@ class ASp_GunA: public ASp_Gun
   KGM_OBJECT(ASp_GunA);
 public:
   ASp_GunA(kgmIGame* g)
-    :ASp_Gun(g)
+  :ASp_Gun(g)
   {
 
   }
@@ -100,7 +142,7 @@ class ASp_GunFA: public ASp_Gun
   KGM_OBJECT(ASp_GunFA);
 public:
   ASp_GunFA(kgmIGame* g)
-    :ASp_Gun(g)
+  :ASp_Gun(g)
   {
 
   }
