@@ -95,7 +95,9 @@ public:
   void logic(kgmString s)
   {
     float dist = 0, angle = 0;
+    vec3  orin(0, 0, 1);
     kgmString ts = "ASp_Spacer state x aim: ";
+
     vtext->getText()->m_text = ts + s;
 
     if(target)
