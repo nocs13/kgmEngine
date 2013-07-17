@@ -39,7 +39,7 @@ bool kgmGameLogic::add(kgmActor *a)
 
     m_objects.add(a);
     a->increment();
-    a->init();
+    //a->init();
 
     return true;
   }
@@ -63,7 +63,7 @@ bool kgmGameLogic::add(kgmGameObject *o)
   {
     m_objects.add(o);
     o->increment();
-    o->init();
+    //o->init();
 
     return true;
   }
@@ -86,13 +86,25 @@ bool kgmGameLogic::chooseLogic(kgmString s)
   return true;
 }
 
+void kgmGameLogic::init()
+{
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  {
+    kgmGameObject* go = (*i);
+    go->init();
+  }
+
+  if(m_levlogic)
+    m_levlogic->init();
+}
+
 void kgmGameLogic::update(u32 milliseconds)
 {
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
 
   if(m_levlogic)
-    m_levlogic->logic();
+    m_levlogic->update();
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {

@@ -36,23 +36,6 @@ public:
 
   void init()
   {
-    kgmString sgo, saim;
-
-    m_options.get("Aim", saim);
-    m_options.get("Target", sgo);
-
-    if(sgo.length() > 0 && m_dummies.size() > 0)
-    {
-      for(int i = 0; i < m_dummies.size(); i++)
-      {
-        kgmDummy* d = m_dummies[i];
-
-        if(d->m_linked)
-        {
-          ((kgmActor*)d->m_linked)->setOption("Target", sgo);
-        }
-      }
-    }
   }
 
   void exit()

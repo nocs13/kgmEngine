@@ -431,8 +431,9 @@ int kgmGameBase::gLoad(kgmString s)
 
   loadXml_II(s);
 
-  m_render->build();
-  m_physics->build();
+  if(m_render)  m_render->build();
+  if(m_physics) m_physics->build();
+  if(m_logic)   m_logic->init();
 
   m_state = State_Play;
 
@@ -1265,6 +1266,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
             }
           }
         }
+
+        if(actor->getBody()->m_convex.size() > 0)
+          actor->getBody()->m_shape == kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")

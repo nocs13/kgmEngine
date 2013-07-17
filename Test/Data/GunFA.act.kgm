@@ -19,7 +19,7 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="shoot" priority="1" time="30" type="attack" switch="aiming">
+  <State id="shoot" priority="1" time="1000" type="attack" switch="aiming">
    <Sound value="uloop" />
   </State>
 

@@ -24,9 +24,9 @@
  </kgmActor>
 
  <kgmActor name='spaceshipA_1' type='KSpaceshipA' group='1' >
-  <Position value='15.0 -5.0 0.0'/>
-  <Rotation value='0.0 0.0 0.0'/>
-  <State value='idle'/>
+  <Position value='15.0 -5.0 0.0' />
+  <Rotation value='0.0 0.0 0.0' />
+  <State value='idle' />
   <Target value='main_spacer' />
  </kgmActor>
 </kgm>

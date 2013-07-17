@@ -27,7 +27,9 @@ public:
       m_logic = l;
     }
 
-    virtual void logic() = 0;
+    virtual void init()   = 0;
+    virtual void exit()   = 0;
+    virtual void update() = 0;
   };
 
   //kgmList<kgmActor*>       m_actors;
@@ -50,6 +52,7 @@ public:
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
 
+  virtual void init();
   virtual void action(ACTION, void* src, int arg){}
   virtual void input(int, int);
   virtual void update(u32 milliseconds);

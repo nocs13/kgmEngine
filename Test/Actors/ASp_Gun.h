@@ -21,7 +21,7 @@ public:
     game = g;
     target = null;
 
-    shoot_distance = 20.0;
+    shoot_distance = 30.0;
     shoot          = false;
 
     m_body->m_gravity = false;
@@ -31,7 +31,7 @@ public:
     vtext = new kgmVisual();
 
     kgmText* text = new kgmText();
-    text->m_rect  = uRect(10, 150, 500, 200);
+    text->m_rect  = uRect(30, 200, 700, 200);
 
     vtext->set(text);
     ((kgmGameBase*)game)->m_render->add(vtext);
@@ -42,6 +42,11 @@ public:
   {
     vtext->remove();
     vtext->release();
+  }
+
+  void init()
+  {
+    setState("idle");
   }
 
   void update(u32 ms)
@@ -97,7 +102,7 @@ public:
 
   void logic(kgmString s)
   {
-    float dist = 0, angle = 0, side = 0;
+    float dist = -1, angle = 0, side = 0;
     vec3  left, orin(0, 0, 1);
     kgmString ts = "ASp_Spacer state x aim: ";
 
@@ -123,12 +128,23 @@ public:
       m_options.get("Target", sgo);
 
       if(sgo.length() > 0)
+      {
         target = game->getLogic()->getObjectById(sgo);
+      }
+      else if(m_parent)
+      {
+        sgo = ((kgmActor*)m_parent)->getOption("Target");
+
+        if(sgo.length() > 0)
+        {
+          target = game->getLogic()->getObjectById(sgo);
+        }
+      }
     }
 
     if(s == "idle")
     {
-      if(dist < shoot_distance && angle < (PI / 5))
+      if(dist > 0 && dist < shoot_distance && angle < (PI / 4))
       {
         setState("aiming");
       }
@@ -146,6 +162,8 @@ public:
         else
           rot.z -= angle;
 
+        shoot = true;
+        getBody()->rotate(rot);
         setState("shoot");
       }
       else
@@ -175,7 +193,7 @@ public:
     vec3      pos;
     kgmDummy* dmy = null;
 
-    dmy = dummy("Gun.1");
+    dmy = dummy("shoot");
 
     m_visual->m_transform.angles(r);
     m.rotate(r);
@@ -190,30 +208,13 @@ public:
                                        m_body->rotation(),
                                        m_body->m_velocity + 0.1f);
 
-    dmy = dummy("Gun.2");
-
-    if(dmy)
-      pos = m_body->m_position + m * dmy->m_shift;
-    else
-      pos = m_body->m_position;
-
-    kgmGameObject* go2 = new ASp_LaserA(game, 1000,
-                                       pos,
-                                       m_body->rotation(),
-                                       m_body->m_velocity + 0.1f);
-
     go1->setId("laser1");
     go1->setParent(this);
     go1->setGroup(getGroup());
-    go2->setId("laser2");
-    go2->setParent(this);
-    go2->setGroup(getGroup());
 
     game->gAppend(go1);
-    game->gAppend(go2);
 
     go1->release();
-    go2->release();
   }
 };
 

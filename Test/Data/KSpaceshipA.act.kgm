@@ -2,7 +2,7 @@
 <kgm>
  <kgmActor id='KSpaceshipA' type="KSpaceshipA">
   <Mass value='1.0' />
-  <Bound value='0.5 0.5 1.0' />
+  <Bound value='5. 5. 5.' />
   <Gravity value='false' />
   <Shape value='convex' data='KSpaceshipA.cls.kgm' />
   <Dummies value="KSpaceshipA.dms.kgm" />
