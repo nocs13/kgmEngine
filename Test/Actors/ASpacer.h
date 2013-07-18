@@ -25,7 +25,7 @@ public:
     c_dist    = 5.0f;
     z_dist    = 2.0f;
     speed_max = 0.05;
-    speed_min = 0.00;
+    speed_min = 0.01;
     roll      = 0.0;
     yaaw      = 0.0;
     pich      = 0.5 * PI;
@@ -104,6 +104,9 @@ public:
 
       kgmString ts = "ASpacer state: ";
 
+      ts = ts + kgmConvert::toString(gbtns[1]);
+      ts = ts + " ";
+
       if(m_state)
         vtext->getText()->m_text = ts + m_state->id;
       else
@@ -122,8 +125,8 @@ public:
 
           if(gbtns[inp.input])
           {
-            setState(inp.state);
             ainput = true;
+            setState(inp.state);
           }
         }
 
@@ -134,7 +137,7 @@ public:
           return;
         }
 
-        if(m_body->m_velocity > speed_min)
+        if(!ainput && (m_body->m_velocity > speed_min))
         {
           setState("slow");
           m_body->m_position.z = 0.0f;

@@ -203,10 +203,10 @@ public:
     else
       pos = m_body->m_position;
 
-    kgmGameObject* go1 = new ASp_LaserA(game, 1000,
+    kgmGameObject* go1 = new ASp_LaserB(game, 1000,
                                        pos,
                                        m_body->rotation(),
-                                       m_body->m_velocity + 0.1f);
+                                       m_body->m_velocity + 0.1f, 0.5);
 
     go1->setId("laser1");
     go1->setParent(this);

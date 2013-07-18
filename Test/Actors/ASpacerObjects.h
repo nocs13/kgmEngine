@@ -115,9 +115,9 @@ public:
   }
 };
 
-class ASp_LaserA: public kgmGameObject
+class ASp_Laser: public kgmGameObject
 {
-  KGM_OBJECT(ASp_LaserA);
+  KGM_OBJECT(ASp_Laser);
 
   struct Vertex
   {
@@ -129,7 +129,7 @@ class ASp_LaserA: public kgmGameObject
   kgmMaterial*  mtl;
 
 public:
-  ASp_LaserA(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed)
+  ASp_Laser(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed, float len=0.2)
   {
     timeout(time);
     m_visual  = new kgmVisual();
@@ -145,26 +145,26 @@ public:
     mesh = new kgmMesh();
     Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_T);
 
-    v[0]  = { {0, -0.2, -0.2}, {0, 1}};
-    v[1]  = { {0, -0.2, 0.2},  {0, 0}};
-    v[2]  = { {0, 0.2, 0.2},   {1, 0}};
-    v[3]  = { {0, 0.2, 0.2},   {1, 0}};
-    v[4]  = { {0, 0.2, -0.2},  {1, 1}};
-    v[5]  = { {0, -0.2, -0.2}, {0, 1}};
+    v[0]  = { {0, -len, -len}, {0, 1}};
+    v[1]  = { {0, -len, len},  {0, 0}};
+    v[2]  = { {0, len, len},   {1, 0}};
+    v[3]  = { {0, len, len},   {1, 0}};
+    v[4]  = { {0, len, -len},  {1, 1}};
+    v[5]  = { {0, -len, -len}, {0, 1}};
 
-    v[6]  = { {0.2, -0.2, 0},  {0, 1}};
-    v[7]  = { {0.2,  0.2, 0},  {0, 0}};
-    v[8]  = { {-0.2,  0.2, 0}, {1, 0}};
-    v[9]  = { {-0.2, 0.2, 0},  {1, 0}};
-    v[10] = { {-0.2, -0.2, 0}, {1, 1}};
-    v[11] = { {0.2, -0.2, 0},  {0, 1}};
+    v[6]  = { {len, -len, 0},  {0, 1}};
+    v[7]  = { {len,  len, 0},  {0, 0}};
+    v[8]  = { {-len,  len, 0}, {1, 0}};
+    v[9]  = { {-len, len, 0},  {1, 0}};
+    v[10] = { {-len, -len, 0}, {1, 1}};
+    v[11] = { {len, -len, 0},  {0, 1}};
 
-    v[12] = { {0.2, 0, -0.2},  {0, 1}};
-    v[13] = { {0.2, 0, 0.2},   {0, 0}};
-    v[14] = { {-0.2, 0, 0.2},  {1, 0}};
-    v[15] = { {-0.2, 0, 0.2},  {1, 0}};
-    v[16] = { {-0.2, 0, -0.2}, {1, 1}};
-    v[17] = { {0.2, 0, -0.2},  {0, 1}};
+    v[12] = { {len, 0, -len},  {0, 1}};
+    v[13] = { {len, 0, len},   {0, 0}};
+    v[14] = { {-len, 0, len},  {1, 0}};
+    v[15] = { {-len, 0, len},  {1, 0}};
+    v[16] = { {-len, 0, -len}, {1, 1}};
+    v[17] = { {len, 0, -len},  {0, 1}};
 
     m_visual->addVisual(mesh, mtl);
 
@@ -177,11 +177,11 @@ public:
     m_body->m_gravity   = false;
     m_body->m_udata     = this;
     m_body->m_mass      = 0.0f;
-    m_body->m_bound.min = vec3(-.1, -.1, -.1);
-    m_body->m_bound.max = vec3( .1,  .1,  .1);
+    m_body->m_bound.min = vec3(-len, -len, -len);
+    m_body->m_bound.max = vec3( len,  len,  len);
   }
 
-  ~ASp_LaserA()
+  ~ASp_Laser()
   {
     mesh->release();
     mtl->release();
@@ -190,6 +190,29 @@ public:
   void update(u32 t)
   {
     kgmGameObject::update(t);
+  }
+};
+
+class ASp_LaserA: public ASp_Laser
+{
+  KGM_OBJECT(ASp_LaserA);
+
+public:
+  ASp_LaserA(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed, float len=0.2)
+    :ASp_Laser(g, time, pos, rot, speed, len)
+  {
+  }
+};
+
+class ASp_LaserB: public ASp_Laser
+{
+  KGM_OBJECT(ASp_LaserB);
+
+public:
+  ASp_LaserB(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed, float len=0.5)
+    :ASp_Laser(g, time, pos, rot, speed, len)
+  {
+    mtl->m_tex_color = g->getResources()->getTexture("point_c.tga");
   }
 };
 
