@@ -36,11 +36,16 @@ public:
 
   void init()
   {
+    for(int i = 0; i < m_dummies.size(); i++)
+    {
+      kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
+
+      ((kgmActor*)go)->setGroup(getGroup());
+    }
   }
 
   void exit()
   {
-
   }
 
   void update(u32 ms)

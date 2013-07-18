@@ -52,7 +52,7 @@ public:
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
 
-  virtual void init();
+  virtual void prepare();
   virtual void action(ACTION, void* src, int arg){}
   virtual void input(int, int);
   virtual void update(u32 milliseconds);

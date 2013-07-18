@@ -86,7 +86,7 @@ bool kgmGameLogic::chooseLogic(kgmString s)
   return true;
 }
 
-void kgmGameLogic::init()
+void kgmGameLogic::prepare()
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {

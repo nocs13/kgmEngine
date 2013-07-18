@@ -433,7 +433,7 @@ int kgmGameBase::gLoad(kgmString s)
 
   if(m_render)  m_render->build();
   if(m_physics) m_physics->build();
-  if(m_logic)   m_logic->init();
+  if(m_logic)   m_logic->prepare();
 
   m_state = State_Play;
 
