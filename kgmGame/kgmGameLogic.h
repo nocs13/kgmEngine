@@ -51,6 +51,7 @@ public:
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
+  bool validity(kgmGameObject*);
 
   virtual void prepare();
   virtual void action(ACTION, void* src, int arg){}

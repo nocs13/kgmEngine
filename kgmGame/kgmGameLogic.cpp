@@ -86,6 +86,17 @@ bool kgmGameLogic::chooseLogic(kgmString s)
   return true;
 }
 
+bool kgmGameLogic::validity(kgmGameObject *go)
+{
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  {
+    if(go == (*i))
+      return true;
+  }
+
+  return false;
+}
+
 void kgmGameLogic::prepare()
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
@@ -110,6 +121,16 @@ void kgmGameLogic::update(u32 milliseconds)
   {
     kgmGameObject* go = (*i);
 
+    if(go->valid())
+    {
+      go->update(milliseconds);
+    }
+  }
+
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  {
+    kgmGameObject* go = (*i);
+
     if(go->removed())
     {
       if(m_gameplayer == go)
@@ -118,16 +139,12 @@ void kgmGameLogic::update(u32 milliseconds)
       go->release();
       m_objects.erase(i);
     }
-    else if(go->valid())
-    {
-      go->update(milliseconds);
-    }
   }
 }
 
 void kgmGameLogic::input(int btn, int state)
 {
-  if(m_gameplayer)
+  if(m_gameplayer && validity(m_gameplayer))
   {
     m_gameplayer->input(btn, state);
   }

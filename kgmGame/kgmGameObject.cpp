@@ -45,18 +45,6 @@ void kgmGameObject::update(u32 mls)
     return;
   }
 
-  if(m_parent && m_parent->getBody())
-  {
-    if(getBody())
-    {
-      vec3 v = m_parent->getBody()->m_position + m_position;
-      vec3 r = m_parent->getBody()->m_rotation + m_rotation;
-
-      //getBody()->translate(v);
-      //getBody()->rotate(r);
-    }
-  }
-
   if(getBody())
   {
     mtx4 tm;
