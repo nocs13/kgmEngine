@@ -6,7 +6,7 @@ KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
 kgmParticles::kgmParticles()
 {
   m_count = 10;
-  m_life = 2000.0f;
+  m_life = 2000;
   m_speed = 0.5f;
   m_color.color = 0xffffffff;
   m_fade  = true;
@@ -20,25 +20,27 @@ kgmParticles::kgmParticles()
 
   st_size = 1.1f;
   en_size = 30.f;
+
+  m_particles = null;
 }
 
 kgmParticles::~kgmParticles()
 {
-  for(int i = 0; i < m_particles.size(); i++)
-    delete m_particles[i];
-
-  m_particles.clear();
+  if(m_particles)
+    delete [] m_particles;
 }
 
 void kgmParticles::build(){
   int i = 0;
   float ctime = kgmTime::getTicks();
 
-  for(i = 0; i < m_count; i++){
-    Particle*  pr = new Particle();
-    m_particles.add(pr);
-    init(pr);
-  }
+  if(m_particles)
+    delete [] m_particles;
+
+  m_particles = new Particle[m_count];
+
+  for(i = 0; i < m_count; i++)
+    init(&m_particles[i]);
 }
 
 void kgmParticles::init(Particle* pr)
@@ -66,9 +68,9 @@ void kgmParticles::update(u32 t)
 {
   int i = 0;
 
-  for(i = (m_particles.size() - 1); i >= 0; i--)
+  for(i = m_count; i = 0; i--)
   {
-    Particle*  pr =  m_particles[i];
+    Particle*  pr =  &m_particles[i - 1];
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
     pr->time += t;

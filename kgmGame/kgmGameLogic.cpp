@@ -86,7 +86,7 @@ bool kgmGameLogic::chooseLogic(kgmString s)
   return true;
 }
 
-bool kgmGameLogic::validity(kgmGameObject *go)
+bool kgmGameLogic::isvalid(kgmGameObject *go)
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
@@ -144,7 +144,7 @@ void kgmGameLogic::update(u32 milliseconds)
 
 void kgmGameLogic::input(int btn, int state)
 {
-  if(m_gameplayer && validity(m_gameplayer))
+  if(m_gameplayer && isvalid(m_gameplayer))
   {
     m_gameplayer->input(btn, state);
   }

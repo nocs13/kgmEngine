@@ -15,6 +15,7 @@ public:
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
   virtual bool add(kgmGameObject*)                     = 0;
+  virtual bool isvalid(kgmGameObject*)                 = 0;
   virtual void update(u32)                             = 0;
   virtual void collide(kgmGameObject*, kgmGameObject*) = 0;
 

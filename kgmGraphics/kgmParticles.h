@@ -7,25 +7,20 @@ class kgmParticles: public kgmObject
 {
   KGM_OBJECT(kgmParticles);
 public:
-  struct Particle{
-  public:
-    vec3   pos; //current position
-    vec3   dir; //move direction
+  struct Particle
+  {
+    vec3   pos;   //current position
+    vec3   dir;   //move direction
     color  col;   //color
     float  speed; //speed of particle
     float  mass;  //mass of particle
-    float  size;	//particle geometry size
-    float  life;  //life time
-    float  time;  //current time
-
-    Particle()
-    {
-      memset(this, 0, sizeof(Particle));
-    }
+    float  size;  //particle geometry size
+    u32    life;  //life time
+    u32    time;  //current time
   };
 
 public:
-  kgmList<Particle*> m_particles;
+  Particle*  m_particles;
   u32        m_count;
 
   bool       m_loop;
@@ -50,8 +45,8 @@ public:
   float st_size;
   float en_size;
 
-  float time_start;
-  float time_update;
+  u32   time_start;
+  u32   time_update;
 
 public:
   kgmParticles();

@@ -322,7 +322,19 @@ public:
     if(kgmTime::getTicks() - m_last_update < 50)
       return;
 
-    animate();
+    switch(m_typerender)
+    {
+    case RenderMesh:
+      animate();
+    break;
+    case RenderParticles:
+      if(m_particles)
+      {
+        m_particles->update(50);
+      }
+      break;
+    }
+
     m_last_update = kgmTime::getTicks();
   }
 
