@@ -17,7 +17,9 @@ public:
     float  size;	//particle geometry size
     float  life;  //life time
     float  time;  //current time
-    Particle(){
+
+    Particle()
+    {
       memset(this, 0, sizeof(Particle));
     }
   };
