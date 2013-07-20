@@ -18,8 +18,8 @@ kgmParticles::kgmParticles()
 
   direction = vec3(0.0f, 0.0f, 1.0f);
 
-  st_size = 1.1f;
-  en_size = 30.f;
+  st_size = 0.1f;
+  en_size = 1.0f;
 
   m_particles = null;
 }
@@ -68,11 +68,12 @@ void kgmParticles::update(u32 t)
 {
   int i = 0;
 
-  for(i = m_count; i = 0; i--)
+  for(i = m_count; i > 0; i--)
   {
     Particle*  pr =  &m_particles[i - 1];
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
+    pr->pos.y = 0;
     pr->time += t;
 
     if(st_size != en_size)

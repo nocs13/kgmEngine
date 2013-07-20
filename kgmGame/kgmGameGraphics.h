@@ -175,6 +175,10 @@ private:
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
   void gcDrawBillboard(box b, uint col);
   void trash();
+
+  void setProjMatrix(mtx4&);
+  void setViewMatrix(mtx4&);
+  void setWorldMatrix(mtx4&);
 public:
   void add(kgmMaterial* mtl)
   {

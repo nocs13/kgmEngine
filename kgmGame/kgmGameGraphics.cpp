@@ -34,6 +34,8 @@ float b = (temp & 0x00f0)/255.0;
 float a = (temp & 0x000f)/255.0;*/
 }
 
+mtx4       g_mtx_proj;
+mtx4       g_mtx_view;
 mtx4       g_mtx_world;
 mtx4*      g_mtx_joints = null;
 
@@ -168,6 +170,26 @@ void kgmGameGraphics::setGuiStyle(kgmGuiStyle* s){
   gui_style = s;
 }
 
+void kgmGameGraphics::setProjMatrix(mtx4 &m)
+{
+  g_mtx_proj = m;
+  gc->gcSetMatrix(gcmtx_proj, m.m);
+}
+
+void kgmGameGraphics::setViewMatrix(mtx4 &m)
+{
+  g_mtx_view = m;
+  gc->gcSetMatrix(gcmtx_view, m.m);
+}
+
+void kgmGameGraphics::setWorldMatrix(mtx4 &m)
+{
+  g_mtx_world = m;
+
+  mtx4 mw = m * g_mtx_view;
+  gc->gcSetMatrix(gcmtx_view, mw.m);
+}
+
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 10000.0);
   m_camera.camera.set(PI / 6, width / height, .1f, 10000.0,
@@ -252,8 +274,8 @@ void kgmGameGraphics::render(){
 
   gc->gcCull(1);
 
-  gc->gcSetMatrix(gcmtx_proj, m_camera.camera.mProj.m);
-  gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
+  setProjMatrix(m_camera.camera.mProj);
+  setViewMatrix(m_camera.camera.mView);
   g_mtx_world.identity();
 
   gc->gcBegin();
@@ -298,13 +320,19 @@ void kgmGameGraphics::render(){
     render(vis_blend[i - 1]);
   }
 
+  mvw.identity();
+  //setViewMatrix(mvw);
+  gc->gcCull(gc_none);
+
   for(int i = 0; i < vis_particles.size(); i++)
   {
     render(vis_particles[i]->getParticles());
+    vis_particles[i]->update();
   }
+  gc->gcCull(gccull_back);
 
 #ifdef TEST
-  gc->gcSetMatrix(gcmtx_view, m_camera.camera.mView.m);
+  setViewMatrix(m_camera.camera.mView);
 
   for(int i = m_bodies.size(); i > 0;  i--)
   {
@@ -424,8 +452,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
     return;
 
   mtx4 tr = visual->m_transform * m_camera.camera.mView;
-  gc->gcSetMatrix(gcmtx_view, tr.m);
-  g_mtx_world      = visual->m_transform;
+  setWorldMatrix(visual->m_transform);
 
   if(visual->m_tm_joints)
   {
@@ -502,20 +529,39 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
 void kgmGameGraphics::render(kgmParticles* particles)
 {
+#define MAX_PARTICLES 100
+  struct PrPoint{ vec3 pos; u32 col; vec2 uv; };
+
   if(!particles)
     return;
 
-  struct PrPoint{ vec3 v; u32 c; vec2 uv; };
+  vec3   rv, uv;
+  float2 dim(1, 1);
 
-  PrPoint       points[1000][6];
+
+  rv = vec3(m_camera.camera.mView.m[0], m_camera.camera.mView.m[1], m_camera.camera.mView.m[2]);
+  rv.normalize();
+   rv.x *= dim.x * 0.5f;
+    rv.y *= dim.x * 0.5f;
+     rv.z *= dim.x * 0.5f;
+  uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
+  uv.normalize();
+   uv.x *= dim.y * 0.5f;
+    uv.y *= dim.y * 0.5f;
+     uv.z *= dim.y * 0.5f;
+
+  PrPoint       points[MAX_PARTICLES][6];
   s32           count;
 
   if(particles)
   {
-    count = (particles->m_count > 1000) ? (1000) : (particles->m_count);
+    count = (particles->m_count > MAX_PARTICLES) ? (MAX_PARTICLES) : (particles->m_count);
 
     for(s32 i = 0; i < count; i++)
     {
+      PrPoint v[4];
+      vec3    pos = particles->m_particles[i].pos;
+      /*
       float scale = particles->m_particles[i].scale;
       points[i][0].v = particles->m_particles[i].pos + vec3(-scale, 0, -scale);
       points[i][1].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
@@ -523,10 +569,25 @@ void kgmGameGraphics::render(kgmParticles* particles)
       points[i][3].v = particles->m_particles[i].pos + vec3(-scale, 0,  scale);
       points[i][4].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
       points[i][5].v = particles->m_particles[i].pos + vec3( scale, 0,  scale);
+      */
+      v[0].pos = pos - rv + uv;
+       v[0].col = 0xff0000ff;
+        v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
+      v[1].pos = pos - rv - uv;
+       v[1].col = 0x00ff00ff;
+        v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
+      v[2].pos = pos + rv + uv;
+       v[2].col = 0x0000ffff;
+        v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
+      v[3].pos = pos + rv - uv;
+       v[3].col = 0xffffffff;
+        v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
+
+      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 4, v, 0, 0, 0);
     }
 
-    gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
-               sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
+    //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
+    //           sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
   }
 
   particles->update(10);
@@ -610,8 +671,8 @@ void kgmGameGraphics::render(kgmShader* s){
     s->start();
     s->set("g_fTime",     kgmTime::getTime());
     s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);
-    s->set("g_mView",     m_camera.camera.mView);
-    s->set("g_mProj",     m_camera.camera.mProj);
+    s->set("g_mProj",     g_mtx_proj);
+    s->set("g_mView",     g_mtx_view);
     s->set("g_mTran",     g_mtx_world);
     s->set("g_vAmbient",  g_vec_ambient);
     s->set("g_vLight",    g_vec_light);
@@ -864,7 +925,7 @@ void kgmGameGraphics::gcDrawBillboard(box b, uint col){
     v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
   m.identity();
-  gc->gcSetMatrix(gcmtx_view, m.m);
+  setViewMatrix(m);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 }
 

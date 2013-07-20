@@ -437,7 +437,8 @@ public:
     m[11] = plane.z * light.w;
      m[15] = plane.w * light.w + d;
  }
-// multiply vector 3d to matrix rotate component
+
+ // multiply vector 3d to matrix rotate component
  kgmVector3d<T> multiply(kgmVector3d<T>& v){
   kgmVector3d<T> r;
   r.x = v.x*m[0] + v.y*m[4] + v.z*m[8];
@@ -445,6 +446,7 @@ public:
   r.z = v.x*m[2] + v.y*m[6] + v.z*m[10];
   return r;
  }
+
 //Orthogonal projection
  void ortho(T l, T r, T b, T t, T n, T f){
   m[0] = (T)2.0 / (r - l),		m[1] = (T)0,				m[2] = (T)0,				m[3] = (T)0;
@@ -452,7 +454,8 @@ public:
   m[8] = (T)0,					m[9] = (T)0,				m[10] = (T)-2.0 / (f- n),	m[11] = (T)0;
   m[12] = - (r + l) / (r - l);  m[13] = - (t + b) / (t - b);m[14] = - (f + n) / (f - n);m[15] = (T)1.0;
  }
-//transpose
+
+ //transpose
  void transpose(){
   kgmMatrix3d<T> t = *this;
   m[0]  = t[0],  m[1]  = t[4], m[2]  = t[8],  m[3]  = t[12];
@@ -460,6 +463,7 @@ public:
   m[8]  = t[2],  m[9]  = t[6], m[10] = t[10], m[11] = t[14];
   m[12] = t[3],  m[13] = t[7], m[14] = t[11], m[15] = t[15];
  }
+
 protected:
 inline T det(T& a00, T& a01, T& a10, T& a11){
  return (a00*a11 - a01*a10);
