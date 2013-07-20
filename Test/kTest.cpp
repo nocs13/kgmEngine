@@ -26,7 +26,8 @@ KGMOBJECT_IMPLEMENT(ASp_MotorA, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Laser, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_LaserA, ASp_Laser);
 KGMOBJECT_IMPLEMENT(ASp_LaserB, ASp_Laser);
-KGMOBJECT_IMPLEMENT(ASp_Asteroid, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_Flame, kgmGameObject);
+KGMOBJECT_IMPLEMENT(ASp_FlameA, ASp_Flame);
 KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
@@ -238,6 +239,10 @@ public:
     else if(t == "KSpacerSpawner")
     {
       return new ASp_SpacerSpawner(this);
+    }
+    else if(t == "ASp_FlameA")
+    {
+      return new ASp_FlameA();
     }
 
     return kgmGameBase::gObject(t);

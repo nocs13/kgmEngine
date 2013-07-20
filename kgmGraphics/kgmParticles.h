@@ -13,8 +13,8 @@ public:
     vec3   dir;   //move direction
     color  col;   //color
     float  speed; //speed of particle
+    float  scale; //particle geometry size
     float  mass;  //mass of particle
-    float  size;  //particle geometry size
     u32    life;  //life time
     u32    time;  //current time
   };

@@ -121,7 +121,7 @@ void kgmGameLogic::update(u32 milliseconds)
   {
     kgmGameObject* go = (*i);
 
-    if(go->valid())
+    if(isvalid(go) && go->valid())
     {
       go->update(milliseconds);
     }

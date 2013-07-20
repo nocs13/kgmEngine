@@ -335,6 +335,7 @@ public:
 
 class ASp_FlameA: public ASp_Flame
 {
+  KGM_OBJECT(ASp_FlameA);
 
 };
 #endif // ASPACEROBJECTS_H

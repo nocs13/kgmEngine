@@ -61,7 +61,7 @@ void kgmParticles::init(Particle* pr)
   pr->life  = 0.01f * m_life  * (rand() % 100);
   pr->col = m_color;
   pr->time = 0;
-  pr->size = st_size;
+  pr->scale = st_size;
 }
 
 void kgmParticles::update(u32 t)
@@ -78,7 +78,7 @@ void kgmParticles::update(u32 t)
     if(st_size != en_size)
     {
       float d_size = (st_size - en_size) / pr->life;
-      pr->size = st_size - (d_size * pr->time);
+      pr->scale = st_size - (d_size * pr->time);
     }
 
     if(m_fade)

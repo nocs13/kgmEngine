@@ -190,8 +190,7 @@ void kgmGameGraphics::render(){
 
   kgmMaterial           mbase;
   kgmList<kgmMesh*>     meshes;
-  kgmList<kgmVisual*>   visuals_norm,
-                        visuals_blend;
+  kgmList<kgmVisual*>   vis_mesh, vis_blend, vis_particles;
 
   // parse visible objects
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
@@ -209,7 +208,7 @@ void kgmGameGraphics::render(){
     }
     else if((*i)->m_visuals.length() > 0)
     {
-      visuals_norm.add((*i));
+      vis_mesh.add((*i));
     }
   }
 
@@ -222,13 +221,22 @@ void kgmGameGraphics::render(){
 
       continue;
     }
-    else if(!(*i)->valid())
+    else if((*i)->valid() && (*i)->m_visuals.length() > 0)
     {
-      continue;
+      vis_blend.add((*i));
     }
-    else if((*i)->m_visuals.length() > 0)
+  }
+
+  for(kgmList<kgmVisual*>::iterator i = m_vis_particles.begin(); i != m_vis_particles.end(); ++i)
+  {
+    if((*i)->removed())
     {
-      visuals_blend.add((*i));
+      (*i)->release();
+      m_vis_particles.erase(i);
+    }
+    else if((*i)->valid())
+    {
+      vis_particles.add(*i);
     }
   }
 
@@ -282,12 +290,17 @@ void kgmGameGraphics::render(){
     render(m_meshes[i]);
   }
 
-  for(int i = visuals_norm.size(); i > 0;  i--){
-    render(visuals_norm[i - 1]);
+  for(int i = vis_mesh.size(); i > 0;  i--){
+    render(vis_mesh[i - 1]);
   }
 
-  for(int i = visuals_blend.size(); i > 0;  i--){
-    render(visuals_blend[i - 1]);
+  for(int i = vis_blend.size(); i > 0;  i--){
+    render(vis_blend[i - 1]);
+  }
+
+  for(int i = 0; i < vis_particles.size(); i++)
+  {
+    render(vis_particles[i]->getParticles());
   }
 
 #ifdef TEST
@@ -379,17 +392,9 @@ void kgmGameGraphics::render(){
   gc->gcSetTexture(2, 0);
   gc->gcSetTexture(3, 0);
 
-  visuals_blend.clear();
-  visuals_norm.clear();
-
-  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
-  {
-    if((*i)->removed())
-    {
-      (*i)->release();
-      m_visuals.erase(i);
-    }
-  }
+  vis_particles.clear();
+  vis_blend.clear();
+  vis_mesh.clear();
 }
 
 void kgmGameGraphics::render(Mesh *m){
@@ -430,6 +435,7 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
   switch(visual->m_typerender)
   {
+  case kgmVisual::RenderNone:
   case kgmVisual::RenderMesh:
   {
     for(int i = 0; i < visual->m_visuals.size(); i++)
@@ -467,26 +473,8 @@ void kgmGameGraphics::render(kgmVisual* visual){
     gcDrawText(font, 10, 15, text->m_color, rc, text->m_text);
   }
     break;
-  case kgmVisual::RenderParticles:
-  {
-    struct PrPoint{ vec3 v; u32 c; vec2 uv; };
-
-    PrPoint       points[1000][6];
-    s32           count;
-    kgmParticles* particles = visual->getParticles();
-
-    if(particles)
-    {
-      count = (particles->m_count > 1000) ? (1000) : (particles->m_count);
-
-      for(s32 i = 0; i < count; i++)
-      {
-
-      }
-    }
   }
-    break;
-  }
+
   visual->update();
 
   /*
@@ -512,12 +500,36 @@ void kgmGameGraphics::render(kgmVisual* visual){
   //*/
 }
 
-void kgmGameGraphics::render(kgmParticles* p)
+void kgmGameGraphics::render(kgmParticles* particles)
 {
-  if(!p)
+  if(!particles)
     return;
 
-  p->update(20);
+  struct PrPoint{ vec3 v; u32 c; vec2 uv; };
+
+  PrPoint       points[1000][6];
+  s32           count;
+
+  if(particles)
+  {
+    count = (particles->m_count > 1000) ? (1000) : (particles->m_count);
+
+    for(s32 i = 0; i < count; i++)
+    {
+      float scale = particles->m_particles[i].scale;
+      points[i][0].v = particles->m_particles[i].pos + vec3(-scale, 0, -scale);
+      points[i][1].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
+      points[i][2].v = particles->m_particles[i].pos + vec3(-scale, 0,  scale);
+      points[i][3].v = particles->m_particles[i].pos + vec3(-scale, 0,  scale);
+      points[i][4].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
+      points[i][5].v = particles->m_particles[i].pos + vec3( scale, 0,  scale);
+    }
+
+    gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
+               sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
+  }
+
+  particles->update(10);
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){
