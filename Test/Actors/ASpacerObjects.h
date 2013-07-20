@@ -309,4 +309,32 @@ public:
   }
 };
 
+class ASp_Flame: public kgmGameObject
+{
+  KGM_OBJECT(ASp_Flame);
+
+protected:
+  kgmParticles* particles;
+
+public:
+  ASp_Flame()
+  {
+    particles = new kgmParticles();
+    m_visual  = new kgmVisual();
+
+    particles->build();
+    m_visual->set(particles);
+  }
+
+  virtual ~ASp_Flame()
+  {
+    if(particles)
+      particles->release();
+  }
+};
+
+class ASp_FlameA: public ASp_Flame
+{
+
+};
 #endif // ASPACEROBJECTS_H

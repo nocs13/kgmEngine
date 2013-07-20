@@ -428,35 +428,65 @@ void kgmGameGraphics::render(kgmVisual* visual){
     g_mtx_joints_count = visual->m_skeleton->m_joints.size();
   }
 
-  //gc->gc2DMode();
-  //gcDrawText(gui_style->gui_font, 10, 20, 0xFFFFFFFF, kgmGui::Rect(1, 10, 400, 500), visual->m_info);
-  //gc->gc3DMode();
-
-  for(int i = 0; i < visual->m_visuals.size(); i++)
+  switch(visual->m_typerender)
   {
-    kgmVisual::Visual* v = visual->m_visuals[i];
+  case kgmVisual::RenderMesh:
+  {
+    for(int i = 0; i < visual->m_visuals.size(); i++)
+    {
+      kgmVisual::Visual* v = visual->m_visuals[i];
 
-    kgmMaterial* mtl = v->getMaterial();
-    render(mtl);
+      kgmMaterial* mtl = v->getMaterial();
+      render(mtl);
 
-    if(visual->m_tm_joints)
-      render((kgmShader*)this->shaders[2]);
-    else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
-      render((kgmShader*)this->shaders[0]);
-    else
-      render((kgmShader*)this->shaders[1]);
+      if(visual->m_tm_joints)
+        render((kgmShader*)this->shaders[2]);
+      else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
+        render((kgmShader*)this->shaders[0]);
+      else
+        render((kgmShader*)this->shaders[1]);
 
-    // /*
-    gc->gcDraw(gcpmt_triangles, v->getFvf(),
-               v->getVsize(), v->getVcount(), v->getVertices(),
-               2, 3 * v->getFcount(), v->getFaces());
-    // */
-    render((kgmShader*)null);
-    render((kgmMaterial*)null);
+      // /*
+      gc->gcDraw(gcpmt_triangles, v->getFvf(),
+                 v->getVsize(), v->getVcount(), v->getVertices(),
+                 2, 3 * v->getFcount(), v->getFaces());
+      // */
+      render((kgmShader*)null);
+      render((kgmMaterial*)null);
+    }
+
+    g_mtx_joints       = null;
+    g_mtx_joints_count = 0;
   }
+    break;
+  case kgmVisual::RenderText:
+  {
+    kgmText* text = visual->getText();
+    kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
+                    text->m_rect.w, text->m_rect.h);
+    gcDrawText(font, 10, 15, text->m_color, rc, text->m_text);
+  }
+    break;
+  case kgmVisual::RenderParticles:
+  {
+    struct PrPoint{ vec3 v; u32 c; vec2 uv; };
 
-  g_mtx_joints       = null;
-  g_mtx_joints_count = 0;
+    PrPoint       points[1000][6];
+    s32           count;
+    kgmParticles* particles = visual->getParticles();
+
+    if(particles)
+    {
+      count = (particles->m_count > 1000) ? (1000) : (particles->m_count);
+
+      for(s32 i = 0; i < count; i++)
+      {
+
+      }
+    }
+  }
+    break;
+  }
   visual->update();
 
   /*
@@ -486,6 +516,8 @@ void kgmGameGraphics::render(kgmParticles* p)
 {
   if(!p)
     return;
+
+  p->update(20);
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){
@@ -783,3 +815,44 @@ void kgmGameGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fco
   gc->gcBlend(0, 0, 0);
   gc->gcSetTexture(0, 0);
 }
+
+void kgmGameGraphics::gcDrawBillboard(box b, uint col){
+  mtx4 mv, mp, m;
+  vec3 rv, uv;
+  typedef struct{ vec3 pos; uint col; vec2 uv; } V;
+
+  V v[4];
+  vec3 pos(0, 0, 10);
+  float2 dim(10, 10);
+
+  gc->gcGetMatrix(gcmtx_view, mv.m);
+  gc->gcGetMatrix(gcmtx_proj, mp.m);
+  m = mv * mp;
+
+  rv = vec3(m.m[0], m.m[4], m.m[8]); rv.normalize();
+   rv.x *= dim.x * 0.5f;
+    rv.y *= dim.x * 0.5f;
+     rv.z *= dim.x * 0.5f;
+  uv = vec3(m.m[1], m.m[5], m.m[9]); uv.normalize();
+   uv.x *= dim.y * 0.5f;
+    uv.y *= dim.y * 0.5f;
+     uv.z *= dim.y * 0.5f;
+
+  v[0].pos = pos - rv + uv;
+   v[0].col = 0xff0000ff;
+    v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
+  v[1].pos = pos - rv - uv;
+   v[1].col = 0x00ff00ff;
+    v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
+  v[2].pos = pos + rv + uv;
+   v[2].col = 0x0000ffff;
+    v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
+  v[3].pos = pos + rv - uv;
+   v[3].col = 0xffffffff;
+    v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
+
+  m.identity();
+  gc->gcSetMatrix(gcmtx_view, m.m);
+  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+}
+
