@@ -315,14 +315,24 @@ class ASp_Flame: public kgmGameObject
 
 protected:
   kgmParticles* particles;
-
+  kgmMaterial*  material;
 public:
-  ASp_Flame()
+  ASp_Flame(kgmIGame* g)
   {
     particles = new kgmParticles();
     m_visual  = new kgmVisual();
 
+    material = new kgmMaterial();
+    material->m_2side = true;
+
+    material->m_transparency = 0.5;
+    material->m_alpha        = 0.5;
+    material->m_type         = "simple";
+    material->m_shader       = kgmMaterial::ShaderNone;
+    material->m_tex_color = g->getResources()->getTexture("point_a.tga");
+
     particles->build();
+    particles->set(material);
     m_visual->set(particles);
   }
 
@@ -330,12 +340,20 @@ public:
   {
     if(particles)
       particles->release();
+
+    if(material)
+      material->release();
   }
 };
 
 class ASp_FlameA: public ASp_Flame
 {
   KGM_OBJECT(ASp_FlameA);
+public:
+  ASp_FlameA(kgmIGame* g)
+    :ASp_Flame(g)
+  {
 
+  }
 };
 #endif // ASPACEROBJECTS_H

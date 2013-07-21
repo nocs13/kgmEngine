@@ -242,7 +242,7 @@ public:
     }
     else if(t == "ASp_FlameA")
     {
-      return new ASp_FlameA();
+      return new ASp_FlameA(this);
     }
 
     return kgmGameBase::gObject(t);

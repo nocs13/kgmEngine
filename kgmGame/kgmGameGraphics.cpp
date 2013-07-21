@@ -322,13 +322,21 @@ void kgmGameGraphics::render(){
 
   mvw.identity();
   //setViewMatrix(mvw);
-  gc->gcCull(gc_none);
+  //gc->gcCull(gc_none);
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
+    kgmParticles* ptcl = vis_particles[i]->getParticles();
+
     setWorldMatrix(vis_particles[i]->m_transform);
-    render(vis_particles[i]->getParticles());
-    vis_particles[i]->update();
+
+    if(ptcl)
+    {
+      render(ptcl->m_material);
+      render(vis_particles[i]->getParticles());
+      render((kgmMaterial*)null);
+      vis_particles[i]->update();
+    }
   }
   gc->gcCull(gccull_back);
 

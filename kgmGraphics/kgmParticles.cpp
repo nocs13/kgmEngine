@@ -1,4 +1,5 @@
 #include "kgmParticles.h"
+#include "kgmMaterial.h"
 #include "../kgmBase/kgmTime.h"
 
 KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
@@ -21,13 +22,18 @@ kgmParticles::kgmParticles()
   st_size = 0.1f;
   en_size = 1.0f;
 
-  m_particles = null;
+  m_particles  = null;
+  m_material   = null;
+  m_typerender = RTypeBillboard;
 }
 
 kgmParticles::~kgmParticles()
 {
   if(m_particles)
     delete [] m_particles;
+
+  if(m_material)
+    m_material->release();
 }
 
 void kgmParticles::build(){
@@ -104,4 +110,15 @@ void kgmParticles::update(u32 t)
       }
     }
   }
+}
+
+void kgmParticles::set(kgmMaterial *m)
+{
+  if(m_material)
+    m_material->release();
+
+  m_material = m;
+
+  if(m)
+    m->increment();
 }
