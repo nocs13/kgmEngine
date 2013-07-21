@@ -536,23 +536,17 @@ void kgmGameGraphics::render(kgmParticles* particles)
   if(!particles)
     return;
 
-  vec3   rv, uv;
-  float2 dim(1, 1);
+  mtx4    mtr = g_mtx_view;//g_mtx_world * g_mtx_view;
+  vec3    rv, uv;
+  float2  dim(1, 1);
 
 
-  rv = vec3(m_camera.camera.mView.m[0], m_camera.camera.mView.m[1], m_camera.camera.mView.m[2]);
+  //rv = vec3(m_camera.camera.mView.m[0], m_camera.camera.mView.m[1], m_camera.camera.mView.m[2]);
+  rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
   rv.normalize();
-  rv.x *= dim.x * 0.5f;
-  rv.y *= dim.x * 0.5f;
-  rv.z *= dim.x * 0.5f;
-  uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
+  //uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
+  uv = rv.cross(m_camera.camera.mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
   uv.normalize();
-  uv.x *= dim.y * 0.5f;
-  uv.y *= dim.y * 0.5f;
-  uv.z *= dim.y * 0.5f;
-
-  rv = vec3(1,0,0);
-  uv = vec3(0,1,0);
 
   PrPoint       points[MAX_PARTICLES][6];
   s32           count;
@@ -564,7 +558,8 @@ void kgmGameGraphics::render(kgmParticles* particles)
     for(s32 i = 0; i < count; i++)
     {
       PrPoint v[4];
-      vec3    pos = particles->m_particles[i].pos;
+      vec3    pos   = particles->m_particles[i].pos;
+      float   scale = particles->m_particles[i].scale;
       /*
       float scale = particles->m_particles[i].scale;
       points[i][0].v = particles->m_particles[i].pos + vec3(-scale, 0, -scale);
@@ -574,16 +569,16 @@ void kgmGameGraphics::render(kgmParticles* particles)
       points[i][4].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
       points[i][5].v = particles->m_particles[i].pos + vec3( scale, 0,  scale);
       */
-      v[0].pos = pos - rv + uv;
+      v[0].pos = (pos - rv + uv) * scale;
       v[0].col = 0xff0000ff;
       v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
-      v[1].pos = pos - rv - uv;
+      v[1].pos = (pos - rv - uv) * scale;
       v[1].col = 0x00ff00ff;
       v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
-      v[2].pos = pos + rv + uv;
+      v[2].pos = (pos + rv + uv) * scale;
       v[2].col = 0x0000ffff;
       v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
-      v[3].pos = pos + rv - uv;
+      v[3].pos = (pos + rv - uv) * scale;
       v[3].col = 0xffffffff;
       v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
