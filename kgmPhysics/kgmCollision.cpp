@@ -603,7 +603,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
     {
       cross = false;
 
-      for(j = 0; j < 3; j++)
+      for(int j = 0; j < 3; j++)
       {
         sides = 0;
         cross = false;

@@ -173,7 +173,7 @@ private:
   void render(kgmParticles*);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
-  void gcDrawBillboard(box b, uint col);
+  void gcDrawBillboard(box b, u32 col);
   void trash();
 
   void setProjMatrix(mtx4&);
