@@ -326,6 +326,7 @@ void kgmGameGraphics::render(){
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
+    setWorldMatrix(vis_particles[i]->m_transform);
     render(vis_particles[i]->getParticles());
     vis_particles[i]->update();
   }

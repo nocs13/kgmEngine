@@ -55,4 +55,15 @@ void kgmGameObject::update(u32 mls)
       m_visual->m_transform = tm;
     }
   }
+  else
+  {
+    mtx4 tr, rt;
+
+    if(getVisual())
+    {
+      tr.translate(m_position);
+      rt.rotate(m_rotation);
+      m_visual->m_transform = rt * tr;
+    }
+  }
 }
