@@ -329,7 +329,7 @@ public:
     material->m_alpha        = 0.5;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderNone;
-    material->m_tex_color = g->getResources()->getTexture("point_a.tga");
+    material->m_tex_color = g->getResources()->getTexture("point_c.tga");
 
     particles->build();
     particles->set(material);

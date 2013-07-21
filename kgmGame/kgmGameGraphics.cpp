@@ -568,6 +568,7 @@ void kgmGameGraphics::render(kgmParticles* particles)
       PrPoint v[4];
       vec3    pos   = particles->m_particles[i].pos;
       float   scale = particles->m_particles[i].scale;
+
       /*
       float scale = particles->m_particles[i].scale;
       points[i][0].v = particles->m_particles[i].pos + vec3(-scale, 0, -scale);
@@ -578,17 +579,15 @@ void kgmGameGraphics::render(kgmParticles* particles)
       points[i][5].v = particles->m_particles[i].pos + vec3( scale, 0,  scale);
       */
       v[0].pos = (pos - rv + uv) * scale;
-      v[0].col = 0xff0000ff;
       v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
       v[1].pos = (pos - rv - uv) * scale;
-      v[1].col = 0x00ff00ff;
       v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
       v[2].pos = (pos + rv + uv) * scale;
-      v[2].col = 0x0000ffff;
       v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
       v[3].pos = (pos + rv - uv) * scale;
-      v[3].col = 0xffffffff;
       v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
+
+      v[0].col = v[1].col = v[2].col = v[3].col = particles->m_particles[i].col.color;
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 4, v, 0, 0, 0);
     }
@@ -596,8 +595,6 @@ void kgmGameGraphics::render(kgmParticles* particles)
     //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
     //           sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
   }
-
-  particles->update(10);
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){
@@ -629,7 +626,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
   {
     gc->gcDepth(true, false, gccmp_less);
     //gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+    gc->gcBlend(true, gcblend_one, gcblend_srcialpha);
     //gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
     m_alpha = true;
   }
@@ -726,12 +723,6 @@ void kgmGameGraphics::render(kgmMesh *m){
   }
 }
 
-/*
-uniform vec4 g_vAmbient;
-uniform vec4 g_vLight;
-uniform vec3 g_vEye;
-uniform vec3 g_vEyeLook;
-*/
 void kgmGameGraphics::render(kgmGui* gui){
   kgmGui::Rect rect;
   kgmString    text;
