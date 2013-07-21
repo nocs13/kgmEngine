@@ -330,9 +330,10 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderNone;
-    material->m_tex_color    = g->getResources()->getTexture("point_d.tga");
+    material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
 
-    particles->m_count = 100;
+    particles->m_speed = 1.0;
+    particles->m_count = 10;
     particles->m_life  = 5000;
     particles->build();
     particles->set(material);
