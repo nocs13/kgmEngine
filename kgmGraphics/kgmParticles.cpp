@@ -6,7 +6,7 @@ KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
 
 kgmParticles::kgmParticles()
 {
-  m_count = 10;
+  m_count = 3;
   m_life = 2000;
   m_speed = 0.5f;
   m_color.color = 0xffffffff;

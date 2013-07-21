@@ -587,7 +587,7 @@ void kgmGameGraphics::render(kgmParticles* particles)
       v[3].pos = (pos + rv - uv) * scale;
       v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
-      v[0].col = v[1].col = v[2].col = v[3].col = particles->m_particles[i].col.color;
+      v[0].col = v[1].col = v[2].col = v[3].col = 0x00ffff00;//particles->m_particles[i].col.color;
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 4, v, 0, 0, 0);
     }
@@ -625,9 +625,8 @@ void kgmGameGraphics::render(kgmMaterial* m){
   if(m->m_transparency > 0)
   {
     gc->gcDepth(true, false, gccmp_less);
-    //gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-    gc->gcBlend(true, gcblend_one, gcblend_srcialpha);
-    //gc->gcAlpha(true, gccmp_great, 1.0f - m->m_transparency);
+    //gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+    gc->gcBlend(true, gcblend_srcialpha, gcblend_zero);
     m_alpha = true;
   }
 
@@ -660,6 +659,11 @@ void kgmGameGraphics::render(kgmMaterial* m){
   {
     gc->gcSetTexture(2, g_tex_black);
     tspecular = g_tex_black;
+  }
+
+  if(m->m_shader == kgmMaterial::ShaderNone)
+  {
+    render((kgmShader*)null);
   }
 }
 
