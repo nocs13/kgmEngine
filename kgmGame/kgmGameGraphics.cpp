@@ -96,9 +96,9 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
     kgmVisual::AnimateVertices = false;
 
     if(rc != null){
-      shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
-      shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      //shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
+      //shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
+      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
     }
   }
 }
@@ -316,13 +316,26 @@ void kgmGameGraphics::render(){
     render(vis_mesh[i - 1]);
   }
 
-  for(int i = vis_blend.size(); i > 0;  i--){
-    render(vis_blend[i - 1]);
+  if(lighting)
+  {
+    gc->gcSetParameter(gcpar_lighting, null);
+    gc->gcSetLight(-1, null, 0.0);
+    gc->gcSetLight(-2, null, 0.0);
+    gc->gcSetLight(-3, null, 0.0);
+    gc->gcSetLight(-4, null, 0.0);
+    gc->gcSetLight(-5, null, 0.0);
+    gc->gcSetLight(-6, null, 0.0);
+    gc->gcSetLight(-7, null, 0.0);
+    gc->gcSetLight(-8, null, 0.0);
+    gc->gcSetLight(-9, null, 0.0);
+
+    lighting = false;
   }
 
-  mvw.identity();
-  //setViewMatrix(mvw);
-  //gc->gcCull(gc_none);
+  for(int i = vis_blend.size(); i > 0;  i--)
+  {
+    render(vis_blend[i - 1]);
+  }
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
@@ -372,22 +385,8 @@ void kgmGameGraphics::render(){
 
   //For last step draw gui
   gc->gcSetShader(null);
-  gc->gcSetLight(-1, null, 0.0);
-  gc->gcSetLight(-2, null, 0.0);
-  gc->gcSetLight(-3, null, 0.0);
-  gc->gcSetLight(-4, null, 0.0);
-  gc->gcSetLight(-5, null, 0.0);
-  gc->gcSetLight(-6, null, 0.0);
-  gc->gcSetLight(-7, null, 0.0);
-  gc->gcSetLight(-8, null, 0.0);
-  gc->gcSetLight(-9, null, 0.0);
   gc->gcDepth(false, 0, 0);
   gc->gc2DMode();
-
-  if(lighting)
-  {
-    gc->gcSetParameter(gcpar_lighting, null);
-  }
 
   // render guis
   for(int i = 0; i < m_guis.size(); i++)
@@ -483,10 +482,10 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
       if(visual->m_tm_joints)
         render((kgmShader*)this->shaders[2]);
-      else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
-        render((kgmShader*)this->shaders[0]);
-      else
-        render((kgmShader*)this->shaders[1]);
+      //else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
+      //  render((kgmShader*)this->shaders[0]);
+      //else
+      //  render((kgmShader*)this->shaders[1]);
 
       // /*
       gc->gcDraw(gcpmt_triangles, v->getFvf(),
@@ -587,7 +586,7 @@ void kgmGameGraphics::render(kgmParticles* particles)
       v[3].pos = (pos + rv - uv) * scale;
       v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
-      v[0].col = v[1].col = v[2].col = v[3].col = 0x00ffff00;//particles->m_particles[i].col.color;
+      v[0].col = v[1].col = v[2].col = v[3].col = particles->m_particles[i].col.color;
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 4, v, 0, 0, 0);
     }
@@ -613,8 +612,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
 
     if(m_alpha)
     {
-      //gc->gcDepth(true, true, gccmp_less);
-      gc->gcAlpha(false, 0, 0);
+      gc->gcDepth(true, true, gccmp_less);
       gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
       m_alpha = false;
     }
@@ -622,11 +620,12 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
-  if(m->m_transparency > 0)
+  if(m->m_blend)
   {
     gc->gcDepth(true, false, gccmp_less);
     //gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-    gc->gcBlend(true, gcblend_srcialpha, gcblend_zero);
+    //gc->gcBlend(true, gcblend_srcialpha, gcblend_zero);
+    gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
     m_alpha = true;
   }
 

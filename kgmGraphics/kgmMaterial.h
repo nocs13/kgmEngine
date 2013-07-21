@@ -36,6 +36,7 @@ public:
     ShaderOcean,
     ShaderMirror,
     ShaderGlass,
+    ShaderFlame,
     ShaderIce
   };
 
@@ -75,6 +76,9 @@ public:
 
   bool        m_alpha;
   bool        m_2side;
+  bool        m_blend;
+
+  u32         m_srcblend, m_dstblend;
 
   kgmString   m_type;
 public:

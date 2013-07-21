@@ -75,8 +75,9 @@ public:
     mtl = new kgmMaterial();
     mtl->m_2side = true;
 
-    mtl->m_transparency = 0.5;
-    mtl->m_alpha = 0.5;
+    mtl->m_blend = true;
+    mtl->m_srcblend = gcblend_srcalpha;
+    mtl->m_dstblend = gcblend_srcialpha;
     mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
     mtl->m_type = "simple";
     mtl->m_shader = kgmMaterial::ShaderNone;
@@ -137,8 +138,9 @@ public:
     mtl = new kgmMaterial();
     mtl->m_2side = true;
 
-    mtl->m_transparency = 0.5;
-    mtl->m_alpha = 0.5;
+    mtl->m_blend = true;
+    mtl->m_srcblend = gcblend_srcalpha;
+    mtl->m_dstblend = gcblend_srcialpha;
     mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
     mtl->m_shader = kgmMaterial::ShaderNone;
 
@@ -323,14 +325,15 @@ public:
     m_visual  = new kgmVisual();
 
     material = new kgmMaterial();
-    material->m_2side = true;
-
-    material->m_transparency = 0.5;
-    material->m_alpha        = 0.5;
+    material->m_blend        = true;
+    material->m_srcblend     = gcblend_srcalpha;
+    material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderNone;
-    material->m_tex_color = g->getResources()->getTexture("point_c.tga");
+    material->m_tex_color    = g->getResources()->getTexture("point_d.tga");
 
+    particles->m_count = 100;
+    particles->m_life  = 5000;
     particles->build();
     particles->set(material);
     m_visual->set(particles);
