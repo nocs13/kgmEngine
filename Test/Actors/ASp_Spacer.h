@@ -24,7 +24,8 @@ protected:
 public:
   ASp_Spacer(kgmIGame* g)
   {
-    game = g;
+    game      = g;
+    m_health  = 10;
 
     speed_max = 0.05;
     speed_min = 0.01;
@@ -91,11 +92,13 @@ public:
       }
 
       kgmString ts = "ASp_Spacer state: ";
+      kgmString hl = kgmConvert::toString((s32)m_health);
 
-      if(m_state)
-        vtext->getText()->m_text = ts + m_state->id;
-      else
-        vtext->getText()->m_text = ts;
+      //if(m_state)
+      //  vtext->getText()->m_text = ts + hl + m_state->id;
+      //else
+      //  vtext->getText()->m_text = ts;
+      vtext->getText()->m_text = ts + hl;
     }
 
     if(m_state)
@@ -192,6 +195,19 @@ public:
           setState("idle", true);
         }
       }
+      else if(m_state->id == "die")
+      {
+        remove();
+        m_body->remove();
+        m_visual->remove();
+      }
+
+      if(m_health < 1 && m_state->id != "dying")
+      {
+        setState("dying", true);
+
+        m_visual->disable();
+      }
 
       logic(m_state->id);
     }
@@ -222,7 +238,7 @@ public:
   {
     float dist = 0, angle = 0;
     kgmString ts = "ASp_Spacer state x aim: ";
-    vtext->getText()->m_text = ts + s;
+    //vtext->getText()->m_text = ts + s;
 
     if(target)
     {
@@ -323,6 +339,10 @@ public:
     {
       action_shoot_rocket();
     }
+    else if(action == "dying")
+    {
+      action_dying();
+    }
   }
 
   void action_shoot_laser()
@@ -378,6 +398,22 @@ public:
   void action_shoot_rocket()
   {
 
+  }
+
+  void action_dying()
+  {
+    vec3      pos = m_body->m_position;
+
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
+
+
+    go1->setId("explode1");
+    go1->setParent(this);
+    go1->setGroup(getGroup());
+
+    game->gAppend(go1);
+
+    go1->release();
   }
 };
 #endif // ASP_SPACER_H

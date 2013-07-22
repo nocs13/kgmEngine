@@ -47,6 +47,8 @@ public:
   vec3       location;
   vec3       direction;
 
+  float      div_life;
+  float      div_speed;
   float      div_location;
   float      div_direction;
 

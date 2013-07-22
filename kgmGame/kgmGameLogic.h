@@ -16,22 +16,6 @@ public:
     ACTION_OBJECT
   };
 
-  class Logic
-  {
-    kgmGameLogic* m_logic;
-
-  public:
-    Logic(kgmGameLogic* l)
-      :m_logic(null)
-    {
-      m_logic = l;
-    }
-
-    virtual void init()   = 0;
-    virtual void exit()   = 0;
-    virtual void update() = 0;
-  };
-
   //kgmList<kgmActor*>       m_actors;
   //kgmList<kgmSensor*>      m_sensors;
   //kgmList<kgmTrigger*>     m_triggers;
@@ -39,7 +23,6 @@ public:
 
   kgmActor*                m_gameplayer;
   //kgmActor*               m_player;
-  Logic*                   m_logic;
 
 public:
   kgmGameLogic();
@@ -59,7 +42,6 @@ public:
   virtual void update(u32 milliseconds);
   virtual void collide(kgmGameObject*, kgmGameObject*);
   virtual kgmGameObject* getObjectById(kgmString);
-  virtual Logic*         getLogic(kgmString);
 
   kgmActor* gameplayer(u8 i)
   {

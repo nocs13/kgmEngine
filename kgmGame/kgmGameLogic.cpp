@@ -3,7 +3,6 @@
 
 kgmGameLogic::kgmGameLogic()
 {
-  m_logic      = null;
   m_gameplayer = null;
 }
 
@@ -21,13 +20,9 @@ void kgmGameLogic::clear()
     (*i)->release();
   }
 
-  if(m_logic)
-    delete m_logic;
-
   m_objects.clear();
 
   m_gameplayer = null;
-  m_logic      = null;
 }
 
 bool kgmGameLogic::add(kgmActor *a)
@@ -71,21 +66,6 @@ bool kgmGameLogic::add(kgmGameObject *o)
   return false;
 }
 
-bool kgmGameLogic::chooseLogic(kgmString s)
-{
-  Logic* ll = getLogic(s);
-
-  if(!ll)
-    return false;
-
-  if(m_logic)
-    delete m_logic;
-
-  m_logic = ll;
-
-  return true;
-}
-
 bool kgmGameLogic::isvalid(kgmGameObject *go)
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
@@ -104,18 +84,12 @@ void kgmGameLogic::prepare()
     kgmGameObject* go = (*i);
     go->init();
   }
-
-  if(m_logic)
-    m_logic->init();
 }
 
 void kgmGameLogic::update(u32 milliseconds)
 {
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
-
-  if(m_logic)
-    m_logic->update();
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
@@ -171,10 +145,5 @@ kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
     }
   }
 
-  return null;
-}
-
-kgmGameLogic::Logic* kgmGameLogic::getLogic(kgmString)
-{
   return null;
 }

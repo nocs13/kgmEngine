@@ -21,6 +21,8 @@ public:
     game = g;
     target = null;
 
+    m_health = 10;
+
     shoot_distance = 30.0;
     shoot          = false;
 
@@ -80,9 +82,10 @@ public:
       }
 
       kgmString ts = "ASp_Gun state: ";
+      kgmString hl = kgmConvert::toString((s32)m_health);
 
       if(m_state)
-        vtext->getText()->m_text = ts + m_state->id;
+        vtext->getText()->m_text = ts + hl;
       else
         vtext->getText()->m_text = ts;
     }
@@ -94,6 +97,19 @@ public:
       }
       else if(m_state->id == "shoot")
       {
+      }
+      else if(m_state->id == "die")
+      {
+        remove();
+        m_body->remove();
+        m_visual->remove();
+      }
+
+      if(this->m_health < 1 && m_state->id != "dying")
+      {
+        setState("dying", true);
+
+        m_visual->disable();
       }
 
       logic(m_state->id);
@@ -182,6 +198,10 @@ public:
     {
       action_shoot_laser();
     }
+    else if(action == "dying")
+    {
+      action_dying();
+    }
   }
 
   void action_shoot_laser()
@@ -215,6 +235,26 @@ public:
     game->gAppend(go1);
 
     go1->release();
+  }
+
+  void action_dying()
+  {
+    vec3      pos = m_body->m_position;
+
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
+    kgmGameObject* go2 = new ASp_ExplodeB(game, pos);
+
+
+    go1->setId("explode1");
+    go1->setParent(this);
+    go2->setId("explode1");
+    go2->setParent(this);
+
+    game->gAppend(go1);
+    game->gAppend(go2);
+
+    go1->release();
+    go2->release();
   }
 };
 

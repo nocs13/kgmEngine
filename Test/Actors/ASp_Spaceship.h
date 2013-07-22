@@ -14,6 +14,8 @@ public:
   {
     game = g;
 
+    m_health = 10;
+
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-3, -3, -3);
     m_body->m_bound.max = vec3( 3,  3,  3);
@@ -76,12 +78,12 @@ public:
         }
       }
 
-      kgmString ts = "ASp_Spacer state: ";
+      kgmString ts = "ASp_Spacership state: ";
 
-      if(m_state)
-        vtext->getText()->m_text = ts + m_state->id;
-      else
-        vtext->getText()->m_text = ts;
+      //if(m_state)
+      //  vtext->getText()->m_text = ts + m_state->id;
+      //else
+      //  vtext->getText()->m_text = ts;
     }
 
     if(m_state)
@@ -89,9 +91,50 @@ public:
       if(m_state->id == "idle")
       {
       }
+      else if(m_state->id == "die")
+      {
+        remove();
+        m_body->remove();
+        m_visual->remove();
+      }
+
+      if(this->m_health < 1 && m_state->id != "dying")
+      {
+        setState("dying", true);
+
+        m_visual->disable();
+      }
 
       logic(m_state->id);
     }
+  }
+
+  void action(kgmString action)
+  {
+    if(action == "dying")
+    {
+      action_dying();
+    }
+  }
+
+  void action_dying()
+  {
+    vec3      pos = m_body->m_position;
+
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
+    kgmGameObject* go2 = new ASp_ExplodeB(game, pos);
+
+
+    go1->setId("explode1");
+    go1->setParent(this);
+    go2->setId("explode1");
+    go2->setParent(this);
+
+    game->gAppend(go1);
+    game->gAppend(go2);
+
+    go1->release();
+    go2->release();
   }
 };
 

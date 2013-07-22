@@ -19,8 +19,11 @@ kgmParticles::kgmParticles()
 
   direction = vec3(0.0f, 0.0f, 1.0f);
 
-  st_size = 0.1f;
-  en_size = 1.0f;
+  div_life  = 0.0f;
+  div_speed = 0.0f;
+
+  st_size   = 0.1f;
+  en_size   = 1.0f;
 
   m_particles  = null;
   m_material   = null;
@@ -63,10 +66,10 @@ void kgmParticles::init(Particle* pr)
   pr->dir.z = 0.01f * pow( 1.0, rand()%2) * direction.z * (rand() % 100);
   pr->dir.normalize();
 
-  pr->speed = 0.01f * m_speed * (rand() % 100);
-  pr->life  = 0.01f * m_life  * (rand() % 100);
-  pr->col = m_color;
-  pr->time = 0;
+  pr->speed = m_speed - div_speed * m_speed / (1 + rand() % 100);
+  pr->life  = m_life  - div_life  * m_life  / (1 + rand() % 100);
+  pr->time  = 0;
+  pr->col   = m_color;
   pr->scale = st_size;
 }
 

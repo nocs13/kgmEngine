@@ -95,15 +95,17 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
   {
     kgmVisual::AnimateVertices = false;
 
-    if(rc != null){
-      //shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
-      //shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+    if(rc != null)
+    {
+      shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
+      shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
     }
   }
 }
 
-kgmGameGraphics::~kgmGameGraphics(){
+kgmGameGraphics::~kgmGameGraphics()
+{
   if(g_tex_black)
     gc->gcFreeTexture(g_tex_black);
 
@@ -308,11 +310,13 @@ void kgmGameGraphics::render(){
   }
 
   //render 3D
-  for(int i = 0; i < m_meshes.size(); i++){
+  for(int i = 0; i < m_meshes.size(); i++)
+  {
     render(m_meshes[i]);
   }
 
-  for(int i = vis_mesh.size(); i > 0;  i--){
+  for(int i = vis_mesh.size(); i > 0;  i--)
+  {
     render(vis_mesh[i - 1]);
   }
 
@@ -482,10 +486,12 @@ void kgmGameGraphics::render(kgmVisual* visual){
 
       if(visual->m_tm_joints)
         render((kgmShader*)this->shaders[2]);
-      //else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone)
-      //  render((kgmShader*)this->shaders[0]);
-      //else
-      //  render((kgmShader*)this->shaders[1]);
+      else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone && shaders.length() > 0)
+        render((kgmShader*)this->shaders[0]);
+      else if(shaders.length() > 1)
+        render((kgmShader*)this->shaders[1]);
+      else
+        render((kgmShader*)null);
 
       // /*
       gc->gcDraw(gcpmt_triangles, v->getFvf(),

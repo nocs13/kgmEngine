@@ -57,7 +57,7 @@ public:
 
   bool isType(kgmObject& o)
   {
-    kgmRuntime* r = &Class;
+    kgmRuntime* r = &runtime();
 
     while(r != 0){
       if(!strcmp(r->nClass, o.runtime().nClass))
@@ -71,7 +71,7 @@ public:
   }
 
   bool isType(kgmRuntime& o){
-    kgmRuntime* r = &Class;
+    kgmRuntime* r = &runtime();
 
     while(r != 0){
       if(!strcmp(r->nClass, o.nClass))

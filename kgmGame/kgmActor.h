@@ -73,12 +73,12 @@ public:
   u32     m_type;
   u32     m_bearing;
 
-  u32     m_group;
-  u32     m_health;
-  u32     m_attack;
-  u32     m_defence;
-  u32     m_evasion;
-  u32     m_accuracy;
+  s32     m_group;
+  s32     m_health;
+  s32     m_attack;
+  s32     m_defence;
+  s32     m_evasion;
+  s32     m_accuracy;
 
   mtx4    m_transform;
   mtx4    m_dvisual;      //visual transform relative to object transform
@@ -105,15 +105,6 @@ public:
   virtual void input(u32, int);
   virtual void logic(kgmString s);
   virtual void action(kgmString s);
-
-  void remove();
-
-  void enable(bool s);
-  void active(bool a);
-  void visible(bool a);
-
-  bool enabled();
-  bool removed();
 
   void setDirection(vec3& d);
 

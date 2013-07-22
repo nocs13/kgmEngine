@@ -32,17 +32,18 @@ KGMOBJECT_IMPLEMENT(ASp_Smoke, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SmokeA, ASp_Smoke);
 KGMOBJECT_IMPLEMENT(ASp_Explode, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_ExplodeA, ASp_Explode);
+KGMOBJECT_IMPLEMENT(ASp_ExplodeB, ASp_Explode);
 KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
 
-class kLogic: public kgmGameLogic
+class ASp_Logic: public kgmGameLogic
 {
   kgmIGame*  game;
   kgmVisual* vtext;
 public:
-  kLogic(kgmIGame* g)
+  ASp_Logic(kgmIGame* g)
   :kgmGameLogic()
   {
     game  = g;
@@ -65,12 +66,21 @@ public:
     {
     }
 
-    if(os->isClass(ASp_LaserA::Class))
+    if(os->isType(ASp_Laser::Class) && !od->isType(ASp_Laser::Class))
     {
       if(os->getGroup() != od->getGroup())
       {
         kgmString t = kgmString("Logic: ") + os->getId() + kgmString(" ") + od->getId();
         vtext->m_text->m_text = t;
+
+        ASp_Laser* laser = (ASp_Laser*)os;
+
+        if(od->isType(kgmActor::Class))
+        {
+          kgmActor* actor = (kgmActor*)od;
+
+          actor->m_health -= laser->power;
+        }
 
         os->remove();
 
@@ -86,7 +96,6 @@ public:
 
 class kGame: public kgmGameBase{
   kGui*      gui;
-  kLogic*    logic;
   //kgmSound* snd;
 
 public:
@@ -108,7 +117,7 @@ public:
     if(m_logic)
     {
       m_logic->release();
-      m_logic = new kLogic(this);
+      m_logic = new ASp_Logic(this);
     }
   }
 
@@ -118,7 +127,7 @@ public:
 private:
   void  initLogic()
   {
-    m_logic = new kLogic(this);
+    m_logic = new ASp_Logic(this);
   }
 
 public:
