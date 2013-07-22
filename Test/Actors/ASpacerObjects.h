@@ -330,7 +330,7 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderNone;
-    material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
+    material->m_tex_color    = g->getResources()->getTexture("fire_a.tga");
 
     particles->m_speed = 1.0;
     particles->m_count = 10;
@@ -356,6 +356,106 @@ class ASp_FlameA: public ASp_Flame
 public:
   ASp_FlameA(kgmIGame* g)
     :ASp_Flame(g)
+  {
+
+  }
+};
+
+class ASp_Smoke: public kgmGameObject
+{
+  KGM_OBJECT(ASp_Smoke);
+
+protected:
+  kgmParticles* particles;
+  kgmMaterial*  material;
+public:
+  ASp_Smoke(kgmIGame* g)
+  {
+    particles = new kgmParticles();
+    m_visual  = new kgmVisual();
+
+    material = new kgmMaterial();
+    material->m_blend        = true;
+    material->m_srcblend     = gcblend_srcalpha;
+    material->m_dstblend     = gcblend_one;
+    material->m_type         = "simple";
+    material->m_shader       = kgmMaterial::ShaderNone;
+    material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
+
+    particles->m_speed = 1.0;
+    particles->m_count = 10;
+    particles->m_life  = 5000;
+    particles->build();
+    particles->set(material);
+    m_visual->set(particles);
+  }
+
+  virtual ~ASp_Smoke()
+  {
+    if(particles)
+      particles->release();
+
+    if(material)
+      material->release();
+  }
+};
+
+class ASp_SmokeA: public ASp_Smoke
+{
+  KGM_OBJECT(ASp_SmokeA);
+public:
+  ASp_SmokeA(kgmIGame* g)
+    :ASp_Smoke(g)
+  {
+
+  }
+};
+
+class ASp_Explode: public kgmGameObject
+{
+  KGM_OBJECT(ASp_Explode);
+
+protected:
+  kgmParticles* particles;
+  kgmMaterial*  material;
+public:
+  ASp_Explode(kgmIGame* g)
+  {
+    particles = new kgmParticles();
+    m_visual  = new kgmVisual();
+
+    material = new kgmMaterial();
+    material->m_blend        = true;
+    material->m_srcblend     = gcblend_srcalpha;
+    material->m_dstblend     = gcblend_one;
+    material->m_type         = "simple";
+    material->m_shader       = kgmMaterial::ShaderNone;
+    material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
+
+    particles->m_speed = 1.0;
+    particles->m_count = 10;
+    particles->m_life  = 5000;
+    particles->build();
+    particles->set(material);
+    m_visual->set(particles);
+  }
+
+  virtual ~ASp_Explode()
+  {
+    if(particles)
+      particles->release();
+
+    if(material)
+      material->release();
+  }
+};
+
+class ASp_ExplodeA: public ASp_Explode
+{
+  KGM_OBJECT(ASp_ExplodeA);
+public:
+  ASp_ExplodeA(kgmIGame* g)
+    :ASp_Explode(g)
   {
 
   }

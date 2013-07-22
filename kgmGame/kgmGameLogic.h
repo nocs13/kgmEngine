@@ -16,12 +16,12 @@ public:
     ACTION_OBJECT
   };
 
-  class LogicOfLevel
+  class Logic
   {
     kgmGameLogic* m_logic;
 
   public:
-    LogicOfLevel(kgmGameLogic* l)
+    Logic(kgmGameLogic* l)
       :m_logic(null)
     {
       m_logic = l;
@@ -39,7 +39,7 @@ public:
 
   kgmActor*                m_gameplayer;
   //kgmActor*               m_player;
-  LogicOfLevel*            m_levlogic;
+  Logic*                   m_logic;
 
 public:
   kgmGameLogic();
@@ -59,7 +59,7 @@ public:
   virtual void update(u32 milliseconds);
   virtual void collide(kgmGameObject*, kgmGameObject*);
   virtual kgmGameObject* getObjectById(kgmString);
-  virtual LogicOfLevel*  getLogic(kgmString);
+  virtual Logic*         getLogic(kgmString);
 
   kgmActor* gameplayer(u8 i)
   {

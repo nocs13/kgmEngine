@@ -3,7 +3,7 @@
 
 kgmGameLogic::kgmGameLogic()
 {
-  m_levlogic   = null;
+  m_logic      = null;
   m_gameplayer = null;
 }
 
@@ -21,13 +21,13 @@ void kgmGameLogic::clear()
     (*i)->release();
   }
 
-  if(m_levlogic)
-    delete m_levlogic;
+  if(m_logic)
+    delete m_logic;
 
   m_objects.clear();
 
   m_gameplayer = null;
-  m_levlogic   = null;
+  m_logic      = null;
 }
 
 bool kgmGameLogic::add(kgmActor *a)
@@ -73,15 +73,15 @@ bool kgmGameLogic::add(kgmGameObject *o)
 
 bool kgmGameLogic::chooseLogic(kgmString s)
 {
-  LogicOfLevel* ll = getLogic(s);
+  Logic* ll = getLogic(s);
 
   if(!ll)
     return false;
 
-  if(m_levlogic)
-    delete m_levlogic;
+  if(m_logic)
+    delete m_logic;
 
-  m_levlogic = ll;
+  m_logic = ll;
 
   return true;
 }
@@ -105,8 +105,8 @@ void kgmGameLogic::prepare()
     go->init();
   }
 
-  if(m_levlogic)
-    m_levlogic->init();
+  if(m_logic)
+    m_logic->init();
 }
 
 void kgmGameLogic::update(u32 milliseconds)
@@ -114,8 +114,8 @@ void kgmGameLogic::update(u32 milliseconds)
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
 
-  if(m_levlogic)
-    m_levlogic->update();
+  if(m_logic)
+    m_logic->update();
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
@@ -174,7 +174,7 @@ kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
   return null;
 }
 
-kgmGameLogic::LogicOfLevel* kgmGameLogic::getLogic(kgmString)
+kgmGameLogic::Logic* kgmGameLogic::getLogic(kgmString)
 {
-
+  return null;
 }
