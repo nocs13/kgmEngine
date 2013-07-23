@@ -51,14 +51,15 @@ class kgmGui: public kgmEvent
   Guis	    m_childs;
 
  public:
-  u32       m_id;	     //numeric id
-  kgmString m_sid;     //string id
-  kgmGui*   m_parent;  //parent window whom send messages
-  kgmGui*   m_focus;   //current child active window
-  Rect      m_rect;    //rect of window
+  u32       m_id;	      //numeric id
+  kgmString m_sid;      //string id
+  kgmGui*   m_parent;   //parent window whom send messages
+  kgmGui*   m_focus;    //current child active window
+  Rect      m_rect;     //rect of window
   bool      m_view;     //view status of window
   bool      m_hasMouse; //is mouse inside widget
   bool      m_hasInput; //is input(keyboard/joystick) inside widget
+  bool      m_hasAlpha; //test alpha in color
   kgmString  m_text;    //gui text
   void*     m_xdata;
 protected:
@@ -83,8 +84,8 @@ public:
  void getRect(Rect&, bool abs = false);
  void getRect(u32&, u32&, u32&, u32&, bool abs = false);
 
- void      setText(kgmString);
- kgmString getText();
+ void         setText(kgmString);
+ kgmString    getText();
 
  void         setSid(kgmString  sid){ this->m_sid = sid; };
  kgmString    getSid(){ return this->m_sid; };
@@ -92,8 +93,10 @@ public:
  kgmGui*      getById(u32 id);
  kgmGui*      getBySid(kgmString sid);
 
- void  setXdata(void* x){ m_xdata = x; }
- void* getXdata(){ return m_xdata; }
+ void         setXdata(void* x){ m_xdata = x; }
+ void*        getXdata(){ return m_xdata; }
+
+ void         setAlpha(bool a){ m_hasAlpha = a; }
 
  // MESSAGE MANAGER
  virtual void onEvent(kgmEvent::Event* e);

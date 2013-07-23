@@ -9,10 +9,12 @@ kgmGui::kgmGui()
 {
   m_id = 0;
   m_parent = 0;
-  m_view = false;
+
+  m_view     = false;
   m_hasMouse = false;
   m_hasInput = false;
-  m_focus = this;
+  m_hasAlpha = false;
+  m_focus    = this;
 
   m_draw = 0;
   m_base.scale = true;
@@ -25,28 +27,35 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
   m_view = true;
   m_hasMouse = false;
   m_hasInput = false;
+  m_hasAlpha = false;
+
   m_focus = (par)?(0):(this);
-  if(par){
+
+  if(par)
+  {
    par->addChild(this);
    m_parent = par;
   }
 
-  m_draw = 0;
-  m_base.scale = true;
+  m_draw        = 0;
+  m_base.scale  = true;
 }
 
 kgmGui::~kgmGui(){
   m_childs.clear();
+
   if(m_parent) 
    m_parent->delChild(this);
 }
 
 //public:
-void kgmGui::show(){
+void kgmGui::show()
+{
   m_view = true;
 }
 
-void kgmGui::hide(){
+void kgmGui::hide()
+{
   m_view = false;
 }
 

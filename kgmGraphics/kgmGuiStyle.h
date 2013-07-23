@@ -9,13 +9,15 @@
   Its not GUI, only for use GUI ctive parametes. as colors, textures and etc....
 */
 
-class kgmGuiStyle: public kgmObject{
+class kgmGuiStyle: public kgmObject
+{
  public:
   typedef u32         Color;
   typedef kgmTexture* Image;
   typedef kgmFont*    Font;
 
-  struct SGui{
+  struct SGui
+  {
     Color tx_color; // Text color
     Color bg_color; // Background color
     Color fg_color; // Foreground color
@@ -23,15 +25,18 @@ class kgmGuiStyle: public kgmObject{
     Image image;    // Background image
   };
 
-  struct SGuiButton: SGui{
+  struct SGuiButton: SGui
+  {
 
   };
 
-  struct SGuiList: SGui{
+  struct SGuiList: SGui
+  {
 
   };
 
-  struct SGuiProgress: SGui{
+  struct SGuiProgress: SGui
+  {
 
   };
 

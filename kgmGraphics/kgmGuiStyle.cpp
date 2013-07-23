@@ -24,5 +24,4 @@ kgmGuiStyle::kgmGuiStyle()
   slist.ac_color = 0xffaaaaaa;
   slist.fg_color = 0xffbbbbbb;
   slist.image    = null;
-
 }

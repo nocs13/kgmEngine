@@ -105,7 +105,8 @@ public:
         m_visual->remove();
       }
 
-      if(this->m_health < 1 && m_state->id != "dying")
+      if((m_health < 1 && m_state->id != "dying")
+         || (m_parent && !game->getLogic()->isvalid(m_parent)))
       {
         setState("dying", true);
 

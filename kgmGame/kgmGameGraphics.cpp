@@ -742,6 +742,14 @@ void kgmGameGraphics::render(kgmGui* gui){
   gui->getRect(rect, true);
   text = gui->getText();
 
+  bool isalpha = false;
+  bool istransparent = false;
+
+  if(gui->m_hasAlpha)
+  {
+    isalpha = true;
+  }
+
   if(gui->isClass(kgmGuiButton::Class))
   {
     u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
