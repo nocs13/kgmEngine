@@ -132,20 +132,50 @@ protected:
 
 
 public:
- void addGui(kgmGui* g)
+ void guiAdd(kgmGui* g)
  {
-   if(g){
+   if(g)
+   {
      bool is = false;
+
      for(int i = 0; i < m_guis.size(); i++)
-       if(g == m_guis[i]) { is = true; break; }
-     if(!is){
+     {
+       if(g == m_guis[i])
+       {
+         is = true;
+
+         break;
+       }
+     }
+
+     if(!is)
+     {
        m_guis.add(g);
+       g->increment();
+
        if(m_render)
          m_render->add(g);
      }
    }
  }
  
+ void guiRemove(kgmGui* g)
+ {
+   if(m_render)
+     m_render->eraze(g);
+
+   for(int i = m_guis.size(); i > 0; i--)
+   {
+     if(g == m_guis[i - 1])
+     {
+       m_guis.erase(i - 1);
+       g->release();
+
+       break;
+     }
+   }
+ }
+
  kgmGraphics* getRender(){
      return 0; //m_render;
  }

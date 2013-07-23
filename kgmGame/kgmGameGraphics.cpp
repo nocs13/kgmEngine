@@ -816,7 +816,7 @@ void kgmGameGraphics::render(kgmGui* gui){
   {
     render((kgmGuiProgress*)gui);
   }
-  else if(gui->isClass(kgmGui::Class))
+  else if(gui->isType(kgmGui::Class))
   {
     if(gui->m_hasMouse )
     {

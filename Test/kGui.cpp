@@ -60,7 +60,7 @@ kGui::kGui(kgmGameBase* game)
   lst->addItem("map005.kgm");
   gui->show();
 
-  game->addGui(m_guiMain);
+  game->guiAdd(m_guiMain);
 
 
   m_guiPause = new kgmGui(null, w / 2 - 50, h / 2 - 50, 100, 100);
@@ -75,7 +75,7 @@ kGui::kGui(kgmGameBase* game)
   btn->setText("Exit");
   btn->setSid("gameExit");
 
-  game->addGui(m_guiPause);
+  game->guiAdd(m_guiPause);
 }
 
 kGui::~kGui()

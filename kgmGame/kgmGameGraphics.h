@@ -235,12 +235,31 @@ public:
   }
 
   void add(kgmGui* gui, bool tmp = false){
-    if(gui){
+    if(gui)
+    {
       gui->increment();
+
       if(tmp)
-       m_tguis.add(gui);
+        m_tguis.add(gui);
       else
         m_guis.add(gui);
+    }
+  }
+
+  void eraze(kgmGui* gui)
+  {
+    if(!gui)
+      return;
+
+    for(s32 i = m_guis.size(); i > 0; i--)
+    {
+      if(m_guis[i - 1] == gui)
+      {
+        m_guis.erase(i - 1);
+        gui->release();
+
+        break;
+      }
     }
   }
 

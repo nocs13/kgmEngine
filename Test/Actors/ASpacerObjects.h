@@ -428,7 +428,7 @@ protected:
 public:
   ASp_Explode(kgmIGame* g, kgmString tid = "fire_a.tga")
   {
-    timeout(2001);
+    timeout(3000);
 
     particles = new kgmParticles();
     m_visual  = new kgmVisual();
@@ -444,7 +444,7 @@ public:
     particles->direction = vec3(1, 1, 0.4);
     particles->m_speed = 5.0;
     particles->m_count = 30;
-    particles->m_life  = 2000;
+    particles->m_life  = 1000;
     particles->m_loop  = false;
     particles->en_size = 2.0;
     particles->build();

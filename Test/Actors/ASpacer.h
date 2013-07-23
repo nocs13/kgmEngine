@@ -18,6 +18,7 @@ class ASpacer: public kgmActor
   bool      gbtns[65];
 
   kgmVisual* vtext;
+  ASp_Gui*   gui;
 public:
   ASpacer(kgmIGame* g)
   {
@@ -37,6 +38,7 @@ public:
     memset(gbtns, false, sizeof(gbtns));
 
     vtext = new kgmVisual();
+    gui   = new ASp_Gui(game);
 
     m_health = 100;
   }
@@ -45,6 +47,7 @@ public:
   {
     vtext->remove();
     vtext->release();
+    gui->release();
   }
 
   void init()
@@ -60,12 +63,14 @@ public:
     {
       ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
+
+      ((kgmGameBase*)game)->guiAdd(gui);
     }
   }
 
   void exit()
   {
-
+    ((kgmGameBase*)game)->guiRemove(gui);
   }
 
   void update(u32 mls)

@@ -8,6 +8,7 @@
 #include "kGui.h"
 #include "Actors/ATaoRen.h"
 #include "Actors/AKomble.h"
+#include "Actors/ASp_Gui.h"
 #include "Actors/ASpacerObjects.h"
 #include "Actors/ASpacer.h"
 #include "Actors/ASp_Gun.h"
@@ -16,6 +17,7 @@
 
 KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
 KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_Gui, kgmGui);
 KGMOBJECT_IMPLEMENT(ASp_Gun, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_GunA, ASp_Gun);
 KGMOBJECT_IMPLEMENT(ASp_GunFA, ASp_Gun);

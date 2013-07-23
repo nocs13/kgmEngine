@@ -149,7 +149,8 @@ public:  //virtuals
   virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
   virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
 
-  virtual void           addGui(kgmGui* g) = 0;
+  virtual void           guiAdd(kgmGui* g) = 0;
+  virtual void           guiRemove(kgmGui* g) = 0;
 
   //usefull interfaces
   virtual kgmIGraphics*  getGraphics() = 0;
