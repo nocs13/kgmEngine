@@ -217,11 +217,11 @@ void kgmGameGraphics::render(){
   kgmList<kgmVisual*>   vis_mesh, vis_blend, vis_particles;
 
   // parse visible objects
-  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
     if((*i)->removed())
     {
-      (*i)->release();
+      //(*i)->release();
       m_visuals.erase(i);
 
       continue;

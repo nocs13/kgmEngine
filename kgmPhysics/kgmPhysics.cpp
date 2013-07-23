@@ -20,8 +20,8 @@ void kgmPhysics::update(float time){
   {
     if((*i)->removed())
     {
-      (*i)->release();
-      m_bodies.erase(i);
+      //(*i)->release();
+      //m_bodies.erase(i);
     }
   }
 }

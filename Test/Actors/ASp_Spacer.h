@@ -53,7 +53,6 @@ public:
 
   virtual ~ASp_Spacer()
   {
-    vtext->remove();
     vtext->release();
   }
 
@@ -195,7 +194,7 @@ public:
           setState("idle", true);
         }
       }
-      else if(m_state->id == "die")
+      else if(m_state->id == "diexxx")
       {
         remove();
         m_body->remove();

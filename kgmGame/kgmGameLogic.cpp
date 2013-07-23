@@ -34,7 +34,6 @@ bool kgmGameLogic::add(kgmActor *a)
 
     m_objects.add(a);
     a->increment();
-    //a->init();
 
     return true;
   }
@@ -58,7 +57,6 @@ bool kgmGameLogic::add(kgmGameObject *o)
   {
     m_objects.add(o);
     o->increment();
-    //o->init();
 
     return true;
   }
@@ -102,7 +100,7 @@ void kgmGameLogic::update(u32 milliseconds)
       if(m_gameplayer == go)
         m_gameplayer = null;
 
-      go->release();
+//      go->release();
 
       m_objects.erase(i);
       //m_objects.erase(i - 1);

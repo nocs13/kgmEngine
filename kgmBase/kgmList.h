@@ -51,6 +51,12 @@ public:
     bool operator==(iterator i){
       return (_Ptr == i._Ptr);
     }
+    void next(){
+      if(_Ptr) _Ptr = _Ptr->next;
+    }
+    void prev(){
+      if(_Ptr) _Ptr = _Ptr->prev;
+    }
   };
   //// *********************
 protected:
@@ -115,36 +121,53 @@ public:
     csize++;
   }
   iterator erase(iterator i){
-    if(!i._Ptr) return i;
+    if(!i._Ptr)
+      return i;
+
     _Node *prev, *next;
     prev = i._Ptr->prev;
     next = i._Ptr->next;
-    if(prev) prev->next = next;
-    if(next) next->prev = prev;
+
+    if(prev)
+      prev->next = next;
+
+    if(next)
+      next->prev = prev;
+
     delete i._Ptr;
+
     if(i._Ptr == _First)
       _First = i._Ptr = next;
     else
       i._Ptr = next;
+
     csize--;
+
     return i;
   }
   void erase(int i){
     _Node *node = _First;
+
     if(i >= csize)
       return;
+
     while(node && i){
       node = node->next;
       i--;
     }
+
     if(node){
       if(node->prev)
         node->prev->next = node->next;
+
       if(node->next)
         node->next->prev = node->prev;
+
       if(node == _First)
         _First = 0;
+
       delete node;
+
       csize--;
     }
   }

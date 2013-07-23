@@ -33,14 +33,14 @@ void kgmGameObject::update(u32 mls)
   {
     setParent(null);
 
-    if(getBody())
+    /*if(getBody())
       getBody()->remove();
 
     if(getVisual())
       getVisual()->remove();
 
     disable();
-    remove();
+    remove();*/
 
     return;
   }

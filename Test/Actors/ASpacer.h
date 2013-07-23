@@ -45,7 +45,6 @@ public:
 
   ~ASpacer()
   {
-    vtext->remove();
     vtext->release();
     gui->release();
   }
