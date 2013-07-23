@@ -72,11 +72,6 @@ void kgmActor::update(u32 time)
     if(dummy->m_linked)
     {
       kgmGameObject* go = (kgmGameObject*)dummy->m_linked;
-
-      if(go->getBody())
-      {
-        //go->getBody()->translate();
-      }
     }
   }
 }

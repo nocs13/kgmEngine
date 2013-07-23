@@ -92,8 +92,10 @@ void kgmGameLogic::update(u32 milliseconds)
     return;
 
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(int i = m_objects.size(); i > 0; --i)
   {
     kgmGameObject* go = (*i);
+    //kgmGameObject* go = m_objects[i - 1];
 
     if(go->removed())
     {
@@ -103,6 +105,7 @@ void kgmGameLogic::update(u32 milliseconds)
       go->release();
 
       m_objects.erase(i);
+      //m_objects.erase(i - 1);
 
       break;
     }

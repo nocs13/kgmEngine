@@ -68,7 +68,7 @@ public:
         kgmDummy*       dm = m_dummies[i];
         kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
 
-        if(go && go->getBody())
+        if(go && game->getLogic()->isvalid(go) && go->getBody())
         {
           vec3 v = getBody()->m_position +  dm->m_shift;
           vec3 r = getBody()->m_rotation +  dm->m_orient;
