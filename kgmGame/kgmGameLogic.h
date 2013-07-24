@@ -42,6 +42,10 @@ public:
   virtual void update(u32 milliseconds);
   virtual void collide(kgmGameObject*, kgmGameObject*);
   virtual kgmGameObject* getObjectById(kgmString);
+  virtual u32            getObjectsByType(kgmRuntime&,
+                                          kgmList<kgmGameObject*>&);
+  virtual u32            getObjectsByClass(kgmRuntime&,
+                                           kgmList<kgmGameObject*>&);
 
   kgmActor* gameplayer(u8 i)
   {

@@ -21,14 +21,16 @@ class kgmGui: public kgmEvent
   typedef kgmVector2d<s32>  Point;
   typedef kgmRect2d<s32>    Rect;
   
-  struct Styles{
+  struct Styles
+  {
     u32 fgColor;
     u32 bgColor;
     u32 acColor;
   };
   
  protected:
-  enum OptionValue{
+  enum OptionValue
+  {
     OptNone,
     OptRect,
     OptText,
@@ -47,25 +49,26 @@ class kgmGui: public kgmEvent
  public:
 
  public:
-  typedef  kgmList<kgmGui*> Guis;
-  Guis	    m_childs;
+  typedef    kgmList<kgmGui*> Guis;
+  Guis       m_childs;
 
  public:
-  u32       m_id;	      //numeric id
-  kgmString m_sid;      //string id
-  kgmGui*   m_parent;   //parent window whom send messages
-  kgmGui*   m_focus;    //current child active window
-  Rect      m_rect;     //rect of window
-  bool      m_view;     //view status of window
-  bool      m_hasMouse; //is mouse inside widget
-  bool      m_hasInput; //is input(keyboard/joystick) inside widget
-  bool      m_hasAlpha; //test alpha in color
-  kgmString  m_text;    //gui text
-  void*     m_xdata;
+  u32        m_id;       //numeric id
+  kgmString  m_sid;      //string id
+  kgmGui*    m_parent;   //parent window whom send messages
+  kgmGui*    m_focus;    //current child active window
+  Rect       m_rect;     //rect of window
+  bool       m_view;     //view status of window
+  bool       m_hasMouse; //is mouse inside widget
+  bool       m_hasInput; //is input(keyboard/joystick) inside widget
+  bool       m_hasAlpha; //test alpha in color
+  kgmString  m_text;     //gui text
+  void*      m_xdata;
+
 protected:
 
 private:
-  Base  m_base;    
+  Base          m_base;
   kgmIGuiDraw*  m_draw;
   
 public:

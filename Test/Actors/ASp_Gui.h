@@ -57,6 +57,7 @@ class ASp_Gui: public kgmGui
     kgmGui*             gui_back;
     kgmList<GuiActor*>  gui_actors;
   public:
+
     GuiMap(kgmIGame* g)
     {
       game     = g;
