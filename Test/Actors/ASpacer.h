@@ -63,6 +63,8 @@ public:
       ASp_Skybox* sb = new ASp_Skybox(game);
       game->gAppend(sb);
 
+      gui->set(this);
+      gui->add(this);
       ((kgmGameBase*)game)->guiAdd(gui);
     }
   }

@@ -7,14 +7,18 @@ class ASp_Gui: public kgmGui
 
   class GuiHealth: public kgmGui
   {
+    kgmIGame* game;
+
     kgmGui* gui_background;
     kgmGui* gui_midlground;
     kgmGui* gui_foreground;
 
-    s32     health;
+    kgmActor* actor;
   public:
-    GuiHealth()
+    GuiHealth(kgmIGame* g)
     {
+      game = g;
+
       gui_midlground = new kgmGui();
       gui_foreground = new kgmGui();
 
@@ -27,12 +31,17 @@ class ASp_Gui: public kgmGui
       setRect(0, 0, 200, 10);
       show();
 
-      health = 100;
+      actor = null;
     }
 
-    void setHealth(s32 h)
+    void set(kgmActor* a)
     {
-      health = h;
+      actor = a;
+    }
+
+    void update()
+    {
+
     }
   };
 
@@ -44,11 +53,13 @@ class ASp_Gui: public kgmGui
       kgmActor*  actor;
     };
 
+    kgmIGame*           game;
     kgmGui*             gui_back;
     kgmList<GuiActor*>  gui_actors;
   public:
-    GuiMap()
+    GuiMap(kgmIGame* g)
     {
+      game     = g;
       gui_back = new kgmGui();
 
       gui_back->setParent(this);
@@ -63,6 +74,11 @@ class ASp_Gui: public kgmGui
 
       ga.actor = a;
     }
+
+    void update()
+    {
+
+    }
   };
 
   kgmIGame*  game;
@@ -75,8 +91,8 @@ public:
   {
     game = g;
 
-    gui_health = new GuiHealth();
-    gui_map    = new GuiMap();
+    gui_health = new GuiHealth(g);
+    gui_map    = new GuiMap(g);
 
     gui_health->setParent(this);
     gui_map->setParent(this);
@@ -88,6 +104,11 @@ public:
   void add(kgmActor* a)
   {
     gui_map->add(a);
+  }
+
+  void set(kgmActor* a)
+  {
+
   }
 
   void update()
