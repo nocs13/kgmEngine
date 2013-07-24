@@ -221,8 +221,8 @@ void kgmGameGraphics::render(){
   {
     if((*i)->removed())
     {
-      //(*i)->release();
-      m_visuals.erase(i);
+      (*i)->release();
+      i = m_visuals.erase(i);
 
       continue;
     }
@@ -256,7 +256,7 @@ void kgmGameGraphics::render(){
     if((*i)->removed())
     {
       (*i)->release();
-      m_vis_particles.erase(i);
+     i =  m_vis_particles.erase(i);
     }
     else if((*i)->valid())
     {
@@ -269,7 +269,7 @@ void kgmGameGraphics::render(){
     if((*i)->removed())
     {
       (*i)->release();
-      m_vis_text.erase(i);
+      i = m_vis_text.erase(i);
     }
   }
   //---

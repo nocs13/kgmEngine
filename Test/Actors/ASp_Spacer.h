@@ -194,7 +194,7 @@ public:
           setState("idle", true);
         }
       }
-      else if(m_state->id == "diexxx")
+      else if(m_state->id == "die")
       {
         remove();
         m_body->remove();

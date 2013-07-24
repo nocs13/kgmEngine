@@ -100,9 +100,9 @@ void kgmGameLogic::update(u32 milliseconds)
       if(m_gameplayer == go)
         m_gameplayer = null;
 
-//      go->release();
+      go->release();
 
-      m_objects.erase(i);
+      i = m_objects.erase(i);
       //m_objects.erase(i - 1);
 
       break;
