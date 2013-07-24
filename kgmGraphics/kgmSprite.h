@@ -1,13 +1,10 @@
 #pragma once
 
 class kgmSprite: public kgmObject{
+  KGM_OBJECT(kgmSprite);
 public:
- enum Type{
-  Type_None,
-  Type_Rect,
-  Type_Billboard,
- };
-
+  uRect  m_rect;
+  bool   m_alpha;
 public:
  kgmSprite();
  ~kgmSprite();
