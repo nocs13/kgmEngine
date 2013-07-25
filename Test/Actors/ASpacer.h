@@ -66,6 +66,14 @@ public:
       gui->set(this);
       gui->add(this);
       ((kgmGameBase*)game)->guiAdd(gui);
+
+      kgmList<kgmGameObject*> objs;
+      game->getLogic()->getObjectsByType(kgmActor::Class, objs);
+
+      for(int i = 0; i < objs.size(); i++)
+        gui->add(objs[i]);
+
+      objs.clear();
     }
   }
 
@@ -246,6 +254,8 @@ public:
       cam.mPos = cpos;
       cam.mDir = m_body->direction();
       cam.update();
+
+      gui->update();
     }
   }
 

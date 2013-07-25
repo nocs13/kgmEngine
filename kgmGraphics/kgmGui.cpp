@@ -14,10 +14,14 @@ kgmGui::kgmGui()
   m_hasMouse = false;
   m_hasInput = false;
   m_hasAlpha = false;
+  m_useStyle = true;
   m_focus    = this;
 
   m_draw = 0;
   m_base.scale = true;
+
+  m_color = 0xffffffff;
+  m_image = null;
 }
 
 kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
@@ -28,6 +32,7 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
   m_hasMouse = false;
   m_hasInput = false;
   m_hasAlpha = false;
+  m_useStyle = true;
 
   m_focus = (par)?(0):(this);
 
@@ -39,6 +44,9 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
 
   m_draw        = 0;
   m_base.scale  = true;
+
+  m_color = 0xffffffff;
+  m_image = null;
 }
 
 kgmGui::~kgmGui(){

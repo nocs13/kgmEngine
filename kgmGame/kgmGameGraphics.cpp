@@ -853,11 +853,17 @@ void kgmGameGraphics::render(kgmGui* gui){
   {
     if(gui->m_hasMouse )
     {
-      gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+      if(gui->m_useStyle)
+        gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+      else
+        gcDrawRect(rect, gui->m_color, gui->m_image);
     }
     else
     {
-      gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
+      if(gui->m_useStyle)
+        gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
+      else
+        gcDrawRect(rect, gui->m_color, gui->m_image);
     }
   }
 

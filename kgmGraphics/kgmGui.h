@@ -11,6 +11,7 @@
 //Class of GUI
 class   kgmGui;
 class   kgmIGuiDraw;
+class   kgmTexture;
 
 class kgmGui: public kgmEvent
 {
@@ -20,6 +21,8 @@ class kgmGui: public kgmEvent
   typedef void*             Option;
   typedef kgmVector2d<s32>  Point;
   typedef kgmRect2d<s32>    Rect;
+  typedef kgmTexture*       Image;
+  typedef u32               Color;
   
   struct Styles
   {
@@ -59,10 +62,13 @@ class kgmGui: public kgmEvent
   kgmGui*    m_focus;    //current child active window
   Rect       m_rect;     //rect of window
   bool       m_view;     //view status of window
+  bool       m_useStyle; //for draw manager, use predefined style
   bool       m_hasMouse; //is mouse inside widget
   bool       m_hasInput; //is input(keyboard/joystick) inside widget
   bool       m_hasAlpha; //test alpha in color
   kgmString  m_text;     //gui text
+  Color      m_color;    //gui bg color
+  Image      m_image;    //gui bg texture.
   void*      m_xdata;
 
 protected:
@@ -99,7 +105,10 @@ public:
  void         setXdata(void* x){ m_xdata = x; }
  void*        getXdata(){ return m_xdata; }
 
- void         setAlpha(bool a){ m_hasAlpha = a; }
+ void         setAlpha(bool  a) { m_hasAlpha = a; }
+ void         setColor(Color c) { m_color = c;    }
+ void         setImage(Image i) { m_image = i;    }
+ void         useStyle(bool  s) { m_useStyle = s; }
 
  // MESSAGE MANAGER
  virtual void onEvent(kgmEvent::Event* e);

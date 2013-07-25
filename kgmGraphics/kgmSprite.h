@@ -13,4 +13,9 @@ public:
 public:
  kgmSprite();
  virtual ~kgmSprite();
+
+ void setRect(u32 x, u32 y, u32 w, u32 h)
+ {
+   m_rect = uRect(x, y, w, h);
+ }
 };

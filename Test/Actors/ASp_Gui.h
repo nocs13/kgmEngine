@@ -55,7 +55,7 @@ class ASp_Gui: public kgmGui
 
     kgmIGame*           game;
     kgmGui*             gui_back;
-    kgmList<GuiActor*>  gui_actors;
+    kgmList<GuiActor>   gui_actors;
   public:
 
     GuiMap(kgmIGame* g)
@@ -69,16 +69,43 @@ class ASp_Gui: public kgmGui
       show();
     }
 
+    virtual ~GuiMap()
+    {
+      gui_actors.clear();
+    }
+
     void add(kgmActor* a)
     {
       GuiActor ga;
 
       ga.actor = a;
+      ga.gui   = new kgmGui();
+      ga.gui->setParent(this);
+      ga.gui->useStyle(false);
+
+      if(a->m_gameplayer)
+        ga.gui->setColor(0xffffffff);
+      else
+        ga.gui->setColor(0xff0000ff);
+
+      ga.gui->show();
+      gui_actors.add(ga);
     }
 
     void update()
     {
+      for(kgmList<GuiActor>::iterator i = gui_actors.begin();
+          i != gui_actors.end(); ++i)
+      {
+        if(game->getLogic()->isvalid((*i).actor) && (*i).actor->valid())
+        {
+          vec3 pos = (*i).actor->getBody()->position();
+          u32  x = pos.x / 35;
+          u32  y = pos.y / 35;
 
+          (*i).gui->setRect(150 + x, 150 - y, 5, 5);
+        }
+      }
     }
   };
 
@@ -114,7 +141,8 @@ public:
 
   void update()
   {
-
+    gui_health->update();
+    gui_map->update();
   }
 };
 
