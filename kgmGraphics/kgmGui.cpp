@@ -94,10 +94,12 @@ void kgmGui::repaint(kgmGui* gui){
 }
 
 void kgmGui::setParent(kgmGui* pr){
-  if(!pr)
+  if(!pr || pr == m_parent)
     return;
+
   if(m_parent)
     m_parent->delChild(this);
+
   pr->addChild(this);
   m_parent = pr;
 }

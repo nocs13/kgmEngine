@@ -97,7 +97,14 @@ class ASp_Gui: public kgmGui
       for(kgmList<GuiActor>::iterator i = gui_actors.begin();
           i != gui_actors.end(); ++i)
       {
-        if(game->getLogic()->isvalid((*i).actor) && (*i).actor->valid())
+        if(!game->getLogic()->isvalid((*i).actor))
+        {
+          (*i).gui->release();
+          i = gui_actors.erase(i);
+
+          break;
+        }
+        else if((*i).actor->valid())
         {
           vec3 pos = (*i).actor->getBody()->position();
           u32  x = pos.x / 35;
