@@ -168,6 +168,7 @@ private:
   void render(kgmGui*);
   void render(kgmMesh*);
   void render(kgmVisual*);
+  void render(kgmSprite*);
   void render(kgmShader*);
   void render(kgmMaterial*);
   void render(kgmParticles*);

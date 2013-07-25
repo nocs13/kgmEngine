@@ -392,6 +392,20 @@ void kgmGameGraphics::render(){
   gc->gcDepth(false, 0, 0);
   gc->gc2DMode();
 
+  for(kgmList<kgmVisual*>::iterator i = m_vis_sprite.begin(); i != m_vis_sprite.end(); ++i)
+  {
+    if((*i)->removed())
+    {
+      (*i)->release();
+
+      i = m_vis_sprite.erase(i);
+    }
+    else if((*i)->valid())
+    {
+      render((*i)->getSprite());
+    }
+  }
+
   // render guis
   for(int i = 0; i < m_guis.size(); i++)
   {
@@ -459,7 +473,8 @@ void kgmGameGraphics::render(Mesh *m){
   }
 }
 
-void kgmGameGraphics::render(kgmVisual* visual){
+void kgmGameGraphics::render(kgmVisual* visual)
+{
   if(!visual)
     return;
 
@@ -539,6 +554,24 @@ void kgmGameGraphics::render(kgmVisual* visual){
     }
   }
   //*/
+}
+
+void kgmGameGraphics::render(kgmSprite* sprite)
+{
+  struct Point{ vec3 pos; u32 col; vec2 uv; };
+  Point v[4];
+
+  v[0].pos = vec3(sprite->m_rect.x, sprite->m_rect.y, 0);
+  v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
+  v[1].pos = vec3(sprite->m_rect.x, sprite->m_rect.y + sprite->m_rect.h, 0);
+  v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
+  v[2].pos = vec3(sprite->m_rect.x + sprite->m_rect.w, sprite->m_rect.y, 0);
+  v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
+  v[3].pos = vec3(sprite->m_rect.x + sprite->m_rect.w, sprite->m_rect.y + sprite->m_rect.h, 0);
+  v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
+
+  v[0].col = v[1].col = v[2].col = v[3].col = sprite->m_color.color;
+  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(Point), 4, v, 0, 0, 0);
 }
 
 void kgmGameGraphics::render(kgmParticles* particles)

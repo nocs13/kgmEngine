@@ -199,6 +199,9 @@ public:
 
     if(m_text)
       m_text->release();
+
+    if(m_sprite)
+      m_sprite->release();
   }
 
   void enable(){
@@ -281,6 +284,28 @@ public:
     return m_text;
   }
 
+  void set(kgmSprite* sprite)
+  {
+    if(!sprite)
+      return;
+
+    if(m_typerender == RenderNone || m_typerender == RenderSprite)
+    {
+
+      if(m_sprite)
+        m_sprite->release();
+
+      sprite->increment();
+      m_sprite = sprite;
+      m_typerender = RenderSprite;
+    }
+  }
+
+  kgmSprite* getSprite()
+  {
+    return m_sprite;
+  }
+
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
   {
     m_animation = a;
@@ -333,6 +358,11 @@ public:
         m_particles->update(50);
       }
       break;
+    case RenderSprite:
+      if(m_sprite)
+      {
+
+      }
     }
 
     m_last_update = kgmTime::getTicks();
