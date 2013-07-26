@@ -129,6 +129,15 @@ public:
         vtext->getText()->m_text = ts;
     }
 
+    vec3 pos = getBody()->position();
+
+    if(pos.x < -5000) pos.x =  5000;
+    if(pos.x >  5000) pos.x = -5000;
+    if(pos.y < -5000) pos.y =  5000;
+    if(pos.x >  5000) pos.y = -5000;
+
+    getBody()->translate(pos);
+
     if(m_state)
     {
       bool ainput = false;
@@ -243,6 +252,20 @@ public:
         {
           setState("idle", true);
         }
+      }
+      else if(m_state->id == "die")
+      {
+        remove();
+        m_body->remove();
+        m_visual->remove();
+        game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
+      }
+
+      if(m_health < 1 && m_state->id != "dying")
+      {
+        setState("dying", true);
+
+        m_visual->disable();
       }
     }
 

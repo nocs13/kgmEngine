@@ -125,6 +125,11 @@ void kgmGameLogic::input(int btn, int state)
   }
 }
 
+void kgmGameLogic::action(ACTION, kgmObject*, kgmString)
+{
+
+}
+
 void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 {
 

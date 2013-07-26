@@ -10,12 +10,6 @@
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 public:
-  enum ACTION
-  {
-    ACTION_INPUT,
-    ACTION_OBJECT
-  };
-
   //kgmList<kgmActor*>       m_actors;
   //kgmList<kgmSensor*>      m_sensors;
   //kgmList<kgmTrigger*>     m_triggers;
@@ -37,9 +31,9 @@ public:
   bool isvalid(kgmGameObject*);
 
   virtual void prepare();
-  virtual void action(ACTION, void* src, int arg){}
   virtual void input(int, int);
   virtual void update(u32 milliseconds);
+  virtual void action(ACTION, kgmObject*, kgmString);
   virtual void collide(kgmGameObject*, kgmGameObject*);
   virtual kgmGameObject* getObjectById(kgmString);
   virtual u32            getObjectsByType(kgmRuntime&,

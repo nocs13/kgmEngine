@@ -13,6 +13,14 @@ class kgmGameObject;
 class kgmILogic
 {
 public:
+  enum ACTION
+  {
+    ACTION_NONE,
+    ACTION_OBJECT,
+    ACTION_GAMEOBJECT
+  };
+
+public:
   virtual bool add(kgmActor*)                          = 0;
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
@@ -20,6 +28,7 @@ public:
   virtual bool isvalid(kgmGameObject*)                 = 0;
 
   virtual void update(u32)                             = 0;
+  virtual void action(ACTION, kgmObject*, kgmString)   = 0;
   virtual void collide(kgmGameObject*, kgmGameObject*) = 0;
 
   virtual kgmGameObject* getObjectById(kgmString)                    = 0;

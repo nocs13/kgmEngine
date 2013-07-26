@@ -44,12 +44,51 @@ class ASp_Logic: public kgmGameLogic
 {
   kgmIGame*  game;
   kgmVisual* vtext;
+  kgmVisual* vresult;
+
+  u32        enemies;
+
 public:
   ASp_Logic(kgmIGame* g)
   :kgmGameLogic()
   {
-    game  = g;
-    vtext = null;
+    game    = g;
+    vtext   = null;
+    vresult = null;
+  }
+
+  void prepare()
+  {
+    kgmList<kgmGameObject*> objs;
+    kgmGameLogic::prepare();
+    this->getObjectsByType(ASp_Spaceship::Class, objs);
+
+    enemies = objs.size();
+    objs.clear();
+  }
+
+
+  void action(kgmILogic::ACTION type, kgmObject* src, kgmString arg)
+  {
+    if(type == kgmILogic::ACTION_GAMEOBJECT)
+    {
+      if(arg == "die")
+      {
+        if(src->isType(ASp_Spaceship::Class))
+        {
+          enemies--;
+
+          if(enemies == 0)
+          {
+
+          }
+        }
+        else if(src->isType(ASpacer::Class))
+        {
+
+        }
+      }
+    }
   }
 
   void collide(kgmGameObject *os, kgmGameObject *od)
