@@ -15,8 +15,6 @@ void kgmGameLogic::clear()
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-
-    (*i)->exit();
     (*i)->release();
   }
 

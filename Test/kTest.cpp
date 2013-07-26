@@ -23,6 +23,7 @@ KGMOBJECT_IMPLEMENT(ASp_GunA, ASp_Gun);
 KGMOBJECT_IMPLEMENT(ASp_GunFA, ASp_Gun);
 KGMOBJECT_IMPLEMENT(ASp_Spacer, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpacerA, kgmActor);
+KGMOBJECT_IMPLEMENT(ASp_Result, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Skybox, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_MotorA, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Laser, kgmGameObject);
@@ -39,6 +40,8 @@ KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
+
+class kGame;
 
 class ASp_Logic: public kgmGameLogic
 {
@@ -80,12 +83,24 @@ public:
 
           if(enemies == 0)
           {
-
+              ASp_Result* res = new ASp_Result(game, 1000, 1, "Success");
+              game->gAppend(res);
           }
         }
         else if(src->isType(ASpacer::Class))
         {
-
+            ASp_Result* res = new ASp_Result(game, 1000, 0, "Failed");
+            game->gAppend(res);
+        }
+      }
+      else if(arg == "result")
+      {
+        if(src->isClass(ASp_Result::Class))
+        {
+          if(((ASp_Result*)src)->getResult())
+            game->gCommand("gameover_success");
+          else
+            game->gCommand("gameover_fail");
         }
       }
     }
@@ -225,6 +240,22 @@ public:
       vec3 pos(x, y, 0), vel(0,0,0);
       snd->getSound()->emit(pos, vel);
     }*/
+  }
+
+  int gCommand(kgmString s)
+  {
+    if(s == "gameover_fail")
+    {
+      m_state = kgmIGame::State_None;
+      gUnload();
+      gui->viewAgain();
+    }
+    else if(s == "gameover_success")
+    {
+      m_state = kgmIGame::State_None;
+      gUnload();
+      gui->viewAgain();
+    }
   }
 
   int gLoad(kgmString s)

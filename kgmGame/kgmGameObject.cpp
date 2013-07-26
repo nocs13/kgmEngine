@@ -31,6 +31,8 @@ void kgmGameObject::update(u32 mls)
 
   if((m_timeout != -1) && ((ct - m_birth) > m_timeout))
   {
+    exit();
+
     setParent(null);
 
     if(getBody())

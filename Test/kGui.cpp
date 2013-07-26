@@ -135,3 +135,9 @@ void kGui::onAction(kgmEvent* e, int a)
     m_game->m_msAbs = true;
   }
 }
+
+void kGui::viewAgain()
+{
+  m_guiMain->show();
+  m_game->m_msAbs = false;
+}

@@ -486,4 +486,49 @@ public:
     setPosition(pos);
   }
 };
+
+class ASp_Result: public kgmGameObject
+{
+  KGM_OBJECT(ASp_Result);
+
+  kgmIGame* game;
+  kgmString text;
+  s32       result;
+
+public:
+  ASp_Result(kgmIGame* g, u32 time, s32 res, kgmString txt)
+  {
+    game = g;
+    text = txt;
+    result = res;
+    timeout(time);
+
+    m_visual  = new kgmVisual();
+    kgmText* text = new kgmText();
+    text->m_rect  = uRect(100, 200, 500, 200);
+
+    m_visual->set(text);
+    text->release();
+  }
+
+  ~ASp_Result()
+  {
+  }
+
+  s32 getResult()
+  {
+    return result;
+  }
+
+  void update(u32 t)
+  {
+    kgmGameObject::update(t);
+  }
+
+  void exit()
+  {
+    game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "result");
+  }
+};
+
 #endif // ASPACEROBJECTS_H

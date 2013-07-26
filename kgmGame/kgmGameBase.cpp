@@ -458,11 +458,9 @@ int kgmGameBase::gCommand(kgmString s)
 {
   if(s == "exit")
     gQuit();
-
-  if(s == "pause")
+  else if(s == "pause")
     m_state = State_Pause;
-
-  if(s == "resume")
+  else if(s == "resume")
     m_state = State_Play;
 
   return true;
