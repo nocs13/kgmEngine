@@ -132,10 +132,25 @@ void kgmGameGraphics::clear(){
   }
   m_visuals.clear();
 
+  for(int i = 0; i < m_vis_text.size(); i++){
+    m_vis_text[i]->release();
+  }
+  m_vis_text.clear();
+
   for(int i = 0; i < m_vis_blend.size(); i++){
     m_vis_blend[i]->release();
   }
   m_vis_blend.clear();
+
+  for(int i = 0; i < m_vis_sprite.size(); i++){
+    m_vis_sprite[i]->release();
+  }
+  m_vis_sprite.clear();
+
+  for(int i = 0; i < m_vis_particles.size(); i++){
+    m_vis_particles[i]->release();
+  }
+  m_vis_particles.clear();
 
   for(int i = 0; i < m_lights.size(); i++){
     m_lights[i].light->release();

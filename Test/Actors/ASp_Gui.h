@@ -102,9 +102,9 @@ class ASp_Gui: public kgmGui
           (*i).gui->release();
           i = gui_actors.erase(i);
 
-          break;
+          continue;
         }
-        else if((*i).actor->valid())
+        else if((*i).actor->valid() && !(*i).actor->removed())
         {
           vec3 pos;
 
