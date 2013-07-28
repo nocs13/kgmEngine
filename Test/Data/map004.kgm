@@ -14,7 +14,6 @@
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='idle'/>
  </kgmActor>
-
  <kgmActor name='spacer_1' type='ASp_SpacerA' group='1' >
   <Position value='5.0 5.0 0.0'/>
   <Rotation value='0.0 0.0 0.0'/>
@@ -22,16 +21,30 @@
   <Aim value='attack' />
   <Target value='main_spacer' />
  </kgmActor>
-
+ <kgmActor name='spacer_2' type='ASp_SpacerA' group='1' >
+  <Position value='15.0 5.0 0.0'/>
+  <Rotation value='0.0 0.0 0.0'/>
+  <State value='idle'/>
+  <Aim value='attack' />
+  <Target value='main_spacer' />
+ </kgmActor>
+ <kgmActor name='spacer_3' type='ASp_SpacerA' group='1' >
+  <Position value='5.0 15.0 0.0'/>
+  <Rotation value='0.0 0.0 0.0'/>
+  <State value='idle'/>
+  <Aim value='attack' />
+  <Target value='main_spacer' />
+ </kgmActor>
  <kgmActor name='spaceshipA_1' type='KSpaceshipA' group='1' >
   <Position value='15.0 -5.0 0.0' />
   <Rotation value='0.0 0.0 0.0' />
   <State value='idle' />
   <Target value='main_spacer' />
  </kgmActor>
-
- <kgmGameObject name='flameA_1' type='ASp_FlameA' >
-  <Position value='1.0 1.0 0.0' />
+ <kgmActor name='spaceshipA_2' type='KSpaceshipA' group='1' >
+  <Position value='15.0 -15.0 0.0' />
   <Rotation value='0.0 0.0 0.0' />
- </kgmGameObject>
+  <State value='idle' />
+  <Target value='main_spacer' />
+ </kgmActor>
 </kgm>

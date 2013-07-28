@@ -39,9 +39,6 @@ protected:
   {
   }
 
-private:
-  bool isValid();
-
 public:
   kgmObject(){
     m_references = 1;
@@ -71,7 +68,7 @@ public:
   }
 
   bool isType(kgmRuntime& o){
-    kgmRuntime* r = &runtime();
+  kgmRuntime* r = &runtime();
 
     while(r != 0){
       if(!strcmp(r->nClass, o.nClass))
@@ -95,7 +92,7 @@ public:
   }
 
   void release(){
-    if(!isValid())
+    if(!kgmObject::isValid(this))
       return;
 
     m_references--;
@@ -116,6 +113,7 @@ public:
   //private:
   static void releaseObjects();
   static int  objectCount();
+  static bool isValid(kgmObject*);
 };
 ///////////////////
 

@@ -94,10 +94,11 @@ class ASp_Gui: public kgmGui
 
     void update()
     {
+      return;
       for(kgmList<GuiActor>::iterator i = gui_actors.begin();
           i != gui_actors.end(); ++i)
       {
-        if(!game->getLogic()->isvalid((*i).actor) || (*i).actor->removed())
+        if(!kgmObject::isValid((*i).actor) || !(*i).actor->valid())
         {
           (*i).gui->release();
           i = gui_actors.erase(i);

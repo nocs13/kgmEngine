@@ -64,12 +64,13 @@ public:
 class ASp_MotorA: public kgmGameObject
 {
   KGM_OBJECT(ASp_MotorA);
-
+  kgmIGame*     game;
   kgmMesh*      mesh;
   kgmMaterial*  mtl;
 public:
   ASp_MotorA(kgmIGame* g)
   {
+    game     = g;
     m_visual = new kgmVisual();
 
     mtl = new kgmMaterial();
@@ -114,6 +115,15 @@ public:
     mesh->release();
     mtl->release();
   }
+
+  void update(u32 mls)
+  {
+    if(getParent() && !kgmObject::isValid(getParent()))
+    {
+      m_visual->remove();
+      remove();
+    }
+  }
 };
 
 class ASp_Laser: public kgmGameObject
@@ -137,6 +147,7 @@ public:
   {
     power = 1;
     timeout(time);
+    this->setId("laser");
     m_visual  = new kgmVisual();
 
     mtl = new kgmMaterial();
@@ -196,6 +207,10 @@ public:
   void update(u32 t)
   {
     kgmGameObject::update(t);
+  }
+
+  void exit()
+  {
   }
 };
 

@@ -41,10 +41,12 @@ public:
     gui   = new ASp_Gui(game);
 
     m_health = 100;
+    setId("MainPlayer");
   }
 
   ~ASpacer()
   {
+    ((kgmGameBase*)game)->guiRemove(gui);
     vtext->release();
     gui->release();
   }
@@ -60,12 +62,12 @@ public:
 
     if(m_gameplayer)
     {
-      ASp_Skybox* sb = new ASp_Skybox(game);
-      game->gAppend(sb);
+      //ASp_Skybox* sb = new ASp_Skybox(game);
+      //game->gAppend(sb);
 
       gui->set(this);
       gui->add(this);
-      ((kgmGameBase*)game)->guiAdd(gui);
+      //((kgmGameBase*)game)->guiAdd(gui);
 
       kgmList<kgmGameObject*> objs;
       game->getLogic()->getObjectsByType(kgmActor::Class, objs);
@@ -367,10 +369,10 @@ public:
                                        m_body->m_velocity + 0.1f);
 
     go1->setId("laser1");
-    go1->setParent(this);
+    //go1->setParent(this);
     go1->setGroup(getGroup());
     go2->setId("laser2");
-    go2->setParent(this);
+    //go2->setParent(this);
     go2->setGroup(getGroup());
 
     game->gAppend(go1);

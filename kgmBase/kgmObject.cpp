@@ -5,7 +5,8 @@ static kgmList<kgmObject*> g_objects;
 
 KGMOBJECT_IMPLEMENT(kgmObject, kgmObject)
 
-void* kgmObject::operator new(size_t size){
+void* kgmObject::operator new(size_t size)
+{
  kgmObject* p = (kgmObject*)malloc(size);
  g_objects.push_back(p);
 
@@ -15,24 +16,17 @@ void* kgmObject::operator new(size_t size){
 void kgmObject::operator delete(void* p){
  int i;
 
- for(i = 0; i < g_objects.size(); i++)
+ for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
  {
-   if((kgmObject*)p == g_objects[i])
+   if((kgmObject*)p == (*i))
    {
      g_objects.erase(i);
+
      break;
    }
  }
 
  free(p);
-}
-
-bool kgmObject::isValid(){
-  for(int i = 0; i < g_objects.size(); i++)
-   if((kgmObject*)this == g_objects[i])
-     return true;
-
-  return false;
 }
 
 void kgmObject::releaseObjects(void)
@@ -48,3 +42,11 @@ int kgmObject::objectCount()
   return g_objects.length();
 }
 
+bool kgmObject::isValid(kgmObject* o)
+{
+  for(int i = 0; i < g_objects.size(); i++)
+   if(o == g_objects[i])
+     return true;
+
+  return false;
+}

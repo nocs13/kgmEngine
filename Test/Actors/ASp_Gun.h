@@ -15,13 +15,16 @@ protected:
 
   vec3            rotate;
   bool            shoot;
+  bool            explode;
+
 public:
   ASp_Gun(kgmIGame* g)
   {
     game = g;
     target = null;
-
+    explode = false;
     m_health = 10;
+    setId("Gun");
 
     shoot_distance = 30.0;
     shoot          = false;
@@ -106,7 +109,7 @@ public:
       }
 
       if((m_health < 1 && m_state->id != "dying")
-         || (m_parent && !game->getLogic()->isvalid(m_parent)))
+         || (m_parent && !kgmObject::isValid(m_parent)))
       {
         setState("dying", true);
 
@@ -230,7 +233,6 @@ public:
                                        m_body->m_velocity + 0.1f, 0.5);
 
     go1->setId("laser1");
-    go1->setParent(this);
     go1->setGroup(getGroup());
 
     game->gAppend(go1);
@@ -240,22 +242,18 @@ public:
 
   void action_dying()
   {
+    if(explode)
+      return;
+
     vec3      pos = m_body->m_position;
 
     kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
-    kgmGameObject* go2 = new ASp_ExplodeB(game, pos);
-
 
     go1->setId("explode1");
-    go1->setParent(this);
-    go2->setId("explode1");
-    go2->setParent(this);
-
     game->gAppend(go1);
-    game->gAppend(go2);
 
     go1->release();
-    go2->release();
+    explode = true;
   }
 };
 

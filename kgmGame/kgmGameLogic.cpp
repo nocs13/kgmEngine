@@ -13,28 +13,26 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+//  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     (*i)->release();
   }
 
   m_objects.clear();
 
+  for(kgmList<kgmGameObject*>::iterator i = m_trush.begin(); i != m_trush.end(); ++i)
+  {
+    (*i)->release();
+  }
+
+  m_trush.clear();
+
   m_gameplayer = null;
 }
 
 bool kgmGameLogic::add(kgmActor *a)
 {
-  if(a)
-  {
-    if(a->m_gameplayer)
-      m_gameplayer = a;
-
-    m_objects.add(a);
-    a->increment();
-
-    return true;
-  }
 
   return false;
 }
@@ -51,9 +49,15 @@ bool kgmGameLogic::add(kgmTrigger *a)
 
 bool kgmGameLogic::add(kgmGameObject *o)
 {
-  if(o)
+  if(o && o->isType(kgmActor::Class) && ((kgmActor*)o)->m_gameplayer)
   {
-    m_objects.add(o);
+    m_gameplayer = (kgmActor*)o;
+    m_objects.push_back(o);
+    o->increment();
+  }
+  else if(o)
+  {
+    m_objects.push_back(o);
     o->increment();
 
     return true;
@@ -62,24 +66,29 @@ bool kgmGameLogic::add(kgmGameObject *o)
   return false;
 }
 
-bool kgmGameLogic::isvalid(kgmGameObject *go)
+/*bool kgmGameLogic::isvalid(kgmGameObject *go)
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+//  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     if(go == (*i))
       return true;
   }
 
   return false;
-}
+}*/
 
 void kgmGameLogic::prepare()
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+//  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
     go->init();
   }
+
+  //if(m_gameplayer)
+  //  m_gameplayer->init();
 }
 
 void kgmGameLogic::update(u32 milliseconds)
@@ -87,34 +96,62 @@ void kgmGameLogic::update(u32 milliseconds)
   if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
     return;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  //for(int i = m_objects.size(); i > 0; --i)
+  if(!m_gameplayer || !kgmObject::isValid(m_gameplayer))
+  {
+    kgmIGame::getGame()->gCommand("gameover_fail");
+
+    return;
+  }
+  //else if(m_gameplayer)
+  //{
+  //  m_gameplayer->update(milliseconds);
+  //}
+
+  std::vector<kgmGameObject*>::iterator i = m_objects.begin();
+
+  while(i != m_objects.end())
   {
     kgmGameObject* go = (*i);
-    //kgmGameObject* go = m_objects[i - 1];
+
+    if(!kgmObject::isValid(go))
+    {
+      i = m_objects.erase(i);
+
+      if(m_gameplayer == go)
+        m_gameplayer = null;
+
+      continue;
+    }
 
     if(go->removed())
     {
       if(m_gameplayer == go)
         m_gameplayer = null;
 
-      go->release();
-
+      kgmString s = go->runtime().nClass;
+      m_trush.add(go);
       i = m_objects.erase(i);
-      //m_objects.erase(i - 1);
-
-      break;
     }
-    else if(isvalid(go) && go->valid())
+    else if(go->valid())
     {
+      kgmString s = go->runtime().nClass;
       go->update(milliseconds);
+      ++i;
     }
+  }
+
+  static int tm = kgmTime::getTicks();
+
+  if(kgmTime::getTicks() - tm > 1000)
+  {
+    trush();
+    tm = kgmTime::getTicks();
   }
 }
 
 void kgmGameLogic::input(int btn, int state)
 {
-  if(m_gameplayer && isvalid(m_gameplayer))
+  if(m_gameplayer && kgmObject::isValid(m_gameplayer))
   {
     m_gameplayer->input(btn, state);
   }
@@ -135,7 +172,8 @@ void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 
 kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -156,7 +194,8 @@ u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmGameObject*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -174,7 +213,8 @@ u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmGameObject*>& objs
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -186,4 +226,17 @@ u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmGameObject*>& objs
   }
 
   return count;
+}
+
+void kgmGameLogic::trush()
+{
+  for(int i = m_trush.size(); i > 0; i--)
+  {
+      m_trush[i - 1]->release();
+      m_trush.erase(i - 1);
+
+      //return;
+  }
+
+  m_trush.clear();
 }

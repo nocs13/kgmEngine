@@ -163,6 +163,8 @@ public:
   void setGuiStyle(kgmGuiStyle*);
   void setDefaultFont(kgmFont*);
 
+  s32  getShaderId(kgmString);
+
 private:
   void render(Mesh*);
   void render(kgmGui*);

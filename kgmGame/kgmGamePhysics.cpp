@@ -34,8 +34,8 @@ void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
 
 
   if(!kgmIGame::getGame()->getLogic() ||
-     !kgmIGame::getGame()->getLogic()->isvalid(go_body) ||
-     !kgmIGame::getGame()->getLogic()->isvalid(go_tobody))
+     !kgmObject::isValid(go_body) ||
+     !kgmObject::isValid(go_tobody))
     return;
 
   if(go_body->getParent() == go_tobody ||

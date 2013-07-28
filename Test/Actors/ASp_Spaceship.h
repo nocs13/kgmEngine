@@ -8,12 +8,13 @@ protected:
   kgmIGame* game;
 
   kgmVisual* vtext;
+  bool       explode;
 
 public:
   ASp_Spaceship(kgmIGame* g)
   {
     game = g;
-
+    explode = false;
     m_health = 10;
 
     m_body->m_gravity = false;
@@ -68,7 +69,7 @@ public:
         kgmDummy*       dm = m_dummies[i];
         kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
 
-        if(go && game->getLogic()->isvalid(go) && go->getBody())
+        if(go && kgmObject::isValid(go) && go->getBody())
         {
           vec3 v = getBody()->m_position +  dm->m_shift;
           vec3 r = getBody()->m_rotation +  dm->m_orient;
@@ -120,22 +121,19 @@ public:
 
   void action_dying()
   {
+    if(explode)
+      return;
+
     vec3      pos = m_body->m_position;
 
     kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
-    kgmGameObject* go2 = new ASp_ExplodeB(game, pos);
-
 
     go1->setId("explode1");
-    go1->setParent(this);
-    go2->setId("explode1");
-    go2->setParent(this);
 
     game->gAppend(go1);
-    game->gAppend(go2);
 
     go1->release();
-    go2->release();
+    explode = true;
   }
 };
 

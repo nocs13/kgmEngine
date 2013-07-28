@@ -7,13 +7,17 @@
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
 
+#include <vector>
+
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 public:
   //kgmList<kgmActor*>       m_actors;
   //kgmList<kgmSensor*>      m_sensors;
   //kgmList<kgmTrigger*>     m_triggers;
-  kgmList<kgmGameObject*>  m_objects;
+  //kgmList<kgmGameObject*>  m_objects;
+  std::vector<kgmGameObject*>  m_objects;
+  kgmList<kgmGameObject*>    m_trush;
 
   kgmActor*                m_gameplayer;
   //kgmActor*               m_player;
@@ -28,7 +32,7 @@ public:
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
-  bool isvalid(kgmGameObject*);
+//  bool isvalid(kgmGameObject*);
 
   virtual void prepare();
   virtual void input(int, int);
@@ -45,6 +49,9 @@ public:
   {
     return m_gameplayer;
   }
+
+private:
+  void trush();
 };
 
 #endif // KGMGAMELOGIC_H

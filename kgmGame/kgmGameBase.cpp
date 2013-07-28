@@ -316,6 +316,10 @@ void kgmGameBase::onIdle(){
     if(m_logic && fps > 0)
       m_logic->update(1000 / fps);
     break;
+  case State_Stop:
+    gUnload();
+    m_state = State_None;
+    break;
   default:
     break;
   }
@@ -858,15 +862,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
           if(sgrp.length() > 0)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
-          m_render->add(act->getVisual());
-          m_physics->add(act->getBody());
-          m_logic->add(act);
-
+          gAppend(act);
+          act->release();
 #ifdef TEST
           m_render->add(act->getBody());
 #endif
-
-          act->release();
         }
       }
       else if(id == "kgmGameObject")
@@ -881,15 +881,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
         if(sgrp.length() > 0)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
-        m_render->add(gob->getVisual());
-        m_physics->add(gob->getBody());
-        m_logic->add(gob);
-
+        gAppend(gob);
+        gob->release();
 #ifdef TEST
           m_render->add(act->getBody());
 #endif
-
-        gob->release();
       }
       else if(id == "Vertices")
       {
@@ -984,6 +980,12 @@ bool kgmGameBase::loadXml_II(kgmString& path)
       }
       else if(id == "Shader")
       {
+        kgmString data;
+
+        if(xml.attribute("value", data))
+        {
+          mtl->m_shader = (kgmMaterial::Shader)m_render->getShaderId(value);
+        }
       }
       else if(id == "Material")
       {

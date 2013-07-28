@@ -58,10 +58,13 @@ public:
     game    = g;
     vtext   = null;
     vresult = null;
+
+    enemies = 1;
   }
 
   void prepare()
   {
+    enemies = 1;
     kgmList<kgmGameObject*> objs;
     kgmGameLogic::prepare();
     this->getObjectsByType(ASp_Spaceship::Class, objs);
@@ -246,14 +249,12 @@ public:
   {
     if(s == "gameover_fail")
     {
-      m_state = kgmIGame::State_None;
-      gUnload();
+      m_state = kgmIGame::State_Stop;
       gui->viewAgain();
     }
     else if(s == "gameover_success")
     {
-      m_state = kgmIGame::State_None;
-      gUnload();
+      m_state = kgmIGame::State_Stop;
       gui->viewAgain();
     }
   }

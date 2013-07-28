@@ -64,16 +64,6 @@ void kgmActor::update(u32 time)
         setState(m_state->switchto, true);
     }
   }
-
-  for(int i = 0; i < m_dummies.size(); i++)
-  {
-    kgmDummy* dummy = m_dummies[i];
-
-    if(dummy->m_linked)
-    {
-      kgmGameObject* go = (kgmGameObject*)dummy->m_linked;
-    }
-  }
 }
 
 void kgmActor::input(u32 btn, int state)
@@ -97,7 +87,8 @@ void kgmActor::action(kgmString s)
 {
 }
 
-void kgmActor::setDirection(vec3& d){
+void kgmActor::setDirection(vec3& d)
+{
   //m_body->m_direction = d;
   //m_body->m_direction.normalize();
   //m_body->m_rotation.z = (float)acos(m_body->m_direction.x);

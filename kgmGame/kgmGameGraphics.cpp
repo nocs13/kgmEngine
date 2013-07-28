@@ -693,6 +693,11 @@ void kgmGameGraphics::render(kgmMaterial* m){
     gc->gcSetTexture(0, m->m_tex_color->m_texture);
     tcolor = m->m_tex_color->m_texture;
   }
+  else
+  {
+    gc->gcSetTexture(0, g_tex_white);
+    tcolor = g_tex_white;
+  }
 
   if(m->m_tex_normal){
     gc->gcSetTexture(1, m->m_tex_normal->m_texture);
@@ -886,6 +891,11 @@ void kgmGameGraphics::render(kgmGui* gui){
     if(gui->m_childs[i]->m_view)
       render(gui->m_childs[i]);
   }
+}
+
+s32 kgmGameGraphics::getShaderId(kgmString s)
+{
+  return -1;
 }
 
 //*************** DRAWING ***************

@@ -485,7 +485,8 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
         mtl->m_shader = kgmMaterial::ShaderMirror;
       else if(val == "ICE")
         mtl->m_shader = kgmMaterial::ShaderIce;
-      //      mtl->m_shader = kgmIGame::getGame()->getResources()->getShader(val);
+      else
+        mtl->m_shader = kgmMaterial::ShaderBase;
     }
   }
 

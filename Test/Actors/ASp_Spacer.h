@@ -16,6 +16,7 @@ protected:
   float     yaaw;
 
   bool      chase;
+  bool      explode;
 
   kgmGameObject*  target;
 
@@ -35,6 +36,7 @@ public:
     yaaw      = 0.0;
 
     chase     = false;
+    explode   = false;
 
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
@@ -199,6 +201,7 @@ public:
         remove();
         m_body->remove();
         m_visual->remove();
+        vtext->remove();
       }
 
       if(m_health < 1 && m_state->id != "dying")
@@ -239,7 +242,7 @@ public:
     kgmString ts = "ASp_Spacer state x aim: ";
     //vtext->getText()->m_text = ts + s;
 
-    if(target)
+    if(target && kgmObject::isValid(target))
     {
       vec3 tpos   = target->getBody()->m_position;
       vec3 tdir   = tpos - m_body->m_position;
@@ -381,10 +384,8 @@ public:
                                        m_body->m_velocity + 0.1f);
 
     go1->setId("laser1");
-    go1->setParent(this);
     go1->setGroup(getGroup());
     go2->setId("laser2");
-    go2->setParent(this);
     go2->setGroup(getGroup());
 
     game->gAppend(go1);
@@ -401,18 +402,21 @@ public:
 
   void action_dying()
   {
+    if(explode)
+      return;
+
     vec3      pos = m_body->m_position;
 
     kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
 
 
     go1->setId("explode1");
-    go1->setParent(this);
     go1->setGroup(getGroup());
 
     game->gAppend(go1);
 
     go1->release();
+    explode = true;
   }
 };
 #endif // ASP_SPACER_H
