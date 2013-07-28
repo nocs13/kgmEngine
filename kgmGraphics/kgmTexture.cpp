@@ -18,8 +18,6 @@ kgmTexture::kgmTexture(kgmIGraphics* gc, u32 type){
 }
 
 kgmTexture::~kgmTexture(){
- if(m_gc)
-  m_gc->gcFreeTexture(m_texture);
 }
 
 void kgmTexture::start(u32 s){

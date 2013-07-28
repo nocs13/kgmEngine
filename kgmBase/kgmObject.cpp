@@ -44,7 +44,7 @@ int kgmObject::objectCount()
 
 bool kgmObject::isValid(kgmObject* o)
 {
-  for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i++)
+  for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
    if(o == *i)
      return true;
 

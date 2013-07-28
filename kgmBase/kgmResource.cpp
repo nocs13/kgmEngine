@@ -9,6 +9,4 @@ kgmResource::kgmResource(){
 }
 
 kgmResource::~kgmResource(){
-  if(m_resources)
-    m_resources->remove(this);
 }
