@@ -759,11 +759,11 @@ bool kgmGameBase::loadXml_II(kgmString& path)
 #define TypeCollision  6
 #define TypeGameObject 7
 
-#define AttrString(node, id, val)		\
-  {						\
-  kgmString sid;				\
-  sid = id;					\
-  node->attribute(sid, val);			\
+#define AttrString(node, id, val) \
+{ \
+  kgmString sid; \
+  sid = id; \
+  node->attribute(sid, val); \
 }
 
   kgmMemory<char> mem;
@@ -1356,6 +1356,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
           dm->attach(go, kgmDummy::AttachToObject);
 
         gAppend(go);
+        go->release();
       }
     }
     else if(id == "Visual")

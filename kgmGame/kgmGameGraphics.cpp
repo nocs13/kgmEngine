@@ -379,7 +379,7 @@ void kgmGameGraphics::render(){
   {
     kgmBody* body = m_bodies[i - 1];
 
-    if(!body->valid() || body->removed())
+    if(body->removed())
     {
       body->release();
       m_bodies.erase(i - 1);

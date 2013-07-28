@@ -8,7 +8,6 @@ class ASp_Gun: public kgmActor
 protected:
   kgmIGame* game;
 
-  kgmVisual*      vtext;
   kgmGameObject*  target;
 
   float           shoot_distance;
@@ -32,21 +31,10 @@ public:
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
     m_body->m_bound.max = vec3( 1,  1,  1);
-
-    vtext = new kgmVisual();
-
-    kgmText* text = new kgmText();
-    text->m_rect  = uRect(30, 200, 700, 200);
-
-    vtext->set(text);
-    ((kgmGameBase*)game)->m_render->add(vtext);
-    text->release();
   }
 
   virtual ~ASp_Gun()
   {
-    vtext->remove();
-    vtext->release();
   }
 
   void init()
@@ -83,14 +71,6 @@ public:
           go->getVisual()->m_transform = m * m_visual->m_transform;
         }
       }
-
-      kgmString ts = "ASp_Gun state: ";
-      kgmString hl = kgmConvert::toString((s32)m_health);
-
-      if(m_state)
-        vtext->getText()->m_text = ts + hl;
-      else
-        vtext->getText()->m_text = ts;
     }
 
     if(m_state)
@@ -104,8 +84,6 @@ public:
       else if(m_state->id == "die")
       {
         remove();
-        m_body->remove();
-        m_visual->remove();
       }
 
       if((m_health < 1 && m_state->id != "dying")
@@ -114,6 +92,7 @@ public:
         setState("dying", true);
 
         m_visual->disable();
+        m_body->disable();
       }
 
       logic(m_state->id);
@@ -124,9 +103,6 @@ public:
   {
     float dist = -1, angle = 0, side = 0;
     vec3  left, orin(0, 0, 1);
-    kgmString ts = "ASp_Spacer state x aim: ";
-
-    vtext->getText()->m_text = ts + s;
 
     if(target)
     {

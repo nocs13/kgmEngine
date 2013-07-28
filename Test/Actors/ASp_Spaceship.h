@@ -7,7 +7,6 @@ class ASp_Spaceship: public kgmActor
 protected:
   kgmIGame* game;
 
-  kgmVisual* vtext;
   bool       explode;
 
 public:
@@ -20,21 +19,10 @@ public:
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-3, -3, -3);
     m_body->m_bound.max = vec3( 3,  3,  3);
-
-    vtext = new kgmVisual();
-
-    kgmText* text = new kgmText();
-    text->m_rect  = uRect(10, 150, 500, 200);
-
-    vtext->set(text);
-    ((kgmGameBase*)game)->m_render->add(vtext);
-    text->release();
   }
 
   virtual ~ASp_Spaceship()
   {
-    vtext->remove();
-    vtext->release();
   }
 
   void init()
@@ -78,13 +66,6 @@ public:
           go->getBody()->rotate(r);
         }
       }
-
-      kgmString ts = "ASp_Spacership state: ";
-
-      //if(m_state)
-      //  vtext->getText()->m_text = ts + m_state->id;
-      //else
-      //  vtext->getText()->m_text = ts;
     }
 
     if(m_state)
@@ -95,8 +76,6 @@ public:
       else if(m_state->id == "die")
       {
         remove();
-        m_body->remove();
-        m_visual->remove();
         game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
       }
 

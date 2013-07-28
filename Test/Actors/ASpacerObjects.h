@@ -521,6 +521,7 @@ public:
     m_visual  = new kgmVisual();
     kgmText* text = new kgmText();
     text->m_rect  = uRect(100, 200, 500, 200);
+    text->m_text  = txt;
 
     m_visual->set(text);
     text->release();
@@ -542,7 +543,7 @@ public:
 
   void exit()
   {
-    game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "result");
+    game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "result");    
   }
 };
 
