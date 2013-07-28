@@ -73,7 +73,7 @@ public:
       game->getLogic()->getObjectsByType(kgmActor::Class, objs);
 
       for(int i = 0; i < objs.size(); i++)
-        gui->add(objs[i]);
+        gui->add((kgmActor*)objs[i]);
 
       objs.clear();
     }

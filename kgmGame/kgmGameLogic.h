@@ -15,8 +15,8 @@ public:
   //kgmList<kgmActor*>       m_actors;
   //kgmList<kgmSensor*>      m_sensors;
   //kgmList<kgmTrigger*>     m_triggers;
-  //kgmList<kgmGameObject*>  m_objects;
-  std::vector<kgmGameObject*>  m_objects;
+  kgmList<kgmGameObject*>  m_objects;
+  //std::vector<kgmGameObject*>  m_objects;
   kgmList<kgmGameObject*>    m_trush;
 
   kgmActor*                m_gameplayer;

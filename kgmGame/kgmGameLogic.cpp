@@ -13,8 +13,8 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
-//  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     (*i)->release();
   }
@@ -80,8 +80,8 @@ bool kgmGameLogic::add(kgmGameObject *o)
 
 void kgmGameLogic::prepare()
 {
-//  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
     go->init();
@@ -107,7 +107,8 @@ void kgmGameLogic::update(u32 milliseconds)
   //  m_gameplayer->update(milliseconds);
   //}
 
-  std::vector<kgmGameObject*>::iterator i = m_objects.begin();
+  //std::vector<kgmGameObject*>::iterator i = m_objects.begin();
+  kgmList<kgmGameObject*>::iterator i = m_objects.begin();
 
   while(i != m_objects.end())
   {
@@ -172,8 +173,8 @@ void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
 
 kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
 {
-  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -194,8 +195,8 @@ u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmGameObject*>& objs)
 {
   u32 count = 0;
 
-  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 
@@ -213,8 +214,8 @@ u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmGameObject*>& objs
 {
   u32 count = 0;
 
-  //for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  //for(std::vector<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmGameObject* go = (*i);
 

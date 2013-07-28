@@ -6,6 +6,7 @@ class kgmText: public kgmObject
 public:
   kgmString  m_text;
   uRect      m_rect;
+  u32        m_size;
   u32        m_color;
 
 public:
@@ -13,6 +14,7 @@ public:
   {
     m_text  = "";
     m_rect  = uRect(10, 10, 300, 100);
+    m_size  = 15;
     m_color = 0xffffffff;
   }
 
