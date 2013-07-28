@@ -258,8 +258,6 @@ public:
       else if(m_state->id == "die")
       {
         remove();
-        m_body->remove();
-        m_visual->remove();
         game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
       }
 

@@ -118,11 +118,7 @@ public:
 
   void update(u32 mls)
   {
-    if(getParent() && !kgmObject::isValid(getParent()))
-    {
-      m_visual->remove();
-      remove();
-    }
+    //kgmGameObject::update(mls);
   }
 };
 
@@ -184,6 +180,8 @@ public:
     v[17] = { {len, 0, -len},  {0, 1}};
 
     m_visual->addVisual(mesh, mtl);
+    mesh->release();
+    mtl->release();
 
     m_body = new kgmBody();
 
@@ -200,8 +198,6 @@ public:
 
   ~ASp_Laser()
   {
-    mesh->release();
-    mtl->release();
   }
 
   void update(u32 t)
@@ -457,9 +453,9 @@ public:
     material->m_tex_color    = g->getResources()->getTexture(tid);
 
     particles->direction = vec3(1, 1, 0.4);
-    particles->m_speed = 5.0;
+    particles->m_speed = 2.0;
     particles->m_count = 30;
-    particles->m_life  = 1000;
+    particles->m_life  = 3000;
     particles->m_loop  = false;
     particles->en_size = 2.0;
     particles->build();

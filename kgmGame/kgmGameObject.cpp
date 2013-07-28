@@ -25,26 +25,41 @@ kgmGameObject::~kgmGameObject()
     m_visual->release();
 }
 
+void kgmGameObject::remove()
+{
+  setParent(null);
+
+  if(getBody())
+    getBody()->remove();
+
+  if(getVisual())
+    getVisual()->remove();
+
+  m_remove = true;
+}
+
 void kgmGameObject::update(u32 mls)
 {
   u32 ct = kgmTime::getTicks();
 
+  if(removed())
+    return;
+
   if((m_timeout != -1) && ((ct - m_birth) > m_timeout))
   {
-    setParent(null);
-
-    if(getBody())
-      getBody()->remove();
-
-    if(getVisual())
-      getVisual()->remove();
-
-    disable();
     remove();
 
     exit();
 
     return;
+  }
+
+  if(getParent())
+  {
+    if(!kgmObject::isValid(getParent()) || getParent()->removed())
+    {
+      remove();
+    }
   }
 
   if(getBody())

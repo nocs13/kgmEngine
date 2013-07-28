@@ -47,7 +47,7 @@ public:
   bool visible()    { return m_visible;  }
   bool removed()    { return m_remove;   }
 
-  void remove()     { m_remove = true;   }
+  void remove();//     { m_remove = true;   }
   void enable()     { m_valid  = true;   }
   void disable()    { m_valid  = false;  }
   void show()       { m_visible = true;  }

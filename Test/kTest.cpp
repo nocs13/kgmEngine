@@ -86,13 +86,13 @@ public:
 
           if(enemies == 0)
           {
-              ASp_Result* res = new ASp_Result(game, 1000, 1, "Success");
+              ASp_Result* res = new ASp_Result(game, 3000, 1, "Success");
               game->gAppend(res);
           }
         }
         else if(src->isType(ASpacer::Class))
         {
-            ASp_Result* res = new ASp_Result(game, 1000, 0, "Failed");
+            ASp_Result* res = new ASp_Result(game, 3000, 0, "Failed");
             game->gAppend(res);
         }
       }

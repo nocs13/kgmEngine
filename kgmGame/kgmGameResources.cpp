@@ -170,16 +170,21 @@ kgmPicture* kgmGameResources::getPicture(char* id){
 
 kgmTexture* kgmGameResources::getTexture(char* id){
  int i = 0;
+
  for(i = 0; i < m_resources.size(); i++){
   if(!strcmp(m_resources[i]->m_id, id)){
    m_resources[i]->increment();
+
    return (kgmTexture*)m_resources[i];
   }
  }
+
  kgmTexture* texture = 0;
  kgmMemory<char> mem;
+
  if(!getFile(id, mem))
   return 0;
+
  texture = m_tools.genTexture(kgmIGame::getGame()->getGraphics(), mem);
 
  if(texture){

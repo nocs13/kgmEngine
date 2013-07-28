@@ -1,7 +1,7 @@
 #include "kgmTexture.h"
 #include "../kgmBase/kgmIGraphics.h"
 
-KGMOBJECT_IMPLEMENT(kgmTexture,	kgmResource);
+KGMOBJECT_IMPLEMENT(kgmTexture, kgmResource);
 
 kgmTexture::kgmTexture(){
  m_texture = 0;

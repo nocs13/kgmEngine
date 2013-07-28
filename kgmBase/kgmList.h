@@ -16,7 +16,11 @@ private:
     T      data;
     _Node  *prev, *next;
 
-    _Node(){ prev = next = 0; }
+    _Node()
+    {
+      prev = next = 0;
+    }
+
     inline void* operator new(size_t size)
     {
       return malloc(size);
@@ -34,8 +38,11 @@ public:
   {
     friend class kgmList<T>;
     _Node* _Ptr;
+
   public:
-    iterator(){ _Ptr = 0; }
+    iterator(){
+      _Ptr = 0;
+    }
     T& operator*(){
       return _Ptr->data;
     }
@@ -68,7 +75,10 @@ protected:
   }
   _Node *_last(){
     _Node *node = _First;
-    while(node && node->next) node = node->next;
+
+    while(node && node->next)
+      node = node->next;
+
     return node;
   }
 
@@ -81,37 +91,46 @@ public:
 
   T& operator[](unsigned int i){
     _Node *node = _First;
+
     while(node && i){
       node = node->next;
       i--;
     }
+
     return node->data;
   }
+
   int size(){
     return csize;
   }
+
   int length(){
     return csize;
   }
+
   void push_back(T t){
     add(t);
   }
+
   void add(T t){
     _Node *node = new _Node();
     node->data = t;
     _Node *lnode = _last();
-    if(!lnode)
+
+    if(!lnode){
       _First = node;
-    else{
+    }else{
       node->prev = lnode;
       lnode->next = node;
     }
     csize++;
   }
+
   void append(T t){
     _Node *node = new _Node();
     node->data = t;
     _Node *lnode = _last();
+
     if(!lnode)
       _First = node;
     else{
@@ -120,6 +139,7 @@ public:
     }
     csize++;
   }
+
   iterator erase(iterator i){
     if(!i._Ptr)
       return i;
@@ -145,6 +165,7 @@ public:
 
     return i;
   }
+
   void erase(int i){
     _Node *node = _First;
 
@@ -164,31 +185,49 @@ public:
         node->next->prev = node->prev;
 
       if(node == _First)
-        _First = 0;
+      {
+        if(_First->next)
+          _First = _First->next;
+        else
+          _First = 0;
+#ifdef TEST
+        if(_First == 0 && csize > 1)
+        {
+          int k = 0;
+        }
+#endif
+      }
 
       delete node;
 
       csize--;
     }
   }
+
   void clear(){
     _Node *node = _First;
+
     while(node){
       _Node *prev = node;
       node = node->next;
       delete prev;
     }
+
     _First = 0;
     csize = 0;
   }
+
   iterator begin(){
     iterator i;
     i._Ptr = _First;
+
     return i;
   }
+
   iterator end(){
     iterator i;
     i._Ptr = 0;
+
     return i;
   }
 };

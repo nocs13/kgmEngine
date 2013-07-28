@@ -2,6 +2,8 @@
 #include "kgmObject.h"
 #include "kgmString.h"
 
+class kgmIResources;
+
 class kgmResource: public kgmObject{
  KGM_OBJECT(kgmResource)
 public:
@@ -15,10 +17,14 @@ public:
   TypeAnimation,
   TypeSkeleton,
  };
+
+protected:
+ kgmIResources* m_resources;
 public:
+ kgmObject* m_resource;
  kgmString  m_id;
- u32	    m_uid;
- u32       m_type;
+ u32	       m_uid;
+ u32        m_type;
 
 protected:
  ~kgmResource();

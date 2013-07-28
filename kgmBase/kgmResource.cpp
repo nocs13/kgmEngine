@@ -1,4 +1,5 @@
 #include "kgmResource.h"
+#include "kgmIResources.h"
 
 KGMOBJECT_IMPLEMENT(kgmResource, kgmObject);
 
@@ -8,4 +9,6 @@ kgmResource::kgmResource(){
 }
 
 kgmResource::~kgmResource(){
+  if(m_resources)
+    m_resources->remove(this);
 }
