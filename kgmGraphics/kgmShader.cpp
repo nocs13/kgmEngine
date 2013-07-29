@@ -13,8 +13,6 @@ kgmShader::kgmShader(kgmIGraphics* g)
 
 kgmShader::~kgmShader()
 {
- if(m_gc)
-  m_gc->gcFreeShader(m_shader);
  m_input.clear();
 }
 

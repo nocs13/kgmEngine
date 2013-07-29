@@ -22,6 +22,14 @@ kgmMaterial::kgmMaterial(){
 }
 
 kgmMaterial::~kgmMaterial(){
+  if(m_tex_color)
+    m_tex_color->release();
+
+  if(m_tex_normal)
+    m_tex_normal->release();
+
+  if(m_tex_specular)
+    m_tex_specular->release();
 }
 
 kgmMaterial* kgmMaterial::clone(){
@@ -36,11 +44,3 @@ kgmMaterial* kgmMaterial::clone(){
   m->m_id = m_id;
   return m;
 }
-
-void kgmMaterial::start(kgmIGraphics* g){
- m_gc = g;
-}
-
-void kgmMaterial::stop(){
-}
-

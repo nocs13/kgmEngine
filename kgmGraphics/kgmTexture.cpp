@@ -20,15 +20,6 @@ kgmTexture::kgmTexture(kgmIGraphics* gc, u32 type){
 kgmTexture::~kgmTexture(){
 }
 
-void kgmTexture::start(u32 s){
- m_stage = s;
- m_gc->gcSetTexture(m_stage, m_texture);
-}
-
-void kgmTexture::stop(){
- m_gc->gcSetTexture(m_stage, 0);
-}
-
 void kgmTexture::setFlags(u32 f){
  m_flags = f;
 }

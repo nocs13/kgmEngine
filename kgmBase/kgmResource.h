@@ -18,8 +18,8 @@ public:
   TypeSkeleton,
  };
 
-protected:
- kgmIResources* m_resources;
+ static kgmIResources* g_resources;
+
 public:
  kgmObject* m_resource;
  kgmString  m_id;
@@ -32,5 +32,7 @@ protected:
 public:
  kgmResource();
  void setId(kgmString id){ m_id = id; }
+
+ void release();
 };
 

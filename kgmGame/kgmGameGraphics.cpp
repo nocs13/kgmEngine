@@ -227,7 +227,7 @@ void kgmGameGraphics::render(){
 
   mtx4 mvw, mpr;
 
-  kgmMaterial           mbase;
+  //kgmMaterial           mbase;
   kgmList<kgmMesh*>     meshes;
   kgmList<kgmVisual*>   vis_mesh, vis_blend, vis_particles;
 
@@ -447,7 +447,7 @@ void kgmGameGraphics::render(){
           m_camera.camera.mPos.x, m_camera.camera.mPos.y, m_camera.camera.mPos.z,
           kgmObject::objectCount());
   kgmString text(info);
-  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 600, 200), text);
+  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 
   gc->gc3DMode();
 

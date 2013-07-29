@@ -86,8 +86,6 @@ public:
   ~kgmMaterial();
 
   kgmMaterial* clone();
-  void         start(kgmIGraphics*);
-  void         stop();
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

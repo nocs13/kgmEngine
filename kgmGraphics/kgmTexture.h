@@ -90,9 +90,6 @@ public:
  kgmTexture(kgmIGraphics*, u32 type);
  ~kgmTexture();
 
- void start(u32);
- void stop();
-
  void setFlags(u32 f);
  void addFlags(u32 f);
 };
