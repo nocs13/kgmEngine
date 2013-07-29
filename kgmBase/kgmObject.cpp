@@ -50,3 +50,16 @@ bool kgmObject::isValid(kgmObject* o)
 
   return false;
 }
+
+#ifdef TEST
+void kgmObject::listObjects()
+{
+  int k = 0;
+
+  for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
+  {
+    kgmObject* o = *i;
+    k++;
+  }
+}
+#endif

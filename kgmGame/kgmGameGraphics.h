@@ -188,6 +188,7 @@ public:
     if(mtl)
     {
       m_materials.add(mtl);
+      mtl->increment();
     }
   }
 
@@ -283,7 +284,7 @@ public:
     {
       kgmMaterial* m = m_materials[i];
 
-      if(m && m->m_id == name)
+      if(m && m->m_id.length() && (m->m_id == name))
       {
         *mtl = m;
 

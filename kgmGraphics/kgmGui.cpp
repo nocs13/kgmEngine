@@ -364,6 +364,7 @@ void kgmGui::onIdle(){
 void kgmGui::addChild(kgmGui *e){
   if(!e)
    return;
+
   if(!isChild(e))
    m_childs.push_back(e);
 }

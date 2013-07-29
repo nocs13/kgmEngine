@@ -17,7 +17,6 @@ class ASpacer: public kgmActor
 
   bool      gbtns[65];
 
-  kgmVisual* vtext;
   ASp_Gui*   gui;
 public:
   ASpacer(kgmIGame* g)
@@ -37,7 +36,6 @@ public:
 
     memset(gbtns, false, sizeof(gbtns));
 
-    vtext = new kgmVisual();
     gui   = new ASp_Gui(game);
 
     m_health = 100;
@@ -47,19 +45,11 @@ public:
   ~ASpacer()
   {
     ((kgmGameBase*)game)->guiRemove(gui);
-    vtext->release();
     gui->release();
   }
 
   void init()
   {
-    kgmText* text = new kgmText();
-    text->m_rect  = uRect(10, 100, 300, 200);
-
-    vtext->set(text);
-    ((kgmGameBase*)game)->m_render->add(vtext);
-    text->release();
-
     if(m_gameplayer)
     {
       //ASp_Skybox* sb = new ASp_Skybox(game);
@@ -67,7 +57,7 @@ public:
 
       gui->set(this);
       gui->add(this);
-      //((kgmGameBase*)game)->guiAdd(gui);
+      ((kgmGameBase*)game)->guiAdd(gui);
 
       kgmList<kgmGameObject*> objs;
       game->getLogic()->getObjectsByType(kgmActor::Class, objs);
@@ -81,7 +71,6 @@ public:
 
   void exit()
   {
-    ((kgmGameBase*)game)->guiRemove(gui);
   }
 
   void update(u32 mls)
@@ -124,11 +113,6 @@ public:
 
       ts = ts + kgmConvert::toString(gbtns[1]);
       ts = ts + " ";
-
-      if(m_state)
-        vtext->getText()->m_text = ts + m_state->id;
-      else
-        vtext->getText()->m_text = ts;
     }
 
     vec3 pos = getBody()->position();
@@ -367,10 +351,8 @@ public:
                                        m_body->m_velocity + 0.1f);
 
     go1->setId("laser1");
-    //go1->setParent(this);
     go1->setGroup(getGroup());
     go2->setId("laser2");
-    //go2->setParent(this);
     go2->setGroup(getGroup());
 
     game->gAppend(go1);

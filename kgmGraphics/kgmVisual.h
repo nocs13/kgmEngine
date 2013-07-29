@@ -169,6 +169,7 @@ public:
     m_typeshadow = ShadowNone;
     m_typerender = RenderNone;
 
+    m_skeleton  = null;
     m_animation = null;
     m_fstart    = m_fend = 0;
     m_floop     = false;
@@ -202,6 +203,12 @@ public:
 
     if(m_sprite)
       m_sprite->release();
+
+    if(m_skeleton)
+      m_skeleton->release();
+
+    if(m_animation)
+      m_animation->release();
   }
 
   void enable(){

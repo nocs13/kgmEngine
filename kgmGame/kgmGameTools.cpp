@@ -266,8 +266,9 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
   kgmTexture* tex = new kgmTexture;
   tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
   pic->release();
+
   if(!tex->m_texture){
-    delete tex;
+    tex->release();
     return 0;
   }
   return tex;
@@ -276,9 +277,12 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
 kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m)
 {
   kgmPicture* pic = genPicture(m);
+
   if(!pic)
     return 0;
+
   u32 fmt = gctex_fmt32;
+
   switch(pic->bpp){
   case 8:
     fmt = gctex_fmt8;
@@ -293,13 +297,17 @@ kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgm
     fmt = gctex_fmt32;
     break;
   };
+
   kgmFont* font = new kgmFont();
   font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
-  delete pic;
+  pic->release();
+
   if(!font->m_texture){
-    delete font;
+    font->release();
+
     return 0;
   }
+
   font->m_rows = r;
   font->m_cols = c;
   return font;
@@ -332,12 +340,15 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
 
   kgmShader* shader = new kgmShader(gc);
   shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
+
   if(mem_vsh) free(mem_vsh);
   if(mem_fsh) free(mem_fsh);
+
   if(!shader->m_shader){
-    delete shader;
+    shader->release();
     shader = 0;
   }
+
   return shader;
 }
 
@@ -362,7 +373,7 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmXml& xml){
   shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
 
   if(!shader->m_shader){
-    delete shader;
+    shader->release();
     shader = null;
   }
 
@@ -543,7 +554,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<char>& m){
   delete val;
 
   if(skel->m_joints.size() < 1){
-    delete skel;
+    skel->release();
     skel = 0;
   }
   skel->update();
@@ -593,7 +604,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
 
 
   if(skel->m_joints.size() < 1){
-    delete skel;
+    skel->release();
     skel = 0;
   }
 
@@ -660,7 +671,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmMemory<char>& m){
   }
 
   if(anim->count() < 1){
-    delete anim;
+    anim->release();
     anim = 0;
   }
 
@@ -739,7 +750,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
   }
 
   if(anim->count() < 1){
-    delete anim;
+    anim->release();
     anim = 0;
   }
   return anim;

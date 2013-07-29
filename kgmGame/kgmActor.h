@@ -111,7 +111,10 @@ public:
   void add(kgmDummy* m)
   {
     if(m)
+    {
       m_dummies.add(m);
+      m->increment();
+    }
   }
 
   kgmDummy* dummy(kgmString id)

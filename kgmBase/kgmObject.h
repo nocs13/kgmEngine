@@ -114,6 +114,9 @@ public:
   static void releaseObjects();
   static int  objectCount();
   static bool isValid(kgmObject*);
+#ifdef TEST
+  static void listObjects();
+#endif
 };
 ///////////////////
 

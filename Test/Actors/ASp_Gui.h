@@ -9,7 +9,6 @@ class ASp_Gui: public kgmGui
   {
     kgmIGame* game;
 
-    kgmGui* gui_background;
     kgmGui* gui_midlground;
     kgmGui* gui_foreground;
 
@@ -28,10 +27,20 @@ class ASp_Gui: public kgmGui
       gui_midlground->setRect(0, 0, 200, 10);
       gui_foreground->setRect(0, 0, 200, 10);
 
+      setText("main health");
       setRect(0, 0, 200, 10);
       show();
 
       actor = null;
+    }
+
+    ~GuiHealth()
+    {
+      delChild(gui_midlground);
+      delChild(gui_foreground);
+
+      gui_midlground->release();
+      gui_foreground->release();
     }
 
     void set(kgmActor* a)
@@ -54,23 +63,26 @@ class ASp_Gui: public kgmGui
     };
 
     kgmIGame*           game;
-    kgmGui*             gui_back;
     kgmList<GuiActor>   gui_actors;
   public:
 
     GuiMap(kgmIGame* g)
     {
       game     = g;
-      gui_back = new kgmGui();
-
-      gui_back->setParent(this);
-
+      setText("main map");
       setRect(0, 100, 300, 300);
       show();
     }
 
     virtual ~GuiMap()
     {
+      for(kgmList<GuiActor>::iterator i = gui_actors.begin();
+          i != gui_actors.end(); i.next())
+      {
+        delChild((*i).gui);
+        (*i).gui->release();
+      }
+
       gui_actors.clear();
     }
 
@@ -94,12 +106,12 @@ class ASp_Gui: public kgmGui
 
     void update()
     {
-      return;
       for(kgmList<GuiActor>::iterator i = gui_actors.begin();
           i != gui_actors.end(); ++i)
       {
         if(!kgmObject::isValid((*i).actor) || !(*i).actor->valid())
         {
+          delChild((*i).gui);
           (*i).gui->release();
           i = gui_actors.erase(i);
 
@@ -137,8 +149,18 @@ public:
     gui_health->setParent(this);
     gui_map->setParent(this);
 
+    setText("main gui");
     setRect(0, 0, 1, 1);
     show();
+  }
+
+  ~ASp_Gui()
+  {
+    delChild(gui_health);
+    delChild(gui_map);
+
+    gui_health->release();
+    gui_map->release();
   }
 
   void add(kgmActor* a)

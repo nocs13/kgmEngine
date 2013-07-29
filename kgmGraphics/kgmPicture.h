@@ -21,11 +21,8 @@ public:
   pdata = d;
  }
  virtual ~kgmPicture(){
-  release();
- }
- void release(){
-  if(pdata)
-   delete (char*)pdata;
+   if(pdata)
+    delete (char*)pdata;
  }
  u32 getWidth(){
   return width;

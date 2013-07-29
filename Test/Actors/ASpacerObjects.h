@@ -204,10 +204,6 @@ public:
   {
     kgmGameObject::update(t);
   }
-
-  void exit()
-  {
-  }
 };
 
 class ASp_LaserA: public ASp_Laser
@@ -525,6 +521,7 @@ public:
 
   ~ASp_Result()
   {
+    int k=0;
   }
 
   s32 getResult()

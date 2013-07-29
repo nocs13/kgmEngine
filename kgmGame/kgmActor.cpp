@@ -30,7 +30,11 @@ kgmActor::kgmActor()
 
 kgmActor::~kgmActor()
 {
+  for(int i = 0; i < m_dummies.size(); i++)
+    m_dummies[i]->release();
+
   m_inputs.clear();
+  m_dummies.clear();
 }
 
 void kgmActor::exit()

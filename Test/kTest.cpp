@@ -120,6 +120,8 @@ public:
 
       vtext->set(text);
       ((kgmGameBase*)game)->m_render->add(vtext);
+      text->release();
+      vtext->release();
     }
     else
     {
@@ -183,11 +185,8 @@ public:
   ~kGame(){
   }
 
-private:
-  void  initLogic()
-  {
-    m_logic = new ASp_Logic(this);
-  }
+//protected:
+  void  initLogic();
 
 public:
   void onIdle()
@@ -334,6 +333,11 @@ public:
     return kgmGameBase::gObject(t);
   }
 };
+
+void  kGame::initLogic()
+{
+  m_logic = new ASp_Logic(this);
+}
 
 
 class kApp: public kgmApp{

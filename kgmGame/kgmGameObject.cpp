@@ -21,7 +21,7 @@ kgmGameObject::~kgmGameObject()
   if(m_body)
     m_body->release();
 
-  if(m_visible)
+  if(m_visual)
     m_visual->release();
 }
 

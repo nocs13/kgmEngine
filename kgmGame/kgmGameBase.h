@@ -110,25 +110,23 @@ public:
 
 ///////////////////////////////////////
 
-private:
-//init interfaces
- virtual void  initResources();
- virtual void  initGraphycs();
- virtual void  initPhysics();
- virtual void  initSystem();
- virtual void  initAudio();
- virtual void  initLogic();
-protected:
+public:
+ //init interfaces
+  virtual void  initResources();
+  virtual void  initGraphycs();
+  virtual void  initPhysics();
+  virtual void  initSystem();
+  virtual void  initAudio();
+  virtual void  initLogic();
 
-// Game Resources
+ // Game Resources
  kgmTexture*    getTexture(char*);
  kgmShader*	    getShader(char*);
  kgmMesh*	      getMesh(char*);
  kgmActor*      getActor(kgmString);
  kgmAnimation*  getAnimation(char*);
 
- void*          loadXml(kgmString& path);
- bool           loadXml_II(kgmString& path);
+ bool           loadXml(kgmString& path);
 
 
 public:

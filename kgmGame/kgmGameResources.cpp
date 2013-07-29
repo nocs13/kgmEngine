@@ -161,22 +161,28 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 }
 
 kgmPicture* kgmGameResources::getPicture(char* id){
+
   for(int i = 0; i < m_resources.size(); i++){
     if(!strcmp(m_resources[i]->m_id, id)){
       m_resources[i]->increment();
+
       return (kgmPicture*)m_resources[i];
     }
   }
 
   kgmMemory<char> mem;
   kgmPicture* picture = 0;
+
   if(!getFile(id, mem))
     return 0;
+
   picture = m_tools.genPicture(mem);
+
   if(picture){
     picture->m_id = id;
     m_resources.add(picture);
   }
+
   return picture;
 }
 
