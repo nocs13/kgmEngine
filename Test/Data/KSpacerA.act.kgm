@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <kgm>
- <kgmActor type="ASp_SpacerA">
+ <kgmActor type="KSpacerA">
   <Mass value='1.0' />
   <Bound value='1.0 1.5 1.0' />
   <Gravity value='false' />
@@ -11,7 +11,7 @@
   <GameObject id="GunA.1"  type="GunA"   dummy="Gun.1"   />
   <GameObject id="GunA.2"  type="GunA"   dummy="Gun.2"   />
   <GameObject id="GunB"    type="GunB"   dummy="Gun.3"   />
-  
+
   <Visual id='Base'>
    <Mesh value="kspacer_o1.kgm" />
    <Material value="kspacer_o1.kgm" />

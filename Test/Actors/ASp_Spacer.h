@@ -51,6 +51,8 @@ public:
     vtext->set(text);
     ((kgmGameBase*)game)->m_render->add(vtext);
     text->release();
+
+    setGroup(1);
   }
 
   virtual ~ASp_Spacer()

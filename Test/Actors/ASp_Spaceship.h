@@ -19,6 +19,8 @@ public:
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-3, -3, -3);
     m_body->m_bound.max = vec3( 3,  3,  3);
+
+    setGroup(1);
   }
 
   virtual ~ASp_Spaceship()

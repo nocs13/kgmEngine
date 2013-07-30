@@ -291,21 +291,15 @@ public:
     {
       return new ASp_AsteroidSpawner(this);
     }
-    else if(t == "ASp_GunA")
-    {
-      return new ASp_GunA(this);
-    }
-    else if(t == "ASp_GunFA" ||
-            t == "GunFA")
+    else if(t == "GunFA")
     {
       return new ASp_GunFA(this);
     }
-    else if(t == "ASp_SpacerA" || t == "KSpacerA")
+    else if(t == "KSpacerA")
     {
       return new ASp_SpacerA(this);
     }
-    else if(t == "ASp_SpaceshipA" ||
-            t == "KSpaceshipA")
+    else if(t == "KSpaceshipA")
     {
       return new ASp_SpaceshipA(this);
     }
@@ -313,7 +307,7 @@ public:
     {
       return new ASp_SpacerSpawner(this);
     }
-    else if(t == "ASp_FlameA")
+    else if(t == "KFlameA")
     {
       return new ASp_FlameA(this);
     }

@@ -72,11 +72,11 @@ class kgm_object(bpy.types.Operator):
 
  def execute(self, context):
      print("Exec object \n")
-     
-     animaniacs = [  ( "dummy", "dummy", "kgmDummy object" ), 
+
+     animaniacs = [  ( "dummy", "dummy", "kgmDummy object" ),
                      ( "actor", "actor", "kgmActor object" ),
                      ( "object", "object", "kgmGameObject object" )]
-     
+
      bpy.types.Object.kgm = bpy.props.BoolProperty()
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
      bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm object', items=animaniacs, description='select kgm object')
@@ -92,7 +92,6 @@ class kgm_object(bpy.types.Operator):
      a.kgm_object = "None"
      return {'FINISHED'}
 
-#
 
 scene_materials = []
 
@@ -125,8 +124,6 @@ class kgmMaterial:
           self.map_specular_strength = TextureSlot.normal_factor
         else:
           self.map_color = tf_path
-
-
 
   if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
    self.shader = bpy.data.materials[mtl.name]['Shader']
@@ -423,17 +420,18 @@ class kgmObject:
     self.linked = o.parent.name
 
   if o.kgm_player:
-    self.player = "on"    
-  else:  
-    self.player = "off"    
-    
-  preds = ['kgm', 'kgm_type', 'kgm_object', 'kgm_player', 'kgm_state']  
-  
+    self.player = "on"
+  else:
+    self.player = "off"
+
+  preds = ['kgm', 'kgm_type', 'kgm_object', 'kgm_player', 'kgm_state']
+
   for k in o.keys():
     tk = str(k)
-    
-    if tk.find('kgm_') == -1 or tk in preds:
-#      next
+    print('object option: ' + tk + '\n')
+    #tk.find('kgm_') == -1 or
+    if tk.find('_') == 0 or tk in preds:
+      print('object option: ' + tk + ' in use\n')
       pass
     else:
       self.props[tk] = o.get(k)
@@ -502,7 +500,7 @@ class kgmExport(bpy.types.Operator):
 
   scene = context.scene
   for o in scene.objects:
-   print(o.name + o.type)
+   print(o.name + ':' + o.type)
 
   if self.is_selection:
    objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
@@ -538,6 +536,7 @@ class kgmExport(bpy.types.Operator):
     pass
 
   print("Animations: " + str(len(animations)))
+  print("Gobjects: " + str(len(gobjects)))
   print("Objects: " + str(len(objects)))
   print("Mehses: " + str(len(meshes)))
   print("Lights: " + str(len(lights)))
@@ -568,25 +567,25 @@ class kgmExport(bpy.types.Operator):
     file.write("  </Animation>\n")
    file.write(" </kgmAnimation>\n")
 
-  #materials
-  for o in scene_materials:
-   file.write(" <kgmMaterial name='" + o.name + "'>\n")
-   file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
-   file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
-   file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
-   file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
-   file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
-#   if(o.images):
-#    file.write("  <Texture value='" + o.images[0] + "'/>\n")
-   if o.map_color != "":
-     file.write("  <map_color value='" + o.map_color + "'/>\n")
-   if o.map_normal != "":
-     file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
-   if o.map_specular != "":
-     file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
-   if(hasattr(o, 'shader')):
-    file.write("  <Shader value='" + o.shader + "'/>\n")
-   file.write(" </kgmMaterial>\n")
+   #materials
+   if self.exp_materials:
+     for o in scene_materials:
+       file.write(" <kgmMaterial name='" + o.name + "'>\n")
+       file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
+       file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
+       file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
+       file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
+       file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
+
+       if o.map_color != "":
+         file.write("  <map_color value='" + o.map_color + "'/>\n")
+       if o.map_normal != "":
+         file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
+       if o.map_specular != "":
+         file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
+       if(hasattr(o, 'shader')):
+         file.write("  <Shader value='" + o.shader + "'/>\n")
+       file.write(" </kgmMaterial>\n")
 
   #lights
   for o in lights:
@@ -655,6 +654,7 @@ class kgmExport(bpy.types.Operator):
 
   #kgm_objects
   for a in gobjects:
+   print('kgmObject: ' + a.name)
    if a.gtype == "actor":
     file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "' player='" + a.player + "'>\n")
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
@@ -710,7 +710,7 @@ class kgmExport(bpy.types.Operator):
 def menu_func(self, context):
     self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='PLUGIN')
     #default_path = os.path.splitext(bpy.data.filepath)[0] + ".kgm"
-    self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
+    #self.layout.operator(kgmExport.bl_idname, text="Kgm (.kgm)").filepath = default_path
 
 def menu_func_a(self, context):
     self.layout.operator(kgm_object.bl_idname, text="kgmObject", icon='PLUGIN')
