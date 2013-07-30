@@ -79,7 +79,7 @@
    19 21 22
   </Faces>
  </kgmMesh>
- <kgmActor name='Ren' type='RenTao' player='on' >
+ <kgmActor name='Ren' object='RenTao' player='on' >
   <Position value='5.0 5.0 0.0'/>
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='idle'/>

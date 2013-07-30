@@ -692,7 +692,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       {
         type = TypeActor;
         kgmString s, sgrp;
-        xml.attribute("type", s);
+        xml.attribute("object", s);
         xml.attribute("group", sgrp);
         obj = act = gSpawn(s);
 
@@ -716,7 +716,8 @@ bool kgmGameBase::loadXml(kgmString& path)
           gAppend(act);
           act->release();
 #ifdef TEST
-          m_render->add(act->getBody());
+          if(act && act->getBody())
+            m_render->add(act->getBody());
 #endif
         }
       }
@@ -725,7 +726,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeGameObject;
         kgmString s, sgrp;
 
-        xml.attribute("type", s);
+        xml.attribute("object", s);
         xml.attribute("group", sgrp);
         obj = gob = gObject(s);
 
@@ -735,7 +736,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         gAppend(gob);
         gob->release();
 #ifdef TEST
-          m_render->add(act->getBody());
+        if(gob && gob->getBody())
+          m_render->add(gob->getBody());
 #endif
       }
       else if(id == "Vertices")

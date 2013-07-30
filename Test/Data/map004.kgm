@@ -1,14 +1,35 @@
 <?xml version='1.0'?>
 <kgm>
- <kgmLight name='Lamp'>
-  <Type value='Point'/>
-  <Color value='1.0 1.0 1.0'/>
-  <Position value='4.076245307922363 1.0054539442062378 5.903861999511719'/>
-  <Rotation value='0.6503279805183411 0.055217109620571136 1.8663908243179321'/>
-  <Intensity value='1.0'/>
-  <Shadows value='Yes'/>
- </kgmLight>
- <kgmActor name='main_spacer' type='KSpacer' player='on' group='0' >
+ <kgmActor name='kgmObject.002' object='ASp_SpacershipA' parent='None' player='off'>
+  <Position value='5.486207008361816 -2.7408320903778076 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+  <State value='None'/>
+ </kgmActor>
+ <kgmActor name='kgmObject.001' object='ASp_SpacershipA' parent='None' player='off'>
+  <Position value='-6.305732727050781 0.9484868049621582 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+  <State value='None'/>
+ </kgmActor>
+ <kgmActor name='Spacer.002' object='KSpacerA' parent='None' player='off'>
+  <Position value='-2.998363494873047 -3.045818328857422 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+  <State value='idle'/>
+ </kgmActor>
+ <kgmActor name='Spacer.000' object='KSpacerA' parent='None' player='off'>
+  <Position value='2.5309696197509766 -6.05759334564209 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+  <State value='idle'/>
+ </kgmActor>
+ <kgmGameObject name='kgmObject' object='SpawnAsteroid' parent='None'>
+  <Position value='5.393172740936279 5.105494976043701 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmGameObject>
+ <kgmActor name='Spacer.001' object='KSpacerA' parent='None' player='off'>
+  <Position value='-6.994217872619629 -7.000044345855713 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+  <State value='idle'/>
+ </kgmActor>
+ <kgmActor name='Player' object='KSpacer' parent='None' player='on'>
   <Position value='0.0 0.0 0.0'/>
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='idle'/>

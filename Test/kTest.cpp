@@ -283,18 +283,6 @@ public:
     {
       return new ASpacer(this);
     }
-    else if(t == "KSpacerA")
-    {
-      return new ASpacer(this);
-    }
-    else if(t == "KSpacerB")
-    {
-      return new ASpacer(this);
-    }
-    else if(t == "KSpacerC")
-    {
-      return new ASpacer(this);
-    }
     else if(t == "MotorA")
     {
       return new ASp_MotorA(this);
@@ -312,7 +300,7 @@ public:
     {
       return new ASp_GunFA(this);
     }
-    else if(t == "ASp_SpacerA")
+    else if(t == "ASp_SpacerA" || t == "KSpacerA")
     {
       return new ASp_SpacerA(this);
     }
