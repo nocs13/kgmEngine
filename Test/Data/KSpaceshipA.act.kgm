@@ -25,7 +25,7 @@
    <Sound value="uloop" />
   </State>
 
-  <State id="die" priority="11" time="-1" type="die" switch='died'>
+  <State id="die" priority="11" time="-1" type="die">
    <Sound value="uloop" />
   </State>
  </kgmActor>

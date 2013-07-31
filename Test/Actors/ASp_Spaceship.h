@@ -34,6 +34,7 @@ public:
       kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
 
       ((kgmActor*)go)->setGroup(getGroup());
+      ((kgmActor*)go)->setState("idle");
     }
 
     setState("idle");

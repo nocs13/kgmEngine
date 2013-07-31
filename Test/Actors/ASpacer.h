@@ -116,14 +116,17 @@ public:
       ts = ts + " ";
     }
 
-    vec3 pos = getBody()->position();
+    if(getBody())
+    {
+      vec3 pos = getBody()->position();
 
-    if(pos.x < -5000) pos.x =  5000;
-    if(pos.x >  5000) pos.x = -5000;
-    if(pos.y < -5000) pos.y =  5000;
-    if(pos.x >  5000) pos.y = -5000;
+      if(pos.x < -5000) pos.x =  5000;
+      if(pos.x >  5000) pos.x = -5000;
+      if(pos.y < -5000) pos.y =  5000;
+      if(pos.x >  5000) pos.y = -5000;
 
-    getBody()->translate(pos);
+      getBody()->translate(pos);
+    }
 
     if(m_state)
     {

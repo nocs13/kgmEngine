@@ -39,6 +39,7 @@ public:
   virtual void         exit(){}
   virtual void         init(){}
   virtual void         update(u32 mls);
+  virtual void         event(kgmObject*, kgmString){ }
   virtual kgmBody*     getBody(){   return m_body;   }
   virtual kgmVisual*   getVisual(){ return m_visual; }
 

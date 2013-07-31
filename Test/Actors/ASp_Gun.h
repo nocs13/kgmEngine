@@ -88,7 +88,8 @@ public:
       }
 
       if((m_health < 1 && m_state->id != "dying")
-         || (m_parent && !kgmObject::isValid(m_parent)))
+      || (m_parent && !kgmObject::isValid(m_parent))
+      || (m_parent && ((kgmActor*)m_parent)->getState() == "die"))
       {
         setState("dying", true);
 

@@ -152,7 +152,8 @@ public:
     }
   }
 
-  bool setState(kgmString s, bool force = false);
+  bool      setState(kgmString s, bool force = false);
+  kgmString getState(){ if(m_state) return m_state->id; }
 
   // options
   void setOption(kgmString key, kgmString value)
