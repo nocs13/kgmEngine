@@ -19,7 +19,7 @@ kgmActor::kgmActor()
   m_dvisual.identity();
   m_dvisual.rotate(-0.5f * PI, tv);
 
-  m_health = 1.0f;
+  m_health = 10;
 
   m_animation = null;
   m_skeleton  = null;

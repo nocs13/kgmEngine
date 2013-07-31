@@ -35,6 +35,8 @@ public:
 
       ((kgmActor*)go)->setGroup(getGroup());
     }
+
+    setState("idle");
   }
 
   void exit()

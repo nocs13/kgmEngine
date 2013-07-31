@@ -144,12 +144,6 @@ public:
         }
 
         os->remove();
-
-        if(os->getBody())
-          os->getBody()->remove();
-
-        if(os->getVisual())
-          os->getVisual()->remove();
       }
     }
   }

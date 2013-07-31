@@ -24,6 +24,7 @@ public:
     explode = false;
     m_health = 10;
     setId("Gun");
+    setGroup(1);
 
     shoot_distance = 30.0;
     shoot          = false;
