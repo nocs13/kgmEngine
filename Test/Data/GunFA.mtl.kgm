@@ -1,0 +1,14 @@
+<?xml version='1.0'?>
+<kgm>
+ <kgmMaterial name='GunFA'>
+  <Color value='0.6000000238418579 0.20056040585041046 0.4184894859790802'/>
+  <Emmision value='1.0 1.0 1.0'/>
+  <Specular value='0.5 0.5 0.5'/>
+  <Shininess value='1.0'/>
+  <Alpha value='1.0'/>
+  <map_color value='GunFA.col.tga'/>
+
+  <Shader value="light"/>
+ </kgmMaterial>
+</kgm>
+
