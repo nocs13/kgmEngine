@@ -17,6 +17,8 @@ kgmParticles::kgmParticles()
   m_depth = false;
   m_loop  = true;
 
+  volume    = vec3(0, 0, 0);
+  location  = vec3(0, 0, 0);
   direction = vec3(0.0f, 0.0f, 1.0f);
 
   div_life  = 0.0f;
@@ -58,12 +60,12 @@ void kgmParticles::init(Particle* pr)
     return;
 
   pr->pos = location;
-  pr->pos.x += 0.01f * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->pos.y += 0.01f * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->pos.z += 0.01f * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->dir.x = 0.01f * pow(-1.0, rand()%2) * direction.x * (rand() % 100);
-  pr->dir.y = 0.01f * pow(-1.0, rand()%2) * direction.y * (rand() % 100);
-  pr->dir.z = 0.01f * pow( 1.0, rand()%2) * direction.z * (rand() % 100);
+  pr->pos.x += volume.x * pow(-1.0, rand()%2) * (rand() % 100);
+  pr->pos.y += volume.x * pow(-1.0, rand()%2) * (rand() % 100);
+  pr->pos.z += volume.x * pow(-1.0, rand()%2) * (rand() % 100);
+  pr->dir.x  = direction.x * pow(-1.0, rand()%2) * (rand() % 100);
+  pr->dir.y  = direction.y * pow(-1.0, rand()%2) * (rand() % 100);
+  pr->dir.z  = direction.z * pow( 1.0, rand()%2) * (rand() % 100);
   pr->dir.normalize();
 
   pr->speed = m_speed - div_speed * m_speed / (1 + rand() % 100);

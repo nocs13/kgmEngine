@@ -9,7 +9,6 @@ class ASp_Gui: public kgmGui
   {
     kgmIGame* game;
 
-    kgmGui* gui_midlground;
     kgmGui* gui_foreground;
 
     kgmActor* actor;
@@ -18,14 +17,12 @@ class ASp_Gui: public kgmGui
     {
       game = g;
 
-      gui_midlground = new kgmGui();
       gui_foreground = new kgmGui();
-
-      gui_midlground->setParent(this);
       gui_foreground->setParent(this);
-
-      gui_midlground->setRect(0, 0, 200, 10);
       gui_foreground->setRect(0, 0, 200, 10);
+      gui_foreground->setColor(0xff0000bb);
+      gui_foreground->useStyle(false);
+      gui_foreground->show();
 
       setText("main health");
       setRect(0, 0, 200, 10);
@@ -36,10 +33,8 @@ class ASp_Gui: public kgmGui
 
     ~GuiHealth()
     {
-      delChild(gui_midlground);
       delChild(gui_foreground);
 
-      gui_midlground->release();
       gui_foreground->release();
     }
 
@@ -50,7 +45,10 @@ class ASp_Gui: public kgmGui
 
     void update()
     {
-
+      if(actor && kgmObject::isValid(actor))
+      {
+        gui_foreground->setRect(0, 0, 2 * actor->m_health, 10);
+      }
     }
   };
 
@@ -70,7 +68,7 @@ class ASp_Gui: public kgmGui
     {
       game     = g;
       setText("main map");
-      setRect(0, 100, 300, 300);
+      setRect(0, 20, 200, 200);
       show();
     }
 
@@ -127,7 +125,7 @@ class ASp_Gui: public kgmGui
           u32  x = pos.x / 35;
           u32  y = pos.y / 35;
 
-          (*i).gui->setRect(150 + x, 150 - y, 5, 5);
+          (*i).gui->setRect(100 + x, 100 - y, 4, 4);
         }
       }
     }
@@ -170,7 +168,7 @@ public:
 
   void set(kgmActor* a)
   {
-
+    gui_health->set(a);
   }
 
   void update()

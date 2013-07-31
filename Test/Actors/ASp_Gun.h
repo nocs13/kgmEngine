@@ -43,6 +43,14 @@ public:
     setState("idle");
   }
 
+  void event(kgmObject* o, kgmString arg)
+  {
+    if(arg == "die" && o == m_parent)
+    {
+      setState("dying");
+    }
+  }
+
   void update(u32 ms)
   {
     kgmActor::update(ms);

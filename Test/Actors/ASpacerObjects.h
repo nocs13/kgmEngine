@@ -433,7 +433,8 @@ protected:
   kgmMaterial*  material;
 
 public:
-  ASp_Explode(kgmIGame* g, kgmString tid = "fire_a.tga")
+  ASp_Explode(kgmIGame* g, vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(0, 0, 0),
+              kgmString tid = "fire_a.tga")
   {
     timeout(3000);
 
@@ -449,6 +450,7 @@ public:
     material->m_tex_color    = g->getResources()->getTexture(tid);
 
     particles->direction = vec3(1, 1, 0.4);
+    particles->volume  = vol;
     particles->m_speed = 2.0;
     particles->m_count = 30;
     particles->m_life  = 3000;
@@ -457,6 +459,8 @@ public:
     particles->build();
     particles->set(material);
     m_visual->set(particles);
+
+    setPosition(pos);
   }
 
   virtual ~ASp_Explode()
@@ -473,10 +477,9 @@ class ASp_ExplodeA: public ASp_Explode
 {
   KGM_OBJECT(ASp_ExplodeA);
 public:
-  ASp_ExplodeA(kgmIGame* g, vec3 pos)
-    :ASp_Explode(g)
+  ASp_ExplodeA(kgmIGame* g, vec3 pos, vec3 vol = vec3(0, 0, 0))
+    :ASp_Explode(g, pos, vol)
   {
-    setPosition(pos);
   }
 };
 
@@ -484,13 +487,12 @@ class ASp_ExplodeB: public ASp_Explode
 {
   KGM_OBJECT(ASp_ExplodeB);
 public:
-  ASp_ExplodeB(kgmIGame* g, vec3 pos)
-    :ASp_Explode(g)
+  ASp_ExplodeB(kgmIGame* g, vec3 pos, vec3 vol = vec3(0, 0, 0))
+    :ASp_Explode(g, pos, vol)
   {
     material->m_tex_color  = g->getResources()->getTexture("smoke_a.tga");
     particles->m_count     = 10;
     particles->build();
-    setPosition(pos);
   }
 };
 

@@ -44,6 +44,7 @@ public:
 
   color      m_color;
 
+  vec3       volume;
   vec3       location;
   vec3       direction;
 
