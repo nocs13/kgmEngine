@@ -97,7 +97,7 @@ public:
         kgmDummy*       dm = m_dummies[i];
         kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
 
-        if(go && go->getVisual())
+        if(go && kgmObject::isValid(go) && go->getVisual())
         {
           mtx4 m;
           vec3 v = dm->m_shift;
@@ -252,8 +252,15 @@ public:
       if(m_health < 1 && m_state->id != "dying")
       {
         setState("dying", true);
-
         m_visual->disable();
+
+        for(int i = 0; i < m_dummies.size(); i++)
+        {
+          kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
+
+          if(kgmObject::isValid(go))
+            go->event(this, "die");
+        }
       }
     }
 

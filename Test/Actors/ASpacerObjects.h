@@ -120,6 +120,14 @@ public:
   {
     //kgmGameObject::update(mls);
   }
+
+  void event(kgmObject* o, kgmString arg)
+  {
+    if(arg == "die" && o == m_parent)
+    {
+      remove();
+    }
+  }
 };
 
 class ASp_Laser: public kgmGameObject
@@ -344,7 +352,7 @@ public:
     material->m_tex_color    = g->getResources()->getTexture("fire_a.tga");
 
     particles->m_count   = 10;
-    particles->m_speed   = 1.0;
+    particles->m_speed   = .0000001;
     particles->div_speed = 1.0;
     particles->m_life    = 2000;
     particles->div_life  = 1.0;
@@ -395,9 +403,10 @@ public:
     material->m_shader       = kgmMaterial::ShaderNone;
     material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
 
-    particles->m_speed = 1.0;
+    particles->m_speed = .01;
     particles->m_count = 10;
     particles->m_life  = 5000;
+    particles->div_speed = .5;
     particles->build();
     particles->set(material);
     m_visual->set(particles);
@@ -450,8 +459,8 @@ public:
     material->m_tex_color    = g->getResources()->getTexture(tid);
 
     particles->direction = vec3(1, 1, 0.4);
-    particles->volume  = vol;
-    particles->m_speed = 2.0;
+    particles->volume    = vol;
+    particles->m_speed = .01;
     particles->m_count = 30;
     particles->m_life  = 3000;
     particles->m_loop  = false;
