@@ -20,7 +20,7 @@ void kgmObject::operator delete(void* p){
  {
    if((kgmObject*)p == (*i))
    {
-     g_objects.erase(i);
+     i = g_objects.erase(i);
 
      break;
    }
@@ -45,7 +45,7 @@ int kgmObject::objectCount()
 bool kgmObject::isValid(kgmObject* o)
 {
   for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
-   if(o == *i)
+   if(o == (*i))
      return true;
 
   return false;

@@ -32,7 +32,7 @@ public:
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
-//  bool isvalid(kgmGameObject*);
+  bool isValid(kgmGameObject*);
 
   virtual void prepare();
   virtual void input(int, int);
