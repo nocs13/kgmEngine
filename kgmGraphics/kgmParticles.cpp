@@ -12,9 +12,6 @@ kgmParticles::kgmParticles()
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
-  m_alpha = false;
-  m_blend = true;
-  m_depth = false;
   m_loop  = true;
 
   volume    = vec3(0, 0, 0);
@@ -67,6 +64,9 @@ void kgmParticles::init(Particle* pr)
   pr->dir.z = direction.z * pow( 1.0, rand()%2) * (rand() % 100);
   pr->dir.normalize();
 
+  int s = m_speed / (1 + rand() % 10);
+  int l = m_life  / (1 + rand() % 10);
+
   pr->speed = m_speed - div_speed * m_speed / (1 + rand() % 100);
   pr->life  = m_life  - div_life  * m_life  / (1 + rand() % 100);
   pr->time  = 0;
@@ -89,6 +89,7 @@ void kgmParticles::update(u32 t)
     if(st_size != en_size)
     {
       float d_size = (st_size - en_size) / pr->life;
+
       pr->scale = st_size - (d_size * pr->time);
     }
 
@@ -96,22 +97,12 @@ void kgmParticles::update(u32 t)
     {
       uchar a = (uchar)(255.0 - 255.0 * pr->time / pr->life);
 
-      if(m_alpha)
-      {
-        pr->col.a = a;
-      }
-      else
-      {
-        pr->col.r = pr->col.g = pr->col.b = a;
-      }
+      pr->col.r = pr->col.g = pr->col.b = pr->col.a = a;
     }
 
-    if(pr->time > pr->life)
+    if(m_loop && (pr->time > pr->life))
     {
-      if(m_loop)
-      {
         init(pr);
-      }
     }
   }
 }

@@ -35,9 +35,6 @@ public:
   bool       m_loop;
   bool       m_fade;
   bool       m_fall;
-  bool       m_alpha;
-  bool       m_blend;
-  bool       m_depth;
 
   float      m_speed;
   float      m_life;

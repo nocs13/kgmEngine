@@ -459,11 +459,13 @@ public:
 
     particles->direction = vec3(1, 1, 0.4);
     particles->volume    = vol;
-    particles->m_speed = .0000001;
+    particles->m_speed = .01;
     particles->m_count = 30;
-    particles->m_life  = 3000;
+    particles->m_life  = 2000;
     particles->m_loop  = false;
     particles->en_size = 2.0;
+    particles->div_life = 1.0;
+
     particles->build();
     particles->set(material);
     m_visual->set(particles);

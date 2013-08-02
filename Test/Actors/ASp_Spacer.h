@@ -68,7 +68,8 @@ public:
         kgmDummy*       dm = m_dummies[i];
         kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
 
-        if(go && kgmObject::isValid(go) && go->getVisual())
+        if(go && kgmObject::isValid(go) && go->isType(kgmGameObject::Class)
+           && go->getVisual())
         {
           mtx4 m;
           vec3 v = dm->m_shift;
@@ -79,9 +80,6 @@ public:
           go->getVisual()->m_transform = m * m_visual->m_transform;
         }
       }
-
-      kgmString ts = "ASp_Spacer state: ";
-      kgmString hl = kgmConvert::toString((s32)m_health);
     }
 
     if(getBody())
@@ -206,7 +204,7 @@ public:
         {
           kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
 
-          if(kgmObject::isValid(go))
+          if(kgmObject::isValid(go) && go->isType(kgmGameObject::Class))
             go->event(this, "die");
         }
       }
@@ -409,11 +407,10 @@ public:
     vec3  pos = m_body->m_position;
     vec3  dim;  bnd.dimension(dim);
 
-    kgmGameObject* go1 = new ASp_ExplodeA(game, pos, dim);
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos, vec3(0.03,0.03,0.03));
 
 
     go1->setId("explode1");
-    go1->setGroup(getGroup());
 
     game->gAppend(go1);
 
