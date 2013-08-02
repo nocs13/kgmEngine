@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ASP_GUI_H
 #define ASP_GUI_H
 
@@ -95,8 +96,10 @@ class ASp_Gui: public kgmGui
 
       if(a->m_gameplayer)
         ga.gui->setColor(0xffffffff);
-      else
+      else if(!strcmp("ASp_SpaceshipA", a->runtime().nClass))
         ga.gui->setColor(0xff0000ff);
+      else if(!strcmp("ASp_SpacerA", a->runtime().nClass))
+        ga.gui->setColor(0xff4169ff);
 
       ga.gui->show();
       gui_actors.add(ga);

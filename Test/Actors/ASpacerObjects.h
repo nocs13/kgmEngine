@@ -54,7 +54,7 @@ public:
       kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
       mtx4 m, msc;
 
-      msc.scale(50, 50, 50);
+      msc.scale(80, 80, 80);
       m.translate(cam.mPos);
       m_visual->m_transform = msc * m;
     }
@@ -442,8 +442,7 @@ protected:
   kgmMaterial*  material;
 
 public:
-  ASp_Explode(kgmIGame* g, vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(0, 0, 0),
-              kgmString tid = "fire_a.tga")
+  ASp_Explode(kgmIGame* g, vec3 pos, vec3 vol, kgmString tid = "fire_a.tga")
   {
     timeout(3000);
 
@@ -460,7 +459,7 @@ public:
 
     particles->direction = vec3(1, 1, 0.4);
     particles->volume    = vol;
-    particles->m_speed = .01;
+    particles->m_speed = .0000001;
     particles->m_count = 30;
     particles->m_life  = 3000;
     particles->m_loop  = false;
@@ -486,7 +485,7 @@ class ASp_ExplodeA: public ASp_Explode
 {
   KGM_OBJECT(ASp_ExplodeA);
 public:
-  ASp_ExplodeA(kgmIGame* g, vec3 pos, vec3 vol = vec3(0, 0, 0))
+  ASp_ExplodeA(kgmIGame* g, vec3 pos, vec3 vol)
     :ASp_Explode(g, pos, vol)
   {
   }
@@ -496,7 +495,7 @@ class ASp_ExplodeB: public ASp_Explode
 {
   KGM_OBJECT(ASp_ExplodeB);
 public:
-  ASp_ExplodeB(kgmIGame* g, vec3 pos, vec3 vol = vec3(0, 0, 0))
+  ASp_ExplodeB(kgmIGame* g, vec3 pos, vec3 vol)
     :ASp_Explode(g, pos, vol)
   {
     material->m_tex_color  = g->getResources()->getTexture("smoke_a.tga");

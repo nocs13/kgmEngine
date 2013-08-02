@@ -231,9 +231,11 @@ public:
     if(explode)
       return;
 
-    vec3      pos = m_body->m_position;
+    box3  bnd = m_body->m_bound;
+    vec3  pos = m_body->m_position;
+    vec3  dim;  bnd.dimension(dim);
 
-    kgmGameObject* go1 = new ASp_ExplodeA(game, pos);
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos, dim);
 
     go1->setId("explode1");
     game->gAppend(go1);

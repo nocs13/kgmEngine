@@ -132,7 +132,7 @@ public:
       if(os->getGroup() != od->getGroup())
       {
         kgmString t = kgmString("Logic: ") + os->getId() + kgmString(" ") + od->getId();
-        vtext->m_text->m_text = t;
+        //vtext->m_text->m_text = t;
 
         ASp_Laser* laser = (ASp_Laser*)os;
 

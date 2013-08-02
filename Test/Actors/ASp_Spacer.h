@@ -20,8 +20,6 @@ protected:
 
   kgmGameObject*  target;
 
-  kgmVisual* vtext;
-
 public:
   ASp_Spacer(kgmIGame* g)
   {
@@ -41,23 +39,11 @@ public:
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
     m_body->m_bound.max = vec3( 1,  1,  1);
-
-    target = null;
-    vtext = new kgmVisual();
-
-    kgmText* text = new kgmText();
-    text->m_rect  = uRect(10, 150, 500, 200);
-
-    vtext->set(text);
-    ((kgmGameBase*)game)->m_render->add(vtext);
-    text->release();
-
     setGroup(1);
   }
 
   virtual ~ASp_Spacer()
   {
-    vtext->release();
   }
 
   void update(u32 ms)
@@ -96,12 +82,6 @@ public:
 
       kgmString ts = "ASp_Spacer state: ";
       kgmString hl = kgmConvert::toString((s32)m_health);
-
-      //if(m_state)
-      //  vtext->getText()->m_text = ts + hl + m_state->id;
-      //else
-      //  vtext->getText()->m_text = ts;
-      vtext->getText()->m_text = ts + hl;
     }
 
     if(getBody())
@@ -215,7 +195,6 @@ public:
         remove();
         m_body->remove();
         m_visual->remove();
-        vtext->remove();
       }
 
       if(m_health < 1 && m_state->id != "dying")

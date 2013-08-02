@@ -52,7 +52,7 @@ kGui::kGui(kgmGameBase* game)
   kgmGuiList* lst = new kgmGuiList(gui, w / 2, 10, w / 2 - 2, h - 100);
   lst->m_itemHeight = 40;
   lst->setSid("levels");
-  lst->addItem("level01.kgm");
+  lst->addItem("map000.kgm");
   lst->addItem("map001.kgm");
   lst->addItem("map002.kgm");
   lst->addItem("map003.kgm");
