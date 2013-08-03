@@ -352,7 +352,7 @@ public:
     material->m_tex_color    = g->getResources()->getTexture("fire_a.tga");
 
     particles->m_count   = 10;
-    particles->m_speed   = .0000001;
+    particles->m_speed   = 1.1;
     particles->div_speed = 1.0;
     particles->m_life    = 2000;
     particles->div_life  = 1.0;

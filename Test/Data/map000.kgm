@@ -41,4 +41,8 @@
   <State value='idle'/>
   <Group value='0'/>
  </kgmActor>
+ <kgmGameObject name='Flame' object='KFlameA' parent='None'>
+  <Position value='0.0 0.0 0.0'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmGameObject>
 </kgm>

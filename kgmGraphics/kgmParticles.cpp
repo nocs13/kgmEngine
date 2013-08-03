@@ -67,11 +67,12 @@ void kgmParticles::init(Particle* pr)
   int s = m_speed / (1 + rand() % 10);
   int l = m_life  / (1 + rand() % 10);
 
-  pr->speed = m_speed - div_speed * m_speed / (1 + rand() % 100);
-  pr->life  = m_life  - div_life  * m_life  / (1 + rand() % 100);
+  pr->speed = m_speed - div_speed * s;//m_speed / (1 + rand() % 99);
+  pr->life  = m_life  - div_life  * l;//m_life  / (1 + rand() % 99);
   pr->time  = 0;
   pr->col   = m_color;
   pr->scale = st_size;
+  pr->mass = 0;
 }
 
 void kgmParticles::update(u32 t)

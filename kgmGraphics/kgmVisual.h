@@ -351,7 +351,9 @@ public:
 
   void update()
   {
-    if(kgmTime::getTicks() - m_last_update < 50)
+    u32 dtick = kgmTime::getTicks() - m_last_update;
+
+    if(dtick < 50)
       return;
 
     switch(m_typerender)
@@ -362,7 +364,7 @@ public:
     case RenderParticles:
       if(m_particles)
       {
-        m_particles->update(50);
+        m_particles->update(dtick);
       }
       break;
     case RenderSprite:
