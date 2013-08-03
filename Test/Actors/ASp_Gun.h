@@ -95,14 +95,9 @@ public:
         remove();
       }
 
-      if((m_health < 1 && m_state->id != "dying")
-      || (m_parent && !kgmObject::isValid(m_parent))
-      || (m_parent && ((kgmActor*)m_parent)->getState() == "die"))
+      if(m_health < 1 && m_state->id != "dying")
       {
         setState("dying", true);
-
-        m_visual->disable();
-        m_body->disable();
       }
 
       logic(m_state->id);
@@ -242,6 +237,8 @@ public:
 
     go1->release();
     explode = true;
+
+    remove();
   }
 };
 

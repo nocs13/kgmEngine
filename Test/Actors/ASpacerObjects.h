@@ -459,8 +459,8 @@ public:
 
     particles->direction = vec3(1, 1, 0.4);
     particles->volume    = vol;
-    particles->m_speed = .01;
-    particles->m_count = 30;
+    particles->m_speed = .1;
+    particles->m_count = 10;
     particles->m_life  = 2000;
     particles->m_loop  = false;
     particles->en_size = 2.0;

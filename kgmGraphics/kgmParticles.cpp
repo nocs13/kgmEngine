@@ -56,16 +56,17 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  pr->pos.x = volume.x * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->pos.y = volume.y * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->pos.z = volume.z * pow(-1.0, rand()%2) * (rand() % 100);
+  float s = m_speed / (1 + rand() % 10);
+  float l = m_life  / (1 + rand() % 10);
+  float m = pow(-1.0, rand()%2) / (1 + rand() % 100);
+
+  pr->pos.x = volume.x * pow(-1.0, rand()%2) / (1 + rand() % 100);
+  pr->pos.y = volume.y * pow(-1.0, rand()%2) / (1 + rand() % 100);
+  pr->pos.z = volume.z * pow(-1.0, rand()%2) / (1 + rand() % 100);
   pr->dir.x = direction.x * pow(-1.0, rand()%2) * (rand() % 100);
   pr->dir.y = direction.y * pow(-1.0, rand()%2) * (rand() % 100);
   pr->dir.z = direction.z * pow( 1.0, rand()%2) * (rand() % 100);
   pr->dir.normalize();
-
-  int s = m_speed / (1 + rand() % 10);
-  int l = m_life  / (1 + rand() % 10);
 
   pr->speed = m_speed - div_speed * s;//m_speed / (1 + rand() % 99);
   pr->life  = m_life  - div_life  * l;//m_life  / (1 + rand() % 99);

@@ -525,7 +525,6 @@ void kgmGameGraphics::render(kgmVisual* visual)
   switch(visual->m_typerender)
   {
   case kgmVisual::RenderNone:
-    //break;
   case kgmVisual::RenderMesh:
   {
     for(int i = 0; i < visual->m_visuals.size(); i++)

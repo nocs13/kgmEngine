@@ -205,7 +205,7 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
     evt.event = evtMsMove;
     msPoint.x = LOWORD(lPar);
     msPoint.y = HIWORD(lPar);
-    ClientToScreen(hWnd, &msPoint);
+    //ClientToScreen(hWnd, &msPoint);
 
     if(wnd->m_msAbs)
     {

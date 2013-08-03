@@ -87,15 +87,6 @@ public:
       if(this->m_health < 1 && m_state->id != "dying")
       {
         setState("dying", true);
-        m_visual->disable();
-
-        for(int i = 0; i < m_dummies.size(); i++)
-        {
-          kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
-
-          if(kgmObject::isValid(go))
-            go->event(this, "die");
-        }
       }
 
       logic(m_state->id);
@@ -115,6 +106,17 @@ public:
     if(explode)
       return;
 
+    for(int i = 0; i < m_dummies.size(); i++)
+    {
+      kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
+
+      if(kgmObject::isValid(go))
+      {
+        go->event(this, "die");
+        m_dummies[i]->m_linked = null;
+      }
+    }
+
     box3  bnd = m_body->m_bound;
     vec3  pos = m_body->m_position;
     vec3  dim;  bnd.dimension(dim);
@@ -127,6 +129,8 @@ public:
 
     go1->release();
     explode = true;
+
+    remove();
   }
 };
 

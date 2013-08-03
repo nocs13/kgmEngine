@@ -205,7 +205,10 @@ public:
           kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
 
           if(kgmObject::isValid(go) && go->isType(kgmGameObject::Class))
+          {
             go->event(this, "die");
+            m_dummies[i]->m_linked = null;
+          }
         }
       }
 
