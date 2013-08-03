@@ -134,8 +134,42 @@ class ASp_Gui: public kgmGui
     }
   };
 
+  class GuiInput: public kgmGui
+  {
+    kgmIGame*  game;
+    kgmGuiButton *btnLeft, *btnRight, *btnUp, *btnShoot;
+
+  public:
+    GuiInput(  kgmIGame*  g)
+    {
+      game = g;
+      setRect(200, 200, 300, 100);
+
+      btnUp = new kgmGuiButton(this, 0, 0, 300, 40);
+      btnLeft = new kgmGuiButton(this, 0, 40, 100, 60);
+      btnRight = new kgmGuiButton(this, 100, 40, 100, 60);
+      btnShoot = new kgmGuiButton(this, 200, 40, 100, 60);
+
+      show();
+    }
+
+    virtual ~GuiInput()
+    {
+      delChild(btnUp);
+      delChild(btnLeft);
+      delChild(btnRight);
+      delChild(btnShoot);
+
+      btnUp->release();
+      btnLeft->release();
+      btnRight->release();
+      btnShoot->release();
+    }
+  };
+
   kgmIGame*  game;
 
+  GuiInput*  gui_input;
   GuiHealth* gui_health;
   GuiMap*    gui_map;
 
@@ -146,9 +180,11 @@ public:
 
     gui_health = new GuiHealth(g);
     gui_map    = new GuiMap(g);
+    gui_input  = new GuiInput(g);
 
     gui_health->setParent(this);
     gui_map->setParent(this);
+    gui_input->setParent(this);
 
     setText("main gui");
     setRect(0, 0, 1, 1);
@@ -159,9 +195,11 @@ public:
   {
     delChild(gui_health);
     delChild(gui_map);
+    delChild(gui_input);
 
     gui_health->release();
     gui_map->release();
+    gui_input->release();
   }
 
   void add(kgmActor* a)

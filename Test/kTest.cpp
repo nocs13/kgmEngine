@@ -4,6 +4,7 @@
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmGraphics/kgmGuiButton.h"
 
 #include "kGui.h"
 #include "Actors/ATaoRen.h"
