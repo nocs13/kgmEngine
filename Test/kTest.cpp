@@ -1,5 +1,5 @@
-#include "../kgmSystem/kgmApp.h"
 #include "../kgmSystem/kgmSystem.h"
+#include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
 
 #include "../kgmBase/kgmXml.h"
@@ -316,7 +316,7 @@ void  kGame::initLogic()
 }
 
 
-class kApp: public kgmApp{
+class kApp: public kgmGameApp{
 #ifdef ANDROID
 public:
 #endif

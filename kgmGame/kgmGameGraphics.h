@@ -38,16 +38,17 @@ class kgmGameGraphics: public kgmObject
      box3 box;
   };
 
-  struct Light
-  {
-    kgmLight* light;
-  };
-
   struct Camera
   {
     kgmCamera  camera;
     kgmVisual* object;
     float      zdiff, dist;
+  };
+
+  /*
+  struct Light
+  {
+    kgmLight* light;
   };
 
   class Mesh
@@ -99,7 +100,7 @@ class kgmGameGraphics: public kgmObject
     kgmMaterial* material;
     kgmList<Mesh> meshes;
     kgmOctTree<Mesh*> tree;
-  };
+  };*/
 
 public:
   struct Settings
@@ -118,9 +119,10 @@ private:
 
   Camera   m_camera;
 
-  kgmList<Mesh*>        m_meshes;
+  //kgmList<Mesh*>        m_meshes;
+  kgmTab<kgmMesh*, kgmMaterial*> m_meshes;
   kgmList<kgmMaterial*> m_materials;
-  kgmList<Light>        m_lights;
+  kgmList<kgmLight*>    m_lights;
   kgmList<kgmVisual*>   m_visuals;
   kgmList<kgmVisual*>   m_vis_mesh;
   kgmList<kgmVisual*>   m_vis_text;
@@ -166,7 +168,7 @@ public:
   s32  getShaderId(kgmString);
 
 private:
-  void render(Mesh*);
+  //void render(Mesh*);
   void render(kgmGui*);
   void render(kgmMesh*);
   void render(kgmVisual*);
@@ -194,19 +196,23 @@ public:
 
   void add(kgmLight* lgt)
   {
-    if(lgt)
-      lgt->increment();
+    if(!lgt)
+      return;
 
-    Light light;
-    light.light = lgt;
-    m_lights.add(light);
+    lgt->increment();
+    m_lights.add(lgt);
   }
 
-  void add(kgmMesh* mesh, kgmMaterial* material)
+  void add(kgmMesh* mesh, kgmMaterial* mtl)
   {
-    Mesh* m = new Mesh(mesh, material);
+    //Mesh* m = new Mesh(mesh, material);
+    if(!mesh)
+      return;
 
-    m_meshes.add(m);
+    if(mesh) mesh->increment();
+    if(mtl)  mtl->increment();
+
+    m_meshes.add(mesh, mtl);
   }
 
   void add(kgmVisual* a){
@@ -218,6 +224,8 @@ public:
     switch(a->m_typerender)
     {
     case kgmVisual::RenderNone:
+      //a->release();
+      //break;
     case kgmVisual::RenderMesh:
       if(a->m_visuals.size() > 0 && a->m_visuals[0]->getMaterial() &&
          (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
@@ -297,13 +305,16 @@ public:
 
   bool set(kgmMesh* msh, kgmMaterial* mtl)
   {
-    for(int i = 0; i < m_meshes.size(); i++)
+    for(int i = 0; i < m_meshes.length(); i++)
     {
-      kgmMesh* m = m_meshes[i]->m_mesh;
+      kgmMesh* c_msh = null;
+      kgmMaterial* c_mtl = null;
 
-      if(m == msh)
+      m_meshes.get(i, c_msh, c_mtl);
+
+      if(c_msh == msh)
       {
-        m_meshes[i]->m_mtrl = mtl;
+        //m_meshes[i]->m_mtrl = mtl;
 
         return true;
       }
@@ -312,14 +323,24 @@ public:
     return false;
   }
 
-  void setTo(kgmMesh* mesh, kgmMaterial* mtl){
-    if(!mesh || !mtl)
+  void setTo(kgmMesh* mesh, kgmMaterial* mtrl){
+    if(!mesh || !mtrl)
       return;
 
-    for(int i = 0; i < m_meshes.size(); i++){
-      if(mesh == m_meshes[i]->m_mesh){
-        m_meshes[i]->m_mtrl = mtl;
-        break;
+    for(int i = 0; i < m_meshes.length(); i++){
+      kgmMesh* msh = null;
+      kgmMaterial* mtl = null;
+
+      if(m_meshes.get(i, msh, mtl))
+      {
+        if(mesh == msh)
+        {
+          m_meshes[msh] = mtrl;
+          mtrl->increment();
+
+          if(mtl) mtl->release();
+          break;
+        }
       }
     }
   }

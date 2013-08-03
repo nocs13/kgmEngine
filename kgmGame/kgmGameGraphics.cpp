@@ -118,8 +118,16 @@ kgmGameGraphics::~kgmGameGraphics()
 }
 
 void kgmGameGraphics::clear(){
-  for(int i = 0; i < m_meshes.size(); i++)
-    delete m_meshes[i];
+  for(int i = 0; i < m_meshes.length(); i++)
+  {
+    kgmMesh* msh = null;
+    kgmMaterial* mtl = null;
+
+    m_meshes.get(i, msh, mtl);
+
+    if(msh) msh->release();
+    if(mtl) mtl->release();
+  }
   m_meshes.clear();
 
   for(int i = 0; i < m_materials.size(); i++){
@@ -153,7 +161,7 @@ void kgmGameGraphics::clear(){
   m_vis_particles.clear();
 
   for(int i = 0; i < m_lights.size(); i++){
-    m_lights[i].light->release();
+    m_lights[i]->release();
   }
   m_lights.clear();
 
@@ -313,21 +321,33 @@ void kgmGameGraphics::render(){
 
     for(int i = 0; i < m_lights.size(); i++)
     {
-      Light l = m_lights[i];
+      kgmLight* l = m_lights[i];
 
-      if(l.light)
+      if(l)
       {
-        gc->gcSetLight(i, (float*)&l.light->position, l.light->intensity);
-        g_vec_light = vec4(l.light->position.x, l.light->position.y,
-                           l.light->position.z, l.light->intensity);
+        gc->gcSetLight(i, (float*)&l->position, l->intensity);
+        g_vec_light = vec4(l->position.x, l->position.y,
+                           l->position.z, l->intensity);
       }
     }
   }
 
   //render 3D
-  for(int i = 0; i < m_meshes.size(); i++)
+  for(int i = 0; i < m_meshes.length(); i++)
   {
-    render(m_meshes[i]);
+    kgmMesh* msh = null;
+    kgmMaterial* mtl = null;
+
+    if(m_meshes.get(i, msh, mtl))
+    {
+      if(mtl)
+        render(mtl);
+
+      if(msh)
+        render(msh);
+
+      render((kgmMaterial*)null);
+    }
   }
 
   for(int i = vis_mesh.size(); i > 0;  i--)
@@ -466,7 +486,7 @@ void kgmGameGraphics::render(){
   vis_mesh.clear();
 }
 
-void kgmGameGraphics::render(Mesh *m){
+/*void kgmGameGraphics::render(Mesh *m){
   if(!m)
     return;
 
@@ -486,7 +506,7 @@ void kgmGameGraphics::render(Mesh *m){
     render((kgmShader*)null);
     render((kgmMaterial*)null);
   }
-}
+}*/
 
 void kgmGameGraphics::render(kgmVisual* visual)
 {
@@ -505,6 +525,7 @@ void kgmGameGraphics::render(kgmVisual* visual)
   switch(visual->m_typerender)
   {
   case kgmVisual::RenderNone:
+    //break;
   case kgmVisual::RenderMesh:
   {
     for(int i = 0; i < visual->m_visuals.size(); i++)
