@@ -19,8 +19,17 @@
 class kgmMesh: public kgmResource{
   KGM_OBJECT(kgmMesh);
 public:
+  enum RenderType
+  {
+    RT_TRIANGLE,
+    RT_POINT,
+    RT_LINE
+  };
+
   enum FVF{
     FVF_P,        // = (gcv_xyz) ,
+    FVF_P_C,        // = (gcv_xyz|gcv_col) ,
+    FVF_P_N,        // = (gcv_xyz|gcv_nor) ,
     FVF_P_T,        // = (gcv_xyz|gcv_uv0) ,
     FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
@@ -36,6 +45,10 @@ public:
 
   struct Vertex{
     vec3 pos;
+  };
+
+  struct Vertex_P_C: public Vertex{
+    u32 col;
   };
 
   struct Vertex_P_T: public Vertex{
@@ -96,6 +109,8 @@ public:
   };
 
 public:
+  RenderType m_rtype;
+
   Vertex* m_vertices; //vertex buffer
   u32     m_vcount;   //vertex count
   Face*   m_faces;    //face buffer

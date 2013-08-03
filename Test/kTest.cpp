@@ -36,6 +36,7 @@ KGMOBJECT_IMPLEMENT(ASp_SmokeA, ASp_Smoke);
 KGMOBJECT_IMPLEMENT(ASp_Explode, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_ExplodeA, ASp_Explode);
 KGMOBJECT_IMPLEMENT(ASp_ExplodeB, ASp_Explode);
+KGMOBJECT_IMPLEMENT(ASp_ExplodeC, ASp_Explode);
 KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);

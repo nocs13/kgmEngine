@@ -122,12 +122,16 @@ public:
     vec3  dim;  bnd.dimension(dim);
 
     kgmGameObject* go1 = new ASp_ExplodeA(game, pos, dim);
+    kgmGameObject* go2 = new ASp_ExplodeC(game, pos, dim);
 
     go1->setId("explode1");
+    go2->setId("explode2");
 
     game->gAppend(go1);
+    game->gAppend(go2);
 
     go1->release();
+    go2->release();
     explode = true;
 
     remove();

@@ -54,8 +54,9 @@ public:
   {
     if(m_gameplayer)
     {
-      //ASp_Skybox* sb = new ASp_Skybox(game);
-      //game->gAppend(sb);
+      ASp_Skybox* sb = new ASp_Skybox(game);
+      game->gAppend(sb);
+      sb->release();
 
       setGroup(0);
       gui->set(this);

@@ -44,7 +44,7 @@ public:
     mtx4*         transform;
     bool          skin;
 
-    kgmMesh::Vertex* vertices;
+    kgmMesh::Vertex*     vertices;
   public:
 
     Visual()
@@ -128,6 +128,10 @@ public:
     u32 getFff()
     {
       return mesh->fff();
+    }
+    kgmMesh::RenderType getRenderType()
+    {
+      return mesh->m_rtype;
     }
   };
 

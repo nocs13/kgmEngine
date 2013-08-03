@@ -305,7 +305,8 @@ void kgmGameGraphics::render(){
 
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
+  gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
+  //gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
 
   //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
@@ -355,7 +356,7 @@ void kgmGameGraphics::render(){
     render(vis_mesh[i - 1]);
   }
 
-  if(lighting)
+  /*if(lighting)
   {
     gc->gcSetParameter(gcpar_lighting, null);
     gc->gcSetLight(-1, null, 0.0);
@@ -369,7 +370,7 @@ void kgmGameGraphics::render(){
     gc->gcSetLight(-9, null, 0.0);
 
     lighting = false;
-  }
+  }*/
 
   for(int i = vis_blend.size(); i > 0;  i--)
   {
@@ -544,7 +545,24 @@ void kgmGameGraphics::render(kgmVisual* visual)
         render((kgmShader*)null);
 
       // /*
-      gc->gcDraw(gcpmt_triangles, v->getFvf(),
+      u32  pmt;
+
+      switch(v->getRenderType())
+      {
+      case kgmMesh::RT_LINE:
+        pmt = gcpmt_lines;
+        break;
+      case kgmMesh::RT_POINT:
+        render((kgmShader*)null);
+        render((kgmMaterial*)null);
+        pmt = gcpmt_points;
+        //pmt = gcpmt_lines;
+        break;
+      default:
+        pmt = gcpmt_triangles;
+      };
+
+      gc->gcDraw(pmt, v->getFvf(),
                  v->getVsize(), v->getVcount(), v->getVertices(),
                  2, 3 * v->getFcount(), v->getFaces());
       // */
@@ -798,11 +816,23 @@ void kgmGameGraphics::render(kgmMesh *m){
   if(!m)
     return;
 
-  if(m){
-    gc->gcDraw(gcpmt_triangles, m->fvf(), m->vsize(),
-               m->vcount(), m->vertices(),
-               2, 3 * m->fcount(), m->faces());
-  }
+  u32  pmt;
+
+  switch(m->m_rtype)
+  {
+  case kgmMesh::RT_LINE:
+    pmt = gcpmt_lines;
+    break;
+  case kgmMesh::RT_POINT:
+    pmt = gcpmt_points;
+    break;
+  default:
+    pmt = gcpmt_triangles;
+  };
+
+  gc->gcDraw(pmt, m->fvf(), m->vsize(),
+             m->vcount(), m->vertices(),
+             2, 3 * m->fcount(), m->faces());
 }
 
 void kgmGameGraphics::render(kgmGui* gui){

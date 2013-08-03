@@ -29,12 +29,28 @@ public:
     mtl->m_type        = "simple";
     mtl->m_shader      = kgmMaterial::ShaderNone;
     mtl->m_2side       = true;
-    mtl->m_tex_color   = game->getResources()->getTexture("sky_1.tga");
+    //mtl->m_tex_color   = game->getResources()->getTexture("sky_1.tga");
 
-    kgmMesh* mesh = game->getResources()->getMesh("skybox_1.kgm");
+    //kgmMesh* mesh = game->getResources()->getMesh("skybox_1.kgm");
+    kgmMesh* mesh = new kgmMesh();
+    mesh->m_rtype = kgmMesh::RT_POINT;
+
+    kgmMesh::Vertex_P_C* pc = mesh->vAlloc(10000, kgmMesh::FVF_P_C);
+
+    for(int i = 0; i < 10000; i++)
+    {
+//      srand (time(NULL));
+      vec3 v(pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand());
+      v.normalize();
+      v = v * 10;
+      v.z *= 0.41;
+
+      pc[i].pos = v;
+      pc[i].col = 0xffffffaa;
+    }
 
     m_visual = new kgmVisual();
-    m_visual->addVisual(mesh, mtl);
+    m_visual->addVisual(mesh, null);
 
     mesh->release();
     mtl->release();
@@ -459,10 +475,11 @@ public:
 
     particles->direction = vec3(1, 1, 0.4);
     particles->volume    = vol;
-    particles->m_speed = .1;
+    particles->m_speed = .9;
     particles->m_count = 10;
     particles->m_life  = 2000;
     particles->m_loop  = false;
+    particles->st_size = .1;
     particles->en_size = 2.0;
     particles->div_life = 1.0;
 
@@ -502,6 +519,24 @@ public:
   {
     material->m_tex_color  = g->getResources()->getTexture("smoke_a.tga");
     particles->m_count     = 10;
+    particles->build();
+  }
+};
+
+class ASp_ExplodeC: public ASp_Explode
+{
+  KGM_OBJECT(ASp_ExplodeC);
+public:
+  ASp_ExplodeC(kgmIGame* g, vec3 pos, vec3 vol)
+    :ASp_Explode(g, pos, vol)
+  {
+    particles->m_fade      = false;
+    particles->m_count     = 50;
+    particles->st_size     = 0.01;
+    particles->en_size     = 0.05;
+    particles->m_speed     = 60.0;
+    particles->div_speed     = .5;
+
     particles->build();
   }
 };
