@@ -22,7 +22,7 @@
   </State>
 
   <State id="dying" priority="10" time="20" type="die" switch="die">
-   <Sound value="uloop" />
+   <Sound value="explosion_b.wav" />
   </State>
 
   <State id="die" priority="11" time="-1" type="die">

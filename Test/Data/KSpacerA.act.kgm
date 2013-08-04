@@ -62,7 +62,7 @@
   </State>
 
   <State id="dying" priority="10" time="20" type="die" switch="die">
-   <Sound value="uloop" />
+   <Sound value="explosion_a.wav" />
   </State>
 
   <State id="die" priority="11" time="-1" type="die" switch='died'>
@@ -70,11 +70,10 @@
   </State>
 
   <State id="laser" priority="1" time="500" type="attack" switch="idle">
-   <Sound value="laser_a.wav.x" />
+   <Sound value="laser_shoot_a.wav" />
   </State>
 
   <State id="rocket" priority="2" time="1" type="attack" switch="idle">
-   <Sound value="laser_a.wav.x" />
   </State>
  </kgmActor>
 </kgm>
