@@ -118,7 +118,7 @@ void kGui::onAction(kgmEvent* e, int a)
     if(res == kgmIGame::State_Play)
     {
       m_guiMain->hide();
-      m_game->m_msAbs = true;
+      //m_game->m_msAbs = true;
     }
   }
   else if(sid == "gameExit")
@@ -132,7 +132,7 @@ void kGui::onAction(kgmEvent* e, int a)
   {
     m_guiPause->hide();
     m_game->gPause(false);
-    m_game->m_msAbs = true;
+    //m_game->m_msAbs = true;
   }
 }
 
