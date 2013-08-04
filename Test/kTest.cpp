@@ -326,7 +326,7 @@ class kApp: public kgmGameApp{
 #ifdef ANDROID
 public:
 #endif
-  kGame*	m_game;
+  kGame* game;
 public:
   kApp(){
   }
@@ -338,10 +338,10 @@ public:
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
-    m_game = new kGame();
-    m_game->setRect(0, 0, w, h);
-    m_game->loop();
-    m_game->release();
+    m_game = game = new kGame();
+    game->setRect(0, 0, w, h);
+    game->loop();
+    game->release();
   }
 };
 
@@ -487,7 +487,20 @@ int main(int argc, char** argv)
 extern "C" jint JNI_OnLoad(JavaVM* vm,void* reserved) {
     return JNI_VERSION_1_6;
 }
+
 /////////////////////////
+kApp*          m_app  = null;
+kgmIGame*      m_game = null;
+AAssetManager* g_assetManager = NULL;
+static JavaVM* jvm;
+
+bool kgm_android_init_app()
+{
+  m_app = new kApp();
+  m_game = m_app->gameApplication()->game();
+
+  return true;
+}
 
 /*class KApp: public kgmApp{
 public:

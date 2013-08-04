@@ -1,7 +1,7 @@
 #ifndef ASPACEROBJECTS_H
 #define ASPACEROBJECTS_H
 
-#include "../kgmGame/kgmGameObject.h"
+//#include "../kgmGame/kgmGameObject.h"
 
 struct ASp_Vertex
 {

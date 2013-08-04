@@ -75,6 +75,11 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv* env, jobject
     LOGI("Game init asset manager\n");
     env->GetJavaVM(&jvm);
 
+    if(!kgm_android_init_app())
+    {
+      return;
+    }
+
     kgmGameApp::gameApplication()->setMainWindow(ANativeWindow_fromSurface(env, surface));
     LOGI("Game init native widnow\n");
 
@@ -156,7 +161,7 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, job
       case 0:
           evt.event = evtMsMove;
 
-          if(kgm_android_msabsolute())
+          if(kgmGameApp::gameApplication()->android_msabsolute())
           {
             evt.msx = x - prev_x;
             evt.msy = y - prev_y;

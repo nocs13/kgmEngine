@@ -7,7 +7,7 @@
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
 
-#include <vector>
+//#include <vector>
 
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
