@@ -153,15 +153,16 @@ public:  //virtuals
   virtual void           guiRemove(kgmGui* g) = 0;
 
   //usefull interfaces
-  virtual kgmIGraphics*  getGraphics() = 0;
-  virtual kgmIPhysics*   getPhysics() = 0;
-  virtual kgmISpawner*   getSpawner() = 0;
-  virtual kgmIAudio*     getAudio() = 0;
-  virtual kgmIVideo*     getVideo() = 0;
-  virtual kgmILogic*     getLogic() = 0;
-  virtual kgmIResources* getResources() = 0;
-  virtual kgmWindow*     getWindow() = 0;
-  virtual kgmSystem*     getSystem() = 0;
+  virtual kgmIGraphics*   getGraphics() = 0;
+  virtual kgmIPhysics*    getPhysics() = 0;
+  virtual kgmISpawner*    getSpawner() = 0;
+  virtual kgmIAudio*      getAudio() = 0;
+  virtual kgmIVideo*      getVideo() = 0;
+  virtual kgmILogic*      getLogic() = 0;
+  virtual kgmIResources*  getResources() = 0;
+  virtual kgmWindow*      getWindow() = 0;
+  virtual kgmSystem*      getSystem() = 0;
+  virtual kgmEnvironment* getEnvironment() = 0;
 
 //protected:
 

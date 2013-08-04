@@ -867,19 +867,28 @@ void kgmGameGraphics::render(kgmGui* gui){
     tClip.w = fw;
     tClip.h = fh;
 
-    switch(((kgmGuiButton*)gui)->getState())
+    if(gui->m_useStyle)
     {
-    case kgmGuiButton::StateFocus:
-      gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
-      break;
-    case kgmGuiButton::StateClick:
-      gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
-      break;
-    case kgmGuiButton::StateNone:
-    default:
-      gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
+      switch(((kgmGuiButton*)gui)->getState())
+      {
+      case kgmGuiButton::StateFocus:
+        gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
+        break;
+      case kgmGuiButton::StateClick:
+        gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
+        break;
+      case kgmGuiButton::StateNone:
+      default:
+        gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
+      }
     }
-    gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, tClip, text);
+    else
+    {
+      gcDrawRect(rect, gui->m_color, gui->m_image);
+    }
+
+    if(text.length() > 0)
+      gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, tClip, text);
   }
   else if(gui->isClass(kgmGuiScroll::Class))
   {
@@ -953,10 +962,10 @@ void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
-  v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 0);
-  v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 1);
-  v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 0);
-  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 1);
+  v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 1);
+  v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 0);
+  v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 1);
+  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 0);
 
   if(tex && tex->m_texture)
     gc->gcSetTexture(0, tex->m_texture);

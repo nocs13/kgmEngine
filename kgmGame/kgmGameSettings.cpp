@@ -6,70 +6,73 @@
 static short g_gsid = 0x0101;
 
 kgmGameSettings::kgmGameSettings(){
- m_gsid = 0xf0f0f0f0;
- m_name = "kgmEngine.conf";
 
- load();
+  m_gsid = 0xf0f0f0f0;
+  m_mouse_camera = true;
+  m_name = "kgmEngine.conf";
+
+  load();
 }
 
 kgmGameSettings::kgmGameSettings(const char* path){
- m_gsid = 0xf0f0f0f0;
+  m_gsid = 0xf0f0f0f0;
+  m_mouse_camera = true;
 
- if(path && strlen(path) < 128)
-   m_name = path;
+  if(path && strlen(path) < 128)
+    m_name = path;
   else
-   m_name = "kgmEngine.conf";
+    m_name = "kgmEngine.conf";
 
- load();
+  load();
 }
 
 kgmGameSettings::~kgmGameSettings(){
- //save();
+  //save();
 }
 
 void kgmGameSettings::load(){
- FILE* file = fopen(m_name.data(), "r");
+  FILE* file = fopen(m_name.data(), "r");
 
- if(!file)
-	 return;
+  if(!file)
+    return;
 
- char* str = new char[2048];
+  char* str = new char[2048];
 
- while(!feof(file))
- {
-   char key[64] = {0};
-   char val[128] = {0};
+  while(!feof(file))
+  {
+    char key[64] = {0};
+    char val[128] = {0};
 
-   fscanf(file, "%s %s", key, val);
+    fscanf(file, "%s %s", key, val);
 
-   if(!strlen(key) || key[0] == '#')
-     continue;
+    if(!strlen(key) || key[0] == '#')
+      continue;
 
-   kgmString s_key(key);
-   kgmString s_val(val);
+    kgmString s_key(key);
+    kgmString s_val(val);
 
-   m_parameters.add(s_key, s_val);
- }
+    m_parameters.add(s_key, s_val);
+  }
 
- fclose(file);
+  fclose(file);
 }
 
 void kgmGameSettings::save(){
- FILE* file = fopen(m_name.data(), "w");
+  FILE* file = fopen(m_name.data(), "w");
 
- if(!file)
-	 return;
+  if(!file)
+    return;
 
- for(int i = 0; i < m_parameters.length(); i++)
- {
-   kgmString key, val;
+  for(int i = 0; i < m_parameters.length(); i++)
+  {
+    kgmString key, val;
 
-   m_parameters.get(i, key, val);
+    m_parameters.get(i, key, val);
 
-   fprintf(file, "%s %s", (char*)key, (char*)val);
- }
+    fprintf(file, "%s %s", (char*)key, (char*)val);
+  }
 
- fclose(file);
+  fclose(file);
 }
 
 kgmString kgmGameSettings::get(char* key)

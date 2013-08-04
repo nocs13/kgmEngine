@@ -136,19 +136,62 @@ class ASp_Gui: public kgmGui
 
   class GuiInput: public kgmGui
   {
+    class Button: public kgmGuiButton
+    {
+    public:
+      Button(kgmGui* p, int x, int y, int w, int h)
+      :kgmGuiButton(p, x, y, w, h)
+      {
+        useStyle(false);
+        setAlpha(true);
+        setColor(0xff00ff00);
+      }
+
+      void onMsLeftUp(int key, int x, int y)
+      {
+        setColor(0xff00ff00);
+        if(m_parent)
+          m_parent->onAction(this, 0);
+      }
+
+      void onMsLeftDown(int key, int x, int y)
+      {
+        setColor(0xff0000ff);
+        if(m_parent)
+          m_parent->onAction(this, 1);
+      }
+    };
+
     kgmIGame*  game;
-    kgmGuiButton *btnLeft, *btnRight, *btnUp, *btnShoot;
+    Button *btnLeft, *btnRight, *btnUp, *btnShoot;
 
   public:
     GuiInput(  kgmIGame*  g)
     {
-      game = g;
-      setRect(200, 200, 300, 100);
+      int cx, cy, cw, ch;
 
-      btnUp = new kgmGuiButton(this, 0, 0, 300, 40);
-      btnLeft = new kgmGuiButton(this, 0, 40, 100, 60);
-      btnRight = new kgmGuiButton(this, 100, 40, 100, 60);
-      btnShoot = new kgmGuiButton(this, 200, 40, 100, 60);
+      game = g;
+
+      game->getWindow()->getRect(cx, cy, cw, ch);
+
+      if(ch > cw)
+      {
+       setRect(cw / 2 - 150, ch - 100, 300, 100);
+      }
+      else
+      {
+        setRect(cw - 300, ch - 100, 300, 100);
+      }
+
+      btnUp = new Button(this, 0, 0, 300, 40);
+      btnLeft = new Button(this, 0, 40, 100, 60);
+      btnShoot = new Button(this, 100, 40, 100, 60);
+      btnRight = new Button(this, 200, 40, 100, 60);
+
+      btnUp->setImage(game->getResources()->getTexture("ui_up.tga"));
+      btnLeft->setImage(game->getResources()->getTexture("ui_left.tga"));
+      btnRight->setImage(game->getResources()->getTexture("ui_right.tga"));
+      btnShoot->setImage(game->getResources()->getTexture("ui_shoot.tga"));
 
       show();
     }
@@ -164,6 +207,77 @@ class ASp_Gui: public kgmGui
       btnLeft->release();
       btnRight->release();
       btnShoot->release();
+    }
+
+    void onAction(kgmGui* src, u32 type)
+    {
+      kgmEvent::Event evt;
+
+      if(src == btnUp)
+      {
+        if(type)
+        {
+          evt.event = evtKeyDown;
+          evt.key = KEY_UP;
+          game->getWindow()->onEvent(&evt);
+        }
+        else
+        {
+          evt.event = evtKeyUp;
+          evt.key = KEY_UP;
+          game->getWindow()->onEvent(&evt);
+        }
+      }
+      else if(src == btnLeft)
+      {
+        if(type)
+        {
+          evt.event = evtKeyDown;
+          evt.key = KEY_LEFT;
+          game->getWindow()->onEvent(&evt);
+        }
+        else
+        {
+          evt.event = evtKeyUp;
+          evt.key = KEY_LEFT;
+          game->getWindow()->onEvent(&evt);
+        }
+      }
+      else if(src == btnRight)
+      {
+        if(type)
+        {
+          evt.event = evtKeyDown;
+          evt.key = KEY_RIGHT;
+          game->getWindow()->onEvent(&evt);
+        }
+        else
+        {
+          evt.event = evtKeyUp;
+          evt.key = KEY_RIGHT;
+          game->getWindow()->onEvent(&evt);
+        }
+      }
+      else if(src == btnShoot)
+      {
+        if(type)
+        {
+          evt.event = evtKeyDown;
+          evt.key = KEY_X;
+          game->getWindow()->onEvent(&evt);
+        }
+        else
+        {
+          evt.event = evtKeyUp;
+          evt.key = KEY_X;
+          game->getWindow()->onEvent(&evt);
+        }
+      }
+    }
+
+    void update()
+    {
+
     }
   };
 
@@ -216,6 +330,7 @@ public:
   {
     gui_health->update();
     gui_map->update();
+    gui_input->update();
   }
 };
 

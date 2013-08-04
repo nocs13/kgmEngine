@@ -296,24 +296,31 @@ public:
     {
     case grot_x:
     {
-      alpha += (0.005f * state);
-      vt = m_body->m_rotation;
-      vt.z += (0.002f * state);
-      m_body->rotate(0, 0, vt.z);
+      if(g_ms_camera)
+      {
+        alpha += (0.005f * state);
+        vt = m_body->m_rotation;
+        vt.z += (0.002f * state);
+        m_body->rotate(0, 0, vt.z);
+      }
       break;
     }
     case grot_y:
     {
-      z_dist -= (state * 0.005f);
-      z_dist = (z_dist > 2.0)?(2.0):(z_dist);
-      z_dist = (z_dist < .1)?(.1):(z_dist);
-
+      if(g_ms_camera)
+      {
+        z_dist -= (state * 0.005f);
+        z_dist = (z_dist > 2.0)?(2.0):(z_dist);
+        z_dist = (z_dist < .1)?(.1):(z_dist);
+      }
       break;
     }
     case grot_z:
     {
-      c_dist += (state * 0.1f);
-
+      if(g_ms_camera)
+      {
+        c_dist += (state * 0.1f);
+      }
       break;
     }
     }

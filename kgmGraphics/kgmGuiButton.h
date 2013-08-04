@@ -17,8 +17,9 @@ class kgmGuiButton: public kgmGui
     StateClick
   };
 
-  Type 	 m_type;
+  Type   m_type;
   State  m_state;
+
 public:
   kgmGuiButton();
   kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h);

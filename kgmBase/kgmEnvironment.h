@@ -8,7 +8,8 @@
 
 class kgmFont;
 
-class kgmEnvironment{
+class kgmEnvironment: public kgmObject
+{
 public:
  u32 wnd_width, wnd_height, 
       wnd_bpp, wnd_fscreen;
