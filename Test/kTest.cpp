@@ -6,6 +6,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 
+#include "kGlobals.h"
 #include "kGui.h"
 #include "Actors/ATaoRen.h"
 #include "Actors/AKomble.h"
@@ -42,6 +43,9 @@ KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
+
+bool g_ms_camera = false;
+
 
 class kGame;
 

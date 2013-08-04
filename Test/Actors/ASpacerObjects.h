@@ -35,7 +35,7 @@ public:
     kgmMesh* mesh = new kgmMesh();
     mesh->m_rtype = kgmMesh::RT_POINT;
 
-    kgmMesh::Vertex_P_C* pc = mesh->vAlloc(10000, kgmMesh::FVF_P_C);
+    kgmMesh::Vertex_P_C* pc = (kgmMesh::Vertex_P_C*)mesh->vAlloc(10000, kgmMesh::FVF_P_C);
 
     for(int i = 0; i < 10000; i++)
     {

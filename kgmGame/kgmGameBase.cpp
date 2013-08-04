@@ -1,5 +1,4 @@
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmEnvironment.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmTime.h"
@@ -184,6 +183,10 @@ kgmSystem*  kgmGameBase::getSystem(){
 
 kgmWindow*  kgmGameBase::getWindow(){
   return (kgmWindow*)this;
+}
+
+kgmEnvironment*  kgmGameBase::getEnvironment(){
+  return m_settings;
 }
 
 void kgmGameBase::initResources()

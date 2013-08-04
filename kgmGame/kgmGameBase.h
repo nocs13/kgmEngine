@@ -30,11 +30,11 @@ public:
  static kgmGameBase*	m_game;
 
 protected:
- kgmIAudio*		    m_audio;
- kgmIVideo*		    m_video;
- kgmISpawner*		m_spawner;
- kgmIGraphics*		m_graphics;
- kgmGamePhysics*	m_physics;
+ kgmIAudio*		      m_audio;
+ kgmIVideo*		      m_video;
+ kgmISpawner*		    m_spawner;
+ kgmIGraphics*		  m_graphics;
+ kgmGamePhysics*	  m_physics;
  kgmGameResources*	m_resources;
  kgmGameSettings*   m_settings;
 
@@ -58,7 +58,6 @@ public:
 
  kgmGameLogic*         m_logic;
  kgmGameGraphics*      m_render;
- //kgmList<kgmObject*>   m_objects;
  kgmList<kgmGui*>      m_guis;     //game or nongame guis
 
  ////////////////
@@ -76,6 +75,7 @@ public:
  kgmIResources*     getResources();
  kgmSystem*         getSystem();
  kgmWindow*         getWindow();
+ kgmEnvironment*    getEnvironment();
 
  void quit();
  void log(const char* msg);
