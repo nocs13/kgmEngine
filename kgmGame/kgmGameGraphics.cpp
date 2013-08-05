@@ -219,7 +219,7 @@ void kgmGameGraphics::setWorldMatrix(mtx4 &m)
 
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 10000.0);
-  m_camera.camera.set(PI / 6, width / height, .1f, 10000.0,
+  m_camera.camera.set(PI / 2, width / height, .1f, 10000.0,
                       m_camera.camera.mPos,
                       m_camera.camera.mDir,
                       m_camera.camera.mUp);
@@ -310,12 +310,13 @@ void kgmGameGraphics::render(){
   gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
   //gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
 
+#ifdef TEST
   //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
-
+#endif
 
   if(this->m_lights.size() > 0)
   {
@@ -358,7 +359,7 @@ void kgmGameGraphics::render(){
     render(vis_mesh[i - 1]);
   }
 
-  /*if(lighting)
+  if(lighting)
   {
     gc->gcSetParameter(gcpar_lighting, null);
     gc->gcSetLight(-1, null, 0.0);
@@ -372,7 +373,7 @@ void kgmGameGraphics::render(){
     gc->gcSetLight(-9, null, 0.0);
 
     lighting = false;
-  }*/
+  }
 
   for(int i = vis_blend.size(); i > 0;  i--)
   {
@@ -464,6 +465,7 @@ void kgmGameGraphics::render(){
   }
   //---
 
+#ifdef TEST
   char info[4096] = {0};
   sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i\n",
           m_camera.camera.mDir.x, m_camera.camera.mDir.y, m_camera.camera.mDir.z,
@@ -471,6 +473,7 @@ void kgmGameGraphics::render(){
           kgmObject::objectCount());
   kgmString text(info);
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
+#endif
 
   gc->gc3DMode();
 
@@ -488,28 +491,6 @@ void kgmGameGraphics::render(){
   vis_blend.clear();
   vis_mesh.clear();
 }
-
-/*void kgmGameGraphics::render(Mesh *m){
-  if(!m)
-    return;
-
-  if(m->m_mtrl)
-  {
-    render(m->m_mtrl);
-    render(shaders[1]);
-  }
-
-  if(m->m_mesh){
-    gc->gcDraw(gcpmt_triangles, m->m_mesh->fvf(), m->m_mesh->vsize(),
-               m->m_mesh->vcount(), m->getVertices(),
-               2, 3 * m->m_mesh->fcount(), m->m_mesh->faces());
-  }
-
-  if(m->m_mtrl){
-    render((kgmShader*)null);
-    render((kgmMaterial*)null);
-  }
-}*/
 
 void kgmGameGraphics::render(kgmVisual* visual)
 {

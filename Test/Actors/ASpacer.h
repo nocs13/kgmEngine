@@ -25,7 +25,7 @@ public:
     c_dist    = 5.0f;
     z_dist    = 2.0f;
     speed_max = 0.05;
-    speed_min = 0.0;
+    speed_min = 0.01;
     roll      = 0.0;
     yaaw      = 0.0;
     pich      = 0.5 * PI;
@@ -70,6 +70,8 @@ public:
         gui->add((kgmActor*)objs[i]);
 
       objs.clear();
+
+      getBody()->m_velocity = speed_min;
     }
   }
 
@@ -112,11 +114,6 @@ public:
           go->getVisual()->m_transform = m * m_visual->m_transform;
         }
       }
-
-      kgmString ts = "ASpacer state: ";
-
-      ts = ts + kgmConvert::toString(gbtns[1]);
-      ts = ts + " ";
     }
 
     if(getBody())

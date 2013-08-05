@@ -108,8 +108,6 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
   bool  res = false;
   int   i = 0;
 
-  kgm_log() << "\nLoading resource: " << id << " ...";
-
 #ifdef WIN32
   const kgmString delim((const char*)"\\", 1);
 #else
@@ -117,9 +115,10 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
-  kgm_log() << "\nkgmEngine android loading file " << id << " am " << (s32)kgm_android_getAssetManager();
+#ifdef TEST
+  kgm_log() << "\nkgmEngine android loading file " << id;
+#endif
   AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
-  kgm_log() << "\nkgmEngine android file loaded";
 
   if (NULL == asset)
   {
@@ -129,26 +128,30 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
   }
 
   long size = AAsset_getLength(asset);
-  //char* buffer = (char*) malloc (sizeof(char)*size);
   m.alloc(size);
   AAsset_read (asset, (char*)m, size);
-  //__android_log_print(ANDROID_LOG_ERROR, NF_LOG_TAG, buffer);
+#ifdef TEST
   kgm_log() << "\nkgmEngine android file size: " << (s32)size;
-  //free(buffer);
+#endif
   AAsset_close(asset);
+
   return true;
 #else
   for(i = 0; i < m_paths.size(); i++){
     kgmFile file;
+
     if(m_paths[i]->type == 2){
       path = m_paths[i]->path + delim + kgmString(id, strlen(id));
+
       if(kgmIGame::getGame()->getSystem()->isFile(path) && file.open(path, kgmFile::Read)){
         m.alloc(file.length());
         file.read(m.data(), file.length());
         file.close();
+
         return true;
       }
-    }else if(m_paths[i]->type == 1){
+    }
+    else if(m_paths[i]->type == 1){
       if(m_paths[i]->archive.copy(id, m)){
         return true;
       }
@@ -157,6 +160,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
   kgm_log() << "\nCan't load file: " << id;
+
   return false;
 }
 
@@ -196,7 +200,9 @@ kgmTexture* kgmGameResources::getTexture(char* id){
 #endif
     if(!strcmp(m_resources[i]->m_id, id)){
       m_resources[i]->increment();
-
+#ifdef TEST
+      kgm_log() << "texture in cash";
+#endif
       return (kgmTexture*)m_resources[i];
     }
   }

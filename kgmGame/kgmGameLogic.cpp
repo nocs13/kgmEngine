@@ -1,5 +1,6 @@
 #include "kgmGameLogic.h"
 #include "kgmIGame.h"
+#include "../kgmBase/kgmLog.h"
 
 kgmGameLogic::kgmGameLogic()
 {

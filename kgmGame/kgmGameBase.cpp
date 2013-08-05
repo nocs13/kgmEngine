@@ -288,13 +288,13 @@ void kgmGameBase::onIdle(){
 
   static int tick = kgmTime::getTicks();
   static int frames = 0;
-  static int fps = 0;
+  static int fps = 1;
   static char buf[128];
 
   if(kgmTime::getTicks() - tick > 1000)
   {
     fps = frames;
-    frames = 0;
+    frames = 1;
     tick =  kgmTime::getTicks();
   }
   else
@@ -313,10 +313,10 @@ void kgmGameBase::onIdle(){
   case State_Pause:
     break;
   case State_Play:
-    if(m_physics && fps > 0)
+    if(m_physics)
       m_physics->update(1000 / fps);
 
-    if(m_logic && fps > 0)
+    if(m_logic)
       m_logic->update(1000 / fps);
     break;
   case State_Stop:
