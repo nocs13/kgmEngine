@@ -3,6 +3,37 @@
 #include "../kgmBase/kgmEvent.h"
 #include "../kgmSystem/kgmApp.h"
 
+#ifdef ANDROID
+#include <jni.h>
+#include <sys/types.h>
+#include <android/log.h>
+#include <android/input.h>
+#include <android/sensor.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+#include <android/native_window_jni.h>
+
+#define  LOG_TAG    "kgmEngine"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+extern "C"
+{
+  JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_init(JNIEnv * env, jobject obj,  jint width, jint height,
+                                                                             jobject am,   jobject surface);
+  JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_quit(JNIEnv * env, jobject obj);
+  JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_idle(JNIEnv * env, jobject obj);
+  JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_onKeyboard(JNIEnv * env, jobject obj, jint a, jint key);
+  JNIEXPORT void  JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, jobject obj,  jint act, jint x, jint y);
+};
+
+extern AAssetManager* kgm_android_getAssetManager();
+extern const char*    kgm_android_classname();
+extern bool           kgm_android_init_app();
+extern void           kgm_android_init(JNIEnv * env, jobject am);
+#endif
+
+
 class kgmGameApp: public kgmApp
 {
 protected:
@@ -22,50 +53,13 @@ public:
   }
 
 #ifdef ANDROID
-  bool android_msAbsolute;
-
-  void android_quit()
-  {
-
-  }
-
-  void android_idle()
-  {
-
-  }
-
-  void android_input(kgmEvent::Event* e)
-  {
-
-  }
-
-  void android_resize(int, int)
-  {
-
-  }
-
-  void android_close()
-  {
-
-  }
-
-  void android_release()
-  {
-
-  }
-
-  bool android_msabsolute()
-  {
-    return android_msAbsolute;
-  }
+  virtual kgmIGame* android_init_game() = 0
+  ;
+  void android_exit();
+  void android_init(JNIEnv* env, jobject obj, jint width, jint height, jobject am, jobject surface);
+  void android_quit(JNIEnv* env, jobject obj);
+  void android_idle(JNIEnv* env, jobject obj);
+  void android_onKeyboard(JNIEnv* env, jobject obj, jint a, jint key);
+  void android_onTouch(JNIEnv* env, jobject obj,  jint act, jint x, jint y);
 #endif
 };
-
-#ifdef ANDROID
-  //initiate exit from program
-  extern void       kgm_android_exit();
-  //create game exempliar
-  extern kgmIGame*  kgm_android_init_game();
-  //create game exempliar
-  extern bool  kgm_android_init_app();
-#endif

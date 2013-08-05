@@ -65,7 +65,7 @@ public:
  int   m_wRect[4];
 #endif
 
- kgmWindow*	m_parent;		 
+ kgmWindow*	m_parent;
 // int  m_x, m_y, m_w, m_h;
 // int  m_msx, m_msy;
 
@@ -90,6 +90,9 @@ public:
  void   setMouse(int x, int y);
  void   getMouse(int& x, int& y);
  void   setTitle(char*);
+
+ bool   getMsAbsolute(){ return m_msAbs; }
+ void   setMsAbsolute(bool s){ m_msAbs = s; }
 
 
  virtual kgmIGraphics* getGC();

@@ -414,7 +414,7 @@ void kgmOSL::run()
       if(vol < 0) vol = 0;
 
       s->volume(vol);
-      kgm_log() << "OSL distance " << dst << "\n";
+      //kgm_log() << "OSL distance " << dst << "\n";
 
       if(s->remove)
       {

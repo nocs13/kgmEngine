@@ -90,7 +90,9 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
     if(val != 0)
       m_has_buffers = true;
   }
-  //m_has_shaders = false;
+
+  m_has_shaders = false;
+
   if(m_has_shaders)
   {
     kgmVisual::AnimateVertices = false;

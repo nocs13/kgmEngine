@@ -1,6 +1,7 @@
 #include "kGui.h"
 #include "kGlobals.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmGame/kgmGameApp.h"
 
 kGui::kGui(kgmGameBase* game)
 {
@@ -93,9 +94,7 @@ void kGui::onAction(kgmEvent* e, int a)
   {
     m_game->gQuit();
 #ifdef ANDROID
-    extern kgm_android_exit();
-
-    kgm_android_exit();
+    kgmGameApp::gameApplication()->android_exit();
 #endif
   }
   else if(sid == "game")

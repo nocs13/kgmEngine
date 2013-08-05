@@ -24,6 +24,7 @@ public:
     virtual void volume(float vol)          = 0;
     virtual void emit(vec3& pos, vec3& vel) = 0;
   }; 
+
 public:
   virtual Sound* create(FMT fmt, u16 freq, u32 size, void* data) = 0; //create sound object from .wav ...
   virtual void   listener(vec3& pos, vec3& vel, vec3& ort)       = 0;

@@ -1,5 +1,6 @@
 #include "kgmGameResources.h"
 #include "kgmIGame.h"
+#include "kgmGameApp.h"
 #include "kgmGameTools.h"
 
 
@@ -14,10 +15,8 @@
 #include "kgmActor.h"
 
 #ifdef ANDROID
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
-
-extern AAssetManager* kgm_getAssetManager();
+  #include <android/asset_manager.h>
+  #include <android/asset_manager_jni.h>
 #endif
 
 static char 	 str_buf[256];
@@ -118,8 +117,9 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
-  kgm_log() << "\nkgmEngine android loading file " << id;
-  AAsset* asset = AAssetManager_open(kgm_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
+  kgm_log() << "\nkgmEngine android loading file " << id << " am " << (s32)kgm_android_getAssetManager();
+  AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
+  kgm_log() << "\nkgmEngine android file loaded";
 
   if (NULL == asset)
   {

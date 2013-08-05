@@ -280,6 +280,13 @@ public:
       cam.update();
 
       gui->update();
+
+      if(kgmIGame::getGame()->getAudio())
+      {
+        vec3 no(0, 0, 0);
+        vec3 spos = m_body->position();
+        kgmIGame::getGame()->getAudio()->listener(spos, no, no);
+      }
     }
   }
 
