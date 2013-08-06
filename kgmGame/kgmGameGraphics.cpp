@@ -569,6 +569,7 @@ void kgmGameGraphics::render(kgmVisual* visual)
 
   visual->update();
 
+#ifdef TEST
   /*
   if(visual->m_tm_joints)
   {
@@ -590,6 +591,7 @@ void kgmGameGraphics::render(kgmVisual* visual)
     }
   }
   //*/
+#endif
 }
 
 void kgmGameGraphics::render(kgmSprite* sprite)
@@ -672,6 +674,7 @@ void kgmGameGraphics::render(kgmParticles* particles)
 }
 
 void kgmGameGraphics::render(kgmMaterial* m){
+
   if(!m)
   {
     gc->gcSetTexture(0, 0);
@@ -695,6 +698,11 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
+#ifdef TEST
+  if(m->m_id.length() > 0)
+    kgm_log() << "setting material " << m->m_id.data();
+#endif
+
   if(m->m_blend)
   {
     gc->gcDepth(true, false, gccmp_less);
@@ -711,6 +719,9 @@ void kgmGameGraphics::render(kgmMaterial* m){
   }
 
   if(m->m_tex_color){
+#ifdef TEST
+    kgm_log() << "setting texture " << m->m_tex_color->m_id.data();
+#endif
     gc->gcSetTexture(0, m->m_tex_color->m_texture);
     tcolor = m->m_tex_color->m_texture;
   }

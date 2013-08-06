@@ -29,9 +29,7 @@ public:
     mtl->m_type        = "simple";
     mtl->m_shader      = kgmMaterial::ShaderNone;
     mtl->m_2side       = true;
-    //mtl->m_tex_color   = game->getResources()->getTexture("sky_1.tga");
 
-    //kgmMesh* mesh = game->getResources()->getMesh("skybox_1.kgm");
     kgmMesh* mesh = new kgmMesh();
     mesh->m_rtype = kgmMesh::RT_POINT;
 
@@ -39,7 +37,6 @@ public:
 
     for(int i = 0; i < 10000; i++)
     {
-//      srand (time(NULL));
       vec3 v(pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand());
       v.normalize();
       v = v * 10;
@@ -95,7 +92,8 @@ public:
     mtl->m_blend = true;
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_srcialpha;
-    mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
+//    mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
+    mtl->m_tex_color = g->getResources()->getTexture("fire_a.tga");
     mtl->m_type = "simple";
     mtl->m_shader = kgmMaterial::ShaderNone;
 
