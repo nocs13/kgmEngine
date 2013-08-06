@@ -87,7 +87,7 @@ kgmGameBase::kgmGameBase()
   log("check desktop dimensions...");
   m_system->getDesktopDimension(m_width, m_height);
 
-  log("size window...");
+  //log("size window...");
   //setRect(0, 0, m_width,	m_height);
 
   initResources();
@@ -215,7 +215,7 @@ void kgmGameBase::initAudio(){
 #ifdef OAL
   m_audio	= new kgmOAL();
 #elif defined(OSL)
-  m_audio	= new kgmOSL();
+  //m_audio	= new kgmOSL();
 #elif defined(D3DS)
 #endif
 }

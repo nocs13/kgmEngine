@@ -215,9 +215,22 @@ kgmTexture* kgmGameResources::getTexture(char* id){
 
   texture = m_tools.genTexture(kgmIGame::getGame()->getGraphics(), mem);
 
-  if(texture){
+  if(texture && texture->m_texture)
+  {
+#ifdef TEST
+      kgm_log() << "texture generated";
+#endif
     texture->m_id = id;
     m_resources.add(texture);
+  }
+  else if(texture)
+  {
+#ifdef TEST
+      kgm_log() << "texture generation failed";
+#endif
+    texture->release();
+
+    texture = null;
   }
 
   return texture;
@@ -312,15 +325,20 @@ kgmSound* kgmGameResources::getSound(char* id){
       return (kgmSound*)m_resources[i];
     }
   }
+
   kgmSound* snd = 0;
   kgmMemory<char> mem;
+
   if(!getFile(id, mem))
     return 0;
+
   snd = m_tools.genSound(kgmIGame::getGame()->getAudio(), mem);
+
   if(snd){
     snd->m_id = id;
     m_resources.add(snd);
   }
+
   return snd;
 }
 

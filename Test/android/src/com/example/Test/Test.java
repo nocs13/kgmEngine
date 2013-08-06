@@ -34,14 +34,14 @@ public class Test extends Activity
     //GL2JNIView mView;
     SurfaceView mView;
 
-    public static void TestFinish()
+    public static void kgmAppFinish()
     {
-	System.out.println("Test Finishing");	
+        System.out.println("Test Finishing");
 
-	if(m_test != null)
+        if(m_test != null)
         {
             TestLib.quit();
-	    m_test.finish();
+            m_test.finish();
         }
     }
 
@@ -69,7 +69,7 @@ public class Test extends Activity
 
 	m_test = this;
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
        //super.onConfigurationChanged(newConfig);
@@ -97,7 +97,7 @@ public class Test extends Activity
     	}
     	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
     	//TestLib.onMsMove();
-    	
+
     	return true;
     }
 

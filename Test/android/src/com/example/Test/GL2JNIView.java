@@ -179,8 +179,8 @@ class GL2JNIView extends GLSurfaceView {
             EGL10.EGL_GREEN_SIZE, 4,
             EGL10.EGL_BLUE_SIZE, 4,
             EGL10.EGL_DEPTH_SIZE, 8,
-            //EGL10.EGL_RENDERABLE_TYPE, 
-            //EGL_OPENGL_ES2_BIT,
+            EGL10.EGL_RENDERABLE_TYPE,
+            EGL_OPENGL_ES2_BIT,
             EGL10.EGL_NONE
         };
 

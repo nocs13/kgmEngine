@@ -16,9 +16,9 @@
 GLu32          m_rendertarget = 0;
 
 #ifdef ANDROID
-EGLDisplay  m_display = EGL_NO_DISPLAY;
+EGLDisplay  m_display       = EGL_NO_DISPLAY;
 EGLSurface  m_renderSurface = EGL_NO_SURFACE;
-EGLContext m_context = EGL_NO_CONTEXT;
+EGLContext  m_context       = EGL_NO_CONTEXT;
 #endif
 
 kgmOGL::kgmOGL(kgmOGLWindow *wnd){
@@ -271,8 +271,8 @@ void kgmOGL::gcSetLight(int i, float* pos, float range){
 
   if(glIsEnabled(GL_LIGHT0 + l))
   {
-   glDisable(GL_LIGHT0 + l);
-   m_lights--;
+    glDisable(GL_LIGHT0 + l);
+    m_lights--;
   }
 
   if(m_lights < 1)
@@ -558,7 +558,9 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   if(GL_NO_ERROR != err)
   {
     u32 k = 0;
-    switch(err){
+
+    switch(err)
+    {
     case GL_INVALID_ENUM:
       k = 1;
       break;
@@ -584,18 +586,22 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   t->buffer = frame;
   t->format = fmt;
   t->type = type;
+
   return (void*)t;
 }
 
 void kgmOGL::gcFreeTexture(void *t){
   if(!t)
     return;
+
   if(((Texture*)t)->texture)
     glDeleteTextures(1,&((Texture*)t)->texture);
+
 #ifdef GL_FRAMEBUFFER
   if(((Texture*)t)->buffer)
     glDeleteFramebuffers(1, &((Texture*)t)->buffer);
 #endif
+
   delete (Texture*)t;
 }
 

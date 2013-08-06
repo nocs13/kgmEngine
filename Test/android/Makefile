@@ -3,7 +3,7 @@ all: build
 build:
 	make -C ../../android/ clean && make -C ../../android/
 	cp ../Data/* ./assets/.
-	~/Install/android-ndk-r8e/ndk-build -B
+	$(NDK_ROOT)/ndk-build -B
 	ant clean && ant debug
 
 clean:
@@ -12,5 +12,5 @@ clean:
 	rm -rf obj libs assets/*
 run:
 	~/Install/android-sdk-linux/platform-tools/adb uninstall com.example.Test
-	~/Install/android-sdk-linux/platform-tools/adb install bin/Test-debug.apk 
-	
+	~/Install/android-sdk-linux/platform-tools/adb install bin/Test-debug.apk
+

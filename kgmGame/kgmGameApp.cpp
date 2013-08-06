@@ -41,6 +41,8 @@ void kgmGameApp::android_quit(JNIEnv* env, jobject obj)
   {
     LOGI("Game release game\n");
     g_game->getWindow()->onClose();
+
+    delete g_game;
   }
 
   g_game = null;
@@ -53,7 +55,7 @@ void kgmGameApp::android_exit()
   JNIEnv* env;
   jvm->AttachCurrentThread(&env, NULL);
   jclass cls = env->FindClass(kgm_android_classname());
-  jmethodID mid = env->GetStaticMethodID(cls, "GameFinish", "()V");
+  jmethodID mid = env->GetStaticMethodID(cls, "kgmAppFinish", "()V");
   env->CallStaticVoidMethod(cls, mid);
 }
 

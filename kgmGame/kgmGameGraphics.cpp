@@ -698,7 +698,7 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
-#ifdef TEST
+#ifdef TESTXXX
   if(m->m_id.length() > 0)
     kgm_log() << "setting material " << m->m_id.data();
 #endif

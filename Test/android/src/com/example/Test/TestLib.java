@@ -21,13 +21,11 @@ package com.example.Test;
 public class TestLib {
 
      static {
-         //System.loadLibrary("Test");
-    	 try{
-    	   //System.load("/data/data/com.example.Test/lib/libTest.so");
-    	   System.loadLibrary("Test");
-    	 }catch(UnsatisfiedLinkError use){
-    		 System.out.println("WARNING: Could not load libTest.so " + use.getMessage());
-    	 }
+         try{
+           System.loadLibrary("Test");
+         }catch(UnsatisfiedLinkError use){
+           System.out.println("WARNING: Could not load libTest.so " + use.getMessage());
+         }
      }
 
     /**
@@ -35,8 +33,7 @@ public class TestLib {
      * @param height the current view height
      */
      public static native String  stringFromJNI();
-     public static native void    init(int width, int height, Object asset, 
-    		 							  Object surface);
+     public static native void    init(int width, int height, Object asset, Object surface);
      public static native void    idle();
      public static native void    quit();
      public static native void    onTouch(int a, int x, int y);   
