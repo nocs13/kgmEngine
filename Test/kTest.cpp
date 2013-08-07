@@ -400,9 +400,6 @@ JNIEXPORT void  JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobj
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_init(JNIEnv* env, jobject obj,  jint width, jint height, jobject am,
                                                           jobject surface)
 {
-  kgm_log() << "test thread id " << (s32)gettid();
-  kgm_log() << "test gl context " << (s32)eglGetCurrentContext();
-
   if(kgmGameApp::gameApplication()->game())
   {
     kgmGameApp::gameApplication()->game()->getWindow()->setRect(0, 0, width, height);
@@ -421,7 +418,6 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_quit(JNIEnv * env, jobject 
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_idle(JNIEnv * env, jobject obj)
 {
-  kgm_log() << "test thread idle id " << (s32)gettid();
   kgmGameApp::gameApplication()->android_idle(env, obj);
 }
 
@@ -432,7 +428,6 @@ JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onKeyboard(JNIEnv * env, jo
 
 JNIEXPORT void JNICALL Java_com_example_Test_TestLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)
 {
-  kgm_log() << "test thread touch id " << (s32)gettid();
   kgmGameApp::gameApplication()->android_onTouch(env, obj,  a, x, y);
 }
 #endif

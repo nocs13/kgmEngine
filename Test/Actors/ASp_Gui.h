@@ -70,6 +70,9 @@ class ASp_Gui: public kgmGui
       game     = g;
       setText("main map");
       setRect(0, 20, 200, 200);
+      setAlpha(true);
+      setColor(0x55AA3333);
+      useStyle(false);
       show();
     }
 
@@ -150,6 +153,7 @@ class ASp_Gui: public kgmGui
       void onMsLeftUp(int key, int x, int y)
       {
         setColor(0xff00ff00);
+
         if(m_parent)
           m_parent->onAction(this, 0);
       }
@@ -157,6 +161,7 @@ class ASp_Gui: public kgmGui
       void onMsLeftDown(int key, int x, int y)
       {
         setColor(0xff0000ff);
+
         if(m_parent)
           m_parent->onAction(this, 1);
       }
@@ -193,6 +198,14 @@ class ASp_Gui: public kgmGui
       btnRight->setImage(game->getResources()->getTexture("ui_right.tga"));
       btnShoot->setImage(game->getResources()->getTexture("ui_shoot.tga"));
 
+      //btnUp->hide();
+      //btnLeft->hide();
+      //btnRight->hide();
+      //btnShoot->hide();
+
+      setColor(0x00000000);
+      useStyle(false);
+      setAlpha(true);
       show();
     }
 

@@ -105,10 +105,8 @@ kgmGameBase::kgmGameBase()
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
-  kgm_log() << "game thread id " << (s32)gettid();
   log("init game audio...");
   initAudio();
-  kgm_log() << "game thread id " << (s32)gettid();
   log("init game logic...");
   initLogic();
 

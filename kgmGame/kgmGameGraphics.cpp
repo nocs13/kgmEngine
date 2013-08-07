@@ -698,11 +698,6 @@ void kgmGameGraphics::render(kgmMaterial* m){
     return;
   }
 
-#ifdef TESTXXX
-  if(m->m_id.length() > 0)
-    kgm_log() << "setting material " << m->m_id.data();
-#endif
-
   if(m->m_blend)
   {
     gc->gcDepth(true, false, gccmp_less);
@@ -719,9 +714,6 @@ void kgmGameGraphics::render(kgmMaterial* m){
   }
 
   if(m->m_tex_color){
-#ifdef TEST
-    kgm_log() << "setting texture " << m->m_tex_color->m_id.data();
-#endif
     gc->gcSetTexture(0, m->m_tex_color->m_texture);
     tcolor = m->m_tex_color->m_texture;
   }
@@ -839,13 +831,8 @@ void kgmGameGraphics::render(kgmGui* gui){
   gui->getRect(rect, true);
   text = gui->getText();
 
-  bool isalpha = false;
-  bool istransparent = false;
-
   if(gui->m_hasAlpha)
-  {
-    isalpha = true;
-  }
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
 
   if(gui->isClass(kgmGuiButton::Class))
   {
@@ -927,18 +914,29 @@ void kgmGameGraphics::render(kgmGui* gui){
     if(gui->m_hasMouse )
     {
       if(gui->m_useStyle)
+      {
         gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+      }
       else
+      {
         gcDrawRect(rect, gui->m_color, gui->m_image);
+      }
     }
     else
     {
       if(gui->m_useStyle)
+      {
         gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
+      }
       else
+      {
         gcDrawRect(rect, gui->m_color, gui->m_image);
+      }
     }
   }
+
+  if(gui->m_hasAlpha)
+    gc->gcBlend(false, gcblend_zero, gcblend_zero);
 
   for(int i = 0; i < gui->m_childs.length(); i++){
     if(gui->m_childs[i]->m_view)
@@ -955,6 +953,9 @@ s32 kgmGameGraphics::getShaderId(kgmString s)
 void kgmGameGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
+
+//  if(tex && tex->m_texture)
+//    col = 0x00FFFFFF;
 
   v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 1);
   v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 0);

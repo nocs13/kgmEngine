@@ -92,8 +92,7 @@ public:
     mtl->m_blend = true;
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_srcialpha;
-//    mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
-    mtl->m_tex_color = g->getResources()->getTexture("fire_a.tga");
+    mtl->m_tex_color = g->getResources()->getTexture("point_a.tga");
     mtl->m_type = "simple";
     mtl->m_shader = kgmMaterial::ShaderNone;
 

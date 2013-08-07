@@ -400,11 +400,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
 
-#ifdef ANDROID
-  kgm_log() << "egl thread id " << (s32)gettid();
-  kgm_log() << "eglContext: " << (s32)eglGetCurrentContext();
-#endif
-
   switch(fmt){
   case gctex_fmt8:
     pic_fmt = GL_RED;

@@ -370,7 +370,6 @@ class GL2JNIView extends GLSurfaceView {
 
     private static class Renderer implements GLSurfaceView.Renderer {
         public void onDrawFrame(GL10 gl) {
-            Log.w(TAG, "Idle thread id " + Thread.currentThread().getId());
             TestLib.idle();
             
             if(GL2JNIView.isEvt)
