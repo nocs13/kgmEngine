@@ -68,12 +68,23 @@ import javax.microedition.khronos.opengles.GL10;
  *   bit depths). Failure to do so would result in an EGL_BAD_MATCH error.
  */
 class GL2JNIView extends GLSurfaceView {
+	
     private static String TAG = "GL2JNIView";
     private static final boolean DEBUG = false;
     private static AssetManager assMan = null;
-    
+
     public static Context ctx = null;
     public static Surface srf = null;
+    
+	public static final int EVT_KEYUP   = 0xf1;
+	public static final int EVT_KEYDOWN = 0xf2;
+	public static final int EVT_TOUCH   = 0xf3;
+    public static boolean   isEvt   = false;
+    public static int        evtId   = 0;
+    public static int        evtKey  = 0;
+    public static int        evtX    = 0;
+    public static int        evtY    = 0;
+
 
     public GL2JNIView(Context context) {
         super(context);
@@ -114,7 +125,7 @@ class GL2JNIView extends GLSurfaceView {
 
         /* Set the renderer responsible for frame rendering */
         setRenderer(new Renderer());
-        
+
         this.getHolder().addCallback(new SurfaceHolder.Callback() {
 
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -132,6 +143,11 @@ class GL2JNIView extends GLSurfaceView {
             }
 
         });
+    }
+    
+    public void setEvent(int evtId)
+    {
+    	
     }
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
@@ -354,7 +370,26 @@ class GL2JNIView extends GLSurfaceView {
 
     private static class Renderer implements GLSurfaceView.Renderer {
         public void onDrawFrame(GL10 gl) {
+            Log.w(TAG, "Idle thread id " + Thread.currentThread().getId());
             TestLib.idle();
+            
+            if(GL2JNIView.isEvt)
+            {
+            	switch(GL2JNIView.evtId)
+            	{
+            	case GL2JNIView.EVT_KEYUP:
+            		TestLib.onKeyboard(1, GL2JNIView.evtKey);
+            		break;
+            	case GL2JNIView.EVT_KEYDOWN:
+            		TestLib.onKeyboard(0, GL2JNIView.evtKey);
+            		break;
+            	case GL2JNIView.EVT_TOUCH:
+            		TestLib.onTouch(GL2JNIView.evtKey, GL2JNIView.evtX, GL2JNIView.evtY);
+            		break;
+            	}
+            	
+            	GL2JNIView.isEvt = false;
+            }
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {

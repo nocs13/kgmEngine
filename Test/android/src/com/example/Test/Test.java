@@ -33,8 +33,8 @@ public class Test extends Activity
     public static Test m_test = null;
     private static String TAG = "Test";
 
-    //GL2JNIView mView;
-    SurfaceView mView;
+    GL2JNIView mView;
+    //SurfaceView mView;
 
     public static void kgmAppFinish()
     {
@@ -89,13 +89,28 @@ public class Test extends Activity
     	switch(me.getAction())
     	{
     	case MotionEvent.ACTION_MOVE:
-        	TestLib.onTouch(0, (int)me.getX(), (int)me.getY());
+    		GL2JNIView.isEvt = true;
+    		GL2JNIView.evtId = GL2JNIView.EVT_TOUCH;
+    		GL2JNIView.evtKey = 0;
+    		GL2JNIView.evtX = (int)me.getX();
+    		GL2JNIView.evtY = (int)me.getY();
+        	//TestLib.onTouch(0, (int)me.getX(), (int)me.getY());
     		break;
     	case MotionEvent.ACTION_DOWN:
-        	TestLib.onTouch(1, (int)me.getX(), (int)me.getY());
+    		GL2JNIView.isEvt = true;
+    		GL2JNIView.evtId = GL2JNIView.EVT_TOUCH;
+    		GL2JNIView.evtKey = 1;
+    		GL2JNIView.evtX = (int)me.getX();
+    		GL2JNIView.evtY = (int)me.getY();
+        	//TestLib.onTouch(1, (int)me.getX(), (int)me.getY());
     		break;
     	case MotionEvent.ACTION_UP:
-        	TestLib.onTouch(2, (int)me.getX(), (int)me.getY());
+    		GL2JNIView.isEvt = true;
+    		GL2JNIView.evtId = GL2JNIView.EVT_TOUCH;
+    		GL2JNIView.evtKey = 2;
+    		GL2JNIView.evtX = (int)me.getX();
+    		GL2JNIView.evtY = (int)me.getY();
+        	//TestLib.onTouch(2, (int)me.getX(), (int)me.getY());
     		break;
     	}
     	//TestLib.onMsMove((int)me.getX(), (int)me.getY());
@@ -107,7 +122,10 @@ public class Test extends Activity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
-        TestLib.onKeyboard(0, keyCode);
+		GL2JNIView.isEvt = true;
+		GL2JNIView.evtId = GL2JNIView.EVT_KEYDOWN;
+		GL2JNIView.evtKey = keyCode;
+        //TestLib.onKeyboard(0, keyCode);
 
     	return true;
     }
@@ -115,7 +133,10 @@ public class Test extends Activity
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event)
     {
-        TestLib.onKeyboard(1, keyCode);
+		GL2JNIView.isEvt = true;
+		GL2JNIView.evtId = GL2JNIView.EVT_KEYUP;
+		GL2JNIView.evtKey = keyCode;
+        //TestLib.onKeyboard(1, keyCode);
 
     	return true;
     }
