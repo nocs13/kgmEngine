@@ -105,8 +105,10 @@ kgmGameBase::kgmGameBase()
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
+  kgm_log() << "game thread id " << (s32)gettid();
   log("init game audio...");
   initAudio();
+  kgm_log() << "game thread id " << (s32)gettid();
   log("init game logic...");
   initLogic();
 
@@ -227,63 +229,8 @@ void kgmGameBase::initLogic(){
 void kgmGameBase::log(const char* msg){
   kgmLog::log(msg);
 }
-
-/*void kgmGameBase::settings(bool save){
- FILE* file;
- if(save){
-  //Saving...
-  file = fopen(set_file, "w");
-  if(!file)
-   return;
-  fprintf(file, "Width\t\t\t%i\n", m_width);
-  fprintf(file, "Height\t\t\t%i\n", m_height);
-  fprintf(file, "Bpp\t\t\t%i\n", m_bpp);
-  fprintf(file, "Fullscreen\t\t\t%i\n", m_fullscreen);
- }else{
-  //Reading...
-  file = fopen(set_file, "r");
-  if(!file)
-   return;
-  char* buf = new char[128];
-  while(!feof(file) || !ferror(file)){
-   memset(buf, 0, sizeof(char) * 128);
-   if(fscanf(file, "%s", buf) < 1)
-    break;
-   fprintf(stderr, buf);
-   if(!strcmp(buf, "Window")){
-    fscanf(file, "%i %i %i", &m_width, &m_height, &m_bpp);
-    setRect(0, 0, m_width, m_height);
-    m_render->resize(m_width, m_height);
-   }else if(!strcmp(buf, "Fullscreen")){
-    fscanf(file, "%i", &m_fullscreen);
-    this->fullscreen((bool)m_fullscreen);
-   }else if(!strcmp(buf, "BaseFont")){
-    char* sbuf = new char[128];
-    int r = 0, c = 0;
-    memset(sbuf, 0, 128);
-    fscanf(file, "%s %i %i ", sbuf, &r, &c);
-    kgmString path(sbuf, strlen(sbuf));
-    log("open font...");
-    m_font = m_resources->getFont((char*)sbuf, r, c);
-    m_render->setDefaultFont(m_font);
-    if(!m_font)
-     log("can't load font");
-    delete [] sbuf;
-   }else if(!strcmp(buf, "Data")){
-    char* sbuf = new char[128];
-    memset(sbuf, 0, 128);
-    fscanf(file, "%s", sbuf);
-    kgmString path(sbuf, strlen(sbuf));
-    m_resources->addPath(path);
-    delete [] sbuf;
-   }
-  }
-  delete [] buf;
- }
-}
-*/
-
 //
+
 void kgmGameBase::onIdle(){
 
   static int tick = kgmTime::getTicks();

@@ -397,7 +397,9 @@ void kgmOSL::OSL_sound_bufferQueue_callback(SLBufferQueueItf caller,void *pConte
 void kgmOSL::run()
 {
   active = true;
+
   kgm_log() << "OSL Gues whooo.....\n";
+  kgm_log() << "osl thread id " << (s32)gettid();
 
   while(active)
   {

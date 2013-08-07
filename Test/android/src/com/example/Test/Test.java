@@ -25,11 +25,13 @@ import android.widget.TextView;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.content.res.Configuration;
+import android.util.Log;
 
 
 public class Test extends Activity
 {
     public static Test m_test = null;
+    private static String TAG = "Test";
 
     //GL2JNIView mView;
     SurfaceView mView;
@@ -68,6 +70,7 @@ public class Test extends Activity
     	setContentView(mView);
 
 	m_test = this;
+        Log.v(TAG, "Thread = " + Thread.currentThread().getId());
     }
 
     @Override

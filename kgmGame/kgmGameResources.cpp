@@ -115,7 +115,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
-#ifdef TEST
+#ifdef TESTXXX
   kgm_log() << "\nkgmEngine android loading file " << id;
 #endif
   AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
@@ -130,7 +130,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
   long size = AAsset_getLength(asset);
   m.alloc(size);
   AAsset_read (asset, (char*)m, size);
-#ifdef TEST
+#ifdef TESTXXX
   kgm_log() << "\nkgmEngine android file size: " << (s32)size;
 #endif
   AAsset_close(asset);

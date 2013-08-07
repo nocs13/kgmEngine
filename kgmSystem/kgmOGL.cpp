@@ -400,6 +400,11 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
 
+#ifdef ANDROID
+  kgm_log() << "egl thread id " << (s32)gettid();
+  kgm_log() << "eglContext: " << (s32)eglGetCurrentContext();
+#endif
+
   switch(fmt){
   case gctex_fmt8:
     pic_fmt = GL_RED;
@@ -458,6 +463,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
   if(tex == 0)
   {
+    kgm_log() << "gl: no generated texture";
+
     return null;
   }
 
@@ -577,10 +584,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   glBindTexture(GL_TEXTURE_2D, 0);
 #ifdef GL_FRAMEBUFFER
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif
-
-#ifdef ANDROID
-  kgm_log() << "eglContext: " << (s32)eglGetCurrentContext();
 #endif
 
   Texture* t = new Texture;
