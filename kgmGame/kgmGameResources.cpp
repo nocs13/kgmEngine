@@ -122,7 +122,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 
   if (NULL == asset)
   {
-    kgmLog::log("_ASSET_NOT_FOUND_");
+    //kgmLog::log("_ASSET_NOT_FOUND_");
 
     return false;
   }

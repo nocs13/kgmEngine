@@ -215,7 +215,7 @@ void kgmGameBase::initAudio(){
 #ifdef OAL
   m_audio	= new kgmOAL();
 #elif defined(OSL)
-  //m_audio	= new kgmOSL();
+  m_audio	= new kgmOSL();
 #elif defined(D3DS)
 #endif
 }

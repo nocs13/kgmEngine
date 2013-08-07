@@ -579,6 +579,10 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 
+#ifdef ANDROID
+  kgm_log() << "eglContext: " << (s32)eglGetCurrentContext();
+#endif
+
   Texture* t = new Texture;
   t->width = w;
   t->height = h;
