@@ -71,7 +71,7 @@ class ASp_Gui: public kgmGui
       setText("main map");
       setRect(0, 20, 200, 200);
       setAlpha(true);
-      setColor(0x55AA3333);
+      setColor(0x55966804);
       useStyle(false);
       show();
     }
@@ -147,7 +147,7 @@ class ASp_Gui: public kgmGui
       {
         useStyle(false);
         setAlpha(true);
-        setColor(0xff00ff00);
+        setColor(0xFF966804);
       }
 
       ~Button()
@@ -160,7 +160,7 @@ class ASp_Gui: public kgmGui
 
       void onMsLeftUp(int key, int x, int y)
       {
-        setColor(0xff00ff00);
+        setColor(0xFF966804);
 
         if(m_parent)
           m_parent->onAction(this, 0);

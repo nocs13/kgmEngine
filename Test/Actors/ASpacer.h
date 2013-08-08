@@ -252,7 +252,6 @@ public:
       if(m_health < 1 && m_state->id != "dying")
       {
         setState("dying", true);
-        m_visual->disable();
 
         for(int i = 0; i < m_dummies.size(); i++)
         {
@@ -339,6 +338,10 @@ public:
     else if(action == "rocket")
     {
       action_shoot_rocket();
+    }
+    else if(action == "dying")
+    {
+      action_dying();
     }
   }
 

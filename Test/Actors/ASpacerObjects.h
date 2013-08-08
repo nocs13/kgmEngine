@@ -556,10 +556,21 @@ public:
     result = res;
     timeout(time);
 
+    int cx, cy, cw, ch, tw, tl;
+    game->getWindow()->getRect(cx, cy, cw, ch);
+
+    tl = txt.length();
+
+    if(tl < 1)
+      tl = 1;
+
+    tw = 300 / tl;
+
     m_visual  = new kgmVisual();
     kgmText* text = new kgmText();
-    text->m_rect  = uRect(100, 200, 500, 200);
+    text->m_rect  = uRect(10, ch - 2 * tw, 300, 2 * tw);
     text->m_text  = txt;
+    text->m_size  = tw;
 
     m_visual->set(text);
     text->release();

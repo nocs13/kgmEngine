@@ -461,7 +461,7 @@ void kgmGameGraphics::render(){
     kgmText* text = m_vis_text[i]->getText();
     kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
                     text->m_rect.w, text->m_rect.h);
-    gcDrawText(font, 10, 15, text->m_color, rc, text->m_text);
+    gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
   }
   //---
 
