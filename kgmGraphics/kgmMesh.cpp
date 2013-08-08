@@ -62,6 +62,10 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
    m_vertices = new Vertex_P_N_C_T[count];
    m_fvf = FVF_P_N_C_T;
    break;
+ case FVF_P_C_T:
+   m_vertices = new Vertex_P_C_T[count];
+   m_fvf = FVF_P_C_T;
+   break;
  case FVF_P_T:
    m_vertices = new Vertex_P_T[count];
    m_fvf = FVF_P_T;
@@ -121,6 +125,8 @@ u32 kgmMesh::fvf(){
  case FVF_P_N_C:
    return (gcv_xyz|gcv_nor|gcv_col);
    break;
+ case FVF_P_C_T:
+   return (gcv_xyz|gcv_col|gcv_uv0);
  case FVF_P_T:
    return (gcv_xyz|gcv_uv0);
    break;
@@ -163,6 +169,8 @@ u32 kgmMesh::vsize(){
   case FVF_P_N_C_T:
     return sizeof(Vertex_P_N_C_T);
     break;
+  case FVF_P_C_T:
+    return sizeof(Vertex_P_C_T);
   case FVF_P_T:
     return sizeof(Vertex_P_T);
     break;

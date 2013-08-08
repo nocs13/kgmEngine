@@ -1234,6 +1234,10 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     {
       kgmString s;
       kgmActor::State* state = new kgmActor::State();
+
+      state->sound = null;
+      state->animation = null;
+
       a_node->node(i)->attribute("id", state->id);
       a_node->node(i)->attribute("type", state->type);
       a_node->node(i)->attribute("switch", state->switchto);

@@ -536,10 +536,9 @@ void kgmGameGraphics::render(kgmVisual* visual)
         pmt = gcpmt_lines;
         break;
       case kgmMesh::RT_POINT:
-        render((kgmShader*)null);
-        render((kgmMaterial*)null);
+//        render((kgmShader*)null);
+//        render((kgmMaterial*)null);
         pmt = gcpmt_points;
-        //pmt = gcpmt_lines;
         break;
       default:
         pmt = gcpmt_triangles;

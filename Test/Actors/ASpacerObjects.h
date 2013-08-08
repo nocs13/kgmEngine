@@ -6,6 +6,7 @@
 struct ASp_Vertex
 {
   vec3 v;
+  u32  c;
   vec2 uv;
 };
 
@@ -33,9 +34,9 @@ public:
     kgmMesh* mesh = new kgmMesh();
     mesh->m_rtype = kgmMesh::RT_POINT;
 
-    kgmMesh::Vertex_P_C* pc = (kgmMesh::Vertex_P_C*)mesh->vAlloc(10000, kgmMesh::FVF_P_C);
+    kgmMesh::Vertex_P_C* pc = (kgmMesh::Vertex_P_C*)mesh->vAlloc(2000, kgmMesh::FVF_P_C);
 
-    for(int i = 0; i < 10000; i++)
+    for(int i = 0; i < 1000; i++)
     {
       vec3 v(pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand(), pow(-1.0, rand()%2) * rand());
       v.normalize();
@@ -97,28 +98,28 @@ public:
     mtl->m_shader = kgmMaterial::ShaderNone;
 
     mesh = new kgmMesh();
-    ASp_Vertex* v = (ASp_Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_T);
+    ASp_Vertex* v = (ASp_Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
 
-    v[0]   = { {0, -0.1, -0.1}, {0, 1}};
-    v[1]   = { {0, -0.1, 0.1},  {0, 0}};
-    v[2]   = { {0, 0.1, 0.1},   {1, 0}};
-    v[3]   = { {0, 0.1, 0.1},   {1, 0}};
-    v[4]   = { {0, 0.1, -0.1},  {1, 1}};
-    v[5]   = { {0, -0.1, -0.1}, {0, 1}};
+    v[0]   = { {0, -0.1, -0.1}, 0xffffffff, {0, 1}};
+    v[1]   = { {0, -0.1, 0.1},  0xffffffff, {0, 0}};
+    v[2]   = { {0, 0.1, 0.1},   0xffffffff, {1, 0}};
+    v[3]   = { {0, 0.1, 0.1},   0xffffffff, {1, 0}};
+    v[4]   = { {0, 0.1, -0.1},  0xffffffff, {1, 1}};
+    v[5]   = { {0, -0.1, -0.1}, 0xffffffff, {0, 1}};
 
-    v[6]   = { {0, -0.1, 0},  {0, 1}};
-    v[7]   = { {0,  0.1, 0},  {0, 0}};
-    v[8]   = { {-1,  0.1, 0}, {1, 0}};
-    v[9]   = { {-1, 0.1, 0},  {1, 0}};
-    v[10]  = { {-1, -0.1, 0}, {1, 1}};
-    v[11]  = { {0, -0.1, 0},  {0, 1}};
+    v[6]   = { {0, -0.1, 0},  0xffffffff, {0, 1}};
+    v[7]   = { {0,  0.1, 0},  0xffffffff, {0, 0}};
+    v[8]   = { {-1,  0.1, 0}, 0xffffffff, {1, 0}};
+    v[9]   = { {-1, 0.1, 0},  0xffffffff, {1, 0}};
+    v[10]  = { {-1, -0.1, 0}, 0xffffffff, {1, 1}};
+    v[11]  = { {0, -0.1, 0},  0xffffffff, {0, 1}};
 
-    v[12]  = { {0, 0, -0.1},  {0, 1}};
-    v[13]  = { {0, 0, 0.1},   {0, 0}};
-    v[14]  = { {-1, 0, 0.1},  {1, 0}};
-    v[15]  = { {-1, 0, 0.1},  {1, 0}};
-    v[16]  = { {-1, 0, -0.1}, {1, 1}};
-    v[17]  = { {0, 0, -0.1},  {0, 1}};
+    v[12]  = { {0, 0, -0.1},  0xffffffff, {0, 1}};
+    v[13]  = { {0, 0, 0.1},   0xffffffff, {0, 0}};
+    v[14]  = { {-1, 0, 0.1},  0xffffffff, {1, 0}};
+    v[15]  = { {-1, 0, 0.1},  0xffffffff, {1, 0}};
+    v[16]  = { {-1, 0, -0.1}, 0xffffffff, {1, 1}};
+    v[17]  = { {0, 0, -0.1},  0xffffffff, {0, 1}};
 
     m_visual->addVisual(mesh, mtl);
   }
@@ -150,6 +151,7 @@ class ASp_Laser: public kgmGameObject
   struct Vertex
   {
     vec3 v;
+    u32  c;
     vec2 uv;
   };
 
@@ -177,28 +179,28 @@ public:
     mtl->m_shader = kgmMaterial::ShaderNone;
 
     mesh = new kgmMesh();
-    Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_T);
+    Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
 
-    v[0]  = { {0, -len, -len}, {0, 1}};
-    v[1]  = { {0, -len, len},  {0, 0}};
-    v[2]  = { {0, len, len},   {1, 0}};
-    v[3]  = { {0, len, len},   {1, 0}};
-    v[4]  = { {0, len, -len},  {1, 1}};
-    v[5]  = { {0, -len, -len}, {0, 1}};
+    v[0]  = { {0, -len, -len}, 0xffffffff, {0, 1}};
+    v[1]  = { {0, -len, len},  0xffffffff, {0, 0}};
+    v[2]  = { {0, len, len},   0xffffffff, {1, 0}};
+    v[3]  = { {0, len, len},   0xffffffff, {1, 0}};
+    v[4]  = { {0, len, -len},  0xffffffff, {1, 1}};
+    v[5]  = { {0, -len, -len}, 0xffffffff, {0, 1}};
 
-    v[6]  = { {len, -len, 0},  {0, 1}};
-    v[7]  = { {len,  len, 0},  {0, 0}};
-    v[8]  = { {-len,  len, 0}, {1, 0}};
-    v[9]  = { {-len, len, 0},  {1, 0}};
-    v[10] = { {-len, -len, 0}, {1, 1}};
-    v[11] = { {len, -len, 0},  {0, 1}};
+    v[6]  = { {len, -len, 0},  0xffffffff, {0, 1}};
+    v[7]  = { {len,  len, 0},  0xffffffff, {0, 0}};
+    v[8]  = { {-len,  len, 0}, 0xffffffff, {1, 0}};
+    v[9]  = { {-len, len, 0},  0xffffffff, {1, 0}};
+    v[10] = { {-len, -len, 0}, 0xffffffff, {1, 1}};
+    v[11] = { {len, -len, 0},  0xffffffff, {0, 1}};
 
-    v[12] = { {len, 0, -len},  {0, 1}};
-    v[13] = { {len, 0, len},   {0, 0}};
-    v[14] = { {-len, 0, len},  {1, 0}};
-    v[15] = { {-len, 0, len},  {1, 0}};
-    v[16] = { {-len, 0, -len}, {1, 1}};
-    v[17] = { {len, 0, -len},  {0, 1}};
+    v[12] = { {len, 0, -len},  0xffffffff, {0, 1}};
+    v[13] = { {len, 0, len},   0xffffffff, {0, 0}};
+    v[14] = { {-len, 0, len},  0xffffffff, {1, 0}};
+    v[15] = { {-len, 0, len},  0xffffffff, {1, 0}};
+    v[16] = { {-len, 0, -len}, 0xffffffff, {1, 1}};
+    v[17] = { {len, 0, -len},  0xffffffff, {0, 1}};
 
     m_visual->addVisual(mesh, mtl);
     mesh->release();

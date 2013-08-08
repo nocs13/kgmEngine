@@ -150,6 +150,14 @@ class ASp_Gui: public kgmGui
         setColor(0xff00ff00);
       }
 
+      ~Button()
+      {
+        if(m_image)
+        {
+          m_image->release();
+        }
+      }
+
       void onMsLeftUp(int key, int x, int y)
       {
         setColor(0xff00ff00);

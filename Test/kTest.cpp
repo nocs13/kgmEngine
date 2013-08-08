@@ -110,6 +110,8 @@ public:
             game->gCommand("gameover_success");
           else
             game->gCommand("gameover_fail");
+
+          src->release();
         }
       }
     }
@@ -137,9 +139,6 @@ public:
     {
       if(os->getGroup() != od->getGroup())
       {
-        kgmString t = kgmString("Logic: ") + os->getId() + kgmString(" ") + od->getId();
-        //vtext->m_text->m_text = t;
-
         ASp_Laser* laser = (ASp_Laser*)os;
 
         if(od->isType(kgmActor::Class))
@@ -157,20 +156,12 @@ public:
 
 class kGame: public kgmGameBase{
   kGui*      gui;
-  //kgmSound* snd;
 
 public:
   kGame(){
     gui = new kGui(this);
     m_msAbs = false;
     m_gamemode = true;
-
-    //m_logic->add("RenTao", new AITaoRen(this));
-    /*snd = m_game->getResources()->getSound("1.wav");
-      if(snd && snd->getSound())
-      {
-        snd->getSound()->play(true);
-      }*/
 
     if(m_physics)
       m_physics->m_gravity = 1.0f;
@@ -236,12 +227,6 @@ public:
   void onMsMove(int k, int x, int y)
   {
     kgmGameBase::onMsMove(k, x, y);
-
-    /*if(snd)
-    {
-      vec3 pos(x, y, 0), vel(0,0,0);
-      snd->getSound()->emit(pos, vel);
-    }*/
   }
 
   int gCommand(kgmString s)

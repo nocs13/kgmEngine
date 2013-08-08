@@ -18,6 +18,7 @@ class ASpacer: public kgmActor
   bool      gbtns[65];
 
   ASp_Gui*   gui;
+  bool       explode;
 public:
   ASpacer(kgmIGame* g)
   {
@@ -29,6 +30,7 @@ public:
     roll      = 0.0;
     yaaw      = 0.0;
     pich      = 0.5 * PI;
+    explode   = false;
 
     m_body->m_gravity = false;
     m_body->m_bound.min = vec3(-1, -1, -1);
@@ -38,7 +40,7 @@ public:
 
     gui   = new ASp_Gui(game);
 
-    m_health = 100;
+    m_health = 1;
     setId("MainPlayer");
 
     m_gameplayer = true;
@@ -245,8 +247,6 @@ public:
       }
       else if(m_state->id == "die")
       {
-        remove();
-        game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
       }
 
       if(m_health < 1 && m_state->id != "dying")
@@ -393,6 +393,34 @@ public:
   void action_shoot_rocket()
   {
 
+  }
+
+  void action_dying()
+  {
+    if(explode)
+      return;
+
+    box3  bnd = m_body->m_bound;
+    vec3  pos = m_body->m_position;
+    vec3  dim;  bnd.dimension(dim);
+
+    kgmGameObject* go1 = new ASp_ExplodeA(game, pos, dim);
+    kgmGameObject* go2 = new ASp_ExplodeC(game, pos, dim);
+
+
+    go1->setId("explode1");
+    go2->setId("explode1");
+
+    game->gAppend(go1);
+    game->gAppend(go2);
+
+    go1->release();
+    go2->release();
+
+    explode = true;
+
+    remove();
+    game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
   }
 };
 #endif // ASPACER_H

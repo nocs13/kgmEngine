@@ -81,7 +81,6 @@ public:
       else if(m_state->id == "die")
       {
         remove();
-        game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
       }
 
       if(this->m_health < 1 && m_state->id != "dying")
@@ -135,6 +134,7 @@ public:
     explode = true;
 
     remove();
+    game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "die");
   }
 };
 
