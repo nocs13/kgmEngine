@@ -155,7 +155,15 @@ public:
 };
 
 class kGame: public kgmGameBase{
+  struct GameData
+  {
+    u32 sig;
+    u8  maps;
+    u8  cmap;
+  };
+
   kGui*      gui;
+  GameData   data;
 
 public:
   kGame(){
@@ -298,6 +306,17 @@ public:
     }
 
     return kgmGameBase::gObject(t);
+  }
+
+private:
+  void readData()
+  {
+
+  }
+
+  void saveData()
+  {
+
   }
 };
 
