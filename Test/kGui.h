@@ -12,6 +12,7 @@ public:
     kgmGui*      m_guiGame;
     kgmGui*      m_guiSettings;
     kgmGui*      m_guiPause;
+    kgmGuiList*  m_guiLevels;
 
 public:
     kGui(kgmGameBase*);

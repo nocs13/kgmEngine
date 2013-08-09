@@ -46,6 +46,10 @@ KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
 
 bool g_ms_camera = false;
 
+//const char* maps[][] =
+//{
+//  "map test", "map001.map",
+//};
 
 class kGame;
 
@@ -157,7 +161,7 @@ public:
 class kGame: public kgmGameBase{
   struct GameData
   {
-    u32 sig;
+    u16 sig;
     u8  maps;
     u8  cmap;
   };
@@ -166,7 +170,8 @@ class kGame: public kgmGameBase{
   GameData   data;
 
 public:
-  kGame(){
+  kGame()
+  {
     gui = new kGui(this);
     m_msAbs = false;
     m_gamemode = true;
@@ -179,9 +184,14 @@ public:
       m_logic->release();
       m_logic = new ASp_Logic(this);
     }
+
+    readData();
+    saveData();
   }
 
-  ~kGame(){
+  ~kGame()
+  {
+    saveData();
   }
 
 //protected:
@@ -311,12 +321,54 @@ public:
 private:
   void readData()
   {
+    kgmString path;
 
+#ifdef ANDROID
+#else
+    kgmSystem::getHomeDirectory(path);
+
+    path += "/.kSpacer";
+
+    if(!kgmSystem::isDirectory(path))
+      return;
+
+    path += "/data";
+#endif;
+
+    kgmFile f;
+
+    f.open(path, kgmFile::Read);
+
+    if(f.m_file)
+      f.read(&data, sizeof(data));
+
+    f.close();
   }
 
   void saveData()
   {
+    kgmString path;
 
+#ifdef ANDROID
+#else
+    kgmSystem::getHomeDirectory(path);
+
+    path += "/.kSpacer";
+
+    if(!kgmSystem::isDirectory(path))
+      kgmFile::make_directory(path);
+
+    path += "/data";
+#endif;
+
+    kgmFile f;
+
+    f.open(path, kgmFile::Write | kgmFile::Create);
+
+    if(f.m_file)
+      f.write(&data, sizeof(data));
+
+    f.close();
   }
 };
 

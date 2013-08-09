@@ -10,6 +10,7 @@
 #else
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 
@@ -154,5 +155,16 @@ bool kgmFile::rename(kgmString oname, kgmString nname)
 
   return true;
 }
+
+bool kgmFile::make_directory(kgmString& path)
+{
+  int res = mkdir(path.data(), 0777);
+
+  if(res)
+    return false;
+
+  return true;
+}
+
 
 

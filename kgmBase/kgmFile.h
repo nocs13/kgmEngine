@@ -37,6 +37,7 @@ public:
   //STATIC
   static bool remove_file(kgmString path);
   static bool rename(kgmString oname, kgmString nname);
+  static bool make_directory(kgmString&);
 };
 
 

@@ -51,7 +51,7 @@ kGui::kGui(kgmGameBase* game)
   text = "Continue";
   btn->setText(text);
 
-  kgmGuiList* lst = new kgmGuiList(gui, w / 2, 10, w / 2 - 2, h - 100);
+  kgmGuiList* lst = m_guiLevels = new kgmGuiList(gui, w / 2, 10, w / 2 - 2, h - 100);
   lst->m_itemHeight = 40;
   lst->setSid("levels");
   lst->addItem("map000.kgm");
