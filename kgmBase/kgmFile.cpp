@@ -158,8 +158,13 @@ bool kgmFile::rename(kgmString oname, kgmString nname)
 
 bool kgmFile::make_directory(kgmString& path)
 {
-  int res = mkdir(path.data(), 0777);
+  int res = 0;
 
+#ifdef WIN32
+  res = mkdir(path.data());
+#else
+  res = mkdir(path.data(), 0777);
+#endif
   if(res)
     return false;
 

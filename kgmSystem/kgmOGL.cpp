@@ -69,7 +69,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   }
 
 #ifdef WIN32
-  if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
+  //if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
 #endif
 
 #ifdef LINUX

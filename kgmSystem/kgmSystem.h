@@ -12,6 +12,7 @@ public:
  static void setCurrentDirectory(kgmString&);
  static void getTemporaryDirectory(kgmString&);
  static void getHomeDirectory(kgmString&);
+ static void getPathDelim(kgmString&);
  static bool createDirectory(kgmString&);
  static bool getCpuData(int &cpus, int &cores);
  static bool isFile(kgmString&);

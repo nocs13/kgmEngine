@@ -191,6 +191,15 @@ void kgmSystem::getHomeDirectory(kgmString& s){
 #endif
 }
 
+void kgmSystem::getPathDelim(kgmString &s)
+{
+#ifdef WIN32
+  s = "\\";
+#else
+  s = "/";
+#endif
+}
+
 bool kgmSystem::isFile(kgmString& s){
   FILE* file;
   if(!(file = fopen(s, "r")))
@@ -202,7 +211,7 @@ bool kgmSystem::isFile(kgmString& s){
 bool kgmSystem::isDirectory(kgmString& s){
 #ifdef WIN32
   DWORD attr =  GetFileAttributes(s.data());
-  if(attr & FILE_ATTRIBUTE_DIRECTORY)
+  if((attr != 0xffffffff) && (attr & FILE_ATTRIBUTE_DIRECTORY))
     return true;
 #endif
 #ifdef LINUX

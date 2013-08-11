@@ -1033,7 +1033,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
 kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
   kgmWave wav;
 
-  if(!wav.from_mem((char*)m.data(), m.length()))
+  if(!au || !wav.from_mem((char*)m.data(), m.length()))
     return 0;
 
   kgmIAudio::FMT fmt;
