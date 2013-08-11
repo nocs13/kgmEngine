@@ -46,10 +46,14 @@ KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
 
 bool g_ms_camera = false;
 
-//const char* maps[][] =
-//{
-//  "map test", "map001.map",
-//};
+const char* maps[] =
+{
+  "map test0", "map000.map",
+  "map test1", "map001.map",
+  "map test2", "map002.map",
+  "map test3", "map003.map",
+  "map test4", "map004.map",
+};
 
 class kGame;
 
