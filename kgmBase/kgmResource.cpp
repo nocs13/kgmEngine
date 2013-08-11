@@ -1,6 +1,10 @@
 #include "kgmResource.h"
 #include "kgmIResources.h"
 
+#ifdef TEST
+#include "kgmLog.h"
+#endif
+
 KGMOBJECT_IMPLEMENT(kgmResource, kgmObject);
 
 kgmIResources* kgmResource::g_resources = null;
@@ -16,7 +20,15 @@ kgmResource::~kgmResource(){
 void kgmResource::release()
 {
   if(g_resources && references() == 1)
+  {
     g_resources->remove(this);
+#ifdef TEST
+    kgm_log() << "resource release:";
+
+    if(m_id.length() > 0)
+      kgm_log() << m_id.data();
+#endif
+  }
 
   kgmObject::release();
 }
