@@ -279,6 +279,7 @@ void kgmGameBase::onIdle(){
 
 #ifdef TEST
   kgmObject::listObjects();
+  //kgm_log() << "State is: " << (s32)m_state;
 #endif
 }
 

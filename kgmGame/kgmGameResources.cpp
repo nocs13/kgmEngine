@@ -34,6 +34,7 @@ void kgmGameResources::release(){
 
   for(i = 0; i < m_paths.size(); i++)
     delete m_paths[i];
+
   m_paths.clear();
 
   for(i = 0; i < m_resources.size(); i++){
@@ -41,21 +42,26 @@ void kgmGameResources::release(){
       continue;
     m_resources[i]->release();
   }
+
   m_resources.clear();
 }
 
 void kgmGameResources::add(kgmResource* r){
   bool exist = false;
+
   if(!r)
     return;
-  return;
+
   for(int i = 0; i < m_resources.size(); i++){
     if(r == m_resources[i]){
       exist = true;
       break;
     }
   }
-  if(exist) return;
+
+  if(exist)
+    return;
+
   m_resources.add(r);
 }
 
@@ -74,6 +80,10 @@ void kgmGameResources::remove(kgmResource* r){
       else if(r->isClass(kgmShader::Class))
       {
         kgmIGame::getGame()->getGraphics()->gcFreeShader(((kgmShader*)r)->m_shader);
+      }
+      else if(r->isClass(kgmSound::Class))
+      {
+        kgmIGame::getGame()->getAudio();
       }
 
       m_resources.erase(i);
@@ -115,7 +125,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
-#ifdef TESTXXX
+#ifdef TEST
   kgm_log() << "\nkgmEngine android loading file " << id;
 #endif
   AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
