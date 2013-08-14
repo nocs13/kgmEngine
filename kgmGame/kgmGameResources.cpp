@@ -132,7 +132,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 
   if (NULL == asset)
   {
-    //kgmLog::log("_ASSET_NOT_FOUND_");
+    kgmLog::log("_ASSET_NOT_FOUND_");
 
     return false;
   }
@@ -140,7 +140,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
   long size = AAsset_getLength(asset);
   m.alloc(size);
   AAsset_read (asset, (char*)m, size);
-#ifdef TESTXXX
+#ifdef TEST
   kgm_log() << "\nkgmEngine android file size: " << (s32)size;
 #endif
   AAsset_close(asset);

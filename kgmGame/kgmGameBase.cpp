@@ -212,13 +212,14 @@ void kgmGameBase::initSystem()
 }
 
 void kgmGameBase::initAudio(){
+  m_audio = null;
+
 #ifdef OAL
   m_audio	= new kgmOAL();
 #elif defined(OSL)
-  m_audio	= new kgmOSL();
+  //m_audio	= new kgmOSL();
 #elif defined(D3DS)
 #else
-  m_audio = null;
 #endif
 }
 
@@ -1014,7 +1015,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
       actor->getBody()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
     }
-    else if(id == "Shape")
+    else if(id == "Shapexxx")
     {
       a_node->node(i)->attribute("value", val);
 
