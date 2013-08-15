@@ -1,4 +1,5 @@
 #include "kgmPhysics.h"
+#include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmTime.h"
 
 #ifdef WIN32
@@ -32,15 +33,27 @@ void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
 
 ///////////////////////// 
 void kgmPhysics::clear(){
+#ifdef TEST
+  kgm_log() << "\nPhysics clearing...";
+#endif
+
   for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
   {
+#ifdef TEST
+    kgm_log() << "\nRelease body: " << (s32)(*i)->m_type;
+#endif
     (*i)->release();
   }
-
+#ifdef TEST
+  kgm_log() << "\nBodies released";
+#endif
   m_bodies.clear();
   m_triangles.clear();
   m_collision.reset();
   m_intersection.reset();
+#ifdef TEST
+  kgm_log() << "\nPhysics cleared";
+#endif
 }
 
 void kgmPhysics::build(){

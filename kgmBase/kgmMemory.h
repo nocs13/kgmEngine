@@ -31,7 +31,8 @@ public:
   alloc(m.m_data, m.m_length);
  }
 
- virtual ~kgmMemory(){
+ virtual ~kgmMemory()
+ {
   clear();
  }
 

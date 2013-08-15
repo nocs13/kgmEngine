@@ -21,13 +21,13 @@ void kgmResource::release()
 {
   if(g_resources && references() == 1)
   {
-    g_resources->remove(this);
 #ifdef TEST
-    kgm_log() << "resource release:";
+    kgm_log() << "\nResource release:";
 
     if(m_id.length() > 0)
       kgm_log() << m_id.data();
 #endif
+    g_resources->remove(this);
   }
 
   kgmObject::release();

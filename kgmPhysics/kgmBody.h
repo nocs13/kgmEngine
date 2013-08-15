@@ -25,8 +25,8 @@ public:
   };
 
 
-  u32	    m_type;
-  u32	    m_shape;
+  u32     m_type;
+  u32     m_shape;
 
   bool    m_valid;      //valid physics object
   bool    m_remove;     //physics object should removed
@@ -47,12 +47,12 @@ public:
   vec3     m_rotation;    //current rotation
   quat     m_quaternion;  //current rotation(in quaternions)
 
-  box3     m_bound;  //bound box
+  box3     m_bound;       //bound box
 
   Constraint         m_constraint;
   kgmList<polygon3*> m_convex; //convex shape sides for simulation(collision, ...)
 
-  void*	  m_udata;   //user data of linked object
+  void*	  m_udata;        //user data of linked object
 
 private:
   vec3     m_direction;        //current direction

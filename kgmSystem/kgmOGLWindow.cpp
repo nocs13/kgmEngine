@@ -208,7 +208,8 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
  m_gc = new kgmOGL(this);
 }
 
-kgmOGLWindow::~kgmOGLWindow(){
+kgmOGLWindow::~kgmOGLWindow()
+{
 }
 
 void kgmOGLWindow::onClose()

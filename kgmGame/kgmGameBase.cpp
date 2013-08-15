@@ -158,7 +158,7 @@ kgmIPhysics* kgmGameBase::getPhysics(){
 }
 
 kgmISpawner* kgmGameBase::getSpawner(){
-  return m_game->m_spawner;
+  return null;
 }
 
 kgmIAudio*  kgmGameBase::getAudio(){
@@ -212,15 +212,7 @@ void kgmGameBase::initSystem()
 }
 
 void kgmGameBase::initAudio(){
-  m_audio = null;
-
-#ifdef OAL
-  m_audio	= new kgmOAL();
-#elif defined(OSL)
-  //m_audio	= new kgmOSL();
-#elif defined(D3DS)
-#else
-#endif
+  m_audio = new kgmGameAudio();
 }
 
 void kgmGameBase::initLogic(){
@@ -312,7 +304,7 @@ void kgmGameBase::onClose()
   if(m_audio)
   {
     m_audio->release();
-    delete m_audio;
+    //delete m_audio;
   }
 
   log("free system...");
@@ -405,10 +397,28 @@ int kgmGameBase::gUnload()
   u32 state = m_state;
   state = State_Stop;
 
-  m_render->clear();
-  m_physics->clear();
-  m_logic->clear();
+  kgm_log() << "\nUnloading...";
+  kgm_log() << "\nClear logic";
 
+  if(m_logic)
+    m_logic->clear();
+
+  kgm_log() << "\nClear audio";
+
+  if(m_audio)
+    m_audio->clear();
+
+  kgm_log() << "\nClear physics";
+
+  if(m_physics)
+    m_physics->clear();
+
+  kgm_log() << "\nClear render";
+
+  if(m_render)
+    m_render->clear();
+
+  kgm_log() << "\nUnloaded";
   m_state = state;
 
   return 0;

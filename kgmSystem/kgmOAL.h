@@ -8,6 +8,7 @@
 #include "../kgmMedia/kgmWave.h"
 #include "../kgmMath/kgmMath.h"
 
+#ifdef OAL
 #ifdef WIN32
 #include "inc/al.h"
 #include "inc/alc.h"
@@ -19,9 +20,7 @@
 #include <AL/alext.h>
 #endif
 
-#ifdef OAL
-
-class kgmOAL: public kgmIAudio  
+class kgmOAL: public kgmIAudio, public kgmObject
 {
   class _Sound: public Sound{
     u32	buffer;
@@ -47,8 +46,8 @@ public:
   virtual ~kgmOAL();
 
   Sound* create(FMT fmt, u16 freq, u32 size, void* data);
-  void 	 listener(vec3& pos, vec3& vel, vec3& ort);
-  void   release();
+  void   listener(vec3& pos, vec3& vel, vec3& ort);
+  void   clear();
 };
 
 #endif

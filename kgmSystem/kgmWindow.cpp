@@ -534,7 +534,7 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
     break;
   }
 
-  if(m_evt.event)
+  if(wnd && m_evt.event)
     wnd->onEvent(&m_evt);
 
   return 1;
@@ -730,15 +730,21 @@ void kgmWindow::loop(){
 
 #ifdef LINUX
   XEvent evt;
-  while(m_loop && m_dpy){
-    while(XPending(m_dpy) > 0){
+
+  while(m_loop && m_dpy)
+  {
+    while(XPending(m_dpy) > 0)
+    {
       XNextEvent(m_dpy, &evt);
       WndProc(this, &evt);
-      if(!m_loop || !m_dpy)
-        break;
+
+      if(!m_dpy)
+        return;
     }
 
-    if(m_dpy)
+    if(!m_loop || !m_dpy)
+      break;
+    else
       onIdle();
 
     usleep(0);
@@ -805,7 +811,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h){
 void kgmWindow::setRect(int x, int y, int w, int h){
 #ifdef WIN32
   RECT r;
-  // GetClientRect(m_hWnd, (LPRECT)&r);
+  //GetClientRect(m_hWnd, (LPRECT)&r);
 #endif
 
 #ifdef LINUX

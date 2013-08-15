@@ -209,6 +209,9 @@ bool kgmSystem::isFile(kgmString& s){
 }
 
 bool kgmSystem::isDirectory(kgmString& s){
+  if(s.length() < 1)
+    return false;
+
 #ifdef WIN32
   DWORD attr =  GetFileAttributes(s.data());
   if((attr != 0xffffffff) && (attr & FILE_ATTRIBUTE_DIRECTORY))

@@ -5,6 +5,7 @@
 #include "kgmGameGraphics.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameLogic.h"
+#include "kgmGameAudio.h"
 
 #include "kgmGameObject.h"
 #include "kgmActor.h"
@@ -30,9 +31,8 @@ public:
  static kgmGameBase*	m_game;
 
 protected:
- kgmIAudio*		      m_audio;
  kgmIVideo*		      m_video;
- kgmISpawner*		    m_spawner;
+ kgmGameAudio*		  m_audio;
  kgmIGraphics*		  m_graphics;
  kgmGamePhysics*	  m_physics;
  kgmGameResources*	m_resources;
