@@ -18,7 +18,7 @@ protected:
 public:
 
  kgmMemory(){ 
-  m_data = 0; 
+  m_data = null;
   m_length = 0; 
   m_position = 0;
  }
@@ -38,11 +38,14 @@ public:
 
  kgmMemory<T>& operator=(const kgmMemory<T>& m){
   clear();
+
   if(!m.m_length)
    return *this;
-  m_data = new T[m.m_length];
+
+  m_data = (T*)malloc(sizeof(T) * m.m_length);
   m_length = m.m_length;
   memcpy(m_data, m.m_data, sizeof(T) * m_length);
+
   return *this;
  }
 
@@ -56,8 +59,9 @@ public:
 
  void clear(){
   if(m_data)
-   delete [] m_data;
-  m_data = 0;
+   free(m_data);
+
+  m_data = null;
   m_length = 0;
   m_position = 0;
  }
@@ -76,20 +80,26 @@ public:
 
  bool alloc(u32 len){
   clear();
+
   if(!len)
    return false;
-  m_data = new T[len];
+
+  m_data = (T*)malloc(sizeof(T) * len);
   m_length = len;
+
   return true;
  }
 
  bool alloc(T* data, u32 len){
   clear();
+
   if(!data || !len)
    return false;
-  m_data = new T[len];
+
+  m_data = (T*)malloc(sizeof(T) * len);
   m_length = len;
   memcpy(m_data, data, sizeof(T) * m_length);
+
   return true;
  }
  
@@ -150,7 +160,7 @@ public:
      for(int i = 0; i < scnt; i++){
        if(m_data[m_position + rs] == sym[i]){
          loop = false;
-	 break;
+         break;
        }
      }
      if(loop)

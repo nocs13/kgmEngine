@@ -17,9 +17,12 @@ public:
  kgmTString(const T* str){
   if(!str)
    return;
+
   u32 len = 0;
+
   while(str[len] && (len < KGM_TSTRING_MAX_COPY))
    len++;
+
   alloc((T*)str, len);
  }
 
@@ -38,18 +41,24 @@ public:
  //operators
  kgmTString<T>& operator=(const T* str){
   kgmArray<T>::clear();
+
   if(!str)
    return *this;
+
   u32 len = 0;
+
   while(str[len] && (len < KGM_TSTRING_MAX_COPY))
    len++;
+
   alloc((T*)str, len);
+
   return *this;
  }
 
  kgmTString<T>& operator=(const kgmTString<T>& str){
   kgmArray<T>::clear();
   alloc(str.m_data, str.m_length);
+
   return *this;
  }
 
@@ -63,19 +72,22 @@ public:
   int len = kgmArray<T>::m_length + s.m_length;
   if(len <= kgmArray<T>::m_length)
    return *this;
-  T* str = new T[len + 1];
+
+  T* str = (T*)malloc(sizeof(T) * (len + 1));
   memcpy(str, kgmArray<T>::m_data, sizeof(T) * kgmArray<T>::m_length);
   memcpy(&str[kgmArray<T>::m_length], s.m_data, sizeof(T) * s.m_length);
   kgmArray<T>::clear();
   kgmArray<T>::m_data   = str;
   kgmArray<T>::m_length = len;
   kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
-  return *this; 
+
+  return *this;
  }
 
  kgmTString<T> operator+(const kgmTString<T>& s){
   kgmTString<T> r = (*this);
   r += s;
+
   return r; 
  }
 
@@ -110,14 +122,14 @@ public:
  void alloc(u32 len){
   kgmArray<T>::clear();
   kgmArray<T>::m_length = len;
-  kgmArray<T>::m_data   = new T[kgmArray<T>::m_length + 1];
+  kgmArray<T>::m_data   = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
   kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
  }
 
  void alloc(T* m, u32 len){
   kgmArray<T>::clear();
   kgmArray<T>::m_length = len;
-  kgmArray<T>::m_data = new T[kgmArray<T>::m_length + 1];
+  kgmArray<T>::m_data = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
   memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length);
   kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
  }
@@ -148,12 +160,14 @@ public:
   for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
    if(kgmArray<T>::m_data[i] == t)
     return i;
+
   return -1;
  }
  
  T* pointer(u32 i){
   if(i > kgmArray<T>::m_length)
-    return 0;
+    return null;
+
   return &kgmArray<T>::m_data[i];
  }
 
@@ -174,15 +188,19 @@ public:
   int size;
 
   istart = find(ssym, 0);
+
   if(istart < 0)
    return false;
+
   istart++;
   iend = find(esym, istart);
+
   if(iend < 0)
    return false;
 
   size = iend - istart;
   r.alloc(pointer(istart), size);
+
   return r;
  }
 
@@ -192,9 +210,11 @@ protected:
  int find(T sym, int start){
   if(start > kgmArray<T>::m_length)
    return -1;
+
   for(int i = start; i <= kgmArray<T>::m_length; i++)
    if(kgmArray<T>::m_data[i] == sym)
     return i;
+
   return -1;
  }
 
@@ -202,6 +222,7 @@ protected:
 public:
  static void sReplace(T* s, T ss, T es){
   T* c = s;
+
   do{
    if(*c == ss) *c = es;
   }while(*c != (T)0);

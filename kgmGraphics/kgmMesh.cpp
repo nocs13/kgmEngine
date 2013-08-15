@@ -14,6 +14,11 @@ kgmMesh::kgmMesh(){
 }
 
 kgmMesh::~kgmMesh(){
+  if(m_vertices)
+    free(m_vertices);
+
+  if(m_faces)
+    free(m_faces);
  }
 
 box3 kgmMesh::bound(){
@@ -48,59 +53,65 @@ box3 kgmMesh::bound(){
 
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
  if(m_vertices)
-  delete [] m_vertices;
+  free(m_vertices);
+
+ u32 v_size = 0;
+
  switch(f){
  case FVF_P_N_C_T_BW_BI:
-   m_vertices = new Vertex_P_N_C_T_BW_BI[count];
+   v_size = sizeof(Vertex_P_N_C_T_BW_BI) * count;
    m_fvf = FVF_P_N_C_T_BW_BI;
    break;
  case FVF_P_N_C_T2:
-   m_vertices = new Vertex_P_N_C_T2[count];
+   v_size = sizeof(Vertex_P_N_C_T2) * count;
    m_fvf = FVF_P_N_C_T2;
    break;
  case FVF_P_N_C_T:
-   m_vertices = new Vertex_P_N_C_T[count];
+   v_size = sizeof(Vertex_P_N_C_T) * count;
    m_fvf = FVF_P_N_C_T;
    break;
  case FVF_P_C_T:
-   m_vertices = new Vertex_P_C_T[count];
+   v_size = sizeof(Vertex_P_C_T) * count;
    m_fvf = FVF_P_C_T;
    break;
  case FVF_P_T:
-   m_vertices = new Vertex_P_T[count];
+   v_size = sizeof(Vertex_P_T) * count;
    m_fvf = FVF_P_T;
    break;
  case FVF_P_N:
-   m_vertices = new Vertex_P_N[count];
+   v_size = sizeof(Vertex_P_N) * count;
    m_fvf = FVF_P_N;
    break;
  case FVF_P_C:
-   m_vertices = new Vertex_P_C[count];
+   v_size = sizeof(Vertex_P_C) * count;
    m_fvf = FVF_P_C;
    break;
  case FVF_P:
-   m_vertices = new Vertex[count];
+   v_size = sizeof(Vertex) * count;
    m_fvf = FVF_P;
    break;
  default:
-   m_vertices = new Vertex[count];
+   v_size = sizeof(Vertex_P_N_C) * count;
    m_fvf = FVF_P_N_C;
  }
 
+ m_vertices = (Vertex*)malloc(v_size);
  m_vcount = count;
+
  return m_vertices;
 }
 
 kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
  if(m_faces)
-  delete [] m_faces;
+  free(m_faces);
+
  switch(f){
  case FFF_32:
-   m_faces = new Face_32[count];
+   m_faces = (Face*)malloc(sizeof(Face_32) * count);
    m_fff = FFF_32;
    break;
  default:
-   m_faces = new Face_16[count];
+   m_faces = (Face*)malloc(sizeof(Face_16) * count);
    m_fff = FFF_16;
  }
 

@@ -138,6 +138,7 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_Z] = (char)gbtn_z;
 
   m_gamemode = true;
+  m_state    = State_None;
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
@@ -229,7 +230,7 @@ void kgmGameBase::onIdle(){
   static int tick = kgmTime::getTicks();
   static int frames = 0;
   static int fps = 1;
-  static char buf[128];
+  static char buf[128] = {0};
 
   if(kgmTime::getTicks() - tick > 1000)
   {
@@ -260,7 +261,7 @@ void kgmGameBase::onIdle(){
       m_logic->update(1000 / fps);
     break;
   case State_Stop:
-    gUnload();
+    //gUnload();
     m_state = State_None;
     break;
   default:

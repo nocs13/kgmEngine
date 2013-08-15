@@ -153,8 +153,8 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
 
   if(b_btcnt == 8){
     u32 r_size = b_width * b_height;
-    pdata = new u32[r_size];
-    u32 *pal = new u32[256];
+    pdata = (u32*)malloc(sizeof(u32) * r_size);
+    u32 *pal = (u32*)malloc(sizeof(u32) * 256);
     memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
 
     for(u32 i = 0; i < r_size; i++)
@@ -166,13 +166,13 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<char>& m)
     width = b_width;
     height = b_height;
     bpp = 32;
-    delete pal;
+    free(pal);
 
     return new kgmPicture(width, height, bpp, frames, pdata);
   }
 
   u32 r_size = b_width * b_height * (b_btcnt / 8);
-  pdata = new char[r_size];
+  pdata = malloc(sizeof(char) * r_size);
   memcpy(pdata, pm, r_size);
   width = b_width;
   height = b_height;
@@ -225,7 +225,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
 
   u32 r_size = w * h * (btcnt/8);
   pm += idl;
-  pdata = new char[r_size];
+  pdata = malloc(sizeof(char) * r_size);
   memcpy(pdata, pm, r_size);
   u32 k = (u32)((u32*)pdata)[0];
   width = w;

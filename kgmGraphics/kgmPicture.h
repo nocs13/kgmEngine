@@ -28,6 +28,8 @@ public:
  {
    if(pdata)
     free(pdata);
+
+   pdata = null;
  }
 
  u32 getWidth()
@@ -112,6 +114,7 @@ public:
    bpp = 32;
 
    free(pal);
+   pal = null;
 
    return true;
   }

@@ -10,6 +10,7 @@ kgmGuiList::kgmGuiList()
  m_itemSel = -1;
  m_itemHeight = 20;
  m_position = 0;
+ m_range    = 0;
 }
 
 kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
@@ -20,6 +21,7 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
  m_itemSel = -1;
  m_itemHeight = 20;
  m_position = 0;
+ m_range    = 0;
 }
 
 

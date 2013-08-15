@@ -22,9 +22,12 @@ public:
 
  kgmArray<T>& operator=(const kgmArray<T>& a){
   kgmMemory<T>::clear();
+
   if(!a.m_length)
-   return *this;
+    return *this;
+
   kgmMemory<T>::alloc(a.m_data, a.m_length);
+
   return *this;
  }
 
@@ -37,11 +40,13 @@ public:
   T*   old  = kgmMemory<T>::m_data;
   u32 scpy = (kgmMemory<T>::m_length < len)?(kgmMemory<T>::m_length):(len);
 
-  kgmMemory<T>::m_data = new T[len];
+  kgmMemory<T>::m_data = (T*)malloc(sizeof(T) * len);
   kgmMemory<T>::m_length = len;
-  if(old){
+
+  if(old)
+  {
    memcpy(kgmMemory<T>::m_data, old, sizeof(T) * scpy);
-   delete [] old;
+   free(old);
   }
  }
 

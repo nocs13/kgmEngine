@@ -711,8 +711,7 @@ void kgmWindow::show(bool sh){
 }
 
 void kgmWindow::loop(){
-  if(!m_loop)
-    m_loop = true;
+  m_loop = true;
 
 #ifdef WIN32
   MSG msg;

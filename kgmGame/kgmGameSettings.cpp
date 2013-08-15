@@ -36,7 +36,7 @@ void kgmGameSettings::load(){
   if(!file)
     return;
 
-  char* str = new char[2048];
+  //char* str = new char[2048];
 
   while(!feof(file))
   {
@@ -53,6 +53,7 @@ void kgmGameSettings::load(){
 
     m_parameters.add(s_key, s_val);
   }
+
 
   fclose(file);
 }
