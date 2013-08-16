@@ -83,7 +83,7 @@ void kgmGameResources::remove(kgmResource* r){
       }
       else if(r->isClass(kgmSound::Class))
       {
-        kgmIGame::getGame()->getAudio();
+        ((kgmSound*)r)->m_sound->release();
       }
 
       m_resources.erase(i);

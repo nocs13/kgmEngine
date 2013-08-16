@@ -12,7 +12,6 @@ kgmSound::kgmSound(kgmIAudio::Sound* s)
  m_sound = s;
 }
 
-kgmSound::~kgmSound(){
-  if(m_sound)
-    m_sound->release();
+kgmSound::~kgmSound()
+{
 }

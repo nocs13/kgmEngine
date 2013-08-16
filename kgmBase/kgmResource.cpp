@@ -21,7 +21,7 @@ void kgmResource::release()
 {
   if(g_resources && references() == 1)
   {
-#ifdef TEST
+#ifdef TESTX
     kgm_log() << "\nResource release:";
 
     if(m_id.length() > 0)

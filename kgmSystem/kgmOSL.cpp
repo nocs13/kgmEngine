@@ -31,8 +31,13 @@ kgmOSL::_Sound::~_Sound(){
   }
 }
 
-void kgmOSL::_Sound::release(){
+void kgmOSL::_Sound::release()
+{
   remove = true;
+
+#ifdef TEST
+        kgm_log() << "OSL remove flag set \n";
+#endif
 }
 
 void kgmOSL::_Sound::stop(){
@@ -155,7 +160,24 @@ kgmOSL::kgmOSL()
 
 kgmOSL::~kgmOSL()
 {
-  free(mux);
+  active = false;
+  kgm_log() << "OSL stoping thread\n";
+  join();
+  kgm_log() << "OSL thread stoped\n";
+
+    if(outputMixObject)
+    {
+      kgm_log() << "OSL delete outputMixObject \n";
+      (*outputMixObject)->Destroy(outputMixObject);
+    }
+
+    if(engineObject)
+    {
+      kgm_log() << "OSL delete engineObject \n";
+      (*engineObject)->Destroy(engineObject);
+    }
+
+    free(mux);
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
@@ -354,24 +376,9 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
   orient   = ort;
 }
 
-void kgmOSL::release()
+void kgmOSL::clear()
 {
-  active = false;
-  kgm_log() << "OSL stoping thread\n";
-  join();
-  kgm_log() << "OSL thread stoped\n";
-
-    if(outputMixObject)
-    {
-      kgm_log() << "OSL delete outputMixObject \n";
-      (*outputMixObject)->Destroy(outputMixObject);
-    }
-
-    if(engineObject)
-    {
-      kgm_log() << "OSL delete engineObject \n";
-      (*engineObject)->Destroy(engineObject);
-    }
+  kgm_log() << "OSL clear\n";
 }
 
 void kgmOSL::OSL_sound_bufferQueue_callback(SLBufferQueueItf caller,void *pContext)
@@ -398,37 +405,49 @@ void kgmOSL::run()
 {
   active = true;
 
+#ifdef TEST
   kgm_log() << "OSL Gues whooo.....\n";
   kgm_log() << "osl thread id " << (s32)gettid();
+#endif
 
   while(active)
   {
     lock(mux);
-//    kgm_log() << "OSL check sounds.\n";
+#ifdef TEST
+    kgm_log() << "OSL check sounds.\n";
+#endif
 
-    for(int i = sounds.length(); i > 0; i--)
+    for(int i = sounds.length(); i > 0; --i)
     {
       _Sound* s = sounds[i - 1];
       SLresult result;
 
-      float dst = s->position.distance(position);
-      float vol = (700 - dst) / 750;
-      if(vol < 0) vol = 0;
-
-      s->volume(vol);
-      //kgm_log() << "OSL distance " << dst << "\n";
-
       if(s->remove)
       {
         delete s;
-        kgm_log() << "OSL remove sounds " << i << "\n";
 
+#ifdef TEST
+        kgm_log() << "OSL remove sounds " << i << "\n";
+#endif
         sounds.erase(i - 1);
+
+        continue;
       }
+
+      float dst = s->position.distance(position);
+      float vol = (700 - dst) / 750;
+
+      if(vol < 0)
+        vol = 0;
+
+      s->volume(vol);
+#ifdef TEST
+      kgm_log() << "OSL distance " << dst << "\n";
+#endif
     }
 
     unlock(mux);
-    kgmSystem::sleep(200);
+    kgmSystem::sleep(1000);
   }
 }
 

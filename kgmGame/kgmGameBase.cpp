@@ -146,7 +146,6 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 {
 }
 
-
 kgmGameBase::~kgmGameBase(){
 }
 
@@ -399,28 +398,21 @@ int kgmGameBase::gUnload()
   state = State_Stop;
 
   kgm_log() << "\nUnloading...";
-  kgm_log() << "\nClear logic";
 
   if(m_logic)
     m_logic->clear();
 
-  kgm_log() << "\nClear audio";
-
   if(m_audio)
     m_audio->clear();
-
-  kgm_log() << "\nClear physics";
 
   if(m_physics)
     m_physics->clear();
 
-  kgm_log() << "\nClear render";
-
   if(m_render)
     m_render->clear();
 
-  kgm_log() << "\nUnloaded";
   m_state = state;
+  kgm_log() << "\nUnloaded";
 
   return 0;
 }

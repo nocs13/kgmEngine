@@ -15,8 +15,8 @@
 #endif
 
 
-class kgmThread{
-
+class kgmThread
+{
 public:
 typedef long  TID;
 typedef void* Mutex;

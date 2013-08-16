@@ -43,7 +43,7 @@ void kgmSystem::sleep(u32 ms){
 #ifdef WIN32
   Sleep(ms);
 #else
-  usleep(ms);
+  usleep(ms * 1000);
 #endif
 }
 

@@ -12,7 +12,7 @@
 #include <SLES/OpenSLES_Android.h>
 #endif
 
-class kgmOSL: public kgmIAudio, public kgmThread
+class kgmOSL: public kgmIAudio, public kgmThread, public kgmObject
 {
     class _Sound: public Sound{
       kgmOSL*     osl;
@@ -65,7 +65,7 @@ public:
 
     Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
     void     listener(vec3& pos, vec3& vel, vec3& ort);
-    void     release();
+    void     clear();
 
     void     run();
 
