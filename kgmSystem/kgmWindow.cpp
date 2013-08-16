@@ -743,9 +743,8 @@ void kgmWindow::loop(){
 
     if(!m_loop || !m_dpy)
       break;
-    else
-      onIdle();
-
+    //else
+    onIdle();
     usleep(0);
   }
 #endif

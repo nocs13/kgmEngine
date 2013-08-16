@@ -71,13 +71,18 @@ public:
 
     if(data_size > 0)
     {
-      data = new char[data_size];
-      if(!data){
+      data = (char*)malloc(sizeof(char) * data_size);
+
+      if(!data)
+      {
         fclose(in);
+
         return false;
       }
       else
+      {
         fread(data, data_size, 1, in);
+      }
     }
 
     fclose(in);
@@ -98,9 +103,10 @@ public:
     memcpy(&fmt_format, pM, sizeof(WAVE_FMT)); pM += fmt_size;
     memcpy(&data_id, pM, sizeof(int)); pM += 4;
     memcpy(&data_size, pM, sizeof(int)); pM += 4;
-    data = new char[data_size];
+    data = (char*)malloc(sizeof(char) * data_size);
     memcpy(data, pM, data_size);
     fmt_format.cbSize = sizeof(fmt_format);
+
     return true;
   }
 };

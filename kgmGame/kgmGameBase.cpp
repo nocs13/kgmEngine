@@ -1009,9 +1009,13 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   if(!actor)
     return null;
 
-  for(int i = 0; i < a_node->nodes(); i++){
+  for(int i = 0; i < a_node->nodes(); ++i){
     kgmString id, val;
-    a_node->node(i)->id(id);
+
+    if(a_node->node(i))
+      a_node->node(i)->id(id);
+    else
+      break;
 
     if(id == "Mass")
     {
@@ -1111,6 +1115,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
           {
             kgmXml::Node* node = xml.m_node->node(i);
 
+            if(!node)
+              break;
+
             if(node->m_name == "kgmDummy")
             {
               kgmDummy* dummy = new kgmDummy();
@@ -1122,6 +1129,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
               for(int j = 0; j < node->nodes(); j++)
               {
                 kgmXml::Node* jnode = node->node(j);
+
+                if(!jnode)
+                  break;
 
                 if(jnode->m_name == "Position")
                 {
@@ -1185,7 +1195,11 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       for(int j = 0; j < a_node->node(i)->nodes(); j++)
       {
-        a_node->node(i)->node(j)->id(id);
+        if(a_node->node(i)->node(j))
+          a_node->node(i)->node(j)->id(id);
+        else
+          break;
+
         if(id == "Material"){
           a_node->node(i)->node(j)->attribute("value", val);
           mtl = m_resources->getMaterial(val);
@@ -1265,7 +1279,10 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       for(int j = 0; j < a_node->node(i)->nodes(); j++)
       {
-        a_node->node(i)->node(j)->id(id);
+        if(a_node->node(i)->node(j))
+          a_node->node(i)->node(j)->id(id);
+        else
+          break;
 
         if(id == "Sound")
         {

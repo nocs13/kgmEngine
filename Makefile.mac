@@ -13,7 +13,7 @@ LIBS =
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DOAL -DGPUSHADERS
-	FLGS = -c -g -fPIC -O0 -fpermissive  -ansi
+	FLGS = -c -g -fPIC -O1 -fpermissive  -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else

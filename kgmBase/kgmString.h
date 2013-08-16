@@ -96,15 +96,15 @@ public:
  }
 
  bool operator==(const kgmTString<T>& s){
-//   if(!kgmArray<T>::m_data || !s.m_data)
-//     return false;
+   if(!kgmArray<T>::m_data || !s.m_data)
+     return false;
 
    return !memcmp(kgmArray<T>::m_data, s.m_data, sizeof(T) * (kgmArray<T>::m_length + 1));
  }
 
  bool operator==(const T* s){
-//   if(!kgmArray<T>::m_data || !s)
-//     return false;
+   if(!kgmArray<T>::m_data || !s)
+     return false;
 
    return !memcmp(kgmArray<T>::m_data, s, sizeof(T) * (kgmArray<T>::m_length + 1));
  }

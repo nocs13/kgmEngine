@@ -181,6 +181,8 @@ public:
     m_tm_joints   = null;
     m_last_update = kgmTime::getTicks();
 
+    m_text = null;
+    m_sprite = null;
     m_particles = null;
   }
 

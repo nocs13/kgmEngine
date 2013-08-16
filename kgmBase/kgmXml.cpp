@@ -62,6 +62,7 @@ kgmXml::Node* kgmXml::Node::node(kgmString id){
 
 bool kgmXml::Node::id(kgmString& id){
   id = m_name;
+
   return true;
 }
 

@@ -445,7 +445,11 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
 
   for(int i = 0; i < mnode->nodes(); i++){
     kgmString id, val;
-    mnode->node(i)->id(id);
+
+    if(mnode->node(i))
+      mnode->node(i)->id(id);
+    else
+      break;
 
     if(id == "Color"){
       mnode->node(i)->attribute("value", val);
@@ -875,7 +879,11 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 
   for(int i = 0; i < mnode->nodes(); i++){
     kgmString id, val, data;
-    mnode->node(i)->id(id);
+
+    if(mnode->node(i))
+      mnode->node(i)->id(id);
+    else
+      break;
 
     if(id == "Vertices"){
       u32 count = 0;
