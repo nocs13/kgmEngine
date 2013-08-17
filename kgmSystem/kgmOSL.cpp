@@ -16,19 +16,33 @@ kgmOSL::_Sound::_Sound(kgmOSL* sl){
   vol = .8f;
   loop = false;
   remove = false;
+  buffer = null;
 }
 
 kgmOSL::_Sound::~_Sound(){
+#ifdef TEST
+  kgm_log() << "OSL delete sound \n";
+#endif
+
   if(audioPlayerObject)
   {
     stop();
+
     (*audioPlayerObject)->Destroy(audioPlayerObject);
   }
 
   if(buffer)
   {
-    free(buffer);
+#ifdef TEST
+    kgm_log() << "OSL delete sound buffer\n";
+#endif
+
+    //free(buffer);
   }
+
+#ifdef TEST
+        kgm_log() << "OSL sound deleted...\n";
+#endif
 }
 
 void kgmOSL::_Sound::release()
@@ -44,6 +58,10 @@ void kgmOSL::_Sound::stop(){
   SLresult result;
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED);
+
+#ifdef TEST
+        kgm_log() << "OSL sound stopped\n";
+#endif
 }
 
 void kgmOSL::_Sound::play(bool loop){
@@ -67,6 +85,9 @@ void kgmOSL::_Sound::play(bool loop){
     }
   }
 
+#ifdef TEST
+        kgm_log() << "OSL sound played\n";
+#endif
 }
 
 void kgmOSL::_Sound::volume(float v)
@@ -99,6 +120,10 @@ void kgmOSL::_Sound::pause(){
   SLresult result;
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PAUSED);
+
+#ifdef TEST
+        kgm_log() << "OSL sound paused\n";
+#endif
 }
 
 void kgmOSL::_Sound::emit(vec3& pos, vec3& vel){
@@ -421,6 +446,10 @@ void kgmOSL::run()
     {
       _Sound* s = sounds[i - 1];
       SLresult result;
+
+#ifdef TEST
+        kgm_log() << "OSL sound " << i << "\n";
+#endif
 
       if(s->remove)
       {
