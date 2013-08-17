@@ -20,7 +20,7 @@
 #include <AL/alext.h>
 #endif
 
-class kgmOAL: public kgmIAudio, public kgmObject
+class kgmOAL: public kgmIAudio
 {
   class _Sound: public Sound{
     u32	buffer;

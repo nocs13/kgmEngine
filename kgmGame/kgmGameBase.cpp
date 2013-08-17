@@ -250,6 +250,10 @@ void kgmGameBase::onIdle(){
     break;
   case State_Load:
     break;
+  case State_Uload:
+    gUnload();
+    m_state = State_None;
+    break;
   case State_Pause:
     break;
   case State_Play:
@@ -260,8 +264,6 @@ void kgmGameBase::onIdle(){
       m_logic->update(1000 / fps);
     break;
   case State_Stop:
-    //gUnload();
-    m_state = State_None;
     break;
   default:
     break;
@@ -411,7 +413,7 @@ int kgmGameBase::gUnload()
   if(m_render)
     m_render->clear();
 
-  m_state = state;
+  m_state = State_None;
   kgm_log() << "\nUnloaded";
 
   return 0;
@@ -436,6 +438,13 @@ int kgmGameBase::gQuit(){
   m_state = State_None;
   close();
   return 1;
+}
+
+int kgmGameBase::gSwitch(u32 state)
+{
+  m_state = state;
+
+  return m_state;
 }
 
 u32 kgmGameBase::gState(){
@@ -669,11 +678,11 @@ bool kgmGameBase::loadXml(kgmString& path)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
           gAppend(act);
-          act->release();
 #ifdef TEST
           if(act && act->getBody())
             m_render->add(act->getBody());
 #endif
+          act->release();
         }
       }
       else if(id == "kgmGameObject")
@@ -689,11 +698,11 @@ bool kgmGameBase::loadXml(kgmString& path)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
         gAppend(gob);
-        gob->release();
 #ifdef TEST
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
 #endif
+        gob->release();
       }
       else if(id == "Vertices")
       {

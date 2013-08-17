@@ -125,7 +125,7 @@ void kGui::onAction(kgmEvent* e, int a)
   }
   else if(sid == "gameExit")
   {
-    m_game->gUnload();
+    m_game->gSwitch(kgmIGame::State_Uload);
     m_guiPause->hide();
     m_guiMain->show();
 

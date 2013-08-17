@@ -37,7 +37,7 @@ public:
  void priority(int);
 
  static Mutex mutex();
- static void  free(Mutex);
+ static void  mxfree(Mutex);
  static void  lock(Mutex);
  static void  unlock(Mutex);
  static bool  lockable(Mutex);

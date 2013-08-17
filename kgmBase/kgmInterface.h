@@ -11,6 +11,6 @@ class kgmIInput;
 class kgmIPhysics;
 
 
-class kgmInterface
+class kgmInterface: public kgmObject
 {
 };

@@ -40,13 +40,13 @@ public:
 
     gui   = new ASp_Gui(game);
 
-    m_health = 1;
+    m_health = 10;
     setId("MainPlayer");
 
     m_gameplayer = true;
   }
 
-  ~ASpacer()
+  virtual ~ASpacer()
   {
     ((kgmGameBase*)game)->guiRemove(gui);
     gui->release();

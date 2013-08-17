@@ -50,6 +50,8 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
 }
 
 kgmGui::~kgmGui(){
+  for(int i = m_childs.size(); i > 0; i--)
+    m_childs[i - 1]->release();
   m_childs.clear();
 
   if(m_parent) 

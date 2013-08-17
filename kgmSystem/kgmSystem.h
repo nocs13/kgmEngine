@@ -3,7 +3,7 @@
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmInterface.h"
 
-class kgmSystem: public kgmInterface, public kgmObject
+class kgmSystem: public kgmInterface
 {
 public:
  static void sleep(u32 ms);

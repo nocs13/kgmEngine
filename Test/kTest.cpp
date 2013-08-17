@@ -120,6 +120,7 @@ public:
             game->gCommand("gameover_fail");
 
           src->release();
+          game->gSwitch(kgmIGame::State_Uload);
         }
       }
     }

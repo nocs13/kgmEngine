@@ -98,6 +98,7 @@ public:
  int            gCommand(kgmString);     //do string command
  int            gQuit();                 //quit from level
  u32            gState();                //check game state
+ int            gSwitch(u32);            //switch game state
  void           gPause(bool);            //render game scene
  void           gRender();               //render game scene
  kgmActor*      gSpawn(kgmString);       //spawns the actor

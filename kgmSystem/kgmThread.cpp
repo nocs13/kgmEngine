@@ -113,7 +113,7 @@ kgmThread::Mutex kgmThread::mutex()
   return NULL;
 }
 
-void  kgmThread::free(kgmThread::Mutex m)
+void  kgmThread::mxfree(kgmThread::Mutex m)
 {
 #ifdef WIN32
   //_endthread();

@@ -37,7 +37,7 @@ kgmOSL::_Sound::~_Sound(){
     kgm_log() << "OSL delete sound buffer\n";
 #endif
 
-    //free(buffer);
+    free(buffer);
   }
 
 #ifdef TEST
@@ -122,7 +122,7 @@ void kgmOSL::_Sound::pause(){
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PAUSED);
 
 #ifdef TEST
-        kgm_log() << "OSL sound paused\n";
+  kgm_log() << "OSL sound paused\n";
 #endif
 }
 
@@ -186,23 +186,37 @@ kgmOSL::kgmOSL()
 kgmOSL::~kgmOSL()
 {
   active = false;
+#ifdef TEST
   kgm_log() << "OSL stoping thread\n";
+#endif
+
   join();
+
+#ifdef TEST
   kgm_log() << "OSL thread stoped\n";
+#endif
 
     if(outputMixObject)
     {
+#ifdef TEST
       kgm_log() << "OSL delete outputMixObject \n";
+#endif
       (*outputMixObject)->Destroy(outputMixObject);
     }
 
     if(engineObject)
     {
+#ifdef TEST
       kgm_log() << "OSL delete engineObject \n";
+#endif
       (*engineObject)->Destroy(engineObject);
     }
 
-    free(mux);
+    mxfree(mux);
+
+#ifdef TEST
+    kgm_log() << "OSL finish\n";
+#endif
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)

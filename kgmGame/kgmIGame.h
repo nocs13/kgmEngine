@@ -130,9 +130,10 @@ class kgmIGame{
 public:
   enum State{
     State_None,
-    State_Play,
     State_Quit,
+    State_Play,
     State_Load,
+    State_Uload,
     State_Pause,
     State_Stop
   };
@@ -145,6 +146,7 @@ public:  //virtuals
   virtual int            gCommand(kgmString) = 0;         //do command
   virtual int            gQuit() = 0;                     //close game
   virtual u32            gState() = 0;                    //check game active  state
+  virtual int            gSwitch(u32) = 0;                //switch game state
   virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
   virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
   virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
