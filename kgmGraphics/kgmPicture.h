@@ -99,7 +99,7 @@ public:
   {
    u32 r_size = b_width * b_height;
    pdata    = malloc(sizeof(u32) * r_size);
-   u32 *pal = malloc(sizeof(u32) * 256);
+   u32 *pal = (u32*)malloc(sizeof(u32) * 256);
    memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
 
    for(u32 i = 0; i < r_size; i++)

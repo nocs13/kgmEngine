@@ -86,6 +86,7 @@ public:
     }
 
     fclose(in);
+
     return true;
   }
 

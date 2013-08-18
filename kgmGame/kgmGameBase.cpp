@@ -162,7 +162,7 @@ kgmISpawner* kgmGameBase::getSpawner(){
 }
 
 kgmIAudio*  kgmGameBase::getAudio(){
-  return m_game->m_audio;
+  return (kgmIAudio*)m_game->m_audio;
 }
 
 kgmIVideo*  kgmGameBase::getVideo(){
@@ -212,7 +212,10 @@ void kgmGameBase::initSystem()
 }
 
 void kgmGameBase::initAudio(){
+//#ifdef WIN32
+//#else
   m_audio = new kgmGameAudio();
+//#endif
 }
 
 void kgmGameBase::initLogic(){
