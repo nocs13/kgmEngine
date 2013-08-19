@@ -260,11 +260,11 @@ void kgmGameBase::onIdle(){
   case State_Pause:
     break;
   case State_Play:
-    if(m_physics)
-      m_physics->update(1000 / fps);
-
     if(m_logic)
       m_logic->update(1000 / fps);
+
+    if(m_physics)
+      m_physics->update(1000 / fps);
     break;
   case State_Stop:
     break;
@@ -388,9 +388,9 @@ int kgmGameBase::gLoad(kgmString s)
 
   loadXml(s);
 
+  if(m_logic)   m_logic->prepare();
   if(m_render)  m_render->build();
   if(m_physics) m_physics->build();
-  if(m_logic)   m_logic->prepare();
 
   m_state = State_Play;
 
