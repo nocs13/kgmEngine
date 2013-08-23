@@ -257,7 +257,15 @@ void kgmGameGraphics::render(){
     }
     else if((*i)->m_visuals.length() > 0)
     {
-      vis_mesh.add((*i));
+      vec3 v(0, 0, 0);
+
+      v = (*i)->m_transform * v;
+
+      vec3  l = (*i)->getBound().max - (*i)->getBound().min;
+
+
+      if(m_camera.camera.isSphereCross(v, 0.5 * l.length()))
+        vis_mesh.add((*i));
     }
   }
 

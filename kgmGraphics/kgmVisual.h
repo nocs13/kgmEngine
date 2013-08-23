@@ -159,6 +159,7 @@ public:
   u32                    m_fset;
 
 //private:
+  box3                   m_bound;
   mtx4*                  m_tm_joints;
   u32                    m_last_update;
 
@@ -178,6 +179,7 @@ public:
     m_fstart    = m_fend = 0;
     m_floop     = false;
 
+    m_bound       = box3(vec3(-1, -1, -1), vec3(1, 1, 1));
     m_tm_joints   = null;
     m_last_update = kgmTime::getTicks();
 
@@ -352,7 +354,18 @@ public:
   void addVisual(kgmMesh* msh, kgmMaterial* mtl)
   {
     if(msh)
+    {
       m_visuals.add(new Visual(msh, mtl));
+
+      box3 b = msh->bound();
+
+      m_bound.extend(b);
+    }
+  }
+
+  box3 getBound()
+  {
+    return m_bound;
   }
 
   void update()

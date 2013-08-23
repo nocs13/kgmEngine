@@ -1229,8 +1229,14 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         actor->getVisual()->setSkeleton(skl);
 
         msh->release();
-        if(skl) skl->release();
         if(mtl) mtl->release();
+        if(skl) skl->release();
+        if(anm) anm->release();
+
+        msh = null;
+        mtl = null;
+        skl = null;
+        anm = null;
       }
     }
     else if(id == "Input")
