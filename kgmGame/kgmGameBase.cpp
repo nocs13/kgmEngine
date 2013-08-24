@@ -360,6 +360,7 @@ void kgmGameBase::onMsWheel(int k, int x, int y, int z)
 
 void kgmGameBase::onResize(int w, int h){
   kgmWindow::onResize(w, h);
+
   if(m_render)
     m_render->resize(w, h);
 
@@ -673,8 +674,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           {
             act->m_gameplayer = true;
 
-            if(m_gamemode)
-              m_render->linkCamera(act->getVisual(), 10.0f, 10.0f);
+            //if(m_gamemode) m_render->linkCamera(act->getVisual(), 10.0f, 10.0f);
           }
 
           if(sgrp.length() > 0)

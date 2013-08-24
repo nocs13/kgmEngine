@@ -45,7 +45,7 @@ public:
   kgmSkeleton*  skeleton;
   kgmAnimation* animation;
 
-  mtx4 mtransform;
+  mtx4  mtransform;
 
   void* tdiffuse;
   void* tspecular;

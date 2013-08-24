@@ -60,7 +60,7 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
   gui_style = new kgmGuiStyle();
 
-  linkCamera(null, 0, 0);
+  //linkCamera(null, 0, 0);
 
   if(g)
   {
@@ -104,6 +104,8 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
       shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
     }
   }
+
+  m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
 }
 
 kgmGameGraphics::~kgmGameGraphics()
@@ -142,7 +144,7 @@ void kgmGameGraphics::clear(){
   }
   m_visuals.clear();
 
-  for(int i = 0; i < m_vis_text.size(); i++){
+  /*for(int i = 0; i < m_vis_text.size(); i++){
     m_vis_text[i]->release();
   }
   m_vis_text.clear();
@@ -160,7 +162,7 @@ void kgmGameGraphics::clear(){
   for(int i = 0; i < m_vis_particles.size(); i++){
     m_vis_particles[i]->release();
   }
-  m_vis_particles.clear();
+  m_vis_particles.clear();*/
 
   for(int i = 0; i < m_lights.size(); i++){
     m_lights[i]->release();
@@ -175,7 +177,7 @@ void kgmGameGraphics::clear(){
   m_bodies.clear();
 #endif
 
-  linkCamera(null, 0, 0);
+  //linkCamera(null, 0, 0);
 }
 
 kgmShader* s_def = null;
@@ -219,10 +221,14 @@ void kgmGameGraphics::setWorldMatrix(mtx4 &m)
 
 void kgmGameGraphics::resize(float width, float height){
   gc->gcSetViewport(0, 0, width, height, 1.0, 10000.0);
-  m_camera.camera.set(PI / 2, width / height, .1f, 10000.0,
-                      m_camera.camera.mPos,
-                      m_camera.camera.mDir,
-                      m_camera.camera.mUp);
+  m_camera.set(PI / 6, width / height, .1f, 10000.0,
+                      m_camera.mPos,
+                      m_camera.mDir,
+                      m_camera.mUp);
+
+#ifdef TEST
+  kgm_log() << "Resized";
+#endif
 }
 
 void kgmGameGraphics::render(){
@@ -232,14 +238,17 @@ void kgmGameGraphics::render(){
   vec3 v[2];
   mtx4 m;
   vec4 myvar;
-  int i = 0;
+  int i = 0, k = 0;
   bool lighting = false;
 
   mtx4 mvw, mpr;
 
   //kgmMaterial           mbase;
   kgmList<kgmMesh*>     meshes;
-  kgmList<kgmVisual*>   vis_mesh, vis_blend, vis_particles;
+  kgmList<kgmVisual*>   vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
+
+  //m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
+  //m_camera.set(PI / 2, m_camera.mAspect, m_camera.mNear, m_camera.mFar, m_camera.mPos, m_camera.mDir, m_camera.mUp);
 
   // parse visible objects
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
@@ -255,7 +264,15 @@ void kgmGameGraphics::render(){
     {
       continue;
     }
-    else if((*i)->m_visuals.length() > 0)
+    else if((*i)->m_typerender == kgmVisual::RenderText)
+    {
+      vis_text.add(*i);
+    }
+    else if((*i)->m_typerender == kgmVisual::RenderSprite)
+    {
+      vis_sprite.add(*i);
+    }
+    else
     {
       vec3 v(0, 0, 0);
 
@@ -264,53 +281,34 @@ void kgmGameGraphics::render(){
       vec3  l = (*i)->getBound().max - (*i)->getBound().min;
 
 
-      if(m_camera.camera.isSphereCross(v, 0.5 * l.length()))
-        vis_mesh.add((*i));
-    }
-  }
-
-  for(kgmList<kgmVisual*>::iterator i = m_vis_blend.begin(); i != m_vis_blend.end(); ++i)
-  {
-    if((*i)->removed())
-    {
-      (*i)->release();
-      m_vis_blend.erase(i);
-
-      continue;
-    }
-    else if((*i)->valid() && (*i)->m_visuals.length() > 0)
-    {
-      vis_blend.add((*i));
-    }
-  }
-
-  for(kgmList<kgmVisual*>::iterator i = m_vis_particles.begin(); i != m_vis_particles.end(); ++i)
-  {
-    if((*i)->removed())
-    {
-      (*i)->release();
-     i =  m_vis_particles.erase(i);
-    }
-    else if((*i)->valid())
-    {
-      vis_particles.add(*i);
-    }
-  }
-
-  for(kgmList<kgmVisual*>::iterator i = m_vis_text.begin(); i != m_vis_text.end(); ++i)
-  {
-    if((*i)->removed())
-    {
-      (*i)->release();
-      i = m_vis_text.erase(i);
+      if(m_camera.isSphereCross(v, 0.5 * l.length()))
+      {
+        if((*i)->m_typerender == kgmVisual::RenderParticles)
+        {
+          vis_particles.add(*i);
+        }
+        else if((*i)->m_visuals.length() > 0)
+        {
+          //vis_mesh.add((*i));
+          if((*i)->m_visuals.size() > 0 && (*i)->m_visuals[0]->getMaterial() &&
+             ((*i)->m_visuals[0]->getMaterial()->m_blend))
+            vis_blend.add((*i));
+          else
+            vis_mesh.add((*i));
+        }
+      }
+      else
+      {
+        k++;
+      }
     }
   }
   //---
 
   gc->gcCull(1);
 
-  setProjMatrix(m_camera.camera.mProj);
-  setViewMatrix(m_camera.camera.mView);
+  setProjMatrix(m_camera.mProj);
+  setViewMatrix(m_camera.mView);
   g_mtx_world.identity();
 
   gc->gcBegin();
@@ -345,6 +343,9 @@ void kgmGameGraphics::render(){
   }
 
   //render 3D
+  gc->gcBlend(false, null, null);
+  gc->gcAlpha(false, null, null);
+
   for(int i = 0; i < m_meshes.length(); i++)
   {
     kgmMesh* msh = null;
@@ -405,7 +406,7 @@ void kgmGameGraphics::render(){
   gc->gcCull(gccull_back);
 
 #ifdef TEST
-  setViewMatrix(m_camera.camera.mView);
+  setViewMatrix(m_camera.mView);
 
   for(int i = m_bodies.size(); i > 0;  i--)
   {
@@ -439,18 +440,9 @@ void kgmGameGraphics::render(){
   gc->gcDepth(false, 0, 0);
   gc->gc2DMode();
 
-  for(kgmList<kgmVisual*>::iterator i = m_vis_sprite.begin(); i != m_vis_sprite.end(); ++i)
+  for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
   {
-    if((*i)->removed())
-    {
-      (*i)->release();
-
-      i = m_vis_sprite.erase(i);
-    }
-    else if((*i)->valid())
-    {
-      render((*i)->getSprite());
-    }
+    render((*i)->getSprite());
   }
 
   // render guis
@@ -464,9 +456,9 @@ void kgmGameGraphics::render(){
   //---
 
   //render text's
-  for(int i = 0; i < m_vis_text.size(); i++)
+  for(int i = 0; i < vis_text.size(); i++)
   {
-    kgmText* text = m_vis_text[i]->getText();
+    kgmText* text = vis_text[i]->getText();
     kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
                     text->m_rect.w, text->m_rect.h);
     gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
@@ -475,10 +467,11 @@ void kgmGameGraphics::render(){
 
 #ifdef TEST
   char info[4096] = {0};
-  sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i\n",
-          m_camera.camera.mDir.x, m_camera.camera.mDir.y, m_camera.camera.mDir.z,
-          m_camera.camera.mPos.x, m_camera.camera.mPos.y, m_camera.camera.mPos.z,
-          kgmObject::objectCount());
+  sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i \
+  unvisible: %i\n",
+          m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z,
+          m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
+          kgmObject::objectCount(), k);
   kgmString text(info);
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 #endif
@@ -496,7 +489,9 @@ void kgmGameGraphics::render(){
   gc->gcSetTexture(3, 0);
 
   vis_particles.clear();
+  vis_sprite.clear();
   vis_blend.clear();
+  vis_text.clear();
   vis_mesh.clear();
 }
 
@@ -505,7 +500,7 @@ void kgmGameGraphics::render(kgmVisual* visual)
   if(!visual)
     return;
 
-  mtx4 tr = visual->m_transform * m_camera.camera.mView;
+  mtx4 tr = visual->m_transform * m_camera.mView;
   setWorldMatrix(visual->m_transform);
 
   if(visual->m_tm_joints)
@@ -636,7 +631,7 @@ void kgmGameGraphics::render(kgmParticles* particles)
   rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
   rv.normalize();
   //uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
-  uv = rv.cross(m_camera.camera.mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
+  uv = rv.cross(m_camera.mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
   uv.normalize();
 
   PrPoint       points[MAX_PARTICLES][6];
@@ -773,8 +768,8 @@ void kgmGameGraphics::render(kgmShader* s){
     s->set("g_mTran",     g_mtx_world);
     s->set("g_vAmbient",  g_vec_ambient);
     s->set("g_vLight",    g_vec_light);
-    s->set("g_vEye",      m_camera.camera.mPos);
-    s->set("g_vEyeDir",   m_camera.camera.mDir);
+    s->set("g_vEye",      m_camera.mPos);
+    s->set("g_vEyeDir",   m_camera.mDir);
 
     if(tcolor)
       s->set("g_txColor", 0);

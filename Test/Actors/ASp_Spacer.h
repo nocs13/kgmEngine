@@ -66,7 +66,7 @@ public:
       for(int i = 0; i < m_dummies.length(); i++)
       {
         kgmDummy*       dm = m_dummies[i];
-        kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
+        kgmGameObject*  go = (kgmGameObject*)dm->linked();
 
         if(go && kgmObject::isValid(go) && go->isType(kgmGameObject::Class)
            && go->getVisual())
@@ -202,12 +202,12 @@ public:
 
         for(int i = 0; i < m_dummies.size(); i++)
         {
-          kgmGameObject* go = (kgmGameObject*)m_dummies[i]->m_linked;
+          kgmGameObject* go = (kgmGameObject*)m_dummies[i]->linked();
 
           if(kgmObject::isValid(go) && go->isType(kgmGameObject::Class))
           {
             go->event(this, "die");
-            m_dummies[i]->m_linked = null;
+            m_dummies[i]->detach();
           }
         }
       }

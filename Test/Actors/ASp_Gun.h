@@ -67,7 +67,7 @@ public:
       for(int i = 0; i < m_dummies.length(); i++)
       {
         kgmDummy*       dm = m_dummies[i];
-        kgmGameObject*  go = (kgmGameObject*)dm->m_linked;
+        kgmGameObject*  go = (kgmGameObject*)dm->linked();
 
         if(go && go->getVisual())
         {

@@ -22,16 +22,20 @@ public:
   Attach       m_type;
   vec3         m_shift;
   vec3         m_orient;
+
+private:
   kgmObject*   m_linked;
 
 public:
   ~kgmDummy()
   {
+    if(m_linked)
+      m_linked->release();
   }
 
   kgmDummy()
   {
-    m_linked = 0;
+    m_linked = null;
     m_type   = AttachToNone;
 
     m_shift = m_orient = vec3(0, 0, 0);
@@ -41,6 +45,18 @@ public:
   {
     m_linked = o;
     m_type   = t;
+
+    if(m_linked)
+      m_linked->increment();
+  }
+
+  void detach()
+  {
+    if(m_linked)
+      m_linked->release();
+
+    m_linked = null;
+    m_type = AttachToNone;
   }
 
   void setId(kgmString s)
@@ -56,5 +72,10 @@ public:
   void setOrient(vec3& r)
   {
     m_orient = r;
+  }
+
+  kgmObject* linked()
+  {
+    return m_linked;
   }
 };
