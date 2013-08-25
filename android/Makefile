@@ -22,9 +22,8 @@ $(objects) : %.o : %.cpp
 $(OUT): $(objects)
 	$(AR) -crs $(OUT) $(objects)
 
-sdk: $(OUT)
-	cp $(OUT) ../libkgmEngine_android.a
-
 clean:
 	rm -f $(objects)
 	rm -f $(OUT)
+
+release: clean $(OUT)

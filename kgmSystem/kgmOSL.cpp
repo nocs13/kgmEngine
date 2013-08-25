@@ -186,6 +186,7 @@ kgmOSL::kgmOSL()
 kgmOSL::~kgmOSL()
 {
   active = false;
+
 #ifdef TEST
   kgm_log() << "OSL stoping thread\n";
 #endif

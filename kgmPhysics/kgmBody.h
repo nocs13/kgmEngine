@@ -128,12 +128,10 @@ public:
   vec3 rotation()  { return m_rotation;  }
   vec3 direction() { return m_direction; }
 
-#ifdef TEST
   kgmOBox3d<float> getOBox()
   {
     vec3 dim = m_bound.max - m_bound.min;
 
     return kgmOBox3d<float>(m_position, m_rotation, dim);
   }
-#endif
 };

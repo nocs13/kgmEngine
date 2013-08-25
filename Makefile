@@ -11,13 +11,13 @@ all: $(OUT_SO)
 	make -C Test
 
 $(objects) : %.o : %.cpp %.h
-	$(CC) $(FLGS) $(DEFS) -c $< -o $@ $(DIRS)
+	$(CC) $(FLGS) $(DEFS) -DDEBUG -DTEST -c $< -o $@ $(DIRS)
 
 $(OUT_A): $(objects)
 	$(AR) -r -c -s $(OUT_A) $(objects)
 
 $(OUT_SO): $(OUT_A)
-	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS) -DDEBUG -DTEST
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk
