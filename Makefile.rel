@@ -1,0 +1,31 @@
+include Makefile.mac
+
+subdirs := $(wildcard kgm*/)
+sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
+objects := $(patsubst %.cpp,%.o,$(sources))
+
+OUT_SO = libkgmEngine.so
+OUT_A  = libkgmEngine.a
+
+all: $(OUT_SO)
+
+$(objects) : %.o : %.cpp %.h
+	$(CC) $(FLGS) $(DEFS) -Ofast -c $< -o $@ $(DIRS)
+
+$(OUT_A): $(objects)
+	$(AR) -r -c -s $(OUT_A) $(objects)
+
+$(OUT_SO): $(OUT_A)
+	$(CC) -shared  -Ofast -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+
+sdk: $(OUT_A)  $(OUT_SO)
+	mkdir -p sdk
+	cp $(OUT_A)  sdk/.
+	cp $(OUT_SO) sdk/.
+
+clean:
+#	echo "val: $(os)" # use cmd line make os=<some_val> clean	
+	rm -f $(objects)
+
+distclean: clean
+	rm -f $(OUT_SO) $(OUT_A)
