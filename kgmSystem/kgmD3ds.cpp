@@ -30,7 +30,9 @@ void kgmD3ds::_Sound::stop(){
 
 void kgmD3ds::_Sound::play(bool loop){
   if(pSb)
+  {
     pSb->Play(0, 0, (loop)?(DSBPLAY_LOOPING):(0));
+  }
 }
 
 void kgmD3ds::_Sound::volume(float vol){
@@ -68,53 +70,58 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   DSBUFFERDESC dsb = {0};
   LPDIRECTSOUNDBUFFER pSb = 0;
-  WAVEFORMATEX*       wf  = null;
+  WAVEFORMATEX        wf = {0};
 
   if(!m_pSnd || !data || !size)
     return null;
 
-  wf = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX) + size + 1);
-
-  wf->cbSize = 0;
-  wf->nSamplesPerSec = freq;
-  wf->wFormatTag      = WAVE_FORMAT_PCM;
+  wf.cbSize          = 0;
+  wf.nSamplesPerSec  = freq;
+  wf.wFormatTag      = WAVE_FORMAT_PCM;
 
   switch(fmt){
   case FMT_MONO8:
-    wf->nChannels = 1;
-    wf->wBitsPerSample = 8;
+    wf.nChannels = 1;
+    wf.wBitsPerSample = 8;
   break;
   case FMT_MONO16:
-    wf->nChannels = 1;
-    wf->wBitsPerSample = 16;
+    wf.nChannels = 1;
+    wf.wBitsPerSample = 16;
   break;
   case FMT_STEREO8:
-    wf->nChannels = 2;
-    wf->wBitsPerSample = 8;
+    wf.nChannels = 2;
+    wf.wBitsPerSample = 8;
   break;
   case FMT_STEREO16:
-    wf->nChannels = 2;
-    wf->wBitsPerSample = 8;
+    wf.nChannels = 2;
+    wf.wBitsPerSample = 8;
   break;
   }
 
-  wf->nBlockAlign = wf->nChannels * ( wf->wBitsPerSample / 8 );
-  wf->nAvgBytesPerSec = wf->nBlockAlign * wf->nSamplesPerSec;
+  wf.nBlockAlign = wf.nChannels * ( wf.wBitsPerSample / 8 );
+  wf.nAvgBytesPerSec = wf.nBlockAlign * wf.nSamplesPerSec;
 
   dsb.dwSize = sizeof(dsb);
   dsb.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRL3D;
   dsb.dwBufferBytes = size;
-  dsb.lpwfxFormat = wf;
-
-
-  memcpy(wf + sizeof(WAVEFORMATEX), data, size);
+  dsb.lpwfxFormat = &wf;
 
   if(FAILED(m_pSnd->CreateSoundBuffer(&dsb, &pSb, 0)))
   {
     pSb = null;
   }
 
-  free(wf);
+  if(pSb)
+  {
+    VOID   *ptr1, *ptr2;
+    DWORD  size1, size2;
+
+    if(DS_OK == pSb->Lock(0, size, &ptr1, &size1, &ptr2, &size2, 0L))
+    {
+      memcpy(ptr1, data, size);
+      pSb->Unlock(ptr1, size, NULL, 0);
+    }
+  }
 
   return (pSb) ? (new _Sound(pSb)) : (null);
 }

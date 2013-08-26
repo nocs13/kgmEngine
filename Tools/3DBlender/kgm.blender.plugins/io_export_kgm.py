@@ -454,8 +454,16 @@ class kgmCollision:
       iface.append(c)
 
      self.faces.append(iface)
-
-
+	 
+class kgmProxy:	 
+ def __init__(self, o):
+  self.mtx    = o.matrix_local
+  self.name   = o.name
+  self.type   = o.type
+  self.object = o.proxy.name
+  self.pos    = Vector((0, 0, 0)) * self.mtx
+  self.quat   = self.mtx.to_quaternion()
+  self.euler  = self.mtx.to_euler()
 
 import threading
 class kgmThread(threading.Thread):
@@ -500,7 +508,7 @@ class kgmExport(bpy.types.Operator):
 
   scene = context.scene
   for o in scene.objects:
-   print(o.name + ':' + o.type)
+   print(o.name + ':' + o.type) 
 
   if self.is_selection:
    objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
@@ -511,7 +519,8 @@ class kgmExport(bpy.types.Operator):
 
   print("Collect Objects...")
   collision = None
-  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.name != 'kgm_collision']
+  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.name != 'kgm_collision' and ob.proxy is None]
+  proxies = [kgmProxy(ob) for ob in objects if self.exp_kgmactors and ob.proxy is not None]
   materials = [ob for ob in scene_materials if self.exp_materials]
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
@@ -673,6 +682,14 @@ class kgmExport(bpy.types.Operator):
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
     file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
     file.write(" </kgmGameObject>\n")
+
+  #proxies
+  for o in proxies:
+   file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'>\n")
+   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+#   file.write("  <Euler value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+   file.write("  <Quaternion value='" + str(o.quat[0]) + " " + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + "'/>\n")
+   file.write(" </kgmProxy>\n")
 
   #collisions
   if collision != None:

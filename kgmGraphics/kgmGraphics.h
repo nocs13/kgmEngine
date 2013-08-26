@@ -15,120 +15,264 @@
 #include "kgmGuiStyle.h"
 #include "kgmIGuiDraw.h"
 
+#include "kgmMesh.h"
+#include "kgmText.h"
 #include "kgmLight.h"
+#include "kgmSprite.h"
 #include "kgmCamera.h"
+#include "kgmVisual.h"
+#include "kgmMaterial.h"
+
+#ifdef TEST
+#include "../kgmPhysics/kgmBody.h";
+#endif
 
 
-class kgmGraphics : public kgmInterface, public kgmIGuiDraw, public kgmObject
+class kgmGraphics : public kgmObject
 {
+  KGM_OBJECT(kgmGraphics);
 public:
-  kgmIResources* rc;
+  struct Settings
+  {
+    char texture_quality;
+    char shadow_quality;
+
+    bool lods;
+  };
+
+  struct Mesh
+  {
+    kgmMaterial* material;
+    kgmMesh*     mesh;
+    mtx4         mtx;
+  };
+
+private:
   kgmIGraphics* gc;
-  kgmWindow* wnd;
+  kgmIResources* rc;
+
   kgmFont* font;
 
-  kgmNode* node;
+  kgmCamera   m_camera;
 
-  kgmList<kgmMaterial*> materials;
-  kgmList<kgmLight*>    lights;
-  kgmList<kgmMesh*>     meshes;
-  kgmList<kgmNode*>     nodes;
-  kgmList<kgmGui*>      guis;
-  kgmGuiStyle*          gui_style;
+  kgmList<Mesh>         m_meshes;
+  //kgmTab<kgmMesh*, kgmMaterial*> m_meshes;
+  kgmList<kgmMaterial*> m_materials;
+  kgmList<kgmLight*>    m_lights;
+  kgmList<kgmVisual*>   m_visuals;
+  kgmList<kgmGui*>      m_guis, m_tguis;
 
-  int fwidth, fheight;
-  float znear, zfar;
+#ifdef TEST
+  kgmList<kgmBody*>     m_bodies;
+#endif
 
-  kgmLight*     light;
-  kgmCamera*    camera;
-  kgmMaterial*  material;
-  kgmSkeleton*  skeleton;
-  kgmAnimation* animation;
+  kgmGuiStyle* gui_style;
 
-  mtx4  mtransform;
-
-  void* tdiffuse;
-  void* tspecular;
+  void* tcolor;
   void* tnormal;
+  void* tspecular;
   void* tdepth;
   void* shader;
+  mtx4  location;
 
-  kgmTab<u16, kgmShader*> shaders;
-  kgmTab<u16, void*> textures;
+  kgmTab<u16, kgmShader*>  shaders;
+  kgmTab<u16, kgmTexture*> textures;
 
-  kgmCamera  mcamera;
+  bool  m_has_shaders;
+  bool  m_has_buffers;
 
+  bool  m_alpha;
+  bool  m_culling;
 public:
-  kgmGraphics(kgmWindow* w, kgmIResources* r = 0);
+  kgmGraphics(kgmIGraphics*, kgmIResources*);
   ~kgmGraphics();
 
-  void
-  build();
-  void
-  render();
-  void
-  resize(int, int);
+  void clear();
+  void build();
+  void render();
+  void update();
+  void resize(float, float);
 
-  void
-  erase(kgmGui*);
+  void setGuiStyle(kgmGuiStyle*);
+  void setDefaultFont(kgmFont*);
 
-  void
-  setActiveCamera(kgmCamera*);
+  s32  getShaderId(kgmString);
 
-  void
-  setDefaultFont(kgmFont*);
+private:
+  void render(kgmGui*);
+  void render(kgmMesh*);
+  void render(kgmVisual*);
+  void render(kgmSprite*);
+  void render(kgmShader*);
+  void render(kgmMaterial*);
+  void render(kgmParticles*);
+  void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
+  void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
+  void gcDrawBillboard(box b, u32 col);
+  void trash();
 
-  bool
-  registration(u32 id, kgmShader* sh)
+  void setProjMatrix(mtx4&);
+  void setViewMatrix(mtx4&);
+  void setWorldMatrix(mtx4&);
+public:
+  void add(kgmMaterial* mtl)
   {
-    shaders.add((u16) id, sh);
-    return true;
+    if(mtl)
+    {
+      m_materials.add(mtl);
+      mtl->increment();
+    }
   }
 
-  //virtuals
-  void
-  update(kgmGui* gui)
+  void add(kgmLight* lgt)
   {
-    render(gui);
+    if(!lgt)
+      return;
+
+    lgt->increment();
+    m_lights.add(lgt);
   }
 
-  kgmCamera& mainCamera(){
-      return mcamera;
+  void add(kgmMesh* mesh, kgmMaterial* mtl, mtx4* mtx = null)
+  {
+    Mesh m;
+
+    if(!mesh)
+      return;
+
+    if(mesh) mesh->increment();
+    if(mtl)  mtl->increment();
+
+    m.mesh = mesh;
+    m.material = mtl;
+
+    if(mtx)
+      m.mtx = *mtx;
+    else
+      m.mtx.identity();
+
+    m_meshes.add(m);
   }
 
-  void add(kgmGui* g){ guis.add(g); }
-  void add(kgmNode* n){ if(n) this->nodes.add(n); }
-  void add(kgmMesh* m){ if(m) this->meshes.add(m); }
-  void add(kgmLight* l){ if(l) this->lights.add(l); }
-  void add(kgmMaterial* m){ if(m) this->materials.add(m); }
+  void add(kgmVisual* a){
+    if(!a)
+      return;
 
-protected:
-  void
-  set(kgmCamera*);
-  void
-  set(kgmMaterial*);
-  void
-  set(kgmShader*, u32);
+    a->increment();
 
-  void
-  render(kgmNode*);
-  void
-  render(kgmGui*);
-  void
-  render(kgmGuiTab*);
-  void
-  render(kgmGuiList*);
-  void
-  render(kgmGuiButton*);
-  void
-  render(kgmGuiScroll*);
-  void
-  render(kgmGuiProgress*);
+    m_visuals.add(a);
 
-  //
-  void
-  gcDrawRect(kgmGui::Rect rc, u32 col, void* tex);
-  void
-  gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
-    kgmGui::Rect clip, kgmString& text);
+
+
+    /*switch(a->m_typerender)
+    {
+    case kgmVisual::RenderNone:
+      //a->release();
+      //break;
+    case kgmVisual::RenderMesh:
+      if(a->m_visuals.size() > 0 && a->m_visuals[0]->getMaterial() &&
+         (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
+          a->m_visuals[0]->getMaterial()->m_alpha))
+        m_vis_blend.add(a);
+      else
+        m_visuals.add(a);
+    break;
+    case kgmVisual::RenderText:
+      m_vis_text.add(a);
+    break;
+    case kgmVisual::RenderSprite:
+      m_vis_sprite.add(a);
+    break;
+    case kgmVisual::RenderParticles:
+      m_vis_particles.add(a);
+    break;
+    };*/
+  }
+
+  void add(kgmGui* gui, bool tmp = false){
+    if(gui)
+    {
+      gui->increment();
+
+      if(tmp)
+        m_tguis.add(gui);
+      else
+        m_guis.add(gui);
+    }
+  }
+
+  void eraze(kgmGui* gui)
+  {
+    if(!gui)
+      return;
+
+    for(s32 i = m_guis.size(); i > 0; i--)
+    {
+      if(m_guis[i - 1] == gui)
+      {
+        m_guis.erase(i - 1);
+        gui->release();
+
+        break;
+      }
+    }
+  }
+
+#ifdef TEST
+  void add(kgmBody* a)
+  {
+    if(a)
+    {
+      m_bodies.add(a);
+      a->increment();
+    }
+  }
+#endif
+
+  bool get(kgmString name, kgmMaterial** mtl)
+  {
+    for(int i = 0; i < m_materials.size(); i++)
+    {
+      kgmMaterial* m = m_materials[i];
+
+      if(m && m->m_id.length() && (m->m_id == name))
+      {
+        *mtl = m;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool set(kgmMesh* msh, kgmMaterial* mtl)
+  {
+    if(!msh)
+      return false;
+
+    for(int i = 0; i < m_meshes.length(); i++)
+    {
+      Mesh* mesh = &m_meshes[i];
+
+      if(mesh->mesh == msh)
+      {
+        if(mesh->material)
+          mesh->material->release();
+
+        if(mtl)
+          mtl->increment();
+
+        mesh->material = mtl;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  kgmCamera& camera(){
+    return m_camera;
+  }
 };

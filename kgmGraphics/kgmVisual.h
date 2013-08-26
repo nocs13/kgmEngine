@@ -323,7 +323,15 @@ public:
 
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
   {
-    m_animation = a;
+    if(m_animation)
+      m_animation->release();
+
+    if(a)
+    {
+      a->increment();
+      m_animation = a;
+    }
+
     m_fstart    = start;
     m_fset      = start;
     m_fend      = end;

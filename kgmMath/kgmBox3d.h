@@ -46,6 +46,26 @@ public:
     return  (max - min);
   }
 
+  void center(kgmVector3d<T> &dim)
+  {
+    dim = max - min;
+
+    dim.x = min.x + 0.5 * dim.x;
+    dim.y = min.y + 0.5 * dim.y;
+    dim.z = min.z + 0.5 * dim.z;
+  }
+
+  kgmVector3d<T> center()
+  {
+    kgmVector3d<T> dim = max - min;
+
+    dim.x = min.x + 0.5 * dim.x;
+    dim.y = min.y + 0.5 * dim.y;
+    dim.z = min.z + 0.5 * dim.z;
+
+    return  dim;
+  }
+
   void points(kgmVector3d<T> v[]){
     kgmVector3d<T> d = max - min;
 
