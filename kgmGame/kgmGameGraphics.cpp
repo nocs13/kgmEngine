@@ -95,8 +95,6 @@ kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r){
 
   if(m_has_shaders)
   {
-    kgmVisual::AnimateVertices = false;
-
     if(rc != null)
     {
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));

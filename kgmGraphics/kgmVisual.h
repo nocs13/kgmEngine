@@ -427,43 +427,39 @@ private:
       //m_tm_joints[i] = jframe;
     }
 
-    if(AnimateVertices)
+    for(int j = 0; j < m_visuals.size(); j++)
     {
-      for(int j = 0; j < m_visuals.size(); j++)
+      Visual* v = m_visuals[j];
+
+      if(!v->skin)
+        continue;
+
+      kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
+      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
+
+      for(int i = 0; i < v->mesh->vcount(); i++)
       {
-        Visual* v = m_visuals[j];
+        vec3   pos(0, 0, 0);
+        vec3   bpos = vbase[i].pos;
+        float* wght = (float*)(vbase[i].bw);
+        int*   indx = (int*)(vbase[i].bi);
 
-        if(!v->skin)
-          continue;
-
-        kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
-        kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
-
-        for(int i = 0; i < v->mesh->vcount(); i++)
+        for(int j = 0; j < 4; j++)
         {
-          vec3   pos(0, 0, 0);
-          vec3   bpos = vbase[i].pos;
-          float* wght = (float*)(vbase[i].bw);
-          int*   indx = (int*)(vbase[i].bi);
+          int   bi = (int)indx[j];
+          float w  = wght[j];
 
-          for(int j = 0; j < 4; j++)
+          if(bi < 0)
           {
-            int   bi = (int)indx[j];
-            float w  = wght[j];
-
-            if(bi < 0)
-            {
-              if(j < 1)
-                pos = bpos;
-              break;
-            }
-
-
-            pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
+            if(j < 1)
+              pos = bpos;
+            break;
           }
 
-          verts[i].pos = pos;
+          pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
         }
+
+        verts[i].pos = pos;
       }
     }
 

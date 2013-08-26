@@ -92,7 +92,7 @@ public:
  void   setTitle(char*);
 
  bool   getMsAbsolute(){ return m_msAbs; }
- void   setMsAbsolute(bool s){ m_msAbs = s; }
+ void   setMsAbsolute(bool s){ m_msAbs = !s; }
 
 
  virtual kgmIGraphics* getGC();
