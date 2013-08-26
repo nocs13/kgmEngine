@@ -438,7 +438,6 @@ int kgmGameBase::gCommand(kgmString s)
 int kgmGameBase::gQuit(){
   m_state = State_Quit;
   m_quit = true;
-  m_msAbs = true;
   m_state = State_None;
   close();
   return 1;

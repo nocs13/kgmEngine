@@ -44,7 +44,7 @@ KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
 KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
 
-bool g_ms_camera = false;
+bool g_ms_camera = true;
 
 const char* maps[] =
 {
@@ -178,8 +178,9 @@ public:
   kGame()
   {
     gui = new kGui(this);
-    m_msAbs = false;
     m_gamemode = true;
+
+    setMsAbsolute(true);
 
     if(m_physics)
       m_physics->m_gravity = 1.0f;
@@ -222,7 +223,9 @@ public:
       {
         gPause(true);
         gui->m_guiPause->show();
-        m_msAbs = false;
+
+        if(g_ms_camera)
+          setMsAbsolute(true);
       }
       else if(gState() == State_Pause)
       {

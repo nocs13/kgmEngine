@@ -447,7 +447,7 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
     XQueryPointer(wnd->m_dpy, wnd->m_wnd, &wroot, &wchild, &rx, &ry, &cx, &cy, &mask);
     m_evt.event = evtMsMove;
 
-    if(wnd->m_msAbs)
+    if(!wnd->m_msAbs)
     {
       unsigned int  x, y, w, h, border, depth;
 

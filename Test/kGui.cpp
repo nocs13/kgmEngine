@@ -120,7 +120,7 @@ void kGui::onAction(kgmEvent* e, int a)
       m_guiMain->hide();
 
       if(g_ms_camera)
-        m_game->setMsAbsolute(true);
+        m_game->setMsAbsolute(false);
     }
   }
   else if(sid == "gameExit")
@@ -130,7 +130,7 @@ void kGui::onAction(kgmEvent* e, int a)
     m_guiMain->show();
 
     if(g_ms_camera)
-      m_game->setMsAbsolute(false);
+      m_game->setMsAbsolute(true);
   }
   else if(sid == "gameResume")
   {
@@ -138,7 +138,7 @@ void kGui::onAction(kgmEvent* e, int a)
     m_game->gPause(false);
 
     if(g_ms_camera)
-      m_game->setMsAbsolute(true);
+      m_game->setMsAbsolute(false);
   }
 }
 
@@ -147,5 +147,5 @@ void kGui::viewAgain()
   m_guiMain->show();
 
   if(g_ms_camera)
-    m_game->setMsAbsolute(false);
+    m_game->setMsAbsolute(true);
 }
