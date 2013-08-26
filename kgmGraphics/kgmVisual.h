@@ -323,6 +323,9 @@ public:
 
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
   {
+    if(a == m_animation)
+      return;
+
     if(m_animation)
       m_animation->release();
 

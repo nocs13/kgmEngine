@@ -207,7 +207,7 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
     msPoint.y = HIWORD(lPar);
     //ClientToScreen(hWnd, &msPoint);
 
-    if(wnd->m_msAbs)
+    if(!wnd->m_msAbs)
     {
       RECT rc;
       GetClientRect(wnd->m_wnd, (LPRECT)&rc);
