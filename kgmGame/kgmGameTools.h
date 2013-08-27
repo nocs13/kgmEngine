@@ -14,6 +14,7 @@
 #include "../kgmGraphics/kgmAnimation.h"
 #include "../kgmGraphics/kgmSkeleton.h"
 #include "../kgmGraphics/kgmGuiStyle.h"
+#include "../kgmPhysics/kgmShapeCollision.h"
 
 class kgmPicture;
 class kgmActor;
@@ -54,8 +55,8 @@ public:
  static kgmMesh*  genMesh(kgmXml& x);
 
  //SHAPES
-  //static kgmMesh*  genMesh(kgmMemory<char>& m);
-  static s32     genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
+  static s32                 genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
+  static kgmShapeCollision*  genShapeCollision(kgmXml& x);
 
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<char>& m);

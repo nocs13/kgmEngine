@@ -10,6 +10,7 @@
 #include "../kgmGraphics/kgmTexture.h"
 #include "../kgmGraphics/kgmShader.h"
 #include "../kgmGraphics/kgmMesh.h"
+#include "../kgmPhysics/kgmShapeCollision.h"
 
 #include "kgmGameTools.h"
 
@@ -47,20 +48,21 @@ public:
  kgmGameResources();
  ~kgmGameResources();
 
- void		release();
- void		add(kgmResource*);
- void		remove(kgmResource*);
+ void               release();
+ void               add(kgmResource*);
+ void               remove(kgmResource*);
 
- void		addPath(kgmString s);
- bool		getFile(char* id, kgmMemory<char>& m);
+ void               addPath(kgmString s);
+ bool               getFile(char* id, kgmMemory<char>& m);
 
- kgmPicture*    getPicture(char* id);
- kgmTexture*    getTexture(char* id);
- kgmMaterial*   getMaterial(char* id);
- kgmShader*     getShader(char* id);
- kgmAnimation*  getAnimation(char* id);
- kgmSound*      getSound(char*);
- kgmMesh*       getMesh(char* id);
- kgmSkeleton*   getSkeleton(char* id);
- kgmFont*       getFont(char* id, u32 r, u32 c);
+ kgmPicture*        getPicture(char* id);
+ kgmTexture*        getTexture(char* id);
+ kgmMaterial*       getMaterial(char* id);
+ kgmShader*         getShader(char* id);
+ kgmAnimation*      getAnimation(char* id);
+ kgmSound*          getSound(char*);
+ kgmMesh*           getMesh(char* id);
+ kgmSkeleton*       getSkeleton(char* id);
+ kgmFont*           getFont(char* id, u32 r, u32 c);
+ kgmShapeCollision* getShapeCollision(char* id);
 };

@@ -204,15 +204,9 @@ kgmTexture* kgmGameResources::getTexture(char* id){
   int i = 0;
 
   for(i = 0; i < m_resources.size(); i++){
-#ifdef TEST
-    kgmResource* r = m_resources[i];
-    kgmString s = r->m_id;
-#endif
     if(!strcmp(m_resources[i]->m_id, id)){
       m_resources[i]->increment();
-#ifdef TEST
-      kgm_log() << "texture in cash";
-#endif
+
       return (kgmTexture*)m_resources[i];
     }
   }
@@ -249,8 +243,10 @@ kgmTexture* kgmGameResources::getTexture(char* id){
 //Material
 kgmMaterial* kgmGameResources::getMaterial(char* id){
   kgmMaterial* mtl = 0;
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id) && (m_resources[i]->isClass(kgmMaterial::Class))){
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id) && (m_resources[i]->isClass(kgmMaterial::Class)))
+    {
       m_resources[i]->increment();
 
       return (kgmMaterial*)m_resources[i];
@@ -353,9 +349,12 @@ kgmSound* kgmGameResources::getSound(char* id){
 }
 
 kgmMesh* kgmGameResources::getMesh(char* id){
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id) && m_resources[i]->isClass(kgmMesh::Class))
+    {
       m_resources[i]->increment();
+
       return (kgmMesh*)m_resources[i];
     }
   }
@@ -387,14 +386,17 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id){
       return (kgmSkeleton*)m_resources[i];
     }
   }
+
   kgmSkeleton* skel = 0;
   kgmMemory<char> mem;
+
   if(!getFile(id, mem))
-    return 0;
+    return null;
 
   kgmXml xml(mem);
+
   if(!xml.m_node){
-    return 0;
+    return null;
   }
 
   //skel = m_tools.genSkeleton(mem);
@@ -423,6 +425,42 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c){
     font->m_id = id;
     m_resources.add(font);
   }
+
   return font;
+}
+
+kgmShapeCollision* kgmGameResources::getShapeCollision(char* id)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(id, m_resources[i]->m_id) && m_resources[i]->isClass(kgmShapeCollision::Class))
+    {
+      m_resources[i]->increment();
+
+      return (kgmShapeCollision*)m_resources[i];
+    }
+  }
+
+  kgmShapeCollision* shape = null;
+  kgmMemory<char> mem;
+
+  if(!getFile(id, mem))
+    return null;
+
+  kgmXml xml(mem);
+
+  if(!xml.m_node){
+    return null;
+  }
+
+  shape = m_tools.genShapeCollision(xml);
+
+  if(shape)
+  {
+    shape->m_id = id;
+    m_resources.add(shape);
+  }
+
+  return shape;
 }
 

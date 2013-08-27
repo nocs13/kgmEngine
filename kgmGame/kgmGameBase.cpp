@@ -908,8 +908,8 @@ bool kgmGameBase::loadXml(kgmString& path)
           {
             kgmXml  xml(mem);
 
-            kgmMesh* mesh = kgmGameTools::genMesh(xml);
-            kgmMaterial* mtl = kgmGameTools::genMaterial(xml);
+            kgmMesh* mesh = m_resources->getMesh(sclass.data());
+            kgmMaterial* mtl = m_resources->getMaterial(sclass.data());
 
             if(mesh)
             {
@@ -919,14 +919,15 @@ bool kgmGameBase::loadXml(kgmString& path)
             }
 
             kgmList<triangle3> tr_list;
+            kgmShapeCollision* shape = m_resources->getShapeCollision(sclass.data());
 
-            if(kgmGameTools::genShapeCollision(xml, tr_list) > 0)
+            if(shape && shape->triangles.size() > 0)
             {
               vec3 v[3];
 
-              for(int i = 0; i < tr_list.size(); i++)
+              for(int i = 0; i < shape->triangles.size(); i++)
               {
-                triangle3 tr = tr_list[i];
+                triangle3 tr = shape->triangles[i];
 
                 v[0] = mtx * tr.pt[0];
                 v[1] = mtx * tr.pt[1];
@@ -934,9 +935,9 @@ bool kgmGameBase::loadXml(kgmString& path)
 
                 m_physics->add(v[0], v[1], v[2]);
               }
-            }
 
-            tr_list.clear();
+              shape->release();
+            }
           }
         }
       }

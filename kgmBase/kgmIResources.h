@@ -14,6 +14,7 @@ class kgmPicture;
 class kgmFont;
 class kgmFile;
 class kgmXml;
+class kgmShapeCollision;
 
 template<class T> class kgmMemory;
 
@@ -79,20 +80,21 @@ public:
   };
 
 private:
-  virtual void             remove(_Resource*){};
+  virtual void                remove(_Resource*){};
 
 public:
-  virtual void             add(kgmResource*) = 0;
-  virtual void             remove(kgmResource*) = 0;
+  virtual void                add(kgmResource*) = 0;
+  virtual void                remove(kgmResource*) = 0;
 
-  virtual bool             getFile(char*, kgmMemory<char>&) = 0;
-  virtual kgmPicture*      getPicture(char*) = 0;
-  virtual kgmTexture*      getTexture(char*) = 0;
-  virtual kgmMaterial*     getMaterial(char*) = 0;
-  virtual kgmShader*       getShader(char*) = 0;
-  virtual kgmAnimation*    getAnimation(char*) = 0;
-  virtual kgmSkeleton*     getSkeleton(char*) = 0;
-  virtual kgmSound*        getSound(char*) = 0;
-  virtual kgmMesh*         getMesh(char*) = 0;
-  virtual kgmFont*         getFont(char*, u32 r, u32 c) = 0;
+  virtual bool                getFile(char*, kgmMemory<char>&) = 0;
+  virtual kgmPicture*         getPicture(char*) = 0;
+  virtual kgmTexture*         getTexture(char*) = 0;
+  virtual kgmMaterial*        getMaterial(char*) = 0;
+  virtual kgmShader*          getShader(char*) = 0;
+  virtual kgmAnimation*       getAnimation(char*) = 0;
+  virtual kgmSkeleton*        getSkeleton(char*) = 0;
+  virtual kgmSound*           getSound(char*) = 0;
+  virtual kgmMesh*            getMesh(char*) = 0;
+  virtual kgmFont*            getFont(char*, u32 r, u32 c) = 0;
+  virtual kgmShapeCollision*  getShapeCollision(char* id) = 0;
 };
