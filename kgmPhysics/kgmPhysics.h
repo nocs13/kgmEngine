@@ -4,6 +4,7 @@
 #include "../kgmMath/kgmMath.h"
 
 #include "kgmIPhysics.h"
+#include "kgmTypes.h"
 #include "kgmBody.h"
 #include "kgmCollision.h"
 #include "kgmIntersection.h"

@@ -518,9 +518,9 @@ class kgmExport(bpy.types.Operator):
   #cFrame = bpy.context.scene.frame_current
 
   print("Collect Objects...")
-  collision = None
-  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.name != 'kgm_collision' and ob.proxy is None]
+  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
   proxies = [kgmProxy(ob) for ob in objects if self.exp_kgmactors and ob.proxy is not None]
+  collisions = [kgmCollision(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
   materials = [ob for ob in scene_materials if self.exp_materials]
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
@@ -535,14 +535,6 @@ class kgmExport(bpy.types.Operator):
       print("scan armature")
       for bone in armature.data.bones:
         animations.append(kgmBoneAnimation(bone, armature))
-
-  try:
-    if self.exp_kgmphysics == True:
-      o = context.scene.objects['kgm_collision']
-      if o != None:
-        collision = kgmCollision(o)
-  except:
-    pass
 
   print("Animations: " + str(len(animations)))
   print("Gobjects: " + str(len(gobjects)))
@@ -692,7 +684,7 @@ class kgmExport(bpy.types.Operator):
    file.write(" />\n")
 
   #collisions
-  if collision != None:
+  for collision in collisions:
    file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
    for face in collision.faces:
      file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")

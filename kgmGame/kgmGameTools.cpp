@@ -871,6 +871,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
   int   col[4] = {0};
 
   kgmXml::Node* mnode = 0;
+
   if(!x.m_node || !(mnode = x.m_node->node("kgmMesh")))
     return 0;
 
@@ -961,6 +962,59 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
     materials[i]->release();
   materials.clear();
   return m;
+}
+
+s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
+{
+  kgmXml::Node* node = 0;
+
+  if(!x.m_node || !(node = x.m_node->node("kgmCollision")))
+    return 0;
+
+  s32 count = 0;
+
+  if(node->m_name == "kgmCollision")
+  {
+    kgmString val;
+
+    node->attribute("polygons", val);
+
+    for(int j = 0; j < node->nodes(); j++)
+    {
+      kgmXml::Node* node = node->node(j);
+
+      if(node->m_name == "Polygon")
+      {
+        kgmString scount;
+        u32       count;
+
+        node->attribute("vertices", scount);
+        count = kgmConvert::toInteger(scount);
+
+        vec3*     pol = new vec3[count];
+        vec3      v;
+        int       n = 0;
+        char*     pdata = node->m_data.data();
+
+        for(int k = 0; k < count; k++)
+        {
+          sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
+          (pdata) += (u32)n;
+          pol[k] = v;
+        }
+
+        for(int k = 2; k < count; k++)
+        {
+          shape.add(triangle3(pol[0], pol[k - 1], pol[k]));
+          count++;
+        }
+
+        delete [] pol;
+      }
+    }
+  }
+
+  return count;
 }
 
 kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)

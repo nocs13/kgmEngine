@@ -1,6 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
+#include "kgmTypes.h";
 
 class kgmBody: public kgmObject
 {
@@ -50,7 +51,8 @@ public:
   box3     m_bound;       //bound box
 
   Constraint         m_constraint;
-  kgmList<polygon3*> m_convex; //convex shape sides for simulation(collision, ...)
+
+  kgmList<kgmPhysicTypes::Triangle> m_convex; //convex shape sides for simulation(collision, ...)
 
   void*	  m_udata;        //user data of linked object
 
@@ -122,7 +124,7 @@ public:
 
   void setShape(box3& b);
   void setShape(sphere3& s);
-  void setShape(int c, polygon3* p);
+  void addShapeSide(vec3 v[3]);
 
   vec3 position()  { return m_position;  }
   vec3 rotation()  { return m_rotation;  }

@@ -54,8 +54,8 @@ public:
  static kgmMesh*  genMesh(kgmXml& x);
 
  //SHAPES
-  static kgmMesh*  genMesh(kgmMemory<char>& m);
-  static kgmMesh*  genMesh(kgmXml& x);
+  //static kgmMesh*  genMesh(kgmMemory<char>& m);
+  static s32     genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
 
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<char>& m);

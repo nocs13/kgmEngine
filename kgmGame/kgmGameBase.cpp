@@ -742,6 +742,26 @@ bool kgmGameBase::loadXml(kgmString& path)
             {
               m_render->add(mesh, mtl, &mtx);
             }
+
+            kgmList<triangle3> tr_list;
+
+            if(kgmGameTools::genShapeCollision(xml, tr_list) > 0)
+            {
+              vec3 v[3];
+
+              for(int i = 0; i < tr_list.size(); i++)
+              {
+                triangle3 tr = tr_list[i];
+
+                v[0] = mtx * tr.a;
+                v[1] = mtx * tr.a;
+                v[2] = mtx * tr.a;
+
+                m_physics->add(v[0], v[1], v[2]);
+              }
+            }
+
+            tr_list.clear();
           }
         }
       }
@@ -1072,7 +1092,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
       actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
       actor->getBody()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
     }
-    else if(id == "Shapexxx")
+    else if(id == "Collision")
     {
       a_node->node(i)->attribute("value", val);
 
@@ -1109,7 +1129,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
                     node->attribute("vertices", scount);
                     count = kgmConvert::toInteger(scount);
 
-                    polygon3* pol = new polygon3(count);
+                    vec3*     pol = new vec3[count];
                     vec3      v;
                     int       n = 0;
                     char*     pdata = node->m_data.data();
@@ -1118,10 +1138,17 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
                     {
                       sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
                       (pdata) += (u32)n;
-                      pol->m_points[k] = v;
+                      pol[k] = v;
                     }
 
-                    actor->getBody()->m_convex.add(pol);
+                    for(int k = 2; k < count; k++)
+                    {
+                      vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
+
+                      actor->getBody()->addShapeSide(v);
+                    }
+
+                    delete [] pol;
                   }
                 }
               }

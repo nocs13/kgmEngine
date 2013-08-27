@@ -631,3 +631,80 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
 
   return false;
 }
+
+bool kgmCollision::ob_collision(obox3& s_box, kgmList<kgmPhysicTypes::Triangle>& d_poly, mtx4& d_tran)
+{
+  vec3               s_points[8];
+  kgmPlane3d<float>  s_planes[3];
+
+  s_box.points(s_points);
+
+  s_planes[0] = kgmPlane3d<float>(s_points[0], s_points[2], s_points[1]);
+  s_planes[1] = kgmPlane3d<float>(s_points[0], s_points[4], s_points[3]);
+  s_planes[2] = kgmPlane3d<float>(s_points[0], s_points[1], s_points[5]);
+
+  float    dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
+
+  int  sides = 0;
+  bool cross = false;
+
+  for(kgmList<kgmPhysicTypes::Triangle>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
+  {
+    kgmPhysicTypes::Triangle poly = (*i);
+    vec3     points[3];
+
+    for(int j = 0; j < 3; j++)
+    {
+      points[j] = d_tran * poly.v[j];
+    }
+
+    plane3 d_plane(points[0], points[1], points[2]);
+
+    sides = 0;
+
+    for(int j = 0; j < 8; j++)
+    {
+      float dist = d_plane.distance(s_points[j]);
+
+      if(dist < 0)
+        sides--;
+      else
+        sides++;
+    }
+
+    if(abs(sides) == 8)
+    {
+      continue;
+    }
+    else
+    {
+      cross = false;
+
+      for(int j = 0; j < 3; j++)
+      {
+        sides = 0;
+        cross = false;
+
+        for(int k = 0; k < 3; k++)
+        {
+          float dist = s_planes[j].distance(s_points[j]);
+
+          if(dist < 0 && dist > (dims[j]))
+            cross = true;
+
+          if(dist < 0)
+            sides--;
+          else
+            sides++;
+        }
+      }
+
+      if(cross || (abs(sides) != 8))
+      {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

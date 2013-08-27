@@ -55,15 +55,19 @@ kgmBody::kgmBody(void* udata)
 
 kgmBody::~kgmBody(){
   int i;
-  for(i = 0; i < m_convex.size(); i++)
-    delete m_convex[i];
+
   m_convex.clear();
 }
 
 void kgmBody::collision(kgmBody* body){
 }
 
+void kgmBody::addShapeSide(vec3 v[])
+{
+  kgmPhysicTypes::Triangle tr(v[0], v[1], v[2]);
 
+  m_convex.add(tr);
+}
 
 //void kgmBody::setDirection(vec3& d){
 //  m_direction = d;
