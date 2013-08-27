@@ -1,7 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
-#include "kgmTypes.h";
 
 class kgmBody: public kgmObject
 {
@@ -52,7 +51,7 @@ public:
 
   Constraint         m_constraint;
 
-  kgmList<kgmPhysicTypes::Triangle> m_convex; //convex shape sides for simulation(collision, ...)
+  kgmList<triangle3> m_convex; //convex shape sides for simulation(collision, ...)
 
   void*	  m_udata;        //user data of linked object
 

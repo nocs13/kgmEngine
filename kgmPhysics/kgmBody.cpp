@@ -64,7 +64,7 @@ void kgmBody::collision(kgmBody* body){
 
 void kgmBody::addShapeSide(vec3 v[])
 {
-  kgmPhysicTypes::Triangle tr(v[0], v[1], v[2]);
+  triangle3 tr(v[0], v[1], v[2]);
 
   m_convex.add(tr);
 }

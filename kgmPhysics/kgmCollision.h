@@ -51,5 +51,5 @@ public:
                       box3& d_box, vec3& d_start, vec3& d_rot, float d_len);
 
   bool ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& d_tran);
-  bool ob_collision(obox3& s_box, kgmList<kgmPhysicTypes::Triangle>& d_poly, mtx4& d_tran);
+  bool ob_collision(obox3& s_box, kgmList<triangle3>& d_poly, mtx4& d_tran);
 };

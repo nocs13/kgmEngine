@@ -706,65 +706,6 @@ bool kgmGameBase::loadXml(kgmString& path)
 #endif
         gob->release();
       }
-      else if(id == "kgmProxy")
-      {
-        kgmString sname, stype, sclass, spos, squat;
-
-        xml.attribute("name", sname);
-        xml.attribute("type", stype);
-        xml.attribute("class", sclass);
-        xml.attribute("position", spos);
-        xml.attribute("quaternion", squat);
-
-        if(stype == "MESH" || stype == "mesh")
-        {
-          kgmMemory<s8> mem;
-          vec3          pos;
-          quat          rot;
-          mtx4          mtx, mrot, mpos;
-
-          sclass = sclass + ".kgm";
-          sscanf(spos.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
-          sscanf(squat.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.z);
-
-          mpos.translate(pos);
-          mrot = mtx4(rot);
-          mtx = mrot * mpos;
-
-          if(m_resources->getFile((char*)sclass, mem))
-          {
-            kgmXml  xml(mem);
-
-            kgmMesh* mesh = kgmGameTools::genMesh(xml);
-            kgmMaterial* mtl = kgmGameTools::genMaterial(xml);
-
-            if(mesh)
-            {
-              m_render->add(mesh, mtl, &mtx);
-            }
-
-            kgmList<triangle3> tr_list;
-
-            if(kgmGameTools::genShapeCollision(xml, tr_list) > 0)
-            {
-              vec3 v[3];
-
-              for(int i = 0; i < tr_list.size(); i++)
-              {
-                triangle3 tr = tr_list[i];
-
-                v[0] = mtx * tr.a;
-                v[1] = mtx * tr.a;
-                v[2] = mtx * tr.a;
-
-                m_physics->add(v[0], v[1], v[2]);
-              }
-            }
-
-            tr_list.clear();
-          }
-        }
-      }
       else if(id == "Vertices")
       {
         int len = 0, n = 0;
@@ -936,6 +877,68 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(act && type == TypeActor)
           act->setState(s);
+      }
+      else if(id == "kgmProxy")
+      {
+        kgmString sname, stype, sclass, spos, squat;
+
+        xml.attribute("name", sname);
+        xml.attribute("type", stype);
+        xml.attribute("class", sclass);
+        xml.attribute("position", spos);
+        xml.attribute("quaternion", squat);
+
+        if(stype == "MESH" || stype == "mesh")
+        {
+          kgmMemory<s8> mem;
+          vec3          pos;
+          quat          rot;
+          mtx4          mtx, mrot, mpos;
+
+          sclass = sclass + ".kgm";
+          sscanf(spos.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
+          sscanf(squat.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.w);
+
+          mpos.translate(pos);
+          mrot = mtx4(rot);
+          mtx = mrot * mpos;
+          //mtx.identity();
+
+          if(m_resources->getFile((char*)sclass, mem))
+          {
+            kgmXml  xml(mem);
+
+            kgmMesh* mesh = kgmGameTools::genMesh(xml);
+            kgmMaterial* mtl = kgmGameTools::genMaterial(xml);
+
+            if(mesh)
+            {
+              m_render->add(mesh, mtl, &mtx);
+              mesh->release();
+              mtl->release();
+            }
+
+            kgmList<triangle3> tr_list;
+
+            if(kgmGameTools::genShapeCollision(xml, tr_list) > 0)
+            {
+              vec3 v[3];
+
+              for(int i = 0; i < tr_list.size(); i++)
+              {
+                triangle3 tr = tr_list[i];
+
+                v[0] = mtx * tr.pt[0];
+                v[1] = mtx * tr.pt[1];
+                v[2] = mtx * tr.pt[2];
+
+                m_physics->add(v[0], v[1], v[2]);
+              }
+            }
+
+            tr_list.clear();
+          }
+        }
       }
       else
       {

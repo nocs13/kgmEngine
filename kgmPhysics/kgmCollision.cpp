@@ -632,7 +632,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
   return false;
 }
 
-bool kgmCollision::ob_collision(obox3& s_box, kgmList<kgmPhysicTypes::Triangle>& d_poly, mtx4& d_tran)
+bool kgmCollision::ob_collision(obox3& s_box, kgmList<triangle3>& d_poly, mtx4& d_tran)
 {
   vec3               s_points[8];
   kgmPlane3d<float>  s_planes[3];
@@ -648,14 +648,14 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<kgmPhysicTypes::Triangle>&
   int  sides = 0;
   bool cross = false;
 
-  for(kgmList<kgmPhysicTypes::Triangle>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
+  for(kgmList<triangle3>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
   {
-    kgmPhysicTypes::Triangle poly = (*i);
+    triangle3 poly = (*i);
     vec3     points[3];
 
     for(int j = 0; j < 3; j++)
     {
-      points[j] = d_tran * poly.v[j];
+      points[j] = d_tran * poly.pt[j];
     }
 
     plane3 d_plane(points[0], points[1], points[2]);

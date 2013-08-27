@@ -250,8 +250,11 @@ class kgmMesh:
    for n in scene_materials:
     if n.name == m.name:
      b = True
+     break
+     
    if b == False:
     scene_materials.append(kgmMaterial(m))
+    print("add material to scene_materials")
 
   uvcoord = len(mesh.uv_textures)
 
@@ -265,8 +268,8 @@ class kgmMesh:
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
       vi = face.vertices[j]
-      c = mesh.vertices[vi].co * mtx
-      n = face.normal * mtx.to_3x3()
+      c = mtx * mesh.vertices[vi].co
+      n = mtx.to_3x3() * face.normal 
       v.v = [c[0], c[1], c[2]]
       v.n = [n[0], n[1], n[2]]
 
@@ -450,7 +453,7 @@ class kgmCollision:
 
      for j in range(0, len(face.vertices)):
       vi = face.vertices[j]
-      c = mesh.vertices[vi].co * mtx
+      c = mtx * mesh.vertices[vi].co 
       iface.append(c)
 
      self.faces.append(iface)
@@ -521,7 +524,6 @@ class kgmExport(bpy.types.Operator):
   meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
   proxies = [kgmProxy(ob) for ob in objects if self.exp_kgmactors and ob.proxy is not None]
   collisions = [kgmCollision(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
-  materials = [ob for ob in scene_materials if self.exp_materials]
   lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
@@ -541,6 +543,7 @@ class kgmExport(bpy.types.Operator):
   print("Objects: " + str(len(objects)))
   print("Mehses: " + str(len(meshes)))
   print("Lights: " + str(len(lights)))
+  print("Materials: " + str(len(scene_materials)))
 
 #  path = self.filepath
   if not self.filepath.lower().endswith(".kgm"):
@@ -569,8 +572,9 @@ class kgmExport(bpy.types.Operator):
    file.write(" </kgmAnimation>\n")
 
    #materials
-   if self.exp_materials:
+  if self.exp_materials:
      for o in scene_materials:
+       print("Materials " + str(o.name))
        file.write(" <kgmMaterial name='" + o.name + "'>\n")
        file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
        file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
@@ -679,7 +683,7 @@ class kgmExport(bpy.types.Operator):
   for o in proxies:
    file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'")
    file.write(" position='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'")
-   file.write(" quaternion='" + str(o.quat[0]) + " " + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + "'")
+   file.write(" quaternion='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'")
 #   file.write("  <Euler value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
    file.write(" />\n")
 

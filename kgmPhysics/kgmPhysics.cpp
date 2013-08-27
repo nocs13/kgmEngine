@@ -50,7 +50,7 @@ void kgmPhysics::build(){
 
 // static objects
 void kgmPhysics::add(vec3& a, vec3& b, vec3& c){
-  Triangle trn(a, b, c);
+  triangle3 trn(a, b, c);
   m_triangles.add(trn);
 }
 
@@ -83,14 +83,10 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos){
 
   for(int j = 0; j < m_triangles.size(); j++)
   {
-    plane pln(m_triangles[j].a,
-    m_triangles[j].b,
-    m_triangles[j].c);
-    Triangle  trn(m_triangles[j].a,
-    m_triangles[j].b,
-    m_triangles[j].c);
+    plane pln(m_triangles[j].pt[0],  m_triangles[j].pt[1],  m_triangles[j].pt[2]);
+    triangle3  trn(m_triangles[j].pt[0],  m_triangles[j].pt[1],  m_triangles[j].pt[2]);
 
-    if(m_collision.collision(spos, epos, rad, trn.a, trn.b, trn.c, pt_ins))
+    if(m_collision.collision(spos, epos, rad, trn.pt[0], trn.pt[1], trn.pt[2], pt_ins))
     {
       insect = true;
       dist = pln.distance(epos);
@@ -130,7 +126,7 @@ void kgmPhysics::doCollision(float dtime){
   u32  stime = kgmTime::getTicks();
 
   //active collisions
-  kgmList<Triangle>	triangles;
+  kgmList<triangle3>	triangles;
   kgmList<kgmBody*>	bodies;
 
 
@@ -371,8 +367,8 @@ void kgmPhysics::doCollision(float dtime){
     //check collision to static objects
     for(int j = 0; j < triangles.size(); j++)
     {
-      Triangle  trn = triangles[j];
-      plane pln(trn.a, trn.b, trn.c);
+      triangle3  trn = triangles[j];
+      plane pln(trn.pt[0], trn.pt[1], trn.pt[2]);
       bool iscollision = false;
       vec3 n = vec3(0, 0, 0);
       vec3 s = body->m_position;
@@ -382,7 +378,7 @@ void kgmPhysics::doCollision(float dtime){
       //   d.z += rz;
       /*(s.distance(d) > 0.0000001f) && */
       m_collision.reset();
-      if(m_collision.collision(s, d, rx, ry, rz, &trn.a, 3)){
+      if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3)){
         vec3 pr_e = m_collision.m_point;
         vec3 pr_s = pln.projection(s);
         n = m_collision.m_normal;
@@ -412,7 +408,7 @@ void kgmPhysics::doCollision(float dtime){
       if(m_gravity && body->m_gravity && (!upstare)){
         d.z -= gdist;
         m_collision.reset();
-        if(m_collision.collision(s, d, rx, ry, rz, &trn.a, 3)){
+        if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3)){
           vec3 pr_e = m_collision.m_point;
           float z = 0.0f;
           n = m_collision.m_normal;
@@ -451,20 +447,20 @@ void kgmPhysics::doCollision(float dtime){
   }
 }
 
-void kgmPhysics::getTriangles(kgmList<Triangle>& triangles, sphere& s){
+void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s){
   int i = 0;
   int count = m_triangles.size();
   for(i; i < count; i++){
-    Triangle t = m_triangles[i];
-    vec3 mn = t.a;
+    triangle3 t = m_triangles[i];
+    vec3 mn = t.pt[0];
     vec3 ct;
-    ct.x = (t.a.x + t.b.x + t.c.x) * 0.3333333;
-    ct.y = (t.a.y + t.b.y + t.c.y) * 0.3333333;
-    ct.z = (t.a.z + t.b.z + t.c.z) * 0.3333333;
+    ct.x = (t.pt[0].x + t.pt[1].x + t.pt[2].x) * 0.3333333;
+    ct.y = (t.pt[0].y + t.pt[1].y + t.pt[2].y) * 0.3333333;
+    ct.z = (t.pt[0].z + t.pt[1].z + t.pt[2].z) * 0.3333333;
 
-    float a = SQR(t.a.x - ct.x) + SQR(t.a.y - ct.y) + SQR(t.a.z - ct.z);
-    float b = SQR(t.b.x - ct.x) + SQR(t.b.y - ct.y) + SQR(t.b.z - ct.z);
-    float c = SQR(t.c.x - ct.x) + SQR(t.c.y - ct.y) + SQR(t.c.z - ct.z);
+    float a = SQR(t.pt[0].x - ct.x) + SQR(t.pt[0].y - ct.y) + SQR(t.pt[0].z - ct.z);
+    float b = SQR(t.pt[1].x - ct.x) + SQR(t.pt[1].y - ct.y) + SQR(t.pt[1].z - ct.z);
+    float c = SQR(t.pt[2].x - ct.x) + SQR(t.pt[2].y - ct.y) + SQR(t.pt[2].z - ct.z);
     float d = SQR(ct.x - s.center.x) + SQR(ct.y - s.center.y) + SQR(ct.z - s.center.z);
 
     if(b > a) a = b;

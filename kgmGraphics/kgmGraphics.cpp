@@ -490,7 +490,7 @@ void kgmGraphics::render(kgmVisual* visual)
   if(!visual)
     return;
 
-  mtx4 tr = visual->m_transform * m_camera.mView;
+  //mtx4 tr = visual->m_transform * m_camera.mView;
   setWorldMatrix(visual->m_transform);
 
   if(visual->m_tm_joints)

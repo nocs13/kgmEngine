@@ -966,22 +966,22 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 
 s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
 {
-  kgmXml::Node* node = 0;
+  kgmXml::Node* c_node = 0;
 
-  if(!x.m_node || !(node = x.m_node->node("kgmCollision")))
+  if(!x.m_node || !(c_node = x.m_node->node("kgmCollision")))
     return 0;
 
-  s32 count = 0;
+  s32 p_count = 0;
 
-  if(node->m_name == "kgmCollision")
+  if(c_node->m_name == "kgmCollision")
   {
     kgmString val;
 
-    node->attribute("polygons", val);
+    c_node->attribute("polygons", val);
 
-    for(int j = 0; j < node->nodes(); j++)
+    for(int j = 0; j < c_node->nodes(); j++)
     {
-      kgmXml::Node* node = node->node(j);
+      kgmXml::Node* node = c_node->node(j);
 
       if(node->m_name == "Polygon")
       {
@@ -1006,7 +1006,7 @@ s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
         for(int k = 2; k < count; k++)
         {
           shape.add(triangle3(pol[0], pol[k - 1], pol[k]));
-          count++;
+          p_count++;
         }
 
         delete [] pol;
@@ -1014,7 +1014,7 @@ s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
     }
   }
 
-  return count;
+  return p_count;
 }
 
 kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)

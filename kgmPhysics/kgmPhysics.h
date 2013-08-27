@@ -4,21 +4,18 @@
 #include "../kgmMath/kgmMath.h"
 
 #include "kgmIPhysics.h"
-#include "kgmTypes.h"
 #include "kgmBody.h"
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
 class kgmPhysics: public kgmIPhysics{
- typedef kgmTriangle3d<float> Triangle;
-
 public:
  float			m_gravity;
  bool			 m_isgravity;
 
  kgmList<triangle3>	   m_triangles;
  kgmList<kgmBody*>	    m_bodies;
- kgmOctTree<Triangle*>	m_treestatic;
+ kgmOctTree<triangle3*>	m_treestatic;
 
  vec3		m_ptCurrent;
  vec3		m_ptDestination;
@@ -49,6 +46,6 @@ public:
 // bool checkCollision(vec3& spos, vec3& epos, box& bound, vec3& rpos);
 protected:
  void doCollision(float);
- void getTriangles(kgmList<Triangle>& triangles, sphere& s);
+ void getTriangles(kgmList<triangle3>& triangles, sphere& s);
  void getBodies(kgmList<kgmBody*>& bodies, sphere& s);
 };

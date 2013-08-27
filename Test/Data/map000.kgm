@@ -1,48 +1,19 @@
 <?xml version='1.0'?>
 <kgm>
- <kgmActor name='Spaceship.1' object='KSpaceshipA' parent='None' player='off'>
-  <Position value='0.20134544372558594 -10.446582794189453 2.377677992626559e-05'/>
+ <kgmLight name='Lamp'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.0'/>
+  <Position value='4.076245307922363 1.0054539442062378 5.903861999511719'/>
+  <Rotation value='0.6503279805183411 0.055217109620571136 1.8663908243179321'/>
+  <Intensity value='1.0'/>
+  <Shadows value='Yes'/>
+ </kgmLight>
+ <kgmActor name='kgmObject' object='RenTao' parent='None' player='on'>
+  <Position value='0.0 0.0 0.0'/>
   <Rotation value='0.0 -0.0 0.0'/>
   <State value='None'/>
  </kgmActor>
- <kgmActor name='Spaceship.0' object='KSpaceshipA' parent='None' player='off'>
-  <Position value='-14.685836791992188 23.362930297851562 -1.0481335266376846e-05'/>
-  <Rotation value='0.0 -0.0 0.0'/>
-  <State value='None'/>
- </kgmActor>
- <kgmActor name='Spacer.002' object='KSpacerA' parent='None' player='off'>
-  <Position value='3.7911529541015625 22.503013610839844 -6.850956197013147e-06'/>
-  <Rotation value='0.0 -0.0 0.0'/>
-  <State value='idle'/>
-  <Aim value='hunt'/>
-  <Target value='Player'/>
- </kgmActor>
- <kgmActor name='Spacer.000' object='KSpacerA' parent='None' player='off'>
-  <Position value='15.721778869628906 20.63037872314453 -3.8578605199290905e-06'/>
-  <Rotation value='0.0 -0.0 0.0'/>
-  <State value='idle'/>
-  <Aim value='hunt'/>
-  <Target value='Player'/>
- </kgmActor>
- <kgmGameObject name='AsteroidSpawner' object='KAsteroidSpawner' parent='None'>
-  <Position value='5.393172740936279 5.105494976043701 0.0'/>
-  <Rotation value='0.0 -0.0 0.0'/>
- </kgmGameObject>
- <kgmActor name='Spacer.001' object='KSpacerA' parent='None' player='off'>
-  <Position value='-2.7127838134765625 10.496513366699219 6.8017934609088115e-06'/>
-  <Rotation value='0.0 -0.0 0.0'/>
-  <State value='idle'/>
-  <Aim value='hunt'/>
-  <Target value='Player'/>
- </kgmActor>
- <kgmActor name='Player' object='KSpacer' parent='None' player='on'>
-  <Position value='0.0 0.0 0.0'/>
-  <Rotation value='0.0 -0.0 0.0'/>
-  <State value='idle'/>
-  <Group value='0'/>
- </kgmActor>
- <kgmGameObject name='Flame' object='KFlameA' parent='None'>
-  <Position value='0.0 0.0 0.0'/>
-  <Rotation value='0.0 -0.0 0.0'/>
- </kgmGameObject>
+ <kgmProxy name='Floor_proxy.002' type='MESH' class='Floor' position='-3.0502846240997314 4.962277412414551 0.0' quaternion='0.0 0.0 -0.8923377990722656 0.451368123292923' />
+ <kgmProxy name='Floor_proxy.001' type='MESH' class='Floor' position='-2.513615369796753 1.6352146863937378 0.0' quaternion='0.0 0.0 -0.30736541748046875 0.9515915513038635' />
+ <kgmProxy name='Floor_proxy' type='MESH' class='Floor' position='2.4918437004089355 0.0 0.0' quaternion='0.0 0.0 0.0 1.0' />
 </kgm>
