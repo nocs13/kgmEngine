@@ -685,11 +685,11 @@ class kgmExport(bpy.types.Operator):
 
   #proxies
   for o in proxies:
-   file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'>\n")
-   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+   file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'")
+   file.write(" position='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'")
+   file.write(" quaternion='" + str(o.quat[0]) + " " + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + "'")
 #   file.write("  <Euler value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write("  <Quaternion value='" + str(o.quat[0]) + " " + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + "'/>\n")
-   file.write(" </kgmProxy>\n")
+   file.write(" />\n")
 
   #collisions
   if collision != None:

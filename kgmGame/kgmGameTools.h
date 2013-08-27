@@ -53,6 +53,10 @@ public:
  static kgmMesh*  genMesh(kgmMemory<char>& m);
  static kgmMesh*  genMesh(kgmXml& x);
 
+ //SHAPES
+  static kgmMesh*  genMesh(kgmMemory<char>& m);
+  static kgmMesh*  genMesh(kgmXml& x);
+
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<char>& m);
 };
