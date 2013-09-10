@@ -893,6 +893,14 @@ void kgmGraphics::render(kgmGui* gui){
       gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
     }
   }
+  else if(gui->isType(kgmGuiText::Class))
+  {
+    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
+    u32 fheight = (u32)((float)rect.h * (float)0.75f);
+
+    if(text.length() > 0)
+      gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, rect, text);
+  }
   else if(gui->isClass(kgmGuiTab::Class))
   {
     render((kgmGuiTab*)gui);

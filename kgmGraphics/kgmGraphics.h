@@ -9,6 +9,7 @@
 #include "kgmGui.h"
 #include "kgmGuiTab.h"
 #include "kgmGuiList.h"
+#include "kgmGuiText.h"
 #include "kgmGuiButton.h"
 #include "kgmGuiScroll.h"
 #include "kgmGuiProgress.h"

@@ -41,6 +41,10 @@ kGui::kGui(kgmGameBase* game)
   gui->hide();
   m_guiSettings = gui;
 
+  gui = new kgmGuiText(m_guiSettings, 10, 10, 300, 40);
+  gui->setText("Developer: Karakal_13");
+  gui->show();
+
   gui = new kgmGui(m_guiMain, 0, 50, w, h - 50);
   gui->setSid("guiGame");
   m_guiGame = gui;

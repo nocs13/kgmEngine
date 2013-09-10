@@ -1,7 +1,6 @@
 #pragma once
 #include "../kgmBase//kgmList.h"
 #include "../kgmMath/kgmMath.h"
-#include "kgmTypes.h"
 
 
 class kgmCollision{
