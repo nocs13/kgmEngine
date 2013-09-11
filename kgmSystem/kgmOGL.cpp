@@ -485,6 +485,30 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #else
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 #endif
+
+#ifdef TEST
+    err = glGetError();
+
+    if(GL_NO_ERROR != err)
+    {
+      u32 k = 0;
+
+      switch(err)
+      {
+      case GL_INVALID_ENUM:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_ENUM";
+        break;
+      case GL_INVALID_VALUE:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_VALUE";
+        break;
+      case GL_INVALID_OPERATION:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_OPERATION";
+        break;
+      default:
+        kgm_log() << "gcGenTexture has error: Unknown";
+      }
+    }
+#endif
     break;
     // case 1:
     // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -536,8 +560,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
       glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
       //  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_INT, NULL);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
-      //  glDrawBuffer(GL_NONE);
-      //  glReadBuffer(GL_NONE);
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex, 0);
 #endif
     }
@@ -555,6 +577,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
   }
 
+#ifdef TEST
   err = glGetError();
 
   if(GL_NO_ERROR != err)
@@ -575,6 +598,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     }
     kgm_log() << "gcGenTexture has error: " << (s32)err;
   }
+#endif
 
   glBindTexture(GL_TEXTURE_2D, 0);
 #ifdef GL_FRAMEBUFFER
@@ -620,10 +644,12 @@ void kgmOGL::gcSetTexture(u32 stage, void* t){
 
   GLenum err = glGetError();
 
+#ifdef TEST
   if(err != GL_NO_ERROR)
   {
-    //kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
+    kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
   }
+#endif
 }
 
 /*
