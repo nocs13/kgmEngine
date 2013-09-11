@@ -375,11 +375,11 @@ void kgmOGL::gc2DMode(){
 #ifdef GL_PROJECTION
   m_wnd->getRect(x, y, w, h);
   glMatrixMode(GL_PROJECTION);
-  glGetFloatv(GL_PROJECTION_MATRIX, mtx_mode_proj);
+  //glGetFloatv(GL_PROJECTION_MATRIX, mtx_mode_proj);
   glLoadIdentity();
   glOrtho(0, w, h, 0, 1, -1);
   glMatrixMode(GL_MODELVIEW);
-  glGetFloatv(GL_MODELVIEW_MATRIX, mtx_mode_view);
+  //glGetFloatv(GL_MODELVIEW_MATRIX, mtx_mode_view);
   glLoadIdentity();
 #endif
 }
@@ -431,6 +431,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #ifdef ANDROID
    glActiveTexture(GL_TEXTURE0);
 #endif
+
   switch(type){
   case gctype_tex2d:
     glGenTextures(1, &tex);
@@ -458,16 +459,19 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
   if(tex == 0)
   {
+#ifdef TEST
     kgm_log() << "gl: no generated texture";
+#endif
 
     return null;
   }
 
 
-  const GLubyte* p_str;
-  GLenum err = glGetError();
+  const  GLubyte* p_str;
+  GLenum err = 0;
 
-  switch(type){
+  switch(type)
+  {
   case gctype_tex2d:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -578,29 +582,31 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   }
 
 #ifdef TEST
-  err = glGetError();
+    err = glGetError();
 
-  if(GL_NO_ERROR != err)
-  {
-    u32 k = 0;
-
-    switch(err)
+    if(GL_NO_ERROR != err)
     {
-    case GL_INVALID_ENUM:
-      k = 1;
-      break;
-    case GL_INVALID_VALUE:
-      k = 2;
-      break;
-    case GL_INVALID_OPERATION:
-      k = 3;
-      break;
+      u32 k = 0;
+
+      switch(err)
+      {
+      case GL_INVALID_ENUM:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_ENUM";
+        break;
+      case GL_INVALID_VALUE:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_VALUE";
+        break;
+      case GL_INVALID_OPERATION:
+        kgm_log() << "gcGenTexture has error: GL_INVALID_OPERATION";
+        break;
+      default:
+        kgm_log() << "gcGenTexture has error: Unknown";
+      }
     }
-    kgm_log() << "gcGenTexture has error: " << (s32)err;
-  }
 #endif
 
   glBindTexture(GL_TEXTURE_2D, 0);
+
 #ifdef GL_FRAMEBUFFER
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
@@ -631,20 +637,24 @@ void kgmOGL::gcFreeTexture(void *t){
   delete (Texture*)t;
 }
 
-void kgmOGL::gcSetTexture(u32 stage, void* t){
+void kgmOGL::gcSetTexture(u32 stage, void* t)
+{
+  GLenum err;
+
   if(!t)
   {
     glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
+
     return;
   }
 
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
 
-  GLenum err = glGetError();
-
 #ifdef TEST
+  err = glGetError();
+
   if(err != GL_NO_ERROR)
   {
     kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
