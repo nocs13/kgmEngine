@@ -44,6 +44,8 @@ float b = (temp & 0x00f0)/255.0;
 float a = (temp & 0x000f)/255.0;*/
 }
 
+mtx4       g_mtx_orto;
+mtx4       g_mtx_iden;
 mtx4       g_mtx_proj;
 mtx4       g_mtx_view;
 mtx4       g_mtx_world;
@@ -114,6 +116,7 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   }
 
   m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
+  g_mtx_iden.identity();
 }
 
 kgmGraphics::~kgmGraphics()
@@ -209,6 +212,8 @@ void kgmGraphics::resize(float width, float height){
                       m_camera.mPos,
                       m_camera.mDir,
                       m_camera.mUp);
+
+  g_mtx_orto.ortho(0, width, height, 0, 1, -1);
 
 #ifdef TEST
   kgm_log() << "Resized";
@@ -428,7 +433,10 @@ void kgmGraphics::render(){
   //For last step draw gui
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
-  gc->gc2DMode();
+
+  //switch to 2D
+  setProjMatrix(g_mtx_orto);
+  setViewMatrix(g_mtx_iden);
 
   for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
   {
@@ -466,7 +474,9 @@ void kgmGraphics::render(){
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 #endif
 
-  gc->gc3DMode();
+  //switch to 3D
+  setProjMatrix(g_mtx_proj);
+  setViewMatrix(g_mtx_view);
 
   gc->gcEnd();
 

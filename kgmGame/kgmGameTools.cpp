@@ -18,6 +18,7 @@ kgmGameTools::~kgmGameTools(){
 }
 
 //*************** DRAWING ***************
+/*
 void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex){
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
@@ -89,6 +90,7 @@ void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, i
   gc->gcSetTexture(0, 0);
   gc->gc3DMode();
 }
+*/
 
 kgmPicture* kgmGameTools::genPicture(kgmMemory<char>& m)
 {

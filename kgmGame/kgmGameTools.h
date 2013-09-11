@@ -25,8 +25,8 @@ public:
  kgmGameTools();
  virtual ~kgmGameTools();
 //  DRAWING 
- static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex);
- static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
+// static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex);
+// static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
 
 //  PICTURE & TEXTURE & FONT & STYLE
  static kgmPicture*   genPicture(kgmMemory<char>& m);
