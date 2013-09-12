@@ -367,32 +367,6 @@ void kgmOGL::gcDepth(bool depth, bool mask, u32 mode){
   glDepthFunc(gl_enum(mode));
 }
 
-
-//Dimension MODE
-void kgmOGL::gc2DMode(){
-  int  x, y, w, h;
-
-#ifdef GL_PROJECTION
-  m_wnd->getRect(x, y, w, h);
-  glMatrixMode(GL_PROJECTION);
-  //glGetFloatv(GL_PROJECTION_MATRIX, mtx_mode_proj);
-  glLoadIdentity();
-  glOrtho(0, w, h, 0, 1, -1);
-  glMatrixMode(GL_MODELVIEW);
-  //glGetFloatv(GL_MODELVIEW_MATRIX, mtx_mode_view);
-  glLoadIdentity();
-#endif
-}
-void kgmOGL::gc3DMode()
-{
-#ifdef GL_PROJECTION
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(mtx_mode_proj);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadMatrixf(mtx_mode_view);
-#endif
-}
-
 //TEXTURE
 void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 {
@@ -578,8 +552,12 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   default:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+#ifdef ANDROID
+    glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+#else
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
-  }
+#endif
 
 #ifdef TEST
     err = glGetError();
@@ -604,6 +582,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
       }
     }
 #endif
+  }
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1024,29 +1003,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
-}
-
-
-void kgmOGL::gcDrawRect(int x, int y, int w, int h, u32 col){
-  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
-  V v[4];
-
-  gc2DMode();
-  /*
-  v[0].pos = vec3(rect.min.x, rect.min.y, 0); v[0].col = col; v[0].uv = vec2(0, 1);
-  v[1].pos = vec3(rect.min.x, rect.max.y, 0); v[1].col = col; v[1].uv = vec2(0, 1);
-  v[2].pos = vec3(rect.max.x, rect.max.y, 0); v[2].col = col; v[2].uv = vec2(1, 0);
-  v[3].pos = vec3(rect.max.x, rect.min.y, 0); v[3].col = col; v[3].uv = vec2(1, 1);
-
-  gcDraw(gcpmt_trianglefan, gcv_xyz | gcv_dif | gcv_tex, sizeof(V), 4, v, 0, 0);
-*/
-  v[0].pos = vec3(x,     y, 0);     v[0].col = col; v[0].uv = vec2(0, 0);
-  v[1].pos = vec3(x,     y + h, 0); v[1].col = col; v[1].uv = vec2(0, 1);
-  v[2].pos = vec3(x + w, y, 0);     v[2].col = col; v[2].uv = vec2(1, 0);
-  v[3].pos = vec3(x + w, y + h, 0); v[3].col = col; v[3].uv = vec2(1, 1);
-
-  gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-  gc3DMode();
 }
 
 void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){

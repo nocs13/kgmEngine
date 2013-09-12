@@ -128,9 +128,6 @@ public:
  virtual void* gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) = 0;
  virtual void  gcFreeTexture(void *t) = 0;
  virtual void  gcSetTexture(u32 stage, void *t) = 0;
- // MODE
- //virtual void  gc2DMode() = 0;
- //virtual void  gc3DMode() = 0;
  // MATRIX 
  virtual void  gcSetMatrix(u32 mode, float* mtx) = 0;
  virtual void  gcGetMatrix(u32 mode, float* mtx) = 0;

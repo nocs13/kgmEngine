@@ -131,13 +131,8 @@ public:
   void  gcEnd();
   void  gcRender();
   void  gcSetTarget(void* t);
-  //MODE
-  void  gc2DMode();
-  void  gc3DMode();
   //DRAW
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
-  void  gcDrawRect(int x, int y, int w, int h, u32 col);
-  //void  gcDrawText(lRect clip, float w, float h, u32 col, char *text, u32 tlen);
   void  gcDrawBillboard(vec3 v, float w, float h, u32 col);
   //TEXTURE
   void* gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);

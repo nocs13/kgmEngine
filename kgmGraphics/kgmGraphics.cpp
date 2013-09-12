@@ -84,12 +84,14 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
       return;
 
     //generic black texture
+    kgm_log() << "\nGen black texture";
     memset(txd, 0x00, sizeof(txd));
-    g_tex_black = gc->gcGenTexture(txd, 2, 2, 32, 0);
+    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
     //generic white texture
+    kgm_log() << "\nGen white texture";
     memset(txd, 0xffffffff, sizeof(txd));
-    g_tex_white = gc->gcGenTexture(txd, 2, 2, 32, 0);
+    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
 
     g->gcGetParameter(gcsup_shaders, &val);
@@ -433,10 +435,7 @@ void kgmGraphics::render(){
   //For last step draw gui
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
-
-  //switch to 2D
-  setProjMatrix(g_mtx_orto);
-  setViewMatrix(g_mtx_iden);
+  gc2DMode();
 
   for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
   {
@@ -474,12 +473,8 @@ void kgmGraphics::render(){
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 #endif
 
-  //switch to 3D
-  setProjMatrix(g_mtx_proj);
-  setViewMatrix(g_mtx_view);
-
+  gc3DMode();
   gc->gcEnd();
-
   gc->gcRender();
 
   //clear&reset
@@ -957,6 +952,19 @@ void kgmGraphics::render(kgmGui* gui){
 s32 kgmGraphics::getShaderId(kgmString s)
 {
   return -1;
+}
+
+//*************** VIEW MODE *************
+void kgmGraphics::gc2DMode()
+{
+  setProjMatrix(g_mtx_orto);
+  setViewMatrix(g_mtx_iden);
+}
+
+void kgmGraphics::gc3DMode()
+{
+  setProjMatrix(g_mtx_proj);
+  setViewMatrix(g_mtx_view);
 }
 
 //*************** DRAWING ***************
