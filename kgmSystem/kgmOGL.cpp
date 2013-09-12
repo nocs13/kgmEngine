@@ -448,7 +448,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   {
   case gctype_tex2d:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 #ifdef GL_DEPTH_TEXTURE_MODE
     if(fmt == gctex_fmtdepth)
     {
@@ -551,7 +552,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
   default:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     //glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 #ifdef ANDROID
     glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
@@ -628,6 +630,15 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
     return;
   }
 
+#ifdef ANDROID
+  GLboolean stat = GL_FALSE;
+
+//  glGetBooleanv(GL_TEXTURE_2D, &stat);
+
+//  if(stat == GL_FALSE)
+    glEnable(GL_TEXTURE_2D);
+#endif
+
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
 
@@ -636,7 +647,12 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
   if(err != GL_NO_ERROR)
   {
-    kgm_log() << "gcSetTexture has error: " << (s32)err << "\n";
+    kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << "\n";
+
+//    if(!glIsTexture(((Texture*)t)->texture))
+//    {
+//      kgm_log() << "gcSetTexture has not valid texture\n";
+//    }
   }
 #endif
 }

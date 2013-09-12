@@ -220,6 +220,8 @@ void kgmGraphics::resize(float width, float height){
 #ifdef TEST
   kgm_log() << "Resized";
 #endif
+
+  gc->gcSetParameter(gcpar_textures, 1);
 }
 
 void kgmGraphics::render(){
