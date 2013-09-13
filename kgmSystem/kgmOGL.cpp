@@ -600,6 +600,10 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   t->format = fmt;
   t->type = type;
 
+#ifdef TEST
+  kgm_log() << "gcGenTexture generated tex: " << (s32)tex << "\n";
+#endif
+
   return (void*)t;
 }
 
@@ -622,24 +626,29 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 {
   GLenum err;
 
+#ifdef ANDROID
+  glEnable(GL_TEXTURE_2D);
+#endif
+
   if(!t)
   {
-    glActiveTexture(GL_TEXTURE0 + stage);
+    //glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+#ifdef TEST
+    err = glGetError();
+
+    if(err != GL_NO_ERROR)
+    {
+      kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
+
+    }
+#endif
 
     return;
   }
 
-#ifdef ANDROID
-  GLboolean stat = GL_FALSE;
-
-//  glGetBooleanv(GL_TEXTURE_2D, &stat);
-
-//  if(stat == GL_FALSE)
-    glEnable(GL_TEXTURE_2D);
-#endif
-
-  glActiveTexture(GL_TEXTURE0 + stage);
+  //glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
 
 #ifdef TEST
