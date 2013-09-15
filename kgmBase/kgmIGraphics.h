@@ -115,8 +115,8 @@ public:
 
 
 public:
- virtual void  gcSetParameter(u32 param, void* value) = 0;
- virtual void  gcGetParameter(u32 param, void* value) = 0;
+ virtual void  gcSet(u32 param, void* value) = 0;
+ virtual void  gcGet(u32 param, void* value) = 0;
  virtual void  gcClear(u32 flag, u32 col, float depth, u32 sten) = 0;
  virtual void  gcBegin() = 0;
  virtual void  gcEnd() = 0;

@@ -31,8 +31,10 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   this->m_wnd = wnd;
 
   GLubyte* oglVersion = (GLubyte*)glGetString(GL_VERSION);
-  kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
 
+#ifdef TEST
+  kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
+#endif
 
   glInitExt();
   glEnable(GL_ACTIVE_TEXTURE);
@@ -87,7 +89,7 @@ kgmOGL::~kgmOGL(){
   m_rendertarget = 0;
 }
 
-void kgmOGL::gcSetParameter(u32 param, void* value){
+void kgmOGL::gcSet(u32 param, void* value){
   switch(param)
   {
   case gcpar_blending:
@@ -140,7 +142,8 @@ void kgmOGL::gcSetParameter(u32 param, void* value){
     break;
   }
 }
-void kgmOGL::gcGetParameter(u32 param, void* value){
+
+void kgmOGL::gcGet(u32 param, void* value){
   switch(param)
   {
   case gcsup_shaders:
@@ -151,6 +154,7 @@ void kgmOGL::gcGetParameter(u32 param, void* value){
     break;
   }
 }
+
 void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten){
   GLu32 cl = 0;
 
@@ -173,6 +177,7 @@ void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten){
     cl |= GL_STENCIL_BUFFER_BIT;
     glClearStencil(sten);
   }
+
   glClear(cl);
 }
 
@@ -208,6 +213,7 @@ void kgmOGL::gcSetTarget(void* t){
   if(err != GL_NO_ERROR){
     int k = 0;
   }
+
   GLint ipar = 0;
   glEnable(GL_DEPTH_TEST);
   glDepthMask(true);
@@ -374,6 +380,10 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
 
+#ifdef TEST
+  kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
+#endif
+
   switch(fmt){
   case gctex_fmt8:
     pic_fmt = GL_RED;
@@ -401,10 +411,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     pic_fmt = GL_RGB;
     fmt_bt = 3;
   }
-
-#ifdef ANDROID
-   glActiveTexture(GL_TEXTURE0);
-#endif
 
   switch(type){
   case gctype_tex2d:
@@ -440,7 +446,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     return null;
   }
 
-
   const  GLubyte* p_str;
   GLenum err = 0;
 
@@ -448,8 +453,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   {
   case gctype_tex2d:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 #ifdef GL_DEPTH_TEXTURE_MODE
     if(fmt == gctex_fmtdepth)
     {
@@ -469,24 +473,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     err = glGetError();
 
     if(GL_NO_ERROR != err)
-    {
-      u32 k = 0;
-
-      switch(err)
-      {
-      case GL_INVALID_ENUM:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_ENUM";
-        break;
-      case GL_INVALID_VALUE:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_VALUE";
-        break;
-      case GL_INVALID_OPERATION:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_OPERATION";
-        break;
-      default:
-        kgm_log() << "gcGenTexture has error: Unknown";
-      }
-    }
+      kgm_log() << "gcGenTexture has error: " << (s32)err << "\n";
 #endif
     break;
     // case 1:
@@ -552,9 +539,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
   default:
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
 #ifdef ANDROID
     glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 #else
@@ -565,24 +551,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     err = glGetError();
 
     if(GL_NO_ERROR != err)
-    {
-      u32 k = 0;
-
-      switch(err)
-      {
-      case GL_INVALID_ENUM:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_ENUM";
-        break;
-      case GL_INVALID_VALUE:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_VALUE";
-        break;
-      case GL_INVALID_OPERATION:
-        kgm_log() << "gcGenTexture has error: GL_INVALID_OPERATION";
-        break;
-      default:
-        kgm_log() << "gcGenTexture has error: Unknown";
-      }
-    }
+      kgm_log() << "gcGenTexture has error: " << (s32)err << "\n";
 #endif
   }
 
@@ -627,12 +596,12 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
   GLenum err;
 
 #ifdef ANDROID
-  glEnable(GL_TEXTURE_2D);
+//  glEnable(GL_TEXTURE_2D);
 #endif
 
   if(!t)
   {
-    //glActiveTexture(GL_TEXTURE0 + stage);
+    glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef TEST
@@ -648,7 +617,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
     return;
   }
 
-  //glActiveTexture(GL_TEXTURE0 + stage);
+  glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
 
 #ifdef TEST
@@ -656,12 +625,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
   if(err != GL_NO_ERROR)
   {
-    kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << "\n";
-
-//    if(!glIsTexture(((Texture*)t)->texture))
-//    {
-//      kgm_log() << "gcSetTexture has not valid texture\n";
-//    }
+    kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
   }
 #endif
 }
@@ -1030,7 +994,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #endif
 }
 
-void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
+/*void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
   mtx4 mv, mp, m;
   vec3 rv, uv;
   typedef struct{ vec3 pos; u32 dif; vec2 uv; } V;
@@ -1068,7 +1032,7 @@ void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
   gcSetMatrix(gcmtx_view, m.m);
   gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
   //  glColor4f(1, 1, 1, 1);
-}
+}*/
 
 //VERTEX & INDEX BUFFER 
 void* kgmOGL::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize){

@@ -124,8 +124,8 @@ public:
 
 
   //RENDER
-  void  gcSetParameter(u32 param, void* value);
-  void  gcGetParameter(u32 param, void* value);
+  void  gcSet(u32 param, void* value);
+  void  gcGet(u32 param, void* value);
   void  gcClear(u32 flag, u32 col, f32 depth, u32 sten);
   void  gcBegin();
   void  gcEnd();
@@ -133,7 +133,6 @@ public:
   void  gcSetTarget(void* t);
   //DRAW
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
-  void  gcDrawBillboard(vec3 v, float w, float h, u32 col);
   //TEXTURE
   void* gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);
   void  gcFreeTexture(void* tex);

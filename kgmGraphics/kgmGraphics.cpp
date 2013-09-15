@@ -84,22 +84,22 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
       return;
 
     //generic black texture
-    kgm_log() << "\nGen black texture";
-    memset(txd, 0x00, sizeof(txd));
+    kgm_log() << "Gen black texture\n";
+    memset(txd, 0x00000000, sizeof(txd));
     g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
     //generic white texture
-    kgm_log() << "\nGen white texture";
+    kgm_log() << "Gen white texture\n";
     memset(txd, 0xffffffff, sizeof(txd));
     g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
 
-    g->gcGetParameter(gcsup_shaders, &val);
+    g->gcGet(gcsup_shaders, &val);
 
     if(val != 0)
       m_has_shaders = true;
 
-    g->gcGetParameter(gcsup_fbuffers, &val);
+    g->gcGet(gcsup_fbuffers, &val);
 
     if(val != 0)
       m_has_buffers = true;
@@ -220,8 +220,6 @@ void kgmGraphics::resize(float width, float height){
 #ifdef TEST
   kgm_log() << "Resized";
 #endif
-
-  gc->gcSetParameter(gcpar_textures, 1);
 }
 
 void kgmGraphics::render(){
@@ -319,7 +317,7 @@ void kgmGraphics::render(){
 
   if(this->m_lights.size() > 0)
   {
-    gc->gcSetParameter(gcpar_lighting, (void*)true);
+    gc->gcSet(gcpar_lighting, (void*)true);
     lighting = true;
 
     for(int i = 0; i < m_lights.size(); i++)
@@ -369,7 +367,7 @@ void kgmGraphics::render(){
 
   if(lighting)
   {
-    gc->gcSetParameter(gcpar_lighting, null);
+    gc->gcSet(gcpar_lighting, null);
     gc->gcSetLight(-1, null, 0.0);
     gc->gcSetLight(-2, null, 0.0);
     gc->gcSetLight(-3, null, 0.0);

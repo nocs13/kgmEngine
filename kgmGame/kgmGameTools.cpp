@@ -266,7 +266,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
     break;
   };
   kgmTexture* tex = new kgmTexture;
-  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, 0);
   pic->release();
 
   if(!tex->m_texture){
