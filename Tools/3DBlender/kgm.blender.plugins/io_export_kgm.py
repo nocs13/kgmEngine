@@ -251,25 +251,31 @@ class kgmMesh:
     if n.name == m.name:
      b = True
      break
-     
+
    if b == False:
     scene_materials.append(kgmMaterial(m))
     print("add material to scene_materials")
 
   uvcoord = len(mesh.uv_textures)
 
+  mesh_faces = None
+
   if hasattr(mesh, 'faces'):
-    print('Faces: ' + str(len(mesh.faces)))
-    for i in range(0, len(mesh.faces)):
-     face = mesh.faces[i]
+    mesh_faces = mesh.faces
+  elif hasattr(mesh, 'polygons'):
+    mesh_faces = mesh.polygons
+
+  if mesh_faces:
+    print('Faces: ' + str(len(mesh_faces)))
+    for i in range(0, len(mesh_faces)):
+     face = mesh_faces[i]
      iface = [-1, -1, -1, -1]
-     uvface = mesh.uv_textures.active.data[i] if uvcoord else None
 
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
       vi = face.vertices[j]
       c = mtx * mesh.vertices[vi].co
-      n = mtx.to_3x3() * face.normal 
+      n = mtx.to_3x3() * face.normal
       v.v = [c[0], c[1], c[2]]
       v.n = [n[0], n[1], n[2]]
 
@@ -280,9 +286,15 @@ class kgmMesh:
          v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
          v.wb[g] = mesh.vertices[vi].groups[g].weight
 
-      if uvface:
-       uv = uvface.uv[j]
-       v.uv = [uv[0], uv[1]]
+      if uvcoord:
+        if hasattr(mesh, 'uv_layers'):
+          uv = mesh.uv_layers.active.data[face.loop_start + j].uv
+          v.uv = [uv[0], uv[1]]
+        else:
+          uvface = mesh.uv_textures.active.data[i] if uvcoord else None
+          if uvface:
+            uv = uvface.uv[j]
+            v.uv = [uv[0], uv[1]]
 
       v.idx = vi
       iface[j] = self.addVertex(v)
@@ -453,12 +465,12 @@ class kgmCollision:
 
      for j in range(0, len(face.vertices)):
       vi = face.vertices[j]
-      c = mtx * mesh.vertices[vi].co 
+      c = mtx * mesh.vertices[vi].co
       iface.append(c)
 
      self.faces.append(iface)
-	 
-class kgmProxy:	 
+
+class kgmProxy:
  def __init__(self, o):
   self.mtx    = o.matrix_local
   self.name   = o.name
@@ -511,7 +523,7 @@ class kgmExport(bpy.types.Operator):
 
   scene = context.scene
   for o in scene.objects:
-   print(o.name + ':' + o.type) 
+   print(o.name + ':' + o.type)
 
   if self.is_selection:
    objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
