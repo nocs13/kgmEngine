@@ -269,7 +269,8 @@ class kgmMesh:
     print('Faces: ' + str(len(mesh_faces)))
     for i in range(0, len(mesh_faces)):
      face = mesh_faces[i]
-     iface = [-1, -1, -1, -1]
+     #iface = [-1, -1, -1, -1]
+     iface = []
 
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
@@ -297,14 +298,18 @@ class kgmMesh:
             v.uv = [uv[0], uv[1]]
 
       v.idx = vi
-      iface[j] = self.addVertex(v)
+      #iface[j] = self.addVertex(v)
+      iface.append(self.addVertex(v))
 
-     if len(face.vertices) == 4:
-      self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
-      self.faces.append(kgmFace(iface[0], iface[2], iface[3]))
-     else:
-      self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
+     #if len(face.vertices) == 4:
+     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
+     # self.faces.append(kgmFace(iface[0], iface[2], iface[3]))
+     #else:
+     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
 
+     for k in range(2, len(iface)):
+       self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
+       
  def addVertex(self, vx):
   iv = -1
   #check if such vertex already exist
