@@ -421,6 +421,30 @@ u16 keyTranslate(KeySym key){
     return KEY_Y;
   case XK_z:
     return KEY_Z;
+  case XK_F1:
+    return KEY_F1;
+  case XK_F2:
+    return KEY_F2;
+  case XK_F3:
+    return KEY_F3;
+  case XK_F4:
+    return KEY_F4;
+  case XK_F5:
+    return KEY_F5;
+  case XK_F6:
+    return KEY_F6;
+  case XK_F7:
+    return KEY_F7;
+  case XK_F8:
+    return KEY_F8;
+  case XK_F9:
+    return KEY_F9;
+  case XK_F10:
+    return KEY_F10;
+  case XK_F11:
+    return KEY_F11;
+  case XK_F12:
+    return KEY_F12;
   }
   return KEY_NONE;
 }

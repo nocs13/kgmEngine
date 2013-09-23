@@ -107,8 +107,10 @@ kgmGameBase::kgmGameBase()
 
   log("init game audio...");
   initAudio();
-  log("init game logic...");
-  initLogic();
+
+  //log("init game logic...");
+  //initLogic();
+  m_logic = null;
 
   log("open font...");
   m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
@@ -212,10 +214,7 @@ void kgmGameBase::initSystem()
 }
 
 void kgmGameBase::initAudio(){
-//#ifdef WIN32
-//#else
   m_audio = new kgmGameAudio();
-//#endif
 }
 
 void kgmGameBase::initLogic(){
@@ -324,6 +323,14 @@ void kgmGameBase::onKeyUp(int k){
   {
     m_logic->input(m_keymap[k], 0);
     m_input[m_keymap[k]] = 0;
+  }
+
+  if(k == KEY_F12)
+  {
+    if(this->m_fs)
+      fullscreen(false);
+    else
+      fullscreen(true);
   }
 }
 

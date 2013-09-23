@@ -138,9 +138,8 @@ public:
     State_Stop
   };
 
-public:  //virtuals
-  //virtual kgmActor*      genActor(kgmString) = 0;
-
+public:
+  //virtuals
   virtual int            gLoad(kgmString) = 0;            //load game map
   virtual int            gUnload() = 0;                   //load game map
   virtual int            gCommand(kgmString) = 0;         //do command
@@ -166,9 +165,17 @@ public:  //virtuals
   virtual kgmSystem*      getSystem() = 0;
   virtual kgmEnvironment* getEnvironment() = 0;
 
-//protected:
+protected:
+  //init interfaces
+  virtual void  initResources() = 0;
+  virtual void  initGraphycs() = 0;
+  virtual void  initPhysics() = 0;
+  virtual void  initSystem() = 0;
+  virtual void  initAudio() = 0;
+  virtual void  initLogic() = 0;
 
-public:		//statics for help
+public:
+  //statics for help
   static kgmIGame*       getGame();
 };
 
