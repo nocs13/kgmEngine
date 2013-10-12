@@ -7,12 +7,15 @@ LUA= .
 include $(LUA)/config
 
 # primary targets (only "all" and "clean" are useful after distribution)
-all clean co klean:
+all clean co:
 	cd include; $(MAKE) $@
 	cd src; $(MAKE) $@
 	cd src/lib; $(MAKE) $@
 #	cd src/lua; $(MAKE) $@
 #	cd src/luac; $(MAKE) $@
+
+distclean: clean
+	echo distclean
 
 # remove debug information from binaries
 strip:

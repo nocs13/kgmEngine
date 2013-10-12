@@ -1,6 +1,7 @@
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
+#include "../kgmGame/kgmGameScript.h"
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
@@ -404,6 +405,13 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
     m_game = game = new kGame();
+    kgmLuaOpen();
+    kgmMemory<s8> mem;
+    m_game->getResources()->getFile("main.lua", mem);
+    kgmString str(mem.data(), mem.length());
+    kgmLuaRun(str);
+    kgmLuaClose();
+
     game->setRect(0, 0, w, h);
     game->loop();
     game->release();
