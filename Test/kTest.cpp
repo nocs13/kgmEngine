@@ -405,6 +405,7 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
     m_game = game = new kGame();
+
     kgmLuaOpen();
     kgmMemory<s8> mem;
     m_game->getResources()->getFile("main.lua", mem);
