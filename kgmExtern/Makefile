@@ -1,12 +1,13 @@
 include ../Makefile.mac
 
 all:
-	make -C lua linux
-	
-	cp lua/src/lua.h ../kgmSystem/inc/.
-	cp lua/src/lualib.h ../kgmSystem/inc/.
-	cp lua/src/luaconf.h ../kgmSystem/inc/.
-	cp lua/src/lauxlib.h ../kgmSystem/inc/.
-	
-	cp lua/src/liblua.a ../kgmSystem/lib/.	
+	make -C lua-4.0.1 
+	mkdir -p ../kgmSystem/inc/lua
+	cp lua-4.0.1/include/*.h ../kgmSystem/inc/lua/.	
+	cp lua-4.0.1/lib/liblua.a ../kgmSystem/lib/.	
+
+clean:
+	make -C lua-4.0.1 clean
+	rm -rf ../kgmSystem/inc/lua
+	rm -f  ../kgmSystem/lib/liblua.a	
 	
