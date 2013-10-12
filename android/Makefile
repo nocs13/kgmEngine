@@ -14,15 +14,25 @@ objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT = libkgmEngine.a
 
-all: $(OUT)
+all: $(OUT) lua
 
 $(objects) : %.o : %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
 
 $(OUT): $(objects)
 	$(AR) -crs $(OUT) $(objects)
+	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/*.o
+	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/lib/*.o
 
-clean:
+lua:
+	make -C ../kgmExtern/lua-4.0.1 -f Makefile.android
+
+luaclean:
+	make -C ../kgmExtern/lua-4.0.1 clean -f Makefile.android
+
+
+
+clean: luaclean
 	rm -f $(objects)
 	rm -f $(OUT)
 
