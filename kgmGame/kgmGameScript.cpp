@@ -5,6 +5,14 @@
 #include <stdarg.h>
 
 #ifdef LUA
+typedef int (*lua_CFn) (lua_State *lua);
+static int kgmLuaListObjects(lua_State *lua);
+static int kgmLuaListActors(lua_State *lua);
+static int kgmLuaRemoveObject(lua_State *lua);
+static int kgmLuaGetObjectType(lua_State *lua);
+static int kgmLuaGetActorState(lua_State *lua);
+static int kgmLuaSetActorState(lua_State *lua);
+
 lua_State* lua_main = null;
 
 bool kgmLuaOpen()
