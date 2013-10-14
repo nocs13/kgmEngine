@@ -6,6 +6,7 @@
 
 #ifdef LUA
 typedef int (*lua_CFn) (lua_State *lua);
+
 static int kgmLuaListObjects(lua_State *lua);
 static int kgmLuaListActors(lua_State *lua);
 static int kgmLuaRemoveObject(lua_State *lua);
@@ -124,4 +125,54 @@ void kgmLuaPush(char* arg){
 void kgmLuaPush(void* arg){
   lua_pushuserdata(lua_main, arg);
 }
+
+//
+int kgmLuaListObjects(lua_State *lua)
+{
+  int n = lua_gettop(lua);
+
+  if(n < 1)
+    return 0;
+
+  const char* fn_name = lua_tostring(lua, 1);
+
+  kgmIGame* game = kgmIGame::getGame();
+
+  if(!game || !game->getLogic())
+    return;
+
+  kgmList<kgmGameObject*> objects;
+  game->getLogic()->getObjects(objects);
+
+  for(int i = 0; i < objects.length(); i++)
+    kgmLuaCall(fn_name, "v", objects[i]);
+
+  return 0;
+}
+
+int kgmLuaListActors(lua_State *lua)
+{
+
+}
+
+int kgmLuaRemoveObject(lua_State *lua)
+{
+
+}
+
+int kgmLuaGetObjectType(lua_State *lua)
+{
+
+}
+
+int kgmLuaGetActorState(lua_State *lua)
+{
+
+}
+
+int kgmLuaSetActorState(lua_State *lua)
+{
+
+}
+
 #endif

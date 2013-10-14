@@ -12,15 +12,10 @@
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 public:
-  //kgmList<kgmActor*>       m_actors;
-  //kgmList<kgmSensor*>      m_sensors;
-  //kgmList<kgmTrigger*>     m_triggers;
-  kgmList<kgmGameObject*>  m_objects;
-  //std::vector<kgmGameObject*>  m_objects;
+  kgmList<kgmGameObject*>    m_objects;
   kgmList<kgmGameObject*>    m_trush;
 
-  kgmActor*                m_gameplayer;
-  //kgmActor*               m_player;
+  kgmActor*                  m_gameplayer;
 
 public:
   kgmGameLogic();
@@ -40,6 +35,7 @@ public:
   virtual void action(ACTION, kgmObject*, kgmString);
   virtual void collide(kgmGameObject*, kgmGameObject*);
   virtual kgmGameObject* getObjectById(kgmString);
+  virtual u32            getObjects(kgmList<kgmGameObject*>&);
   virtual u32            getObjectsByType(kgmRuntime&,
                                           kgmList<kgmGameObject*>&);
   virtual u32            getObjectsByClass(kgmRuntime&,

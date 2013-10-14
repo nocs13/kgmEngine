@@ -25,13 +25,13 @@ public:
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
   virtual bool add(kgmGameObject*)                     = 0;
-//  virtual bool isvalid(kgmGameObject*)                 = 0;
 
   virtual void update(u32)                             = 0;
   virtual void action(ACTION, kgmObject*, kgmString)   = 0;
   virtual void collide(kgmGameObject*, kgmGameObject*) = 0;
 
   virtual kgmGameObject* getObjectById(kgmString)                    = 0;
+  virtual u32            getObjects(kgmList<kgmGameObject*>&)        = 0;
   virtual u32            getObjectsByType(kgmRuntime&,
                                           kgmList<kgmGameObject*>&)  = 0;
   virtual u32            getObjectsByClass(kgmRuntime&,
