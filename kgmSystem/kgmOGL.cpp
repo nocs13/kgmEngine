@@ -395,11 +395,13 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
   case gctex_fmt24:
     pic_fmt = GL_RGB;
-    fmt_bt = 3;
+    fmt_bt = GL_COMPRESSED_RGB_ARB;
+    //fmt_bt = 3;
     break;
   case gctex_fmt32:
     pic_fmt = GL_RGBA;
-    fmt_bt = 4;
+    fmt_bt = GL_COMPRESSED_RGBA_ARB;
+    //fmt_bt = 4;
     break;
 #ifdef GL_DEPTH_COMPONENT
   case gctex_fmtdepth:
@@ -408,7 +410,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
 #endif
   default:
-    pic_fmt = GL_RGB;
+    //pic_fmt = GL_RGB;
+    fmt_bt = GL_COMPRESSED_RGB_ARB;
     fmt_bt = 3;
   }
 
@@ -470,6 +473,18 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
 
 #ifdef TEST
+    int compressed;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_ARB, &compressed);
+
+    if (compressed == GL_TRUE)
+    {
+      kgm_log() << "OK \n";
+    }
+    else
+    {
+      kgm_log() << "NO \n";
+    }
+
     err = glGetError();
 
     if(GL_NO_ERROR != err)
