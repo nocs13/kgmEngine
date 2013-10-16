@@ -14,6 +14,8 @@
 #endif
 
 GLu32          m_rendertarget = 0;
+GLint*         g_compressed_format = null;
+GLint          g_num_compressed_format = 0;
 
 #ifdef ANDROID
 EGLDisplay  m_display       = EGL_NO_DISPLAY;
@@ -69,6 +71,20 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
   {
     m_is_framebuffer = 1;
   }
+
+#ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
+  glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, &g_num_compressed_format);
+
+  g_compressed_format = (GLint*)malloc(g_num_compressed_format * sizeof(GLint));
+
+  glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS_ARB, g_compressed_format);
+
+  for(int i = 0; i < g_num_compressed_format; i++)
+  {
+    int k = g_compressed_format[i];
+    int a = 0;
+  }
+#endif
 
 #ifdef WIN32
   //if(wglSwapIntervalEXT) wglSwapIntervalEXT(0);
