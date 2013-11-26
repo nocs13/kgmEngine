@@ -65,6 +65,8 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
   rc = r;
 
+  m_max_faces = 500000;
+
   m_has_shaders = false;
   m_has_buffers = false;
   m_alpha       = false;

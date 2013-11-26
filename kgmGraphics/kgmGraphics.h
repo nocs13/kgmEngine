@@ -84,6 +84,8 @@ private:
 
   bool  m_alpha;
   bool  m_culling;
+
+  uint32 m_max_faces;
 public:
   kgmGraphics(kgmIGraphics*, kgmIResources*);
   ~kgmGraphics();

@@ -2,7 +2,7 @@
 #include "kgmArray.h"
 
 #ifdef WIN32
- #include <tchar.h>
+#include <tchar.h>
 #endif 
 
 #define KGM_TSTRING_MAX_COPY 1048576
@@ -10,223 +10,231 @@
 template <class T> 
 class kgmTString: public kgmArray<T>{
 public:
- kgmTString()
- :kgmArray<T>(){
- }
+  kgmTString()
+    :kgmArray<T>(){
+  }
 
- kgmTString(const T* str){
-  if(!str)
-   return;
+  kgmTString(const T* str){
+    if(!str)
+      return;
 
-  u32 len = 0;
+    u32 len = 0;
 
-  while(str[len] && (len < KGM_TSTRING_MAX_COPY))
-   len++;
+    while(str[len] && (len < KGM_TSTRING_MAX_COPY))
+      len++;
 
-  alloc((T*)str, len);
- }
+    alloc((T*)str, len);
+  }
 
- kgmTString(const T* str, u32 len){
-  alloc((T*)str, len);
- }
+  kgmTString(const T* str, u32 len){
+    alloc((T*)str, len);
+  }
 
- kgmTString(const kgmTString<T>& str){
-  alloc(str.m_data, str.m_length);
- }
+  kgmTString(const kgmTString<T>& str){
+    alloc(str.m_data, str.m_length);
+  }
 
- virtual ~kgmTString(){
-  kgmArray<T>::clear();
- }
+  virtual ~kgmTString(){
+    kgmArray<T>::clear();
+  }
 
- //operators
- kgmTString<T>& operator=(const T* str){
-  kgmArray<T>::clear();
+  //operators
+  kgmTString<T>& operator=(const T* str){
+    kgmArray<T>::clear();
 
-  if(!str)
-   return *this;
+    if(!str)
+      return *this;
 
-  u32 len = 0;
+    u32 len = 0;
 
-  while(str[len] && (len < KGM_TSTRING_MAX_COPY))
-   len++;
+    while(str[len] && (len < KGM_TSTRING_MAX_COPY))
+      len++;
 
-  alloc((T*)str, len);
+    alloc((T*)str, len);
 
-  return *this;
- }
+    return *this;
+  }
 
- kgmTString<T>& operator=(const kgmTString<T>& str){
-  kgmArray<T>::clear();
-  alloc(str.m_data, str.m_length);
+  kgmTString<T>& operator=(const kgmTString<T>& str){
+    kgmArray<T>::clear();
+    alloc(str.m_data, str.m_length);
 
-  return *this;
- }
+    return *this;
+  }
 
- //kgmTString<T>& operator=(int str){
- //}
+  //kgmTString<T>& operator=(int str){
+  //}
 
- //kgmTString<T>& operator=(double str){
- //}
+  //kgmTString<T>& operator=(double str){
+  //}
 
- kgmTString<T>& operator+=(const kgmTString<T>& s){
-  int len = kgmArray<T>::m_length + s.m_length;
-  if(len <= kgmArray<T>::m_length)
-   return *this;
+  kgmTString<T>& operator+=(const kgmTString<T>& s){
+    int len = kgmArray<T>::m_length + s.m_length;
+    if(len <= kgmArray<T>::m_length)
+      return *this;
 
-  T* str = (T*)malloc(sizeof(T) * (len + 1));
-  memcpy(str, kgmArray<T>::m_data, sizeof(T) * kgmArray<T>::m_length);
-  memcpy(&str[kgmArray<T>::m_length], s.m_data, sizeof(T) * s.m_length);
-  kgmArray<T>::clear();
-  kgmArray<T>::m_data   = str;
-  kgmArray<T>::m_length = len;
-  kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+    T* str = (T*)malloc(sizeof(T) * (len + 1));
+    memcpy(str, kgmArray<T>::m_data, sizeof(T) * kgmArray<T>::m_length);
+    memcpy(&str[kgmArray<T>::m_length], s.m_data, sizeof(T) * s.m_length);
+    kgmArray<T>::clear();
+    kgmArray<T>::m_data   = str;
+    kgmArray<T>::m_length = len;
+    kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
 
-  return *this;
- }
+    return *this;
+  }
 
- kgmTString<T> operator+(const kgmTString<T>& s){
-  kgmTString<T> r = (*this);
-  r += s;
+  kgmTString<T> operator+(const kgmTString<T>& s){
+    kgmTString<T> r = (*this);
+    r += s;
 
-  return r; 
- }
+    return r;
+  }
 
- T&  operator[](u32 i){
-  return kgmArray<T>::m_data[i];
- }
+  T&  operator[](u32 i){
+    return kgmArray<T>::m_data[i];
+  }
 
- bool operator==(const kgmTString<T>& s){
-   if(!kgmArray<T>::m_data || !s.m_data)
-     return false;
+  bool operator==(const kgmTString<T>& s){
+    if(!kgmArray<T>::m_data || !s.m_data)
+      return false;
 
-   return !memcmp(kgmArray<T>::m_data, s.m_data, sizeof(T) * (kgmArray<T>::m_length + 1));
- }
+    return !memcmp(kgmArray<T>::m_data, s.m_data, sizeof(T) * (kgmArray<T>::m_length + 1));
+  }
 
- bool operator==(const T* s){
-   if(!kgmArray<T>::m_data || !s)
-     return false;
+  bool operator==(const T* s){
+    if(!kgmArray<T>::m_data || !s)
+      return false;
 
-   return !memcmp(kgmArray<T>::m_data, s, sizeof(T) * (kgmArray<T>::m_length + 1));
- }
+    return !memcmp(kgmArray<T>::m_data, s, sizeof(T) * (kgmArray<T>::m_length + 1));
+  }
 
-/////////// type cast
- operator T*() const{
-  return (T*)kgmArray<T>::m_data;
- }
+  /////////// type cast
+  operator T*() const{
+    return (T*)kgmArray<T>::m_data;
+  }
 
- operator const T*() const{
-  return (const T*)kgmArray<T>::m_data;
- }
+  operator const T*() const{
+    return (const T*)kgmArray<T>::m_data;
+  }
 
-////////////////////
- void alloc(u32 len){
-  kgmArray<T>::clear();
-  kgmArray<T>::m_length = len;
-  kgmArray<T>::m_data   = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
-  kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
- }
+  ////////////////////
+  void alloc(u32 len){
+    kgmArray<T>::clear();
+    kgmArray<T>::m_length = len;
+    kgmArray<T>::m_data   = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
+    kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+  }
 
- void alloc(T* m, u32 len){
-  kgmArray<T>::clear();
-  kgmArray<T>::m_length = len;
-  kgmArray<T>::m_data = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
-  memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length);
-  kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
- }
+  void alloc(T* m, u32 len){
+    kgmArray<T>::clear();
+    kgmArray<T>::m_length = len;
+    kgmArray<T>::m_data = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
+    memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length);
+    kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+  }
 
- void toUpper(){
-  if(!kgmArray<T>::m_data) 
-   return;
+  void toUpper(){
+    if(!kgmArray<T>::m_data)
+      return;
 
-  const T diff = (T)'a' - (T)'A';
+    const T diff = (T)'a' - (T)'A';
 
-  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
-   if(kgmArray<T>::m_data[i] >= 'A' && kgmArray<T>::m_data[i] <= 'Z')
-    kgmArray<T>::m_data[i] += diff;
- }
+    for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
+      if(kgmArray<T>::m_data[i] >= 'A' && kgmArray<T>::m_data[i] <= 'Z')
+        kgmArray<T>::m_data[i] += diff;
+  }
 
- void toLower(){
-  if(!kgmArray<T>::m_data) 
-   return;
+  void toLower(){
+    if(!kgmArray<T>::m_data)
+      return;
 
-  const T diff = (T)'a' - (T)'A';
+    const T diff = (T)'a' - (T)'A';
 
-  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
-   if(kgmArray<T>::m_data[i] >= 'a' && kgmArray<T>::m_data[i] <= 'z')
-    kgmArray<T>::m_data[i] -= diff;
- }
+    for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
+      if(kgmArray<T>::m_data[i] >= 'a' && kgmArray<T>::m_data[i] <= 'z')
+        kgmArray<T>::m_data[i] -= diff;
+  }
 
- int exist(T& t){
-  for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
-   if(kgmArray<T>::m_data[i] == t)
-    return i;
+  int exist(T& t){
+    for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
+      if(kgmArray<T>::m_data[i] == t)
+        return i;
 
-  return -1;
- }
- 
- T* pointer(u32 i){
-  if(i > kgmArray<T>::m_length)
-    return null;
+    return -1;
+  }
 
-  return &kgmArray<T>::m_data[i];
- }
+  T* pointer(u32 i){
+    if(i > kgmArray<T>::m_length)
+      return null;
 
- kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos){
-  //not implemented
-  kgmTString<T> r;
-  bool istok = false;
-  unsigned int  i = 0;
+    return &kgmArray<T>::m_data[i];
+  }
 
-  return r;
- }
+  kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos){
+    //not implemented
+    kgmTString<T> r;
+    bool istok = false;
+    unsigned int  i = 0;
 
- //string between symbols
- kgmTString<T> string(T ssym, T esym){
-  kgmTString<T> r;
-  int istart;
-  int iend;
-  int size;
+    return r;
+  }
 
-  istart = find(ssym, 0);
+  //string between symbols
+  kgmTString<T> string(T ssym, T esym){
+    kgmTString<T> r;
+    int istart;
+    int iend;
+    int size;
 
-  if(istart < 0)
-   return false;
+    istart = find(ssym, 0);
 
-  istart++;
-  iend = find(esym, istart);
+    if(istart < 0)
+      return false;
 
-  if(iend < 0)
-   return false;
+    istart++;
+    iend = find(esym, istart);
 
-  size = iend - istart;
-  r.alloc(pointer(istart), size);
+    if(iend < 0)
+      return false;
 
-  return r;
- }
+    size = iend - istart;
+    r.alloc(pointer(istart), size);
 
- //int split(T sym, kgmList<>)
+    return r;
+  }
+
+  //int split(T sym, kgmList<>)
 protected:
- //find symbol position 
- int find(T sym, int start){
-  if(start > kgmArray<T>::m_length)
-   return -1;
+  //find symbol position
+  int find(T sym, int start){
+    if(start > kgmArray<T>::m_length)
+      return -1;
 
-  for(int i = start; i <= kgmArray<T>::m_length; i++)
-   if(kgmArray<T>::m_data[i] == sym)
-    return i;
+    for(int i = start; i <= kgmArray<T>::m_length; i++)
+      if(kgmArray<T>::m_data[i] == sym)
+        return i;
 
-  return -1;
- }
+    return -1;
+  }
 
 
 public:
- static void sReplace(T* s, T ss, T es){
-  T* c = s;
+  static void sReplace(T* s, T ss, T es){
+    T* c = s;
 
-  do{
-   if(*c == ss) *c = es;
-  }while(*c != (T)0);
- }
+    do{
+      if(*c == ss) *c = es;
+    }while(*c != (T)0);
+  }
+
+  static bool toHexString(kgmTString<T>& hexStr, sint8* buf, sint32 bufLen)
+  {
+    if(!buf || !bufLen)
+      return false;
+
+    return true;
+  }
 };
 
 
