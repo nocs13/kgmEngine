@@ -228,7 +228,7 @@ public:
     }while(*c != (T)0);
   }
 
-  static bool toHexString(kgmTString<T>& hexStr, sint8* buf, sint32 bufLen)
+  static bool toHexString(kgmTString<T>& hexStr, int8* buf, int32 bufLen)
   {
     if(!buf || !bufLen)
       return false;
