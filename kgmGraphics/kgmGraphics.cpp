@@ -238,6 +238,7 @@ void kgmGraphics::render(){
 
   //kgmMaterial           mbase;
   kgmList<kgmMesh*>     meshes;
+  kgmList<kgmLight*>    vw_lights;
   kgmList<kgmVisual*>   vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
 
   //m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
@@ -296,6 +297,18 @@ void kgmGraphics::render(){
       }
     }
   }
+
+  //parse viewport lights
+  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
+  {
+    if(!(*i)->ison)
+      continue;
+
+    if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
+       continue;
+
+    vw_lights.add(*i);
+  }
   //---
 
   gc->gcCull(1);
@@ -328,7 +341,8 @@ void kgmGraphics::render(){
 
       if(l)
       {
-        gc->gcSetLight(i, (float*)&l->position, l->intensity);
+        gc->gcSetLight(i, (float*)&l->position, l->intensity, (float*)&l->color,
+                       (float*)&l->direction, (float)l->intensity);
         g_vec_light = vec4(l->position.x, l->position.y,
                            l->position.z, l->intensity);
       }
@@ -370,15 +384,15 @@ void kgmGraphics::render(){
   if(lighting)
   {
     gc->gcSet(gcpar_lighting, null);
-    gc->gcSetLight(-1, null, 0.0);
-    gc->gcSetLight(-2, null, 0.0);
-    gc->gcSetLight(-3, null, 0.0);
-    gc->gcSetLight(-4, null, 0.0);
-    gc->gcSetLight(-5, null, 0.0);
-    gc->gcSetLight(-6, null, 0.0);
-    gc->gcSetLight(-7, null, 0.0);
-    gc->gcSetLight(-8, null, 0.0);
-    gc->gcSetLight(-9, null, 0.0);
+    gc->gcSetLight(-1, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-2, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-3, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-4, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-5, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-6, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-7, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-8, null, 0.0, null, null, 0.0);
+    gc->gcSetLight(-9, null, 0.0, null, null, 0.0);
 
     lighting = false;
   }

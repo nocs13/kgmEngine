@@ -283,7 +283,7 @@ void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
 }
 
 //Light
-void kgmOGL::gcSetLight(int i, float* pos, float range){
+void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, float angle){
  if(i > GL_MAX_LIGHTS)
    return;
 
@@ -312,11 +312,18 @@ void kgmOGL::gcSetLight(int i, float* pos, float range){
     glEnable(GL_LIGHTING);
  }
 
- float col[] = {1, 1, 1, 1};
  glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
  glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
  glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
  glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f - range);
+
+ vec3 v(dir[0], dir[1], dir[2]);
+
+ if(v.length() > 0)
+ {
+   glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION,  (float*)dir);
+   glLightfv(GL_LIGHT0 + i, GL_SPOT_CUTOFF,  (float*)&angle);
+ }
 }
 
 //FOG

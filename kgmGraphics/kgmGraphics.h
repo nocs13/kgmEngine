@@ -116,6 +116,7 @@ private:
   void gcDrawBillboard(box b, u32 col);
   void trash();
 
+
   void setProjMatrix(mtx4&);
   void setViewMatrix(mtx4&);
   void setWorldMatrix(mtx4&);

@@ -156,7 +156,7 @@ public:
   void  gcStencil(bool en, u32 func, u32 mask, u32 ref,
                   u32 fail, u32 zfail, u32 zpass);
   //LIGHT
-  void gcSetLight(int i, float* pos, float range);
+  void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle);
   //VERTEX & INDEX BUFFER
   void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
   void  gcFreeVertexBuffer(void*);

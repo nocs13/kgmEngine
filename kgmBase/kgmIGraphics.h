@@ -141,7 +141,7 @@ public:
  //DEPTH
  virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
  //LIGHT
- virtual void gcSetLight(int i, float* pos, float range) = 0;
+ virtual void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle) = 0;
  //VERTEX & INDEX BUFFERS
  virtual void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
  virtual void  gcFreeVertexBuffer(void*) = 0;
