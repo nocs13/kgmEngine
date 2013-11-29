@@ -11,6 +11,7 @@ kgmMesh::kgmMesh(){
   m_vcount = m_fcount = 0;
   m_fvf = m_fff = 0;
   m_rtype = RT_TRIANGLE;
+  m_group = 0;
 }
 
 kgmMesh::~kgmMesh(){

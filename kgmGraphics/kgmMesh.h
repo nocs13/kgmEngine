@@ -126,6 +126,8 @@ public:
 
   kgmList<LOD*> m_lods;
 
+  u32     m_group;    // object group id
+
 public:
   kgmMesh();
   virtual ~kgmMesh();

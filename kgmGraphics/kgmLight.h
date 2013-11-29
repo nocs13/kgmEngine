@@ -19,6 +19,8 @@ public:
  kgmTexture shadowmap;  //light shadow map depth texture
 
  kgmString m_id;
+ u32       m_group;     // object group id
+
 public:
  kgmLight(){
   position  = vec3(0, 0, 0);
@@ -34,6 +36,7 @@ public:
   ison = true;
 
   shadowmap.m_type = kgmTexture::Type_RT_Depth;
+  m_group = 0;
  }
 
  virtual ~kgmLight()

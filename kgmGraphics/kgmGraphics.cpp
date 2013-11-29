@@ -24,6 +24,8 @@ KGMOBJECT_IMPLEMENT(kgmGraphics,  kgmObject);
 KGMOBJECT_IMPLEMENT(kgmFrustum,		kgmObject);
 KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
+#define LIGHTS_PER_SHADER 8
+
 struct Vert
 {
   vec3 v;
@@ -55,6 +57,9 @@ u32        g_mtx_joints_count = 0;
 
 vec4       g_vec_light   = vec4(0, 0, 0, 1);
 vec4       g_vec_ambient = vec4(1, 1, 1, 1);
+
+vec4       g_lgt_light[LIGHTS_PER_SHADER] = {};
+vec4       g_lgt_color[LIGHTS_PER_SHADER] = {};
 
 kgmShader* g_shd_active = null;
 
@@ -193,13 +198,17 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s){
 void kgmGraphics::setProjMatrix(mtx4 &m)
 {
   g_mtx_proj = m;
-  gc->gcSetMatrix(gcmtx_proj, m.m);
+
+  if(!m_has_shaders)
+    gc->gcSetMatrix(gcmtx_proj, m.m);
 }
 
 void kgmGraphics::setViewMatrix(mtx4 &m)
 {
   g_mtx_view = m;
-  gc->gcSetMatrix(gcmtx_view, m.m);
+
+  if(!m_has_shaders)
+    gc->gcSetMatrix(gcmtx_view, m.m);
 }
 
 void kgmGraphics::setWorldMatrix(mtx4 &m)
@@ -207,7 +216,9 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
   g_mtx_world = m;
 
   mtx4 mw = m * g_mtx_view;
-  gc->gcSetMatrix(gcmtx_view, mw.m);
+
+  if(!m_has_shaders)
+    gc->gcSetMatrix(gcmtx_view, mw.m);
 }
 
 void kgmGraphics::resize(float width, float height){
@@ -353,6 +364,60 @@ void kgmGraphics::render(){
   gc->gcBlend(false, null, null);
   gc->gcAlpha(false, null, null);
 
+  //draw static scene
+  //by lights
+  //take meshes in viewport
+  kgmList<Mesh*> vw_meshes;
+
+  for(int i = 0; i < m_meshes.length(); i++)
+  {
+    Mesh* mesh = &m_meshes[i];
+
+    box3 bx = mesh->mesh->bound();
+
+    bx.min = mesh->mtx * bx.min;
+    bx.max = mesh->mtx * bx.max;
+
+    if(m_camera.isSphereCross(bx.center(), 0.5 * bx.dimension().length()))
+      vw_meshes.add(mesh);
+  }
+
+  //I-pass: render all geometry with dark light
+  for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); i++)
+  {
+    Mesh* mesh = *i;
+
+    setWorldMatrix(mesh->mtx);
+
+    render(mesh->material);
+
+    if(m_has_shaders)
+    {
+
+    }
+    else
+    {
+
+    }
+
+    render((kgmMaterial*)null);
+  }
+  //render meshes by light and only lighting data, no diffuse
+  for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
+  {
+    kgmLight* light = *i;
+
+    for(kgmList<Mesh*>::iterator j = vw_meshes.begin(); j != vw_meshes.end(); j++)
+    {
+      box3 bx = mesh->mesh->bound();
+
+      bx.min = mesh->mtx * bx.min;
+      bx.max = mesh->mtx * bx.max;
+
+    }
+  }
+  //by simple method
+  /*
   for(int i = 0; i < m_meshes.length(); i++)
   {
     Mesh* mesh = &m_meshes[i];
@@ -374,7 +439,7 @@ void kgmGraphics::render(){
 
       render((kgmMaterial*)null);
     }
-  }
+  }*/
 
   for(int i = vis_mesh.size(); i > 0;  i--)
   {
