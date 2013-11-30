@@ -249,7 +249,6 @@ void kgmGraphics::render(){
 
   //kgmMaterial           mbase;
   kgmList<kgmMesh*>     meshes;
-  kgmList<kgmLight*>    vw_lights;
   kgmList<kgmVisual*>   vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
 
   //m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
@@ -308,18 +307,6 @@ void kgmGraphics::render(){
       }
     }
   }
-
-  //parse viewport lights
-  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
-  {
-    if(!(*i)->ison)
-      continue;
-
-    if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
-       continue;
-
-    vw_lights.add(*i);
-  }
   //---
 
   gc->gcCull(1);
@@ -364,8 +351,21 @@ void kgmGraphics::render(){
   gc->gcBlend(false, null, null);
   gc->gcAlpha(false, null, null);
 
-  //draw static scene
-  //by lights
+  //draw static scene by lights
+  //collect viewport lights
+  kgmList<kgmLight*>    vw_lights;
+
+  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
+  {
+    if(!(*i)->ison)
+      continue;
+
+    if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
+       continue;
+
+    vw_lights.add(*i);
+  }
+
   //take meshes in viewport
   kgmList<Mesh*> vw_meshes;
 
