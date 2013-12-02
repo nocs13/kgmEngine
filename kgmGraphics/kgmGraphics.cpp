@@ -66,6 +66,8 @@ kgmShader* g_shd_active = null;
 void*      g_tex_black = null;
 void*      g_tex_white = null;
 
+kgmLight   g_def_light;
+
 kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
   rc = r;
@@ -328,7 +330,7 @@ void kgmGraphics::render(){
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
 #endif
 
-  if(this->m_lights.size() > 0)
+  /*if(this->m_lights.size() > 0)
   {
     gc->gcSet(gcpar_lighting, (void*)true);
     lighting = true;
@@ -345,7 +347,7 @@ void kgmGraphics::render(){
                            l->position.z, l->intensity);
       }
     }
-  }
+  }*/
 
   //render 3D
   gc->gcBlend(false, null, null);
@@ -366,6 +368,9 @@ void kgmGraphics::render(){
     vw_lights.add(*i);
   }
 
+  if(vw_lights.length() < 1)
+    vw_lights.add(&g_def_light);
+
   //take meshes in viewport
   kgmList<Mesh*> vw_meshes;
 
@@ -382,7 +387,22 @@ void kgmGraphics::render(){
       vw_meshes.add(mesh);
   }
 
-  //I-pass: render all geometry with dark light
+  //I-pass: render all geometry with first light package
+  lighting = true;
+  kgmLight* light = vw_lights[0];
+
+  if(m_has_shaders)
+  {
+    g_vec_light = vec4(light->position.x, light->position.y,
+                       light->position.z, light->intensity);
+  }
+  else
+  {
+    gc->gcSet(gcpar_lighting, (void*)true);
+    gc->gcSetLight(0, (float*)&light->position, light->intensity, (float*)&light->color,
+                   (float*)&light->direction, (float)light->angle);
+  }
+
   for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); i++)
   {
     Mesh* mesh = *i;
@@ -395,12 +415,21 @@ void kgmGraphics::render(){
     {
 
     }
-    else
-    {
 
-    }
+    render((kgmMesh*)mesh->mesh);
 
     render((kgmMaterial*)null);
+  }
+
+  lighting = false;
+  if(m_has_shaders)
+  {
+
+  }
+  else
+  {
+    gc->gcSet(gcpar_lighting, (void*)true);
+    gc->gcSetLight(-1, null, 0, null, null, 0);
   }
   //render meshes by light and only lighting data, no diffuse
   for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
@@ -409,10 +438,10 @@ void kgmGraphics::render(){
 
     for(kgmList<Mesh*>::iterator j = vw_meshes.begin(); j != vw_meshes.end(); j++)
     {
-      box3 bx = mesh->mesh->bound();
+      box3 bx = (*j)->mesh->bound();
 
-      bx.min = mesh->mtx * bx.min;
-      bx.max = mesh->mtx * bx.max;
+      bx.min = (*j)->mtx * bx.min;
+      bx.max = (*j)->mtx * bx.max;
 
     }
   }

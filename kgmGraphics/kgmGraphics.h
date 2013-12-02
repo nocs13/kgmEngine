@@ -120,6 +120,7 @@ private:
   void setProjMatrix(mtx4&);
   void setViewMatrix(mtx4&);
   void setWorldMatrix(mtx4&);
+
 public:
   void add(kgmMaterial* mtl)
   {
