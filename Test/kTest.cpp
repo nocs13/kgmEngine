@@ -9,6 +9,7 @@
 
 #include "kGlobals.h"
 #include "kGui.h"
+#include "Actors/ACamera.h"
 #include "Actors/ATaoRen.h"
 #include "Actors/AKomble.h"
 #include "Actors/ASp_Gui.h"
@@ -18,6 +19,7 @@
 #include "Actors/ASp_Spacer.h"
 #include "Actors/ASp_Spaceship.h"
 
+KGMOBJECT_IMPLEMENT(ACamera, kgmActor);
 KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
 KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
 KGMOBJECT_IMPLEMENT(ASp_Gui, kgmObject);
@@ -273,6 +275,12 @@ public:
   int gLoad(kgmString s)
   {
     int res = kgmGameBase::gLoad(s);
+
+    if(res)
+    {
+      ACamera* camera = new ACamera(this);
+      m_logic->add((kgmGameObject*)camera, true);
+    }
 
     return res;
   }

@@ -22,6 +22,13 @@ void kgmGameLogic::clear()
 
   m_objects.clear();
 
+  for(kgmList<kgmGameObject*>::iterator i = m_inputs.begin(); i != m_inputs.end(); ++i)
+  {
+    (*i)->release();
+  }
+
+  m_inputs.clear();
+
   for(kgmList<kgmGameObject*>::iterator i = m_trush.begin(); i != m_trush.end(); ++i)
   {
     (*i)->release();
@@ -30,12 +37,6 @@ void kgmGameLogic::clear()
   m_trush.clear();
 
   m_gameplayer = null;
-}
-
-bool kgmGameLogic::add(kgmActor *a)
-{
-
-  return false;
 }
 
 bool kgmGameLogic::add(kgmSensor *a)
@@ -48,23 +49,31 @@ bool kgmGameLogic::add(kgmTrigger *a)
   return false;
 }
 
-bool kgmGameLogic::add(kgmGameObject *o)
+bool kgmGameLogic::add(kgmGameObject *o, bool input)
 {
   if(o && o->isType(kgmActor::Class) && ((kgmActor*)o)->m_gameplayer)
   {
     m_gameplayer = (kgmActor*)o;
     m_objects.push_back(o);
     o->increment();
+
     if(kgmObject::isValid(o))
     {
       int k = 0;
     }
+
     return true;
   }
   else if(o)
   {
     m_objects.push_back(o);
     o->increment();
+
+    if(input)
+    {
+      m_inputs.add(o);
+      o->increment();
+    }
 
     return true;
   }
@@ -146,6 +155,10 @@ void kgmGameLogic::input(int btn, int state)
   }
   else
   {
+    for(int i = 0; i < m_inputs.length(); i++)
+    {
+      ((kgmActor*)m_inputs[i])->input(btn, state);
+    }
   }
 }
 

@@ -13,6 +13,7 @@ class kgmGameLogic : public kgmILogic, public kgmObject
 {
 public:
   kgmList<kgmGameObject*>    m_objects;
+  kgmList<kgmGameObject*>    m_inputs;
   kgmList<kgmGameObject*>    m_trush;
 
   kgmActor*                  m_gameplayer;
@@ -22,10 +23,9 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
-  bool add(kgmActor*);
-  bool add(kgmGameObject*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
+  bool add(kgmGameObject*, bool input = false);
   bool chooseLogic(kgmString);
   bool isValid(kgmGameObject*);
 
