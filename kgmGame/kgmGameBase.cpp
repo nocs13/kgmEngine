@@ -139,6 +139,10 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_Y] = (char)gbtn_y;
   m_keymap[KEY_Z] = (char)gbtn_z;
 
+  m_keymap[KEY_MSBLEFT] = (char)gbtn_a;
+  m_keymap[KEY_MSBRIGHT] = (char)gbtn_b;
+  m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
+
   m_gamemode = true;
   m_state    = State_None;
 }
@@ -339,6 +343,22 @@ void kgmGameBase::onKeyDown(int k){
   {
     m_logic->input(m_keymap[k], 1);
     m_input[m_keymap[k]] = 1;
+  }
+}
+
+void kgmGameBase::onMsLeftUp(int k, int x, int y){
+  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBLEFT]] != 0))
+  {
+    m_logic->input(m_keymap[KEY_MSBLEFT], 0);
+    m_input[m_keymap[KEY_MSBLEFT]] = 0;
+  }
+}
+
+void kgmGameBase::onMsLeftDown(int k, int x, int y){
+  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBLEFT]] != 1))
+  {
+    m_logic->input(m_keymap[KEY_MSBLEFT], 1);
+    m_input[m_keymap[KEY_MSBLEFT]] = 1;
   }
 }
 

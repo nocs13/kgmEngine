@@ -189,10 +189,9 @@ public:
       m_physics->m_gravity = 1.0f;
 
     if(m_logic)
-    {
       m_logic->release();
-      m_logic = new ASp_Logic(this);
-    }
+
+    m_logic = new ASp_Logic(this);
 
     readData();
     saveData();
@@ -202,9 +201,6 @@ public:
   {
     saveData();
   }
-
-//protected:
-  void  initLogic();
 
 public:
   void onIdle()
@@ -388,12 +384,6 @@ private:
     f.close();
   }
 };
-
-void  kGame::initLogic()
-{
-  m_logic = new ASp_Logic(this);
-}
-
 
 class kApp: public kgmGameApp{
 #ifdef ANDROID

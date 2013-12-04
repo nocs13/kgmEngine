@@ -97,7 +97,7 @@ enum game_button{
   grot_y,
   grot_z,
 
-  gbtn_end = 64,
+  gbtn_end = 64
 };
 
 
