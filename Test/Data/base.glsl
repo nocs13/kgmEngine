@@ -22,7 +22,7 @@ void main(void)
 {
    vec3 vvv = g_Vertex;
    V = vec4(g_mTran * gl_Vertex).xyz;
-//   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+   //V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
    N  = normalize(vec3(g_mTran * vec4(gl_Normal, 0.0)));
    L  = normalize(g_vLight.xyz - V);
 

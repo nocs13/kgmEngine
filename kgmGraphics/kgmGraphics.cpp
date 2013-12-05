@@ -68,6 +68,8 @@ void*      g_tex_white = null;
 
 kgmLight   g_def_light;
 
+#define    kgmMaterial_ShaderGui 100
+
 kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
   rc = r;
@@ -114,7 +116,7 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
       m_has_buffers = true;
   }
 
-  m_has_shaders = false;
+  //m_has_shaders = false;
 
   if(m_has_shaders)
   {
@@ -123,6 +125,7 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
       shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      shaders.add(kgmMaterial_ShaderGui, rc->getShader("gui.glsl"));
     }
   }
 
@@ -413,7 +416,10 @@ void kgmGraphics::render(){
 
     if(m_has_shaders)
     {
-
+      if(mesh->material && shaders.hasKey(mesh->material->m_shader))
+        render((kgmShader*)shaders[mesh->material->m_shader]);
+      else
+        render((kgmShader*)shaders[kgmMaterial::ShaderBase]);
     }
 
     render((kgmMesh*)mesh->mesh);
@@ -431,6 +437,7 @@ void kgmGraphics::render(){
     gc->gcSet(gcpar_lighting, (void*)true);
     gc->gcSetLight(-1, null, 0, null, null, 0);
   }
+
   //render meshes by light and only lighting data, no diffuse
   for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
   {
@@ -543,9 +550,17 @@ void kgmGraphics::render(){
 #endif
 
   //For last step draw gui
-  gc->gcSetShader(null);
+  //gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
   gc2DMode();
+
+  if(m_has_shaders)
+  {
+    mtx4 m;
+    m.identity();
+    setWorldMatrix(m);
+    render((kgmShader*)shaders[kgmMaterial_ShaderGui]);
+  }
 
   for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
   {
@@ -582,6 +597,9 @@ void kgmGraphics::render(){
   kgmString text(info);
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 #endif
+
+  if(m_has_shaders)
+    render((kgmShader*)null);
 
   gc3DMode();
   gc->gcEnd();
@@ -848,11 +866,6 @@ void kgmGraphics::render(kgmMaterial* m){
   {
     gc->gcSetTexture(2, g_tex_black);
     tspecular = g_tex_black;
-  }
-
-  if(m->m_shader == kgmMaterial::ShaderNone)
-  {
-    render((kgmShader*)null);
   }
 }
 
