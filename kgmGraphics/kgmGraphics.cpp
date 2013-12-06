@@ -398,6 +398,9 @@ void kgmGraphics::render(){
   {
     g_vec_light = vec4(light->position.x, light->position.y,
                        light->position.z, light->intensity);
+    mtx4 m;
+    m.identity();
+    setWorldMatrix(m);
   }
   else
   {
