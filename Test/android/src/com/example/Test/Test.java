@@ -35,6 +35,7 @@ public class Test extends Activity
 
     GL2JNIView mView;
     //SurfaceView mView;
+    //TestGL2 mView;
 
     public static void kgmAppFinish()
     {
@@ -67,6 +68,7 @@ public class Test extends Activity
     	mView = new GL2JNIView(getApplication(), true, 1, 0);
     	//mView = new TestView(getApplication());
     	//mView = new GLSurfaceView(this);
+    	//mView = new TestGL2(this);
     	setContentView(mView);
 
 	m_test = this;

@@ -15,7 +15,7 @@ kgmGuiStyle::kgmGuiStyle()
   sbutton.tx_color = 0xffffffff;
   sbutton.bg_color = 0xff999999;
   sbutton.fg_color = 0xffbbbbbb;
-  sbutton.ac_color = 0xffdddddd;
+  sbutton.ac_color = 0xffbbbbbb;
   sbutton.image    = null;
 
   //gui list

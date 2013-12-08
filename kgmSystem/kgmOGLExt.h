@@ -87,6 +87,9 @@ extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
 extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
 extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
 
+extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
+extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
+extern PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB;
 
 #define glActiveTexture          glActiveTextureARB
 #define glClientActiveTexture    glClientActiveTextureARB
@@ -130,6 +133,9 @@ extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
 #define glUniformMatrix3fv       glUniformMatrix3fvARB
 #define glUniformMatrix4fv       glUniformMatrix4fvARB
 #define glBindAttribLocation     glBindAttribLocationARB
+#define glDisableVertexAttribArray glDisableVertexAttribArrayARB
+#define glEnableVertexAttribArray glEnableVertexAttribArrayARB
+#define glVertexAttribPointer     glVertexAttribPointerARB
 #endif
 
 #ifdef WIN32

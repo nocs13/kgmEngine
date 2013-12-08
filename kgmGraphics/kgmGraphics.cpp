@@ -66,7 +66,8 @@ kgmShader* g_shd_active = null;
 void*      g_tex_black = null;
 void*      g_tex_white = null;
 
-kgmLight   g_def_light;
+kgmLight     g_def_light;
+kgmMaterial  g_def_material;
 
 #define    kgmMaterial_ShaderGui 100
 
@@ -122,10 +123,10 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   {
     if(rc != null)
     {
+      shaders.add(kgmMaterial_ShaderGui, rc->getShader("gui.glsl"));
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
       shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
-      shaders.add(kgmMaterial_ShaderGui, rc->getShader("gui.glsl"));
     }
   }
 
@@ -322,15 +323,15 @@ void kgmGraphics::render(){
 
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
-  //gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
+  //gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
+  gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
 
 #ifdef TEST
   //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
-  gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
+  //gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
 #endif
 
   /*if(this->m_lights.size() > 0)
@@ -415,7 +416,10 @@ void kgmGraphics::render(){
 
     setWorldMatrix(mesh->mtx);
 
-    render(mesh->material);
+    if(mesh->material)
+      render(mesh->material);
+    else
+      render(&g_def_material);
 
     if(m_has_shaders)
     {
@@ -548,7 +552,7 @@ void kgmGraphics::render(){
     obox3 ob = body->getOBox();
     ob.points(vec_points);
 
-    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+    //gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
   }
 #endif
 
@@ -562,6 +566,7 @@ void kgmGraphics::render(){
     mtx4 m;
     m.identity();
     setWorldMatrix(m);
+
     render((kgmShader*)shaders[kgmMaterial_ShaderGui]);
   }
 
@@ -877,9 +882,9 @@ void kgmGraphics::render(kgmShader* s){
 
   if(s)
   {
-    s->attr(0, "g_Vertex");
-    s->attr(1, "g_Normal");
-    s->attr(2, "g_Texcoord");
+    //s->attr(0, "g_Vertex");
+    //s->attr(1, "g_Normal");
+    //s->attr(2, "g_Texcoord");
 
     s->start();
     s->set("g_fTime",     kgmTime::getTime());

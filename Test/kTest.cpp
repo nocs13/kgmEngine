@@ -79,6 +79,13 @@ public:
     enemies = 1;
   }
 
+  bool add(kgmGameObject *gobj, bool input)
+  {
+    if(gobj->isType(kgmActor::Class) && ((kgmActor*)gobj)->m_gameplayer)
+      ((kgmActor*)gobj)->m_gameplayer = false;
+    return kgmGameLogic::add(gobj, input);
+  }
+
   void prepare()
   {
     enemies = 1;
@@ -276,6 +283,7 @@ public:
     {
       ACamera* camera = new ACamera(this);
       m_logic->add((kgmGameObject*)camera, true);
+      camera->release();
     }
 
     return res;
@@ -404,12 +412,14 @@ public:
     kgmSystem::getDesktopDimension(w, h);
     m_game = game = new kGame();
 
-    kgmLuaOpen();
-    kgmMemory<s8> mem;
-    m_game->getResources()->getFile("main.lua", mem);
-    kgmString str(mem.data(), mem.length());
-    kgmLuaRun(str);
-    kgmLuaClose();
+#ifndef ANDROID
+    //kgmLuaOpen();
+    //kgmMemory<s8> mem;
+    //m_game->getResources()->getFile("main.lua", mem);
+    //kgmString str(mem.data(), mem.length());
+    //kgmLuaRun(str);
+    //kgmLuaClose();
+#endif
 
     game->setRect(0, 0, w, h);
     game->loop();

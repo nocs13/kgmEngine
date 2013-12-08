@@ -6,15 +6,18 @@ uniform mat4   g_mTran;
 varying vec2   Texcoord;
 varying vec4   PxColor;
 
-attribute vec3 g_Vertex;
 attribute vec4 g_Color;
+attribute vec3 g_Vertex;
 attribute vec2 g_Texcoord;
 
 void main(void)
 {
-   gl_Position  = g_mProj * g_mView * g_mTran * gl_Vertex;
-   Texcoord     = gl_MultiTexCoord0.xy;
-   PxColor      = gl_Color;
+   gl_Position  = g_mProj * g_mView * g_mTran * vec4(g_Vertex, 1);
+   //Texcoord     = gl_MultiTexCoord0.xy;
+   //PxColor      = gl_Color;
+   //PxColor      = g_Color;
+   PxColor = vec4(1,0.1,1,1);
+   Texcoord     = g_Texcoord;
 }
 
 //Fragment Shader
@@ -28,4 +31,5 @@ void main( void )
  vec4 color     = texture2D(g_txColor,    Texcoord);
 
  gl_FragColor = color * PxColor;
+ //gl_FragColor = vec4(1.0, 0.1, 0.1, 1) * PxColor;
 }

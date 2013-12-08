@@ -21,13 +21,16 @@ attribute vec2 g_Texcoord;
 void main(void)
 {
    vec3 vvv = g_Vertex;
-   V = vec4(g_mTran * gl_Vertex).xyz;
-   //V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
-   N  = normalize(vec3(g_mTran * vec4(gl_Normal, 0.0)));
+   //V = vec4(g_mTran * gl_Vertex).xyz;
+   //N  = normalize(vec3(g_mTran * vec4(gl_Normal, 0.0)));
+   //L  = normalize(g_vLight.xyz - V);
+   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+   N  = normalize(vec3(g_mTran * vec4(g_Normal, 0.0)));
    L  = normalize(g_vLight.xyz - V);
 
    gl_Position  = g_mProj * g_mView * vec4(V, 1.0);
-   Texcoord     = gl_MultiTexCoord0.xy;
+   //Texcoord     = gl_MultiTexCoord0.xy;
+   Texcoord     = g_Texcoord;
 }
 
 //Fragment Shader

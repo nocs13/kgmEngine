@@ -13,9 +13,17 @@
 #pragma comment(lib, "glu32.lib")
 #endif
 
+#ifdef TEST
+#ifndef ANDROID
+#include <GL/glu.h>
+#endif
+#endif
+
 GLu32          m_rendertarget = 0;
 GLint*         g_compressed_format = null;
 GLint          g_num_compressed_format = 0;
+void*          g_shader = null;
+
 
 #ifdef ANDROID
 EGLDisplay  m_display       = EGL_NO_DISPLAY;
@@ -284,6 +292,7 @@ void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
 
 //Light
 void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, float angle){
+#ifndef GLES_2
  if(i > GL_MAX_LIGHTS)
    return;
 
@@ -299,7 +308,6 @@ void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, 
 
   if(m_lights < 1)
     glDisable(GL_LIGHTING);
-
   return;
  }
 
@@ -324,6 +332,7 @@ void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, 
    glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION,  (float*)dir);
    glLightfv(GL_LIGHT0 + i, GL_SPOT_CUTOFF,  (float*)&angle);
  }
+#endif
 }
 
 //FOG
@@ -418,13 +427,19 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
   case gctex_fmt24:
     pic_fmt = GL_RGB;
+#ifdef GL_COMPRESSED_RGB_ARB
     fmt_bt = GL_COMPRESSED_RGB_ARB;
-    //fmt_bt = 3;
+#else
+    fmt_bt = 3;
+#endif
     break;
   case gctex_fmt32:
     pic_fmt = GL_RGBA;
+#ifdef GL_COMPRESSED_RGBA_ARB
     fmt_bt = GL_COMPRESSED_RGBA_ARB;
-    //fmt_bt = 4;
+#else
+    fmt_bt = 4;
+#endif
     break;
 #ifdef GL_DEPTH_COMPONENT
   case gctex_fmtdepth:
@@ -434,8 +449,13 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
   default:
     //pic_fmt = GL_RGB;
+    //fmt_bt = GL_COMPRESSED_RGB_ARB;
+    //fmt_bt = 3;
+#ifdef GL_COMPRESSED_RGB_ARB
     fmt_bt = GL_COMPRESSED_RGB_ARB;
+#else
     fmt_bt = 3;
+#endif
   }
 
   switch(type){
@@ -496,6 +516,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
 
 #ifdef TEST
+#ifdef GL_TEXTURE_COMPRESSED_ARB
     int compressed;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_ARB, &compressed);
 
@@ -512,6 +533,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
     if(GL_NO_ERROR != err)
       kgm_log() << "gcGenTexture has error: " << (s32)err << "\n";
+#endif
 #endif
     break;
     // case 1:
@@ -863,39 +885,58 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   unsigned int  c_size  = sizeof(unsigned );
   unsigned int  uv_size = sizeof(float) * 2;
 
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
   if(v_fmt & gcv_xyz)
   {
-#ifdef GLES_2
-    glEnableVertexAttribArray(0);
+//#ifdef GLES_2
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, v_size, pM);
+    glEnableVertexAttribArray(0);
+    if(g_shader)  gcBindAttribute(g_shader, 0, "g_Vertex");
+
+#ifdef TEST
+#ifndef ANDROID
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR)
+    {
+      kgm_log() << "Error glEnableVertexAttribArray: " << (s32)err << "\n";
+      kgm_log() << "Error glEnableVertexAttribArray: " << (s8*)gluErrorString(err) << "\n";
+    }
 #endif
+#endif
+//#else
+    //glEnableClientState(GL_VERTEX_ARRAY);
+    //glVertexPointer(3, GL_FLOAT, v_size, pM);
+//#endif
     vec3 pos = *((vec3*)pM);
     pM += (sizeof(float) * 3);
   }
+  //return;
+
   if(v_fmt & gcv_nor)
   {
-#ifdef GLES_2
+//#ifdef GLES_2
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT,v_size,pM);
-#endif
+    if(g_shader)  gcBindAttribute(g_shader, 1, "g_Normal");
+//#else
+//    glEnableClientState(GL_NORMAL_ARRAY);
+//    glNormalPointer(GL_FLOAT,v_size,pM);
+//#endif
     pM += (sizeof(float)*3);
   }
 
   if(v_fmt & gcv_col)
   {
-#ifdef GLES_2
+//#ifdef GLES_2
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, v_size, pM);
-#else
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-#endif
+    if(g_shader)  gcBindAttribute(g_shader, 2, "g_Color");
+//#else
+    //glEnableClientState(GL_COLOR_ARRAY);
+    //glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
+//#endif
     pM += sizeof(u32);
   }
   // if(v_fmt & gcv_spc){
@@ -905,14 +946,15 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   // }
   if(v_fmt & gcv_uv0)
   {
-#ifdef GLES_2
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glClientActiveTexture(GL_TEXTURE0);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#endif
+//#ifdef GLES_2
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    if(g_shader)  gcBindAttribute(g_shader, 1, "g_Texcoord");
+//#else
+//    glClientActiveTexture(GL_TEXTURE0);
+//    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+//#endif
     pM += (uv_size);
   }
 
@@ -1003,6 +1045,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
 #else
+//      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_INT, i_pnt);
 #endif
       break;
@@ -1010,6 +1053,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
 #else
+//      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_SHORT, i_pnt);
 #endif
     }
@@ -1017,19 +1061,19 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glDrawArrays(gl_enum(pmt), 0, v_cnt);
   }
 
-#ifdef GLES_2
+//#ifdef GLES_2
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
   glDisableVertexAttribArray(3);
   glDisableVertexAttribArray(4);
   glDisableVertexAttribArray(5);
-#else
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
+//#else
+//  glDisableClientState(GL_VERTEX_ARRAY);
+//  glDisableClientState(GL_NORMAL_ARRAY);
+//  glDisableClientState(GL_COLOR_ARRAY);
+//  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//#endif
 }
 
 /*void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
@@ -1250,9 +1294,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
     if(stat[0] == GL_FALSE){
       glGetInfoLog(vshad, 256, &size, tbuf);
-#ifdef WIN32
-      MessageBox(0, tbuf, "VShader", 0);
-#elif defined LINUX
+#ifdef TEST
       kgmLog::log(kgmString("VShader: %s") + kgmString(tbuf));
 #endif
     }
@@ -1270,9 +1312,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
     if(stat[0] == GL_FALSE){
       glGetInfoLog(fshad, 256, &size, tbuf);
-#ifdef WIN32
-      MessageBox(0, tbuf, "FShader", 0);
-#elif defined LINUX
+#ifdef TEST
       kgmLog::log(kgmString("FShader: ") + kgmString(tbuf));
 #endif
     }
@@ -1294,7 +1334,8 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 void kgmOGL::gcFreeShader(void* s){
 #ifdef GL_VERTEX_SHADER
   // glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
-  if(s){
+  if(s)
+  {
     glDeleteObject((GLhandle)s);
   }
 #endif
@@ -1302,17 +1343,24 @@ void kgmOGL::gcFreeShader(void* s){
 void kgmOGL::gcSetShader(void* s){
 #ifdef GL_VERTEX_SHADER
   if(s){
+    glUseProgramObject(0);
+    glBindAttribLocation((GLhandle)s, 0, "g_Vertex");
+    glBindAttribLocation((GLhandle)s, 2, "g_Color");
+    glBindAttribLocation((GLhandle)s, 1, "g_Texcoord");
     glUseProgramObject((GLhandle)s);
+    g_shader = s;
+#ifdef TEST
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
 #ifndef ANDROID
-      const GLubyte* ers = gluErrorString(err);
-      kgmLog::log(kgmString("some error fixed ") + kgmString((const char*)ers));
+      kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
 #endif
     }
+#endif
   }
   else{
     glUseProgramObject(0);
+    g_shader = null;
   }
 #endif
 }
@@ -1323,10 +1371,15 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
   if(s)
   {
     glBindAttribLocation((GLhandle)s, i, attr);
+#ifdef TEST
+#ifndef ANDROID
     GLenum err = glGetError();
-
     if(err != GL_NO_ERROR)
-      kgm_log() << "Error glBindAttribLocation: " << (s32)err << "\n";
+    {
+      kgm_log() << "Error glBindAttribLocation: " << (s8*)gluErrorString(err) << " i " << (s32)i << "\n";
+    }
+#endif
+#endif
   }
 #endif
 }

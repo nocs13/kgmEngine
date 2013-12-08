@@ -80,10 +80,10 @@ class GL2JNIView extends GLSurfaceView {
 	public static final int EVT_KEYDOWN = 0xf2;
 	public static final int EVT_TOUCH   = 0xf3;
     public static boolean   isEvt   = false;
-    public static int        evtId   = 0;
-    public static int        evtKey  = 0;
-    public static int        evtX    = 0;
-    public static int        evtY    = 0;
+    public static int       evtId   = 0;
+    public static int       evtKey  = 0;
+    public static int       evtX    = 0;
+    public static int       evtY    = 0;
 
 
     public GL2JNIView(Context context) {
@@ -155,7 +155,7 @@ class GL2JNIView extends GLSurfaceView {
         public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig eglConfig) {
             Log.w(TAG, "creating OpenGL ES 2.0 context");
             checkEglError("Before eglCreateContext", egl);
-            int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL10.EGL_NONE };
+            int[] attrib_list = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
             EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
             checkEglError("After eglCreateContext", egl);
             return context;
