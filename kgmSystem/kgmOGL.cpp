@@ -80,6 +80,11 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
     m_is_framebuffer = 1;
   }
 
+#ifdef GLES_2
+  m_is_shader = 1;
+  m_is_framebuffer = 1;
+#endif
+
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, &g_num_compressed_format);
 
@@ -885,145 +890,104 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   unsigned int  c_size  = sizeof(unsigned );
   unsigned int  uv_size = sizeof(float) * 2;
 
+  int ah = 0;
+  GLenum err = 0;
+
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
   if(v_fmt & gcv_xyz)
   {
-//#ifdef GLES_2
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, v_size, pM);
-    glEnableVertexAttribArray(0);
-    if(g_shader)  gcBindAttribute(g_shader, 0, "g_Vertex");
-
-#ifdef TEST
-#ifndef ANDROID
-    GLenum err = glGetError();
-    if(err != GL_NO_ERROR)
-    {
-      kgm_log() << "Error glEnableVertexAttribArray: " << (s32)err << "\n";
-      kgm_log() << "Error glEnableVertexAttribArray: " << (s8*)gluErrorString(err) << "\n";
-    }
+#ifdef GLES_1
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, v_size, pM);
+#else
+    ah = glGetAttribLocation(g_shader, "g_Vertex");
+    glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+    glEnableVertexAttribArray(ah);
 #endif
-#endif
-//#else
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    //glVertexPointer(3, GL_FLOAT, v_size, pM);
-//#endif
     vec3 pos = *((vec3*)pM);
     pM += (sizeof(float) * 3);
   }
-  //return;
 
   if(v_fmt & gcv_nor)
   {
-//#ifdef GLES_2
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, v_size, pM);
-    if(g_shader)  gcBindAttribute(g_shader, 1, "g_Normal");
-//#else
-//    glEnableClientState(GL_NORMAL_ARRAY);
-//    glNormalPointer(GL_FLOAT,v_size,pM);
-//#endif
+#ifdef GLES_1
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT,v_size,pM);
+#else
+    ah = glGetAttribLocation(g_shader, "g_Normal");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+#endif
     pM += (sizeof(float)*3);
   }
 
   if(v_fmt & gcv_col)
   {
-//#ifdef GLES_2
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, v_size, pM);
-    if(g_shader)  gcBindAttribute(g_shader, 2, "g_Color");
-//#else
-    //glEnableClientState(GL_COLOR_ARRAY);
-    //glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-//#endif
+#ifdef GLES_1
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
+#else
+    ah = glGetAttribLocation(g_shader, "g_Color");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
+#endif
     pM += sizeof(u32);
   }
-  // if(v_fmt & gcv_spc){
-  //  glEnableClientState(GL_COLOR_ARRAY);
-  //   glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-  //  pM += sizeof(u32);
-  // }
+
   if(v_fmt & gcv_uv0)
   {
-//#ifdef GLES_2
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-    if(g_shader)  gcBindAttribute(g_shader, 1, "g_Texcoord");
-//#else
-//    glClientActiveTexture(GL_TEXTURE0);
-//    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-//#endif
+#ifdef GLES_1
+    glClientActiveTexture(GL_TEXTURE0);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#else
+    ah = glGetAttribLocation(g_shader, "g_Texcoord");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+#endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv1){
-#ifdef GLES_2
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
+#ifdef GLES_1
     glClientActiveTexture(GL_TEXTURE1);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+#else
+    ah = glGetAttribLocation(g_shader, "g_Texcoord2");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv2){
-#ifdef GLES_2
-    glEnableVertexAttribArray(5);
-    glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glClientActiveTexture(GL_TEXTURE2);
+#ifdef GLES_1
+    glClientActiveTexture(GL_TEXTURE1);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#endif
-    pM += (uv_size);
-  }
-
-  if(v_fmt & gcv_uv3){
-#ifdef GLES_2
-    glEnableVertexAttribArray(6);
-    glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #else
-    glClientActiveTexture(GL_TEXTURE3);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#endif
-    pM += (uv_size);
-  }
-
-  if(v_fmt & gcv_uv4){
-#ifdef GLES_2
-    glEnableVertexAttribArray(7);
-    glVertexAttribPointer(7, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glClientActiveTexture(GL_TEXTURE4);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#endif
-    pM += (uv_size);
-  }
-
-  if(v_fmt & gcv_uv5){
-#ifdef GLES_2
-    glEnableVertexAttribArray(8);
-    glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, v_size, pM);
-#else
-    glClientActiveTexture(GL_TEXTURE5);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
+    ah = glGetAttribLocation(g_shader, "g_Texcoord3");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_bn0){
 #ifdef GLES_2
-//    glEnableVertexAttribArray(8);
-//    glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    ah = glGetAttribLocation(g_shader, "g_Weights");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
+    pM += (4 * sizeof(float));
+    ah = glGetAttribLocation(g_shader, "g_Indices");
+    glEnableVertexAttribArray(ah);
+    glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
+    pM += (4 * sizeof(float));
 #else
-    u32 k = ((u32)pM - (u32)v_pnt);
+    /*u32 k = ((u32)pM - (u32)v_pnt);
     float* f1 = (float*)pM;
     glClientActiveTexture(GL_TEXTURE1);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1034,7 +998,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glClientActiveTexture(GL_TEXTURE2);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(4, GL_FLOAT, v_size, pM);
-    pM += (4 * sizeof(float));
+    pM += (4 * sizeof(float));*/
 #endif
   }
 
@@ -1283,6 +1247,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
 #ifdef GL_VERTEX_SHADER
   prog = glCreateProgramObject();
+  kgm_log() << "gcGenShader 0 " << (s32)glGetError() << "\n";
 
   //GL_VERTEX_SHADER
   if(vsrc){
@@ -1299,6 +1264,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 #endif
     }
     glAttachObject(prog, vshad);
+    kgm_log() << "gcGenShader 5 " << (s32)glGetError() << "\n";
     //  glDeleteObject(vshad);
   }
 
@@ -1320,6 +1286,10 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     //  glDeleteObject(fshad);
   }
 
+  glBindAttribLocation((GLhandle)prog, 0, "g_Vertex");
+  glBindAttribLocation((GLhandle)prog, 1, "g_Normal");
+  glBindAttribLocation((GLhandle)prog, 2, "g_Color");
+  glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
   glLinkProgram(prog);
   glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
   if(stat[0] == GL_FALSE){
@@ -1331,22 +1301,20 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
   return (void*)prog;
 }
+
 void kgmOGL::gcFreeShader(void* s){
 #ifdef GL_VERTEX_SHADER
-  // glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
+  //glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
   if(s)
   {
     glDeleteObject((GLhandle)s);
   }
 #endif
 }
+
 void kgmOGL::gcSetShader(void* s){
 #ifdef GL_VERTEX_SHADER
   if(s){
-    glUseProgramObject(0);
-    glBindAttribLocation((GLhandle)s, 0, "g_Vertex");
-    glBindAttribLocation((GLhandle)s, 2, "g_Color");
-    glBindAttribLocation((GLhandle)s, 1, "g_Texcoord");
     glUseProgramObject((GLhandle)s);
     g_shader = s;
 #ifdef TEST

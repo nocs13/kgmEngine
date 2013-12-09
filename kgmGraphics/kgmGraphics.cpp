@@ -121,12 +121,16 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
 
   if(m_has_shaders)
   {
+    kgm_log() << "Prepare shaders \n";
+
     if(rc != null)
     {
-      shaders.add(kgmMaterial_ShaderGui, rc->getShader("gui.glsl"));
       shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      shaders.add(kgmMaterial::ShaderPoor, rc->getShader("poor.glsl"));
+      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
+      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial_ShaderGui,   rc->getShader("gui.glsl"));
     }
   }
 
@@ -398,7 +402,7 @@ void kgmGraphics::render(){
   if(m_has_shaders)
   {
     g_vec_light = vec4(light->position.x, light->position.y,
-                       light->position.z, light->intensity);
+                       light->position.z, 0.5);
     mtx4 m;
     m.identity();
     setWorldMatrix(m);
@@ -834,8 +838,6 @@ void kgmGraphics::render(kgmMaterial* m){
   if(m->m_blend)
   {
     gc->gcDepth(true, false, gccmp_less);
-    //gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-    //gc->gcBlend(true, gcblend_srcialpha, gcblend_zero);
     gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
     m_alpha = true;
   }

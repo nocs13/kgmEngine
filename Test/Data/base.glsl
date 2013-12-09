@@ -1,4 +1,4 @@
-#version 120
+//#version 120
 uniform mat4   g_mView;
 uniform mat4   g_mProj;
 uniform mat4   g_mTran;
@@ -13,23 +13,21 @@ varying vec3   N;
 varying vec3   V;
 varying vec3   L;
 varying vec2   Texcoord;
+varying float  Ldist;
 
 attribute vec3 g_Vertex;
 attribute vec3 g_Normal;
+attribute vec4 g_Color;
 attribute vec2 g_Texcoord;
 
 void main(void)
 {
-   vec3 vvv = g_Vertex;
-   //V = vec4(g_mTran * gl_Vertex).xyz;
-   //N  = normalize(vec3(g_mTran * vec4(gl_Normal, 0.0)));
-   //L  = normalize(g_vLight.xyz - V);
    V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
-   N  = normalize(vec3(g_mTran * vec4(g_Normal, 0.0)));
-   L  = normalize(g_vLight.xyz - V);
+   N = normalize(vec3(g_mTran * vec4(g_Normal, 0.0)));
+   L = normalize(g_vLight.xyz - V);
+   Ldist = distance(g_vLight.xyz, V); //length(g_vLight.xyz - V)
 
    gl_Position  = g_mProj * g_mView * vec4(V, 1.0);
-   //Texcoord     = gl_MultiTexCoord0.xy;
    Texcoord     = g_Texcoord;
 }
 
@@ -43,6 +41,7 @@ varying vec2   Texcoord;
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
+varying float  Ldist;
 
 void main( void )
 {
@@ -50,15 +49,16 @@ void main( void )
  vec4 normal    = texture2D(g_txNormal,   Texcoord);
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- normal.xyz = normal.xyz + N;
- normal.xyz = normalize(normal.xyz);
+ normal.xyz = normalize(normal.xyz) * N;
+ //normal.xyz = normalize(normal.xyz);
 
  float intensity  = 1.0;
        intensity  = clamp(2.0 * dot(normal.xyz, L), 0.1, 1.0);
 //       intensity += dot(normal.xyz, g_vEyeDir);
-       intensity  = clamp(intensity, 0.1, 1.0);
+       intensity  = clamp(intensity, 0.25, 1.0);
 
  vec3  col = (color.xyz + specular.xyz) * intensity;
+// vec3  col = (color.xyz) * intensity;
 
  col = clamp(col, 0.0, 1.0);
 

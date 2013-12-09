@@ -90,6 +90,7 @@ extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
 extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
 extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
 extern PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB;
+extern PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB;
 
 #define glActiveTexture          glActiveTextureARB
 #define glClientActiveTexture    glClientActiveTextureARB
@@ -136,6 +137,7 @@ extern PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB;
 #define glDisableVertexAttribArray glDisableVertexAttribArrayARB
 #define glEnableVertexAttribArray glEnableVertexAttribArrayARB
 #define glVertexAttribPointer     glVertexAttribPointerARB
+#define glGetAttribLocation     glGetAttribLocationARB
 #endif
 
 #ifdef WIN32

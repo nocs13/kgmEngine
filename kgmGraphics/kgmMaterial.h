@@ -30,6 +30,7 @@ public:
   {
     ShaderNone,
     ShaderBase,
+    ShaderPoor,
     ShaderSkin,
     ShaderWater,
     ShaderRiver,
