@@ -35,34 +35,29 @@ public:
     ShadowFull
   };
 
-  class Visual
+  class Mesh: public kgmObject
   {
     friend class  kgmVisual;
 
-    kgmMaterial*  material;
     kgmMesh*      mesh;
-    mtx4*         transform;
     bool          skin;
 
     kgmMesh::Vertex*     vertices;
   public:
 
-    Visual()
+    Mesh()
     {
       mesh      = null;
-      material  = null;
 
       skin      = false;
       vertices  = null;
     }
 
-    Visual(kgmMesh* msh, kgmMaterial* mtl)
+    Mesh(kgmMesh* msh)
     {
       mesh      = null;
-      material  = null;
 
       if(msh)  { mesh = msh; msh->increment(); }
-      if(mtl)  { material = mtl; mtl->increment(); }
 
       skin      = false;
       vertices  = null;
@@ -79,17 +74,16 @@ public:
       }
     }
 
-    virtual ~Visual()
+    virtual ~Mesh()
     {
       if(vertices)  delete [] vertices;
 
       if(mesh)      mesh->release();
-      if(material)  material->release();
     }
 
-    kgmMaterial* getMaterial()
+    bool hasSkin()
     {
-      return material;
+      return skin;
     }
 
     kgmMesh::Vertex* getVertices()
@@ -144,11 +138,11 @@ public:
   TypeShadow             m_typeshadow;
   TypeRender             m_typerender;
 
-  kgmList<kgmMaterial*>  m_materials;   //material maps
-  kgmList<Visual*>       m_visuals;     //render geometry
+  kgmMaterial*           m_material;    //material maps
   kgmParticles*          m_particles;   //particle effect
   kgmSprite*             m_sprite;      //render sprite
   kgmText*               m_text;        //render text
+  Mesh*                  m_mesh;        //render geometry
 
 
   kgmSkeleton*           m_skeleton;
@@ -174,17 +168,20 @@ public:
     m_typeshadow = ShadowNone;
     m_typerender = RenderNone;
 
-    m_skeleton  = null;
-    m_animation = null;
+    m_skeleton      = null;
+    m_animation     = null;
+    m_tm_joints     = null;
+
     m_fstart    = m_fend = 0;
     m_floop     = false;
 
     m_bound       = box3(vec3(-1, -1, -1), vec3(1, 1, 1));
-    m_tm_joints   = null;
     m_last_update = kgmTime::getTicks();
 
     m_text = null;
+    m_mesh = null;
     m_sprite = null;
+    m_material = null;
     m_particles = null;
   }
 
@@ -192,25 +189,23 @@ public:
   {
     int i = 0;
 
-    for(int i = 0; i < m_materials.size(); i++)
-      m_materials[i]->release();
-    m_materials.clear();
-
-    for(int i = 0; i < m_visuals.size(); i++)
-      delete m_visuals[i];
-    m_visuals.clear();
-
     if(m_tm_joints)
       delete [] m_tm_joints;
+
+    if(m_material)
+      m_material->release();
 
     if(m_particles)
       m_particles->release();
 
-    if(m_text)
-      m_text->release();
-
     if(m_sprite)
       m_sprite->release();
+
+    if(m_mesh)
+      m_mesh->release();
+
+    if(m_text)
+      m_text->release();
 
     if(m_skeleton)
       m_skeleton->release();
@@ -239,20 +234,23 @@ public:
     return m_remove;
   }
 
-  //Materials
-  int numMaterials(){
-    return m_materials.size();
-  }
-
-  bool add(kgmMaterial* m)
+  bool set(kgmMaterial* m)
   {
     if(m == 0)
       return false;
 
-    m_materials.add(m);
+    if(m_material)
+      m_material->release();
+
+    m_material = m;
     m->increment();
 
     return true;
+  }
+
+  kgmMaterial* getMaterial()
+  {
+    return m_material;
   }
 
   void set(kgmParticles* par)
@@ -362,16 +360,21 @@ public:
     }
   }
 
-  void addVisual(kgmMesh* msh, kgmMaterial* mtl)
+  bool set(kgmMesh* msh)
   {
-    if(msh)
-    {
-      m_visuals.add(new Visual(msh, mtl));
+    if(!msh)
+      return false;
 
-      box3 b = msh->bound();
+    if(m_mesh)
+      m_mesh->release();
 
-      m_bound.extend(b);
-    }
+    m_mesh = new Mesh(msh);
+    m_bound = msh->bound();
+  }
+
+  Mesh* getMesh()
+  {
+    return m_mesh;
   }
 
   box3 getBound()
@@ -410,7 +413,7 @@ public:
 private:
   void animate()
   {
-    if(!m_animation || !m_skeleton)
+    if(!m_animation || !m_skeleton || !m_mesh || !m_mesh->skin)
       return;
 
     if(!m_floop && m_fset >= m_fend)
@@ -438,17 +441,12 @@ private:
       //m_tm_joints[i] = jframe;
     }
 
-    for(int j = 0; j < m_visuals.size(); j++)
+    if(m_mesh)
     {
-      Visual* v = m_visuals[j];
+      kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->mesh->vertices();
+      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->vertices;
 
-      if(!v->skin)
-        continue;
-
-      kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->mesh->vertices();
-      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)v->vertices;
-
-      for(int i = 0; i < v->mesh->vcount(); i++)
+      for(int i = 0; i < m_mesh->mesh->vcount(); i++)
       {
         vec3   pos(0, 0, 0);
         vec3   bpos = vbase[i].pos;

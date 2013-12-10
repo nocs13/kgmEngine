@@ -25,7 +25,7 @@ void main(void)
    V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
    N = normalize(vec3(g_mTran * vec4(g_Normal, 0.0)));
    L = normalize(g_vLight.xyz - V);
-   Ldist = distance(g_vLight.xyz, V); //length(g_vLight.xyz - V)
+   Ldist = distance(g_vLight.xyz, V);
 
    gl_Position  = g_mProj * g_mView * vec4(V, 1.0);
    Texcoord     = g_Texcoord;
@@ -49,7 +49,8 @@ void main( void )
  vec4 normal    = texture2D(g_txNormal,   Texcoord);
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- normal.xyz = normalize(normal.xyz) * N;
+ //normal.xyz = N;
+ //normal.xyz = normalize(normal.xyz * normalize(N));
  //normal.xyz = normalize(normal.xyz);
 
  float intensity  = 1.0;
@@ -63,7 +64,8 @@ void main( void )
  col = clamp(col, 0.0, 1.0);
 
  gl_FragColor = vec4(col.x, col.y, col.z, color.w);
-// gl_FragColor = color;
-// gl_FragColor = specular;
-// gl_FragColor = vec4(1, 0, 0, 1);
+ //gl_FragColor = color;
+ //gl_FragColor = normal;
+ //gl_FragColor = specular;
+ //gl_FragColor = vec4(1, 0, 0, 1);
 }

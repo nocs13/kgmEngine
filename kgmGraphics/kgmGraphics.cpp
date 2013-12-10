@@ -97,12 +97,12 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
 
     //generic black texture
     kgm_log() << "Gen black texture\n";
-    memset(txd, 0x00000000, sizeof(txd));
+    memset(txd, 0x00, sizeof(txd));
     g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
     //generic white texture
     kgm_log() << "Gen white texture\n";
-    memset(txd, 0xffffffff, sizeof(txd));
+    memset(txd, 0xff, sizeof(txd));
     g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
 
@@ -301,11 +301,10 @@ void kgmGraphics::render(){
         {
           vis_particles.add(*i);
         }
-        else if((*i)->m_visuals.length() > 0)
+        else if((*i)->getMaterial())
         {
           //vis_mesh.add((*i));
-          if((*i)->m_visuals.size() > 0 && (*i)->m_visuals[0]->getMaterial() &&
-             ((*i)->m_visuals[0]->getMaterial()->m_blend))
+          if((*i)->getMaterial()->m_blend)
             vis_blend.add((*i));
           else
             vis_mesh.add((*i));
@@ -438,10 +437,16 @@ void kgmGraphics::render(){
     render((kgmMaterial*)null);
   }
 
+  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); i++)
+  {
+    render((*i));
+  }
+
   lighting = false;
+
   if(m_has_shaders)
   {
-
+    gc->gcSetShader(null);
   }
   else
   {
@@ -486,13 +491,13 @@ void kgmGraphics::render(){
 
       render((kgmMaterial*)null);
     }
-  }*/
+  }
 
   for(int i = vis_mesh.size(); i > 0;  i--)
   {
     render(vis_mesh[i - 1]);
   }
-
+  */
   if(lighting)
   {
     gc->gcSet(gcpar_lighting, null);
@@ -523,7 +528,9 @@ void kgmGraphics::render(){
     if(ptcl)
     {
       render(ptcl->m_material);
+      render(shaders[kgmMaterial::ShaderBase]);
       render(vis_particles[i]->getParticles());
+      render((kgmShader*)null);
       render((kgmMaterial*)null);
       vis_particles[i]->update();
     }
@@ -635,8 +642,19 @@ void kgmGraphics::render(kgmVisual* visual)
   if(!visual)
     return;
 
-  //mtx4 tr = visual->m_transform * m_camera.mView;
   setWorldMatrix(visual->m_transform);
+
+  kgmMaterial* mtl = visual->getMaterial();
+
+  render(mtl);
+
+  if(m_has_shaders)
+  {
+    if(shaders.hasKey(mtl->m_shader))
+      render(shaders[mtl->m_shader]);
+    else
+      render(shaders[kgmMaterial::ShaderBase]);
+  }
 
   if(visual->m_tm_joints)
   {
@@ -649,46 +667,25 @@ void kgmGraphics::render(kgmVisual* visual)
   case kgmVisual::RenderNone:
   case kgmVisual::RenderMesh:
   {
-    for(int i = 0; i < visual->m_visuals.size(); i++)
+    kgmVisual::Mesh* msh = visual->getMesh();
+
+    u32  pmt;
+
+    switch(msh->getRenderType())
     {
-      kgmVisual::Visual* v = visual->m_visuals[i];
+    case kgmMesh::RT_LINE:
+      pmt = gcpmt_lines;
+      break;
+    case kgmMesh::RT_POINT:
+      pmt = gcpmt_points;
+      break;
+    default:
+      pmt = gcpmt_triangles;
+    };
 
-      kgmMaterial* mtl = v->getMaterial();
-      render(mtl);
-
-      if(visual->m_tm_joints && this->shaders.length() > 2)
-        render((kgmShader*)this->shaders[2]);
-      else if(mtl && mtl->m_shader == kgmMaterial::ShaderNone && shaders.length() > 0)
-        render((kgmShader*)this->shaders[0]);
-      else if(shaders.length() > 1)
-        render((kgmShader*)this->shaders[1]);
-      else
-        render((kgmShader*)null);
-
-      // /*
-      u32  pmt;
-
-      switch(v->getRenderType())
-      {
-      case kgmMesh::RT_LINE:
-        pmt = gcpmt_lines;
-        break;
-      case kgmMesh::RT_POINT:
-//        render((kgmShader*)null);
-//        render((kgmMaterial*)null);
-        pmt = gcpmt_points;
-        break;
-      default:
-        pmt = gcpmt_triangles;
-      };
-
-      gc->gcDraw(pmt, v->getFvf(),
-                 v->getVsize(), v->getVcount(), v->getVertices(),
-                 2, 3 * v->getFcount(), v->getFaces());
-      // */
-      render((kgmShader*)null);
-      render((kgmMaterial*)null);
-    }
+    gc->gcDraw(pmt, msh->getFvf(),
+               msh->getVsize(), msh->getVcount(), msh->getVertices(),
+               2, 3 * msh->getFcount(), msh->getFaces());
 
     g_mtx_joints       = null;
     g_mtx_joints_count = 0;
@@ -729,6 +726,9 @@ void kgmGraphics::render(kgmVisual* visual)
   }
   //*/
 #endif
+
+  render((kgmShader*)null);
+  render((kgmMaterial*)null);
 }
 
 void kgmGraphics::render(kgmSprite* sprite)
@@ -864,8 +864,8 @@ void kgmGraphics::render(kgmMaterial* m){
   }
   else
   {
-    gc->gcSetTexture(1, g_tex_black);
-    tnormal = g_tex_black;
+    gc->gcSetTexture(1, g_tex_white);
+    tnormal = g_tex_white;
   }
 
   if(m->m_tex_specular){

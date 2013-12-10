@@ -54,11 +54,6 @@ void kgmActor::exit()
 void kgmActor::init()
 {
   m_transform.translate(m_body->m_position);
-
-  if(m_visual && m_visual->m_visuals.size() > 0)
-  {
-
-  }
 }
 
 void kgmActor::update(u32 time)

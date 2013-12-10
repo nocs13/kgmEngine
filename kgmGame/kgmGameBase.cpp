@@ -1320,7 +1320,8 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       if(msh)
       {
-        actor->getVisual()->addVisual(msh, mtl);
+        actor->getVisual()->set(msh);
+        actor->getVisual()->set(mtl);
         actor->getVisual()->setAnimation(anm);
         actor->getVisual()->setSkeleton(skl);
 

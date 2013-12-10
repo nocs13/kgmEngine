@@ -48,7 +48,7 @@ public:
     }
 
     m_visual = new kgmVisual();
-    m_visual->addVisual(mesh, null);
+    m_visual->set(mesh);
 
     mesh->release();
     mtl->release();
@@ -121,7 +121,8 @@ public:
     v[16]  = { {-1, 0, -0.1}, 0xffffffff, {1, 1}};
     v[17]  = { {0, 0, -0.1},  0xffffffff, {0, 1}};
 
-    m_visual->addVisual(mesh, mtl);
+    m_visual->set(mesh);
+    m_visual->set(mtl);
   }
 
   ~ASp_MotorA()
@@ -202,7 +203,8 @@ public:
     v[16] = { {-len, 0, -len}, 0xffffffff, {1, 1}};
     v[17] = { {len, 0, -len},  0xffffffff, {0, 1}};
 
-    m_visual->addVisual(mesh, mtl);
+    m_visual->set(mesh);
+    m_visual->set(mtl);
     mesh->release();
     mtl->release();
 
@@ -268,7 +270,8 @@ public:
     mtl->m_shader = kgmMaterial::ShaderBase;
     mtl->m_tex_color = g->getResources()->getTexture("asteroid_0.tga");
 
-    m_visual->addVisual(msh, mtl);
+    m_visual->set(msh);
+    m_visual->set(mtl);
 
     m_body   = new kgmBody();
     m_body->m_udata = this;
