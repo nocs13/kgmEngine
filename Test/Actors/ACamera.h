@@ -8,7 +8,7 @@ class ACamera: public kgmActor
 
   kgmIGame* game;
   float     z_dist, c_dist;
-  bool      ms_left;
+  bool      ms_left, ms_right;
 
 public:
   ACamera(kgmIGame* g)
@@ -18,6 +18,7 @@ public:
     z_dist = 3.0f;
     c_dist = 1.0f;
     ms_left = false;
+    ms_right = false;
   }
 
   void update(u32 mls)
@@ -55,6 +56,9 @@ public:
     case gbtn_a:
       ms_left = (state) ? (true) : (false);
       break;
+    case gbtn_b:
+      ms_right = (state) ? (true) : (false);
+      break;
     case gbtn_left:
     case gbtn_right:
       break;
@@ -75,6 +79,10 @@ public:
       if(ms_left)
       {
         m_body->m_position = m_body->m_position + m_body->direction() * (float)state * 0.1f;
+      }
+      else if(ms_right)
+      {
+        m_body->m_position.z += (float)state * 0.1f;
       }
       break;
     }

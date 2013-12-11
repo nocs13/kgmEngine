@@ -362,6 +362,22 @@ void kgmGameBase::onMsLeftDown(int k, int x, int y){
   }
 }
 
+void kgmGameBase::onMsRightUp(int k, int x, int y){
+  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBRIGHT]] != 0))
+  {
+    m_logic->input(m_keymap[KEY_MSBRIGHT], 0);
+    m_input[m_keymap[KEY_MSBRIGHT]] = 0;
+  }
+}
+
+void kgmGameBase::onMsRightDown(int k, int x, int y){
+  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBRIGHT]] != 1))
+  {
+    m_logic->input(m_keymap[KEY_MSBRIGHT], 1);
+    m_input[m_keymap[KEY_MSBRIGHT]] = 1;
+  }
+}
+
 void kgmGameBase::onMsMove(int k, int x, int y){
   m_input[grot_x] = x;
   m_input[grot_y] = y;

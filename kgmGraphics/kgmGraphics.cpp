@@ -442,18 +442,6 @@ void kgmGraphics::render(){
     render((*i));
   }
 
-  lighting = false;
-
-  if(m_has_shaders)
-  {
-    gc->gcSetShader(null);
-  }
-  else
-  {
-    gc->gcSet(gcpar_lighting, (void*)true);
-    gc->gcSetLight(-1, null, 0, null, null, 0);
-  }
-
   //render meshes by light and only lighting data, no diffuse
   for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
   {
@@ -468,36 +456,19 @@ void kgmGraphics::render(){
 
     }
   }
-  //by simple method
-  /*
-  for(int i = 0; i < m_meshes.length(); i++)
+
+  lighting = false;
+
+  if(m_has_shaders)
   {
-    Mesh* mesh = &m_meshes[i];
-
-    box3 bx = mesh->mesh->bound();
-
-    bx.min = mesh->mtx * bx.min;
-    bx.max = mesh->mtx * bx.max;
-
-    if(m_camera.isSphereCross(bx.center(), 0.5 * bx.dimension().length()))
-    {
-      setWorldMatrix(mesh->mtx);
-
-      if(mesh->material)
-        render(mesh->material);
-
-      if(mesh->mesh)
-        render(mesh->mesh);
-
-      render((kgmMaterial*)null);
-    }
+    gc->gcSetShader(null);
+  }
+  else
+  {
+    gc->gcSet(gcpar_lighting, (void*)true);
+    gc->gcSetLight(-1, null, 0, null, null, 0);
   }
 
-  for(int i = vis_mesh.size(); i > 0;  i--)
-  {
-    render(vis_mesh[i - 1]);
-  }
-  */
   if(lighting)
   {
     gc->gcSet(gcpar_lighting, null);
@@ -538,7 +509,13 @@ void kgmGraphics::render(){
   gc->gcCull(gccull_back);
 
 #ifdef TEST
+  mtx4 mid;
+  mid.identity();
   setViewMatrix(m_camera.mView);
+  setWorldMatrix(mid);
+
+  if(m_has_shaders)
+    gc->gcSetShader(shaders[kgmMaterial::ShaderBase]);
 
   for(int i = m_bodies.size(); i > 0;  i--)
   {
@@ -563,12 +540,29 @@ void kgmGraphics::render(){
     obox3 ob = body->getOBox();
     ob.points(vec_points);
 
-    //gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
   }
+
+  for(int i = m_lights.size(); i > 0;  i--)
+  {
+    kgmLight* light = m_lights[i - 1];
+
+    box3 bb;
+    bb.min = light->position - vec3(1,1,1);
+    bb.max = light->position + vec3(1,1,1);
+    vec3 vec_points[8];
+    s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
+    bb.points(vec_points);
+
+    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+  }
+
+  if(m_has_shaders)
+    gc->gcSetShader(null);
 #endif
 
   //For last step draw gui
-  //gc->gcSetShader(null);
+  gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
   gc2DMode();
 

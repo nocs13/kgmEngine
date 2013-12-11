@@ -515,15 +515,15 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
       break;
     case Button2:
       if(evt->type == ButtonPress)
-        m_evt.event = evtMsRightDown;
-      else
-        m_evt.event = evtMsRightUp;
-      break;
-    case Button3:
-      if(evt->type == ButtonPress)
         m_evt.event = evtMsMiddleDown;
       else
         m_evt.event = evtMsMiddleUp;
+      break;
+    case Button3:
+      if(evt->type == ButtonPress)
+        m_evt.event = evtMsRightDown;
+      else
+        m_evt.event = evtMsRightUp;
       break;
     case Button4:
       m_evt.event = evtMsWheel;

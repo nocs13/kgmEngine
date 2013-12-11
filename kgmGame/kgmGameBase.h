@@ -89,6 +89,8 @@ public:
   void onMsWheel(int k, int x, int y, int z);
   void onMsLeftUp(int k, int x, int y);
   void onMsLeftDown(int k, int x, int y);
+  void onMsRightUp(int k, int x, int y);
+  void onMsRightDown(int k, int x, int y);
   void onResize(int w, int h);
   void onPaint(kgmIGraphics*);
   void onAction(kgmGui* e, u32 arg);

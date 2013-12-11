@@ -50,13 +50,13 @@ void main( void )
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
  //normal.xyz = N;
- //normal.xyz = normalize(normal.xyz * normalize(N));
+ normal.xyz = normalize(normal.xyz + normalize(N));
  //normal.xyz = normalize(normal.xyz);
 
  float intensity  = 1.0;
-       intensity  = clamp(2.0 * dot(normal.xyz, L), 0.1, 1.0);
+       intensity  = clamp(dot(normal.xyz, L), 0.1, 1.0);
 //       intensity += dot(normal.xyz, g_vEyeDir);
-       intensity  = clamp(intensity, 0.25, 1.0);
+       intensity  = clamp(intensity, 0.0, 1.0);
 
  vec3  col = (color.xyz + specular.xyz) * intensity;
 // vec3  col = (color.xyz) * intensity;

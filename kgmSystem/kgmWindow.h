@@ -19,100 +19,100 @@ void kgmUnregisterWindowClass();
 #endif
 
 #ifdef LINUX
- #include <unistd.h>
- #include <X11/Xlib.h>
- #include <X11/Xutil.h>
- #include <X11/XKBlib.h>
- #include <X11/keysym.h>
- #include <X11/extensions/xf86vmode.h>
- #include <GL/glx.h>
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/XKBlib.h>
+#include <X11/keysym.h>
+#include <X11/extensions/xf86vmode.h>
+#include <GL/glx.h>
 
- u16 keyTranslate(KeySym);
+u16 keyTranslate(KeySym);
 #endif
 
 #ifdef ANDROID
 #include <android/keycodes.h>
- u16 keyTranslate(int key);
+u16 keyTranslate(int key);
 #endif
 
 enum{
- KGMWINDOWOPENGL     = 0X00001111,
- KGMWINDOWDIRECT3D8  = 0X00002222,
- KGMWINDOWDIRECT3D9  = 0X00003333,
- KGMWINDOWDIRECT3D10 = 0X00004444,
- KGMWINDOWDIRECT3D11 = 0X00005555,
+  KGMWINDOWOPENGL     = 0X00001111,
+  KGMWINDOWDIRECT3D8  = 0X00002222,
+  KGMWINDOWDIRECT3D9  = 0X00003333,
+  KGMWINDOWDIRECT3D10 = 0X00004444,
+  KGMWINDOWDIRECT3D11 = 0X00005555,
 };
 
 
 class kgmWindow: public kgmEvent{
 public:
 #ifdef WIN32
- //microsoft windows 32 window
- HWND m_wnd;		//window descriptor
+  //microsoft windows 32 window
+  HWND m_wnd;		//window descriptor
 #endif
 
 #ifdef LINUX
- Display             *m_dpy;
- Window               m_wnd;
- XF86VidModeModeInfo  m_mode;
- XSetWindowAttributes m_xswa;
- Atom                 m_wmDelete;
- int                  m_screen;
+  Display             *m_dpy;
+  Window               m_wnd;
+  XF86VidModeModeInfo  m_mode;
+  XSetWindowAttributes m_xswa;
+  Atom                 m_wmDelete;
+  int                  m_screen;
 #endif
 
 #ifdef ANDROID
- void* m_wnd;
- int   m_wRect[4];
+  void* m_wnd;
+  int   m_wRect[4];
 #endif
 
- kgmWindow*	m_parent;
-// int  m_x, m_y, m_w, m_h;
-// int  m_msx, m_msy;
+  kgmWindow*	m_parent;
+  // int  m_x, m_y, m_w, m_h;
+  // int  m_msx, m_msy;
 
- bool m_fs;
- bool m_msAbs;
- bool m_msf;
+  bool m_fs;
+  bool m_msAbs;
+  bool m_msf;
 
 private:
- bool m_loop;
+  bool m_loop;
 
 public:
- kgmWindow();
- kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);
- virtual ~kgmWindow();
+  kgmWindow();
+  kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);
+  virtual ~kgmWindow();
 
- void   loop();
- void   close();
- void   show(bool);
- void   fullscreen(bool);
- void   setRect(int x, int y, int w, int h);
- void   getRect(int& x, int& y, int& w, int& h);
- void   setMouse(int x, int y);
- void   getMouse(int& x, int& y);
- void   setTitle(char*);
+  void   loop();
+  void   close();
+  void   show(bool);
+  void   fullscreen(bool);
+  void   setRect(int x, int y, int w, int h);
+  void   getRect(int& x, int& y, int& w, int& h);
+  void   setMouse(int x, int y);
+  void   getMouse(int& x, int& y);
+  void   setTitle(char*);
 
- bool   getMsAbsolute(){ return m_msAbs; }
- void   setMsAbsolute(bool s){ m_msAbs = s; }
+  bool   getMsAbsolute(){ return m_msAbs; }
+  void   setMsAbsolute(bool s){ m_msAbs = s; }
 
 
- virtual kgmIGraphics* getGC();
+  virtual kgmIGraphics* getGC();
 
 #ifdef WIN32
- static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
+  static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
 #endif
 #ifdef LINUX
- static int WndProc(kgmWindow*, XEvent*);
+  static int WndProc(kgmWindow*, XEvent*);
 #endif
 
- // Virtual Functions
- virtual void onClose();
- virtual void onIdle(){
- }
- virtual void onMenu(int id){
- }
- virtual void onEvent(kgmEvent::Event* e){
-  if(!e)
-   return;
-  kgmEvent::onEvent(e);
- }
+  // Virtual Functions
+  virtual void onClose();
+  virtual void onIdle(){
+  }
+  virtual void onMenu(int id){
+  }
+  virtual void onEvent(kgmEvent::Event* e){
+    if(!e) return;
+
+    kgmEvent::onEvent(e);
+  }
 };
