@@ -674,7 +674,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
     if(err != GL_NO_ERROR)
     {
-      kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
+      //kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
 
     }
 #endif
@@ -1260,7 +1260,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     if(stat[0] == GL_FALSE){
       glGetInfoLog(vshad, 256, &size, tbuf);
 #ifdef TEST
-      kgmLog::log(kgmString("VShader: %s") + kgmString(tbuf));
+      kgmLog::log(kgmString("VShader: ") + kgmString(tbuf));
 #endif
     }
     glAttachObject(prog, vshad);
@@ -1321,7 +1321,7 @@ void kgmOGL::gcSetShader(void* s){
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
 #ifndef ANDROID
-      kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
+      //kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
 #endif
     }
 #endif
