@@ -278,10 +278,16 @@ kgmShader* kgmGameResources::getShader(char* id){
       return (kgmShader*)m_resources[i];
     }
   }
+
   kgmCString path, name, dir;
   name = id;
   kgmShader* shader = 0;
   kgmMemory<char> mem;
+
+#ifdef DEBUG
+    kgm_log() << "Shader loading: " << id << "...\n";
+#endif
+
   if(getFile(name, mem)){
     kgmString s(mem.data(), mem.length());
     shader = m_tools.genShader(kgmIGame::getGame()->getGraphics(), s);
@@ -291,7 +297,7 @@ kgmShader* kgmGameResources::getShader(char* id){
     shader->m_id = id;
     m_resources.add(shader);
 #ifdef DEBUG
-    //kgmLog::log("\nShader: %s successfully loaded", (char*)id);
+    kgm_log() << "Shader: " << id << "successfully loaded\n";
 #endif
   }
   return shader;

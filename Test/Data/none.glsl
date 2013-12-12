@@ -7,7 +7,7 @@ attribute vec3 g_Vertex;
 
 void main(void)
 {
-   gl_Position  = g_mProj * g_mView * g_mTran * g_Vertex;
+   gl_Position  = g_mProj * g_mView * g_mTran * vec4(g_Vertex, 1);
 }
 
 //Fragment Shader
