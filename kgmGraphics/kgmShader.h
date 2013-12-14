@@ -9,25 +9,35 @@ class kgmIGraphics;
 class kgmShader: public kgmResource{
  KGM_OBJECT(kgmShader)
 public:
-  enum Type{
-    fTime,
-    fRandom,
-    vEyePosition,
-    vEyeDirection,
-    vLight,
-    mView,
-    mProjection,
-    mViewProjection,
-    tDiffuse,
-    tNormal,
-    tSpecular,
+  enum Input
+  {
+    IN_MTX4_VIEW         = 1 << 0,
+    IN_MTX4_PROJ         = 1 << 1,
+    IN_MTX4_TRAN         = 1 << 2,
+    IN_VEC3_EYEPOS       = 1 << 3,
+    IN_VEC3_EYEDIR       = 1 << 4,
+    IN_VEC4_COLOR        = 1 << 5,
+    IN_VEC4_LIGHTPOS     = 1 << 6,
+    IN_VEC4_LIGHTDIR     = 1 << 7,
+    IN_VEC4_LIGHTSPOS    = 1 << 8,
+    IN_VEC4_LIGHTSDIR    = 1 << 9,
+    IN_VEC1_TIME         = 1 << 10,
+    IN_VEC1_RANDOM       = 1 << 11,
   };
 
+  enum Map
+  {
+    MAP_COLOR      = 1 << 0,
+    MAP_NORMAL     = 1 << 1,
+    MAP_SPECULAR   = 1 << 2,
+  };
 protected:
  kgmIGraphics*  m_gc;
+ u32            m_input;
+ u8             m_maps;
 public:
- void*		             m_shader;
- kgmTab<Type, kgmString> m_input;
+ void*          m_shader;
+
 public:
  kgmShader(kgmIGraphics* g = 0);
  ~kgmShader();

@@ -70,6 +70,7 @@ kgmLight     g_def_light;
 kgmMaterial  g_def_material;
 
 #define    kgmMaterial_ShaderGui 100
+#define    kgmMaterial_ShaderLights 101
 
 kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
   gc = g;
@@ -125,12 +126,13 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
 
     if(rc != null)
     {
-      shaders.add(kgmMaterial::ShaderNone, rc->getShader("none.glsl"));
-      shaders.add(kgmMaterial::ShaderBase, rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderPoor, rc->getShader("poor.glsl"));
+      shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
+      shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial::ShaderPoor,  rc->getShader("poor.glsl"));
       //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin, rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial_ShaderGui,   rc->getShader("gui.glsl"));
+      shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
+      shaders.add(kgmMaterial_ShaderLights, rc->getShader("lights.glsl"));
     }
   }
 
