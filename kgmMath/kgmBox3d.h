@@ -98,6 +98,14 @@ public:
               (max.x < b.min.x) || (max.y < b.min.y) || (max.z < b.min.z));
   }
 
+  bool intersect(kgmVector3d<T> center, T radius)
+  {
+    kgmBox3d<T>  b(center - kgmVector3d<T>(radius, radius, radius),
+                   center + kgmVector3d<T>(radius, radius, radius));
+
+    return intersect(b);
+  }
+
   bool intersect(kgmRay3d<T> &r, kgmVector3d<T> &cp){
     kgmVector3d<T> rect[6][4];
     kgmPlane3d<T>  plane;

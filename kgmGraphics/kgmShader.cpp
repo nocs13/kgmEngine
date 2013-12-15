@@ -12,7 +12,7 @@ kgmShader::kgmShader(kgmIGraphics* g)
 
   m_maps  = MAP_COLOR | MAP_NORMAL | MAP_SPECULAR;
   m_input = IN_MTX4_PROJ | IN_MTX4_VIEW | IN_MTX4_TRAN | IN_VEC3_EYEPOS | IN_VEC3_EYEDIR
-                | IN_VEC4_LIGHTPOS | IN_VEC4_LIGHTDIR | IN_VEC1_TIME | IN_VEC1_RANDOM;
+                | IN_VEC4_LIGHT | IN_VEC1_TIME | IN_VEC1_RANDOM;
 }
 
 kgmShader::~kgmShader()
@@ -57,6 +57,11 @@ void kgmShader::set(const char* id, int v)
 void kgmShader::set(const char* id, mtx4& v)
 {
   m_gc->gcUniformMatrix(m_shader, 4, 0, id, v.m);
+}
+
+void kgmShader::set(const char* id, mtx3& v)
+{
+  m_gc->gcUniformMatrix(m_shader, 3, 0, id, v.m);
 }
 
 void kgmShader::set(const char* id, void* t)

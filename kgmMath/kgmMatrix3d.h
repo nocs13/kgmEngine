@@ -3,29 +3,56 @@
 //#include "kgmVector4d.h"
 //#include "kgmQuaternion.h"
 
+//MATRIX3x3
+template <class T> class kgmMatrix3x3{
+public:
+ T m[9];
+
+public:
+ kgmMatrix3x3()
+ {
+   m[0] = m[1] = m[2] =
+   m[3] = m[4] = m[5] =
+   m[6] = m[7] = m[8] = (T)0;
+ }
+
+ kgmMatrix3x3(T *f)
+ {
+  memcpy(m, f, sizeof(T) * 3);
+ }
+
+ T& operator[](int i){
+   return m[i];
+ }
+
+ T& operator()(int row, int col){
+  return m[col * 3 + row];
+ }
+};
+
 //MATRIX4x4
-template <class T> class kgmMatrix3d{
+template <class T> class kgmMatrix4x4{
 public:
  T m[16];
 
 public:
- kgmMatrix3d()
+ kgmMatrix4x4()
  {
   identity();
  }
 
- kgmMatrix3d(T *f)
+ kgmMatrix4x4(T *f)
  {
   memcpy(m, f, sizeof(T) * 16);
  }
 
- kgmMatrix3d(kgmVector3d<T>& v)
+ kgmMatrix4x4(kgmVector3d<T>& v)
  {
   identity();
   translate(v);
  }
 
- kgmMatrix3d(kgmQuaternion<T> &q){
+ kgmMatrix4x4(kgmQuaternion<T> &q){
   T x2 = q.x + q.x,
   y2 = q.y + q.y,
   z2 = q.z + q.z,
@@ -52,10 +79,10 @@ public:
   m[15] = 1.0f;
  }
 
- kgmMatrix3d(kgmQuaternion<T> &q, kgmVector3d<T> &v)
+ kgmMatrix4x4(kgmQuaternion<T> &q, kgmVector3d<T> &v)
  {
-  kgmMatrix3d mrt(q);
-  kgmMatrix3d mtr(v);
+  kgmMatrix4x4 mrt(q);
+  kgmMatrix4x4 mtr(v);
   *this = mrt * mtr;
  }
 
@@ -65,8 +92,8 @@ public:
  T& operator()(int row, int col){
   return m[col * 4 + row];
  }
- kgmMatrix3d operator+(kgmMatrix3d& a){
-  kgmMatrix3d r;
+ kgmMatrix4x4 operator+(kgmMatrix4x4& a){
+  kgmMatrix4x4 r;
   r.m[0] = m[0]+a.m[0];
   r.m[1] = m[1]+a.m[1];
   r.m[2] = m[2]+a.m[2];
@@ -88,7 +115,7 @@ public:
   r.m[15] = m[15]+a.m[15];
   return r;
  }
- kgmMatrix3d& operator*=(T f){
+ kgmMatrix4x4& operator*=(T f){
   m[0] += m[0] * f;
   m[1] += m[1] * f;
   m[2] += m[2] * f;
@@ -107,8 +134,8 @@ public:
   m[15] += m[15] * f;
   return *this;
  }
- kgmMatrix3d operator*(T f){
-  kgmMatrix3d r;
+ kgmMatrix4x4 operator*(T f){
+  kgmMatrix4x4 r;
   r.m[0] = m[0] * f;
   r.m[1] = m[1] * f;
   r.m[2] = m[2] * f;
@@ -127,8 +154,8 @@ public:
   r.m[15] = m[15] * f;
   return r;
  }
- kgmMatrix3d operator*(kgmMatrix3d& a){
-  kgmMatrix3d r;
+ kgmMatrix4x4 operator*(kgmMatrix4x4& a){
+  kgmMatrix4x4 r;
   r.m[0] = m[0]*a.m[0]+m[1]*a.m[4]+m[2]*a.m[8]+m[3]*a.m[12];
   r.m[1] = m[0]*a.m[1]+m[1]*a.m[5]+m[2]*a.m[9]+m[3]*a.m[13];
   r.m[2] = m[0]*a.m[2]+m[1]*a.m[6]+m[2]*a.m[10]+m[3]*a.m[14];
@@ -291,7 +318,7 @@ public:
 
  void rotate(T angle, kgmVector3d<T> &axis, kgmVector3d<T> &point) {
   kgmVector3d<T> v;
-  kgmMatrix3d<T> mtr, mrt, mts;
+  kgmMatrix4x4<T> mtr, mrt, mts;
   mrt.rotate(angle, axis);
   v = mrt * point;
   mtr.translate(v.inverse());
@@ -313,8 +340,8 @@ public:
  }
 
  void invert(){
-  kgmMatrix3d<T> &m = *this;
-  kgmMatrix3d<T> out;
+  kgmMatrix4x4<T> &m = *this;
+  kgmMatrix4x4<T> out;
 
   T d = (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1)) * (m(2, 2) * m(3, 3) - m(3, 2) * m(2, 3))	- (m(0, 0) * m(2, 1) - m(2, 0) * m(0, 1)) * (m(1, 2) * m(3, 3) - m(3, 2) * m(1, 3))
       + (m(0, 0) * m(3, 1) - m(3, 0) * m(0, 1)) * (m(1, 2) * m(2, 3) - m(2, 2) * m(1, 3))	+ (m(1, 0) * m(2, 1) - m(2, 0) * m(1, 1)) * (m(0, 2) * m(3, 3) - m(3, 2) * m(0, 3))
@@ -344,7 +371,7 @@ public:
   *this = out;
  }
  void fast_invert(){
-  kgmMatrix3d<T>  r;
+  kgmMatrix4x4<T>  r;
   float idet = det(m[0], m[1], m[2],  m[4], m[5], m[6],  m[8], m[9], m[10]);
   float ndet = det();
   idet = 1.0f / idet;
@@ -369,7 +396,7 @@ public:
 
 
  void quaternion(kgmVector4d<T> &q, kgmVector3d<T> &v){
-  kgmMatrix3d<T> mtr, mrt;
+  kgmMatrix4x4<T> mtr, mrt;
   mrt.quaternion(q);
   mtr.translate(v);
   mul(*this, mrt, mtr);
@@ -388,7 +415,7 @@ public:
  void lookat(const kgmVector3d<T>& eye, const kgmVector3d<T>& dir, const kgmVector3d<T>& up)
  {
    kgmVector3d<T> x, y, z, ieye = eye;
-   kgmMatrix3d<T> m0, m1;
+   kgmMatrix4x4<T> m0, m1;
    z = dir * (-1);
    z.normalize();
    x = up.cross(z);
@@ -457,7 +484,7 @@ public:
 
  //transpose
  void transpose(){
-  kgmMatrix3d<T> t = *this;
+  kgmMatrix4x4<T> t = *this;
   m[0]  = t[0],  m[1]  = t[4], m[2]  = t[8],  m[3]  = t[12];
   m[4]  = t[1],  m[5]  = t[5], m[6]  = t[9],  m[7]  = t[13];
   m[8]  = t[2],  m[9]  = t[6], m[10] = t[10], m[11] = t[14];

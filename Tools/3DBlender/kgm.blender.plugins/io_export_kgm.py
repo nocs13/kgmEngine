@@ -135,8 +135,8 @@ class kgmMaterial:
 class kgmLight:
  def __init__(self, o):
   self.name = o.name
-  self.pos = Vector((0, 0, 0)) * o.matrix_local
-  self.rot = o.matrix_local.to_euler()
+  self.pos  = o.matrix_local.to_translation()
+  self.rot  = o.matrix_local.to_euler()
   lamp = o.data
   self.intensity = lamp.energy
   self.shadows = 'No' if lamp.shadow_method == 'NOSHADOW' else 'Yes'
@@ -148,8 +148,8 @@ class kgmLight:
 class kgmCamera:
  def __init__(self, o):
   self.name = o.name
-  self.pos = Vector((0, 0, 0)) * o.matrix_local
-  self.rot = o.matrix_local.to_euler()
+  self.pos  = o.matrix_local.to_translation()
+  self.rot  = o.matrix_local.to_euler()
   self.angle = o.data.angle
   self.near = o.data.clip_start
   self.far = o.data.clip_end
@@ -309,7 +309,7 @@ class kgmMesh:
 
      for k in range(2, len(iface)):
        self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
-       
+
  def addVertex(self, vx):
   iv = -1
   #check if such vertex already exist
