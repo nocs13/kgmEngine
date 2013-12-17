@@ -167,8 +167,11 @@ public:
   void  gcSetShader(void* s);
   void  gcBindAttribute(void* s, int i, const char* attr);
   void  gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val);
-  void  gcUniformMatrix(void* s, u32, u32, const char*, void*);
+  void  gcUniformMatrix(void* s, u32 type, u32 cnt, u32 tsp, const char*, void*);
   void  gcUniformSampler(void* s, const char*, void*);
+#ifdef TEST
+  void  gcGetUniform(void* s, const char*, void*);
+#endif
 
   //////////////////////////// inlines
   GLenum gl_enum(u32 e){

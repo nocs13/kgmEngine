@@ -29,39 +29,39 @@ void kgmShader::stop()
   m_gc->gcSetShader(0);
 }
 
-void kgmShader::set(const char* id, float& v)
+void kgmShader::set(const char* id, float& v, int count)
 {
-  m_gc->gcUniform(m_shader, 0, 1, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_float1, count, id, &v);
 }
 
-void kgmShader::set(const char* id, vec2& v)
+void kgmShader::set(const char* id, vec2& v, int count)
 {
-  m_gc->gcUniform(m_shader, 0, 2, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_float2, count, id, &v);
 }
 
-void kgmShader::set(const char* id, vec3& v)
+void kgmShader::set(const char* id, vec3& v, int count)
 {
-  m_gc->gcUniform(m_shader, 0, 3, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_float3, count, id, &v);
 }
 
-void kgmShader::set(const char* id, vec4& v)
+void kgmShader::set(const char* id, vec4& v, int count)
 {
-  m_gc->gcUniform(m_shader, 0, 4, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_float4, count, id, &v);
 }
 
-void kgmShader::set(const char* id, int v)
+void kgmShader::set(const char* id, int v, int count)
 {
-  m_gc->gcUniform(m_shader, 1, 1, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_int1, count, id, &v);
 }
 
-void kgmShader::set(const char* id, mtx4& v)
+void kgmShader::set(const char* id, mtx4& v, int count)
 {
-  m_gc->gcUniformMatrix(m_shader, 4, 0, id, v.m);
+  m_gc->gcUniformMatrix(m_shader, gcunitype_mtx4, count, 0, id, v.m);
 }
 
-void kgmShader::set(const char* id, mtx3& v)
+void kgmShader::set(const char* id, mtx3& v, int count)
 {
-  m_gc->gcUniformMatrix(m_shader, 3, 0, id, v.m);
+  m_gc->gcUniformMatrix(m_shader, gcunitype_mtx3, count, 0, id, v.m);
 }
 
 void kgmShader::set(const char* id, void* t)

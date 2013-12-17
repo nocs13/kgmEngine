@@ -44,13 +44,13 @@ public:
  void start();
  void stop();
 
- void set(const char*, float&);
- void set(const char*, vec2&);
- void set(const char*, vec3&);
- void set(const char*, vec4&);
- void set(const char*, mtx4&);
- void set(const char*, mtx3&);
- void set(const char*, int);
+ void set(const char*, float&, int count = 1);
+ void set(const char*, vec2&,  int count = 1);
+ void set(const char*, vec3&,  int count = 1);
+ void set(const char*, vec4&,  int count = 1);
+ void set(const char*, mtx4&,  int count = 1);
+ void set(const char*, mtx3&,  int count = 1);
+ void set(const char*, int,    int count = 1);
  void set(const char*, void*);
  void attr(int, const char*);
 

@@ -102,6 +102,18 @@ enum gc_enum{
  gccull_back,
  gccull_front,
 
+  gcunitype_float1,
+  gcunitype_float2,
+  gcunitype_float3,
+  gcunitype_float4,
+  gcunitype_int1,
+  gcunitype_int2,
+  gcunitype_int3,
+  gcunitype_int4,
+  gcunitype_mtx2,
+  gcunitype_mtx3,
+  gcunitype_mtx4,
+
   //hardware support
   gcsup_shaders = 1024, // vertex,format shaders
   gcsup_fbuffers,       // frame buffers
@@ -152,6 +164,9 @@ public:
  virtual void  gcSetShader(void* s) = 0;
  virtual void  gcBindAttribute(void* s, int, const char*) = 0;
  virtual void  gcUniform(void* s, u32, u32, const char*, void*) = 0;
- virtual void  gcUniformMatrix(void* s, u32, u32, const char*, void*) = 0;
+ virtual void  gcUniformMatrix(void* s, u32, u32, u32, const char*, void*) = 0;
  virtual void  gcUniformSampler(void* s, const char*, void*) = 0;
+#ifdef TEST
+  virtual void  gcGetUniform(void* s, const char*, void*) = 0;
+#endif
 };

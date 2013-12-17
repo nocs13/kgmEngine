@@ -86,6 +86,7 @@ extern PFNGLUNIFORMMATRIX2FVARBPROC     glUniformMatrix2fvARB;
 extern PFNGLUNIFORMMATRIX3FVARBPROC     glUniformMatrix3fvARB;
 extern PFNGLUNIFORMMATRIX4FVARBPROC     glUniformMatrix4fvARB;
 extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
+extern PFNGLGETUNIFORMFVARBPROC         glGetUniformfvARB;
 
 extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
 extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
@@ -134,6 +135,7 @@ extern PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB;
 #define glUniformMatrix3fv       glUniformMatrix3fvARB
 #define glUniformMatrix4fv       glUniformMatrix4fvARB
 #define glBindAttribLocation     glBindAttribLocationARB
+#define glGetUniformfv           glGetUniformfvARB
 #define glDisableVertexAttribArray glDisableVertexAttribArrayARB
 #define glEnableVertexAttribArray glEnableVertexAttribArrayARB
 #define glVertexAttribPointer     glVertexAttribPointerARB

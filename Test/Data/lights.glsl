@@ -9,6 +9,7 @@ uniform float  g_fTime;
 uniform float  g_fRandom;
 
 uniform vec4   g_vLights[12];
+uniform int    g_iLights;
 
 attribute vec3 g_Vertex;
 attribute vec3 g_Normal;
@@ -20,6 +21,8 @@ varying vec3   normal;
 varying vec3   eye;
 varying vec2   texcoord;
 
+varying vec4   lights[12];
+
 void main(void)
 {
   vec4 pos = g_mTran * vec4(g_Vertex, 1.0);
@@ -29,6 +32,13 @@ void main(void)
 
   eye          = vec3(-pos.xyz);
 
+  for(int i = 0; i < g_iLights; i++)
+  {
+    vec3 ldir = pos.xyz - g_vLights[i].xyz;
+    lights[i].w = g_vLights[i].w / length(ldir);
+    lights[i].xyz = normalize(ldir);
+  }
+
   gl_Position  = g_mProj * g_mView * pos;
   texcoord     = g_Texcoord;
 }
@@ -36,6 +46,10 @@ void main(void)
 //Fragment Shader
 uniform mat4      g_mTran;
 uniform vec4      g_vLights[12];
+uniform float     g_fRandom;
+uniform int       g_iLights;
+
+uniform vec4      g_vTEST;
 
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
@@ -45,6 +59,9 @@ varying vec2      texcoord;
 varying vec3      position;
 varying vec3      normal;
 varying vec3      eye;
+
+varying vec4      lights[12];
+
 
 void main( void )
 {
@@ -59,15 +76,14 @@ void main( void )
   float shininess = 0.1;
   float intensity = 0.0;
 
-  for(int i = 0; i < 12; i++)
-  {
-    vec3   l = position - vec3(vec4(g_vLights[i].xy, 5, 1.0));
-    float  d = length(l);
+  float   I = clamp(10.0 * g_fRandom, 0.0, 11.0);
 
-    l = normalize(l);
-    intensity += 0.99 * (g_vLights[i].w / d) * max(dot(normal,l), 0.01);
+  for(int i = 0; i < g_iLights; i++)
+  {
+    vec3   l = (lights[i].xyz);
+
+    intensity += (lights[i].w) * max(dot(normal,l), 0.01);
   }
 
-  gl_FragColor = intensity * color;
-  //gl_FragColor = vec4(g_vLights[3].w, 0, 0, 1);
+  gl_FragColor = intensity * vec4(1.0);//color;
 }

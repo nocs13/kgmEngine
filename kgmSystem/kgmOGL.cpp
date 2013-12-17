@@ -1359,55 +1359,50 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
   if(link < 0)
     return;
 
-  if(type == 0){
-    switch(cnt){
-    case 1:
-      glUniform1fv(link, 1, (float*)val);
+    switch(type){
+    case gcunitype_float1:
+      glUniform1fv(link, cnt, (float*)val);
       break;
-    case 2:
-      glUniform2fv(link, 1, (float*)val);
+    case gcunitype_float2:
+      glUniform2fv(link, cnt, (float*)val);
       break;
-    case 3:
-      glUniform3fv(link, 1, (float*)val);
+    case gcunitype_float3:
+      glUniform3fv(link, cnt, (float*)val);
       break;
-    case 4:
-      glUniform4fv(link, 1, (float*)val);
+    case gcunitype_float4:
+      glUniform4fv(link, cnt, (float*)val);
       break;
-    }
-  }else if(type == 1){
-    switch(cnt){
-    case 1:
-      glUniform1iv(link, 1, (const int*)val);
+    case gcunitype_int1:
+      glUniform1iv(link, cnt, (const int*)val);
       break;
-    case 2:
-      glUniform2iv(link, 1, (const int*)val);
+    case gcunitype_int2:
+      glUniform2iv(link, cnt, (const int*)val);
       break;
-    case 3:
-      glUniform3iv(link, 1, (const int*)val);
+    case gcunitype_int3:
+      glUniform3iv(link, cnt, (const int*)val);
       break;
-    case 4:
-      glUniform4iv(link, 1, (const int*)val);
+    case gcunitype_int4:
+      glUniform4iv(link, cnt, (const int*)val);
       break;
     }
-  }
 #endif
 }
 
-void kgmOGL::gcUniformMatrix(void* s, u32 cnt, u32 trn, const char* par, void* val)
+void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* par, void* val)
 { 
 #ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)s, par);
   if(link < 0)
     return;
-  switch(cnt){
-  case 2:
-    glUniformMatrix2fv(link, 1, (GLboolean)trn, (float*)val);
+  switch(type){
+  case gcunitype_mtx2:
+    glUniformMatrix2fv(link, cnt, (GLboolean)trn, (float*)val);
     break;
-  case 3:
-    glUniformMatrix3fv(link, 1, (GLboolean)trn, (float*)val);
+  case gcunitype_mtx3:
+    glUniformMatrix3fv(link, cnt, (GLboolean)trn, (float*)val);
     break;
-  case 4:
-    glUniformMatrix4fv(link, 1, (GLboolean)trn, (float*)val);
+  case gcunitype_mtx4:
+    glUniformMatrix4fv(link, cnt, (GLboolean)trn, (float*)val);
     break;
   }
 #endif
@@ -1422,4 +1417,13 @@ void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
   glUniform1i(link, (GLu32)val);
 #endif
 }
+
+#ifdef TEST
+void kgmOGL::gcGetUniform(void* s, const char* par, void* val)
+{
+#ifdef GL_VERTEX_SHADER
+  glGetUniformfv((GLhandle)s, par, val);
+#endif
+}
+#endif
 

@@ -939,9 +939,11 @@ void kgmGraphics::render(kgmShader* s){
 
   if(s)
   {
+    float random = (float)rand()/(float)RAND_MAX;
+
     s->start();
     s->set("g_fTime",     kgmTime::getTime());
-    s->set("g_fRandom",   (float)rand()/(float)RAND_MAX);
+    s->set("g_fRandom",   random);
     s->set("g_mProj",     g_mtx_proj);
     s->set("g_mView",     g_mtx_view);
     s->set("g_mTran",     g_mtx_world);
@@ -973,19 +975,29 @@ void kgmGraphics::render(kgmShader* s){
 
     if((s->m_input & kgmShader::IN_VEC4_LIGHTS) &&  g_lights_count > 0)
     {
-      for(int i = 0; i < 32; i++)
+      vec4 lights[32];
+
+      for(int i = 0; i < g_lights_count; i++)
+      {
+        lights[i] = vec4(g_lights[i]->position.x,g_lights[i]->position.y,g_lights[i]->position.z,g_lights[i]->intensity);
+      }
+
+      s->set("g_iLights", g_lights_count);
+      s->set("g_vLights", lights[0], g_lights_count);
+
+      /*for(int i = 0; i < g_lights_count; i++)
       {
         char buf[16];
         vec4 l1(0,0,0,0.1);
 
         kgmLight* l = g_lights[i];
 
-        if(i < g_lights_count)
-          l1 = vec4(l->position.x, l->position.y, l->position.z, l->intensity);
+        //if(i < g_lights_count)
+        l1 = vec4(l->position.x, l->position.y, l->position.z, l->intensity);
 
         sprintf(buf, "g_vLights[%i]\0", i);
         s->set(buf, l1);
-      }
+      }*/
     }
 
     g_shd_active = s;
