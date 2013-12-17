@@ -964,13 +964,7 @@ void kgmGraphics::render(kgmShader* s){
 
     if(g_mtx_joints)
     {
-      for(int i = 0; i < g_mtx_joints_count; i++)
-      {
-        char buf[16];
-
-        sprintf(buf, "g_mJoints[%i]\0", i);
-        s->set(buf, g_mtx_joints[i]);
-      }
+      s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
     }
 
     if((s->m_input & kgmShader::IN_VEC4_LIGHTS) &&  g_lights_count > 0)

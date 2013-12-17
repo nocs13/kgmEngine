@@ -64,11 +64,6 @@ void kgmShader::set(const char* id, mtx3& v, int count)
   m_gc->gcUniformMatrix(m_shader, gcunitype_mtx3, count, 0, id, v.m);
 }
 
-void kgmShader::set(const char* id, void* t)
-{
-  m_gc->gcUniformSampler(m_shader, id, t);
-}
-
 void kgmShader::attr(int i, const char* a)
 {
   m_gc->gcBindAttribute(m_shader, i, a);

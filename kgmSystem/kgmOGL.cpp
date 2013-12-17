@@ -1409,13 +1409,13 @@ void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* pa
 }
 
 void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
-#ifdef GL_VERTEX_SHADER
+//#ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)s, par);
 
   if(link < 0)
     return;
   glUniform1i(link, (GLu32)val);
-#endif
+//#endif
 }
 
 #ifdef TEST

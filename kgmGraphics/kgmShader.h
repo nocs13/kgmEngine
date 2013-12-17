@@ -51,7 +51,6 @@ public:
  void set(const char*, mtx4&,  int count = 1);
  void set(const char*, mtx3&,  int count = 1);
  void set(const char*, int,    int count = 1);
- void set(const char*, void*);
  void attr(int, const char*);
 
  kgmIGraphics* gc(){ return m_gc; }

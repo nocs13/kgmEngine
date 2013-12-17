@@ -45,7 +45,6 @@ void main(void)
 
 //Fragment Shader
 uniform mat4      g_mTran;
-uniform vec4      g_vLights[12];
 uniform float     g_fRandom;
 uniform int       g_iLights;
 
@@ -80,10 +79,10 @@ void main( void )
 
   for(int i = 0; i < g_iLights; i++)
   {
-    vec3   l = (lights[i].xyz);
+    vec3 l = normalize(lights[i].xyz);
 
     intensity += (lights[i].w) * max(dot(normal,l), 0.01);
   }
 
-  gl_FragColor = intensity * vec4(1.0);//color;
+  gl_FragColor = vec4(intensity * color.xyz, color.w);
 }
