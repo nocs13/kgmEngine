@@ -26,6 +26,10 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityLow;
+kgmGraphics::GraphicsQuality kgmGraphics::shedowQuality  = GraphicsQualityLow;
+
+
 struct Vert
 {
   vec3 v;
@@ -66,6 +70,7 @@ u32        g_lights_count = 0;
 
 void*      g_tex_black = null;
 void*      g_tex_white = null;
+void*      g_map_shadow = null;
 
 kgmLight     g_def_light;
 kgmMaterial  g_def_material;
@@ -145,6 +150,11 @@ kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
       }
 
     }
+  }
+
+  if(m_has_buffers)
+  {
+    //gc->gcGenTexture(null);
   }
 
   m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));

@@ -33,13 +33,17 @@ class kgmGraphics : public kgmObject
 {
   KGM_OBJECT(kgmGraphics);
 public:
-  struct Settings
-  {
-    char texture_quality;
-    char shadow_quality;
 
-    bool lods;
+  enum GraphicsQuality
+  {
+    GraphicsQualityLow,
+    GraphicsQualityMedium,
+    GraphicsQualityHight,
+    GraphicsQualitySuper
   };
+
+  static GraphicsQuality   textureQuality;
+  static GraphicsQuality   shedowQuality;
 
   struct Mesh
   {
