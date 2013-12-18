@@ -286,8 +286,6 @@ void kgmGraphics::render(){
   //m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   //m_camera.set(PI / 2, m_camera.mAspect, m_camera.mNear, m_camera.mFar, m_camera.mPos, m_camera.mDir, m_camera.mUp);
 
-  g_lights_count = 0;
-
   // parse visible objects
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
@@ -389,6 +387,7 @@ void kgmGraphics::render(){
   //fix strongest or main light
   float     l_force = 0.0f;
   kgmLight* l_main = null;
+  g_lights_count = 0;
 
   for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
@@ -399,7 +398,7 @@ void kgmGraphics::render(){
        continue;
 
     vw_lights.add(*i);
-    g_lights[g_lights_count++] = (*i);
+    /*g_lights[g_lights_count++] = (*i);
 
     if(g_lights_count >= MAX_LIGHTS)
       break;
@@ -410,13 +409,17 @@ void kgmGraphics::render(){
     {
       l_force = force;
       l_main  = (*i);
-    }
+    }*/
   }
 
   if(vw_lights.length() < 1)
   {
     l_main = &g_def_light;
     vw_lights.add(&g_def_light);
+  }
+  else
+  {
+    l_main = vw_lights[0];
   }
 
   //take meshes in viewport
@@ -456,7 +459,14 @@ void kgmGraphics::render(){
 
   for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); i++)
   {
-    Mesh* mesh = *i;
+    Mesh*   mesh = *i;
+    box3    bbound = mesh->mesh->bound();
+    sphere3 sbound;
+
+    bbound.min    = mesh->mtx * bbound.min;
+    bbound.max    = mesh->mtx * bbound.max;
+    sbound.center = bbound.center();
+    sbound.radius = 0.5f * bbound.dimension().length();
 
     setWorldMatrix(mesh->mtx);
 
@@ -464,6 +474,25 @@ void kgmGraphics::render(){
       render(mesh->material);
     else
       render(&g_def_material);
+
+    g_lights_count = 0;
+
+    for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
+    {
+      sphere3  lbound((*i)->position, 10 * (*i)->intensity);
+
+      if(sbound.center.distance(lbound.center) < (sbound.radius + lbound.radius))
+      {
+        if(g_lights_count == 0)
+          g_vec_light = vec4((*i)->position.x, (*i)->position.y,
+                             (*i)->position.z, (*i)->intensity);
+
+        g_lights[g_lights_count++] = (*i);
+
+        if(g_lights_count > MAX_LIGHTS)
+          break;
+      }
+    }
 
     if(m_has_shaders)
     {
