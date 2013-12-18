@@ -351,7 +351,7 @@ void kgmGraphics::render(){
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
   //gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xFF777777, 1, 0);
+  gc->gcClear(gcflag_color | gcflag_depth, 0xFF7700FF, 1, 0);
 
 #ifdef TEST
   //Grid
@@ -467,16 +467,15 @@ void kgmGraphics::render(){
 
     if(m_has_shaders)
     {
-      /*if(g_lights_count > 0 && shaders.hasKey(kgmMaterial_ShaderLights))
+      if(g_lights_count > 1 && shaders.hasKey(kgmMaterial_ShaderLights))
         render((kgmShader*)shaders[kgmMaterial_ShaderLights]);
       else if(mesh->material && shaders.hasKey(mesh->material->m_shader))
         render((kgmShader*)shaders[mesh->material->m_shader]);
       else
-        render((kgmShader*)shaders[kgmMaterial::ShaderBase]);*/
-      render((kgmShader*)shaders[kgmMaterial::ShaderBase]);
+        render((kgmShader*)shaders[kgmMaterial::ShaderBase]);
     }
 
-    //render((kgmMesh*)mesh->mesh);
+    render((kgmMesh*)mesh->mesh);
 
     render((kgmMaterial*)null);
   }
@@ -485,40 +484,6 @@ void kgmGraphics::render(){
   {
     render((*i));
   }
-
-  //render meshes by light and only lighting data, no diffuse
-  render(&g_def_material);
-  for(kgmList<Mesh*>::iterator j = vw_meshes.begin(); j != vw_meshes.end(); j++)
-  {
-    box3 bx = (*j)->mesh->bound();
-
-    bx.min = (*j)->mtx * bx.min;
-    bx.max = (*j)->mtx * bx.max;
-
-    for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
-    {
-      kgmLight* light = *i;
-      vec3      lpos  = light->position;
-      float     range = 10 * light->intensity;
-
-      if(bx.intersect(bx.center(), bx.min.distance(bx.max) * 0.5f))
-      {
-        setWorldMatrix((*j)->mtx);
-
-        if(m_has_shaders && g_lights_count > 0 && shaders.hasKey(kgmMaterial_ShaderLights))
-        {
-          render((kgmShader*)shaders[kgmMaterial_ShaderLights]);
-        }
-
-        gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
-        render((*j)->mesh);
-        gc->gcBlend(false, gcblend_one, gcblend_one);
-      }
-    }
-  }
-  render((kgmMaterial*)null);
-
-  lighting = false;
 
   if(m_has_shaders)
   {
@@ -944,6 +909,7 @@ void kgmGraphics::render(kgmShader* s){
     s->start();
     s->set("g_fTime",     kgmTime::getTime());
     s->set("g_fRandom",   random);
+    s->set("g_fShine",    0.5f);
     s->set("g_mProj",     g_mtx_proj);
     s->set("g_mView",     g_mtx_view);
     s->set("g_mTran",     g_mtx_world);
@@ -973,25 +939,12 @@ void kgmGraphics::render(kgmShader* s){
 
       for(int i = 0; i < g_lights_count; i++)
       {
-        lights[i] = vec4(g_lights[i]->position.x,g_lights[i]->position.y,g_lights[i]->position.z,g_lights[i]->intensity);
+        lights[i] = vec4(g_lights[i]->position.x, g_lights[i]->position.y,
+                         -g_lights[i]->position.z, g_lights[i]->intensity);
       }
 
       s->set("g_iLights", g_lights_count);
       s->set("g_vLights", lights[0], g_lights_count);
-
-      /*for(int i = 0; i < g_lights_count; i++)
-      {
-        char buf[16];
-        vec4 l1(0,0,0,0.1);
-
-        kgmLight* l = g_lights[i];
-
-        //if(i < g_lights_count)
-        l1 = vec4(l->position.x, l->position.y, l->position.z, l->intensity);
-
-        sprintf(buf, "g_vLights[%i]\0", i);
-        s->set(buf, l1);
-      }*/
     }
 
     g_shd_active = s;
