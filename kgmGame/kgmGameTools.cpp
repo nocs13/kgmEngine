@@ -251,19 +251,31 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
   kgmPicture* pic = genPicture(m);
 
   if(!pic)
-    return 0;
-
-  switch(kgmGraphics::textureQuality)
   {
-  case kgmGraphics::GraphicsQualityHight:
-    pic->resample(pic->width / 2, pic->height / 2);
-    break;
-  case kgmGraphics::GraphicsQualityMedium:
-    pic->resample(pic->width / 4, pic->height / 4);
-    break;
-  case kgmGraphics::GraphicsQualityLow:
-    pic->resample(pic->width / 8, pic->height / 8);
-    break;
+    return 0;
+  }
+  else
+  {
+    int nwidth, nheight;
+
+    switch(kgmGraphics::textureQuality)
+    {
+    case kgmGraphics::GraphicsQualityHight:
+      nwidth = (256 >= (pic->width / 2)) ? (pic->width / 2) : (pic->width);
+      nheight = (256 >= (pic->height / 2)) ? (pic->height / 2) : (pic->height);
+      pic->resample(nwidth, nheight);
+      break;
+    case kgmGraphics::GraphicsQualityMedium:
+      nwidth = (128 >= (pic->width / 4)) ? (pic->width / 4) : (pic->width);
+      nheight = (128 >= (pic->height / 4)) ? (pic->height / 4) : (pic->height);
+      pic->resample(nwidth, nheight);
+      break;
+    case kgmGraphics::GraphicsQualityLow:
+      nwidth = (64 >= (pic->width / 8)) ? (pic->width / 8) : (pic->width);
+      nheight = (64 >= (pic->height / 8)) ? (pic->height / 8) : (pic->height);
+      pic->resample(nwidth, nheight);
+      break;
+    }
   }
 
   u32 fmt = gctex_fmt32;

@@ -26,7 +26,7 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
-kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityMedium;
 kgmGraphics::GraphicsQuality kgmGraphics::shedowQuality  = GraphicsQualityLow;
 
 
@@ -366,7 +366,7 @@ void kgmGraphics::render(){
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
-  //gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
+  gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
 #endif
 
   /*if(this->m_lights.size() > 0)
@@ -1227,9 +1227,9 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
 
     if(clip.inside(cx + fwidth, cy + fheight))
     {
-      v[0].pos = vec3(cx, cy, 0),    v[0].col = fcolor, v[0].uv = vec2(tx, ty);
-      v[1].pos = vec3(cx, cy+fheight, 0),  v[1].col = fcolor, v[1].uv = vec2(tx, ty-tdy);
-      v[2].pos = vec3(cx+fwidth, cy, 0),  v[2].col = fcolor, v[2].uv = vec2(tx+tdx-0.001, ty);
+      v[0].pos = vec3(cx, cy, 0),               v[0].col = fcolor, v[0].uv = vec2(tx+0.001,     ty-0.001);
+      v[1].pos = vec3(cx, cy+fheight, 0),       v[1].col = fcolor, v[1].uv = vec2(tx+0.001,     ty-tdy);
+      v[2].pos = vec3(cx+fwidth, cy, 0),        v[2].col = fcolor, v[2].uv = vec2(tx+tdx-0.001, ty-0.001);
       v[3].pos = vec3(cx+fwidth, cy+fheight, 0),v[3].col = fcolor, v[3].uv = vec2(tx+tdx-0.001, ty-tdy);
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
