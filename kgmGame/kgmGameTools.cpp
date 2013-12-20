@@ -8,6 +8,7 @@
 #include "../kgmMath/kgmRect2d.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmPicture.h"
+#include "../kgmGraphics/kgmGraphics.h"
 
 static char str_buf[1024];
 
@@ -248,9 +249,25 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
 kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
 {
   kgmPicture* pic = genPicture(m);
+
   if(!pic)
     return 0;
+
+  switch(kgmGraphics::textureQuality)
+  {
+  case kgmGraphics::GraphicsQualityHight:
+    pic->resample(pic->width / 2, pic->height / 2);
+    break;
+  case kgmGraphics::GraphicsQualityMedium:
+    pic->resample(pic->width / 4, pic->height / 4);
+    break;
+  case kgmGraphics::GraphicsQualityLow:
+    pic->resample(pic->width / 8, pic->height / 8);
+    break;
+  }
+
   u32 fmt = gctex_fmt32;
+
   switch(pic->bpp){
   case 8:
     fmt = gctex_fmt8;
@@ -265,14 +282,19 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
     fmt = gctex_fmt32;
     break;
   };
+
   kgmTexture* tex = new kgmTexture;
+
   tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, 0);
   pic->release();
 
-  if(!tex->m_texture){
+  if(!tex->m_texture)
+  {
     tex->release();
+
     return 0;
   }
+
   return tex;
 }
 

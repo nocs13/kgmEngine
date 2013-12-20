@@ -26,7 +26,7 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
-kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityLow;
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shedowQuality  = GraphicsQualityLow;
 
 
@@ -524,6 +524,11 @@ void kgmGraphics::render(){
     render((*i));
   }
 
+  for(int i = vis_blend.size(); i > 0;  i--)
+  {
+    render(vis_blend[i - 1]);
+  }
+
   if(m_has_shaders)
   {
     gc->gcSetShader(null);
@@ -550,10 +555,8 @@ void kgmGraphics::render(){
     lighting = false;
   }
 
-  for(int i = vis_blend.size(); i > 0;  i--)
-  {
-    render(vis_blend[i - 1]);
-  }
+  if(m_has_shaders)
+    render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
@@ -571,7 +574,11 @@ void kgmGraphics::render(){
       vis_particles[i]->update();
     }
   }
+
   gc->gcCull(gccull_back);
+
+  if(m_has_shaders)
+    render((kgmShader*)null);
 
 #ifdef TEST
   mtx4 mid;
