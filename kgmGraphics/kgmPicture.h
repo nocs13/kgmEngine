@@ -70,9 +70,9 @@ public:
       {
         int pixel = (cy * (nwidth * cbpp)) + (cx * cbpp);
         int nearest =  (((int)(cy / sheight) * (width * cbpp)) + ((int)(cx / swidth) * cbpp) );
-        u8 r = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
-        u8 g = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
-        u8 b = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
+        u8 r = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
+        u8 g = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
+        u8 b = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
 
         ndata[pixel    ] = r;//((u8*)pdata)[nearest    ];
         ndata[pixel + 1] = g;//((u8*)pdata)[nearest + 1];
