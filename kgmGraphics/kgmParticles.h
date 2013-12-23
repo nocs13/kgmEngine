@@ -3,6 +3,7 @@
 #include "../kgmMath/kgmMath.h"
 #include "kgm4Color.h"
 
+class kgmMesh;
 class kgmMaterial;
 
 class kgmParticles: public kgmObject
@@ -11,21 +12,22 @@ class kgmParticles: public kgmObject
 public:
   enum TypeRender
   {
-    RTypeBillboard,
-    RTypeParticle,
-    RTypeMesh
+    RTypeBillboard,   //camera oriented
+    RTypePoint,       //3 intersect flat
+    RTypeMesh         //point has own mesh refference
   };
 
   struct Particle
   {
-    vec3   pos;   //current position
-    vec3   dir;   //move direction
-    color  col;   //color
-    float  speed; //speed of particle
-    float  scale; //particle geometry size
-    float  mass;  //mass of particle
-    u32    life;  //life time
-    u32    time;  //current time
+    vec3     pos;   //current position
+    vec3     dir;   //move direction
+    color    col;   //color
+    float    speed; //speed of particle
+    float    scale; //particle geometry size
+    float    mass;  //mass of particle
+    u32      life;  //life time
+    u32      time;  //current time
+    kgmMesh* mesh;  //ref mesh
   };
 
 public:

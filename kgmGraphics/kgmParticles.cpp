@@ -27,6 +27,7 @@ kgmParticles::kgmParticles()
   m_particles  = null;
   m_material   = null;
   m_typerender = RTypeBillboard;
+  //m_typerender = RTypePoint;
 }
 
 kgmParticles::~kgmParticles()

@@ -28,7 +28,7 @@ void main(void)
   ldir     = vec3(g_vLight.xyz - pos.xyz);
   lpos     = g_vLight.xyz;
   eye      = vec3(-pos.xyz);
-  eye      = g_vEye;
+  //eye      = g_vEye;
 
   gl_Position  = g_mProj * g_mView * pos;
   texcoord     = g_Texcoord;
@@ -53,22 +53,19 @@ void main( void )
   vec4 spec       = vec4(0.0);
 
   vec3 b = normalize(tnormal.xyz * 2.0 - 1.0);
-  vec3 n = normalize(normal);
+  vec3 n = normalize(normal + b);  //bump part
   vec3 l = normalize(ldir);
   vec3 e = normalize(eye);
 
-  float diffuse = max(dot(b, lpos), 1.0);
-  float shininess = 1;
+  float shininess = 30.0;
   float intensity = max(dot(n,l), 0.1);
 
-  diffuse = clamp(diffuse, 0.1, 0.5);
-
+  tspecular = vec4(1.0);
   //specular
   {
     vec3 h = normalize(l + e);
-    float intSpec = max(dot(h,n), 0.0);
-    //spec = specular * pow(intSpec, shininess);
-    spec = vec4(0) * pow(intSpec, shininess);
+    float kspec = max(dot(h, n), 0.0);
+    spec = tspecular * pow(kspec, shininess);
   }
 
   gl_FragColor = intensity * tcolor + spec;

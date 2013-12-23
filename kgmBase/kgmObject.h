@@ -68,7 +68,7 @@ public:
   }
 
   bool isType(kgmRuntime& o){
-  kgmRuntime* r = &runtime();
+    kgmRuntime* r = &runtime();
 
     while(r != 0){
       if(!strcmp(r->nClass, o.nClass))

@@ -9,6 +9,7 @@ uniform float  g_fTime;
 uniform float  g_fRandom;
 uniform float  g_fShine;
 
+uniform vec4   g_vLight;
 uniform vec4   g_vLights[12];
 uniform int    g_iLights;
 
@@ -23,6 +24,7 @@ varying vec3   eye;
 varying vec2   texcoord;
 varying float  shininess;
 
+varying vec4   light;
 varying vec4   lights[12];
 
 void main(void)
@@ -33,7 +35,9 @@ void main(void)
   normal   = normalize(g_Normal);
 
   shininess    = g_fShine;
-  eye          = vec3(-pos.xyz);
+  eye          = g_vEye;
+  light.xyz    = vec3(g_vLight.xyz - pos.xyz);
+  light.w      = g_vLight.w / length(light.xyz);
 
   for(int i = 0; i < g_iLights; i++)
   {
@@ -63,24 +67,25 @@ varying vec3      position;
 varying vec3      normal;
 varying vec3      eye;
 
+varying vec4      light;
 varying vec4      lights[12];
 
 
 void main( void )
 {
-  vec4 color     = texture2D(g_txColor,    texcoord);
-  vec4 tnormal   = texture2D(g_txNormal,   texcoord);
-  vec4 specular  = texture2D(g_txSpecular, texcoord);
+  vec4 tcolor     = texture2D(g_txColor,    texcoord);
+  vec4 tnormal    = texture2D(g_txNormal,   texcoord);
+  vec4 tspecular  = texture2D(g_txSpecular, texcoord);
+  vec4 spec       = vec4(0.0);
 
   vec3 b = normalize(tnormal.xyz * 2.0 - 1.0);
-  vec3 n = normalize(tnormal.xyz);
+  vec3 n = normalize(tnormal.xyz + normalize(normal));
   vec3 e = normalize(eye);
+  vec3 l = normalize(light.xyz);
 
 
-  float intensity = 0.0;
-  float kspec  = 0.0;
+  float intensity = light.w * max(dot(n,l), 0.1);
 
-  float I = clamp(10.0 * g_fRandom, 0.0, 11.0);
 
   for(int i = 0; i < g_iLights; i++)
   {
@@ -88,14 +93,17 @@ void main( void )
     float sh = dot(l, eye);
 
     intensity += (lights[i].w) * max(dot(normal,l), 0.01);
-    kspec     += sh * shininess;
-    //intensity += (1.0) * max(dot(normal,l), 0.01);
   }
 
-  kspec = clamp(kspec, 0.1, 1.0);
+
+  {
+    vec3 h = normalize(l + e);
+    float kspec = max(dot(h, n), 0.0);
+    spec = tspecular * pow(kspec, shininess * 100.0);
+  }
+
   vec4 fcolor = vec4(0,0,0,0);
-  fcolor.xyz  = intensity * color.xyz;
-  //fcolor.x   += specular.x;
-  fcolor.w    = color.w;
+  fcolor.xyz  = intensity * tcolor.xyz + spec.xyz;
+  fcolor.w     = tcolor.w;
   gl_FragColor = fcolor;
 }

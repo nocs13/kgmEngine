@@ -54,10 +54,12 @@ public:
 
   bool resample(int nwidth, int nheight)
   {
+    u8* pdata = (u8*)this->pdata;
+
     if(!pdata) return false;
 
     int cbpp = bpp / 8;
-    unsigned char* ndata = (unsigned char*)malloc(nwidth * nheight * cbpp);
+    u8* ndata = (u8*)malloc(nwidth * nheight * cbpp);
 
     double swidth =  (double)nwidth / (double)width;
     double sheight = (double)nheight / (double)height;
@@ -67,11 +69,16 @@ public:
       for(int cx = 0; cx < nwidth; cx++)
       {
         int pixel = (cy * (nwidth * cbpp)) + (cx * cbpp);
-        int nearestMatch =  (((int)(cy / sheight) * (width * cbpp)) + ((int)(cx / swidth) * cbpp) );
+        int nearest =  (((int)(cy / sheight) * (width * cbpp)) + ((int)(cx / swidth) * cbpp) );
+        u8 r = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
+        u8 g = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
+        u8 b = (pdata[nearest - 1] + pdata[nearest] + pdata[nearest + 1]) / 3;
 
-        ndata[pixel    ] = ((u8*)pdata)[nearestMatch    ];
-        ndata[pixel + 1] = ((u8*)pdata)[nearestMatch + 1];
-        ndata[pixel + 2] = ((u8*)pdata)[nearestMatch + 2];
+        ndata[pixel    ] = r;//((u8*)pdata)[nearest    ];
+        ndata[pixel + 1] = g;//((u8*)pdata)[nearest + 1];
+        ndata[pixel + 2] = b;//((u8*)pdata)[nearest + 2];
+
+        if(cbpp == 4)  ndata[pixel + 3] = ((u8*)pdata)[nearest + 3];
       }
     }
 
