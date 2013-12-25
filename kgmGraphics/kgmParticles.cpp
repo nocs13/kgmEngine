@@ -20,13 +20,14 @@ kgmParticles::kgmParticles()
 
   div_life  = 0.0f;
   div_speed = 0.0f;
+  div_location = 0.0f;
+  div_direction = 0.0f;
 
   st_size   = 0.1f;
   en_size   = 1.0f;
 
   m_particles  = null;
-  //m_typerender = RTypeBillboard;
-  m_typerender = RTypePoint;
+  m_typerender = RTypeBillboard;
 }
 
 kgmParticles::~kgmParticles()
@@ -37,12 +38,14 @@ kgmParticles::~kgmParticles()
 
 void kgmParticles::build(){
   int i = 0;
-  float ctime = kgmTime::getTicks();
 
   if(m_particles)
     delete [] m_particles;
 
   m_particles = new Particle[m_count];
+
+  if(div_life < 0) div_life = 0;
+  if(div_speed < 0) div_speed = 0;
 
   for(i = 0; i < m_count; i++)
     init(&m_particles[i]);
@@ -53,24 +56,23 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  float s = m_speed / (1 + rand() % 10);
-  float l = m_life  / (1 + rand() % 10);
-  float m = pow(-1.0, rand()%2) / (1 + rand() % 100);
+  srand (time(NULL));
+  float s = m_speed / (1 + rand() % m_count);
+  float l = m_life  / (1 + rand() % m_count);
 
-  pr->pos.x = volume.x * pow(-1.0, rand()%2) / (1 + rand() % 100);
-  pr->pos.y = volume.y * pow(-1.0, rand()%2) / (1 + rand() % 100);
-  pr->pos.z = volume.z * pow(-1.0, rand()%2) / (1 + rand() % 100);
-  pr->dir.x = direction.x * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->dir.y = direction.y * pow(-1.0, rand()%2) * (rand() % 100);
-  pr->dir.z = direction.z * pow( 1.0, rand()%2) * (rand() % 100);
+  pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->dir   = direction + direction * (div_direction / (1 + rand() % m_count));
   pr->dir.normalize();
 
-  pr->speed = m_speed - div_speed * s;//m_speed / (1 + rand() % 99);
-  pr->life  = m_life  - div_life  * l;//m_life  / (1 + rand() % 99);
-  pr->time  = 0;
+  pr->speed = m_speed - div_speed * s;
+  pr->life  = m_life  - div_life  * l;
   pr->col   = m_color;
   pr->scale = st_size;
-  pr->mass = 0;
+  pr->time  = 0;
+  pr->mass  = 0;
+  pr->mesh  = null;
 }
 
 void kgmParticles::update(u32 t)
@@ -79,10 +81,10 @@ void kgmParticles::update(u32 t)
 
   for(i = m_count; i > 0; i--)
   {
-    Particle*  pr =  &m_particles[i - 1];
+    Particle* pr = &m_particles[i - 1];
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
-    pr->pos.y = 0;
+    //pr->pos.y = 0;
     pr->time += t;
 
     if(st_size != en_size)
