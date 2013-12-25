@@ -26,7 +26,7 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
-kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityMedium;
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shedowQuality  = GraphicsQualityLow;
 
 
@@ -569,23 +569,23 @@ void kgmGraphics::render(){
     lighting = false;
   }
 
+  //draw particles
   if(m_has_shaders)
     render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
-    kgmParticles* ptcl = vis_particles[i]->getParticles();
+    kgmVisual* vis = vis_particles[i];
 
-    setWorldMatrix(vis_particles[i]->m_transform);
+    setWorldMatrix(vis->m_transform);
 
-    if(ptcl)
+    if(vis->getParticles())
     {
-      render(ptcl->m_material);
+      render(vis->getMaterial());
       render(shaders[kgmMaterial::ShaderBase]);
-      render(vis_particles[i]->getParticles());
+      render(vis->getParticles());
       render((kgmShader*)null);
       render((kgmMaterial*)null);
-      vis_particles[i]->update();
     }
   }
 
@@ -661,6 +661,7 @@ void kgmGraphics::render(){
     render((kgmShader*)shaders[kgmMaterial_ShaderGui]);
   }
 
+  //draw sprites
   for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
   {
     render((*i)->getSprite());
@@ -837,7 +838,7 @@ void kgmGraphics::render(kgmParticles* particles)
   if(!particles)
     return;
 
-  mtx4    mtr = g_mtx_view;//g_mtx_world * g_mtx_view;
+  mtx4    mtr = g_mtx_view;
   vec3    rv, uv;
   float2  dim(1, 1);
 
@@ -890,32 +891,34 @@ void kgmGraphics::render(kgmParticles* particles)
   {
     PrPoint* parts = new PrPoint[particles->m_count * 18];
 
-    for (s32 i = 0; i < particles->m_count; i++)
+    for (s32 i = 0; i < particles->m_count; i+=18)
     {
+      u32     col   = particles->m_particles[i].col.color;
       vec3    pos   = particles->m_particles[i].pos;
       float   scale = particles->m_particles[i].scale;
-      parts[i + 0]  = {pos + vec3(-scale,  scale, 0), 0xffffffff, vec2(0, 0)};
-      parts[i + 1]  = {pos + vec3(-scale, -scale, 0), 0xffffffff, vec2(0, 1)};
-      parts[i + 2]  = {pos + vec3(scale, scale, 0),   0xffffffff, vec2(1, 0)};
-      parts[i + 3]  = {pos + vec3(scale, scale, 0),   0xffffffff, vec2(1, 0)};
-      parts[i + 4]  = {pos + vec3(-scale, -scale, 0), 0xffffffff, vec2(0, 1)};
-      parts[i + 5]  = {pos + vec3(scale, -scale, 0),  0xffffffff, vec2(1, 1)};
-      parts[i + 6]  = {pos + vec3(-scale,  0, scale), 0xffffffff, vec2(0, 0)};
-      parts[i + 7]  = {pos + vec3(-scale, 0, -scale), 0xffffffff, vec2(0, 1)};
-      parts[i + 8]  = {pos + vec3(scale, 0, scale),   0xffffffff, vec2(1, 0)};
-      parts[i + 9]  = {pos + vec3(scale, 0, scale),   0xffffffff, vec2(1, 0)};
-      parts[i + 10] = {pos + vec3(-scale, 0, -scale), 0xffffffff, vec2(0, 1)};
-      parts[i + 11] = {pos + vec3(scale, 0, -scale),  0xffffffff, vec2(1, 1)};
-      parts[i + 12] = {pos + vec3(0, -scale,  scale), 0xffffffff, vec2(0, 0)};
-      parts[i + 13] = {pos + vec3(0, -scale, -scale), 0xffffffff, vec2(0, 1)};
-      parts[i + 14] = {pos + vec3(0, scale, scale),   0xffffffff, vec2(1, 0)};
-      parts[i + 15] = {pos + vec3(0, scale, scale),   0xffffffff, vec2(1, 0)};
-      parts[i + 16] = {pos + vec3(0, -scale, -scale), 0xffffffff, vec2(0, 1)};
-      parts[i + 17] = {pos + vec3(0, scale, -scale),  0xffffffff, vec2(1, 1)};
+      parts[i + 0]  = {pos + vec3(-scale,  scale, 0), col, vec2(0, 0)};
+      parts[i + 1]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
+      parts[i + 2]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
+      parts[i + 3]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
+      parts[i + 4]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
+      parts[i + 5]  = {pos + vec3(scale, -scale, 0),  col, vec2(1, 1)};
+      parts[i + 6]  = {pos + vec3(-scale,  0, scale), col, vec2(0, 0)};
+      parts[i + 7]  = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
+      parts[i + 8]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
+      parts[i + 9]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
+      parts[i + 10] = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
+      parts[i + 11] = {pos + vec3(scale, 0, -scale),  col, vec2(1, 1)};
+      parts[i + 12] = {pos + vec3(0, -scale,  scale), col, vec2(0, 0)};
+      parts[i + 13] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
+      parts[i + 14] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
+      parts[i + 15] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
+      parts[i + 16] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
+      parts[i + 17] = {pos + vec3(0, scale, -scale),  col, vec2(1, 1)};
     }
 
+    //gc->gcCull(gc_none);
     gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
-               sizeof(PrPoint), 18 * particles->m_count, parts, 0, 0, 0);
+                 sizeof(PrPoint), 18 * particles->m_count, parts, 0, 0, 0);
     delete [] parts;
   }
   //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,

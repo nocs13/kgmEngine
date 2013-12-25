@@ -25,18 +25,14 @@ kgmParticles::kgmParticles()
   en_size   = 1.0f;
 
   m_particles  = null;
-  m_material   = null;
-  m_typerender = RTypeBillboard;
-  //m_typerender = RTypePoint;
+  //m_typerender = RTypeBillboard;
+  m_typerender = RTypePoint;
 }
 
 kgmParticles::~kgmParticles()
 {
   if(m_particles)
     delete [] m_particles;
-
-  if(m_material)
-    m_material->release();
 }
 
 void kgmParticles::build(){
@@ -108,15 +104,4 @@ void kgmParticles::update(u32 t)
         init(pr);
     }
   }
-}
-
-void kgmParticles::set(kgmMaterial *m)
-{
-  if(m_material)
-    m_material->release();
-
-  m_material = m;
-
-  if(m)
-    m->increment();
 }

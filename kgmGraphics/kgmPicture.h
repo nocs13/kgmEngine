@@ -6,8 +6,8 @@
 class kgmPicture: public kgmResource
 {
 public:
-  u32 width, height, bpp, frames;
-  void*        pdata;
+  u32  width, height, bpp, frames;
+  u8*  pdata;
 public:
   kgmPicture()
   {
@@ -54,8 +54,6 @@ public:
 
   bool resample(int nwidth, int nheight)
   {
-    u8* pdata = (u8*)this->pdata;
-
     if(!pdata) return false;
 
     int cbpp = bpp / 8;
@@ -70,13 +68,16 @@ public:
       {
         int pixel = (cy * (nwidth * cbpp)) + (cx * cbpp);
         int nearest =  (((int)(cy / sheight) * (width * cbpp)) + ((int)(cx / swidth) * cbpp) );
-        u8 r = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
+        /*u8 r = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
         u8 g = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
         u8 b = (pdata[nearest - cbpp] + pdata[nearest] + pdata[nearest + cbpp]) / 3;
 
-        ndata[pixel    ] = r;//((u8*)pdata)[nearest    ];
-        ndata[pixel + 1] = g;//((u8*)pdata)[nearest + 1];
-        ndata[pixel + 2] = b;//((u8*)pdata)[nearest + 2];
+        ndata[pixel    ] = r;
+        ndata[pixel + 1] = g;
+        ndata[pixel + 2] = b;*/
+        ndata[pixel    ] = ((u8*)pdata)[nearest    ];
+        ndata[pixel + 1] = ((u8*)pdata)[nearest + 1];
+        ndata[pixel + 2] = ((u8*)pdata)[nearest + 2];
 
         if(cbpp == 4)  ndata[pixel + 3] = ((u8*)pdata)[nearest + 3];
       }

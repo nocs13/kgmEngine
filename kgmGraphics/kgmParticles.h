@@ -59,7 +59,6 @@ public:
   u32        time_start;
   u32        time_update;
 
-  kgmMaterial* m_material;
   TypeRender   m_typerender;
 public:
   kgmParticles();
@@ -68,7 +67,6 @@ public:
   void build();
   void init(Particle*);
   void update(u32 t);
-  void set(kgmMaterial*);
 };
 
 

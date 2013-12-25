@@ -375,7 +375,7 @@ public:
     particles->m_life    = 2000;
     particles->div_life  = 1.0;
     particles->build();
-    particles->set(material);
+    m_visual->set(material);
     m_visual->set(particles);
   }
 
@@ -426,7 +426,7 @@ public:
     particles->m_life  = 5000;
     particles->div_speed = .5;
     particles->build();
-    particles->set(material);
+    m_visual->set(material);
     m_visual->set(particles);
   }
 
@@ -486,7 +486,7 @@ public:
     particles->div_life = 1.0;
 
     particles->build();
-    particles->set(material);
+    m_visual->set(material);
     m_visual->set(particles);
 
     setPosition(pos);
