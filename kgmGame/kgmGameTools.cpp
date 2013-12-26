@@ -9,6 +9,7 @@
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmPicture.h"
 #include "../kgmGraphics/kgmGraphics.h"
+#include "../kgmGraphics/kgmParticles.h"
 
 static char str_buf[1024];
 
@@ -1224,4 +1225,9 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<char>& m){
   snd->m_sound = s;
 
   return snd;
+}
+
+kgmParticles* kgmGameTools::genParticles(kgmXml &x)
+{
+  return null;
 }

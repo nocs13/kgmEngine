@@ -51,10 +51,10 @@ protected:
   char           m_input[gbtn_end];
   char           m_keymap[150];
 
-  bool       m_gamemode;
+  bool           m_gamemode;
 public:
-  int		    m_state;	//game state
-  bool		    m_result;	//game over result
+  int            m_state;	//game state
+  bool           m_result;	//game over result
 
   kgmGameLogic*         m_logic;
   kgmGameGraphics*      m_render;
@@ -126,8 +126,8 @@ public:
 
   // Game Resources
   kgmTexture*    getTexture(char*);
-  kgmShader*	    getShader(char*);
-  kgmMesh*	      getMesh(char*);
+  kgmShader*     getShader(char*);
+  kgmMesh*       getMesh(char*);
   kgmActor*      getActor(kgmString);
   kgmAnimation*  getAnimation(char*);
 

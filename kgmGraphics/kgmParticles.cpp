@@ -46,6 +46,8 @@ void kgmParticles::build(){
 
   if(div_life < 0) div_life = 0;
   if(div_speed < 0) div_speed = 0;
+  if(div_life > 1.0) div_life = 1.0;
+  if(div_speed > 1.0) div_speed = 1.0;
 
   for(i = 0; i < m_count; i++)
     init(&m_particles[i]);
@@ -56,9 +58,11 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  srand (time(NULL));
-  float s = m_speed / (1 + rand() % m_count);
-  float l = m_life  / (1 + rand() % m_count);
+  //srand (time(NULL));
+  float s = m_speed / (1 + rand() % (10 * m_count));
+  float l = m_life  / (1 + rand() % (10 * m_count));
+
+  //if(l > m_life) l = m_life;
 
   pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
@@ -73,6 +77,9 @@ void kgmParticles::init(Particle* pr)
   pr->time  = 0;
   pr->mass  = 0;
   pr->mesh  = null;
+
+  if(pr->life < 0) pr->life = 0;
+  if(pr->speed < 0) pr->speed = 0.0f;
 }
 
 void kgmParticles::update(u32 t)
@@ -84,7 +91,6 @@ void kgmParticles::update(u32 t)
     Particle* pr = &m_particles[i - 1];
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
-    //pr->pos.y = 0;
     pr->time += t;
 
     if(st_size != en_size)

@@ -920,8 +920,8 @@ void kgmGraphics::render(kgmParticles* particles)
     }
 
     gc->gcCull(gc_none);
-    gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
-                 sizeof(PrPoint), 18 * particles->m_count, parts, 0, 0, 0);
+    gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0, sizeof(PrPoint), 18 * particles->m_count, parts, 0, 0, 0);
+    //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0, sizeof(PrPoint), 18, &parts[36], 0, 0, 0);
     delete [] parts;
   }
   //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,

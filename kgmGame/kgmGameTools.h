@@ -19,6 +19,7 @@
 class kgmPicture;
 class kgmActor;
 class kgmGameMap;
+class kgmParticles;
 
 class kgmGameTools{
 public:
@@ -60,4 +61,7 @@ public:
 
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<char>& m);
+
+ //PARTICLES
+ static kgmParticles* genParticles(kgmXml& x);
 };
