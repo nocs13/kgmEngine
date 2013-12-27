@@ -1,5 +1,5 @@
 #include "kgmTexture.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 
 KGMOBJECT_IMPLEMENT(kgmTexture, kgmResource);
 
@@ -10,7 +10,7 @@ kgmTexture::kgmTexture(){
  m_gc = 0;
 }
 
-kgmTexture::kgmTexture(kgmIGraphics* gc, u32 type){
+kgmTexture::kgmTexture(kgmIGC* gc, u32 type){
  m_texture = 0;
  m_type = type;
  m_flags = 0;

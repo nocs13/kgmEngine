@@ -24,7 +24,7 @@
 	"..\kgmInterface\kgmIAI.h"\
 	"..\kgmInterface\kgmIAudio.h"\
 	"..\kgmInterface\kgmIGame.h"\
-	"..\kgmInterface\kgmIGraphics.h"\
+	"..\kgmInterface\kgmIGC.h"\
 	"..\kgmInterface\kgmInterface.h"\
 	"..\kgmInterface\kgmIPhysics.h"\
 	"..\kgmInterface\kgmISpawner.h"\
@@ -101,7 +101,7 @@
 	"..\kgmInterface\kgmIAI.h"\
 	"..\kgmInterface\kgmIAudio.h"\
 	"..\kgmInterface\kgmIGame.h"\
-	"..\kgmInterface\kgmIGraphics.h"\
+	"..\kgmInterface\kgmIGC.h"\
 	"..\kgmInterface\kgmInterface.h"\
 	"..\kgmInterface\kgmIPhysics.h"\
 	"..\kgmInterface\kgmISpawner.h"\

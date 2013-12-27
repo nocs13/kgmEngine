@@ -4,7 +4,7 @@
 #include "../kgmBase/kgmTab.h"
 #include "../kgmMath/kgmMath.h"
 
-class kgmIGraphics;
+class kgmIGC;
 
 class kgmShader: public kgmResource{
  KGM_OBJECT(kgmShader)
@@ -31,14 +31,14 @@ public:
     MAP_SPECULAR   = 1 << 2,
   };
 protected:
- kgmIGraphics*  m_gc;
+ kgmIGC*  m_gc;
  u8             m_maps;
 public:
  u32            m_input;
  void*          m_shader;
 
 public:
- kgmShader(kgmIGraphics* g = 0);
+ kgmShader(kgmIGC* g = 0);
  ~kgmShader();
 
  void start();
@@ -53,5 +53,5 @@ public:
  void set(const char*, int,    int count = 1);
  void attr(int, const char*);
 
- kgmIGraphics* gc(){ return m_gc; }
+ kgmIGC* gc(){ return m_gc; }
 };

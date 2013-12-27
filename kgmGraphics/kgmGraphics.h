@@ -1,6 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmInterface.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmTab.h"
 #include "../kgmSystem/kgmWindow.h"
@@ -24,12 +24,14 @@
 #include "kgmVisual.h"
 #include "kgmMaterial.h"
 
+#include "kgmIScene.h"
+
 #ifdef TEST
 #include "../kgmPhysics/kgmBody.h";
 #endif
 
 
-class kgmGraphics : public kgmObject
+class kgmGraphics: public kgmObject
 {
   KGM_OBJECT(kgmGraphics);
 public:
@@ -53,7 +55,7 @@ public:
   };
 
 private:
-  kgmIGraphics* gc;
+  kgmIGC* gc;
   kgmIResources* rc;
 
   kgmFont* font;
@@ -61,11 +63,10 @@ private:
   kgmCamera   m_camera;
 
   kgmList<Mesh>         m_meshes;
-  //kgmTab<kgmMesh*, kgmMaterial*> m_meshes;
   kgmList<kgmMaterial*> m_materials;
   kgmList<kgmLight*>    m_lights;
   kgmList<kgmVisual*>   m_visuals;
-  kgmList<kgmGui*>      m_guis, m_tguis;
+  kgmList<kgmGui*>      m_guis;
 
 #ifdef TEST
   kgmList<kgmBody*>     m_bodies;
@@ -91,7 +92,7 @@ private:
 
   uint32 m_max_faces;
 public:
-  kgmGraphics(kgmIGraphics*, kgmIResources*);
+  kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();
 
   void clear();
@@ -200,32 +201,13 @@ public:
     };*/
   }
 
-  void add(kgmGui* gui, bool tmp = false){
+  void add(kgmGui* gui)
+  {
     if(gui)
     {
       gui->increment();
 
-      if(tmp)
-        m_tguis.add(gui);
-      else
-        m_guis.add(gui);
-    }
-  }
-
-  void eraze(kgmGui* gui)
-  {
-    if(!gui)
-      return;
-
-    for(s32 i = m_guis.size(); i > 0; i--)
-    {
-      if(m_guis[i - 1] == gui)
-      {
-        m_guis.erase(i - 1);
-        gui->release();
-
-        break;
-      }
+      m_guis.add(gui);
     }
   }
 

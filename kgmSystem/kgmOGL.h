@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 #include "kgmWindow.h"
 
 #ifdef WIN32
@@ -87,7 +87,7 @@ typedef u32 GLu32;
 class kgmOGLWindow;
 
 //////// OPENGL GRAPHYCAL CONTEXT
-class kgmOGL: public kgmIGraphics{
+class kgmOGL: public kgmIGC{
 public:
   //VERTEX & INDEX BUFFER
   struct VBO{

@@ -6,7 +6,7 @@ class kgmIApp;
 class kgmIAI;
 class kgmIAudio;
 class kgmIVideo;
-class kgmIGraphics;
+class kgmIGC;
 class kgmIInput;
 class kgmIPhysics;
 

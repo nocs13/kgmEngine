@@ -28,14 +28,14 @@
 class kgmGameBase: public kgmOGLWindow, public kgmIGame
 {
 public:
-  static kgmGameBase*	m_game;
+  static kgmGameBase* m_game;
 
 protected:
-  kgmIVideo*		      m_video;
-  kgmGameAudio*		  m_audio;
-  kgmIGraphics*		  m_graphics;
-  kgmGamePhysics*	  m_physics;
-  kgmGameResources*	m_resources;
+//  kgmIGC*            m_gc;
+  kgmIVideo*         m_video;
+  kgmGameAudio*      m_audio;
+  kgmGamePhysics*    m_physics;
+  kgmGameResources*  m_resources;
   kgmGameSettings*   m_settings;
 
   kgmSystem*         m_system;
@@ -66,7 +66,7 @@ public:
   kgmGameBase(kgmString &conf);
   virtual ~kgmGameBase();
 
-  kgmIGraphics*      getGraphics();
+  kgmIGC*            getGC();
   kgmIPhysics*       getPhysics();
   kgmISpawner*       getSpawner();
   kgmIAudio*         getAudio();
@@ -92,7 +92,7 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
   void onResize(int w, int h);
-  void onPaint(kgmIGraphics*);
+  void onPaint(kgmIGC*);
   void onAction(kgmGui* e, u32 arg);
 
   void onInputAction(int action, int argument);
@@ -162,24 +162,8 @@ public:
     }
   }
 
-  void guiRemove(kgmGui* g)
+  kgmGraphics* getRender()
   {
-    if(m_render)
-      m_render->eraze(g);
-
-    for(int i = m_guis.size(); i > 0; i--)
-    {
-      if(g == m_guis[i - 1])
-      {
-        m_guis.erase(i - 1);
-        g->release();
-
-        break;
-      }
-    }
-  }
-
-  kgmGraphics* getRender(){
-    return 0; //m_render;
+    return m_render;
   }
 };

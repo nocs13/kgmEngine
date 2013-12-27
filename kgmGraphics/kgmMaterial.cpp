@@ -1,6 +1,6 @@
 #include "kgmMaterial.h"
 #include "kgmTexture.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 
 KGMOBJECT_IMPLEMENT(kgmMaterial, kgmResource);
 

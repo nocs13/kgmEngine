@@ -3,7 +3,7 @@
 #include "kgm4Color.h"
 #include "kgmShader.h"
 
-class kgmIGraphics;
+class kgmIGC;
 class kgmTexture;
 class kgmShader;
 
@@ -12,7 +12,7 @@ class kgmShader;
 class kgmMaterial: public kgmResource{
   KGM_OBJECT(kgmMaterial);
 protected:
-  kgmIGraphics*  m_gc;
+  kgmIGC*  m_gc;
 
 public:
   enum Flags

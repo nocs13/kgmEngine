@@ -21,7 +21,7 @@ void kgmGuiScroll::setRange(u32 r){
   m_position = 0;
 }
 
-/*void kgmGuiScroll::onPaint(kgmIGraphics* gc){
+/*void kgmGuiScroll::onPaint(kgmIGC* gc){
   if(!m_view)
    return;
   Rect rect = Rect(m_rect.x, m_rect.y + m_position * m_dimension.y,

@@ -1,6 +1,6 @@
 #include "kgmGui.h"
 #include "kgmFont.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 #include "kgmIGuiDraw.h"
 
 KGMOBJECT_IMPLEMENT(kgmGui, kgmEvent)
@@ -134,14 +134,6 @@ void kgmGui::getRect(u32& x, u32& y, u32& w, u32& h, bool abs){
     w = m_rect.w;
     h = m_rect.h;
   }
-}
-
-void kgmGui::setText(kgmString s){
-  m_text = s;
-}
-
-kgmString kgmGui::getText(){
-  return m_text;
 }
 
 kgmGui* kgmGui::getById(u32 id)

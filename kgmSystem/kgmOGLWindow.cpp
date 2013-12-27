@@ -255,7 +255,7 @@ void kgmOGLWindow::onClose()
   kgmWindow::onClose();
 }
 
-kgmIGraphics* kgmOGLWindow::getGC(){
+kgmIGC* kgmOGLWindow::getGC(){
   return m_gc;
 }
 

@@ -1,10 +1,10 @@
 #include "kgmShader.h"
 #include "kgmTexture.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 
 KGMOBJECT_IMPLEMENT(kgmShader, kgmResource);
 
-kgmShader::kgmShader(kgmIGraphics* g)
+kgmShader::kgmShader(kgmIGC* g)
 {
   m_gc     = g;
   m_shader = 0;

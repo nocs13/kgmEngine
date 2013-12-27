@@ -68,11 +68,12 @@ kgmGameBase::kgmGameBase()
   kgmString sdata;
   kgmString spath;
 
-  m_resources = 0;
-  m_graphics = 0;
-  m_physics = 0;
-  m_system = 0;
-  m_audio = 0;
+  m_resources = null;
+  m_physics = null;
+  m_render = null;
+  m_system = null;
+  m_audio = null;
+//  m_gc = null;
 
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
@@ -93,15 +94,16 @@ kgmGameBase::kgmGameBase()
   initResources();
 
   log("open graphics...");
-  m_graphics = getGC();
-  if(!m_graphics)
+  m_gc = getGC();
+
+  if(!m_gc)
     return;
 
   log("init physics...");
   initPhysics();
 
   log("open renderer...");
-  m_render = new kgmGameGraphics(m_graphics, m_resources);
+  m_render = new kgmGameGraphics(m_gc, m_resources);
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
@@ -155,8 +157,8 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 kgmGameBase::~kgmGameBase(){
 }
 
-kgmIGraphics* kgmGameBase::getGraphics(){
-  return m_game->m_graphics;
+kgmIGC* kgmGameBase::getGC(){
+  return m_game->m_gc;
 }
 
 kgmIPhysics* kgmGameBase::getPhysics(){
@@ -284,7 +286,7 @@ void kgmGameBase::onIdle(){
 #endif
 }
 
-void kgmGameBase::onPaint(kgmIGraphics* gc){
+void kgmGameBase::onPaint(kgmIGC* gc){
 }
 
 void kgmGameBase::onClose()

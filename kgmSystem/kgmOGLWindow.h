@@ -51,5 +51,5 @@ public:
  virtual ~kgmOGLWindow();
  
  void onClose();
- kgmIGraphics* getGC();
+ kgmIGC* getGC();
 };

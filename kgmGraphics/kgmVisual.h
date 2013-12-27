@@ -3,7 +3,7 @@
 #include "../kgmBase/kgmBase.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmTime.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 
 #include "kgmMesh.h"
 #include "kgmText.h"

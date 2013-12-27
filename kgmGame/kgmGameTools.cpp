@@ -3,7 +3,7 @@
 
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmMemory.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmMath/kgmRect2d.h"
 #include "../kgmMedia/kgmSound.h"
@@ -21,7 +21,7 @@ kgmGameTools::~kgmGameTools(){
 
 //*************** DRAWING ***************
 /*
-void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex){
+void kgmGameTools::gcDrawRect(kgmIGC* gc, int x, int y, int w, int h, u32 col, void* tex){
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
   V v[4];
 
@@ -39,7 +39,7 @@ void kgmGameTools::gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 
     gc->gcSetTexture(0, 0);
 }
 
-void kgmGameTools::gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
+void kgmGameTools::gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
   typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
   V v[4];
   kgmRect2d<int> clip(x, y, x + w, y + h);
@@ -247,7 +247,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<char>& m)
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
 
-kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
+kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<char>& m)
 {
   kgmPicture* pic = genPicture(m);
 
@@ -311,7 +311,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGraphics* gc, kgmMemory<char>& m)
   return tex;
 }
 
-kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m)
+kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m)
 {
   kgmPicture* pic = genPicture(m);
 
@@ -351,7 +351,7 @@ kgmFont* kgmGameTools::genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgm
 }
 
 // SHADER
-kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
+kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
   char* mem_vsh = 0;
   char* mem_fsh = 0;
 
@@ -389,7 +389,7 @@ kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmString& s){
   return shader;
 }
 
-kgmShader* kgmGameTools::genShader(kgmIGraphics* gc, kgmXml& xml){
+kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmXml& xml){
   char* mem_vsh = 0;
   char* mem_fsh = 0;
 

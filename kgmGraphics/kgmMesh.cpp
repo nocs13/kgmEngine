@@ -1,7 +1,7 @@
 #include "kgmMesh.h"
 #include "../kgmMath/kgmMath.h"
 #include "../kgmBase/kgmMemory.h"
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 
 KGMOBJECT_IMPLEMENT(kgmMesh, kgmResource);
 

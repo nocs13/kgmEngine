@@ -1,5 +1,5 @@
 #pragma once
-#include "../kgmBase/kgmIGraphics.h"
+#include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmXml.h"
@@ -26,22 +26,22 @@ public:
  kgmGameTools();
  virtual ~kgmGameTools();
 //  DRAWING 
-// static void gcDrawRect(kgmIGraphics* gc, int x, int y, int w, int h, u32 col, void* tex);
-// static void gcDrawText(kgmIGraphics* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
+// static void gcDrawRect(kgmIGC* gc, int x, int y, int w, int h, u32 col, void* tex);
+// static void gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
 
 //  PICTURE & TEXTURE & FONT & STYLE
  static kgmPicture*   genPicture(kgmMemory<char>& m);
  static kgmPicture*   genPictureFromBmp(kgmMemory<char>& m);
  static kgmPicture*   genPictureFromTga(kgmMemory<char>& m);
- static kgmTexture*   genTexture(kgmIGraphics* gc, kgmMemory<char>& m);
- static kgmFont*      genFont(kgmIGraphics* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m);
+ static kgmTexture*   genTexture(kgmIGC* gc, kgmMemory<char>& m);
+ static kgmFont*      genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<char>& m);
  static kgmGuiStyle*  genGuiStyle(kgmIResources* rc, kgmString id);
 
 // SHADER & MATERIAL
  static kgmMaterial*  genMaterial(kgmMemory<char>& m);
  static kgmMaterial*  genMaterial(kgmXml& x);
- static kgmShader*    genShader(kgmIGraphics* gc, kgmString& s);
- static kgmShader*    genShader(kgmIGraphics* gc, kgmXml& s);
+ static kgmShader*    genShader(kgmIGC* gc, kgmString& s);
+ static kgmShader*    genShader(kgmIGC* gc, kgmXml& s);
 
 //////////// SKELETON
  static kgmSkeleton*  genSkeleton(kgmMemory<char>& m);

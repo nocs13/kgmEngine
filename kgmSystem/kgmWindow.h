@@ -95,7 +95,7 @@ public:
   void   setMsAbsolute(bool s){ m_msAbs = s; }
 
 
-  virtual kgmIGraphics* getGC();
+  virtual kgmIGC* getGC();
 
 #ifdef WIN32
   static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);

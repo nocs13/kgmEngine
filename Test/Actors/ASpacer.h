@@ -48,7 +48,7 @@ public:
 
   virtual ~ASpacer()
   {
-    ((kgmGameBase*)game)->guiRemove(gui);
+    gui->erase();
     gui->release();
   }
 

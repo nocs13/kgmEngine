@@ -9,7 +9,7 @@
 
 KGMOBJECT_IMPLEMENT(kgmGameGraphics, kgmGraphics);
 
-kgmGameGraphics::kgmGameGraphics(kgmIGraphics *g, kgmIResources* r)
+kgmGameGraphics::kgmGameGraphics(kgmIGC *g, kgmIResources* r)
   :kgmGraphics(g, r)
 {
 }

@@ -2,7 +2,7 @@
 #include "../kgmMath/kgmMath.h"
 #include "../kgmBase/kgmResource.h"
 
-class kgmIGraphics;
+class kgmIGC;
 
 class kgmTexture: public kgmResource{
  KGM_OBJECT(kgmTexture)
@@ -49,7 +49,7 @@ public:
  };
 
 protected:
- kgmIGraphics* m_gc;
+ kgmIGC* m_gc;
 
 public:
  void* m_texture;
@@ -87,7 +87,7 @@ public:
 
 public:
  kgmTexture();
- kgmTexture(kgmIGraphics*, u32 type);
+ kgmTexture(kgmIGC*, u32 type);
  ~kgmTexture();
 
  void setFlags(u32 f);

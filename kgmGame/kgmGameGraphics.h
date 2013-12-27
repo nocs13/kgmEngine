@@ -17,6 +17,6 @@ class kgmGameGraphics: public kgmGraphics
   KGM_OBJECT(kgmGameGraphics);
 
 public:
-  kgmGameGraphics(kgmIGraphics*, kgmIResources*);
+  kgmGameGraphics(kgmIGC*, kgmIResources*);
   ~kgmGameGraphics();
 };

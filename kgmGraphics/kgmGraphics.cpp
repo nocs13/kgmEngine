@@ -80,7 +80,7 @@ kgmMaterial  g_def_material;
 #define    kgmMaterial_ShaderGui 100
 #define    kgmMaterial_ShaderLights 101
 
-kgmGraphics::kgmGraphics(kgmIGraphics *g, kgmIResources* r){
+kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
   gc = g;
   rc = r;
 

@@ -909,7 +909,7 @@ void kgmWindow::onClose()
   m_loop = 0;
 }
 
-kgmIGraphics* kgmWindow::getGC()
+kgmIGC* kgmWindow::getGC()
 {
   return 0;
 }

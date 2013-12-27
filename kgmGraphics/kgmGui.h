@@ -56,8 +56,7 @@ protected:
     bool scale;
   };
   
-public:
-
+  bool       m_erase;
 public:
   typedef    kgmList<kgmGui*> Guis;
   Guis       m_childs;
@@ -100,17 +99,20 @@ public:
   void getRect(Rect&, bool abs = false);
   void getRect(u32&, u32&, u32&, u32&, bool abs = false);
 
-  void         setText(kgmString);
-  kgmString    getText();
+  void         erase()   { m_erase = true; }
+  bool         isErased(){ return m_erase; }
 
-  void         setSid(kgmString  sid){ this->m_sid = sid; };
-  kgmString    getSid(){ return this->m_sid; };
+  void         setText(kgmString s) { m_text = s;    }
+  kgmString    getText()            { return m_text; }
+
+  void         setSid(kgmString  sid){ m_sid = sid;  }
+  kgmString    getSid()              { return m_sid; }
 
   kgmGui*      getById(u32 id);
   kgmGui*      getBySid(kgmString sid);
 
-  void         setXdata(void* x){ m_xdata = x; }
-  void*        getXdata(){ return m_xdata; }
+  void         setXdata(void* x){ m_xdata = x;    }
+  void*        getXdata()       { return m_xdata; }
 
   void         setAlpha(bool  a) { m_hasAlpha = a; }
   void         setColor(Color c) { m_color = c;    }
@@ -123,20 +125,27 @@ public:
   virtual void onIdle();
 
 public: //static
-  Rect toAbsolute(Rect rect){
+  Rect toAbsolute(Rect rect)
+  {
     Point pt = toAbsolute (Point(rect.x, rect.y));
+
     return Rect(pt.x, pt.y, rect.w, rect.h);
   }
 
-  Point toAbsolute(Point pt){
+  Point toAbsolute(Point pt)
+  {
     kgmGui* parent = m_parent;
-    while(parent){
+
+    while(parent)
+    {
       pt.x += parent->m_rect.x;
       pt.y += parent->m_rect.y;
       parent = parent->m_parent;
     }
+
     return pt;
   }
+
 protected:
   virtual void onMsWheel(int k, int x, int y, int z);
   virtual void onMsMove(int k, int x, int y);
@@ -160,8 +169,8 @@ protected:
   u32           getId(){ return this->m_id; };
 
   //*************** DRAWING ***************
-  //void gcDrawRect(kgmIGraphics* gc, Rect rc, u32 col, void* tex);
-  //void gcDrawText(kgmIGraphics* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, Rect clip, kgmString& text);
+  //void gcDrawRect(kgmIGC* gc, Rect rc, u32 col, void* tex);
+  //void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, Rect clip, kgmString& text);
 };
 
 

@@ -22,7 +22,7 @@ void kgmGuiButton::onClick(){
     m_parent->onAction(this, 0);
 }
 
-/*void kgmGuiButton::onPaint(kgmIGraphics* gc){
+/*void kgmGuiButton::onPaint(kgmIGC* gc){
   u32 fwidth = m_rect.w / 15;
   u32 fheight = m_rect.h / 2; 
   u32 tlen = m_text.length();
