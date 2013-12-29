@@ -253,7 +253,8 @@ void kgmGameBase::onIdle(){
   // if(fps > 60)
   //  return;
 
-  switch(m_state){
+  switch(m_state)
+  {
   case State_None:
     break;
   case State_Load:
@@ -279,6 +280,17 @@ void kgmGameBase::onIdle(){
 
   if(m_render)
     m_render->render();
+
+  for(int i = m_guis.size(); i > 0; i--)
+  {
+    kgmGui* gui = m_guis[i - 1];
+
+    if(gui->erased())
+    {
+      gui->release();
+      m_guis.erase(i - 1);
+    }
+  }
 
 #ifdef TEST
   kgmObject::listObjects();
@@ -418,9 +430,12 @@ void kgmGameBase::onResize(int w, int h){
 void kgmGameBase::onEvent(kgmEvent::Event* e){
   kgmWindow::onEvent(e);
 
-  for(int i = 0; i < m_guis.size(); i++)
+  for(int i = m_guis.size(); i > 0; i--)
   {
-    m_guis[i]->onEvent(e);
+    kgmGui* gui = m_guis[i - 1];
+
+    if(!gui->erased())
+      gui->onEvent(e);
   }
 }
 

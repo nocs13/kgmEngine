@@ -27,8 +27,7 @@ void main(void)
   normal   = normalize(vec3(g_mTran * vec4(g_Normal, 1.0)));
   ldir     = vec3(g_vLight.xyz - pos.xyz);
   lpos     = g_vLight.xyz;
-  eye      = vec3(-pos.xyz);
-  //eye      = g_vEye;
+  eye      = g_vEye;
 
   gl_Position  = g_mProj * g_mView * pos;
   texcoord     = g_Texcoord;
@@ -38,6 +37,8 @@ void main(void)
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
+
+attribute vec4 g_Color;
 
 varying vec2   texcoord;
 varying vec3   normal;
@@ -68,5 +69,5 @@ void main( void )
     spec = tspecular * pow(kspec, shininess);
   }
 
-  gl_FragColor = intensity * tcolor + spec;
+  gl_FragColor = intensity * tcolor * g_Color + spec;
 }

@@ -99,8 +99,8 @@ public:
   void getRect(Rect&, bool abs = false);
   void getRect(u32&, u32&, u32&, u32&, bool abs = false);
 
-  void         erase()   { m_erase = true; }
-  bool         isErased(){ return m_erase; }
+  void         erase() { m_erase = true; }
+  bool         erased(){ return m_erase; }
 
   void         setText(kgmString s) { m_text = s;    }
   kgmString    getText()            { return m_text; }

@@ -24,8 +24,6 @@
 #include "kgmVisual.h"
 #include "kgmMaterial.h"
 
-#include "kgmIScene.h"
-
 #ifdef TEST
 #include "../kgmPhysics/kgmBody.h";
 #endif

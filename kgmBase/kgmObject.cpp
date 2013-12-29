@@ -39,6 +39,12 @@ void kgmObject::releaseObjects(void)
 
 int kgmObject::objectCount()
 {
+#ifdef TEST
+  for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
+  {
+    kgmObject* o = (*i);
+  }
+#endif
   return g_objects.length();
 }
 

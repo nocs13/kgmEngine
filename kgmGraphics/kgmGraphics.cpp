@@ -540,6 +540,7 @@ void kgmGraphics::render(){
 
   for(int i = vis_blend.size(); i > 0;  i--)
   {
+    render(shaders[kgmMaterial::ShaderBase]);
     render(vis_blend[i - 1]);
   }
 
@@ -668,11 +669,18 @@ void kgmGraphics::render(){
   }
 
   // render guis
-  for(int i = 0; i < m_guis.size(); i++)
+  for(int i = m_guis.size(); i > 0; i--)
   {
-    if(m_guis[i]->m_view)
+    kgmGui* gui = m_guis[i - 1];
+
+    if(gui->erased())
     {
-      render(m_guis[i]);
+      gui->release();
+      m_guis.erase(i - 1);
+    }
+    else if(gui->m_view)
+    {
+      render(gui);
     }
   }
   //---

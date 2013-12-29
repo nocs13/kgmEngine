@@ -9,6 +9,7 @@ kgmGui::kgmGui()
 {
   m_id = 0;
   m_parent = 0;
+  m_erase  = false;
 
   m_view     = false;
   m_hasMouse = false;
@@ -27,6 +28,8 @@ kgmGui::kgmGui()
 kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
   m_id = 0;
   m_parent = par;
+  m_erase  = false;
+
   m_rect = m_base.rect = Rect(x, y, w, h);
   m_view = true;
   m_hasMouse = false;

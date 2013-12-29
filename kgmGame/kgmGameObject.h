@@ -29,6 +29,7 @@ protected:
 
   kgmBody*       m_body;
   kgmVisual*     m_visual;
+  kgmList<kgmVisual*> m_visuals;
 
   kgmGameObject* m_parent;
 
