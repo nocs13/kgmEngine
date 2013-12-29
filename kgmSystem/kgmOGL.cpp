@@ -22,7 +22,8 @@
 GLu32          m_rendertarget = 0;
 GLint*         g_compressed_format = null;
 GLint          g_num_compressed_format = 0;
-void*          g_shader = null;
+
+GLhandle       g_shader = null;
 
 
 #ifdef ANDROID
@@ -1316,7 +1317,7 @@ void kgmOGL::gcSetShader(void* s){
 #ifdef GL_VERTEX_SHADER
   if(s){
     glUseProgramObject((GLhandle)s);
-    g_shader = s;
+    g_shader = (GLhandle)s;
 #ifdef TEST
     GLenum err = glGetError();
     if(err != GL_NO_ERROR){
@@ -1422,7 +1423,7 @@ void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
 void kgmOGL::gcGetUniform(void* s, const char* par, void* val)
 {
 #ifdef GL_VERTEX_SHADER
-  glGetUniformfv((GLhandle)s, par, val);
+  glGetUniformfv((GLhandle)s, (GLint)par, (float*)val);
 #endif
 }
 #endif

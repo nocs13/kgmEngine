@@ -21,7 +21,7 @@ public:
     height = h;
     bpp = b;
     frames = f;
-    pdata = d;
+    pdata = (u8*)d;
   }
 
   virtual ~kgmPicture()
@@ -137,7 +137,7 @@ public:
     if(b_btcnt == 8)
     {
       u32 r_size = b_width * b_height;
-      pdata    = malloc(sizeof(u32) * r_size);
+      pdata    = (u8*)malloc(sizeof(u32) * r_size);
       u32 *pal = (u32*)malloc(sizeof(u32) * 256);
       memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
 
@@ -159,7 +159,7 @@ public:
     }
 
     u32 r_size = b_width * b_height * (b_btcnt/8);
-    pdata = malloc(sizeof(char) * r_size);
+    pdata = (u8*)malloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);//////
     width = b_width;
     height = b_height;
@@ -197,7 +197,7 @@ public:
 
     u32 r_size = w * h * (btcnt/8);
     pm += idl;
-    pdata = malloc(sizeof(char) * r_size);
+    pdata = (u8*)malloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);
     u32 k = (u32)((u32*)pdata)[0];
     width = w;

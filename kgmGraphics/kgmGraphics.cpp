@@ -467,7 +467,7 @@ void kgmGraphics::render(){
                    (float*)&l_main->direction, (float)l_main->angle);
   }
 
-  for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); i++)
+  for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); ++i)
   {
     Mesh*   mesh = *i;
     box3    bbound = mesh->mesh->bound();
@@ -489,7 +489,7 @@ void kgmGraphics::render(){
     g_lights_count = 0;
     g_main_light = null;
 
-    for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); i++)
+    for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); ++i)
     {
       sphere3  lbound((*i)->position, 10 * (*i)->intensity);
 
@@ -533,7 +533,7 @@ void kgmGraphics::render(){
     render((kgmMaterial*)null);
   }
 
-  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); i++)
+  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
   {
     render((*i));
   }

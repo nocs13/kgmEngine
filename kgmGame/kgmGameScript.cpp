@@ -139,7 +139,7 @@ int kgmLuaListObjects(lua_State *lua)
   kgmIGame* game = kgmIGame::getGame();
 
   if(!game || !game->getLogic())
-    return;
+    return 0;
 
   kgmList<kgmGameObject*> objects;
   game->getLogic()->getObjects(objects);

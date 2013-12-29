@@ -94,7 +94,7 @@ kgmGameBase::kgmGameBase()
   initResources();
 
   log("open graphics...");
-  m_gc = getGC();
+  m_gc = (kgmOGL*)getGC();
 
   if(!m_gc)
     return;
