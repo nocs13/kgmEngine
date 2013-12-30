@@ -139,6 +139,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
       shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
       shaders.add(kgmMaterial::ShaderPoor,  rc->getShader("poor.glsl"));
+      shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
       //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
       shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("base.glsl"));
       shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));

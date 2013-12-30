@@ -31,14 +31,15 @@ public:
     ShaderNone,
     ShaderBase,
     ShaderPoor,
-    ShaderSkin,
+    ShaderBlend,
     ShaderWater,
     ShaderRiver,
     ShaderOcean,
     ShaderMirror,
     ShaderGlass,
     ShaderFlame,
-    ShaderIce
+    ShaderIce,
+    ShaderSkin
   };
 
   class Color
