@@ -14,19 +14,21 @@ void* kgmObject::operator new(size_t size)
 }
 
 void kgmObject::operator delete(void* p){
- int i;
+ bool is = false;
 
  for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
  {
    if((kgmObject*)p == (*i))
    {
      i = g_objects.erase(i);
+     is = true;
 
      break;
    }
  }
 
- free(p);
+ if(is)
+  free(p);
 }
 
 void kgmObject::releaseObjects(void)

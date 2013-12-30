@@ -79,6 +79,7 @@ public:
   bool        m_alpha;
   bool        m_2side;
   bool        m_blend;
+  bool        m_depth;
 
   u32         m_srcblend, m_dstblend;
 

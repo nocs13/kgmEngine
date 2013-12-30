@@ -15,6 +15,7 @@ kgmMaterial::kgmMaterial(){
   m_alpha        = false;
   m_2side        = false;
   m_blend        = false;
+  m_depth        = true;
 
   m_tex_color    = m_tex_specular = m_tex_normal = 0;
 

@@ -89,6 +89,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
   m_has_shaders = false;
   m_has_buffers = false;
   m_alpha       = false;
+  m_depth       = true;
   m_culling     = true;
 
   gui_style = new kgmGuiStyle();
@@ -954,17 +955,27 @@ void kgmGraphics::render(kgmMaterial* m){
 
     if(m_alpha)
     {
-      gc->gcDepth(true, true, gccmp_less);
       gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
       m_alpha = false;
+    }
+
+    if(!m_depth)
+    {
+      gc->gcDepth(true, true, gccmp_less);
+      m_depth = true;
     }
 
     return;
   }
 
-  if(m->m_blend)
+  if(!m->m_depth)
   {
     gc->gcDepth(true, false, gccmp_less);
+    m_depth = false;
+  }
+
+  if(m->m_blend)
+  {
     gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
     m_alpha = true;
   }
