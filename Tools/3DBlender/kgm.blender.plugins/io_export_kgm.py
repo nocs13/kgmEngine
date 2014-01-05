@@ -430,7 +430,7 @@ class kgmObject:
   self.state = o.kgm_state
   self.gobject = o.kgm_object
   self.mtx = o.matrix_world
-  self.pos = Vector((0, 0, 0)) * self.mtx
+  self.pos = o.matrix_local.to_translation()
   self.quat = self.mtx.to_quaternion()
   self.euler = self.mtx.to_euler()
   self.linked = 'None'
@@ -505,12 +505,13 @@ class kgmExport(bpy.types.Operator):
    # TODO, add better example props
  filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
    #use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default= True)
- exp_meshes = BoolProperty(name="Export Meshes", description="", default=False)
+ exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
  exp_lights = BoolProperty(name="Export Lights", description="", default=False)
  exp_materials = BoolProperty(name="Export Materials", description="", default=False)
  exp_cameras = BoolProperty(name="Export Cameras", description="", default=False)
- exp_armatures = BoolProperty(name="Export Armatures", description="", default=True)
+ exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
+# exp_dummies = BoolProperty(name="Export Dummies", description="", default=False)
  exp_kgmactors = BoolProperty(name="Export kgmActors", description="", default=False)
  exp_kgmphysics = BoolProperty(name="Export kgmPhysics", description="", default=False)
  is_selection = BoolProperty(name="Selected only", description="", default=False)
@@ -538,13 +539,14 @@ class kgmExport(bpy.types.Operator):
   #cFrame = bpy.context.scene.frame_current
 
   print("Collect Objects...")
-  meshes = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
-  proxies = [kgmProxy(ob) for ob in objects if self.exp_kgmactors and ob.proxy is not None]
+  meshes    = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
+  proxies   = [kgmProxy(ob) for ob in objects if self.exp_kgmactors and ob.proxy is not None]
   collisions = [kgmCollision(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
-  lights = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
-  cameras = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
+  lights    = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
+  cameras   = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
-  gobjects = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and (hasattr(ob, 'kgm') )]
+#  dummies   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_dummies ]
+  gobjects  = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmactors and (hasattr(ob, 'kgm') )]
 #  animations = [kgmAnimation(ob) for ob in objects if self.exp_animations]
   animations = []
 
@@ -556,12 +558,13 @@ class kgmExport(bpy.types.Operator):
         animations.append(kgmBoneAnimation(bone, armature))
 
   print("Animations: " + str(len(animations)))
-  print("Gobjects: " + str(len(gobjects)))
-  print("Objects: " + str(len(objects)))
-  print("Mehses: " + str(len(meshes)))
-  print("Lights: " + str(len(lights)))
-  print("Materials: " + str(len(scene_materials)))
-
+  print("Gobjects: "   + str(len(gobjects)))
+  print("Objects: "    + str(len(objects)))
+  print("Mehses: "     + str(len(meshes)))
+  print("Lights: "     + str(len(lights)))
+  print("Materials: "  + str(len(scene_materials)))
+  print("Dummies: "    + str(len(lights)))
+  
 #  path = self.filepath
   if not self.filepath.lower().endswith(".kgm"):
    self.filepath += ".kgm"
@@ -746,11 +749,13 @@ def menu_func_a(self, context):
     self.layout.operator(kgm_object.bl_idname, text="kgmObject", icon='PLUGIN')
 
 def register():
+    bpy.utils.register_class(kgm_object)
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
 
 def unregister():
+    bpy.utils.unregister_class(kgm_object)
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
     bpy.types.INFO_MT_add.remove(menu_func_a)

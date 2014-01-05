@@ -691,7 +691,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
   if(err != GL_NO_ERROR)
   {
-    kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
+    //kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
   }
 #endif
 }
