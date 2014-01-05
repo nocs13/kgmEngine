@@ -19,6 +19,7 @@ varying vec3   ldir;
 varying vec3   lpos;
 varying vec3   eye;
 varying vec2   texcoord;
+varying vec4   vColor;
 
 
 void main(void)
@@ -31,6 +32,7 @@ void main(void)
 
   gl_Position  = g_mProj * g_mView * pos;
   texcoord     = g_Texcoord;
+  vColor       = g_Color;
 }
 
 //Fragment Shader
@@ -38,13 +40,12 @@ uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
 
-attribute vec4 g_Color;
-
 varying vec2   texcoord;
 varying vec3   normal;
 varying vec3   ldir;
 varying vec3   lpos;
 varying vec3   eye;
+varying vec4   vColor;
 
 void main( void )
 {

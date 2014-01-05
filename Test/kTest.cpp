@@ -10,43 +10,8 @@
 #include "kGlobals.h"
 #include "kGui.h"
 #include "Actors/ACamera.h"
-#include "Actors/ATaoRen.h"
-#include "Actors/AKomble.h"
-#include "Actors/ASp_Gui.h"
-#include "Actors/ASpacerObjects.h"
-#include "Actors/ASpacer.h"
-#include "Actors/ASp_Gun.h"
-#include "Actors/ASp_Spacer.h"
-#include "Actors/ASp_Spaceship.h"
 
 KGMOBJECT_IMPLEMENT(ACamera, kgmActor);
-KGMOBJECT_IMPLEMENT(AKomble, kgmActor);
-KGMOBJECT_IMPLEMENT(ASpacer, kgmActor);
-KGMOBJECT_IMPLEMENT(ASp_Gui, kgmObject);
-KGMOBJECT_IMPLEMENT(ASp_Gun, kgmActor);
-KGMOBJECT_IMPLEMENT(ASp_GunA, ASp_Gun);
-KGMOBJECT_IMPLEMENT(ASp_GunFA, ASp_Gun);
-KGMOBJECT_IMPLEMENT(ASp_Spacer, kgmActor);
-KGMOBJECT_IMPLEMENT(ASp_SpacerA, kgmActor);
-KGMOBJECT_IMPLEMENT(ASp_Result, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_Skybox, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_MotorA, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_Laser, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_LaserA, ASp_Laser);
-KGMOBJECT_IMPLEMENT(ASp_LaserB, ASp_Laser);
-KGMOBJECT_IMPLEMENT(ASp_Flame, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_FlameA, ASp_Flame);
-KGMOBJECT_IMPLEMENT(ASp_Smoke, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_SmokeA, ASp_Smoke);
-KGMOBJECT_IMPLEMENT(ASp_Explode, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_ExplodeA, ASp_Explode);
-KGMOBJECT_IMPLEMENT(ASp_ExplodeB, ASp_Explode);
-KGMOBJECT_IMPLEMENT(ASp_ExplodeC, ASp_Explode);
-KGMOBJECT_IMPLEMENT(ASp_AsteroidSpawner, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_SpacerSpawner, kgmGameObject);
-KGMOBJECT_IMPLEMENT(ASp_Spaceship, kgmActor);
-KGMOBJECT_IMPLEMENT(ASp_SpaceshipA, ASp_Spaceship);
-
 bool g_ms_camera = true;
 
 const char* maps[] =
@@ -91,7 +56,6 @@ public:
     enemies = 1;
     kgmList<kgmGameObject*> objs;
     kgmGameLogic::prepare();
-    this->getObjectsByType(ASp_Spaceship::Class, objs);
 
     enemies = objs.size();
     objs.clear();
@@ -100,40 +64,6 @@ public:
 
   void action(kgmILogic::ACTION type, kgmObject* src, kgmString arg)
   {
-    if(type == kgmILogic::ACTION_GAMEOBJECT)
-    {
-      if(arg == "die")
-      {
-        if(src->isType(ASp_Spaceship::Class))
-        {
-          enemies--;
-
-          if(enemies == 0)
-          {
-              ASp_Result* res = new ASp_Result(game, 3000, 1, "Success");
-              game->gAppend(res);
-          }
-        }
-        else if(src->isType(ASpacer::Class))
-        {
-            ASp_Result* res = new ASp_Result(game, 3000, 0, "Failed");
-            game->gAppend(res);
-        }
-      }
-      else if(arg == "result")
-      {
-        if(src->isClass(ASp_Result::Class))
-        {
-          if(((ASp_Result*)src)->getResult())
-            game->gCommand("gameover_success");
-          else
-            game->gCommand("gameover_fail");
-
-          src->release();
-          game->gSwitch(kgmIGame::State_Uload);
-        }
-      }
-    }
   }
 
   void collide(kgmGameObject *os, kgmGameObject *od)
@@ -152,23 +82,6 @@ public:
     }
     else
     {
-    }
-
-    if(os->isType(ASp_Laser::Class) && !od->isType(ASp_Laser::Class))
-    {
-      if(os->getGroup() != od->getGroup())
-      {
-        ASp_Laser* laser = (ASp_Laser*)os;
-
-        if(od->isType(kgmActor::Class))
-        {
-          kgmActor* actor = (kgmActor*)od;
-
-          actor->m_health -= laser->power;
-        }
-
-        os->remove();
-      }
     }
   }
 };
@@ -291,51 +204,6 @@ public:
 
   kgmGameObject* gObject(kgmString t)
   {
-    if(t == "RenTao")
-    {
-      return new ATaoRen(this);
-    }
-    else if(t == "HyugaNeji")
-    {
-
-    }
-    else if(t == "Komble")
-    {
-      return new AKomble(this);
-    }
-    else if(t == "KSpacer")
-    {
-      return new ASpacer(this);
-    }
-    else if(t == "MotorA")
-    {
-      return new ASp_MotorA(this);
-    }
-    else if(t == "KAsteroidSpawner")
-    {
-      return new ASp_AsteroidSpawner(this);
-    }
-    else if(t == "GunFA")
-    {
-      return new ASp_GunFA(this);
-    }
-    else if(t == "KSpacerA")
-    {
-      return new ASp_SpacerA(this);
-    }
-    else if(t == "KSpaceshipA")
-    {
-      return new ASp_SpaceshipA(this);
-    }
-    else if(t == "KSpacerSpawner")
-    {
-      return new ASp_SpacerSpawner(this);
-    }
-    else if(t == "KFlameA")
-    {
-      return new ASp_FlameA(this);
-    }
-
     return kgmGameBase::gObject(t);
   }
 

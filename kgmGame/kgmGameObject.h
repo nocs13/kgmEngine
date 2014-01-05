@@ -110,6 +110,8 @@ public:
   {
     return m_parent;
   }
+
+  u32 birth() { return m_birth; }
 };
 
 #endif // KGMGAMEOBJECT_H
