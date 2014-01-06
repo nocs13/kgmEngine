@@ -126,13 +126,11 @@ void kgmGameLogic::update(u32 milliseconds)
       if(m_gameplayer == go)
         m_gameplayer = null;
 
-      kgmString s = go->runtime().nClass;
       m_trush.add(go);
       i = m_objects.erase(i);
     }
     else if(go->valid())
     {
-      kgmString s = go->runtime().nClass;
       go->update(milliseconds);
       ++i;
     }

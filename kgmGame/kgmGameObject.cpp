@@ -35,7 +35,9 @@ void kgmGameObject::remove()
   if(getVisual())
     getVisual()->remove();
 
-  m_remove = true;
+  m_remove  = true;
+  m_valid   = false;
+  m_visible = false;
 }
 
 void kgmGameObject::update(u32 mls)
