@@ -92,6 +92,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
   m_depth       = true;
   m_culling     = true;
 
+  m_bg_color    = 0xFF000000;
+
   gui_style = new kgmGuiStyle();
 
   //linkCamera(null, 0, 0);
@@ -139,8 +141,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
 
       shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderPoor,  rc->getShader("poor.glsl"));
       shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
+      //shaders.add(kgmMaterial::ShaderPoor,  rc->getShader("poor.glsl"));
       //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
       shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("base.glsl"));
       shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
@@ -281,7 +283,8 @@ void kgmGraphics::resize(float width, float height){
 #endif
 }
 
-void kgmGraphics::render(){
+void kgmGraphics::render()
+{
   static float alpha = 0.0;
   static float m_time[4];
   s32 rect[4];
@@ -330,7 +333,6 @@ void kgmGraphics::render(){
 
       vec3  l = (*i)->getBound().max - (*i)->getBound().min;
 
-
       if(m_camera.isSphereCross(v, 0.5 * l.length()))
       {
         if((*i)->m_typerender == kgmVisual::RenderParticles)
@@ -362,15 +364,25 @@ void kgmGraphics::render(){
 
   gc->gcBegin();
   gc->gcDepth(true, 1, gccmp_lequal);
-  //gc->gcClear(gcflag_color | gcflag_depth, 0xFF000000, 1, 0);
-  gc->gcClear(gcflag_color | gcflag_depth, 0xFF7700FF, 1, 0);
+  gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
+  //gc->gcClear(gcflag_color | gcflag_depth, 0xFF7700FF, 1, 0);
 
 #ifdef TEST
   //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
+  if(m_has_shaders)
+  {
+    render(shaders[kgmMaterial::ShaderNone]);
+  }
+
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
+
+  if(m_has_shaders)
+  {
+    render((kgmShader*)null);
+  }
 #endif
 
   /*if(this->m_lights.size() > 0)
@@ -604,7 +616,9 @@ void kgmGraphics::render(){
   setWorldMatrix(mid);
 
   if(m_has_shaders)
-    gc->gcSetShader(shaders[kgmMaterial::ShaderBase]);
+  {
+    render(shaders[kgmMaterial::ShaderNone]);
+  }
 
   for(int i = m_bodies.size(); i > 0;  i--)
   {
@@ -626,10 +640,18 @@ void kgmGraphics::render(){
     vec3 vec_points[8];
     s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
 
+    kgmMesh::Vertex_P_C gr_points[8];
+
     obox3 ob = body->getOBox();
     ob.points(vec_points);
 
-    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+    for(int i = 0; i < 8; i++)
+    {
+      gr_points[i].pos = vec_points[i];
+      gr_points[i].col = 0xffffffff;
+    }
+
+    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, 2, 24, lines);
   }
 
   for(int i = m_lights.size(); i > 0;  i--)
@@ -641,13 +663,24 @@ void kgmGraphics::render(){
     bb.max = light->position + vec3(1,1,1);
     vec3 vec_points[8];
     s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
+
+    kgmMesh::Vertex_P_C gr_points[8];
+
     bb.points(vec_points);
 
-    gc->gcDraw(gcpmt_lines, gcv_xyz, sizeof(vec3), 8, vec_points, 2, 24, lines);
+    for(int i = 0; i < 8; i++)
+    {
+      gr_points[i].pos = vec_points[i];
+      gr_points[i].col = 0xffffffff;
+    }
+
+    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, 2, 24, lines);
   }
 
   if(m_has_shaders)
+  {
     gc->gcSetShader(null);
+  }
 #endif
 
   //For last step draw gui

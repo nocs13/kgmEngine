@@ -1251,14 +1251,16 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
   kgm_log() << "gcGenShader 0 " << (s32)glGetError() << "\n";
 
   //GL_VERTEX_SHADER
-  if(vsrc){
+  if(vsrc)
+  {
     size = strlen(vsrc);
     v_shad = vshad = glCreateShaderObject(GL_VERTEX_SHADER);
     glShaderSource(vshad, 1, (const GLcharARB**)&vsrc, &size);
     glCompileShader(vshad);
     glGetObjectParameteriv(vshad, GL_OBJECT_COMPILE_STATUS, stat);
 
-    if(stat[0] == GL_FALSE){
+    if(stat[0] == GL_FALSE)
+    {
       glGetInfoLog(vshad, 256, &size, tbuf);
 #ifdef TEST
       kgmLog::log(kgmString("VShader: ") + kgmString(tbuf));
@@ -1269,7 +1271,8 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     //  glDeleteObject(vshad);
   }
 
-  if(fsrc){
+  if(fsrc)
+  {
     size = strlen(fsrc);
     fshad = glCreateShaderObject(GL_FRAGMENT_SHADER);
     glShaderSource(fshad, 1, (const GLcharARB**)&fsrc, NULL);
@@ -1277,7 +1280,8 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     glAttachObject(prog, fshad);
     glGetObjectParameteriv(fshad, GL_OBJECT_COMPILE_STATUS, stat);
 
-    if(stat[0] == GL_FALSE){
+    if(stat[0] == GL_FALSE)
+    {
       glGetInfoLog(fshad, 256, &size, tbuf);
 #ifdef TEST
       kgmLog::log(kgmString("FShader: ") + kgmString(tbuf));
@@ -1293,7 +1297,9 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
   glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
   glLinkProgram(prog);
   glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
-  if(stat[0] == GL_FALSE){
+
+  if(stat[0] == GL_FALSE)
+  {
     glGetInfoLog(prog, 256, &size, tbuf);
     kgmLog::log(kgmString("LogARB: ") + kgmString(tbuf));
   }
@@ -1320,7 +1326,9 @@ void kgmOGL::gcSetShader(void* s){
     g_shader = (GLhandle)s;
 #ifdef TEST
     GLenum err = glGetError();
-    if(err != GL_NO_ERROR){
+
+    if(err != GL_NO_ERROR)
+    {
 #ifndef ANDROID
       //kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
 #endif

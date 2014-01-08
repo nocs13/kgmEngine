@@ -90,6 +90,8 @@ private:
   bool  m_culling;
 
   uint32 m_max_faces;
+
+  u32    m_bg_color;
 public:
   kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();
@@ -165,7 +167,8 @@ public:
     m_meshes.add(m);
   }
 
-  void add(kgmVisual* a){
+  void add(kgmVisual* a)
+  {
     if(!a)
       return;
 
@@ -264,7 +267,13 @@ public:
     return false;
   }
 
-  kgmCamera& camera(){
+  kgmCamera& camera()
+  {
     return m_camera;
+  }
+
+  void setBgColor(u32 col)
+  {
+    m_bg_color = col;
   }
 };
