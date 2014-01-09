@@ -419,8 +419,8 @@ void kgmGraphics::render()
     if(!(*i)->ison)
       continue;
 
-    if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
-       continue;
+    //if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
+    //   continue;
 
     vw_lights.add(*i);
     /*g_lights[g_lights_count++] = (*i);
@@ -585,24 +585,52 @@ void kgmGraphics::render()
   }
 
   //draw particles
-  if(m_has_shaders)
-    render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
+  kgmList<kgmVisual*>  depthless_particles;
+  //I pass with depth category
+  //if(m_has_shaders)
+  //  render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
 
   for(int i = 0; i < vis_particles.size(); i++)
   {
-    kgmVisual* vis = vis_particles[i];
+    kgmVisual*    vis = vis_particles[i];
+    kgmParticles* par = vis->getParticles();
+    kgmMaterial*  mtl = vis->getMaterial();
 
-    setWorldMatrix(vis->m_transform);
 
-    if(vis->getParticles())
+    if(par && mtl)
     {
-      render(vis->getMaterial());
-      render(shaders[kgmMaterial::ShaderBase]);
+      if(mtl->m_depth == false)
+      {
+        depthless_particles.add(vis);
+
+        continue;
+      }
+
+      setWorldMatrix(vis->m_transform);
+      render(mtl);
+      render(shaders[mtl->m_shader]);
       render(vis->getParticles());
       render((kgmShader*)null);
       render((kgmMaterial*)null);
     }
   }
+
+  //no depth particles
+  for(int i = 0; i < depthless_particles.size(); i++)
+  {
+    kgmVisual*    vis = vis_particles[i];
+    kgmParticles* par = vis->getParticles();
+    kgmMaterial*  mtl = vis->getMaterial();
+
+    setWorldMatrix(vis->m_transform);
+    render(mtl);
+    render(shaders[mtl->m_shader]);
+    render(vis->getParticles());
+    render((kgmShader*)null);
+    render((kgmMaterial*)null);
+  }
+
+  depthless_particles.clear();
 
   gc->gcCull(gccull_back);
 
