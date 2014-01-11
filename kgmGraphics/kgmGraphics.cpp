@@ -1326,6 +1326,8 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
 
   if(tex && tex->m_texture)
     gc->gcSetTexture(0, tex->m_texture);
+  else
+    gc->gcSetTexture(0, g_tex_white);
 
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 
