@@ -903,7 +903,7 @@ void kgmGraphics::render(kgmSprite* sprite)
 
 void kgmGraphics::render(kgmParticles* particles)
 {
-#define MAX_PARTICLES 100
+#define MAX_PARTICLES 5000
   struct PrPoint{ vec3 pos; u32 col; vec2 uv; };
 
   if(!particles)
@@ -930,33 +930,29 @@ void kgmGraphics::render(kgmParticles* particles)
 
     for(s32 i = 0; i < count; i++)
     {
-      PrPoint v[4];
       vec3    pos   = particles->m_particles[i].pos;
       float   scale = particles->m_particles[i].scale;
 
-      /*
-      float scale = particles->m_particles[i].scale;
-      points[i][0].v = particles->m_particles[i].pos + vec3(-scale, 0, -scale);
-      points[i][1].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
-      points[i][2].v = particles->m_particles[i].pos + vec3(-scale, 0,  scale);
-      points[i][3].v = particles->m_particles[i].pos + vec3(-scale, 0,  scale);
-      points[i][4].v = particles->m_particles[i].pos + vec3( scale, 0, -scale);
-      points[i][5].v = particles->m_particles[i].pos + vec3( scale, 0,  scale);
-      */
+      points[i][0].pos = (pos - rv + uv) * scale;
+        points[i][0].uv = vec2(0.0f, 0.0f);
+      points[i][1].pos = (pos - rv - uv) * scale;
+        points[i][1].uv = vec2(0.0f, 1.0f);
+      points[i][2].pos = (pos + rv + uv) * scale;
+        points[i][2].uv = vec2(1.0f, 0.0f);
 
-      v[0].pos = (pos - rv + uv) * scale;
-      v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
-      v[1].pos = (pos - rv - uv) * scale;
-      v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
-      v[2].pos = (pos + rv + uv) * scale;
-      v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
-      v[3].pos = (pos + rv - uv) * scale;
-      v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
+      points[i][3].pos = (pos + rv - uv) * scale;
+        points[i][3].uv = vec2(1.0f, 1.0f);
+      points[i][4].pos = (pos + rv + uv) * scale;
+        points[i][4].uv = vec2(1.0f, 0.0f);
+      points[i][5].pos = (pos - rv - uv) * scale;
+        points[i][5].uv = vec2(0.0f, 1.0f);
 
-      v[0].col = v[1].col = v[2].col = v[3].col = particles->m_particles[i].col.color;
-
-      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 4, v, 0, 0, 0);
+      points[i][0].col = points[i][1].col =
+      points[i][2].col = points[i][3].col =
+      points[i][4].col = points[i][5].col = particles->m_particles[i].col.color;
     }
+
+    gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 6 * count, points, 0, 0, 0);
   }
   else if(particles->m_typerender == kgmParticles::RTypePoint)
   {
