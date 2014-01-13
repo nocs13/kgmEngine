@@ -66,7 +66,8 @@ public:
 
   void build();
   void init(Particle*);
-  void update(u32 t);
+
+  virtual void update(u32 t);
 };
 
 
