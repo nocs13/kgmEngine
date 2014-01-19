@@ -7,7 +7,7 @@ kgmGameObject::kgmGameObject()
   m_body(null),
   m_parent(null)
 {
-  m_valid  = true;
+  m_valid   = true;
   m_remove  = false;
   m_culled  = false;
   m_visible = true;
@@ -18,6 +18,9 @@ kgmGameObject::kgmGameObject()
 
 kgmGameObject::~kgmGameObject()
 {
+  if(m_remove)
+    remove();
+
   if(m_body)
     m_body->release();
 

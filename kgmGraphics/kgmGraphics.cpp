@@ -932,19 +932,21 @@ void kgmGraphics::render(kgmParticles* particles)
     {
       vec3    pos   = particles->m_particles[i].pos;
       float   scale = particles->m_particles[i].scale;
+      vec3    crv = rv * scale,
+              cuv = uv * scale;
 
-      points[i][0].pos = (pos - rv + uv) * scale;
+      points[i][0].pos = (pos - crv + cuv);
         points[i][0].uv = vec2(0.0f, 0.0f);
-      points[i][1].pos = (pos - rv - uv) * scale;
+      points[i][1].pos = (pos - crv - cuv);
         points[i][1].uv = vec2(0.0f, 1.0f);
-      points[i][2].pos = (pos + rv + uv) * scale;
+      points[i][2].pos = (pos + crv + cuv);
         points[i][2].uv = vec2(1.0f, 0.0f);
 
-      points[i][3].pos = (pos + rv - uv) * scale;
+      points[i][3].pos = (pos + crv - cuv);
         points[i][3].uv = vec2(1.0f, 1.0f);
-      points[i][4].pos = (pos + rv + uv) * scale;
+      points[i][4].pos = (pos + crv + cuv);
         points[i][4].uv = vec2(1.0f, 0.0f);
-      points[i][5].pos = (pos - rv - uv) * scale;
+      points[i][5].pos = (pos - crv - cuv);
         points[i][5].uv = vec2(0.0f, 1.0f);
 
       points[i][0].col = points[i][1].col =
