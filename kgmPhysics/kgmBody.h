@@ -33,7 +33,7 @@ public:
   bool    m_collision;  //calculate collisions for this body
   bool    m_gravity;    //gravity object or gravitation required
   bool    m_falling;    //additional information of falling
-#ifdef TEST
+#ifdef DEBUG
   bool    m_intersect;  //have intersection
 #endif
   float   m_mass;          //mass of body

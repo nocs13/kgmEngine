@@ -125,7 +125,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "\nkgmEngine android loading file " << id;
 #endif
   AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
@@ -140,7 +140,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
   long size = AAsset_getLength(asset);
   m.alloc(size);
   AAsset_read (asset, (char*)m, size);
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "\nkgmEngine android file size: " << (s32)size;
 #endif
   AAsset_close(asset);
@@ -221,7 +221,7 @@ kgmTexture* kgmGameResources::getTexture(char* id){
 
   if(texture && texture->m_texture)
   {
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "texture generated";
 #endif
     texture->m_id = id;
@@ -229,7 +229,7 @@ kgmTexture* kgmGameResources::getTexture(char* id){
   }
   else if(texture)
   {
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "texture generation failed";
 #endif
     texture->release();

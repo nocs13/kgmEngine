@@ -156,7 +156,7 @@ void kgmPhysics::doCollision(float dtime){
       continue;
     }
 
-#ifdef TEST
+#ifdef DEBUG
     body->m_intersect = false;
 #endif
 
@@ -278,7 +278,7 @@ void kgmPhysics::doCollision(float dtime){
       //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
       )
       {
-#ifdef TEST
+#ifdef DEBUG
         body->m_intersect = true;
 #endif
         if(cbody->m_shape == kgmBody::ShapePolyhedron)

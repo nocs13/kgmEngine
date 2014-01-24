@@ -206,7 +206,7 @@ void kgmGraphics::clear(){
   }
   m_lights.clear();
 
-#ifdef TEST
+#ifdef DEBUG
   for(int i = 0; i < m_bodies.size(); i++)
   {
     m_bodies[i]->release();
@@ -278,7 +278,7 @@ void kgmGraphics::resize(float width, float height){
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "Resized";
 #endif
 }
@@ -367,7 +367,7 @@ void kgmGraphics::render()
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
   //gc->gcClear(gcflag_color | gcflag_depth, 0xFF7700FF, 1, 0);
 
-#ifdef TEST
+#ifdef DEBUG
   //Grid
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff},   {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00},   {{0, 1000, 0}, 0xff00ff00},
@@ -637,7 +637,7 @@ void kgmGraphics::render()
   if(m_has_shaders)
     render((kgmShader*)null);
 
-#ifdef TEST
+#ifdef DEBUG
   mtx4 mid;
   mid.identity();
   setViewMatrix(m_camera.mView);
@@ -758,7 +758,7 @@ void kgmGraphics::render()
   }
   //---
 
-#ifdef TEST
+#ifdef DEBUG
   char info[4096] = {0};
   sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i \
   unvisible: %i\n",
@@ -855,7 +855,7 @@ void kgmGraphics::render(kgmVisual* visual)
 
   visual->update();
 
-#ifdef TEST
+#ifdef DEBUG
   /*
   if(visual->m_tm_joints)
   {
@@ -962,7 +962,7 @@ void kgmGraphics::render(kgmParticles* particles)
 
     for (s32 i = 0; i < particles->m_count; i++)
     {
-#ifdef TEST
+#ifdef DEBUG
       kgmParticles::Particle* ptcl = &particles->m_particles[i];
 #endif
       u32     col   = particles->m_particles[i].col.color;
@@ -1372,7 +1372,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     }
     else
     {
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!";
 #endif
     }

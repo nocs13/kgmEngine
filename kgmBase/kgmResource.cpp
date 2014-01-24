@@ -1,7 +1,7 @@
 #include "kgmResource.h"
 #include "kgmIResources.h"
 
-#ifdef TEST
+#ifdef DEBUG
 #include "kgmLog.h"
 #endif
 
@@ -21,7 +21,7 @@ void kgmResource::release()
 {
   if(g_resources && references() == 1)
   {
-#ifdef TESTX
+#ifdef DEBUG
     kgm_log() << "\nResource release:";
 
     if(m_id.length() > 0)

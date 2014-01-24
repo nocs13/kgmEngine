@@ -13,7 +13,7 @@
 #pragma comment(lib, "glu32.lib")
 #endif
 
-#ifdef TEST
+#ifdef DEBUG
 #ifndef ANDROID
 #include <GL/glu.h>
 #endif
@@ -43,7 +43,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
 
   GLubyte* oglVersion = (GLubyte*)glGetString(GL_VERSION);
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
 #endif
 
@@ -418,7 +418,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLenum pic_fmt;
   GLu32 fmt_bt = 0;
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
 #endif
 
@@ -491,7 +491,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
   if(tex == 0)
   {
-#ifdef TEST
+#ifdef DEBUG
     kgm_log() << "gl: no generated texture";
 #endif
 
@@ -521,7 +521,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 #endif
 
-#ifdef TEST
+#ifdef DEBUG
 #ifdef GL_TEXTURE_COMPRESSED_ARB
     int compressed;
     glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_ARB, &compressed);
@@ -613,7 +613,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 #endif
 
-#ifdef TEST
+#ifdef DEBUG
     err = glGetError();
 
     if(GL_NO_ERROR != err)
@@ -635,7 +635,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   t->format = fmt;
   t->type = type;
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "gcGenTexture generated tex: " << (s32)tex << "\n";
 #endif
 
@@ -670,7 +670,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
     glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#ifdef TEST
+#ifdef DEBUG
     err = glGetError();
 
     if(err != GL_NO_ERROR)
@@ -686,7 +686,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
 
-#ifdef TEST
+#ifdef DEBUG
   err = glGetError();
 
   if(err != GL_NO_ERROR)
@@ -1262,7 +1262,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     if(stat[0] == GL_FALSE)
     {
       glGetInfoLog(vshad, 256, &size, tbuf);
-#ifdef TEST
+#ifdef DEBUG
       kgmLog::log(kgmString("VShader: ") + kgmString(tbuf));
 #endif
     }
@@ -1283,7 +1283,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
     if(stat[0] == GL_FALSE)
     {
       glGetInfoLog(fshad, 256, &size, tbuf);
-#ifdef TEST
+#ifdef DEBUG
       kgmLog::log(kgmString("FShader: ") + kgmString(tbuf));
 #endif
     }
@@ -1324,7 +1324,7 @@ void kgmOGL::gcSetShader(void* s){
   if(s){
     glUseProgramObject((GLhandle)s);
     g_shader = (GLhandle)s;
-#ifdef TEST
+#ifdef DEBUG
     GLenum err = glGetError();
 
     if(err != GL_NO_ERROR)
@@ -1348,7 +1348,7 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
   if(s)
   {
     glBindAttribLocation((GLhandle)s, i, attr);
-#ifdef TEST
+#ifdef DEBUG
 #ifndef ANDROID
     GLenum err = glGetError();
     if(err != GL_NO_ERROR)
@@ -1427,7 +1427,7 @@ void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
 //#endif
 }
 
-#ifdef TEST
+#ifdef DEBUG
 void kgmOGL::gcGetUniform(void* s, const char* par, void* val)
 {
 #ifdef GL_VERTEX_SHADER

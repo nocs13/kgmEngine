@@ -20,7 +20,7 @@ kgmOSL::_Sound::_Sound(kgmOSL* sl){
 }
 
 kgmOSL::_Sound::~_Sound(){
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OSL delete sound \n";
 #endif
 
@@ -33,14 +33,14 @@ kgmOSL::_Sound::~_Sound(){
 
   if(buffer)
   {
-#ifdef TEST
+#ifdef DEBUG
     kgm_log() << "OSL delete sound buffer\n";
 #endif
 
     free(buffer);
   }
 
-#ifdef TEST
+#ifdef DEBUG
         kgm_log() << "OSL sound deleted...\n";
 #endif
 }
@@ -49,8 +49,8 @@ void kgmOSL::_Sound::release()
 {
   remove = true;
 
-#ifdef TEST
-        kgm_log() << "OSL remove flag set \n";
+#ifdef DEBUG
+  kgm_log() << "OSL remove flag set \n";
 #endif
 }
 
@@ -59,8 +59,8 @@ void kgmOSL::_Sound::stop(){
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED);
 
-#ifdef TEST
-        kgm_log() << "OSL sound stopped\n";
+#ifdef DEBUG
+  kgm_log() << "OSL sound stopped\n";
 #endif
 }
 
@@ -85,7 +85,7 @@ void kgmOSL::_Sound::play(bool loop){
     }
   }
 
-#ifdef TEST
+#ifdef DEBUG
         kgm_log() << "OSL sound played\n";
 #endif
 }
@@ -121,7 +121,7 @@ void kgmOSL::_Sound::pause(){
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PAUSED);
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OSL sound paused\n";
 #endif
 }
@@ -187,19 +187,19 @@ kgmOSL::~kgmOSL()
 {
   active = false;
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OSL stoping thread\n";
 #endif
 
   join();
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OSL thread stoped\n";
 #endif
 
     if(outputMixObject)
     {
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "OSL delete outputMixObject \n";
 #endif
       (*outputMixObject)->Destroy(outputMixObject);
@@ -207,7 +207,7 @@ kgmOSL::~kgmOSL()
 
     if(engineObject)
     {
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "OSL delete engineObject \n";
 #endif
       (*engineObject)->Destroy(engineObject);
@@ -215,7 +215,7 @@ kgmOSL::~kgmOSL()
 
     mxfree(mux);
 
-#ifdef TEST
+#ifdef DEBUG
     kgm_log() << "OSL finish\n";
 #endif
 }
@@ -445,7 +445,7 @@ void kgmOSL::run()
 {
   active = true;
 
-#ifdef TEST
+#ifdef DEBUG
   kgm_log() << "OSL Gues whooo.....\n";
   kgm_log() << "osl thread id " << (s32)gettid();
 #endif
@@ -453,7 +453,7 @@ void kgmOSL::run()
   while(active)
   {
     lock(mux);
-#ifdef TEST
+#ifdef DEBUG
     kgm_log() << "OSL check sounds.\n";
 #endif
 
@@ -462,7 +462,7 @@ void kgmOSL::run()
       _Sound* s = sounds[i - 1];
       SLresult result;
 
-#ifdef TEST
+#ifdef DEBUG
         kgm_log() << "OSL sound " << i << "\n";
 #endif
 
@@ -470,7 +470,7 @@ void kgmOSL::run()
       {
         delete s;
 
-#ifdef TEST
+#ifdef DEBUG
         kgm_log() << "OSL remove sounds " << i << "\n";
 #endif
         sounds.erase(i - 1);
@@ -485,7 +485,7 @@ void kgmOSL::run()
         vol = 0;
 
       s->volume(vol);
-#ifdef TEST
+#ifdef DEBUG
       kgm_log() << "OSL distance " << dst << "\n";
 #endif
     }

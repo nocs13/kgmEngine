@@ -24,7 +24,7 @@
 #include "kgmVisual.h"
 #include "kgmMaterial.h"
 
-#ifdef TEST
+#ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h";
 #endif
 
@@ -66,7 +66,7 @@ private:
   kgmList<kgmVisual*>   m_visuals;
   kgmList<kgmGui*>      m_guis;
 
-#ifdef TEST
+#ifdef DEBUG
   kgmList<kgmBody*>     m_bodies;
 #endif
 
@@ -213,7 +213,7 @@ public:
     }
   }
 
-#ifdef TEST
+#ifdef DEBUG
   void add(kgmBody* a)
   {
     if(a)

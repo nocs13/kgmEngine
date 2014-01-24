@@ -41,7 +41,7 @@ void kgmObject::releaseObjects(void)
 
 int kgmObject::objectCount()
 {
-#ifdef TEST
+#ifdef DEBUG
   int c = 0;
   for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
   {
@@ -61,7 +61,7 @@ bool kgmObject::isValid(kgmObject* o)
   return false;
 }
 
-#ifdef TEST
+#ifdef DEBUG
 void kgmObject::listObjects()
 {
   int k = 0;

@@ -292,7 +292,7 @@ void kgmGameBase::onIdle(){
     }
   }
 
-#ifdef TEST
+#ifdef DEBUG
   kgmObject::listObjects();
   //kgm_log() << "State is: " << (s32)m_state;
 #endif
@@ -540,7 +540,7 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
   if(m_logic)
     m_logic->add(go);
 
-#ifdef TEST
+#ifdef DEBUG
   if(m_render && go->getBody())
     m_render->add(go->getBody());
 #endif
@@ -740,7 +740,7 @@ bool kgmGameBase::loadXml(kgmString& path)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
           gAppend(act);
-#ifdef TEST
+#ifdef DEBUG
           if(act && act->getBody())
             m_render->add(act->getBody());
 #endif
@@ -760,7 +760,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
         gAppend(gob);
-#ifdef TEST
+#ifdef DEBUG
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
 #endif

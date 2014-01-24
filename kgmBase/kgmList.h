@@ -216,7 +216,7 @@ public:
           _First = _First->next;
         else
           _First = 0;
-#ifdef TEST
+#ifdef DEBUG
         if(_First == 0 && csize > 1)
         {
           int k = 0;

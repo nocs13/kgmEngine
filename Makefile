@@ -7,11 +7,24 @@ objects := $(patsubst %.cpp,%.o,$(sources))
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine.a
 
-all: $(OUT_SO)
+all: debug
 	make -C Test
 
+debug: set_debug $(OUT_SO)
+	echo 'debug finished.'
+
+set_debug:
+	$(eval DEFS += -DDEBUG)
+	$(eval FLGS += -g)
+
+release: set_release  $(OUT_SO)
+	echo 'release finished.'
+
+set_release:
+	$(eval DEFS += -DRELEASE)
+
 $(objects) : %.o : %.cpp %.h
-	$(CC) $(FLGS) $(DEFS) -DDEBUG -DTEST -c $< -o $@ $(DIRS)
+	$(CC) $(FLGS) $(DEFS) -c $< -o $@ $(DIRS)
 
 $(OUT_A): $(objects) lua
 	$(AR) -r -c -s $(OUT_A) $(objects)
@@ -19,7 +32,7 @@ $(OUT_A): $(objects) lua
 	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/lib/*.o
 
 $(OUT_SO): $(OUT_A)
-	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS) -DDEBUG -DTEST
+	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 lua:
 	make -C kgmExtern/lua-4.0.1
@@ -33,7 +46,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 	cp $(OUT_SO) sdk/.
 
 clean: luaclean
-#	echo "val: $(os)" # use cmd line make os=<some_val> clean	
+#	echo "val: $(os)" # use cmd line make os=<some_val> clean
 	rm -f $(objects)
 
 distclean: clean

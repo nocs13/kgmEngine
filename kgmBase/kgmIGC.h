@@ -166,7 +166,7 @@ public:
  virtual void  gcUniform(void* s, u32, u32, const char*, void*) = 0;
  virtual void  gcUniformMatrix(void* s, u32, u32, u32, const char*, void*) = 0;
  virtual void  gcUniformSampler(void* s, const char*, void*) = 0;
-#ifdef TEST
+#ifdef DEBUG
   virtual void  gcGetUniform(void* s, const char*, void*) = 0;
 #endif
 };

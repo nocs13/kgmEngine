@@ -16,7 +16,7 @@ kgmBody::kgmBody()
   m_collision = true;
   m_gravity   = true;
   m_falling   = false;
-#ifdef TEST
+#ifdef DEBUG
   m_intersect = false;
 #endif
 
