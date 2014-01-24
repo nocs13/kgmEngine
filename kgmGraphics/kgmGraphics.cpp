@@ -549,7 +549,29 @@ void kgmGraphics::render()
 
   for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
   {
-    render((*i));
+    kgmVisual* visual   = (*i);
+    vec3       pos(0, 0, 0);
+    float      distance = 9999999999999999999999.0f;
+
+    g_lights_count = 0;
+    g_main_light = null;
+
+
+    pos = visual->m_transform * pos;
+
+    for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); ++i)
+    {
+      float cdist = pos.distance((*i)->position);
+
+      if(cdist < distance)
+      {
+        distance       = cdist;
+        g_main_light   = (*i);
+        g_lights_count = 1;
+      }
+    }
+
+    render(visual);
   }
 
   for(int i = vis_blend.size(); i > 0;  i--)
