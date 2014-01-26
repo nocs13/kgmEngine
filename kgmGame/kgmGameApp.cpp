@@ -145,6 +145,15 @@ void kgmGameApp::android_onTouch(JNIEnv* env, jobject obj,  jint a, jint x, jint
   }
 }
 
+void kgmGameApp::android_onCompass(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z)
+{
+
+}
+
+void kgmGameApp::android_onGyroscope(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z)
+{
+
+}
 
 void kgm_android_init(JNIEnv * env, jobject am)
 {
@@ -187,6 +196,17 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onKeyboard(JNIEnv * env, 
 
 JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onTouch(JNIEnv * env, jobject obj, jint a, jint x, jint y)
 {
-  kgmGameApp::gameApplication()->android_onTouch(env, obj,  a, x, y);
+  kgmGameApp::gameApplication()->android_onTouch(env, obj, a, x, y);
 }
+
+JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onCompass(JNIEnv * env, jobject obj, jfloat x, jfloat y, jfloat z)
+{
+  kgmGameApp::gameApplication()->android_onGyroscope(env, obj, x, y, z);
+}
+
+JNIEXPORT void JNICALL Java_com_kgmEngine_Game_GameLib_onGyroscope(JNIEnv * env, jobject obj, jfloat x, jfloat y, jfloat z)
+{
+  kgmGameApp::gameApplication()->android_onGyroscope(env, obj, x, y, z);
+}
+
 #endif

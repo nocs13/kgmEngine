@@ -1261,9 +1261,13 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
     if(stat[0] == GL_FALSE)
     {
-      glGetInfoLog(vshad, 256, &size, tbuf);
 #ifdef DEBUG
-      kgmLog::log(kgmString("VShader: ") + kgmString(tbuf));
+#ifdef ANDROID
+      glGetShaderInfoLog(vshad, 256, &size, tbuf);
+#else
+      glGetInfoLog(vshad, 256, &size, tbuf);
+#endif
+      kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
     glAttachObject(prog, vshad);
@@ -1282,26 +1286,32 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc){
 
     if(stat[0] == GL_FALSE)
     {
-      glGetInfoLog(fshad, 256, &size, tbuf);
 #ifdef DEBUG
-      kgmLog::log(kgmString("FShader: ") + kgmString(tbuf));
+#ifdef ANDROID
+      glGetShaderInfoLog(fshad, 256, &size, tbuf);
+#else
+      glGetInfoLog(fshad, 256, &size, tbuf);
+#endif
+      kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
     glAttachObject(prog, fshad);
     //  glDeleteObject(fshad);
   }
 
-  glBindAttribLocation((GLhandle)prog, 0, "g_Vertex");
-  glBindAttribLocation((GLhandle)prog, 1, "g_Normal");
-  glBindAttribLocation((GLhandle)prog, 2, "g_Color");
-  glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
+  //glBindAttribLocation((GLhandle)prog, 0, "g_Vertex");
+  //glBindAttribLocation((GLhandle)prog, 1, "g_Normal");
+  //glBindAttribLocation((GLhandle)prog, 2, "g_Color");
+  //glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
   glLinkProgram(prog);
   glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
 
   if(stat[0] == GL_FALSE)
   {
+#ifdef DEBUG
     glGetInfoLog(prog, 256, &size, tbuf);
     kgmLog::log(kgmString("LogARB: ") + kgmString(tbuf));
+#endif
   }
   // glUseProgram();
 #endif

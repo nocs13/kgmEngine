@@ -26,8 +26,8 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
-kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
-kgmGraphics::GraphicsQuality kgmGraphics::shedowQuality  = GraphicsQualityLow;
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityLow;
+kgmGraphics::GraphicsQuality kgmGraphics::shadowQuality  = GraphicsQualityLow;
 
 
 struct Vert

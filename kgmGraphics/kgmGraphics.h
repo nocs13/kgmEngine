@@ -43,7 +43,7 @@ public:
   };
 
   static GraphicsQuality   textureQuality;
-  static GraphicsQuality   shedowQuality;
+  static GraphicsQuality   shadowQuality;
 
   struct Mesh
   {

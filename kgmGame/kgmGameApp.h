@@ -61,5 +61,7 @@ public:
   void android_idle(JNIEnv* env, jobject obj);
   void android_onKeyboard(JNIEnv* env, jobject obj, jint a, jint key);
   void android_onTouch(JNIEnv* env, jobject obj,  jint act, jint x, jint y);
+  void android_onCompass(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z);
+  void android_onGyroscope(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z);
 #endif
 };
