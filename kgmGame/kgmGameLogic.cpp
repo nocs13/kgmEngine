@@ -108,6 +108,7 @@ void kgmGameLogic::update(u32 milliseconds)
 
   kgmList<kgmGameObject*>::iterator i = m_objects.begin();
 
+  gcount = 0;
   while(i != m_objects.end())
   {
     kgmGameObject* go = (*i);
@@ -133,6 +134,13 @@ void kgmGameLogic::update(u32 milliseconds)
     {
       go->update(milliseconds);
       ++i;
+    }
+
+    if(go->isType(kgmActor::Class))
+    {
+      kgmActor* a = (kgmActor*)go;
+      if(a->m_gameplayer)
+        gcount++;
     }
   }
 

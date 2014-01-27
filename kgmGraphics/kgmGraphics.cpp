@@ -26,7 +26,7 @@ KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
 
 #define MAX_LIGHTS 12
 
-kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityLow;
+kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shadowQuality  = GraphicsQualityLow;
 
 
@@ -789,6 +789,25 @@ void kgmGraphics::render()
           kgmObject::objectCount(), k);
   kgmString text(info);
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
+
+  static u32 fps_start_time = kgmTime::getTicks();
+  static u32 fps_frame_time = 0;
+  static u32 fps_frames = 0;
+  static kgmString fps_text;
+
+  if(kgmTime::getTicks() - fps_start_time > 1000)
+  {
+    memset(info, 0, sizeof(info));
+    sprintf(info, "FPS: %i\0", fps_frames);
+    fps_text = info;
+    fps_frames = 0;
+    fps_start_time = kgmTime::getTicks();
+  }
+  else
+  {
+    fps_frames++;
+  }
+  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 100, 20), fps_text);
 #endif
 
   if(m_has_shaders)

@@ -18,6 +18,8 @@ public:
 
   kgmActor*                  m_gameplayer;
 
+  s32 gcount;
+
 public:
   kgmGameLogic();
   virtual ~kgmGameLogic();
