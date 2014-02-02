@@ -779,7 +779,6 @@ void kgmWindow::loop(){
 void kgmWindow::close()
 { 
   //Prepae to close window
-  //onClose();
 
 #ifdef WIN32
   DestroyWindow(m_wnd);
@@ -895,6 +894,7 @@ void kgmWindow::onClose()
   kgm_log() << "onClose" << "\n";
 
 #ifdef WIN32
+  DestroyWindow(m_wnd);
 #endif
 
 #ifdef LINUX

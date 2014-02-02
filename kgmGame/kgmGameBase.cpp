@@ -304,6 +304,7 @@ void kgmGameBase::onPaint(kgmIGC* gc){
 void kgmGameBase::onClose()
 {
   log("free graphics renderer...");
+
   if(m_render)
     m_render->release();
 
@@ -324,10 +325,7 @@ void kgmGameBase::onClose()
 
   log("free audio...");
   if(m_audio)
-  {
     m_audio->release();
-    //delete m_audio;
-  }
 
   log("free system...");
   if(m_system)

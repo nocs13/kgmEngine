@@ -39,10 +39,7 @@ void kgmGameApp::android_quit(JNIEnv* env, jobject obj)
 
   if(g_game)
   {
-    LOGI("Game release game\n");
     g_game->getWindow()->onClose();
-
-    delete g_game;
   }
 
   g_game = null;
