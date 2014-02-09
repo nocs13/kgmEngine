@@ -52,6 +52,10 @@ public:
     return !strcmp(runtime().nClass, o.nClass);
   }
 
+  bool isClass(const char* o){
+    return !strcmp(runtime().nClass, o);
+  }
+
   bool isType(kgmObject& o)
   {
     kgmRuntime* r = &runtime();
@@ -72,6 +76,22 @@ public:
 
     while(r != 0){
       if(!strcmp(r->nClass, o.nClass))
+        return true;
+
+      if(r == r->pClass)
+        break;
+
+      r = r->pClass;
+    }
+
+    return false;
+  }
+
+  bool isType(const char* o){
+    kgmRuntime* r = &runtime();
+
+    while(r != 0){
+      if(!strcmp(r->nClass, o))
         return true;
 
       if(r == r->pClass)
