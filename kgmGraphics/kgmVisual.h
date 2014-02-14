@@ -131,9 +131,9 @@ public:
 
   bool                   m_valid;
   bool                   m_remove;
+  bool                   m_visible;
 
 public:
-  bool                   m_visible;
   mtx4                   m_transform;
   TypeShadow             m_typeshadow;
   TypeRender             m_typerender;
@@ -232,6 +232,18 @@ public:
 
   bool removed(){
     return m_remove;
+  }
+
+  void show(){
+    m_visible = true;
+  }
+
+  void hide(){
+    m_visible = false;
+  }
+
+  bool visible(){
+    return m_visible;
   }
 
   bool set(kgmMaterial* m)
@@ -413,6 +425,9 @@ public:
 private:
   void animate()
   {
+    if(!m_valid)
+      return;
+
     if(!m_animation || !m_skeleton || !m_mesh || !m_mesh->skin)
       return;
 
