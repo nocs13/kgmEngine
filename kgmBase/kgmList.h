@@ -41,7 +41,7 @@ public:
 
   public:
     iterator(){
-      _Ptr = 0;
+      _Ptr = null;
     }
     T& operator*(){
       return _Ptr->data;

@@ -313,7 +313,7 @@ void kgmGraphics::render()
 
       continue;
     }
-    else if(!(*i)->valid())
+    else if(!(*i)->valid() || !(*i)->visible())
     {
       continue;
     }
