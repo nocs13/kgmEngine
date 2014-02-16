@@ -54,9 +54,19 @@ kgmD3ds::kgmD3ds()
   m_pSnd = null;
 
   if(FAILED(DirectSoundCreate(0, &m_pSnd, 0)))
+  {
+#ifdef DEBUG
+    kgm_log() << "Error: can't create direct sound\n";
+#endif
     return;
+  }
 
-  m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_NORMAL);
+  if(m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_NORMAL) != DS_OK)
+  {
+#ifdef DEBUG
+    kgm_log() << "Error: can't set cooperative level\n";
+#endif
+  }
 }
 
 kgmD3ds::~kgmD3ds()
@@ -102,12 +112,15 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
   wf.nAvgBytesPerSec = wf.nBlockAlign * wf.nSamplesPerSec;
 
   dsb.dwSize = sizeof(dsb);
-  dsb.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRL3D;
+  dsb.dwFlags = DSBCAPS_STATIC;
   dsb.dwBufferBytes = size;
   dsb.lpwfxFormat = &wf;
 
   if(FAILED(m_pSnd->CreateSoundBuffer(&dsb, &pSb, 0)))
   {
+#ifdef DEBUG
+    kgm_log() << "Error: can't create sound buffer\n";
+#endif
     pSb = null;
   }
 
@@ -121,6 +134,13 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
       memcpy(ptr1, data, size);
       pSb->Unlock(ptr1, size, NULL, 0);
     }
+#ifdef DEBUG
+    else
+    {
+      kgm_log() << "Error: can't Lock sound buffer\n";
+    }
+#endif
+
   }
 
   return (pSb) ? (new _Sound(pSb)) : (null);
