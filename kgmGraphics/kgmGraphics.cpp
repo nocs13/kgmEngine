@@ -96,8 +96,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
 
   gui_style = new kgmGuiStyle();
 
-  //linkCamera(null, 0, 0);
-
   if(g)
   {
     int val;
@@ -108,12 +106,10 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
       return;
 
     //generic black texture
-    kgm_log() << "Gen black texture\n";
     memset(txd, 0x00, sizeof(txd));
     g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
     //generic white texture
-    kgm_log() << "Gen white texture\n";
     memset(txd, 0xff, sizeof(txd));
     g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
@@ -133,7 +129,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
 
   if(m_has_shaders)
   {
+#ifdef DEBUG
     kgm_log() << "Prepare shaders \n";
+#endif
 
     if(rc != null)
     {
@@ -1414,7 +1412,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     else
     {
 #ifdef DEBUG
-      kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!";
+      kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!" << "\n";
 #endif
     }
 

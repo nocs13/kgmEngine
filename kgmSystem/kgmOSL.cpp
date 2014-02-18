@@ -20,6 +20,7 @@ kgmOSL::_Sound::_Sound(kgmOSL* sl){
 }
 
 kgmOSL::_Sound::~_Sound(){
+
 #ifdef DEBUG
   kgm_log() << "OSL delete sound \n";
 #endif
@@ -41,7 +42,7 @@ kgmOSL::_Sound::~_Sound(){
   }
 
 #ifdef DEBUG
-        kgm_log() << "OSL sound deleted...\n";
+  kgm_log() << "OSL sound deleted...\n";
 #endif
 }
 
@@ -86,7 +87,7 @@ void kgmOSL::_Sound::play(bool loop){
   }
 
 #ifdef DEBUG
-        kgm_log() << "OSL sound played\n";
+  kgm_log() << "OSL sound played\n";
 #endif
 }
 
@@ -105,11 +106,9 @@ void kgmOSL::_Sound::volume(float v)
 
     if(SL_RESULT_SUCCESS != result)
     {
+#ifdef DEBUG
       kgm_log() << "OSL can't set volume: " << newvol << "from max volume: " << maxvol << "\n";
-    }
-    else
-    {
-      //kgm_log() << "OSL set volume: " << newvol << "from max volume: " << maxvol << "\n";
+#endif
     }
 
     vol = v;
@@ -141,7 +140,10 @@ kgmOSL::kgmOSL()
   outputMixObject = null;
   listenerObject = null;
 
+#ifdef DEBUG
   kgm_log() << "OSL init engineObject \n";
+#endif
+
   result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
   result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
 
@@ -149,7 +151,10 @@ kgmOSL::kgmOSL()
     return;
 
   // get the engine interface, which is needed in order to create other objects
+#ifdef DEBUG
   kgm_log() << "OSL init engineEngine \n";
+#endif
+
   result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
 
   if(result != SL_RESULT_SUCCESS)
@@ -157,14 +162,21 @@ kgmOSL::kgmOSL()
 
   const SLInterfaceID ids[1] = {SL_IID_NULL}; //{SL_IID_ENVIRONMENTALREVERB};
   const SLboolean req[1] = {SL_BOOLEAN_FALSE};
+
+#ifdef DEBUG
   kgm_log() << "OSL init outputMixObject \n";
+#endif
+
   result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 1, ids, req);
 
   if(result != SL_RESULT_SUCCESS)
     return;
 
   // realize the output mix
+#ifdef DEBUG
   kgm_log() << "OSL realize outputMixObject \n";
+#endif
+
   result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
 
   if(result != SL_RESULT_SUCCESS)
@@ -178,7 +190,11 @@ kgmOSL::kgmOSL()
 //    return;
 
   mux = mutex();
+
+#ifdef DEBUG
   kgm_log() << "OSL start control thread\n";
+#endif
+
   exec();
   priority(-2);
 }
@@ -319,7 +335,9 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   // create audio player
   const SLInterfaceID ids_1[3] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND, SL_IID_VOLUME};
   const SLboolean req_1[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE,  SL_BOOLEAN_TRUE};
+#ifdef DEBUG
   kgm_log() << "OSL init audioPlayerObject \n";
+#endif
   result = (*engineEngine)->CreateAudioPlayer(engineEngine, &sound->audioPlayerObject, &audioSrc, &audioSnk,
   3, ids_1, req_1);
 
@@ -331,7 +349,10 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   }
 
   // realize the player
+#ifdef DEBUG
   kgm_log() << "OSL Realize audioPlayerObject \n";
+#endif
+
   result = (*sound->audioPlayerObject)->Realize(sound->audioPlayerObject, SL_BOOLEAN_FALSE);
 
   if(result != SL_RESULT_SUCCESS)
@@ -341,7 +362,10 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     return  null;
   }
 
+#ifdef DEBUG
   kgm_log() << "OSL init audioPlayerQueue \n";
+#endif
+
   result = (*sound->audioPlayerObject)->GetInterface(sound->audioPlayerObject, SL_IID_BUFFERQUEUE, &sound->audioPlayerQueue);
 
   if(result != SL_RESULT_SUCCESS)
@@ -353,8 +377,11 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
 
   //OSL_sound_bufferQueue_callback
   (*sound->audioPlayerQueue)->RegisterCallback(sound->audioPlayerQueue, OSL_sound_bufferQueue_callback, sound);
-  \
+
+#ifdef DEBUG
   kgm_log() << "OSL init audioPlayer \n";
+#endif
+
   result = (*sound->audioPlayerObject)->GetInterface(sound->audioPlayerObject, SL_IID_PLAY,  &sound->audioPlayer);
 
   if(result != SL_RESULT_SUCCESS)
@@ -364,7 +391,10 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     return  null;
   }
 
+#ifdef DEBUG
   kgm_log() << "OSL init audioVolume \n";
+#endif
+
   result = (*sound->audioPlayerObject)->GetInterface(sound->audioPlayerObject, SL_IID_VOLUME,  &sound->audioVolume);
 
   if(result != SL_RESULT_SUCCESS)
@@ -374,19 +404,27 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
     return  null;
   }
 
+#ifdef DEBUG
   kgm_log() << "OSL init audioSeek \n";
+#endif
+
   result = (*sound->audioPlayerObject)->GetInterface(sound->audioPlayerObject, SL_IID_SEEK,  &sound->audioSeek);
 
   if(result != SL_RESULT_SUCCESS)
   {
+#ifdef DEBUG
     kgm_log() << "OSL failed audioSeek\n";
+#endif
 
     //delete sound;
 
     //return  null;
   }
 
+#ifdef DEBUG
   kgm_log() << "OSL SetPlayState audioPlayer \n";
+#endif
+
   result = (*sound->audioPlayer)->SetPlayState(sound->audioPlayer, SL_PLAYSTATE_PLAYING);
 
   if(result != SL_RESULT_SUCCESS)
@@ -418,19 +456,25 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
 
 void kgmOSL::clear()
 {
+#ifdef DEBUG
   kgm_log() << "OSL clear\n";
+#endif
 }
 
 void kgmOSL::OSL_sound_bufferQueue_callback(SLBufferQueueItf caller,void *pContext)
 {
   _Sound* s = (_Sound*)pContext;
 
+#ifdef DEBUG
   kgm_log() << "OSL queue callback\n";
+#endif
 
   if(!s)
     return;
 
+#ifdef DEBUG
   kgm_log() << "OSL context is valid\n";
+#endif
 
   if(s->loop && s->audioPlayerQueue)
   {

@@ -14,7 +14,9 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 :kgmWindow(0, "", x, y, w, h, bpp, fs){
  m_gc = 0;
 
- kgmLog::log("init ogl screen");
+#ifdef DEBUG
+ kgm_log() << "init ogl screen\n";
+#endif
 
 #ifdef WIN32
  PIXELFORMATDESCRIPTOR pfd = {0};
@@ -161,10 +163,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   surface = EGL_NO_SURFACE;
 
   display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  kgm_log() << "kgmEngine: eglGetDisplay\n";
-
   eglInitialize(display, 0, 0);
-  kgm_log() << "kgmEngine: eglInitialize\n";
 
   if(eglChooseConfig(display, RGBX_888_ATTRIBS, &config, 1, &numConfigs) == 0)
   {
@@ -173,21 +172,17 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
       return;
     }
   }
-  kgm_log() << "kgmEngine: eglChooseConfig\n";
 
   eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-  kgm_log() << "kgmEngine: eglGetConfigAttrib\n";
-
   ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
-  kgm_log() << "kgmEngine: ANativeWindow_setBuffersGeometry\n";
-
   surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
-  kgm_log() << "kgmEngine: eglCreateWindowSurface\n";
   context = eglCreateContext(display, config, NULL, NULL);
-  kgm_log() << "kgmEngine: eglCreateContext\n";
 
-  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
+  {
+#ifdef DEBUG
     kgm_log() << "kgmEngine: Unable to eglMakeCurrent \n";
+#endif
 
     return;
   }

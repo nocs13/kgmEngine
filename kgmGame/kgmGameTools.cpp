@@ -516,7 +516,6 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     {
       mnode->node(i)->attribute("value", val);
       mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
-      kgm_log() << "genMaterial: map color " << (s32)mtl->m_tex_color;
     }
     else if(id == "map_normal")
     {

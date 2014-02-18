@@ -16,7 +16,10 @@ kGui::kGui(kgmGameBase* game)
   int x, y, w, h;
 
   game->getRect(x, y, w, h);
+
+#ifdef DEBUG
   kgm_log() << "GameRect: " << w << " " << h << ".";
+#endif
 
   m_guiMain = new kgmGui(null, 0, 0, w, h);
   m_guiMain->addListener(this);

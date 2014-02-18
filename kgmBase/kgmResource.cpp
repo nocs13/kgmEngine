@@ -25,7 +25,7 @@ void kgmResource::release()
     kgm_log() << "\nResource release:";
 
     if(m_id.length() > 0)
-      kgm_log() << m_id.data();
+      kgm_log() << m_id.data() << "\n";
 #endif
     g_resources->remove(this);
   }

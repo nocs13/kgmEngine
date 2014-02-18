@@ -442,7 +442,10 @@ int kgmGameBase::gLoad(kgmString s)
 {
   gUnload();
 
+#ifdef DEBUG
   kgm_log() << kgm_log_label() << " " << "Loading game map " << (char*)s << "..." << "\n";
+#endif
+
   m_state = State_Load;
 
   loadXml(s);
@@ -461,7 +464,9 @@ int kgmGameBase::gUnload()
   u32 state = m_state;
   state = State_Stop;
 
+#ifdef DEBUG
   kgm_log() << "\nUnloading...";
+#endif
 
   if(m_logic)
     m_logic->clear();
@@ -476,7 +481,10 @@ int kgmGameBase::gUnload()
     m_render->clear();
 
   m_state = State_None;
+
+#ifdef DEBUG
   kgm_log() << "\nUnloaded";
+#endif
 
   return 0;
 }
@@ -641,15 +649,24 @@ bool kgmGameBase::loadXml(kgmString& path)
 }
 
   kgmMemory<char> mem;
-  if(!kgmIGame::getGame()->getResources()->getFile(path, mem)){
+
+  if(!kgmIGame::getGame()->getResources()->getFile(path, mem))
+  {
+#ifdef DEBUG
     kgm_log() << "\nCan't find map " << (char*)path;
+#endif
+
     return false;
   }
 
   kgmXml xml;
-  if(kgmXml::XML_ERROR == xml.open(mem)){
+
+  if(kgmXml::XML_ERROR == xml.open(mem))
+  {
+#ifdef DEBUG
     kgm_log() << "\nNot valid xml %s" << (char*)path;
     kgm_log() << "Error: " << "Not valid xml " << (char*)path << "\n";
+#endif
 
     return false;
   }
@@ -683,7 +700,10 @@ bool kgmGameBase::loadXml(kgmString& path)
     else if(xstate == kgmXml::XML_TAG_OPEN)
     {
       id = xml.m_tagName;
+
+#ifdef DEBUG
       kgm_log() << "Node: " << (char*)id << "\n";
+#endif
 
       if(id == "kgmMaterial")
       {
@@ -797,7 +817,10 @@ bool kgmGameBase::loadXml(kgmString& path)
     {
       kgmString data;
       id = xml.m_tagName;
+
+#ifdef DEBUG
       kgm_log() << "Node: " << (char*)id << "\n";
+#endif
 
       if(id == "Color")
       {
@@ -1091,7 +1114,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgmString       type = a;
   kgmMemory<char> mem;
 
+#ifdef DEBUG
   kgm_log() << "\nSpawning Actor: " << a.data();
+#endif
 
   if(!m_resources->getFile(a, mem))
   {
@@ -1334,7 +1359,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
         if(id == "Material"){
           a_node->node(i)->node(j)->attribute("value", val);
           mtl = m_resources->getMaterial(val);
-          kgm_log() << "\nMaterial: " << val.data();
         }else if(id == "Mesh"){
           a_node->node(i)->node(j)->attribute("value", val);
           msh = m_resources->getMesh(val);
@@ -1458,7 +1482,9 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     }
   }
 
+#ifdef DEBUG
   kgm_log() << "\nActor: " << actor->getId();
+#endif
 
   return actor;
 }
