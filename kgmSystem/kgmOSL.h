@@ -14,62 +14,64 @@
 
 class kgmOSL: public kgmIAudio, public kgmThread
 {
-    class _Sound: public Sound{
-      kgmOSL*     osl;
-    public:
-      SLObjectItf audioPlayerObject;
-      SLPlayItf   audioPlayer;
-      SLVolumeItf audioVolume;
-      SLSeekItf   audioSeek;
+  class _Sound: public Sound
+  {
+    kgmOSL*     osl;
+  public:
+    SLObjectItf audioPlayerObject;
+    SLPlayItf   audioPlayer;
+    SLVolumeItf audioVolume;
+    SLSeekItf   audioSeek;
 #ifdef ANDROID
-      SLAndroidSimpleBufferQueueItf audioPlayerQueue;
+    SLAndroidSimpleBufferQueueItf audioPlayerQueue;
 #else
-      SLBufferQueueItf audioPlayerQueue;
+    SLBufferQueueItf audioPlayerQueue;
 #endif
-        void* buffer;
-        uint  length;
-
-        vec3  position;
-        vec3  velocity;
-
-        bool  remove;
-        bool  loop;
-        float vol;
-    protected:
-    public:
-        _Sound(kgmOSL*);
-        virtual ~_Sound();
-        void release();
-        void stop();
-        void play(bool loop);
-        void pause();
-        void volume(float vol);
-        void emit(vec3& pos, vec3& vel);
-    };
-
-    SLObjectItf engineObject;
-    SLEngineItf engineEngine;
-    SLObjectItf outputMixObject;
-    SLObjectItf listenerObject;
-
-    kgmList<_Sound*> sounds;
-    Mutex            mux;
-    bool             active;
+    void* buffer;
+    uint  length;
 
     vec3  position;
     vec3  velocity;
-    vec3  orient;
+
+    bool  remove;
+    bool  loop;
+    float vol;
+
+  public:
+    _Sound(kgmOSL*);
+    virtual ~_Sound();
+    void release();
+    void stop();
+    void play(bool loop);
+    void pause();
+    void volume(float vol);
+    void emit(vec3& pos, vec3& vel);
+  };
+
+  SLObjectItf engineObject;
+  SLEngineItf engineEngine;
+  SLObjectItf outputMixObject;
+  SLObjectItf listenerObject;
+
+  kgmList<_Sound*> sounds;
+  Mutex            mux;
+  bool             active;
+
+  vec3  position;
+  vec3  velocity;
+  vec3  orient;
+
 public:
-    kgmOSL();
-    virtual ~kgmOSL();
+  kgmOSL();
+  virtual ~kgmOSL();
 
-    Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
-    void     listener(vec3& pos, vec3& vel, vec3& ort);
-    void     clear();
+  Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
+  void     listener(vec3& pos, vec3& vel, vec3& ort);
+  void     clear();
 
-    void     run();
+  void     run();
 
-    static void OSL_sound_bufferQueue_callback(SLBufferQueueItf,void*);
+  static void OSL_sound_bufferQueue_callback(SLBufferQueueItf,void*);
 };
 #endif
 
