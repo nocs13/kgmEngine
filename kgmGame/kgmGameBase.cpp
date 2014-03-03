@@ -22,7 +22,6 @@
 #include "kgmGameObject.h"
 #include "kgmActor.h"
 
-//#include "../kgmGraphics/kgmDraw.inl"
 #include "../kgmGraphics/kgmGuiTab.h"
 #include "../kgmGraphics/kgmGraphics.h"
 /////////////////////////
@@ -32,15 +31,16 @@
 #include <string.h>
 
 kgmGameBase* kgmGameBase::m_game;
-kgmIGame* kgmIGame::getGame(){
+kgmIGame* kgmIGame::getGame()
+{
   return kgmGameBase::m_game;
 }
 
 #define		BWIDTH		640
 #define		BHEIGHT		480
 
-const char *log_file = "kgmLog.txt";
-const char *set_file = "kgmEngine.conf";
+//const char *log_file = "kgmLog.txt";
+//const char *set_file = "kgmEngine.conf";
 
 int   width  = 0;
 int   height = 0;
@@ -648,7 +648,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   node->attribute(sid, val); \
 }
 
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
   if(!kgmIGame::getGame()->getResources()->getFile(path, mem))
   {
@@ -971,7 +971,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(stype == "MESH" || stype == "mesh")
         {
-          kgmMemory<s8> mem;
+          kgmMemory<u8> mem;
           vec3          pos;
           quat          rot;
           mtx4          mtx, mrot, mpos;
@@ -1112,7 +1112,7 @@ bool kgmGameBase::gMapBinary(kgmString& path)
 kgmActor* kgmGameBase::gSpawn(kgmString a){
   kgmActor*       actor = 0;
   kgmString       type = a;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
 #ifdef DEBUG
   kgm_log() << "\nSpawning Actor: " << a.data();
@@ -1185,7 +1185,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
       if(val == "convex")
       {
-        kgmMemory<s8> mem;
+        kgmMemory<u8> mem;
         kgmString     dfile;
 
         a_node->node(i)->attribute("data", dfile);
@@ -1258,7 +1258,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
     }
     else if(id == "Dummies")
     {
-      kgmMemory<char> mem;
+      kgmMemory<u8> mem;
       a_node->node(i)->attribute("value", val);
 
       if((val.length() > 0) && m_resources->getFile(val, mem))

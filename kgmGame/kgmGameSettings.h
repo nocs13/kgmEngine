@@ -1,17 +1,18 @@
 #pragma once
 #include "../kgmBase/kgmTab.h"
+#include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmEnvironment.h"
 
 class kgmGameSettings: public kgmEnvironment
 {
+  kgmXml* m_xml;
+
 public:
  short  m_gsid;
  bool   m_mouse_camera;
 
- kgmString m_name;
-
- kgmTab<kgmString, kgmString> m_parameters;
+ static kgmString m_name;
 public:
  kgmGameSettings();
  kgmGameSettings(const char* path);

@@ -12,6 +12,7 @@ all: debug
 
 debug: set_debug $(OUT_SO)
 	echo 'debug finished.'
+	make -C Tools/Packer
 
 set_debug:
 	$(eval DEFS += -DDEBUG)
@@ -19,6 +20,7 @@ set_debug:
 
 release: set_release  $(OUT_SO)
 	echo 'release finished.'
+	make -C Tools/Packer
 
 set_release:
 	$(eval DEFS += -DRELEASE)

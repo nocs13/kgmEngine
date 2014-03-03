@@ -53,7 +53,7 @@ public:
  void               remove(kgmResource*);
 
  void               addPath(kgmString s);
- bool               getFile(char* id, kgmMemory<char>& m);
+ bool               getFile(char* id, kgmMemory<u8>& m);
 
  kgmPicture*        getPicture(char* id);
  kgmTexture*        getTexture(char* id);

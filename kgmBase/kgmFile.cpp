@@ -14,11 +14,13 @@
 #endif
 
 
-kgmFile::kgmFile(){
+kgmFile::kgmFile()
+{
   m_file = 0;
 }
 
-kgmFile::~kgmFile(){
+kgmFile::~kgmFile()
+{
   close();
 }
 

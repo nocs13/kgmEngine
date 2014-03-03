@@ -95,6 +95,7 @@ void kgmGameResources::remove(kgmResource* r){
 
 void kgmGameResources::addPath(kgmString s){
   Path* path = 0;
+
   if(kgmSystem::isDirectory(s))
   {
     path = new Path();
@@ -113,7 +114,7 @@ void kgmGameResources::addPath(kgmString s){
     m_paths.add(path);
 }
 
-bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
+bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m){
   kgmString path;
   bool  res = false;
   int   i = 0;
@@ -125,14 +126,18 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
 #endif
 
 #ifdef ANDROID
+
 #ifdef DEBUG
   kgm_log() << "\nkgmEngine android loading file " << id << "\n";
 #endif
+
   AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
 
   if (NULL == asset)
   {
+#ifdef DEBUG
     kgmLog::log("_ASSET_NOT_FOUND_");
+#endif
 
     return false;
   }
@@ -161,8 +166,10 @@ bool kgmGameResources::getFile(char* id, kgmMemory<char>& m){
         return true;
       }
     }
-    else if(m_paths[i]->type == 1){
-      if(m_paths[i]->archive.copy(id, m)){
+    else if(m_paths[i]->type == 1)
+    {
+      if(m_paths[i]->archive.copy(id, m))
+      {
         return true;
       }
     }
@@ -186,7 +193,7 @@ kgmPicture* kgmGameResources::getPicture(char* id){
     }
   }
 
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
   kgmPicture* picture = 0;
 
   if(!getFile(id, mem))
@@ -214,7 +221,7 @@ kgmTexture* kgmGameResources::getTexture(char* id){
   }
 
   kgmTexture* texture = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
   if(!getFile(id, mem))
     return 0;
@@ -255,7 +262,7 @@ kgmMaterial* kgmGameResources::getMaterial(char* id){
     }
   }
 
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
   if(!getFile(id, mem))
     return 0;
 
@@ -284,7 +291,7 @@ kgmShader* kgmGameResources::getShader(char* id){
   kgmCString path, name, dir;
   name = id;
   kgmShader* shader = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
 #ifdef DEBUG
     kgm_log() << "Shader loading: " << id << "...\n";
@@ -313,7 +320,7 @@ kgmAnimation* kgmGameResources::getAnimation(char* id){
     }
   }
   kgmAnimation* anim = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
   if(!getFile(id, mem))
     return 0;
 
@@ -341,7 +348,7 @@ kgmSound* kgmGameResources::getSound(char* id){
   }
 
   kgmSound* snd = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
   if(!getFile(id, mem))
     return 0;
@@ -367,7 +374,7 @@ kgmMesh* kgmGameResources::getMesh(char* id){
     }
   }
   kgmMesh* mesh = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
   if(!getFile(id, mem))
     return 0;
 
@@ -396,7 +403,7 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id){
   }
 
   kgmSkeleton* skel = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
   if(!getFile(id, mem))
     return null;
@@ -424,7 +431,7 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c){
     }
   }
   kgmFont* font = 0;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
   if(!getFile(id, mem))
     return 0;
   font = m_tools.genFont(kgmIGame::getGame()->getGC(), 10, 10, r, c, mem);
@@ -450,7 +457,7 @@ kgmShapeCollision* kgmGameResources::getShapeCollision(char* id)
   }
 
   kgmShapeCollision* shape = null;
-  kgmMemory<char> mem;
+  kgmMemory<u8> mem;
 
   if(!getFile(id, mem))
     return null;

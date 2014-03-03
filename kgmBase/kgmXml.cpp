@@ -107,7 +107,7 @@ kgmXml::kgmXml(void* mem, int size){
   m_node = parse(mem, size);
 }
 
-kgmXml::kgmXml(kgmMemory<char>& m){
+kgmXml::kgmXml(kgmMemory<u8>& m){
   m_node = 0;
   m_position = null;
   m_node = parse(m.data(), m.length());
@@ -267,7 +267,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
   return base;
 }
 
-kgmXml::XmlState kgmXml::open(kgmMemory<char>& m)
+kgmXml::XmlState kgmXml::open(kgmMemory<u8>& m)
 {
   m_position = null;
 

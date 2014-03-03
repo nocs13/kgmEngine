@@ -180,7 +180,7 @@ public:
       if(!e.valid)
         continue;
 
-      kgmMemory<char> m;
+      kgmMemory<u8> m;
       m.alloc(e.size);
       archive.seek(e.offset);
       archive.read(m.data(), m.length());
@@ -253,7 +253,13 @@ public:
     if(!ff.open(f, 0))
       return false;
 
-    char *pn = strrchr((char*)f, '\\');
+    char delim = '/';
+
+    #ifdef WIN32
+    delim = '\\';
+    #endif
+
+    char *pn = strrchr((char*)f, delim);
 
     if(pn)
       pn++;
@@ -265,7 +271,7 @@ public:
     e.size = ff.length();
     e.valid = true;
     e.offset = archive.length();
-    char buf[64];
+    u8 buf[64];
 
     archive.seek(archive.length());
 
@@ -303,8 +309,9 @@ public:
     return true;
   }
   
-  bool copy(kgmString id, kgmMemory<char>& m){
-    Entry *pe = 0;
+  bool copy(kgmString id, kgmMemory<u8>& m)
+  {
+    Entry *pe = null;
     
     if(!id.length() || !archive.m_file || changed)
       return false;
@@ -319,9 +326,32 @@ public:
       return false;
     
     m.alloc(pe->size);
-    archive.seek(pe->offset + sizeof(Header) + sizeof(Entry) * toc.length());
+    archive.seek(pe->offset);
     archive.read(m.data(), pe->size);
     
+    return true;
+  }
+
+  bool copy(u32 index, kgmMemory<u8>& m)
+  {
+    Entry *pe = 0;
+
+    if(!archive.m_file || changed)
+      return false;
+
+    if(index >= toc.size())
+      return false;
+
+    pe = &toc[index];
+
+    if(!pe)
+      return false;
+
+    m.alloc(pe->size);
+    archive.seek(pe->offset);
+    archive.read(m.data(), pe->size);
+    archive.seek(0);
+
     return true;
   }
 
@@ -330,13 +360,14 @@ public:
     return toc.size();
   }
 
-  void info(u32 i, kgmString& name, u32& size)
+  void info(u32 i, kgmString& name, u32& size, u32& offset)
   {
     if(i < 0 || i >= toc.size())
       return;
 
-    name = toc[i].name;
-    size = toc[i].size;
+    name   = toc[i].name;
+    size   = toc[i].size;
+    offset = toc[i].offset;
   }
 };
 

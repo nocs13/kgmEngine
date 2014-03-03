@@ -203,7 +203,7 @@ kgmOSL::kgmOSL()
 #endif
 
   exec();
-  priority(-2);
+  //priority(-2);
 }
 
 kgmOSL::~kgmOSL()

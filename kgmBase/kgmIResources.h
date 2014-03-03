@@ -86,7 +86,7 @@ public:
   virtual void                add(kgmResource*) = 0;
   virtual void                remove(kgmResource*) = 0;
 
-  virtual bool                getFile(char*, kgmMemory<char>&) = 0;
+  virtual bool                getFile(char*, kgmMemory<u8>&) = 0;
   virtual kgmPicture*         getPicture(char*) = 0;
   virtual kgmTexture*         getTexture(char*) = 0;
   virtual kgmMaterial*        getMaterial(char*) = 0;

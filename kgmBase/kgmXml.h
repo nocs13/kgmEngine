@@ -66,12 +66,12 @@ public:
 public:
  kgmXml();
  kgmXml(void* mem, int size);
- kgmXml(kgmMemory<char>& m);
+ kgmXml(kgmMemory<u8>& m);
  kgmXml(kgmString& s);
  virtual ~kgmXml();
  void print(Node*);
 
- XmlState open(kgmMemory<char>& m);
+ XmlState open(kgmMemory<u8>& m);
  XmlState next();
  XmlState close();
  int      attributes();
