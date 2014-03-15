@@ -2,6 +2,7 @@
 #define KINPUT_H
 
 #include "../../kgmGame/actors/kgmActors.h"
+#include "../../kgmGame/objects/kgmObjects.h"
 
 class kInput: public kgmInputListen
 {
@@ -19,7 +20,13 @@ public:
   {
     switch(btn)
     {
-    case 0:
+    case gbtn_a:
+      if(state)
+      {
+        kgmExplode* e = new kgmExplode(game, vec3(0,0,0),vec3(1,1,1));
+        game->gAppend(e);
+        e->release();
+      }
       break;
     }
   }
