@@ -30,17 +30,19 @@ $(objects) : %.o : %.cpp %.h
 
 $(OUT_A): $(objects) lua
 	$(AR) -r -c -s $(OUT_A) $(objects)
-	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/*.o
-	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/lib/*.o
+#	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/*.o
+#	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/lib/*.o
 
 $(OUT_SO): $(OUT_A)
 	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 lua:
-	make -C kgmExtern/lua-4.0.1
+	echo 'building lua'
+#	make -C kgmExtern/lua-4.0.1
 
 luaclean:
-	make -C kgmExtern/lua-4.0.1 clean
+	echo 'cleaning lua'
+#	make -C kgmExtern/lua-4.0.1 clean
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk

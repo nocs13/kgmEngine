@@ -9,6 +9,7 @@ class kgmMaterial;
 class kgmParticles: public kgmObject
 {
   KGM_OBJECT(kgmParticles);
+
 public:
   enum TypeRender
   {
@@ -37,15 +38,18 @@ public:
   bool       m_loop;
   bool       m_fade;
   bool       m_fall;
-
-  float      m_speed;
-  float      m_life;
+  bool       m_tex_slide_x;
+  bool       m_tex_slide_y;
 
   color      m_color;
 
+  vec3       force;
   vec3       volume;
   vec3       location;
   vec3       direction;
+
+  float      m_life;
+  float      m_speed;
 
   float      div_life;
   float      div_speed;
@@ -55,11 +59,14 @@ public:
   float      mass;
   float      st_size;
   float      en_size;
+  float      tex_slide_w;
+  float      tex_slide_h;
 
   u32        time_start;
   u32        time_update;
 
-  TypeRender   m_typerender;
+  TypeRender m_typerender;
+
 public:
   kgmParticles();
   ~kgmParticles();

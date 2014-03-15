@@ -14,6 +14,7 @@ kgmParticles::kgmParticles()
   m_fall  = false;
   m_loop  = true;
 
+  force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
   location  = vec3(0, 0, 0);
   direction = vec3(0.0f, 0.0f, 1.0f);
@@ -25,6 +26,12 @@ kgmParticles::kgmParticles()
 
   st_size   = 0.1f;
   en_size   = 1.0f;
+
+  tex_slide_w = 0.0f;
+  tex_slide_h = 0.0f;
+  m_tex_slide_x = false;
+  m_tex_slide_y = false;
+
 
   m_particles  = null;
   m_typerender = RTypeBillboard;
