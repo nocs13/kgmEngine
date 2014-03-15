@@ -117,14 +117,25 @@ class kgmExplode: public kgmGameObject
 {
   KGM_OBJECT(kgmExplode);
 
+private:
+  kgmIGame* game;
+
 protected:
   kgmParticles* particles;
   kgmMaterial*  material;
 
 public:
-  kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, kgmString tid = "fire_a.tga")
+  kgmExplode(kgmIGame* g,
+             vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
+             float speed = 1.0f, float life = 1000,
+             float size_start = 0.1f, float size_end = 2.0f,
+             u32 count = 20,
+             bool loop = false,
+             kgmString tid="fire_a.tga")
   {
-    timeout(3000);
+    timeout(life);
+
+    game = g;
 
     particles = new kgmParticles();
     m_visual  = new kgmVisual();
@@ -138,15 +149,15 @@ public:
     material->m_shader       = kgmMaterial::ShaderBlend;
     material->m_tex_color    = g->getResources()->getTexture(tid);
 
-    particles->direction = vec3(1, 1, 0.4);
+    particles->direction = dir;
     particles->volume    = vol;
-    particles->m_speed = .9;
-    particles->m_count = 10;
-    particles->m_life  = 2000;
-    particles->m_loop  = false;
-    particles->st_size = .1;
-    particles->en_size = 2.0;
-    particles->div_life = 1.0;
+    particles->m_speed   = speed;
+    particles->m_count = count;
+    particles->m_life  = life;
+    particles->m_loop  = loop;
+    particles->st_size = size_start;
+    particles->en_size = size_end;
+    particles->div_life = 0.8;
 
     particles->build();
 
@@ -163,6 +174,20 @@ public:
 
     if(material)
       material->release();
+  }
+
+  void setTexture(kgmString tid)
+  {
+    if(material->m_tex_color)
+      material->m_tex_color->release();
+
+    material->m_tex_color = game->getResources()->getTexture(tid);
+  }
+
+  void setSlideFrames(u32 rows, u32 cols)
+  {
+    particles->tex_slide_rows = rows;
+    particles->tex_slide_cols = cols;
   }
 };
 

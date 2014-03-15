@@ -8,67 +8,72 @@ uniform vec3   g_vEyeDir;
 uniform float  g_fTime;
 uniform float  g_fRandom;
 
+varying vec3   N;
+varying vec3   V;
+varying vec3   L;
+varying vec2   Texcoord;
+varying float  I;
 
 attribute vec3 g_Vertex;
 attribute vec3 g_Normal;
 attribute vec4 g_Color;
 attribute vec2 g_Texcoord;
 
-varying vec3   normal;
-varying vec3   ldir;
-varying vec3   lpos;
-varying vec3   eye;
-varying vec2   texcoord;
-varying vec4   vColor;
-
-
 void main(void)
 {
-  vec4 pos = g_mTran * vec4(g_Vertex, 1.0);
-  normal   = normalize(vec3(g_mTran * vec4(g_Normal, 1.0)));
-  ldir     = vec3(g_vLight.xyz - pos.xyz);
-  lpos     = g_vLight.xyz;
-  eye      = g_vEye;
+   mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
+                     g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
+                     g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
+   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+   N = normalize(mRot * g_Normal);
+   I = g_vLight.w;
+   L = g_vLight.xyz;
 
-  gl_Position  = g_mProj * g_mView * pos;
-  texcoord     = g_Texcoord;
-  vColor       = g_Color;
+   gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
+   Texcoord      = g_Texcoord;
 }
 
 //Fragment Shader
+#ifdef GL_ES
+precision lowp float;
+#endif
+
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
+uniform vec3      g_vEyeDir;
 
-varying vec2   texcoord;
-varying vec3   normal;
-varying vec3   ldir;
-varying vec3   lpos;
-varying vec3   eye;
-varying vec4   vColor;
+varying vec3   N;
+varying vec3   V;
+varying vec3   L;
+varying vec2   Texcoord;
+varying float  I;
 
 void main( void )
 {
-  vec4 tcolor     = texture2D(g_txColor,    texcoord);
-  vec4 tnormal    = texture2D(g_txNormal,   texcoord);
-  vec4 tspecular  = texture2D(g_txSpecular, texcoord);
-  vec4 spec       = vec4(0.0);
+ vec4 color     = texture2D(g_txColor,    Texcoord);
+ vec4 normal    = texture2D(g_txNormal,   Texcoord);
+ vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
-  vec3 b = normalize(tnormal.xyz * 2.0 - 1.0);
-  vec3 n = normalize(normal + b);  //bump part
-  vec3 l = normalize(ldir);
-  vec3 e = normalize(eye);
+ normal = (2.0 * normal) - 1.0;
+ normal.xyz = normal.xyz + N;
+ normal.xyz = normalize(normal.xyz);
 
-  float shininess = 30.0;
-  float intensity = max(dot(n,l), 0.1);
+ vec3 vN = normalize(normal.xyz);
+ vec3 vL = normalize(L - V);
+ vec3 Y  = normalize(-g_vEyeDir);
 
-  tspecular = vec4(1.0);
-  //specular
-  {
-    vec3 h = normalize(l + e);
-    float kspec = max(dot(h, n), 0.0);
-    spec = tspecular * pow(kspec, shininess);
-  }
+ float distance = length(L - V);
+ float intensity  = 1.0;
+       intensity  = max(dot(normal.xyz, normalize(vL)), 0.0) / (1.0 + 0.1 * distance);
+       intensity  = clamp(intensity, 0.2, 0.7);
+ vec3  reflection = normalize(normal.xyz * 2.0 * intensity - vL);
+ //float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
+ float ispecular  = pow(clamp(dot(vL, vN), 0.0, 1.0), 100.0);
 
-  gl_FragColor = intensity * tcolor * g_Color + spec;
+ vec4  col = vec4(color.xyz * intensity, color.w) + vec4(specular.xyz * ispecular, 0);
+
+ col = clamp(col, 0.1, 1.0);
+
+ gl_FragColor = col;
 }

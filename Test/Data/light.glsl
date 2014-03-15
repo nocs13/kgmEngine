@@ -55,6 +55,10 @@ void main(void)
 }
 
 //Fragment Shader
+#ifdef GL_ES
+precision highp float;
+#endif
+
 uniform sampler2D txBase;
 uniform vec3  posLight;
 uniform float rngLight;

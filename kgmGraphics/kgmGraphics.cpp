@@ -971,22 +971,44 @@ void kgmGraphics::render(kgmParticles* particles)
     {
       vec3    pos   = particles->m_particles[i].pos;
       float   scale = particles->m_particles[i].scale;
+      float   time  = particles->m_particles[i].time;
+      float   life  = particles->m_particles[i].life;
       vec3    crv = rv * scale,
               cuv = uv * scale;
 
+      float   txu_s = 0.0f, txv_s = 0.0f;
+      float   txu_e = 1.0f, txv_e = 1.0f;
+
+      if(particles->tex_slide_cols > 1 || particles->tex_slide_rows > 1)
+      {
+        u32 frames = particles->tex_slide_cols + particles->tex_slide_rows;
+        u32 frame  = (u32)((float)frames * time / life);
+
+        float sw = (particles->tex_slide_cols > 1) ? (1.0f / particles->tex_slide_cols) : (1.0f);
+        float sh = (particles->tex_slide_rows > 1) ? (1.0f / particles->tex_slide_rows) : (1.0f);
+
+        u32   ir = frame / particles->tex_slide_cols;
+        u32   ic = frame % particles->tex_slide_cols;
+
+        txu_s = sw * ic;
+        txv_s = sh * ir;
+        txu_e = sw * (ic + 1);
+        txv_e = sh * (ir + 1);
+      }
+
       points[i][0].pos = (pos - crv + cuv);
-        points[i][0].uv = vec2(0.0f, 0.0f);
+        points[i][0].uv = vec2(txu_s, txv_s);
       points[i][1].pos = (pos - crv - cuv);
-        points[i][1].uv = vec2(0.0f, 1.0f);
+        points[i][1].uv = vec2(txu_s, txv_e);
       points[i][2].pos = (pos + crv + cuv);
-        points[i][2].uv = vec2(1.0f, 0.0f);
+        points[i][2].uv = vec2(txu_e, txv_s);
 
       points[i][3].pos = (pos + crv - cuv);
-        points[i][3].uv = vec2(1.0f, 1.0f);
+        points[i][3].uv = vec2(txu_e, txv_e);
       points[i][4].pos = (pos + crv + cuv);
-        points[i][4].uv = vec2(1.0f, 0.0f);
+        points[i][4].uv = vec2(txu_e, txv_s);
       points[i][5].pos = (pos - crv - cuv);
-        points[i][5].uv = vec2(0.0f, 1.0f);
+        points[i][5].uv = vec2(txu_s, txv_e);
 
       points[i][0].col = points[i][1].col =
       points[i][2].col = points[i][3].col =

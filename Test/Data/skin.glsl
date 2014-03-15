@@ -2,10 +2,6 @@
 #define JOINTS  35
 #define EPSILON 0.001
 
-attribute vec3 g_Vertex;
-attribute vec3 g_Normal;
-attribute vec4 g_Color;
-attribute vec2 g_Texcoord;
 
 uniform mat4 g_mView;
 uniform mat4 g_mProj;
