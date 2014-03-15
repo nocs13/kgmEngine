@@ -38,8 +38,6 @@ public:
   bool       m_loop;
   bool       m_fade;
   bool       m_fall;
-  bool       m_tex_slide_x;
-  bool       m_tex_slide_y;
 
   color      m_color;
 
@@ -59,11 +57,11 @@ public:
   float      mass;
   float      st_size;
   float      en_size;
-  float      tex_slide_w;
-  float      tex_slide_h;
 
   u32        time_start;
   u32        time_update;
+  u32        tex_slide_rows;
+  u32        tex_slide_cols;
 
   TypeRender m_typerender;
 

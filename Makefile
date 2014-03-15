@@ -1,13 +1,19 @@
 include Makefile.mac
 
 subdirs := $(wildcard kgm*/)
+subdirs += $(wildcard kgmGame/actors)
+subdirs += $(wildcard kgmGame/objects)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
+sources += $(wildcard kgmGame/actors/*.cpp)
+sources += $(wildcard kgmGame/objects/*.cpp)
 objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine.a
 
 all: debug
+	echo $(subdirs)
+	echo $(sources)
 	make -C Test
 
 debug: set_debug $(OUT_SO)

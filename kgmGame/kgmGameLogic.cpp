@@ -159,7 +159,7 @@ void kgmGameLogic::input(int btn, int state)
   {
     m_gameplayer->input(btn, state);
   }
-  else
+//  else
   {
     for(int i = 0; i < m_inputs.length(); i++)
     {

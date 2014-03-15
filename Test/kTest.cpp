@@ -10,8 +10,10 @@
 #include "kGlobals.h"
 #include "kGui.h"
 #include "Actors/ACamera.h"
+#include "Actors/kInput.h"
 
 KGMOBJECT_IMPLEMENT(ACamera, kgmActor);
+KGMOBJECT_IMPLEMENT(kInput, kgmInputListen);
 bool g_ms_camera = true;
 
 const char* maps[] =
@@ -48,6 +50,7 @@ public:
   {
     if(gobj->isType(kgmActor::Class) && ((kgmActor*)gobj)->m_gameplayer)
       ((kgmActor*)gobj)->m_gameplayer = false;
+
     return kgmGameLogic::add(gobj, input);
   }
 
@@ -197,6 +200,10 @@ public:
       ACamera* camera = new ACamera(this);
       m_logic->add((kgmGameObject*)camera, true);
       camera->release();
+
+      kInput* input = new kInput(this);
+      m_logic->add((kgmGameObject*)input, true);
+      input->release();
     }
 
     return res;

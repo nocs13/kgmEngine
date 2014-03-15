@@ -27,11 +27,8 @@ kgmParticles::kgmParticles()
   st_size   = 0.1f;
   en_size   = 1.0f;
 
-  tex_slide_w = 0.0f;
-  tex_slide_h = 0.0f;
-  m_tex_slide_x = false;
-  m_tex_slide_y = false;
-
+  tex_slide_rows = 0;
+  tex_slide_cols = 0;
 
   m_particles  = null;
   m_typerender = RTypeBillboard;
