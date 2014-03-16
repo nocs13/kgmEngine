@@ -981,7 +981,7 @@ void kgmGraphics::render(kgmParticles* particles)
 
       if(particles->tex_slide_cols > 1 || particles->tex_slide_rows > 1)
       {
-        u32 frames = particles->tex_slide_cols + particles->tex_slide_rows;
+        u32 frames = particles->tex_slide_cols * particles->tex_slide_rows;
         u32 frame  = (u32)((float)frames * time / life);
 
         float sw = (particles->tex_slide_cols > 1) ? (1.0f / particles->tex_slide_cols) : (1.0f);

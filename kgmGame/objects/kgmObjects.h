@@ -50,17 +50,6 @@ public:
   }
 };
 
-class kgmFlameA: public kgmFlame
-{
-  KGM_OBJECT(kgmFlameA);
-public:
-  kgmFlameA(kgmIGame* g)
-    :kgmFlame(g)
-  {
-
-  }
-};
-
 class kgmSmoke: public kgmGameObject
 {
   KGM_OBJECT(kgmSmoke);
@@ -102,17 +91,6 @@ public:
   }
 };
 
-class kgmSmokeA: public kgmSmoke
-{
-  KGM_OBJECT(kgmSmokeA);
-public:
-  kgmSmokeA(kgmIGame* g)
-    :kgmSmoke(g)
-  {
-
-  }
-};
-
 class kgmExplode: public kgmGameObject
 {
   KGM_OBJECT(kgmExplode);
@@ -129,7 +107,7 @@ public:
              vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
              float speed = 1.0f, float life = 1000,
              float size_start = 0.1f, float size_end = 2.0f,
-             u32 count = 20,
+             u32 count = 10,
              bool loop = false,
              kgmString tid="fire_a.tga")
   {
@@ -152,12 +130,12 @@ public:
     particles->direction = dir;
     particles->volume    = vol;
     particles->m_speed   = speed;
-    particles->m_count = count;
-    particles->m_life  = life;
-    particles->m_loop  = loop;
-    particles->st_size = size_start;
-    particles->en_size = size_end;
-    particles->div_life = 0.8;
+    particles->m_count   = count;
+    particles->m_life    = life;
+    particles->m_loop    = loop;
+    particles->st_size   = size_start;
+    particles->en_size   = size_end;
+    particles->div_life  = 0.8;
 
     particles->build();
 
@@ -188,47 +166,6 @@ public:
   {
     particles->tex_slide_rows = rows;
     particles->tex_slide_cols = cols;
-  }
-};
-
-class kgmExplodeA: public kgmExplode
-{
-  KGM_OBJECT(kgmExplodeA);
-public:
-  kgmExplodeA(kgmIGame* g, vec3 pos, vec3 vol)
-    :kgmExplode(g, pos, vol)
-  {
-  }
-};
-
-class kgmExplodeB: public kgmExplode
-{
-  KGM_OBJECT(kgmExplodeB);
-public:
-  kgmExplodeB(kgmIGame* g, vec3 pos, vec3 vol)
-    :kgmExplode(g, pos, vol)
-  {
-    material->m_tex_color  = g->getResources()->getTexture("smoke_a.tga");
-    particles->m_count     = 10;
-    particles->build();
-  }
-};
-
-class kgmExplodeC: public kgmExplode
-{
-  KGM_OBJECT(kgmExplodeC);
-public:
-  kgmExplodeC(kgmIGame* g, vec3 pos, vec3 vol)
-    :kgmExplode(g, pos, vol)
-  {
-    particles->m_fade      = false;
-    particles->m_count     = 50;
-    particles->st_size     = 0.01;
-    particles->en_size     = 0.05;
-    particles->m_speed     = 60.0;
-    particles->div_speed     = .5;
-
-    particles->build();
   }
 };
 

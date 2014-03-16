@@ -12,7 +12,7 @@ kgmParticles::kgmParticles()
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
-  m_loop  = true;
+  m_loop  = false;
 
   force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
@@ -95,7 +95,6 @@ void kgmParticles::update(u32 t)
     Particle* pr = &m_particles[i - 1];
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
-    pr->time += t;
 
     if(st_size != en_size)
     {
@@ -104,16 +103,19 @@ void kgmParticles::update(u32 t)
       pr->scale = st_size - (d_size * pr->time);
     }
 
-    if(m_fade)
+    if(m_fade && pr->col.a > 1)
     {
       uchar a = (uchar)(255.0 - 255.0 * pr->time / pr->life);
-
-      pr->col.r = pr->col.g = pr->col.b = pr->col.a = a;
+      //pr->col.r = pr->col.g = pr->col.b =
+      if(a < pr->col.a)
+        pr->col.a = a;
     }
 
     if(m_loop && (pr->time > pr->life))
     {
         init(pr);
     }
+
+    pr->time += t;
   }
 }
