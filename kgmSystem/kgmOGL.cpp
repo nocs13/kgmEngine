@@ -662,7 +662,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
   GLenum err;
 
 #ifdef ANDROID
-//  glEnable(GL_TEXTURE_2D);
+  //glEnable(GL_TEXTURE_2D);
 #endif
 
   if(!t)
@@ -675,7 +675,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
     if(err != GL_NO_ERROR)
     {
-      kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
+      //kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
     }
 #endif
 
@@ -690,7 +690,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 
   if(err != GL_NO_ERROR)
   {
-    kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
+    //kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
   }
 #endif
 }
@@ -1335,7 +1335,8 @@ void kgmOGL::gcFreeShader(void* s){
 
 void kgmOGL::gcSetShader(void* s){
 #ifdef GL_VERTEX_SHADER
-  if(s){
+  if(s)
+  {
     glUseProgramObject((GLhandle)s);
     g_shader = (GLhandle)s;
 #ifdef DEBUG
@@ -1344,12 +1345,13 @@ void kgmOGL::gcSetShader(void* s){
     if(err != GL_NO_ERROR)
     {
 #ifndef ANDROID
-      kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
+      //kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
 #endif
     }
 #endif
   }
-  else{
+  else
+  {
     glUseProgramObject(0);
     g_shader = null;
   }

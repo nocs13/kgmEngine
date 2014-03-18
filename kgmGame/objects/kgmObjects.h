@@ -62,6 +62,27 @@ public:
   }
 };
 
+class kgmParticleEffect: public kgmGameObject
+{
+  KGM_OBJECT(kgmParticleEffect);
+
+public:
+  kgmParticleEffect(kgmIGame* g,
+               vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
+               float speed = 1.0f, float life = 1000,
+               float size_start = .1f, float size_end = 2.0f,
+               u32 count = 1,
+               bool loop = false)
+  {
+
+  }
+
+  virtual ~kgmParticleEffect()
+  {
+
+  }
+};
+
 class kgmFlame: public kgmGameObject
 {
   KGM_OBJECT(kgmFlame);
@@ -162,7 +183,7 @@ public:
   kgmExplode(kgmIGame* g,
              vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
              float speed = 1.0f, float life = 1000,
-             float size_start = 0.1f, float size_end = 2.0f,
+             float size_start = .1f, float size_end = 2.0f,
              u32 count = 10,
              bool loop = false,
              kgmString tid="fire_a.tga")

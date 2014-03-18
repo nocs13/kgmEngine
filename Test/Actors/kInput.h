@@ -24,7 +24,7 @@ public:
       if(state)
       {
         kgmExplode* e = new kgmExplode(game, vec3(0,0,0),vec3(1,1,1));
-        e->setTexture("explode.tga");
+        e->setTexture("explode_b.tga");
         e->setSlideFrames(4, 4);
         game->gAppend(e);
         e->release();
