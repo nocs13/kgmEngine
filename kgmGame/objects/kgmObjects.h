@@ -62,24 +62,94 @@ public:
   }
 };
 
-class kgmParticleEffect: public kgmGameObject
+class kgmParticleObject: public kgmGameObject
 {
-  KGM_OBJECT(kgmParticleEffect);
+  KGM_OBJECT(kgmParticleObject);
+
+private:
+  kgmIGame* game;
+
+protected:
+  kgmParticles* particles;
+  kgmMaterial*  material;
 
 public:
-  kgmParticleEffect(kgmIGame* g,
+  kgmParticleObject(kgmIGame* g,
                vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
-               float speed = 1.0f, float life = 1000,
-               float size_start = .1f, float size_end = 2.0f,
+               float speed = 0.0f, float div_speed = 0.0,
+               float life = 1000, float div_life = 0.5f,
+               float size_start = .1f, float size_end = 1.0f,
                u32 count = 1,
+               kgmString tid = "",
                bool loop = false)
   {
+    timeout(life);
 
+    game = g;
+
+    particles = new kgmParticles();
+    m_visual  = new kgmVisual();
+
+    material = new kgmMaterial();
+    material->m_depth        = false;
+    material->m_blend        = true;
+    material->m_srcblend     = gcblend_srcalpha;
+    material->m_dstblend     = gcblend_one;
+    material->m_type         = "simple";
+    material->m_shader       = kgmMaterial::ShaderBlend;
+    material->m_tex_color    = g->getResources()->getTexture(tid);
+
+    particles->direction = dir;
+    particles->volume    = vol;
+    particles->m_speed   = speed;
+    particles->m_count   = count;
+    particles->m_life    = life;
+    particles->m_loop    = loop;
+    particles->st_size   = size_start;
+    particles->en_size   = size_end;
+    particles->div_life  = div_life;
+
+    particles->build();
+
+    m_visual->set(material);
+    m_visual->set(particles);
+
+    setPosition(pos);
   }
 
-  virtual ~kgmParticleEffect()
+  kgmParticleObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
   {
+    game = g;
+    material = mtl;
+    particles = pts;
 
+    pts->increment();
+    mtl->increment();
+
+    timeout(life);
+  }
+
+  virtual ~kgmParticleObject()
+  {
+    if(particles)
+      particles->release();
+
+    if(material)
+      material->release();
+  }
+
+  void setTexture(kgmString tid)
+  {
+    if(material->m_tex_color)
+      material->m_tex_color->release();
+
+    material->m_tex_color = game->getResources()->getTexture(tid);
+  }
+
+  void setSlideFrames(u32 rows, u32 cols)
+  {
+    particles->tex_slide_rows = rows;
+    particles->tex_slide_cols = cols;
   }
 };
 
