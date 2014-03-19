@@ -198,10 +198,10 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   if(m.empty())
     return 0;
 
-  uchar   idl, cmp, dt, btcnt, dsc;
-  uchar   clmap[5];
-  u16  xorgn, yorgn, w, h;
-  char*   pm = (char*)m.data();
+  uchar idl, cmp, dt, btcnt, dsc;
+  uchar clmap[5];
+  u16   xorgn, yorgn, w, h;
+  char* pm = (char*)m.data();
 
   int   width = 0;
   int   height = 0;
@@ -209,16 +209,16 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   int   frames = 0;
   void* pdata = 0;
 
-  memcpy(&idl, pm, 1);      pm += 1;
-  memcpy(&cmp, pm, 1);      pm += 1;
-  memcpy(&dt, pm, 1);       pm += 1;
-  memcpy(&clmap, pm, 5);    pm += 5;
-  memcpy(&xorgn, pm, 2);    pm += 2;
-  memcpy(&yorgn, pm, 2);    pm += 2;
-  memcpy(&w, pm, 2);        pm += 2;
-  memcpy(&h, pm, 2);        pm += 2;
-  memcpy(&btcnt, pm, 1);    pm += 1;
-  memcpy(&dsc, pm, 1);      pm += 1;
+  memcpy(&idl,   pm, 1);  pm += 1;
+  memcpy(&cmp,   pm, 1);  pm += 1;
+  memcpy(&dt,    pm, 1);  pm += 1;
+  memcpy(&clmap, pm, 5);  pm += 5;
+  memcpy(&xorgn, pm, 2);  pm += 2;
+  memcpy(&yorgn, pm, 2);  pm += 2;
+  memcpy(&w,     pm, 2);  pm += 2;
+  memcpy(&h,     pm, 2);  pm += 2;
+  memcpy(&btcnt, pm, 1);  pm += 1;
+  memcpy(&dsc,   pm, 1);  pm += 1;
 
   if(dt != 2)
     return 0;
@@ -227,7 +227,8 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
     if((btcnt != 32))
       return 0;
 
-  u32 r_size = w * h * (btcnt/8);
+  u32 bt_pp = btcnt / 8;
+  u32 r_size = w * h * bt_pp;
   pm += idl;
   pdata = malloc(sizeof(char) * r_size);
   memcpy(pdata, pm, r_size);
@@ -238,8 +239,9 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
   for(int i = 0; i < (w * h); i++)
   {
-    char* pt = (char*)(((char*)pdata) + i * btcnt / 8);
+    char* pt = (char*)(((char*)pdata) + i * bt_pp);
     char  t  = pt[0];
+
     pt[0] = pt[2];
     pt[2] = t;
   }

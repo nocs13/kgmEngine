@@ -62,9 +62,9 @@ public:
   }
 };
 
-class kgmParticleObject: public kgmGameObject
+class kgmParticlesObject: public kgmGameObject
 {
-  KGM_OBJECT(kgmParticleObject);
+  KGM_OBJECT(kgmParticlesObject);
 
 private:
   kgmIGame* game;
@@ -74,10 +74,10 @@ protected:
   kgmMaterial*  material;
 
 public:
-  kgmParticleObject(kgmIGame* g,
+  kgmParticlesObject(kgmIGame* g,
                vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
                float speed = 0.0f, float div_speed = 0.0,
-               float life = 1000, float div_life = 0.5f,
+               float life = 1000,  float div_life = 0.5f,
                float size_start = .1f, float size_end = 1.0f,
                u32 count = 1,
                kgmString tid = "",
@@ -117,7 +117,7 @@ public:
     setPosition(pos);
   }
 
-  kgmParticleObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
+  kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
   {
     game = g;
     material = mtl;
@@ -129,7 +129,7 @@ public:
     timeout(life);
   }
 
-  virtual ~kgmParticleObject()
+  virtual ~kgmParticlesObject()
   {
     if(particles)
       particles->release();
@@ -153,7 +153,7 @@ public:
   }
 };
 
-class kgmFlame: public kgmGameObject
+class kgmFlame: public kgmParticlesObject
 {
   KGM_OBJECT(kgmFlame);
 
@@ -163,28 +163,8 @@ protected:
 
 public:
   kgmFlame(kgmIGame* g)
+  :kgmParticlesObject(g)
   {
-    particles = new kgmParticles();
-    m_visual  = new kgmVisual();
-
-    material = new kgmMaterial();
-    material->m_depth        = false;
-    material->m_blend        = true;
-    material->m_srcblend     = gcblend_srcalpha;
-    material->m_dstblend     = gcblend_one;
-    material->m_type         = "simple";
-    material->m_shader       = kgmMaterial::ShaderBlend;
-    material->m_tex_color    = g->getResources()->getTexture("fire_a.tga");
-
-    particles->m_count   = 10;
-    particles->m_speed   = 1.1;
-    particles->div_speed = 1.0;
-    particles->m_life    = 2000;
-    particles->div_life  = 1.0;
-
-    particles->build();
-    m_visual->set(material);
-    m_visual->set(particles);
   }
 
   virtual ~kgmFlame()
