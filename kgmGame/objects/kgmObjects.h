@@ -157,10 +157,6 @@ class kgmFlame: public kgmParticlesObject
 {
   KGM_OBJECT(kgmFlame);
 
-protected:
-  kgmParticles* particles;
-  kgmMaterial*  material;
-
 public:
   kgmFlame(kgmIGame* g)
   :kgmParticlesObject(g)

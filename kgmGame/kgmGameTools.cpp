@@ -97,12 +97,16 @@ void kgmGameTools::gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, 
 kgmPicture* kgmGameTools::genPicture(kgmMemory<u8>& m)
 {
   u32 id_tga = 0x00020000;
-  if(m.empty())
+
+  if(m.empty() || !m.data())
     return 0;
+
   if(!memcmp("BM", m.data(), 2))
     return genPictureFromBmp(m);
+
   if(!memcmp(&id_tga, m.data(), 4))
     return genPictureFromTga(m);
+
   return 0;
 }
 
@@ -223,9 +227,8 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   if(dt != 2)
     return 0;
 
-  if((btcnt != 24))
-    if((btcnt != 32))
-      return 0;
+  if((btcnt != 24) && (btcnt != 32))
+    return 0;
 
   u32 bt_pp = btcnt / 8;
   u32 r_size = w * h * bt_pp;
@@ -237,13 +240,29 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   height = h;
   bpp = btcnt;
 
-  for(int i = 0; i < (w * h); i++)
-  {
-    char* pt = (char*)(((char*)pdata) + i * bt_pp);
-    char  t  = pt[0];
+  u32 order = (dsc & 0x20);
 
-    pt[0] = pt[2];
-    pt[2] = t;
+  if(order)
+  {
+    for(int i = (w * h); i > 0; i--)
+    {
+      char* pt = (char*)(((char*)pdata) + (i - 1) * bt_pp);
+      char  t  = pt[0];
+
+      pt[0] = pt[2];
+      pt[2] = t;
+    }
+  }
+  else
+  {
+    for(int i = 0; i < (w * h); i++)
+    {
+      char* pt = (char*)(((char*)pdata) + i * bt_pp);
+      char  t  = pt[0];
+
+      pt[0] = pt[2];
+      pt[2] = t;
+    }
   }
   
   return new kgmPicture(width, height, bpp, frames, pdata);
