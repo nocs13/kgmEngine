@@ -20,13 +20,12 @@ else
 	RM = del
 endif
 
-kgmEngine: ../../libkgmEngine.a
-	make -C ../..
-
 all: kgmEngine
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 	$(CC) -o kEditor *.o ../../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
+kgmEngine: ../../libkgmEngine.a
+	make -C ../..
+
 clean:	
 	$(RM) -f kEditor *.o
-	
