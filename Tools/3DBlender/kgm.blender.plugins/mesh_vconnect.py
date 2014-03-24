@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
 bl_info = {
     "name": "Vertex Connect",
     "author": "Karakal_13",
@@ -29,7 +28,6 @@ bl_info = {
     "tracker_url": "http://projects.blender.org/tracker/index.php",
     "category": "Mesh"
 }
-        
 
 import bpy
 import bmesh
@@ -39,26 +37,21 @@ import operator
 
 from math import *
 
-
-
-
 class VConnect_toolbar(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_context = "mesh_edit"
     bl_label = "VConnect"
-    
+
     @classmethod
     def poll(cls, context):
         return context.active_object
-    
-    
+
     def draw(self, context):
         layout = self.layout
         
         scn = context.scene
         ob = context.object
-        
         col = layout.column(align=True)
         row = layout.row()
         row.separator()
@@ -71,22 +64,18 @@ class VConnect_edit_connect(bpy.types.Operator):
     bl_label = "VConnect edit connect"
     bl_description = "Connect near vertices."
     
-    
     def execute(self, context):
       if self.main_object is None:
         return
       self.connect_vertices()
       return
-       
-       
+
     def invoke (self, context, event):
         self.main_object = bpy.context.active_object
         self.distance = bpy.context.scene.VConnect_distance
-        
         self.execute(context)
-        
         return {"FINISHED"}
-      
+
     def connect_vertices(self):
       self.main_object.update_from_editmode()
       mverts = self.main_object.data.vertices
@@ -96,13 +85,10 @@ class VConnect_edit_connect(bpy.types.Operator):
       verts = [v for v in mverts if v.select]
       
       for i in range(0, len(verts) - 1):
-        print(str(verts[i].co))
         for j in range(i + 1, len(verts)):
           v = verts[i].co - verts[j].co
           dist = math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
-          print(dist)
           if dist < self.distance:
-            print("merging " + str(i) + " " + str(j))
             vx = 0.5 * (verts[i].co.x + verts[j].co.x)
             vy = 0.5 * (verts[i].co.y + verts[j].co.y)
             vz = 0.5 * (verts[i].co.z + verts[j].co.z)
@@ -111,15 +97,31 @@ class VConnect_edit_connect(bpy.types.Operator):
             mverts[vi].co.x = mverts[vj].co.x = vx
             mverts[vi].co.y = mverts[vj].co.y = vy
             mverts[vi].co.z = mverts[vj].co.z = vz
-            #self.main_object.data.update()
 
-      #self.main_object.data.remove_doubles(0.00001);
+      fverts = list()
+      for v in mverts:
+        fverts.append((v.co.x, v.co.y, v.co.z))
+
+      fpolys = list()
+      for f in mfaces:
+        verts = list()
+        for i in f.vertices:
+          verts.append(i)
+        fpolys.append(verts);
+
+      #print("vertices: " + str(fverts))
+      #print("polygons: " + str(fpolys))
+
+      mesh = bpy.data.meshes.new(self.main_object.data.name)
+      mesh.from_pydata(fverts, [], fpolys)
       bpy.ops.object.mode_set(mode = 'OBJECT')
-      self.main_object.data.from_pydata([v.co for v in mverts], [f.vertices for f in medges], [])
+      mesh.update(calc_edges=True)
+      self.main_object.data = mesh
+      #self.main_object.data.from_pydata(fverts, [], fpolys)
       bpy.ops.object.mode_set(mode = 'EDIT')
-      bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)
+      bpy.ops.mesh.remove_doubles(threshold=0.00001, use_unselected=False)
       self.main_object.update_from_editmode()
-      
+
 def register():
     bpy.utils.register_class(VConnect_toolbar)
     bpy.utils.register_class(VConnect_edit_connect)
@@ -136,6 +138,4 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    
-    
 
