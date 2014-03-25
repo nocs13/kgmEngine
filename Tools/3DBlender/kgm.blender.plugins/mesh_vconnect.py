@@ -49,7 +49,7 @@ class VConnect_toolbar(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        
+
         scn = context.scene
         ob = context.object
         col = layout.column(align=True)
@@ -57,13 +57,13 @@ class VConnect_toolbar(bpy.types.Panel):
         row.separator()
         col.operator("vconnect.edit_connect", text="Connect")
         col.prop(scn, "VConnect_distance")
-        
+
 # Edit strokes operator.
 class VConnect_edit_connect(bpy.types.Operator):
     bl_idname = "vconnect.edit_connect"
     bl_label = "VConnect edit connect"
     bl_description = "Connect near vertices."
-    
+
     def execute(self, context):
       if self.main_object is None:
         return
@@ -71,6 +71,11 @@ class VConnect_edit_connect(bpy.types.Operator):
       return
 
     def invoke (self, context, event):
+#        self.main_object = bpy.context.active_object
+        if bpy.context.edit_object is None or bpy.context.edit_object.type != 'MESH':
+          print("Wrong edit object")
+          return {"FINISHED"}
+
         self.main_object = bpy.context.active_object
         self.distance = bpy.context.scene.VConnect_distance
         self.execute(context)
@@ -78,12 +83,11 @@ class VConnect_edit_connect(bpy.types.Operator):
 
     def connect_vertices(self):
       self.main_object.update_from_editmode()
-      mverts = self.main_object.data.vertices
-      medges = self.main_object.data.edges
-      mfaces = self.main_object.data.polygons
-      
-      verts = [v for v in mverts if v.select]
-      
+      mbmesh = bmesh.from_edit_mesh(self.main_object.data)
+      mbmesh.faces.active = None
+
+      verts = [v for v in mbmesh.verts if v.select]
+
       for i in range(0, len(verts) - 1):
         for j in range(i + 1, len(verts)):
           v = verts[i].co - verts[j].co
@@ -94,31 +98,11 @@ class VConnect_edit_connect(bpy.types.Operator):
             vz = 0.5 * (verts[i].co.z + verts[j].co.z)
             vi = verts[i].index
             vj = verts[j].index
-            mverts[vi].co.x = mverts[vj].co.x = vx
-            mverts[vi].co.y = mverts[vj].co.y = vy
-            mverts[vi].co.z = mverts[vj].co.z = vz
+            mbmesh.verts[vi].co.x = mbmesh.verts[vj].co.x = vx
+            mbmesh.verts[vi].co.y = mbmesh.verts[vj].co.y = vy
+            mbmesh.verts[vi].co.z = mbmesh.verts[vj].co.z = vz
 
-      fverts = list()
-      for v in mverts:
-        fverts.append((v.co.x, v.co.y, v.co.z))
-
-      fpolys = list()
-      for f in mfaces:
-        verts = list()
-        for i in f.vertices:
-          verts.append(i)
-        fpolys.append(verts);
-
-      #print("vertices: " + str(fverts))
-      #print("polygons: " + str(fpolys))
-
-      mesh = bpy.data.meshes.new(self.main_object.data.name)
-      mesh.from_pydata(fverts, [], fpolys)
-      bpy.ops.object.mode_set(mode = 'OBJECT')
-      mesh.update(calc_edges=True)
-      self.main_object.data = mesh
-      #self.main_object.data.from_pydata(fverts, [], fpolys)
-      bpy.ops.object.mode_set(mode = 'EDIT')
+      bmesh.update_edit_mesh(self.main_object.data, True)
       bpy.ops.mesh.remove_doubles(threshold=0.00001, use_unselected=False)
       self.main_object.update_from_editmode()
 
@@ -129,7 +113,7 @@ def register():
       name="distance",
       description = "Maximux distance for connect",
       default = 1.0)
-    
+
 
 def unregister():
     bpy.utils.unregister_class(VConnect_toolbar)
