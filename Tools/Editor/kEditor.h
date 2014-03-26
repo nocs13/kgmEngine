@@ -2,11 +2,22 @@
 #define KEDITOR_H
 
 #include "../../kgmGame/kgmGameBase.h"
+#include "kPivot.h"
+#include "kGridline.h"
 
 class kEditor: public kgmGameBase
 {
+
+private:
+  bool ms_click[3];
+  vec3 cam_pos;
+  f32  cam_rot;
+
+  kGridline* gridline;
+  kPivot*    pivot;
 public:
   kEditor();
+  ~kEditor();
 
   void onKeyUp(int k);
   void onKeyDown(int k);

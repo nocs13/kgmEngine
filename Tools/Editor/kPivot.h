@@ -3,10 +3,10 @@
 
 #include "../../kgmGraphics/kgmVisual.h"
 
-class kgmPivot: public kgmVisual
+class kPivot: public kgmVisual
 {
 public:
-  kgmPivot();
+  kPivot();
 };
 
 #endif // KGMPIVOT_H

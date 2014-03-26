@@ -96,6 +96,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
 
   gui_style = new kgmGuiStyle();
 
+  g_def_material.m_shader = kgmMaterial::ShaderNone;
+
   if(g)
   {
     int val;
@@ -140,9 +142,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
       shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
       shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
       shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
-      //shaders.add(kgmMaterial::ShaderPoor,  rc->getShader("poor.glsl"));
-      //shaders.add(kgmMaterial::ShaderSkin, rc->getShader("skin.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("base.glsl"));
+      shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("skin.glsl"));
       shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
 
       shader = rc->getShader("lights.glsl");
@@ -152,7 +152,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
         shader->m_input |= kgmShader::IN_VEC4_LIGHTS;
         shaders.add(kgmMaterial_ShaderLights, shader);
       }
-
     }
   }
 
@@ -275,10 +274,6 @@ void kgmGraphics::resize(float width, float height){
                       m_camera.mUp);
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
-
-#ifdef DEBUG
-  kgm_log() << "Resized";
-#endif
 }
 
 void kgmGraphics::render()

@@ -1,11 +1,11 @@
 OS = $(shell uname -s)
 RM =
 
-CC = g++ 
+CC = g++
 DEFS = -DLINUX
-FLGS = -ansi -std=c++98 
+FLGS = -ansi -std=c++98
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
-	-I../kgmGraphics -L../kgmSystem/lib -L../	
+	-I../kgmGraphics -L../kgmSystem/lib -L../
 LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
 ifeq ($(OS), Linux)
@@ -20,12 +20,9 @@ else
 	RM = del
 endif
 
-all: kgmEngine
+all:
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 	$(CC) -o kEditor *.o ../../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
-kgmEngine: ../../libkgmEngine.a
-	make -C ../..
-
-clean:	
+clean:
 	$(RM) -f kEditor *.o
