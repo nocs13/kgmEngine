@@ -2,6 +2,8 @@
 #define KEDITOR_H
 
 #include "../../kgmGame/kgmGameBase.h"
+#include "../../kgmGraphics/kgmGuiMenu.h"
+
 #include "kPivot.h"
 #include "kGridline.h"
 
@@ -15,6 +17,8 @@ private:
 
   kGridline* gridline;
   kPivot*    pivot;
+
+  kgmGuiMenu* menu;
 public:
   kEditor();
   ~kEditor();

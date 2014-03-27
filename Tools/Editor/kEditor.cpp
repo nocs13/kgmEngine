@@ -9,11 +9,19 @@ kEditor::kEditor()
   cam_pos = vec3(0, 0, 0);
   cam_rot = 0.0f;
 
-  gridline = new kGridline();
 
   if(m_render)
   {
-    m_render->add(gridline,null);
+    menu = new kgmGuiMenu(null);
+    kgmGuiMenu::Item* item = menu->item->add(-1, "File");
+    item->add(0, "Quit");
+    item = menu->item->add(-1, "Help");
+    item->add(0xffff, "About");
+    m_render->add(menu);
+
+
+    gridline = new kGridline();
+    m_render->add(gridline, null);
   }
 }
 

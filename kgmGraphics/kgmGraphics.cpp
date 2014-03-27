@@ -3,6 +3,7 @@
 #include "kgmGuiButton.h"
 #include "kgmGuiScroll.h"
 #include "kgmGuiList.h"
+#include "kgmGuiMenu.h"
 #include "kgmGuiTab.h"
 #include "kgmGui.h"
 #include "kgmMesh.h"
@@ -1285,8 +1286,11 @@ void kgmGraphics::render(kgmGui* gui){
       gcDrawRect(kgmGui::Rect(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemSel * ((kgmGuiList*)gui)->m_itemHeight,
                               rect.w, ((kgmGuiList*)gui)->m_itemHeight), gui_style->sbutton.fg_color, gui_style->slist.image);
     //Draw Items Rects
-    for(int i = ((kgmGuiList*)gui)->m_position; i < (((kgmGuiList*)gui)->m_position + item_view); i++){
-      if(i >= item_cnt) continue;
+    for(int i = ((kgmGuiList*)gui)->m_position; i < (((kgmGuiList*)gui)->m_position + item_view); i++)
+    {
+      if(i >= item_cnt)
+        continue;
+
       kgmString item; item = ((kgmGuiList*)gui)->m_items[i];
       u32 a = (i - ((kgmGuiList*)gui)->m_position);
       kgmGui::Rect clip(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a,
@@ -1303,6 +1307,13 @@ void kgmGraphics::render(kgmGui* gui){
 
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, rect, text);
+  }
+  else if(gui->isClass(kgmGuiMenu::Class))
+  {
+    kgmGuiMenu* menu = (kgmGuiMenu*)gui;
+
+    if(menu->item)
+      renderGuiMenuItem(menu->item);
   }
   else if(gui->isClass(kgmGuiTab::Class))
   {
@@ -1341,9 +1352,38 @@ void kgmGraphics::render(kgmGui* gui){
   if(gui->m_hasAlpha)
     gc->gcBlend(false, gcblend_zero, gcblend_zero);
 
-  for(int i = 0; i < gui->m_childs.length(); i++){
+  for(int i = 0; i < gui->m_childs.length(); i++)
+  {
     if(gui->m_childs[i]->m_view)
       render(gui->m_childs[i]);
+  }
+}
+
+void kgmGraphics::renderGuiMenuItem(void *i)
+{
+  kgmGuiMenu::Item* item = (kgmGuiMenu::Item*)i;
+
+  iRect rect = item->getRect();
+
+  gcDrawRect(rect, 0xff888888, null);
+
+  for(int i = 0; i < item->getItemsCount(); i++)
+  {
+    kgmGuiMenu::Item* citem = item->getItem(i);
+
+    kgmGui::Rect rc(rect.x, rect.y + i * 21, rect.w, 21);
+
+    if(item->getSelected() == i)
+    {
+      gcDrawRect(item->getRect(), 0xff999999, null);
+
+      if(citem->getItemsCount() > 0)
+        renderGuiMenuItem(citem);
+    }
+
+    kgmString title = citem->getTitle();
+
+    gcDrawText(font, 20, 30, 0xFFFFFFFF, rc, title);
   }
 }
 

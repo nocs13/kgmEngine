@@ -25,7 +25,8 @@ kgmGui::kgmGui()
   m_image = null;
 }
 
-kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
+kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
+{
   m_id = 0;
   m_parent = par;
   m_erase  = false;
@@ -41,8 +42,8 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h){
 
   if(par)
   {
-   par->addChild(this);
-   m_parent = par;
+    par->addChild(this);
+    m_parent = par;
   }
 
   m_draw        = 0;
@@ -58,7 +59,7 @@ kgmGui::~kgmGui(){
   m_childs.clear();
 
   if(m_parent) 
-   m_parent->delChild(this);
+    m_parent->delChild(this);
 }
 
 //public:

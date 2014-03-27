@@ -28,7 +28,6 @@
 #include "../kgmPhysics/kgmBody.h";
 #endif
 
-
 class kgmGraphics: public kgmObject
 {
   KGM_OBJECT(kgmGraphics);
@@ -115,13 +114,16 @@ private:
   void render(kgmShader*);
   void render(kgmMaterial*);
   void render(kgmParticles*);
+
+  void renderGuiMenuItem(void*);
+
   void gc2DMode();
   void gc3DMode();
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
   void gcDrawBillboard(box b, u32 col);
-  void trash();
 
+  void trash();
 
   void setProjMatrix(mtx4&);
   void setViewMatrix(mtx4&);
