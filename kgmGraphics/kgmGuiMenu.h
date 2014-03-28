@@ -6,6 +6,8 @@ class kgmGuiMenu: public kgmGui
 
 public:
 
+  static u32 ItemHeight;
+
   class Item
   {
   protected:
@@ -32,8 +34,7 @@ public:
 
       selected = -1;
 
-      rect = iRect(0, 0, 0, 20);
-      rect.h = 20;
+      rect = iRect(0, 0, 10 * t.length(), ItemHeight);
     }
 
     ~Item()
@@ -63,9 +64,9 @@ public:
       items.add(item);
 
       if(vertical)
-        rect.h += 21;
+        rect.h += item->getRect().height();
       else
-        rect.w += 71;
+        rect.w += item->getRect().width();
 
       return item;
     }
@@ -88,30 +89,43 @@ public:
     {
       if(rect.inside(x, y))
       {
-        selected = rect.height() / 21;
-
-        if(selected < items.length() && items[selected]->getItemsCount() > 0)
+        for(u32 i = 0; i < items.length(); i++)
         {
-          items[selected]->setExpand(true);
+          if(items[i]->getRect().inside(x, y) && selected != i)
+          {
+            if(selected != -1 && selected < items.length())
+              items[selected]->setExpand(false);
+
+            selected = i;
+
+            break;
+          }
+        }
+
+        if(selected != -1)
+        {
+          if(selected < items.length() && items[selected]->getItemsCount() > 0)
+            items[selected]->setExpand(true);
         }
       }
-      else if(selected < items.length() && items[selected]->getExpand())
+      else if(selected != -1 && selected < items.length() && items[selected]->getExpand())
       {
         items[selected]->movePointer(x, y);
       }
     }
   };
 
-
+protected:
   Item* item;
 
 public:
-  kgmGuiMenu(kgmGui* parent, kgmString title = "Menu");
+  kgmGuiMenu(kgmGui* parent);
   ~kgmGuiMenu();
 
-  iRect getMenuRect();
-  void setPosition(int x, int y);
+  Item* add(u32 id, kgmString title);
 
   void onMsMove(int k, int x, int y);
   void onMsLeftUp(int k, int x, int y);
+
+  Item* getItem() { return item; }
 };

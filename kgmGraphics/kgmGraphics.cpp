@@ -1310,10 +1310,33 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isClass(kgmGuiMenu::Class))
   {
+    if(gui->m_hasMouse )
+    {
+      if(gui->m_useStyle)
+      {
+        gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+      }
+      else
+      {
+        gcDrawRect(rect, gui->m_color, gui->m_image);
+      }
+    }
+    else
+    {
+      if(gui->m_useStyle)
+      {
+        gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
+      }
+      else
+      {
+        gcDrawRect(rect, gui->m_color, gui->m_image);
+      }
+    }
+
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
 
-    if(menu->item)
-      renderGuiMenuItem(menu->item);
+    if(menu->getItem())
+      renderGuiMenuItem(menu->getItem());
   }
   else if(gui->isClass(kgmGuiTab::Class))
   {
@@ -1375,7 +1398,7 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
     if(item->getSelected() == i)
     {
-      gcDrawRect(item->getRect(), 0xff999999, null);
+      gcDrawRect(item->getRect(), 0xff550011, null);
 
       if(citem->getItemsCount() > 0)
         renderGuiMenuItem(citem);

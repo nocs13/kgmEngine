@@ -13,9 +13,9 @@ kEditor::kEditor()
   if(m_render)
   {
     menu = new kgmGuiMenu(null);
-    kgmGuiMenu::Item* item = menu->item->add(-1, "File");
+    kgmGuiMenu::Item* item = menu->add(-1, "File");
     item->add(0, "Quit");
-    item = menu->item->add(-1, "Help");
+    item = menu->add(-1, "Help");
     item->add(0xffff, "About");
     m_render->add(menu);
 
@@ -75,6 +75,9 @@ void kEditor::onMsRightDown(int k, int x, int y)
 void kEditor::onMsMove(int k, int x, int y)
 {
   kgmGameBase::onMsMove(k, x, y);
+
+  if(menu)
+    menu->onMsMove(k, x, y);
 
   if(m_render)
   {
