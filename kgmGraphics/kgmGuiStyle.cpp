@@ -24,4 +24,11 @@ kgmGuiStyle::kgmGuiStyle()
   slist.ac_color = 0xffaaaaaa;
   slist.fg_color = 0xffbbbbbb;
   slist.image    = null;
+
+  //gui menu
+  smenu.tx_color = 0xffffffff;
+  smenu.bg_color = 0xffaaaaaa;
+  smenu.ac_color = 0xffaaaaaa;
+  smenu.fg_color = 0xffbbbbbb;
+  smenu.image    = null;
 }

@@ -35,6 +35,11 @@ class kgmGuiStyle: public kgmObject
 
   };
 
+  struct SGuiMenu: SGui
+  {
+
+  };
+
   struct SGuiProgress: SGui
   {
 
@@ -45,6 +50,7 @@ class kgmGuiStyle: public kgmObject
   
   SGui sgui;
   SGuiList slist;
+  SGuiMenu smenu;
   SGuiButton sbutton;
   SGuiProgress sprogess;
 

@@ -801,7 +801,7 @@ void kgmGraphics::render()
   {
     fps_frames++;
   }
-  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 100, 20), fps_text);
+  //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 1, 100, 20), fps_text);
 #endif
 
   if(m_has_shaders)
@@ -1314,7 +1314,7 @@ void kgmGraphics::render(kgmGui* gui){
     {
       if(gui->m_useStyle)
       {
-        gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
+        gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
       }
       else
       {
@@ -1325,7 +1325,7 @@ void kgmGraphics::render(kgmGui* gui){
     {
       if(gui->m_useStyle)
       {
-        gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
+        gcDrawRect(rect, gui_style->smenu.bg_color, gui_style->smenu.image);
       }
       else
       {
@@ -1394,11 +1394,11 @@ void kgmGraphics::renderGuiMenuItem(void *i)
   {
     kgmGuiMenu::Item* citem = item->getItem(i);
 
-    kgmGui::Rect rc(rect.x, rect.y + i * 21, rect.w, 21);
+    kgmGui::Rect rc = citem->getRect();
 
     if(item->getSelected() == i)
     {
-      gcDrawRect(item->getRect(), 0xff550011, null);
+      gcDrawRect(rc, 0xff550011, null);
 
       if(citem->getItemsCount() > 0)
         renderGuiMenuItem(citem);
@@ -1406,7 +1406,7 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
     kgmString title = citem->getTitle();
 
-    gcDrawText(font, 20, 30, 0xFFFFFFFF, rc, title);
+    gcDrawText(font, 10, 20, 0xFFFFFFFF, rc, title);
   }
 }
 

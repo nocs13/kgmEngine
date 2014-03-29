@@ -10,8 +10,17 @@ public:
 
   class Item
   {
+  public:
+    enum Type
+    {
+      TypeItem,
+      TypeMenu,
+      TypeSeparator
+    };
+
   protected:
     u32        id;
+    Type       type;
     kgmString  title;
 
     kgmGui::Rect rect;
@@ -21,20 +30,43 @@ public:
 
     s32        selected;
 
+    f32        xscale, yscale;
+
     kgmList<Item*> items;
 
   public:
-    Item(u32 i, kgmString t, bool vert = true)
+    Item(kgmString text, bool horizontal = false)
     {
-      id    = i;
-      title = t;
+      id    = -1;
+      title = text;
+
+      type  = TypeMenu;
 
       expand = false;
-      vertical = vert;
+      vertical = !horizontal;
 
       selected = -1;
 
-      rect = iRect(0, 0, 10 * t.length(), ItemHeight);
+      xscale = yscale = 1.0f;
+
+      rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+    }
+
+    Item(u32 eid, kgmString text, bool horizontal = false)
+    {
+      id    = eid;
+      title = text;
+
+      type  = TypeItem;
+
+      expand = false;
+      vertical = !horizontal;
+
+      selected = -1;
+
+      xscale = yscale = 1.0f;
+
+      rect = iRect(0, 0, 10 * title.length(), ItemHeight);
     }
 
     ~Item()
@@ -52,21 +84,52 @@ public:
 
     iRect getRect() { return rect; }
 
+    s32 getType(){ return (s32)type; }
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
 
+    Item* add(kgmString title, kgmTexture* icon = null)
+    {
+      if(type != TypeMenu || title.length() < 1)
+        return null;
+
+      Item* item = new Item(title);
+      items.add(item);
+
+      if(vertical)
+      {
+        rect.h += item->getRect().height();
+
+        item->setPosition(rect.x, rect.y + rect.h);
+      }
+      else
+      {
+        rect.w += item->getRect().width();
+
+        item->setPosition(rect.x + rect.w, rect.y);
+      }
+
+      return item;
+    }
+
     Item* add(u32 id, kgmString title, kgmTexture* icon = null)
     {
-      if(title.length() < 1)
+      if(type != TypeMenu || title.length() < 1)
         return null;
 
       Item* item = new Item(id, title);
       items.add(item);
 
       if(vertical)
+      {
+        item->setPosition(rect.x, rect.y + rect.h);
         rect.h += item->getRect().height();
+      }
       else
+      {
+        item->setPosition(rect.x + rect.w, rect.y);
         rect.w += item->getRect().width();
+      }
 
       return item;
     }
@@ -122,6 +185,7 @@ public:
   kgmGuiMenu(kgmGui* parent);
   ~kgmGuiMenu();
 
+  Item* add(kgmString title);
   Item* add(u32 id, kgmString title);
 
   void onMsMove(int k, int x, int y);

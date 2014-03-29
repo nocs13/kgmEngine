@@ -8,7 +8,23 @@ kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
 {
   m_rect.x = m_rect.y = 0;
 
-  item = new Item(-1, "", false);
+  item = new Item("", true);
+}
+
+kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
+{
+  Item* im = item->add(title);
+
+  if(!im)
+    return null;
+
+  u32 x = m_rect.x + m_rect.w + 1;
+
+  m_rect = item->getRect();
+
+  im->setPosition(x, 0);
+
+  return im;
 }
 
 kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)

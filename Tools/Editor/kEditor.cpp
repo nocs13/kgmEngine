@@ -4,21 +4,29 @@ kEditor::kEditor()
 {
   setMsAbsolute(true);
 
-  ms_click[0] = ms_click[0] = ms_click[0] = false;
+  ms_click[0] = ms_click[1] = ms_click[2] = false;
 
   cam_pos = vec3(0, 0, 0);
   cam_rot = 0.0f;
 
-
   if(m_render)
   {
     menu = new kgmGuiMenu(null);
-    kgmGuiMenu::Item* item = menu->add(-1, "File");
+    kgmGuiMenu::Item* item = menu->add("File");
+    item->add(1, "Open");
+    item->add(2, "Save");
     item->add(0, "Quit");
-    item = menu->add(-1, "Help");
+    item = menu->add("Edit");
+    item->add(11, "Add mesh");
+    item->add(12, "Add material");
+    item = menu->add("Run");
+    item->add(21, "Run");
+    item = menu->add("View");
+    item->add(31, "Mesh list");
+    item->add(32, "Material list");
+    item = menu->add("Help");
     item->add(0xffff, "About");
     m_render->add(menu);
-
 
     gridline = new kGridline();
     m_render->add(gridline, null);
