@@ -8,7 +8,7 @@ kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
 {
   m_rect.x = m_rect.y = 0;
 
-  item = new Item("", true);
+  item = new Item(null, "", true);
 }
 
 kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
@@ -21,8 +21,6 @@ kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
   u32 x = m_rect.x + m_rect.w + 1;
 
   m_rect = item->getRect();
-
-  im->setPosition(x, 0);
 
   return im;
 }
@@ -38,8 +36,6 @@ kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)
 
   m_rect = item->getRect();
 
-  im->setPosition(x, 0);
-
   return im;
 }
 
@@ -51,10 +47,11 @@ kgmGuiMenu::~kgmGuiMenu()
 
 void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 {
-  if(m_rect.inside(x, y))
-  {
-    item->setExpand(!item->getExpand());
-  }
+  Item* itm = item->clickPointer(x, y);
+
+  s32 selid = item->getSelected();
+
+  Item* selected = item->getItem(selid);
 }
 
 void kgmGuiMenu::onMsMove(int key, int x, int y)

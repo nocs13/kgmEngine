@@ -52,6 +52,9 @@ void kEditor::onMsLeftUp(int k, int x, int y)
 {
   kgmGameBase::onMsLeftUp(k, x, y);
 
+  if(menu)
+    menu->onMsLeftUp(k, x, y);
+
   setMsAbsolute(true);
   ms_click[0] = false;
 }

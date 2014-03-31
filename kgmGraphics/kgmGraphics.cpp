@@ -1388,7 +1388,7 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
   iRect rect = item->getRect();
 
-  gcDrawRect(rect, 0xff888888, null);
+  //gcDrawRect(rect, 0xff888888, null);
 
   for(int i = 0; i < item->getItemsCount(); i++)
   {
@@ -1398,10 +1398,15 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
     if(item->getSelected() == i)
     {
-      gcDrawRect(rc, 0xff550011, null);
 
-      if(citem->getItemsCount() > 0)
+      if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(citem);
+
+      gcDrawRect(rc, 0xff550011, null);
+    }
+    else
+    {
+      gcDrawRect(rc, 0xff888888, null);
     }
 
     kgmString title = citem->getTitle();

@@ -19,30 +19,32 @@ public:
     };
 
   protected:
+    Item*      parent;
     u32        id;
     Type       type;
     kgmString  title;
 
     kgmGui::Rect rect;
 
-    bool       expand;
+    bool       popup;
     bool       vertical;
 
     s32        selected;
-
     f32        xscale, yscale;
 
     kgmList<Item*> items;
 
   public:
-    Item(kgmString text, bool horizontal = false)
+    Item(Item* par, kgmString text, bool horizontal = false)
     {
+      parent = par;
+
       id    = -1;
       title = text;
 
       type  = TypeMenu;
 
-      expand = false;
+      popup = false;
       vertical = !horizontal;
 
       selected = -1;
@@ -50,16 +52,30 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+
+      if(parent)
+      {
+        if(parent->vertical)
+        {
+          setPosition(parent->rect.x, parent->rect.y + ItemHeight * parent->items.length());
+        }
+        else
+        {
+          setPosition(parent->rect.x + 40 * parent->items.length(), parent->rect.y);
+        }
+      }
     }
 
-    Item(u32 eid, kgmString text, bool horizontal = false)
+    Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
     {
+      parent = par;
+
       id    = eid;
       title = text;
 
       type  = TypeItem;
 
-      expand = false;
+      popup = false;
       vertical = !horizontal;
 
       selected = -1;
@@ -67,6 +83,18 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+
+      if(parent)
+      {
+        if(parent->vertical)
+        {
+          setPosition(parent->rect.x, parent->rect.y + ItemHeight * parent->items.length());
+        }
+        else
+        {
+          setPosition(parent->rect.x + 40 * parent->items.length(), parent->rect.y);
+        }
+      }
     }
 
     ~Item()
@@ -79,35 +107,46 @@ public:
 
     kgmString getTitle() { return title; }
 
-    void setExpand(bool e) { expand = e; }
-    bool getExpand() { return expand; }
-
     iRect getRect() { return rect; }
 
     s32 getType(){ return (s32)type; }
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
 
+    iRect rectContent()
+    {
+      if(type == TypeItem)
+        return rect;
+
+      s32 w = 0, h = 0;
+
+      for(int i = 0; i < items.length(); i++)
+      {
+        s32 iw = items[i]->getRect().width();
+        s32 ih = items[i]->getRect().height();
+
+        if(vertical)
+        {
+          h += ih;
+          w = (iw > w) ? (iw) : (w);
+        }
+        else
+        {
+          w += iw;
+          h = ih;
+        }
+      }
+
+      return iRect(rect.x, rect.y, w, h);
+    }
+
     Item* add(kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
         return null;
 
-      Item* item = new Item(title);
+      Item* item = new Item(this, title);
       items.add(item);
-
-      if(vertical)
-      {
-        rect.h += item->getRect().height();
-
-        item->setPosition(rect.x, rect.y + rect.h);
-      }
-      else
-      {
-        rect.w += item->getRect().width();
-
-        item->setPosition(rect.x + rect.w, rect.y);
-      }
 
       return item;
     }
@@ -117,19 +156,8 @@ public:
       if(type != TypeMenu || title.length() < 1)
         return null;
 
-      Item* item = new Item(id, title);
+      Item* item = new Item(this, id, title);
       items.add(item);
-
-      if(vertical)
-      {
-        item->setPosition(rect.x, rect.y + rect.h);
-        rect.h += item->getRect().height();
-      }
-      else
-      {
-        item->setPosition(rect.x + rect.w, rect.y);
-        rect.w += item->getRect().width();
-      }
 
       return item;
     }
@@ -150,31 +178,35 @@ public:
 
     void movePointer(int x, int y)
     {
-      if(rect.inside(x, y))
+      for(u32 i = 0; i < items.length(); i++)
       {
-        for(u32 i = 0; i < items.length(); i++)
+        if(items[i]->getRect().inside(x, y) && selected != i)
         {
-          if(items[i]->getRect().inside(x, y) && selected != i)
-          {
-            if(selected != -1 && selected < items.length())
-              items[selected]->setExpand(false);
+          selected = i;
 
-            selected = i;
-
-            break;
-          }
-        }
-
-        if(selected != -1)
-        {
-          if(selected < items.length() && items[selected]->getItemsCount() > 0)
-            items[selected]->setExpand(true);
+          break;
         }
       }
-      else if(selected != -1 && selected < items.length() && items[selected]->getExpand())
+
+      if(selected != -1 && selected < items.length())
       {
         items[selected]->movePointer(x, y);
       }
+    }
+
+    Item* clickPointer(int x, int y)
+    {
+      selected = -1;
+
+      if(rect.inside(x, y))
+        return this;
+
+      if(selected != -1 && selected < items.length())
+      {
+        return items[selected]->clickPointer(x, y);
+      }
+
+      return null;
     }
   };
 
