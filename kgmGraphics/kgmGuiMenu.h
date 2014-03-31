@@ -53,7 +53,8 @@ public:
 
       xscale = yscale = 1.0f;
 
-      rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      rect = iRect(0, 0, 1, 1);
     }
 
     Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
@@ -72,7 +73,8 @@ public:
 
       xscale = yscale = 1.0f;
 
-      rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      rect = iRect(0, 0, 1, 1);
     }
 
     ~Item()
@@ -92,33 +94,6 @@ public:
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
 
-    iRect rectContent()
-    {
-      if(type == TypeItem)
-        return rect;
-
-      s32 w = 0, h = 0;
-
-      for(int i = 0; i < items.length(); i++)
-      {
-        s32 iw = items[i]->getRect().width();
-        s32 ih = items[i]->getRect().height();
-
-        if(vertical)
-        {
-          h += ih;
-          w = (iw > w) ? (iw) : (w);
-        }
-        else
-        {
-          w += iw;
-          h = ih;
-        }
-      }
-
-      return iRect(rect.x, rect.y, w, h);
-    }
-
     Item* add(kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
@@ -126,18 +101,20 @@ public:
 
       Item* item = new Item(this, title);
 
+      s32 iw = 10 * title.length();
+
       if(vertical)
       {
-        item->setPosition(rect.x, rect.y + ItemHeight + ItemHeight * items.length());
+        if(iw > rect.w)
+          rect.w = iw;
+
+        item->setPosition(rect.x + iw, rect.y + rect.h);
+
+        rect.h += ItemHeight;
       }
       else
       {
-        s32 cwidth = 0;
-
-        for(int i = 0; i < items.length(); i++)
-          cwidth += items[i]->rect.width();
-
-        item->setPosition(cwidth , rect.y);
+        rect.w += iw;
       }
 
       items.add(item);
@@ -152,18 +129,18 @@ public:
 
       Item* item = new Item(this, id, title);
 
+      s32 iw = 10 * title.length();
+
       if(vertical)
       {
-        item->setPosition(rect.x, rect.y + ItemHeight + ItemHeight * items.length());
+        if(iw > rect.w)
+          rect.w = iw;
+
+        rect.h += ItemHeight;
       }
       else
       {
-        s32 cwidth = 0;
-
-        for(int i = 0; i < items.length(); i++)
-          cwidth += items[i]->rect.width();
-
-        item->setPosition(cwidth , rect.y);
+        rect.w += iw;
       }
 
       items.add(item);
@@ -177,6 +154,29 @@ public:
         return items[i];
 
       return null;
+    }
+
+    iRect getRect(s32 i)
+    {
+      iRect rc(0, 0, 0, 0);
+
+      for(int i = 0; i < items.length(); i++)
+      {
+        if(vertical)
+        {
+          rc.x = rect.x;
+          rc.y = rect.y + i * ItemHeight;
+          rc.w = rect.w;
+          rc.h = ItemHeight;
+        }
+        else
+        {
+          rc.x += 10 * items[i]->title.length();
+          rc.y = rect.y;
+          rc.w = 10 * items[i]->title.length();
+          rc.h = ItemHeight;
+        }
+      }
     }
 
     void setPosition(int x, int y)

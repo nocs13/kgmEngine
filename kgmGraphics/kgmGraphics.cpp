@@ -1388,13 +1388,13 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
   iRect rect = item->getRect();
 
-  //gcDrawRect(rect, 0xff888888, null);
+  gcDrawRect(rect, 0xff888888, null);
 
   for(int i = 0; i < item->getItemsCount(); i++)
   {
     kgmGuiMenu::Item* citem = item->getItem(i);
 
-    kgmGui::Rect rc = citem->getRect();
+    kgmGui::Rect rc = citem->getRect(i);
 
     if(item->getSelected() == i)
     {
