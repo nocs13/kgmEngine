@@ -25,7 +25,7 @@ public:
     kgmString  title;
 
     kgmGui::Rect rect;
-    kgmGui::Rect cnrect;
+    u32          width;
 
     bool       popup;
     bool       vertical;
@@ -54,6 +54,7 @@ public:
       xscale = yscale = 1.0f;
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      width = 10 * title.length();
       rect = iRect(0, 0, 1, 1);
     }
 
@@ -74,6 +75,7 @@ public:
       xscale = yscale = 1.0f;
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
+      width = 10 * title.length();
       rect = iRect(0, 0, 1, 1);
     }
 
@@ -101,20 +103,16 @@ public:
 
       Item* item = new Item(this, title);
 
-      s32 iw = 10 * title.length();
-
       if(vertical)
       {
-        if(iw > rect.w)
-          rect.w = iw;
-
-        item->setPosition(rect.x + iw, rect.y + rect.h);
+        if(item->width > rect.w)
+          rect.w = item->width;
 
         rect.h += ItemHeight;
       }
       else
       {
-        rect.w += iw;
+        rect.w += item->width;
       }
 
       items.add(item);
@@ -129,18 +127,16 @@ public:
 
       Item* item = new Item(this, id, title);
 
-      s32 iw = 10 * title.length();
-
       if(vertical)
       {
-        if(iw > rect.w)
-          rect.w = iw;
+        if(item->width > rect.w)
+          rect.w = item->width;
 
         rect.h += ItemHeight;
       }
       else
       {
-        rect.w += iw;
+        rect.w += item->width;
       }
 
       items.add(item);
@@ -171,9 +167,9 @@ public:
         }
         else
         {
-          rc.x += 10 * items[i]->title.length();
+          rc.x += items[i]->width;
           rc.y = rect.y;
-          rc.w = 10 * items[i]->title.length();
+          rc.w = items[i]->width;
           rc.h = ItemHeight;
         }
       }
