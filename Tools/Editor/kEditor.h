@@ -9,7 +9,6 @@
 
 class kEditor: public kgmGameBase
 {
-
 private:
   bool ms_click[3];
   vec3 cam_pos;
@@ -23,6 +22,7 @@ public:
   kEditor();
   ~kEditor();
 
+  void onAction(kgmEvent*,int);
   void onKeyUp(int k);
   void onKeyDown(int k);
   void onMsMove(int k, int x, int y);
@@ -31,6 +31,10 @@ public:
   void onMsLeftDown(int k, int x, int y);
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
+
+  void onQuit();
+  void onMapOpen();
+  void onMapSave();
 };
 
 #endif // KEDITOR_H

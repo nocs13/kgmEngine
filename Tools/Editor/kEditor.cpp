@@ -26,6 +26,7 @@ kEditor::kEditor()
     item->add(32, "Material list");
     item = menu->add("Help");
     item->add(0xffff, "About");
+    menu->addListener(this);
     m_render->add(menu);
 
     gridline = new kGridline();
@@ -123,3 +124,38 @@ void kEditor::onMsWheel(int k, int x, int y, int z)
 {
   kgmGameBase::onMsWheel(k, x, y, z);
 }
+
+void kEditor::onAction(kgmEvent *gui, int id)
+{
+  if(gui == menu)
+  {
+    switch(id)
+    {
+    case 0:
+      onQuit();
+      break;
+    case 1:
+      onMapOpen();
+      break;
+    case 2:
+      onMapSave();
+      break;
+    }
+  }
+}
+
+void kEditor::onQuit()
+{
+  close();
+}
+
+void kEditor::onMapOpen()
+{
+
+}
+
+void kEditor::onMapSave()
+{
+
+}
+

@@ -47,11 +47,12 @@ kgmGuiMenu::~kgmGuiMenu()
 
 void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 {
-  Item* itm = item->clickPointer(x, y);
+  Item* selected = item->clickPointer(x, y);
 
-  s32 selid = item->getSelected();
-
-  Item* selected = item->getItem(selid);
+  if(selected && selected->getType() == Item::TypeItem)
+  {
+    onAction(this, selected->getId());
+  }
 }
 
 void kgmGuiMenu::onMsMove(int key, int x, int y)

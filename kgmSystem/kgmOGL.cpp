@@ -1021,7 +1021,9 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_SHORT, i_pnt);
 #endif
     }
-  }else{
+  }
+  else
+  {
     glDrawArrays(gl_enum(pmt), 0, v_cnt);
   }
 

@@ -224,5 +224,4 @@ protected:
  virtual void onMsRightUp(int k, int x, int y){}
  virtual void onKeyDown(int k){}
  virtual void onKeyUp(int k){}
-
 };

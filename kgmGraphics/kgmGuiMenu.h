@@ -25,11 +25,13 @@ public:
     kgmString  title;
 
     kgmGui::Rect rect;
+    kgmGui::Rect cnrect;
 
     bool       popup;
     bool       vertical;
 
     s32        selected;
+    s32        wcontent;
     f32        xscale, yscale;
 
     kgmList<Item*> items;
@@ -52,18 +54,6 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 10 * title.length(), ItemHeight);
-
-      if(parent)
-      {
-        if(parent->vertical)
-        {
-          setPosition(parent->rect.x, parent->rect.y + ItemHeight * parent->items.length());
-        }
-        else
-        {
-          setPosition(parent->rect.x + 40 * parent->items.length(), parent->rect.y);
-        }
-      }
     }
 
     Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
@@ -83,18 +73,6 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 10 * title.length(), ItemHeight);
-
-      if(parent)
-      {
-        if(parent->vertical)
-        {
-          setPosition(parent->rect.x, parent->rect.y + ItemHeight * parent->items.length());
-        }
-        else
-        {
-          setPosition(parent->rect.x + 40 * parent->items.length(), parent->rect.y);
-        }
-      }
     }
 
     ~Item()
@@ -109,6 +87,7 @@ public:
 
     iRect getRect() { return rect; }
 
+    u32 getId(){ return id; }
     s32 getType(){ return (s32)type; }
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
@@ -146,6 +125,21 @@ public:
         return null;
 
       Item* item = new Item(this, title);
+
+      if(vertical)
+      {
+        item->setPosition(rect.x, rect.y + ItemHeight + ItemHeight * items.length());
+      }
+      else
+      {
+        s32 cwidth = 0;
+
+        for(int i = 0; i < items.length(); i++)
+          cwidth += items[i]->rect.width();
+
+        item->setPosition(cwidth , rect.y);
+      }
+
       items.add(item);
 
       return item;
@@ -157,6 +151,21 @@ public:
         return null;
 
       Item* item = new Item(this, id, title);
+
+      if(vertical)
+      {
+        item->setPosition(rect.x, rect.y + ItemHeight + ItemHeight * items.length());
+      }
+      else
+      {
+        s32 cwidth = 0;
+
+        for(int i = 0; i < items.length(); i++)
+          cwidth += items[i]->rect.width();
+
+        item->setPosition(cwidth , rect.y);
+      }
+
       items.add(item);
 
       return item;
@@ -196,15 +205,23 @@ public:
 
     Item* clickPointer(int x, int y)
     {
-      selected = -1;
-
       if(rect.inside(x, y))
+      {
+        selected = -1;
+
         return this;
+      }
 
       if(selected != -1 && selected < items.length())
       {
-        return items[selected]->clickPointer(x, y);
+        Item* sel = items[selected]->clickPointer(x, y);
+
+        selected = -1;
+
+        return sel;
       }
+
+      selected = -1;
 
       return null;
     }
