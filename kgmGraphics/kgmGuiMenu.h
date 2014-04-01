@@ -31,7 +31,6 @@ public:
     bool       vertical;
 
     s32        selected;
-    s32        wcontent;
     f32        xscale, yscale;
 
     kgmList<Item*> items;
@@ -55,7 +54,7 @@ public:
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       width = 10 * title.length();
-      rect = iRect(0, 0, 1, 1);
+      rect = iRect(0, 0, 0, 0);
     }
 
     Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
@@ -76,7 +75,7 @@ public:
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       width = 10 * title.length();
-      rect = iRect(0, 0, 1, 1);
+      rect = iRect(0, 0, 0, 0);
     }
 
     ~Item()
@@ -152,27 +151,32 @@ public:
       return null;
     }
 
-    iRect getRect(s32 i)
+    iRect getRect(s32 index)
     {
       iRect rc(0, 0, 0, 0);
 
-      for(int i = 0; i < items.length(); i++)
+      if(index >= items.length())
+        return rc;
+
+      for(int i = 0; i <= index; i++)
       {
         if(vertical)
         {
           rc.x = rect.x;
-          rc.y = rect.y + i * ItemHeight;
+          rc.y += ItemHeight;
           rc.w = rect.w;
           rc.h = ItemHeight;
         }
         else
         {
-          rc.x += items[i]->width;
+          rc.x += ((i==0)?(0):(items[i-1]->width));
           rc.y = rect.y;
           rc.w = items[i]->width;
           rc.h = ItemHeight;
         }
       }
+
+      return rc;
     }
 
     void setPosition(int x, int y)
@@ -185,9 +189,23 @@ public:
     {
       for(u32 i = 0; i < items.length(); i++)
       {
-        if(items[i]->getRect().inside(x, y) && selected != i)
+        if(getRect(i).inside(x, y) && selected != i)
         {
           selected = i;
+
+          Item* ci = items[i];
+          Rect  rc = getRect(i);
+
+          if(vertical)
+          {
+            if(ci->vertical)
+              ci->setPosition(rc.x + rc.w, rc.y);
+          }
+          else
+          {
+            if(ci->vertical)
+              ci->setPosition(rc.x, rc.y + rc.h);
+          }
 
           break;
         }
@@ -201,14 +219,16 @@ public:
 
     Item* clickPointer(int x, int y)
     {
-      if(rect.inside(x, y))
+      if(selected != -1 && getRect(selected).inside(x, y))
       {
+        Item* sel = items[selected];
+
         selected = -1;
 
-        return this;
+        return sel;
       }
 
-      if(selected != -1 && selected < items.length())
+      if(selected != -1 && items[selected]->type == TypeMenu)
       {
         Item* sel = items[selected]->clickPointer(x, y);
 

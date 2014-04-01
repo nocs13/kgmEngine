@@ -1394,7 +1394,7 @@ void kgmGraphics::renderGuiMenuItem(void *i)
   {
     kgmGuiMenu::Item* citem = item->getItem(i);
 
-    kgmGui::Rect rc = citem->getRect(i);
+    kgmGui::Rect rc = item->getRect(i);
 
     if(item->getSelected() == i)
     {
@@ -1411,7 +1411,7 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
     kgmString title = citem->getTitle();
 
-    gcDrawText(font, 10, 20, 0xFFFFFFFF, rc, title);
+    gcDrawText(font, 8, 20, 0xFFFFFFFF, rc, title);
   }
 }
 
