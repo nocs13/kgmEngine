@@ -10,6 +10,9 @@ kFileDialog::kFileDialog()
   list = new kgmGuiList(this, 1, 1, 298, 200);
   button = new kgmGuiButton(this, 1, 201, 100, 35);
 
+  list->addListener(this);
+  button->addListener(this);
+
   pathFolder = "";
 
 #ifdef WIN32
@@ -33,7 +36,7 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
   {
     int i = list->getSel();
 
-    kgmString item = list->getSelectedItem();
+    kgmString item = list->getItem(i);
 
     if(item == ".")
     {
