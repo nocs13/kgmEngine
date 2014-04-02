@@ -17,13 +17,19 @@ kEditor::kEditor()
     item->add(2, "Save");
     item->add(0, "Quit");
     item = menu->add("Edit");
-    item->add(11, "Add mesh");
-    item->add(12, "Add material");
+    item->add(11, "Delete");
+    item->add(12, "Duplicate");
+    item = menu->add("Add");
+    item->add(41, "Mesh");
+    item->add(42, "Light");
+    item->add(43, "Material");
+    item->add(44, "Object");
+    item->add(45, "Actor");
     item = menu->add("Run");
     item->add(21, "Run");
     item = menu->add("View");
-    item->add(31, "Mesh list");
-    item->add(32, "Material list");
+    item->add(31, "Meshes");
+    item->add(32, "Materials");
     item = menu->add("Help");
     item->add(0xffff, "About");
     menu->addListener(this);
@@ -31,6 +37,10 @@ kEditor::kEditor()
 
     gridline = new kGridline();
     m_render->add(gridline, null);
+
+    fdd = new kFileDialog();
+    fdd->hide();
+    m_render->add(fdd);
   }
 }
 
@@ -55,6 +65,8 @@ void kEditor::onMsLeftUp(int k, int x, int y)
 
   if(menu)
     menu->onMsLeftUp(k, x, y);
+
+  fdd->onMsLeftUp(k, x, y);
 
   setMsAbsolute(true);
   ms_click[0] = false;
@@ -88,8 +100,11 @@ void kEditor::onMsMove(int k, int x, int y)
 {
   kgmGameBase::onMsMove(k, x, y);
 
-  if(menu)
+  if(m_msAbs && menu)
     menu->onMsMove(k, x, y);
+
+  if(m_msAbs && fdd)
+    fdd->onMsMove(k, x, y);
 
   if(m_render)
   {
@@ -151,7 +166,7 @@ void kEditor::onQuit()
 
 void kEditor::onMapOpen()
 {
-
+  fdd->forRead("/");
 }
 
 void kEditor::onMapSave()

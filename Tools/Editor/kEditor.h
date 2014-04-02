@@ -6,6 +6,7 @@
 
 #include "kPivot.h"
 #include "kGridline.h"
+#include "kFileDialog.h"
 
 class kEditor: public kgmGameBase
 {
@@ -18,6 +19,8 @@ private:
   kPivot*    pivot;
 
   kgmGuiMenu* menu;
+
+  kFileDialog* fdd;
 public:
   kEditor();
   ~kEditor();
