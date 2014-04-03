@@ -757,7 +757,7 @@ void kgmGraphics::render()
       gui->release();
       m_guis.erase(i - 1);
     }
-    else if(gui->m_view)
+    else if(gui->visible())
     {
       render(gui);
     }
@@ -1269,9 +1269,26 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isClass(kgmGuiScroll::Class))
   {
+    kgmGuiScroll* gscroll = (kgmGuiScroll*)gui;
+    kgmGui::Rect  srect = gscroll->getScrollerRect();
+
+    srect = gscroll->toAbsolute(srect);
+
+    if(gui->m_useStyle)
+    {
+      gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
+      gcDrawRect(srect, 0xffff00ff, gui_style->smenu.image);
+    }
+    else
+    {
+      gcDrawRect(rect, gui->m_color, gui->m_image);
+      gcDrawRect(srect, 0xffff00ff, null);
+    }
   }
   else if(gui->isClass(kgmGuiList::Class))
   {
+    kgmGuiList* glist = (kgmGuiList*)gui;
+
     u32 fontHeight = ((kgmGuiList*)gui)->m_itemHeight - 2;
     u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
     u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
@@ -1285,19 +1302,27 @@ void kgmGraphics::render(kgmGui* gui){
        (((kgmGuiList*)gui)->m_itemSel < ((kgmGuiList*)gui)->m_items.size()))
       gcDrawRect(kgmGui::Rect(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemSel * ((kgmGuiList*)gui)->m_itemHeight,
                               rect.w, ((kgmGuiList*)gui)->m_itemHeight), gui_style->sbutton.fg_color, gui_style->slist.image);
+
     //Draw Items Rects
-    for(int i = ((kgmGuiList*)gui)->m_position; i < (((kgmGuiList*)gui)->m_position + item_view); i++)
+    for(int i = ((kgmGuiList*)gui)->m_position;
+            i < (((kgmGuiList*)gui)->m_position + item_view); i++)
     {
       if(i >= item_cnt)
         continue;
 
       kgmString item; item = ((kgmGuiList*)gui)->m_items[i];
       u32 a = (i - ((kgmGuiList*)gui)->m_position);
-      kgmGui::Rect clip(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a,
-                        rect.w, ((kgmGuiList*)gui)->m_itemHeight);
+      kgmGui::Rect clip(rect.x + 1, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a + 1,
+                        rect.w - 2, ((kgmGuiList*)gui)->m_itemHeight - 2);
 
       clip.h ++;
-      gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
+      if(rect.inside(clip))
+        gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
+    }
+
+    if(glist->m_scroll && glist->m_scroll->visible())
+    {
+      render(glist->m_scroll);
     }
   }
   else if(gui->isType(kgmGuiText::Class))
@@ -1340,11 +1365,11 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isClass(kgmGuiTab::Class))
   {
-    render((kgmGuiTab*)gui);
+    //render((kgmGuiTab*)gui);
   }
   else if(gui->isClass(kgmGuiProgress::Class))
   {
-    render((kgmGuiProgress*)gui);
+    //render((kgmGuiProgress*)gui);
   }
   else if(gui->isType(kgmGui::Class))
   {

@@ -28,6 +28,7 @@ public:
   typedef void*             Option;
   typedef kgmVector2d<s32>  Point;
   typedef kgmRect2d<s32>    Rect;
+  typedef kgmTexture*       Icon;
   typedef kgmTexture*       Image;
   typedef u32               Color;
   
@@ -118,6 +119,8 @@ public:
   void         setColor(Color c) { m_color = c;    }
   void         setImage(Image i) { m_image = i;    }
   void         useStyle(bool  s) { m_useStyle = s; }
+
+  bool         visible(){ return m_view; }
 
   // MESSAGE MANAGER
   virtual void onEvent(kgmEvent::Event* e);

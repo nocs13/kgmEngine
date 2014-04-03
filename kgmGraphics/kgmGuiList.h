@@ -7,9 +7,12 @@ class kgmGuiList: public kgmGui{
 
  typedef kgmList<kgmString> Items;
 
- struct Item{
-  kgmString text;
+ struct Item
+ {
+   u32       icon;
+   kgmString text;
  };
+
 public:
  Items     m_items;
  int       m_itemSel;
@@ -17,17 +20,21 @@ public:
  u32       m_itemHeight;
 
  kgmGuiScroll *m_scroll;
- u32          m_position;
- u32          m_range;
- 
+ u32           m_position;
+ u32           m_range;
+
+ kgmList<Icon> icons;
+
 public:
  kgmGuiList();
  kgmGuiList(kgmGui *par, int x, int y, int w, int h);
  ~kgmGuiList();
- void addItem(kgmString s);
+ void addItem(kgmString s, u32 icon = -1);
  void remItem(int s);
 
  kgmString getItem(int i);
+ Rect      getItemRect(int i);
+ Icon      getItemIcon(int i);
  void      setSel(int sel);
  int       getSel();
  char*     getSelectedItem();

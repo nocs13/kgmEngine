@@ -19,9 +19,11 @@ class kgmGuiScroll: public kgmGui{
   kgmGuiScroll(kgmGui *par, int x, int y, int w, int h);
   ~kgmGuiScroll();
 
+  Rect getScrollerRect();
+
   void setRange(u32 r);
   void setOrientation(ORIENT o);
-  void onMsMove(int key, u32 x, u32 y);
 
+  void onMsMove(int key, u32 x, u32 y);
   void onChange(u32 pos);
 };

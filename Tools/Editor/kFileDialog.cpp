@@ -5,9 +5,9 @@
 kgmString kFileDialog::DIRCON = "/";
 
 kFileDialog::kFileDialog()
-  :kgmGui(null, 0, 0, 300, 300)
+  :kgmGui(null, 100, 50, 200, 300)
 {
-  list = new kgmGuiList(this, 1, 1, 298, 200);
+  list = new kgmGuiList(this, 1, 1, 198, 200);
   button = new kgmGuiButton(this, 1, 201, 100, 35);
 
   list->addListener(this);
@@ -46,13 +46,19 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
     {
       kgmString tmp = pathFolder;
 
-      char* a = strrchr(tmp.data(), '/');
+      if(tmp != "/")
+      {
+        char* a = strrchr(tmp.data(), '/');
 
-      if(a) *a = 0;
+        if(a)
+        {
+          tmp = kgmString(tmp.data(), (int)(a - tmp.data()));
+        }
 
-      pathFolder = tmp;
+        pathFolder = tmp;
 
-      listFolder();
+        listFolder();
+      }
     }
     else
     {

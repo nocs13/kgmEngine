@@ -76,7 +76,9 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 {
   kgmGameBase::onMsLeftDown(k, x, y);
 
-  setMsAbsolute(false);
+  if(!fdd->visible())
+    setMsAbsolute(false);
+
   ms_click[0] = true;
 }
 
@@ -92,7 +94,9 @@ void kEditor::onMsRightDown(int k, int x, int y)
 {
   kgmGameBase::onMsRightDown(k, x, y);
 
-  setMsAbsolute(false);
+  if(!fdd->visible())
+    setMsAbsolute(false);
+
   ms_click[1] = true;
 }
 
@@ -106,7 +110,7 @@ void kEditor::onMsMove(int k, int x, int y)
   if(m_msAbs && fdd)
     fdd->onMsMove(k, x, y);
 
-  if(m_render)
+  if(m_render && !m_msAbs)
   {
     if(ms_click[0])
     {
