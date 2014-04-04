@@ -9,6 +9,7 @@ kgmGuiList::kgmGuiList()
   m_scroll->show();
   m_scroll->setRange(1);
   m_itemSel = -1;
+  m_itemStart = 0;
   m_itemHeight = 20;
   m_position = 0;
   m_range    = 0;
@@ -21,6 +22,7 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   m_scroll->show();
   m_scroll->setRange(1);
   m_itemSel = -1;
+  m_itemStart = 0;
   m_itemHeight = 20;
   m_position = 0;
   m_range    = 0;
@@ -146,5 +148,13 @@ void kgmGuiList::onKeyDown(int k)
     if(m_itemSel >= 0 && m_itemSel < m_items.size())
       onSelect(m_itemSel);
     break;
+  }
+}
+
+void kgmGuiList::onAction(kgmGui *gui, u32 a)
+{
+  if(gui == m_scroll)
+  {
+    m_itemStart = a;
   }
 }

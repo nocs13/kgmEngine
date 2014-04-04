@@ -27,7 +27,7 @@ kgmGui::Rect kgmGuiScroll::getScrollerRect()
   int k = m_rect.height() / m_range;
 
   s = (s > 10) ? (s) : (10);
-  s = (s >  1) ? (s) : ( 1);
+  k = (k >  1) ? (k) : ( 1);
 
   Rect rect = Rect(m_rect.x, m_rect.y + m_position * k,
                    m_rect.w, s);

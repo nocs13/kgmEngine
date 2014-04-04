@@ -1301,7 +1301,8 @@ void kgmGraphics::render(kgmGui* gui){
     if((((kgmGuiList*)gui)->m_itemSel >= 0) &&
        (((kgmGuiList*)gui)->m_itemSel < ((kgmGuiList*)gui)->m_items.size()))
       gcDrawRect(kgmGui::Rect(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemSel * ((kgmGuiList*)gui)->m_itemHeight,
-                              rect.w, ((kgmGuiList*)gui)->m_itemHeight), gui_style->sbutton.fg_color, gui_style->slist.image);
+                              rect.w, ((kgmGuiList*)gui)->m_itemHeight),
+                              gui_style->sbutton.fg_color, gui_style->slist.image);
 
     //Draw Items Rects
     for(int i = ((kgmGuiList*)gui)->m_position;
