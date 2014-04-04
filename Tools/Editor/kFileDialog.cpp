@@ -10,8 +10,8 @@ kFileDialog::kFileDialog()
   list = new kgmGuiList(this, 1, 1, 198, 200);
   button = new kgmGuiButton(this, 1, 201, 100, 35);
 
-  list->addListener(this);
-  button->addListener(this);
+  //list->addListener(this);
+  //button->addListener(this);
 
   pathFolder = "";
 
@@ -95,6 +95,7 @@ void kFileDialog::listFolder()
     }
 
     closedir (folder);
+    list->sort();
   }
 }
 

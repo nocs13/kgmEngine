@@ -13,6 +13,9 @@ class kgmGuiScroll: public kgmGui{
   u32    m_range;
   u32    m_position;
 
+  bool   m_drag;
+  s32    m_dx, m_dy;
+
   ORIENT m_orientation;
  public:
   kgmGuiScroll();
@@ -25,5 +28,7 @@ class kgmGuiScroll: public kgmGui{
   void setOrientation(ORIENT o);
 
   void onMsMove(int key, u32 x, u32 y);
+  void onMsLeftDown(int key, u32 x, u32 y);
+  void onMsLeftUp(int key, u32 x, u32 y);
   void onChange(u32 pos);
 };

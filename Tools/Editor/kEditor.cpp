@@ -11,7 +11,7 @@ kEditor::kEditor()
 
   if(m_render)
   {
-    menu = new kgmGuiMenu(null);
+    menu = new kMenu(null, this);
     kgmGuiMenu::Item* item = menu->add("File");
     item->add(1, "Open");
     item->add(2, "Save");
@@ -32,7 +32,6 @@ kEditor::kEditor()
     item->add(32, "Materials");
     item = menu->add("Help");
     item->add(0xffff, "About");
-    menu->addListener(this);
     m_render->add(menu);
 
     gridline = new kGridline();
@@ -49,6 +48,17 @@ kEditor::~kEditor()
   gridline->release();
 }
 
+void kEditor::onEvent(kgmEvent::Event *e)
+{
+  kgmGameBase::onEvent(e);
+
+  if(menu->visible())
+    menu->onEvent(e);
+
+  if(fdd->visible())
+    fdd->onEvent(e);
+}
+
 void kEditor::onKeyUp(int k)
 {
   kgmGameBase::onKeyUp(k);
@@ -62,11 +72,6 @@ void kEditor::onKeyDown(int k)
 void kEditor::onMsLeftUp(int k, int x, int y)
 {
   kgmGameBase::onMsLeftUp(k, x, y);
-
-  if(menu)
-    menu->onMsLeftUp(k, x, y);
-
-  fdd->onMsLeftUp(k, x, y);
 
   setMsAbsolute(true);
   ms_click[0] = false;
@@ -103,12 +108,6 @@ void kEditor::onMsRightDown(int k, int x, int y)
 void kEditor::onMsMove(int k, int x, int y)
 {
   kgmGameBase::onMsMove(k, x, y);
-
-  if(m_msAbs && menu)
-    menu->onMsMove(k, x, y);
-
-  if(m_msAbs && fdd)
-    fdd->onMsMove(k, x, y);
 
   if(m_render && !m_msAbs)
   {

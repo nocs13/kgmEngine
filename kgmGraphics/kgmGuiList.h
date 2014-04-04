@@ -39,9 +39,12 @@ public:
  int       getSel();
  char*     getSelectedItem();
  void      clear();
+ void      sort();
 
  virtual void onSelect(u32);
+
 protected:
+ void onMsLeftDown(int k, int x, int y);
  void onMsLeftUp(int k, int x, int y);
  void onMsMove(int k, int x, int y);
  void onMsWheel(int k, int x, int y, int z);

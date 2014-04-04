@@ -100,13 +100,52 @@ void kgmGuiList::clear()
   m_items.clear();
 }
 
+void kgmGuiList::sort()
+{
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
+  {
+    for(Items::iterator j = i; j != m_items.end(); j++)
+    {
+      if(*i == *j)
+        continue;
+
+      for(int k = 0; k < (*i).length(); k++)
+      {
+        if((k >= (*j).length()) || ((*i)[k] > (*j)[k]))
+        {
+          kgmString tmp = (*j);
+
+          (*j) = (*i);
+
+          (*i) = tmp;
+
+          break;
+        }
+        else if((*i)[k] < (*j)[k])
+        {
+          break;
+        }
+      }
+    }
+  }
+}
+
 void kgmGuiList::onSelect(u32 sel)
 {
   m_parent->onAction(this, sel);
 }
 
+void kgmGuiList::onMsLeftDown(int k, int x, int y)
+{
+  if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
+    return m_scroll->onMsLeftDown(k, x, y);
+}
+
 void kgmGuiList::onMsLeftUp(int k, int x, int y)
 {
+  if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
+    return m_scroll->onMsLeftUp(k, x, y);
+
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
   m_itemSel = m_position + (y - rect.y) / m_itemHeight;
 
@@ -119,13 +158,15 @@ void kgmGuiList::onMsMove(int k, int x, int y)
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
 
   if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-    m_scroll->onMsMove(k, x, y);
+    return m_scroll->onMsMove(k, x, y);
   else if(y / m_itemHeight < m_items.size())
     m_itemSel = y / m_itemHeight;
 }
 
 void kgmGuiList::onMsWheel(int k, int x, int y, int z)
 {
+  kgmGui::onMsWheel(k, x, y, z);
+
   if(z > 0)
     onKeyDown(KEY_UP);
   else
@@ -155,6 +196,6 @@ void kgmGuiList::onAction(kgmGui *gui, u32 a)
 {
   if(gui == m_scroll)
   {
-    m_itemStart = a;
+    m_position = a;
   }
 }

@@ -1289,10 +1289,8 @@ void kgmGraphics::render(kgmGui* gui){
   {
     kgmGuiList* glist = (kgmGuiList*)gui;
 
-    u32 fontHeight = ((kgmGuiList*)gui)->m_itemHeight - 2;
     u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
     u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
-    kgmGui::Rect frect;
 
     //Draw Main Rect
     gcDrawRect(rect, gui_style->slist.bg_color, gui_style->slist.image);
@@ -1309,14 +1307,20 @@ void kgmGraphics::render(kgmGui* gui){
             i < (((kgmGuiList*)gui)->m_position + item_view); i++)
     {
       if(i >= item_cnt)
-        continue;
+        break;
 
-      kgmString item; item = ((kgmGuiList*)gui)->m_items[i];
+      kgmString item;
+      item = ((kgmGuiList*)gui)->m_items[i];
+
+      kgmGui::Rect frect;
+      frect = glist->getItemRect(i);
+
       u32 a = (i - ((kgmGuiList*)gui)->m_position);
       kgmGui::Rect clip(rect.x + 1, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a + 1,
                         rect.w - 2, ((kgmGuiList*)gui)->m_itemHeight - 2);
 
       clip.h ++;
+
       if(rect.inside(clip))
         gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
     }

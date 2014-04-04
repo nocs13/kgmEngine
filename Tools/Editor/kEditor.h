@@ -10,6 +10,26 @@
 
 class kEditor: public kgmGameBase
 {
+  class kMenu: public kgmGuiMenu
+  {
+    kEditor* editor;
+
+  public:
+    kMenu(kgmGui* parent, kEditor* e)
+      :kgmGuiMenu(parent)
+    {
+      editor = e;
+    }
+
+    void onAction(kgmGui* gui, u32 arg)
+    {
+      if(editor)
+      {
+        editor->onAction(this, arg);
+      }
+    }
+  };
+
 private:
   bool ms_click[3];
   vec3 cam_pos;
@@ -18,13 +38,14 @@ private:
   kGridline* gridline;
   kPivot*    pivot;
 
-  kgmGuiMenu* menu;
+  kMenu*     menu;
 
   kFileDialog* fdd;
 public:
   kEditor();
   ~kEditor();
 
+  void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
   void onKeyUp(int k);
   void onKeyDown(int k);

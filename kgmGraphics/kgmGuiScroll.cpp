@@ -4,6 +4,7 @@ KGMOBJECT_IMPLEMENT(kgmGuiScroll, kgmGui)
 
 kgmGuiScroll::kgmGuiScroll()
 {
+  m_drag = false;
   m_range = 1;
   m_position  = 0;
   m_orientation = ORIENT_VERTICAL;
@@ -12,6 +13,7 @@ kgmGuiScroll::kgmGuiScroll()
 kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
   :kgmGui(par, x, y, w, h)
 {
+  m_drag = false;
   m_range = 1;
   m_position  = 0;
   m_orientation = ORIENT_VERTICAL;
@@ -57,7 +59,7 @@ void kgmGuiScroll::onMsMove(int key, u32 x, u32 y)
   u32 pos;
 
   if(!m_view  ||
-     //!key == KEY_MSBLEFT ||
+     !m_drag ||
      !m_rect.inside(x, y))
     return;
 
@@ -77,6 +79,18 @@ void kgmGuiScroll::onMsMove(int key, u32 x, u32 y)
 
     onChange(pos);
   }
+}
+
+void kgmGuiScroll::onMsLeftDown(int key, u32 x, u32 y)
+{
+  m_drag = true;
+  m_dx = x;
+  m_dy = y;
+}
+
+void kgmGuiScroll::onMsLeftUp(int key, u32 x, u32 y)
+{
+  m_drag = false;
 }
 
 void kgmGuiScroll::onChange(u32 pos)
