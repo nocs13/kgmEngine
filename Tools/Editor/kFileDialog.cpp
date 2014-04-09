@@ -8,12 +8,15 @@ kFileDialog::kFileDialog()
   :kgmGui(null, 100, 50, 200, 300)
 {
   list = new kgmGuiList(this, 1, 1, 198, 200);
-  button = new kgmGuiButton(this, 1, 201, 100, 35);
+  text = new kgmGuiText(this, 1, 237, 198, 30);
+  btnCmd = new kgmGuiButton(this, 1, 201, 99, 35);
+  btnFail = new kgmGuiButton(this, 101, 201, 99, 35);
 
-  //list->addListener(this);
-  //button->addListener(this);
+  btnFail->setText("Close");
 
   pathFolder = "";
+
+  modeSave = false;
 
 #ifdef WIN32
   DIRCON = "\\";
@@ -69,11 +72,29 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
         pathFolder = tmp;
         listFolder();
       }
+      else
+      {
+        text->setText(item);
+        text->dropCursor();
+
+        filePath = tmp;
+      }
     }
   }
-  else if(gui == button)
+  else if(gui == btnCmd)
   {
     hide();
+
+    if(modeSave)
+      onSave();
+    else
+      onOpen();
+  }
+  else if(gui == btnFail)
+  {
+    hide();
+
+    onFail();
   }
 }
 
@@ -99,15 +120,43 @@ void kFileDialog::listFolder()
   }
 }
 
-void kFileDialog::forRead(kgmString dir)
+void kFileDialog::forOpen(kgmString dir)
 {
   if(dir.length() < 1)
-    pathFolder = "/";
+    if(!pathFolder.length())
+      pathFolder = "/";
   else
     pathFolder = dir;
 
-  button->setText("Open");
+  btnCmd->setText("Open");
+
+  filePath = "";
+  modeSave = false;
+  text->setEditable(false);
 
   show();
   listFolder();
+}
+
+void kFileDialog::forSave(kgmString dir)
+{
+  if(dir.length() < 1)
+    if(!pathFolder.length())
+      pathFolder = "/";
+  else
+    pathFolder = dir;
+
+  btnCmd->setText("Save");
+
+  filePath = "";
+  modeSave = true;
+  text->setEditable(true);
+
+  show();
+  listFolder();
+}
+
+kgmString kFileDialog::getPath()
+{
+  return filePath;
 }

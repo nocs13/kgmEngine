@@ -23,6 +23,7 @@ class kgmGuiStyle: public kgmObject
     Color fg_color; // Foreground color
     Color ac_color; // Active color
     Image image;    // Background image
+    u32   ft_size;  // Font height
   };
 
   struct SGuiButton: SGui
@@ -35,7 +36,17 @@ class kgmGuiStyle: public kgmObject
 
   };
 
+  struct SGuiText: SGui
+  {
+    Color cr_color;  //Cursor color
+  };
+
   struct SGuiMenu: SGui
+  {
+
+  };
+
+  struct SGuiScroll: SGui
   {
 
   };
@@ -48,10 +59,12 @@ class kgmGuiStyle: public kgmObject
   //gui
   Font  gui_font;
   
-  SGui sgui;
-  SGuiList slist;
-  SGuiMenu smenu;
-  SGuiButton sbutton;
+  SGui         sgui;
+  SGuiList     slist;
+  SGuiMenu     smenu;
+  SGuiText     stext;
+  SGuiScroll   sscroll;
+  SGuiButton   sbutton;
   SGuiProgress sprogess;
 
  public:

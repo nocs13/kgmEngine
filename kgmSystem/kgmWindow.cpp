@@ -51,6 +51,8 @@ inline u16 keyTranslate(int key){
     return KEY_DOWN;
   case VK_SHIFT:
     return KEY_LSHIFT;
+  case VK_DELETE:
+    return KEY_DELETE;
   case 0x13:
     return KEY_PAUSE;
   case 0x30:
@@ -319,7 +321,8 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
                          None
                        };
 
-u16 keyTranslate(KeySym key){
+u16 keyTranslate(KeySym key)
+{
   switch(key){
   case XK_Escape:
     return KEY_ESCAPE;
@@ -349,6 +352,16 @@ u16 keyTranslate(KeySym key){
     return KEY_RALT;
   case XK_Pause:
     return KEY_PAUSE;
+  case XK_BackSpace:
+    return KEY_BACK;
+  case XK_Delete:
+    return KEY_DELETE;
+  case XK_minus:
+    return KEY_SUB;
+  case XK_comma:
+    return KEY_COMMA;
+  case XK_period:
+    return KEY_DOT;
   case XK_0:
     return KEY_0;
   case XK_1:

@@ -37,6 +37,8 @@ public:
  Icon      getItemIcon(int i);
  void      setSel(int sel);
  int       getSel();
+ int       getFirstVisibleItem();
+ int       getVisibleItemsCount();
  char*     getSelectedItem();
  void      clear();
  void      sort();

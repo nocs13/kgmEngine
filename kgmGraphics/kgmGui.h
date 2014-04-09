@@ -109,8 +109,11 @@ public:
   void         setSid(kgmString  sid){ m_sid = sid;  }
   kgmString    getSid()              { return m_sid; }
 
+  kgmGui*      getRoot();
   kgmGui*      getById(u32 id);
   kgmGui*      getBySid(kgmString sid);
+  kgmGui*      getFocus();
+  bool         setFocus(kgmGui*);
 
   void         setXdata(void* x){ m_xdata = x;    }
   void*        getXdata()       { return m_xdata; }

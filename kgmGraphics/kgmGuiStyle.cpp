@@ -9,6 +9,7 @@ kgmGuiStyle::kgmGuiStyle()
   sgui.bg_color = 0xffffffff;
   sgui.ac_color = 0xffffffff;
   sgui.fg_color = 0xffffffff;
+  sgui.ft_size  = 20;
   sgui.image    = null;
 
   //gui button
@@ -31,4 +32,20 @@ kgmGuiStyle::kgmGuiStyle()
   smenu.ac_color = 0xffaaaaaa;
   smenu.fg_color = 0xffbbbbbb;
   smenu.image    = null;
+
+  //gui text
+  stext.tx_color = 0xffffffff;
+  stext.bg_color = 0xffaaaaaa;
+  stext.ac_color = 0xffaaaaaa;
+  stext.fg_color = 0xffbbbbbb;
+  stext.cr_color = 0xff888888;
+  stext.ft_size  = 18;
+  stext.image    = null;
+
+  //gui scroll
+  sscroll.tx_color = 0xffffffff;
+  sscroll.bg_color = 0xff999999;
+  sscroll.ac_color = 0xffaaaaaa;
+  sscroll.fg_color = 0xffbbbbbb;
+  sscroll.image    = null;
 }

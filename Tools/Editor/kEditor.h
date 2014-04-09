@@ -30,6 +30,105 @@ class kEditor: public kgmGameBase
     }
   };
 
+  class kFDD: public kFileDialog
+  {
+    kEditor* editor;
+
+  public:
+    kFDD(kEditor* e)
+    {
+      editor = e;
+    }
+
+    void onOpen()
+    {
+      editor->onAction(this, 1);
+    }
+
+    void onSave()
+    {
+      editor->onAction(this, 2);
+    }
+
+    void onFail()
+    {
+      editor->onAction(this, 0);
+    }
+  };
+
+  class Node
+  {
+    enum Type
+    {
+      NONE,
+      MESH,
+      LIGHT,
+      ACTOR,
+      MATERIAL
+    };
+
+    union
+    {
+      kgmMesh*      msh;
+      kgmLight*     lgt;
+      kgmActor*     act;
+      kgmMaterial*  mtl;
+    };
+
+    Type typ;
+    vec3 pos;
+    vec3 rot;
+
+  public:
+    Node()
+    {
+      typ = NONE;
+      msh = null;
+    }
+
+    Node(kgmMesh* m)
+    {
+      typ = MESH;
+      msh = m;
+    }
+
+    Node(kgmLight* l)
+    {
+      typ = LIGHT;
+      lgt = l;
+    }
+
+    Node(kgmActor* a)
+    {
+      typ = ACTOR;
+      act = a;
+    }
+
+    Node(kgmMaterial* m)
+    {
+      typ = MATERIAL;
+      mtl = m;
+    }
+
+    ~Node()
+    {
+      kgmObject* o = (kgmObject*)msh;
+
+      if(o)
+        o->release();
+    }
+
+    Type type()
+    {
+      return typ;
+    }
+
+    kgmObject* object()
+    {
+      return (kgmObject*)msh;
+    }
+  };
+
 private:
   bool ms_click[3];
   vec3 cam_pos;
@@ -40,7 +139,11 @@ private:
 
   kMenu*     menu;
 
-  kFileDialog* fdd;
+  kFDD*      fdd;
+  u32        fddMode;
+
+  Node* selected;
+  kgmList<Node*> nodes;
 public:
   kEditor();
   ~kEditor();
@@ -59,6 +162,7 @@ public:
   void onQuit();
   void onMapOpen();
   void onMapSave();
+  void onAddMesh();
 };
 
 #endif // KEDITOR_H

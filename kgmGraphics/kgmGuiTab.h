@@ -7,7 +7,7 @@ class kgmGuiTab: public kgmGui
   KGM_OBJECT(kgmGuiTab);
 
 private:
-  u32	  m_index;
+  u32  m_index;
 
 public:
  kgmGuiTab();

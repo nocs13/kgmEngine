@@ -4,19 +4,25 @@ KGMOBJECT_IMPLEMENT(kgmGuiScroll, kgmGui)
 
 kgmGuiScroll::kgmGuiScroll()
 {
+  m_ppp = 1;
   m_drag = false;
   m_range = 1;
   m_position  = 0;
   m_orientation = ORIENT_VERTICAL;
+
+  m_msp = 0;
 }
 
 kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
   :kgmGui(par, x, y, w, h)
 {
+  m_ppp = 1;
   m_drag = false;
   m_range = 1;
   m_position  = 0;
   m_orientation = ORIENT_VERTICAL;
+
+  m_msp = 0;
 }
 
 kgmGuiScroll::~kgmGuiScroll()
@@ -31,7 +37,7 @@ kgmGui::Rect kgmGuiScroll::getScrollerRect()
   s = (s > 10) ? (s) : (10);
   k = (k >  1) ? (k) : ( 1);
 
-  Rect rect = Rect(m_rect.x, m_rect.y + m_position * k,
+  Rect rect = Rect(m_rect.x, m_rect.y + m_position * m_ppp,
                    m_rect.w, s);
 
   return rect;
@@ -43,6 +49,13 @@ void kgmGuiScroll::setRange(u32 r)
     m_range = r;
 
   m_position = 0;
+
+  m_ppp = (float)m_rect.h / (float)r;
+}
+
+void kgmGuiScroll::setPosition(u32 p)
+{
+  m_position = p;
 }
 
 /*void kgmGuiScroll::onPaint(kgmIGC* gc){
@@ -59,7 +72,7 @@ void kgmGuiScroll::onMsMove(int key, u32 x, u32 y)
   u32 pos;
 
   if(!m_view  ||
-     !m_drag ||
+     //!m_drag ||
      !m_rect.inside(x, y))
     return;
 
@@ -73,9 +86,12 @@ void kgmGuiScroll::onMsMove(int key, u32 x, u32 y)
 
   pos = d;
 
+  pos = (y - m_rect.y) / m_ppp;
+
   if(pos != m_position)
   {
     m_position = pos;
+    //m_msp = y;
 
     onChange(pos);
   }

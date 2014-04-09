@@ -66,7 +66,17 @@ kgmString kgmGuiList::getItem(int i)
 
 kgmGui::Rect kgmGuiList::getItemRect(int i)
 {
+ Rect rc(0, 0, 0, 0);
 
+ if(i < 0 || i >= m_items.length())
+   return rc;
+
+ rc.x = m_rect.x + 1;
+ rc.w = m_rect.w - 2;
+ rc.y = m_rect.y + m_itemHeight * (i - m_position) + 1;
+ rc.h = m_itemHeight;
+
+ return rc;
 }
 
 kgmGui::Icon kgmGuiList::getItemIcon(int i)
@@ -82,6 +92,16 @@ void kgmGuiList::setSel(int sel)
 int kgmGuiList::getSel()
 {
   return m_itemSel;
+}
+
+int kgmGuiList::getFirstVisibleItem()
+{
+  return m_position;
+}
+
+int kgmGuiList::getVisibleItemsCount()
+{
+  return m_rect.h / m_itemHeight;
 }
 
 char* kgmGuiList::getSelectedItem()
@@ -155,12 +175,11 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
 
 void kgmGuiList::onMsMove(int k, int x, int y)
 {
-  Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
-
   if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
     return m_scroll->onMsMove(k, x, y);
-  else if(y / m_itemHeight < m_items.size())
-    m_itemSel = y / m_itemHeight;
+  else if((y / m_itemHeight < m_items.size()) &&
+          (y < (m_rect.y + m_rect.h - 1)))
+    m_itemSel = getFirstVisibleItem() +  y / m_itemHeight;
 }
 
 void kgmGuiList::onMsWheel(int k, int x, int y, int z)
@@ -175,15 +194,23 @@ void kgmGuiList::onMsWheel(int k, int x, int y, int z)
 
 void kgmGuiList::onKeyDown(int k)
 {
+  s32 iir = m_rect.h / m_itemHeight;
+
   switch(k)
   {
   case KEY_UP:
     if(m_itemSel > 0)
       m_itemSel--;
+    if(m_itemSel < m_position)
+      m_position = m_itemSel;
+    m_scroll->setPosition(m_position);
     break;
   case KEY_DOWN:
     if(m_itemSel < (m_items.size() - 1))
       m_itemSel++;
+    if(m_itemSel >= (m_position + iir))
+      m_position++;
+    m_scroll->setPosition(m_position);
     break;
   case KEY_ENTER:
     if(m_itemSel >= 0 && m_itemSel < m_items.size())

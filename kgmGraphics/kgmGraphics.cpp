@@ -1244,28 +1244,21 @@ void kgmGraphics::render(kgmGui* gui){
     tClip.w = fw;
     tClip.h = fh;
 
-    if(gui->m_useStyle)
+    switch(((kgmGuiButton*)gui)->getState())
     {
-      switch(((kgmGuiButton*)gui)->getState())
-      {
-      case kgmGuiButton::StateFocus:
-        gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
-        break;
-      case kgmGuiButton::StateClick:
-        gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
-        break;
-      case kgmGuiButton::StateNone:
-      default:
-        gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
-      }
-    }
-    else
-    {
-      gcDrawRect(rect, gui->m_color, gui->m_image);
+    case kgmGuiButton::StateFocus:
+      gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
+      break;
+    case kgmGuiButton::StateClick:
+      gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
+      break;
+    case kgmGuiButton::StateNone:
+    default:
+      gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
     }
 
     if(text.length() > 0)
-      gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, tClip, text);
+      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
   }
   else if(gui->isClass(kgmGuiScroll::Class))
   {
@@ -1274,16 +1267,8 @@ void kgmGraphics::render(kgmGui* gui){
 
     srect = gscroll->toAbsolute(srect);
 
-    if(gui->m_useStyle)
-    {
-      gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
-      gcDrawRect(srect, 0xffff00ff, gui_style->smenu.image);
-    }
-    else
-    {
-      gcDrawRect(rect, gui->m_color, gui->m_image);
-      gcDrawRect(srect, 0xffff00ff, null);
-    }
+    gcDrawRect(rect, gui_style->sscroll.bg_color, gui_style->sscroll.image);
+    gcDrawRect(srect, gui_style->sscroll.fg_color, gui_style->sscroll.image);
   }
   else if(gui->isClass(kgmGuiList::Class))
   {
@@ -1292,19 +1277,16 @@ void kgmGraphics::render(kgmGui* gui){
     u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
     u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
 
+    kgmGui::Rect srect = glist->getItemRect(glist->getFirstVisibleItem());
+    srect = glist->toAbsolute(srect);
+
     //Draw Main Rect
     gcDrawRect(rect, gui_style->slist.bg_color, gui_style->slist.image);
 
-    //Draw Focused Rect
-    if((((kgmGuiList*)gui)->m_itemSel >= 0) &&
-       (((kgmGuiList*)gui)->m_itemSel < ((kgmGuiList*)gui)->m_items.size()))
-      gcDrawRect(kgmGui::Rect(rect.x, rect.y + ((kgmGuiList*)gui)->m_itemSel * ((kgmGuiList*)gui)->m_itemHeight,
-                              rect.w, ((kgmGuiList*)gui)->m_itemHeight),
-                              gui_style->sbutton.fg_color, gui_style->slist.image);
-
     //Draw Items Rects
-    for(int i = ((kgmGuiList*)gui)->m_position;
-            i < (((kgmGuiList*)gui)->m_position + item_view); i++)
+    for(int i = glist->getFirstVisibleItem();
+            i < (glist->getFirstVisibleItem() + glist->getVisibleItemsCount());
+            i++)
     {
       if(i >= item_cnt)
         break;
@@ -1314,15 +1296,18 @@ void kgmGraphics::render(kgmGui* gui){
 
       kgmGui::Rect frect;
       frect = glist->getItemRect(i);
+      frect = glist->toAbsolute(frect);
 
-      u32 a = (i - ((kgmGuiList*)gui)->m_position);
-      kgmGui::Rect clip(rect.x + 1, rect.y + ((kgmGuiList*)gui)->m_itemHeight * a + 1,
-                        rect.w - 2, ((kgmGuiList*)gui)->m_itemHeight - 2);
+      if(i == glist->getSel())
+      {
+        gcDrawRect(frect, gui_style->slist.fg_color, gui_style->slist.image);
+      }
 
-      clip.h ++;
-
-      if(rect.inside(clip))
-        gcDrawText(gui_style->gui_font, clip.height() / 2, clip.height(), 0xFFFFFFFF, clip, item);
+      if(rect.inside(frect))
+      {
+        gcDrawText(gui_style->gui_font, frect.height() / 2, frect.height(),
+                   gui_style->slist.tx_color, frect, item);
+      }
     }
 
     if(glist->m_scroll && glist->m_scroll->visible())
@@ -1332,35 +1317,42 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isType(kgmGuiText::Class))
   {
-    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
-    u32 fheight = (u32)((float)rect.h * (float)0.75f);
+    kgmGuiText* gtext = (kgmGuiText*)gui;
+
+    if(gui->m_hasMouse )
+    {
+      gcDrawRect(rect, gui_style->stext.fg_color, gui_style->stext.image);
+    }
+    else
+    {
+      gcDrawRect(rect, gui_style->stext.bg_color, gui_style->stext.image);
+    }
 
     if(text.length() > 0)
-      gcDrawText(gui_style->gui_font, fwidth, fheight, 0xFFFFFFFF, rect, text);
+    {
+      if(!gtext->isReadOnly())
+      {
+        u32 i = gtext->getCursor();
+        kgmGui::Rect rc(rect.x + (u32)(0.5 * gui_style->stext.ft_size) * i, rect.y + 1,
+                        (u32)(0.5 * gui_style->stext.ft_size - 1), gui_style->stext.ft_size);
+
+        if(rect.inside(rc))
+          gcDrawRect(rc, gui_style->stext.cr_color, null);
+      }
+
+      gcDrawText(gui_style->gui_font, (u32)(0.5 * gui_style->stext.ft_size),
+                 gui_style->stext.ft_size, gui_style->stext.tx_color, rect, text);
+    }
   }
   else if(gui->isClass(kgmGuiMenu::Class))
   {
     if(gui->m_hasMouse )
     {
-      if(gui->m_useStyle)
-      {
-        gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
-      }
-      else
-      {
-        gcDrawRect(rect, gui->m_color, gui->m_image);
-      }
+      gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
     }
     else
     {
-      if(gui->m_useStyle)
-      {
-        gcDrawRect(rect, gui_style->smenu.bg_color, gui_style->smenu.image);
-      }
-      else
-      {
-        gcDrawRect(rect, gui->m_color, gui->m_image);
-      }
+      gcDrawRect(rect, gui_style->smenu.bg_color, gui_style->smenu.image);
     }
 
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
@@ -1380,25 +1372,11 @@ void kgmGraphics::render(kgmGui* gui){
   {
     if(gui->m_hasMouse )
     {
-      if(gui->m_useStyle)
-      {
-        gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
-      }
-      else
-      {
-        gcDrawRect(rect, gui->m_color, gui->m_image);
-      }
+      gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
     }
     else
     {
-      if(gui->m_useStyle)
-      {
-        gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
-      }
-      else
-      {
-        gcDrawRect(rect, gui->m_color, gui->m_image);
-      }
+      gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
     }
   }
 

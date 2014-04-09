@@ -1,4 +1,10 @@
 #include "kEditor.h"
+enum FDDMODE\
+{
+  FDDMOD_NONE,
+  FDDMODE_MAP,
+  FDDMODE_MESH
+};
 
 kEditor::kEditor()
 {
@@ -8,6 +14,8 @@ kEditor::kEditor()
 
   cam_pos = vec3(0, 0, 0);
   cam_rot = 0.0f;
+
+  selected = null;
 
   if(m_render)
   {
@@ -37,7 +45,7 @@ kEditor::kEditor()
     gridline = new kGridline();
     m_render->add(gridline, null);
 
-    fdd = new kFileDialog();
+    fdd = new kFDD(this);
     fdd->hide();
     m_render->add(fdd);
   }
@@ -158,6 +166,56 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case 2:
       onMapSave();
       break;
+    case 41:
+      onAddMesh();
+      break;
+    }
+  }
+  else if(gui == fdd)
+  {
+    switch(id)
+    {
+    case 0:
+      fddMode = 0;
+      break;
+    case 1:
+      if(fddMode == FDDMODE_MESH)
+      {
+        kgmFile file;
+        kgmString fpath = fdd->getPath();
+
+        if(file.open(fpath, kgmFile::Read))
+        {
+          kgmMemory<u8> mem;
+
+          mem.alloc(file.length());
+          file.read(mem, file.length());
+          file.close();
+
+          kgmXml xml(mem);
+          mem.clear();
+
+          kgmMesh* mesh = kgmGameTools::genMesh(xml);
+          xml.close();
+
+          if(mesh)
+          {
+            m_render->add(mesh, null);
+            Node* node = new Node(mesh);
+            selected = node;
+           nodes.add(node);
+          }
+        }
+      }
+      else if(fddMode == FDDMODE_MAP)
+      {
+
+      }
+      fddMode = 0;
+      break;
+    case 2:
+      fddMode = 0;
+      break;
     }
   }
 }
@@ -169,11 +227,18 @@ void kEditor::onQuit()
 
 void kEditor::onMapOpen()
 {
-  fdd->forRead("/");
+  fddMode = FDDMODE_MAP;
+  fdd->forOpen("");
 }
 
 void kEditor::onMapSave()
 {
-
+  fddMode = FDDMODE_MAP;
+  fdd->forSave("");
 }
 
+void kEditor::onAddMesh()
+{
+  fddMode = FDDMODE_MESH;
+  fdd->forOpen("");
+}
