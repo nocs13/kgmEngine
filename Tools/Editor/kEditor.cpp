@@ -1,4 +1,6 @@
 #include "kEditor.h"
+#include "../../kgmSystem/kgmSystem.h"
+
 enum FDDMODE\
 {
   FDDMOD_NONE,
@@ -56,6 +58,38 @@ kEditor::~kEditor()
   gridline->release();
 }
 
+kEditor::Node* kEditor::select(int x, int y)
+{
+  iRect vp = m_render->viewport();
+  float unit_x = (2.0f*((float)(x-vp.x)/(vp.w-vp.x)))-1.0f,
+        unit_y = 1.0f-(2.0f*((float)(y-vp.y)/(vp.h - vp.y)));
+
+  kgmCamera cam = m_render->camera();
+
+  vec3 ms;
+  ms.x = (2.0f * x) / vp.w - 1.0f;
+  ms.y = 1.0f - (2.0f * y) / vp.h;
+  ms.z = 1.0f;
+
+  kgmRay3d<float> ray(ms, cam.mDir);
+
+  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  {
+    vec3 c;
+
+    if((*i)->bound().intersect(ray, c))
+      return *i;
+  }
+
+  //float mx = (float)((x - vp.w * 0.5) * (1.0 / vp.w) * cam.mFov * 0.5);
+  //float my = (float)((y - vp.h * 0.5) * (1.0 / vp.w) * cam.mFov * 0.5);
+  //float4 dx = cameraRight * mx;
+  //float4 dy = cam.mUp * my;
+
+  //float3 dir = normalize(cameraDir + (dx + dy).xyz * 2.0);
+
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmGameBase::onEvent(e);
@@ -93,6 +127,9 @@ void kEditor::onMsLeftDown(int k, int x, int y)
     setMsAbsolute(false);
 
   ms_click[0] = true;
+
+  if(nodes.length() > 0)
+    selected = select(x, y);
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
@@ -202,6 +239,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
           {
             m_render->add(mesh, null);
             Node* node = new Node(mesh);
+            node->set(mesh->bound());
             selected = node;
            nodes.add(node);
           }
@@ -228,17 +266,47 @@ void kEditor::onQuit()
 void kEditor::onMapOpen()
 {
   fddMode = FDDMODE_MAP;
-  fdd->forOpen("");
+
+  if(fdd->getFolder().length())
+  {
+    fdd->forOpen("");
+  }
+  else
+  {
+    kgmString path;
+    kgmSystem::getHomeDirectory(path);
+    fdd->forOpen(path);
+  }
 }
 
 void kEditor::onMapSave()
 {
   fddMode = FDDMODE_MAP;
-  fdd->forSave("");
+
+  if(fdd->getFolder().length())
+  {
+    fdd->forSave("");
+  }
+  else
+  {
+    kgmString path;
+    kgmSystem::getHomeDirectory(path);
+    fdd->forSave(path);
+  }
 }
 
 void kEditor::onAddMesh()
 {
   fddMode = FDDMODE_MESH;
-  fdd->forOpen("");
+
+  if(fdd->getFolder().length())
+  {
+    fdd->forOpen("");
+  }
+  else
+  {
+    kgmString path;
+    kgmSystem::getHomeDirectory(path);
+    fdd->forOpen(path);
+  }
 }

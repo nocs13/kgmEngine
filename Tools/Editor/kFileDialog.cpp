@@ -123,10 +123,14 @@ void kFileDialog::listFolder()
 void kFileDialog::forOpen(kgmString dir)
 {
   if(dir.length() < 1)
+  {
     if(!pathFolder.length())
       pathFolder = "/";
+  }
   else
+  {
     pathFolder = dir;
+  }
 
   btnCmd->setText("Open");
 
@@ -141,10 +145,14 @@ void kFileDialog::forOpen(kgmString dir)
 void kFileDialog::forSave(kgmString dir)
 {
   if(dir.length() < 1)
+  {
     if(!pathFolder.length())
       pathFolder = "/";
+  }
   else
+  {
     pathFolder = dir;
+  }
 
   btnCmd->setText("Save");
 
@@ -159,4 +167,9 @@ void kFileDialog::forSave(kgmString dir)
 kgmString kFileDialog::getPath()
 {
   return filePath;
+}
+
+kgmString kFileDialog::getFolder()
+{
+  return pathFolder;
 }

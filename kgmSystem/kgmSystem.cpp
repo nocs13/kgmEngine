@@ -164,16 +164,22 @@ void kgmSystem::getTemporaryDirectory(kgmString& s){
   buf.zero();
 #ifdef WIN32
   DWORD dw = GetTempPath(MAX_PATH, buf);
+
   if(dw != NULL)
     s = buf;
 #endif
+
 #ifdef LINUX
   DIR* dir = opendir("~/tmp");
-  if(dir != 0){
+
+  if(dir != 0)
+  {
     closedir(dir);
     s = (char*)"~/tmp";
-  }else{
-      s = "/tmp";
+  }
+  else
+  {
+     s = "/tmp";
   }
 #endif
 }

@@ -57,6 +57,7 @@ private:
 
   kgmFont* font;
 
+  iRect       m_viewport;
   kgmCamera   m_camera;
 
   kgmList<Mesh>         m_meshes;
@@ -267,6 +268,11 @@ public:
     }
 
     return false;
+  }
+
+  iRect viewport()
+  {
+    return m_viewport;
   }
 
   kgmCamera& camera()

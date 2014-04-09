@@ -275,6 +275,7 @@ void kgmGraphics::resize(float width, float height){
                       m_camera.mUp);
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
+  m_viewport = iRect(0, 0, width, height);
 }
 
 void kgmGraphics::render()

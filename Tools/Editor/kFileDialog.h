@@ -29,6 +29,7 @@ public:
   void forSave(kgmString dir);
 
   kgmString getPath();
+  kgmString getFolder();
 
   virtual void onOpen(){}
   virtual void onSave(){}

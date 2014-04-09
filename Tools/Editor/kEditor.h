@@ -78,6 +78,7 @@ class kEditor: public kgmGameBase
     Type typ;
     vec3 pos;
     vec3 rot;
+    box3 bnd;
 
   public:
     Node()
@@ -127,6 +128,16 @@ class kEditor: public kgmGameBase
     {
       return (kgmObject*)msh;
     }
+
+    void set(box3 b)
+    {
+      bnd = b;
+    }
+
+    box3 bound()
+    {
+      return bnd;
+    }
   };
 
 private:
@@ -147,6 +158,8 @@ private:
 public:
   kEditor();
   ~kEditor();
+
+  Node* select(int x, int y);
 
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);

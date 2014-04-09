@@ -292,7 +292,8 @@ void kgmOGL::gcGetMatrix(u32 mode, float* mtx){
 #endif
 }
 
-void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f){
+void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f)
+{
   glViewport(x, y, w, h);
 }
 

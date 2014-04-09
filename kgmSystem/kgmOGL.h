@@ -90,7 +90,8 @@ class kgmOGLWindow;
 class kgmOGL: public kgmIGC{
 public:
   //VERTEX & INDEX BUFFER
-  struct VBO{
+  struct VBO
+  {
     GLu32 vb, ib;
     u32   vsize, isize;
   };

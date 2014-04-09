@@ -1,6 +1,7 @@
 #pragma once
 
-template <class T> class kgmBox3d{
+template <class T> class kgmBox3d
+{
 public:
   kgmVector3d<T> min, max;
 
