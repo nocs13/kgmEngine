@@ -270,6 +270,26 @@ public:
     return false;
   }
 
+  bool set(kgmMesh* msh, mtx4 m)
+  {
+    if(!msh)
+      return false;
+
+    for(int i = 0; i < m_meshes.length(); i++)
+    {
+      Mesh* mesh = &m_meshes[i];
+
+      if(mesh->mesh == msh)
+      {
+        mesh->mtx = m;
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   iRect viewport()
   {
     return m_viewport;

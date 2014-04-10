@@ -8,6 +8,23 @@ enum FDDMODE\
   FDDMODE_MESH
 };
 
+enum MENUEVENT
+{
+  ME_FILE_QUIT,
+  ME_FILE_OPEN,
+  ME_FILE_SAVE,
+  ME_EDIT_REMOVE,
+  ME_EDIT_DUPLICATE,
+  ME_ADD_MESH,
+  ME_ADD_LIGHT,
+  ME_ADD_ACTOR,
+  ME_ADD_OBJECT,
+  ME_ADD_MATERIAL,
+  ME_RUN_RUN,
+  ME_VIEW_OBJECTS,
+  ME_HELP_ABOUT
+};
+
 kEditor::kEditor()
 {
   setMsAbsolute(true);
@@ -23,39 +40,48 @@ kEditor::kEditor()
   {
     menu = new kMenu(null, this);
     kgmGuiMenu::Item* item = menu->add("File");
-    item->add(1, "Open");
-    item->add(2, "Save");
-    item->add(0, "Quit");
+    item->add(ME_FILE_OPEN, "Open");
+    item->add(ME_FILE_SAVE, "Save");
+    item->add(ME_FILE_QUIT, "Quit");
     item = menu->add("Edit");
-    item->add(11, "Delete");
-    item->add(12, "Duplicate");
+    item->add(ME_EDIT_REMOVE, "Remove");
+    item->add(ME_EDIT_DUPLICATE, "Duplicate");
     item = menu->add("Add");
-    item->add(41, "Mesh");
-    item->add(42, "Light");
-    item->add(43, "Material");
-    item->add(44, "Object");
-    item->add(45, "Actor");
+    item->add(ME_ADD_MESH, "Mesh");
+    item->add(ME_ADD_LIGHT, "Light");
+    item->add(ME_ADD_ACTOR, "Actor");
+    item->add(ME_ADD_OBJECT, "Object");
+    item->add(ME_ADD_MATERIAL, "Material");
     item = menu->add("Run");
-    item->add(21, "Run");
+    item->add(ME_RUN_RUN, "Run");
     item = menu->add("View");
-    item->add(31, "Meshes");
-    item->add(32, "Materials");
+    item->add(ME_VIEW_OBJECTS, "Objects");
     item = menu->add("Help");
-    item->add(0xffff, "About");
+    item->add(ME_HELP_ABOUT, "About");
     m_render->add(menu);
 
     gridline = new kGridline();
     m_render->add(gridline, null);
 
+    pivot = new kPivot();
+    m_render->add(pivot, null);
+
     fdd = new kFDD(this);
     fdd->hide();
     m_render->add(fdd);
+
+    vo = new kViewObjects(this);
+    m_render->add(vo);
   }
 }
 
 kEditor::~kEditor()
 {
   gridline->release();
+  pivot->release();
+  menu->release();
+  fdd->release();
+  vo->release();
 }
 
 kEditor::Node* kEditor::select(int x, int y)
@@ -66,12 +92,28 @@ kEditor::Node* kEditor::select(int x, int y)
 
   kgmCamera cam = m_render->camera();
 
-  vec3 ms;
-  ms.x = (2.0f * x) / vp.w - 1.0f;
-  ms.y = 1.0f - (2.0f * y) / vp.h;
-  ms.z = 1.0f;
+  vec3 ms, md;
+  ms.x = cam.mPos.x + (2.0f * x) / vp.w - 1.0f;
+  ms.y = cam.mPos.y + 1.0f - (2.0f * y) / vp.h;
+  ms.z = 0;//cam.mPos.z;// + 1.0f;
+  md = ms - cam.mPos;
+  md.normalize();
 
-  kgmRay3d<float> ray(ms, cam.mDir);
+  //kgmRay3d<float> ray(ms, cam.mDir);
+  kgmRay3d<float> ray(cam.mPos, md);
+
+  {
+    vec3 nor(0, 0, 1), pos(0, 0, 0), c;
+    kgmPlane3d<float> pl(nor, pos);
+
+    if(pl.intersect(ray, c))
+    {
+      mtx4 m;
+      m.identity();
+      m.translate(c);
+      m_render->set(pivot, m);
+    }
+  }
 
   for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
   {
@@ -87,7 +129,6 @@ kEditor::Node* kEditor::select(int x, int y)
   //float4 dy = cam.mUp * my;
 
   //float3 dir = normalize(cameraDir + (dx + dy).xyz * 2.0);
-
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -130,6 +171,8 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 
   if(nodes.length() > 0)
     selected = select(x, y);
+  else
+    select(x, y);
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
@@ -194,17 +237,20 @@ void kEditor::onAction(kgmEvent *gui, int id)
   {
     switch(id)
     {
-    case 0:
+    case ME_FILE_QUIT:
       onQuit();
       break;
-    case 1:
+    case ME_FILE_OPEN:
       onMapOpen();
       break;
-    case 2:
+    case ME_FILE_SAVE:
       onMapSave();
       break;
-    case 41:
+    case ME_ADD_MESH:
       onAddMesh();
+      break;
+    case ME_VIEW_OBJECTS:
+      onViewObjects();
       break;
     }
   }
@@ -309,4 +355,9 @@ void kEditor::onAddMesh()
     kgmSystem::getHomeDirectory(path);
     fdd->forOpen(path);
   }
+}
+
+void kEditor::onViewObjects()
+{
+
 }

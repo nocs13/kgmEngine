@@ -1,9 +1,9 @@
 #ifndef KGMPIVOT_H
 #define KGMPIVOT_H
 
-#include "../../kgmGraphics/kgmVisual.h"
+#include "../../kgmGraphics/kgmMesh.h"
 
-class kPivot: public kgmVisual
+class kPivot: public kgmMesh
 {
 public:
   kPivot();

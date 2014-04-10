@@ -56,6 +56,22 @@ class kEditor: public kgmGameBase
     }
   };
 
+  class kViewObjects: public kgmGuiList
+  {
+    kEditor* editor;
+  public:
+    kViewObjects(kEditor* e)
+      :kgmGuiList(null, 1, 50, 100, 300)
+    {
+      editor = e;
+    }
+
+    void onSelect(u32 i)
+    {
+      editor->onAction(this, i);
+    }
+  };
+
   class Node
   {
     enum Type
@@ -79,6 +95,7 @@ class kEditor: public kgmGameBase
     vec3 pos;
     vec3 rot;
     box3 bnd;
+    kgmString nam;
 
   public:
     Node()
@@ -138,6 +155,16 @@ class kEditor: public kgmGameBase
     {
       return bnd;
     }
+
+    void set(kgmString n)
+    {
+      nam = n;
+    }
+
+    kgmString name()
+    {
+      return nam;
+    }
   };
 
 private:
@@ -146,12 +173,17 @@ private:
   f32  cam_rot;
 
   kGridline* gridline;
+
   kPivot*    pivot;
+  vec3       pv_pos;
+  vec3       pv_rot;
 
   kMenu*     menu;
 
   kFDD*      fdd;
   u32        fddMode;
+
+  kViewObjects* vo;
 
   Node* selected;
   kgmList<Node*> nodes;
@@ -176,6 +208,7 @@ public:
   void onMapOpen();
   void onMapSave();
   void onAddMesh();
+  void onViewObjects();
 };
 
 #endif // KEDITOR_H
