@@ -1,7 +1,7 @@
 #include "kEditor.h"
 #include "../../kgmSystem/kgmSystem.h"
 
-enum FDDMODE\
+enum FDDMODE
 {
   FDDMOD_NONE,
   FDDMODE_MAP,
@@ -103,14 +103,45 @@ kEditor::Node* kEditor::select(int x, int y)
   kgmRay3d<float> ray(cam.mPos, md);
 
   {
+    vec3 ms, mr, md;
+    /*mr = cam.mDir.cross(cam.mUp);
+    mr.normalize();
+
+    ms.x = cam.mPos.x + mr.x * ((2.0f * x) / vp.w - 1.0f);
+    ms.y = cam.mPos.y + mr.y * ((2.0f * x) / vp.w - 1.0f);
+    ms.z = cam.mPos.z + 1.0f - (2.0f * y)  / vp.h;
+    //ms.z = 0;//cam.mPos.z;// + 1.0f;
+    md = ms - cam.mPos;
+    md.normalize();*/
+    vec3 view = cam.mDir;
+    view.normalize();
+    vec3 h = view.cross(cam.mUp);
+    h.normalize();
+    vec3 v = h.cross(view);
+    v.normalize();
+    float dist = 1;
+    float vL = tan(cam.mFov / 2) * dist;
+    float hL = vL * (vp.width() / vp.height());
+    //v = v * vL;
+    //h = h * hL;
+    float xx = x - vp.width() / 2;
+    float yy = y - vp.height() / 2;
+    xx /= (vp.width() / 2);
+    yy /= (vp.height() / 2);
+
+    ms = cam.mPos + view * dist + h * xx - v * yy;
+    md = cam.mPos - ms;
+    md.normalize();
+
     vec3 nor(0, 0, 1), pos(0, 0, 0), c;
     kgmPlane3d<float> pl(nor, pos);
+    kgmRay3d<float>   ray(cam.mPos, md);
 
-    if(pl.intersect(ray, c))
+    //if(pl.intersect(ray, c))
     {
       mtx4 m;
       m.identity();
-      m.translate(c);
+      m.translate(ms);
       m_render->set(pivot, m);
     }
   }

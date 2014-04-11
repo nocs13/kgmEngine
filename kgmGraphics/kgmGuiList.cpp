@@ -18,7 +18,7 @@ kgmGuiList::kgmGuiList()
 kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   :kgmGui(par, x, y, w, h)
 {
-  m_scroll = new kgmGuiScroll(this, x + w - 10, y, 10, h);
+  m_scroll = new kgmGuiScroll(this, x + w - 10, 0, 10, h);
   m_scroll->show();
   m_scroll->setRange(1);
   m_itemSel = -1;

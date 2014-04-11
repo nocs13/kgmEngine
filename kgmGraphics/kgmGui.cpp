@@ -124,7 +124,7 @@ void kgmGui::getRect(kgmGui::Rect& rc, bool abs)
 {
   if(abs)
   {
-    rc = toAbsolute(this->m_rect);  
+    rc = toAbsolute(this->m_rect);
   }
   else
   {
