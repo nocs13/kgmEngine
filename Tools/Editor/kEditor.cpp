@@ -390,5 +390,8 @@ void kEditor::onAddMesh()
 
 void kEditor::onViewObjects()
 {
-
+  if(vo->visible())
+    vo->hide();
+  else
+    vo->show();
 }
