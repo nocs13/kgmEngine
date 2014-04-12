@@ -74,6 +74,7 @@ class kEditor: public kgmGameBase
 
   class Node
   {
+  public:
     enum Type
     {
       NONE,
@@ -97,7 +98,6 @@ class kEditor: public kgmGameBase
     box3 bnd;
     kgmString nam;
 
-  public:
     Node()
     {
       typ = NONE;
@@ -134,36 +134,6 @@ class kEditor: public kgmGameBase
 
       if(o)
         o->release();
-    }
-
-    Type type()
-    {
-      return typ;
-    }
-
-    kgmObject* object()
-    {
-      return (kgmObject*)msh;
-    }
-
-    void set(box3 b)
-    {
-      bnd = b;
-    }
-
-    box3 bound()
-    {
-      return bnd;
-    }
-
-    void set(kgmString n)
-    {
-      nam = n;
-    }
-
-    kgmString name()
-    {
-      return nam;
     }
   };
 

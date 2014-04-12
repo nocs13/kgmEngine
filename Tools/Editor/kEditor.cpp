@@ -71,7 +71,10 @@ kEditor::kEditor()
     m_render->add(fdd);
 
     vo = new kViewObjects(this);
+    vo->hide();
     m_render->add(vo);
+
+    m_render->setBgColor(0xffbbaa99);
   }
 }
 
@@ -104,29 +107,22 @@ kEditor::Node* kEditor::select(int x, int y)
 
   {
     vec3 ms, mr, md;
-    /*mr = cam.mDir.cross(cam.mUp);
-    mr.normalize();
-
-    ms.x = cam.mPos.x + mr.x * ((2.0f * x) / vp.w - 1.0f);
-    ms.y = cam.mPos.y + mr.y * ((2.0f * x) / vp.w - 1.0f);
-    ms.z = cam.mPos.z + 1.0f - (2.0f * y)  / vp.h;
-    //ms.z = 0;//cam.mPos.z;// + 1.0f;
-    md = ms - cam.mPos;
-    md.normalize();*/
     vec3 view = cam.mDir;
     view.normalize();
     vec3 h = view.cross(cam.mUp);
     h.normalize();
     vec3 v = h.cross(view);
     v.normalize();
-    float dist = 1;
-    float vL = tan(cam.mFov / 2) * dist;
+    float dist = 0.1;
+    float vL = tan(cam.mFov) * dist;
     float hL = vL * (vp.width() / vp.height());
-    //v = v * vL;
-    //h = h * hL;
+    v = v * vL;
+    h = h * hL;
     float xx = x - vp.width() / 2;
     float yy = y - vp.height() / 2;
-    xx /= (vp.width() / 2);
+
+    //2.65 is empiric, should fixed
+    xx /= (vp.width() / 2.65);
     yy /= (vp.height() / 2);
 
     ms = cam.mPos + view * dist + h * xx - v * yy;
@@ -137,29 +133,22 @@ kEditor::Node* kEditor::select(int x, int y)
     kgmPlane3d<float> pl(nor, pos);
     kgmRay3d<float>   ray(cam.mPos, md);
 
-    //if(pl.intersect(ray, c))
+    /*if(pl.intersect(ray, c))
     {
       mtx4 m;
       m.identity();
       m.translate(ms);
       m_render->set(pivot, m);
-    }
+    }*/
   }
 
   for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
   {
     vec3 c;
 
-    if((*i)->bound().intersect(ray, c))
+    if((*i)->bnd.intersect(ray, c))
       return *i;
   }
-
-  //float mx = (float)((x - vp.w * 0.5) * (1.0 / vp.w) * cam.mFov * 0.5);
-  //float my = (float)((y - vp.h * 0.5) * (1.0 / vp.w) * cam.mFov * 0.5);
-  //float4 dx = cameraRight * mx;
-  //float4 dy = cam.mUp * my;
-
-  //float3 dir = normalize(cameraDir + (dx + dy).xyz * 2.0);
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -201,9 +190,20 @@ void kEditor::onMsLeftDown(int k, int x, int y)
   ms_click[0] = true;
 
   if(nodes.length() > 0)
+  {
     selected = select(x, y);
+    if(selected)
+    {
+      mtx4 m;
+      m.identity();
+      m.translate(selected->pos);
+      m_render->set(pivot, m);
+    }
+  }
   else
+  {
     select(x, y);
+  }
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
@@ -316,7 +316,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
           {
             m_render->add(mesh, null);
             Node* node = new Node(mesh);
-            node->set(mesh->bound());
+            node->bnd = mesh->bound();
             selected = node;
            nodes.add(node);
           }
