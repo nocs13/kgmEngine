@@ -87,6 +87,9 @@ kgmGui::Icon kgmGuiList::getItemIcon(int i)
 void kgmGuiList::setSel(int sel)
 {
   m_itemSel = sel;
+
+  if(m_scroll)
+    m_scroll->setPosition(sel);
 }
 
 int kgmGuiList::getSel()
@@ -118,6 +121,11 @@ void kgmGuiList::clear()
     m_items[i].clear();
 
   m_items.clear();
+
+  m_position = 0;
+
+  if(m_scroll)
+    m_scroll->setPosition(0);
 }
 
 void kgmGuiList::sort()

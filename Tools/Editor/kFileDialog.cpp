@@ -117,6 +117,7 @@ void kFileDialog::listFolder()
 
     closedir (folder);
     list->sort();
+    list->setSel(0);
   }
 }
 
