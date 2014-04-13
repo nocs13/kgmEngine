@@ -1,4 +1,5 @@
 #include "kEditor.h"
+#include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
 
 enum FDDMODE
@@ -146,6 +147,9 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
   if(fdd->visible())
     fdd->onEvent(e);
+
+  if(vo->visible())
+    vo->onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -303,8 +307,10 @@ void kEditor::onAction(kgmEvent *gui, int id)
             m_render->add(mesh, null);
             Node* node = new Node(mesh);
             node->bnd = mesh->bound();
+            node->nam = kgmString("Mesh_") + kgmConvert::toString(nodes.length() + 1);
             selected = node;
-           nodes.add(node);
+            nodes.add(node);
+            vo->addItem(node->nam);
           }
         }
       }

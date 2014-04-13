@@ -1277,7 +1277,6 @@ void kgmGraphics::render(kgmGui* gui){
     kgmGuiList* glist = (kgmGuiList*)gui;
 
     u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
-    u32 item_view = ((kgmGuiList*)gui)->m_itemHeight;
 
     kgmGui::Rect srect = glist->getItemRect(glist->getFirstVisibleItem());
     srect = glist->toAbsolute(srect);
