@@ -182,6 +182,7 @@ void kEditor::onMsLeftDown(int k, int x, int y)
   if(nodes.length() > 0)
   {
     selected = select(x, y);
+
     if(selected)
     {
       mtx4 m;
