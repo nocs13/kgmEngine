@@ -90,20 +90,11 @@ kEditor::~kEditor()
 kEditor::Node* kEditor::select(int x, int y)
 {
   iRect vp = m_render->viewport();
-  float unit_x = (2.0f*((float)(x-vp.x)/(vp.w-vp.x)))-1.0f,
-        unit_y = 1.0f-(2.0f*((float)(y-vp.y)/(vp.h - vp.y)));
+  float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
+        unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
   kgmCamera cam = m_render->camera();
-
-  vec3 ms, md;
-  ms.x = cam.mPos.x + (2.0f * x) / vp.w - 1.0f;
-  ms.y = cam.mPos.y + 1.0f - (2.0f * y) / vp.h;
-  ms.z = 0;//cam.mPos.z;// + 1.0f;
-  md = ms - cam.mPos;
-  md.normalize();
-
-  //kgmRay3d<float> ray(ms, cam.mDir);
-  kgmRay3d<float> ray(cam.mPos, md);
+  kgmRay3d<float> ray;
 
   {
     vec3 ms, mr, md;
@@ -115,31 +106,26 @@ kEditor::Node* kEditor::select(int x, int y)
     v.normalize();
     float dist = 0.1;
     float vL = tan(cam.mFov) * dist;
-    float hL = vL * (vp.width() / vp.height());
+    float hL = vL * ((float)vp.width() / (float)vp.height());
     v = v * vL;
     h = h * hL;
-    float xx = x - vp.width() / 2;
-    float yy = y - vp.height() / 2;
 
-    //2.65 is empiric, should fixed
-    xx /= (vp.width() / 2.65);
-    yy /= (vp.height() / 2);
-
-    ms = cam.mPos + view * dist + h * xx - v * yy;
+    ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
     md = cam.mPos - ms;
     md.normalize();
 
     vec3 nor(0, 0, 1), pos(0, 0, 0), c;
     kgmPlane3d<float> pl(nor, pos);
-    kgmRay3d<float>   ray(cam.mPos, md);
 
-    /*if(pl.intersect(ray, c))
+    ray = kgmRay3d<float>(cam.mPos, md);
+
+    //if(pl.intersect(ray, c))
     {
       mtx4 m;
       m.identity();
       m.translate(ms);
-      m_render->set(pivot, m);
-    }*/
+      //m_render->set(pivot, m);
+    }
   }
 
   for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)

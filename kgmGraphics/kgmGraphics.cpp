@@ -267,7 +267,8 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
     gc->gcSetMatrix(gcmtx_view, mw.m);
 }
 
-void kgmGraphics::resize(float width, float height){
+void kgmGraphics::resize(float width, float height)
+{
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
   m_camera.set(PI / 6, width / height, .1f, 100000.0,
                       m_camera.mPos,
