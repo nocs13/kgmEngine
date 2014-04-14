@@ -37,6 +37,8 @@ kEditor::kEditor()
 
   selected = null;
 
+  oquered = 0;
+
   if(m_render)
   {
     menu = new kMenu(null, this);
@@ -223,20 +225,27 @@ void kEditor::onMsMove(int k, int x, int y)
   {
     if(ms_click[0])
     {
-      kgmCamera& cam = m_render->camera();
+      if(selected)
+      {
 
-      cam_rot += 0.001 * x;
+      }
+      else
+      {
+        kgmCamera& cam = m_render->camera();
 
-      if(cam_rot > 2 * PI)
-        cam_rot = 0;
+        cam_rot += 0.001 * x;
 
-      if(cam_rot < -2 * PI)
-        cam_rot = 0;
+        if(cam_rot > 2 * PI)
+          cam_rot = 0;
 
-      cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
-      cam.mDir.normalize();
-      cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
-      cam.update();
+        if(cam_rot < -2 * PI)
+          cam_rot = 0;
+
+        cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
+        cam.mDir.normalize();
+        cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
+        cam.update();
+      }
     }
     else if(ms_click[1])
     {
@@ -308,7 +317,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
             m_render->add(mesh, null);
             Node* node = new Node(mesh);
             node->bnd = mesh->bound();
-            node->nam = kgmString("Mesh_") + kgmConvert::toString(nodes.length() + 1);
+            node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
             selected = node;
             nodes.add(node);
             vo->addItem(node->nam);
@@ -324,6 +333,20 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case 2:
       fddMode = 0;
       break;
+    }
+  }
+  else if(gui == vo)
+  {
+    kgmString s = vo->getSelectedItem();
+
+    for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+    {
+      if((*i)->nam == s)
+      {
+        selected = *i;
+
+        break;
+      }
     }
   }
 }

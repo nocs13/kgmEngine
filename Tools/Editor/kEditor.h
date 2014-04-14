@@ -153,10 +153,13 @@ private:
   kFDD*      fdd;
   u32        fddMode;
 
+  u32        oquered;
+
   kViewObjects* vo;
 
   Node* selected;
   kgmList<Node*> nodes;
+
 public:
   kEditor();
   ~kEditor();

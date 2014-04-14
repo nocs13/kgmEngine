@@ -48,6 +48,7 @@ protected:
   kgmFont*       m_font;
   kgmString      m_paths;
 
+  char           m_keys[130];
   char           m_input[gbtn_end];
   char           m_keymap[150];
 

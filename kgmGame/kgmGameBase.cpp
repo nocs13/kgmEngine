@@ -36,8 +36,8 @@ kgmIGame* kgmIGame::getGame()
   return kgmGameBase::m_game;
 }
 
-#define		BWIDTH		640
-#define		BHEIGHT		480
+#define BWIDTH  640
+#define BHEIGHT 480
 
 //const char *log_file = "kgmLog.txt";
 //const char *set_file = "kgmEngine.conf";
@@ -123,8 +123,11 @@ kgmGameBase::kgmGameBase()
     m_render->setDefaultFont(m_font );
 
   log("set input map...");
+  memset(m_keys, 0, sizeof(m_keys));
+
   for(int i = 0; i < sizeof(m_keymap); i++)
     m_keymap[i] = 0;
+
   for(int i = 0; i < sizeof(m_input); i++)
     m_input[i] = 0;
 
@@ -334,7 +337,10 @@ void kgmGameBase::onClose()
   kgmOGLWindow::onClose();
 }
 
-void kgmGameBase::onKeyUp(int k){
+void kgmGameBase::onKeyUp(int k)
+{
+  m_keys[k] = 0;
+
   if(m_logic && m_state == State_Play && m_input[m_keymap[k]] != 0)
   {
     m_logic->input(m_keymap[k], 0);
@@ -351,6 +357,8 @@ void kgmGameBase::onKeyUp(int k){
 }
 
 void kgmGameBase::onKeyDown(int k){
+  m_keys[k] = 1;
+
   if(m_logic && (m_state == State_Play) && (m_input[m_keymap[k]] != 1))
   {
     m_logic->input(m_keymap[k], 1);
