@@ -27,7 +27,8 @@ extern ANativeWindow* kgm_getNativeWindow();
 
 class kgmOGL;
 
-class kgmOGLWindow: public kgmWindow{
+class kgmOGLWindow: public kgmWindow
+{
 public:
 #ifdef WIN32
  HDC        m_hdc;

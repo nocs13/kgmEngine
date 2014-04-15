@@ -44,7 +44,8 @@ enum{
 };
 
 
-class kgmWindow: public kgmEvent{
+class kgmWindow: public kgmEvent
+{
 public:
 #ifdef WIN32
   //microsoft windows 32 window

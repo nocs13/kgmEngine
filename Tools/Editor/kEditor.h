@@ -7,6 +7,7 @@
 #include "kPivot.h"
 #include "kGridline.h"
 #include "kFileDialog.h"
+#include "kViewObjects.h"
 
 class kEditor: public kgmGameBase
 {
@@ -53,22 +54,6 @@ class kEditor: public kgmGameBase
     void onFail()
     {
       editor->onAction(this, 0);
-    }
-  };
-
-  class kViewObjects: public kgmGuiList
-  {
-    kEditor* editor;
-  public:
-    kViewObjects(kEditor* e)
-      :kgmGuiList(null, 1, 50, 100, 300)
-    {
-      editor = e;
-    }
-
-    void onSelect(u32 i)
-    {
-      editor->onAction(this, i);
     }
   };
 

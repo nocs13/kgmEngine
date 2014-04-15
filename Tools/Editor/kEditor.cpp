@@ -73,7 +73,7 @@ kEditor::kEditor()
     fdd->hide();
     m_render->add(fdd);
 
-    vo = new kViewObjects(this);
+    vo = new kViewObjects(this, 1, 50, 100, 300);
     vo->hide();
     m_render->add(vo);
 
@@ -144,7 +144,7 @@ void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmGameBase::onEvent(e);
 
-  if(menu->visible())
+  if(menu->visible() && m_msAbs)
     menu->onEvent(e);
 
   if(fdd->visible())
@@ -225,34 +225,44 @@ void kEditor::onMsMove(int k, int x, int y)
   {
     if(ms_click[0])
     {
-      if(selected)
-      {
+      kgmCamera& cam = m_render->camera();
 
+      cam_rot += 0.001 * x;
+
+      if(cam_rot > 2 * PI)
+        cam_rot = 0;
+
+      if(cam_rot < -2 * PI)
+        cam_rot = 0;
+
+      cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
+      cam.mDir.normalize();
+      cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
+      cam.update();
+    }
+    else if(ms_click[1])
+    {
+      if(m_keys[KEY_Z] && selected)
+      {
+        selected->pos.x += 0.01 * x;
+        selected->pos.y += 0.01 * y;
+
+        mtx4 m;
+        m.identity();
+        m.translate(selected->pos);
+
+        if(selected->typ == Node::MESH)
+        {
+          m_render->set(selected->msh, m);
+        }
       }
       else
       {
         kgmCamera& cam = m_render->camera();
 
-        cam_rot += 0.001 * x;
-
-        if(cam_rot > 2 * PI)
-          cam_rot = 0;
-
-        if(cam_rot < -2 * PI)
-          cam_rot = 0;
-
-        cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
-        cam.mDir.normalize();
-        cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
+        cam.mPos.z += 0.01 * -y;
         cam.update();
       }
-    }
-    else if(ms_click[1])
-    {
-      kgmCamera& cam = m_render->camera();
-
-      cam.mPos.z += 0.01 * -y;
-      cam.update();
     }
   }
 }
@@ -320,7 +330,8 @@ void kEditor::onAction(kgmEvent *gui, int id)
             node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
             selected = node;
             nodes.add(node);
-            vo->addItem(node->nam);
+            vo->getGuiList()->addItem(node->nam);
+            vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
           }
         }
       }
@@ -337,7 +348,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
   }
   else if(gui == vo)
   {
-    kgmString s = vo->getSelectedItem();
+    kgmString s = vo->getGuiList()->getItem(id);
 
     for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
     {
