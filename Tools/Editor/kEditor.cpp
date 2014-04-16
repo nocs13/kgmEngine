@@ -140,6 +140,23 @@ kEditor::Node* kEditor::select(int x, int y)
   }
 }
 
+bool kEditor::mapOpen(kgmString s)
+{
+  return true;
+}
+
+bool kEditor::mapSave(kgmString s)
+{
+  FILE* f = fopen(s.data(), "w");
+
+  if(!f)
+    return false;
+
+  fclose(f);
+
+  return true;
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmGameBase::onEvent(e);
@@ -337,11 +354,15 @@ void kEditor::onAction(kgmEvent *gui, int id)
       }
       else if(fddMode == FDDMODE_MAP)
       {
-
+        mapOpen(fdd->getPath());
       }
       fddMode = 0;
       break;
     case 2:
+      if(fddMode == FDDMODE_MAP)
+      {
+        mapSave(fdd->getPath());
+      }
       fddMode = 0;
       break;
     }

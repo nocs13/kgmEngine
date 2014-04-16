@@ -151,6 +151,9 @@ public:
 
   Node* select(int x, int y);
 
+  bool mapSave(kgmString);
+  bool mapOpen(kgmString);
+
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
   void onKeyUp(int k);
