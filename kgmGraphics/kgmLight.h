@@ -10,7 +10,8 @@ public:
 public:
  vec3  position;   //light position
  vec3  direction;  //light direction, if 0 then light is omni
- vec4  color, specular;
+ vec4  color,
+       specular;
  float intensity;  //light intensity, 1 mean 10 meter range
  float angle;      //light spot angle if directional
  bool  ison;       //light switched on
@@ -22,7 +23,8 @@ public:
  u32       m_group;     // object group id
 
 public:
- kgmLight(){
+ kgmLight()
+ {
   position  = vec3(0, 0, 0);
   direction = vec3(0, 0, 0);
 

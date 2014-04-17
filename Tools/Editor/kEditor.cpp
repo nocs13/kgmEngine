@@ -152,6 +152,65 @@ bool kEditor::mapSave(kgmString s)
   if(!f)
     return false;
 
+  fprintf(f, "<?xml version='1.0'?>\n");
+  fprintf(f, "<kgm>\n");
+
+  kgmList<Node*> meshes;
+  kgmList<Node*> lights;
+  kgmList<Node*> actors;
+  kgmList<Node*> materials;
+
+  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  {
+    switch ((*i)->typ)
+    {
+    case Node::MESH:
+      meshes.add(*i);
+      continue;
+    case Node::LIGHT:
+      lights.add(*i);
+      continue;
+    case Node::ACTOR:
+      actors.add(*i);
+      continue;
+    case Node::MATERIAL:
+      materials.add(*i);
+      continue;
+    default:
+      continue;
+    }
+  }
+
+  for(kgmList<Node*>::iterator i = materials.begin(); i != materials.end(); i++)
+  {
+    fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
+    fprintf(f, " </kgmMaterial\n");
+  }
+
+  for(kgmList<Node*>::iterator i = lights.begin(); i != lights.end(); i++)
+  {
+    fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
+    fprintf(f, " </kgmLight\n");
+  }
+
+  for(kgmList<Node*>::iterator i = meshes.begin(); i != meshes.end(); i++)
+  {
+    fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
+    fprintf(f, " </kgmMesh\n");
+  }
+
+  for(kgmList<Node*>::iterator i = actors.begin(); i != actors.end(); i++)
+  {
+    fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
+    fprintf(f, " </kgmActor\n");
+  }
+
+  materials.clear();
+  actors.clear();
+  lights.clear();
+  meshes.clear();
+
+  fprintf(f, "</kgm>");
   fclose(f);
 
   return true;
@@ -345,6 +404,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
             Node* node = new Node(mesh);
             node->bnd = mesh->bound();
             node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
+            node->lnk = fdd->getFile();
             selected = node;
             nodes.add(node);
             vo->getGuiList()->addItem(node->nam);

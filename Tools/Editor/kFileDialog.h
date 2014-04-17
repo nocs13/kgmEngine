@@ -28,6 +28,7 @@ public:
   void forOpen(kgmString dir);
   void forSave(kgmString dir);
 
+  kgmString getFile();
   kgmString getPath();
   kgmString getFolder();
 

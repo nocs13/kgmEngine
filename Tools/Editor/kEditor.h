@@ -82,6 +82,7 @@ class kEditor: public kgmGameBase
     vec3 rot;
     box3 bnd;
     kgmString nam;
+    kgmString lnk;
 
     Node()
     {

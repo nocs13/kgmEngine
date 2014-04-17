@@ -165,6 +165,11 @@ void kFileDialog::forSave(kgmString dir)
   listFolder();
 }
 
+kgmString kFileDialog::getFile()
+{
+  return text->m_text;
+}
+
 kgmString kFileDialog::getPath()
 {
   return filePath;
