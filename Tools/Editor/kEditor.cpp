@@ -184,25 +184,25 @@ bool kEditor::mapSave(kgmString s)
   for(kgmList<Node*>::iterator i = materials.begin(); i != materials.end(); i++)
   {
     fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
-    fprintf(f, " </kgmMaterial\n");
+    fprintf(f, " </kgmMaterial>\n");
   }
 
   for(kgmList<Node*>::iterator i = lights.begin(); i != lights.end(); i++)
   {
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
-    fprintf(f, " </kgmLight\n");
+    fprintf(f, " </kgmLight>\n");
   }
 
   for(kgmList<Node*>::iterator i = meshes.begin(); i != meshes.end(); i++)
   {
     fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
-    fprintf(f, " </kgmMesh\n");
+    fprintf(f, " </kgmMesh>\n");
   }
 
   for(kgmList<Node*>::iterator i = actors.begin(); i != actors.end(); i++)
   {
     fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
-    fprintf(f, " </kgmActor\n");
+    fprintf(f, " </kgmActor>\n");
   }
 
   materials.clear();

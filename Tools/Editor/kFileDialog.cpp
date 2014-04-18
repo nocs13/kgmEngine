@@ -172,6 +172,9 @@ kgmString kFileDialog::getFile()
 
 kgmString kFileDialog::getPath()
 {
+  if(!filePath.length())
+    filePath = getFolder() + DIRCON + getFile();
+
   return filePath;
 }
 
