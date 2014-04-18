@@ -15,8 +15,8 @@ ifeq ($(OS), Linux)
 	RM = rm -f
 else
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS
-    FLGS = -g -O0 -mwindows
-    LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32
+    FLGS = -g -O0 -mwindows -fpermissive
+    LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
 	RM = del
 endif
 

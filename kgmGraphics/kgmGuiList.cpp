@@ -130,9 +130,9 @@ void kgmGuiList::clear()
 
 void kgmGuiList::sort()
 {
-  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); ++i)
   {
-    for(Items::iterator j = i; j != m_items.end(); j++)
+    for(Items::iterator j = i; j != m_items.end(); ++j)
     {
       if(*i == *j)
         continue;

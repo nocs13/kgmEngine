@@ -131,7 +131,7 @@ kEditor::Node* kEditor::select(int x, int y)
     }
   }
 
-  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3 c;
 
@@ -160,7 +160,7 @@ bool kEditor::mapSave(kgmString s)
   kgmList<Node*> actors;
   kgmList<Node*> materials;
 
-  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     switch ((*i)->typ)
     {
@@ -181,25 +181,25 @@ bool kEditor::mapSave(kgmString s)
     }
   }
 
-  for(kgmList<Node*>::iterator i = materials.begin(); i != materials.end(); i++)
+  for(kgmList<Node*>::iterator i = materials.begin(); i != materials.end(); ++i)
   {
     fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmMaterial>\n");
   }
 
-  for(kgmList<Node*>::iterator i = lights.begin(); i != lights.end(); i++)
+  for(kgmList<Node*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmLight>\n");
   }
 
-  for(kgmList<Node*>::iterator i = meshes.begin(); i != meshes.end(); i++)
+  for(kgmList<Node*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
     fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
     fprintf(f, " </kgmMesh>\n");
   }
 
-  for(kgmList<Node*>::iterator i = actors.begin(); i != actors.end(); i++)
+  for(kgmList<Node*>::iterator i = actors.begin(); i != actors.end(); ++i)
   {
     fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmActor>\n");
@@ -431,7 +431,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
   {
     kgmString s = vo->getGuiList()->getItem(id);
 
-    for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+    for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
     {
       if((*i)->nam == s)
       {

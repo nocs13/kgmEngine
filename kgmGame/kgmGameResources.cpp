@@ -298,7 +298,7 @@ kgmShader* kgmGameResources::getShader(char* id){
 #endif
 
   if(getFile(name, mem)){
-    kgmString s(mem.data(), mem.length());
+    kgmString s((const char*)mem.data(), mem.length());
     shader = m_tools.genShader(kgmIGame::getGame()->getGC(), s);
   }
 

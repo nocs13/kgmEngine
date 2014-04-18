@@ -135,18 +135,20 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h){
 #endif
 }
 
-void kgmSystem::getCurrentDirectory(kgmString& s){
+void kgmSystem::getCurrentDirectory(kgmString& s)
+{
   kgmMemory<u8> buf(1024);
   buf.zero();
 #ifdef WIN32
-  GetCurrentDirectory(1024, buf);
+  GetCurrentDirectory(1024, (LPSTR)buf.data());
 #else
   getcwd(buf, 1024);
 #endif
-  s = buf;
+  s = (const char*)buf.data();
 }
 
-void kgmSystem::setCurrentDirectory(kgmString& s){
+void kgmSystem::setCurrentDirectory(kgmString& s)
+{
   kgmMemory<u8> buf(256);
   buf.zero();
 #ifdef WIN32
@@ -155,18 +157,19 @@ void kgmSystem::setCurrentDirectory(kgmString& s){
 #ifdef LINUX
   chdir(s);
 #endif
-  s = buf;
+  s = (const char*)buf.data();
 }
 
-void kgmSystem::getTemporaryDirectory(kgmString& s){
+void kgmSystem::getTemporaryDirectory(kgmString& s)
+{
   bool res = false;
   kgmMemory<u8> buf(256);
   buf.zero();
 #ifdef WIN32
-  DWORD dw = GetTempPath(MAX_PATH, buf);
+  DWORD dw = GetTempPath(MAX_PATH, (LPSTR)buf.data());
 
   if(dw != NULL)
-    s = buf;
+    s = (const char*)buf.data();
 #endif
 
 #ifdef LINUX

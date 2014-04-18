@@ -455,7 +455,8 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
   key = new char[128];
   val = new char[128];
 
-  while(!m.eof()){
+  while(!m.eof())
+  {
     memset(str, 0, 1024);
     memset(key, 0, 128);
     memset(val, 0, 128);

@@ -277,7 +277,7 @@ kgmXml::XmlState kgmXml::open(kgmMemory<u8>& m)
   if(m.length() < 1)
     return XML_ERROR;
 
-  m_xmlString.alloc(m.data(), m.length());
+  m_xmlString.alloc((char*)m.data(), m.length());
   m_position = m_xmlString.data();
 
   if(*m_position != '<' && *(++m_position) != '?')
