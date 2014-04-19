@@ -426,7 +426,13 @@ void kEditor::onAction(kgmEvent *gui, int id)
       }
       else if(fddMode == FDDMODE_PATH)
       {
+        kgmString loc = fdd->getFolder();
 
+        if(loc.length() > 0)
+        {
+          m_settings->set("Path", loc.data());
+          m_settings->save();
+        }
       }
       fddMode = 0;
       break;
@@ -464,48 +470,24 @@ void kEditor::onMapOpen()
 {
   fddMode = FDDMODE_MAP;
 
-  if(fdd->getFolder().length())
-  {
-    fdd->forOpen("");
-  }
-  else
-  {
-    kgmString path;
-    kgmSystem::getHomeDirectory(path);
-    fdd->forOpen(path);
-  }
+  fdd->changeLocation(false);
+  fdd->forOpen(m_settings->get("Path"));
 }
 
 void kEditor::onMapSave()
 {
   fddMode = FDDMODE_MAP;
 
-  if(fdd->getFolder().length())
-  {
-    fdd->forSave("");
-  }
-  else
-  {
-    kgmString path;
-    kgmSystem::getHomeDirectory(path);
-    fdd->forSave(path);
-  }
+  fdd->changeLocation(false);
+  fdd->forSave(m_settings->get("Path"));
 }
 
 void kEditor::onAddMesh()
 {
   fddMode = FDDMODE_MESH;
 
-  if(fdd->getFolder().length())
-  {
-    fdd->forOpen("");
-  }
-  else
-  {
-    kgmString path;
-    kgmSystem::getHomeDirectory(path);
-    fdd->forOpen(path);
-  }
+  fdd->changeLocation(false);
+  fdd->forOpen(m_settings->get("Path"));
 }
 
 void kEditor::onViewObjects()
@@ -519,15 +501,18 @@ void kEditor::onViewObjects()
 void kEditor::onOptionsDatabase()
 {
   fddMode = FDDMODE_PATH;
+  kgmString loc = m_settings->get("Path");
 
-  if(fdd->getFolder().length())
+  fdd->changeLocation(true);
+
+  if(!loc.length())
   {
-    fdd->forOpen("");
+    kgmString cwd;
+    kgmSystem::getCurrentDirectory(cwd);
+    fdd->forOpen(cwd);
   }
   else
   {
-    kgmString path;
-    kgmSystem::getHomeDirectory(path);
-    fdd->forOpen(path);
+    fdd->forOpen(loc);
   }
 }

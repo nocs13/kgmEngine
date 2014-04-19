@@ -56,9 +56,9 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
         char* a = null;
 
         #ifdef WIN32
-        strrchr(tmp.data(), '\\');
+        a = strrchr(tmp.data(), '\\');
         #else
-        strrchr(tmp.data(), '/');
+        a = strrchr(tmp.data(), '/');
         #endif
 
         if(a)
