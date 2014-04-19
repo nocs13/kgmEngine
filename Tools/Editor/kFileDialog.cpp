@@ -17,6 +17,8 @@ kFileDialog::kFileDialog()
   pathFolder = "";
 
   modeSave = false;
+  localable = true;
+  allsee = true;
 
 #ifdef WIN32
   DIRCON = "\\";
@@ -51,7 +53,13 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
 
       if(tmp != "/")
       {
-        char* a = strrchr(tmp.data(), '/');
+        char* a = null;
+
+        #ifdef WIN32
+        strrchr(tmp.data(), '\\');
+        #else
+        strrchr(tmp.data(), '/');
+        #endif
 
         if(a)
         {
@@ -112,6 +120,24 @@ void kFileDialog::listFolder()
   {
     while((ent = readdir (folder)) != NULL)
     {
+      if(strlen(ent->d_name) == 1 && strncmp(ent->d_name, ".", 1) == 0)
+        continue;
+
+      if(!localable)
+      {
+        if(strlen(ent->d_name) == 2 && strncmp(ent->d_name, "..", 2) == 0)
+          continue;
+      }
+
+      if(!allsee)
+      {
+        if(strlen(ent->d_name) > 1 && ent->d_name[0] == '.')
+        {
+          if(strcmp(ent->d_name, "..") != 0)
+            continue;
+        }
+      }
+
       list->addItem(ent->d_name);
     }
 
@@ -182,3 +208,14 @@ kgmString kFileDialog::getFolder()
 {
   return pathFolder;
 }
+
+void kFileDialog::changeLocation(bool s)
+{
+  localable = s;
+}
+
+void kFileDialog::showHidden(bool s)
+{
+  allsee = s;
+}
+

@@ -6,7 +6,8 @@ enum FDDMODE
 {
   FDDMOD_NONE,
   FDDMODE_MAP,
-  FDDMODE_MESH
+  FDDMODE_MESH,
+  FDDMODE_PATH
 };
 
 enum MENUEVENT
@@ -23,6 +24,7 @@ enum MENUEVENT
   ME_ADD_MATERIAL,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
+  ME_OPTIONS_DATABASE,
   ME_HELP_ABOUT
 };
 
@@ -59,6 +61,8 @@ kEditor::kEditor()
     item->add(ME_RUN_RUN, "Run");
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects");
+    item = menu->add("Options");
+    item->add(ME_OPTIONS_DATABASE, "Database");
     item = menu->add("Help");
     item->add(ME_HELP_ABOUT, "About");
     m_render->add(menu);
@@ -70,6 +74,7 @@ kEditor::kEditor()
     m_render->add(pivot, null);
 
     fdd = new kFDD(this);
+    fdd->showHidden(false);
     fdd->hide();
     m_render->add(fdd);
 
@@ -369,6 +374,9 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case ME_VIEW_OBJECTS:
       onViewObjects();
       break;
+    case ME_OPTIONS_DATABASE:
+      onOptionsDatabase();
+      break;
     }
   }
   else if(gui == fdd)
@@ -415,6 +423,10 @@ void kEditor::onAction(kgmEvent *gui, int id)
       else if(fddMode == FDDMODE_MAP)
       {
         mapOpen(fdd->getPath());
+      }
+      else if(fddMode == FDDMODE_PATH)
+      {
+
       }
       fddMode = 0;
       break;
@@ -502,4 +514,20 @@ void kEditor::onViewObjects()
     vo->hide();
   else
     vo->show();
+}
+
+void kEditor::onOptionsDatabase()
+{
+  fddMode = FDDMODE_PATH;
+
+  if(fdd->getFolder().length())
+  {
+    fdd->forOpen("");
+  }
+  else
+  {
+    kgmString path;
+    kgmSystem::getHomeDirectory(path);
+    fdd->forOpen(path);
+  }
 }

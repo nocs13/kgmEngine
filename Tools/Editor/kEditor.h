@@ -171,6 +171,7 @@ public:
   void onMapSave();
   void onAddMesh();
   void onViewObjects();
+  void onOptionsDatabase();
 };
 
 #endif // KEDITOR_H

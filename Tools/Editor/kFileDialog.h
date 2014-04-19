@@ -19,6 +19,8 @@ class kFileDialog : public kgmGui
   kgmString filePath;
 
   bool      modeSave;
+  bool      localable;
+  bool      allsee;
 
 public:
   kFileDialog();
@@ -27,6 +29,9 @@ public:
 
   void forOpen(kgmString dir);
   void forSave(kgmString dir);
+
+  void changeLocation(bool s);
+  void showHidden(bool s);
 
   kgmString getFile();
   kgmString getPath();
