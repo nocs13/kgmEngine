@@ -21,12 +21,14 @@ public:
      XML_TAG_DATA
  };
 
- struct Attribute{
+ struct Attribute
+ {
    kgmString m_name;
    kgmString m_data;
  };
 
- class Node{
+ class Node
+ {
   Node* m_parent;
 
  public:
