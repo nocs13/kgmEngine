@@ -170,6 +170,7 @@ public:
   void onMapOpen();
   void onMapSave();
   void onAddMesh();
+  void onAddLight();
   void onViewObjects();
   void onOptionsDatabase();
 };

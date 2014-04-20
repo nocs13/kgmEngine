@@ -15,10 +15,18 @@ public:
     min = a, max = b;
   }
 
+  kgmBox3d(T mnx, T mny, T mnz, T mxx, T mxy, T mxz)
+  {
+    min.x = mnx, min.y = mny, min.z = mnz;
+    max.x = mxx, max.y = mxy, max.z = mxz;
+  }
+
   kgmBox3d(const kgmVector3d<T> v[], int count)
   {
     min = max = v[0];
-    for(int i = 0; i < count; i++){
+
+    for(int i = 0; i < count; i++)
+    {
       min.x = MIN(min.x, v[i].x);
       min.y = MIN(min.y, v[i].y);
       min.z = MIN(min.z, v[i].z);
@@ -27,10 +35,12 @@ public:
       max.z = MAX(max.z, v[i].z);
     }
   }
+
   void set(kgmVector3d<T> &a, kgmVector3d<T> &b)
   {
     min = a, max = b;
   }
+
   void set(T mnx, T mny, T mnz, T mxx, T mxy, T mxz)
   {
     min.x = mnx, min.y = mny, min.z = mnz;

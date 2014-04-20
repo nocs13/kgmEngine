@@ -371,6 +371,9 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case ME_ADD_MESH:
       onAddMesh();
       break;
+    case ME_ADD_LIGHT:
+      onAddLight();
+      break;
     case ME_VIEW_OBJECTS:
       onViewObjects();
       break;
@@ -488,6 +491,21 @@ void kEditor::onAddMesh()
 
   fdd->changeLocation(false);
   fdd->forOpen(m_settings->get("Path"));
+}
+
+void kEditor::onAddLight()
+{
+  kgmLight* l = new kgmLight();
+
+  Node* node = new Node(l);
+  node->bnd = box3(-1, -1, -1, 1, 1, 1);
+  node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
+  selected = node;
+  nodes.add(node);
+  vo->getGuiList()->addItem(node->nam);
+  vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+  m_render->add(l);
 }
 
 void kEditor::onViewObjects()
