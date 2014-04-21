@@ -84,34 +84,41 @@ class kEditor: public kgmGameBase
     kgmString nam;
     kgmString lnk;
 
+    kgmGraphics::Icon* icn;
+
     Node()
     {
       typ = NONE;
       msh = null;
+      icn = null;
     }
 
     Node(kgmMesh* m)
     {
       typ = MESH;
       msh = m;
+      icn = null;
     }
 
     Node(kgmLight* l)
     {
       typ = LIGHT;
       lgt = l;
+      icn = null;
     }
 
     Node(kgmActor* a)
     {
       typ = ACTOR;
       act = a;
+      icn = null;
     }
 
     Node(kgmMaterial* m)
     {
       typ = MATERIAL;
       mtl = m;
+      icn = null;
     }
 
     ~Node()
@@ -120,6 +127,9 @@ class kEditor: public kgmGameBase
 
       if(o)
         o->release();
+
+      if(icn)
+        icn->release();
     }
   };
 

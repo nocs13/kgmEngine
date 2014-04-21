@@ -51,6 +51,42 @@ public:
     mtx4         mtx;
   };
 
+  class Icon: public kgmObject
+  {
+    kgmTexture* icon;
+    float       width,
+                height;
+    vec3        position;
+
+  public:
+    Icon()
+    {
+      icon = null;
+    }
+
+    Icon(kgmTexture* c, float w, float h, vec3 v)
+    {
+      icon = c;
+      width = w;
+      height = h;
+      position = v;
+
+      if(c)
+        c->increment();
+    }
+
+    ~Icon()
+    {
+      if(icon)
+        icon->release();
+    }
+
+    kgmTexture* getIcon() { return icon; }
+    float       getWidth() { return width; }
+    float       getHeight() { return height; }
+    vec3        getPosition() { return position; }
+  };
+
 private:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -65,6 +101,7 @@ private:
   kgmList<kgmLight*>    m_lights;
   kgmList<kgmVisual*>   m_visuals;
   kgmList<kgmGui*>      m_guis;
+  kgmList<Icon*>        m_icons;
 
 #ifdef DEBUG
   kgmList<kgmBody*>     m_bodies;
@@ -115,6 +152,7 @@ private:
   void render(kgmShader*);
   void render(kgmMaterial*);
   void render(kgmParticles*);
+  void render(Icon*);
 
   void renderGuiMenuItem(void*);
 

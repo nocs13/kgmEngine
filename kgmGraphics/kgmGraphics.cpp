@@ -81,7 +81,8 @@ kgmMaterial  g_def_material;
 #define    kgmMaterial_ShaderGui 100
 #define    kgmMaterial_ShaderLights 101
 
-kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r){
+kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
+{
   gc = g;
   rc = r;
 
@@ -189,20 +190,21 @@ void kgmGraphics::clear(){
   }
   m_meshes.clear();
 
-  for(int i = 0; i < m_materials.size(); i++){
+  for(int i = 0; i < m_materials.size(); i++)
     m_materials[i]->release();
-  }
   m_materials.clear();
 
-  for(int i = 0; i < m_visuals.size(); i++){
+  for(int i = 0; i < m_visuals.size(); i++)
     m_visuals[i]->release();
-  }
   m_visuals.clear();
 
-  for(int i = 0; i < m_lights.size(); i++){
+  for(int i = 0; i < m_lights.size(); i++)
     m_lights[i]->release();
-  }
   m_lights.clear();
+
+  for(int i = 0; i < m_icons.size(); i++)
+    m_icons[i]->release();
+  m_icons.clear();
 
 #ifdef DEBUG
   for(int i = 0; i < m_bodies.size(); i++)
@@ -655,6 +657,11 @@ void kgmGraphics::render()
   if(m_has_shaders)
     render((kgmShader*)null);
 
+  //draw icons
+  for(int i = 0; i < m_icons.size(); i++)
+  {
+    render(m_icons[i]);
+  }
 #ifdef DEBUG
   mtx4 mid;
   mid.identity();
@@ -1054,6 +1061,43 @@ void kgmGraphics::render(kgmParticles* particles)
   }
   //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
     //           sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
+}
+
+void kgmGraphics::render(Icon* icon)
+{
+  mtx4    mtr = g_mtx_view;
+  vec3    rv, uv;
+
+  rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
+  rv.normalize();
+  uv = rv.cross(m_camera.mDir);
+  uv.normalize();
+
+  vec3    pos   = icon->getPosition();
+  vec3    crv = rv * icon->getWidth(),
+      cuv = uv * icon->getHeight();
+
+  kgmMesh::Vertex_P_C_T points[6];
+
+  points[0].pos = (pos - crv + cuv);
+  points[0].uv = vec2(0, 0);
+  points[1].pos = (pos - crv - cuv);
+  points[1].uv = vec2(0, 1);
+  points[2].pos = (pos + crv + cuv);
+  points[2].uv = vec2(1, 0);
+
+  points[3].pos = (pos + crv - cuv);
+  points[3].uv = vec2(1, 1);
+  points[4].pos = (pos + crv + cuv);
+  points[4].uv = vec2(1, 0);
+  points[5].pos = (pos - crv - cuv);
+  points[5].uv = vec2(0, 1);
+
+  points[0].col = points[1].col =
+      points[2].col = points[3].col =
+      points[4].col = points[5].col = 0xffffffff;
+
+  gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
 
 void kgmGraphics::render(kgmMaterial* m){
