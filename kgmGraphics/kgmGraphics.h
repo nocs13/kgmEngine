@@ -58,10 +58,16 @@ public:
                 height;
     vec3        position;
 
+    bool        remove;
+
   public:
     Icon()
     {
       icon = null;
+      width = 1;
+      height = 1;
+      position = vec3(0, 0, 0);
+      remove = false;
     }
 
     Icon(kgmTexture* c, float w, float h, vec3 v)
@@ -70,6 +76,7 @@ public:
       width = w;
       height = h;
       position = v;
+      remove = false;
 
       if(c)
         c->increment();
@@ -85,6 +92,9 @@ public:
     float       getWidth() { return width; }
     float       getHeight() { return height; }
     vec3        getPosition() { return position; }
+
+    bool        getRemove() { return remove; }
+    void        setRemove(bool r) { remove = r; }
   };
 
 private:
@@ -126,6 +136,8 @@ private:
   bool  m_alpha;
   bool  m_culling;
 
+  bool  m_editor;
+
   uint32 m_max_faces;
 
   u32    m_bg_color;
@@ -138,6 +150,7 @@ public:
   void render();
   void update();
   void resize(float, float);
+  void setEditor(bool);
 
   void setGuiStyle(kgmGuiStyle*);
   void setDefaultFont(kgmFont*);
@@ -216,32 +229,15 @@ public:
     a->increment();
 
     m_visuals.add(a);
+  }
 
+  void add(Icon* ico)
+  {
+    if(!ico)
+      return;
 
-
-    /*switch(a->m_typerender)
-    {
-    case kgmVisual::RenderNone:
-      //a->release();
-      //break;
-    case kgmVisual::RenderMesh:
-      if(a->m_visuals.size() > 0 && a->m_visuals[0]->getMaterial() &&
-         (a->m_visuals[0]->getMaterial()->m_transparency > 0.0 ||
-          a->m_visuals[0]->getMaterial()->m_alpha))
-        m_vis_blend.add(a);
-      else
-        m_visuals.add(a);
-    break;
-    case kgmVisual::RenderText:
-      m_vis_text.add(a);
-    break;
-    case kgmVisual::RenderSprite:
-      m_vis_sprite.add(a);
-    break;
-    case kgmVisual::RenderParticles:
-      m_vis_particles.add(a);
-    break;
-    };*/
+    ico->increment();
+    m_icons.add(ico);
   }
 
   void add(kgmGui* gui)

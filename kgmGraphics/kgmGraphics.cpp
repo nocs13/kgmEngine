@@ -22,8 +22,8 @@
 
 ////////////////////
 KGMOBJECT_IMPLEMENT(kgmGraphics,  kgmObject);
-KGMOBJECT_IMPLEMENT(kgmFrustum,		kgmObject);
-KGMOBJECT_IMPLEMENT(kgmCamera,		kgmFrustum);
+KGMOBJECT_IMPLEMENT(kgmFrustum,   kgmObject);
+KGMOBJECT_IMPLEMENT(kgmCamera,    kgmFrustum);
 
 #define MAX_LIGHTS 12
 
@@ -79,7 +79,8 @@ kgmLight     g_def_light;
 kgmMaterial  g_def_material;
 
 #define    kgmMaterial_ShaderGui 100
-#define    kgmMaterial_ShaderLights 101
+#define    kgmMaterial_ShaderTex 101
+#define    kgmMaterial_ShaderLights 102
 
 kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 {
@@ -146,6 +147,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
       shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
       shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("skin.glsl"));
       shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
+      shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
 
       shader = rc->getShader("lights.glsl");
 
@@ -164,6 +166,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
+
+  m_editor = false;
 }
 
 kgmGraphics::~kgmGraphics()
@@ -216,15 +220,18 @@ void kgmGraphics::clear(){
 }
 
 kgmShader* s_def = null;
-void kgmGraphics::build(){
+void kgmGraphics::build()
+{
 }
 
-void kgmGraphics::setDefaultFont(kgmFont* f){
+void kgmGraphics::setDefaultFont(kgmFont* f)
+{
   font = f;
   gui_style->gui_font = f;
 }
 
-void kgmGraphics::setGuiStyle(kgmGuiStyle* s){
+void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
+{
   if(!s)
     return;
 
@@ -267,6 +274,11 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
 
   if(!m_has_shaders)
     gc->gcSetMatrix(gcmtx_view, mw.m);
+}
+
+void kgmGraphics::setEditor(bool e)
+{
+  m_editor = e;
 }
 
 void kgmGraphics::resize(float width, float height)
@@ -658,10 +670,22 @@ void kgmGraphics::render()
     render((kgmShader*)null);
 
   //draw icons
-  for(int i = 0; i < m_icons.size(); i++)
+  if(m_editor)
   {
-    render(m_icons[i]);
+    for(int i = m_icons.size(); i > 0; i--)
+    {
+      if(m_icons[i - 1]->getRemove())
+      {
+        m_icons[i - 1]->release();
+        m_icons.erase(i - 1);
+      }
+      else
+      {
+        render(m_icons[i - 1]);
+      }
+    }
   }
+
 #ifdef DEBUG
   mtx4 mid;
   mid.identity();
@@ -1073,9 +1097,9 @@ void kgmGraphics::render(Icon* icon)
   uv = rv.cross(m_camera.mDir);
   uv.normalize();
 
-  vec3    pos   = icon->getPosition();
-  vec3    crv = rv * icon->getWidth(),
-      cuv = uv * icon->getHeight();
+  vec3 pos   = icon->getPosition();
+  vec3 crv = rv * icon->getWidth(),
+       cuv = uv * icon->getHeight();
 
   kgmMesh::Vertex_P_C_T points[6];
 
@@ -1094,10 +1118,22 @@ void kgmGraphics::render(Icon* icon)
   points[5].uv = vec2(0, 1);
 
   points[0].col = points[1].col =
-      points[2].col = points[3].col =
-      points[4].col = points[5].col = 0xffffffff;
+  points[2].col = points[3].col =
+  points[4].col = points[5].col = 0xffffffff;
+
+  kgmMaterial mtl;
+  mtl.m_shader = kgmMaterial::ShaderBase;
+  mtl.m_tex_color = icon->getIcon();
+  render(&mtl);
+  g_mtx_world.identity();
+  //g_mtx_world.translate(icon->getPosition());
+  //render(shaders[kgmMaterial_ShaderTex]);
+  render(shaders[kgmMaterial::ShaderNone]);
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
+
+  render((kgmShader*)null);
+  render((kgmMaterial*)null);
 }
 
 void kgmGraphics::render(kgmMaterial* m){

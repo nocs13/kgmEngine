@@ -43,6 +43,8 @@ kEditor::kEditor()
 
   if(m_render)
   {
+    m_render->setEditor(true);
+
     menu = new kMenu(null, this);
     kgmGuiMenu::Item* item = menu->add("File");
     item->add(ME_FILE_OPEN, "Open");
@@ -500,12 +502,15 @@ void kEditor::onAddLight()
   Node* node = new Node(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
+  node->icn = new kgmGraphics::Icon(getResources()->getTexture("light_ico.tga"), 1, 1, vec3(0, 0, 0));
+
   selected = node;
   nodes.add(node);
   vo->getGuiList()->addItem(node->nam);
   vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
   m_render->add(l);
+  m_render->add(node->icn);
 }
 
 void kEditor::onViewObjects()
