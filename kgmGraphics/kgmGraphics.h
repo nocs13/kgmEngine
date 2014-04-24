@@ -92,6 +92,7 @@ public:
     float       getWidth() { return width; }
     float       getHeight() { return height; }
     vec3        getPosition() { return position; }
+    void        setPosition(vec3 v) { position = v; }
 
     bool        getRemove() { return remove; }
     void        setRemove(bool r) { remove = r; }

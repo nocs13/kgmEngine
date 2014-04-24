@@ -142,7 +142,12 @@ kEditor::Node* kEditor::select(int x, int y)
   {
     vec3 c;
 
-    if((*i)->bnd.intersect(ray, c))
+    box3 bnd = (*i)->bnd;
+
+    bnd.min = bnd.min + (*i)->pos;
+    bnd.max = bnd.max + (*i)->pos;
+
+    if(bnd.intersect(ray, c))
       return *i;
   }
 }
@@ -264,6 +269,9 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 
   ms_click[0] = true;
 
+  if(m_keys[KEY_Z])
+    return;
+
   if(nodes.length() > 0)
   {
     selected = select(x, y);
@@ -337,6 +345,11 @@ void kEditor::onMsMove(int k, int x, int y)
         if(selected->typ == Node::MESH)
         {
           m_render->set(selected->msh, m);
+        }
+        else if(selected->typ == Node::LIGHT)
+        {
+          selected->lgt->position = selected->pos;
+          selected->icn->setPosition(selected->pos);
         }
       }
       else
@@ -447,6 +460,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
         mapSave(fdd->getPath());
       }
       fddMode = 0;
+
       break;
     }
   }
