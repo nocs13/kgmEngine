@@ -3,6 +3,8 @@
 
 kApp::kApp()
 {
+  m_game = null;
+  editor = null;
 }
 
 void kApp::main()
@@ -10,6 +12,7 @@ void kApp::main()
   kgm_log() << "Start\n";
 
   editor = new kEditor();
+  m_game = editor;
 
   editor->loop();
 

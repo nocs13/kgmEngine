@@ -4,6 +4,7 @@
 #include "../../kgmGame/kgmGameBase.h"
 #include "../../kgmGraphics/kgmGuiMenu.h"
 
+#include "kNode.h"
 #include "kPivot.h"
 #include "kGridline.h"
 #include "kFileDialog.h"
@@ -57,82 +58,6 @@ class kEditor: public kgmGameBase
     }
   };
 
-  class Node
-  {
-  public:
-    enum Type
-    {
-      NONE,
-      MESH,
-      LIGHT,
-      ACTOR,
-      MATERIAL
-    };
-
-    union
-    {
-      kgmMesh*      msh;
-      kgmLight*     lgt;
-      kgmActor*     act;
-      kgmMaterial*  mtl;
-    };
-
-    Type typ;
-    vec3 pos;
-    vec3 rot;
-    box3 bnd;
-    kgmString nam;
-    kgmString lnk;
-
-    kgmGraphics::Icon* icn;
-
-    Node()
-    {
-      typ = NONE;
-      msh = null;
-      icn = null;
-    }
-
-    Node(kgmMesh* m)
-    {
-      typ = MESH;
-      msh = m;
-      icn = null;
-    }
-
-    Node(kgmLight* l)
-    {
-      typ = LIGHT;
-      lgt = l;
-      icn = null;
-    }
-
-    Node(kgmActor* a)
-    {
-      typ = ACTOR;
-      act = a;
-      icn = null;
-    }
-
-    Node(kgmMaterial* m)
-    {
-      typ = MATERIAL;
-      mtl = m;
-      icn = null;
-    }
-
-    ~Node()
-    {
-      kgmObject* o = (kgmObject*)msh;
-
-      if(o)
-        o->release();
-
-      if(icn)
-        icn->release();
-    }
-  };
-
 private:
   bool ms_click[3];
   vec3 cam_pos;
@@ -153,14 +78,14 @@ private:
 
   kViewObjects* vo;
 
-  Node* selected;
-  kgmList<Node*> nodes;
+  kNode* selected;
+  kgmList<kNode*> nodes;
 
 public:
   kEditor();
   ~kEditor();
 
-  Node* select(int x, int y);
+  kNode* select(int x, int y);
 
   bool mapSave(kgmString);
   bool mapOpen(kgmString);
@@ -177,6 +102,7 @@ public:
   void onMsRightDown(int k, int x, int y);
 
   void onQuit();
+  void onEditOptions();
   void onMapOpen();
   void onMapSave();
   void onAddMesh();

@@ -40,15 +40,18 @@ protected:
   kgmIGame*  m_game;
 
 public:
-  virtual ~kgmGameApp(){
+  virtual ~kgmGameApp()
+  {
 
   }
 
-  kgmIGame* game(){
+  kgmIGame* game()
+  {
     return m_game;
   }
 
-  static kgmGameApp* gameApplication(){
+  static kgmGameApp* gameApplication()
+  {
     return (kgmGameApp*)kgmApp::application();
   }
 

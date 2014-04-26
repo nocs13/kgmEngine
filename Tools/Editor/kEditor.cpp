@@ -1,4 +1,6 @@
 #include "kEditor.h"
+#include "kViewOptions.h"
+
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
 
@@ -17,6 +19,9 @@ enum MENUEVENT
   ME_FILE_SAVE,
   ME_EDIT_REMOVE,
   ME_EDIT_DUPLICATE,
+  ME_EDIT_OPTIONS,
+  ME_MAP_OPEN,
+  ME_MAP_SAVE,
   ME_ADD_MESH,
   ME_ADD_LIGHT,
   ME_ADD_ACTOR,
@@ -53,6 +58,10 @@ kEditor::kEditor()
     item = menu->add("Edit");
     item->add(ME_EDIT_REMOVE, "Remove");
     item->add(ME_EDIT_DUPLICATE, "Duplicate");
+    item->add(ME_EDIT_OPTIONS, "Options");
+    item = menu->add("Map");
+    item->add(ME_MAP_OPEN, "Open");
+    item->add(ME_MAP_SAVE, "Save");
     item = menu->add("Add");
     item->add(ME_ADD_MESH, "Mesh");
     item->add(ME_ADD_LIGHT, "Light");
@@ -97,7 +106,7 @@ kEditor::~kEditor()
   vo->release();
 }
 
-kEditor::Node* kEditor::select(int x, int y)
+kNode* kEditor::select(int x, int y)
 {
   iRect vp = m_render->viewport();
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
@@ -124,9 +133,6 @@ kEditor::Node* kEditor::select(int x, int y)
     md = cam.mPos - ms;
     md.normalize();
 
-    vec3 nor(0, 0, 1), pos(0, 0, 0), c;
-    kgmPlane3d<float> pl(nor, pos);
-
     ray = kgmRay3d<float>(cam.mPos, md);
 
     //if(pl.intersect(ray, c))
@@ -138,7 +144,7 @@ kEditor::Node* kEditor::select(int x, int y)
     }
   }
 
-  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3 c;
 
@@ -147,8 +153,14 @@ kEditor::Node* kEditor::select(int x, int y)
     bnd.min = bnd.min + (*i)->pos;
     bnd.max = bnd.max + (*i)->pos;
 
+    printf("AAA\n");
+
     if(bnd.intersect(ray, c))
+    {
+      printf("aaa\n");
+
       return *i;
+    }
   }
 }
 
@@ -167,25 +179,25 @@ bool kEditor::mapSave(kgmString s)
   fprintf(f, "<?xml version='1.0'?>\n");
   fprintf(f, "<kgm>\n");
 
-  kgmList<Node*> meshes;
-  kgmList<Node*> lights;
-  kgmList<Node*> actors;
-  kgmList<Node*> materials;
+  kgmList<kNode*> meshes;
+  kgmList<kNode*> lights;
+  kgmList<kNode*> actors;
+  kgmList<kNode*> materials;
 
-  for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     switch ((*i)->typ)
     {
-    case Node::MESH:
+    case kNode::MESH:
       meshes.add(*i);
       continue;
-    case Node::LIGHT:
+    case kNode::LIGHT:
       lights.add(*i);
       continue;
-    case Node::ACTOR:
+    case kNode::ACTOR:
       actors.add(*i);
       continue;
-    case Node::MATERIAL:
+    case kNode::MATERIAL:
       materials.add(*i);
       continue;
     default:
@@ -193,25 +205,25 @@ bool kEditor::mapSave(kgmString s)
     }
   }
 
-  for(kgmList<Node*>::iterator i = materials.begin(); i != materials.end(); ++i)
+  for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
   {
     fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmMaterial>\n");
   }
 
-  for(kgmList<Node*>::iterator i = lights.begin(); i != lights.end(); ++i)
+  for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmLight>\n");
   }
 
-  for(kgmList<Node*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
+  for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
     fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
     fprintf(f, " </kgmMesh>\n");
   }
 
-  for(kgmList<Node*>::iterator i = actors.begin(); i != actors.end(); ++i)
+  for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
   {
     fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmActor>\n");
@@ -342,11 +354,11 @@ void kEditor::onMsMove(int k, int x, int y)
         m.identity();
         m.translate(selected->pos);
 
-        if(selected->typ == Node::MESH)
+        if(selected->typ == kNode::MESH)
         {
           m_render->set(selected->msh, m);
         }
-        else if(selected->typ == Node::LIGHT)
+        else if(selected->typ == kNode::LIGHT)
         {
           selected->lgt->position = selected->pos;
           selected->icn->setPosition(selected->pos);
@@ -382,6 +394,9 @@ void kEditor::onAction(kgmEvent *gui, int id)
       break;
     case ME_FILE_SAVE:
       onMapSave();
+      break;
+    case ME_EDIT_OPTIONS:
+      onEditOptions();
       break;
     case ME_ADD_MESH:
       onAddMesh();
@@ -427,7 +442,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
           if(mesh)
           {
             m_render->add(mesh, null);
-            Node* node = new Node(mesh);
+            kNode* node = new kNode(mesh);
             node->bnd = mesh->bound();
             node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
             node->lnk = fdd->getFile();
@@ -468,7 +483,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
   {
     kgmString s = vo->getGuiList()->getItem(id);
 
-    for(kgmList<Node*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+    for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
     {
       if((*i)->nam == s)
       {
@@ -501,6 +516,37 @@ void kEditor::onMapSave()
   fdd->forSave(m_settings->get("Path"));
 }
 
+void kEditor::onEditOptions()
+{
+  if(!selected)
+    return;
+
+  kViewOptions* vop = null;
+
+  switch(selected->typ)
+  {
+  case kNode::MESH:
+    vop = new kViewOptionsForMesh(selected, 50, 50, 200, 300);
+    break;
+  case kNode::LIGHT:
+    vop = new kViewOptionsForLight(selected, 50, 50, 200, 300);
+    break;
+  case kNode::ACTOR:
+    vop = new kViewOptionsForActor(selected, 50, 50, 200, 300);
+    break;
+  case kNode::MATERIAL:
+    vop = new kViewOptionsForMaterial(selected, 50, 50, 200, 300);
+    break;
+  }
+
+  if(vop)
+  {
+    m_render->add(vop);
+    addListener(vop);
+    vop->show();
+  }
+}
+
 void kEditor::onAddMesh()
 {
   fddMode = FDDMODE_MESH;
@@ -513,7 +559,7 @@ void kEditor::onAddLight()
 {
   kgmLight* l = new kgmLight();
 
-  Node* node = new Node(l);
+  kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
   node->icn = new kgmGraphics::Icon(getResources()->getTexture("light_ico.tga"), 1, 1, vec3(0, 0, 0));
