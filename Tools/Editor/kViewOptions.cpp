@@ -16,9 +16,9 @@ kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
   {
     kgmGui* g;
 
-    g = new kgmGui(this, 0, 0, 50, 20);
+    g = new kgmGuiLabel(this, 0, 0, 50, 20);
     g->setText("Position");
-    g = new kgmGui(this, 0, 25, 50, 20);
+    g = new kgmGuiLabel(this, 0, 25, 50, 20);
     g->setText("Rotation");
   }
 }

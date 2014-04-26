@@ -42,6 +42,13 @@ kgmGuiStyle::kgmGuiStyle()
   stext.ft_size  = 18;
   stext.image    = null;
 
+  //gui label
+  slabel.tx_color = 0xffffffff;
+  slabel.bg_color = 0xff999999;
+  slabel.ac_color = 0xffaaaaaa;
+  slabel.fg_color = 0xffbbbbbb;
+  slabel.image    = null;
+
   //gui scroll
   sscroll.tx_color = 0xffffffff;
   sscroll.bg_color = 0xff999999;

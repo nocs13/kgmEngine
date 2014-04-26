@@ -2,6 +2,7 @@
 #include "kgmGuiProgress.h"
 #include "kgmGuiButton.h"
 #include "kgmGuiScroll.h"
+#include "kgmGuiLabel.h"
 #include "kgmGuiList.h"
 #include "kgmGuiMenu.h"
 #include "kgmGuiTab.h"
@@ -1448,6 +1449,25 @@ void kgmGraphics::render(kgmGui* gui){
   else if(gui->isClass(kgmGuiProgress::Class))
   {
     //render((kgmGuiProgress*)gui);
+  }
+  else if(gui->isClass(kgmGuiLabel::Class))
+  {
+    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
+    u32 fheight = (u32)((float)rect.h * (float)0.75f);
+    u32 tlen = text.length();
+    u32 fw = (tlen) * fwidth;
+    u32 fh = fheight;
+    kgmGui::Rect tClip = rect;
+
+    tClip.x = rect.x + rect.w / 2 - fw / 2;
+    tClip.y = rect.y + rect.h / 2 - fh / 2;
+    tClip.w = fw;
+    tClip.h = fh;
+
+    gcDrawRect(rect, gui_style->slabel.bg_color, gui_style->slabel.image);
+
+    if(text.length() > 0)
+      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
   }
   else if(gui->isType(kgmGui::Class))
   {

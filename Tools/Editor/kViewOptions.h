@@ -4,6 +4,7 @@
 #include "kNode.h"
 #include "../../kgmGraphics/kgmGui.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
+#include "../../kgmGraphics/kgmGuiLabel.h"
 
 class kViewOptions : public kgmGui
 {
