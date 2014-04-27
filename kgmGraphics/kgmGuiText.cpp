@@ -41,6 +41,11 @@ u32 kgmGuiText::getCursor()
   return index;
 }
 
+void kgmGuiText::onChange()
+{
+  onAction(this, 0);
+}
+
 void kgmGuiText::onMsLeftDown(int k, int x, int y)
 {
   kgmGui* top = getRoot();
@@ -85,12 +90,17 @@ void kgmGuiText::onKeyDown(int k)
       index--;
 
     m_text = pt1 + pt2;
+
+    onChange();
   }
     break;
   case KEY_DELETE:
   {
     kgmString pt1;
     kgmString pt2;
+
+    if(!m_text.length())
+      break;
 
     if(index != 0)
       pt1 = kgmString(m_text.data(), index);
@@ -102,6 +112,8 @@ void kgmGuiText::onKeyDown(int k)
       index--;
 
     m_text = pt1 + pt2;
+
+    onChange();
   }
     break;
   default:
@@ -109,6 +121,9 @@ void kgmGuiText::onKeyDown(int k)
     kgmString pt1;
     kgmString pt2;
     kgmString pt3;
+
+    if(KEY_NONE == toAnsii(shift, k))
+      break;
 
     pt3.fromSym(toAnsii(shift, k));
 
@@ -121,6 +136,8 @@ void kgmGuiText::onKeyDown(int k)
     index++;
 
     m_text = pt1 + pt3 + pt2;
+
+    onChange();
   }
     break;
   }
@@ -183,5 +200,5 @@ char kgmGuiText::toAnsii(bool shift, u16 key)
       return 46;
   }
 
-  return key;
+  return KEY_NONE;
 }

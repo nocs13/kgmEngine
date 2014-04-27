@@ -1,4 +1,5 @@
 #include "kViewOptions.h"
+#include "../../kgmBase/kgmConvert.h"
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
 
@@ -16,10 +17,37 @@ kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
   {
     kgmGui* g;
 
-    g = new kgmGuiLabel(this, 0, 0, 50, 20);
+    g = new kgmGuiLabel(this, 0, 0, 50, 10);
+    g->setText(n->nam);
+    g = new kgmGuiLabel(this, 0, 12, 50, 20);
     g->setText("Position");
-    g = new kgmGuiLabel(this, 0, 25, 50, 20);
+    g = new kgmGuiText(this, 51, 12, 50, 20);
+    g->setSid("position_x");
+    g->setText(kgmConvert::toString(n->pos.x));
+    ((kgmGuiText*)g)->setEditable(true);
+    g = new kgmGuiText(this, 102, 12, 50, 20);
+    g->setSid("position_y");
+    g->setText(kgmConvert::toString(n->pos.y));
+    ((kgmGuiText*)g)->setEditable(true);
+    g = new kgmGuiText(this, 154, 12, 50, 20);
+    g->setSid("position_z");
+    g->setText(kgmConvert::toString(n->pos.z));
+    ((kgmGuiText*)g)->setEditable(true);
+
+    g = new kgmGuiLabel(this, 0, 35, 50, 20);
     g->setText("Rotation");
+    g = new kgmGuiText(this, 51, 35, 50, 20);
+    g->setSid("rotation_x");
+    g->setText(kgmConvert::toString(n->pos.x));
+    ((kgmGuiText*)g)->setEditable(true);
+    g = new kgmGuiText(this, 102, 35, 50, 20);
+    g->setSid("rotation_y");
+    g->setText(kgmConvert::toString(n->pos.y));
+    ((kgmGuiText*)g)->setEditable(true);
+    g = new kgmGuiText(this, 154, 35, 50, 20);
+    g->setSid("rotation_z");
+    g->setText(kgmConvert::toString(n->pos.z));
+    ((kgmGuiText*)g)->setEditable(true);
   }
 }
 

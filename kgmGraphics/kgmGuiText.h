@@ -22,6 +22,8 @@ public:
   bool isReadOnly();
   u32  getCursor();
 
+  virtual void onChange();
+
   static char toAnsii(bool shift, u16 key);
 
 protected:

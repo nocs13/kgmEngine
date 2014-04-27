@@ -1415,7 +1415,7 @@ void kgmGraphics::render(kgmGui* gui){
       if(!gtext->isReadOnly())
       {
         u32 i = gtext->getCursor();
-        kgmGui::Rect rc(rect.x + (u32)(0.5 * gui_style->stext.ft_size) * i, rect.y + 1,
+        kgmGui::Rect rc(rect.x + 1 + (u32)(0.5 * gui_style->stext.ft_size) * i, rect.y + 1,
                         (u32)(0.5 * gui_style->stext.ft_size - 1), gui_style->stext.ft_size);
 
         if(rect.inside(rc))
