@@ -83,6 +83,23 @@ public:
     if(icn)
       icn->release();
   }
+
+  void setPosition(vec3 v)
+  {
+    pos = v;
+
+    switch(typ)
+    {
+    case LIGHT:
+      lgt->position = v;
+      break;
+    }
+  }
+
+  void setRotation(vec3 r)
+  {
+
+  }
 };
 
 #endif // KNODE_H

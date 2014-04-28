@@ -53,6 +53,13 @@ kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
 
 void kViewOptions::onAction(kgmGui *from, u32 arg)
 {
+  kgmString txt;
+
+  if(from)
+  {
+    txt = from->getText();
+  }
+
   if(from == btn_close)
   {
     kgmGameApp* gapp = kgmGameApp::gameApplication();
@@ -61,5 +68,21 @@ void kViewOptions::onAction(kgmGui *from, u32 arg)
     ((kgmGameBase*)igame)->removeListener(this);
     erase();
     release();
+  }
+
+  if(from->getSid() == "position_x")
+  {
+    node->pos.x = kgmConvert::toDouble(txt);
+    node->setPosition(node->pos);
+  }
+  else if(from->getSid() == "position_y")
+  {
+    node->pos.y = kgmConvert::toDouble(txt);
+    node->setPosition(node->pos);
+  }
+  else if(from->getSid() == "position_z")
+  {
+    node->pos.z = kgmConvert::toDouble(txt);
+    node->setPosition(node->pos);
   }
 }
