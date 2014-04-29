@@ -1125,7 +1125,7 @@ void kgmGraphics::render(Icon* icon)
   kgmMaterial mtl;
   mtl.m_shader = kgmMaterial::ShaderBase;
   mtl.m_tex_color = icon->getIcon();
-  render(&mtl);
+  //render(&mtl);
   g_mtx_world.identity();
   //g_mtx_world.translate(icon->getPosition());
   //render(shaders[kgmMaterial_ShaderTex]);

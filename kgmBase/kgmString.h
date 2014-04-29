@@ -150,7 +150,17 @@ public:
         kgmArray<T>::m_data[i] -= diff;
   }
 
-  int exist(T& t){
+  bool exist(T& t)
+  {
+    for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
+      if(kgmArray<T>::m_data[i] == t)
+        return true;
+
+    return false;
+  }
+
+  int index(T& t)
+  {
     for(u32 i = 0; i <= kgmArray<T>::m_length; i++)
       if(kgmArray<T>::m_data[i] == t)
         return i;

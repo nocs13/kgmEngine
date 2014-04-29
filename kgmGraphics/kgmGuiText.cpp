@@ -5,6 +5,7 @@ KGMOBJECT_IMPLEMENT(kgmGuiText, kgmGui);
 kgmGuiText::kgmGuiText()
 {
   editable = false;
+  numeric = false;
   shift = false;
   index = 0;
 }
@@ -13,6 +14,7 @@ kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
  :kgmGui(par, x, y, w, h)
 {
   editable = false;
+  numeric = false;
   shift = false;
   index = 0;
 }
@@ -26,6 +28,11 @@ void kgmGuiText::setEditable(bool e)
   editable = e;
 }
 
+void kgmGuiText::setNumeric(bool n)
+{
+  numeric = n;
+}
+
 void kgmGuiText::dropCursor()
 {
   index = 0;
@@ -34,6 +41,11 @@ void kgmGuiText::dropCursor()
 bool kgmGuiText::isReadOnly()
 {
   return !editable;
+}
+
+bool kgmGuiText::isNumeric()
+{
+  return numeric;
 }
 
 u32 kgmGuiText::getCursor()
@@ -122,10 +134,32 @@ void kgmGuiText::onKeyDown(int k)
     kgmString pt2;
     kgmString pt3;
 
-    if(KEY_NONE == toAnsii(shift, k))
+    u16 akey = toAnsii(shift, k);
+
+    if(KEY_NONE == akey)
       break;
 
-    pt3.fromSym(toAnsii(shift, k));
+    if(numeric)
+    {
+      if((akey < '0' || akey > '9'))
+      {
+        if(akey == '.')
+        {
+          char dot = '.';
+
+          if(getText().exist(dot))
+          {
+            return;
+          }
+        }
+        else
+        {
+          return;
+        }
+      }
+    }
+
+    pt3.fromSym(akey);
 
     if(index != 0)
       pt1 = kgmString(m_text.data(), index);

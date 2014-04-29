@@ -9,6 +9,7 @@ class kgmGuiText : public kgmGui
 
 private:
   bool editable;
+  bool numeric;
   bool shift;
   u32  index;
 
@@ -18,8 +19,10 @@ public:
   virtual ~kgmGuiText();
 
   void setEditable(bool e);
+  void setNumeric(bool e);
   void dropCursor();
   bool isReadOnly();
+  bool isNumeric();
   u32  getCursor();
 
   virtual void onChange();
