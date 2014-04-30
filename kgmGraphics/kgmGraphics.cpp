@@ -1412,7 +1412,7 @@ void kgmGraphics::render(kgmGui* gui){
 
     if(text.length() > 0)
     {
-      if(!gtext->isReadOnly())
+      if(!gtext->isReadOnly() && gui->getFocus() == gui)
       {
         u32 i = gtext->getCursor();
         kgmGui::Rect rc(rect.x + 1 + (u32)(0.5 * gui_style->stext.ft_size) * i, rect.y + 1,

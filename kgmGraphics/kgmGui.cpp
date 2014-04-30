@@ -195,6 +195,11 @@ kgmGui* kgmGui::getBySid(kgmString sid)
 
 kgmGui* kgmGui::getFocus()
 {
+  kgmGui* root = getRoot();
+
+  if(root)
+    return root->m_focus;
+
   return m_focus;
 }
 
@@ -307,6 +312,16 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
         break;
       }
     }
+  }
+
+  if(m_childs.size() < 1)
+  {
+    kgmGui* root = getRoot();
+
+    if(root)
+      root->setFocus(this);
+    else
+      m_focus = this;
   }
 }
 
