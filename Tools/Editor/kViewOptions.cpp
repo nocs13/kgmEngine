@@ -41,17 +41,17 @@ kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
     g->setText("Rotation");
     g = new kgmGuiText(this, 51, 35, 50, 20);
     g->setSid("rotation_x");
-    g->setText(kgmConvert::toString(n->pos.x));
+    g->setText(kgmConvert::toString(n->rot.x));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     g = new kgmGuiText(this, 102, 35, 50, 20);
     g->setSid("rotation_y");
-    g->setText(kgmConvert::toString(n->pos.y));
+    g->setText(kgmConvert::toString(n->rot.y));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     g = new kgmGuiText(this, 154, 35, 50, 20);
     g->setSid("rotation_z");
-    g->setText(kgmConvert::toString(n->pos.z));
+    g->setText(kgmConvert::toString(n->rot.z));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
   }

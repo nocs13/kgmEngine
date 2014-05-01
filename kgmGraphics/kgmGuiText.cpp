@@ -152,6 +152,11 @@ void kgmGuiText::onKeyDown(int k)
             return;
           }
         }
+        else if(akey == '-')
+        {
+          if(index != 0)
+            return;
+        }
         else
         {
           return;

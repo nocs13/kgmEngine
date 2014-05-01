@@ -1098,7 +1098,7 @@ void kgmGraphics::render(Icon* icon)
   uv = rv.cross(m_camera.mDir);
   uv.normalize();
 
-  vec3 pos   = icon->getPosition();
+  vec3 pos   = vec3(0, 0, 0);//icon->getPosition();
   vec3 crv = rv * icon->getWidth(),
        cuv = uv * icon->getHeight();
 
@@ -1126,15 +1126,17 @@ void kgmGraphics::render(Icon* icon)
   mtl.m_shader = kgmMaterial::ShaderBase;
   mtl.m_tex_color = icon->getIcon();
   //render(&mtl);
+  vec3 mpos = icon->getPosition();
   g_mtx_world.identity();
-  //g_mtx_world.translate(icon->getPosition());
-  //render(shaders[kgmMaterial_ShaderTex]);
-  render(shaders[kgmMaterial::ShaderNone]);
+  g_mtx_world.translate(mpos);
+  render(shaders[kgmMaterial_ShaderTex]);
+  //render(shaders[kgmMaterial::ShaderNone]);
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 
   render((kgmShader*)null);
   render((kgmMaterial*)null);
+  g_mtx_world.identity();
 }
 
 void kgmGraphics::render(kgmMaterial* m){
