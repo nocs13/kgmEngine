@@ -88,6 +88,9 @@ public:
   {
     pos = v;
 
+    if(icn)
+      icn->setPosition(v);
+
     switch(typ)
     {
     case LIGHT:
@@ -98,7 +101,7 @@ public:
 
   void setRotation(vec3 r)
   {
-
+    rot = r;
   }
 };
 
