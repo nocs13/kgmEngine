@@ -325,7 +325,8 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
   }
 }
 
-void kgmGui::onMsLeftUp(int k, int x, int y){
+void kgmGui::onMsLeftUp(int k, int x, int y)
+{
   if(!m_view)  
       return;
   
@@ -349,7 +350,8 @@ void kgmGui::onMsLeftUp(int k, int x, int y){
   }
 }
 
-void kgmGui::onMsRightDown(int k, int x, int y){
+void kgmGui::onMsRightDown(int k, int x, int y)
+{
   if(!m_view)  
       return;
   
@@ -373,7 +375,8 @@ void kgmGui::onMsRightDown(int k, int x, int y){
   }
 }
 
-void kgmGui::onMsRightUp(int k, int x, int y){
+void kgmGui::onMsRightUp(int k, int x, int y)
+{
   if(!m_view)  
       return;
   
@@ -405,7 +408,8 @@ void kgmGui::onMsOutside()
 {
 }
 
-void kgmGui::onKeyDown(int k){
+void kgmGui::onKeyDown(int k)
+{
   if(!m_view)  
     return;
   
@@ -416,7 +420,8 @@ void kgmGui::onKeyDown(int k){
   //  m_childs[i]->onKeyDown(k);
 }
 
-void kgmGui::onKeyUp(int k){
+void kgmGui::onKeyUp(int k)
+{
   if(!m_view)  
       return;
   
@@ -428,7 +433,8 @@ void kgmGui::onKeyUp(int k){
   //  m_childs[i]->onKeyUp(k);
 }
 
-void kgmGui::onIdle(){
+void kgmGui::onIdle()
+{
 }
 
 void kgmGui::addChild(kgmGui *e){
