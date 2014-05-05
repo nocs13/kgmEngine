@@ -407,9 +407,9 @@ void kgmGui::onMsOutside()
 
 void kgmGui::onKeyDown(int k){
   if(!m_view)  
-      return;
+    return;
   
-  if(m_focus)
+  if(m_focus && m_focus != this)
     m_focus->onKeyDown(k);
   //for(int i = 0; i < m_childs.size(); i++)
   // if(m_childs[i]->m_view)
@@ -420,7 +420,7 @@ void kgmGui::onKeyUp(int k){
   if(!m_view)  
       return;
   
-  if(m_focus)
+  if(m_focus && m_focus != this)
     m_focus->onKeyUp(k);
 
   //for(int i = 0; i < m_childs.size(); i++)
