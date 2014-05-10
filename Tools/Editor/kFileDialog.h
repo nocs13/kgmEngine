@@ -17,6 +17,7 @@ class kFileDialog : public kgmGui
 
   kgmString pathFolder;
   kgmString filePath;
+  kgmString filter;
 
   bool      modeSave;
   bool      localable;
@@ -29,6 +30,7 @@ public:
 
   void forOpen(kgmString dir);
   void forSave(kgmString dir);
+  void setFilter(kgmString flt);
 
   void changeLocation(bool s);
   void showHidden(bool s);

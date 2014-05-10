@@ -138,7 +138,22 @@ void kFileDialog::listFolder()
         }
       }
 
-      list->addItem(ent->d_name);
+      if(filter.length() > 0)
+      {
+        if(filter.length() <= strlen(ent->d_name))
+        {
+          if(memcmp(filter.data(),
+                    ent->d_name + strlen(ent->d_name) - filter.length(),
+                    filter.length()) == 0)
+          {
+            list->addItem(ent->d_name);
+          }
+        }
+      }
+      else
+      {
+        list->addItem(ent->d_name);
+      }
     }
 
     closedir (folder);
@@ -189,6 +204,11 @@ void kFileDialog::forSave(kgmString dir)
 
   show();
   listFolder();
+}
+
+void kFileDialog::setFilter(kgmString flt)
+{
+  filter = flt;
 }
 
 kgmString kFileDialog::getFile()

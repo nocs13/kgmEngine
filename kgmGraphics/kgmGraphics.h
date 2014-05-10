@@ -325,6 +325,22 @@ public:
     return false;
   }
 
+  kgmMaterial* getMeshMaterial(kgmMesh* m)
+  {
+    if(!m)
+      return null;
+
+    for(int i = 0; i < m_meshes.length(); i++)
+    {
+      Mesh* mesh = &m_meshes[i];
+
+      if(mesh->mesh == m)
+        return mesh->material;
+    }
+
+    return null;
+  }
+
   iRect viewport()
   {
     return m_viewport;

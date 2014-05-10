@@ -213,13 +213,26 @@ bool kEditor::mapSave(kgmString s)
 
   for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
+    kgmLight* l = (*i)->lgt;
+
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
+    fprintf(f, "  <Position value='%f %f %f'/>\n", l->position.x, l->position.y, l->position.z);
     fprintf(f, " </kgmLight>\n");
   }
 
   for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
+    kgmMaterial* mtl = m_render->getMeshMaterial((*i)->msh);
+
     fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
+
+    if(mtl)
+      fprintf(f, "  <Material value='%s'/>\n", mtl->m_id.data());
+    else
+      fprintf(f, "  <Material value=''/>\n");
+
+    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
     fprintf(f, " </kgmMesh>\n");
   }
 
@@ -478,6 +491,8 @@ void kEditor::onAction(kgmEvent *gui, int id)
 
       break;
     }
+
+    fdd->setFilter("");
   }
   else if(gui == vo)
   {
@@ -551,6 +566,7 @@ void kEditor::onAddMesh()
 {
   fddMode = FDDMODE_MESH;
 
+  fdd->setFilter(".msh");
   fdd->changeLocation(false);
   fdd->forOpen(m_settings->get("Path"));
 }
