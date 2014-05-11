@@ -20,6 +20,9 @@ kFileDialog::kFileDialog()
   localable = true;
   allsee = true;
 
+  fnCallback = null;
+  fnArg = null;
+
 #ifdef WIN32
   DIRCON = "\\";
 #endif
@@ -94,9 +97,31 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
     hide();
 
     if(modeSave)
-      onSave();
+    {
+      if(fnCallback)
+      {
+        fnCallback(fnArg);
+        fnCallback = null;
+        fnArg = null;
+      }
+      else
+      {
+        onSave();
+      }
+    }
     else
-      onOpen();
+    {
+      if(fnCallback)
+      {
+        fnCallback(fnArg);
+        fnCallback = null;
+        fnArg = null;
+      }
+      else
+      {
+        onOpen();
+      }
+    }
   }
   else if(gui == btnFail)
   {
@@ -162,7 +187,7 @@ void kFileDialog::listFolder()
   }
 }
 
-void kFileDialog::forOpen(kgmString dir)
+void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, void* arg)
 {
   if(dir.length() < 1)
   {
@@ -182,9 +207,12 @@ void kFileDialog::forOpen(kgmString dir)
 
   show();
   listFolder();
+
+  fnCallback = fn_call;
+  fnArg = arg;
 }
 
-void kFileDialog::forSave(kgmString dir)
+void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, void* arg = null)
 {
   if(dir.length() < 1)
   {
@@ -204,6 +232,9 @@ void kFileDialog::forSave(kgmString dir)
 
   show();
   listFolder();
+
+  fnCallback = fn_call;
+  fnArg = arg;
 }
 
 void kFileDialog::setFilter(kgmString flt)

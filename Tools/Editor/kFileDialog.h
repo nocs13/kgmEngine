@@ -24,12 +24,19 @@ class kFileDialog : public kgmGui
   bool      allsee;
 
 public:
+  typedef void (*ClickEventCallback)(void*);
+
+private:
+  ClickEventCallback fnCallback;
+  void*              fnArg;
+
+public:
   kFileDialog();
 
   void listFolder();
 
-  void forOpen(kgmString dir);
-  void forSave(kgmString dir);
+  void forOpen(kgmString dir, ClickEventCallback fn_call = null, void* arg = null);
+  void forSave(kgmString dir, ClickEventCallback fn_call = null, void* arg = null);
   void setFilter(kgmString flt);
 
   void changeLocation(bool s);

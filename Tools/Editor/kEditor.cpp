@@ -411,6 +411,12 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case ME_EDIT_OPTIONS:
       onEditOptions();
       break;
+    case ME_MAP_OPEN:
+      onMapOpen();
+      break;
+    case ME_MAP_SAVE:
+      onMapSave();
+      break;
     case ME_ADD_MESH:
       onAddMesh();
       break;
@@ -520,7 +526,7 @@ void kEditor::onMapOpen()
   fddMode = FDDMODE_MAP;
 
   fdd->changeLocation(false);
-  fdd->forOpen(m_settings->get("Path"));
+  fdd->forOpen(m_settings->get("Path"), callMapOpen, this);
 }
 
 void kEditor::onMapSave()
@@ -528,7 +534,7 @@ void kEditor::onMapSave()
   fddMode = FDDMODE_MAP;
 
   fdd->changeLocation(false);
-  fdd->forSave(m_settings->get("Path"));
+  fdd->forSave(m_settings->get("Path"), callMapSave, this);
 }
 
 void kEditor::onEditOptions()
@@ -614,4 +620,14 @@ void kEditor::onOptionsDatabase()
   {
     fdd->forOpen(loc);
   }
+}
+
+void kEditor::callMapOpen(void *par)
+{
+  ((kEditor*)par)->mapOpen(((kEditor*)par)->fdd->getPath());
+}
+
+void kEditor::callMapSave(void *par)
+{
+  ((kEditor*)par)->mapSave(((kEditor*)par)->fdd->getPath());
 }

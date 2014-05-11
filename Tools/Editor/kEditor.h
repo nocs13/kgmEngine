@@ -109,6 +109,9 @@ public:
   void onAddLight();
   void onViewObjects();
   void onOptionsDatabase();
+
+  static void callMapOpen(void*);
+  static void callMapSave(void*);
 };
 
 #endif // KEDITOR_H
