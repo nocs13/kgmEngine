@@ -4,14 +4,6 @@
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
 
-enum FDDMODE
-{
-  FDDMOD_NONE,
-  FDDMODE_MAP,
-  FDDMODE_MESH,
-  FDDMODE_PATH
-};
-
 enum MENUEVENT
 {
   ME_FILE_QUIT,
@@ -253,6 +245,48 @@ bool kEditor::mapSave(kgmString s)
   return true;
 }
 
+bool kEditor::addMesh(kgmString fpath)
+{
+  kgmFile file;
+
+  if(!file.open(fpath, kgmFile::Read))
+    return false;
+
+  kgmMemory<u8> mem;
+
+  mem.alloc(file.length());
+  file.read(mem, file.length());
+  file.close();
+
+  kgmXml xml(mem);
+  mem.clear();
+
+  kgmMesh* mesh = kgmGameTools::genMesh(xml);
+  xml.close();
+
+  if(mesh)
+  {
+    m_render->add(mesh, null);
+    kNode* node = new kNode(mesh);
+    node->bnd = mesh->bound();
+    node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
+    node->lnk = fdd->getFile();
+    selected = node;
+    nodes.add(node);
+    vo->getGuiList()->addItem(node->nam);
+    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+    return true;
+  }
+
+  return false;
+}
+
+bool kEditor::addActor(kgmString path)
+{
+  return false;
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmGameBase::onEvent(e);
@@ -431,75 +465,6 @@ void kEditor::onAction(kgmEvent *gui, int id)
       break;
     }
   }
-  else if(gui == fdd)
-  {
-    switch(id)
-    {
-    case 0:
-      fddMode = 0;
-      break;
-    case 1:
-      if(fddMode == FDDMODE_MESH)
-      {
-        kgmFile file;
-        kgmString fpath = fdd->getPath();
-
-        if(file.open(fpath, kgmFile::Read))
-        {
-          kgmMemory<u8> mem;
-
-          mem.alloc(file.length());
-          file.read(mem, file.length());
-          file.close();
-
-          kgmXml xml(mem);
-          mem.clear();
-
-          kgmMesh* mesh = kgmGameTools::genMesh(xml);
-          xml.close();
-
-          if(mesh)
-          {
-            m_render->add(mesh, null);
-            kNode* node = new kNode(mesh);
-            node->bnd = mesh->bound();
-            node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-            node->lnk = fdd->getFile();
-            selected = node;
-            nodes.add(node);
-            vo->getGuiList()->addItem(node->nam);
-            vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-          }
-        }
-      }
-      else if(fddMode == FDDMODE_MAP)
-      {
-        mapOpen(fdd->getPath());
-      }
-      else if(fddMode == FDDMODE_PATH)
-      {
-        kgmString loc = fdd->getFolder();
-
-        if(loc.length() > 0)
-        {
-          m_settings->set("Path", loc.data());
-          m_settings->save();
-        }
-      }
-      fddMode = 0;
-      break;
-    case 2:
-      if(fddMode == FDDMODE_MAP)
-      {
-        mapSave(fdd->getPath());
-      }
-      fddMode = 0;
-
-      break;
-    }
-
-    fdd->setFilter("");
-  }
   else if(gui == vo)
   {
     kgmString s = vo->getGuiList()->getItem(id);
@@ -523,16 +488,14 @@ void kEditor::onQuit()
 
 void kEditor::onMapOpen()
 {
-  fddMode = FDDMODE_MAP;
-
+  fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forOpen(m_settings->get("Path"), callMapOpen, this);
 }
 
 void kEditor::onMapSave()
 {
-  fddMode = FDDMODE_MAP;
-
+  fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forSave(m_settings->get("Path"), callMapSave, this);
 }
@@ -570,11 +533,9 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddMesh()
 {
-  fddMode = FDDMODE_MESH;
-
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(m_settings->get("Path"));
+  fdd->forOpen(m_settings->get("Path"), callAddMesh, this);
 }
 
 void kEditor::onAddLight()
@@ -595,6 +556,13 @@ void kEditor::onAddLight()
   m_render->add(node->icn);
 }
 
+void kEditor::onAddActor()
+{
+  fdd->setFilter(".act");
+  fdd->changeLocation(false);
+  fdd->forOpen(m_settings->get("Path"), callAddActor, this);
+}
+
 void kEditor::onViewObjects()
 {
   if(vo->visible())
@@ -605,7 +573,6 @@ void kEditor::onViewObjects()
 
 void kEditor::onOptionsDatabase()
 {
-  fddMode = FDDMODE_PATH;
   kgmString loc = m_settings->get("Path");
 
   fdd->changeLocation(true);
@@ -630,4 +597,14 @@ void kEditor::callMapOpen(void *par)
 void kEditor::callMapSave(void *par)
 {
   ((kEditor*)par)->mapSave(((kEditor*)par)->fdd->getPath());
+}
+
+void kEditor::callAddMesh(void *par)
+{
+  ((kEditor*)par)->addMesh(((kEditor*)par)->fdd->getPath());
+}
+
+void kEditor::callAddActor(void *par)
+{
+  ((kEditor*)par)->addActor(((kEditor*)par)->fdd->getPath());
 }

@@ -72,7 +72,6 @@ private:
   kMenu*     menu;
 
   kFDD*      fdd;
-  u32        fddMode;
 
   u32        oquered;
 
@@ -89,6 +88,8 @@ public:
 
   bool mapSave(kgmString);
   bool mapOpen(kgmString);
+  bool addMesh(kgmString);
+  bool addActor(kgmString);
 
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
@@ -107,11 +108,15 @@ public:
   void onMapSave();
   void onAddMesh();
   void onAddLight();
+  void onAddActor();
   void onViewObjects();
   void onOptionsDatabase();
 
   static void callMapOpen(void*);
   static void callMapSave(void*);
+  static void callAddMesh(void*);
+  static void callAddLight(void*);
+  static void callAddActor(void*);
 };
 
 #endif // KEDITOR_H

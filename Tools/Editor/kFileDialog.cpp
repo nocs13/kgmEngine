@@ -128,6 +128,8 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
     hide();
 
     onFail();
+    fnCallback = null;
+    fnArg = null;
   }
 }
 
