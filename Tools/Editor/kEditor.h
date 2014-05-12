@@ -84,6 +84,8 @@ public:
   kEditor();
   ~kEditor();
 
+  void clear();
+
   kNode* select(int x, int y);
 
   bool mapSave(kgmString);

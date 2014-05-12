@@ -98,6 +98,23 @@ kEditor::~kEditor()
   vo->release();
 }
 
+void kEditor::clear()
+{
+  m_render->clear();
+  m_physics->clear();
+
+  for(int i = 0; i < nodes.size(); i++)
+  {
+    nodes[i]->release();
+  }
+
+  nodes.clear();
+
+  vo->getGuiList()->clear();
+
+  oquered = 0;
+}
+
 kNode* kEditor::select(int x, int y)
 {
   iRect vp = m_render->viewport();
@@ -158,6 +175,124 @@ kNode* kEditor::select(int x, int y)
 
 bool kEditor::mapOpen(kgmString s)
 {
+  kgmFile file;
+
+  if(!file.open(s, kgmFile::Read))
+    return false;
+
+  kgmMemory<u8> mem;
+
+  mem.alloc(file.length());
+  file.read(mem.data(), mem.length());
+  file.close();
+
+  kgmXml xml;
+
+  xml.open(mem);
+  mem.clear();
+
+  selected = null;
+  clear();
+  m_render->add(gridline, null);
+
+  kNode* node = null;
+
+  while(kgmXml::XmlState xstate = xml.next())
+  {
+    kgmString id, value, t;
+
+    if(xstate == kgmXml::XML_ERROR)
+    {
+      break;
+    }
+    else if(xstate == kgmXml::XML_FINISH)
+    {
+      break;
+    }
+    else if(xstate == kgmXml::XML_TAG_OPEN)
+    {
+      id = xml.m_tagName;
+
+      if(id == "kgmMaterial")
+      {
+        kgmString id;
+        xml.attribute("name", id);
+        node = new kNode(new kgmMaterial());
+        node->mtl->setId(id);
+        node->nam = id;
+        m_render->add(node->mtl);
+        nodes.add(node);
+      }
+      else if(id == "kgmCamera")
+      {
+
+      }
+      else if(id == "kgmLight")
+      {
+        kgmString id;
+        xml.attribute("name", id);
+        node = new kNode(new kgmLight());
+
+        node->nam = id;
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->icn = new kgmGraphics::Icon(getResources()->getTexture("light_ico.tga"), 1, 1, vec3(0, 0, 0));
+
+        vo->getGuiList()->addItem(node->nam);
+        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+        m_render->add(node->lgt);
+        m_render->add(node->icn);
+
+        nodes.add(node);
+      }
+      else if(id == "kgmMesh")
+      {
+        kgmString id;
+        xml.attribute("name", id);
+        kgmMesh* mesh = m_resources->getMesh(id);
+
+        if(mesh)
+        {
+          node = new kNode(mesh);
+          node->nam = id;
+          m_render->add(node->msh, null);
+          nodes.add(node);
+        }
+      }
+      else if(id == "kgmActor")
+      {
+      }
+      else if(id == "kgmGameObject")
+      {
+      }
+    }
+    else if(xstate == kgmXml::XML_TAG_CLOSE)
+    {
+      kgmString data;
+      id = xml.m_tagName;
+
+      if(id == "Position")
+      {
+        vec3 v;
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+        node->setPosition(v);
+      }
+      else if(id == "Rotation")
+      {
+        vec3 v;
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+        node->setRotation(v);
+      }
+    }
+    else if(xstate == kgmXml::XML_TAG_DATA)
+    {
+    }
+  }
+
+  xml.close();
+
   return true;
 }
 
