@@ -111,6 +111,8 @@ public:
   void onAddMesh();
   void onAddLight();
   void onAddActor();
+  void onAddSensor();
+  void onAddTrigger();
   void onViewObjects();
   void onOptionsDatabase();
 

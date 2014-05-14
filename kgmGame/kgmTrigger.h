@@ -9,6 +9,8 @@ class kgmTrigger : public kgmGameObject
 
 public:
   kgmTrigger();
+
+  virtual void triggering(){}
 };
 
 #endif // KGMTRIGGER_H

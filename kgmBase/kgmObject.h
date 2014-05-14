@@ -7,7 +7,8 @@
 class kgmApp;
 class kgmObject;
 
-struct kgmRuntime{
+struct kgmRuntime
+{
   const char* nClass; //class id
   u32         sClass; //size of class
   kgmRuntime* pClass; //parent class
@@ -28,7 +29,8 @@ struct kgmRuntime{
 
 //base class for kgm_engine project objects
 
-class kgmObject{
+class kgmObject
+{
   KGM_OBJECT(kgmObject);
 
 private:
@@ -40,19 +42,23 @@ protected:
   }
 
 public:
-  kgmObject(){
+  kgmObject()
+  {
     m_references = 1;
   }
 
-  bool isClass(kgmObject& o){
+  bool isClass(kgmObject& o)
+  {
     return !strcmp(runtime().nClass, o.runtime().nClass);
   }
 
-  bool isClass(kgmRuntime& o){
+  bool isClass(kgmRuntime& o)
+  {
     return !strcmp(runtime().nClass, o.nClass);
   }
 
-  bool isClass(const char* o){
+  bool isClass(const char* o)
+  {
     return !strcmp(runtime().nClass, o);
   }
 
@@ -60,21 +66,26 @@ public:
   {
     kgmRuntime* r = &runtime();
 
-    while(r != 0){
+    while(r != 0)
+    {
       if(!strcmp(r->nClass, o.runtime().nClass))
         return true;
 
       if(r == r->pClass)
         break;
+
       r = r->pClass;
     }
+
     return false;
   }
 
-  bool isType(kgmRuntime& o){
+  bool isType(kgmRuntime& o)
+  {
     kgmRuntime* r = &runtime();
 
-    while(r != 0){
+    while(r != 0)
+    {
       if(!strcmp(r->nClass, o.nClass))
         return true;
 
@@ -87,7 +98,8 @@ public:
     return false;
   }
 
-  bool isType(const char* o){
+  bool isType(const char* o)
+  {
     kgmRuntime* r = &runtime();
 
     while(r != 0){
@@ -103,15 +115,18 @@ public:
     return false;
   }
 
-  u32 references(){
+  u32 references()
+  {
     return m_references;
   }
 
-  void increment(){
+  void increment()
+  {
     m_references += 1;
   }
 
-  void release(){
+  void release()
+  {
     if(!kgmObject::isValid(this))
       return;
 
@@ -121,8 +136,8 @@ public:
       delete this;
   }
 
-  virtual kgmObject* clone(){
-
+  virtual kgmObject* clone()
+  {
     return new kgmObject();
   }
 

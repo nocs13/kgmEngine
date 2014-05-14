@@ -17,7 +17,8 @@ enum MENUEVENT
   ME_ADD_MESH,
   ME_ADD_LIGHT,
   ME_ADD_ACTOR,
-  ME_ADD_OBJECT,
+  ME_ADD_SENSOR,
+  ME_ADD_TRIGGER,
   ME_ADD_MATERIAL,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
@@ -58,7 +59,8 @@ kEditor::kEditor()
     item->add(ME_ADD_MESH, "Mesh");
     item->add(ME_ADD_LIGHT, "Light");
     item->add(ME_ADD_ACTOR, "Actor");
-    item->add(ME_ADD_OBJECT, "Object");
+    item->add(ME_ADD_SENSOR, "Sensor");
+    item->add(ME_ADD_TRIGGER, "Trigger");
     item->add(ME_ADD_MATERIAL, "Material");
     item = menu->add("Run");
     item->add(ME_RUN_RUN, "Run");
@@ -177,6 +179,9 @@ bool kEditor::mapOpen(kgmString s)
 {
   kgmFile file;
 
+  if(!kgmSystem::isFile(s) || kgmSystem::isDirectory(s))
+    return false;
+
   if(!file.open(s, kgmFile::Read))
     return false;
 
@@ -247,16 +252,24 @@ bool kEditor::mapOpen(kgmString s)
       }
       else if(id == "kgmMesh")
       {
-        kgmString id;
+        kgmString id, ln;
         xml.attribute("name", id);
-        kgmMesh* mesh = m_resources->getMesh(id);
+        xml.attribute("link", ln);
+        kgmMesh* mesh = m_resources->getMesh(ln);
+        kgmMaterial* mtl = m_resources->getMaterial(ln);
 
         if(mesh)
         {
           node = new kNode(mesh);
           node->nam = id;
-          m_render->add(node->msh, null);
+          node->bnd = mesh->bound();
+          m_render->add(node->msh, mtl);
           nodes.add(node);
+
+          if(mtl)
+            mtl->release();
+
+          vo->getGuiList()->addItem(node->nam);
         }
       }
       else if(id == "kgmActor")

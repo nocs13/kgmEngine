@@ -8,6 +8,8 @@
 #include "../../kgmGraphics/kgmGraphics.h"
 
 #include "../../kgmGame/kgmActor.h"
+#include "../../kgmGame/kgmSensor.h"
+#include "../../kgmGame/kgmTrigger.h"
 
 class kNode : public kgmObject
 {
@@ -18,6 +20,8 @@ public:
     MESH,
     LIGHT,
     ACTOR,
+    SENSOR,
+    TRIGGER,
     MATERIAL
   };
 
@@ -26,6 +30,8 @@ public:
     kgmMesh*      msh;
     kgmLight*     lgt;
     kgmActor*     act;
+    kgmSensor*    sns;
+    kgmTrigger*   trg;
     kgmMaterial*  mtl;
   };
 
@@ -63,6 +69,20 @@ public:
   {
     typ = ACTOR;
     act = a;
+    icn = null;
+  }
+
+  kNode(kgmSensor* s)
+  {
+    typ = SENSOR;
+    sns = s;
+    icn = null;
+  }
+
+  kNode(kgmTrigger* t)
+  {
+    typ = TRIGGER;
+    trg = t;
     icn = null;
   }
 
