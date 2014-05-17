@@ -20,5 +20,16 @@ public:
   {
     target->onAction(this, id);
   }
+
+  bool hasItem(kgmString item)
+  {
+    for(int i = 0; i < list->m_items.length(); i++)
+    {
+      if(item == list->m_items[i])
+        return true;
+    }
+
+    return false;
+  }
 };
 #endif // KVIEWOBJECTS_H

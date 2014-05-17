@@ -92,6 +92,7 @@ public:
   bool mapOpen(kgmString);
   bool addMesh(kgmString);
   bool addActor(kgmString);
+  bool addMaterial(kgmString);
 
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
@@ -113,6 +114,7 @@ public:
   void onAddActor();
   void onAddSensor();
   void onAddTrigger();
+  void onAddMaterial();
   void onViewObjects();
   void onOptionsDatabase();
 
@@ -121,6 +123,7 @@ public:
   static void callAddMesh(void*);
   static void callAddLight(void*);
   static void callAddActor(void*);
+  static void callAddMaterial(void*);
 };
 
 #endif // KEDITOR_H

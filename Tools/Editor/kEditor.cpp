@@ -435,6 +435,26 @@ bool kEditor::addActor(kgmString path)
   return false;
 }
 
+bool kEditor::addMaterial(kgmString id)
+{
+  kgmMaterial* mtl = m_resources->getMaterial(id.data());
+
+  if(!mtl)
+    return false;
+
+  if(!vo->hasItem(id))
+  {
+    kNode* node = new kNode(mtl);
+    node->nam = id;
+
+    m_render->add(mtl);
+    vo->getGuiList()->addItem(id);
+  }
+
+
+  return false;
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmGameBase::onEvent(e);
@@ -605,6 +625,9 @@ void kEditor::onAction(kgmEvent *gui, int id)
     case ME_ADD_LIGHT:
       onAddLight();
       break;
+    case ME_ADD_MATERIAL:
+      onAddMaterial();
+      break;
     case ME_VIEW_OBJECTS:
       onViewObjects();
       break;
@@ -711,6 +734,13 @@ void kEditor::onAddActor()
   fdd->forOpen(m_settings->get("Path"), callAddActor, this);
 }
 
+void kEditor::onAddMaterial()
+{
+  fdd->setFilter(".mtl");
+  fdd->changeLocation(false);
+  fdd->forOpen(m_settings->get("Path"), callAddMaterial, this);
+}
+
 void kEditor::onViewObjects()
 {
   if(vo->visible())
@@ -749,10 +779,15 @@ void kEditor::callMapSave(void *par)
 
 void kEditor::callAddMesh(void *par)
 {
-  ((kEditor*)par)->addMesh(((kEditor*)par)->fdd->getPath());
+  ((kEditor*)par)->addMesh(((kEditor*)par)->fdd->getFile());
 }
 
 void kEditor::callAddActor(void *par)
 {
-  ((kEditor*)par)->addActor(((kEditor*)par)->fdd->getPath());
+  ((kEditor*)par)->addActor(((kEditor*)par)->fdd->getFile());
+}
+
+void kEditor::callAddMaterial(void *par)
+{
+  ((kEditor*)par)->addMaterial(((kEditor*)par)->fdd->getFile());
 }
