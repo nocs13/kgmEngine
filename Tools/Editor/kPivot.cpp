@@ -24,3 +24,8 @@ kPivot::kPivot()
 
   m_rtype = kgmMesh::RT_LINE;
 }
+
+bool kPivot::peekAxis(ray3 r)
+{
+  return false;
+}

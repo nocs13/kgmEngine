@@ -68,6 +68,7 @@ typedef kgmBox3d<f32>      box;
 typedef kgmOBox3d<f32>     obox3;
 typedef kgmLine3d<f32> line;
 typedef kgmLine3d<f32> line3;
+typedef kgmRay3d<f32> ray3;
 typedef kgmSphere3d<f32> sphere;
 typedef kgmSphere3d<f32> sphere3;
 

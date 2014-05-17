@@ -4,6 +4,7 @@
 template <class T> class kgmPlane3d{
 public:
   T x, y, z, w;
+
 public:
   kgmPlane3d()
   {
