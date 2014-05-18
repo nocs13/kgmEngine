@@ -49,7 +49,7 @@ u32 kPivot::peekAxis(ray3 r)
   vec3 vnor, vins;
   plane3 pln;
 
-  vnor = v[1] - v[0];
+  vnor = v[3] - v[0];
   vnor.normalize();
 
   pln = plane3(vnor, v[0]);
@@ -58,7 +58,7 @@ u32 kPivot::peekAxis(ray3 r)
   {
     line3 l(v[0], v[1]);
 
-    if(l.ison(vins))
+    if(l.ison(vins, 0.1))
     {
       axis = AXIS_X;
 
@@ -66,7 +66,7 @@ u32 kPivot::peekAxis(ray3 r)
     }
   }
 
-  vnor = v[2] - v[0];
+  vnor = v[1] - v[0];
   vnor.normalize();
 
   pln = plane3(vnor, v[0]);
@@ -83,7 +83,7 @@ u32 kPivot::peekAxis(ray3 r)
     }
   }
 
-  vnor = v[3] - v[0];
+  vnor = v[2] - v[0];
   vnor.normalize();
 
   pln = plane3(vnor, v[0]);

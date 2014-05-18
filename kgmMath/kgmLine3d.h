@@ -26,22 +26,22 @@ public:
   return v.length();
  }
 
- bool ison(kgmVector3d<T>& v)
+ bool ison(kgmVector3d<T>& v, T presision = T(0.01))
  {
   kgmVector3d<T> vT, vTV;
   kgmVector3d<T> vL = e - s;
   T t = (v.x - s.x) / vL.x;
 
   if((t < 0.0) || (t > 1.0))
-	  return false;
+    return false;
 
   vT.x = s.x + vL.x * t;
   vT.y = s.y + vL.y * t;
   vT.z = s.z + vL.z * t;
   vTV = vT - v;
 
-  if(vTV.length() < 0.01)
-	  return true;
+  if(vTV.length() < presision)
+    return true;
 
   return false;
  }

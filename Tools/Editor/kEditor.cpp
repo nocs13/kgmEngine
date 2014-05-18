@@ -141,13 +141,17 @@ kNode* kEditor::select(int x, int y)
     h = h * hL;
 
     ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
-    md = cam.mPos - ms;
+    md = ms - cam.mPos;
     md.normalize();
 
     ray = kgmRay3d<float>(cam.mPos, md);
 
     //if(pl.intersect(ray, c))
     {
+      plane3 pln(vec3(0,0,1), vec3(0,0,0));
+      ms = vec3(0,0,0);
+      pln.intersect(ray, ms);
+
       mtx4 m;
       m.identity();
       m.translate(ms);
