@@ -23,9 +23,84 @@ kPivot::kPivot()
   v[5].col = 0xffff0000;
 
   m_rtype = kgmMesh::RT_LINE;
+
+  pos = vec3(0, 0, 0);
+  rot = vec3(0, 0, 0);
 }
 
-bool kPivot::peekAxis(ray3 r)
+u32 kPivot::peekAxis(ray3 r)
 {
-  return false;
+  mtx4 mtr, mrt, mmv;
+  mmv.translate(pos);
+  mrt.rotate(rot);
+  mtr = mrt * mmv;
+
+  vec3 v[4], vpt;
+
+  vpt.set(0, 0, 0);
+  v[0] = mtr * vpt;
+  vpt.set(1, 0, 0);
+  v[1] = mtr * vpt;
+  vpt.set(0, 1, 0);
+  v[2] = mtr * vpt;
+  vpt.set(0, 0, 1);
+  v[3] = mtr * vpt;
+
+  vec3 vnor, vins;
+  plane3 pln;
+
+  vnor = v[1] - v[0];
+  vnor.normalize();
+
+  pln = plane3(vnor, v[0]);
+
+  if(pln.intersect(r, vins))
+  {
+    line3 l(v[0], v[1]);
+
+    if(l.ison(vins))
+    {
+      axis = AXIS_X;
+
+      return axis;
+    }
+  }
+
+  vnor = v[2] - v[0];
+  vnor.normalize();
+
+  pln = plane3(vnor, v[0]);
+
+  if(pln.intersect(r, vins))
+  {
+    line3 l(v[0], v[2]);
+
+    if(l.ison(vins))
+    {
+      axis = AXIS_Y;
+
+      return axis;
+    }
+  }
+
+  vnor = v[3] - v[0];
+  vnor.normalize();
+
+  pln = plane3(vnor, v[0]);
+
+  if(pln.intersect(r, vins))
+  {
+    line3 l(v[0], v[3]);
+
+    if(l.ison(vins))
+    {
+      axis = AXIS_Z;
+
+      return axis;
+    }
+  }
+
+  axis = AXIS_NONE;
+
+  return AXIS_NONE;
 }

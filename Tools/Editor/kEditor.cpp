@@ -155,6 +155,12 @@ kNode* kEditor::select(int x, int y)
     }
   }
 
+  if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
+  {
+
+    int k = 0;
+  }
+
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3 c;

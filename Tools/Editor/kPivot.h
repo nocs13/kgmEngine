@@ -21,7 +21,7 @@ public:
 public:
   kPivot();
 
-  bool peekAxis(ray3 r);
+  u32 peekAxis(ray3 r);
 };
 
 #endif // KGMPIVOT_H
