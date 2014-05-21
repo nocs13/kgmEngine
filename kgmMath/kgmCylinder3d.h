@@ -1,5 +1,6 @@
 #pragma once
 #include "kgmVector3d.h"
+#include "kgmPlane3d.h"
 
 template <class T> class kgmCylinder3d
 {
@@ -31,5 +32,20 @@ public:
    return false;
 
   return true;
+ }
+
+ static bool isPointInCylinder(kgmVector3d<T> point, kgmVector3d<T> center,
+                               kgmVector3d<T> normal, T radius, T height)
+ {
+   kgmPlane3d<T>  plane(normal, center);
+   kgmVector3d<T> projected = plane.projection(point);
+
+   if(center.distance(projected) > radius)
+     return false;
+
+   if(plane.distance(point) > height)
+     return false;
+
+   return true;
  }
 };

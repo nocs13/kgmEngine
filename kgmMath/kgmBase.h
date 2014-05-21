@@ -80,10 +80,12 @@ typedef kgmRect2d<f32>   fRect;
 
 
 
-inline f32 fround(f32 n, u32 d){
+inline f32 fround(f32 n, u32 d)
+{
  return (f32)(floor(n * powf(10., d) + 0.5) / powf(10., d));
 }
 
-inline f32 fround(f64 n, u32 d){
+inline f32 fround(f64 n, u32 d)
+{
  return floor(n * powf(10., d) + 0.5) / powf(10., d);
 }
