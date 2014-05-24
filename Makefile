@@ -6,6 +6,7 @@ subdirs += $(wildcard kgmGame/objects)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
 sources += $(wildcard kgmGame/actors/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
+sources += $(wildcard kgmGame/editor/*.cpp)
 objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT_SO = libkgmEngine.so

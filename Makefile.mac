@@ -12,7 +12,7 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
-	DEFS = -DLINUX -DOAL -DGPUSHADERS -DLUA
+	DEFS = -DLINUX -DOAL -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -fpermissive  -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
