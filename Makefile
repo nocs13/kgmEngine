@@ -20,7 +20,7 @@ all: debug
 debug: set_debug $(OUT_SO)
 	echo 'debug finished.'
 	make -C Tools/Packer
-	make -C Tools/Editor
+#	make -C Tools/Editor
 
 set_debug:
 	$(eval DEFS += -DDEBUG)

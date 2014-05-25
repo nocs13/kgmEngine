@@ -16,9 +16,21 @@
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"
 #include "../kgmGraphics/kgmGui.h"
+#include "../kgmGraphics/kgmGuiMenu.h"
 #include "../kgmGraphics/kgmGuiList.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGraphics.h"
+
+#ifdef EDITOR
+#include "editor/kNode.h"
+#include "editor/kPivot.h"
+#include "editor/kGridline.h"
+#include "editor/kFileDialog.h"
+#include "editor/kViewObjects.h"
+
+using namespace kgmGameEditor;
+#endif
+
 
 #ifdef WIN32
 #endif
@@ -31,7 +43,6 @@ public:
   static kgmGameBase* m_game;
 
 protected:
-//  kgmIGC*            m_gc;
   kgmIVideo*         m_video;
   kgmGameAudio*      m_audio;
   kgmGamePhysics*    m_physics;
@@ -53,6 +64,8 @@ protected:
   char           m_keymap[150];
 
   bool           m_gamemode;
+  bool           m_editor;
+
 public:
   int            m_state;	//game state
   bool           m_result;	//game over result
@@ -61,7 +74,54 @@ public:
   kgmGameGraphics*      m_render;
   kgmList<kgmGui*>      m_guis;     //game or nongame guis
 
-  ////////////////
+#ifdef EDITOR
+  class kMenu: public kgmGuiMenu
+  {
+    kgmGameBase* editor;
+
+  public:
+    kMenu(kgmGui* parent, kgmGameBase* e)
+      :kgmGuiMenu(parent)
+    {
+      editor = e;
+    }
+
+    void onAction(kgmGui* gui, u32 arg)
+    {
+      if(editor)
+      {
+        editor->onAction(this, arg);
+      }
+    }
+  };
+
+  class kFDD: public kFileDialog
+  {
+    kgmGameBase* editor;
+
+  public:
+    kFDD(kgmGameBase* e)
+    {
+      editor = e;
+    }
+
+    void onOpen()
+    {
+      editor->onAction(this, 1);
+    }
+
+    void onSave()
+    {
+      editor->onAction(this, 2);
+    }
+
+    void onFail()
+    {
+      editor->onAction(this, 0);
+    }
+  };
+#endif
+
 public:
   kgmGameBase();
   kgmGameBase(kgmString &conf);
