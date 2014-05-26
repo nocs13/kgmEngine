@@ -1498,3 +1498,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
   return actor;
 }
 
+
+#ifdef EDITOR
+#endif
