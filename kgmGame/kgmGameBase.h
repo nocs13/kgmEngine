@@ -16,17 +16,12 @@
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"
 #include "../kgmGraphics/kgmGui.h"
-#include "../kgmGraphics/kgmGuiMenu.h"
 #include "../kgmGraphics/kgmGuiList.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
 #ifdef EDITOR
-#include "editor/kNode.h"
-#include "editor/kPivot.h"
-#include "editor/kGridline.h"
-#include "editor/kFileDialog.h"
-#include "editor/kViewObjects.h"
+#include "editor/kEditor.h"
 
 using namespace kgmGameEditor;
 #endif
@@ -75,72 +70,9 @@ public:
   kgmList<kgmGui*>      m_guis;     //game or nongame guis
 
 #ifdef EDITOR
-  class kMenu: public kgmGuiMenu
-  {
-    kgmGameBase* editor;
+  friend class kEditor;
 
-  public:
-    kMenu(kgmGui* parent, kgmGameBase* e)
-      :kgmGuiMenu(parent)
-    {
-      editor = e;
-    }
-
-    void onAction(kgmGui* gui, u32 arg)
-    {
-      if(editor)
-      {
-        editor->onAction(this, arg);
-      }
-    }
-  };
-
-  class kFDD: public kFileDialog
-  {
-    kgmGameBase* editor;
-
-  public:
-    kFDD(kgmGameBase* e)
-    {
-      editor = e;
-    }
-
-    void onOpen()
-    {
-      editor->onAction(this, 1);
-    }
-
-    void onSave()
-    {
-      editor->onAction(this, 2);
-    }
-
-    void onFail()
-    {
-      editor->onAction(this, 0);
-    }
-  };
-
-  bool ms_click[3];
-  vec3 cam_pos;
-  f32  cam_rot;
-
-  kGridline* gridline;
-
-  kPivot*    pivot;
-  vec3       pv_pos;
-  vec3       pv_rot;
-
-  kMenu*     menu;
-
-  kFDD*      fdd;
-
-  u32        oquered;
-
-  kViewObjects* vo;
-
-  kNode* selected;
-  kgmList<kNode*> nodes;
+  kEditor* editor;
 #endif
 
 public:
@@ -249,47 +181,13 @@ public:
     return m_render;
   }
 
-#ifdef EDITOR
-  void editor_init();
-  void editor_clear();
+  kgmGameSettings* getSettings()
+  {
+    return m_settings;
+  }
 
-  kNode* editor_select(int x, int y);
-
-  bool editor_mapSave(kgmString);
-  bool editor_mapOpen(kgmString);
-  bool editor_addMesh(kgmString);
-  bool editor_addActor(kgmString);
-  bool editor_addMaterial(kgmString);
-
-  void editor_onEvent(kgmEvent::Event*);
-  void editor_onAction(kgmEvent*,int);
-  void editor_onKeyUp(int k);
-  void editor_onKeyDown(int k);
-  void editor_onMsMove(int k, int x, int y);
-  void editor_onMsWheel(int k, int x, int y, int z);
-  void editor_onMsLeftUp(int k, int x, int y);
-  void editor_onMsLeftDown(int k, int x, int y);
-  void editor_onMsRightUp(int k, int x, int y);
-  void editor_onMsRightDown(int k, int x, int y);
-
-  void editor_onQuit();
-  void editor_onEditOptions();
-  void editor_onMapOpen();
-  void editor_onMapSave();
-  void editor_onAddMesh();
-  void editor_onAddLight();
-  void editor_onAddActor();
-  void editor_onAddSensor();
-  void editor_onAddTrigger();
-  void editor_onAddMaterial();
-  void editor_onViewObjects();
-  void editor_onOptionsDatabase();
-
-  static void editor_callMapOpen(void*);
-  static void editor_callMapSave(void*);
-  static void editor_callAddMesh(void*);
-  static void editor_callAddLight(void*);
-  static void editor_callAddActor(void*);
-  static void editor_callAddMaterial(void*);
-#endif
+  s32 getKeyState(u8 key)
+  {
+    return m_keys[key];
+  }
 };
