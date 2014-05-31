@@ -128,14 +128,16 @@ class kgmGameObject;
 
 class kgmIGame{
 public:
-  enum State{
+  enum State
+  {
     State_None,
     State_Quit,
     State_Play,
     State_Load,
     State_Uload,
     State_Pause,
-    State_Stop
+    State_Stop,
+    State_Edit
   };
 
 public:

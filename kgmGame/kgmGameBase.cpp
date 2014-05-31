@@ -151,6 +151,11 @@ kgmGameBase::kgmGameBase()
 
   m_gamemode = true;
   m_state    = State_None;
+
+#ifdef EDITOR
+  editor  = new kEditor(this);
+  m_state = State_Edit;
+#endif
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
@@ -158,10 +163,12 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 {
 }
 
-kgmGameBase::~kgmGameBase(){
+kgmGameBase::~kgmGameBase()
+{
 }
 
-kgmIGC* kgmGameBase::getGC(){
+kgmIGC* kgmGameBase::getGC()
+{
   return m_game->m_gc;
 }
 
@@ -278,6 +285,8 @@ void kgmGameBase::onIdle(){
     break;
   case State_Stop:
     break;
+  case State_Edit:
+    break;
   default:
     break;
   }
@@ -302,28 +311,39 @@ void kgmGameBase::onIdle(){
 #endif
 }
 
-void kgmGameBase::onPaint(kgmIGC* gc){
+void kgmGameBase::onPaint(kgmIGC* gc)
+{
 }
 
 void kgmGameBase::onClose()
 {
+#ifdef EDITOR
+  log("free editor...");
+
+  editor->release();
+  editor = null;
+#endif
+
+
   log("free graphics renderer...");
 
   if(m_render)
     m_render->release();
 
-  log("free scenes...");
 
   log("free gui...");
+
   for(int i = 0; i < m_guis.size(); i++)
     m_guis[i]->release();
   m_guis.clear();
 
   log("free resources...");
+
   if(m_resources)
     m_resources->release();
 
   log("free physics...");
+
   if(m_physics)
     m_physics->release();
 
@@ -434,7 +454,8 @@ void kgmGameBase::onResize(int w, int h){
     m_guis[i]->scale(sw, sh);
 }
 
-void kgmGameBase::onEvent(kgmEvent::Event* e){
+void kgmGameBase::onEvent(kgmEvent::Event* e)
+{
   kgmWindow::onEvent(e);
 
   for(int i = m_guis.size(); i > 0; i--)
@@ -444,6 +465,11 @@ void kgmGameBase::onEvent(kgmEvent::Event* e){
     if(!gui->erased())
       gui->onEvent(e);
   }
+
+#ifdef EDITOR
+  if(editor)
+    editor->onEvent(e);
+#endif
 }
 
 //Game Functions

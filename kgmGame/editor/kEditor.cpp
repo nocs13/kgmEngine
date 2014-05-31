@@ -474,6 +474,8 @@ bool kEditor::addMaterial(kgmString id)
 
 void kEditor::onEvent(kgmEvent::Event *e)
 {
+  kgmEvent::onEvent(e);
+
   if(menu->visible() && game->m_msAbs)
     menu->onEvent(e);
 
