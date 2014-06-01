@@ -154,7 +154,7 @@ kgmGameBase::kgmGameBase()
 
 #ifdef EDITOR
   editor  = new kEditor(this);
-  m_state = State_Edit;
+  editing = false;
 #endif
 }
 

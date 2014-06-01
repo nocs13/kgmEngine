@@ -59,11 +59,10 @@ protected:
   char           m_keymap[150];
 
   bool           m_gamemode;
-  bool           m_editor;
 
 public:
-  int            m_state;	//game state
-  bool           m_result;	//game over result
+  int            m_state;   //game state
+  bool           m_result;  //game over result
 
   kgmGameLogic*         m_logic;
   kgmGameGraphics*      m_render;
@@ -73,6 +72,9 @@ public:
   friend class kEditor;
 
   kEditor* editor;
+  bool     editing;
+
+  void     setEditing(bool e) { editing = e; }
 #endif
 
 public:

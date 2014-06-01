@@ -64,4 +64,10 @@ public:
 
  //PARTICLES
  static kgmParticles* genParticles(kgmXml& x);
+
+ //PARSING TOOLS
+ static kgmMesh*     parseMesh(kgmXml::Node& node);
+ static kgmLight*    parseLight(kgmXml::Node& node);
+ static kgmMaterial* parseMaterial(kgmXml::Node& node);
+ static kgmSkeleton* parseSkeleton(kgmXml::Node& node);
 };
