@@ -11,12 +11,18 @@ public:
   class Item
   {
   public:
+
+    typedef void (*ClickEventCallback)(kgmObject*);
+
     enum Type
     {
       TypeItem,
       TypeMenu,
       TypeSeparator
     };
+
+    ClickEventCallback callback;
+    kgmObject          *object;
 
   protected:
     Item*      parent;
@@ -55,9 +61,11 @@ public:
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       width = 10 * title.length();
       rect = iRect(0, 0, 0, 0);
+
+      callback = null;
     }
 
-    Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
+    Item(Item* par, u32 eid, kgmString text, ClickEventCallback fncall = null, kgmObject* obj = null, bool horizontal = false)
     {
       parent = par;
 
@@ -76,6 +84,9 @@ public:
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       width = 10 * title.length();
       rect = iRect(0, 0, 0, 0);
+
+      callback = fncall;
+      object = obj;
     }
 
     ~Item()
@@ -119,12 +130,12 @@ public:
       return item;
     }
 
-    Item* add(u32 id, kgmString title, kgmTexture* icon = null)
+    Item* add(u32 id, kgmString title, ClickEventCallback fncall = null, kgmObject* obj = null, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
         return null;
 
-      Item* item = new Item(this, id, title);
+      Item* item = new Item(this, id, title, fncall, obj);
 
       if(vertical)
       {
