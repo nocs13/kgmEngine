@@ -1,6 +1,8 @@
 #ifndef KGMCALLBACK_H
 #define KGMCALLBACK_H
 
+//Class for declare callback function
+
 class kgmObject;
 
 template <class F> class kgmCallback;
