@@ -124,13 +124,6 @@ public:
   void onAddMaterial();
   void onViewObjects();
   void onOptionsDatabase();
-
-  static void callMapOpen(void*);
-  static void callMapSave(void*);
-  static void callAddMesh(void*);
-  static void callAddLight(void*);
-  static void callAddActor(void*);
-  static void callAddMaterial(void*);
 };
 
 }

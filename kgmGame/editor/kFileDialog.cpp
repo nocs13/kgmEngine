@@ -25,7 +25,7 @@ kFileDialog::kFileDialog()
   allsee = true;
 
   fnCallback = null;
-  fnArg = null;
+  object = null;
 
 #ifdef WIN32
   DIRCON = "\\";
@@ -102,11 +102,11 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
 
     if(modeSave)
     {
-      if(fnCallback)
+      if(fnCallback && object)
       {
-        fnCallback(fnArg);
+        fnCallback(object, getPath());
         fnCallback = null;
-        fnArg = null;
+        object = null;
       }
       else
       {
@@ -115,11 +115,11 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
     }
     else
     {
-      if(fnCallback)
+      if(fnCallback && object)
       {
-        fnCallback(fnArg);
+        fnCallback(object, getPath());
         fnCallback = null;
-        fnArg = null;
+        object = null;
       }
       else
       {
@@ -133,7 +133,7 @@ void kFileDialog::onAction(kgmGui *gui, u32 id)
 
     onFail();
     fnCallback = null;
-    fnArg = null;
+    object = null;
   }
 }
 
@@ -193,7 +193,7 @@ void kFileDialog::listFolder()
   }
 }
 
-void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, void* arg)
+void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, kgmObject* arg)
 {
   if(dir.length() < 1)
   {
@@ -215,10 +215,10 @@ void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, void* arg)
   listFolder();
 
   fnCallback = fn_call;
-  fnArg = arg;
+  object = arg;
 }
 
-void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, void* arg = null)
+void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, kgmObject* arg = null)
 {
   if(dir.length() < 1)
   {
@@ -240,7 +240,7 @@ void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, void
   listFolder();
 
   fnCallback = fn_call;
-  fnArg = arg;
+  object = arg;
 }
 
 void kFileDialog::setFilter(kgmString flt)
