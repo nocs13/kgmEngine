@@ -120,57 +120,27 @@ class kgmEvent: public kgmObject
 {
   KGM_OBJECT(kgmEvent);
 public:
-  typedef struct{
-    u32  event;		//event id
-    int x, y,
-    width, height; //for rect
-    int msx, msy, msz;	//mouse coordinates
-    int key, keyMask;	//keyboard key and mask
-    void* gc;			//graphical context
-    void* xparam;		//additional parameter
+  typedef struct
+  {
+    u32  event;	       //event id
+    int x, y,          //
+    width, height;     //for rect
+    int msx, msy, msz; //mouse coordinates
+    int key, keyMask;	 //keyboard key and mask
+    void* gc;	         //graphical context
+    void* xparam;	     //additional parameter
   } Event;
 
 public:
-private:
-  kgmList<kgmEvent*> m_listens;	//targets for message delivery
-public:
-  kgmEvent(){
-  }
-  ~kgmEvent(){
-    m_listens.clear();
-  }
-
-  bool addListener(kgmEvent* e){
-    int i;
-    for(i = 0; i < m_listens.length(); i++)
-      if(m_listens[i] == e)
-        return false;
-    m_listens.add(e);
-    return true;
-  }
-
-  bool removeListener(kgmEvent* e)
+  kgmEvent()
   {
-    int i;
-
-    for(i = 0; i < m_listens.length(); i++)
-    {
-      if(m_listens[i] == e)
-      {
-        m_listens.erase(i);
-
-        return true;
-      }
-    }
-
-    return false;
+  }
+  ~kgmEvent()
+  {
   }
 
   virtual void onEvent(kgmEvent::Event* e)
   {
-    for(int i = 0; i < m_listens.length(); i++)
-      m_listens[i]->onEvent(e);
-
     switch(e->event)
     {
     case evtCreate:
@@ -214,14 +184,10 @@ public:
 
   virtual void onAction(kgmEvent* e, int a)
   {
-    for(int i = 0; i < m_listens.length(); i++)
-      m_listens[i]->onAction(e, a);
   }
 
   virtual void onIdle()
   {
-    for(int i = 0; i < m_listens.length(); i++)
-      m_listens[i]->onIdle();
   }
 
 protected:

@@ -1,6 +1,7 @@
 include ../Makefile.mac
 
 all:
+	echo "make lua"
 	make -C lua-4.0.1 
 	mkdir -p ../kgmSystem/inc/lua
 	cp lua-4.0.1/include/*.h ../kgmSystem/inc/lua/.	

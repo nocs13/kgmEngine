@@ -1,5 +1,4 @@
 #include "kEditor.h"
-#include "kViewOptions.h"
 
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
@@ -50,24 +49,24 @@ kEditor::kEditor(kgmGameBase* g)
 
     menu = new kMenu(null, this);
     kgmGuiMenu::Item* item = menu->add("Map");
-    item->add(ME_MAP_OPEN, "Open", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onMapOpen, this);
-    item->add(ME_MAP_SAVE, "Save", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onMapSave, this);
-    item->add(ME_QUIT, "Quit", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onQuit, this);
+    item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onMapOpen));
+    item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onMapSave));
+    item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onQuit));
     item = menu->add("Edit");
-    item->add(ME_EDIT_REMOVE, "Remove");
-    item->add(ME_EDIT_DUPLICATE, "Duplicate");
-    item->add(ME_EDIT_OPTIONS, "Options", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onEditOptions, this);
+    //item->add(ME_EDIT_REMOVE, "Remove");
+    //item->add(ME_EDIT_DUPLICATE, "Duplicate");
+    item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditOptions));
     item = menu->add("Add");
-    item->add(ME_ADD_MESH, "Mesh", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddMesh, this);
-    item->add(ME_ADD_LIGHT, "Light", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddLight, this);
-    item->add(ME_ADD_ACTOR, "Actor", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddActor, this);
-    item->add(ME_ADD_SENSOR, "Sensor", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddSensor, this);
-    item->add(ME_ADD_TRIGGER, "Trigger", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddTrigger, this);
-    item->add(ME_ADD_MATERIAL, "Material", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onAddMaterial, this);
+    item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMesh));
+    item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddLight));
+    item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddActor));
+    item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddSensor));
+    item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddTrigger));
+    item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMaterial));
     item = menu->add("Run");
-    item->add(ME_RUN_RUN, "Run");
+    //item->add(ME_RUN_RUN, "Run");
     item = menu->add("View");
-    item->add(ME_VIEW_OBJECTS, "Objects", (kgmGuiMenu::Item::ClickEventCallback)&kEditor::onViewObjects, this);
+    item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onViewObjects));
     //item = menu->add("Options");
     //item->add(ME_OPTIONS_DATABASE, "Database");
     //item = menu->add("Help");
@@ -84,6 +83,8 @@ kEditor::kEditor(kgmGameBase* g)
     fdd->showHidden(false);
     fdd->hide();
     game->m_render->add(fdd);
+
+    vop = null;
 
     vo = new kViewObjects(this, 1, 50, 100, 300);
     vo->hide();
@@ -463,7 +464,6 @@ bool kEditor::addMaterial(kgmString id)
     vo->getGuiList()->addItem(id);
   }
 
-
   return false;
 }
 
@@ -479,6 +479,9 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
   if(vo->visible())
     vo->onEvent(e);
+
+  if(vop && vop->visible())
+    vop->onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -640,8 +643,6 @@ void kEditor::onEditOptions()
   if(!selected)
     return;
 
-  kViewOptions* vop = null;
-
   switch(selected->typ)
   {
   case kNode::MESH:
@@ -660,8 +661,8 @@ void kEditor::onEditOptions()
 
   if(vop)
   {
+    vop->setCloseCallback(kViewOptions::CloseCallback(this, (kViewOptions::CloseCallback::Function)&onCloseVop));
     game->m_render->add(vop);
-    addListener(vop);
     vop->show();
   }
 }
@@ -739,4 +740,9 @@ void kEditor::onOptionsDatabase()
   {
     fdd->forOpen(loc);
   }
+}
+
+void kEditor::onCloseVop()
+{
+  vop = null;
 }

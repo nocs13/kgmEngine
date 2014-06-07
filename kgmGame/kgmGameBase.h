@@ -75,6 +75,7 @@ public:
   bool     editing;
 
   void     setEditing(bool e) { editing = e; }
+  kEditor* getEditor(){ return editor; }
 #endif
 
 public:

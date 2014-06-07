@@ -144,7 +144,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m){
 
   long size = AAsset_getLength(asset);
   m.alloc(size);
-  AAsset_read (asset, (char*)m, size);
+  AAsset_read (asset, m.data(), size);
 #ifdef DEBUG
   kgm_log() << "\nkgmEngine android file size: " << (s32)size << "\n";
 #endif

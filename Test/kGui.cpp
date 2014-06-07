@@ -22,7 +22,7 @@ kGui::kGui(kgmGameBase* game)
 #endif
 
   m_guiMain = new kgmGui(null, 0, 0, w, h);
-  m_guiMain->addListener(this);
+  //m_guiMain->addListener(this);
 
   kgmGui* gui = new kgmGui(m_guiMain, 0, 0, w, 50);
 
@@ -73,7 +73,7 @@ kGui::kGui(kgmGameBase* game)
 
 
   m_guiPause = new kgmGui(null, w / 2 - 50, h / 2 - 50, 100, 100);
-  m_guiPause->addListener(this);
+  //m_guiPause->addListener(this);
   m_guiPause->hide();
 
   btn = new kgmGuiButton(m_guiPause, 1, 1, 98, 48);

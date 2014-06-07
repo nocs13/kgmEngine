@@ -5,6 +5,7 @@
 #include "../../kgmGraphics/kgmGui.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
+#include "../../kgmBase/kgmCallback.h"
 
 namespace kgmGameEditor
 {
@@ -16,9 +17,18 @@ class kViewOptions : public kgmGui
   kNode*        node;
 
 public:
+  typedef kgmCallback<void(kgmObject*)> CloseCallback;
+
+  CloseCallback callClose;
+public:
   kViewOptions(kNode* n, int x, int y, int w, int h);
 
   void onAction(kgmGui* from, u32 arg);
+
+  void setCloseCallback(CloseCallback cfn)
+  {
+    callClose = cfn;
+  }
 };
 
 class kViewOptionsForMesh : public kViewOptions

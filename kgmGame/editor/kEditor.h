@@ -8,6 +8,7 @@
 #include "kGridline.h"
 #include "kFileDialog.h"
 #include "kViewObjects.h"
+#include "kViewOptions.h"
 
 class kgmGameBase;
 
@@ -84,6 +85,9 @@ private:
 
   kViewObjects* vo;
 
+  kViewOptions* vop;
+
+
   kNode* selected;
   kgmList<kNode*> nodes;
 
@@ -124,6 +128,8 @@ public:
   void onAddMaterial();
   void onViewObjects();
   void onOptionsDatabase();
+
+  void onCloseVop();
 };
 
 }

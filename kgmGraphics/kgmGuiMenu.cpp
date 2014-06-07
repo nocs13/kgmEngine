@@ -27,7 +27,7 @@ kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
 
 kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)
 {
-  Item* im = item->add(id, title);
+  Item* im = item->add(title);
 
   if(!im)
     return null;
@@ -52,8 +52,8 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
   if(selected && selected->getType() == Item::TypeItem)
   {
     //onAction(this, selected->getId());
-    if(selected->callback && selected->object)
-      selected->callback(selected->object);
+    if(selected->callback.getObject())
+      selected->callback(selected->callback.getObject());
   }
 }
 

@@ -6,7 +6,8 @@
 using namespace kgmGameEditor;
 
 kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
-  :kgmGui(null, x, y, w, h)
+:callClose(null, null),
+kgmGui(null, x, y, w, h)
 {
   //tab = new kgmGuiTab(this, 0, 0, w, h);
   tab = null;
@@ -70,10 +71,9 @@ void kViewOptions::onAction(kgmGui *from, u32 arg)
 
   if(from == btn_close)
   {
-    kgmGameApp* gapp = kgmGameApp::gameApplication();
-    kgmIGame* igame = gapp->game();
+    if(callClose.hasObject() && callClose.hasFunction())
+      callClose(callClose.getObject());
 
-    ((kgmGameBase*)igame)->removeListener(this);
     erase();
     release();
   }

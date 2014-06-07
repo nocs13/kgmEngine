@@ -1,4 +1,5 @@
 #include "kgmGui.h"
+#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiMenu: public kgmGui
 {
@@ -12,7 +13,8 @@ public:
   {
   public:
 
-    typedef void (*ClickEventCallback)(kgmObject*);
+    //typedef void (*ClickEventCallback)(kgmObject*);
+    typedef kgmCallback<void(kgmObject*)> ClickEventCallback;
 
     enum Type
     {
@@ -22,7 +24,7 @@ public:
     };
 
     ClickEventCallback callback;
-    kgmObject          *object;
+    //kgmObject          *object;
 
   protected:
     Item*      parent;
@@ -43,6 +45,7 @@ public:
 
   public:
     Item(Item* par, kgmString text, bool horizontal = false)
+    :callback(null, null)
     {
       parent = par;
 
@@ -65,7 +68,8 @@ public:
       callback = null;
     }
 
-    Item(Item* par, u32 eid, kgmString text, ClickEventCallback fncall = null, kgmObject* obj = null, bool horizontal = false)
+    Item(Item* par, u32 eid, kgmString text, ClickEventCallback fncall, bool horizontal = false)
+    :callback(null, null)
     {
       parent = par;
 
@@ -86,7 +90,6 @@ public:
       rect = iRect(0, 0, 0, 0);
 
       callback = fncall;
-      object = obj;
     }
 
     ~Item()
@@ -130,12 +133,12 @@ public:
       return item;
     }
 
-    Item* add(u32 id, kgmString title, ClickEventCallback fncall = null, kgmObject* obj = null, kgmTexture* icon = null)
+    Item* add(u32 id, kgmString title, ClickEventCallback fncall, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
         return null;
 
-      Item* item = new Item(this, id, title, fncall, obj);
+      Item* item = new Item(this, id, title, fncall);
 
       if(vertical)
       {

@@ -35,14 +35,16 @@ $(objects) : %.o : %.cpp
 $(OUT): $(objects) lua
 	echo 'compile kgmengine'
 	$(AR) -crs $(OUT) $(objects)
-	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/*.o
-	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/lib/*.o
+#	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/*.o
+#	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/lib/*.o
 
 lua:
-	make -C ../kgmExtern/lua-4.0.1 -f Makefile.android
+	echo "stage lua"
+#	make -C ../kgmExtern/lua-4.0.1 -f Makefile.android
 
 luaclean:
-	make -C ../kgmExtern/lua-4.0.1 clean -f Makefile.android
+	echo "stage lua clean"
+#	make -C ../kgmExtern/lua-4.0.1 clean -f Makefile.android
 
 
 
