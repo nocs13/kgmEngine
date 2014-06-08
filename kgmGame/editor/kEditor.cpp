@@ -124,6 +124,7 @@ void kEditor::clear()
 kNode* kEditor::select(int x, int y)
 {
   iRect vp = game->m_render->viewport();
+
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
@@ -150,7 +151,7 @@ kNode* kEditor::select(int x, int y)
 
     ray = kgmRay3d<float>(cam.mPos, md);
 
-    //if(pl.intersect(ray, c))
+    /*if(pl.intersect(ray, c))
     {
       plane3 pln(vec3(0,0,1), vec3(0,0,0));
       ms = vec3(0,0,0);
@@ -159,12 +160,13 @@ kNode* kEditor::select(int x, int y)
       mtx4 m;
       m.identity();
       m.translate(ms);
-      //m_render->set(pivot, m);
-    }
+      m_render->set(pivot, m);
+    }*/
   }
 
   if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
   {
+    int k = 0;
   }
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -182,9 +184,41 @@ kNode* kEditor::select(int x, int y)
     {
       printf("aaa\n");
 
-      return *i;
+      return (*i);
     }
   }
+
+  return null;
+}
+
+kgmRay3d<float> kEditor::getPointRay(int x, int y)
+{
+  iRect vp = game->m_render->viewport();
+
+  float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
+  unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
+
+  kgmCamera cam = game->m_render->camera();
+  kgmRay3d<float> ray;
+
+  vec3 ms, mr, md;
+  vec3 view = cam.mDir;
+  view.normalize();
+  vec3 h = view.cross(cam.mUp);
+  h.normalize();
+  vec3 v = h.cross(view);
+  v.normalize();
+  float dist = 0.1;
+  float vL = tan(cam.mFov) * dist;
+  float hL = vL * ((float)vp.width() / (float)vp.height());
+  v = v * vL;
+  h = h * hL;
+
+  ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
+  md = ms - cam.mPos;
+  md.normalize();
+
+  return kgmRay3d<float>(cam.mPos, md);
 }
 
 bool kEditor::mapOpen(kgmString s)
@@ -499,18 +533,14 @@ void kEditor::onMsLeftUp(int k, int x, int y)
 
 void kEditor::onMsLeftDown(int k, int x, int y)
 {
-  if(!fdd->visible())
-    game->setMsAbsolute(false);
-
   ms_click[0] = true;
+  game->setMsAbsolute(false);
 
   if(game->getKeyState(KEY_Z))
     return;
 
   if(nodes.length() > 0)
   {
-    //selected = select(x, y);
-
     if(selected)
     {
       mtx4 m;
@@ -519,10 +549,13 @@ void kEditor::onMsLeftDown(int k, int x, int y)
       game->m_render->set(pivot, m);
     }
   }
-  else
-  {
-    select(x, y);
-  }
+
+  select(x, y);
+
+  if(fdd->visible())
+    game->setMsAbsolute(true);
+  else if(selected && pivot->axis != kPivot::AXIS_NONE)
+    game->setMsAbsolute(true);
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
@@ -542,9 +575,54 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
-  if(selected && pivot->axis != kPivot::AXIS_NONE)
+  if(selected && pivot->axis != kPivot::AXIS_NONE && ms_click[0])
   {
+    kgmRay3d<float> ray = getPointRay(x, y);
 
+    kgmCamera cam = game->m_render->camera();
+
+    vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->pos);
+    vec3 pr, tm;
+    line lax;
+    plane pln;
+    float prdist;
+
+    switch(pivot->axis)
+    {
+    case kPivot::AXIS_X:
+      tm = pivot->pos + vec3(1, 0, 0);
+      lax = line(pivot->pos, tm);
+      //pln = plane(pivot->pos, vec3(0, 0, 1));
+      //pln.intersect(ray, pr);
+      break;
+    case kPivot::AXIS_Y:
+      tm = pivot->pos + vec3(0, 1, 0);
+      lax = line(pivot->pos, tm);
+      break;
+    case kPivot::AXIS_Z:
+      tm = pivot->pos + vec3(0, 0, 1);
+      lax = line(pivot->pos, tm);
+      break;
+    }
+
+    pr = lax.projection(pt);
+    prdist = pivot->pos.distance(pr);
+    prdist *= 2;
+
+    vec3 dir = pr - pivot->pos;
+    dir.normalize();
+
+    selected->setPosition(selected->pos + dir * prdist);
+    //selected->setPosition(selected->pos + pr);
+
+    mtx4 m;
+    m.identity();
+    m.translate(selected->pos);
+    pivot->pos = selected->pos;
+    game->m_render->set(pivot, m);
+
+
+    return;
   }
 
   if(game->m_render && !game->m_msAbs)

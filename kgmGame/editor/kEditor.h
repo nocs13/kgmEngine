@@ -99,6 +99,8 @@ public:
 
   kNode* select(int x, int y);
 
+  kgmRay3d<float> getPointRay(int x, int y);
+
   bool mapSave(kgmString);
   bool mapOpen(kgmString);
   bool addMesh(kgmString);

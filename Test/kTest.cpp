@@ -104,7 +104,11 @@ public:
   kGame()
   {
     gui = new kGui(this);
+
+#ifdef EDITOR
+    gui->m_guiMain->hide();
     m_gamemode = true;
+#endif
 
     setMsAbsolute(true);
 

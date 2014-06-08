@@ -9,7 +9,7 @@ DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem
 LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
 ifeq ($(OS), Linux)
-	DEFS = -DLINUX -DDEBUG -DTEST -DOAL -DGPUSHADERS -DLUA
+	DEFS = -DLINUX -DDEBUG -DTEST -DOAL -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -g -fPIC -O0 -fpermissive  -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f

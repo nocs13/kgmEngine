@@ -63,6 +63,7 @@ u32 kPivot::peekAxis(ray3 r)
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_X;
+      vprj = vins;
 
       return axis;
     }
@@ -89,6 +90,7 @@ u32 kPivot::peekAxis(ray3 r)
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_Y;
+      vprj = vins;
 
       return axis;
     }
@@ -106,6 +108,7 @@ u32 kPivot::peekAxis(ray3 r)
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_Z;
+      vprj = vins;
 
       return axis;
     }

@@ -19,6 +19,7 @@ public:
 
 public:
   vec3 pos, rot;
+  vec3 vprj;
   u32  axis;
 
 public:
