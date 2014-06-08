@@ -53,8 +53,8 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onMapSave));
     item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onQuit));
     item = menu->add("Edit");
-    //item->add(ME_EDIT_REMOVE, "Remove");
-    //item->add(ME_EDIT_DUPLICATE, "Duplicate");
+    item->add(ME_EDIT_REMOVE, "Remove", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditRemove));
+    item->add(ME_EDIT_DUPLICATE, "Duplicate", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditDuplicate));
     item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditOptions));
     item = menu->add("Add");
     item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMesh));
@@ -65,6 +65,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMaterial));
     item = menu->add("Run");
     //item->add(ME_RUN_RUN, "Run");
+    item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onRunRun));
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onViewObjects));
     //item = menu->add("Options");
@@ -164,8 +165,6 @@ kNode* kEditor::select(int x, int y)
 
   if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
   {
-
-    int k = 0;
   }
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -543,6 +542,11 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
+  if(selected && pivot->axis != kPivot::AXIS_NONE)
+  {
+
+  }
+
   if(game->m_render && !game->m_msAbs)
   {
     if(ms_click[0])
@@ -638,6 +642,16 @@ void kEditor::onMapSave()
   fdd->forSave(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&mapSave, this);
 }
 
+void kEditor::onEditRemove()
+{
+
+}
+
+void kEditor::onEditDuplicate()
+{
+
+}
+
 void kEditor::onEditOptions()
 {
   if(!selected)
@@ -714,6 +728,11 @@ void kEditor::onAddMaterial()
   fdd->setFilter(".mtl");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&addMaterial, this);
+}
+
+void kEditor::onRunRun()
+{
+
 }
 
 void kEditor::onViewObjects()

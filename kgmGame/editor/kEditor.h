@@ -117,6 +117,8 @@ public:
   void onMsRightDown(int k, int x, int y);
 
   void onQuit();
+  void onEditRemove();
+  void onEditDuplicate();
   void onEditOptions();
   void onMapOpen();
   void onMapSave();
@@ -128,6 +130,7 @@ public:
   void onAddMaterial();
   void onViewObjects();
   void onOptionsDatabase();
+  void onRunRun();
 
   void onCloseVop();
 };
