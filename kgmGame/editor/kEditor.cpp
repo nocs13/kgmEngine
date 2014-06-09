@@ -722,7 +722,21 @@ void kEditor::onMapSave()
 
 void kEditor::onEditRemove()
 {
+  if(!selected)
+    return;
 
+  switch(selected->typ)
+  {
+  case kNode::MESH:
+    game->getRender()->remove(selected->msh);
+    break;
+  case kNode::LIGHT:
+    game->getRender()->remove(selected->lgt);
+    break;
+  case kNode::MATERIAL:
+    game->getRender()->remove(selected->mtl);
+    break;
+  }
 }
 
 void kEditor::onEditDuplicate()

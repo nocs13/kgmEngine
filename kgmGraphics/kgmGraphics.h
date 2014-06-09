@@ -44,11 +44,22 @@ public:
   static GraphicsQuality   textureQuality;
   static GraphicsQuality   shadowQuality;
 
-  struct Mesh
+  class Mesh
   {
+  public:
     kgmMaterial* material;
     kgmMesh*     mesh;
     mtx4         mtx;
+    bool         remove;
+
+    Mesh()
+    {
+      material = null;
+      mesh     = null;
+      mtx.identity();
+
+      remove = false;
+    }
   };
 
   class Icon: public kgmObject
@@ -261,6 +272,41 @@ public:
     }
   }
 #endif
+
+  void remove(kgmGui* gui)
+  {
+
+  }
+
+  void remove(kgmMesh* msh)
+  {
+    for(int i = 0; i < m_meshes.length(); i++)
+    {
+      Mesh* mesh = &m_meshes[i];
+
+      if(mesh->mesh == msh)
+      {
+        mesh->remove = true;
+
+        break;
+      }
+    }
+  }
+
+  void remove(kgmLight* light)
+  {
+
+  }
+
+  void remove(kgmVisual* visual)
+  {
+
+  }
+
+  void remove(kgmMaterial* material)
+  {
+
+  }
 
   bool get(kgmString name, kgmMaterial** mtl)
   {
