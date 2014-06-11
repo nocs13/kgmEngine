@@ -50,15 +50,12 @@ public:
     kgmMaterial* material;
     kgmMesh*     mesh;
     mtx4         mtx;
-    bool         remove;
 
     Mesh()
     {
       material = null;
       mesh     = null;
       mtx.identity();
-
-      remove = false;
     }
   };
 
@@ -275,7 +272,16 @@ public:
 
   void remove(kgmGui* gui)
   {
+    for(int i = 0; i < m_guis.length(); i++)
+    {
+      if(m_guis[i] == gui)
+      {
+        gui->release();
+        m_guis[i] = null;
 
+        break;
+      }
+    }
   }
 
   void remove(kgmMesh* msh)
@@ -286,7 +292,8 @@ public:
 
       if(mesh->mesh == msh)
       {
-        mesh->remove = true;
+        mesh->mesh->release();
+        mesh->mesh = null;
 
         break;
       }
@@ -295,7 +302,16 @@ public:
 
   void remove(kgmLight* light)
   {
+    for(int i = 0; i < m_lights.length(); i++)
+    {
+      if(m_lights[i] == light)
+      {
+        light->release();
+        m_lights[i] = null;
 
+        break;
+      }
+    }
   }
 
   void remove(kgmVisual* visual)

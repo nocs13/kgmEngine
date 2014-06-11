@@ -427,6 +427,13 @@ void kgmGraphics::render()
 
   for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
+    if((*i) == null)
+    {
+      m_lights.erase(i);
+
+      continue;
+    }
+
     if(!(*i)->ison)
       continue;
 
@@ -461,9 +468,16 @@ void kgmGraphics::render()
   //take meshes in viewport
   kgmList<Mesh*> vw_meshes;
 
-  for(int i = 0; i < m_meshes.length(); i++)
+  for(int i = m_meshes.length(); i > 0; i--)
   {
-    Mesh* mesh = &m_meshes[i];
+    Mesh* mesh = &m_meshes[i - 1];
+
+    if(mesh->mesh == null)
+    {
+      m_meshes.erase(i - 1);
+
+      continue;
+    }
 
     box3 bx = mesh->mesh->bound();
 

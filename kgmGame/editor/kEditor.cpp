@@ -737,6 +737,8 @@ void kEditor::onEditRemove()
     game->getRender()->remove(selected->mtl);
     break;
   }
+
+  vo->getGuiList()->remItem(vo->getGuiList()->getSel());
 }
 
 void kEditor::onEditDuplicate()
