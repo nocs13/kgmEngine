@@ -743,6 +743,43 @@ void kEditor::onEditRemove()
 
 void kEditor::onEditDuplicate()
 {
+  if(!selected)
+    return;
+
+  kNode* node;
+
+  switch(selected->typ)
+  {
+  case kNode::MESH:
+    node = new kNode(selected->msh);
+    node->bnd = selected->msh->bound();
+    node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
+    node->lnk = fdd->getFile();
+    selected = node;
+    nodes.add(node);
+    game->m_render->add(node->msh, null);
+    vo->getGuiList()->addItem(node->nam);
+    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+    break;
+  case kNode::LIGHT:
+    node = new kNode((kgmLight*)selected->lgt->clone());
+    node->bnd = box3(-1, -1, -1, 1, 1, 1);
+    node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
+    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"), 1, 1, vec3(0, 0, 0));
+
+    selected = node;
+    nodes.add(node);
+    vo->getGuiList()->addItem(node->nam);
+    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+    game->m_render->add(node->lgt);
+    game->m_render->add(node->icn);
+    break;
+  case kNode::MATERIAL:
+    game->getRender()->remove(selected->mtl);
+    break;
+  }
 
 }
 
