@@ -36,6 +36,7 @@ public:
  Rect      getItemRect(int i);
  Icon      getItemIcon(int i);
  void      setSel(int sel);
+ int       getItem(kgmString n);
  int       getSel();
  int       getFirstVisibleItem();
  int       getVisibleItemsCount();

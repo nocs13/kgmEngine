@@ -121,6 +121,22 @@ void kEditor::clear()
   oquered = 0;
 }
 
+void kEditor::select(kgmString name)
+{
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    if((*i)->nam == name)
+    {
+      selected = (*i);
+
+      int ci = vo->getGuiList()->getItem(name);
+
+      if(ci != -1)
+        vo->getGuiList()->setSel(ci);
+    }
+  }
+}
+
 kNode* kEditor::select(int x, int y)
 {
   iRect vp = game->m_render->viewport();
@@ -166,29 +182,49 @@ kNode* kEditor::select(int x, int y)
 
   if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
   {
-    int k = 0;
+
   }
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
-    vec3 c;
+    vec3  c, n;
+    plane3 pln;
 
-    box3 bnd = (*i)->bnd;
+    n = vec3(1, 0, 0);
+    pln = plane3(n, (*i)->pos);
 
-    bnd.min = bnd.min + (*i)->pos;
-    bnd.max = bnd.max + (*i)->pos;
-
-    printf("AAA\n");
-
-    if(bnd.intersect(ray, c))
+    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
     {
-      printf("aaa\n");
+      selected = (*i);
+      select((*i)->nam);
 
-      return (*i);
+      break;
+    }
+
+    n = vec3(0, 1, 0);
+    pln = plane3(n, (*i)->pos);
+
+    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
+    {
+      selected = (*i);
+      select((*i)->nam);
+
+      break;
+    }
+
+    n = vec3(0, 0, 1);
+    pln = plane3(n, (*i)->pos);
+
+    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
+    {
+      selected = (*i);
+      select((*i)->nam);
+
+      break;
     }
   }
 
-  return null;
+  return selected;
 }
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)

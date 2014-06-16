@@ -64,6 +64,21 @@ kgmString kgmGuiList::getItem(int i)
   return m_items[i];
 }
 
+int kgmGuiList::getItem(kgmString n)
+{
+  int ci = 0;
+
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
+  {
+    if((*i) == n)
+      return ci;
+
+    ci++;
+  }
+
+  return -1;
+}
+
 kgmGui::Rect kgmGuiList::getItemRect(int i)
 {
  Rect rc(0, 0, 0, 0);
