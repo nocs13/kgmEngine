@@ -26,6 +26,11 @@ public:
   kPivot();
 
   u32 peekAxis(ray3 r);
+
+  mtx4 getTransform();
+
+public:
+  void setPos(vec3 v){ pos = v; }
 };
 
 }

@@ -137,7 +137,7 @@ void kEditor::select(kgmString name)
   }
 }
 
-kNode* kEditor::select(int x, int y)
+void kEditor::select(int x, int y)
 {
   iRect vp = game->m_render->viewport();
 
@@ -180,11 +180,6 @@ kNode* kEditor::select(int x, int y)
     }*/
   }
 
-  if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
-  {
-
-  }
-
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3  c, n;
@@ -197,6 +192,8 @@ kNode* kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
+      pivot->setPos(selected->pos);
+      game->m_render->set(pivot, pivot->getTransform());
 
       break;
     }
@@ -208,6 +205,8 @@ kNode* kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
+      pivot->setPos(selected->pos);
+      game->m_render->set(pivot, pivot->getTransform());
 
       break;
     }
@@ -219,12 +218,17 @@ kNode* kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
+      pivot->setPos(selected->pos);
+      game->m_render->set(pivot, pivot->getTransform());
 
       break;
     }
   }
 
-  return selected;
+  if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
+  {
+    int k = 0;
+  }
 }
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
@@ -656,7 +660,6 @@ void kEditor::onMsMove(int k, int x, int y)
     m.translate(selected->pos);
     pivot->pos = selected->pos;
     game->m_render->set(pivot, m);
-
 
     return;
   }

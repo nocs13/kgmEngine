@@ -118,3 +118,10 @@ u32 kPivot::peekAxis(ray3 r)
 
   return AXIS_NONE;
 }
+
+mtx4 kPivot::getTransform()
+{
+  mtx4 m;
+  m.identity();
+  m.translate(pos);
+}

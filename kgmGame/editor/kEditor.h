@@ -97,8 +97,8 @@ public:
 
   void clear();
 
-  kNode* select(int x, int y);
-  void   select(kgmString name);
+  void select(int x, int y);
+  void select(kgmString name);
 
   kgmRay3d<float> getPointRay(int x, int y);
 
