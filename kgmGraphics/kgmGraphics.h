@@ -72,8 +72,8 @@ public:
     Icon()
     {
       icon = null;
-      width = 1;
-      height = 1;
+      width = 0.2;
+      height = 0.2;
       position = vec3(0, 0, 0);
       remove = false;
     }
