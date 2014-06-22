@@ -5,16 +5,23 @@ template <class T> class kgmVector3d{
 public:
   T x, y, z;
 public:
-  kgmVector3d(){
+  kgmVector3d()
+  {
     x = y = z = 0;
   }
-  kgmVector3d(T a, T b, T c){
+
+  kgmVector3d(T a, T b, T c)
+  {
     x = a, y = b, z = c;
   }
-  kgmVector3d(T* v){
+
+  kgmVector3d(T* v)
+  {
     x = v[0], y = v[1], z = v[2];
   }
-  kgmVector3d(const kgmVector3d<T>& v){
+
+  kgmVector3d(const kgmVector3d<T>& v)
+  {
     x = v.x, y = v.y, z = v.z;
   }
 

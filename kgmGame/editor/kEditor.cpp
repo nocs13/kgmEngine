@@ -32,8 +32,6 @@ kEditor::kEditor(kgmGameBase* g)
 
   game->setMsAbsolute(true);
 
-
-
   ms_click[0] = ms_click[1] = ms_click[2] = false;
 
   cam_pos = vec3(0, 0, 0);
@@ -326,7 +324,7 @@ bool kEditor::mapOpen(kgmString s)
 
         node->nam = id;
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"), 0.2, 0.2, vec3(0, 0, 0));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
 
         vo->getGuiList()->addItem(node->nam);
         vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
@@ -805,7 +803,7 @@ void kEditor::onEditDuplicate()
     node = new kNode((kgmLight*)selected->lgt->clone());
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"), 0.2, 0.2, vec3(0, 0, 0));
+    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
 
     selected = node;
     nodes.add(node);
@@ -865,7 +863,7 @@ void kEditor::onAddLight()
   kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"), 0.2, 0.2, vec3(0, 0, 0));
+  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
 
   selected = node;
   nodes.add(node);

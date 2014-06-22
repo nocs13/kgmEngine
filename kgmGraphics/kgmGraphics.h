@@ -78,7 +78,7 @@ public:
       remove = false;
     }
 
-    Icon(kgmTexture* c, float w, float h, vec3 v)
+    Icon(kgmTexture* c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
     {
       icon = c;
       width = w;
