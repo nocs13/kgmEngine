@@ -73,6 +73,8 @@ public:
   bool       m_hasMouse; //is mouse inside widget
   bool       m_hasInput; //is input(keyboard/joystick) inside widget
   bool       m_hasAlpha; //test alpha in color
+  bool       m_freeze;   //have or not input events
+  bool       m_resize;   //should be gui resizable
   kgmString  m_text;     //gui text
   Color      m_color;    //gui bg color
   Image      m_image;    //gui bg texture.
@@ -123,6 +125,7 @@ public:
   void         setImage(Image i) { m_image = i;    }
   void         useStyle(bool  s) { m_useStyle = s; }
 
+  void         freeze(bool freeze) { m_freeze = freeze; }
   bool         visible(){ return m_view; }
 
   // MESSAGE MANAGER

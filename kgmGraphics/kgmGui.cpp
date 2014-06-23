@@ -12,13 +12,15 @@ kgmGui::kgmGui()
   m_erase  = false;
 
   m_view     = false;
+  m_freeze   = false;
+  m_resize   = true;
   m_hasMouse = false;
   m_hasInput = false;
   m_hasAlpha = false;
   m_useStyle = true;
   m_focus    = null;
 
-  m_draw = 0;
+  m_draw       = 0;
   m_base.scale = true;
 
   m_color = 0xffffffff;
@@ -33,6 +35,8 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
 
   m_rect = m_base.rect = Rect(x, y, w, h);
   m_view = true;
+  m_freeze   = false;
+  m_resize   = true;
   m_hasMouse = false;
   m_hasInput = false;
   m_hasAlpha = false;
@@ -53,12 +57,14 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
   m_image = null;
 }
 
-kgmGui::~kgmGui(){
+kgmGui::~kgmGui()
+{
   for(int i = m_childs.size(); i > 0; i--)
     m_childs[i - 1]->release();
+
   m_childs.clear();
 
-  if(m_parent) 
+  if(m_parent)
     m_parent->delChild(this);
 }
 
@@ -73,33 +79,43 @@ void kgmGui::hide()
   m_view = false;
 }
 
-void kgmGui::scale(float sw, float sh){
+void kgmGui::scale(float sw, float sh)
+{
   m_rect.x = m_base.rect.x * sw;
   m_rect.y = m_base.rect.y * sh;
   m_rect.w = m_base.rect.w * sw;
   m_rect.h = m_base.rect.h * sh;
+
   for(int i = 0; i < m_childs.size(); i++)
     m_childs[i]->scale(sw, sh);
 }
 
-void kgmGui::resize(int w, int h){
+void kgmGui::resize(int w, int h)
+{
   m_rect.w = w;
   m_rect.h = h;
-  if(m_base.scale){
+
+  if(m_base.scale)
+  {
     float sw = (float)w / (float)m_base.rect.w, sh = (float)h / (float)m_base.rect.h;
     scale(sw, sh);
   }
 }
- 
-void kgmGui::repaint(kgmGui* gui){
-  if(m_draw){
+
+void kgmGui::repaint(kgmGui* gui)
+{
+  if(m_draw)
+  {
     m_draw->update(gui);
-  }else if(m_parent){
+  }
+  else if(m_parent)
+  {
     m_parent->repaint(gui);
   }
 }
 
-void kgmGui::setParent(kgmGui* pr){
+void kgmGui::setParent(kgmGui* pr)
+{
   if(!pr || pr == m_parent)
     return;
 
@@ -136,7 +152,7 @@ void kgmGui::getRect(u32& x, u32& y, u32& w, u32& h, bool abs)
 {
   if(abs)
   {
-    Rect rc = toAbsolute(this->m_rect);  
+    Rect rc = toAbsolute(this->m_rect);
     x = rc.x;
     y = rc.y;
     w = rc.w;
@@ -164,33 +180,33 @@ kgmGui* kgmGui::getRoot()
 kgmGui* kgmGui::getById(u32 id)
 {
   if(m_id == id)
-      return this;
+    return this;
 
   for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
   {
-      kgmGui* g = (*i)->getById(id);
+    kgmGui* g = (*i)->getById(id);
 
-      if(g)
-          return g;
+    if(g)
+      return g;
   }
 
   return null;
 }
 
 kgmGui* kgmGui::getBySid(kgmString sid)
-{\
-    if(m_sid == sid)
-        return this;
+{
+  if(m_sid == sid)
+    return this;
 
-    for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
-    {
-        kgmGui* g = (*i)->getBySid(sid);
+  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
+  {
+    kgmGui* g = (*i)->getBySid(sid);
 
-        if(g)
-            return g;
-    }
+    if(g)
+      return g;
+  }
 
-    return null;
+  return null;
 }
 
 kgmGui* kgmGui::getFocus()
@@ -218,7 +234,7 @@ bool kgmGui::setFocus(kgmGui* g)
 void kgmGui::onEvent(kgmEvent::Event* e)
 {
   if(!e)
-   return;
+    return;
 
   kgmEvent::onEvent(e);
 }
@@ -226,14 +242,14 @@ void kgmGui::onEvent(kgmEvent::Event* e)
 void kgmGui::onAction(kgmGui* from, u32 type)
 {
   if(m_parent)
-   m_parent->onAction(from, type);
+    m_parent->onAction(from, type);
 }
 
 void kgmGui::onMsWheel(int k, int x, int y, int z)
 {
-  if(!m_view)  
-      return;
-  
+  if(!m_view || m_freeze)
+    return;
+
   if(!m_parent)
   {
     x = x - m_rect.x;
@@ -242,31 +258,31 @@ void kgmGui::onMsWheel(int k, int x, int y, int z)
 
   for(int i = 0; i < m_childs.size(); i++)
   {
-   if(m_childs[i]->m_view)
-   {
-     m_childs[i]->onMsWheel(k, x, y, z);
+    if(m_childs[i]->m_view && !m_childs[i]->m_freeze)
+    {
+      m_childs[i]->onMsWheel(k, x, y, z);
 
-     break;
-   }
+      break;
+    }
   }
 }
 
 void kgmGui::onMsMove(int k, int x, int y)
 {
-  if(!m_view)  
-      return;
+  if(!m_view || m_freeze)
+    return;
 
   if(!m_parent)
   {
     x = x - m_rect.x;
     y = y - m_rect.y;
   }
-  
+
   for (int i = 0; i < m_childs.size(); i++)
   {
     kgmGui* guiPointed = null;
 
-    if (m_childs[i]->m_view)
+    if (m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {
       if(m_childs[i]->m_rect.inside(x, y))
       {
@@ -275,6 +291,7 @@ void kgmGui::onMsMove(int k, int x, int y)
           m_childs[i]->onMsInside();
           m_childs[i]->m_hasMouse = true;
         }
+
         m_childs[i]->onMsMove(k, x - m_childs[i]->m_rect.x, y - m_childs[i]->m_rect.y);
       }
       else if(m_childs[i]->m_hasMouse)
@@ -282,7 +299,8 @@ void kgmGui::onMsMove(int k, int x, int y)
         m_childs[i]->onMsOutside();
         m_childs[i]->m_hasMouse = false;
       }
-      else if(guiPointed = m_childs[i]->getPointed()){
+      else if(guiPointed = m_childs[i]->getPointed())
+      {
         guiPointed->onMsOutside();
         guiPointed->m_hasMouse = false;
       }
@@ -292,8 +310,8 @@ void kgmGui::onMsMove(int k, int x, int y)
 
 void kgmGui::onMsLeftDown(int k, int x, int y)
 {
-  if(!m_view)  
-      return;
+  if(!m_view || m_freeze)
+    return;
   
   if(!m_parent)
   {
@@ -303,7 +321,7 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
 
   for(int i = 0; i < m_childs.size(); i++)
   {
-    if(m_childs[i]->m_view)
+    if(m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {
       if(m_childs[i]->m_rect.inside(x, y))
       {
@@ -327,8 +345,8 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
 
 void kgmGui::onMsLeftUp(int k, int x, int y)
 {
-  if(!m_view)  
-      return;
+  if(!m_view || m_freeze)
+    return;
   
   if(!m_parent)
   {
@@ -338,7 +356,7 @@ void kgmGui::onMsLeftUp(int k, int x, int y)
 
   for (int i = 0; i < m_childs.size(); i++)
   {
-    if (m_childs[i]->m_view)
+    if (m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {
       if (m_childs[i]->m_rect.inside(x, y))
       {
@@ -352,8 +370,8 @@ void kgmGui::onMsLeftUp(int k, int x, int y)
 
 void kgmGui::onMsRightDown(int k, int x, int y)
 {
-  if(!m_view)  
-      return;
+  if(!m_view || m_freeze)
+    return;
   
   if(!m_parent)
   {
@@ -363,7 +381,7 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 
   for (int i = 0; i < m_childs.size(); i++)
   {
-    if (m_childs[i]->m_view)
+    if (m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {
       if (m_childs[i]->m_rect.inside(x, y))
       {
@@ -377,18 +395,18 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 
 void kgmGui::onMsRightUp(int k, int x, int y)
 {
-  if(!m_view)  
-      return;
-  
+  if(!m_view || m_freeze)
+    return;
+
   if(!m_parent)
   {
     x = x - m_rect.x;
     y = y - m_rect.y;
   }
 
-  for (int i = 0; i < m_childs.size(); i++)
+  for(int i = 0; i < m_childs.size(); i++)
   {
-    if (m_childs[i]->m_view)
+    if(m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {
       if (m_childs[i]->m_rect.inside(x, y))
       {
@@ -410,65 +428,66 @@ void kgmGui::onMsOutside()
 
 void kgmGui::onKeyDown(int k)
 {
-  if(!m_view)  
+  if(!m_view || m_freeze)
     return;
   
-  if(m_focus && m_focus != this)
+  if(m_focus && m_focus != this && !m_focus->m_freeze)
     m_focus->onKeyDown(k);
-  //for(int i = 0; i < m_childs.size(); i++)
-  // if(m_childs[i]->m_view)
-  //  m_childs[i]->onKeyDown(k);
 }
 
 void kgmGui::onKeyUp(int k)
 {
-  if(!m_view)  
-      return;
+  if(!m_view || m_freeze)
+    return;
   
-  if(m_focus && m_focus != this)
+  if(m_focus && m_focus != this && !m_focus->m_freeze)
     m_focus->onKeyUp(k);
-
-  //for(int i = 0; i < m_childs.size(); i++)
-  // if(m_childs[i]->m_view)
-  //  m_childs[i]->onKeyUp(k);
 }
 
 void kgmGui::onIdle()
 {
 }
 
-void kgmGui::addChild(kgmGui *e){
+void kgmGui::addChild(kgmGui *e)
+{
   if(!e)
-   return;
+    return;
 
   if(!isChild(e))
-   m_childs.push_back(e);
+    m_childs.push_back(e);
 }
 
-void kgmGui::delChild(kgmGui *e){
- for(Guis::iterator i = m_childs.begin(); i != m_childs.end(); ++i){
-  if(e == *i)
-   i = m_childs.erase(i);
- }
+void kgmGui::delChild(kgmGui *e)
+{
+  for(Guis::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
+  {
+    if(e == *i)
+      i = m_childs.erase(i);
+  }
 }
 
-bool kgmGui::isChild(kgmGui *e){
+bool kgmGui::isChild(kgmGui *e)
+{
   for(int i = 0; i < m_childs.size(); i++)
-   if(m_childs[i] == e)
-    return true;
+    if(m_childs[i] == e)
+      return true;
+
   return false;
 }
 
-kgmGui* kgmGui::getFocus(Point pos){
-  for(int i = 0; i < m_childs.size(); i++){
-   if(m_childs[i]->m_view && m_childs[i]->m_rect.inside(pos.x, pos.y)){
-     return m_childs[i];
-   }
+kgmGui* kgmGui::getFocus(Point pos)
+{
+  for(int i = 0; i < m_childs.size(); i++)
+  {
+    if(m_childs[i]->m_view && m_childs[i]->m_rect.inside(pos.x, pos.y))
+      return m_childs[i];
   }
+
   return 0;
 }
 
-kgmGui* kgmGui::getPointed(){
+kgmGui* kgmGui::getPointed()
+{
   if(m_hasMouse)
     return this;
 
@@ -476,10 +495,9 @@ kgmGui* kgmGui::getPointed(){
   {
     if(m_childs[i]->getPointed())
     {
-     return m_childs[i];
+      return m_childs[i];
     }
   }
 
   return null;
 }
-
