@@ -25,6 +25,7 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
+  void build();
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
   bool add(kgmGameObject*, bool input = false);

@@ -3,22 +3,38 @@
 
 KGMOBJECT_IMPLEMENT(kgmGuiButton, kgmGui)
 
-kgmGuiButton::kgmGuiButton(){
+kgmGuiButton::kgmGuiButton()
+:callback(null, null)
+{
   m_type = TypeNormal;
   m_state = StateNone;
 }
 
 kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
- :kgmGui(par, x, y, w, h){
+:kgmGui(par, x, y, w, h), callback(null, null)
+{
   m_type = TypeNormal;
   m_state = StateNone;
 }
 
-kgmGuiButton::~kgmGuiButton(){
+kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call)
+:kgmGui(par, x, y, w, h), callback(null, null)
+{
+  m_type = TypeNormal;
+  m_state = StateNone;
+
+  callback = call;
 }
 
-void kgmGuiButton::onClick(){
-  if(m_parent)
+kgmGuiButton::~kgmGuiButton()
+{
+}
+
+void kgmGuiButton::onClick()
+{
+  if(callback.hasObject() && callback.hasFunction())
+    callback(callback.getObject());
+  else if(m_parent)
     m_parent->onAction(this, 0);
 }
 

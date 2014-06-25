@@ -140,9 +140,12 @@ public:
     }
   }
 
-  void onKeyUp(int k){
+  void onKeyUp(int k)
+  {
     kgmGameBase::onKeyUp(k);
 
+#ifdef EDITOR
+#else
     if(k == KEY_ESCAPE)
     {
       if(gState() == State_Play)
@@ -160,9 +163,11 @@ public:
         m_msAbs = true;
       }
     }
+#endif
   }
 
-  void onKeyDown(int k){
+  void onKeyDown(int k)
+  {
     kgmGameBase::onKeyDown(k);
   }
 

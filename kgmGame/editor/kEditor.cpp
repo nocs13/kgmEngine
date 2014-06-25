@@ -62,14 +62,9 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddTrigger));
     item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMaterial));
     item = menu->add("Run");
-    //item->add(ME_RUN_RUN, "Run");
     item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onRunRun));
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onViewObjects));
-    //item = menu->add("Options");
-    //item->add(ME_OPTIONS_DATABASE, "Database");
-    //item = menu->add("Help");
-    //item->add(ME_HELP_ABOUT, "About");
     game->m_render->add(menu);
 
     gridline = new kGridline();
@@ -557,6 +552,21 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
 void kEditor::onKeyUp(int k)
 {
+  if(k == KEY_ESCAPE && game->m_state != kgmIGame::State_Edit)
+  {
+    if(game->getPhysics())
+    {
+      game->getPhysics()->clear();
+    }
+
+    if(game->getLogic())
+    {
+      game->getLogic()->clear();
+    }
+
+    menu->show();
+    game->m_state = kgmIGame::State_Edit;
+  }
 }
 
 void kEditor::onKeyDown(int k)
@@ -900,7 +910,19 @@ void kEditor::onAddMaterial()
 
 void kEditor::onRunRun()
 {
+  menu->hide();
 
+  if(game->getPhysics())
+  {
+    game->getPhysics()->build();
+  }
+
+  if(game->getLogic())
+  {
+    game->getLogic()->build();
+  }
+
+  game->m_state = kgmIGame::State_Play;
 }
 
 void kEditor::onViewObjects()
