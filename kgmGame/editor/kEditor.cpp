@@ -33,6 +33,7 @@ kEditor::kEditor(kgmGameBase* g)
   game->setMsAbsolute(true);
 
   ms_click[0] = ms_click[1] = ms_click[2] = false;
+  ctrl_left = false;
 
   cam_pos = vec3(0, 0, 0);
   cam_rot = 0.0f;
@@ -567,10 +568,15 @@ void kEditor::onKeyUp(int k)
     menu->show();
     game->m_state = kgmIGame::State_Edit;
   }
+
+  if(k == KEY_LCTRL)
+    ctrl_left = false;
 }
 
 void kEditor::onKeyDown(int k)
 {
+  if(k == KEY_LCTRL)
+    ctrl_left = true;
 }
 
 void kEditor::onMsLeftUp(int k, int x, int y)
@@ -674,7 +680,7 @@ void kEditor::onMsMove(int k, int x, int y)
 
   if(game->m_render && !game->m_msAbs)
   {
-    if(ms_click[0])
+    if(ms_click[0] && ctrl_left)
     {
       kgmCamera& cam = game->m_render->camera();
 

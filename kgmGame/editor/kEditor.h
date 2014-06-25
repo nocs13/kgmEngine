@@ -68,6 +68,8 @@ private:
   kgmGameBase* game;
 
   bool ms_click[3];
+  bool ctrl_left;
+
   vec3 cam_pos;
   f32  cam_rot;
 
