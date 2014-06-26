@@ -110,6 +110,9 @@ public:
   bool addActor(kgmString);
   bool addMaterial(kgmString);
 
+  void initPhysics();
+  void initLogic();
+
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
   void onKeyUp(int k);

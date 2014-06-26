@@ -534,6 +534,28 @@ bool kEditor::addMaterial(kgmString id)
   return false;
 }
 
+void kEditor::initPhysics()
+{
+  for(kgmList<kNode>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  {
+    kNode* node = (*i);
+
+    if(node->typ == kNode::MESH)
+    {
+
+    }
+    else if(node->typ == kNode::ACTOR)
+    {
+
+    }
+  }
+}
+
+void kEditor::initLogic()
+{
+
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmEvent::onEvent(e);
