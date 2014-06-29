@@ -536,7 +536,7 @@ bool kEditor::addMaterial(kgmString id)
 
 void kEditor::initPhysics()
 {
-  for(kgmList<kNode>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); i++)
   {
     kNode* node = (*i);
 

@@ -1,8 +1,11 @@
 #pragma once
 #include "kgmGui.h"
+#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiScroll: public kgmGui{
   KGM_OBJECT(kgmGuiScroll);
+
+  typedef kgmCallback<void(kgmObject*, u32)> ChangeEventCallback;
 
   enum ORIENT
   {
@@ -21,6 +24,8 @@ class kgmGuiScroll: public kgmGui{
   s32    m_msp;
 
   ORIENT m_orientation;
+  ChangeEventCallback callback;
+
  public:
   kgmGuiScroll();
   kgmGuiScroll(kgmGui *par, int x, int y, int w, int h);
@@ -32,8 +37,12 @@ class kgmGuiScroll: public kgmGui{
   void setPosition(u32 p);
   void setOrientation(ORIENT o);
 
+  void setChangeEventCallback(ChangeEventCallback call)
+  {
+    callback = call;
+  }
+
   void onMsMove(int key, u32 x, u32 y);
   void onMsLeftDown(int key, u32 x, u32 y);
   void onMsLeftUp(int key, u32 x, u32 y);
-  void onChange(u32 pos);
 };

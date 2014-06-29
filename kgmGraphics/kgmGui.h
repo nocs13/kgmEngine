@@ -130,7 +130,6 @@ public:
 
   // MESSAGE MANAGER
   virtual void onEvent(kgmEvent::Event* e);
-  virtual void onAction(kgmGui* from, u32 type);
   virtual void onIdle();
 
 public: //static

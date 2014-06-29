@@ -3,6 +3,7 @@
 KGMOBJECT_IMPLEMENT(kgmGuiScroll, kgmGui)
 
 kgmGuiScroll::kgmGuiScroll()
+  :kgmGui(), callback(null, null)
 {
   m_ppp = 1;
   m_drag = false;
@@ -14,7 +15,7 @@ kgmGuiScroll::kgmGuiScroll()
 }
 
 kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
-  :kgmGui(par, x, y, w, h)
+  :kgmGui(par, x, y, w, h), callback(null, null)
 {
   m_ppp = 1;
   m_drag = false;
@@ -92,8 +93,8 @@ void kgmGuiScroll::onMsMove(int key, u32 x, u32 y)
   {
     m_position = pos;
     //m_msp = y;
-
-    onChange(pos);
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject(), pos);
   }
 }
 
@@ -107,10 +108,4 @@ void kgmGuiScroll::onMsLeftDown(int key, u32 x, u32 y)
 void kgmGuiScroll::onMsLeftUp(int key, u32 x, u32 y)
 {
   m_drag = false;
-}
-
-void kgmGuiScroll::onChange(u32 pos)
-{
-  if(m_parent)
-    m_parent->onAction(this, pos);
 }

@@ -2,16 +2,21 @@
 #define KGMGUITEXT_H
 
 #include "kgmGui.h"
+#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiText : public kgmGui
 {
   KGM_OBJECT(kgmGuiText);
+
+  typedef kgmCallback<void(kgmObject*)> ChangeEventCallback;
 
 private:
   bool editable;
   bool numeric;
   bool shift;
   u32  index;
+
+  ChangeEventCallback callback;
 
 public:
   kgmGuiText();
@@ -25,7 +30,10 @@ public:
   bool isNumeric();
   u32  getCursor();
 
-  virtual void onChange();
+  void setChangeEventCallback(ChangeEventCallback call)
+  {
+    callback = call;
+  }
 
   static char toAnsii(bool shift, u16 key);
 

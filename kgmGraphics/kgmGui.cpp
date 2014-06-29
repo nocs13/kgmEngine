@@ -239,12 +239,6 @@ void kgmGui::onEvent(kgmEvent::Event* e)
   kgmEvent::onEvent(e);
 }
 
-void kgmGui::onAction(kgmGui* from, u32 type)
-{
-  if(m_parent)
-    m_parent->onAction(from, type);
-}
-
 void kgmGui::onMsWheel(int k, int x, int y, int z)
 {
   if(!m_view || m_freeze)

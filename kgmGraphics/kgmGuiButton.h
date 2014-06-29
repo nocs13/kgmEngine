@@ -33,8 +33,6 @@ public:
   kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
   kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call);
   virtual ~kgmGuiButton();
-  
-  virtual void onClick();
 
   State getState()
   {

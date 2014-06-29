@@ -30,14 +30,6 @@ kgmGuiButton::~kgmGuiButton()
 {
 }
 
-void kgmGuiButton::onClick()
-{
-  if(callback.hasObject() && callback.hasFunction())
-    callback(callback.getObject());
-  else if(m_parent)
-    m_parent->onAction(this, 0);
-}
-
 /*void kgmGuiButton::onPaint(kgmIGC* gc){
   u32 fwidth = m_rect.w / 15;
   u32 fheight = m_rect.h / 2; 
@@ -73,7 +65,8 @@ void kgmGuiButton::onClick()
 void kgmGuiButton::onMsLeftUp(int key, int x, int y){
   //if(m_state == StateFocus)
   {
-    onClick();
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject());
     m_state = StateFocus;
   }
 }

@@ -3,6 +3,7 @@
 KGMOBJECT_IMPLEMENT(kgmGuiText, kgmGui);
 
 kgmGuiText::kgmGuiText()
+  :kgmGui(), callback(null, null)
 {
   editable = false;
   numeric = false;
@@ -11,7 +12,7 @@ kgmGuiText::kgmGuiText()
 }
 
 kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
- :kgmGui(par, x, y, w, h)
+ :kgmGui(par, x, y, w, h), callback(null, null)
 {
   editable = false;
   numeric = false;
@@ -51,11 +52,6 @@ bool kgmGuiText::isNumeric()
 u32 kgmGuiText::getCursor()
 {
   return index;
-}
-
-void kgmGuiText::onChange()
-{
-  onAction(this, 0);
 }
 
 void kgmGuiText::onMsLeftDown(int k, int x, int y)
@@ -103,7 +99,8 @@ void kgmGuiText::onKeyDown(int k)
 
     m_text = pt1 + pt2;
 
-    onChange();
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject());
   }
     break;
   case KEY_DELETE:
@@ -125,7 +122,8 @@ void kgmGuiText::onKeyDown(int k)
 
     m_text = pt1 + pt2;
 
-    onChange();
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject());
   }
     break;
   default:
@@ -176,7 +174,8 @@ void kgmGuiText::onKeyDown(int k)
 
     m_text = pt1 + pt3 + pt2;
 
-    onChange();
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject());
   }
     break;
   }

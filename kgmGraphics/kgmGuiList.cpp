@@ -3,7 +3,7 @@
 KGMOBJECT_IMPLEMENT(kgmGuiList, kgmGui)
 
 kgmGuiList::kgmGuiList()
-  :kgmGui()
+  :kgmGui(), callback(null, null)
 {
   m_scroll = new kgmGuiScroll(this, 0, 0, 0, 0);
   m_scroll->show();
@@ -16,7 +16,7 @@ kgmGuiList::kgmGuiList()
 }
 
 kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
-  :kgmGui(par, x, y, w, h)
+  :kgmGui(par, x, y, w, h), callback(null, null)
 {
   m_scroll = new kgmGuiScroll(this, x + w - 10, 0, 10, h);
   m_scroll->show();
@@ -81,17 +81,17 @@ int kgmGuiList::getItem(kgmString n)
 
 kgmGui::Rect kgmGuiList::getItemRect(int i)
 {
- Rect rc(0, 0, 0, 0);
+  Rect rc(0, 0, 0, 0);
 
- if(i < 0 || i >= m_items.length())
-   return rc;
+  if(i < 0 || i >= m_items.length())
+    return rc;
 
- rc.x = m_rect.x + 1;
- rc.w = m_rect.w - 2;
- rc.y = m_rect.y + m_itemHeight * (i - m_position) + 1;
- rc.h = m_itemHeight;
+  rc.x = m_rect.x + 1;
+  rc.w = m_rect.w - 2;
+  rc.y = m_rect.y + m_itemHeight * (i - m_position) + 1;
+  rc.h = m_itemHeight;
 
- return rc;
+  return rc;
 }
 
 kgmGui::Icon kgmGuiList::getItemIcon(int i)
@@ -173,11 +173,6 @@ void kgmGuiList::sort()
   }
 }
 
-void kgmGuiList::onSelect(u32 sel)
-{
-  m_parent->onAction(this, sel);
-}
-
 void kgmGuiList::onMsLeftDown(int k, int x, int y)
 {
   if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
@@ -192,8 +187,11 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
   m_itemSel = m_position + (y - rect.y) / m_itemHeight;
 
-  if(m_parent && (m_itemSel < m_items.size()))
-    onSelect(m_itemSel);
+  if((m_itemSel < m_items.size()))
+  {
+    if(callback.hasObject() && callback.hasFunction())
+      callback(callback.getObject());
+  }
 }
 
 void kgmGuiList::onMsMove(int k, int x, int y)
@@ -237,15 +235,10 @@ void kgmGuiList::onKeyDown(int k)
     break;
   case KEY_ENTER:
     if(m_itemSel >= 0 && m_itemSel < m_items.size())
-      onSelect(m_itemSel);
+    {
+      if(callback.hasObject() && callback.hasFunction())
+        callback(callback.getObject());
+    }
     break;
-  }
-}
-
-void kgmGuiList::onAction(kgmGui *gui, u32 a)
-{
-  if(gui == m_scroll)
-  {
-    m_position = a;
   }
 }
