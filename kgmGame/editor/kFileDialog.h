@@ -27,19 +27,18 @@ class kFileDialog : public kgmGui
   bool      allsee;
 
 public:
-  typedef void (*ClickEventCallback)(kgmObject*, kgmString);
+  typedef kgmCallback<void(kgmObject*, kgmString)> ClickEventCallback;
 
 private:
-  ClickEventCallback fnCallback;
-  kgmObject*         object;
+  ClickEventCallback callback;
 
 public:
   kFileDialog();
 
   void listFolder();
 
-  void forOpen(kgmString dir, ClickEventCallback fn_call = null, kgmObject* arg = null);
-  void forSave(kgmString dir, ClickEventCallback fn_call = null, kgmObject* arg = null);
+  void forOpen(kgmString dir, ClickEventCallback call);
+  void forSave(kgmString dir, ClickEventCallback call);
   void setFilter(kgmString flt);
 
   void changeLocation(bool s);
@@ -54,6 +53,10 @@ public:
   virtual void onFail(){}
 
 protected:
+  void onFileSelect();
+  void onOpenSelect();
+  void onSaveSelect();
+  void onFailSelect();
   void onAction(kgmGui*, u32);
   void onMsLeftUp(int, int, int);
   void onMsMove(int, int, int);

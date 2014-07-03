@@ -12,6 +12,8 @@ namespace kgmGameEditor
 
 class kViewOptions : public kgmGui
 {
+//  kgmObject(kViewObject);
+
   kgmGuiButton* btn_close;
   kgmGuiTab*    tab;
   kNode*        node;

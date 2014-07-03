@@ -9,23 +9,23 @@ using namespace kgmGameEditor;
 kgmString kFileDialog::DIRCON = "/";
 
 kFileDialog::kFileDialog()
-  :kgmGui(null, 100, 50, 200, 300)
+  :kgmGui(null, 100, 50, 200, 300), callback(null, null)
 {
   list = new kgmGuiList(this, 1, 1, 198, 200);
   text = new kgmGuiText(this, 1, 237, 198, 30);
   btnCmd = new kgmGuiButton(this, 1, 201, 99, 35);
   btnFail = new kgmGuiButton(this, 101, 201, 99, 35);
 
+  list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onFileSelect));
+
   btnFail->setText("Close");
+  btnFail->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onFailSelect));
 
   pathFolder = "";
 
   modeSave = false;
   localable = true;
   allsee = true;
-
-  fnCallback = null;
-  object = null;
 
 #ifdef WIN32
   DIRCON = "\\";
@@ -42,99 +42,79 @@ void kFileDialog::onMsMove(int k, int x, int y)
   kgmGui::onMsMove(k, x, y);
 }
 
-void kFileDialog::onAction(kgmGui *gui, u32 id)
+void kFileDialog::onFileSelect()
 {
-  if(gui == list)
+  int i = list->getSel();
+
+  kgmString item = list->getItem(i);
+
+  if(item == ".")
   {
-    int i = list->getSel();
 
-    kgmString item = list->getItem(i);
+  }
 
-    if(item == ".")
+  if(item == "..")
+  {
+    kgmString tmp = pathFolder;
+
+    if(tmp != "/")
     {
+      char* a = null;
 
-    }
-    if(item == "..")
-    {
-      kgmString tmp = pathFolder;
+      #ifdef WIN32
+      a = strrchr(tmp.data(), '\\');
+      #else
+      a = strrchr(tmp.data(), '/');
+      #endif
 
-      if(tmp != "/")
+      if(a)
       {
-        char* a = null;
-
-        #ifdef WIN32
-        a = strrchr(tmp.data(), '\\');
-        #else
-        a = strrchr(tmp.data(), '/');
-        #endif
-
-        if(a)
-        {
-          tmp = kgmString(tmp.data(), (int)(a - tmp.data()));
-        }
-
-        pathFolder = tmp;
-
-        listFolder();
+        tmp = kgmString(tmp.data(), (int)(a - tmp.data()));
       }
+
+      pathFolder = tmp;
+
+      listFolder();
+    }
+  }
+  else
+  {
+    kgmString tmp = pathFolder + DIRCON + kgmString(item);
+
+    if(kgmSystem::isDirectory(tmp))
+    {
+      pathFolder = tmp;
+      listFolder();
     }
     else
     {
-      kgmString tmp = pathFolder + DIRCON + kgmString(item);
+      text->setText(item);
+      text->dropCursor();
 
-      if(kgmSystem::isDirectory(tmp))
-      {
-        pathFolder = tmp;
-        listFolder();
-      }
-      else
-      {
-        text->setText(item);
-        text->dropCursor();
-
-        filePath = tmp;
-      }
+      filePath = tmp;
     }
   }
-  else if(gui == btnCmd)
-  {
-    hide();
+}
 
-    if(modeSave)
-    {
-      if(fnCallback && object)
-      {
-        fnCallback(object, getPath());
-        fnCallback = null;
-        object = null;
-      }
-      else
-      {
-        onSave();
-      }
-    }
-    else
-    {
-      if(fnCallback && object)
-      {
-        fnCallback(object, getPath());
-        fnCallback = null;
-        object = null;
-      }
-      else
-      {
-        onOpen();
-      }
-    }
-  }
-  else if(gui == btnFail)
-  {
-    hide();
+void kFileDialog::onOpenSelect()
+{
+  hide();
 
-    onFail();
-    fnCallback = null;
-    object = null;
-  }
+  if(callback.hasObject() && callback.hasFunction())
+    callback(callback.getObject(), getPath());
+}
+
+void kFileDialog::onSaveSelect()
+{
+  hide();
+
+  if(callback.hasObject() && callback.hasFunction())
+    callback(callback.getObject(), getPath());
+}
+
+void kFileDialog::onFailSelect()
+{
+  hide();
 }
 
 void kFileDialog::listFolder()
@@ -193,7 +173,7 @@ void kFileDialog::listFolder()
   }
 }
 
-void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, kgmObject* arg)
+void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call)
 {
   if(dir.length() < 1)
   {
@@ -206,6 +186,7 @@ void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, kgmObject* 
   }
 
   btnCmd->setText("Open");
+  btnCmd->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onOpenSelect));
 
   filePath = "";
   modeSave = false;
@@ -214,11 +195,10 @@ void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, kgmObject* 
   show();
   listFolder();
 
-  fnCallback = fn_call;
-  object = arg;
+  callback = fn_call;
 }
 
-void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, kgmObject* arg = null)
+void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call)
 {
   if(dir.length() < 1)
   {
@@ -231,6 +211,7 @@ void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, kgmO
   }
 
   btnCmd->setText("Save");
+  btnCmd->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onSaveSelect));
 
   filePath = "";
   modeSave = true;
@@ -239,8 +220,7 @@ void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, kgmO
   show();
   listFolder();
 
-  fnCallback = fn_call;
-  object = arg;
+  callback = fn_call;
 }
 
 void kFileDialog::setFilter(kgmString flt)

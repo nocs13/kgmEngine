@@ -44,6 +44,7 @@ public:
   box3 bnd;
   kgmString nam;
   kgmString lnk;
+  kgmString mat;
 
   kgmGraphics::Icon* icn;
 

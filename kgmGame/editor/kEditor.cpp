@@ -592,25 +592,31 @@ void kEditor::onKeyUp(int k)
   }
 
   if(k == KEY_LCTRL)
+  {
     ctrl_left = false;
+    game->setMsAbsolute(true);
+  }
 }
 
 void kEditor::onKeyDown(int k)
 {
   if(k == KEY_LCTRL)
+  {
     ctrl_left = true;
+    game->setMsAbsolute(false);
+  }
 }
 
 void kEditor::onMsLeftUp(int k, int x, int y)
 {
-  game->setMsAbsolute(true);
+  //game->setMsAbsolute(true);
   ms_click[0] = false;
 }
 
 void kEditor::onMsLeftDown(int k, int x, int y)
 {
   ms_click[0] = true;
-  game->setMsAbsolute(false);
+  //game->setMsAbsolute(false);
 
   if(game->getKeyState(KEY_Z))
     return;
@@ -785,14 +791,14 @@ void kEditor::onMapOpen()
 {
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&mapOpen, this);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&mapOpen));
 }
 
 void kEditor::onMapSave()
 {
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&mapSave, this);
+  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&mapSave));
 }
 
 void kEditor::onEditRemove()
@@ -891,7 +897,7 @@ void kEditor::onAddMesh()
 {
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&addMesh, this);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addMesh));
 }
 
 void kEditor::onAddLight()
@@ -916,7 +922,7 @@ void kEditor::onAddActor()
 {
   fdd->setFilter(".act");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&addActor, this);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addActor));
 }
 
 void kEditor::onAddSensor()
@@ -933,7 +939,7 @@ void kEditor::onAddMaterial()
 {
   fdd->setFilter(".mtl");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), (kFileDialog::ClickEventCallback)&addMaterial, this);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addMaterial));
 }
 
 void kEditor::onRunRun()
@@ -971,11 +977,11 @@ void kEditor::onOptionsDatabase()
   {
     kgmString cwd;
     kgmSystem::getCurrentDirectory(cwd);
-    fdd->forOpen(cwd);
+    //fdd->forOpen(cwd);
   }
   else
   {
-    fdd->forOpen(loc);
+    //fdd->forOpen(loc);
   }
 }
 
