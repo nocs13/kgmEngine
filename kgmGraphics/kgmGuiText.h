@@ -8,7 +8,7 @@ class kgmGuiText : public kgmGui
 {
   KGM_OBJECT(kgmGuiText);
 
-  typedef kgmCallback<void(kgmObject*)> ChangeEventCallback;
+  typedef kgmCallback<void(kgmObject*, kgmString)> ChangeEventCallback;
 
 private:
   bool editable;

@@ -100,7 +100,7 @@ void kgmGuiText::onKeyDown(int k)
     m_text = pt1 + pt2;
 
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject());
+      callback(callback.getObject(), getText());
   }
     break;
   case KEY_DELETE:
@@ -123,7 +123,7 @@ void kgmGuiText::onKeyDown(int k)
     m_text = pt1 + pt2;
 
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject());
+      callback(callback.getObject(), getText());
   }
     break;
   default:
@@ -175,7 +175,7 @@ void kgmGuiText::onKeyDown(int k)
     m_text = pt1 + pt3 + pt2;
 
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject());
+      callback(callback.getObject(), getText());
   }
     break;
   }

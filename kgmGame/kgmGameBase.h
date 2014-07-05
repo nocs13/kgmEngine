@@ -66,7 +66,7 @@ public:
 
   kgmGameLogic*         m_logic;
   kgmGameGraphics*      m_render;
-  kgmList<kgmGui*>      m_guis;     //game or nongame guis
+  kgmList<kgmGui*>      m_guis;    //game or nongame guis
 
 #ifdef EDITOR
   friend class kEditor;

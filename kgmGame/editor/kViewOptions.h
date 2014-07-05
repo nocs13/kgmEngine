@@ -18,6 +18,9 @@ class kViewOptions : public kgmGui
   kgmGuiTab*    tab;
   kNode*        node;
 
+protected:
+  u32  y_coord;
+
 public:
   typedef kgmCallback<void(kgmObject*)> CloseCallback;
 
@@ -26,20 +29,30 @@ public:
   kViewOptions(kNode* n, int x, int y, int w, int h);
 
   void onAction(kgmGui* from, u32 arg);
+  void onCloseOptions();
+  void onPositionX(kgmString s);
+  void onPositionY(kgmString s);
+  void onPositionZ(kgmString s);
 
   void setCloseCallback(CloseCallback cfn)
   {
     callClose = cfn;
   }
+
+
 };
+
+class kFileDialog;
 
 class kViewOptionsForMesh : public kViewOptions
 {
+
+  kFileDialog* fd;
 public:
-  kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
-  :kViewOptions(n, x, y, w, h)
-  {
-  }
+  kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
+
+  void onSelectMaterial();
+  void onSelectedMaterial();
 };
 
 class kViewOptionsForLight : public kViewOptions

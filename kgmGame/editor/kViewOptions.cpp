@@ -2,6 +2,7 @@
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
+#include "kFileDialog.h"
 
 using namespace kgmGameEditor;
 
@@ -12,47 +13,54 @@ kgmGui(null, x, y, w, h)
   //tab = new kgmGuiTab(this, 0, 0, w, h);
   tab = null;
   node = n;
+  y_coord = 0;
 
-  btn_close = new kgmGuiButton(this, w - 11, 1, 10, 10);
+  btn_close = new kgmGuiButton(this, w - 21, y_coord + 1, 20, 20);
   btn_close->setText("X");
+  btn_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&onCloseOptions));
 
   if(n)
   {
     kgmGui* g;
 
-    g = new kgmGuiLabel(this, 0, 0, 50, 10);
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
     g->setText(n->nam);
-    g = new kgmGuiLabel(this, 0, 12, 50, 20);
+    y_coord += 22;
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
     g->setText("Position");
-    g = new kgmGuiText(this, 51, 12, 50, 20);
+    g = new kgmGuiText(this, 51, y_coord, 50, 20);
     g->setSid("position_x");
     g->setText(kgmConvert::toString(n->pos.x));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&onPositionX));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 102, 12, 50, 20);
+    g = new kgmGuiText(this, 102, y_coord, 50, 20);
     g->setSid("position_y");
     g->setText(kgmConvert::toString(n->pos.y));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&onPositionY));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 154, 12, 50, 20);
+    g = new kgmGuiText(this, 154, y_coord, 50, 20);
     g->setSid("position_z");
     g->setText(kgmConvert::toString(n->pos.z));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&onPositionZ));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
-    g = new kgmGuiLabel(this, 0, 35, 50, 20);
+    y_coord += 23;
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
     g->setText("Rotation");
-    g = new kgmGuiText(this, 51, 35, 50, 20);
+    g = new kgmGuiText(this, 51, y_coord, 50, 20);
     g->setSid("rotation_x");
     g->setText(kgmConvert::toString(n->rot.x));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 102, 35, 50, 20);
+    g = new kgmGuiText(this, 102, y_coord, 50, 20);
     g->setSid("rotation_y");
     g->setText(kgmConvert::toString(n->rot.y));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 154, 35, 50, 20);
+    g = new kgmGuiText(this, 154, y_coord, 50, 20);
     g->setSid("rotation_z");
     g->setText(kgmConvert::toString(n->rot.z));
     ((kgmGuiText*)g)->setEditable(true);
@@ -93,4 +101,58 @@ void kViewOptions::onAction(kgmGui *from, u32 arg)
     node->pos.z = kgmConvert::toDouble(txt);
     node->setPosition(node->pos);
   }
+}
+
+void kViewOptions::onCloseOptions()
+{
+  if(callClose.hasObject() && callClose.hasFunction())
+    callClose(callClose.getObject());
+
+  erase();
+  release();
+}
+
+void kViewOptions::onPositionX(kgmString s)
+{
+  node->pos.x = kgmConvert::toDouble(s);
+  node->setPosition(node->pos);
+}
+
+void kViewOptions::onPositionY(kgmString s)
+{
+  node->pos.y = kgmConvert::toDouble(s);
+  node->setPosition(node->pos);
+}
+
+void kViewOptions::onPositionZ(kgmString s)
+{
+  node->pos.z = kgmConvert::toDouble(s);
+  node->setPosition(node->pos);
+}
+
+kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  fd = null;
+  y_coord += 23;
+  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g->setText("Material");
+  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+
+  kgmGuiButton* btn = new kgmGuiButton(this, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&onSelectMaterial));
+}
+
+void kViewOptionsForMesh::onSelectMaterial()
+{
+  if(fd)
+    return;
+
+  fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("mtl");
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }

@@ -872,16 +872,16 @@ void kEditor::onEditOptions()
   switch(selected->typ)
   {
   case kNode::MESH:
-    vop = new kViewOptionsForMesh(selected, 50, 50, 200, 300);
+    vop = new kViewOptionsForMesh(selected, 50, 50, 210, 300);
     break;
   case kNode::LIGHT:
-    vop = new kViewOptionsForLight(selected, 50, 50, 200, 300);
+    vop = new kViewOptionsForLight(selected, 50, 50, 210, 300);
     break;
   case kNode::ACTOR:
-    vop = new kViewOptionsForActor(selected, 50, 50, 200, 300);
+    vop = new kViewOptionsForActor(selected, 50, 50, 210, 300);
     break;
   case kNode::MATERIAL:
-    vop = new kViewOptionsForMaterial(selected, 50, 50, 200, 300);
+    vop = new kViewOptionsForMaterial(selected, 50, 50, 210, 300);
     break;
   }
 

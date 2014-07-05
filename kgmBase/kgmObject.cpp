@@ -28,7 +28,7 @@ void kgmObject::operator delete(void* p){
  }
 
  if(is)
-  free(p);
+   free(p);
 }
 
 void kgmObject::releaseObjects(void)
