@@ -342,6 +342,7 @@ bool kEditor::mapOpen(kgmString s)
         {
           node = new kNode(mesh);
           node->nam = id;
+          node->lnk = ln;
           node->bnd = mesh->bound();
           game->m_render->add(node->msh, mtl);
           nodes.add(node);
@@ -377,6 +378,15 @@ bool kEditor::mapOpen(kgmString s)
         xml.attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
         node->setRotation(v);
+      }
+      else if(id == "Material")
+      {
+        vec3 v;
+        value.clear();
+        xml.attribute("value", value);
+
+        if(value.length())
+          node->setMaterial(value);
       }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
