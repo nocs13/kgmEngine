@@ -137,7 +137,7 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   y_coord += 23;
   kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
   g->setText("Material");
-  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = guiMtlText = new kgmGuiText(this, 51, y_coord, 70, 20);
 
   kgmGuiButton* btn = new kgmGuiButton(this, 125, y_coord, 50, 20);
   btn->setText("select");
@@ -154,5 +154,25 @@ void kViewOptionsForMesh::onSelectMaterial()
   fd->showHidden(false);
   fd->show();
   fd->setFilter("mtl");
+  fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&onSelectedMaterial));
+
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMesh::onSelectedMaterial()
+{
+  node->setMaterial(fd->getFile());
+  guiMtlText->setText(fd->getFile());
+
+  fd->erase();
+  fd->release();
+  fd = null;
+}
+
+void kViewOptionsForMesh::onSelectFailed()
+{
+  fd->erase();
+  fd->release();
+  fd = null;
 }

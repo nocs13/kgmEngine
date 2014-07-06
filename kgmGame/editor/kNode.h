@@ -110,6 +110,7 @@ public:
 
   void setPosition(vec3 v);
   void setRotation(vec3 r);
+  void setMaterial(kgmString m);
 };
 
 }

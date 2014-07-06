@@ -1205,6 +1205,58 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("image", attr);
         gs->sbutton.image = rc->getTexture(attr);
       }
+      else if(n->m_name == "GuiMenu")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->smenu.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->smenu.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->smenu.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->smenu.tx_color);
+        n->attribute("image", attr);
+        gs->smenu.image = rc->getTexture(attr);
+      }
+      else if(n->m_name == "GuiText")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->stext.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->stext.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->stext.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->stext.tx_color);
+        n->attribute("image", attr);
+        gs->stext.image = rc->getTexture(attr);
+      }
+      else if(n->m_name == "GuiScroll")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sscroll.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sscroll.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sscroll.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->sscroll.tx_color);
+        n->attribute("image", attr);
+        gs->sscroll.image = rc->getTexture(attr);
+      }
+      else if(n->m_name == "GuiLabel")
+      {
+        n->attribute("bg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slabel.bg_color);
+        n->attribute("fg_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slabel.fg_color);
+        n->attribute("ac_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slabel.ac_color);
+        n->attribute("tx_color", attr);
+        KGM_STRHEX_TO_INT(attr, gs->slabel.tx_color);
+        n->attribute("image", attr);
+        gs->slabel.image = rc->getTexture(attr);
+      }
     }
 
     return gs;

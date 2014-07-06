@@ -31,6 +31,7 @@ public:
 
 private:
   ClickEventCallback callback;
+  kgmGuiButton::ClickEventCallback fail_callback;
 
 public:
   kFileDialog();
@@ -40,6 +41,7 @@ public:
   void forOpen(kgmString dir, ClickEventCallback call);
   void forSave(kgmString dir, ClickEventCallback call);
   void setFilter(kgmString flt);
+  void setFailCallback(kgmGuiButton::ClickEventCallback);
 
   void changeLocation(bool s);
   void showHidden(bool s);

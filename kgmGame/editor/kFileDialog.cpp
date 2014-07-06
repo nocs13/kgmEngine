@@ -9,7 +9,7 @@ using namespace kgmGameEditor;
 kgmString kFileDialog::DIRCON = "/";
 
 kFileDialog::kFileDialog()
-  :kgmGui(null, 100, 50, 200, 300), callback(null, null)
+  :kgmGui(null, 100, 50, 200, 300), callback(null, null), fail_callback(null, null)
 {
   list = new kgmGuiList(this, 1, 1, 198, 200);
   text = new kgmGuiText(this, 1, 237, 198, 30);
@@ -115,6 +115,14 @@ void kFileDialog::onSaveSelect()
 void kFileDialog::onFailSelect()
 {
   hide();
+
+  if(fail_callback.hasObject() && fail_callback.hasFunction())
+    fail_callback(fail_callback.getObject());
+}
+
+void kFileDialog::setFailCallback(kgmGuiButton::ClickEventCallback call)
+{
+  fail_callback = call;
 }
 
 void kFileDialog::listFolder()

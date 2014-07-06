@@ -51,3 +51,15 @@ void kNode::setRotation(vec3 r)
     break;
   }
 }
+
+void kNode::setMaterial(kgmString m)
+{
+  if(typ == MESH)// || typ == ACTOR
+  {
+    kgmMaterial* mtl = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getMaterial(m.data());
+
+    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtl);
+
+    mat = m;
+  }
+}
