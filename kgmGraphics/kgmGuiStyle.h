@@ -53,7 +53,8 @@ class kgmGuiStyle: public kgmObject
 
   struct SGuiCheck: SGui
   {
-
+    Color bg_check;
+    Color fg_check;
   };
 
   struct SGuiScroll: SGui

@@ -139,6 +139,9 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   g->setText("Material");
   g = guiMtlText = new kgmGuiText(this, 51, y_coord, 70, 20);
 
+  if(node->mat.length())
+    g->setText(node->mat);
+
   kgmGuiButton* btn = new kgmGuiButton(this, 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&onSelectMaterial));

@@ -1267,6 +1267,10 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         KGM_STRHEX_TO_INT(attr, gs->scheck.ac_color);
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->scheck.tx_color);
+        n->attribute("bg_check", attr);
+        KGM_STRHEX_TO_INT(attr, gs->scheck.bg_check);
+        n->attribute("fg_check", attr);
+        KGM_STRHEX_TO_INT(attr, gs->scheck.fg_check);
         n->attribute("image", attr);
         gs->scheck.image = rc->getTexture(attr);
       }

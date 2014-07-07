@@ -54,6 +54,8 @@ kgmGuiStyle::kgmGuiStyle()
   scheck.bg_color = 0xff999999;
   scheck.ac_color = 0xffaaaaaa;
   scheck.fg_color = 0xffbbbbbb;
+  scheck.bg_check = 0xff555555;
+  scheck.fg_check = 0xffeeeeee;
   scheck.image    = null;
 
   //gui scroll

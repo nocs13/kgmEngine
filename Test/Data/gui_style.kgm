@@ -8,5 +8,5 @@
 <GuiText bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  image='gui_btn_img.tga'/>
 <GuiScroll bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  image='gui_btn_img.tga'/>
 <GuiLabel bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  image='gui_btn_img.tga'/>
-<GuiCheck bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  image='gui_btn_img.tga'/>
+<GuiCheck bg_color='0xffaaaaaa' fg_color='0xffffffff' ac_color='0xff777777' tx_color='0xffffffff'  bg_check='0xff795306' fg_check='0xffecc53f' image='gui_btn_img.tga'/>
 </GuiTheme>

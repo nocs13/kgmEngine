@@ -1502,11 +1502,18 @@ void kgmGraphics::render(kgmGui* gui){
 
     kgmGui::Rect btClip = rect;
     kgmGui::Rect txClip = rect;
+    kgmGui::Rect chClip = rect;
 
     btClip.x += 2;
     btClip.y += 2;
     btClip.w = 20;
-    btClip.h = rect.h - 2;
+    btClip.h = rect.h - 4;
+
+    chClip = btClip;
+    chClip.x += 3;
+    chClip.y += 3;
+    chClip.w -= 6;
+    chClip.h -= 6;
 
     txClip.x += 25;
     txClip.w -= 25;
@@ -1521,10 +1528,10 @@ void kgmGraphics::render(kgmGui* gui){
       gcDrawRect(rect, gui_style->scheck.bg_color, gui_style->scheck.image);
     }
 
+    gcDrawRect(btClip, gui_style->scheck.bg_check, null);
+
     if(((kgmGuiCheck*)gui)->isCheck())
-      gcDrawRect(btClip, gui_style->scheck.bg_color + 0x00111111, null);
-    else
-      gcDrawRect(btClip, gui_style->scheck.fg_color + 0x00888888, null);
+      gcDrawRect(chClip, gui_style->scheck.fg_check, null);
 
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, txClip, text);
