@@ -5,6 +5,7 @@
 #include "../../kgmGraphics/kgmGui.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
+#include "../../kgmGraphics/kgmGuiCheck.h"
 #include "../../kgmBase/kgmCallback.h"
 
 namespace kgmGameEditor
@@ -55,6 +56,7 @@ public:
   void onSelectFailed();
   void onSelectMaterial();
   void onSelectedMaterial();
+  void onSelectCollision(bool);
 };
 
 class kViewOptionsForLight : public kViewOptions

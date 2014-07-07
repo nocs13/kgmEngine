@@ -49,6 +49,13 @@ kgmGuiStyle::kgmGuiStyle()
   slabel.fg_color = 0xffbbbbbb;
   slabel.image    = null;
 
+  //gui check
+  scheck.tx_color = 0xffffffff;
+  scheck.bg_color = 0xff999999;
+  scheck.ac_color = 0xffaaaaaa;
+  scheck.fg_color = 0xffbbbbbb;
+  scheck.image    = null;
+
   //gui scroll
   sscroll.tx_color = 0xffffffff;
   sscroll.bg_color = 0xff999999;

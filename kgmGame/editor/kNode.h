@@ -24,8 +24,7 @@ public:
     LIGHT,
     ACTOR,
     SENSOR,
-    TRIGGER,
-    MATERIAL
+    TRIGGER
   };
 
   union
@@ -35,16 +34,20 @@ public:
     kgmActor*     act;
     kgmSensor*    sns;
     kgmTrigger*   trg;
-    kgmMaterial*  mtl;
   };
 
   Type typ;
+
   vec3 pos;
   vec3 rot;
+
   box3 bnd;
+
   kgmString nam;
   kgmString lnk;
   kgmString mat;
+
+  bool col;
 
   kgmGraphics::Icon* icn;
 
@@ -53,6 +56,7 @@ public:
     typ = NONE;
     msh = null;
     icn = null;
+    col = false;
   }
 
   kNode(kgmMesh* m)
@@ -60,6 +64,7 @@ public:
     typ = MESH;
     msh = m;
     icn = null;
+    col = false;
   }
 
   kNode(kgmLight* l)
@@ -67,6 +72,7 @@ public:
     typ = LIGHT;
     lgt = l;
     icn = null;
+    col = false;
   }
 
   kNode(kgmActor* a)
@@ -74,6 +80,7 @@ public:
     typ = ACTOR;
     act = a;
     icn = null;
+    col = false;
   }
 
   kNode(kgmSensor* s)
@@ -81,6 +88,7 @@ public:
     typ = SENSOR;
     sns = s;
     icn = null;
+    col = false;
   }
 
   kNode(kgmTrigger* t)
@@ -88,13 +96,7 @@ public:
     typ = TRIGGER;
     trg = t;
     icn = null;
-  }
-
-  kNode(kgmMaterial* m)
-  {
-    typ = MATERIAL;
-    mtl = m;
-    icn = null;
+    col = false;
   }
 
   ~kNode()

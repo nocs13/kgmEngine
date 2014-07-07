@@ -6,21 +6,18 @@ KGMOBJECT_IMPLEMENT(kgmGuiButton, kgmGui)
 kgmGuiButton::kgmGuiButton()
 :callback(null, null)
 {
-  m_type = TypeNormal;
   m_state = StateNone;
 }
 
 kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
 :kgmGui(par, x, y, w, h), callback(null, null)
 {
-  m_type = TypeNormal;
   m_state = StateNone;
 }
 
 kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call)
 :kgmGui(par, x, y, w, h), callback(null, null)
 {
-  m_type = TypeNormal;
   m_state = StateNone;
 
   callback = call;

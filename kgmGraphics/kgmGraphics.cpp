@@ -3,6 +3,7 @@
 #include "kgmGuiButton.h"
 #include "kgmGuiScroll.h"
 #include "kgmGuiLabel.h"
+#include "kgmGuiCheck.h"
 #include "kgmGuiList.h"
 #include "kgmGuiMenu.h"
 #include "kgmGuiTab.h"
@@ -1484,6 +1485,49 @@ void kgmGraphics::render(kgmGui* gui){
 
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
+  }
+  else if(gui->isClass(kgmGuiCheck::Class))
+  {
+    u32 fwidth = (u32)((float)(rect.w - 25) / (float)(text.length() + 1));
+    u32 fheight = (u32)((float)rect.h * (float)0.75f);
+    u32 tlen = text.length();
+    u32 fw = (tlen) * fwidth;
+    u32 fh = fheight;
+    kgmGui::Rect tClip = rect;
+
+    tClip.x = rect.x + rect.w / 2 - fw / 2;
+    tClip.y = rect.y + rect.h / 2 - fh / 2;
+    tClip.w = fw;
+    tClip.h = fh;
+
+    kgmGui::Rect btClip = rect;
+    kgmGui::Rect txClip = rect;
+
+    btClip.x += 2;
+    btClip.y += 2;
+    btClip.w = 20;
+    btClip.h = rect.h - 2;
+
+    txClip.x += 25;
+    txClip.w -= 25;
+
+    switch(((kgmGuiCheck*)gui)->getState())
+    {
+    case kgmGuiCheck::StateFocus:
+      gcDrawRect(rect, gui_style->scheck.ac_color, gui_style->scheck.image);
+      break;
+    case kgmGuiCheck::StateNone:
+    default:
+      gcDrawRect(rect, gui_style->scheck.bg_color, gui_style->scheck.image);
+    }
+
+    if(((kgmGuiCheck*)gui)->isCheck())
+      gcDrawRect(btClip, gui_style->scheck.bg_color + 0x00111111, null);
+    else
+      gcDrawRect(btClip, gui_style->scheck.fg_color + 0x00888888, null);
+
+    if(text.length() > 0)
+      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, txClip, text);
   }
   else if(gui->isType(kgmGui::Class))
   {

@@ -51,6 +51,11 @@ class kgmGuiStyle: public kgmObject
 
   };
 
+  struct SGuiCheck: SGui
+  {
+
+  };
+
   struct SGuiScroll: SGui
   {
 
@@ -69,6 +74,7 @@ class kgmGuiStyle: public kgmObject
   SGuiMenu     smenu;
   SGuiText     stext;
   SGuiLabel    slabel;
+  SGuiCheck    scheck;
   SGuiScroll   sscroll;
   SGuiButton   sbutton;
   SGuiProgress sprogess;

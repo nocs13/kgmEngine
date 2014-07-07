@@ -19,7 +19,6 @@ enum MENUEVENT
   ME_ADD_ACTOR,
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
-  ME_ADD_MATERIAL,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
   ME_OPTIONS_DATABASE,
@@ -61,7 +60,6 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddActor));
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddSensor));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddTrigger));
-    item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMaterial));
     item = menu->add("Run");
     item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onRunRun));
     item = menu->add("View");
@@ -74,7 +72,7 @@ kEditor::kEditor(kgmGameBase* g)
     pivot = new kPivot();
     game->m_render->add(pivot, null);
 
-    fdd = new kFDD(this);
+    fdd = new kFileDialog();
     fdd->showHidden(false);
     fdd->hide();
     game->m_render->add(fdd);
@@ -298,17 +296,7 @@ bool kEditor::mapOpen(kgmString s)
     {
       id = xml.m_tagName;
 
-      if(id == "kgmMaterial")
-      {
-        kgmString id;
-        xml.attribute("name", id);
-        node = new kNode(new kgmMaterial());
-        node->mtl->setId(id);
-        node->nam = id;
-        game->m_render->add(node->mtl);
-        nodes.add(node);
-      }
-      else if(id == "kgmCamera")
+      if(id == "kgmCamera")
       {
 
       }
@@ -381,12 +369,21 @@ bool kEditor::mapOpen(kgmString s)
       }
       else if(id == "Material")
       {
-        vec3 v;
         value.clear();
         xml.attribute("value", value);
 
         if(value.length())
           node->setMaterial(value);
+      }
+      else if(id == "Collision")
+      {
+        value.clear();
+        xml.attribute("value", value);
+
+        u32 t = kgmConvert::toInteger(value);
+
+        if(t != 0)
+          node->col = true;
       }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
@@ -395,6 +392,8 @@ bool kEditor::mapOpen(kgmString s)
   }
 
   xml.close();
+
+  selected = null;
 
   return true;
 }
@@ -426,9 +425,6 @@ bool kEditor::mapSave(kgmString s)
       continue;
     case kNode::ACTOR:
       actors.add(*i);
-      continue;
-    case kNode::MATERIAL:
-      materials.add(*i);
       continue;
     default:
       continue;
@@ -463,6 +459,10 @@ bool kEditor::mapSave(kgmString s)
 
     fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+
+    if((*i)->col)
+      fprintf(f, "  <Collision value='%u'/>\n", (*i)->col);
+
     fprintf(f, " </kgmMesh>\n");
   }
 
@@ -522,25 +522,6 @@ bool kEditor::addMesh(kgmString fpath)
 
 bool kEditor::addActor(kgmString path)
 {
-  return false;
-}
-
-bool kEditor::addMaterial(kgmString id)
-{
-  kgmMaterial* mtl = game->getResources()->getMaterial(id.data());
-
-  if(!mtl)
-    return false;
-
-  if(!vo->hasItem(id))
-  {
-    kNode* node = new kNode(mtl);
-    node->nam = id;
-
-    game->m_render->add(mtl);
-    vo->getGuiList()->addItem(id);
-  }
-
   return false;
 }
 
@@ -824,9 +805,6 @@ void kEditor::onEditRemove()
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
     break;
-  case kNode::MATERIAL:
-    game->getRender()->remove(selected->mtl);
-    break;
   }
 
   vo->getGuiList()->remItem(vo->getGuiList()->getSel());
@@ -867,9 +845,6 @@ void kEditor::onEditDuplicate()
     game->m_render->add(node->lgt);
     game->m_render->add(node->icn);
     break;
-  case kNode::MATERIAL:
-    game->getRender()->remove(selected->mtl);
-    break;
   }
 
 }
@@ -889,9 +864,6 @@ void kEditor::onEditOptions()
     break;
   case kNode::ACTOR:
     vop = new kViewOptionsForActor(selected, 50, 50, 210, 300);
-    break;
-  case kNode::MATERIAL:
-    vop = new kViewOptionsForMaterial(selected, 50, 50, 210, 300);
     break;
   }
 
@@ -943,13 +915,6 @@ void kEditor::onAddSensor()
 void kEditor::onAddTrigger()
 {
 
-}
-
-void kEditor::onAddMaterial()
-{
-  fdd->setFilter(".mtl");
-  fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addMaterial));
 }
 
 void kEditor::onRunRun()

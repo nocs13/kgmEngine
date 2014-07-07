@@ -37,32 +37,6 @@ class kEditor: public kgmEvent
     }
   };
 
-  class kFDD: public kFileDialog
-  {
-    kEditor* editor;
-
-  public:
-    kFDD(kEditor* e)
-    {
-      editor = e;
-    }
-
-    void onOpen()
-    {
-      editor->onAction(this, 1);
-    }
-
-    void onSave()
-    {
-      editor->onAction(this, 2);
-    }
-
-    void onFail()
-    {
-      editor->onAction(this, 0);
-    }
-  };
-
 private:
 
   kgmGameBase* game;
@@ -81,7 +55,7 @@ private:
 
   kMenu*     menu;
 
-  kFDD*      fdd;
+  kFileDialog* fdd;
 
   u32        oquered;
 
@@ -108,7 +82,6 @@ public:
   bool mapOpen(kgmString);
   bool addMesh(kgmString);
   bool addActor(kgmString);
-  bool addMaterial(kgmString);
 
   void initPhysics();
   void initLogic();
@@ -135,7 +108,6 @@ public:
   void onAddActor();
   void onAddSensor();
   void onAddTrigger();
-  void onAddMaterial();
   void onViewObjects();
   void onOptionsDatabase();
   void onRunRun();

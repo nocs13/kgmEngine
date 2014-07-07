@@ -7,13 +7,6 @@ class kgmGuiButton: public kgmGui
 {
   KGM_OBJECT(kgmGuiButton);
 
-  enum Type
-  {
-    TypeNormal,
-    TypeCheck,
-    TypeRadio,
-  };
-
   enum State
   {
     StateNone,
@@ -23,7 +16,6 @@ class kgmGuiButton: public kgmGui
 
   typedef kgmCallback<void(kgmObject*)> ClickEventCallback;
 
-  Type   m_type;
   State  m_state;
 
   ClickEventCallback callback;

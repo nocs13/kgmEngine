@@ -142,6 +142,12 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   kgmGuiButton* btn = new kgmGuiButton(this, 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&onSelectMaterial));
+
+  y_coord += 23;
+  kgmGuiCheck* chk = new kgmGuiCheck(this, 1, y_coord, 150, 20);
+  chk->setText("collide");
+  chk->setCheck(node->col);
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&onSelectCollision));
 }
 
 void kViewOptionsForMesh::onSelectMaterial()
@@ -175,4 +181,9 @@ void kViewOptionsForMesh::onSelectFailed()
   fd->erase();
   fd->release();
   fd = null;
+}
+
+void kViewOptionsForMesh::onSelectCollision(bool s)
+{
+  node->col = s;
 }
