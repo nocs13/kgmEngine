@@ -42,7 +42,7 @@ class kgmGuiScroll: public kgmGui{
     callback = call;
   }
 
-  void onMsMove(int key, u32 x, u32 y);
-  void onMsLeftDown(int key, u32 x, u32 y);
-  void onMsLeftUp(int key, u32 x, u32 y);
+  void onMsMove(int key, int x, int y);
+  void onMsLeftDown(int key, int x, int y);
+  void onMsLeftUp(int key, int x, int y);
 };

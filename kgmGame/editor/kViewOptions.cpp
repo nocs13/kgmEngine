@@ -65,10 +65,19 @@ kgmGui(null, x, y, w, h)
     g->setText(kgmConvert::toString(n->rot.z));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
+
+    y_coord += 23;
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g->setText("Rotation Y");
+    g = new kgmGuiScroll(this, 51, y_coord, 150, 20);
+    g->show();
+    ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
+    ((kgmGuiScroll*)g)->setRange(360);
+    ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.z));
   }
 }
 
-void kViewOptions::onAction(kgmGui *from, u32 arg)
+/*void kViewOptions::onAction(kgmGui *from, u32 arg)
 {
   kgmString txt;
 
@@ -101,7 +110,7 @@ void kViewOptions::onAction(kgmGui *from, u32 arg)
     node->pos.z = kgmConvert::toDouble(txt);
     node->setPosition(node->pos);
   }
-}
+}*/
 
 void kViewOptions::onCloseOptions()
 {
@@ -128,6 +137,12 @@ void kViewOptions::onPositionZ(kgmString s)
 {
   node->pos.z = kgmConvert::toDouble(s);
   node->setPosition(node->pos);
+}
+
+void kViewOptions::onRotationZ(u32 s)
+{
+  node->rot.z = s;
+  node->setRotation(node->pos);
 }
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
