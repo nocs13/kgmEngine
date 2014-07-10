@@ -32,7 +32,7 @@ kgmGuiScroll::~kgmGuiScroll()
 
 kgmGui::Rect kgmGuiScroll::getScrollerRect()
 {
-  int t = (m_orientation == ORIENT_VERTICAL) ? (m_rect.height()) :(m_rect.width());
+  int t = (m_orientation == ORIENT_VERTICAL) ? (m_rect.height()) : (m_rect.width());
   int s = t / m_range;
   int k = t / m_range;
 
@@ -42,9 +42,15 @@ kgmGui::Rect kgmGuiScroll::getScrollerRect()
   Rect rect;
 
   if(m_orientation == ORIENT_VERTICAL)
-    rect = Rect(m_rect.x, m_rect.y + m_position * m_ppp, m_rect.w, s);
+    if((m_position * m_ppp + s) < m_rect.height())
+      rect = Rect(m_rect.x, m_rect.y + m_position * m_ppp, m_rect.w, s);
+    else
+      rect = Rect(m_rect.x, m_rect.y + m_rect.height() - s, m_rect.w, s);
   else
-    rect = Rect(m_rect.x + m_position * m_ppp, m_rect.y, s, m_rect.h);
+    if((m_position * m_ppp + s) < m_rect.width())
+      rect = Rect(m_rect.x + m_position * m_ppp, m_rect.y, s, m_rect.h);
+    else
+      rect = Rect(m_rect.x + m_rect.width() - s, m_rect.y, s, m_rect.h);
 
   return rect;
 }
@@ -63,7 +69,8 @@ void kgmGuiScroll::setRange(u32 r)
 
 void kgmGuiScroll::setPosition(u32 p)
 {
-  m_position = p;
+  if(p >= 0 && p <= m_range)
+    m_position = p;
 }
 
 void kgmGuiScroll::setOrientation(ORIENT o)
@@ -84,6 +91,8 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
 {
   u32 pos;
 
+  if(!m_drag)
+    return;
   //if(!m_view  ||
      //!m_drag ||
      //!m_rect.inside(x, y))
@@ -95,22 +104,24 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
   if(m_orientation == ORIENT_VERTICAL)
   {
     h = (float)m_rect.height() / (float)m_range;
-    d = (float)(y - m_rect.y) / (float)h;
+    //d = (float)(y - m_rect.y) / (float)h;
+    d = (float)(y) / (float)h;
   }
   else
   {
     h = (float)m_rect.width() / (float)m_range;
-    d = (float)(x - m_rect.x) / (float)h;
+    //d = (float)(x - m_rect.x) / (float)h;
+    d = (float)(x) / (float)h;
   }
 
   pos = d;
 
   if(m_orientation == ORIENT_VERTICAL)
-    pos = (y - m_rect.y) / m_ppp;
+    pos = (y) / m_ppp;
   else
-    pos = (x - m_rect.x) / m_ppp;
+    pos = (x) / m_ppp;
 
-  if(pos != m_position)
+  if(pos >= 0 && pos <= m_range && pos != m_position)
   {
     m_position = pos;
     //m_msp = y;
@@ -121,9 +132,12 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
 
 void kgmGuiScroll::onMsLeftDown(int key, int x, int y)
 {
-  m_drag = true;
-  m_dx = x;
-  m_dy = y;
+  if(getScrollerRect().inside(m_rect.x + x, m_rect.y + y))
+  {
+    m_drag = true;
+    m_dx = x;
+    m_dy = y;
+  }
 }
 
 void kgmGuiScroll::onMsLeftUp(int key, int x, int y)

@@ -34,6 +34,8 @@ public:
   void onPositionX(kgmString s);
   void onPositionY(kgmString s);
   void onPositionZ(kgmString s);
+  void onRotationX(u32 s);
+  void onRotationY(u32 s);
   void onRotationZ(u32 s);
 
   void setCloseCallback(CloseCallback cfn)

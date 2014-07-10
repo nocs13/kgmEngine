@@ -175,14 +175,16 @@ void kgmGuiList::sort()
 
 void kgmGuiList::onMsLeftDown(int k, int x, int y)
 {
-  if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-    return m_scroll->onMsLeftDown(k, x, y);
+  kgmGui::onMsLeftDown(k, x, y);
+  //if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
+  //  return m_scroll->onMsLeftDown(k, x, y);
 }
 
 void kgmGuiList::onMsLeftUp(int k, int x, int y)
 {
-  if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-    return m_scroll->onMsLeftUp(k, x, y);
+  kgmGui::onMsLeftUp(k, x, y);
+  //if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
+  //  return m_scroll->onMsLeftUp(k, x, y);
 
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
   m_itemSel = m_position + (y - rect.y) / m_itemHeight;
@@ -197,7 +199,7 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
 void kgmGuiList::onMsMove(int k, int x, int y)
 {
   if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-    return m_scroll->onMsMove(k, x, y);
+    return m_scroll->onMsMove(k, x - m_scroll->m_rect.x, y - m_scroll->m_rect.y);
   else if((y / m_itemHeight < m_items.size()) &&
           (y < (m_rect.y + m_rect.h - 1)))
     m_itemSel = getFirstVisibleItem() +  y / m_itemHeight;

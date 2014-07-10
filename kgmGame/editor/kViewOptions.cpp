@@ -68,12 +68,31 @@ kgmGui(null, x, y, w, h)
 
     y_coord += 23;
     g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g->setText("Rotation X");
+    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
+    g->show();
+    ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
+    ((kgmGuiScroll*)g)->setRange(360);
+    ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.x));
+    ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&onRotationX));
+    y_coord += 23;
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
     g->setText("Rotation Y");
-    g = new kgmGuiScroll(this, 51, y_coord, 150, 20);
+    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
+    g->show();
+    ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
+    ((kgmGuiScroll*)g)->setRange(360);
+    ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.y));
+    ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&onRotationY));
+    y_coord += 23;
+    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g->setText("Rotation Z");
+    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.z));
+    ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&onRotationZ));
   }
 }
 
@@ -139,10 +158,22 @@ void kViewOptions::onPositionZ(kgmString s)
   node->setPosition(node->pos);
 }
 
+void kViewOptions::onRotationX(u32 s)
+{
+  node->rot.x = DEGTORAD(s);
+  node->setRotation(node->rot);
+}
+
+void kViewOptions::onRotationY(u32 s)
+{
+  node->rot.y = DEGTORAD(s);
+  node->setRotation(node->rot);
+}
+
 void kViewOptions::onRotationZ(u32 s)
 {
-  node->rot.z = s;
-  node->setRotation(node->pos);
+  node->rot.z = DEGTORAD(s);
+  node->setRotation(node->rot);
 }
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
