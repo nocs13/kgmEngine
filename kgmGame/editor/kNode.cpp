@@ -42,7 +42,10 @@ void kNode::setRotation(vec3 r)
   {
     mtx4 mrot, mpos, mtrn;
 
+    mrot.identity();
     mrot.rotate(rot);
+
+    mpos.identity();
     mpos.translate(pos);
     mtrn = mrot * mpos;
 

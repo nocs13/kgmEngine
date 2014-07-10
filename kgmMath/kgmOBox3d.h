@@ -49,8 +49,7 @@ public:
 
   void points(kgmVector3d<T> v[])
   {
-    quat q;
-    q.euler(rotation);
+    quat q(rotation);
 
     mtx4  mrt(q);
     mtx4  mtl(position);

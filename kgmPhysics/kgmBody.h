@@ -86,7 +86,7 @@ public:
     m_rotation.x = x;
     m_rotation.y = y;
     m_rotation.z = z;
-    m_quaternion.euler(m_rotation);
+    m_quaternion = quat(m_rotation);
 
     mtx4 m(m_quaternion);
     vec3 v(1, 0, 0);

@@ -199,7 +199,146 @@ public:
 
   m[0] = m[5] = m[10] = m[15] = 1;
  }
- void angles(kgmVector3d<T>& r){
+
+ void angles(kgmVector3d<T>& r)
+ {
+   kgmQuaternion<T> quat;
+
+   quaternion(quat);
+
+   quat.angles(r);
+ }
+
+ void quaternion(kgmVector4d<T> &q, kgmVector3d<T> &v)
+ {
+  kgmMatrix4x4<T> mtr, mrt;
+  mrt.quaternion(q);
+  mtr.translate(v);
+  mul(*this, mrt, mtr);
+ }
+
+ void quaternion(kgmQuaternion<T>& q)
+ {
+   float t = 1 + m[0] + m[5] + m[10];
+
+   if( t > 0.00000001f )
+   {
+     T S = (T)sqrt(t) * 2;
+     q.x = ( m[9] - m[6] ) / S;
+     q.y = ( m[2] - m[8] ) / S;
+     q.z = ( m[4] - m[1] ) / S;
+     q.w = 0.25f * S;
+   }
+ }
+
+ kgmQuaternion<T> quaternion()
+ {
+   kgmQuaternion<T> q;
+
+   quaternion(q);
+
+   return q;
+ }
+
+ void translate(T x, T y, T z)
+ {
+  m[12] = x,  m[13] = y,  m[14] = z;
+ }
+
+ void translate(kgmVector3d<T>& v)
+ {
+  translate(v.x, v.y, v.z);
+ }
+
+ void rotate(T x, T y, T z)
+ {
+   kgmQuaternion<T> qx, qy, qz, qr;
+
+   qx = kgmQuaternion<T>(kgmVector3d<T>(1, 0, 0), x);
+   qy = kgmQuaternion<T>(kgmVector3d<T>(0, 1, 0), y);
+   qz = kgmQuaternion<T>(kgmVector3d<T>(0, 0, 1), z);
+   qr = qz * qy * qx;
+   qr.normalize();
+
+   *this = kgmMatrix4x4(qr);
+ }
+
+ void rotate(kgmVector3d<T> &r)
+ {
+  rotate(r.x, r.y, r.z);
+ }
+
+ void rotate(T angle, kgmVector3d<T> &axis)
+ {
+  T rad = angle;
+  T c = cos(rad);
+  T s = sin(rad);
+  kgmVector3d<T> v = axis;
+  v.normalize();
+  float xy = v.x * v.y;
+  float yz = v.y * v.z;
+  float zx = v.z * v.x;
+  float xs = v.x * s;
+  float ys = v.y * s;
+  float zs = v.z * s;
+  m[0] = (1.0f - c) * v.x * v.x + c; m[4] = (1.0f - c) * xy - zs; m[8] = (1.0f - c) * zx + ys; m[12] = 0.0;
+  m[1] = (1.0f - c) * xy + zs; m[5] = (1.0f - c) * v.y * v.y + c; m[9] = m[6] = (1.0f - c) * yz - xs; m[13] = 0.0;
+  m[2] = (1.0f - c) * zx - ys; m[6] = (1.0f - c) * yz + xs; m[10] = (1.0f - c) * v.z * v.z + c; m[14] = 0.0;
+  m[3] = 0.0; m[7] = 0.0; m[11] = 0.0; m[15] = 1.0;
+ }
+
+ void rotate(T angle, kgmVector3d<T> &axis, kgmVector3d<T> &point)
+ {
+  kgmVector3d<T> v;
+  kgmMatrix4x4<T> mtr, mrt, mts;
+  mrt.rotate(angle, axis);
+  v = mrt * point;
+  mtr.translate(v.inverse());
+  (*this) = mrt * mtr;
+ }
+
+ void scale(T x, T y, T z)
+ {
+  m[0]  = x;
+  m[5]  = y;
+  m[10] = z;
+ }
+
+ void scale(kgmVector3d<T> &v)
+ {
+  scale(v.x, v.y, v.z);
+ }
+
+ void from_euler(T x, T y, T z)
+ {
+   /*
+    *  R = Rz(φ)Ry(θ)Rx(ψ) =
+    *  cosθ cos φ | sin ψ sin θ cos φ − cos ψ sin φ | cos ψ sin θ cos φ + sin ψ sin φ
+    *  cosθ sin φ | sin ψ sin θ sin φ + cos ψ cos φ | cos ψ sin θ sin φ − sin ψ cos φ
+    *  − sin θ    | sin ψ cosθ                      | cos ψ cosθ
+    */
+  T cp = (T)cos(x);
+  T sp = (T)sin(x);
+  T cy = (T)cos(y);
+  T sy = (T)sin(y);
+  T cr = (T)cos(z);
+  T sr = (T)sin(z);
+
+  m[0] = cy*cr;
+   m[1] = sp*sy*cr - sr*cy;
+    m[2] = cp*sy*cr + sp*sr;
+
+  m[4] = cy*sr;
+   m[5] = sp*sy*sr + cp*cr;
+    m[6] = cp*sy*sr - sp*cr;
+
+  m[8] = -sy;
+   m[9] = cy*sp;
+    m[10] = cp*cy;
+ }
+
+ void to_euler(kgmVector3d<T>& r)
+ {
   double angle_x, angle_y, angle_z, c, tr_x, tr_y, tr_z;
   r.x = (T)asin(m[6]);
   r.y = (T)asin(m[8]);
@@ -207,14 +346,18 @@ public:
 
   angle_y = -asin(m[2]);
   c		 =  cos(angle_y);
-  if(fabs(c) > 0.005){
+
+  if(fabs(c) > 0.005)
+  {
    tr_x      =  m[10] / c;
    tr_y      = -m[6]  / c;
    angle_x  = atan2( tr_y, tr_x );
    tr_x      =  m[0] / c;
    tr_y      = -m[1] / c;
    angle_z  = atan2( tr_y, tr_x );
-  }else{
+  }
+  else
+  {
    angle_x  = 0;
    tr_x      = m[5];
    tr_y      = m[4];
@@ -255,91 +398,14 @@ public:
   */
  }
 
- void quaternion(kgmQuaternion<T>& q){
-   float t = 1 + m[0] + m[5] + m[10];
-
-   if( t > 0.00000001f ){
-     T S = (T)sqrt(t) * 2;
-     q.x = ( m[9] - m[6] ) / S;
-     q.y = ( m[2] - m[8] ) / S;
-     q.z = ( m[4] - m[1] ) / S;
-     q.w = 0.25f * S;
-   }
- }
-
- void translate(T x, T y, T z){
-  m[12] = x,  m[13] = y,  m[14] = z;
- }
- void translate(kgmVector3d<T>& v){
-  translate(v.x, v.y, v.z);
- }
-
- void rotate(T x, T y, T z){
-  T cp = (T)cos(x);
-  T sp = (T)sin(x);
-  T cy = (T)cos(y);
-  T sy = (T)sin(y);
-  T cr = (T)cos(z);
-  T sr = (T)sin(z);
-
-  m[0] = cy*cr;
-   m[1] = -sr*cy;
-    m[2] = sy;
-
-  m[4] = sp*sy*cr + sr*cp;
-   m[5] = sp*sy*sr + cp*cr;
-    m[6] = -sp*cy;
-
-  m[8] = -sy*cp*cr + sp*sr;
-   m[9] = sr*sy*cp + sr*sp;
-    m[10] = cp*cy;
- }
- void rotate(kgmVector3d<T> &r){
-  rotate(r.x, r.y, r.z);
- }
-
- void rotate(T angle, kgmVector3d<T> &axis) {
-  T rad = angle;
-  T c = cos(rad);
-  T s = sin(rad);
-  kgmVector3d<T> v = axis;
-  v.normalize();
-  float xy = v.x * v.y;
-  float yz = v.y * v.z;
-  float zx = v.z * v.x;
-  float xs = v.x * s;
-  float ys = v.y * s;
-  float zs = v.z * s;
-  m[0] = (1.0f - c) * v.x * v.x + c; m[4] = (1.0f - c) * xy - zs; m[8] = (1.0f - c) * zx + ys; m[12] = 0.0;
-  m[1] = (1.0f - c) * xy + zs; m[5] = (1.0f - c) * v.y * v.y + c; m[9] = m[6] = (1.0f - c) * yz - xs; m[13] = 0.0;
-  m[2] = (1.0f - c) * zx - ys; m[6] = (1.0f - c) * yz + xs; m[10] = (1.0f - c) * v.z * v.z + c; m[14] = 0.0;
-  m[3] = 0.0; m[7] = 0.0; m[11] = 0.0; m[15] = 1.0;
- }
-
- void rotate(T angle, kgmVector3d<T> &axis, kgmVector3d<T> &point) {
-  kgmVector3d<T> v;
-  kgmMatrix4x4<T> mtr, mrt, mts;
-  mrt.rotate(angle, axis);
-  v = mrt * point;
-  mtr.translate(v.inverse());
-  (*this) = mrt * mtr;
- }
-
- void scale(T x, T y, T z){
-  m[0] = x;
-  m[5] = y;
-  m[10] = z;
- }
- void scale(kgmVector3d<T> &v){
-  scale(v.x, v.y, v.z);
- }
-
- T determine(){
+ T determine()
+ {
   return det(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7],
            m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
  }
 
- void invert(){
+ void invert()
+ {
   kgmMatrix4x4<T> &m = *this;
   kgmMatrix4x4<T> out;
 
@@ -370,7 +436,9 @@ public:
   out(3, 3) = d * (m(0, 0) * (m(1, 1) * m(2, 2) - m(2, 1) * m(1, 2)) + m(1, 0) * (m(2, 1) * m(0, 2) - m(0, 1) * m(2, 2)) + m(2, 0) * (m(0, 1) * m(1, 2) - m(1, 1) * m(0, 2)));
   *this = out;
  }
- void fast_invert(){
+
+ void fast_invert()
+ {
   kgmMatrix4x4<T>  r;
   float idet = det(m[0], m[1], m[2],  m[4], m[5], m[6],  m[8], m[9], m[10]);
   float ndet = det();
@@ -394,14 +462,8 @@ public:
   *this = r;
  }
 
-
- void quaternion(kgmVector4d<T> &q, kgmVector3d<T> &v){
-  kgmMatrix4x4<T> mtr, mrt;
-  mrt.quaternion(q);
-  mtr.translate(v);
-  mul(*this, mrt, mtr);
- }
 //matrix perspective
+
  void perspective(T fov, T asp, T znear, T zfar)
  {
    T y = (T)tan(fov),	 x = y * asp;
