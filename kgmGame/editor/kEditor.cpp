@@ -158,18 +158,6 @@ void kEditor::select(int x, int y)
     md.normalize();
 
     ray = kgmRay3d<float>(cam.mPos, md);
-
-    /*if(pl.intersect(ray, c))
-    {
-      plane3 pln(vec3(0,0,1), vec3(0,0,0));
-      ms = vec3(0,0,0);
-      pln.intersect(ray, ms);
-
-      mtx4 m;
-      m.identity();
-      m.translate(ms);
-      m_render->set(pivot, m);
-    }*/
   }
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -665,8 +653,6 @@ void kEditor::onMsMove(int k, int x, int y)
     case kPivot::AXIS_X:
       tm = pivot->pos + vec3(1, 0, 0);
       lax = line(pivot->pos, tm);
-      //pln = plane(pivot->pos, vec3(0, 0, 1));
-      //pln.intersect(ray, pr);
       break;
     case kPivot::AXIS_Y:
       tm = pivot->pos + vec3(0, 1, 0);
@@ -686,7 +672,6 @@ void kEditor::onMsMove(int k, int x, int y)
     dir.normalize();
 
     selected->setPosition(selected->pos + dir * prdist);
-    //selected->setPosition(selected->pos + pr);
 
     mtx4 m;
     m.identity();
@@ -696,8 +681,7 @@ void kEditor::onMsMove(int k, int x, int y)
 
     return;
   }
-
-  if(game->m_render && !game->m_msAbs)
+  else if(game->m_render && !game->m_msAbs)
   {
     if(ms_click[0] && ctrl_left)
     {
