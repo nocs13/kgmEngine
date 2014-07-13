@@ -807,7 +807,7 @@ void kEditor::onEditDuplicate()
   if(!selected)
     return;
 
-  kNode* node;
+  kNode* node = null;
 
   switch(selected->typ)
   {
@@ -816,8 +816,7 @@ void kEditor::onEditDuplicate()
     node->bnd = selected->msh->bound();
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
     node->lnk = fdd->getFile();
-    selected = node;
-    nodes.add(node);
+
     game->m_render->add(node->msh, null);
     vo->getGuiList()->addItem(node->nam);
     vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
@@ -830,8 +829,6 @@ void kEditor::onEditDuplicate()
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
     node->geo = new kArrow();
 
-    selected = node;
-    nodes.add(node);
     vo->getGuiList()->addItem(node->nam);
     vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
@@ -839,9 +836,16 @@ void kEditor::onEditDuplicate()
     game->m_render->add(node->icn);
     game->m_render->add(node->geo, null);
 
-    node->setPosition(selected->pos);
-    node->setRotation(selected->rot);
     break;
+  }
+
+  if(node)
+  {
+    node->setPosition(selected->pos + vec3(0.1, 0, 0));
+    node->setRotation(selected->rot);
+    nodes.add(node);
+
+    selected = node;
   }
 
 }
