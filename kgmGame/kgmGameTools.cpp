@@ -469,7 +469,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
       mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
     }
     if(!strcmp(key, "map_texture")){
-      mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
+      mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
     }
     if(!strcmp(key, "shader")){
       if(val == "SKIN")
@@ -537,17 +537,17 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     else if(id == "map_color")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->m_tex_color = kgmIGame::getGame()->getResources()->getTexture(val);
+      mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
     }
     else if(id == "map_normal")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->m_tex_normal = kgmIGame::getGame()->getResources()->getTexture(val);
+      mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(val));
     }
     else if(id == "map_specular")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->m_tex_specular = kgmIGame::getGame()->getResources()->getTexture(val);
+      mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(val));
     }
     else if(id == "Shader")
     {

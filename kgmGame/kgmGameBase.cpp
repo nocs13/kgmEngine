@@ -892,7 +892,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       {
         if(xml.attribute("value", data))
         {
-          mtl->m_tex_color = m_resources->getTexture(data);
+          mtl->setTexColor(m_resources->getTexture(data));
         }
       }
       else if(id == "map_normal")
@@ -901,7 +901,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->m_tex_normal = m_resources->getTexture(data);
+          mtl->setTexNormal(m_resources->getTexture(data));
         }
       }
       else if(id == "map_specular")
@@ -910,7 +910,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->m_tex_specular = m_resources->getTexture(data);
+          mtl->setTexSpecular(m_resources->getTexture(data));
         }
       }
       else if(id == "Shader")

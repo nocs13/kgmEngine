@@ -97,7 +97,8 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderBlend;
-    material->m_tex_color    = g->getResources()->getTexture(tid);
+
+    material->setTexColor(g->getResources()->getTexture(tid));
 
     particles->direction = dir;
     particles->volume    = vol;
@@ -140,10 +141,7 @@ public:
 
   void setTexture(kgmString tid)
   {
-    if(material->m_tex_color)
-      material->m_tex_color->release();
-
-    material->m_tex_color = game->getResources()->getTexture(tid);
+    material->setTexColor(game->getResources()->getTexture(tid));
   }
 
   void setSlideFrames(u32 rows, u32 cols)
@@ -192,7 +190,7 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderBlend;
-    material->m_tex_color    = g->getResources()->getTexture("smoke_a.tga");
+    material->setTexColor(g->getResources()->getTexture("smoke_a.tga"));
 
     particles->m_speed = .01;
     particles->m_count = 10;
@@ -248,7 +246,7 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderBlend;
-    material->m_tex_color    = g->getResources()->getTexture(tid);
+    material->setTexColor(g->getResources()->getTexture(tid));
 
     particles->direction = dir;
     particles->volume    = vol;
@@ -279,10 +277,7 @@ public:
 
   void setTexture(kgmString tid)
   {
-    if(material->m_tex_color)
-      material->m_tex_color->release();
-
-    material->m_tex_color = game->getResources()->getTexture(tid);
+    material->setTexColor(game->getResources()->getTexture(tid));
   }
 
   void setSlideFrames(u32 rows, u32 cols)
@@ -324,7 +319,7 @@ public:
     mtl->m_blend = true;
     mtl->m_srcblend = gcblend_one;
     mtl->m_dstblend = gcblend_one;
-    mtl->m_tex_color = g->getResources()->getTexture("point_redd.tga");
+    mtl->setTexColor(g->getResources()->getTexture("point_redd.tga"));
     mtl->m_shader = kgmMaterial::ShaderBlend;
 
     mesh = new kgmMesh();
@@ -402,7 +397,7 @@ public:
     mtl->m_depth = false;
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_one;
-    mtl->m_tex_color = g->getResources()->getTexture("point_d.tga");
+    mtl->setTexColor(g->getResources()->getTexture("point_d.tga"));
     mtl->m_type = "simple";
     mtl->m_shader = kgmMaterial::ShaderBlend;
 

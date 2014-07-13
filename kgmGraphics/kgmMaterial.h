@@ -66,12 +66,13 @@ public:
     }
   };
 
+protected:
+  kgmTexture *m_tex_color, *m_tex_normal, *m_tex_specular;
 
 public:
   Color  m_color, m_specular, m_emision;
   float  m_shininess, m_transparency;
 
-  kgmTexture *m_tex_color, *m_tex_normal, *m_tex_specular;
 
   Shader      m_shader;
   u32         m_flags;            //render specisific flags enable/disable
@@ -89,6 +90,18 @@ public:
   ~kgmMaterial();
 
   kgmMaterial* clone();
+
+  void setTexColor(kgmTexture* t);
+  void setTexNormal(kgmTexture* t);
+  void setTexSpecular(kgmTexture* t);
+
+  bool hasTexColor();
+  bool hasTexNormal();
+  bool hasTexSpecular();
+
+  kgmTexture* getTexColor();
+  kgmTexture* getTexNormal();
+  kgmTexture* getTexSpecular();
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

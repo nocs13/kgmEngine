@@ -705,7 +705,7 @@ void kgmGraphics::render()
       {
         kgmMaterial mtl;
         mtl.m_shader = kgmMaterial::ShaderBase;
-        mtl.m_tex_color = icon->getIcon();
+        mtl.setTexColor(icon->getIcon());
         //render(&mtl);
         //render(shaders[kgmMaterial::ShaderNone]);
         render(shaders[kgmMaterial_ShaderTex]);
@@ -1202,9 +1202,9 @@ void kgmGraphics::render(kgmMaterial* m){
     m_culling = false;
   }
 
-  if(m->m_tex_color){
-    gc->gcSetTexture(0, m->m_tex_color->m_texture);
-    tcolor = m->m_tex_color->m_texture;
+  if(m->hasTexColor()){
+    gc->gcSetTexture(0, m->getTexColor()->m_texture);
+    tcolor = m->getTexColor()->m_texture;
   }
   else
   {
@@ -1212,9 +1212,9 @@ void kgmGraphics::render(kgmMaterial* m){
     tcolor = g_tex_white;
   }
 
-  if(m->m_tex_normal){
-    gc->gcSetTexture(1, m->m_tex_normal->m_texture);
-    tnormal = m->m_tex_normal->m_texture;
+  if(m->hasTexNormal()){
+    gc->gcSetTexture(1, m->getTexNormal()->m_texture);
+    tnormal = m->getTexNormal()->m_texture;
   }
   else
   {
@@ -1222,9 +1222,9 @@ void kgmGraphics::render(kgmMaterial* m){
     tnormal = g_tex_white;
   }
 
-  if(m->m_tex_specular){
-    gc->gcSetTexture(2, m->m_tex_specular->m_texture);
-    tspecular = m->m_tex_specular->m_texture;
+  if(m->hasTexSpecular()){
+    gc->gcSetTexture(2, m->getTexSpecular()->m_texture);
+    tspecular = m->getTexSpecular()->m_texture;
   }
   else
   {
