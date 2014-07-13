@@ -50,12 +50,14 @@ public:
   bool col;
 
   kgmGraphics::Icon* icn;
+  kgmMesh*           geo;
 
   kNode()
   {
     typ = NONE;
     msh = null;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -64,6 +66,7 @@ public:
     typ = MESH;
     msh = m;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -72,6 +75,7 @@ public:
     typ = LIGHT;
     lgt = l;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -80,6 +84,7 @@ public:
     typ = ACTOR;
     act = a;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -88,6 +93,7 @@ public:
     typ = SENSOR;
     sns = s;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -96,6 +102,7 @@ public:
     typ = TRIGGER;
     trg = t;
     icn = null;
+    geo = null;
     col = false;
   }
 
@@ -108,8 +115,12 @@ public:
 
     if(icn)
       icn->release();
+
+    if(geo)
+      geo->release();
   }
 
+  mtx4 getMatrix();
   void setPosition(vec3 v);
   void setRotation(vec3 r);
   void setMaterial(kgmString m);

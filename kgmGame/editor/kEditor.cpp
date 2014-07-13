@@ -297,14 +297,18 @@ bool kEditor::mapOpen(kgmString s)
         node->nam = id;
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+        node->geo = new kArrow();
 
         vo->getGuiList()->addItem(node->nam);
         vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
         game->m_render->add(node->lgt);
         game->m_render->add(node->icn);
+        game->m_render->add(node->geo, null);
 
         nodes.add(node);
+
+        node->setPosition(vec3(0,0,0));
       }
       else if(id == "kgmMesh")
       {
@@ -431,6 +435,7 @@ bool kEditor::mapSave(kgmString s)
 
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
     fprintf(f, "  <Position value='%f %f %f'/>\n", l->position.x, l->position.y, l->position.z);
+    fprintf(f, "  <Direction value='%f %f %f'/>\n", l->direction.x, l->direction.y, l->direction.z);
     fprintf(f, " </kgmLight>\n");
   }
 
@@ -788,10 +793,13 @@ void kEditor::onEditRemove()
     break;
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
+    game->getRender()->remove(selected->geo);
     break;
   }
 
   vo->getGuiList()->remItem(vo->getGuiList()->getSel());
+
+  selected = null;
 }
 
 void kEditor::onEditDuplicate()
@@ -820,6 +828,7 @@ void kEditor::onEditDuplicate()
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+    node->geo = new kArrow();
 
     selected = node;
     nodes.add(node);
@@ -828,6 +837,10 @@ void kEditor::onEditDuplicate()
 
     game->m_render->add(node->lgt);
     game->m_render->add(node->icn);
+    game->m_render->add(node->geo, null);
+
+    node->setPosition(selected->pos);
+    node->setRotation(selected->rot);
     break;
   }
 
@@ -874,6 +887,7 @@ void kEditor::onAddLight()
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->geo = new kArrow();
 
   selected = node;
   nodes.add(node);
@@ -882,6 +896,7 @@ void kEditor::onAddLight()
 
   game->m_render->add(l);
   game->m_render->add(node->icn);
+  game->m_render->add(node->geo, null);
 }
 
 void kEditor::onAddActor()
