@@ -59,6 +59,7 @@ protected:
   void onOpenSelect();
   void onSaveSelect();
   void onFailSelect();
+  void onEditFile(kgmString);
   void onAction(kgmGui*, u32);
   void onMsLeftUp(int, int, int);
   void onMsMove(int, int, int);

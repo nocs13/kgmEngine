@@ -13,6 +13,7 @@ kFileDialog::kFileDialog()
 {
   list = new kgmGuiList(this, 1, 1, 198, 200);
   text = new kgmGuiText(this, 1, 237, 198, 30);
+  text->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&onEditFile));
   btnCmd = new kgmGuiButton(this, 1, 201, 99, 35);
   btnFail = new kgmGuiButton(this, 101, 201, 99, 35);
 
@@ -83,6 +84,7 @@ void kFileDialog::onFileSelect()
 
     if(kgmSystem::isDirectory(tmp))
     {
+      filePath = "";
       pathFolder = tmp;
       listFolder();
     }
@@ -118,6 +120,12 @@ void kFileDialog::onFailSelect()
 
   if(fail_callback.hasObject() && fail_callback.hasFunction())
     fail_callback(fail_callback.getObject());
+}
+
+void kFileDialog::onEditFile(kgmString s)
+{
+
+  filePath = pathFolder + DIRCON + s;
 }
 
 void kFileDialog::setFailCallback(kgmGuiButton::ClickEventCallback call)

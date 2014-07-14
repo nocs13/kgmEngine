@@ -68,6 +68,8 @@ private:
   kNode* selected;
   kgmList<kNode*> nodes;
 
+  kgmMaterial* mtlLines;
+
 public:
   kEditor(  kgmGameBase* game);
   ~kEditor();

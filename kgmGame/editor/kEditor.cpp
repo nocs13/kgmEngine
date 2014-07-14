@@ -41,6 +41,9 @@ kEditor::kEditor(kgmGameBase* g)
 
   oquered = 0;
 
+  mtlLines = new kgmMaterial();
+  mtlLines->m_shader = kgmMaterial::ShaderNone;
+
   if(game->m_render)
   {
     game->m_render->setEditor(true);
@@ -70,7 +73,7 @@ kEditor::kEditor(kgmGameBase* g)
     game->m_render->add(gridline, null);
 
     pivot = new kPivot();
-    game->m_render->add(pivot, null);
+    game->m_render->add(pivot, mtlLines);
 
     fdd = new kFileDialog();
     fdd->showHidden(false);
@@ -94,6 +97,8 @@ kEditor::~kEditor()
   menu->release();
   fdd->release();
   vo->release();
+
+  mtlLines->release();
 }
 
 void kEditor::clear()
@@ -268,6 +273,8 @@ bool kEditor::mapOpen(kgmString s)
 
   kNode* node = null;
 
+  oquered = 0;
+
   while(kgmXml::XmlState xstate = xml.next())
   {
     kgmString id, value, t;
@@ -286,10 +293,12 @@ bool kEditor::mapOpen(kgmString s)
 
       if(id == "kgmCamera")
       {
-
+        oquered++;
       }
       else if(id == "kgmLight")
       {
+        oquered++;
+
         kgmString id;
         xml.attribute("name", id);
         node = new kNode(new kgmLight());
@@ -304,7 +313,7 @@ bool kEditor::mapOpen(kgmString s)
 
         game->m_render->add(node->lgt);
         game->m_render->add(node->icn);
-        game->m_render->add(node->geo, null);
+        game->m_render->add(node->geo, mtlLines);
 
         nodes.add(node);
 
@@ -312,6 +321,8 @@ bool kEditor::mapOpen(kgmString s)
       }
       else if(id == "kgmMesh")
       {
+        oquered++;
+
         kgmString id, ln;
         xml.attribute("name", id);
         xml.attribute("link", ln);
@@ -335,9 +346,15 @@ bool kEditor::mapOpen(kgmString s)
       }
       else if(id == "kgmActor")
       {
+        oquered++;
       }
-      else if(id == "kgmGameObject")
+      else if(id == "kgmTrigger")
       {
+        oquered++;
+      }
+      else if(id == "kgmSensor")
+      {
+        oquered++;
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -434,8 +451,8 @@ bool kEditor::mapSave(kgmString s)
     kgmLight* l = (*i)->lgt;
 
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
-    fprintf(f, "  <Position value='%f %f %f'/>\n", l->position.x, l->position.y, l->position.z);
-    fprintf(f, "  <Direction value='%f %f %f'/>\n", l->direction.x, l->direction.y, l->direction.z);
+    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
     fprintf(f, " </kgmLight>\n");
   }
 
@@ -834,7 +851,7 @@ void kEditor::onEditDuplicate()
 
     game->m_render->add(node->lgt);
     game->m_render->add(node->icn);
-    game->m_render->add(node->geo, null);
+    game->m_render->add(node->geo, mtlLines);
 
     break;
   }
@@ -900,7 +917,7 @@ void kEditor::onAddLight()
 
   game->m_render->add(l);
   game->m_render->add(node->icn);
-  game->m_render->add(node->geo, null);
+  game->m_render->add(node->geo, mtlLines);
 }
 
 void kEditor::onAddActor()
