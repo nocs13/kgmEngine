@@ -73,7 +73,9 @@ kEditor::kEditor(kgmGameBase* g)
     game->m_render->add(gridline, null);
 
     pivot = new kPivot();
+    pivot->setPos(vec3(0, 0, 0));
     game->m_render->add(pivot, mtlLines);
+    game->m_render->set(pivot, pivot->getTransform());
 
     fdd = new kFileDialog();
     fdd->showHidden(false);
@@ -268,8 +270,15 @@ bool kEditor::mapOpen(kgmString s)
   mem.clear();
 
   selected = null;
+
   clear();
+
   game->m_render->add(gridline, null);
+  game->m_render->add(pivot, mtlLines);
+
+  pivot->setPos(vec3(0, 0, 0));
+  game->m_render->set(pivot, pivot->getTransform());
+
 
   kNode* node = null;
 
