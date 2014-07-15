@@ -124,4 +124,6 @@ mtx4 kPivot::getTransform()
   mtx4 m;
   m.identity();
   m.translate(pos);
+
+  return m;
 }
