@@ -114,6 +114,7 @@ public:
   void onViewObjects();
   void onOptionsDatabase();
   void onRunRun();
+  void onSelectObject();
 
   void onCloseVop();
 };

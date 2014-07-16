@@ -70,7 +70,7 @@ kEditor::kEditor(kgmGameBase* g)
     game->m_render->add(menu);
 
     gridline = new kGridline();
-    game->m_render->add(gridline, null);
+    game->m_render->add(gridline, mtlLines);
 
     pivot = new kPivot();
     pivot->setPos(vec3(0, 0, 0));
@@ -85,6 +85,7 @@ kEditor::kEditor(kgmGameBase* g)
     vop = null;
 
     vo = new kViewObjects(this, 1, 50, 100, 300);
+    vo->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&onSelectObject));
     vo->hide();
     game->m_render->add(vo);
 
@@ -132,6 +133,12 @@ void kEditor::select(kgmString name)
 
       if(ci != -1)
         vo->getGuiList()->setSel(ci);
+
+      if(pivot)
+      {
+        pivot->setPos((*i)->pos);
+        game->m_render->set(pivot, pivot->getTransform());
+      }
     }
   }
 }
@@ -992,4 +999,10 @@ void kEditor::onOptionsDatabase()
 void kEditor::onCloseVop()
 {
   vop = null;
+}
+
+void kEditor::onSelectObject()
+{
+  kgmString id = vo->getGuiList()->getItem(vo->getGuiList()->getSel());
+  select(id);
 }

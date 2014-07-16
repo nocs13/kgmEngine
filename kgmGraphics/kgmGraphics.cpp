@@ -102,6 +102,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   gui_style = new kgmGuiStyle();
 
   g_def_material.m_shader = kgmMaterial::ShaderNone;
+  g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
   {
@@ -566,6 +567,17 @@ void kgmGraphics::render()
         render((kgmShader*)shaders[mesh->material->m_shader]);
       else
         render((kgmShader*)shaders[kgmMaterial::ShaderBase]);
+
+      if(mesh->material)
+      {
+        render(mesh->material);
+        render((kgmShader*)shaders[mesh->material->m_shader]);
+      }
+      else
+      {
+        render(&g_def_material);
+        render((kgmShader*)shaders[g_def_material.m_shader]);
+      }
     }
 
     render((kgmMesh*)mesh->mesh);

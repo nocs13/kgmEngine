@@ -3,7 +3,8 @@
 #include "kgmGuiScroll.h"
 #include "../kgmBase/kgmCallback.h"
 
-class kgmGuiList: public kgmGui{
+class kgmGuiList: public kgmGui
+{
   KGM_OBJECT(kgmGuiList)
 
   typedef kgmList<kgmString> Items;
