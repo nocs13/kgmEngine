@@ -1247,7 +1247,7 @@ void kgmGraphics::render(kgmMaterial* m){
 
 void kgmGraphics::render(kgmShader* s){
   //send default parameters
-  vec4 v_light(0, 0, 0, 1);
+  vec4 v_light(0, 0, 0, 10);
 
   if(g_main_light)
     v_light = vec4(g_main_light->position.x, g_main_light->position.y, g_main_light->position.z, g_main_light->intensity);

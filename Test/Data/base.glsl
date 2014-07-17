@@ -55,7 +55,7 @@ void main( void )
  vec4 normal    = texture2D(g_txNormal,   Texcoord);
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- normal = (2.0 * normal) - 1.0;
+ //normal = (2.0 * normal) - 1.0;
  normal.xyz = normal.xyz + N;
  normal.xyz = normalize(normal.xyz);
 
@@ -64,14 +64,14 @@ void main( void )
  vec3 Y  = normalize(-g_vEyeDir);
 
  float distance = length(L - V);
- float intensity  = 1.0;
-       intensity  = max(dot(normal.xyz, normalize(vL)), 0.0) / (1.0 + 0.1 * distance);
+ float intensity  = I;
+       intensity  = I * max(dot(normal.xyz, normalize(vL)), 0.0) / (1.0 + distance);
        intensity  = clamp(intensity, 0.2, 0.7);
  vec3  reflection = normalize(normal.xyz * 2.0 * intensity - vL);
- //float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
- float ispecular  = pow(clamp(dot(vL, vN), 0.0, 1.0), 100.0);
+ float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
+ //float ispecular  = pow(clamp(dot(vL, vN), 0.0, 1.0), 100.0);
 
- vec4  col = vec4(color.xyz * intensity, color.w) + vec4(specular.xyz * ispecular, 0);
+ vec4  col = vec4(color.xyz * intensity, color.w);// + vec4(specular.xyz * ispecular, 0);
 
  col = clamp(col, 0.1, 1.0);
 

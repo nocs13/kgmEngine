@@ -3,7 +3,8 @@
 #include "../kgmBase/kgmList.h"
 #include "kgmTexture.h"
 
-class kgmLight: public kgmObject{
+class kgmLight: public kgmObject
+{
   KGM_OBJECT(kgmLight)
   public:
     static float LIGHT_RANGE;
@@ -31,7 +32,7 @@ public:
     color     = vec4(.7, .7, .7, 1);
     specular  = vec4(.7, .7, .7, 1);
 
-    intensity = 1.0f;
+    intensity = 10.0f;
     angle = 0.0f;
 
     shadows = false;
