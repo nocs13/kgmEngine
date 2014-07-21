@@ -15,16 +15,16 @@ struct kgmRuntime
 };
 
 #define KGM_OBJECT(o_class)                     \
-  public:                                	\
-  static  kgmRuntime   Class;			\
-  static  o_class*     cast(kgmObject*);	\
+  public:                                	      \
+  static  kgmRuntime   Class;	                  \
+  static  o_class*     cast(kgmObject*);        \
   virtual kgmRuntime&  runtime();
 
 
 
-#define KGMOBJECT_IMPLEMENT(o_class, o_parent)	\
+#define KGMOBJECT_IMPLEMENT(o_class, o_parent)   \
   kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class}; \
-  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; } \
+  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }   \
   kgmRuntime& o_class::runtime() { return o_class::Class; }
 
 //base class for kgm_engine project objects

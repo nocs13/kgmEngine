@@ -6,6 +6,7 @@
 class kgmSensor : public kgmGameObject
 {
   KGM_OBJECT(kgmSensor);
+
 public:
   kgmSensor();
 

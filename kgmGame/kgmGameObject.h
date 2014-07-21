@@ -34,6 +34,14 @@ protected:
 
   kgmGameObject*      m_parent;
 
+#ifdef EDITOR
+public:
+  static kgmTab<kgmString, kgmObject*(*)()> g_typ_actors;
+  static kgmTab<kgmString, kgmObject*(*)()> g_typ_effects;
+  static kgmTab<kgmString, kgmObject*(*)()> g_typ_sensors;
+  static kgmTab<kgmString, kgmObject*(*)()> g_typ_triggers;
+#endif
+
 public:
   kgmGameObject();
   virtual ~kgmGameObject();
