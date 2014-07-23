@@ -13,7 +13,7 @@
 #include "Actors/kInput.h"
 
 KGMOBJECT_IMPLEMENT(ACamera, kgmActor);
-KGMOBJECT_IMPLEMENT(kInput, kgmInputListen);
+KGMOBJECT_IMPLEMENT(kInput, kgmSnInputListener);
 bool g_ms_camera = true;
 
 const char* maps[] =

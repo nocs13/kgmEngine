@@ -1,10 +1,10 @@
 #ifndef KINPUT_H
 #define KINPUT_H
 
-#include "../../kgmGame/actors/kgmActors.h"
 #include "../../kgmGame/objects/kgmObjects.h"
+#include "../../kgmGame/objects/kgmSnInputListener.h"
 
-class kInput: public kgmInputListen
+class kInput: public kgmSnInputListener
 {
   KGM_OBJECT(kInput);
 

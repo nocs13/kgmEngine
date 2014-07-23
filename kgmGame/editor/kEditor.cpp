@@ -102,6 +102,11 @@ kEditor::~kEditor()
   vo->release();
 
   mtlLines->release();
+
+  kgmGameObject::g_typ_actors.clear();
+  kgmGameObject::g_typ_effects.clear();
+  kgmGameObject::g_typ_sensors.clear();
+  kgmGameObject::g_typ_triggers.clear();
 }
 
 void kEditor::clear()
