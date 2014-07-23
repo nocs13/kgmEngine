@@ -75,6 +75,7 @@ u32        g_lights_count = 0;
 
 void*      g_tex_black = null;
 void*      g_tex_white = null;
+void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
 kgmLight     g_def_light;
@@ -121,6 +122,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     memset(txd, 0xff, sizeof(txd));
     g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
+    //generic gray texture
+    memset(txd, 0x80, sizeof(txd));
+    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
 
     g->gcGet(gcsup_shaders, &val);
 
@@ -180,6 +184,9 @@ kgmGraphics::~kgmGraphics()
 
   if(g_tex_white)
     gc->gcFreeTexture(g_tex_white);
+
+  if(g_tex_gray)
+    gc->gcFreeTexture(g_tex_gray);
 
   gui_style->release();
   m_guis.clear();
@@ -1230,8 +1237,8 @@ void kgmGraphics::render(kgmMaterial* m){
   }
   else
   {
-    gc->gcSetTexture(1, g_tex_white);
-    tnormal = g_tex_white;
+    gc->gcSetTexture(1, g_tex_gray);
+    tnormal = g_tex_gray;
   }
 
   if(m->hasTexSpecular()){
