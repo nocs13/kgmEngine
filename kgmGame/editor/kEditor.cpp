@@ -89,6 +89,8 @@ kEditor::kEditor(kgmGameBase* g)
     vo->hide();
     game->m_render->add(vo);
 
+    vs = null;
+
     game->m_render->setBgColor(0xffbbaa99);
   }
 }
@@ -100,6 +102,9 @@ kEditor::~kEditor()
   menu->release();
   fdd->release();
   vo->release();
+
+  if(vo)
+    vo->release();
 
   mtlLines->release();
 
@@ -556,6 +561,29 @@ bool kEditor::addActor(kgmString path)
   return false;
 }
 
+bool kEditor::addSensor(kgmString type)
+{
+  if(type.length() < 1)
+    return false;
+
+  if(kgmGameObject::g_typ_sensors.hasKey(type))
+  {
+    kgmObject* (*fn_new)() = kgmGameObject::g_typ_sensors[type];
+  }
+
+  return false;
+}
+
+void kEditor::menuAddSensor()
+{
+  kgmString s = vs->getGuiList()->getItem(vs->getGuiList()->getSel());
+
+  vs->erase();
+  vs->release();
+
+  addSensor(s);
+}
+
 void kEditor::initPhysics()
 {
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); i++)
@@ -950,7 +978,19 @@ void kEditor::onAddActor()
 
 void kEditor::onAddSensor()
 {
+  if(vs)
+    return;
 
+  vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&menuAddSensor));
+
+  for(int i = 0; i < kgmGameObject::g_typ_sensors.length(); i++)
+  {
+    kgmString s = kgmGameObject::g_typ_sensors.key(i);
+    vs->getGuiList()->addItem(s);
+  }
+
+  game->guiAdd(vs);
 }
 
 void kEditor::onAddTrigger()

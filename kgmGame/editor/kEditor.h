@@ -60,7 +60,8 @@ private:
 
   u32        oquered;
 
-  kViewObjects* vo;
+  kViewObjects* vo;   //view objects
+  kViewObjects* vs;   //view sensors
 
   kViewOptions* vop;
 
@@ -85,6 +86,9 @@ public:
   bool mapOpen(kgmString);
   bool addMesh(kgmString);
   bool addActor(kgmString);
+  bool addSensor(kgmString);
+
+  void menuAddSensor();
 
   void initPhysics();
   void initLogic();

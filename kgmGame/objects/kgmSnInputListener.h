@@ -22,5 +22,11 @@ public:
   {
 
   }
+
+public:
+  static kgmSnInputListener* New()
+  {
+    return new kgmSnInputListener();
+  }
 };
 #endif // KGMSNINPUTLISTENER_H

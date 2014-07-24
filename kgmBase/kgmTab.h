@@ -91,6 +91,16 @@ public:
     return true;
   }
 
+  Key key(u32 index)
+  {
+    return _index(index)->m_key;
+  }
+
+  Value value(u32 index)
+  {
+    return _index(index)->m_value;
+  }
+
   void add(Key key, Value value){
     _Node* node = new _Node;
     node->m_key = key;

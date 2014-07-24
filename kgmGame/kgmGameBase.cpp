@@ -25,6 +25,8 @@
 #include "../kgmGraphics/kgmGuiTab.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
+#include "objects/kgmSnInputListener.h"
+
 /////////////////////////
 
 #include <stdlib.h>
@@ -155,6 +157,8 @@ kgmGameBase::kgmGameBase()
 #ifdef EDITOR
   editor  = new kEditor(this);
   editing = false;
+
+  kgmGameObject::g_typ_sensors.add("kgmSnInputListener", &kgmSnInputListener::New);
 #endif
 }
 
