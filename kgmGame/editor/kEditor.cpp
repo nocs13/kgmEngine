@@ -301,6 +301,8 @@ bool kEditor::mapOpen(kgmString s)
 
   oquered = 0;
 
+  kgmString atype;
+
   while(kgmXml::XmlState xstate = xml.next())
   {
     kgmString id, value, t;
@@ -353,7 +355,6 @@ bool kEditor::mapOpen(kgmString s)
         xml.attribute("name", id);
         xml.attribute("link", ln);
         kgmMesh* mesh = game->getResources()->getMesh(ln);
-        kgmMaterial* mtl = game->getResources()->getMaterial(ln);
 
         if(mesh)
         {
@@ -361,11 +362,8 @@ bool kEditor::mapOpen(kgmString s)
           node->nam = id;
           node->lnk = ln;
           node->bnd = mesh->bound();
-          game->m_render->add(node->msh, mtl);
+          game->m_render->add(node->msh, null);
           nodes.add(node);
-
-          if(mtl)
-            mtl->release();
 
           vo->getGuiList()->addItem(node->nam);
         }

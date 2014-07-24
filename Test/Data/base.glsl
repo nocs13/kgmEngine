@@ -55,7 +55,7 @@ void main( void )
  vec4 normal    = texture2D(g_txNormal,   Texcoord);
  vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- //normal = (2.0 * normal) - 1.0;
+ normal = (2.0 * normal) - 1.0;
  normal.xyz = normal.xyz + N;
  normal.xyz = normalize(normal.xyz);
 
