@@ -567,6 +567,27 @@ bool kEditor::addSensor(kgmString type)
   if(kgmGameObject::g_typ_sensors.hasKey(type))
   {
     kgmObject* (*fn_new)() = kgmGameObject::g_typ_sensors[type];
+
+    if(fn_new)
+    {
+      kgmSensor* sn = (kgmSensor*)fn_new();
+
+      if(sn)
+      {
+        kNode* node = new kNode(sn);
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+        selected = node;
+
+        game->m_render->add(node->icn);
+
+        vo->getGuiList()->addItem(node->nam);
+        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+        nodes.add(node);
+      }
+    }
   }
 
   return false;
