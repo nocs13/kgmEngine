@@ -1,5 +1,8 @@
 #ifndef KGMGAMEAUDIO_H
 #define KGMGAMEAUDIO_H
+
+#include "../kgmMedia/kgmNullAudio.h"
+
 #ifdef OAL
 #include "../kgmSystem/kgmOAL.h"
 #elif defined(OSL)
@@ -16,6 +19,7 @@ class kgmGameAudio
 #elif defined(D3DS)
     :public kgmD3ds
 #else
+    :public kgmNullAudio
 #endif
 {
 

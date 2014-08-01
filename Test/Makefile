@@ -14,8 +14,8 @@ ifeq ($(OS), Linux)
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else
-	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DD3DS -DLUA
-	FLGS = -g -O0 -mwindows
+	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DLUA -DEDITOR
+	FLGS = -g -O0 -fpermissive  -mwindows -static-libgcc -static-libstdc++
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
 	RM = del
 endif

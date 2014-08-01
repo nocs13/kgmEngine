@@ -17,7 +17,7 @@ ifeq ($(OS), Linux)
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else
-	DEFS = -DWIN32 -DGPUSHADERS -DD3DS -DLUA
+	DEFS = -DWIN32 -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -mwindows -fpermissive
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
 	RM = del

@@ -29,7 +29,7 @@ public:
 
   kgmQuaternion(const kgmVector3d<T> &v, T a)
   {
-    T l = v.length();
+    T l = (T)v.length();
 
     if(l != 0)
     {
