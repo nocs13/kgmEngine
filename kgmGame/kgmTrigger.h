@@ -37,19 +37,25 @@ public:
 
   void set(u32 c, bool p)
   {
-    if(chanels[c] == p)
+    if(c >= chanels.length() || chanels[c] == p)
       return;
+
+    bool prev = state();
 
     chanels[c] = p;
 
-    for(int i = 0; i < c; i++)
-    {
-      if(chanels[i] == false)
-        return;
-    }
+    bool cur = state();
 
-    if(destination)
-      destination->event(this, "on");
+    if(prev != cur)
+    {
+      if(destination)
+      {
+        if(cur)
+          destination->event(this, "on");
+        else
+          destination->event(this, "off");
+      }
+    }
   }
 
   bool get(u32 c)
@@ -57,9 +63,20 @@ public:
     return chanels[c];
   }
 
+  bool state()
+  {
+    for(int i = 0; i < chanels.length(); i++)
+    {
+      if(chanels[i] == false)
+        return false;
+    }
+
+    return true;
+  }
+
   void setDestination(kgmGameObject* o)
   {
-
+    destination = o;
   }
 
   virtual void triggering(){}
