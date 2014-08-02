@@ -156,7 +156,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
       shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
       shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
 
-      shader = rc->getShader("lights.glsl");
+      //shader = rc->getShader("lights.glsl");
+      shader = rc->getShader("base.glsl");
 
       if(shader)
       {

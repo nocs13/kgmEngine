@@ -300,45 +300,45 @@ void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f)
 //Light
 void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, float angle){
 #ifndef GLES_2
- if(i > GL_MAX_LIGHTS)
-   return;
+  if(i > GL_MAX_LIGHTS)
+    return;
 
- if(i < 0)
- {
-  int l = (int)fabs(i) - 1;
-
-  if(glIsEnabled(GL_LIGHT0 + l))
+  if(i < 0)
   {
-    glDisable(GL_LIGHT0 + l);
-    m_lights--;
+    int l = (int)fabs(i) - 1;
+
+    if(glIsEnabled(GL_LIGHT0 + l))
+    {
+      glDisable(GL_LIGHT0 + l);
+      m_lights--;
+    }
+
+    if(m_lights < 1)
+      glDisable(GL_LIGHTING);
+    return;
   }
 
-  if(m_lights < 1)
-    glDisable(GL_LIGHTING);
-  return;
- }
+  if(!glIsEnabled(GL_LIGHT0 + i))
+  {
+    glEnable(GL_LIGHT0 + i);
+    m_lights++;
 
- if(!glIsEnabled(GL_LIGHT0 + i))
- {
-  glEnable(GL_LIGHT0 + i);
-  m_lights++;
+    if(!glIsEnabled(GL_LIGHTING))
+      glEnable(GL_LIGHTING);
+  }
 
-  if(!glIsEnabled(GL_LIGHTING))
-    glEnable(GL_LIGHTING);
- }
+  glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
+  glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
+  glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
+  glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f - range);
 
- glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
- glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
- glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
- glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f - range);
+  vec3 v(dir[0], dir[1], dir[2]);
 
- vec3 v(dir[0], dir[1], dir[2]);
-
- if(v.length() > 0)
- {
-   glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION,  (float*)dir);
-   glLightfv(GL_LIGHT0 + i, GL_SPOT_CUTOFF,  (float*)&angle);
- }
+  if(v.length() > 0)
+  {
+    glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION,  (float*)dir);
+    glLightfv(GL_LIGHT0 + i, GL_SPOT_CUTOFF,  (float*)&angle);
+  }
 #endif
 }
 
@@ -372,7 +372,7 @@ void  kgmOGL::gcBlend(bool en, u32 fnsrc, u32 fndst){
 //ALPHA
 void  kgmOGL::gcAlpha(bool en, u32 fn, float ref){
 #ifdef GL_ALPHA_TEST
-    if(!en){
+  if(!en){
     glDisable(GL_ALPHA_TEST);
     return;
   }
@@ -883,7 +883,7 @@ void gcStencil(bool en, u32 func, u32 mask, u32 ref,
 void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
                     u32 i_size, u32 i_cnt, void *i_pnt){
   if(!v_pnt)
-      return;
+    return;
 
   unsigned char *pM = (unsigned char*)v_pnt;
   unsigned int  p_size  = sizeof(float) * 3;
@@ -1003,14 +1003,14 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #endif
   }
 
-//  glColor3f(1, 1, 1);
+  //  glColor3f(1, 1, 1);
   if(i_pnt && i_cnt){
     switch(i_size){
     case 4:
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
 #else
-//      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
+      //      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_INT, i_pnt);
 #endif
       break;
@@ -1018,7 +1018,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
 #else
-//      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
+      //      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_SHORT, i_pnt);
 #endif
     }
@@ -1028,19 +1028,19 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glDrawArrays(gl_enum(pmt), 0, v_cnt);
   }
 
-//#ifdef GLES_2
+  //#ifdef GLES_2
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
   glDisableVertexAttribArray(3);
   glDisableVertexAttribArray(4);
   glDisableVertexAttribArray(5);
-//#else
-//  glDisableClientState(GL_VERTEX_ARRAY);
-//  glDisableClientState(GL_NORMAL_ARRAY);
-//  glDisableClientState(GL_COLOR_ARRAY);
-//  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-//#endif
+  //#else
+  //  glDisableClientState(GL_VERTEX_ARRAY);
+  //  glDisableClientState(GL_NORMAL_ARRAY);
+  //  glDisableClientState(GL_COLOR_ARRAY);
+  //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  //#endif
 }
 
 /*void  kgmOGL::gcDrawBillboard(vec3 pos, float w, float h, u32 col){
@@ -1387,32 +1387,32 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
   if(link < 0)
     return;
 
-    switch(type){
-    case gcunitype_float1:
-      glUniform1fv(link, cnt, (float*)val);
-      break;
-    case gcunitype_float2:
-      glUniform2fv(link, cnt, (float*)val);
-      break;
-    case gcunitype_float3:
-      glUniform3fv(link, cnt, (float*)val);
-      break;
-    case gcunitype_float4:
-      glUniform4fv(link, cnt, (float*)val);
-      break;
-    case gcunitype_int1:
-      glUniform1iv(link, cnt, (const int*)val);
-      break;
-    case gcunitype_int2:
-      glUniform2iv(link, cnt, (const int*)val);
-      break;
-    case gcunitype_int3:
-      glUniform3iv(link, cnt, (const int*)val);
-      break;
-    case gcunitype_int4:
-      glUniform4iv(link, cnt, (const int*)val);
-      break;
-    }
+  switch(type){
+  case gcunitype_float1:
+    glUniform1fv(link, cnt, (float*)val);
+    break;
+  case gcunitype_float2:
+    glUniform2fv(link, cnt, (float*)val);
+    break;
+  case gcunitype_float3:
+    glUniform3fv(link, cnt, (float*)val);
+    break;
+  case gcunitype_float4:
+    glUniform4fv(link, cnt, (float*)val);
+    break;
+  case gcunitype_int1:
+    glUniform1iv(link, cnt, (const int*)val);
+    break;
+  case gcunitype_int2:
+    glUniform2iv(link, cnt, (const int*)val);
+    break;
+  case gcunitype_int3:
+    glUniform3iv(link, cnt, (const int*)val);
+    break;
+  case gcunitype_int4:
+    glUniform4iv(link, cnt, (const int*)val);
+    break;
+  }
 #endif
 }
 
@@ -1437,13 +1437,13 @@ void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* pa
 }
 
 void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
-//#ifdef GL_VERTEX_SHADER
+  //#ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)s, par);
 
   if(link < 0)
     return;
   glUniform1i(link, (GLu32)val);
-//#endif
+  //#endif
 }
 
 #ifdef DEBUG

@@ -58,7 +58,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 
 clean: luaclean
 #	echo "val: $(os)" # use cmd line make os=<some_val> clean
-	rm -f $(objects)
+	$(RM) $(objects)
 
 distclean: clean
-	rm -f $(OUT_SO) $(OUT_A)
+	$(RM) $(OUT_SO) $(OUT_A)

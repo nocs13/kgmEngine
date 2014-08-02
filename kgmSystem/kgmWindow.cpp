@@ -904,10 +904,8 @@ void kgmWindow::setTitle(char* title)
 
 void kgmWindow::onClose()
 {
-  kgm_log() << "onClose" << "\n";
-
-#ifdef WIN32
-  DestroyWindow(m_wnd);
+#ifdef DEBUG
+  kgm_log() << "onClose\n";
 #endif
 
 #ifdef LINUX
