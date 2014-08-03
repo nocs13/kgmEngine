@@ -65,10 +65,9 @@ public:
 class kViewOptionsForLight : public kViewOptions
 {
 public:
-  kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
-  :kViewOptions(n, x, y, w, h)
-  {
-  }
+  kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
+
+  void setIntencity(kgmString s);
 };
 
 class kViewOptionsForActor : public kViewOptions

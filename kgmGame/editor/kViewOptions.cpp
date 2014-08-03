@@ -236,3 +236,17 @@ void kViewOptionsForMesh::onSelectCollision(bool s)
 {
   node->col = s;
 }
+
+kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  y_coord += 23;
+  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g->setText("Intensity");
+
+  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+
+  g->setText(kgmConvert::toString(node->lgt->intensity));
+
+  y_coord += 23;
+}
