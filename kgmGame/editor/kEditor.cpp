@@ -301,7 +301,7 @@ bool kEditor::mapOpen(kgmString s)
 
   oquered = 0;
 
-  kgmString atype;
+  kgmString ntype;
 
   while(kgmXml::XmlState xstate = xml.next())
   {
@@ -321,11 +321,13 @@ bool kEditor::mapOpen(kgmString s)
 
       if(id == "kgmCamera")
       {
-        oquered++;
+        //oquered++;
+        ntype = "camera";
       }
       else if(id == "kgmLight")
       {
         oquered++;
+        ntype = "light";
 
         kgmString id;
         xml.attribute("name", id);
@@ -350,6 +352,7 @@ bool kEditor::mapOpen(kgmString s)
       else if(id == "kgmMesh")
       {
         oquered++;
+        ntype = "mesh";
 
         kgmString id, ln;
         xml.attribute("name", id);
@@ -371,14 +374,17 @@ bool kEditor::mapOpen(kgmString s)
       else if(id == "kgmActor")
       {
         oquered++;
+        ntype = "actor";
       }
       else if(id == "kgmTrigger")
       {
         oquered++;
+        ntype = "trigger";
       }
       else if(id == "kgmSensor")
       {
         oquered++;
+        ntype = "sensor";
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -391,7 +397,16 @@ bool kEditor::mapOpen(kgmString s)
         vec3 v;
         xml.attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-        node->setPosition(v);
+
+        if(ntype == "camera")
+        {
+          game->getRender()->camera().mPos = v;
+          game->getRender()->camera().update();
+        }
+        else
+        {
+          node->setPosition(v);
+        }
       }
       else if(id == "Rotation")
       {
@@ -399,6 +414,18 @@ bool kEditor::mapOpen(kgmString s)
         xml.attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
         node->setRotation(v);
+      }
+      else if(id == "Direction")
+      {
+        vec3 v;
+        xml.attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        if(ntype == "camera")
+        {
+          game->getRender()->camera().mDir = v;
+          game->getRender()->camera().update();
+        }
       }
       else if(id == "Material")
       {
@@ -463,6 +490,13 @@ bool kEditor::mapSave(kgmString s)
       continue;
     }
   }
+
+  kgmCamera& mcam = game->getRender()->camera();
+
+  fprintf(f, " <kgmCamera name='main_camera' active='true'>\n");
+  fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);
+  fprintf(f, "  <Direction value='%f %f %f'/>\n", mcam.mDir.x, mcam.mDir.y, mcam.mDir.z);
+  fprintf(f, " </kgmCamera>\n");
 
   for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
   {
