@@ -192,6 +192,9 @@ void kEditor::select(int x, int y)
     n = vec3(1, 0, 0);
     pln = plane3(n, (*i)->pos);
 
+    if((*i)->lock)
+      continue;
+
     if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
     {
       selected = (*i);
@@ -760,7 +763,7 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
-  if(selected && pivot->axis != kPivot::AXIS_NONE && ms_click[0])
+  if(selected && pivot->axis != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 

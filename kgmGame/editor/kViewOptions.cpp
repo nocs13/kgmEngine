@@ -93,6 +93,12 @@ kgmGui(null, x, y, w, h)
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.z));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&onRotationZ));
+
+    y_coord += 23;
+    kgmGuiCheck* lock = new kgmGuiCheck(this, 1, y_coord, 150, 20);
+    lock->setText("Locked");
+    lock->setCheck(node->lock);
+    lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&onSelectLock));
   }
 }
 
@@ -176,6 +182,11 @@ void kViewOptions::onRotationZ(u32 s)
   node->setRotation(node->rot);
 }
 
+void kViewOptions::onSelectLock(bool s)
+{
+  node->lock = s;
+}
+
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
@@ -247,6 +258,15 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiText(this, 51, y_coord, 70, 20);
 
   g->setText(kgmConvert::toString(node->lgt->intensity));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&setIntencity));
 
   y_coord += 23;
+}
+
+void kViewOptionsForLight::setIntencity(kgmString s)
+{
+  f32 in = kgmConvert::toDouble(s);
+
+  node->lgt->intensity = in;
 }

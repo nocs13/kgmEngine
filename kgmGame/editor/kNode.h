@@ -47,7 +47,7 @@ public:
   kgmString lnk;
   kgmString mat;
 
-  bool col;
+  bool col, lock;
 
   kgmGraphics::Icon* icn;
   kgmMesh*           geo;
@@ -59,6 +59,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   kNode(kgmMesh* m)
@@ -68,6 +69,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   kNode(kgmLight* l)
@@ -77,6 +79,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   kNode(kgmActor* a)
@@ -86,6 +89,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   kNode(kgmSensor* s)
@@ -95,6 +99,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   kNode(kgmTrigger* t)

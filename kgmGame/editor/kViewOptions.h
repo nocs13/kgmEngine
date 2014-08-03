@@ -37,6 +37,7 @@ public:
   void onRotationX(u32 s);
   void onRotationY(u32 s);
   void onRotationZ(u32 s);
+  void onSelectLock(bool);
 
   void setCloseCallback(CloseCallback cfn)
   {
