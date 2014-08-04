@@ -46,7 +46,7 @@ void kgmD3ds::_Sound::emit(vec3& pos, vec3& vel){
 
 void kgmD3ds::_Sound::drop()
 {
-    delete this;
+  delete this;
 }
 
 kgmD3ds::kgmD3ds()
@@ -93,19 +93,19 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
   case FMT_MONO8:
     wf.nChannels = 1;
     wf.wBitsPerSample = 8;
-  break;
+    break;
   case FMT_MONO16:
     wf.nChannels = 1;
     wf.wBitsPerSample = 16;
-  break;
+    break;
   case FMT_STEREO8:
     wf.nChannels = 2;
     wf.wBitsPerSample = 8;
-  break;
+    break;
   case FMT_STEREO16:
     wf.nChannels = 2;
     wf.wBitsPerSample = 8;
-  break;
+    break;
   }
 
   wf.nBlockAlign = wf.nChannels * ( wf.wBitsPerSample / 8 );
@@ -148,8 +148,8 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
 
 void kgmD3ds::listener(vec3& pos, vec3& vel, vec3& ort)
 {
- float l = vel.length();
- float dirort[6] = {vel.x, vel.y, vel.z, ort.x, ort.y, ort.z};
+  float l = vel.length();
+  float dirort[6] = {vel.x, vel.y, vel.z, ort.x, ort.y, ort.z};
 }
 
 void kgmD3ds::clear()
