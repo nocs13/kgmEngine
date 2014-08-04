@@ -109,6 +109,7 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
   }
 
   ~kNode()

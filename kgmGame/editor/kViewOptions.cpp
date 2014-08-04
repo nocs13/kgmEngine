@@ -270,3 +270,32 @@ void kViewOptionsForLight::setIntencity(kgmString s)
 
   node->lgt->intensity = in;
 }
+
+kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+}
+
+kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  y_coord += 23;
+  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g->setText("Channels");
+
+  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+
+  g->setText(kgmConvert::toString((s32)node->trg->getCount()));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&setChanels));
+
+  y_coord += 23;
+}
+
+void kViewOptionsForTrigger::setChanels(kgmString s)
+{
+  u32 ch = kgmConvert::toDouble(s);
+
+  node->trg->setCount(ch);
+}
+

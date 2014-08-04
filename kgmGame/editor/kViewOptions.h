@@ -74,19 +74,21 @@ public:
 class kViewOptionsForActor : public kViewOptions
 {
 public:
-  kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
-  :kViewOptions(n, x, y, w, h)
-  {
-  }
+  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
 };
 
-class kViewOptionsForMaterial : public kViewOptions
+class kViewOptionsForSensor : public kViewOptions
 {
 public:
-  kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h)
-  :kViewOptions(n, x, y, w, h)
-  {
-  }
+  kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
+};
+
+class kViewOptionsForTrigger : public kViewOptions
+{
+public:
+  kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h);
+
+  void setChanels(kgmString s);
 };
 
 }

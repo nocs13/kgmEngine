@@ -991,6 +991,9 @@ void kEditor::onEditOptions()
   case kNode::ACTOR:
     vop = new kViewOptionsForActor(selected, 50, 50, 210, 300);
     break;
+  case kNode::TRIGGER:
+    vop = new kViewOptionsForTrigger(selected, 50, 50, 210, 300);
+    break;
   }
 
   if(vop)
@@ -1054,7 +1057,21 @@ void kEditor::onAddSensor()
 
 void kEditor::onAddTrigger()
 {
+  kgmTrigger* tr = new kgmTrigger();
 
+  kNode* node = new kNode(tr);
+  node->bnd = box3(-1, -1, -1, 1, 1, 1);
+  node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
+  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->geo = new kArrow();
+
+  selected = node;
+  nodes.add(node);
+  vo->getGuiList()->addItem(node->nam);
+  vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+  game->m_render->add(node->icn);
+  game->m_render->add(node->geo, mtlLines);
 }
 
 void kEditor::onRunRun()
