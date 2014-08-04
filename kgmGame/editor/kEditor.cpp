@@ -1,5 +1,6 @@
 #include "kEditor.h"
 
+#include "../../kgmBase/kgmLog.h"
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
 #include "../kgmGameBase.h"
@@ -854,6 +855,8 @@ void kEditor::onMsMove(int k, int x, int y)
 
         cam.mPos.z += 0.01 * -y;
         cam.update();
+
+        kgm_log() << "Y: " << y << "\n";
       }
     }
   }

@@ -29,7 +29,7 @@ all:
 	$(CC) -o kTest *.o ../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
 clean:	
-	$(RM) -f kTest *.o
+	$(RM) kTest *.o
 	
 run: 
 	./kTest	

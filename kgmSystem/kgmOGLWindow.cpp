@@ -34,16 +34,23 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
  pfd.iLayerType = PFD_MAIN_PLANE;
 
  m_hdc = GetDC(m_wnd);
+
  if(!m_hdc)
 	 return;
+
  int pf = ChoosePixelFormat(m_hdc,&pfd);
+
  if(!pf)
 	 return;
+
  if(!SetPixelFormat(m_hdc,pf,&pfd))
 	 return;
+
  m_hrc = wglCreateContext(m_hdc);
+
  if(!m_hrc)
 	 return;
+
  if(!wglMakeCurrent(m_hdc,m_hrc))
 	 return;
 #endif

@@ -5,6 +5,7 @@ CC = g++
 AR = ar
 DEFS = -DLINUX -DDEBUG -DLUA
 DSND = -OAL
+DSEP = /
 
 FLGS =
 DIRS = -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics -I./kgmExtern/lua-4.0.1/include
@@ -17,8 +18,10 @@ ifeq ($(OS), Linux)
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else
+	OS = Windows
+	DSEP = \\
 	DEFS = -DWIN32 -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -mwindows -fpermissive
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32
-	RM = del /Q
+	RM = rm -f 
 endif

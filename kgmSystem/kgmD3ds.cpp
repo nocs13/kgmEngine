@@ -29,7 +29,7 @@ void kgmD3ds::_Sound::stop(){
 }
 
 void kgmD3ds::_Sound::play(bool loop){
-  // should be check because dont play
+  // should be check because don't play
   if(pSb)
   {
     pSb->Play(0, 0, (loop)?(DSBPLAY_LOOPING):(0));

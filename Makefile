@@ -20,7 +20,6 @@ all: debug
 debug: set_debug $(OUT_SO)
 	echo 'debug finished.'
 	make -C Tools/Packer
-#	make -C Tools/Editor
 
 set_debug:
 	$(eval DEFS += -DDEBUG)
@@ -37,19 +36,15 @@ $(objects) : %.o : %.cpp %.h
 
 $(OUT_A): $(objects) lua
 	$(AR) -r -c -s $(OUT_A) $(objects)
-#	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/*.o
-#	$(AR) -r -c -s $(OUT_A) kgmExtern/lua-4.0.1/src/lib/*.o
 
 $(OUT_SO): $(OUT_A)
 	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 lua:
 	echo 'building lua'
-#	make -C kgmExtern/lua-4.0.1
 
 luaclean:
 	echo 'cleaning lua'
-#	make -C kgmExtern/lua-4.0.1 clean
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk
@@ -57,7 +52,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 	cp $(OUT_SO) sdk/.
 
 clean: luaclean
-#	echo "val: $(os)" # use cmd line make os=<some_val> clean
+#	use cmd line make os=<some_val> clean
 	$(RM) $(objects)
 
 distclean: clean
