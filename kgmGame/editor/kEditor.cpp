@@ -28,6 +28,10 @@ enum MENUEVENT
 
 kEditor::kEditor(kgmGameBase* g)
 {
+  void* nnn = &game;
+
+  game = null;
+
   game = g;
 
   game->setMsAbsolute(true);
@@ -351,7 +355,7 @@ bool kEditor::mapOpen(kgmString s)
 
         nodes.add(node);
 
-        node->setPosition(vec3(0,0,0));
+//        node->setPosition(vec3(0,0,0));
       }
       else if(id == "kgmMesh")
       {
@@ -384,6 +388,31 @@ bool kEditor::mapOpen(kgmString s)
       {
         oquered++;
         ntype = "trigger";
+
+        kgmString id, chn, dst;
+        xml.attribute("name", id);
+        xml.attribute("channels", chn);
+        xml.attribute("destination", dst);
+
+        kgmTrigger* tr= new kgmTrigger();
+        tr->setCount(kgmConvert::toInteger(chn));
+        tr->setDestination(dst);
+
+        node = new kNode(tr);
+        node->nam = id;
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        nodes.add(node);
+
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
+        node->geo = new kArrow();
+
+        vo->getGuiList()->addItem(node->nam);
+        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+        game->m_render->add(node->icn);
+        game->m_render->add(node->geo, mtlLines);
+
+        nodes.add(node);
       }
       else if(id == "kgmSensor")
       {
@@ -475,6 +504,7 @@ bool kEditor::mapSave(kgmString s)
   kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
   kgmList<kNode*> actors;
+  kgmList<kNode*> triggers;
   kgmList<kNode*> materials;
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -489,6 +519,9 @@ bool kEditor::mapSave(kgmString s)
       continue;
     case kNode::ACTOR:
       actors.add(*i);
+      continue;
+    case kNode::TRIGGER:
+      triggers.add(*i);
       continue;
     default:
       continue;
@@ -542,6 +575,15 @@ bool kEditor::mapSave(kgmString s)
   {
     fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
     fprintf(f, " </kgmActor>\n");
+  }
+
+  for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
+  {
+    fprintf(f, " <kgmTrigger name='%s' channels='%i' destination='%s'>\n",
+            (*i)->nam.data(), (*i)->trg->getCount(), (*i)->trg->getDestination().data());
+    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    fprintf(f, " </kgmTrigger>\n");
   }
 
   materials.clear();
@@ -1018,6 +1060,8 @@ void kEditor::onAddLight()
   kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
+  game->getResources();
+  game->getResources()->getTexture("light_ico.tga");
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
   node->geo = new kArrow();
 
