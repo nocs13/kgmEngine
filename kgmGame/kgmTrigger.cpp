@@ -6,12 +6,12 @@ KGMOBJECT_IMPLEMENT(kgmTrigger, kgmGameObject);
 
 kgmTrigger::kgmTrigger()
 {
-  destination = null;
+  target = "";
 }
 
-void kgmTrigger::sendDestination(kgmString e)
+void kgmTrigger::sendToTarget(kgmString e)
 {
-  kgmGameObject* o = kgmIGame::getGame()->getLogic()->getObjectById(destination);
+  kgmGameObject* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
 
   if(o)
     o->event(this, e);

@@ -28,10 +28,6 @@ enum MENUEVENT
 
 kEditor::kEditor(kgmGameBase* g)
 {
-  void* nnn = &game;
-
-  game = null;
-
   game = g;
 
   game->setMsAbsolute(true);
@@ -389,14 +385,14 @@ bool kEditor::mapOpen(kgmString s)
         oquered++;
         ntype = "trigger";
 
-        kgmString id, chn, dst;
+        kgmString id, chn, trg;
         xml.attribute("name", id);
         xml.attribute("channels", chn);
-        xml.attribute("destination", dst);
+        xml.attribute("target", trg);
 
         kgmTrigger* tr= new kgmTrigger();
         tr->setCount(kgmConvert::toInteger(chn));
-        tr->setDestination(dst);
+        tr->setTarget(trg);
 
         node = new kNode(tr);
         node->nam = id;
@@ -504,6 +500,7 @@ bool kEditor::mapSave(kgmString s)
   kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
   kgmList<kNode*> actors;
+  kgmList<kNode*> sensors;
   kgmList<kNode*> triggers;
   kgmList<kNode*> materials;
 
@@ -519,6 +516,9 @@ bool kEditor::mapSave(kgmString s)
       continue;
     case kNode::ACTOR:
       actors.add(*i);
+      continue;
+    case kNode::SENSOR:
+      sensors.add(*i);
       continue;
     case kNode::TRIGGER:
       triggers.add(*i);
@@ -577,10 +577,19 @@ bool kEditor::mapSave(kgmString s)
     fprintf(f, " </kgmActor>\n");
   }
 
+  for(kgmList<kNode*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
+  {
+    fprintf(f, " <kgmSensor name='%s' class='%s' target='%s'>\n",
+            (*i)->nam.data(), (*i)->sns->runtime().nClass, (*i)->sns->getTarget().data());
+    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    fprintf(f, " </kgmSensor>\n");
+  }
+
   for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
   {
-    fprintf(f, " <kgmTrigger name='%s' channels='%i' destination='%s'>\n",
-            (*i)->nam.data(), (*i)->trg->getCount(), (*i)->trg->getDestination().data());
+    fprintf(f, " <kgmTrigger name='%s' channels='%i' target='%s'>\n",
+            (*i)->nam.data(), (*i)->trg->getCount(), (*i)->trg->getTarget().data());
     fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
     fprintf(f, " </kgmTrigger>\n");
@@ -658,14 +667,19 @@ bool kEditor::addSensor(kgmString type)
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+        node->geo = new kArrow();
+
         selected = node;
 
         game->m_render->add(node->icn);
+        game->m_render->add(node->geo, mtlLines);
 
         vo->getGuiList()->addItem(node->nam);
         vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
         nodes.add(node);
+
+        return true;
       }
     }
   }
@@ -1032,6 +1046,9 @@ void kEditor::onEditOptions()
     break;
   case kNode::ACTOR:
     vop = new kViewOptionsForActor(selected, 50, 50, 210, 300);
+    break;
+  case kNode::SENSOR:
+    vop = new kViewOptionsForSensor(selected, 50, 50, 210, 300);
     break;
   case kNode::TRIGGER:
     vop = new kViewOptionsForTrigger(selected, 50, 50, 210, 300);

@@ -17,7 +17,7 @@ class kgmTrigger : public kgmGameObject
 
 private:
   kgmArray<bool> chanels;
-  kgmString      destination;
+  kgmString      target;
 
 public:
   kgmTrigger();
@@ -54,9 +54,9 @@ public:
     if(prev != cur)
     {
       if(cur)
-        sendDestination("on");
+        sendToTarget("on");
       else
-        sendDestination("off");
+        sendToTarget("off");
     }
   }
 
@@ -76,20 +76,20 @@ public:
     return true;
   }
 
-  void setDestination(kgmString o)
+  void setTarget(kgmString o)
   {
-    destination = o;
+    target = o;
   }
 
-  kgmString getDestination()
+  kgmString getTarget()
   {
-    return destination;
+    return target;
   }
 
   virtual void triggering(){}
 
 private:
-  void sendDestination(kgmString);
+  void sendToTarget(kgmString);
 };
 
 #endif // KGMTRIGGER_H

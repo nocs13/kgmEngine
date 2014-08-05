@@ -81,6 +81,8 @@ class kViewOptionsForSensor : public kViewOptions
 {
 public:
   kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
+
+  void setTarget(kgmString s);
 };
 
 class kViewOptionsForTrigger : public kViewOptions
@@ -89,6 +91,7 @@ public:
   kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h);
 
   void setChanels(kgmString s);
+  void setTarget(kgmString s);
 };
 
 }

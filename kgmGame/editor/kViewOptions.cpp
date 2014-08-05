@@ -276,10 +276,33 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 {
 }
 
+kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  y_coord += 23;
+
+  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g->setText("Target");
+
+  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+
+  g->setText(node->sns->getTarget());
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&setTarget));
+
+  y_coord += 23;
+}
+
+void kViewOptionsForSensor::setTarget(kgmString s)
+{
+  node->sns->setTarget(s);
+}
+
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   y_coord += 23;
+
   kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
   g->setText("Channels");
 
@@ -288,6 +311,17 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
   g->setText(kgmConvert::toString((s32)node->trg->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&setChanels));
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g->setText("Target");
+
+  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+
+  g->setText(node->trg->getTarget());
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&setTarget));
 
   y_coord += 23;
 }
@@ -299,3 +333,7 @@ void kViewOptionsForTrigger::setChanels(kgmString s)
   node->trg->setCount(ch);
 }
 
+void kViewOptionsForTrigger::setTarget(kgmString s)
+{
+  node->trg->setTarget(s);
+}
