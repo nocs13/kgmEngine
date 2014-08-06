@@ -380,6 +380,50 @@ bool kEditor::mapOpen(kgmString s)
         oquered++;
         ntype = "actor";
       }
+      else if(id == "kgmSensor")
+      {
+        oquered++;
+        node = null;
+        ntype = "sensor";
+
+        kgmString id, cls, trg;
+        xml.attribute("name", id);
+        xml.attribute("class", cls);
+        xml.attribute("target", trg);
+
+        kgmSensor* sns = null;
+
+        if(kgmGameObject::g_typ_sensors.hasKey(cls))
+        {
+          kgmObject* (*fn_new)() = kgmGameObject::g_typ_sensors[cls];
+
+          if(fn_new)
+          {
+            kgmSensor* sn = (kgmSensor*)fn_new();
+
+            if(sn)
+            {
+              sn->setTarget(trg);
+
+              node = new kNode(sn);
+              node->bnd = box3(-1, -1, -1, 1, 1, 1);
+              node->nam = id;
+              node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+              node->geo = new kArrow();
+
+              selected = node;
+
+              game->m_render->add(node->icn);
+              game->m_render->add(node->geo, mtlLines);
+
+              vo->getGuiList()->addItem(node->nam);
+              vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+              nodes.add(node);
+            }
+          }
+        }
+      }
       else if(id == "kgmTrigger")
       {
         oquered++;
@@ -409,11 +453,6 @@ bool kEditor::mapOpen(kgmString s)
         game->m_render->add(node->geo, mtlLines);
 
         nodes.add(node);
-      }
-      else if(id == "kgmSensor")
-      {
-        oquered++;
-        ntype = "sensor";
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
