@@ -513,6 +513,16 @@ bool kEditor::mapOpen(kgmString s)
         if(t != 0)
           node->col = true;
       }
+      else if(id == "Locked")
+      {
+        value.clear();
+        xml.attribute("value", value);
+
+        u32 t = kgmConvert::toInteger(value);
+
+        if(t != 0)
+          node->lock = true;
+      }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
     {
@@ -587,6 +597,10 @@ bool kEditor::mapSave(kgmString s)
     fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
     fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
     fprintf(f, " </kgmLight>\n");
   }
 
@@ -607,12 +621,19 @@ bool kEditor::mapSave(kgmString s)
     if((*i)->col)
       fprintf(f, "  <Collision value='%u'/>\n", (*i)->col);
 
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
     fprintf(f, " </kgmMesh>\n");
   }
 
   for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
   {
     fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
+
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
     fprintf(f, " </kgmActor>\n");
   }
 
@@ -622,6 +643,10 @@ bool kEditor::mapSave(kgmString s)
             (*i)->nam.data(), (*i)->sns->runtime().nClass, (*i)->sns->getTarget().data());
     fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
     fprintf(f, " </kgmSensor>\n");
   }
 
@@ -631,6 +656,10 @@ bool kEditor::mapSave(kgmString s)
             (*i)->nam.data(), (*i)->trg->getCount(), (*i)->trg->getTarget().data());
     fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
     fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
     fprintf(f, " </kgmTrigger>\n");
   }
 
@@ -684,6 +713,26 @@ bool kEditor::addMesh(kgmString fpath)
 
 bool kEditor::addActor(kgmString path)
 {
+  kgmString afile = fdd->getFile();
+
+  char* p = strstr(afile.data(), ".act");
+
+  if(p != 0)
+  {
+    u32 size = ((u32)p) - ((u32)afile.data());
+
+    kgmString t;
+
+    t.alloc(afile.data(), size);
+
+    afile = t;
+  }
+
+  kgmActor* actor = game->gSpawn(afile);
+
+  if(!actor)
+    return false;
+
   return false;
 }
 
