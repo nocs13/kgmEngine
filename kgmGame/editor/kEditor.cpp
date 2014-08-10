@@ -109,10 +109,7 @@ kEditor::~kEditor()
 
   mtlLines->release();
 
-  kgmGameObject::g_typ_actors.clear();
-  kgmGameObject::g_typ_effects.clear();
-  kgmGameObject::g_typ_sensors.clear();
-  kgmGameObject::g_typ_triggers.clear();
+  kgmGameObject::g_typ_objects.clear();
 }
 
 void kEditor::clear()
@@ -393,9 +390,9 @@ bool kEditor::mapOpen(kgmString s)
 
         kgmSensor* sns = null;
 
-        if(kgmGameObject::g_typ_sensors.hasKey(cls))
+        if(kgmGameObject::g_typ_objects.hasKey(cls))
         {
-          kgmObject* (*fn_new)() = kgmGameObject::g_typ_sensors[cls];
+          kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[cls];
 
           if(fn_new)
           {
@@ -741,9 +738,9 @@ bool kEditor::addSensor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmGameObject::g_typ_sensors.hasKey(type))
+  if(kgmGameObject::g_typ_objects.hasKey(type))
   {
-    kgmObject* (*fn_new)() = kgmGameObject::g_typ_sensors[type];
+    kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -1195,9 +1192,9 @@ void kEditor::onAddSensor()
   vs = new kViewObjects(this, 1, 50, 100, 300);
   vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&menuAddSensor));
 
-  for(int i = 0; i < kgmGameObject::g_typ_sensors.length(); i++)
+  for(int i = 0; i < kgmGameObject::g_typ_objects.length(); i++)
   {
-    kgmString s = kgmGameObject::g_typ_sensors.key(i);
+    kgmString s = kgmGameObject::g_typ_objects.key(i);
     vs->getGuiList()->addItem(s);
   }
 

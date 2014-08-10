@@ -154,11 +154,11 @@ kgmGameBase::kgmGameBase()
   m_gamemode = true;
   m_state    = State_None;
 
+  kgmGameObject::g_typ_objects.add("kgmSnInputListener", &kgmSnInputListener::New);
+
 #ifdef EDITOR
   editor  = new kEditor(this);
   editing = false;
-
-  kgmGameObject::g_typ_sensors.add("kgmSnInputListener", &kgmSnInputListener::New);
 #endif
 }
 
@@ -595,6 +595,19 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
 
 kgmGameObject* kgmGameBase::gObject(kgmString s)
 {
+  if(kgmGameObject::g_typ_objects.hasKey(s))
+  {
+    kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[s];
+
+    if(fn_new)
+    {
+      kgmGameObject* go = fn_new();
+
+      if(go)
+        return go;
+    }
+  }
+
   return null;
 }
 

@@ -1,12 +1,7 @@
 #include "kgmGameObject.h"
 KGMOBJECT_IMPLEMENT(kgmGameObject, kgmObject);
 
-#ifdef EDITOR
-  kgmTab<kgmString, kgmObject*(*)()> kgmGameObject::g_typ_actors;
-  kgmTab<kgmString, kgmObject*(*)()> kgmGameObject::g_typ_effects;
-  kgmTab<kgmString, kgmObject*(*)()> kgmGameObject::g_typ_sensors;
-  kgmTab<kgmString, kgmObject*(*)()> kgmGameObject::g_typ_triggers;
-#endif
+kgmTab<kgmString, kgmGameObject*(*)()> kgmGameObject::g_typ_objects;
 
 kgmGameObject::kgmGameObject()
   :kgmObject(),
