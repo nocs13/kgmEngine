@@ -4,7 +4,8 @@
 
 KGMOBJECT_IMPLEMENT(kgmTrigger, kgmGameObject);
 
-kgmTrigger::kgmTrigger()
+kgmTrigger::kgmTrigger(kgmIGame* g)
+  :kgmGameObject(g)
 {
   target = "";
 }

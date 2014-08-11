@@ -11,6 +11,9 @@ class ACamera: public kgmActor
   bool      ms_left, ms_right;
 
 public:
+
+  static New(kgmIGame* g){ return new ACamera(g); }
+
   ACamera(kgmIGame* g)
     :kgmActor()
   {

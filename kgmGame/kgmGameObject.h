@@ -5,6 +5,8 @@
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmGraphics/kgmVisual.h"
 
+class kgmIGame;
+
 class kgmGameObject : public kgmObject
 {
   KGM_OBJECT(kgmGameObject);
@@ -35,10 +37,10 @@ protected:
   kgmGameObject*      m_parent;
 
 public:
-  static kgmTab<kgmString, kgmGameObject*(*)()> g_typ_objects;
+  static kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> g_typ_objects;
 
 public:
-  kgmGameObject();
+  kgmGameObject(kgmIGame* g = null);
   virtual ~kgmGameObject();
 
   virtual void         exit(){}

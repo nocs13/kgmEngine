@@ -96,7 +96,7 @@ public:
   kgmTab<kgmString, kgmString> m_options;
 
 public:
-  kgmActor();
+  kgmActor(kgmIGame* g = null);
   virtual ~kgmActor();
 
   virtual void init();

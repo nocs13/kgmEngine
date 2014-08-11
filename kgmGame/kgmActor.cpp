@@ -1,7 +1,8 @@
 #include "kgmActor.h"
 KGMOBJECT_IMPLEMENT(kgmActor, kgmGameObject);
 
-kgmActor::kgmActor()
+kgmActor::kgmActor(kgmIGame* g)
+  :kgmGameObject(g)
 {
   vec3 tv(0, 0, 1);
 

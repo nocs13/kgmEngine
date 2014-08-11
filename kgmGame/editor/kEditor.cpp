@@ -431,7 +431,7 @@ bool kEditor::mapOpen(kgmString s)
         xml.attribute("channels", chn);
         xml.attribute("target", trg);
 
-        kgmTrigger* tr= new kgmTrigger();
+        kgmTrigger* tr= new kgmTrigger(game);
         tr->setCount(kgmConvert::toInteger(chn));
         tr->setTarget(trg);
 
@@ -735,6 +735,13 @@ bool kEditor::addActor(kgmString path)
 
 bool kEditor::addSensor(kgmString type)
 {
+  if(vs)
+  {
+    vs->erase();
+    vs->release();
+    vs = null;
+  }
+
   if(type.length() < 1)
     return false;
 
@@ -1192,9 +1199,9 @@ void kEditor::onAddSensor()
   vs = new kViewObjects(this, 1, 50, 100, 300);
   vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&menuAddSensor));
 
-  for(int i = 0; i < kgmGameObject::g_typ_objects.length(); i++)
+  for(int i = 0; i < kgmSensor::g_typ_sensors.length(); i++)
   {
-    kgmString s = kgmGameObject::g_typ_objects.key(i);
+    kgmString s = kgmSensor::g_typ_sensors[i];
     vs->getGuiList()->addItem(s);
   }
 

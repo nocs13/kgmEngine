@@ -20,7 +20,7 @@ private:
   kgmString      target;
 
 public:
-  kgmTrigger();
+  kgmTrigger(kgmIGame* g = null);
 
   bool setCount(u32 c)
   {

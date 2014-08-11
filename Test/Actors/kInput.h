@@ -13,7 +13,10 @@ class kInput: public kgmSnInputListener
   u8 keys[128];
 
 public:
+  static kgmGameObject* New(kgmIGame* g){ return new kInput(g); }
+
   kInput(kgmIGame* g)
+    :kgmSnInputListener(g)
   {
     game = g;
 

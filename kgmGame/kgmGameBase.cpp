@@ -157,6 +157,8 @@ kgmGameBase::kgmGameBase()
   kgmGameObject::g_typ_objects.add("kgmSnInputListener", &kgmSnInputListener::New);
 
 #ifdef EDITOR
+  kgmSensor::g_typ_sensors.add("kgmSnInputListener");
+
   editor  = new kEditor(this);
   editing = false;
 #endif
@@ -1205,7 +1207,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
   kgmString stype;
   a_node->attribute("type", stype);
-  actor = (m_logic)?((kgmActor*)gObject(stype)):(new kgmActor());
+  actor = (m_logic)?((kgmActor*)gObject(stype)):(new kgmActor(this));
 
   if(!actor)
     return null;
