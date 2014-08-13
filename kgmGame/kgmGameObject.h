@@ -7,9 +7,15 @@
 
 class kgmIGame;
 
+#define KGM_GO_OBJECT(o_class)                                           \
+  KGM_OBJECT(o_class)                                                    \
+  static  o_class*     New(kgmIGame* g){ return new o_class(g); }        \
+  private:
+
+
 class kgmGameObject : public kgmObject
 {
-  KGM_OBJECT(kgmGameObject);
+  KGM_GO_OBJECT(kgmGameObject);
 
 private:
   kgmString m_id;

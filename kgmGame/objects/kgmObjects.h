@@ -8,14 +8,14 @@
 
 class kgmResult: public kgmGameObject
 {
-  KGM_OBJECT(kgmResult);
+  KGM_GO_OBJECT(kgmResult);
 
   kgmIGame* game;
   kgmString text;
   s32       result;
 
 public:
-  kgmResult(kgmIGame* g, u32 time, s32 res, kgmString txt)
+  kgmResult(kgmIGame* g, u32 time = 0, s32 res = 0, kgmString txt = "")
   {
     game = g;
     text = txt;
@@ -58,13 +58,12 @@ public:
 
   void exit()
   {
-    //game->getLogic()->action(kgmILogic::ACTION_GAMEOBJECT, this, "result");
   }
 };
 
 class kgmParticlesObject: public kgmGameObject
 {
-  KGM_OBJECT(kgmParticlesObject);
+  KGM_GO_OBJECT(kgmParticlesObject);
 
 private:
   kgmIGame* game;
@@ -153,7 +152,7 @@ public:
 
 class kgmFlame: public kgmParticlesObject
 {
-  KGM_OBJECT(kgmFlame);
+  KGM_GO_OBJECT(kgmFlame);
 
 public:
   kgmFlame(kgmIGame* g)
@@ -173,7 +172,7 @@ public:
 
 class kgmSmoke: public kgmGameObject
 {
-  KGM_OBJECT(kgmSmoke);
+  KGM_GO_OBJECT(kgmSmoke);
 
 protected:
   kgmParticles* particles;
@@ -214,7 +213,7 @@ public:
 
 class kgmExplode: public kgmGameObject
 {
-  KGM_OBJECT(kgmExplode);
+  KGM_GO_OBJECT(kgmExplode);
 
 private:
   kgmIGame* game;
@@ -289,7 +288,7 @@ public:
 
 class kgmLaser: public kgmGameObject
 {
-  KGM_OBJECT(kgmLaser);
+  KGM_GO_OBJECT(kgmLaser);
 
   struct Vertex
   {
@@ -305,6 +304,12 @@ public:
   u32           power;
 
 public:
+  kgmLaser(kgmIGame* g = null)
+    :kgmGameObject(g)
+  {
+
+  }
+
   kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed,
            float hlen=0.5, float hwid=0.1)
   {
@@ -370,7 +375,7 @@ public:
 
 class kgmIonNozzle: public kgmGameObject
 {
-  KGM_OBJECT(kgmIonNozzle);
+  KGM_GO_OBJECT(kgmIonNozzle);
 
   struct Vertex
   {

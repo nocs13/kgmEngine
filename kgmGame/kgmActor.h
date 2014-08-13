@@ -22,7 +22,7 @@
 
 class kgmActor: public kgmGameObject
 {
-  KGM_OBJECT(kgmActor);
+  KGM_GO_OBJECT(kgmActor);
 
 public:
   struct Action

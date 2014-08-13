@@ -5,7 +5,7 @@
 
 class kgmTrigger : public kgmGameObject
 {
-  KGM_OBJECT(kgmTrigger);
+  KGM_GO_OBJECT(kgmTrigger);
 
   enum Type
   {

@@ -5,10 +5,11 @@
 
 class kgmSensor : public kgmGameObject
 {
-  KGM_OBJECT(kgmSensor);
+  KGM_GO_OBJECT(kgmSensor);
 
   kgmString target;
 
+public:
 #ifdef EDITOR
   static kgmList<kgmString> g_typ_sensors;
 #endif
