@@ -109,7 +109,7 @@ public:
     kgmGameObject::g_typ_objects.add("ACamera", &ACamera::New);
 
 #ifdef EDITOR
-    kgmSensor::g_typ_sensors.add("kInput");
+    kgmGameObject::g_list_sensors.add("kInput");
 
     gui->m_guiMain->hide();
     m_gamemode = true;

@@ -1199,9 +1199,9 @@ void kEditor::onAddSensor()
   vs = new kViewObjects(this, 1, 50, 100, 300);
   vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&menuAddSensor));
 
-  for(int i = 0; i < kgmSensor::g_typ_sensors.length(); i++)
+  for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
   {
-    kgmString s = kgmSensor::g_typ_sensors[i];
+    kgmString s = kgmGameObject::g_list_sensors[i];
     vs->getGuiList()->addItem(s);
   }
 

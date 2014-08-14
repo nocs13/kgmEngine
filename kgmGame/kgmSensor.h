@@ -10,11 +10,6 @@ class kgmSensor : public kgmGameObject
   kgmString target;
 
 public:
-#ifdef EDITOR
-  static kgmList<kgmString> g_typ_sensors;
-#endif
-
-public:
   kgmSensor(kgmIGame* g = null);
 
   virtual void sense(){}

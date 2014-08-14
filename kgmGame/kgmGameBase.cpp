@@ -157,7 +157,7 @@ kgmGameBase::kgmGameBase()
   kgmGameObject::g_typ_objects.add("kgmSnInputListener", &kgmSnInputListener::New);
 
 #ifdef EDITOR
-  kgmSensor::g_typ_sensors.add("kgmSnInputListener");
+  kgmGameObject::g_list_sensors.add("kgmSnInputListener");
 
   editor  = new kEditor(this);
   editing = false;

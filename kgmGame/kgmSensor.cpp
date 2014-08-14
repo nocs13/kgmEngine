@@ -4,10 +4,6 @@
 
 KGMOBJECT_IMPLEMENT(kgmSensor, kgmGameObject);
 
-#ifdef EDITOR
-  kgmList<kgmString> kgmSensor::g_typ_sensors;
-#endif
-
 kgmSensor::kgmSensor(kgmIGame* g)
   :kgmGameObject(g)
 {

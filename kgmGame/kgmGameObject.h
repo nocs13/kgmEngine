@@ -2,6 +2,7 @@
 #define KGMGAMEOBJECT_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmVariable.h"
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmGraphics/kgmVisual.h"
 
@@ -44,6 +45,14 @@ protected:
 
 public:
   static kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> g_typ_objects;
+
+#ifdef EDITOR
+  static kgmList<kgmString> g_list_objects;
+  static kgmList<kgmString> g_list_sensors;
+  static kgmList<kgmString> g_list_actors;
+
+  kgmList<kgmVariable> m_variables;
+#endif
 
 public:
   kgmGameObject(kgmIGame* g = null);
@@ -124,6 +133,7 @@ public:
   }
 
   u32 birth() { return m_birth; }
+
 };
 
 #endif // KGMGAMEOBJECT_H
