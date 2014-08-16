@@ -54,6 +54,58 @@ u32 kgmGuiText::getCursor()
   return index;
 }
 
+void kgmGuiText::moveLeft()
+{
+  if(index > 0)
+    index--;
+}
+
+void kgmGuiText::moveRight()
+{
+  if(index < m_text.length())
+    index++;
+}
+
+void kgmGuiText::delLeft()
+{
+  kgmString pt1;
+  kgmString pt2;
+
+  if(!m_text.length())
+    return;
+
+  if(index > 0)
+    pt1 = kgmString(m_text.data(), index - 1);
+
+  if(index < m_text.length())
+    pt2 = kgmString(m_text.data() + index, m_text.length() - index);
+
+  if(index > 0)
+    index--;
+
+  m_text = pt1 + pt2;
+}
+
+void kgmGuiText::delRight()
+{
+  kgmString pt1;
+  kgmString pt2;
+
+  if(!m_text.length() || (index == m_text.length()))
+    return;
+
+  if(index != 0)
+    pt1 = kgmString(m_text.data(), index);
+
+  if(index < m_text.length())
+    pt2 = kgmString(m_text.data() + index + 1, m_text.length() - index - 1);
+
+  if(index >= m_text.length())
+    index--;
+
+  m_text = pt1 + pt2;
+}
+
 void kgmGuiText::onMsLeftDown(int k, int x, int y)
 {
   kgmGui* top = getRoot();
@@ -67,6 +119,8 @@ void kgmGuiText::onKeyDown(int k)
   if(!editable)
     return;
 
+  //FIXME
+
   switch (k)
   {
   case KEY_ENTER:
@@ -76,28 +130,14 @@ void kgmGuiText::onKeyDown(int k)
     shift = true;
     break;
   case KEY_LEFT:
-    if(index > 0)
-      index--;
+    moveLeft();
     break;
   case KEY_RIGHT:
-    if(index < (m_text.length() - 1))
-      index++;
+    moveRight();
     break;
   case KEY_BACK:
   {
-    kgmString pt1;
-    kgmString pt2;
-
-    if(index > 0)
-      pt1 = kgmString(m_text.data(), index - 1);
-
-    if(index < m_text.length())
-      pt2 = kgmString(m_text.data() + index, m_text.length() - index);
-
-    if(index > 0)
-      index--;
-
-    m_text = pt1 + pt2;
+    delLeft();
 
     if(callback.hasObject() && callback.hasFunction())
       callback(callback.getObject(), getText());
@@ -105,22 +145,7 @@ void kgmGuiText::onKeyDown(int k)
     break;
   case KEY_DELETE:
   {
-    kgmString pt1;
-    kgmString pt2;
-
-    if(!m_text.length())
-      break;
-
-    if(index != 0)
-      pt1 = kgmString(m_text.data(), index);
-
-    if(index < m_text.length())
-      pt2 = kgmString(m_text.data() + index + 1, m_text.length() - index - 1);
-
-    if(index >= m_text.length())
-      index--;
-
-    m_text = pt1 + pt2;
+    delRight();
 
     if(callback.hasObject() && callback.hasFunction())
       callback(callback.getObject(), getText());

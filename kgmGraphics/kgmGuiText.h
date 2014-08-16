@@ -41,6 +41,12 @@ protected:
   void onMsLeftDown(int k, int x, int y);
   void onKeyDown(int k);
   void onKeyUp(int k);
+
+private:
+  void delLeft();
+  void delRight();
+  void moveLeft();
+  void moveRight();
 };
 
 #endif // KGMGUITEXT_H
