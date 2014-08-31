@@ -14,7 +14,8 @@ private:
   bool editable;
   bool numeric;
   bool shift;
-  u32  index;
+  u32  index, place;     //cursor index in text and place in view
+  u32  fwidth, fheight;  //character width and height
 
   ChangeEventCallback callback;
 
@@ -33,6 +34,22 @@ public:
   void setChangeEventCallback(ChangeEventCallback call)
   {
     callback = call;
+  }
+
+  void setCharResolution(u32 w, u32 h)
+  {
+    fwidth = w;
+    fheight = h;
+  }
+
+  u32 getCharWidth()
+  {
+    return fwidth;
+  }
+
+  u32 getCharHeight()
+  {
+    return fheight;
   }
 
   static char toAnsii(bool shift, u16 key);

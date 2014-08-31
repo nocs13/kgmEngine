@@ -9,6 +9,9 @@ kgmGuiText::kgmGuiText()
   numeric = false;
   shift = false;
   index = 0;
+  place = 0;
+  fwidth = 10;
+  fheight = 15;
 }
 
 kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
@@ -18,6 +21,9 @@ kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
   numeric = false;
   shift = false;
   index = 0;
+  place = 0;
+  fwidth = 10;
+  fheight = 15;
 }
 
 kgmGuiText::~kgmGuiText()
@@ -51,19 +57,27 @@ bool kgmGuiText::isNumeric()
 
 u32 kgmGuiText::getCursor()
 {
-  return index;
+  return place; //index;
 }
 
 void kgmGuiText::moveLeft()
 {
   if(index > 0)
     index--;
+
+  if(place > 0)
+    place--;
 }
 
 void kgmGuiText::moveRight()
 {
   if(index < m_text.length())
     index++;
+
+  u32 cpw = m_rect.width() / fwidth; // chars per width
+
+  if(place < cpw && place < m_text.length())
+    place++;
 }
 
 void kgmGuiText::delLeft()
@@ -80,8 +94,7 @@ void kgmGuiText::delLeft()
   if(index < m_text.length())
     pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
-  if(index > 0)
-    index--;
+  moveLeft();
 
   m_text = pt1 + pt2;
 }
@@ -100,7 +113,7 @@ void kgmGuiText::delRight()
   if(index < m_text.length())
     pt2 = kgmString(m_text.data() + index + 1, m_text.length() - index - 1);
 
-  if(index >= m_text.length())
+  if(index != 0 && index >= m_text.length())
     index--;
 
   m_text = pt1 + pt2;
@@ -196,6 +209,7 @@ void kgmGuiText::onKeyDown(int k)
       pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
     index++;
+
 
     m_text = pt1 + pt3 + pt2;
 

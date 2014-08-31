@@ -44,6 +44,13 @@ protected:
   kgmGameObject*      m_parent;
 
 public:
+  enum GoType
+  {
+    GoActor,
+    GoSensor,
+    GoObject
+  };
+
   static kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> g_typ_objects;
 
 #ifdef EDITOR
@@ -132,7 +139,32 @@ public:
     return m_parent;
   }
 
-  u32 birth() { return m_birth; }
+  u32 birth()
+  {
+    return m_birth;
+  }
+
+  static void goRegister(kgmString id, GoType type, kgmGameObject*(*create)(kgmIGame*))
+  {
+    g_typ_objects.add(id, create);
+
+#ifdef EDITOR
+    switch((int)type)
+    {
+    case GoActor:
+      g_list_actors.add(id);
+      break;
+    case GoSensor:
+      g_list_sensors.add(id);
+      break;
+    case GoObject:
+      g_list_objects.add(id);
+      break;
+    default:
+      break;
+    }
+#endif
+  }
 
 };
 
