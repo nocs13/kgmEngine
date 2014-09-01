@@ -148,6 +148,13 @@ public:
     particles->tex_slide_rows = rows;
     particles->tex_slide_cols = cols;
   }
+
+#ifdef EDITOR
+  void eupdate()
+  {
+    particles->build();
+  }
+#endif
 };
 
 class kgmFlame: public kgmParticlesObject
@@ -158,6 +165,13 @@ public:
   kgmFlame(kgmIGame* g)
   :kgmParticlesObject(g)
   {
+#ifdef EDITOR
+    kgmVariable var;
+
+    var = kgmVariable("Count", 10, &particles->m_count);
+
+    m_variables.add(var);
+#endif
   }
 
   virtual ~kgmFlame()

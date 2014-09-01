@@ -800,11 +800,11 @@ bool kEditor::addObject(kgmString t)
 
   if(kgmGameObject::g_typ_objects.hasKey(type))
   {
-    kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[type];
+    kgmGameObject* (*fn_new)(kgmIGame*) = kgmGameObject::g_typ_objects[type];
 
     if(fn_new)
     {
-      kgmGameObject* go = (kgmGameObject*)fn_new();
+      kgmGameObject* go = (kgmGameObject*)fn_new(game);
 
       if(go)
       {

@@ -59,6 +59,11 @@ public:
   static kgmList<kgmString> g_list_actors;
 
   kgmList<kgmVariable> m_variables;
+
+  virtual void eupdate()
+  {
+
+  }
 #endif
 
 public:

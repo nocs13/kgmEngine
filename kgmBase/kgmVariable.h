@@ -39,41 +39,52 @@ public:
   kgmVariable()
   {
     type = TNone;
+    x_linked = null;
   }
 
-  kgmVariable(kgmString name, f64 data)
+  kgmVariable(kgmString name, f64 data, void* xptr = null)
   {
     id = name;
     type = TFloat;
     v_float = data;
+    x_linked = xptr;
   }
 
-  kgmVariable(kgmString name, kgmString data)
+  kgmVariable(kgmString name, kgmString data, void* xptr = null)
   {
     id = name;
     type = TString;
     v_string = data;
+    x_linked = xptr;
   }
 
-  kgmVariable(kgmString name, s32 data)
+  kgmVariable(kgmString name, s32 data, void* xptr = null)
   {
     id = name;
     type = TInteger;
     v_integer = data;
+    x_linked = xptr;
   }
 
-  kgmVariable(kgmString name, bool data)
+  kgmVariable(kgmString name, bool data, void* xptr = null)
   {
     id = name;
     type = TBoolean;
     v_boolean = data;
+    x_linked = xptr;
   }
 
-  kgmVariable(kgmString name, void* data)
+  kgmVariable(kgmString name, void* data, void* xptr = null)
   {
     id = name;
     type = TPointer;
     v_pointer = data;
+    x_linked = xptr;
+  }
+
+  void* getXlinked()
+  {
+    return x_linked;
   }
 
   Type getType()
@@ -126,6 +137,48 @@ public:
   void* getPointer()
   {
     return v_pointer;
+  }
+
+  void setFloat(f64 val)
+  {
+    if(type == TFloat)
+      v_float = val;
+
+    if(x_linked)
+      *((float*)x_linked) = val;
+  }
+
+  void setInteger(s32 val)
+  {
+    if(type == TInteger)
+      v_integer = val;
+
+    if(x_linked)
+      *((s32*)x_linked) = val;
+  }
+
+  void setString(str val)
+  {
+    if(type == TString)
+      v_string = val;
+
+    if(x_linked)
+      *((kgmString*)x_linked) = val;
+  }
+
+  void setBoolean(bool val)
+  {
+    if(type == TBoolean)
+      v_boolean = val;
+
+    if(x_linked)
+      *((bool*)x_linked) = val;
+  }
+
+  void setPointer(void* val)
+  {
+    if(type == TPointer)
+      *((s32*)v_pointer) = (s32)val;
   }
 };
 
