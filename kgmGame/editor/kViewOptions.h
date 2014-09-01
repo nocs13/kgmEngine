@@ -87,8 +87,42 @@ public:
 
 class kViewOptionsForObject : public kViewOptions
 {
+  class kGuiText: public kgmGuiText
+  {
+  public:
+    typedef kgmCallback<void(kgmObject*, kgmString, kgmString)> kChangeEventCallback;
+
+  private:
+    kChangeEventCallback kcallback;
+
+  public:
+    kGuiText()
+      : kgmGuiText(), kcallback(null, null)
+    {
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&dataChange));
+    }
+
+    kGuiText(kgmGui* parent, int x, int y, int w, int h)
+      : kgmGuiText(parent, x, y, w, h), kcallback(null, null)
+    {
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&dataChange));
+    }
+
+    void setChangeEventCallback(kChangeEventCallback call)
+    {
+      kcallback = call;
+    }
+
+    void dataChange(kgmString s)
+    {
+      if(kcallback.hasObject() && kcallback.hasFunction())
+        kcallback(kcallback.getObject(), getSid(), getText());
+    }
+  };
 public:
   kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
+
+  void updateVariable(kgmString id, kgmString data);
 };
 
 class kViewOptionsForTrigger : public kViewOptions

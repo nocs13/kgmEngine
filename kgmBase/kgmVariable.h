@@ -1,8 +1,11 @@
 #ifndef KGMVARIABLE_H
 #define KGMVARIABLE_H
 
+#pragma once
+
 #include "kgmObject.h"
 #include "kgmString.h"
+#include "kgmConvert.h"
 
 class kgmVariable
 {
@@ -10,7 +13,8 @@ class kgmVariable
 
 public:
 
-  enum Type{
+  enum Type
+  {
     TNone = 0,
     TFloat,
     TString,
@@ -28,6 +32,8 @@ private:
   s32    v_integer;
   bool   v_boolean;
   void*  v_pointer;
+
+  void*  x_linked;  //user data pointer, which linked to update automatically
 
 public:
   kgmVariable()
@@ -78,6 +84,48 @@ public:
   kgmString getName()
   {
     return id;
+  }
+
+  kgmString toString()
+  {
+    switch(type)
+    {
+    case TFloat:
+      return kgmConvert::toString(v_float);
+    case TInteger:
+      return kgmConvert::toString(v_integer);
+    case TBoolean:
+      return kgmConvert::toString((s32)v_boolean);
+    case TPointer:
+      return kgmConvert::toString((s32)v_pointer);
+    case TString:
+      return v_string;
+    }
+  }
+
+  kgmString getString()
+  {
+    return v_string;
+  }
+
+  s32 getInteger()
+  {
+    return v_integer;
+  }
+
+  f64 getFloat()
+  {
+    return v_float;
+  }
+
+  bool getBoolean()
+  {
+    return v_boolean;
+  }
+
+  void* getPointer()
+  {
+    return v_pointer;
   }
 };
 

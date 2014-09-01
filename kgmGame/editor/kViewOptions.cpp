@@ -301,6 +301,30 @@ void kViewOptionsForSensor::setTarget(kgmString s)
 kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  if(node->obj->m_variables.length() > 0)
+    y_coord += 23;
+
+  for(int i = 0; i < node->obj->m_variables.length(); i++)
+  {
+    kgmVariable& var = node->obj->m_variables[i];
+
+    kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g->setText(var.getName());
+
+    g = new kGuiText(this, 51, y_coord, 70, 20);
+    g->setSid(var.getName());
+
+    //g->setText(kgmConvert::toString((s32)node->trg->getCount()));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setChangeEventCallback(kGuiText::ChangeEventCallback(this, (kGuiText::ChangeEventCallback::Function)&updateVariable));
+
+    y_coord += 23;
+  }
+}
+
+void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
+{
+  int k = 0;
 }
 
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
