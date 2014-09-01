@@ -19,6 +19,7 @@ enum MENUEVENT
   ME_ADD_LIGHT,
   ME_ADD_ACTOR,
   ME_ADD_SENSOR,
+  ME_ADD_OBJECT,
   ME_ADD_TRIGGER,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
@@ -63,6 +64,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddLight));
     item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddActor));
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddSensor));
+    item->add(ME_ADD_OBJECT, "Object", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddObject));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddTrigger));
     item = menu->add("Run");
     item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onRunRun));
@@ -779,6 +781,57 @@ bool kEditor::addSensor(kgmString type)
   return false;
 }
 
+bool kEditor::addObject(kgmString t)
+{
+  kgmString type;
+
+  if(vs)
+  {
+    int is = vs->getGuiList()->getSel();
+    type = vs->getGuiList()->getItem(is);
+
+    vs->erase();
+    vs->release();
+    vs = null;
+  }
+
+  if(type.length() < 1)
+    return false;
+
+  if(kgmGameObject::g_typ_objects.hasKey(type))
+  {
+    kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[type];
+
+    if(fn_new)
+    {
+      kgmGameObject* go = (kgmGameObject*)fn_new();
+
+      if(go)
+      {
+        kNode* node = new kNode((kgmGameObject*)go);
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->nam = kgmString("Object_") + kgmConvert::toString((s32)(++oquered));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
+        node->geo = new kArrow();
+
+        selected = node;
+
+        game->m_render->add(node->icn);
+        game->m_render->add(node->geo, mtlLines);
+
+        vo->getGuiList()->addItem(node->nam);
+        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+        nodes.add(node);
+
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 void kEditor::menuAddSensor()
 {
   kgmString s = vs->getGuiList()->getItem(vs->getGuiList()->getSel());
@@ -1142,6 +1195,9 @@ void kEditor::onEditOptions()
   case kNode::SENSOR:
     vop = new kViewOptionsForSensor(selected, 50, 50, 210, 300);
     break;
+  case kNode::OBJECT:
+    vop = new kViewOptionsForObject(selected, 50, 50, 210, 300);
+    break;
   case kNode::TRIGGER:
     vop = new kViewOptionsForTrigger(selected, 50, 50, 210, 300);
     break;
@@ -1202,6 +1258,23 @@ void kEditor::onAddSensor()
   for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
   {
     kgmString s = kgmGameObject::g_list_sensors[i];
+    vs->getGuiList()->addItem(s);
+  }
+
+  game->guiAdd(vs);
+}
+
+void kEditor::onAddObject()
+{
+  if(vs)
+    return;
+
+  vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&addObject));
+
+  for(int i = 0; i < kgmGameObject::g_list_objects.length(); i++)
+  {
+    kgmString s = kgmGameObject::g_list_objects[i];
     vs->getGuiList()->addItem(s);
   }
 

@@ -24,16 +24,18 @@ public:
     LIGHT,
     ACTOR,
     SENSOR,
+    OBJECT,
     TRIGGER
   };
 
   union
   {
-    kgmMesh*      msh;
-    kgmLight*     lgt;
-    kgmActor*     act;
-    kgmSensor*    sns;
-    kgmTrigger*   trg;
+    kgmMesh*        msh;
+    kgmLight*       lgt;
+    kgmActor*       act;
+    kgmSensor*      sns;
+    kgmTrigger*     trg;
+    kgmGameObject*  obj;
   };
 
   Type typ;
@@ -106,6 +108,16 @@ public:
   {
     typ = TRIGGER;
     trg = t;
+    icn = null;
+    geo = null;
+    col = false;
+    lock = false;
+  }
+
+  kNode(kgmGameObject* o)
+  {
+    typ = OBJECT;
+    obj = o;
     icn = null;
     geo = null;
     col = false;

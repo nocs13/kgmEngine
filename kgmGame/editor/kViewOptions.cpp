@@ -298,6 +298,11 @@ void kViewOptionsForSensor::setTarget(kgmString s)
   node->sns->setTarget(s);
 }
 
+kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+}
+
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {

@@ -85,6 +85,12 @@ public:
   void setTarget(kgmString s);
 };
 
+class kViewOptionsForObject : public kViewOptions
+{
+public:
+  kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
+};
+
 class kViewOptionsForTrigger : public kViewOptions
 {
 public:

@@ -87,6 +87,7 @@ public:
   bool addMesh(kgmString);
   bool addActor(kgmString);
   bool addSensor(kgmString);
+  bool addObject(kgmString);
 
   void menuAddSensor();
 
@@ -114,6 +115,7 @@ public:
   void onAddLight();
   void onAddActor();
   void onAddSensor();
+  void onAddObject();
   void onAddTrigger();
   void onViewObjects();
   void onOptionsDatabase();

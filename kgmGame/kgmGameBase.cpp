@@ -155,7 +155,12 @@ kgmGameBase::kgmGameBase()
   m_gamemode = true;
   m_state    = State_None;
 
-  kgmGameObject::goRegister("kgmResult", kgmGameObject::GoObject, &kgmResult::New);
+  kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoObject, &kgmResult::New);
+  kgmGameObject::goRegister("kgmFlame",   kgmGameObject::GoObject, &kgmFlame::New);
+  kgmGameObject::goRegister("kgmSmoke",   kgmGameObject::GoObject, &kgmFlame::New);
+  kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoObject, &kgmLaser::New);
+  kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoObject, &kgmExplode::New);
+  kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoObject, &kgmParticlesObject::New);
   kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, &kgmSnInputListener::New);
 
 #ifdef EDITOR
