@@ -18,6 +18,16 @@ class kgmConvert: public kgmObject
     return atof(s.data());
   }
 
+  static bool toBoolean(kgmString& s)
+  {
+    if(s == "true")
+      return true;
+    else if(s == "false")
+      return false;
+
+    return false;
+  }
+
   static kgmString toString(s32 i)
   {
     char* a = new char[17];
@@ -38,5 +48,13 @@ class kgmConvert: public kgmObject
     kgmString s(a, strlen(a));
     delete [] a;
     return s;
+  }
+
+  static kgmString toString(bool b)
+  {
+    if(b == true)
+      return kgmString("true");
+
+    return kgmString("false");
   }
 };

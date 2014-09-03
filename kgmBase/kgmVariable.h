@@ -48,6 +48,9 @@ public:
     type = TFloat;
     v_float = data;
     x_linked = xptr;
+
+    if(x_linked)
+      v_float = *((float*)x_linked);
   }
 
   kgmVariable(kgmString name, kgmString data, void* xptr = null)
@@ -56,6 +59,9 @@ public:
     type = TString;
     v_string = data;
     x_linked = xptr;
+
+    if(x_linked)
+      v_string = *((kgmString*)x_linked);
   }
 
   kgmVariable(kgmString name, s32 data, void* xptr = null)
@@ -64,6 +70,9 @@ public:
     type = TInteger;
     v_integer = data;
     x_linked = xptr;
+
+    if(x_linked)
+      v_integer = *((s32*)x_linked);
   }
 
   kgmVariable(kgmString name, bool data, void* xptr = null)
@@ -72,6 +81,9 @@ public:
     type = TBoolean;
     v_boolean = data;
     x_linked = xptr;
+
+    if(x_linked)
+      v_boolean = *((bool*)x_linked);
   }
 
   kgmVariable(kgmString name, void* data, void* xptr = null)

@@ -72,6 +72,10 @@ protected:
   kgmParticles* particles;
   kgmMaterial*  material;
 
+#ifdef EDITOR
+  kgmString idTex;
+#endif
+
 public:
   kgmParticlesObject(kgmIGame* g,
                vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
@@ -96,7 +100,6 @@ public:
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderBlend;
-
     material->setTexColor(g->getResources()->getTexture(tid));
 
     particles->direction = dir;
@@ -115,6 +118,27 @@ public:
     m_visual->set(particles);
 
     setPosition(pos);
+
+#ifdef EDITOR
+    kgmVariable var;
+
+    var = kgmVariable("Count",  0,     &particles->m_count);
+    m_variables.add(var);
+    var = kgmVariable("Speed",  0.0,   &particles->m_speed);
+    m_variables.add(var);
+    var = kgmVariable("dSpeed", 0.0,   &particles->div_speed);
+    m_variables.add(var);
+    var = kgmVariable("Life",   0,     &particles->m_life);
+    m_variables.add(var);
+    var = kgmVariable("dLife",  0,     &particles->div_life);
+    m_variables.add(var);
+    var = kgmVariable("Loop",   false, &particles->m_loop);
+    m_variables.add(var);
+    idTex = tid;
+    var = kgmVariable("tId",   "",     &idTex);
+    m_variables.add(var);
+
+#endif
   }
 
   kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
@@ -152,6 +176,7 @@ public:
 #ifdef EDITOR
   void eupdate()
   {
+    material->setTexColor(game->getResources()->getTexture(idTex));
     particles->build();
   }
 #endif
@@ -162,29 +187,24 @@ class kgmFlame: public kgmParticlesObject
   KGM_GO_OBJECT(kgmFlame);
 
 public:
-  kgmFlame(kgmIGame* g)
-  :kgmParticlesObject(g)
+  kgmFlame(kgmIGame* g,
+               vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
+               float speed = 0.0f, float div_speed = 0.0,
+               float life = 1000,  float div_life = 0.5f,
+               float size_start = .1f, float size_end = 1.0f,
+               u32 count = 1,
+               kgmString tid = "flame_a.tga",
+               bool loop = true)
+    :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life, size_start, size_end, count, tid, loop)
   {
-#ifdef EDITOR
-    kgmVariable var;
-
-    var = kgmVariable("Count", 10, &particles->m_count);
-
-    m_variables.add(var);
-#endif
   }
 
   virtual ~kgmFlame()
   {
-    if(particles)
-      particles->release();
-
-    if(material)
-      material->release();
   }
 };
 
-class kgmSmoke: public kgmGameObject
+class kgmSmoke: public kgmParticlesObject
 {
   KGM_GO_OBJECT(kgmSmoke);
 
@@ -192,83 +212,47 @@ protected:
   kgmParticles* particles;
   kgmMaterial*  material;
 public:
-  kgmSmoke(kgmIGame* g)
+  kgmSmoke(kgmIGame* g,
+           vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
+           float speed = 0.01f, float div_speed = 0.5,
+           float life = 5000,  float div_life = 0.5f,
+           float size_start = .1f, float size_end = 1.0f,
+           u32 count = 10,
+           kgmString tid = "smoke_a.tga",
+           bool loop = false)
+    :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life, size_start, size_end, count, tid, loop)
   {
-    particles = new kgmParticles();
-    m_visual  = new kgmVisual();
-
-    material = new kgmMaterial();
     material->m_blend        = true;
     material->m_srcblend     = gcblend_srcalpha;
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
     material->m_shader       = kgmMaterial::ShaderBlend;
-    material->setTexColor(g->getResources()->getTexture("smoke_a.tga"));
-
-    particles->m_speed = .01;
-    particles->m_count = 10;
-    particles->m_life  = 5000;
-    particles->div_speed = .5;
-    particles->build();
-
-    m_visual->set(material);
-    m_visual->set(particles);
   }
 
   virtual ~kgmSmoke()
   {
-    if(particles)
-      particles->release();
-
-    if(material)
-      material->release();
   }
 };
 
-class kgmExplode: public kgmGameObject
+class kgmExplode: public kgmParticlesObject
 {
   KGM_GO_OBJECT(kgmExplode);
 
 private:
   kgmIGame* game;
 
-protected:
-  kgmParticles* particles;
-  kgmMaterial*  material;
-
 public:
   kgmExplode(kgmIGame* g,
              vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
-             float speed = 1.0f, float life = 1000,
+             float speed = 1.0f, float div_speed = 0.1f, float life = 1000, float div_life = 0.2f,
              float size_start = .1f, float size_end = 2.0f,
              u32 count = 10,
              bool loop = false,
              kgmString tid="fire_a.tga")
+    :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life, size_start, size_end, count, tid, loop)
   {
     timeout(life);
 
-    game = g;
-
-    particles = new kgmParticles();
-    m_visual  = new kgmVisual();
-
-    material = new kgmMaterial();
-    material->m_depth        = false;
-    material->m_blend        = true;
-    material->m_srcblend     = gcblend_srcalpha;
-    material->m_dstblend     = gcblend_one;
-    material->m_type         = "simple";
-    material->m_shader       = kgmMaterial::ShaderBlend;
-    material->setTexColor(g->getResources()->getTexture(tid));
-
-    particles->direction = dir;
-    particles->volume    = vol;
-    particles->m_speed   = speed;
-    particles->m_count   = count;
-    particles->m_life    = life;
-    particles->m_loop    = loop;
-    particles->st_size   = size_start;
-    particles->en_size   = size_end;
     particles->div_life  = 0.8;
 
     particles->build();
@@ -281,11 +265,6 @@ public:
 
   virtual ~kgmExplode()
   {
-    if(particles)
-      particles->release();
-
-    if(material)
-      material->release();
   }
 
   void setTexture(kgmString tid)

@@ -314,17 +314,57 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
     g = new kGuiText(this, 51, y_coord, 70, 20);
     g->setSid(var.getName());
 
-    //g->setText(kgmConvert::toString((s32)node->trg->getCount()));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setChangeEventCallback(kGuiText::ChangeEventCallback(this, (kGuiText::ChangeEventCallback::Function)&updateVariable));
+    ((kGuiText*)g)->setEditable(true);
+    ((kGuiText*)g)->setChangeEventCallback(kGuiText::kChangeEventCallback(this, (kGuiText::kChangeEventCallback::Function)&updateVariable));
+
+    switch(var.getType())
+    {
+    case kgmVariable::TString:
+      g->setText(var.getString());
+      break;
+    case kgmVariable::TInteger:
+      g->setText(kgmConvert::toString(var.getInteger()));
+      break;
+    case kgmVariable::TFloat:
+      g->setText(kgmConvert::toString(var.getFloat()));
+      break;
+    case kgmVariable::TBoolean:
+      g->setText(kgmConvert::toString(var.getBoolean()));
+      break;
+    }
 
     y_coord += 23;
+
+    if(y_coord > m_rect.height())
+      m_rect.h = y_coord + 20;
   }
 }
 
 void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
 {
-  int k = 0;
+  for(int i = 0; i < node->obj->m_variables.length(); i++)
+  {
+    if(node->obj->m_variables[i].getName() == id)
+    {
+      switch(node->obj->m_variables[i].getType())
+      {
+      case kgmVariable::TString:
+        node->obj->m_variables[i].setString(data);
+        break;
+      case kgmVariable::TInteger:
+        node->obj->m_variables[i].setInteger(kgmConvert::toInteger(data));
+        break;
+      case kgmVariable::TFloat:
+        node->obj->m_variables[i].setFloat(kgmConvert::toDouble(data));
+        break;
+      case kgmVariable::TBoolean:
+        node->obj->m_variables[i].setBoolean(kgmConvert::toBoolean(data));
+        break;
+      }
+
+      node->obj->eupdate();
+    }
+  }
 }
 
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
