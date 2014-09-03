@@ -379,7 +379,11 @@ void kgmGameBase::onKeyUp(int k)
     m_input[m_keymap[k]] = 0;
   }
 
+#ifdef WIN32
+  if(k == KEY_F11)
+#else
   if(k == KEY_F12)
+#endif
   {
     if(this->m_fs)
       fullscreen(false);

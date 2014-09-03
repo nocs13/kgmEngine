@@ -95,6 +95,15 @@ kEditor::kEditor(kgmGameBase* g)
     vs = null;
 
     game->m_render->setBgColor(0xffbbaa99);
+
+    logView = new kgmVisual();
+    logView->m_typerender = kgmVisual::RenderText;
+    kgmText* text = new kgmText();
+    logView->set(text);
+    text->release();
+    logView->m_text->m_text = "mouse point: ";
+    logView->m_text->m_rect.y += 100;
+    game->m_render->add(logView);
   }
 }
 
@@ -105,6 +114,9 @@ kEditor::~kEditor()
   menu->release();
   fdd->release();
   vo->release();
+
+  logView->remove();
+  logView->release();
 
   if(vo)
     vo->release();

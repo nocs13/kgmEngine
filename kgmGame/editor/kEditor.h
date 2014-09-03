@@ -71,6 +71,8 @@ private:
 
   kgmMaterial* mtlLines;
 
+  kgmVisual*     logView;
+
 public:
   kEditor(  kgmGameBase* game);
   ~kEditor();

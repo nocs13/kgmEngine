@@ -3,6 +3,7 @@
 #include "kgmObject.h"
 #include "kgmString.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 class kgmConvert: public kgmObject
 {

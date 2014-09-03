@@ -57,6 +57,42 @@ inline u16 keyTranslate(int key){
     return KEY_LCTRL;
   case 0x13:
     return KEY_PAUSE;
+  case VK_F1:
+    return KEY_F1;
+    break;
+  case VK_F2:
+    return KEY_F2;
+    break;
+  case VK_F3:
+    return KEY_F3;
+    break;
+  case VK_F4:
+    return KEY_F4;
+    break;
+  case VK_F5:
+    return KEY_F5;
+    break;
+  case VK_F6:
+    return KEY_F6;
+    break;
+  case VK_F7:
+    return KEY_F7;
+    break;
+  case VK_F8:
+    return KEY_F8;
+    break;
+  case VK_F9:
+    return KEY_F9;
+    break;
+  case VK_F10:
+    return KEY_F10;
+    break;
+  case VK_F11:
+    return KEY_F11;
+    break;
+  case VK_F12:
+    return KEY_F12;
+    break;
   case 0x30:
     return KEY_0;
   case 0x31:
@@ -196,23 +232,16 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
 
       static bool seted = false;
 
-      if(evt.msy < 0)
-      {
-        bool k = false;
-      }
-
       if(seted)
       {
         seted = false;
       }
       else
       {
-        u32 dh = GetSystemMetrics(SM_CYCAPTION);
-        //XWarpPointer(wnd->m_dpy, wnd->m_wnd, wnd->m_wnd, 0, 0, w, h, w / 2, h / 2);
-        SetCursorPos(wrc.left + rc.right / 2, dh + wrc.top + rc.bottom / 2);
+        POINT pt = {rc.right / 2, rc.bottom / 2};
+        ClientToScreen(wnd->m_wnd, &pt);
+        SetCursorPos(pt.x, pt.y);
         seted = true;
-        //evt.msx = 0;
-        //evt.msy = 0;
       }
     }
     else
@@ -686,10 +715,23 @@ void kgmWindow::fullscreen(bool fs){
   Mode.dmPelsHeight = iHeight;
   Mode.dmSize = sizeof(Mode);
   Mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+
   if(fs)
-    ChangeDisplaySettings(&Mode, CDS_FULLSCREEN);
+  {
+    if(ChangeDisplaySettings(&Mode, CDS_FULLSCREEN) == 0)
+    {
+      SetWindowLong(m_wnd,GWL_STYLE, WS_POPUP);
+      SetWindowPos(m_wnd, HWND_TOP, 0, 0, iWidth, iHeight, SWP_SHOWWINDOW);
+    }
+  }
   else
-    ChangeDisplaySettings(NULL, 0);
+  {
+    if(ChangeDisplaySettings(NULL, 0) == 0)
+    {
+      SetWindowLong(m_wnd,GWL_STYLE, WS_OVERLAPPEDWINDOW);
+      SetWindowPos(m_wnd, HWND_TOP, 50, 50, iWidth - 100, iHeight - 100, SWP_SHOWWINDOW);
+    }
+  }
 #endif
 
 #ifdef LINUX
