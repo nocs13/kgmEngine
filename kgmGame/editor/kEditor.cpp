@@ -730,7 +730,7 @@ bool kEditor::addActor(kgmString path)
 
   if(p != 0)
   {
-    u32 size = ((u32)p) - ((u32)afile.data());
+    size_t size = ((size_t)p) - ((size_t)afile.data());
 
     kgmString t;
 

@@ -381,7 +381,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
 
   mem_fsh = (char*)strstr((char*)s, "//Fragment Shader");
   if(mem_fsh){
-    u32 sh_s = (u32)mem_fsh - (u32)s.data();
+    size_t sh_s = (size_t)mem_fsh - (size_t)s.data();
     mem_vsh = (char*)malloc(sh_s + 1);
     memcpy(mem_vsh, s.data(), sh_s);
     mem_vsh[sh_s] = '\0';
@@ -979,7 +979,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
         &v[i].uv.x, &v[i].uv.y, &rd);
         v[i].col = 0xffffffff;
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
 #ifdef DEBUG
       kgmLog::log("\nEnd vertices");
@@ -1000,7 +1000,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         f[i].a = fi[0];
         f[i].b = fi[1];
         f[i].c = fi[2];
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
 #ifdef DEBUG
       kgmLog::log("\nEnd faces");
@@ -1037,7 +1037,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
       delete [] v;
 #ifdef DEBUG
@@ -1391,7 +1391,7 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
         &v[i].uv.x, &v[i].uv.y, &rd);
         v[i].col = 0xffffffff;
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
     }
     else if(id == "Faces")
@@ -1411,7 +1411,7 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
         f[i].a = fi[0];
         f[i].b = fi[1];
         f[i].c = fi[2];
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
     }
     else if(id == "Skin")
@@ -1446,7 +1446,7 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
-        p = (char*)((u32)p + rd);
+        p = (char*)((size_t)p + rd);
       }
 
       delete [] v;

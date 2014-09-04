@@ -161,7 +161,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
           kgmString sdata;
 
           p = toSyms(p, (char*)"]]>\0");
-          sdata.alloc(cdata, (u32)((u32)p - (u32)cdata));
+          sdata.alloc(cdata, (u32)((size_t)p - (size_t)cdata));
 
           if(isNode && node)
           {
@@ -197,7 +197,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
           else
           {
             kgmString s;
-            s.alloc((char*)m_data_ref, ((int)cn) - (int)m_data_ref);
+            s.alloc((char*)m_data_ref, ((size_t)cn) - (size_t)m_data_ref);
             node->m_data += s;
           }
           node = node->parent();
@@ -217,7 +217,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
         p = exeptSyms(p, (char*)" \t\r\n");
         m_name_ref = p;
         p = toSyms(p, (char*)" \t/>");
-        m_name_len = (int)p - (int)m_name_ref;
+        m_name_len = (size_t)p - (size_t)m_name_ref;
         n->m_name.alloc((char*)m_name_ref, m_name_len);
 
         while(*p != '>'){
@@ -241,13 +241,13 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
               node->add(a);
               m_name_ref = p;
               p = toSyms(p, (char*)" \t=");
-              m_name_len = (int)p - (int)m_name_ref;
+              m_name_len = (size_t)p - (size_t)m_name_ref;
               p = toSyms(p, (char*)"=");
               p = toSyms(p, (char*)"'\"");
               char csyms[2] = {*p, '\0'};
               m_data_ref = ++p;
               p = toSyms(p, csyms);
-              m_data_len = (int)p - (int)m_data_ref;
+              m_data_len = (size_t)p - (size_t)m_data_ref;
 
               a->m_name.alloc((char*)m_name_ref, m_name_len);
               a->m_data.alloc((char*)m_data_ref, m_data_len);

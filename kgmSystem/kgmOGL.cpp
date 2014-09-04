@@ -1331,7 +1331,7 @@ void kgmOGL::gcFreeShader(void* s){
   //glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
   if(s)
   {
-    glDeleteObject((GLhandle)s);
+    glDeleteObject((GLhandle)(size_t)s);
   }
 #endif
 }
@@ -1340,8 +1340,8 @@ void kgmOGL::gcSetShader(void* s){
 #ifdef GL_VERTEX_SHADER
   if(s)
   {
-    glUseProgramObject((GLhandle)s);
-    g_shader = (GLhandle)s;
+    glUseProgramObject((GLhandle)(size_t)s);
+    g_shader = (GLhandle)(size_t)s;
 #ifdef DEBUG
     GLenum err = glGetError();
 
@@ -1366,7 +1366,7 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
 #ifdef GL_VERTEX_SHADER
   if(s)
   {
-    glBindAttribLocation((GLhandle)s, i, attr);
+    glBindAttribLocation((GLhandle)(size_t)s, i, attr);
 #ifdef DEBUG
 #ifndef ANDROID
     GLenum err = glGetError();
@@ -1383,7 +1383,7 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
 void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 { 
 #ifdef GL_VERTEX_SHADER
-  GLint link = glGetUniformLocation((GLhandle)s, par);
+  GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
   if(link < 0)
     return;
 
@@ -1419,7 +1419,7 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* par, void* val)
 { 
 #ifdef GL_VERTEX_SHADER
-  GLint link = glGetUniformLocation((GLhandle)s, par);
+  GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
   if(link < 0)
     return;
   switch(type){
@@ -1438,11 +1438,11 @@ void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* pa
 
 void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
   //#ifdef GL_VERTEX_SHADER
-  GLint link = glGetUniformLocation((GLhandle)s, par);
+  GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
 
   if(link < 0)
     return;
-  glUniform1i(link, (GLu32)val);
+  glUniform1i(link, (GLu32)(size_t)val);
   //#endif
 }
 
@@ -1450,7 +1450,7 @@ void kgmOGL::gcUniformSampler(void* s, const char* par, void* val){
 void kgmOGL::gcGetUniform(void* s, const char* par, void* val)
 {
 #ifdef GL_VERTEX_SHADER
-  glGetUniformfv((GLhandle)s, (GLint)par, (float*)val);
+  glGetUniformfv((GLhandle)(size_t)s, (GLint)(size_t)par, (float*)val);
 #endif
 }
 #endif

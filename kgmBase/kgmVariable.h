@@ -127,7 +127,7 @@ public:
     case TBoolean:
       return kgmConvert::toString((s32)v_boolean);
     case TPointer:
-      return kgmConvert::toString((s32)v_pointer);
+      return kgmConvert::toString((s32)(size_t)v_pointer);
     case TString:
       return v_string;
     }
@@ -197,7 +197,7 @@ public:
   void setPointer(void* val)
   {
     if(type == TPointer)
-      *((s32*)v_pointer) = (s32)val;
+      *((size_t*)v_pointer) = (size_t)val;
   }
 
   void sync(Sync s = SyncNone)
@@ -219,7 +219,7 @@ public:
         *((bool*)x_linked) = v_boolean;
         break;
       case TPointer:
-        *((u32*)x_linked) = (u32)v_pointer;
+        *((size_t*)x_linked) = (size_t)v_pointer;
         break;
       case TString:
         *((kgmString*)x_linked) = v_string;
