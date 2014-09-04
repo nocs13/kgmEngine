@@ -68,7 +68,7 @@ int kgmGuiList::getItem(kgmString n)
 {
   int ci = 0;
 
-  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); ++i)
   {
     if((*i) == n)
       return ci;

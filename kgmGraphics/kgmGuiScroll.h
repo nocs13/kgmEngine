@@ -5,7 +5,7 @@
 class kgmGuiScroll: public kgmGui{
   KGM_OBJECT(kgmGuiScroll);
 
-  typedef kgmCallback<void(kgmObject*, u32)> ChangeEventCallback;
+  typedef kgmCallback<void(void*, u32)> ChangeEventCallback;
 
   enum ORIENT
   {

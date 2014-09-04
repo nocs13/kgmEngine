@@ -59,11 +59,13 @@ kgmGuiButton::~kgmGuiButton()
   gcDrawText(gc, getFont(), fwidth, fheight, m_colors[TEXT], tClip, m_text);
   }*/
 
-void kgmGuiButton::onMsLeftUp(int key, int x, int y){
+void kgmGuiButton::onMsLeftUp(int key, int x, int y)
+{
   //if(m_state == StateFocus)
   {
     if(callback.hasObject() && callback.hasFunction())
       callback(callback.getObject());
+
     m_state = StateFocus;
   }
 }

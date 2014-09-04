@@ -461,7 +461,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
     memset(key, 0, 128);
     memset(val, 0, 128);
 
-    m.reads(str, 1024, "\n", 1);
+    m.reads((u8*)str, 1024, (u8*)"\n", 1);
     sscanf(str, "%s %s", key, val);
 
     if(!strcmp(key, "color")){
@@ -592,7 +592,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
     memset(key, 0, 128);
     memset(val, 0, 128);
 
-    if(0 == m.reads(str, 1024, "\n", 1))
+    if(0 == m.reads((u8*)str, 1024, (u8*)"\n", 1))
       break;
 
     sscanf(str, "%s %s", key, val);
@@ -600,13 +600,18 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
     if(!strcmp(key, "Bone")){
       kgmSkeleton::Joint* joint = new kgmSkeleton::Joint;
       char* c = strstr(str, "Bone");
-      if(c){
+
+      if(c)
+      {
         c += 5;
         strncpy(joint->n, c, sizeof(joint->n));
       }
+
       memset(str, 0, 1024);
-      if(0 == m.reads(str, 1024, "\n", 1))
+
+      if(0 == m.reads((u8*)str, 1024, (u8*)"\n", 1))
         break;
+
       sscanf(str, "%i %f %f %f %f %f %f %f", &joint->i,
       &joint->v.x, &joint->v.y, &joint->v.z,
       &joint->r.x, &joint->r.y, &joint->r.z, &joint->r.w);
@@ -696,7 +701,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m){
     memset(str, 0, 1024);
     memset(key, 0, 512);
 
-    if(0 == m.reads(str, 512, "\n", 1))
+    if(0 == m.reads((u8*)str, 512, (u8*)"\n", 1))
       break;
     //   str_close(str);
     sscanf(str, "%s", key);
@@ -843,23 +848,29 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
     memset(key, 0, 128);
     memset(val, 0, 128);
     memset(str, 0, 512);
-    mm.reads(str, 512, "\n", 1);
+    mm.reads((u8*)str, 512, (u8*)"\n", 1);
     sscanf(str, "%s", key);
-    if(!strcmp(key, "Mesh")){
+
+    if(!strcmp(key, "Mesh"))
+    {
       sscanf(str, "%s %s", key, val);
       if(m)
         break;
       m = new kgmMesh();
       strcpy(m->m_id, val);
     }
-    if(!strcmp(key, "Vertices")){
+
+    if(!strcmp(key, "Vertices"))
+    {
       u32 count = 0;
       u32 maps  = 0;
       kgmMesh::Vertex_P_N_C_T2*  v = 0;
       sscanf(str, "%s %i %i", key, &count, &maps);
       v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
-      for(int i = 0; i < count; i++){
-        mm.reads(str, 512, "\n", 1);
+
+      for(int i = 0; i < count; i++)
+      {
+        mm.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%f %f %f %f %f %f %f %f",
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
@@ -874,9 +885,11 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       sscanf(str, "%s %i", key, &count);
       f = (kgmMesh::Face_16*)m->fAlloc(count);
       fmaps.realloc(count);
-      for(int i = 0; i < count; i++){
+
+      for(int i = 0; i < count; i++)
+      {
         u32 fi[3];
-        mm.reads(str, 512, "\n", 1);
+        mm.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%i %i %i %i", &fi[0], &fi[1], &fi[2]);
         f[i].a = fi[0];
         f[i].b = fi[1];
@@ -889,11 +902,13 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
       kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
-      for(int i = 0; i < count; i++){
+
+      for(int i = 0; i < count; i++)
+      {
         u32  nw = 0;
         u32  bi[4] = {0};
         float bw[4] = {0.0f};
-        mm.reads(str, 512, "\n", 1);
+        mm.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3]);
@@ -913,9 +928,12 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       delete [] v;
     }
   }
+
   for(int i = 0; i < materials.size(); i++)
     materials[i]->release();
+
   materials.clear();
+
   delete [] key;
   delete [] val;
   delete [] str;

@@ -14,14 +14,14 @@ LIBS =
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DOAL -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -fPIC -O0 -fpermissive  -ansi
+	FLGS = -fPIC -O0 -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else
 	OS = Windows
 	DSEP = \\
 	DEFS = -DWIN32 -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -fPIC -O0 -mwindows -fpermissive
+	FLGS = -fPIC -O0 -mwindows -ansi
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32
 	RM = rm -f 
 endif

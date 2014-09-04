@@ -23,7 +23,7 @@ protected:
   u32           y_coord;
 
 public:
-  typedef kgmCallback<void(kgmObject*)> CloseCallback;
+  typedef kgmCallback<void(void*)> CloseCallback;
 
   CloseCallback callClose;
 public:

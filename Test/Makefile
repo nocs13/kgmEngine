@@ -10,7 +10,7 @@ LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DOAL -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -g -fPIC -O0 -fpermissive  -ansi
+	FLGS = -g -fPIC -O0 -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else

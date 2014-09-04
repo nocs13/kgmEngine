@@ -13,7 +13,7 @@ kFileDialog::kFileDialog()
 {
   list = new kgmGuiList(this, 1, 1, 198, 200);
   text = new kgmGuiText(this, 1, 237, 198, 30);
-  text->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&onEditFile));
+  text->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kFileDialog::onEditFile));
   btnCmd = new kgmGuiButton(this, 1, 201, 99, 35);
   btnFail = new kgmGuiButton(this, 101, 201, 99, 35);
 

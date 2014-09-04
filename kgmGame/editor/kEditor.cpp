@@ -52,24 +52,24 @@ kEditor::kEditor(kgmGameBase* g)
 
     menu = new kMenu(null, this);
     kgmGuiMenu::Item* item = menu->add("Map");
-    item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onMapOpen));
-    item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onMapSave));
-    item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onQuit));
+    item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
+    item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));
+    item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onQuit));
     item = menu->add("Edit");
-    item->add(ME_EDIT_REMOVE, "Remove", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditRemove));
-    item->add(ME_EDIT_DUPLICATE, "Duplicate", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditDuplicate));
-    item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onEditOptions));
+    item->add(ME_EDIT_REMOVE, "Remove", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditRemove));
+    item->add(ME_EDIT_DUPLICATE, "Duplicate", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditDuplicate));
+    item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditOptions));
     item = menu->add("Add");
-    item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddMesh));
-    item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddLight));
-    item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddActor));
-    item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddSensor));
-    item->add(ME_ADD_OBJECT, "Object", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddObject));
-    item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onAddTrigger));
+    item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMesh));
+    item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddLight));
+    item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddActor));
+    item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
+    item->add(ME_ADD_OBJECT, "Object", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObject));
+    item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item = menu->add("Run");
-    item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onRunRun));
+    item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunRun));
     item = menu->add("View");
-    item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&onViewObjects));
+    item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewObjects));
     game->m_render->add(menu);
 
     gridline = new kGridline();
@@ -88,7 +88,7 @@ kEditor::kEditor(kgmGameBase* g)
     vop = null;
 
     vo = new kViewObjects(this, 1, 50, 100, 300);
-    vo->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&onSelectObject));
+    vo->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::onSelectObject));
     vo->hide();
     game->m_render->add(vo);
 
@@ -406,11 +406,11 @@ bool kEditor::mapOpen(kgmString s)
 
         if(kgmGameObject::g_typ_objects.hasKey(cls))
         {
-          kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[cls];
+          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
 
           if(fn_new)
           {
-            kgmSensor* sn = (kgmSensor*)fn_new();
+            kgmSensor* sn = (kgmSensor*)fn_new(game);
 
             if(sn)
             {
@@ -761,11 +761,11 @@ bool kEditor::addSensor(kgmString type)
 
   if(kgmGameObject::g_typ_objects.hasKey(type))
   {
-    kgmGameObject* (*fn_new)() = kgmGameObject::g_typ_objects[type];
+    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
 
     if(fn_new)
     {
-      kgmSensor* sn = (kgmSensor*)fn_new();
+      kgmSensor* sn = (kgmSensor*)fn_new(game);
 
       if(sn)
       {
@@ -858,7 +858,7 @@ void kEditor::menuAddSensor()
 
 void kEditor::initPhysics()
 {
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); i++)
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     kNode* node = (*i);
 
@@ -1111,14 +1111,14 @@ void kEditor::onMapOpen()
 {
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&mapOpen));
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapOpen));
 }
 
 void kEditor::onMapSave()
 {
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&mapSave));
+  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapSave));
 }
 
 void kEditor::onEditRemove()
@@ -1219,7 +1219,7 @@ void kEditor::onEditOptions()
 
   if(vop)
   {
-    vop->setCloseCallback(kViewOptions::CloseCallback(this, (kViewOptions::CloseCallback::Function)&onCloseVop));
+    vop->setCloseCallback(kViewOptions::CloseCallback(this, (kViewOptions::CloseCallback::Function)&kEditor::onCloseVop));
     game->m_render->add(vop);
     vop->show();
   }
@@ -1229,7 +1229,7 @@ void kEditor::onAddMesh()
 {
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addMesh));
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addMesh));
 }
 
 void kEditor::onAddLight()
@@ -1258,7 +1258,7 @@ void kEditor::onAddActor()
 {
   fdd->setFilter(".act");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&addActor));
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
 }
 
 void kEditor::onAddSensor()
@@ -1267,7 +1267,7 @@ void kEditor::onAddSensor()
     return;
 
   vs = new kViewObjects(this, 1, 50, 100, 300);
-  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&menuAddSensor));
+  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::menuAddSensor));
 
   for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
   {
@@ -1284,7 +1284,7 @@ void kEditor::onAddObject()
     return;
 
   vs = new kViewObjects(this, 1, 50, 100, 300);
-  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&addObject));
+  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::addObject));
 
   for(int i = 0; i < kgmGameObject::g_list_objects.length(); i++)
   {

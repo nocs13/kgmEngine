@@ -8,7 +8,7 @@ class kgmGuiList: public kgmGui
   KGM_OBJECT(kgmGuiList)
 
   typedef kgmList<kgmString> Items;
-  typedef kgmCallback<void(kgmObject*)> SelectEventCallback;
+  typedef kgmCallback<void(void*)> SelectEventCallback;
 
   struct Item
   {

@@ -13,7 +13,7 @@ class kgmGuiCheck: public kgmGui
     StateFocus,
   };
 
-  typedef kgmCallback<void(kgmObject*, bool)> ClickEventCallback;
+  typedef kgmCallback<void(void*, bool)> ClickEventCallback;
 
   State  m_state;
   bool   m_check;

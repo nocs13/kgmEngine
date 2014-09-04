@@ -139,11 +139,13 @@ void kgmSystem::getCurrentDirectory(kgmString& s)
 {
   kgmMemory<u8> buf(1024);
   buf.zero();
+
 #ifdef WIN32
   GetCurrentDirectory(1024, (LPSTR)buf.data());
 #else
-  getcwd(buf, 1024);
+  getcwd((s8*)buf.data(), 1024);
 #endif
+
   s = (const char*)buf.data();
 }
 

@@ -51,14 +51,16 @@ public:
     GoObject
   };
 
-  static kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> g_typ_objects;
+  typedef kgmGameObject* (*GenGo)(kgmIGame*);
+
+  static kgmTab<kgmString, GenGo> g_typ_objects;
+
+  kgmList<kgmVariable> m_variables; //update variables for control from outside
 
 #ifdef EDITOR
   static kgmList<kgmString> g_list_objects;
   static kgmList<kgmString> g_list_sensors;
   static kgmList<kgmString> g_list_actors;
-
-  kgmList<kgmVariable> m_variables;
 
   virtual void eupdate()
   {

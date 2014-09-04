@@ -14,7 +14,7 @@ class kgmGuiButton: public kgmGui
     StateClick
   };
 
-  typedef kgmCallback<void(kgmObject*)> ClickEventCallback;
+  typedef kgmCallback<void(void*)> ClickEventCallback;
 
   State  m_state;
 
