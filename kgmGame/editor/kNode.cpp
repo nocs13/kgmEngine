@@ -41,9 +41,23 @@ void kNode::setPosition(vec3 v)
     lgt->direction = getMatrix() * lgt->direction;
     break;
   case MESH:
-  {
     ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
-  }
+    break;
+  case OBJECT:
+    obj->setPosition(pos);
+    obj->setRotation(rot);
+    break;
+  case ACTOR:
+    act->setPosition(pos);
+    act->setRotation(rot);
+    break;
+  case SENSOR:
+    sns->setPosition(pos);
+    sns->setRotation(rot);
+    break;
+  case TRIGGER:
+    trg->setPosition(pos);
+    trg->setRotation(rot);
     break;
   }
 }

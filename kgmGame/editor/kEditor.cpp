@@ -101,7 +101,7 @@ kEditor::kEditor(kgmGameBase* g)
     kgmText* text = new kgmText();
     logView->set(text);
     text->release();
-    logView->m_text->m_text = "mouse point: ";
+    //logView->m_text->m_text = "mouse point: ";
     logView->m_text->m_rect.y += 100;
     game->m_render->add(logView);
   }
@@ -830,6 +830,8 @@ bool kEditor::addObject(kgmString t)
 
         game->m_render->add(node->icn);
         game->m_render->add(node->geo, mtlLines);
+        game->m_render->add(go->getVisual());
+        game->m_logic->add(go);
 
         vo->getGuiList()->addItem(node->nam);
         vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
