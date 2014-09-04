@@ -125,7 +125,7 @@ public:
     case TInteger:
       return kgmConvert::toString(v_integer);
     case TBoolean:
-      return kgmConvert::toString((s32)v_boolean);
+      return (v_boolean == false) ? kgmString("false") : kgmString("true");
     case TPointer:
       return kgmConvert::toString((s32)(size_t)v_pointer);
     case TString:
@@ -246,6 +246,28 @@ public:
         v_string = *((kgmString*)x_linked);
         break;
       }
+    }
+  }
+
+  void fromString(kgmString s)
+  {
+    switch(type)
+    {
+    case TFloat:
+      v_float = kgmConvert::toDouble(s);
+      break;
+    case TInteger:
+      v_integer = kgmConvert::toInteger(s);
+      break;
+    case TBoolean:
+      v_boolean = (s == "false") ? (false) : (true);
+      break;
+    case TPointer:
+      v_pointer = (void*)kgmConvert::toInteger(s);
+      break;
+    case TString:
+      v_string = s;
+      break;
     }
   }
 };

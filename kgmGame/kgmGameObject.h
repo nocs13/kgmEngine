@@ -151,6 +151,17 @@ public:
     return m_birth;
   }
 
+  void setParameter(kgmString name, kgmString value)
+  {
+    for(int i = 0; i < m_variables.length(); ++i)
+    {
+      kgmVariable& var = m_variables[i];
+
+      if(var.getName() == name)
+        var.fromString(value);
+    }
+  }
+
   static void goRegister(kgmString id, GoType type, kgmGameObject*(*create)(kgmIGame*))
   {
     g_typ_objects.add(id, create);

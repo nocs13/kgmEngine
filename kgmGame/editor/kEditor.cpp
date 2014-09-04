@@ -465,6 +465,47 @@ bool kEditor::mapOpen(kgmString s)
 
         nodes.add(node);
       }
+      else if(id == "kgmGameObject")
+      {
+        oquered++;
+        node = null;
+        ntype = "gobject";
+
+        kgmString id, cls, trg;
+        xml.attribute("name", id);
+        xml.attribute("class", cls);
+
+        kgmSensor* sns = null;
+
+        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        {
+          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+
+          if(fn_new)
+          {
+            kgmGameObject* go = (kgmGameObject*)fn_new(game);
+
+            if(go)
+            {
+              node = new kNode(go);
+              node->bnd = box3(-1, -1, -1, 1, 1, 1);
+              node->nam = id;
+              node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
+              node->geo = new kArrow();
+
+              selected = node;
+
+              game->m_render->add(node->icn);
+              game->m_render->add(node->geo, mtlLines);
+
+              vo->getGuiList()->addItem(node->nam);
+              vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+              nodes.add(node);
+            }
+          }
+        }
+      }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
     {
@@ -534,6 +575,17 @@ bool kEditor::mapOpen(kgmString s)
         if(t != 0)
           node->lock = true;
       }
+      else if(id == "Parameter")
+      {
+        kgmString name, type, value;
+        kgmVariable var;
+
+        xml.attribute("name",  name);
+        xml.attribute("type",  type);
+        xml.attribute("value", value);
+
+        node->obj->setParameter(name, value);
+      }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
     {
@@ -561,6 +613,7 @@ bool kEditor::mapSave(kgmString s)
   kgmList<kNode*> lights;
   kgmList<kNode*> actors;
   kgmList<kNode*> sensors;
+  kgmList<kNode*> objects;
   kgmList<kNode*> triggers;
   kgmList<kNode*> materials;
 
@@ -579,6 +632,9 @@ bool kEditor::mapSave(kgmString s)
       continue;
     case kNode::SENSOR:
       sensors.add(*i);
+      continue;
+    case kNode::OBJECT:
+      objects.add(*i);
       continue;
     case kNode::TRIGGER:
       triggers.add(*i);
@@ -659,6 +715,42 @@ bool kEditor::mapSave(kgmString s)
       fprintf(f, "  <Locked value='1'/>\n");
 
     fprintf(f, " </kgmSensor>\n");
+  }
+
+  for(kgmList<kNode*>::iterator i = objects.begin(); i != objects.end(); ++i)
+  {
+    fprintf(f, " <kgmGameObject name='%s' class='%s'>\n",
+            (*i)->nam.data(), (*i)->obj->runtime().nClass);
+    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
+    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+
+    if((*i)->lock)
+      fprintf(f, "  <Locked value='1'/>\n");
+
+    for(int j = 0; j < (*i)->obj->m_variables.length(); ++j)
+    {
+      kgmVariable& var = (*i)->obj->m_variables[j];
+      kgmString typ;
+
+      switch(var.getType())
+      {
+      case kgmVariable::TInteger:
+        typ = "integer";
+        break;
+      case kgmVariable::TFloat:
+        typ = "float";
+        break;
+      case kgmVariable::TBoolean:
+        typ = "boolean";
+        break;
+      default:
+        typ = "string";
+      }
+
+      fprintf(f, "  <Parameter name='%s' type='%s' value='%s'/>\n", var.getName().data(), typ.data(), var.toString().data());
+    }
+
+    fprintf(f, " </kgmGameObject>\n");
   }
 
   for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
