@@ -16,7 +16,7 @@ public:
     x = a, y = b, z = c, w = d;
   }
 
-  kgmQuaternion(const kgmVector3d<T> &r)
+  kgmQuaternion(kgmVector3d<T> &r)
   {
     kgmVector3d<T> vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
 
@@ -27,7 +27,7 @@ public:
     normalize();
   }
 
-  kgmQuaternion(const kgmVector3d<T> &v, T a)
+  kgmQuaternion(kgmVector3d<T> &v, T a)
   {
     T l = (T)v.length();
 

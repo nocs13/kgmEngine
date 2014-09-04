@@ -1,7 +1,7 @@
 #ifndef KGMCALLBACK_H
 #define KGMCALLBACK_H
 
-//Class for declare callback function
+//Class for declare callback func
 
 class kgmObject;
 
@@ -14,7 +14,7 @@ public:
   typedef F (*Function)(Args...);
 
 private:
-  kgmObject* object;
+  void* object;
   Function   function;
 
 public:
@@ -24,7 +24,7 @@ public:
     function = null;
   }
 
-  kgmCallback(kgmObject* obj = null, Function fn = null)
+  kgmCallback(void* obj = null, Function fn = null)
   {
     object = obj;
     function = fn;
@@ -32,6 +32,13 @@ public:
 
   F operator()(Args... args)
   {
+#ifdef __MINGW32__
+    __asm__ volatile
+    (
+      "mov %eax, %edx\n"
+      "mov %eax, %ecx\n"
+    );
+#endif
     return function(args...);
   }
 
@@ -45,7 +52,7 @@ public:
     return (function != null);
   }
 
-  kgmObject* getObject()
+  void* getObject()
   {
     return object;
   }

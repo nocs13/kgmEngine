@@ -4,15 +4,13 @@
 #endif // ACAMERA_H
 class ACamera: public kgmActor
 {
-  KGM_OBJECT(ACamera);
+  KGM_GO_OBJECT(ACamera);
 
   kgmIGame* game;
   float     z_dist, c_dist;
   bool      ms_left, ms_right;
 
 public:
-
-  static New(kgmIGame* g){ return new ACamera(g); }
 
   ACamera(kgmIGame* g)
     :kgmActor()

@@ -124,9 +124,9 @@ public:
 
     var = kgmVariable("Count",  0,     &particles->m_count);
     m_variables.add(var);
-    var = kgmVariable("Speed",  0.0,   &particles->m_speed);
+    var = kgmVariable("Speed",  0.0f,   &particles->m_speed);
     m_variables.add(var);
-    var = kgmVariable("dSpeed", 0.0,   &particles->div_speed);
+    var = kgmVariable("dSpeed", 0.0f,   &particles->div_speed);
     m_variables.add(var);
     var = kgmVariable("Life",   0,     &particles->m_life);
     m_variables.add(var);

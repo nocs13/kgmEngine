@@ -253,10 +253,11 @@ public:
  void rotate(T x, T y, T z)
  {
    kgmQuaternion<T> qx, qy, qz, qr;
+   kgmVector3d<T>   vx(1, 0, 0), vy(0, 1, 0), vz(0, 0, 1);
 
-   qx = kgmQuaternion<T>(kgmVector3d<T>(1, 0, 0), x);
-   qy = kgmQuaternion<T>(kgmVector3d<T>(0, 1, 0), y);
-   qz = kgmQuaternion<T>(kgmVector3d<T>(0, 0, 1), z);
+   qx = kgmQuaternion<T>(vx, x);
+   qy = kgmQuaternion<T>(vy, y);
+   qz = kgmQuaternion<T>(vz, z);
    qr = qz * qy * qx;
    qr.normalize();
 

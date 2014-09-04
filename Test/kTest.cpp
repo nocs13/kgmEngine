@@ -106,7 +106,7 @@ public:
     gui = new kGui(this);
 
     kgmGameObject::g_typ_objects.add("kInput", &kInput::New);
-    kgmGameObject::g_typ_objects.add("ACamera", &ACamera::New);
+    kgmGameObject::g_typ_objects.add("ACamera", (kgmGameObject*(*)(kgmIGame*))&ACamera::New);
 
 #ifdef EDITOR
     kgmGameObject::g_list_sensors.add("kInput");

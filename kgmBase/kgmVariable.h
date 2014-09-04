@@ -23,11 +23,18 @@ public:
     TPointer
   };
 
+  enum Sync
+  {
+    SyncNone,
+    SyncToLink,
+    SyncFromLink
+  };
+
 private:
   kgmString id;
   Type      type;
 
-  f64    v_float;
+  f32    v_float;
   str    v_string;
   s32    v_integer;
   bool   v_boolean;
@@ -42,7 +49,7 @@ public:
     x_linked = null;
   }
 
-  kgmVariable(kgmString name, f64 data, void* xptr = null)
+  kgmVariable(kgmString name, f32 data, void* xptr = null)
   {
     id = name;
     type = TFloat;
@@ -136,7 +143,7 @@ public:
     return v_integer;
   }
 
-  f64 getFloat()
+  f32 getFloat()
   {
     return v_float;
   }
@@ -151,7 +158,7 @@ public:
     return v_pointer;
   }
 
-  void setFloat(f64 val)
+  void setFloat(f32 val)
   {
     if(type == TFloat)
       v_float = val;
@@ -191,6 +198,55 @@ public:
   {
     if(type == TPointer)
       *((s32*)v_pointer) = (s32)val;
+  }
+
+  void sync(Sync s = SyncNone)
+  {
+    if(!x_linked || s == SyncNone)
+      return;
+
+    if(s == SyncToLink)
+    {
+      switch(type)
+      {
+      case TFloat:
+        *((f32*)x_linked) = v_float;
+        break;
+      case TInteger:
+        *((s32*)x_linked) = v_integer;
+        break;
+      case TBoolean:
+        *((bool*)x_linked) = v_boolean;
+        break;
+      case TPointer:
+        *((u32*)x_linked) = (u32)v_pointer;
+        break;
+      case TString:
+        *((kgmString*)x_linked) = v_string;
+        break;
+      }
+    }
+    else if(s == SyncFromLink)
+    {
+      switch(type)
+      {
+      case TFloat:
+        v_float = *((f32*)x_linked);
+        break;
+      case TInteger:
+        v_integer = *((s32*)x_linked);
+        break;
+      case TBoolean:
+        v_boolean = *((bool*)x_linked);
+        break;
+      case TPointer:
+        v_pointer = (void*)*((u32*)x_linked);
+        break;
+      case TString:
+        v_string = *((kgmString*)x_linked);
+        break;
+      }
+    }
   }
 };
 

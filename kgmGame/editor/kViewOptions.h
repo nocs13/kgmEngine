@@ -90,7 +90,7 @@ class kViewOptionsForObject : public kViewOptions
   class kGuiText: public kgmGuiText
   {
   public:
-    typedef kgmCallback<void(kgmObject*, kgmString, kgmString)> kChangeEventCallback;
+    typedef kgmCallback<void(void*, kgmString, kgmString)> kChangeEventCallback;
 
   private:
     kChangeEventCallback kcallback;
@@ -99,13 +99,13 @@ class kViewOptionsForObject : public kViewOptions
     kGuiText()
       : kgmGuiText(), kcallback(null, null)
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&dataChange));
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
     }
 
     kGuiText(kgmGui* parent, int x, int y, int w, int h)
       : kgmGuiText(parent, x, y, w, h), kcallback(null, null)
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&dataChange));
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
     }
 
     void setChangeEventCallback(kChangeEventCallback call)
