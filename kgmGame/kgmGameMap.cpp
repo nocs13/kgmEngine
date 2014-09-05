@@ -252,6 +252,7 @@ kgmGameMap::Node kgmGameMap::next()
 
 
   kgmString id, value, t;
+  kgmString ntype;
 
   if(xstate == kgmXml::XML_ERROR)
   {
@@ -268,45 +269,29 @@ kgmGameMap::Node kgmGameMap::next()
 
     if(id == "kgmCamera")
     {
-      //oquered++;
       ntype = "camera";
     }
     else if(id == "kgmLight")
     {
-      oquered++;
       ntype = "light";
 
       kgmString id;
       xml.attribute("name", id);
-      node = new kNode(new kgmLight());
+      node.obj = new kgmLight();
 
-      node->nam = id;
-      node->bnd = box3(-1, -1, -1, 1, 1, 1);
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-      node->geo = new kArrow();
-
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
-      game->m_render->add(node->lgt);
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-
-      //        node->setPosition(vec3(0,0,0));
+      node.nam = id;
+      node.bnd = box3(-1, -1, -1, 1, 1, 1);
     }
     else if(id == "kgmMesh")
     {
-      oquered++;
       ntype = "mesh";
 
       kgmString id, ln;
       xml.attribute("name", id);
       xml.attribute("link", ln);
-      kgmMesh* mesh = game->getResources()->getMesh(ln);
+      node.obj = game->getResources()->getMesh(ln);
 
-      if(mesh)
+      if(node.obj)
       {
         node = new kNode(mesh);
         node->nam = id;

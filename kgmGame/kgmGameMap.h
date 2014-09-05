@@ -47,6 +47,7 @@ public:
 
     vec3       pos;
     vec3       rot;
+    box3       bnd;
 
     kgmString  nam;
     kgmString  lnk;
