@@ -4,6 +4,7 @@
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
 #include "../kgmGameBase.h"
+#include "../kgmGameMap.h"
 
 using namespace kgmGameEditor;
 
@@ -601,13 +602,13 @@ bool kEditor::mapOpen(kgmString s)
 
 bool kEditor::mapSave(kgmString s)
 {
-  FILE* f = fopen(s.data(), "w");
+  kgmXml     xml;
+  kgmGameMap map(game, kgmGameMap::OpenWrite);
 
-  if(!f)
-    return false;
+  map.open(xml);
 
-  fprintf(f, "<?xml version='1.0'?>\n");
-  fprintf(f, "<kgm>\n");
+  //fprintf(f, "<?xml version='1.0'?>\n");
+  //fprintf(f, "<kgm>\n");
 
   kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
@@ -646,124 +647,97 @@ bool kEditor::mapSave(kgmString s)
 
   kgmCamera& mcam = game->getRender()->camera();
 
-  fprintf(f, " <kgmCamera name='main_camera' active='true'>\n");
-  fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);
-  fprintf(f, "  <Direction value='%f %f %f'/>\n", mcam.mDir.x, mcam.mDir.y, mcam.mDir.z);
-  fprintf(f, " </kgmCamera>\n");
+  //fprintf(f, " <kgmCamera name='main_camera' active='true'>\n");
+  //fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);
+  //fprintf(f, "  <Direction value='%f %f %f'/>\n", mcam.mDir.x, mcam.mDir.y, mcam.mDir.z);
+  //fprintf(f, " </kgmCamera>\n");
 
   for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
   {
-    fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
-    fprintf(f, " </kgmMaterial>\n");
+    //fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
+    //fprintf(f, " </kgmMaterial>\n");
   }
 
   for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
-    kgmLight* l = (*i)->lgt;
+    kgmGameMap::Node node;
 
-    fprintf(f, " <kgmLight name='%s'>\n", (*i)->nam.data());
-    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    node.obj = (*i)->lgt;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lck = (*i)->lock;
 
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
-
-    fprintf(f, " </kgmLight>\n");
+    map.addLight(node);
   }
 
   for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
     kgmMaterial* mtl = game->m_render->getMeshMaterial((*i)->msh);
 
-    fprintf(f, " <kgmMesh name='%s' link='%s'>\n", (*i)->nam.data(), (*i)->lnk.data());
+    kgmGameMap::Node node;
 
-    if(mtl)
-      fprintf(f, "  <Material value='%s'/>\n", mtl->m_id.data());
-    else
-      fprintf(f, "  <Material value=''/>\n");
+    node.obj = (*i)->msh;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lnk = (*i)->lnk;
+    node.mtl = (*i)->mat;
+    node.lck = (*i)->lock;
 
-    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
-
-    if((*i)->col)
-      fprintf(f, "  <Collision value='%u'/>\n", (*i)->col);
-
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
-
-    fprintf(f, " </kgmMesh>\n");
+    map.addMesh(node);
   }
 
   for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
   {
-    fprintf(f, " <kgmActor name='%s'>\n", (*i)->nam.data());
+    kgmGameMap::Node node;
 
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
+    node.obj = (*i)->act;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lck = (*i)->lock;
 
-    fprintf(f, " </kgmActor>\n");
+    map.addActor(node);
   }
 
   for(kgmList<kNode*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
   {
-    fprintf(f, " <kgmSensor name='%s' class='%s' target='%s'>\n",
-            (*i)->nam.data(), (*i)->sns->runtime().nClass, (*i)->sns->getTarget().data());
-    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    kgmGameMap::Node node;
 
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
+    node.obj = (*i)->sns;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lck = (*i)->lock;
 
-    fprintf(f, " </kgmSensor>\n");
+    map.addSensor(node);
   }
 
   for(kgmList<kNode*>::iterator i = objects.begin(); i != objects.end(); ++i)
   {
-    fprintf(f, " <kgmGameObject name='%s' class='%s'>\n",
-            (*i)->nam.data(), (*i)->obj->runtime().nClass);
-    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    kgmGameMap::Node node;
 
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
+    node.obj = (*i)->obj;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lck = (*i)->lock;
 
-    for(int j = 0; j < (*i)->obj->m_variables.length(); ++j)
-    {
-      kgmVariable& var = (*i)->obj->m_variables[j];
-      kgmString typ;
-
-      switch(var.getType())
-      {
-      case kgmVariable::TInteger:
-        typ = "integer";
-        break;
-      case kgmVariable::TFloat:
-        typ = "float";
-        break;
-      case kgmVariable::TBoolean:
-        typ = "boolean";
-        break;
-      default:
-        typ = "string";
-      }
-
-      fprintf(f, "  <Parameter name='%s' type='%s' value='%s'/>\n", var.getName().data(), typ.data(), var.toString().data());
-    }
-
-    fprintf(f, " </kgmGameObject>\n");
+    map.addGameObject(node);
   }
 
   for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
   {
-    fprintf(f, " <kgmTrigger name='%s' channels='%i' target='%s'>\n",
-            (*i)->nam.data(), (*i)->trg->getCount(), (*i)->trg->getTarget().data());
-    fprintf(f, "  <Position value='%f %f %f'/>\n", (*i)->pos.x, (*i)->pos.y, (*i)->pos.z);
-    fprintf(f, "  <Rotation value='%f %f %f'/>\n", (*i)->rot.x, (*i)->rot.y, (*i)->rot.z);
+    kgmGameMap::Node node;
 
-    if((*i)->lock)
-      fprintf(f, "  <Locked value='1'/>\n");
+    node.obj = (*i)->trg;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.nam = (*i)->nam;
+    node.lck = (*i)->lock;
 
-    fprintf(f, " </kgmTrigger>\n");
+    map.addTrigger(node);
   }
 
   materials.clear();
@@ -771,7 +745,18 @@ bool kEditor::mapSave(kgmString s)
   lights.clear();
   meshes.clear();
 
-  fprintf(f, "</kgm>");
+  FILE* f = fopen(s.data(), "w");
+
+  if(!f)
+    return false;
+
+  kgmString str;
+
+  if(xml.toString(str) > 1)
+  {
+    fprintf(f, "%s", str.data());
+  }
+
   fclose(f);
 
   return true;

@@ -644,3 +644,72 @@ void kgmXml::print(Node* n)
   for(int i = 0; i < n->nodes(); i++)
     print(n->node(i));
 }
+
+void kgmXml::addToString(kgmString& str, kgmXml::Node* node)
+{
+  if(!node)
+    return;
+
+  m_spaces ++;
+
+  str += kgmString("\n");
+
+  for(int i = 0; i < m_spaces; i++)
+    str += " ";
+
+  str += kgmString("<") + node->m_name;
+
+  for(int i = 0; i < node->m_attributes.length(); i++)
+  {
+    str += " ";
+    str += node->m_attributes[i]->m_name;
+    str += "='";
+    str += node->m_attributes[i]->m_data;
+    str += "'";
+  }
+
+  bool subs = false;
+
+  if(node->m_data.length() < 1 || node->m_nodes.length() < 1)
+    subs = false;
+
+  if(!subs)
+    str += "/>";
+  else
+    str += ">";
+
+  if(node->m_data.length() > 0)
+  {
+    str += node->m_data;
+  }
+  else if(node->m_nodes.length() > 0)
+  {
+    for(int i = 0; i < node->m_nodes.length(); ++i)
+      addToString(str, node->m_nodes[i]);
+  }
+
+  if(subs)
+  {
+    str += "\n";
+
+    for(int i = 0; i < m_spaces; i++)
+      str += " ";
+
+    str += "</";
+    str += node->m_name;
+    str += ">";
+  }
+
+  m_spaces --;
+}
+
+u32 kgmXml::toString(kgmString& str)
+{
+  str = "<?xml version='1.0'?>";
+
+  m_spaces = -1;
+
+  addToString(str, m_node);
+
+  return str.length();
+}
