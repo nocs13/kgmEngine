@@ -55,13 +55,13 @@ bool kgmGameMap::addMesh(Node n)
     snode->m_name = "kgmPosition";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.pos.x) + kgmString(" ") +
                                                            kgmConvert::toString(n.pos.y) + kgmString(" ") +
-                                                           kgmConvert::toString(n.pos.z) + kgmString(" ")));
+                                                           kgmConvert::toString(n.pos.z)));
 
     snode = new kgmXml::Node(node);
     snode->m_name = "kgmRotation";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                            kgmConvert::toString(n.rot.y) + kgmString(" ") +
-                                                           kgmConvert::toString(n.rot.z) + kgmString(" ")));
+                                                           kgmConvert::toString(n.rot.z)));
     if(n.col != 0)
     {
       snode = new kgmXml::Node(node);
@@ -94,13 +94,13 @@ bool kgmGameMap::addLight(Node n)
     snode->m_name = "Position";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.pos.x) + kgmString(" ") +
                                                            kgmConvert::toString(n.pos.y) + kgmString(" ") +
-                                                           kgmConvert::toString(n.pos.z) + kgmString(" ")));
+                                                           kgmConvert::toString(n.pos.z)));
 
     snode = new kgmXml::Node(node);
     snode->m_name = "Rotation";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                            kgmConvert::toString(n.rot.y) + kgmString(" ") +
-                                                           kgmConvert::toString(n.rot.z) + kgmString(" ")));
+                                                           kgmConvert::toString(n.rot.z)));
 
     if(n.lck)
     {
@@ -208,7 +208,7 @@ bool kgmGameMap::addGameObject(Node n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmSensor";
+    node->m_name = "kgmGameObjects";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
     node->m_attributes.add(new kgmXml::Attribute("class", ((kgmGameObject*)n.obj)->runtime().nClass));
 

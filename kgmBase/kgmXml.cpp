@@ -670,8 +670,8 @@ void kgmXml::addToString(kgmString& str, kgmXml::Node* node)
 
   bool subs = false;
 
-  if(node->m_data.length() < 1 || node->m_nodes.length() < 1)
-    subs = false;
+  if(node->m_data.length() > 0 ||  node->m_nodes.length() > 0)
+    subs = true;
 
   if(!subs)
     str += "/>";

@@ -119,7 +119,6 @@ public:
 
     setPosition(pos);
 
-#ifdef EDITOR
     kgmVariable var;
 
     var = kgmVariable("Count",  0,     &particles->m_count);
@@ -135,10 +134,8 @@ public:
     var = kgmVariable("Loop",   false, &particles->m_loop);
     m_variables.add(var);
     idTex = tid;
-    var = kgmVariable("tId",   "",     &idTex);
+    var = kgmVariable("tId",   kgmString(""),     &idTex);
     m_variables.add(var);
-
-#endif
   }
 
   kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
