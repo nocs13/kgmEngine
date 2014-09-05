@@ -319,6 +319,19 @@ bool kEditor::mapOpen(kgmString s)
 
   kgmString ntype;
 
+  kgmGameMap map(game, kgmGameMap::OpenRead);
+
+  map.open(xml);
+
+  kgmGameMap::Node mnode = map.next();
+
+  while(mnode.obj)
+  {
+
+    mnode = map.next();
+  }
+
+  /*
   while(kgmXml::XmlState xstate = xml.next())
   {
     kgmString id, value, t;
@@ -592,7 +605,7 @@ bool kEditor::mapOpen(kgmString s)
     {
     }
   }
-
+*/
   xml.close();
 
   selected = null;
@@ -606,9 +619,6 @@ bool kEditor::mapSave(kgmString s)
   kgmGameMap map(game, kgmGameMap::OpenWrite);
 
   map.open(xml);
-
-  //fprintf(f, "<?xml version='1.0'?>\n");
-  //fprintf(f, "<kgm>\n");
 
   kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
@@ -651,12 +661,6 @@ bool kEditor::mapSave(kgmString s)
   //fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);
   //fprintf(f, "  <Direction value='%f %f %f'/>\n", mcam.mDir.x, mcam.mDir.y, mcam.mDir.z);
   //fprintf(f, " </kgmCamera>\n");
-
-  for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
-  {
-    //fprintf(f, " <kgmMaterial name='%s'>\n", (*i)->nam.data());
-    //fprintf(f, " </kgmMaterial>\n");
-  }
 
   for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
