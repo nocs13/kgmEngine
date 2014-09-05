@@ -39,7 +39,7 @@ public:
       "mov %eax, %ecx\n"
     );
 #endif
-    return function(args...);
+    return kgmCallback::function(args...);
   }
 
   bool hasObject()
