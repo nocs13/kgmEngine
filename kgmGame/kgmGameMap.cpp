@@ -213,7 +213,7 @@ bool kgmGameMap::addGameObject(Node n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmGameObjects";
+    node->m_name = "kgmGameObject";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
     node->m_attributes.add(new kgmXml::Attribute("class", ((kgmGameObject*)n.obj)->runtime().nClass));
 
@@ -373,7 +373,7 @@ kgmGameMap::Node kgmGameMap::next()
       {
         ntype = "gobject";
 
-        kgmString id, cls, trg;
+        kgmString id, cls;
         m_xml->attribute("name", id);
         m_xml->attribute("class", cls);
 
@@ -415,7 +415,7 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        node.pos = v;
+        node.rot = v;
       }
       else if(id == "Direction")
       {
@@ -463,7 +463,8 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("type",  type);
         m_xml->attribute("value", value);
 
-        ((kgmGameObject*)node.obj)->setParameter(name, value);
+        if(node.obj)
+          ((kgmGameObject*)node.obj)->setParameter(name, value);
       }
       else if((id == "kgmMesh") || (id == "kgmLight") || (id == "kgmMaterial") ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||

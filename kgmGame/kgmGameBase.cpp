@@ -135,10 +135,10 @@ kgmGameBase::kgmGameBase()
   for(int i = 0; i < sizeof(m_input); i++)
     m_input[i] = 0;
 
-  m_keymap[KEY_LEFT]  = m_keymap[KEY_A] = (char)gbtn_left;
-  m_keymap[KEY_RIGHT] = m_keymap[KEY_D] = (char)gbtn_right;
-  m_keymap[KEY_UP]    = m_keymap[KEY_W] = (char)gbtn_up;
-  m_keymap[KEY_DOWN]  = m_keymap[KEY_S] = (char)gbtn_down;
+  m_keymap[KEY_LEFT]    = m_keymap[KEY_A] = (char)gbtn_left;
+  m_keymap[KEY_RIGHT]   = m_keymap[KEY_D] = (char)gbtn_right;
+  m_keymap[KEY_UP]      = m_keymap[KEY_W] = (char)gbtn_up;
+  m_keymap[KEY_DOWN]    = m_keymap[KEY_S] = (char)gbtn_down;
   m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
   m_keymap[KEY_ENTER]   = (char)gbtn_start;
   m_keymap[KEY_LSHIFT]  = (char)gbtn_n;
@@ -148,8 +148,8 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_Y] = (char)gbtn_y;
   m_keymap[KEY_Z] = (char)gbtn_z;
 
-  m_keymap[KEY_MSBLEFT] = (char)gbtn_a;
-  m_keymap[KEY_MSBRIGHT] = (char)gbtn_b;
+  m_keymap[KEY_MSBLEFT]   = (char)gbtn_a;
+  m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
   m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
 
   m_gamemode = true;
