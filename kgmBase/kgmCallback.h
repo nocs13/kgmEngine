@@ -32,13 +32,6 @@ public:
 
   F operator()(Args... args)
   {
-#ifdef __MINGW32XXX__
-    __asm__ volatile
-    (
-      "mov %eax, %edx\n"
-      "mov %eax, %ecx\n"
-    );
-#endif
     return kgmCallback::function(args...);
   }
 

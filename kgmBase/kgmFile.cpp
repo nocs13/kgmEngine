@@ -163,7 +163,7 @@ bool kgmFile::make_directory(kgmString& path)
   int res = 0;
 
 #ifdef WIN32
-  res = mkdir(path.data());
+  res = CreateDirectory(path.data(), NULL);
 #else
   res = mkdir(path.data(), 0777);
 #endif

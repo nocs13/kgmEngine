@@ -1,10 +1,6 @@
 #pragma once
 #include "kgmArray.h"
 
-#ifdef WIN32
-#include <tchar.h>
-#endif 
-
 #define KGM_TSTRING_MAX_COPY 1048576
 
 template <class T> 

@@ -7,7 +7,7 @@
 #ifdef WIN32
  #include <windows.h>
  #include <process.h>
- #include <pthread.h>
+#include <pthread.h>
 #else
  #include <stdlib.h>
  #include <unistd.h>
@@ -22,11 +22,11 @@ public:
 typedef long  TID;
 typedef void* Mutex;
 
-#ifdef WIN32
- void* m_thread;
-#else
+//#ifdef WIN32
+// void* m_thread;
+//#else
  pthread_t m_thread;
-#endif
+//#endif
  
 public:
  kgmThread();

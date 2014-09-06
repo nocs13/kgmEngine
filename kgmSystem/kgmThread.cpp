@@ -20,14 +20,11 @@ kgmThread::~kgmThread()
   exit();
 }
 
-bool kgmThread::exec(){
+bool kgmThread::exec()
+{
  int rc = 0;
 
-#ifdef WIN32 
- m_thread = (void*)_beginthread((void (*)(void*) )thread, 0, this);
-#else
  rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
-#endif 
 
  if(rc)
   return false;
@@ -37,13 +34,12 @@ bool kgmThread::exec(){
 
 void kgmThread::exit()
 {
-#ifdef WIN32 
- _endthread();
-#elif defined ANDROID
+#ifdef defined ANDROID
  pthread_kill(m_thread, 9);
 #else
  pthread_cancel(m_thread);
 #endif 
+
  m_thread = null;
 }
 
