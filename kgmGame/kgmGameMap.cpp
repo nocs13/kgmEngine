@@ -276,7 +276,7 @@ kgmGameMap::Node kgmGameMap::next()
       ntype = "light";
 
       kgmString id;
-      xml.attribute("name", id);
+      m_xml->attribute("name", id);
       node.obj = new kgmLight();
 
       node.nam = id;
@@ -293,25 +293,17 @@ kgmGameMap::Node kgmGameMap::next()
 
       if(node.obj)
       {
-        node = new kNode(mesh);
-        node->nam = id;
-        node->lnk = ln;
-        node->bnd = mesh->bound();
-        game->m_render->add(node->msh, null);
-        nodes.add(node);
-
-        vo->getGuiList()->addItem(node->nam);
+        node.nam = id;
+        node.lnk = ln;
+        node.bnd = mesh->bound();
       }
     }
     else if(id == "kgmActor")
     {
-      oquered++;
       ntype = "actor";
     }
     else if(id == "kgmSensor")
     {
-      oquered++;
-      node = null;
       ntype = "sensor";
 
       kgmString id, cls, trg;
@@ -327,72 +319,43 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(fn_new)
         {
-          kgmSensor* sn = (kgmSensor*)fn_new(game);
+          kgmSensor* sn = (kgmSensor*)fn_new(m_game);
 
           if(sn)
           {
             sn->setTarget(trg);
 
-            node = new kNode(sn);
-            node->bnd = box3(-1, -1, -1, 1, 1, 1);
-            node->nam = id;
-            node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
-            node->geo = new kArrow();
-
-            selected = node;
-
-            game->m_render->add(node->icn);
-            game->m_render->add(node->geo, mtlLines);
-
-            vo->getGuiList()->addItem(node->nam);
-            vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
-            nodes.add(node);
+            node.obj = sn;
+            node.bnd = box3(-1, -1, -1, 1, 1, 1);
+            node.nam = id;
           }
         }
       }
     }
     else if(id == "kgmTrigger")
     {
-      oquered++;
       ntype = "trigger";
 
       kgmString id, chn, trg;
-      xml.attribute("name", id);
-      xml.attribute("channels", chn);
-      xml.attribute("target", trg);
+      m_xml->attribute("name", id);
+      m_xml->attribute("channels", chn);
+      m_xml->attribute("target", trg);
 
-      kgmTrigger* tr= new kgmTrigger(game);
+      kgmTrigger* tr= new kgmTrigger(m_game);
       tr->setCount(kgmConvert::toInteger(chn));
       tr->setTarget(trg);
 
-      node = new kNode(tr);
-      node->nam = id;
-      node->bnd = box3(-1, -1, -1, 1, 1, 1);
-      nodes.add(node);
-
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
-      node->geo = new kArrow();
-
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
+      node.obj = tr;
+      node.nam = id;
+      node.bnd = box3(-1, -1, -1, 1, 1, 1);
     }
     else if(id == "kgmGameObject")
     {
-      oquered++;
-      node = null;
       ntype = "gobject";
 
       kgmString id, cls, trg;
-      xml.attribute("name", id);
-      xml.attribute("class", cls);
-
-      kgmSensor* sns = null;
+      m_xml->attribute("name", id);
+      m_xml->attribute("class", cls);
 
       if(kgmGameObject::g_typ_objects.hasKey(cls))
       {
@@ -400,25 +363,13 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(fn_new)
         {
-          kgmGameObject* go = (kgmGameObject*)fn_new(game);
+          kgmGameObject* go = (kgmGameObject*)fn_new(m_game);
 
           if(go)
           {
-            node = new kNode(go);
-            node->bnd = box3(-1, -1, -1, 1, 1, 1);
-            node->nam = id;
-            node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
-            node->geo = new kArrow();
-
-            selected = node;
-
-            game->m_render->add(node->icn);
-            game->m_render->add(node->geo, mtlLines);
-
-            vo->getGuiList()->addItem(node->nam);
-            vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
-            nodes.add(node);
+            node.obj = go;
+            node.bnd = box3(-1, -1, -1, 1, 1, 1);
+            node.nam = id;
           }
         }
       }
@@ -427,60 +378,51 @@ kgmGameMap::Node kgmGameMap::next()
   else if(xstate == kgmXml::XML_TAG_CLOSE)
   {
     kgmString data;
-    id = xml.m_tagName;
+    id = m_xml->m_tagName;
 
     if(id == "Position")
     {
       vec3 v;
-      xml.attribute("value", value);
+      m_xml->attribute("value", value);
       sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-      if(ntype == "camera")
-      {
-        game->getRender()->camera().mPos = v;
-        game->getRender()->camera().update();
-      }
-      else
-      {
-        node->setPosition(v);
-      }
+      node.pos = v;
     }
     else if(id == "Rotation")
     {
       vec3 v;
-      xml.attribute("value", value);
+      m_xml->attribute("value", value);
       sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-      node->setRotation(v);
+
+      node.pos = v;
     }
     else if(id == "Direction")
     {
       vec3 v;
-      xml.attribute("value", value);
+      m_xml->attribute("value", value);
       sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
       if(ntype == "camera")
       {
-        game->getRender()->camera().mDir = v;
-        game->getRender()->camera().update();
       }
     }
     else if(id == "Material")
     {
       value.clear();
-      xml.attribute("value", value);
+      m_xml->attribute("value", value);
 
       if(value.length())
-        node->setMaterial(value);
+        node.mtl = value;
     }
     else if(id == "Collision")
     {
       value.clear();
-      xml.attribute("value", value);
+      m_xml->attribute("value", value);
 
       u32 t = kgmConvert::toInteger(value);
 
       if(t != 0)
-        node->col = true;
+        node.col = true;
     }
     else if(id == "Locked")
     {
