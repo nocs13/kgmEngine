@@ -335,6 +335,8 @@ bool kEditor::mapOpen(kgmString s)
       node->nam = mnode.nam;
       node->lnk = mnode.lnk;
       node->bnd = mnode.bnd;
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
       game->m_render->add(node->msh, null);
       nodes.add(node);
 
@@ -347,6 +349,8 @@ bool kEditor::mapOpen(kgmString s)
 
       node->nam = mnode.nam;
       node->bnd = mnode.bnd;
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
       node->geo = new kArrow();
 
@@ -370,6 +374,8 @@ bool kEditor::mapOpen(kgmString s)
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
       node->geo = new kArrow();
 
@@ -388,6 +394,8 @@ bool kEditor::mapOpen(kgmString s)
 
       node->nam = mnode.nam;
       node->bnd = mnode.bnd;
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
 
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
       node->geo = new kArrow();
@@ -407,6 +415,8 @@ bool kEditor::mapOpen(kgmString s)
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
       node->geo = new kArrow();
 
