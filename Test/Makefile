@@ -1,7 +1,7 @@
 OS = $(shell uname -s)
 RM =
 
-CC = g++ 
+CC = ccache g++ 
 DEFS = -DLINUX
 FLGS = -ansi -std=c++98 
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \

@@ -1,7 +1,7 @@
 OS = $(shell uname -s)
 RM =
 
-CC = g++
+CC = ccache g++ 
 AR = ar
 DEFS = -DLINUX -DDEBUG -DLUA
 DSND = -OAL
