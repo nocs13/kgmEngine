@@ -74,7 +74,7 @@ private:
   kgmVisual*     logView;
 
 public:
-  kEditor(  kgmGameBase* game);
+  explicit kEditor(  kgmGameBase* game);
   ~kEditor();
 
   void clear();

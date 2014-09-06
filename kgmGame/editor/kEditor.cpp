@@ -327,6 +327,98 @@ bool kEditor::mapOpen(kgmString s)
 
   while(mnode.obj)
   {
+    if(mnode.typ == kgmGameMap::NodeMsh)
+    {
+      oquered++;
+      node = new kNode((kgmMesh*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->lnk = mnode.lnk;
+      node->bnd = mnode.bnd;
+      game->m_render->add(node->msh, null);
+      nodes.add(node);
+
+      vo->getGuiList()->addItem(node->nam);
+    }
+    else if(mnode.typ == kgmGameMap::NodeLgt)
+    {
+      oquered++;
+      node = new kNode((kgmLight*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+      node->geo = new kArrow();
+
+      vo->getGuiList()->addItem(node->nam);
+      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+      game->m_render->add(node->lgt);
+      game->m_render->add(node->icn);
+      game->m_render->add(node->geo, mtlLines);
+
+      nodes.add(node);
+    }
+    else if(mnode.typ == kgmGameMap::NodeAct)
+    {
+      oquered++;
+    }
+    else if(mnode.typ == kgmGameMap::NodeSns)
+    {
+      oquered++;
+      node = new kNode((kgmSensor*)mnode.obj);
+
+      node->bnd = mnode.bnd;
+      node->nam = mnode.nam;
+      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+      node->geo = new kArrow();
+
+      game->m_render->add(node->icn);
+      game->m_render->add(node->geo, mtlLines);
+
+      vo->getGuiList()->addItem(node->nam);
+      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+      nodes.add(node);
+    }
+    else if(mnode.typ == kgmGameMap::NodeTrg)
+    {
+      oquered++;
+      node = new kNode((kgmTrigger*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+
+      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
+      node->geo = new kArrow();
+
+      vo->getGuiList()->addItem(node->nam);
+      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+      game->m_render->add(node->icn);
+      game->m_render->add(node->geo, mtlLines);
+
+      nodes.add(node);
+    }
+    else if(mnode.typ == kgmGameMap::NodeObj)
+    {
+      oquered++;
+      node = new kNode((kgmGameObject*)mnode.obj);
+
+      node->bnd = mnode.bnd;
+      node->nam = mnode.nam;
+      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
+      node->geo = new kArrow();
+
+
+      game->m_render->add(node->icn);
+      game->m_render->add(node->geo, mtlLines);
+
+      vo->getGuiList()->addItem(node->nam);
+      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+      nodes.add(node);
+    }
 
     mnode = map.next();
   }

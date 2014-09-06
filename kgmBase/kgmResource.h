@@ -4,7 +4,8 @@
 
 class kgmIResources;
 
-class kgmResource: public kgmObject{
+class kgmResource: public kgmObject
+{
  KGM_OBJECT(kgmResource)
 public:
  enum  Type{

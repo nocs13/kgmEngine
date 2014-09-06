@@ -35,7 +35,7 @@ public:
     NodeLgt,
     NodeObj,
     NodeAct,
-    NodeSnc,
+    NodeSns,
     NodeTrg
   };
 

@@ -25,7 +25,7 @@ bool kgmThread::exec(){
 
 #ifdef WIN32 
  m_thread = (void*)_beginthread((void (*)(void*) )thread, 0, this);
-#else 
+#else
  rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
 #endif 
 

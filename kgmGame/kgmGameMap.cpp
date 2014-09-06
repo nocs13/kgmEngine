@@ -1,5 +1,10 @@
 #include "kgmGameMap.h"
 
+#include "../kgmBase/kgmResource.h"
+
+#include "kgmIGame.h"
+#include "kgmGameResources.h"
+
 KGMOBJECT_IMPLEMENT(kgmGameMap, kgmObject);
 
 kgmGameMap::kgmGameMap(kgmIGame* g, OpenType ot)
@@ -246,213 +251,231 @@ kgmGameMap::Node kgmGameMap::next()
 {
   Node node;
 
-  node.obj = null;
-
-  kgmXml::XmlState xstate = m_xml->next();
-
-
-  kgmString id, value, t;
-  kgmString ntype;
-
-  if(xstate == kgmXml::XML_ERROR)
-  {
-    return node;
-  }
-  else if(xstate == kgmXml::XML_FINISH)
-  {
-    return node;
-  }
-
-  if(xstate == kgmXml::XML_TAG_OPEN)
-  {
-    id = m_xml->m_tagName;
-
-    if(id == "kgmCamera")
-    {
-      ntype = "camera";
-    }
-    else if(id == "kgmLight")
-    {
-      ntype = "light";
-
-      kgmString id;
-      m_xml->attribute("name", id);
-      node.obj = new kgmLight();
-
-      node.nam = id;
-      node.bnd = box3(-1, -1, -1, 1, 1, 1);
-    }
-    else if(id == "kgmMesh")
-    {
-      ntype = "mesh";
-
-      kgmString id, ln;
-      xml.attribute("name", id);
-      xml.attribute("link", ln);
-      node.obj = game->getResources()->getMesh(ln);
-
-      if(node.obj)
-      {
-        node.nam = id;
-        node.lnk = ln;
-        node.bnd = mesh->bound();
-      }
-    }
-    else if(id == "kgmActor")
-    {
-      ntype = "actor";
-    }
-    else if(id == "kgmSensor")
-    {
-      ntype = "sensor";
-
-      kgmString id, cls, trg;
-      xml.attribute("name", id);
-      xml.attribute("class", cls);
-      xml.attribute("target", trg);
-
-      kgmSensor* sns = null;
-
-      if(kgmGameObject::g_typ_objects.hasKey(cls))
-      {
-        kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
-
-        if(fn_new)
-        {
-          kgmSensor* sn = (kgmSensor*)fn_new(m_game);
-
-          if(sn)
-          {
-            sn->setTarget(trg);
-
-            node.obj = sn;
-            node.bnd = box3(-1, -1, -1, 1, 1, 1);
-            node.nam = id;
-          }
-        }
-      }
-    }
-    else if(id == "kgmTrigger")
-    {
-      ntype = "trigger";
-
-      kgmString id, chn, trg;
-      m_xml->attribute("name", id);
-      m_xml->attribute("channels", chn);
-      m_xml->attribute("target", trg);
-
-      kgmTrigger* tr= new kgmTrigger(m_game);
-      tr->setCount(kgmConvert::toInteger(chn));
-      tr->setTarget(trg);
-
-      node.obj = tr;
-      node.nam = id;
-      node.bnd = box3(-1, -1, -1, 1, 1, 1);
-    }
-    else if(id == "kgmGameObject")
-    {
-      ntype = "gobject";
-
-      kgmString id, cls, trg;
-      m_xml->attribute("name", id);
-      m_xml->attribute("class", cls);
-
-      if(kgmGameObject::g_typ_objects.hasKey(cls))
-      {
-        kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
-
-        if(fn_new)
-        {
-          kgmGameObject* go = (kgmGameObject*)fn_new(m_game);
-
-          if(go)
-          {
-            node.obj = go;
-            node.bnd = box3(-1, -1, -1, 1, 1, 1);
-            node.nam = id;
-          }
-        }
-      }
-    }
-  }
-  else if(xstate == kgmXml::XML_TAG_CLOSE)
-  {
-    kgmString data;
-    id = m_xml->m_tagName;
-
-    if(id == "Position")
-    {
-      vec3 v;
-      m_xml->attribute("value", value);
-      sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-
-      node.pos = v;
-    }
-    else if(id == "Rotation")
-    {
-      vec3 v;
-      m_xml->attribute("value", value);
-      sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-
-      node.pos = v;
-    }
-    else if(id == "Direction")
-    {
-      vec3 v;
-      m_xml->attribute("value", value);
-      sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
-
-      if(ntype == "camera")
-      {
-      }
-    }
-    else if(id == "Material")
-    {
-      value.clear();
-      m_xml->attribute("value", value);
-
-      if(value.length())
-        node.mtl = value;
-    }
-    else if(id == "Collision")
-    {
-      value.clear();
-      m_xml->attribute("value", value);
-
-      u32 t = kgmConvert::toInteger(value);
-
-      if(t != 0)
-        node.col = true;
-    }
-    else if(id == "Locked")
-    {
-      value.clear();
-      xml.attribute("value", value);
-
-      u32 t = kgmConvert::toInteger(value);
-
-      if(t != 0)
-        node->lock = true;
-    }
-    else if(id == "Parameter")
-    {
-      kgmString name, type, value;
-      kgmVariable var;
-
-      xml.attribute("name",  name);
-      xml.attribute("type",  type);
-      xml.attribute("value", value);
-
-      node->obj->setParameter(name, value);
-    }
-  }
-  else if(xstate == kgmXml::XML_TAG_DATA)
-  {
-  }
-
+  memset(&node, 0, sizeof(Node));
 
   if(m_type == OpenWrite)
     return node;
+
+
+  while(kgmXml::XmlState xstate = m_xml->next())
+  {
+
+    kgmString id, value, t;
+    kgmString ntype;
+
+    if(xstate == kgmXml::XML_ERROR)
+    {
+      return node;
+    }
+    else if(xstate == kgmXml::XML_FINISH)
+    {
+      return node;
+    }
+
+    if(xstate == kgmXml::XML_TAG_OPEN)
+    {
+      id = m_xml->m_tagName;
+
+      if(id == "kgmCamera")
+      {
+        ntype = "camera";
+      }
+      else if(id == "kgmLight")
+      {
+        ntype = "light";
+
+        kgmString id;
+        m_xml->attribute("name", id);
+        node.obj = new kgmLight();
+
+        node.nam = id;
+        node.bnd = box3(-1, -1, -1, 1, 1, 1);
+
+        node.typ = NodeLgt;
+      }
+      else if(id == "kgmMesh")
+      {
+        ntype = "mesh";
+
+        kgmString id, ln;
+        m_xml->attribute("name", id);
+        m_xml->attribute("link", ln);
+        kgmMesh* mesh = m_game->getResources()->getMesh(ln);
+
+        if(mesh)
+        {
+          node.nam = id;
+          node.lnk = ln;
+          node.obj = mesh;
+          node.bnd = mesh->bound();
+        }
+
+        node.typ = NodeMsh;
+      }
+      else if(id == "kgmActor")
+      {
+        ntype = "actor";
+
+        node.typ = NodeAct;
+      }
+      else if(id == "kgmSensor")
+      {
+        ntype = "sensor";
+
+        kgmString id, cls, trg;
+        m_xml->attribute("name", id);
+        m_xml->attribute("class", cls);
+        m_xml->attribute("target", trg);
+
+        kgmSensor* sns = null;
+
+        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        {
+          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+
+          if(fn_new)
+          {
+            kgmSensor* sn = (kgmSensor*)fn_new(m_game);
+
+            if(sn)
+            {
+              sn->setTarget(trg);
+
+              node.obj = sn;
+              node.bnd = box3(-1, -1, -1, 1, 1, 1);
+              node.nam = id;
+            }
+          }
+        }
+
+        node.typ = NodeSns;
+      }
+      else if(id == "kgmTrigger")
+      {
+        ntype = "trigger";
+
+        kgmString id, chn, trg;
+        m_xml->attribute("name", id);
+        m_xml->attribute("channels", chn);
+        m_xml->attribute("target", trg);
+
+        kgmTrigger* tr= new kgmTrigger(m_game);
+        tr->setCount(kgmConvert::toInteger(chn));
+        tr->setTarget(trg);
+
+        node.obj = tr;
+        node.nam = id;
+        node.bnd = box3(-1, -1, -1, 1, 1, 1);
+
+        node.typ = NodeTrg;
+      }
+      else if(id == "kgmGameObject")
+      {
+        ntype = "gobject";
+
+        kgmString id, cls, trg;
+        m_xml->attribute("name", id);
+        m_xml->attribute("class", cls);
+
+        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        {
+          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+
+          if(fn_new)
+          {
+            kgmGameObject* go = (kgmGameObject*)fn_new(m_game);
+
+            if(go)
+            {
+              node.obj = go;
+              node.bnd = box3(-1, -1, -1, 1, 1, 1);
+              node.nam = id;
+            }
+          }
+        }
+
+        node.typ = NodeObj;
+      }
+    }
+    else if(xstate == kgmXml::XML_TAG_CLOSE)
+    {
+      id = m_xml->m_tagName;
+
+      if(id == "Position")
+      {
+        vec3 v;
+        m_xml->attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        node.pos = v;
+      }
+      else if(id == "Rotation")
+      {
+        vec3 v;
+        m_xml->attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        node.pos = v;
+      }
+      else if(id == "Direction")
+      {
+        vec3 v;
+        m_xml->attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        if(ntype == "camera")
+        {
+        }
+      }
+      else if(id == "Material")
+      {
+        value.clear();
+        m_xml->attribute("value", value);
+
+        if(value.length())
+          node.mtl = value;
+      }
+      else if(id == "Collision")
+      {
+        value.clear();
+        m_xml->attribute("value", value);
+
+        u32 t = kgmConvert::toInteger(value);
+
+        if(t != 0)
+          node.col = true;
+      }
+      else if(id == "Locked")
+      {
+        value.clear();
+        m_xml->attribute("value", value);
+
+        u32 t = kgmConvert::toInteger(value);
+
+        if(t != 0)
+          node.lck = true;
+      }
+      else if(id == "Parameter")
+      {
+        kgmString name, type, value;
+
+        m_xml->attribute("name",  name);
+        m_xml->attribute("type",  type);
+        m_xml->attribute("value", value);
+
+        ((kgmGameObject*)node.obj)->setParameter(name, value);
+      }
+      else if((id == "kgmMesh") || (id == "kgmLight") || (id == "kgmMaterial") ||
+              (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
+              (id == "kgmGameObject"))
+      {
+        break;
+      }
+    }
+    else if(xstate == kgmXml::XML_TAG_DATA)
+    {
+    }
+  }
 
   return node;
 }
