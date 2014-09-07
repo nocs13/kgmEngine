@@ -116,6 +116,39 @@ bool kgmGameMap::addLight(Node n)
   }
 }
 
+bool kgmGameMap::addCamera(Node n)
+{
+  if(m_type == OpenRead || !n.obj)
+    return false;
+
+  if(m_xml && m_xml->m_node->m_name == "kgm")
+  {
+    kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
+
+    vec3 pos, dir;
+
+    pos = ((kgmCamera*)n.obj)->mPos;
+    dir = ((kgmCamera*)n.obj)->mDir;
+
+    node->m_name = "kgmCamera";
+    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
+    node->m_attributes.add(new kgmXml::Attribute("position", kgmConvert::toString(pos.x) + kgmString(" ") +
+                                                  kgmConvert::toString(pos.y) + kgmString(" ") +
+                                                  kgmConvert::toString(pos.z)));
+    node->m_attributes.add(new kgmXml::Attribute("direction", kgmConvert::toString(dir.x) + kgmString(" ") +
+                                                  kgmConvert::toString(dir.y) + kgmString(" ") +
+                                                  kgmConvert::toString(dir.z)));
+    node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(((kgmCamera*)n.obj)->mFov)));
+
+    if(n.lck)
+    {
+      kgmXml::Node* snode = new kgmXml::Node(node);
+      snode->m_name = "Locked";
+      snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
+    }
+  }
+}
+
 bool kgmGameMap::addMaterial(Node n)
 {
   if(m_type == OpenRead || !n.obj)
@@ -135,6 +168,42 @@ bool kgmGameMap::addActor(Node n)
   if(m_type == OpenRead || !n.obj)
     return false;
 
+  if(m_xml && m_xml->m_node->m_name == "kgm")
+  {
+    kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
+
+    node->m_name = "kgmActor";
+    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
+    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmActor*)n.obj)->runtime().nClass));
+
+    kgmXml::Node* snode = new kgmXml::Node(node);
+    snode->m_name = "Position";
+    snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.pos.x) + kgmString(" ") +
+                                                  kgmConvert::toString(n.pos.y) + kgmString(" ") +
+                                                  kgmConvert::toString(n.pos.z)));
+
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Rotation";
+    snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
+                                                  kgmConvert::toString(n.rot.y) + kgmString(" ") +
+                                                  kgmConvert::toString(n.rot.z)));
+
+    for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
+    {
+      kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
+
+      snode = new kgmXml::Node(node);
+      snode->m_name = "Parameter";
+      snode->m_attributes.add(new kgmXml::Attribute(var.getName(), var.toString()));
+    }
+
+    if(n.lck)
+    {
+      snode = new kgmXml::Node(node);
+      snode->m_name = "Locked";
+      snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
+    }
+  }
 }
 
 bool kgmGameMap::addSensor(Node n)
@@ -162,6 +231,15 @@ bool kgmGameMap::addSensor(Node n)
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
+
+    for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
+    {
+      kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
+
+      snode = new kgmXml::Node(node);
+      snode->m_name = "Parameter";
+      snode->m_attributes.add(new kgmXml::Attribute(var.getName(), var.toString()));
+    }
 
     if(n.lck)
     {
@@ -279,6 +357,26 @@ kgmGameMap::Node kgmGameMap::next()
       if(id == "kgmCamera")
       {
         ntype = "camera";
+
+        kgmString id, pos, dir, fov;
+        m_xml->attribute("name", id);
+        m_xml->attribute("position", pos);
+        m_xml->attribute("direction", dir);
+        m_xml->attribute("fov", fov);
+
+        node.obj = (kgmObject*)new kgmCamera();
+
+        node.nam = id;
+        node.bnd = box3(-1, -1, -1, 1, 1, 1);
+        ((kgmCamera*)node.obj)->mFov = kgmConvert::toDouble(fov);
+        sscanf(pos.data(), "%f %f %f", &((kgmCamera*)node.obj)->mPos.x,
+                                       &((kgmCamera*)node.obj)->mPos.y,
+                                       &((kgmCamera*)node.obj)->mPos.z);
+        sscanf(dir.data(), "%f %f %f", &((kgmCamera*)node.obj)->mDir.x,
+                                       &((kgmCamera*)node.obj)->mDir.y,
+                                       &((kgmCamera*)node.obj)->mDir.z);
+
+        node.typ = NodeCam;
       }
       else if(id == "kgmLight")
       {
@@ -466,9 +564,8 @@ kgmGameMap::Node kgmGameMap::next()
         if(node.obj)
           ((kgmGameObject*)node.obj)->setParameter(name, value);
       }
-      else if((id == "kgmMesh") || (id == "kgmLight") || (id == "kgmMaterial") ||
-              (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
-              (id == "kgmGameObject"))
+      else if((id == "kgmMesh") || (id == "kgmLight") || (id == "kgmCamera") || (id == "kgmMaterial") ||
+              (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") || (id == "kgmGameObject"))
       {
         break;
       }

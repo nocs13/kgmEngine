@@ -343,6 +343,16 @@ bool kEditor::mapOpen(kgmString s)
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
+    else if(mnode.typ == kgmGameMap::NodeCam)
+    {
+      game->getRender()->camera().mPos = ((kgmCamera*)mnode.obj)->mPos;
+      game->getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
+      game->getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
+
+      mnode.obj->release();
+
+      game->getRender()->camera().update();
+    }
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
       oquered++;
@@ -471,6 +481,13 @@ bool kEditor::mapSave(kgmString s)
   }
 
   kgmCamera& mcam = game->getRender()->camera();
+
+  kgmGameMap::Node node;
+
+  node.obj = &mcam;
+  node.nam = "main_camera";
+
+  map.addCamera(node);
 
   //fprintf(f, " <kgmCamera name='main_camera' active='true'>\n");
   //fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);

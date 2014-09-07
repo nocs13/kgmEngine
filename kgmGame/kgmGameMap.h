@@ -84,6 +84,7 @@ public:
 
   bool addMesh(Node n);
   bool addLight(Node n);
+  bool addCamera(Node n);
   bool addMaterial(Node n);
   bool addActor(Node n);
   bool addSensor(Node n);
