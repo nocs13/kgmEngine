@@ -368,6 +368,23 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
       oquered++;
+      node = new kNode((kgmActor*)mnode.obj);
+
+      node->bnd = mnode.bnd;
+      node->nam = mnode.nam;
+      node->lock = mnode.lck;
+      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
+      node->geo = new kArrow();
+
+      game->m_render->add(node->icn);
+      game->m_render->add(node->geo, mtlLines);
+
+      vo->getGuiList()->addItem(node->nam);
+      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+      nodes.add(node);
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
     }
     else if(mnode.typ == kgmGameMap::NodeSns)
     {
@@ -635,27 +652,48 @@ bool kEditor::addMesh(kgmString fpath)
   return false;
 }
 
-bool kEditor::addActor(kgmString path)
+bool kEditor::addActor(kgmString type)
 {
-  kgmString afile = fdd->getFile();
-
-  char* p = strstr(afile.data(), ".act");
-
-  if(p != 0)
+  if(vs)
   {
-    size_t size = ((size_t)p) - ((size_t)afile.data());
-
-    kgmString t;
-
-    t.alloc(afile.data(), size);
-
-    afile = t;
+    vs->erase();
+    vs->release();
+    vs = null;
   }
 
-  kgmActor* actor = game->gSpawn(afile);
-
-  if(!actor)
+  if(type.length() < 1)
     return false;
+
+  if(kgmGameObject::g_typ_objects.hasKey(type))
+  {
+    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+
+    if(fn_new)
+    {
+      kgmActor* ac = (kgmActor*)fn_new(game);
+
+      if(ac)
+      {
+        kNode* node = new kNode(ac);
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
+        node->geo = new kArrow();
+
+        selected = node;
+
+        game->m_render->add(node->icn);
+        game->m_render->add(node->geo, mtlLines);
+
+        vo->getGuiList()->addItem(node->nam);
+        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
+
+        nodes.add(node);
+
+        return true;
+      }
+    }
+  }
 
   return false;
 }
@@ -757,6 +795,16 @@ bool kEditor::addObject(kgmString t)
   }
 
   return false;
+}
+
+void kEditor::menuAddActor()
+{
+  kgmString s = vs->getGuiList()->getItem(vs->getGuiList()->getSel());
+
+  vs->erase();
+  vs->release();
+
+  addActor(s);
 }
 
 void kEditor::menuAddSensor()
@@ -1169,9 +1217,19 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  fdd->setFilter(".act");
-  fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
+  if(vs)
+    return;
+
+  vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::menuAddActor));
+
+  for(int i = 0; i < kgmGameObject::g_list_actors.length(); i++)
+  {
+    kgmString s = kgmGameObject::g_list_actors[i];
+    vs->getGuiList()->addItem(s);
+  }
+
+  game->guiAdd(vs);
 }
 
 void kEditor::onAddSensor()

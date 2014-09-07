@@ -91,6 +91,7 @@ public:
   bool addSensor(kgmString);
   bool addObject(kgmString);
 
+  void menuAddActor();
   void menuAddSensor();
 
   void initPhysics();
