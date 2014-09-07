@@ -2,8 +2,8 @@
 
 using namespace kgmGameEditor;
 
-kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h)
-  :callClose(null, null),
+kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h, bool selclose)
+  :callClose(null, null), callEclose(null, null), callSelect(null, null),
   kgmGui(null, x, y, w, h)
 {
   target = t;
@@ -13,13 +13,26 @@ kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h)
   btn_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewObjects::onCloseObjects));
 
   list = new kgmGuiList(this, 1, 21, w - 2, h - 23);
+  list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kViewObjects::onSelectItem));
+
+  closeOnSelect = selclose;
 }
 
 void kViewObjects::onCloseObjects()
 {
-  if(callClose.hasObject() && callClose.hasFunction())
-    callClose(callClose.getObject());
-
   erase();
   release();
+
+  if(callEclose.hasObject() && callEclose.hasFunction())
+    callEclose(callEclose.getObject());
+}
+
+void kViewObjects::onSelectItem()
+{
+
+  if(callSelect.hasObject() && callSelect.hasFunction())
+    callSelect(callSelect.getObject(), list->getItem(list->getSel()));
+
+  if(closeOnSelect)
+    onCloseObjects();
 }

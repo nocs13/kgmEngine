@@ -60,9 +60,6 @@ private:
 
   u32        oquered;
 
-  kViewObjects* vo;   //view objects
-  kViewObjects* vs;   //view sensors
-
   kViewOptions* vop;
 
 
@@ -90,9 +87,6 @@ public:
   bool addActor(kgmString);
   bool addSensor(kgmString);
   bool addObject(kgmString);
-
-  void menuAddActor();
-  void menuAddSensor();
 
   void initPhysics();
   void initLogic();
@@ -123,7 +117,7 @@ public:
   void onViewObjects();
   void onOptionsDatabase();
   void onRunRun();
-  void onSelectObject();
+  void onSelectObject(kgmString);
 
   void onCloseVop();
 };

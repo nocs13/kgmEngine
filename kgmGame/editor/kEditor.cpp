@@ -88,13 +88,6 @@ kEditor::kEditor(kgmGameBase* g)
 
     vop = null;
 
-    vo = new kViewObjects(this, 1, 50, 100, 300);
-    vo->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::onSelectObject));
-    vo->hide();
-    game->m_render->add(vo);
-
-    vs = null;
-
     game->m_render->setBgColor(0xffbbaa99);
 
     logView = new kgmVisual();
@@ -114,13 +107,9 @@ kEditor::~kEditor()
   pivot->release();
   menu->release();
   fdd->release();
-  vo->release();
 
   logView->remove();
   logView->release();
-
-  if(vo)
-    vo->release();
 
   mtlLines->release();
 
@@ -139,8 +128,6 @@ void kEditor::clear()
 
   nodes.clear();
 
-  vo->getGuiList()->clear();
-
   oquered = 0;
 }
 
@@ -151,11 +138,6 @@ void kEditor::select(kgmString name)
     if((*i)->nam == name)
     {
       selected = (*i);
-
-      int ci = vo->getGuiList()->getItem(name);
-
-      if(ci != -1)
-        vo->getGuiList()->setSel(ci);
 
       if(pivot)
       {
@@ -339,7 +321,6 @@ bool kEditor::mapOpen(kgmString s)
       game->m_render->add(node->msh, null);
       nodes.add(node);
 
-      vo->getGuiList()->addItem(node->nam);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
@@ -353,9 +334,6 @@ bool kEditor::mapOpen(kgmString s)
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
       node->geo = new kArrow();
-
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
       game->m_render->add(node->lgt);
       game->m_render->add(node->icn);
@@ -379,9 +357,6 @@ bool kEditor::mapOpen(kgmString s)
       game->m_render->add(node->icn);
       game->m_render->add(node->geo, mtlLines);
 
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
       nodes.add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
@@ -400,9 +375,6 @@ bool kEditor::mapOpen(kgmString s)
       game->m_render->add(node->icn);
       game->m_render->add(node->geo, mtlLines);
 
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
       nodes.add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
@@ -418,9 +390,6 @@ bool kEditor::mapOpen(kgmString s)
 
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
       node->geo = new kArrow();
-
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
       game->m_render->add(node->icn);
       game->m_render->add(node->geo, mtlLines);
@@ -443,9 +412,6 @@ bool kEditor::mapOpen(kgmString s)
 
       game->m_render->add(node->icn);
       game->m_render->add(node->geo, mtlLines);
-
-      vo->getGuiList()->addItem(node->nam);
-      vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -643,8 +609,6 @@ bool kEditor::addMesh(kgmString fpath)
     node->lnk = fdd->getFile();
     selected = node;
     nodes.add(node);
-    vo->getGuiList()->addItem(node->nam);
-    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
     return true;
   }
@@ -654,13 +618,6 @@ bool kEditor::addMesh(kgmString fpath)
 
 bool kEditor::addActor(kgmString type)
 {
-  if(vs)
-  {
-    vs->erase();
-    vs->release();
-    vs = null;
-  }
-
   if(type.length() < 1)
     return false;
 
@@ -685,9 +642,6 @@ bool kEditor::addActor(kgmString type)
         game->m_render->add(node->icn);
         game->m_render->add(node->geo, mtlLines);
 
-        vo->getGuiList()->addItem(node->nam);
-        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
         nodes.add(node);
 
         return true;
@@ -700,13 +654,6 @@ bool kEditor::addActor(kgmString type)
 
 bool kEditor::addSensor(kgmString type)
 {
-  if(vs)
-  {
-    vs->erase();
-    vs->release();
-    vs = null;
-  }
-
   if(type.length() < 1)
     return false;
 
@@ -731,9 +678,6 @@ bool kEditor::addSensor(kgmString type)
         game->m_render->add(node->icn);
         game->m_render->add(node->geo, mtlLines);
 
-        vo->getGuiList()->addItem(node->nam);
-        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
         nodes.add(node);
 
         return true;
@@ -746,17 +690,7 @@ bool kEditor::addSensor(kgmString type)
 
 bool kEditor::addObject(kgmString t)
 {
-  kgmString type;
-
-  if(vs)
-  {
-    int is = vs->getGuiList()->getSel();
-    type = vs->getGuiList()->getItem(is);
-
-    vs->erase();
-    vs->release();
-    vs = null;
-  }
+  kgmString type = t;
 
   if(type.length() < 1)
     return false;
@@ -784,9 +718,6 @@ bool kEditor::addObject(kgmString t)
         game->m_render->add(go->getVisual());
         game->m_logic->add(go);
 
-        vo->getGuiList()->addItem(node->nam);
-        vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
-
         nodes.add(node);
 
         return true;
@@ -795,26 +726,6 @@ bool kEditor::addObject(kgmString t)
   }
 
   return false;
-}
-
-void kEditor::menuAddActor()
-{
-  kgmString s = vs->getGuiList()->getItem(vs->getGuiList()->getSel());
-
-  vs->erase();
-  vs->release();
-
-  addActor(s);
-}
-
-void kEditor::menuAddSensor()
-{
-  kgmString s = vs->getGuiList()->getItem(vs->getGuiList()->getSel());
-
-  vs->erase();
-  vs->release();
-
-  addSensor(s);
 }
 
 void kEditor::initPhysics()
@@ -848,9 +759,6 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
   if(fdd->visible())
     fdd->onEvent(e);
-
-  if(vo->visible())
-    vo->onEvent(e);
 
   if(vop && vop->visible())
     vop->onEvent(e);
@@ -1047,20 +955,6 @@ void kEditor::onAction(kgmEvent *gui, int id)
   if(gui == menu)
   {
   }
-  else if(gui == vo)
-  {
-    kgmString s = vo->getGuiList()->getItem(id);
-
-    for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-    {
-      if((*i)->nam == s)
-      {
-        selected = *i;
-
-        break;
-      }
-    }
-  }
 }
 
 void kEditor::onQuit()
@@ -1098,8 +992,6 @@ void kEditor::onEditRemove()
     break;
   }
 
-  vo->getGuiList()->remItem(vo->getGuiList()->getSel());
-
   selected = null;
 }
 
@@ -1119,8 +1011,6 @@ void kEditor::onEditDuplicate()
     node->lnk = fdd->getFile();
 
     game->m_render->add(node->msh, null);
-    vo->getGuiList()->addItem(node->nam);
-    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
     break;
   case kNode::LIGHT:
@@ -1129,9 +1019,6 @@ void kEditor::onEditDuplicate()
     node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
     node->geo = new kArrow();
-
-    vo->getGuiList()->addItem(node->nam);
-    vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
     game->m_render->add(node->lgt);
     game->m_render->add(node->icn);
@@ -1207,8 +1094,6 @@ void kEditor::onAddLight()
 
   selected = node;
   nodes.add(node);
-  vo->getGuiList()->addItem(node->nam);
-  vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
   game->m_render->add(l);
   game->m_render->add(node->icn);
@@ -1217,16 +1102,13 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  if(vs)
-    return;
-
-  vs = new kViewObjects(this, 1, 50, 100, 300);
-  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::menuAddActor));
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
 
   for(int i = 0; i < kgmGameObject::g_list_actors.length(); i++)
   {
     kgmString s = kgmGameObject::g_list_actors[i];
-    vs->getGuiList()->addItem(s);
+    vs->addItem(s);
   }
 
   game->guiAdd(vs);
@@ -1234,16 +1116,13 @@ void kEditor::onAddActor()
 
 void kEditor::onAddSensor()
 {
-  if(vs)
-    return;
-
-  vs = new kViewObjects(this, 1, 50, 100, 300);
-  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::menuAddSensor));
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 
   for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
   {
     kgmString s = kgmGameObject::g_list_sensors[i];
-    vs->getGuiList()->addItem(s);
+    vs->addItem(s);
   }
 
   game->guiAdd(vs);
@@ -1251,16 +1130,13 @@ void kEditor::onAddSensor()
 
 void kEditor::onAddObject()
 {
-  if(vs)
-    return;
-
-  vs = new kViewObjects(this, 1, 50, 100, 300);
-  vs->getGuiList()->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kEditor::addObject));
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addObject));
 
   for(int i = 0; i < kgmGameObject::g_list_objects.length(); i++)
   {
     kgmString s = kgmGameObject::g_list_objects[i];
-    vs->getGuiList()->addItem(s);
+    vs->addItem(s);
   }
 
   game->guiAdd(vs);
@@ -1278,8 +1154,6 @@ void kEditor::onAddTrigger()
 
   selected = node;
   nodes.add(node);
-  vo->getGuiList()->addItem(node->nam);
-  vo->getGuiList()->setSel(vo->getGuiList()->m_items.length() - 1);
 
   game->m_render->add(node->icn);
   game->m_render->add(node->geo, mtlLines);
@@ -1304,10 +1178,14 @@ void kEditor::onRunRun()
 
 void kEditor::onViewObjects()
 {
-  if(vo->visible())
-    vo->hide();
-  else
-    vo->show();
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 100, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+
+  for(int i = 0; i < nodes.length(); i++)
+    vo->addItem(nodes[i]->nam);
+
+  game->guiAdd(vo);
+
 }
 
 void kEditor::onOptionsDatabase()
@@ -1333,8 +1211,7 @@ void kEditor::onCloseVop()
   vop = null;
 }
 
-void kEditor::onSelectObject()
+void kEditor::onSelectObject(kgmString id)
 {
-  kgmString id = vo->getGuiList()->getItem(vo->getGuiList()->getSel());
   select(id);
 }
