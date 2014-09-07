@@ -1063,22 +1063,22 @@ void kEditor::onEditOptions()
   switch(selected->typ)
   {
   case kNode::MESH:
-    vop = new kViewOptionsForMesh(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForMesh(selected, 50, 50, 250, 300);
     break;
   case kNode::LIGHT:
-    vop = new kViewOptionsForLight(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForLight(selected, 50, 50, 250, 300);
     break;
   case kNode::ACTOR:
-    vop = new kViewOptionsForActor(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForActor(selected, 50, 50, 250, 300);
     break;
   case kNode::SENSOR:
-    vop = new kViewOptionsForSensor(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForSensor(selected, 50, 50, 250, 300);
     break;
   case kNode::OBJECT:
-    vop = new kViewOptionsForObject(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForObject(selected, 50, 50, 250, 300);
     break;
   case kNode::TRIGGER:
-    vop = new kViewOptionsForTrigger(selected, 50, 50, 210, 300);
+    vop = new kViewOptionsForTrigger(selected, 50, 50, 250, 300);
     break;
   }
 
@@ -1119,7 +1119,7 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
 
   for(int i = 0; i < kgmGameObject::g_list_actors.length(); i++)
@@ -1133,7 +1133,7 @@ void kEditor::onAddActor()
 
 void kEditor::onAddSensor()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 
   for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
@@ -1147,7 +1147,7 @@ void kEditor::onAddSensor()
 
 void kEditor::onAddObject()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 100, 300);
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addObject));
 
   for(int i = 0; i < kgmGameObject::g_list_objects.length(); i++)
@@ -1195,7 +1195,7 @@ void kEditor::onRunRun()
 
 void kEditor::onViewObjects()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 100, 300);
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
   vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
 
   for(int i = 0; i < nodes.length(); i++)
