@@ -1205,7 +1205,7 @@ void kEditor::onRunRun()
 
   if(game->getLogic())
   {
-    game->getLogic()->build();
+    game->getLogic()->prepare();
   }
 
   game->m_state = kgmIGame::State_Play;

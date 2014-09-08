@@ -39,11 +39,6 @@ void kgmGameLogic::clear()
   m_gameplayer = null;
 }
 
-void kgmGameLogic::build()
-{
-
-}
-
 bool kgmGameLogic::add(kgmSensor *a)
 {
   return false;

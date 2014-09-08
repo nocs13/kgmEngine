@@ -112,8 +112,6 @@ public:
     particles->en_size   = size_end;
     particles->div_life  = div_life;
 
-    particles->build();
-
     m_visual->set(material);
     m_visual->set(particles);
 
@@ -168,6 +166,11 @@ public:
   {
     particles->tex_slide_rows = rows;
     particles->tex_slide_cols = cols;
+  }
+
+  void init()
+  {
+    particles->build();
   }
 
 #ifdef EDITOR

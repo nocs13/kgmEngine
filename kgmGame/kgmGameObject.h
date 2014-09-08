@@ -72,7 +72,6 @@ public:
   kgmGameObject(kgmIGame* g = null);
   virtual ~kgmGameObject();
 
-  virtual void         exit(){}
   virtual void         init(){}
   virtual void         update(u32 mls);
   virtual void         event(kgmObject*, kgmString){ }
@@ -84,11 +83,12 @@ public:
   bool visible()    { return m_visible;  }
   bool removed()    { return m_remove;   }
 
-  void remove();//     { m_remove = true;   }
   void enable()     { m_valid  = true;   }
   void disable()    { m_valid  = false;  }
   void show()       { m_visible = true;  }
   void hide()       { m_visible = false; }
+
+  void remove();
 
   void timeout(u32 t){ m_timeout = t;    }
 
@@ -184,6 +184,8 @@ public:
 #endif
   }
 
+private:
+  virtual void         clear(){}
 };
 
 #endif // KGMGAMEOBJECT_H
