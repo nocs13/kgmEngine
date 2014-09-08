@@ -65,7 +65,7 @@ public:
       if(_Ptr) _Ptr = _Ptr->prev;
     }
   };
-  //// *********************
+
 protected:
   _Node* _First;
   u32    csize;
