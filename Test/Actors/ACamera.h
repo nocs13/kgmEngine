@@ -20,6 +20,8 @@ public:
     c_dist = 1.0f;
     ms_left = false;
     ms_right = false;
+
+    m_body->m_mass = 0.0f;
   }
 
   void update(u32 mls)
