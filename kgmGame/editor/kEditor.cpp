@@ -661,6 +661,10 @@ bool kEditor::addActor(kgmString type)
 
         nodes.add(node);
 
+        game->getLogic()->add(ac, false);
+        game->getRender()->add(ac->getVisual());
+        game->getPhysics()->add(ac->getBody());
+
         return true;
       }
     }
@@ -697,6 +701,10 @@ bool kEditor::addSensor(kgmString type)
 
         nodes.add(node);
 
+        game->getLogic()->add(sn);
+        game->getRender()->add(sn->getVisual());
+        game->getPhysics()->add(sn->getBody());
+
         return true;
       }
     }
@@ -732,10 +740,12 @@ bool kEditor::addObject(kgmString t)
 
         game->m_render->add(node->icn);
         game->m_render->add(node->geo, mtlLines);
-        game->m_render->add(go->getVisual());
-        game->m_logic->add(go);
 
         nodes.add(node);
+
+        game->getLogic()->add(go, false);
+        game->getRender()->add(go->getVisual());
+        game->getPhysics()->add(go->getBody());
 
         return true;
       }
@@ -797,6 +807,9 @@ void kEditor::onKeyUp(int k)
 
     menu->show();
     game->m_state = kgmIGame::State_Edit;
+
+    game->getRender()->camera().mPos = cam_pos_bk;
+    game->getRender()->camera().mDir = cam_dir_bk;
   }
 
   if(k == KEY_LCTRL)
@@ -1174,11 +1187,16 @@ void kEditor::onAddTrigger()
 
   game->m_render->add(node->icn);
   game->m_render->add(node->geo, mtlLines);
+
+  game->getLogic()->add(tr);
 }
 
 void kEditor::onRunRun()
 {
   menu->hide();
+
+  cam_pos_bk = game->getRender()->camera().mPos;
+  cam_dir_bk = game->getRender()->camera().mDir;
 
   if(game->getPhysics())
   {

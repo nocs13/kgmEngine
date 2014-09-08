@@ -48,6 +48,9 @@ private:
   vec3 cam_pos;
   f32  cam_rot;
 
+  vec3 cam_pos_bk;
+  vec3 cam_dir_bk;
+
   kGridline* gridline;
 
   kPivot*    pivot;

@@ -105,12 +105,10 @@ public:
   {
     gui = new kGui(this);
 
-    kgmGameObject::g_typ_objects.add("kInput", &kInput::New);
-    kgmGameObject::g_typ_objects.add("ACamera", (kgmGameObject*(*)(kgmIGame*))&ACamera::New);
+    kgmGameObject::goRegister("kInput",  kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kInput::New);
+    kgmGameObject::goRegister("ACamera",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&ACamera::New);
 
 #ifdef EDITOR
-    kgmGameObject::g_list_sensors.add("kInput");
-
     gui->m_guiMain->hide();
     m_gamemode = true;
 #endif
