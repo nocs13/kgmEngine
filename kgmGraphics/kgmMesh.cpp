@@ -5,24 +5,31 @@
 
 KGMOBJECT_IMPLEMENT(kgmMesh, kgmResource);
 
-kgmMesh::kgmMesh(){
-  m_vertices = 0;
-  m_faces = 0;
+kgmMesh::kgmMesh()
+{
+  m_vertices = null;
+  m_faces = null;
+  m_maps = null;
   m_vcount = m_fcount = 0;
   m_fvf = m_fff = 0;
   m_rtype = RT_TRIANGLE;
   m_group = 0;
 }
 
-kgmMesh::~kgmMesh(){
+kgmMesh::~kgmMesh()
+{
   if(m_vertices)
     free(m_vertices);
 
   if(m_faces)
     free(m_faces);
+
+  if(m_maps)
+    free(m_maps);
  }
 
-box3 kgmMesh::bound(){
+box3 kgmMesh::bound()
+{
  box3   m_bound;
 
  if(!m_vertices)
@@ -35,7 +42,8 @@ box3 kgmMesh::bound(){
  u32 i    = 0;
  int  size = 0;
 
- for(i = 0; i < m_vcount; i++){
+ for(i = 0; i < m_vcount; i++)
+ {
   v = m_vertices[i];
   min.x = MIN(min.x, v.pos.x);
    min.y = MIN(min.y, v.pos.y);
@@ -52,13 +60,15 @@ box3 kgmMesh::bound(){
 }
 
 
-kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
+kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
+{
  if(m_vertices)
   free(m_vertices);
 
  u32 v_size = 0;
 
- switch(f){
+ switch(f)
+ {
  case FVF_P_N_C_T_BW_BI:
    v_size = sizeof(Vertex_P_N_C_T_BW_BI) * count;
    m_fvf = FVF_P_N_C_T_BW_BI;
@@ -102,11 +112,13 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f){
  return m_vertices;
 }
 
-kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
+kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f)
+{
  if(m_faces)
   free(m_faces);
 
- switch(f){
+ switch(f)
+ {
  case FFF_32:
    m_faces = (Face*)malloc(sizeof(Face_32) * count);
    m_fff = FFF_32;
@@ -117,11 +129,14 @@ kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f){
  }
 
  m_fcount = count;
+
  return m_faces;
 }
 
-u32 kgmMesh::fvf(){
- switch(m_fvf){
+u32 kgmMesh::fvf()
+{
+ switch(m_fvf)
+ {
  case FVF_P_N_C_T2_BW_BI:
    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_bn0);
    break;
@@ -155,8 +170,10 @@ u32 kgmMesh::fvf(){
  return 0;
 }
 
-u32 kgmMesh::fff(){
- switch(m_fvf){
+u32 kgmMesh::fff()
+{
+ switch(m_fvf)
+ {
  case FFF_16:
    return 16;
    break;
@@ -164,11 +181,14 @@ u32 kgmMesh::fff(){
    return 32;
    break;
  }
+
  return 0;
 }
 
-u32 kgmMesh::vsize(){
-  switch(m_fvf){
+u32 kgmMesh::vsize()
+{
+  switch(m_fvf)
+  {
   case FVF_P_N_C_T2_BW_BI:
     return sizeof(Vertex_P_N_C_T2_BW_BI);
     break;
@@ -196,10 +216,12 @@ u32 kgmMesh::vsize(){
     return sizeof(Vertex);
     break;
   }
+
   return 0;
 }
 
-u32 kgmMesh::fsize(){
+u32 kgmMesh::fsize()
+{
   switch(m_fvf)
   {
   case FFF_16:
@@ -209,5 +231,6 @@ u32 kgmMesh::fsize(){
     return 32;
     break;
   }
+
   return 0;
  }

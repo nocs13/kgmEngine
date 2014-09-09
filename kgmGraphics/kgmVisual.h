@@ -214,35 +214,43 @@ public:
       m_animation->release();
   }
 
-  void enable(){
+  void enable()
+  {
     m_valid = false;
   }
 
-  void disable(){
+  void disable()
+  {
     m_valid = false;
   }
 
-  bool valid(){
+  bool valid()
+  {
     return m_valid;
   }
 
-  void remove(){
+  void remove()
+  {
     m_remove = true;
   }
 
-  bool removed(){
+  bool removed()
+  {
     return m_remove;
   }
 
-  void show(){
+  void show()
+  {
     m_visible = true;
   }
 
-  void hide(){
+  void hide()
+  {
     m_visible = false;
   }
 
-  bool visible(){
+  bool visible()
+  {
     return m_visible;
   }
 
@@ -490,4 +498,3 @@ private:
     m_fset++;
   }
 };
-

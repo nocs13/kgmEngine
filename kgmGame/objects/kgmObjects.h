@@ -72,9 +72,9 @@ protected:
   kgmParticles* particles;
   kgmMaterial*  material;
 
-#ifdef EDITOR
-  kgmString idTex;
-#endif
+  //For editor only
+
+  kgmString     idTex;
 
 public:
   kgmParticlesObject(kgmIGame* g,
