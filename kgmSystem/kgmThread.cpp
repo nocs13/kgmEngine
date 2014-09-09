@@ -60,6 +60,9 @@ void kgmThread::priority(int prio)
 #ifdef ANDROID
 #define SCHED_BATCH SCHED_NORMAL
 #define SCHED_IDLE  SCHED_NORMAL
+#elif defined WIN32
+#define SCHED_BATCH 0
+#define SCHED_IDLE  0
 #endif
 
   int policy = SCHED_OTHER;
@@ -147,6 +150,6 @@ bool  kgmThread::lockable(Mutex m)
 
 kgmThread::TID  kgmThread::idThread()
 {
-  return pthread_self();
+  return (kgmThread::TID)pthread_self();
 }
 
