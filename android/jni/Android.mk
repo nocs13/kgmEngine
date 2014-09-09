@@ -31,7 +31,7 @@ include $(CLEAR_VARS)
 	LOCAL_LDLIBS    += -lGLESv1_CM
 	LOCAL_LDLIBS    += -lEGL
 	LOCAL_LDLIBS    += -lOpenSLES
-	LOCAL_CFLAGS    := -DANDROID -DOSL -fpermissive -Wall -g #-Werror
+	LOCAL_CFLAGS    := -DANDROID -DOSL -Wall -g #-Werror
 #	LOCAL_CFLAGS    += -DGLES_2
 	LOCAL_CFLAGS    += -DGLES_1
         LOCAL_CFLAGS    += -frtti
