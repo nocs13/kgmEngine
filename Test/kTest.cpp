@@ -51,7 +51,7 @@ public:
     if(gobj->isType(kgmActor::Class) && ((kgmActor*)gobj)->m_gameplayer)
       ((kgmActor*)gobj)->m_gameplayer = false;
 
-    return kgmGameLogic::add(gobj, input);
+    return kgmGameLogic::add(gobj);
   }
 
   void prepare()
@@ -210,11 +210,11 @@ public:
     if(res)
     {
       ACamera* camera = new ACamera(this);
-      m_logic->add((kgmGameObject*)camera, true);
+      m_logic->add((kgmGameObject*)camera);
       camera->release();
 
       kInput* input = new kInput(this);
-      m_logic->add((kgmGameObject*)input, true);
+      m_logic->add((kgmGameObject*)input);
       input->release();
     }
 

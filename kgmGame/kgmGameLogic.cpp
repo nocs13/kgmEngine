@@ -39,6 +39,25 @@ void kgmGameLogic::clear()
   m_gameplayer = null;
 }
 
+bool kgmGameLogic::add(kgmActor *a)
+{
+  if(a)
+  {
+    if(((kgmActor*)a)->m_gameplayer)
+    {
+      m_gameplayer = (kgmActor*)a;
+      addGameplayer(a);
+    }
+
+    m_objects.push_back(a);
+    a->increment();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool kgmGameLogic::add(kgmSensor *a)
 {
   return false;
@@ -49,34 +68,30 @@ bool kgmGameLogic::add(kgmTrigger *a)
   return false;
 }
 
-bool kgmGameLogic::add(kgmGameObject *o, bool input)
+bool kgmGameLogic::add(kgmGameObject *o)
 {
-  if(o && o->isType(kgmActor::Class) && ((kgmActor*)o)->m_gameplayer)
-  {
-    m_gameplayer = (kgmActor*)o;
-    m_objects.push_back(o);
-    o->increment();
-
-    if(kgmObject::isValid(o))
-    {
-      int k = 0;
-    }
-
-    return true;
-  }
-  else if(o)
+  if(o)
   {
     m_objects.push_back(o);
     o->increment();
 
-    if(input)
-    {
-      m_inputs.add(o);
-      o->increment();
-    }
+//      m_inputs.add(o);
+//      o->increment();
 
     return true;
   }
+
+  return false;
+}
+
+bool kgmGameLogic::addGameplayer(kgmActor* a)
+{
+
+  return false;
+}
+
+bool kgmGameLogic::delGameplayer(kgmActor* a)
+{
 
   return false;
 }

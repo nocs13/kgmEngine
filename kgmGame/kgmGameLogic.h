@@ -25,11 +25,15 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
+  bool add(kgmActor*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
-  bool add(kgmGameObject*, bool input = false);
+  bool add(kgmGameObject*);
   bool chooseLogic(kgmString);
   bool isValid(kgmGameObject*);
+  bool addGameplayer(kgmActor*);
+  bool delGameplayer(kgmActor*);
+
 
   virtual void prepare();
   virtual void input(int, int);

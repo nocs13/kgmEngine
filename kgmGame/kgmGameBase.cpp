@@ -241,21 +241,24 @@ void kgmGameBase::initSystem()
 
 }
 
-void kgmGameBase::initAudio(){
+void kgmGameBase::initAudio()
+{
   m_audio = new kgmGameAudio();
 }
 
-void kgmGameBase::initLogic(){
+void kgmGameBase::initLogic()
+{
   m_logic = new kgmGameLogic();
 }
 
-void kgmGameBase::log(const char* msg){
+void kgmGameBase::log(const char* msg)
+{
   kgmLog::log(msg);
 }
 //
 
-void kgmGameBase::onIdle(){
-
+void kgmGameBase::onIdle()
+{
   static int tick = kgmTime::getTicks();
   static int frames = 0;
   static int fps = 1;

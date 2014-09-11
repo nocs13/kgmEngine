@@ -661,7 +661,7 @@ bool kEditor::addActor(kgmString type)
 
         nodes.add(node);
 
-        game->getLogic()->add(ac, false);
+        game->getLogic()->add(ac);
         game->getRender()->add(ac->getVisual());
         game->getPhysics()->add(ac->getBody());
 
@@ -743,7 +743,7 @@ bool kEditor::addObject(kgmString t)
 
         nodes.add(node);
 
-        game->getLogic()->add(go, false);
+        game->getLogic()->add(go);
         game->getRender()->add(go->getVisual());
         game->getPhysics()->add(go->getBody());
 
