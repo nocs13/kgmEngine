@@ -4,6 +4,7 @@
 #include "kgm4Color.h"
 
 class kgmMesh;
+class kgmCamera;
 class kgmMaterial;
 
 class kgmParticles: public kgmObject
@@ -65,12 +66,26 @@ public:
 
   TypeRender m_typerender;
 
+private:
+  kgmMesh*    m_mesh;
+  kgmCamera*  m_camera;
+
 public:
   kgmParticles();
   ~kgmParticles();
 
   void build();
   void init(Particle*);
+
+  void     setCamera(kgmCamera* c)
+  {
+    m_camera = c;
+  }
+
+  kgmMesh* getMesh()
+  {
+    return m_mesh;
+  }
 
   virtual void update(u32 t);
 };

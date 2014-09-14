@@ -1,5 +1,7 @@
 #include "kgmParticles.h"
 #include "kgmMaterial.h"
+#include "kgmCamera.h"
+#include "kgmMesh.h"
 #include "../kgmBase/kgmTime.h"
 
 KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
@@ -32,19 +34,31 @@ kgmParticles::kgmParticles()
 
   m_particles  = null;
   m_typerender = RTypeBillboard;
+
+  m_camera = null;
+  m_mesh   = null;
 }
 
 kgmParticles::~kgmParticles()
 {
   if(m_particles)
     delete [] m_particles;
+
+  if(m_mesh)
+    m_mesh->release();
 }
 
-void kgmParticles::build(){
+void kgmParticles::build()
+{
   int i = 0;
 
   if(m_particles)
     delete [] m_particles;
+
+  if(m_mesh)
+    m_mesh->release();
+
+  m_mesh = null;
 
   m_particles = new Particle[m_count];
 
@@ -53,8 +67,39 @@ void kgmParticles::build(){
   if(div_life > 1.0) div_life = 1.0;
   if(div_speed > 1.0) div_speed = 1.0;
 
+  if(m_typerender != RTypeMesh)
+  {
+    m_mesh = new kgmMesh();
+
+    u32 count;
+
+    if(m_typerender == RTypeBillboard)
+      count = m_count * 6;
+    else if(m_typerender == RTypePoint)
+      count = m_count * 18;
+
+    kgmMesh::Vertex_P_C_T* v = (kgmMesh::Vertex_P_C_T*)m_mesh->vAlloc(count, kgmMesh::FVF_P_C_T);
+  }
+
   for(i = 0; i < m_count; i++)
+  {
     init(&m_particles[i]);
+
+    if(m_mesh)
+    {
+      if(m_typerender == RTypeBillboard)
+      {
+        if(m_camera)
+        {
+
+        }
+      }
+      else
+      {
+
+      }
+    }
+  }
 }
 
 void kgmParticles::init(Particle* pr)
@@ -117,5 +162,22 @@ void kgmParticles::update(u32 t)
     }
 
     pr->time += t;
+  }
+
+  if(m_mesh && m_typerender != RTypeMesh)
+  {
+    for(i = m_count; i > 0; i--)
+    {
+      Particle* pr = &m_particles[i - 1];
+
+      if(m_typerender == RTypeBillboard)
+      {
+
+      }
+      else
+      {
+
+      }
+    }
   }
 }
