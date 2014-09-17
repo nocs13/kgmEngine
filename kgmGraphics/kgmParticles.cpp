@@ -84,21 +84,6 @@ void kgmParticles::build()
   for(i = 0; i < m_count; i++)
   {
     init(&m_particles[i]);
-
-    if(m_mesh)
-    {
-      if(m_typerender == RTypeBillboard)
-      {
-        if(m_camera)
-        {
-
-        }
-      }
-      else
-      {
-
-      }
-    }
   }
 }
 
@@ -158,7 +143,7 @@ void kgmParticles::update(u32 t)
 
     if(m_loop && (pr->time > pr->life))
     {
-        init(pr);
+      init(pr);
     }
 
     pr->time += t;
@@ -166,17 +151,38 @@ void kgmParticles::update(u32 t)
 
   if(m_mesh && m_typerender != RTypeMesh)
   {
-    for(i = m_count; i > 0; i--)
+    kgmMesh::Vertex_P_C_T* parts = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
+
+    if(m_typerender == RTypeBillboard)
     {
-      Particle* pr = &m_particles[i - 1];
 
-      if(m_typerender == RTypeBillboard)
+    }
+    else
+    {
+      for (s32 i = 0; i < m_count; i++)
       {
+        u32     col   = m_particles[i].col.color;
+        vec3    pos   = m_particles[i].pos;
+        f32     scale = m_particles[i].scale;
 
-      }
-      else
-      {
-
+        parts[18 * i + 0]  = {pos + vec3(-scale,  scale, 0), col, vec2(0, 0)};
+        parts[18 * i + 1]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
+        parts[18 * i + 2]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
+        parts[18 * i + 3]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
+        parts[18 * i + 4]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
+        parts[18 * i + 5]  = {pos + vec3(scale, -scale, 0),  col, vec2(1, 1)};
+        parts[18 * i + 6]  = {pos + vec3(-scale,  0, scale), col, vec2(0, 0)};
+        parts[18 * i + 7]  = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
+        parts[18 * i + 8]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
+        parts[18 * i + 9]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
+        parts[18 * i + 10] = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
+        parts[18 * i + 11] = {pos + vec3(scale, 0, -scale),  col, vec2(1, 1)};
+        parts[18 * i + 12] = {pos + vec3(0, -scale,  scale), col, vec2(0, 0)};
+        parts[18 * i + 13] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
+        parts[18 * i + 14] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
+        parts[18 * i + 15] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
+        parts[18 * i + 16] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
+        parts[18 * i + 17] = {pos + vec3(0, scale, -scale),  col, vec2(1, 1)};
       }
     }
   }
