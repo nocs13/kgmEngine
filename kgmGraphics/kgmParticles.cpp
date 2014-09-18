@@ -6,6 +6,13 @@
 
 KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
 
+inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
+{
+  v.pos = pos;
+  v.col = col;
+  v.uv  = uv;
+}
+
 kgmParticles::kgmParticles()
 {
   m_count = 10;
@@ -165,24 +172,24 @@ void kgmParticles::update(u32 t)
         vec3    pos   = m_particles[i].pos;
         f32     scale = m_particles[i].scale;
 
-        parts[18 * i + 0]  = {pos + vec3(-scale,  scale, 0), col, vec2(0, 0)};
-        parts[18 * i + 1]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
-        parts[18 * i + 2]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
-        parts[18 * i + 3]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
-        parts[18 * i + 4]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
-        parts[18 * i + 5]  = {pos + vec3(scale, -scale, 0),  col, vec2(1, 1)};
-        parts[18 * i + 6]  = {pos + vec3(-scale,  0, scale), col, vec2(0, 0)};
-        parts[18 * i + 7]  = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
-        parts[18 * i + 8]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
-        parts[18 * i + 9]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
-        parts[18 * i + 10] = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
-        parts[18 * i + 11] = {pos + vec3(scale, 0, -scale),  col, vec2(1, 1)};
-        parts[18 * i + 12] = {pos + vec3(0, -scale,  scale), col, vec2(0, 0)};
-        parts[18 * i + 13] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
-        parts[18 * i + 14] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
-        parts[18 * i + 15] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
-        parts[18 * i + 16] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
-        parts[18 * i + 17] = {pos + vec3(0, scale, -scale),  col, vec2(1, 1)};
+        init_point(parts[18 * i + 0], pos + vec3(-scale,  scale, 0), col, vec2(0, 0));
+        init_point(parts[18 * i + 1], pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
+        init_point(parts[18 * i + 2], pos + vec3(scale, scale, 0),   col, vec2(1, 0));
+        init_point(parts[18 * i + 3], pos + vec3(scale, scale, 0),   col, vec2(1, 0));
+        init_point(parts[18 * i + 4], pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
+        init_point(parts[18 * i + 5], pos + vec3(scale, -scale, 0),  col, vec2(1, 1));
+        init_point(parts[18 * i + 6], pos + vec3(-scale,  0, scale), col, vec2(0, 0));
+        init_point(parts[18 * i + 7], pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
+        init_point(parts[18 * i + 8], pos + vec3(scale, 0, scale),   col, vec2(1, 0));
+        init_point(parts[18 * i + 9], pos + vec3(scale, 0, scale),   col, vec2(1, 0));
+        init_point(parts[18 * i + 10], pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
+        init_point(parts[18 * i + 11], pos + vec3(scale, 0, -scale),  col, vec2(1, 1));
+        init_point(parts[18 * i + 12], pos + vec3(0, -scale,  scale), col, vec2(0, 0));
+        init_point(parts[18 * i + 13], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
+        init_point(parts[18 * i + 14], pos + vec3(0, scale, scale),   col, vec2(1, 0));
+        init_point(parts[18 * i + 15], pos + vec3(0, scale, scale),   col, vec2(1, 0));
+        init_point(parts[18 * i + 16], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
+        init_point(parts[18 * i + 17], pos + vec3(0, scale, -scale),  col, vec2(1, 1));
       }
     }
   }
