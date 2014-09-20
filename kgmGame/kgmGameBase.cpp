@@ -67,7 +67,7 @@ kgmCamera g_cam;
 ////////////////////////////////////
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
-  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false){
+  :kgmOGLWindow(0, (char*)"kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false){
   m_game = this;
   kgmString sdata;
   kgmString spath;
@@ -84,7 +84,7 @@ kgmGameBase::kgmGameBase()
 
   log("open settings...");
   m_settings = new kgmGameSettings();
-  spath = m_settings->get("Path");
+  spath = m_settings->get((char*)"Path");
 
   log("open system...");
   m_system = new kgmSystem();
@@ -170,7 +170,7 @@ kgmGameBase::kgmGameBase()
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, 640, 480, 24, false)
+  :kgmOGLWindow(0, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 
@@ -223,7 +223,7 @@ void kgmGameBase::initResources()
 {
   log("init resources");
   m_resources = new kgmGameResources();
-  m_resources->addPath(m_settings->get("Path"));
+  m_resources->addPath(m_settings->get((char*)"Path"));
 }
 
 void kgmGameBase::initGraphycs()
@@ -675,7 +675,7 @@ inline void xmlAttr(kgmXml::Node* node, const char* id, float& val)
 inline void xmlAttr(kgmXml::Node* node, const char* id, vec3& val)
 {
   kgmString sid, v;
-  double         a[3];
+  float     a[3];
   sid = id;
   node->attribute(sid, v);
   sscanf(v.data(), "%f %f %f", &a[0], &a[1], &a[2]);
@@ -685,7 +685,7 @@ inline void xmlAttr(kgmXml::Node* node, const char* id, vec3& val)
 inline void xmlAttr(kgmXml::Node* node, const char* id, quat& val)
 {
   kgmString sid, v;
-  double         a[4];
+  float     a[4];
   sid = id;
   node->attribute(sid, v);
   sscanf(v.data(), "%f %f %f %f", &a[0], &a[1], &a[2], &a[3]);

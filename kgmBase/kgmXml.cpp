@@ -288,7 +288,7 @@ kgmXml::XmlState kgmXml::open(kgmMemory<u8>& m)
   }
   else
   {
-    m_position = (char*)toSyms((unsigned char*)m_position, ">", m.length());
+    m_position = (char*)toSyms((unsigned char*)m_position, (char*)">", m.length());
 
     if(!m_position)
     {
@@ -338,7 +338,7 @@ kgmXml::XmlState kgmXml::next()
   }
 
   //Find tag start symbol
-  pt = (char*)exeptSyms((unsigned char*)pt, " \t\r\n");
+  pt = (char*)exeptSyms((unsigned char*)pt, (char*)" \t\r\n");
 
   if(!pt)
   {
@@ -350,7 +350,7 @@ kgmXml::XmlState kgmXml::next()
   //Check if before was some ascii, it will be identified as data
   if(*pt != '<')
   {
-    pt = (char*)toSyms((unsigned char*)pt, "<");
+    pt = (char*)toSyms((unsigned char*)pt, (char*)"<");
 
     if(!pt)
     {
@@ -396,12 +396,12 @@ kgmXml::XmlState kgmXml::next()
     }
   }
 
-  pt = (char*)toSyms((unsigned char*)pt, " \t/>");
+  pt = (char*)toSyms((unsigned char*)pt, (char*)" \t/>");
 
   m_tagName.alloc(m_position, (int)(pt - m_position));
   Attribute* attr = null;
 
-  while(pt=(char*)exeptSyms((unsigned char*)pt, " \t"))
+  while(pt=(char*)exeptSyms((unsigned char*)pt, (char*)" \t"))
   {
     if(*pt == '0')
     {
@@ -442,7 +442,7 @@ kgmXml::XmlState kgmXml::next()
         return XML_ERROR;
       }
 
-      pt = (char*)exeptSyms((unsigned char*)(++pt), " \t");
+      pt = (char*)exeptSyms((unsigned char*)(++pt), (char*)" \t");
 
       if(*pt == '/' || *pt == '>' )
       {
@@ -471,7 +471,7 @@ kgmXml::XmlState kgmXml::next()
       }
       else
       {
-        pt = (char*)toSyms((unsigned char*)pt, " \t/>");
+        pt = (char*)toSyms((unsigned char*)pt, (char*)" \t/>");
 
         if(!pt)
         {

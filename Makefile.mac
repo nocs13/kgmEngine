@@ -14,7 +14,7 @@ LIBS =
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DOAL -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -fPIC -O0 -ansi
+	FLGS = -fPIC -O0 -ansi -std=c++11 #-Werror
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f
 else

@@ -317,7 +317,7 @@ public:
     mtl->m_blend = true;
     mtl->m_srcblend = gcblend_one;
     mtl->m_dstblend = gcblend_one;
-    mtl->setTexColor(g->getResources()->getTexture("point_redd.tga"));
+    mtl->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
     mtl->m_shader = kgmMaterial::ShaderBlend;
 
     mesh = new kgmMesh();
@@ -395,7 +395,7 @@ public:
     mtl->m_depth = false;
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_one;
-    mtl->setTexColor(g->getResources()->getTexture("point_d.tga"));
+    mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
     mtl->m_type = "simple";
     mtl->m_shader = kgmMaterial::ShaderBlend;
 

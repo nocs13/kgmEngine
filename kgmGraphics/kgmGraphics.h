@@ -25,7 +25,7 @@
 #include "kgmMaterial.h"
 
 #ifdef DEBUG
-#include "../kgmPhysics/kgmBody.h";
+#include "../kgmPhysics/kgmBody.h"
 #endif
 
 class kgmGraphics: public kgmObject

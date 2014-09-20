@@ -1021,15 +1021,12 @@ void kgmGraphics::render(kgmSprite* sprite)
 
 void kgmGraphics::render(kgmParticles* particles)
 {
-#define MAX_PARTICLES 5000
-  struct PrPoint{ vec3 pos; u32 col; vec2 uv; };
-
-  if(!particles)
+  if(!particles || !particles->getMesh())
     return;
 
   mtx4    mtr = g_mtx_view;
   vec3    rv, uv;
-  float2  dim(1, 1);
+  //float2  dim(1, 1);
 
 
   //rv = vec3(m_camera.camera.mView.m[0], m_camera.camera.mView.m[1], m_camera.camera.mView.m[2]);
@@ -1039,12 +1036,12 @@ void kgmGraphics::render(kgmParticles* particles)
   uv = rv.cross(m_camera.mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
   uv.normalize();
 
-  PrPoint       points[MAX_PARTICLES][6];
   s32           count;
 
   if(particles->m_typerender == kgmParticles::RTypeBillboard)
   {
-    count = (particles->m_count > MAX_PARTICLES) ? (MAX_PARTICLES) : (particles->m_count);
+    count = particles->m_count;
+    kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)particles->getMesh()->vertices();
 
     for(s32 i = 0; i < count; i++)
     {
@@ -1075,66 +1072,29 @@ void kgmGraphics::render(kgmParticles* particles)
         txv_e = sh * (ir + 1);
       }
 
-      points[i][0].pos = (pos - crv + cuv);
-        points[i][0].uv = vec2(txu_s, txv_s);
-      points[i][1].pos = (pos - crv - cuv);
-        points[i][1].uv = vec2(txu_s, txv_e);
-      points[i][2].pos = (pos + crv + cuv);
-        points[i][2].uv = vec2(txu_e, txv_s);
+      points[i].pos = (pos - crv + cuv);
+        points[i].uv = vec2(txu_s, txv_s);
+      points[i + 1].pos = (pos - crv - cuv);
+        points[i + 1].uv = vec2(txu_s, txv_e);
+      points[i + 2].pos = (pos + crv + cuv);
+        points[i + 2].uv = vec2(txu_e, txv_s);
 
-      points[i][3].pos = (pos + crv - cuv);
-        points[i][3].uv = vec2(txu_e, txv_e);
-      points[i][4].pos = (pos + crv + cuv);
-        points[i][4].uv = vec2(txu_e, txv_s);
-      points[i][5].pos = (pos - crv - cuv);
-        points[i][5].uv = vec2(txu_s, txv_e);
+      points[i + 3].pos = (pos + crv - cuv);
+        points[i + 3].uv = vec2(txu_e, txv_e);
+      points[i + 4].pos = (pos + crv + cuv);
+        points[i + 4].uv = vec2(txu_e, txv_s);
+      points[i + 5].pos = (pos - crv - cuv);
+        points[i + 5].uv = vec2(txu_s, txv_e);
 
-      points[i][0].col = points[i][1].col =
-      points[i][2].col = points[i][3].col =
-      points[i][4].col = points[i][5].col = particles->m_particles[i].col.color;
+      points[i].col = points[i + 1].col =
+      points[i + 2].col = points[i + 3].col =
+      points[i + 4].col = points[i + 5].col = particles->m_particles[i].col.color;
     }
 
-    gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 6 * count, points, 0, 0, 0);
+    //gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(PrPoint), 6 * count, points, 0, 0, 0);
   }
-  else if(particles->m_typerender == kgmParticles::RTypePoint)
-  {
-    PrPoint* parts = new PrPoint[18 * particles->m_count];
 
-    for (s32 i = 0; i < particles->m_count; i++)
-    {
-#ifdef DEBUG
-      kgmParticles::Particle* ptcl = &particles->m_particles[i];
-#endif
-      u32     col   = particles->m_particles[i].col.color;
-      vec3    pos   = particles->m_particles[i].pos;
-      float   scale = particles->m_particles[i].scale;
-      parts[18 * i + 0]  = {pos + vec3(-scale,  scale, 0), col, vec2(0, 0)};
-      parts[18 * i + 1]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
-      parts[18 * i + 2]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
-      parts[18 * i + 3]  = {pos + vec3(scale, scale, 0),   col, vec2(1, 0)};
-      parts[18 * i + 4]  = {pos + vec3(-scale, -scale, 0), col, vec2(0, 1)};
-      parts[18 * i + 5]  = {pos + vec3(scale, -scale, 0),  col, vec2(1, 1)};
-      parts[18 * i + 6]  = {pos + vec3(-scale,  0, scale), col, vec2(0, 0)};
-      parts[18 * i + 7]  = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
-      parts[18 * i + 8]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
-      parts[18 * i + 9]  = {pos + vec3(scale, 0, scale),   col, vec2(1, 0)};
-      parts[18 * i + 10] = {pos + vec3(-scale, 0, -scale), col, vec2(0, 1)};
-      parts[18 * i + 11] = {pos + vec3(scale, 0, -scale),  col, vec2(1, 1)};
-      parts[18 * i + 12] = {pos + vec3(0, -scale,  scale), col, vec2(0, 0)};
-      parts[18 * i + 13] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
-      parts[18 * i + 14] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
-      parts[18 * i + 15] = {pos + vec3(0, scale, scale),   col, vec2(1, 0)};
-      parts[18 * i + 16] = {pos + vec3(0, -scale, -scale), col, vec2(0, 1)};
-      parts[18 * i + 17] = {pos + vec3(0, scale, -scale),  col, vec2(1, 1)};
-    }
-
-    gc->gcCull(gc_none);
-    gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0, sizeof(PrPoint), 18 * particles->m_count, parts, 0, 0, 0);
-    //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0, sizeof(PrPoint), 18, &parts[36], 0, 0, 0);
-    delete [] parts;
-  }
-  //gc->gcDraw(gcpmt_triangles, gcv_xyz | gcv_col | gcv_uv0,
-    //           sizeof(PrPoint), 6 * count, particles, 0, 0, 0);
+  render(particles->getMesh());
 }
 
 void kgmGraphics::render(Icon* icon)

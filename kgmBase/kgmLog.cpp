@@ -27,6 +27,6 @@ void kgmLog::log_(kgmString s)
 #ifdef ANDROID
     LOGI((char*)s);
 #else
-    printf((char*)s);
+    printf("%s", (char*)s.data());
 #endif
 }
