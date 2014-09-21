@@ -98,8 +98,11 @@ void kgmGui::resize(int w, int h)
   if(m_base.scale)
   {
     float sw = (float)w / (float)m_base.rect.w, sh = (float)h / (float)m_base.rect.h;
+
     scale(sw, sh);
   }
+
+  onResize(w, h);
 }
 
 void kgmGui::repaint(kgmGui* gui)
@@ -436,6 +439,11 @@ void kgmGui::onKeyUp(int k)
   
   if(m_focus && m_focus != this && !m_focus->m_freeze)
     m_focus->onKeyUp(k);
+}
+
+void kgmGui::onResize(int w, int h)
+{
+
 }
 
 void kgmGui::onIdle()

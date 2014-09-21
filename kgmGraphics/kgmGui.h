@@ -165,6 +165,7 @@ protected:
   virtual void onMsOutside();
   virtual void onKeyDown(int k);
   virtual void onKeyUp(int k);
+  virtual void onResize(int w, int h);
 
   //useful functions
   void          addChild(kgmGui *e);
