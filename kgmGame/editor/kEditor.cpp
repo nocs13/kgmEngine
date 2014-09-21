@@ -86,8 +86,6 @@ kEditor::kEditor(kgmGameBase* g)
     fdd->hide();
     game->m_render->add(fdd);
 
-    vop = null;
-
     game->m_render->setBgColor(0xffbbaa99);
 
     logView = new kgmVisual();
@@ -786,9 +784,6 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
   if(fdd->visible())
     fdd->onEvent(e);
-
-  if(vop && vop->visible())
-    vop->onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -1073,6 +1068,8 @@ void kEditor::onEditOptions()
   if(!selected)
     return;
 
+  kViewOptions* vop = null;
+
   switch(selected->typ)
   {
   case kNode::MESH:
@@ -1097,9 +1094,9 @@ void kEditor::onEditOptions()
 
   if(vop)
   {
-    vop->setCloseCallback(kViewOptions::CloseCallback(this, (kViewOptions::CloseCallback::Function)&kEditor::onCloseVop));
-    game->m_render->add(vop);
+    game->guiAdd(vop);
     vop->show();
+    vop->release();
   }
 }
 
@@ -1142,6 +1139,7 @@ void kEditor::onAddActor()
   }
 
   game->guiAdd(vs);
+  vs->release();
 }
 
 void kEditor::onAddSensor()
@@ -1156,6 +1154,7 @@ void kEditor::onAddSensor()
   }
 
   game->guiAdd(vs);
+  vs->release();
 }
 
 void kEditor::onAddObject()
@@ -1170,6 +1169,7 @@ void kEditor::onAddObject()
   }
 
   game->guiAdd(vs);
+  vs->release();
 }
 
 void kEditor::onAddTrigger()
@@ -1220,7 +1220,7 @@ void kEditor::onViewObjects()
     vo->addItem(nodes[i]->nam);
 
   game->guiAdd(vo);
-
+  vo->release();
 }
 
 void kEditor::onOptionsDatabase()
@@ -1239,11 +1239,6 @@ void kEditor::onOptionsDatabase()
   {
     //fdd->forOpen(loc);
   }
-}
-
-void kEditor::onCloseVop()
-{
-  vop = null;
 }
 
 void kEditor::onSelectObject(kgmString id)

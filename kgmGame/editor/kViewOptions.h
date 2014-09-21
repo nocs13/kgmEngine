@@ -2,7 +2,7 @@
 #define KVIEWOPTIONS_H
 
 #include "kNode.h"
-#include "../../kgmGraphics/kgmGui.h"
+#include "../../kgmGraphics/kgmGuiFrame.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
 #include "../../kgmGraphics/kgmGuiCheck.h"
@@ -11,9 +11,9 @@
 namespace kgmGameEditor
 {
 
-class kViewOptions : public kgmGui
+class kViewOptions : public kgmGuiFrame
 {
-//  kgmObject(kViewObject);
+  //KGM_OBJECT(kViewOptions);
 
   kgmGuiButton* btn_close;
   kgmGuiTab*    tab;

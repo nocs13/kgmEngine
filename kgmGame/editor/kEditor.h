@@ -63,7 +63,7 @@ private:
 
   u32        oquered;
 
-  kViewOptions* vop;
+  //kViewOptions* vop;
 
 
   kNode* selected;

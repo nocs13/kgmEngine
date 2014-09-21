@@ -8,39 +8,35 @@ using namespace kgmGameEditor;
 
 kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
 :callClose(null, null),
-kgmGui(null, x, y, w, h)
+kgmGuiFrame("Options", x, y, w, h)
 {
   //tab = new kgmGuiTab(this, 0, 0, w, h);
   tab = null;
   node = n;
   y_coord = 0;
 
-  btn_close = new kgmGuiButton(this, w - 21, y_coord + 1, 20, 20);
-  btn_close->setText("X");
-  btn_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptions::onCloseOptions));
-
   if(n)
   {
     kgmGui* g;
 
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText(n->nam);
     y_coord += 22;
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText("Position");
-    g = new kgmGuiText(this, 51, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 51, y_coord, 50, 20);
     g->setSid("position_x");
     g->setText(kgmConvert::toString(n->pos.x));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionX));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 102, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 102, y_coord, 50, 20);
     g->setSid("position_y");
     g->setText(kgmConvert::toString(n->pos.y));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionY));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 154, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 154, y_coord, 50, 20);
     g->setSid("position_z");
     g->setText(kgmConvert::toString(n->pos.z));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionZ));
@@ -48,46 +44,46 @@ kgmGui(null, x, y, w, h)
     ((kgmGuiText*)g)->setNumeric(true);
 
     y_coord += 23;
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText("Rotation");
-    g = new kgmGuiText(this, 51, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 51, y_coord, 50, 20);
     g->setSid("rotation_x");
     g->setText(kgmConvert::toString(n->rot.x));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 102, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 102, y_coord, 50, 20);
     g->setSid("rotation_y");
     g->setText(kgmConvert::toString(n->rot.y));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(this, 154, y_coord, 50, 20);
+    g = new kgmGuiText(getClient(), 154, y_coord, 50, 20);
     g->setSid("rotation_z");
     g->setText(kgmConvert::toString(n->rot.z));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
     y_coord += 23;
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText("Rotation X");
-    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.x));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationX));
     y_coord += 23;
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText("Rotation Y");
-    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.y));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationY));
     y_coord += 23;
-    g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText("Rotation Z");
-    g = new kgmGuiScroll(this, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
@@ -95,7 +91,7 @@ kgmGui(null, x, y, w, h)
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationZ));
 
     y_coord += 23;
-    kgmGuiCheck* lock = new kgmGuiCheck(this, 1, y_coord, 150, 20);
+    kgmGuiCheck* lock = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
     lock->setText("Locked");
     lock->setCheck(node->lock);
     lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
@@ -143,7 +139,6 @@ void kViewOptions::onCloseOptions()
     callClose(callClose.getObject());
 
   erase();
-  release();
 }
 
 void kViewOptions::onPositionX(kgmString s)
@@ -192,19 +187,19 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 {
   fd = null;
   y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
   g->setText("Material");
-  g = guiMtlText = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = guiMtlText = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
 
   if(node->mat.length())
     g->setText(node->mat);
 
-  kgmGuiButton* btn = new kgmGuiButton(this, 125, y_coord, 50, 20);
+  kgmGuiButton* btn = new kgmGuiButton(getClient(), 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMaterial));
 
   y_coord += 23;
-  kgmGuiCheck* chk = new kgmGuiCheck(this, 1, y_coord, 150, 20);
+  kgmGuiCheck* chk = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
   chk->setText("collide");
   chk->setCheck(node->col);
   chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
@@ -252,10 +247,10 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
   g->setText("Intensity");
 
-  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
 
   g->setText(kgmConvert::toString(node->lgt->intensity));
   ((kgmGuiText*)g)->setEditable(true);
@@ -281,10 +276,10 @@ kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int 
 {
   y_coord += 23;
 
-  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
   g->setText("Target");
 
-  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
 
   g->setText(node->sns->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
@@ -308,10 +303,10 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
   {
     kgmVariable& var = node->obj->m_variables[i];
 
-    kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+    kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
     g->setText(var.getName());
 
-    g = new kGuiText(this, 51, y_coord, 70, 20);
+    g = new kGuiText(getClient(), 51, y_coord, 70, 20);
     g->setSid(var.getName());
 
     ((kGuiText*)g)->setEditable(true);
@@ -372,10 +367,10 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
 {
   y_coord += 23;
 
-  kgmGui* g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
   g->setText("Channels");
 
-  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
 
   g->setText(kgmConvert::toString((s32)node->trg->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
@@ -383,10 +378,10 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
 
   y_coord += 23;
 
-  g = new kgmGuiLabel(this, 0, y_coord, 50, 20);
+  g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
   g->setText("Target");
 
-  g = new kgmGuiText(this, 51, y_coord, 70, 20);
+  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
 
   g->setText(node->trg->getTarget());
   ((kgmGuiText*)g)->setEditable(true);

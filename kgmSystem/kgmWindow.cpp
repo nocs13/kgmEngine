@@ -491,14 +491,16 @@ u16 keyTranslate(KeySym key)
   return KEY_NONE;
 }
 
-int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
+int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt)
+{
   Window wroot, wchild;
   kgmEvent::Event m_evt = {0};
   int rx, ry, cx, cy;
   unsigned int mask;
   KeySym   ksym;
 
-  switch(evt->type){
+  switch(evt->type)
+  {
   case Expose:
     m_evt.event = evtPaint;
     break;
@@ -512,6 +514,21 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt){
   case MotionNotify:
     XQueryPointer(wnd->m_dpy, wnd->m_wnd, &wroot, &wchild, &rx, &ry, &cx, &cy, &mask);
     m_evt.event = evtMsMove;
+
+    switch(((XMotionEvent*)evt)->state)
+    {
+    case Button1Mask:
+      m_evt.keyMask = KEY_MSBLEFT;
+      break;
+    case Button2Mask:
+      m_evt.keyMask = KEY_MSBMIDDLE;
+      break;
+    case Button3Mask:
+      m_evt.keyMask = KEY_MSBRIGHT;
+      break;
+    default:
+      m_evt.keyMask = KEY_NONE;
+    }
 
     if(!wnd->m_msAbs)
     {
@@ -691,7 +708,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
   XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
-               ButtonReleaseMask | PointerMotionMask|StructureNotifyMask );
+               ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | ButtonMotionMask);
   XMapWindow(m_dpy, m_wnd);
   XStoreName(m_dpy, m_wnd, wname);
   XFlush(m_dpy);

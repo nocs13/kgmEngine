@@ -8,7 +8,7 @@ kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h, bool selclos
 {
   target = t;
 
-  list = new kgmGuiList(getClient(), 1, 21, w - 2, h - 23);
+  list = new kgmGuiList(getClient(), 0, 0, getClient()->m_rect.width(), getClient()->m_rect.height());
   list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kViewObjects::onSelectItem));
 
   closeOnSelect = selclose;
