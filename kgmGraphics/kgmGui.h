@@ -93,6 +93,7 @@ public:
 
   void show();
   void hide();
+  void close();
   void scale(float, float);
   void resize(int, int);
   void repaint(kgmGui*);

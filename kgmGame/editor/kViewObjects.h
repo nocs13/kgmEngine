@@ -1,14 +1,14 @@
 #ifndef KVIEWOBJECTS_H
 #define KVIEWOBJECTS_H
 
-#include "../../kgmGraphics/kgmGui.h"
+#include "../../kgmGraphics/kgmGuiFrame.h"
 #include "../../kgmGraphics/kgmGuiList.h"
 #include "../../kgmGraphics/kgmGuiButton.h"
 
 namespace kgmGameEditor
 {
 
-class kViewObjects : public kgmGui
+class kViewObjects : public kgmGuiFrame
 {
 public:
   typedef kgmCallback<void(void*)> CloseCallback;
@@ -19,7 +19,6 @@ private:
   CloseCallback  callEclose;
   SelectCallback callSelect;
 
-  kgmGuiButton* btn_close;
   kgmEvent* target;
   kgmGuiList* list;
 
@@ -28,7 +27,7 @@ private:
 public:
   kViewObjects(kgmEvent* tar, int x, int y, int w, int h, bool selclose = true);
 
-  void onCloseObjects();
+  void onClose();
   void onSelectItem();
 
   void setCloseCallback(CloseCallback cc)

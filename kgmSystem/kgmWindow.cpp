@@ -4,8 +4,6 @@
 #include "kgmApp.h"
 #include "../kgmBase/kgmLog.h"
 
-
-
 #ifdef WIN32
 inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
 {
@@ -170,7 +168,8 @@ inline u16 keyTranslate(int key){
 }
 
 
-long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
+long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
+{
   static bool set_cursor = false;
   kgmWindow* wnd = (kgmWindow*)GetWindowLong(hWnd, GWL_USERDATA);
   kgmEvent::Event evt;
@@ -217,6 +216,21 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar){
     evt.event = evtMsMove;
     msPoint.x = LOWORD(lPar);
     msPoint.y = HIWORD(lPar);
+
+    switch(wPar)
+    {
+    case MK_LBUTTON:
+      evt.keyMask = KEY_MSBLEFT;
+      break;
+    case MK_RBUTTON:
+      evt.keyMask = KEY_MSBRIGHT;
+      break;
+    case MK_MBUTTON:
+      evt.keyMask = KEY_MSBMIDDLE;
+      break;
+    default:
+      evt.key = KEY_NONE;
+    }
     //ClientToScreen(hWnd, &msPoint);
 
     if(!wnd->m_msAbs)

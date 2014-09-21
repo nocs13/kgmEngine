@@ -21,9 +21,14 @@ public:
   kgmGuiFrame(kgmString title = "Frame", int x = 50, int y = 50, int w = 200, int h = 300);
 
   void onMsMove(int k, int x, int y);
+  void onMsLeftDown(int k, int x, int y);
   void onResize(int w, int h);
-  void onKeyDown(int k);
-  void onKeyUp(int k);
+  void onFrameClose();
+
+  kgmGui* getClient()
+  {
+    return m_client;
+  }
 };
 
 #endif // KGMGUIFRAME_H

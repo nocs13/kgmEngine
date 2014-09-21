@@ -2,21 +2,25 @@
 #include "kgmGuiLabel.h"
 #include "kgmGuiButton.h"
 
+KGMOBJECT_IMPLEMENT(kgmGuiFrame, kgmGui);
+
 kgmGuiFrame::kgmGuiFrame(kgmString title, int x, int y, int w, int h)
 :kgmGui(null, x, y, w, h)
 {
-  m_title = new kgmGuiLabel(this, 0, 0, w - 16, 15);
+  m_title = new kgmGuiLabel(this, 0, 0, w - 20, 20);
   m_title->setText(title);
-  m_close = new kgmGuiButton(this, w - 16, 0, 15, 15);
+  m_close = new kgmGuiButton(this, w - 20, 0, 20, 20);
   m_close->setText("X");
-  m_client = new kgmGui(this, 0, 16, w, h - 15);
+  m_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kgmGuiFrame::onFrameClose));
+
+  m_client = new kgmGui(this, 0, 20, w, h - 20);
 }
 
 void kgmGuiFrame::onMsMove(int k, int x, int y)
 {
-  Rect rc(0, 0, m_rect.width(), 16);
+  Rect rc(m_rect.x, m_rect.y, m_rect.w, 20);
 
-  if(rc.inside(x, y))
+  if((k == KEY_MSBLEFT) && rc.inside(x, y))
   {
     int dx = x - m_prevx;
     int dy = y - m_prevy;
@@ -31,19 +35,28 @@ void kgmGuiFrame::onMsMove(int k, int x, int y)
   kgmGui::onMsMove(k, x, y);
 }
 
+void kgmGuiFrame::onMsLeftDown(int k, int x, int y)
+{
+  Rect rc(m_rect.x, m_rect.y, m_rect.w, 20);
+
+  if(rc.inside(x, y))
+  {
+    m_prevx = x;
+    m_prevy = y;
+  }
+
+  kgmGui::onMsMove(k, x, y);
+}
+
 void kgmGuiFrame::onResize(int w, int h)
 {
+  m_close->m_rect.x = w - 20;
+
   kgmGui::onResize(w, h);
 }
 
-void kgmGuiFrame::onKeyDown(int k)
+void kgmGuiFrame::onFrameClose()
 {
-
-  kgmGui::onKeyDown(k);
-}
-
-void kgmGuiFrame::onKeyUp(int k)
-{
-
-  kgmGui::onKeyUp(k);
+  erase();
+  release();
 }

@@ -79,6 +79,13 @@ void kgmGui::hide()
   m_view = false;
 }
 
+void kgmGui::close()
+{
+  onClose();
+
+  erase();
+}
+
 void kgmGui::scale(float sw, float sh)
 {
   m_rect.x = m_base.rect.x * sw;
