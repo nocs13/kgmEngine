@@ -6,6 +6,11 @@ void kgmThread::thread(kgmThread *p)
  if(!p)
    return;
 
+#ifdef WIN32
+#else
+ pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+#endif
+
  p->run();
 }
 
@@ -20,7 +25,7 @@ kgmThread::~kgmThread()
   exit();
 }
 
-bool kgmThread::exec()
+bool kgmThread::exec(bool canselable, Priority pr)
 {
  int rc = 0;
 
@@ -36,6 +41,8 @@ void kgmThread::exit()
 {
 #ifdef ANDROID
  pthread_kill(m_thread, 9);
+#elif defined(WIN32)
+ TerminateThread(m_thread, NULL);
 #else
  pthread_cancel(m_thread);
 #endif 
@@ -148,7 +155,7 @@ bool  kgmThread::lockable(Mutex m)
   return false;
 }
 
-kgmThread::TID  kgmThread::idThread()
+kgmThread::TID  kgmThread::id()
 {
   return (kgmThread::TID)pthread_self();
 }
