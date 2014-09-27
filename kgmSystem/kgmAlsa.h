@@ -1,6 +1,8 @@
 #ifndef KGMALSA_H
 #define KGMALSA_H
 
+#ifdef ALSA
+
 #include <alsa/asoundlib.h>
 
 #include "../kgmMedia/kgmIAudio.h"
@@ -15,4 +17,5 @@ public:
   ~kgmAlsa();
 };
 
+#endif //ALSA
 #endif // KGMALSA_H

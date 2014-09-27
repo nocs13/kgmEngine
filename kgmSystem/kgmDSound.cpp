@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "kgmD3ds.h"
+#include "kgmDSound.h"
 #include "../kgmBase/kgmLog.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -11,61 +11,66 @@
 
 static u32 error = 0;
 
-#ifdef D3DS
+#ifdef DSOUND
 
-kgmD3ds::_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
+kgmDSound::_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
 {
   pSb = sb;
 }
 
-kgmD3ds::_Sound::~_Sound()
+kgmDSound::_Sound::~_Sound()
 {
 }
 
-void kgmD3ds::_Sound::release()
+void kgmDSound::_Sound::release()
 {
   if(pSb)
     pSb->Release();
 }
 
-void kgmD3ds::_Sound::stop()
+void kgmDSound::_Sound::stop()
 {
 }
 
-void kgmD3ds::_Sound::play(bool loop)
+void kgmDSound::_Sound::play(bool loop)
 {
   // should be check because don't play
   if(pSb)
   {
-    pSb->Play(0, 0, (loop)?(DSBPLAY_LOOPING):(0));
+    if(FAILED(pSb->Play(0, 0, (loop) ? (DSBPLAY_LOOPING) : (0))))
+    {
+#ifdef DEBUG
+    kgm_log() << "Error: can't play sound buffer.\n";
+#endif
+    }
   }
 }
 
-void kgmD3ds::_Sound::volume(float vol)
+void kgmDSound::_Sound::volume(float vol)
 {
 }
 
-void kgmD3ds::_Sound::pause()
+void kgmDSound::_Sound::pause()
 {
 }
 
-void kgmD3ds::_Sound::emit(vec3& pos, vec3& vel)
+void kgmDSound::_Sound::emit(vec3& pos, vec3& vel)
 {
 }
 
-void kgmD3ds::_Sound::drop()
+void kgmDSound::_Sound::drop()
 {
   delete this;
 }
 
-kgmD3ds::kgmD3ds()
+kgmDSound::kgmDSound()
 {
   m_pSnd = null;
 
   if(FAILED(DirectSoundCreate(0, &m_pSnd, 0)))
   {
 #ifdef DEBUG
-    kgm_log() << "Error: can't create direct sound\n";
+    kgm_log() << "Error: can't create direct sound.\n";
 #endif
     return;
   }
@@ -73,26 +78,39 @@ kgmD3ds::kgmD3ds()
   if(m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_NORMAL) != DS_OK)
   {
 #ifdef DEBUG
-    kgm_log() << "Error: can't set cooperative level\n";
+    kgm_log() << "Error: can't set cooperative level.\n";
 #endif
   }
 }
 
-kgmD3ds::~kgmD3ds()
+kgmDSound::~kgmDSound()
 {
   if(m_pSnd)
-    m_pSnd->Release();
+  {
+    if(FAILED(m_pSnd->Release()))
+    {
+#ifdef DEBUG
+      kgm_log() << "Error: can't release direct sound.\n";
+#endif
+    }
+  }
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
-kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
+kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   DSBUFFERDESC dsb = {0};
   LPDIRECTSOUNDBUFFER pSb = 0;
   WAVEFORMATEX        wf = {0};
 
   if(!m_pSnd || !data || !size)
+  {
+#ifdef DEBUG
+    kgm_log() << "Error: not valid direct sound or data.\n";
+#endif
+
     return null;
+  }
 
   wf.cbSize          = 0;
   wf.nSamplesPerSec  = freq;
@@ -129,7 +147,7 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
   if(FAILED(m_pSnd->CreateSoundBuffer(&dsb, &pSb, 0)))
   {
 #ifdef DEBUG
-    kgm_log() << "Error: can't create sound buffer\n";
+    kgm_log() << "Error: can't create sound buffer.\n";
 #endif
     pSb = null;
   }
@@ -147,7 +165,7 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
 #ifdef DEBUG
     else
     {
-      kgm_log() << "Error: can't Lock sound buffer\n";
+      kgm_log() << "Error: can't Lock sound buffer.\n";
     }
 #endif
 
@@ -156,13 +174,13 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
   return (pSb) ? (new _Sound(pSb)) : (null);
 }
 
-void kgmD3ds::listener(vec3& pos, vec3& vel, vec3& ort)
+void kgmDSound::listener(vec3& pos, vec3& vel, vec3& ort)
 {
   float l = vel.length();
   float dirort[6] = {vel.x, vel.y, vel.z, ort.x, ort.y, ort.z};
 }
 
-void kgmD3ds::clear()
+void kgmDSound::clear()
 {
 }
 #endif

@@ -34,25 +34,18 @@ set_release:
 $(objects) : %.o : %.cpp %.h
 	$(CC) $(FLGS) $(DEFS) -c $< -o $@ $(DIRS)
 
-$(OUT_A): $(objects) lua
+$(OUT_A): $(objects)
 	$(AR) -r -c -s $(OUT_A) $(objects)
 
 $(OUT_SO): $(OUT_A)
 	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
-
-lua:
-	echo 'building lua'
-
-luaclean:
-	echo 'cleaning lua'
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk
 	cp $(OUT_A)  sdk/.
 	cp $(OUT_SO) sdk/.
 
-clean: luaclean
-#	use cmd line make os=<some_val> clean
+clean:
 	$(RM) $(objects)
 
 distclean: clean

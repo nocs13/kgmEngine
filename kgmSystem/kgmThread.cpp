@@ -9,6 +9,7 @@ void kgmThread::thread(kgmThread *p)
     return;
 
 #ifdef WIN32
+
 #else
   if(p->m_canselable)
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
@@ -34,6 +35,9 @@ bool kgmThread::exec(bool canselable, Priority pr)
   int rc = 0;
 
 #ifdef WIN32
+  m_thread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)thread, this,0, 0);
+
+  rc = (int)(m_thread) ? (0) : (-1);
 #else
   rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
 #endif
@@ -81,6 +85,31 @@ void kgmThread::priority(Priority prio)
 
 
 #ifdef WIN32
+  int policy = THREAD_PRIORITY_NORMAL;
+
+  switch(prio)
+  {
+  case PrNormal:
+    policy = THREAD_PRIORITY_NORMAL;
+    break;
+  case PrLow:
+    policy = THREAD_PRIORITY_BELOW_NORMAL;
+    break;
+  case PrIdle:
+    policy = THREAD_PRIORITY_IDLE;
+    break;
+  case PrHight:
+    policy = THREAD_PRIORITY_ABOVE_NORMAL;
+    break;
+  case PrSuper:
+    policy = THREAD_PRIORITY_HIGHEST;
+    break;
+  default:
+    policy = THREAD_PRIORITY_NORMAL;
+    break;
+  }
+
+  SetThreadPriority(m_thread, policy);
 #else
   int policy = SCHED_OTHER;
   sched_param param{0};
@@ -116,13 +145,24 @@ void kgmThread::priority(Priority prio)
 kgmThread::Mutex kgmThread::mutex()
 {
 #ifdef WIN32
-#else
-  pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-
-  *mutex = PTHREAD_MUTEX_INITIALIZER;
+  Mutex mutex = (Mutex)malloc(sizeof(CRITICAL_SECTION));
 
   if(mutex)
+  {
+    InitializeCriticalSection(mutex);
+
     return mutex;
+  }
+
+#else
+  Mutex mutex = (Mutex)malloc(sizeof(pthread_mutex_t));
+
+  if(mutex)
+  {
+    *mutex = PTHREAD_MUTEX_INITIALIZER;
+
+    return mutex;
+  }
 #endif
 
   return null;
@@ -132,7 +172,12 @@ void  kgmThread::mxfree(kgmThread::Mutex m)
 {
   if(m)
   {
+    unlock(m);
+
 #ifdef WIN32
+    DeleteCriticalSection(m);
+
+    free(m);
 #else
     pthread_mutex_destroy((pthread_mutex_t*)m);
 
@@ -146,8 +191,9 @@ void  kgmThread::lock(kgmThread::Mutex m)
   if(m)
   {
 #ifdef WIN32
+    EnterCriticalSection(m);
 #else
-    int rc = pthread_mutex_lock((pthread_mutex_t*)m);
+    pthread_mutex_lock(m);
 #endif
   }
 }
@@ -157,8 +203,9 @@ void  kgmThread::unlock(kgmThread::Mutex m)
   if(m)
   {
 #ifdef WIN32
+    LeaveCriticalSection(m);
 #else
-    int rc = pthread_mutex_unlock((pthread_mutex_t*)m);
+    pthread_mutex_unlock(m);
 #endif
   }
 }
@@ -168,10 +215,16 @@ bool  kgmThread::lockable(Mutex m)
   if(m)
   {
 #ifdef WIN32
-#else
-    if(!pthread_mutex_trylock((pthread_mutex_t*)m))
+    if(!TryEnterCriticalSection(m))
     {
-      pthread_mutex_unlock((pthread_mutex_t*)m);
+      LeaveCriticalSection(m);
+
+      return true;
+    }
+#else
+    if(!pthread_mutex_trylock(m))
+    {
+      pthread_mutex_unlock(m);
 
       return true;
     }
@@ -186,6 +239,7 @@ kgmThread::TID  kgmThread::id()
   TID tid = 0;
 
 #ifdef WIN32
+  tid = GetCurrentThreadId();
 #else
   tid = (kgmThread::TID)pthread_self();
 #endif

@@ -8,11 +8,11 @@
 #include "../kgmMedia/kgmWave.h"
 #include "../kgmMath/kgmMath.h"
 
-#ifdef D3DS
+#ifdef DSOUND
 #include <windows.h>
 #include <dsound.h>
 
-class kgmD3ds: public kgmIAudio
+class kgmDSound: public kgmIAudio
 {
   class _Sound: public Sound
   {
@@ -34,8 +34,8 @@ class kgmD3ds: public kgmIAudio
   LPDIRECTSOUND m_pSnd;
 
 public:
-  kgmD3ds();
-  virtual ~kgmD3ds();
+  kgmDSound();
+  virtual ~kgmDSound();
 
   Sound* create(FMT fmt, u16 freq, u32 size, void* data);
   void   listener(vec3& pos, vec3& vel, vec3& ort);

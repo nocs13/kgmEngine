@@ -125,6 +125,13 @@ public:
 
     readData();
     saveData();
+
+    kgmSound* snd = m_resources->getSound("mail.wav");
+
+    if(snd && snd->getSound())
+    {
+      snd->getSound()->play(false);
+    }
   }
 
   ~kGame()

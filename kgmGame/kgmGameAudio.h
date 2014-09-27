@@ -7,23 +7,34 @@
 #include "../kgmSystem/kgmOAL.h"
 #elif defined(OSL)
 #include "../kgmSystem/kgmOSL.h"
-#elif defined(D3DS)
-#include "../kgmSystem/kgmD3ds.h"
+#elif defined(DSOUND)
+#include "../kgmSystem/kgmDSound.h"
 #endif
 
-class kgmGameAudio
-#ifdef OAL
-  :public kgmOAL
-#elif defined(OSL)
-  :public kgmOSL
-#elif defined(D3DS)
-    :public kgmD3ds
-#else
-    :public kgmNullAudio
-#endif
+class kgmGameAudio: public kgmIAudio
 {
+  KGM_OBJECT(kgmGameAudio);
+
 private:
   kgmIAudio*  m_audio;
 
+public:
+  kgmGameAudio();
+  virtual ~kgmGameAudio();
+
+  Sound* create(FMT fmt, u16 freq, u32 size, void* data)
+  {
+    return m_audio->create(fmt, freq, size, data);
+  }
+
+  void   listener(vec3& pos, vec3& vel, vec3& ort)
+  {
+    m_audio->listener(pos, vel, ort);
+  }
+
+  void   clear()
+  {
+    m_audio->clear();
+  }
 };
 #endif // KGMGAMEAUDIO_H

@@ -8,7 +8,7 @@
 
 #ifdef WIN32
  #include <windows.h>
- #include <process.h>
+ #include <winbase.h>
 #else
  #include <stdlib.h>
  #include <unistd.h>
@@ -25,7 +25,12 @@ class kgmThread: public kgmObject
   KGM_OBJECT(kgmThread);
 public:
   typedef long  TID;
-  typedef void* Mutex;
+
+#ifdef WIN32
+  typedef CRITICAL_SECTION* Mutex;
+#else
+  typedef pthread_mutex_t* Mutex;
+#endif
 
   enum Priority
   {
