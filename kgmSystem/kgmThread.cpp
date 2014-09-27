@@ -1,53 +1,55 @@
 #include "kgmThread.h"
 #include "kgmSystem.h"
 
+KGMOBJECT_IMPLEMENT(kgmThread, kgmObject);
+
 void kgmThread::thread(kgmThread *p)
 {
- if(!p)
-   return;
+  if(!p)
+    return;
 
 #ifdef WIN32
 #else
- pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif
 
- p->run();
+  p->run();
 }
 
 kgmThread::kgmThread()
 {
- m_thread = 0;
+  m_thread = 0;
 }
 
 kgmThread::~kgmThread()
 {
- if(m_thread)
-  exit();
+  if(m_thread)
+    kill();
 }
 
 bool kgmThread::exec(bool canselable, Priority pr)
 {
- int rc = 0;
+  int rc = 0;
 
- rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
+  rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
 
- if(rc)
-  return false;
+  if(rc)
+    return false;
 
- return true;
+  return true;
 }
 
-void kgmThread::exit()
+void kgmThread::kill()
 {
-#ifdef ANDROID
- pthread_kill(m_thread, 9);
-#elif defined(WIN32)
- TerminateThread(m_thread, NULL);
+#ifdef WIN32
+  TerminateThread(m_thread, NULL);
+#elif defined(ANDROID)
+  pthread_kill(m_thread, 9);
 #else
- pthread_cancel(m_thread);
+  pthread_cancel(m_thread);
 #endif 
 
- m_thread = null;
+  m_thread = null;
 }
 
 void kgmThread::join()
@@ -56,10 +58,11 @@ void kgmThread::join()
 #else
   pthread_join(m_thread, NULL);
 #endif 
- m_thread = 0;
+
+  m_thread = 0;
 }
 
-void kgmThread::priority(int prio)
+void kgmThread::priority(Priority prio)
 {
   if(!m_thread)
     return;
@@ -77,23 +80,23 @@ void kgmThread::priority(int prio)
 
   switch(prio)
   {
-  case -1:
-      policy = SCHED_BATCH;
-      break;
+  case PrNormal:
+    policy = SCHED_BATCH;
+    break;
   case -2:
-      policy = SCHED_IDLE;
-      break;
+    policy = SCHED_IDLE;
+    break;
   case 1:
-      policy = SCHED_RR;
-      param.sched_priority = 20;
-      break;
+    policy = SCHED_RR;
+    param.sched_priority = 20;
+    break;
   case 2:
-      policy = SCHED_RR;
-      param.sched_priority = 50;
-      break;
+    policy = SCHED_RR;
+    param.sched_priority = 50;
+    break;
   default:
-      pthread_getschedparam(0, &policy, &param);
-      break;
+    pthread_getschedparam(0, &policy, &param);
+    break;
   }
 
   pthread_setschedparam(m_thread, policy, &param);

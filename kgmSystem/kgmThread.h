@@ -29,15 +29,11 @@ public:
 
   enum Priority
   {
-#ifdef WIN32
-    PrLow = 0,
-    PrNormal = 1,
-    PrHight = 2
-#else
-    PrLow = SCHED_IDLE,
-    PrNormal = SCHED_OTHER,
-    PrHight = SCHED_BATCH
-#endif
+    PrNormal = 0,
+    PrLow,
+    PrIdle,
+    PrHight,
+    PrSuper
   };
 
 private:
@@ -52,9 +48,9 @@ public:
  ~kgmThread();
 
  bool exec(bool canselable = false, Priority pr = PrNormal);
- void exit();
+ void kill();
  void join();
- void priority(int);
+ void priority(Priority);
 
  static Mutex mutex();
  static void  mxfree(Mutex);
