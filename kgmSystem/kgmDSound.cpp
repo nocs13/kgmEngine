@@ -75,7 +75,7 @@ kgmDSound::kgmDSound()
     return;
   }
 
-  if(m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_NORMAL) != DS_OK)
+  if(m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_PRIORITY) != DS_OK)
   {
 #ifdef DEBUG
     kgm_log() << "Error: can't set cooperative level.\n";
@@ -112,7 +112,7 @@ kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
     return null;
   }
 
-  wf.cbSize          = 0;
+  wf.cbSize          = sizeof(WAVEFORMATEX);
   wf.nSamplesPerSec  = freq;
   wf.wFormatTag      = WAVE_FORMAT_PCM;
 
@@ -132,14 +132,14 @@ kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
     break;
   case FMT_STEREO16:
     wf.nChannels = 2;
-    wf.wBitsPerSample = 8;
+    wf.wBitsPerSample = 16;
     break;
   }
 
   wf.nBlockAlign = wf.nChannels * ( wf.wBitsPerSample / 8 );
   wf.nAvgBytesPerSec = wf.nBlockAlign * wf.nSamplesPerSec;
 
-  dsb.dwSize = sizeof(dsb);
+  dsb.dwSize = sizeof(DSBUFFERDESC);
   dsb.dwFlags = DSBCAPS_STATIC;
   dsb.dwBufferBytes = size;
   dsb.lpwfxFormat = &wf;
