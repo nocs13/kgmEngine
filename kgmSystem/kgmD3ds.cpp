@@ -13,22 +13,27 @@ static u32 error = 0;
 
 #ifdef D3DS
 
-kgmD3ds::_Sound::_Sound(LPDIRECTSOUNDBUFFER sb){
+kgmD3ds::_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
+{
   pSb = sb;
 }
 
-kgmD3ds::_Sound::~_Sound(){
+kgmD3ds::_Sound::~_Sound()
+{
 }
 
-void kgmD3ds::_Sound::release(){
+void kgmD3ds::_Sound::release()
+{
   if(pSb)
     pSb->Release();
 }
 
-void kgmD3ds::_Sound::stop(){
+void kgmD3ds::_Sound::stop()
+{
 }
 
-void kgmD3ds::_Sound::play(bool loop){
+void kgmD3ds::_Sound::play(bool loop)
+{
   // should be check because don't play
   if(pSb)
   {
@@ -36,13 +41,16 @@ void kgmD3ds::_Sound::play(bool loop){
   }
 }
 
-void kgmD3ds::_Sound::volume(float vol){
+void kgmD3ds::_Sound::volume(float vol)
+{
 }
 
-void kgmD3ds::_Sound::pause(){
+void kgmD3ds::_Sound::pause()
+{
 }
 
-void kgmD3ds::_Sound::emit(vec3& pos, vec3& vel){
+void kgmD3ds::_Sound::emit(vec3& pos, vec3& vel)
+{
 }
 
 void kgmD3ds::_Sound::drop()
@@ -90,7 +98,8 @@ kgmIAudio::Sound* kgmD3ds::create(FMT fmt, u16 freq, u32 size, void* data)
   wf.nSamplesPerSec  = freq;
   wf.wFormatTag      = WAVE_FORMAT_PCM;
 
-  switch(fmt){
+  switch(fmt)
+  {
   case FMT_MONO8:
     wf.nChannels = 1;
     wf.wBitsPerSample = 8;

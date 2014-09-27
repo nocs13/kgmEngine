@@ -1,14 +1,14 @@
 OS = $(shell uname -s)
 RM =
 
-CC = ccache g++ 
+CC = ccache g++
 AR = ar
 DEFS = -DLINUX -DDEBUG -DLUA
 DSND = -OAL
 DSEP = /
 
 FLGS =
-DIRS = -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics -I./kgmExtern/lua-4.0.1/include
+DIRS = -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics -I./kgmExtern/lua/include
 LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
@@ -23,5 +23,5 @@ else
 	DEFS = -DWIN32 -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -mwindows
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32
-	RM = rm -f 
+	RM = rm -f
 endif

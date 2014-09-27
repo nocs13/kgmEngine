@@ -5,17 +5,20 @@
 //class kgmWave;
 //class kgmSound;
 
-class kgmIAudio: public kgmInterface{
+class kgmIAudio: public kgmInterface
+{
 public: 
-  enum FMT{
+  enum FMT
+  {
     FMT_NONE,
     FMT_MONO8,
     FMT_MONO16,
     FMT_STEREO8,
     FMT_STEREO16,
   };
- 
-  class Sound{
+
+  class Sound
+  {
   public:
     virtual void release()                  = 0;
     virtual void stop()                     = 0;

@@ -42,7 +42,9 @@ private:
 #else
  pthread_t m_thread;
 #endif
- 
+
+ bool m_canselable;
+
 public:
  kgmThread();
  ~kgmThread();

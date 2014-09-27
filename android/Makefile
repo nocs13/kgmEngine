@@ -32,22 +32,10 @@ set_release:
 $(objects) : %.o : %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
 
-$(OUT): $(objects) lua
+$(OUT): $(objects)
 	echo 'compile kgmengine'
 	$(AR) -crs $(OUT) $(objects)
-#	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/*.o
-#	$(AR) -r -c -s $(OUT_A) ../kgmExtern/lua-4.0.1/src/lib/*.o
 
-lua:
-	echo "stage lua"
-#	make -C ../kgmExtern/lua-4.0.1 -f Makefile.android
-
-luaclean:
-	echo "stage lua clean"
-#	make -C ../kgmExtern/lua-4.0.1 clean -f Makefile.android
-
-
-
-clean: luaclean
+clean:
 	rm -f $(objects)
 	rm -f $(OUT)

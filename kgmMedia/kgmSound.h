@@ -2,18 +2,21 @@
 #include "kgmIAudio.h"
 #include "../kgmBase/kgmResource.h"
 
-class kgmSound: public kgmResource{
- KGM_OBJECT(kgmSound)
-public:
- kgmIAudio::Sound* m_sound;
+class kgmSound: public kgmResource
+{
+  KGM_OBJECT(kgmSound)
+  public:
+    kgmIAudio::Sound* m_sound;
 
 public:
- kgmSound();
- kgmSound(kgmIAudio::Sound* s);
+  kgmSound();
+  kgmSound(kgmIAudio::Sound* s);
 
- kgmIAudio::Sound*  getSound(){
-   return m_sound;
- }
+  kgmIAudio::Sound*  getSound()
+  {
+    return m_sound;
+  }
+
 private:
- ~kgmSound();
+  ~kgmSound();
 };

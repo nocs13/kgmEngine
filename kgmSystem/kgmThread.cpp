@@ -10,7 +10,8 @@ void kgmThread::thread(kgmThread *p)
 
 #ifdef WIN32
 #else
-  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  if(p->m_canselable)
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif
 
   p->run();
@@ -19,6 +20,7 @@ void kgmThread::thread(kgmThread *p)
 kgmThread::kgmThread()
 {
   m_thread = 0;
+  m_canselable = false;
 }
 
 kgmThread::~kgmThread()
@@ -31,10 +33,15 @@ bool kgmThread::exec(bool canselable, Priority pr)
 {
   int rc = 0;
 
+#ifdef WIN32
+#else
   rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
+#endif
 
   if(rc)
     return false;
+
+  priority(pr);
 
   return true;
 }
@@ -70,56 +77,67 @@ void kgmThread::priority(Priority prio)
 #ifdef ANDROID
 #define SCHED_BATCH SCHED_NORMAL
 #define SCHED_IDLE  SCHED_NORMAL
-#elif defined WIN32
-#define SCHED_BATCH 0
-#define SCHED_IDLE  0
 #endif
 
+
+#ifdef WIN32
+#else
   int policy = SCHED_OTHER;
   sched_param param{0};
 
   switch(prio)
   {
   case PrNormal:
+    policy = SCHED_OTHER;
+    break;
+  case PrLow:
     policy = SCHED_BATCH;
     break;
-  case -2:
+  case PrIdle:
     policy = SCHED_IDLE;
     break;
-  case 1:
+  case PrHight:
     policy = SCHED_RR;
     param.sched_priority = 20;
     break;
-  case 2:
+  case PrSuper:
     policy = SCHED_RR;
-    param.sched_priority = 50;
+    param.sched_priority = 80;
     break;
   default:
-    pthread_getschedparam(0, &policy, &param);
+    policy = SCHED_OTHER;
     break;
   }
 
   pthread_setschedparam(m_thread, policy, &param);
-
-  m_thread = 0;
+#endif
 }
 
 kgmThread::Mutex kgmThread::mutex()
 {
+#ifdef WIN32
+#else
   pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
 
   *mutex = PTHREAD_MUTEX_INITIALIZER;
 
-  return mutex;
+  if(mutex)
+    return mutex;
+#endif
+
+  return null;
 }
 
 void  kgmThread::mxfree(kgmThread::Mutex m)
 {
   if(m)
   {
+#ifdef WIN32
+#else
     pthread_mutex_destroy((pthread_mutex_t*)m);
 
     free(m);
+#endif
   }
 }
 
@@ -127,7 +145,10 @@ void  kgmThread::lock(kgmThread::Mutex m)
 {
   if(m)
   {
+#ifdef WIN32
+#else
     int rc = pthread_mutex_lock((pthread_mutex_t*)m);
+#endif
   }
 }
 
@@ -135,7 +156,10 @@ void  kgmThread::unlock(kgmThread::Mutex m)
 {
   if(m)
   {
+#ifdef WIN32
+#else
     int rc = pthread_mutex_unlock((pthread_mutex_t*)m);
+#endif
   }
 }
 
@@ -143,16 +167,15 @@ bool  kgmThread::lockable(Mutex m)
 {
   if(m)
   {
+#ifdef WIN32
+#else
     if(!pthread_mutex_trylock((pthread_mutex_t*)m))
     {
       pthread_mutex_unlock((pthread_mutex_t*)m);
 
       return true;
     }
-    else
-    {
-      return false;
-    }
+#endif
   }
 
   return false;
@@ -160,6 +183,12 @@ bool  kgmThread::lockable(Mutex m)
 
 kgmThread::TID  kgmThread::id()
 {
-  return (kgmThread::TID)pthread_self();
-}
+  TID tid = 0;
 
+#ifdef WIN32
+#else
+  tid = (kgmThread::TID)pthread_self();
+#endif
+
+  return tid;
+}

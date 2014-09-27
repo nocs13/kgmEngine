@@ -1,11 +1,11 @@
 OS = $(shell uname -s)
 RM =
 
-CC = ccache g++ 
+CC = ccache g++
 DEFS = -DLINUX
-FLGS = -ansi -std=c++98 
+FLGS = -ansi -std=c++98
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
-	-I../kgmGraphics -I../kgmExtern/lua-4.0.1/include -L../kgmSystem/lib -L../ 
+	-I../kgmGraphics -I../kgmExtern/lua/include -L../kgmSystem/lib -L../
 LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
 ifeq ($(OS), Linux)
@@ -28,8 +28,8 @@ all:
 #	$(CC) -g -o kTest $(DEFS) $(FLAGS) $(OBJS) $(INCS) $(libs) -L../ -L../kgmLua
 	$(CC) -o kTest *.o ../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
-clean:	
+clean:
 	$(RM) kTest *.o
-	
-run: 
-	./kTest	
+
+run:
+	./kTest

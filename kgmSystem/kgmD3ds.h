@@ -14,7 +14,8 @@
 
 class kgmD3ds: public kgmIAudio
 {
-  class _Sound: public Sound{
+  class _Sound: public Sound
+  {
     LPDIRECTSOUNDBUFFER pSb;
 
     virtual ~_Sound();

@@ -11,8 +11,8 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char uchar;
 
-
-struct WAVE_FMT{
+struct WAVE_FMT
+{
   u16 wFormatTag;
   u16 nChannels;
   u32 nSamplesPerSec;
@@ -22,7 +22,7 @@ struct WAVE_FMT{
   u16 cbSize;
 }; 
 
-class kgmWave  
+class kgmWave
 {
 public:
   u32      riff_id;
@@ -37,21 +37,26 @@ public:
 
 public:
 
-  kgmWave(){
+  kgmWave()
+  {
     data = 0;
   }
-  virtual ~kgmWave(){
+
+  virtual ~kgmWave()
+  {
     if(data)
       free(data);
   }
 
   bool openWav(char *file)
   {
-    FILE *in = 0l;
+    FILE *in = NULL;
 
     if(!file || !strlen(file))
       return false;
+
     in = fopen(file,"rb");
+
     if(!in)
       return false;
 
@@ -94,6 +99,7 @@ public:
   {
     if(!mem)
       return false;
+
     char *pM = mem;
 
     memcpy(&riff_id, pM, sizeof(int)); pM += 4;

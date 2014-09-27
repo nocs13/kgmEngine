@@ -5,8 +5,8 @@
 
 #ifdef OSL
 
-
-kgmOSL::_Sound::_Sound(kgmOSL* sl){
+kgmOSL::_Sound::_Sound(kgmOSL* sl)
+{
   audioPlayerObject = null;
   audioPlayer = null;
   audioVolume = null;
@@ -19,8 +19,8 @@ kgmOSL::_Sound::_Sound(kgmOSL* sl){
   buffer = null;
 }
 
-kgmOSL::_Sound::~_Sound(){
-
+kgmOSL::_Sound::~_Sound()
+{
 #ifdef DEBUG
   kgm_log() << "OSL delete sound \n";
 #endif
@@ -55,7 +55,8 @@ void kgmOSL::_Sound::release()
 #endif
 }
 
-void kgmOSL::_Sound::stop(){
+void kgmOSL::_Sound::stop()
+{
   SLresult result;
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED);
@@ -65,7 +66,8 @@ void kgmOSL::_Sound::stop(){
 #endif
 }
 
-void kgmOSL::_Sound::play(bool loop){
+void kgmOSL::_Sound::play(bool loop)
+{
   SLresult result;
 
   result = (*audioPlayerQueue)->Enqueue(audioPlayerQueue, buffer, length);

@@ -2,7 +2,8 @@
 #include "../kgmBase/kgmString.h"
 
 
-class kgmScript{
+class kgmScript
+{
 public:
  virtual bool load(kgmString scr) = 0;
  virtual bool run(kgmString str) = 0;
