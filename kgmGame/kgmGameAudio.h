@@ -22,6 +22,8 @@ class kgmGameAudio
     :public kgmNullAudio
 #endif
 {
+private:
+  kgmIAudio*  m_audio;
 
 };
 #endif // KGMGAMEAUDIO_H
