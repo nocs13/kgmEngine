@@ -22,7 +22,8 @@
 
 class kgmOAL: public kgmIAudio
 {
-  class _Sound: public Sound{
+  class _Sound: public Sound
+  {
     u32	buffer;
     u32	source;
 

@@ -3,14 +3,6 @@
 
 #include "../kgmMedia/kgmNullAudio.h"
 
-#ifdef OAL
-#include "../kgmSystem/kgmOAL.h"
-#elif defined(OSL)
-#include "../kgmSystem/kgmOSL.h"
-#elif defined(DSOUND)
-#include "../kgmSystem/kgmDSound.h"
-#endif
-
 class kgmGameAudio: public kgmIAudio
 {
   KGM_OBJECT(kgmGameAudio);
