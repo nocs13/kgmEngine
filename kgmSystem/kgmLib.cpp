@@ -1,6 +1,9 @@
 #include "kgmLib.h"
 #include "../kgmBase/kgmTypes.h"
 
+KGMOBJECT_IMPLEMENT(kgmLib, kgmObject);
+
+
 kgmLib::kgmLib()
 {
   handle = 0;
@@ -27,16 +30,21 @@ void kgmLib::close()
 {
   if(!handle)
     return;
+
 #ifdef WIN32
   FreeLibrary((HINSTANCE)handle);
 #elif LINUX
   dlclose(handle);
 #endif
+
   handle = 0;
 }
 
 void* kgmLib::get(char *sym)
 {
+  if(sym == null)
+    return null;
+
 #ifdef WIN32
   return (void*)GetProcAddress((HINSTANCE)handle,sym);
 #endif
@@ -47,4 +55,3 @@ void* kgmLib::get(char *sym)
 
   return null;
 }
-

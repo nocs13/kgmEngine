@@ -95,7 +95,6 @@ int main(int argc, char** argv){
  signal(SIGTERM,  kgm_signal_handler);
  signal(SIGSEGV,  kgm_signal_handler);
  signal(SIGABRT,  kgm_signal_handler);
- signal(SIGBREAK, kgm_signal_handler);
 
  if(kgmApp::application())
    kgmApp::application()->main();

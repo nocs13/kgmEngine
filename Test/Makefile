@@ -1,8 +1,4 @@
-ifneq ("$(wildcard $(/etc/issue))","")
-OS = Unix
-else
-OS = Windows
-endif
+OS = $(shell uname -s)
 
 RM =
 
@@ -14,8 +10,8 @@ DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem
 	-I../kgmGraphics -I../kgmExtern/lua/include -L../kgmSystem/lib -L../
 LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
-ifeq ($(OS), Unix)
-	DEFS = -DLINUX -DDEBUG -DTEST -DOAL -DGPUSHADERS -DLUA -DEDITOR
+ifeq ($(OS), Linux)
+	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -g -fPIC -O0 -ansi
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
 	RM = rm -f

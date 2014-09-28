@@ -263,7 +263,6 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
       evt.msx = msPoint.x;
       evt.msy = msPoint.y;
     }
-    kgm_log() << "WOW " << evt.msy << " " << (s32)msPoint.y << "\n";
     break;
   case WM_LBUTTONDOWN:
     evt.event = evtMsLeftDown;
