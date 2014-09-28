@@ -530,9 +530,6 @@ int kgmGameBase::gUnload()
   if(m_logic)
     m_logic->clear();
 
-  if(m_audio)
-    m_audio->clear();
-
   if(m_physics)
     m_physics->clear();
 

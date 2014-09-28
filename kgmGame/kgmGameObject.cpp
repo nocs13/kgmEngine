@@ -15,6 +15,7 @@ kgmGameObject::kgmGameObject(kgmIGame* g)
   m_body(null),
   m_parent(null)
 {
+  m_game    = g;
   m_valid   = true;
   m_remove  = false;
   m_culled  = false;

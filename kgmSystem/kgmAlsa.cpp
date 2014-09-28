@@ -58,7 +58,7 @@ MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
 
 #endif //ALSA
 
-class _Sound: public kgmIAudio::Sound
+class _Sound
 {
 public:
   void *handle;
@@ -284,7 +284,7 @@ kgmAlsa::~kgmAlsa()
   m_lib.close();
 }
 
-kgmIAudio::Sound* kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
+kgmIAudio::Sound kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
 {
 #ifdef ALSA
   if(1)
@@ -299,13 +299,4 @@ kgmIAudio::Sound* kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
 #endif
 
   return null;
-}
-
-void kgmAlsa::listener(vec3& pos, vec3& vel, vec3& ort)
-{
-}
-
-void kgmAlsa::clear()
-{
-
 }

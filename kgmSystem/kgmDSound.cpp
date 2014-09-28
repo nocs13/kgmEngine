@@ -12,27 +12,43 @@
 static u32 error = 0;
 
 #ifdef DSOUND
+struct _Sound
+{
+  LPDIRECTSOUNDBUFFER pSb;
 
-kgmDSound::_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
+  _Sound(LPDIRECTSOUNDBUFFER sb);
+  ~_Sound();
+
+  void release();
+  void stop();
+  void play(bool loop);
+  void pause();
+  void volume(float vol);
+  void emit(vec3& pos, vec3& vel);
+
+  void drop();
+};
+
+_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
 {
   pSb = sb;
 }
 
-kgmDSound::_Sound::~_Sound()
+_Sound::~_Sound()
 {
 }
 
-void kgmDSound::_Sound::release()
+void _Sound::release()
 {
   if(pSb)
     pSb->Release();
 }
 
-void kgmDSound::_Sound::stop()
+void _Sound::stop()
 {
 }
 
-void kgmDSound::_Sound::play(bool loop)
+void _Sound::play(bool loop)
 {
   // should be check because don't play
   if(pSb)
@@ -46,21 +62,12 @@ void kgmDSound::_Sound::play(bool loop)
   }
 }
 
-void kgmDSound::_Sound::volume(float vol)
+void _Sound::volume(float vol)
 {
 }
 
-void kgmDSound::_Sound::pause()
+void _Sound::pause()
 {
-}
-
-void kgmDSound::_Sound::emit(vec3& pos, vec3& vel)
-{
-}
-
-void kgmDSound::_Sound::drop()
-{
-  delete this;
 }
 
 kgmDSound::kgmDSound()
@@ -105,7 +112,7 @@ kgmDSound::~kgmDSound()
 }
 
 //kgmSound* kgmOAL::generic(kgmWave* wav)
-kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
+kgmIAudio::Sound kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   DSBUFFERDESC dsb = {0};
   LPDIRECTSOUNDBUFFER pSb = 0;
@@ -186,15 +193,5 @@ kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
   }
 
   return (pSb) ? (new _Sound(pSb)) : (null);
-}
-
-void kgmDSound::listener(vec3& pos, vec3& vel, vec3& ort)
-{
-  float l = vel.length();
-  float dirort[6] = {vel.x, vel.y, vel.z, ort.x, ort.y, ort.z};
-}
-
-void kgmDSound::clear()
-{
 }
 #endif

@@ -131,7 +131,7 @@ public:
 
     if(snd && snd->getSound())
     {
-      snd->getSound()->play(true);
+      getAudio()->play(snd->getSound(), true);
       kgm_log() << "Play mail.wav\n";
     }
   }

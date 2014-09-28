@@ -15,9 +15,7 @@ public:
   kgmAlsa();
   ~kgmAlsa();
 
-  Sound* create(FMT fmt, u16 freq, u32 size, void* data);
-  void   listener(vec3& pos, vec3& vel, vec3& ort);
-  void   clear();
+  Sound create(FMT fmt, u16 freq, u32 size, void* data);
 };
 
 #endif // KGMALSA_H

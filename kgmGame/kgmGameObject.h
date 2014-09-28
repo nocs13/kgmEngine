@@ -19,6 +19,8 @@ class kgmGameObject : public kgmObject
   KGM_GO_OBJECT(kgmGameObject);
 
 private:
+  kgmIGame* m_game;
+
   kgmString m_id;
   kgmString m_class;
 
@@ -75,6 +77,8 @@ public:
   virtual void         event(kgmObject*, kgmString){ }
   virtual kgmBody*     getBody(){   return m_body;   }
   virtual kgmVisual*   getVisual(){ return m_visual; }
+
+  kgmIGame* game()  { return m_game;     }
 
   bool valid()      { return m_valid;    }
   bool culled()     { return m_culled;   }
