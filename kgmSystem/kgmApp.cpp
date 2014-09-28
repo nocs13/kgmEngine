@@ -2,6 +2,7 @@
 #include "kgmWindow.h"
 #include "../kgmBase/kgmMemory.h"
 
+#include <signal.h>
 
 #ifdef WIN32
  #include <windows.h>
@@ -11,21 +12,26 @@
  #include <unistd.h>
 #endif
 
+static void kgm_signal_handler(int s);
+
 
 //kgmApp
 
 //Application object, unique only  
 kgmApp* kgmApp::m_app = 0;
 
-kgmApp::kgmApp(){
+kgmApp::kgmApp()
+{
  m_app = this; 
 }
 
-kgmApp::~kgmApp(){
+kgmApp::~kgmApp()
+{
  m_app = 0;
 }
 
-void kgmApp::main(){
+void kgmApp::main()
+{
 }
 
 //FOR WINDOWS
@@ -62,6 +68,13 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
  int argc = 0;
  char **argv = 0;
 
+ signal(SIGINT,   kgm_signal_handler);
+ signal(SIGILL,   kgm_signal_handler);
+ signal(SIGTERM,  kgm_signal_handler);
+ signal(SIGSEGV,  kgm_signal_handler);
+ signal(SIGABRT,  kgm_signal_handler);
+ signal(SIGBREAK, kgm_signal_handler);
+
  if(kgmApp::application())
    kgmApp::application()->main();
 
@@ -76,6 +89,13 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 
 int main(int argc, char** argv){
  int rValue = 0;
+
+ signal(SIGINT,   kgm_signal_handler);
+ signal(SIGILL,   kgm_signal_handler);
+ signal(SIGTERM,  kgm_signal_handler);
+ signal(SIGSEGV,  kgm_signal_handler);
+ signal(SIGABRT,  kgm_signal_handler);
+ signal(SIGBREAK, kgm_signal_handler);
 
  if(kgmApp::application())
    kgmApp::application()->main();
@@ -119,5 +139,11 @@ int main()
   return 0;
 }*/
 #endif
+
+void kgm_signal_handler(int s)
+{
+  printf("Caught signal %d\n",s);
+  exit(1);
+}
 /////////
 
