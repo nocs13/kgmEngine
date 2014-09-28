@@ -53,9 +53,9 @@ public:
     m_audio->stop(snd);
   }
 
-  void pan(Sound snd, s16 pan)
+  void channel(Sound snd, s16 pan)
   {
-    m_audio->pan(snd, pan);
+    m_audio->channel(snd, pan);
   }
 
   void transform(Sound snd, vec3& pos, vec3& vel)

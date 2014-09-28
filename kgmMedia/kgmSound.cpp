@@ -8,7 +8,7 @@ kgmSound::kgmSound()
   m_sound = null;
 }
 
-kgmSound::kgmSound(kgmIAudio::Sound* s)
+kgmSound::kgmSound(kgmIAudio::Sound s)
   :kgmResource()
 {
   m_sound = s;

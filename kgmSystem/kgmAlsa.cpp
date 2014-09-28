@@ -5,8 +5,9 @@ KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
 
 #ifdef ALSA
 #include <alsa/asoundlib.h>
+#include <alsa/mixer.h>
 
-static const char alsaDevice[] = "ALSA Default";
+static const char alsaDevice[] = "default";
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic warning "-fpermissive"
@@ -26,6 +27,7 @@ MAKE_FUNC(snd_pcm_close);
 MAKE_FUNC(snd_pcm_drain);
 MAKE_FUNC(snd_pcm_writei);
 MAKE_FUNC(snd_pcm_prepare);
+MAKE_FUNC(snd_pcm_set_params);
 MAKE_FUNC(snd_pcm_hw_params);
 MAKE_FUNC(snd_pcm_hw_params_any);
 MAKE_FUNC(snd_pcm_hw_params_free);
@@ -44,6 +46,7 @@ MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
 #define snd_pcm_drain    psnd_pcm_drain
 #define snd_pcm_writei   psnd_pcm_writei
 #define snd_pcm_prepare  psnd_pcm_prepare
+#define snd_pcm_set_params       psnd_pcm_set_params
 #define snd_pcm_hw_params        psnd_pcm_hw_params
 #define snd_pcm_hw_params_any    psnd_pcm_hw_params_any
 #define snd_pcm_hw_params_free   psnd_pcm_hw_params_free
@@ -58,19 +61,28 @@ MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
 
 #endif //ALSA
 
-class _Sound
+struct _Sound
 {
 public:
   void *handle;
   void *data;
   u32   size;
 
-public:
+  int pcm_rate;
+  int pcm_frames;
+  int pcm_format;
+  int pcm_channels;
+
   _Sound()
   {
     handle = null;
     data   = null;
     size   = 0;
+
+    pcm_rate     = 0;
+    pcm_frames   = 0;
+    pcm_format   = 0;
+    pcm_channels = 0;
 
 #ifdef ALSA
     int err = (int)snd_pcm_open((void*)&handle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
@@ -94,6 +106,9 @@ public:
       kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
     }
 #endif
+
+    if(data)
+      free(data);
   }
 
   void release()
@@ -112,11 +127,41 @@ public:
     if(handle && data && size)
     {
       int pcm = 0;
+      int bpp = 1;
 
-      if(pcm = snd_pcm_writei(handle, data, size) != size)
+      if(pcm_format == SND_PCM_FORMAT_S16_LE)
+        bpp = 2;
+
+      pcm_frames = size / (bpp * pcm_channels);
+
+      if(pcm = snd_pcm_set_params(handle, pcm_format,
+                                  SND_PCM_ACCESS_RW_INTERLEAVED, pcm_channels,
+                                  pcm_rate, 1, 256000) < 0) {
+          printf("Playback set param error: %s\n", snd_strerror(pcm));
+       }
+
+      if(pcm = snd_pcm_prepare(handle) < 0)
+        printf("ERROR: Can't prepare. %s\n", snd_strerror(pcm));
+
+      for(int i = 0; ; i++)
       {
-        printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
+        int nsize = 512 * i;
+
+        if(size - nsize < 256)
+          break;
+
+        snd_pcm_writei(handle, data, pcm_frames);
       }
+      //if(pcm = snd_pcm_writei(handle, data, pcm_frames) != pcm_frames)
+      {
+        //printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
+      }
+
+      if(pcm = snd_pcm_drain(handle) < 0)
+        printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
+
+      //if(pcm = snd_pcm_close(handle) < 0)
+      //  printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
     }
 #endif
   }
@@ -127,16 +172,6 @@ public:
   }
 
   void volume(float vol)
-  {
-
-  }
-
-  void emit(vec3& pos, vec3& vel)
-  {
-
-  }
-
-  void drop()
   {
 
   }
@@ -154,10 +189,10 @@ public:
 #ifdef ALSA
     if(handle)
     {
-      int pcm          = 0;
-      int pcm_rate     = 0;
-      int pcm_format   = 0;
-      int pcm_channels = 0;
+      int pcm       = 0;
+      pcm_rate      = 0;
+      pcm_format    = 0;
+      pcm_channels  = 0;
 
       pcm_rate = freq;
 
@@ -181,37 +216,13 @@ public:
         pcm_channels = 2;
       }
 
-      snd_pcm_hw_params_t *params = null;
+      /*pcm = (int)snd_pcm_open((void*)&handle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
-      params = (snd_pcm_hw_params_t*)malloc(1024);
-      //if(pcm = snd_pcm_hw_params_malloc(handle, &params) < 0)
-      //  printf("ERROR: Can't alloc param. %s\n", snd_strerror(pcm));
-
-      if(params == null)
-        return false;
-
-      if(snd_pcm_hw_params_any != null)
-        pcm = snd_pcm_hw_params_any(handle, params);
-
-      if(pcm = snd_pcm_hw_params_set_access(handle, params,
-                                             SND_PCM_ACCESS_RW_INTERLEAVED) < 0)
-        printf("ERROR: Can't set interleaved mode. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_hw_params_set_format(handle, params,
-                                             SND_PCM_FORMAT_S16_LE) < 0)
-        printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_hw_params_set_channels(handle, params, pcm_channels) < 0)
-        printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_hw_params_set_rate_near(handle, params, &pcm_rate, 0) < 0)
-        printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_hw_params(handle, params) < 0)
-        printf("ERROR: Can't set harware parameters. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_prepare(handle) < 0)
-        printf("ERROR: Can't prepare. %s\n", snd_strerror(pcm));
+      if(pcm < 0)
+      {
+        kgm_log() << "Error: can't open alsa device.\n";
+        kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(pcm)) << ".\n";
+      }*/
 
         if(data && size)
         {
@@ -247,6 +258,7 @@ kgmAlsa::kgmAlsa()
     LOAD_FUNC(snd_pcm_drain);
     LOAD_FUNC(snd_pcm_writei);
     LOAD_FUNC(snd_pcm_prepare);
+    LOAD_FUNC(snd_pcm_set_params);
     LOAD_FUNC(snd_pcm_hw_params);
     LOAD_FUNC(snd_pcm_hw_params_any);
     LOAD_FUNC(snd_pcm_hw_params_free);
@@ -299,4 +311,40 @@ kgmIAudio::Sound kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
 #endif
 
   return null;
+}
+
+void kgmAlsa::remove(Sound snd)
+{
+ if(snd)
+ {
+#ifdef ALSA
+   delete snd;
+#endif
+ }
+}
+
+void kgmAlsa::channel(Sound snd, s16 pan)
+{
+
+}
+
+void kgmAlsa::volume(Sound snd, u16 vol)
+{
+
+}
+
+void kgmAlsa::pause(Sound snd, bool stat)
+{
+
+}
+
+void kgmAlsa::play(Sound snd, bool loop)
+{
+  if(snd)
+    ((_Sound*)snd)->play(loop);
+}
+
+void kgmAlsa::stop(Sound snd)
+{
+
 }

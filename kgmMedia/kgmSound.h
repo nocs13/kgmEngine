@@ -5,14 +5,15 @@
 class kgmSound: public kgmResource
 {
   KGM_OBJECT(kgmSound)
-  public:
-    kgmIAudio::Sound* m_sound;
+
+  private:
+    kgmIAudio::Sound m_sound;
 
 public:
   kgmSound();
-  kgmSound(kgmIAudio::Sound* s);
+  kgmSound(kgmIAudio::Sound s);
 
-  kgmIAudio::Sound*  getSound()
+  kgmIAudio::Sound  getSound()
   {
     return m_sound;
   }

@@ -1334,7 +1334,7 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<u8>& m){
     return 0;
   }
 
-  kgmIAudio::Sound* s = au->create(fmt,
+  kgmIAudio::Sound s = au->create(fmt,
   wav.fmt_format.nSamplesPerSec,
   wav.data_size,
   wav.data);
@@ -1342,8 +1342,7 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<u8>& m){
   if(!s)
     return 0;
 
-  kgmSound* snd = new kgmSound();
-  snd->m_sound = s;
+  kgmSound* snd = new kgmSound(s);
 
   return snd;
 }
