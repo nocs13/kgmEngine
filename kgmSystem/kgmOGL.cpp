@@ -119,7 +119,8 @@ kgmOGL::~kgmOGL(){
   m_rendertarget = 0;
 }
 
-void kgmOGL::gcSet(u32 param, void* value){
+void kgmOGL::gcSet(u32 param, void* value)
+{
   switch(param)
   {
   case gcpar_blending:

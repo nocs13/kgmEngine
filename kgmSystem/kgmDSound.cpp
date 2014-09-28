@@ -75,7 +75,15 @@ kgmDSound::kgmDSound()
     return;
   }
 
-  if(m_pSnd->SetCooperativeLevel((HWND)GetDesktopWindow(), DSSCL_PRIORITY) != DS_OK)
+  //Set Cooperative Level
+   HWND hWnd = GetForegroundWindow();
+
+   if (hWnd == NULL)
+   {
+    hWnd = GetDesktopWindow();
+   }
+
+   if(m_pSnd->SetCooperativeLevel((HWND)hWnd, DSSCL_PRIORITY) != DS_OK)
   {
 #ifdef DEBUG
     kgm_log() << "Error: can't set cooperative level.\n";
@@ -140,7 +148,7 @@ kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
   wf.nAvgBytesPerSec = wf.nBlockAlign * wf.nSamplesPerSec;
 
   dsb.dwSize = sizeof(DSBUFFERDESC);
-  dsb.dwFlags = DSBCAPS_STATIC;
+  dsb.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN;
   dsb.dwBufferBytes = size;
   dsb.lpwfxFormat = &wf;
 
@@ -157,10 +165,16 @@ kgmIAudio::Sound* kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
     VOID   *ptr1, *ptr2;
     DWORD  size1, size2;
 
-    if(DS_OK == pSb->Lock(0, size, &ptr1, &size1, &ptr2, &size2, 0L))
+    if(DS_OK == pSb->Lock(0, 0, &ptr1, &size1, NULL, NULL, DSBLOCK_ENTIREBUFFER))
     {
       memcpy(ptr1, data, size);
-      pSb->Unlock(ptr1, size, NULL, 0);
+
+      if(FAILED(pSb->Unlock(ptr1, size, NULL, 0)))
+      {
+   #ifdef DEBUG
+       kgm_log() << "Error: can't unlock sound buffer.\n";
+   #endif
+      }
     }
 #ifdef DEBUG
     else

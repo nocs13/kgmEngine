@@ -167,6 +167,12 @@ kgmGameBase::kgmGameBase()
   editor  = new kEditor(this);
   editing = false;
 #endif
+
+  int rc[4];
+
+  getRect(rc[0], rc[1], rc[2], rc[3]);
+
+  onResize(rc[2], rc[3]);
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)

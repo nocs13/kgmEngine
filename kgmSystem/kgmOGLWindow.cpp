@@ -11,7 +11,8 @@
 //}
 
 kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
-:kgmWindow(0, "", x, y, w, h, bpp, fs){
+:kgmWindow(0, "", x, y, w, h, bpp, fs)
+{
  m_gc = 0;
 
 #ifdef DEBUG
@@ -53,6 +54,9 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
  if(!wglMakeCurrent(m_hdc,m_hrc))
 	 return;
+
+ SendMessage(m_wnd, WM_ACTIVATE, NULL, NULL);
+ SendMessage(m_wnd, WM_PAINT, NULL, NULL);
 #endif
 
 #ifdef LINUX

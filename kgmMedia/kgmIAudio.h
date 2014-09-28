@@ -14,10 +14,12 @@ public:
     FMT_MONO8,
     FMT_MONO16,
     FMT_STEREO8,
-    FMT_STEREO16,
+    FMT_STEREO16
   };
 
-  class Sound
+  typedef void* Sound;
+
+  /*class Sound
   {
   public:
     virtual void release()                  = 0;
@@ -26,10 +28,19 @@ public:
     virtual void pause()                    = 0;
     virtual void volume(float vol)          = 0;
     virtual void emit(vec3& pos, vec3& vel) = 0;
-  }; 
+  };*/
 
 public:
-  virtual Sound* create(FMT fmt, u16 freq, u32 size, void* data) = 0; //create sound object from .wav ...
+  virtual Sound* create(FMT fmt, u16 freq, u32 size, void* data) = 0;
+  virtual void   remove(Sound* snd)                              = 0;
+
+  virtual void   volume(Sound* snd, u16 vol)                     = 0;
+  virtual void   pause(Sound* snd, bool stat)                    = 0;
+  virtual void   play(Sound* snd, bool loop)                     = 0;
+  virtual void   stop(Sound* snd)                                = 0;
+  virtual void   pan(Sound* snd, s16 pan)                        = 0;
+
+  virtual void   transform(Sound* snd, vec3& pos, vec3& vel)     = 0;
   virtual void   listener(vec3& pos, vec3& vel, vec3& ort)       = 0;
-  virtual void   clear()                                         = 0;
+  virtual void   background(Sound* snd, bool stat)               = 0;
 };
