@@ -3,7 +3,11 @@
 
 #include "../kgmMedia/kgmIAudio.h"
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmList.h"
 #include "../kgmSystem/kgmLib.h"
+#include "../kgmSystem/kgmThread.h"
+
+class _Sound;
 
 class kgmAlsa : public kgmIAudio
 {
@@ -11,6 +15,9 @@ class kgmAlsa : public kgmIAudio
 
   void*  m_handle;
   kgmLib m_lib;
+
+  kgmList<_Sound*> m_sounds;
+
 public:
   kgmAlsa();
   ~kgmAlsa();

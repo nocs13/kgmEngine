@@ -19,15 +19,20 @@ static const char alsaDevice[] = "default";
 typedef void* (*PCM_FUNC)(snd_pcm_t*,...);
 
 //#define MAKE_FUNC(f) static typeof(f) p##f
-#define MAKE_FUNC(f) static PCM_FUNC p##f
+#define MAKE_FUNC(f) static PCM_FUNC p##f \
 
 MAKE_FUNC(snd_strerror);
+MAKE_FUNC(snd_pcm_wait);
 MAKE_FUNC(snd_pcm_open);
 MAKE_FUNC(snd_pcm_close);
 MAKE_FUNC(snd_pcm_drain);
+MAKE_FUNC(snd_pcm_start);
 MAKE_FUNC(snd_pcm_writei);
 MAKE_FUNC(snd_pcm_prepare);
+MAKE_FUNC(snd_pcm_recover);
 MAKE_FUNC(snd_pcm_set_params);
+MAKE_FUNC(snd_pcm_bytes_to_frames);
+MAKE_FUNC(snd_pcm_frames_to_bytes);
 MAKE_FUNC(snd_pcm_hw_params);
 MAKE_FUNC(snd_pcm_hw_params_any);
 MAKE_FUNC(snd_pcm_hw_params_free);
@@ -41,12 +46,17 @@ MAKE_FUNC(snd_pcm_hw_params_set_rate_near);
 MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
 
 #define snd_strerror     psnd_strerror
+#define snd_pcm_wait     psnd_pcm_wait
 #define snd_pcm_open     psnd_pcm_open
 #define snd_pcm_close    psnd_pcm_close
 #define snd_pcm_drain    psnd_pcm_drain
+#define snd_pcm_start    psnd_pcm_start
 #define snd_pcm_writei   psnd_pcm_writei
 #define snd_pcm_prepare  psnd_pcm_prepare
+#define snd_pcm_recover  psnd_pcm_recover
 #define snd_pcm_set_params       psnd_pcm_set_params
+#define snd_pcm_bytes_to_frames  psnd_pcm_bytes_to_frames
+#define snd_pcm_frames_to_bytes  psnd_pcm_frames_to_bytes
 #define snd_pcm_hw_params        psnd_pcm_hw_params
 #define snd_pcm_hw_params_any    psnd_pcm_hw_params_any
 #define snd_pcm_hw_params_free   psnd_pcm_hw_params_free
@@ -63,7 +73,13 @@ MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
 
 struct _Sound
 {
-public:
+  enum State
+  {
+    StStop,
+    StPlay,
+    StPause
+  };
+
   void *handle;
   void *data;
   u32   size;
@@ -72,6 +88,10 @@ public:
   int pcm_frames;
   int pcm_format;
   int pcm_channels;
+
+  bool loop;
+
+  State state;
 
   _Sound()
   {
@@ -84,29 +104,12 @@ public:
     pcm_format   = 0;
     pcm_channels = 0;
 
-#ifdef ALSA
-    int err = (int)snd_pcm_open((void*)&handle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
-
-    if(err < 0)
-    {
-      kgm_log() << "Error: can't open alsa device.\n";
-      kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
-    }
-#endif
+    loop = false;
+    state = StStop;
   }
 
   ~_Sound()
   {
-#ifdef ALSA
-    int err = (int)snd_pcm_close(handle);
-
-    if(err < 0)
-    {
-      kgm_log() << "Error: can't open alsa device.\n";
-      kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
-    }
-#endif
-
     if(data)
       free(data);
   }
@@ -118,11 +121,15 @@ public:
 
   void stop()
   {
-
+    state = StStop;
   }
 
-  void play(bool loop)
+  void play(bool lp)
   {
+    state = StPlay;
+
+    loop = lp;
+
 #ifdef ALSA
     if(handle && data && size)
     {
@@ -136,22 +143,52 @@ public:
 
       if(pcm = snd_pcm_set_params(handle, pcm_format,
                                   SND_PCM_ACCESS_RW_INTERLEAVED, pcm_channels,
-                                  pcm_rate, 1, 256000) < 0) {
+                                  pcm_rate, 1, 500000) < 0) {
           printf("Playback set param error: %s\n", snd_strerror(pcm));
        }
 
       if(pcm = snd_pcm_prepare(handle) < 0)
         printf("ERROR: Can't prepare. %s\n", snd_strerror(pcm));
 
-      for(int i = 0; ; i++)
+      snd_pcm_sframes_t avail = snd_pcm_bytes_to_frames(handle, size);
+
+      char* WritePtr = data;
+
+      while(avail > 0)
       {
-        int nsize = 512 * i;
+        int ret = snd_pcm_writei(handle, WritePtr, avail);
 
-        if(size - nsize < 256)
+        switch (ret)
+        {
+        case -EAGAIN:
+          continue;
+        case -ESTRPIPE:
+        case -EPIPE:
+        case -EINTR:
+          ret = snd_pcm_recover(handle, ret, 1);
+
+          if(ret < 0)
+            avail = 0;
+
           break;
+        default:
+          if(ret >= 0)
+          {
+            WritePtr += (u32)snd_pcm_frames_to_bytes(handle, ret);
+            avail -= ret;
+          }
+          break;
+        }
 
-        snd_pcm_writei(handle, data, pcm_frames);
+        if (ret < 0)
+        {
+          ret = snd_pcm_prepare(handle);
+
+          if(ret < 0)
+            break;
+        }
       }
+
       //if(pcm = snd_pcm_writei(handle, data, pcm_frames) != pcm_frames)
       {
         //printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
@@ -253,12 +290,17 @@ kgmAlsa::kgmAlsa()
 #ifdef ALSA
 #define LOAD_FUNC(f) p##f = m_lib.get(#f)
     LOAD_FUNC(snd_strerror);
+    LOAD_FUNC(snd_pcm_wait);
     LOAD_FUNC(snd_pcm_open);
     LOAD_FUNC(snd_pcm_close);
     LOAD_FUNC(snd_pcm_drain);
+    LOAD_FUNC(snd_pcm_start);
     LOAD_FUNC(snd_pcm_writei);
     LOAD_FUNC(snd_pcm_prepare);
+    LOAD_FUNC(snd_pcm_recover);
     LOAD_FUNC(snd_pcm_set_params);
+    LOAD_FUNC(snd_pcm_bytes_to_frames);
+    LOAD_FUNC(snd_pcm_frames_to_bytes);
     LOAD_FUNC(snd_pcm_hw_params);
     LOAD_FUNC(snd_pcm_hw_params_any);
     LOAD_FUNC(snd_pcm_hw_params_free);
@@ -273,19 +315,15 @@ kgmAlsa::kgmAlsa()
 
     if(snd_pcm_open)
     {
-      /*err = (int)snd_pcm_open((void*)&m_handle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+      char* device = "default";
+      //char* device = "plughw:0,0";
+      err = (int)snd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
       if(err < 0)
       {
         kgm_log() << "Error: can't open alsa device.\n";
         kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
       }
-      else
-      {
-        snd_pcm_close(m_handle);
-
-        m_handle = null;
-      }*/
     }
 #endif
   }
@@ -293,6 +331,10 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+#ifdef ALSA
+  snd_pcm_close(m_handle);
+#endif
+
   m_lib.close();
 }
 
