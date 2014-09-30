@@ -324,6 +324,10 @@ kgmAlsa::kgmAlsa()
         kgm_log() << "Error: can't open alsa device.\n";
         kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
       }
+      else
+      {
+        m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
+      }
     }
 #endif
   }
@@ -377,7 +381,6 @@ void kgmAlsa::volume(Sound snd, u16 vol)
 
 void kgmAlsa::pause(Sound snd, bool stat)
 {
-
 }
 
 void kgmAlsa::play(Sound snd, bool loop)
@@ -389,4 +392,16 @@ void kgmAlsa::play(Sound snd, bool loop)
 void kgmAlsa::stop(Sound snd)
 {
 
+}
+
+int kgmAlsa::proceed()
+{
+  m_mixer.clean();
+
+  for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
+  {
+
+  }
+
+  return 0;
 }
