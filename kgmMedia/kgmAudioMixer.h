@@ -30,14 +30,19 @@ public:
     return frames;
   }
 
+  u32 getLength()
+  {
+    return buffer.length();
+  }
+
   u32 getChannels()
   {
     return channels;
   }
 
-  u32 getBitsPerSample()
+  u32 getBytesPerSample()
   {
-    return bytes_per_sample * 8;
+    return bytes_per_sample;
   }
 
   u32 getSamplesPerSecond()

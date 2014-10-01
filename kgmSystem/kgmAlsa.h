@@ -31,6 +31,8 @@ class kgmAlsa : public kgmIAudio
     {
       object   = obj;
       callback = call;
+
+      exec();
     }
 
     void run()
@@ -41,7 +43,7 @@ class kgmAlsa : public kgmIAudio
   };
 
 private:
-  void*  m_handle;
+  void*         m_handle;
 
   kgmLib        m_lib;
 
@@ -50,6 +52,9 @@ private:
   kgmList<_Sound*> m_sounds;
 
   kgmAudioMixer    m_mixer;
+
+  bool             m_proceed;
+
 public:
   kgmAlsa();
   ~kgmAlsa();

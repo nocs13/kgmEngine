@@ -16,7 +16,7 @@ kgmAudioMixer::~kgmAudioMixer()
 void kgmAudioMixer::clean()
 {
   if(buffer.length() > 0)
-    memset(buffer.data(), 0, buffer.length());
+    memset(buffer.data(), 0x7f, buffer.length());
 }
 
 bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 sps)
@@ -38,19 +38,42 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 sps)
 
   samples_per_second = sps;
 
-  if(samples_per_second > 45000)
+  if(samples_per_second > 44100)
     return false;
 
   u32 size = channels * bytes_per_sample * samples_per_second;
 
-  return buffer.alloc(size);
+  frames = size / bytes_per_sample;
+
+  bool res = buffer.alloc(size);
+
+  clean();
+
+  return res;
 }
 
-u32  kgmAudioMixer::mixdata(void* data, u32 len, u32 chn, u32 bps, u32 sps)
+u32  kgmAudioMixer::mixdata(void* data, u32 size, u32 chn, u32 bps, u32 rate)
 {
-  if(data == null || len == 0)
+  if(data == null || size < 1)
     return 0;
 
-  if(buffer.length() < 1)
+  if(buffer.data() == null || buffer.length() < 1)
     return 0;
+
+  u32 bytespersample = chn * bps / 8;
+
+  u32 readsize = bytespersample * frames;
+
+  if(readsize > size)
+    readsize = size;
+
+  for(int i = 0; i < readsize; i += bytespersample)
+  {
+    for(int j = 0; j < bytespersample; j++)
+    {
+      buffer[i + j] += ((s8*)data)[i + j];
+    }
+  }
+
+  return readsize;
 }
