@@ -8,10 +8,11 @@ class kgmAudioMixer : public kgmObject
 {
   kgmMemory<s8> buffer;
 
+  u32       rate;
   u32       frames;
   u32       channels;
   u32       bytes_per_sample;
-  u32       samples_per_second;
+
 public:
   kgmAudioMixer();
   ~kgmAudioMixer();
@@ -45,9 +46,9 @@ public:
     return bytes_per_sample;
   }
 
-  u32 getSamplesPerSecond()
+  u32 getRate()
   {
-    return samples_per_second;
+    return rate;
   }
 
   u32 getBytesPerFrame()

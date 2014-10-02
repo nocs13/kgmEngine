@@ -68,6 +68,7 @@ public:
   void  play(Sound snd, bool loop);
   void  stop(Sound snd);
 
+  int   render();
   int   proceed();
 };
 

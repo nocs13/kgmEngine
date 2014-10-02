@@ -234,7 +234,7 @@ kgmAlsa::kgmAlsa()
 
         if(pcm = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, 5000) < 0)
+                                    44100, 1, 500 * 1000) < 0)
         {
           printf("Playback set param error: %s\n", snd_strerror(pcm));
         }
@@ -303,6 +303,71 @@ void kgmAlsa::stop(Sound snd)
     ((_Sound*)snd)->stop();
 }
 
+int kgmAlsa::render()
+{
+#ifdef ALSA
+    if(m_handle && m_mixer.getBuffer())
+    {
+      int pcm = 0;
+      int bpp = 1;
+
+      int pcm_frames = m_mixer.getFrames();
+
+      int avail = m_mixer.getLength();
+
+      char* WritePtr = m_mixer.getBuffer();
+
+      while(avail > 0)
+      {
+        int ret = snd_pcm_writei(m_handle, WritePtr, avail);
+        //int ret = snd_pcm_writei(m_handle, WritePtr, 100);
+
+        switch (ret)
+        {
+        case -EAGAIN:
+          continue;
+        case -ESTRPIPE:
+        case -EPIPE:
+        case -EINTR:
+          ret = snd_pcm_recover(m_handle, ret, 1);
+
+          if(ret < 0)
+            avail = 0;
+
+          break;
+        default:
+          if(ret >= 0)
+          {
+            u32 k = (u32)snd_pcm_frames_to_bytes(m_handle, ret);
+            WritePtr += k;
+            avail -= k;
+
+            if((WritePtr - (char*)m_mixer.getBuffer()) >= m_mixer.getLength())
+              break;
+          }
+          break;
+        }
+
+        if (ret < 0)
+        {
+          ret = snd_pcm_prepare(m_handle);
+
+          if(ret < 0)
+            break;
+        }
+      }
+
+      //if(pcm = snd_pcm_writei(handle, data, pcm_frames) != pcm_frames)
+      //printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
+
+      //if(pcm = snd_pcm_drain(m_handle) < 0)
+      //  printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
+    }
+#endif
+
+  return 1;
+}
+
 int kgmAlsa::proceed()
 {
   m_proceed = true;
@@ -343,61 +408,7 @@ int kgmAlsa::proceed()
       }
     }
 
-#ifdef ALSA
-    if(m_handle && m_mixer.getBuffer())
-    {
-      int pcm = 0;
-      int bpp = 1;
-
-      int pcm_frames = m_mixer.getFrames();
-
-      int avail = m_mixer.getLength();
-
-      char* WritePtr = m_mixer.getBuffer();
-
-      while(avail > 0)
-      {
-        int ret = snd_pcm_writei(m_handle, WritePtr, avail);
-
-        switch (ret)
-        {
-        case -EAGAIN:
-          continue;
-        case -ESTRPIPE:
-        case -EPIPE:
-        case -EINTR:
-          ret = snd_pcm_recover(m_handle, ret, 1);
-
-          if(ret < 0)
-            avail = 0;
-
-          break;
-        default:
-          if(ret >= 0)
-          {
-            u32 k = (u32)snd_pcm_frames_to_bytes(m_handle, ret);
-            WritePtr += k;
-            avail -= k;
-          }
-          break;
-        }
-
-        if (ret < 0)
-        {
-          ret = snd_pcm_prepare(m_handle);
-
-          if(ret < 0)
-            break;
-        }
-      }
-
-      //if(pcm = snd_pcm_writei(handle, data, pcm_frames) != pcm_frames)
-      //printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
-
-      if(pcm = snd_pcm_drain(m_handle) < 0)
-        printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
-    }
-#endif
+    render();
   }
 
   return 0;
