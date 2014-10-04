@@ -1,5 +1,6 @@
 #include "kgmAlsa.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmTime.h"
 
 KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
 
@@ -245,6 +246,7 @@ kgmAlsa::kgmAlsa()
         m_mixer.prepare(2, 16, 44100);
 
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
+        //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
       }
     }
 #endif
@@ -256,6 +258,10 @@ kgmAlsa::~kgmAlsa()
 #ifdef ALSA
   snd_pcm_close(m_handle);
 #endif
+
+  m_proceed = false;
+  m_render.join();
+  m_thread.join();
 
   m_lib.close();
 }
@@ -305,6 +311,8 @@ void kgmAlsa::stop(Sound snd)
 
 int kgmAlsa::render()
 {
+  //while(m_proceed)
+  {
 #ifdef ALSA
     if(m_handle && m_mixer.getBuffer())
     {
@@ -338,7 +346,8 @@ int kgmAlsa::render()
         default:
           if(ret >= 0)
           {
-            u32 k = (u32)snd_pcm_frames_to_bytes(m_handle, ret);
+            //u32 k = (u32)snd_pcm_frames_to_bytes(m_handle, ret);
+            u32 k = ret * m_mixer.getBytesPerFrame();
             WritePtr += k;
             avail -= k;
 
@@ -364,6 +373,7 @@ int kgmAlsa::render()
       //  printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
     }
 #endif
+  }
 
   return 1;
 }
@@ -408,7 +418,10 @@ int kgmAlsa::proceed()
       }
     }
 
+    kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
     render();
+    usleep(500000);
+    kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
   }
 
   return 0;

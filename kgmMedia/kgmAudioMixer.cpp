@@ -41,7 +41,7 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
   if(rate > 44100)
     return false;
 
-  u32 size = channels * bytes_per_sample * rate * 10;
+  u32 size = channels * bytes_per_sample * rate;
 
   frames = size / (channels *bytes_per_sample);
 

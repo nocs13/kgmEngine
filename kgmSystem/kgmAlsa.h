@@ -48,6 +48,7 @@ private:
   kgmLib        m_lib;
 
   Thread        m_thread;
+  Thread        m_render;
 
   kgmList<_Sound*> m_sounds;
 
