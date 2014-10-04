@@ -1,17 +1,22 @@
+#pragma once
 #ifndef KGMAUDIOMIXER_H
 #define KGMAUDIOMIXER_H
 
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmMemory.h"
+#include "kgmIAudio.h"
 
 class kgmAudioMixer : public kgmObject
 {
+  KGM_OBJECT(kgmAudioMixer);
+private:
   kgmMemory<s8> buffer;
 
   u32       rate;
   u32       frames;
   u32       channels;
   u32       bytes_per_sample;
+  u32       bytes_per_frame;
 
 public:
   kgmAudioMixer();
@@ -19,7 +24,8 @@ public:
 
   void clean();
   bool prepare(u32 chn, u32 bps, u32 sps);
-  u32  mixdata(void* data, u32 len, u32 chn, u32 bps, u32 sps);
+  u32  mixdata(void* data, u32 len, u32 chn, u32 bps, u32 sps, u16 vol = kgmIAudio::VolMax,
+               s16 pan = kgmIAudio::PanBalance);
 
   void* getBuffer()
   {

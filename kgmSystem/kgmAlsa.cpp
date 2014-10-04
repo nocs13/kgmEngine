@@ -25,6 +25,7 @@ typedef void* (*PCM_FUNC)(void*,...);
 MAKE_FUNC(snd_strerror);
 MAKE_FUNC(snd_pcm_wait);
 MAKE_FUNC(snd_pcm_open);
+MAKE_FUNC(snd_pcm_stop);
 MAKE_FUNC(snd_pcm_close);
 MAKE_FUNC(snd_pcm_drain);
 MAKE_FUNC(snd_pcm_start);
@@ -51,6 +52,7 @@ MAKE_FUNC(snd_async_handler_get_callback_private);
 #define snd_strerror     psnd_strerror
 #define snd_pcm_wait     psnd_pcm_wait
 #define snd_pcm_open     psnd_pcm_open
+#define snd_pcm_stop     psnd_pcm_stop
 #define snd_pcm_close    psnd_pcm_close
 #define snd_pcm_drain    psnd_pcm_drain
 #define snd_pcm_start    psnd_pcm_start
@@ -108,6 +110,9 @@ struct _Sound
   u32   size;
   u32   cursor;
 
+  s16   vol;
+  s16   pan;
+
   int bps;
   int rate;
   int frames;
@@ -125,6 +130,7 @@ struct _Sound
 
     cursor = 0;
 
+    pan    =
     bps      = 0;
     rate     = freq;
     frames   = 0;
@@ -220,6 +226,7 @@ kgmAlsa::kgmAlsa()
     LOAD_FUNC(snd_strerror);
     LOAD_FUNC(snd_pcm_wait);
     LOAD_FUNC(snd_pcm_open);
+    LOAD_FUNC(snd_pcm_stop);
     LOAD_FUNC(snd_pcm_close);
     LOAD_FUNC(snd_pcm_drain);
     LOAD_FUNC(snd_pcm_start);
@@ -260,7 +267,7 @@ kgmAlsa::kgmAlsa()
 
         if(pcm = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, 1500 * 1000) < 0)
+                                    44100, 1, 1 * 1000) < 0)
         {
           printf("Playback set param error: %s\n", snd_strerror(pcm));
         }
@@ -275,8 +282,6 @@ kgmAlsa::kgmAlsa()
 
         if(pcm < 0)
           printf("ERROR: Can't prepare handler %s.\n", snd_strerror(pcm));
-
-        snd_pcm_start(m_handle);
 
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
         //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
@@ -355,6 +360,8 @@ int kgmAlsa::render()
       int pcm = 0;
       int bpp = 1;
 
+      snd_pcm_start(m_handle);
+
       int frames = m_mixer.getFrames();
 
       int avail = m_mixer.getLength();
@@ -412,7 +419,7 @@ int kgmAlsa::render()
       //  printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
     }
 
-    //kgmThread::sleep(1000);
+    //snd_pcm_stop(m_handle);
 #endif
   }
 
@@ -431,6 +438,8 @@ int kgmAlsa::proceed()
     {
       _Sound* sound = (*i);
 
+      //continue;
+
       if(sound->remove)
       {
         i = m_sounds.erase(i);
@@ -445,8 +454,13 @@ int kgmAlsa::proceed()
 
       //continue;
 
-      u32 size = m_mixer.mixdata((sound->data + sound->cursor), (sound->size - sound->cursor),
-                                 sound->channels, sound->bps, sound->rate);
+      u32 size = m_mixer.mixdata((sound->data + sound->cursor),
+                                 (sound->size - sound->cursor),
+                                 sound->channels,
+                                 sound->bps,
+                                 sound->rate,
+                                 sound->vol,
+                                 sound->pan);
 
       if((sound->cursor + size) >= sound->size)
       {
@@ -463,7 +477,7 @@ int kgmAlsa::proceed()
 
     //kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
     render();
-    //kgmThread::sleep(1);
+    kgmThread::sleep(1);
     //kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
   }
 

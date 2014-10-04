@@ -8,6 +8,19 @@
 class kgmIAudio: public kgmInterface
 {
 public: 
+  enum Volume
+  {
+    VolMin = 0,
+    VolMax = 10000
+  };
+
+  enum Pan
+  {
+    PanLeft    = -10000,
+    PanBalance =  0,
+    PanRight   =  10000
+  };
+
   enum FMT
   {
     FMT_NONE,
