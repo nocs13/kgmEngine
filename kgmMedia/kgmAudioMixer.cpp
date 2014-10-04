@@ -1,4 +1,7 @@
 #include "kgmAudioMixer.h"
+#include <math.h>
+
+#define TEST
 
 kgmAudioMixer::kgmAudioMixer()
 {
@@ -54,36 +57,57 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
 
 u32  kgmAudioMixer::mixdata(void* data, u32 size, u32 chn, u32 bps, u32 rate)
 {
+#ifdef TEST
+
+  for(int i = 0; i < frames; i+=2)
+  {
+    s32 a = 300 * i;//0 * sin(18 * i);
+    ((s16*)buffer.data())[i]     = a;
+    ((s16*)buffer.data())[i + 1] = a;
+  }
+
+  return true;
+#endif
+
   if(data == null || size < 1)
     return 0;
 
   if(buffer.data() == null || buffer.length() < 1)
     return 0;
 
-  u32 bytps = chn * bps / 8;
+  u32 bpf = chn * bps / 8;
 
-  u32 mframes = size / bytps;
+  u32 byps = bps / 8;
+
+  u32 mframes = size / bpf;
 
   u32 rframes = (mframes < frames) ? (mframes) : (frames);
 
-  u32 readsize = bytps * rframes;
+  u32 readsize = bpf * rframes;
 
   if(readsize > size)
     readsize = size;
-
-  char* sample = new char[bytps];
 
   for(int i = 0; i < rframes; i++)
   {
     char* lsample = buffer.data() + bytes_per_sample * i;
 
-    memcpy(sample, data + bytps * i, bytps);
+    s16 s1 = 0, s2 = 0;
 
-    ((s16*)lsample)[0] += ((s16*)sample)[0];
-    ((s16*)lsample)[1] += ((s16*)sample)[0];
+    if(chn == 2)
+    {
+      memcpy(&s1, data + bpf * i, byps);
+      memcpy(&s2, data + bpf * i + byps, byps);
+    }
+    else
+    {
+      memcpy(&s1, data + bpf * i, byps);
+      s2 = s1;
+    }
+
+    ((s16*)lsample)[0] += s1;
+    ((s16*)lsample)[1] += s2;
   }
-
-  delete [] sample;
 
   return readsize;
 }

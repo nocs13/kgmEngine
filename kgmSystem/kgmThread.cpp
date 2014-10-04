@@ -246,3 +246,12 @@ kgmThread::TID  kgmThread::id()
 
   return tid;
 }
+
+void kgmThread::sleep(u32 ms)
+{
+#ifdef WIN32
+  Sleep(ms);
+#else
+  usleep(ms * 1000);
+#endif
+}

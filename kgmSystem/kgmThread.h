@@ -66,6 +66,7 @@ public:
  static bool  lockable(Mutex);
 
  static TID   id();
+ static void  sleep(u32 ms);
 
 protected:
  virtual void run() = 0;
