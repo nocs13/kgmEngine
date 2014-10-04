@@ -7,10 +7,12 @@ KGMOBJECT_IMPLEMENT(kgmAudioMixer, kgmObject)
 
 inline s16 snd_normalize(s16 val)
 {
-  if(val > 32767)
-    val = 32767;
-  else if(val < -32768)
-    val = -32768;
+  s16 max = 30000;
+
+  if(val > max)
+    val = max;
+  else if(val < -max)
+    val = -max;
 }
 
 kgmAudioMixer::kgmAudioMixer()
@@ -111,7 +113,20 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     else if(pan > kgmIAudio::PanRight)
       pan = kgmIAudio::PanRight;
 
-    float pnl = 1.0f - pan / kgmIAudio::PanLeft;
+    float pan1 = 1.0f;// + (float)pan / (float)kgmIAudio::PanRight;
+    float pan2 = 1.0f;// - pan1;
+
+    if(pan > 0)
+    {
+      pan1 = 1.0f - (float)pan / (float)kgmIAudio::PanRight;
+    }
+    else
+    {
+      pan2 = 1.0f - (float)pan / (float)kgmIAudio::PanLeft;
+    }
+
+    vol_div[0] *= pan1;
+    vol_div[1] *= pan2;
   }
   else
   {
@@ -139,10 +154,13 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
     s1 = (s16)((float)s1 * (float)vol_div[0]);
     s2 = (s16)((float)s2 * (float)vol_div[1]);
-    //s2 = vol_div[1];
 
-    r1 = snd_normalize(r1 + s1);
-    r2 = snd_normalize(r2 + s2);
+    //a + b - (a * b) - 65535;
+
+    r1 = snd_normalize((r1 + s1) >> 1);
+    r2 = snd_normalize((r2 + s2) >> 1);
+    //r1 = snd_normalize((r1 + s1) - (r1 * s1) / 0xffff);
+    //r2 = snd_normalize((r2 + s2) - (r2 * s2) / 0xffff);
 
     ((s16*)lsample)[0] = r1;
     ((s16*)lsample)[1] = r2;

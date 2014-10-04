@@ -130,7 +130,9 @@ struct _Sound
 
     cursor = 0;
 
-    pan    =
+    pan      = 0;
+    vol      = 0;
+
     bps      = 0;
     rate     = freq;
     frames   = 0;
@@ -311,6 +313,9 @@ kgmIAudio::Sound kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   _Sound* sound = new _Sound(fmt, freq, size, data);
 
+  sound->vol = kgmIAudio::VolMax;
+  sound->pan = kgmIAudio::PanBalance;
+
   m_sounds.add(sound);
 
   return sound;
@@ -428,17 +433,22 @@ int kgmAlsa::render()
 
 int kgmAlsa::proceed()
 {
+  static u32 max_sounds = 0;
+
   m_proceed = true;
 
   while(m_proceed)
   {
+    u32 snd_cound = 0;
+
     m_mixer.clean();
 
     for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
     {
       _Sound* sound = (*i);
 
-      //continue;
+      if(snd_cound > max_sounds)
+        break;
 
       if(sound->remove)
       {
@@ -451,8 +461,6 @@ int kgmAlsa::proceed()
 
       if(sound->state != _Sound::StPlay)
         continue;
-
-      //continue;
 
       u32 size = m_mixer.mixdata((sound->data + sound->cursor),
                                  (sound->size - sound->cursor),
@@ -473,11 +481,13 @@ int kgmAlsa::proceed()
       {
         sound->cursor += size;
       }
+
+      snd_cound++;
     }
 
     //kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
     render();
-    kgmThread::sleep(1);
+    kgmThread::sleep(0);
     //kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
   }
 

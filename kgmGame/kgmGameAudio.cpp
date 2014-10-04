@@ -1,4 +1,5 @@
 #include "kgmGameAudio.h"
+#include "../kgmMedia/kgmNullAudio.h"
 
 #ifdef OAL
 #include "../kgmSystem/kgmOAL.h"
@@ -18,6 +19,7 @@ kgmGameAudio::kgmGameAudio()
   m_audio = new kgmOAL();
 #elif defined(ALSA)
   m_audio = new kgmAlsa();
+  //m_audio = new kgmNullAudio();
 #elif defined(OSL)
   m_audio = new kgmOSL();
 #elif defined(DSOUND)

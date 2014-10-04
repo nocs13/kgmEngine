@@ -134,6 +134,22 @@ public:
       getAudio()->play(snd->getSound(), true);
       kgm_log() << "Play mail.wav\n";
     }
+
+    kgmSound* snd1 = m_resources->getSound("2.wav");
+
+    if(snd1 && snd1->getSound())
+    {
+      getAudio()->play(snd1->getSound(), true);
+      kgm_log() << "Play mail.wav\n";
+    }
+
+    kgmSound* snd2 = m_resources->getSound("3.wav");
+
+    if(snd2 && snd2->getSound())
+    {
+      getAudio()->play(snd2->getSound(), true);
+      kgm_log() << "Play mail.wav\n";
+    }
   }
 
   ~kGame()
