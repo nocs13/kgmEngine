@@ -86,6 +86,9 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
   u32 byps = bps / 8;
 
+  if(byps > 4)
+    return 0;
+
   u32 mframes = size / bpf;
 
   u32 rframes = (mframes < (frames / divs)) ? (mframes) : (frames / divs);
@@ -133,7 +136,7 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
       break;
     }
 
-    char* lsample = buffer.data() + ref;
+    void* lsample = buffer.data() + ref;
 
     s16 s1 = 0;
     s16 s2 = 0;
@@ -146,7 +149,10 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     else
     {
       memcpy(&s1, data + bpf * i, byps);
-      s1 =  (s16)(s1 - 0x80) << 8;
+
+      if(byps == 1)
+        s1 =  (s16)(s1 - 0x80) << 8;
+
       s2 = s1;
     }
 
@@ -158,18 +164,48 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
     for(int j = 0; j < divs; j++)
     {
+      u32 ref1 = bytes_per_frame * j;
+      u32 ref2 = bytes_per_frame * j + bytes_per_sample;
+
+      //s16 r1 = 0;
+      //s16 r2 = 0;
       s16 r1 = ((s16*)lsample)[bytes_per_frame * j];
       s16 r2 = ((s16*)lsample)[bytes_per_frame * j + 1];
 
+      memcpy(&r1, lsample + ref1, bytes_per_sample);
+      memcpy(&r2, lsample + ref2, bytes_per_sample);
+
       r1 = snd_normalize((r1 + s1) >> 1);
       r2 = snd_normalize((r2 + s2) >> 1);
+      //r1 = snd_normalize((s1));
+      //r2 = snd_normalize((s2));
 
       //((s16*)lsample)[0] = r1;
       //((s16*)lsample)[1] = r2;
       ((s16*)lsample)[bytes_per_frame * j]     = r1;
       ((s16*)lsample)[bytes_per_frame * j + 1] = r2;
+      //memcpy(lsample + ref1, &r1, bytes_per_sample);
+      //memcpy(lsample + ref2, &r2, bytes_per_sample);
     }
   }
+
+  s16 a = (s16)((s8*)buffer.data())[buffer.length() - 2];
+
+  if(a == 0)
+  {
+    int k = 0;
+
+    a = (s16)((s8*)buffer.data())[1];
+  }
+
+  /*FILE* f = fopen("/tmp/zzz", "ab");
+
+  if(f)
+  {
+    fwrite(buffer.data(), buffer.length(), 1, f);
+
+    fclose(f);
+  }*/
 
   return readsize;
 }

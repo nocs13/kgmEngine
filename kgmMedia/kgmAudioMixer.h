@@ -58,7 +58,7 @@ public:
     return rate;
   }
 
-  u32 getTime()
+  u32 getMsTime()
   {
     //time in miliseconds
 

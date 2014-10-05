@@ -250,9 +250,11 @@ kgmAlsa::kgmAlsa()
       {
         int pcm = 0;
 
+        m_mixer.prepare(2, 16, 44100);
+
         if(pcm = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, 100 * 1000) < 0)
+                                    44100, 1, m_mixer.getMsTime() * 1000) < 0)
         {
           kgm_log() << "Playback set param error: " << (char*)snd_strerror(pcm) << ".\n";
 
@@ -266,12 +268,10 @@ kgmAlsa::kgmAlsa()
           return;
         }
 
-        m_mixer.prepare(2, 16, 44100);
-
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
         //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
 
-        m_thread.priority(kgmThread::PrIdle);
+        //m_thread.priority(kgmThread::PrIdle);
         //m_render.priority(kgmThread::PrIdle);
       }
     }
@@ -355,7 +355,7 @@ int kgmAlsa::render()
 
       char* WritePtr = m_mixer.getBuffer();
 
-      avail = frames;
+      avail = frames - 1;
 
       while(avail > 0)
       {
@@ -378,7 +378,9 @@ int kgmAlsa::render()
           if(ret >= 0)
           {
             u32 k = ret * m_mixer.getBytesPerFrame();
+
             WritePtr += k;
+
             avail -= ret;
 
             if(avail < 1)
@@ -448,7 +450,7 @@ int kgmAlsa::proceed()
                                  sound->vol,
                                  sound->pan);
 
-      if((sound->cursor + size) >= sound->size)
+      if((sound->cursor + size) == sound->size)
       {
         sound->cursor = 0;
 
@@ -463,16 +465,18 @@ int kgmAlsa::proceed()
       snd_cound++;
     }
 
-    kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
     render();
 
     u32 t2 = kgmTime::getTicks();
 
     u32 t3 = t2 - t1;
 
-    if(t3 < m_mixer.getTime())
-      kgmThread::sleep(m_mixer.getTime() - t3);
-    kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
+    if(t3 < m_mixer.getMsTime())
+    {
+      s32 wtime = m_mixer.getMsTime() - t3;
+
+      kgmThread::sleep(wtime);
+    }
   }
 
   return 0;

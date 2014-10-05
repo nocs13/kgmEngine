@@ -126,13 +126,11 @@ public:
     readData();
     saveData();
 
-    kgm_log() << "Load mail.wav\n";
     kgmSound* snd = m_resources->getSound("1.wav");
 
     if(snd && snd->getSound())
     {
-      getAudio()->play(snd->getSound(), true);
-      kgm_log() << "Play mail.wav\n";
+      //getAudio()->play(snd->getSound(), true);
     }
 
     kgmSound* snd1 = m_resources->getSound("2.wav");
@@ -140,15 +138,13 @@ public:
     if(snd1 && snd1->getSound())
     {
       getAudio()->play(snd1->getSound(), true);
-      kgm_log() << "Play mail.wav\n";
     }
 
     kgmSound* snd2 = m_resources->getSound("3.wav");
 
     if(snd2 && snd2->getSound())
     {
-      getAudio()->play(snd2->getSound(), true);
-      kgm_log() << "Play mail.wav\n";
+      //getAudio()->play(snd2->getSound(), true);
     }
   }
 
