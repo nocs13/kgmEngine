@@ -76,25 +76,6 @@ MAKE_FUNC(snd_async_handler_get_callback_private);
 #define snd_async_add_pcm_handler psnd_async_add_pcm_handler
 #define snd_async_handler_get_callback_private psnd_async_handler_get_callback_private
 
-
-void _callback(snd_async_handler_t *pcm_callback)
-{
-  kgmAlsa* obj = (kgmAlsa*)snd_async_handler_get_callback_private((snd_pcm_t*)pcm_callback);
-
-  if(obj)
-    obj->render();
-  /*snd_pcm_t *pcm_handle = snd_async_handler_get_pcm(pcm_callback);
-  snd_pcm_sframes_t avail;
-  int err;
-
-  avail = snd_pcm_avail_update(pcm_handle);
-  while (avail >= period_size) {
-     snd_pcm_writei(pcm_handle, MyBuffer, period_size);
-     avail = snd_pcm_avail_update(handle);
-     }
-     */
- }
-
 #endif //ALSA
 
 struct _Sound
@@ -260,8 +241,10 @@ kgmAlsa::kgmAlsa()
 
       if(err < 0)
       {
-        kgm_log() << "Error: can't open alsa device.\n";
-        kgm_log() << "Error: is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
+        kgm_log() << "Error: Can't open alsa device.\n";
+        kgm_log() << "Error: Is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
+
+        return;
       }
       else
       {
@@ -269,26 +252,26 @@ kgmAlsa::kgmAlsa()
 
         if(pcm = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, 1 * 1000) < 0)
+                                    44100, 1, 100 * 1000) < 0)
         {
-          printf("Playback set param error: %s\n", snd_strerror(pcm));
+          kgm_log() << "Playback set param error: " << (char*)snd_strerror(pcm) << ".\n";
+
+          return;
         }
 
         if(pcm = snd_pcm_prepare(m_handle) < 0)
-          printf("ERROR: Can't prepare. %s\n", snd_strerror(pcm));
+        {
+          kgm_log() << "ERROR: Can't prepare " << (char*)snd_strerror(pcm) << ".\n";
+
+          return;
+        }
 
         m_mixer.prepare(2, 16, 44100);
-
-        //m_callback = null;
-        //pcm = snd_async_add_pcm_handler(&m_callback, m_handle, _callback, this);
-
-        if(pcm < 0)
-          printf("ERROR: Can't prepare handler %s.\n", snd_strerror(pcm));
 
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
         //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
 
-        //m_thread.priority(kgmThread::PrIdle);
+        m_thread.priority(kgmThread::PrIdle);
         //m_render.priority(kgmThread::PrIdle);
       }
     }
@@ -298,13 +281,14 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+  m_proceed = false;
+
+  m_render.join();
+  m_thread.join();
+
 #ifdef ALSA
   snd_pcm_close(m_handle);
 #endif
-
-  m_proceed = false;
-  m_render.join();
-  m_thread.join();
 
   m_lib.close();
 }
@@ -329,12 +313,12 @@ void kgmAlsa::remove(Sound snd)
 
 void kgmAlsa::channel(Sound snd, s16 pan)
 {
-
+  ((_Sound*)snd)->pan = pan;
 }
 
 void kgmAlsa::volume(Sound snd, u16 vol)
 {
-
+  ((_Sound*)snd)->vol = vol;
 }
 
 void kgmAlsa::pause(Sound snd, bool stat)
@@ -365,8 +349,6 @@ int kgmAlsa::render()
       int pcm = 0;
       int bpp = 1;
 
-      snd_pcm_start(m_handle);
-
       int frames = m_mixer.getFrames();
 
       int avail = m_mixer.getLength();
@@ -378,7 +360,6 @@ int kgmAlsa::render()
       while(avail > 0)
       {
         int ret = snd_pcm_writei(m_handle, WritePtr, avail);
-        //int ret = snd_pcm_writei(m_handle, WritePtr, 100);
 
         switch (ret)
         {
@@ -396,12 +377,10 @@ int kgmAlsa::render()
         default:
           if(ret >= 0)
           {
-            //u32 k = (u32)snd_pcm_frames_to_bytes(m_handle, ret);
             u32 k = ret * m_mixer.getBytesPerFrame();
             WritePtr += k;
             avail -= ret;
 
-            //if((WritePtr - (char*)m_mixer.getBuffer()) >= m_mixer.getLength())
             if(avail < 1)
               break;
           }
@@ -417,14 +396,9 @@ int kgmAlsa::render()
         }
       }
 
-      //if(pcm = snd_pcm_writei(handle, data, pcm_frames) != pcm_frames)
-      //printf("ERROR: Can't write. %s\n", snd_strerror(pcm));
-
-      //if(pcm = snd_pcm_drain(m_handle) < 0)
-      //  printf("ERROR: Can't drain. %s\n", snd_strerror(pcm));
+      if(pcm = snd_pcm_drain(m_handle) < 0)
+        kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
     }
-
-    //snd_pcm_stop(m_handle);
 #endif
   }
 
@@ -433,7 +407,7 @@ int kgmAlsa::render()
 
 int kgmAlsa::proceed()
 {
-  static u32 max_sounds = 0;
+  static u32 max_sounds = 10;
 
   m_proceed = true;
 
@@ -442,6 +416,8 @@ int kgmAlsa::proceed()
     u32 snd_cound = 0;
 
     m_mixer.clean();
+
+    u32 t1 = kgmTime::getTicks();
 
     for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
     {
@@ -461,6 +437,8 @@ int kgmAlsa::proceed()
 
       if(sound->state != _Sound::StPlay)
         continue;
+
+      u32 rs = sound->size - sound->cursor;
 
       u32 size = m_mixer.mixdata((sound->data + sound->cursor),
                                  (sound->size - sound->cursor),
@@ -485,10 +463,16 @@ int kgmAlsa::proceed()
       snd_cound++;
     }
 
-    //kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
+    kgm_log() << "Start audio render " << kgmTime::getTimeText() << "\n";
     render();
-    kgmThread::sleep(0);
-    //kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
+
+    u32 t2 = kgmTime::getTicks();
+
+    u32 t3 = t2 - t1;
+
+    if(t3 < m_mixer.getTime())
+      kgmThread::sleep(m_mixer.getTime() - t3);
+    kgm_log() << "End   audio render " << kgmTime::getTimeText() << "\n";
   }
 
   return 0;

@@ -3,8 +3,6 @@
 
 KGMOBJECT_IMPLEMENT(kgmAudioMixer, kgmObject)
 
-#undef TEST
-
 inline s16 snd_normalize(s16 val)
 {
   s16 max = 30000;
@@ -61,6 +59,10 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
 
   u32 size = channels * bytes_per_sample * rate;
 
+  size /= 10;
+
+  time = 100;
+
   frames = size / (channels * bytes_per_sample);
 
   bool res = buffer.alloc(size);
@@ -72,22 +74,13 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
 
 u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16 vol, s16 pan)
 {
-#ifdef TEST
-
-  for(int i = 0; i < frames; i++)
-  {
-    s32 a = 300 * i;//0 * sin(18 * i);
-    ((s16*)buffer.data())[i]     = a;
-  }
-
-  return true;
-#endif
-
   if(data == null || size < 1)
     return 0;
 
   if(buffer.data() == null || buffer.length() < 1)
     return 0;
+
+  u32 divs = (u32)ceil(rate / sps);
 
   u32 bpf = chn * bps / 8;
 
@@ -95,7 +88,7 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
   u32 mframes = size / bpf;
 
-  u32 rframes = (mframes < frames) ? (mframes) : (frames);
+  u32 rframes = (mframes < (frames / divs)) ? (mframes) : (frames / divs);
 
   u32 readsize = bpf * rframes;
 
@@ -128,18 +121,22 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     vol_div[0] *= pan1;
     vol_div[1] *= pan2;
   }
-  else
-  {
-  }
 
   for(int i = 0; i < rframes; i++)
   {
-    s32 ref = bytes_per_frame * i;
+    s32 ref = bytes_per_frame * i * divs;
+
+    if(ref > buffer.length())
+    {
+      int k = 0;
+
+      break;
+    }
+
     char* lsample = buffer.data() + ref;
 
-    s16 s1 = 0, s2 = 0;
-    s16 r1 = ((s16*)lsample)[0];
-    s16 r2 = ((s16*)lsample)[1];
+    s16 s1 = 0;
+    s16 s2 = 0;
 
     if(chn == 2)
     {
@@ -149,6 +146,7 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     else
     {
       memcpy(&s1, data + bpf * i, byps);
+      s1 =  (s16)(s1 - 0x80) << 8;
       s2 = s1;
     }
 
@@ -156,14 +154,21 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     s2 = (s16)((float)s2 * (float)vol_div[1]);
 
     //a + b - (a * b) - 65535;
+    //a + b - (a * b) / 65535;
 
-    r1 = snd_normalize((r1 + s1) >> 1);
-    r2 = snd_normalize((r2 + s2) >> 1);
-    //r1 = snd_normalize((r1 + s1) - (r1 * s1) / 0xffff);
-    //r2 = snd_normalize((r2 + s2) - (r2 * s2) / 0xffff);
+    for(int j = 0; j < divs; j++)
+    {
+      s16 r1 = ((s16*)lsample)[bytes_per_frame * j];
+      s16 r2 = ((s16*)lsample)[bytes_per_frame * j + 1];
 
-    ((s16*)lsample)[0] = r1;
-    ((s16*)lsample)[1] = r2;
+      r1 = snd_normalize((r1 + s1) >> 1);
+      r2 = snd_normalize((r2 + s2) >> 1);
+
+      //((s16*)lsample)[0] = r1;
+      //((s16*)lsample)[1] = r2;
+      ((s16*)lsample)[bytes_per_frame * j]     = r1;
+      ((s16*)lsample)[bytes_per_frame * j + 1] = r2;
+    }
   }
 
   return readsize;

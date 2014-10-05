@@ -15,6 +15,8 @@ KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmIAudio);
 
 kgmGameAudio::kgmGameAudio()
 {
+  m_audio = null;
+
 #ifdef OAL
   m_audio = new kgmOAL();
 #elif defined(ALSA)
@@ -31,5 +33,8 @@ kgmGameAudio::kgmGameAudio()
 
 kgmGameAudio::~kgmGameAudio()
 {
-
+  if(m_audio)
+  {
+    m_audio->release();
+  }
 }

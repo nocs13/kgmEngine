@@ -12,6 +12,7 @@ class kgmAudioMixer : public kgmObject
 private:
   kgmMemory<s8> buffer;
 
+  u32       time;
   u32       rate;
   u32       frames;
   u32       channels;
@@ -55,6 +56,13 @@ public:
   u32 getRate()
   {
     return rate;
+  }
+
+  u32 getTime()
+  {
+    //time in miliseconds
+
+    return time;
   }
 
   u32 getBytesPerFrame()
