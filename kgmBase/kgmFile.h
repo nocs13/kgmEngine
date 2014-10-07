@@ -3,19 +3,17 @@
 #include "kgmString.h"
 typedef unsigned int u32;
 
-class kgmFile{
+class kgmFile
+{
 public:
-#ifdef WIN32
   enum
   {
     Read   = 1 << 0L,
     Write  = 1 << 1L,
     Create = 1 << 2L,
   };
-#else
-#endif
 
-  FILE* m_file;
+  s32 m_file;
 public:
   //CONSTRUCTOR-DESTRUCTOR
   kgmFile();

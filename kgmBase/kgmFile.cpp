@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <io.h>
 #else
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -24,7 +25,7 @@ kgmFile::~kgmFile()
   close();
 }
 
-bool kgmFile::open(kgmCString& file, u32 mode)
+bool kgmFile::open(kgmCString& path, u32 mode)
 {
   u32 smode;
 
@@ -46,14 +47,16 @@ bool kgmFile::open(kgmCString& file, u32 mode)
   else if(mode & Write)
     smode = O_WRONLY;
   else if(mode & Read)
-    smode = O_RRONLY;
+    smode = O_RDONLY;
 
   if(mode & Create)
     smode |= (O_CREAT | O_EXCL);
 
-  smode |= 
+#ifdef WIN32
+  smode |= O_BINARY;
+#endif
 
-  m_file = ::open(file, smode);
+  m_file = ::open(path, smode);
   
   if(!m_file)
     return false;
@@ -64,44 +67,33 @@ bool kgmFile::open(kgmCString& file, u32 mode)
 void kgmFile::close()
 {
   if(m_file)
-    close(m_file);
+    ::close(m_file);
 
   m_file = 0;
 }
 
 void kgmFile::flush()
 {
-  fflush(m_file);
+  ::fsync(m_file);
 }
 
 u32 kgmFile::read(void *dst, u32 cnt)
 {
-  return fread(dst, 1, cnt, m_file);
+  return ::read(m_file, dst, cnt);
 }
 
 u32 kgmFile::write(void *src, u32 cnt)
 {
-  return fwrite(src, 1, cnt, m_file);
-}
-
-u32 kgmFile::append(void *src, u32 cnt)
-{
-  return 0;
-}
-
-u32 kgmFile::erase(u32 from, u32 size)
-{
-  return 0;
+  return ::write(m_file, src, cnt);
 }
 
 u32 kgmFile::length()
 {
   long size = 0;
   long cpos = 0;
-  cpos = ftell(m_file);
-  fseek(m_file, 0, SEEK_END);
-  size = ftell(m_file);
-  fseek(m_file, cpos, SEEK_SET);
+  cpos = ::lseek(m_file, SEEK_CUR, 0);
+  size = ::lseek(m_file, 0, SEEK_END);
+  ::lseek(m_file, cpos, SEEK_SET);
 
   return (u32)size;
 }
@@ -109,7 +101,7 @@ u32 kgmFile::length()
 u32 kgmFile::length(u32 len)
 {
 #ifdef WIN32
-  HANDLE hFile = (HANDLE)_get_osfhandle(m_file->_file);
+  HANDLE hFile = (HANDLE)_get_osfhandle(m_file);
 
   if(hFile)
   {
@@ -121,11 +113,8 @@ u32 kgmFile::length(u32 len)
       return 0;
   }
 #elif defined ANDROID
-  if(m_file && m_file->_file)
-    return ftruncate(m_file->_file, len);
-#else
-  if(m_file && m_file->_fileno)
-    return ftruncate(m_file->_fileno, len);
+  if(m_file)
+    return ftruncate(m_file, len);
 #endif
 
   return 0;
@@ -133,7 +122,7 @@ u32 kgmFile::length(u32 len)
 
 u32 kgmFile::position()
 {
-  return (u32)ftell(m_file);
+  return (u32)::lseek(m_file, SEEK_CUR, 0);
 }
 
 u32 kgmFile::seek(u32 pos)
@@ -141,12 +130,12 @@ u32 kgmFile::seek(u32 pos)
   if(!m_file)
     return -1;
 
-  return fseek(m_file, pos, SEEK_SET);
+  return ::lseek(m_file, SEEK_SET, pos);
 }
 
 bool kgmFile::eof()
 {
-  return feof(m_file);
+  return (position() == length());
 }
 
 void* kgmFile::mmap()
