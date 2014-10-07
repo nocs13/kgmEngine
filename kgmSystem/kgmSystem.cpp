@@ -211,29 +211,28 @@ void kgmSystem::getPathDelim(kgmString &s)
 #endif
 }
 
-bool kgmSystem::isFile(kgmString& s){
-  FILE* file;
-  if(!(file = fopen(s, "r")))
+bool kgmSystem::isFile(kgmString& s)
+{
+  struct stat file_stat;
+
+  if(stat(s, &file_stat) != 0)
     return false;
-  fclose(file);
-  return true;
+
+  if(S_ISREG(file_stat.st_mode))
+    return true;
+
+  return false;
 }
 
-bool kgmSystem::isDirectory(kgmString& s){
-  if(s.length() < 1)
+bool kgmSystem::isDirectory(kgmString& s)
+{
+  struct stat file_stat;
+
+  if(stat(s, &file_stat) != 0)
     return false;
 
-#ifdef WIN32
-  DWORD attr =  GetFileAttributes(s.data());
-  if((attr != 0xffffffff) && (attr & FILE_ATTRIBUTE_DIRECTORY))
+  if(S_ISDIR(file_stat.st_mode))
     return true;
-#endif
-#ifdef LINUX
-  DIR* dir = opendir(s.data());
-  if(dir){
-    closedir(dir);
-    return true;
-  }
-#endif
+
   return false;
 }

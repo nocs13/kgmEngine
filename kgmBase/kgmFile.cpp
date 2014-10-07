@@ -89,13 +89,12 @@ u32 kgmFile::write(void *src, u32 cnt)
 
 u32 kgmFile::length()
 {
-  long size = 0;
-  long cpos = 0;
-  cpos = ::lseek(m_file, SEEK_CUR, 0);
-  size = ::lseek(m_file, 0, SEEK_END);
-  ::lseek(m_file, cpos, SEEK_SET);
+  struct stat state;
 
-  return (u32)size;
+  if(fstat(m_file, &state) != 0)
+    return -1;
+
+  return (u32)state.st_size;
 }
 
 u32 kgmFile::length(u32 len)
@@ -112,7 +111,7 @@ u32 kgmFile::length(u32 len)
     else
       return 0;
   }
-#elif defined ANDROID
+#else
   if(m_file)
     return ftruncate(m_file, len);
 #endif
