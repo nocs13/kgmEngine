@@ -34,11 +34,11 @@ public:
 
 public:
   virtual Sound  create(FMT fmt, u16 freq, u32 size, void* data) = 0;
-  virtual void   remove(Sound snd)                              = 0;
+  virtual void   remove(Sound snd)                               = 0;
 
-  virtual void   channel(Sound snd, s16 rel)                    = 0;
-  virtual void   volume(Sound snd, u16 vol)                     = 0;
-  virtual void   pause(Sound snd, bool stat)                    = 0;
-  virtual void   play(Sound snd, bool loop)                     = 0;
-  virtual void   stop(Sound snd)                                = 0;
+  virtual void   channel(Sound snd, s16 rel)                     = 0;
+  virtual void   volume(Sound snd, u16 vol)                      = 0;
+  virtual void   pause(Sound snd, bool stat)                     = 0;
+  virtual void   play(Sound snd, bool loop)                      = 0;
+  virtual void   stop(Sound snd)                                 = 0;
 };

@@ -362,9 +362,9 @@ int kgmAlsa::render()
 
       char* WritePtr = m_mixer.getBuffer();
 
-      avail = frames / 10;
+      avail = frames;
 
-      //snd_pcm_prepare(m_handle);
+      kgm_log() << "Available frames " << avail << "\n";
 
       while(avail > 0)
       {
@@ -410,8 +410,8 @@ int kgmAlsa::render()
       if(pcm = snd_pcm_drain(m_handle) < 0)
         kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
 
-      if(fd)
-        fwrite(m_mixer.getBuffer(), m_mixer.getLength(), 1, fd);
+      //if(fd)
+      //  fwrite(m_mixer.getBuffer(), m_mixer.getLength(), 1, fd);
     }
 #endif
   }

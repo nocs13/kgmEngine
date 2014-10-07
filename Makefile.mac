@@ -16,7 +16,7 @@ LIBS =
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -std=c++11 #-Wno-unknown-pragmas -Werror
-	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU -lopenal
+	LIBS = -lpthread -lXxf86vm -lX11 -lGL -lGLU
 	RM = rm -f
 else
 	CC   = g++

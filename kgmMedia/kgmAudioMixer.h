@@ -18,6 +18,8 @@ private:
   u32       channels;
   u32       bytes_per_sample;
   u32       bytes_per_frame;
+  
+  u32       active_size;
 
 public:
   kgmAudioMixer();
@@ -35,7 +37,8 @@ public:
 
   u32 getFrames()
   {
-    return frames;
+    return active_size / getBytesPerFrame();
+    //return frames;
   }
 
   u32 getLength()

@@ -20,6 +20,7 @@ kgmAudioMixer::kgmAudioMixer()
   channels = 0;
   bytes_per_sample = 0;
   bytes_per_frame  = 0;
+  active_size = 0;
 }
 
 kgmAudioMixer::~kgmAudioMixer()
@@ -31,6 +32,8 @@ void kgmAudioMixer::clean()
 {
   if(buffer.length() > 0)
     memset(buffer.data(), 0x00, buffer.length());
+
+  active_size = 0;
 }
 
 bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
@@ -98,6 +101,9 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
   if(readsize > size)
     readsize = size;
+
+  if(readsize > active_size)
+    active_size = readsize;
 
   float vol_div[2] = {1};
 

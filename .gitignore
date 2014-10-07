@@ -9,7 +9,12 @@
 *.config
 *.files
 *.includes
+*.tags
+*.workspace
+*.session 
+*.project
 .cproject
+.project
 .directory
 .dep
 .inc
