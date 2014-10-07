@@ -195,8 +195,12 @@ struct _Sound
   }
 };
 
+FILE* fd = NULL;
+
 kgmAlsa::kgmAlsa()
 {
+  fd = fopen("/tmp/zbufau", "wb");
+
   m_handle = null;
 
   if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
@@ -271,7 +275,7 @@ kgmAlsa::kgmAlsa()
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
         //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
 
-        //m_thread.priority(kgmThread::PrIdle);
+        m_thread.priority(kgmThread::PrIdle);
         //m_render.priority(kgmThread::PrIdle);
       }
     }
@@ -281,6 +285,9 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+  if(fd)
+    fclose(fd);
+
   m_proceed = false;
 
   m_render.join();
@@ -355,7 +362,9 @@ int kgmAlsa::render()
 
       char* WritePtr = m_mixer.getBuffer();
 
-      avail = frames - 1;
+      avail = frames / 10;
+
+      //snd_pcm_prepare(m_handle);
 
       while(avail > 0)
       {
@@ -400,6 +409,9 @@ int kgmAlsa::render()
 
       if(pcm = snd_pcm_drain(m_handle) < 0)
         kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
+
+      if(fd)
+        fwrite(m_mixer.getBuffer(), m_mixer.getLength(), 1, fd);
     }
 #endif
   }
