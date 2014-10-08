@@ -10,6 +10,7 @@ class kgmIGame;
 
 #define KGM_GO_OBJECT(o_class)                                           \
   KGM_OBJECT(o_class)                                                    \
+  public:                                                                \
   static  o_class*     New(kgmIGame* g){ return new o_class(g); }        \
   private:
 

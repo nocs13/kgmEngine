@@ -6,6 +6,7 @@
 class kgmGuiButton: public kgmGui
 {
   KGM_OBJECT(kgmGuiButton);
+public:
 
   enum State
   {

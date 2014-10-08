@@ -1,10 +1,10 @@
 #pragma once
 #include <stdio.h>
 #include "kgmString.h"
-typedef unsigned int u32;
 
-class kgmFile
+class kgmFile: kgmObject
 {
+  KGM_OBJECT(kgmFile);
 public:
   enum
   {
@@ -15,12 +15,10 @@ public:
 
   s32 m_file;
 public:
-  //CONSTRUCTOR-DESTRUCTOR
   kgmFile();
   ~kgmFile();
 
-  //FUNCTIONS
-  bool open(kgmCString& path, u32 mode); //open create,read,write
+  bool open(kgmCString& path, u32 mode);
   void close();
   void flush();
   u32  read(void *dst, u32 cnt);
@@ -32,11 +30,8 @@ public:
   u32  position();
   u32  seek(u32 pos);
   bool eof();
+  bool mmap(kgmMemory<u8> &buf);
 
-  void* mmap();
-  void  munmap(void* v);
-
-  //STATIC
   static bool remove_file(kgmString path);
   static bool rename(kgmString oname, kgmString nname);
   static bool make_directory(kgmString&);

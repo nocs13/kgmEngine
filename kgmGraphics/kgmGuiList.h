@@ -5,7 +5,8 @@
 
 class kgmGuiList: public kgmGui
 {
-  KGM_OBJECT(kgmGuiList)
+  KGM_OBJECT(kgmGuiList);
+public:
 
   typedef kgmList<kgmString> Items;
   typedef kgmCallback<void(void*)> SelectEventCallback;

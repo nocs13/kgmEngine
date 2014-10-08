@@ -9,6 +9,7 @@
 class kgmResult: public kgmGameObject
 {
   KGM_GO_OBJECT(kgmResult);
+public:
 
   kgmIGame* game;
   kgmString text;

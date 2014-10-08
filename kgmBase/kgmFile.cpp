@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #endif
 
+KGMOBJECT_IMPLEMENT(kgmFile, kgmObject);
+
 kgmFile::kgmFile()
 {
   m_file = 0;
@@ -154,34 +156,30 @@ bool kgmFile::eof()
   return (position() == length());
 }
 
-void* kgmFile::mmap()
+bool kgmFile::mmap(kgmMemory<u8> &buf)
 {
   u32 size = 0;
 
   if(!m_file)
-    return 0;
+    return false;
 
   size = length();
- 
- if(!size)
-    return 0;
 
-  char* v = (char*)malloc(sizeof(char) * size);
+  if(!size)
+    return false;
 
-  if(!v)
-    return 0;
+  if(!buf.alloc(size))
+    return false;
+
+  u32 pos = position();
 
   seek(0);
-  read(v, size);
-  seek(0);
 
-  return v;
-}
+  read(buf.data(), size);
 
-void kgmFile::munmap(void* v)
-{
-  if(v)
-    free(v);
+  seek(pos);
+
+  return true;
 }
 
 bool kgmFile::remove_file(kgmString path)

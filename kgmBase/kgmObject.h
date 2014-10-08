@@ -18,7 +18,8 @@ struct kgmRuntime
   public:                                	      \
   static  kgmRuntime   Class;	                  \
   static  o_class*     cast(kgmObject*);        \
-  virtual kgmRuntime&  runtime();
+  virtual kgmRuntime&  runtime();               \
+  private:
 
 
 

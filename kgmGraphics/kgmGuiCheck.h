@@ -6,6 +6,7 @@
 class kgmGuiCheck: public kgmGui
 {
   KGM_OBJECT(kgmGuiCheck);
+public:
 
   enum State
   {

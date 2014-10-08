@@ -2,8 +2,10 @@
 #include "kgmGui.h"
 #include "../kgmBase/kgmCallback.h"
 
-class kgmGuiScroll: public kgmGui{
+class kgmGuiScroll: public kgmGui
+{
   KGM_OBJECT(kgmGuiScroll);
+public:
 
   typedef kgmCallback<void(void*, u32)> ChangeEventCallback;
 
