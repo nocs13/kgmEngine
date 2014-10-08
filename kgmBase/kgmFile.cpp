@@ -6,14 +6,15 @@
 
 #ifdef WIN32
 #include <windows.h>
+#include <fcntl.h>
 #include <io.h>
+#include <sys/stat.h>
 #else
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
-
 
 kgmFile::kgmFile()
 {
@@ -36,10 +37,8 @@ bool kgmFile::open(kgmCString& path, u32 mode)
 #define O_RDONLY  _O_RDONLY
 #define O_WRONLY  _O_WRONLY
 #define O_BINARY  _O_BINARY
-#defind open      _open
-#defind close     _close
-#defind read      _read
-#defind write     _write
+#else   
+#define O_BINARY  0
 #endif
 
   if((mode & Write) && (mode & Read))
@@ -52,12 +51,14 @@ bool kgmFile::open(kgmCString& path, u32 mode)
   if(mode & Create)
     smode |= (O_CREAT | O_EXCL);
 
-#ifdef WIN32
   smode |= O_BINARY;
+
+#ifdef WIN32
+  m_file = _open(path, smode);
+#else
+  m_file = ::open(path, smode);
 #endif
 
-  m_file = ::open(path, smode);
-  
   if(!m_file)
     return false;
 
@@ -67,24 +68,40 @@ bool kgmFile::open(kgmCString& path, u32 mode)
 void kgmFile::close()
 {
   if(m_file)
+  {
+#ifdef WIN32
+    _close(m_file);
+#else
     ::close(m_file);
-
+#endif
+  }
   m_file = 0;
 }
 
 void kgmFile::flush()
 {
+#ifdef WIN32
+#else
   ::fsync(m_file);
+#endif
 }
 
 u32 kgmFile::read(void *dst, u32 cnt)
 {
+#ifdef WIN32
+  return _read(m_file, dst, cnt);
+#else
   return ::read(m_file, dst, cnt);
+#endif
 }
 
 u32 kgmFile::write(void *src, u32 cnt)
 {
+#ifdef WIN32
+  return _write(m_file, src, cnt);
+#else
   return ::write(m_file, src, cnt);
+#endif
 }
 
 u32 kgmFile::length()

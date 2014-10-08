@@ -5,7 +5,13 @@
 #include "kgmObject.h"
 #include "kgmString.h"
 
+#ifdef WIN32
+#include <ws2tcpip.h>
+
+#define AF_LOCAL AF_UNSPEC
+#else
 #include <sys/socket.h>
+#endif
 
 class kgmSocket : public kgmObject
 {
