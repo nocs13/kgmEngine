@@ -10,7 +10,7 @@
 
 #ifdef DSOUND
 #include <windows.h>
-#include <dsound.h>
+#include "inc/DX/dsound.h"
 
 class kgmDSound: public kgmIAudio
 {
