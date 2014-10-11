@@ -4,17 +4,27 @@
 
 #pragma once
 #include "../kgmMedia/kgmIAudio.h"
+#include "../kgmMedia/kgmAudioMixer.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmMedia/kgmWave.h"
 #include "../kgmMath/kgmMath.h"
+
+#include "../kgmBase/kgmList.h"
 
 #ifdef DSOUND
 #include <windows.h>
 #include "inc/DX/dsound.h"
 
+class _Sound;
+
 class kgmDSound: public kgmIAudio
 {
-  LPDIRECTSOUND m_pSnd;
+  LPDIRECTSOUND       m_pSnd;
+  LPDIRECTSOUNDBUFFER m_pSbuf;
+
+  kgmAudioMixer m_mixer;
+
+  kgmList<_Sound*> m_sounds;
 
 public:
   kgmDSound();
