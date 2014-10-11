@@ -81,11 +81,6 @@ kEditor::kEditor(kgmGameBase* g)
     game->m_render->add(pivot, mtlLines);
     game->m_render->set(pivot, pivot->getTransform());
 
-    fdd = new kFileDialog();
-    fdd->showHidden(false);
-    fdd->hide();
-    game->m_render->add(fdd);
-
     game->m_render->setBgColor(0xffbbaa99);
 
     logView = new kgmVisual();
@@ -104,7 +99,6 @@ kEditor::~kEditor()
   gridline->release();
   pivot->release();
   menu->release();
-  fdd->release();
 
   logView->remove();
   logView->release();
@@ -596,18 +590,18 @@ bool kEditor::mapSave(kgmString s)
   return true;
 }
 
-bool kEditor::addMesh(kgmString fpath)
+bool kEditor::addMesh(kgmString path)
 {
-  kgmFile file;
+  kgmString dir, name;
 
-  if(!file.open(fpath, kgmFile::Read))
-    return false;
+  kgmSystem::splitPath(path, dir, name);
 
   kgmMemory<u8> mem;
 
-  mem.alloc(file.length());
-  file.read(mem, file.length());
-  file.close();
+  game->getResources()->getFile(name, mem);
+
+  if(mem.length() < 1)
+    return false;
 
   kgmXml xml(mem);
   mem.clear();
@@ -621,7 +615,7 @@ bool kEditor::addMesh(kgmString fpath)
     kNode* node = new kNode(mesh);
     node->bnd = mesh->bound();
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    node->lnk = fdd->getFile();
+    node->lnk = name;
     selected = node;
     nodes.add(node);
 
@@ -781,9 +775,6 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
   if(menu->visible() && game->m_msAbs)
     menu->onEvent(e);
-
-  if(fdd->visible())
-    fdd->onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -850,9 +841,7 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 
   select(x, y);
 
-  if(fdd->visible())
-    game->setMsAbsolute(true);
-  else if(selected && pivot->axis != kPivot::AXIS_NONE)
+  if(selected && pivot->axis != kPivot::AXIS_NONE)
     game->setMsAbsolute(true);
 }
 
@@ -865,9 +854,6 @@ void kEditor::onMsRightUp(int k, int x, int y)
 
 void kEditor::onMsRightDown(int k, int x, int y)
 {
-  if(!fdd->visible())
-    game->setMsAbsolute(false);
-
   ms_click[1] = true;
 }
 
@@ -989,6 +975,10 @@ void kEditor::onQuit()
 
 void kEditor::onMapOpen()
 {
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+  game->guiAdd(fdd);
+
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapOpen));
@@ -996,6 +986,10 @@ void kEditor::onMapOpen()
 
 void kEditor::onMapSave()
 {
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+  game->guiAdd(fdd);
+
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapSave));
@@ -1033,7 +1027,7 @@ void kEditor::onEditDuplicate()
     node = new kNode(selected->msh);
     node->bnd = selected->msh->bound();
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    node->lnk = fdd->getFile();
+    node->lnk = selected->lnk;
 
     game->m_render->add(node->msh, null);
 
@@ -1102,6 +1096,10 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddMesh()
 {
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+  game->guiAdd(fdd);
+
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addMesh));
@@ -1227,17 +1225,13 @@ void kEditor::onOptionsDatabase()
 {
   kgmString loc = game->getSettings()->get("Path");
 
-  fdd->changeLocation(true);
-
   if(!loc.length())
   {
     kgmString cwd;
     kgmSystem::getCurrentDirectory(cwd);
-    //fdd->forOpen(cwd);
   }
   else
   {
-    //fdd->forOpen(loc);
   }
 }
 

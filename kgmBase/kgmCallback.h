@@ -1,17 +1,16 @@
 #ifndef KGMCALLBACK_H
 #define KGMCALLBACK_H
 
-//Class for declare callback func
+// Callback function should be __stdcall attribute.
 
 template <class Res, class Obj, class... Args> class kgmCallback
-//class kgmCallback<Res (Obj, Args...)>
 {
 public:
-  typedef Res(*Function)(Args...);
+  typedef __stdcall Res(*Function)(Args...);
 
 private:
-  typedef Res(*Fn)(Args...);
-  typedef Res(*Fno)(Obj, Args...);
+  typedef __stdcall Res(*Fn)(Args...);
+  typedef __stdcall Res(*Fno)(Obj, Args...);
 
   Obj object;
 
@@ -28,7 +27,7 @@ public:
     function = null;
   }
 
-  kgmCallback(Obj obj = null, Fn fn = null)
+  kgmCallback(Obj obj = null, Function fn = null)
   {
     object = obj;
     function = fn;

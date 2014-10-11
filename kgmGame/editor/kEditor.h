@@ -59,7 +59,7 @@ private:
 
   kMenu*     menu;
 
-  kFileDialog* fdd;
+  //kFileDialog* fdd;
 
   u32        oquered;
 
@@ -84,12 +84,12 @@ public:
 
   kgmRay3d<float> getPointRay(int x, int y);
 
-  bool mapSave(kgmString);
-  bool mapOpen(kgmString);
-  bool addMesh(kgmString);
-  bool addActor(kgmString);
-  bool addSensor(kgmString);
-  bool addObject(kgmString);
+  __stdcall bool mapSave(kgmString);
+  __stdcall bool mapOpen(kgmString);
+  __stdcall bool addMesh(kgmString);
+  __stdcall bool addActor(kgmString);
+  __stdcall bool addSensor(kgmString);
+  __stdcall bool addObject(kgmString);
 
   void initPhysics();
   void initLogic();
@@ -105,24 +105,23 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
 
-  void onQuit();
-  void onEditRemove();
-  void onEditDuplicate();
-  void onEditOptions();
-  void onMapOpen();
-  void onMapSave();
-  void onAddMesh();
-  void onAddLight();
-  void onAddActor();
-  void onAddSensor();
-  void onAddObject();
-  void onAddTrigger();
-  void onViewObjects();
-  void onOptionsDatabase();
-  void onRunRun();
-  void onSelectObject(kgmString);
-
-  void onCloseVop();
+  __stdcall void onQuit();
+  __stdcall void onEditRemove();
+  __stdcall void onEditDuplicate();
+  __stdcall void onEditOptions();
+  __stdcall void onMapOpen();
+  __stdcall void onMapSave();
+  __stdcall void onAddMesh();
+  __stdcall void onAddLight();
+  __stdcall void onAddActor();
+  __stdcall void onAddSensor();
+  __stdcall void onAddObject();
+  __stdcall void onAddTrigger();
+  __stdcall void onViewObjects();
+  __stdcall void onOptionsDatabase();
+  __stdcall void onRunRun();
+  __stdcall void onSelectObject(kgmString);
+  __stdcall void onCloseVop();
 };
 
 }

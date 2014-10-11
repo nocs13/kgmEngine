@@ -113,7 +113,7 @@ class kViewOptionsForObject : public kViewOptions
       kcallback = call;
     }
 
-    void dataChange(kgmString s)
+    __stdcall void dataChange(kgmString s)
     {
       if(kcallback.hasFunction())
         kcallback(getSid(), getText());

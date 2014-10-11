@@ -55,11 +55,11 @@ public:
   virtual void onFail(){}
 
 protected:
-  void onFileSelect();
-  void onOpenSelect();
-  void onSaveSelect();
-  void onFailSelect();
-  void onEditFile(kgmString);
+  __stdcall void onFileSelect();
+  __stdcall void onOpenSelect();
+  __stdcall void onSaveSelect();
+  __stdcall void onFailSelect();
+  __stdcall void onEditFile(kgmString);
   void onAction(kgmGui*, u32);
   void onMsLeftUp(int, int, int);
   void onMsMove(int, int, int);

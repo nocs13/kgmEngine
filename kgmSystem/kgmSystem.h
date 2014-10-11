@@ -17,4 +17,5 @@ public:
   static bool getCpuData(int &cpus, int &cores);
   static bool isFile(kgmString&);
   static bool isDirectory(kgmString&);
+  static bool splitPath(kgmString path, kgmString& dir, kgmString& file);
 };

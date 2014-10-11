@@ -44,6 +44,13 @@ struct CPU
 #define S_ISDIR(mode)  (((mode) & _S_IFMT) == _S_IFDIR)
 #endif
 
+#ifdef WIN32
+  static const char delim = '\\';
+#else
+  static const char delim = '/';
+#endif
+
+
 void kgmSystem::sleep(u32 ms)
 {
 #ifdef WIN32
@@ -245,3 +252,37 @@ bool kgmSystem::isDirectory(kgmString& s)
 
   return false;
 }
+
+bool kgmSystem::splitPath(kgmString path, kgmString& dir, kgmString& file)
+{
+  s8* sym = strrchr(path.data(), delim);
+
+  if(sym != null)
+  {
+    if(isFile(path))
+    {
+      file = (++sym);
+      dir.alloc(path.data(), u32(sym - path.data() - 1));
+
+      return true;
+    }
+    else
+    {
+      dir = path;
+
+      return false;
+    }
+  }
+  else
+  {
+    if(isFile(path))
+      file = path;
+    else
+      dir = path;\
+
+    return false;
+  }
+
+  return false;
+}
+
