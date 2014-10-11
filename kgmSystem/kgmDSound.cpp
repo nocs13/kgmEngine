@@ -194,4 +194,40 @@ kgmIAudio::Sound kgmDSound::create(FMT fmt, u16 freq, u32 size, void* data)
 
   return (pSb) ? (new _Sound(pSb)) : (null);
 }
+
+void kgmDSound::remove(Sound snd)
+{
+
+}
+
+void kgmDSound::channel(Sound snd, s16 pan)
+{
+
+}
+
+void kgmDSound::volume(Sound snd, u16 vol)
+{
+
+}
+
+void kgmDSound::pause(Sound snd, bool stat)
+{
+
+}
+
+void kgmDSound::play(Sound snd, bool loop)
+{
+
+}
+
+void kgmDSound::pan(Sound  snd, s16 pan)
+{
+
+}
+
+void kgmDSound::stop(Sound snd)
+{
+
+}
+
 #endif

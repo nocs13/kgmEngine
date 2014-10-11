@@ -32,7 +32,7 @@ public:
 
   F operator()(Args... args)
   {
-    return kgmCallback::function(args...);
+    return function(args...);
   }
 
   bool hasObject()

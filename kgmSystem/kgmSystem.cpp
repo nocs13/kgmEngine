@@ -6,6 +6,7 @@
 
 #ifdef WIN32
 #include <windows.h>
+#include <sys/stat.h>
 #endif
 
 #ifdef LINUX
@@ -39,7 +40,12 @@ struct CPU
 
 #endif
 
-void kgmSystem::sleep(u32 ms){
+#ifndef S_ISDIR
+#define S_ISDIR(mode)  (((mode) & _S_IFMT) == _S_IFDIR)
+#endif
+
+void kgmSystem::sleep(u32 ms)
+{
 #ifdef WIN32
   Sleep(ms);
 #else
@@ -47,7 +53,8 @@ void kgmSystem::sleep(u32 ms){
 #endif
 }
 
-bool kgmSystem::getCpuData(int& cpu_count, int& cpu_cores){
+bool kgmSystem::getCpuData(int& cpu_count, int& cpu_cores)
+{
 #ifdef WIN32
 #elif defined LINUX
 
@@ -111,10 +118,12 @@ bool kgmSystem::getCpuData(int& cpu_count, int& cpu_cores){
 
   cpus.clear();
 #endif
+
   return true;
 }
 
-void kgmSystem::getDesktopDimension(u32& w, u32& h){
+void kgmSystem::getDesktopDimension(u32& w, u32& h)
+{
 #ifdef WIN32
   w = GetDeviceCaps(GetDC(GetDesktopWindow()), HORZRES);
   h = GetDeviceCaps(GetDC(GetDesktopWindow()), VERTRES);
