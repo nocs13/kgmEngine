@@ -27,7 +27,7 @@ class kFileDialog : public kgmGui
   bool      allsee;
 
 public:
-  typedef kgmCallback<void(void*, kgmString)> ClickEventCallback;
+  typedef kgmCallback<void, kgmObject*, kgmString> ClickEventCallback;
 
 private:
   ClickEventCallback callback;

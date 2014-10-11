@@ -14,7 +14,7 @@ public:
     StateFocus,
   };
 
-  typedef kgmCallback<void(void*, bool)> ClickEventCallback;
+  typedef kgmCallback<void, kgmObject*, bool> ClickEventCallback;
 
   State  m_state;
   bool   m_check;

@@ -457,7 +457,7 @@ public:
     if(!valid())
       return;
 
-    visual->m_transform = m_visual->m_transform;
+    visual->getTransform() = m_visual->getTransform();
     visual->update();
   }
 

@@ -3,20 +3,16 @@
 
 //Class for declare callback func
 
-class kgmObject;
-
-template <class F> class kgmCallback;
-
-template <class Res, class Obj, class... Args>
-class kgmCallback<Res (Obj, Args...)>
+template <class Res, class Obj, class... Args> class kgmCallback
+//class kgmCallback<Res (Obj, Args...)>
 {
 public:
   typedef Res(*Function)(Args...);
 
+private:
   typedef Res(*Fn)(Args...);
   typedef Res(*Fno)(Obj, Args...);
 
-private:
   Obj object;
 
   union

@@ -350,7 +350,7 @@ void kgmGraphics::render()
     {
       vec3 v(0, 0, 0);
 
-      v = (*i)->m_transform * v;
+      v = (*i)->getTransform() * v;
 
       vec3  l = (*i)->getBound().max - (*i)->getBound().min;
 
@@ -603,7 +603,7 @@ void kgmGraphics::render()
     g_main_light = null;
 
 
-    pos = visual->m_transform * pos;
+    pos = visual->getTransform() * pos;
 
     for(kgmList<kgmLight*>::iterator i = vw_lights.begin(); i != vw_lights.end(); ++i)
     {
@@ -674,7 +674,7 @@ void kgmGraphics::render()
         continue;
       }
 
-      setWorldMatrix(vis->m_transform);
+      setWorldMatrix(vis->getTransform());
       render(mtl);
       render(shaders[mtl->m_shader]);
       render(vis->getParticles());
@@ -690,7 +690,7 @@ void kgmGraphics::render()
     kgmParticles* par = vis->getParticles();
     kgmMaterial*  mtl = vis->getMaterial();
 
-    setWorldMatrix(vis->m_transform);
+    setWorldMatrix(vis->getTransform());
     render(mtl);
     render(shaders[mtl->m_shader]);
     render(vis->getParticles());
@@ -912,7 +912,7 @@ void kgmGraphics::render(kgmVisual* visual)
   if(!visual)
     return;
 
-  setWorldMatrix(visual->m_transform);
+  setWorldMatrix(visual->getTransform());
 
   kgmMaterial* mtl = visual->getMaterial();
 

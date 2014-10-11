@@ -23,9 +23,9 @@ struct kgmRuntime
 
 
 
-#define KGMOBJECT_IMPLEMENT(o_class, o_parent)   \
-  kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class}; \
-  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }   \
+#define KGMOBJECT_IMPLEMENT(o_class, o_parent)                                         \
+  kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class};  \
+  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }                      \
   kgmRuntime& o_class::runtime() { return o_class::Class; }
 
 //base class for kgm_engine project objects
@@ -33,6 +33,21 @@ struct kgmRuntime
 class kgmObject
 {
   KGM_OBJECT(kgmObject);
+
+public:
+  template<class... Args> class Action
+  {
+  public:
+    virtual void call(Args... args) = 0;
+  };
+
+  template<class... Args> class Event
+  {
+  public:
+    void operator()(Args... args)
+    {
+    }
+  };
 
 private:
   unsigned int m_references;

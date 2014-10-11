@@ -15,7 +15,7 @@ public:
     StateClick
   };
 
-  typedef kgmCallback<void(void*)> ClickEventCallback;
+  typedef kgmCallback<void, kgmObject*> ClickEventCallback;
 
   State  m_state;
 

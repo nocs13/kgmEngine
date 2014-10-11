@@ -83,7 +83,7 @@ void kgmGameObject::update(u32 mls)
     if(getVisual())
     {
       m_body->transform(tm);
-      m_visual->m_transform = tm;
+      m_visual->getTransform() = tm;
       m_visual->update();
     }
   }
@@ -95,7 +95,7 @@ void kgmGameObject::update(u32 mls)
     {
       tr.translate(m_position);
       rt.rotate(m_rotation);
-      m_visual->m_transform = rt * tr;
+      m_visual->getTransform() = rt * tr;
       m_visual->update();
     }
   }

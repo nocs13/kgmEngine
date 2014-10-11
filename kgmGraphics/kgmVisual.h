@@ -133,8 +133,10 @@ public:
   bool                   m_remove;
   bool                   m_visible;
 
-public:
+private:
   mtx4                   m_transform;
+
+public:
   TypeShadow             m_typeshadow;
   TypeRender             m_typerender;
 
@@ -266,6 +268,11 @@ public:
     m->increment();
 
     return true;
+  }
+
+  mtx4& getTransform()
+  {
+    return m_transform;
   }
 
   kgmMaterial* getMaterial()

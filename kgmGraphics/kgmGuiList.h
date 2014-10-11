@@ -9,7 +9,7 @@ class kgmGuiList: public kgmGui
 public:
 
   typedef kgmList<kgmString> Items;
-  typedef kgmCallback<void(void*)> SelectEventCallback;
+  typedef kgmCallback<void, kgmObject*> SelectEventCallback;
 
   struct Item
   {

@@ -11,8 +11,8 @@ namespace kgmGameEditor
 class kViewObjects : public kgmGuiFrame
 {
 public:
-  typedef kgmCallback<void(void*)> CloseCallback;
-  typedef kgmCallback<void(void*, kgmString)> SelectCallback;
+  typedef kgmCallback<void, kgmObject*> CloseCallback;
+  typedef kgmCallback<void, kgmObject*, kgmString> SelectCallback;
 
 private:
   CloseCallback  callClose;

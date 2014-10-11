@@ -13,8 +13,7 @@ public:
   {
   public:
 
-    //typedef void (*ClickEventCallback)(kgmObject*);
-    typedef kgmCallback<void(void*)> ClickEventCallback;
+    typedef kgmCallback<void, kgmObject*> ClickEventCallback;
 
     enum Type
     {
