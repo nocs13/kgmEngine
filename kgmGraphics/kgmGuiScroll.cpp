@@ -126,7 +126,7 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
     m_position = pos;
     //m_msp = y;
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject(), pos);
+      callback(pos);
   }
 }
 

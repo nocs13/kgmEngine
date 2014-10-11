@@ -99,13 +99,13 @@ class kViewOptionsForObject : public kViewOptions
     kGuiText()
       : kgmGuiText(), kcallback(null, null)
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Fn)&kGuiText::dataChange));
     }
 
     kGuiText(kgmGui* parent, int x, int y, int w, int h)
       : kgmGuiText(parent, x, y, w, h), kcallback(null, null)
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
+      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Fn)&kGuiText::dataChange));
     }
 
     void setChangeEventCallback(kChangeEventCallback call)
@@ -115,8 +115,8 @@ class kViewOptionsForObject : public kViewOptions
 
     void dataChange(kgmString s)
     {
-      if(kcallback.hasObject() && kcallback.hasFunction())
-        kcallback(kcallback.getObject(), getSid(), getText());
+      if(kcallback.hasFunction())
+        kcallback(getSid(), getText());
     }
   };
 public:

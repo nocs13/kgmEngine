@@ -17,14 +17,14 @@ kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h, bool selclos
 void kViewObjects::onClose()
 {
   if(callEclose.hasObject() && callEclose.hasFunction())
-    callEclose(callEclose.getObject());
+    callEclose();
 }
 
 void kViewObjects::onSelectItem()
 {
 
   if(callSelect.hasObject() && callSelect.hasFunction())
-    callSelect(callSelect.getObject(), list->getItem(list->getSel()));
+    callSelect(list->getItem(list->getSel()));
 
   if(closeOnSelect)
     close();

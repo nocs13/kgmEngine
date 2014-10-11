@@ -11,7 +11,7 @@ kgmGuiFrame::kgmGuiFrame(kgmString title, int x, int y, int w, int h)
   m_title->setText(title);
   m_close = new kgmGuiButton(this, w - 20, 0, 20, 20);
   m_close->setText("X");
-  m_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kgmGuiFrame::onFrameClose));
+  m_close->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Fn)&kgmGuiFrame::onFrameClose));
 
   m_client = new kgmGui(this, 0, 20, w, h - 20);
 }

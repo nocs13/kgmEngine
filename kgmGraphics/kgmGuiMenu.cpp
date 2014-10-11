@@ -53,7 +53,7 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
   {
     //onAction(this, selected->getId());
     if(selected->callback.getObject())
-      selected->callback(selected->callback.getObject());
+      selected->callback();
   }
 }
 

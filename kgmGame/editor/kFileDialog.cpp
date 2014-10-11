@@ -103,7 +103,7 @@ void kFileDialog::onOpenSelect()
   hide();
 
   if(callback.hasObject() && callback.hasFunction())
-    callback(callback.getObject(), getPath());
+    callback(getPath());
 }
 
 void kFileDialog::onSaveSelect()
@@ -111,7 +111,7 @@ void kFileDialog::onSaveSelect()
   hide();
 
   if(callback.hasObject() && callback.hasFunction())
-    callback(callback.getObject(), getPath());
+    callback(getPath());
 }
 
 void kFileDialog::onFailSelect()
@@ -119,7 +119,7 @@ void kFileDialog::onFailSelect()
   hide();
 
   if(fail_callback.hasObject() && fail_callback.hasFunction())
-    fail_callback(fail_callback.getObject());
+    fail_callback();
 }
 
 void kFileDialog::onEditFile(kgmString s)

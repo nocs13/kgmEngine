@@ -7,15 +7,23 @@ class kgmObject;
 
 template <class F> class kgmCallback;
 
-template <class F, class... Args>
-class kgmCallback<F(Args...)>
+template <class Res, class Obj, class... Args>
+class kgmCallback<Res (Obj, Args...)>
 {
 public:
-  typedef F (*Function)(Args...);
+  typedef Res(*Function)(Args...);
+
+  typedef Res(*Fn)(Args...);
+  typedef Res(*Fno)(Obj, Args...);
 
 private:
-  void* object;
-  Function   function;
+  Obj object;
+
+  union
+  {
+    Fn  function;
+    Fno functiono;
+  };
 
 public:
   kgmCallback()
@@ -24,15 +32,18 @@ public:
     function = null;
   }
 
-  kgmCallback(void* obj = null, Function fn = null)
+  kgmCallback(Obj obj = null, Fn fn = null)
   {
     object = obj;
     function = fn;
   }
 
-  F operator()(Args... args)
+  Res operator()(Args... args)
   {
-    return function(args...);
+    if(object)
+      return (*functiono)(object, args...);
+
+    return (*function)(args...);
   }
 
   bool hasObject()

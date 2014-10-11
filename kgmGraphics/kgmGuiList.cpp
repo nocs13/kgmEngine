@@ -192,7 +192,7 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
   if((m_itemSel < m_items.size()))
   {
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject());
+      callback();
   }
 }
 
@@ -239,7 +239,7 @@ void kgmGuiList::onKeyDown(int k)
     if(m_itemSel >= 0 && m_itemSel < m_items.size())
     {
       if(callback.hasObject() && callback.hasFunction())
-        callback(callback.getObject());
+        callback();
     }
     break;
   }

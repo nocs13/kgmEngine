@@ -136,7 +136,7 @@ kgmGuiFrame("Options", x, y, w, h)
 void kViewOptions::onCloseOptions()
 {
   if(callClose.hasObject() && callClose.hasFunction())
-    callClose(callClose.getObject());
+    callClose();
 
   erase();
 }

@@ -64,7 +64,7 @@ void kgmGuiButton::onMsLeftUp(int key, int x, int y)
   //if(m_state == StateFocus)
   {
     if(callback.hasObject() && callback.hasFunction())
-      callback(callback.getObject());
+      callback();
 
     m_state = StateFocus;
   }
