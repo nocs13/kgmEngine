@@ -1,5 +1,5 @@
 #pragma once 
-#include "kgmObject.h"
+//#include "kgmObject.h"
 #include "malloc.h"
 
 typedef unsigned int u32;
@@ -40,10 +40,13 @@ public:
     _Node* _Ptr;
 
   public:
-    iterator(){
-      _Ptr = null;
+    iterator()
+    {
+      _Ptr = NULL;
     }
-    T& operator*(){
+
+    T& operator*()
+    {
       return _Ptr->data;
     }
     void operator++(){
@@ -86,9 +89,9 @@ protected:
   }
 
 public:
-  kgmList():_First(null),csize(0)
+  kgmList():_First(NULL),csize(0)
   {
-    _First = null;
+    _First = NULL;
     csize  = 0;
   }
 

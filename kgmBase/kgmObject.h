@@ -1,8 +1,10 @@
 #pragma once
 #include "kgmMain.h"
 #include "kgmTypes.h"
+#include "kgmList.h"
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 class kgmApp;
 class kgmObject;
@@ -43,9 +45,13 @@ public:
 
   template<class... Args> class Event
   {
+    kgmList<Action<Args...>*> list;
+
   public:
     void operator()(Args... args)
     {
+      for(int i = 0; i < list.length(); i++)
+        (list[i])->call(args...);
     }
   };
 
