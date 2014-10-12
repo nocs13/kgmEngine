@@ -47,6 +47,9 @@ public:
   {
     kgmList<Action<Args...>*> list;
 
+    friend void kgmObject::connect();
+    friend void kgmObject::spread();
+
   public:
     void operator()(Args... args)
     {
@@ -158,6 +161,11 @@ public:
       delete this;
   }
 
+  template<class T, class... Args>
+  void connect(T *t, void(T::*f)(Args...), Event<Args...> &s)
+  {
+  }
+
   virtual kgmObject* clone()
   {
     return new kgmObject();
@@ -174,6 +182,10 @@ public:
 #ifdef DEBUG
   static void listObjects();
 #endif
+
+private:
+  template<class... Args>
+  void spread(Event<Args...> &evt);
 };
 ///////////////////
 

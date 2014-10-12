@@ -45,7 +45,7 @@ void kgmGuiFrame::onMsLeftDown(int k, int x, int y)
     m_prevy = y;
   }
 
-  kgmGui::onMsMove(k, x, y);
+  kgmGui::onMsLeftDown(k, x, y);
 }
 
 void kgmGuiFrame::onResize(int w, int h)
@@ -57,6 +57,10 @@ void kgmGuiFrame::onResize(int w, int h)
 
 void kgmGuiFrame::onFrameClose()
 {
-  erase();
+  close();
+}
+
+void kgmGuiFrame::onClose()
+{
   release();
 }

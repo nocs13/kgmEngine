@@ -107,12 +107,19 @@ public:
 
   // Virtual Functions
   virtual void onClose();
-  virtual void onIdle(){
+
+  virtual void onIdle()
+  {
   }
-  virtual void onMenu(int id){
+
+  virtual void onMenu(int id)
+  {
   }
-  virtual void onEvent(kgmEvent::Event* e){
-    if(!e) return;
+
+  virtual void onEvent(kgmEvent::Event* e)
+  {
+    if(!e)
+      return;
 
     kgmEvent::onEvent(e);
   }

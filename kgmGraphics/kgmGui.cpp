@@ -83,7 +83,8 @@ void kgmGui::close()
 {
   onClose();
 
-  erase();
+  if(m_parent == null)
+    erase();
 }
 
 void kgmGui::scale(float sw, float sh)

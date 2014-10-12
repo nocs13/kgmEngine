@@ -13,7 +13,7 @@ namespace kgmGameEditor
 
 class kViewOptions : public kgmGuiFrame
 {
-  //KGM_OBJECT(kViewOptions);
+  KGM_OBJECT(kViewOptions);
 
   kgmGuiButton* btn_close;
   kgmGuiTab*    tab;

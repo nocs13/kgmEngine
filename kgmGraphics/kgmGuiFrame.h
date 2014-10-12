@@ -24,6 +24,7 @@ public:
   void onMsLeftDown(int k, int x, int y);
   void onResize(int w, int h);
   void onFrameClose();
+  void onClose();
 
   kgmGui* getClient()
   {

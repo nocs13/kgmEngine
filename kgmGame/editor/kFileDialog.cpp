@@ -9,13 +9,13 @@ using namespace kgmGameEditor;
 kgmString kFileDialog::DIRCON = "/";
 
 kFileDialog::kFileDialog()
-  :kgmGui(null, 100, 50, 200, 300), callback(null, null), fail_callback(null, null)
+  :kgmGuiFrame(null, 100, 50, 200, 300), callback(null, null), fail_callback(null, null)
 {
-  list = new kgmGuiList(this, 1, 1, 198, 200);
-  text = new kgmGuiText(this, 1, 237, 198, 30);
+  list = new kgmGuiList(this->getClient(), 1, 1, 198, 200);
+  text = new kgmGuiText(this->getClient(), 1, 237, 198, 30);
   text->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kFileDialog::onEditFile));
-  btnCmd = new kgmGuiButton(this, 1, 201, 99, 35);
-  btnFail = new kgmGuiButton(this, 101, 201, 99, 35);
+  btnCmd = new kgmGuiButton(this->getClient(), 1, 201, 99, 35);
+  btnFail = new kgmGuiButton(this->getClient(), 101, 201, 99, 35);
 
   list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onFileSelect));
 

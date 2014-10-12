@@ -4,12 +4,13 @@
 #include "../../kgmGraphics/kgmGui.h"
 #include "../../kgmGraphics/kgmGuiText.h"
 #include "../../kgmGraphics/kgmGuiList.h"
+#include "../../kgmGraphics/kgmGuiFrame.h"
 #include "../../kgmGraphics/kgmGuiButton.h"
 
 namespace kgmGameEditor
 {
 
-class kFileDialog : public kgmGui
+class kFileDialog : public kgmGuiFrame
 {
   kgmGuiList* list;
   kgmGuiText* text;

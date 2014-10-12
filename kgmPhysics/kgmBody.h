@@ -1,5 +1,5 @@
 #pragma once
-#include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmObject.h"
 #include "../kgmMath/kgmMath.h"
 
 class kgmBody: public kgmObject
