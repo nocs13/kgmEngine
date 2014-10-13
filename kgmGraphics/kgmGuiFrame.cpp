@@ -62,5 +62,4 @@ void kgmGuiFrame::onFrameClose()
 
 void kgmGuiFrame::onClose()
 {
-  release();
 }
