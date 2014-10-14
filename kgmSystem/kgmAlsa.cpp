@@ -107,7 +107,7 @@ static int run_recovery(snd_pcm_t *handle, int err)
       err = psnd_pcm_start(handle);
 
     if (err < 0)
-      kgm_log() << "prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+      kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror(err) << ".\n";
   }
   else if (err == -ESTRPIPE)
   {
@@ -122,7 +122,7 @@ static int run_recovery(snd_pcm_t *handle, int err)
         err = psnd_pcm_start(handle);
 
       if (err < 0)
-        kgm_log() << "prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+        kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror(err) << ".\n";
     }
   }
 
@@ -322,8 +322,8 @@ kgmAlsa::kgmAlsa()
 
         if(err < 0)
         {
-          kgm_log() << "Error: Can't open alsa device.\n";
-          kgm_log() << "Error: Is " << (char*)kgmString((char*)psnd_strerror(err)) << ".\n";
+          kgm_log() << "kgmAlsa Error: Can't open alsa device.\n";
+          kgm_log() << "kgmAlsa Error: Is " << (char*)kgmString((char*)psnd_strerror(err)) << ".\n";
 
           return;
         }
@@ -379,14 +379,14 @@ kgmAlsa::kgmAlsa()
                                      SND_PCM_ACCESS_RW_INTERLEAVED, 2,
                                      44100, 1, m_mixer.getMsTime() * 1000) < 0)
         {
-          kgm_log() << "Playback set param error: " << (char*)psnd_strerror(err) << ".\n";
+          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror(err) << ".\n";
 
           return;
         }
 
         if(err = psnd_pcm_prepare(m_handle) < 0)
         {
-          kgm_log() << "ERROR: Can't prepare " << (char*)psnd_strerror(err) << ".\n";
+          kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror(err) << ".\n";
 
           return;
         }
@@ -492,7 +492,12 @@ int kgmAlsa::render()
       //kgm_log() << "Available frames " << avail << "\n";
 
       kgmThread::lock(m_mutex);
-      kgm_log() << "kgmAlsa:: render lock\n";
+
+      u32 t1 = kgmTime::getTicks();
+
+#ifdef DEBUG
+      kgm_log() << "kgmAlsa:: render lock " << kgmTime::getTimeText() << "\n";
+#endif
 
       while(avail > 0)
       {
@@ -561,12 +566,26 @@ int kgmAlsa::render()
         }
       }
 
-      if(pcm = psnd_pcm_drain(m_handle) < 0)
-        kgm_log() << "ERROR: Can't drain. " << (char*)psnd_strerror(pcm) << "\n";
+      //if(pcm = psnd_pcm_drain(m_handle) < 0)
+      //  kgm_log() << "kgmAlsa ERROR: Can't drain. " << (char*)psnd_strerror(pcm) << "\n";
+
+      u32 t2 = kgmTime::getTicks();
+
+      u32 t3 = t2 - t2;
+
+      if(t3 < m_mixer.getMsTime())
+      {
+        s32 wtime = m_mixer.getMsTime() - t3;
+
+        kgmThread::sleep(wtime / 2);
+      }
 
       m_mixer.clean();
       kgmThread::unlock(m_mutex);
-      kgm_log() << "kgmAlsa:: render unlock\n";
+
+#ifdef DEBUG
+      kgm_log() << "kgmAlsa:: render unlock " << kgmTime::getTimeText() << "\n";
+#endif
     }
 #endif
   }
@@ -585,7 +604,10 @@ int kgmAlsa::proceed()
     u32 snd_cound = 0;
 
     kgmThread::lock(m_mutex);
-    kgm_log() << "kgmAlsa:: proceed lock\n";
+
+#ifdef DEBUG
+    kgm_log() << "kgmAlsa:: proceed lock " << kgmTime::getTimeText() << "\n";
+#endif
 
     m_mixer.clean();
 
@@ -609,8 +631,6 @@ int kgmAlsa::proceed()
 
       if(sound->state != _Sound::StPlay)
         continue;
-
-      //u32 rs = sound->size - sound->cursor;
 
       u32 size = m_mixer.mixdata((sound->data + sound->cursor),
                                  (sound->size - sound->cursor),
@@ -638,7 +658,10 @@ int kgmAlsa::proceed()
     //render();
 
     kgmThread::unlock(m_mutex);
-    kgm_log() << "kgmAlsa:: proceed unlock\n";
+
+#ifdef DEBUG
+    kgm_log() << "kgmAlsa:: proceed unlock " << kgmTime::getTimeText() << "\n";
+#endif
 
     u32 t2 = kgmTime::getTicks();
 

@@ -2,6 +2,7 @@
 #ifdef WIN32
 #include <windows.h>
 #include <time.h>
+#include <sys/time.h>
 #else
 #include <time.h>
 #include <sys/time.h>
@@ -14,7 +15,34 @@ typedef unsigned int u32;
 
 class kgmTime
 {
+  timeval tv;
 public:
+
+#ifdef WIN32
+    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+#endif
+
+public:
+
+  kgmTime()
+  {
+    update();
+  }
+
+  void update()
+  {
+    gettimeofday(&tv, 0);
+  }
+
+  u32 getSeconds()
+  {
+    return tv.tv_sec;
+  }
+
+  u32 getUSeconds()
+  {
+    return tv.tv_usec;
+  }
 
   static u32 getTicks()
   {
@@ -47,8 +75,6 @@ public:
     timeval tv;
 
 #ifdef WIN32
-    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
-
     SYSTEMTIME  system_time;
     FILETIME    file_time;
     uint64_t    time;
