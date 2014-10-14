@@ -62,10 +62,10 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
 
   u32 size = channels * bytes_per_sample * rate;
 
-  size /= 5;
+  size *= 2;
   //size *= 2;
 
-  time = 200;
+  time = 1000 * 2;
 
   frames = size / (channels * bytes_per_sample);
 
@@ -182,8 +182,8 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
       //memcpy(&r1, lsample + ref1, bytes_per_sample);
       //memcpy(&r2, lsample + ref2, bytes_per_sample);
 
-      //r1 = snd_normalize((r1 + s1) >> 1);
-      //r2 = snd_normalize((r2 + s2) >> 1);
+      r1 = snd_normalize((r1 + s1) >> 1);
+      r2 = snd_normalize((r2 + s2) >> 1);
       //r1 = snd_normalize(r1 + s1 >> 1);
       //r2 = snd_normalize(r2 + s2 >> 1);
       //r1 = snd_normalize(r1 + s1 - (r1 * s1) / 0xffff);

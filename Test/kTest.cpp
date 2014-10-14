@@ -130,7 +130,7 @@ public:
 
     if(snd && snd->getSound())
     {
-      //getAudio()->play(snd->getSound(), true);
+      getAudio()->play(snd->getSound(), true);
     }
 
     kgmSound* snd1 = m_resources->getSound("2.wav");
@@ -144,7 +144,7 @@ public:
 
     if(snd2 && snd2->getSound())
     {
-      //getAudio()->play(snd2->getSound(), true);
+      getAudio()->play(snd2->getSound(), true);
     }
   }
 

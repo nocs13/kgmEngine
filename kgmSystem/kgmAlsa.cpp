@@ -32,6 +32,7 @@ MAKE_FUNC(snd_pcm_start);
 MAKE_FUNC(snd_pcm_writei);
 MAKE_FUNC(snd_pcm_prepare);
 MAKE_FUNC(snd_pcm_recover);
+MAKE_FUNC(snd_pcm_nonblock);
 MAKE_FUNC(snd_pcm_set_params);
 MAKE_FUNC(snd_pcm_bytes_to_frames);
 MAKE_FUNC(snd_pcm_frames_to_bytes);
@@ -59,6 +60,7 @@ MAKE_FUNC(snd_async_handler_get_callback_private);
 #define snd_pcm_writei   psnd_pcm_writei
 #define snd_pcm_prepare  psnd_pcm_prepare
 #define snd_pcm_recover  psnd_pcm_recover
+#define snd_pcm_nonblock  psnd_pcm_nonblock
 #define snd_pcm_set_params       psnd_pcm_set_params
 #define snd_pcm_bytes_to_frames  psnd_pcm_bytes_to_frames
 #define snd_pcm_frames_to_bytes  psnd_pcm_frames_to_bytes
@@ -195,12 +197,8 @@ struct _Sound
   }
 };
 
-FILE* fd = NULL;
-
 kgmAlsa::kgmAlsa()
 {
-  fd = fopen("/tmp/zbufau", "wb");
-
   m_handle = null;
 
   if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
@@ -220,6 +218,7 @@ kgmAlsa::kgmAlsa()
     LOAD_FUNC(snd_pcm_writei);
     LOAD_FUNC(snd_pcm_prepare);
     LOAD_FUNC(snd_pcm_recover);
+    LOAD_FUNC(snd_pcm_nonblock);
     LOAD_FUNC(snd_pcm_set_params);
     LOAD_FUNC(snd_pcm_bytes_to_frames);
     LOAD_FUNC(snd_pcm_frames_to_bytes);
@@ -245,29 +244,77 @@ kgmAlsa::kgmAlsa()
 
       if(err < 0)
       {
-        kgm_log() << "Error: Can't open alsa device.\n";
-        kgm_log() << "Error: Is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
+        usleep(200000);
 
-        return;
-      }
-      else
-      {
-        int pcm = 0;
+        err = (int)snd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
-        m_mixer.prepare(2, 16, 44100);
-
-        if(pcm = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
-                                    SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, m_mixer.getMsTime() * 1000) < 0)
+        if(err < 0)
         {
-          kgm_log() << "Playback set param error: " << (char*)snd_strerror(pcm) << ".\n";
+          kgm_log() << "Error: Can't open alsa device.\n";
+          kgm_log() << "Error: Is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
+
+          return;
+        }
+      }
+
+      if(err == 0)
+      {
+        err = snd_pcm_nonblock(m_handle, 0);
+
+        if(err < 0)
+        {
+          psnd_pcm_close(m_handle);
+
+          m_handle = null;
 
           return;
         }
 
-        if(pcm = snd_pcm_prepare(m_handle) < 0)
+        m_mixer.prepare(2, 16, 44100);
+
+        snd_pcm_hw_params_t *params = null;
+
+        snd_pcm_hw_params_malloc(&params);
+
+        if(params != null)
         {
-          kgm_log() << "ERROR: Can't prepare " << (char*)snd_strerror(pcm) << ".\n";
+          int periods = 4;
+          int frequency = 44100;
+          snd_pcm_uframes_t bufferSizeInFrames = m_mixer.getFrames();
+
+          if((snd_pcm_hw_params_any(m_handle, params) == 0) &&
+             (snd_pcm_hw_params_set_access(m_handle, params, SND_PCM_ACCESS_MMAP_INTERLEAVED) == 0) &&
+             (snd_pcm_hw_params_set_format(m_handle, params, SND_PCM_FORMAT_S16_LE) == 0) &&
+             (snd_pcm_hw_params_set_channels(m_handle, params, 2) == 0) &&
+             //(snd_pcm_hw_params_set_periods_near(m_handle, params, &periods, NULL) == 0) &&
+             (snd_pcm_hw_params_set_rate_near(m_handle, params, &frequency, NULL) == 0) &&
+             //(snd_pcm_hw_params_set_buffer_size_near(m_handle, params, &bufferSizeInFrames) == 0) &&
+             (snd_pcm_hw_params(m_handle, params) == 0))
+          {
+            kgm_log() << "kgmAlsa: wow set params :S \n";
+          }
+          else
+          {
+            printf("kgmAlsa: %I failed: %s\n", err, psnd_strerror(err));
+            //return;
+          }
+
+          psnd_pcm_hw_params_free(params);
+          //psnd_pcm_close(m_handle);
+        }
+
+        if(err = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
+                                    SND_PCM_ACCESS_RW_INTERLEAVED, 2,
+                                    44100, 1, m_mixer.getMsTime() * 1000) < 0)
+        {
+          kgm_log() << "Playback set param error: " << (char*)snd_strerror(err) << ".\n";
+
+          return;
+        }
+
+        if(err = snd_pcm_prepare(m_handle) < 0)
+        {
+          kgm_log() << "ERROR: Can't prepare " << (char*)snd_strerror(err) << ".\n";
 
           return;
         }
@@ -285,9 +332,6 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
-  if(fd)
-    fclose(fd);
-
   m_proceed = false;
 
   m_render.join();
@@ -407,11 +451,8 @@ int kgmAlsa::render()
         }
       }
 
-      if(pcm = snd_pcm_drain(m_handle) < 0)
-        kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
-
-      //if(fd)
-      //  fwrite(m_mixer.getBuffer(), m_mixer.getLength(), 1, fd);
+      //if(pcm = snd_pcm_drain(m_handle) < 0)
+      //  kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
     }
 #endif
   }
@@ -452,7 +493,7 @@ int kgmAlsa::proceed()
       if(sound->state != _Sound::StPlay)
         continue;
 
-      u32 rs = sound->size - sound->cursor;
+      //u32 rs = sound->size - sound->cursor;
 
       u32 size = m_mixer.mixdata((sound->data + sound->cursor),
                                  (sound->size - sound->cursor),
@@ -487,7 +528,7 @@ int kgmAlsa::proceed()
     {
       s32 wtime = m_mixer.getMsTime() - t3;
 
-      kgmThread::sleep(wtime);
+      //kgmThread::sleep(wtime / 10);
     }
   }
 
