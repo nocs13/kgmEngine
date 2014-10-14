@@ -23,60 +23,112 @@ typedef void* (*PCM_FUNC)(void*,...);
 #define MAKE_FUNC(f) static PCM_FUNC p##f \
 
 MAKE_FUNC(snd_strerror);
-MAKE_FUNC(snd_pcm_wait);
 MAKE_FUNC(snd_pcm_open);
-MAKE_FUNC(snd_pcm_stop);
 MAKE_FUNC(snd_pcm_close);
-MAKE_FUNC(snd_pcm_drain);
-MAKE_FUNC(snd_pcm_start);
-MAKE_FUNC(snd_pcm_writei);
-MAKE_FUNC(snd_pcm_prepare);
-MAKE_FUNC(snd_pcm_recover);
 MAKE_FUNC(snd_pcm_nonblock);
-MAKE_FUNC(snd_pcm_set_params);
-MAKE_FUNC(snd_pcm_bytes_to_frames);
 MAKE_FUNC(snd_pcm_frames_to_bytes);
-MAKE_FUNC(snd_pcm_hw_params);
-MAKE_FUNC(snd_pcm_hw_params_any);
-MAKE_FUNC(snd_pcm_hw_params_free);
+MAKE_FUNC(snd_pcm_bytes_to_frames);
 MAKE_FUNC(snd_pcm_hw_params_malloc);
-MAKE_FUNC(snd_pcm_hw_params_alloca);
-MAKE_FUNC(snd_pcm_hw_params_sizeof);
+MAKE_FUNC(snd_pcm_hw_params_free);
+MAKE_FUNC(snd_pcm_hw_params_any);
+MAKE_FUNC(snd_pcm_hw_params_current);
 MAKE_FUNC(snd_pcm_hw_params_set_access);
 MAKE_FUNC(snd_pcm_hw_params_set_format);
 MAKE_FUNC(snd_pcm_hw_params_set_channels);
+MAKE_FUNC(snd_pcm_hw_params_set_periods_near);
 MAKE_FUNC(snd_pcm_hw_params_set_rate_near);
+MAKE_FUNC(snd_pcm_hw_params_set_rate);
 MAKE_FUNC(snd_pcm_hw_params_set_rate_resample);
-MAKE_FUNC(snd_async_add_pcm_handler);
-MAKE_FUNC(snd_async_handler_get_callback_private);
+MAKE_FUNC(snd_pcm_hw_params_set_buffer_time_near);
+MAKE_FUNC(snd_pcm_hw_params_set_period_time_near);
+MAKE_FUNC(snd_pcm_hw_params_set_buffer_size_near);
+MAKE_FUNC(snd_pcm_hw_params_set_period_size_near);
+MAKE_FUNC(snd_pcm_hw_params_set_buffer_size_min);
+MAKE_FUNC(snd_pcm_hw_params_get_buffer_time_min);
+MAKE_FUNC(snd_pcm_hw_params_get_buffer_time_max);
+MAKE_FUNC(snd_pcm_hw_params_get_period_time_min);
+MAKE_FUNC(snd_pcm_hw_params_get_period_time_max);
+MAKE_FUNC(snd_pcm_hw_params_get_buffer_size);
+MAKE_FUNC(snd_pcm_hw_params_get_period_size);
+MAKE_FUNC(snd_pcm_hw_params_get_access);
+MAKE_FUNC(snd_pcm_hw_params_get_periods);
+MAKE_FUNC(snd_pcm_hw_params_test_format);
+MAKE_FUNC(snd_pcm_hw_params_test_channels);
+MAKE_FUNC(snd_pcm_hw_params);
+MAKE_FUNC(snd_pcm_sw_params_malloc);
+MAKE_FUNC(snd_pcm_sw_params_current);
+MAKE_FUNC(snd_pcm_sw_params_set_avail_min);
+MAKE_FUNC(snd_pcm_sw_params_set_stop_threshold);
+MAKE_FUNC(snd_pcm_sw_params);
+MAKE_FUNC(snd_pcm_sw_params_free);
+MAKE_FUNC(snd_pcm_prepare);
+MAKE_FUNC(snd_pcm_start);
+MAKE_FUNC(snd_pcm_resume);
+MAKE_FUNC(snd_pcm_reset);
+MAKE_FUNC(snd_pcm_wait);
+MAKE_FUNC(snd_pcm_delay);
+MAKE_FUNC(snd_pcm_state);
+MAKE_FUNC(snd_pcm_avail_update);
+MAKE_FUNC(snd_pcm_areas_silence);
+MAKE_FUNC(snd_pcm_mmap_begin);
+MAKE_FUNC(snd_pcm_mmap_commit);
+MAKE_FUNC(snd_pcm_readi);
+MAKE_FUNC(snd_pcm_writei);
+MAKE_FUNC(snd_pcm_drain);
+MAKE_FUNC(snd_pcm_drop);
+MAKE_FUNC(snd_pcm_recover);
+MAKE_FUNC(snd_pcm_info_malloc);
+MAKE_FUNC(snd_pcm_info_free);
+MAKE_FUNC(snd_pcm_info_set_device);
+MAKE_FUNC(snd_pcm_info_set_subdevice);
+MAKE_FUNC(snd_pcm_info_set_stream);
+MAKE_FUNC(snd_pcm_info_get_name);
+MAKE_FUNC(snd_pcm_set_params);
+MAKE_FUNC(snd_ctl_pcm_next_device);
+MAKE_FUNC(snd_ctl_pcm_info);
+MAKE_FUNC(snd_ctl_open);
+MAKE_FUNC(snd_ctl_close);
+MAKE_FUNC(snd_ctl_card_info_malloc);
+MAKE_FUNC(snd_ctl_card_info_free);
+MAKE_FUNC(snd_ctl_card_info);
+MAKE_FUNC(snd_ctl_card_info_get_name);
+MAKE_FUNC(snd_ctl_card_info_get_id);
+MAKE_FUNC(snd_card_next);
+MAKE_FUNC(snd_config_update_free_global);
+#undef MAKE_FUNC
 
-#define snd_strerror     psnd_strerror
-#define snd_pcm_wait     psnd_pcm_wait
-#define snd_pcm_open     psnd_pcm_open
-#define snd_pcm_stop     psnd_pcm_stop
-#define snd_pcm_close    psnd_pcm_close
-#define snd_pcm_drain    psnd_pcm_drain
-#define snd_pcm_start    psnd_pcm_start
-#define snd_pcm_writei   psnd_pcm_writei
-#define snd_pcm_prepare  psnd_pcm_prepare
-#define snd_pcm_recover  psnd_pcm_recover
-#define snd_pcm_nonblock  psnd_pcm_nonblock
-#define snd_pcm_set_params       psnd_pcm_set_params
-#define snd_pcm_bytes_to_frames  psnd_pcm_bytes_to_frames
-#define snd_pcm_frames_to_bytes  psnd_pcm_frames_to_bytes
-#define snd_pcm_hw_params        psnd_pcm_hw_params
-#define snd_pcm_hw_params_any    psnd_pcm_hw_params_any
-#define snd_pcm_hw_params_free   psnd_pcm_hw_params_free
-#define snd_pcm_hw_params_malloc psnd_pcm_hw_params_malloc
-#define snd_pcm_hw_params_alloca psnd_pcm_hw_params_alloca
-#define snd_pcm_hw_params_sizeof psnd_pcm_hw_params_sizeof
-#define snd_pcm_hw_params_set_access psnd_pcm_hw_params_set_access
-#define snd_pcm_hw_params_set_format psnd_pcm_hw_params_set_format
-#define snd_pcm_hw_params_set_channels psnd_pcm_hw_params_set_channels
-#define snd_pcm_hw_params_set_rate_near psnd_pcm_hw_params_set_rate_near
-#define snd_pcm_hw_params_set_rate_resample psnd_pcm_hw_params_set_rate_resample
-#define snd_async_add_pcm_handler psnd_async_add_pcm_handler
-#define snd_async_handler_get_callback_private psnd_async_handler_get_callback_private
+static int run_recovery(snd_pcm_t *handle, int err)
+{
+  if (err == -EPIPE)
+  {
+    err = psnd_pcm_prepare(handle);
+
+    if(err >= 0)
+      err = psnd_pcm_start(handle);
+
+    if (err < 0)
+      kgm_log() << "prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+  }
+  else if (err == -ESTRPIPE)
+  {
+    while ((err = psnd_pcm_resume(handle)) == -EAGAIN)
+      usleep(1);
+
+    if (err < 0)
+    {
+      err = psnd_pcm_prepare(handle);
+
+      if(err >= 0)
+        err = psnd_pcm_start(handle);
+
+      if (err < 0)
+        kgm_log() << "prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+    }
+  }
+
+  return err;
+}
+
 
 #endif //ALSA
 
@@ -200,6 +252,7 @@ struct _Sound
 kgmAlsa::kgmAlsa()
 {
   m_handle = null;
+  m_mutex  = null;
 
   if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
       m_lib.open("libasound.so.0") || m_lib.open("libasound.so"))
@@ -209,49 +262,68 @@ kgmAlsa::kgmAlsa()
 #ifdef ALSA
 #define LOAD_FUNC(f) p##f = m_lib.get(#f)
     LOAD_FUNC(snd_strerror);
-    LOAD_FUNC(snd_pcm_wait);
     LOAD_FUNC(snd_pcm_open);
-    LOAD_FUNC(snd_pcm_stop);
     LOAD_FUNC(snd_pcm_close);
-    LOAD_FUNC(snd_pcm_drain);
-    LOAD_FUNC(snd_pcm_start);
-    LOAD_FUNC(snd_pcm_writei);
-    LOAD_FUNC(snd_pcm_prepare);
-    LOAD_FUNC(snd_pcm_recover);
     LOAD_FUNC(snd_pcm_nonblock);
-    LOAD_FUNC(snd_pcm_set_params);
-    LOAD_FUNC(snd_pcm_bytes_to_frames);
     LOAD_FUNC(snd_pcm_frames_to_bytes);
-    LOAD_FUNC(snd_pcm_hw_params);
-    LOAD_FUNC(snd_pcm_hw_params_any);
-    LOAD_FUNC(snd_pcm_hw_params_free);
     LOAD_FUNC(snd_pcm_hw_params_malloc);
-    LOAD_FUNC(snd_pcm_hw_params_alloca);
-    LOAD_FUNC(snd_pcm_hw_params_sizeof);
+    LOAD_FUNC(snd_pcm_hw_params_free);
+    LOAD_FUNC(snd_pcm_hw_params_any);
     LOAD_FUNC(snd_pcm_hw_params_set_access);
     LOAD_FUNC(snd_pcm_hw_params_set_format);
     LOAD_FUNC(snd_pcm_hw_params_set_channels);
+    LOAD_FUNC(snd_pcm_hw_params_set_periods_near);
     LOAD_FUNC(snd_pcm_hw_params_set_rate_near);
-    LOAD_FUNC(snd_pcm_hw_params_set_rate_resample);
-    //LOAD_FUNC(snd_async_add_pcm_handler);
-    //LOAD_FUNC(snd_async_handler_get_callback_private);
+    LOAD_FUNC(snd_pcm_hw_params_set_rate);
+    LOAD_FUNC(snd_pcm_hw_params_set_buffer_size_near);
+    LOAD_FUNC(snd_pcm_hw_params_set_buffer_size_min);
+    LOAD_FUNC(snd_pcm_hw_params_get_period_size);
+    LOAD_FUNC(snd_pcm_hw_params_get_access);
+    LOAD_FUNC(snd_pcm_hw_params);
+    LOAD_FUNC(snd_pcm_set_params);
+    LOAD_FUNC(snd_pcm_prepare);
+    LOAD_FUNC(snd_pcm_start);
+    LOAD_FUNC(snd_pcm_resume);
+    LOAD_FUNC(snd_pcm_state);
+    LOAD_FUNC(snd_pcm_avail_update);
+    LOAD_FUNC(snd_pcm_areas_silence);
+    LOAD_FUNC(snd_pcm_mmap_begin);
+    LOAD_FUNC(snd_pcm_mmap_commit);
+    LOAD_FUNC(snd_pcm_writei);
+    LOAD_FUNC(snd_pcm_drain);
+    LOAD_FUNC(snd_pcm_info_malloc);
+    LOAD_FUNC(snd_pcm_info_free);
+    LOAD_FUNC(snd_pcm_info_set_device);
+    LOAD_FUNC(snd_pcm_info_set_subdevice);
+    LOAD_FUNC(snd_pcm_info_set_stream);
+    LOAD_FUNC(snd_pcm_info_get_name);
+    LOAD_FUNC(snd_ctl_pcm_next_device);
+    LOAD_FUNC(snd_ctl_pcm_info);
+    LOAD_FUNC(snd_ctl_open);
+    LOAD_FUNC(snd_ctl_close);
+    LOAD_FUNC(snd_ctl_card_info_malloc);
+    LOAD_FUNC(snd_ctl_card_info_free);
+    LOAD_FUNC(snd_ctl_card_info);
+    LOAD_FUNC(snd_ctl_card_info_get_name);
+    LOAD_FUNC(snd_card_next);
+#undef LOAD_FUNC
 
     if(snd_pcm_open)
     {
       char* device = "default";
       //char* device = "plughw:0,0";
-      err = (int)snd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+      err = (int)psnd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
       if(err < 0)
       {
         usleep(200000);
 
-        err = (int)snd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+        err = (int)psnd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
         if(err < 0)
         {
           kgm_log() << "Error: Can't open alsa device.\n";
-          kgm_log() << "Error: Is " << (char*)kgmString((char*)snd_strerror(err)) << ".\n";
+          kgm_log() << "Error: Is " << (char*)kgmString((char*)psnd_strerror(err)) << ".\n";
 
           return;
         }
@@ -259,7 +331,7 @@ kgmAlsa::kgmAlsa()
 
       if(err == 0)
       {
-        err = snd_pcm_nonblock(m_handle, 0);
+        err = psnd_pcm_nonblock(m_handle, 0);
 
         if(err < 0)
         {
@@ -274,7 +346,7 @@ kgmAlsa::kgmAlsa()
 
         snd_pcm_hw_params_t *params = null;
 
-        snd_pcm_hw_params_malloc(&params);
+        psnd_pcm_hw_params_malloc(&params);
 
         if(params != null)
         {
@@ -282,20 +354,20 @@ kgmAlsa::kgmAlsa()
           int frequency = 44100;
           snd_pcm_uframes_t bufferSizeInFrames = m_mixer.getFrames();
 
-          if((snd_pcm_hw_params_any(m_handle, params) == 0) &&
-             (snd_pcm_hw_params_set_access(m_handle, params, SND_PCM_ACCESS_MMAP_INTERLEAVED) == 0) &&
-             (snd_pcm_hw_params_set_format(m_handle, params, SND_PCM_FORMAT_S16_LE) == 0) &&
-             (snd_pcm_hw_params_set_channels(m_handle, params, 2) == 0) &&
-             //(snd_pcm_hw_params_set_periods_near(m_handle, params, &periods, NULL) == 0) &&
-             (snd_pcm_hw_params_set_rate_near(m_handle, params, &frequency, NULL) == 0) &&
-             //(snd_pcm_hw_params_set_buffer_size_near(m_handle, params, &bufferSizeInFrames) == 0) &&
-             (snd_pcm_hw_params(m_handle, params) == 0))
+          if((psnd_pcm_hw_params_any(m_handle, params) == 0) &&
+             (psnd_pcm_hw_params_set_access(m_handle, params, SND_PCM_ACCESS_MMAP_INTERLEAVED) == 0) &&
+             (psnd_pcm_hw_params_set_format(m_handle, params, SND_PCM_FORMAT_S16_LE) == 0) &&
+             (psnd_pcm_hw_params_set_channels(m_handle, params, 2) == 0) &&
+             (psnd_pcm_hw_params_set_periods_near(m_handle, params, &periods, NULL) == 0) &&
+             (psnd_pcm_hw_params_set_rate_near(m_handle, params, &frequency, NULL) == 0) &&
+             (psnd_pcm_hw_params_set_buffer_size_near(m_handle, params, &bufferSizeInFrames) == 0) &&
+             (psnd_pcm_hw_params(m_handle, params) == 0))
           {
             kgm_log() << "kgmAlsa: wow set params :S \n";
           }
           else
           {
-            printf("kgmAlsa: %I failed: %s\n", err, psnd_strerror(err));
+            printf("kgmAlsa: %i failed: %s\n", err, psnd_strerror(err));
             //return;
           }
 
@@ -303,27 +375,30 @@ kgmAlsa::kgmAlsa()
           //psnd_pcm_close(m_handle);
         }
 
-        if(err = snd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
-                                    SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                    44100, 1, m_mixer.getMsTime() * 1000) < 0)
+        if(err = psnd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
+                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
+                                     44100, 1, m_mixer.getMsTime() * 1000) < 0)
         {
-          kgm_log() << "Playback set param error: " << (char*)snd_strerror(err) << ".\n";
+          kgm_log() << "Playback set param error: " << (char*)psnd_strerror(err) << ".\n";
 
           return;
         }
 
-        if(err = snd_pcm_prepare(m_handle) < 0)
+        if(err = psnd_pcm_prepare(m_handle) < 0)
         {
-          kgm_log() << "ERROR: Can't prepare " << (char*)snd_strerror(err) << ".\n";
+          kgm_log() << "ERROR: Can't prepare " << (char*)psnd_strerror(err) << ".\n";
 
           return;
         }
 
         m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
-        //m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
+        m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
 
         m_thread.priority(kgmThread::PrIdle);
-        //m_render.priority(kgmThread::PrIdle);
+        m_render.priority(kgmThread::PrIdle);
+        m_proceed = true;
+
+        m_mutex = kgmThread::mutex();
       }
     }
 #endif
@@ -336,9 +411,10 @@ kgmAlsa::~kgmAlsa()
 
   m_render.join();
   m_thread.join();
+  kgmThread::mxfree(m_mutex);
 
 #ifdef ALSA
-  snd_pcm_close(m_handle);
+  psnd_pcm_close(m_handle);
 #endif
 
   m_lib.close();
@@ -392,27 +468,61 @@ void kgmAlsa::stop(Sound snd)
 
 int kgmAlsa::render()
 {
-  //while(m_proceed)
+  while(m_proceed)
   {
 #ifdef ALSA
-    if(m_handle && m_mixer.getBuffer())
+    if(m_handle && m_mixer.getBuffer() && m_mixer.getFrames())
     {
       int pcm = 0;
       int bpp = 1;
+      int avail = 0;
 
-      int frames = m_mixer.getFrames();
+      snd_pcm_uframes_t offset, frames;
+      const snd_pcm_channel_area_t *areas = NULL;
 
-      int avail = m_mixer.getLength();
+      avail = psnd_pcm_avail_update(m_handle);
+
+      if(avail < 0)
+        run_recovery(m_handle, avail);
+
+      avail = m_mixer.getFrames();
 
       char* WritePtr = m_mixer.getBuffer();
 
-      avail = frames;
+      //kgm_log() << "Available frames " << avail << "\n";
 
-      kgm_log() << "Available frames " << avail << "\n";
+      kgmThread::lock(m_mutex);
+      kgm_log() << "kgmAlsa:: render lock\n";
 
       while(avail > 0)
       {
-        int ret = snd_pcm_writei(m_handle, WritePtr, avail);
+        int ret;
+
+        /*frames = avail;
+
+        ret = psnd_pcm_mmap_begin(m_handle, &areas, &offset, &frames);
+
+        if(ret < 0)
+        {
+          ret = run_recovery(m_handle, ret);
+
+          if(ret < 0)
+            break;
+        }
+
+        WritePtr = (char*)areas->addr + (offset * areas->step / 8);
+        int WriteCnt = psnd_pcm_frames_to_bytes(m_handle, frames);
+
+        int commitres = psnd_pcm_mmap_commit(m_handle, offset, frames);
+
+        if (commitres < 0 || (commitres-frames) != 0)
+        {
+          kgm_log() << "mmap commit error: "
+                    << (char*)psnd_strerror(commitres >= 0 ? -EPIPE : commitres) << "\n";
+          break;
+        }*/
+
+        ret = psnd_pcm_writei(m_handle, WritePtr, avail);
 
         switch (ret)
         {
@@ -421,7 +531,7 @@ int kgmAlsa::render()
         case -ESTRPIPE:
         case -EPIPE:
         case -EINTR:
-          ret = snd_pcm_recover(m_handle, ret, 1);
+          ret = psnd_pcm_recover(m_handle, ret, 1);
 
           if(ret < 0)
             avail = 0;
@@ -444,15 +554,19 @@ int kgmAlsa::render()
 
         if (ret < 0)
         {
-          ret = snd_pcm_prepare(m_handle);
+          ret = psnd_pcm_prepare(m_handle);
 
           if(ret < 0)
             break;
         }
       }
 
-      //if(pcm = snd_pcm_drain(m_handle) < 0)
-      //  kgm_log() << "ERROR: Can't drain. " << (char*)snd_strerror(pcm) << "\n";
+      if(pcm = psnd_pcm_drain(m_handle) < 0)
+        kgm_log() << "ERROR: Can't drain. " << (char*)psnd_strerror(pcm) << "\n";
+
+      m_mixer.clean();
+      kgmThread::unlock(m_mutex);
+      kgm_log() << "kgmAlsa:: render unlock\n";
     }
 #endif
   }
@@ -469,6 +583,9 @@ int kgmAlsa::proceed()
   while(m_proceed)
   {
     u32 snd_cound = 0;
+
+    kgmThread::lock(m_mutex);
+    kgm_log() << "kgmAlsa:: proceed lock\n";
 
     m_mixer.clean();
 
@@ -518,7 +635,10 @@ int kgmAlsa::proceed()
       snd_cound++;
     }
 
-    render();
+    //render();
+
+    kgmThread::unlock(m_mutex);
+    kgm_log() << "kgmAlsa:: proceed unlock\n";
 
     u32 t2 = kgmTime::getTicks();
 
@@ -528,7 +648,7 @@ int kgmAlsa::proceed()
     {
       s32 wtime = m_mixer.getMsTime() - t3;
 
-      //kgmThread::sleep(wtime / 10);
+      kgmThread::sleep(wtime / 2);
     }
   }
 

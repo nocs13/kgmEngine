@@ -49,6 +49,7 @@ private:
 
   Thread        m_thread;
   Thread        m_render;
+  Thread::Mutex m_mutex;
 
   kgmList<_Sound*> m_sounds;
 

@@ -5,6 +5,12 @@
 //class kgmWave;
 //class kgmSound;
 
+/*
+  Supports 1 or 2 channel stream with
+  1 or 2 byte sample. 8000 till 48000
+  frequency.
+*/
+
 class kgmIAudio: public kgmInterface
 {
 public: 

@@ -159,7 +159,8 @@ kgmThread::Mutex kgmThread::mutex()
 
   if(mutex)
   {
-    *mutex = PTHREAD_MUTEX_INITIALIZER;
+    //*mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_init(mutex, NULL);
 
     return mutex;
   }
