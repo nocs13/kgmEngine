@@ -26,6 +26,10 @@ class kgmDSound: public kgmIAudio
 
   kgmList<_Sound*> m_sounds;
 
+  u32 m_timer;
+
+  friend void CALLBACK DirectSoundProc(UINT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
+
 public:
   kgmDSound();
   virtual ~kgmDSound();

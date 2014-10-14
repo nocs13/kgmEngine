@@ -1,4 +1,5 @@
 #include "kgmAudioMixer.h"
+#include "kgmIAudio.h"
 #include <math.h>
 
 KGMOBJECT_IMPLEMENT(kgmAudioMixer, kgmObject)
@@ -17,6 +18,7 @@ kgmAudioMixer::kgmAudioMixer()
 {
   rate = 0;
   frames = 0;
+  format = 0;
   channels = 0;
   bytes_per_sample = 0;
   bytes_per_frame  = 0;
@@ -68,6 +70,17 @@ bool kgmAudioMixer::prepare(u32 chn, u32 bps, u32 fr)
   time = 100 * 1;
 
   frames = size / (channels * bytes_per_sample);
+
+  if(channels == 2 && bytes_per_sample == 2)
+    format = kgmIAudio::FMT_STEREO16;
+  else if(channels == 2 && bytes_per_sample == 1)
+    format = kgmIAudio::FMT_STEREO8;
+  else if(channels == 1 && bytes_per_sample == 2)
+    format = kgmIAudio::FMT_MONO16;
+  else if(channels == 1 && bytes_per_sample == 1)
+    format = kgmIAudio::FMT_MONO8;
+  else
+    format = kgmIAudio::FMT_NONE;
 
   bool res = buffer.alloc(size);
 

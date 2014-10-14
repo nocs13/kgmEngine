@@ -5,6 +5,10 @@
 #include "kgmDSound.h"
 #include "../kgmBase/kgmLog.h"
 
+#ifdef WIN32
+#include <mmsystem.h>
+#endif
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -70,6 +74,61 @@ void _Sound::pause()
 {
 }
 */
+
+void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
+                                         DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
+{
+  kgmDSound *self = (kgmDSound*)dwUser;
+  DWORD PlayCursor,WriteCursor;
+  BYTE *WritePtr1,*WritePtr2;
+  DWORD WriteCnt1,WriteCnt2;
+  WAVEFORMATEX OutputType;
+  DWORD BytesPlayed;
+  DWORD BufSize;
+  HRESULT DSRes;
+
+  (void)uID;
+  (void)uReserved;
+  (void)dwReserved1;
+  (void)dwReserved2;
+
+  BufSize = self->m_mixer.getLength();
+
+  // Get current play and write cursors
+  IDirectSoundBuffer_GetCurrentPosition(self->m_pSbuf, &PlayCursor, &WriteCursor);
+
+  // Get the output format and figure the number of bytes played (block aligned)
+  IDirectSoundBuffer_GetFormat(self->m_pSbuf, &OutputType, sizeof(WAVEFORMATEX),NULL);
+
+  //BytesPlayed=((((WriteCursor<pData->OldWriteCursor)?(BufSize+WriteCursor-pData->OldWriteCursor):(WriteCursor-pData->OldWriteCursor))/OutputType.nBlockAlign)*OutputType.nBlockAlign);
+
+  // Lock output buffer started at 40msec in front of the old write cursor (15msec in front of the actual write cursor)
+  //DSRes=IDirectSoundBuffer_Lock(self->m_pSbuf,(pData->OldWriteCursor+(OutputType.nSamplesPerSec/25)*OutputType.nBlockAlign)%BufSize,BytesPlayed,(LPVOID*)&WritePtr1,&WriteCnt1,(LPVOID*)&WritePtr2,&WriteCnt2,0);
+
+  // If the buffer is lost, restore it, play and lock
+  if (DSRes==DSERR_BUFFERLOST)
+  {
+    IDirectSoundBuffer_Restore(self->m_pSbuf);
+    IDirectSoundBuffer_Play(self->m_pSbuf,0,0,DSBPLAY_LOOPING);
+    //DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf,(pData->OldWriteCursor+(OutputType.nSamplesPerSec/25)*OutputType.nBlockAlign)%BufSize,BytesPlayed,(LPVOID*)&WritePtr1,&WriteCnt1,(LPVOID*)&WritePtr2,&WriteCnt2,0);
+  }
+
+  // Successfully locked the output buffer
+  if (DSRes==DS_OK)
+  {
+    // If we have an active context, mix data directly into output buffer otherwise fill with silence
+    //SuspendContext(NULL);
+    //if (WritePtr1)
+    //  aluMixData(pDevice->Context, WritePtr1, WriteCnt1, pDevice->Format);
+    //if (WritePtr2)
+    //  aluMixData(pDevice->Context, WritePtr2, WriteCnt2, pDevice->Format);
+    //ProcessContext(NULL);
+
+    // Unlock output buffer only when successfully locked
+    IDirectSoundBuffer_Unlock(self->m_pSbuf, WritePtr1, WriteCnt1, WritePtr2, WriteCnt2);
+  }
+}
+
 struct _Sound
 {
   enum State
@@ -233,10 +292,10 @@ kgmDSound::kgmDSound()
    }
 
    wf.cbSize          = sizeof(WAVEFORMATEX);
-   wf.nSamplesPerSec  = 44100;
+   wf.nSamplesPerSec  = m_mixer.getRate();
    wf.wFormatTag      = WAVE_FORMAT_PCM;
 
-   switch(FMT_STEREO16)
+   switch(m_mixer.getFormat())
    {
    case FMT_MONO8:
      wf.nChannels = 1;
@@ -254,6 +313,11 @@ kgmDSound::kgmDSound()
      wf.nChannels = 2;
      wf.wBitsPerSample = 16;
      break;
+   default:
+     m_pSnd->Release();
+     m_pSnd = null;
+
+     return;
    }
 
    wf.nBlockAlign = wf.nChannels * ( wf.wBitsPerSample / 8 );
@@ -270,36 +334,37 @@ kgmDSound::kgmDSound()
      kgm_log() << "Error: can't create sound buffer.\n";
  #endif
      m_pSbuf = null;
+
+     m_pSnd->Release();
+     m_pSnd = null;
+
+     return;
    }
 
    if(m_pSbuf)
    {
-     VOID   *ptr1, *ptr2;
-     DWORD  size1, size2;
-
-     if(DS_OK == m_pSbuf->Lock(0, 0, &ptr1, &size1, NULL, NULL, DSBLOCK_ENTIREBUFFER))
+     if(FAILED(m_pSbuf->Play(0, 0, DSBPLAY_LOOPING)))
      {
-       memcpy(ptr1, data, size);
-
-       if(FAILED(m_pSbuf->Unlock(ptr1, size, NULL, 0)))
-       {
-    #ifdef DEBUG
-        kgm_log() << "Error: can't unlock sound buffer.\n";
-    #endif
-       }
+       m_pSbuf->Release();
+       m_pSnd->Release();
+       m_pSbuf = null;
+       m_pSnd = null;
      }
- #ifdef DEBUG
      else
      {
-       kgm_log() << "Error: can't Lock sound buffer.\n";
+       m_timer = timeSetEvent(25, 0, (LPTIMECALLBACK)DirectSoundProc, (DWORD)this,
+                              (UINT)TIME_CALLBACK_FUNCTION | TIME_PERIODIC);
      }
- #endif
-
    }
 }
 
 kgmDSound::~kgmDSound()
 {
+  if(m_timer)
+    timeKillEvent(m_timer);
+
+  Sleep(100);
+
   if(m_pSbuf)
   {
     if(FAILED(m_pSbuf->Release()))

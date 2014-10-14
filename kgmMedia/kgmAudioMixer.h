@@ -15,6 +15,7 @@ private:
   u32       time;
   u32       rate;
   u32       frames;
+  u32       format;
   u32       channels;
   u32       bytes_per_sample;
   u32       bytes_per_frame;
@@ -39,6 +40,11 @@ public:
   {
     return active_size / getBytesPerFrame();
     //return frames;
+  }
+
+  u32 getFormat()
+  {
+    return format;
   }
 
   u32 getLength()

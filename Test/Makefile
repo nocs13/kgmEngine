@@ -20,7 +20,7 @@ else
 	EXT = .exe
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
 	FLGS = -m32 -g -O0 #-mwindows -static-libgcc -static-libstdc++
-	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
+	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound -lWinmm
 	RM = del
 endif
 
