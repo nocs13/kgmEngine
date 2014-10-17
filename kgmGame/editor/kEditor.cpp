@@ -794,6 +794,21 @@ void kEditor::onKeyUp(int k)
       game->getLogic()->clear();
     }
 
+    for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+    {
+      switch ((*i)->typ)
+      {
+      case kNode::ACTOR:
+      case kNode::OBJECT:
+      case kNode::SENSOR:
+      case kNode::TRIGGER:
+        (*i)->obj->resetToVariables();
+        break;
+      default:
+        break;
+      }
+    }
+
     menu->show();
     game->m_state = kgmIGame::State_Edit;
 

@@ -10,7 +10,9 @@
 #include <mmsystem.h>
 #endif
 
+#ifdef DSOUND
 KGMOBJECT_IMPLEMENT(kgmDSound, kgmIAudio);
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

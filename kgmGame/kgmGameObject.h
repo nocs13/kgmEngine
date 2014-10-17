@@ -67,6 +67,12 @@ public:
   {
 
   }
+
+  virtual void resetToVariables()
+  {
+    for(int i = 0; i < m_variables.length(); i++)
+      m_variables[i].sync(kgmVariable::SyncToLink);
+  }
 #endif
 
 public:
