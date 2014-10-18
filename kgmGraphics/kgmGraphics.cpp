@@ -194,7 +194,8 @@ kgmGraphics::~kgmGraphics()
   clear();
 }
 
-void kgmGraphics::clear(){
+void kgmGraphics::clear()
+{
   for(int i = 0; i < m_meshes.length(); i++)
   {
     Mesh* mesh = &m_meshes[i];
@@ -214,7 +215,7 @@ void kgmGraphics::clear(){
   m_visuals.clear();
 
   for(int i = 0; i < m_lights.size(); i++)
-    m_lights[i]->release();
+    m_lights[i].light->release();
   m_lights.clear();
 
   for(int i = 0; i < m_icons.size(); i++)
@@ -303,6 +304,10 @@ void kgmGraphics::resize(float width, float height)
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);
 }
+
+/*
+ * Main Graphical Render process
+*/
 
 void kgmGraphics::render()
 {
@@ -435,22 +440,27 @@ void kgmGraphics::render()
   kgmLight* l_main = null;
   g_lights_count = 0;
 
-  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
+  for(kgmList<Light>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
-    if((*i) == null)
+    if((*i).remove == true)
     {
-      m_lights.erase(i);
+      (*i).light->release();
+
+      i = m_lights.erase(i);
+
+      if(i == m_lights.end())
+        break;
 
       continue;
     }
 
-    if(!(*i)->ison)
+    if(!(*i).light->ison)
       continue;
 
     //if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
     //   continue;
 
-    vw_lights.add(*i);
+    vw_lights.add((*i).light);
     /*g_lights[g_lights_count++] = (*i);
 
     if(g_lights_count >= MAX_LIGHTS)
@@ -478,14 +488,21 @@ void kgmGraphics::render()
   //take meshes in viewport
   kgmList<Mesh*> vw_meshes;
 
-  for(int i = m_meshes.length(); i > 0; i--)
+  for(kgmList<Mesh>::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
   {
-    Mesh* mesh = &m_meshes[i - 1];
+    Mesh* mesh = &(*i);
 
-    if(mesh->mesh == null)
+    if(mesh->remove == true)
     {
-      m_meshes.erase(i - 1);
+      if(mesh->mesh)
+        mesh->mesh->release();
 
+      i = m_meshes.erase(i);
+
+      continue;
+    }
+    else if(mesh->mesh == null)
+    {
       continue;
     }
 
@@ -716,7 +733,7 @@ void kgmGraphics::render()
     {
       Icon* icon = m_icons[i -1];
 
-      if(icon->getRemove())
+      if(icon->remove)
       {
         icon->release();
         m_icons.erase(i - 1);
@@ -783,7 +800,7 @@ void kgmGraphics::render()
 
   for(int i = m_lights.size(); i > 0;  i--)
   {
-    kgmLight* light = m_lights[i - 1];
+    kgmLight* light = m_lights[i - 1].light;
 
     box3 bb;
     bb.min = light->position - vec3(1,1,1);

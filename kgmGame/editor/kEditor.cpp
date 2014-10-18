@@ -1026,6 +1026,7 @@ void kEditor::onEditRemove()
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
     game->getRender()->remove(selected->geo);
+    game->getRender()->remove(selected->icn);
     break;
   }
 
@@ -1136,8 +1137,6 @@ void kEditor::onAddLight()
   kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-  game->getResources();
-  game->getResources()->getTexture("light_ico.tga");
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
   node->geo = new kArrow();
 
@@ -1147,6 +1146,8 @@ void kEditor::onAddLight()
   game->m_render->add(l);
   game->m_render->add(node->icn);
   game->m_render->add(node->geo, mtlLines);
+
+  l->release();
 }
 
 void kEditor::onAddActor()
