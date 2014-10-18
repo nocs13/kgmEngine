@@ -72,6 +72,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   kNode(kgmLight* l)
@@ -82,6 +84,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   kNode(kgmActor* a)
@@ -92,6 +96,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   kNode(kgmSensor* s)
@@ -102,6 +108,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   kNode(kgmTrigger* t)
@@ -112,6 +120,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   kNode(kgmGameObject* o)
@@ -122,6 +132,8 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    obj->increment();
   }
 
   ~kNode()

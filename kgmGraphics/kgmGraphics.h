@@ -44,7 +44,30 @@ public:
   static GraphicsQuality   textureQuality;
   static GraphicsQuality   shadowQuality;
 
-  class Mesh
+  class Node
+  {
+  public:
+    bool remove;
+
+  public:
+    Node()
+    {
+      remove = false;
+    }
+  };
+
+  class Light: public Node
+  {
+  public:
+    kgmLight* light;
+
+    Light()
+    {
+      light = null;
+    }
+  };
+
+  class Mesh: public Node
   {
   public:
     kgmMaterial* material;
@@ -56,6 +79,18 @@ public:
       material = null;
       mesh     = null;
       mtx.identity();
+      remove  = false;
+    }
+  };
+
+  class Visual: public Node
+  {
+  public:
+    kgmVisual* visual;
+
+    Visual()
+    {
+      visual = null;
     }
   };
 

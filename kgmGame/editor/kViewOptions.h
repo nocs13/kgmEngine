@@ -122,7 +122,7 @@ class kViewOptionsForObject : public kViewOptions
 public:
   kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
 
-  void updateVariable(kgmString id, kgmString data);
+  __stdcall void updateVariable(kgmString id, kgmString data);
 };
 
 class kViewOptionsForTrigger : public kViewOptions
@@ -130,8 +130,8 @@ class kViewOptionsForTrigger : public kViewOptions
 public:
   kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h);
 
-  void setChanels(kgmString s);
-  void setTarget(kgmString s);
+  __stdcall void setChanels(kgmString s);
+  __stdcall void setTarget(kgmString s);
 };
 
 }
