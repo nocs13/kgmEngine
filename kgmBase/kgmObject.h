@@ -36,13 +36,13 @@ class kgmObject
 {
   KGM_OBJECT(kgmObject);
 
-public:
   template<class... Args> class Action
   {
   public:
     virtual void call(Args... args) = 0;
   };
 
+public:
   template<class... Args> class Event
   {
     kgmList<Action<Args...>*> list;
