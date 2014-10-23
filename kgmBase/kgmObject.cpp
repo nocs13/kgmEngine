@@ -12,7 +12,7 @@ void* kgmObject::operator new(size_t size)
 {
   kgmObject* p = (kgmObject*)malloc(size);
   g_objects.push_back(p);
-  kgm_log() << "Add memory: " << (s32)p << "\n";
+  //kgm_log() << "Add memory: " << (s32)p << "\n";
   return p;
 }
 
@@ -34,7 +34,7 @@ void kgmObject::operator delete(void* p){
   {
     free(p);
 
-    kgm_log() << "Free memory: " << (s32)p << "\n";
+    //kgm_log() << "Free memory: " << (s32)p << "\n";
   }
 }
 
