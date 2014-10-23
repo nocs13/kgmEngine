@@ -3,14 +3,17 @@
 
 #define KGM_TSTRING_MAX_COPY 1048576
 
-template <class T> 
-class kgmTString: public kgmArray<T>{
+template <class T>
+class kgmTString: public kgmArray<T>
+{
 public:
   kgmTString()
-    :kgmArray<T>(){
+    :kgmArray<T>()
+  {
   }
 
-  kgmTString(const T* str){
+  kgmTString(const T* str)
+  {
     if(!str)
       return;
 
@@ -22,20 +25,24 @@ public:
     alloc((T*)str, len);
   }
 
-  kgmTString(const T* str, u32 len){
+  kgmTString(const T* str, u32 len)
+  {
     alloc((T*)str, len);
   }
 
-  kgmTString(const kgmTString<T>& str){
+  kgmTString(const kgmTString<T>& str)
+  {
     alloc(str.m_data, str.m_length);
   }
 
-  virtual ~kgmTString(){
+  ~kgmTString()
+  {
     kgmArray<T>::clear();
   }
 
   //operators
-  kgmTString<T>& operator=(const T* str){
+  kgmTString<T>& operator=(const T* str)
+  {
     kgmArray<T>::clear();
 
     if(!str)
@@ -51,15 +58,18 @@ public:
     return *this;
   }
 
-  kgmTString<T>& operator=(const kgmTString<T>& str){
+  kgmTString<T>& operator=(const kgmTString<T>& str)
+  {
     kgmArray<T>::clear();
     alloc(str.m_data, str.m_length);
 
     return *this;
   }
 
-  kgmTString<T>& operator+=(const kgmTString<T>& s){
+  kgmTString<T>& operator+=(const kgmTString<T>& s)
+  {
     int len = kgmArray<T>::m_length + s.m_length;
+
     if(len <= kgmArray<T>::m_length)
       return *this;
 
@@ -74,25 +84,29 @@ public:
     return *this;
   }
 
-  kgmTString<T> operator+(const kgmTString<T>& s){
+  kgmTString<T> operator+(const kgmTString<T>& s)
+  {
     kgmTString<T> r = (*this);
     r += s;
 
     return r;
   }
 
-  T&  operator[](u32 i){
+  T&  operator[](u32 i)
+  {
     return kgmArray<T>::m_data[i];
   }
 
-  bool operator==(const kgmTString<T>& s){
+  bool operator==(const kgmTString<T>& s)
+  {
     if(!kgmArray<T>::m_data || !s.m_data)
       return false;
 
     return !memcmp(kgmArray<T>::m_data, s.m_data, sizeof(T) * (kgmArray<T>::m_length + 1));
   }
 
-  bool operator==(const T* s){
+  bool operator==(const T* s)
+  {
     if(!kgmArray<T>::m_data || !s)
       return false;
 
@@ -100,23 +114,27 @@ public:
   }
 
   /////////// type cast
-  operator T*() const{
+  operator T*() const
+  {
     return (T*)kgmArray<T>::m_data;
   }
 
-  operator const T*() const{
+  operator const T*() const
+  {
     return (const T*)kgmArray<T>::m_data;
   }
 
   ////////////////////
-  void alloc(u32 len){
+  void alloc(u32 len)
+  {
     kgmArray<T>::clear();
     kgmArray<T>::m_length = len;
     kgmArray<T>::m_data   = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
     kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
   }
 
-  void alloc(T* m, u32 len){
+  void alloc(T* m, u32 len)
+  {
     kgmArray<T>::clear();
     kgmArray<T>::m_length = len;
     kgmArray<T>::m_data = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1));
@@ -124,7 +142,8 @@ public:
     kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
   }
 
-  void toUpper(){
+  void toUpper()
+  {
     if(!kgmArray<T>::m_data)
       return;
 
@@ -135,7 +154,8 @@ public:
         kgmArray<T>::m_data[i] += diff;
   }
 
-  void toLower(){
+  void toLower()
+  {
     if(!kgmArray<T>::m_data)
       return;
 
@@ -164,14 +184,16 @@ public:
     return -1;
   }
 
-  T* pointer(u32 i){
+  T* pointer(u32 i)
+  {
     if(i > kgmArray<T>::m_length)
       return null;
 
     return &kgmArray<T>::m_data[i];
   }
 
-  kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos){
+  kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos)
+  {
     //not implemented
     kgmTString<T> r;
     bool istok = false;
@@ -181,7 +203,8 @@ public:
   }
 
   //string between symbols
-  kgmTString<T> string(T ssym, T esym){
+  kgmTString<T> string(T ssym, T esym)
+  {
     kgmTString<T> r;
     int istart;
     int iend;
@@ -219,7 +242,8 @@ public:
   //int split(T sym, kgmList<>)
 protected:
   //find symbol position
-  int find(T sym, int start){
+  int find(T sym, int start)
+  {
     if(start > kgmArray<T>::m_length)
       return -1;
 
@@ -230,14 +254,16 @@ protected:
     return -1;
   }
 
-
 public:
-  static void sReplace(T* s, T ss, T es){
+  static void sReplace(T* s, T ss, T es)
+  {
     T* c = s;
 
-    do{
+    do
+    {
       if(*c == ss) *c = es;
-    }while(*c != (T)0);
+    }
+    while(*c != (T)0);
   }
 
   static bool toHexString(kgmTString<T>& hexStr, int8* buf, int32 bufLen)
@@ -257,9 +283,9 @@ typedef kgmTString<short> kgmWString;
 typedef kgmTString<char>		kgmString;
 #else
 typedef kgmTString<short>		kgmString;
-#endif  
+#endif
 
-//string between symbols 
+//string between symbols
 /*inline void str_syms(char* src, char* dst, char sch, char ech){
  char* pst = strchr(src, sch);
  if(!pst) return;
@@ -268,7 +294,7 @@ typedef kgmTString<short>		kgmString;
  memcpy(dst, pst, (int)(pen - pst));
 }
 
-//close string 
+//close string
 inline void str_close(char* str){
  char* ptr_r = strchr(str, '\r');
  char* ptr_n = strchr(str, '\n');
