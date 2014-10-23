@@ -58,7 +58,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onQuit));
     item = menu->add("Edit");
     item->add(ME_EDIT_REMOVE, "Remove", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditRemove));
-    item->add(ME_EDIT_DUPLICATE, "Duplicate", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditDuplicate));
+    //item->add(ME_EDIT_DUPLICATE, "Duplicate", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditDuplicate));
     item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditOptions));
     item = menu->add("Add");
     item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMesh));
@@ -794,6 +794,21 @@ void kEditor::onKeyUp(int k)
       game->getLogic()->clear();
     }
 
+    for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+    {
+      switch ((*i)->typ)
+      {
+      case kNode::ACTOR:
+      case kNode::OBJECT:
+      case kNode::SENSOR:
+      case kNode::TRIGGER:
+        (*i)->obj->resetToVariables();
+        break;
+      default:
+        break;
+      }
+    }
+
     menu->show();
     game->m_state = kgmIGame::State_Edit;
 
@@ -1011,8 +1026,13 @@ void kEditor::onEditRemove()
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
     game->getRender()->remove(selected->geo);
+    game->getRender()->remove(selected->icn);
     break;
   }
+
+  nodes.erase(selected);
+
+  selected->release();
 
   selected = null;
 }
@@ -1117,8 +1137,6 @@ void kEditor::onAddLight()
   kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-  game->getResources();
-  game->getResources()->getTexture("light_ico.tga");
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
   node->geo = new kArrow();
 
@@ -1128,6 +1146,8 @@ void kEditor::onAddLight()
   game->m_render->add(l);
   game->m_render->add(node->icn);
   game->m_render->add(node->geo, mtlLines);
+
+  l->release();
 }
 
 void kEditor::onAddActor()

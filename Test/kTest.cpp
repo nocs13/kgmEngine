@@ -126,6 +126,8 @@ public:
     readData();
     saveData();
 
+    return;
+
     kgmSound* snd = m_resources->getSound("1.wav");
 
     if(snd && snd->getSound())

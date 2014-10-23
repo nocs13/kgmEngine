@@ -44,7 +44,33 @@ public:
   static GraphicsQuality   textureQuality;
   static GraphicsQuality   shadowQuality;
 
-  class Mesh
+  class Node
+  {
+  public:
+    bool remove;
+
+  public:
+    Node()
+    {
+      remove = false;
+    }
+
+    bool getRemove()       { return remove; }
+    void setRemove(bool r) { remove = r;    }
+  };
+
+  class Light: public Node
+  {
+  public:
+    kgmLight* light;
+
+    Light()
+    {
+      light = null;
+    }
+  };
+
+  class Mesh: public Node
   {
   public:
     kgmMaterial* material;
@@ -56,17 +82,27 @@ public:
       material = null;
       mesh     = null;
       mtx.identity();
+      remove  = false;
     }
   };
 
-  class Icon: public kgmObject
+  class Visual: public Node
+  {
+  public:
+    kgmVisual* visual;
+
+    Visual()
+    {
+      visual = null;
+    }
+  };
+
+  class Icon: public kgmObject, public Node
   {
     kgmTexture* icon;
     float       width,
                 height;
     vec3        position;
-
-    bool        remove;
 
   public:
     Icon()
@@ -75,7 +111,6 @@ public:
       width = 0.2;
       height = 0.2;
       position = vec3(0, 0, 0);
-      remove = false;
     }
 
     Icon(kgmTexture* c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
@@ -84,7 +119,6 @@ public:
       width = w;
       height = h;
       position = v;
-      remove = false;
 
       if(c)
         c->increment();
@@ -101,9 +135,6 @@ public:
     float       getHeight() { return height; }
     vec3        getPosition() { return position; }
     void        setPosition(vec3 v) { position = v; }
-
-    bool        getRemove() { return remove; }
-    void        setRemove(bool r) { remove = r; }
   };
 
 private:
@@ -116,8 +147,8 @@ private:
   kgmCamera   m_camera;
 
   kgmList<Mesh>         m_meshes;
+  kgmList<Light>        m_lights;
   kgmList<kgmMaterial*> m_materials;
-  kgmList<kgmLight*>    m_lights;
   kgmList<kgmVisual*>   m_visuals;
   kgmList<kgmGui*>      m_guis;
   kgmList<Icon*>        m_icons;
@@ -205,8 +236,13 @@ public:
     if(!lgt)
       return;
 
+    Light light;
+
+    light.light = lgt;
+
     lgt->increment();
-    m_lights.add(lgt);
+
+    m_lights.add(light);
   }
 
   void add(kgmMesh* mesh, kgmMaterial* mtl, mtx4* mtx = null)
@@ -292,8 +328,7 @@ public:
 
       if(mesh->mesh == msh)
       {
-        mesh->mesh->release();
-        mesh->mesh = null;
+        mesh->remove = true;
 
         break;
       }
@@ -304,10 +339,9 @@ public:
   {
     for(int i = 0; i < m_lights.length(); i++)
     {
-      if(m_lights[i] == light)
+      if(m_lights[i].light == light)
       {
-        light->release();
-        m_lights[i] = null;
+        m_lights[i].remove = true;
 
         break;
       }
@@ -322,6 +356,12 @@ public:
   void remove(kgmMaterial* material)
   {
 
+  }
+
+  void remove(Icon* ico)
+  {
+    if(ico)
+      ico->remove = true;
   }
 
   bool get(kgmString name, kgmMaterial** mtl)

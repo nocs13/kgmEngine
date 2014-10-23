@@ -22,7 +22,7 @@ void kgmResource::release()
   if(g_resources && references() == 1)
   {
 #ifdef DEBUG
-    kgm_log() << "\nResource release:";
+    kgm_log() << "Resource release: ";
 
     if(m_id.length() > 0)
       kgm_log() << m_id.data() << "\n";

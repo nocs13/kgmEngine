@@ -11,6 +11,8 @@
 
 #include "../kgmBase/kgmList.h"
 
+#include "../kgmSystem/kgmThread.h"
+
 #ifdef DSOUND
 #include <windows.h>
 #include "inc/DX/dsound.h"
@@ -19,6 +21,37 @@ class _Sound;
 
 class kgmDSound: public kgmIAudio
 {
+  KGM_OBJECT(kgmDSound);
+
+  class Thread: public kgmThread
+  {
+    kgmDSound* object;
+
+    int (*callback)(kgmDSound*);
+  public:
+
+    Thread()
+    {
+      object   = null;
+      callback = null;
+    }
+
+    bool start(kgmDSound* obj, int (*call)(kgmDSound*))
+    {
+      object   = obj;
+      callback = call;
+
+      exec();
+    }
+
+    void run()
+    {
+      if(object && callback)
+        callback(object);
+    }
+  };
+
+
   LPDIRECTSOUND       m_pSnd;
   LPDIRECTSOUNDBUFFER m_pSbuf;
 
@@ -27,6 +60,11 @@ class kgmDSound: public kgmIAudio
   kgmList<_Sound*> m_sounds;
 
   u32 m_timer;
+
+  Thread        m_thread;
+  Thread::Mutex m_mutex;
+
+  bool     m_proceed;
 
   friend void CALLBACK DirectSoundProc(UINT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 
@@ -43,6 +81,8 @@ public:
   void  play(Sound snd, bool loop);
   void  pan(Sound  snd, s16 pan);
   void  stop(Sound snd);
+
+  __stdcall int   proceed();
 };
 
 #endif

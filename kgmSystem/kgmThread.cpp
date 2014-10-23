@@ -159,7 +159,6 @@ kgmThread::Mutex kgmThread::mutex()
 
   if(mutex)
   {
-    //*mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_init(mutex, NULL);
 
     return mutex;
@@ -192,7 +191,8 @@ void  kgmThread::lock(kgmThread::Mutex m)
   if(m)
   {
 #ifdef WIN32
-    EnterCriticalSection(m);
+    if(TryEnterCriticalSection(m))
+      EnterCriticalSection(m);
 #else
     pthread_mutex_lock(m);
 #endif

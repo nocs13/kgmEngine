@@ -3,10 +3,15 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "kgmDSound.h"
+#include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmLog.h"
 
 #ifdef WIN32
 #include <mmsystem.h>
+#endif
+
+#ifdef DSOUND
+KGMOBJECT_IMPLEMENT(kgmDSound, kgmIAudio);
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -92,9 +97,13 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
   (void)dwReserved1;
   (void)dwReserved2;
 
-  BufSize = self->m_mixer.getLength();
+  BufSize = self->m_mixer.getFrames() * self->m_mixer.getBytesPerFrame();
+
+  if(BufSize < 1)
+    return;
 
   // Get current play and write cursors
+  IDirectSoundBuffer_SetCurrentPosition(self->m_pSbuf, 0);
   IDirectSoundBuffer_GetCurrentPosition(self->m_pSbuf, &PlayCursor, &WriteCursor);
 
   // Get the output format and figure the number of bytes played (block aligned)
@@ -103,14 +112,16 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
   //BytesPlayed=((((WriteCursor<pData->OldWriteCursor)?(BufSize+WriteCursor-pData->OldWriteCursor):(WriteCursor-pData->OldWriteCursor))/OutputType.nBlockAlign)*OutputType.nBlockAlign);
 
   // Lock output buffer started at 40msec in front of the old write cursor (15msec in front of the actual write cursor)
-  //DSRes=IDirectSoundBuffer_Lock(self->m_pSbuf,(pData->OldWriteCursor+(OutputType.nSamplesPerSec/25)*OutputType.nBlockAlign)%BufSize,BytesPlayed,(LPVOID*)&WritePtr1,&WriteCnt1,(LPVOID*)&WritePtr2,&WriteCnt2,0);
+  DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf, 0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
+                                  (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
 
   // If the buffer is lost, restore it, play and lock
   if (DSRes==DSERR_BUFFERLOST)
   {
     IDirectSoundBuffer_Restore(self->m_pSbuf);
     IDirectSoundBuffer_Play(self->m_pSbuf,0,0,DSBPLAY_LOOPING);
-    //DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf,(pData->OldWriteCursor+(OutputType.nSamplesPerSec/25)*OutputType.nBlockAlign)%BufSize,BytesPlayed,(LPVOID*)&WritePtr1,&WriteCnt1,(LPVOID*)&WritePtr2,&WriteCnt2,0);
+    DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf, 0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
+                                    (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
   }
 
   // Successfully locked the output buffer
@@ -118,14 +129,32 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
   {
     // If we have an active context, mix data directly into output buffer otherwise fill with silence
     //SuspendContext(NULL);
+    kgmThread::lock(self->m_mutex);
+    u32 t1 = kgmTime::getTicks();
     //if (WritePtr1)
     //  aluMixData(pDevice->Context, WritePtr1, WriteCnt1, pDevice->Format);
     //if (WritePtr2)
     //  aluMixData(pDevice->Context, WritePtr2, WriteCnt2, pDevice->Format);
+    memcpy(WritePtr1, self->m_mixer.getBuffer(), WriteCnt1);
     //ProcessContext(NULL);
 
     // Unlock output buffer only when successfully locked
     IDirectSoundBuffer_Unlock(self->m_pSbuf, WritePtr1, WriteCnt1, WritePtr2, WriteCnt2);
+
+    self->m_mixer.clean();
+
+    u32 t2 = kgmTime::getTicks();
+
+    u32 t3 = t2 - t2;
+
+    if(t3 < self->m_mixer.getMsTime())
+    {
+      s32 wtime = self->m_mixer.getMsTime() - t3;
+
+      kgmThread::sleep(wtime - 10);
+    }
+
+    kgmThread::unlock(self->m_mutex);
   }
 }
 
@@ -251,6 +280,8 @@ kgmDSound::kgmDSound()
   m_pSnd = null;
   m_pSbuf = null;
 
+  m_proceed = false;
+
   if(FAILED(DirectSoundCreate(0, &m_pSnd, 0)))
   {
 #ifdef DEBUG
@@ -352,18 +383,32 @@ kgmDSound::kgmDSound()
      }
      else
      {
-       m_timer = timeSetEvent(25, 0, (LPTIMECALLBACK)DirectSoundProc, (DWORD)this,
+       m_timer = timeSetEvent(m_mixer.getMsTime() - 10, 0, (LPTIMECALLBACK)DirectSoundProc, (DWORD)this,
                               (UINT)TIME_CALLBACK_FUNCTION | TIME_PERIODIC);
+
+       m_proceed = true;
+
+       m_thread.start(this, (int(*)(kgmDSound*))&kgmDSound::proceed);
+       m_thread.priority(kgmThread::PrIdle);
+
+       m_mutex = kgmThread::mutex();
      }
    }
 }
 
 kgmDSound::~kgmDSound()
 {
+  m_proceed = false;
+
   if(m_timer)
     timeKillEvent(m_timer);
 
   Sleep(100);
+
+  m_thread.join();
+
+  kgmThread::mxfree(m_mutex);
+
 
   if(m_pSbuf)
   {
@@ -430,6 +475,91 @@ void kgmDSound::stop(Sound snd)
 {
   if(snd)
     ((_Sound*)snd)->stop();
+}
+
+int kgmDSound::proceed()
+{
+  static u32 max_sounds = 10;
+
+  m_proceed = true;
+
+  while(m_proceed)
+  {
+    u32 snd_cound = 0;
+
+    kgmThread::lock(m_mutex);
+
+#ifdef DEBUG
+    kgm_log() << "kgmDSound:: proceed lock " << kgmTime::getTimeText() << "\n";
+#endif
+
+    m_mixer.clean();
+
+    u32 t1 = kgmTime::getTicks();
+
+    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
+    {
+      _Sound* sound = (*i);
+
+      if(snd_cound > max_sounds)
+        break;
+
+      if(sound->remove)
+      {
+        i = m_sounds.erase(i);
+
+        delete sound;
+
+        continue;
+      }
+
+      if(sound->state != _Sound::StPlay)
+        continue;
+
+      u32 size = m_mixer.mixdata((sound->data + sound->cursor),
+                                 (sound->size - sound->cursor),
+                                 sound->channels,
+                                 sound->bps,
+                                 sound->rate,
+                                 sound->vol,
+                                 sound->pan);
+
+      if((sound->cursor + size) == sound->size)
+      {
+        sound->cursor = 0;
+
+        if(!sound->loop)
+          sound->stop();
+      }
+      else
+      {
+        sound->cursor += size;
+      }
+
+      snd_cound++;
+    }
+
+    //render();
+
+    kgmThread::unlock(m_mutex);
+
+#ifdef DEBUG
+    kgm_log() << "kgmDSound:: proceed unlock " << kgmTime::getTimeText() << "\n";
+#endif
+
+    u32 t2 = kgmTime::getTicks();
+
+    u32 t3 = t2 - t1;
+
+    if(t3 < m_mixer.getMsTime())
+    {
+      s32 wtime = m_mixer.getMsTime() - t3;
+
+      kgmThread::sleep(wtime / 2);
+    }
+  }
+
+  return 0;
 }
 
 #endif

@@ -28,7 +28,8 @@ public:
   kViewObjects(kgmEvent* tar, int x, int y, int w, int h, bool selclose = true);
 
   void onClose();
-  void onSelectItem();
+
+  __stdcall void onSelectItem();
 
   void setCloseCallback(CloseCallback cc)
   {

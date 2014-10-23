@@ -87,4 +87,5 @@ inline void kgm_log_print(const char* s){
 }
 
 #define KGM_DBG_MSG(x) fprintf(stderr, "%s", x)
+#define KGM_LOG() (kgm_log() << __FILE__ << ":" << __LINE__ << ":")
 
