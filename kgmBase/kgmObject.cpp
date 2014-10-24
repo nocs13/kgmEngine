@@ -16,7 +16,8 @@ void* kgmObject::operator new(size_t size)
   return p;
 }
 
-void kgmObject::operator delete(void* p){
+void kgmObject::operator delete(void* p)
+{
   bool is = false;
 
   for(kgmList<kgmObject*>::iterator i = g_objects.begin(); i != g_objects.end(); i.next())
