@@ -396,6 +396,7 @@ kgmAlsa::kgmAlsa()
 
         m_thread.priority(kgmThread::PrIdle);
         m_render.priority(kgmThread::PrIdle);
+        
         m_proceed = true;
 
         m_mutex = kgmThread::mutex();
@@ -587,6 +588,10 @@ int kgmAlsa::render()
       kgm_log() << "kgmAlsa:: render unlock " << kgmTime::getTimeText() << "\n";
 #endif
     }
+    else
+    {
+      kgmThread::sleep(m_mixer.getMsTime() - 1);
+    }
 #endif
   }
 
@@ -655,8 +660,6 @@ int kgmAlsa::proceed()
       snd_cound++;
     }
 
-    //render();
-
     kgmThread::unlock(m_mutex);
 
 #ifdef DEBUG
@@ -670,6 +673,10 @@ int kgmAlsa::proceed()
     if(t3 < m_mixer.getMsTime())
     {
       s32 wtime = m_mixer.getMsTime() - t3;
+
+#ifdef DEBUG
+    kgm_log() << "kgmAlsa:: proceed sleeping " << wtime / 2 << "\n";
+#endif
 
       kgmThread::sleep(wtime / 2);
     }
