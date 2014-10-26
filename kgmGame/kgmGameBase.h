@@ -26,12 +26,6 @@
 using namespace kgmGameEditor;
 #endif
 
-
-#ifdef WIN32
-#endif
-#ifdef LINUX
-#endif
-
 class kgmGameBase: public kgmOGLWindow, public kgmIGame
 {
 public:

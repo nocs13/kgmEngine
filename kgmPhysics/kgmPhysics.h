@@ -1,14 +1,16 @@
 #pragma once
-#include "../kgmBase/kgmList.h"
-#include "../kgmBase/kgmOctTree.h"
 #include "../kgmMath/kgmMath.h"
+#include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmOctTree.h"
 
 #include "kgmIPhysics.h"
 #include "kgmBody.h"
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
-class kgmPhysics: public kgmIPhysics{
+class kgmPhysics: public kgmObject, public kgmIPhysics
+{
 public:
  float			m_gravity;
  bool			 m_isgravity;

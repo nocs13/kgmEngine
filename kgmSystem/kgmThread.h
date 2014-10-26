@@ -23,6 +23,7 @@
 class kgmThread: public kgmObject
 {
   KGM_OBJECT(kgmThread);
+
 public:
   typedef long  TID;
 
@@ -75,3 +76,38 @@ private:
  static void thread(kgmThread *p);
 };
 
+class kgmInstThread: public kgmThread
+{
+  void* object;
+  int (*callback)(void*);
+
+public:
+  kgmInstThread()
+  {
+    object   = null;
+    callback = null;
+  }
+
+  kgmInstThread(void* obj, int (*call)(void*))
+  {
+    object   = obj;
+    callback = call;
+
+    start(obj, call);
+  }
+
+  void start(void* obj, int (*call)(void*))
+  {
+    object   = obj;
+    callback = call;
+
+    if(call && obj)
+      exec();
+  }
+
+  virtual void run() final
+  {
+    if(object && callback)
+      callback(object);
+  }
+};

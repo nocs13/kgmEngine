@@ -1,6 +1,5 @@
 #pragma once
 #include "kgmTypes.h"
-#include "kgmInterface.h"
 
 class kgmMesh;
 class kgmAnimation;
@@ -18,7 +17,7 @@ class kgmShapeCollision;
 
 template<class T> class kgmMemory;
 
-class kgmIResources: public kgmInterface
+class kgmIResources
 {
 private:
   enum Type

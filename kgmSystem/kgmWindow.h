@@ -1,5 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmEvent.h"
+#include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmIWindow.h"
 #include "../kgmMath/kgmMath.h"
 

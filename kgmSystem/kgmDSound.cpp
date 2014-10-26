@@ -11,7 +11,7 @@
 #endif
 
 #ifdef DSOUND
-KGMOBJECT_IMPLEMENT(kgmDSound, kgmIAudio);
+KGMOBJECT_IMPLEMENT(kgmDSound, kgmObject);
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ static u32 error = 0;
 #ifdef DSOUND
 
 void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
-                                         DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
+                              DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
 {
   kgmDSound *self = (kgmDSound*)dwUser;
   DWORD PlayCursor,WriteCursor;

@@ -1,8 +1,8 @@
 #pragma once
-#include "../kgmBase/kgmInterface.h"
 #include "../kgmBase/kgmIGC.h"
-#include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmTab.h"
+#include "../kgmBase/kgmIResources.h"
+
 #include "../kgmSystem/kgmWindow.h"
 
 #include "kgmNode.h"

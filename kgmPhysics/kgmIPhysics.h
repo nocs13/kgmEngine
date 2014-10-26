@@ -1,9 +1,8 @@
 #pragma once
-#include "../kgmBase/kgmInterface.h"
 
 class kgmBody;
 
-class kgmIPhysics: public kgmInterface
+class kgmIPhysics
 {
 public:
  virtual void clear() = 0;

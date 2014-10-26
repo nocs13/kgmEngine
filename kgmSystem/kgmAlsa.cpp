@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmTime.h"
 
-KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
+KGMOBJECT_IMPLEMENT(kgmAlsa, kgmObject);
 
 #ifdef ALSA
 #include <alsa/asoundlib.h>

@@ -1,9 +1,8 @@
 #pragma once
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmString.h"
-#include "../kgmBase/kgmInterface.h"
 
-class kgmSystem: public kgmInterface
+class kgmSystem: public kgmObject
 {
 public:
   static void sleep(u32 ms);

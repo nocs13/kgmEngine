@@ -1,9 +1,10 @@
 #ifndef KGMGAMEAUDIO_H
 #define KGMGAMEAUDIO_H
 
+#include "../kgmBase/kgmObject.h"
 #include "../kgmMedia/kgmNullAudio.h"
 
-class kgmGameAudio: public kgmIAudio
+class kgmGameAudio: public kgmObject, public kgmIAudio
 {
   KGM_OBJECT(kgmGameAudio);
 

@@ -11,7 +11,7 @@
 #include "../kgmSystem/kgmDSound.h"
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmIAudio);
+KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmObject);
 
 kgmGameAudio::kgmGameAudio()
 {
@@ -35,6 +35,6 @@ kgmGameAudio::~kgmGameAudio()
 {
   if(m_audio)
   {
-    m_audio->release();
+    ((kgmObject*)m_audio)->release();
   }
 }

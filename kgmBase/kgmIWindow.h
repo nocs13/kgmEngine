@@ -1,7 +1,6 @@
 #pragma once
-#include "kgmInterface.h"
 
-class kgmIWindow: public kgmInterface
+class kgmIWindow
 {
 public:
   virtual void close() = 0;

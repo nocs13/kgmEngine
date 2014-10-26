@@ -1,5 +1,4 @@
 #pragma once
-#include "../kgmBase/kgmInterface.h"
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmTypes.h"

@@ -1,5 +1,4 @@
 #pragma once
-#include "kgmInterface.h"
 #include "../kgmMath/kgmMath.h"
 
 class   kgmIGC;
@@ -121,8 +120,7 @@ enum gc_enum
   gcsup_fbuffers,       // frame buffers
 };
 
-
-class kgmIGC: public kgmInterface
+class kgmIGC
 {
 public:
   typedef void* Shader;
