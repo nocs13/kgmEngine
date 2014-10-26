@@ -21,7 +21,8 @@ template<class T> class kgmMemory;
 class kgmIResources: public kgmInterface
 {
 private:
-  enum Type{
+  enum Type
+  {
     TypeNone,
     TypeMemory,
     TypeFile,

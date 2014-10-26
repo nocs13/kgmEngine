@@ -51,7 +51,6 @@ class kgmDSound: public kgmIAudio
     }
   };
 
-
   LPDIRECTSOUND       m_pSnd;
   LPDIRECTSOUNDBUFFER m_pSbuf;
 

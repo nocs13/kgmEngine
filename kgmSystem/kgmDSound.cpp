@@ -21,64 +21,6 @@ KGMOBJECT_IMPLEMENT(kgmDSound, kgmIAudio);
 static u32 error = 0;
 
 #ifdef DSOUND
-/*struct _Sound
-{
-  LPDIRECTSOUNDBUFFER pSb;
-
-  _Sound(LPDIRECTSOUNDBUFFER sb);
-  ~_Sound();
-
-  void release();
-  void stop();
-  void play(bool loop);
-  void pause();
-  void volume(float vol);
-  void emit(vec3& pos, vec3& vel);
-
-  void drop();
-};
-
-_Sound::_Sound(LPDIRECTSOUNDBUFFER sb)
-{
-  pSb = sb;
-}
-
-_Sound::~_Sound()
-{
-}
-
-void _Sound::release()
-{
-  if(pSb)
-    pSb->Release();
-}
-
-void _Sound::stop()
-{
-}
-
-void _Sound::play(bool loop)
-{
-  // should be check because don't play
-  if(pSb)
-  {
-    if(FAILED(pSb->Play(0, 0, (loop) ? (DSBPLAY_LOOPING) : (0))))
-    {
-#ifdef DEBUG
-    kgm_log() << "Error: can't play sound buffer.\n";
-#endif
-    }
-  }
-}
-
-void _Sound::volume(float vol)
-{
-}
-
-void _Sound::pause()
-{
-}
-*/
 
 void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
                                          DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
@@ -102,44 +44,30 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
   if(BufSize < 1)
     return;
 
-  // Get current play and write cursors
-  IDirectSoundBuffer_SetCurrentPosition(self->m_pSbuf, 0);
-  IDirectSoundBuffer_GetCurrentPosition(self->m_pSbuf, &PlayCursor, &WriteCursor);
+  self->m_pSbuf->SetCurrentPosition(0);
+  self->m_pSbuf->GetCurrentPosition(&PlayCursor, &WriteCursor);
 
-  // Get the output format and figure the number of bytes played (block aligned)
-  IDirectSoundBuffer_GetFormat(self->m_pSbuf, &OutputType, sizeof(WAVEFORMATEX),NULL);
+  self->m_pSbuf->GetFormat(&OutputType, sizeof(WAVEFORMATEX),NULL);
 
-  //BytesPlayed=((((WriteCursor<pData->OldWriteCursor)?(BufSize+WriteCursor-pData->OldWriteCursor):(WriteCursor-pData->OldWriteCursor))/OutputType.nBlockAlign)*OutputType.nBlockAlign);
+  DSRes = self->m_pSbuf->Lock(0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
+                              (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
 
-  // Lock output buffer started at 40msec in front of the old write cursor (15msec in front of the actual write cursor)
-  DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf, 0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
-                                  (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
-
-  // If the buffer is lost, restore it, play and lock
   if (DSRes==DSERR_BUFFERLOST)
   {
-    IDirectSoundBuffer_Restore(self->m_pSbuf);
-    IDirectSoundBuffer_Play(self->m_pSbuf,0,0,DSBPLAY_LOOPING);
-    DSRes = IDirectSoundBuffer_Lock(self->m_pSbuf, 0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
-                                    (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
+    self->m_pSbuf->Restore();
+    self->m_pSbuf->Play(0, 0, DSBPLAY_LOOPING);
+    DSRes = self->m_pSbuf->Lock(0, BufSize,(LPVOID*)&WritePtr1, &WriteCnt1,
+                                (LPVOID*)&WritePtr2, &WriteCnt2, DSBLOCK_ENTIREBUFFER);
   }
 
-  // Successfully locked the output buffer
   if (DSRes==DS_OK)
   {
-    // If we have an active context, mix data directly into output buffer otherwise fill with silence
-    //SuspendContext(NULL);
     kgmThread::lock(self->m_mutex);
     u32 t1 = kgmTime::getTicks();
-    //if (WritePtr1)
-    //  aluMixData(pDevice->Context, WritePtr1, WriteCnt1, pDevice->Format);
-    //if (WritePtr2)
-    //  aluMixData(pDevice->Context, WritePtr2, WriteCnt2, pDevice->Format);
-    memcpy(WritePtr1, self->m_mixer.getBuffer(), WriteCnt1);
-    //ProcessContext(NULL);
 
-    // Unlock output buffer only when successfully locked
-    IDirectSoundBuffer_Unlock(self->m_pSbuf, WritePtr1, WriteCnt1, WritePtr2, WriteCnt2);
+    memcpy(WritePtr1, self->m_mixer.getBuffer(), WriteCnt1);
+
+    self->m_pSbuf->Unlock(WritePtr1, WriteCnt1, WritePtr2, WriteCnt2);
 
     self->m_mixer.clean();
 

@@ -106,7 +106,8 @@ enum game_event
   gevt_none,
 };
 
-struct kgmGameCommand{
+struct kgmGameCommand
+{
   char* m_cmd;
 };
 
@@ -126,7 +127,8 @@ class kgmEnvironment;
 
 class kgmGameObject;
 
-class kgmIGame{
+class kgmIGame
+{
 public:
   enum State
   {
