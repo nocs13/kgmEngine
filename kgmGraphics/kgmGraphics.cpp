@@ -1607,8 +1607,10 @@ void kgmGraphics::gc3DMode()
 }
 
 //*************** DRAWING ***************
-void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
+void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
+
   V v[4];
 
 //  if(tex && tex->m_texture)
@@ -1630,9 +1632,12 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex){
     gc->gcSetTexture(0, 0);
 }
 
-void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text){
+void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text)
+{
   typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
+
   V v[4];
+
   u32 tlen = text.length();
 
   if(tlen < 1)
@@ -1650,28 +1655,35 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   gc->gcBlend(true, gcblend_one, gcblend_one);
   gc->gcSetTexture(0, font->m_texture);
 
-  for(u32 i = 0; i < tlen; i++){
+  for(u32 i = 0; i < tlen; i++)
+  {
     char ch = text[i];
 
-    if(ch == '\n'){ cx = (float)clip.x, cy += fheight; continue; }
-    if((ch == ' ') || (ch == '\t')){  tx = 0.0f, ty = 0.0f;	}
+    if(ch == '\n')
+    { 
+      cx = (float)clip.x; 
+      cy += fheight; 
+      
+      continue; 
+    }
+
+    if((ch == ' ') || (ch == '\t'))
+    {  
+      tx = 0.0f; 
+      ty = 0.0f;	
+    }
 
     tx = (float)(tdx * (ch % font->m_rows));
     ty = 1.0f - (float)(tdy * (ch / font->m_rows));
 
     if(clip.inside(cx + fwidth, cy + fheight))
     {
-      v[0].pos = vec3(cx, cy, 0),               v[0].col = fcolor, v[0].uv = vec2(tx+0.001,     ty-0.001);
-      v[1].pos = vec3(cx, cy+fheight, 0),       v[1].col = fcolor, v[1].uv = vec2(tx+0.001,     ty-tdy);
-      v[2].pos = vec3(cx+fwidth, cy, 0),        v[2].col = fcolor, v[2].uv = vec2(tx+tdx-0.001, ty-0.001);
-      v[3].pos = vec3(cx+fwidth, cy+fheight, 0),v[3].col = fcolor, v[3].uv = vec2(tx+tdx-0.001, ty-tdy);
-      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-    }
-    else
-    {
-#ifdef DEBUG
-      kgm_log() << "\nText: " << (char*)text << " " << "Not clipped H,W " << (s32)fheight << " " << (s32)fwidth << " end!" << "\n";
-#endif
+      v[0].pos = vec3(cx, cy, 0),                v[0].col = fcolor, v[0].uv = vec2(tx + 0.001,     ty - 0.001);
+      v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = fcolor, v[1].uv = vec2(tx + 0.001,     ty - tdy);
+      v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = fcolor, v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
+      v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
+      
+      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
 
     cx += fwidth;
@@ -1681,9 +1693,11 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   gc->gcSetTexture(0, 0);
 }
 
-void kgmGraphics::gcDrawBillboard(box b, u32 col){
+void kgmGraphics::gcDrawBillboard(box b, u32 col)
+{
   mtx4 mv, mp, m;
   vec3 rv, uv;
+
   typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
 
   V v[4];
@@ -1692,6 +1706,7 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col){
 
   gc->gcGetMatrix(gcmtx_view, mv.m);
   gc->gcGetMatrix(gcmtx_proj, mp.m);
+
   m = mv * mp;
 
   rv = vec3(m.m[0], m.m[4], m.m[8]); rv.normalize();
@@ -1718,6 +1733,6 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col){
 
   m.identity();
   setViewMatrix(m);
-  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 }
 
