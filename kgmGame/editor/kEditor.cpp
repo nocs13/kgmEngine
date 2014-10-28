@@ -630,36 +630,53 @@ bool kEditor::addActor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmGameObject::g_typ_objects.hasKey(type))
+  kgmActor* ac = null;
+
+  kgmString cpath = "Data";
+
+  cpath += kgmSystem::PathDelim;
+  cpath += type;
+  cpath += ".act";
+
+#ifdef DEBUG
+  kgm_log() << "kEditor: Check actor path is " << cpath << ".\n";
+#endif
+
+  if(kgmSystem::isFile(cpath))
+    ac = game->gSpawn(type);
+
+  if(ac == null && kgmGameObject::g_typ_objects.hasKey(type))
   {
     kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
 
     if(fn_new)
     {
-      kgmActor* ac = (kgmActor*)fn_new(game);
+      ac = (kgmActor*)fn_new(game);
 
-      if(ac)
-      {
-        kNode* node = new kNode(ac);
-        node->bnd = box3(-1, -1, -1, 1, 1, 1);
-        node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
-        node->geo = new kArrow();
-
-        selected = node;
-
-        game->m_render->add(node->icn);
-        game->m_render->add(node->geo, mtlLines);
-
-        nodes.add(node);
-
-        game->getLogic()->add(ac);
-        game->getRender()->add(ac->getVisual());
-        game->getPhysics()->add(ac->getBody());
-
-        return true;
-      }
+      break;
     }
+  }
+
+  if(ac)
+  {
+    kNode* node = new kNode(ac);
+    node->bnd = box3(-1, -1, -1, 1, 1, 1);
+    node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
+    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
+    node->geo = new kArrow();
+
+    selected = node;
+
+    game->m_render->add(node->icn);
+    game->m_render->add(node->geo, mtlLines);
+
+    nodes.add(node);
+
+    game->getLogic()->add(ac);
+    game->getRender()->add(ac->getVisual());
+    game->getPhysics()->add(ac->getBody());
+    
+    return true;
   }
 
   return false;
@@ -1153,6 +1170,7 @@ void kEditor::onAddLight()
 void kEditor::onAddActor()
 {
   kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+  
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
 
   for(int i = 0; i < kgmGameObject::g_list_actors.length(); i++)

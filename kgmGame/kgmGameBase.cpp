@@ -1178,10 +1178,11 @@ bool kgmGameBase::gMapBinary(kgmString& path)
 }
 
 /////////////////
-kgmActor* kgmGameBase::gSpawn(kgmString a){
+kgmActor* kgmGameBase::gSpawn(kgmString a)
+{
   kgmActor*       actor = 0;
   kgmString       type = a;
-  kgmMemory<u8> mem;
+  kgmMemory<u8>   mem;
 
 #ifdef DEBUG
   kgm_log() << "\nSpawning Actor: " << a.data();
@@ -1205,7 +1206,8 @@ kgmActor* kgmGameBase::gSpawn(kgmString a){
 
   kgmXml::Node* a_node = null;
 
-  for(int i = 0; i < xml.m_node->nodes(); i++){
+  for(int i = 0; i < xml.m_node->nodes(); i++)
+  {
     kgmString id;
     xml.m_node->node(i)->id(id);
 

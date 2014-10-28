@@ -42,6 +42,13 @@ public:
     PrSuper
   };
 
+  enum Type
+  {
+    TpNone   = 0,
+    TpCansel = 1L << 0,
+    TpDetach = 1L << 1
+  };
+
 private:
 #ifdef WIN32
  void* m_thread;
@@ -50,6 +57,8 @@ private:
 #endif
 
  bool m_canselable;
+
+ s32  m_result;
 
 public:
  kgmThread();
@@ -67,6 +76,7 @@ public:
  static bool  lockable(Mutex);
 
  static TID   id();
+ static void  exit(s32 res);
  static void  sleep(u32 ms);
 
 protected:
@@ -78,8 +88,8 @@ private:
 
 class kgmInstThread: public kgmThread
 {
-  void* object;
-  int (*callback)(void*);
+  void   *object;
+  int   (*callback)(void*);
 
 public:
   kgmInstThread()

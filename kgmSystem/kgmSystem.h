@@ -5,6 +5,12 @@
 class kgmSystem: public kgmObject
 {
 public:
+#ifdef WIN32
+  const char* PathDelim = "\\";
+#else
+  const char* PathDelim = "/";
+#endif
+
   static void sleep(u32 ms);
   static void getDesktopDimension(u32& w, u32& h);
   static void getCurrentDirectory(kgmString&);

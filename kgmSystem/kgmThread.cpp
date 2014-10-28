@@ -16,11 +16,14 @@ void kgmThread::thread(kgmThread *p)
 #endif
 
   p->run();
+
+  kgmThread::exit(p->m_result);
 }
 
 kgmThread::kgmThread()
 {
   m_thread = 0;
+  m_result = 0;
   m_canselable = false;
 }
 
@@ -246,6 +249,15 @@ kgmThread::TID  kgmThread::id()
 #endif
 
   return tid;
+}
+
+void kgmThread::exit(s32 res)
+{
+#ifdef WIN32
+  ExitThread((DWORD)res);
+#else
+  pthread_exit((void*)res);
+#endif
 }
 
 void kgmThread::sleep(u32 ms)
