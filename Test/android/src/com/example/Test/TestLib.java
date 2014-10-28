@@ -18,12 +18,17 @@ package com.example.Test;
 
 // Wrapper for native library
 
-public class TestLib {
+public class TestLib
+{
 
-     static {
-         try{
+     static
+     {
+         try
+         {
            System.loadLibrary("Test");
-         }catch(UnsatisfiedLinkError use){
+         }
+         catch(UnsatisfiedLinkError use)
+         {
            System.out.println("WARNING: Could not load libTest.so " + use.getMessage());
          }
      }
@@ -36,6 +41,6 @@ public class TestLib {
      public static native void    init(int width, int height, Object asset, Object surface);
      public static native void    idle();
      public static native void    quit();
-     public static native void    onTouch(int a, int x, int y);   
-     public static native void    onKeyboard(int a, int k);   
+     public static native void    onTouch(int a, int x, int y);
+     public static native void    onKeyboard(int a, int k);
 }

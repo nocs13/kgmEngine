@@ -38,7 +38,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd){
 
   if(!wnd)
     return;
-  
+
   this->m_wnd = wnd;
 
   GLubyte* oglVersion = (GLubyte*)glGetString(GL_VERSION);
@@ -424,7 +424,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
 #endif
 
-  switch(fmt){
+  switch(fmt)
+  {
   case gctex_fmt8:
     pic_fmt = GL_RED;
     fmt_bt = 1;
@@ -466,7 +467,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
   }
 
-  switch(type){
+  switch(type)
+  {
   case gctype_tex2d:
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -698,7 +700,7 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 }
 
 /*
-//RENDER BUFFER 
+//RENDER BUFFER
 void* kgmOGL::gcGenRenderTarget(u32 w, u32 h, u32 flags){
  GLenum stat = 0;
  RenderBuffer* rb = new RenderBuffer;
@@ -876,7 +878,7 @@ void kgmOGL::gcClipPlane(bool en, u32 id, float* par){
 #endif
 }
 //STENCIL
-void gcStencil(bool en, u32 func, u32 mask, u32 ref, 
+void gcStencil(bool en, u32 func, u32 mask, u32 ref,
                u32 fail, u32 zfail, u32 zpass){
 
 }
@@ -1084,7 +1086,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   //  glColor4f(1, 1, 1, 1);
 }*/
 
-//VERTEX & INDEX BUFFER 
+//VERTEX & INDEX BUFFER
 void* kgmOGL::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize){
   VBO* vbo = new VBO;
   memset(vbo, 0, sizeof(VBO));
@@ -1382,7 +1384,7 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
 }
 
 void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
-{ 
+{
 #ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
   if(link < 0)
@@ -1418,7 +1420,7 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 }
 
 void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* par, void* val)
-{ 
+{
 #ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
   if(link < 0)

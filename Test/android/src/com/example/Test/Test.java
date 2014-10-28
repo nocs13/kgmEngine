@@ -71,17 +71,21 @@ public class Test extends Activity
     	//mView = new TestGL2(this);
     	setContentView(mView);
 
-	m_test = this;
-        Log.v(TAG, "Thread = " + Thread.currentThread().getId());
+      m_test = this;
+      Log.v(TAG, "Thread = " + Thread.currentThread().getId());
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig)
+    {
        //super.onConfigurationChanged(newConfig);
 
        // Checks the orientation of the screen
-       if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-       } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+       if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+       {
+       }
+       else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
+       {
        }
     }
 
@@ -124,9 +128,9 @@ public class Test extends Activity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
-		GL2JNIView.isEvt = true;
-		GL2JNIView.evtId = GL2JNIView.EVT_KEYDOWN;
-		GL2JNIView.evtKey = keyCode;
+		  GL2JNIView.isEvt = true;
+		  GL2JNIView.evtId = GL2JNIView.EVT_KEYDOWN;
+		  GL2JNIView.evtKey = keyCode;
         //TestLib.onKeyboard(0, keyCode);
 
     	return true;
@@ -135,26 +139,11 @@ public class Test extends Activity
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event)
     {
-		GL2JNIView.isEvt = true;
-		GL2JNIView.evtId = GL2JNIView.EVT_KEYUP;
-		GL2JNIView.evtKey = keyCode;
+		  GL2JNIView.isEvt = true;
+		  GL2JNIView.evtId = GL2JNIView.EVT_KEYUP;
+		  GL2JNIView.evtKey = keyCode;
         //TestLib.onKeyboard(1, keyCode);
 
     	return true;
     }
-
-    /* A native method that is implemented by the
-     * 'hello-jni' native library, which is packaged
-     * with this application.
-     */
-    /* This is another native method declaration that is *not*
-     * implemented by 'hello-jni'. This is simply to show that
-     * you can declare as many native methods in your Java code
-     * as you want, their implementation is searched in the
-     * currently loaded native libraries only the first time
-     * you call them.
-     *
-     * Trying to call this function will result in a
-     * java.lang.UnsatisfiedLinkError exception !
-     */
 }

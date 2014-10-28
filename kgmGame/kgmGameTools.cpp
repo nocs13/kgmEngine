@@ -13,10 +13,12 @@
 
 static char str_buf[1024];
 
-kgmGameTools::kgmGameTools(){
+kgmGameTools::kgmGameTools()
+{
 }
 
-kgmGameTools::~kgmGameTools(){
+kgmGameTools::~kgmGameTools()
+{
 }
 
 //*************** DRAWING ***************
@@ -159,7 +161,8 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
   if(b_btcnt < 8)
     return 0;
 
-  if(b_btcnt == 8){
+  if(b_btcnt == 8)
+  {
     u32 r_size = b_width * b_height;
     pdata = (u32*)malloc(sizeof(u32) * r_size);
     u32 *pal = (u32*)malloc(sizeof(u32) * 256);
@@ -171,6 +174,7 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
       memcpy(&ind, pm, 1);	pm += 1;
       ((u32*)pdata)[i] = pal[ind];
     }
+
     width = b_width;
     height = b_height;
     bpp = 32;
@@ -185,7 +189,7 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
   width = b_width;
   height = b_height;
   bpp = b_btcnt;
-  
+
   for(int i = 0; i < (width * height); i++)
   {
     char* pt = (char*)(((char*)pdata) + i * b_btcnt / 8);
@@ -264,7 +268,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
       pt[2] = t;
     }
   }
-  
+
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
 
@@ -302,7 +306,8 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
 
   u32 fmt = gctex_fmt32;
 
-  switch(pic->bpp){
+  switch(pic->bpp)
+  {
   case 8:
     fmt = gctex_fmt8;
     break;
@@ -317,7 +322,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
     break;
   };
 
-  kgmTexture* tex = new kgmTexture;
+  kgmTexture* tex = new kgmTexture();
 
   tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, 0);
   pic->release();
@@ -341,7 +346,8 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
 
   u32 fmt = gctex_fmt32;
 
-  switch(pic->bpp){
+  switch(pic->bpp)
+  {
   case 8:
     fmt = gctex_fmt8;
     break;
@@ -360,7 +366,8 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
   font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
   pic->release();
 
-  if(!font->m_texture){
+  if(!font->m_texture)
+  {
     font->release();
 
     return 0;
@@ -368,6 +375,7 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
 
   font->m_rows = r;
   font->m_cols = c;
+
   return font;
 }
 
@@ -755,7 +763,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
   kgmAnimation::Animation* f = 0;
   kgmString id, val;
   int tick = 0;
-  
+
   kgmXml::Node* anode = 0;
 
   if(!x.m_node || !(anode = x.m_node->node("kgmAnimation")))

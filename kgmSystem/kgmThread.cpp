@@ -11,8 +11,7 @@ void kgmThread::thread(kgmThread *p)
 #ifdef WIN32
 
 #else
-  if(p->m_canselable)
-    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif
 
   p->run();
@@ -24,7 +23,6 @@ kgmThread::kgmThread()
 {
   m_thread = 0;
   m_result = 0;
-  m_canselable = false;
 }
 
 kgmThread::~kgmThread()
@@ -33,7 +31,7 @@ kgmThread::~kgmThread()
     kill();
 }
 
-bool kgmThread::exec(bool canselable, Priority pr)
+bool kgmThread::exec(Flags sets, Priority pr)
 {
   int rc = 0;
 
@@ -42,7 +40,18 @@ bool kgmThread::exec(bool canselable, Priority pr)
 
   rc = (int)(m_thread) ? (0) : (-1);
 #else
-  rc = pthread_create(&m_thread, 0, (void*(*)(void*))thread, this);
+  pthread_attr_t attr;
+
+  pthread_attr_init(&attr);
+
+  if(sets & CtDetach)
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  else
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+  
+  rc = pthread_create(&m_thread, &attr, (void*(*)(void*))thread, this);
+
+  pthread_attr_destroy(&attr);
 #endif
 
   if(rc)
@@ -69,6 +78,7 @@ void kgmThread::kill()
 void kgmThread::join()
 {
 #ifdef WIN32 
+
 #else
   pthread_join(m_thread, NULL);
 #endif 

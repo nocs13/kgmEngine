@@ -19,17 +19,20 @@
   #include <android/asset_manager_jni.h>
 #endif
 
-static char 	 str_buf[256];
+static char str_buf[256];
 
-kgmGameResources::kgmGameResources(){
+kgmGameResources::kgmGameResources()
+{
   kgmResource::g_resources = this;
 }
 
-kgmGameResources::~kgmGameResources(){
+kgmGameResources::~kgmGameResources()
+{
   release();
 }
 
-void kgmGameResources::release(){
+void kgmGameResources::release()
+{
   int i = 0;
 
   for(i = 0; i < m_paths.size(); i++)
@@ -37,24 +40,30 @@ void kgmGameResources::release(){
 
   m_paths.clear();
 
-  for(i = 0; i < m_resources.size(); i++){
+  for(i = 0; i < m_resources.size(); i++)
+  {
     if(m_resources[i] == 0)
       continue;
+
     m_resources[i]->release();
   }
 
   m_resources.clear();
 }
 
-void kgmGameResources::add(kgmResource* r){
+void kgmGameResources::add(kgmResource* r)
+{
   bool exist = false;
 
   if(!r)
     return;
 
-  for(int i = 0; i < m_resources.size(); i++){
-    if(r == m_resources[i]){
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(r == m_resources[i])
+    {
       exist = true;
+
       break;
     }
   }
@@ -65,14 +74,17 @@ void kgmGameResources::add(kgmResource* r){
   m_resources.add(r);
 }
 
-void kgmGameResources::remove(kgmResource* r){
+void kgmGameResources::remove(kgmResource* r)
+{
   if(!r)
     return;
 
-  for(int i = 0; i < m_resources.size(); i++){
+  for(int i = 0; i < m_resources.size(); i++)
+  {
     kgmResource* rs = m_resources[i];
 
-    if(r == rs && r->references() <= 1){
+    if(r == rs && r->references() <= 1)
+    {
       if(r->isClass(kgmTexture::Class))
       {
         kgmIGame::getGame()->getGC()->gcFreeTexture(((kgmTexture*)r)->m_texture);
@@ -93,7 +105,8 @@ void kgmGameResources::remove(kgmResource* r){
   }
 }
 
-void kgmGameResources::addPath(kgmString s){
+void kgmGameResources::addPath(kgmString s)
+{
   Path* path = 0;
 
   if(kgmSystem::isDirectory(s))
@@ -114,7 +127,8 @@ void kgmGameResources::addPath(kgmString s){
     m_paths.add(path);
 }
 
-bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m){
+bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
+{
   kgmString path;
   bool  res = false;
   int   i = 0;
@@ -152,13 +166,16 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m){
 
   return true;
 #else
-  for(i = 0; i < m_paths.size(); i++){
+  for(i = 0; i < m_paths.size(); i++)
+  {
     kgmFile file;
 
-    if(m_paths[i]->type == 2){
+    if(m_paths[i]->type == 2)
+    {
       path = m_paths[i]->path + delim + kgmString(id, strlen(id));
 
-      if(kgmIGame::getGame()->getSystem()->isFile(path) && file.open(path, kgmFile::Read)){
+      if(kgmIGame::getGame()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
+      {
         m.alloc(file.length());
         file.read(m.data(), file.length());
         file.close();
@@ -183,10 +200,12 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m){
   return false;
 }
 
-kgmPicture* kgmGameResources::getPicture(char* id){
-
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+kgmPicture* kgmGameResources::getPicture(char* id)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id))
+    {
       m_resources[i]->increment();
 
       return (kgmPicture*)m_resources[i];
@@ -201,7 +220,8 @@ kgmPicture* kgmGameResources::getPicture(char* id){
 
   picture = m_tools.genPicture(mem);
 
-  if(picture){
+  if(picture)
+  {
     picture->m_id = id;
     m_resources.add(picture);
   }
@@ -209,11 +229,14 @@ kgmPicture* kgmGameResources::getPicture(char* id){
   return picture;
 }
 
-kgmTexture* kgmGameResources::getTexture(char* id){
+kgmTexture* kgmGameResources::getTexture(char* id)
+{
   int i = 0;
 
-  for(i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+  for(i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id))
+    {
       m_resources[i]->increment();
 
       return (kgmTexture*)m_resources[i];
@@ -250,8 +273,10 @@ kgmTexture* kgmGameResources::getTexture(char* id){
 }
 
 //Material
-kgmMaterial* kgmGameResources::getMaterial(char* id){
+kgmMaterial* kgmGameResources::getMaterial(char* id)
+{
   kgmMaterial* mtl = 0;
+
   for(int i = 0; i < m_resources.size(); i++)
   {
     if(!strcmp(m_resources[i]->m_id, id) && (m_resources[i]->isClass(kgmMaterial::Class)))
@@ -263,6 +288,7 @@ kgmMaterial* kgmGameResources::getMaterial(char* id){
   }
 
   kgmMemory<u8> mem;
+
   if(!getFile(id, mem))
     return 0;
 
@@ -273,15 +299,19 @@ kgmMaterial* kgmGameResources::getMaterial(char* id){
     mtl->m_id = id;
     m_resources.add(mtl);
   }
+
   return mtl;
 }
 
 //Shader
-kgmShader* kgmGameResources::getShader(char* id){
+kgmShader* kgmGameResources::getShader(char* id)
+{
   kgmCString ext;
 
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id))
+    {
       m_resources[i]->increment();
 
       return (kgmShader*)m_resources[i];
@@ -297,52 +327,69 @@ kgmShader* kgmGameResources::getShader(char* id){
     kgm_log() << "Shader loading: " << id << "...\n";
 #endif
 
-  if(getFile(name, mem)){
+  if(getFile(name, mem))
+  {
     kgmString s((const char*)mem.data(), mem.length());
     shader = m_tools.genShader(kgmIGame::getGame()->getGC(), s);
   }
 
-  if(shader){
+  if(shader)
+  {
     shader->m_id = id;
     m_resources.add(shader);
 #ifdef DEBUG
     kgm_log() << "Shader: " << id << "successfully loaded\n";
 #endif
   }
+
   return shader;
 }
 
-kgmAnimation* kgmGameResources::getAnimation(char* id){
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+kgmAnimation* kgmGameResources::getAnimation(char* id)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id))
+    {
       m_resources[i]->increment();
+
       return (kgmAnimation*)m_resources[i];
     }
   }
+
   kgmAnimation* anim = 0;
   kgmMemory<u8> mem;
+
   if(!getFile(id, mem))
     return 0;
 
   kgmXml xml(mem);
-  if(!xml.m_node){
+
+  if(!xml.m_node)
+  {
     return 0;
   }
 
   //anim = m_tools.genAnimation(mem);
   anim = m_tools.genAnimation(xml);
 
-  if(anim){
+  if(anim)
+  {
     anim->m_id = id;
     m_resources.add(anim);
   }
+
   return anim;
 }
 
-kgmSound* kgmGameResources::getSound(char* id){
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(m_resources[i]->m_id, id)){
+kgmSound* kgmGameResources::getSound(char* id)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(m_resources[i]->m_id, id))
+    {
       m_resources[i]->increment();
+
       return (kgmSound*)m_resources[i];
     }
   }
@@ -355,7 +402,8 @@ kgmSound* kgmGameResources::getSound(char* id){
 
   snd = m_tools.genSound(kgmIGame::getGame()->getAudio(), mem);
 
-  if(snd){
+  if(snd)
+  {
     snd->m_id = id;
     m_resources.add(snd);
   }
@@ -363,7 +411,8 @@ kgmSound* kgmGameResources::getSound(char* id){
   return snd;
 }
 
-kgmMesh* kgmGameResources::getMesh(char* id){
+kgmMesh* kgmGameResources::getMesh(char* id)
+{
   for(int i = 0; i < m_resources.size(); i++)
   {
     if(!strcmp(m_resources[i]->m_id, id) && m_resources[i]->isClass(kgmMesh::Class))
@@ -373,20 +422,25 @@ kgmMesh* kgmGameResources::getMesh(char* id){
       return (kgmMesh*)m_resources[i];
     }
   }
+
   kgmMesh* mesh = 0;
   kgmMemory<u8> mem;
+
   if(!getFile(id, mem))
     return 0;
 
   kgmXml xml(mem);
-  if(!xml.m_node){
+
+  if(!xml.m_node)
+  {
     return 0;
   }
 
   //mesh = m_tools.genMesh(mem);
   mesh = m_tools.genMesh(xml);
 
-  if(mesh){
+  if(mesh)
+  {
     mesh->m_id = id;
     m_resources.add(mesh);
   }
@@ -394,10 +448,14 @@ kgmMesh* kgmGameResources::getMesh(char* id){
   return mesh;
 }
 
-kgmSkeleton* kgmGameResources::getSkeleton(char* id){
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(id, m_resources[i]->m_id)){
+kgmSkeleton* kgmGameResources::getSkeleton(char* id)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(id, m_resources[i]->m_id))
+    {
       m_resources[i]->increment();
+
       return (kgmSkeleton*)m_resources[i];
     }
   }
@@ -410,33 +468,42 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id){
 
   kgmXml xml(mem);
 
-  if(!xml.m_node){
+  if(!xml.m_node)
     return null;
-  }
 
   //skel = m_tools.genSkeleton(mem);
   skel = m_tools.genSkeleton(xml);
-  if(skel){
+
+  if(skel)
+  {
     skel->m_id = id;
     m_resources.add(skel);
   }
+
   return skel;
 }
 
-kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c){
-  for(int i = 0; i < m_resources.size(); i++){
-    if(!strcmp(id, m_resources[i]->m_id)){
+kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    if(!strcmp(id, m_resources[i]->m_id))
+    {
       m_resources[i]->increment();
+
       return (kgmFont*)m_resources[i];
     }
   }
   kgmFont* font = 0;
   kgmMemory<u8> mem;
+
   if(!getFile(id, mem))
     return 0;
+
   font = m_tools.genFont(kgmIGame::getGame()->getGC(), 10, 10, r, c, mem);
 
-  if(font){
+  if(font)
+  {
     font->m_id = id;
     m_resources.add(font);
   }

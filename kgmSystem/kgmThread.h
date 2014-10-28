@@ -42,11 +42,10 @@ public:
     PrSuper
   };
 
-  enum Type
+  enum Flags
   {
-    TpNone   = 0,
-    TpCansel = 1L << 0,
-    TpDetach = 1L << 1
+    CtNone   = 0,
+    CtDetach = 1L << 1
   };
 
 private:
@@ -56,15 +55,13 @@ private:
  pthread_t m_thread;
 #endif
 
- bool m_canselable;
-
  s32  m_result;
 
 public:
  kgmThread();
  ~kgmThread();
 
- bool exec(bool canselable = false, Priority pr = PrNormal);
+ bool exec(Flags sets = CtNone, Priority pr = PrNormal);
  void kill();
  void join();
  void priority(Priority);

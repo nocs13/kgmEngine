@@ -634,12 +634,12 @@ bool kEditor::addActor(kgmString type)
 
   kgmString cpath = "Data";
 
-  cpath += kgmSystem::PathDelim;
+  cpath += kgmString(kgmSystem::PathDelim);
   cpath += type;
-  cpath += ".act";
+  cpath += kgmString(".act");
 
 #ifdef DEBUG
-  kgm_log() << "kEditor: Check actor path is " << cpath << ".\n";
+  kgm_log() << "kEditor: Check actor path is " << (char*)cpath << ".\n";
 #endif
 
   if(kgmSystem::isFile(cpath))
@@ -650,11 +650,7 @@ bool kEditor::addActor(kgmString type)
     kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
 
     if(fn_new)
-    {
       ac = (kgmActor*)fn_new(game);
-
-      break;
-    }
   }
 
   if(ac)

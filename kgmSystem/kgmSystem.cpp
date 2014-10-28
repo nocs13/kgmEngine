@@ -50,6 +50,12 @@ struct CPU
   static const char delim = '/';
 #endif
 
+#ifdef WIN32
+  const char* kgmSystem::PathDelim = "\\";
+#else
+  const char* kgmSystem::PathDelim = "/";
+#endif
+
 
 void kgmSystem::sleep(u32 ms)
 {
