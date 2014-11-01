@@ -309,7 +309,9 @@ bool kEditor::mapOpen(kgmString s)
       node->nam = mnode.nam;
       node->lnk = mnode.lnk;
       node->bnd = mnode.bnd;
+      node->col = mnode.col;
       node->lock = mnode.lck;
+
       game->m_render->add(node->msh, null);
       nodes.add(node);
 
@@ -505,12 +507,15 @@ bool kEditor::mapSave(kgmString s)
 
     kgmGameMap::Node node;
 
+    memset(&node, 0, sizeof(node));
+
     node.obj = (*i)->msh;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
     node.lnk = (*i)->lnk;
     node.mtl = (*i)->mat;
+    node.col = (*i)->col;
     node.lck = (*i)->lock;
 
     map.addMesh(node);

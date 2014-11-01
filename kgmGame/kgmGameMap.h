@@ -53,8 +53,7 @@ public:
     kgmString  lnk;
     kgmString  mtl;
 
-    u8         col;  //collision type
-
+    bool       col;  //collision type
     bool       hdn;  // node is hidden
     bool       lck;  //locked. for editor only
   };
