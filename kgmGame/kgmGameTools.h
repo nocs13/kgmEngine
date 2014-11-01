@@ -20,6 +20,7 @@ class kgmPicture;
 class kgmActor;
 class kgmGameMap;
 class kgmParticles;
+class kgmBody;
 
 class kgmGameTools{
 public:
@@ -58,6 +59,7 @@ public:
  //SHAPES
   static s32                 genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
   static kgmShapeCollision*  genShapeCollision(kgmXml& x);
+  static kgmShapeCollision*  genShapeCollision(kgmMesh& x);
 
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<u8>& m);

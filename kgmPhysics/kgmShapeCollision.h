@@ -5,7 +5,6 @@
 #include "../kgmBase/kgmResource.h"
 #include "../kgmMath/kgmMath.h"
 
-
 class kgmShapeCollision: public kgmResource
 {
   KGM_OBJECT(kgmShapeCollision);

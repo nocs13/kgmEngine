@@ -53,13 +53,15 @@ kgmBody::kgmBody(void* udata)
   m_udata = udata;
 }
 
-kgmBody::~kgmBody(){
+kgmBody::~kgmBody()
+{
   int i;
 
   m_convex.clear();
 }
 
-void kgmBody::collision(kgmBody* body){
+void kgmBody::collision(kgmBody* body)
+{
 }
 
 void kgmBody::addShapeSide(vec3 v[])

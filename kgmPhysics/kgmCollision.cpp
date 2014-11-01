@@ -1,41 +1,54 @@
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
+KGMOBJECT_IMPLEMENT(kgmCollision, kgmObject);
+
 inline bool crossLineSphere(line3& ln, sphere3& sp)
 {
   if(sp.isin(ln.s) || sp.isin(ln.e))
     return true;
+
   vec3 proj = ln.projection(sp.center);
   vec3 ctpr = proj - sp.center;
+
   if((ctpr.length() < sp.radius) && (ln.ison(proj)))
     return true;
+
   return false;
 }
 
 inline bool ptInPolygon(vec3& pt, vec3* poly, u32 points)
 {
   double angle = 0.0;
-  for(int i = 0; i < points; i++){
+
+  for(int i = 0; i < points; i++)
+  {
     vec3 vs;
     vec3 ve;
 
     vs = poly[i] - pt;
     vs.normalize();
+
     if(i == (points - 1))
       ve = poly[0] - pt;
     else
       ve = poly[i + 1] - pt;
+
     ve.normalize();
     angle += vs.angle(ve); //acos(vs.dot(ve));
   }
+
   //if(angle < (1.5 * PI))
   if(angle < (1.99999 * PI))
     return false;
+
   return true;
 }
 
-inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* poly, u32 points){
-  for(int i = 0; i < points; i++){
+inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* poly, u32 points)
+{
+  for(int i = 0; i < points; i++)
+  {
     vec3  vs;
     vec3  ve;
     vec3  pr;
@@ -56,7 +69,8 @@ inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* p
     ln.set(vs, ve);
     pr = ln.projection(pt);
 
-    if(ln.ison(pt)){
+    if(ln.ison(pt))
+    {
       if((SQR(pr.x - pt.x) < SQR(rx)) &&
          (SQR(pr.y - pt.y) < SQR(ry)) &&
          (SQR(pr.z - pt.z) < SQR(rz)))
@@ -67,7 +81,6 @@ inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* p
   return false;
 }
 
-/*		***		***		***		***		*/
 //Constructor & Desctructor
 kgmCollision::kgmCollision()
 {
@@ -81,38 +94,52 @@ kgmCollision::~kgmCollision()
 void kgmCollision::reset()
 {
   m_collision = false;
-  m_point     = m_normal = vec3(0, 0, 0);
+
+  m_point = m_normal = vec3(0, 0, 0);
 }
 
 //collision move sphere with triangle
-bool kgmCollision::collision(vec3& start, vec3& end, float radius, vec3& tra, vec3& trb, vec3& trc, vec3& pt_insect){
+bool kgmCollision::collision(vec3& start, vec3& end, float radius, vec3& tra, vec3& trb,
+                             vec3& trc, vec3& pt_insect)
+{
   triangle3 triangle(tra, trb, trc);
   plane3    plane(tra, trb, trc);
   line3     line(start, end);
 
   float s_dist = plane.distance(start),
-      e_dist = plane.distance(end);
+        e_dist = plane.distance(end);
 
   bool b_plinsect = false;
   bool b_plnear = false;
+
   if(s_dist < 0.0) return false;
-  if(plane.intersect(line, pt_insect)){
+
+  if(plane.intersect(line, pt_insect))
+  {
     b_plinsect = true;
   }
-  if((e_dist >= 0.0f) && (e_dist < radius)){
+
+  if((e_dist >= 0.0f) && (e_dist < radius))
+  {
     pt_insect = plane.projection(end);
     b_plnear = true;
   }
-  if(!b_plinsect && !b_plnear){
+
+  if(!b_plinsect && !b_plnear)
+  {
     return false;
   }
-  if(b_plinsect || b_plnear){
+
+  if(b_plinsect || b_plnear)
+  {
     //  return true;
   }
 
-  if(triangle.isin(pt_insect)){
+  if(triangle.isin(pt_insect))
+  {
     m_point = pt_insect;
     m_normal = plane.normal();
+
     return true;
   }
 
@@ -125,13 +152,17 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius, vec3& tra, ve
 //*/
 
   line3 lna(tra, trb), lnb(trb, trc), lnc(trc, tra);
+
   if(crossLineSphere(lna, sphere) ||
      crossLineSphere(lnb, sphere) ||
-     crossLineSphere(lnc, sphere)){
+     crossLineSphere(lnc, sphere))
+  {
     m_point = pt_insect;
     m_normal = plane.normal();
+
     return true;
   }
+
   return false;
 }
 
@@ -143,68 +174,93 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius, vec3* poly, u
   vec3				  pt_insect;
 
   float s_dist = plane.distance(start),
-      e_dist = plane.distance(end);
+        e_dist = plane.distance(end);
 
   bool b_plinsect = false;
   bool b_plnear = false;
+
   if(s_dist < 0.0) return false;
+
   if(e_dist > radius) return false;
-  if(plane.intersect(line, pt_insect)){
+
+  if(plane.intersect(line, pt_insect))
+  {
     b_plinsect = true;
   }
 
-  if((e_dist > 0.0f) && (e_dist < radius)){
+  if((e_dist > 0.0f) && (e_dist < radius))
+  {
     pt_insect = plane.projection(end);
     b_plnear = true;
   }
 
-  if(!b_plinsect && !b_plnear){
+  if(!b_plinsect && !b_plnear)
+  {
     return false;
   }
+
   ///*
-  if(!ptInPolygon(pt_insect, poly, points)){
+  if(!ptInPolygon(pt_insect, poly, points))
+  {
     sphere3 sphere(pt_insect, radius);
-    for(int i = 0; i < points ; i++){
+
+    for(int i = 0; i < points ; i++)
+    {
       line3 line;
+
       if(i == (points - 1))
         line.set(poly[0], poly[i]);
       else
         line.set(poly[i], poly[i + 1]);
-      if(crossLineSphere(line, sphere)){
+
+      if(crossLineSphere(line, sphere))
+      {
         m_normal = plane.normal();
         m_point = pt_insect;
+
         return true;;
       }
     }
+
     return false;
   }
   //*/
+
   m_normal = plane.normal();
   m_point = pt_insect;
+
   return true;
 }
 //collision move elipsoid with polygon
-bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float rz, vec3* poly, u32 points){
+bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float rz,
+                             vec3* poly, u32 points)
+{
   kgmIntersection	  intersection;
-  plane3    plane(poly[0], poly[1], poly[2]);
-  line3     line(start, end);
-  vec3				  pt_insect;
-  vec3				  pr_start, pr_end, pr_delta;
-  bool				  b_plinsect = false;
+
+  plane3 plane(poly[0], poly[1], poly[2]);
+
+  line3  line(start, end);
+  vec3   pt_insect;
+  vec3   pr_start, pr_end, pr_delta;
+  bool   b_plinsect = false;
 
   float	s_dist = plane.distance(start),
-      e_dist = plane.distance(end);
+        e_dist = plane.distance(end);
 
   // if(s_dist < 0.0) return false;;
   pr_start	= plane.projection(start);
   pr_end		= plane.projection(end);
   pr_delta	= pr_end - end;
-  if(plane.intersect(line, pt_insect)){
+
+  if(plane.intersect(line, pt_insect))
+  {
     if(ptInPolygon(pt_insect, poly, points) ||
-       crossEllipticPolygon(pt_insect, rx, ry, rz, poly, points)){
+       crossEllipticPolygon(pt_insect, rx, ry, rz, poly, points))
+    {
       m_normal = plane.normal();
       m_point  = pt_insect = pr_end;
       m_collision = true;
+
       return true;
     }
   }
@@ -212,12 +268,15 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
 
   if((SQR(pr_end.x - end.x) < SQR(rx)) &&
      (SQR(pr_end.y - end.y) < SQR(ry)) &&
-     (SQR(pr_end.z - end.z) < SQR(rz))){
+     (SQR(pr_end.z - end.z) < SQR(rz)))
+  {
     if(ptInPolygon(pr_end, poly, points) ||
-       crossEllipticPolygon(pr_end, rx, ry, rz, poly, points)){
+       crossEllipticPolygon(pr_end, rx, ry, rz, poly, points))
+    {
       m_normal = plane.normal();
       m_point  = pr_end;
       m_collision = true;
+
       return true;
     }
 
@@ -236,16 +295,21 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
 
   m_normal = plane.normal();
   m_point  = pt_insect;
+
   return m_collision;
 }
 //collision move elipsoid with box
-bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float rz, box3& b, mtx4& btr){
+bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float rz,
+                             box3& b, mtx4& btr)
+{
   int i = 0;
   vec3 box_points[8];
   vec3 box_sides[6][4];
   b.points(box_points);
+
   for(i = 0; i < 8; i++)
     box_points[i] = btr * box_points[i];
+
   box_sides[0][0] = box_points[0];
   box_sides[0][1] = box_points[1];
   box_sides[0][2] = box_points[5];
@@ -274,75 +338,95 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
   float dist = -1.0f;
   vec3  ptins;
   m_collision = false;
-  for(i = 0; i < 6; i++){
+
+  for(i = 0; i < 6; i++)
+  {
     plane	pln(box_sides[i][0], box_sides[i][1], box_sides[i][2]);
     float edist = pln.distance(end);
-    if(collision(start, end, rx, ry, rz, box_sides[i], 4)){
+
+    if(collision(start, end, rx, ry, rz, box_sides[i], 4))
+    {
       ptins = m_point;
       m_collision = true;
-      if(edist > 0.0f){
+
+      if(edist > 0.0f)
         break;
-      }
     }
   }
+
   return m_collision;
 }
 
 //collision move sphere with cylinder
 bool kgmCollision::collision(vec3& start, vec3& end, float radius, 
-                             kgmCylinder3d<float>& cyl, vec3& rpt){
-  kgmLine3d<float>	line(start, end);
-  vec3				pt_insect;
-  vec3				pt_proj;
-  vec3				pt_temp;
-  float				ln_proj;
+                             kgmCylinder3d<float>& cyl, vec3& rpt)
+{
+  kgmLine3d<float> line(start, end);
+
+  vec3  pt_insect;
+  vec3  pt_proj;
+  vec3  pt_temp;
+  float ln_proj;
 
   pt_proj = line.projection(cyl.position);
   pt_temp = vec3(pt_proj.x, pt_proj.y, cyl.position.z);
   ln_proj = pt_temp.distance(cyl.position);
+
   if(ln_proj > cyl.radius)
     return false;
+
   if((pt_proj.z < cyl.position.z) ||
      (pt_proj.z > (cyl.position.z + cyl.height)))
     return false;
+
   return true;
 }
+
 //collision move cylinder to static cylinder
 bool kgmCollision::collision(vec3& start, vec3& end, 
                              kgmCylinder3d<float>& cyl,
                              kgmCylinder3d<float>& scyl,
-                             vec3& rpt){
+                             vec3& rpt)
+{
   kgmLine3d<float>	line(start, end);
-  vec3				pt_proj;
-  vec3				pt_temp;
-  float				dist_start_proj;
-  float				dist_scyl_proj;
+  vec3 pt_proj;
+  vec3 pt_temp;
+  float dist_start_proj;
+  float dist_scyl_proj;
 
   pt_proj = line.projection(scyl.position);
   dist_start_proj = start.distance(pt_proj);
+
   if(dist_start_proj > (start.distance(end) + cyl.radius))
     return false;
 
   pt_temp = vec3(pt_proj.x, pt_proj.y, scyl.position.z);
   dist_scyl_proj = pt_temp.distance(scyl.position);
+
   if(dist_scyl_proj > (cyl.radius + scyl.radius))
     return false;
 
   if((pt_proj.z < (scyl.position.z - cyl.height)) ||
      (pt_proj.z > (scyl.position.z + scyl.height)))
     return false;
+
   rpt = pt_proj;
+
   return true;
 }
+
 //collision move sphere with box
 bool kgmCollision::collision(vec3& start, vec3& end, float radius, 
-                             box& b, mtx4& btr){
+                             box& b, mtx4& btr)
+{
   int i = 0;
   vec3 box_points[8];
   vec3 box_sides[6][4];
   b.points(box_points);
+
   for(i = 0; i < 8; i++)
     box_points[i] = btr * box_points[i];
+
   box_sides[0][0] = box_points[0];
   box_sides[0][1] = box_points[1];
   box_sides[0][2] = box_points[5];
@@ -371,58 +455,76 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius,
   float dist = -1.0f;
   vec3  ptins;
   m_collision = false;
-  for(i = 0; i < 6; i++){
-    if(collision(start, end, radius, box_sides[i], 4)){
+
+  for(i = 0; i < 6; i++)
+  {
+    if(collision(start, end, radius, box_sides[i], 4))
+    {
       //  if(collision(start, end, radius, box_sides[i][0], box_sides[i][1],box_sides[i][2], ptins) ||
       //     collision(start, end, radius, box_sides[i][0], box_sides[i][2],box_sides[i][3], ptins)){
       ptins = m_point;
       m_collision = true;
+
       break;
-      if(m_collision){
+
+      if(m_collision)
+      {
         if(start.distance(m_point) > dist)
           m_point = ptins;
         else
           dist = start.distance(m_point);
-      }else{
+      }
+      else
+      {
         dist = start.distance(m_point);
       }
+
       m_collision = true;
     }
   }
+
   return m_collision;
 }
+
 //collision move box to static box
 bool kgmCollision::collision(vec3& start, vec3& end, 
                              kgmBox3d<float>& mbox,
                              kgmBox3d<float>& sbox,
-                             vec3& rpt){
-  kgmLine3d<float>	line(start, end);
-  vec3				pt_proj;
-  vec3				pt_temp;
-  float				dist_proj;
-  float				dist_sbox_proj;
+                             vec3& rpt)
+{
+  kgmLine3d<float> line(start, end);
+  vec3 pt_proj;
+  vec3 pt_temp;
+  float dist_proj;
+  float dist_sbox_proj;
 
-  vec3	pt_mbox = (mbox.min + mbox.max) * 0.5f;
+  vec3 pt_mbox = (mbox.min + mbox.max) * 0.5f;
   pt_mbox.z = mbox.min.z;
-  vec3	pr_mbox = mbox.max - mbox.min;
-  vec3	pt_sbox = (sbox.min + sbox.max) * 0.5f;
+  vec3 pr_mbox = mbox.max - mbox.min;
+  vec3 pt_sbox = (sbox.min + sbox.max) * 0.5f;
   pt_sbox.z = sbox.min.z;
-  vec3	pr_sbox = sbox.max - sbox.min;
+  vec3 pr_sbox = sbox.max - sbox.min;
 
   pt_proj = line.projection(pt_sbox);
   dist_proj = start.distance(pt_proj);
+
   if(dist_proj > (start.distance(end)))
     return false;
 
   pt_temp = vec3(pt_proj.x, pt_proj.y, pt_sbox.z);
+
   if((fabs(pt_temp.x - pt_sbox.x)) > (pr_sbox.x * 0.5f + pr_mbox.x * 0.5f))
     return false;
+
   if((fabs(pt_temp.y - pt_sbox.y)) > (pr_sbox.y * 0.5f + pr_mbox.y * 0.5f))
     return false;
+
   if((pt_proj.z < (pt_sbox.z - pr_mbox.z)) ||
      (pt_proj.z > (pt_sbox.z + pr_sbox.z)))
     return false;
+
   rpt = pt_proj;
+
   return true;
 }
 
@@ -434,7 +536,8 @@ bool kgmCollision::ob_collision(obox3& s_box, obox3& d_box)
   return true;
 }
 
-bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d_box, vec3& d_start, vec3& d_end)
+bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d_box,
+                                vec3& d_start, vec3& d_end)
 {
   vec3 s_dir = s_end - s_start;
   vec3 d_dir = d_end - d_start;
@@ -475,7 +578,7 @@ bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_end, box3& d
 }
 
 bool kgmCollision::ob_collision(box3& s_box, vec3& s_start, vec3& s_rot, float s_len,
-                                 box3& d_box, vec3& d_start, vec3& d_rot, float d_len)
+                                box3& d_box, vec3& d_start, vec3& d_rot, float d_len)
 {
   box3 sbox = s_box;
   sbox.max.x += s_len;
@@ -566,7 +669,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
   s_planes[1] = kgmPlane3d<float>(s_points[0], s_points[4], s_points[3]);
   s_planes[2] = kgmPlane3d<float>(s_points[0], s_points[1], s_points[5]);
 
-  float    dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
+  float dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
 
   int  sides = 0;
   bool cross = false;
@@ -643,7 +746,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<triangle3>& d_poly, mtx4& 
   s_planes[1] = kgmPlane3d<float>(s_points[0], s_points[4], s_points[3]);
   s_planes[2] = kgmPlane3d<float>(s_points[0], s_points[1], s_points[5]);
 
-  float    dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
+  float dims[3] = {s_box.dimension.z, s_box.dimension.x, s_box.dimension.y};
 
   int  sides = 0;
   bool cross = false;

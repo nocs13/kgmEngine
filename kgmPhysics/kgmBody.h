@@ -17,11 +17,9 @@ public:
 
   struct Constraint
   {
-    bool      position,
-    rotation,
-    scale;
-    vec3      offset;
-    kgmBody*  body;
+    bool     position, rotation, scale;
+    vec3     offset;
+    kgmBody* body;
   };
 
 
