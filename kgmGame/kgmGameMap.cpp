@@ -52,6 +52,9 @@ bool kgmGameMap::addMesh(Node n)
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
     node->m_attributes.add(new kgmXml::Attribute("link", n.lnk));
 
+    if(n.col)
+      node->m_attributes.add(new kgmXml::Attribute("collision", "on"));
+
     kgmXml::Node* snode = new kgmXml::Node(node);
     snode->m_name = "kgmMaterial";
     snode->m_attributes.add(new kgmXml::Attribute("value", n.mtl));
