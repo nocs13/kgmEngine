@@ -96,15 +96,8 @@ void kgmActor::logic(kgmString s)
 {
 }
 
-void kgmActor::action(kgmString s)
+void kgmActor::action(kgmString& s)
 {
-}
-
-void kgmActor::setDirection(vec3& d)
-{
-  //m_body->m_direction = d;
-  //m_body->m_direction.normalize();
-  //m_body->m_rotation.z = (float)acos(m_body->m_direction.x);
 }
 
 bool kgmActor::setState(kgmString s, bool force)
@@ -135,7 +128,9 @@ bool kgmActor::setState(kgmString s, bool force)
     }
 
     m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == -1)?(true):(false));
+
     state->stime = kgmTime::getTicks();
+
     action(state->id);
   }
   else
