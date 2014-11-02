@@ -1,19 +1,25 @@
 #pragma once
 
 //TRIANGLE 3D
-template <class T> class kgmTriangle3d{
+template <class T> class kgmTriangle3d
+{
 public:
   kgmVector3d<T> pt[3];
   kgmPlane3d<T> plane;
+
 public:
-  kgmTriangle3d(){
+  kgmTriangle3d()
+  {
   }
-  kgmTriangle3d(kgmVector3d<T> &aa, kgmVector3d<T> &bb, kgmVector3d<T> &cc){
+
+  kgmTriangle3d(kgmVector3d<T> &aa, kgmVector3d<T> &bb, kgmVector3d<T> &cc)
+  {
     pt[0] = aa, pt[1] = bb, pt[2] = cc;
     plane = kgmPlane3d<T>(aa, bb, cc);
   }
 
-  bool isin(kgmVector3d<T> v){
+  bool isin(kgmVector3d<T> v)
+  {
     kgmVector3d<T> v0, v1, v2;
     T a0, a1, a2, an;
 
@@ -31,7 +37,8 @@ public:
     return false;
   }
 
-  bool intersect(kgmVector3d<T> v, float r){
+  bool intersect(kgmVector3d<T> v, float r)
+  {
     return false;
   }
 };

@@ -1167,6 +1167,64 @@ kgmShapeCollision* kgmGameTools::genShapeCollision(kgmXml& x)
   return shape;
 }
 
+kgmCollision::Shape* kgmGameTools::genShapeCollision(kgmMesh &m)
+{
+  kgmCollision::Shape* shape = null;
+
+  if(m.faces() && m.fcount())
+  {
+    shape = new kgmCollision::Shape();
+
+    for(int i = 0; i < m.fcount(); i++)
+    {
+      vec3 a, b, c;
+      u32  ia, ib, ic;
+
+      if(m.fff() == kgmMesh::FFF_16)
+      {
+        kgmMesh::Face_16 f;
+
+        memcpy(&f, m.faces() + i * m.fsize(), m.fsize());
+
+        ia = f.a;
+        ib = f.b;
+        ic = f.c;
+      }
+      else
+      {
+        kgmMesh::Face_32 f;
+
+        memcpy(&f, m.faces() + i * m.fsize(), m.fsize());
+
+        ia = f.a;
+        ib = f.b;
+        ic = f.c;
+      }
+
+      memcpy(&a, m.vertices() + ia * m.vsize(), m.vsize());
+      memcpy(&b, m.vertices() + ib * m.vsize(), m.vsize());
+      memcpy(&c, m.vertices() + ic * m.vsize(), m.vsize());
+
+      shape->triangles.add(triangle3(a, b, c));
+    }
+  }
+  else if(m.vertices() && m.vcount())
+  {
+    vec3 a, b, c;
+
+    for(int i = 0; i < m.vcount(); i+=3)
+    {
+      memcpy(&a, m.vertices() + (i    ) * m.vsize(), m.vsize());
+      memcpy(&b, m.vertices() + (i + 1) * m.vsize(), m.vsize());
+      memcpy(&c, m.vertices() + (i + 2) * m.vsize(), m.vsize());
+
+      shape->triangles.add(triangle3(a, b, c));
+    }
+  }
+
+  return shape;
+}
+
 kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
 {
 #define KGM_STRHEX_TO_INT(s, i) if(s.length() > 0) sscanf(s, "%x", &i)

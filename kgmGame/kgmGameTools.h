@@ -14,15 +14,18 @@
 #include "../kgmGraphics/kgmAnimation.h"
 #include "../kgmGraphics/kgmSkeleton.h"
 #include "../kgmGraphics/kgmGuiStyle.h"
+#include "../kgmPhysics/kgmCollision.h"
 #include "../kgmPhysics/kgmShapeCollision.h"
 
 class kgmPicture;
 class kgmActor;
 class kgmGameMap;
 class kgmParticles;
+class kgmIPhysics;
 class kgmBody;
 
-class kgmGameTools{
+class kgmGameTools
+{
 public:
  kgmGameTools();
  virtual ~kgmGameTools();
@@ -57,9 +60,9 @@ public:
  static kgmMesh*  genMesh(kgmXml& x);
 
  //SHAPES
-  static s32                 genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
-  static kgmShapeCollision*  genShapeCollision(kgmXml& x);
-  static kgmShapeCollision*  genShapeCollision(kgmMesh& x);
+  static s32                  genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
+  static kgmShapeCollision*   genShapeCollision(kgmXml& x);
+  static kgmCollision::Shape* genShapeCollision(kgmMesh& x);
 
 //SOUNDS
  static kgmSound* genSound(kgmIAudio* snd, kgmMemory<u8>& m);
