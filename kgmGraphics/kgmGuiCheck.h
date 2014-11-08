@@ -1,9 +1,9 @@
 #pragma once
-#include "kgmGui.h"
+#include "kgmGuiLabel.h"
 #include "../kgmBase/kgmCallback.h"
 
 
-class kgmGuiCheck: public kgmGui
+class kgmGuiCheck: public kgmGuiLabel
 {
   KGM_OBJECT(kgmGuiCheck);
 public:

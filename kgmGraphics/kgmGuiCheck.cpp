@@ -1,7 +1,7 @@
 #include "kgmGuiCheck.h"
 #include "../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiCheck, kgmGui)
+KGMOBJECT_IMPLEMENT(kgmGuiCheck, kgmGuiLabel)
 
 kgmGuiCheck::kgmGuiCheck()
 :callback(null, null)
@@ -11,14 +11,14 @@ kgmGuiCheck::kgmGuiCheck()
 }
 
 kgmGuiCheck::kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
-:kgmGui(par, x, y, w, h), callback(null, null)
+:kgmGuiLabel(par, x, y, w, h), callback(null, null)
 {
   m_state = StateNone;
   m_check = false;
 }
 
 kgmGuiCheck::kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call)
-:kgmGui(par, x, y, w, h), callback(null, null)
+:kgmGuiLabel(par, x, y, w, h), callback(null, null)
 {
   m_state = StateNone;
   m_check = false;

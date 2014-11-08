@@ -38,6 +38,7 @@ public:
   void onRotationY(u32 s);
   void onRotationZ(u32 s);
   void onSelectLock(bool);
+  void onSelectCollision(bool);
 
   void setCloseCallback(CloseCallback cfn)
   {
@@ -60,7 +61,6 @@ public:
   void onSelectFailed();
   void onSelectMaterial();
   void onSelectedMaterial();
-  void onSelectCollision(bool);
 };
 
 class kViewOptionsForLight : public kViewOptions

@@ -1478,6 +1478,9 @@ void kgmGraphics::render(kgmGui* gui){
     tClip.w = fw;
     tClip.h = fh;
 
+    fwidth = ((kgmGuiLabel*)gui)->getFontWidth();
+    fheight = ((kgmGuiLabel*)gui)->getFontHeight();
+
     gcDrawRect(rect, gui_style->slabel.bg_color, gui_style->slabel.image);
 
     if(text.length() > 0)
@@ -1514,6 +1517,9 @@ void kgmGraphics::render(kgmGui* gui){
 
     txClip.x += 25;
     txClip.w -= 25;
+
+    fwidth = ((kgmGuiCheck*)gui)->getFontWidth();
+    fheight = ((kgmGuiCheck*)gui)->getFontHeight();
 
     switch(((kgmGuiCheck*)gui)->getState())
     {

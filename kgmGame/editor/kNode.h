@@ -11,6 +11,8 @@
 #include "../../kgmGame/kgmSensor.h"
 #include "../../kgmGame/kgmTrigger.h"
 
+#include "../kgmPhysics/kgmObstacle.h"
+
 namespace kgmGameEditor
 {
 
@@ -25,7 +27,8 @@ public:
     ACTOR,
     SENSOR,
     OBJECT,
-    TRIGGER
+    TRIGGER,
+    OBSTACLE
   };
 
   union
@@ -35,6 +38,7 @@ public:
     kgmActor*       act;
     kgmSensor*      sns;
     kgmTrigger*     trg;
+    kgmObstacle*    obs;
     kgmGameObject*  obj;
   };
 
@@ -119,6 +123,18 @@ public:
     icn = null;
     geo = null;
     col = false;
+    lock = false;
+
+    obj->increment();
+  }
+
+  kNode(kgmObstacle* o)
+  {
+    typ = OBSTACLE;
+    obs = o;
+    icn = null;
+    geo = null;
+    col = true;
     lock = false;
 
     obj->increment();

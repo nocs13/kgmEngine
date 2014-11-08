@@ -1233,6 +1233,25 @@ void kEditor::onAddTrigger()
   game->getLogic()->add(tr);
 }
 
+void kEditor::onAddObstacle()
+{
+  kgmTrigger* tr = new kgmTrigger();
+
+  kNode* node = new kNode(tr);
+  node->bnd = box3(-1, -1, -1, 1, 1, 1);
+  node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
+  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->geo = new kArrow();
+
+  selected = node;
+  nodes.add(node);
+
+  game->m_render->add(node->icn);
+  game->m_render->add(node->geo, mtlLines);
+
+  game->getLogic()->add(tr);
+}
+
 void kEditor::onRunRun()
 {
   menu->hide();

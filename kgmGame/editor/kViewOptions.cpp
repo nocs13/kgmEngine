@@ -96,6 +96,12 @@ kgmGuiFrame("Options", x, y, w, h)
     lock->setText("Locked");
     lock->setCheck(node->lock);
     lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
+
+    y_coord += 23;
+    kgmGuiCheck* chk = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
+    chk->setText("collide");
+    chk->setCheck(node->col);
+    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
   }
 }
 
@@ -183,6 +189,12 @@ void kViewOptions::onSelectLock(bool s)
   node->lock = s;
 }
 
+void kViewOptions::onSelectCollision(bool s)
+{
+  node->col = s;
+}
+
+
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
@@ -198,12 +210,6 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   kgmGuiButton* btn = new kgmGuiButton(getClient(), 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMaterial));
-
-  y_coord += 23;
-  kgmGuiCheck* chk = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
-  chk->setText("collide");
-  chk->setCheck(node->col);
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
 }
 
 void kViewOptionsForMesh::onSelectMaterial()
@@ -237,11 +243,6 @@ void kViewOptionsForMesh::onSelectFailed()
   fd->erase();
   fd->release();
   fd = null;
-}
-
-void kViewOptionsForMesh::onSelectCollision(bool s)
-{
-  node->col = s;
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
