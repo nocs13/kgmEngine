@@ -134,6 +134,11 @@ public:
   __stdcall void setTarget(kgmString s);
 };
 
+class kViewOptionsForObstacle : public kViewOptions
+{
+public:
+  kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h);
+};
 }
 
 #endif // KVIEWOPTIONS_H
