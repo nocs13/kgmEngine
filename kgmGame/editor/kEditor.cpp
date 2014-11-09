@@ -22,6 +22,7 @@ enum MENUEVENT
   ME_ADD_SENSOR,
   ME_ADD_OBJECT,
   ME_ADD_TRIGGER,
+  ME_ADD_OBSTACLE,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
   ME_OPTIONS_DATABASE,
@@ -67,6 +68,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
     item->add(ME_ADD_OBJECT, "Object", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObject));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
+    item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
     item = menu->add("Run");
     item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunRun));
     item = menu->add("View");
@@ -1127,6 +1129,9 @@ void kEditor::onEditOptions()
   case kNode::TRIGGER:
     vop = new kViewOptionsForTrigger(selected, 50, 50, 250, 300);
     break;
+  case kNode::OBSTACLE:
+    vop = new kViewOptionsForObstacle(selected, 50, 50, 250, 300);
+    break;
   }
 
   if(vop)
@@ -1235,12 +1240,12 @@ void kEditor::onAddTrigger()
 
 void kEditor::onAddObstacle()
 {
-  kgmTrigger* tr = new kgmTrigger();
+  kgmObstacle* o = new kgmObstacle();
 
-  kNode* node = new kNode(tr);
+  kNode* node = new kNode(o);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
-  node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
+  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("obstacle_ico.tga"));
   node->geo = new kArrow();
 
   selected = node;
@@ -1248,8 +1253,6 @@ void kEditor::onAddObstacle()
 
   game->m_render->add(node->icn);
   game->m_render->add(node->geo, mtlLines);
-
-  game->getLogic()->add(tr);
 }
 
 void kEditor::onRunRun()

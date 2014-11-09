@@ -403,3 +403,9 @@ void kViewOptionsForTrigger::setTarget(kgmString s)
 {
   node->trg->setTarget(s);
 }
+
+kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  y_coord += 23;
+}
