@@ -1,18 +1,26 @@
 #pragma once
 #include "kgmGui.h"
-
+#include "kgmGuiButton.h"
 
 class kgmGuiTab: public kgmGui
 {
   KGM_OBJECT(kgmGuiTab);
 
 private:
+  struct Tab
+  {
+    kgmGui* tab;
+    kgmGuiButton* btn;
+  };
+
+private:
   u32  m_index;
   u32  tab_height;
 
+  kgmGui* labels;
   kgmGui* client;
 
-  kgmList<kgmGui*> tabs;
+  kgmList<Tab> tabs;
 
 public:
  kgmGuiTab();
