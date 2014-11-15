@@ -89,3 +89,11 @@ kgmGui* kgmGuiTab::addTab(kgmString title)
   labels->add(tabs.length(), title);
   gui->show();
 }
+
+void kgmGuiTab::select(u32 i)
+{
+  if(i >= tabs.length())
+    return;
+
+  set(i);
+}

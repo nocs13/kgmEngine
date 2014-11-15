@@ -7,6 +7,33 @@ class kgmGuiTab: public kgmGui
   KGM_OBJECT(kgmGuiTab);
 
 private:
+
+  class Menu: public kgmGuiMenu
+  {
+  public:
+    typedef kgmCallback<void, kgmObject*, u32> ClickEventCallback;
+
+    ClickEventCallback callback;
+  public:
+    Menu(kgmGui* parent)
+      :kgmGuiMenu(parent), callback(null, null)
+    {
+
+    }
+
+    void onMsLeftUp(int key, int x, int y)
+    {
+      Item* selected = item->clickPointer(x, y);
+
+      if(selected)
+      {
+        if(callback.hasObject())
+          callback(item->getSelected());
+      }
+    }
+  };
+
+private:
   u32  m_index;
   u32  tab_height;
 
@@ -26,4 +53,6 @@ public:
 
  kgmGui* active();
  kgmGui* addTab(kgmString title);
+
+ __stdcall void select(u32);
 };

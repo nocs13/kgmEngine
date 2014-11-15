@@ -1591,16 +1591,16 @@ void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);
 
-      gcDrawRect(rc, 0xff550011, null);
+      gcDrawRect(rc, gui_style->smenu.fg_color, gui_style->smenu.image);
     }
     else
     {
-      gcDrawRect(rc, 0xff888888, null);
+      gcDrawRect(rc, gui_style->smenu.bg_color, gui_style->smenu.image);
     }
 
     kgmString title = citem->getTitle();
 
-    gcDrawText(font, 8, 20, 0xFFFFFFFF, rc, title);
+    gcDrawText(font, 8, 20, gui_style->smenu.tx_color, rc, title);
   }
 }
 
