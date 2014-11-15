@@ -17,13 +17,6 @@ class kgmGui: public kgmEvent
 {
   KGM_OBJECT(kgmGui);
 
-protected:
-  class Argument
-  {
-  public:
-
-  };
-
 public:
   typedef void*             Option;
   typedef kgmVector2d<s32>  Point;
@@ -52,7 +45,8 @@ protected:
     OptAcColor
   };
 
-  struct Base{
+  struct Base
+  {
     Rect rect;
     bool scale;
   };
@@ -78,6 +72,7 @@ public:
   kgmString  m_text;     //gui text
   Color      m_color;    //gui bg color
   Image      m_image;    //gui bg texture.
+  s32        m_fontsize; // font size. -1 default
   void*      m_xdata;
 
 protected:
@@ -102,6 +97,8 @@ public:
   void setRect(u32, u32, u32, u32);
   void getRect(Rect&, bool abs = false);
   void getRect(u32&, u32&, u32&, u32&, bool abs = false);
+
+  Rect getRect() const  { return m_rect; }
 
   void         erase() { m_erase = true; }
   bool         erased(){ return m_erase; }
@@ -128,6 +125,9 @@ public:
 
   void         freeze(bool freeze) { m_freeze = freeze; }
   bool         visible(){ return m_view; }
+
+  s32          getFontSize() const { return m_fontsize; }
+  void         setFontSize(s32 sz) { m_fontsize = sz;   }
 
   // MESSAGE MANAGER
   virtual void onEvent(kgmEvent::Event* e);

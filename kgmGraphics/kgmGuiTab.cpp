@@ -19,7 +19,7 @@ kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
 
   tab_height = 20;
 
-  labels = new kgmGui(this, 0, 0, w, tab_height);
+  labels = new kgmGuiMenu(this);
   client = new kgmGui(this, 0, tab_height, w, h - tab_height);
 }
 
@@ -27,8 +27,8 @@ kgmGuiTab::~kgmGuiTab()
 {
   for(int i = tabs.length(); i > 0; i--)
   {
-    tabs[i].btn->release();
-    tabs[i].tab->release();
+    tabs[i]->release();
+    tabs[i]->release();
   }
 
   tabs.clear();
@@ -45,11 +45,11 @@ u32 kgmGuiTab::set(u32 k)
     if(i == k)
     {
       m_index = i;
-      tabs[i].tab->show();
+      tabs[i]->show();
     }
     else
     {
-      tabs[i].tab->hide();
+      tabs[i]->hide();
     }
   }
 
@@ -74,10 +74,18 @@ kgmGui* kgmGuiTab::active()
   if(m_index < 0 || m_index >= tabs.size())
     return null;
 
-  return tabs[m_index].tab;
+  return tabs[m_index];
 }
 
 kgmGui* kgmGuiTab::addTab(kgmString title)
 {
+  kgmGui* gui = new kgmGui(client, 0, 0, client->getRect().width(), client->getRect().height());
 
+  gui->setText(title);
+
+  if(active() != null)
+    active()->hide();
+
+  labels->add(tabs.length(), title);
+  gui->show();
 }

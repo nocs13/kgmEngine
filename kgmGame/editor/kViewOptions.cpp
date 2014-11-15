@@ -20,24 +20,28 @@ kgmGuiFrame("Options", x, y, w, h)
   {
     kgmGui* g;
 
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
+
+    kgmGui* tgeneral = tab->addTab("General");
+
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText(n->nam);
     y_coord += 22;
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Position");
-    g = new kgmGuiText(getClient(), 51, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
     g->setSid("position_x");
     g->setText(kgmConvert::toString(n->pos.x));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionX));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(getClient(), 102, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
     g->setSid("position_y");
     g->setText(kgmConvert::toString(n->pos.y));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionY));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(getClient(), 154, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
     g->setSid("position_z");
     g->setText(kgmConvert::toString(n->pos.z));
     ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionZ));
@@ -45,46 +49,46 @@ kgmGuiFrame("Options", x, y, w, h)
     ((kgmGuiText*)g)->setNumeric(true);
 
     y_coord += 23;
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Rotation");
-    g = new kgmGuiText(getClient(), 51, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
     g->setSid("rotation_x");
     g->setText(kgmConvert::toString(n->rot.x));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(getClient(), 102, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
     g->setSid("rotation_y");
     g->setText(kgmConvert::toString(n->rot.y));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(getClient(), 154, y_coord, 50, 20);
+    g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
     g->setSid("rotation_z");
     g->setText(kgmConvert::toString(n->rot.z));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
     y_coord += 23;
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Rotation X");
-    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.x));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationX));
     y_coord += 23;
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Rotation Y");
-    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.y));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationY));
     y_coord += 23;
-    g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Rotation Z");
-    g = new kgmGuiScroll(getClient(), 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
@@ -92,13 +96,15 @@ kgmGuiFrame("Options", x, y, w, h)
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationZ));
 
     y_coord += 23;
-    kgmGuiCheck* lock = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
+    kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 1, y_coord, 150, 20);
     lock->setText("Locked");
     lock->setCheck(node->lock);
     lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
 
-    y_coord += 23;
-    kgmGuiCheck* chk = new kgmGuiCheck(getClient(), 1, y_coord, 150, 20);
+    kgmGui* gcollision = tab->addTab("Collide");
+    y_coord = 1;
+
+    kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
     chk->setText("collide");
     chk->setCheck(node->col);
     chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
@@ -248,11 +254,12 @@ void kViewOptionsForMesh::onSelectFailed()
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+  kgmGui* tlight = tab->addTab("Light");
+  y_coord = 1;
+  kgmGui* g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
   g->setText("Intensity");
 
-  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
+  g = new kgmGuiText(tlight, 51, y_coord, 70, 20);
 
   g->setText(kgmConvert::toString(node->lgt->intensity));
   ((kgmGuiText*)g)->setEditable(true);

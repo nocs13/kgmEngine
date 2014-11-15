@@ -207,7 +207,7 @@ private:
   void render(kgmParticles*);
   void render(Icon*);
 
-  void renderGuiMenuItem(void*);
+  void renderGuiMenuItem(kgmGui*, void*);
 
   void gc2DMode();
   void gc3DMode();

@@ -1322,6 +1322,7 @@ void kgmGraphics::render(kgmGui* gui){
     return;
 
   gui->getRect(rect, true);
+
   text = gui->getText();
 
   if(gui->m_hasAlpha)
@@ -1454,7 +1455,7 @@ void kgmGraphics::render(kgmGui* gui){
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
 
     if(menu->getItem())
-      renderGuiMenuItem(menu->getItem());
+      renderGuiMenuItem(menu, menu->getItem());
   }
   else if(gui->isClass(kgmGuiTab::Class))
   {
@@ -1561,11 +1562,18 @@ void kgmGraphics::render(kgmGui* gui){
   }
 }
 
-void kgmGraphics::renderGuiMenuItem(void *i)
+void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
 {
   kgmGuiMenu::Item* item = (kgmGuiMenu::Item*)i;
 
+  kgmGui::Rect prect;
+
+  menu->getRect(prect, true);
+
   iRect rect = item->getRect();
+
+  //prect.x += rect.x;
+  //prect.y += rect.y;
 
   gcDrawRect(rect, 0xff888888, null);
 
@@ -1575,11 +1583,13 @@ void kgmGraphics::renderGuiMenuItem(void *i)
 
     kgmGui::Rect rc = item->getRect(i);
 
+    rc.x += prect.x;
+    rc.y += prect.y;
+
     if(item->getSelected() == i)
     {
-
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
-        renderGuiMenuItem(citem);
+        renderGuiMenuItem(menu, citem);
 
       gcDrawRect(rc, 0xff550011, null);
     }

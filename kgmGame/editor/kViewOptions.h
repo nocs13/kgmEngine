@@ -16,9 +16,10 @@ class kViewOptions : public kgmGuiFrame
   KGM_OBJECT(kViewOptions);
 
   kgmGuiButton* btn_close;
-  kgmGuiTab*    tab;
 
 protected:
+  kgmGuiTab*    tab;
+
   kNode*        node;
   u32           y_coord;
 
