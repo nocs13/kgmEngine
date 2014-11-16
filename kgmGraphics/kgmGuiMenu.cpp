@@ -18,7 +18,7 @@ kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
   if(!im)
     return null;
 
-  m_rect = item->getRect();
+  m_rect = item->getSubRect();
 
   return im;
 }
@@ -30,7 +30,7 @@ kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)
   if(!im)
     return null;
 
-  m_rect = item->getRect();
+  m_rect = item->getSubRect();
 
   return im;
 }

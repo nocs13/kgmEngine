@@ -8,7 +8,6 @@ class kgmGuiMenu: public kgmGui
   KGM_OBJECT(kgmGuiMenu)
 
 public:
-
   static u32 ItemHeight;
 
   class Item
@@ -40,6 +39,8 @@ public:
     s32        selected;
     f32        xscale, yscale;
 
+    u32        swidth; //submenu max width
+
     kgmList<Item*> items;
 
   public:
@@ -64,6 +65,8 @@ public:
       rect.w = 10 * title.length();
       rect.h = ItemHeight;
 
+      swidth = rect.w;
+
       callback = null;
     }
 
@@ -87,6 +90,8 @@ public:
       rect = iRect(0, 0, 0, 0);
       rect.w = 10 * title.length();
       rect.h = ItemHeight;
+
+      swidth = rect.w;
 
       callback = fncall;
     }
@@ -117,14 +122,20 @@ public:
 
       if(vertical)
       {
-        if(item->rect.w > rect.w)
-          rect.w = item->rect.w;
+        if(item->rect.w > swidth)
+        {
+          swidth = item->rect.w;
 
-        rect.h += ItemHeight;
+          for(int i = 0; i < items.length(); i++)
+            items[i]->rect.w = swidth;
+        }
+
+        item->rect.y += ItemHeight * (1 + items.length());
       }
       else
       {
-        rect.w += item->rect.w;
+        for(int i = 0; i < items.length(); i++)
+          item->rect.x += items[i]->rect.w;
       }
 
       items.add(item);
@@ -141,14 +152,21 @@ public:
 
       if(vertical)
       {
-        if(item->rect.w > rect.w)
-          rect.w = item->rect.w;
+        if(item->rect.w > swidth)
+        {
+          swidth = item->rect.w;
 
-        rect.h += ItemHeight;
+          for(int i = 0; i < items.length(); i++)
+            items[i]->rect.w = swidth;
+        }
+
+        item->rect.x = rect.x;
+        item->rect.y += ItemHeight * (1 + items.length());
       }
       else
       {
-        rect.w += item->rect.w;
+        for(int i = 0; i < items.length(); i++)
+          item->rect.x += items[i]->rect.w;
       }
 
       items.add(item);
@@ -171,31 +189,30 @@ public:
       if(index >= items.length())
         return rc;
 
-      for(int i = 0; i <= index; i++)
+      return items[index]->rect;
+    }
+
+    iRect getSubRect()
+    {
+      iRect rc(0, 0, 0, 0);
+
+      rc.x = rect.x;
+      rc.y = rect.y;
+
+      if(vertical)
       {
-        if(vertical)
-        {
-          rc.x = rect.x;
-          rc.y += ItemHeight;
-          rc.w = rect.w;
-          rc.h = ItemHeight;
-        }
-        else
-        {
-          rc.x += ((i==0) ? (0) : (items[i-1]->rect.w));
-          rc.y = rect.y;
-          rc.w = items[i]->rect.w;
-          rc.h = ItemHeight;
-        }
+        rc.w = swidth;
+        rc.h = ItemHeight * (1 + items.length());
+      }
+      else
+      {
+        for(int i = 0; i < items.length(); i++)
+          rc.w += items[i]->rect.w;
+
+        rc.h = ItemHeight;
       }
 
       return rc;
-    }
-
-    void setPosition(int x, int y)
-    {
-      rect.x = x;
-      rect.y = y;
     }
 
     void movePointer(int x, int y)
@@ -208,17 +225,6 @@ public:
 
           Item* ci = items[i];
           Rect  rc = getRect(i);
-
-          if(vertical)
-          {
-            if(ci->vertical)
-              ci->setPosition(rc.x + rc.w, rc.y);
-          }
-          else
-          {
-            if(ci->vertical)
-              ci->setPosition(rc.x, rc.y + rc.h);
-          }
 
           break;
         }

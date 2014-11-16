@@ -1443,14 +1443,14 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isClass(kgmGuiMenu::Class))
   {
-    if(gui->m_hasMouse )
+    /*if(gui->m_hasMouse )
     {
       gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
     }
     else
     {
       gcDrawRect(rect, gui_style->smenu.bg_color, gui_style->smenu.image);
-    }
+    }*/
 
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
 
