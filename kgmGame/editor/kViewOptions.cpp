@@ -204,16 +204,18 @@ void kViewOptions::onSelectCollision(bool s)
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmGui* tmesh = tab->addTab("Mesh");
+  y_coord = 1;
   fd = null;
   y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(tmesh, 0, y_coord, 50, 20);
   g->setText("Material");
-  g = guiMtlText = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
+  g = guiMtlText = new kgmGuiText(tmesh, 51, y_coord, 70, 20);
 
   if(node->mat.length())
     g->setText(node->mat);
 
-  kgmGuiButton* btn = new kgmGuiButton(getClient(), 125, y_coord, 50, 20);
+  kgmGuiButton* btn = new kgmGuiButton(tmesh, 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMaterial));
 }
@@ -283,12 +285,13 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  y_coord += 23;
+  kgmGui* tsensor = tab->addTab("Sensor");
+  y_coord = 1;
 
-  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(tsensor, 0, y_coord, 50, 20);
   g->setText("Target");
 
-  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
+  g = new kgmGuiText(tsensor, 51, y_coord, 70, 20);
 
   g->setText(node->sns->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
@@ -305,6 +308,9 @@ void kViewOptionsForSensor::setTarget(kgmString s)
 kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmGui* tobject = tab->addTab("Object");
+  y_coord = 1;
+
   if(node->obj->m_variables.length() > 0)
     y_coord += 23;
 
@@ -312,10 +318,10 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
   {
     kgmVariable& var = node->obj->m_variables[i];
 
-    kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+    kgmGui* g = new kgmGuiLabel(tobject, 0, y_coord, 50, 20);
     g->setText(var.getName());
 
-    g = new kGuiText(getClient(), 51, y_coord, 70, 20);
+    g = new kGuiText(tobject, 51, y_coord, 70, 20);
     g->setSid(var.getName());
 
     ((kGuiText*)g)->setEditable(true);
@@ -374,12 +380,13 @@ void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  y_coord += 23;
+  kgmGui* ttrigger = tab->addTab("Trigger");
+  y_coord = 1;
 
-  kgmGui* g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(ttrigger, 0, y_coord, 50, 20);
   g->setText("Channels");
 
-  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
+  g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
   g->setText(kgmConvert::toString((s32)node->trg->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
@@ -387,10 +394,10 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
 
   y_coord += 23;
 
-  g = new kgmGuiLabel(getClient(), 0, y_coord, 50, 20);
+  g = new kgmGuiLabel(ttrigger, 0, y_coord, 50, 20);
   g->setText("Target");
 
-  g = new kgmGuiText(getClient(), 51, y_coord, 70, 20);
+  g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
   g->setText(node->trg->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
