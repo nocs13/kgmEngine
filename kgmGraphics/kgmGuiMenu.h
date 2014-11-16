@@ -25,7 +25,6 @@ public:
     };
 
     ClickEventCallback callback;
-    //kgmObject          *object;
 
   protected:
     Item*      parent;
@@ -34,7 +33,6 @@ public:
     kgmString  title;
 
     kgmGui::Rect rect;
-    //u32          width;
 
     bool       popup;
     bool       vertical;
@@ -62,7 +60,6 @@ public:
 
       xscale = yscale = 1.0f;
 
-      //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       rect = iRect(0, 0, 0, 0);
       rect.w = 10 * title.length();
       rect.h = ItemHeight;
@@ -87,7 +84,6 @@ public:
 
       xscale = yscale = 1.0f;
 
-      //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
       rect = iRect(0, 0, 0, 0);
       rect.w = 10 * title.length();
       rect.h = ItemHeight;
@@ -105,7 +101,7 @@ public:
 
     kgmString getTitle() { return title; }
 
-    iRect getRect() { return rect; }
+    iRect getRect() const { return rect; }
 
     u32 getId(){ return id; }
     s32 getType(){ return (s32)type; }

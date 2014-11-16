@@ -1572,10 +1572,7 @@ void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
 
   iRect rect = item->getRect();
 
-  //prect.x += rect.x;
-  //prect.y += rect.y;
-
-  gcDrawRect(rect, 0xff888888, null);
+  //gcDrawRect(rect, 0xff888888, null);
 
   for(int i = 0; i < item->getItemsCount(); i++)
   {

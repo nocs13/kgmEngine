@@ -19,41 +19,42 @@ kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
 
   tab_height = 20;
 
-  labels = new kgmGuiMenu(this);
+  labels = new Labels(this);
   client = new kgmGui(this, 0, tab_height, w, h - tab_height);
 
   labels->setSid("tab_labels");
   labels->m_rect.w = w;
   labels->m_rect.h = tab_height;
+
+  labels->setLabelsCallback(Labels::ClickEventCallback(this, (Labels::ClickEventCallback::Function)&kgmGuiTab::select));
 }
 
 kgmGuiTab::~kgmGuiTab()
 {
-  for(int i = tabs.length(); i > 0; i--)
+  //for(int i = tabs.length(); i > 0; i--)
   {
-    tabs[i]->release();
-    tabs[i]->release();
+    //tabs[i]->release();
   }
 
-  tabs.clear();
+  //tabs.clear();
 }
 
 
 u32 kgmGuiTab::set(u32 k)
 {
-  if((k < 0) || (k >= tabs.size()))
+  if((k < 0) || (k >= client->m_childs.length()))
     return m_index;
   
-  for(int i = 0; i < tabs.size(); i++)
+  for(int i = 0; i < client->m_childs.length(); i++)
   {
     if(i == k)
     {
       m_index = i;
-      tabs[i]->show();
+      client->m_childs[i]->show();
     }
     else
     {
-      tabs[i]->hide();
+      client->m_childs[i]->hide();
     }
   }
 
@@ -72,13 +73,13 @@ u32 kgmGuiTab::previous()
 
 kgmGui* kgmGuiTab::active()
 {
-  if(tabs.size() < 1)
+  if(client->m_childs.length() < 1)
     return null;
 
-  if(m_index < 0 || m_index >= tabs.size())
+  if(m_index < 0 || m_index >= client->m_childs.length())
     return null;
 
-  return tabs[m_index];
+  return client->m_childs[m_index];
 }
 
 kgmGui* kgmGuiTab::addTab(kgmString title)
@@ -90,13 +91,13 @@ kgmGui* kgmGuiTab::addTab(kgmString title)
   if(active() != null)
     active()->hide();
 
-  labels->add(tabs.length(), title);
+  labels->add(client->m_childs.length(), title);
   gui->show();
 }
 
 void kgmGuiTab::select(u32 i)
 {
-  if(i >= tabs.length())
+  if(i >= client->m_childs.length())
     return;
 
   set(i);
