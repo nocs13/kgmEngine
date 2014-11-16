@@ -286,6 +286,7 @@ void kgmGui::onMsMove(int k, int x, int y)
   for (int i = 0; i < m_childs.size(); i++)
   {
     kgmGui* guiPointed = null;
+    kgmGui* child = m_childs[i];
 
     if (m_childs[i]->m_view && !m_childs[i]->m_freeze)
     {

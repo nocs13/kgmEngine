@@ -34,7 +34,7 @@ public:
     kgmString  title;
 
     kgmGui::Rect rect;
-    u32          width;
+    //u32          width;
 
     bool       popup;
     bool       vertical;
@@ -63,8 +63,9 @@ public:
       xscale = yscale = 1.0f;
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
-      width = 10 * title.length();
       rect = iRect(0, 0, 0, 0);
+      rect.w = 10 * title.length();
+      rect.h = ItemHeight;
 
       callback = null;
     }
@@ -87,8 +88,9 @@ public:
       xscale = yscale = 1.0f;
 
       //rect = iRect(0, 0, 10 * title.length(), ItemHeight);
-      width = 10 * title.length();
       rect = iRect(0, 0, 0, 0);
+      rect.w = 10 * title.length();
+      rect.h = ItemHeight;
 
       callback = fncall;
     }
@@ -119,14 +121,14 @@ public:
 
       if(vertical)
       {
-        if(item->width > rect.w)
-          rect.w = item->width;
+        if(item->rect.w > rect.w)
+          rect.w = item->rect.w;
 
         rect.h += ItemHeight;
       }
       else
       {
-        rect.w += item->width;
+        rect.w += item->rect.w;
       }
 
       items.add(item);
@@ -143,14 +145,14 @@ public:
 
       if(vertical)
       {
-        if(item->width > rect.w)
-          rect.w = item->width;
+        if(item->rect.w > rect.w)
+          rect.w = item->rect.w;
 
         rect.h += ItemHeight;
       }
       else
       {
-        rect.w += item->width;
+        rect.w += item->rect.w;
       }
 
       items.add(item);
@@ -184,9 +186,9 @@ public:
         }
         else
         {
-          rc.x += ((i==0)?(0):(items[i-1]->width));
+          rc.x += ((i==0) ? (0) : (items[i-1]->rect.w));
           rc.y = rect.y;
-          rc.w = items[i]->width;
+          rc.w = items[i]->rect.w;
           rc.h = ItemHeight;
         }
       }

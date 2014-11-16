@@ -53,6 +53,9 @@ kEditor::kEditor(kgmGameBase* g)
     game->m_render->setEditor(true);
 
     menu = new kMenu(null, this);
+
+    menu->setSid("editor_main_menu");
+
     kgmGuiMenu::Item* item = menu->add("Map");
     item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
     item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));

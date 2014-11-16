@@ -4,6 +4,8 @@
 
 KGMOBJECT_IMPLEMENT(kgmAlsa, kgmObject);
 
+#undef DEBUG
+
 #ifdef ALSA
 #include <alsa/asoundlib.h>
 //#include <alsa/mixer.h>

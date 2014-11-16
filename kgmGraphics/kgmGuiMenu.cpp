@@ -1,13 +1,13 @@
 #include "kgmGuiMenu.h"
+#include "../kgmBase/kgmLog.h"
+
 KGMOBJECT_IMPLEMENT(kgmGuiMenu, kgmGui)
 
 u32 kgmGuiMenu::ItemHeight = 20;
 
 kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
-  :kgmGui(parent, 0, 0, 0, 0)
+  :kgmGui(parent, 0, 0, 1, 1)
 {
-  m_rect.x = m_rect.y = 0;
-
   item = new Item(null, "", true);
 }
 
@@ -17,8 +17,6 @@ kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
 
   if(!im)
     return null;
-
-  u32 x = m_rect.x + m_rect.w + 1;
 
   m_rect = item->getRect();
 
@@ -31,8 +29,6 @@ kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)
 
   if(!im)
     return null;
-
-  u32 x = m_rect.x + m_rect.w + 1;
 
   m_rect = item->getRect();
 
@@ -51,7 +47,6 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 
   if(selected && selected->getType() == Item::TypeItem)
   {
-    //onAction(this, selected->getId());
     if(selected->callback.getObject())
       selected->callback();
   }
@@ -59,5 +54,9 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 
 void kgmGuiMenu::onMsMove(int key, int x, int y)
 {
+#ifdef DEBUG
+  kgm_log() << "kgmGuiMenu onMsMove: " << (s8*)m_sid << " " << x << " " << y << "\n";
+#endif
+
   item->movePointer(x, y);
 }

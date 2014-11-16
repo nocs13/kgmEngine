@@ -21,6 +21,10 @@ kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
 
   labels = new kgmGuiMenu(this);
   client = new kgmGui(this, 0, tab_height, w, h - tab_height);
+
+  labels->setSid("tab_labels");
+  labels->m_rect.w = w;
+  labels->m_rect.h = tab_height;
 }
 
 kgmGuiTab::~kgmGuiTab()
