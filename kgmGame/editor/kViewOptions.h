@@ -72,12 +72,6 @@ public:
   void setIntencity(kgmString s);
 };
 
-class kViewOptionsForActor : public kViewOptions
-{
-public:
-  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
-};
-
 class kViewOptionsForSensor : public kViewOptions
 {
 public:
@@ -124,6 +118,12 @@ public:
   kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
 
   __stdcall void updateVariable(kgmString id, kgmString data);
+};
+
+class kViewOptionsForActor : public kViewOptionsForObject
+{
+public:
+  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
 };
 
 class kViewOptionsForTrigger : public kViewOptions

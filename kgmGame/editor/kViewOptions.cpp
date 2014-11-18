@@ -278,8 +278,10 @@ void kViewOptionsForLight::setIntencity(kgmString s)
 }
 
 kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
-:kViewOptions(n, x, y, w, h)
+:kViewOptionsForObject(n, x, y, w, h)
 {
+  kgmGui* tactor = tab->addTab("Actor");
+  y_coord = 1;
 }
 
 kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
