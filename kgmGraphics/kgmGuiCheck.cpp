@@ -15,6 +15,8 @@ kgmGuiCheck::kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
 {
   m_state = StateNone;
   m_check = false;
+
+  m_group_owner = null;
 }
 
 kgmGuiCheck::kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call)
@@ -24,16 +26,19 @@ kgmGuiCheck::kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCall
   m_check = false;
 
   callback = call;
+  m_group_owner = null;
 }
 
 kgmGuiCheck::~kgmGuiCheck()
 {
+  m_group.clear();
 }
 
 void kgmGuiCheck::onMsLeftUp(int key, int x, int y){
   //if(m_state == StateFocus)
   {
-    m_check = !m_check;
+    //m_check = !m_check;
+    setCheck(!m_check);
 
     if(callback.hasObject() && callback.hasFunction())
       callback(m_check);
