@@ -108,43 +108,42 @@ kgmGuiFrame("Options", x, y, w, h)
     chk->setText("collide");
     chk->setCheck(node->col);
     chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
+    y_coord += 23;
+
+    kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+    chk_grp->setText("Shape Box");
+    chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectBoxShape));
+    y_coord += 23;
+
+    chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+    chk->setText("Shape Mesh");
+    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMeshShape));
+    chk_grp->addGroup(chk);
+    y_coord += 23;
+
+    g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
+    g->setText("Bound xyz");
+    g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
+    g->setSid("Length x");
+    g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundX));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+    g = new kgmGuiText(gcollision, 102, y_coord, 50, 20);
+    g->setSid("Width y");
+    g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundY));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+    g = new kgmGuiText(gcollision, 154, y_coord, 50, 20);
+    g->setSid("Height z");
+    g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundZ));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+    y_coord += 23;
   }
 }
-
-/*void kViewOptions::onAction(kgmGui *from, u32 arg)
-{
-  kgmString txt;
-
-  if(from)
-  {
-    txt = from->getText();
-  }
-
-  if(from == btn_close)
-  {
-    if(callClose.hasObject() && callClose.hasFunction())
-      callClose(callClose.getObject());
-
-    erase();
-    release();
-  }
-
-  if(from->getSid() == "position_x")
-  {
-    node->pos.x = kgmConvert::toDouble(txt);
-    node->setPosition(node->pos);
-  }
-  else if(from->getSid() == "position_y")
-  {
-    node->pos.y = kgmConvert::toDouble(txt);
-    node->setPosition(node->pos);
-  }
-  else if(from->getSid() == "position_z")
-  {
-    node->pos.z = kgmConvert::toDouble(txt);
-    node->setPosition(node->pos);
-  }
-}*/
 
 void kViewOptions::onCloseOptions()
 {
@@ -200,6 +199,39 @@ void kViewOptions::onSelectCollision(bool s)
   node->col = s;
 }
 
+void kViewOptions::onSelectBoxShape(bool s)
+{
+  node->shp = "box";
+}
+
+void kViewOptions::onSelectMeshShape(bool s)
+{
+  node->col = "mesh";
+}
+
+void kViewOptions::onBoundX(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.x = -0.5 * v;
+  node->bnd.max.x =  0.5 * v;
+}
+
+void kViewOptions::onBoundY(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.y = -0.5 * v;
+  node->bnd.max.y =  0.5 * v;
+}
+
+void kViewOptions::onBoundZ(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.z = -0.5 * v;
+  node->bnd.max.z =  0.5 * v;
+}
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)

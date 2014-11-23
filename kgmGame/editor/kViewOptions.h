@@ -32,14 +32,21 @@ public:
 
   void onAction(kgmGui* from, u32 arg);
   void onCloseOptions();
-  void onPositionX(kgmString s);
-  void onPositionY(kgmString s);
-  void onPositionZ(kgmString s);
-  void onRotationX(u32 s);
-  void onRotationY(u32 s);
-  void onRotationZ(u32 s);
-  void onSelectLock(bool);
-  void onSelectCollision(bool);
+  __stdcall void onPositionX(kgmString s);
+  __stdcall void onPositionY(kgmString s);
+  __stdcall void onPositionZ(kgmString s);
+  __stdcall void onRotationX(u32 s);
+  __stdcall void onRotationY(u32 s);
+  __stdcall void onRotationZ(u32 s);
+  __stdcall void onSelectLock(bool);
+  __stdcall void onSelectCollision(bool);
+  __stdcall void onSelectBoxShape(bool);
+  __stdcall void onSelectMeshShape(bool);
+  __stdcall void onSelectSphereShape(bool);
+  __stdcall void onSelectCylinderShape(bool);
+  __stdcall void onBoundX(kgmString s);
+  __stdcall void onBoundY(kgmString s);
+  __stdcall void onBoundZ(kgmString s);
 
   void setCloseCallback(CloseCallback cfn)
   {

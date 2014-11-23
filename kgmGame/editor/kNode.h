@@ -52,6 +52,7 @@ public:
   kgmString nam;
   kgmString lnk;
   kgmString mat;
+  kgmString shp;
 
   bool col, lock;
 
