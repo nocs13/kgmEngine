@@ -315,6 +315,8 @@ bool kEditor::mapOpen(kgmString s)
       node->lnk = mnode.lnk;
       node->bnd = mnode.bnd;
       node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
       game->m_render->add(node->msh, null);
@@ -329,6 +331,9 @@ bool kEditor::mapOpen(kgmString s)
       node = new kNode((kgmLight*)mnode.obj);
 
       node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
@@ -359,6 +364,9 @@ bool kEditor::mapOpen(kgmString s)
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
       node->geo = new kArrow();
@@ -377,6 +385,9 @@ bool kEditor::mapOpen(kgmString s)
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
       node->geo = new kArrow();
@@ -394,6 +405,9 @@ bool kEditor::mapOpen(kgmString s)
       node = new kNode((kgmTrigger*)mnode.obj);
 
       node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
@@ -414,6 +428,9 @@ bool kEditor::mapOpen(kgmString s)
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
       node->geo = new kArrow();
@@ -501,6 +518,9 @@ bool kEditor::mapSave(kgmString s)
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addLight(node);
@@ -521,6 +541,8 @@ bool kEditor::mapSave(kgmString s)
     node.lnk = (*i)->lnk;
     node.mtl = (*i)->mat;
     node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addMesh(node);
@@ -534,6 +556,7 @@ bool kEditor::mapSave(kgmString s)
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addActor(node);
@@ -547,6 +570,9 @@ bool kEditor::mapSave(kgmString s)
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addSensor(node);
@@ -560,6 +586,9 @@ bool kEditor::mapSave(kgmString s)
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addGameObject(node);
@@ -573,6 +602,9 @@ bool kEditor::mapSave(kgmString s)
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addTrigger(node);

@@ -54,9 +54,5 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 
 void kgmGuiMenu::onMsMove(int key, int x, int y)
 {
-#ifdef DEBUG
-  kgm_log() << "kgmGuiMenu onMsMove: " << (s8*)m_sid << " " << x << " " << y << "\n";
-#endif
-
   item->movePointer(x, y);
 }

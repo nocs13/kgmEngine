@@ -1,4 +1,5 @@
 #include "kViewOptions.h"
+#include "../../kgmBase/kgmLog.h"
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
@@ -107,18 +108,25 @@ kgmGuiFrame("Options", x, y, w, h)
     kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
     chk->setText("collide");
     chk->setCheck(node->col);
+    kgm_log() <<  "collision ";
+    kgm_log() << (s32)node->col;
+    kgm_log() <<  " "; 
+    kgm_log() << node->shp.data();
+    kgm_log() << "\n";
     chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
     y_coord += 23;
 
     kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
     chk_grp->setText("Shape Box");
     chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectBoxShape));
+    if(node->shp == "box") chk_grp->setCheck(true);
     y_coord += 23;
 
     chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
     chk->setText("Shape Mesh");
     chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMeshShape));
     chk_grp->addGroup(chk);
+    if(node->shp == "mesh") chk->setCheck(true);
     y_coord += 23;
 
     g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
@@ -201,12 +209,14 @@ void kViewOptions::onSelectCollision(bool s)
 
 void kViewOptions::onSelectBoxShape(bool s)
 {
-  node->shp = "box";
+  if(s)
+    node->shp = "box";
 }
 
 void kViewOptions::onSelectMeshShape(bool s)
 {
-  node->col = "mesh";
+  if(s)
+    node->shp = "mesh";
 }
 
 void kViewOptions::onBoundX(kgmString s)

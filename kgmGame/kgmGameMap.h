@@ -52,6 +52,7 @@ public:
     kgmString  nam;
     kgmString  lnk;
     kgmString  mtl;
+    kgmString  shp;
 
     bool       col;  //collision type
     bool       hdn;  // node is hidden
@@ -89,6 +90,8 @@ public:
   bool addSensor(Node n);
   bool addTrigger(Node n);
   bool addGameObject(Node n);
+
+  void addCollision(kgmXml::Node& xnode, Node& node);
 
   Node next();
 };

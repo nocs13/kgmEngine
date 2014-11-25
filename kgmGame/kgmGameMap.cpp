@@ -70,12 +70,9 @@ bool kgmGameMap::addMesh(Node n)
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
-    if(n.col != 0)
-    {
-      snode = new kgmXml::Node(node);
-      snode->m_name = "Collision";
-      snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.col)));
-    }
+
+    if(n.col)
+      addCollision(*node, n);
 
     if(n.lck)
     {
@@ -110,6 +107,9 @@ bool kgmGameMap::addLight(Node n)
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
 
+    if(n.col)
+      addCollision(*node, n);
+
     if(n.lck)
     {
       snode = new kgmXml::Node(node);
@@ -142,6 +142,9 @@ bool kgmGameMap::addCamera(Node n)
                                                   kgmConvert::toString(dir.y) + kgmString(" ") +
                                                   kgmConvert::toString(dir.z)));
     node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(((kgmCamera*)n.obj)->mFov)));
+
+    if(n.col)
+      addCollision(*node, n);
 
     if(n.lck)
     {
@@ -191,6 +194,9 @@ bool kgmGameMap::addActor(Node n)
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
 
+    if(n.col)
+      addCollision(*node, n);
+
     for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
     {
       kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
@@ -235,6 +241,9 @@ bool kgmGameMap::addSensor(Node n)
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
 
+    if(n.col)
+      addCollision(*node, n);
+
     for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
     {
       kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
@@ -276,6 +285,9 @@ bool kgmGameMap::addTrigger(Node n)
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
 
+    if(n.col)
+      addCollision(*node, n);
+
     if(n.lck)
     {
       snode = new kgmXml::Node(node);
@@ -309,6 +321,9 @@ bool kgmGameMap::addGameObject(Node n)
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
+
+    if(n.col)
+      addCollision(*node, n);
 
     for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
     {
@@ -541,10 +556,24 @@ kgmGameMap::Node kgmGameMap::next()
         value.clear();
         m_xml->attribute("value", value);
 
-        u32 t = kgmConvert::toInteger(value);
-
-        if(t != 0)
+        if(value == "true")
           node.col = true;
+
+        value.clear();
+        m_xml->attribute("shape", value);
+        node.shp = value;
+
+        float dim[3] = {0};
+        value.clear();
+        m_xml->attribute("bound", value);
+        sscanf(value.data(), "%f %f %f", &dim[0], &dim[1], &dim[2]);
+
+        node.bnd.min.x = -0.5 * dim[0];
+        node.bnd.min.y = -0.5 * dim[1];
+        node.bnd.min.z = -0.5 * dim[2];
+        node.bnd.max.x =  0.5 * dim[0];
+        node.bnd.max.y =  0.5 * dim[1];
+        node.bnd.max.z =  0.5 * dim[2];
       }
       else if(id == "Locked")
       {
@@ -604,4 +633,29 @@ kgmGameMap::Node kgmGameMap::next()
   }
 
   return node;
+}
+
+void kgmGameMap::addCollision(kgmXml::Node& xnode, Node& node)
+{
+  if(node.col != 0)
+  {
+    kgmXml::Node* snode = new kgmXml::Node(&xnode);
+    snode->m_name = "Collision";
+    snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(node.col)));
+
+    kgmString shape = node.shp;
+
+    if(shape.length() < 1)
+    {
+      shape = "box";
+    }
+
+    snode->m_attributes.add(new kgmXml::Attribute("shape", shape));
+
+    kgmString bound = kgmString("") + kgmConvert::toString(node.bnd.max.x - node.bnd.min.x) +
+      kgmString(" ") + kgmConvert::toString(node.bnd.max.y - node.bnd.min.y) +
+      kgmString(" ") + kgmConvert::toString(node.bnd.max.z - node.bnd.min.z);
+    
+    snode->m_attributes.add(new kgmXml::Attribute("bound", bound));
+  }
 }
