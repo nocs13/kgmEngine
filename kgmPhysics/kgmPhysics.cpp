@@ -6,15 +6,20 @@
 #include <windows.h>
 #endif
 
+KGMOBJECT_IMPLEMENT(kgmPhysics, kgmObject);
+
 //kgmPhysics
-kgmPhysics::kgmPhysics(){
+kgmPhysics::kgmPhysics()
+{
 }
 
-kgmPhysics::~kgmPhysics(){
+kgmPhysics::~kgmPhysics()
+{
 }
 
 //virtual 
-void kgmPhysics::update(float time){
+void kgmPhysics::update(float time)
+{
   doCollision(time);
 
   for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
@@ -49,33 +54,53 @@ void kgmPhysics::build(){
 }
 
 // static objects
-void kgmPhysics::add(vec3& a, vec3& b, vec3& c){
+void kgmPhysics::add(vec3& a, vec3& b, vec3& c)
+{
   triangle3 trn(a, b, c);
   m_triangles.add(trn);
 }
 
+void kgmPhysics::add(kgmCollision::Shape *shape)
+{
+  if(!shape)
+    return;
+
+  for(int i = 0; i < shape->triangles.length(); i++)
+    m_triangles.add(shape->triangles[i]);
+}
+
 // dynamic objects
-void kgmPhysics::add(kgmBody* body){
+void kgmPhysics::add(kgmBody* body)
+{
   if(!body)
     return;
 
   m_bodies.add(body);
+
   body->increment();
 }
 
 //remove body
-bool kgmPhysics::remove(kgmBody* body){
-  for(int i = 0; i < m_bodies.size(); i++){
-    if(m_bodies[i] == body){
+bool kgmPhysics::remove(kgmBody* body)
+{
+  for(int i = 0; i < m_bodies.size(); i++)
+  {
+    if(m_bodies[i] == body)
+    {
       m_bodies.erase(i);
+
+      body->release();
+
       break;
     }
   }
+
   return true;
 }
 
 //collision
-bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos){
+bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos)
+{
   bool  insect = false;
   float dist = 0.0f;
   vec3  pt_ins;
@@ -170,8 +195,8 @@ void kgmPhysics::doCollision(float dtime){
     vec3 b_max = body->m_bound.max;
     float crad = b_min.distance(b_max) * 0.5f;
     float rx = 0.5f * (body->m_bound.max.x - body->m_bound.min.x),//crad,
-    ry = 0.5f * (body->m_bound.max.y - body->m_bound.min.y),//crad,
-    rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
+        ry = 0.5f * (body->m_bound.max.y - body->m_bound.min.y),//crad,
+        rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
 
     //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
     if(body->m_speed_up > 0.0f)
@@ -195,7 +220,7 @@ void kgmPhysics::doCollision(float dtime){
 
     sinteract.center = body->m_position;
     sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
-    body->m_position.distance(epos);
+                       body->m_position.distance(epos);
     //getBodies(bodies, sinteract);
 
     //check collision to dynamic objects
@@ -271,12 +296,12 @@ void kgmPhysics::doCollision(float dtime){
          ( (cbody->m_shape == kgmBody::ShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
            || (cbody->m_shape == kgmBody::ShapePolyhedron && m_collision.ob_collision(ob_body, ob_cbody)
                && m_collision.ob_collision(ob_cbody, cbody->m_convex, mtx_cbody))
+           )
+         //&& ob_body.intersect(ob_cbody)
+         //&& ob_cbody.intersect(ob_body)
+         //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
+         //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
          )
-      //&& ob_body.intersect(ob_cbody)
-      //&& ob_cbody.intersect(ob_body)
-      //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
-      //&& m_collision.ob_collision(body->m_bound, s, d, cbody->m_bound, cbody->m_position, cd)
-      )
       {
 #ifdef DEBUG
         body->m_intersect = true;
@@ -356,12 +381,13 @@ void kgmPhysics::doCollision(float dtime){
         }
       }
     }
+
     bodies.clear();
     //**********************************
 
     sinteract.center = body->m_position;
     sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
-    body->m_position.distance(epos);
+                       body->m_position.distance(epos);
     getTriangles(triangles, sinteract);
 
     //check collision to static objects
@@ -378,7 +404,9 @@ void kgmPhysics::doCollision(float dtime){
       //   d.z += rz;
       /*(s.distance(d) > 0.0000001f) && */
       m_collision.reset();
-      if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3)){
+
+      if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3))
+      {
         vec3 pr_e = m_collision.m_point;
         vec3 pr_s = pln.projection(s);
         n = m_collision.m_normal;
@@ -392,32 +420,43 @@ void kgmPhysics::doCollision(float dtime){
           n.z = 0.0f;
         }
 
-        if(n.length() > 0.001f){
+        if(n.length() > 0.001f)
+        {
           n.normalize();
           epos.x = pr_e.x + n.x * rx;//fabs(pr_end.x - d.x);
           epos.y = pr_e.y + n.y * ry;//fabs(pr_end.y - d.y);
           z      = pr_e.z + n.z * rz;//fabs(pr_end.z - d.z);;
           z += 0.01;
-          if((n.z > 0.95) && ((z) > epos.z)){
+
+          if((n.z > 0.95) && ((z) > epos.z))
+          {
             epos.z = z - rz;
             upstare = true;
           }
         }
       }
 
-      if(m_gravity && body->m_gravity && (!upstare)){
+      if(m_gravity && body->m_gravity && (!upstare))
+      {
         d.z -= gdist;
         m_collision.reset();
-        if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3)){
+
+        if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3))
+        {
           vec3 pr_e = m_collision.m_point;
           float z = 0.0f;
           n = m_collision.m_normal;
-          if(n.z < 0.0) continue;
+
+          if(n.z < 0.0)
+            continue;
+
           epos.x = pr_e.x + n.x * rx;//fabs(pr_end.x - d.x);
           epos.y = pr_e.y + n.y * ry;//fabs(pr_end.y - d.y);
           z      = pr_e.z + n.z * rz;//fabs(pr_end.z - d.z);
           z += 0.01;
-          if((n.z > 0.0) && ((z - rz) > epos.z)){
+
+          if((n.z > 0.0) && ((z - rz) > epos.z))
+          {
             epos.z = z - rz;
             holddown  = true;
           }
@@ -440,17 +479,22 @@ void kgmPhysics::doCollision(float dtime){
     {
       body->m_falling = false;
     }
+
     if(epos.z <= (spos.z - gdist))
       body->m_falling = true;
+
     body->m_falling = false;
     body->m_position = epos;
   }
 }
 
-void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s){
+void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s)
+{
   int i = 0;
   int count = m_triangles.size();
-  for(i; i < count; i++){
+
+  for(i; i < count; i++)
+  {
     triangle3 t = m_triangles[i];
     vec3 mn = t.pt[0];
     vec3 ct;
@@ -471,13 +515,17 @@ void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s){
   }
 }
 
-void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s){
+void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s)
+{
   int i = 0;
   int count = m_bodies.size();
-  for(i; i < count; i++){
+
+  for(i; i < count; i++)
+  {
     sphere3 bs(m_bodies[i]->m_bound);	bs.center = m_bodies[i]->m_position;
     vec3	  ds = s.center - bs.center;
     float	  mgn = SQR(ds.x) + SQR(ds.y) + SQR(ds.z);
+
     if(mgn < (SQR(s.radius) + SQR(bs.radius)))
       bodies.add(m_bodies[i]);
   }
