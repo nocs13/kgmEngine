@@ -308,7 +308,12 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
   g->setText(kgmConvert::toString(node->lgt->intensity));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForLight::setIntencity));
+  y_coord += 23;
 
+  kgmGuiCheck* check = new kgmGuiCheck(tlight, 1, y_coord, 150, 20);
+  check->setText("Shadows");
+  check->setCheck(node->lgt->shadows);
+  check->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForLight::setShadows));
   y_coord += 23;
 }
 
@@ -317,6 +322,11 @@ void kViewOptionsForLight::setIntencity(kgmString s)
   f32 in = kgmConvert::toDouble(s);
 
   node->lgt->intensity = in;
+}
+
+void kViewOptionsForLight::setShadows(bool s)
+{
+  node->lgt->shadows = s;
 }
 
 kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)

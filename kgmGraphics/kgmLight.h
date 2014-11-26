@@ -5,18 +5,30 @@
 
 class kgmLight: public kgmObject
 {
-  KGM_OBJECT(kgmLight)
-  public:
-    static float LIGHT_RANGE;
+  KGM_OBJECT(kgmLight);
+
 public:
+    static float LIGHT_RANGE;
+
+    enum Type
+    {
+      TypePoint,
+      TypeSpot,
+      TypeSun
+    };
+
+public:
+  Type  type;
+
   vec3  position;   //light position
   vec3  direction;  //light direction, if 0 then light is omni
-  vec4  color,
-  specular;
+  vec4  color, specular;
+
   float intensity;  //light intensity, 1 mean 10 meter range
   float angle;      //light spot angle if directional
-  bool  ison;       //light switched on
-  bool  shadows;    //light drop shadows, on shadow map
+
+  bool  active;     //light switched on
+  bool  shadows;    //cast shadows, need shadow map. not for point type.
 
   kgmTexture shadowmap;  //light shadow map depth texture
 
@@ -26,6 +38,8 @@ public:
 public:
   kgmLight()
   {
+    type = TypePoint;
+
     position  = vec3(0, 0, 0);
     direction = vec3(0, 0, 0);
 
@@ -36,7 +50,7 @@ public:
     angle = 0.0f;
 
     shadows = false;
-    ison = true;
+    active = true;
 
     shadowmap.m_type = kgmTexture::Type_RT_Depth;
     m_group = 0;
@@ -57,7 +71,7 @@ public:
     l->intensity = intensity;
     l->angle = angle;
     l->shadows = shadows;
-    l->ison = ison;
+    l->active = active;
     l->shadowmap = shadowmap;
     l->m_group = m_group;
   }

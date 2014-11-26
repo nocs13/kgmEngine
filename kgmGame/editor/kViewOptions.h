@@ -76,7 +76,8 @@ class kViewOptionsForLight : public kViewOptions
 public:
   kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
 
-  void setIntencity(kgmString s);
+  __stdcall void setIntencity(kgmString s);
+  __stdcall void setShadows(bool s);
 };
 
 class kViewOptionsForSensor : public kViewOptions

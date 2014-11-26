@@ -454,7 +454,7 @@ void kgmGraphics::render()
       continue;
     }
 
-    if(!(*i).light->ison)
+    if(!(*i).light->active)
       continue;
 
     //if(!m_camera.isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))

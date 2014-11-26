@@ -31,6 +31,47 @@ class kgmGameBase: public kgmOGLWindow, public kgmIGame
 public:
   static kgmGameBase* m_game;
 
+  enum NodeType
+  {
+    NodeNone,
+    NodeMesh,
+    NodeLight,
+    NodeCamera,
+    NodeMaterial,
+    NodeActor,
+    NodeSensor,
+    NodeTrigger,
+    NodeGameObject
+  };
+
+  class Node
+  {
+    NodeType type;
+
+    kgmObject* object;
+
+    vec3       position;
+    vec3       rotation;
+
+    box3       bound;
+
+    kgmString  name;
+    kgmString  link;
+    kgmString  material;
+    kgmString  shape;
+
+    bool       collision;
+    bool       hidden;
+    bool       lock;
+
+  public:
+    Node()
+    {
+      object = null;
+      type   = NodeNone;
+    }
+  };
+
 protected:
   kgmIVideo*         m_video;
   kgmGameAudio*      m_audio;
