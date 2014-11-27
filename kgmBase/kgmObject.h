@@ -23,27 +23,27 @@ struct kgmRuntime
   virtual kgmRuntime&  runtime();               \
   private:
 
-
-
 #define KGMOBJECT_IMPLEMENT(o_class, o_parent)                                         \
   kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class};  \
   o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }                      \
   kgmRuntime& o_class::runtime() { return o_class::Class; }
 
-//base class for kgm_engine project objects
+// Base class for kgm_engine objects.
 
 class kgmObject
 {
   KGM_OBJECT(kgmObject);
 
-  template<class... Args> class Action
+  template<class... Args>
+  class Action
   {
   public:
     virtual void call(Args... args) = 0;
   };
 
 public:
-  template<class... Args> class Event
+  template<class... Args>
+  class Event
   {
     kgmList<Action<Args...>*> list;
 
@@ -70,6 +70,11 @@ public:
   kgmObject()
   {
     m_references = 1;
+  }
+
+  kgmObject(const kgmObject& o)
+  {
+    m_references = o.m_references;
   }
 
   bool isClass(kgmObject& o)
@@ -161,6 +166,18 @@ public:
       delete this;
   }
 
+  static kgmObject* assign(kgmObject* dest, kgmObject* src)
+  {
+    if (src == null)
+      return null;
+
+    dest = src;
+
+    src->increment();
+
+    return dest;
+  }
+
   template<class T, class... Args>
   void connect(T *t, void(T::*f)(Args...), Event<Args...> &s)
   {
@@ -168,13 +185,14 @@ public:
 
   virtual kgmObject* clone()
   {
-    return new kgmObject();
+    return null;
   }
 
   void* operator new(size_t size);
   void  operator delete(void* p);
 
   friend class kgmApp;
+
   //private:
   static void releaseObjects();
   static int  objectCount();

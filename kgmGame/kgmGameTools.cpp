@@ -324,7 +324,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
 
   kgmTexture* tex = new kgmTexture();
 
-  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, 0);
+  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
   pic->release();
 
   if(!tex->m_texture)
@@ -363,7 +363,15 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
   };
 
   kgmFont* font = new kgmFont();
+
+  gc->gcSet(gctex_fltmag, (void*)gcflt_near);
+  gc->gcSet(gctex_fltmin, (void*)gcflt_near);
+
   font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+
+  gc->gcSet(gctex_fltmag, (void*)gcflt_linear);
+  gc->gcSet(gctex_fltmin, (void*)gcflt_linear);
+
   pic->release();
 
   if(!font->m_texture)

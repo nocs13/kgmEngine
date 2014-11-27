@@ -119,7 +119,7 @@ kgmGameBase::kgmGameBase()
   m_logic = null;
 
   log("open font...");
-  m_font = m_resources->getFont((char*)"arial.tga", 16, 16);
+  m_font = m_resources->getFont((char*)"font.tga", 16, 16);
 
   if(!m_font)
     log("can't load font");

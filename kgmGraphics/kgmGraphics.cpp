@@ -1597,7 +1597,9 @@ void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
 
     kgmString title = citem->getTitle();
 
-    gcDrawText(font, 8, 20, gui_style->smenu.tx_color, rc, title);
+    float asp = (float)m_viewport.width() / (float)m_viewport.height();
+    gcDrawText(font, 8, 19, gui_style->smenu.tx_color, rc, title);
+    //gcDrawText(font, 10, 10, 0xff000000, rc, title);
   }
 }
 
@@ -1665,7 +1667,8 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
 
   float cx = (float)clip.x, cy = (float)clip.y;
 
-  gc->gcBlend(true, gcblend_one, gcblend_one);
+  //gc->gcBlend(true, gcblend_one, gcblend_one);
+  gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->m_texture);
 
   for(u32 i = 0; i < tlen; i++)
