@@ -40,6 +40,14 @@ class kEditor: public kgmEvent
 
 private:
 
+  enum
+  {
+    ViewPerspective,
+    ViewFront,
+    ViewLeft,
+    ViewTop
+  };
+
   kgmGameBase* game;
 
   bool ms_click[3];
@@ -61,7 +69,8 @@ private:
 
   //kFileDialog* fdd;
 
-  u32        oquered;
+  u32  oquered;
+  u32  view_mode;
 
   //kViewOptions* vop;
 
@@ -119,6 +128,10 @@ public:
   __stdcall void onAddTrigger();
   __stdcall void onAddObstacle();
   __stdcall void onViewObjects();
+  __stdcall void onViewPerspective();
+  __stdcall void onViewFront();
+  __stdcall void onViewLeft();
+  __stdcall void onViewTop();
   __stdcall void onOptionsDatabase();
   __stdcall void onRunRun();
   __stdcall void onSelectObject(kgmString);

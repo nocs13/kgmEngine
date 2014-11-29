@@ -25,6 +25,9 @@ enum MENUEVENT
   ME_ADD_OBSTACLE,
   ME_RUN_RUN,
   ME_VIEW_OBJECTS,
+  ME_VIEW_PERSPECTIVE,
+  ME_VIEW_FRONT,
+  ME_VIEW_BACK,
   ME_OPTIONS_DATABASE,
   ME_HELP_ABOUT
 };
@@ -44,6 +47,7 @@ kEditor::kEditor(kgmGameBase* g)
   selected = null;
 
   oquered = 0;
+  view_mode = ViewPerspective;
 
   mtlLines = new kgmMaterial();
   mtlLines->m_shader = kgmMaterial::ShaderNone;
@@ -76,6 +80,10 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunRun));
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewObjects));
+    item->add(ME_VIEW_OBJECTS, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
+    item->add(ME_VIEW_OBJECTS, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
+    item->add(ME_VIEW_OBJECTS, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
+    item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->m_render->add(menu);
 
     gridline = new kGridline();
@@ -983,17 +991,36 @@ void kEditor::onMsMove(int k, int x, int y)
     {
       kgmCamera& cam = game->m_render->camera();
 
-      cam_rot += 0.001 * x;
+      if(view_mode == ViewPerspective)
+      {
+        cam_rot += 0.001 * x;
 
-      if(cam_rot > 2 * PI)
-        cam_rot = 0;
+        if(cam_rot > 2 * PI)
+          cam_rot = 0;
 
-      if(cam_rot < -2 * PI)
-        cam_rot = 0;
+        if(cam_rot < -2 * PI)
+          cam_rot = 0;
 
-      cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
-      cam.mDir.normalize();
-      cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
+        cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
+        cam.mDir.normalize();
+        cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
+      }
+      else if(view_mode == ViewFront)
+      {
+        cam.mPos.y += 0.1 * x;
+        cam.mPos.z += 0.1 * y;
+      }
+      else if(view_mode == ViewLeft)
+      {
+        cam.mPos.x += 0.1 * x;
+        cam.mPos.z += 0.1 * y;
+      }
+      else if(view_mode == ViewTop)
+      {
+        cam.mPos.x += 0.1 * y;
+        cam.mPos.y += 0.1 * x;
+      }
+
       cam.update();
     }
     else if(ms_click[1])
@@ -1021,10 +1048,24 @@ void kEditor::onMsMove(int k, int x, int y)
       {
         kgmCamera& cam = game->m_render->camera();
 
-        cam.mPos.z += 0.01 * -y;
-        cam.update();
+        if(view_mode == ViewPerspective)
+        {
+          cam.mPos.z += 0.01 * -y;
+        }
+        else if(view_mode == ViewFront)
+        {
+          cam.mPos.x += 0.1 * y;
+        }
+        else if(view_mode == ViewLeft)
+        {
+          cam.mPos.y += 0.1 * y;
+        }
+        else if(view_mode == ViewTop)
+        {
+          cam.mPos.z += 0.1 * y;
+        }
 
-        kgm_log() << "Y: " << y << "\n";
+        cam.update();
       }
     }
   }
@@ -1134,7 +1175,6 @@ void kEditor::onEditDuplicate()
 
     selected = node;
   }
-
 }
 
 void kEditor::onEditOptions()
@@ -1320,6 +1360,46 @@ void kEditor::onViewObjects()
 
   game->guiAdd(vo);
   vo->release();
+}
+
+void kEditor::onViewPerspective()
+{
+  view_mode = ViewPerspective;
+  kgmCamera& cam = game->m_render->camera();
+
+  //cam.mPos = vec3(10, 10, 10);
+  cam.mDir = vec3( 0.5,  0.5,  -0.3).normal();
+  cam.update();
+}
+
+void kEditor::onViewFront()
+{
+  view_mode = ViewFront;
+  kgmCamera& cam = game->m_render->camera();
+
+  cam.mDir = vec3(1, 0, 0);
+  cam.mUp  = vec3(0, 0, 1);
+  cam.update();
+}
+
+void kEditor::onViewLeft()
+{
+  view_mode = ViewLeft;
+  kgmCamera& cam = game->m_render->camera();
+
+  cam.mDir = vec3(0, 1, 0);
+  cam.mUp  = vec3(0, 0, 1);
+  cam.update();
+}
+
+void kEditor::onViewTop()
+{
+  view_mode = ViewTop;
+  kgmCamera& cam = game->m_render->camera();
+
+  cam.mDir = vec3(0, 0, -1);
+  cam.mUp  = vec3(1, 0,  0);
+  cam.update();
 }
 
 void kEditor::onOptionsDatabase()
