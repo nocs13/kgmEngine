@@ -2,6 +2,7 @@
 #define KGMSURFACE_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmArray.h"
 
 class kgmSurface : public kgmObject
 {

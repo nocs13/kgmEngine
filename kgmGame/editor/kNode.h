@@ -11,7 +11,7 @@
 #include "../../kgmGame/kgmSensor.h"
 #include "../../kgmGame/kgmTrigger.h"
 
-#include "../kgmPhysics/kgmObstacle.h"
+#include "../../kgmPhysics/kgmObstacle.h"
 
 namespace kgmGameEditor
 {
