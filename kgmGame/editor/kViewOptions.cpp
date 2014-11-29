@@ -129,8 +129,15 @@ kgmGuiFrame("Options", x, y, w, h)
     if(node->shp == "mesh") chk->setCheck(true);
     y_coord += 23;
 
+    chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+    chk->setText("Shape Plane");
+    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectPlaneShape));
+    chk_grp->addGroup(chk);
+    if(node->shp == "plane") chk->setCheck(true);
+    y_coord += 23;
+
     g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
-    g->setText("Bound xyz");
+    g->setText("Bound");
     g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
     g->setSid("Length x");
     g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
@@ -217,6 +224,12 @@ void kViewOptions::onSelectMeshShape(bool s)
 {
   if(s)
     node->shp = "mesh";
+}
+
+void kViewOptions::onSelectPlaneShape(bool s)
+{
+  if(s)
+    node->shp = "plane";
 }
 
 void kViewOptions::onBoundX(kgmString s)

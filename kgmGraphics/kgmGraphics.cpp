@@ -1532,10 +1532,10 @@ void kgmGraphics::render(kgmGui* gui){
       gcDrawRect(rect, gui_style->scheck.bg_color, gui_style->scheck.image);
     }
 
-    gcDrawRect(btClip, gui_style->scheck.bg_check, null);
+    gcDrawRect(btClip, gui_style->scheck.bg_check, gui_style->scheck.image);
 
     if(((kgmGuiCheck*)gui)->isCheck())
-      gcDrawRect(chClip, gui_style->scheck.fg_check, null);
+      gcDrawRect(chClip, gui_style->scheck.fg_check, gui_style->scheck.image);
 
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, txClip, text);
@@ -1571,8 +1571,6 @@ void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
   menu->getRect(prect, true);
 
   iRect rect = item->getRect();
-
-  //gcDrawRect(rect, 0xff888888, null);
 
   for(int i = 0; i < item->getItemsCount(); i++)
   {
@@ -1627,9 +1625,6 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex)
   typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
 
   V v[4];
-
-//  if(tex && tex->m_texture)
-//    col = 0x00FFFFFF;
 
   v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 1);
   v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 0);
@@ -1751,4 +1746,3 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col)
   setViewMatrix(m);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 }
-

@@ -42,6 +42,7 @@ public:
   __stdcall void onSelectCollision(bool);
   __stdcall void onSelectBoxShape(bool);
   __stdcall void onSelectMeshShape(bool);
+  __stdcall void onSelectPlaneShape(bool);
   __stdcall void onSelectSphereShape(bool);
   __stdcall void onSelectCylinderShape(bool);
   __stdcall void onBoundX(kgmString s);
