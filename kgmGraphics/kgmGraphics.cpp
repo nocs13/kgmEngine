@@ -303,10 +303,11 @@ void kgmGraphics::setEditor(bool e)
 void kgmGraphics::resize(float width, float height)
 {
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
+
   m_camera.set(PI / 6, width / height, .1f, 100000.0,
-                      m_camera.mPos,
-                      m_camera.mDir,
-                      m_camera.mUp);
+                 m_camera.mPos, m_camera.mDir, m_camera.mUp);
+
+  m_camera.viewport((float)width, (float)height);
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);

@@ -1051,6 +1051,8 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else
       {
+        static float cam_scale = 1.0;
+
         kgmCamera& cam = game->m_render->camera();
 
         if(view_mode == ViewPerspective)
@@ -1060,14 +1062,20 @@ void kEditor::onMsMove(int k, int x, int y)
         else if(view_mode == ViewFront)
         {
           cam.mPos.x += 0.1 * y;
+          cam_scale += 0.1 * y;
+          cam.scale(cam_scale);
         }
         else if(view_mode == ViewLeft)
         {
           cam.mPos.y += 0.1 * y;
+          cam_scale += 0.1 * y;
+          cam.scale(cam_scale);
         }
         else if(view_mode == ViewTop)
         {
           cam.mPos.z += 0.1 * y;
+          cam_scale += 0.1 * y;
+          cam.scale(cam_scale);
         }
 
         cam.update();
@@ -1393,6 +1401,8 @@ void kEditor::onViewPerspective()
 
   //cam.mPos = vec3(10, 10, 10);
   cam.mDir = vec3( 0.5,  0.5,  -0.3).normal();
+  cam.mUp  = vec3(0, 0, 1);
+  cam.setOrthogonal(false);
   cam.update();
 }
 
@@ -1403,6 +1413,7 @@ void kEditor::onViewFront()
 
   cam.mDir = vec3(1, 0, 0);
   cam.mUp  = vec3(0, 0, 1);
+  cam.setOrthogonal(true);
   cam.update();
 }
 
@@ -1413,6 +1424,7 @@ void kEditor::onViewLeft()
 
   cam.mDir = vec3(0, 1, 0);
   cam.mUp  = vec3(0, 0, 1);
+  cam.setOrthogonal(true);
   cam.update();
 }
 
@@ -1423,6 +1435,7 @@ void kEditor::onViewTop()
 
   cam.mDir = vec3(0, 0, -1);
   cam.mUp  = vec3(1, 0,  0);
+  cam.setOrthogonal(true);
   cam.update();
 }
 
