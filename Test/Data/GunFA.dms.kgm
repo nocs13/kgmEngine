@@ -1,7 +1,0 @@
-<?xml version='1.0'?>
-<kgm>
- <kgmDummy name='shoot' parent='GunFA'>
-  <Position value='0.771731972694397 0.0 0.2499423772096634'/>
-  <Rotation value='0.0 -0.0 0.0'/>
- </kgmDummy>
-</kgm>

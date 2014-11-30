@@ -4,6 +4,8 @@
 
 using namespace kgmGameEditor;
 
+KGMOBJECT_IMPLEMENT(kNode, kgmObject);
+
 mtx4 kNode::getMatrix()
 {
   mtx4 mrot, mpos;

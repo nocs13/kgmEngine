@@ -18,6 +18,7 @@ namespace kgmGameEditor
 
 class kNode : public kgmObject
 {
+  KGM_OBJECT(kNode);
 public:
   enum Type
   {
@@ -151,6 +152,25 @@ public:
     lock = false;
 
     obj->increment();
+  }
+
+  kNode(const kNode& n)
+  {
+    typ = n.typ;
+    col = n.col;
+    shp = n.shp;
+    pos = n.pos;
+    rot = n.rot;
+    bnd = n.bnd;
+    lnk = n.lnk;
+    lock = n.lock;
+
+    obj = null;
+    icn = null;
+    geo = null;
+
+    if(n.obj)
+      obj = (kgmGameObject*)n.obj->clone();
   }
 
   ~kNode()

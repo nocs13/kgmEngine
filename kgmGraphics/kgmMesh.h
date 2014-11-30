@@ -16,8 +16,10 @@
 #define KGM_MESH_MAP_CHANNELS 4
 
 
-class kgmMesh: public kgmResource{
+class kgmMesh: public kgmResource
+{
   KGM_OBJECT(kgmMesh);
+
 public:
   enum RenderType
   {
@@ -26,7 +28,8 @@ public:
     RT_LINE
   };
 
-  enum FVF{
+  enum FVF
+  {
     FVF_P,        // = (gcv_xyz) ,
     FVF_P_C,        // = (gcv_xyz|gcv_col) ,
     FVF_P_N,        // = (gcv_xyz|gcv_nor) ,
@@ -39,55 +42,67 @@ public:
     FVF_P_N_C_T2_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
   };
 
-  enum FFF{
+  enum FFF
+  {
     FFF_16,
     FFF_32
   };
 
-  struct Vertex{
+  struct Vertex
+  {
     vec3 pos;
   };
 
-  struct Vertex_P_C: public Vertex{
+  struct Vertex_P_C: public Vertex
+  {
     u32 col;
   };
 
-  struct Vertex_P_T: public Vertex{
+  struct Vertex_P_T: public Vertex
+  {
     vec2 uv;
   };
 
-  struct Vertex_P_N: public Vertex{
+  struct Vertex_P_N: public Vertex
+  {
     vec3 nor;
   };
 
-  struct Vertex_P_C_T: public Vertex{
+  struct Vertex_P_C_T: public Vertex
+  {
     u32  col;
     vec2 uv;
   };
 
-  struct Vertex_P_N_C: public Vertex_P_N{
+  struct Vertex_P_N_C: public Vertex_P_N
+  {
     u32  col;
   };
 
-  struct Vertex_P_N_C_T: public Vertex_P_N_C{
+  struct Vertex_P_N_C_T: public Vertex_P_N_C
+  {
     vec2 uv;
   };
 
-  struct Vertex_P_N_C_T2: public Vertex_P_N_C{
+  struct Vertex_P_N_C_T2: public Vertex_P_N_C
+  {
     vec2 uv[2];
   };
 
-  struct Vertex_P_N_C_T_BW_BI: public Vertex_P_N_C_T{
+  struct Vertex_P_N_C_T_BW_BI: public Vertex_P_N_C_T
+  {
     float bw[4];
     int   bi[4];
   };
 
-  struct Vertex_P_N_C_T2_BW_BI: public Vertex_P_N_C_T2{
+  struct Vertex_P_N_C_T2_BW_BI: public Vertex_P_N_C_T2
+  {
     float bw[4];
     int   bi[4];
   };
 
-  struct Face{
+  struct Face
+  {
   };
 
   struct Face_16: public Face
@@ -132,6 +147,8 @@ public:
 public:
   kgmMesh();
   virtual ~kgmMesh();
+
+  kgmMesh* clone();
 
   box3 bound();  //recalculate boundes(box, sphere, ...)
 

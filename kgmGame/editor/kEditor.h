@@ -115,8 +115,8 @@ public:
   void onMsRightDown(int k, int x, int y);
 
   __stdcall void onQuit();
+  __stdcall void onEditClone();
   __stdcall void onEditRemove();
-  __stdcall void onEditDuplicate();
   __stdcall void onEditOptions();
   __stdcall void onMapOpen();
   __stdcall void onMapSave();

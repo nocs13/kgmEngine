@@ -26,7 +26,28 @@ kgmMesh::~kgmMesh()
 
   if(m_maps)
     free(m_maps);
- }
+}
+
+kgmMesh* kgmMesh::clone()
+{
+  kgmMesh* mesh = new kgmMesh();
+
+  mesh->m_rtype = m_rtype;
+
+  mesh->m_vcount = m_vcount;
+  mesh->m_fcount = m_fcount;
+  mesh->m_fvf    = m_fvf;
+  mesh->m_fff    = m_fff;
+  mesh->m_group  = m_group;
+
+  mesh->vAlloc(m_vcount, (kgmMesh::FVF)m_fvf);
+  mesh->fAlloc(m_fcount, (kgmMesh::FFF)m_fff);
+
+  memcpy(mesh->m_vertices, m_vertices, m_vcount * vsize());
+  memcpy(mesh->m_faces, m_faces, m_fcount * fsize());
+
+  return mesh;
+}
 
 box3 kgmMesh::bound()
 {
@@ -222,13 +243,13 @@ u32 kgmMesh::vsize()
 
 u32 kgmMesh::fsize()
 {
-  switch(m_fvf)
+  switch(m_fff)
   {
   case FFF_16:
-    return 16;
+    return sizeof(Face_16);
     break;
   case FFF_32:
-    return 32;
+    return  sizeof(Face_32);
     break;
   }
 
