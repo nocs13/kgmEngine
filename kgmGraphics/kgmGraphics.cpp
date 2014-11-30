@@ -157,7 +157,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
       shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
 
       //shader = rc->getShader("lights.glsl");
-      shader = rc->getShader("base.glsl");
+      //shader = rc->getShader("base.glsl");
+      shader = shaders[kgmMaterial::ShaderBase];
 
       if(shader)
       {
@@ -204,22 +205,27 @@ void kgmGraphics::clear()
     if(mesh->mesh) mesh->mesh->release();
     if(mesh->material) mesh->material->release();
   }
+
   m_meshes.clear();
 
   for(int i = 0; i < m_materials.size(); i++)
     m_materials[i]->release();
+
   m_materials.clear();
 
   for(int i = 0; i < m_visuals.size(); i++)
     m_visuals[i]->release();
+
   m_visuals.clear();
 
   for(int i = 0; i < m_lights.size(); i++)
     m_lights[i].light->release();
+
   m_lights.clear();
 
   for(int i = 0; i < m_icons.size(); i++)
     m_icons[i]->release();
+
   m_icons.clear();
 
 #ifdef DEBUG
@@ -227,6 +233,7 @@ void kgmGraphics::clear()
   {
     m_bodies[i]->release();
   }
+
   m_bodies.clear();
 #endif
 }
@@ -323,8 +330,9 @@ void kgmGraphics::render()
   mtx4 mvw, mpr;
 
   //kgmMaterial           mbase;
-  kgmList<kgmMesh*>     meshes;
-  kgmList<kgmVisual*>   vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
+  //kgmList<kgmMesh*>     meshes, meshes_nd;
+  kgmList<kgmVisual*>   vis_mesh, vis_mesh_nd, vis_text,
+                        vis_blend, vis_sprite, vis_particles;
 
   //m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   //m_camera.set(PI / 2, m_camera.mAspect, m_camera.mNear, m_camera.mFar, m_camera.mPos, m_camera.mDir, m_camera.mUp);
@@ -486,7 +494,7 @@ void kgmGraphics::render()
   }
 
   //take meshes in viewport
-  kgmList<Mesh*> vw_meshes;
+  kgmList<Mesh*> vw_meshes, vw_meshes_nd;
 
   for(kgmList<Mesh>::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
   {
@@ -512,7 +520,12 @@ void kgmGraphics::render()
     bx.max = mesh->mtx * bx.max;
 
     if(m_camera.isSphereCross(bx.center(), 0.5 * bx.dimension().length()))
-      vw_meshes.add(mesh);
+    {
+      if(mesh->material && mesh->material->m_depth == false)
+        vw_meshes_nd.add(mesh);
+      else
+        vw_meshes.add(mesh);
+    }
   }
 
   //DRAW static scene by lights
@@ -671,6 +684,7 @@ void kgmGraphics::render()
 
   //draw particles
   kgmList<kgmVisual*>  depthless_particles;
+
   //I pass with depth category
   //if(m_has_shaders)
   //  render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
@@ -698,6 +712,31 @@ void kgmGraphics::render()
       render((kgmShader*)null);
       render((kgmMaterial*)null);
     }
+  }
+
+  // depthless meshes
+
+  for(kgmList<Mesh*>::iterator i = vw_meshes_nd.begin(); i != vw_meshes_nd.end(); ++i)
+  {
+    Mesh*   mesh = *i;
+    box3    bbound = mesh->mesh->bound();
+    sphere3 sbound;
+    float   l_force = 0.0f;
+
+    bbound.min    = mesh->mtx * bbound.min;
+    bbound.max    = mesh->mtx * bbound.max;
+    sbound.center = bbound.center();
+    sbound.radius = 0.5f * bbound.dimension().length();
+
+    setWorldMatrix(mesh->mtx);
+
+    if(mesh->material)
+    {
+      render(mesh->material);
+      render(shaders[mesh->material->m_shader]);
+    }
+
+    render(mesh->mesh);
   }
 
   //no depth particles
@@ -1183,7 +1222,7 @@ void kgmGraphics::render(kgmMaterial* m){
 
   if(!m->m_depth)
   {
-    gc->gcDepth(true, false, gccmp_less);
+    gc->gcDepth(false, false, gccmp_less);
     m_depth = false;
   }
 

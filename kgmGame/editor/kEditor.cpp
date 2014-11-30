@@ -52,6 +52,10 @@ kEditor::kEditor(kgmGameBase* g)
   mtlLines = new kgmMaterial();
   mtlLines->m_shader = kgmMaterial::ShaderNone;
 
+  mtlPivot = new kgmMaterial();
+  mtlPivot->m_shader = kgmMaterial::ShaderNone;
+  mtlPivot->m_depth = false;
+
   if(game->m_render)
   {
     game->m_render->setEditor(true);
@@ -91,7 +95,7 @@ kEditor::kEditor(kgmGameBase* g)
 
     pivot = new kPivot();
     pivot->setPos(vec3(0, 0, 0));
-    game->m_render->add(pivot, mtlLines);
+    game->m_render->add(pivot, mtlPivot);
     game->m_render->set(pivot, pivot->getTransform());
 
     game->m_render->setBgColor(0xffbbaa99);
@@ -117,6 +121,7 @@ kEditor::~kEditor()
   logView->release();
 
   mtlLines->release();
+  mtlPivot->release();
 
   kgmGameObject::g_typ_objects.clear();
 }

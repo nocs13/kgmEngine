@@ -159,6 +159,10 @@ public:
           for(int i = 0; i < items.length(); i++)
             items[i]->rect.w = swidth;
         }
+        else
+        {
+          item->rect.w = swidth;
+        }
 
         item->rect.x = rect.x;
         item->rect.y += ItemHeight * (1 + items.length());

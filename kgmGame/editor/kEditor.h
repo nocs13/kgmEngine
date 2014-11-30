@@ -78,7 +78,7 @@ private:
   kNode* selected;
   kgmList<kNode*> nodes;
 
-  kgmMaterial* mtlLines;
+  kgmMaterial *mtlLines, *mtlPivot;
 
   kgmVisual*     logView;
 

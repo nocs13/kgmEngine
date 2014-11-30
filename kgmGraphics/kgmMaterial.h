@@ -45,20 +45,24 @@ public:
   class Color
   {
   public:
-    union{
-      struct{ float r, g, b, a; };
+    union
+    {
+      struct { float r, g, b, a; };
       float c[4];
     };
 
-    Color(){
+    Color()
+    {
       r = g = b = a = 1.0;
     }
 
-    Color(float rx, float gx, float bx, float ax){
+    Color(float rx, float gx, float bx, float ax)
+    {
       r = rx, g = gx, b = bx, a = ax;
     }
 
-    void get(uchar &r, uchar &g, uchar &b, uchar &a){
+    void get(uchar &r, uchar &g, uchar &b, uchar &a)
+    {
       r = 255.0 * this->r;
       g = 255.0 * this->g;
       b = 255.0 * this->b;
