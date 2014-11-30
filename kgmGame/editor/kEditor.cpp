@@ -1399,7 +1399,6 @@ void kEditor::onViewPerspective()
   view_mode = ViewPerspective;
   kgmCamera& cam = game->m_render->camera();
 
-  //cam.mPos = vec3(10, 10, 10);
   cam.mDir = vec3( 0.5,  0.5,  -0.3).normal();
   cam.mUp  = vec3(0, 0, 1);
   cam.setOrthogonal(false);
