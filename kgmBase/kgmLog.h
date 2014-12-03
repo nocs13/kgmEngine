@@ -11,49 +11,65 @@ class kgmLogError;
 class kgmLogDebug;
 class kgmLogWarning;
 
-class kgmLog{
+class kgmLog
+{
 public:
     static kgmLog LOG;
 
 public:
-    kgmLog(){
+    kgmLog()
+    {
     }
 
-    kgmLog(const char* path){
+    kgmLog(const char* path)
+    {
     }
 
-    ~kgmLog(){
+    ~kgmLog()
+    {
     }
 
-    kgmLog& operator << (kgmString& s){
-        log_(s);
-        return *this;
+    kgmLog& operator << (kgmString& s)
+    {
+      log_(s);
+ 
+      return *this;
     }
 
-    kgmLog& operator << (kgmString s){
-        log_(s);
-        return *this;
+    kgmLog& operator << (kgmString s)
+    {
+      log_(s);
+    
+      return *this;
     }
     
-    kgmLog& operator << (const char* s){
-        log_(s);
-        return *this;
+    kgmLog& operator << (const char* s)
+    {
+      log_(s);
+      
+      return *this;
     }
     
     
-    kgmLog& operator << (char* s){
-        log_(s);
-        return *this;
+    kgmLog& operator << (char* s)
+    {
+      log_(s);
+
+      return *this;
     }
 
-    kgmLog& operator << (s32 s){
-        log_(kgmConvert::toString(s));
-        return *this;
+    kgmLog& operator << (s32 s)
+    {
+      log_(kgmConvert::toString(s));
+
+      return *this;
     }
 
-    kgmLog& operator << (f64 s){
-        log_(kgmConvert::toString(s));
-        return *this;
+    kgmLog& operator << (f64 s)
+    {
+      log_(kgmConvert::toString(s));
+      
+      return *this;
     }
 
     static void log(kgmString s);
@@ -70,19 +86,22 @@ inline kgmLog& kgm_log()
     return kgmLog::LOG;
 }
 
-inline const char* kgm_log_label(){
-    time_t rawtime;
-    struct tm * timeinfo;
+inline const char* kgm_log_label()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
 
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
-    return asctime (timeinfo);
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
+  
+  return asctime (timeinfo);
 }
 
-inline void kgm_log_print(const char* s){
+inline void kgm_log_print(const char* s)
+{
 #ifdef DEBUG
-    //kgm_log(s);
-    fprintf(stderr, "%s\n", s);
+  //kgm_log(s);
+  fprintf(stderr, "%s\n", s);
 #endif
 }
 

@@ -1,4 +1,5 @@
 #include "kPivot.h"
+#include "../../kgmBase/kgmLog.h"
 
 using namespace kgmGameEditor;
 
@@ -59,23 +60,27 @@ u32 kPivot::peekAxis(ray3 r)
   if(pln.intersect(r, vins))
   {
     line3 l(v[0], v[1]);
-
+    kgm_log() << "Z plane: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+    kgm_log() << "Line S: " << v[0].x << " " << v[0].y << " " << v[0].z << "\n";
+    kgm_log() << "Line E: " << v[1].x << " " << v[1].y << " " << v[1].z << "\n";
+    kgm_log() << "Line E: " << v[2].x << " " << v[2].y << " " << v[2].z << "\n";
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_X;
       vprj = vins;
-
+      kgm_log() << "AXIS X: selected\n";
       return axis;
     }
 
-    /*vec3 vnor = v[1] - v[0];
+    l.set(v[0], v[2]);
 
-    if(cylinder3::isPointInCylinder(vins, v[0], vnor, 0.1, 1.0))
+    if(l.ison(vins, 0.1))
     {
-      axis = AXIS_X;
-
+      axis = AXIS_Y;
+      vprj = vins;
+      kgm_log() << "AXIS Y: selected\n";
       return axis;
-    }*/
+    }
   }
 
   vnor = v[1] - v[0];
