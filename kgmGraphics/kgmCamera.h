@@ -139,6 +139,13 @@ public:
     return ortho.on;
   }
 
+  fRect getOrthoView() const
+  {
+    return fRect(-ortho.scale * ortho.width/ortho.height,
+                  ortho.scale * ortho.width/ortho.height,
+                 -ortho.scale, ortho.scale);
+  }
+
 protected:
   void perspective(float fov, float asp, float zn, float zf)
   {

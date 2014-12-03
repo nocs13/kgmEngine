@@ -8,6 +8,8 @@
 
 using namespace kgmGameEditor;
 
+static float cam_scale = 1.0;
+
 enum MENUEVENT
 {
   ME_QUIT,
@@ -160,12 +162,32 @@ void kEditor::select(kgmString name)
 
 void kEditor::select(int x, int y)
 {
-  iRect vp = game->m_render->viewport();
+  kgmCamera cam = game->m_render->camera();
+
+  fRect vp;
+
+  if(cam.isOrthogonal())
+  {
+    fRect f_rc = cam.getOrthoView();
+
+    vp = f_rc;
+  }
+  //else
+  {
+    iRect rc = game->m_render->viewport();
+
+    vp = fRect(rc.x, rc.y, rc.w, rc.h);
+  }
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
-  kgmCamera cam = game->m_render->camera();
+  if(cam.isOrthogonal())
+  {
+    unit_x *= 2;
+    unit_y *= 2;
+  }
+
   kgmRay3d<float> ray;
 
   {
@@ -176,7 +198,7 @@ void kEditor::select(int x, int y)
     h.normalize();
     vec3 v = h.cross(view);
     v.normalize();
-    float dist = 0.1;
+    float dist = 1.0;
     float vL = tan(cam.mFov) * dist;
     float hL = vL * ((float)vp.width() / (float)vp.height());
     v = v * vL;
@@ -1051,8 +1073,6 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else
       {
-        static float cam_scale = 1.0;
-
         kgmCamera& cam = game->m_render->camera();
 
         if(view_mode == ViewPerspective)
