@@ -96,10 +96,11 @@ public:
     if(ortho.on)
     {
       mProj.identity();
+      mProj.ortho(-ortho.scale, ortho.scale, -ortho.scale, ortho.scale, 0, 100000);
       //mProj.ortho(0.0, ortho.width, 0.0, ortho.height, 0, 100000);
-      mProj.ortho(-ortho.scale * ortho.width/ortho.height,
-                    ortho.scale * ortho.width/ortho.height, -ortho.scale, ortho.scale,
-                      0.0, 1000000);
+      //mProj.ortho(-ortho.scale * ortho.width/ortho.height,
+      //            ortho.scale * ortho.width/ortho.height, -ortho.scale, ortho.scale,
+      //            0.0, 1000000);
 
       mView.identity();
       //mView.ortho(0.0, ortho.width, ortho.height, 0.0, 1, -1);

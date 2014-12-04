@@ -1044,8 +1044,8 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else if(view_mode == ViewTop)
       {
-        cam.mPos.x += 0.1 * y;
-        cam.mPos.y += 0.1 * x;
+        cam.mPos.y += 0.1 * y;
+        cam.mPos.x -= 0.1 * x;
       }
 
       cam.update();
@@ -1453,7 +1453,7 @@ void kEditor::onViewTop()
   kgmCamera& cam = game->m_render->camera();
 
   cam.mDir = vec3(0, 0, -1);
-  cam.mUp  = vec3(1, 0,  0);
+  cam.mUp  = vec3(0, 1,  0);
   cam.setOrthogonal(true);
   cam.update();
 }
