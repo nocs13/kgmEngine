@@ -215,8 +215,8 @@ void kEditor::select(int x, int y)
     ray = kgmRay3d<float>(cam.mPos, md);
   }
 
-  kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
-  kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
+  //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
+  //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
@@ -274,12 +274,19 @@ void kEditor::select(int x, int y)
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
+  kgmCamera cam = game->m_render->camera();
+
   iRect vp = game->m_render->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
-  unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
+        unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
-  kgmCamera cam = game->m_render->camera();
+  if(cam.isOrthogonal())
+  {
+    unit_x *= cam_scale;
+    unit_y *= cam_scale;
+  }
+
   kgmRay3d<float> ray;
 
   vec3 ms, mr, md;
@@ -289,17 +296,32 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   h.normalize();
   vec3 v = h.cross(view);
   v.normalize();
-  float dist = 0.1;
+  float dist = 1.0;
   float vL = tan(cam.mFov) * dist;
   float hL = vL * ((float)vp.width() / (float)vp.height());
   v = v * vL;
   h = h * hL;
 
+  if(cam.isOrthogonal())
+  {
+    v.normalize();
+    h.normalize();
+  }
+
   ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
   md = ms - cam.mPos;
   md.normalize();
 
-  return kgmRay3d<float>(cam.mPos, md);
+  if(cam.isOrthogonal())
+  {
+    ray = kgmRay3d<float>(ms, cam.mDir);
+  }
+  else
+  {
+    ray = kgmRay3d<float>(cam.mPos, md);
+  }
+
+  return ray;
 }
 
 bool kEditor::mapOpen(kgmString s)
@@ -1009,7 +1031,8 @@ void kEditor::onMsMove(int k, int x, int y)
     vec3 dir = pr - pivot->pos;
     dir.normalize();
 
-    selected->setPosition(selected->pos + dir * prdist);
+    //selected->setPosition(selected->pos + dir * prdist);
+    selected->setPosition(pr);
 
     mtx4 m;
     m.identity();
@@ -1041,12 +1064,12 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else if(view_mode == ViewFront)
       {
-        cam.mPos.y += 0.1 * x;
+        cam.mPos.y -= 0.1 * x;
         cam.mPos.z += 0.1 * y;
       }
       else if(view_mode == ViewLeft)
       {
-        cam.mPos.x -= 0.1 * x;
+        cam.mPos.x += 0.1 * x;
         cam.mPos.z += 0.1 * y;
       }
       else if(view_mode == ViewTop)
@@ -1065,8 +1088,21 @@ void kEditor::onMsMove(int k, int x, int y)
 
         if(cam.isOrthogonal())
         {
-          selected->pos.x += x * cam_scale;
-          selected->pos.y += y * cam_scale;
+          switch(view_mode)
+          {
+          case ViewFront:
+            selected->pos.y += x * cam_scale;
+            selected->pos.z += y * cam_scale;
+            break;
+          case ViewLeft:
+            selected->pos.x += x * cam_scale;
+            selected->pos.z += y * cam_scale;
+            break;
+          case ViewTop:
+            selected->pos.x += x * cam_scale;
+            selected->pos.y += y * cam_scale;
+            break;
+          }
         }
         else
         {
