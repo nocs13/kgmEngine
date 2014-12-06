@@ -57,13 +57,16 @@ u32 kPivot::peekAxis(ray3 r)
 
   pln = plane3(vnor, v[0]);
 
+  //kgm_log() << "Line S: " << v[0].x << " " << v[0].y << " " << v[0].z << "\n";
+  //kgm_log() << "Line E: " << v[1].x << " " << v[1].y << " " << v[1].z << "\n";
+  //kgm_log() << "Line E: " << v[2].x << " " << v[2].y << " " << v[2].z << "\n";
+
   if(pln.intersect(r, vins))
   {
     line3 l(v[0], v[1]);
-    kgm_log() << "Z plane: " << vins.x << " " << vins.y << " " << vins.z << "\n";
-    kgm_log() << "Line S: " << v[0].x << " " << v[0].y << " " << v[0].z << "\n";
-    kgm_log() << "Line E: " << v[1].x << " " << v[1].y << " " << v[1].z << "\n";
-    kgm_log() << "Line E: " << v[2].x << " " << v[2].y << " " << v[2].z << "\n";
+
+    kgm_log() << "\nZ Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_X;
@@ -90,6 +93,8 @@ u32 kPivot::peekAxis(ray3 r)
 
   if(pln.intersect(r, vins))
   {
+    kgm_log() << "\nX Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     line3 l(v[0], v[2]);
 
     if(l.ison(vins, 0.1))
@@ -97,6 +102,16 @@ u32 kPivot::peekAxis(ray3 r)
       axis = AXIS_Y;
       vprj = vins;
 
+      return axis;
+    }
+
+    l.set(v[0], v[3]);
+
+    if(l.ison(vins, 0.1))
+    {
+      axis = AXIS_Z;
+      vprj = vins;
+      kgm_log() << "AXIS Z: selected\n";
       return axis;
     }
   }
@@ -108,6 +123,8 @@ u32 kPivot::peekAxis(ray3 r)
 
   if(pln.intersect(r, vins))
   {
+    kgm_log() << "\nY Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     line3 l(v[0], v[3]);
 
     if(l.ison(vins, 0.1))
@@ -115,6 +132,16 @@ u32 kPivot::peekAxis(ray3 r)
       axis = AXIS_Z;
       vprj = vins;
 
+      return axis;
+    }
+
+    l.set(v[0], v[1]);
+
+    if(l.ison(vins, 0.1))
+    {
+      axis = AXIS_X;
+      vprj = vins;
+      kgm_log() << "AXIS X: selected\n";
       return axis;
     }
   }

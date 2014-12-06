@@ -164,52 +164,37 @@ void kEditor::select(int x, int y)
 {
   kgmCamera cam = game->m_render->camera();
 
-  fRect vp;
-
-  if(cam.isOrthogonal())
-  {
-    fRect f_rc = cam.getOrthoView();
-
-    vp = f_rc;
-  }
-  //else
-  {
-    iRect rc = game->m_render->viewport();
-
-    vp = fRect(rc.x, rc.y, rc.w, rc.h);
-  }
+  iRect vp = game->m_render->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
-  if(cam.isOrthogonal())
-  {
-    unit_x *= 2;
-    unit_y *= 2;
-  }
-
   kgmRay3d<float> ray;
 
+  vec3 ms, mr, md;
+  vec3 view = cam.mDir;
+  view.normalize();
+  vec3 h = view.cross(cam.mUp);
+  h.normalize();
+  vec3 v = h.cross(view);
+  v.normalize();
+  float dist = 1.0;
+  float vL = tan(cam.mFov) * dist;
+  float hL = vL * ((float)vp.width() / (float)vp.height());
+  v = v * vL;
+  h = h * hL;
+
+  if(cam.isOrthogonal())
   {
-    vec3 ms, mr, md;
-    vec3 view = cam.mDir;
-    view.normalize();
-    vec3 h = view.cross(cam.mUp);
-    h.normalize();
-    vec3 v = h.cross(view);
     v.normalize();
-    float dist = 1.0;
-    float vL = tan(cam.mFov) * dist;
-    float hL = vL * ((float)vp.width() / (float)vp.height());
-    v = v * vL;
-    h = h * hL;
-
-    ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
-    md = ms - cam.mPos;
-    md.normalize();
-
-    ray = kgmRay3d<float>(cam.mPos, md);
+    h.normalize();
   }
+
+  ms = cam.mPos + view * dist + h * unit_x - v * unit_y;
+  md = ms - cam.mPos;
+  md.normalize();
+
+  ray = kgmRay3d<float>(cam.mPos, md);
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
@@ -1039,7 +1024,7 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else if(view_mode == ViewLeft)
       {
-        cam.mPos.x += 0.1 * x;
+        cam.mPos.x -= 0.1 * x;
         cam.mPos.z += 0.1 * y;
       }
       else if(view_mode == ViewTop)
