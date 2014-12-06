@@ -10,6 +10,8 @@ using namespace kgmGameEditor;
 
 static float cam_scale = 1.0;
 
+kLine g_line;
+
 enum MENUEVENT
 {
   ME_QUIT,
@@ -110,6 +112,8 @@ kEditor::kEditor(kgmGameBase* g)
     //logView->m_text->m_text = "mouse point: ";
     logView->m_text->m_rect.y += 100;
     game->m_render->add(logView);
+
+    game->m_render->add((kgmMesh*)&g_line, mtlPivot);
   }
 }
 
@@ -169,6 +173,12 @@ void kEditor::select(int x, int y)
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
+  if(cam.isOrthogonal())
+  {
+    unit_x *= cam_scale;
+    unit_y *= cam_scale;
+  }
+
   kgmRay3d<float> ray;
 
   vec3 ms, mr, md;
@@ -194,7 +204,19 @@ void kEditor::select(int x, int y)
   md = ms - cam.mPos;
   md.normalize();
 
-  ray = kgmRay3d<float>(cam.mPos, md);
+  g_line.set(cam.mPos, ms);
+
+  if(cam.isOrthogonal())
+  {
+    ray = kgmRay3d<float>(ms, cam.mDir);
+  }
+  else
+  {
+    ray = kgmRay3d<float>(cam.mPos, md);
+  }
+
+  kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
+  kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
@@ -1039,8 +1061,18 @@ void kEditor::onMsMove(int k, int x, int y)
     {
       if(game->getKeyState(KEY_Z) && selected)
       {
-        selected->pos.x += 0.01 * x;
-        selected->pos.y += 0.01 * y;
+        kgmCamera& cam = game->m_render->camera();
+
+        if(cam.isOrthogonal())
+        {
+          selected->pos.x += x * cam_scale;
+          selected->pos.y += y * cam_scale;
+        }
+        else
+        {
+          selected->pos.x += 0.01 * x;
+          selected->pos.y += 0.01 * y;
+        }
 
         mtx4 m;
         m.identity();
@@ -1066,21 +1098,33 @@ void kEditor::onMsMove(int k, int x, int y)
         }
         else if(view_mode == ViewFront)
         {
-          cam.mPos.x += 0.1 * y;
           cam_scale += 0.1 * y;
+
+          if(cam_scale < 1.0)
+            cam_scale = 1.0;
+
           cam.scale(cam_scale);
+          cam.mPos.x = cam_scale;
         }
         else if(view_mode == ViewLeft)
         {
-          cam.mPos.y += 0.1 * y;
           cam_scale += 0.1 * y;
+
+          if(cam_scale < 1.0)
+            cam_scale = 1.0;
+
           cam.scale(cam_scale);
+          cam.mPos.y = cam_scale;
         }
         else if(view_mode == ViewTop)
         {
-          cam.mPos.z += 0.1 * y;
           cam_scale += 0.1 * y;
+
+          if(cam_scale < 1.0)
+            cam_scale = 1.0;
+
           cam.scale(cam_scale);
+          cam.mPos.z = cam_scale;
         }
 
         cam.update();
@@ -1404,10 +1448,12 @@ void kEditor::onViewPerspective()
   view_mode = ViewPerspective;
   kgmCamera& cam = game->m_render->camera();
 
-  cam.mDir = vec3( 0.5,  0.5,  -0.3).normal();
+  cam.mDir = vec3( 0.5, 0.5, -0.3).normal();
   cam.mUp  = vec3(0, 0, 1);
   cam.setOrthogonal(false);
   cam.update();
+
+  cam_scale = 1.0;
 }
 
 void kEditor::onViewFront()
@@ -1415,7 +1461,7 @@ void kEditor::onViewFront()
   view_mode = ViewFront;
   kgmCamera& cam = game->m_render->camera();
 
-  cam.mDir = vec3(1, 0, 0);
+  cam.mDir = vec3(-1, 0, 0);
   cam.mUp  = vec3(0, 0, 1);
   cam.setOrthogonal(true);
   cam.update();
@@ -1426,7 +1472,7 @@ void kEditor::onViewLeft()
   view_mode = ViewLeft;
   kgmCamera& cam = game->m_render->camera();
 
-  cam.mDir = vec3(0, 1, 0);
+  cam.mDir = vec3(0, -1, 0);
   cam.mUp  = vec3(0, 0, 1);
   cam.setOrthogonal(true);
   cam.update();

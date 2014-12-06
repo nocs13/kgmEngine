@@ -4,6 +4,7 @@
 #include "../../kgmGraphics/kgmGuiMenu.h"
 
 #include "kNode.h"
+#include "kLine.h"
 #include "kArrow.h"
 #include "kPivot.h"
 #include "kGridline.h"
