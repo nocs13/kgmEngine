@@ -121,3 +121,26 @@ void kNode::setMaterial(kgmString m)
 
   }
 }
+
+void kNode::setShader(kgmString s)
+{
+  if(typ == MESH)
+  {
+    kgmMaterial* mtl = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getMaterial(mat.data());
+
+    if(mtl)
+    {
+      kgmShader* sh = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getShader(s.data());
+
+      if(sh != NULL)
+      {
+        mtl->setShader(sh);
+        shd = s;
+      }
+    }
+  }
+  else if(typ == ACTOR)
+  {
+
+  }
+}

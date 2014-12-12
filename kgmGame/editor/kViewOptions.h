@@ -64,12 +64,15 @@ class kViewOptionsForMesh : public kViewOptions
 
   kFileDialog* fd;
   kgmGuiText*  guiMtlText;
+  kgmGuiText*  guiShdText;
 public:
   kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
 
   void onSelectFailed();
   void onSelectMaterial();
   void onSelectedMaterial();
+  void onSelectShader();
+  void onSelectedShader();
 };
 
 class kViewOptionsForLight : public kViewOptions

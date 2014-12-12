@@ -20,7 +20,7 @@ kgmMaterial::kgmMaterial()
 
   m_tex_color    = m_tex_specular = m_tex_normal = 0;
 
-  m_shader       = ShaderBase;
+  m_shader       = null;
 }
 
 kgmMaterial::~kgmMaterial()
@@ -33,6 +33,9 @@ kgmMaterial::~kgmMaterial()
 
   if(m_tex_specular)
     m_tex_specular->release();
+
+  if(m_shader)
+    m_shader->release();
 }
 
 kgmMaterial* kgmMaterial::clone()
@@ -116,4 +119,17 @@ kgmTexture* kgmMaterial::getTexNormal()
 kgmTexture* kgmMaterial::getTexSpecular()
 {
   return m_tex_specular;
+}
+
+void kgmMaterial::setShader(Shader shader)
+{
+  if(shader == null)
+    return;
+
+  if(m_shader)
+    m_shader->release();
+
+  m_shader = shader;
+
+  m_shader->increment();
 }

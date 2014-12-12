@@ -102,7 +102,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   gui_style = new kgmGuiStyle();
 
-  g_def_material.m_shader = kgmMaterial::ShaderNone;
+  g_def_material.setShader(rc->getShader("none"));//kgmMaterial::ShaderNone;
   g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
@@ -149,16 +149,16 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     {
       kgmShader* shader = null;
 
-      shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
-      shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
-      shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
-      shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("skin.glsl"));
-      shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
-      shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
+      //shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
+      //shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
+      //shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
+      //shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("skin.glsl"));
+      //shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
+      //shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
 
       //shader = rc->getShader("lights.glsl");
-      //shader = rc->getShader("base.glsl");
-      shader = shaders[kgmMaterial::ShaderBase];
+      shader = rc->getShader("base.glsl");
+      //shader = shaders[kgmMaterial::ShaderBase];
 
       if(shader)
       {

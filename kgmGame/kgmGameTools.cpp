@@ -488,15 +488,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
       mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
     }
     if(!strcmp(key, "shader")){
-      if(val == "SKIN")
-        mtl->m_shader = kgmMaterial::ShaderSkin;
-      else if(val == "WATER")
-        mtl->m_shader = kgmMaterial::ShaderWater;
-      else if(val == "MIRROR")
-        mtl->m_shader = kgmMaterial::ShaderMirror;
-      else if(val == "ICE")
-        mtl->m_shader = kgmMaterial::ShaderIce;
-      //mtl->m_shader = kgmIGame::getGame()->getResources()->getShader(val);
+      mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
     }
   }
 
@@ -568,16 +560,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     else if(id == "Shader")
     {
       mnode->node(i)->attribute("value", val);
-      if(val == "SKIN")
-        mtl->m_shader = kgmMaterial::ShaderSkin;
-      else if(val == "WATER")
-        mtl->m_shader = kgmMaterial::ShaderWater;
-      else if(val == "MIRROR")
-        mtl->m_shader = kgmMaterial::ShaderMirror;
-      else if(val == "ICE")
-        mtl->m_shader = kgmMaterial::ShaderIce;
-      else
-        mtl->m_shader = kgmMaterial::ShaderBase;
+      mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
     }
   }
 

@@ -892,9 +892,6 @@ void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmEvent::onEvent(e);
 
-//  if(game)
-//    game->
-
   if(menu->visible() && game->m_msAbs)
     menu->onEvent(e);
 }

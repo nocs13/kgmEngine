@@ -273,6 +273,18 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   kgmGuiButton* btn = new kgmGuiButton(tmesh, 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMaterial));
+
+  y_coord += 23;
+  g = new kgmGuiLabel(tmesh, 0, y_coord, 50, 20);
+  g->setText("Shader");
+  g = guiShdText = new kgmGuiText(tmesh, 51, y_coord, 70, 20);
+
+  if(node->shd.length())
+    g->setText(node->shd);
+
+  btn = new kgmGuiButton(tmesh, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShader));
 }
 
 void kViewOptionsForMesh::onSelectMaterial()
@@ -295,6 +307,32 @@ void kViewOptionsForMesh::onSelectedMaterial()
 {
   node->setMaterial(fd->getFile());
   guiMtlText->setText(fd->getFile());
+
+  fd->erase();
+  fd->release();
+  fd = null;
+}
+
+void kViewOptionsForMesh::onSelectShader()
+{
+  if(fd || node->mat.length() < 1)
+    return;
+
+  fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("shd");
+  fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectedShader));
+
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMesh::onSelectedShader()
+{
+  node->setShader(fd->getFile());
+  guiShdText->setText(fd->getFile());
 
   fd->erase();
   fd->release();

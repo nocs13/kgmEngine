@@ -26,7 +26,7 @@ public:
     MF_Textures  = 1 << 6L,
   };
 
-  enum Shader
+  /*enum Shader
   {
     ShaderNone,
     ShaderBase,
@@ -40,7 +40,9 @@ public:
     ShaderFlame,
     ShaderIce,
     ShaderSkin
-  };
+  };*/
+
+  typedef kgmShader* Shader;
 
   class Color
   {
@@ -91,7 +93,7 @@ public:
   kgmString   m_type;
 public:
   kgmMaterial();
-  ~kgmMaterial();
+  virtual ~kgmMaterial();
 
   kgmMaterial* clone();
 
@@ -106,6 +108,12 @@ public:
   kgmTexture* getTexColor();
   kgmTexture* getTexNormal();
   kgmTexture* getTexSpecular();
+
+  void setShader(Shader shader);
+  Shader getShader() const
+  {
+    return m_shader;
+  }
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

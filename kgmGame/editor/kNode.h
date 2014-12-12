@@ -53,6 +53,7 @@ public:
   kgmString nam;
   kgmString lnk;
   kgmString mat;
+  kgmString shd;
   kgmString shp;
 
   bool col, lock;
@@ -159,6 +160,7 @@ public:
     typ = n.typ;
     col = n.col;
     shp = n.shp;
+    shd = n.shd;
     pos = n.pos;
     rot = n.rot;
     bnd = n.bnd;
@@ -191,6 +193,7 @@ public:
   void setPosition(vec3 v);
   void setRotation(vec3 r);
   void setMaterial(kgmString m);
+  void setShader(kgmString s);
 };
 
 }
