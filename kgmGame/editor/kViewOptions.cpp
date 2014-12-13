@@ -118,23 +118,42 @@ kgmGuiFrame("Options", x, y, w, h)
 
     kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
     chk_grp->setText("Shape Box");
-    chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectBoxShape));
+    chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeBox));
     if(node->shp == "box") chk_grp->setCheck(true);
     y_coord += 23;
 
     chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-    chk->setText("Shape Mesh");
-    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMeshShape));
+    chk->setText("Shape Sphere");
+    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeSphere));
     chk_grp->addGroup(chk);
-    if(node->shp == "mesh") chk->setCheck(true);
+    if(node->shp == "sphere") chk->setCheck(true);
     y_coord += 23;
 
-    chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-    chk->setText("Shape Plane");
-    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectPlaneShape));
-    chk_grp->addGroup(chk);
-    if(node->shp == "plane") chk->setCheck(true);
-    y_coord += 23;
+    if(node->typ == kNode::MESH)
+    {
+      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+      chk->setText("Shape Mesh");
+      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeMesh));
+      chk_grp->addGroup(chk);
+      if(node->shp == "mesh") chk->setCheck(true);
+      y_coord += 23;
+
+      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+      chk->setText("Shape Plane");
+      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapePlane));
+      chk_grp->addGroup(chk);
+      if(node->shp == "plane") chk->setCheck(true);
+      y_coord += 23;
+    }
+    else if(node->typ == kNode::OBSTACLE)
+    {
+      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+      chk->setText("Shape Polyhedron");
+      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapePolyhedra));
+      chk_grp->addGroup(chk);
+      if(node->shp == "polyhedra") chk->setCheck(true);
+      y_coord += 23;
+    }
 
     g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
     g->setText("Bound");
@@ -214,22 +233,34 @@ void kViewOptions::onSelectCollision(bool s)
   node->col = s;
 }
 
-void kViewOptions::onSelectBoxShape(bool s)
+void kViewOptions::onSelectShapeBox(bool s)
 {
   if(s)
     node->shp = "box";
 }
 
-void kViewOptions::onSelectMeshShape(bool s)
+void kViewOptions::onSelectShapeMesh(bool s)
 {
   if(s)
     node->shp = "mesh";
 }
 
-void kViewOptions::onSelectPlaneShape(bool s)
+void kViewOptions::onSelectShapePlane(bool s)
 {
   if(s)
     node->shp = "plane";
+}
+
+void kViewOptions::onSelectShapeSphere(bool s)
+{
+  if(s)
+    node->shp = "sphere";
+}
+
+void kViewOptions::onSelectShapePolyhedra(bool s)
+{
+  if(s)
+    node->shp = "polyhedra";
 }
 
 void kViewOptions::onBoundX(kgmString s)

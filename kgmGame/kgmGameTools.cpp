@@ -954,7 +954,8 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
   m = new kgmMesh();
   mnode->attribute("id", m->m_id);
 
-  for(int i = 0; i < mnode->nodes(); i++){
+  for(int i = 0; i < mnode->nodes(); i++)
+  {
     kgmString id, val, data;
 
     if(mnode->node(i))
@@ -962,7 +963,8 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
     else
       break;
 
-    if(id == "Vertices"){
+    if(id == "Vertices")
+    {
       u32 count = 0;
       kgmMesh::Vertex_P_N_C_T*  v = 0;
 
@@ -970,9 +972,13 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
       sscanf(val.data(), "%i", &count);
       v = (kgmMesh::Vertex_P_N_C_T*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T);
       mnode->node(i)->data(data);
+
       char* p = data.data();
-      for(int i = 0; i < count; i++){
+
+      for(int i = 0; i < count; i++)
+      {
         u32 rd;
+
         sscanf(p, "%f %f %f %f %f %f %f %f %n",
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
@@ -988,12 +994,16 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
     {
       u32 count = 0;
       kgmMesh::Face_16*   f = 0;
+
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
       f = (kgmMesh::Face_16*)m->fAlloc(count);
       mnode->node(i)->data(data);
+
       char* p = data.data();
-      for(int i = 0; i < count; i++){
+
+      for(int i = 0; i < count; i++)
+      {
         u32 fi[3], rd;
         sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
         f[i].a = fi[0];
@@ -1008,12 +1018,18 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
     else if(id == "Skin")
     {
       u32 count = 0;
+
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
+
       kgmMesh::Vertex_P_N_C_T* v = new kgmMesh::Vertex_P_N_C_T[ m->vcount() ];
+
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
+
       kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
+
       mnode->node(i)->data(data);
+
       char* p = data.data();
 
       for(int i = 0; i < count; i++)
@@ -1021,6 +1037,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         u32  nw = 0, rd = 0;
         int   bi[4] = {0};
         float bw[4] = {0.0f};
+
         sscanf(p, "%i %i %i %i %f %f %f %f %n", //&nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3], &rd);

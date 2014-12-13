@@ -1246,8 +1246,8 @@ void kgmGraphics::render(kgmMaterial* m){
   }
   else
   {
-    gc->gcSetTexture(1, g_tex_gray);
-    tnormal = g_tex_gray;
+    gc->gcSetTexture(1, g_tex_black);
+    tnormal = g_tex_black;
   }
 
   if(m->hasTexSpecular()){

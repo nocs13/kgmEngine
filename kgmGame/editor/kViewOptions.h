@@ -40,11 +40,12 @@ public:
   __stdcall void onRotationZ(u32 s);
   __stdcall void onSelectLock(bool);
   __stdcall void onSelectCollision(bool);
-  __stdcall void onSelectBoxShape(bool);
-  __stdcall void onSelectMeshShape(bool);
-  __stdcall void onSelectPlaneShape(bool);
-  __stdcall void onSelectSphereShape(bool);
-  __stdcall void onSelectCylinderShape(bool);
+  __stdcall void onSelectShapeBox(bool);
+  __stdcall void onSelectShapeMesh(bool);
+  __stdcall void onSelectShapePlane(bool);
+  __stdcall void onSelectShapeSphere(bool);
+  __stdcall void onSelectShapeCylinder(bool);
+  __stdcall void onSelectShapePolyhedra(bool);
   __stdcall void onBoundX(kgmString s);
   __stdcall void onBoundY(kgmString s);
   __stdcall void onBoundZ(kgmString s);
