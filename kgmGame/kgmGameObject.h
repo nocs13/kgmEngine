@@ -6,18 +6,20 @@
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmGraphics/kgmVisual.h"
 
+/*TODO: Must switch to kgmGameNode. */
+
 class kgmIGame;
 
 #define KGM_GO_OBJECT(o_class)                                           \
   KGM_OBJECT(o_class)                                                    \
   public:                                                                \
-  static  __stdcall o_class*     New(kgmIGame* g){ return new o_class(g); }        \
+  static  __stdcall o_class* New(kgmIGame* g){ return new o_class(g); }  \
   private:
 
 
 class kgmGameObject : public kgmObject
 {
-  KGM_GO_OBJECT(kgmGameObject);
+  KGM_OBJECT(kgmGameObject);
 
 private:
   kgmIGame* m_game;
@@ -49,7 +51,7 @@ public:
   {
     GoActor,
     GoSensor,
-    GoObject
+    GoTrigger
   };
 
   typedef kgmGameObject* (*GenGo)(kgmIGame*);
@@ -59,7 +61,6 @@ public:
   kgmList<kgmVariable> m_variables; //update variables for control from outside
 
 #ifdef EDITOR
-  static kgmList<kgmString> g_list_objects;
   static kgmList<kgmString> g_list_sensors;
   static kgmList<kgmString> g_list_actors;
 
@@ -79,7 +80,7 @@ public:
   kgmGameObject(kgmIGame* g = null);
   virtual ~kgmGameObject();
 
-  virtual void         init(){}
+  virtual void         init() = 0;
   virtual void         update(u32 mls);
   virtual void         event(kgmObject*, kgmString){ }
   virtual kgmBody*     getBody(){   return m_body;   }
@@ -184,9 +185,6 @@ public:
     case GoSensor:
       g_list_sensors.add(id);
       break;
-    case GoObject:
-      g_list_objects.add(id);
-      break;
     default:
       break;
     }
@@ -194,7 +192,7 @@ public:
   }
 
 private:
-  virtual void         clear(){}
+  virtual void clear(){}
 };
 
 #endif // KGMGAMEOBJECT_H

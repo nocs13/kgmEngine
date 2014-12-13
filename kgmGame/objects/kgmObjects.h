@@ -2,11 +2,11 @@
 #define KGMOBJECTS_H
 
 #include "../kgmIGame.h"
-#include "../kgmGameObject.h"
+#include "../kgmActor.h"
 #include "../kgmGameResources.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 
-class kgmResult: public kgmGameObject
+class kgmResult: public kgmActor
 {
   KGM_GO_OBJECT(kgmResult);
 public:
@@ -62,7 +62,7 @@ public:
   }
 };
 
-class kgmParticlesObject: public kgmGameObject
+class kgmParticlesObject: public kgmActor
 {
   KGM_GO_OBJECT(kgmParticlesObject);
 
@@ -280,7 +280,7 @@ public:
   }
 };
 
-class kgmLaser: public kgmGameObject
+class kgmLaser: public kgmActor
 {
   KGM_GO_OBJECT(kgmLaser);
 
@@ -299,7 +299,7 @@ public:
 
 public:
   kgmLaser(kgmIGame* g = null)
-    :kgmGameObject(g)
+    :kgmActor(g)
   {
 
   }
@@ -367,7 +367,7 @@ public:
   }
 };
 
-class kgmIonNozzle: public kgmGameObject
+class kgmIonNozzle: public kgmActor
 {
   KGM_GO_OBJECT(kgmIonNozzle);
 

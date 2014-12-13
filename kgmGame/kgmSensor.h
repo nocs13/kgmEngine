@@ -14,6 +14,8 @@ public:
 
   virtual void sense(){}
 
+  void init() {}
+
   void setTarget(kgmString s)
   {
     target = s;

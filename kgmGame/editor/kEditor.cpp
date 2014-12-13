@@ -80,7 +80,6 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddLight));
     item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddActor));
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
-    item->add(ME_ADD_OBJECT, "Object", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObject));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
     item = menu->add("Run");
@@ -1395,21 +1394,6 @@ void kEditor::onAddSensor()
   for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
   {
     kgmString s = kgmGameObject::g_list_sensors[i];
-    vs->addItem(s);
-  }
-
-  game->guiAdd(vs);
-  vs->release();
-}
-
-void kEditor::onAddObject()
-{
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addObject));
-
-  for(int i = 0; i < kgmGameObject::g_list_objects.length(); i++)
-  {
-    kgmString s = kgmGameObject::g_list_objects[i];
     vs->addItem(s);
   }
 

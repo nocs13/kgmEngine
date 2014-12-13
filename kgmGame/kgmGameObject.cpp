@@ -4,7 +4,6 @@ KGMOBJECT_IMPLEMENT(kgmGameObject, kgmObject);
 kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> kgmGameObject::g_typ_objects;
 
 #ifdef EDITOR
-  kgmList<kgmString> kgmGameObject::g_list_objects;
   kgmList<kgmString> kgmGameObject::g_list_sensors;
   kgmList<kgmString> kgmGameObject::g_list_actors;
 #endif

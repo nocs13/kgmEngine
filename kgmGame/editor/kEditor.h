@@ -125,7 +125,6 @@ public:
   __stdcall void onAddLight();
   __stdcall void onAddActor();
   __stdcall void onAddSensor();
-  __stdcall void onAddObject();
   __stdcall void onAddTrigger();
   __stdcall void onAddObstacle();
   __stdcall void onViewObjects();

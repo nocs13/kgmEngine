@@ -22,6 +22,8 @@ private:
 public:
   kgmTrigger(kgmIGame* g = null);
 
+  void init() {}
+
   bool setCount(u32 c)
   {
     if(c > 32)
