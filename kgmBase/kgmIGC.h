@@ -38,6 +38,8 @@ enum gc_enum
   gc_d3d10,
   gc_d3d11,
 
+  gc_rdev,
+
   gcpar_lighting,
   gcpar_blending,
   gcpar_culling,

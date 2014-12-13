@@ -322,7 +322,7 @@ void kViewOptionsForMesh::onSelectShader()
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
-  fd->setFilter("shd");
+  fd->setFilter("glsl");
   fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectedShader));
 

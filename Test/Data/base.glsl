@@ -64,11 +64,11 @@ void main( void )
  vec3 Y  = normalize(-g_vEyeDir);
 
  float distance = length(L - V);
- float intensity  = I;
+ float intensity  = I / distance;
        intensity  = I * max(dot(normal.xyz, normalize(vL)), 0.0) / (1.0 + distance);
        intensity  = clamp(intensity, 0.2, 0.7);
- vec3  reflection = normalize(normal.xyz * 2.0 * intensity - vL);
- float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
+ //vec3  reflection = normalize(normal.xyz * 2.0 * intensity - vL);
+ //float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
  //float ispecular  = pow(clamp(dot(vL, vN), 0.0, 1.0), 100.0);
 
  vec4  col = vec4(color.xyz * intensity, color.w);// + vec4(specular.xyz * ispecular, 0);

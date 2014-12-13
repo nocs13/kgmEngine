@@ -56,17 +56,21 @@ bool kgmGameMap::addMesh(Node n)
       node->m_attributes.add(new kgmXml::Attribute("collision", "on"));
 
     kgmXml::Node* snode = new kgmXml::Node(node);
-    snode->m_name = "kgmMaterial";
+    snode->m_name = "Material";
     snode->m_attributes.add(new kgmXml::Attribute("value", n.mtl));
 
     snode = new kgmXml::Node(node);
-    snode->m_name = "kgmPosition";
+    snode->m_name = "Shader";
+    snode->m_attributes.add(new kgmXml::Attribute("value", n.shd));
+
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Position";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.pos.x) + kgmString(" ") +
                                                   kgmConvert::toString(n.pos.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.pos.z)));
 
     snode = new kgmXml::Node(node);
-    snode->m_name = "kgmRotation";
+    snode->m_name = "Rotation";
     snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(n.rot.x) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.y) + kgmString(" ") +
                                                   kgmConvert::toString(n.rot.z)));
@@ -550,6 +554,14 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(value.length())
           node.mtl = value;
+      }
+      else if(id == "Shader")
+      {
+        value.clear();
+        m_xml->attribute("value", value);
+
+        if(value.length())
+          node.shd = value;
       }
       else if(id == "Collision")
       {

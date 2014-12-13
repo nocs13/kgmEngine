@@ -194,6 +194,9 @@ void kgmOGL::gcGet(u32 param, void* value)
   case gcsup_fbuffers:
     *((u32*)value) = m_is_framebuffer;
     break;
+  case gc_rdev:
+    //*((const char*)value) = "opengl";
+    break;
   }
 }
 

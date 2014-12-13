@@ -58,6 +58,7 @@ public:
     kgmString  name;
     kgmString  link;
     kgmString  material;
+    kgmString  shader;
     kgmString  shape;
 
     bool       collision;

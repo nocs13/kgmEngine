@@ -30,16 +30,35 @@ public:
     MAP_NORMAL     = 1 << 1,
     MAP_SPECULAR   = 1 << 2,
   };
+
+  enum Type
+  {
+    TypeNone,
+    TypeBase,
+    TypePoor,
+    TypeBlend,
+    TypeWater,
+    TypeRiver,
+    TypeOcean,
+    TypeMirror,
+    TypeGlass,
+    TypeFlame,
+    TypeIce,
+    TypeSkin
+  };
+
 protected:
  kgmIGC*  m_gc;
- u8             m_maps;
+ u8       m_type;
+ u8       m_maps;
+
 public:
  u32            m_input;
  void*          m_shader;
 
 public:
  kgmShader(kgmIGC* g = 0);
- ~kgmShader();
+ virtual ~kgmShader();
 
  void start();
  void stop();
@@ -53,5 +72,7 @@ public:
  void set(const char*, int,    int count = 1);
  void attr(int, const char*);
 
- kgmIGC* gc(){ return m_gc; }
+ kgmIGC* gc() const { return m_gc; }
+ void setType(u8 type) { m_type = type; }
+ u8 getType() const { return m_type; }
 };

@@ -81,9 +81,9 @@ void*      g_map_shadow = null;
 kgmLight     g_def_light;
 kgmMaterial  g_def_material;
 
-#define    kgmMaterial_ShaderGui 100
-#define    kgmMaterial_ShaderTex 101
-#define    kgmMaterial_ShaderLights 102
+#define  kgmShader_TypeGui    100
+#define  kgmShader_TypeIcon   101
+#define  kgmShader_TypeLights 102
 
 kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 {
@@ -102,7 +102,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   gui_style = new kgmGuiStyle();
 
-  g_def_material.setShader(rc->getShader("none"));//kgmMaterial::ShaderNone;
+  g_def_material.setShader(rc->getShader("none.glsl"));//kgmMaterial::ShaderNone;
   g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
@@ -149,21 +149,20 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     {
       kgmShader* shader = null;
 
-      //shaders.add(kgmMaterial::ShaderNone,  rc->getShader("none.glsl"));
-      //shaders.add(kgmMaterial::ShaderBase,  rc->getShader("base.glsl"));
-      //shaders.add(kgmMaterial::ShaderBlend, rc->getShader("blend.glsl"));
-      //shaders.add(kgmMaterial::ShaderSkin,  rc->getShader("skin.glsl"));
-      //shaders.add(kgmMaterial_ShaderGui,    rc->getShader("gui.glsl"));
-      //shaders.add(kgmMaterial_ShaderTex,    rc->getShader("texture.glsl"));
+      shaders.add(kgmShader::TypeNone,  rc->getShader("none.glsl"));
+      shaders.add(kgmShader::TypeBase,  rc->getShader("base.glsl"));
+      shaders.add(kgmShader::TypeBlend, rc->getShader("blend.glsl"));
+      shaders.add(kgmShader::TypeSkin,  rc->getShader("skin.glsl"));
+      shaders.add(kgmShader_TypeGui,    rc->getShader("gui.glsl"));
+      shaders.add(kgmShader_TypeIcon,   rc->getShader("icon.glsl"));
 
       //shader = rc->getShader("lights.glsl");
       shader = rc->getShader("base.glsl");
-      //shader = shaders[kgmMaterial::ShaderBase];
 
       if(shader)
       {
         shader->m_input |= kgmShader::IN_VEC4_LIGHTS;
-        shaders.add(kgmMaterial_ShaderLights, shader);
+        shaders.add(kgmShader_TypeLights, shader);
       }
     }
   }
@@ -176,7 +175,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
 
-  m_editor = false;
+  //m_editor = false;
 }
 
 kgmGraphics::~kgmGraphics()
@@ -409,7 +408,7 @@ void kgmGraphics::render()
                   {{0, 0, 0}, 0xffff0000},   {{0, 0, 1000}, 0xffff0000}};
   if(m_has_shaders)
   {
-    render(shaders[kgmMaterial::ShaderNone]);
+    render(shaders[kgmShader::TypeNone]);
   }
 
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
@@ -592,7 +591,6 @@ void kgmGraphics::render()
           g_lights[g_lights_count++] = (*i);
         }
 
-
         if(g_lights_count > MAX_LIGHTS)
           break;
       }
@@ -600,22 +598,19 @@ void kgmGraphics::render()
 
     if(m_has_shaders)
     {
-      if(g_lights_count > 1 && shaders.hasKey(kgmMaterial_ShaderLights))
-        render((kgmShader*)shaders[kgmMaterial_ShaderLights]);
-      else if(mesh->material && shaders.hasKey(mesh->material->m_shader))
-        render((kgmShader*)shaders[mesh->material->m_shader]);
-      else
-        render((kgmShader*)shaders[kgmMaterial::ShaderBase]);
-
       if(mesh->material)
       {
         render(mesh->material);
-        render((kgmShader*)shaders[mesh->material->m_shader]);
+
+        if(mesh->material->getShader())
+          render(mesh->material->getShader());
+        else
+          render((kgmShader*)shaders[kgmShader::TypeNone]);
       }
       else
       {
         render(&g_def_material);
-        render((kgmShader*)shaders[g_def_material.m_shader]);
+        render(g_def_material.getShader());
       }
     }
 
@@ -653,7 +648,7 @@ void kgmGraphics::render()
 
   for(int i = vis_blend.size(); i > 0;  i--)
   {
-    render(shaders[kgmMaterial::ShaderBase]);
+    render(shaders[kgmShader::TypeBase]);
     render(vis_blend[i - 1]);
   }
 
@@ -696,7 +691,6 @@ void kgmGraphics::render()
     kgmParticles* par = vis->getParticles();
     kgmMaterial*  mtl = vis->getMaterial();
 
-
     if(par && mtl)
     {
       if(mtl->m_depth == false)
@@ -708,7 +702,7 @@ void kgmGraphics::render()
 
       setWorldMatrix(vis->getTransform());
       render(mtl);
-      render(shaders[mtl->m_shader]);
+      render(mtl->getShader());
       render(vis->getParticles());
       render((kgmShader*)null);
       render((kgmMaterial*)null);
@@ -722,7 +716,6 @@ void kgmGraphics::render()
     Mesh*   mesh = *i;
     box3    bbound = mesh->mesh->bound();
     sphere3 sbound;
-    float   l_force = 0.0f;
 
     bbound.min    = mesh->mtx * bbound.min;
     bbound.max    = mesh->mtx * bbound.max;
@@ -734,7 +727,7 @@ void kgmGraphics::render()
     if(mesh->material)
     {
       render(mesh->material);
-      render(shaders[mesh->material->m_shader]);
+      render(mesh->material->getShader());
     }
 
     render(mesh->mesh);
@@ -749,7 +742,7 @@ void kgmGraphics::render()
 
     setWorldMatrix(vis->getTransform());
     render(mtl);
-    render(shaders[mtl->m_shader]);
+    render(mtl->getShader());
     render(vis->getParticles());
     render((kgmShader*)null);
     render((kgmMaterial*)null);
@@ -781,11 +774,9 @@ void kgmGraphics::render()
       else
       {
         kgmMaterial mtl;
-        mtl.m_shader = kgmMaterial::ShaderBase;
+//        mtl.setShader(shaders[kgmShader::TypeBase]);
         mtl.setTexColor(icon->getIcon());
-        //render(&mtl);
-        //render(shaders[kgmMaterial::ShaderNone]);
-        render(shaders[kgmMaterial_ShaderTex]);
+        render(shaders[kgmShader_TypeIcon]);
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
@@ -801,7 +792,7 @@ void kgmGraphics::render()
 
   if(m_has_shaders)
   {
-    render(shaders[kgmMaterial::ShaderNone]);
+    render(shaders[kgmShader::TypeNone]);
   }
 
   for(int i = m_bodies.size(); i > 0;  i--)
@@ -878,7 +869,7 @@ void kgmGraphics::render()
     m.identity();
     setWorldMatrix(m);
 
-    render((kgmShader*)shaders[kgmMaterial_ShaderGui]);
+    render((kgmShader*)shaders[kgmShader_TypeGui]);
   }
 
   //draw sprites
@@ -977,10 +968,10 @@ void kgmGraphics::render(kgmVisual* visual)
 
   if(m_has_shaders)
   {
-    if(shaders.hasKey(mtl->m_shader))
-      render(shaders[mtl->m_shader]);
+    if(mtl->getShader())
+      render(mtl->getShader());
     else
-      render(shaders[kgmMaterial::ShaderBase]);
+      render(shaders[kgmShader::TypeBase]);
   }
 
   if(visual->m_tm_joints)
@@ -1270,65 +1261,66 @@ void kgmGraphics::render(kgmMaterial* m){
   }
 }
 
-void kgmGraphics::render(kgmShader* s){
+void kgmGraphics::render(kgmShader* s)
+{
+  if(s == null)
+  {
+    gc->gcSetShader(null);
+    g_shd_active = null;
+
+    return;
+  }
+
   //send default parameters
   vec4 v_light(0, 0, 0, 10);
 
   if(g_main_light)
     v_light = vec4(g_main_light->position.x, g_main_light->position.y, g_main_light->position.z, g_main_light->intensity);
 
-  if(s)
+  float random = (float)rand()/(float)RAND_MAX;
+
+  s->start();
+  s->set("g_fTime",     kgmTime::getTime());
+  s->set("g_fRandom",   random);
+  s->set("g_fShine",    0.5f);
+  s->set("g_mProj",     g_mtx_proj);
+  s->set("g_mView",     g_mtx_view);
+  s->set("g_mTran",     g_mtx_world);
+  s->set("g_mNorm",     g_mtx_normal);
+  s->set("g_vAmbient",  g_vec_ambient);
+  s->set("g_vLight",    v_light);
+  s->set("g_vEye",      m_camera.mPos);
+  s->set("g_vEyeDir",   m_camera.mDir);
+
+  if(tcolor)
+    s->set("g_txColor", 0);
+
+  if(tnormal)
+    s->set("g_txNormal", 1);
+
+  if(tspecular)
+    s->set("g_txSpecular", 2);
+
+  if(g_mtx_joints)
   {
-    float random = (float)rand()/(float)RAND_MAX;
+    s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
+  }
 
-    s->start();
-    s->set("g_fTime",     kgmTime::getTime());
-    s->set("g_fRandom",   random);
-    s->set("g_fShine",    0.5f);
-    s->set("g_mProj",     g_mtx_proj);
-    s->set("g_mView",     g_mtx_view);
-    s->set("g_mTran",     g_mtx_world);
-    s->set("g_mNorm",     g_mtx_normal);
-    s->set("g_vAmbient",  g_vec_ambient);
-    s->set("g_vLight",    v_light);
-    s->set("g_vEye",      m_camera.mPos);
-    s->set("g_vEyeDir",   m_camera.mDir);
+  if((s->m_input & kgmShader::IN_VEC4_LIGHTS) &&  g_lights_count > 0)
+  {
+    vec4 lights[32];
 
-    if(tcolor)
-      s->set("g_txColor", 0);
-
-    if(tnormal)
-      s->set("g_txNormal", 1);
-
-    if(tspecular)
-      s->set("g_txSpecular", 2);
-
-    if(g_mtx_joints)
+    for(int i = 0; i < g_lights_count; i++)
     {
-      s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
+      lights[i] = vec4(g_lights[i]->position.x, g_lights[i]->position.y,
+      -g_lights[i]->position.z, g_lights[i]->intensity);
     }
 
-    if((s->m_input & kgmShader::IN_VEC4_LIGHTS) &&  g_lights_count > 0)
-    {
-      vec4 lights[32];
-
-      for(int i = 0; i < g_lights_count; i++)
-      {
-        lights[i] = vec4(g_lights[i]->position.x, g_lights[i]->position.y,
-                         -g_lights[i]->position.z, g_lights[i]->intensity);
-      }
-
-      s->set("g_iLights", g_lights_count);
-      s->set("g_vLights", lights[0], g_lights_count);
-    }
-
-    g_shd_active = s;
+    s->set("g_iLights", g_lights_count);
+    s->set("g_vLights", lights[0], g_lights_count);
   }
-  else
-  {
-    gc->gcSetShader(null);
-    g_shd_active = null;
-  }
+
+  g_shd_active = s;
 }
 
 void kgmGraphics::render(kgmMesh *m){

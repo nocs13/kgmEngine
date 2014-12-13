@@ -52,6 +52,7 @@ public:
     kgmString  nam;
     kgmString  lnk;
     kgmString  mtl;
+    kgmString  shd;
     kgmString  shp;
 
     bool       col;  //collision type

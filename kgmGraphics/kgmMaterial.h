@@ -26,22 +26,6 @@ public:
     MF_Textures  = 1 << 6L,
   };
 
-  /*enum Shader
-  {
-    ShaderNone,
-    ShaderBase,
-    ShaderPoor,
-    ShaderBlend,
-    ShaderWater,
-    ShaderRiver,
-    ShaderOcean,
-    ShaderMirror,
-    ShaderGlass,
-    ShaderFlame,
-    ShaderIce,
-    ShaderSkin
-  };*/
-
   typedef kgmShader* Shader;
 
   class Color
