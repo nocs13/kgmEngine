@@ -8,6 +8,9 @@ uniform vec3   g_vEyeDir;
 uniform float  g_fTime;
 uniform float  g_fRandom;
 
+uniform vec4   g_vLights[31];
+uniform int    g_iLights;
+
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
@@ -38,6 +41,9 @@ void main(void)
 precision lowp float;
 #endif
 
+uniform vec4 g_vLights[31];
+uniform int  g_iLights;
+
 uniform sampler2D g_txColor;
 
 varying vec3   N;
@@ -53,7 +59,14 @@ void main( void )
  vec3 LN = normalize(L - V);
 
  float distance = length(L - V);
- float intensity  = I * dot(N, LN) / (1.0 + distance);
+ float intensity = I * dot(N, LN) / (1.0 + distance);
+
+ for(int i = 0; i < g_iLights; i++)
+ {
+   vec3  ln = normalize(g_vLights[i].xyz - V);
+   float dn = length(g_vLights[i].xyz - V);
+   intensity += (10 * dot(N, ln) / (1.0 + dn));
+ }
 
  vec4  col = vec4(color.xyz * intensity, color.w);
 

@@ -39,6 +39,9 @@ precision lowp float;
 #endif
 
 uniform sampler2D g_txColor;
+uniform sampler2D g_txNormal;
+uniform sampler2D g_txSpecular;
+uniform vec3      g_vEyeDir;
 
 varying vec3   N;
 varying vec3   V;
@@ -48,16 +51,29 @@ varying float  I;
 
 void main( void )
 {
- vec4 color = texture2D(g_txColor,    Texcoord);
+ vec4 color     = texture2D(g_txColor,    Texcoord);
+ vec4 normal    = texture2D(g_txNormal,   Texcoord);
+ vec4 specular  = texture2D(g_txSpecular, Texcoord);
 
- vec3 LN = normalize(L - V);
+ normal = (2.0 * normal) - 1.0;
+ normal.xyz = normal.xyz + N;
+ normal.xyz = normalize(normal.xyz);
+
+ vec3 vN = normalize(normal.xyz);
+ vec3 vL = normalize(L - V);
+ vec3 Y  = normalize(-g_vEyeDir);
 
  float distance = length(L - V);
- float intensity  = I * dot(N, LN) / (1.0 + distance);
+ float intensity  = I / (1.0 + distance);
+       intensity  = I * max(dot(normal.xyz, normalize(vL)), 0.0);
+       intensity  = clamp(intensity, 0.1, 0.9);
+ vec3  reflection = normalize(normal.xyz * 2.0 * intensity - vL);
+ float ispecular  = pow(clamp(dot(reflection, Y), 0, 1), 10);
+ //float ispecular  = pow(clamp(dot(vL, vN), 0.0, 1.0), 100.0);
 
- vec4  col = vec4(color.xyz * intensity, color.w);
+ vec4  col = vec4(color.xyz * intensity, color.w) + vec4(specular.xyz * ispecular, 0);
 
- col = clamp(col, 0.1, 0.95);
+ col = clamp(col, 0.1, 1.0);
 
  gl_FragColor = col;
 }

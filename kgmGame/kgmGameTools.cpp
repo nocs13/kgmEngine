@@ -838,7 +838,8 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   int   col[4] = {0};
 
   if(mm.empty())
-    return 0;
+    return null;
+
   key = new char[128];
   val = new char[128];
   str = new char[512];
@@ -924,6 +925,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv[0].x, v[i].uv[0].y);
       }
+
       delete [] v;
     }
   }
@@ -936,6 +938,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   delete [] key;
   delete [] val;
   delete [] str;
+
   return m;
 }
 
@@ -949,7 +952,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
   kgmXml::Node* mnode = 0;
 
   if(!x.m_node || !(mnode = x.m_node->node("kgmMesh")))
-    return 0;
+    return null;
 
   m = new kgmMesh();
   mnode->attribute("id", m->m_id);
@@ -1055,6 +1058,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
         s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
         p = (char*)((size_t)p + rd);
       }
+
       delete [] v;
 #ifdef DEBUG
       kgmLog::log("\nEnd skin");
@@ -1065,7 +1069,11 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 
   for(int i = 0; i < materials.size(); i++)
     materials[i]->release();
+
   materials.clear();
+
+  m->rebound();
+
   return m;
 }
 

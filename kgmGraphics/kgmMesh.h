@@ -143,6 +143,7 @@ public:
   kgmList<LOD*> m_lods;
 
   u32     m_group;    // object group id
+  box3    m_bound;
 
 public:
   kgmMesh();
@@ -150,7 +151,8 @@ public:
 
   kgmMesh* clone();
 
-  box3 bound();  //recalculate boundes(box, sphere, ...)
+  void rebound();  //recalculate boundes(box, sphere, ...)
+  box3 bound();
 
   Vertex* vAlloc(u32 count, FVF f=FVF_P_N_C);
   Face*   fAlloc(u32 count, FFF f=FFF_16);

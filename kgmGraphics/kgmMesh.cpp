@@ -14,6 +14,7 @@ kgmMesh::kgmMesh()
   m_fvf = m_fff = 0;
   m_rtype = RT_TRIANGLE;
   m_group = 0;
+  m_bound = box3();
 }
 
 kgmMesh::~kgmMesh()
@@ -49,12 +50,12 @@ kgmMesh* kgmMesh::clone()
   return mesh;
 }
 
-box3 kgmMesh::bound()
+void kgmMesh::rebound()
 {
-  box3   m_bound;
+  m_bound = box3();
 
   if(!m_vertices)
-    return m_bound;
+    return;
 
   u8 *v = (u8*) m_vertices;
   vec3 max = ((Vertex*)v)->pos,
@@ -77,10 +78,12 @@ box3 kgmMesh::bound()
 
   m_bound.min = min;
   m_bound.max = max;
-
-  return m_bound;
 }
 
+box3 kgmMesh::bound()
+{
+  return m_bound;
+}
 
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
 {
