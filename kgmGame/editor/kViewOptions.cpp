@@ -148,10 +148,10 @@ kgmGuiFrame("Options", x, y, w, h)
     else if(node->typ == kNode::OBSTACLE)
     {
       chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-      chk->setText("Shape Polyhedron");
-      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapePolyhedra));
+      chk->setText("Shape Convex");
+      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeConvex));
       chk_grp->addGroup(chk);
-      if(node->shp == "polyhedra") chk->setCheck(true);
+      if(node->shp == "convex") chk->setCheck(true);
       y_coord += 23;
     }
 
@@ -257,10 +257,10 @@ void kViewOptions::onSelectShapeSphere(bool s)
     node->shp = "sphere";
 }
 
-void kViewOptions::onSelectShapePolyhedra(bool s)
+void kViewOptions::onSelectShapeConvex(bool s)
 {
   if(s)
-    node->shp = "polyhedra";
+    node->shp = "convex";
 }
 
 void kViewOptions::onBoundX(kgmString s)

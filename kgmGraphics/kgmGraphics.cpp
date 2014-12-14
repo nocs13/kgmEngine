@@ -84,7 +84,7 @@ kgmMaterial  g_def_material;
 #define  kgmShader_TypeIcon   101
 #define  kgmShader_TypeLights 102
 
-inline static void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos)
+inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
   if(lights == null || count < 1)
     return;

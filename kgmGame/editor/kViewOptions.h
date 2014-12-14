@@ -45,7 +45,7 @@ public:
   __stdcall void onSelectShapePlane(bool);
   __stdcall void onSelectShapeSphere(bool);
   __stdcall void onSelectShapeCylinder(bool);
-  __stdcall void onSelectShapePolyhedra(bool);
+  __stdcall void onSelectShapeConvex(bool);
   __stdcall void onBoundX(kgmString s);
   __stdcall void onBoundY(kgmString s);
   __stdcall void onBoundZ(kgmString s);
