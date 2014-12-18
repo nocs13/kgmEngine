@@ -185,6 +185,7 @@ public:
   kgmAnimation*  getAnimation(char*);
 
   bool           loadXml(kgmString& path);
+  bool           loadXml_I(kgmString& path);
 
 
 public:

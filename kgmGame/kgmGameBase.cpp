@@ -15,6 +15,7 @@
 #include "../kgmSystem/kgmOSL.h"
 
 #include "kgmIGame.h"
+#include "kgmGameMap.h"
 #include "kgmGameBase.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameResources.h"
@@ -1161,6 +1162,33 @@ bool kgmGameBase::loadXml(kgmString& path)
         m_data = "";
       }
     }
+  }
+
+  return true;
+}
+
+bool kgmGameBase::loadXml_I(kgmString& idmap)
+{
+  kgmMemory<u8> mem;
+
+  m_resources->getFile(idmap, mem);
+
+  if(mem.length() < 1)
+    return false;
+
+  kgmXml xml;
+
+  xml.open(mem);
+  mem.clear();
+
+
+  kgmGameMap map(this, kgmGameMap::OpenRead);
+  map.open(xml);
+
+  kgmGameMap::Node mnode = map.next();
+
+  while(mnode.obj)
+  {
   }
 
   return true;
