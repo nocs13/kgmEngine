@@ -89,13 +89,19 @@ public:
 
   }
 
+  virtual void gameInit() = 0;
+  virtual void gameLoop() = 0;
+  virtual void gameFree() = 0;
+
   kgmIGame* game()
   {
     return m_game;
   }
 
-  /*int main(int argc, char **argv)
+  int main(int argc, char **argv)
   {
+    gameInit();
+
     if(game() == NULL)
       return 1;
 
@@ -113,8 +119,12 @@ public:
 #endif
     }
 
+    gameLoop();
+
+    gameFree();
+
     return 0;
-  }*/
+  }
 
   static kgmGameApp* gameApplication()
   {

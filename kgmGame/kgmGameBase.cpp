@@ -154,7 +154,7 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
 
   m_gamemode = true;
-  m_state    = State_None;
+  m_state    = State_Idle;
 
   kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmResult::New);
   kgmGameObject::goRegister("kgmFlame",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmFlame::New);
@@ -285,31 +285,13 @@ void kgmGameBase::onIdle()
   // if(fps > 60)
   //  return;
 
-  switch(m_state)
+  if(m_state == State_Play)
   {
-  case State_None:
-    break;
-  case State_Load:
-    break;
-  case State_Uload:
-    gUnload();
-    m_state = State_None;
-    break;
-  case State_Pause:
-    break;
-  case State_Play:
     if(m_logic)
       m_logic->update(1000 / fps);
 
     if(m_physics)
       m_physics->update(1000 / fps);
-    break;
-  case State_Stop:
-    break;
-  case State_Edit:
-    break;
-  default:
-    break;
   }
 
   if(m_render)
@@ -522,7 +504,7 @@ int kgmGameBase::gLoad(kgmString s)
 int kgmGameBase::gUnload()
 {
   u32 state = m_state;
-  state = State_Stop;
+  m_state = State_Clean;
 
 #ifdef DEBUG
   kgm_log() << "\nUnloading...";
@@ -537,7 +519,7 @@ int kgmGameBase::gUnload()
   if(m_render)
     m_render->clear();
 
-  m_state = State_None;
+  m_state = State_Idle;
 
 #ifdef DEBUG
   kgm_log() << "\nUnloaded";
@@ -561,7 +543,7 @@ int kgmGameBase::gCommand(kgmString s)
 int kgmGameBase::gQuit(){
   m_state = State_Quit;
   m_quit = true;
-  m_state = State_None;
+  m_state = State_Idle;
   close();
   return 1;
 }
@@ -591,7 +573,7 @@ void kgmGameBase::gPause(bool s){
 
 bool kgmGameBase::gAppend(kgmGameObject* go)
 {
-  if(!go || m_state == State_None || m_state == State_Quit)
+  if(!go || (m_state != State_Play && m_state != State_Load))
     return false;
 
   if(m_render && go->getVisual())

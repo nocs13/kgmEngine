@@ -45,11 +45,12 @@ enum game_action_type
   gact_type_object,
 };
 
-enum game_state{
-  gstate_none,
-  gstate_load,
+enum game_state
+{
+  gstate_idle,
   gstate_run,
-  gstate_finish,
+  gstate_load,
+  gstate_clean,
   gstate_pause,
 };
 
@@ -131,13 +132,12 @@ class kgmIGame
 public:
   enum State
   {
-    State_None,
+    State_Idle,
     State_Quit,
     State_Play,
     State_Load,
-    State_Uload,
+    State_Clean,
     State_Pause,
-    State_Stop,
     State_Edit
   };
 

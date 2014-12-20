@@ -216,12 +216,16 @@ public:
   {
     if(s == "gameover_fail")
     {
-      m_state = kgmIGame::State_Stop;
+      m_state = kgmIGame::State_Clean;
+      gUnload();
+      m_state = kgmIGame::State_Idle;
       gui->viewAgain();
     }
     else if(s == "gameover_success")
     {
-      m_state = kgmIGame::State_Stop;
+      m_state = kgmIGame::State_Clean;
+      gUnload();
+      m_state = kgmIGame::State_Idle;
       gui->viewAgain();
     }
   }
@@ -316,7 +320,7 @@ public:
   ~kApp(){
   }
 
-  int main(int argc, char **argv)
+  /*int main(int argc, char **argv)
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
@@ -324,24 +328,30 @@ public:
 
     game->setRect(0, 0, w, h);
 
-    if(argc > 1)
-    {
-      if(strncmp(argv[1], "mapid", 5) == 0 && argc > 2)
-      {
-        game->gLoad(argv[2]);
-      }
-#ifdef EDITOR
-      else if(strncmp(argv[1], "editor", 6) == 0)
-      {
-
-      }
-#endif
-    }
-
     game->loop();
     game->release();
 
     return 0;
+  }*/
+
+  void gameInit()
+  {
+    u32 w, h;
+    kgmSystem::getDesktopDimension(w, h);
+    m_game = game = new kGame();
+
+    game->setRect(0, 0, w, h);
+  }
+
+  void gameLoop()
+  {
+    if(game)
+      game->loop();
+  }
+
+  void gameFree()
+  {
+    game->release();
   }
 
 #ifdef ANDROID
