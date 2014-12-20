@@ -1186,58 +1186,41 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
   map.open(xml);
 
   kgmGameMap::Node mnode = map.next();
+  mtx4 mtr, mr, mv;
 
   while(mnode.obj)
   {
     if(mnode.typ == kgmGameMap::NodeMsh)
     {
-      oquered++;
-      node = new kNode((kgmMesh*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->lnk = mnode.lnk;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->mat = mnode.mtl;
-      node->shd = mnode.shd;
-      node->lock = mnode.lck;
+      kgmMesh *msh = (kgmMesh*)mnode.obj;
 
       kgmMaterial *mtl = null;
 
-      mtl = game->getResources()->getMaterial(mnode.mtl);
+      mtl = getResources()->getMaterial(mnode.mtl);
 
       if(mtl)
-        mtl->setShader(game->getResources()->getShader(mnode.shd));
+        mtl->setShader(getResources()->getShader(mnode.shd));
 
-      game->m_render->add(node->msh, mtl);
-      nodes.add(node);
+      mr.identity();
+      mr.rotate(mnode.rot);
+      mv.identity();
+      mv.translate(mnode.pos);
+      mtr = mr * mv;
 
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
+      m_render->add(msh, mtl, &mtr);
     }
     else if(mnode.typ == kgmGameMap::NodeLgt)
     {
-      oquered++;
-      node = new kNode((kgmLight*)mnode.obj);
+      kgmLight *lgt = (kgmLight*)mnode.obj;
 
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-      node->geo = new kArrow();
+      m_render->add(lgt);
 
-      game->m_render->add(node->lgt);
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
+      lgt->position = mnode.pos;
 
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
+      mr.identity();
+      mr.rotate(mnode.rot);
+      vec3 v(1, 0, 0);
+      lgt->direction = mr * v;
     }
     else if(mnode.typ == kgmGameMap::NodeCam)
     {
