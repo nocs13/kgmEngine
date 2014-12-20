@@ -94,6 +94,28 @@ public:
     return m_game;
   }
 
+  /*int main(int argc, char **argv)
+  {
+    if(game() == NULL)
+      return 1;
+
+    if(argc > 1)
+    {
+      if(strncmp(argv[1], "mapid", 5) == 0 && argc > 2)
+      {
+        game()->gLoad(argv[2]);
+      }
+#ifdef EDITOR
+      else if(strncmp(argv[1], "editor", 6) == 0)
+      {
+
+      }
+#endif
+    }
+
+    return 0;
+  }*/
+
   static kgmGameApp* gameApplication()
   {
     return (kgmGameApp*)kgmApp::application();

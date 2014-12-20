@@ -14,7 +14,7 @@ public:
   kgmApp();
   ~kgmApp();
 
-  virtual void main();
+  virtual int main(int argc, char **argv);
 
   void setMainWindow(void* w)
   {

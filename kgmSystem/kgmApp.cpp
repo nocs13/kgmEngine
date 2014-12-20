@@ -30,8 +30,9 @@ kgmApp::~kgmApp()
  m_app = 0;
 }
 
-void kgmApp::main()
+int kgmApp::main(int argc, char **argv)
 {
+  return 0;
 }
 
 //FOR WINDOWS
@@ -97,7 +98,7 @@ int main(int argc, char** argv){
  signal(SIGABRT,  kgm_signal_handler);
 
  if(kgmApp::application())
-   kgmApp::application()->main();
+   rValue = kgmApp::application()->main(argc, argv);
 
 // kgmObject::releaseObjects();
 

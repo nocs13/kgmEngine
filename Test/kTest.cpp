@@ -316,24 +316,32 @@ public:
   ~kApp(){
   }
 
-  void main()
+  int main(int argc, char **argv)
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
     m_game = game = new kGame();
 
-#ifndef ANDROID
-    //kgmLuaOpen();
-    //kgmMemory<s8> mem;
-    //m_game->getResources()->getFile("main.lua", mem);
-    //kgmString str(mem.data(), mem.length());
-    //kgmLuaRun(str);
-    //kgmLuaClose();
-#endif
-
     game->setRect(0, 0, w, h);
+
+    if(argc > 1)
+    {
+      if(strncmp(argv[1], "mapid", 5) == 0 && argc > 2)
+      {
+        game->gLoad(argv[2]);
+      }
+#ifdef EDITOR
+      else if(strncmp(argv[1], "editor", 6) == 0)
+      {
+
+      }
+#endif
+    }
+
     game->loop();
     game->release();
+
+    return 0;
   }
 
 #ifdef ANDROID

@@ -1224,99 +1224,42 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
     }
     else if(mnode.typ == kgmGameMap::NodeCam)
     {
-      game->getRender()->camera().mPos = ((kgmCamera*)mnode.obj)->mPos;
-      game->getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
-      game->getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
+      getRender()->camera().mPos = ((kgmCamera*)mnode.obj)->mPos;
+      getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
+      getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
 
       mnode.obj->release();
 
-      game->getRender()->camera().update();
+      getRender()->camera().update();
     }
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
-      oquered++;
-      node = new kNode((kgmActor*)mnode.obj);
+      kgmActor *act = (kgmActor*)mnode.obj;
 
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
-      node->geo = new kArrow();
+      act->setPosition(mnode.pos);
+      act->setRotation(mnode.rot);
 
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
+      m_logic->add(act);
+      m_render->add(act->getVisual());
+      m_physics->add(act->getBody());
     }
     else if(mnode.typ == kgmGameMap::NodeSns)
     {
-      oquered++;
-      node = new kNode((kgmSensor*)mnode.obj);
+      kgmSensor *sns = (kgmSensor*)mnode.obj;
 
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
-      node->geo = new kArrow();
+      sns->setPosition(mnode.pos);
+      sns->setRotation(mnode.rot);
 
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
+      m_logic->add(sns);
     }
     else if(mnode.typ == kgmGameMap::NodeTrg)
     {
-      oquered++;
-      node = new kNode((kgmTrigger*)mnode.obj);
+      kgmTrigger *trg = (kgmTrigger*)mnode.obj;
 
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
+      trg->setPosition(mnode.pos);
+      trg->setRotation(mnode.rot);
 
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
-      node->geo = new kArrow();
-
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeObj)
-    {
-      oquered++;
-      node = new kNode((kgmGameObject*)mnode.obj);
-
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
-      node->geo = new kArrow();
-
-
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
+      m_logic->add(trg);
     }
 
     mnode = map.next();
