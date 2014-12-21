@@ -161,6 +161,14 @@ public:
 #endif
   }
 
+  void guiShow(bool s)
+  {
+    if(s)
+      gui->m_guiMain->show();
+    else
+      gui->m_guiMain->hide();
+  }
+
   void onIdle()
   {
     kgmGameBase::onIdle();
@@ -351,7 +359,12 @@ public:
   void gameLoop()
   {
     if(game)
+    {
+      if(game->gState() == kgmIGame::State_Play)
+        game->guiShow(false);
+
       game->loop();
+    }
   }
 
   void gameFree()
