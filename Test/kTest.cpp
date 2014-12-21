@@ -46,19 +46,21 @@ public:
     enemies = 1;
   }
 
-  bool add(kgmGameObject *gobj, bool input)
+  bool add(kgmActor *act, bool input)
   {
-    if(gobj->isType(kgmActor::Class) && ((kgmActor*)gobj)->m_gameplayer)
-      ((kgmActor*)gobj)->m_gameplayer = false;
+    if(!act)
+      return false;
 
-    return kgmGameLogic::add(gobj);
+    kgmGameLogic::add((kgmActor*)act);
+
+    if(act->m_gameplayer){}
   }
 
   void prepare()
   {
     enemies = 1;
     kgmList<kgmGameObject*> objs;
-    kgmGameLogic::prepare();
+    kgmGameLogic::build();
 
     enemies = objs.size();
     objs.clear();
@@ -108,11 +110,6 @@ public:
     kgmGameObject::goRegister("kInput",  kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kInput::New);
     kgmGameObject::goRegister("ACamera",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&ACamera::New);
 
-#ifdef EDITOR
-    gui->m_guiMain->hide();
-    m_gamemode = true;
-#endif
-
     setMsAbsolute(true);
 
     if(m_physics)
@@ -156,6 +153,14 @@ public:
   }
 
 public:
+  void edit()
+  {
+#ifdef EDITOR
+    gui->m_guiMain->hide();
+    m_state = State_Edit;
+#endif
+  }
+
   void onIdle()
   {
     kgmGameBase::onIdle();
@@ -237,11 +242,11 @@ public:
     if(res)
     {
       ACamera* camera = new ACamera(this);
-      m_logic->add((kgmGameObject*)camera);
+      m_logic->add((kgmActor*)camera);
       camera->release();
 
       kInput* input = new kInput(this);
-      m_logic->add((kgmGameObject*)input);
+      m_logic->add((kgmSensor*)input);
       input->release();
     }
 
@@ -352,6 +357,11 @@ public:
   void gameFree()
   {
     game->release();
+  }
+
+  void gameEdit()
+  {
+    game->edit();
   }
 
 #ifdef ANDROID

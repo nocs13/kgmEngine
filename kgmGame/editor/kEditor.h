@@ -99,7 +99,6 @@ public:
   __stdcall bool addMesh(kgmString);
   __stdcall bool addActor(kgmString);
   __stdcall bool addSensor(kgmString);
-  __stdcall bool addObject(kgmString);
 
   void initPhysics();
   void initLogic();

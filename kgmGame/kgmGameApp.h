@@ -92,6 +92,7 @@ public:
   virtual void gameInit() = 0;
   virtual void gameLoop() = 0;
   virtual void gameFree() = 0;
+  virtual void gameEdit() = 0;
 
   kgmIGame* game()
   {
@@ -111,12 +112,10 @@ public:
       {
         game()->gLoad(argv[2]);
       }
-#ifdef EDITOR
-      else if(strncmp(argv[1], "editor", 6) == 0)
+      else if(strncmp(argv[1], "edit", 4) == 0)
       {
-
+        gameEdit();
       }
-#endif
     }
 
     gameLoop();

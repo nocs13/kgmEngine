@@ -58,25 +58,25 @@ bool kgmGameLogic::add(kgmActor *a)
   return false;
 }
 
-bool kgmGameLogic::add(kgmSensor *a)
+bool kgmGameLogic::add(kgmSensor *sn)
 {
-  return false;
-}
-
-bool kgmGameLogic::add(kgmTrigger *a)
-{
-  return false;
-}
-
-bool kgmGameLogic::add(kgmGameObject *o)
-{
-  if(o)
+  if(sn)
   {
-    m_objects.push_back(o);
-    o->increment();
+    m_objects.push_back(sn);
+    sn->increment();
 
-//      m_inputs.add(o);
-//      o->increment();
+    return true;
+  }
+
+  return false;
+}
+
+bool kgmGameLogic::add(kgmTrigger *tr)
+{
+  if(tr)
+  {
+    m_objects.push_back(tr);
+    tr->increment();
 
     return true;
   }
@@ -107,7 +107,7 @@ bool kgmGameLogic::isValid(kgmGameObject *go)
   return false;
 }
 
-void kgmGameLogic::prepare()
+void kgmGameLogic::build()
 {
   for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {

@@ -153,7 +153,6 @@ kgmGameBase::kgmGameBase()
   m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
   m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
 
-  m_gamemode = true;
   m_state    = State_Idle;
 
   kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmResult::New);
@@ -490,9 +489,10 @@ int kgmGameBase::gLoad(kgmString s)
 
   m_state = State_Load;
 
-  loadXml(s);
+  //loadXml(s);
+  loadXml_I(s);
 
-  if(m_logic)   m_logic->prepare();
+  if(m_logic)   m_logic->build();
   if(m_render)  m_render->build();
   if(m_physics) m_physics->build();
 
@@ -583,7 +583,14 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
     m_physics->add(go->getBody());
 
   if(m_logic)
-    m_logic->add(go);
+  {
+    if(go-isType(kgmActor::Class))
+      m_logic->add((kgmActor*)go);
+    else if(go-isType(kgmSensor::Class))
+      m_logic->add((kgmSensor*)go);
+    else if(go-isType(kgmTrigger::Class))
+      m_logic->add((kgmTrigger*)go);
+  }
 
 #ifdef DEBUG
   if(m_render && go->getBody())

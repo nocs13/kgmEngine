@@ -82,10 +82,10 @@ protected:
 
   kgmSystem*         m_system;
 
-  u32		    m_width;
-  u32		    m_height;
-  u32		    m_bpp;
-  u32		    m_fullscreen;
+  u32	m_width;
+  u32	m_height;
+  u32	m_bpp;
+  u32	m_fullscreen;
 
   kgmFont*       m_font;
   kgmString      m_paths;
@@ -93,8 +93,6 @@ protected:
   char           m_keys[130];
   char           m_input[gbtn_end];
   char           m_keymap[150];
-
-  bool           m_gamemode;
 
 public:
   int            m_state;   //game state

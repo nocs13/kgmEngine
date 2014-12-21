@@ -24,13 +24,12 @@ public:
   virtual bool add(kgmActor*)                          = 0;
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
-  virtual bool add(kgmGameObject*)                     = 0;
 
   virtual bool addGameplayer(kgmActor*)                = 0;
   virtual bool delGameplayer(kgmActor*)                = 0;
 
   virtual void clear()                                 = 0;
-  virtual void prepare()                               = 0;
+  virtual void build()                                 = 0;
   virtual void update(u32)                             = 0;
   virtual void action(ACTION, kgmObject*, kgmString)   = 0;
   virtual void collide(kgmGameObject*, kgmGameObject*) = 0;

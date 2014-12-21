@@ -832,48 +832,6 @@ bool kEditor::addSensor(kgmString type)
   return false;
 }
 
-bool kEditor::addObject(kgmString t)
-{
-  kgmString type = t;
-
-  if(type.length() < 1)
-    return false;
-
-  if(kgmGameObject::g_typ_objects.hasKey(type))
-  {
-    kgmGameObject* (*fn_new)(kgmIGame*) = kgmGameObject::g_typ_objects[type];
-
-    if(fn_new)
-    {
-      kgmGameObject* go = (kgmGameObject*)fn_new(game);
-
-      if(go)
-      {
-        kNode* node = new kNode((kgmGameObject*)go);
-        node->bnd = box3(-1, -1, -1, 1, 1, 1);
-        node->nam = kgmString("Object_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
-        node->geo = new kArrow();
-
-        selected = node;
-
-        game->m_render->add(node->icn);
-        game->m_render->add(node->geo, mtlLines);
-
-        nodes.add(node);
-
-        game->getLogic()->add(go);
-        game->getRender()->add(go->getVisual());
-        game->getPhysics()->add(go->getBody());
-
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
 void kEditor::initPhysics()
 {
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -1451,7 +1409,7 @@ void kEditor::onRunRun()
 
   if(game->getLogic())
   {
-    game->getLogic()->prepare();
+    game->getLogic()->build();
   }
 
   game->m_state = kgmIGame::State_Play;

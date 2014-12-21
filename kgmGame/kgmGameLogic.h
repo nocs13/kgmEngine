@@ -28,14 +28,13 @@ public:
   bool add(kgmActor*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
-  bool add(kgmGameObject*);
   bool chooseLogic(kgmString);
   bool isValid(kgmGameObject*);
   bool addGameplayer(kgmActor*);
   bool delGameplayer(kgmActor*);
 
 
-  virtual void prepare();
+  virtual void build();
   virtual void input(int, int);
   virtual void update(u32 milliseconds);
   virtual void action(ACTION, kgmObject*, kgmString);
