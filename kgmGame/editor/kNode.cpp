@@ -130,13 +130,8 @@ void kNode::setShader(kgmString s)
 
     if(mtl)
     {
-      kgmShader* sh = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getShader(s.data());
-
-      if(sh != NULL)
-      {
-        mtl->setShader(sh);
-        shd = s;
-      }
+      mtl->setShader(kgmShader::toType(s));
+      shd = s;
     }
   }
   else if(typ == ACTOR)

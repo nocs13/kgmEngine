@@ -493,4 +493,6 @@ public:
   {
     m_bg_color = col;
   }
+
+  kgmShader* toShader(kgmShader::Shader shader);
 };

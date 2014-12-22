@@ -44,7 +44,7 @@ public:
     color     = vec4(.7, .7, .7, 1);
     specular  = vec4(.7, .7, .7, 1);
 
-    intensity = 10.0f;
+    intensity = 1.0f;
     angle = 0.0f;
 
     shadows = false;

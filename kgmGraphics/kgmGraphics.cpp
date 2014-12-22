@@ -122,7 +122,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   gui_style = new kgmGuiStyle();
 
-  g_def_material.setShader(rc->getShader("none.glsl"));//kgmMaterial::ShaderNone;
+  g_def_material.setShader(kgmShader::TypeNone);
   g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
@@ -544,6 +544,23 @@ void kgmGraphics::render()
     render((kgmMaterial*)null);
   }
 
+  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
+  {
+    kgmVisual* visual = (*i);
+
+    setWorldMatrix(visual->getTransform());
+
+    kgmMaterial* mtl = visual->getMaterial();
+
+    render(mtl);
+
+    render(shaders[kgmShader_TypeAmbient]);
+
+    render(visual);
+
+    render((kgmMaterial*)null);
+  }
+
   // draw meshes light by light and blend to framebuffer
 
   gc->gcBlend(true, gcblend_one, gcblend_one);
@@ -577,7 +594,7 @@ void kgmGraphics::render()
       if(m_has_shaders)
       {
         if(mtl->getShader() && mtl != &g_def_material)
-          render(mtl->getShader());
+          render(toShader(mtl->getShader()));
         else
           render(shaders[kgmShader_TypeLight]);
       }
@@ -588,6 +605,29 @@ void kgmGraphics::render()
     }
 
     g_light_active = null;
+  }
+
+  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
+  {
+    kgmVisual* visual = (*i);
+
+    setWorldMatrix(visual->getTransform());
+
+    kgmMaterial* mtl = visual->getMaterial();
+
+    render(mtl);
+
+    gc->gcSetTexture(0, g_tex_white);
+    tcolor = g_tex_white;
+
+    if(shaders.hasKey(mtl->getShader()))
+      render(shaders.value(mtl->getShader()));
+    else
+      render(shaders[kgmShader::TypeBase]);
+
+    render(visual);
+
+    render((kgmMaterial*)null);
   }
 
   gc->gcBlend(false, null, null);
@@ -647,7 +687,7 @@ void kgmGraphics::render()
 
       setWorldMatrix(vis->getTransform());
       render(mtl);
-      render(mtl->getShader());
+      render(toShader(mtl->getShader()));
       render(vis->getParticles());
       render((kgmShader*)null);
       render((kgmMaterial*)null);
@@ -672,7 +712,7 @@ void kgmGraphics::render()
     if(mesh->material)
     {
       render(mesh->material);
-      render(mesh->material->getShader());
+      render(toShader(mesh->material->getShader()));
     }
 
     render(mesh->mesh);
@@ -688,7 +728,7 @@ void kgmGraphics::render()
 
     setWorldMatrix(vis->getTransform());
     render(mtl);
-    render(mtl->getShader());
+    render(toShader(mtl->getShader()));
     render(vis->getParticles());
     render((kgmShader*)null);
     render((kgmMaterial*)null);
@@ -721,12 +761,14 @@ void kgmGraphics::render()
       else
       {
         kgmMaterial mtl;
+        gc->gcAlpha(true, gccmp_great, 0.5);
         mtl.setTexColor(icon->getIcon());
         render(&mtl);
         render(shaders[kgmShader_TypeIcon]);
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
+        gc->gcAlpha(false, gccmp_great, 0.0);
       }
     }
   }
@@ -911,20 +953,6 @@ void kgmGraphics::render(kgmVisual* visual)
   if(!visual)
     return;
 
-  setWorldMatrix(visual->getTransform());
-
-  kgmMaterial* mtl = visual->getMaterial();
-
-  render(mtl);
-
-  if(m_has_shaders)
-  {
-    if(mtl->getShader())
-      render(mtl->getShader());
-    else
-      render(shaders[kgmShader::TypeBase]);
-  }
-
   if(visual->m_tm_joints)
   {
     g_mtx_joints       = visual->m_tm_joints;
@@ -970,7 +998,7 @@ void kgmGraphics::render(kgmVisual* visual)
     break;
   }
 
-  visual->update();
+  //visual->update();
 
 #ifdef DEBUG
   /*
@@ -995,9 +1023,6 @@ void kgmGraphics::render(kgmVisual* visual)
   }
   //*/
 #endif
-
-  render((kgmShader*)null);
-  render((kgmMaterial*)null);
 }
 
 void kgmGraphics::render(kgmSprite* sprite)
@@ -1736,4 +1761,12 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col)
   m.identity();
   setViewMatrix(m);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+}
+
+kgmShader* kgmGraphics::toShader(kgmShader::Shader shader)
+{
+  if(shaders.hasKey(shader))
+    return shaders[shader];
+
+  return shaders[0];
 }

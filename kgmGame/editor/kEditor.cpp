@@ -56,7 +56,7 @@ kEditor::kEditor(kgmGameBase* g)
   mtlLines = new kgmMaterial();
 
   mtlPivot = new kgmMaterial();
-  mtlPivot->setShader(game->getResources()->getShader("none.glsl"));
+  mtlPivot->setShader(kgmShader::TypeNone);
   mtlPivot->m_depth = false;
 
   if(game->m_render)
@@ -388,7 +388,7 @@ bool kEditor::mapOpen(kgmString s)
       mtl = game->getResources()->getMaterial(mnode.mtl);
 
       if(mtl)
-        mtl->setShader(game->getResources()->getShader(mnode.shd));
+        mtl->setShader(kgmShader::toType(mnode.shd));
 
       game->m_render->add(node->msh, mtl);
       nodes.add(node);

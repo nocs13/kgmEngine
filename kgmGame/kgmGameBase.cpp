@@ -943,7 +943,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->m_shader = (kgmMaterial::Shader)m_render->getShaderId(value);
+          mtl->m_shader = (kgmShader::Shader)m_render->getShaderId(value);
         }
       }
       else if(id == "Material")
@@ -1188,7 +1188,7 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
       mtl = getResources()->getMaterial(mnode.mtl);
 
       if(mtl)
-        mtl->setShader(getResources()->getShader(mnode.shd));
+        mtl->setShader(kgmShader::toType(mnode.shd));
 
       mr.identity();
       mr.rotate(mnode.rot);

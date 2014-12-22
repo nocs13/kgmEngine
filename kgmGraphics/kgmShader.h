@@ -6,8 +6,10 @@
 
 class kgmIGC;
 
-class kgmShader: public kgmResource{
+class kgmShader: public kgmResource
+{
  KGM_OBJECT(kgmShader)
+
 public:
   enum Input
   {
@@ -31,25 +33,27 @@ public:
     MAP_SPECULAR   = 1 << 2,
   };
 
-  enum Type
+public:
+  enum Shader
   {
     TypeNone,
     TypeBase,
+    TypeSkin,
     TypePoor,
     TypeBlend,
     TypeWater,
     TypeRiver,
     TypeOcean,
-    TypeMirror,
     TypeGlass,
     TypeFlame,
+    TypeMirror,
+    TypeLights,
     TypeIce,
-    TypeSkin
+    TypeExtend = 0x1f
   };
 
 protected:
  kgmIGC*  m_gc;
- u8       m_type;
  u8       m_maps;
 
 public:
@@ -72,7 +76,8 @@ public:
  void set(const char*, int,    int count = 1);
  void attr(int, const char*);
 
+ static const char* toString(Shader);
+ static Shader toType(const char*);
+
  kgmIGC* gc() const { return m_gc; }
- void setType(u8 type) { m_type = type; }
- u8 getType() const { return m_type; }
 };

@@ -26,8 +26,6 @@ public:
     MF_Textures  = 1 << 6L,
   };
 
-  typedef kgmShader* Shader;
-
   class Color
   {
   public:
@@ -64,7 +62,8 @@ public:
   float  m_shininess, m_transparency;
 
 
-  Shader      m_shader;
+  kgmShader::Shader m_shader;
+
   u32         m_flags;            //render specisific flags enable/disable
 
   bool        m_alpha;
@@ -93,8 +92,8 @@ public:
   kgmTexture* getTexNormal();
   kgmTexture* getTexSpecular();
 
-  void setShader(Shader shader);
-  Shader getShader() const
+  void setShader(kgmShader::Shader shader);
+  kgmShader::Shader getShader() const
   {
     return m_shader;
   }
