@@ -139,3 +139,17 @@ void kNode::setShader(kgmString s)
 
   }
 }
+
+void kNode::setConvex(kgmString s)
+{
+  if(typ == OBSTACLE)
+  {
+    kgmMaterial* mtl = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getMaterial(mat.data());
+
+    if(mtl)
+    {
+      mtl->setShader(kgmShader::toType(s));
+      shd = s;
+    }
+  }
+}

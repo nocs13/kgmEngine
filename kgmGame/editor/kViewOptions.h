@@ -62,18 +62,18 @@ class kFileDialog;
 
 class kViewOptionsForMesh : public kViewOptions
 {
-
   kFileDialog* fd;
   kgmGuiText*  guiMtlText;
   kgmGuiText*  guiShdText;
+
 public:
   kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
 
-  void onSelectFailed();
-  void onSelectMaterial();
-  void onSelectedMaterial();
-  void onSelectShader();
-  void onSelectedShader();
+  __stdcall void onSelectFailed();
+  __stdcall void onSelectMaterial();
+  __stdcall void onSelectedMaterial();
+  __stdcall void onSelectShader();
+  __stdcall void onSelectedShader();
 };
 
 class kViewOptionsForLight : public kViewOptions
@@ -150,8 +150,14 @@ public:
 
 class kViewOptionsForObstacle : public kViewOptions
 {
+  kFileDialog* fd;
+  kgmGuiText*  guiCnvText;
+
 public:
   kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h);
+
+  __stdcall void onSelectConvex();
+  __stdcall void onSelectedConvex();
 };
 }
 

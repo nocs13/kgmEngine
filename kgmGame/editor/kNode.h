@@ -194,6 +194,7 @@ public:
   void setRotation(vec3 r);
   void setMaterial(kgmString m);
   void setShader(kgmString s);
+  void setConvex(kgmString s);
 };
 
 }
