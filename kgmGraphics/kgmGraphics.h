@@ -62,11 +62,50 @@ public:
   class Light: public Node
   {
   public:
-    kgmLight* light;
+    kgmLight *light;
+    kgmTexture *shadowmap;
+
+    ~Light()
+    {
+      if(light)
+        light->release();
+
+      if(shadowmap)
+        shadowmap->release();
+    }
 
     Light()
     {
       light = null;
+      shadowmap = null;
+    }
+
+    Light(kgmLight *l)
+    {
+      light = l;
+      shadowmap = null;
+
+      if(light)
+      {
+        light->increment();
+
+        if(light->shadows)
+        {
+          //shadowmap->m_type = kgmTexture::Type_RT_Depth;
+        }
+      }
+    }
+
+    Light(const Light& l)
+    {
+      light = l.light;
+      shadowmap = l.shadowmap;
+
+      if(light)
+        light->increment();
+
+      if(shadowmap)
+        shadowmap->increment();
     }
   };
 
@@ -237,11 +276,7 @@ public:
     if(!lgt)
       return;
 
-    Light light;
-
-    light.light = lgt;
-
-    lgt->increment();
+    Light light(lgt);
 
     m_lights.add(light);
   }

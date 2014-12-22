@@ -333,19 +333,19 @@ public:
   ~kApp(){
   }
 
-  /*int main(int argc, char **argv)
+  int main(int argc, char **argv)
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
     m_game = game = new kGame();
 
     game->setRect(0, 0, w, h);
-
+    game->guiShow(false);
     game->loop();
     game->release();
 
     return 0;
-  }*/
+  }
 
   void gameInit()
   {

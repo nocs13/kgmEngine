@@ -1,93 +1,64 @@
-uniform mat4 g_mView;
-uniform mat4 g_mProj;
-uniform mat4 g_mViewProj;
-uniform vec4 g_vAmbient;
-uniform vec4 g_vLight;
-uniform vec3 g_vEye;
-uniform vec3 g_vEyeLook;
+uniform mat4   g_mView;
+uniform mat4   g_mProj;
+uniform mat4   g_mTran;
+uniform vec4   g_vAmbient;
+uniform vec4   g_vLight;
+uniform vec3   g_vEye;
+uniform vec3   g_vEyeDir;
+uniform float  g_fTime;
+uniform float  g_fRandom;
 
-uniform vec3  posCamera;
-uniform vec3  posLight;
-uniform float rngLight;
+varying vec3   N;
+varying vec3   V;
+varying vec3   L;
+varying vec2   Texcoord;
+varying float  I;
 
-varying vec3 N;
-varying vec3 V;
-varying vec3 L;
-varying vec2 Texcoord;
-varying vec4 Position;
-
-varying float intensity;
-
-varying vec4  ambient;
-varying vec4  diffuse;
-varying vec4  c_color;
-
-
-const float shininess = 100.0;
+attribute vec3 g_Vertex;
+attribute vec3 g_Normal;
+attribute vec4 g_Color;
+attribute vec2 g_Texcoord;
 
 void main(void)
 {
-   posCamera = g_vEye;
-   posLight = vec3(g_vLight.x, g_vLight.y, g_vLight.z);
-   rngLight = g_vLight.w;
+   mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
+                     g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
+                     g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
+   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+   N = normalize(mRot * g_Normal);
+   I = g_vLight.w;
+   L = g_vLight.xyz;
 
-   vec4 v = g_mView * gl_Vertex;
-   vec3 n = vec3(g_mView * vec4(gl_Normal, 1));
-   vec3 l = posLight - Position.xyz;
-   vec3 c = posCamera - Position.xyz;
-
-   N = normalize(n);
-   L = normalize(l);
-   V = normalize(c);
-   intensity = dot(N, L) * shininess / length(l);
-   intensity = max(intensity, 0.1);
-
-   diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
-   ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;
-   ambient += gl_LightModel.ambient * gl_FrontMaterial.ambient;
-
-   Position = v;
-
-//   gl_Position = ftransform();
-//   gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;//g_mView * g_mProj;
-   gl_Position = g_mProj * g_mView * gl_Vertex;//g_mView * g_mProj;
-   Texcoord    = gl_MultiTexCoord0.xy;
+   gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
+   Texcoord      = g_Texcoord;
 }
 
 //Fragment Shader
 #ifdef GL_ES
-precision highp float;
+precision lowp float;
 #endif
 
-uniform sampler2D txBase;
-uniform vec3  posLight;
-uniform float rngLight;
+uniform sampler2D g_txColor;
+uniform sampler2D g_txNormal;
+uniform sampler2D g_txSpecular;
 
-varying vec2 Texcoord;
-varying vec4 Position;
-
-varying vec3 N;
-varying vec3 V;
-varying vec3 L;
-varying float intensity;
-
-varying vec4  ambient;
-varying vec4  diffuse;
-varying vec4  c_color;
-
-
+varying vec3   N;
+varying vec3   V;
+varying vec3   L;
+varying vec2   Texcoord;
+varying float  I;
 
 void main( void )
 {
- vec4 color  = texture2D(txBase, Texcoord);
- vec4 color1 = ambient;
- float alpha = color.a;
- 
- vec3  v_lp = posLight - Position.xyz;
- float rangle = rngLight;
-// intensity *= rangle / length(posLight - Position.xyz);
- color *= intensity;
- color.a = alpha;              
- //gl_FragColor = color;
- gl_FragColor = vec4(1, 0, 0, 1);
+
+ vec3 LN = normalize(L - V);
+
+ float distance = length(L - V);
+ float intensity = I * dot(N, LN) / (1.0 + distance);
+
+ vec4  col = vec4(intensity, intensity, intensity, 1.0);
+
+ col = clamp(col, 0.0, 0.8);
+
+ gl_FragColor = col;
 }

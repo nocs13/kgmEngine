@@ -30,8 +30,6 @@ public:
   bool  active;     //light switched on
   bool  shadows;    //cast shadows, need shadow map. not for point type.
 
-  kgmTexture shadowmap;  //light shadow map depth texture
-
   kgmString m_id;
   u32       m_group;     // object group id
 
@@ -52,7 +50,6 @@ public:
     shadows = false;
     active = true;
 
-    shadowmap.m_type = kgmTexture::Type_RT_Depth;
     m_group = 0;
   }
 
@@ -72,11 +69,9 @@ public:
     l->angle = angle;
     l->shadows = shadows;
     l->active = active;
-    l->shadowmap = shadowmap;
     l->m_group = m_group;
   }
 };
-
 
 typedef kgmList<kgmLight*> kgmLights;
 
