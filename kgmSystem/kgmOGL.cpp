@@ -106,7 +106,7 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd)
 #endif
 
 #ifdef LINUX
-  // if(glxSwapIntervalSGI) glxSwapIntervalSGI(0);
+  //if(glxSwapIntervalSGI) glxSwapIntervalSGI(0);
 #endif
 
   //init local values
