@@ -868,7 +868,8 @@ void kEditor::onIdle()
 
   if(kgmTime::getTicks() - ctick > cdel)
   {
-    game->getLogic()->update(cdel);
+    if(game->gState() != kgmIGame::State_Play)
+      game->getLogic()->update(cdel);
 
     ctick = kgmTime::getTicks();
   }
