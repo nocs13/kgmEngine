@@ -854,6 +854,26 @@ void kEditor::initLogic()
 
 }
 
+void kEditor::onIdle()
+{
+  kgmEvent::onIdle();
+
+  /*for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+
+  }*/
+
+  static u32 ctick = 0;
+  static u32 cdel = 250;
+
+  if(kgmTime::getTicks() - ctick > cdel)
+  {
+    game->getLogic()->update(cdel);
+
+    ctick = kgmTime::getTicks();
+  }
+}
+
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmEvent::onEvent(e);

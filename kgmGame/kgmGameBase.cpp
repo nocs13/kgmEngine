@@ -311,6 +311,11 @@ void kgmGameBase::onIdle()
   kgmObject::listObjects();
   //kgm_log() << "State is: " << (s32)m_state;
 #endif
+
+#ifdef EDITOR
+  if(editor)
+    editor->onIdle();
+#endif
 }
 
 void kgmGameBase::onPaint(kgmIGC* gc)

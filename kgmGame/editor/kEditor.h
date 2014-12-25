@@ -103,6 +103,7 @@ public:
   void initPhysics();
   void initLogic();
 
+  void onIdle();
   void onEvent(kgmEvent::Event*);
   void onAction(kgmEvent*,int);
   void onKeyUp(int k);
