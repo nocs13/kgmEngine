@@ -858,18 +858,20 @@ void kEditor::onIdle()
 {
   kgmEvent::onIdle();
 
-  /*for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-
-  }*/
-
   static u32 ctick = 0;
   static u32 cdel = 250;
 
   if(kgmTime::getTicks() - ctick > cdel)
   {
-    if(game->gState() != kgmIGame::State_Play)
-      game->getLogic()->update(cdel);
+    for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+    {
+      if((*i)->typ == kNode::TRIGGER || (*i)->typ == kNode::SENSOR || (*i)->typ == kNode::ACTOR)
+      {
+        kgmGameObject *o = (kgmGameObject*)(*i)->obj;
+
+        o->update(cdel);
+      }
+    }
 
     ctick = kgmTime::getTicks();
   }
