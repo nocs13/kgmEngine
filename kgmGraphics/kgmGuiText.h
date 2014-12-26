@@ -31,6 +31,7 @@ public:
   bool isReadOnly();
   bool isNumeric();
   u32  getCursor();
+  u32  getIndex();
 
   void setChangeEventCallback(ChangeEventCallback call)
   {

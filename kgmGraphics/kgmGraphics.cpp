@@ -1453,8 +1453,25 @@ void kgmGraphics::render(kgmGui* gui){
           gcDrawRect(rc, gui_style->stext.cr_color, null);
       }
 
+      kgmString c_text;
+      u32       c_len = rect.width() / (u32)(0.5 * gui_style->stext.ft_size);
+      u32       c_idx = gtext->getIndex() - gtext->getCursor();
+
+      if(c_idx + c_len > text.length())
+        c_len = text.length() - c_idx;
+
+      c_text.alloc(c_len);
+
+      for(u32 i = 0; i < c_len; i++)
+      {
+        if(c_idx + i >= text.length())
+          break;
+
+        c_text.data()[i] = text.data()[c_idx + i]; 
+      }
+
       gcDrawText(gui_style->gui_font, (u32)(0.5 * gui_style->stext.ft_size),
-                 gui_style->stext.ft_size, gui_style->stext.tx_color, rect, text);
+                 gui_style->stext.ft_size, gui_style->stext.tx_color, rect, c_text);
     }
   }
   else if(gui->isClass(kgmGuiMenu::Class))

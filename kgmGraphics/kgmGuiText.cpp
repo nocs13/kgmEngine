@@ -1,4 +1,5 @@
 #include "kgmGuiText.h"
+#include "../kgmBase/kgmLog.h"
 
 KGMOBJECT_IMPLEMENT(kgmGuiText, kgmGui)
 
@@ -57,7 +58,12 @@ bool kgmGuiText::isNumeric()
 
 u32 kgmGuiText::getCursor()
 {
-  return place; //index;
+  return place;
+}
+
+u32 kgmGuiText::getIndex()
+{
+  return index;
 }
 
 void kgmGuiText::moveLeft()
@@ -97,6 +103,8 @@ void kgmGuiText::delLeft()
   moveLeft();
 
   m_text = pt1 + pt2;
+
+  kgm_log() << "kgmGuiTex::delLeft index " << (s32)index << " place " << (s32)place << "\n"; 
 }
 
 void kgmGuiText::delRight()
@@ -117,6 +125,8 @@ void kgmGuiText::delRight()
     index--;
 
   m_text = pt1 + pt2;
+
+  kgm_log() << "kgmGuiTex::delRight index " << (s32)index << " place " << (s32)place << "\n"; 
 }
 
 void kgmGuiText::onMsLeftDown(int k, int x, int y)
@@ -208,13 +218,16 @@ void kgmGuiText::onKeyDown(int k)
     if(index < m_text.length())
       pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
-    index++;
+    moveRight();
 
 
     m_text = pt1 + pt3 + pt2;
 
     if(callback.hasObject() && callback.hasFunction())
       callback(getText());
+
+    kgm_log() << "kgmGuiTex::delLeft index " << (s32)index << " place " << (s32)place << "\n"; 
+
   }
     break;
   }
