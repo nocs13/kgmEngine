@@ -209,9 +209,6 @@ class kgmSmoke: public kgmParticlesObject
 {
   KGM_GO_OBJECT(kgmSmoke);
 
-protected:
-  kgmParticles* particles;
-  kgmMaterial*  material;
 public:
   kgmSmoke(kgmIGame* g,
            vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),

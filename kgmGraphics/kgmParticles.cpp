@@ -127,6 +127,9 @@ void kgmParticles::update(u32 t)
 {
   int i = 0;
 
+  if(m_particles == null)
+    return;
+
   for(i = m_count; i > 0; i--)
   {
     Particle* pr = &m_particles[i - 1];
