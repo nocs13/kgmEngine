@@ -27,16 +27,15 @@ public:
     LIGHT,
     ACTOR,
     SENSOR,
-    OBJECT,
     TRIGGER,
     OBSTACLE
   };
 
   union
   {
-    kgmMesh*        msh;
     kgmLight*       lgt;
     kgmActor*       act;
+    kgmVisual*      msh;
     kgmSensor*      sns;
     kgmTrigger*     trg;
     kgmObstacle*    obs;
@@ -59,7 +58,7 @@ public:
   bool col, lock;
 
   kgmGraphics::Icon* icn;
-  kgmMesh*           geo;
+  kgmVisual*         geo;
 
   kNode()
   {
@@ -74,7 +73,8 @@ public:
   kNode(kgmMesh* m)
   {
     typ = MESH;
-    msh = m;
+    msh = new kgmVisual();
+    msh->set(m);
     icn = null;
     geo = null;
     col = false;
@@ -138,18 +138,6 @@ public:
     icn = null;
     geo = null;
     col = true;
-    lock = false;
-
-    obj->increment();
-  }
-
-  kNode(kgmGameObject* o)
-  {
-    typ = OBJECT;
-    obj = o;
-    icn = null;
-    geo = null;
-    col = false;
     lock = false;
 
     obj->increment();

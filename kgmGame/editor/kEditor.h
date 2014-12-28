@@ -60,9 +60,9 @@ private:
   vec3 cam_pos_bk;
   vec3 cam_dir_bk;
 
-  kGridline* gridline;
-
-  kPivot*    pivot;
+  //kGridline* gridline;
+  //kPivot*    pivot;
+  kgmVisual *gridline, *pivot;
   vec3       pv_pos;
   vec3       pv_rot;
 

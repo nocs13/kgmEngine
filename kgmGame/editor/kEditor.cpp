@@ -92,26 +92,27 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->m_render->add(menu);
 
-    gridline = new kGridline();
-    game->m_render->add(gridline, mtlLines);
+    //gridline = new kgmVisual();
+    //gridline->set(mtlLines);
+    //gridline->set((kgmMesh*)(new kGridline()));
+    //game->m_render->add(gridline);
 
-    pivot = new kPivot();
-    pivot->setPos(vec3(0, 0, 0));
-    game->m_render->add(pivot, mtlPivot);
-    game->m_render->set(pivot, pivot->getTransform());
+    pivot = new kgmVisual();
+    mtx4 mtr;
+    mtr.identity();
+    pivot->set(mtlPivot);
+    pivot->set((kgmMesh*)(new kPivot()));
+    pivot->set(&mtr);
+    game->m_render->add(pivot);
+
+    kgmVisual *vis = new kgmVisual();
+    vis->set((kgmMesh*)&g_line);
+    vis->set(mtlPivot);
+    game->m_render->add(vis);
+    vis->release();
+
 
     game->m_render->setBgColor(0xffbbaa99);
-
-    logView = new kgmVisual();
-    logView->m_typerender = kgmVisual::RenderText;
-    kgmText* text = new kgmText();
-    logView->set(text);
-    text->release();
-    //logView->m_text->m_text = "mouse point: ";
-    logView->m_text->m_rect.y += 100;
-    game->m_render->add(logView);
-
-    game->m_render->add((kgmMesh*)&g_line, mtlPivot);
   }
 }
 
@@ -120,9 +121,6 @@ kEditor::~kEditor()
   gridline->release();
   pivot->release();
   menu->release();
-
-  logView->remove();
-  logView->release();
 
   mtlLines->release();
   mtlPivot->release();
@@ -155,8 +153,8 @@ void kEditor::select(kgmString name)
 
       if(pivot)
       {
-        pivot->setPos((*i)->pos);
-        game->m_render->set(pivot, pivot->getTransform());
+        ((kPivot*)pivot->getMesh())->setPos((*i)->pos);
+        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
       }
     }
   }
@@ -231,8 +229,12 @@ void kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
-      pivot->setPos(selected->pos);
-      game->m_render->set(pivot, pivot->getTransform());
+
+      if(pivot)
+      {
+        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+      }
 
       break;
     }
@@ -244,8 +246,12 @@ void kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
-      pivot->setPos(selected->pos);
-      game->m_render->set(pivot, pivot->getTransform());
+
+      if(pivot)
+      {
+        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+      }
 
       break;
     }
@@ -257,17 +263,21 @@ void kEditor::select(int x, int y)
     {
       selected = (*i);
       select((*i)->nam);
-      pivot->setPos(selected->pos);
-      game->m_render->set(pivot, pivot->getTransform());
+
+      if(pivot)
+      {
+        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+      }
 
       break;
     }
   }
 
-  if(pivot->peekAxis(ray) != kPivot::AXIS_NONE)
+  /*if(((kPivot*)pivot->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
   {
     int k = 0;
-  }
+  }*/
 }
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
@@ -347,12 +357,11 @@ bool kEditor::mapOpen(kgmString s)
 
   clear();
 
-  game->m_render->add(gridline, null);
-  game->m_render->add(pivot, mtlLines);
+  game->m_render->add(gridline);
+  game->m_render->add(pivot);
 
-  pivot->setPos(vec3(0, 0, 0));
-  game->m_render->set(pivot, pivot->getTransform());
-
+  ((kPivot*)pivot->getMesh())->setPos(vec3(0, 0, 0));
+  pivot->set(((kPivot*)pivot->getMesh())->getTransform());
 
   kNode* node = null;
 
@@ -390,7 +399,8 @@ bool kEditor::mapOpen(kgmString s)
       if(mtl)
         mtl->setShader(kgmShader::toType(mnode.shd));
 
-      game->m_render->add(node->msh, mtl);
+      node->msh->set(mtl);
+      game->m_render->add(node->msh);
       nodes.add(node);
 
       node->setPosition(mnode.pos);
@@ -408,11 +418,14 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-      node->geo = new kArrow();
+      node->geo = new kgmVisual();
+
+      node->geo->set((kgmMesh*)(new kArrow()));
+      node->geo->set(mtlLines);
 
       game->m_render->add(node->lgt);
       game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
+      game->m_render->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -440,10 +453,13 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
-      node->geo = new kArrow();
+      node->geo = new kgmVisual();
+
+      node->geo->set((kgmMesh*)(new kArrow()));
+      node->geo->set(mtlLines);
 
       game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
+      game->m_render->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -461,10 +477,13 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
-      node->geo = new kArrow();
+      node->geo = new kgmVisual();
+
+      node->geo->set((kgmMesh*)(new kArrow()));
+      node->geo->set(mtlLines);
 
       game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
+      game->m_render->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -483,32 +502,13 @@ bool kEditor::mapOpen(kgmString s)
       node->lock = mnode.lck;
 
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
-      node->geo = new kArrow();
+      node->geo = new kgmVisual();
+
+      node->geo->set((kgmMesh*)(new kArrow()));
+      node->geo->set(mtlLines);
 
       game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
-
-      nodes.add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeObj)
-    {
-      oquered++;
-      node = new kNode((kgmGameObject*)mnode.obj);
-
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("object_ico.tga"));
-      node->geo = new kArrow();
-
-
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo, mtlLines);
+      game->m_render->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -556,9 +556,6 @@ bool kEditor::mapSave(kgmString s)
     case kNode::SENSOR:
       sensors.add(*i);
       continue;
-    case kNode::OBJECT:
-      objects.add(*i);
-      continue;
     case kNode::TRIGGER:
       triggers.add(*i);
       continue;
@@ -599,7 +596,7 @@ bool kEditor::mapSave(kgmString s)
 
   for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
-    kgmMaterial* mtl = game->m_render->getMeshMaterial((*i)->msh);
+    kgmMaterial* mtl = (*i)->msh->getMaterial();
 
     kgmGameMap::Node node;
 
@@ -725,13 +722,13 @@ bool kEditor::addMesh(kgmString path)
 
   if(mesh)
   {
-    game->m_render->add(mesh, null);
     kNode* node = new kNode(mesh);
     node->bnd = mesh->bound();
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
     node->lnk = name;
     selected = node;
     nodes.add(node);
+    game->m_render->add(node->msh);
 
     return true;
   }
@@ -773,12 +770,14 @@ bool kEditor::addActor(kgmString type)
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
-    node->geo = new kArrow();
+    node->geo = new kgmVisual();
+    node->geo->set((kgmMesh*)(new kArrow()));
+    node->geo->set(mtlLines);
 
     selected = node;
 
     game->m_render->add(node->icn);
-    game->m_render->add(node->geo, mtlLines);
+    game->m_render->add(node->geo);
 
     nodes.add(node);
 
@@ -811,12 +810,13 @@ bool kEditor::addSensor(kgmString type)
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
-        node->geo = new kArrow();
+        node->geo->set((kgmMesh*)(new kArrow()));
+        node->geo->set(mtlLines);
 
         selected = node;
 
         game->m_render->add(node->icn);
-        game->m_render->add(node->geo, mtlLines);
+        game->m_render->add(node->geo);
 
         nodes.add(node);
 
@@ -904,7 +904,6 @@ void kEditor::onKeyUp(int k)
       switch ((*i)->typ)
       {
       case kNode::ACTOR:
-      case kNode::OBJECT:
       case kNode::SENSOR:
       case kNode::TRIGGER:
         (*i)->obj->resetToVariables();
@@ -958,13 +957,15 @@ void kEditor::onMsLeftDown(int k, int x, int y)
       mtx4 m;
       m.identity();
       m.translate(selected->pos);
-      game->m_render->set(pivot, m);
+
+      if(pivot)
+        pivot->set(m);
     }
   }
 
   select(x, y);
 
-  if(selected && pivot->axis != kPivot::AXIS_NONE)
+  if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE)
     game->setMsAbsolute(true);
 }
 
@@ -982,39 +983,39 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
-  if(selected && pivot->axis != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
+  if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
     kgmCamera cam = game->m_render->camera();
 
-    vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->pos);
+    vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh())->pos);
     vec3 pr, tm;
     line lax;
     plane pln;
     float prdist;
 
-    switch(pivot->axis)
+    switch(((kPivot*)pivot->getMesh())->axis)
     {
     case kPivot::AXIS_X:
-      tm = pivot->pos + vec3(1, 0, 0);
-      lax = line(pivot->pos, tm);
+      tm = ((kPivot*)pivot->getMesh())->pos + vec3(1, 0, 0);
+      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
       break;
     case kPivot::AXIS_Y:
-      tm = pivot->pos + vec3(0, 1, 0);
-      lax = line(pivot->pos, tm);
+      tm = ((kPivot*)pivot->getMesh())->pos + vec3(0, 1, 0);
+      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
       break;
     case kPivot::AXIS_Z:
-      tm = pivot->pos + vec3(0, 0, 1);
-      lax = line(pivot->pos, tm);
+      tm = ((kPivot*)pivot->getMesh())->pos + vec3(0, 0, 1);
+      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
       break;
     }
 
     pr = lax.projection(pt);
-    prdist = pivot->pos.distance(pr);
+    prdist = ((kPivot*)pivot->getMesh())->pos.distance(pr);
     prdist *= 2;
 
-    vec3 dir = pr - pivot->pos;
+    vec3 dir = pr - ((kPivot*)pivot->getMesh())->pos;
     dir.normalize();
 
     //selected->setPosition(selected->pos + dir * prdist);
@@ -1023,8 +1024,8 @@ void kEditor::onMsMove(int k, int x, int y)
     mtx4 m;
     m.identity();
     m.translate(selected->pos);
-    pivot->pos = selected->pos;
-    game->m_render->set(pivot, m);
+    ((kPivot*)pivot->getMesh())->setPos(selected->pos);
+    pivot->set(m);
 
     return;
   }
@@ -1102,7 +1103,7 @@ void kEditor::onMsMove(int k, int x, int y)
 
         if(selected->typ == kNode::MESH)
         {
-          game->m_render->set(selected->msh, m);
+          selected->msh->set(m);
         }
         else if(selected->typ == kNode::LIGHT)
         {
@@ -1204,33 +1205,30 @@ void kEditor::onEditClone()
   {
   case kNode::MESH:
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    game->m_render->add(node->msh, null);
+    game->m_render->add(node->msh);
 
     break;
   case kNode::LIGHT:
     node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-    node->geo = new kArrow();
+    node->geo = new kgmVisual();
+    node->geo->set((kgmMesh*)(new kArrow()));
+
     game->m_render->add(node->lgt);
 
     break;
   case kNode::SENSOR:
     node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
-    node->geo = new kArrow();
+    node->geo = new kgmVisual();
+    node->geo->set((kgmMesh*)(new kArrow()));
 
     break;
   case kNode::TRIGGER:
     node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
-    node->geo = new kArrow();
-
-    break;
-  case kNode::OBJECT:
-    node->nam = kgmString("Object_") + kgmConvert::toString((s32)(++oquered));
-
-    if(((kgmGameObject*)node->obj)->getVisual())
-      game->m_render->add(((kgmGameObject*)node->obj)->getVisual());
+    node->geo = new kgmVisual();
+    node->geo->set((kgmMesh*)(new kArrow()));
 
     break;
   case kNode::ACTOR:
@@ -1246,7 +1244,10 @@ void kEditor::onEditClone()
     game->m_render->add(node->icn);
 
   if(node->geo)
-    game->m_render->add(node->geo, mtlLines);
+  {
+    node->geo->set(mtlLines);
+    game->m_render->add(node->geo);
+  }
 
   node->setPosition(selected->pos + vec3(0.1, 0, 0));
   node->setRotation(selected->rot);
@@ -1301,9 +1302,6 @@ void kEditor::onEditOptions()
   case kNode::SENSOR:
     vop = new kViewOptionsForSensor(selected, 50, 50, 250, 300);
     break;
-  case kNode::OBJECT:
-    vop = new kViewOptionsForObject(selected, 50, 50, 250, 300);
-    break;
   case kNode::TRIGGER:
     vop = new kViewOptionsForTrigger(selected, 50, 50, 250, 300);
     break;
@@ -1339,16 +1337,18 @@ void kEditor::onAddLight()
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-  node->geo = new kArrow();
+  node->geo = new kgmVisual();
+  node->geo->set((kgmMesh*)(new kArrow()));
+  node->geo->set(mtlLines);
 
   selected = node;
   nodes.add(node);
 
   game->m_render->add(l);
   game->m_render->add(node->icn);
-  game->m_render->add(node->geo, mtlLines);
+  //game->m_render->add(node->geo);
 
-  l->release();
+  //l->release();
 }
 
 void kEditor::onAddActor()
@@ -1390,13 +1390,16 @@ void kEditor::onAddTrigger()
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
-  node->geo = new kArrow();
+  node->geo = new kgmVisual();
+  node->geo->set((kgmMesh*)(new kArrow()));
+  node->geo->set(mtlLines);
+
 
   selected = node;
   nodes.add(node);
 
   game->m_render->add(node->icn);
-  game->m_render->add(node->geo, mtlLines);
+  game->m_render->add(node->geo);
 
   game->getLogic()->add(tr);
 }
@@ -1409,13 +1412,15 @@ void kEditor::onAddObstacle()
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
   node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("obstacle_ico.tga"));
-  node->geo = new kArrow();
+  node->geo = new kgmVisual();
+  node->geo->set((kgmMesh*)(new kArrow()));
+  node->geo->set(mtlLines);
 
   selected = node;
   nodes.add(node);
 
   game->m_render->add(node->icn);
-  game->m_render->add(node->geo, mtlLines);
+  game->m_render->add(node->geo);
 }
 
 void kEditor::onRunRun()

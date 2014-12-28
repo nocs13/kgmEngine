@@ -39,7 +39,8 @@ void main( void )
 
  vec4  col = vec4(color.xyz * I, color.w);
 
- col = clamp(col, 0.01, 0.99);
+ //col.xyz = clamp(col.xyz, 0.02, 0.25);
+ col.xyz = col.xyz * 0.2;
 
  gl_FragColor = col;
 }

@@ -136,15 +136,15 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     //generic black texture
     memset(txd, 0x00, sizeof(txd));
-    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
+    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
 
     //generic white texture
     memset(txd, 0xff, sizeof(txd));
-    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
+    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
 
     //generic gray texture
     memset(txd, 0x80, sizeof(txd));
-    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, 0);
+    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
 
     g->gcGet(gcsup_shaders, &val);
 
@@ -218,17 +218,6 @@ kgmGraphics::~kgmGraphics()
 
 void kgmGraphics::clear()
 {
-  for(int i = 0; i < m_meshes.length(); i++)
-  {
-    Mesh* mesh = &m_meshes[i];
-
-
-    if(mesh->mesh) mesh->mesh->release();
-    if(mesh->material) mesh->material->release();
-  }
-
-  m_meshes.clear();
-
   for(int i = 0; i < m_materials.size(); i++)
     m_materials[i]->release();
 
@@ -351,7 +340,7 @@ void kgmGraphics::render()
 
   mtx4 mvw, mpr;
 
-  kgmList<kgmVisual*>   vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
+  kgmList<kgmVisual*> vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
 
   // parse visible visual objects
 
@@ -368,11 +357,11 @@ void kgmGraphics::render()
     {
       continue;
     }
-    else if((*i)->m_typerender == kgmVisual::RenderText)
+    else if((*i)->type() == kgmVisual::TypeText)
     {
       vis_text.add(*i);
     }
-    else if((*i)->m_typerender == kgmVisual::RenderSprite)
+    else if((*i)->type() == kgmVisual::TypeSprite)
     {
       vis_sprite.add(*i);
     }
@@ -386,16 +375,17 @@ void kgmGraphics::render()
 
       if(m_camera.isSphereCross(v, 0.5 * l.length()))
       {
-        if((*i)->m_typerender == kgmVisual::RenderParticles)
+        if((*i)->type() == kgmVisual::TypeParticles)
         {
           vis_particles.add(*i);
         }
-        else if((*i)->getMaterial())
+        else if((*i)->getMaterial() && (*i)->getMaterial()->m_blend)
         {
-          if((*i)->getMaterial()->m_blend)
-            vis_blend.add((*i));
-          else
-            vis_mesh.add((*i));
+            vis_blend.add(*i);
+        }
+        else
+        {
+          vis_mesh.add(*i);
         }
       }
       else
@@ -468,42 +458,6 @@ void kgmGraphics::render()
       break;
   }
 
-  //collect meshes in viewport
-
-  kgmList<Mesh*> vw_meshes, vw_meshes_depthless;
-
-  for(kgmList<Mesh>::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
-  {
-    Mesh* mesh = &(*i);
-
-    if(mesh->remove == true)
-    {
-      if(mesh->mesh)
-        mesh->mesh->release();
-
-      i = m_meshes.erase(i);
-
-      continue;
-    }
-    else if(mesh->mesh == null)
-    {
-      continue;
-    }
-
-    box3 bx = mesh->mesh->bound();
-
-    bx.min = mesh->mtx * bx.min;
-    bx.max = mesh->mtx * bx.max;
-
-    if(m_camera.isSphereCross(bx.center(), 0.5 * bx.dimension().length()))
-    {
-      if(mesh->material && mesh->material->m_depth == false)
-        vw_meshes_depthless.add(mesh);
-      else
-        vw_meshes.add(mesh);
-    }
-  }
-
   //I pass: draw scene by ambient
 
   lighting = true;
@@ -515,22 +469,20 @@ void kgmGraphics::render()
     setWorldMatrix(m);
   }
 
-  for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); ++i)
+  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
   {
-    Mesh*   mesh = *i;
-    box3    bbound = mesh->mesh->bound();
+    box3    bbound = (*i)->getBound();
     sphere3 sbound;
-    float   l_force = 0.0f;
 
-    bbound.min    = mesh->mtx * bbound.min;
-    bbound.max    = mesh->mtx * bbound.max;
+    bbound.min    = (*i)->getTransform() * bbound.min;
+    bbound.max    = (*i)->getTransform() * bbound.max;
     sbound.center = bbound.center();
     sbound.radius = 0.5f * bbound.dimension().length();
 
-    setWorldMatrix(mesh->mtx);
+    setWorldMatrix((*i)->getTransform());
 
-    if(mesh->material)
-      render(mesh->material);
+    if((*i)->getMaterial())
+      render((*i)->getMaterial());
     else
       render(&g_def_material);
 
@@ -539,24 +491,7 @@ void kgmGraphics::render()
       render(shaders[kgmShader_TypeAmbient]);
     }
 
-    render((kgmMesh*)mesh->mesh);
-
-    render((kgmMaterial*)null);
-  }
-
-  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
-  {
-    kgmVisual* visual = (*i);
-
-    setWorldMatrix(visual->getTransform());
-
-    kgmMaterial* mtl = visual->getMaterial();
-
-    render(mtl);
-
-    render(shaders[kgmShader_TypeAmbient]);
-
-    render(visual);
+    render(*i);
 
     render((kgmMaterial*)null);
   }
@@ -569,20 +504,19 @@ void kgmGraphics::render()
   {
     g_light_active = g_lights[i];
 
-    for(kgmList<Mesh*>::iterator i = vw_meshes.begin(); i != vw_meshes.end(); ++i)
+    for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
     {
-      Mesh*   mesh = *i;
-      kgmMaterial* mtl = (mesh->material)?(mesh->material):(&g_def_material);
+      kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(&g_def_material);
 
-      box3    bbound = mesh->mesh->bound();
+      box3    bbound = (*i)->getBound();
       sphere3 sbound;
 
-      bbound.min    = mesh->mtx * bbound.min;
-      bbound.max    = mesh->mtx * bbound.max;
+      bbound.min    = (*i)->getTransform() * bbound.min;
+      bbound.max    = (*i)->getTransform() * bbound.max;
       sbound.center = bbound.center();
       sbound.radius = 0.5f * bbound.dimension().length();
 
-      setWorldMatrix(mesh->mtx);
+      setWorldMatrix((*i)->getTransform());
 
       tcolor = g_tex_white;
       gc->gcSetTexture(0, tcolor);
@@ -593,13 +527,10 @@ void kgmGraphics::render()
 
       if(m_has_shaders)
       {
-        if(mtl->getShader() && mtl != &g_def_material)
-          render(toShader(mtl->getShader()));
-        else
-          render(shaders[kgmShader_TypeLight]);
+        render(shaders[kgmShader_TypeLight]);
       }
 
-      render((kgmMesh*)mesh->mesh);
+      render(*i);
 
       render((kgmMaterial*)null);
     }
@@ -607,51 +538,7 @@ void kgmGraphics::render()
     g_light_active = null;
   }
 
-  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
-  {
-    kgmVisual* visual = (*i);
-
-    setWorldMatrix(visual->getTransform());
-
-    kgmMaterial* mtl = visual->getMaterial();
-
-    render(mtl);
-
-    gc->gcSetTexture(0, g_tex_white);
-    tcolor = g_tex_white;
-
-    if(shaders.hasKey(mtl->getShader()))
-      render(shaders.value(mtl->getShader()));
-    else
-      render(shaders[kgmShader::TypeBase]);
-
-    render(visual);
-
-    render((kgmMaterial*)null);
-  }
-
   gc->gcBlend(false, null, null);
-
-  /*
-  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
-  {
-    kgmVisual* visual = (*i);
-    vec3       pos(0, 0, 0);
-    float      distance = 9999999999999999999999.0f;
-
-    g_lights_count = 0;
-
-    pos = visual->getTransform() * pos;
-
-    render(visual);
-  }
-
-  for(int i = vis_blend.size(); i > 0;  i--)
-  {
-    render(shaders[kgmShader::TypeBase]);
-    render(vis_blend[i - 1]);
-  }
-  */
 
   if(m_has_shaders)
   {
@@ -695,28 +582,6 @@ void kgmGraphics::render()
   }
 
   // depthless meshes
-
-  for(kgmList<Mesh*>::iterator i = vw_meshes_depthless.begin(); i != vw_meshes_depthless.end(); ++i)
-  {
-    Mesh*   mesh = *i;
-    box3    bbound = mesh->mesh->bound();
-    sphere3 sbound;
-
-    bbound.min    = mesh->mtx * bbound.min;
-    bbound.max    = mesh->mtx * bbound.max;
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
-
-    setWorldMatrix(mesh->mtx);
-
-    if(mesh->material)
-    {
-      render(mesh->material);
-      render(toShader(mesh->material->getShader()));
-    }
-
-    render(mesh->mesh);
-  }
 
   //depthless particles
 
@@ -959,14 +824,17 @@ void kgmGraphics::render(kgmVisual* visual)
     g_mtx_joints_count = visual->m_skeleton->m_joints.size();
   }
 
-  switch(visual->m_typerender)
+  switch(visual->type())
   {
-  case kgmVisual::RenderNone:
-  case kgmVisual::RenderMesh:
+  case kgmVisual::TypeNone:
+  case kgmVisual::TypeMesh:
   {
     kgmVisual::Mesh* msh = visual->getMesh();
 
     u32  pmt;
+
+    if(!msh)
+      return;
 
     switch(msh->getRenderType())
     {
@@ -988,7 +856,7 @@ void kgmGraphics::render(kgmVisual* visual)
     g_mtx_joints_count = 0;
   }
     break;
-  case kgmVisual::RenderText:
+  case kgmVisual::TypeText:
   {
     kgmText* text = visual->getText();
     kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,

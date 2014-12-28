@@ -743,6 +743,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   kgmActor*       act = 0;
   kgmGameObject*  gob = 0;
   kgmObject*      obj = 0;
+  kgmVisual*      vis = 0;
 
   u32             vts = 0,
       fcs = 0;
@@ -794,8 +795,11 @@ bool kgmGameBase::loadXml(kgmString& path)
       {
         type = TypeMesh;
         obj = msh = new kgmMesh();
-        m_render->add(msh, 0);
+        vis = new kgmVisual();
+        vis->set(msh);
+        m_render->add(vis);
         msh->release();
+        vis->release();
       }
       else if(id == "kgmActor")
       {
@@ -961,7 +965,9 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(xml.attribute("name", data))
           {
             m_render->get(data, &mtl);
-            m_render->set(msh, mtl);
+
+            if(vis && mtl)
+              vis->set(mtl);
           }
         }
       }
@@ -1058,9 +1064,14 @@ bool kgmGameBase::loadXml(kgmString& path)
 
             if(mesh)
             {
-              m_render->add(mesh, mtl, &mtx);
+              kgmVisual *vis = new kgmVisual();
+              vis->set(mesh);
+              vis->set(mtl);
+              vis->set(&mtx);
+              m_render->add(vis);
               mesh->release();
               mtl->release();
+              vis->release();
             }
 
             kgmList<triangle3> tr_list;
@@ -1201,7 +1212,12 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
       mv.translate(mnode.pos);
       mtr = mr * mv;
 
-      m_render->add(msh, mtl, &mtr);
+      kgmVisual *vis = new kgmVisual();
+      vis->set(msh);
+      vis->set(mtl);
+      vis->set(&mtr);
+      m_render->add(vis);
+      vis->release();
     }
     else if(mnode.typ == kgmGameMap::NodeLgt)
     {

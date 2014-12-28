@@ -18,13 +18,14 @@ class kgmVisual: public kgmObject
   KGM_OBJECT(kgmVisual);
 
 public:
-  enum TypeRender
+  enum Type
   {
-    RenderNone,
-    RenderMesh,
-    RenderText,
-    RenderSprite,
-    RenderParticles
+    TypeNone,
+    TypeMesh,
+    TypeText,
+    TypeSprite,
+    TypeBillboard,
+    TypeParticles
   };
 
   enum  TypeShadow
@@ -123,6 +124,7 @@ public:
     {
       return mesh->fff();
     }
+
     kgmMesh::RenderType getRenderType()
     {
       return mesh->m_rtype;
@@ -137,15 +139,12 @@ private:
   mtx4                   m_transform;
 
 public:
+  Type                   m_type;
   TypeShadow             m_typeshadow;
-  TypeRender             m_typerender;
 
-  kgmMaterial*           m_material;    //material maps
-  kgmParticles*          m_particles;   //particle effect
-  kgmSprite*             m_sprite;      //render sprite
-  kgmText*               m_text;        //render text
-  Mesh*                  m_mesh;        //render geometry
+  kgmMaterial*           m_material;
 
+  kgmObject*             m_visual;
 
   kgmSkeleton*           m_skeleton;
   kgmAnimation*          m_animation;
@@ -160,6 +159,7 @@ public:
   u32                    m_last_update;
 
   static  bool           AnimateVertices;
+
 public:
   kgmVisual()
   {
@@ -167,12 +167,14 @@ public:
     m_remove  = false;
     m_visible = true;
 
+    m_type       = TypeNone;
     m_typeshadow = ShadowNone;
-    m_typerender = RenderNone;
 
-    m_skeleton      = null;
-    m_animation     = null;
-    m_tm_joints     = null;
+    m_visual    = null;
+    m_material  = null;
+    m_skeleton  = null;
+    m_animation = null;
+    m_tm_joints = null;
 
     m_fstart    = m_fend = 0;
     m_floop     = false;
@@ -180,16 +182,19 @@ public:
     m_bound       = box3(vec3(-1, -1, -1), vec3(1, 1, 1));
     m_last_update = kgmTime::getTicks();
 
-    m_text = null;
-    m_mesh = null;
-    m_sprite = null;
-    m_material = null;
-    m_particles = null;
+    m_transform.identity();
   }
 
   virtual ~kgmVisual()
   {
-    int i = 0;
+    clear();
+  }
+
+  void clear()
+  {
+    m_type = TypeNone;
+
+    m_transform.identity();
 
     if(m_tm_joints)
       delete [] m_tm_joints;
@@ -197,17 +202,8 @@ public:
     if(m_material)
       m_material->release();
 
-    if(m_particles)
-      m_particles->release();
-
-    if(m_sprite)
-      m_sprite->release();
-
-    if(m_mesh)
-      m_mesh->release();
-
-    if(m_text)
-      m_text->release();
+    if(m_visual)
+      m_visual->release();
 
     if(m_skeleton)
       m_skeleton->release();
@@ -256,23 +252,21 @@ public:
     return m_visible;
   }
 
-  bool set(kgmMaterial* m)
+  u32 type()
   {
-    if(m == 0)
-      return false;
+    return m_type;
+  }
+
+  void set(kgmMaterial* m)
+  {
+    if(m == null)
+      return;
 
     if(m_material)
       m_material->release();
 
     m_material = m;
     m->increment();
-
-    return true;
-  }
-
-  mtx4& getTransform()
-  {
-    return m_transform;
   }
 
   kgmMaterial* getMaterial()
@@ -280,26 +274,39 @@ public:
     return m_material;
   }
 
+  void set(mtx4 *mtx)
+  {
+    if(!mtx)
+      return;
+
+    m_transform = *mtx;
+  }
+
+  void set(mtx4 mtx)
+  {
+    m_transform = mtx;
+  }
+
+  mtx4& getTransform()
+  {
+    return m_transform;
+  }
+
   void set(kgmParticles* par)
   {
     if(!par)
       return;
 
-    if(m_typerender == RenderNone || m_typerender == RenderParticles)
-    {
+    clear();
 
-      if(m_particles)
-        m_particles->release();
-
-      par->increment();
-      m_particles = par;
-      m_typerender = RenderParticles;
-    }
+    par->increment();
+    m_visual = par;
+    m_type = TypeParticles;
   }
 
   kgmParticles* getParticles()
   {
-    return m_particles;
+    return (kgmParticles*)m_visual;
   }
 
   void set(kgmText* text)
@@ -307,21 +314,16 @@ public:
     if(!text)
       return;
 
-    if(m_typerender == RenderNone || m_typerender == RenderText)
-    {
+    clear();
 
-      if(m_text)
-        m_text->release();
-
-      text->increment();
-      m_text = text;
-      m_typerender = RenderText;
-    }
+    text->increment();
+    m_visual = text;
+    m_type = TypeText;
   }
 
   kgmText* getText()
   {
-    return m_text;
+    return (kgmText*)m_visual;
   }
 
   void set(kgmSprite* sprite)
@@ -329,21 +331,16 @@ public:
     if(!sprite)
       return;
 
-    if(m_typerender == RenderNone || m_typerender == RenderSprite)
-    {
+    clear();
 
-      if(m_sprite)
-        m_sprite->release();
-
-      sprite->increment();
-      m_sprite = sprite;
-      m_typerender = RenderSprite;
-    }
+    sprite->increment();
+    m_visual = sprite;
+    m_type = TypeSprite;
   }
 
   kgmSprite* getSprite()
   {
-    return m_sprite;
+    return (kgmSprite*)m_visual;
   }
 
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
@@ -392,16 +389,16 @@ public:
     if(!msh)
       return false;
 
-    if(m_mesh)
-      m_mesh->release();
+    clear();
 
-    m_mesh = new Mesh(msh);
+    m_visual = new Mesh(msh);
+    m_type = TypeMesh;
     m_bound = msh->bound();
   }
 
   Mesh* getMesh()
   {
-    return m_mesh;
+    return (Mesh*)m_visual;
   }
 
   box3 getBound()
@@ -416,21 +413,20 @@ public:
     if(dtick < 50)
       return;
 
-    switch(m_typerender)
+    switch(m_type)
     {
-    case RenderMesh:
+    case TypeMesh:
       animate();
     break;
-    case RenderParticles:
-      if(m_particles)
+    case TypeParticles:
+      if(m_visual)
       {
-        m_particles->update(dtick);
+        getParticles()->update(dtick);
       }
       break;
-    case RenderSprite:
-      if(m_sprite)
+    case TypeSprite:
+      if(m_visual)
       {
-
       }
     }
 
@@ -442,6 +438,8 @@ private:
   {
     if(!m_valid)
       return;
+
+    Mesh* m_mesh = getMesh();
 
     if(!m_animation || !m_skeleton || !m_mesh || !m_mesh->skin)
       return;

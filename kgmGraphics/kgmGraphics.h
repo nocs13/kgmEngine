@@ -109,22 +109,6 @@ public:
     }
   };
 
-  class Mesh: public Node
-  {
-  public:
-    kgmMaterial* material;
-    kgmMesh*     mesh;
-    mtx4         mtx;
-
-    Mesh()
-    {
-      material = null;
-      mesh     = null;
-      mtx.identity();
-      remove  = false;
-    }
-  };
-
   class Visual: public Node
   {
   public:
@@ -185,7 +169,6 @@ private:
   iRect       m_viewport;
   kgmCamera   m_camera;
 
-  kgmList<Mesh>         m_meshes;
   kgmList<Light>        m_lights;
   kgmList<kgmMaterial*> m_materials;
   kgmList<kgmVisual*>   m_visuals;
@@ -281,7 +264,7 @@ public:
     m_lights.add(light);
   }
 
-  void add(kgmMesh* mesh, kgmMaterial* mtl, mtx4* mtx = null)
+  /*void add(kgmMesh* mesh, kgmMaterial* mtl, mtx4* mtx = null)
   {
     Mesh m;
 
@@ -300,7 +283,7 @@ public:
       m.mtx.identity();
 
     m_meshes.add(m);
-  }
+  }*/
 
   void add(kgmVisual* a)
   {
@@ -356,21 +339,6 @@ public:
     }
   }
 
-  void remove(kgmMesh* msh)
-  {
-    for(int i = 0; i < m_meshes.length(); i++)
-    {
-      Mesh* mesh = &m_meshes[i];
-
-      if(mesh->mesh == msh)
-      {
-        mesh->remove = true;
-
-        break;
-      }
-    }
-  }
-
   void remove(kgmLight* light)
   {
     for(int i = 0; i < m_lights.length(); i++)
@@ -415,68 +383,6 @@ public:
     }
 
     return false;
-  }
-
-  bool set(kgmMesh* msh, kgmMaterial* mtl)
-  {
-    if(!msh)
-      return false;
-
-    for(int i = 0; i < m_meshes.length(); i++)
-    {
-      Mesh* mesh = &m_meshes[i];
-
-      if(mesh->mesh == msh)
-      {
-        if(mesh->material)
-          mesh->material->release();
-
-        if(mtl)
-          mtl->increment();
-
-        mesh->material = mtl;
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  bool set(kgmMesh* msh, mtx4 m)
-  {
-    if(!msh)
-      return false;
-
-    for(int i = 0; i < m_meshes.length(); i++)
-    {
-      Mesh* mesh = &m_meshes[i];
-
-      if(mesh->mesh == msh)
-      {
-        mesh->mtx = m;
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  kgmMaterial* getMeshMaterial(kgmMesh* m)
-  {
-    if(!m)
-      return null;
-
-    for(int i = 0; i < m_meshes.length(); i++)
-    {
-      Mesh* mesh = &m_meshes[i];
-
-      if(mesh->mesh == m)
-        return mesh->material;
-    }
-
-    return null;
   }
 
   iRect viewport()

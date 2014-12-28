@@ -58,7 +58,9 @@ void main( void )
 
  vec4  col = vec4(intensity, intensity, intensity, 1.0);
 
- col = clamp(col, 0.0, 0.8);
+ col.xyz = clamp(col.xyz, 0.0, 1.0);
 
+ //gl_FragColor = texture2D(g_txColor, Texcoord);
+ //gl_FragColor = vec4(1, 0, 0, 1);
  gl_FragColor = col;
 }

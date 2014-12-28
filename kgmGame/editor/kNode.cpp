@@ -33,7 +33,7 @@ void kNode::setPosition(vec3 v)
     icn->setPosition(v);
 
   if(geo)
-    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(geo, mtrn);
+    geo->set(mtrn);
 
   switch(typ)
   {
@@ -43,9 +43,8 @@ void kNode::setPosition(vec3 v)
     lgt->direction = getMatrix() * lgt->direction;
     break;
   case MESH:
-    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
+    msh->set(mtrn);
     break;
-  case OBJECT:
   case ACTOR:
   case SENSOR:
   case TRIGGER:
@@ -76,7 +75,7 @@ void kNode::setRotation(vec3 r)
   mtrn = mrot * mpos;
 
   if(geo)
-    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(geo, mtrn);
+    geo->set(mtrn);
 
   switch(typ)
   {
@@ -85,11 +84,8 @@ void kNode::setRotation(vec3 r)
     lgt->direction = getMatrix() * lgt->direction;
     break;
   case MESH:
-  {
-    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
-  }
+    msh->set(mtrn);
     break;
-  case OBJECT:
   case ACTOR:
   case SENSOR:
   case TRIGGER:
@@ -112,9 +108,11 @@ void kNode::setMaterial(kgmString m)
   {
     kgmMaterial* mtl = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getMaterial(m.data());
 
-    ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtl);
-
-    mat = m;
+    if(msh && mtl)
+    {
+      msh->set(mtl);
+      mat = m;
+    }
   }
   else if(typ == ACTOR)
   {
@@ -144,12 +142,5 @@ void kNode::setConvex(kgmString s)
 {
   if(typ == OBSTACLE)
   {
-    kgmMaterial* mtl = ((kgmGameBase*)kgmGameApp::gameApplication()->game())->getResources()->getMaterial(mat.data());
-
-    if(mtl)
-    {
-      mtl->setShader(kgmShader::toType(s));
-      shd = s;
-    }
   }
 }
