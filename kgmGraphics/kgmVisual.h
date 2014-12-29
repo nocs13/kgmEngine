@@ -185,6 +185,55 @@ public:
     m_transform.identity();
   }
 
+  kgmVisual(const kgmVisual &v)
+  {
+    m_valid   = v.m_valid;
+    m_remove  = v.m_remove;
+    m_visible = v.m_visible;
+
+    m_type       = v.m_type;
+    m_typeshadow = v.m_typeshadow;
+
+    m_visual    = null;
+    m_material  = v.m_material;
+    m_skeleton  = v.m_skeleton;
+    m_animation = v.m_animation;
+    m_tm_joints = null;
+
+    if(m_material)
+      m_material->increment();
+
+    if(m_animation)
+      m_animation->increment();
+
+    if(m_skeleton)
+    {
+      m_skeleton->increment();
+      m_tm_joints = new mtx4[m_skeleton->m_joints.size()];
+    }
+
+    if(v.m_visual)
+    {
+      if(m_type == TypeMesh)
+      {
+        m_visual = new Mesh(((Mesh*)v.m_visual)->mesh);
+      }
+      else
+      {
+        m_visual = v.m_visual;
+        m_visual->increment();
+      }
+    }
+
+    m_fstart = v.m_fstart;
+    m_fend   = v.m_fend;
+    m_floop  = v.m_floop;
+
+    m_bound       = v.m_bound;
+    m_last_update = kgmTime::getTicks();
+    m_transform   = v.m_transform;
+  }
+
   virtual ~kgmVisual()
   {
     clear();
@@ -404,6 +453,11 @@ public:
   box3 getBound()
   {
     return m_bound;
+  }
+
+  virtual kgmObject* clone()
+  {
+    return new kgmVisual(*this);
   }
 
   void update()
