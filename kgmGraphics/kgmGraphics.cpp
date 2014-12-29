@@ -471,6 +471,8 @@ void kgmGraphics::render()
 
   for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
   {
+    kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(&g_def_material);
+    
     box3    bbound = (*i)->getBound();
     sphere3 sbound;
 
@@ -481,10 +483,12 @@ void kgmGraphics::render()
 
     setWorldMatrix((*i)->getTransform());
 
-    if((*i)->getMaterial())
-      render((*i)->getMaterial());
-    else
-      render(&g_def_material);
+    tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
+    gc->gcSetTexture(0, tcolor);
+    tnormal = null;
+    gc->gcSetTexture(1, tnormal);
+    tspecular = null;
+    gc->gcSetTexture(2, tspecular);
 
     if(m_has_shaders)
     {

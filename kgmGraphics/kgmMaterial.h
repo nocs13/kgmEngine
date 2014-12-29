@@ -9,7 +9,8 @@ class kgmShader;
 
 #define KGM_TEXTURES_PER_MATERIAL 8
 
-class kgmMaterial: public kgmResource{
+class kgmMaterial: public kgmResource
+{
   KGM_OBJECT(kgmMaterial);
 protected:
   kgmIGC*  m_gc;
@@ -70,10 +71,12 @@ public:
   bool        m_2side;
   bool        m_blend;
   bool        m_depth;
+  bool        m_light;
 
   u32         m_srcblend, m_dstblend;
 
   kgmString   m_type;
+
 public:
   kgmMaterial();
   virtual ~kgmMaterial();
@@ -96,6 +99,16 @@ public:
   kgmShader::Shader getShader() const
   {
     return m_shader;
+  }
+
+  void light(bool l = true)
+  {
+    m_light = l;
+  }
+  
+  bool light() const
+  {
+    return m_light;
   }
 };
 

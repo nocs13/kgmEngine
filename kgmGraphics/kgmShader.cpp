@@ -9,9 +9,9 @@ kgmShader::kgmShader(kgmIGC* g)
   m_gc     = g;
   m_shader = 0;
 
-  m_maps  = MAP_COLOR | MAP_NORMAL | MAP_SPECULAR;
-  m_input = IN_MTX4_PROJ | IN_MTX4_VIEW | IN_MTX4_TRAN | IN_VEC3_EYEPOS | IN_VEC3_EYEDIR
-                | IN_VEC4_LIGHT | IN_VEC1_TIME | IN_VEC1_RANDOM;
+  m_input = IN_MTX4_PROJ | IN_MTX4_VIEW | IN_MTX4_TRAN | IN_VEC3_EYEPOS | IN_VEC3_EYEDIR | 
+            IN_VEC4_LIGHT | IN_VEC1_TIME | IN_VEC1_RANDOM | 
+            IN_MAP_COLOR | IN_MAP_NORMAL | IN_MAP_SPECULAR;
 }
 
 kgmShader::~kgmShader()
