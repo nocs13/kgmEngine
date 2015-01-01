@@ -1,4 +1,6 @@
 #include "kgmGameObject.h"
+#include "kgmIGame.h"
+
 KGMOBJECT_IMPLEMENT(kgmGameObject, kgmObject);
 
 kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> kgmGameObject::g_typ_objects;

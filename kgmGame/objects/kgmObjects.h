@@ -66,9 +66,6 @@ class kgmParticlesObject: public kgmActor
 {
   KGM_GO_OBJECT(kgmParticlesObject);
 
-private:
-  kgmIGame* game;
-
 protected:
   kgmParticles* particles;
   kgmMaterial*  material;
@@ -86,10 +83,9 @@ public:
                u32 count = 1,
                kgmString tid = "",
                bool loop = false)
+  :kgmActor(g)
   {
     timeout(life);
-
-    game = g;
 
     particles = new kgmParticles();
     m_visual  = new kgmVisual();
@@ -138,8 +134,8 @@ public:
   }
 
   kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
+  :kgmActor(g)
   {
-    game = g;
     material = mtl;
     particles = pts;
 
@@ -160,7 +156,7 @@ public:
 
   void setTexture(kgmString tid)
   {
-    material->setTexColor(game->getResources()->getTexture(tid));
+    material->setTexColor(game()->getResources()->getTexture(tid));
   }
 
   void setSlideFrames(u32 rows, u32 cols)
@@ -174,10 +170,15 @@ public:
     particles->build();
   }
 
+  void update(u32 ms)
+  {
+    particles->update(ms);
+  }
+
 #ifdef EDITOR
   void eupdate()
   {
-    material->setTexColor(game->getResources()->getTexture(idTex));
+    material->setTexColor(game()->getResources()->getTexture(idTex));
     particles->build();
   }
 #endif
@@ -190,10 +191,10 @@ class kgmFlame: public kgmParticlesObject
 public:
   kgmFlame(kgmIGame* g,
                vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
-               float speed = 0.0f, float div_speed = 0.0,
-               float life = 1000,  float div_life = 0.5f,
+               float speed = 0.5f, float div_speed = 0.3f,
+               float life = 2000,  float div_life = 0.5f,
                float size_start = .1f, float size_end = 1.0f,
-               u32 count = 1,
+               u32 count = 10,
                kgmString tid = "flame_a.tga",
                bool loop = true)
     :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life, size_start, size_end, count, tid, loop)
@@ -212,7 +213,7 @@ class kgmSmoke: public kgmParticlesObject
 public:
   kgmSmoke(kgmIGame* g,
            vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
-           float speed = 0.01f, float div_speed = 0.5,
+           float speed = 0.1f, float div_speed = 0.5,
            float life = 5000,  float div_life = 0.5f,
            float size_start = .1f, float size_end = 1.0f,
            u32 count = 10,

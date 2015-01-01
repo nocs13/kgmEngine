@@ -86,17 +86,17 @@ public:
   virtual kgmBody*     getBody(){   return m_body;   }
   virtual kgmVisual*   getVisual(){ return m_visual; }
 
-  kgmIGame* game()  { return m_game;     }
+  kgmIGame* game() const { return m_game;     }
 
-  bool valid()      { return m_valid;    }
-  bool culled()     { return m_culled;   }
-  bool visible()    { return m_visible;  }
-  bool removed()    { return m_remove;   }
+  bool valid()   const { return m_valid;    }
+  bool culled()  const { return m_culled;   }
+  bool visible() const { return m_visible;  }
+  bool removed() const { return m_remove;   }
 
-  void enable()     { m_valid  = true;   }
-  void disable()    { m_valid  = false;  }
-  void show()       { m_visible = true;  }
-  void hide()       { m_visible = false; }
+  void enable()  { m_valid  = true;   }
+  void disable() { m_valid  = false;  }
+  void show()    { m_visible = true;  }
+  void hide()    { m_visible = false; }
 
   void remove();
 

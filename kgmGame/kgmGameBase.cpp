@@ -292,6 +292,13 @@ void kgmGameBase::onIdle()
     if(m_physics)
       m_physics->update(1000 / fps);
   }
+#ifdef EDITOR
+  else if(m_state == State_Edit)
+  {
+    if(m_logic)
+      m_logic->update(1000 / fps);
+  }
+#endif
 
   if(m_render)
     m_render->render();

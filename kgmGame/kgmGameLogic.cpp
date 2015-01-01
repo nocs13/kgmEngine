@@ -52,6 +52,8 @@ bool kgmGameLogic::add(kgmActor *a)
     m_objects.push_back(a);
     a->increment();
 
+    a->init();
+
     return true;
   }
 
@@ -118,12 +120,17 @@ void kgmGameLogic::build()
 
 void kgmGameLogic::update(u32 milliseconds)
 {
-  if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
+  if(kgmIGame::getGame()->gState() != kgmIGame::State_Play
+#ifdef EDITOR
+  || kgmIGame::getGame()->gState() != kgmIGame::State_Edit
+#endif
+  )
     return;
 
   kgmList<kgmGameObject*>::iterator i = m_objects.begin();
 
   gcount = 0;
+
   while(i != m_objects.end())
   {
     kgmGameObject* go = (*i);
@@ -147,15 +154,20 @@ void kgmGameLogic::update(u32 milliseconds)
     }
     else if(go->valid())
     {
-      go->update(milliseconds);
-      ++i;
-    }
+      if(go->isType(kgmActor::Class))
+      {
+        kgmActor* a = (kgmActor*)go;
 
-    if(go->isType(kgmActor::Class))
-    {
-      kgmActor* a = (kgmActor*)go;
-      if(a->m_gameplayer)
-        gcount++;
+        if(a->m_gameplayer)
+          gcount++;
+
+#ifdef EDITOR
+        if(a->getState() == "idle")
+#endif
+        a->update(milliseconds);
+      }
+
+      ++i;
     }
   }
 

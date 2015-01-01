@@ -768,6 +768,10 @@ bool kEditor::addActor(kgmString type)
   if(ac)
   {
     kNode* node = new kNode(ac);
+
+    //For evade remove actor from scene.
+    ac->timeout(-1);
+
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
