@@ -52,7 +52,6 @@ private:
   kgmGameBase* game;
 
   bool ms_click[3];
-  bool ctrl_left;
 
   vec3 cam_pos;
   f32  cam_rot;
@@ -82,6 +81,8 @@ private:
   kgmMaterial *mtlLines, *mtlPivot;
 
   kgmVisual*     logView;
+
+  bool  move_camera;
 
 public:
   explicit kEditor(  kgmGameBase* game);
