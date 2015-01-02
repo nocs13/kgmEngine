@@ -15,6 +15,7 @@
 #include "kgmGuiProgress.h"
 #include "kgmGuiStyle.h"
 #include "kgmIGuiDraw.h"
+#include "kgmIGraphics.h"
 
 #include "kgmMesh.h"
 #include "kgmText.h"
@@ -28,7 +29,7 @@
 #include "../kgmPhysics/kgmBody.h"
 #endif
 
-class kgmGraphics: public kgmObject
+class kgmGraphics: public kgmObject, public kgmIGraphics
 {
   KGM_OBJECT(kgmGraphics);
 public:
@@ -41,8 +42,8 @@ public:
     GraphicsQualitySuper
   };
 
-  static GraphicsQuality   textureQuality;
-  static GraphicsQuality   shadowQuality;
+  static GraphicsQuality textureQuality;
+  static GraphicsQuality shadowQuality;
 
   class Node
   {

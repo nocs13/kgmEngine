@@ -119,6 +119,7 @@ class kgmIVideo;
 class kgmILogic;
 class kgmISpawner;
 class kgmIPhysics;
+class kgmIGraphics;
 class kgmIResources;
 
 class kgmSystem;
@@ -144,7 +145,7 @@ public:
 public:
   //virtuals
   virtual int            gLoad(kgmString) = 0;            //load game map
-  virtual int            gUnload() = 0;                   //load game map
+  virtual int            gUnload() = 0;                   //unload game map
   virtual int            gCommand(kgmString) = 0;         //do command
   virtual int            gQuit() = 0;                     //close game
   virtual u32            gState() = 0;                    //check game active  state
@@ -155,7 +156,6 @@ public:
 
   virtual void           guiAdd(kgmGui* g) = 0;
 
-  //usefull interfaces
   virtual kgmIGC*         getGC() = 0;
   virtual kgmIPhysics*    getPhysics() = 0;
   virtual kgmISpawner*    getSpawner() = 0;
@@ -168,7 +168,6 @@ public:
   virtual kgmEnvironment* getEnvironment() = 0;
 
 protected:
-  //init interfaces
   virtual void  initResources() = 0;
   virtual void  initGraphycs() = 0;
   virtual void  initPhysics() = 0;
@@ -177,7 +176,6 @@ protected:
   virtual void  initLogic() = 0;
 
 public:
-  //statics for help
-  static kgmIGame*       getGame();
+  static kgmIGame* getGame();
 };
 
