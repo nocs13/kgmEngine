@@ -11,6 +11,8 @@
 #include "../kgmGraphics/kgmGraphics.h"
 #include "../kgmGraphics/kgmParticles.h"
 
+#include "kgmActor.h"
+
 static char str_buf[1024];
 
 kgmGameTools::kgmGameTools()
@@ -1550,4 +1552,328 @@ kgmMaterial* kgmGameTools::parseMaterial(kgmXml::Node& node)
 kgmSkeleton* kgmGameTools::parseSkeleton(kgmXml::Node& node)
 {
 
+}
+
+bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
+{
+  if(!game || !actor || !xml.m_node)
+    return false;
+
+  kgmXml::Node* a_node = null;
+
+  for(int i = 0; i < xml.m_node->nodes(); i++)
+  {
+    kgmString id;
+    xml.m_node->node(i)->id(id);
+
+    if(id == "kgmActor")
+    {
+      a_node = xml.m_node->node(i);
+
+      break;
+    }
+  }
+
+  if(!a_node)
+    return false;
+
+  for(int i = 0; i < a_node->nodes(); ++i){
+    kgmString id, val;
+
+    if(a_node->node(i))
+      a_node->node(i)->id(id);
+    else
+      break;
+
+    if(id == "Mass")
+    {
+      a_node->node(i)->attribute("value", val);
+      sscanf(val.data(), "%f", &actor->getBody()->m_mass);
+    }
+    else if(id == "Bound")
+    {
+      float a[3];
+      a_node->node(i)->attribute("value", val);
+      sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
+      actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      actor->getBody()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+    }
+    else if(id == "Collision")
+    {
+      a_node->node(i)->attribute("value", val);
+
+      if(val == "convex")
+      {
+        kgmMemory<u8> mem;
+        kgmString     dfile;
+
+        a_node->node(i)->attribute("data", dfile);
+
+        if(game->getResources()->getFile(dfile, mem))
+        {
+          kgmXml xml(mem);
+
+          if(xml.m_node)
+          {
+            for(int i = 0; i < xml.m_node->nodes(); i++)
+            {
+              kgmXml::Node* node = xml.m_node->node(i);
+
+              if(node->m_name == "kgmCollision")
+              {
+                node->attribute("polygons", val);
+
+                for(int j = 0; j < xml.m_node->node(i)->nodes(); j++)
+                {
+                  kgmXml::Node* node = xml.m_node->node(i)->node(j);
+
+                  if(node->m_name == "Polygon")
+                  {
+                    kgmString scount;
+                    u32       count;
+
+                    node->attribute("vertices", scount);
+                    count = kgmConvert::toInteger(scount);
+
+                    vec3*     pol = new vec3[count];
+                    vec3      v;
+                    int       n = 0;
+                    char*     pdata = node->m_data.data();
+
+                    for(int k = 0; k < count; k++)
+                    {
+                      sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
+                      (pdata) += (u32)n;
+                      pol[k] = v;
+                    }
+
+                    for(int k = 2; k < count; k++)
+                    {
+                      vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
+
+                      actor->getBody()->addShapeSide(v);
+                    }
+
+                    delete [] pol;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if(actor->getBody()->m_convex.size() > 0)
+          actor->getBody()->m_shape == kgmBody::ShapePolyhedron;
+      }
+    }
+    else if(id == "Gravity")
+    {
+      a_node->node(i)->attribute("value", val);
+
+      if(val == "true")
+        actor->getBody()->m_gravity = true;
+      else
+        actor->getBody()->m_gravity = false;
+    }
+    else if(id == "Dummies")
+    {
+      kgmMemory<u8> mem;
+      a_node->node(i)->attribute("value", val);
+
+      if((val.length() > 0) && game->getResources()->getFile(val, mem))
+      {
+        kgmXml xml(mem);
+
+        if(xml.m_node)
+        {
+          for(int i = 0; i < xml.m_node->nodes(); i++)
+          {
+            kgmXml::Node* node = xml.m_node->node(i);
+
+            if(!node)
+              break;
+
+            if(node->m_name == "kgmDummy")
+            {
+              kgmDummy* dummy = new kgmDummy();
+
+              actor->add(dummy);
+              dummy->release();
+              node->attribute("name", dummy->m_id);
+
+              for(int j = 0; j < node->nodes(); j++)
+              {
+                kgmXml::Node* jnode = node->node(j);
+
+                if(!jnode)
+                  break;
+
+                if(jnode->m_name == "Position")
+                {
+                  kgmString spos;
+                  vec3      v;
+
+                  jnode->attribute("value", spos);
+                  sscanf(spos, "%f %f %f", &v.x, &v.y, &v.z);
+                  dummy->setShift(v);
+                }
+                else if(jnode->m_name == "Rotation")
+                {
+                  kgmString srot;
+                  vec3      r;
+
+                  jnode->attribute("value", srot);
+                  sscanf(srot, "%f %f %f", &r.x, &r.y, &r.z);
+                  dummy->setOrient(r);
+                }
+              }
+            }
+          }
+
+          xml.close();
+        }
+
+        mem.clear();
+      }
+    }
+    else if(id == "Visual")
+    {
+      kgmMesh*      msh = 0;
+      kgmMaterial*  mtl = 0;
+      kgmSkeleton*  skl = 0;
+      kgmAnimation* anm = 0;
+
+      for(int j = 0; j < a_node->node(i)->nodes(); j++)
+      {
+        if(a_node->node(i)->node(j))
+          a_node->node(i)->node(j)->id(id);
+        else
+          break;
+
+        if(id == "Material"){
+          a_node->node(i)->node(j)->attribute("value", val);
+          mtl = game->getResources()->getMaterial(val);
+        }else if(id == "Mesh"){
+          a_node->node(i)->node(j)->attribute("value", val);
+          msh = game->getResources()->getMesh(val);
+        }else if(id == "Animation"){
+          a_node->node(i)->node(j)->attribute("value", val);
+          anm = game->getResources()->getAnimation(val);
+        }else if(id == "Skeleton"){
+          a_node->node(i)->node(j)->attribute("value", val);
+          skl = game->getResources()->getSkeleton(val);
+        }else if(id == "Dummy"){
+          a_node->node(i)->node(j)->attribute("value", val);
+        }
+      }
+
+      if(msh)
+      {
+        actor->getVisual()->set(msh);
+        actor->getVisual()->set(mtl);
+        actor->getVisual()->setAnimation(anm);
+        actor->getVisual()->setSkeleton(skl);
+
+        msh->release();
+
+        if(mtl) mtl->release();
+        if(skl) skl->release();
+        if(anm) anm->release();
+
+        msh = null;
+        mtl = null;
+        skl = null;
+        anm = null;
+      }
+    }
+    else if(id == "Input")
+    {
+      u32 btn = 0, btn1 = 0, btn2 = 0, stat = 0;
+      kgmString state;
+
+      a_node->node(i)->attribute("button",  val);  sscanf(val, "%i", &btn);
+      val = "";
+      a_node->node(i)->attribute("button1", val);  sscanf(val, "%i", &btn1);
+      val = "";
+      a_node->node(i)->attribute("button2", val);  sscanf(val, "%i", &btn2);
+      val = "";
+      a_node->node(i)->attribute("status",  val);  sscanf(val, "%i", &stat);
+      a_node->node(i)->attribute("state",   state);
+
+      actor->add(btn, stat, state, btn1, btn2);
+    }
+    else if(id == "InputActive")
+    {
+      u32 btn = 0, btn1 = 0, btn2 = 0, stat = 1;
+      kgmString state;
+
+      a_node->node(i)->attribute("button",  val);  sscanf(val, "%i", &btn);
+      val = "";
+      a_node->node(i)->attribute("button1", val);  sscanf(val, "%i", &btn1);
+      val = "";
+      a_node->node(i)->attribute("button2", val);  sscanf(val, "%i", &btn2);
+      a_node->node(i)->attribute("state",   state);
+
+      actor->add(btn, stat, state, btn1, btn2, true);
+    }
+    else if(id == "State")
+    {
+      kgmString s;
+      kgmActor::State* state = new kgmActor::State();
+
+      state->sound = null;
+      state->animation = null;
+
+      a_node->node(i)->attribute("id", state->id);
+      a_node->node(i)->attribute("type", state->type);
+      a_node->node(i)->attribute("switch", state->switchto);
+
+      a_node->node(i)->attribute("time", s);
+      if(s.length() > 0) sscanf(s, "%i", &state->timeout);
+
+      a_node->node(i)->attribute("priority", s);
+      if(s.length() > 0) sscanf(s, "%i", &state->priopity);
+
+      for(int j = 0; j < a_node->node(i)->nodes(); j++)
+      {
+        if(a_node->node(i)->node(j))
+          a_node->node(i)->node(j)->id(id);
+        else
+          break;
+
+        if(id == "Sound")
+        {
+          a_node->node(i)->node(j)->attribute("value", s);
+          state->sound = game->getResources()->getSound(s);
+        }
+        else if(id == "Animation")
+        {
+          a_node->node(i)->node(j)->attribute("value", s);
+          state->animation = game->getResources()->getAnimation(s);
+          a_node->node(i)->node(j)->attribute("start", s);
+          if(s.length() > 0) sscanf(s, "%i", &state->fstart);
+          a_node->node(i)->node(j)->attribute("end", s);
+          if(s.length() > 0) sscanf(s, "%i", &state->fend);
+        }
+        else if(id == "Option")
+        {
+          kgmString k, v;
+          a_node->node(i)->node(j)->attribute("key", k);
+          a_node->node(i)->node(j)->attribute("value", v);
+        }
+      }
+      actor->m_states.add(state);
+    }
+    else
+    {
+      kgmString val;
+
+      if(a_node->node(i)->attribute("value", val))
+      {
+        actor->m_options.add(id, val);
+      }
+    }
+  }
+
+  return true;
 }

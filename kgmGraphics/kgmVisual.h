@@ -129,6 +129,11 @@ public:
     {
       return mesh->m_rtype;
     }
+
+    kgmMesh* getMesh() const
+    {
+      return mesh;
+    }
   };
 
   bool                   m_valid;

@@ -23,6 +23,7 @@ class kgmGameMap;
 class kgmParticles;
 class kgmIPhysics;
 class kgmBody;
+class kgmIGame;
 
 class kgmGameTools
 {
@@ -75,4 +76,7 @@ public:
  static kgmLight*    parseLight(kgmXml::Node& node);
  static kgmMaterial* parseMaterial(kgmXml::Node& node);
  static kgmSkeleton* parseSkeleton(kgmXml::Node& node);
+
+ //ACTOR TOOLS
+ static bool initActor(kgmIGame* g, kgmActor *a, kgmXml &xml);
 };

@@ -43,7 +43,8 @@ kEditor::kEditor(kgmGameBase* g)
   game->setMsAbsolute(true);
 
   ms_click[0] = ms_click[1] = ms_click[2] = false;
-  ctrl_left = false;
+
+  move_camera = false;
 
   cam_pos = vec3(0, 0, 0);
   cam_rot = 0.0f;
@@ -153,8 +154,8 @@ void kEditor::select(kgmString name)
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh())->setPos((*i)->pos);
-        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->pos);
+        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
     }
   }
@@ -232,8 +233,8 @@ void kEditor::select(int x, int y)
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
-        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
       break;
@@ -249,8 +250,8 @@ void kEditor::select(int x, int y)
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
-        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
       break;
@@ -266,18 +267,18 @@ void kEditor::select(int x, int y)
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh())->setPos(selected->pos);
-        pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
       break;
     }
   }
 
-  /*if(((kPivot*)pivot->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
+  if(((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
   {
     int k = 0;
-  }*/
+  }
 }
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
@@ -360,8 +361,8 @@ bool kEditor::mapOpen(kgmString s)
   game->m_render->add(gridline);
   game->m_render->add(pivot);
 
-  ((kPivot*)pivot->getMesh())->setPos(vec3(0, 0, 0));
-  pivot->set(((kPivot*)pivot->getMesh())->getTransform());
+  ((kPivot*)pivot->getMesh()->getMesh())->setPos(vec3(0, 0, 0));
+  pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
 
   kNode* node = null;
 
@@ -767,6 +768,10 @@ bool kEditor::addActor(kgmString type)
   if(ac)
   {
     kNode* node = new kNode(ac);
+
+    //For evade remove actor from scene.
+    ac->timeout(-1);
+
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
     node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
@@ -922,7 +927,7 @@ void kEditor::onKeyUp(int k)
 
   if(k == KEY_LCTRL)
   {
-    ctrl_left = false;
+    move_camera = false;
     game->setMsAbsolute(true);
   }
 }
@@ -931,23 +936,21 @@ void kEditor::onKeyDown(int k)
 {
   if(k == KEY_LCTRL)
   {
-    ctrl_left = true;
+    move_camera = true;
     game->setMsAbsolute(false);
   }
 }
 
 void kEditor::onMsLeftUp(int k, int x, int y)
 {
-  //game->setMsAbsolute(true);
   ms_click[0] = false;
 }
 
 void kEditor::onMsLeftDown(int k, int x, int y)
 {
   ms_click[0] = true;
-  //game->setMsAbsolute(false);
 
-  if(game->getKeyState(KEY_Z))
+  if(move_camera)
     return;
 
   if(nodes.length() > 0)
@@ -965,14 +968,12 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 
   select(x, y);
 
-  if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE)
-    game->setMsAbsolute(true);
+  //if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE)
+  //  game->setMsAbsolute(true);
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
 {
-  game->setMsAbsolute(true);
-
   ms_click[1] = false;
 }
 
@@ -983,55 +984,11 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
-  if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
+  u32 paxes = ((kPivot*)pivot->getMesh()->getMesh())->getAxis();
+
+  if(game->m_render && move_camera)
   {
-    kgmRay3d<float> ray = getPointRay(x, y);
-
-    kgmCamera cam = game->m_render->camera();
-
-    vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh())->pos);
-    vec3 pr, tm;
-    line lax;
-    plane pln;
-    float prdist;
-
-    switch(((kPivot*)pivot->getMesh())->axis)
-    {
-    case kPivot::AXIS_X:
-      tm = ((kPivot*)pivot->getMesh())->pos + vec3(1, 0, 0);
-      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
-      break;
-    case kPivot::AXIS_Y:
-      tm = ((kPivot*)pivot->getMesh())->pos + vec3(0, 1, 0);
-      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
-      break;
-    case kPivot::AXIS_Z:
-      tm = ((kPivot*)pivot->getMesh())->pos + vec3(0, 0, 1);
-      lax = line(((kPivot*)pivot->getMesh())->pos, tm);
-      break;
-    }
-
-    pr = lax.projection(pt);
-    prdist = ((kPivot*)pivot->getMesh())->pos.distance(pr);
-    prdist *= 2;
-
-    vec3 dir = pr - ((kPivot*)pivot->getMesh())->pos;
-    dir.normalize();
-
-    //selected->setPosition(selected->pos + dir * prdist);
-    selected->setPosition(pr);
-
-    mtx4 m;
-    m.identity();
-    m.translate(selected->pos);
-    ((kPivot*)pivot->getMesh())->setPos(selected->pos);
-    pivot->set(m);
-
-    return;
-  }
-  else if(game->m_render && !game->m_msAbs)
-  {
-    if(ms_click[0] && ctrl_left)
+    if(ms_click[0])
     {
       kgmCamera& cam = game->m_render->camera();
 
@@ -1153,6 +1110,50 @@ void kEditor::onMsMove(int k, int x, int y)
         cam.update();
       }
     }
+  }
+  else if(selected && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
+  {
+    kgmRay3d<float> ray = getPointRay(x, y);
+
+    kgmCamera cam = game->m_render->camera();
+
+    vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh()->getMesh())->pos);
+    vec3 pr, tm;
+    line lax;
+    plane pln;
+    float prdist;
+
+    switch(paxes)
+    {
+    case kPivot::AXIS_X:
+      tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(1, 0, 0);
+      lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      break;
+    case kPivot::AXIS_Y:
+      tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(0, 1, 0);
+      lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      break;
+    case kPivot::AXIS_Z:
+      tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(0, 0, 1);
+      lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      break;
+    }
+
+    pr = lax.projection(pt);
+    prdist = ((kPivot*)pivot->getMesh()->getMesh())->pos.distance(pr);
+    prdist *= 2;
+
+    vec3 dir = pr - ((kPivot*)pivot->getMesh()->getMesh())->pos;
+    dir.normalize();
+
+    //selected->setPosition(selected->pos + dir * prdist);
+    selected->setPosition(pr);
+
+    mtx4 m;
+    m.identity();
+    m.translate(selected->pos);
+    ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+    pivot->set(m);
   }
 }
 
