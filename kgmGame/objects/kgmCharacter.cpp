@@ -213,7 +213,7 @@ void kgmCharacter::update(u32 ms)
 
   if(m_gameplayer)
   {
-    kgmCamera& cam = ((kgmGameBase*)game())->getRender()->camera();
+    kgmCamera& cam = game()->getGraphics()->camera();
     vec3 cpos = m_body->position() - m_body->direction() * c_dist;
     cpos.z = m_body->m_position.z + z_dist;
     cam.mPos = cpos;
@@ -228,3 +228,9 @@ void kgmCharacter::update(u32 ms)
     }
   }
 }
+
+void kgmCharacter::input(u32 in, int state)
+{
+
+}
+

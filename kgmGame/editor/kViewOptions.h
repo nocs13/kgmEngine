@@ -135,8 +135,14 @@ public:
 
 class kViewOptionsForActor : public kViewOptionsForObject
 {
+  kFileDialog *fd;
+  kgmGuiText  *guiInit;
+
 public:
   kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
+
+  __stdcall void showInit();
+  __stdcall void onInit();
 };
 
 class kViewOptionsForTrigger : public kViewOptions

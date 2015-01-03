@@ -27,6 +27,7 @@
 #include "../kgmGraphics/kgmGraphics.h"
 
 #include "objects/kgmObjects.h"
+#include "objects/kgmCharacter.h"
 #include "objects/kgmSnInputListener.h"
 
 /////////////////////////
@@ -160,6 +161,7 @@ kgmGameBase::kgmGameBase()
   kgmGameObject::goRegister("kgmSmoke",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmFlame::New);
   kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmLaser::New);
   kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmExplode::New);
+  kgmGameObject::goRegister("kgmCharacter", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmCharacter::New);
   kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmParticlesObject::New);
   kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmSnInputListener::New);
 
@@ -207,6 +209,10 @@ kgmIVideo*  kgmGameBase::getVideo(){
 
 kgmILogic*  kgmGameBase::getLogic(){
   return m_game->m_logic;
+}
+
+kgmIGraphics*  kgmGameBase::getGraphics(){
+  return m_game->m_render;
 }
 
 kgmIResources* kgmGameBase::getResources(){

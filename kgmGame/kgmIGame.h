@@ -162,6 +162,7 @@ public:
   virtual kgmIAudio*      getAudio() = 0;
   virtual kgmIVideo*      getVideo() = 0;
   virtual kgmILogic*      getLogic() = 0;
+  virtual kgmIGraphics*   getGraphics() = 0;
   virtual kgmIResources*  getResources() = 0;
   virtual kgmWindow*      getWindow() = 0;
   virtual kgmSystem*      getSystem() = 0;

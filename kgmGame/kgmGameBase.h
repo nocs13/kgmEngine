@@ -123,6 +123,7 @@ public:
   kgmIAudio*         getAudio();
   kgmIVideo*         getVideo();
   kgmILogic*         getLogic();
+  kgmIGraphics*      getGraphics();
   kgmIResources*     getResources();
   kgmSystem*         getSystem();
   kgmWindow*         getWindow();

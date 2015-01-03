@@ -416,6 +416,51 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 {
   kgmGui* tactor = tab->addTab("Actor");
   y_coord = 1;
+  fd = null;
+  y_coord += 23;
+  kgmGui* g = new kgmGuiLabel(tactor, 0, y_coord, 50, 20);
+  g->setText("Initial");
+  g = guiInit = new kgmGuiText(tactor, 51, y_coord, 70, 20);
+
+  if(node->mat.length())
+    g->setText(node->mat);
+
+  kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showInit));
+
+  y_coord += 23;
+}
+
+void kViewOptionsForActor::showInit()
+{
+  if(fd)
+    return;
+
+  fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("act");
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForActor::onInit));
+
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForActor::onInit()
+{
+  kgmMemory<u8> mem;
+  kgmGameApp::gameApplication()->game()->getResources()->getFile(fd->getFile(), mem);
+
+  kgmXml xml(mem);
+
+  mem.clear();
+
+  kgmGameTools::initActor(kgmGameApp::gameApplication()->game(), node->act, xml);
+
+  fd->erase();
+  fd->release();
+  fd = null;
 }
 
 kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
