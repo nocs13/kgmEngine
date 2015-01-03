@@ -1,0 +1,4 @@
+#ifndef KGMI3DAUDIO_H
+#define KGMI3DAUDIO_H
+
+#endif // KGMI3DAUDIO_H
