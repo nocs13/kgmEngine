@@ -465,6 +465,20 @@ void kViewOptionsForActor::onInit()
   fd = null;
 }
 
+kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* tunit = tab->addTab("Unit");
+  y_coord = 1;
+}
+
+kViewOptionsForEffect::kViewOptionsForEffect(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* teffect = tab->addTab("effect");
+  y_coord = 1;
+}
+
 kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {

@@ -133,6 +133,20 @@ public:
   __stdcall void updateVariable(kgmString id, kgmString data);
 };
 
+class kViewOptionsForUnit : public kViewOptionsForObject
+{
+
+public:
+  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
+};
+
+class kViewOptionsForEffect : public kViewOptionsForObject
+{
+
+public:
+  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
+};
+
 class kViewOptionsForActor : public kViewOptionsForObject
 {
   kFileDialog *fd;

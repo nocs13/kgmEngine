@@ -2,23 +2,24 @@
 #define KGMOBJECTS_H
 
 #include "../kgmIGame.h"
+#include "../kgmUnit.h"
 #include "../kgmActor.h"
+#include "../kgmEffect.h"
 #include "../kgmGameResources.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 
-class kgmResult: public kgmActor
+class kgmResult: public kgmUnit
 {
   KGM_GO_OBJECT(kgmResult);
 public:
 
-  kgmIGame* game;
   kgmString text;
   s32       result;
 
 public:
   kgmResult(kgmIGame* g, u32 time = 0, s32 res = 0, kgmString txt = "")
+    :kgmUnit(g)
   {
-    game = g;
     text = txt;
     result = res;
     timeout(time);
@@ -62,7 +63,7 @@ public:
   }
 };
 
-class kgmParticlesObject: public kgmActor
+class kgmParticlesObject: public kgmEffect
 {
   KGM_GO_OBJECT(kgmParticlesObject);
 
@@ -83,7 +84,7 @@ public:
                u32 count = 1,
                kgmString tid = "",
                bool loop = false)
-  :kgmActor(g)
+  :kgmEffect(g)
   {
     timeout(life);
 
@@ -134,7 +135,7 @@ public:
   }
 
   kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
-  :kgmActor(g)
+  :kgmEffect(g)
   {
     material = mtl;
     particles = pts;
@@ -278,7 +279,7 @@ public:
   }
 };
 
-class kgmLaser: public kgmActor
+class kgmLaser: public kgmEffect
 {
   KGM_GO_OBJECT(kgmLaser);
 
@@ -297,13 +298,14 @@ public:
 
 public:
   kgmLaser(kgmIGame* g = null)
-    :kgmActor(g)
+    :kgmEffect(g)
   {
 
   }
 
   kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot, float speed,
            float hlen=0.5, float hwid=0.1)
+    :kgmEffect(g)
   {
     power = 1;
     timeout(time);
@@ -365,7 +367,7 @@ public:
   }
 };
 
-class kgmIonNozzle: public kgmActor
+class kgmIonNozzle: public kgmEffect
 {
   KGM_GO_OBJECT(kgmIonNozzle);
 
@@ -384,6 +386,7 @@ class kgmIonNozzle: public kgmActor
   kgmMesh*       mesh;
 public:
   kgmIonNozzle(kgmIGame* g)
+    :kgmEffect(g)
   {
     game     = g;
     m_visual = new kgmVisual();

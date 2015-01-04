@@ -156,13 +156,13 @@ kgmGameBase::kgmGameBase()
 
   m_state    = State_Idle;
 
-  kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmResult::New);
-  kgmGameObject::goRegister("kgmFlame",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmFlame::New);
-  kgmGameObject::goRegister("kgmSmoke",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmFlame::New);
-  kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmLaser::New);
-  kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmExplode::New);
+  kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoUnit, (kgmGameObject::GenGo)&kgmResult::New);
+  kgmGameObject::goRegister("kgmFlame",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmFlame::New);
+  kgmGameObject::goRegister("kgmSmoke",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmSmoke::New);
+  kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmLaser::New);
+  kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmExplode::New);
   kgmGameObject::goRegister("kgmCharacter", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmCharacter::New);
-  kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmParticlesObject::New);
+  kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmParticlesObject::New);
   kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmSnInputListener::New);
 
 #ifdef EDITOR

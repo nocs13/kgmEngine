@@ -21,10 +21,11 @@ enum MENUEVENT
   ME_EDIT_REMOVE,
   ME_EDIT_OPTIONS,
   ME_ADD_MESH,
+  ME_ADD_UNIT,
   ME_ADD_LIGHT,
   ME_ADD_ACTOR,
+  ME_ADD_EFFECT,
   ME_ADD_SENSOR,
-  ME_ADD_OBJECT,
   ME_ADD_TRIGGER,
   ME_ADD_OBSTACLE,
   ME_RUN_RUN,
@@ -78,8 +79,10 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditOptions));
     item = menu->add("Add");
     item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMesh));
+    item->add(ME_ADD_UNIT, "Unit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddUnit));
     item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddLight));
     item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddActor));
+    item->add(ME_ADD_EFFECT, "Effect", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddEffect));
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
@@ -769,8 +772,12 @@ bool kEditor::addUnit(kgmString type)
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("unit_ico.tga"));
+        node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
+
+        //For evade remove unit from scene.
+        un->timeout(-1);
 
         selected = node;
 
@@ -811,19 +818,11 @@ bool kEditor::addActor(kgmString type)
   if(kgmSystem::isFile(cpath))
     ac = game->gSpawn(type);
 
-  if(ac == null && kgmGameObject::g_typ_objects.hasKey(type))
-  {
-    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
-
-    if(fn_new)
-      ac = (kgmActor*)fn_new(game);
-  }
-
   if(ac)
   {
     kNode* node = new kNode(ac);
 
-    //For evade remove actor from scene.
+    //For evade remove unit from scene.
     ac->timeout(-1);
 
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
@@ -869,8 +868,12 @@ bool kEditor::addEffect(kgmString type)
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("effect_ico.tga"));
+        node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
+
+        //For evade remove unit from scene.
+        eff->timeout(-1);
 
         selected = node;
 
@@ -910,6 +913,7 @@ bool kEditor::addSensor(kgmString type)
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+        node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
 
@@ -1389,11 +1393,17 @@ void kEditor::onEditOptions()
   case kNode::MESH:
     vop = new kViewOptionsForMesh(selected, 50, 50, 250, 300);
     break;
+  case kNode::UNIT:
+    vop = new kViewOptionsForUnit(selected, 50, 50, 250, 300);
+    break;
   case kNode::LIGHT:
     vop = new kViewOptionsForLight(selected, 50, 50, 250, 300);
     break;
   case kNode::ACTOR:
     vop = new kViewOptionsForActor(selected, 50, 50, 250, 300);
+    break;
+  case kNode::EFFECT:
+    vop = new kViewOptionsForEffect(selected, 50, 50, 250, 300);
     break;
   case kNode::SENSOR:
     vop = new kViewOptionsForSensor(selected, 50, 50, 250, 300);
