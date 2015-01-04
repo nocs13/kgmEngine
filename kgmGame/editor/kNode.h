@@ -54,6 +54,7 @@ public:
   kgmString mat;
   kgmString shd;
   kgmString shp;
+  kgmString ini;
 
   bool col, lock;
 

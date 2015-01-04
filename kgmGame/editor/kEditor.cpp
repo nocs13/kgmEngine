@@ -627,6 +627,7 @@ bool kEditor::mapSave(kgmString s)
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
     node.bnd = (*i)->bnd;
+    node.ini = (*i)->ini;
     node.lck = (*i)->lock;
 
     map.addActor(node);

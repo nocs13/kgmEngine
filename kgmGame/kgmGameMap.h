@@ -54,6 +54,7 @@ public:
     kgmString  mtl;
     kgmString  shd;
     kgmString  shp;
+    kgmString  ini;
 
     bool       col;  //collision type
     bool       hdn;  // node is hidden

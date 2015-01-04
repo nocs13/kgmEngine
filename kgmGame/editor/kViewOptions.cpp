@@ -422,8 +422,8 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
   g->setText("Initial");
   g = guiInit = new kgmGuiText(tactor, 51, y_coord, 70, 20);
 
-  if(node->mat.length())
-    g->setText(node->mat);
+  if(node->ini.length())
+    g->setText(node->ini);
 
   kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
   btn->setText("select");
@@ -457,6 +457,8 @@ void kViewOptionsForActor::onInit()
   mem.clear();
 
   kgmGameTools::initActor(kgmGameApp::gameApplication()->game(), node->act, xml);
+
+  node->ini = fd->getFile();
 
   fd->erase();
   fd->release();
