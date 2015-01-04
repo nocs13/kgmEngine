@@ -52,8 +52,10 @@ struct CPU
 
 #ifdef WIN32
   const char* kgmSystem::PathDelim = "\\";
+  const int   kgmSystem::PathDelimSym = '\\';
 #else
   const char* kgmSystem::PathDelim = "/";
+  const int   kgmSystem::PathDelimSym = '/';
 #endif
 
 

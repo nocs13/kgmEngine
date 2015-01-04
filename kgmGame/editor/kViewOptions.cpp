@@ -475,7 +475,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
 kViewOptionsForEffect::kViewOptionsForEffect(kNode* n, int x, int y, int w, int h)
 :kViewOptionsForObject(n, x, y, w, h)
 {
-  kgmGui* teffect = tab->addTab("effect");
+  kgmGui* teffect = tab->addTab("Effect");
   y_coord = 1;
 }
 

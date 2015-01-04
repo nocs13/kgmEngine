@@ -128,7 +128,7 @@ public:
 
   kNode(kgmEffect* e)
   {
-    typ = SENSOR;
+    typ = EFFECT;
     eff = e;
     icn = null;
     geo = null;

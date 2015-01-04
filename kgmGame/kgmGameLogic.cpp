@@ -46,6 +46,8 @@ bool kgmGameLogic::add(kgmUnit *u)
     m_objects.push_back(u);
     u->increment();
 
+    u->init();
+
     return true;
   }
 
@@ -80,6 +82,8 @@ bool kgmGameLogic::add(kgmEffect *e)
     m_objects.push_back(e);
     e->increment();
 
+    e->init();
+
     return true;
   }
 
@@ -93,6 +97,8 @@ bool kgmGameLogic::add(kgmSensor *sn)
     m_objects.push_back(sn);
     sn->increment();
 
+    sn->init();
+
     return true;
   }
 
@@ -105,6 +111,8 @@ bool kgmGameLogic::add(kgmTrigger *tr)
   {
     m_objects.push_back(tr);
     tr->increment();
+
+    tr->init();
 
     return true;
   }

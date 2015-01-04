@@ -770,7 +770,7 @@ bool kEditor::addUnit(kgmString type)
       {
         kNode* node = new kNode(un);
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
-        node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
+        node->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
         node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("unit_ico.tga"));
         node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
@@ -815,8 +815,14 @@ bool kEditor::addActor(kgmString type)
   kgm_log() << "kEditor: Check actor path is " << (char*)cpath << ".\n";
 #endif
 
-  if(kgmSystem::isFile(cpath))
-    ac = game->gSpawn(type);
+  const char *t = null;
+
+  if(type.data())
+    t = strrchr((const char*)type.data(), kgmSystem::PathDelimSym);
+//  if(kgmSystem::isFile(cpath))
+
+  if(t)
+    ac = game->gSpawn(++t);
 
   if(ac)
   {
@@ -969,7 +975,9 @@ void kEditor::onIdle()
   {
     for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
     {
-      if((*i)->typ == kNode::TRIGGER || (*i)->typ == kNode::SENSOR || (*i)->typ == kNode::ACTOR)
+      if((*i)->typ == kNode::TRIGGER || (*i)->typ == kNode::SENSOR ||
+         (*i)->typ == kNode::ACTOR || (*i)->typ == kNode::UNIT ||
+        (*i)->typ == kNode::EFFECT)
       {
         kgmGameObject *o = (kgmGameObject*)(*i)->obj;
 
@@ -1394,22 +1402,22 @@ void kEditor::onEditOptions()
     vop = new kViewOptionsForMesh(selected, 50, 50, 250, 300);
     break;
   case kNode::UNIT:
-    vop = new kViewOptionsForUnit(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForUnit(selected, 50, 50, 300, 300);
     break;
   case kNode::LIGHT:
     vop = new kViewOptionsForLight(selected, 50, 50, 250, 300);
     break;
   case kNode::ACTOR:
-    vop = new kViewOptionsForActor(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForActor(selected, 50, 50, 300, 300);
     break;
   case kNode::EFFECT:
-    vop = new kViewOptionsForEffect(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForEffect(selected, 50, 50, 300, 300);
     break;
   case kNode::SENSOR:
-    vop = new kViewOptionsForSensor(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForSensor(selected, 50, 50, 300, 300);
     break;
   case kNode::TRIGGER:
-    vop = new kViewOptionsForTrigger(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForTrigger(selected, 50, 50, 300, 300);
     break;
   case kNode::OBSTACLE:
     vop = new kViewOptionsForObstacle(selected, 50, 50, 250, 300);

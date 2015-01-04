@@ -6,6 +6,7 @@ class kgmSystem: public kgmObject
 {
 public:
   static const char* PathDelim;
+  static const int   PathDelimSym;
 
   static void sleep(u32 ms);
   static void getDesktopDimension(u32& w, u32& h);

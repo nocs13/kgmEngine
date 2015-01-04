@@ -238,9 +238,6 @@ class kgmExplode: public kgmParticlesObject
 {
   KGM_GO_OBJECT(kgmExplode);
 
-private:
-  kgmIGame* game;
-
 public:
   kgmExplode(kgmIGame* g,
              vec3 pos = vec3(0, 0, 0), vec3 vol = vec3(1, 1, 1), vec3 dir = vec3(0, 0, 0),
@@ -269,7 +266,7 @@ public:
 
   void setTexture(kgmString tid)
   {
-    material->setTexColor(game->getResources()->getTexture(tid));
+    material->setTexColor(game()->getResources()->getTexture(tid));
   }
 
   void setSlideFrames(u32 rows, u32 cols)
@@ -384,6 +381,7 @@ class kgmIonNozzle: public kgmEffect
 
   kgmVisual*     visual;
   kgmMesh*       mesh;
+
 public:
   kgmIonNozzle(kgmIGame* g)
     :kgmEffect(g)
