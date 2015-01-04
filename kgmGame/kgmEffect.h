@@ -3,8 +3,11 @@
 
 class kgmEffect : public kgmGameObject
 {
-  KGM_OBJECT(kgmEffect)
+  KGM_GO_OBJECT(kgmEffect);
+
 public:
-  kgmEffect();
+  kgmEffect(kgmIGame *g);
+
+  void init();
 };
 

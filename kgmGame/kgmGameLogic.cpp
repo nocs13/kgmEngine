@@ -39,6 +39,19 @@ void kgmGameLogic::clear()
   m_gameplayer = null;
 }
 
+bool kgmGameLogic::add(kgmUnit *u)
+{
+  if(u)
+  {
+    m_objects.push_back(u);
+    u->increment();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool kgmGameLogic::add(kgmActor *a)
 {
   if(a)
@@ -53,6 +66,19 @@ bool kgmGameLogic::add(kgmActor *a)
     a->increment();
 
     a->init();
+
+    return true;
+  }
+
+  return false;
+}
+
+bool kgmGameLogic::add(kgmEffect *e)
+{
+  if(e)
+  {
+    m_objects.push_back(e);
+    e->increment();
 
     return true;
   }

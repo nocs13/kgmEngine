@@ -79,4 +79,5 @@ public:
 
  //ACTOR TOOLS
  static bool initActor(kgmIGame* g, kgmActor *a, kgmXml &xml);
+ static bool initActor(kgmIGame* g, kgmActor *a, kgmString id);
 };

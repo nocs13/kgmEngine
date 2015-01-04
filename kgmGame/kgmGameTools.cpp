@@ -1554,6 +1554,19 @@ kgmSkeleton* kgmGameTools::parseSkeleton(kgmXml::Node& node)
 
 }
 
+bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmString id)
+{
+  kgmMemory<u8> mem;
+
+  game->getResources()->getFile(id, mem);
+
+  kgmXml xml(mem);
+
+  mem.clear();
+
+  return kgmGameTools::initActor(game, actor, xml);
+}
+
 bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 {
   if(!game || !actor || !xml.m_node)

@@ -5,7 +5,9 @@
 
 template <class T> class kgmList;
 
+class kgmUnit;
 class kgmActor;
+class kgmEffect;
 class kgmSensor;
 class kgmTrigger;
 class kgmGameObject;
@@ -21,7 +23,9 @@ public:
   };
 
 public:
+  virtual bool add(kgmUnit*)                           = 0;
   virtual bool add(kgmActor*)                          = 0;
+  virtual bool add(kgmEffect*)                         = 0;
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
 

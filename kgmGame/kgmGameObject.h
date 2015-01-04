@@ -49,7 +49,9 @@ protected:
 public:
   enum GoType
   {
+    GoUnit,
     GoActor,
+    GoEffect,
     GoSensor,
     GoTrigger
   };
@@ -58,11 +60,14 @@ public:
 
   static kgmTab<kgmString, GenGo> g_typ_objects;
 
-  kgmList<kgmVariable> m_variables; //update variables for control from outside
+  //update variables for control from outside
+
+  kgmList<kgmVariable> m_variables;
 
 #ifdef EDITOR
   static kgmList<kgmString> g_list_sensors;
-  static kgmList<kgmString> g_list_actors;
+  static kgmList<kgmString> g_list_effects;
+  static kgmList<kgmString> g_list_units;
 
   virtual void eupdate()
   {
@@ -86,7 +91,7 @@ public:
   virtual kgmBody*     getBody(){   return m_body;   }
   virtual kgmVisual*   getVisual(){ return m_visual; }
 
-  kgmIGame* game() const { return m_game;     }
+  kgmIGame* game() const { return m_game;   }
 
   bool valid()   const { return m_valid;    }
   bool culled()  const { return m_culled;   }
@@ -100,7 +105,7 @@ public:
 
   void remove();
 
-  void timeout(u32 t){ m_timeout = t;    }
+  void timeout(u32 t){ m_timeout = t; }
 
   void setId(kgmString s)
   {
@@ -179,8 +184,11 @@ public:
 #ifdef EDITOR
     switch((int)type)
     {
-    case GoActor:
-      g_list_actors.add(id);
+    case GoUnit:
+      g_list_units.add(id);
+      break;
+    case GoEffect:
+      g_list_effects.add(id);
       break;
     case GoSensor:
       g_list_sensors.add(id);

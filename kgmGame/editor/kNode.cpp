@@ -45,11 +45,13 @@ void kNode::setPosition(vec3 v)
   case MESH:
     msh->set(mtrn);
     break;
+  case UNIT:
   case ACTOR:
+  case EFFECT:
   case SENSOR:
   case TRIGGER:
-    trg->setPosition(pos);
-    trg->setRotation(rot);
+    obj->setPosition(pos);
+    obj->setRotation(rot);
 
     if(obj->getVisual())
     {
@@ -86,11 +88,13 @@ void kNode::setRotation(vec3 r)
   case MESH:
     msh->set(mtrn);
     break;
+  case UNIT:
   case ACTOR:
+  case EFFECT:
   case SENSOR:
   case TRIGGER:
-    trg->setPosition(pos);
-    trg->setRotation(rot);
+    obj->setPosition(pos);
+    obj->setRotation(rot);
 
     if(obj->getVisual())
     {

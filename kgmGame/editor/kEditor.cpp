@@ -452,12 +452,24 @@ bool kEditor::mapOpen(kgmString s)
       node->col = mnode.col;
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
+      node->ini = mnode.ini;
       node->lock = mnode.lck;
       node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
       node->geo = new kgmVisual();
 
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
+
+      if(node->act)
+      {
+        game->getLogic()->add(node->act);
+
+        if(node->act->getBody())
+          game->getPhysics()->add(node->act->getBody());
+
+        if(node->act->getVisual())
+          game->getGraphics()->add(node->act->getVisual());
+      }
 
       game->m_render->add(node->icn);
       game->m_render->add(node->geo);
@@ -738,6 +750,47 @@ bool kEditor::addMesh(kgmString path)
   return false;
 }
 
+bool kEditor::addUnit(kgmString type)
+{
+  if(type.length() < 1)
+    return false;
+
+  if(kgmGameObject::g_typ_objects.hasKey(type))
+  {
+    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+
+    if(fn_new)
+    {
+      kgmUnit* un = (kgmUnit*)fn_new(game);
+
+      if(un)
+      {
+        kNode* node = new kNode(un);
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("unit_ico.tga"));
+        node->geo->set((kgmMesh*)(new kArrow()));
+        node->geo->set(mtlLines);
+
+        selected = node;
+
+        game->m_render->add(node->icn);
+        game->m_render->add(node->geo);
+
+        nodes.add(node);
+
+        game->getLogic()->add(un);
+        game->getRender()->add(un->getVisual());
+        game->getPhysics()->add(un->getBody());
+
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 bool kEditor::addActor(kgmString type)
 {
   if(type.length() < 1)
@@ -792,6 +845,47 @@ bool kEditor::addActor(kgmString type)
     game->getPhysics()->add(ac->getBody());
     
     return true;
+  }
+
+  return false;
+}
+
+bool kEditor::addEffect(kgmString type)
+{
+  if(type.length() < 1)
+    return false;
+
+  if(kgmGameObject::g_typ_objects.hasKey(type))
+  {
+    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+
+    if(fn_new)
+    {
+      kgmEffect* eff = (kgmEffect*)fn_new(game);
+
+      if(eff)
+      {
+        kNode* node = new kNode(eff);
+        node->bnd = box3(-1, -1, -1, 1, 1, 1);
+        node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
+        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("effect_ico.tga"));
+        node->geo->set((kgmMesh*)(new kArrow()));
+        node->geo->set(mtlLines);
+
+        selected = node;
+
+        game->m_render->add(node->icn);
+        game->m_render->add(node->geo);
+
+        nodes.add(node);
+
+        game->getLogic()->add(eff);
+        game->getRender()->add(eff->getVisual());
+        game->getPhysics()->add(eff->getBody());
+
+        return true;
+      }
+    }
   }
 
   return false;
@@ -1331,6 +1425,22 @@ void kEditor::onAddMesh()
   fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addMesh));
 }
 
+void kEditor::onAddUnit()
+{
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addUnit));
+
+  for(int i = 0; i < kgmGameObject::g_list_units.length(); i++)
+  {
+    kgmString s = kgmGameObject::g_list_units[i];
+    vs->addItem(s);
+  }
+
+  game->guiAdd(vs);
+  vs->release();
+}
+
 void kEditor::onAddLight()
 {
   kgmLight* l = new kgmLight();
@@ -1355,13 +1465,24 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
-  
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+  game->guiAdd(fdd);
 
-  for(int i = 0; i < kgmGameObject::g_list_actors.length(); i++)
+  fdd->setFilter(".act");
+  fdd->changeLocation(false);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
+}
+
+void kEditor::onAddEffect()
+{
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
+
+  for(int i = 0; i < kgmGameObject::g_list_effects.length(); i++)
   {
-    kgmString s = kgmGameObject::g_list_actors[i];
+    kgmString s = kgmGameObject::g_list_effects[i];
     vs->addItem(s);
   }
 

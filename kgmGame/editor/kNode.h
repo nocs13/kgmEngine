@@ -7,7 +7,9 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
+#include "../../kgmGame/kgmUnit.h"
 #include "../../kgmGame/kgmActor.h"
+#include "../../kgmGame/kgmEffect.h"
 #include "../../kgmGame/kgmSensor.h"
 #include "../../kgmGame/kgmTrigger.h"
 
@@ -24,8 +26,10 @@ public:
   {
     NONE,
     MESH,
+    UNIT,
     LIGHT,
     ACTOR,
+    EFFECT,
     SENSOR,
     TRIGGER,
     OBSTACLE
@@ -33,9 +37,11 @@ public:
 
   union
   {
+    kgmUnit*        unt;
     kgmLight*       lgt;
     kgmActor*       act;
     kgmVisual*      msh;
+    kgmEffect*      eff;
     kgmSensor*      sns;
     kgmTrigger*     trg;
     kgmObstacle*    obs;
@@ -84,6 +90,18 @@ public:
     obj->increment();
   }
 
+  kNode(kgmUnit* u)
+  {
+    typ = UNIT;
+    unt = u;
+    icn = null;
+    geo = null;
+    col = false;
+    lock = false;
+
+    obj->increment();
+  }
+
   kNode(kgmLight* l)
   {
     typ = LIGHT;
@@ -100,6 +118,18 @@ public:
   {
     typ = ACTOR;
     act = a;
+    icn = null;
+    geo = null;
+    col = false;
+    lock = false;
+
+    obj->increment();
+  }
+
+  kNode(kgmEffect* e)
+  {
+    typ = SENSOR;
+    eff = e;
     icn = null;
     geo = null;
     col = false;

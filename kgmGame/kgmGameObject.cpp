@@ -7,7 +7,8 @@ kgmTab<kgmString, kgmGameObject*(*)(kgmIGame*)> kgmGameObject::g_typ_objects;
 
 #ifdef EDITOR
   kgmList<kgmString> kgmGameObject::g_list_sensors;
-  kgmList<kgmString> kgmGameObject::g_list_actors;
+  kgmList<kgmString> kgmGameObject::g_list_effects;
+  kgmList<kgmString> kgmGameObject::g_list_units;
 #endif
 
 kgmGameObject::kgmGameObject(kgmIGame* g)

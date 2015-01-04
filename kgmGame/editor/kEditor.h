@@ -98,7 +98,9 @@ public:
   __stdcall bool mapSave(kgmString);
   __stdcall bool mapOpen(kgmString);
   __stdcall bool addMesh(kgmString);
+  __stdcall bool addUnit(kgmString);
   __stdcall bool addActor(kgmString);
+  __stdcall bool addEffect(kgmString);
   __stdcall bool addSensor(kgmString);
 
   void initPhysics();
@@ -123,8 +125,10 @@ public:
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
   __stdcall void onAddMesh();
+  __stdcall void onAddUnit();
   __stdcall void onAddLight();
   __stdcall void onAddActor();
+  __stdcall void onAddEffect();
   __stdcall void onAddSensor();
   __stdcall void onAddTrigger();
   __stdcall void onAddObstacle();

@@ -440,6 +440,35 @@ kgmGameMap::Node kgmGameMap::next()
       {
         ntype = "actor";
 
+        kgmString id, cls, ini;
+
+        m_xml->attribute("name",  id);
+        m_xml->attribute("class", cls);
+        m_xml->attribute("init",  ini);
+
+        kgmActor* act = null;
+
+        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        {
+          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+
+          if(fn_new)
+          {
+            act = (kgmActor*)fn_new(m_game);
+
+            if(act)
+            {
+              if(ini.length() > 0)
+                kgmGameTools::initActor(m_game, act, ini);
+
+              node.obj = act;
+              node.bnd = box3(-1, -1, -1, 1, 1, 1);
+              node.nam = id;
+              node.ini = ini;
+            }
+          }
+        }
+
         node.typ = NodeAct;
       }
       else if(id == "kgmSensor")

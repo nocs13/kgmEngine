@@ -3,7 +3,9 @@
 
 #include "../kgmBase/kgmObject.h"
 #include "kgmILogic.h"
+#include "kgmUnit.h"
 #include "kgmActor.h"
+#include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
 
@@ -25,7 +27,9 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
+  bool add(kgmUnit*);
   bool add(kgmActor*);
+  bool add(kgmEffect*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
   bool chooseLogic(kgmString);
