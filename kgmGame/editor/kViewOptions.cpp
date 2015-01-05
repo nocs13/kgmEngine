@@ -423,8 +423,15 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
   g->setText("State");
   g = guiState = new kgmGuiText(tactor, 51, y_coord, 70, 20);
 
-  if(node->act)
-    g->setText(node->act->getState());
+  if(0)//node->act)
+  {
+    kgmString state;
+
+    state = node->act->getState();
+
+    if(state.length())
+      g->setText(state);
+  }
 
   kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
   btn->setText("select");
@@ -447,6 +454,8 @@ void kViewOptionsForActor::showStates()
 
   vo = new kViewObjects();
 
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForActor::onState));
+
   for(u32 i = 0; i < node->act->getStatesCount(); i++)
     vo->addItem(node->act->getStateName(i));
 
@@ -467,6 +476,8 @@ void kViewOptionsForActor::onState(kgmString state)
   node->ini = fd->getFile();*/
 
   node->act->setState(state);
+
+  guiState->setText(state);
 
   vo->erase();
   vo->release();
