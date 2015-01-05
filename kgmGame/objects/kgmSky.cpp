@@ -1,5 +1,8 @@
 #include "kgmSky.h"
 
-kgmSky::kgmSky()
+KGMOBJECT_IMPLEMENT(kgmSky, kgmUnit);
+
+kgmSky::kgmSky(kgmIGame *g)
+  :kgmUnit(g)
 {
 }

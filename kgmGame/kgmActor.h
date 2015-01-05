@@ -151,7 +151,12 @@ public:
   }
 
   bool      setState(kgmString s, bool force = false);
-  kgmString getState(){ if(m_state) return m_state->id; }
+  kgmString getState() const { if(m_state) return m_state->id; }
+
+#ifdef EDITOR
+  u32       getStatesCount() { return m_states.length(); }
+  kgmString getStateName(u32 i) { if(i < m_states.length()) return m_states[i]->id; }
+#endif
 
   // options
   void setOption(kgmString key, kgmString value)

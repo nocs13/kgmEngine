@@ -25,7 +25,7 @@ private:
   bool closeOnSelect;
 
 public:
-  kViewObjects(kgmEvent* tar, int x, int y, int w, int h, bool selclose = true);
+  kViewObjects(kgmEvent* tar = null, int x = 100, int y = 100, int w = 150, int h = 300, bool selclose = true);
 
   void onClose();
 

@@ -1,17 +1,12 @@
-/*
- * kgmNode.cpp
- *
- *  Created on: Jun 2, 2011
- *      Author: goga
- */
-
 #include "kgmNode.h"
 
-kgmNode::kgmNode()
+KGMOBJECT_IMPLEMENT(kgmNode, kgmObject);
+
+kgmNode::kgmNode(kgmNode *parent)
 {
+  m_parent = parent;
 }
 
 kgmNode::~kgmNode()
 {
 }
-

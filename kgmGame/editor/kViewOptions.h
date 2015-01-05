@@ -11,6 +11,9 @@
 namespace kgmGameEditor
 {
 
+class kFileDialog;
+class kViewObjects;
+
 class kViewOptions : public kgmGuiFrame
 {
   KGM_OBJECT(kViewOptions);
@@ -57,8 +60,6 @@ public:
 
 
 };
-
-class kFileDialog;
 
 class kViewOptionsForMesh : public kViewOptions
 {
@@ -149,14 +150,14 @@ public:
 
 class kViewOptionsForActor : public kViewOptionsForObject
 {
-  kFileDialog *fd;
-  kgmGuiText  *guiInit;
+  kViewObjects *vo;
+  kgmGuiText   *guiState;
 
 public:
   kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
 
-  __stdcall void showInit();
-  __stdcall void onInit();
+  __stdcall void showStates();
+  __stdcall void onState(kgmString);
 };
 
 class kViewOptionsForTrigger : public kViewOptions

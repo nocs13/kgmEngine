@@ -4,6 +4,7 @@
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
 #include "kFileDialog.h"
+#include "kViewObjects.h"
 
 using namespace kgmGameEditor;
 
@@ -416,40 +417,45 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 {
   kgmGui* tactor = tab->addTab("Actor");
   y_coord = 1;
-  fd = null;
+  vo = null;
   y_coord += 23;
   kgmGui* g = new kgmGuiLabel(tactor, 0, y_coord, 50, 20);
-  g->setText("Initial");
-  g = guiInit = new kgmGuiText(tactor, 51, y_coord, 70, 20);
+  g->setText("State");
+  g = guiState = new kgmGuiText(tactor, 51, y_coord, 70, 20);
 
-  if(node->ini.length())
-    g->setText(node->ini);
+  if(node->act)
+    g->setText(node->act->getState());
 
   kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showInit));
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showStates));
 
   y_coord += 23;
 }
 
-void kViewOptionsForActor::showInit()
+void kViewOptionsForActor::showStates()
 {
-  if(fd)
+  if(vo)
     return;
 
-  fd = new kFileDialog();
+  /*fd = new kFileDialog();
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("act");
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForActor::onInit));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForActor::onInit));*/
 
-  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+  vo = new kViewObjects();
+
+  for(u32 i = 0; i < node->act->getStatesCount(); i++)
+    vo->addItem(node->act->getStateName(i));
+
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(vo);
 }
 
-void kViewOptionsForActor::onInit()
+void kViewOptionsForActor::onState(kgmString state)
 {
-  kgmMemory<u8> mem;
+  /*kgmMemory<u8> mem;
   kgmGameApp::gameApplication()->game()->getResources()->getFile(fd->getFile(), mem);
 
   kgmXml xml(mem);
@@ -458,11 +464,13 @@ void kViewOptionsForActor::onInit()
 
   kgmGameTools::initActor(kgmGameApp::gameApplication()->game(), node->act, xml);
 
-  node->ini = fd->getFile();
+  node->ini = fd->getFile();*/
 
-  fd->erase();
-  fd->release();
-  fd = null;
+  node->act->setState(state);
+
+  vo->erase();
+  vo->release();
+  vo = null;
 }
 
 kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)

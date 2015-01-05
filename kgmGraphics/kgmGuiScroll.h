@@ -47,4 +47,5 @@ public:
   void onMsMove(int key, int x, int y);
   void onMsLeftDown(int key, int x, int y);
   void onMsLeftUp(int key, int x, int y);
+  void onMsOutside();
 };

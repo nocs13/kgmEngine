@@ -8,7 +8,7 @@ kgmGuiScroll::kgmGuiScroll()
   m_ppp = 1;
   m_drag = false;
   m_range = 1;
-  m_position  = 0;
+  m_position = 1;
   m_orientation = ORIENT_VERTICAL;
 
   m_msp = 0;
@@ -20,7 +20,7 @@ kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
   m_ppp = 1;
   m_drag = false;
   m_range = 1;
-  m_position  = 0;
+  m_position = 1;
   m_orientation = ORIENT_VERTICAL;
 
   m_msp = 0;
@@ -57,10 +57,11 @@ kgmGui::Rect kgmGuiScroll::getScrollerRect()
 
 void kgmGuiScroll::setRange(u32 r)
 {
-  if(r > 0)
-    m_range = r;
+  if(r < 1)
+    return;
 
-  m_position = 0;
+  m_range    = r;
+  m_position = 1;
 
   int t = (m_orientation == ORIENT_VERTICAL) ? (m_rect.height()) :(m_rect.width());
 
@@ -69,7 +70,7 @@ void kgmGuiScroll::setRange(u32 r)
 
 void kgmGuiScroll::setPosition(u32 p)
 {
-  if(p >= 0 && p <= m_range)
+  if(p >= 1 && p <= m_range)
     m_position = p;
 }
 
@@ -78,25 +79,12 @@ void kgmGuiScroll::setOrientation(ORIENT o)
   m_orientation = o;
 }
 
-/*void kgmGuiScroll::onPaint(kgmIGC* gc){
-  if(!m_view)
-   return;
-  Rect rect = Rect(m_rect.x, m_rect.y + m_position * m_dimension.y,
-            m_rect.w, (m_position + 1) * m_dimension.y);
-  gcDrawRect(gc, m_rect, m_colors[0], 0);
-  gcDrawRect(gc, rect, m_colors[3], 0);
-  }*/
-
 void kgmGuiScroll::onMsMove(int key, int x, int y)
 {
   u32 pos;
 
   if(!m_drag)
     return;
-  //if(!m_view  ||
-     //!m_drag ||
-     //!m_rect.inside(x, y))
-    //return;
 
   float d;
   float h;
@@ -104,13 +92,11 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
   if(m_orientation == ORIENT_VERTICAL)
   {
     h = (float)m_rect.height() / (float)m_range;
-    //d = (float)(y - m_rect.y) / (float)h;
     d = (float)(y) / (float)h;
   }
   else
   {
     h = (float)m_rect.width() / (float)m_range;
-    //d = (float)(x - m_rect.x) / (float)h;
     d = (float)(x) / (float)h;
   }
 
@@ -121,10 +107,10 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
   else
     pos = (x) / m_ppp;
 
-  if(pos >= 0 && pos <= m_range && pos != m_position)
+  if(pos >= 1 && pos <= m_range && pos != m_position)
   {
     m_position = pos;
-    //m_msp = y;
+
     if(callback.hasObject() && callback.hasFunction())
       callback(pos);
   }
@@ -141,6 +127,11 @@ void kgmGuiScroll::onMsLeftDown(int key, int x, int y)
 }
 
 void kgmGuiScroll::onMsLeftUp(int key, int x, int y)
+{
+  m_drag = false;
+}
+
+void kgmGuiScroll::onMsOutside()
 {
   m_drag = false;
 }
