@@ -19,6 +19,10 @@ kgmCharacter::kgmCharacter(kgmIGame *g)
   c_dist    = 5.0f;
   z_dist    = 2.0f;
 
+  kgmVariable var;
+
+  var = kgmVariable("Gameplayer", 0, &this->m_gameplayer);
+  m_variables.add(var);
 }
 
 void kgmCharacter::update(u32 ms)
