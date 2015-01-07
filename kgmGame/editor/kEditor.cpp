@@ -969,7 +969,7 @@ void kEditor::onIdle()
   kgmEvent::onIdle();
 
   static u32 ctick = 0;
-  static u32 cdel = 250;
+  static u32 cdel  = 50;
 
   if(kgmTime::getTicks() - ctick > cdel)
   {
