@@ -29,6 +29,8 @@ public:
   virtual bool add(kgmSensor*)                         = 0;
   virtual bool add(kgmTrigger*)                        = 0;
 
+  virtual bool remove(kgmGameObject*)                  = 0;
+
   virtual bool addGameplayer(kgmActor*)                = 0;
   virtual bool delGameplayer(kgmActor*)                = 0;
 

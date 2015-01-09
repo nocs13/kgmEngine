@@ -123,6 +123,7 @@ class kViewOptionsForObject : public kViewOptions
 public:
   kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
 
+  __stdcall void onSelectEnable(bool);
   __stdcall void updateVariable(kgmString id, kgmString data);
 };
 

@@ -527,6 +527,13 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
   kgmGui* tobject = tab->addTab("Object");
   y_coord = 1;
 
+  kgmGuiCheck* enable = new kgmGuiCheck(tobject, 1, y_coord, 150, 20);
+  enable->setText("Enabled");
+  enable->setCheck(node->obj->valid());
+  enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectEnable));
+
+  y_coord += 23;
+
   if(node->obj->m_variables.length() > 0)
     y_coord += 23;
 
@@ -563,6 +570,28 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
 
     if(y_coord > m_rect.height())
       m_rect.h = y_coord + 20;
+  }
+}
+
+void kViewOptionsForObject::onSelectEnable(bool state)
+{
+  if(state)
+  {
+    node->obj->enable();
+
+    if(node->obj->isType(kgmUnit::Class))
+      kgmIGame::getGame()->getLogic()->add((kgmUnit*)node->obj);
+    else if(node->obj->isType(kgmActor::Class))
+      kgmIGame::getGame()->getLogic()->add((kgmActor*)node->obj);
+    else if(node->obj->isType(kgmSensor::Class))
+      kgmIGame::getGame()->getLogic()->add((kgmSensor*)node->obj);
+    else if(node->obj->isType(kgmTrigger::Class))
+      kgmIGame::getGame()->getLogic()->add((kgmTrigger*)node->obj);
+  }
+  else
+  {
+    node->obj->disable();
+    kgmIGame::getGame()->getLogic()->remove(node->obj);
   }
 }
 

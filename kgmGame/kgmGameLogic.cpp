@@ -120,6 +120,28 @@ bool kgmGameLogic::add(kgmTrigger *tr)
   return false;
 }
 
+bool kgmGameLogic::remove(kgmGameObject *o)
+{
+  if(!o)
+    return false;
+
+  for(int i = m_objects.length(); i > 0; i--)
+  {
+    if(o == m_objects[i-1])
+    {
+      m_objects.erase(i - 1);
+
+      delGameplayer((kgmActor*)o);
+
+      o->release();
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
 bool kgmGameLogic::addGameplayer(kgmActor* a)
 {
   m_inputs.add(a);

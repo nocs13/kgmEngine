@@ -32,6 +32,7 @@ public:
   bool add(kgmEffect*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
+  bool remove(kgmGameObject*);
   bool chooseLogic(kgmString);
   bool isValid(kgmGameObject*);
   bool addGameplayer(kgmActor*);
