@@ -122,12 +122,22 @@ bool kgmGameLogic::add(kgmTrigger *tr)
 
 bool kgmGameLogic::addGameplayer(kgmActor* a)
 {
+  m_inputs.add(a);
 
   return false;
 }
 
 bool kgmGameLogic::delGameplayer(kgmActor* a)
 {
+  for(int i = m_inputs.length(); i > 0; i--)
+  {
+    if(a == m_inputs[i-1])
+    {
+      m_inputs.erase(i - 1);
+
+      return true;
+    }
+  }
 
   return false;
 }
@@ -216,16 +226,9 @@ void kgmGameLogic::update(u32 milliseconds)
 
 void kgmGameLogic::input(int btn, int state)
 {
-  if(m_gameplayer && kgmObject::isValid(m_gameplayer))
+  for(int i = 0; i < m_inputs.length(); i++)
   {
-    m_gameplayer->input(btn, state);
-  }
-//  else
-  {
-    for(int i = 0; i < m_inputs.length(); i++)
-    {
-      ((kgmActor*)m_inputs[i])->input(btn, state);
-    }
+    ((kgmActor*)m_inputs[i])->input(btn, state);
   }
 }
 

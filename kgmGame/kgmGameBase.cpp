@@ -28,6 +28,7 @@
 
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
+#include "objects/kgmLnCamera.h"
 #include "objects/kgmSnInputListener.h"
 
 /////////////////////////
@@ -162,6 +163,7 @@ kgmGameBase::kgmGameBase()
   kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmLaser::New);
   kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmExplode::New);
   kgmGameObject::goRegister("kgmCharacter", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmCharacter::New);
+  kgmGameObject::goRegister("kgmLnCamera",  kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmLnCamera::New);
   kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmParticlesObject::New);
   kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmSnInputListener::New);
 

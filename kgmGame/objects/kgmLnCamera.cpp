@@ -11,6 +11,11 @@ kgmLnCamera::kgmLnCamera(kgmIGame* g)
 {
   m_camera = null;
   m_linked = null;
+
+  kgmVariable var;
+
+  var = kgmVariable("linkto",   kgmString(""), &m_lname);
+  m_variables.add(var);
 }
 
 kgmLnCamera::~kgmLnCamera()
@@ -27,8 +32,10 @@ void kgmLnCamera::init()
 
 void kgmLnCamera::update(u32 ms)
 {
-  if(m_camera == null)
+  if(!valid() || !m_camera || !m_linked)
     return;
+
+
 }
 
 bool kgmLnCamera::linkto(kgmString name)

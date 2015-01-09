@@ -86,14 +86,6 @@ public:
   __stdcall void setShadows(bool s);
 };
 
-class kViewOptionsForSensor : public kViewOptions
-{
-public:
-  kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
-
-  void setTarget(kgmString s);
-};
-
 class kViewOptionsForObject : public kViewOptions
 {
   class kGuiText: public kgmGuiText
@@ -158,6 +150,14 @@ public:
 
   __stdcall void showStates();
   __stdcall void onState(kgmString);
+};
+
+class kViewOptionsForSensor : public kViewOptionsForObject
+{
+public:
+  kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
+
+  void setTarget(kgmString s);
 };
 
 class kViewOptionsForTrigger : public kViewOptions

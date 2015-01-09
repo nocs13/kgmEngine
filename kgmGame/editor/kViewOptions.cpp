@@ -499,7 +499,7 @@ kViewOptionsForEffect::kViewOptionsForEffect(kNode* n, int x, int y, int w, int 
 }
 
 kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
-:kViewOptions(n, x, y, w, h)
+:kViewOptionsForObject(n, x, y, w, h)
 {
   kgmGui* tsensor = tab->addTab("Sensor");
   y_coord = 1;
