@@ -3,6 +3,7 @@
 #include "../../kgmBase/kgmLog.h"
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmSystem.h"
+#include "../../kgmSystem/kgmThread.h"
 #include "../kgmGameBase.h"
 #include "../kgmGameMap.h"
 
@@ -1564,9 +1565,20 @@ void kEditor::onAddObstacle()
   game->m_render->add(node->geo);
 }
 
+static int runRun(void *cmd)
+{
+  if(!cmd)
+    return 1;
+
+  int res = system((char*)cmd);
+
+  return res;
+  //return execl((char*)cmd, (char*)cmd);
+}
+
 void kEditor::onRunRun()
 {
-  menu->hide();
+  /*menu->hide();
 
   cam_pos_bk = game->getRender()->camera().mPos;
   cam_dir_bk = game->getRender()->camera().mDir;
@@ -1581,7 +1593,36 @@ void kEditor::onRunRun()
     game->getLogic()->build();
   }
 
-  game->m_state = kgmIGame::State_Play;
+  game->m_state = kgmIGame::State_Play;*/
+
+  kgmString path;
+
+  kgmSystem::getTemporaryDirectory(path);
+
+  if(path.length() < 1)
+    path = ".";
+
+  path += kgmSystem::PathDelim;
+
+  path += "~run.map";
+
+  mapSave(path);
+
+  kgmString cmd, exe;
+
+  if(kgmSystem::getProcessPath(exe) < 1)
+    return;
+
+  cmd = exe;
+  cmd += " path ";
+  cmd += path;
+
+  //int res = system(cmd.data());
+  kgmInstThread thread(cmd.data(), runRun);
+
+  thread.join();
+
+  kgmFile::remove_file(path);
 }
 
 void kEditor::onViewObjects()

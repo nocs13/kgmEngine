@@ -20,4 +20,6 @@ public:
   static bool isFile(kgmString&);
   static bool isDirectory(kgmString&);
   static bool splitPath(kgmString path, kgmString& dir, kgmString& file);
+  static int  getProcessId();
+  static int  getProcessPath(kgmString&);
 };

@@ -294,3 +294,30 @@ bool kgmSystem::splitPath(kgmString path, kgmString& dir, kgmString& file)
   return false;
 }
 
+int kgmSystem::getProcessId()
+{
+#ifdef WIN32
+  return (int)GetModuleHandle(NULL);
+#else
+  return (int)getpid();
+#endif
+}
+
+int kgmSystem::getProcessPath(kgmString &path)
+{
+  char c_path[1024] = {0};
+
+#ifdef WIN32
+  GetModuleFileName(NULL, c_path, sizeof(c_path));
+  path = c_path;
+
+  return (int)path.length();
+#else
+  readlink("/proc/self/exe", c_path, sizeof(c_path));
+  path = c_path;
+
+  return (int)path.length();
+#endif
+
+  return 0;
+}
