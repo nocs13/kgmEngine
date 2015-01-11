@@ -69,7 +69,7 @@ kgmCString c_map;
 kgmCamera g_cam;
 ////////////////////////////////////
 //                kgmGameBase
-kgmGameBase::kgmGameBase()
+kgmGameBase::kgmGameBase(bool edit)
   :kgmOGLWindow(0, (char*)"kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false){
   m_game = this;
   kgmString sdata;
@@ -168,8 +168,10 @@ kgmGameBase::kgmGameBase()
   kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmSnInputListener::New);
 
 #ifdef EDITOR
-  editor  = new kEditor(this);
-  editing = false;
+  editor = null;
+
+  if(edit)
+    editor = new kEditor(this);
 #endif
 
   int rc[4];
@@ -1191,6 +1193,19 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
 {
   kgmMemory<u8> mem;
 
+#ifdef EDITOR
+  if(kgmSystem::isFile(idmap))
+  {
+    kgmFile file;
+
+    if(file.open(idmap, kgmFile::Read))
+    {
+      file.mmap(mem);
+      file.close();
+    }
+  }
+  else
+#endif
   m_resources->getFile(idmap, mem);
 
   if(mem.length() < 1)

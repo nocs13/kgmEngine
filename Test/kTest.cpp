@@ -103,7 +103,8 @@ class kGame: public kgmGameBase{
   GameData   data;
 
 public:
-  kGame()
+  kGame(bool edit)
+    :kgmGameBase(edit)
   {
     gui = new kGui(this);
 
@@ -333,7 +334,7 @@ public:
   ~kApp(){
   }
 
-  int main(int argc, char **argv)
+  /*int main(int argc, char **argv)
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
@@ -345,13 +346,13 @@ public:
     game->release();
 
     return 0;
-  }
+  }*/
 
-  void gameInit()
+  void gameInit(bool edit)
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
-    m_game = game = new kGame();
+    m_game = game = new kGame(edit);
 
     game->setRect(0, 0, w, h);
   }

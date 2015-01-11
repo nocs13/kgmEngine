@@ -106,14 +106,12 @@ public:
   friend class kEditor;
 
   kEditor* editor;
-  bool     editing;
 
-  void     setEditing(bool e) { editing = e; }
   kEditor* getEditor(){ return editor; }
 #endif
 
 public:
-  kgmGameBase();
+  kgmGameBase(bool edit = false);
   kgmGameBase(kgmString &conf);
   virtual ~kgmGameBase();
 

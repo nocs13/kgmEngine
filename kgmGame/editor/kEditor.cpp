@@ -1573,28 +1573,10 @@ static int runRun(void *cmd)
   int res = system((char*)cmd);
 
   return res;
-  //return execl((char*)cmd, (char*)cmd);
 }
 
 void kEditor::onRunRun()
 {
-  /*menu->hide();
-
-  cam_pos_bk = game->getRender()->camera().mPos;
-  cam_dir_bk = game->getRender()->camera().mDir;
-
-  if(game->getPhysics())
-  {
-    game->getPhysics()->build();
-  }
-
-  if(game->getLogic())
-  {
-    game->getLogic()->build();
-  }
-
-  game->m_state = kgmIGame::State_Play;*/
-
   kgmString path;
 
   kgmSystem::getTemporaryDirectory(path);
@@ -1604,7 +1586,7 @@ void kEditor::onRunRun()
 
   path += kgmSystem::PathDelim;
 
-  path += "~run.map";
+  path += "~kgmrun.map";
 
   mapSave(path);
 
@@ -1614,7 +1596,7 @@ void kEditor::onRunRun()
     return;
 
   cmd = exe;
-  cmd += " path ";
+  cmd += " mapfile ";
   cmd += path;
 
   //int res = system(cmd.data());

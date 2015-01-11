@@ -188,17 +188,14 @@ void kgmSystem::setCurrentDirectory(kgmString& s)
 
 void kgmSystem::getTemporaryDirectory(kgmString& s)
 {
-  bool res = false;
-  kgmMemory<u8> buf(256);
-  buf.zero();
 #ifdef WIN32
-  DWORD dw = GetTempPath(MAX_PATH, (LPSTR)buf.data());
+  char buf[MAX_PATH] = {0};
+
+  DWORD dw = GetTempPath(MAX_PATH, (LPSTR)buf);
 
   if(dw != NULL)
-    s = (const char*)buf.data();
-#endif
-
-#ifdef LINUX
+    s = (const char*)buf;
+#else
   DIR* dir = opendir("~/tmp");
 
   if(dir != 0)
