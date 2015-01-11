@@ -464,17 +464,6 @@ void kViewOptionsForActor::showStates()
 
 void kViewOptionsForActor::onState(kgmString state)
 {
-  /*kgmMemory<u8> mem;
-  kgmGameApp::gameApplication()->game()->getResources()->getFile(fd->getFile(), mem);
-
-  kgmXml xml(mem);
-
-  mem.clear();
-
-  kgmGameTools::initActor(kgmGameApp::gameApplication()->game(), node->act, xml);
-
-  node->ini = fd->getFile();*/
-
   node->act->setState(state);
 
   guiState->setText(state);
@@ -587,11 +576,17 @@ void kViewOptionsForObject::onSelectEnable(bool state)
       kgmIGame::getGame()->getLogic()->add((kgmSensor*)node->obj);
     else if(node->obj->isType(kgmTrigger::Class))
       kgmIGame::getGame()->getLogic()->add((kgmTrigger*)node->obj);
+
+    if(node->obj->getBody())
+      kgmIGame::getGame()->getPhysics()->add(node->obj->getBody());
   }
   else
   {
     node->obj->disable();
     kgmIGame::getGame()->getLogic()->remove(node->obj);
+
+    if(node->obj->getBody())
+      kgmIGame::getGame()->getPhysics()->remove(node->obj->getBody());
   }
 }
 

@@ -15,8 +15,6 @@ class kgmCharacter : public kgmActor
   float pich;
   float speed_max;
   float speed_min;
-  float c_dist;
-  float z_dist;
 
   bool  gbtns[64];
 
@@ -26,7 +24,6 @@ public:
   kgmCharacter(kgmIGame* g = null);
 
   void update(u32 ms);
-  void input(u32 in, int state);
 };
 
 #endif // KGMCHARACTER_H

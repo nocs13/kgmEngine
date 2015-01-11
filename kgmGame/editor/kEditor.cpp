@@ -466,11 +466,6 @@ bool kEditor::mapOpen(kgmString s)
 
       if(node->act)
       {
-        game->getLogic()->add(node->act);
-
-        if(node->act->getBody())
-          game->getPhysics()->add(node->act->getBody());
-
         if(node->act->getVisual())
           game->getGraphics()->add(node->act->getVisual());
       }
@@ -787,9 +782,7 @@ bool kEditor::addUnit(kgmString type)
 
         nodes.add(node);
 
-        game->getLogic()->add(un);
         game->getRender()->add(un->getVisual());
-        game->getPhysics()->add(un->getBody());
 
         return true;
       }
@@ -846,9 +839,7 @@ bool kEditor::addActor(kgmString type)
 
     nodes.add(node);
 
-    game->getLogic()->add(ac);
     game->getRender()->add(ac->getVisual());
-    game->getPhysics()->add(ac->getBody());
     
     return true;
   }
@@ -889,9 +880,7 @@ bool kEditor::addEffect(kgmString type)
 
         nodes.add(node);
 
-        game->getLogic()->add(eff);
         game->getRender()->add(eff->getVisual());
-        game->getPhysics()->add(eff->getBody());
 
         return true;
       }
@@ -931,9 +920,7 @@ bool kEditor::addSensor(kgmString type)
 
         nodes.add(node);
 
-        game->getLogic()->add(sn);
         game->getRender()->add(sn->getVisual());
-        game->getPhysics()->add(sn->getBody());
 
         return true;
       }
@@ -982,7 +969,8 @@ void kEditor::onIdle()
       {
         kgmGameObject *o = (kgmGameObject*)(*i)->obj;
 
-        o->update(cdel);
+        if(o->valid())
+          o->update(cdel);
       }
     }
 

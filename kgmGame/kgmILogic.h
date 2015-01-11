@@ -31,9 +31,6 @@ public:
 
   virtual bool remove(kgmGameObject*)                  = 0;
 
-  virtual bool addGameplayer(kgmActor*)                = 0;
-  virtual bool delGameplayer(kgmActor*)                = 0;
-
   virtual void clear()                                 = 0;
   virtual void build()                                 = 0;
   virtual void update(u32)                             = 0;

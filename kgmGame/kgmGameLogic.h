@@ -15,8 +15,6 @@ class kgmGameLogic : public kgmILogic, public kgmObject
 {
 public:
   kgmList<kgmGameObject*>    m_objects;
-  kgmList<kgmGameObject*>    m_inputs;
-  kgmList<kgmGameObject*>    m_trush;
 
   kgmActor*                  m_gameplayer;
 
@@ -35,9 +33,6 @@ public:
   bool remove(kgmGameObject*);
   bool chooseLogic(kgmString);
   bool isValid(kgmGameObject*);
-  bool addGameplayer(kgmActor*);
-  bool delGameplayer(kgmActor*);
-
 
   virtual void build();
   virtual void input(int, int);

@@ -16,9 +16,6 @@ kgmCharacter::kgmCharacter(kgmIGame *g)
   speed_max = 0.05;
   speed_min = 0.01;
 
-  c_dist    = 5.0f;
-  z_dist    = 2.0f;
-
   kgmVariable var;
 
   var = kgmVariable("Gameplayer", 0, &this->m_gameplayer);
@@ -171,29 +168,6 @@ void kgmCharacter::update(u32 ms)
         kgmGameObject* go = (kgmGameObject*)m_dummies[i]->linked();
       }
     }
-    else if(m_state->id == "correct")
-    {
-      if(roll > 0.0f)
-        roll -= 0.02f;
-      else
-        roll += 0.02f;
-
-      if(fabs(roll) < 0.05f)
-        roll = 0.0f;
-
-      if(yaaw > 0.0f)
-        yaaw -= 0.02f;
-      else
-        yaaw += 0.02f;
-
-      if(fabs(yaaw) < 0.05f)
-        yaaw = 0.0f;
-
-      if(yaaw == 0.0 && roll == 0.0)
-      {
-        setState("idle", true);
-      }
-    }
     else if(m_state->id == "die")
     {
     }
@@ -214,27 +188,4 @@ void kgmCharacter::update(u32 ms)
       }
     }
   }
-
-  if(m_gameplayer)
-  {
-    kgmCamera& cam = game()->getGraphics()->camera();
-    vec3 cpos = m_body->position() - m_body->direction() * c_dist;
-    cpos.z = m_body->m_position.z + z_dist;
-    cam.mPos = cpos;
-    cam.mDir = m_body->direction();
-    cam.update();
-
-    if(kgmIGame::getGame()->getAudio())
-    {
-      vec3 no(0, 0, 0);
-      vec3 spos = m_body->position();
-      ((kgmGameAudio*)kgmIGame::getGame()->getAudio())->listener(spos, no, no);
-    }
-  }
 }
-
-void kgmCharacter::input(u32 in, int state)
-{
-
-}
-

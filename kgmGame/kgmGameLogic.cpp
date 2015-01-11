@@ -22,20 +22,6 @@ void kgmGameLogic::clear()
 
   m_objects.clear();
 
-  for(kgmList<kgmGameObject*>::iterator i = m_inputs.begin(); i != m_inputs.end(); ++i)
-  {
-    (*i)->release();
-  }
-
-  m_inputs.clear();
-
-  for(kgmList<kgmGameObject*>::iterator i = m_trush.begin(); i != m_trush.end(); ++i)
-  {
-    (*i)->release();
-  }
-
-  m_trush.clear();
-
   m_gameplayer = null;
 }
 
@@ -58,11 +44,8 @@ bool kgmGameLogic::add(kgmActor *a)
 {
   if(a)
   {
-    if(((kgmActor*)a)->m_gameplayer)
-    {
+    if(!m_gameplayer && ((kgmActor*)a)->m_gameplayer)
       m_gameplayer = (kgmActor*)a;
-      addGameplayer(a);
-    }
 
     m_objects.push_back(a);
     a->increment();
@@ -127,35 +110,14 @@ bool kgmGameLogic::remove(kgmGameObject *o)
 
   for(int i = m_objects.length(); i > 0; i--)
   {
-    if(o == m_objects[i-1])
+    if(o == m_objects[i - 1])
     {
       m_objects.erase(i - 1);
 
-      delGameplayer((kgmActor*)o);
-
       o->release();
 
-      return true;
-    }
-  }
-
-  return false;
-}
-
-bool kgmGameLogic::addGameplayer(kgmActor* a)
-{
-  m_inputs.add(a);
-
-  return false;
-}
-
-bool kgmGameLogic::delGameplayer(kgmActor* a)
-{
-  for(int i = m_inputs.length(); i > 0; i--)
-  {
-    if(a == m_inputs[i-1])
-    {
-      m_inputs.erase(i - 1);
+      if(o == m_gameplayer)
+        m_gameplayer = null;
 
       return true;
     }
@@ -215,7 +177,7 @@ void kgmGameLogic::update(u32 milliseconds)
       if(m_gameplayer == go)
         m_gameplayer = null;
 
-      m_trush.add(go);
+      go->disable();
       i = m_objects.erase(i);
     }
     else if(go->valid())
@@ -241,17 +203,14 @@ void kgmGameLogic::update(u32 milliseconds)
 
   if(kgmTime::getTicks() - tm > 100)
   {
-    trush();
     tm = kgmTime::getTicks();
   }
 }
 
 void kgmGameLogic::input(int btn, int state)
 {
-  for(int i = 0; i < m_inputs.length(); i++)
-  {
-    ((kgmActor*)m_inputs[i])->input(btn, state);
-  }
+  if(m_gameplayer)
+    m_gameplayer->input(btn, state);
 }
 
 void kgmGameLogic::action(ACTION, kgmObject*, kgmString)
@@ -332,14 +291,4 @@ u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmGameObject*>& objs
   }
 
   return count;
-}
-
-void kgmGameLogic::trush()
-{
-  for(kgmList<kgmGameObject*>::iterator i = m_trush.begin(); i != m_trush.end(); ++i)
-  {
-    (*i)->release();
-  }
-
-  m_trush.clear();
 }
