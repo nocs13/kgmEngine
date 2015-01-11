@@ -244,29 +244,6 @@ public:
     }
   }
 
-  int gLoad(kgmString s)
-  {
-    int res = kgmGameBase::gLoad(s);
-
-    if(res)
-    {
-      ACamera* camera = new ACamera(this);
-      m_logic->add((kgmActor*)camera);
-      camera->release();
-
-      kInput* input = new kInput(this);
-      m_logic->add((kgmSensor*)input);
-      input->release();
-    }
-
-    return res;
-  }
-
-  kgmGameObject* gObject(kgmString t)
-  {
-    return kgmGameBase::gObject(t);
-  }
-
 private:
   void readData()
   {
