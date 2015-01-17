@@ -386,7 +386,7 @@ void kgmGameBase::onKeyUp(int k)
 {
   m_keys[k] = 0;
 
-  if(m_logic && m_state == State_Play && m_input[m_keymap[k]] != 0)
+  if(m_logic && (m_state == State_Play || m_state == State_Edit) && m_input[m_keymap[k]] != 0)
   {
     m_logic->input(m_keymap[k], 0);
     m_input[m_keymap[k]] = 0;
@@ -408,7 +408,7 @@ void kgmGameBase::onKeyUp(int k)
 void kgmGameBase::onKeyDown(int k){
   m_keys[k] = 1;
 
-  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[k]] != 1))
+  if(m_logic && (m_state == State_Play || m_state == State_Edit) && (m_input[m_keymap[k]] != 1))
   {
     m_logic->input(m_keymap[k], 1);
     m_input[m_keymap[k]] = 1;

@@ -417,6 +417,10 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 {
   kgmGui* tactor = tab->addTab("Actor");
   y_coord = 1;
+  kgmGuiCheck* check = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
+  check->setText("Player");
+  check->setCheck(node->act->m_gameplayer);
+  check->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
   vo = null;
   y_coord += 23;
   kgmGui* g = new kgmGuiLabel(tactor, 0, y_coord, 50, 20);
@@ -471,6 +475,16 @@ void kViewOptionsForActor::onState(kgmString state)
   vo->erase();
   vo->release();
   vo = null;
+}
+
+void kViewOptionsForActor::onPlayer(bool s)
+{
+  node->act->m_gameplayer = s;
+
+  if(s)
+    kgmIGame::getGame()->getLogic()->setPlayer(node->act);
+  else
+    kgmIGame::getGame()->getLogic()->setPlayer(null);
 }
 
 kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)

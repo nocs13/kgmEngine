@@ -44,9 +44,6 @@ bool kgmGameLogic::add(kgmActor *a)
 {
   if(a)
   {
-    if(!m_gameplayer && ((kgmActor*)a)->m_gameplayer)
-      m_gameplayer = (kgmActor*)a;
-
     m_objects.push_back(a);
     a->increment();
 

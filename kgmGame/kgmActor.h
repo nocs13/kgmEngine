@@ -51,6 +51,7 @@ public:
     kgmString type;
     kgmString action;
     kgmString switchto;
+    kgmString switchfrom;
 
     u32       priopity;
     u32       timeout;

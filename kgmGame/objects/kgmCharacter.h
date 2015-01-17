@@ -13,8 +13,9 @@ class kgmCharacter : public kgmActor
   float roll;
   float yaaw;
   float pich;
-  float speed_max;
-  float speed_min;
+  float speed_idl;
+  float speed_wlk;
+  float speed_run;
 
   bool  gbtns[64];
 
@@ -24,6 +25,7 @@ public:
   kgmCharacter(kgmIGame* g = null);
 
   void update(u32 ms);
+  void action(kgmString&);
 };
 
 #endif // KGMCHARACTER_H

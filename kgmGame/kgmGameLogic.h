@@ -46,10 +46,9 @@ public:
   virtual u32            getObjectsByClass(kgmRuntime&,
                                            kgmList<kgmGameObject*>&);
 
-  kgmActor* gameplayer(u8 i)
-  {
-    return m_gameplayer;
-  }
+  void      setPlayer(kgmActor* gp) { m_gameplayer = gp; }
+  kgmActor* getPlayer() { return m_gameplayer; }
+
 
 private:
   void trush();

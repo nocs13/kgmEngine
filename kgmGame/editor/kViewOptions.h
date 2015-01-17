@@ -151,6 +151,7 @@ public:
 
   __stdcall void showStates();
   __stdcall void onState(kgmString);
+  __stdcall void onPlayer(bool);
 };
 
 class kViewOptionsForSensor : public kViewOptionsForObject

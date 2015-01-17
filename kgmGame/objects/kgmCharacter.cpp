@@ -13,12 +13,17 @@ kgmCharacter::kgmCharacter(kgmIGame *g)
   yaaw      = 0.0;
   pich      = 0.5 * PI;
 
-  speed_max = 0.05;
-  speed_min = 0.01;
+  speed_idl = 0.0;
+  speed_wlk = 0.5;
+  speed_run = 0.8;
 
   kgmVariable var;
 
-  var = kgmVariable("Gameplayer", 0, &this->m_gameplayer);
+  var = kgmVariable("sIdle", 0.0f, &speed_idl);
+  m_variables.add(var);
+  var = kgmVariable("sWalk", 0.0f, &speed_wlk);
+  m_variables.add(var);
+  var = kgmVariable("sRun",  0.0f, &speed_run);
   m_variables.add(var);
 }
 
@@ -87,86 +92,12 @@ void kgmCharacter::update(u32 ms)
           setState(inp.state);
         }
       }
-
-      if(!ainput && (roll != 0.0 || yaaw != 0.0))
-      {
-        setState("correct");
-
-        return;
-      }
-
-      if(!ainput && (m_body->m_velocity > speed_min))
-      {
-        setState("slow");
-        m_body->m_position.z = 0.0f;
-      }
     }
-    else if(m_state->id == "left")
+    else if(m_state->id == "walk")
     {
-      vec3 vt = m_body->m_rotation;
-      vt.z += (0.02f);
-      m_body->rotate(vt.x, vt.y, vt.z);
-
-      if(roll > -PI/4)
-        roll -= 0.02f;
     }
-    else if(m_state->id == "right")
+    else if(m_state->id == "jump")
     {
-      vec3 vt = m_body->m_rotation;
-      vt.z -= (0.02f);
-      m_body->rotate(vt.x, vt.y, vt.z);
-
-      if(roll < PI/4)
-        roll += 0.02f;
-    }
-    else if(m_state->id == "up")
-    {
-      if(yaaw < PI/6)
-      {
-        vec3 vt = m_body->m_rotation;
-        vt.x    = yaaw;
-        m_body->rotate(vt.x, vt.y, vt.z);
-
-        yaaw += 0.02f;
-      }
-    }
-    else if(m_state->id == "down")
-    {
-      if(yaaw > -PI/6)
-      {
-        vec3 vt = m_body->m_rotation;
-        vt.x    = yaaw;
-        m_body->rotate(vt.x, vt.y, vt.z);
-
-        yaaw -= 0.02f;
-      }
-    }
-    else if(m_state->id == "fast")
-    {
-      if(m_body->m_velocity < speed_max)
-      {
-        m_body->m_velocity += 0.001f;
-
-        if(m_body->m_velocity > speed_max)
-          m_body->m_velocity = speed_max;
-      }
-    }
-    else if(m_state->id == "slow")
-    {
-      if(m_body->m_velocity > speed_min)
-      {
-        m_body->m_velocity -= 0.001f;
-
-        if(m_body->m_velocity < speed_min)
-          m_body->m_velocity = speed_min;
-      }
-      else if(m_body->m_velocity <= speed_min)
-        setState(m_state->switchto);
-
-      for(int i = 0; i < m_dummies.size(); i++)
-      {
-        kgmGameObject* go = (kgmGameObject*)m_dummies[i]->linked();
-      }
     }
     else if(m_state->id == "die")
     {
@@ -187,5 +118,33 @@ void kgmCharacter::update(u32 ms)
         }
       }
     }
+  }
+}
+
+void kgmCharacter::action(kgmString &a)
+{
+  if(a == "idle")
+  {
+    m_body->m_velocity = speed_idl;
+  }
+  else if(a == "walk")
+  {
+    m_body->m_velocity = speed_wlk;
+  }
+  else if(a == "run")
+  {
+    m_body->m_velocity = speed_run;
+  }
+  else if(a == "jump")
+  {
+
+  }
+  else if(a == "fall")
+  {
+
+  }
+  else if(a == "die")
+  {
+
   }
 }

@@ -43,6 +43,8 @@ public:
                                           kgmList<kgmGameObject*>&)  = 0;
   virtual u32            getObjectsByClass(kgmRuntime&,
                                            kgmList<kgmGameObject*>&) = 0;
+  virtual void           setPlayer(kgmActor*)                        = 0;
+  virtual kgmActor*      getPlayer()                                 = 0;
 };
 
 #endif // KGMILOGIC_H

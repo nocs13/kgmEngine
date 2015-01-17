@@ -119,7 +119,6 @@ bool kgmActor::setState(kgmString s, bool force)
 
     if(state->sound && state->sound->getSound())
     {
-      //state->sound->m_sound->play((state->timeout == -1) ? (true) : (false));
       game()->getAudio()->play(state->sound->getSound(), (state->timeout == -1) ? (true) : (false));
     }
 
