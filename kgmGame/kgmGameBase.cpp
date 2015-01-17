@@ -577,6 +577,14 @@ int kgmGameBase::gSwitch(u32 state)
   return m_state;
 }
 
+int kgmGameBase::gButton(game_button gb)
+{
+  if(gb >= sizeof(m_input))
+    return 0;
+
+  return m_input[(int)gb];
+}
+
 u32 kgmGameBase::gState(){
   return m_state;
 }

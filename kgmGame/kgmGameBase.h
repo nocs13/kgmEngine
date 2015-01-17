@@ -151,6 +151,7 @@ public:
   int            gUnload();               //unload game level
   int            gCommand(kgmString);     //do string command
   int            gQuit();                 //quit from level
+  int            gButton(game_button);
   u32            gState();                //check game state
   int            gSwitch(u32);            //switch game state
   void           gPause(bool);            //render game scene
