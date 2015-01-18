@@ -32,10 +32,16 @@ void kgmLnCamera::init()
 
 void kgmLnCamera::update(u32 ms)
 {
-  if(!valid() || !m_camera || !m_linked)
+  if(!valid() || !m_camera)
     return;
 
+  if(!m_linked)
+  {
+    m_linked = game()->getLogic()->getPlayer();
 
+    if(!m_linked)
+      return;
+  }
 }
 
 bool kgmLnCamera::linkto(kgmString name)
