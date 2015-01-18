@@ -831,6 +831,7 @@ bool kEditor::addActor(kgmString type)
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
     node->geo->set(mtlLines);
+    node->ini = type;
 
     selected = node;
 

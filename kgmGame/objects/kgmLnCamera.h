@@ -13,6 +13,9 @@ class kgmLnCamera : public kgmSensor
   kgmActor  *m_linked;
   kgmString  m_lname;
 
+  vec3       m_place;
+  vec3       m_look;
+
 public:
   kgmLnCamera(kgmIGame *game = null);
   ~kgmLnCamera();

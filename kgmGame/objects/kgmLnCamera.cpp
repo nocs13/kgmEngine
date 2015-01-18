@@ -12,9 +12,24 @@ kgmLnCamera::kgmLnCamera(kgmIGame* g)
   m_camera = null;
   m_linked = null;
 
+  m_place = vec3(-1, 0, 1);
+  m_look  = vec3(0, 0, 0.2);
+
   kgmVariable var;
 
   var = kgmVariable("linkto",   kgmString(""), &m_lname);
+  m_variables.add(var);
+  var = kgmVariable("placeX", 0.0f, &m_place.x);
+  m_variables.add(var);
+  var = kgmVariable("placeY", 0.0f, &m_place.y);
+  m_variables.add(var);
+  var = kgmVariable("placeZ", 0.0f, &m_place.z);
+  m_variables.add(var);
+  var = kgmVariable("lookX", 0.0f, &m_look.x);
+  m_variables.add(var);
+  var = kgmVariable("lookY", 0.0f, &m_look.y);
+  m_variables.add(var);
+  var = kgmVariable("lookZ", 0.0f, &m_look.z);
   m_variables.add(var);
 }
 
@@ -42,6 +57,17 @@ void kgmLnCamera::update(u32 ms)
     if(!m_linked)
       return;
   }
+
+  vec3 pos = m_linked->getBody()->position();
+
+  vec3 c_pos  = pos + m_place;
+  vec3 c_look = pos + m_look;
+  vec3 c_ldir = c_look - c_pos;
+
+  c_ldir.normalize();
+  m_camera->mPos = c_pos;
+  m_camera->mDir = c_ldir;
+  m_camera->update();
 }
 
 bool kgmLnCamera::linkto(kgmString name)
