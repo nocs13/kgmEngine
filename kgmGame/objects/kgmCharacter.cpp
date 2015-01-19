@@ -4,6 +4,8 @@
 #include "../kgmGameAudio.h"
 #include "../kgmGraphics/kgmIGraphics.h"
 
+#include "../../kgmBase/kgmLog.h"
+
 KGMOBJECT_IMPLEMENT(kgmCharacter, kgmActor);
 
 kgmCharacter::kgmCharacter(kgmIGame *g)
@@ -123,6 +125,8 @@ void kgmCharacter::update(u32 ms)
 
 void kgmCharacter::action(kgmString &a)
 {
+  kgm_log() << "kgmCharacter action: " << (char*)a << "\n";
+
   if(a == "idle")
   {
     m_body->m_velocity = speed_idl;

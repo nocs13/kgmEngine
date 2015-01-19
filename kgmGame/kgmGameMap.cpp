@@ -440,30 +440,17 @@ kgmGameMap::Node kgmGameMap::next()
         kgmString id, cls, ini;
 
         m_xml->attribute("name",  id);
-        m_xml->attribute("class", cls);
-        m_xml->attribute("init",  ini);
+        //m_xml->attribute("class", cls);
+        m_xml->attribute("actor",  ini);
 
-        kgmActor* act = null;
+        kgmActor* act = kgmIGame::getGame()->gSpawn(ini);
 
-        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        if(act)
         {
-          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
-
-          if(fn_new)
-          {
-            act = (kgmActor*)fn_new(m_game);
-
-            if(act)
-            {
-              if(ini.length() > 0)
-                kgmGameTools::initActor(m_game, act, ini);
-
-              node.obj = act;
-              node.bnd = box3(-1, -1, -1, 1, 1, 1);
-              node.nam = id;
-              node.ini = ini;
-            }
-          }
+          node.obj = act;
+          node.bnd = box3(-1, -1, -1, 1, 1, 1);
+          node.nam = id;
+          node.ini = ini;
         }
 
         node.typ = NodeAct;

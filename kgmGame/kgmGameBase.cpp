@@ -1287,9 +1287,19 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
       act->setPosition(mnode.pos);
       act->setRotation(mnode.rot);
 
+      kgm_log() << "actor possition " << mnode.pos.x << " " << mnode.pos.y << "" << mnode.pos.z << "\n";
+
       m_logic->add(act);
       m_render->add(act->getVisual());
       m_physics->add(act->getBody());
+
+      if(act->m_gameplayer)
+        m_logic->setPlayer(act);
+
+      kgmString state = act->getState();
+
+      if(state.length() < 1)
+        act->setState("idle");
     }
     else if(mnode.typ == kgmGameMap::NodeSns)
     {
