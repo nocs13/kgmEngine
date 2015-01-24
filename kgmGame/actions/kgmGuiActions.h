@@ -1,0 +1,4 @@
+#ifndef KGMGUIACTIONS_H
+#define KGMGUIACTIONS_H
+
+#endif // KGMGUIACTIONS_H
