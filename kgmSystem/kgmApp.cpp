@@ -1,15 +1,16 @@
 #include "kgmApp.h"
 #include "kgmWindow.h"
+#include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmMemory.h"
 
 #include <signal.h>
 
 #ifdef WIN32
- #include <windows.h>
+#include <windows.h>
 #endif
 
 #ifdef LINUX
- #include <unistd.h>
+#include <unistd.h>
 #endif
 
 static void kgm_signal_handler(int s);
@@ -22,12 +23,12 @@ kgmApp* kgmApp::m_app = 0;
 
 kgmApp::kgmApp()
 {
- m_app = this; 
+  m_app = this;
 }
 
 kgmApp::~kgmApp()
 {
- m_app = 0;
+  m_app = 0;
 }
 
 int kgmApp::main(int argc, char **argv)
@@ -40,47 +41,83 @@ int kgmApp::main(int argc, char **argv)
 HINSTANCE hInst = 0;
 LONG kgmDumper(struct _EXCEPTION_POINTERS* pe)
 {
- MessageBox(0, "Exception", "abort!", 0);
- return NULL;
+  MessageBox(0, "Exception", "abort!", 0);
+  return NULL;
 }
 
 #if defined _USRDLL
 //DLL MAIN Function
 BOOL __stdcall DllMain(HANDLE a, DWORD b, DWORD c){
- hInst = a;
- switch(b)
- {
- case DLL_PROCESS_DETACH:
-	 kgmMemoryClear();
-	 break;
- case DLL_THREAD_DETACH:
-	 kgmMemoryClear();
-	 break;
- }
- return TRUE;
+  hInst = a;
+  switch(b)
+  {
+  case DLL_PROCESS_DETACH:
+    kgmMemoryClear();
+    break;
+  case DLL_THREAD_DETACH:
+    kgmMemoryClear();
+    break;
+  }
+  return TRUE;
 }
 #else
 //WinMain  Function
 int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 {
- int rValue = 0;
- hInst = a;
+  typedef char* char_ptr;
 
- int argc = 0;
- char **argv = 0;
+  int rValue = 0;
+  hInst = a;
 
- signal(SIGINT,   kgm_signal_handler);
- signal(SIGILL,   kgm_signal_handler);
- signal(SIGTERM,  kgm_signal_handler);
- signal(SIGSEGV,  kgm_signal_handler);
- signal(SIGABRT,  kgm_signal_handler);
- signal(SIGBREAK, kgm_signal_handler);
+  int  argc = 0;
+  char *args = 0;
+  char **argv = 0;
 
- if(kgmApp::application())
-   kgmApp::application()->main();
+  if(pStr != NULL)
+  {
+    argv = new char_ptr[sizeof(char_ptr) * 256];
 
- //kgmClearAllocatedMemory();
- return rValue;
+    args = new char[strlen(GetCommandLine()) + 1];
+
+    memset(args, 0, strlen(GetCommandLine()) + 1);
+
+    strcpy(args, GetCommandLine());
+
+    char* pch = strtok(args, " ");
+
+    while(pch != NULL)
+    {
+      argc++;
+
+      if(argc > 255)
+        break;
+
+      argv[argc - 1] = pch;
+
+      pch = strtok(NULL, " ");
+    }
+  }
+
+  signal(SIGINT,   kgm_signal_handler);
+  signal(SIGILL,   kgm_signal_handler);
+  signal(SIGTERM,  kgm_signal_handler);
+  signal(SIGSEGV,  kgm_signal_handler);
+  signal(SIGABRT,  kgm_signal_handler);
+  signal(SIGBREAK, kgm_signal_handler);
+
+  kgm_log() << "LOL: " << pStr << "\n";
+
+  if(kgmApp::application())
+    kgmApp::application()->main(argc, argv);
+
+  if(args)
+    delete [] args;
+
+  if(argv)
+    delete [] argv;
+
+  //kgmClearAllocatedMemory();
+  return rValue;
 }
 #endif
 #endif
@@ -89,20 +126,20 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 #ifdef LINUX
 
 int main(int argc, char** argv){
- int rValue = 0;
+  int rValue = 0;
 
- signal(SIGINT,   kgm_signal_handler);
- signal(SIGILL,   kgm_signal_handler);
- signal(SIGTERM,  kgm_signal_handler);
- signal(SIGSEGV,  kgm_signal_handler);
- signal(SIGABRT,  kgm_signal_handler);
+  signal(SIGINT,   kgm_signal_handler);
+  signal(SIGILL,   kgm_signal_handler);
+  signal(SIGTERM,  kgm_signal_handler);
+  signal(SIGSEGV,  kgm_signal_handler);
+  signal(SIGABRT,  kgm_signal_handler);
 
- if(kgmApp::application())
-   rValue = kgmApp::application()->main(argc, argv);
+  if(kgmApp::application())
+    rValue = kgmApp::application()->main(argc, argv);
 
-// kgmObject::releaseObjects();
+  // kgmObject::releaseObjects();
 
- return rValue;
+  return rValue;
 }
 
 #endif

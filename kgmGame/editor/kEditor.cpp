@@ -56,6 +56,8 @@ kEditor::kEditor(kgmGameBase* g)
   oquered = 0;
   view_mode = ViewPerspective;
 
+  gridline = null;
+
   mtlLines = new kgmMaterial();
 
   mtlPivot = new kgmMaterial();
@@ -1573,7 +1575,8 @@ void kEditor::onRunRun()
   if(path.length() < 1)
     path = ".";
 
-  path += kgmSystem::PathDelim;
+  if(path.data()[path.length() - 1] != kgmSystem::PathDelimSym)
+    path += kgmSystem::PathDelim;
 
   path += "~kgmrun.map";
 
@@ -1585,10 +1588,9 @@ void kEditor::onRunRun()
     return;
 
   cmd = exe;
-  cmd += " mapfile ";
+  cmd += " map ";
   cmd += path;
 
-  //int res = system(cmd.data());
   kgmInstThread thread(cmd.data(), runRun);
 
   thread.join();
