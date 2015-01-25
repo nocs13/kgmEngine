@@ -110,6 +110,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   gc = g;
   rc = r;
 
+  font = null;
+
   m_max_faces = 500000;
 
   m_has_shaders = false;
@@ -773,7 +775,7 @@ void kgmGraphics::render()
           m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
           kgmObject::objectCount(), k);
   kgmString text(info);
-  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
+  //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 
   static u32 fps_start_time = kgmTime::getTicks();
   static u32 fps_frame_time = 0;

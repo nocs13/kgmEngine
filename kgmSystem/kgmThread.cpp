@@ -78,12 +78,10 @@ void kgmThread::kill()
 void kgmThread::join()
 {
 #ifdef WIN32 
-
+  WaitForSingleObject(m_thread, INFINITE);
 #else
   pthread_join(m_thread, NULL);
 #endif 
-
-  m_thread = 0;
 }
 
 void kgmThread::priority(Priority prio)
