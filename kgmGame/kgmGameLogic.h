@@ -13,10 +13,11 @@
 
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
-public:
-  kgmList<kgmGameObject*>    m_objects;
 
   kgmActor*                  m_gameplayer;
+
+public:
+  kgmList<kgmGameObject*>    m_objects;
 
   s32 gcount;
 

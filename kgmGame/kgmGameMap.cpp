@@ -185,7 +185,11 @@ bool kgmGameMap::addActor(Node n)
     node->m_name = "kgmActor";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
     node->m_attributes.add(new kgmXml::Attribute("actor", n.ini));
-    //node->m_attributes.add(new kgmXml::Attribute("class", ((kgmActor*)n.obj)->runtime().nClass));
+
+    if(((kgmActor*)n.obj)->m_gameplayer)
+    {
+      node->m_attributes.add(new kgmXml::Attribute("player", "on"));
+    }
 
     kgmXml::Node* snode = new kgmXml::Node(node);
     snode->m_name = "Position";
@@ -437,11 +441,11 @@ kgmGameMap::Node kgmGameMap::next()
       {
         ntype = "actor";
 
-        kgmString id, cls, ini;
+        kgmString id, plr, ini;
 
-        m_xml->attribute("name",  id);
-        //m_xml->attribute("class", cls);
-        m_xml->attribute("actor",  ini);
+        m_xml->attribute("name", id);
+        m_xml->attribute("actor", ini);
+        m_xml->attribute("player", plr);
 
         kgmActor* act = kgmIGame::getGame()->gSpawn(ini);
 
@@ -451,6 +455,9 @@ kgmGameMap::Node kgmGameMap::next()
           node.bnd = box3(-1, -1, -1, 1, 1, 1);
           node.nam = id;
           node.ini = ini;
+
+          if(plr == "on")
+            act->m_gameplayer = true;
         }
 
         node.typ = NodeAct;
