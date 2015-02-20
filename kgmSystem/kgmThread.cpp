@@ -62,6 +62,21 @@ bool kgmThread::exec(Flags sets, Priority pr)
   return true;
 }
 
+bool kgmThread::active()
+{
+  if(!m_thread)
+    return false;
+
+#ifdef WIN32
+  
+#else
+  if(pthread_kill(m_thread, 0) == 0)
+    return true;
+#endif
+
+  return false;
+}
+
 void kgmThread::kill()
 {
 #ifdef WIN32

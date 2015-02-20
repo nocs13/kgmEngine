@@ -14,6 +14,7 @@
  #include <unistd.h>
  #include <pthread.h>
  #include <sched.h>
+ #include <signal.h>
 #endif
 
 #ifdef WIN32
@@ -62,6 +63,8 @@ public:
  ~kgmThread();
 
  bool exec(Flags sets = CtNone, Priority pr = PrNormal);
+ bool active();
+ 
  void kill();
  void join();
  void priority(Priority);
