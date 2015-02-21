@@ -1591,7 +1591,7 @@ void kEditor::onRunRun()
   cmd += " map ";
   cmd += path;
 
-  kgmInstThread thread(cmd.data(), runRun);
+  kgmThread thread(cmd.data(), runRun);
 
   thread.join();
 

@@ -23,6 +23,16 @@ kgmThread::kgmThread()
 {
   m_thread = 0;
   m_result = 0;
+
+  m_object   = null;
+  m_callback = null;
+}
+
+kgmThread::kgmThread(void* obj, int (*call)(void*), uint sets, uint pr)
+{
+  kgmThread();
+
+  exec(obj, call, sets, pr);
 }
 
 kgmThread::~kgmThread()
@@ -31,7 +41,7 @@ kgmThread::~kgmThread()
     kill();
 }
 
-bool kgmThread::exec(Flags sets, Priority pr)
+bool kgmThread::exec(uint sets, uint pr)
 {
   int rc = 0;
 
@@ -60,6 +70,17 @@ bool kgmThread::exec(Flags sets, Priority pr)
   priority(pr);
 
   return true;
+}
+
+bool kgmThread::exec(void* obj, int (*call)(void*), uint sets, uint pr)
+{
+  m_object   = obj;
+  m_callback = call;
+
+  if(!call)
+    return false;
+
+  return exec(sets, pr);
 }
 
 bool kgmThread::active()
@@ -99,7 +120,7 @@ void kgmThread::join()
 #endif 
 }
 
-void kgmThread::priority(Priority prio)
+void kgmThread::priority(uint prio)
 {
   if(!m_thread)
     return;
@@ -290,4 +311,10 @@ void kgmThread::sleep(u32 ms)
 #else
   usleep(ms * 1000);
 #endif
+}
+
+void kgmThread::run()
+{
+  if(m_callback)
+    m_result = m_callback(m_object);
 }

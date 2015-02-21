@@ -56,18 +56,23 @@ private:
  pthread_t m_thread;
 #endif
 
+ void   *m_object;
+ int   (*m_callback)(void*);
+
  s32  m_result;
 
 public:
  kgmThread();
+ kgmThread(void* obj, int (*call)(void*), uint sets = CtNone, uint pr = PrNormal);
  ~kgmThread();
 
- bool exec(Flags sets = CtNone, Priority pr = PrNormal);
+ bool exec(uint sets = CtNone, uint pr = PrNormal);
+ bool exec(void* obj, int (*call)(void*), uint sets = CtNone, uint pr = PrNormal);
  bool active();
  
  void kill();
  void join();
- void priority(Priority);
+ void priority(uint);
 
  static Mutex mutex();
  static void  mxfree(Mutex);
@@ -80,16 +85,14 @@ public:
  static void  sleep(u32 ms);
 
 protected:
- virtual void run() = 0;
+ virtual void run();
 
 private:
  static void thread(kgmThread *p);
 };
 
-class kgmInstThread: public kgmThread
+/*class kgmInstThread: public kgmThread
 {
-  void   *object;
-  int   (*callback)(void*);
 
 public:
   kgmInstThread()
@@ -120,4 +123,4 @@ public:
     if(object && callback)
       callback(object);
   }
-};
+};*/
