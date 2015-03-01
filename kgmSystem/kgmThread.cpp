@@ -28,11 +28,11 @@ kgmThread::kgmThread()
   m_callback = null;
 }
 
-kgmThread::kgmThread(void* obj, int (*call)(void*), uint sets, uint pr)
+kgmThread::kgmThread(int (*call)(void*), void* obj, uint sets, uint pr)
 {
   kgmThread();
 
-  exec(obj, call, sets, pr);
+  exec(call, obj, sets, pr);
 }
 
 kgmThread::~kgmThread()
@@ -72,7 +72,7 @@ bool kgmThread::exec(uint sets, uint pr)
   return true;
 }
 
-bool kgmThread::exec(void* obj, int (*call)(void*), uint sets, uint pr)
+bool kgmThread::exec(int (*call)(void*), void* obj, uint sets, uint pr)
 {
   m_object   = obj;
   m_callback = call;
