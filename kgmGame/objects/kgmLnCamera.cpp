@@ -58,6 +58,9 @@ void kgmLnCamera::update(u32 ms)
       return;
   }
 
+  if(!m_linked->getBody())
+    return;
+
   vec3 pos = m_linked->getBody()->position();
 
   vec3 c_pos  = pos + m_place;
