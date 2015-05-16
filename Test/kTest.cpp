@@ -298,6 +298,8 @@ private:
   }
 };
 
+#include "../../kgmBase/kgmPointer.h"
+
 class kApp: public kgmGameApp{
 #ifdef ANDROID
 public:

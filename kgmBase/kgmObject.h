@@ -132,7 +132,8 @@ public:
   {
     kgmRuntime* r = &runtime();
 
-    while(r != 0){
+    while(r != 0)
+    {
       if(!strcmp(r->nClass, o))
         return true;
 
@@ -164,18 +165,6 @@ public:
 
     if(m_references < 1)
       delete this;
-  }
-
-  static kgmObject* assign(kgmObject* dest, kgmObject* src)
-  {
-    if (src == null)
-      return null;
-
-    dest = src;
-
-    src->increment();
-
-    return dest;
   }
 
   template<class T, class... Args>
