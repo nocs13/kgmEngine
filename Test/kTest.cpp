@@ -292,10 +292,11 @@ private:
 
     f.open(path, kgmFile::Write | kgmFile::Create);
 
-    if(f.m_file)
+    if(f.m_file > 0)
+    {
       f.write(&data, sizeof(data));
-
-    f.close();
+      f.close();
+    }
   }
 };
 
@@ -311,7 +312,11 @@ public:
   {
   }
 
-  ~kApp(){
+  ~kApp()
+  {
+#ifdef DEBUG
+    kgm_log() << "kApp::~kApp.\n";
+#endif
   }
 
   /*int main(int argc, char **argv)

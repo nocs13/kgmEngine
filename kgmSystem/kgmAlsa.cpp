@@ -1,6 +1,7 @@
 #include "kgmAlsa.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmTime.h"
+#include "../kgmBase/kgmPointer.h"
 
 KGMOBJECT_IMPLEMENT(kgmAlsa, kgmObject);
 
@@ -143,7 +144,8 @@ struct _Sound
     StPause
   };
 
-  void *data;
+  //void *data;
+  kgm_ptr<u8> data;
   u32   size;
   u32   cursor;
 
@@ -162,8 +164,7 @@ struct _Sound
 
   _Sound(kgmIAudio::FMT fmt, u16 freq, u32 size, void* data)
   {
-    this->data   = null;
-    this->size   = 0;
+    this->size = 0;
 
     cursor = 0;
 
@@ -204,9 +205,9 @@ struct _Sound
 
     if(data != null && size > 0)
     {
-      this->data = malloc(size);
+      this->data = kgm_ptr<u8>(new u8[size]);
 
-      memcpy(this->data, data, size);
+      memcpy(((u8*)this->data), data, size);
 
       this->size = size;
     }
@@ -214,8 +215,6 @@ struct _Sound
 
   ~_Sound()
   {
-    if(data)
-      free(data);
   }
 
   void release()
@@ -421,6 +420,10 @@ kgmAlsa::~kgmAlsa()
 #endif
 
   m_lib.close();
+
+#ifdef DEBUG
+  kgm_log() << "kgmAlsa::~kgmAlsa.\n";
+#endif
 }
 
 kgmIAudio::Sound kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)
@@ -639,7 +642,7 @@ int kgmAlsa::proceed()
       if(sound->state != _Sound::StPlay)
         continue;
 
-      u32 size = m_mixer.mixdata((sound->data + sound->cursor),
+      u32 size = m_mixer.mixdata((((u8*)sound->data) + sound->cursor),
                                  (sound->size - sound->cursor),
                                  sound->channels,
                                  sound->bps,

@@ -2,6 +2,7 @@
 #define KGMGAMEAUDIO_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmPointer.h"
 #include "../kgmMedia/kgmNullAudio.h"
 
 class kgmGameAudio: public kgmObject, public kgmIAudio
@@ -16,7 +17,7 @@ class kgmGameAudio: public kgmObject, public kgmIAudio
   };
 
 private:
-  kgmIAudio*  m_audio;
+  kgm_ptr<kgmIAudio> m_audio;
 
   Listener m_listener;
 
@@ -26,37 +27,37 @@ public:
 
   Sound create(FMT fmt, u16 freq, u32 size, void* data)
   {
-    return m_audio->create(fmt, freq, size, data);
+    return ((kgmIAudio*)m_audio)->create(fmt, freq, size, data);
   }
 
   void remove(Sound snd)
   {
-    m_audio->remove(snd);
+    ((kgmIAudio*)m_audio)->remove(snd);
   }
 
   void volume(Sound snd, u16 vol)
   {
-    m_audio->volume(snd, vol);
+    ((kgmIAudio*)m_audio)->volume(snd, vol);
   }
 
   void pause(Sound snd, bool stat)
   {
-    m_audio->pause(snd, stat);
+    ((kgmIAudio*)m_audio)->pause(snd, stat);
   }
 
   void play(Sound snd, bool loop)
   {
-    m_audio->play(snd, loop);
+    ((kgmIAudio*)m_audio)->play(snd, loop);
   }
 
   void stop(Sound snd)
   {
-    m_audio->stop(snd);
+    ((kgmIAudio*)m_audio)->stop(snd);
   }
 
   void channel(Sound snd, s16 pan)
   {
-    m_audio->channel(snd, pan);
+    ((kgmIAudio*)m_audio)->channel(snd, pan);
   }
 
   void transform(Sound snd, vec3& pos, vec3& vel)

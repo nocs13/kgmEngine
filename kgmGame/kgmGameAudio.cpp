@@ -1,4 +1,5 @@
 #include "kgmGameAudio.h"
+#include "../kgmBase/kgmLog.h"
 #include "../kgmMedia/kgmNullAudio.h"
 
 #ifdef OAL
@@ -15,26 +16,23 @@ KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmObject);
 
 kgmGameAudio::kgmGameAudio()
 {
-  m_audio = null;
-
 #ifdef OAL
-  m_audio = new kgmOAL();
+  m_audio = kgm_ptr<kgmIAudio>(new kgmOAL());
 #elif defined(ALSA)
-  m_audio = new kgmAlsa();
+  m_audio = kgm_ptr<kgmIAudio>(new kgmAlsa());
   //m_audio = new kgmNullAudio();
 #elif defined(OSL)
-  m_audio = new kgmOSL();
+  m_audio = kgm_ptr<kgmIAudio>(new kgmOSL());
 #elif defined(DSOUND)
-  m_audio = new kgmDSound();
+  m_audio = kgm_ptr<kgmIAudio>(new kgmDSound());
 #else
-  m_audio = new kgmNullAudio();
+  m_audio = kgm_ptr<kgmIAudio>(new kgmNullAudio());
 #endif
 }
 
 kgmGameAudio::~kgmGameAudio()
 {
-  if(m_audio)
-  {
-    ((kgmObject*)m_audio)->release();
-  }
+#ifdef DEBUG
+  kgm_log() << "kgmGameAudio::~kgmGameAudio.\n";
+#endif
 }

@@ -11,13 +11,13 @@ public:
 
   kgmPointer()
   {
-    //pointer = 0;
-    //counter = 0;
+    pointer = 0L;
+    counter = 0;
   }
 
   kgmPointer(T* ptr)
   {
-    if(ptr == 0)
+    if(ptr == 0L)
       return;
 
     counter = new int;
@@ -61,15 +61,18 @@ public:
 
   void operator=(const kgmPointer<T>& ptr)
   {
+    if(pointer)
+    {
+      (*counter)--;
+
+      if((*counter) < 1)
+        delete pointer;
+    }
+
     pointer = ptr.pointer;
     counter = ptr.counter;
 
     (*counter)++;
-  }
-
-  operator T() const
-  {
-    return (*pointer);
   }
 
   operator T*() const

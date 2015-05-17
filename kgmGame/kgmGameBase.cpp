@@ -370,6 +370,7 @@ void kgmGameBase::onClose()
     m_physics->release();
 
   log("free audio...");
+
   if(m_audio)
     m_audio->release();
 

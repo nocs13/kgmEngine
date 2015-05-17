@@ -1,5 +1,6 @@
 #include "kgmAudioMixer.h"
 #include "kgmIAudio.h"
+#include "../kgmBase/kgmLog.h"
 #include <math.h>
 
 KGMOBJECT_IMPLEMENT(kgmAudioMixer, kgmObject)
@@ -28,6 +29,10 @@ kgmAudioMixer::kgmAudioMixer()
 kgmAudioMixer::~kgmAudioMixer()
 {
   buffer.clear();
+
+#ifdef DEBUG
+  kgm_log() << "kgmAudioMixer::~kgmAudioMixer.\n";
+#endif
 }
 
 void kgmAudioMixer::clean()
