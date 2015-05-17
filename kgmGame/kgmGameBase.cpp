@@ -339,8 +339,11 @@ void kgmGameBase::onClose()
 #ifdef EDITOR
   log("free editor...");
 
-  editor->release();
-  editor = null;
+  if(editor != null)
+  {
+    editor->release();
+    editor = null;
+  }
 #endif
 
 
