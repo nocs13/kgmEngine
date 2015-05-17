@@ -158,9 +158,6 @@ public:
 
   void release()
   {
-    if(!kgmObject::isValid(this))
-      return;
-
     m_references--;
 
     if(m_references < 1)
@@ -177,18 +174,10 @@ public:
     return null;
   }
 
-  void* operator new(size_t size);
-  void  operator delete(void* p);
+  //void* operator new(size_t size);
+  //void  operator delete(void* p);
 
   friend class kgmApp;
-
-  //private:
-  static void releaseObjects();
-  static int  objectCount();
-  static bool isValid(kgmObject*);
-#ifdef DEBUG
-  static void listObjects();
-#endif
 
 private:
   template<class... Args>

@@ -10,7 +10,7 @@
 
 class kgmResult: public kgmUnit
 {
-  KGM_GO_OBJECT(kgmResult);
+  KGM_UNIT(kgmResult);
 public:
 
   kgmString text;
@@ -55,7 +55,11 @@ public:
 
   void update(u32 t)
   {
-    kgmGameObject::update(t);
+    kgmUnit::update(t);
+  }
+
+  void init()
+  {
   }
 
   void exit()
@@ -65,7 +69,7 @@ public:
 
 class kgmParticlesObject: public kgmEffect
 {
-  KGM_GO_OBJECT(kgmParticlesObject);
+  KGM_UNIT(kgmParticlesObject);
 
 protected:
   kgmParticles* particles;
@@ -187,7 +191,7 @@ public:
 
 class kgmFlame: public kgmParticlesObject
 {
-  KGM_GO_OBJECT(kgmFlame);
+  KGM_UNIT(kgmFlame);
 
 public:
   kgmFlame(kgmIGame* g,
@@ -209,7 +213,7 @@ public:
 
 class kgmSmoke: public kgmParticlesObject
 {
-  KGM_GO_OBJECT(kgmSmoke);
+  KGM_UNIT(kgmSmoke);
 
 public:
   kgmSmoke(kgmIGame* g,
@@ -236,7 +240,7 @@ public:
 
 class kgmExplode: public kgmParticlesObject
 {
-  KGM_GO_OBJECT(kgmExplode);
+  KGM_UNIT(kgmExplode);
 
 public:
   kgmExplode(kgmIGame* g,
@@ -278,7 +282,7 @@ public:
 
 class kgmLaser: public kgmEffect
 {
-  KGM_GO_OBJECT(kgmLaser);
+  KGM_UNIT(kgmLaser);
 
   struct Vertex
   {
@@ -366,7 +370,7 @@ public:
 
 class kgmIonNozzle: public kgmEffect
 {
-  KGM_GO_OBJECT(kgmIonNozzle);
+  KGM_UNIT(kgmIonNozzle);
 
   struct Vertex
   {
@@ -462,7 +466,7 @@ public:
 
   void event(kgmObject* o, kgmString arg)
   {
-    if(arg == "die" && o == m_parent)
+    if(arg == "die" && o == getParent())
     {
       visual->disable();
       visual->remove();

@@ -1,11 +1,11 @@
 #ifndef KGMSENSOR_H
 #define KGMSENSOR_H
 
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 
-class kgmSensor : public kgmGameObject
+class kgmSensor : public kgmUnit
 {
-  KGM_GO_OBJECT(kgmSensor);
+  KGM_UNIT(kgmSensor);
 
   kgmString target;
 

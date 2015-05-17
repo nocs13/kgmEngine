@@ -29,22 +29,9 @@ void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
   if(!body || !tobody || !body->m_udata || !tobody->m_udata)
     return;
 
-  kgmGameObject* go_body   = (kgmGameObject*)body->m_udata;
-  kgmGameObject* go_tobody = (kgmGameObject*)tobody->m_udata;
+  kgmUnit* go_body   = (kgmUnit*)body->m_udata;
+  kgmUnit* go_tobody = (kgmUnit*)tobody->m_udata;
 
-
-  if(!kgmIGame::getGame()->getLogic() ||
-     !kgmObject::isValid(go_body) ||
-     !kgmObject::isValid(go_tobody))
-    return;
-
-  if(go_body->getParent() == go_tobody ||
-     go_tobody->getParent() == go_body)
-  {
-  }
-  else
-  {
-    kgmIGame::getGame()->getLogic()->collide(go_body, go_tobody);
-  }
+  kgmIGame::getGame()->getLogic()->collide(go_body, go_tobody);
 }
 

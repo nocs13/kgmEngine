@@ -5,10 +5,12 @@
 
 class kgmSky : public kgmUnit
 {
-  KGM_GO_OBJECT(kgmSky);
+  KGM_UNIT(kgmSky);
 
 public:
   kgmSky(kgmIGame*);
+
+  void init(){}
 };
 
 #endif // KGMSKY_H

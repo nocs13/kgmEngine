@@ -59,7 +59,7 @@ public:
   void prepare()
   {
     enemies = 1;
-    kgmList<kgmGameObject*> objs;
+    kgmList<kgmUnit*> objs;
     kgmGameLogic::build();
 
     enemies = objs.size();
@@ -71,7 +71,7 @@ public:
   {
   }
 
-  void collide(kgmGameObject *os, kgmGameObject *od)
+  void collide(kgmUnit *os, kgmUnit *od)
   {
     if(!vtext)
     {
@@ -108,8 +108,8 @@ public:
   {
     gui = new kGui(this);
 
-    kgmGameObject::goRegister("kInput",  kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kInput::New);
-    kgmGameObject::goRegister("ACamera",  kgmGameObject::GoActor, (kgmGameObject::GenGo)&ACamera::New);
+    kgmUnit::goRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
+    kgmUnit::goRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
 
     setMsAbsolute(true);
 

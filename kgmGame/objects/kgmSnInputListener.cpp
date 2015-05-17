@@ -1,4 +1,4 @@
 #include "kgmSnInputListener.h"
-#include "../kgmGameObject.h"
+#include "../kgmUnit.h"
 
 KGMOBJECT_IMPLEMENT(kgmSnInputListener, kgmSensor);

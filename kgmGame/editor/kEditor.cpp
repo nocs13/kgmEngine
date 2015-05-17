@@ -132,7 +132,7 @@ kEditor::~kEditor()
   mtlLines->release();
   mtlPivot->release();
 
-  kgmGameObject::g_typ_objects.clear();
+  kgmUnit::g_typ_objects.clear();
 }
 
 void kEditor::clear()
@@ -756,9 +756,9 @@ bool kEditor::addUnit(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmGameObject::g_typ_objects.hasKey(type))
+  if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -855,9 +855,9 @@ bool kEditor::addEffect(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmGameObject::g_typ_objects.hasKey(type))
+  if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -898,9 +898,9 @@ bool kEditor::addSensor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmGameObject::g_typ_objects.hasKey(type))
+  if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[type];
+    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -970,7 +970,7 @@ void kEditor::onIdle()
          (*i)->typ == kNode::ACTOR || (*i)->typ == kNode::UNIT ||
         (*i)->typ == kNode::EFFECT)
       {
-        kgmGameObject *o = (kgmGameObject*)(*i)->obj;
+        kgmUnit *o = (kgmUnit*)(*i)->obj;
 
         if(o->valid())
           o->update(cdel);
@@ -1441,9 +1441,9 @@ void kEditor::onAddUnit()
 
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addUnit));
 
-  for(int i = 0; i < kgmGameObject::g_list_units.length(); i++)
+  for(int i = 0; i < kgmUnit::g_list_units.length(); i++)
   {
-    kgmString s = kgmGameObject::g_list_units[i];
+    kgmString s = kgmUnit::g_list_units[i];
     vs->addItem(s);
   }
 
@@ -1490,9 +1490,9 @@ void kEditor::onAddEffect()
 
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
 
-  for(int i = 0; i < kgmGameObject::g_list_effects.length(); i++)
+  for(int i = 0; i < kgmUnit::g_list_effects.length(); i++)
   {
-    kgmString s = kgmGameObject::g_list_effects[i];
+    kgmString s = kgmUnit::g_list_effects[i];
     vs->addItem(s);
   }
 
@@ -1505,9 +1505,9 @@ void kEditor::onAddSensor()
   kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 
-  for(int i = 0; i < kgmGameObject::g_list_sensors.length(); i++)
+  for(int i = 0; i < kgmUnit::g_list_sensors.length(); i++)
   {
-    kgmString s = kgmGameObject::g_list_sensors[i];
+    kgmString s = kgmUnit::g_list_sensors[i];
     vs->addItem(s);
   }
 

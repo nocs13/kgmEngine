@@ -1,6 +1,6 @@
 #include "kgmGameScript.h"
 #include "kgmGameBase.h"
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 #include "kgmActor.h"
 #include <stdarg.h>
 
@@ -141,7 +141,7 @@ int kgmLuaListObjects(lua_State *lua)
   if(!game || !game->getLogic())
     return 0;
 
-  kgmList<kgmGameObject*> objects;
+  kgmList<kgmUnit*> objects;
   game->getLogic()->getObjects(objects);
 
   for(int i = 0; i < objects.length(); i++)

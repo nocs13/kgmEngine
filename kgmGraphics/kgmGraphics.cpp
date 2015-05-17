@@ -769,11 +769,11 @@ void kgmGraphics::render()
 
 #ifdef DEBUG
   char info[4096] = {0};
-  sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \nobject count: %i \
+  sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \n \
   unvisible: %i\n",
           m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z,
           m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
-          kgmObject::objectCount(), k);
+          k);
   kgmString text(info);
   //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 

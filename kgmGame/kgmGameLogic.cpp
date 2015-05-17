@@ -14,7 +14,7 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     (*i)->remove();
     (*i)->release();
@@ -100,7 +100,7 @@ bool kgmGameLogic::add(kgmTrigger *tr)
   return false;
 }
 
-bool kgmGameLogic::remove(kgmGameObject *o)
+bool kgmGameLogic::remove(kgmUnit *o)
 {
   if(!o)
     return false;
@@ -123,9 +123,9 @@ bool kgmGameLogic::remove(kgmGameObject *o)
   return false;
 }
 
-bool kgmGameLogic::isValid(kgmGameObject *go)
+bool kgmGameLogic::isValid(kgmUnit *go)
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
   {
     if(go == (*i))
       return true;
@@ -136,9 +136,9 @@ bool kgmGameLogic::isValid(kgmGameObject *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
     go->init();
   }
 }
@@ -156,21 +156,15 @@ void kgmGameLogic::update(u32 milliseconds)
     return;
 #endif
 
-  kgmList<kgmGameObject*>::iterator i = m_objects.begin();
+  kgmList<kgmUnit*>::iterator i = m_objects.begin();
 
   gcount = 0;
 
   while(i != m_objects.end())
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
 
-    if(!kgmObject::isValid(go))
-    {
-      ++i;
-
-      continue;
-    }
-    else if(go->removed())
+    if(go->removed())
     {
       if(m_gameplayer == go)
         m_gameplayer = null;
@@ -204,16 +198,16 @@ void kgmGameLogic::action(ACTION, kgmObject*, kgmString)
 
 }
 
-void kgmGameLogic::collide(kgmGameObject* src, kgmGameObject* dst)
+void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)
 {
 
 }
 
-kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
+kgmUnit* kgmGameLogic::getObjectById(kgmString id)
 {
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
 
     if(go->removed() || !go->valid())
     {
@@ -228,13 +222,13 @@ kgmGameObject* kgmGameLogic::getObjectById(kgmString id)
   return null;
 }
 
-u32 kgmGameLogic::getObjects(kgmList<kgmGameObject*>& objs)
+u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
 
     objs.add((*i));
     count++;
@@ -243,13 +237,13 @@ u32 kgmGameLogic::getObjects(kgmList<kgmGameObject*>& objs)
   return count;
 }
 
-u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmGameObject*>& objs)
+u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
 
     if(!go->removed() && go->valid() && (*i)->isType(t))
     {
@@ -261,13 +255,13 @@ u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmGameObject*>& objs)
   return count;
 }
 
-u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmGameObject*>& objs)
+u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameObject*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmGameObject* go = (*i);
+    kgmUnit* go = (*i);
 
     if(!go->removed() && go->valid() && (*i)->isClass(t))
     {

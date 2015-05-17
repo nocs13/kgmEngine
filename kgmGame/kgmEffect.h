@@ -1,9 +1,9 @@
 #pragma once
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 
-class kgmEffect : public kgmGameObject
+class kgmEffect : public kgmUnit
 {
-  KGM_GO_OBJECT(kgmEffect);
+  KGM_UNIT(kgmEffect);
 
 public:
   kgmEffect(kgmIGame *g);

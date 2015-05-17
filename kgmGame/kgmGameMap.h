@@ -12,7 +12,7 @@
 #include "kgmActor.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 
 class kgmIGame;
 

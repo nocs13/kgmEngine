@@ -14,10 +14,10 @@
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 
-  kgmActor*                  m_gameplayer;
+  kgmActor* m_gameplayer;
 
 public:
-  kgmList<kgmGameObject*>    m_objects;
+  kgmList<kgmUnit*> m_objects;
 
   s32 gcount;
 
@@ -31,21 +31,21 @@ public:
   bool add(kgmEffect*);
   bool add(kgmSensor*);
   bool add(kgmTrigger*);
-  bool remove(kgmGameObject*);
+  bool remove(kgmUnit*);
   bool chooseLogic(kgmString);
-  bool isValid(kgmGameObject*);
+  bool isValid(kgmUnit*);
 
   virtual void build();
   virtual void input(int, int);
   virtual void update(u32 milliseconds);
   virtual void action(ACTION, kgmObject*, kgmString);
-  virtual void collide(kgmGameObject*, kgmGameObject*);
-  virtual kgmGameObject* getObjectById(kgmString);
-  virtual u32            getObjects(kgmList<kgmGameObject*>&);
+  virtual void collide(kgmUnit*, kgmUnit*);
+  virtual kgmUnit* getObjectById(kgmString);
+  virtual u32            getObjects(kgmList<kgmUnit*>&);
   virtual u32            getObjectsByType(kgmRuntime&,
-                                          kgmList<kgmGameObject*>&);
+                                          kgmList<kgmUnit*>&);
   virtual u32            getObjectsByClass(kgmRuntime&,
-                                           kgmList<kgmGameObject*>&);
+                                           kgmList<kgmUnit*>&);
 
   void      setPlayer(kgmActor* gp) { m_gameplayer = gp; }
   kgmActor* getPlayer() { return m_gameplayer; }

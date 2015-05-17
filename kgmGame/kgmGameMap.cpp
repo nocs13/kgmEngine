@@ -206,9 +206,9 @@ bool kgmGameMap::addActor(Node n)
     if(n.col)
       addCollision(*node, n);
 
-    for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
+    for(int i = 0; i < ((kgmUnit*)n.obj)->m_variables.length(); ++i)
     {
-      kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
+      kgmVariable& var = ((kgmUnit*)n.obj)->m_variables[i];
 
       snode = new kgmXml::Node(node);
       snode->m_name = "Parameter";
@@ -253,9 +253,9 @@ bool kgmGameMap::addSensor(Node n)
     if(n.col)
       addCollision(*node, n);
 
-    for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
+    for(int i = 0; i < ((kgmUnit*)n.obj)->m_variables.length(); ++i)
     {
-      kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
+      kgmVariable& var = ((kgmUnit*)n.obj)->m_variables[i];
 
       snode = new kgmXml::Node(node);
       snode->m_name = "Parameter";
@@ -315,9 +315,9 @@ bool kgmGameMap::addGameObject(Node n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmGameObject";
+    node->m_name = "kgmUnit";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmGameObject*)n.obj)->runtime().nClass));
+    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->runtime().nClass));
 
     kgmXml::Node* snode = new kgmXml::Node(node);
     snode->m_name = "Position";
@@ -334,9 +334,9 @@ bool kgmGameMap::addGameObject(Node n)
     if(n.col)
       addCollision(*node, n);
 
-    for(int i = 0; i < ((kgmGameObject*)n.obj)->m_variables.length(); ++i)
+    for(int i = 0; i < ((kgmUnit*)n.obj)->m_variables.length(); ++i)
     {
-      kgmVariable& var = ((kgmGameObject*)n.obj)->m_variables[i];
+      kgmVariable& var = ((kgmUnit*)n.obj)->m_variables[i];
 
       snode = new kgmXml::Node(node);
       snode->m_name = "Parameter";
@@ -473,9 +473,9 @@ kgmGameMap::Node kgmGameMap::next()
 
         kgmSensor* sns = null;
 
-        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        if(kgmUnit::g_typ_objects.hasKey(cls))
         {
-          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+          kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[cls];
 
           if(fn_new)
           {
@@ -513,7 +513,7 @@ kgmGameMap::Node kgmGameMap::next()
 
         node.typ = NodeTrg;
       }
-      else if(id == "kgmGameObject")
+      else if(id == "kgmUnit")
       {
         ntype = "gobject";
 
@@ -521,13 +521,13 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("name", id);
         m_xml->attribute("class", cls);
 
-        if(kgmGameObject::g_typ_objects.hasKey(cls))
+        if(kgmUnit::g_typ_objects.hasKey(cls))
         {
-          kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[cls];
+          kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[cls];
 
           if(fn_new)
           {
-            kgmGameObject* go = (kgmGameObject*)fn_new(m_game);
+            kgmUnit* go = (kgmUnit*)fn_new(m_game);
 
             if(go)
             {
@@ -628,7 +628,7 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("value", value);
 
         if(node.obj)
-          ((kgmGameObject*)node.obj)->setParameter(name, value);
+          ((kgmUnit*)node.obj)->setParameter(name, value);
       }
       else if(id == "kgmCamera")
       {
@@ -658,7 +658,7 @@ kgmGameMap::Node kgmGameMap::next()
       }
       else if((id == "kgmMesh") || (id == "kgmLight") || (id == "kgmMaterial") ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
-              (id == "kgmGameObject"))
+              (id == "kgmUnit"))
       {
         break;
       }

@@ -7,7 +7,7 @@
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
 
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 #include "kgmActor.h"
 
 #include "kgmGameSettings.h"
@@ -157,8 +157,8 @@ public:
   void           gPause(bool);            //render game scene
   void           gRender();               //render game scene
   kgmActor*      gSpawn(kgmString);       //spawns the actor
-  bool           gAppend(kgmGameObject*); //add game object in scene
-  kgmGameObject* gObject(kgmString);     //spawn game object
+  bool           gAppend(kgmUnit*); //add game object in scene
+  kgmUnit*       gObject(kgmString);     //spawn game object
 
   bool gMapBinary(kgmString&);
   bool gMapAscii(kgmString&);

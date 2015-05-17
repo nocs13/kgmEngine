@@ -50,9 +50,9 @@ void kgmCharacter::update(u32 ms)
     for(int i = 0; i < m_dummies.length(); i++)
     {
       kgmDummy*       dm = m_dummies[i];
-      kgmGameObject*  go = (kgmGameObject*)dm->linked();
+      kgmUnit*  go = (kgmUnit*)dm->linked();
 
-      if(go && kgmObject::isValid(go) && go->getVisual())
+      if(go && go->getVisual())
       {
         mtx4 m;
         vec3 v = dm->m_shift;
@@ -111,13 +111,10 @@ void kgmCharacter::update(u32 ms)
 
       for(int i = 0; i < m_dummies.size(); i++)
       {
-        kgmGameObject* go = (kgmGameObject*)m_dummies[i]->linked();
+        kgmUnit* go = (kgmUnit*)m_dummies[i]->linked();
 
-        if(kgmObject::isValid(go))
-        {
-          go->event(this, "die");
-          m_dummies[i]->detach();
-        }
+        go->event(this, "die");
+        m_dummies[i]->detach();
       }
     }
   }

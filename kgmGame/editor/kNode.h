@@ -45,7 +45,7 @@ public:
     kgmSensor*      sns;
     kgmTrigger*     trg;
     kgmObstacle*    obs;
-    kgmGameObject*  obj;
+    kgmUnit*  obj;
   };
 
   Type typ;
@@ -191,7 +191,7 @@ public:
     geo = null;
 
     if(n.obj)
-      obj = (kgmGameObject*)n.obj->clone();
+      obj = (kgmUnit*)n.obj->clone();
   }
 
   ~kNode()

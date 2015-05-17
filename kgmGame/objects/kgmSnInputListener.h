@@ -5,7 +5,7 @@
 
 class kgmSnInputListener : public kgmSensor
 {
-  KGM_GO_OBJECT(kgmSnInputListener);
+  KGM_UNIT(kgmSnInputListener);
 
 public:
   kgmSnInputListener(kgmIGame* g)

@@ -2,17 +2,17 @@
 #include "kgmIGame.h"
 #include "kgmILogic.h"
 
-KGMOBJECT_IMPLEMENT(kgmTrigger, kgmGameObject);
+KGMOBJECT_IMPLEMENT(kgmTrigger, kgmUnit);
 
 kgmTrigger::kgmTrigger(kgmIGame* g)
-  :kgmGameObject(g)
+  :kgmUnit(g)
 {
   target = "";
 }
 
 void kgmTrigger::sendToTarget(kgmString e)
 {
-  kgmGameObject* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
+  kgmUnit* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
 
   if(o)
     o->event(this, e);

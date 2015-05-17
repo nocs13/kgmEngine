@@ -1,8 +1,8 @@
 #include "kgmEffect.h"
-KGMOBJECT_IMPLEMENT(kgmEffect, kgmGameObject);
+KGMOBJECT_IMPLEMENT(kgmEffect, kgmUnit);
 
 kgmEffect::kgmEffect(kgmIGame *g)
-:kgmGameObject(g)
+:kgmUnit(g)
 {
 }
 

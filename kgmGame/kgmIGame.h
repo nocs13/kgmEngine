@@ -127,7 +127,7 @@ class kgmSystem;
 class kgmWindow;
 class kgmEnvironment;
 
-class kgmGameObject;
+class kgmUnit;
 
 class kgmIGame
 {
@@ -153,8 +153,8 @@ public:
   virtual u32            gState() = 0;                    //check game active  state
   virtual int            gSwitch(u32) = 0;                //switch game state
   virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
-  virtual kgmGameObject* gObject(kgmString) = 0;          //spawn game object
-  virtual bool           gAppend(kgmGameObject*) = 0;     //add game object in scene
+  virtual kgmUnit*       gObject(kgmString) = 0;          //spawn game object
+  virtual bool           gAppend(kgmUnit*) = 0;     //add game object in scene
 
   virtual void           guiAdd(kgmGui* g) = 0;
 

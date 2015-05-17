@@ -17,12 +17,12 @@
 
 #include "../kgmPhysics/kgmBody.h"
 
-#include "kgmGameObject.h"
 #include "kgmGamePhysics.h"
+#include "kgmUnit.h"
 
-class kgmActor: public kgmGameObject
+class kgmActor: public kgmUnit
 {
-  KGM_GO_OBJECT(kgmActor);
+  KGM_UNIT(kgmActor);
 
 public:
   struct Action

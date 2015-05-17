@@ -20,7 +20,7 @@
 #include "kgmGamePhysics.h"
 #include "kgmGameResources.h"
 
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 #include "kgmActor.h"
 
 #include "../kgmGraphics/kgmGuiTab.h"
@@ -157,15 +157,15 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
-  kgmGameObject::goRegister("kgmResult",  kgmGameObject::GoUnit, (kgmGameObject::GenGo)&kgmResult::New);
-  kgmGameObject::goRegister("kgmFlame",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmFlame::New);
-  kgmGameObject::goRegister("kgmSmoke",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmSmoke::New);
-  kgmGameObject::goRegister("kgmLaser",   kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmLaser::New);
-  kgmGameObject::goRegister("kgmExplode", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmExplode::New);
-  kgmGameObject::goRegister("kgmCharacter", kgmGameObject::GoActor, (kgmGameObject::GenGo)&kgmCharacter::New);
-  kgmGameObject::goRegister("kgmLnCamera",  kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmLnCamera::New);
-  kgmGameObject::goRegister("kgmParticlesObject", kgmGameObject::GoEffect, (kgmGameObject::GenGo)&kgmParticlesObject::New);
-  kgmGameObject::goRegister("kgmSnInputListener", kgmGameObject::GoSensor, (kgmGameObject::GenGo)&kgmSnInputListener::New);
+  kgmUnit::goRegister("kgmResult",  kgmUnit::GoUnit, (kgmUnit::GenGo)&kgmResult::New);
+  kgmUnit::goRegister("kgmFlame",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmFlame::New);
+  kgmUnit::goRegister("kgmSmoke",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmSmoke::New);
+  kgmUnit::goRegister("kgmLaser",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmLaser::New);
+  kgmUnit::goRegister("kgmExplode", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmExplode::New);
+  kgmUnit::goRegister("kgmCharacter", kgmUnit::GoActor, (kgmUnit::GenGo)&kgmCharacter::New);
+  kgmUnit::goRegister("kgmLnCamera",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmLnCamera::New);
+  kgmUnit::goRegister("kgmParticlesObject", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmParticlesObject::New);
+  kgmUnit::goRegister("kgmSnInputListener", kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmSnInputListener::New);
 
 #ifdef EDITOR
   editor = null;
@@ -323,11 +323,6 @@ void kgmGameBase::onIdle()
       m_guis.erase(i - 1);
     }
   }
-
-#ifdef DEBUG
-  kgmObject::listObjects();
-  //kgm_log() << "State is: " << (s32)m_state;
-#endif
 
 #ifdef EDITOR
   if(editor)
@@ -601,7 +596,7 @@ void kgmGameBase::gPause(bool s){
   }
 }
 
-bool kgmGameBase::gAppend(kgmGameObject* go)
+bool kgmGameBase::gAppend(kgmUnit* go)
 {
   if(!go || (m_state != State_Play && m_state != State_Load))
     return false;
@@ -630,15 +625,15 @@ bool kgmGameBase::gAppend(kgmGameObject* go)
   return true;
 }
 
-kgmGameObject* kgmGameBase::gObject(kgmString s)
+kgmUnit* kgmGameBase::gObject(kgmString s)
 {
-  if(kgmGameObject::g_typ_objects.hasKey(s))
+  if(kgmUnit::g_typ_objects.hasKey(s))
   {
-    kgmGameObject::GenGo fn_new = kgmGameObject::g_typ_objects[s];
+    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[s];
 
     if(fn_new)
     {
-      kgmGameObject* go = fn_new(this);
+      kgmUnit* go = fn_new(this);
 
       if(go)
         return go;
@@ -766,7 +761,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
   kgmActor*       act = 0;
-  kgmGameObject*  gob = 0;
+  kgmUnit*  gob = 0;
   kgmObject*      obj = 0;
   kgmVisual*      vis = 0;
 
@@ -858,7 +853,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           act->release();
         }
       }
-      else if(id == "kgmGameObject")
+      else if(id == "kgmUnit")
       {
         type = TypeGameObject;
         kgmString s, sgrp;
@@ -1559,7 +1554,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("type",  type);
       a_node->node(i)->attribute("dummy", dummy);
 
-      kgmGameObject* go = (isactor) ? (gSpawn(type)) : (gObject(type));
+      kgmUnit* go = (isactor) ? (gSpawn(type)) : (gObject(type));
 
       if(go)
       {

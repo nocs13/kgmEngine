@@ -7,7 +7,7 @@ class kgmActor;
 
 class kgmLnCamera : public kgmSensor
 {
-  KGM_GO_OBJECT(kgmLnCamera);
+  KGM_UNIT(kgmLnCamera);
 
   kgmCamera *m_camera;
   kgmActor  *m_linked;

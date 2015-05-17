@@ -1,11 +1,11 @@
 #ifndef KGMTRIGGER_H
 #define KGMTRIGGER_H
 
-#include "kgmGameObject.h"
+#include "kgmUnit.h"
 
-class kgmTrigger : public kgmGameObject
+class kgmTrigger : public kgmUnit
 {
-  KGM_GO_OBJECT(kgmTrigger);
+  KGM_UNIT(kgmTrigger);
 
   enum Type
   {

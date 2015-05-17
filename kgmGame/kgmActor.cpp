@@ -2,10 +2,10 @@
 #include "kgmIGame.h"
 #include "../kgmMedia/kgmIAudio.h"
 
-KGMOBJECT_IMPLEMENT(kgmActor, kgmGameObject);
+KGMOBJECT_IMPLEMENT(kgmActor, kgmUnit);
 
 kgmActor::kgmActor(kgmIGame* g)
-  :kgmGameObject(g)
+  :kgmUnit(g)
 {
   vec3 tv(0, 0, 1);
 
@@ -62,7 +62,7 @@ void kgmActor::init()
 
 void kgmActor::update(u32 time)
 {
-  kgmGameObject::update(time);
+  kgmUnit::update(time);
 
   if(m_state && m_state->timeout != 0xffffffff)
   {
