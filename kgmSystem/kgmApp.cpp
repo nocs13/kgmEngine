@@ -15,8 +15,8 @@
 
 static void kgm_signal_handler(int s);
 
-
 //kgmApp
+
 
 //Application object, unique only  
 kgmApp* kgmApp::m_app = 0;

@@ -5,6 +5,7 @@
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmPointer.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 
 #include "kGlobals.h"
@@ -99,14 +100,14 @@ class kGame: public kgmGameBase{
     u8  cmap;
   };
 
-  kGui*      gui;
+  kgm_ptr<kGui> gui;
   GameData   data;
 
 public:
   kGame(bool edit)
     :kgmGameBase(edit)
   {
-    gui = new kGui(this);
+    gui = kgm_ptr<kGui>(new kGui(this));
 
     kgmUnit::goRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
     kgmUnit::goRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
@@ -157,7 +158,7 @@ public:
   void edit()
   {
 #ifdef EDITOR
-    gui->m_guiMain->hide();
+    ((kGui*)gui)->m_guiMain->hide();
     m_state = State_Edit;
 #endif
   }
@@ -165,9 +166,9 @@ public:
   void guiShow(bool s)
   {
     if(s)
-      gui->m_guiMain->show();
+      ((kGui*)gui)->m_guiMain->show();
     else
-      gui->m_guiMain->hide();
+      ((kGui*)gui)->m_guiMain->hide();
   }
 
   void onIdle()
@@ -233,14 +234,14 @@ public:
       m_state = kgmIGame::State_Clean;
       gUnload();
       m_state = kgmIGame::State_Idle;
-      gui->viewAgain();
+      ((kGui*)gui)->viewAgain();
     }
     else if(s == "gameover_success")
     {
       m_state = kgmIGame::State_Clean;
       gUnload();
       m_state = kgmIGame::State_Idle;
-      gui->viewAgain();
+      ((kGui*)gui)->viewAgain();
     }
   }
 
@@ -304,7 +305,7 @@ class kApp: public kgmGameApp{
 #ifdef ANDROID
 public:
 #endif
-  kGame* game;
+  kgm_ptr<kGame> game;
 public:
   kApp()
   {
@@ -331,30 +332,32 @@ public:
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
-    m_game = game = new kGame(edit);
 
-    game->setRect(0, 0, w, h);
+    game = kgm_ptr<kGame>(new kGame(edit));
+
+    m_game = ((kGame*)game);
+
+    ((kGame*)game)->setRect(0, 0, w, h);
   }
 
   void gameLoop()
   {
-    if(game)
+    if(game.valid())
     {
-      if(game->gState() == kgmIGame::State_Play)
-        game->guiShow(false);
+      if(((kGame*)game)->gState() == kgmIGame::State_Play)
+        ((kGame*)game)->guiShow(false);
 
-      game->loop();
+      ((kGame*)game)->loop();
     }
   }
 
   void gameFree()
   {
-    game->release();
   }
 
   void gameEdit()
   {
-    game->edit();
+    ((kGame*)game)->edit();
   }
 
 #ifdef ANDROID
@@ -362,10 +365,12 @@ public:
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
-    m_game = game = new kGame();
-    game->setRect(0, 0, w, h);
+    game = kgm_ptr<kGame>(new kGame(edit));
 
-    return game;
+    m_game = ((kGame*)game);
+    ((kGame*)game)->setRect(0, 0, w, h);
+
+    return ((kGame*)game);
   }
 #endif
 };

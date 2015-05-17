@@ -4,10 +4,16 @@
 template <class T>
 class kgmPointer
 {
-  T*   pointer;
-  int* counter;
+  T*   pointer = 0;
+  int* counter = 0;
 
 public:
+
+  kgmPointer()
+  {
+    //pointer = 0;
+    //counter = 0;
+  }
 
   kgmPointer(T* ptr)
   {
@@ -51,6 +57,14 @@ public:
   void operator=(const T& data)
   {
     (*pointer) = data;
+  }
+
+  void operator=(const kgmPointer<T>& ptr)
+  {
+    pointer = ptr.pointer;
+    counter = ptr.counter;
+
+    (*counter)++;
   }
 
   operator T() const
