@@ -10,7 +10,7 @@
 
 class _Sound;
 
-class kgmAlsa: public kgmObject, public kgmIAudio
+class kgmAlsa: public kgmIAudio
 {
   KGM_OBJECT(kgmAlsa);
 

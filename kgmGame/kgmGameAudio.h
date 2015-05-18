@@ -5,7 +5,7 @@
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmMedia/kgmNullAudio.h"
 
-class kgmGameAudio: public kgmObject, public kgmIAudio
+class kgmGameAudio: public kgmIAudio
 {
   KGM_OBJECT(kgmGameAudio);
 
@@ -18,6 +18,7 @@ class kgmGameAudio: public kgmObject, public kgmIAudio
 
 private:
   kgm_ptr<kgmIAudio> m_audio;
+  //kgmIAudio* m_audio;
 
   Listener m_listener;
 

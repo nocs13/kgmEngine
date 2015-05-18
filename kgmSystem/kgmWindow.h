@@ -101,8 +101,7 @@ public:
 
 #ifdef WIN32
   static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
-#endif
-#ifdef LINUX
+#else
   static int WndProc(kgmWindow*, XEvent*);
 #endif
 

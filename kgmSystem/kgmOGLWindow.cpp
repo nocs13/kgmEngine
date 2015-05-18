@@ -90,31 +90,46 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   int numModes = 0;
   int bestMode = -1;
   int i = 0;
+
   XF86VidModeGetAllModeLines(m_dpy, m_screen, &numModes, &modes);
   m_mode = *modes[0];
+
   getRect(rx, ry, rw, rh);
-  for(i = 0; i < numModes; i++){
-   if( (modes[i]->hdisplay == rw) && (modes[i]->vdisplay == rh) ){
-	bestMode = i;
-	break;
-   }
+
+  for(i = 0; i < numModes; i++)
+  {
+    if( (modes[i]->hdisplay == rw) && (modes[i]->vdisplay == rh) )
+    {
+      bestMode = i;
+      break;
+    }
   }
+
   vi = glXChooseVisual(m_dpy, m_screen, attrDbl);
-  if(vi == 0){
-   kgmLog::log("No Doublebuffered Visual");
-   vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
-   if(vi == 0){
-    kgmLog::log("No Singlebuffered Visual");
-    return;
+
+  if(vi == 0)
+  {
+    kgmLog::log("No Doublebuffered Visual");
+    vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
+
+   if(vi == 0)
+   {
+     kgmLog::log("No Singlebuffered Visual");
+
+     return;
    }
    else
-    kgmLog::log("\nGot Singlebuffered Visual");
+   {
+     kgmLog::log("\nGot Singlebuffered Visual");
+   }
   }
   else
    kgmLog::log("\nGot Doublebuffered Visual");
 
   m_glctx = glXCreateContext(m_dpy, vi, 0, GL_TRUE);
+
   cmap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
+
   m_xswa.colormap = cmap;
   m_xswa.border_pixel = 0;
   
@@ -129,19 +144,22 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
   glXMakeCurrent(m_dpy, m_wnd, m_glctx);
+
   if(glXIsDirect(m_dpy, m_glctx))
-   kgmLog::log("\nDirect Rendering!");
+    kgmLog::log("\nDirect Rendering!");
   else
-   kgmLog::log("\nNo Direct Rendering!\n");
+    kgmLog::log("\nNo Direct Rendering!\n");
+
   XMapWindow(m_dpy, m_wnd);
   XFlush(m_dpy);
   XFree(modes);
 
   if(tprop.value)
-   XStoreName(m_dpy, m_wnd, (const char*)tprop.value);
+    XStoreName(m_dpy, m_wnd, (const char*)tprop.value);
 
   if(m_fs)
-   fullscreen(true);
+    fullscreen(true);
+
 #endif
 
 #ifdef ANDROIDXXX
@@ -211,11 +229,14 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   //eglSwapBuffers(display, surface);
 #endif
 
- m_gc = new kgmOGL(this);
+  m_gc = new kgmOGL(this);
 }
 
 kgmOGLWindow::~kgmOGLWindow()
 {
+#ifdef DEBUG
+  kgm_log() << "kgmOGLWindow::~kgmOGLWindow.\n";
+#endif
 }
 
 void kgmOGLWindow::onClose()

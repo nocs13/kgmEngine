@@ -3,7 +3,7 @@
 #include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmPointer.h"
 
-KGMOBJECT_IMPLEMENT(kgmAlsa, kgmObject);
+KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
 
 #undef DEBUG
 
@@ -286,6 +286,7 @@ kgmAlsa::kgmAlsa()
     LOAD_FUNC(snd_pcm_start);
     LOAD_FUNC(snd_pcm_resume);
     LOAD_FUNC(snd_pcm_state);
+    LOAD_FUNC(snd_pcm_reset);
     LOAD_FUNC(snd_pcm_avail_update);
     LOAD_FUNC(snd_pcm_areas_silence);
     LOAD_FUNC(snd_pcm_mmap_begin);
@@ -313,13 +314,13 @@ kgmAlsa::kgmAlsa()
     {
       char* device = "default";
       //char* device = "plughw:0,0";
-      err = (int)psnd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+      err = (int)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
       if(err < 0)
       {
         usleep(200000);
 
-        err = (int)psnd_pcm_open((void*)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+        err = (int)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
         if(err < 0)
         {
@@ -416,6 +417,8 @@ kgmAlsa::~kgmAlsa()
   kgmThread::mxfree(m_mutex);
 
 #ifdef ALSA
+  kgm_log() << "kgmAlsa snd_pcm_close.\n";
+  psnd_pcm_reset(m_handle);
   psnd_pcm_close(m_handle);
 #endif
 

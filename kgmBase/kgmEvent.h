@@ -135,6 +135,7 @@ public:
   kgmEvent()
   {
   }
+
   ~kgmEvent()
   {
   }

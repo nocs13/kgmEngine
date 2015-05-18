@@ -300,8 +300,10 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
     return DefWindowProc(hWnd, msg, wPar, lPar);
     break;
   }
+
   if(evt.event)
     wnd->onEvent(&evt);
+
   return 1;
 }
 
@@ -725,8 +727,11 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 #endif
 }
 
-kgmWindow::~kgmWindow(){
-  //close();
+kgmWindow::~kgmWindow()
+{
+#ifdef DEBUG
+  kgm_log() << "kgmWindow::~kgmWindow.\n";
+#endif
 }
 
 void kgmWindow::fullscreen(bool fs){

@@ -12,13 +12,14 @@
 #include "../kgmSystem/kgmDSound.h"
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmObject);
+KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmIAudio);
 
 kgmGameAudio::kgmGameAudio()
 {
 #ifdef OAL
   m_audio = kgm_ptr<kgmIAudio>(new kgmOAL());
 #elif defined(ALSA)
+  //m_audio = new kgmAlsa();
   m_audio = kgm_ptr<kgmIAudio>(new kgmAlsa());
   //m_audio = new kgmNullAudio();
 #elif defined(OSL)
@@ -32,6 +33,12 @@ kgmGameAudio::kgmGameAudio()
 
 kgmGameAudio::~kgmGameAudio()
 {
+  /*if(m_audio)
+  {
+    delete m_audio;
+
+    m_audio = null;
+  }*/
 #ifdef DEBUG
   kgm_log() << "kgmGameAudio::~kgmGameAudio.\n";
 #endif

@@ -336,6 +336,26 @@ void kgmGameBase::onPaint(kgmIGC* gc)
 
 void kgmGameBase::onClose()
 {
+  log("free audio...");
+
+  if(m_audio)
+  {
+    delete m_audio;
+
+    m_audio = null;
+    //m_audio->release();
+  }
+
+  log("free logic...");
+
+  if(m_logic)
+  {
+    delete m_logic;
+
+    m_logic = null;
+    //m_audio->release();
+  }
+
 #ifdef EDITOR
   log("free editor...");
 
@@ -345,7 +365,6 @@ void kgmGameBase::onClose()
     editor = null;
   }
 #endif
-
 
   log("free graphics renderer...");
 
@@ -368,11 +387,6 @@ void kgmGameBase::onClose()
 
   if(m_physics)
     m_physics->release();
-
-  log("free audio...");
-
-  if(m_audio)
-    m_audio->release();
 
   log("free system...");
   if(m_system)
