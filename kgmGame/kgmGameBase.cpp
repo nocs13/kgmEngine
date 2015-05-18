@@ -182,12 +182,66 @@ kgmGameBase::kgmGameBase(bool edit)
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-  :kgmOGLWindow(0, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
+:kgmOGLWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 
 kgmGameBase::~kgmGameBase()
 {
+  log("free audio...");
+
+  if(m_audio)
+  {
+    delete m_audio;
+
+    m_audio = null;
+  }
+
+  log("free logic...");
+
+  if(m_logic)
+  {
+    delete m_logic;
+
+    m_logic = null;
+  }
+
+#ifdef EDITOR
+  log("free editor...");
+
+  if(editor != null)
+  {
+    editor->release();
+    editor = null;
+  }
+#endif
+
+  log("free graphics renderer...");
+
+  if(m_render)
+    m_render->release();
+
+
+  log("free gui...");
+
+  for(int i = 0; i < m_guis.size(); i++)
+    m_guis[i]->release();
+  m_guis.clear();
+
+  log("free resources...");
+
+  if(m_resources)
+    m_resources->release();
+
+  log("free physics...");
+
+  if(m_physics)
+    m_physics->release();
+
+  log("free system...");
+
+  if(m_system)
+    m_system->release();
 }
 
 kgmIGC* kgmGameBase::getGC()
@@ -336,63 +390,6 @@ void kgmGameBase::onPaint(kgmIGC* gc)
 
 void kgmGameBase::onClose()
 {
-  log("free audio...");
-
-  if(m_audio)
-  {
-    delete m_audio;
-
-    m_audio = null;
-    //m_audio->release();
-  }
-
-  log("free logic...");
-
-  if(m_logic)
-  {
-    delete m_logic;
-
-    m_logic = null;
-    //m_audio->release();
-  }
-
-#ifdef EDITOR
-  log("free editor...");
-
-  if(editor != null)
-  {
-    editor->release();
-    editor = null;
-  }
-#endif
-
-  log("free graphics renderer...");
-
-  if(m_render)
-    m_render->release();
-
-
-  log("free gui...");
-
-  for(int i = 0; i < m_guis.size(); i++)
-    m_guis[i]->release();
-  m_guis.clear();
-
-  log("free resources...");
-
-  if(m_resources)
-    m_resources->release();
-
-  log("free physics...");
-
-  if(m_physics)
-    m_physics->release();
-
-  log("free system...");
-  if(m_system)
-    m_system->release();
-
-  kgmOGLWindow::onClose();
 }
 
 void kgmGameBase::onKeyUp(int k)

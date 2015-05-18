@@ -6,82 +6,78 @@
 #include "../kgmBase/kgmLog.h"
 
 
-//kgmOGLWindow::kgmOGLWindow()
-//:kgmWindow(0, "", 10, 10, 500, 400, 16, false){
-//}
-
 kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
-:kgmWindow(0, "", x, y, w, h, bpp, fs)
+  :kgmWindow(null, "", x, y, w, h, bpp, fs)
 {
- m_gc = 0;
+  m_gc = null;
 
 #ifdef DEBUG
- kgm_log() << "init ogl screen\n";
+  kgm_log() << "init ogl screen\n";
 #endif
 
 #ifdef WIN32
- PIXELFORMATDESCRIPTOR pfd = {0};
- pfd.nSize = sizeof(pfd);
- pfd.nVersion = 1;
- pfd.dwFlags = PFD_DRAW_TO_WINDOW | 
-               PFD_SUPPORT_OPENGL |
-               PFD_DOUBLEBUFFER;// |
-//				  PFD_GENERIC_ACCELERATED | 
-//				   PFD_SWAP_LAYER_BUFFERS;
- pfd.cColorBits = 24;
- pfd.cDepthBits = 16;
- pfd.cStencilBits = 8;
- pfd.iPixelType = PFD_TYPE_RGBA;
- pfd.iLayerType = PFD_MAIN_PLANE;
+  PIXELFORMATDESCRIPTOR pfd = {0};
+  pfd.nSize = sizeof(pfd);
+  pfd.nVersion = 1;
+  pfd.dwFlags = PFD_DRAW_TO_WINDOW |
+                PFD_SUPPORT_OPENGL |
+                PFD_DOUBLEBUFFER;// |
+  //				  PFD_GENERIC_ACCELERATED |
+  //				   PFD_SWAP_LAYER_BUFFERS;
+  pfd.cColorBits = 24;
+  pfd.cDepthBits = 16;
+  pfd.cStencilBits = 8;
+  pfd.iPixelType = PFD_TYPE_RGBA;
+  pfd.iLayerType = PFD_MAIN_PLANE;
 
- m_hdc = GetDC(m_wnd);
+  m_hdc = GetDC(m_wnd);
 
- if(!m_hdc)
-	 return;
+  if(!m_hdc)
+    return;
 
- int pf = ChoosePixelFormat(m_hdc,&pfd);
+  int pf = ChoosePixelFormat(m_hdc,&pfd);
 
- if(!pf)
-	 return;
+  if(!pf)
+    return;
 
- if(!SetPixelFormat(m_hdc,pf,&pfd))
-	 return;
+  if(!SetPixelFormat(m_hdc,pf,&pfd))
+    return;
 
- m_hrc = wglCreateContext(m_hdc);
+  m_hrc = wglCreateContext(m_hdc);
 
- if(!m_hrc)
-	 return;
+  if(!m_hrc)
+    return;
 
- if(!wglMakeCurrent(m_hdc,m_hrc))
-	 return;
+  if(!wglMakeCurrent(m_hdc,m_hrc))
+    return;
 
- SendMessage(m_wnd, WM_ACTIVATE, NULL, NULL);
- SendMessage(m_wnd, WM_PAINT, NULL, NULL);
+  SendMessage(m_wnd, WM_ACTIVATE, NULL, NULL);
+  SendMessage(m_wnd, WM_PAINT, NULL, NULL);
 #endif
 
 #ifdef LINUX
-/* attributes for a single buffered visual in RGBA format with at least
+  /* attributes for a single buffered visual in RGBA format with at least
    4 bits per color and a 16 bit depth buffer
 */
-static int attrSgl[] = {
+  static int attrSgl[] = {
     GLX_RGBA,
     GLX_RED_SIZE, 4,
     GLX_GREEN_SIZE, 4,
     GLX_BLUE_SIZE, 4,
     GLX_DEPTH_SIZE, 16,
     None
-};
+  };
 
-/* attributes for a double buffered visual in RGBA format with at least
+  /* attributes for a double buffered visual in RGBA format with at least
    4 bits per color and a 16 bit depth buffer
 */
-static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
-    GLX_RED_SIZE, 4,
-    GLX_GREEN_SIZE, 4,
-    GLX_BLUE_SIZE, 4,
-    GLX_DEPTH_SIZE, 16,
-    None
-};
+  static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
+                           GLX_RED_SIZE, 4,
+                           GLX_GREEN_SIZE, 4,
+                           GLX_BLUE_SIZE, 4,
+                           GLX_DEPTH_SIZE, 16,
+                           None
+                         };
 
   Colormap cmap;
   XVisualInfo* vi = 0;
@@ -112,19 +108,19 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
     kgmLog::log("No Doublebuffered Visual");
     vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
 
-   if(vi == 0)
-   {
-     kgmLog::log("No Singlebuffered Visual");
+    if(vi == 0)
+    {
+      kgmLog::log("No Singlebuffered Visual");
 
-     return;
-   }
-   else
-   {
-     kgmLog::log("\nGot Singlebuffered Visual");
-   }
+      return;
+    }
+    else
+    {
+      kgmLog::log("\nGot Singlebuffered Visual");
+    }
   }
   else
-   kgmLog::log("\nGot Doublebuffered Visual");
+    kgmLog::log("\nGot Doublebuffered Visual");
 
   m_glctx = glXCreateContext(m_dpy, vi, 0, GL_TRUE);
 
@@ -140,7 +136,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
   /* create a window in window mode*/
   m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
   m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, vi->screen),  x, y, w, h,
-	 	0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
+                        0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
   glXMakeCurrent(m_dpy, m_wnd, m_glctx);
@@ -234,59 +230,62 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
 
 kgmOGLWindow::~kgmOGLWindow()
 {
-#ifdef DEBUG
-  kgm_log() << "kgmOGLWindow::~kgmOGLWindow.\n";
-#endif
-}
-
-void kgmOGLWindow::onClose()
-{
   if(m_gc)
+  {
     delete m_gc;
 
-  m_gc = 0;
+    m_gc = null;
+  }
 
- #ifdef WIN32
+#ifdef WIN32
+
   wglDeleteContext(m_hrc);
   wglMakeCurrent(m_hdc, 0);
   ReleaseDC(m_wnd,m_hdc);
- #endif
 
- #ifdef LINUX
-  if (m_glctx)
+#elif defined(ANDROIDXXX)
+
+  if (display != EGL_NO_DISPLAY)
   {
-   if(!glXMakeCurrent(m_dpy, None, NULL))
-    kgmLog::log("Could not release drawing context.\n");
-   glXDestroyContext(m_dpy, m_glctx);
-   m_glctx = NULL;
-  }
- #endif
-
- #ifdef ANDROIDXXX
-  if (display != EGL_NO_DISPLAY) {
     eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    if (context != EGL_NO_CONTEXT) {
+
+    if (context != EGL_NO_CONTEXT)
+    {
       eglDestroyContext(display, context);
     }
-    if (surface != EGL_NO_SURFACE) {
+
+    if (surface != EGL_NO_SURFACE)
+    {
       eglDestroySurface(display, surface);
     }
+
     eglTerminate(display);
   }
 
   display = EGL_NO_DISPLAY;
   context = EGL_NO_CONTEXT;
   surface = EGL_NO_SURFACE;
- #endif
 
-  kgmWindow::onClose();
+#else
+
+  if (m_glctx)
+  {
+    if(!glXMakeCurrent(m_dpy, None, NULL))
+      kgmLog::log("Could not release drawing context.\n");
+
+    glXDestroyContext(m_dpy, m_glctx);
+
+    m_glctx = NULL;
+  }
+
+#endif
+
+#ifdef DEBUG
+  kgm_log() << "kgmOGLWindow::~kgmOGLWindow.\n";
+#endif
 }
 
-kgmIGC* kgmOGLWindow::getGC(){
+kgmIGC* kgmOGLWindow::getGC()
+{
   return m_gc;
 }
-
-
-
-
-
