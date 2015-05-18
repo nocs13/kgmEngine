@@ -47,10 +47,8 @@ public:
 
  kgmOGL *m_gc;
 public:
- //kgmOGLWindow();
  kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);
  virtual ~kgmOGLWindow();
  
- void onClose();
  kgmIGC* getGC();
 };

@@ -75,6 +75,11 @@ public:
     (*counter)++;
   }
 
+  T* operator->() const
+  {
+    return pointer;
+  }
+
   operator T*() const
   {
     return pointer;
