@@ -119,7 +119,8 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd)
   m_mag_filter = GL_LINEAR;
 }
 
-kgmOGL::~kgmOGL(){
+kgmOGL::~kgmOGL()
+{
   m_rendertarget = 0;
 }
 

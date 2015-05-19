@@ -72,7 +72,8 @@ public:
     pointer = ptr.pointer;
     counter = ptr.counter;
 
-    (*counter)++;
+    if(pointer)
+      (*counter)++;
   }
 
   T* operator->() const

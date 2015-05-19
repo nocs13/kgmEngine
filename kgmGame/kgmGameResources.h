@@ -16,53 +16,58 @@
 
 class kgmIGame;
 
-class kgmGameResources: public kgmIResources{
+class kgmGameResources: public kgmIResources
+{
 protected:
 
- struct Path{
+  struct Path
+  {
 
-  u32       type;    
-  kgmString  path;
-  kgmFile    file;
-  kgmArchive archive;
+    u32       type;
+    kgmString  path;
+    kgmFile    file;
+    kgmArchive archive;
 
-  Path(){
-   type = 0;
-  }
+    Path()
+    {
+      type = 0;
+    }
 
-  ~Path(){
-   path.clear();
-   file.close();
-   archive.close();
-  }
- };
+    ~Path()
+    {
+      path.clear();
+      file.close();
+      archive.close();
+    }
+  };
 
- kgmIGame*              m_game;
+  kgmIGC*                m_gc;
+  kgmIAudio*             m_audio;
 
- kgmList<kgmResource*>  m_resources;
- kgmList<Path*>         m_paths;
- kgmGameTools           m_tools;
+  kgmList<kgmResource*>  m_resources;
+  kgmList<Path*>         m_paths;
+  kgmGameTools           m_tools;
 
 
 public:
- kgmGameResources();
- ~kgmGameResources();
+  kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
+  ~kgmGameResources();
 
- void               release();
- void               add(kgmResource*);
- void               remove(kgmResource*);
+  void               release();
+  void               add(kgmResource*);
+  void               remove(kgmResource*);
 
- void               addPath(kgmString s);
- bool               getFile(char* id, kgmMemory<u8>& m);
+  void               addPath(kgmString s);
+  bool               getFile(char* id, kgmMemory<u8>& m);
 
- kgmPicture*        getPicture(char* id);
- kgmTexture*        getTexture(char* id);
- kgmMaterial*       getMaterial(char* id);
- kgmShader*         getShader(char* id);
- kgmAnimation*      getAnimation(char* id);
- kgmSound*          getSound(char*);
- kgmMesh*           getMesh(char* id);
- kgmSkeleton*       getSkeleton(char* id);
- kgmFont*           getFont(char* id, u32 r, u32 c);
- kgmShapeCollision* getShapeCollision(char* id);
+  kgmPicture*        getPicture(char* id);
+  kgmTexture*        getTexture(char* id);
+  kgmMaterial*       getMaterial(char* id);
+  kgmShader*         getShader(char* id);
+  kgmAnimation*      getAnimation(char* id);
+  kgmSound*          getSound(char*);
+  kgmMesh*           getMesh(char* id);
+  kgmSkeleton*       getSkeleton(char* id);
+  kgmFont*           getFont(char* id, u32 r, u32 c);
+  kgmShapeCollision* getShapeCollision(char* id);
 };

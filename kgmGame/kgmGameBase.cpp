@@ -101,16 +101,15 @@ kgmGameBase::kgmGameBase(bool edit)
   initResources();
 
   log("open graphics...");
-  m_gc = (kgmOGL*)getGC();
 
-  if(!m_gc)
+  if(!kgmOGLWindow::getGC())
     return;
 
   log("init physics...");
   initPhysics();
 
   log("open renderer...");
-  m_render = new kgmGameGraphics(m_gc, m_resources);
+  m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
@@ -244,11 +243,6 @@ kgmGameBase::~kgmGameBase()
     m_system->release();
 }
 
-kgmIGC* kgmGameBase::getGC()
-{
-  return m_game->m_gc;
-}
-
 kgmIPhysics* kgmGameBase::getPhysics(){
   return m_game->m_physics;
 }
@@ -292,7 +286,7 @@ kgmEnvironment*  kgmGameBase::getEnvironment(){
 void kgmGameBase::initResources()
 {
   log("init resources");
-  m_resources = new kgmGameResources();
+  m_resources = new kgmGameResources(getGC(), getAudio());
   m_resources->addPath(m_settings->get((char*)"Path"));
 }
 
@@ -390,6 +384,7 @@ void kgmGameBase::onPaint(kgmIGC* gc)
 
 void kgmGameBase::onClose()
 {
+  kgmOGLWindow::onClose();
 }
 
 void kgmGameBase::onKeyUp(int k)

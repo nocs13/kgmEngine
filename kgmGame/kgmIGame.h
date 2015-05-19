@@ -158,7 +158,6 @@ public:
 
   virtual void           guiAdd(kgmGui* g) = 0;
 
-  virtual kgmIGC*         getGC() = 0;
   virtual kgmIPhysics*    getPhysics() = 0;
   virtual kgmISpawner*    getSpawner() = 0;
   virtual kgmIAudio*      getAudio() = 0;

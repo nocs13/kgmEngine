@@ -21,8 +21,11 @@
 
 static char str_buf[256];
 
-kgmGameResources::kgmGameResources()
+kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
+  m_gc    = gc;
+  m_audio = audio;
+
   kgmResource::g_resources = this;
 }
 
@@ -87,15 +90,15 @@ void kgmGameResources::remove(kgmResource* r)
     {
       if(r->isClass(kgmTexture::Class))
       {
-        kgmIGame::getGame()->getGC()->gcFreeTexture(((kgmTexture*)r)->m_texture);
+        m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
       }
       else if(r->isClass(kgmShader::Class))
       {
-        kgmIGame::getGame()->getGC()->gcFreeShader(((kgmShader*)r)->m_shader);
+        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
       }
       else if(r->isClass(kgmSound::Class))
       {
-        kgmIGame::getGame()->getAudio()->remove(((kgmSound*)r)->getSound());
+        m_audio->remove(((kgmSound*)r)->getSound());
       }
 
       m_resources.erase(i);
@@ -249,7 +252,7 @@ kgmTexture* kgmGameResources::getTexture(char* id)
   if(!getFile(id, mem))
     return 0;
 
-  texture = m_tools.genTexture(kgmIGame::getGame()->getGC(), mem);
+  texture = m_tools.genTexture(m_gc, mem);
 
   if(texture && texture->m_texture)
   {
@@ -330,7 +333,7 @@ kgmShader* kgmGameResources::getShader(char* id)
   if(getFile(name, mem))
   {
     kgmString s((const char*)mem.data(), mem.length());
-    shader = m_tools.genShader(kgmIGame::getGame()->getGC(), s);
+    shader = m_tools.genShader(m_gc, s);
   }
 
   if(shader)
@@ -500,7 +503,7 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
   if(!getFile(id, mem))
     return 0;
 
-  font = m_tools.genFont(kgmIGame::getGame()->getGC(), 10, 10, r, c, mem);
+  font = m_tools.genFont(m_gc, 10, 10, r, c, mem);
 
   if(font)
   {

@@ -729,6 +729,50 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 
 kgmWindow::~kgmWindow()
 {
+  //Prepae to close window
+
+#ifdef WIN32
+
+  DestroyWindow(m_wnd);
+
+#elif defined(ANDROID)
+
+#else LINUX
+
+  /*XDestroyWindow(m_dpy, m_wnd);
+
+  if(!m_parent)
+  {
+    XCloseDisplay(m_dpy);
+
+    m_dpy = null;
+  }*/
+
+  XDestroyWindow(m_dpy, m_wnd);
+
+  if(!m_parent)
+    XCloseDisplay(m_dpy);
+
+  //XEvent ev;
+  XClientMessageEvent ev;
+
+  memset(&ev, 0, sizeof (ev));
+
+  /*ev.xclient.type = ClientMessage;
+ ev.xclient.window = m_wnd;
+ ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", false);
+ ev.xclient.format = 32;
+ ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
+ ev.xclient.data.l[1] = CurrentTime;
+ XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);*/
+
+  ev.type = ClientMessage;
+  ev.window = m_wnd;
+  ev.format = 32;
+  XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);
+
+#endif
+
 #ifdef DEBUG
   kgm_log() << "kgmWindow::~kgmWindow.\n";
 #endif
@@ -789,13 +833,17 @@ void kgmWindow::fullscreen(bool fs){
   m_fs = fs;
 }
 
-void kgmWindow::show(bool sh){
+void kgmWindow::show(bool sh)
+{
 #ifdef WIN32
-  if(sh && !IsWindowVisible(m_wnd)){
+  if(sh && !IsWindowVisible(m_wnd))
+  {
     ShowWindow(m_wnd, SW_SHOWNORMAL);
     return;
   }
-  if(!sh && IsWindowVisible(m_wnd)){
+
+  if(!sh && IsWindowVisible(m_wnd))
+  {
     ShowWindow(m_wnd, SW_HIDE);
     return;
   }
@@ -810,7 +858,8 @@ void kgmWindow::show(bool sh){
 #endif
 }
 
-void kgmWindow::loop(){
+void kgmWindow::loop()
+{
   m_loop = true;
 
 #ifdef WIN32
@@ -853,36 +902,9 @@ void kgmWindow::loop(){
 }
 
 void kgmWindow::close()
-{ 
-  //Prepae to close window
-
-#ifdef WIN32
-  DestroyWindow(m_wnd);
-#endif
-
-#ifdef LINUX
-  //XDestroyWindow(m_dpy, m_wnd);
-  // if(!m_parent)
-  //  XCloseDisplay(m_dpy);
-  //XEvent ev;
-  XClientMessageEvent ev;
-
-  memset(&ev, 0, sizeof (ev));
-
-  /*ev.xclient.type = ClientMessage;
- ev.xclient.window = m_wnd;
- ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", false);
- ev.xclient.format = 32;
- ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
- ev.xclient.data.l[1] = CurrentTime;
- XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);*/
-
-  ev.type = ClientMessage;
-  ev.window = m_wnd;
-  ev.format = 32;
-  XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);
-
-#endif
+{
+  if(m_loop)
+    m_loop = false;
 }
 
 void kgmWindow::getRect(int& x, int& y, int& w, int& h){
@@ -965,27 +987,9 @@ void kgmWindow::setTitle(char* title)
 #endif
 }
 
-void kgmWindow::onClose()
-{
-#ifdef DEBUG
-  kgm_log() << "onClose\n";
-#endif
-
-#ifdef LINUX
-  XDestroyWindow(m_dpy, m_wnd);
-  if(!m_parent)
-  {
-    XCloseDisplay(m_dpy);
-    m_dpy = null;
-  }
-#endif
-
-  m_loop = 0;
-}
-
 kgmIGC* kgmWindow::getGC()
 {
-  return 0;
+  return null;
 }
 
 

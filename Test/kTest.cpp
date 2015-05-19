@@ -302,18 +302,29 @@ private:
 
 #include "../../kgmBase/kgmPointer.h"
 
-class kApp: public kgmGameApp{
+class kApp: public kgmGameApp
+{
 #ifdef ANDROID
 public:
 #endif
-  kgm_ptr<kGame> game;
+
+  //kgm_ptr<kGame> game;
+  kGame* game;
+
 public:
   kApp()
   {
+    game = null;
   }
 
   ~kApp()
   {
+    if(game)
+    {
+      delete game;
+
+      game = null;
+    }
 #ifdef DEBUG
     kgm_log() << "kApp::~kApp.\n";
 #endif
@@ -338,31 +349,34 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
-    game = kgm_ptr<kGame>(new kGame(edit));
+    //game = kgm_ptr<kGame>(new kGame(edit));
+    game = new kGame(edit);
 
     m_game = ((kGame*)game);
 
-    ((kGame*)game)->setRect(0, 0, w, h);
+    game->setRect(0, 0, w, h);
   }
 
   void gameLoop()
   {
-    if(game.valid())
+//    if(game.valid())
+    if(game != null)
     {
-      if(((kGame*)game)->gState() == kgmIGame::State_Play)
-        ((kGame*)game)->guiShow(false);
+      if(game->gState() == kgmIGame::State_Play)
+        game->guiShow(false);
 
-      ((kGame*)game)->loop();
+      game->loop();
     }
   }
 
   void gameFree()
   {
+
   }
 
   void gameEdit()
   {
-    ((kGame*)game)->edit();
+    game->edit();
   }
 
 #ifdef ANDROID

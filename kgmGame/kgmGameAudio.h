@@ -33,32 +33,32 @@ public:
 
   void remove(Sound snd)
   {
-    ((kgmIAudio*)m_audio)->remove(snd);
+    m_audio->remove(snd);
   }
 
   void volume(Sound snd, u16 vol)
   {
-    ((kgmIAudio*)m_audio)->volume(snd, vol);
+    m_audio->volume(snd, vol);
   }
 
   void pause(Sound snd, bool stat)
   {
-    ((kgmIAudio*)m_audio)->pause(snd, stat);
+    m_audio->pause(snd, stat);
   }
 
   void play(Sound snd, bool loop)
   {
-    ((kgmIAudio*)m_audio)->play(snd, loop);
+    m_audio->play(snd, loop);
   }
 
   void stop(Sound snd)
   {
-    ((kgmIAudio*)m_audio)->stop(snd);
+    m_audio->stop(snd);
   }
 
   void channel(Sound snd, s16 pan)
   {
-    ((kgmIAudio*)m_audio)->channel(snd, pan);
+    m_audio->channel(snd, pan);
   }
 
   void transform(Sound snd, vec3& pos, vec3& vel)

@@ -9,13 +9,13 @@
 kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
   :kgmWindow(null, "", x, y, w, h, bpp, fs)
 {
-  m_gc = null;
 
 #ifdef DEBUG
   kgm_log() << "init ogl screen\n";
 #endif
 
 #ifdef WIN32
+
   PIXELFORMATDESCRIPTOR pfd = {0};
   pfd.nSize = sizeof(pfd);
   pfd.nVersion = 1;
@@ -53,9 +53,75 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
   SendMessage(m_wnd, WM_ACTIVATE, NULL, NULL);
   SendMessage(m_wnd, WM_PAINT, NULL, NULL);
+
+#elif defined(ANDROID)
+
+  const EGLint RGBX_888_ATTRIBS[] =
+  {
+#ifdef GLES_2
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#endif
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
+    EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE
+  };
+
+  const EGLint RGB_565_ATTRIBS[] =
+  {
+#ifdef GLES_2
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#endif
+    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+    EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
+    EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE
+  };
+
+  EGLint    dummy, format;
+  EGLint    numConfigs;
+  EGLConfig config;
+
+  display = EGL_NO_DISPLAY;
+  context = EGL_NO_CONTEXT;
+  surface = EGL_NO_SURFACE;
+
+  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  eglInitialize(display, 0, 0);
+
+  if(eglChooseConfig(display, RGBX_888_ATTRIBS, &config, 1, &numConfigs) == 0)
+  {
+    if(eglChooseConfig(display, RGB_565_ATTRIBS, &config, 1, &numConfigs) == 0)
+    {
+      return;
+    }
+  }
+
+  eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+  ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
+  surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
+  context = eglCreateContext(display, config, NULL, NULL);
+
+  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
+  {
+#ifdef DEBUG
+    kgm_log() << "kgmEngine: Unable to eglMakeCurrent \n";
 #endif
 
-#ifdef LINUX
+    return;
+  }
+
+  eglQuerySurface(display, surface, EGL_WIDTH, &w);
+  eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+
+  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+  //glEnable(GL_CULL_FACE);
+  //glShadeModel(GL_SMOOTH);
+  //glDisable(GL_DEPTH_TEST);
+  //glClearColor(1, 1, 1, 1);
+  //glClear(GL_COLOR_BUFFER_BIT);
+
+  //eglSwapBuffers(display, surface);
+
+#else
   /* attributes for a single buffered visual in RGBA format with at least
    4 bits per color and a 16 bit depth buffer
   */
@@ -158,84 +224,13 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
 #endif
 
-#ifdef ANDROIDXXX
-  const EGLint RGBX_888_ATTRIBS[] =
-  {
-  #ifdef GLES_2
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-  #endif
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
-    EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE
-  };
-
-  const EGLint RGB_565_ATTRIBS[] =
-  {
-  #ifdef GLES_2
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-  #endif
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
-    EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE
-  };
-
-  EGLint    dummy, format;
-  EGLint    numConfigs;
-  EGLConfig config;
-
-  display = EGL_NO_DISPLAY;
-  context = EGL_NO_CONTEXT;
-  surface = EGL_NO_SURFACE;
-
-  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  eglInitialize(display, 0, 0);
-
-  if(eglChooseConfig(display, RGBX_888_ATTRIBS, &config, 1, &numConfigs) == 0)
-  {
-    if(eglChooseConfig(display, RGB_565_ATTRIBS, &config, 1, &numConfigs) == 0)
-    {
-      return;
-    }
-  }
-
-  eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-  ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
-  surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
-  context = eglCreateContext(display, config, NULL, NULL);
-
-  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
-  {
-#ifdef DEBUG
-    kgm_log() << "kgmEngine: Unable to eglMakeCurrent \n";
-#endif
-
-    return;
-  }
-
-  eglQuerySurface(display, surface, EGL_WIDTH, &w);
-  eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-
-  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-  //glEnable(GL_CULL_FACE);
-  //glShadeModel(GL_SMOOTH);
-  //glDisable(GL_DEPTH_TEST);
-  //glClearColor(1, 1, 1, 1);
-  //glClear(GL_COLOR_BUFFER_BIT);
-
-  //eglSwapBuffers(display, surface);
-#endif
-
-  m_gc = new kgmOGL(this);
+  m_gc = kgm_ptr<kgmOGL>(new kgmOGL(this));
 }
 
 kgmOGLWindow::~kgmOGLWindow()
 {
-  if(m_gc)
-  {
-    delete m_gc;
 
-    m_gc = null;
-  }
+  m_gc = kgm_ptr<kgmOGL>(null);
 
 #ifdef WIN32
 
@@ -287,5 +282,5 @@ kgmOGLWindow::~kgmOGLWindow()
 
 kgmIGC* kgmOGLWindow::getGC()
 {
-  return m_gc;
+  return (kgmOGL*) m_gc;
 }

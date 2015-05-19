@@ -106,7 +106,10 @@ public:
 #endif
 
   // Virtual Functions
-  virtual void onClose();
+  virtual void onClose()
+  {
+    close();
+  }
 
   virtual void onIdle()
   {

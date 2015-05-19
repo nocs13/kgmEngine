@@ -33,12 +33,6 @@ kgmGameAudio::kgmGameAudio()
 
 kgmGameAudio::~kgmGameAudio()
 {
-  /*if(m_audio)
-  {
-    delete m_audio;
-
-    m_audio = null;
-  }*/
 #ifdef DEBUG
   kgm_log() << "kgmGameAudio::~kgmGameAudio.\n";
 #endif

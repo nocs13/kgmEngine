@@ -115,7 +115,6 @@ public:
   kgmGameBase(kgmString &conf);
   virtual ~kgmGameBase();
 
-  kgmIGC*            getGC();
   kgmIPhysics*       getPhysics();
   kgmISpawner*       getSpawner();
   kgmIAudio*         getAudio();
