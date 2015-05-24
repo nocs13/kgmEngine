@@ -41,7 +41,7 @@ public:
     text->m_size  = tw;
 
     m_visual->set(text);
-    text->release();
+//    text->release();
   }
 
   virtual ~kgmResult()
@@ -144,7 +144,7 @@ public:
     material = mtl;
     particles = pts;
 
-    pts->increment();
+//    pts->increment();
     mtl->increment();
 
     timeout(life);
@@ -152,8 +152,8 @@ public:
 
   virtual ~kgmParticlesObject()
   {
-    if(particles)
-      particles->release();
+//    if(particles)
+//      particles->release();
 
     if(material)
       material->release();
@@ -451,8 +451,8 @@ public:
   {
     mesh->release();
     mtl->release();
-    ptl->release();
-    visual->release();
+//    ptl->release();
+//    visual->release();
   }
 
   void update(u32 mls)

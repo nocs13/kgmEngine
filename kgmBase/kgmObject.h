@@ -59,22 +59,21 @@ public:
   };
 
 private:
-  unsigned int m_references;
-
-protected:
-  virtual ~kgmObject()
-  {
-  }
+//  unsigned int m_references;
 
 public:
   kgmObject()
   {
-    m_references = 1;
+//    m_references = 1;
   }
 
   kgmObject(const kgmObject& o)
   {
-    m_references = o.m_references;
+//    m_references = o.m_references;
+  }
+
+  virtual ~kgmObject()
+  {
   }
 
   bool isClass(kgmObject& o)
@@ -146,7 +145,7 @@ public:
     return false;
   }
 
-  u32 references()
+/*  u32 references()
   {
     return m_references;
   }
@@ -162,7 +161,7 @@ public:
 
     if(m_references < 1)
       delete this;
-  }
+  }*/
 
   template<class T, class... Args>
   void connect(T *t, void(T::*f)(Args...), Event<Args...> &s)

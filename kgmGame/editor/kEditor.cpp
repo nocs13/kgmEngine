@@ -116,7 +116,7 @@ kEditor::kEditor(kgmGameBase* g)
     vis->set((kgmMesh*)&g_line);
     vis->set(mtlPivot);
     game->m_render->add(vis);
-    vis->release();
+//    vis->release();
 
 
     game->m_render->setBgColor(0xffbbaa99);
@@ -125,9 +125,9 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
-  gridline->release();
-  pivot->release();
-  menu->release();
+//  gridline->release();
+//  pivot->release();
+//  menu->release();
 
   mtlLines->release();
   mtlPivot->release();
@@ -142,7 +142,7 @@ void kEditor::clear()
 
   for(int i = 0; i < nodes.size(); i++)
   {
-    nodes[i]->release();
+//    nodes[i]->release();
   }
 
   nodes.clear();
@@ -444,7 +444,7 @@ bool kEditor::mapOpen(kgmString s)
       game->getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
       game->getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
 
-      mnode.obj->release();
+//      mnode.obj->release();
 
       game->getRender()->camera().update();
     }
@@ -1375,7 +1375,7 @@ void kEditor::onEditRemove()
 
   nodes.erase(selected);
 
-  selected->release();
+//  selected->release();
 
   selected = null;
 }
@@ -1420,7 +1420,7 @@ void kEditor::onEditOptions()
   {
     game->guiAdd(vop);
     vop->show();
-    vop->release();
+//    vop->release();
   }
 }
 
@@ -1448,7 +1448,7 @@ void kEditor::onAddUnit()
   }
 
   game->guiAdd(vs);
-  vs->release();
+//  vs->release();
 }
 
 void kEditor::onAddLight()
@@ -1497,7 +1497,7 @@ void kEditor::onAddEffect()
   }
 
   game->guiAdd(vs);
-  vs->release();
+//  vs->release();
 }
 
 void kEditor::onAddSensor()
@@ -1512,7 +1512,7 @@ void kEditor::onAddSensor()
   }
 
   game->guiAdd(vs);
-  vs->release();
+//  vs->release();
 }
 
 void kEditor::onAddTrigger()
@@ -1607,7 +1607,7 @@ void kEditor::onViewObjects()
     vo->addItem(nodes[i]->nam);
 
   game->guiAdd(vo);
-  vo->release();
+//  vo->release();
 }
 
 void kEditor::onViewPerspective()

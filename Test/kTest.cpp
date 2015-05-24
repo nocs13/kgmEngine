@@ -83,8 +83,8 @@ public:
 
       vtext->set(text);
       ((kgmGameBase*)game)->m_render->add(vtext);
-      text->release();
-      vtext->release();
+//      text->release();
+//      vtext->release();
     }
     else
     {
@@ -109,8 +109,8 @@ public:
   {
     gui = kgm_ptr<kGui>(new kGui(this));
 
-    kgmUnit::goRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
-    kgmUnit::goRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
+    kgmUnit::unitRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
+    kgmUnit::unitRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
 
     setMsAbsolute(true);
 
@@ -118,7 +118,7 @@ public:
       m_physics->m_gravity = 1.0f;
 
     if(m_logic)
-      m_logic->release();
+      delete m_logic;
 
     m_logic = new ASp_Logic(this);
 
@@ -152,6 +152,12 @@ public:
   ~kGame()
   {
     saveData();
+
+    gui = (kGui*)null;
+
+#ifdef DEBUG
+  kgm_log() << "kGame::~kGame.\n";
+#endif
   }
 
 public:
@@ -319,11 +325,9 @@ public:
 
   ~kApp()
   {
-    if(game)
+    if (game)
     {
       delete game;
-
-      game = null;
     }
 #ifdef DEBUG
     kgm_log() << "kApp::~kApp.\n";
@@ -371,7 +375,12 @@ public:
 
   void gameFree()
   {
-
+//    if(game.valid())
+    if(game)
+    {
+      delete game;
+      game = (kGame*)null;
+    }
   }
 
   void gameEdit()

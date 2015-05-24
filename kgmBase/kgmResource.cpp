@@ -9,12 +9,16 @@ KGMOBJECT_IMPLEMENT(kgmResource, kgmObject);
 
 kgmIResources* kgmResource::g_resources = null;
 
-kgmResource::kgmResource(){
- m_type = 0;
- m_uid = 0;
+kgmResource::kgmResource()
+{
+  m_type = 0;
+  m_uid = 0;
+
+  m_references = 1;
 }
 
-kgmResource::~kgmResource(){
+kgmResource::~kgmResource()
+{
 }
 
 void kgmResource::release()
@@ -29,6 +33,4 @@ void kgmResource::release()
 #endif
     g_resources->remove(this);
   }
-
-  kgmObject::release();
 }

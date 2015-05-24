@@ -122,6 +122,15 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd)
 kgmOGL::~kgmOGL()
 {
   m_rendertarget = 0;
+
+#ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
+  if(g_compressed_format)
+    free(g_compressed_format);
+#endif
+
+#ifdef DEBUG
+  kgm_log() << "kgmOGL::~kgmOGL.\n";
+#endif
 }
 
 void kgmOGL::gcSet(u32 param, void* value)
@@ -1085,7 +1094,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 }
 
 // SHADERS
-GLint v_shad;
+//GLint v_shad;
 void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 {
   GLhandle prog = 0;
@@ -1105,7 +1114,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   if(vsrc)
   {
     size = strlen(vsrc);
-    v_shad = vshad = glCreateShaderObject(GL_VERTEX_SHADER);
+    vshad = glCreateShaderObject(GL_VERTEX_SHADER);
     glShaderSource(vshad, 1, (const GLcharARB**)&vsrc, &size);
     glCompileShader(vshad);
     glGetObjectParameteriv(vshad, GL_OBJECT_COMPILE_STATUS, stat);
@@ -1121,11 +1130,14 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
       kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
+
     glAttachObject(prog, vshad);
+
 #ifdef DEBUG
     kgm_log() << "gcGenShader 5 " << (s32)glGetError() << "\n";
 #endif
-    //  glDeleteObject(vshad);
+
+    glDeleteObject(vshad);
   }
 
   if(fsrc)
@@ -1148,14 +1160,16 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
       kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
+
     glAttachObject(prog, fshad);
-    //  glDeleteObject(fshad);
+    glDeleteObject(fshad);
   }
 
   //glBindAttribLocation((GLhandle)prog, 0, "g_Vertex");
   //glBindAttribLocation((GLhandle)prog, 1, "g_Normal");
   //glBindAttribLocation((GLhandle)prog, 2, "g_Color");
   //glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
+
   glLinkProgram(prog);
   glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
 
@@ -1175,9 +1189,9 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 void kgmOGL::gcFreeShader(void* s)
 {
 #ifdef GL_VERTEX_SHADER
-  //glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
   if(s)
   {
+    //glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
     glDeleteObject((GLhandle)(size_t)s);
   }
 #endif
@@ -1190,20 +1204,21 @@ void kgmOGL::gcSetShader(void* s)
   {
     glUseProgramObject((GLhandle)(size_t)s);
     g_shader = (GLhandle)(size_t)s;
+
 #ifdef DEBUG
     GLenum err = glGetError();
 
     if(err != GL_NO_ERROR)
     {
-#ifndef ANDROID
-      //kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << " sid: " << (s32)s << "\n";
-#endif
+      kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << "\n";
     }
 #endif
+
   }
   else
   {
     glUseProgramObject(0);
+
     g_shader = null;
   }
 #endif

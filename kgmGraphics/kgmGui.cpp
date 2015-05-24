@@ -60,7 +60,13 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
 kgmGui::~kgmGui()
 {
   for(int i = m_childs.size(); i > 0; i--)
-    m_childs[i - 1]->release();
+  {
+    kgmGui* gui = m_childs[i - 1];
+
+    gui->setParent(null);
+
+    delete gui;
+  }
 
   m_childs.clear();
 
@@ -127,13 +133,15 @@ void kgmGui::repaint(kgmGui* gui)
 
 void kgmGui::setParent(kgmGui* pr)
 {
-  if(!pr || pr == m_parent)
+  if(pr == m_parent)
     return;
 
   if(m_parent)
     m_parent->delChild(this);
 
-  pr->addChild(this);
+  if(pr)
+    pr->addChild(this);
+
   m_parent = pr;
 }
 

@@ -194,8 +194,8 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
   m_xswa.colormap = cmap;
   m_xswa.border_pixel = 0;
-  
-  XTextProperty tprop;
+
+  XTextProperty tprop = {0};
   XGetWMName(m_dpy, m_wnd, &tprop);
   XDestroyWindow(m_dpy, m_wnd);
 
@@ -217,7 +217,11 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
   XFree(modes);
 
   if(tprop.value)
+  {
     XStoreName(m_dpy, m_wnd, (const char*)tprop.value);
+
+    XFree(tprop.value);
+  }
 
   if(m_fs)
     fullscreen(true);
@@ -230,7 +234,7 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 kgmOGLWindow::~kgmOGLWindow()
 {
 
-  m_gc = kgm_ptr<kgmOGL>(null);
+  m_gc = (kgmOGL*)null;
 
 #ifdef WIN32
 

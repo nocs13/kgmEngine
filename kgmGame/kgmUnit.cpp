@@ -32,11 +32,11 @@ kgmUnit::~kgmUnit()
   if(m_remove)
     remove();
 
-  if(m_body)
-    m_body->release();
+//  if(m_body)
+//    m_body->release();
 
-  if(m_visual)
-    m_visual->release();
+//  if(m_visual)
+//    m_visual->release();
 }
 
 void kgmUnit::remove()

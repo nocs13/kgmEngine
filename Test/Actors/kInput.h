@@ -34,7 +34,7 @@ public:
         e->setTexture("explode_b.tga");
         e->setSlideFrames(4, 4);
         game->gAppend(e);
-        e->release();
+//        e->release();
       }
       else if(state && keys[gbtn_z])
       {
@@ -42,7 +42,7 @@ public:
         e->setTexture("fire_aa.tga");
         e->setSlideFrames(1, 3);
         game->gAppend(e);
-        e->release();
+//        e->release();
       }
       break;
     }

@@ -729,7 +729,10 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 
 kgmWindow::~kgmWindow()
 {
-  //Prepae to close window
+  //Prepare to close window
+#ifdef DEBUG
+  kgm_log() << "kgmWindow::~kgmWindow Prepare to close window.\n";
+#endif
 
 #ifdef WIN32
 
@@ -748,15 +751,23 @@ kgmWindow::~kgmWindow()
     m_dpy = null;
   }*/
 
+  kgm_log() << "000.\n";
   XDestroyWindow(m_dpy, m_wnd);
+  kgm_log() << "001.\n";
 
   if(!m_parent)
     XCloseDisplay(m_dpy);
+  kgm_log() << "002.\n";
 
   //XEvent ev;
-  XClientMessageEvent ev;
+  /*XClientMessageEvent ev;
 
   memset(&ev, 0, sizeof (ev));
+
+  ev.type = ClientMessage;
+  ev.window = m_wnd;
+  ev.format = 32;
+  XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);*/
 
   /*ev.xclient.type = ClientMessage;
  ev.xclient.window = m_wnd;
@@ -765,11 +776,6 @@ kgmWindow::~kgmWindow()
  ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
  ev.xclient.data.l[1] = CurrentTime;
  XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);*/
-
-  ev.type = ClientMessage;
-  ev.window = m_wnd;
-  ev.format = 32;
-  XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);
 
 #endif
 

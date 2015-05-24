@@ -68,8 +68,8 @@ public:
 
     ~Light()
     {
-      if(light)
-        light->release();
+//      if(light)
+//        light->release();
 
       if(shadowmap)
         shadowmap->release();
@@ -88,11 +88,11 @@ public:
 
       if(light)
       {
-        light->increment();
+//        light->increment();
 
         if(light->shadows)
         {
-          //shadowmap->m_type = kgmTexture::Type_RT_Depth;
+//          shadowmap->m_type = kgmTexture::Type_RT_Depth;
         }
       }
     }
@@ -102,8 +102,8 @@ public:
       light = l.light;
       shadowmap = l.shadowmap;
 
-      if(light)
-        light->increment();
+//      if(light)
+//        light->increment();
 
       if(shadowmap)
         shadowmap->increment();
@@ -291,7 +291,7 @@ public:
     if(!a)
       return;
 
-    a->increment();
+//    a->increment();
 
     m_visuals.add(a);
   }
@@ -301,7 +301,7 @@ public:
     if(!ico)
       return;
 
-    ico->increment();
+//    ico->increment();
     m_icons.add(ico);
   }
 
@@ -309,8 +309,6 @@ public:
   {
     if(gui)
     {
-      gui->increment();
-
       m_guis.add(gui);
     }
   }
@@ -321,7 +319,6 @@ public:
     if(a)
     {
       m_bodies.add(a);
-      a->increment();
     }
   }
 #endif
@@ -332,8 +329,8 @@ public:
     {
       if(m_guis[i] == gui)
       {
-        gui->release();
         m_guis[i] = null;
+        m_guis.erase(i);
 
         break;
       }

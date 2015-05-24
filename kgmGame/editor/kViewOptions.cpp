@@ -341,7 +341,7 @@ void kViewOptionsForMesh::onSelectedMaterial()
   guiMtlText->setText(fd->getFile());
 
   fd->erase();
-  fd->release();
+//  fd->release();
   fd = null;
 }
 
@@ -367,14 +367,14 @@ void kViewOptionsForMesh::onSelectedShader()
   guiShdText->setText(fd->getFile());
 
   fd->erase();
-  fd->release();
+//  fd->release();
   fd = null;
 }
 
 void kViewOptionsForMesh::onSelectFailed()
 {
   fd->erase();
-  fd->release();
+//  fd->release();
   fd = null;
 }
 
@@ -473,7 +473,7 @@ void kViewOptionsForActor::onState(kgmString state)
   guiState->setText(state);
 
   vo->erase();
-  vo->release();
+//  vo->release();
   vo = null;
 }
 
@@ -713,6 +713,6 @@ void kViewOptionsForObstacle::onSelectedConvex()
   guiCnvText->setText(fd->getFile());
 
   fd->erase();
-  fd->release();
+//  fd->release();
   fd = null;
 }

@@ -86,8 +86,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmUnit* u)
@@ -98,8 +96,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmLight* l)
@@ -110,8 +106,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmActor* a)
@@ -122,8 +116,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmEffect* e)
@@ -134,8 +126,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmSensor* s)
@@ -146,8 +136,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmTrigger* t)
@@ -158,8 +146,6 @@ public:
     geo = null;
     col = false;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(kgmObstacle* o)
@@ -170,8 +156,6 @@ public:
     geo = null;
     col = true;
     lock = false;
-
-    obj->increment();
   }
 
   kNode(const kNode& n)
@@ -198,14 +182,14 @@ public:
   {
     kgmObject* o = (kgmObject*)msh;
 
-    if(o)
-      o->release();
+//    if(o)
+//      o->release();
 
-    if(icn)
-      icn->release();
+//    if(icn)
+//      icn->release();
 
-    if(geo)
-      geo->release();
+//    if(geo)
+//      geo->release();
   }
 
   mtx4 getMatrix();

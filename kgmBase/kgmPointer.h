@@ -32,7 +32,8 @@ public:
     pointer = object.pointer;
     counter = object.counter;
 
-    (*counter)++;
+    if(pointer)
+      (*counter)++;
   }
 
   ~kgmPointer()
@@ -66,7 +67,13 @@ public:
       (*counter)--;
 
       if((*counter) < 1)
+      {
         delete pointer;
+        delete counter;
+
+        pointer = 0;
+        counter = 0;
+      }
     }
 
     pointer = ptr.pointer;

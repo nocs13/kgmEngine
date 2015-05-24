@@ -35,8 +35,8 @@ kgmLnCamera::kgmLnCamera(kgmIGame* g)
 
 kgmLnCamera::~kgmLnCamera()
 {
-  if(m_linked)
-    m_linked->release();
+//  if(m_linked)
+//    m_linked->release();
 }
 
 void kgmLnCamera::init()
@@ -83,10 +83,10 @@ bool kgmLnCamera::linkto(kgmString name)
   if(!a)
     return false;
 
-  if(m_linked)
-    m_linked->release();
+//  if(m_linked)
+//    m_linked->release();
 
-  a->increment();
+//  a->increment();
 
   m_linked = a;
   m_lname = name;

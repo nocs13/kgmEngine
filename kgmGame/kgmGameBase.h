@@ -205,7 +205,7 @@ public:
       if(!is)
       {
         m_guis.add(g);
-        g->increment();
+//        g->increment();
 
         if(m_render)
           m_render->add(g);

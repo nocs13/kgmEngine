@@ -26,7 +26,7 @@ void kgmPhysics::update(float time)
   {
     if((*i)->removed())
     {
-      (*i)->release();
+//      (*i)->release();
       i = m_bodies.erase(i);
     }
   }
@@ -41,7 +41,7 @@ void kgmPhysics::clear()
 {
   for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
   {
-    (*i)->release();
+//    (*i)->release();
   }
 
   m_bodies.clear();
@@ -77,7 +77,7 @@ void kgmPhysics::add(kgmBody* body)
 
   m_bodies.add(body);
 
-  body->increment();
+//  body->increment();
 }
 
 //remove body
@@ -89,7 +89,7 @@ bool kgmPhysics::remove(kgmBody* body)
     {
       m_bodies.erase(i);
 
-      body->release();
+//      body->release();
 
       break;
     }

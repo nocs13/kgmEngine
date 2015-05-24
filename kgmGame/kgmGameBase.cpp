@@ -156,15 +156,15 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
-  kgmUnit::goRegister("kgmResult",  kgmUnit::GoUnit, (kgmUnit::GenGo)&kgmResult::New);
-  kgmUnit::goRegister("kgmFlame",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmFlame::New);
-  kgmUnit::goRegister("kgmSmoke",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmSmoke::New);
-  kgmUnit::goRegister("kgmLaser",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmLaser::New);
-  kgmUnit::goRegister("kgmExplode", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmExplode::New);
-  kgmUnit::goRegister("kgmCharacter", kgmUnit::GoActor, (kgmUnit::GenGo)&kgmCharacter::New);
-  kgmUnit::goRegister("kgmLnCamera",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmLnCamera::New);
-  kgmUnit::goRegister("kgmParticlesObject", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmParticlesObject::New);
-  kgmUnit::goRegister("kgmSnInputListener", kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmSnInputListener::New);
+  kgmUnit::unitRegister("kgmResult",  kgmUnit::GoUnit, (kgmUnit::GenGo)&kgmResult::New);
+  kgmUnit::unitRegister("kgmFlame",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmFlame::New);
+  kgmUnit::unitRegister("kgmSmoke",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmSmoke::New);
+  kgmUnit::unitRegister("kgmLaser",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmLaser::New);
+  kgmUnit::unitRegister("kgmExplode", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmExplode::New);
+  kgmUnit::unitRegister("kgmCharacter", kgmUnit::GoActor, (kgmUnit::GenGo)&kgmCharacter::New);
+  kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmLnCamera::New);
+  kgmUnit::unitRegister("kgmParticlesObject", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmParticlesObject::New);
+  kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmSnInputListener::New);
 
 #ifdef EDITOR
   editor = null;
@@ -187,60 +187,48 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
-  log("free audio...");
-
-  if(m_audio)
-  {
-    delete m_audio;
-
-    m_audio = null;
-  }
-
   log("free logic...");
 
   if(m_logic)
-  {
     delete m_logic;
-
-    m_logic = null;
-  }
 
 #ifdef EDITOR
   log("free editor...");
 
   if(editor != null)
-  {
-    editor->release();
-    editor = null;
-  }
+    delete editor;
 #endif
 
   log("free graphics renderer...");
 
   if(m_render)
-    m_render->release();
-
+    delete m_render;
 
   log("free gui...");
 
-  for(int i = 0; i < m_guis.size(); i++)
-    m_guis[i]->release();
   m_guis.clear();
 
   log("free resources...");
 
   if(m_resources)
-    m_resources->release();
+    delete m_resources;
 
   log("free physics...");
 
   if(m_physics)
-    m_physics->release();
+    delete m_physics;
+
+  log("free audio...");
+
+  if(m_audio)
+    delete m_audio;
 
   log("free system...");
 
   if(m_system)
-    m_system->release();
+    delete m_system;
+
+  kgmUnit::unitUnregister();
 }
 
 kgmIPhysics* kgmGameBase::getPhysics(){
@@ -367,7 +355,7 @@ void kgmGameBase::onIdle()
 
     if(gui->erased())
     {
-      gui->release();
+//      gui->release();
       m_guis.erase(i - 1);
     }
   }
@@ -819,7 +807,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeLight;
         obj = lgt = new kgmLight();
         m_render->add(lgt);
-        lgt->release();
+//        lgt->release();
       }
       else if(id == "kgmMesh")
       {
@@ -829,7 +817,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         vis->set(msh);
         m_render->add(vis);
         msh->release();
-        vis->release();
+//        vis->release();
       }
       else if(id == "kgmActor")
       {
@@ -860,7 +848,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(act && act->getBody())
             m_render->add(act->getBody());
 #endif
-          act->release();
+//          act->release();
         }
       }
       else if(id == "kgmUnit")
@@ -880,7 +868,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
 #endif
-        gob->release();
+//        gob->release();
       }
       else if(id == "Vertices")
       {
@@ -1101,7 +1089,7 @@ bool kgmGameBase::loadXml(kgmString& path)
               m_render->add(vis);
               mesh->release();
               mtl->release();
-              vis->release();
+//              vis->release();
             }
 
             kgmList<triangle3> tr_list;
@@ -1260,7 +1248,7 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
       vis->set(mtl);
       vis->set(&mtr);
       m_render->add(vis);
-      vis->release();
+//      vis->release();
     }
     else if(mnode.typ == kgmGameMap::NodeLgt)
     {
@@ -1281,7 +1269,7 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
       getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
       getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
 
-      mnode.obj->release();
+//      mnode.obj->release();
 
       getRender()->camera().update();
     }
@@ -1517,7 +1505,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
               kgmDummy* dummy = new kgmDummy();
 
               actor->add(dummy);
-              dummy->release();
+//              dummy->release();
               node->attribute("name", dummy->m_id);
 
               for(int j = 0; j < node->nodes(); j++)
@@ -1577,7 +1565,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
           dm->attach(go, kgmDummy::AttachToObject);
 
         gAppend(go);
-        go->release();
+//        go->release();
       }
     }
     else if(id == "Visual")

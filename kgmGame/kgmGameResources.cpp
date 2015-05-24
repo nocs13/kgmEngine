@@ -31,7 +31,39 @@ kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 
 kgmGameResources::~kgmGameResources()
 {
-  release();
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    kgmResource* r = m_resources[i];
+
+    if(r)
+    {
+      if(r->isClass(kgmTexture::Class))
+      {
+        m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
+      }
+      else if(r->isClass(kgmShader::Class))
+      {
+        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
+      }
+      else if(r->isClass(kgmSound::Class))
+      {
+        m_audio->remove(((kgmSound*)r)->getSound());
+      }
+      if(r->isClass(kgmFont::Class))
+      {
+        m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
+      }
+
+      delete r;
+    }
+  }
+
+  m_resources.clear();
+
+  for(int i = 0; i < m_paths.size(); i++)
+    delete m_paths[i];
+
+  m_paths.clear();
 }
 
 void kgmGameResources::release()
@@ -81,6 +113,8 @@ void kgmGameResources::remove(kgmResource* r)
 {
   if(!r)
     return;
+
+  return;
 
   for(int i = 0; i < m_resources.size(); i++)
   {
@@ -488,6 +522,8 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id)
 
 kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
 {
+  int k = 0;
+
   for(int i = 0; i < m_resources.size(); i++)
   {
     if(!strcmp(id, m_resources[i]->m_id))
@@ -497,6 +533,7 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
       return (kgmFont*)m_resources[i];
     }
   }
+
   kgmFont* font = 0;
   kgmMemory<u8> mem;
 

@@ -61,7 +61,7 @@ bool kgmFile::open(kgmCString& path, u32 mode)
   m_file = ::open(path, smode);
 #endif
 
-  if(!m_file)
+  if(m_file < 1)
     return false;
 
   return true;
@@ -69,7 +69,7 @@ bool kgmFile::open(kgmCString& path, u32 mode)
 
 void kgmFile::close()
 {
-  if(m_file)
+  if(m_file > 0)
   {
 #ifdef WIN32
     _close(m_file);

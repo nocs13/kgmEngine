@@ -374,11 +374,11 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
   gc->gcSet(gctex_fltmag, (void*)gcflt_linear);
   gc->gcSet(gctex_fltmin, (void*)gcflt_linear);
 
-  pic->release();
+  delete pic;
 
   if(!font->m_texture)
   {
-    font->release();
+    delete font;
 
     return 0;
   }
@@ -1711,7 +1711,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
               kgmDummy* dummy = new kgmDummy();
 
               actor->add(dummy);
-              dummy->release();
+//              dummy->release();
               node->attribute("name", dummy->m_id);
 
               for(int j = 0; j < node->nodes(); j++)

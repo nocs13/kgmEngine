@@ -168,7 +168,7 @@ public:
     }
   }
 
-  static void goRegister(kgmString id, GoType type, kgmUnit*(*create)(kgmIGame*))
+  static void unitRegister(kgmString id, GoType type, kgmUnit*(*create)(kgmIGame*))
   {
     g_typ_objects.add(id, create);
 
@@ -187,6 +187,17 @@ public:
     default:
       break;
     }
+#endif
+  }
+
+  static void unitUnregister()
+  {
+    g_typ_objects.clear();
+
+#ifdef EDITOR
+    g_list_units.clear();
+    g_list_effects.clear();
+    g_list_sensors.clear();
 #endif
   }
 

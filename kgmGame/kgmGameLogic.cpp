@@ -17,7 +17,7 @@ void kgmGameLogic::clear()
   for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     (*i)->remove();
-    (*i)->release();
+//    (*i)->release();
   }
 
   m_objects.clear();
@@ -30,7 +30,7 @@ bool kgmGameLogic::add(kgmUnit *u)
   if(u)
   {
     m_objects.push_back(u);
-    u->increment();
+//    u->increment();
 
     u->init();
 
@@ -45,7 +45,7 @@ bool kgmGameLogic::add(kgmActor *a)
   if(a)
   {
     m_objects.push_back(a);
-    a->increment();
+//    a->increment();
 
     a->init();
 
@@ -60,7 +60,7 @@ bool kgmGameLogic::add(kgmEffect *e)
   if(e)
   {
     m_objects.push_back(e);
-    e->increment();
+//    e->increment();
 
     e->init();
 
@@ -75,7 +75,7 @@ bool kgmGameLogic::add(kgmSensor *sn)
   if(sn)
   {
     m_objects.push_back(sn);
-    sn->increment();
+//    sn->increment();
 
     sn->init();
 
@@ -90,7 +90,7 @@ bool kgmGameLogic::add(kgmTrigger *tr)
   if(tr)
   {
     m_objects.push_back(tr);
-    tr->increment();
+//    tr->increment();
 
     tr->init();
 
@@ -111,7 +111,7 @@ bool kgmGameLogic::remove(kgmUnit *o)
     {
       m_objects.erase(i - 1);
 
-      o->release();
+//      o->release();
 
       if(o == m_gameplayer)
         m_gameplayer = null;
@@ -170,7 +170,7 @@ void kgmGameLogic::update(u32 milliseconds)
         m_gameplayer = null;
 
       i = m_objects.erase(i);
-      go->release();
+//      go->release();
     }
     else if(go->valid())
     {

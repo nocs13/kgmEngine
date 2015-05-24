@@ -226,7 +226,6 @@ public:
       else
       {
         m_visual = v.m_visual;
-        m_visual->increment();
       }
     }
 
@@ -257,7 +256,7 @@ public:
       m_material->release();
 
     if(m_visual)
-      m_visual->release();
+      delete m_visual;
 
     if(m_skeleton)
       m_skeleton->release();
@@ -353,7 +352,6 @@ public:
 
     clear();
 
-    par->increment();
     m_visual = par;
     m_type = TypeParticles;
   }
@@ -370,7 +368,6 @@ public:
 
     clear();
 
-    text->increment();
     m_visual = text;
     m_type = TypeText;
   }
@@ -387,7 +384,6 @@ public:
 
     clear();
 
-    sprite->increment();
     m_visual = sprite;
     m_type = TypeSprite;
   }

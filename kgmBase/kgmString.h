@@ -37,7 +37,8 @@ public:
  
   ~kgmTString()
   { 
-    kgmArray<T>::clear(); 
+    if(kgmArray<T>::m_data && kgmArray<T>::m_length)
+      kgmArray<T>::clear();
   } 
  
   //operators 

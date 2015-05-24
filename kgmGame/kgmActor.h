@@ -111,7 +111,6 @@ public:
     if(m)
     {
       m_dummies.add(m);
-      m->increment();
     }
   }
 

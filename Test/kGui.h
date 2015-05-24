@@ -16,7 +16,7 @@ public:
 
 public:
     kGui(kgmGameBase*);
-    virtual ~kGui();
+    ~kGui();
     void onAction(kgmEvent*, int);
 
     void viewAgain();

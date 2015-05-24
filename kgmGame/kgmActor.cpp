@@ -34,9 +34,6 @@ kgmActor::kgmActor(kgmIGame* g)
 
 kgmActor::~kgmActor()
 {
-  for(int i = 0; i < m_dummies.size(); i++)
-    m_dummies[i]->release();
-
   for(int i = 0; i < m_states.size(); i++)
   {
     if(m_states[i]->sound)

@@ -213,7 +213,9 @@ kgmGraphics::~kgmGraphics()
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
 
-  gui_style->release();
+  shaders.clear();
+
+//  gui_style->release();
   m_guis.clear();
   clear();
 }
@@ -225,25 +227,25 @@ void kgmGraphics::clear()
 
   m_materials.clear();
 
-  for(int i = 0; i < m_visuals.size(); i++)
-    m_visuals[i]->release();
+//  for(int i = 0; i < m_visuals.size(); i++)
+//    m_visuals[i]->release();
 
   m_visuals.clear();
 
-  for(int i = 0; i < m_lights.size(); i++)
-    m_lights[i].light->release();
+//  for(int i = 0; i < m_lights.size(); i++)
+//    m_lights[i].light->release();
 
   m_lights.clear();
 
-  for(int i = 0; i < m_icons.size(); i++)
-    m_icons[i]->release();
+//  for(int i = 0; i < m_icons.size(); i++)
+//    m_icons[i]->release();
 
   m_icons.clear();
 
 #ifdef DEBUG
   for(int i = 0; i < m_bodies.size(); i++)
   {
-    m_bodies[i]->release();
+//    m_bodies[i]->release();
   }
 
   m_bodies.clear();
@@ -266,8 +268,8 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
   if(!s)
     return;
 
-  if(gui_style)
-    gui_style->release();
+//  if(gui_style)
+//    gui_style->release();
 
   gui_style = s;
 }
@@ -350,7 +352,7 @@ void kgmGraphics::render()
   {
     if((*i)->removed())
     {
-      (*i)->release();
+//      (*i)->release();
       i = m_visuals.erase(i);
 
       continue;
@@ -438,7 +440,7 @@ void kgmGraphics::render()
   {
     if((*i).remove == true)
     {
-      (*i).light->release();
+//      (*i).light->release();
 
       i = m_lights.erase(i);
 
@@ -626,7 +628,7 @@ void kgmGraphics::render()
 
       if(icon->remove)
       {
-        icon->release();
+//        icon->release();
         m_icons.erase(i - 1);
       }
       else
@@ -661,7 +663,7 @@ void kgmGraphics::render()
 
     if(body->removed())
     {
-      body->release();
+//      body->release();
       m_bodies.erase(i - 1);
 
       continue;
@@ -748,7 +750,7 @@ void kgmGraphics::render()
 
     if(gui->erased())
     {
-      gui->release();
+//      gui->release();
       m_guis.erase(i - 1);
     }
     else if(gui->visible())
@@ -774,7 +776,7 @@ void kgmGraphics::render()
           m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z,
           m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
           k);
-  kgmString text(info);
+  //kgmString text(info);
   //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
 
   static u32 fps_start_time = kgmTime::getTicks();
@@ -1213,7 +1215,7 @@ void kgmGraphics::render(kgmGui* gui){
 
   gui->getRect(rect, true);
 
-  text = gui->getText();
+  //text = gui->getText();
 
   if(gui->m_hasAlpha)
     gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
@@ -1278,7 +1280,7 @@ void kgmGraphics::render(kgmGui* gui){
       if(i >= item_cnt)
         break;
 
-      kgmString item;
+      /*kgmString item;
       item = ((kgmGuiList*)gui)->m_items[i];
 
       kgmGui::Rect frect;
@@ -1294,7 +1296,7 @@ void kgmGraphics::render(kgmGui* gui){
       {
         gcDrawText(gui_style->gui_font, frect.height() / 2, frect.height(),
                    gui_style->slist.tx_color, frect, item);
-      }
+      }*/
     }
 
     if(glist->m_scroll && glist->m_scroll->visible())

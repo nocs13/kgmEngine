@@ -29,8 +29,6 @@ private:
 public:
   ~kgmDummy()
   {
-    if(m_linked)
-      m_linked->release();
   }
 
   kgmDummy()
@@ -45,16 +43,10 @@ public:
   {
     m_linked = o;
     m_type   = t;
-
-    if(m_linked)
-      m_linked->increment();
   }
 
   void detach()
   {
-    if(m_linked)
-      m_linked->release();
-
     m_linked = null;
     m_type = AttachToNone;
   }
