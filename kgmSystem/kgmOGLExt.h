@@ -89,9 +89,11 @@ extern PFNGLBINDATTRIBLOCATIONARBPROC   glBindAttribLocationARB;
 extern PFNGLGETUNIFORMFVARBPROC         glGetUniformfvARB;
 
 extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
-extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
-extern PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB;
-extern PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB;
+extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC  glEnableVertexAttribArrayARB;
+extern PFNGLVERTEXATTRIBPOINTERARBPROC      glVertexAttribPointerARB;
+extern PFNGLGETATTRIBLOCATIONARBPROC        glGetAttribLocationARB;
+
+extern PFNGLUSEPROGRAMPROC                  glUseProgram;
 
 #define glActiveTexture          glActiveTextureARB
 #define glClientActiveTexture    glClientActiveTextureARB
@@ -136,10 +138,13 @@ extern PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB;
 #define glUniformMatrix4fv       glUniformMatrix4fvARB
 #define glBindAttribLocation     glBindAttribLocationARB
 #define glGetUniformfv           glGetUniformfvARB
+
 #define glDisableVertexAttribArray glDisableVertexAttribArrayARB
-#define glEnableVertexAttribArray glEnableVertexAttribArrayARB
-#define glVertexAttribPointer     glVertexAttribPointerARB
-#define glGetAttribLocation     glGetAttribLocationARB
+#define glEnableVertexAttribArray  glEnableVertexAttribArrayARB
+#define glVertexAttribPointer      glVertexAttribPointerARB
+#define glGetAttribLocation        glGetAttribLocationARB
+
+#define glUseProgram       glUseProgram
 #endif
 
 #ifdef WIN32

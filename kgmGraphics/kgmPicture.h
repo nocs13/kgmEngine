@@ -8,11 +8,12 @@ class kgmPicture: public kgmResource
 public:
   u32  width, height, bpp, frames;
   u8*  pdata;
+
 public:
   kgmPicture()
   {
     width = height = bpp = frames = 0;
-    pdata = 0;
+    pdata = null;
   }
 
   kgmPicture(s32 w, s32 h, s32 b, s32 f, void* d)
@@ -28,8 +29,6 @@ public:
   {
     if(pdata)
       free(pdata);
-
-    pdata = null;
   }
 
   u32 getWidth()
@@ -54,9 +53,11 @@ public:
 
   bool resample(int nwidth, int nheight)
   {
-    if(!pdata) return false;
+    if(!pdata)
+      return false;
 
     int cbpp = bpp / 8;
+
     u8* ndata = (u8*)malloc(nwidth * nheight * cbpp);
 
     double swidth =  (double)nwidth / (double)width;

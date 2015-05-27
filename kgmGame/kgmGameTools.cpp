@@ -327,11 +327,12 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
   kgmTexture* tex = new kgmTexture();
 
   tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
-  pic->release();
+
+  delete pic;
 
   if(!tex->m_texture)
   {
-    tex->release();
+    delete tex;
 
     return 0;
   }

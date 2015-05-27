@@ -163,18 +163,20 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
     if( (modes[i]->hdisplay == rw) && (modes[i]->vdisplay == rh) )
     {
       bestMode = i;
+
       break;
     }
   }
 
   vi = glXChooseVisual(m_dpy, m_screen, attrDbl);
 
-  if(vi == 0)
+  if(vi == null)
   {
     kgmLog::log("No Doublebuffered Visual");
+
     vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
 
-    if(vi == 0)
+    if(vi == null)
     {
       kgmLog::log("No Singlebuffered Visual");
 
@@ -186,7 +188,9 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
     }
   }
   else
+  {
     kgmLog::log("\nGot Doublebuffered Visual");
+  }
 
   m_glctx = glXCreateContext(m_dpy, vi, 0, GL_TRUE);
 
@@ -200,12 +204,17 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
   XDestroyWindow(m_dpy, m_wnd);
 
   /* create a window in window mode*/
-  m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
-  m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, vi->screen),  x, y, w, h,
-                        0, vi->depth, InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
+  m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask |
+                      ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
+
+  m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, vi->screen),  x, y, w, h, 0, vi->depth,
+                        InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
+
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
+
   glXMakeCurrent(m_dpy, m_wnd, m_glctx);
+
 
   if(glXIsDirect(m_dpy, m_glctx))
     kgmLog::log("\nDirect Rendering!");
@@ -214,7 +223,12 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
   XMapWindow(m_dpy, m_wnd);
   XFlush(m_dpy);
+
   XFree(modes);
+  XFree(vi);
+
+  vi    = null;
+  modes = null;
 
   if(tprop.value)
   {

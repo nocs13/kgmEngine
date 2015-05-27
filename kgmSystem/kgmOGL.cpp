@@ -1116,7 +1116,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
     size = strlen(vsrc);
     vshad = glCreateShaderObject(GL_VERTEX_SHADER);
     glShaderSource(vshad, 1, (const GLcharARB**)&vsrc, &size);
-    glCompileShader(vshad);
+    /*glCompileShader(vshad);
     glGetObjectParameteriv(vshad, GL_OBJECT_COMPILE_STATUS, stat);
 
     if(stat[0] == GL_FALSE)
@@ -1129,14 +1129,9 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #endif
       kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
-    }
+    }*/
 
     glAttachObject(prog, vshad);
-
-#ifdef DEBUG
-    kgm_log() << "gcGenShader 5 " << (s32)glGetError() << "\n";
-#endif
-
     glDeleteObject(vshad);
   }
 
@@ -1145,8 +1140,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
     size = strlen(fsrc);
     fshad = glCreateShaderObject(GL_FRAGMENT_SHADER);
     glShaderSource(fshad, 1, (const GLcharARB**)&fsrc, NULL);
-    glCompileShader(fshad);
-    glAttachObject(prog, fshad);
+    /*glCompileShader(fshad);
     glGetObjectParameteriv(fshad, GL_OBJECT_COMPILE_STATUS, stat);
 
     if(stat[0] == GL_FALSE)
@@ -1159,7 +1153,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #endif
       kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
-    }
+    }*/
 
     glAttachObject(prog, fshad);
     glDeleteObject(fshad);
@@ -1173,14 +1167,14 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   glLinkProgram(prog);
   glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
 
+#ifdef DEBUG
   if(stat[0] == GL_FALSE)
   {
-#ifdef DEBUG
     glGetInfoLog(prog, 256, &size, tbuf);
     kgmLog::log(kgmString("LogARB: ") + kgmString(tbuf));
-#endif
   }
-  // glUseProgram();
+#endif
+
 #endif
 
   return (void*)prog;
@@ -1189,10 +1183,12 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 void kgmOGL::gcFreeShader(void* s)
 {
 #ifdef GL_VERTEX_SHADER
-  if(s)
+  size_t shader = (size_t)s;
+
+  if(shader >= 0)
   {
     //glDetachObject(((ShadeStruct*)shad), ((ShadeStruct*)shad));
-    glDeleteObject((GLhandle)(size_t)s);
+    glDeleteObject((GLhandle)shader);
   }
 #endif
 }
@@ -1203,17 +1199,8 @@ void kgmOGL::gcSetShader(void* s)
   if(s)
   {
     glUseProgramObject((GLhandle)(size_t)s);
+    //glUseProgramObject((GLint)(size_t)s);
     g_shader = (GLhandle)(size_t)s;
-
-#ifdef DEBUG
-    GLenum err = glGetError();
-
-    if(err != GL_NO_ERROR)
-    {
-      kgm_log() << "Error glUseProgramObject: " << (s8*)gluErrorString(err) << "\n";
-    }
-#endif
-
   }
   else
   {

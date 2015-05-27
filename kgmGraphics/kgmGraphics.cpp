@@ -110,7 +110,13 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   gc = g;
   rc = r;
 
-  font = null;
+  font      = null;
+  tcolor    = null;
+  tdepth    = null;
+  shader    = null;
+  tnormal   = null;
+  tspecular = null;
+  gui_style = null;
 
   m_max_faces = 500000;
 
@@ -121,6 +127,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_culling     = true;
 
   m_bg_color    = 0xFF000000;
+
+  m_editor      = false;
 
   gui_style = new kgmGuiStyle();
 
@@ -198,8 +206,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
-
-  //m_editor = false;
 }
 
 kgmGraphics::~kgmGraphics()
@@ -213,10 +219,12 @@ kgmGraphics::~kgmGraphics()
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
 
-  shaders.clear();
+  if(gui_style)
+    delete gui_style;
 
-//  gui_style->release();
+  shaders.clear();
   m_guis.clear();
+
   clear();
 }
 
@@ -268,8 +276,12 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
   if(!s)
     return;
 
-//  if(gui_style)
-//    gui_style->release();
+  if(gui_style)
+  {
+    delete gui_style;
+
+    gui_style = null;
+  }
 
   gui_style = s;
 }

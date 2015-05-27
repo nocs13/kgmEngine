@@ -228,6 +228,9 @@ kgmGameBase::~kgmGameBase()
   if(m_system)
     delete m_system;
 
+  if(m_settings)
+    delete m_settings;
+
   kgmUnit::unitUnregister();
 }
 

@@ -9,11 +9,14 @@ inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
 {
   int mx = LOWORD(lPar);
   int my = HIWORD(lPar);
-  if(abs){
+
+  if(abs)
+  {
     x = e.msx = mx;
     y = e.msy = my;
   }
-  else{
+  else
+  {
     e.msx = mx - x;
     e.msy = my - y;
     x = mx;
@@ -21,17 +24,21 @@ inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
   }
 }
 
-inline u32 WPARAM_KEY(WPARAM wPar){
+inline u32 WPARAM_KEY(WPARAM wPar)
+{
   u32 key = 0;
+
   if(LOWORD(wPar) & MK_CONTROL) key |= KB_KEYCTRL;
   if(LOWORD(wPar) & MK_SHIFT)   key |= KB_KEYSHFT;
   if(LOWORD(wPar) & MK_ALT)     key |= KB_KEYALT;
   if(LOWORD(wPar) & MK_LBUTTON) key |= KB_MSBLEFT;
   if(LOWORD(wPar) & MK_RBUTTON) key |= KB_MSBRIGHT;
+
   return key;
 }
 
-inline u16 keyTranslate(int key){
+inline u16 keyTranslate(int key)
+{
   switch(key){
   case VK_ESCAPE:
     return KEY_ESCAPE;
@@ -751,13 +758,9 @@ kgmWindow::~kgmWindow()
     m_dpy = null;
   }*/
 
-  kgm_log() << "000.\n";
   XDestroyWindow(m_dpy, m_wnd);
-  kgm_log() << "001.\n";
 
-  if(!m_parent)
-    XCloseDisplay(m_dpy);
-  kgm_log() << "002.\n";
+  XCloseDisplay(m_dpy);
 
   //XEvent ev;
   /*XClientMessageEvent ev;
@@ -913,56 +916,59 @@ void kgmWindow::close()
     m_loop = false;
 }
 
-void kgmWindow::getRect(int& x, int& y, int& w, int& h){
+void kgmWindow::getRect(int& x, int& y, int& w, int& h)
+{
 #ifdef WIN32
+
   RECT r;
   GetClientRect(m_wnd, (LPRECT)&r);
   x = r.left, y = r.top, w = r.right - x, h = r.bottom - y;
   //kgm_log() << "wrc: " << (s32)w << " " << (s32)h << "\n";
-#endif
-#ifdef LINUX
-  unsigned int  width, height, border, depth;
-  Window dummy;
-  XGetGeometry(m_dpy, m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
-#endif
-#ifdef ANDROID
+
+#elif defined(ANDROID)
+
   x = m_wRect[0];
   y = m_wRect[1];
   w = m_wRect[2];
   h = m_wRect[3];
+
+#else LINUX
+
+  unsigned int  width, height, border, depth;
+  Window dummy;
+  XGetGeometry(m_dpy, m_wnd, &dummy, &x, &y, (u32*)&w, (u32*)&h, &border, &depth);
+
 #endif
 }
 
-void kgmWindow::setRect(int x, int y, int w, int h){
+void kgmWindow::setRect(int x, int y, int w, int h)
+{
 #ifdef WIN32
   RECT r;
   //GetClientRect(m_hWnd, (LPRECT)&r);
-#endif
-
-#ifdef LINUX
-  XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
-  XMapWindow(m_dpy, m_wnd);
-  XFlush(m_dpy);
-#endif
-
-#ifdef ANDROID
+#elif defined(ANDROID)
   m_wRect[0] = x;
   m_wRect[1] = y;
   m_wRect[2] = w;
   m_wRect[3] = h;
   onResize(w, h);
+#else
+  XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
+  XMapWindow(m_dpy, m_wnd);
+  XFlush(m_dpy);
 #endif
 }
 
 void kgmWindow::setMouse(int x, int y)
 {
   m_msf = true;
+
 #ifdef WIN32
   POINT pt = {x, y};
   ScreenToClient(m_wnd, &pt);
   SetCursorPos(pt.x, pt.y);
-#endif
-#ifdef LINUX
+#elif defined(ANDROID)
+#else
   int cx, cy, w, h;
   getRect(cx, cy, w, h);
   XWarpPointer(m_dpy, m_wnd, m_wnd, 0, 0, w, h, x, y);
@@ -976,9 +982,9 @@ void kgmWindow::getMouse(int& x, int& y)
   POINT pt = {x, y};
   // ScreenToClient(m_hWnd, &pt);
   // SetCursorPos(pt.x, pt.y);
-#endif
+#elif defined(ANDROID)
 
-#ifdef LINUX
+#else
 #endif
 }
 
@@ -986,9 +992,8 @@ void kgmWindow::setTitle(char* title)
 {
 #ifdef WIN32
   SetWindowText(m_wnd, title);
-#endif
-
-#ifdef LINUX
+#elif defined(ANDROID)
+#else
   XStoreName(m_dpy, m_wnd, title);
 #endif
 }
