@@ -188,7 +188,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
       shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
       shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
 
-      //shader = rc->getShader("lights.glsl");
       shader = rc->getShader("base.glsl");
 
       if(shader)
@@ -426,9 +425,10 @@ void kgmGraphics::render()
   Vert lines[] = {{{0, 0, 0}, 0xff0000ff}, {{1000, 0, 0}, 0xff0000ff},
                   {{0, 0, 0}, 0xff00ff00}, {{0, 1000, 0}, 0xff00ff00},
                   {{0, 0, 0}, 0xffff0000}, {{0, 0, 1000}, 0xffff0000}};
+
   if(m_has_shaders)
   {
-    render(shaders[kgmShader::TypeNone]);
+    //render(shaders[kgmShader::TypeNone]);
   }
 
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 6, lines, 0, 0, null);
@@ -666,7 +666,7 @@ void kgmGraphics::render()
 
   if(m_has_shaders)
   {
-    render(shaders[kgmShader::TypeNone]);
+    //render(shaders[kgmShader::TypeNone]);
   }
 
   for(int i = m_bodies.size(); i > 0;  i--)

@@ -747,7 +747,7 @@ kgmWindow::~kgmWindow()
 
 #elif defined(ANDROID)
 
-#else LINUX
+#else
 
   /*XDestroyWindow(m_dpy, m_wnd);
 

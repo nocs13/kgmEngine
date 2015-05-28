@@ -146,19 +146,17 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
                          };
 
   Colormap cmap;
-  XVisualInfo* vi = 0;
-  XF86VidModeModeInfo **modes;
+  //XF86VidModeModeInfo **modes;
   int rx, ry, rw, rh;
-  int numModes = 0;
-  int bestMode = -1;
-  int i = 0;
+  //int numModes = 0;
+  //int bestMode = -1;
 
-  XF86VidModeGetAllModeLines(m_dpy, m_screen, &numModes, &modes);
-  m_mode = *modes[0];
+  //XF86VidModeGetAllModeLines(m_dpy, m_screen, &numModes, &modes);
+  //m_mode = *modes[0];
 
   getRect(rx, ry, rw, rh);
 
-  for(i = 0; i < numModes; i++)
+  /*for(int i = 0; i < numModes; i++)
   {
     if( (modes[i]->hdisplay == rw) && (modes[i]->vdisplay == rh) )
     {
@@ -166,17 +164,17 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
       break;
     }
-  }
+  }*/
 
-  vi = glXChooseVisual(m_dpy, m_screen, attrDbl);
+  visual = glXChooseVisual(m_dpy, m_screen, attrDbl);
 
-  if(vi == null)
+  if(visual == null)
   {
     kgmLog::log("No Doublebuffered Visual");
 
-    vi = glXChooseVisual(m_dpy, m_screen, attrSgl);
+    visual = glXChooseVisual(m_dpy, m_screen, attrSgl);
 
-    if(vi == null)
+    if(visual == null)
     {
       kgmLog::log("No Singlebuffered Visual");
 
@@ -192,9 +190,7 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
     kgmLog::log("\nGot Doublebuffered Visual");
   }
 
-  m_glctx = glXCreateContext(m_dpy, vi, 0, GL_TRUE);
-
-  cmap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
+  cmap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), visual->visual, AllocNone);
 
   m_xswa.colormap = cmap;
   m_xswa.border_pixel = 0;
@@ -207,13 +203,18 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
   m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask |
                       ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
 
-  m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, vi->screen),  x, y, w, h, 0, vi->depth,
-                        InputOutput, vi->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
+  m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, visual->screen),  x, y, w, h, 0, visual->depth,
+                        InputOutput, visual->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
 
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
 
-  glXMakeCurrent(m_dpy, m_wnd, m_glctx);
+  m_glctx = glXCreateContext(m_dpy, visual, 0, GL_TRUE);
+
+  if(!glXMakeCurrent(m_dpy, m_wnd, m_glctx))
+  {
+    kgmLog::log("\nError: Cannot activate ogl context.");
+  }
 
 
   if(glXIsDirect(m_dpy, m_glctx))
@@ -224,11 +225,9 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
   XMapWindow(m_dpy, m_wnd);
   XFlush(m_dpy);
 
-  XFree(modes);
-  XFree(vi);
+  //XFree(modes);
 
-  vi    = null;
-  modes = null;
+  //modes = null;
 
   if(tprop.value)
   {
@@ -289,6 +288,13 @@ kgmOGLWindow::~kgmOGLWindow()
     glXDestroyContext(m_dpy, m_glctx);
 
     m_glctx = NULL;
+  }
+
+  if (visual)
+  {
+    XFree(visual);
+
+    visual = null;
   }
 
 #endif

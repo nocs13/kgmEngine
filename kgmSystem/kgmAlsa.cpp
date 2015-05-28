@@ -255,6 +255,8 @@ kgmAlsa::kgmAlsa()
   m_handle = null;
   m_mutex  = null;
 
+  m_proceed = 0;
+
   if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
       m_lib.open("libasound.so.0") || m_lib.open("libasound.so"))
   {

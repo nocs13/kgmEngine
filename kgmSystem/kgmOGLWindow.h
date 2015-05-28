@@ -49,7 +49,8 @@ public:
 
 #else
 
- GLXContext m_glctx;
+  XVisualInfo* visual = null;
+  GLXContext m_glctx;
 
 #endif
 

@@ -61,6 +61,8 @@ PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB = 0;
 PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB = 0;
 
 PFNGLUSEPROGRAMPROC               glUseProgram = 0;
+PFNGLDELETESHADERPROC             glDeleteShader = 0;
+
 #endif
 
 #ifdef WIN32
@@ -127,6 +129,7 @@ bool glInitExt(){
   GLEXT_FN(glGetAttribLocationARB, PFNGLGETATTRIBLOCATIONARBPROC);
 
   GLEXT_FN(glUseProgram,    PFNGLUSEPROGRAMPROC);
+  GLEXT_FN(glDeleteShader,  PFNGLDELETESHADERPROC);
 #endif
 
 #ifdef WIN32

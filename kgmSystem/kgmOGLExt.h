@@ -94,6 +94,7 @@ extern PFNGLVERTEXATTRIBPOINTERARBPROC      glVertexAttribPointerARB;
 extern PFNGLGETATTRIBLOCATIONARBPROC        glGetAttribLocationARB;
 
 extern PFNGLUSEPROGRAMPROC                  glUseProgram;
+extern PFNGLDELETESHADERPROC                glDeleteShader;
 
 #define glActiveTexture          glActiveTextureARB
 #define glClientActiveTexture    glClientActiveTextureARB
