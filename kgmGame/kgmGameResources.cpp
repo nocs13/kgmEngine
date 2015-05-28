@@ -25,8 +25,6 @@ kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
   m_gc    = gc;
   m_audio = audio;
-
-  kgmResource::g_resources = this;
 }
 
 kgmGameResources::~kgmGameResources()
@@ -54,7 +52,7 @@ kgmGameResources::~kgmGameResources()
         m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
       }
 
-      delete r;
+      r->release();
     }
   }
 
@@ -64,26 +62,6 @@ kgmGameResources::~kgmGameResources()
     delete m_paths[i];
 
   m_paths.clear();
-}
-
-void kgmGameResources::release()
-{
-  int i = 0;
-
-  for(i = 0; i < m_paths.size(); i++)
-    delete m_paths[i];
-
-  m_paths.clear();
-
-  for(i = 0; i < m_resources.size(); i++)
-  {
-    if(m_resources[i] == 0)
-      continue;
-
-    m_resources[i]->release();
-  }
-
-  m_resources.clear();
 }
 
 void kgmGameResources::add(kgmResource* r)
@@ -111,16 +89,14 @@ void kgmGameResources::add(kgmResource* r)
 
 void kgmGameResources::remove(kgmResource* r)
 {
-  if(!r)
+  if(r == null)
     return;
 
-  return;
-
-  for(int i = 0; i < m_resources.size(); i++)
+  for(int i = m_resources.size(); i > 0; i--)
   {
-    kgmResource* rs = m_resources[i];
+    kgmResource* rs = m_resources[i - 1];
 
-    if(r == rs && r->references() <= 1)
+    if(r == rs && r->references() == 1)
     {
       if(r->isClass(kgmTexture::Class))
       {
@@ -135,9 +111,9 @@ void kgmGameResources::remove(kgmResource* r)
         m_audio->remove(((kgmSound*)r)->getSound());
       }
 
-      m_resources.erase(i);
+      r->release();
 
-      break;
+      m_resources.erase(i);
     }
   }
 }

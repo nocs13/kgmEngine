@@ -166,15 +166,15 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
     }
   }*/
 
-  visual = glXChooseVisual(m_dpy, m_screen, attrDbl);
+  m_visual = glXChooseVisual(m_dpy, m_screen, attrDbl);
 
-  if(visual == null)
+  if(m_visual == null)
   {
     kgmLog::log("No Doublebuffered Visual");
 
-    visual = glXChooseVisual(m_dpy, m_screen, attrSgl);
+    m_visual = glXChooseVisual(m_dpy, m_screen, attrSgl);
 
-    if(visual == null)
+    if(m_visual == null)
     {
       kgmLog::log("No Singlebuffered Visual");
 
@@ -190,54 +190,17 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
     kgmLog::log("\nGot Doublebuffered Visual");
   }
 
-  cmap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), visual->visual, AllocNone);
-
-  m_xswa.colormap = cmap;
-  m_xswa.border_pixel = 0;
-
-  XTextProperty tprop = {0};
-  XGetWMName(m_dpy, m_wnd, &tprop);
-  XDestroyWindow(m_dpy, m_wnd);
-
-  /* create a window in window mode*/
-  m_xswa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask |
-                      ButtonReleaseMask | PointerMotionMask | StructureNotifyMask;
-
-  m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, visual->screen),  x, y, w, h, 0, visual->depth,
-                        InputOutput, visual->visual, CWBorderPixel | CWColormap | CWEventMask, &m_xswa);
-
-  Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
-  XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
-
-  m_glctx = glXCreateContext(m_dpy, visual, 0, GL_TRUE);
+  m_glctx = glXCreateContext(m_dpy, m_visual, 0, GL_TRUE);
 
   if(!glXMakeCurrent(m_dpy, m_wnd, m_glctx))
   {
     kgmLog::log("\nError: Cannot activate ogl context.");
   }
 
-
   if(glXIsDirect(m_dpy, m_glctx))
     kgmLog::log("\nDirect Rendering!");
   else
     kgmLog::log("\nNo Direct Rendering!\n");
-
-  XMapWindow(m_dpy, m_wnd);
-  XFlush(m_dpy);
-
-  //XFree(modes);
-
-  //modes = null;
-
-  if(tprop.value)
-  {
-    XStoreName(m_dpy, m_wnd, (const char*)tprop.value);
-
-    XFree(tprop.value);
-  }
-
-  if(m_fs)
-    fullscreen(true);
 
 #endif
 
@@ -290,11 +253,11 @@ kgmOGLWindow::~kgmOGLWindow()
     m_glctx = NULL;
   }
 
-  if (visual)
+  if (m_visual)
   {
-    XFree(visual);
+    XFree(m_visual);
 
-    visual = null;
+    m_visual = null;
   }
 
 #endif

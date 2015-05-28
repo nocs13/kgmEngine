@@ -59,21 +59,40 @@ public:
   };
 
 private:
-//  unsigned int m_references;
+  unsigned int m_references;
+
+protected:
+  virtual ~kgmObject()
+  {
+  }
 
 public:
   kgmObject()
   {
-//    m_references = 1;
+    m_references = 1;
   }
 
   kgmObject(const kgmObject& o)
   {
-//    m_references = o.m_references;
+    m_references = o.m_references;
   }
 
-  virtual ~kgmObject()
+  u32 references() const
   {
+    return m_references;
+  }
+
+  void increment()
+  {
+    m_references += 1;
+  }
+
+  void release()
+  {
+    m_references--;
+
+    if(m_references < 1)
+      delete this;
   }
 
   bool isClass(kgmObject& o)

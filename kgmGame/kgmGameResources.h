@@ -53,7 +53,6 @@ public:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
   ~kgmGameResources();
 
-  void               release();
   void               add(kgmResource*);
   void               remove(kgmResource*);
 

@@ -679,23 +679,27 @@ u16 keyTranslate(int key)
 }
 #endif
 
-kgmWindow::kgmWindow(){
+kgmWindow::kgmWindow()
+{
   m_parent = 0;
   m_msAbs = true;
   m_msf = false;
   m_fs = false;
 }
 
-kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs){
+kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
+{
   m_parent = wp;
   m_msAbs = true;
   m_msf = false;
   m_fs = false;
 
-  kgmLog::log("init screen");
+  kgmLog::log("Init screen");
 
 #ifdef WIN32
+
   WNDCLASS wcl;
+
   if(!GetClassInfo(0, cWndClass, &wcl))
     kgmRegisterWindowClass();
 
@@ -703,18 +707,30 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
                        (fs)?(WS_POPUP|WS_VISIBLE):(WS_OVERLAPPEDWINDOW|WS_VISIBLE),
                        x, y, w, h,
                        (wp)?(wp->m_wnd):(0), 0, 0, 0);
+
   SetWindowLong(m_wnd, GWL_USERDATA, (LONG)this);
   ShowWindow(m_wnd, SW_SHOW);
   UpdateWindow(m_wnd);
-#endif
-  
-#ifdef LINUX
-  m_dpy = (wp)?(wp->m_dpy):XOpenDisplay(NULL);
-  m_screen = (wp)?(wp->m_screen):DefaultScreen(m_dpy);
+
+#elif defined(ANDROID)
+
+  kgm_log() << "Init window rect: " << w << " " << h << ".";
+  m_wRect[0] = x;
+  m_wRect[1] = y;
+  m_wRect[2] = w;
+  m_wRect[3] = h;
+
+#else
+
+  m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
+  m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
+
   m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
                               x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
+
   XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
                ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | ButtonMotionMask);
   XMapWindow(m_dpy, m_wnd);
@@ -723,14 +739,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 
   Bool b_ret;
   XkbSetDetectableAutoRepeat(m_dpy, True, &b_ret);
-#endif
 
-#ifdef ANDROID
-  kgm_log() << "Init window rect: " << w << " " << h << ".";
-  m_wRect[0] = x;
-  m_wRect[1] = y;
-  m_wRect[2] = w;
-  m_wRect[3] = h;
 #endif
 }
 
@@ -787,11 +796,13 @@ kgmWindow::~kgmWindow()
 #endif
 }
 
-void kgmWindow::fullscreen(bool fs){
+void kgmWindow::fullscreen(bool fs)
+{
   if(m_fs == fs)
     return;
 
 #ifdef WIN32
+
   u32 iWidth, iHeight;
   DEVMODE Mode;
 
@@ -820,9 +831,11 @@ void kgmWindow::fullscreen(bool fs){
       SetWindowPos(m_wnd, HWND_TOP, 50, 50, iWidth - 100, iHeight - 100, SWP_SHOWWINDOW);
     }
   }
-#endif
 
-#ifdef LINUX
+#elif defined(ANDROID)
+
+#else
+
   XEvent xev;
   Atom wm_state = XInternAtom(m_dpy, "_NET_WM_STATE", False);
   Atom fullscreen = XInternAtom(m_dpy, "_NET_WM_STATE_FULLSCREEN", False);
@@ -837,6 +850,7 @@ void kgmWindow::fullscreen(bool fs){
   xev.xclient.data.l[2] = 0;
 
   XSendEvent(m_dpy, DefaultRootWindow(m_dpy), False, SubstructureNotifyMask, &xev);
+
 #endif
 
   m_fs = fs;
@@ -845,6 +859,7 @@ void kgmWindow::fullscreen(bool fs){
 void kgmWindow::show(bool sh)
 {
 #ifdef WIN32
+
   if(sh && !IsWindowVisible(m_wnd))
   {
     ShowWindow(m_wnd, SW_SHOWNORMAL);
@@ -856,14 +871,18 @@ void kgmWindow::show(bool sh)
     ShowWindow(m_wnd, SW_HIDE);
     return;
   }
-#endif
 
-#ifdef LINUX
+#elif defined(ANDROID)
+
+#else
+
   if(sh)
     XMapWindow(m_dpy, m_wnd);
   else
     XUnmapWindow(m_dpy, m_wnd);
+
   XFlush(m_dpy);
+
 #endif
 }
 
@@ -872,20 +891,28 @@ void kgmWindow::loop()
   m_loop = true;
 
 #ifdef WIN32
+
   MSG msg;
-  while(m_wnd && m_loop){
-    if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE)){
+
+  while(m_wnd && m_loop)
+  {
+    if(PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+    {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
     }
-    else{
+    else
+    {
       onIdle();
     }
+
     Sleep(0);
   }
-#endif
 
-#ifdef LINUX
+#elif defined(ANDROID)
+
+#else
+
   XEvent evt;
 
   while(m_loop && m_dpy)
@@ -893,6 +920,7 @@ void kgmWindow::loop()
     while(XPending(m_dpy) > 0)
     {
       XNextEvent(m_dpy, &evt);
+
       WndProc(this, &evt);
 
       if(!m_dpy)
@@ -901,10 +929,12 @@ void kgmWindow::loop()
 
     if(!m_loop || !m_dpy)
       break;
+
     //else
     onIdle();
     usleep(0);
   }
+
 #endif
   
   m_loop = false;
@@ -944,18 +974,24 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h)
 void kgmWindow::setRect(int x, int y, int w, int h)
 {
 #ifdef WIN32
+
   RECT r;
   //GetClientRect(m_hWnd, (LPRECT)&r);
+
 #elif defined(ANDROID)
+
   m_wRect[0] = x;
   m_wRect[1] = y;
   m_wRect[2] = w;
   m_wRect[3] = h;
   onResize(w, h);
+
 #else
+
   XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
   XMapWindow(m_dpy, m_wnd);
   XFlush(m_dpy);
+
 #endif
 }
 
@@ -964,37 +1000,50 @@ void kgmWindow::setMouse(int x, int y)
   m_msf = true;
 
 #ifdef WIN32
+
   POINT pt = {x, y};
   ScreenToClient(m_wnd, &pt);
   SetCursorPos(pt.x, pt.y);
+
 #elif defined(ANDROID)
+
 #else
+
   int cx, cy, w, h;
   getRect(cx, cy, w, h);
   XWarpPointer(m_dpy, m_wnd, m_wnd, 0, 0, w, h, x, y);
+
 #endif
 }
 
 void kgmWindow::getMouse(int& x, int& y)
 {
   m_msf = true;
+
 #ifdef WIN32
+
   POINT pt = {x, y};
   // ScreenToClient(m_hWnd, &pt);
   // SetCursorPos(pt.x, pt.y);
 #elif defined(ANDROID)
 
 #else
+
 #endif
 }
 
 void kgmWindow::setTitle(char* title)
 {
 #ifdef WIN32
+
   SetWindowText(m_wnd, title);
+
 #elif defined(ANDROID)
+
 #else
+
   XStoreName(m_dpy, m_wnd, title);
+
 #endif
 }
 

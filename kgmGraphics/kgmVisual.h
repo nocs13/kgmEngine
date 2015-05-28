@@ -256,7 +256,7 @@ public:
       m_material->release();
 
     if(m_visual)
-      delete m_visual;
+      m_visual->release();
 
     if(m_skeleton)
       m_skeleton->release();

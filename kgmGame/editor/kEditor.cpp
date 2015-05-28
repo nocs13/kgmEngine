@@ -99,25 +99,25 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->m_render->add(menu);
 
-    //gridline = new kgmVisual();
-    //gridline->set(mtlLines);
-    //gridline->set((kgmMesh*)(new kGridline()));
-    //game->m_render->add(gridline);
+    kgmMesh* mesh;
 
+    mesh = (kgmMesh*)(new kGridline());
+
+    gridline = new kgmVisual();
+    gridline->set(mtlLines);
+    gridline->set(mesh);
+    mesh->release();
+    game->m_render->add(gridline);
+
+    mesh = (kgmMesh*)(new kPivot());
     pivot = new kgmVisual();
     mtx4 mtr;
     mtr.identity();
     pivot->set(mtlPivot);
-    pivot->set((kgmMesh*)(new kPivot()));
+    pivot->set(mesh);
+    mesh->release();
     pivot->set(&mtr);
     game->m_render->add(pivot);
-
-    kgmVisual *vis = new kgmVisual();
-    vis->set((kgmMesh*)&g_line);
-    vis->set(mtlPivot);
-    game->m_render->add(vis);
-//    vis->release();
-
 
     game->m_render->setBgColor(0xffbbaa99);
   }
@@ -125,9 +125,9 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
-//  gridline->release();
-//  pivot->release();
-//  menu->release();
+  gridline->release();
+  pivot->release();
+  menu->release();
 
   mtlLines->release();
   mtlPivot->release();

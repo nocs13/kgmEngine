@@ -1227,7 +1227,7 @@ void kgmGraphics::render(kgmGui* gui){
 
   gui->getRect(rect, true);
 
-  //text = gui->getText();
+  text = gui->getText();
 
   if(gui->m_hasAlpha)
     gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
@@ -1292,10 +1292,12 @@ void kgmGraphics::render(kgmGui* gui){
       if(i >= item_cnt)
         break;
 
-      /*kgmString item;
+      kgmString item;
+
       item = ((kgmGuiList*)gui)->m_items[i];
 
       kgmGui::Rect frect;
+
       frect = glist->getItemRect(i);
       frect = glist->toAbsolute(frect);
 
@@ -1308,7 +1310,7 @@ void kgmGraphics::render(kgmGui* gui){
       {
         gcDrawText(gui_style->gui_font, frect.height() / 2, frect.height(),
                    gui_style->slist.tx_color, frect, item);
-      }*/
+      }
     }
 
     if(glist->m_scroll && glist->m_scroll->visible())

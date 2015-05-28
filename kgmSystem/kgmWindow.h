@@ -4,9 +4,10 @@
 #include "../kgmBase/kgmIWindow.h"
 #include "../kgmMath/kgmMath.h"
 
-
 class kgmWindow;
+
 #ifdef WIN32
+
 #include <windows.h>
 
 #define cWndClass "cWndClass"
@@ -17,9 +18,13 @@ inline u16 keyTranslate(int);
 void kgmRegisterWindowClass();
 void kgmUnregisterWindowClass();
 
-#endif
+#elif defined(ANDROID)
 
-#ifdef LINUX
+#include <android/keycodes.h>
+u16 keyTranslate(int key);
+
+#else
+
 #include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -29,14 +34,11 @@ void kgmUnregisterWindowClass();
 #include <GL/glx.h>
 
 u16 keyTranslate(KeySym);
+
 #endif
 
-#ifdef ANDROID
-#include <android/keycodes.h>
-u16 keyTranslate(int key);
-#endif
-
-enum{
+enum
+{
   KGMWINDOWOPENGL     = 0X00001111,
   KGMWINDOWDIRECT3D8  = 0X00002222,
   KGMWINDOWDIRECT3D9  = 0X00003333,
@@ -49,27 +51,29 @@ class kgmWindow: public kgmEvent
 {
 public:
 #ifdef WIN32
+
   //microsoft windows 32 window
   HWND m_wnd;		//window descriptor
-#endif
 
-#ifdef LINUX
+#elif defined(ANDROID)
+
+  void* m_wnd;
+  int   m_wRect[4];
+
+#else
+
   Display             *m_dpy;
   Window               m_wnd;
+//  XVisualInfo*         m_visual;
   XF86VidModeModeInfo  m_mode;
   XSetWindowAttributes m_xswa;
   Atom                 m_wmDelete;
   int                  m_screen;
+
 #endif
 
-#ifdef ANDROID
-  void* m_wnd;
-  int   m_wRect[4];
-#endif
 
   kgmWindow*	m_parent;
-  // int  m_x, m_y, m_w, m_h;
-  // int  m_msx, m_msy;
 
   bool m_fs;
   bool m_msAbs;
