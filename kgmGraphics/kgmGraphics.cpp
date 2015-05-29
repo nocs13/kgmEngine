@@ -130,7 +130,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_editor      = false;
 
-  gui_style = new kgmGuiStyle();
+  //gui_style = new kgmGuiStyle();
 
   g_def_material.setShader(kgmShader::TypeNone);
   g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
@@ -194,6 +194,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
       {
         shader->m_input |= kgmShader::IN_VEC4_LIGHTS;
         shaders.add(kgmShader_TypeLights, shader);
+
+        shader->release();
       }
     }
   }
@@ -277,7 +279,7 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
 
   if(gui_style)
   {
-    delete gui_style;
+    gui_style->release();
 
     gui_style = null;
   }

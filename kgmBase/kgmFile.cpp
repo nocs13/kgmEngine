@@ -30,7 +30,7 @@ kgmFile::~kgmFile()
 
 bool kgmFile::open(kgmCString& path, u32 mode)
 {
-  u32 smode;
+  u32 smode = 0;
 
 #ifdef WIN32
 #define O_EXCL    _O_EXCL

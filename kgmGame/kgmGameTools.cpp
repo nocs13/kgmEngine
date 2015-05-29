@@ -416,6 +416,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
   }
 
   kgmShader* shader = new kgmShader(gc);
+
   shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
 
   if(mem_vsh) free(mem_vsh);

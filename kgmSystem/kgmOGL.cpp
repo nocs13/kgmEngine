@@ -252,15 +252,17 @@ void kgmOGL::gcEnd()
 void kgmOGL::gcRender()
 {
 #ifdef WIN32
+
   SwapBuffers(m_wnd->m_hdc);
-#endif
 
-#ifdef LINUX
-  glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);
-#endif
+#elif defined(ANDROIDXXX)
 
-#ifdef ANDROIDXXX
   eglSwapBuffers(m_wnd->display, m_wnd->surface);
+
+#else
+
+  glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);
+
 #endif
 }
 

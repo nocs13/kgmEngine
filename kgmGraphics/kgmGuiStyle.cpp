@@ -65,3 +65,27 @@ kgmGuiStyle::kgmGuiStyle()
   sscroll.fg_color = 0xffbbbbbb;
   sscroll.image    = null;
 }
+
+kgmGuiStyle::~kgmGuiStyle()
+{
+  if(sgui.image != null)
+    sgui.image->release();
+
+  if(sbutton.image != null)
+    sbutton.image->release();
+
+  if(smenu.image != null)
+    smenu.image->release();
+
+  if(stext.image != null)
+    stext.image->release();
+
+  if(slabel.image != null)
+    slabel.image->release();
+
+  if(scheck.image != null)
+    scheck.image->release();
+
+  if(sscroll.image != null)
+    sscroll.image->release();
+}

@@ -109,10 +109,10 @@ public:
   };
 
 private:
-  kgmOGLWindow* m_wnd;
+  kgmOGLWindow* m_wnd = null;
 
   //Current Render Buffer
-  RenderBuffer* m_renderbuffer;
+  RenderBuffer* m_renderbuffer = null;
 
   // Mode Matrices
   float mtx_mode_view[16],

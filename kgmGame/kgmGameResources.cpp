@@ -52,7 +52,7 @@ kgmGameResources::~kgmGameResources()
         m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
       }
 
-      r->release();
+      ((kgmObject*)r)->release();
     }
   }
 
@@ -89,33 +89,6 @@ void kgmGameResources::add(kgmResource* r)
 
 void kgmGameResources::remove(kgmResource* r)
 {
-  if(r == null)
-    return;
-
-  for(int i = m_resources.size(); i > 0; i--)
-  {
-    kgmResource* rs = m_resources[i - 1];
-
-    if(r == rs && r->references() == 1)
-    {
-      if(r->isClass(kgmTexture::Class))
-      {
-        m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
-      }
-      else if(r->isClass(kgmShader::Class))
-      {
-        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
-      }
-      else if(r->isClass(kgmSound::Class))
-      {
-        m_audio->remove(((kgmSound*)r)->getSound());
-      }
-
-      r->release();
-
-      m_resources.erase(i);
-    }
-  }
 }
 
 void kgmGameResources::addPath(kgmString s)
@@ -178,7 +151,9 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
   AAsset_close(asset);
 
   return true;
+
 #else
+
   for(i = 0; i < m_paths.size(); i++)
   {
     kgmFile file;
@@ -204,6 +179,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
       }
     }
   }
+
 #endif
 
 #ifdef DEBUG

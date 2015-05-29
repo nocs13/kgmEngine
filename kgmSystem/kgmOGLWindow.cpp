@@ -9,10 +9,11 @@
 kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
   :kgmWindow(null, "", x, y, w, h, bpp, fs)
 {
-
 #ifdef DEBUG
   kgm_log() << "init ogl screen\n";
 #endif
+
+  m_glctx = 0;
 
 #ifdef WIN32
 

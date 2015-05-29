@@ -82,4 +82,5 @@ class kgmGuiStyle: public kgmObject
 
  public:
   kgmGuiStyle();
+  ~kgmGuiStyle();
 };
