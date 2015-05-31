@@ -134,7 +134,7 @@ kEditor::~kEditor()
   mtlLines->release();
   mtlPivot->release();
 
-//  kgmUnit::g_typ_objects.clear();
+  kgmUnit::g_typ_objects.clear();
 }
 
 void kEditor::clear()
@@ -144,7 +144,7 @@ void kEditor::clear()
 
   for(int i = 0; i < nodes.size(); i++)
   {
-//    nodes[i]->release();
+    nodes[i]->release();
   }
 
   nodes.clear();

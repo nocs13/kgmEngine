@@ -165,6 +165,12 @@ public:
 
   static  bool           AnimateVertices;
 
+private:
+  ~kgmVisual()
+  {
+    clear();
+  }
+
 public:
   kgmVisual()
   {
@@ -236,11 +242,6 @@ public:
     m_bound       = v.m_bound;
     m_last_update = kgmTime::getTicks();
     m_transform   = v.m_transform;
-  }
-
-  virtual ~kgmVisual()
-  {
-    clear();
   }
 
   void clear()
@@ -350,9 +351,11 @@ public:
     if(!par)
       return;
 
-    clear();
+    if(m_visual)
+      m_visual->release();
 
     m_visual = par;
+    par->increment();
     m_type = TypeParticles;
   }
 
@@ -366,9 +369,11 @@ public:
     if(!text)
       return;
 
-    clear();
+    if(m_visual)
+      m_visual->release();
 
     m_visual = text;
+    text->increment();
     m_type = TypeText;
   }
 
@@ -382,9 +387,11 @@ public:
     if(!sprite)
       return;
 
-    clear();
+    if(m_visual)
+      m_visual->release();
 
     m_visual = sprite;
+    sprite->increment();
     m_type = TypeSprite;
   }
 
@@ -442,7 +449,8 @@ public:
     if(!msh)
       return false;
 
-    clear();
+    if(m_visual)
+      m_visual->release();
 
     m_visual = new Mesh(msh);
     m_type = TypeMesh;

@@ -78,9 +78,11 @@ public:
   }
 #endif
 
+protected:
+  virtual ~kgmUnit();
+
 public:
   kgmUnit(kgmIGame* g = null);
-  virtual ~kgmUnit();
 
   virtual void         init() = 0;
   virtual void         update(u32 mls);

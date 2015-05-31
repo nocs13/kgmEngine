@@ -96,9 +96,11 @@ public:
 
   kgmTab<kgmString, kgmString> m_options;
 
+protected:
+  virtual ~kgmActor();
+
 public:
   kgmActor(kgmIGame* g = null);
-  virtual ~kgmActor();
 
   virtual void init();
   virtual void exit();

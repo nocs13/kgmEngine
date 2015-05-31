@@ -27,7 +27,7 @@ public:
   }
 
 private:
-  void sendToTarget(kgmString s);
+  void event(kgmString s);
 };
 
 #endif // KGMSENSOR_H

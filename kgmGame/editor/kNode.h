@@ -67,6 +67,22 @@ public:
   kgmGraphics::Icon* icn;
   kgmVisual*         geo;
 
+private:
+  ~kNode()
+  {
+    kgmObject* o = (kgmObject*)msh;
+
+    if(o)
+      o->release();
+
+    if(icn)
+      icn->release();
+
+    if(geo)
+      geo->release();
+  }
+
+public:
   kNode()
   {
     typ = NONE;
@@ -176,20 +192,6 @@ public:
 
     if(n.obj)
       obj = (kgmUnit*)n.obj->clone();
-  }
-
-  ~kNode()
-  {
-    kgmObject* o = (kgmObject*)msh;
-
-//    if(o)
-//      o->release();
-
-//    if(icn)
-//      icn->release();
-
-//    if(geo)
-//      geo->release();
   }
 
   mtx4 getMatrix();
