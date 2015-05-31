@@ -84,9 +84,11 @@ private:
 
   bool  move_camera;
 
-public:
-  explicit kEditor(  kgmGameBase* game);
+private:
   ~kEditor();
+
+public:
+  kEditor(kgmGameBase* game);
 
   void clear();
 

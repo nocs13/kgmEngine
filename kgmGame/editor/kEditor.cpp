@@ -59,6 +59,8 @@ kEditor::kEditor(kgmGameBase* g)
   gridline = null;
 
   mtlLines = new kgmMaterial();
+  mtlLines->setShader(kgmShader::TypeNone);
+  mtlLines->m_depth = false;
 
   mtlPivot = new kgmMaterial();
   mtlPivot->setShader(kgmShader::TypeNone);
@@ -132,7 +134,7 @@ kEditor::~kEditor()
   mtlLines->release();
   mtlPivot->release();
 
-  kgmUnit::g_typ_objects.clear();
+//  kgmUnit::g_typ_objects.clear();
 }
 
 void kEditor::clear()

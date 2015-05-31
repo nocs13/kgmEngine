@@ -190,13 +190,13 @@ kgmGameBase::~kgmGameBase()
   log("free logic...");
 
   if(m_logic)
-    delete m_logic;
+    m_logic->release();
 
 #ifdef EDITOR
   log("free editor...");
 
-  if(editor != null)
-    delete editor;
+  if(editor)
+    editor->release();
 #endif
 
   log("free graphics renderer...");

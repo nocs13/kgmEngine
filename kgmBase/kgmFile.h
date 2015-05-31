@@ -18,7 +18,7 @@ public:
   kgmFile();
   ~kgmFile();
 
-  bool open(kgmCString& path, u32 mode);
+  bool open(kgmCString& path, u32 mode = Read);
   void close();
   void flush();
   u32  read(void *dst, u32 cnt);
