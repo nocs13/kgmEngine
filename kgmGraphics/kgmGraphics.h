@@ -64,49 +64,34 @@ public:
   {
   public:
     kgmLight *light;
-    kgmTexture *shadowmap;
 
     ~Light()
     {
-//      if(light)
-//        light->release();
-
-      if(shadowmap)
-        shadowmap->release();
+      if(light)
+        light->release();
     }
 
     Light()
     {
       light = null;
-      shadowmap = null;
     }
 
     Light(kgmLight *l)
     {
       light = l;
-      shadowmap = null;
 
       if(light)
       {
-//        light->increment();
-
-        if(light->shadows)
-        {
-//          shadowmap->m_type = kgmTexture::Type_RT_Depth;
-        }
+        light->increment();
       }
     }
 
     Light(const Light& l)
     {
       light = l.light;
-      shadowmap = l.shadowmap;
 
-//      if(light)
-//        light->increment();
-
-      if(shadowmap)
-        shadowmap->increment();
+      if(light)
+        light->increment();
     }
   };
 
@@ -192,8 +177,7 @@ private:
   kgmTab<u16, kgmShader*>  shaders;
   kgmTab<u16, kgmTexture*> textures;
 
-  bool  m_has_shaders;
-  bool  m_has_buffers;
+  kgmTexture *m_shadowmap;
 
   bool  m_depth;
   bool  m_alpha;
