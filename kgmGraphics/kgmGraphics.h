@@ -350,23 +350,6 @@ public:
       ico->remove = true;
   }
 
-  bool get(kgmString name, kgmMaterial** mtl)
-  {
-    for(int i = 0; i < m_materials.size(); i++)
-    {
-      kgmMaterial* m = m_materials[i];
-
-      if(m && m->m_id.length() && (m->m_id == name))
-      {
-        *mtl = m;
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   iRect viewport()
   {
     return m_viewport;

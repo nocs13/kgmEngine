@@ -45,13 +45,14 @@ public:
 
     kgmObject* obj;
 
+    kgmMaterial* mtl;
+
     vec3       pos;
     vec3       rot;
     box3       bnd;
 
     kgmString  nam;
     kgmString  lnk;
-    kgmString  mtl;
     kgmString  shd;
     kgmString  shp;
     kgmString  ini;
@@ -87,7 +88,6 @@ public:
   bool addMesh(Node n);
   bool addLight(Node n);
   bool addCamera(Node n);
-  bool addMaterial(Node n);
   bool addActor(Node n);
   bool addSensor(Node n);
   bool addTrigger(Node n);

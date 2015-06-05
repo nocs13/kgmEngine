@@ -71,11 +71,6 @@ public:
     objs.clear();
   }
 
-
-  void action(kgmILogic::ACTION type, kgmObject* src, kgmString arg)
-  {
-  }
-
   void collide(kgmUnit *os, kgmUnit *od)
   {
     if(!vtext)

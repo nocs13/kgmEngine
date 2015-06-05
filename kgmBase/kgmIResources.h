@@ -6,7 +6,6 @@ class kgmAnimation;
 class kgmSound;
 class kgmShader;
 class kgmTexture;
-class kgmMaterial;
 class kgmResource;
 class kgmSkeleton;
 class kgmPicture;
@@ -28,14 +27,16 @@ private:
     TypeMesh,
     TypeShader,
     TypeTexture,
-    TypeMaterial,
   };
 
 private:
-  class _Resource{
+  /*class _Resource
+  {
     friend class kgmIResources;
-    s32 references;
-    kgmIResources*    resource_manager;
+
+    s32            references;
+    kgmIResources* resource_manager;
+
   protected:
     _Resource(kgmIResources* rs)
     {
@@ -43,11 +44,13 @@ private:
       resource_manager = rs;
     }
 
-    virtual ~_Resource(){
+    virtual ~_Resource()
+    {
     }
 
   public:
-    void release(){
+    void release()
+    {
       if(references > 0)
         references--;
 
@@ -56,15 +59,18 @@ private:
     }
   };
 
-  friend class _Resource;
+  friend class _Resource;*/
 
 public:
-  template <class T> class Resource: public _Resource{
+  /*template <class T> class Resource: public _Resource
+  {
     friend class kgmIResources;
 
     T*  resource;
+
     Resource(kgmIResources* rs, T* r)
-    :_Resource(rs){
+    :_Resource(rs)
+    {
       resource = r;
     }
 
@@ -77,10 +83,10 @@ public:
     {
       return resource;
     }
-  };
+  };*/
 
 private:
-  virtual void                remove(_Resource*){};
+  //virtual void                remove(_Resource*){};
 
 public:
   virtual void                add(kgmResource*) = 0;
@@ -89,7 +95,6 @@ public:
   virtual bool                getFile(char*, kgmMemory<u8>&) = 0;
   virtual kgmPicture*         getPicture(char*) = 0;
   virtual kgmTexture*         getTexture(char*) = 0;
-  virtual kgmMaterial*        getMaterial(char*) = 0;
   virtual kgmShader*          getShader(char*) = 0;
   virtual kgmAnimation*       getAnimation(char*) = 0;
   virtual kgmSkeleton*        getSkeleton(char*) = 0;

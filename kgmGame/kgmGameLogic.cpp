@@ -170,7 +170,7 @@ void kgmGameLogic::update(u32 milliseconds)
         m_gameplayer = null;
 
       i = m_objects.erase(i);
-//      go->release();
+      go->release();
     }
     else if(go->valid())
     {
@@ -193,17 +193,12 @@ void kgmGameLogic::input(int btn, int state)
     m_gameplayer->input(btn, state);
 }
 
-void kgmGameLogic::action(ACTION, kgmObject*, kgmString)
-{
-
-}
-
 void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)
 {
 
 }
 
-kgmUnit* kgmGameLogic::getObjectById(kgmString id)
+kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
 {
   for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {

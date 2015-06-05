@@ -797,9 +797,12 @@ bool kgmGameBase::loadXml(kgmString& path)
         xml.attribute("name", id);
         type = TypeMaterial;
         obj = mtl = new kgmMaterial();
-        mtl->setId(id);
-        m_render->add(mtl);
-        mtl->release();
+
+        if(vis)
+        {
+          vis->set(mtl);
+          mtl->release();
+        }
       }
       else if(id == "kgmCamera")
       {
@@ -810,7 +813,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeLight;
         obj = lgt = new kgmLight();
         m_render->add(lgt);
-//        lgt->release();
+        lgt->release();
       }
       else if(id == "kgmMesh")
       {
@@ -820,7 +823,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         vis->set(msh);
         m_render->add(vis);
         msh->release();
-//        vis->release();
+        vis->release();
       }
       else if(id == "kgmActor")
       {
@@ -973,23 +976,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->m_shader = (kgmShader::Shader)m_render->getShaderId(value);
-        }
-      }
-      else if(id == "Material")
-      {
-        if(type == TypeMesh)
-        {
-          kgmString data;
-          kgmMaterial* mtl = null;
-
-          if(xml.attribute("name", data))
-          {
-            m_render->get(data, &mtl);
-
-            if(vis && mtl)
-              vis->set(mtl);
-          }
+          mtl->setShader(m_resources->getShader(value));
         }
       }
       else if(id == "Position")
@@ -1081,7 +1068,7 @@ bool kgmGameBase::loadXml(kgmString& path)
             kgmXml  xml(mem);
 
             kgmMesh* mesh = m_resources->getMesh(sclass.data());
-            kgmMaterial* mtl = m_resources->getMaterial(sclass.data());
+            kgmMaterial* mtl = null;//m_resources->getMaterial(sclass.data());
 
             if(mesh)
             {
@@ -1235,10 +1222,10 @@ bool kgmGameBase::loadXml_I(kgmString& idmap)
 
       kgmMaterial *mtl = null;
 
-      mtl = getResources()->getMaterial(mnode.mtl);
+      //mtl = getResources()->getMaterial(mnode.mtl);
 
       if(mtl)
-        mtl->setShader(kgmShader::toType(mnode.shd));
+        mtl->setShader(getResources()->getShader(mnode.shd));
 
       mr.identity();
       mr.rotate(mnode.rot);
@@ -1587,7 +1574,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 
         if(id == "Material"){
           a_node->node(i)->node(j)->attribute("value", val);
-          mtl = m_resources->getMaterial(val);
+          mtl = null; //m_resources->getMaterial(val);
         }else if(id == "Mesh"){
           a_node->node(i)->node(j)->attribute("value", val);
           msh = m_resources->getMesh(val);

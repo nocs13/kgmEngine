@@ -101,7 +101,7 @@ public:
     material->m_srcblend     = gcblend_srcalpha;
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
-    material->setShader(kgmShader::TypeBlend);
+    material->setShader(g->getResources()->getShader("blend.glsl"));
     material->setTexColor(g->getResources()->getTexture(tid));
 
     particles->direction = dir;
@@ -230,7 +230,7 @@ public:
     material->m_srcblend     = gcblend_srcalpha;
     material->m_dstblend     = gcblend_one;
     material->m_type         = "simple";
-    material->setShader(kgmShader::TypeBlend);
+    material->setShader(g->getResources()->getShader("blend.glsl"));
   }
 
   virtual ~kgmSmoke()
@@ -320,7 +320,7 @@ public:
     mtl->m_srcblend = gcblend_one;
     mtl->m_dstblend = gcblend_one;
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
-    mtl->setShader(kgmShader::TypeBlend);
+    mtl->setShader(g->getResources()->getShader("blend.glsl"));
 
     mesh = new kgmMesh();
     Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
@@ -401,7 +401,7 @@ public:
     mtl->m_dstblend = gcblend_one;
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
     mtl->m_type = "simple";
-    mtl->setShader(kgmShader::TypeBlend);
+    mtl->setShader(g->getResources()->getShader("blend.glsl"));
 
     ptl = new kgmParticles();
     ptl->m_typerender  = kgmParticles::RTypePoint;

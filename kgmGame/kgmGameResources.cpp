@@ -261,37 +261,6 @@ kgmTexture* kgmGameResources::getTexture(char* id)
   return texture;
 }
 
-//Material
-kgmMaterial* kgmGameResources::getMaterial(char* id)
-{
-  kgmMaterial* mtl = 0;
-
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    if(!strcmp(m_resources[i]->m_id, id) && (m_resources[i]->isClass(kgmMaterial::Class)))
-    {
-      m_resources[i]->increment();
-
-      return (kgmMaterial*)m_resources[i];
-    }
-  }
-
-  kgmMemory<u8> mem;
-
-  if(!getFile(id, mem))
-    return 0;
-
-  kgmXml xml(mem);
-  mtl = m_tools.genMaterial(xml);
-
-  if(mtl){
-    mtl->m_id = id;
-    m_resources.add(mtl);
-  }
-
-  return mtl;
-}
-
 //Shader
 kgmShader* kgmGameResources::getShader(char* id)
 {

@@ -132,7 +132,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   //gui_style = new kgmGuiStyle();
 
-  g_def_material.setShader(kgmShader::TypeNone);
+  g_def_material.setShader(null);
   g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
@@ -566,7 +566,7 @@ void kgmGraphics::render()
 
       setWorldMatrix(vis->getTransform());
       render(mtl);
-      render(toShader(mtl->getShader()));
+      render(mtl->getShader());
       render(vis->getParticles());
       render((kgmShader*)null);
       render((kgmMaterial*)null);
@@ -585,7 +585,7 @@ void kgmGraphics::render()
 
     setWorldMatrix(vis->getTransform());
     render(mtl);
-    render(toShader(mtl->getShader()));
+    render(mtl->getShader());
     render(vis->getParticles());
     render((kgmShader*)null);
     render((kgmMaterial*)null);

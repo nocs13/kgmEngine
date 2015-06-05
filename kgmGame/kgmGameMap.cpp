@@ -56,12 +56,12 @@ bool kgmGameMap::addMesh(Node n)
       node->m_attributes.add(new kgmXml::Attribute("collision", "on"));
 
     kgmXml::Node* snode = new kgmXml::Node(node);
-    snode->m_name = "Material";
+    /*snode->m_name = "Material";
     snode->m_attributes.add(new kgmXml::Attribute("value", n.mtl));
 
     snode = new kgmXml::Node(node);
     snode->m_name = "Shader";
-    snode->m_attributes.add(new kgmXml::Attribute("value", n.shd));
+    snode->m_attributes.add(new kgmXml::Attribute("value", n.shd));*/
 
     snode = new kgmXml::Node(node);
     snode->m_name = "Position";
@@ -156,20 +156,6 @@ bool kgmGameMap::addCamera(Node n)
       snode->m_name = "Locked";
       snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
     }
-  }
-}
-
-bool kgmGameMap::addMaterial(Node n)
-{
-  if(m_type == OpenRead || !n.obj)
-    return false;
-
-  if(m_xml && m_xml->m_node->m_name == "kgm")
-  {
-    kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
-
-    node->m_name = "kgmMaterial";
-    node->m_attributes.add(new kgmXml::Attribute("name", ((kgmMaterial*)n.obj)->m_id));
   }
 }
 
@@ -576,8 +562,8 @@ kgmGameMap::Node kgmGameMap::next()
         value.clear();
         m_xml->attribute("value", value);
 
-        if(value.length())
-          node.mtl = value;
+        //if(value.length())
+        //  node.mtl = value;
       }
       else if(id == "Shader")
       {

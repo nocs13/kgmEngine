@@ -9,8 +9,6 @@
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
 
-//#include <vector>
-
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 
@@ -38,18 +36,29 @@ public:
   virtual void build();
   virtual void input(int, int);
   virtual void update(u32 milliseconds);
-  virtual void action(ACTION, kgmObject*, kgmString);
   virtual void collide(kgmUnit*, kgmUnit*);
-  virtual kgmUnit* getObjectById(kgmString);
-  virtual u32            getObjects(kgmList<kgmUnit*>&);
-  virtual u32            getObjectsByType(kgmRuntime&,
-                                          kgmList<kgmUnit*>&);
-  virtual u32            getObjectsByClass(kgmRuntime&,
-                                           kgmList<kgmUnit*>&);
 
-  void      setPlayer(kgmActor* gp) { m_gameplayer = gp; }
-  kgmActor* getPlayer() { return m_gameplayer; }
+  virtual kgmUnit* getObjectById(kgmString&);
 
+  virtual u32 getObjects(kgmList<kgmUnit*>&);
+  virtual u32 getObjectsByType(kgmRuntime&, kgmList<kgmUnit*>&);
+  virtual u32 getObjectsByClass(kgmRuntime&, kgmList<kgmUnit*>&);
+
+  void      setPlayer(kgmActor* gp)
+  {
+    if(m_gameplayer)
+      m_gameplayer->release();
+
+    m_gameplayer = gp;
+
+    if(m_gameplayer)
+      m_gameplayer->increment();
+  }
+
+  kgmActor* getPlayer()
+  {
+    return m_gameplayer;
+  }
 
 private:
   void trush();

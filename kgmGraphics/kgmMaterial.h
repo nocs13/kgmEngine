@@ -9,7 +9,7 @@ class kgmShader;
 
 #define KGM_TEXTURES_PER_MATERIAL 8
 
-class kgmMaterial: public kgmResource
+class kgmMaterial: public kgmObject
 {
   KGM_OBJECT(kgmMaterial);
 protected:
@@ -62,8 +62,7 @@ public:
   Color  m_color, m_specular, m_emision;
   float  m_shininess, m_transparency;
 
-
-  kgmShader::Shader m_shader;
+  kgmShader*  m_shader;
 
   u32         m_flags;            //render specisific flags enable/disable
 
@@ -71,7 +70,6 @@ public:
   bool        m_2side;
   bool        m_blend;
   bool        m_depth;
-  bool        m_light;
 
   u32         m_srcblend, m_dstblend;
 
@@ -95,20 +93,11 @@ public:
   kgmTexture* getTexNormal();
   kgmTexture* getTexSpecular();
 
-  void setShader(kgmShader::Shader shader);
-  kgmShader::Shader getShader() const
+  void setShader(kgmShader* shader);
+
+  kgmShader* getShader() const
   {
     return m_shader;
-  }
-
-  void light(bool l = true)
-  {
-    m_light = l;
-  }
-  
-  bool light() const
-  {
-    return m_light;
   }
 };
 

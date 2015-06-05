@@ -61,7 +61,6 @@ public:
 
   kgmPicture*        getPicture(char* id);
   kgmTexture*        getTexture(char* id);
-  kgmMaterial*       getMaterial(char* id);
   kgmShader*         getShader(char* id);
   kgmAnimation*      getAnimation(char* id);
   kgmSound*          getSound(char*);

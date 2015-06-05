@@ -59,11 +59,11 @@ kEditor::kEditor(kgmGameBase* g)
   gridline = null;
 
   mtlLines = new kgmMaterial();
-  mtlLines->setShader(kgmShader::TypeNone);
+  mtlLines->setShader(null);
   mtlLines->m_depth = false;
 
   mtlPivot = new kgmMaterial();
-  mtlPivot->setShader(kgmShader::TypeNone);
+  mtlPivot->setShader(null);
   mtlPivot->m_depth = false;
 
   if(game->m_render)
@@ -376,8 +376,6 @@ bool kEditor::mapOpen(kgmString s)
 
   oquered = 0;
 
-  kgmString ntype;
-
   kgmGameMap map(game, kgmGameMap::OpenRead);
 
   map.open(xml);
@@ -397,18 +395,9 @@ bool kEditor::mapOpen(kgmString s)
       node->col = mnode.col;
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
-      node->mat = mnode.mtl;
       node->shd = mnode.shd;
       node->lock = mnode.lck;
 
-      kgmMaterial *mtl = null;
-
-      mtl = game->getResources()->getMaterial(mnode.mtl);
-
-      if(mtl)
-        mtl->setShader(kgmShader::toType(mnode.shd));
-
-      node->msh->set(mtl);
       game->m_render->add(node->msh);
       nodes.add(node);
 
@@ -623,8 +612,6 @@ bool kEditor::mapSave(kgmString s)
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
     node.lnk = (*i)->lnk;
-    node.mtl = (*i)->mat;
-    node.shd = (*i)->shd;
     node.col = (*i)->col;
     node.shp = (*i)->shp;
     node.bnd = (*i)->bnd;
