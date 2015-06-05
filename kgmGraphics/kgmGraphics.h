@@ -336,12 +336,8 @@ public:
 
   void remove(kgmVisual* visual)
   {
-
-  }
-
-  void remove(kgmMaterial* material)
-  {
-
+    if(visual)
+      visual->remove();
   }
 
   void remove(Icon* ico)

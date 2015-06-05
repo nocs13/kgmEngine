@@ -288,6 +288,46 @@ void kViewOptions::onBoundZ(kgmString s)
   node->bnd.max.z =  0.5 * v;
 }
 
+kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  kgmMaterial* mtl = n->getMaterial();
+
+  if(!mtl)
+    return;
+
+  kgmGui* tmaterial = tab->addTab("Material");
+  y_coord = 1;
+  fd = null;
+  y_coord += 23;
+  kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("TexColor");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+
+  kgmGuiButton* btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectTexColor));
+
+  y_coord += 23;
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Shader");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+
+  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectShader));
+}
+
+void kViewOptionsForMaterial::onSelectShader()
+{
+
+}
+
+void kViewOptionsForMaterial::onSelectTexColor()
+{
+
+}
+
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
@@ -295,80 +335,6 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
   y_coord = 1;
   fd = null;
   y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(tmesh, 0, y_coord, 50, 20);
-  g->setText("Material");
-  g = guiMtlText = new kgmGuiText(tmesh, 51, y_coord, 70, 20);
-
-  if(node->mat.length())
-    g->setText(node->mat);
-
-  kgmGuiButton* btn = new kgmGuiButton(tmesh, 125, y_coord, 50, 20);
-  btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectMaterial));
-
-  y_coord += 23;
-  g = new kgmGuiLabel(tmesh, 0, y_coord, 50, 20);
-  g->setText("Shader");
-  g = guiShdText = new kgmGuiText(tmesh, 51, y_coord, 70, 20);
-
-  if(node->shd.length())
-    g->setText(node->shd);
-
-  btn = new kgmGuiButton(tmesh, 125, y_coord, 50, 20);
-  btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShader));
-}
-
-void kViewOptionsForMesh::onSelectMaterial()
-{
-  if(fd)
-    return;
-
-  fd = new kFileDialog();
-  fd->m_rect.x = 300;
-  fd->showHidden(false);
-  fd->show();
-  fd->setFilter("mtl");
-  fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectedMaterial));
-
-  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-}
-
-void kViewOptionsForMesh::onSelectedMaterial()
-{
-  node->setMaterial(fd->getFile());
-  guiMtlText->setText(fd->getFile());
-
-  fd->erase();
-//  fd->release();
-  fd = null;
-}
-
-void kViewOptionsForMesh::onSelectShader()
-{
-  if(fd || node->mat.length() < 1)
-    return;
-
-  fd = new kFileDialog();
-  fd->m_rect.x = 300;
-  fd->showHidden(false);
-  fd->show();
-  fd->setFilter("glsl");
-  fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectedShader));
-
-  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-}
-
-void kViewOptionsForMesh::onSelectedShader()
-{
-  node->setShader(fd->getFile());
-  guiShdText->setText(fd->getFile());
-
-  fd->erase();
-//  fd->release();
-  fd = null;
 }
 
 void kViewOptionsForMesh::onSelectFailed()
@@ -532,17 +498,17 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
 
   kgmGuiCheck* enable = new kgmGuiCheck(tobject, 1, y_coord, 150, 20);
   enable->setText("Enabled");
-  enable->setCheck(node->obj->valid());
+  enable->setCheck(node->unt->valid());
   enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectEnable));
 
   y_coord += 23;
 
-  if(node->obj->m_variables.length() > 0)
+  if(node->unt->m_variables.length() > 0)
     y_coord += 23;
 
-  for(int i = 0; i < node->obj->m_variables.length(); i++)
+  for(int i = 0; i < node->unt->m_variables.length(); i++)
   {
-    kgmVariable& var = node->obj->m_variables[i];
+    kgmVariable& var = node->unt->m_variables[i];
 
     kgmGui* g = new kgmGuiLabel(tobject, 0, y_coord, 50, 20);
     g->setText(var.getName());
@@ -580,7 +546,7 @@ void kViewOptionsForObject::onSelectEnable(bool state)
 {
   if(state)
   {
-    node->obj->enable();
+    node->unt->enable();
 
     if(node->obj->isType(kgmUnit::Class))
       kgmIGame::getGame()->getLogic()->add((kgmUnit*)node->obj);
@@ -591,42 +557,42 @@ void kViewOptionsForObject::onSelectEnable(bool state)
     else if(node->obj->isType(kgmTrigger::Class))
       kgmIGame::getGame()->getLogic()->add((kgmTrigger*)node->obj);
 
-    if(node->obj->getBody())
-      kgmIGame::getGame()->getPhysics()->add(node->obj->getBody());
+    if(node->unt->getBody())
+      kgmIGame::getGame()->getPhysics()->add(node->unt->getBody());
   }
   else
   {
-    node->obj->disable();
-    kgmIGame::getGame()->getLogic()->remove(node->obj);
+    node->unt->disable();
+    kgmIGame::getGame()->getLogic()->remove(node->unt);
 
-    if(node->obj->getBody())
-      kgmIGame::getGame()->getPhysics()->remove(node->obj->getBody());
+    if(node->unt->getBody())
+      kgmIGame::getGame()->getPhysics()->remove(node->unt->getBody());
   }
 }
 
 void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
 {
-  for(int i = 0; i < node->obj->m_variables.length(); i++)
+  for(int i = 0; i < node->unt->m_variables.length(); i++)
   {
-    if(node->obj->m_variables[i].getName() == id)
+    if(node->unt->m_variables[i].getName() == id)
     {
-      switch(node->obj->m_variables[i].getType())
+      switch(node->unt->m_variables[i].getType())
       {
       case kgmVariable::TString:
-        node->obj->m_variables[i].setString(data);
+        node->unt->m_variables[i].setString(data);
         break;
       case kgmVariable::TInteger:
-        node->obj->m_variables[i].setInteger(kgmConvert::toInteger(data));
+        node->unt->m_variables[i].setInteger(kgmConvert::toInteger(data));
         break;
       case kgmVariable::TFloat:
-        node->obj->m_variables[i].setFloat(kgmConvert::toDouble(data));
+        node->unt->m_variables[i].setFloat(kgmConvert::toDouble(data));
         break;
       case kgmVariable::TBoolean:
-        node->obj->m_variables[i].setBoolean(kgmConvert::toBoolean(data));
+        node->unt->m_variables[i].setBoolean(kgmConvert::toBoolean(data));
         break;
       }
 
-      node->obj->eupdate();
+      node->unt->eupdate();
     }
   }
 }

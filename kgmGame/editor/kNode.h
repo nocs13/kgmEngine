@@ -37,15 +37,16 @@ public:
 
   union
   {
-    kgmUnit*        unt;
-    kgmLight*       lgt;
-    kgmActor*       act;
-    kgmVisual*      msh;
-    kgmEffect*      eff;
-    kgmSensor*      sns;
-    kgmTrigger*     trg;
-    kgmObstacle*    obs;
-    kgmUnit*  obj;
+    kgmUnit*      unt;
+    kgmLight*     lgt;
+    kgmActor*     act;
+    kgmVisual*    msh;
+    kgmEffect*    eff;
+    kgmSensor*    sns;
+    kgmTrigger*   trg;
+    kgmObstacle*  obs;
+
+    kgmObject*    obj;
   };
 
   Type typ;
@@ -57,8 +58,6 @@ public:
 
   kgmString nam;
   kgmString lnk;
-  kgmString mat;
-  kgmString shd;
   kgmString shp;
   kgmString ini;
 
@@ -85,11 +84,11 @@ private:
 public:
   kNode()
   {
-    typ = NONE;
-    msh = null;
-    icn = null;
-    geo = null;
-    col = false;
+    typ  = NONE;
+    msh  = null;
+    icn  = null;
+    geo  = null;
+    col  = false;
     lock = false;
   }
 
@@ -106,22 +105,28 @@ public:
 
   kNode(kgmUnit* u)
   {
-    typ = UNIT;
-    unt = u;
-    icn = null;
-    geo = null;
-    col = false;
+    typ  = UNIT;
+    unt  = u;
+    icn  = null;
+    geo  = null;
+    col  = false;
     lock = false;
+
+    if(u)
+      u->increment();
   }
 
   kNode(kgmLight* l)
   {
-    typ = LIGHT;
-    lgt = l;
-    icn = null;
-    geo = null;
-    col = false;
+    typ  = LIGHT;
+    lgt  = l;
+    icn  = null;
+    geo  = null;
+    col  = false;
     lock = false;
+
+    if(l)
+      l->increment();
   }
 
   kNode(kgmActor* a)
@@ -132,6 +137,9 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    if(a)
+      a->increment();
   }
 
   kNode(kgmEffect* e)
@@ -142,6 +150,9 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    if(e)
+      e->increment();
   }
 
   kNode(kgmSensor* s)
@@ -152,6 +163,9 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    if(s)
+      s->increment();
   }
 
   kNode(kgmTrigger* t)
@@ -162,6 +176,9 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    if(t)
+      t->increment();
   }
 
   kNode(kgmObstacle* o)
@@ -172,6 +189,9 @@ public:
     geo = null;
     col = true;
     lock = false;
+
+    if(o)
+      o->increment();
   }
 
   kNode(const kNode& n)
@@ -179,7 +199,6 @@ public:
     typ = n.typ;
     col = n.col;
     shp = n.shp;
-    shd = n.shd;
     pos = n.pos;
     rot = n.rot;
     bnd = n.bnd;
@@ -197,9 +216,10 @@ public:
   mtx4 getMatrix();
   void setPosition(vec3 v);
   void setRotation(vec3 r);
-  void setMaterial(kgmString m);
-  void setShader(kgmString s);
   void setConvex(kgmString s);
+
+  void setMaterial(kgmMaterial* m);
+  kgmMaterial* getMaterial();
 };
 
 }

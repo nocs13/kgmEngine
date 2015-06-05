@@ -97,13 +97,17 @@ public:
 
   kgmRay3d<float> getPointRay(int x, int y);
 
-  __stdcall bool mapSave(kgmString);
-  __stdcall bool mapOpen(kgmString);
-  __stdcall bool addMesh(kgmString);
+  __stdcall bool fdMapSave(kFileDialog*);
+  __stdcall bool fdMapOpen(kFileDialog*);
+  __stdcall bool fdAddMesh(kFileDialog*);
   __stdcall bool addUnit(kgmString);
   __stdcall bool addActor(kgmString);
   __stdcall bool addEffect(kgmString);
   __stdcall bool addSensor(kgmString);
+
+  bool mapSave(kgmString);
+  bool mapOpen(kgmString);
+  bool addMesh(kgmString);
 
   void initPhysics();
   void initLogic();

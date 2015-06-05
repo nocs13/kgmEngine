@@ -50,12 +50,12 @@ void kNode::setPosition(vec3 v)
   case EFFECT:
   case SENSOR:
   case TRIGGER:
-    obj->setPosition(pos);
-    obj->setRotation(rot);
+    trg->setPosition(pos);
+    trg->setRotation(rot);
 
-    if(obj->getVisual())
+    if(trg->getVisual())
     {
-      kgmVisual* vis = obj->getVisual();
+      kgmVisual* vis = trg->getVisual();
 
       vis->getTransform() = mtrn;
     }
@@ -93,12 +93,12 @@ void kNode::setRotation(vec3 r)
   case EFFECT:
   case SENSOR:
   case TRIGGER:
-    obj->setPosition(pos);
-    obj->setRotation(rot);
+    trg->setPosition(pos);
+    trg->setRotation(rot);
 
-    if(obj->getVisual())
+    if(trg->getVisual())
     {
-      kgmVisual* vis = obj->getVisual();
+      kgmVisual* vis = trg->getVisual();
 
       vis->getTransform() = mtrn;
     }
@@ -106,31 +106,62 @@ void kNode::setRotation(vec3 r)
   }
 }
 
-void kNode::setMaterial(kgmString m)
-{
-  if(typ == MESH)
-  {
-  }
-  else if(typ == ACTOR)
-  {
-
-  }
-}
-
-void kNode::setShader(kgmString s)
-{
-  if(typ == MESH)
-  {
-  }
-  else if(typ == ACTOR)
-  {
-
-  }
-}
-
 void kNode::setConvex(kgmString s)
 {
   if(typ == OBSTACLE)
   {
+  }
+}
+
+kgmMaterial* kNode::getMaterial()
+{
+  switch(typ)
+  {
+   case MESH:
+    {
+      return msh->getMaterial();
+
+      break;
+    }
+   case UNIT:
+   case ACTOR:
+   case EFFECT:
+    {
+      kgmVisual* v = unt->getVisual();
+
+      if(v)
+        v->getMaterial();
+      break;
+    }
+   default:
+      return null;
+  }
+
+  return null;
+}
+
+void kNode::setMaterial(kgmMaterial* m)
+{
+  switch(typ)
+  {
+    case MESH:
+    {
+      return msh->set(m);
+
+      break;
+    }
+    case UNIT:
+    case ACTOR:
+    case EFFECT:
+    {
+      kgmVisual* v = unt->getVisual();
+
+      if(v)
+        v->set(m);
+
+      break;
+    }
+    default:
+      break;
   }
 }

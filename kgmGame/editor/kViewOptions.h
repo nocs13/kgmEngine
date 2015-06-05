@@ -61,6 +61,21 @@ public:
 
 };
 
+class kViewOptionsForMaterial : public kViewOptions
+{
+  kFileDialog* fd;
+
+public:
+  kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
+
+  __stdcall void onSelectFailed();
+  __stdcall void onSelectShader();
+  __stdcall void onSelectedShader();
+  __stdcall void onSelectTexColor();
+  __stdcall void onSelectTexNormal();
+  __stdcall void onSelectTexSpecular();
+};
+
 class kViewOptionsForMesh : public kViewOptions
 {
   kFileDialog* fd;

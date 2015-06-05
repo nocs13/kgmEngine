@@ -28,7 +28,7 @@ class kFileDialog : public kgmGuiFrame
   bool      allsee;
 
 public:
-  typedef kgmCallback<void, kgmObject*, kgmString> ClickEventCallback;
+  typedef kgmCallback<void, kgmObject*, kFileDialog*> ClickEventCallback;
 
 private:
   ClickEventCallback callback;
@@ -61,6 +61,7 @@ protected:
   __stdcall void onSaveSelect();
   __stdcall void onFailSelect();
   __stdcall void onEditFile(kgmString);
+
   void onAction(kgmGui*, u32);
   void onMsLeftUp(int, int, int);
   void onMsMove(int, int, int);

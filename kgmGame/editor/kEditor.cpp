@@ -341,6 +341,13 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   return ray;
 }
 
+bool kEditor::fdMapOpen(kFileDialog* fd)
+{
+  kgmString s = fd->getPath();
+
+  return mapOpen(s);
+}
+
 bool kEditor::mapOpen(kgmString s)
 {
   kgmFile file;
@@ -395,7 +402,6 @@ bool kEditor::mapOpen(kgmString s)
       node->col = mnode.col;
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
-      node->shd = mnode.shd;
       node->lock = mnode.lck;
 
       game->m_render->add(node->msh);
@@ -528,6 +534,13 @@ bool kEditor::mapOpen(kgmString s)
   selected = null;
 
   return true;
+}
+
+bool kEditor::fdMapSave(kFileDialog* fd)
+{
+  kgmString s = fd->getPath();
+
+  return mapSave(s);
 }
 
 bool kEditor::mapSave(kgmString s)
@@ -705,6 +718,11 @@ bool kEditor::mapSave(kgmString s)
   return true;
 }
 
+bool kEditor::fdAddMesh(kFileDialog* fd)
+{
+  return addMesh(fd->getPath());
+}
+
 bool kEditor::addMesh(kgmString path)
 {
   kgmString dir, name;
@@ -727,6 +745,7 @@ bool kEditor::addMesh(kgmString path)
   if(mesh)
   {
     kNode* node = new kNode(mesh);
+    mesh->release();
     node->bnd = mesh->bound();
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
     node->lnk = name;
@@ -999,7 +1018,7 @@ void kEditor::onKeyUp(int k)
       case kNode::ACTOR:
       case kNode::SENSOR:
       case kNode::TRIGGER:
-        (*i)->obj->resetToVariables();
+        (*i)->unt->resetToVariables();
         break;
       default:
         break;
@@ -1269,7 +1288,7 @@ void kEditor::onMapOpen()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapOpen));
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapOpen));
 }
 
 void kEditor::onMapSave()
@@ -1280,7 +1299,7 @@ void kEditor::onMapSave()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::mapSave));
+  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
 }
 
 void kEditor::onEditClone()
@@ -1364,7 +1383,7 @@ void kEditor::onEditRemove()
 
   nodes.erase(selected);
 
-//  selected->release();
+  selected->release();
 
   selected = null;
 }
@@ -1421,7 +1440,7 @@ void kEditor::onAddMesh()
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addMesh));
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdAddMesh));
 }
 
 void kEditor::onAddUnit()
