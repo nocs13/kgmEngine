@@ -13,8 +13,6 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
   kgm_log() << "init ogl screen\n";
 #endif
 
-  m_glctx = 0;
-
 #ifdef WIN32
 
   PIXELFORMATDESCRIPTOR pfd = {0};

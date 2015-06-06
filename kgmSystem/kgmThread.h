@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "../kgmBase/kgmBase.h"
+#include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmObject.h"
 
 #ifdef WIN32
