@@ -70,13 +70,12 @@ public:
 
   __stdcall void onSelectFailed();
   __stdcall void onSelectShader();
-  __stdcall void onSelectedShader();
   __stdcall void onSelectTexColor();
   __stdcall void onSelectTexNormal();
   __stdcall void onSelectTexSpecular();
 };
 
-class kViewOptionsForMesh : public kViewOptions
+class kViewOptionsForMesh : public kViewOptionsForMaterial
 {
   kFileDialog* fd;
   kgmGuiText*  guiMtlText;

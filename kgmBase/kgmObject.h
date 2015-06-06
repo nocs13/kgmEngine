@@ -164,24 +164,6 @@ public:
     return false;
   }
 
-/*  u32 references()
-  {
-    return m_references;
-  }
-
-  void increment()
-  {
-    m_references += 1;
-  }
-
-  void release()
-  {
-    m_references--;
-
-    if(m_references < 1)
-      delete this;
-  }*/
-
   template<class T, class... Args>
   void connect(T *t, void(T::*f)(Args...), Event<Args...> &s)
   {

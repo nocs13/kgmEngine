@@ -53,7 +53,6 @@ private:
   Labels*     labels;
 
   u32 tabs;
-  //kgmList<kgmGui*> tabs;
 
 public:
  kgmGuiTab();

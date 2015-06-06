@@ -182,8 +182,6 @@ public:
   kgmAnimation*  getAnimation(char*);
 
   bool           loadXml(kgmString& path);
-  bool           loadXml_I(kgmString& path);
-
 
 public:
   void guiAdd(kgmGui* g)
@@ -205,7 +203,7 @@ public:
       if(!is)
       {
         m_guis.add(g);
-//        g->increment();
+        g->increment();
 
         if(m_render)
           m_render->add(g);

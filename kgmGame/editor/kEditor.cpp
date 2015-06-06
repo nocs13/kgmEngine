@@ -1399,7 +1399,7 @@ void kEditor::onEditOptions()
   switch(selected->typ)
   {
   case kNode::MESH:
-    vop = new kViewOptionsForMesh(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForMesh(selected, 50, 50, 260, 300);
     break;
   case kNode::UNIT:
     vop = new kViewOptionsForUnit(selected, 50, 50, 300, 300);

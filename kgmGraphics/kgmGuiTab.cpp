@@ -31,14 +31,7 @@ kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
 
 kgmGuiTab::~kgmGuiTab()
 {
-  //for(int i = tabs.length(); i > 0; i--)
-  {
-    //tabs[i]->release();
-  }
-
-  //tabs.clear();
 }
-
 
 u32 kgmGuiTab::set(u32 k)
 {

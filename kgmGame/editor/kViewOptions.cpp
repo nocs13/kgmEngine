@@ -291,15 +291,16 @@ void kViewOptions::onBoundZ(kgmString s)
 kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmGui* tmaterial = tab->addTab("Material");
+  y_coord = 1;
+  fd = null;
+  y_coord += 23;
+
   kgmMaterial* mtl = n->getMaterial();
 
   if(!mtl)
     return;
 
-  kgmGui* tmaterial = tab->addTab("Material");
-  y_coord = 1;
-  fd = null;
-  y_coord += 23;
   kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
@@ -329,7 +330,7 @@ void kViewOptionsForMaterial::onSelectTexColor()
 }
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
-:kViewOptions(n, x, y, w, h)
+:kViewOptionsForMaterial(n, x, y, w, h)
 {
   kgmGui* tmesh = tab->addTab("Mesh");
   y_coord = 1;

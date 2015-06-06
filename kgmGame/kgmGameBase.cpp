@@ -507,8 +507,7 @@ int kgmGameBase::gLoad(kgmString s)
 
   m_state = State_Load;
 
-  //loadXml(s);
-  loadXml_I(s);
+  loadXml(s);
 
   if(m_logic)   m_logic->build();
   if(m_render)  m_render->build();
@@ -521,12 +520,7 @@ int kgmGameBase::gLoad(kgmString s)
 
 int kgmGameBase::gUnload()
 {
-  u32 state = m_state;
   m_state = State_Clean;
-
-#ifdef DEBUG
-  kgm_log() << "\nUnloading...";
-#endif
 
   if(m_logic)
     m_logic->clear();
@@ -543,7 +537,7 @@ int kgmGameBase::gUnload()
   kgm_log() << "\nUnloaded";
 #endif
 
-  return 0;
+  return m_state;
 }
 
 int kgmGameBase::gCommand(kgmString s)
@@ -558,11 +552,14 @@ int kgmGameBase::gCommand(kgmString s)
   return true;
 }
 
-int kgmGameBase::gQuit(){
+int kgmGameBase::gQuit()
+{
   m_state = State_Quit;
   m_quit = true;
   m_state = State_Idle;
+
   close();
+
   return 1;
 }
 
@@ -590,8 +587,7 @@ void kgmGameBase::gPause(bool s){
   {
     m_state = State_Pause;
   }
-
-  if(!s && m_state == State_Pause)
+  else if(!s && m_state == State_Pause)
   {
     m_state = State_Play;
   }
@@ -645,29 +641,35 @@ kgmUnit* kgmGameBase::gObject(kgmString s)
 }
 
 ///////////////////////////////////////
-kgmTexture* kgmGameBase::getTexture(char* id){
+kgmTexture* kgmGameBase::getTexture(char* id)
+{
   return kgmIGame::getGame()->getResources()->getTexture(id);
 }
 
-kgmShader* kgmGameBase::getShader(char* id){
+kgmShader* kgmGameBase::getShader(char* id)
+{
   return kgmIGame::getGame()->getResources()->getShader(id);
 }
 
-kgmMesh* kgmGameBase::getMesh(char* id){
+kgmMesh* kgmGameBase::getMesh(char* id)
+{
   return kgmIGame::getGame()->getResources()->getMesh(id);
 }
 
-kgmAnimation* kgmGameBase::getAnimation(char* id){
+kgmAnimation* kgmGameBase::getAnimation(char* id)
+{
   return kgmIGame::getGame()->getResources()->getAnimation(id);
 }
 
-kgmActor* kgmGameBase::getActor(kgmString id){
+kgmActor* kgmGameBase::getActor(kgmString id)
+{
   return gSpawn(id);
 }
 
 /////////////////////////
 //**************Load Map**********/////////
 /////////////////
+
 inline void xmlAttr(kgmXml::Node* node, const char* id, kgmString& val)
 {
   kgmString sid;
@@ -854,7 +856,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(act && act->getBody())
             m_render->add(act->getBody());
 #endif
-//          act->release();
+          act->release();
         }
       }
       else if(id == "kgmUnit")
@@ -874,7 +876,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
 #endif
-//        gob->release();
+        gob->release();
       }
       else if(id == "Vertices")
       {
@@ -1079,7 +1081,7 @@ bool kgmGameBase::loadXml(kgmString& path)
               m_render->add(vis);
               mesh->release();
               mtl->release();
-//              vis->release();
+              vis->release();
             }
 
             kgmList<triangle3> tr_list;
@@ -1172,141 +1174,11 @@ bool kgmGameBase::loadXml(kgmString& path)
 
           delete [] v;
         }
+
         m_data = "";
       }
     }
   }
-
-  return true;
-}
-
-bool kgmGameBase::loadXml_I(kgmString& idmap)
-{
-  kgmMemory<u8> mem;
-
-#ifdef EDITOR
-  if(kgmSystem::isFile(idmap))
-  {
-    kgmFile file;
-
-    if(file.open(idmap, kgmFile::Read))
-    {
-      file.mmap(mem);
-      file.close();
-    }
-  }
-  else
-#endif
-  m_resources->getFile(idmap, mem);
-
-  if(mem.length() < 1)
-    return false;
-
-  kgmXml xml;
-
-  xml.open(mem);
-  mem.clear();
-
-
-  kgmGameMap map(this, kgmGameMap::OpenRead);
-  map.open(xml);
-
-  kgmGameMap::Node mnode = map.next();
-  mtx4 mtr, mr, mv;
-
-  while(mnode.obj)
-  {
-    if(mnode.typ == kgmGameMap::NodeMsh)
-    {
-      kgmMesh *msh = (kgmMesh*)mnode.obj;
-
-      kgmMaterial *mtl = null;
-
-      //mtl = getResources()->getMaterial(mnode.mtl);
-
-      if(mtl)
-        mtl->setShader(getResources()->getShader(mnode.shd));
-
-      mr.identity();
-      mr.rotate(mnode.rot);
-      mv.identity();
-      mv.translate(mnode.pos);
-      mtr = mr * mv;
-
-      kgmVisual *vis = new kgmVisual();
-      vis->set(msh);
-      vis->set(mtl);
-      vis->set(&mtr);
-      m_render->add(vis);
-//      vis->release();
-    }
-    else if(mnode.typ == kgmGameMap::NodeLgt)
-    {
-      kgmLight *lgt = (kgmLight*)mnode.obj;
-
-      m_render->add(lgt);
-
-      lgt->position = mnode.pos;
-
-      mr.identity();
-      mr.rotate(mnode.rot);
-      vec3 v(1, 0, 0);
-      lgt->direction = mr * v;
-    }
-    else if(mnode.typ == kgmGameMap::NodeCam)
-    {
-      getRender()->camera().mPos = ((kgmCamera*)mnode.obj)->mPos;
-      getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
-      getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
-
-//      mnode.obj->release();
-
-      getRender()->camera().update();
-    }
-    else if(mnode.typ == kgmGameMap::NodeAct)
-    {
-      kgmActor *act = (kgmActor*)mnode.obj;
-
-      act->setPosition(mnode.pos);
-      act->setRotation(mnode.rot);
-
-      kgm_log() << "actor possition " << mnode.pos.x << " " << mnode.pos.y << "" << mnode.pos.z << "\n";
-
-      m_logic->add(act);
-      m_render->add(act->getVisual());
-      m_physics->add(act->getBody());
-
-      if(act->m_gameplayer)
-        m_logic->setPlayer(act);
-
-      kgmString state = act->getState();
-
-      if(state.length() < 1)
-        act->setState("idle");
-    }
-    else if(mnode.typ == kgmGameMap::NodeSns)
-    {
-      kgmSensor *sns = (kgmSensor*)mnode.obj;
-
-      sns->setPosition(mnode.pos);
-      sns->setRotation(mnode.rot);
-
-      m_logic->add(sns);
-    }
-    else if(mnode.typ == kgmGameMap::NodeTrg)
-    {
-      kgmTrigger *trg = (kgmTrigger*)mnode.obj;
-
-      trg->setPosition(mnode.pos);
-      trg->setRotation(mnode.rot);
-
-      m_logic->add(trg);
-    }
-
-    mnode = map.next();
-  }
-
-  xml.close();
 
   return true;
 }

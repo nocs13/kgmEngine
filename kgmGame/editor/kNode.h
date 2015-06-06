@@ -101,6 +101,13 @@ public:
     geo = null;
     col = false;
     lock = false;
+
+    if(m)
+    {
+      kgmMaterial* mtl = new kgmMaterial();
+      msh->set(mtl);
+      mtl->release();
+    }
   }
 
   kNode(kgmUnit* u)
