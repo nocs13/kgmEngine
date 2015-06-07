@@ -65,6 +65,7 @@ class kViewOptionsForMaterial : public kViewOptions
 {
   kFileDialog* fd;
 
+  Slot<kViewOptionsForMaterial, int> slotSelectShader;
 public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 

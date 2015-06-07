@@ -34,27 +34,132 @@ class kgmObject
 {
   KGM_OBJECT(kgmObject);
 
-  template<class... Args>
+protected:
+  /*template <class T, class... Args>
   class Action
   {
   public:
-    virtual void call(Args... args) = 0;
-  };
-
-public:
-  template<class... Args>
-  class Event
-  {
-    kgmList<Action<Args...>*> list;
-
-    friend void kgmObject::connect();
-    friend void kgmObject::spread();
+    T *t;
+    void(T::*f)(Args...);
 
   public:
+    Action(T *tc, void(T::*fc)(Args...))
+    {
+      t = tc;
+      f = fc;
+    }
+
+    virtual void call(Args... args)
+    {
+      (t->*f)(args...);
+    }
+  };*/
+
+  template <class... Args> class Signal;
+
+  class BaseSlot
+  {
+  public:
+    virtual ~BaseSlot(){}
+  };
+
+  template <class... Args> class AbstractSlot: public BaseSlot
+  {
+  protected:
+    virtual ~AbstractSlot()
+    {
+      for(int i = 0; i < signals.length(); i++)
+        signals[i]->disconnect(*this);
+    }
+
+    friend class Signal<Args...>;
+
+    virtual void add(Signal<Args...>* e)
+    {
+      signals.add(e);
+    }
+
+    virtual void remove(Signal<Args...>* e)
+    {
+      signals.erase(e);
+    }
+
+    virtual void call(Args... args) = 0;
+
+  protected:
+    kgmList<Signal<Args...>*> signals;
+  };
+
+  template <class T, class... Args> class Slot: public AbstractSlot<Args...>
+  {
+  public:
+    Slot()
+    {
+
+    }
+
+    Slot(T* t, void(T::*f)(Args...), Signal<Args...> &s)
+    {
+
+    }
+
+  private:
+    Slot(const Slot&)
+    {
+
+    }
+
+    void operator=(const Slot&)
+    {
+
+    }
+
+    friend class Signal<Args...>;
+
+    virtual void call(Args... args)
+    {
+      (t->f)(args...);
+    }
+
+  private:
+    T* t;
+    void (T::*f)(Args...);
+
+  };
+
+  template<class... Args>
+  class Signal
+  {
+    kgmList<AbstractSlot<Args...>*> list;
+
+  public:
+    Signal()
+    {
+
+    }
+
+    ~Signal()
+    {
+      for(int i = 0; i < list.length(); i++)
+        list[i]->remove(this);
+    }
+
+    void connect(AbstractSlot<Args...> &s)
+    {
+      list.add(s);
+
+      s.add(this);
+    }
+
+    void disconnect(AbstractSlot<Args...> &s)
+    {
+      list.erase(s);
+    }
+
     void operator()(Args... args)
     {
       for(int i = 0; i < list.length(); i++)
-        (list[i])->call(args...);
+        list[i]->call(args...);
     }
   };
 
@@ -164,11 +269,6 @@ public:
     return false;
   }
 
-  template<class T, class... Args>
-  void connect(T *t, void(T::*f)(Args...), Event<Args...> &s)
-  {
-  }
-
   virtual kgmObject* clone()
   {
     return null;
@@ -178,10 +278,6 @@ public:
   //void  operator delete(void* p);
 
   friend class kgmApp;
-
-private:
-  template<class... Args>
-  void spread(Event<Args...> &evt);
 };
 ///////////////////
 
