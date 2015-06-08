@@ -41,11 +41,10 @@ public:
 
   struct Node
   {
-    NodeType typ;
+    NodeType typ = NodeNone;
 
-    kgmObject* obj;
-
-    kgmMaterial* mtl;
+    kgmObject*   obj = null;
+    kgmMaterial* mtl = null;
 
     vec3       pos;
     vec3       rot;
@@ -60,6 +59,13 @@ public:
     bool       col;  //collision type
     bool       hdn;  // node is hidden
     bool       lck;  //locked. for editor only
+
+    Node()
+    {
+      typ = NodeNone;
+      obj = null;
+      mtl = null;
+    }
   };
 
 private:
@@ -91,7 +97,7 @@ public:
   bool addActor(Node n);
   bool addSensor(Node n);
   bool addTrigger(Node n);
-  bool addGameObject(Node n);
+  bool addUnit(Node n);
 
   void addCollision(kgmXml::Node& xnode, Node& node);
 

@@ -63,29 +63,42 @@ public:
 
 class kViewOptionsForMaterial : public kViewOptions
 {
-  kFileDialog* fd;
+  enum Mode
+  {
+    Mode_None,
+    Mode_Shader,
+    Mode_Color,
+    Mode_Normal,
+    Mode_Specular
+  };
+
+  Mode mode;
 
   Slot<kViewOptionsForMaterial, int> slotSelectShader;
+
+  Slot<kViewOptionsForMaterial, int> slotSelectColor;
+  Slot<kViewOptionsForMaterial, int> slotSelectNormal;
+  Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
+
 public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 
-  __stdcall void onSelectFailed();
-  __stdcall void onSelectShader();
-  __stdcall void onSelectTexColor();
-  __stdcall void onSelectTexNormal();
-  __stdcall void onSelectTexSpecular();
+  __stdcall void onSelectFailed(kFileDialog*);
+  __stdcall void onSelectSuccess(kFileDialog*);
+  __stdcall void onSelectShader(int);
+  __stdcall void onSelectTexColor(int);
+  __stdcall void onSelectTexNormal(int);
+  __stdcall void onSelectTexSpecular(int);
 };
 
 class kViewOptionsForMesh : public kViewOptionsForMaterial
 {
-  kFileDialog* fd;
   kgmGuiText*  guiMtlText;
   kgmGuiText*  guiShdText;
 
 public:
   kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
 
-  __stdcall void onSelectFailed();
   __stdcall void onSelectMaterial();
   __stdcall void onSelectedMaterial();
   __stdcall void onSelectShader();

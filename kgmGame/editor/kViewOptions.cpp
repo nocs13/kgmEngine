@@ -293,9 +293,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 {
   kgmGui* tmaterial = tab->addTab("Material");
   y_coord = 1;
-  fd = null;
-  y_coord += 23;
 
+  y_coord += 23;
   kgmMaterial* mtl = n->getMaterial();
 
   if(!mtl)
@@ -305,28 +304,132 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->setText("TexColor");
   g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
+  if(mtl->getTexColor())
+    g->setText(mtl->getTexColor()->m_id);
+
   kgmGuiButton* btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectTexColor));
+  slotSelectColor.connect(this, &kViewOptionsForMaterial::onSelectTexColor, &btn->sigClick);
+
+  y_coord += 23;
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("TexNormal");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+
+  if(mtl->getTexNormal())
+    g->setText(mtl->getTexNormal()->m_id);
+
+  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("select");
+  slotSelectNormal.connect(this, &kViewOptionsForMaterial::onSelectTexNormal, &btn->sigClick);
+
+  y_coord += 23;
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("TexSpecular");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+
+  if(mtl->getTexSpecular())
+    g->setText(mtl->getTexSpecular()->m_id);
+
+  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("select");
+  slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
   g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
+  if(mtl->getShader())
+    g->setText(mtl->getShader()->m_id);
+
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectShader));
+  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
 }
 
-void kViewOptionsForMaterial::onSelectShader()
+void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)
 {
-
+  fd->erase();
 }
 
-void kViewOptionsForMaterial::onSelectTexColor()
+void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
 {
+  switch (mode)
+  {
+    case Mode_Shader:
+      this->node->getMaterial()->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
+      break;
+    case Mode_Color:
+      this->node->getMaterial()->setTexColor(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      break;
+    case Mode_Normal:
+      this->node->getMaterial()->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      break;
+    case Mode_Specular:
+      this->node->getMaterial()->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      break;
+    default:
+      break;
+  }
 
+  fd->erase();
+}
+
+void kViewOptionsForMaterial::onSelectShader(int)
+{
+  mode = Mode_Shader;
+
+  kFileDialog* fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("glsl");
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMaterial::onSelectTexColor(int)
+{
+  mode = Mode_Color;
+
+  kFileDialog* fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("tga");
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMaterial::onSelectTexNormal(int)
+{
+  mode = Mode_Normal;
+
+  kFileDialog* fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("tga");
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMaterial::onSelectTexSpecular(int)
+{
+  mode = Mode_Specular;
+
+  kFileDialog* fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter("tga");
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
@@ -334,15 +437,7 @@ kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
 {
   kgmGui* tmesh = tab->addTab("Mesh");
   y_coord = 1;
-  fd = null;
   y_coord += 23;
-}
-
-void kViewOptionsForMesh::onSelectFailed()
-{
-  fd->erase();
-//  fd->release();
-  fd = null;
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
@@ -669,7 +764,7 @@ void kViewOptionsForObstacle::onSelectConvex()
   fd->showHidden(false);
   fd->show();
   fd->setFilter("cvx");
-  fd->setFailCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedConvex));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }

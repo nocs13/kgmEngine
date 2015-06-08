@@ -22,7 +22,7 @@ public:
   ClickEventCallback callback;
 
 public:
-  Signal<int> event;
+  Signal<int> sigClick;
 
 public:
   kgmGuiButton();

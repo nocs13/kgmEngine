@@ -402,6 +402,7 @@ bool kEditor::mapOpen(kgmString s)
       node->col = mnode.col;
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
+      node->setMaterial(mnode.mtl);
       node->lock = mnode.lck;
 
       game->m_render->add(node->msh);
@@ -630,6 +631,8 @@ bool kEditor::mapSave(kgmString s)
     node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
+    node.mtl = (*i)->getMaterial();
+
     map.addMesh(node);
   }
 
@@ -677,7 +680,7 @@ bool kEditor::mapSave(kgmString s)
     node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
-    map.addGameObject(node);
+    map.addUnit(node);
   }
 
   for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)

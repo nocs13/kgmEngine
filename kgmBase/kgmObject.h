@@ -35,26 +35,6 @@ class kgmObject
   KGM_OBJECT(kgmObject);
 
 protected:
-  /*template <class T, class... Args>
-  class Action
-  {
-  public:
-    T *t;
-    void(T::*f)(Args...);
-
-  public:
-    Action(T *tc, void(T::*fc)(Args...))
-    {
-      t = tc;
-      f = fc;
-    }
-
-    virtual void call(Args... args)
-    {
-      (t->*f)(args...);
-    }
-  };*/
-
   template <class... Args> class Signal;
 
   class BaseSlot
@@ -63,13 +43,14 @@ protected:
     virtual ~BaseSlot(){}
   };
 
-  template <class... Args> class AbstractSlot: public BaseSlot
+  template <class... Args>
+  class AbstractSlot: public BaseSlot
   {
   protected:
     virtual ~AbstractSlot()
     {
       for(int i = 0; i < signals.length(); i++)
-        signals[i]->disconnect(*this);
+        signals[i]->disconnect(this);
     }
 
     friend class Signal<Args...>;
@@ -90,17 +71,26 @@ protected:
     kgmList<Signal<Args...>*> signals;
   };
 
-  template <class T, class... Args> class Slot: public AbstractSlot<Args...>
+  template <class T, class... Args>
+  class Slot: public AbstractSlot<Args...>
   {
   public:
     Slot()
     {
-
+      this->t = null;
+      this->f = null;
     }
 
-    Slot(T* t, void(T::*f)(Args...), Signal<Args...> &s)
+    bool connect(T* t, void(T::*f)(Args...), Signal<Args...> *s)
     {
+      if (this->t != null || this->f != null)
+        return false;
 
+      this->t = t;
+      this->f = f;
+
+      AbstractSlot<Args...>::add(s);
+      s->connect(this);
     }
 
   private:
@@ -118,7 +108,10 @@ protected:
 
     virtual void call(Args... args)
     {
-      (t->f)(args...);
+      if(!t || !f)
+        return;
+
+      (t->*f)(args...);
     }
 
   private:
@@ -144,14 +137,17 @@ protected:
         list[i]->remove(this);
     }
 
-    void connect(AbstractSlot<Args...> &s)
+    void connect(AbstractSlot<Args...> *s)
     {
+      if(!s)
+        return;
+
       list.add(s);
 
-      s.add(this);
+      s->add(this);
     }
 
-    void disconnect(AbstractSlot<Args...> &s)
+    void disconnect(AbstractSlot<Args...> *s)
     {
       list.erase(s);
     }

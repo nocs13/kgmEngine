@@ -119,7 +119,7 @@ void kFileDialog::onFailSelect()
   hide();
 
   if(fail_callback.hasObject() && fail_callback.hasFunction())
-    fail_callback();
+    fail_callback(this);
 }
 
 void kFileDialog::onEditFile(kgmString s)
@@ -128,7 +128,7 @@ void kFileDialog::onEditFile(kgmString s)
   filePath = pathFolder + DIRCON + s;
 }
 
-void kFileDialog::setFailCallback(kgmGuiButton::ClickEventCallback call)
+void kFileDialog::setFailCallback(ClickEventCallback call)
 {
   fail_callback = call;
 }
