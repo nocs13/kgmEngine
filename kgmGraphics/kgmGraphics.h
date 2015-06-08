@@ -19,6 +19,7 @@
 
 #include "kgmMesh.h"
 #include "kgmText.h"
+#include "kgmIcon.h"
 #include "kgmLight.h"
 #include "kgmSprite.h"
 #include "kgmCamera.h"
@@ -48,16 +49,16 @@ public:
   class Node
   {
   public:
-    bool remove;
+    bool m_remove;
 
   public:
     Node()
     {
-      remove = false;
+      m_remove = false;
     }
 
-    bool getRemove()       { return remove; }
-    void setRemove(bool r) { remove = r;    }
+    bool removed() { return m_remove; }
+    void remove()  { m_remove = true; }
   };
 
   class Light: public Node
@@ -175,7 +176,7 @@ private:
   mtx4  location;
 
   kgmTab<u16, kgmShader*>  shaders;
-  kgmTab<u16, kgmTexture*> textures;
+  //kgmTab<u16, kgmTexture*> textures;
 
   kgmTexture *m_shadowmap;
 
@@ -192,7 +193,6 @@ public:
   kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();
 
-  void clear();
   void build();
   void render();
   void update();
@@ -249,33 +249,12 @@ public:
     m_lights.add(light);
   }
 
-  /*void add(kgmMesh* mesh, kgmMaterial* mtl, mtx4* mtx = null)
-  {
-    Mesh m;
-
-    if(!mesh)
-      return;
-
-    if(mesh) mesh->increment();
-    if(mtl)  mtl->increment();
-
-    m.mesh = mesh;
-    m.material = mtl;
-
-    if(mtx)
-      m.mtx = *mtx;
-    else
-      m.mtx.identity();
-
-    m_meshes.add(m);
-  }*/
-
   void add(kgmVisual* a)
   {
     if(!a)
       return;
 
-//    a->increment();
+    a->increment();
 
     m_visuals.add(a);
   }
@@ -285,7 +264,7 @@ public:
     if(!ico)
       return;
 
-//    ico->increment();
+    ico->increment();
     m_icons.add(ico);
   }
 
@@ -293,6 +272,7 @@ public:
   {
     if(gui)
     {
+      gui->increment();
       m_guis.add(gui);
     }
   }
@@ -302,24 +282,11 @@ public:
   {
     if(a)
     {
+      a->increment();
       m_bodies.add(a);
     }
   }
 #endif
-
-  void remove(kgmGui* gui)
-  {
-    for(int i = 0; i < m_guis.length(); i++)
-    {
-      if(m_guis[i] == gui)
-      {
-        m_guis[i] = null;
-        m_guis.erase(i);
-
-        break;
-      }
-    }
-  }
 
   void remove(kgmLight* light)
   {
@@ -327,23 +294,17 @@ public:
     {
       if(m_lights[i].light == light)
       {
-        m_lights[i].remove = true;
+        m_lights[i].remove();
 
         break;
       }
     }
   }
 
-  void remove(kgmVisual* visual)
-  {
-    if(visual)
-      visual->remove();
-  }
-
   void remove(Icon* ico)
   {
     if(ico)
-      ico->remove = true;
+      ico->remove();
   }
 
   iRect viewport()

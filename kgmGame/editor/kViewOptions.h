@@ -80,6 +80,11 @@ class kViewOptionsForMaterial : public kViewOptions
   Slot<kViewOptionsForMaterial, int> slotSelectNormal;
   Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
 
+  kgmGuiText*  guiTextTexColor;
+  kgmGuiText*  guiTextTexNormal;
+  kgmGuiText*  guiTextTexSpecular;
+  kgmGuiText*  guiTextShader;
+
 public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 
@@ -93,9 +98,6 @@ public:
 
 class kViewOptionsForMesh : public kViewOptionsForMaterial
 {
-  kgmGuiText*  guiMtlText;
-  kgmGuiText*  guiShdText;
-
 public:
   kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
 

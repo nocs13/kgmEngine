@@ -206,6 +206,9 @@ kgmGameBase::~kgmGameBase()
 
   log("free gui...");
 
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    (*i)->release();
+
   m_guis.clear();
 
   log("free resources...");
@@ -527,9 +530,6 @@ int kgmGameBase::gUnload()
 
   if(m_physics)
     m_physics->clear();
-
-  if(m_render)
-    m_render->clear();
 
   m_state = State_Idle;
 

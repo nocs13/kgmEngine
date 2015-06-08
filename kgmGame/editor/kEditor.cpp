@@ -139,9 +139,6 @@ kEditor::~kEditor()
 
 void kEditor::clear()
 {
-  game->m_render->clear();
-  game->getPhysics()->clear();
-
   for(int i = 0; i < nodes.size(); i++)
   {
     nodes[i]->release();
@@ -344,6 +341,8 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
 bool kEditor::fdMapOpen(kFileDialog* fd)
 {
   kgmString s = fd->getPath();
+
+  fd->erase();
 
   return mapOpen(s);
 }
@@ -1288,6 +1287,7 @@ void kEditor::onMapOpen()
   kFileDialog *fdd = new kFileDialog();
   fdd->showHidden(false);
   game->guiAdd(fdd);
+  fdd->release();
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -1375,12 +1375,12 @@ void kEditor::onEditRemove()
   switch(selected->typ)
   {
   case kNode::MESH:
-    game->getRender()->remove(selected->msh);
+    selected->msh->remove();
     break;
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
-    game->getRender()->remove(selected->geo);
     game->getRender()->remove(selected->icn);
+    selected->geo->remove();
     break;
   }
 

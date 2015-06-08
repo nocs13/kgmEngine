@@ -196,6 +196,45 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
+  for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
+    i.value()->release();
+
+  shaders.clear();
+
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    (*i)->release();
+
+  m_guis.clear();
+
+  for(int i = 0; i < m_materials.size(); i++)
+    m_materials[i]->release();
+
+  m_materials.clear();
+
+  for(int i = 0; i < m_visuals.size(); i++)
+    m_visuals[i]->release();
+
+  m_visuals.clear();
+
+  for(int i = 0; i < m_lights.size(); i++)
+    m_lights[i].light->release();
+
+  m_lights.clear();
+
+  for(int i = 0; i < m_icons.size(); i++)
+    m_icons[i]->release();
+
+  m_icons.clear();
+
+#ifdef DEBUG
+  for(int i = 0; i < m_bodies.size(); i++)
+  {
+    m_bodies[i]->release();
+  }
+
+  m_bodies.clear();
+#endif
+
   if(g_tex_black)
     gc->gcFreeTexture(g_tex_black);
 
@@ -206,44 +245,7 @@ kgmGraphics::~kgmGraphics()
     gc->gcFreeTexture(g_tex_gray);
 
   if(gui_style)
-    delete gui_style;
-
-  shaders.clear();
-  m_guis.clear();
-
-  clear();
-}
-
-void kgmGraphics::clear()
-{
-  for(int i = 0; i < m_materials.size(); i++)
-    m_materials[i]->release();
-
-  m_materials.clear();
-
-//  for(int i = 0; i < m_visuals.size(); i++)
-//    m_visuals[i]->release();
-
-  m_visuals.clear();
-
-//  for(int i = 0; i < m_lights.size(); i++)
-//    m_lights[i].light->release();
-
-  m_lights.clear();
-
-//  for(int i = 0; i < m_icons.size(); i++)
-//    m_icons[i]->release();
-
-  m_icons.clear();
-
-#ifdef DEBUG
-  for(int i = 0; i < m_bodies.size(); i++)
-  {
-//    m_bodies[i]->release();
-  }
-
-  m_bodies.clear();
-#endif
+    gui_style->release();
 }
 
 kgmShader* s_def = null;
@@ -351,7 +353,7 @@ void kgmGraphics::render()
   {
     if((*i)->removed())
     {
-//      (*i)->release();
+      (*i)->release();
       i = m_visuals.erase(i);
 
       continue;
@@ -419,9 +421,9 @@ void kgmGraphics::render()
 
   for(kgmList<Light>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
-    if((*i).remove == true)
+    if((*i).removed())
     {
-//      (*i).light->release();
+      (*i).light->release();
 
       i = m_lights.erase(i);
 
@@ -613,9 +615,9 @@ void kgmGraphics::render()
     {
       Icon* icon = m_icons[i -1];
 
-      if(icon->remove)
+      if(icon->removed())
       {
-//        icon->release();
+        icon->release();
         m_icons.erase(i - 1);
       }
       else
@@ -740,7 +742,7 @@ void kgmGraphics::render()
 
     if(gui->erased())
     {
-//      gui->release();
+      gui->release();
       m_guis.erase(i - 1);
     }
     else if(gui->visible())

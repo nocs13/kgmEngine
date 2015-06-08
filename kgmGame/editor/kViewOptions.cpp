@@ -302,7 +302,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
   if(mtl->getTexColor())
     g->setText(mtl->getTexColor()->m_id);
@@ -314,7 +314,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexNormal");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g = guiTextTexNormal = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
   if(mtl->getTexNormal())
     g->setText(mtl->getTexNormal()->m_id);
@@ -326,7 +326,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexSpecular");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g = guiTextTexSpecular = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
   if(mtl->getTexSpecular())
     g->setText(mtl->getTexSpecular()->m_id);
@@ -338,7 +338,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
   if(mtl->getShader())
     g->setText(mtl->getShader()->m_id);
@@ -359,15 +359,19 @@ void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
   {
     case Mode_Shader:
       this->node->getMaterial()->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
+      guiTextShader->setText(fd->getFile());
       break;
     case Mode_Color:
       this->node->getMaterial()->setTexColor(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      guiTextTexColor->setText(fd->getFile());
       break;
     case Mode_Normal:
       this->node->getMaterial()->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      guiTextTexNormal->setText(fd->getFile());
       break;
     case Mode_Specular:
       this->node->getMaterial()->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      guiTextTexSpecular->setText(fd->getFile());
       break;
     default:
       break;

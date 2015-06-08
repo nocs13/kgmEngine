@@ -25,6 +25,7 @@ public:
    {
     friend class kgmTab<Key, Value>;
     _Node* _Ptr;
+
    public:
     iterator()
     {
@@ -141,7 +142,8 @@ public:
     return _index(index)->m_value;
   }
 
-  void add(Key key, Value value){
+  void add(Key key, Value value)
+  {
     _Node* node = new _Node;
     node->m_key = key;
     node->m_value = value;

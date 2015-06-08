@@ -9,12 +9,8 @@ class kgmCamera;
 class kgmIGraphics
 {
 public:
-
-  virtual void add(kgmLight*) = 0;
+  virtual void add(kgmLight*)  = 0;
   virtual void add(kgmVisual*) = 0;
-
-  virtual void remove(kgmLight*) = 0;
-  virtual void remove(kgmVisual*) = 0;
 
   virtual kgmCamera& camera() = 0;
 };
