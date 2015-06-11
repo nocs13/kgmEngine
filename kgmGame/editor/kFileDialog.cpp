@@ -35,12 +35,12 @@ kFileDialog::kFileDialog()
 
 void kFileDialog::onMsLeftUp(int k, int x, int y)
 {
-  kgmGui::onMsLeftUp(k, x, y);
+  kgmGuiFrame::onMsLeftUp(k, x, y);
 }
 
 void kFileDialog::onMsMove(int k, int x, int y)
 {
-  kgmGui::onMsMove(k, x, y);
+  kgmGuiFrame::onMsMove(k, x, y);
 }
 
 void kFileDialog::onFileSelect()

@@ -202,7 +202,7 @@ kgmGameBase::~kgmGameBase()
   log("free graphics renderer...");
 
   if(m_render)
-    delete m_render;
+    m_render->release();
 
   log("free gui...");
 
@@ -219,20 +219,22 @@ kgmGameBase::~kgmGameBase()
   log("free physics...");
 
   if(m_physics)
-    delete m_physics;
+    m_physics->release();
 
   log("free audio...");
 
   if(m_audio)
-    delete m_audio;
+    m_audio->release();
 
   log("free system...");
 
   if(m_system)
-    delete m_system;
+    m_system->release();
+
+  log("free settings...");
 
   if(m_settings)
-    delete m_settings;
+    m_settings->release();
 
   kgmUnit::unitUnregister();
 }

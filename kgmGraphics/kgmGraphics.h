@@ -48,13 +48,30 @@ public:
 
   class Node
   {
-  public:
+    kgmObject* m_object = null;
+
     bool m_remove;
 
   public:
     Node()
     {
+      m_object = null;
       m_remove = false;
+    }
+
+    Node(const Node& node)
+    {
+      m_object = node.m_object;
+      m_remove = node.m_remove;
+
+      if(m_object)
+        m_object->increment();
+    }
+
+    ~Node()
+    {
+      if(m_object)
+        m_object->release();
     }
 
     bool removed() { return m_remove; }

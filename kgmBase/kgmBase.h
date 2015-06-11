@@ -20,6 +20,11 @@
   #define __stdcall
 #endif
 
-inline void* kgm_alloc(size_t size);
-inline void  kgm_free(void*);
-inline void  kgm_assign(void** src, void** dst);
+#ifdef WIN32
+  #define KGM_DECL_EXPORT     __declspec(dllexport)
+  #define KGM_DECL_IMPORT     __declspec(dllimport)
+#elif defined(QT_VISIBILITY_AVAILABLE)
+  #define KGM_DECL_EXPORT     __attribute__((visibility("default")))
+  #define KGM_DECL_IMPORT     __attribute__((visibility("default")))
+  #define KGM_DECL_HIDDEN     __attribute__((visibility("hidden")))
+#endif

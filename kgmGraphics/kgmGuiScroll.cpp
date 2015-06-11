@@ -107,7 +107,7 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
   else
     pos = (x) / m_ppp;
 
-  if(pos >= 1 && pos <= m_range && pos != m_position)
+  if(pos >= 0 && pos <= m_range && pos != m_position)
   {
     m_position = pos;
 

@@ -117,7 +117,6 @@ protected:
   private:
     T* t;
     void (T::*f)(Args...);
-
   };
 
   template<class... Args>

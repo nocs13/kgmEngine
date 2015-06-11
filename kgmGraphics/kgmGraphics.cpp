@@ -197,14 +197,15 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 kgmGraphics::~kgmGraphics()
 {
   for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
-    i.value()->release();
+    if(i.value())
+      i.value()->release();
 
   shaders.clear();
 
-  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+  /*for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
     (*i)->release();
 
-  m_guis.clear();
+  m_guis.clear();*/
 
   for(int i = 0; i < m_materials.size(); i++)
     m_materials[i]->release();
@@ -423,7 +424,8 @@ void kgmGraphics::render()
   {
     if((*i).removed())
     {
-      (*i).light->release();
+      if((*i).light)
+        (*i).light->release();
 
       i = m_lights.erase(i);
 
@@ -471,19 +473,18 @@ void kgmGraphics::render()
 
     setWorldMatrix((*i)->getTransform());
 
-    tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
-    gc->gcSetTexture(0, tcolor);
-    tnormal = null;
-    gc->gcSetTexture(1, tnormal);
-    tspecular = null;
-    gc->gcSetTexture(2, tspecular);
+    render(mtl);
 
 #ifndef NO_SHADERS
 
-    render(shaders[kgmShader_TypeAmbient]);
+    if(mtl->getShader())
+      render(mtl->getShader());
+    else
+      render(shaders[kgmShader_TypeAmbient]);
 
 #endif
-    render(*i);
+
+    //render(*i);
 
     render((kgmMaterial*)null);
   }
@@ -491,6 +492,7 @@ void kgmGraphics::render()
   // draw meshes light by light and blend to framebuffer
 
   gc->gcBlend(true, gcblend_one, gcblend_one);
+//  gc->gcBlend(true, gcblend_one, gcblend_dstcol);
 
   for(int i = 0; i < g_lights_count; i++)
   {

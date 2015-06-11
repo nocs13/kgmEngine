@@ -188,26 +188,19 @@ public:
   {
     if(g)
     {
-      bool is = false;
-
       for(int i = 0; i < m_guis.size(); i++)
       {
         if(g == m_guis[i])
         {
-          is = true;
-
-          break;
+          return;
         }
       }
 
-      if(!is)
-      {
-        m_guis.add(g);
-        g->increment();
+      m_guis.add(g);
+      g->increment();
 
-        if(m_render)
-          m_render->add(g);
-      }
+      if(m_render)
+        m_render->add(g);
     }
   }
 
