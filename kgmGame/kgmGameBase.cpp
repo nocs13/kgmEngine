@@ -206,15 +206,15 @@ kgmGameBase::~kgmGameBase()
 
   log("free gui...");
 
-  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
-    (*i)->release();
+  //for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+  //  (*i)->release();
 
   m_guis.clear();
 
   log("free resources...");
 
   if(m_resources)
-    delete m_resources;
+    m_resources->release();
 
   log("free physics...");
 

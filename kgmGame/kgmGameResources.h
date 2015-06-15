@@ -16,7 +16,7 @@
 
 class kgmIGame;
 
-class kgmGameResources: public kgmIResources
+class kgmGameResources: public kgmObject, public kgmIResources
 {
 protected:
 

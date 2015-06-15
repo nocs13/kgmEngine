@@ -184,7 +184,7 @@ public:
 
   void increment()
   {
-    m_references += 1;
+    m_references++;
   }
 
   void release()
@@ -269,13 +269,6 @@ public:
     return null;
   }
 
-  //void* operator new(size_t size);
-  //void  operator delete(void* p);
-
-  friend class kgmApp;
+//  friend class kgmApp;
 };
 ///////////////////
-
-
-
-
