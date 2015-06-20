@@ -63,8 +63,8 @@ public:
 
   bool col, lock;
 
-  kgmGraphics::Icon* icn;
-  kgmVisual*         geo;
+  kgmIcon*   icn = null;
+  kgmVisual* geo = null;
 
 private:
   ~kNode()

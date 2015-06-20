@@ -421,7 +421,7 @@ bool kEditor::mapOpen(kgmString s)
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+      node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
       node->geo = new kgmVisual();
 
       node->geo->set((kgmMesh*)(new kArrow()));
@@ -457,7 +457,7 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->ini = mnode.ini;
       node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
+      node->icn = new kgmIcon(game->getResources()->getTexture("actor_ico.tga"));
       node->geo = new kgmVisual();
 
       node->geo->set((kgmMesh*)(new kArrow()));
@@ -487,7 +487,7 @@ bool kEditor::mapOpen(kgmString s)
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+      node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
       node->geo = new kgmVisual();
 
       node->geo->set((kgmMesh*)(new kArrow()));
@@ -512,7 +512,7 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
-      node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
+      node->icn = new kgmIcon(game->getResources()->getTexture("trigger_ico.tga"));
       node->geo = new kgmVisual();
 
       node->geo->set((kgmMesh*)(new kArrow()));
@@ -779,7 +779,7 @@ bool kEditor::addUnit(kgmString type)
         kNode* node = new kNode(un);
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("unit_ico.tga"));
+        node->icn = new kgmIcon(game->getResources()->getTexture("unit_ico.tga"));
         node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
@@ -839,7 +839,7 @@ bool kEditor::addActor(kgmString type)
 
     node->bnd = box3(-1, -1, -1, 1, 1, 1);
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("actor_ico.tga"));
+    node->icn = new kgmIcon(game->getResources()->getTexture("actor_ico.tga"));
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
     node->geo->set(mtlLines);
@@ -878,7 +878,7 @@ bool kEditor::addEffect(kgmString type)
         kNode* node = new kNode(eff);
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("effect_ico.tga"));
+        node->icn = new kgmIcon(game->getResources()->getTexture("effect_ico.tga"));
         node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
@@ -921,7 +921,7 @@ bool kEditor::addSensor(kgmString type)
         kNode* node = new kNode(sn);
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+        node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
         node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
@@ -1321,7 +1321,7 @@ void kEditor::onEditClone()
     break;
   case kNode::LIGHT:
     node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+    node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
 
@@ -1330,14 +1330,14 @@ void kEditor::onEditClone()
     break;
   case kNode::SENSOR:
     node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("sensor_ico.tga"));
+    node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
 
     break;
   case kNode::TRIGGER:
     node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("trigger_ico.tga"));
+    node->icn = new kgmIcon(game->getResources()->getTexture("trigger_ico.tga"));
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
 
@@ -1469,7 +1469,7 @@ void kEditor::onAddLight()
   kNode* node = new kNode(l);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
   node->geo = new kgmVisual();
   node->geo->set((kgmMesh*)(new kArrow()));
   node->geo->set(mtlLines);
@@ -1533,7 +1533,7 @@ void kEditor::onAddTrigger()
   kNode* node = new kNode(tr);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("light_ico.tga"));
+  node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
   node->geo = new kgmVisual();
   node->geo->set((kgmMesh*)(new kArrow()));
   node->geo->set(mtlLines);
@@ -1555,7 +1555,7 @@ void kEditor::onAddObstacle()
   kNode* node = new kNode(o);
   node->bnd = box3(-1, -1, -1, 1, 1, 1);
   node->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmGraphics::Icon(game->getResources()->getTexture("obstacle_ico.tga"));
+  node->icn = new kgmIcon(game->getResources()->getTexture("obstacle_ico.tga"));
   node->geo = new kgmVisual();
   node->geo->set((kgmMesh*)(new kArrow()));
   node->geo->set(mtlLines);

@@ -46,9 +46,10 @@ public:
   static GraphicsQuality textureQuality;
   static GraphicsQuality shadowQuality;
 
+  template <class T>
   class Node
   {
-    kgmObject* m_object = null;
+    T* m_object = null;
 
     bool m_remove;
 
@@ -59,7 +60,13 @@ public:
       m_remove = false;
     }
 
-    Node(const Node& node)
+    Node(T* obj)
+    {
+      m_object = obj;
+      m_remove = false;
+    }
+
+    Node(const Node<T>& node)
     {
       m_object = node.m_object;
       m_remove = node.m_remove;
@@ -74,94 +81,13 @@ public:
         m_object->release();
     }
 
+    T* operator()()
+    {
+      return m_object;
+    }
+
     bool removed() { return m_remove; }
     void remove()  { m_remove = true; }
-  };
-
-  class Light: public Node
-  {
-  public:
-    kgmLight *light;
-
-    ~Light()
-    {
-      if(light)
-        light->release();
-    }
-
-    Light()
-    {
-      light = null;
-    }
-
-    Light(kgmLight *l)
-    {
-      light = l;
-
-      if(light)
-      {
-        light->increment();
-      }
-    }
-
-    Light(const Light& l)
-    {
-      light = l.light;
-
-      if(light)
-        light->increment();
-    }
-  };
-
-  class Visual: public Node
-  {
-  public:
-    kgmVisual* visual;
-
-    Visual()
-    {
-      visual = null;
-    }
-  };
-
-  class Icon: public kgmObject, public Node
-  {
-    kgmTexture* icon;
-    float       width,
-                height;
-    vec3        position;
-
-  public:
-    Icon()
-    {
-      icon = null;
-      width = 0.2;
-      height = 0.2;
-      position = vec3(0, 0, 0);
-    }
-
-    Icon(kgmTexture* c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
-    {
-      icon = c;
-      width = w;
-      height = h;
-      position = v;
-
-      if(c)
-        c->increment();
-    }
-
-    ~Icon()
-    {
-      if(icon)
-        icon->release();
-    }
-
-    kgmTexture* getIcon() { return icon; }
-    float       getWidth() { return width; }
-    float       getHeight() { return height; }
-    vec3        getPosition() { return position; }
-    void        setPosition(vec3 v) { position = v; }
   };
 
 private:
@@ -173,11 +99,10 @@ private:
   iRect       m_viewport;
   kgmCamera   m_camera;
 
-  kgmList<Light>        m_lights;
-  kgmList<kgmMaterial*> m_materials;
-  kgmList<kgmVisual*>   m_visuals;
-  kgmList<kgmGui*>      m_guis;
-  kgmList<Icon*>        m_icons;
+  kgmList< Node<kgmLight>  > m_lights;
+  kgmList< Node<kgmVisual> > m_visuals;
+  kgmList< Node<kgmGui>    > m_guis;
+  kgmList< Node<kgmIcon>   > m_icons;
 
 #ifdef DEBUG
   kgmList<kgmBody*>     m_bodies;
@@ -229,7 +154,7 @@ private:
   void render(kgmShader*);
   void render(kgmMaterial*);
   void render(kgmParticles*);
-  void render(Icon*);
+  void render(kgmIcon*);
 
   void renderGuiMenuItem(kgmGui*, void*);
 
@@ -249,11 +174,11 @@ public:
 
   void add(kgmMaterial* mtl)
   {
-    if(mtl)
+    /*if(mtl)
     {
       m_materials.add(mtl);
       mtl->increment();
-    }
+    }*/
   }
 
   void add(kgmLight* lgt)
@@ -261,7 +186,7 @@ public:
     if(!lgt)
       return;
 
-    Light light(lgt);
+    Node<kgmLight> light(lgt);
 
     m_lights.add(light);
   }
@@ -276,13 +201,12 @@ public:
     m_visuals.add(a);
   }
 
-  void add(Icon* ico)
+  void add(kgmIcon* ico)
   {
     if(!ico)
       return;
 
-    ico->increment();
-    m_icons.add(ico);
+    m_icons.add(Node<kgmIcon>(ico));
   }
 
   void add(kgmGui* gui)
@@ -309,7 +233,7 @@ public:
   {
     for(int i = 0; i < m_lights.length(); i++)
     {
-      if(m_lights[i].light == light)
+      if(m_lights[i]() == light)
       {
         m_lights[i].remove();
 
@@ -318,10 +242,17 @@ public:
     }
   }
 
-  void remove(Icon* ico)
+  void remove(kgmIcon* ico)
   {
-    if(ico)
-      ico->remove();
+    for(int i = 0; i < m_icons.length(); i++)
+    {
+      if(m_icons[i]() == ico)
+      {
+        m_icons[i].remove();
+
+        break;
+      }
+    }
   }
 
   iRect viewport()
