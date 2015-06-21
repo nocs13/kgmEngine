@@ -374,10 +374,9 @@ public:
 
   void gameFree()
   {
-//    if(game.valid())
     if(game)
     {
-      delete game;
+      game->release();
       game = (kGame*)null;
     }
   }

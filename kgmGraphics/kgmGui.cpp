@@ -65,7 +65,7 @@ kgmGui::~kgmGui()
 
     gui->setParent(null);
 
-    delete gui;
+    gui->release();
   }
 
   m_childs.clear();

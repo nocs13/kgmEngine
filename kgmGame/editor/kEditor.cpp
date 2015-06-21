@@ -70,7 +70,7 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->m_render->setEditor(true);
 
-    menu = new kMenu(null, this);
+    kMenu* menu = new kMenu(null, this);
 
     menu->setSid("editor_main_menu");
 
@@ -129,7 +129,7 @@ kEditor::~kEditor()
 {
   gridline->release();
   pivot->release();
-  menu->release();
+//  menu->release();
 
   mtlLines->release();
   mtlPivot->release();
@@ -995,8 +995,8 @@ void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmEvent::onEvent(e);
 
-  if(menu->visible() && game->m_msAbs)
-    menu->onEvent(e);
+//  if(menu->visible() && game->m_msAbs)
+//    menu->onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -1027,7 +1027,7 @@ void kEditor::onKeyUp(int k)
       }
     }
 
-    menu->show();
+//    menu->show();
     game->m_state = kgmIGame::State_Edit;
 
     game->getRender()->camera().mPos = cam_pos_bk;
@@ -1272,9 +1272,6 @@ void kEditor::onMsWheel(int k, int x, int y, int z)
 
 void kEditor::onAction(kgmEvent *gui, int id)
 {
-  if(gui == menu)
-  {
-  }
 }
 
 void kEditor::onQuit()

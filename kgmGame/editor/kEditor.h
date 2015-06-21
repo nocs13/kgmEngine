@@ -65,7 +65,7 @@ private:
   vec3       pv_pos;
   vec3       pv_rot;
 
-  kMenu*     menu;
+  //kMenu*     menu;
 
   //kFileDialog* fdd;
 

@@ -199,15 +199,20 @@ kgmGameBase::~kgmGameBase()
     editor->release();
 #endif
 
-  log("free graphics renderer...");
+  log("free physics...");
+
+  if(m_physics)
+    m_physics->release();
+
+  log("free renderer...");
 
   if(m_render)
     m_render->release();
 
   log("free gui...");
 
-  //for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
-  //  (*i)->release();
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    (*i)->release();
 
   m_guis.clear();
 
@@ -215,11 +220,6 @@ kgmGameBase::~kgmGameBase()
 
   if(m_resources)
     m_resources->release();
-
-  log("free physics...");
-
-  if(m_physics)
-    m_physics->release();
 
   log("free audio...");
 

@@ -83,11 +83,11 @@ kgmMaterial  g_def_material;
 
 enum
 {
-kgmShader_TypeGui = 100,
-kgmShader_TypeIcon,
-kgmShader_TypeLight,
-kgmShader_TypeLights,
-kgmShader_TypeAmbient
+  kgmShader_TypeGui = 100,
+  kgmShader_TypeIcon,
+  kgmShader_TypeLight,
+  kgmShader_TypeLights,
+  kgmShader_TypeAmbient
 };
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
@@ -97,7 +97,6 @@ inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(
 
   for(u32 i = 0; i < count; i++)
   {
-
     for(u32 j = i + 1; j < count; j++)
     {
 
@@ -183,31 +182,19 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
+  m_visuals.clear();
+
+  m_lights.clear();
+
+  m_icons.clear();
+
+  m_guis.clear();
+
   for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
     if(i.value())
       i.value()->release();
 
   shaders.clear();
-
-  for(kgmList<Node<kgmGui>>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
-    (*i)()->release();
-
-  m_guis.clear();
-
-  for(int i = 0; i < m_visuals.size(); i++)
-    m_visuals[i]()->release();
-
-  m_visuals.clear();
-
-  for(int i = 0; i < m_lights.size(); i++)
-    m_lights[i]()->release();
-
-  m_lights.clear();
-
-  for(int i = 0; i < m_icons.size(); i++)
-    m_icons[i]()->release();
-
-  m_icons.clear();
 
 #ifdef DEBUG
   for(int i = 0; i < m_bodies.size(); i++)
@@ -289,7 +276,7 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
   mtx4 mw = m * g_mtx_view;
 
 #ifdef NO_SHADERS
-    gc->gcSetMatrix(gcmtx_view, mw.m);
+  gc->gcSetMatrix(gcmtx_view, mw.m);
 #endif
 }
 
@@ -303,7 +290,7 @@ void kgmGraphics::resize(float width, float height)
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
 
   m_camera.set(PI / 6, width / height, .1f, 100000.0,
-                 m_camera.mPos, m_camera.mDir, m_camera.mUp);
+               m_camera.mPos, m_camera.mDir, m_camera.mUp);
 
   m_camera.viewport((float)width, (float)height);
 
@@ -369,7 +356,7 @@ void kgmGraphics::render()
         }
         else if((*i)()->getMaterial() && (*i)()->getMaterial()->m_blend)
         {
-            vis_blend.add((*i)());
+          vis_blend.add((*i)());
         }
         else
         {
@@ -421,7 +408,7 @@ void kgmGraphics::render()
       continue;
 
     if(!m_camera.isSphereCross((*i)()->position, kgmLight::LIGHT_RANGE * (*i)()->intensity))
-       continue;
+      continue;
 
     g_lights[g_lights_count++] = (*i)();
 
@@ -474,7 +461,7 @@ void kgmGraphics::render()
   // draw meshes light by light and blend to framebuffer
 
   gc->gcBlend(true, gcblend_one, gcblend_one);
-//  gc->gcBlend(true, gcblend_one, gcblend_dstcol);
+  //  gc->gcBlend(true, gcblend_one, gcblend_dstcol);
 
   for(int i = 0; i < g_lights_count; i++)
   {
@@ -748,7 +735,7 @@ void kgmGraphics::render()
 #ifdef DEBUG
   char info[4096] = {0};
   sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \n \
-  unvisible: %i\n",
+          unvisible: %i\n",
           m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z,
           m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
           k);
@@ -929,7 +916,7 @@ void kgmGraphics::render(kgmParticles* particles)
       float   time  = particles->m_particles[i].time;
       float   life  = particles->m_particles[i].life;
       vec3    crv = rv * scale,
-              cuv = uv * scale;
+          cuv = uv * scale;
 
       float   txu_s = 0.0f, txv_s = 0.0f;
       float   txu_e = 1.0f, txv_e = 1.0f;
@@ -952,22 +939,22 @@ void kgmGraphics::render(kgmParticles* particles)
       }
 
       points[i].pos = (pos - crv + cuv);
-        points[i].uv = vec2(txu_s, txv_s);
+      points[i].uv = vec2(txu_s, txv_s);
       points[i + 1].pos = (pos - crv - cuv);
-        points[i + 1].uv = vec2(txu_s, txv_e);
+      points[i + 1].uv = vec2(txu_s, txv_e);
       points[i + 2].pos = (pos + crv + cuv);
-        points[i + 2].uv = vec2(txu_e, txv_s);
+      points[i + 2].uv = vec2(txu_e, txv_s);
 
       points[i + 3].pos = (pos + crv - cuv);
-        points[i + 3].uv = vec2(txu_e, txv_e);
+      points[i + 3].uv = vec2(txu_e, txv_e);
       points[i + 4].pos = (pos + crv + cuv);
-        points[i + 4].uv = vec2(txu_e, txv_s);
+      points[i + 4].uv = vec2(txu_e, txv_s);
       points[i + 5].pos = (pos - crv - cuv);
-        points[i + 5].uv = vec2(txu_s, txv_e);
+      points[i + 5].uv = vec2(txu_s, txv_e);
 
       points[i].col = points[i + 1].col =
-      points[i + 2].col = points[i + 3].col =
-      points[i + 4].col = points[i + 5].col = particles->m_particles[i].col.color;
+          points[i + 2].col = points[i + 3].col =
+          points[i + 4].col = points[i + 5].col = particles->m_particles[i].col.color;
     }
   }
 
@@ -986,7 +973,7 @@ void kgmGraphics::render(kgmIcon* icon)
 
   vec3 pos   = icon->getPosition();
   vec3 crv = rv * icon->getWidth(),
-       cuv = uv * icon->getHeight();
+      cuv = uv * icon->getHeight();
 
   kgmMesh::Vertex_P_C_T points[6];
 
@@ -1005,8 +992,8 @@ void kgmGraphics::render(kgmIcon* icon)
   points[5].uv = vec2(0, 0);
 
   points[0].col = points[1].col =
-  points[2].col = points[3].col =
-  points[4].col = points[5].col = 0xffffffff;
+      points[2].col = points[3].col =
+      points[4].col = points[5].col = 0xffffffff;
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
@@ -1149,7 +1136,7 @@ void kgmGraphics::render(kgmShader* s)
     for(int i = 0; i < (g_lights_count - 1); i++)
     {
       lights[i] = vec4(g_lights[i + 1]->position.x, g_lights[i + 1]->position.y,
-      g_lights[i + 1]->position.z, g_lights[i + 1]->intensity);
+          g_lights[i + 1]->position.z, g_lights[i + 1]->intensity);
 
     }
 
@@ -1251,8 +1238,8 @@ void kgmGraphics::render(kgmGui* gui){
 
     //Draw Items Rects
     for(int i = glist->getFirstVisibleItem();
-            i < (glist->getFirstVisibleItem() + glist->getVisibleItemsCount());
-            i++)
+        i < (glist->getFirstVisibleItem() + glist->getVisibleItemsCount());
+        i++)
     {
       if(i >= item_cnt)
         break;
@@ -1322,7 +1309,7 @@ void kgmGraphics::render(kgmGui* gui){
         if(c_idx + i >= text.length())
           break;
 
-        c_text.data()[i] = text.data()[c_idx + i]; 
+        c_text.data()[i] = text.data()[c_idx + i];
       }
 
       gcDrawText(gui_style->gui_font, (u32)(0.5 * gui_style->stext.ft_size),
@@ -1559,17 +1546,17 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     char ch = text[i];
 
     if(ch == '\n')
-    { 
-      cx = (float)clip.x; 
-      cy += fheight; 
+    {
+      cx = (float)clip.x;
+      cy += fheight;
       
-      continue; 
+      continue;
     }
 
     if((ch == ' ') || (ch == '\t'))
-    {  
-      tx = 0.0f; 
-      ty = 0.0f;	
+    {
+      tx = 0.0f;
+      ty = 0.0f;
     }
 
     tx = (float)(tdx * (ch % font->m_rows));

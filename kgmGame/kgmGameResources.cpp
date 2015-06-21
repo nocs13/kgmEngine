@@ -41,7 +41,9 @@ kgmGameResources::~kgmGameResources()
       }
       else if(r->isClass(kgmShader::Class))
       {
-        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
+        kgmShader* sh = (kgmShader*)r;
+        m_gc->gcFreeShader(sh->m_shader);
+//        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
       }
       else if(r->isClass(kgmSound::Class))
       {

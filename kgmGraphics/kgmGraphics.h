@@ -78,7 +78,10 @@ public:
     ~Node()
     {
       if(m_object)
+      {
+        u32 ref = m_object->references();
         m_object->release();
+      }
     }
 
     T* operator()()
