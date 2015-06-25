@@ -100,7 +100,7 @@ class kGame: public kgmGameBase{
   };
 
   kgm_ptr<kGui> gui;
-  GameData   data;
+  GameData      data;
 
 public:
   kGame(bool edit)
@@ -117,35 +117,12 @@ public:
       m_physics->m_gravity = 1.0f;
 
     if(m_logic)
-      delete m_logic;
+      m_logic->release();
 
     m_logic = new ASp_Logic(this);
 
     readData();
     saveData();
-
-    return;
-
-    kgmSound* snd = m_resources->getSound("1.wav");
-
-    if(snd && snd->getSound())
-    {
-      getAudio()->play(snd->getSound(), true);
-    }
-
-    kgmSound* snd1 = m_resources->getSound("2.wav");
-
-    if(snd1 && snd1->getSound())
-    {
-      getAudio()->play(snd1->getSound(), true);
-    }
-
-    kgmSound* snd2 = m_resources->getSound("3.wav");
-
-    if(snd2 && snd2->getSound())
-    {
-      getAudio()->play(snd2->getSound(), true);
-    }
   }
 
   ~kGame()

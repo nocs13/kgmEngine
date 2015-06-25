@@ -72,15 +72,14 @@ kgmCamera g_cam;
 kgmGameBase::kgmGameBase(bool edit)
   :kgmOGLWindow(0, (char*)"kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false){
   m_game = this;
-  kgmString sdata;
   kgmString spath;
 
   m_resources = null;
-  m_physics = null;
-  m_render = null;
-  m_system = null;
-  m_audio = null;
-//  m_gc = null;
+  m_physics   = null;
+  m_render    = null;
+  m_system    = null;
+  m_logic     = null;
+  m_audio     = null;
 
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
@@ -95,8 +94,7 @@ kgmGameBase::kgmGameBase(bool edit)
   log("check desktop dimensions...");
   m_system->getDesktopDimension(m_width, m_height);
 
-  //log("size window...");
-  //setRect(0, 0, m_width,	m_height);
+  log("init resources...");
 
   initResources();
 
@@ -109,23 +107,22 @@ kgmGameBase::kgmGameBase(bool edit)
   initPhysics();
 
   log("open renderer...");
-  m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
-  m_render->resize(m_width, m_height);
-  m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
+  //m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
+  //m_render->resize(m_width, m_height);
+  //m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
   log("init game audio...");
-  initAudio();
+  //initAudio();
 
   //log("init game logic...");
   //initLogic();
-  m_logic = null;
 
   log("open font...");
   m_font = m_resources->getFont((char*)"font.tga", 16, 16);
 
   if(!m_font)
     log("can't load font");
-  else
+  else if(m_render)
     m_render->setDefaultFont(m_font );
 
   log("set input map...");
@@ -169,8 +166,8 @@ kgmGameBase::kgmGameBase(bool edit)
 #ifdef EDITOR
   editor = null;
 
-  if(edit)
-    editor = new kEditor(this);
+//  if(edit)
+//    editor = new kEditor(this);
 #endif
 
   int rc[4];

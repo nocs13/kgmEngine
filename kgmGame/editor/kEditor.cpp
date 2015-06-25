@@ -57,14 +57,10 @@ kEditor::kEditor(kgmGameBase* g)
   view_mode = ViewPerspective;
 
   gridline = null;
+  pivot    = null;
 
-  mtlLines = new kgmMaterial();
-  mtlLines->setShader(null);
-  mtlLines->m_depth = false;
-
-  mtlPivot = new kgmMaterial();
-  mtlPivot->setShader(null);
-  mtlPivot->m_depth = false;
+  mtlLines = null;
+  mtlPivot = null;
 
   if(game->m_render)
   {
@@ -101,6 +97,14 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->guiAdd(menu);
 
+    mtlLines = new kgmMaterial();
+    mtlLines->setShader(null);
+    mtlLines->m_depth = false;
+
+    mtlPivot = new kgmMaterial();
+    mtlPivot->setShader(null);
+    mtlPivot->m_depth = false;
+
     kgmMesh* mesh;
 
     mesh = (kgmMesh*)(new kGridline());
@@ -127,12 +131,17 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
-  gridline->release();
-  pivot->release();
-//  menu->release();
+  if(gridline)
+    gridline->release();
 
-  mtlLines->release();
-  mtlPivot->release();
+  if(pivot)
+    pivot->release();
+
+  if(mtlLines)
+    mtlLines->release();
+
+  if(mtlPivot)
+    mtlPivot->release();
 
   kgmUnit::g_typ_objects.clear();
 }
@@ -1093,7 +1102,10 @@ void kEditor::onMsRightDown(int k, int x, int y)
 
 void kEditor::onMsMove(int k, int x, int y)
 {
-  u32 paxes = ((kPivot*)pivot->getMesh()->getMesh())->getAxis();
+  u32 paxes = kPivot::AXIS_NONE;
+
+  if(game->m_render)
+    paxes = ((kPivot*)pivot->getMesh()->getMesh())->getAxis();
 
   if(game->m_render && move_camera)
   {
