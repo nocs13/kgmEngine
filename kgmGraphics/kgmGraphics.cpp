@@ -166,12 +166,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   {
     shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
-    shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
+//    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
+//    shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
-    shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
-    //shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+//    shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
+//    shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
+//    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -190,9 +190,9 @@ kgmGraphics::~kgmGraphics()
 
   m_guis.clear();
 
-  //for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
-  //  if(i.value())
-  //    i.value()->release();
+  for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
+    if(i.value())
+      rc->remove(i.value());
 
   shaders.clear();
 

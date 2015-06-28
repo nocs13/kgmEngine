@@ -214,7 +214,10 @@ kgmGameBase::~kgmGameBase()
   log("free resources...");
 
   if(m_resources)
+  {
+    m_resources->remove(m_font);
     m_resources->release();
+  }
 
   log("free audio...");
 

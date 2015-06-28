@@ -396,10 +396,12 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
   char* mem_fsh = 0;
 
   if(!gc || s.empty())
-    return 0;
+    return null;
 
   mem_fsh = (char*)strstr((char*)s, "//Fragment Shader");
-  if(mem_fsh){
+
+  if(mem_fsh)
+  {
     size_t sh_s = (size_t)mem_fsh - (size_t)s.data();
     mem_vsh = (char*)malloc(sh_s + 1);
     memcpy(mem_vsh, s.data(), sh_s);
@@ -409,7 +411,9 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
     mem_fsh = (char*)malloc(sh_s + 1);
     memcpy(mem_fsh, fsh, sh_s);
     mem_fsh[sh_s] = '\0';
-  }else{
+  }
+  else
+  {
     mem_vsh = (char*)malloc(s.length() + 1);
     memcpy(mem_vsh, s.data(), s.length());
     mem_vsh[s.length()] = '\0';
@@ -419,12 +423,16 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s){
 
   shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
 
-  if(mem_vsh) free(mem_vsh);
-  if(mem_fsh) free(mem_fsh);
+  if(mem_vsh)
+    free(mem_vsh);
 
-  if(!shader->m_shader){
+  if(mem_fsh)
+    free(mem_fsh);
+
+  if(!shader->m_shader)
+  {
     shader->release();
-    shader = 0;
+    shader = null;
   }
 
   return shader;

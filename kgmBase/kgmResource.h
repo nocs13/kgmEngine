@@ -6,20 +6,20 @@ class kgmIResources;
 
 class kgmResource: public kgmObject
 {
-  KGM_OBJECT(kgmResource)
+  KGM_OBJECT(kgmResource);
 
-  public:
-    enum  Type
-    {
-            TypeNone,
-            TypeFont,
-            TypeTexture,
-            TypeShader,
-            TypeMesh,
-            TypeSound,
-            TypeAnimation,
-            TypeSkeleton,
-    };
+public:
+  enum  Type
+  {
+    TypeNone,
+    TypeFont,
+    TypeTexture,
+    TypeShader,
+    TypeMesh,
+    TypeSound,
+    TypeAnimation,
+    TypeSkeleton,
+  };
 
 public:
   kgmObject* m_resource;
@@ -32,8 +32,5 @@ public:
   ~kgmResource();
 
   void setId(kgmString id){ m_id = id; }
-
-private:
-  void release();
 };
 

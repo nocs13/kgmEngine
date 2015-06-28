@@ -41,9 +41,7 @@ kgmGameResources::~kgmGameResources()
       }
       else if(r->isClass(kgmShader::Class))
       {
-        kgmShader* sh = (kgmShader*)r;
-        m_gc->gcFreeShader(sh->m_shader);
-//        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
+        m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
       }
       else if(r->isClass(kgmSound::Class))
       {
@@ -54,7 +52,7 @@ kgmGameResources::~kgmGameResources()
         m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
       }
 
-      ((kgmObject*)r)->release();
+      r->release();
     }
   }
 
@@ -91,6 +89,10 @@ void kgmGameResources::add(kgmResource* r)
 
 void kgmGameResources::remove(kgmResource* r)
 {
+  if(!r || r->references() < 2)
+    return;
+
+  r->release();
 }
 
 void kgmGameResources::addPath(kgmString s)
@@ -244,17 +246,11 @@ kgmTexture* kgmGameResources::getTexture(char* id)
 
   if(texture && texture->m_texture)
   {
-#ifdef DEBUG
-      kgm_log() << "texture generated";
-#endif
     texture->m_id = id;
     m_resources.add(texture);
   }
   else if(texture)
   {
-#ifdef DEBUG
-      kgm_log() << "texture generation failed";
-#endif
     texture->release();
 
     texture = null;
@@ -283,10 +279,6 @@ kgmShader* kgmGameResources::getShader(char* id)
   kgmShader* shader = 0;
   kgmMemory<u8> mem;
 
-#ifdef DEBUG
-    kgm_log() << "Shader loading: " << id << "...\n";
-#endif
-
   if(getFile(name, mem))
   {
     kgmString s((const char*)mem.data(), mem.length());
@@ -296,11 +288,8 @@ kgmShader* kgmGameResources::getShader(char* id)
   if(shader)
   {
     shader->m_id = id;
+//    shader->increment();
     m_resources.add(shader);
-    shader->increment();
-#ifdef DEBUG
-    kgm_log() << "Shader: " << id << "successfully loaded\n";
-#endif
   }
 
   return shader;
@@ -331,7 +320,6 @@ kgmAnimation* kgmGameResources::getAnimation(char* id)
     return 0;
   }
 
-  //anim = m_tools.genAnimation(mem);
   anim = m_tools.genAnimation(xml);
 
   if(anim)
@@ -432,7 +420,6 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id)
   if(!xml.m_node)
     return null;
 
-  //skel = m_tools.genSkeleton(mem);
   skel = m_tools.genSkeleton(xml);
 
   if(skel)

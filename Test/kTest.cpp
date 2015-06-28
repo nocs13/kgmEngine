@@ -106,7 +106,7 @@ public:
   kGame(bool edit)
     :kgmGameBase(edit)
   {
-    gui = kgm_ptr<kGui>(new kGui(this));
+    //gui = kgm_ptr<kGui>(new kGui(this));
 
     kgmUnit::unitRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
     kgmUnit::unitRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
@@ -140,13 +140,17 @@ public:
   void edit()
   {
 #ifdef EDITOR
-    ((kGui*)gui)->m_guiMain->hide();
+    if(gui.valid())
+      ((kGui*)gui)->m_guiMain->hide();
     m_state = State_Edit;
 #endif
   }
 
   void guiShow(bool s)
   {
+    if(!gui.valid())
+      return;
+
     if(s)
       ((kGui*)gui)->m_guiMain->show();
     else
