@@ -171,7 +171,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
     shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
     shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
-    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+    //shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -190,9 +190,9 @@ kgmGraphics::~kgmGraphics()
 
   m_guis.clear();
 
-  for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
-    if(i.value())
-      i.value()->release();
+  //for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
+  //  if(i.value())
+  //    i.value()->release();
 
   shaders.clear();
 

@@ -8,7 +8,8 @@
 #include "../kgmMath/kgmMatrix3d.h"
 #include "../kgmMath/kgmBase.h"
 
-class kgmSkeleton: public kgmResource{
+class kgmSkeleton: public kgmResource
+{
   KGM_OBJECT(kgmSkeleton);
 public:
 
@@ -24,14 +25,17 @@ public:
   kgmList<Joint*> m_joints;
   kgmList<mtx4>   m_matrices;
   kgmList<mtx4>   m_imatrices;
+
 public:
-  kgmSkeleton(){
+  kgmSkeleton()
+  {
   }
 
   virtual ~kgmSkeleton()
   {
     for(int i = 0; i < m_joints.size(); i++)
       delete m_joints[i];
+
     m_joints.clear();
     m_matrices.clear();
     m_imatrices.clear();
@@ -42,7 +46,8 @@ public:
     m_matrices.clear();
     m_imatrices.clear();
 
-    for(u32 i = 0; i < m_joints.size(); i++){
+    for(u32 i = 0; i < m_joints.size(); i++)
+    {
       Joint* j = m_joints[i];
       mtx4 m = mtx4(j->r, j->v);
       //mtx4 m = mtx4(m_joints[i]->v);
@@ -57,7 +62,8 @@ public:
     if(!pbm || (cnt != m_joints.size()))
       return;
 
-    for(u32 i = 0; i < m_joints.size(); i++){
+    for(u32 i = 0; i < m_joints.size(); i++)
+    {
       pbm[i] = mtx4(m_joints[i]->r, m_joints[i]->v);
     }
   }

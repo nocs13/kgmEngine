@@ -94,12 +94,13 @@ kgmGameBase::kgmGameBase(bool edit)
   log("check desktop dimensions...");
   m_system->getDesktopDimension(m_width, m_height);
 
-  log("init resources...");
+  log("init game audio...");
+  //initAudio();
 
+  log("init resources...");
   initResources();
 
   log("open graphics...");
-
   if(!kgmOGLWindow::getGC())
     return;
 
@@ -107,12 +108,9 @@ kgmGameBase::kgmGameBase(bool edit)
   initPhysics();
 
   log("open renderer...");
-  //m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
-  //m_render->resize(m_width, m_height);
-  //m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
-
-  log("init game audio...");
-  //initAudio();
+  m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
+  m_render->resize(m_width, m_height);
+  m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
   //log("init game logic...");
   //initLogic();

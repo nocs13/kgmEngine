@@ -18,78 +18,7 @@ template<class T> class kgmMemory;
 
 class kgmIResources
 {
-private:
-  enum Type
-  {
-    TypeNone,
-    TypeMemory,
-    TypeFile,
-    TypeMesh,
-    TypeShader,
-    TypeTexture,
-  };
-
-private:
-  /*class _Resource
-  {
-    friend class kgmIResources;
-
-    s32            references;
-    kgmIResources* resource_manager;
-
-  protected:
-    _Resource(kgmIResources* rs)
-    {
-      references = 1;
-      resource_manager = rs;
-    }
-
-    virtual ~_Resource()
-    {
-    }
-
-  public:
-    void release()
-    {
-      if(references > 0)
-        references--;
-
-      if(references < 1)
-        resource_manager->remove(this);
-    }
-  };
-
-  friend class _Resource;*/
-
 public:
-  /*template <class T> class Resource: public _Resource
-  {
-    friend class kgmIResources;
-
-    T*  resource;
-
-    Resource(kgmIResources* rs, T* r)
-    :_Resource(rs)
-    {
-      resource = r;
-    }
-
-    virtual ~Resource(){
-    }
-
-  public:
-
-    operator T*() const
-    {
-      return resource;
-    }
-  };*/
-
-private:
-  //virtual void                remove(_Resource*){};
-
-public:
-  virtual void                add(kgmResource*) = 0;
   virtual void                remove(kgmResource*) = 0;
 
   virtual bool                getFile(char*, kgmMemory<u8>&) = 0;

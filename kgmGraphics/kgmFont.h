@@ -23,4 +23,9 @@ public:
         m_fwidth = m_fheight = 0;
     m_rows = m_cols = 0, m_base = 32;
   }
+
+  ~kgmFont()
+  {
+
+  }
 };
