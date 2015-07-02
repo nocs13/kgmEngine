@@ -13,6 +13,13 @@ class kgmIcon: public kgmObject
               height;
   vec3        position;
 
+protected:
+  ~kgmIcon()
+  {
+    if(icon)
+      icon->release();
+  }
+
 public:
   kgmIcon()
   {
@@ -31,12 +38,6 @@ public:
 
     if(c)
       c->increment();
-  }
-
-  ~kgmIcon()
-  {
-    if(icon)
-      icon->release();
   }
 
   kgmTexture* getIcon() { return icon; }

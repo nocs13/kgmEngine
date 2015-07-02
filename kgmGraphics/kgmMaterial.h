@@ -83,9 +83,11 @@ public:
 
   kgmString   m_type;
 
+protected:
+  ~kgmMaterial();
+
 public:
   kgmMaterial();
-  virtual ~kgmMaterial();
 
   kgmMaterial* clone();
 

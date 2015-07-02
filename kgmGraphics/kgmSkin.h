@@ -3,7 +3,9 @@
 
 class kgmSkin: public kgmObject
 {
+protected:
+  ~kgmSkin();
+
 public:
  kgmSkin();
- ~kgmSkin();
 };

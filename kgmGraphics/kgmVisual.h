@@ -165,7 +165,7 @@ public:
 
   static  bool           AnimateVertices;
 
-private:
+protected:
   ~kgmVisual()
   {
     clear();

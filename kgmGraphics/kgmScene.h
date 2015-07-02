@@ -16,9 +16,11 @@ class kgmScene: public kgmObject
 public:
   Scene* m_scene;
 
+protected:
+  ~kgmScene();
+
 public:
   kgmScene();
-  virtual ~kgmScene();
 };
 
 #endif

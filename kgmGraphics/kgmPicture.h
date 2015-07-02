@@ -9,6 +9,13 @@ public:
   u32  width, height, bpp, frames;
   u8*  pdata;
 
+protected:
+  ~kgmPicture()
+  {
+    if(pdata)
+      free(pdata);
+  }
+
 public:
   kgmPicture()
   {
@@ -23,12 +30,6 @@ public:
     bpp = b;
     frames = f;
     pdata = (u8*)d;
-  }
-
-  virtual ~kgmPicture()
-  {
-    if(pdata)
-      free(pdata);
   }
 
   u32 getWidth()

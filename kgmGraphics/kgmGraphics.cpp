@@ -78,8 +78,8 @@ void*      g_tex_white = null;
 void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
-kgmLight     g_def_light;
-kgmMaterial  g_def_material;
+kgmLight*     g_def_light = null;
+kgmMaterial*  g_def_material = null;
 
 enum
 {
@@ -131,8 +131,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   //gui_style = new kgmGuiStyle();
 
-  g_def_material.setShader(null);
-  g_def_material.m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
+  g_def_material = new kgmMaterial();
+  g_def_material->setShader(null);
+  g_def_material->m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
 
   if(g)
   {
@@ -176,7 +177,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 #endif
 
-  m_camera.set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
+  m_camera = new kgmCamera();
+  m_camera->set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
 }
 
@@ -216,6 +218,12 @@ kgmGraphics::~kgmGraphics()
 
   if(gui_style)
     gui_style->release();
+
+  if(m_camera)
+    m_camera->release();
+
+  if(g_def_material)
+    g_def_material->release();
 }
 
 kgmShader* s_def = null;
@@ -289,10 +297,10 @@ void kgmGraphics::resize(float width, float height)
 {
   gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
 
-  m_camera.set(PI / 6, width / height, .1f, 100000.0,
-               m_camera.mPos, m_camera.mDir, m_camera.mUp);
+  m_camera->set(PI / 6, width / height, .1f, 100000.0,
+               m_camera->mPos, m_camera->mDir, m_camera->mUp);
 
-  m_camera.viewport((float)width, (float)height);
+  m_camera->viewport((float)width, (float)height);
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);
@@ -348,7 +356,7 @@ void kgmGraphics::render()
 
       vec3  l = (*i)()->getBound().max - (*i)()->getBound().min;
 
-      if(m_camera.isSphereCross(v, 0.5 * l.length()))
+      if(m_camera->isSphereCross(v, 0.5 * l.length()))
       {
         if((*i)()->type() == kgmVisual::TypeParticles)
         {
@@ -372,8 +380,8 @@ void kgmGraphics::render()
 
   gc->gcCull(1);
 
-  setProjMatrix(m_camera.mProj);
-  setViewMatrix(m_camera.mView);
+  setProjMatrix(m_camera->mProj);
+  setViewMatrix(m_camera->mView);
   g_mtx_world.identity();
 
   gc->gcBegin();
@@ -407,7 +415,7 @@ void kgmGraphics::render()
     if(!(*i)()->active)
       continue;
 
-    if(!m_camera.isSphereCross((*i)()->position, kgmLight::LIGHT_RANGE * (*i)()->intensity))
+    if(!m_camera->isSphereCross((*i)()->position, kgmLight::LIGHT_RANGE * (*i)()->intensity))
       continue;
 
     g_lights[g_lights_count++] = (*i)();
@@ -430,7 +438,7 @@ void kgmGraphics::render()
 
   for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
   {
-    kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(&g_def_material);
+    kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(g_def_material);
     
     box3    bbound = (*i)->getBound();
     sphere3 sbound;
@@ -469,7 +477,7 @@ void kgmGraphics::render()
 
     for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
     {
-      kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(&g_def_material);
+      kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(g_def_material);
 
       box3    bbound = (*i)->getBound();
       sphere3 sbound;
@@ -593,15 +601,16 @@ void kgmGraphics::render()
       }
       else
       {
-        kgmMaterial mtl;
+        kgmMaterial* mtl = new kgmMaterial();
         gc->gcAlpha(true, gccmp_great, 0.5);
-        mtl.setTexColor(icon->getIcon());
-        render(&mtl);
+        mtl->setTexColor(icon->getIcon());
+        render(mtl);
         render(shaders[kgmShader_TypeIcon]);
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
         gc->gcAlpha(false, gccmp_great, 0.0);
+        mtl->release();
       }
     }
   }
@@ -609,7 +618,7 @@ void kgmGraphics::render()
 #ifdef DEBUG
   mtx4 mid;
   mid.identity();
-  setViewMatrix(m_camera.mView);
+  setViewMatrix(m_camera->mView);
   setWorldMatrix(mid);
 
 #ifndef NO_SHADERS
@@ -736,8 +745,8 @@ void kgmGraphics::render()
   char info[4096] = {0};
   sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \n \
           unvisible: %i\n",
-          m_camera.mDir.x, m_camera.mDir.y, m_camera.mDir.z,
-          m_camera.mPos.x, m_camera.mPos.y, m_camera.mPos.z,
+          m_camera->mDir.x, m_camera->mDir.y, m_camera->mDir.z,
+          m_camera->mPos.x, m_camera->mPos.y, m_camera->mPos.z,
           k);
   //kgmString text(info);
   //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
@@ -899,7 +908,7 @@ void kgmGraphics::render(kgmParticles* particles)
   rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
   rv.normalize();
   //uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
-  uv = rv.cross(m_camera.mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
+  uv = rv.cross(m_camera->mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
   uv.normalize();
 
   s32           count;
@@ -968,7 +977,7 @@ void kgmGraphics::render(kgmIcon* icon)
 
   rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
   rv.normalize();
-  uv = rv.cross(m_camera.mDir);
+  uv = rv.cross(m_camera->mDir);
   uv.normalize();
 
   vec3 pos   = icon->getPosition();
@@ -1112,8 +1121,8 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_mNorm",     g_mtx_normal);
   s->set("g_vAmbient",  g_vec_ambient);
   s->set("g_vLight",    v_light);
-  s->set("g_vEye",      m_camera.mPos);
-  s->set("g_vEyeDir",   m_camera.mDir);
+  s->set("g_vEye",      m_camera->mPos);
+  s->set("g_vEyeDir",   m_camera->mDir);
 
   if(tcolor)
     s->set("g_txColor", 0);

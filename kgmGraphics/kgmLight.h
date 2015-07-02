@@ -33,6 +33,11 @@ public:
   kgmString m_id;
   u32       m_group;     // object group id
 
+protected:
+  ~kgmLight()
+  {
+  }
+
 public:
   kgmLight()
   {
@@ -51,10 +56,6 @@ public:
     active = true;
 
     m_group = 0;
-  }
-
-  virtual ~kgmLight()
-  {
   }
 
   kgmObject* clone()

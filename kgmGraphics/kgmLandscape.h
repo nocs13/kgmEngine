@@ -5,16 +5,20 @@
 
 #include "../kgmBase/kgmObject.h"
 
-class kgmLandscape: public kgmObject{
- KGM_OBJECT(kgmLandscape);
-private:
- struct Heightmap
- {
-   //kgmPicture* map;
- };
-public:
-	kgmLandscape();
-	virtual ~kgmLandscape();
+class kgmLandscape: public kgmObject
+{
+  KGM_OBJECT(kgmLandscape);
 
+private:
+  struct Heightmap
+  {
+    //kgmPicture* map;
+  };
+
+protected:
+  ~kgmLandscape();
+
+public:
+  kgmLandscape();
 };
 

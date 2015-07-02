@@ -70,9 +70,11 @@ private:
   kgmMesh*    m_mesh;
   kgmCamera*  m_camera;
 
+protected:
+  ~kgmParticles();
+
 public:
   kgmParticles();
-  ~kgmParticles();
 
   void build();
   void init(Particle*);

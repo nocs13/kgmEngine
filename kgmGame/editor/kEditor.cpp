@@ -177,7 +177,7 @@ void kEditor::select(kgmString name)
 
 void kEditor::select(int x, int y)
 {
-  kgmCamera cam = game->m_render->camera();
+  kgmCamera& cam = game->m_render->camera();
 
   iRect vp = game->m_render->viewport();
 
@@ -297,7 +297,7 @@ void kEditor::select(int x, int y)
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
-  kgmCamera cam = game->m_render->camera();
+  kgmCamera& cam = game->m_render->camera();
 
   iRect vp = game->m_render->viewport();
 
@@ -1236,7 +1236,7 @@ void kEditor::onMsMove(int k, int x, int y)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
-    kgmCamera cam = game->m_render->camera();
+    kgmCamera& cam = game->m_render->camera();
 
     vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh()->getMesh())->pos);
     vec3 pr, tm;

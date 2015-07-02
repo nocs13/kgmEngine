@@ -32,9 +32,10 @@ private:
   kgmList<kgmNode*> m_childs;
 
 
+protected:
+  ~kgmNode();
+
 public:
   kgmNode(kgmNode *parent = null);
-  virtual ~kgmNode();
-
 };
 

@@ -145,9 +145,11 @@ public:
   u32     m_group;    // object group id
   box3    m_bound;
 
+protected:
+  ~kgmMesh();
+
 public:
   kgmMesh();
-  virtual ~kgmMesh();
 
   kgmMesh* clone();
 

@@ -19,7 +19,6 @@ class kgmIGame;
 class kgmGameResources: public kgmObject, public kgmIResources
 {
 protected:
-
   struct Path
   {
 
@@ -53,7 +52,7 @@ public:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
   ~kgmGameResources();
 
-  void               add(kgmResource*);
+  //void               add(kgmResource*);
   void               remove(kgmResource*);
 
   void               addPath(kgmString s);

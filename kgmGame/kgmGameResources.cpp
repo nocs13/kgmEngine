@@ -52,6 +52,7 @@ kgmGameResources::~kgmGameResources()
         m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
       }
 
+      unlock(r);
       r->release();
     }
   }
@@ -64,7 +65,7 @@ kgmGameResources::~kgmGameResources()
   m_paths.clear();
 }
 
-void kgmGameResources::add(kgmResource* r)
+/*void kgmGameResources::add(kgmResource* r)
 {
   bool exist = false;
 
@@ -85,7 +86,7 @@ void kgmGameResources::add(kgmResource* r)
     return;
 
   m_resources.add(r);
-}
+}*/
 
 void kgmGameResources::remove(kgmResource* r)
 {
@@ -216,6 +217,7 @@ kgmPicture* kgmGameResources::getPicture(char* id)
   if(picture)
   {
     picture->m_id = id;
+    lock(picture);
     m_resources.add(picture);
   }
 
@@ -247,6 +249,7 @@ kgmTexture* kgmGameResources::getTexture(char* id)
   if(texture && texture->m_texture)
   {
     texture->m_id = id;
+    lock(texture);
     m_resources.add(texture);
   }
   else if(texture)
@@ -288,7 +291,7 @@ kgmShader* kgmGameResources::getShader(char* id)
   if(shader)
   {
     shader->m_id = id;
-//    shader->increment();
+    lock(shader);
     m_resources.add(shader);
   }
 
@@ -325,6 +328,7 @@ kgmAnimation* kgmGameResources::getAnimation(char* id)
   if(anim)
   {
     anim->m_id = id;
+    lock(anim);
     m_resources.add(anim);
   }
 
@@ -354,6 +358,7 @@ kgmSound* kgmGameResources::getSound(char* id)
   if(snd)
   {
     snd->m_id = id;
+    lock(snd);
     m_resources.add(snd);
   }
 
@@ -391,6 +396,7 @@ kgmMesh* kgmGameResources::getMesh(char* id)
   if(mesh)
   {
     mesh->m_id = id;
+    lock(mesh);
     m_resources.add(mesh);
   }
 
@@ -425,6 +431,7 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id)
   if(skel)
   {
     skel->m_id = id;
+    lock(skel);
     m_resources.add(skel);
   }
 
@@ -456,6 +463,7 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
   if(font)
   {
     font->m_id = id;
+    lock(font);
     m_resources.add(font);
   }
 
@@ -491,9 +499,9 @@ kgmShapeCollision* kgmGameResources::getShapeCollision(char* id)
   if(shape)
   {
     shape->m_id = id;
+    lock(shape);
     m_resources.add(shape);
   }
 
   return shape;
 }
-

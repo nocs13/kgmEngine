@@ -5,7 +5,8 @@
 #include "../kgmMath/kgmBase.h"
 #include "../kgmMath/kgmVector3d.h"
 
-class kgmDummy: public kgmObject{
+class kgmDummy: public kgmObject
+{
   KGM_OBJECT(kgmDummy);
 
 public:
@@ -26,11 +27,12 @@ public:
 private:
   kgmObject*   m_linked;
 
-public:
+protected:
   ~kgmDummy()
   {
   }
 
+public:
   kgmDummy()
   {
     m_linked = null;

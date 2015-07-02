@@ -8,6 +8,11 @@ class kgmResource: public kgmObject
 {
   KGM_OBJECT(kgmResource);
 
+  friend class kgmIResources;
+
+private:
+  bool m_lock;
+
 public:
   enum  Type
   {
@@ -27,10 +32,22 @@ public:
   u32	       m_uid;
   u32        m_type;
 
-public:
-  kgmResource();
+protected:
   ~kgmResource();
 
+public:
+  kgmResource();
+
   void setId(kgmString id){ m_id = id; }
+
+  void release()
+  {
+    if((references() > 1) || (!m_lock && references() == 1))
+      ((kgmObject*)this)->release();
+  }
+
+private:
+  void lock() { m_lock = true; }
+  void unlock() { m_lock = false; }
 };
 

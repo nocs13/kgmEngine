@@ -100,7 +100,7 @@ private:
   kgmFont* font;
 
   iRect       m_viewport;
-  kgmCamera   m_camera;
+  kgmCamera*  m_camera;
 
   kgmList< Node<kgmLight>  > m_lights;
   kgmList< Node<kgmVisual> > m_visuals;
@@ -265,7 +265,7 @@ public:
 
   kgmCamera& camera()
   {
-    return m_camera;
+    return *m_camera;
   }
 
   void setBgColor(u32 col)

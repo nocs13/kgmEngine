@@ -56,9 +56,11 @@ public:
  u32   m_input;
  void* m_shader;
 
+protected:
+ ~kgmShader();
+
 public:
  kgmShader(kgmIGC* g = 0);
- virtual ~kgmShader();
 
  void start();
  void stop();

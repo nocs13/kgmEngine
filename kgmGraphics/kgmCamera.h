@@ -1,8 +1,9 @@
 #pragma once
 #include "kgmFrustum.h"
 
-class kgmCamera: public kgmFrustum{
-  KGM_OBJECT(kgmCamera)
+class kgmCamera: public kgmFrustum
+{
+  KGM_OBJECT(kgmCamera);
 
 public:
   enum
@@ -21,7 +22,7 @@ public:
     float height;
   };
 
- public:
+public:
   vec3  mPos, mDir, mUp;
   float mFov, mAspect, mNear, mFar;
   mtx4  mProj, mView, mVwPj;
@@ -30,17 +31,18 @@ public:
 
   Ortho ortho;
 
- public:
+protected:
+  ~kgmCamera()
+  {
+  }
+
+public:
   kgmCamera()
   {
     memset(&ortho, 0, sizeof(Ortho));
     ortho.scale = 1.0;
 
     set(0.16 * PI, 1.0, .01, 100000.0, vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 0, 1));
-  }
-
-  virtual ~kgmCamera()
-  {
   }
 
   void set(float fov, float asp, float zn, float zf, vec3 v, vec3 d,  vec3 u)
@@ -143,7 +145,7 @@ public:
   fRect getOrthoView() const
   {
     return fRect(-ortho.scale * ortho.width/ortho.height,
-                  ortho.scale * ortho.width/ortho.height,
+                 ortho.scale * ortho.width/ortho.height,
                  -ortho.scale, ortho.scale);
   }
 

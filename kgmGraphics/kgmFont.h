@@ -16,16 +16,17 @@ public:
   m_fwidth, m_fheight;
   u32 m_rows, m_cols, m_base;
 
+protected:
+  ~kgmFont()
+  {
+
+  }
+
 public:
   kgmFont()
   {
     m_twidth = m_theight =
         m_fwidth = m_fheight = 0;
     m_rows = m_cols = 0, m_base = 32;
-  }
-
-  ~kgmFont()
-  {
-
   }
 };

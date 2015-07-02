@@ -7,7 +7,8 @@
 
 class kgmGui;
 
-class kgmIGuiDraw{
+class kgmIGuiDraw
+{
 public:
-    virtual void update(kgmGui*) = 0;
+  virtual void update(kgmGui*) = 0;
 };

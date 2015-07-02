@@ -18,6 +18,10 @@ template<class T> class kgmMemory;
 
 class kgmIResources
 {
+protected:
+  void lock(kgmResource* r);
+  void unlock(kgmResource* r);
+
 public:
   virtual void                remove(kgmResource*) = 0;
 

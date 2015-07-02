@@ -2,8 +2,9 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmTab.h"
 
-class kgmFog: public kgmObject{
- KGM_OBJECT(kgmFog)
+class kgmFog: public kgmObject
+{
+ KGM_OBJECT(kgmFog);
 
 public:
  u32  m_type;
@@ -14,7 +15,8 @@ public:
  vec4  m_color;
 
 public:
- kgmFog(){
+ kgmFog()
+ {
   m_mode = 0;
   m_density = 0.5f;
   m_start = 10.0f;
