@@ -3,30 +3,28 @@
 #include "kgmWindow.h"
 #include "../kgmBase/kgmPointer.h"
 
-
-
 #ifdef WIN32
 
- #include <windows.h>
+#include <windows.h>
 
 #elif defined(ANDROID)
 
- #include <jni.h>
- #include <errno.h>
- #include <EGL/egl.h>
- #include <android/native_window.h>
+#include <jni.h>
+#include <errno.h>
+#include <EGL/egl.h>
+#include <android/native_window.h>
 
- extern ANativeWindow* kgm_getNativeWindow();
+extern ANativeWindow* kgm_getNativeWindow();
 
 #else
 
- #include <unistd.h>
- #include <X11/Xlib.h>
- #include <X11/Xutil.h>
- #include <X11/keysym.h>
- #include <X11/extensions/xf86vmode.h>
- #include <GL/gl.h>
- #include <GL/glx.h>
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
+#include <X11/extensions/xf86vmode.h>
+#include <GL/gl.h>
+#include <GL/glx.h>
 
 #endif
 
@@ -38,8 +36,8 @@ class kgmOGLWindow: public kgmWindow
 public:
 #ifdef WIN32
 
- HDC        m_hdc;
- HGLRC      m_hrc;
+  HDC        m_hdc;
+  HGLRC      m_hrc;
 
 #elif defined(ANDROID)
 
@@ -55,11 +53,11 @@ public:
 #endif
 
 private:
- kgm_ptr<kgmOGL> m_gc;
+  kgm_ptr<kgmOGL> m_gc;
 
 public:
- kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);
- virtual ~kgmOGLWindow();
- 
- kgmIGC* getGC();
+  kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);
+  virtual ~kgmOGLWindow();
+
+  kgmIGC* getGC();
 };

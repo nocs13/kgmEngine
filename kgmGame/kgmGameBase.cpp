@@ -38,6 +38,7 @@
 #include <string.h>
 
 kgmGameBase* kgmGameBase::m_game;
+
 kgmIGame* kgmIGame::getGame()
 {
   return kgmGameBase::m_game;
@@ -82,6 +83,12 @@ kgmGameBase::kgmGameBase(bool edit)
   m_logic     = null;
   m_audio     = null;
 
+  m_font = null;
+
+#ifdef EDITOR
+  editor = null;
+#endif
+
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
 
@@ -90,19 +97,16 @@ kgmGameBase::kgmGameBase(bool edit)
   spath = m_settings->get((char*)"Path");
 
   log("open system...");
-  m_system = new kgmSystem();
-
-  log("check desktop dimensions...");
-  m_system->getDesktopDimension(m_width, m_height);
+  initSystem();
 
   log("init game audio...");
-  //initAudio();
+  initAudio();
 
   log("init resources...");
   initResources();
 
   log("open graphics...");
-  if(!kgmOGLWindow::getGC())
+  if(!kgmWindow::getGC())
     return;
 
   log("init physics...");
@@ -113,8 +117,8 @@ kgmGameBase::kgmGameBase(bool edit)
   m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
-  //log("init game logic...");
-  //initLogic();
+  log("init game logic...");
+  initLogic();
 
   log("open font...");
   m_font = m_resources->getFont((char*)"font.tga", 16, 16);
@@ -163,10 +167,7 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmSnInputListener::New);
 
 #ifdef EDITOR
-  editor = null;
-
-//  if(edit)
-//    editor = new kEditor(this);
+  if(edit) editor = new kEditor(this);
 #endif
 
   int rc[4];
@@ -177,7 +178,7 @@ kgmGameBase::kgmGameBase(bool edit)
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-:kgmOGLWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
+  :kgmOGLWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 
@@ -238,39 +239,48 @@ kgmGameBase::~kgmGameBase()
   kgmUnit::unitUnregister();
 }
 
-kgmIPhysics* kgmGameBase::getPhysics(){
+kgmIPhysics* kgmGameBase::getPhysics()
+{
   return m_game->m_physics;
 }
 
-kgmISpawner* kgmGameBase::getSpawner(){
+kgmISpawner* kgmGameBase::getSpawner()
+{
   return null;
 }
 
-kgmIAudio*  kgmGameBase::getAudio(){
+kgmIAudio*  kgmGameBase::getAudio()
+{
   return (kgmIAudio*)m_game->m_audio;
 }
 
-kgmIVideo*  kgmGameBase::getVideo(){
+kgmIVideo*  kgmGameBase::getVideo()
+{
   return m_game->m_video;
 }
 
-kgmILogic*  kgmGameBase::getLogic(){
+kgmILogic*  kgmGameBase::getLogic()
+{
   return m_game->m_logic;
 }
 
-kgmIGraphics*  kgmGameBase::getGraphics(){
+kgmIGraphics*  kgmGameBase::getGraphics()
+{
   return m_game->m_render;
 }
 
-kgmIResources* kgmGameBase::getResources(){
+kgmIResources* kgmGameBase::getResources()
+{
   return m_game->m_resources;
 }
 
-kgmSystem*  kgmGameBase::getSystem(){
+kgmSystem*  kgmGameBase::getSystem()
+{
   return m_game->m_system;
 }
 
-kgmWindow*  kgmGameBase::getWindow(){
+kgmWindow*  kgmGameBase::getWindow()
+{
   return (kgmWindow*)this;
 }
 
@@ -280,7 +290,6 @@ kgmEnvironment*  kgmGameBase::getEnvironment(){
 
 void kgmGameBase::initResources()
 {
-  log("init resources");
   m_resources = new kgmGameResources(getGC(), getAudio());
   m_resources->addPath(m_settings->get((char*)"Path"));
 }
@@ -297,7 +306,9 @@ void kgmGameBase::initPhysics()
 
 void kgmGameBase::initSystem()
 {
+  m_system = new kgmSystem();
 
+  m_system->getDesktopDimension(m_width, m_height);
 }
 
 void kgmGameBase::initAudio()
@@ -323,6 +334,8 @@ void kgmGameBase::onIdle()
   static int fps = 1;
   static char buf[128] = {0};
 
+  s32 m_maxFps = 30;
+
   if(kgmTime::getTicks() - tick > 1000)
   {
     fps = frames;
@@ -332,10 +345,17 @@ void kgmGameBase::onIdle()
   else
   {
     frames++;
-  }
 
-  // if(fps > 60)
-  //  return;
+    if(frames > m_maxFps)
+    {
+      s32 pause = 1000 - (kgmTime::getTicks() - tick);
+
+      if(pause > 0)
+      {
+        kgmThread::sleep(pause);
+      }
+    }
+  }
 
   if(m_state == State_Play)
   {
@@ -362,7 +382,7 @@ void kgmGameBase::onIdle()
 
     if(gui->erased())
     {
-//      gui->release();
+      //      gui->release();
       m_guis.erase(i - 1);
     }
   }
@@ -730,7 +750,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 #define TypeGameObject 7
 
 #define AttrString(node, id, val) \
-{ \
+  { \
   kgmString sid; \
   sid = id; \
   node->attribute(sid, val); \
@@ -1368,7 +1388,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
               kgmDummy* dummy = new kgmDummy();
 
               actor->add(dummy);
-//              dummy->release();
+              //              dummy->release();
               node->attribute("name", dummy->m_id);
 
               for(int j = 0; j < node->nodes(); j++)
@@ -1428,7 +1448,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
           dm->attach(go, kgmDummy::AttachToObject);
 
         gAppend(go);
-//        go->release();
+        //        go->release();
       }
     }
     else if(id == "Visual")

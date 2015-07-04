@@ -257,6 +257,7 @@ kgmAlsa::kgmAlsa()
 
   m_proceed = 0;
 
+
   if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
       m_lib.open("libasound.so.0") || m_lib.open("libasound.so"))
   {
@@ -372,7 +373,6 @@ kgmAlsa::kgmAlsa()
           else
           {
             printf("kgmAlsa: %i failed: %s\n", err, psnd_strerror(err));
-            //return;
           }
 
           psnd_pcm_hw_params_free(params);
@@ -420,8 +420,12 @@ kgmAlsa::~kgmAlsa()
 
 #ifdef ALSA
   kgm_log() << "kgmAlsa snd_pcm_close.\n";
-  psnd_pcm_reset(m_handle);
-  psnd_pcm_close(m_handle);
+
+  if(m_handle)
+  {
+    psnd_pcm_reset(m_handle);
+    psnd_pcm_close(m_handle);
+  }
 #endif
 
   m_lib.close();
@@ -582,7 +586,7 @@ int kgmAlsa::render()
 
       u32 t2 = kgmTime::getTicks();
 
-      u32 t3 = t2 - t2;
+      u32 t3 = t2 - t1;
 
       if(t3 < m_mixer.getMsTime())
       {

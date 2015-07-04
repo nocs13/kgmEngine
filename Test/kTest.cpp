@@ -272,7 +272,6 @@ public:
 
   void gameLoop()
   {
-//    if(game.valid())
     if(game != null)
     {
       if(game->gState() == kgmIGame::State_Play)
@@ -287,7 +286,7 @@ public:
     if(game)
     {
       game->release();
-      game = (kGame*)null;
+      game = null;
     }
   }
 

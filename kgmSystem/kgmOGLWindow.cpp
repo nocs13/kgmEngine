@@ -135,7 +135,7 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
   /* attributes for a double buffered visual in RGBA format with at least
    4 bits per color and a 16 bit depth buffer
-*/
+  */
   static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
                            GLX_RED_SIZE, 4,
                            GLX_GREEN_SIZE, 4,
@@ -144,7 +144,7 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
                            None
                          };
 
-  Colormap cmap;
+  //Colormap cmap;
   //XF86VidModeModeInfo **modes;
   int rx, ry, rw, rh;
   //int numModes = 0;
@@ -208,7 +208,6 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
 kgmOGLWindow::~kgmOGLWindow()
 {
-
   m_gc = (kgmOGL*)null;
 
 #ifdef WIN32
