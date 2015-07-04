@@ -156,6 +156,14 @@ bool kgmFile::eof()
   return (position() == length());
 }
 
+bool kgmFile::valid()
+{
+  if(m_file > 0)
+    return true;
+
+  return false;
+}
+
 bool kgmFile::mmap(kgmMemory<u8> &buf)
 {
   u32 size = 0;

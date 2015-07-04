@@ -13,7 +13,9 @@ public:
     Create = 1 << 2L,
   };
 
+private:
   s32 m_file;
+
 public:
   kgmFile();
   ~kgmFile();
@@ -30,6 +32,7 @@ public:
   u32  position();
   u32  seek(u32 pos);
   bool eof();
+  bool valid();
   bool mmap(kgmMemory<u8> &buf);
 
   static bool remove_file(kgmString path);

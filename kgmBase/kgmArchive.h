@@ -76,7 +76,7 @@ public:
   
   bool open(kgmString pakf)
   {
-    if(archive.m_file)
+    if(archive.valid())
       return false;
 
     memset(&head, 0, sizeof(head));
@@ -240,7 +240,7 @@ public:
   {
     kgmFile  ff;
 
-    if(!archive.m_file || (f.length() < 1))
+    if(!archive.valid() || (f.length() < 1))
       return false;
 
     //check if alredy exist this name
@@ -293,7 +293,7 @@ public:
     u32 i = 0;
     Entry *pe = 0;
 
-    if(!id.length() || !archive.m_file)
+    if(!id.length() || !archive.valid())
       return false;
 
     for(i = 0; i < toc.size(); i++)
@@ -313,7 +313,7 @@ public:
   {
     Entry *pe = null;
     
-    if(!id.length() || !archive.m_file || changed)
+    if(!id.length() || !archive.valid() || changed)
       return false;
     
     for(u32 i = 0; i < toc.size(); i++)
@@ -336,7 +336,7 @@ public:
   {
     Entry *pe = 0;
 
-    if(!archive.m_file || changed)
+    if(!archive.valid() || changed)
       return false;
 
     if(index >= toc.size())

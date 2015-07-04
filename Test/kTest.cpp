@@ -99,15 +99,13 @@ class kGame: public kgmGameBase{
     u8  cmap;
   };
 
-  kgm_ptr<kGui> gui;
+  kGui *gui = null;
   GameData      data;
 
 public:
   kGame(bool edit)
     :kgmGameBase(edit)
   {
-    //gui = kgm_ptr<kGui>(new kGui(this));
-
     kgmUnit::unitRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
     kgmUnit::unitRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
 
@@ -121,16 +119,10 @@ public:
 
     m_logic = new ASp_Logic(this);
 
-    readData();
-    saveData();
   }
 
   ~kGame()
   {
-    saveData();
-
-    gui = (kGui*)null;
-
 #ifdef DEBUG
   kgm_log() << "kGame::~kGame.\n";
 #endif
@@ -140,21 +132,12 @@ public:
   void edit()
   {
 #ifdef EDITOR
-    if(gui.valid())
-      ((kGui*)gui)->m_guiMain->hide();
     m_state = State_Edit;
 #endif
   }
 
   void guiShow(bool s)
   {
-    if(!gui.valid())
-      return;
-
-    if(s)
-      ((kGui*)gui)->m_guiMain->show();
-    else
-      ((kGui*)gui)->m_guiMain->hide();
   }
 
   void onIdle()
@@ -228,60 +211,6 @@ public:
       gUnload();
       m_state = kgmIGame::State_Idle;
       ((kGui*)gui)->viewAgain();
-    }
-  }
-
-private:
-  void readData()
-  {
-    kgmString path;
-
-#ifdef ANDROID
-#else
-    kgmSystem::getHomeDirectory(path);
-
-    path += "/.kSpacer";
-
-    if(!kgmSystem::isDirectory(path))
-      return;
-
-    path += "/data";
-#endif;
-
-    kgmFile f;
-
-    f.open(path, kgmFile::Read);
-
-    if(f.m_file)
-      f.read(&data, sizeof(data));
-
-    f.close();
-  }
-
-  void saveData()
-  {
-    kgmString path;
-
-#ifdef ANDROID
-#else
-    kgmSystem::getHomeDirectory(path);
-
-    path += "/.kSpacer";
-
-    if(!kgmSystem::isDirectory(path))
-      kgmFile::make_directory(path);
-
-    path += "/data";
-#endif;
-
-    kgmFile f;
-
-    f.open(path, kgmFile::Write | kgmFile::Create);
-
-    if(f.m_file > 0)
-    {
-      f.write(&data, sizeof(data));
-      f.close();
     }
   }
 };
