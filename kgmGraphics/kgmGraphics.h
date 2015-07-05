@@ -64,6 +64,9 @@ public:
     {
       m_object = obj;
       m_remove = false;
+
+      if(m_object)
+        m_object->increment();
     }
 
     Node(const Node<T>& node)

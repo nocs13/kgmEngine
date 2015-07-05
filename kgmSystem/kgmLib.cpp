@@ -19,7 +19,7 @@ bool kgmLib::open(char *p)
 {
 #ifdef WIN32
   handle = (void*)LoadLibrary(p);
-#elif LINUX
+#else
   handle = dlopen(p, RTLD_NOW);
 #endif
 
@@ -33,7 +33,7 @@ void kgmLib::close()
 
 #ifdef WIN32
   FreeLibrary((HINSTANCE)handle);
-#elif LINUX
+#else
   dlclose(handle);
 #endif
 
@@ -47,9 +47,7 @@ void* kgmLib::get(char *sym)
 
 #ifdef WIN32
   return (void*)GetProcAddress((HINSTANCE)handle,sym);
-#endif
-
-#ifdef LINUX
+#else
   return dlsym(handle, sym);
 #endif
 

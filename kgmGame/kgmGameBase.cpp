@@ -106,7 +106,7 @@ kgmGameBase::kgmGameBase(bool edit)
   initResources();
 
   log("open graphics...");
-  if(!kgmWindow::getGC())
+  if(!kgmOGLWindow::getGC())
     return;
 
   log("init physics...");
@@ -114,7 +114,7 @@ kgmGameBase::kgmGameBase(bool edit)
 
   log("open renderer...");
   m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
-  m_render->resize(m_width, m_height);
+  //m_render->resize(m_width, m_height);
   m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
 
   log("init game logic...");

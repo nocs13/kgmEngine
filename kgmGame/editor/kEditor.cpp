@@ -96,6 +96,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->guiAdd(menu);
+    menu->release();
 
     mtlLines = new kgmMaterial();
     mtlLines->setShader(null);

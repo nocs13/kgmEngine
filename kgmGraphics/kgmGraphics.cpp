@@ -234,7 +234,9 @@ void kgmGraphics::build()
 void kgmGraphics::setDefaultFont(kgmFont* f)
 {
   font = f;
-  gui_style->gui_font = f;
+
+  if(gui_style)
+    gui_style->gui_font = f;
 }
 
 void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
@@ -1479,7 +1481,7 @@ void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
 
     kgmString title = citem->getTitle();
 
-    float asp = (float)m_viewport.width() / (float)m_viewport.height();
+    //float asp = (float)m_viewport.width() / (float)m_viewport.height();
     gcDrawText(font, 8, 19, gui_style->smenu.tx_color, rc, title);
     //gcDrawText(font, 10, 10, 0xff000000, rc, title);
   }
