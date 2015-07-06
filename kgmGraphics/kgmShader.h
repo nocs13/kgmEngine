@@ -34,8 +34,10 @@ public:
   {
     TypeNone,
     TypeBase,
+    TypeBump,
     TypeSkin,
     TypePoor,
+    TypeLight,
     TypeBlend,
     TypeWater,
     TypeRiver,
@@ -43,7 +45,6 @@ public:
     TypeGlass,
     TypeFlame,
     TypeMirror,
-    TypeLights,
     TypeIce,
     TypeExtend = 0x1f
   };

@@ -76,6 +76,7 @@ const char *kgmShader::toString(Shader type)
   s_text(TypeBase);
   s_text(TypeSkin);
   s_text(TypePoor);
+  s_text(TypeLight);
   s_text(TypeBlend);
   s_text(TypeWater);
   s_text(TypeRiver);
@@ -83,7 +84,6 @@ const char *kgmShader::toString(Shader type)
   s_text(TypeGlass);
   s_text(TypeFlame);
   s_text(TypeMirror);
-  s_text(TypeLights);
   s_text(TypeIce);
 #undef s_text
 
@@ -98,6 +98,7 @@ kgmShader::Shader kgmShader::toType(const char* str)
   s_type(TypeBase);
   s_type(TypeSkin);
   s_type(TypePoor);
+  s_type(TypeLight);
   s_type(TypeBlend);
   s_type(TypeWater);
   s_type(TypeRiver);
@@ -105,7 +106,6 @@ kgmShader::Shader kgmShader::toType(const char* str)
   s_type(TypeGlass);
   s_type(TypeFlame);
   s_type(TypeMirror);
-  s_type(TypeLights);
   s_type(TypeIce);
 #undef s_type
 

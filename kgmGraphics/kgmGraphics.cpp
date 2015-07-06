@@ -72,7 +72,7 @@ kgmShader* g_shd_active = null;
 kgmLight*  g_light_active = null;
 kgmLight*  g_lights[MAX_LIGHTS] = {null};
 u32        g_lights_count = 0;
-f32        g_fAmbient = 0.91f;
+f32        g_fAmbient = 0.1f;
 void*      g_tex_black = null;
 void*      g_tex_white = null;
 void*      g_tex_gray  = null;
@@ -85,8 +85,6 @@ enum
 {
   kgmShader_TypeGui = 100,
   kgmShader_TypeIcon,
-  kgmShader_TypeLight,
-  kgmShader_TypeLights,
   kgmShader_TypeAmbient
 };
 
@@ -168,11 +166,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   {
     shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
+    shaders.add(kgmShader::TypeBump,   rc->getShader("bump.glsl"));
     shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
+    shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
+    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
     shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
-    shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
     shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
@@ -472,7 +471,7 @@ void kgmGraphics::render()
 
     render(vis);
 
-    // draw meshes light by light and blend to framebuffer
+    // draw meshes to add lights.
 
     gc->gcBlend(true, gcblend_one, gcblend_one);
 
@@ -489,7 +488,33 @@ void kgmGraphics::render()
 
 #ifndef NO_SHADERS
 
-      render(shaders[kgmShader_TypeLight]);
+      render(shaders[kgmShader::TypeLight]);
+
+#endif
+
+      render(vis);
+    }
+
+    gc->gcBlend(false, null, null);
+
+    // draw meshes to add bump and specular.
+
+    gc->gcBlend(true, gcblend_one, gcblend_one);
+
+    for(int i = 0; i < g_lights_count; i++)
+    {
+      g_light_active = g_lights[i];
+
+      tcolor = g_tex_white;
+      gc->gcSetTexture(0, tcolor);
+      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
+      gc->gcSetTexture(1, tnormal);
+      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
+      gc->gcSetTexture(2, tspecular);
+
+#ifndef NO_SHADERS
+
+      render(shaders[kgmShader::TypeBump]);
 
 #endif
 

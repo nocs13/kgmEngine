@@ -336,7 +336,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
-  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  /*g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
   g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
@@ -345,7 +345,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
-  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
+  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);*/
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)

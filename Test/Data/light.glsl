@@ -21,16 +21,19 @@ attribute vec2 g_Texcoord;
 
 void main(void)
 {
-   mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
-                     g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
-                     g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
-   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
-   N = normalize(mRot * g_Normal);
-   I = g_vLight.w;
-   L = g_vLight.xyz;
+    mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
+            g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
+            g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
 
-   gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
-   Texcoord      = g_Texcoord;
+    V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+
+    N = normalize(mRot * g_Normal);
+
+    I = g_vLight.w;
+    L = g_vLight.xyz;
+
+    gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
+    Texcoord      = g_Texcoord;
 }
 
 //Fragment Shader
@@ -51,16 +54,12 @@ varying float  I;
 void main( void )
 {
 
- vec3 LN = normalize(L - V);
+    vec3 LN = normalize(L - V);
 
- float distance = length(L - V);
- float intensity = I * dot(N, LN) / (1.0 + distance);
+    float distance = length(L - V);
+    float intensity = I * dot(N, LN) / (1.0 + distance);
 
- vec4  col = vec4(intensity, intensity, intensity, 1.0);
+    vec4 col = texture2D(g_txColor, Texcoord);
 
- col.xyz = clamp(col.xyz, 0.0, 0.5);
-
- //gl_FragColor = texture2D(g_txColor, Texcoord);
- //gl_FragColor = vec4(1, 0, 0, 1);
- gl_FragColor = col;
+    gl_FragColor = vec4(col.xyz * intensity, 1.0);
 }
