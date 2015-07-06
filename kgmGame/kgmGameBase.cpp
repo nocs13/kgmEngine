@@ -334,7 +334,7 @@ void kgmGameBase::onIdle()
   static int fps = 1;
   static char buf[128] = {0};
 
-  s32 m_maxFps = 30;
+  s32 m_maxFps = 60;
 
   if(kgmTime::getTicks() - tick > 1000)
   {

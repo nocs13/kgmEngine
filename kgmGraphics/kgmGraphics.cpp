@@ -129,7 +129,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_editor      = false;
 
-  //gui_style = new kgmGuiStyle();
+  m_vis_mesh_scene.alloc(4096);
+  m_cnt_vis_mesh_scene = 0;
 
   g_def_material = new kgmMaterial();
   g_def_material->setShader(null);
@@ -167,12 +168,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   {
     shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-//    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
-//    shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
+    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
+    shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-//    shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
-//    shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
-//    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+    shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
+    shaders.add(kgmShader_TypeLight,   rc->getShader("light.glsl"));
+    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -325,7 +326,7 @@ void kgmGraphics::render()
 
   mtx4 mvw, mpr;
 
-  kgmList<kgmVisual*> vis_mesh, vis_text, vis_blend, vis_sprite, vis_particles;
+  kgmList<kgmVisual*> vis_text, vis_blend, vis_sprite, vis_particles;
 
   // parse visible visual objects
 
@@ -370,7 +371,12 @@ void kgmGraphics::render()
         }
         else
         {
-          vis_mesh.add((*i)());
+          //vis_mesh.add((*i)());
+          if(m_cnt_vis_mesh_scene == m_vis_mesh_scene.length())
+            m_vis_mesh_scene.realloc(m_vis_mesh_scene.length() + 4096);
+
+          m_vis_mesh_scene[m_cnt_vis_mesh_scene] = (*i)();
+          m_cnt_vis_mesh_scene++;
         }
       }
       else
@@ -438,19 +444,20 @@ void kgmGraphics::render()
 
 #endif
 
-  for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
+  for(int i = 0; i < m_cnt_vis_mesh_scene; i++)
   {
-    kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(g_def_material);
+    kgmVisual* vis = m_vis_mesh_scene[i];
+    kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(g_def_material);
     
-    box3    bbound = (*i)->getBound();
+    box3    bbound = vis->getBound();
     sphere3 sbound;
 
-    bbound.min    = (*i)->getTransform() * bbound.min;
-    bbound.max    = (*i)->getTransform() * bbound.max;
+    bbound.min    = vis->getTransform() * bbound.min;
+    bbound.max    = vis->getTransform() * bbound.max;
     sbound.center = bbound.center();
     sbound.radius = 0.5f * bbound.dimension().length();
 
-    setWorldMatrix((*i)->getTransform());
+    setWorldMatrix(vis->getTransform());
 
     render(mtl);
 
@@ -463,14 +470,38 @@ void kgmGraphics::render()
 
 #endif
 
-    //render(*i);
+    render(vis);
 
-    render((kgmMaterial*)null);
+    // draw meshes light by light and blend to framebuffer
+
+    gc->gcBlend(true, gcblend_one, gcblend_one);
+
+    for(int i = 0; i < g_lights_count; i++)
+    {
+      g_light_active = g_lights[i];
+
+      tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
+      gc->gcSetTexture(0, tcolor);
+      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
+      gc->gcSetTexture(1, tnormal);
+      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
+      gc->gcSetTexture(2, tspecular);
+
+#ifndef NO_SHADERS
+
+      render(shaders[kgmShader_TypeLight]);
+
+#endif
+
+      render(vis);
+    }
+
+    gc->gcBlend(false, null, null);
   }
 
   // draw meshes light by light and blend to framebuffer
 
-  gc->gcBlend(true, gcblend_one, gcblend_one);
+  /*gc->gcBlend(true, gcblend_one, gcblend_one);
   //  gc->gcBlend(true, gcblend_one, gcblend_dstcol);
 
   for(int i = 0; i < g_lights_count; i++)
@@ -512,7 +543,7 @@ void kgmGraphics::render()
     g_light_active = null;
   }
 
-  gc->gcBlend(false, null, null);
+  gc->gcBlend(false, null, null);*/
 
 #ifndef NO_SHADERS
 
@@ -795,7 +826,8 @@ void kgmGraphics::render()
   vis_sprite.clear();
   vis_blend.clear();
   vis_text.clear();
-  vis_mesh.clear();
+
+  m_cnt_vis_mesh_scene = 0;
 }
 
 void kgmGraphics::render(kgmVisual* visual)

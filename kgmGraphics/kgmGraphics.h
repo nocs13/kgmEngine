@@ -126,6 +126,9 @@ private:
   kgmTab<u16, kgmShader*>  shaders;
   //kgmTab<u16, kgmTexture*> textures;
 
+  kgmArray<kgmVisual*> m_vis_mesh_scene;
+  s32                  m_cnt_vis_mesh_scene;
+
   kgmTexture *m_shadowmap;
 
   bool  m_depth;
