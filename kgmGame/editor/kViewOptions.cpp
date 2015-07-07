@@ -336,6 +336,24 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Shininess");
+  g = new kgmGuiScroll(tmaterial, 51, y_coord, 140, 20);
+  g->show();
+  ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
+  ((kgmGuiScroll*)g)->setRange(100);
+  ((kgmGuiScroll*)g)->setPosition(mtl->m_shininess - 1);
+  ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onShininess));
+
+  y_coord += 23;
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Transparency");
+  g = new kgmGuiScroll(tmaterial, 51, y_coord, 140, 20);
+  g->show();
+  ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
+  ((kgmGuiScroll*)g)->setRange(100);
+  ((kgmGuiScroll*)g)->setPosition(mtl->m_transparency);
+  ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
   /*g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
   g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
@@ -380,7 +398,7 @@ void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
   fd->erase();
 }
 
-void kViewOptionsForMaterial::onSelectShader(int)
+/*void kViewOptionsForMaterial::onSelectShader(int)
 {
   mode = Mode_Shader;
 
@@ -392,7 +410,7 @@ void kViewOptionsForMaterial::onSelectShader(int)
   fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-}
+}*/
 
 void kViewOptionsForMaterial::onSelectTexColor(int)
 {
@@ -434,6 +452,26 @@ void kViewOptionsForMaterial::onSelectTexSpecular(int)
   fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+}
+
+void kViewOptionsForMaterial::onShininess(u32 s)
+{
+  kgmMaterial* mtl = node->getMaterial();
+
+  if(!mtl)
+    return;
+
+  mtl->m_shininess = 1.0f + (float)s;
+}
+
+void kViewOptionsForMaterial::onTransparency(u32 s)
+{
+  kgmMaterial* mtl = node->getMaterial();
+
+  if(!mtl)
+    return;
+
+  mtl->m_transparency = (float)s;
 }
 
 kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)

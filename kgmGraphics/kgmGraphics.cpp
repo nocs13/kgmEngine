@@ -72,6 +72,8 @@ kgmShader* g_shd_active = null;
 kgmLight*  g_light_active = null;
 kgmLight*  g_lights[MAX_LIGHTS] = {null};
 u32        g_lights_count = 0;
+f32        g_fShine = 0.0f;
+f32        g_fAlpha = 1.0f;
 f32        g_fAmbient = 0.1f;
 void*      g_tex_black = null;
 void*      g_tex_white = null;
@@ -1098,6 +1100,9 @@ void kgmGraphics::render(kgmMaterial* m){
     return;
   }
 
+  g_fShine = m->m_shininess;
+  g_fAlpha = 1.0f / (1.0f + (float)m->m_transparency);
+
   if(!m->m_depth)
   {
     gc->gcDepth(false, false, gccmp_less);
@@ -1172,7 +1177,8 @@ void kgmGraphics::render(kgmShader* s)
   s->start();
   s->set("g_fTime",     kgmTime::getTime());
   s->set("g_fRandom",   random);
-  s->set("g_fShine",    0.5f);
+  s->set("g_fShine",    g_fShine);
+  s->set("g_fAlpha",    g_fAlpha);
   s->set("g_fAmbient",  g_fAmbient);
   s->set("g_mProj",     g_mtx_proj);
   s->set("g_mView",     g_mtx_view);

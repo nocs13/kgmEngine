@@ -6,13 +6,18 @@ uniform vec4   g_vLight;
 uniform vec3   g_vEye;
 uniform vec3   g_vEyeDir;
 uniform float  g_fTime;
+uniform float  g_fShine;
+uniform float  g_fAlpha;
 uniform float  g_fRandom;
 
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
+varying vec3   Y;
 varying vec2   Texcoord;
 varying float  I;
+varying float  shine;
+varying float  alpha;
 
 attribute vec3 g_Vertex;
 attribute vec3 g_Normal;
@@ -31,6 +36,10 @@ void main(void)
 
     I = g_vLight.w;
     L = g_vLight.xyz;
+    Y = g_vEyeDir;
+
+    shine = g_fShine;
+    alpha = g_fAlpha;
 
     gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
     Texcoord      = g_Texcoord;
@@ -48,8 +57,11 @@ uniform sampler2D g_txSpecular;
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
+varying vec3   Y;
 varying vec2   Texcoord;
 varying float  I;
+varying float  shine;
+varying float  alpha;
 
 void main( void )
 {
@@ -58,8 +70,15 @@ void main( void )
 
     float distance = length(L - V);
     float intensity = I * dot(N, LN) / (1.0 + distance);
+    float specular = 1.0f;
 
     vec4 col = texture2D(g_txColor, Texcoord);
 
-    gl_FragColor = vec4(col.xyz * intensity, 1.0);
+    if(dot(N, LN) > 0.0)
+    {
+      specular = pow(max(0.0, dot(reflect(-LN, N), Y)), shine);
+      intensity += specular;
+    }
+
+    gl_FragColor = vec4(col.xyz * intensity, col.w);
 }

@@ -90,10 +90,12 @@ public:
 
   __stdcall void onSelectFailed(kFileDialog*);
   __stdcall void onSelectSuccess(kFileDialog*);
-  __stdcall void onSelectShader(int);
+  //__stdcall void onSelectShader(int);
   __stdcall void onSelectTexColor(int);
   __stdcall void onSelectTexNormal(int);
   __stdcall void onSelectTexSpecular(int);
+  __stdcall void onShininess(u32 s);
+  __stdcall void onTransparency(u32 s);
 };
 
 class kViewOptionsForMesh : public kViewOptionsForMaterial

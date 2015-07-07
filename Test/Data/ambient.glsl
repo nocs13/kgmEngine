@@ -1,4 +1,3 @@
-
 uniform mat4   g_mView;
 uniform mat4   g_mProj;
 uniform mat4   g_mTran;
@@ -38,9 +37,6 @@ void main( void )
  vec4 color = texture2D(g_txColor, Texcoord);
 
  vec4  col = vec4(color.xyz * I, color.w);
-
- //col.xyz = clamp(col.xyz, 0.02, 0.25);
- //col.xyz = col.xyz * 0.5;
 
  gl_FragColor = col;
 }
