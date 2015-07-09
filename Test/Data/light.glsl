@@ -14,6 +14,7 @@ varying vec3   N;
 varying vec3   V;
 varying vec3   L;
 varying vec3   Y;
+varying vec3   VV;
 varying vec2   Texcoord;
 varying float  I;
 varying float  shine;
@@ -31,6 +32,7 @@ void main(void)
             g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
 
     V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
+    VV = vec4(g_mView * vec4(V, 1.0)).xyz;
 
     N = normalize(mRot * g_Normal);
 
@@ -58,6 +60,7 @@ varying vec3   N;
 varying vec3   V;
 varying vec3   L;
 varying vec3   Y;
+varying vec3   VV;
 varying vec2   Texcoord;
 varying float  I;
 varying float  shine;
@@ -66,19 +69,27 @@ varying float  alpha;
 void main( void )
 {
 
+    vec3 NN = normalize(N);
     vec3 LN = normalize(L - V);
+    vec3 R  = normalize(-reflect(LN, NN));
+    vec3 E  = normalize(Y - VV);
 
-    float distance = length(L - V);
-    float intensity = I * dot(N, LN) / (1.0 + distance);
-    float specular = 1.0f;
+    float distance = 1.0 + length(L - V);
+    float intensity = I * dot(NN, LN) / distance;
 
     vec4 col = texture2D(g_txColor, Texcoord);
+    col.xyz *= intensity;
 
-    if(dot(N, LN) > 0.0)
+    LN = normalize(L - VV);
+
+    if(dot(NN, LN) > 0.0)
     {
-      specular = pow(max(0.0, dot(reflect(-LN, N), Y)), shine);
-      intensity += specular;
+      vec3 specular = texture2D(g_txSpecular, Texcoord).xyz;
+      specular += vec3(pow(max(0.0, dot(R, E)), shine));
+      specular = clamp(specular, 0.0, 1.0);
+      col.xyz += specular;
     }
 
-    gl_FragColor = vec4(col.xyz * intensity, col.w);
+    col.xyz = clamp(col.xyz, 0.0, 1.0);
+    gl_FragColor = vec4(col.xyz, alpha * col.w);
 }

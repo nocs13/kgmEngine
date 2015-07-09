@@ -464,10 +464,7 @@ void kgmGraphics::render()
 
 #ifndef NO_SHADERS
 
-    if(mtl->getShader())
-      render(mtl->getShader());
-    else
-      render(shaders[kgmShader_TypeAmbient]);
+    render(shaders[kgmShader_TypeAmbient]);
 
 #endif
 
@@ -495,24 +492,26 @@ void kgmGraphics::render()
 #endif
 
       render(vis);
+
+      render((kgmShader*)null);
     }
 
     gc->gcBlend(false, null, null);
 
     // draw meshes to add bump and specular.
 
-    gc->gcBlend(true, gcblend_one, gcblend_one);
+    /*gc->gcBlend(true, gcblend_one, gcblend_one);
 
     for(int i = 0; i < g_lights_count; i++)
     {
       g_light_active = g_lights[i];
 
-      tcolor = g_tex_white;
-      gc->gcSetTexture(0, tcolor);
+      //tcolor = g_tex_white;
+      //gc->gcSetTexture(0, tcolor);
       tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
-      gc->gcSetTexture(1, tnormal);
+      gc->gcSetTexture(0, tnormal);
       tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-      gc->gcSetTexture(2, tspecular);
+      gc->gcSetTexture(1, tspecular);
 
 #ifndef NO_SHADERS
 
@@ -523,7 +522,10 @@ void kgmGraphics::render()
       render(vis);
     }
 
-    gc->gcBlend(false, null, null);
+    gc->gcBlend(false, null, null);*/
+
+    render((kgmMaterial*)null);
+    render((kgmShader*)null);
   }
 
   // draw meshes light by light and blend to framebuffer
@@ -1091,7 +1093,7 @@ void kgmGraphics::render(kgmMaterial* m){
 
     if(!m_depth)
     {
-      gc->gcDepth(true, true, gccmp_less);
+      gc->gcDepth(true, true, gccmp_lequal);
       m_depth = true;
     }
 

@@ -1297,7 +1297,7 @@ void kEditor::onMapOpen()
   kFileDialog *fdd = new kFileDialog();
   fdd->showHidden(false);
   game->guiAdd(fdd);
-  fdd->release();
+  //fdd->release();
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);

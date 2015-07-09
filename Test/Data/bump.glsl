@@ -6,14 +6,18 @@ uniform vec4   g_vLight;
 uniform vec3   g_vEye;
 uniform vec3   g_vEyeDir;
 uniform float  g_fTime;
+uniform float  g_fShine;
+uniform float  g_fAlpha;
 uniform float  g_fRandom;
-uniform float  g_fShininess;
 
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
+varying vec3   Y;
 varying vec2   Texcoord;
 varying float  I;
+varying float  shine;
+varying float  alpha;
 
 attribute vec3 g_Vertex;
 attribute vec3 g_Normal;
@@ -29,9 +33,14 @@ void main(void)
     V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
 
     N = normalize(mRot * g_Normal);
+    //N = normalize(g_Normal);
 
     I = g_vLight.w;
     L = g_vLight.xyz;
+    Y = g_vEyeDir;
+
+    shine = g_fShine;
+    alpha = g_fAlpha;
 
     gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
     Texcoord      = g_Texcoord;
@@ -42,27 +51,41 @@ void main(void)
 precision lowp float;
 #endif
 
-uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
 
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
+varying vec3   Y;
 varying vec2   Texcoord;
 varying float  I;
+varying float  shine;
+varying float  alpha;
 
 void main( void )
 {
+    vec4 bump = texture2D(g_txNormal, Texcoord);
+    vec4 spec = texture2D(g_txSpecular, Texcoord);
 
     vec3 LN = normalize(L - V);
 
+    vec3 norm = normalize(N + bump.xyz);
+    //norm = normalize(bump.xyz);
+
     float distance = length(L - V);
-    float intensity = I * dot(N, LN) / (1.0 + distance);
+    float intensity = I * dot(norm, LN) / (1.0 + distance);
 
     vec4  col = vec4(intensity, intensity, intensity, 1.0);
 
-    col.xyz = clamp(col.xyz, 0.0, 0.5);
+    //if(dot(N, LN) > 0.0)
+    {
+      vec4 specular;
+      specular = spec * pow(max(0.0, dot(reflect(LN, norm), -Y)), shine);
+      col.xyz += specular.xyz;
+    }
+
+    col.xyz = clamp(col.xyz, 0.0, 1.0);
 
     gl_FragColor = col;
 }
