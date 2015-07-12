@@ -73,7 +73,13 @@ void main( void )
     vec3 NN = normalize(N);
     vec3 LN = normalize(L - V);
     vec3 R  = normalize(-reflect(LN, NN));
-    vec3 E  = normalize(Y - VV); //VV
+    vec3 E  = normalize(Y - V); //VV
+
+    //Normal
+    {
+      vec3 bump = texture2D(g_txNormal, Texcoord).xyz * 2.0 - 1.0;
+      NN = normalize(NN + bump);
+    }
 
     float distance = 1.0 + length(L - V);
     float intensity = I * dot(NN, LN) / distance;
@@ -81,13 +87,11 @@ void main( void )
     vec4 col = texture2D(g_txColor, Texcoord);
     col.xyz *= intensity;
 
-    LN = normalize(L - VV); //VV
 
-    if(dot(NN, LN) > 0.0)
+    //Specular
     {
-      vec3 specular = texture2D(g_txSpecular, Texcoord).xyz;
-      specular += vec3(pow(max(0.0, dot(R, E)), shine));
-      //specular /= distance;
+      vec3 specular = texture2D(g_txSpecular, Texcoord).rgb;
+      specular += vec3(intensity * pow(max(0.0, dot(R, E)), shine));
       specular = clamp(specular, 0.0, 1.0);
       col.xyz += specular;
     }

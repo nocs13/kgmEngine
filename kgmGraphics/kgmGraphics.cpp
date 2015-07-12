@@ -480,7 +480,7 @@ void kgmGraphics::render()
 
       tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
       gc->gcSetTexture(0, tcolor);
-      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
+      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
       gc->gcSetTexture(1, tnormal);
       tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
       gc->gcSetTexture(2, tspecular);
