@@ -372,7 +372,6 @@ void kgmGraphics::render()
         }
         else
         {
-          //vis_mesh.add((*i)());
           if(m_cnt_vis_mesh_scene == m_vis_mesh_scene.length())
             m_vis_mesh_scene.realloc(m_vis_mesh_scene.length() + 4096);
 
@@ -470,7 +469,10 @@ void kgmGraphics::render()
 
     render(vis);
 
-    // draw meshes to add lights.
+    // draw meshes to add light, bump and specular.
+
+    //if(m_depth)
+    //  gc->gcDepth(true, false, gccmp_lequal);
 
     gc->gcBlend(true, gcblend_one, gcblend_one);
 
@@ -498,81 +500,12 @@ void kgmGraphics::render()
 
     gc->gcBlend(false, null, null);
 
-    // draw meshes to add bump and specular.
-
-    /*gc->gcBlend(true, gcblend_one, gcblend_one);
-
-    for(int i = 0; i < g_lights_count; i++)
-    {
-      g_light_active = g_lights[i];
-
-      //tcolor = g_tex_white;
-      //gc->gcSetTexture(0, tcolor);
-      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
-      gc->gcSetTexture(0, tnormal);
-      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-      gc->gcSetTexture(1, tspecular);
-
-#ifndef NO_SHADERS
-
-      render(shaders[kgmShader::TypeBump]);
-
-#endif
-
-      render(vis);
-    }
-
-    gc->gcBlend(false, null, null);*/
+    //if(m_depth)
+    //  gc->gcDepth(true, true, gccmp_lequal);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
   }
-
-  // draw meshes light by light and blend to framebuffer
-
-  /*gc->gcBlend(true, gcblend_one, gcblend_one);
-  //  gc->gcBlend(true, gcblend_one, gcblend_dstcol);
-
-  for(int i = 0; i < g_lights_count; i++)
-  {
-    g_light_active = g_lights[i];
-
-    for(kgmList<kgmVisual*>::iterator i = vis_mesh.begin(); i != vis_mesh.end(); ++i)
-    {
-      kgmMaterial* mtl = ((*i)->getMaterial())?((*i)->getMaterial()):(g_def_material);
-
-      box3    bbound = (*i)->getBound();
-      sphere3 sbound;
-
-      bbound.min    = (*i)->getTransform() * bbound.min;
-      bbound.max    = (*i)->getTransform() * bbound.max;
-      sbound.center = bbound.center();
-      sbound.radius = 0.5f * bbound.dimension().length();
-
-      setWorldMatrix((*i)->getTransform());
-
-      tcolor = g_tex_white;
-      gc->gcSetTexture(0, tcolor);
-      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_black);
-      gc->gcSetTexture(1, tnormal);
-      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-      gc->gcSetTexture(2, tspecular);
-
-#ifndef NO_SHADERS
-
-      render(shaders[kgmShader_TypeLight]);
-
-#endif
-
-      render(*i);
-
-      render((kgmMaterial*)null);
-    }
-
-    g_light_active = null;
-  }
-
-  gc->gcBlend(false, null, null);*/
 
 #ifndef NO_SHADERS
 
@@ -800,6 +733,7 @@ void kgmGraphics::render()
     kgmText* text = vis_text[i]->getText();
     kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
                     text->m_rect.w, text->m_rect.h);
+
     gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
   }
 

@@ -10,6 +10,7 @@ uniform float  g_fShine;
 uniform float  g_fAlpha;
 uniform float  g_fRandom;
 
+varying vec4   C;
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
@@ -40,6 +41,7 @@ void main(void)
     L = g_vLight.xyz;
     //Y = g_vEyeDir;
     Y = -vec3(g_mView * vec4(V, 1.0));
+    C = g_Color;
 
     shine = g_fShine;
     alpha = g_fAlpha;
@@ -57,6 +59,7 @@ uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
 
+varying vec4   C;
 varying vec3   N;
 varying vec3   V;
 varying vec3   L;
@@ -73,7 +76,7 @@ void main( void )
     vec3 NN = normalize(N);
     vec3 LN = normalize(L - V);
     vec3 R  = normalize(-reflect(LN, NN));
-    vec3 E  = normalize(Y - V); //VV
+    vec3 E  = normalize(Y - VV); //VV
 
     //Normal
     {
@@ -82,18 +85,17 @@ void main( void )
     }
 
     float distance = 1.0 + length(L - V);
-    float intensity = I * dot(NN, LN) / distance;
+    float intensity = max(0.0, (I * dot(NN, LN) / distance));
 
-    vec4 col = texture2D(g_txColor, Texcoord);
+    vec4 col = C * texture2D(g_txColor, Texcoord);
     col.xyz *= intensity;
-
 
     //Specular
     {
       vec3 specular = texture2D(g_txSpecular, Texcoord).rgb;
       specular += vec3(intensity * pow(max(0.0, dot(R, E)), shine));
       specular = clamp(specular, 0.0, 1.0);
-      col.xyz += specular;
+      col.xyz = col.xyz + specular;
     }
 
     col.xyz = clamp(col.xyz, 0.0, 1.0);

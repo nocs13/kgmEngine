@@ -44,7 +44,7 @@ public:
   virtual u32 getObjectsByType(kgmRuntime&, kgmList<kgmUnit*>&);
   virtual u32 getObjectsByClass(kgmRuntime&, kgmList<kgmUnit*>&);
 
-  void      setPlayer(kgmActor* gp)
+  void  setPlayer(kgmActor* gp)
   {
     if(m_gameplayer)
       m_gameplayer->release();
