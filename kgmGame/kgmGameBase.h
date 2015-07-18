@@ -31,48 +31,6 @@ class kgmGameBase: public kgmOGLWindow, public kgmIGame
 public:
   static kgmGameBase* m_game;
 
-  enum NodeType
-  {
-    NodeNone,
-    NodeMesh,
-    NodeLight,
-    NodeCamera,
-    NodeMaterial,
-    NodeActor,
-    NodeSensor,
-    NodeTrigger,
-    NodeGameObject
-  };
-
-  class Node
-  {
-    NodeType type;
-
-    kgmObject* object;
-
-    vec3       position;
-    vec3       rotation;
-
-    box3       bound;
-
-    kgmString  name;
-    kgmString  link;
-    kgmString  material;
-    kgmString  shader;
-    kgmString  shape;
-
-    bool       collision;
-    bool       hidden;
-    bool       lock;
-
-  public:
-    Node()
-    {
-      object = null;
-      type   = NodeNone;
-    }
-  };
-
 protected:
   kgmIVideo*         m_video;
   kgmGameAudio*      m_audio;
@@ -94,13 +52,12 @@ protected:
   char           m_input[gbtn_end];
   char           m_keymap[150];
 
-public:
   int            m_state;   //game state
   bool           m_result;  //game over result
 
   kgmGameLogic*         m_logic;
   kgmGameGraphics*      m_render;
-  kgmList<kgmGui*>      m_guis;    //game or nongame guis
+  kgmList<kgmGui*>      m_guis;    // game or nongame guis
 
 #ifdef EDITOR
   friend class kEditor;
@@ -109,6 +66,9 @@ public:
 
   kEditor* getEditor(){ return editor; }
 #endif
+
+private:
+  kgmList<Node>         m_nodes;   // game nodes.
 
 public:
   kgmGameBase(bool edit = false);
@@ -156,8 +116,8 @@ public:
   void           gPause(bool);            //render game scene
   void           gRender();               //render game scene
   kgmActor*      gSpawn(kgmString);       //spawns the actor
-  bool           gAppend(kgmUnit*); //add game object in scene
-  kgmUnit*       gObject(kgmString);     //spawn game object
+  bool           gAppend(Node);           //add game object in scene
+  kgmUnit*       gObject(kgmString);      //spawn game object
 
   bool gMapBinary(kgmString&);
   bool gMapAscii(kgmString&);

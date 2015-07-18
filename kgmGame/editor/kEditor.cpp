@@ -62,9 +62,9 @@ kEditor::kEditor(kgmGameBase* g)
   mtlLines = null;
   mtlPivot = null;
 
-  if(game->m_render)
+  if(game->getRender())
   {
-    game->m_render->setEditor(true);
+    game->getRender()->setEditor(true);
 
     kMenu* menu = new kMenu(null, this);
 
@@ -114,7 +114,7 @@ kEditor::kEditor(kgmGameBase* g)
     gridline->set(mtlLines);
     gridline->set(mesh);
     mesh->release();
-    game->m_render->add(gridline);
+    game->getRender()->add(gridline);
 
     mesh = (kgmMesh*)(new kPivot());
     pivot = new kgmVisual();
@@ -124,9 +124,9 @@ kEditor::kEditor(kgmGameBase* g)
     pivot->set(mesh);
     mesh->release();
     pivot->set(&mtr);
-    game->m_render->add(pivot);
+    game->getRender()->add(pivot);
 
-    game->m_render->setBgColor(0xffbbaa99);
+    game->getRender()->setBgColor(0xffbbaa99);
   }
 }
 
@@ -149,19 +149,12 @@ kEditor::~kEditor()
 
 void kEditor::clear()
 {
-  for(int i = 0; i < nodes.size(); i++)
-  {
-    nodes[i]->release();
-  }
-
-  nodes.clear();
-
   oquered = 0;
 }
 
 void kEditor::select(kgmString name)
 {
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  for(kgmList<kgmIGame::Node>::iterator i = game->m_nodes.begin(); i != game->m_nodes.end(); ++i)
   {
     if((*i)->nam == name)
     {
@@ -178,9 +171,9 @@ void kEditor::select(kgmString name)
 
 void kEditor::select(int x, int y)
 {
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
-  iRect vp = game->m_render->viewport();
+  iRect vp = game->getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -298,9 +291,9 @@ void kEditor::select(int x, int y)
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
-  iRect vp = game->m_render->viewport();
+  iRect vp = game->getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -382,8 +375,8 @@ bool kEditor::mapOpen(kgmString s)
 
   clear();
 
-  game->m_render->add(gridline);
-  game->m_render->add(pivot);
+  game->getRender()->add(gridline);
+  game->getRender()->add(pivot);
 
   ((kPivot*)pivot->getMesh()->getMesh())->setPos(vec3(0, 0, 0));
   pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
@@ -414,7 +407,7 @@ bool kEditor::mapOpen(kgmString s)
       node->setMaterial(mnode.mtl);
       node->lock = mnode.lck;
 
-      game->m_render->add(node->msh);
+      game->getRender()->add(node->msh);
       nodes.add(node);
 
       node->setPosition(mnode.pos);
@@ -437,9 +430,9 @@ bool kEditor::mapOpen(kgmString s)
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
 
-      game->m_render->add(node->lgt);
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo);
+      game->getRender()->add(node->lgt);
+      game->getRender()->add(node->icn);
+      game->getRender()->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -479,8 +472,8 @@ bool kEditor::mapOpen(kgmString s)
           game->getGraphics()->add(node->act->getVisual());
       }
 
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo);
+      game->getRender()->add(node->icn);
+      game->getRender()->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -503,8 +496,8 @@ bool kEditor::mapOpen(kgmString s)
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
 
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo);
+      game->getRender()->add(node->icn);
+      game->getRender()->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -528,8 +521,8 @@ bool kEditor::mapOpen(kgmString s)
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
 
-      game->m_render->add(node->icn);
-      game->m_render->add(node->geo);
+      game->getRender()->add(node->icn);
+      game->getRender()->add(node->geo);
 
       nodes.add(node);
       node->setPosition(mnode.pos);
@@ -763,7 +756,7 @@ bool kEditor::addMesh(kgmString path)
     node->lnk = name;
     selected = node;
     nodes.add(node);
-    game->m_render->add(node->msh);
+    game->getRender()->add(node->msh);
 
     return true;
   }
@@ -778,7 +771,7 @@ bool kEditor::addUnit(kgmString type)
 
   if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
+    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -799,8 +792,8 @@ bool kEditor::addUnit(kgmString type)
 
         selected = node;
 
-        game->m_render->add(node->icn);
-        game->m_render->add(node->geo);
+        game->getRender()->add(node->icn);
+        game->getRender()->add(node->geo);
 
         nodes.add(node);
 
@@ -857,8 +850,8 @@ bool kEditor::addActor(kgmString type)
 
     selected = node;
 
-    game->m_render->add(node->icn);
-    game->m_render->add(node->geo);
+    game->getRender()->add(node->icn);
+    game->getRender()->add(node->geo);
 
     nodes.add(node);
 
@@ -877,7 +870,7 @@ bool kEditor::addEffect(kgmString type)
 
   if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
+    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -898,8 +891,8 @@ bool kEditor::addEffect(kgmString type)
 
         selected = node;
 
-        game->m_render->add(node->icn);
-        game->m_render->add(node->geo);
+        game->getRender()->add(node->icn);
+        game->getRender()->add(node->geo);
 
         nodes.add(node);
 
@@ -920,7 +913,7 @@ bool kEditor::addSensor(kgmString type)
 
   if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[type];
+    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
 
     if(fn_new)
     {
@@ -938,8 +931,8 @@ bool kEditor::addSensor(kgmString type)
 
         selected = node;
 
-        game->m_render->add(node->icn);
-        game->m_render->add(node->geo);
+        game->getRender()->add(node->icn);
+        game->getRender()->add(node->geo);
 
         nodes.add(node);
 
@@ -1011,7 +1004,7 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
 void kEditor::onKeyUp(int k)
 {
-  if(k == KEY_ESCAPE && game->m_state != kgmIGame::State_Edit)
+  if(k == KEY_ESCAPE && game->gState() != kgmIGame::State_Edit)
   {
     if(game->getPhysics())
     {
@@ -1038,8 +1031,6 @@ void kEditor::onKeyUp(int k)
     }
 
 //    menu->show();
-    game->m_state = kgmIGame::State_Edit;
-
     game->getRender()->camera().mPos = cam_pos_bk;
     game->getRender()->camera().mDir = cam_dir_bk;
   }
@@ -1105,14 +1096,14 @@ void kEditor::onMsMove(int k, int x, int y)
 {
   u32 paxes = kPivot::AXIS_NONE;
 
-  if(game->m_render)
+  if(game->getRender())
     paxes = ((kPivot*)pivot->getMesh()->getMesh())->getAxis();
 
-  if(game->m_render && move_camera)
+  if(game->getRender() && move_camera)
   {
     if(ms_click[0])
     {
-      kgmCamera& cam = game->m_render->camera();
+      kgmCamera& cam = game->getRender()->camera();
 
       if(view_mode == ViewPerspective)
       {
@@ -1150,7 +1141,7 @@ void kEditor::onMsMove(int k, int x, int y)
     {
       if(game->getKeyState(KEY_Z) && selected)
       {
-        kgmCamera& cam = game->m_render->camera();
+        kgmCamera& cam = game->getRender()->camera();
 
         if(cam.isOrthogonal())
         {
@@ -1192,7 +1183,7 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else
       {
-        kgmCamera& cam = game->m_render->camera();
+        kgmCamera& cam = game->getRender()->camera();
 
         if(view_mode == ViewPerspective)
         {
@@ -1237,7 +1228,7 @@ void kEditor::onMsMove(int k, int x, int y)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
-    kgmCamera& cam = game->m_render->camera();
+    kgmCamera& cam = game->getRender()->camera();
 
     vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh()->getMesh())->pos);
     vec3 pr, tm;
@@ -1326,7 +1317,7 @@ void kEditor::onEditClone()
   {
   case kNode::MESH:
     node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    game->m_render->add(node->msh);
+    game->getRender()->add(node->msh);
 
     break;
   case kNode::LIGHT:
@@ -1335,7 +1326,7 @@ void kEditor::onEditClone()
     node->geo = new kgmVisual();
     node->geo->set((kgmMesh*)(new kArrow()));
 
-    game->m_render->add(node->lgt);
+    game->getRender()->add(node->lgt);
 
     break;
   case kNode::SENSOR:
@@ -1356,18 +1347,18 @@ void kEditor::onEditClone()
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
 
     if(((kgmActor*)node->act)->getVisual())
-      game->m_render->add(((kgmActor*)node->act)->getVisual());
+      game->getRender()->add(((kgmActor*)node->act)->getVisual());
 
     break;
   }
 
   if(node->icn)
-    game->m_render->add(node->icn);
+    game->getRender()->add(node->icn);
 
   if(node->geo)
   {
     node->geo->set(mtlLines);
-    game->m_render->add(node->geo);
+    game->getRender()->add(node->geo);
   }
 
   node->setPosition(selected->pos + vec3(0.1, 0, 0));
@@ -1487,8 +1478,8 @@ void kEditor::onAddLight()
   selected = node;
   nodes.add(node);
 
-  game->m_render->add(l);
-  game->m_render->add(node->icn);
+  game->getRender()->add(l);
+  game->getRender()->add(node->icn);
   //game->m_render->add(node->geo);
 
   //l->release();
@@ -1552,8 +1543,8 @@ void kEditor::onAddTrigger()
   selected = node;
   nodes.add(node);
 
-  game->m_render->add(node->icn);
-  game->m_render->add(node->geo);
+  game->getRender()->add(node->icn);
+  game->getRender()->add(node->geo);
 
   game->getLogic()->add(tr);
 }
@@ -1573,8 +1564,8 @@ void kEditor::onAddObstacle()
   selected = node;
   nodes.add(node);
 
-  game->m_render->add(node->icn);
-  game->m_render->add(node->geo);
+  game->getRender()->add(node->icn);
+  game->getRender()->add(node->geo);
 }
 
 static int runRun(void *cmd)
@@ -1634,7 +1625,7 @@ void kEditor::onViewObjects()
 void kEditor::onViewPerspective()
 {
   view_mode = ViewPerspective;
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
   cam.mDir = vec3( 0.5, 0.5, -0.3).normal();
   cam.mUp  = vec3(0, 0, 1);
@@ -1647,7 +1638,7 @@ void kEditor::onViewPerspective()
 void kEditor::onViewFront()
 {
   view_mode = ViewFront;
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
   cam.mDir = vec3(-1, 0, 0);
   cam.mUp  = vec3(0, 0, 1);
@@ -1658,7 +1649,7 @@ void kEditor::onViewFront()
 void kEditor::onViewLeft()
 {
   view_mode = ViewLeft;
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
   cam.mDir = vec3(0, -1, 0);
   cam.mUp  = vec3(0, 0, 1);
@@ -1669,7 +1660,7 @@ void kEditor::onViewLeft()
 void kEditor::onViewTop()
 {
   view_mode = ViewTop;
-  kgmCamera& cam = game->m_render->camera();
+  kgmCamera& cam = game->getRender()->camera();
 
   cam.mDir = vec3(0, 0, -1);
   cam.mUp  = vec3(0, 1,  0);

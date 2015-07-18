@@ -1,7 +1,9 @@
 #pragma once
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
+
 #include "kgmTexture.h"
+#include "kgmIcon.h"
 
 class kgmLight: public kgmObject
 {
@@ -33,6 +35,10 @@ public:
   kgmString m_id;
   u32       m_group;     // object group id
 
+#ifdef DEBUG
+  kgmIcon* m_icon = null;
+#endif
+
 protected:
   ~kgmLight()
   {
@@ -58,20 +64,65 @@ public:
     m_group = 0;
   }
 
+  kgmLight(const kgmLight& light)
+  {
+    type = light.TypePoint;
+
+    position  = light.position;
+    direction = light.direction;
+
+    color     = light.color;
+    specular  = light.specular;
+
+    intensity = light.intensity;
+    angle     = light.angle;
+
+    shadows   = light.shadows;
+    active    = light.active;
+
+    m_group   = light.m_group;
+
+#ifdef DEBUG
+    setIcon(light.m_icon);
+#endif
+  }
+
   kgmObject* clone()
   {
     kgmLight* l = new kgmLight();
 
-    l->position = position;
+    l->position  = position;
     l->direction = direction;
-    l->color = color;
-    l->specular = specular;
+    l->color     = color;
+    l->specular  = specular;
     l->intensity = intensity;
-    l->angle = angle;
-    l->shadows = shadows;
-    l->active = active;
-    l->m_group = m_group;
+    l->angle     = angle;
+    l->shadows   = shadows;
+    l->active    = active;
+    l->m_group   = m_group;
+
+#ifdef DEBUG
+    l->setIcon(m_icon);
+#endif
   }
+
+#ifdef DEBUG
+  void setIcon(kgmIcon* icon)
+  {
+    if(m_icon)
+      m_icon->release();
+
+    m_icon = icon;
+
+    if(icon)
+      icon->increment();
+  }
+
+  kgmIcon* getIcon()
+  {
+    return m_icon;
+  }
+#endif
 };
 
 typedef kgmList<kgmLight*> kgmLights;

@@ -500,7 +500,7 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(kgmUnit::g_typ_objects.hasKey(cls))
         {
-          kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[cls];
+          kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[cls];
 
           if(fn_new)
           {
@@ -548,7 +548,7 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(kgmUnit::g_typ_objects.hasKey(cls))
         {
-          kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[cls];
+          kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[cls];
 
           if(fn_new)
           {

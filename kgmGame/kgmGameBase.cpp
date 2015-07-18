@@ -156,15 +156,15 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
-  kgmUnit::unitRegister("kgmResult",  kgmUnit::GoUnit, (kgmUnit::GenGo)&kgmResult::New);
-  kgmUnit::unitRegister("kgmFlame",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmFlame::New);
-  kgmUnit::unitRegister("kgmSmoke",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmSmoke::New);
-  kgmUnit::unitRegister("kgmLaser",   kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmLaser::New);
-  kgmUnit::unitRegister("kgmExplode", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmExplode::New);
-  kgmUnit::unitRegister("kgmCharacter", kgmUnit::GoActor, (kgmUnit::GenGo)&kgmCharacter::New);
-  kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmLnCamera::New);
-  kgmUnit::unitRegister("kgmParticlesObject", kgmUnit::GoEffect, (kgmUnit::GenGo)&kgmParticlesObject::New);
-  kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::GoSensor, (kgmUnit::GenGo)&kgmSnInputListener::New);
+  kgmUnit::unitRegister("kgmResult",  kgmUnit::Unit, (kgmUnit::Generate)&kgmResult::New);
+  kgmUnit::unitRegister("kgmFlame",   kgmUnit::Effect, (kgmUnit::Generate)&kgmFlame::New);
+  kgmUnit::unitRegister("kgmSmoke",   kgmUnit::Effect, (kgmUnit::Generate)&kgmSmoke::New);
+  kgmUnit::unitRegister("kgmLaser",   kgmUnit::Effect, (kgmUnit::Generate)&kgmLaser::New);
+  kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
+  kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
+  kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::Sensor, (kgmUnit::Generate)&kgmLnCamera::New);
+  kgmUnit::unitRegister("kgmParticlesObject", kgmUnit::Effect, (kgmUnit::Generate)&kgmParticlesObject::New);
+  kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::Sensor, (kgmUnit::Generate)&kgmSnInputListener::New);
 
 #ifdef EDITOR
   if(edit) editor = new kEditor(this);
@@ -184,6 +184,9 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
+  log("free scene...");
+  gUnload();
+
   log("free logic...");
 
   if(m_logic)
@@ -552,6 +555,25 @@ int kgmGameBase::gUnload()
   if(m_physics)
     m_physics->clear();
 
+  for(kgmList<Node>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  {
+    switch((*i).type)
+    {
+      case kgmIGame::Node::NodeUnt:
+      case kgmIGame::Node::NodeAct:
+      case kgmIGame::Node::NodeSns:
+      case kgmIGame::Node::NodeTrg:
+        if((*i).object && ((kgmUnit*)(*i).object)->getVisual())
+          ((kgmUnit*)(*i).object)->getVisual()->remove();
+
+        if((*i).object && ((kgmUnit*)(*i).object)->getBody())
+          ((kgmUnit*)(*i).object)->remove();
+      break;
+    }
+  }
+
+  m_nodes.clear();
+
   m_state = State_Idle;
 
 #ifdef DEBUG
@@ -614,31 +636,35 @@ void kgmGameBase::gPause(bool s){
   }
 }
 
-bool kgmGameBase::gAppend(kgmUnit* go)
+bool kgmGameBase::gAppend(kgmIGame::Node node)
 {
-  if(!go || (m_state != State_Play && m_state != State_Load))
+  if(!node.object)
     return false;
 
-  if(m_render && go->getVisual())
-    m_render->add(go->getVisual());
+  if(m_render && node.getVisual())
+    m_render->add(node.getVisual());
 
-  if(m_physics && go->getBody())
-    m_physics->add(go->getBody());
+  if(m_physics && node.getBody())
+    m_physics->add(node.getBody());
 
   if(m_logic)
   {
-    if(go-isType(kgmActor::Class))
-      m_logic->add((kgmActor*)go);
-    else if(go-isType(kgmSensor::Class))
-      m_logic->add((kgmSensor*)go);
-    else if(go-isType(kgmTrigger::Class))
-      m_logic->add((kgmTrigger*)go);
+    if(node.object->isType(kgmActor::Class))
+      m_logic->add((kgmActor*)node.object);
+    else if(node.object->isType(kgmSensor::Class))
+      m_logic->add((kgmSensor*)node.object);
+    else if(node.object->isType(kgmTrigger::Class))
+      m_logic->add((kgmTrigger*)node.object);
+    else if(node.object->isType(kgmUnit::Class))
+      m_logic->add((kgmUnit*)node.object);
   }
 
 #ifdef DEBUG
-  if(m_render && go->getBody())
-    m_render->add(go->getBody());
+  if(m_render && node.getBody())
+    m_render->add(node.getBody());
 #endif
+
+  m_nodes.add(node);
 
   return true;
 }
@@ -647,7 +673,7 @@ kgmUnit* kgmGameBase::gObject(kgmString s)
 {
   if(kgmUnit::g_typ_objects.hasKey(s))
   {
-    kgmUnit::GenGo fn_new = kgmUnit::g_typ_objects[s];
+    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[s];
 
     if(fn_new)
     {
@@ -872,7 +898,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(sgrp.length() > 0)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
-          gAppend(act);
+          gAppend(Node(act, kgmIGame::Node::NodeAct));
 #ifdef DEBUG
           if(act && act->getBody())
             m_render->add(act->getBody());
@@ -892,7 +918,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(sgrp.length() > 0)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
-        gAppend(gob);
+        gAppend(Node(gob, kgmIGame::Node::NodeUnt));
 #ifdef DEBUG
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
@@ -1447,8 +1473,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
         if(dm)
           dm->attach(go, kgmDummy::AttachToObject);
 
-        gAppend(go);
-        //        go->release();
+        gAppend(Node(go, kgmIGame::Node::NodeUnt));
       }
     }
     else if(id == "Visual")

@@ -113,7 +113,11 @@ struct kgmGameCommand
 };
 
 class kgmGui;
+class kgmBody;
+class kgmUnit;
 class kgmActor;
+class kgmLight;
+class kgmVisual;
 class kgmIGC;
 class kgmIAudio;
 class kgmIVideo;
@@ -126,8 +130,6 @@ class kgmIResources;
 class kgmSystem;
 class kgmWindow;
 class kgmEnvironment;
-
-class kgmUnit;
 
 class kgmIGame
 {
@@ -143,18 +145,79 @@ public:
     State_Edit
   };
 
+  struct Node
+  {
+    enum NodeType
+    {
+      NodeNone,
+      NodeCam,
+      NodeLgt,
+      NodeVis,
+      NodeUnt,
+      NodeAct,
+      NodeSns,
+      NodeTrg
+    };
+
+    NodeType type = NodeNone;
+
+    kgmObject* object = null;
+
+    bool collide = false;  //collision type
+    bool hidden  = false;  // node is hidden
+    bool locked  = false;  //locked. for editor only
+
+    Node()
+    {
+
+    }
+
+    Node(kgmObject* obj, NodeType typ)
+    {
+      if(obj)
+        obj->increment();
+
+      object = obj;
+      type   = typ;
+    }
+
+    Node(const Node& node)
+    {
+      type    = node.type;
+      object  = node.object;
+      collide = node.collide;
+      hidden  = node.hidden;
+      locked  = node.locked;
+
+      if(object)
+        object->increment();
+    }
+
+    ~Node()
+    {
+      if(object)
+        object->release();
+    }
+
+    kgmBody*   getBody();
+    kgmUnit*   getUnit();
+    kgmLight*  getLight();
+    kgmVisual* getVisual();
+  };
+
 public:
   //virtuals
-  virtual int            gLoad(kgmString) = 0;            //load game map
-  virtual int            gUnload() = 0;                   //unload game map
-  virtual int            gCommand(kgmString) = 0;         //do command
-  virtual int            gQuit() = 0;                     //close game
-  virtual int            gButton(game_button) = 0;        //game input button state
-  virtual u32            gState() = 0;                    //check game active  state
-  virtual int            gSwitch(u32) = 0;                //switch game state
-  virtual kgmActor*      gSpawn(kgmString) = 0;           //spawn game actor
-  virtual kgmUnit*       gObject(kgmString) = 0;          //spawn game object
-  virtual bool           gAppend(kgmUnit*) = 0;     //add game object in scene
+  virtual int            gLoad(kgmString)     = 0;    //load game map
+  virtual int            gUnload()            = 0;    //unload game map
+  virtual int            gCommand(kgmString)  = 0;    //do command
+  virtual int            gQuit()              = 0;    //close game
+  virtual int            gButton(game_button) = 0;    //game input button state
+  virtual u32            gState()             = 0;    //check game active  state
+  virtual int            gSwitch(u32)         = 0;    //switch game state
+  virtual kgmActor*      gSpawn(kgmString)    = 0;    //spawn game actor
+  virtual kgmUnit*       gObject(kgmString)   = 0;    //spawn game object
+
+  virtual bool           gAppend(Node)     = 0;       //add game object in map
 
   virtual void           guiAdd(kgmGui* g) = 0;
 

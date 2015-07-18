@@ -36,7 +36,7 @@ private:
   u32       m_birth;
   u32       m_timeout;
 
-  kgmUnit*  m_parent;
+  kgmUnit*          m_parent;
   kgmList<kgmUnit*> m_childs;
 
 protected:
@@ -44,18 +44,20 @@ protected:
   kgmVisual*     m_visual;
 
 public:
-  enum GoType
+  enum Type
   {
-    GoUnit,
-    GoActor,
-    GoEffect,
-    GoSensor,
-    GoTrigger
+    Unit,
+    Mesh,
+    Actor,
+    Camera,
+    Effect,
+    Sensor,
+    Trigger
   };
 
-  typedef kgmUnit* (*GenGo)(kgmIGame*);
+  typedef kgmUnit* (*Generate)(kgmIGame*);
 
-  static kgmTab<kgmString, GenGo> g_typ_objects;
+  static kgmTab<kgmString, Generate> g_typ_objects;
 
   //update variables for control from outside
 
@@ -170,20 +172,20 @@ public:
     }
   }
 
-  static void unitRegister(kgmString id, GoType type, kgmUnit*(*create)(kgmIGame*))
+  static void unitRegister(kgmString id, Type type, kgmUnit*(*create)(kgmIGame*))
   {
     g_typ_objects.add(id, create);
 
 #ifdef EDITOR
     switch((int)type)
     {
-    case GoUnit:
+    case Unit:
       g_list_units.add(id);
       break;
-    case GoEffect:
+    case Effect:
       g_list_effects.add(id);
       break;
-    case GoSensor:
+    case Sensor:
       g_list_sensors.add(id);
       break;
     default:

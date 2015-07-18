@@ -28,7 +28,7 @@ public:
   {
     kgmActor::update(mls);
 
-    kgmCamera& cam = ((kgmGameBase*)game)->m_render->camera();
+    kgmCamera& cam = ((kgmGameBase*)game)->getRender()->camera();
     vec3 cpos = m_body->m_position;
     cpos.y -= z_dist;
 

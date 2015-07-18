@@ -81,7 +81,7 @@ public:
       text->m_rect  = uRect(10, 250, 500, 200);
 
       vtext->set(text);
-      ((kgmGameBase*)game)->m_render->add(vtext);
+      ((kgmGameBase*)game)->getRender()->add(vtext);
 //      text->release();
 //      vtext->release();
     }
@@ -106,8 +106,8 @@ public:
   kGame(bool edit)
     :kgmGameBase(edit)
   {
-    kgmUnit::unitRegister("kInput",  kgmUnit::GoSensor, (kgmUnit::GenGo)&kInput::New);
-    kgmUnit::unitRegister("ACamera",  kgmUnit::GoActor, (kgmUnit::GenGo)&ACamera::New);
+    kgmUnit::unitRegister("kInput",  kgmUnit::Sensor, (kgmUnit::Generate)&kInput::New);
+    kgmUnit::unitRegister("ACamera",  kgmUnit::Actor, (kgmUnit::Generate)&ACamera::New);
 
     setMsAbsolute(true);
 
