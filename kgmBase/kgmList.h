@@ -70,13 +70,26 @@ public:
       return (_Ptr == i._Ptr);
     }
 
-    void next()
+    bool next()
     {
-      if(_Ptr) _Ptr = _Ptr->next;
+      if(_Ptr)
+        _Ptr = _Ptr->next;
+
+      if(_Ptr)
+        return true;
+
+      return false;
     }
 
-    void prev(){
-      if(_Ptr) _Ptr = _Ptr->prev;
+    bool prev()
+    {
+      if(_Ptr)
+        _Ptr = _Ptr->prev;
+
+      if(_Ptr)
+        return true;
+
+      return false;
     }
   };
 

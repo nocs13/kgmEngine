@@ -4,6 +4,8 @@
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmList.h"
 
+#include "../kgmMath/kgmMath.h"
+
 enum game_condition
 {
   gcnd_none,
@@ -163,6 +165,8 @@ public:
 
     kgmObject* object = null;
 
+    kgmString name;
+
     bool collide = false;  //collision type
     bool hidden  = false;  // node is hidden
     bool locked  = false;  //locked. for editor only
@@ -172,18 +176,20 @@ public:
 
     }
 
-    Node(kgmObject* obj, NodeType typ)
+    Node(kgmObject* obj, NodeType typ, kgmString nam)
     {
       if(obj)
         obj->increment();
 
       object = obj;
       type   = typ;
+      name   = nam;
     }
 
     Node(const Node& node)
     {
       type    = node.type;
+      name    = node.name;
       object  = node.object;
       collide = node.collide;
       hidden  = node.hidden;
@@ -203,6 +209,11 @@ public:
     kgmUnit*   getUnit();
     kgmLight*  getLight();
     kgmVisual* getVisual();
+
+    vec3 getPosition();
+    void setPosition(vec3 pos);
+    vec3 getRotation();
+    void setRotation(vec3 pos);
   };
 
 public:

@@ -178,4 +178,9 @@ public:
   {
     return m_keys[key];
   }
+
+  kgmList<Node>::iterator nodeBegin()
+  {
+    return m_nodes.begin();
+  }
 };

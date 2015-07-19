@@ -154,11 +154,13 @@ void kEditor::clear()
 
 void kEditor::select(kgmString name)
 {
-  for(kgmList<kgmIGame::Node>::iterator i = game->m_nodes.begin(); i != game->m_nodes.end(); ++i)
+  kgmList<kgmIGame::Node>::iterator i = game->nodeBegin();
+
+  do
   {
-    if((*i)->nam == name)
+    if((*i).name == name)
     {
-      selected = (*i);
+      selected = (*i).object;
 
       if(pivot)
       {
@@ -166,7 +168,7 @@ void kEditor::select(kgmString name)
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
     }
-  }
+  }while(i.next());
 }
 
 void kEditor::select(int x, int y)

@@ -898,7 +898,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(sgrp.length() > 0)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
-          gAppend(Node(act, kgmIGame::Node::NodeAct));
+          gAppend(Node(act, kgmIGame::Node::NodeAct, act->getId()));
 #ifdef DEBUG
           if(act && act->getBody())
             m_render->add(act->getBody());
@@ -918,7 +918,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(sgrp.length() > 0)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
-        gAppend(Node(gob, kgmIGame::Node::NodeUnt));
+        gAppend(Node(gob, kgmIGame::Node::NodeUnt, gob->getId()));
 #ifdef DEBUG
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
@@ -1473,7 +1473,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
         if(dm)
           dm->attach(go, kgmDummy::AttachToObject);
 
-        gAppend(Node(go, kgmIGame::Node::NodeUnt));
+        gAppend(Node(go, kgmIGame::Node::NodeUnt, go->getId()));
       }
     }
     else if(id == "Visual")

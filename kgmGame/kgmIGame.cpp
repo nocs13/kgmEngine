@@ -35,3 +35,32 @@ kgmVisual* kgmIGame::Node::getVisual()
   return null;
 }
 
+vec3 kgmIGame::Node::getPosition()
+{
+  switch(type)
+  {
+  case NodeUnt:
+  case NodeAct:
+  }
+
+  return vec3(0, 0, 0);
+}
+
+void kgmIGame::Node::setPosition(vec3 pos)
+{
+
+}
+
+vec3 kgmIGame::Node::getRotation()
+{
+
+  return vec3(0, 0, 0);
+}
+
+void kgmIGame::Node::setRotation(vec3 pos)
+{
+
+}
+
+
+
