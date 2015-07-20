@@ -128,10 +128,30 @@ public:
     return m_group;
   }
 
+  vec3 getPosition()
+  {
+    vec3 v(0, 0, 0);
+
+    if(m_body)
+      v = m_body->position();
+
+    return v;
+  }
+
   void setPosition(vec3& v)
   {
     if(m_body)
       m_body->translate(v.x, v.y, v.z);
+  }
+
+  vec3 getRotation()
+  {
+    vec3 v(0, 0, 0);
+
+    if(m_body)
+      v = m_body->rotation();
+
+    return v;
   }
 
   void setRotation(vec3& r)

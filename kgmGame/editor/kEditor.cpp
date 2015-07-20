@@ -164,7 +164,7 @@ void kEditor::select(kgmString name)
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->pos);
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
     }
@@ -224,26 +224,27 @@ void kEditor::select(int x, int y)
 
   //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
   //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
+  kgmList<kgmIGame::Node>::iterator i = game->nodeBegin();
 
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  do
   {
     vec3  c, n;
     plane3 pln;
 
     n = vec3(1, 0, 0);
-    pln = plane3(n, (*i)->pos);
+    pln = plane3(n, (*i).getPosition());
 
-    if((*i)->lock)
+    if((*i).locked)
       continue;
 
-    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
     {
-      selected = (*i);
-      select((*i)->nam);
+      selected = (*i).object;
+      select((*i).name);
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -251,16 +252,16 @@ void kEditor::select(int x, int y)
     }
 
     n = vec3(0, 1, 0);
-    pln = plane3(n, (*i)->pos);
+    pln = plane3(n, (*i).getPosition());
 
-    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
     {
-      selected = (*i);
-      select((*i)->nam);
+      selected = (*i).object;
+      select((*i).name);
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -268,22 +269,22 @@ void kEditor::select(int x, int y)
     }
 
     n = vec3(0, 0, 1);
-    pln = plane3(n, (*i)->pos);
+    pln = plane3(n, (*i).getPosition());
 
-    if(pln.intersect(ray, c) && ((*i)->pos.distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
     {
-      selected = (*i);
-      select((*i)->nam);
+      selected = (*i).object;
+      select((*i).name);
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
       break;
     }
-  }
+  }while(i.next());
 
   if(((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
   {
@@ -352,7 +353,7 @@ bool kEditor::fdMapOpen(kFileDialog* fd)
   return mapOpen(s);
 }
 
-bool kEditor::mapOpen(kgmString s)
+/*bool kEditor::mapOpen(kgmString s)
 {
   kgmFile file;
 
@@ -723,7 +724,7 @@ bool kEditor::mapSave(kgmString s)
   fclose(f);
 
   return true;
-}
+}*/
 
 bool kEditor::fdAddMesh(kFileDialog* fd)
 {
@@ -751,14 +752,12 @@ bool kEditor::addMesh(kgmString path)
 
   if(mesh)
   {
-    kNode* node = new kNode(mesh);
+    kgmVisual* visual = new kgmVisual();
+    visual->set(mesh);
     mesh->release();
-    node->bnd = mesh->bound();
-    node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    node->lnk = name;
-    selected = node;
-    nodes.add(node);
-    game->getRender()->add(node->msh);
+    kgmString name = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
+    game->gAppend(kgmIGame::Node(visual, kgmIGame::Node::NodeVis, name));
+    selected = visual;
 
     return true;
   }

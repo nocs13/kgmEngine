@@ -37,10 +37,19 @@ kgmVisual* kgmIGame::Node::getVisual()
 
 vec3 kgmIGame::Node::getPosition()
 {
+  vec3 v(0, 0, 0);
+
   switch(type)
   {
   case NodeUnt:
   case NodeAct:
+  case NodeSns:
+  case NodeTrg:
+    return ((kgmUnit*)object)->getPosition();
+  case NodeLgt:
+    return ((kgmLight*)object)->position;
+  case NodeVis:
+    return ((kgmVisual*)object)->getTransform() * v;
   }
 
   return vec3(0, 0, 0);
@@ -48,19 +57,52 @@ vec3 kgmIGame::Node::getPosition()
 
 void kgmIGame::Node::setPosition(vec3 pos)
 {
-
+  switch(type)
+  {
+  case NodeUnt:
+  case NodeAct:
+  case NodeSns:
+  case NodeTrg:
+    ((kgmUnit*)object)->setPosition(pos);
+  case NodeLgt:
+    ((kgmLight*)object)->position = pos;
+  case NodeVis:
+    ((kgmVisual*)object)->getTransform().translate(pos);
+  }
 }
 
 vec3 kgmIGame::Node::getRotation()
 {
+  vec3 v(0, 0, 0);
 
-  return vec3(0, 0, 0);
+  switch(type)
+  {
+  case NodeUnt:
+  case NodeAct:
+  case NodeSns:
+  case NodeTrg:
+    return ((kgmUnit*)object)->getRotation();
+  case NodeLgt:
+    return ((kgmLight*)object)->direction;
+  case NodeVis:
+    return v;
+  }
+
+  return v;
 }
 
-void kgmIGame::Node::setRotation(vec3 pos)
+void kgmIGame::Node::setRotation(vec3 rot)
 {
-
+  switch(type)
+  {
+  case NodeUnt:
+  case NodeAct:
+  case NodeSns:
+  case NodeTrg:
+    ((kgmUnit*)object)->setRotation(rot);
+  case NodeLgt:
+    ((kgmLight*)object)->direction = rot;
+  case NodeVis:
+    ((kgmVisual*)object)->getTransform().rotate(rot);
+  }
 }
-
-
-
