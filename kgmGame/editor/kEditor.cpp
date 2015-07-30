@@ -154,18 +154,22 @@ void kEditor::clear()
 
 void kEditor::select(kgmString name)
 {
-  kgmList<kgmIGame::Node>::iterator i = game->nodeBegin();
+  kgmList<kgmUnit*> units;
+
+  game->getLogic()->getObjects(units);
+
+  kgmList<kgmUnit*>::iterator i = units.begin();
 
   do
   {
-    if((*i).name == name)
+    if((*i)->getId() == name)
     {
-      selected = (*i).object;
+      selected = (*i);
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
-        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
+        //pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
     }
   }while(i.next());
@@ -224,7 +228,11 @@ void kEditor::select(int x, int y)
 
   //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
   //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
-  kgmList<kgmIGame::Node>::iterator i = game->nodeBegin();
+  kgmList<kgmUnit*> units;
+
+  game->getLogic()->getObjects(units);
+
+  kgmList<kgmUnit*>::iterator i = units.begin();
 
   do
   {
@@ -232,19 +240,16 @@ void kEditor::select(int x, int y)
     plane3 pln;
 
     n = vec3(1, 0, 0);
-    pln = plane3(n, (*i).getPosition());
+    pln = plane3(n, (*i)->getPosition());
 
-    if((*i).locked)
-      continue;
-
-    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = (*i).object;
-      select((*i).name);
+      selected = (*i);
+      select((*i)->getId());
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -252,16 +257,16 @@ void kEditor::select(int x, int y)
     }
 
     n = vec3(0, 1, 0);
-    pln = plane3(n, (*i).getPosition());
+    pln = plane3(n, (*i)->getPosition());
 
-    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = (*i).object;
-      select((*i).name);
+      selected = (*i);
+      select((*i)->getId());
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -269,16 +274,16 @@ void kEditor::select(int x, int y)
     }
 
     n = vec3(0, 0, 1);
-    pln = plane3(n, (*i).getPosition());
+    pln = plane3(n, (*i)->getPosition());
 
-    if(pln.intersect(ray, c) && ((*i).getPosition().distance(c) < 1.0))
+    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = (*i).object;
-      select((*i).name);
+      selected = (*i);
+      select((*i)->getId());
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i).getPosition());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -796,9 +801,7 @@ bool kEditor::addUnit(kgmString type)
         game->getRender()->add(node->icn);
         game->getRender()->add(node->geo);
 
-        nodes.add(node);
-
-        game->getRender()->add(un->getVisual());
+        game->gAppend(un);
 
         return true;
       }

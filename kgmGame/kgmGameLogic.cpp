@@ -223,8 +223,6 @@ u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
 
   for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmUnit* go = (*i);
-
     objs.add((*i));
     count++;
   }

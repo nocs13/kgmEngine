@@ -57,7 +57,13 @@ protected:
 
   kgmGameLogic*         m_logic;
   kgmGameGraphics*      m_render;
-  kgmList<kgmGui*>      m_guis;    // game or nongame guis
+
+  kgmList<kgmUnit*>   m_units;     // game units.
+  kgmList<kgmBody*>   m_bodies;    // game bodies.
+  kgmList<kgmLight*>  m_lights;    // game lights.
+  kgmList<kgmVisual*> m_visuals;   // game visuals.
+
+  kgmList<kgmGui*>    m_guis;      // game guis.
 
 #ifdef EDITOR
   friend class kEditor;
@@ -66,9 +72,6 @@ protected:
 
   kEditor* getEditor(){ return editor; }
 #endif
-
-private:
-  kgmList<Node>         m_nodes;   // game nodes.
 
 public:
   kgmGameBase(bool edit = false);
@@ -116,8 +119,11 @@ public:
   void           gPause(bool);            //render game scene
   void           gRender();               //render game scene
   kgmActor*      gSpawn(kgmString);       //spawns the actor
-  bool           gAppend(Node);           //add game object in scene
   kgmUnit*       gObject(kgmString);      //spawn game object
+  bool           gAppend(kgmUnit*);       //add game unit in map
+  bool           gAppend(kgmBody*);       //add game body in map
+  bool           gAppend(kgmLight*);      //add game light in map
+  bool           gAppend(kgmVisual*);     //add game object in map
 
   bool gMapBinary(kgmString&);
   bool gMapAscii(kgmString&);
@@ -177,10 +183,5 @@ public:
   s32 getKeyState(u8 key)
   {
     return m_keys[key];
-  }
-
-  kgmList<Node>::iterator nodeBegin()
-  {
-    return m_nodes.begin();
   }
 };

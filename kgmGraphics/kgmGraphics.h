@@ -183,11 +183,6 @@ public:
 
   void add(kgmMaterial* mtl)
   {
-    /*if(mtl)
-    {
-      m_materials.add(mtl);
-      mtl->increment();
-    }*/
   }
 
   void add(kgmLight* lgt)

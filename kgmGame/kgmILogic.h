@@ -22,10 +22,10 @@ public:
 
   virtual bool remove(kgmUnit*) = 0;
 
-  virtual void clear()                                 = 0;
-  virtual void build()                                 = 0;
-  virtual void update(u32)                             = 0;
-  virtual void collide(kgmUnit*, kgmUnit*)             = 0;
+  virtual void clear()                     = 0;
+  virtual void build()                     = 0;
+  virtual void update(u32)                 = 0;
+  virtual void collide(kgmUnit*, kgmUnit*) = 0;
 
   virtual kgmUnit*  getObjectById(kgmString&)             = 0;
   virtual u32       getObjects(kgmList<kgmUnit*>&)        = 0;
