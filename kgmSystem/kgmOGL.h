@@ -33,7 +33,7 @@ typedef u32 GLu32;
 
 #else
 #include <GL/gl.h>
-#include <GL/glu.h>
+//#include <GL/glu.h>
 #include "inc/glext.h"
 
 #ifndef GL_OBJECT_COMPILE_STATUS

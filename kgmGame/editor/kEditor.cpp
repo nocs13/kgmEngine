@@ -761,7 +761,7 @@ bool kEditor::addMesh(kgmString path)
     visual->set(mesh);
     mesh->release();
     kgmString name = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    game->gAppend(kgmIGame::Node(visual, kgmIGame::Node::NodeVis, name));
+    game->gAppend(visual);
     selected = visual;
 
     return true;
@@ -844,23 +844,8 @@ bool kEditor::addActor(kgmString type)
     //For evade remove unit from scene.
     ac->timeout(-1);
 
-    node->bnd = box3(-1, -1, -1, 1, 1, 1);
-    node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmIcon(game->getResources()->getTexture("actor_ico.tga"));
-    node->geo = new kgmVisual();
-    node->geo->set((kgmMesh*)(new kArrow()));
-    node->geo->set(mtlLines);
-    node->ini = type;
+    game->gAppend(ac);
 
-    selected = node;
-
-    game->getRender()->add(node->icn);
-    game->getRender()->add(node->geo);
-
-    nodes.add(node);
-
-    game->getRender()->add(ac->getVisual());
-    
     return true;
   }
 
@@ -893,14 +878,7 @@ bool kEditor::addEffect(kgmString type)
         //For evade remove unit from scene.
         eff->timeout(-1);
 
-        selected = node;
-
-        game->getRender()->add(node->icn);
-        game->getRender()->add(node->geo);
-
-        nodes.add(node);
-
-        game->getRender()->add(eff->getVisual());
+        game->gAppend(eff);
 
         return true;
       }
@@ -933,14 +911,7 @@ bool kEditor::addSensor(kgmString type)
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
 
-        selected = node;
-
-        game->getRender()->add(node->icn);
-        game->getRender()->add(node->geo);
-
-        nodes.add(node);
-
-        game->getRender()->add(sn->getVisual());
+        game->gAppend(sn);
 
         return true;
       }

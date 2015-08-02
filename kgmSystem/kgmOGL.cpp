@@ -15,7 +15,7 @@
 
 #ifdef DEBUG
 #ifndef ANDROID
-#include <GL/glu.h>
+//#include <GL/glu.h>
 #endif
 #endif
 
@@ -1246,7 +1246,7 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
     GLenum err = glGetError();
     if(err != GL_NO_ERROR)
     {
-      kgm_log() << "Error glBindAttribLocation: " << (s8*)gluErrorString(err) << " i " << (s32)i << "\n";
+      //kgm_log() << "Error glBindAttribLocation: " << (s8*)gluErrorString(err) << " i " << (s32)i << "\n";
     }
 #endif
 #endif
