@@ -42,8 +42,8 @@ void kNode::setPosition(vec3 v)
     lgt->direction = vec3(1, 0, 0);
     lgt->direction = getMatrix() * lgt->direction;
     break;
-  case MESH:
-    msh->set(mtrn);
+  case VISUAL:
+    vis->set(mtrn);
     break;
   case UNIT:
   case ACTOR:
@@ -85,8 +85,8 @@ void kNode::setRotation(vec3 r)
     lgt->direction = vec3(1, 0, 0);
     lgt->direction = getMatrix() * lgt->direction;
     break;
-  case MESH:
-    msh->set(mtrn);
+  case VISUAL:
+    vis->set(mtrn);
     break;
   case UNIT:
   case ACTOR:
@@ -106,6 +106,16 @@ void kNode::setRotation(vec3 r)
   }
 }
 
+vec3 kNode::getPosition()
+{
+  pos = v;
+}
+
+vec3 kNode::getRotation()
+{
+  return rot;
+}
+
 void kNode::setConvex(kgmString s)
 {
   if(typ == OBSTACLE)
@@ -117,9 +127,9 @@ kgmMaterial* kNode::getMaterial()
 {
   switch(typ)
   {
-   case MESH:
+   case VISUAL:
     {
-      return msh->getMaterial();
+      return vis->getMaterial();
 
       break;
     }
@@ -144,9 +154,9 @@ void kNode::setMaterial(kgmMaterial* m)
 {
   switch(typ)
   {
-    case MESH:
+    case VISUAL:
     {
-      return msh->set(m);
+      return vis->set(m);
 
       break;
     }

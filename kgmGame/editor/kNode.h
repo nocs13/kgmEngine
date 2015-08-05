@@ -25,10 +25,10 @@ public:
   enum Type
   {
     NONE,
-    MESH,
     UNIT,
     LIGHT,
     ACTOR,
+    VISUAL,
     EFFECT,
     SENSOR,
     TRIGGER,
@@ -40,7 +40,7 @@ public:
     kgmUnit*      unt;
     kgmLight*     lgt;
     kgmActor*     act;
-    kgmVisual*    msh;
+    kgmVisual*    vis;
     kgmEffect*    eff;
     kgmSensor*    sns;
     kgmTrigger*   trg;
@@ -69,7 +69,7 @@ public:
 private:
   ~kNode()
   {
-    kgmObject* o = (kgmObject*)msh;
+    kgmObject* o = (kgmObject*)vis;
 
     if(o)
       o->release();
@@ -85,29 +85,21 @@ public:
   kNode()
   {
     typ  = NONE;
-    msh  = null;
+    vis  = null;
     icn  = null;
     geo  = null;
     col  = false;
     lock = false;
   }
 
-  kNode(kgmMesh* m)
+  kNode(kgmVisual* v)
   {
-    typ = MESH;
-    msh = new kgmVisual();
-    msh->set(m);
+    typ = VISUAL;
+    vis = v;
     icn = null;
     geo = null;
     col = false;
     lock = false;
-
-    if(m)
-    {
-      kgmMaterial* mtl = new kgmMaterial();
-      msh->set(mtl);
-      mtl->release();
-    }
   }
 
   kNode(kgmUnit* u)
@@ -221,6 +213,8 @@ public:
   }
 
   mtx4 getMatrix();
+  vec3 getPosition();
+  vec3 getRotation();
   void setPosition(vec3 v);
   void setRotation(vec3 r);
   void setConvex(kgmString s);

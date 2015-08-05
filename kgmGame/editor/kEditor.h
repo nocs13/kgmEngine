@@ -75,7 +75,7 @@ private:
   //kViewOptions* vop;
 
 
-  kgmObject* selected;
+  kNode* selected;
 
   kgmMaterial *mtlLines, *mtlPivot;
 
