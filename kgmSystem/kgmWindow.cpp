@@ -188,7 +188,7 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
   m.wParam = wPar;
   m.lParam = lPar;
 
-  
+
   if(!wnd)
     return 1;
 
@@ -350,7 +350,7 @@ static int attrSgl[] = {
 
 /* attributes for a double buffered visual in RGBA format with at least
  * 4 bits per color and a 16 bit depth buffer */
-static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER, 
+static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
                          GLX_RED_SIZE, 4,
                          GLX_GREEN_SIZE, 4,
                          GLX_BLUE_SIZE, 4,
@@ -722,11 +722,17 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
 
 #else
 
+  XSetWindowAttributes   swa;
+  int cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
+
   m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
   m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
-  m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
-                              x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+  //m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
+  //                            x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+  m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
+                        DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
+                        cmask, &swa);
 
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
@@ -936,7 +942,7 @@ void kgmWindow::loop()
   }
 
 #endif
-  
+
   m_loop = false;
 }
 
@@ -1052,6 +1058,66 @@ kgmIGC* kgmWindow::getGC()
   return null;
 }
 
+/* X11 borderless window example.
+
+#include <stdlib.h>
+#include <math.h>
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+#include <GL/glu.h>
+
+int main(int argc, char *argv[]){
+  XSetWindowAttributes   swa;
+  XEvent                 xev;
+
+  Display           *dpy    = XOpenDisplay(NULL);
+  Window                  root    = DefaultRootWindow(dpy);
+  GLint                   att[]   = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, True, None};
+  XVisualInfo             *vi     = glXChooseVisual(dpy, 0, att);
+  GLXContext              glc     = glXCreateContext(dpy, vi, NULL, False);
+  Visual                  *vis    = DefaultVisual(dpy, 0);
+  Colormap                cmap    = XCreateColormap(dpy, root, vis, AllocNone);
+  unsigned int            w       = XDisplayWidth(dpy, 0) / 2;
+  unsigned int            h       = XDisplayHeight(dpy, 0) / 2;
+  int                     dep     = DefaultDepth(dpy, 0);
+  int                     cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
+  XWindowAttributes       gwa;
+  Window                  win;
 
 
+  swa.colormap           = cmap;
+  swa.border_pixel       = 0;
+  swa.event_mask         = ExposureMask;
+  swa.override_redirect  = 1;
+  win = XCreateWindow(dpy, root, 10, 10, w, h, 0, dep, InputOutput, vis, cmask, &swa);
+  XMapWindow(dpy, win);
 
+  glXMakeCurrent(dpy, win, glc);
+  glClearColor(0.00, 0.00, 0.60, 1.00);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(-1., 1., -1., 1., 1., 100.);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  //gluLookAt(0., 0., 10., 0., 0., 0., 0., 1., 0.);
+
+  while(1) {
+    XNextEvent(dpy, &xev);
+
+    if(xev.type == Expose) {
+      XGetWindowAttributes(dpy, win, &gwa);
+      glViewport(0, 0, gwa.width, gwa.height);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      // DRAW SOMETHING
+      glXSwapBuffers(dpy, win);
+    }
+  }
+}
+
+//
+//      gcc -o gl-base gl-base.cc -lX11 -lGL -lGLU -lm
+//
+
+*/
