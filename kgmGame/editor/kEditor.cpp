@@ -1263,8 +1263,12 @@ void kEditor::onEditClone()
   switch(selected->typ)
   {
   case kNode::VISUAL:
-    node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-    game->getRender()->add(node->vis);
+    kgmVisual::Mesh* mesh = ((kgmVisual*)node)->getMesh();
+
+    if(mesh && mesh->getMesh())
+      mesh->getMesh()->setId( kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
+
+    game->getRender()->add((kgmVisual*)node);
 
     break;
   case kNode::LIGHT:
