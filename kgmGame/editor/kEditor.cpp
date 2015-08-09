@@ -1263,6 +1263,7 @@ void kEditor::onEditClone()
   switch(selected->typ)
   {
   case kNode::VISUAL:
+  {
     kgmVisual::Mesh* mesh = ((kgmVisual*)node)->getMesh();
 
     if(mesh && mesh->getMesh())
@@ -1271,36 +1272,40 @@ void kEditor::onEditClone()
     game->getRender()->add((kgmVisual*)node);
 
     break;
+  }
   case kNode::LIGHT:
-    node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
-    node->geo = new kgmVisual();
-    node->geo->set((kgmMesh*)(new kArrow()));
+  {
+    kgmLight* light = (kgmLight*)node;
+    light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
 
-    game->getRender()->add(node->lgt);
+    game->gAppend(light);
 
     break;
+  }
   case kNode::SENSOR:
-    node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
-    node->geo = new kgmVisual();
-    node->geo->set((kgmMesh*)(new kArrow()));
+  {
+    kgmSensor* sensor = (kgmSensor*)node;
+    sensor->setId(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
+    game->gAppend(sensor);
 
     break;
+  }
   case kNode::TRIGGER:
-    node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-    node->icn = new kgmIcon(game->getResources()->getTexture("trigger_ico.tga"));
-    node->geo = new kgmVisual();
-    node->geo->set((kgmMesh*)(new kArrow()));
+  {
+    kgmTrigger* trigger = (kgmTrigger*)node;
+    trigger->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
+    game->gAppend(trigger);
 
     break;
+  }
   case kNode::ACTOR:
-    node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
-
-    if(((kgmActor*)node->act)->getVisual())
-      game->getRender()->add(((kgmActor*)node->act)->getVisual());
+  {
+    kgmActor* actor = (kgmActor*)node;
+    actor->setId(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
+    game->gAppend(actor);
 
     break;
+  }
   }
 }
 
@@ -1399,22 +1404,15 @@ void kEditor::onAddUnit()
 
 void kEditor::onAddLight()
 {
-  kgmLight* l = new kgmLight();
+  kgmLight* light = new kgmLight();
 
-  kNode* node = new kNode(l);
-  node->bnd = box3(-1, -1, -1, 1, 1, 1);
-  node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
-  node->geo = new kgmVisual();
-  node->geo->set((kgmMesh*)(new kArrow()));
-  node->geo->set(mtlLines);
+  light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
 
-  selected = node;
-  nodes.add(node);
+  if(selected)
+    selected->release();
 
-  game->getRender()->add(l);
-  game->getRender()->add(node->icn);
-  //game->m_render->add(node->geo);
+  selected = new kNode(light);
+  game->gAppend(light);
 
   //l->release();
 }
@@ -1465,41 +1463,17 @@ void kEditor::onAddTrigger()
 {
   kgmTrigger* tr = new kgmTrigger();
 
-  kNode* node = new kNode(tr);
-  node->bnd = box3(-1, -1, -1, 1, 1, 1);
-  node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
-  node->geo = new kgmVisual();
-  node->geo->set((kgmMesh*)(new kArrow()));
-  node->geo->set(mtlLines);
+  tr->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
 
+  if(selected)
+    selected->release();
 
-  selected = node;
-  nodes.add(node);
-
-  game->getRender()->add(node->icn);
-  game->getRender()->add(node->geo);
-
-  game->getLogic()->add(tr);
+  selected = new kNode(tr);
+  game->gAppend(tr);
 }
 
 void kEditor::onAddObstacle()
 {
-  kgmObstacle* o = new kgmObstacle();
-
-  kNode* node = new kNode(o);
-  node->bnd = box3(-1, -1, -1, 1, 1, 1);
-  node->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
-  node->icn = new kgmIcon(game->getResources()->getTexture("obstacle_ico.tga"));
-  node->geo = new kgmVisual();
-  node->geo->set((kgmMesh*)(new kArrow()));
-  node->geo->set(mtlLines);
-
-  selected = node;
-  nodes.add(node);
-
-  game->getRender()->add(node->icn);
-  game->getRender()->add(node->geo);
 }
 
 static int runRun(void *cmd)
@@ -1546,14 +1520,8 @@ void kEditor::onRunRun()
 
 void kEditor::onViewObjects()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
-
-  for(int i = 0; i < nodes.length(); i++)
-    vo->addItem(nodes[i]->nam);
-
-  game->guiAdd(vo);
-//  vo->release();
+  //kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
 }
 
 void kEditor::onViewPerspective()

@@ -130,7 +130,7 @@ kgmGuiFrame("Options", x, y, w, h)
     if(node->shp == "sphere") chk->setCheck(true);
     y_coord += 23;
 
-    if(node->typ == kNode::MESH)
+    if(node->typ == kNode::VISUAL)
     {
       chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
       chk->setText("Shape Mesh");

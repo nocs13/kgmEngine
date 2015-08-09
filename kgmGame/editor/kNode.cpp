@@ -108,7 +108,7 @@ void kNode::setRotation(vec3 r)
 
 vec3 kNode::getPosition()
 {
-  pos = v;
+  return pos;
 }
 
 vec3 kNode::getRotation()
