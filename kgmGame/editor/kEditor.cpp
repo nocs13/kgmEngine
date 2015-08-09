@@ -368,7 +368,7 @@ bool kEditor::fdMapOpen(kFileDialog* fd)
 
   fd->erase();
 
-  return mapOpen(s);
+  return true; //mapOpen(s);
 }
 
 /*bool kEditor::mapOpen(kgmString s)
@@ -1250,7 +1250,7 @@ void kEditor::onMapSave()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
+  //fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
 }
 
 void kEditor::onEditClone()
@@ -1500,7 +1500,7 @@ void kEditor::onRunRun()
 
   path += "~kgmrun.map";
 
-  mapSave(path);
+  //mapSave(path);
 
   kgmString cmd, exe;
 

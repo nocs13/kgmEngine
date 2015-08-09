@@ -728,11 +728,14 @@ kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int
   m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
   m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
-  //m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
-  //                            x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
-  m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
-                        DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
-                        cmask, &swa);
+  m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
+                              x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+  //m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
+  //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
+  //                      cmask, &swa);
+  //m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, 0), x, y, w, h, 0,
+  //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
+  //                      cmask, &swa);
 
   Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
