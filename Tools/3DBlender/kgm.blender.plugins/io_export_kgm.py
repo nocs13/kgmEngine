@@ -29,7 +29,7 @@ import bpy
 from mathutils import *
 
 def toGrad(a):
-  return a * 180.0 / 3.1415
+ return a * 180.0 / 3.1415
 
 '''class kgm_panel(bpy.types.Panel):
  bl_idname = "KGM_PANEL"
@@ -63,12 +63,17 @@ def toGrad(a):
   #row.operator("object.select_random")
 '''
 
-class kgm_object(bpy.types.Operator):
+def enum_items_cb(self, context):
+    l = (('ONE','One','First'), ('TWO','Two','Second'), ('THREE', 'Three', 'Third'))
+    enum_items_cb.lookup = {id: name for id, name, desc in l}
+    return l
+
+class kgm_unit(bpy.types.Operator):
  ''' Add kgmObject '''
- bl_idname = "object.kgm_object"
- bl_label = "Add kgmObject"
+ bl_idname = "object.kgm_unit"
+ bl_label = "Add kgmUnit"
  bl_options = {'REGISTER', 'UNDO'}
- 
+
  width = bpy.props.FloatProperty(
             name="Width",
             description="Box Width",
@@ -76,59 +81,139 @@ class kgm_object(bpy.types.Operator):
             default=1.0,
             )
 
+ #myprop = bpy.props.EnumProperty(items=enum_items_cb)
+
+ #def execute(self, context):
+ #   self.report({'INFO'}, enum_items_cb.lookup[self.myprop])
+ #   return {'FINISHED'}
+
  def __init__(self):
-	 print("start")
-	 
+  print("start")
+
  def __del__(self):
-	 print("end")
-	 
-     
+  print("end")
+
  def execute(self, context):
-     print("Execute object \n")
-     animaniacs = [  ( "dummy", "dummy", "kgmDummy" ),
-                     ( "actor", "actor", "kgmActor" ),
-                     ( "object", "object", "kgmGameObject" )]
+     print("Execute unit.\n")
+     
+     animaniacs = [  ( "dummy", "dummy",     "kgmDummy"   ),
+                     ( "actor",   "actor",   "kgmActor"   ),
+                     ( "sensor",  "sensor",  "kgmSensor"  ),
+                     ( "trigger", "trigger", "kgmTrigger" ),
+                     ( "actor",   "actor",   "kgmActor"   ),
+                     ( "unit",    "unit",    "kgmUnit"    )]
 
      bpy.types.Object.kgm        = bpy.props.BoolProperty()
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-     bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm object', items=animaniacs, description='select kgm object')
+     bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state  = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
-     
+
      bpy.ops.object.add()
      a = bpy.context.object
-     
-     a.name       = "kgmObject"
+
+     a.name       = "kgmUnit"
      a.kgm        = True
      a.kgm_player = False
-     a.kgm_type   = "object";
+     a.kgm_type   = "unit";
      a.kgm_state  = "None"
      a.kgm_object = "None"
      return {'FINISHED'}
 
- def zzmodal(self, context, event):
+ def modal(self, context, event):
      print("Modal object \n")
      return {'RUNNING_MODAL'}
+
+ def invoke(self, context, event):
+     print("Invoke unit.\n")
      
- def zzinvoke(self, context, event):
-     print("Invoke object \n")
-     animaniacs = [  ( "dummy", "dummy", "kgmDummy object" ),
-                     ( "actor", "actor", "kgmActor object" ),
-                     ( "object", "object", "kgmGameObject object" )]
+     animaniacs = [  ( "dummy", "dummy",     "kgmDummy"   ),
+                     ( "actor",   "actor",   "kgmActor"   ),
+                     ( "sensor",  "sensor",  "kgmSensor"  ),
+                     ( "trigger", "trigger", "kgmTrigger" ),
+                     ( "actor",   "actor",   "kgmActor"   ),
+                     ( "unit",    "unit",    "kgmUnit"    )]
 
      bpy.types.Object.kgm = True
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-     bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm object', items=animaniacs, description='select kgm object')
+     bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
+     
      bpy.ops.object.add()
      a = bpy.context.object
-     a.name = "kgmObject"
+     
+     a.name = "kgmUnit"
      a.kgm_player = False
-     a.kgm_type = "object";
+     a.kgm_type = "unit";
      a.kgm_state = "None"
      a.kgm_object = "None"
      return {'RUNNING_MODAL'}
+
+ def draw(self, context):
+   layout = self.layout
+
+class kgm_dummy(bpy.types.Operator):
+ ''' Add kgmDummy '''
+ bl_idname = "object.kgm_dummy"
+ bl_label = "Add kgmDummy"
+ bl_options = {'REGISTER', 'UNDO'}
+
+ width = bpy.props.FloatProperty(
+            name="Width",
+            description="Box Width",
+            min=0.01, max=100.0,
+            default=5.0,
+            )
+
+ #myprop = bpy.props.EnumProperty(items=enum_items_cb)
+
+ #def execute(self, context):
+ #   self.report({'INFO'}, enum_items_cb.lookup[self.myprop])
+ #   return {'FINISHED'}
+
+ def __init__(self):
+  print("start")
+
+ def __del__(self):
+  print("end")
+
+ def execute(self, context):
+     print("Execute dummy.\n")
+
+     bpy.ops.object.add()
+     a = bpy.context.object
+
+     a.name       = "kgmDummy"
+     return {'FINISHED'}
+
+ def modal(self, context, event):
+     print("Modal dummy.\n")
+     return {'RUNNING_MODAL'}
+
+ def invoke(self, context, event):
+     print("Invoke dummy.\n")
+     
+     bpy.ops.object.add()
+     a = bpy.context.object
+     
+     a.name       = "kgmDummy"
+     return {'RUNNING_MODAL'}
+
+ def draw(self, context):
+   layout = self.layout
+
+class kgm_unit_menu(bpy.types.Menu):
+    bl_label = "kgmUnit Custom Menu"
+    bl_idname = "OBJECT_MT_kgmobject_custom_menu"
+
+    def draw(self, context):
+        layout = self.layout
+        op = layout.operator(ShowInfo.bl_idname, text = 'Say Hi', icon='HAND' )
+        op.info = "Hello"
+        op = layout.operator(ShowInfo.bl_idname, text = 'Say Yes', icon='HAND' )
+        op.info = "No"
+        op = layout.operator_menu_enum(kgm_object.bl_idname, "myprop", text=kgm_object.bl_label)
 
 scene_materials = []
 
@@ -472,7 +557,7 @@ class kgmObject:
   self.euler   = self.mtx.to_euler()
   self.linked  = 'None'
   self.props   = {}
-  
+
   if self.gtype == None:
     self.gtype = ""
   if self.gobject == None:
@@ -606,7 +691,7 @@ class kgmExport(bpy.types.Operator):
   print("Lights: "     + str(len(lights)))
   print("Materials: "  + str(len(scene_materials)))
   print("Dummies: "    + str(len(lights)))
-  
+
 #  path = self.filepath
   if not self.filepath.lower().endswith(".kgm"):
    self.filepath += ".kgm"
@@ -780,18 +865,21 @@ class kgmExport(bpy.types.Operator):
   elif False:
    return self.execute(context)
 
-
 #---------------------------
 def menu_func(self, context):
     self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='PLUGIN')
 
 def menu_func_a(self, context):
-    self.layout.operator(kgm_object.bl_idname, text="kgmObject", icon='PLUGIN')
+    self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
+    self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
+    #self.layout.operator_menu_enum(kgm_object.bl_idname, "type", text="kgmObject", icon='OUTLINER_OB_EMPTY')
+    pass
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
+    #bpy.ops.wm.call_menu(name=kgm_object_menu.bl_idname)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
