@@ -6,126 +6,278 @@ from mathutils import *
 scene_materials = []
 
 class kgm_unit(bpy.types.Operator):
- bl_idname  = "object.kgm_unit"
- bl_label   = "Add kgmUnit"
- bl_options = {'REGISTER', 'UNDO'}
+  bl_idname  = "object.kgm_unit"
+  bl_label   = "Add kgmUnit"
+  bl_options = {'REGISTER', 'UNDO'}
 
- width = bpy.props.FloatProperty( name="Width",
-                                  description="Box Width",
-                                  min=0.01, max=100.0,
-                                  default=1.0 )
+  width = bpy.props.FloatProperty( name="Width",
+                                   description="Box Width",
+                                   min=0.01, max=100.0,
+                                   default=1.0 )
 
- def __init__(self):
-  print("start")
+  def __init__(self):
+    print("start")
 
- def __del__(self):
-  print("end")
+  def __del__(self):
+    print("end")
 
- def execute(self, context):
-  print("Execute unit.\n")
+  def execute(self, context):
+    bpy.types.Object.kgm_unit   = True
+    bpy.types.Object.kgm_state  = bpy.props.StringProperty()
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
-  animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                  ( "actor",   "actor",   "kgmActor"   ),
-                  ( "sensor",  "sensor",  "kgmSensor"  ),
-                  ( "trigger", "trigger", "kgmTrigger" )]
+    bpy.ops.object.add()
+    a = bpy.context.object
 
-  bpy.types.Object.kgm        = bpy.props.BoolProperty()
-  bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-  bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
-  bpy.types.Object.kgm_state  = bpy.props.StringProperty()
-  bpy.types.Object.kgm_object = bpy.props.StringProperty()
+    a.name       = "kgmUnit"
+    a.kgm_state  = "None"
+    a.kgm_object = "None"
+    return {'FINISHED'}
 
-  bpy.ops.object.add()
-  a = bpy.context.object
+  def modal(self, context, event):
+    print("Modal object \n")
+    return {'RUNNING_MODAL'}
 
-  a.name       = "kgmUnit"
-  a.kgm        = True
-  a.kgm_player = False
-  a.kgm_type   = "unit";
-  a.kgm_state  = "None"
-  a.kgm_object = "None"
-  return {'FINISHED'}
+  def invoke(self, context, event):
+    bpy.types.Object.kgm_unit   = True
+    bpy.types.Object.kgm_state  = bpy.props.StringProperty()
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
- def modal(self, context, event):
-  print("Modal object \n")
-  return {'RUNNING_MODAL'}
+    bpy.ops.object.add()
+    a = bpy.context.object
 
- def invoke(self, context, event):
-  print("Invoke unit.\n")
+    a.name       = "kgmUnit"
+    a.kgm_state  = "None"
+    a.kgm_object = "None"
+    return {'RUNNING_MODAL'}
 
-  animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                  ( "actor",   "actor",   "kgmActor"   ),
-                  ( "sensor",  "sensor",  "kgmSensor"  ),
-                  ( "trigger", "trigger", "kgmTrigger" )]
+  def draw(self, context):
+    layout = self.layout
 
-  bpy.types.Object.kgm = True
-  bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-  bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
-  bpy.types.Object.kgm_state = bpy.props.StringProperty()
-  bpy.types.Object.kgm_object = bpy.props.StringProperty()
+class kgm_actor(bpy.types.Operator):
+  bl_idname  = "object.kgm_actor"
+  bl_label   = "Add kgmActor"
+  bl_options = {'REGISTER', 'UNDO'}
 
-  bpy.ops.object.add()
-  a = bpy.context.object
+  width = bpy.props.FloatProperty( name="Width",
+                                   description="Box Width",
+                                   min=0.01, max=100.0,
+                                   default=1.0 )
 
-  a.name = "kgmUnit"
-  a.kgm_player = False
-  a.kgm_type = "unit";
-  a.kgm_state = "None"
-  a.kgm_object = "None"
-  return {'RUNNING_MODAL'}
+  def __init__(self):
+    print("start")
 
- def draw(self, context):
-  layout = self.layout
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.types.Object.kgm_actor  = True
+    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
+    bpy.types.Object.kgm_state  = bpy.props.StringProperty()
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmActor"
+    a.kgm_player = False
+    a.kgm_state  = "None"
+    a.kgm_object = "None"
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal object.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.types.Object.kgm_actor  = True
+    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
+    bpy.types.Object.kgm_state  = bpy.props.StringProperty()
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmActor"
+    a.kgm_player = False
+    a.kgm_state  = "None"
+    a.kgm_object = "None"
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
+
+class kgm_sensor(bpy.types.Operator):
+  bl_idname  = "object.kgm_sensor"
+  bl_label   = "Add kgmSensor"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  width = bpy.props.FloatProperty( name="Width",
+                                   description="Box Width",
+                                   min=0.01, max=100.0,
+                                   default=1.0 )
+
+  def __init__(self):
+    print("start")
+
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.types.Object.kgm_sensor = True
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmSensor"
+    a.kgm_object = "None"
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal object.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.types.Object.kgm_sensor = True
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmSensor"
+    a.kgm_object = "None"
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
+
+class kgm_trigger(bpy.types.Operator):
+  bl_idname  = "object.kgm_trigger"
+  bl_label   = "Add kgmTrigger"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  width = bpy.props.FloatProperty( name="Width",
+                                   description="Box Width",
+                                   min=0.01, max=100.0,
+                                   default=1.0 )
+
+  def __init__(self):
+    print("start")
+
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.types.Object.kgm_trigger = True
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmTrigger"
+    a.kgm_object = "None"
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal object.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.types.Object.kgm_trigger = True
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmTrigger"
+    a.kgm_object = "None"
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
+
+class kgm_effect(bpy.types.Operator):
+  bl_idname  = "object.kgm_effect"
+  bl_label   = "Add kgmEffect"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  width = bpy.props.FloatProperty( name="Width",
+                                   description="Box Width",
+                                   min=0.01, max=100.0,
+                                   default=1.0 )
+
+  def __init__(self):
+    print("start")
+
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.types.Object.kgm_sensor = True
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmEffect"
+    a.kgm_object = "None"
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.types.Object.kgm_effect = True
+    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name       = "kgmEffect"
+    a.kgm_object = "None"
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
 
 class kgm_dummy(bpy.types.Operator):
- ''' Add kgmDummy '''
- bl_idname = "object.kgm_dummy"
- bl_label = "Add kgmDummy"
- bl_options = {'REGISTER', 'UNDO'}
+  ''' Add kgmDummy '''
+  bl_idname = "object.kgm_dummy"
+  bl_label = "Add kgmDummy"
+  bl_options = {'REGISTER', 'UNDO'}
 
- width = bpy.props.FloatProperty(
-            name="Width",
-            description="Box Width",
-            min=0.01, max=100.0,
-            default=5.0,
-            )
+  width = bpy.props.FloatProperty(
+             name="Width",
+             description="Box Width",
+             min=0.01, max=100.0,
+             default=5.0,
+             )
 
- #myprop = bpy.props.EnumProperty(items=enum_items_cb)
+  def __init__(self):
+    print("start")
 
- #def execute(self, context):
- #   self.report({'INFO'}, enum_items_cb.lookup[self.myprop])
- #   return {'FINISHED'}
+  def __del__(self):
+    print("end")
 
- def __init__(self):
-  print("start")
+  def execute(self, context):
+    bpy.ops.object.add()
+    a = bpy.context.object
 
- def __del__(self):
-  print("end")
+    a.name = "kgmDummy"
+    return {'FINISHED'}
 
- def execute(self, context):
-     print("Execute dummy.\n")
+  def modal(self, context, event):
+    print("Modal dummy.\n")
+    return {'RUNNING_MODAL'}
 
-     bpy.ops.object.add()
-     a = bpy.context.object
+  def invoke(self, context, event):
+    bpy.ops.object.add()
+    a = bpy.context.object
 
-     a.name       = "kgmDummy"
-     return {'FINISHED'}
+    a.name = "kgmDummy"
+    return {'RUNNING_MODAL'}
 
- def modal(self, context, event):
-     print("Modal dummy.\n")
-     return {'RUNNING_MODAL'}
-
- def invoke(self, context, event):
-     print("Invoke dummy.\n")
-
-     bpy.ops.object.add()
-     a = bpy.context.object
-
-     a.name       = "kgmDummy"
-     return {'RUNNING_MODAL'}
-
- def draw(self, context):
-   layout = self.layout
+  def draw(self, context):
+    layout = self.layout
 
 scene_materials = []
 
@@ -491,7 +643,99 @@ class kgmObject:
     else:
       self.props[tk] = o.get(k)
 
-class kgmCollision:
+class kgmUnit:
+  def __init__(self, o):
+    self.name    = o.name
+    self.state   = o.get('kgm_state')
+    self.gobject = o.get('kgm_object')
+    self.mtx     = o.matrix_world
+    self.pos     = o.matrix_local.to_translation()
+    self.quat    = self.mtx.to_quaternion()
+    self.euler   = self.mtx.to_euler()
+    self.linked  = 'None'
+    self.props   = {}
+
+    if self.gobject == None:
+      self.gobject = ""
+    if self.state == None:
+      self.state = ""
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmActor:
+  def __init__(self, o):
+    self.name    = o.name
+    self.state   = o.get('kgm_state')
+    self.player  = o.get('kgm_player')
+    self.gobject = o.get('kgm_object')
+    self.mtx     = o.matrix_world
+    self.pos     = o.matrix_local.to_translation()
+    self.quat    = self.mtx.to_quaternion()
+    self.euler   = self.mtx.to_euler()
+    self.linked  = 'None'
+    self.props   = {}
+
+    if self.gobject == None:
+      self.gobject = ""
+    if self.player == None:
+      self.player = False
+    if self.state == None:
+      self.state = ""
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmEffect:
+  def __init__(self, o):
+    self.name    = o.name
+    self.state   = o.get('kgm_state')
+    self.gobject = o.get('kgm_object')
+    self.mtx     = o.matrix_world
+    self.pos     = o.matrix_local.to_translation()
+    self.quat    = self.mtx.to_quaternion()
+    self.euler   = self.mtx.to_euler()
+    self.linked  = 'None'
+    self.props   = {}
+
+    if self.gobject == None:
+      self.gobject = ""
+    if self.state == None:
+      self.state = ""
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmSensor:
+  def __init__(self, o):
+    self.name    = o.name
+    self.state   = o.get('kgm_state')
+    self.gobject = o.get('kgm_object')
+    self.mtx     = o.matrix_world
+    self.pos     = o.matrix_local.to_translation()
+    self.quat    = self.mtx.to_quaternion()
+    self.euler   = self.mtx.to_euler()
+    self.linked  = 'None'
+    self.props   = {}
+
+    if self.gobject == None:
+      self.gobject = ""
+    if self.state == None:
+      self.state = ""
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmTrigger:
+  def __init__(self, o):
+    self.name    = o.name
+    self.mtx     = o.matrix_world
+    self.pos     = o.matrix_local.to_translation()
+    self.quat    = self.mtx.to_quaternion()
+    self.euler   = self.mtx.to_euler()
+    self.linked  = 'None'
+    self.props   = {}
+
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmObstacle:
  def __init__(self, o):
   mesh = o.data
   mtx = o.matrix_local
