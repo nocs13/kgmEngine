@@ -261,6 +261,7 @@ class kgm_obstacle(bpy.types.Operator):
   bl_options = {'REGISTER', 'UNDO'}
 
   bpy.types.Object.kgm_obstacle = bpy.props.BoolProperty(name = "kgm_obstacle", default = False)
+  bpy.types.Object.kgm_surface  = bpy.props.StringProperty(name = "kgm_surface")
 
   width = bpy.props.FloatProperty(
              name="Width",
@@ -807,11 +808,19 @@ class kgmPanel(bpy.types.Panel):
     obj = context.object
 
     if hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
-      print("Object is kgmUnit.\n")
       self.draw_unit(context)
     elif hasattr(obj, 'kgm_actor') and obj.kgm_actor is True:
-      print("Object is kgmActor.\n")
       self.draw_actor(context)
+    elif hasattr(obj, 'kgm_sensor') and obj.kgm_sensor is True:
+      self.draw_sensor(context)
+    elif hasattr(obj, 'kgm_trigger') and obj.kgm_trigger is True:
+      self.draw_trigger(context)
+    elif hasattr(obj, 'kgm_effect') and obj.kgm_effect is True:
+      self.draw_effect(context)
+    elif hasattr(obj, 'kgm_dummy') and obj.kgm_dummy is True:
+      self.draw_dummy(context)
+    elif hasattr(obj, 'kgm_obstacle') and obj.kgm_obstacle is True:
+      self.draw_obstacle(context)
 
   def draw_unit(self, context):
     obj = context.object
@@ -834,3 +843,51 @@ class kgmPanel(bpy.types.Panel):
     row.prop(obj, "kgm_object")
     row = layout.row()
     row.prop(obj, "kgm_player")
+
+  def draw_sensor(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Sensor", icon = "WORLD_DATA")
+    row = layout.row()
+    row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_object")
+
+  def draw_trigger(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Trigger", icon = "WORLD_DATA")
+    row = layout.row()
+    row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_object")
+
+  def draw_effect(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Effect", icon = "WORLD_DATA")
+    row = layout.row()
+    row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_object")
+
+  def draw_dummy(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Dummy", icon = "WORLD_DATA")
+    row = layout.row()
+    row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_object")
+
+  def draw_obstacle(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Obstacle", icon = "WORLD_DATA")
+    row = layout.row()
+    row.prop(obj, "kgm_surface")
