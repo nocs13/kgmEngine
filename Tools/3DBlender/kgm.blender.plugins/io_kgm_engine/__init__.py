@@ -295,20 +295,23 @@ def menu_func_a(self, context):
   self.layout.operator(kgm_objects.kgm_unit.bl_idname,   text="kgmUnit", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_actor.bl_idname,  text="kgmActor", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_dummy.bl_idname,  text="kgmDummy", icon='OUTLINER_OB_EMPTY')
+  self.layout.operator(kgm_objects.kgm_effect.bl_idname, text="kgmEffect", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_trigger.bl_idname,text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_effect.bl_idname, text="kgmEffect", icon='OUTLINER_OB_EMPTY')
+  self.layout.operator(kgm_objects.kgm_obstacle.bl_idname,text="kgmObstacle", icon='OUTLINER_OB_EMPTY')
 
 def register():
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
   bpy.types.INFO_MT_add.append(menu_func_a)
   #bpy.ops.wm.call_menu(name=kgm_object_menu.bl_idname)
+  #bpy.utils.register_class(kgm_objects.kgmPanel)
 
 def unregister():
   bpy.utils.unregister_module(__name__)
   bpy.types.INFO_MT_file_export.remove(menu_func)
   bpy.types.INFO_MT_add.remove(menu_func_a)
+  #bpy.utils.unregister_class(kgm_objects.kgmPanel)
 
 if __name__ == "__main__":
   register()
