@@ -879,10 +879,6 @@ class kgmPanel(bpy.types.Panel):
     layout = self.layout
     row = layout.row()
     row.label(text = "Dummy", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
 
   def draw_obstacle(self, context):
     obj = context.object
