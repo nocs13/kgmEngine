@@ -287,7 +287,48 @@ class kgmExport(bpy.types.Operator):
    return wm.invoke_props_popup(self, event) #
   elif False:
    return self.execute(context)
+
+class kgmProject(bpy.types.Operator):
+  '''This appiers in the tooltip of '''
+  # this is important since its how bpy.ops.export.kgm_export() is constructed
+  bl_idname = "import_scene.kgm"
+  bl_label = "Set Kgm Project"
+
+  # TODO, add better example props
+  filepath = StringProperty(name="File Path",
+                            description="File path used for set the Kgm project",
+                            maxlen=1024,
+                            default="~/")
+
+  def invoke(self, context, event):
+    print('kgmProject: invoke')
+    wm = context.window_manager
+
+    if True:
+      wm.fileselect_add(self)
+      return {'RUNNING_MODAL'}
+    elif True:
+      wm.invoke_search_popup(self)
+      return {'RUNNING_MODAL'}
+    elif False:
+      return wm.invoke_props_popup(self, event) #
+    elif False:
+      return self.execute(context)
+
+    return {'RUNNING_MODAL'}
+
+  @classmethod
+  def poll(cls, context):
+    print('kgmProject: poll')
+    return context.active_object != None
+
+  def execute(self, context):
+    print('kgmProject: execute')
+    print('kgmProject: setting kgm project from file: ' + self.filepath)
+
+    return {'FINISHED'}
 #---------------------------
+
 def menu_func(self, context):
   self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='NONE')
 
@@ -300,9 +341,13 @@ def menu_func_a(self, context):
   self.layout.operator(kgm_objects.kgm_trigger.bl_idname,text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_obstacle.bl_idname,text="kgmObstacle", icon='OUTLINER_OB_EMPTY')
 
+def menu_func_b(self, context):
+  self.layout.operator(kgmProject.bl_idname,   text="kgmProject", icon='OUTLINER_OB_EMPTY')
+
 def register():
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
+  bpy.types.INFO_MT_file_import.append(menu_func_b)
   bpy.types.INFO_MT_add.append(menu_func_a)
   #bpy.ops.wm.call_menu(name=kgm_object_menu.bl_idname)
   #bpy.utils.register_class(kgm_objects.kgmPanel)
@@ -310,6 +355,7 @@ def register():
 def unregister():
   bpy.utils.unregister_module(__name__)
   bpy.types.INFO_MT_file_export.remove(menu_func)
+  bpy.types.INFO_MT_file_import.remove(menu_func_b)
   bpy.types.INFO_MT_add.remove(menu_func_a)
   #bpy.utils.unregister_class(kgm_objects.kgmPanel)
 
