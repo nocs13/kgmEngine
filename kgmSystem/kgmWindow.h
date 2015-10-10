@@ -26,11 +26,15 @@ u16 keyTranslate(int key);
 #else
 
 #include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/XKBlib.h>
-#include <X11/keysym.h>
-#include <X11/extensions/xf86vmode.h>
+//#include <X11/Xlib.h>
+#include "inc/X11/Xlib.h"
+#include "inc/X11/XKBlib.h"
+#include "inc/X11/keysym.h"
+#include "inc/X11/extensions/xf86vmode.h"
+//#include <X11/Xutil.h>
+//#include <X11/XKBlib.h>
+//#include <X11/keysym.h>
+//#include <X11/extensions/xf86vmode.h>
 #include <GL/glx.h>
 
 u16 keyTranslate(KeySym);
