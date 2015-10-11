@@ -29,13 +29,20 @@ if "bpy" in locals():
     importlib.reload(kgm_objects)
   if "kgm_export" in locals():
     importlib.reload(kgm_export)
+  if "kgm_project" in locals():
+    importlib.reload(kgm_project)
+else:
+  import bpy
+
+from bpy.props import StringProperty, BoolProperty
+from bpy_extras.io_utils import ExportHelper
 
 import os
 from math import radians
-import bpy
 from mathutils import *
 
-from . import kgm_objects
+#from . import kgm_objects
+#from . import *
 
 def toGrad(a):
  return a * 180.0 / 3.1415
@@ -323,8 +330,10 @@ class kgmProject(bpy.types.Operator):
     return context.active_object != None
 
   def execute(self, context):
+    from . import kgm_project
     print('kgmProject: execute')
     print('kgmProject: setting kgm project from file: ' + self.filepath)
+    kgm_project.parse(self.filepath)
 
     return {'FINISHED'}
 #---------------------------
