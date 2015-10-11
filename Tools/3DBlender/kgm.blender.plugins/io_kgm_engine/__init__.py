@@ -42,7 +42,6 @@ from math import radians
 from mathutils import *
 
 #from . import kgm_objects
-#from . import *
 
 def toGrad(a):
  return a * 180.0 / 3.1415

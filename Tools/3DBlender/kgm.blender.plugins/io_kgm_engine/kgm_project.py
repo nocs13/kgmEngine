@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import bpy
+#import bpy
 import xml.etree.ElementTree as ET
 
 Units   = []
@@ -7,17 +7,17 @@ Actors  = []
 Sensors = []
 
 def parse(path):
-  tree = NULL
+  tree = None
 
   try:
-    tree = ET.parse('country_data.xml')
-  except:
-    print('kgm project ' + path + 'cannot load as xml file.')
+    tree = ET.parse(path)
+  except Exception as e:
+    print('kgm project ' + path + ' cannot load as xml file. error: ' + e)
     return
 
   root = tree.getroot()
 
-  for elem in root.iter(NULL):
+  for elem in root.iter(None):
     print('kgm project element: ' + elem.attrib)
 
 def run(cmd):
