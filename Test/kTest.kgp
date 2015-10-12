@@ -2,7 +2,14 @@
 <kgmProject name="kTest">
  <Executable value="kTest" />
 
- <kgmActor id="">
- </kgmActor>
+ <kgmActor id="player" />
+ <kgmActor id="kgmAnubis" />
+
+ <kgmUnit id="kgmResult" />
+ <kgmUnit id="kgmFlame" />
+ <kgmUnit id="kgmSmoke" />
+ <kgmUnit id="kgmLaser" />
+ <kgmUnit id="kgmExplode" />
+ <kgmUnit id="kgmIonNozzle" />
 
 </kgmProject>
