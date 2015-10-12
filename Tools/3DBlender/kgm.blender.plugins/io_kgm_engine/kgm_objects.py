@@ -10,12 +10,10 @@ class kgm_unit(bpy.types.Operator):
   bl_label   = "Add kgmUnit"
   bl_options = {'REGISTER', 'UNDO'}
 
-  bpy.types.Object.kgm_unit = bpy.props.BoolProperty(name = "kgm_unit", default = False)
+  Units = []
 
-  width = bpy.props.FloatProperty( name="Width",
-                                   description="Box Width",
-                                   min=0.01, max=100.0,
-                                   default=1.0 )
+  bpy.types.Object.kgm_unit  = bpy.props.BoolProperty(name = "kgm_unit", default = False)
+  bpy.types.Object.kgm_units = bpy.props.EnumProperty(items=Units)
 
   def __init__(self):
     print("unit start")
@@ -47,17 +45,19 @@ class kgm_unit(bpy.types.Operator):
     layout = self.layout
     print("Draw unit.\n")
 
+  def set_enum(self, value):
+    self.kgm_object = self.units[value]
+
+  def get_enum(self):
+    return 0
+
+
 class kgm_actor(bpy.types.Operator):
   bl_idname  = "object.kgm_actor"
   bl_label   = "Add kgmActor"
   bl_options = {'REGISTER', 'UNDO'}
 
   bpy.types.Object.kgm_actor = bpy.props.BoolProperty(name = "kgm_actor", default = False)
-
-  width = bpy.props.FloatProperty( name="Width",
-                                   description="Box Width",
-                                   min=0.01, max=100.0,
-                                   default=1.0 )
 
   def __init__(self):
     print("start")
@@ -95,11 +95,6 @@ class kgm_sensor(bpy.types.Operator):
 
   bpy.types.Object.kgm_sensor = bpy.props.BoolProperty(name = "kgm_sensor", default = False)
 
-  width = bpy.props.FloatProperty( name="Width",
-                                   description="Box Width",
-                                   min=0.01, max=100.0,
-                                   default=1.0 )
-
   def __init__(self):
     print("start")
 
@@ -135,11 +130,6 @@ class kgm_trigger(bpy.types.Operator):
   bl_options = {'REGISTER', 'UNDO'}
 
   bpy.types.Object.kgm_trigger = bpy.props.BoolProperty(name = "kgm_trigger", default = False)
-
-  width = bpy.props.FloatProperty( name="Width",
-                                   description="Box Width",
-                                   min=0.01, max=100.0,
-                                   default=1.0 )
 
   def __init__(self):
     print("start")
@@ -177,11 +167,6 @@ class kgm_effect(bpy.types.Operator):
 
   bpy.types.Object.kgm_effect = bpy.props.BoolProperty(name = "kgm_effect", default = False)
 
-  width = bpy.props.FloatProperty( name="Width",
-                                   description="Box Width",
-                                   min=0.01, max=100.0,
-                                   default=1.0 )
-
   def __init__(self):
     print("start")
 
@@ -217,13 +202,6 @@ class kgm_dummy(bpy.types.Operator):
   bl_options = {'REGISTER', 'UNDO'}
 
   bpy.types.Object.kgm_dummy = bpy.props.BoolProperty(name = "kgm_dummy", default = False)
-
-  width = bpy.props.FloatProperty(
-             name="Width",
-             description="Box Width",
-             min=0.01, max=100.0,
-             default=5.0,
-             )
 
   def __init__(self):
     print("start")
@@ -262,13 +240,6 @@ class kgm_obstacle(bpy.types.Operator):
 
   bpy.types.Object.kgm_obstacle = bpy.props.BoolProperty(name = "kgm_obstacle", default = False)
   bpy.types.Object.kgm_surface  = bpy.props.StringProperty(name = "kgm_surface")
-
-  width = bpy.props.FloatProperty(
-             name="Width",
-             description="Box Width",
-             min=0.01, max=100.0,
-             default=5.0,
-             )
 
   def __init__(self):
     print("start")
@@ -831,6 +802,8 @@ class kgmPanel(bpy.types.Panel):
     row.prop(obj, "kgm_state")
     row = layout.row()
     row.prop(obj, "kgm_object")
+    row = layout.row()
+    row.prop(obj, "kgm_units")
 
   def draw_actor(self, context):
     obj = context.object

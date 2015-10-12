@@ -40,14 +40,13 @@ from bpy_extras.io_utils import ExportHelper
 import os
 from math import radians
 from mathutils import *
-
-#from . import kgm_objects
+from bpy.props import *
 
 def toGrad(a):
  return a * 180.0 / 3.1415
 
-from bpy.props import *
 class kgmExport(bpy.types.Operator):
+ from . import kgm_objects
  '''This appiers in the tooltip of '''
  bl_idname = "export_scene.kgm" # this is important since its how bpy.ops.export.kgm_export() is constructed
  bl_label = "Export Kgm"
@@ -325,14 +324,26 @@ class kgmProject(bpy.types.Operator):
 
   @classmethod
   def poll(cls, context):
+    wm = context.window_manager
+
+    if True:
+      wm.fileselect_add(self)
+      return {'RUNNING_MODAL'}
+    elif True:
+      wm.invoke_search_popup(self)
+      return {'RUNNING_MODAL'}
+    elif False:
+      return wm.invoke_props_popup(self, event) #
+    elif False:
+      return self.execute(context)
     print('kgmProject: poll')
     return context.active_object != None
 
   def execute(self, context):
-    from . import kgm_project
+    from .kgm_project import parse
     print('kgmProject: execute')
     print('kgmProject: setting kgm project from file: ' + self.filepath)
-    kgm_project.parse(self.filepath)
+    parse(self.filepath)
 
     return {'FINISHED'}
 #---------------------------

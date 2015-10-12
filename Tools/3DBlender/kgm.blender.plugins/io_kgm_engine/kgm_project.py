@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import subprocess
 
-Units   = []
+#Units   = []
 Actors  = []
 Sensors = []
 
@@ -31,12 +31,27 @@ def parse(path):
     Executable = items[0].attributes['value'].value
     print('kgm execuable is: ' + Executable);
 
+  from .kgm_objects import kgm_unit
+  items = xmldoc.getElementsByTagName('kgmUnit');
+
+  if len(items) > 0:
+    for item in items:
+      kgm_unit.Units.append(item.attributes['id'].value)
+      print('kgm unit: ' + item.attributes['id'].value);
+
   items = xmldoc.getElementsByTagName('kgmActor');
 
   if len(items) > 0:
     for item in items:
       Actors.append(item.attributes['id'].value)
       print('kgm actor: ' + item.attributes['id'].value);
+
+  items = xmldoc.getElementsByTagName('kgmSensor');
+
+  if len(items) > 0:
+    for item in items:
+      Sensors.append(item.attributes['id'].value)
+      print('kgm Sensor: ' + item.attributes['id'].value);
 
 def run(map):
   if Executable is not None and Directory is not None:
