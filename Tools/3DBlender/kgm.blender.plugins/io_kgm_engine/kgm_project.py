@@ -35,9 +35,11 @@ def parse(path):
   items = xmldoc.getElementsByTagName('kgmUnit');
 
   if len(items) > 0:
+    kgm_unit.Units = []
     for item in items:
       kgm_unit.Units.append(item.attributes['id'].value)
       print('kgm unit: ' + item.attributes['id'].value);
+  print('kgm units: ' + str(kgm_unit.Units));
 
   items = xmldoc.getElementsByTagName('kgmActor');
 

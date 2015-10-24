@@ -17,6 +17,7 @@ class kgm_unit(bpy.types.Operator):
 
   def __init__(self):
     print("unit start")
+    print(str(self.Units))
 
   def __del__(self):
     print("unit end")
@@ -803,6 +804,7 @@ class kgmPanel(bpy.types.Panel):
     row = layout.row()
     row.prop(obj, "kgm_object")
     row = layout.row()
+    bpy.types.Object.kgm_units = bpy.props.EnumProperty(items=kgm_unit.Units)
     row.prop(obj, "kgm_units")
 
   def draw_actor(self, context):

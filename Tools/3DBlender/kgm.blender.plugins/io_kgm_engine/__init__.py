@@ -23,16 +23,17 @@ bl_info = {
     "warning": "",
     "category": "Import-Export"}
 
-if "bpy" in locals():
-  import importlib
-  if "kgm_objects" in locals():
-    importlib.reload(kgm_objects)
-  if "kgm_export" in locals():
-    importlib.reload(kgm_export)
-  if "kgm_project" in locals():
-    importlib.reload(kgm_project)
-else:
-  import bpy
+#if "bpy" in locals():
+#  import importlib
+#  if "kgm_objects" in locals():
+#    importlib.reload(kgm_objects)
+#  if "kgm_export" in locals():
+#    importlib.reload(kgm_export)
+#  if "kgm_project" in locals():
+#    importlib.reload(kgm_project)
+#else:
+import bpy
+from .kgm_objects import kgm_unit
 
 from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ExportHelper
@@ -46,7 +47,7 @@ def toGrad(a):
  return a * 180.0 / 3.1415
 
 class kgmExport(bpy.types.Operator):
- from . import kgm_objects
+ #from . import kgm_objects
  '''This appiers in the tooltip of '''
  bl_idname = "export_scene.kgm" # this is important since its how bpy.ops.export.kgm_export() is constructed
  bl_label = "Export Kgm"
@@ -102,7 +103,6 @@ class kgmExport(bpy.types.Operator):
   effects    = [kgm_objects.kgmEffect(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm_effect')]
   sensors    = [kgm_objects.kgmSensor(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm_sensor')]
   triggers   = [kgm_objects.kgmTrigger(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm_trigger')]
-  #gobjects   = [kgm_objects.kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
   animations = []
 
   if self.exp_animations:
@@ -323,7 +323,7 @@ class kgmProject(bpy.types.Operator):
     return {'RUNNING_MODAL'}
 
   @classmethod
-  def poll(cls, context):
+  def poll(self, context):
     wm = context.window_manager
 
     if True:
