@@ -31,15 +31,15 @@ def parse(path):
     Executable = items[0].attributes['value'].value
     print('kgm execuable is: ' + Executable);
 
-  from .kgm_objects import kgm_unit
+  from .kgm_objects import Units
   items = xmldoc.getElementsByTagName('kgmUnit');
 
   if len(items) > 0:
-    kgm_unit.Units = []
+    Units = []
     for item in items:
-      kgm_unit.Units.append(item.attributes['id'].value)
+      Units.append(item.attributes['id'].value)
       print('kgm unit: ' + item.attributes['id'].value);
-  print('kgm units: ' + str(kgm_unit.Units));
+  print('kgm units: ' + str(Units));
 
   items = xmldoc.getElementsByTagName('kgmActor');
 

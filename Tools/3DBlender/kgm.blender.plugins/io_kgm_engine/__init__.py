@@ -346,6 +346,11 @@ class kgmProject(bpy.types.Operator):
     parse(self.filepath)
 
     return {'FINISHED'}
+
+  def prepare():
+    from .kgm_project import parse
+    print('kgmProject: execute')
+    parse("~/.kgmEngine/project")
 #---------------------------
 
 def menu_func(self, context):
@@ -361,7 +366,8 @@ def menu_func_a(self, context):
   self.layout.operator(kgm_objects.kgm_obstacle.bl_idname,text="kgmObstacle", icon='OUTLINER_OB_EMPTY')
 
 def menu_func_b(self, context):
-  self.layout.operator(kgmProject.bl_idname,   text="kgmProject", icon='OUTLINER_OB_EMPTY')
+  #self.layout.operator(kgmProject.bl_idname,   text="kgmProject", icon='OUTLINER_OB_EMPTY')
+  kgmProject.prepare()
 
 def register():
   bpy.utils.register_module(__name__)
