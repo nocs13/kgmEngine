@@ -350,7 +350,7 @@ class kgmProject(bpy.types.Operator):
   def prepare():
     from .kgm_project import parse
     print('kgmProject: execute')
-    parse("~/.kgmEngine/project")
+    parse(os.getenv("HOME") + "/" + ".kgmEngine/project")
 #---------------------------
 
 def menu_func(self, context):
@@ -367,9 +367,11 @@ def menu_func_a(self, context):
 
 def menu_func_b(self, context):
   #self.layout.operator(kgmProject.bl_idname,   text="kgmProject", icon='OUTLINER_OB_EMPTY')
-  kgmProject.prepare()
+  pass
 
 def register():
+  kgmProject.prepare()
+
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
   bpy.types.INFO_MT_file_import.append(menu_func_b)

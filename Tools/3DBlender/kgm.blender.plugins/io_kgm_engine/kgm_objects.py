@@ -5,15 +5,21 @@ from mathutils import *
 
 scene_materials = []
 
-Units = []#(('One', '1', ''), ('Two', '2', ''), ('3', '', ''))
+Units = []   #(('One', '1', ''), ('Two', '2', ''), ('3', '', ''))
+
+def kgm_units_callback(scene, context):
+  ob = context.object
+  return Units;
 
 class kgm_unit(bpy.types.Operator):
   bl_idname  = "object.kgm_unit"
   bl_label   = "Add kgmUnit"
   bl_options = {'REGISTER', 'UNDO'}
 
+  print("unit class start")
   bpy.types.Object.kgm_unit  = bpy.props.BoolProperty(name = "kgm_unit", default = False)
-  bpy.types.Object.kgm_units = bpy.props.EnumProperty(name = "Units", items=Units)
+  bpy.types.Object.kgm_units = bpy.props.EnumProperty(name = "Units", items=kgm_units_callback)
+  print("unit class end")
 
   def __init__(self):
     print("unit start")
@@ -22,6 +28,7 @@ class kgm_unit(bpy.types.Operator):
     print("unit end")
 
   def execute(self, context):
+    print("Execute unit\n")
     bpy.ops.object.add()
     a = bpy.context.object
 
@@ -30,10 +37,11 @@ class kgm_unit(bpy.types.Operator):
     return {'FINISHED'}
 
   def modal(self, context, event):
-    print("Modal object \n")
+    print("Modal unit\n")
     return {'RUNNING_MODAL'}
 
   def invoke(self, context, event):
+    print("Invoke unit\n")
     bpy.ops.object.add()
     a = bpy.context.object
 
@@ -771,9 +779,12 @@ class kgmPanel(bpy.types.Panel):
   bl_region_type = "WINDOW"
   bl_context = "object"
 
+  print("Panel start.\n")
   bpy.types.Object.kgm_state  = bpy.props.StringProperty(name = "kgm_state",  default = "None")
   bpy.types.Object.kgm_object = bpy.props.StringProperty(name = "kgm_object", default = "None")
   bpy.types.Object.kgm_player = bpy.props.BoolProperty(name = "kgm_player", default = False)
+  bpy.types.Object.kgm_units  = bpy.props.EnumProperty(name = "Units", items=Units)
+  print("Panel end.\n")
 
   def draw(self, context):
     obj = context.object
@@ -802,6 +813,7 @@ class kgmPanel(bpy.types.Panel):
     row.prop(obj, "kgm_state")
     row = layout.row()
     row.prop(obj, "kgm_object")
+    bpy.types.Object.kgm_units  = bpy.props.EnumProperty(name = "Units", items=Units)
     row = layout.row()
     row.prop(obj, "kgm_units")
 

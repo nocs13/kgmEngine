@@ -16,11 +16,12 @@ Process = None
 
 def parse(path):
   xmldoc = None
+  print('kgm project init project file ' + path)
 
   try:
     xmldoc = minidom.parse(path)
   except Exception as e:
-    print('kgm project ' + path + ' cannot load as xml file. error: ' + e)
+    print('kgm project ' + path + ' cannot load as xml file. error: ' + str(e))
     return
 
   Directory = os.path.dirname(path)
@@ -36,8 +37,10 @@ def parse(path):
 
   if len(items) > 0:
     Units = []
+    i = 0
     for item in items:
-      Units.append(item.attributes['id'].value)
+      Units.append((item.attributes['id'].value, str(i), ''))
+      i += 1
       print('kgm unit: ' + item.attributes['id'].value);
   print('kgm units: ' + str(Units));
 
