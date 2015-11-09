@@ -300,7 +300,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   if(!mtl)
     return;
 
-  kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  /*kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
@@ -354,7 +354,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setRange(100);
   ((kgmGuiScroll*)g)->setPosition(mtl->m_transparency);
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
-  /*g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
   g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 

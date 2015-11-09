@@ -1,6 +1,31 @@
 #include "kgmGameApp.h"
+#include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmEvent.h"
 #include "../kgmSystem/kgmWindow.h"
+
+#include "kgmUnit.h"
+
+bool kgmGameApp::exportProject(kgmString path)
+{
+  kgmFile file;
+
+  if (!file.open(path, kgmFile::Write | kgmFile::Create))
+  {
+    kgm_log() << "Cannot open path " << (s8*) path << "\n";
+
+    return false;
+  }
+
+  for (int i = 0; i < kgmUnit::g_typ_objects.length(); i++)
+  {
+
+  }
+
+  file.close();
+
+  return true;
+}
 
 //FOR ANDROID
 #ifdef ANDROID

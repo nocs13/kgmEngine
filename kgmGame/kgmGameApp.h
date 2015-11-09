@@ -138,6 +138,8 @@ public:
     return (kgmGameApp*)kgmApp::application();
   }
 
+  bool exportProject(kgmString path);
+
 #ifdef ANDROID
   virtual kgmIGame* android_init_game() = 0;
   void android_exit();
