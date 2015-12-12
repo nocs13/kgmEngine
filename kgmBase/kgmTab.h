@@ -1,6 +1,5 @@
 #pragma once 
-#include "kgmObject.h"
-#include "malloc.h"
+#include "kgmBase.h"
 
 typedef unsigned int u32;
 ////////// Hash Tab
@@ -77,6 +76,7 @@ public:
   Value& operator[](Key key)
   {
     _Node* node = _find(key);
+
     return node->m_value;
   }
 
@@ -90,12 +90,14 @@ public:
     }
 
     m_nodes = null;
+
     csize   = 0;
   }
 
   int length()
   {
     int    len  = 0;
+
     _Node* node = m_nodes;
 
     while(node)
@@ -115,6 +117,7 @@ public:
       return false;
 
     key = node->m_key;
+
     value = node->m_value;
 
     return true;
@@ -145,10 +148,11 @@ public:
   void add(Key key, Value value)
   {
     _Node* node = new _Node;
-    node->m_key = key;
+
+    node->m_key   = key;
     node->m_value = value;
-    node->m_next = null;
-    node->m_prev = null;
+    node->m_next  = null;
+    node->m_prev  = null;
 
     if(!m_nodes)
     {
@@ -157,6 +161,7 @@ public:
     else
     {
       _last()->m_next = node;
+
       node->m_prev = _last();
     }
   }
@@ -174,6 +179,7 @@ public:
   iterator begin()
   {
    iterator i;
+
    i._Ptr = m_nodes;
 
    return i;
@@ -182,6 +188,7 @@ public:
   iterator end()
   {
    iterator i;
+
    i._Ptr = 0;
 
    return i;
@@ -193,7 +200,9 @@ public:
       return i;
 
     _Node *prev, *next;
+
     prev = i._Ptr->m_prev;
+
     next = i._Ptr->m_next;
 
     if(prev)
@@ -212,35 +221,47 @@ public:
     return i;
   }
 
-
 private:
-  _Node* _last(){
+  _Node* _last()
+  {
     _Node* node = m_nodes;
+
     if(node == 0) return 0;
+
     while(node->m_next != 0)
       node = node->m_next;
+
     return node;
   }
 
-  _Node* _index(u32 i){
+  _Node* _index(u32 i)
+  {
     _Node* node = m_nodes;
+
     u32 index = 0;
+
     while(node){
       if(i == index)
         return node;
       node = node->m_next;
       index++;
     }
+
     return 0;
   }
 
-  _Node* _find(Key& key){
+  _Node* _find(Key& key)
+  {
     _Node* node = m_nodes;
-    while(node){
+
+    while(node)
+    {
       if(node->m_key == key)
         return node;
+
       node = node->m_next;
     }
+
     return 0;
   }
 };

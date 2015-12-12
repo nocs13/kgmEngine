@@ -101,32 +101,32 @@ MAKE_FUNC(snd_card_next);
 MAKE_FUNC(snd_config_update_free_global);
 #undef MAKE_FUNC
 
-static int run_recovery(snd_pcm_t *handle, int err)
+static int run_recovery(snd_pcm_t *handle, size_t err)
 {
   if (err == -EPIPE)
   {
-    err = psnd_pcm_prepare(handle);
+    err = (size_t) psnd_pcm_prepare(handle);
 
     if(err >= 0)
-      err = psnd_pcm_start(handle);
+      err = (size_t) psnd_pcm_start(handle);
 
     if (err < 0)
-      kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+      kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror((void*) err) << ".\n";
   }
   else if (err == -ESTRPIPE)
   {
-    while ((err = psnd_pcm_resume(handle)) == -EAGAIN)
+    while ((err = (size_t) psnd_pcm_resume(handle)) == -EAGAIN)
       usleep(1);
 
     if (err < 0)
     {
-      err = psnd_pcm_prepare(handle);
+      err = (size_t) psnd_pcm_prepare(handle);
 
       if(err >= 0)
-        err = psnd_pcm_start(handle);
+        err = (size_t) psnd_pcm_start(handle);
 
       if (err < 0)
-        kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror(err) << ".\n";
+        kgm_log() << "kgmAlsa: prepare failed: " << (char*)psnd_strerror((void*) err) << ".\n";
     }
   }
 

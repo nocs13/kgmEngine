@@ -9,11 +9,15 @@
   #define nil 0L
 #endif
 
-typedef unsigned char		u8;
-typedef unsigned short	u16;
-typedef unsigned int			u32;
+#ifndef NULL
+  #define NULL 0L
+#endif
 
-typedef unsigned int			uint;
+typedef unsigned char  u8;
+typedef unsigned short u16;
+typedef unsigned int   u32;
+
+typedef unsigned int   uint;
 
 typedef char  s8;
 typedef short s16;

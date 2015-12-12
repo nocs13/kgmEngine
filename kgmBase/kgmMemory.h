@@ -2,10 +2,30 @@
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
-#include "kgmMain.h"
-#include "kgmObject.h"
-#include <stdlib.h>
-#include <malloc.h>
+#include "kgmBase.h"
+
+void	kgmClearAllocatedMemory(void);
+void*	kgmalloc(unsigned int);
+void	kgmfree(void*);
+
+template <class X> bool	kgmnew(X*, unsigned int count = 0);
+template <class X> void	kgmdelete(X*, unsigned int count = 0);
+
+void *kgm_malloc(size_t);
+void  kgm_free(void*);
+
+void *kgm_dbg_malloc(const char*, int, size_t);
+void  kgm_dbg_free(const char*, int, void*);
+
+#undef KGM_DEBUG_MEMORY
+
+#ifdef KGM_DEBUG_MEMORY
+#define malloc(A) kgm_dbg_malloc(__FILE__,__LINE__, (A) )
+#define free(A) kgm_dbg_free( __FILE__, __LINE__, (A) )
+#else
+#define malloc(A) kgm_malloc( (A) )
+#define free(A) kgm_free( (A) )
+#endif
 
 typedef unsigned int u32;
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmString.h"
+#include "../kgmBase/kgmObject.h"
 
 class kgmSystem: public kgmObject
 {

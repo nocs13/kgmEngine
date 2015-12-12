@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 #ifdef WIN32
 #include <windows.h>

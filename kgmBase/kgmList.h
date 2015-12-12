@@ -1,6 +1,5 @@
 #pragma once 
-//#include "kgmObject.h"
-#include "malloc.h"
+#include "kgmMemory.h"
 
 typedef unsigned int u32;
 

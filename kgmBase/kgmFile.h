@@ -1,8 +1,9 @@
 #pragma once
 #include <stdio.h>
 #include "kgmString.h"
+#include "kgmObject.h"
 
-class kgmFile: kgmObject
+class kgmFile: public kgmObject
 {
   KGM_OBJECT(kgmFile);
 public:

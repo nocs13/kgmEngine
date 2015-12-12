@@ -1,6 +1,7 @@
 #pragma once
 #include "kgmTypes.h"
 #include "kgmString.h"
+#include "kgmObject.h"
 
 
 #include <stdlib.h>
@@ -23,8 +24,10 @@ public:
 	  *map_mouse;
 
  char* m_input;			//input map
+
 public:
- kgmEnvironment(){
+ kgmEnvironment()
+ {
   wnd_width = 800;
   wnd_height = 600;
   wnd_bpp = 16;
@@ -38,20 +41,26 @@ public:
 
   m_input = 0;
  }
- ~kgmEnvironment(){
+
+ ~kgmEnvironment()
+ {
   delete [] map_keyboard;
   delete [] map_joystick;
   delete [] map_mouse;
  }
 
- bool load(char* path){
-  return true;
- }
- bool store(char* path){
+ bool load(char* path)
+ {
   return true;
  }
 
- void reset(){
+ bool store(char* path)
+ {
+  return true;
+ }
+
+ void reset()
+ {
   wnd_width = 800;
   wnd_height = 600;
   wnd_bpp = 16;

@@ -1,12 +1,9 @@
 #pragma once
-#include "kgmMain.h"
-#include "kgmTypes.h"
 #include "kgmList.h"
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
 
-class kgmApp;
 class kgmObject;
 
 struct kgmRuntime
@@ -268,7 +265,4 @@ public:
   {
     return null;
   }
-
-//  friend class kgmApp;
 };
-///////////////////

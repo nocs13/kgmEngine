@@ -108,7 +108,7 @@ kEditor::kEditor(kgmGameBase* g)
 
     kgmMesh* mesh;
 
-    mesh = (kgmMesh*)(new kGridline());
+    mesh = (kgmMesh*)(new kGridline(100));
 
     gridline = new kgmVisual();
     gridline->set(mtlLines);
@@ -234,6 +234,11 @@ void kEditor::select(int x, int y)
   kgmList<kgmUnit*> units;
 
   game->getLogic()->getObjects(units);
+
+  if (units.length() < 1)
+  {
+    return;
+  }
 
   kgmList<kgmUnit*>::iterator i = units.begin();
 
