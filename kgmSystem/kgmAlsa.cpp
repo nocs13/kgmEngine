@@ -259,13 +259,13 @@ kgmAlsa::kgmAlsa()
   m_proceed = 0;
 
 
-  if (m_lib.open("libasound.so.2") || m_lib.open("libasound.so.1") ||
-      m_lib.open("libasound.so.0") || m_lib.open("libasound.so"))
+  if (m_lib.open((char*) "libasound.so.2") || m_lib.open((char*) "libasound.so.1") ||
+      m_lib.open((char*) "libasound.so.0") || m_lib.open((char*) "libasound.so"))
   {
-    int err = 0;
+    size_t err = 0;
 
 #ifdef ALSA
-#define LOAD_FUNC(f) p##f = m_lib.get(#f)
+#define LOAD_FUNC(f) p##f = (PCM_FUNC) m_lib.get((char*) #f)
     LOAD_FUNC(snd_strerror);
     LOAD_FUNC(snd_pcm_open);
     LOAD_FUNC(snd_pcm_close);
@@ -316,20 +316,20 @@ kgmAlsa::kgmAlsa()
 
     if(snd_pcm_open)
     {
-      char* device = "default";
+      char* device = (char*) "default";
       //char* device = "plughw:0,0";
-      err = (int)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+      err = (size_t)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
       if(err < 0)
       {
         usleep(200000);
 
-        err = (int)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+        err = (size_t)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
         if(err < 0)
         {
           kgm_log() << "kgmAlsa Error: Can't open alsa device.\n";
-          kgm_log() << "kgmAlsa Error: Is " << (char*)kgmString((char*)psnd_strerror(err)) << ".\n";
+          kgm_log() << "kgmAlsa Error: Is " << (char*)kgmString((char*)psnd_strerror((void*)err)) << ".\n";
 
           return;
         }
@@ -337,7 +337,7 @@ kgmAlsa::kgmAlsa()
 
       if(err == 0)
       {
-        err = psnd_pcm_nonblock(m_handle, 0);
+        err = (size_t) psnd_pcm_nonblock(m_handle, 0);
 
         if(err < 0)
         {
@@ -373,7 +373,7 @@ kgmAlsa::kgmAlsa()
           }
           else
           {
-            printf("kgmAlsa: %i failed: %s\n", err, psnd_strerror(err));
+            printf("kgmAlsa: %lu failed: %s\n", err, psnd_strerror(err));
           }
 
           psnd_pcm_hw_params_free(params);
