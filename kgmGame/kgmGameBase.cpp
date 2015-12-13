@@ -163,7 +163,6 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
   kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
   kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::Sensor, (kgmUnit::Generate)&kgmLnCamera::New);
-  kgmUnit::unitRegister("kgmParticlesObject", kgmUnit::Effect, (kgmUnit::Generate)&kgmParticlesObject::New);
   kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::Sensor, (kgmUnit::Generate)&kgmSnInputListener::New);
 
 #ifdef EDITOR

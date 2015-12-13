@@ -133,7 +133,7 @@ public:
   virtual void onEvent(kgmEvent::Event* e);
   virtual void onIdle();
 
-public: //static
+public:
   Rect toAbsolute(Rect rect)
   {
     Point pt = toAbsolute (Point(rect.x, rect.y));

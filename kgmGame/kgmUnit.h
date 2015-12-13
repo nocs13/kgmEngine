@@ -66,6 +66,7 @@ public:
 #ifdef EDITOR
   static kgmList<kgmString> g_list_sensors;
   static kgmList<kgmString> g_list_effects;
+  static kgmList<kgmString> g_list_actors;
   static kgmList<kgmString> g_list_units;
 
   virtual void eupdate()

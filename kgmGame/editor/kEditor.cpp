@@ -1424,13 +1424,18 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  kFileDialog *fdd = new kFileDialog();
-  fdd->showHidden(false);
-  game->guiAdd(fdd);
+  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
 
-  fdd->setFilter(".act");
-  fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
+
+  for(int i = 0; i < kgmUnit::g_list_actors.length(); i++)
+  {
+    kgmString s = kgmUnit::g_list_actors[i];
+    vs->addItem(s);
+  }
+
+  game->guiAdd(vs);
+//  vs->release();
 }
 
 void kEditor::onAddEffect()

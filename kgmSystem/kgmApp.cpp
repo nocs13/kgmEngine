@@ -14,9 +14,9 @@
 #endif
 
 static void kgm_signal_handler(int s);
+extern void ClearDbgMemory();
 
 //kgmApp
-
 
 //Application object, unique only  
 kgmApp* kgmApp::m_app = 0;
@@ -138,6 +138,7 @@ int main(int argc, char** argv){
     rValue = kgmApp::application()->main(argc, argv);
 
   // kgmObject::releaseObjects();
+  ClearDbgMemory();
 
   return rValue;
 }
