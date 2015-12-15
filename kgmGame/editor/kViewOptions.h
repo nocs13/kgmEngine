@@ -30,6 +30,7 @@ public:
   typedef kgmCallback<void, kgmObject*> CloseCallback;
 
   CloseCallback callClose;
+
 public:
   kViewOptions(kNode* n, int x, int y, int w, int h);
 
@@ -57,8 +58,6 @@ public:
   {
     callClose = cfn;
   }
-
-
 };
 
 class kViewOptionsForMaterial : public kViewOptions
@@ -159,33 +158,6 @@ public:
   __stdcall void updateVariable(kgmString id, kgmString data);
 };
 
-class kViewOptionsForUnit : public kViewOptionsForObject
-{
-
-public:
-  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
-};
-
-class kViewOptionsForEffect : public kViewOptionsForObject
-{
-
-public:
-  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
-};
-
-class kViewOptionsForActor : public kViewOptionsForObject
-{
-  kViewObjects *vo;
-  kgmGuiText   *guiState;
-
-public:
-  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
-
-  __stdcall void showStates();
-  __stdcall void onState(kgmString);
-  __stdcall void onPlayer(bool);
-};
-
 class kViewOptionsForSensor : public kViewOptionsForObject
 {
 public:
@@ -214,6 +186,34 @@ public:
   __stdcall void onSelectConvex();
   __stdcall void onSelectedConvex();
 };
+
+/*class kViewOptionsForUnit : public kViewOptionsForObject
+{
+public:
+  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
+};
+
+class kViewOptionsForEffect : public kViewOptionsForObject
+{
+
+public:
+  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
+};
+
+class kViewOptionsForActor : public kViewOptionsForObject
+{
+  kViewObjects *vo;
+  kgmGuiText   *guiState;
+
+public:
+  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
+
+  __stdcall void showStates();
+  __stdcall void onState(kgmString);
+  __stdcall void onPlayer(bool);
+};
+*/
+
 }
 
 #endif // KVIEWOPTIONS_H

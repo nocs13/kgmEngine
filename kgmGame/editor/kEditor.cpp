@@ -949,7 +949,6 @@ void kEditor::initPhysics()
 
 void kEditor::initLogic()
 {
-
 }
 
 void kEditor::onIdle()
@@ -1350,16 +1349,12 @@ void kEditor::onEditOptions()
     vop = new kViewOptionsForMesh(selected, 50, 50, 260, 300);
     break;
   case kNode::UNIT:
-    vop = new kViewOptionsForUnit(selected, 50, 50, 300, 300);
+  case kNode::EFFECT:
+  case kNode::ACTOR:
+    vop = new kViewOptionsForObject(selected, 50, 50, 300, 300);
     break;
   case kNode::LIGHT:
     vop = new kViewOptionsForLight(selected, 50, 50, 250, 300);
-    break;
-  case kNode::ACTOR:
-    vop = new kViewOptionsForActor(selected, 50, 50, 300, 300);
-    break;
-  case kNode::EFFECT:
-    vop = new kViewOptionsForEffect(selected, 50, 50, 300, 300);
     break;
   case kNode::SENSOR:
     vop = new kViewOptionsForSensor(selected, 50, 50, 300, 300);
