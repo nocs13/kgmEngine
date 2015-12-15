@@ -240,7 +240,7 @@ public:
         v_boolean = *((bool*)x_linked);
         break;
       case TPointer:
-        v_pointer = (void*)*((u32*)x_linked);
+        v_pointer = (void*)*((size_t*)x_linked);
         break;
       case TString:
         v_string = *((kgmString*)x_linked);

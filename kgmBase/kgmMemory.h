@@ -21,8 +21,8 @@ void  kgm_dbg_free(const char*, int, void*);
 
 #ifdef KGM_DEBUG_MEMORY
 
-#define malloc(A) kgm_dbg_malloc(__FILE__,__LINE__, (A) )
-#define free(A) kgm_dbg_free( __FILE__, __LINE__, (A) )
+#define malloc(A) kgm_dbg_malloc(__FILE__, __LINE__, (A) )
+#define free(A) kgm_dbg_free(__FILE__, __LINE__, (A) )
 
 #else
 
@@ -31,7 +31,7 @@ void  kgm_dbg_free(const char*, int, void*);
 
 #endif
 
-void* operator new (size_t size)
+/*void* operator new (size_t size)
 {
   return malloc(size);
 }
@@ -39,7 +39,7 @@ void* operator new (size_t size)
 void operator delete (void* pointer)
 {
   free(pointer);
-}
+}*/
 
 
 typedef unsigned int u32;

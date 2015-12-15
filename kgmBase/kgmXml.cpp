@@ -12,27 +12,35 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-kgmXml::Node::Node(kgmXml::Node* parent){
+kgmXml::Node::Node(kgmXml::Node* parent)
+{
   m_parent = parent;
+
   if(parent)
     parent->add(this);
 }
 
-kgmXml::Node::~Node(){
+kgmXml::Node::~Node()
+{
   int i;
+
   for(i = 0; i < m_nodes.size(); i++)
     delete m_nodes[i];
+
   for(i = 0; i < m_attributes.size(); i++)
     delete m_attributes[i];
+
   m_nodes.clear();
   m_attributes.clear();
 }
 
-void kgmXml::Node::add(kgmXml::Node* n){
+void kgmXml::Node::add(kgmXml::Node* n)
+{
   m_nodes.push_back(n);
 }
 
-void kgmXml::Node::add(kgmXml::Attribute* a){
+void kgmXml::Node::add(kgmXml::Attribute* a)
+{
   m_attributes.push_back(a);
 }
 
@@ -244,7 +252,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
               m_name_len = (size_t)p - (size_t)m_name_ref;
               p = toSyms(p, (char*)"=");
               p = toSyms(p, (char*)"'\"");
-              char csyms[2] = {*p, '\0'};
+              char csyms[2] = {(char) *p, '\0'};
               m_data_ref = ++p;
               p = toSyms(p, csyms);
               m_data_len = (size_t)p - (size_t)m_data_ref;

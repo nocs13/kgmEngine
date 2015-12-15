@@ -373,10 +373,10 @@ bool kEditor::fdMapOpen(kFileDialog* fd)
 
   fd->erase();
 
-  return true; //mapOpen(s);
+  return mapOpen(s);
 }
 
-/*bool kEditor::mapOpen(kgmString s)
+bool kEditor::mapOpen(kgmString s)
 {
   kgmFile file;
 
@@ -422,7 +422,9 @@ bool kEditor::fdMapOpen(kFileDialog* fd)
     if(mnode.typ == kgmGameMap::NodeMsh)
     {
       oquered++;
-      node = new kNode((kgmMesh*)mnode.obj);
+      kgmVisual* visual = new kgmVisual();
+      visual->set((kgmMesh*)mnode.obj);
+      node = new kNode(visual);
 
       node->nam = mnode.nam;
       node->lnk = mnode.lnk;
@@ -433,7 +435,7 @@ bool kEditor::fdMapOpen(kFileDialog* fd)
       node->setMaterial(mnode.mtl);
       node->lock = mnode.lck;
 
-      game->getRender()->add(node->msh);
+      game->getRender()->add(node->vis);
       nodes.add(node);
 
       node->setPosition(mnode.pos);
@@ -591,7 +593,7 @@ bool kEditor::mapSave(kgmString s)
   {
     switch ((*i)->typ)
     {
-    case kNode::MESH:
+    case kNode::VISUAL:
       meshes.add(*i);
       continue;
     case kNode::LIGHT:
@@ -643,13 +645,11 @@ bool kEditor::mapSave(kgmString s)
 
   for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
   {
-    kgmMaterial* mtl = (*i)->msh->getMaterial();
-
     kgmGameMap::Node node;
 
     memset(&node, 0, sizeof(node));
 
-    node.obj = (*i)->msh;
+    node.obj = (*i)->vis;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
     node.nam = (*i)->nam;
@@ -747,7 +747,7 @@ bool kEditor::mapSave(kgmString s)
   fclose(f);
 
   return true;
-}*/
+}
 
 bool kEditor::fdAddMesh(kFileDialog* fd)
 {

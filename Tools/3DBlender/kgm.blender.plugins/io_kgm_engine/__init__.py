@@ -358,7 +358,6 @@ def menu_func(self, context):
 
 def menu_func_a(self, context):
   self.layout.operator(kgm_objects.kgm_unit.bl_idname,   text="kgmUnit", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_actor.bl_idname,  text="kgmActor", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_dummy.bl_idname,  text="kgmDummy", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_effect.bl_idname, text="kgmEffect", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')

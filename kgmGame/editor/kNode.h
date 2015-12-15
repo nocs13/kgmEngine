@@ -4,6 +4,7 @@
 #include "../../kgmBase/kgmObject.h"
 #include "../../kgmGraphics/kgmMesh.h"
 #include "../../kgmGraphics/kgmLight.h"
+#include "../../kgmGraphics/kgmVisual.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 

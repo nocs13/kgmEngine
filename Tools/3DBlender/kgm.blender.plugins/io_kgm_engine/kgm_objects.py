@@ -11,6 +11,9 @@ def kgm_units_callback(scene, context):
   ob = context.object
   return Units;
 
+def kgm_mask_it(self, context):
+  print('called and changed to,', context.scene.MyEnum)
+
 class kgm_unit(bpy.types.Operator):
   bl_idname  = "object.kgm_unit"
   bl_label   = "Add kgmUnit"
@@ -18,7 +21,9 @@ class kgm_unit(bpy.types.Operator):
 
   print("unit class start")
   bpy.types.Object.kgm_unit  = bpy.props.BoolProperty(name = "kgm_unit", default = False)
-  bpy.types.Object.kgm_units = bpy.props.EnumProperty(name = "Units", items=kgm_units_callback)
+  bpy.types.Object.kgm_units = bpy.props.EnumProperty(name = "Units",
+                                                      items = kgm_units_callback,
+                                                      update = kgm_mask_it)
   print("unit class end")
 
   def __init__(self):
@@ -59,79 +64,6 @@ class kgm_unit(bpy.types.Operator):
   def get_enum(self):
     return 0
 
-
-class kgm_actor(bpy.types.Operator):
-  bl_idname  = "object.kgm_actor"
-  bl_label   = "Add kgmActor"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  bpy.types.Object.kgm_actor = bpy.props.BoolProperty(name = "kgm_actor", default = False)
-
-  def __init__(self):
-    print("start")
-
-  def __del__(self):
-    print("end")
-
-  def execute(self, context):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmActor"
-    a.kgm_actor  = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    print("Modal object.\n")
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmActor"
-    a.kgm_actor  = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-
-class kgm_sensor(bpy.types.Operator):
-  bl_idname  = "object.kgm_sensor"
-  bl_label   = "Add kgmSensor"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  bpy.types.Object.kgm_sensor = bpy.props.BoolProperty(name = "kgm_sensor", default = False)
-
-  def __init__(self):
-    print("start")
-
-  def __del__(self):
-    print("end")
-
-  def execute(self, context):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmSensor"
-    a.kgm_sensor = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    print("Modal object.\n")
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmSensor"
-    a.kgm_sensor = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-
 class kgm_trigger(bpy.types.Operator):
   bl_idname  = "object.kgm_trigger"
   bl_label   = "Add kgmTrigger"
@@ -163,41 +95,6 @@ class kgm_trigger(bpy.types.Operator):
 
     a.name       = "kgmTrigger"
     a.kgm_trigger = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-
-class kgm_effect(bpy.types.Operator):
-  bl_idname  = "object.kgm_effect"
-  bl_label   = "Add kgmEffect"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  bpy.types.Object.kgm_effect = bpy.props.BoolProperty(name = "kgm_effect", default = False)
-
-  def __init__(self):
-    print("start")
-
-  def __del__(self):
-    print("end")
-
-  def execute(self, context):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmEffect"
-    a.kgm_effect = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmEffect"
-    a.kgm_effect = True
     return {'RUNNING_MODAL'}
 
   def draw(self, context):
@@ -789,16 +686,10 @@ class kgmPanel(bpy.types.Panel):
   def draw(self, context):
     obj = context.object
 
-    if hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
+    if   hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
       self.draw_unit(context)
-    elif hasattr(obj, 'kgm_actor') and obj.kgm_actor is True:
-      self.draw_actor(context)
-    elif hasattr(obj, 'kgm_sensor') and obj.kgm_sensor is True:
-      self.draw_sensor(context)
     elif hasattr(obj, 'kgm_trigger') and obj.kgm_trigger is True:
       self.draw_trigger(context)
-    elif hasattr(obj, 'kgm_effect') and obj.kgm_effect is True:
-      self.draw_effect(context)
     elif hasattr(obj, 'kgm_dummy') and obj.kgm_dummy is True:
       self.draw_dummy(context)
     elif hasattr(obj, 'kgm_obstacle') and obj.kgm_obstacle is True:
@@ -813,47 +704,14 @@ class kgmPanel(bpy.types.Panel):
     row.prop(obj, "kgm_state")
     row = layout.row()
     row.prop(obj, "kgm_object")
-    bpy.types.Object.kgm_units  = bpy.props.EnumProperty(name = "Units", items=Units)
     row = layout.row()
     row.prop(obj, "kgm_units")
-
-  def draw_actor(self, context):
-    obj = context.object
-    layout = self.layout
-    row = layout.row()
-    row.label(text = "Actor", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
-    row = layout.row()
-    row.prop(obj, "kgm_player")
-
-  def draw_sensor(self, context):
-    obj = context.object
-    layout = self.layout
-    row = layout.row()
-    row.label(text = "Sensor", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
 
   def draw_trigger(self, context):
     obj = context.object
     layout = self.layout
     row = layout.row()
     row.label(text = "Trigger", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
-
-  def draw_effect(self, context):
-    obj = context.object
-    layout = self.layout
-    row = layout.row()
-    row.label(text = "Effect", icon = "WORLD_DATA")
     row = layout.row()
     row.prop(obj, "kgm_state")
     row = layout.row()
