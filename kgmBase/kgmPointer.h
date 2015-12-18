@@ -102,6 +102,8 @@ public:
   }
 };
 
+#define kgmPtr  kgmPointer
+
 #define kgm_ptr kgmPointer
 
 #endif // KGMPOINTER_H

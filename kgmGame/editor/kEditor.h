@@ -19,26 +19,6 @@ namespace kgmGameEditor
 
 class kEditor: public kgmEvent
 {
-  class kMenu: public kgmGuiMenu
-  {
-    kEditor* editor;
-
-  public:
-    kMenu(kgmGui* parent, kEditor* e)
-      :kgmGuiMenu(parent)
-    {
-      editor = e;
-    }
-
-    void onAction(kgmGui* gui, u32 arg)
-    {
-      if(editor)
-      {
-        editor->onAction(this, arg);
-      }
-    }
-  };
-
 private:
 
   enum
