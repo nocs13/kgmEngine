@@ -2,6 +2,8 @@
 #define KNODE_H
 
 #include "../../kgmBase/kgmObject.h"
+#include "../../kgmBase/kgmPointer.h"
+
 #include "../../kgmGraphics/kgmMesh.h"
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmVisual.h"
@@ -64,8 +66,10 @@ public:
 
   bool col, lock;
 
-  kgmIcon*   icn = null;
+  //kgmIcon*   icn = null;
   kgmVisual* geo = null;
+  kgm_ptr<kgmIcon> icn;
+  //kgm_ptr<kgmVisual*> geo;
 
 private:
   ~kNode()
@@ -87,7 +91,7 @@ public:
   {
     typ  = NONE;
     vis  = null;
-    icn  = null;
+    //icn  = null;
     geo  = null;
     col  = false;
     lock = false;
@@ -97,7 +101,7 @@ public:
   {
     typ = VISUAL;
     vis = v;
-    icn = null;
+    //icn = null;
     geo = null;
     col = false;
     lock = false;
@@ -107,7 +111,7 @@ public:
   {
     typ  = UNIT;
     unt  = u;
-    icn  = null;
+    //icn  = null;
     geo  = null;
     col  = false;
     lock = false;
@@ -120,7 +124,7 @@ public:
   {
     typ  = LIGHT;
     lgt  = l;
-    icn  = null;
+    //icn  = null;
     geo  = null;
     col  = false;
     lock = false;
@@ -133,7 +137,7 @@ public:
   {
     typ = ACTOR;
     act = a;
-    icn = null;
+    //icn = null;
     geo = null;
     col = false;
     lock = false;
@@ -146,7 +150,7 @@ public:
   {
     typ = EFFECT;
     eff = e;
-    icn = null;
+    //icn = null;
     geo = null;
     col = false;
     lock = false;
@@ -159,7 +163,7 @@ public:
   {
     typ = SENSOR;
     sns = s;
-    icn = null;
+    //icn = null;
     geo = null;
     col = false;
     lock = false;
@@ -172,7 +176,7 @@ public:
   {
     typ = TRIGGER;
     trg = t;
-    icn = null;
+    //icn = null;
     geo = null;
     col = false;
     lock = false;
@@ -185,7 +189,7 @@ public:
   {
     typ = OBSTACLE;
     obs = o;
-    icn = null;
+    //icn = null;
     geo = null;
     col = true;
     lock = false;
@@ -206,7 +210,7 @@ public:
     lock = n.lock;
 
     obj = null;
-    icn = null;
+    //icn = null;
     geo = null;
 
     if(n.obj)
