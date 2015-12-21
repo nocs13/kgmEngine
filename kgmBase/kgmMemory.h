@@ -48,7 +48,7 @@ template <class T>
 class kgmMemory
 {
 protected:
-  T    *m_data;
+  T   *m_data;
   u32  m_length;
   u32  m_position;  //for seek, read, write
 

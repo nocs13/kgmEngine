@@ -43,6 +43,9 @@ kgmGuiMenu::~kgmGuiMenu()
 
 void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 {
+  if(!m_view || m_freeze)
+    return;
+
   Item* selected = item->clickPointer(x, y);
 
   if(selected && selected->getType() == Item::TypeItem)
@@ -54,5 +57,8 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 
 void kgmGuiMenu::onMsMove(int key, int x, int y)
 {
+  if(!m_view || m_freeze)
+    return;
+
   item->movePointer(x, y);
 }

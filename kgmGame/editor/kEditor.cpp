@@ -66,7 +66,8 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->getRender()->setEditor(true);
 
-    kgmGuiMenu* menu = new kgmGuiMenu(null);
+    //kgmGuiMenu* menu = new kgmGuiMenu(null);
+    menu = kgm_ptr<kgmGuiMenu>(new kgmGuiMenu(null));
 
     menu->setSid("editor_main_menu");
 
@@ -994,7 +995,6 @@ void kEditor::onKeyUp(int k)
     {
     }
 
-//    menu->show();
     game->getRender()->camera().mPos = cam_pos_bk;
     game->getRender()->camera().mDir = cam_dir_bk;
   }
@@ -1003,6 +1003,8 @@ void kEditor::onKeyUp(int k)
   {
     move_camera = false;
     game->setMsAbsolute(true);
+    menu->show();
+    menu->freeze(false);
   }
 }
 
@@ -1012,6 +1014,8 @@ void kEditor::onKeyDown(int k)
   {
     move_camera = true;
     game->setMsAbsolute(false);
+    menu->hide();
+    menu->freeze(true);
   }
 }
 
@@ -1310,6 +1314,12 @@ void kEditor::onEditClone()
 
     break;
   }
+  case kNode::OBSTACLE:
+  {
+    break;
+  }
+  default:
+    break;
   }
 }
 
