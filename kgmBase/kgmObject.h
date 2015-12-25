@@ -156,10 +156,10 @@ protected:
   };
 
 private:
-  unsigned int m_references;
+  u32 m_references;
 
 protected:
-  virtual ~kgmObject()
+  ~kgmObject()
   {
   }
 
@@ -186,7 +186,8 @@ public:
 
   void release()
   {
-    m_references--;
+    if(m_references > 0)
+      m_references--;
 
     if(m_references < 1)
       delete this;

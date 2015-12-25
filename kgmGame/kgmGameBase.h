@@ -38,7 +38,7 @@ protected:
   kgmGameResources*  m_resources;
   kgmGameSettings*   m_settings;
 
-  kgmSystem*         m_system;
+  kgm_ptr<kgmSystem> m_system;
 
   u32	m_width;
   u32	m_height;

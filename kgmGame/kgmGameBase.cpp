@@ -308,7 +308,7 @@ void kgmGameBase::initPhysics()
 
 void kgmGameBase::initSystem()
 {
-  m_system = new kgmSystem();
+  m_system = kgm_ptr<kgmSystem>(new kgmSystem());
 
   m_system->getDesktopDimension(m_width, m_height);
 }
