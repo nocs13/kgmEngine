@@ -1335,10 +1335,14 @@ void kEditor::onEditRemove()
     break;
   case kNode::LIGHT:
     game->getRender()->remove(selected->lgt);
-    game->getRender()->remove(selected->icn);
-    selected->geo->remove();
     break;
   }
+
+  if (selected->icn)
+    game->getRender()->remove(selected->icn);
+
+  if (selected->geo)
+    selected->geo->remove();
 
   selected->release();
 

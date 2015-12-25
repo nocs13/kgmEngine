@@ -66,9 +66,9 @@ public:
 
   bool col, lock;
 
-  //kgmIcon*   icn = null;
+  kgmIcon*   icn = null;
   kgmVisual* geo = null;
-  kgm_ptr<kgmIcon> icn;
+  //kgm_ptr<kgmIcon> icn;
   //kgm_ptr<kgmVisual*> geo;
 
 private:
@@ -90,9 +90,7 @@ public:
   kNode()
   {
     typ  = NONE;
-    vis  = null;
-    //icn  = null;
-    geo  = null;
+    obj  = null;
     col  = false;
     lock = false;
   }
@@ -101,8 +99,6 @@ public:
   {
     typ = VISUAL;
     vis = v;
-    //icn = null;
-    geo = null;
     col = false;
     lock = false;
   }
@@ -111,8 +107,6 @@ public:
   {
     typ  = UNIT;
     unt  = u;
-    //icn  = null;
-    geo  = null;
     col  = false;
     lock = false;
 
@@ -124,8 +118,6 @@ public:
   {
     typ  = LIGHT;
     lgt  = l;
-    //icn  = null;
-    geo  = null;
     col  = false;
     lock = false;
 
@@ -137,8 +129,6 @@ public:
   {
     typ = ACTOR;
     act = a;
-    //icn = null;
-    geo = null;
     col = false;
     lock = false;
 
@@ -150,8 +140,6 @@ public:
   {
     typ = EFFECT;
     eff = e;
-    //icn = null;
-    geo = null;
     col = false;
     lock = false;
 
@@ -163,8 +151,6 @@ public:
   {
     typ = SENSOR;
     sns = s;
-    //icn = null;
-    geo = null;
     col = false;
     lock = false;
 
@@ -176,8 +162,6 @@ public:
   {
     typ = TRIGGER;
     trg = t;
-    //icn = null;
-    geo = null;
     col = false;
     lock = false;
 
@@ -189,8 +173,6 @@ public:
   {
     typ = OBSTACLE;
     obs = o;
-    //icn = null;
-    geo = null;
     col = true;
     lock = false;
 
@@ -210,8 +192,14 @@ public:
     lock = n.lock;
 
     obj = null;
-    //icn = null;
-    geo = null;
+
+    if(n.icn != null){
+      icn = (kgmIcon*)n.geo->clone();
+    }
+
+    if(n.geo != null){
+      geo = (kgmVisual*)n.geo->clone();
+    }
 
     if(n.obj)
       obj = (kgmUnit*)n.obj->clone();

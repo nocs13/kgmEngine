@@ -556,7 +556,6 @@ void kgmGraphics::render()
   for(int i = 0; i < depthless_particles.size(); i++)
   {
     kgmVisual*    vis = vis_particles[i];
-    kgmParticles* par = vis->getParticles();
     kgmMaterial*  mtl = vis->getMaterial();
 
     setWorldMatrix(vis->getTransform());
