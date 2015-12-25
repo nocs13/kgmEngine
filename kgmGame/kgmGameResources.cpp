@@ -65,29 +65,6 @@ kgmGameResources::~kgmGameResources()
   m_paths.clear();
 }
 
-/*void kgmGameResources::add(kgmResource* r)
-{
-  bool exist = false;
-
-  if(!r)
-    return;
-
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    if(r == m_resources[i])
-    {
-      exist = true;
-
-      break;
-    }
-  }
-
-  if(exist)
-    return;
-
-  m_resources.add(r);
-}*/
-
 void kgmGameResources::remove(kgmResource* r)
 {
   if(!r || r->references() < 2)
@@ -121,7 +98,6 @@ void kgmGameResources::addPath(kgmString s)
 bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
 {
   kgmString path;
-  bool  res = false;
   int   i = 0;
 
 #ifdef WIN32
@@ -188,7 +164,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
 #endif
 
 #ifdef DEBUG
-  kgm_log() << "\nCan't load file: " << id << "\n";
+  kgm_log() << "kgmGameResources::getFile Cannot load file: " << id << "\n";
 #endif
 
   return false;
@@ -265,7 +241,7 @@ kgmTexture* kgmGameResources::getTexture(char* id)
 //Shader
 kgmShader* kgmGameResources::getShader(char* id)
 {
-  kgmCString ext;
+  kgm_log() << "kgmGameResources::getShader loading " << id << ".\n";
 
   for(int i = 0; i < m_resources.size(); i++)
   {
@@ -277,7 +253,7 @@ kgmShader* kgmGameResources::getShader(char* id)
     }
   }
 
-  kgmCString path, name, dir;
+  kgmCString name;
   name = id;
   kgmShader* shader = 0;
   kgmMemory<u8> mem;

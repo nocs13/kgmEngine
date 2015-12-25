@@ -219,7 +219,7 @@ kgmGameBase::~kgmGameBase()
 
   if(m_resources)
   {
-    m_resources->remove(m_font);
+    //m_resources->remove(m_font);
     m_resources->release();
   }
 

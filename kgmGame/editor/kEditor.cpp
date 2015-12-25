@@ -1539,8 +1539,9 @@ void kEditor::onRunRun()
 
 void kEditor::onViewObjects()
 {
-  //kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+  game->guiAdd(vo);
 }
 
 void kEditor::onViewPerspective()

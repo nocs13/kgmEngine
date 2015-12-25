@@ -1099,6 +1099,8 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 //GLint v_shad;
 void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 {
+  kgm_log() << "gcGenShader: Cenerating.\n";
+
   GLhandle prog = 0;
   GLhandle vshad = 0, fshad = 0;
   int stat[1] = {0};
@@ -1111,7 +1113,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   if(GL_NO_ERROR != glGetError())
   {
 #ifdef DEBUG
-  kgm_log() << "gcGenShader 0 " << (s32)glGetError() << "\n";
+  kgm_log() << "gcGenShader error is " << (s32)glGetError() << "\n";
 #endif
 
     return null;
@@ -1134,7 +1136,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #else
       glGetInfoLog(vshad, 256, &size, tbuf);
 #endif
-      kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
+      //kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
 
       glDeleteObject(vshad);
@@ -1162,7 +1164,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #else
       glGetInfoLog(fshad, 256, &size, tbuf);
 #endif
-      kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
+      //kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
     else
@@ -1202,6 +1204,8 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 
 #endif
 
+  kgm_log() << "Generate shader " << (int) prog << ".\n";
+
   return (void*)prog;
 }
 
@@ -1212,6 +1216,7 @@ void kgmOGL::gcFreeShader(void* s)
 
   if(shader)
   {
+    kgm_log() << "Delete shader " << (int) shader << ".\n";
     glDeleteObject((GLhandle)shader);
   }
 #endif
