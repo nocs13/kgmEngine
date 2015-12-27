@@ -48,26 +48,17 @@ kgmParticles::kgmParticles()
 
 kgmParticles::~kgmParticles()
 {
-  if(m_particles)
-    delete [] m_particles;
-
-  if(m_mesh)
-    m_mesh->release();
 }
 
 void kgmParticles::build()
 {
   int i = 0;
 
-  if(m_particles)
-    delete [] m_particles;
+  m_particles.reset();
 
-  if(m_mesh)
-    m_mesh->release();
+  m_mesh.reset();
 
-  m_mesh = null;
-
-  m_particles = new Particle[m_count];
+  m_particles = kgm_ptr<Particle>(new Particle[m_count]);
 
   if(div_life < 0) div_life = 0;
   if(div_speed < 0) div_speed = 0;
@@ -76,7 +67,7 @@ void kgmParticles::build()
 
   if(m_typerender != RTypeMesh)
   {
-    m_mesh = new kgmMesh();
+    m_mesh = kgm_ptr<kgmMesh>(new kgmMesh());
 
     u32 count;
 

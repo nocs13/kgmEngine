@@ -3,6 +3,7 @@
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmPointer.h"
 
 #include "../kgmMath/kgmMath.h"
 
@@ -163,7 +164,7 @@ public:
 
     NodeType type = NodeNone;
 
-    kgmObject* object = null;
+    kgm_ptr<kgmObject> object;
 
     kgmString name;
 
@@ -176,11 +177,8 @@ public:
 
     }
 
-    Node(kgmObject* obj, NodeType typ, kgmString nam)
+    Node(kgm_ptr<kgmObject> obj, NodeType typ, kgmString nam)
     {
-      if(obj)
-        obj->increment();
-
       object = obj;
       type   = typ;
       name   = nam;
@@ -194,21 +192,16 @@ public:
       collide = node.collide;
       hidden  = node.hidden;
       locked  = node.locked;
-
-      if(object)
-        object->increment();
     }
 
     ~Node()
     {
-      if(object)
-        object->release();
     }
 
-    kgmBody*   getBody();
-    kgmUnit*   getUnit();
-    kgmLight*  getLight();
-    kgmVisual* getVisual();
+    kgm_ptr<kgmBody>   getBody();
+    kgm_ptr<kgmUnit>   getUnit();
+    kgm_ptr<kgmLight>  getLight();
+    kgm_ptr<kgmVisual> getVisual();
 
     vec3 getPosition();
     void setPosition(vec3 pos);

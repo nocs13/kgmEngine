@@ -4,7 +4,6 @@
 
 kgmGameLogic::kgmGameLogic()
 {
-  m_gameplayer = null;
 }
 
 kgmGameLogic::~kgmGameLogic()
@@ -14,23 +13,20 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     (*i)->remove();
 //    (*i)->release();
   }
 
   m_objects.clear();
-
-  m_gameplayer = null;
 }
 
-bool kgmGameLogic::add(kgmUnit *u)
+bool kgmGameLogic::add(kgm_ptr<kgmUnit> u)
 {
   if(u)
   {
     m_objects.push_back(u);
-//    u->increment();
 
     u->init();
 
@@ -40,12 +36,11 @@ bool kgmGameLogic::add(kgmUnit *u)
   return false;
 }
 
-bool kgmGameLogic::add(kgmActor *a)
+bool kgmGameLogic::add(kgm_ptr<kgmActor> a)
 {
   if(a)
   {
-    m_objects.push_back(a);
-//    a->increment();
+    m_objects.push_back(kgm_ptr_cast<kgmUnit, kgmActor>(a));
 
     a->init();
 
@@ -55,12 +50,11 @@ bool kgmGameLogic::add(kgmActor *a)
   return false;
 }
 
-bool kgmGameLogic::add(kgmEffect *e)
+bool kgmGameLogic::add(kgm_ptr<kgmEffect> e)
 {
   if(e)
   {
-    m_objects.push_back(e);
-//    e->increment();
+    m_objects.push_back(kgm_ptr_cast<kgmUnit, kgmEffect>(e));
 
     e->init();
 
@@ -70,12 +64,11 @@ bool kgmGameLogic::add(kgmEffect *e)
   return false;
 }
 
-bool kgmGameLogic::add(kgmSensor *sn)
+bool kgmGameLogic::add(kgm_ptr<kgmSensor> sn)
 {
   if(sn)
   {
-    m_objects.push_back(sn);
-//    sn->increment();
+    m_objects.push_back(kgm_ptr_cast<kgmUnit, kgmSensor>(sn));
 
     sn->init();
 
@@ -85,11 +78,11 @@ bool kgmGameLogic::add(kgmSensor *sn)
   return false;
 }
 
-bool kgmGameLogic::add(kgmTrigger *tr)
+bool kgmGameLogic::add(kgm_ptr<kgmTrigger> tr)
 {
   if(tr)
   {
-    m_objects.push_back(tr);
+    m_objects.push_back(kgm_ptr_cast<kgmUnit, kgmTrigger>(tr));
 //    tr->increment();
 
     tr->init();
@@ -100,7 +93,7 @@ bool kgmGameLogic::add(kgmTrigger *tr)
   return false;
 }
 
-bool kgmGameLogic::remove(kgmUnit *o)
+bool kgmGameLogic::remove(kgm_ptr<kgmUnit> o)
 {
   if(!o)
     return false;
@@ -111,10 +104,8 @@ bool kgmGameLogic::remove(kgmUnit *o)
     {
       m_objects.erase(i - 1);
 
-//      o->release();
-
       if(o == m_gameplayer)
-        m_gameplayer = null;
+        m_gameplayer.reset();
 
       return true;
     }

@@ -40,14 +40,21 @@ public:
 
   void setId(kgmString id){ m_id = id; }
 
-  void release()
+  /*void release()
   {
     if((references() > 1) || (!m_lock && references() == 1))
       ((kgmObject*)this)->release();
-  }
+  }*/
 
 private:
-  void lock() { m_lock = true; }
-  void unlock() { m_lock = false; }
+  void lock()
+  {
+    m_lock = true;
+  }
+
+  void unlock()
+  {
+    m_lock = false;
+  }
 };
 

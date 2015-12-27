@@ -328,11 +328,11 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
 
   tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
 
-  pic->release();
+  delete pic;
 
   if(!tex->m_texture)
   {
-    tex->release();
+    delete tex;
 
     return 0;
   }
@@ -375,11 +375,11 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
   gc->gcSet(gctex_fltmag, (void*)gcflt_linear);
   gc->gcSet(gctex_fltmin, (void*)gcflt_linear);
 
-  pic->release();
+  delete pic;
 
   if(!font->m_texture)
   {
-    font->release();
+    delete font;
 
     return 0;
   }
@@ -432,7 +432,8 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
 
   if(!shader->m_shader)
   {
-    shader->release();
+    delete shader;
+
     shader = null;
   }
 
@@ -459,8 +460,9 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmXml& xml){
   kgmShader* shader = new kgmShader(gc);
   shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
 
-  if(!shader->m_shader){
-    shader->release();
+  if(!shader->m_shader)
+  {
+    delete shader;
     shader = null;
   }
 
@@ -635,11 +637,15 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
   delete key;
   delete val;
 
-  if(skel->m_joints.size() < 1){
-    skel->release();
+  if(skel->m_joints.size() < 1)
+  {
+    delete skel;
+
     skel = 0;
   }
+
   skel->update();
+
   return skel;
 }
 
@@ -685,17 +691,21 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
   }
 
 
-  if(skel->m_joints.size() < 1){
-    skel->release();
+  if(skel->m_joints.size() < 1)
+  {
+    delete skel;
+
     skel = 0;
   }
 
   skel->update();
+
   return skel;
 }
 
 //ANIMATION
-kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m){
+kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m)
+{
   kgmAnimation* anim = 0;
   kgmAnimation::Animation*   f = 0;
   int tick = 0;
@@ -752,17 +762,21 @@ kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m){
     }
   }
 
-  if(anim->count() < 1){
-    anim->release();
+  if(anim->count() < 1)
+  {
+    delete anim;
+
     anim = 0;
   }
 
   delete [] str;
   delete [] key;
+
   return anim;
 }
 
-kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
+kgmAnimation* kgmGameTools::genAnimation(kgmXml& x)
+{
   kgmAnimation* anim = 0;
   kgmAnimation::Animation* f = 0;
   kgmString id, val;
@@ -831,10 +845,13 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x){
     }
   }
 
-  if(anim->count() < 1){
-    anim->release();
+  if(anim->count() < 1)
+  {
+    delete anim;
+
     anim = 0;
   }
+
   return anim;
 }
 
@@ -944,7 +961,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   }
 
   for(int i = 0; i < materials.size(); i++)
-    materials[i]->release();
+    delete materials[i];
 
   materials.clear();
 
@@ -1081,7 +1098,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x){
 
 
   for(int i = 0; i < materials.size(); i++)
-    materials[i]->release();
+    delete materials[i];
 
   materials.clear();
 
@@ -1797,11 +1814,16 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         actor->getVisual()->setAnimation(anm);
         actor->getVisual()->setSkeleton(skl);
 
-        msh->release();
+        delete msh;
 
-        if(mtl) mtl->release();
-        if(skl) skl->release();
-        if(anm) anm->release();
+        if(mtl)
+          delete mtl;
+
+        if(skl)
+          delete skl;
+
+        if(anm)
+          delete anm;
 
         msh = null;
         mtl = null;
@@ -1844,9 +1866,6 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
       kgmString s;
       kgmActor::State* state = new kgmActor::State();
 
-      state->sound = null;
-      state->animation = null;
-
       a_node->node(i)->attribute("id", state->id);
       a_node->node(i)->attribute("type", state->type);
       a_node->node(i)->attribute("switch", state->switchto);
@@ -1867,7 +1886,8 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         if(id == "Sound")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->sound = game->getResources()->getSound(s);
+          state->sound.reset();
+          state->sound = kgm_ptr<kgmSound>(game->getResources()->getSound(s));
         }
         else if(id == "Animation")
         {

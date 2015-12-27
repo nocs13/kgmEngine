@@ -2,12 +2,13 @@
 #define KGMICON_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmPointer.h"
 
 class kgmTexture;
 
 class kgmIcon: public kgmObject
 {
-  kgmTexture* icon = null;
+  kgm_ptr<kgmTexture> icon;
 
   float       width,
               height;
@@ -22,24 +23,23 @@ public:
     position = vec3(0, 0, 0);
   }
 
-  kgmIcon(kgmTexture* c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
+  kgmIcon(kgm_ptr<kgmTexture>& c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
   {
     icon = c;
     width = w;
     height = h;
     position = v;
-
-    if(c)
-      c->increment();
   }
 
   ~kgmIcon()
   {
-    if(icon)
-      icon->release();
   }
 
-  kgmTexture* getIcon() { return icon; }
+  kgm_ptr<kgmTexture> getIcon()
+  {
+    return icon;
+  }
+
   float       getWidth() { return width; }
   float       getHeight() { return height; }
   vec3        getPosition() { return position; }

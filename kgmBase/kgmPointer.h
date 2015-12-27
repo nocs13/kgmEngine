@@ -7,6 +7,8 @@ class kgmPointer
   T*   pointer = 0;
   int* counter = 0;
 
+  template <class A, class B>
+  friend  kgmPointer<A> kgm_ptr_cast(kgmPointer<B>& var);
 public:
 
   kgmPointer()
@@ -100,7 +102,42 @@ public:
 
     return false;
   }
+
+  void reset()
+  {
+    if(counter == 0)
+      return;
+
+    (*counter)--;
+
+    if((*counter) < 1)
+    {
+      delete counter;
+
+      if(pointer)
+        delete pointer;
+    }
+
+    counter = 0;
+    pointer = 0;
+  }
 };
+
+template <class A, class B>
+kgmPointer<A> kgm_ptr_cast(kgmPointer<B>& var)
+{
+  kgmPointer<A> cast;
+
+  if(var.pointer != null)
+  {
+    cast.pointer = (A*) var.pointer;
+    cast.counter = var.counter;
+
+    (*var.counter)++;
+  }
+
+  return cast;
+}
 
 #define kgmPtr  kgmPointer
 

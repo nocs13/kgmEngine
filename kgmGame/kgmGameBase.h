@@ -63,14 +63,14 @@ protected:
   kgmList<kgmLight*>  m_lights;    // game lights.
   kgmList<kgmVisual*> m_visuals;   // game visuals.
 
-  kgmList<kgmGui*>    m_guis;      // game guis.
+  kgmList< kgm_ptr<kgmGui> > m_guis;      // game guis.
 
 #ifdef EDITOR
   friend class kEditor;
 
-  kEditor* editor;
+  kgm_ptr<kEditor> editor;
 
-  kEditor* getEditor(){ return editor; }
+  kgm_ptr<kEditor> getEditor(){ return editor; }
 #endif
 
 public:
@@ -150,7 +150,7 @@ public:
   bool           loadXml(kgmString& path);
 
 public:
-  void guiAdd(kgmGui* g)
+  void guiAdd(kgm_ptr<kgmGui> g)
   {
     if(g)
     {
@@ -163,7 +163,6 @@ public:
       }
 
       m_guis.add(g);
-      g->increment();
 
       if(m_render)
         m_render->add(g);

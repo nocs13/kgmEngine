@@ -1,5 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmPointer.h"
 #include "../kgmBase/kgmXml.h"
 #include "kgmTexture.h"
 #include "kgmFont.h"
@@ -22,8 +23,9 @@ class kgmGuiStyle: public kgmObject
     Color bg_color; // Background color
     Color fg_color; // Foreground color
     Color ac_color; // Active color
-    Image image;    // Background image
     u32   ft_size;  // Font height
+
+    kgm_ptr<kgmTexture> image;    // Background image
   };
 
   struct SGuiButton: SGui
@@ -68,7 +70,7 @@ class kgmGuiStyle: public kgmObject
   };
 
   //gui
-  Font  gui_font;
+  kgm_ptr<kgmFont>  gui_font;
   
   SGui         sgui;
   SGuiList     slist;

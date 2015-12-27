@@ -40,10 +40,11 @@ public:
   {
     friend class  kgmVisual;
 
-    kgmMesh*      mesh;
-    bool          skin;
+    kgm_ptr<kgmMesh>      mesh;
 
-    kgmMesh::Vertex*     vertices;
+    bool skin;
+
+    kgm_ptr<kgmMesh::Vertex> vertices;
   public:
 
     Mesh()
@@ -54,11 +55,9 @@ public:
       vertices  = null;
     }
 
-    Mesh(kgmMesh* msh)
+    Mesh(kgm_ptr<kgmMesh> msh)
     {
-      mesh      = null;
-
-      if(msh)  { mesh = msh; msh->increment(); }
+      mesh = msh;
 
       skin      = false;
       vertices  = null;
@@ -67,7 +66,7 @@ public:
       {
         if(mesh->fvf() & gcv_bn0)
         {
-          vertices = new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
+          vertices = kgm_ptr<kgmMesh::Vertex>(new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()]);
           memcpy(vertices, mesh->vertices(),
                  sizeof(kgmMesh::Vertex_P_N_C_T_BW_BI) * mesh->vcount());
           skin = true;
@@ -78,8 +77,6 @@ public:
     virtual ~Mesh()
     {
       if(vertices)  delete [] vertices;
-
-      if(mesh)      mesh->release();
     }
 
     bool hasSkin()
@@ -147,12 +144,13 @@ public:
   Type                   m_type;
   TypeShadow             m_typeshadow;
 
-  kgmMaterial*           m_material;
+  kgm_ptr<kgmMaterial>  m_material;
 
-  kgmObject*             m_visual;
+  kgm_ptr<kgmObject>    m_visual;
 
-  kgmSkeleton*           m_skeleton;
-  kgmAnimation*          m_animation;
+  kgm_ptr<kgmSkeleton>  m_skeleton;
+  kgm_ptr<kgmAnimation> m_animation;
+
   bool                   m_floop;
   u32                    m_fstart;
   u32                    m_fend;
@@ -160,16 +158,10 @@ public:
 
 //private:
   box3                   m_bound;
-  mtx4*                  m_tm_joints;
+  kgm_ptr<mtx4>          m_tm_joints;
   u32                    m_last_update;
 
   static  bool           AnimateVertices;
-
-protected:
-  ~kgmVisual()
-  {
-    clear();
-  }
 
 public:
   kgmVisual()
@@ -185,7 +177,6 @@ public:
     m_material  = null;
     m_skeleton  = null;
     m_animation = null;
-    m_tm_joints = null;
 
     m_fstart    = m_fend = 0;
     m_floop     = false;
@@ -209,25 +200,18 @@ public:
     m_material  = v.m_material;
     m_skeleton  = v.m_skeleton;
     m_animation = v.m_animation;
-    m_tm_joints = null;
-
-    if(m_material)
-      m_material->increment();
-
-    if(m_animation)
-      m_animation->increment();
 
     if(m_skeleton)
     {
-      m_skeleton->increment();
-      m_tm_joints = new mtx4[m_skeleton->m_joints.size()];
+      m_tm_joints = kgm_ptr<mtx4>(new mtx4[m_skeleton->m_joints.size()]);
     }
 
     if(v.m_visual)
     {
       if(m_type == TypeMesh)
       {
-        m_visual = new Mesh(((Mesh*)v.m_visual)->mesh);
+        Mesh* mesh = (Mesh*) ((kgmObject*)v.m_visual);
+        m_visual = kgm_ptr<kgmObject>((kgmObject*)(new Mesh(mesh->mesh)));
       }
       else
       {
@@ -244,26 +228,16 @@ public:
     m_transform   = v.m_transform;
   }
 
+  ~kgmVisual()
+  {
+    clear();
+  }
+
   void clear()
   {
     m_type = TypeNone;
 
     m_transform.identity();
-
-    if(m_tm_joints)
-      delete [] m_tm_joints;
-
-    if(m_material)
-      m_material->release();
-
-    if(m_visual)
-      m_visual->release();
-
-    if(m_skeleton)
-      m_skeleton->release();
-
-    if(m_animation)
-      m_animation->release();
   }
 
   void enable()
@@ -316,11 +290,7 @@ public:
     if(m == null)
       return;
 
-    if(m_material)
-      m_material->release();
-
     m_material = m;
-    m->increment();
   }
 
   kgmMaterial* getMaterial()
@@ -346,75 +316,67 @@ public:
     return m_transform;
   }
 
-  void set(kgmParticles* par)
+  void set(kgm_ptr<kgmParticles> par)
   {
     if(!par)
       return;
 
-    if(m_visual)
-      m_visual->release();
+    m_visual.reset();
 
-    m_visual = par;
-    par->increment();
+    m_visual = (kgm_ptr<kgmObject>) par;
+
     m_type = TypeParticles;
   }
 
-  kgmParticles* getParticles()
+  kgm_ptr<kgmParticles> getParticles()
   {
-    return (kgmParticles*)m_visual;
+    return kgm_ptr_cast<kgmParticles, kgmObject>(m_visual);
   }
 
-  void set(kgmText* text)
+  void set(kgm_ptr<kgmText> text)
   {
     if(!text)
       return;
 
-    if(m_visual)
-      m_visual->release();
+    m_visual.reset();
 
-    m_visual = text;
-    text->increment();
+    m_visual = (kgm_ptr<kgmObject>) text;
+
     m_type = TypeText;
   }
 
-  kgmText* getText()
+  kgm_ptr<kgmText> getText()
   {
-    return (kgmText*)m_visual;
+    return kgm_ptr_cast<kgmText, kgmObject>(m_visual);
   }
 
-  void set(kgmSprite* sprite)
+  void set(kgm_ptr<kgmSprite> sprite)
   {
     if(!sprite)
       return;
 
-    if(m_visual)
-      m_visual->release();
+    m_visual.reset();
 
-    m_visual = sprite;
-    sprite->increment();
+    m_visual = (kgm_ptr<kgmObject>) sprite;
+
     m_type = TypeSprite;
   }
 
-  kgmSprite* getSprite()
+  kgm_ptr<kgmSprite> getSprite()
   {
-    return (kgmSprite*)m_visual;
+    return kgm_ptr_cast<kgmSprite, kgmObject>(m_visual);
   }
 
-  void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
+  void setAnimation(kgm_ptr<kgmAnimation> a, u32 start = 0, u32 end = 0, bool loop = false)
   {
     if(a == null)
       return;
 
     if(a != m_animation)
     {
-      if(m_animation)
-        m_animation->release();
+      m_animation.reset();
 
-      if(a)
-      {
-        a->increment();
-        m_animation = a;
-      }
+      m_animation = a;
     }
 
     m_fstart    = start;
@@ -423,43 +385,40 @@ public:
     m_floop     = loop;
   }
 
-  void setSkeleton(kgmSkeleton* skel)
+  void setSkeleton(kgm_ptr<kgmSkeleton> skel)
   {
     if(skel)
     {
       if(m_skeleton)
       {
-        m_skeleton->release();
+        m_skeleton.reset();
 
         if(m_tm_joints)
         {
-          delete [] m_tm_joints;
-          m_tm_joints = null;
+          m_tm_joints.reset();
         }
       }
 
-      skel->increment();
       m_skeleton = skel;
-      m_tm_joints = new mtx4[skel->m_joints.size()];
+      m_tm_joints = kgm_ptr<mtx4>(new mtx4[skel->m_joints.size()]);
     }
   }
 
-  bool set(kgmMesh* msh)
+  bool set(kgm_ptr<kgmMesh> msh)
   {
     if(!msh)
       return false;
 
-    if(m_visual)
-      m_visual->release();
+    m_visual.reset();
 
-    m_visual = new Mesh(msh);
+    m_visual = (kgm_ptr<kgmObject>) kgm_ptr<Mesh>(new Mesh(msh));
     m_type = TypeMesh;
     m_bound = msh->bound();
   }
 
   Mesh* getMesh()
   {
-    return (Mesh*)m_visual;
+    return (Mesh*) (kgmObject*)m_visual;
   }
 
   box3 getBound()
@@ -538,7 +497,7 @@ private:
     if(m_mesh)
     {
       kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->mesh->vertices();
-      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->vertices;
+      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)((kgmMesh::Vertex*)m_mesh->vertices);
 
       for(int i = 0; i < m_mesh->mesh->vcount(); i++)
       {

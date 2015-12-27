@@ -40,16 +40,16 @@ public:
 
   union
   {
-    kgmUnit*      unt;
-    kgmLight*     lgt;
-    kgmActor*     act;
-    kgmVisual*    vis;
-    kgmEffect*    eff;
-    kgmSensor*    sns;
-    kgmTrigger*   trg;
-    kgmObstacle*  obs;
+    kgm_ptr<kgmUnit>      unt;
+    kgm_ptr<kgmLight>     lgt;
+    kgm_ptr<kgmActor>     act;
+    kgm_ptr<kgmVisual>    vis;
+    kgm_ptr<kgmEffect>    eff;
+    kgm_ptr<kgmSensor>    sns;
+    kgm_ptr<kgmTrigger>   trg;
+    kgm_ptr<kgmObstacle>  obs;
 
-    kgmObject*    obj;
+    kgm_ptr<kgmObject>    obj;
   };
 
   Type typ;
@@ -66,24 +66,14 @@ public:
 
   bool col, lock;
 
-  kgmIcon*   icn = null;
-  kgmVisual* geo = null;
+  kgm_ptr<kgmIcon>   icn;
+  kgm_ptr<kgmVisual> geo;
   //kgm_ptr<kgmIcon> icn;
   //kgm_ptr<kgmVisual*> geo;
 
 private:
   ~kNode()
   {
-    kgmObject* o = (kgmObject*)vis;
-
-    if(o)
-      o->release();
-
-    if(icn)
-      icn->release();
-
-    if(geo)
-      geo->release();
   }
 
 public:
@@ -95,7 +85,7 @@ public:
     lock = false;
   }
 
-  kNode(kgmVisual* v)
+  kNode(kgm_ptr<kgmVisual> v)
   {
     typ = VISUAL;
     vis = v;
@@ -103,81 +93,60 @@ public:
     lock = false;
   }
 
-  kNode(kgmUnit* u)
+  kNode(kgm_ptr<kgmUnit> u)
   {
     typ  = UNIT;
     unt  = u;
     col  = false;
     lock = false;
-
-    if(u)
-      u->increment();
   }
 
-  kNode(kgmLight* l)
+  kNode(kgm_ptr<kgmLight> l)
   {
     typ  = LIGHT;
     lgt  = l;
     col  = false;
     lock = false;
-
-    if(l)
-      l->increment();
   }
 
-  kNode(kgmActor* a)
+  kNode(kgm_ptr<kgmActor> a)
   {
     typ = ACTOR;
     act = a;
     col = false;
     lock = false;
-
-    if(a)
-      a->increment();
   }
 
-  kNode(kgmEffect* e)
+  kNode(kgm_ptr<kgmEffect> e)
   {
     typ = EFFECT;
     eff = e;
     col = false;
     lock = false;
-
-    if(e)
-      e->increment();
   }
 
-  kNode(kgmSensor* s)
+  kNode(kgm_ptr<kgmSensor> s)
   {
     typ = SENSOR;
     sns = s;
     col = false;
     lock = false;
-
-    if(s)
-      s->increment();
   }
 
-  kNode(kgmTrigger* t)
+  kNode(kgm_ptr<kgmTrigger> t)
   {
     typ = TRIGGER;
     trg = t;
     col = false;
     lock = false;
-
-    if(t)
-      t->increment();
   }
 
-  kNode(kgmObstacle* o)
+  kNode(kgm_ptr<kgmObstacle> o)
   {
     typ = OBSTACLE;
     obs = o;
     col = true;
     lock = false;
-
-    if(o)
-      o->increment();
   }
 
   kNode(const kNode& n)
@@ -191,18 +160,42 @@ public:
     lnk = n.lnk;
     lock = n.lock;
 
-    obj = null;
+    if(n.icn != null)
+      icn = kgm_ptr<kgmIcon>((kgmIcon*)n.geo->clone());
 
-    if(n.icn != null){
-      icn = (kgmIcon*)n.geo->clone();
-    }
-
-    if(n.geo != null){
-      geo = (kgmVisual*)n.geo->clone();
-    }
+    if(n.geo != null)
+      geo = kgm_ptr<kgmVisual>((kgmVisual*)n.geo->clone());
 
     if(n.obj)
-      obj = (kgmUnit*)n.obj->clone();
+    {
+      switch(n.typ)
+      {
+      case UNIT:
+        unt = kgm_ptr<kgmUnit>((kgmUnit*)n.unt->clone());
+        break;
+      case LIGHT:
+        lgt = kgm_ptr<kgmLight>((kgmLight*)n.lgt->clone());
+        break;
+      case ACTOR:
+        act = kgm_ptr<kgmActor>((kgmActor*)n.act->clone());
+        break;
+      case VISUAL:
+        vis = kgm_ptr<kgmVisual>((kgmVisual*)n.vis->clone());
+        break;
+      case EFFECT:
+        eff = kgm_ptr<kgmEffect>((kgmEffect*)n.eff->clone());
+        break;
+      case SENSOR:
+        sns = kgm_ptr<kgmSensor>((kgmSensor*)n.sns->clone());
+        break;
+      case TRIGGER:
+        trg = kgm_ptr<kgmTrigger>((kgmTrigger*)n.trg->clone());
+        break;
+      case OBSTACLE:
+        obs = kgm_ptr<kgmObstacle>((kgmObstacle*)n.obs->clone());
+        break;
+      };
+    }
   }
 
   mtx4 getMatrix();

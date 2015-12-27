@@ -18,6 +18,5 @@ public:
     return m_sound;
   }
 
-private:
   ~kgmSound();
 };

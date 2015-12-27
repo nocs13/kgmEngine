@@ -20,22 +20,19 @@ protected:
   ~kgmPolygon()
   {
     verts.clear();
-
-    if(material)
-      material->release();
   }
 
 public:
   kgmArray<Vertex> verts;
-  vec3		  nor;
-  box3		  m_box;
 
-  kgmMaterial*     material;
+  vec3  nor;
+  box3  m_box;
+
+  kgm_ptr<kgmMaterial> material;
 
 public:
   kgmPolygon()
   {
-    material = null;
   }
 
   kgmPolygon(int cnt)

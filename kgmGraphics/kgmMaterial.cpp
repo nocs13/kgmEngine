@@ -17,22 +17,10 @@ kgmMaterial::kgmMaterial()
   m_2side        = false;
   m_blend        = false;
   m_depth        = true;
-
-  m_tex_color    = m_tex_specular = m_tex_normal = 0;
-
-  m_shader       = null;
 }
 
 kgmMaterial::~kgmMaterial()
 {
-  if(m_tex_color)
-    m_tex_color->release();
-
-  if(m_tex_normal)
-    m_tex_normal->release();
-
-  if(m_tex_specular)
-    m_tex_specular->release();
 }
 
 kgmMaterial* kgmMaterial::clone()
@@ -48,51 +36,39 @@ kgmMaterial* kgmMaterial::clone()
 
   m->m_shader = m_shader;
 
-  if(m_shader)
-    m_shader->increment();
-
   m->m_gc = m_gc;
 
   return m;
 }
 
-void kgmMaterial::setTexColor(kgmTexture* t)
+void kgmMaterial::setTexColor(kgm_ptr<kgmTexture> t)
 {
   if(!t || !t->m_texture)
     return;
 
-  if(m_tex_color)
-    m_tex_color->release();
+  m_tex_color.reset();
 
   m_tex_color = t;
-
-  t->increment();
 }
 
-void kgmMaterial::setTexNormal(kgmTexture* t)
+void kgmMaterial::setTexNormal(kgm_ptr<kgmTexture> t)
 {
   if(!t || !t->m_texture)
     return;
 
-  if(m_tex_normal)
-    m_tex_normal->release();
+  m_tex_normal.reset();
 
   m_tex_normal = t;
-
-  t->increment();
 }
 
-void kgmMaterial::setTexSpecular(kgmTexture* t)
+void kgmMaterial::setTexSpecular(kgm_ptr<kgmTexture> t)
 {
   if(!t || !t->m_texture)
     return;
 
-  if(m_tex_specular)
-    m_tex_specular->release();
+  m_tex_specular.reset();
 
   m_tex_specular = t;
-
-  t->increment();
 }
 
 bool kgmMaterial::hasTexColor()
@@ -110,28 +86,24 @@ bool kgmMaterial::hasTexSpecular()
   return (m_tex_specular && m_tex_specular->m_texture);
 }
 
-kgmTexture* kgmMaterial::getTexColor()
+kgm_ptr<kgmTexture> kgmMaterial::getTexColor()
 {
   return m_tex_color;
 }
 
-kgmTexture* kgmMaterial::getTexNormal()
+kgm_ptr<kgmTexture> kgmMaterial::getTexNormal()
 {
   return m_tex_normal;
 }
 
-kgmTexture* kgmMaterial::getTexSpecular()
+kgm_ptr<kgmTexture> kgmMaterial::getTexSpecular()
 {
   return m_tex_specular;
 }
 
-void kgmMaterial::setShader(kgmShader* shader)
+void kgmMaterial::setShader(kgm_ptr<kgmShader> shader)
 {
-  if(m_shader)
-    m_shader->release();
+  m_shader.reset();
 
   m_shader = shader;
-
-  if(m_shader)
-    m_shader->increment();
 }

@@ -37,16 +37,15 @@ public:
   u32   m_start, m_end, m_fps;
   kgmList<Animation*> m_nodes;
 
-protected:
-  virtual ~kgmAnimation()
-  {
-    clear();
-  }
-
 public:
   kgmAnimation():kgmResource()
   {
     m_start = m_end = 0, m_fps = 1;
+  }
+
+  ~kgmAnimation()
+  {
+    clear();
   }
 
   void clear()

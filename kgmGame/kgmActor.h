@@ -57,14 +57,14 @@ public:
     u32       timeout;
     u32       stime;
 
-    kgmSound*     sound;
-    kgmAnimation* animation;
+    kgm_ptr<kgmSound>     sound;
+    kgm_ptr<kgmAnimation> animation;
     u32           fstart, fend;
   };
 
   struct Animation
   {
-    kgmAnimation* animation;
+    kgm_ptr<kgmAnimation> animation;
     u32           start;
     u32           end;
   };
@@ -96,11 +96,9 @@ public:
 
   kgmTab<kgmString, kgmString> m_options;
 
-protected:
-  virtual ~kgmActor();
-
 public:
   kgmActor(kgmIGame* g = null);
+  ~kgmActor();
 
   virtual void init();
   virtual void exit();

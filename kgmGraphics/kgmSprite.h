@@ -11,11 +11,10 @@ public:
   bool   m_alpha;
   color  m_color;
 
-protected:
- ~kgmSprite();
-
 public:
  kgmSprite();
+
+ ~kgmSprite();
 
  void setRect(u32 x, u32 y, u32 w, u32 h)
  {

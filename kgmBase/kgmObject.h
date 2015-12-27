@@ -156,25 +156,24 @@ protected:
   };
 
 private:
-  u32 m_references;
-
-protected:
-  ~kgmObject()
-  {
-  }
+  //u32 m_references;
 
 public:
   kgmObject()
   {
-    m_references = 1;
+    //m_references = 1;
   }
 
   kgmObject(const kgmObject& o)
   {
-    m_references = o.m_references;
+    //m_references = o.m_references;
   }
 
-  u32 references() const
+  ~kgmObject()
+  {
+  }
+
+  /*u32 references() const
   {
     return m_references;
   }
@@ -191,7 +190,7 @@ public:
 
     if(m_references < 1)
       delete this;
-  }
+  }*/
 
   bool isClass(kgmObject& o)
   {

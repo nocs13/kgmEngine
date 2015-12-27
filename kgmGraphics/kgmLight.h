@@ -39,11 +39,6 @@ public:
   kgmIcon* m_icon = null;
 #endif
 
-protected:
-  ~kgmLight()
-  {
-  }
-
 public:
   kgmLight()
   {
@@ -87,6 +82,10 @@ public:
 #endif
   }
 
+  ~kgmLight()
+  {
+  }
+
   kgmObject* clone()
   {
     kgmLight* l = new kgmLight();
@@ -106,16 +105,30 @@ public:
 #endif
   }
 
+  vec3 getPosition() const
+  {
+    return position;
+  }
+
+  vec3 getDirection() const
+  {
+    return direction;
+  }
+
+  void setPosition(vec3 v)
+  {
+    position = v;
+  }
+
+  void setDirection(vec3 v)
+  {
+    direction = v;
+  }
+
 #ifdef DEBUG
   void setIcon(kgmIcon* icon)
   {
-    if(m_icon)
-      m_icon->release();
-
     m_icon = icon;
-
-    if(icon)
-      icon->increment();
   }
 
   kgmIcon* getIcon()

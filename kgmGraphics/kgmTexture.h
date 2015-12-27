@@ -91,12 +91,10 @@ public:
 
   mtx4 m_transform;
 
-protected:
-  ~kgmTexture();
-
 public:
   kgmTexture();
   kgmTexture(kgmIGC*, u32 type);
+  ~kgmTexture();
 
   void setFlags(u32 f);
   void addFlags(u32 f);

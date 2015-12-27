@@ -203,7 +203,6 @@ kgmGraphics::~kgmGraphics()
 #ifdef DEBUG
   for(int i = 0; i < m_bodies.size(); i++)
   {
-    m_bodies[i]->release();
   }
 
   m_bodies.clear();
@@ -217,15 +216,6 @@ kgmGraphics::~kgmGraphics()
 
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
-
-  if(gui_style)
-    gui_style->release();
-
-  if(m_camera)
-    m_camera->release();
-
-  if(g_def_material)
-    g_def_material->release();
 }
 
 kgmShader* s_def = null;
@@ -248,9 +238,7 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
 
   if(gui_style)
   {
-    gui_style->release();
-
-    gui_style = null;
+    gui_style.reset();
   }
 
   gui_style = s;
@@ -335,7 +323,6 @@ void kgmGraphics::render()
   {
     if((*i)()->removed())
     {
-      (*i)()->release();
       i = m_visuals.erase(i);
 
       continue;
@@ -409,9 +396,6 @@ void kgmGraphics::render()
   {
     if((*i).removed())
     {
-      if((*i)())
-        (*i)()->release();
-
       i = m_lights.erase(i);
 
       if(i == m_lights.end())
@@ -590,12 +574,11 @@ void kgmGraphics::render()
 
       if(m_icons[i - 1].removed())
       {
-        icon->release();
         m_icons.erase(i - 1);
       }
       else
       {
-        kgmMaterial* mtl = new kgmMaterial();
+        kgm_ptr<kgmMaterial> mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
         gc->gcAlpha(true, gccmp_great, 0.5);
         mtl->setTexColor(icon->getIcon());
         render(mtl);
@@ -604,7 +587,6 @@ void kgmGraphics::render()
         render((kgmShader*)null);
         render((kgmMaterial*)null);
         gc->gcAlpha(false, gccmp_great, 0.0);
-        mtl->release();
       }
     }
   }
@@ -627,7 +609,6 @@ void kgmGraphics::render()
 
     if(body->removed())
     {
-      body->release();
       m_bodies.erase(i - 1);
 
       continue;
@@ -716,7 +697,6 @@ void kgmGraphics::render()
 
     if(gui->erased())
     {
-      gui->release();
       m_guis.erase(i - 1);
     }
     else if(gui->visible())

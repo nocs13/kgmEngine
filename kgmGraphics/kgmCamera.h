@@ -31,11 +31,6 @@ public:
 
   Ortho ortho;
 
-protected:
-  ~kgmCamera()
-  {
-  }
-
 public:
   kgmCamera()
   {
@@ -43,6 +38,10 @@ public:
     ortho.scale = 1.0;
 
     set(0.16 * PI, 1.0, .01, 100000.0, vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 0, 1));
+  }
+
+  ~kgmCamera()
+  {
   }
 
   void set(float fov, float asp, float zn, float zf, vec3 v, vec3 d,  vec3 u)

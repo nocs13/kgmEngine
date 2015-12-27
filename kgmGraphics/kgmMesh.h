@@ -145,13 +145,12 @@ public:
   u32     m_group;    // object group id
   box3    m_bound;
 
-protected:
-  ~kgmMesh();
-
 public:
   kgmMesh();
 
   kgmMesh* clone();
+
+  ~kgmMesh();
 
   void rebound();  //recalculate boundes(box, sphere, ...)
   box3 bound();

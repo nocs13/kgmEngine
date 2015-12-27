@@ -1,5 +1,6 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmPointer.h"
 #include "../kgmMath/kgmMath.h"
 #include "kgm4Color.h"
 
@@ -29,11 +30,12 @@ public:
     float    mass;  //mass of particle
     u32      life;  //life time
     u32      time;  //current time
-    kgmMesh* mesh;  //ref mesh
+
+    kgm_ptr<kgmMesh> mesh;  //ref mesh
   };
 
 public:
-  Particle*  m_particles;
+  kgm_ptr<Particle>  m_particles;
   u32        m_count;
 
   bool       m_loop;
@@ -67,14 +69,13 @@ public:
   TypeRender m_typerender;
 
 private:
-  kgmMesh*    m_mesh;
-  kgmCamera*  m_camera;
-
-protected:
-  ~kgmParticles();
+  kgm_ptr<kgmMesh>    m_mesh;
+  kgm_ptr<kgmCamera>  m_camera;
 
 public:
   kgmParticles();
+
+  ~kgmParticles();
 
   void build();
   void init(Particle*);

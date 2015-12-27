@@ -64,26 +64,16 @@ public:
     {
       m_object = obj;
       m_remove = false;
-
-      if(m_object)
-        m_object->increment();
     }
 
     Node(const Node<T>& node)
     {
       m_object = node.m_object;
       m_remove = node.m_remove;
-
-      if(m_object)
-        m_object->increment();
     }
 
     ~Node()
     {
-      if(m_object)
-      {
-        m_object->release();
-      }
     }
 
     T* operator()()
@@ -113,7 +103,7 @@ private:
   kgmList<kgmBody*>     m_bodies;
 #endif
 
-  kgmGuiStyle* gui_style;
+  kgm_ptr<kgmGuiStyle> gui_style;
 
   void* tcolor;
   void* tnormal;
@@ -199,8 +189,6 @@ public:
     if(!a)
       return;
 
-    a->increment();
-
     m_visuals.add(a);
   }
 
@@ -216,7 +204,6 @@ public:
   {
     if(gui)
     {
-      gui->increment();
       m_guis.add(gui);
     }
   }
@@ -226,7 +213,6 @@ public:
   {
     if(a)
     {
-      a->increment();
       m_bodies.add(a);
     }
   }

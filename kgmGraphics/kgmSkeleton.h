@@ -27,6 +27,11 @@ public:
   kgmList<mtx4>   m_imatrices;
 
 protected:
+public:
+  kgmSkeleton()
+  {
+  }
+
   ~kgmSkeleton()
   {
     for(int i = 0; i < m_joints.size(); i++)
@@ -35,11 +40,6 @@ protected:
     m_joints.clear();
     m_matrices.clear();
     m_imatrices.clear();
-  }
-
-public:
-  kgmSkeleton()
-  {
   }
 
   void update()

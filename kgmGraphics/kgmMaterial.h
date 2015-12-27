@@ -1,5 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmPointer.h"
 #include "kgm4Color.h"
 #include "kgmShader.h"
 
@@ -12,6 +13,7 @@ class kgmShader;
 class kgmMaterial: public kgmObject
 {
   KGM_OBJECT(kgmMaterial);
+
 protected:
   kgmIGC*  m_gc;
 
@@ -64,13 +66,13 @@ public:
   };
 
 protected:
-  kgmTexture *m_tex_color, *m_tex_normal, *m_tex_specular;
+  kgm_ptr<kgmTexture> m_tex_color, m_tex_normal, m_tex_specular;
 
 public:
   Color  m_color, m_specular, m_emision;
   float  m_shininess, m_transparency;
 
-  kgmShader*  m_shader;
+  kgm_ptr<kgmShader>  m_shader;
 
   u32         m_flags;            //render specisific flags enable/disable
 
@@ -83,29 +85,28 @@ public:
 
   kgmString   m_type;
 
-protected:
-  ~kgmMaterial();
-
 public:
   kgmMaterial();
 
   kgmMaterial* clone();
 
-  void setTexColor(kgmTexture* t);
-  void setTexNormal(kgmTexture* t);
-  void setTexSpecular(kgmTexture* t);
+  ~kgmMaterial();
+
+  void setTexColor(kgm_ptr<kgmTexture> t);
+  void setTexNormal(kgm_ptr<kgmTexture> t);
+  void setTexSpecular(kgm_ptr<kgmTexture> t);
 
   bool hasTexColor();
   bool hasTexNormal();
   bool hasTexSpecular();
 
-  kgmTexture* getTexColor();
-  kgmTexture* getTexNormal();
-  kgmTexture* getTexSpecular();
+  kgm_ptr<kgmTexture> getTexColor();
+  kgm_ptr<kgmTexture> getTexNormal();
+  kgm_ptr<kgmTexture> getTexSpecular();
 
-  void setShader(kgmShader* shader);
+  void setShader(kgm_ptr<kgmShader> shader);
 
-  kgmShader* getShader() const
+  kgm_ptr<kgmShader> getShader() const
   {
     return m_shader;
   }
