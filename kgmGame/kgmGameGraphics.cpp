@@ -1,10 +1,3 @@
-/*
- * kgmGameRenderer.cpp
- *
- *  Created on: May 27, 2012
- *      Author: goga
- */
-
 #include "kgmGameGraphics.h"
 
 KGMOBJECT_IMPLEMENT(kgmGameGraphics, kgmGraphics);
