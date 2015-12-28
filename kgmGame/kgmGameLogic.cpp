@@ -116,7 +116,7 @@ bool kgmGameLogic::remove(kgm_ptr<kgmUnit> o)
 
 bool kgmGameLogic::isValid(kgmUnit *go)
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
   {
     if(go == (*i))
       return true;
@@ -127,7 +127,7 @@ bool kgmGameLogic::isValid(kgmUnit *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
     go->init();
@@ -147,7 +147,7 @@ void kgmGameLogic::update(u32 milliseconds)
     return;
 #endif
 
-  kgmList<kgmUnit*>::iterator i = m_objects.begin();
+  kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin();
 
   gcount = 0;
 
@@ -158,10 +158,9 @@ void kgmGameLogic::update(u32 milliseconds)
     if(go->removed())
     {
       if(m_gameplayer == go)
-        m_gameplayer = null;
+        m_gameplayer.reset();
 
       i = m_objects.erase(i);
-      go->release();
     }
     else if(go->valid())
     {
@@ -191,7 +190,7 @@ void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)
 
 kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
 
@@ -212,7 +211,7 @@ u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     objs.add((*i));
     count++;
@@ -225,7 +224,7 @@ u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
 
@@ -243,7 +242,7 @@ u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList< kgm_ptr<kgmUnit> >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
 

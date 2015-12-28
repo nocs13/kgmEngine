@@ -600,13 +600,13 @@ void kViewOptionsForObject::onSelectEnable(bool state)
     node->unt->enable();
 
     if(node->obj->isType(kgmUnit::Class))
-      kgmIGame::getGame()->getLogic()->add((kgmUnit*)node->obj);
+      kgmIGame::getGame()->getLogic()->add(kgm_ptr_cast<kgmUnit, kgmObject>(node->obj));
     else if(node->obj->isType(kgmActor::Class))
-      kgmIGame::getGame()->getLogic()->add((kgmActor*)node->obj);
+      kgmIGame::getGame()->getLogic()->add(kgm_ptr_cast<kgmActor, kgmObject>(node->obj));
     else if(node->obj->isType(kgmSensor::Class))
-      kgmIGame::getGame()->getLogic()->add((kgmSensor*)node->obj);
+      kgmIGame::getGame()->getLogic()->add(kgm_ptr_cast<kgmSensor, kgmObject>(node->obj));
     else if(node->obj->isType(kgmTrigger::Class))
-      kgmIGame::getGame()->getLogic()->add((kgmTrigger*)node->obj);
+      kgmIGame::getGame()->getLogic()->add(kgm_ptr_cast<kgmTrigger, kgmObject>(node->obj));
 
     if(node->unt->getBody())
       kgmIGame::getGame()->getPhysics()->add(node->unt->getBody());

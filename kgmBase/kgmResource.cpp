@@ -13,6 +13,8 @@ kgmResource::kgmResource()
   m_uid = 0;
 
   m_lock = false;
+
+  m_references = 1;
 }
 
 kgmResource::~kgmResource()

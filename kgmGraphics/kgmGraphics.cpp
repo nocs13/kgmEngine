@@ -1548,8 +1548,10 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
       ty = 0.0f;
     }
 
-    tx = (float)(tdx * (ch % font->m_rows));
-    ty = 1.0f - (float)(tdy * (ch / font->m_rows));
+    u32 rows = (font->m_rows != 0) ? (font->m_rows) : (1);
+
+    tx = (float)(tdx * (ch % rows));
+    ty = 1.0f - (float)(tdy * (ch / rows));
 
     if(clip.inside(cx + fwidth, cy + fheight))
     {

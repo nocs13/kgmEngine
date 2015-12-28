@@ -85,10 +85,6 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_font = null;
 
-#ifdef EDITOR
-  editor = null;
-#endif
-
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
 
@@ -189,29 +185,29 @@ kgmGameBase::~kgmGameBase()
   log("free logic...");
 
   if(m_logic)
-    m_logic->release();
+    delete m_logic;
 
 #ifdef EDITOR
   log("free editor...");
 
   if(editor)
-    editor->release();
+    delete editor;
 #endif
 
   log("free physics...");
 
   if(m_physics)
-    m_physics->release();
+    delete m_physics;
 
   log("free renderer...");
 
   if(m_render)
-    m_render->release();
+    delete m_render;
 
   log("free gui...");
 
-  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
-    (*i)->release();
+  for(kgmList< kgm_ptr<kgmGui> >::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    (*i).reset();
 
   m_guis.clear();
 
@@ -219,24 +215,23 @@ kgmGameBase::~kgmGameBase()
 
   if(m_resources)
   {
-    //m_resources->remove(m_font);
-    m_resources->release();
+    delete m_resources;
   }
 
   log("free audio...");
 
   if(m_audio)
-    m_audio->release();
+    delete m_audio;
 
   log("free system...");
 
   if(m_system)
-    m_system->release();
+    delete m_system;
 
   log("free settings...");
 
   if(m_settings)
-    m_settings->release();
+    delete m_settings;
 
   kgmUnit::unitUnregister();
 }
@@ -648,13 +643,13 @@ bool kgmGameBase::gAppend(kgmUnit* unit)
   if(m_logic)
   {
     if(unit->isType(kgmActor::Class))
-      m_logic->add((kgmActor*)unit);
+      m_logic->add(kgm_ptr<kgmActor>((kgmActor*)unit));
     else if(unit->isType(kgmSensor::Class))
-      m_logic->add((kgmSensor*)unit);
+      m_logic->add(kgm_ptr<kgmSensor>((kgmSensor*)unit));
     else if(unit->isType(kgmTrigger::Class))
-      m_logic->add((kgmTrigger*)unit);
+      m_logic->add(kgm_ptr<kgmTrigger>((kgmTrigger*)unit));
     else if(unit->isType(kgmUnit::Class))
-      m_logic->add((kgmUnit*)unit);
+      m_logic->add(kgm_ptr<kgmUnit>((kgmUnit*)unit));
   }
 
 #ifdef DEBUG
@@ -863,7 +858,6 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(vis)
         {
           vis->set(mtl);
-          mtl->release();
         }
       }
       else if(id == "kgmCamera")
@@ -875,7 +869,6 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeLight;
         obj = lgt = new kgmLight();
         m_render->add(lgt);
-        lgt->release();
       }
       else if(id == "kgmMesh")
       {
@@ -884,8 +877,6 @@ bool kgmGameBase::loadXml(kgmString& path)
         vis = new kgmVisual();
         vis->set(msh);
         m_render->add(vis);
-        msh->release();
-        vis->release();
       }
       else if(id == "kgmActor")
       {
@@ -916,7 +907,6 @@ bool kgmGameBase::loadXml(kgmString& path)
           if(act && act->getBody())
             m_render->add(act->getBody());
 #endif
-          act->release();
         }
       }
       else if(id == "kgmUnit")
@@ -936,7 +926,6 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(gob && gob->getBody())
           m_render->add(gob->getBody());
 #endif
-        gob->release();
       }
       else if(id == "Vertices")
       {
@@ -1139,9 +1128,6 @@ bool kgmGameBase::loadXml(kgmString& path)
               vis->set(mtl);
               vis->set(&mtx);
               m_render->add(vis);
-              mesh->release();
-              mtl->release();
-              vis->release();
             }
 
             kgmList<triangle3> tr_list;
@@ -1161,8 +1147,6 @@ bool kgmGameBase::loadXml(kgmString& path)
 
                 m_physics->add(v[0], v[1], v[2]);
               }
-
-              shape->release();
             }
           }
         }
@@ -1527,12 +1511,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
         actor->getVisual()->setAnimation(anm);
         actor->getVisual()->setSkeleton(skl);
 
-        msh->release();
-
-        if(mtl) mtl->release();
-        if(skl) skl->release();
-        if(anm) anm->release();
-
         msh = null;
         mtl = null;
         skl = null;
@@ -1574,9 +1552,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
       kgmString s;
       kgmActor::State* state = new kgmActor::State();
 
-      state->sound = null;
-      state->animation = null;
-
       a_node->node(i)->attribute("id", state->id);
       a_node->node(i)->attribute("type", state->type);
       a_node->node(i)->attribute("switch", state->switchto);
@@ -1597,7 +1572,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
         if(id == "Sound")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->sound = m_resources->getSound(s);
+          state->sound = kgm_ptr<kgmSound>(m_resources->getSound(s));
         }
         else if(id == "Animation")
         {

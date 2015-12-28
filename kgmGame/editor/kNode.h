@@ -40,17 +40,17 @@ public:
 
   union
   {
-    kgm_ptr<kgmUnit>      unt;
-    kgm_ptr<kgmLight>     lgt;
-    kgm_ptr<kgmActor>     act;
-    kgm_ptr<kgmVisual>    vis;
-    kgm_ptr<kgmEffect>    eff;
-    kgm_ptr<kgmSensor>    sns;
-    kgm_ptr<kgmTrigger>   trg;
-    kgm_ptr<kgmObstacle>  obs;
-
-    kgm_ptr<kgmObject>    obj;
+    kgmUnit*      unt;
+    kgmLight*     lgt;
+    kgmActor*     act;
+    kgmVisual*    vis;
+    kgmEffect*    eff;
+    kgmSensor*    sns;
+    kgmTrigger*   trg;
+    kgmObstacle*  obs;
   };
+
+  kgm_ptr<kgmObject> obj;
 
   Type typ;
 

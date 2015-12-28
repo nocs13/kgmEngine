@@ -72,8 +72,8 @@ class kgmParticlesObject: public kgmEffect
   KGM_UNIT(kgmParticlesObject);
 
 protected:
-  kgmParticles* particles;
-  kgmMaterial*  material;
+  kgm_ptr<kgmParticles> particles;
+  kgm_ptr<kgmMaterial>  material;
 
   //For editor only
 
@@ -92,10 +92,10 @@ public:
   {
     timeout(life);
 
-    particles = new kgmParticles();
+    particles = kgm_ptr<kgmParticles>(new kgmParticles());
     m_visual  = new kgmVisual();
 
-    material = new kgmMaterial();
+    material = kgm_ptr<kgmMaterial>(new kgmMaterial());
     material->m_depth        = false;
     material->m_blend        = true;
     material->m_srcblend     = gcblend_srcalpha;
@@ -138,25 +138,17 @@ public:
     m_variables.add(var);
   }
 
-  kgmParticlesObject(kgmIGame* g, kgmParticles* pts, kgmMaterial* mtl, u32 life)
+  kgmParticlesObject(kgmIGame* g, kgm_ptr<kgmParticles> pts, kgm_ptr<kgmMaterial> mtl, u32 life)
   :kgmEffect(g)
   {
     material = mtl;
     particles = pts;
-
-//    pts->increment();
-    mtl->increment();
 
     timeout(life);
   }
 
   virtual ~kgmParticlesObject()
   {
-//    if(particles)
-//      particles->release();
-
-    if(material)
-      material->release();
   }
 
   void setTexture(kgmString tid)
@@ -291,8 +283,8 @@ class kgmLaser: public kgmEffect
     vec2 uv;
   };
 
-  kgmMesh*      mesh;
-  kgmMaterial*  mtl;
+  kgm_ptr<kgmMesh>      mesh;
+  kgm_ptr<kgmMaterial>  mtl;
 
 public:
   u32           power;
@@ -311,9 +303,10 @@ public:
     power = 1;
     timeout(time);
     this->setId("laser");
+
     m_visual  = new kgmVisual();
 
-    mtl = new kgmMaterial();
+    mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
     mtl->m_2side = true;
     mtl->m_depth = false;
     mtl->m_blend = true;
@@ -322,7 +315,7 @@ public:
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
     mtl->setShader(g->getResources()->getShader("blend.glsl"));
 
-    mesh = new kgmMesh();
+    mesh = kgm_ptr<kgmMesh>(new kgmMesh());
     Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
 
     v[0]  = { {0, -hwid, -hwid}, 0xffffffff, {0, 1}};
@@ -348,8 +341,6 @@ public:
 
     m_visual->set(mesh);
     m_visual->set(mtl);
-    mesh->release();
-    mtl->release();
 
     m_body = new kgmBody();
 
@@ -393,7 +384,7 @@ public:
     game     = g;
     m_visual = new kgmVisual();
 
-    mtl = new kgmMaterial();
+    mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
     mtl->m_2side = true;
     mtl->m_blend = true;
     mtl->m_depth = false;
@@ -403,7 +394,7 @@ public:
     mtl->m_type = "simple";
     mtl->setShader(g->getResources()->getShader("blend.glsl"));
 
-    ptl = new kgmParticles();
+    ptl = kgm_ptr<kgmParticles>(new kgmParticles());
     ptl->m_typerender  = kgmParticles::RTypePoint;
     ptl->m_count       = 25;
     ptl->m_speed       = 2.0f;
@@ -449,10 +440,6 @@ public:
 
   virtual ~kgmIonNozzle()
   {
-    mesh->release();
-    mtl->release();
-//    ptl->release();
-//    visual->release();
   }
 
   void update(u32 mls)

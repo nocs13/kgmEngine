@@ -13,6 +13,8 @@ class kgmResource: public kgmObject
 private:
   bool m_lock;
 
+  u32 m_references;
+
 public:
   enum  Type
   {
@@ -32,19 +34,32 @@ public:
   u32	       m_uid;
   u32        m_type;
 
-protected:
-  ~kgmResource();
-
 public:
   kgmResource();
+  ~kgmResource();
 
   void setId(kgmString id){ m_id = id; }
 
-  /*void release()
+  u32 references() const
   {
-    if((references() > 1) || (!m_lock && references() == 1))
-      ((kgmObject*)this)->release();
-  }*/
+    return m_references;
+  }
+
+  void increment()
+  {
+    m_references++;
+  }
+
+  void release()
+  {
+    if (m_lock)
+      return;
+
+    m_references--;
+
+    if(m_references < 1)
+      delete this;
+  }
 
 private:
   void lock()

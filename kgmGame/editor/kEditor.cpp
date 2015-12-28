@@ -96,8 +96,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
     item->add(ME_VIEW_OBJECTS, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
-    game->guiAdd(menu);
-    menu->release();
+    game->guiAdd(kgm_ptr_cast<kgmGui, kgmGuiMenu>(menu));
 
     mtlLines = new kgmMaterial();
     mtlLines->setShader(null);
@@ -114,7 +113,6 @@ kEditor::kEditor(kgmGameBase* g)
     gridline = new kgmVisual();
     gridline->set(mtlLines);
     gridline->set(mesh);
-    mesh->release();
     game->getRender()->add(gridline);
 
     mesh = (kgmMesh*)(new kPivot());
@@ -123,7 +121,6 @@ kEditor::kEditor(kgmGameBase* g)
     mtr.identity();
     pivot->set(mtlPivot);
     pivot->set(mesh);
-    mesh->release();
     pivot->set(&mtr);
     game->getRender()->add(pivot);
 
@@ -133,18 +130,6 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
-  if(gridline)
-    gridline->release();
-
-  if(pivot)
-    pivot->release();
-
-  if(mtlLines)
-    mtlLines->release();
-
-  if(mtlPivot)
-    mtlPivot->release();
-
   kgmUnit::g_typ_objects.clear();
 }
 
@@ -165,9 +150,6 @@ void kEditor::select(kgmString name)
   {
     if((*i)->getId() == name)
     {
-      if(selected)
-        selected->release();
-
       selected = new kNode((kgmUnit*)(*i));
 
       if(pivot)
@@ -176,7 +158,7 @@ void kEditor::select(kgmString name)
         //pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
     }
-  }while(i.next());
+  } while(i.next());
 }
 
 void kEditor::select(int x, int y)
@@ -253,9 +235,6 @@ void kEditor::select(int x, int y)
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      if(selected)
-        selected->release();
-
       selected = new kNode((kgmUnit*)(*i));
 
       select((*i)->getId());
@@ -274,9 +253,6 @@ void kEditor::select(int x, int y)
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      if(selected)
-        selected->release();
-
       selected = new kNode((kgmUnit*)(*i));
       select((*i)->getId());
 
@@ -294,9 +270,6 @@ void kEditor::select(int x, int y)
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      if(selected)
-        selected->release();
-
       selected = new kNode((kgmUnit*)(*i));
       select((*i)->getId());
 
@@ -453,8 +426,11 @@ bool kEditor::mapOpen(kgmString s)
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
-      node->icn = new kgmIcon(game->getResources()->getTexture("light_ico.tga"));
-      node->geo = new kgmVisual();
+
+      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("light_ico.tga"));
+
+      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+      node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
 
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
@@ -480,7 +456,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
       oquered++;
-      node = new kNode((kgmActor*)mnode.obj);
+      node = new kNode(kgm_ptr<kgmActor>((kgmActor*)mnode.obj));
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
@@ -489,8 +465,10 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->ini = mnode.ini;
       node->lock = mnode.lck;
-      node->icn = new kgmIcon(game->getResources()->getTexture("actor_ico.tga"));
-      node->geo = new kgmVisual();
+      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("actor_ico.tga"));
+
+      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+      node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
 
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
@@ -511,7 +489,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeSns)
     {
       oquered++;
-      node = new kNode((kgmSensor*)mnode.obj);
+      node = new kNode(kgm_ptr<kgmSensor>((kgmSensor*)mnode.obj));
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
@@ -519,8 +497,11 @@ bool kEditor::mapOpen(kgmString s)
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
-      node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
-      node->geo = new kgmVisual();
+
+      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("sensor_ico.tga"));
+
+      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+      node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
 
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
@@ -535,7 +516,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeTrg)
     {
       oquered++;
-      node = new kNode((kgmTrigger*)mnode.obj);
+      node = new kNode(kgm_ptr<kgmTrigger>((kgmTrigger*)mnode.obj));
 
       node->nam = mnode.nam;
       node->bnd = mnode.bnd;
@@ -544,8 +525,10 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
-      node->icn = new kgmIcon(game->getResources()->getTexture("trigger_ico.tga"));
-      node->geo = new kgmVisual();
+      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("trigger_ico.tga"));
+
+      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+      node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
 
       node->geo->set((kgmMesh*)(new kArrow()));
       node->geo->set(mtlLines);
@@ -778,12 +761,8 @@ bool kEditor::addMesh(kgmString path)
   {
     kgmVisual* visual = new kgmVisual();
     visual->set(mesh);
-    mesh->release();
     kgmString name = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
     game->gAppend(visual);
-
-    if(selected)
-      selected->release();
 
     selected = new kNode(visual);
 
@@ -811,7 +790,10 @@ bool kEditor::addUnit(kgmString type)
         kNode* node = new kNode(un);
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmIcon(game->getResources()->getTexture("unit_ico.tga"));
+
+        kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("unit_ico.tga"));
+
+        node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
         node->geo = new kgmVisual();
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
@@ -862,8 +844,6 @@ bool kEditor::addActor(kgmString type)
 
   if(ac)
   {
-    kNode* node = new kNode(ac);
-
     //For evade remove unit from scene.
     ac->timeout(-1);
 
@@ -890,11 +870,12 @@ bool kEditor::addEffect(kgmString type)
 
       if(eff)
       {
-        kNode* node = new kNode(eff);
+        kNode* node = new kNode(kgm_ptr<kgmEffect>(eff));
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmIcon(game->getResources()->getTexture("effect_ico.tga"));
-        node->geo = new kgmVisual();
+        kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("effect_ico.tga"));
+        node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+        node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
 
@@ -926,11 +907,12 @@ bool kEditor::addSensor(kgmString type)
 
       if(sn)
       {
-        kNode* node = new kNode(sn);
+        kNode* node = new kNode(kgm_ptr<kgmSensor>(sn));
         node->bnd = box3(-1, -1, -1, 1, 1, 1);
         node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
-        node->icn = new kgmIcon(game->getResources()->getTexture("sensor_ico.tga"));
-        node->geo = new kgmVisual();
+        kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("sensor_ico.tga"));
+        node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
+        node->geo = kgm_ptr<kgmVisual>(new kgmVisual());
         node->geo->set((kgmMesh*)(new kArrow()));
         node->geo->set(mtlLines);
 
@@ -1344,8 +1326,6 @@ void kEditor::onEditRemove()
   if (selected->geo)
     selected->geo->remove();
 
-  selected->release();
-
   selected = null;
 }
 
@@ -1422,10 +1402,7 @@ void kEditor::onAddLight()
 
   light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
 
-  if(selected)
-    selected->release();
-
-  selected = new kNode(light);
+  selected = new kNode(kgm_ptr<kgmLight>(light));
   game->gAppend(light);
 
   //l->release();
@@ -1484,10 +1461,7 @@ void kEditor::onAddTrigger()
 
   tr->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
 
-  if(selected)
-    selected->release();
-
-  selected = new kNode(tr);
+  selected = new kNode(kgm_ptr<kgmTrigger>(tr));
   game->gAppend(tr);
 }
 

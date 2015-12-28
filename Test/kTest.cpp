@@ -56,7 +56,7 @@ public:
     if(!act)
       return false;
 
-    kgmGameLogic::add((kgmActor*)act);
+    kgmGameLogic::add(kgm_ptr<kgmActor>(act));
 
     if(act->m_gameplayer){}
   }
@@ -91,7 +91,8 @@ public:
   }
 };
 
-class kGame: public kgmGameBase{
+class kGame: public kgmGameBase
+{
   struct GameData
   {
     u16 sig;
@@ -115,7 +116,7 @@ public:
       m_physics->m_gravity = 1.0f;
 
     if(m_logic)
-      m_logic->release();
+      delete m_logic;
 
     m_logic = new ASp_Logic(this);
 
@@ -285,7 +286,8 @@ public:
   {
     if(game)
     {
-      game->release();
+      delete game;
+
       game = null;
     }
   }

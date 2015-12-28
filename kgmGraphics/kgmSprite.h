@@ -3,7 +3,8 @@
 #include "../kgmMath/kgmMath.h"
 #include "kgm4Color.h"
 
-class kgmSprite: public kgmObject{
+class kgmSprite: public kgmObject
+{
   KGM_OBJECT(kgmSprite);
 
 public:
@@ -12,12 +13,14 @@ public:
   color  m_color;
 
 public:
- kgmSprite();
+  kgmSprite()
+  {}
 
- ~kgmSprite();
+  ~kgmSprite()
+  {}
 
- void setRect(u32 x, u32 y, u32 w, u32 h)
- {
-   m_rect = uRect(x, y, w, h);
- }
+  void setRect(u32 x, u32 y, u32 w, u32 h)
+  {
+    m_rect = uRect(x, y, w, h);
+  }
 };

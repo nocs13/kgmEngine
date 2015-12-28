@@ -85,8 +85,8 @@ kGui::kGui(kgmGameBase* game)
 
 kGui::~kGui()
 {
-  m_guiMain->release();
-  m_guiPause->release();
+  delete m_guiMain;
+  delete m_guiPause;
 
 #ifdef DEBUG
   kgm_log() << "kGui::~kGui.\n";

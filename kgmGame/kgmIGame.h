@@ -226,7 +226,7 @@ public:
   virtual bool           gAppend(kgmLight*)   = 0;    //add game light in map
   virtual bool           gAppend(kgmVisual*)  = 0;    //add game object in map
 
-  virtual void           guiAdd(kgmGui* g) = 0;
+  virtual void           guiAdd(kgm_ptr<kgmGui> g) = 0;
 
   virtual kgmIPhysics*    getPhysics() = 0;
   virtual kgmISpawner*    getSpawner() = 0;
