@@ -411,14 +411,26 @@ public:
 
     m_visual.reset();
 
-    m_visual = (kgm_ptr<kgmObject>) kgm_ptr<Mesh>(new Mesh(msh));
+    kgm_ptr<Mesh> mesh;
+
+    mesh = kgm_ptr<Mesh>(new Mesh(msh));
+
+    m_visual = kgm_ptr_cast<kgmObject, Mesh>(mesh);
+
     m_type = TypeMesh;
+
     m_bound = msh->bound();
   }
 
   Mesh* getMesh()
   {
-    return (Mesh*) (kgmObject*)m_visual;
+    kgm_ptr<Mesh> mesh;
+
+    mesh = kgm_ptr_cast<Mesh, kgmObject>(m_visual);
+
+    Mesh *m = (Mesh*) mesh;
+
+    return m;
   }
 
   box3 getBound()

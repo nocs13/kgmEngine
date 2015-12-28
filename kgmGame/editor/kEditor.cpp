@@ -1034,7 +1034,13 @@ void kEditor::onMsMove(int k, int x, int y)
   u32 paxes = kPivot::AXIS_NONE;
 
   if(game->getRender())
-    paxes = ((kPivot*)pivot->getMesh()->getMesh())->getAxis();
+  {
+    kgmVisual::Mesh* mesh = pivot->getMesh();
+
+    kPivot *pvt = (kPivot *) mesh->getMesh();
+
+    paxes = pvt->getAxis();
+  }
 
   if(game->getRender() && move_camera)
   {
