@@ -81,8 +81,15 @@ public:
       return m_object;
     }
 
-    bool removed() { return m_remove; }
-    void remove()  { m_remove = true; }
+    bool removed()
+    {
+      return m_remove;
+    }
+
+    void remove()
+    {
+      m_remove = true;
+    }
   };
 
 private:
@@ -103,7 +110,8 @@ private:
   kgmList<kgmBody*>     m_bodies;
 #endif
 
-  kgm_ptr<kgmGuiStyle> gui_style;
+  //kgm_ptr<kgmGuiStyle> gui_style;
+  kgmGuiStyle* gui_style = null;
 
   void* tcolor;
   void* tnormal;

@@ -216,6 +216,9 @@ kgmGraphics::~kgmGraphics()
 
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
+
+  if(gui_style)
+    delete gui_style;
 }
 
 kgmShader* s_def = null;
@@ -238,7 +241,8 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
 
   if(gui_style)
   {
-    gui_style.reset();
+    //gui_style.reset();
+    delete gui_style;
   }
 
   gui_style = s;

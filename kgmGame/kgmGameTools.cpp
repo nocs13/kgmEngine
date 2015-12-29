@@ -1307,7 +1307,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->sgui.tx_color);
         n->attribute("image", attr);
-        gs->sgui.image = rc->getTexture(attr);
+        gs->sgui.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiList")
       {
@@ -1320,7 +1320,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->slist.tx_color);
         n->attribute("image", attr);
-        gs->slist.image = rc->getTexture(attr);
+        gs->slist.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiButton")
       {
@@ -1333,7 +1333,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->sbutton.tx_color);
         n->attribute("image", attr);
-        gs->sbutton.image = rc->getTexture(attr);
+        gs->sbutton.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiMenu")
       {
@@ -1346,7 +1346,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->smenu.tx_color);
         n->attribute("image", attr);
-        gs->smenu.image = rc->getTexture(attr);
+        gs->smenu.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiText")
       {
@@ -1359,7 +1359,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->stext.tx_color);
         n->attribute("image", attr);
-        gs->stext.image = rc->getTexture(attr);
+        gs->stext.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiScroll")
       {
@@ -1372,7 +1372,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->sscroll.tx_color);
         n->attribute("image", attr);
-        gs->sscroll.image = rc->getTexture(attr);
+        gs->sscroll.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiLabel")
       {
@@ -1385,7 +1385,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("tx_color", attr);
         KGM_STRHEX_TO_INT(attr, gs->slabel.tx_color);
         n->attribute("image", attr);
-        gs->slabel.image = rc->getTexture(attr);
+        gs->slabel.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
       else if(n->m_name == "GuiCheck")
       {
@@ -1402,7 +1402,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
         n->attribute("fg_check", attr);
         KGM_STRHEX_TO_INT(attr, gs->scheck.fg_check);
         n->attribute("image", attr);
-        gs->scheck.image = rc->getTexture(attr);
+        gs->scheck.image = kgm_ptr<kgmTexture>(rc->getTexture(attr));
       }
     }
 
