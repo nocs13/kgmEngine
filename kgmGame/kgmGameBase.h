@@ -63,7 +63,7 @@ protected:
   kgmList<kgmLight*>  m_lights;    // game lights.
   kgmList<kgmVisual*> m_visuals;   // game visuals.
 
-  kgmList<kgmGui*> m_guis;      // game guis.
+  kgmList<kgmGui*> m_guis;         // game guis.
 
 #ifdef EDITOR
   friend class kEditor;

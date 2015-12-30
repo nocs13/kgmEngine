@@ -41,32 +41,26 @@ kgmMaterial* kgmMaterial::clone()
   return m;
 }
 
-void kgmMaterial::setTexColor(kgm_ptr<kgmTexture> t)
+void kgmMaterial::setTexColor(kgmTexture* t)
 {
   if(!t || !t->m_texture)
     return;
-
-  m_tex_color.reset();
 
   m_tex_color = t;
 }
 
-void kgmMaterial::setTexNormal(kgm_ptr<kgmTexture> t)
+void kgmMaterial::setTexNormal(kgmTexture* t)
 {
   if(!t || !t->m_texture)
     return;
-
-  m_tex_normal.reset();
 
   m_tex_normal = t;
 }
 
-void kgmMaterial::setTexSpecular(kgm_ptr<kgmTexture> t)
+void kgmMaterial::setTexSpecular(kgmTexture* t)
 {
   if(!t || !t->m_texture)
     return;
-
-  m_tex_specular.reset();
 
   m_tex_specular = t;
 }
@@ -86,24 +80,22 @@ bool kgmMaterial::hasTexSpecular()
   return (m_tex_specular && m_tex_specular->m_texture);
 }
 
-kgm_ptr<kgmTexture> kgmMaterial::getTexColor()
+kgmTexture* kgmMaterial::getTexColor()
 {
   return m_tex_color;
 }
 
-kgm_ptr<kgmTexture> kgmMaterial::getTexNormal()
+kgmTexture* kgmMaterial::getTexNormal()
 {
   return m_tex_normal;
 }
 
-kgm_ptr<kgmTexture> kgmMaterial::getTexSpecular()
+kgmTexture* kgmMaterial::getTexSpecular()
 {
   return m_tex_specular;
 }
 
-void kgmMaterial::setShader(kgm_ptr<kgmShader> shader)
+void kgmMaterial::setShader(kgmShader* shader)
 {
-  m_shader.reset();
-
   m_shader = shader;
 }

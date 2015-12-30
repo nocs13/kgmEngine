@@ -219,6 +219,9 @@ kgmGraphics::~kgmGraphics()
 
   if(gui_style)
     delete gui_style;
+
+  if(m_camera)
+    delete m_camera;
 }
 
 kgmShader* s_def = null;

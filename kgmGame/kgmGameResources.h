@@ -52,7 +52,6 @@ public:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
   ~kgmGameResources();
 
-  //void               add(kgmResource*);
   void               remove(kgmResource*);
 
   void               addPath(kgmString s);
@@ -67,4 +66,9 @@ public:
   kgmSkeleton*       getSkeleton(char* id);
   kgmFont*           getFont(char* id, u32 r, u32 c);
   kgmShapeCollision* getShapeCollision(char* id);
+
+private:
+  void               add(kgmResource*);
+  kgmResource*       get(char* id);
+  kgmResource*       get(kgmString& id);
 };

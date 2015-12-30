@@ -43,7 +43,8 @@ private:
   vec3       pv_pos;
   vec3       pv_rot;
 
-  kgm_ptr<kgmGuiMenu> menu;
+  //kgm_ptr<kgmGuiMenu> menu;
+  kgmGuiMenu* menu;
 
   //kFileDialog* fdd;
 

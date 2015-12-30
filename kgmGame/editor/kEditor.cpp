@@ -66,7 +66,7 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->getRender()->setEditor(true);
 
-    kgmGuiMenu* menu = new kgmGuiMenu(null);
+    menu = new kgmGuiMenu(null);
     //menu = kgm_ptr<kgmGuiMenu>(new kgmGuiMenu(null));
 
     menu->setSid("editor_main_menu");

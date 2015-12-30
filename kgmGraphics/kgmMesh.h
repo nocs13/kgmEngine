@@ -147,10 +147,10 @@ public:
 
 public:
   kgmMesh();
+  ~kgmMesh();
 
   kgmMesh* clone();
 
-  ~kgmMesh();
 
   void rebound();  //recalculate boundes(box, sphere, ...)
   box3 bound();
@@ -162,7 +162,6 @@ public:
   u32     fvf();
   u32     fff();
 
-  ////
   Vertex* vertices(){ return m_vertices; }
   Face*   faces()   { return m_faces; }
   u32     vcount()  { return m_vcount; }

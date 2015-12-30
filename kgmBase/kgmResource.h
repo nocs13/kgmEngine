@@ -28,7 +28,6 @@ public:
     TypeSkeleton,
   };
 
-public:
   kgmObject* m_resource;
   kgmString  m_id;
   u32	       m_uid;
@@ -55,10 +54,8 @@ public:
     if (m_lock)
       return;
 
-    m_references--;
-
-    if(m_references < 1)
-      delete this;
+    if(m_references > 0)
+      m_references--;
   }
 
 private:

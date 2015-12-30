@@ -66,13 +66,15 @@ public:
   };
 
 protected:
-  kgm_ptr<kgmTexture> m_tex_color, m_tex_normal, m_tex_specular;
+  kgmTexture* m_tex_color = null;
+  kgmTexture* m_tex_normal = null;
+  kgmTexture* m_tex_specular = null;
 
 public:
   Color  m_color, m_specular, m_emision;
   float  m_shininess, m_transparency;
 
-  kgm_ptr<kgmShader>  m_shader;
+  kgmShader*  m_shader = null;
 
   u32         m_flags;            //render specisific flags enable/disable
 
@@ -92,21 +94,21 @@ public:
 
   ~kgmMaterial();
 
-  void setTexColor(kgm_ptr<kgmTexture> t);
-  void setTexNormal(kgm_ptr<kgmTexture> t);
-  void setTexSpecular(kgm_ptr<kgmTexture> t);
+  void setTexColor(kgmTexture* t);
+  void setTexNormal(kgmTexture* t);
+  void setTexSpecular(kgmTexture* t);
 
   bool hasTexColor();
   bool hasTexNormal();
   bool hasTexSpecular();
 
-  kgm_ptr<kgmTexture> getTexColor();
-  kgm_ptr<kgmTexture> getTexNormal();
-  kgm_ptr<kgmTexture> getTexSpecular();
+  kgmTexture* getTexColor();
+  kgmTexture* getTexNormal();
+  kgmTexture* getTexSpecular();
 
-  void setShader(kgm_ptr<kgmShader> shader);
+  void setShader(kgmShader* shader);
 
-  kgm_ptr<kgmShader> getShader() const
+  kgmShader* getShader() const
   {
     return m_shader;
   }
