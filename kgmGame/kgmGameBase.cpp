@@ -191,7 +191,7 @@ kgmGameBase::~kgmGameBase()
   log("free editor...");
 
   if(editor)
-    delete editor;
+    editor.reset();
 #endif
 
   log("free physics...");
@@ -206,8 +206,8 @@ kgmGameBase::~kgmGameBase()
 
   log("free gui...");
 
-  for(kgmList< kgm_ptr<kgmGui> >::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
-    (*i).reset();
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    delete (*i);
 
   m_guis.clear();
 
@@ -281,13 +281,15 @@ kgmWindow*  kgmGameBase::getWindow()
   return (kgmWindow*)this;
 }
 
-kgmEnvironment*  kgmGameBase::getEnvironment(){
+kgmEnvironment*  kgmGameBase::getEnvironment()
+{
   return m_settings;
 }
 
 void kgmGameBase::initResources()
 {
   m_resources = new kgmGameResources(getGC(), getAudio());
+
   m_resources->addPath(m_settings->get((char*)"Path"));
 }
 
@@ -303,7 +305,7 @@ void kgmGameBase::initPhysics()
 
 void kgmGameBase::initSystem()
 {
-  m_system = kgm_ptr<kgmSystem>(new kgmSystem());
+  m_system = new kgmSystem();
 
   m_system->getDesktopDimension(m_width, m_height);
 }
@@ -322,7 +324,6 @@ void kgmGameBase::log(const char* msg)
 {
   kgmLog::log(msg);
 }
-//
 
 void kgmGameBase::onIdle()
 {

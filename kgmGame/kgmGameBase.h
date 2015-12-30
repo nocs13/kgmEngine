@@ -38,7 +38,7 @@ protected:
   kgmGameResources*  m_resources;
   kgmGameSettings*   m_settings;
 
-  kgm_ptr<kgmSystem> m_system;
+  kgmSystem* m_system;
 
   u32	m_width;
   u32	m_height;
@@ -63,7 +63,7 @@ protected:
   kgmList<kgmLight*>  m_lights;    // game lights.
   kgmList<kgmVisual*> m_visuals;   // game visuals.
 
-  kgmList< kgm_ptr<kgmGui> > m_guis;      // game guis.
+  kgmList<kgmGui*> m_guis;      // game guis.
 
 #ifdef EDITOR
   friend class kEditor;
@@ -150,7 +150,7 @@ public:
   bool           loadXml(kgmString& path);
 
 public:
-  void guiAdd(kgm_ptr<kgmGui> g)
+  void guiAdd(kgmGui* g)
   {
     if(g)
     {

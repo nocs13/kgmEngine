@@ -66,8 +66,8 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->getRender()->setEditor(true);
 
-    //kgmGuiMenu* menu = new kgmGuiMenu(null);
-    menu = kgm_ptr<kgmGuiMenu>(new kgmGuiMenu(null));
+    kgmGuiMenu* menu = new kgmGuiMenu(null);
+    //menu = kgm_ptr<kgmGuiMenu>(new kgmGuiMenu(null));
 
     menu->setSid("editor_main_menu");
 
@@ -96,7 +96,8 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_OBJECTS, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
     item->add(ME_VIEW_OBJECTS, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
     item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
-    game->guiAdd(kgm_ptr_cast<kgmGui, kgmGuiMenu>(menu));
+    game->guiAdd(menu);
+    //game->guiAdd(kgm_ptr_cast<kgmGui, kgmGuiMenu>(menu));
 
     mtlLines = new kgmMaterial();
     mtlLines->setShader(null);
