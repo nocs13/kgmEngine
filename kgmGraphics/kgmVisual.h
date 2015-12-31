@@ -40,24 +40,23 @@ public:
   {
     friend class  kgmVisual;
 
-    kgm_ptr<kgmMesh> mesh;
+    kgmMesh* mesh = null;
 
-    bool skin;
+    bool skin = false;
 
-    kgm_ptr<kgmMesh::Vertex> vertices;
+    kgmMesh::Vertex* vertices = null;
   public:
 
     Mesh()
     {
-      mesh      = null;
-
-      skin      = false;
-      vertices  = null;
+      skin     = false;
+      mesh     = null;
+      vertices = null;
     }
 
-    Mesh(kgm_ptr<kgmMesh> msh)
+    Mesh(kgmMesh* m)
     {
-      mesh = msh;
+      mesh = m;
 
       skin      = false;
       vertices  = null;
@@ -66,9 +65,11 @@ public:
       {
         if(mesh->fvf() & gcv_bn0)
         {
-          vertices = kgm_ptr<kgmMesh::Vertex>(new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()]);
+          vertices = (kgmMesh::Vertex*) new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
+
           memcpy(vertices, mesh->vertices(),
                  sizeof(kgmMesh::Vertex_P_N_C_T_BW_BI) * mesh->vcount());
+
           skin = true;
         }
       }
@@ -152,10 +153,11 @@ public:
   kgm_ptr<kgmSkeleton>  m_skeleton;
   kgm_ptr<kgmAnimation> m_animation;
 
-  bool                   m_floop;
-  u32                    m_fstart;
-  u32                    m_fend;
-  u32                    m_fset;
+  bool m_floop;
+
+  u32  m_fstart;
+  u32  m_fend;
+  u32  m_fset;
 
 //private:
   box3                   m_bound;
@@ -405,20 +407,20 @@ public:
     }
   }
 
-  bool set(kgm_ptr<kgmMesh> msh)
+  bool set(kgmMesh* m)
   {
-    if(!msh)
+    if(!m)
       return false;
 
     m_visual.reset();
 
-    kgm_ptr<Mesh> mesh(new Mesh(msh));
+    kgm_ptr<Mesh> mesh(new Mesh(m));
 
     m_visual = kgm_ptr_cast<kgmObject, Mesh>(mesh);
 
     m_type = TypeMesh;
 
-    m_bound = msh->bound();
+    m_bound = m->bound();
   }
 
   Mesh* getMesh()

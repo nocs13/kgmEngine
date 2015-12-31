@@ -712,6 +712,8 @@ bool kgmGameBase::gAppend(kgmVisual* visual)
   if(m_render)
     m_render->add(visual);
 
+  m_visuals.add(visual);
+
   return true;
 }
 

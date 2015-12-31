@@ -107,23 +107,20 @@ kEditor::kEditor(kgmGameBase* g)
     mtlPivot->setShader(null);
     mtlPivot->m_depth = false;
 
-    kgm_ptr<kgmMesh> mesh;
-
-    mesh = kgm_ptr<kgmMesh>((kgmMesh*)(new kGridline(100)));
+    meshGridline = new kGridline(100);
 
     gridline = new kgmVisual();
     gridline->set(mtlLines);
-    gridline->set(mesh);
+    gridline->set(meshGridline);
     game->gAppend(gridline);
 
-    mesh.reset();
+    meshPivot = new kPivot();
 
-    mesh = kgm_ptr<kgmMesh>((kgmMesh*)(new kPivot()));
     pivot = new kgmVisual();
     mtx4 mtr;
     mtr.identity();
     pivot->set(mtlPivot);
-    pivot->set(mesh);
+    pivot->set(meshPivot);
     pivot->set(&mtr);
     game->gAppend(pivot);
 
@@ -133,6 +130,9 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
+  delete meshGridline;
+  delete meshPivot;
+
   kgmUnit::g_typ_objects.clear();
 }
 
