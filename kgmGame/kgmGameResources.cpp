@@ -110,6 +110,21 @@ void kgmGameResources::remove(kgmResource* r)
   r->release();
 }
 
+bool kgmGameResources::exists(kgmResource* r)
+{
+  for(int i = 0; i < m_resources.size(); i++)
+  {
+    kgmResource* res = m_resources[i];
+
+    if(r == res)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void kgmGameResources::addPath(kgmString s)
 {
   Path* path = 0;

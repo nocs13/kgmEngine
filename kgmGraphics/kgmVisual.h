@@ -40,7 +40,7 @@ public:
   {
     friend class  kgmVisual;
 
-    kgm_ptr<kgmMesh>      mesh;
+    kgm_ptr<kgmMesh> mesh;
 
     bool skin;
 
@@ -76,7 +76,8 @@ public:
 
     virtual ~Mesh()
     {
-      if(vertices)  delete [] vertices;
+      if(vertices)
+        delete [] vertices;
     }
 
     bool hasSkin()
@@ -411,9 +412,7 @@ public:
 
     m_visual.reset();
 
-    kgm_ptr<Mesh> mesh;
-
-    mesh = kgm_ptr<Mesh>(new Mesh(msh));
+    kgm_ptr<Mesh> mesh(new Mesh(msh));
 
     m_visual = kgm_ptr_cast<kgmObject, Mesh>(mesh);
 

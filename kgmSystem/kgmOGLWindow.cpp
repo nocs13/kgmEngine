@@ -203,12 +203,15 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int 
 
 #endif
 
-  m_gc = kgm_ptr<kgmOGL>(new kgmOGL(this));
+  m_gc = new kgmOGL(this);
 }
 
 kgmOGLWindow::~kgmOGLWindow()
 {
-  m_gc = (kgmOGL*)null;
+  if (m_gc)
+    delete m_gc;
+
+  m_gc = null;
 
 #ifdef WIN32
 

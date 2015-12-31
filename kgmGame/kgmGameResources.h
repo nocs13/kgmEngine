@@ -53,6 +53,7 @@ public:
   ~kgmGameResources();
 
   void               remove(kgmResource*);
+  bool               exists(kgmResource*);
 
   void               addPath(kgmString s);
   bool               getFile(char* id, kgmMemory<u8>& m);

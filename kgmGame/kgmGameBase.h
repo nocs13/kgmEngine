@@ -32,45 +32,47 @@ public:
   static kgmGameBase* m_game;
 
 protected:
-  kgmIVideo*         m_video;
-  kgmGameAudio*      m_audio;
-  kgmGamePhysics*    m_physics;
-  kgmGameResources*  m_resources;
-  kgmGameSettings*   m_settings;
+  kgmIVideo*        m_video;
+  kgmGameAudio*     m_audio;
+  kgmGamePhysics*   m_physics;
+  kgmGameResources* m_resources;
+  kgmGameSettings*  m_settings;
 
   kgmSystem* m_system;
 
-  u32	m_width;
-  u32	m_height;
-  u32	m_bpp;
-  u32	m_fullscreen;
+  u32 m_width;
+  u32 m_height;
+  u32 m_bpp;
+  u32 m_fullscreen;
 
-  kgmFont*       m_font;
-  kgmString      m_paths;
+  kgmFont*  m_font;
+  kgmString m_paths;
 
-  char           m_keys[130];
-  char           m_input[gbtn_end];
-  char           m_keymap[150];
+  char m_keys[130];
+  char m_input[gbtn_end];
+  char m_keymap[150];
 
-  int            m_state;   //game state
-  bool           m_result;  //game over result
+  int  m_state;
+  bool m_result;
 
-  kgmGameLogic*         m_logic;
-  kgmGameGraphics*      m_render;
+  kgmGameLogic*    m_logic;
+  kgmGameGraphics* m_render;
 
-  kgmList<kgmUnit*>   m_units;     // game units.
-  kgmList<kgmBody*>   m_bodies;    // game bodies.
-  kgmList<kgmLight*>  m_lights;    // game lights.
-  kgmList<kgmVisual*> m_visuals;   // game visuals.
-
-  kgmList<kgmGui*> m_guis;         // game guis.
+  kgmList<kgmGui*>    m_guis;
+  kgmList<kgmUnit*>   m_units;
+  kgmList<kgmBody*>   m_bodies;
+  kgmList<kgmLight*>  m_lights;
+  kgmList<kgmVisual*> m_visuals;
 
 #ifdef EDITOR
   friend class kEditor;
 
   kgm_ptr<kEditor> editor;
 
-  kgm_ptr<kEditor> getEditor(){ return editor; }
+  kgm_ptr<kEditor> getEditor()
+  {
+    return editor;
+  }
 #endif
 
 public:

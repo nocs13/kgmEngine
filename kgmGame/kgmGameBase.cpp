@@ -162,7 +162,8 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::Sensor, (kgmUnit::Generate)&kgmSnInputListener::New);
 
 #ifdef EDITOR
-  if(edit) editor = new kEditor(this);
+  if(edit)
+    editor = kgm_ptr<kEditor>(new kEditor(this));
 #endif
 
   int rc[4];
@@ -214,9 +215,7 @@ kgmGameBase::~kgmGameBase()
   log("free resources...");
 
   if(m_resources)
-  {
     delete m_resources;
-  }
 
   log("free audio...");
 
@@ -549,6 +548,26 @@ int kgmGameBase::gUnload()
 
   if(m_physics)
     m_physics->clear();
+
+  for(kgmList<kgmUnit*>::iterator i = m_units.begin(); i != m_units.end(); ++i)
+    delete (*i);
+
+  m_units.clear();
+
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+    delete (*i);
+
+  m_bodies.clear();
+
+  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); ++i)
+    delete (*i);
+
+  m_lights.clear();
+
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
+    delete (*i);
+
+  m_visuals.clear();
 
   m_state = State_Idle;
 

@@ -57,10 +57,12 @@ public:
     pointer = 0;
   }
 
+  /*
   void operator=(const T& data)
   {
     (*pointer) = data;
   }
+  */
 
   void operator=(const kgmPointer<T>& ptr)
   {

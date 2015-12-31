@@ -53,7 +53,7 @@ public:
 #endif
 
 private:
-  kgm_ptr<kgmOGL> m_gc;
+  kgmOGL* m_gc = null;
 
 public:
   kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);

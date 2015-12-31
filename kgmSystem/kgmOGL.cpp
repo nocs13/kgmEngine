@@ -1228,7 +1228,6 @@ void kgmOGL::gcSetShader(void* s)
   if(s)
   {
     glUseProgramObject((GLhandle)(size_t)s);
-    //glUseProgramObject((GLint)(size_t)s);
     g_shader = (GLhandle)(size_t)s;
   }
   else

@@ -8,8 +8,7 @@ KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
 #undef DEBUG
 
 #ifdef ALSA
-//#include <alsa/asoundlib.h>
-//#include <alsa/mixer.h>
+
 #include "inc/alsa/asoundlib.h"
 
 static const char alsaDevice[] = "default";

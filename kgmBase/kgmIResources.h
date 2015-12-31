@@ -24,6 +24,7 @@ protected:
 
 public:
   virtual void                remove(kgmResource*) = 0;
+  virtual bool                exists(kgmResource*) = 0;
 
   virtual bool                getFile(char*, kgmMemory<u8>&) = 0;
   virtual kgmPicture*         getPicture(char*) = 0;
