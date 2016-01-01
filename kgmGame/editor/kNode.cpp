@@ -32,8 +32,8 @@ void kNode::setPosition(vec3 v)
   if(icn)
     icn->setPosition(v);
 
-  if(geo)
-    geo->set(mtrn);
+  //if(geo)
+  //  geo->set(mtrn);
 
   switch(typ)
   {
@@ -76,8 +76,8 @@ void kNode::setRotation(vec3 r)
   mpos.translate(pos);
   mtrn = mrot * mpos;
 
-  if(geo)
-    geo->set(mtrn);
+  //if(geo)
+  //  geo->set(mtrn);
 
   switch(typ)
   {

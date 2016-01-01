@@ -120,7 +120,7 @@ public:
   int            gSwitch(u32);            //switch game state
   void           gPause(bool);            //render game scene
   void           gRender();               //render game scene
-  kgmActor*      gSpawn(kgmString);       //spawns the actor
+  kgmActor*      gSpawn(kgmString);       //spawn the actor
   kgmUnit*       gObject(kgmString);      //spawn game object
   bool           gAppend(kgmUnit*);       //add game unit in map
   bool           gAppend(kgmBody*);       //add game body in map
@@ -131,9 +131,6 @@ public:
   bool gMapAscii(kgmString&);
   bool gMapXml(kgmString&);
 
-  ///////////////////////////////////////
-
-public:
   //init interfaces
   void  initResources();
   void  initGraphycs();
@@ -142,16 +139,6 @@ public:
   void  initAudio();
   void  initLogic();
 
-  // Game Resources
-  kgmTexture*    getTexture(char*);
-  kgmShader*     getShader(char*);
-  kgmMesh*       getMesh(char*);
-  kgmActor*      getActor(kgmString);
-  kgmAnimation*  getAnimation(char*);
-
-  bool           loadXml(kgmString& path);
-
-public:
   void guiAdd(kgmGui* g)
   {
     if(g)
@@ -185,4 +172,7 @@ public:
   {
     return m_keys[key];
   }
+
+private:
+  bool  loadXml(kgmString& path);
 };

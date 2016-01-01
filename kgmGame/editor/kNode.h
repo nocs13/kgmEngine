@@ -10,6 +10,7 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
+#include "../../kgmGame/kgmIGame.h"
 #include "../../kgmGame/kgmUnit.h"
 #include "../../kgmGame/kgmActor.h"
 #include "../../kgmGame/kgmEffect.h"
@@ -20,6 +21,16 @@
 
 namespace kgmGameEditor
 {
+
+#define BODY_ICO     "body_ico.tga"
+#define UNIT_ICO     "unit_ico.tga"
+#define LIGHT_ICO    "light_ico.tga"
+#define ACTOR_ICO    "actor_ico.tga"
+#define VISUAL_ICO   "visual_ico.tga"
+#define EFFECT_ICO   "effect_ico.tga"
+#define SENSOR_ICO   "sensor_ico.tga"
+#define TRIGGER_ICO  "trigger_ico.tga"
+#define OBSTACLE_ICO "obstacle_ico.tga"
 
 class kNode : public kgmObject
 {
@@ -67,9 +78,6 @@ public:
   bool col, lock;
 
   kgmIcon*   icn = null;
-  kgmVisual* geo = null;
-  //kgm_ptr<kgmIcon> icn;
-  //kgm_ptr<kgmVisual> geo;
 
 private:
   ~kNode()
@@ -83,6 +91,8 @@ public:
     obj  = null;
     col  = false;
     lock = false;
+
+    icn = null;
   }
 
   kNode(kgmVisual* v)
@@ -91,6 +101,8 @@ public:
     vis = v;
     col = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(VISUAL_ICO));
   }
 
   kNode(kgmUnit* u)
@@ -99,6 +111,8 @@ public:
     unt  = u;
     col  = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(UNIT_ICO));
   }
 
   kNode(kgmLight* l)
@@ -107,6 +121,8 @@ public:
     lgt  = l;
     col  = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(LIGHT_ICO));
   }
 
   kNode(kgmActor* a)
@@ -115,6 +131,8 @@ public:
     act = a;
     col = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(ACTOR_ICO));
   }
 
   kNode(kgmEffect* e)
@@ -123,6 +141,8 @@ public:
     eff = e;
     col = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(EFFECT_ICO));
   }
 
   kNode(kgmSensor* s)
@@ -131,6 +151,8 @@ public:
     sns = s;
     col = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(SENSOR_ICO));
   }
 
   kNode(kgmTrigger* t)
@@ -139,6 +161,8 @@ public:
     trg = t;
     col = false;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(TRIGGER_ICO));
   }
 
   kNode(kgmObstacle* o)
@@ -147,6 +171,8 @@ public:
     obs = o;
     col = true;
     lock = false;
+
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(OBSTACLE_ICO));
   }
 
   kNode(const kNode& n)
@@ -163,8 +189,8 @@ public:
     if(n.icn != null)
       icn = (kgmIcon*) n.icn->clone();
 
-    if(n.geo != null)
-      geo = (kgmVisual*) n.geo->clone();
+    //if(n.geo != null)
+    //  geo = (kgmVisual*) n.geo->clone();
 
     if(n.obj)
     {

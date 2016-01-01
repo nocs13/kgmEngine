@@ -717,36 +717,6 @@ bool kgmGameBase::gAppend(kgmVisual* visual)
   return true;
 }
 
-///////////////////////////////////////
-kgmTexture* kgmGameBase::getTexture(char* id)
-{
-  return kgmIGame::getGame()->getResources()->getTexture(id);
-}
-
-kgmShader* kgmGameBase::getShader(char* id)
-{
-  return kgmIGame::getGame()->getResources()->getShader(id);
-}
-
-kgmMesh* kgmGameBase::getMesh(char* id)
-{
-  return kgmIGame::getGame()->getResources()->getMesh(id);
-}
-
-kgmAnimation* kgmGameBase::getAnimation(char* id)
-{
-  return kgmIGame::getGame()->getResources()->getAnimation(id);
-}
-
-kgmActor* kgmGameBase::getActor(kgmString id)
-{
-  return gSpawn(id);
-}
-
-/////////////////////////
-//**************Load Map**********/////////
-/////////////////
-
 inline void xmlAttr(kgmXml::Node* node, const char* id, kgmString& val)
 {
   kgmString sid;

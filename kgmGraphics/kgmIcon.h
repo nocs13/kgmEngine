@@ -8,7 +8,7 @@ class kgmTexture;
 
 class kgmIcon: public kgmObject
 {
-  kgm_ptr<kgmTexture> icon;
+  kgmTexture* icon = null;
 
   float       width,
               height;
@@ -23,7 +23,7 @@ public:
     position = vec3(0, 0, 0);
   }
 
-  kgmIcon(kgm_ptr<kgmTexture>& c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
+  kgmIcon(kgmTexture* c, float w = 0.2, float h = 0.2, vec3 v = vec3(0, 0, 0))
   {
     icon = c;
     width = w;
@@ -35,7 +35,7 @@ public:
   {
   }
 
-  kgm_ptr<kgmTexture> getIcon()
+  kgmTexture* getIcon()
   {
     return icon;
   }
