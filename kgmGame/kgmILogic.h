@@ -15,13 +15,13 @@ class kgmTrigger;
 class kgmILogic
 {
 public:
-  virtual bool add(kgm_ptr<kgmUnit>)    = 0;
-  virtual bool add(kgm_ptr<kgmActor>)   = 0;
-  virtual bool add(kgm_ptr<kgmEffect>)  = 0;
-  virtual bool add(kgm_ptr<kgmSensor>)  = 0;
-  virtual bool add(kgm_ptr<kgmTrigger>) = 0;
+  virtual bool add(kgmUnit*)    = 0;
+  virtual bool add(kgmActor*)   = 0;
+  virtual bool add(kgmEffect*)  = 0;
+  virtual bool add(kgmSensor*)  = 0;
+  virtual bool add(kgmTrigger*) = 0;
 
-  virtual bool remove(kgm_ptr<kgmUnit>) = 0;
+  virtual bool remove(kgmUnit*) = 0;
 
   virtual void clear()                     = 0;
   virtual void build()                     = 0;
@@ -35,8 +35,8 @@ public:
   virtual u32       getObjectsByClass(kgmRuntime&,
                                       kgmList<kgmUnit*>&) = 0;
 
-  virtual void      setPlayer(kgm_ptr<kgmActor>)          = 0;
-  virtual kgm_ptr<kgmActor> getPlayer()                   = 0;
+  virtual void      setPlayer(kgmActor*)          = 0;
+  virtual kgmActor* getPlayer()                   = 0;
 };
 
 #endif // KGMILOGIC_H

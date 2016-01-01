@@ -12,10 +12,10 @@
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 
-  kgm_ptr<kgmActor> m_gameplayer;
+  kgmActor* m_gameplayer = null;
 
 public:
-  kgmList< kgm_ptr<kgmUnit> > m_objects;
+  kgmList<kgmUnit*> m_objects;
 
   s32 gcount;
 
@@ -24,12 +24,12 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
-  bool add(kgm_ptr<kgmUnit>);
-  bool add(kgm_ptr<kgmActor>);
-  bool add(kgm_ptr<kgmEffect>);
-  bool add(kgm_ptr<kgmSensor>);
-  bool add(kgm_ptr<kgmTrigger>);
-  bool remove(kgm_ptr<kgmUnit>);
+  bool add(kgmUnit*);
+  bool add(kgmActor*);
+  bool add(kgmEffect*);
+  bool add(kgmSensor*);
+  bool add(kgmTrigger*);
+  bool remove(kgmUnit*);
   bool chooseLogic(kgmString);
   bool isValid(kgmUnit*);
 
@@ -44,14 +44,12 @@ public:
   virtual u32 getObjectsByType(kgmRuntime&, kgmList<kgmUnit*>&);
   virtual u32 getObjectsByClass(kgmRuntime&, kgmList<kgmUnit*>&);
 
-  void  setPlayer(kgm_ptr<kgmActor> gp)
+  void  setPlayer(kgmActor* gp)
   {
-    m_gameplayer.reset();
-
     m_gameplayer = gp;
   }
 
-  kgm_ptr<kgmActor> getPlayer()
+  kgmActor* getPlayer()
   {
     return m_gameplayer;
   }

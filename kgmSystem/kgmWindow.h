@@ -89,7 +89,7 @@ private:
 public:
   kgmWindow();
   kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);
-  virtual ~kgmWindow();
+  ~kgmWindow();
 
   void   loop();
   void   close();
