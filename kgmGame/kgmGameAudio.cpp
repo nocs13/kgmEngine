@@ -40,7 +40,17 @@ kgmGameAudio::~kgmGameAudio()
 #endif
 
   if(m_audio)
+  {
+    m_audio ->clear();
+
     delete m_audio;
+  }
 
   m_audio = null;
+}
+
+void kgmGameAudio::clear()
+{
+  if(m_audio)
+    m_audio ->clear();
 }

@@ -17,7 +17,7 @@ void  kgm_free(void*);
 void *kgm_dbg_malloc(const char*, int, size_t);
 void  kgm_dbg_free(const char*, int, void*);
 
-#define KGM_DEBUG_MEMORY
+#undef KGM_DEBUG_MEMORY
 
 #ifdef KGM_DEBUG_MEMORY
 

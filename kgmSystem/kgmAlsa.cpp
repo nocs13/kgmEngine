@@ -412,11 +412,21 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+#ifdef DEBUG
+  kgm_log() << "kgmAlsa::~kgmAlsa.\n";
+#endif
+}
+
+void kgmAlsa::clear()
+{
   m_proceed = false;
 
   m_render.join();
   m_thread.join();
+
   kgmThread::mxfree(m_mutex);
+
+  m_mutex = null;
 
 #ifdef ALSA
   kgm_log() << "kgmAlsa snd_pcm_close.\n";
@@ -429,10 +439,6 @@ kgmAlsa::~kgmAlsa()
 #endif
 
   m_lib.close();
-
-#ifdef DEBUG
-  kgm_log() << "kgmAlsa::~kgmAlsa.\n";
-#endif
 }
 
 kgmIAudio::Sound kgmAlsa::create(FMT fmt, u16 freq, u32 size, void* data)

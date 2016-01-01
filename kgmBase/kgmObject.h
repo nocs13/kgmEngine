@@ -156,41 +156,19 @@ protected:
   };
 
 private:
-  //u32 m_references;
 
 public:
   kgmObject()
   {
-    //m_references = 1;
   }
 
   kgmObject(const kgmObject& o)
   {
-    //m_references = o.m_references;
   }
 
-  ~kgmObject()
+  virtual ~kgmObject()
   {
   }
-
-  /*u32 references() const
-  {
-    return m_references;
-  }
-
-  void increment()
-  {
-    m_references++;
-  }
-
-  void release()
-  {
-    if(m_references > 0)
-      m_references--;
-
-    if(m_references < 1)
-      delete this;
-  }*/
 
   bool isClass(kgmObject& o)
   {

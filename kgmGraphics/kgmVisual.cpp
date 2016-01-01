@@ -1,2 +1,2 @@
 #include "kgmVisual.h"
-KGMOBJECT_IMPLEMENT(kgmVisual,	kgmObject);
+KGMOBJECT_IMPLEMENT(kgmVisual, kgmObject);

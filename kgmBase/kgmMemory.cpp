@@ -124,12 +124,12 @@ void ClearDbgMemory()
   allocated = NULL;
 }
 
-inline void* kgm_malloc(size_t size)
+void* kgm_malloc(size_t size)
 {
   return malloc(size);
 }
 
-inline void kgm_free(void* memory)
+void kgm_free(void* memory)
 {
   free(memory);
 }

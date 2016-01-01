@@ -42,12 +42,14 @@ private:
   kGridline* meshGridline = null;
   kPivot*    meshPivot    = null;
 
-  kgmVisual *gridline, *pivot;
-  vec3       pv_pos;
-  vec3       pv_rot;
+  kgmVisual *gridline = null;
+  kgmVisual *pivot    = null;
+
+  vec3  pv_pos;
+  vec3  pv_rot;
 
   //kgm_ptr<kgmGuiMenu> menu;
-  kgmGuiMenu* menu;
+  kgmGuiMenu* menu = null;
 
   //kFileDialog* fdd;
 
@@ -61,9 +63,10 @@ private:
 
   kNode* selected;
 
-  kgmMaterial *mtlLines, *mtlPivot;
+  kgmMaterial* mtlLines = null;
+  kgmMaterial* mtlPivot = null;
 
-  kgmVisual*     logView;
+  kgmVisual*     logView = null;
 
   bool  move_camera;
 

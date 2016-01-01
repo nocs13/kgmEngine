@@ -75,7 +75,7 @@ public:
       }
     }
 
-    virtual ~Mesh()
+    ~Mesh()
     {
       if(vertices)
         delete [] vertices;
@@ -146,12 +146,20 @@ public:
   Type                   m_type;
   TypeShadow             m_typeshadow;
 
-  kgm_ptr<kgmMaterial>  m_material;
+  kgmMaterial*  m_material;
 
-  kgm_ptr<kgmObject>    m_visual;
+  union
+  {
+    Mesh*         m_mesh;
+    kgmText*      m_text;
+    kgmSprite*    m_sprite;
+    kgmParticles* m_particles;
 
-  kgm_ptr<kgmSkeleton>  m_skeleton;
-  kgm_ptr<kgmAnimation> m_animation;
+    kgmObject*    m_visual = null;
+  };
+
+  kgmSkeleton*  m_skeleton  = null;
+  kgmAnimation* m_animation = null;
 
   bool m_floop;
 
@@ -160,11 +168,12 @@ public:
   u32  m_fset;
 
 //private:
-  box3                   m_bound;
-  kgm_ptr<mtx4>          m_tm_joints;
-  u32                    m_last_update;
+  box3   m_bound;
+  u32    m_last_update;
 
-  static  bool           AnimateVertices;
+  kgmArray<mtx4>  m_tm_joints;
+
+  static  bool  AnimateVertices;
 
 public:
   kgmVisual()
@@ -181,8 +190,8 @@ public:
     m_skeleton  = null;
     m_animation = null;
 
-    m_fstart    = m_fend = 0;
-    m_floop     = false;
+    m_fstart = m_fend = 0;
+    m_floop  = false;
 
     m_bound       = box3(vec3(-1, -1, -1), vec3(1, 1, 1));
     m_last_update = kgmTime::getTicks();
@@ -206,7 +215,7 @@ public:
 
     if(m_skeleton)
     {
-      m_tm_joints = kgm_ptr<mtx4>(new mtx4[m_skeleton->m_joints.size()]);
+      m_tm_joints.alloc(m_skeleton->m_joints.size());
     }
 
     if(v.m_visual)
@@ -214,7 +223,8 @@ public:
       if(m_type == TypeMesh)
       {
         Mesh* mesh = (Mesh*) ((kgmObject*)v.m_visual);
-        m_visual = kgm_ptr<kgmObject>((kgmObject*)(new Mesh(mesh->mesh)));
+
+        m_visual = new Mesh(mesh->mesh);
       }
       else
       {
@@ -238,9 +248,32 @@ public:
 
   void clear()
   {
-    m_type = TypeNone;
+    switch(m_type)
+    {
+    case TypeMesh:
+      delete m_mesh;
+      break;
+    case TypeText:
+      delete m_text;
+      break;
+    case TypeSprite:
+      delete m_sprite;
+      break;
+    case TypeParticles:
+      delete m_particles;
+      break;
+    }
+
+    m_visual = null;
+
+    m_skeleton  = null;
+    m_animation = null;
+
+    m_tm_joints.clear();
 
     m_transform.identity();
+
+    m_type = TypeNone;
   }
 
   void enable()
@@ -319,66 +352,95 @@ public:
     return m_transform;
   }
 
-  void set(kgm_ptr<kgmParticles> par)
+  bool set(kgmParticles* p)
   {
-    if(!par)
-      return;
+    if(!p || m_visual)
+      return false;
 
-    m_visual.reset();
-
-    m_visual = (kgm_ptr<kgmObject>) par;
+    m_particles = p;
 
     m_type = TypeParticles;
+
+    return true;
   }
 
-  kgm_ptr<kgmParticles> getParticles()
+  kgmParticles* getParticles()
   {
-    return kgm_ptr_cast<kgmParticles, kgmObject>(m_visual);
+    if(m_type != TypeParticles)
+      return null;
+
+    return m_particles;
   }
 
-  void set(kgm_ptr<kgmText> text)
+  bool set(kgmText* t)
   {
-    if(!text)
-      return;
+    if(!t || m_visual)
+      return false;
 
-    m_visual.reset();
-
-    m_visual = (kgm_ptr<kgmObject>) text;
+    m_text = t;
 
     m_type = TypeText;
+
+    return true;
   }
 
-  kgm_ptr<kgmText> getText()
+  kgmText* getText()
   {
-    return kgm_ptr_cast<kgmText, kgmObject>(m_visual);
+    if(m_type != TypeText)
+      return null;
+
+    return m_text;
   }
 
-  void set(kgm_ptr<kgmSprite> sprite)
+  bool set(kgmSprite* s)
   {
-    if(!sprite)
-      return;
+    if(!s || m_visual)
+      return false;
 
-    m_visual.reset();
-
-    m_visual = (kgm_ptr<kgmObject>) sprite;
+    m_sprite = s;
 
     m_type = TypeSprite;
+
+    return true;
   }
 
-  kgm_ptr<kgmSprite> getSprite()
+  kgmSprite* getSprite()
   {
-    return kgm_ptr_cast<kgmSprite, kgmObject>(m_visual);
+    if(m_type != TypeSprite)
+      return null;
+
+    return m_sprite;
   }
 
-  void setAnimation(kgm_ptr<kgmAnimation> a, u32 start = 0, u32 end = 0, bool loop = false)
+  bool set(kgmMesh* m)
+  {
+    if(!m || m_visual)
+      return false;
+
+    Mesh* mesh = new Mesh(m);
+
+    m_mesh = mesh;
+
+    m_type = TypeMesh;
+
+    m_bound = m->bound();
+  }
+
+  Mesh* getMesh()
+  {
+    if(m_type != TypeMesh)
+      return null;
+
+    return m_mesh;
+  }
+
+  void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
   {
     if(a == null)
       return;
 
     if(a != m_animation)
     {
-      m_animation.reset();
-
       m_animation = a;
     }
 
@@ -388,50 +450,21 @@ public:
     m_floop     = loop;
   }
 
-  void setSkeleton(kgm_ptr<kgmSkeleton> skel)
+  void setSkeleton(kgmSkeleton* s)
   {
-    if(skel)
+    if(s)
     {
       if(m_skeleton)
       {
-        m_skeleton.reset();
-
         if(m_tm_joints)
         {
-          m_tm_joints.reset();
+          m_tm_joints.clear();
         }
       }
 
-      m_skeleton = skel;
-      m_tm_joints = kgm_ptr<mtx4>(new mtx4[skel->m_joints.size()]);
+      m_skeleton = s;
+      m_tm_joints.alloc(s->m_joints.size());
     }
-  }
-
-  bool set(kgmMesh* m)
-  {
-    if(!m)
-      return false;
-
-    m_visual.reset();
-
-    kgm_ptr<Mesh> mesh(new Mesh(m));
-
-    m_visual = kgm_ptr_cast<kgmObject, Mesh>(mesh);
-
-    m_type = TypeMesh;
-
-    m_bound = m->bound();
-  }
-
-  Mesh* getMesh()
-  {
-    kgm_ptr<Mesh> mesh;
-
-    mesh = kgm_ptr_cast<Mesh, kgmObject>(m_visual);
-
-    Mesh *m = (Mesh*) mesh;
-
-    return m;
   }
 
   box3 getBound()

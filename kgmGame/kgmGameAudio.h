@@ -24,7 +24,9 @@ private:
 
 public:
   kgmGameAudio();
-  virtual ~kgmGameAudio();
+  ~kgmGameAudio();
+
+  void clear();
 
   Sound create(FMT fmt, u16 freq, u32 size, void* data)
   {

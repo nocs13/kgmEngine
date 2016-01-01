@@ -133,6 +133,9 @@ kEditor::~kEditor()
   delete meshGridline;
   delete meshPivot;
 
+  delete mtlLines;
+  delete mtlPivot;
+
   kgmUnit::g_typ_objects.clear();
 }
 

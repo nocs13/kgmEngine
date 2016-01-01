@@ -1,6 +1,7 @@
 #pragma once
 #include "../kgmMath/kgmMath.h"
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmInterface.h"
 
 //class kgmWave;
 //class kgmSound;
@@ -11,7 +12,7 @@
   frequency.
 */
 
-class kgmIAudio: public kgmObject
+class kgmIAudio: public kgmInterface, public kgmObject
 {
 public: 
   enum Volume
