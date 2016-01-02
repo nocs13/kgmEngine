@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmPointer.h"
@@ -31,11 +33,11 @@ public:
     u32      life;  //life time
     u32      time;  //current time
 
-    kgm_ptr<kgmMesh> mesh;  //ref mesh
+    kgmMesh* mesh = null;  //ref mesh
   };
 
 public:
-  kgm_ptr<Particle>  m_particles;
+  Particle*  m_particles = null;
   u32        m_count;
 
   bool       m_loop;
@@ -69,18 +71,17 @@ public:
   TypeRender m_typerender;
 
 private:
-  kgm_ptr<kgmMesh>    m_mesh;
-  kgm_ptr<kgmCamera>  m_camera;
+  kgmMesh*    m_mesh   = null;
+  kgmCamera*  m_camera = null;
 
 public:
   kgmParticles();
-
   ~kgmParticles();
 
   void build();
   void init(Particle*);
 
-  void     setCamera(kgmCamera* c)
+  void setCamera(kgmCamera* c)
   {
     m_camera = c;
   }
@@ -92,6 +93,3 @@ public:
 
   virtual void update(u32 t);
 };
-
-
-#pragma once

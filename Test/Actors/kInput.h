@@ -30,19 +30,9 @@ public:
     case gbtn_a:
       if(state && keys[gbtn_x])
       {
-        kgmExplode* e = new kgmExplode(game, vec3(0,0,0),vec3(1,1,1));
-        e->setTexture("explode_b.tga");
-        e->setSlideFrames(4, 4);
-        game->gAppend(e);
-//        e->release();
       }
       else if(state && keys[gbtn_z])
       {
-        kgmFlame* e = new kgmFlame(game);
-        e->setTexture("fire_aa.tga");
-        e->setSlideFrames(1, 3);
-        game->gAppend(e);
-//        e->release();
       }
       break;
     }
