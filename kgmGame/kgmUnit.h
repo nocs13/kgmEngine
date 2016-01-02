@@ -36,12 +36,9 @@ private:
   u32       m_birth;
   u32       m_timeout;
 
-  kgmUnit*          m_parent;
-  kgmList<kgmUnit*> m_childs;
-
 protected:
-  kgmBody*       m_body;
-  kgmVisual*     m_visual;
+  kgmBody*       m_body   = null;
+  kgmVisual*     m_visual = null;
 
 public:
   enum Type
@@ -163,16 +160,6 @@ public:
   {
     if(m_body)
       m_body->rotate(q);
-  }
-
-  void setParent(kgmUnit* a)
-  {
-    m_parent = a;
-  }
-
-  kgmUnit* getParent()
-  {
-    return m_parent;
   }
 
   u32 birth()

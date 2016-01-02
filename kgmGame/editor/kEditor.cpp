@@ -16,6 +16,7 @@ kLine g_line;
 enum MENUEVENT
 {
   ME_QUIT,
+  ME_MAP_NEW,
   ME_MAP_OPEN,
   ME_MAP_SAVE,
   ME_EDIT_CLONE,
@@ -71,6 +72,7 @@ kEditor::kEditor(kgmGameBase* g)
     menu->setSid("editor_main_menu");
 
     kgmGuiMenu::Item* item = menu->add("Map");
+    item->add(ME_MAP_NEW, "New", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapNew));
     item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
     item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));
     item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onQuit));
@@ -1146,6 +1148,11 @@ void kEditor::onAction(kgmEvent *gui, int id)
 void kEditor::onQuit()
 {
   game->close();
+}
+
+void kEditor::onMapNew()
+{
+  clear();
 }
 
 void kEditor::onMapOpen()

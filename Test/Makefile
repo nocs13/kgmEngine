@@ -5,21 +5,21 @@ RM =
 CC = ccache g++
 EXT =
 DEFS = -DLINUX
-FLGS = -ansi -std=c++11
+FLGS = -ansi -std=gnu++11
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
 	-I../kgmGraphics -I../kgmExtern/lua/include -L../kgmSystem/lib -L../
 LIBS = -lpthread -lXxf86vm -lGL -lopenal
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -g -fPIC -O0 -ansi
+	FLGS = -g -fPIC -O0 -ansi -std=gnu++11
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL -ldl
 	RM = rm -f
 else
 	CC = g++
 	EXT = .exe
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
-	FLGS = -m32 -g -O0 #-mwindows -static-libgcc -static-libstdc++
+	FLGS = -m32 -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
 	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm
 	RM = del
 endif

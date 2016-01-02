@@ -1461,7 +1461,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
       if(go)
       {
         go->setId(cid);
-        go->setParent(actor);
 
         kgmDummy* dm = actor->dummy(dummy);
 

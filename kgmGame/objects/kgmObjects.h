@@ -13,58 +13,20 @@ class kgmResult: public kgmUnit
   KGM_UNIT(kgmResult);
 public:
 
+  kgmText* m_text = null;
+
   kgmString text;
   s32       result;
 
 public:
-  kgmResult(kgmIGame* g, u32 time = 0, s32 res = 0, kgmString txt = "")
-    :kgmUnit(g)
-  {
-    text = txt;
-    result = res;
-    timeout(time);
+  kgmResult(kgmIGame* g, u32 time = 0, s32 res = 0, kgmString txt = "");
+  ~kgmResult();
 
-    int cx, cy, cw, ch, tw, tl;
-    //game->getWindow()->getRect(cx, cy, cw, ch);
+  s32 getResult();
 
-    tl = txt.length();
-
-    if(tl < 1)
-      tl = 1;
-
-    tw = 300 / tl;
-
-    m_visual  = new kgmVisual();
-    kgmText* text = new kgmText();
-    text->m_rect  = uRect(10, ch - 2 * tw, 300, 2 * tw);
-    text->m_text  = txt;
-    text->m_size  = tw;
-
-    m_visual->set(text);
-//    text->release();
-  }
-
-  virtual ~kgmResult()
-  {
-  }
-
-  s32 getResult()
-  {
-    return result;
-  }
-
-  void update(u32 t)
-  {
-    kgmUnit::update(t);
-  }
-
-  void init()
-  {
-  }
-
-  void exit()
-  {
-  }
+  void update(u32 t);
+  void init();
+  void exit();
 };
 
 class kgmParticlesObject: public kgmEffect
@@ -453,10 +415,8 @@ public:
 
   void event(kgmObject* o, kgmString arg)
   {
-    if(arg == "die" && o == getParent())
+    if(arg == "die")
     {
-      visual->disable();
-      visual->remove();
       remove();
     }
   }

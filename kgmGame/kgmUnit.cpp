@@ -15,8 +15,7 @@ kgmTab<kgmString, kgmUnit*(*)(kgmIGame*)> kgmUnit::g_typ_objects;
 kgmUnit::kgmUnit(kgmIGame* g)
   :kgmObject(),
   m_visual(null),
-  m_body(null),
-  m_parent(null)
+  m_body(null)
 {
   m_game    = g;
   m_valid   = true;
@@ -33,17 +32,15 @@ kgmUnit::~kgmUnit()
   if(m_remove)
     remove();
 
-//  if(m_body)
-//    m_body->release();
+  if(m_body)
+    delete m_body;
 
-//  if(m_visual)
-//    m_visual->release();
+  if(m_visual)
+    delete m_visual;
 }
 
 void kgmUnit::remove()
 {
-  setParent(null);
-
   clear();
 
   if(getBody())
@@ -69,14 +66,6 @@ void kgmUnit::update(u32 mls)
     remove();
 
     return;
-  }
-
-  if(getParent())
-  {
-    if(getParent()->removed())
-    {
-      remove();
-    }
   }
 
   if(getBody())

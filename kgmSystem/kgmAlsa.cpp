@@ -372,7 +372,7 @@ kgmAlsa::kgmAlsa()
           }
           else
           {
-            printf("kgmAlsa: %lu failed: %s\n", err, psnd_strerror(err));
+            printf("kgmAlsa: %lu failed: %s\n", (int) err, (char*) psnd_strerror((int) err));
           }
 
           psnd_pcm_hw_params_free(params);
@@ -383,14 +383,14 @@ kgmAlsa::kgmAlsa()
                                      SND_PCM_ACCESS_RW_INTERLEAVED, 2,
                                      44100, 1, m_mixer.getMsTime() * 1000) < 0)
         {
-          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror(err) << ".\n";
+          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror((int) err) << ".\n";
 
           return;
         }
 
         if(err = psnd_pcm_prepare(m_handle) < 0)
         {
-          kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror(err) << ".\n";
+          kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror((int) err) << ".\n";
 
           return;
         }
@@ -508,7 +508,7 @@ int kgmAlsa::render()
 
       avail = m_mixer.getFrames();
 
-      char* WritePtr = m_mixer.getBuffer();
+      char* WritePtr = (char*) m_mixer.getBuffer();
 
       //kgm_log() << "Available frames " << avail << "\n";
 

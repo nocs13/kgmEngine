@@ -32,9 +32,6 @@ void kNode::setPosition(vec3 v)
   if(icn)
     icn->setPosition(v);
 
-  //if(geo)
-  //  geo->set(mtrn);
-
   switch(typ)
   {
   case LIGHT:

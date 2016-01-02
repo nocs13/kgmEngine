@@ -112,6 +112,7 @@ public:
   __stdcall void onEditClone();
   __stdcall void onEditRemove();
   __stdcall void onEditOptions();
+  __stdcall void onMapNew();
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
   __stdcall void onAddMesh();
