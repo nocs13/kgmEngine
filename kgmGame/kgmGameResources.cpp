@@ -57,6 +57,10 @@ kgmGameResources::~kgmGameResources()
 
       delete (kgmFont*) r;
     }
+    else if(r->isClass(kgmMesh::Class))
+    {
+      delete (kgmMesh*) r;
+    }
   }
 
   m_resources.clear();

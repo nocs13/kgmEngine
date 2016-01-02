@@ -972,7 +972,8 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   return m;
 }
 
-kgmMesh* kgmGameTools::genMesh(kgmXml& x){
+kgmMesh* kgmGameTools::genMesh(kgmXml& x)
+{
   kgmList<kgmMaterial*> materials;
   kgmMaterial* mtl = 0;
 

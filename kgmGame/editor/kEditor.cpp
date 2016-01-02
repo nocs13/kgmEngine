@@ -702,27 +702,12 @@ bool kEditor::mapSave(kgmString s)
 
 bool kEditor::fdAddMesh(kFileDialog* fd)
 {
-  return addMesh(fd->getPath());
+  return addMesh(fd->getFile());
 }
 
-bool kEditor::addMesh(kgmString path)
+bool kEditor::addMesh(kgmString name)
 {
-  kgmString dir, name;
-
-  kgmSystem::splitPath(path, dir, name);
-
-  kgmMemory<u8> mem;
-
-  game->getResources()->getFile(name, mem);
-
-  if(mem.length() < 1)
-    return false;
-
-  kgmXml xml(mem);
-  mem.clear();
-
-  kgmMesh* mesh = kgmGameTools::genMesh(xml);
-  xml.close();
+  kgmMesh* mesh = game->getResources()->getMesh(name);
 
   if(!mesh)
     return false;
