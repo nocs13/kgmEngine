@@ -64,6 +64,8 @@ kgmGui::~kgmGui()
     kgmGui* gui = m_childs[i - 1];
 
     gui->setParent(null);
+
+    delete gui;
   }
 
   m_childs.clear();
@@ -489,7 +491,11 @@ void kgmGui::delChild(kgmGui *e)
   for(Guis::iterator i = m_childs.begin(); i != m_childs.end(); ++i)
   {
     if(e == *i)
+    {
       i = m_childs.erase(i);
+
+      break;
+    }
   }
 }
 

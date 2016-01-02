@@ -67,9 +67,9 @@ protected:
 #ifdef EDITOR
   friend class kEditor;
 
-  kgm_ptr<kEditor> editor;
+  kEditor* editor = null;
 
-  kgm_ptr<kEditor> getEditor()
+  kEditor* getEditor()
   {
     return editor;
   }

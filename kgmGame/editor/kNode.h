@@ -79,11 +79,6 @@ public:
 
   kgmIcon*   icn = null;
 
-private:
-  ~kNode()
-  {
-  }
-
 public:
   kNode()
   {
@@ -189,9 +184,6 @@ public:
     if(n.icn != null)
       icn = (kgmIcon*) n.icn->clone();
 
-    //if(n.geo != null)
-    //  geo = (kgmVisual*) n.geo->clone();
-
     if(n.obj)
     {
       switch(n.typ)
@@ -222,6 +214,21 @@ public:
         break;
       };
     }
+  }
+
+  ~kNode()
+  {
+    delete icn;
+    delete obj;
+  }
+
+  kgmObject* clone()
+  {
+    kNode* n = new kNode();
+
+    *n = *this;
+
+    return n;
   }
 
   mtx4 getMatrix();

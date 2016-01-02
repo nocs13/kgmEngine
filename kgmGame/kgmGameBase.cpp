@@ -163,7 +163,7 @@ kgmGameBase::kgmGameBase(bool edit)
 
 #ifdef EDITOR
   if(edit)
-    editor = kgm_ptr<kEditor>(new kEditor(this));
+    editor = new kEditor(this);
 #endif
 
   int rc[4];
@@ -180,6 +180,13 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
+#ifdef EDITOR
+  log("free editor...");
+
+  if(editor)
+    delete editor;
+#endif
+
   log("free scene...");
   gUnload();
 
@@ -187,13 +194,6 @@ kgmGameBase::~kgmGameBase()
 
   if(m_logic)
     delete m_logic;
-
-#ifdef EDITOR
-  log("free editor...");
-
-  if(editor)
-    editor.reset();
-#endif
 
   log("free physics...");
 
@@ -379,7 +379,10 @@ void kgmGameBase::onIdle()
 
     if(gui->erased())
     {
-      //      gui->release();
+      getRender()->remove(gui);
+
+      delete gui;
+
       m_guis.erase(i - 1);
     }
   }
@@ -456,7 +459,8 @@ void kgmGameBase::onMsRightUp(int k, int x, int y){
   }
 }
 
-void kgmGameBase::onMsRightDown(int k, int x, int y){
+void kgmGameBase::onMsRightDown(int k, int x, int y)
+{
   if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBRIGHT]] != 1))
   {
     m_logic->input(m_keymap[KEY_MSBRIGHT], 1);
@@ -464,7 +468,8 @@ void kgmGameBase::onMsRightDown(int k, int x, int y){
   }
 }
 
-void kgmGameBase::onMsMove(int k, int x, int y){
+void kgmGameBase::onMsMove(int k, int x, int y)
+{
   m_input[grot_x] = x;
   m_input[grot_y] = y;
 
@@ -487,7 +492,8 @@ void kgmGameBase::onMsWheel(int k, int x, int y, int z)
   }
 }
 
-void kgmGameBase::onResize(int w, int h){
+void kgmGameBase::onResize(int w, int h)
+{
   kgmWindow::onResize(w, h);
 
   if(m_render)

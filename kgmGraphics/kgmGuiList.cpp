@@ -32,7 +32,6 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
 kgmGuiList::~kgmGuiList()
 {
   clear();
-  //delete m_scroll;
 }
 
 void kgmGuiList::addItem(kgmString s, u32 icon)
@@ -40,7 +39,7 @@ void kgmGuiList::addItem(kgmString s, u32 icon)
   if(!s.length())
     return;
 
-  int vCnt = m_rect.h / m_itemHeight;
+  //int vCnt = m_rect.h / m_itemHeight;
   //int sRange = m_items.size() - vCnt;
 
   m_items.push_back(s);

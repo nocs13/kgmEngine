@@ -67,7 +67,6 @@ kEditor::kEditor(kgmGameBase* g)
     game->getRender()->setEditor(true);
 
     menu = new kgmGuiMenu(null);
-    //menu = kgm_ptr<kgmGuiMenu>(new kgmGuiMenu(null));
 
     menu->setSid("editor_main_menu");
 
@@ -111,7 +110,7 @@ kEditor::kEditor(kgmGameBase* g)
     gridline = new kgmVisual();
     gridline->set(mtlLines);
     gridline->set(meshGridline);
-    game->gAppend(gridline);
+    game->getRender()->add(gridline);
 
     meshPivot = new kPivot();
 
@@ -121,7 +120,7 @@ kEditor::kEditor(kgmGameBase* g)
     pivot->set(mtlPivot);
     pivot->set(meshPivot);
     pivot->set(&mtr);
-    game->gAppend(pivot);
+    game->getRender()->add(pivot);
 
     game->getRender()->setBgColor(0xffbbaa99);
   }
@@ -129,6 +128,14 @@ kEditor::kEditor(kgmGameBase* g)
 
 kEditor::~kEditor()
 {
+  clear();
+
+  game->getRender()->remove(pivot);
+  game->getRender()->remove(gridline);
+
+  delete pivot;
+  delete gridline;
+
   delete meshGridline;
   delete meshPivot;
 
@@ -140,28 +147,35 @@ kEditor::~kEditor()
 
 void kEditor::clear()
 {
+  for(u32 i = nodes.length(); i > 0; i--)
+  {
+    kNode* node = nodes[i - 1];
+
+    remove(node);
+  }
+
+  nodes.clear();
+
   oquered = 0;
 }
 
 void kEditor::select(kgmString name)
 {
-  kgmList<kgmUnit*> units;
-
-  game->getLogic()->getObjects(units);
-
-  kgmList<kgmUnit*>::iterator i = units.begin();
+  kgmList<kNode*>::iterator i = nodes.begin();
 
   do
   {
-    if((*i)->getId() == name)
+    if((*i)->nam == name)
     {
-      selected = new kNode((kgmUnit*)(*i));
+      selected = (*i);
 
       if(pivot)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
+        //((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
         //pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
+
+      break;
     }
   } while(i.next());
 }
@@ -414,8 +428,7 @@ bool kEditor::mapOpen(kgmString s)
       node->setMaterial(mnode.mtl);
       node->lock = mnode.lck;
 
-      game->getRender()->add(node->vis);
-      nodes.add(node);
+      add(node);
 
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
@@ -432,14 +445,7 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
-      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("light_ico.tga"));
-
-      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
-
-      game->getRender()->add(node->lgt);
-      game->getRender()->add(node->icn);
-
-      nodes.add(node);
+      add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
@@ -464,15 +470,7 @@ bool kEditor::mapOpen(kgmString s)
       node->ini = mnode.ini;
       node->lock = mnode.lck;
 
-      if(node->act)
-      {
-        if(node->act->getVisual())
-          game->getGraphics()->add(node->act->getVisual());
-      }
-
-      game->getRender()->add(node->icn);
-
-      nodes.add(node);
+      add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
@@ -488,9 +486,8 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
-      game->getRender()->add(node->icn);
 
-      nodes.add(node);
+      add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
@@ -506,13 +503,7 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
-      kgm_ptr<kgmTexture> tex = kgm_ptr<kgmTexture>(game->getResources()->getTexture("trigger_ico.tga"));
-
-      node->icn = kgm_ptr<kgmIcon>(new kgmIcon(tex));
-
-      game->getRender()->add(node->icn);
-
-      nodes.add(node);
+      add(node);
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
@@ -740,12 +731,10 @@ bool kEditor::addMesh(kgmString path)
 
   visual->set(mesh);
 
-  game->getRender()->add(visual);
-
   selected = new kNode(visual);
   selected->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
 
-  nodes.add(selected);
+  add(selected);
 
   return true;
 }
@@ -769,10 +758,7 @@ bool kEditor::addUnit(kgmString type)
         selected->bnd = box3(-1, -1, -1, 1, 1, 1);
         selected->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
 
-        game->getRender()->add(selected->icn);
-        game->getRender()->add(un->getVisual());
-
-        nodes.add(selected);
+        add(selected);
 
         return true;
       }
@@ -814,10 +800,7 @@ bool kEditor::addActor(kgmString type)
     selected->bnd = box3(-1, -1, -1, 1, 1, 1);
     selected->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
 
-    game->getRender()->add(selected->icn);
-    game->getRender()->add(ac->getVisual());
-
-    nodes.add(selected);
+    add(selected);
 
     return true;
   }
@@ -844,10 +827,7 @@ bool kEditor::addEffect(kgmString type)
         selected->bnd = box3(-1, -1, -1, 1, 1, 1);
         selected->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
 
-        game->getRender()->add(selected->icn);
-        game->getRender()->add(eff->getVisual());
-
-        nodes.add(selected);
+        add(selected);
 
         return true;
       }
@@ -876,10 +856,7 @@ bool kEditor::addSensor(kgmString type)
         selected->bnd = box3(-1, -1, -1, 1, 1, 1);
         selected->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
 
-        game->getRender()->add(selected->icn);
-        game->getRender()->add(sn->getVisual());
-
-        nodes.add(selected);
+        add(selected);
 
         return true;
       }
@@ -1211,64 +1188,54 @@ void kEditor::onMapSave()
 
 void kEditor::onEditClone()
 {
-  if(!selected || selected->obj == null)
+  if(!selected)
     return;
 
-  kgmObject* node = selected->obj->clone();
+  kNode* node = (kNode*) selected->clone();
 
   switch(selected->typ)
   {
-  case kNode::VISUAL:
-  {
-    kgmVisual::Mesh* mesh = ((kgmVisual*)node)->getMesh();
-
-    if(mesh && mesh->getMesh())
-      mesh->getMesh()->setId( kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
-
-    game->getRender()->add((kgmVisual*)node);
-
-    break;
-  }
   case kNode::LIGHT:
   {
-    kgmLight* light = (kgmLight*)node;
-    light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-
-    game->gAppend(light);
+    node->nam = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
 
     break;
   }
-  case kNode::SENSOR:
+  case kNode::VISUAL:
   {
-    kgmSensor* sensor = (kgmSensor*)node;
-    sensor->setId(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
-    game->gAppend(sensor);
-
-    break;
-  }
-  case kNode::TRIGGER:
-  {
-    kgmTrigger* trigger = (kgmTrigger*)node;
-    trigger->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
-    game->gAppend(trigger);
+    node->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
 
     break;
   }
   case kNode::ACTOR:
   {
-    kgmActor* actor = (kgmActor*)node;
-    actor->setId(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
-    game->gAppend(actor);
+    node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
+
+    break;
+  }
+  case kNode::SENSOR:
+  {
+    node->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
+
+    break;
+  }
+  case kNode::TRIGGER:
+  {
+    node->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
 
     break;
   }
   case kNode::OBSTACLE:
   {
+    node->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
+
     break;
   }
   default:
     break;
   }
+
+  add(node);
 }
 
 void kEditor::onEditRemove()
@@ -1276,21 +1243,7 @@ void kEditor::onEditRemove()
   if(!selected)
     return;
 
-  switch(selected->typ)
-  {
-  case kNode::VISUAL:
-    selected->vis->remove();
-    break;
-  case kNode::LIGHT:
-    game->getRender()->remove(selected->lgt);
-    break;
-  }
-
-  if (selected->icn)
-    game->getRender()->remove(selected->icn);
-
-  //if (selected->geo)
-  //  selected->geo->remove();
+  remove(selected);
 
   selected = null;
 }
@@ -1367,8 +1320,10 @@ void kEditor::onAddLight()
   light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
 
   selected = new kNode(light);
-  game->gAppend(light);
-  game->getRender()->add(selected->icn);
+
+  selected->nam = light->m_id;
+
+  add(selected);
 }
 
 void kEditor::onAddActor()
@@ -1399,7 +1354,6 @@ void kEditor::onAddEffect()
   }
 
   game->guiAdd(vs);
-//  vs->release();
 }
 
 void kEditor::onAddSensor()
@@ -1414,7 +1368,6 @@ void kEditor::onAddSensor()
   }
 
   game->guiAdd(vs);
-//  vs->release();
 }
 
 void kEditor::onAddTrigger()
@@ -1423,8 +1376,9 @@ void kEditor::onAddTrigger()
 
   tr->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
 
-  selected = new kNode(kgm_ptr<kgmTrigger>(tr));
-  game->gAppend(tr);
+  selected = new kNode(tr);
+
+  add(selected);
 }
 
 void kEditor::onAddObstacle()
@@ -1477,6 +1431,10 @@ void kEditor::onViewObjects()
 {
   kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
   vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+
+  for(int i = 0; i < nodes.length(); i++)
+    vo->addItem(nodes[i]->nam);
+
   game->guiAdd(vo);
 }
 
@@ -1543,4 +1501,70 @@ void kEditor::onOptionsDatabase()
 void kEditor::onSelectObject(kgmString id)
 {
   select(id);
+}
+
+void kEditor::add(kNode* node)
+{
+  if(!node)
+    return;
+
+  game->getRender()->add(node->icn);
+
+  switch (node->typ)
+  {
+  case kNode::LIGHT:
+    game->getRender()->add(node->lgt);
+    break;
+  case kNode::VISUAL:
+    game->getRender()->add(node->vis);
+    break;
+  case kNode::UNIT:
+  case kNode::ACTOR:
+  case kNode::SENSOR:
+  case kNode::TRIGGER:
+    game->getRender()->add(node->unt->getVisual());
+  default:
+    break;
+  }
+
+  nodes.add(node);
+}
+
+void kEditor::remove(kNode* node)
+{
+  if(!node)
+    return;
+
+  game->getRender()->remove(node->icn);
+
+  switch (node->typ)
+  {
+  case kNode::LIGHT:
+    game->getRender()->remove(node->lgt);
+    break;
+  case kNode::VISUAL:
+    game->getRender()->remove(node->vis);
+    break;
+  case kNode::UNIT:
+  case kNode::ACTOR:
+  case kNode::SENSOR:
+  case kNode::TRIGGER:
+    game->getRender()->remove(node->unt->getVisual());
+  default:
+    break;
+  }
+
+  /*for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    kNode* n = (*i);
+
+    if(n == node)
+    {
+      nodes.erase(i);
+
+      break;
+    }
+  }*/
+
+  delete node;
 }

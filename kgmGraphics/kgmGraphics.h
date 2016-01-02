@@ -110,7 +110,6 @@ private:
   kgmList<kgmBody*>     m_bodies;
 #endif
 
-  //kgm_ptr<kgmGuiStyle> gui_style;
   kgmGuiStyle* gui_style = null;
 
   void* tcolor;
@@ -121,7 +120,6 @@ private:
   mtx4  location;
 
   kgmTab<u16, kgmShader*>  shaders;
-  //kgmTab<u16, kgmTexture*> textures;
 
   kgmArray<kgmVisual*> m_vis_mesh_scene;
   s32                  m_cnt_vis_mesh_scene;
@@ -226,11 +224,24 @@ public:
   }
 #endif
 
-  void remove(kgmLight* light)
+  void remove(kgmVisual* v)
+  {
+    for(int i = 0; i < m_visuals.length(); i++)
+    {
+      if(m_visuals[i]() == v)
+      {
+        m_visuals[i].remove();
+
+        break;
+      }
+    }
+  }
+
+  void remove(kgmLight* l)
   {
     for(int i = 0; i < m_lights.length(); i++)
     {
-      if(m_lights[i]() == light)
+      if(m_lights[i]() == l)
       {
         m_lights[i].remove();
 
@@ -239,11 +250,24 @@ public:
     }
   }
 
-  void remove(kgmIcon* ico)
+  void remove(kgmGui* g)
+  {
+    for(int i = 0; i < m_guis.length(); i++)
+    {
+      if(m_guis[i]() == g)
+      {
+        m_guis[i].remove();
+
+        break;
+      }
+    }
+  }
+
+  void remove(kgmIcon* c)
   {
     for(int i = 0; i < m_icons.length(); i++)
     {
-      if(m_icons[i]() == ico)
+      if(m_icons[i]() == c)
       {
         m_icons[i].remove();
 

@@ -131,6 +131,10 @@ public:
   __stdcall void onRunRun();
   __stdcall void onSelectObject(kgmString);
   __stdcall void onCloseVop();
+
+private:
+  void add(kNode*);
+  void remove(kNode*);
 };
 
 }
