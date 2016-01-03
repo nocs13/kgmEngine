@@ -948,7 +948,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
                                  u32 isize, u32 icnt, u32 ioff)
 {
   VBO* vbo = (VBO*)b;
-  u32 offset = 0;
+  size_t offset = 0;
   u32 uvt = 2;
 
   if(!vbo)

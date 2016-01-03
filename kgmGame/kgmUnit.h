@@ -188,6 +188,9 @@ public:
     case Unit:
       g_list_units.add(id);
       break;
+    case Actor:
+      g_list_actors.add(id);
+      break;
     case Effect:
       g_list_effects.add(id);
       break;

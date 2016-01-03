@@ -77,7 +77,7 @@ public:
  static kgmMaterial* parseMaterial(kgmXml::Node& node);
  static kgmSkeleton* parseSkeleton(kgmXml::Node& node);
 
- //ACTOR TOOLS
+ //UNIT TOOLS
  static bool initActor(kgmIGame* g, kgmActor *a, kgmXml &xml);
  static bool initActor(kgmIGame* g, kgmActor *a, kgmString id);
 };

@@ -239,6 +239,13 @@ public:
     return false;
   }
 
+  /*kgmString getType()
+  {
+    kgmString type = runtime().nClass;
+
+    return type;
+  }*/
+
   virtual kgmObject* clone()
   {
     return null;

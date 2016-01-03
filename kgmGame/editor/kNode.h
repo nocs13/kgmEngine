@@ -97,7 +97,7 @@ public:
     col = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(VISUAL_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) VISUAL_ICO));
   }
 
   kNode(kgmUnit* u)
@@ -107,7 +107,7 @@ public:
     col  = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(UNIT_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) UNIT_ICO));
   }
 
   kNode(kgmLight* l)
@@ -117,7 +117,7 @@ public:
     col  = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(LIGHT_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) LIGHT_ICO));
   }
 
   kNode(kgmActor* a)
@@ -127,7 +127,7 @@ public:
     col = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(ACTOR_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) ACTOR_ICO));
   }
 
   kNode(kgmEffect* e)
@@ -137,7 +137,7 @@ public:
     col = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(EFFECT_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) EFFECT_ICO));
   }
 
   kNode(kgmSensor* s)
@@ -147,7 +147,7 @@ public:
     col = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(SENSOR_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) SENSOR_ICO));
   }
 
   kNode(kgmTrigger* t)
@@ -157,7 +157,7 @@ public:
     col = false;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(TRIGGER_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) TRIGGER_ICO));
   }
 
   kNode(kgmObstacle* o)
@@ -167,7 +167,7 @@ public:
     col = true;
     lock = false;
 
-    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture(OBSTACLE_ICO));
+    icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) OBSTACLE_ICO));
   }
 
   kNode(const kNode& n)

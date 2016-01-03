@@ -26,6 +26,7 @@
 #include "../kgmGraphics/kgmGuiTab.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
+#include "objects/kgmCar.h"
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
 
@@ -155,6 +156,8 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmSmoke",   kgmUnit::Effect, (kgmUnit::Generate)&kgmSmoke::New);
   kgmUnit::unitRegister("kgmLaser",   kgmUnit::Effect, (kgmUnit::Generate)&kgmLaser::New);
   kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
+
+  kgmUnit::unitRegister("kgmCar",       kgmUnit::Actor, (kgmUnit::Generate)&kgmCar::New);
   kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
 
 #ifdef EDITOR
@@ -1602,7 +1605,6 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 
   return actor;
 }
-
 
 #ifdef EDITOR
 #endif

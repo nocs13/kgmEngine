@@ -760,36 +760,32 @@ bool kEditor::addActor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmActor* ac = null;
-
-  kgmString cpath = "Data";
-
-  cpath += kgmString(kgmSystem::PathDelim);
-  cpath += type;
-  cpath += kgmString(".act");
-
-#ifdef DEBUG
-  kgm_log() << "kEditor: Check actor path is " << (char*)cpath << ".\n";
-#endif
-
-  const char *t = null;
-
-  if(type.data())
-    t = strrchr((const char*)type.data(), kgmSystem::PathDelimSym);
-//  if(kgmSystem::isFile(cpath))
-
-  if(t)
-    ac = game->gSpawn(++t);
-
-  if(ac)
+  if(kgmUnit::g_typ_objects.hasKey(type))
   {
-    selected = new kNode(ac);
-    selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-    selected->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
+    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
 
-    add(selected);
+    if(fn_new)
+    {
+      kgmActor* ac = (kgmActor*)fn_new(game);
 
-    return true;
+      if(ac)
+      {
+        kgmString id = ac->runtime().nClass;
+
+        id += ".act";
+
+        kgmGameTools::initActor(game, ac, id);
+
+        selected = new kNode(ac);
+        selected->bnd = box3(-1, -1, -1, 1, 1, 1);
+        selected->nam = kgmString(ac->runtime().nClass) + kgmString("_") +
+                        kgmConvert::toString((s32)(++oquered));
+
+        add(selected);
+
+        return true;
+      }
+    }
   }
 
   return false;
@@ -1357,7 +1353,7 @@ void kEditor::onAddActor()
 {
   kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
 
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
+  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
 
   for(int i = 0; i < kgmUnit::g_list_actors.length(); i++)
   {
