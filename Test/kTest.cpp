@@ -117,7 +117,6 @@ public:
       delete m_logic;
 
     m_logic = new ASp_Logic(this);
-
   }
 
   ~kGame()
