@@ -1,6 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmTime.h"
+#include "../kgmBase/kgmCallback.h"
 
 #include "../kgmGraphics/kgmVisual.h"
 #include "../kgmGraphics/kgmMesh.h"
@@ -25,14 +26,18 @@ class kgmActor: public kgmUnit
   KGM_UNIT(kgmActor);
 
 public:
+  struct Action;
+
+  typedef kgmCallback<void, kgmIGame*, kgmActor*, Action*> ActionCallback;
+
+  /*FIXME: Action is global callback with unicum id
+           and callback function.*/
+
   struct Action
   {
-    kgmString name;
+    kgmString id;
 
-    virtual void action()
-    {
-
-    }
+    kgmList<kgmVariable> m_variables;
   };
 
   struct Input
@@ -44,9 +49,8 @@ public:
     kgmString  state;
   };
 
-  class State
+  struct State
   {
-  public:
     kgmString id;
     kgmString type;
     kgmString action;
@@ -57,14 +61,14 @@ public:
     u32       timeout;
     u32       stime;
 
-    kgm_ptr<kgmSound>     sound;
-    kgm_ptr<kgmAnimation> animation;
+    kgmSound*      sound     = null;
+    kgmAnimation*  animation = null;
     u32           fstart, fend;
   };
 
   struct Animation
   {
-    kgm_ptr<kgmAnimation> animation;
+    kgmAnimation* animation = null;
     u32           start;
     u32           end;
   };

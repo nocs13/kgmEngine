@@ -1887,8 +1887,8 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         if(id == "Sound")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->sound.reset();
-          state->sound = kgm_ptr<kgmSound>(game->getResources()->getSound(s));
+          state->sound = null;
+          state->sound = game->getResources()->getSound(s);
         }
         else if(id == "Animation")
         {
