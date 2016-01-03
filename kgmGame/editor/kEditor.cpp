@@ -1185,6 +1185,18 @@ void kEditor::onEditClone()
 
   kNode* node = (kNode*) selected->clone();
 
+  if(!node)
+  {
+    return;
+  }
+  else if (!node->obj)
+  {
+   delete node;
+
+    return;
+  }
+
+
   switch(selected->typ)
   {
   case kNode::LIGHT:
@@ -1202,6 +1214,12 @@ void kEditor::onEditClone()
   case kNode::ACTOR:
   {
     node->nam = kgmString("Actor_") + kgmConvert::toString((s32)(++oquered));
+
+    break;
+  }
+  case kNode::EFFECT:
+  {
+    node->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
 
     break;
   }
@@ -1224,6 +1242,11 @@ void kEditor::onEditClone()
     break;
   }
   default:
+
+    delete node;
+
+    return;
+
     break;
   }
 
@@ -1234,6 +1257,18 @@ void kEditor::onEditRemove()
 {
   if(!selected)
     return;
+
+  for(int i = nodes.length(); i > 0; i--)
+  {
+    kNode* n = nodes[i - 1];
+
+    if(n == selected)
+    {
+      nodes.erase(i - 1);
+
+      break;
+    }
+  }
 
   remove(selected);
 
@@ -1512,9 +1547,11 @@ void kEditor::add(kNode* node)
     break;
   case kNode::UNIT:
   case kNode::ACTOR:
+  case kNode::EFFECT:
   case kNode::SENSOR:
   case kNode::TRIGGER:
     game->getRender()->add(node->unt->getVisual());
+    game->getLogic()->add(node->unt);
   default:
     break;
   }
@@ -1539,24 +1576,14 @@ void kEditor::remove(kNode* node)
     break;
   case kNode::UNIT:
   case kNode::ACTOR:
+  case kNode::EFFECT:
   case kNode::SENSOR:
   case kNode::TRIGGER:
     game->getRender()->remove(node->unt->getVisual());
+    game->getLogic()->remove(node->unt);
   default:
     break;
   }
-
-  /*for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    kNode* n = (*i);
-
-    if(n == node)
-    {
-      nodes.erase(i);
-
-      break;
-    }
-  }*/
 
   delete node;
 }

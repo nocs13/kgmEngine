@@ -25,10 +25,6 @@ public:
 
   void clear();
   bool add(kgmUnit*);
-  bool add(kgmActor*);
-  bool add(kgmEffect*);
-  bool add(kgmSensor*);
-  bool add(kgmTrigger*);
   bool remove(kgmUnit*);
   bool chooseLogic(kgmString);
   bool isValid(kgmUnit*);

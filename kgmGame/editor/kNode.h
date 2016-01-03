@@ -226,7 +226,48 @@ public:
   {
     kNode* n = new kNode();
 
-    *n = *this;
+    n->typ = typ;
+    n->col = col;
+    n->shp = shp;
+    n->pos = pos;
+    n->rot = rot;
+    n->bnd = bnd;
+    n->lnk = lnk;
+    n->lock = lock;
+
+    if(icn != null)
+      n->icn = (kgmIcon*) icn->clone();
+
+    if(obj)
+    {
+      switch(typ)
+      {
+      case UNIT:
+        n->unt = (kgmUnit*) unt->clone();
+        break;
+      case LIGHT:
+        n->lgt = (kgmLight*) lgt->clone();
+        break;
+      case ACTOR:
+        n->act = (kgmActor*) act->clone();
+        break;
+      case VISUAL:
+        n->vis = (kgmVisual*) vis->clone();
+        break;
+      case EFFECT:
+        n->eff = (kgmEffect*) eff->clone();
+        break;
+      case SENSOR:
+        n->sns = (kgmSensor*) sns->clone();
+        break;
+      case TRIGGER:
+        n->trg = (kgmTrigger*) trg->clone();
+        break;
+      case OBSTACLE:
+        n->obs = (kgmObstacle*) obs->clone();
+        break;
+      };
+    }
 
     return n;
   }

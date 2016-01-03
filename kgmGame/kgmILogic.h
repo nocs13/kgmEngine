@@ -16,11 +16,6 @@ class kgmILogic
 {
 public:
   virtual bool add(kgmUnit*)    = 0;
-  virtual bool add(kgmActor*)   = 0;
-  virtual bool add(kgmEffect*)  = 0;
-  virtual bool add(kgmSensor*)  = 0;
-  virtual bool add(kgmTrigger*) = 0;
-
   virtual bool remove(kgmUnit*) = 0;
 
   virtual void clear()                     = 0;

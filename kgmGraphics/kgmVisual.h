@@ -254,18 +254,14 @@ public:
       delete m_mesh;
       break;
     case TypeText:
-      delete m_text;
       break;
     case TypeSprite:
-      delete m_sprite;
       break;
     case TypeParticles:
-      delete m_particles;
       break;
     }
 
-    m_visual = null;
-
+    m_visual    = null;
     m_skeleton  = null;
     m_animation = null;
 

@@ -256,6 +256,14 @@ kgmOGLWindow::~kgmOGLWindow()
 
   if (m_visual)
   {
+    if (m_visual->visual)
+    {
+      /*if (m_visual->visual->ext_data)
+        XFree(m_visual->visual->ext_data);
+
+      XFree(m_visual->visual);*/
+    }
+
     XFree(m_visual);
 
     m_visual = null;

@@ -28,55 +28,6 @@ bool kgmGameLogic::add(kgmUnit* u)
   return true;
 }
 
-bool kgmGameLogic::add(kgmActor* a)
-{
-  if(!a)
-    return false;
-
-  m_objects.push_back(a);
-
-  a->init();
-
-  return true;
-
-}
-
-bool kgmGameLogic::add(kgmEffect* e)
-{
-  if(!e)
-    return false;
-
-  m_objects.push_back(e);
-
-  e->init();
-
-  return true;
-}
-
-bool kgmGameLogic::add(kgmSensor* s)
-{
-  if(!s)
-    return false;
-
-  m_objects.push_back(s);
-
-  s->init();
-
-  return true;
-}
-
-bool kgmGameLogic::add(kgmTrigger* t)
-{
-  if(!t)
-    return false;
-
-  m_objects.push_back(t);
-
-  t->init();
-
-  return true;
-}
-
 bool kgmGameLogic::remove(kgmUnit* o)
 {
   if(!o)
@@ -120,17 +71,6 @@ void kgmGameLogic::build()
 
 void kgmGameLogic::update(u32 milliseconds)
 {
-#ifdef EDITOR
-  u32 state = kgmIGame::getGame()->gState();
-
-  if(kgmIGame::getGame()->gState() != kgmIGame::State_Play &&
-        kgmIGame::getGame()->gState() != kgmIGame::State_Edit)
-    return;
-#else
-  if(kgmIGame::getGame()->gState() != kgmIGame::State_Play)
-    return;
-#endif
-
   kgmList<kgmUnit*>::iterator i = m_objects.begin();
 
   gcount = 0;

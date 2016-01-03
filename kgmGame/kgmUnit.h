@@ -10,7 +10,7 @@
 
 class kgmIGame;
 
-#define KGM_UNIT(o_class)                                           \
+#define KGM_UNIT(o_class)                                                \
   KGM_OBJECT(o_class)                                                    \
   public:                                                                \
   static  __stdcall o_class* New(kgmIGame* g){ return new o_class(g); }  \
@@ -22,23 +22,23 @@ class kgmUnit : public kgmObject
   KGM_OBJECT(kgmUnit);
 
 private:
-  kgmIGame* m_game;
+  kgmIGame* m_game = null;
 
   kgmString m_id;
   kgmString m_class;
 
-  bool      m_valid;
-  bool      m_remove;
-  bool      m_culled;
-  bool      m_visible;
+  bool  m_valid;
+  bool  m_remove;
+  bool  m_culled;
+  bool  m_visible;
 
-  u32       m_group;
-  u32       m_birth;
-  u32       m_timeout;
+  u32  m_group;
+  u32  m_birth;
+  u32  m_timeout;
 
 protected:
-  kgmBody*       m_body   = null;
-  kgmVisual*     m_visual = null;
+  kgmBody*    m_body   = null;
+  kgmVisual*  m_visual = null;
 
 public:
   enum Type

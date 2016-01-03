@@ -28,7 +28,6 @@
 
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
-#include "objects/kgmLnCamera.h"
 
 /////////////////////////
 
@@ -157,7 +156,6 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmLaser",   kgmUnit::Effect, (kgmUnit::Generate)&kgmLaser::New);
   kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
   kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
-  kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::Sensor, (kgmUnit::Generate)&kgmLnCamera::New);
 
 #ifdef EDITOR
   if(edit)
@@ -352,21 +350,20 @@ void kgmGameBase::onIdle()
     }
   }
 
-  if(m_state == State_Play)
+  switch(m_state)
   {
+  case State_Play:
     if(m_logic)
       m_logic->update(1000 / fps);
 
     if(m_physics)
       m_physics->update(1000 / fps);
-  }
-#ifdef EDITOR
-  else if(m_state == State_Edit)
-  {
+    break;
+  case State_Edit:
     if(m_logic)
       m_logic->update(1000 / fps);
+    break;
   }
-#endif
 
   if(m_render)
     m_render->render();
