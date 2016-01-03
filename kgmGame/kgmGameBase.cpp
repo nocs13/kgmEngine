@@ -29,7 +29,6 @@
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
 #include "objects/kgmLnCamera.h"
-#include "objects/kgmSnInputListener.h"
 
 /////////////////////////
 
@@ -159,7 +158,6 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
   kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
   kgmUnit::unitRegister("kgmLnCamera",  kgmUnit::Sensor, (kgmUnit::Generate)&kgmLnCamera::New);
-  kgmUnit::unitRegister("kgmSnInputListener", kgmUnit::Sensor, (kgmUnit::Generate)&kgmSnInputListener::New);
 
 #ifdef EDITOR
   if(edit)
