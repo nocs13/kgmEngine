@@ -36,8 +36,9 @@ public:
   struct Action
   {
     kgmString id;
+    u32       time;
 
-    kgmList<kgmVariable> m_variables;
+    kgmList<kgmVariable> variables;
 
     ActionCallback callback = null;
   };

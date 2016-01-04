@@ -30,6 +30,9 @@
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
 
+#include "actions/kgmGuiActions.h"
+#include "actions/kgmBaseActions.h"
+
 /////////////////////////
 
 #include <stdlib.h>
@@ -160,6 +163,9 @@ kgmGameBase::kgmGameBase(bool edit)
   kgmUnit::unitRegister("kgmCar",       kgmUnit::Actor, (kgmUnit::Generate)&kgmCar::New);
   kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
 
+  kgmGuiActions::register_actions();
+  kgmBaseActions::register_actions();
+
 #ifdef EDITOR
   if(edit)
     editor = new kEditor(this);
@@ -231,6 +237,7 @@ kgmGameBase::~kgmGameBase()
   if(m_settings)
     delete m_settings;
 
+  kgmActor::g_actions.clear();
   kgmUnit::unitUnregister();
 }
 

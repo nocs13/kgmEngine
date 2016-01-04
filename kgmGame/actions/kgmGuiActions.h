@@ -1,4 +1,8 @@
-#ifndef KGMGUIACTIONS_H
-#define KGMGUIACTIONS_H
+class kgmGuiActions
+{
+public:
+  static void register_actions()
+  {
 
-#endif // KGMGUIACTIONS_H
+  }
+};

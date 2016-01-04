@@ -39,6 +39,7 @@ kgmActor::~kgmActor()
   m_states.clear();
   m_inputs.clear();
   m_dummies.clear();
+  m_actions.clear();
 }
 
 void kgmActor::exit()
@@ -100,6 +101,7 @@ void kgmActor::action(kgmString& id)
     return;
 
   action->callback(game(), this, action);
+  action->time = kgmTime::getTicks();
 }
 
 bool kgmActor::setState(kgmString s, bool force)

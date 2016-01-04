@@ -1930,6 +1930,35 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
         if(id == "Varible")
         {
+          kgmString name, type, value;
+
+          a_node->node(i)->node(j)->attribute("name",  name);
+          a_node->node(i)->node(j)->attribute("type",  type);
+          a_node->node(i)->node(j)->attribute("value", value);
+
+          if(!name.empty())
+          {
+            kgmVariable v;
+
+            if(type == "float")
+            {
+              v= kgmVariable(name, (f32) kgmConvert::toDouble(value));
+            }
+            else if (type == "integer")
+            {
+              v= kgmVariable(name, (s32) kgmConvert::toInteger(value));
+            }
+            else if (type == "boolean")
+            {
+              v= kgmVariable(name, (bool) kgmConvert::toBoolean(value));
+            }
+            else
+            {
+              v= kgmVariable(name, value);
+            }
+
+            action->variables.add(v);
+          }
         }
       }
     }
