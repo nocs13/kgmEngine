@@ -83,6 +83,7 @@ public:
   ~kgmUnit();
 
   virtual void         init() = 0;
+  virtual void         exit() = 0;
   virtual void         update(u32 mls);
   virtual void         event(kgmObject*, kgmString){ }
   virtual kgmBody*     getBody(){   return m_body;   }
@@ -112,6 +113,16 @@ public:
   kgmString getId()
   {
     return m_id;
+  }
+
+  void setClass(kgmString c)
+  {
+    m_class = c;
+  }
+
+  kgmString getClass()
+  {
+    return m_class;
   }
 
   void setGroup(u32 g)

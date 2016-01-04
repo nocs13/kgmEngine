@@ -27,11 +27,6 @@ public:
 private:
   kgmObject*   m_linked;
 
-protected:
-  ~kgmDummy()
-  {
-  }
-
 public:
   kgmDummy()
   {
@@ -39,6 +34,10 @@ public:
     m_type   = AttachToNone;
 
     m_shift = m_orient = vec3(0, 0, 0);
+  }
+
+  ~kgmDummy()
+  {
   }
 
   void attach(kgmObject* o = null, Attach t = AttachToNone)

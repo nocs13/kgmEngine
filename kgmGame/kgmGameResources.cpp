@@ -96,7 +96,7 @@ kgmResource* kgmGameResources::get(char* id)
     {
       r->increment();
 
-      return (kgmPicture*)r;
+      return r;
     }
   }
 

@@ -85,7 +85,7 @@ public:
   __stdcall bool fdMapOpen(kFileDialog*);
   __stdcall bool fdAddMesh(kFileDialog*);
   __stdcall bool addUnit(kgmString);
-  __stdcall bool addActor(kgmString);
+  __stdcall bool addActor(kFileDialog*);
   __stdcall bool addEffect(kgmString);
   __stdcall bool addSensor(kgmString);
 

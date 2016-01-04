@@ -755,37 +755,26 @@ bool kEditor::addUnit(kgmString type)
   return false;
 }
 
-bool kEditor::addActor(kgmString type)
+//bool kEditor::addActor(kgmString type)
+bool kEditor::addActor(kFileDialog* fdd)
 {
-  if(type.length() < 1)
+  if(!fdd || fdd->getFile().empty())
     return false;
 
-  if(kgmUnit::g_typ_objects.hasKey(type))
+  kgmActor* ac = new kgmActor(game);
+
+  if(ac)
   {
-    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
+    kgmGameTools::initActor(game, ac, fdd->getFile());
 
-    if(fn_new)
-    {
-      kgmActor* ac = (kgmActor*)fn_new(game);
+    selected = new kNode(ac);
+    selected->bnd = box3(-1, -1, -1, 1, 1, 1);
+    selected->nam = kgmString(ac->getClass()) + kgmString("_") +
+                    kgmConvert::toString((s32)(++oquered));
 
-      if(ac)
-      {
-        kgmString id = ac->runtime().nClass;
+    add(selected);
 
-        id += ".act";
-
-        kgmGameTools::initActor(game, ac, id);
-
-        selected = new kNode(ac);
-        selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-        selected->nam = kgmString(ac->runtime().nClass) + kgmString("_") +
-                        kgmConvert::toString((s32)(++oquered));
-
-        add(selected);
-
-        return true;
-      }
-    }
+    return true;
   }
 
   return false;
@@ -1351,7 +1340,7 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+  /*kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
 
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
 
@@ -1361,7 +1350,16 @@ void kEditor::onAddActor()
     vs->addItem(s);
   }
 
-  game->guiAdd(vs);
+  game->guiAdd(vs);*/
+
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+
+  fdd->setFilter(".act");
+  fdd->changeLocation(false);
+  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
+
+  game->guiAdd(fdd);
 }
 
 void kEditor::onAddEffect()

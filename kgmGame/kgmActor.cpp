@@ -36,6 +36,15 @@ kgmActor::kgmActor(kgmIGame* g)
 
 kgmActor::~kgmActor()
 {
+  for(int i = m_states.length(); i > 0; i++)
+    delete m_states[i - 1];
+
+  for(int i = m_dummies.length(); i > 0; i++)
+    delete m_dummies[i - 1];
+
+  for(int i = m_actions.length(); i > 0; i++)
+    delete m_actions[i - 1];
+
   m_states.clear();
   m_inputs.clear();
   m_dummies.clear();

@@ -35,12 +35,16 @@ bool kgmGameLogic::remove(kgmUnit* o)
 
   for(int i = m_objects.length(); i > 0; i--)
   {
-    if(o == m_objects[i - 1])
+    kgmUnit* u = m_objects[i - 1];
+
+    if(o == u)
     {
       m_objects.erase(i - 1);
 
       if(o == m_gameplayer)
         m_gameplayer = null;
+
+      u->exit();
 
       return true;
     }

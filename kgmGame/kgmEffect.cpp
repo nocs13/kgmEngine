@@ -9,3 +9,7 @@ kgmEffect::kgmEffect(kgmIGame *g)
 void kgmEffect::init()
 {
 }
+
+void kgmEffect::exit()
+{
+}

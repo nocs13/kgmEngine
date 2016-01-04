@@ -9,5 +9,6 @@ public:
   kgmEffect(kgmIGame *g);
 
   void init();
+  void exit();
 };
 

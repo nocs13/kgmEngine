@@ -11,6 +11,7 @@ public:
   kgmSky(kgmIGame*);
 
   void init(){}
+  void exit(){}
 };
 
 #endif // KGMSKY_H

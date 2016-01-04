@@ -1605,12 +1605,17 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
   for(int i = 0; i < xml.m_node->nodes(); i++)
   {
-    kgmString id;
+    kgmString id, type;
+
     xml.m_node->node(i)->id(id);
 
     if(id == "kgmActor")
     {
       a_node = xml.m_node->node(i);
+
+      xml.m_node->node(i)->attribute("type", type);
+
+      actor->setClass(type);
 
       break;
     }
@@ -1740,7 +1745,6 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
               kgmDummy* dummy = new kgmDummy();
 
               actor->add(dummy);
-//              dummy->release();
               node->attribute("name", dummy->m_id);
 
               for(int j = 0; j < node->nodes(); j++)
@@ -1814,17 +1818,6 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         actor->getVisual()->set(mtl);
         actor->getVisual()->setAnimation(anm);
         actor->getVisual()->setSkeleton(skl);
-
-        delete msh;
-
-        if(mtl)
-          delete mtl;
-
-        if(skl)
-          delete skl;
-
-        if(anm)
-          delete anm;
 
         msh = null;
         mtl = null;
