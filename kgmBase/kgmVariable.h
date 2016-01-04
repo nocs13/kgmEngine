@@ -34,19 +34,26 @@ private:
   kgmString id;
   Type      type;
 
-  f32    v_float;
-  str    v_string;
-  s32    v_integer;
-  bool   v_boolean;
-  void*  v_pointer;
+  f32    v_float   = 0.0;
+  str    v_string  = "";
+  s32    v_integer = 0;
+  bool   v_boolean = false;
+  void*  v_pointer = null;
 
-  void*  x_linked;  //user data pointer, which linked to update automatically
+  void*  x_linked = null;  //user data pointer, which linked to update automatically
 
 public:
   kgmVariable()
   {
     type = TNone;
-    x_linked = null;
+
+    v_float   = 0.0;
+    v_string  = "";
+    v_integer = 0;
+    v_boolean = false;
+    v_pointer = null;
+
+    x_linked  = null;
   }
 
   kgmVariable(kgmString name, f32 data, void* xptr = null)

@@ -28,16 +28,18 @@ class kgmActor: public kgmUnit
 public:
   struct Action;
 
-  typedef kgmCallback<void, kgmIGame*, kgmActor*, Action*> ActionCallback;
+  //typedef kgmCallback<void, kgmIGame*, kgmActor*, Action*> ActionCallback;
+  typedef void (*ActionCallback)(kgmIGame*, kgmActor*, Action*);
 
-  /*FIXME: Action is global callback with unicum id
-           and callback function.*/
+  static kgmTab<kgmString, ActionCallback> g_actions;
 
   struct Action
   {
     kgmString id;
 
     kgmList<kgmVariable> m_variables;
+
+    ActionCallback callback = null;
   };
 
   struct Input
@@ -89,9 +91,11 @@ public:
   mtx4    m_dvisual;      //visual transform relative to object transform
 
   kgmList<State*>     m_states;
+  kgmList<Action*>    m_actions;
   kgmList<Input>      m_inputs;
   kgmList<Input>      m_ainputs;
   kgmList<kgmDummy*>  m_dummies;
+
 
   kgmAnimation*       m_animation;
   kgmSkeleton*        m_skeleton;

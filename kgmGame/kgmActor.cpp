@@ -4,6 +4,8 @@
 
 KGMOBJECT_IMPLEMENT(kgmActor, kgmUnit);
 
+kgmTab<kgmString, kgmActor::ActionCallback> kgmActor::g_actions;
+
 kgmActor::kgmActor(kgmIGame* g)
   :kgmUnit(g)
 {
@@ -80,8 +82,24 @@ void kgmActor::input(u32 btn, int state)
   }
 }
 
-void kgmActor::action(kgmString& s)
+void kgmActor::action(kgmString& id)
 {
+  Action* action = null;
+
+  for (kgmList<Action*>::iterator i = m_actions.begin(); i != m_actions.end(); ++i)
+  {
+    if ((*i)->id == id)
+    {
+      action = (*i);
+
+      break;
+    }
+  }
+
+  if (!action || !action->callback)
+    return;
+
+  action->callback(game(), this, action);
 }
 
 bool kgmActor::setState(kgmString s, bool force)
@@ -121,7 +139,7 @@ bool kgmActor::setState(kgmString s, bool force)
 
     state->stime = kgmTime::getTicks();
 
-    action(state->id);
+    action(state->action);
   }
   else
   {
