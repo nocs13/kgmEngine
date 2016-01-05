@@ -6,6 +6,25 @@ using namespace kgmGameEditor;
 
 KGMOBJECT_IMPLEMENT(kNode, kgmObject);
 
+void kNode::update()
+{
+  switch(typ)
+  {
+  case UNIT:
+  case ACTOR:
+  case EFFECT:
+  case SENSOR:
+  case TRIGGER:
+    pos = unt->getPosition();
+    rot = unt->getRotation();
+
+    if(icn)
+      icn->setPosition(pos);
+
+    break;
+  }
+}
+
 mtx4 kNode::getMatrix()
 {
   mtx4 mrot, mpos;
@@ -47,12 +66,12 @@ void kNode::setPosition(vec3 v)
   case EFFECT:
   case SENSOR:
   case TRIGGER:
-    trg->setPosition(pos);
-    trg->setRotation(rot);
+    unt->setPosition(pos);
+    unt->setRotation(rot);
 
-    if(trg->getVisual())
+    if(unt->getVisual())
     {
-      kgmVisual* vis = trg->getVisual();
+      kgmVisual* vis = unt->getVisual();
 
       vis->getTransform() = mtrn;
     }
@@ -73,9 +92,6 @@ void kNode::setRotation(vec3 r)
   mpos.translate(pos);
   mtrn = mrot * mpos;
 
-  //if(geo)
-  //  geo->set(mtrn);
-
   switch(typ)
   {
   case LIGHT:
@@ -90,12 +106,12 @@ void kNode::setRotation(vec3 r)
   case EFFECT:
   case SENSOR:
   case TRIGGER:
-    trg->setPosition(pos);
-    trg->setRotation(rot);
+    unt->setPosition(pos);
+    unt->setRotation(rot);
 
-    if(trg->getVisual())
+    if(unt->getVisual())
     {
-      kgmVisual* vis = trg->getVisual();
+      kgmVisual* vis = unt->getVisual();
 
       vis->getTransform() = mtrn;
     }
@@ -124,24 +140,26 @@ kgmMaterial* kNode::getMaterial()
 {
   switch(typ)
   {
-   case VISUAL:
-    {
-      return vis->getMaterial();
+  case VISUAL:
+  {
+    return vis->getMaterial();
 
-      break;
-    }
-   case UNIT:
-   case ACTOR:
-   case EFFECT:
-    {
-      kgmVisual* v = unt->getVisual();
+    break;
+  }
+  case UNIT:
+  case ACTOR:
+  case EFFECT:
+  case SENSOR:
+  case TRIGGER:
+  {
+    kgmVisual* v = unt->getVisual();
 
-      if(v)
-        v->getMaterial();
-      break;
-    }
-   default:
-      return null;
+    if(v)
+      v->getMaterial();
+    break;
+  }
+  default:
+    return null;
   }
 
   return null;
@@ -151,24 +169,26 @@ void kNode::setMaterial(kgmMaterial* m)
 {
   switch(typ)
   {
-    case VISUAL:
-    {
-      return vis->set(m);
+  case VISUAL:
+  {
+    return vis->set(m);
 
-      break;
-    }
-    case UNIT:
-    case ACTOR:
-    case EFFECT:
-    {
-      kgmVisual* v = unt->getVisual();
+    break;
+  }
+  case UNIT:
+  case ACTOR:
+  case EFFECT:
+  case SENSOR:
+  case TRIGGER:
+  {
+    kgmVisual* v = unt->getVisual();
 
-      if(v)
-        v->set(m);
+    if(v)
+      v->set(m);
 
-      break;
-    }
-    default:
-      break;
+    break;
+  }
+  default:
+    break;
   }
 }

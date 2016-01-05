@@ -272,6 +272,8 @@ public:
     return n;
   }
 
+  void update();
+
   mtx4 getMatrix();
   vec3 getPosition();
   vec3 getRotation();

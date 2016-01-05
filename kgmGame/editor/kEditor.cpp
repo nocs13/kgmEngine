@@ -847,6 +847,9 @@ void kEditor::onIdle()
   {
     ctick = kgmTime::getTicks();
   }
+
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+    (*i)->update();
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -856,30 +859,6 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
 void kEditor::onKeyUp(int k)
 {
-  if(k == KEY_ESCAPE && game->gState() != kgmIGame::State_Edit)
-  {
-    if(game->getPhysics())
-    {
-      game->getPhysics()->clear();
-    }
-
-    if(game->getLogic())
-    {
-      game->getLogic()->clear();
-    }
-
-    kgmList<kgmUnit*> units;
-
-    game->getLogic()->getObjects(units);
-
-    for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); ++i)
-    {
-    }
-
-    game->getRender()->camera().mPos = cam_pos_bk;
-    game->getRender()->camera().mDir = cam_dir_bk;
-  }
-
   if(k == KEY_LCTRL)
   {
     move_camera = false;
