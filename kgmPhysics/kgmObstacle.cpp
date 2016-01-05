@@ -4,12 +4,10 @@ KGMOBJECT_IMPLEMENT(kgmObstacle, kgmObject);
 
 kgmObstacle::kgmObstacle()
 {
-  sx = sy = sz = 0;
+  transform.identity();
 }
 
-kgmObstacle::kgmObstacle(float x, float y, float z)
+kgmObstacle::~kgmObstacle()
 {
-  sx = x;
-  sy = y;
-  sz = z;
+  triangles.clear();
 }

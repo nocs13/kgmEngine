@@ -14,20 +14,20 @@ class kgmPhysics: public kgmObject, public kgmIPhysics
   KGM_OBJECT(kgmPhysics);
 
 public:
-  float			m_gravity;
-  bool			m_isgravity;
+  float  m_gravity;
+  bool   m_isgravity;
 
-  kgmList<triangle3>	    m_triangles;
-  kgmList<kgmBody*>	      m_bodies;
-  kgmOctTree<triangle3*>	m_treestatic;
+  kgmList<kgmBody*>       m_bodies;
+  kgmList<triangle3>      m_triangles;
+  kgmOctTree<triangle3*>  m_treestatic;
 
-  vec3		m_ptCurrent;
-  vec3		m_ptDestination;
-  vec3		m_ptCollision;
-  vec3		m_nrCollision;
-  box3		m_space;
+  vec3  m_ptCurrent;
+  vec3  m_ptDestination;
+  vec3  m_ptCollision;
+  vec3  m_nrCollision;
+  box3  m_space;
 
-  kgmCollision m_collision;
+  kgmCollision    m_collision;
   kgmIntersection m_intersection;
 
 public:

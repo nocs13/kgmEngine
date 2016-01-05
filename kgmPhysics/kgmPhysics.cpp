@@ -8,16 +8,15 @@
 
 KGMOBJECT_IMPLEMENT(kgmPhysics, kgmObject);
 
-//kgmPhysics
 kgmPhysics::kgmPhysics()
 {
 }
 
 kgmPhysics::~kgmPhysics()
 {
+  clear();
 }
 
-//virtual 
 void kgmPhysics::update(float time)
 {
   doCollision(time);
@@ -35,20 +34,18 @@ void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
 {
 }
 
-///////////////////////// 
 void kgmPhysics::clear()
 {
-  m_bodies.clear();
-  m_triangles.clear();
-  m_collision.reset();
   m_intersection.reset();
+  m_collision.reset();
+  m_triangles.clear();
+  m_bodies.clear();
 }
 
 void kgmPhysics::build()
 {
 }
 
-// static objects
 void kgmPhysics::add(vec3& a, vec3& b, vec3& c)
 {
   triangle3 trn(a, b, c);

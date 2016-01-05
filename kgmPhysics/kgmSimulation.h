@@ -2,10 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-class kgmSimulation  
+#include "../kgmBase/kgmObject.h"
+
+class kgmSimulation : public kgmObject
 {
+  KGM_OBJECT(kgmSimulation);
+
 public:
 	kgmSimulation();
-	virtual ~kgmSimulation();
+  ~kgmSimulation();
 };
 
