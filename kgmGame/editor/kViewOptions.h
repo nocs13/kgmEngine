@@ -187,7 +187,7 @@ public:
   __stdcall void onSelectedConvex();
 };
 
-/*class kViewOptionsForUnit : public kViewOptionsForObject
+class kViewOptionsForUnit : public kViewOptionsForObject
 {
 public:
   kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
@@ -212,7 +212,6 @@ public:
   __stdcall void onState(kgmString);
   __stdcall void onPlayer(bool);
 };
-*/
 
 }
 

@@ -596,29 +596,9 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
 void kViewOptionsForObject::onSelectEnable(bool state)
 {
   if(state)
-  {
     node->unt->enable();
-
-    if(node->obj->isType(kgmUnit::Class))
-      kgmIGame::getGame()->getLogic()->add(node->unt);
-    else if(node->obj->isType(kgmActor::Class))
-      kgmIGame::getGame()->getLogic()->add(node->act);
-    else if(node->obj->isType(kgmSensor::Class))
-      kgmIGame::getGame()->getLogic()->add(node->sns);
-    else if(node->obj->isType(kgmTrigger::Class))
-      kgmIGame::getGame()->getLogic()->add(node->trg);
-
-    if(node->unt->getBody())
-      kgmIGame::getGame()->getPhysics()->add(node->unt->getBody());
-  }
   else
-  {
     node->unt->disable();
-    kgmIGame::getGame()->getLogic()->remove(node->unt);
-
-    if(node->unt->getBody())
-      kgmIGame::getGame()->getPhysics()->remove(node->unt->getBody());
-  }
 }
 
 void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
@@ -646,6 +626,82 @@ void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
       node->unt->eupdate();
     }
   }
+}
+
+kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* tunit = tab->addTab("Unit");
+
+  y_coord = 1;
+}
+
+kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* tactor = tab->addTab("Actor");
+  y_coord = 1;
+
+  kgmGui* g = new kgmGuiLabel(tactor, 0, y_coord, 50, 20);
+  g->setText("State");
+  g = guiState = new kgmGuiText(tactor, 51, y_coord, 70, 20);
+
+  kgmString state = node->act->getState();
+
+  if(state.length())
+    g->setText(state);
+
+  kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
+  btn->setText("select");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showStates));
+
+  y_coord += 23;
+
+  kgmGuiCheck* enable = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
+  enable->setText("Player");
+  enable->setCheck(node->unt == kgmIGame::getGame()->getLogic()->getPlayer());
+  enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
+
+  y_coord += 23;
+}
+
+void kViewOptionsForActor::showStates()
+{
+  if(vo)
+    return;
+  vo = new kViewObjects();
+
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForActor::onState));
+
+  for(u32 i = 0; i < node->act->getStatesCount(); i++)
+    vo->addItem(node->act->getStateName(i));
+
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(vo);
+}
+
+void kViewOptionsForActor::onState(kgmString state)
+{
+  node->act->setState(state);
+
+  guiState->setText(state);
+
+  vo->erase();
+  vo = null;
+}
+
+void kViewOptionsForActor::onPlayer(bool state)
+{
+  if(state)
+    kgmIGame::getGame()->getLogic()->setPlayer(node->act);
+  else
+    kgmIGame::getGame()->getLogic()->setPlayer(null);
+}
+
+kViewOptionsForEffect::kViewOptionsForEffect(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* teffect = tab->addTab("Effect");
+  y_coord = 1;
 }
 
 kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h)

@@ -60,6 +60,9 @@ void kgmActor::update(u32 time)
 {
   kgmUnit::update(time);
 
+  if(m_state)
+    action(&m_state->action);
+
   if(m_state && m_state->timeout != 0xffffffff)
   {
     u32 tick = kgmTime::getTicks();
@@ -90,8 +93,16 @@ void kgmActor::input(u32 btn, int state)
 
 void kgmActor::action(Action* action)
 {
-  if (!action || !action->callback)
+  if (!action || action->id.empty())
+  {
     return;
+  }
+  else if (!action->callback)
+  {
+    if (!g_actions.get(action->id, action->callback) ||
+        !action->callback)
+      return;
+  }
 
   action->callback(game(), this, action);
   action->time = kgmTime::getTicks();
@@ -134,7 +145,7 @@ bool kgmActor::setState(kgmString s, bool force)
 
     state->stime = kgmTime::getTicks();
 
-    action(&state->action);
+    state->action.time = state->stime;
   }
   else
   {
