@@ -184,15 +184,6 @@ void kgmPhysics::doCollision(float dtime)
         rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
 
     //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
-    if(body->m_speed_up > 0.0f)
-    {
-      upstare = true;
-      epos.z  = spos.z + body->m_speed_up * ctime;
-      body->m_speed_up -= (body->m_speed_up * 0.2);
-
-      if(body->m_speed_up < 1.0f)
-        body->m_speed_up = 0.0f;
-    }
 
     if(m_gravity && body->m_gravity && !upstare)
     {
@@ -295,6 +286,7 @@ void kgmPhysics::doCollision(float dtime)
         {
 
         }
+
         int  k = 0;
         insect = binsect = true;
         pt_ins = m_collision.m_point;
@@ -338,23 +330,6 @@ void kgmPhysics::doCollision(float dtime)
             epos.z = z - rz;
         }
       }
-
-      ///*
-      if(m_gravity && body->m_gravity && (!upstare) && (body->m_speed_up <= 0.0f))
-      {
-        d.z -= gdist;
-        //if(m_collision.collision(d, g, 0.1f, b, mtr)){
-        m_collision.reset();
-
-        if(m_collision.collision(s, d, rx, ry, rz, cbody->m_bound, mtr))
-        {
-          if((m_collision.m_normal.z > 0.01f) && (m_collision.m_point.z > epos.z))
-            epos.z = m_collision.m_point.z + 0.1f;
-
-          upstare = true;
-          binsect = true;
-        }
-      }//*/
 
       if(binsect)
       {

@@ -70,5 +70,5 @@ void kgmBaseActions::accelerate(kgmIGame* g, kgmActor* a, kgmActor::Action* c)
 
   get(c->variables, "accelerate", acc);
 
-  a->getBody()->m_speed_forward += acc * ms / 1000;
+  a->getBody()->m_velocity += acc * ms / 1000;
 }

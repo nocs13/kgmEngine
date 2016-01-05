@@ -135,31 +135,31 @@ public:
     }
   };
 
-  bool                   m_valid;
-  bool                   m_remove;
-  bool                   m_visible;
+  bool  m_valid;
+  bool  m_remove;
+  bool  m_visible;
 
 private:
-  mtx4                   m_transform;
+  mtx4  m_transform;
 
 public:
-  Type                   m_type;
-  TypeShadow             m_typeshadow;
+  Type        m_type;
+  TypeShadow  m_typeshadow;
 
   kgmMaterial*  m_material;
 
   union
   {
-    Mesh*         m_mesh;
-    kgmText*      m_text;
-    kgmSprite*    m_sprite;
-    kgmParticles* m_particles;
+    Mesh*          m_mesh;
+    kgmText*       m_text;
+    kgmSprite*     m_sprite;
+    kgmParticles*  m_particles;
 
-    kgmObject*    m_visual = null;
+    kgmObject*  m_visual = null;
   };
 
-  kgmSkeleton*  m_skeleton  = null;
-  kgmAnimation* m_animation = null;
+  kgmSkeleton*   m_skeleton  = null;
+  kgmAnimation*  m_animation = null;
 
   bool m_floop;
 

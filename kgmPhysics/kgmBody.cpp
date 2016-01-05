@@ -7,9 +7,9 @@ kgmBody::kgmBody()
   m_friction = 0.0f;
 //  m_force = 0.0f;
   m_velocity      = 0.0f;
-  m_speed_forward = 0.0f;
-  m_speed_side    = 0.0f;
-  m_speed_up      = 0.0f;
+  //m_speed_forward = 0.0f;
+  //m_speed_side    = 0.0f;
+  //m_speed_up      = 0.0f;
 
   m_valid     = true;
   m_remove    = false;
@@ -35,9 +35,9 @@ kgmBody::kgmBody(void* udata)
   m_friction = 0.0f;
 //  m_force = 0.0f;
   m_velocity      = 0.0f;
-  m_speed_forward = 0.0f;
-  m_speed_side    = 0.0f;
-  m_speed_up      = 0.0f;
+  //m_speed_forward = 0.0f;
+  //m_speed_side    = 0.0f;
+  //m_speed_up      = 0.0f;
 
   m_valid     = true;
   m_remove    = false;

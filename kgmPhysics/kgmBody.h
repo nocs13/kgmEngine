@@ -37,9 +37,9 @@ public:
   float   m_mass;          //mass of body
   float   m_friction;      //friction of a body
   float   m_velocity;      //persistent speed
-  float   m_speed_forward;
-  float   m_speed_side;
-  float   m_speed_up;
+  //float   m_speed_forward;
+  //float   m_speed_side;
+  //float   m_speed_up;
 
   vec3     m_position;    //current position
   vec3     m_rotation;    //current rotation
