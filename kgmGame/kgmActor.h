@@ -56,7 +56,6 @@ public:
   {
     kgmString id;
     kgmString type;
-    kgmString action;
     kgmString switchto;
     kgmString switchfrom;
 
@@ -67,6 +66,8 @@ public:
     kgmSound*      sound     = null;
     kgmAnimation*  animation = null;
     u32           fstart, fend;
+
+    Action action;
   };
 
   struct Animation
@@ -92,7 +93,6 @@ public:
   mtx4    m_dvisual;      //visual transform relative to object transform
 
   kgmList<State*>     m_states;
-  kgmList<Action*>    m_actions;
   kgmList<Input>      m_inputs;
   kgmList<Input>      m_ainputs;
   kgmList<kgmDummy*>  m_dummies;
@@ -113,7 +113,8 @@ public:
   virtual void exit();
   virtual void update(u32);
   virtual void input(u32, int);
-  virtual void action(kgmString& s);
+
+  void action(Action* a);
 
   void add(kgmDummy* m)
   {

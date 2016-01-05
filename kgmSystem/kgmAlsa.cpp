@@ -412,6 +412,11 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+  for(int i = m_sounds.length(); i > 0; i--)
+    delete m_sounds[i - 1];
+
+  m_sounds.clear();
+
 #ifdef DEBUG
   kgm_log() << "kgmAlsa::~kgmAlsa.\n";
 #endif

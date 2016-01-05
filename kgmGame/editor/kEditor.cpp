@@ -235,30 +235,23 @@ void kEditor::select(int x, int y)
 
   //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
   //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
-  kgmList<kgmUnit*> units;
+  kgmList<kNode*>::iterator i = nodes.begin();
 
-  game->getLogic()->getObjects(units);
-
-  if (units.length() < 1)
-  {
-    return;
-  }
-
-  kgmList<kgmUnit*>::iterator i = units.begin();
-
-  do
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3  c, n;
     plane3 pln;
 
     n = vec3(1, 0, 0);
+
+    if (*i == null)
+      break;
+
     pln = plane3(n, (*i)->getPosition());
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = new kNode((kgmUnit*)(*i));
-
-      select((*i)->getId());
+      select((*i)->nam);
 
       if(pivot)
       {
@@ -274,8 +267,7 @@ void kEditor::select(int x, int y)
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = new kNode((kgmUnit*)(*i));
-      select((*i)->getId());
+      select((*i)->nam);
 
       if(pivot)
       {
@@ -291,8 +283,7 @@ void kEditor::select(int x, int y)
 
     if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      selected = new kNode((kgmUnit*)(*i));
-      select((*i)->getId());
+      select((*i)->nam);
 
       if(pivot)
       {
@@ -302,7 +293,7 @@ void kEditor::select(int x, int y)
 
       break;
     }
-  }while(i.next());
+  }
 
   if(((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
   {
@@ -755,7 +746,6 @@ bool kEditor::addUnit(kgmString type)
   return false;
 }
 
-//bool kEditor::addActor(kgmString type)
 bool kEditor::addActor(kFileDialog* fdd)
 {
   if(!fdd || fdd->getFile().empty())
@@ -1544,6 +1534,7 @@ void kEditor::add(kNode* node)
   case kNode::EFFECT:
   case kNode::SENSOR:
   case kNode::TRIGGER:
+    game->getPhysics()->add(node->unt->getBody());
     game->getRender()->add(node->unt->getVisual());
     game->getLogic()->add(node->unt);
   default:
@@ -1573,6 +1564,7 @@ void kEditor::remove(kNode* node)
   case kNode::EFFECT:
   case kNode::SENSOR:
   case kNode::TRIGGER:
+    game->getPhysics()->remove(node->unt->getBody());
     game->getRender()->remove(node->unt->getVisual());
     game->getLogic()->remove(node->unt);
   default:

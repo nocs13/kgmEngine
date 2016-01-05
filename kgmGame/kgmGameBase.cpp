@@ -363,15 +363,12 @@ void kgmGameBase::onIdle()
   switch(m_state)
   {
   case State_Play:
+  case State_Edit:
     if(m_logic)
       m_logic->update(1000 / fps);
 
     if(m_physics)
       m_physics->update(1000 / fps);
-    break;
-  case State_Edit:
-    if(m_logic)
-      m_logic->update(1000 / fps);
     break;
   }
 

@@ -1900,60 +1900,54 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         }
         else if(id == "Action")
         {
-          kgmString v;
-          a_node->node(i)->node(j)->attribute("value", v);
-          state->action = v;
+          a_node->node(i)->node(j)->attribute("value", state->action.id);
+
+          for(int k = 0; k < a_node->node(i)->node(j)->nodes(); k++)
+          {
+            kgmString id;
+
+            if(a_node->node(i)->node(j)->node(k))
+              a_node->node(i)->node(j)->node(k)->id(id);
+            else
+              break;
+
+            if(id == "Variable")
+            {
+              kgmString name, type, value;
+
+              a_node->node(i)->node(j)->node(k)->attribute("name",  name);
+              a_node->node(i)->node(j)->node(k)->attribute("type",  type);
+              a_node->node(i)->node(j)->node(k)->attribute("value", value);
+
+              if(!name.empty())
+              {
+                kgmVariable v;
+
+                if(type == "float")
+                {
+                  v= kgmVariable(name, (f32) kgmConvert::toDouble(value));
+                }
+                else if (type == "integer")
+                {
+                  v= kgmVariable(name, (s32) kgmConvert::toInteger(value));
+                }
+                else if (type == "boolean")
+                {
+                  v= kgmVariable(name, (bool) kgmConvert::toBoolean(value));
+                }
+                else
+                {
+                  v= kgmVariable(name, value);
+                }
+
+                state->action.variables.add(v);
+              }
+            }
+          }
         }
       }
 
       actor->m_states.add(state);
-    }
-    else if(id == "Action")
-    {
-      kgmActor::Action* action = new kgmActor::Action();
-
-      a_node->node(i)->attribute("id", action->id);
-
-      for(int j = 0; j < a_node->node(i)->nodes(); j++)
-      {
-        if(a_node->node(i)->node(j))
-          a_node->node(i)->node(j)->id(id);
-        else
-          break;
-
-        if(id == "Varible")
-        {
-          kgmString name, type, value;
-
-          a_node->node(i)->node(j)->attribute("name",  name);
-          a_node->node(i)->node(j)->attribute("type",  type);
-          a_node->node(i)->node(j)->attribute("value", value);
-
-          if(!name.empty())
-          {
-            kgmVariable v;
-
-            if(type == "float")
-            {
-              v= kgmVariable(name, (f32) kgmConvert::toDouble(value));
-            }
-            else if (type == "integer")
-            {
-              v= kgmVariable(name, (s32) kgmConvert::toInteger(value));
-            }
-            else if (type == "boolean")
-            {
-              v= kgmVariable(name, (bool) kgmConvert::toBoolean(value));
-            }
-            else
-            {
-              v= kgmVariable(name, value);
-            }
-
-            action->variables.add(v);
-          }
-        }
-      }
     }
     else
     {

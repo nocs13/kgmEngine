@@ -26,7 +26,6 @@ void kgmPhysics::update(float time)
   {
     if((*i)->removed())
     {
-//      (*i)->release();
       i = m_bodies.erase(i);
     }
   }
@@ -39,18 +38,14 @@ void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
 ///////////////////////// 
 void kgmPhysics::clear()
 {
-  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-  {
-//    (*i)->release();
-  }
-
   m_bodies.clear();
   m_triangles.clear();
   m_collision.reset();
   m_intersection.reset();
 }
 
-void kgmPhysics::build(){
+void kgmPhysics::build()
+{
 }
 
 // static objects
@@ -76,24 +71,13 @@ void kgmPhysics::add(kgmBody* body)
     return;
 
   m_bodies.add(body);
-
-//  body->increment();
 }
 
 //remove body
 bool kgmPhysics::remove(kgmBody* body)
 {
-  for(int i = 0; i < m_bodies.size(); i++)
-  {
-    if(m_bodies[i] == body)
-    {
-      m_bodies.erase(i);
-
-//      body->release();
-
-      break;
-    }
-  }
+  if(body)
+    body->remove();
 
   return true;
 }
@@ -146,7 +130,8 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos)
   return insect;
 }
 
-void kgmPhysics::doCollision(float dtime){
+void kgmPhysics::doCollision(float dtime)
+{
   float G = 1.0f;
   u32  stime = kgmTime::getTicks();
 
@@ -530,5 +515,3 @@ void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s)
       bodies.add(m_bodies[i]);
   }
 }
-
-

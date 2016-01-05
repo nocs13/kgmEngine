@@ -36,19 +36,15 @@ kgmActor::kgmActor(kgmIGame* g)
 
 kgmActor::~kgmActor()
 {
-  for(int i = m_states.length(); i > 0; i++)
+  for(int i = m_states.length(); i > 0; i--)
     delete m_states[i - 1];
 
-  for(int i = m_dummies.length(); i > 0; i++)
+  for(int i = m_dummies.length(); i > 0; i--)
     delete m_dummies[i - 1];
-
-  for(int i = m_actions.length(); i > 0; i++)
-    delete m_actions[i - 1];
 
   m_states.clear();
   m_inputs.clear();
   m_dummies.clear();
-  m_actions.clear();
 }
 
 void kgmActor::exit()
@@ -92,20 +88,8 @@ void kgmActor::input(u32 btn, int state)
   }
 }
 
-void kgmActor::action(kgmString& id)
+void kgmActor::action(Action* action)
 {
-  Action* action = null;
-
-  for (kgmList<Action*>::iterator i = m_actions.begin(); i != m_actions.end(); ++i)
-  {
-    if ((*i)->id == id)
-    {
-      action = (*i);
-
-      break;
-    }
-  }
-
   if (!action || !action->callback)
     return;
 
@@ -150,7 +134,7 @@ bool kgmActor::setState(kgmString s, bool force)
 
     state->stime = kgmTime::getTicks();
 
-    action(state->action);
+    action(&state->action);
   }
   else
   {
