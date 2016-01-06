@@ -28,6 +28,7 @@
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"
+#include "../kgmPhysics/kgmObstacle.h"
 #endif
 
 class kgmGraphics: public kgmObject, public kgmIGraphics
@@ -107,7 +108,8 @@ private:
   kgmList< Node<kgmIcon>   > m_icons;
 
 #ifdef DEBUG
-  kgmList<kgmBody*>     m_bodies;
+  kgmList<kgmBody*>      m_bodies;
+  kgmList<kgmObstacle*>  m_obstacles;
 #endif
 
   kgmGuiStyle* gui_style = null;
@@ -220,6 +222,40 @@ public:
     if(a)
     {
       m_bodies.add(a);
+    }
+  }
+
+  void add(kgmObstacle* a)
+  {
+    if(a)
+    {
+      m_obstacles.add(a);
+    }
+  }
+
+  void remove(kgmBody* a)
+  {
+    for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+    {
+      if(a == (*i))
+      {
+        (*i) = null;
+
+        break;
+      }
+    }
+  }
+
+  void remove(kgmObstacle* o)
+  {
+    for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); ++i)
+    {
+      if(o == (*i))
+      {
+        (*i) = null;
+
+        break;
+      }
     }
   }
 #endif

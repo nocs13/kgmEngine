@@ -6,6 +6,7 @@
 
 #include "kgmIPhysics.h"
 #include "kgmBody.h"
+#include "kgmObstacle.h"
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
@@ -19,6 +20,7 @@ public:
 
   kgmList<kgmBody*>       m_bodies;
   kgmList<triangle3>      m_triangles;
+  kgmList<kgmObstacle*>   m_obstacles;
   kgmOctTree<triangle3*>  m_treestatic;
 
   vec3  m_ptCurrent;
@@ -44,9 +46,12 @@ public:
   void add(vec3& a, vec3& b, vec3& c);
   void add(kgmCollision::Shape* shape);
 
+  void add(kgmObstacle*);
+  void remove(kgmObstacle*);
+
   // dynamic objects
-  void add(kgmBody*);   //add body
-  bool remove(kgmBody*);//remove body
+  void add(kgmBody*);
+  void remove(kgmBody*);
 
   //collision detection
   bool checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos);

@@ -102,83 +102,6 @@ kgmGuiFrame("Options", x, y, w, h)
     lock->setText("Locked");
     lock->setCheck(node->lock);
     lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
-
-    kgmGui* gcollision = tab->addTab("Collide");
-    y_coord = 1;
-
-    kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-    chk->setText("collide");
-    chk->setCheck(node->col);
-    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectCollision));
-    y_coord += 23;
-
-    kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-    chk_grp->setText("Shape Box");
-    chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeBox));
-
-    if(node->shp == "box") chk_grp->setCheck(true);
-    y_coord += 23;
-
-    chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-    chk->setText("Shape Sphere");
-    chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeSphere));
-    chk_grp->addGroup(chk);
-
-    if(node->shp == "sphere") chk->setCheck(true);
-    y_coord += 23;
-
-    if(node->typ == kNode::VISUAL)
-    {
-      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-      chk->setText("Shape Mesh");
-      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeMesh));
-      chk_grp->addGroup(chk);
-      if(node->shp == "mesh") chk->setCheck(true);
-      y_coord += 23;
-
-      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-      chk->setText("Shape Plane");
-      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapePlane));
-      chk_grp->addGroup(chk);
-
-      if(node->shp == "plane") chk->setCheck(true);
-      y_coord += 23;
-    }
-    else if(node->typ == kNode::OBSTACLE)
-    {
-      chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
-      chk->setText("Shape Convex");
-      chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectShapeConvex));
-      chk_grp->addGroup(chk);
-
-      if(node->shp == "convex") chk->setCheck(true);
-      y_coord += 23;
-    }
-
-    g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
-    g->setText("Bound");
-
-    g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
-    g->setSid("Length x");
-    g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundX));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-
-    g = new kgmGuiText(gcollision, 102, y_coord, 50, 20);
-    g->setSid("Width y");
-    g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundY));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-
-    g = new kgmGuiText(gcollision, 154, y_coord, 50, 20);
-    g->setSid("Height z");
-    g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onBoundZ));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    y_coord += 23;
   }
 }
 
@@ -231,65 +154,6 @@ void kViewOptions::onSelectLock(bool s)
   node->lock = s;
 }
 
-void kViewOptions::onSelectCollision(bool s)
-{
-  node->col = s;
-}
-
-void kViewOptions::onSelectShapeBox(bool s)
-{
-  if(s)
-    node->shp = "box";
-}
-
-void kViewOptions::onSelectShapeMesh(bool s)
-{
-  if(s)
-    node->shp = "mesh";
-}
-
-void kViewOptions::onSelectShapePlane(bool s)
-{
-  if(s)
-    node->shp = "plane";
-}
-
-void kViewOptions::onSelectShapeSphere(bool s)
-{
-  if(s)
-    node->shp = "sphere";
-}
-
-void kViewOptions::onSelectShapeConvex(bool s)
-{
-  if(s)
-    node->shp = "convex";
-}
-
-void kViewOptions::onBoundX(kgmString s)
-{
-  double v = kgmConvert::toDouble(s);
-
-  node->bnd.min.x = -0.5 * v;
-  node->bnd.max.x =  0.5 * v;
-}
-
-void kViewOptions::onBoundY(kgmString s)
-{
-  double v = kgmConvert::toDouble(s);
-
-  node->bnd.min.y = -0.5 * v;
-  node->bnd.max.y =  0.5 * v;
-}
-
-void kViewOptions::onBoundZ(kgmString s)
-{
-  double v = kgmConvert::toDouble(s);
-
-  node->bnd.min.z = -0.5 * v;
-  node->bnd.max.z =  0.5 * v;
-}
-
 kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
@@ -302,7 +166,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   if(!mtl)
     return;
 
-  /*kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
@@ -365,7 +229,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
-  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);*/
+  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)
@@ -400,7 +264,7 @@ void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
   fd->erase();
 }
 
-/*void kViewOptionsForMaterial::onSelectShader(int)
+void kViewOptionsForMaterial::onSelectShader(int)
 {
   mode = Mode_Shader;
 
@@ -412,7 +276,7 @@ void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
   fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-}*/
+}
 
 void kViewOptionsForMaterial::onSelectTexColor(int)
 {
@@ -476,12 +340,9 @@ void kViewOptionsForMaterial::onTransparency(u32 s)
   mtl->m_transparency = (float)s;
 }
 
-kViewOptionsForMesh::kViewOptionsForMesh(kNode* n, int x, int y, int w, int h)
+kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)
 :kViewOptionsForMaterial(n, x, y, w, h)
 {
-  kgmGui* tmesh = tab->addTab("Mesh");
-  y_coord = 1;
-  y_coord += 23;
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
@@ -518,32 +379,81 @@ void kViewOptionsForLight::setShadows(bool s)
   node->lgt->shadows = s;
 }
 
-kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
-:kViewOptionsForObject(n, x, y, w, h)
-{
-  kgmGui* tsensor = tab->addTab("Sensor");
-  y_coord = 1;
-
-  kgmGui* g = new kgmGuiLabel(tsensor, 0, y_coord, 50, 20);
-  g->setText("Target");
-
-  g = new kgmGuiText(tsensor, 51, y_coord, 70, 20);
-
-  g->setText(node->sns->getTarget());
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
-
-  y_coord += 23;
-}
-
-void kViewOptionsForSensor::setTarget(kgmString s)
-{
-  node->sns->setTarget(s);
-}
-
 kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmGui* gcollision = tab->addTab("Collide");
+  y_coord = 1;
+
+  kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk->setText("collide");
+  chk->setCheck(node->col);
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectCollision));
+  y_coord += 23;
+
+  kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk_grp->setText("Shape Box");
+  chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectShapeBox));
+
+  if(node->shp == "box") chk_grp->setCheck(true);
+  y_coord += 23;
+
+  chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk->setText("Shape Sphere");
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectShapeSphere));
+  chk_grp->addGroup(chk);
+
+  if(node->shp == "sphere") chk->setCheck(true);
+  y_coord += 23;
+
+  chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk->setText("Shape Mesh");
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectShapeMesh));
+  chk_grp->addGroup(chk);
+  if(node->shp == "mesh") chk->setCheck(true);
+  y_coord += 23;
+
+  chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk->setText("Shape Plane");
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectShapePlane));
+  chk_grp->addGroup(chk);
+
+  if(node->shp == "plane") chk->setCheck(true);
+  y_coord += 23;
+
+  chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
+  chk->setText("Shape Convex");
+  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForObject::onSelectShapeConvex));
+  chk_grp->addGroup(chk);
+
+  if(node->shp == "convex") chk->setCheck(true);
+  y_coord += 23;
+
+  kgmGui* g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
+  g->setText("Bound");
+
+  g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
+  g->setSid("Length x");
+  g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObject::onBoundX));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+
+  g = new kgmGuiText(gcollision, 102, y_coord, 50, 20);
+  g->setSid("Width y");
+  g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObject::onBoundY));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+
+  g = new kgmGuiText(gcollision, 154, y_coord, 50, 20);
+  g->setSid("Height z");
+  g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObject::onBoundZ));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  y_coord += 23;
+
   kgmGui* tobject = tab->addTab("Object");
   y_coord = 1;
 
@@ -593,6 +503,65 @@ kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int 
   }
 }
 
+void kViewOptionsForObject::onSelectCollision(bool s)
+{
+  node->col = s;
+}
+
+void kViewOptionsForObject::onSelectShapeBox(bool s)
+{
+  if(s)
+    node->shp = "box";
+}
+
+void kViewOptionsForObject::onSelectShapeMesh(bool s)
+{
+  if(s)
+    node->shp = "mesh";
+}
+
+void kViewOptionsForObject::onSelectShapePlane(bool s)
+{
+  if(s)
+    node->shp = "plane";
+}
+
+void kViewOptionsForObject::onSelectShapeSphere(bool s)
+{
+  if(s)
+    node->shp = "sphere";
+}
+
+void kViewOptionsForObject::onSelectShapeConvex(bool s)
+{
+  if(s)
+    node->shp = "convex";
+}
+
+void kViewOptionsForObject::onBoundX(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.x = -0.5 * v;
+  node->bnd.max.x =  0.5 * v;
+}
+
+void kViewOptionsForObject::onBoundY(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.y = -0.5 * v;
+  node->bnd.max.y =  0.5 * v;
+}
+
+void kViewOptionsForObject::onBoundZ(kgmString s)
+{
+  double v = kgmConvert::toDouble(s);
+
+  node->bnd.min.z = -0.5 * v;
+  node->bnd.max.z =  0.5 * v;
+}
+
 void kViewOptionsForObject::onSelectEnable(bool state)
 {
   if(state)
@@ -626,6 +595,29 @@ void kViewOptionsForObject::updateVariable(kgmString id, kgmString data)
       node->unt->eupdate();
     }
   }
+}
+
+kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int h)
+:kViewOptionsForObject(n, x, y, w, h)
+{
+  kgmGui* tsensor = tab->addTab("Sensor");
+  y_coord = 1;
+
+  kgmGui* g = new kgmGuiLabel(tsensor, 0, y_coord, 50, 20);
+  g->setText("Target");
+
+  g = new kgmGuiText(tsensor, 51, y_coord, 70, 20);
+
+  g->setText(node->sns->getTarget());
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
+
+  y_coord += 23;
+}
+
+void kViewOptionsForSensor::setTarget(kgmString s)
+{
+  node->sns->setTarget(s);
 }
 
 kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
@@ -775,7 +767,7 @@ void kViewOptionsForObstacle::onSelectConvex()
   fd->showHidden(false);
   fd->show();
   fd->setFilter("cvx");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMesh::onSelectFailed));
+  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForVisual::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedConvex));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }

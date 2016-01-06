@@ -201,11 +201,8 @@ kgmGraphics::~kgmGraphics()
   shaders.clear();
 
 #ifdef DEBUG
-  for(int i = 0; i < m_bodies.size(); i++)
-  {
-  }
-
   m_bodies.clear();
+  m_obstacles.clear();
 #endif
 
   if(g_tex_black)
@@ -244,7 +241,6 @@ void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
 
   if(gui_style)
   {
-    //gui_style.reset();
     delete gui_style;
   }
 
@@ -280,9 +276,9 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
 {
   g_mtx_world = m;
 
+#ifdef NO_SHADERS
   mtx4 mw = m * g_mtx_view;
 
-#ifdef NO_SHADERS
   gc->gcSetMatrix(gcmtx_view, mw.m);
 #endif
 }
@@ -304,10 +300,6 @@ void kgmGraphics::resize(float width, float height)
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);
 }
-
-/*
- * Main Graphical Render process
-*/
 
 void kgmGraphics::render()
 {
@@ -614,7 +606,7 @@ void kgmGraphics::render()
   {
     kgmBody* body = m_bodies[i - 1];
 
-    if(body->removed())
+    if(!body)
     {
       m_bodies.erase(i - 1);
 
@@ -640,7 +632,36 @@ void kgmGraphics::render()
       gr_points[i].col = 0xffffffff;
     }
 
-    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, 2, 24, lines);
+    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, sizeof(s16), 24, lines);
+  }
+
+  for(int i = m_obstacles.size(); i > 0;  i--)
+  {
+    kgmObstacle* obstacle = m_obstacles[i - 1];
+
+    if(!obstacle)
+    {
+      m_obstacles.erase(i - 1);
+
+      continue;
+    }
+
+    s16  lines[6] = {0,1, 1,2, 2,3};
+
+    kgmMesh::Vertex_P_C points[3];
+
+    points[0].col = points[1].col = points[2].col = 0xffffffff;
+
+    for(int i = 0; i < obstacle->length(); i++)
+    {
+      triangle3 tr = obstacle->get(i);
+
+      points[0].pos = tr.pt[0];
+      points[1].pos = tr.pt[1];
+      points[2].pos = tr.pt[2];
+
+      gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(kgmMesh::Vertex_P_C), 3, points, sizeof(s16), 6, lines);
+    }
   }
 
   for(int i = m_lights.size(); i > 0;  i--)

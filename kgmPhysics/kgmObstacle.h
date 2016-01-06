@@ -43,6 +43,9 @@ public:
 
     return t;
   }
+
+  void fromBox(vec3 min, vec3 max);
+  void fromRect(vec2 min, vec2 max);
 };
 
 #endif // KGMOBSTACLE_H

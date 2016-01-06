@@ -38,6 +38,8 @@ void kgmPhysics::clear()
 {
   m_intersection.reset();
   m_collision.reset();
+
+  m_obstacles.clear();
   m_triangles.clear();
   m_bodies.clear();
 }
@@ -52,13 +54,25 @@ void kgmPhysics::add(vec3& a, vec3& b, vec3& c)
   m_triangles.add(trn);
 }
 
-void kgmPhysics::add(kgmCollision::Shape *shape)
+void kgmPhysics::add(kgmObstacle *o)
 {
-  if(!shape)
+  if(!o)
     return;
 
-  for(int i = 0; i < shape->triangles.length(); i++)
-    m_triangles.add(shape->triangles[i]);
+  m_obstacles.add(o);
+}
+
+void kgmPhysics::remove(kgmObstacle* o)
+{
+  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); ++i)
+  {
+    if(o == (*i))
+    {
+      (*i) = null;
+
+      break;
+    }
+  }
 }
 
 // dynamic objects
@@ -70,13 +84,17 @@ void kgmPhysics::add(kgmBody* body)
   m_bodies.add(body);
 }
 
-//remove body
-bool kgmPhysics::remove(kgmBody* body)
+void kgmPhysics::remove(kgmBody* body)
 {
-  if(body)
-    body->remove();
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+  {
+    if(body == (*i))
+    {
+      (*i) = null;
 
-  return true;
+      break;
+    }
+  }
 }
 
 //collision

@@ -76,6 +76,9 @@ void kNode::setPosition(vec3 v)
       vis->getTransform() = mtrn;
     }
     break;
+  case OBSTACLE:
+    obs->set(mtrn);
+    break;
   }
 }
 
@@ -115,6 +118,9 @@ void kNode::setRotation(vec3 r)
 
       vis->getTransform() = mtrn;
     }
+    break;
+  case OBSTACLE:
+    obs->set(mtrn);
     break;
   }
 }

@@ -43,16 +43,6 @@ public:
   __stdcall void onRotationY(u32 s);
   __stdcall void onRotationZ(u32 s);
   __stdcall void onSelectLock(bool);
-  __stdcall void onSelectCollision(bool);
-  __stdcall void onSelectShapeBox(bool);
-  __stdcall void onSelectShapeMesh(bool);
-  __stdcall void onSelectShapePlane(bool);
-  __stdcall void onSelectShapeSphere(bool);
-  __stdcall void onSelectShapeCylinder(bool);
-  __stdcall void onSelectShapeConvex(bool);
-  __stdcall void onBoundX(kgmString s);
-  __stdcall void onBoundY(kgmString s);
-  __stdcall void onBoundZ(kgmString s);
 
   void setCloseCallback(CloseCallback cfn)
   {
@@ -89,7 +79,7 @@ public:
 
   __stdcall void onSelectFailed(kFileDialog*);
   __stdcall void onSelectSuccess(kFileDialog*);
-  //__stdcall void onSelectShader(int);
+  __stdcall void onSelectShader(int);
   __stdcall void onSelectTexColor(int);
   __stdcall void onSelectTexNormal(int);
   __stdcall void onSelectTexSpecular(int);
@@ -97,10 +87,10 @@ public:
   __stdcall void onTransparency(u32 s);
 };
 
-class kViewOptionsForMesh : public kViewOptionsForMaterial
+class kViewOptionsForVisual : public kViewOptionsForMaterial
 {
 public:
-  kViewOptionsForMesh(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForVisual(kNode* n, int x, int y, int w, int h);
 
   __stdcall void onSelectMaterial();
   __stdcall void onSelectedMaterial();
@@ -153,6 +143,17 @@ class kViewOptionsForObject : public kViewOptions
   };
 public:
   kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
+
+  __stdcall void onSelectCollision(bool);
+  __stdcall void onSelectShapeBox(bool);
+  __stdcall void onSelectShapeMesh(bool);
+  __stdcall void onSelectShapePlane(bool);
+  __stdcall void onSelectShapeSphere(bool);
+  __stdcall void onSelectShapeCylinder(bool);
+  __stdcall void onSelectShapeConvex(bool);
+  __stdcall void onBoundX(kgmString s);
+  __stdcall void onBoundY(kgmString s);
+  __stdcall void onBoundZ(kgmString s);
 
   __stdcall void onSelectEnable(bool);
   __stdcall void updateVariable(kgmString id, kgmString data);

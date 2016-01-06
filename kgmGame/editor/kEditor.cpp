@@ -1240,7 +1240,7 @@ void kEditor::onEditOptions()
   switch(selected->typ)
   {
   case kNode::VISUAL:
-    vop = new kViewOptionsForMesh(selected, 50, 50, 260, 300);
+    vop = new kViewOptionsForVisual(selected, 50, 50, 260, 300);
     break;
   case kNode::UNIT:
     vop = new kViewOptionsForUnit(selected, 50, 50, 300, 300);
@@ -1377,6 +1377,11 @@ void kEditor::onAddTrigger()
 
 void kEditor::onAddObstacle()
 {
+  selected = new kNode(new kgmObstacle());
+
+  selected->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
+
+  add(selected);
 }
 
 static int runRun(void *cmd)
@@ -1520,6 +1525,10 @@ void kEditor::add(kNode* node)
     game->getPhysics()->add(node->unt->getBody());
     game->getRender()->add(node->unt->getVisual());
     game->getLogic()->add(node->unt);
+  case kNode::OBSTACLE:
+      game->getPhysics()->add(node->obs);
+      game->getRender()->add(node->obs);
+    break;
   default:
     break;
   }
@@ -1550,6 +1559,10 @@ void kEditor::remove(kNode* node)
     game->getPhysics()->remove(node->unt->getBody());
     game->getRender()->remove(node->unt->getVisual());
     game->getLogic()->remove(node->unt);
+  case kNode::OBSTACLE:
+      game->getPhysics()->remove(node->obs);
+      game->getRender()->remove(node->obs);
+    break;
   default:
     break;
   }
