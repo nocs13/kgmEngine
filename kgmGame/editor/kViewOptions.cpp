@@ -72,7 +72,7 @@ kgmGuiFrame("Options", x, y, w, h)
     y_coord += 23;
     g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotX");
-    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 153, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
@@ -81,7 +81,7 @@ kgmGuiFrame("Options", x, y, w, h)
     y_coord += 23;
     g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotY");
-    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 153, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
@@ -90,7 +90,7 @@ kgmGuiFrame("Options", x, y, w, h)
     y_coord += 23;
     g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotZ");
-    g = new kgmGuiScroll(tgeneral, 51, y_coord, 140, 20);
+    g = new kgmGuiScroll(tgeneral, 51, y_coord, 153, 20);
     g->show();
     ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
     ((kgmGuiScroll*)g)->setRange(360);
@@ -98,7 +98,7 @@ kgmGuiFrame("Options", x, y, w, h)
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationZ));
 
     y_coord += 23;
-    kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 1, y_coord, 150, 20);
+    kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
     lock->setText("Locked");
     lock->setCheck(node->lock);
     lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
@@ -740,30 +740,35 @@ void kViewOptionsForTrigger::setTarget(kgmString s)
 kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  kgmGui* tobs = tab->addTab("Obstacle");
-  y_coord = 1;
+  kgmGui* tobstacle = tab->addTab("Obstacle");
+  y_coord = 3;
   fd = null;
-  y_coord += 23;
-  kgmGui* g = new kgmGuiLabel(tobs, 0, y_coord, 50, 20);
+  kgmGui* g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
   g->setText("Polygons");
-  g = guiCnvText = new kgmGuiText(tobs, 51, y_coord, 70, 20);
+  g = guiCnvText = new kgmGuiText(tobstacle, 51, y_coord, 70, 20);
 
-  if(node->lnk.length() > 0)
-    g->setText(node->lnk);
-
-  kgmGuiButton* btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
+  kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
   btn->setText("select");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
   y_coord += 23;
 
-  btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
+  btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
   btn->setText("Rect");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
-  y_coord += 23;
 
-  btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
+  btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
   btn->setText("Box");
   btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
+  g->setText("Scale");
+  g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
+  g->setSid("scale");
+  g->setText(kgmConvert::toString(n->obs->getScale()));
+  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
   y_coord += 23;
 }
 
@@ -789,6 +794,11 @@ void kViewOptionsForObstacle::onSelectedPolygons()
 
   fd->erase();
   fd = null;
+}
+
+void kViewOptionsForObstacle::onScale(kgmString s)
+{
+  node->obs->set((f32) kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForObstacle::onRect()

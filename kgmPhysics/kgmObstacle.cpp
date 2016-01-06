@@ -5,6 +5,8 @@ KGMOBJECT_IMPLEMENT(kgmObstacle, kgmObject);
 kgmObstacle::kgmObstacle()
 {
   transform.identity();
+
+  scale = 1.0f;
 }
 
 kgmObstacle::~kgmObstacle()

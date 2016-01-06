@@ -186,6 +186,7 @@ public:
 
   __stdcall void onSelectPolygons();
   __stdcall void onSelectedPolygons();
+  __stdcall void onScale(kgmString);
   __stdcall void onRect();
   __stdcall void onBox();
 };

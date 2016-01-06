@@ -646,7 +646,7 @@ void kgmGraphics::render()
       continue;
     }
 
-    s16  lines[6] = {0,1, 1,2, 2,3};
+    s16  lines[6] = {0,1, 1,2, 2,0};
 
     kgmMesh::Vertex_P_C points[3];
 

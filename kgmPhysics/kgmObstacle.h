@@ -12,7 +12,7 @@ class kgmObstacle : public kgmObject
 
   mtx4 transform;
 
-  f32  scale = 1.0f;
+  f32  scale;
 
 public:
   kgmObstacle();
@@ -49,6 +49,11 @@ public:
     t.pt[2] = transform * t.pt[2] * scale;
 
     return t;
+  }
+
+  float getScale()
+  {
+    return scale;
   }
 
   void fromBox(vec3 min, vec3 max);
