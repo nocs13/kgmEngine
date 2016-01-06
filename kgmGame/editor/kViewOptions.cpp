@@ -745,7 +745,7 @@ kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, 
   fd = null;
   y_coord += 23;
   kgmGui* g = new kgmGuiLabel(tobs, 0, y_coord, 50, 20);
-  g->setText("Convex");
+  g->setText("Polygons");
   g = guiCnvText = new kgmGuiText(tobs, 51, y_coord, 70, 20);
 
   if(node->lnk.length() > 0)
@@ -753,11 +753,21 @@ kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, 
 
   kgmGuiButton* btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectConvex));
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
+  y_coord += 23;
+
+  btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
+  btn->setText("Rect");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
+  y_coord += 23;
+
+  btn = new kgmGuiButton(tobs, 125, y_coord, 50, 20);
+  btn->setText("Box");
+  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
   y_coord += 23;
 }
 
-void kViewOptionsForObstacle::onSelectConvex()
+void kViewOptionsForObstacle::onSelectPolygons()
 {
   if(fd)
     return;
@@ -766,17 +776,27 @@ void kViewOptionsForObstacle::onSelectConvex()
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
-  fd->setFilter("cvx");
+  fd->setFilter("plg");
   fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForVisual::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedConvex));
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
-void kViewOptionsForObstacle::onSelectedConvex()
+void kViewOptionsForObstacle::onSelectedPolygons()
 {
   node->setConvex(fd->getFile());
   guiCnvText->setText(fd->getFile());
 
   fd->erase();
   fd = null;
+}
+
+void kViewOptionsForObstacle::onRect()
+{
+  node->obs->fromRect(vec2(-1, -1), vec2(1, 1));
+}
+
+void kViewOptionsForObstacle::onBox()
+{
+  node->obs->fromBox(vec3(-1, -1, -1), vec3(1, 1, 1));
 }

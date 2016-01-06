@@ -12,6 +12,8 @@ class kgmObstacle : public kgmObject
 
   mtx4 transform;
 
+  f32  scale = 1.0f;
+
 public:
   kgmObstacle();
   ~kgmObstacle();
@@ -19,6 +21,11 @@ public:
   void set(mtx4& m)
   {
     transform = m;
+  }
+
+  void set(float s)
+  {
+    scale = s;
   }
 
   void add(vec3& a, vec3& b, vec3& c)
@@ -37,9 +44,9 @@ public:
   {
     triangle3 t = triangles[i];
 
-    t.pt[0] = transform * t.pt[0];
-    t.pt[1] = transform * t.pt[1];
-    t.pt[2] = transform * t.pt[2];
+    t.pt[0] = transform * t.pt[0] * scale;
+    t.pt[1] = transform * t.pt[1] * scale;
+    t.pt[2] = transform * t.pt[2] * scale;
 
     return t;
   }

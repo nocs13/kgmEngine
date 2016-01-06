@@ -184,8 +184,10 @@ class kViewOptionsForObstacle : public kViewOptions
 public:
   kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h);
 
-  __stdcall void onSelectConvex();
-  __stdcall void onSelectedConvex();
+  __stdcall void onSelectPolygons();
+  __stdcall void onSelectedPolygons();
+  __stdcall void onRect();
+  __stdcall void onBox();
 };
 
 class kViewOptionsForUnit : public kViewOptionsForObject
