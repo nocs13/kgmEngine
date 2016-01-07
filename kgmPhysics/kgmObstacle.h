@@ -12,6 +12,8 @@ class kgmObstacle : public kgmObject
 
   mtx4 transform;
 
+  box3 bound;
+
   f32  scale;
 
 public:
@@ -33,6 +35,19 @@ public:
     triangle3 trn(a, b, c);
 
     triangles.add(trn);
+
+    if(triangles.length() > 1)
+    {
+      bound.extend(a);
+      bound.extend(b);
+      bound.extend(c);
+    }
+    else
+    {
+      bound = box3(&a, 1);
+      bound.extend(b);
+      bound.extend(c);
+    }
   }
 
   u32 length()

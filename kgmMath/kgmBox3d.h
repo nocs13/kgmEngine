@@ -25,7 +25,7 @@ public:
   {
     min = max = v[0];
 
-    for(int i = 0; i < count; i++)
+    for(int i = 1; i < count; i++)
     {
       min.x = MIN(min.x, v[i].x);
       min.y = MIN(min.y, v[i].y);
@@ -117,7 +117,8 @@ public:
     return intersect(b);
   }
 
-  bool intersect(kgmRay3d<T> &r, kgmVector3d<T> &cp){
+  bool intersect(kgmRay3d<T> &r, kgmVector3d<T> &cp)
+  {
     kgmVector3d<T> rect[6][4];
     kgmPlane3d<T>  plane;
     kgmBox3d<T>    box;
@@ -185,14 +186,17 @@ public:
     return false;
   }
 
-  bool isin(kgmVector3d<T> &v){
+  bool isin(kgmVector3d<T> &v)
+  {
     if((v.x >= min.x) && (v.y >= min.y) && (v.z >= min.z) &&
        (v.x <= max.x) && (v.y <= max.y) && (v.z <= max.z))
       return true;
+
     return false;
   }
 
-  bool isin(kgmVector3d<T> v[], kgmVector3d<T> &p){
+  bool isin(kgmVector3d<T> v[], kgmVector3d<T> &p)
+  {
     kgmVector3d<T> v0, v1, v2, v3;
     T an = 0;
     v0 = v[0] - p; v0.normalize();
@@ -210,7 +214,8 @@ public:
     return false;
   }
 
-  bool isin(kgmBox3d<T> &b){
+  bool isin(kgmBox3d<T> &b)
+  {
     if((b.min.x > min.x) && (b.min.y > min.y) && (b.min.z > min.z) &&
        (b.max.x < max.x) && (b.max.y < max.y) && (b.max.z < max.z))
       return true;
@@ -218,13 +223,24 @@ public:
     return false;
   }
 
-  void extend(kgmBox3d<T> &b){
+  void extend(kgmBox3d<T> &b)
+  {
     if(b.min.x < min.x) min.x = b.min.x;
     if(b.min.y < min.y) min.y = b.min.y;
     if(b.min.z < min.z) min.z = b.min.z;
     if(b.max.x > max.x) max.x = b.max.x;
     if(b.max.y > max.y) max.y = b.max.y;
     if(b.max.z > max.z) max.z = b.max.z;
+  }
+
+  void extend(kgmVector3d<T> &v)
+  {
+    if(v.x < min.x) min.x = v.x;
+    if(v.y < min.y) min.y = v.y;
+    if(v.z < min.z) min.z = v.z;
+    if(v.x > max.x) max.x = v.x;
+    if(v.y > max.y) max.y = v.y;
+    if(v.z > max.z) max.z = v.z;
   }
 };
 

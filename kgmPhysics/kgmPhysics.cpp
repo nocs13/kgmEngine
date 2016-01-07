@@ -20,14 +20,6 @@ kgmPhysics::~kgmPhysics()
 void kgmPhysics::update(float time)
 {
   doCollision(time);
-
-  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-  {
-    if((*i)->removed())
-    {
-      i = m_bodies.erase(i);
-    }
-  }
 }
 
 void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
@@ -150,15 +142,21 @@ void kgmPhysics::doCollision(float dtime)
   float G = 1.0f;
   u32  stime = kgmTime::getTicks();
 
-  //active collisions
-  kgmList<triangle3>	triangles;
-  kgmList<kgmBody*>	bodies;
+  u16 max_triangles = 5000;
+  u16 max_bodies = 50;
 
+  triangle3  triangles[max_triangles];
+  kgmBody*   bodies[max_bodies];
 
-
-  //iterate by all dynamic objects
-  for(int i = 0; i < m_bodies.size(); i++)
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
   {
+    if(*i == null || (*i)->removed())
+    {
+      m_bodies.erase(i);
+
+      continue;
+    }
+
     bool  holddown = false;
     bool  upstare  = false;
     bool  insect   = false;
@@ -167,9 +165,9 @@ void kgmPhysics::doCollision(float dtime)
     sphere    sbound;
     sphere    sinteract;
 
-    float ctime  = dtime;// + kgmTime::getTicks() - stime;
+    float ctime  = dtime;
 
-    kgmBody* body = m_bodies[i];
+    kgmBody* body = (*i);
 
     if(!body->m_valid)
       continue;
@@ -207,17 +205,16 @@ void kgmPhysics::doCollision(float dtime)
 
     vec3  pt_ins;
     float len = 0.0f;
-    //**********************************
 
     sinteract.center = body->m_position;
     sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
                        body->m_position.distance(epos);
-    //getBodies(bodies, sinteract);
 
-    //check collision to dynamic objects
-    for(int k = 0; k < m_bodies.size(); k++)
+    u32 cbodies = getBodies(bodies, max_bodies, sinteract);
+
+    for(int k = 0; k < cbodies; k++)
     {
-      kgmBody* cbody = m_bodies[k];
+      kgmBody* cbody = bodies[k];
 
       if(cbody == body)
         continue;
@@ -282,12 +279,10 @@ void kgmPhysics::doCollision(float dtime)
       obox3 ob_cbody = cbody->getOBox();
       mtx4  mtx_cbody(cbody->m_quaternion, cbody->m_position);
 
-      if(
-         box_body.intersect(box_cbody) &&
-         ( (cbody->m_shape == kgmBody::ShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
+      if(box_body.intersect(box_cbody) &&
+         ((cbody->m_shape == kgmBody::ShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
            || (cbody->m_shape == kgmBody::ShapePolyhedron && m_collision.ob_collision(ob_body, ob_cbody)
-               && m_collision.ob_collision(ob_cbody, cbody->m_convex, mtx_cbody))
-           )
+               && m_collision.ob_collision(ob_cbody, cbody->m_convex, mtx_cbody)))
          //&& ob_body.intersect(ob_cbody)
          //&& ob_cbody.intersect(ob_body)
          //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
@@ -357,16 +352,13 @@ void kgmPhysics::doCollision(float dtime)
       }
     }
 
-    bodies.clear();
-    //**********************************
-
     sinteract.center = body->m_position;
     sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
                        body->m_position.distance(epos);
-    getTriangles(triangles, sinteract);
 
-    //check collision to static objects
-    for(int j = 0; j < triangles.size(); j++)
+    u32 ctriangles = getTriangles(triangles, max_triangles, sinteract);
+
+    for(int j = 0; j < ctriangles; j++)
     {
       triangle3  trn = triangles[j];
       plane pln(trn.pt[0], trn.pt[1], trn.pt[2]);
@@ -438,11 +430,7 @@ void kgmPhysics::doCollision(float dtime)
         }
       }
     }
-    //**********************************
 
-    triangles.clear();
-
-    //select position
     if(!upstare)
     {
       if(holddown)
@@ -504,4 +492,91 @@ void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s)
     if(mgn < (SQR(s.radius) + SQR(bs.radius)))
       bodies.add(m_bodies[i]);
   }
+}
+
+u32 kgmPhysics::getTriangles(triangle3 triangles[], u32 max, sphere& s)
+{
+  u32 count = 0;
+
+  for(kgmList<triangle3>::iterator i = m_triangles.begin(); i != m_triangles.end(); ++i)
+  {
+    if(count >= max)
+      break;
+
+    triangle3 t = (*i);
+
+    vec3 ct;
+
+    ct.x = (t.pt[0].x + t.pt[1].x + t.pt[2].x) * 0.3333333;
+    ct.y = (t.pt[0].y + t.pt[1].y + t.pt[2].y) * 0.3333333;
+    ct.z = (t.pt[0].z + t.pt[1].z + t.pt[2].z) * 0.3333333;
+
+    float a = SQR(t.pt[0].x - ct.x) + SQR(t.pt[0].y - ct.y) + SQR(t.pt[0].z - ct.z);
+    float b = SQR(t.pt[1].x - ct.x) + SQR(t.pt[1].y - ct.y) + SQR(t.pt[1].z - ct.z);
+    float c = SQR(t.pt[2].x - ct.x) + SQR(t.pt[2].y - ct.y) + SQR(t.pt[2].z - ct.z);
+    float d = SQR(ct.x - s.center.x) + SQR(ct.y - s.center.y) + SQR(ct.z - s.center.z);
+
+    if(b > a) a = b;
+    if(c > a) a = c;
+
+    if((d) < (a + SQR(s.radius)))
+      triangles[count++] = t;
+  }
+
+  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); ++i)
+  {
+    if(count >= max)
+      break;
+
+    for(u32 j = 0; j < (*i)->length(); j++)
+    {
+      if(count >= max)
+        break;
+
+      triangle3 t = (*i)->get(j);
+
+      vec3 ct;
+
+      ct.x = (t.pt[0].x + t.pt[1].x + t.pt[2].x) * 0.3333333;
+      ct.y = (t.pt[0].y + t.pt[1].y + t.pt[2].y) * 0.3333333;
+      ct.z = (t.pt[0].z + t.pt[1].z + t.pt[2].z) * 0.3333333;
+
+      float a = SQR(t.pt[0].x - ct.x) + SQR(t.pt[0].y - ct.y) + SQR(t.pt[0].z - ct.z);
+      float b = SQR(t.pt[1].x - ct.x) + SQR(t.pt[1].y - ct.y) + SQR(t.pt[1].z - ct.z);
+      float c = SQR(t.pt[2].x - ct.x) + SQR(t.pt[2].y - ct.y) + SQR(t.pt[2].z - ct.z);
+      float d = SQR(ct.x - s.center.x) + SQR(ct.y - s.center.y) + SQR(ct.z - s.center.z);
+
+      if(b > a) a = b;
+      if(c > a) a = c;
+
+      if((d) < (a + SQR(s.radius)))
+        triangles[count++] = t;
+    }
+  }
+
+  return count;
+}
+
+u32 kgmPhysics::getBodies(kgmBody* bodies[], u32 max, sphere& s)
+{
+  u32 count = 0;
+
+  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+  {
+    if(count >= max)
+      break;
+
+    sphere3 bs((*i)->m_bound);
+
+    bs.center = (*i)->m_position;
+
+    vec3 ds = s.center - bs.center;
+
+    float mgn = SQR(ds.x) + SQR(ds.y) + SQR(ds.z);
+
+    if(mgn < (SQR(s.radius) + SQR(bs.radius)))
+      bodies[count++] = (*i);
+  }
+
+  return count;
 }
