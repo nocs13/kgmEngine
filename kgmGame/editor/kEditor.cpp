@@ -30,7 +30,8 @@ enum MENUEVENT
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
   ME_ADD_OBSTACLE,
-  ME_RUN_RUN,
+  ME_RUN_PLAY,
+  ME_RUN_STOP,
   ME_VIEW_OBJECTS,
   ME_VIEW_PERSPECTIVE,
   ME_VIEW_FRONT,
@@ -90,7 +91,8 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
     item = menu->add("Run");
-    item->add(ME_RUN_RUN, "Run", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunRun));
+    item->add(ME_RUN_PLAY, "Play", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunPlay));
+    item->add(ME_RUN_STOP, "Stop", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunStop));
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewObjects));
     item->add(ME_VIEW_OBJECTS, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
@@ -1384,46 +1386,46 @@ void kEditor::onAddObstacle()
   add(selected);
 }
 
-static int runRun(void *cmd)
+void kEditor::onRunPlay()
 {
-  if(!cmd)
-    return 1;
-
-  int res = system((char*)cmd);
-
-  return res;
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    switch((*i)->typ)
+    {
+    case kNode::UNIT:
+    case kNode::ACTOR:
+    case kNode::EFFECT:
+    case kNode::SENSOR:
+    case kNode::TRIGGER:
+      game->getPhysics()->add((*i)->unt->getBody());
+      game->getLogic()->add((*i)->unt);
+      break;
+    case kNode::OBSTACLE:
+      game->getPhysics()->add((*i)->obs);
+      break;
+    }
+  }
 }
 
-void kEditor::onRunRun()
+void kEditor::onRunStop()
 {
-  kgmString path;
-
-  kgmSystem::getTemporaryDirectory(path);
-
-  if(path.length() < 1)
-    path = ".";
-
-  if(path.data()[path.length() - 1] != kgmSystem::PathDelimSym)
-    path += kgmSystem::PathDelim;
-
-  path += "~kgmrun.map";
-
-  //mapSave(path);
-
-  kgmString cmd, exe;
-
-  if(kgmSystem::getProcessPath(exe) < 1)
-    return;
-
-  cmd = exe;
-  cmd += " map ";
-  cmd += path;
-
-  kgmThread thread(runRun, cmd.data());
-
-  thread.join();
-
-  kgmFile::remove_file(path);
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    switch((*i)->typ)
+    {
+    case kNode::UNIT:
+    case kNode::ACTOR:
+    case kNode::EFFECT:
+    case kNode::SENSOR:
+    case kNode::TRIGGER:
+      game->getPhysics()->remove((*i)->unt->getBody());
+      game->getLogic()->remove((*i)->unt);
+      break;
+    case kNode::OBSTACLE:
+      game->getPhysics()->remove((*i)->obs);
+      break;
+    }
+  }
 }
 
 void kEditor::onViewObjects()
@@ -1522,11 +1524,8 @@ void kEditor::add(kNode* node)
   case kNode::EFFECT:
   case kNode::SENSOR:
   case kNode::TRIGGER:
-    game->getPhysics()->add(node->unt->getBody());
     game->getRender()->add(node->unt->getVisual());
-    game->getLogic()->add(node->unt);
   case kNode::OBSTACLE:
-      game->getPhysics()->add(node->obs);
       game->getRender()->add(node->obs);
     break;
   default:

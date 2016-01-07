@@ -45,6 +45,7 @@ kgmActor::~kgmActor()
   m_states.clear();
   m_inputs.clear();
   m_dummies.clear();
+  m_options.clear();
 }
 
 void kgmActor::exit()

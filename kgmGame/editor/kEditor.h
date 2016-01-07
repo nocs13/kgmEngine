@@ -129,7 +129,8 @@ public:
   __stdcall void onViewLeft();
   __stdcall void onViewTop();
   __stdcall void onOptionsDatabase();
-  __stdcall void onRunRun();
+  __stdcall void onRunPlay();
+  __stdcall void onRunStop();
   __stdcall void onSelectObject(kgmString);
   __stdcall void onCloseVop();
 
