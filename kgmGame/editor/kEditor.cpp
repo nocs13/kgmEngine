@@ -527,20 +527,22 @@ bool kEditor::mapSave(kgmString s)
 
   map.open(xml);
 
+  kgmList<kNode*> units;
   kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
   kgmList<kNode*> actors;
+  kgmList<kNode*> effects;
   kgmList<kNode*> sensors;
-  kgmList<kNode*> objects;
   kgmList<kNode*> triggers;
+  kgmList<kNode*> obstacles;
   kgmList<kNode*> materials;
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     switch ((*i)->typ)
     {
-    case kNode::VISUAL:
-      meshes.add(*i);
+    case kNode::UNIT:
+      units.add(*i);
       continue;
     case kNode::LIGHT:
       lights.add(*i);
@@ -548,11 +550,20 @@ bool kEditor::mapSave(kgmString s)
     case kNode::ACTOR:
       actors.add(*i);
       continue;
+    case kNode::VISUAL:
+      meshes.add(*i);
+      continue;
+    case kNode::EFFECT:
+      effects.add(*i);
+      continue;
     case kNode::SENSOR:
       sensors.add(*i);
       continue;
     case kNode::TRIGGER:
       triggers.add(*i);
+      continue;
+    case kNode::OBSTACLE:
+      obstacles.add(*i);
       continue;
     default:
       continue;
@@ -568,22 +579,16 @@ bool kEditor::mapSave(kgmString s)
 
   map.addCamera(node);
 
-  //fprintf(f, " <kgmCamera name='main_camera' active='true'>\n");
-  //fprintf(f, "  <Position value='%f %f %f'/>\n", mcam.mPos.x, mcam.mPos.y, mcam.mPos.z);
-  //fprintf(f, "  <Direction value='%f %f %f'/>\n", mcam.mDir.x, mcam.mDir.y, mcam.mDir.z);
-  //fprintf(f, " </kgmCamera>\n");
-
   for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
     kgmGameMap::Node node;
 
     node.obj = (*i)->lgt;
+    node.nam = (*i)->nam;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
     node.col = (*i)->col;
     node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     map.addLight(node);
@@ -596,13 +601,12 @@ bool kEditor::mapSave(kgmString s)
     memset(&node, 0, sizeof(node));
 
     node.obj = (*i)->vis;
+    node.nam = (*i)->nam;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
     node.lnk = (*i)->lnk;
     node.col = (*i)->col;
     node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
     node.lck = (*i)->lock;
 
     node.mtl = (*i)->getMaterial();
@@ -610,45 +614,14 @@ bool kEditor::mapSave(kgmString s)
     map.addMesh(node);
   }
 
-  for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
+  for(kgmList<kNode*>::iterator i = units.begin(); i != units.end(); ++i)
   {
     kgmGameMap::Node node;
 
-    node.obj = (*i)->act;
+    node.obj = (*i)->unt;
+    node.nam = (*i)->nam;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
-    node.bnd = (*i)->bnd;
-    node.ini = (*i)->ini;
-    node.lck = (*i)->lock;
-
-    map.addActor(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->sns;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addSensor(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = objects.begin(); i != objects.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->obj;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
     node.col = (*i)->col;
     node.shp = (*i)->shp;
     node.bnd = (*i)->bnd;
@@ -657,14 +630,61 @@ bool kEditor::mapSave(kgmString s)
     map.addUnit(node);
   }
 
+  for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
+  {
+    kgmGameMap::Node node;
+
+    node.obj = (*i)->act;
+    node.nam = (*i)->nam;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.bnd = (*i)->bnd;
+    node.ini = (*i)->ini;
+    node.lck = (*i)->lock;
+
+    map.addActor(node);
+  }
+
+  for(kgmList<kNode*>::iterator i = effects.begin(); i != effects.end(); ++i)
+  {
+    kgmGameMap::Node node;
+
+    node.obj = (*i)->eff;
+    node.nam = (*i)->nam;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
+    node.lck = (*i)->lock;
+
+    map.addEffect(node);
+  }
+
+  for(kgmList<kNode*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
+  {
+    kgmGameMap::Node node;
+
+    node.obj = (*i)->sns;
+    node.nam = (*i)->nam;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
+    node.lck = (*i)->lock;
+
+    map.addSensor(node);
+  }
+
   for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
   {
     kgmGameMap::Node node;
 
     node.obj = (*i)->trg;
+    node.nam = (*i)->nam;
     node.pos = (*i)->pos;
     node.rot = (*i)->rot;
-    node.nam = (*i)->nam;
     node.col = (*i)->col;
     node.shp = (*i)->shp;
     node.bnd = (*i)->bnd;
@@ -673,8 +693,29 @@ bool kEditor::mapSave(kgmString s)
     map.addTrigger(node);
   }
 
+  for(kgmList<kNode*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i)
+  {
+    kgmGameMap::Node node;
+
+    node.obj = (*i)->obs;
+    node.nam = (*i)->nam;
+    node.pos = (*i)->pos;
+    node.rot = (*i)->rot;
+    node.col = (*i)->col;
+    node.shp = (*i)->shp;
+    node.bnd = (*i)->bnd;
+    node.lck = (*i)->lock;
+
+    map.addObstacle(node);
+  }
+
   materials.clear();
+  obstacles.clear();
+  triggers.clear();
+  sensors.clear();
+  effects.clear();
   actors.clear();
+  units.clear();
   lights.clear();
   meshes.clear();
 

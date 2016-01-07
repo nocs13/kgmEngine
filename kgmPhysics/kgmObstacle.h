@@ -71,6 +71,16 @@ public:
     return scale;
   }
 
+  mtx4 getTransfom() const
+  {
+    return transform;
+  }
+
+  triangle3 getTriangle(u32 i)
+  {
+    return triangles[i];
+  }
+
   void fromBox(vec3 min, vec3 max);
   void fromRect(vec2 min, vec2 max);
 };

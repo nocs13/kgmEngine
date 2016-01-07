@@ -94,10 +94,12 @@ public:
   bool addMesh(Node n);
   bool addLight(Node n);
   bool addCamera(Node n);
+  bool addUnit(Node n);
   bool addActor(Node n);
+  bool addEffect(Node n);
   bool addSensor(Node n);
   bool addTrigger(Node n);
-  bool addUnit(Node n);
+  bool addObstacle(Node n);
 
   void addCollision(kgmXml::Node& xnode, Node& node);
 
