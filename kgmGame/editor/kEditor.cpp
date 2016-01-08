@@ -611,7 +611,7 @@ bool kEditor::mapSave(kgmString s)
 
     node.mtl = (*i)->getMaterial();
 
-    map.addMesh(node);
+    map.addVisual(node);
   }
 
   for(kgmList<kNode*>::iterator i = units.begin(); i != units.end(); ++i)
@@ -754,6 +754,7 @@ bool kEditor::addMesh(kgmString name)
 
   selected = new kNode(visual);
   selected->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
+  selected->lnk = name;
 
   add(selected);
 
@@ -1157,7 +1158,6 @@ void kEditor::onMapOpen()
   kFileDialog *fdd = new kFileDialog();
   fdd->showHidden(false);
   game->guiAdd(fdd);
-  //fdd->release();
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -1172,7 +1172,7 @@ void kEditor::onMapSave()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  //fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
+  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
 }
 
 void kEditor::onEditClone()

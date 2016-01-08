@@ -91,9 +91,9 @@ public:
   bool open(kgmXml& xml);
   bool open(kgmMemory<u8>& mem);
 
-  bool addMesh(Node n);
   bool addLight(Node n);
   bool addCamera(Node n);
+  bool addVisual(Node n);
   bool addUnit(Node n);
   bool addActor(Node n);
   bool addEffect(Node n);
@@ -101,9 +101,21 @@ public:
   bool addTrigger(Node n);
   bool addObstacle(Node n);
 
-  void addCollision(kgmXml::Node& xnode, Node& node);
 
   Node next();
+
+private:
+  void addCollision(kgmXml::Node& xnode, Node& node);
+  void addCollision(kgmXml::Node& xnode, bool col);
+
+  void addName(kgmXml::Node& xnode, kgmString& name);
+  void addLocked(kgmXml::Node& xnode, bool lock);
+  void addPosition(kgmXml::Node& xnode, vec3& pos);
+  void addRotation(kgmXml::Node& xnode, vec3& rot);
+  void addQuaternion(kgmXml::Node& xnode, quat& qt);
+  void addTriangle(kgmXml::Node& xnode, triangle3& tr);
+  void addParameter(kgmXml::Node& xnode, kgmVariable& param);
+  void addParameters(kgmXml::Node& xnode, kgmList<kgmVariable>& params);
 };
 
 #endif // KGMGAMEMAP_H

@@ -1314,7 +1314,10 @@ void kgmGraphics::render(kgmGui* gui){
 
       kgmString c_text;
       u32       c_len = rect.width() / (u32)(0.5 * gui_style->stext.ft_size);
-      u32       c_idx = gtext->getIndex() - gtext->getCursor();
+      s32       c_idx = gtext->getIndex() - gtext->getCursor();
+
+      if (c_idx < 0)
+        c_idx = 0;
 
       if(c_idx + c_len > text.length())
         c_len = text.length() - c_idx;
