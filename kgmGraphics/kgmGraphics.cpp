@@ -318,50 +318,50 @@ void kgmGraphics::render()
 
   // parse visible visual objects
 
-  for(kgmList<Node<kgmVisual>>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
-    if((*i)()->removed())
+    if((*i) == null)
     {
       i = m_visuals.erase(i);
 
       continue;
     }
-    else if(!(*i)()->valid() || !(*i)()->visible())
+    else if(!(*i)->valid() || !(*i)->visible())
     {
       continue;
     }
-    else if((*i)()->type() == kgmVisual::TypeText)
+    else if((*i)->type() == kgmVisual::TypeText)
     {
-      vis_text.add((*i)());
+      vis_text.add((*i));
     }
-    else if((*i)()->type() == kgmVisual::TypeSprite)
+    else if((*i)->type() == kgmVisual::TypeSprite)
     {
-      vis_sprite.add((*i)());
+      vis_sprite.add((*i));
     }
     else
     {
       vec3 v(0, 0, 0);
 
-      v = (*i)()->getTransform() * v;
+      v = (*i)->getTransform() * v;
 
-      vec3  l = (*i)()->getBound().max - (*i)()->getBound().min;
+      vec3  l = (*i)->getBound().max - (*i)->getBound().min;
 
       if(m_camera->isSphereCross(v, 0.5 * l.length()))
       {
-        if((*i)()->type() == kgmVisual::TypeParticles)
+        if((*i)->type() == kgmVisual::TypeParticles)
         {
-          vis_particles.add((*i)());
+          vis_particles.add((*i));
         }
-        else if((*i)()->getMaterial() && (*i)()->getMaterial()->m_blend)
+        else if((*i)->getMaterial() && (*i)->getMaterial()->m_blend)
         {
-          vis_blend.add((*i)());
+          vis_blend.add((*i));
         }
         else
         {
           if(m_cnt_vis_mesh_scene == m_vis_mesh_scene.length())
             m_vis_mesh_scene.realloc(m_vis_mesh_scene.length() + 4096);
 
-          m_vis_mesh_scene[m_cnt_vis_mesh_scene] = (*i)();
+          m_vis_mesh_scene[m_cnt_vis_mesh_scene] = (*i);
           m_cnt_vis_mesh_scene++;
         }
       }
@@ -391,25 +391,22 @@ void kgmGraphics::render()
 
   g_lights_count = 0;
 
-  for(kgmList<Node<kgmLight>>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
+  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
-    if((*i).removed())
+    if((*i) == null)
     {
       i = m_lights.erase(i);
-
-      if(i == m_lights.end())
-        break;
 
       continue;
     }
 
-    if(!(*i)()->active)
+    if(!(*i)->active)
       continue;
 
-    if(!m_camera->isSphereCross((*i)()->position, kgmLight::LIGHT_RANGE * (*i)()->intensity))
+    if(!m_camera->isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
       continue;
 
-    g_lights[g_lights_count++] = (*i)();
+    g_lights[g_lights_count++] = (*i);
 
     if(g_lights_count >= MAX_LIGHTS)
       break;
@@ -569,9 +566,9 @@ void kgmGraphics::render()
 
     for(int i = m_icons.size(); i > 0; i--)
     {
-      kgmIcon* icon = m_icons[i - 1]();
+      kgmIcon* icon = m_icons[i - 1];
 
-      if(m_icons[i - 1].removed())
+      if(icon == null)
       {
         m_icons.erase(i - 1);
       }
@@ -666,7 +663,14 @@ void kgmGraphics::render()
 
   for(int i = m_lights.size(); i > 0;  i--)
   {
-    kgmLight* light = m_lights[i - 1]();
+    kgmLight* light = m_lights[i - 1];
+
+    if (light == null)
+    {
+      m_lights.erase(i - 1);
+
+      continue;
+    }
 
     box3 bb;
     bb.min = light->position - vec3(1,1,1);
@@ -721,9 +725,9 @@ void kgmGraphics::render()
 
   for(int i = m_guis.size(); i > 0; i--)
   {
-    kgmGui* gui = m_guis[i - 1]();
+    kgmGui* gui = m_guis[i - 1];
 
-    if(gui->erased())
+    if(!gui)
     {
       m_guis.erase(i - 1);
     }

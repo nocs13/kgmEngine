@@ -47,52 +47,6 @@ public:
   static GraphicsQuality textureQuality;
   static GraphicsQuality shadowQuality;
 
-  template <class T>
-  class Node
-  {
-    T* m_object = null;
-
-    bool m_remove;
-
-  public:
-    Node()
-    {
-      m_object = null;
-      m_remove = false;
-    }
-
-    Node(T* obj)
-    {
-      m_object = obj;
-      m_remove = false;
-    }
-
-    Node(const Node<T>& node)
-    {
-      m_object = node.m_object;
-      m_remove = node.m_remove;
-    }
-
-    ~Node()
-    {
-    }
-
-    T* operator()()
-    {
-      return m_object;
-    }
-
-    bool removed()
-    {
-      return m_remove;
-    }
-
-    void remove()
-    {
-      m_remove = true;
-    }
-  };
-
 private:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -102,10 +56,10 @@ private:
   iRect       m_viewport;
   kgmCamera*  m_camera;
 
-  kgmList< Node<kgmLight>  > m_lights;
-  kgmList< Node<kgmVisual> > m_visuals;
-  kgmList< Node<kgmGui>    > m_guis;
-  kgmList< Node<kgmIcon>   > m_icons;
+  kgmList<kgmLight*>   m_lights;
+  kgmList<kgmVisual*>  m_visuals;
+  kgmList<kgmGui*>     m_guis;
+  kgmList<kgmIcon*>    m_icons;
 
 #ifdef DEBUG
   kgmList<kgmBody*>      m_bodies;
@@ -187,9 +141,7 @@ public:
     if(!lgt)
       return;
 
-    Node<kgmLight> light(lgt);
-
-    m_lights.add(light);
+    m_lights.add(lgt);
   }
 
   void add(kgmVisual* a)
@@ -205,15 +157,15 @@ public:
     if(!ico)
       return;
 
-    m_icons.add(Node<kgmIcon>(ico));
+    m_icons.add(ico);
   }
 
   void add(kgmGui* gui)
   {
-    if(gui)
-    {
-      m_guis.add(gui);
-    }
+    if(!gui)
+      return;
+
+    m_guis.add(gui);
   }
 
 #ifdef DEBUG
@@ -262,11 +214,11 @@ public:
 
   void remove(kgmVisual* v)
   {
-    for(int i = 0; i < m_visuals.length(); i++)
+    for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
     {
-      if(m_visuals[i]() == v)
+      if((*i) == v)
       {
-        m_visuals[i].remove();
+        (*i) = null;
 
         break;
       }
@@ -275,11 +227,11 @@ public:
 
   void remove(kgmLight* l)
   {
-    for(int i = 0; i < m_lights.length(); i++)
+    for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); ++i)
     {
-      if(m_lights[i]() == l)
+      if((*i) == l)
       {
-        m_lights[i].remove();
+        (*i) = null;
 
         break;
       }
@@ -288,11 +240,11 @@ public:
 
   void remove(kgmGui* g)
   {
-    for(int i = 0; i < m_guis.length(); i++)
+    for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
     {
-      if(m_guis[i]() == g)
+      if((*i) == g)
       {
-        m_guis[i].remove();
+        (*i) = null;
 
         break;
       }
@@ -301,11 +253,11 @@ public:
 
   void remove(kgmIcon* c)
   {
-    for(int i = 0; i < m_icons.length(); i++)
+    for(kgmList<kgmIcon*>::iterator i = m_icons.begin(); i != m_icons.end(); ++i)
     {
-      if(m_icons[i]() == c)
+      if((*i) == c)
       {
-        m_icons[i].remove();
+        (*i) = null;
 
         break;
       }

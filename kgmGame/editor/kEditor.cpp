@@ -803,6 +803,7 @@ bool kEditor::addActor(kFileDialog* fdd)
 
     selected = new kNode(ac);
     selected->bnd = box3(-1, -1, -1, 1, 1, 1);
+    selected->ini = fdd->getFile();
     selected->nam = kgmString(ac->getClass()) + kgmString("_") +
                     kgmConvert::toString((s32)(++oquered));
 
@@ -1411,9 +1412,9 @@ void kEditor::onAddTrigger()
 {
   kgmTrigger* tr = new kgmTrigger();
 
-  tr->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
-
   selected = new kNode(tr);
+  selected->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
+  tr->setId(selected->nam);
 
   add(selected);
 }
@@ -1566,6 +1567,7 @@ void kEditor::add(kNode* node)
   case kNode::SENSOR:
   case kNode::TRIGGER:
     game->getRender()->add(node->unt->getVisual());
+    break;
   case kNode::OBSTACLE:
       game->getRender()->add(node->obs);
     break;
@@ -1599,6 +1601,7 @@ void kEditor::remove(kNode* node)
     game->getPhysics()->remove(node->unt->getBody());
     game->getRender()->remove(node->unt->getVisual());
     game->getLogic()->remove(node->unt);
+    break;
   case kNode::OBSTACLE:
       game->getPhysics()->remove(node->obs);
       game->getRender()->remove(node->obs);
