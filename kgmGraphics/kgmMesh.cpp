@@ -62,11 +62,11 @@ void kgmMesh::rebound()
        min = ((Vertex*)v)->pos;
 
   u32 i    = 0;
+  u32 size = vsize();
 
-  for(i = 0; i < m_vcount; i++)
+  for(i = 1; i < m_vcount; i++)
   {
-    //v = m_vertices[i];
-    v += vsize();
+    v += size;
 
     min.x = MIN(min.x, ((Vertex*)v)->pos.x);
     min.y = MIN(min.y, ((Vertex*)v)->pos.y);

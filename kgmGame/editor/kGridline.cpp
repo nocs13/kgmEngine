@@ -10,7 +10,7 @@ kGridline::kGridline(u8 count, f32 space, u32 color)
   f32 min  = -0.5f * space;
   f32 max  =  0.5f * space;
 
-  for(int i = 0; i < (count + 1); i++)
+  for(int i = 0; i < (count + 2); i++)
   {
     f32 start = min + step * i;
     f32 end   = min + step * (i + 1);

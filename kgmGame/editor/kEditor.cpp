@@ -110,10 +110,12 @@ kEditor::kEditor(kgmGameBase* g)
     mtlPivot->m_depth = false;
 
     meshGridline = new kGridline(100);
+    meshGridline->rebound();
 
     gridline = new kgmVisual();
     gridline->set(mtlLines);
     gridline->set(meshGridline);
+    //gridline->
     game->getRender()->add(gridline);
 
     meshPivot = new kPivot();
