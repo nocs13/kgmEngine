@@ -15,8 +15,12 @@ void kNode::update()
   case EFFECT:
   case SENSOR:
   case TRIGGER:
-    pos = unt->getPosition();
-    rot = unt->getRotation();
+
+    if(unt->getBody())
+    {
+      pos = unt->getPosition();
+      rot = unt->getRotation();
+    }
 
     if(icn)
       icn->setPosition(pos);
@@ -137,9 +141,6 @@ vec3 kNode::getRotation()
 
 void kNode::setConvex(kgmString s)
 {
-  if(typ == OBSTACLE)
-  {
-  }
 }
 
 kgmMaterial* kNode::getMaterial()
@@ -162,6 +163,7 @@ kgmMaterial* kNode::getMaterial()
 
     if(v)
       v->getMaterial();
+
     break;
   }
   default:

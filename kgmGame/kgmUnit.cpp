@@ -23,6 +23,10 @@ kgmUnit::kgmUnit(kgmIGame* g)
   m_culled  = false;
   m_visible = true;
 
+  m_position   = vec3(0, 0, 0);
+  m_rotation   = vec3(0, 0, 0);
+  m_quaternion = quat(0, 0, 0, 1);
+
   m_birth   = kgmTime::getTicks();
   m_timeout = -1;
 }
@@ -68,15 +72,27 @@ void kgmUnit::update(u32 mls)
     return;
   }
 
-  if(getBody())
+  if(m_visual)
   {
     mtx4 tm;
 
-    if(getVisual())
+    if(m_body)
     {
       m_body->transform(tm);
-      m_visual->getTransform() = tm;
-      m_visual->update();
     }
+    else
+    {
+      mtx4 rt, tr;
+
+      tr.identity();
+      tr.translate(m_position);
+      rt.identity();
+      rt.rotate(m_rotation);
+
+      tm = rt * tr;
+    }
+
+    m_visual->getTransform() = tm;
+    m_visual->update();
   }
 }

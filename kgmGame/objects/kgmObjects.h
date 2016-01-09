@@ -50,7 +50,6 @@ public:
                u32 count = 1,
                kgmString tid = "",
                bool loop = false);
-  kgmParticlesObject(kgmIGame* g, kgm_ptr<kgmParticles> pts, kgm_ptr<kgmMaterial> mtl, u32 life);
   ~kgmParticlesObject();
 
   void setTexture(kgmTexture* t);

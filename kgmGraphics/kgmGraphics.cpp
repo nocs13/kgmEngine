@@ -316,8 +316,6 @@ void kgmGraphics::render()
 
   kgmList<kgmVisual*> vis_text, vis_blend, vis_sprite, vis_particles;
 
-  // parse visible visual objects
-
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
     if((*i) == null)

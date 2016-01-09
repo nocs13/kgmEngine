@@ -36,6 +36,10 @@ private:
   u32  m_birth;
   u32  m_timeout;
 
+  vec3 m_position;
+  vec3 m_rotation;
+  quat m_quaternion;
+
 protected:
   kgmBody*    m_body   = null;
   kgmVisual*  m_visual = null;
@@ -137,34 +141,34 @@ public:
 
   vec3 getPosition()
   {
-    vec3 v(0, 0, 0);
-
     if(m_body)
-      v = m_body->position();
+      return m_body->position();
 
-    return v;
+    return m_position;
   }
 
   void setPosition(vec3& v)
   {
     if(m_body)
       m_body->translate(v.x, v.y, v.z);
+    else
+      m_position = v;
   }
 
   vec3 getRotation()
   {
-    vec3 v(0, 0, 0);
-
     if(m_body)
-      v = m_body->rotation();
+      return m_body->rotation();
 
-    return v;
+    return m_rotation;
   }
 
   void setRotation(vec3& r)
   {
     if(m_body)
       m_body->rotate(r.x, r.y, r.z);
+    else
+      m_rotation = r;
   }
 
   void setQuaternion(quat& q)

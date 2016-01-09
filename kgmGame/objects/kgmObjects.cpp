@@ -111,15 +111,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   m_variables.add(var);
 }
 
-kgmParticlesObject::kgmParticlesObject(kgmIGame* g, kgm_ptr<kgmParticles> pts, kgm_ptr<kgmMaterial> mtl, u32 life)
-  :kgmEffect(g)
-{
-  material = mtl;
-  particles = pts;
-
-  timeout(life);
-}
-
 kgmParticlesObject::~kgmParticlesObject()
 {
   delete material;
