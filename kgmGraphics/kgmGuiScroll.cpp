@@ -81,7 +81,7 @@ void kgmGuiScroll::setOrientation(ORIENT o)
 
 void kgmGuiScroll::onMsMove(int key, int x, int y)
 {
-  u32 pos;
+  u32 pos = 0;
 
   if(!m_drag)
     return;

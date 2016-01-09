@@ -21,6 +21,7 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   m_scroll = new kgmGuiScroll(this, x + w - 10, 0, 10, h);
   m_scroll->show();
   m_scroll->setRange(1);
+  m_scroll->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kgmGuiList::onScroll));
   m_itemSel = -1;
   m_itemStart = 0;
   m_itemHeight = 20;
@@ -38,9 +39,6 @@ void kgmGuiList::addItem(kgmString s, u32 icon)
 {
   if(!s.length())
     return;
-
-  //int vCnt = m_rect.h / m_itemHeight;
-  //int sRange = m_items.size() - vCnt;
 
   m_items.push_back(s);
 
@@ -175,15 +173,11 @@ void kgmGuiList::sort()
 void kgmGuiList::onMsLeftDown(int k, int x, int y)
 {
   kgmGui::onMsLeftDown(k, x, y);
-  //if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-  //  return m_scroll->onMsLeftDown(k, x, y);
 }
 
 void kgmGuiList::onMsLeftUp(int k, int x, int y)
 {
   kgmGui::onMsLeftUp(k, x, y);
-  //if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
-  //  return m_scroll->onMsLeftUp(k, x, y);
 
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
   m_itemSel = m_position + (y - rect.y) / m_itemHeight;
@@ -242,4 +236,9 @@ void kgmGuiList::onKeyDown(int k)
     }
     break;
   }
+}
+
+void kgmGuiList::onScroll(u32 n)
+{
+  m_position = n;
 }

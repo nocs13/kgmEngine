@@ -61,4 +61,6 @@ protected:
   void onMsMove(int k, int x, int y);
   void onMsWheel(int k, int x, int y, int z);
   void onKeyDown(int k);
+
+  void onScroll(u32);
 };

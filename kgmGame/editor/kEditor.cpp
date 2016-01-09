@@ -410,9 +410,8 @@ bool kEditor::mapOpen(kgmString s)
     if(mnode.typ == kgmGameMap::NodeMsh)
     {
       oquered++;
-      kgmVisual* visual = new kgmVisual();
-      visual->set((kgmMesh*)mnode.obj);
-      node = new kNode(visual);
+      node = new kNode(new kgmVisual());
+      node->vis->set((kgmMesh*)mnode.obj);
 
       node->nam = mnode.nam;
       node->lnk = mnode.lnk;
@@ -455,7 +454,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
       oquered++;
-      node = new kNode(kgm_ptr<kgmActor>((kgmActor*)mnode.obj));
+      node = new kNode((kgmActor*)mnode.obj);
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
@@ -472,7 +471,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeSns)
     {
       oquered++;
-      node = new kNode(kgm_ptr<kgmSensor>((kgmSensor*)mnode.obj));
+      node = new kNode((kgmSensor*)mnode.obj);
 
       node->bnd = mnode.bnd;
       node->nam = mnode.nam;
@@ -489,7 +488,7 @@ bool kEditor::mapOpen(kgmString s)
     else if(mnode.typ == kgmGameMap::NodeTrg)
     {
       oquered++;
-      node = new kNode(kgm_ptr<kgmTrigger>((kgmTrigger*)mnode.obj));
+      node = new kNode((kgmTrigger*)mnode.obj);
 
       node->nam = mnode.nam;
       node->bnd = mnode.bnd;
