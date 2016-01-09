@@ -9,10 +9,11 @@
 #include "../kgmGraphics/kgmLight.h"
 #include "../kgmGraphics/kgmMaterial.h"
 
+#include "kgmUnit.h"
 #include "kgmActor.h"
+#include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
-#include "kgmUnit.h"
 
 class kgmIGame;
 
@@ -30,13 +31,15 @@ public:
   {
     NodeNone,
     NodeCam,
-    NodeMsh,
+    NodeVis,
     NodeMtl,
     NodeLgt,
-    NodeObj,
+    NodeUnt,
+    NodeEff,
     NodeAct,
     NodeSns,
-    NodeTrg
+    NodeTrg,
+    NodeObs
   };
 
   struct Node

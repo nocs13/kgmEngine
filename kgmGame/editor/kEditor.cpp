@@ -407,11 +407,10 @@ bool kEditor::mapOpen(kgmString s)
 
   while(mnode.obj)
   {
-    if(mnode.typ == kgmGameMap::NodeMsh)
+    if(mnode.typ == kgmGameMap::NodeVis)
     {
       oquered++;
-      node = new kNode(new kgmVisual());
-      node->vis->set((kgmMesh*)mnode.obj);
+      node = new kNode((kgmVisual*)mnode.obj);
 
       node->nam = mnode.nam;
       node->lnk = mnode.lnk;
@@ -451,6 +450,22 @@ bool kEditor::mapOpen(kgmString s)
 
       game->getRender()->camera().update();
     }
+    else if(mnode.typ == kgmGameMap::NodeUnt)
+    {
+      oquered++;
+      node = new kNode((kgmUnit*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
+      node->lock = mnode.lck;
+
+      add(node);
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
+    }
     else if(mnode.typ == kgmGameMap::NodeAct)
     {
       oquered++;
@@ -462,6 +477,22 @@ bool kEditor::mapOpen(kgmString s)
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
       node->ini = mnode.ini;
+      node->lock = mnode.lck;
+
+      add(node);
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
+    }
+    else if(mnode.typ == kgmGameMap::NodeEff)
+    {
+      oquered++;
+      node = new kNode((kgmEffect*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
       add(node);
@@ -489,6 +520,22 @@ bool kEditor::mapOpen(kgmString s)
     {
       oquered++;
       node = new kNode((kgmTrigger*)mnode.obj);
+
+      node->nam = mnode.nam;
+      node->bnd = mnode.bnd;
+      node->col = mnode.col;
+      node->shp = mnode.shp;
+      node->bnd = mnode.bnd;
+      node->lock = mnode.lck;
+
+      add(node);
+      node->setPosition(mnode.pos);
+      node->setRotation(mnode.rot);
+    }
+    else if(mnode.typ == kgmGameMap::NodeObs)
+    {
+      oquered++;
+      node = new kNode((kgmObstacle*)mnode.obj);
 
       node->nam = mnode.nam;
       node->bnd = mnode.bnd;
