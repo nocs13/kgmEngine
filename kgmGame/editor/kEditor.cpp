@@ -575,15 +575,15 @@ bool kEditor::mapSave(kgmString s)
 
   map.open(xml);
 
-  kgmList<kNode*> units;
-  kgmList<kNode*> meshes;
   kgmList<kNode*> lights;
+  kgmList<kNode*> visuals;
+
+  kgmList<kNode*> units;
   kgmList<kNode*> actors;
   kgmList<kNode*> effects;
   kgmList<kNode*> sensors;
   kgmList<kNode*> triggers;
   kgmList<kNode*> obstacles;
-  kgmList<kNode*> materials;
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
@@ -599,7 +599,7 @@ bool kEditor::mapSave(kgmString s)
       actors.add(*i);
       continue;
     case kNode::VISUAL:
-      meshes.add(*i);
+      visuals.add(*i);
       continue;
     case kNode::EFFECT:
       effects.add(*i);
@@ -642,7 +642,7 @@ bool kEditor::mapSave(kgmString s)
     map.addLight(node);
   }
 
-  for(kgmList<kNode*>::iterator i = meshes.begin(); i != meshes.end(); ++i)
+  for(kgmList<kNode*>::iterator i = visuals.begin(); i != visuals.end(); ++i)
   {
     kgmGameMap::Node node;
 
@@ -757,15 +757,14 @@ bool kEditor::mapSave(kgmString s)
     map.addObstacle(node);
   }
 
-  materials.clear();
   obstacles.clear();
   triggers.clear();
   sensors.clear();
   effects.clear();
   actors.clear();
   units.clear();
+  visuals.clear();
   lights.clear();
-  meshes.clear();
 
   FILE* f = fopen(s.data(), "w");
 

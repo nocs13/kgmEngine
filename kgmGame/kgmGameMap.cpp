@@ -99,9 +99,26 @@ bool kgmGameMap::addVisual(Node n)
 
     node->m_name = "kgmVisual";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("mesh", n.lnk));
+    //node->m_attributes.add(new kgmXml::Attribute("mesh", n.lnk));
 
-    if(n.mtl)
+    kgmVisual* vis = (kgmVisual*)n.obj;
+
+    switch(vis->type())
+    {
+    case kgmVisual::TypeMesh:
+      snode = new kgmXml::Node(node);
+      snode->m_name = "Mesh";
+      snode->m_attributes.add(new kgmXml::Attribute("id", vis->getMesh()->getMesh()->m_id));
+      break;
+    case kgmVisual::TypeParticles:
+      snode = new kgmXml::Node(node);
+      snode->m_name = "Particles";
+      break;
+    }
+
+    kgmMaterial* mtl = vis->getMaterial();
+
+    if(mtl)
     {
       kgmXml::Node* tnode = null;
 
@@ -110,41 +127,41 @@ bool kgmGameMap::addVisual(Node n)
 
       snode = new kgmXml::Node(node);
       snode->m_name = "Material";
-      snode->m_attributes.add(new kgmXml::Attribute("shininess", kgmConvert::toString(n.mtl->m_shininess)));
-      snode->m_attributes.add(new kgmXml::Attribute("transparency", kgmConvert::toString(n.mtl->m_transparency)));
+      snode->m_attributes.add(new kgmXml::Attribute("shininess", kgmConvert::toString(mtl->m_shininess)));
+      snode->m_attributes.add(new kgmXml::Attribute("transparency", kgmConvert::toString(mtl->m_transparency)));
 
-      n.mtl->m_color.get(color[0], color[1], color[2], color[3]);
+      mtl->m_color.get(color[0], color[1], color[2], color[3]);
       value = kgmConvert::toString((int)color[0]) + " " + kgmConvert::toString((int)color[1]) + " " +
               kgmConvert::toString((int)color[2]) + " " + kgmConvert::toString((int)color[3]);
 
       snode->m_attributes.add(new kgmXml::Attribute("color", value));
 
-      if(n.mtl->getShader())
+      if(mtl->getShader())
       {
         tnode = new kgmXml::Node(snode);
         tnode->m_name = "Shader";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", n.mtl->getShader()->m_id));
+        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getShader()->m_id));
       }
 
-      if(n.mtl->getTexColor())
+      if(mtl->getTexColor())
       {
         tnode = new kgmXml::Node(snode);
         tnode->m_name = "TexColor";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", n.mtl->getTexColor()->m_id));
+        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexColor()->m_id));
       }
 
-      if(n.mtl->getTexNormal())
+      if(mtl->getTexNormal())
       {
         tnode = new kgmXml::Node(snode);
         tnode->m_name = "TexNormal";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", n.mtl->getTexNormal()->m_id));
+        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexNormal()->m_id));
       }
 
-      if(n.mtl->getTexSpecular())
+      if(mtl->getTexSpecular())
       {
         tnode = new kgmXml::Node(snode);
         tnode->m_name = "TexSpecular";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", n.mtl->getTexSpecular()->m_id));
+        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexSpecular()->m_id));
       }
     }
 
@@ -396,15 +413,10 @@ kgmGameMap::Node kgmGameMap::next()
 
         kgmString id, ln;
         m_xml->attribute("name", id);
-        m_xml->attribute("mesh", ln);
-        kgmMesh* mesh = m_game->getResources()->getMesh(ln);
 
         kgmVisual* vis = new kgmVisual();
 
-        vis->set(mesh);
-
         node.nam = id;
-        node.lnk = ln;
         node.obj = vis;
 
         node.typ = NodeVis;
@@ -610,6 +622,18 @@ kgmGameMap::Node kgmGameMap::next()
         sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
 
         q.angles(node.rot);
+      }
+      else if(id == "Mesh")
+      {
+        kgmString link;
+
+        m_xml->attribute("id", link);
+
+        if(node.typ == NodeVis && ((kgmVisual*)node.obj)->type() == kgmVisual::TypeNone)
+        {
+          ((kgmVisual*)node.obj)->set(m_game->getResources()->getMesh(link));
+        }
+
       }
       else if(id == "Shader")
       {
