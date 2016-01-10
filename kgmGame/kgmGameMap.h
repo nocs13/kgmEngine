@@ -63,6 +63,8 @@ public:
     bool       hdn;  // node is hidden
     bool       lck;  //locked. for editor only
 
+    float fov;
+
     Node()
     {
       typ = NodeNone;

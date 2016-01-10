@@ -368,13 +368,10 @@ kgmGameMap::Node kgmGameMap::next()
 
         kgmString id, fov;
         m_xml->attribute("name", id);
-        m_xml->attribute("fov", fov);
-
-        node.obj = (kgmObject*)new kgmCamera();
+        m_xml->attribute("fov",  fov);
 
         node.nam = id;
-        node.bnd = box3(-1, -1, -1, 1, 1, 1);
-        ((kgmCamera*)node.obj)->mFov = kgmConvert::toDouble(fov);
+        node.fov = kgmConvert::toDouble(fov);
 
         node.typ = NodeCam;
         closed = false;
@@ -604,6 +601,8 @@ kgmGameMap::Node kgmGameMap::next()
         vec3 v;
         m_xml->attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        node.rot = v;
       }
       else if(id == "Quaternion")
       {

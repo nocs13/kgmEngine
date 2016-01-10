@@ -407,7 +407,7 @@ bool kEditor::mapOpen(kgmString s)
 
   kgmGameMap::Node mnode = map.next();
 
-  while(mnode.obj)
+  while(mnode.typ != kgmGameMap::NodeNone)
   {
     if(mnode.typ == kgmGameMap::NodeVis)
     {
@@ -446,9 +446,9 @@ bool kEditor::mapOpen(kgmString s)
     }
     else if(mnode.typ == kgmGameMap::NodeCam)
     {
-      game->getRender()->camera().mPos = ((kgmCamera*)mnode.obj)->mPos;
-      game->getRender()->camera().mDir = ((kgmCamera*)mnode.obj)->mDir;
-      game->getRender()->camera().mFov = ((kgmCamera*)mnode.obj)->mFov;
+      game->getRender()->camera().mPos = mnode.pos;
+      game->getRender()->camera().mDir = mnode.rot;
+      game->getRender()->camera().mFov = mnode.fov;
 
       game->getRender()->camera().update();
     }
