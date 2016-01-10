@@ -802,6 +802,9 @@ bool kEditor::addMesh(kgmString name)
   selected = new kNode(visual);
   selected->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
   selected->lnk = name;
+  selected->mtl = new kgmMaterial();
+
+  visual->set(selected->mtl);
 
   add(selected);
 

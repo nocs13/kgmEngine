@@ -441,7 +441,10 @@ void kgmGraphics::render()
 
 #ifndef NO_SHADERS
 
-    render(shaders[kgmShader_TypeAmbient]);
+    if(mtl->m_shader)
+      render(mtl->m_shader);
+    else
+      render(shaders[kgmShader_TypeAmbient]);
 
 #endif
 
@@ -1048,17 +1051,23 @@ void kgmGraphics::render(kgmMaterial* m){
   g_fShine = m->m_shininess;
   g_fAlpha = 1.0f / (1.0f + (float)m->m_transparency);
 
+  if(m->m_transparency != 0)
+  {
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_dstialpha);
+    m_alpha = true;
+  }
+  else if(m->m_blend)
+  {
+    gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
+    m_alpha = true;
+  }
+
   if(!m->m_depth)
   {
     gc->gcDepth(false, false, gccmp_less);
     m_depth = false;
   }
 
-  if(m->m_blend)
-  {
-    gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
-    m_alpha = true;
-  }
 
   if(m->m_2side)
   {

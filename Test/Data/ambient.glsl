@@ -27,6 +27,7 @@ precision lowp float;
 #endif
 
 uniform sampler2D g_txColor;
+uniform float     g_fAlpha;
 
 varying vec3   V;
 varying vec2   Texcoord;
@@ -36,7 +37,7 @@ void main( void )
 {
  vec4 color = texture2D(g_txColor, Texcoord);
 
- vec4  col = vec4(color.xyz * I, color.w);
+ vec4  col = vec4(color.xyz * I, color.w * g_fAlpha);
 
  gl_FragColor = col;
 }

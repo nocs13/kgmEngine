@@ -79,6 +79,8 @@ public:
 
   kgmIcon*   icn = null;
 
+  kgmMaterial* mtl = null;
+
 public:
   kNode()
   {
@@ -88,6 +90,7 @@ public:
     lock = false;
 
     icn = null;
+    mtl = null;
   }
 
   kNode(kgmVisual* v)
@@ -218,8 +221,9 @@ public:
 
   ~kNode()
   {
-    delete icn;
     delete obj;
+    delete icn;
+    delete mtl;
   }
 
   kgmObject* clone()
