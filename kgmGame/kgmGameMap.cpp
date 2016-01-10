@@ -551,11 +551,10 @@ kgmGameMap::Node kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        kgmTrigger* obs= new kgmTrigger(m_game);
+        kgmObstacle* obs= new kgmObstacle();
 
         node.obj = obs;
         node.nam = id;
-        node.bnd = box3(-1, -1, -1, 1, 1, 1);
 
         node.typ = NodeObs;
         closed = false;
@@ -713,7 +712,7 @@ kgmGameMap::Node kgmGameMap::next()
       }
       else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect") ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
-              (id == "kgmUnit") || (id == "kgmCamera"))
+              (id == "kgmUnit") || (id == "kgmCamera") || (id == "kgmObstacle"))
       {
         closed = true;
 
