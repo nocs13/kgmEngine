@@ -13,10 +13,10 @@ kgmMaterial::kgmMaterial()
   m_shininess    = 1.0;
   m_transparency = 0.0;
 
-  m_alpha        = false;
-  m_2side        = false;
-  m_blend        = false;
-  m_depth        = true;
+  m_alpha  = false;
+  m_blend  = false;
+  m_depth  = true;
+  m_cull   = true;
 }
 
 kgmMaterial::~kgmMaterial()

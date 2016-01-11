@@ -56,9 +56,6 @@ private:
   u32  oquered;
   u32  view_mode;
 
-  //kViewOptions* vop;
-
-
   kgmList<kNode*> nodes;
 
   kNode* selected;
@@ -80,6 +77,8 @@ public:
   void select(kgmString name);
 
   kgmRay3d<float> getPointRay(int x, int y);
+
+  kgmList<kNode*>& getNodes() { return nodes; }
 
   __stdcall bool fdMapSave(kFileDialog*);
   __stdcall bool fdMapOpen(kFileDialog*);
@@ -115,14 +114,18 @@ public:
   __stdcall void onMapNew();
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
+  __stdcall void onAddText();
   __stdcall void onAddMesh();
   __stdcall void onAddUnit();
   __stdcall void onAddLight();
   __stdcall void onAddActor();
   __stdcall void onAddEffect();
+  __stdcall void onAddSprite();
   __stdcall void onAddSensor();
   __stdcall void onAddTrigger();
   __stdcall void onAddObstacle();
+  __stdcall void onAddMaterial();
+  __stdcall void onAddParticles();
   __stdcall void onViewObjects();
   __stdcall void onViewPerspective();
   __stdcall void onViewFront();

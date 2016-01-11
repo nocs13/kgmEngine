@@ -203,7 +203,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   m_visual  = new kgmVisual();
 
   material = new kgmMaterial();
-  material->m_2side = true;
+  material->m_cull  = false;
   material->m_depth = false;
   material->m_blend = true;
   material->m_srcblend = gcblend_one;

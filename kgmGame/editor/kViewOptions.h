@@ -87,15 +87,15 @@ public:
   __stdcall void onTransparency(u32 s);
 };
 
-class kViewOptionsForVisual : public kViewOptionsForMaterial
+class kViewOptionsForVisual : public kViewOptions
 {
+  Slot<kViewOptionsForVisual, int> slotSelectMaterial;
+
 public:
   kViewOptionsForVisual(kNode* n, int x, int y, int w, int h);
 
-  __stdcall void onSelectMaterial();
-  __stdcall void onSelectedMaterial();
-  __stdcall void onSelectShader();
-  __stdcall void onSelectedShader();
+  __stdcall void onShowMaterials(int);
+  __stdcall void onSelectMaterial(kgmString);
 };
 
 class kViewOptionsForLight : public kViewOptions

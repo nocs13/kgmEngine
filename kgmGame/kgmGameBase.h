@@ -69,10 +69,13 @@ protected:
 
   kEditor* editor = null;
 
+public:
   kEditor* getEditor()
   {
     return editor;
   }
+
+private:
 #endif
 
 public:

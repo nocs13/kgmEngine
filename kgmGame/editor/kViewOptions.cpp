@@ -161,7 +161,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord = 1;
 
   y_coord += 23;
-  kgmMaterial* mtl = n->getMaterial();
+  kgmMaterial* mtl = n->mtl;
 
   if(!mtl)
     return;
@@ -244,19 +244,19 @@ void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
   switch (mode)
   {
     case Mode_Shader:
-      this->node->getMaterial()->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
+      this->node->mtl->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
       guiTextShader->setText(fd->getFile());
       break;
     case Mode_Color:
-      this->node->getMaterial()->setTexColor(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      this->node->mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
       guiTextTexColor->setText(fd->getFile());
       break;
     case Mode_Normal:
-      this->node->getMaterial()->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      this->node->mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
       guiTextTexNormal->setText(fd->getFile());
       break;
     case Mode_Specular:
-      this->node->getMaterial()->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      this->node->mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
       guiTextTexSpecular->setText(fd->getFile());
       break;
     default:
@@ -324,7 +324,7 @@ void kViewOptionsForMaterial::onSelectTexSpecular(int)
 
 void kViewOptionsForMaterial::onShininess(u32 s)
 {
-  kgmMaterial* mtl = node->getMaterial();
+  kgmMaterial* mtl = node->mtl;
 
   if(!mtl)
     return;
@@ -334,7 +334,7 @@ void kViewOptionsForMaterial::onShininess(u32 s)
 
 void kViewOptionsForMaterial::onTransparency(u32 s)
 {
-  kgmMaterial* mtl = node->getMaterial();
+  kgmMaterial* mtl = node->mtl;
 
   if(!mtl)
     return;
@@ -343,8 +343,59 @@ void kViewOptionsForMaterial::onTransparency(u32 s)
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)
-:kViewOptionsForMaterial(n, x, y, w, h)
+:kViewOptions(n, x, y, w, h)
 {
+  kgmGui* tvisual = tab->addTab("Visual");
+  y_coord = 1;
+
+  if(n->vis->type() == kgmVisual::TypeMesh)
+  {
+    kgmGui* g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+    g->setText("Material");
+    g = new kgmGuiText(tvisual, 51, y_coord, 70, 20);
+
+    kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
+    btn->setText("select");
+    slotSelectMaterial.connect(this, &kViewOptionsForVisual::onShowMaterials, &btn->sigClick);
+
+    y_coord += 23;
+  }
+}
+
+void kViewOptionsForVisual::onShowMaterials(int s)
+{
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForVisual::onSelectMaterial));
+
+  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+
+  kgmList<kNode*>& nodes = editor->getNodes();
+
+  for(int i = 0; i < nodes.length(); i++)
+    if (nodes[i]->typ == kNode::MATERIAL)
+      vo->addItem(nodes[i]->nam);
+
+  kgmIGame::getGame()->guiAdd(vo);
+}
+
+void kViewOptionsForVisual::onSelectMaterial(kgmString id)
+{
+  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+
+  kgmList<kNode*>& nodes = editor->getNodes();
+
+  for(int i = 0; i < nodes.length(); i++)
+  {
+    if (nodes[i]->typ == kNode::MATERIAL)
+    {
+      if (nodes[i]->nam == id)
+      {
+        node->vis->set(nodes[i]->mtl);
+
+        break;
+      }
+    }
+  }
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
@@ -784,14 +835,12 @@ void kViewOptionsForObstacle::onSelectPolygons()
   fd->showHidden(false);
   fd->show();
   fd->setFilter("plg");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForVisual::onSelectFailed));
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
 void kViewOptionsForObstacle::onSelectedPolygons()
 {
-  node->setConvex(fd->getFile());
   guiCnvText->setText(fd->getFile());
 
   fd->erase();

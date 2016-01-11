@@ -155,9 +155,9 @@ public:
     m_visual = new kgmVisual();
 
     mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
-    mtl->m_2side = true;
-    mtl->m_blend = true;
+    mtl->m_cull  = false;
     mtl->m_depth = false;
+    mtl->m_blend = true;
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_one;
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));

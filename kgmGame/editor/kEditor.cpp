@@ -30,6 +30,7 @@ enum MENUEVENT
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
   ME_ADD_OBSTACLE,
+  ME_ADD_MATERIAL,
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
@@ -90,6 +91,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
+    item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMaterial));
     item = menu->add("Run");
     item->add(ME_RUN_PLAY, "Play", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunPlay));
     item->add(ME_RUN_STOP, "Stop", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunStop));
@@ -420,7 +422,6 @@ bool kEditor::mapOpen(kgmString s)
       node->col = mnode.col;
       node->shp = mnode.shp;
       node->bnd = mnode.bnd;
-      node->setMaterial(mnode.mtl);
       node->lock = mnode.lck;
 
       add(node);
@@ -451,6 +452,16 @@ bool kEditor::mapOpen(kgmString s)
       game->getRender()->camera().mFov = mnode.fov;
 
       game->getRender()->camera().update();
+    }
+    if(mnode.typ == kgmGameMap::NodeMtl)
+    {
+      oquered++;
+      node = new kNode((kgmMaterial*)mnode.obj);
+
+      node->nam  = mnode.nam;
+      node->lock = true;
+
+      add(node);
     }
     else if(mnode.typ == kgmGameMap::NodeUnt)
     {
@@ -584,6 +595,7 @@ bool kEditor::mapSave(kgmString s)
   kgmList<kNode*> sensors;
   kgmList<kNode*> triggers;
   kgmList<kNode*> obstacles;
+  kgmList<kNode*> materials;
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
@@ -613,6 +625,9 @@ bool kEditor::mapSave(kgmString s)
     case kNode::OBSTACLE:
       obstacles.add(*i);
       continue;
+    case kNode::MATERIAL:
+      materials.add(*i);
+      continue;
     default:
       continue;
     }
@@ -626,6 +641,16 @@ bool kEditor::mapSave(kgmString s)
   node.nam = "main_camera";
 
   map.addCamera(node);
+
+  for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
+  {
+    kgmGameMap::Node node;
+
+    node.obj = (*i)->mtl;
+    node.nam = (*i)->nam;
+
+    map.addMaterial(node);
+  }
 
   for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
   {
@@ -656,8 +681,6 @@ bool kEditor::mapSave(kgmString s)
     node.col = (*i)->col;
     node.shp = (*i)->shp;
     node.lck = (*i)->lock;
-
-    node.mtl = (*i)->getMaterial();
 
     map.addVisual(node);
   }
@@ -802,9 +825,6 @@ bool kEditor::addMesh(kgmString name)
   selected = new kNode(visual);
   selected->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
   selected->lnk = name;
-  selected->mtl = new kgmMaterial();
-
-  visual->set(selected->mtl);
 
   add(selected);
 
@@ -1357,6 +1377,9 @@ void kEditor::onEditOptions()
   case kNode::OBSTACLE:
     vop = new kViewOptionsForObstacle(selected, 50, 50, 250, 300);
     break;
+  case kNode::MATERIAL:
+    vop = new kViewOptionsForMaterial(selected, 50, 50, 250, 300);
+    break;
   }
 
   if(vop)
@@ -1476,6 +1499,17 @@ void kEditor::onAddObstacle()
   selected->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
 
   add(selected);
+}
+
+void kEditor::onAddMaterial()
+{
+  kNode* node = new kNode(new kgmMaterial());
+
+  node->nam = kgmString("Material_") + kgmConvert::toString((s32)(++oquered));
+
+  node->lock = true;
+
+  add(node);
 }
 
 void kEditor::onRunPlay()

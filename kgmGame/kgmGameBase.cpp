@@ -994,7 +994,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       }
       else if(id == "Cull")
       {
-        mtl->m_2side = true;
+        mtl->m_cull = true;
       }
       else if(id == "map_color")
       {

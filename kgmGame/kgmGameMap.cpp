@@ -348,6 +348,77 @@ bool kgmGameMap::addObstacle(Node n)
   return true;
 }
 
+bool kgmGameMap::addMaterial(Node n)
+{
+  if(m_type == OpenRead || !n.obj)
+    return false;
+
+  if(!m_xml || m_xml->m_node->m_name != "kgm")
+    return false;
+
+  kgmMaterial* mtl = (kgmMaterial*)n.obj;
+
+  kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
+
+  node->m_name = "kgmMaterial";
+  node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
+
+  kgmXml::Node* snode = new kgmXml::Node(node);
+  snode->m_name = "Shininess";
+  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->m_shininess)));
+
+  snode = new kgmXml::Node(node);
+  snode->m_name = "Transparency";
+  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->m_transparency)));
+
+  if(mtl->m_alpha)
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Alpha";
+    snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
+  }
+
+  if(!mtl->m_cull)
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Cull";
+    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
+  }
+
+  if(mtl->getShader())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Shader";
+    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getShader()->m_id));
+  }
+
+  if(mtl->hasTexColor())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Texture";
+    snode->m_attributes.add(new kgmXml::Attribute("type", "color"));
+    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexColor()->m_id));
+  }
+
+  if(mtl->hasTexNormal())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Texture";
+    snode->m_attributes.add(new kgmXml::Attribute("type", "normal"));
+    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexNormal()->m_id));
+  }
+
+  if(mtl->hasTexSpecular())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Texture";
+    snode->m_attributes.add(new kgmXml::Attribute("type", "specular"));
+    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexSpecular()->m_id));
+  }
+
+  return true;
+}
+
 kgmGameMap::Node kgmGameMap::next()
 {
   Node node;
@@ -571,17 +642,20 @@ kgmGameMap::Node kgmGameMap::next()
         node.typ = NodeObs;
         closed = false;
       }
-      else if(id == "Material")
+      else if(id == "kgmMaterial")
       {
-        kgmString value;
+        ntype = "obstacle";
 
-        node.mtl = new kgmMaterial();
+        kgmString id;
+        m_xml->attribute("name", id);
 
-        m_xml->attribute("shininess", value);
-        node.mtl->m_shininess = kgmConvert::toDouble(value);
+        kgmMaterial* mtl= new kgmMaterial();
 
-        m_xml->attribute("transparency", value);
-        node.mtl->m_transparency = kgmConvert::toDouble(value);
+        node.obj = mtl;
+        node.nam = id;
+
+        node.typ = NodeMtl;
+        closed = false;
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -637,35 +711,43 @@ kgmGameMap::Node kgmGameMap::next()
       }
       else if(id == "Shader")
       {
-        value.clear();
-        m_xml->attribute("value", value);
+        kgmString id;
 
-        if(node.mtl)
-          node.mtl->setShader(kgmIGame::getGame()->getResources()->getShader(value));
+        m_xml->attribute("id", id);
+
+        ((kgmMaterial*)node.obj)->setShader(kgmIGame::getGame()->getResources()->getShader(id));
       }
-      else if(id == "TexColor")
+      else if(id == "Texture")
       {
-        value.clear();
-        m_xml->attribute("value", value);
+        kgmString type, id;
 
-        if(node.mtl)
-          node.mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(value));
+        m_xml->attribute("id", id);
+        m_xml->attribute("type", type);
+
+        if(type == "color")
+          ((kgmMaterial*)node.obj)->setTexColor(kgmIGame::getGame()->getResources()->getTexture(id));
+
+        if(type == "normal")
+          ((kgmMaterial*)node.obj)->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(id));
+
+        if(type == "specular")
+          ((kgmMaterial*)node.obj)->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(id));
       }
-      else if(id == "TexNormal")
+      else if(id == "Shininess")
       {
-        value.clear();
+        kgmString value;
+
         m_xml->attribute("value", value);
 
-        if(node.mtl)
-          node.mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(value));
+        ((kgmMaterial*)node.obj)->m_shininess = kgmConvert::toDouble(value);
       }
-      else if(id == "TexSpecular")
+      else if(id == "Transparency")
       {
-        value.clear();
+        kgmString value;
+
         m_xml->attribute("value", value);
 
-        if(node.mtl)
-          node.mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(value));
+        ((kgmMaterial*)node.obj)->m_transparency = kgmConvert::toDouble(value);
       }
       else if(id == "Collision")
       {

@@ -46,12 +46,11 @@ public:
   {
     NodeType typ = NodeNone;
 
-    kgmObject*   obj = null;
-    kgmMaterial* mtl = null;
+    kgmObject*  obj = null;
 
-    vec3       pos;
-    vec3       rot;
-    box3       bnd;
+    vec3  pos;
+    vec3  rot;
+    box3  bnd;
 
     kgmString  nam;
     kgmString  lnk;
@@ -59,17 +58,16 @@ public:
     kgmString  shp;
     kgmString  ini;
 
-    bool       col;  //collision type
-    bool       hdn;  // node is hidden
-    bool       lck;  //locked. for editor only
+    bool  col;  //collision type
+    bool  hdn;  // node is hidden
+    bool  lck;  //locked. for editor only
 
-    float fov;
+    float  fov;
 
     Node()
     {
       typ = NodeNone;
       obj = null;
-      mtl = null;
     }
   };
 
@@ -105,7 +103,7 @@ public:
   bool addSensor(Node n);
   bool addTrigger(Node n);
   bool addObstacle(Node n);
-
+  bool addMaterial(Node n);
 
   Node next();
 

@@ -1069,7 +1069,7 @@ void kgmGraphics::render(kgmMaterial* m){
   }
 
 
-  if(m->m_2side)
+  if(!m->m_cull)
   {
     gc->gcCull(0);
     m_culling = false;

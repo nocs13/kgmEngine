@@ -46,7 +46,8 @@ public:
     EFFECT,
     SENSOR,
     TRIGGER,
-    OBSTACLE
+    OBSTACLE,
+    MATERIAL
   };
 
   union
@@ -59,8 +60,9 @@ public:
     kgmSensor*    sns;
     kgmTrigger*   trg;
     kgmObstacle*  obs;
+    kgmMaterial*  mtl;
 
-    kgmObject*  obj = null;
+    kgmObject*    obj = null;
   };
 
   Type typ;
@@ -78,8 +80,6 @@ public:
   bool col, lock;
 
   kgmIcon*   icn = null;
-
-  kgmMaterial* mtl = null;
 
 public:
   kNode()
@@ -173,6 +173,14 @@ public:
     icn = new kgmIcon(kgmIGame::getGame()->getResources()->getTexture((char*) OBSTACLE_ICO));
   }
 
+  kNode(kgmMaterial* m)
+  {
+    typ = MATERIAL;
+    mtl = m;
+    col = true;
+    lock = false;
+  }
+
   kNode(const kNode& n)
   {
     typ = n.typ;
@@ -223,7 +231,6 @@ public:
   {
     delete obj;
     delete icn;
-    delete mtl;
   }
 
   kgmObject* clone()
@@ -270,6 +277,9 @@ public:
       case OBSTACLE:
         n->obs = (kgmObstacle*) obs->clone();
         break;
+      case MATERIAL:
+        n->mtl = (kgmMaterial*) obs->clone();
+        break;
       };
     }
 
@@ -283,10 +293,6 @@ public:
   vec3 getRotation();
   void setPosition(vec3 v);
   void setRotation(vec3 r);
-  void setConvex(kgmString s);
-
-  void setMaterial(kgmMaterial* m);
-  kgmMaterial* getMaterial();
 };
 
 }

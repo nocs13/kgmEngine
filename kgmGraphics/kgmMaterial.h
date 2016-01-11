@@ -76,10 +76,10 @@ public:
 
   kgmShader*  m_shader = null;
 
-  u32         m_flags;            //render specisific flags enable/disable
+  u32         m_flags;
 
+  bool        m_cull;
   bool        m_alpha;
-  bool        m_2side;
   bool        m_blend;
   bool        m_depth;
 

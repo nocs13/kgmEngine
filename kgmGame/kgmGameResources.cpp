@@ -88,6 +88,9 @@ void kgmGameResources::add(kgmResource *r)
 
 kgmResource* kgmGameResources::get(char* id)
 {
+  if(!id)
+    return null;
+
   for(int i = 0; i < m_resources.size(); i++)
   {
     kgmResource* r = m_resources[i];
@@ -155,6 +158,9 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
 {
   kgmString path;
   int   i = 0;
+
+  if(!id)
+    return false;
 
 #ifdef WIN32
   const kgmString delim((const char*)"\\", 1);
