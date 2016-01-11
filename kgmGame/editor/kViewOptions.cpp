@@ -208,7 +208,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->show();
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(100);
-  ((kgmGuiScroll*)g)->setPosition(mtl->m_shininess - 1);
+  ((kgmGuiScroll*)g)->setPosition(mtl->shininess() - 1);
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onShininess));
 
   y_coord += 23;
@@ -218,7 +218,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->show();
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(100);
-  ((kgmGuiScroll*)g)->setPosition(mtl->m_transparency);
+  ((kgmGuiScroll*)g)->setPosition(mtl->transparency());
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
@@ -329,7 +329,7 @@ void kViewOptionsForMaterial::onShininess(u32 s)
   if(!mtl)
     return;
 
-  mtl->m_shininess = 1.0f + (float)s;
+  mtl->shininess(1.0f + (float)s);
 }
 
 void kViewOptionsForMaterial::onTransparency(u32 s)
@@ -339,7 +339,7 @@ void kViewOptionsForMaterial::onTransparency(u32 s)
   if(!mtl)
     return;
 
-  mtl->m_transparency = (float)s;
+  mtl->transparency((float)s);
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)

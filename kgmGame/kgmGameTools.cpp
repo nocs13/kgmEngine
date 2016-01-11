@@ -12,6 +12,7 @@
 #include "../kgmGraphics/kgmParticles.h"
 
 #include "kgmActor.h"
+#include "kgmGameShaders.h"
 
 static char str_buf[1024];
 
@@ -420,15 +421,20 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
     mem_vsh[s.length()] = '\0';
   }
 
-  kgmShader* shader = new kgmShader(gc);
+  kgmString vsource, psource;
 
-  shader->m_shader = gc->gcGenShader((const char*)mem_vsh, (const char*)mem_fsh);
+  vsource = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
+  psource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
 
   if(mem_vsh)
     free(mem_vsh);
 
   if(mem_fsh)
     free(mem_fsh);
+
+  kgmShader* shader = new kgmShader(gc);
+
+  shader->m_shader = gc->gcGenShader((const char*)vsource, (const char*)psource);
 
   if(!shader->m_shader)
   {
@@ -440,7 +446,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   return shader;
 }
 
-kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmXml& xml){
+/*kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmXml& xml){
   char* mem_vsh = 0;
   char* mem_fsh = 0;
 
@@ -467,7 +473,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmXml& xml){
   }
 
   return shader;
-}
+}*/
 
 kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
   kgmMaterial* mtl = 0;
@@ -545,7 +551,6 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
         float a;
 
         sscanf(val, "%f", &a);
-        mtl->m_transparency = 1.0f - a;
 
         if(a < 1.0f)
         {

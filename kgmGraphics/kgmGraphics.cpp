@@ -1048,15 +1048,16 @@ void kgmGraphics::render(kgmMaterial* m){
     return;
   }
 
-  g_fShine = m->m_shininess;
-  g_fAlpha = 1.0f / (1.0f + (float)m->m_transparency);
+  g_fShine = m->shininess();
+  g_fAlpha = 1.0f / (1.0f + (float)m->transparency());
 
-  if(m->m_transparency != 0)
+  if(m->alpha())
   {
     gc->gcBlend(true, gcblend_srcalpha, gcblend_dstialpha);
     m_alpha = true;
   }
-  else if(m->m_blend)
+
+  if(m->m_blend)
   {
     gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
     m_alpha = true;

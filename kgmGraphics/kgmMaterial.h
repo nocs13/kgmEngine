@@ -70,9 +70,10 @@ protected:
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
 
+  float  m_shininess, m_transparency;
+
 public:
   Color  m_color, m_specular, m_emision;
-  float  m_shininess, m_transparency;
 
   kgmShader*  m_shader = null;
 
@@ -111,6 +112,45 @@ public:
   kgmShader* getShader() const
   {
     return m_shader;
+  }
+
+  float transparency() const
+  {
+    return m_transparency;
+  }
+
+  void transparency(float t)
+  {
+    m_transparency = t;
+
+    if(t > 0.0)
+      m_alpha = true;
+  }
+
+  float shininess() const
+  {
+    return m_shininess;
+  }
+
+  void shininess(float s)
+  {
+    m_shininess = s;
+  }
+
+  bool alpha() const
+  {
+    return m_alpha;
+  }
+
+  void alpha(bool a)
+  {
+    if(m_alpha == a)
+      return;
+
+    if(!a && m_transparency > 0.0)
+      return;
+
+    m_alpha = a;
   }
 };
 

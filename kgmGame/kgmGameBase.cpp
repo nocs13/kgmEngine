@@ -984,7 +984,6 @@ bool kgmGameBase::loadXml(kgmString& path)
           float a;
 
           sscanf(data, "%f", &a);
-          mtl->m_transparency = 1.0f - a;
 
           if(a < 1.0f)
           {

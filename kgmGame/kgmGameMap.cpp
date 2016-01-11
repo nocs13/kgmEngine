@@ -127,8 +127,8 @@ bool kgmGameMap::addVisual(Node n)
 
       snode = new kgmXml::Node(node);
       snode->m_name = "Material";
-      snode->m_attributes.add(new kgmXml::Attribute("shininess", kgmConvert::toString(mtl->m_shininess)));
-      snode->m_attributes.add(new kgmXml::Attribute("transparency", kgmConvert::toString(mtl->m_transparency)));
+      snode->m_attributes.add(new kgmXml::Attribute("shininess", kgmConvert::toString(mtl->shininess())));
+      snode->m_attributes.add(new kgmXml::Attribute("transparency", kgmConvert::toString(mtl->transparency())));
 
       mtl->m_color.get(color[0], color[1], color[2], color[3]);
       value = kgmConvert::toString((int)color[0]) + " " + kgmConvert::toString((int)color[1]) + " " +
@@ -365,11 +365,11 @@ bool kgmGameMap::addMaterial(Node n)
 
   kgmXml::Node* snode = new kgmXml::Node(node);
   snode->m_name = "Shininess";
-  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->m_shininess)));
+  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->shininess())));
 
   snode = new kgmXml::Node(node);
   snode->m_name = "Transparency";
-  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->m_transparency)));
+  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->transparency())));
 
   if(mtl->m_alpha)
   {
@@ -739,7 +739,7 @@ kgmGameMap::Node kgmGameMap::next()
 
         m_xml->attribute("value", value);
 
-        ((kgmMaterial*)node.obj)->m_shininess = kgmConvert::toDouble(value);
+        ((kgmMaterial*)node.obj)->shininess(kgmConvert::toDouble(value));
       }
       else if(id == "Transparency")
       {
@@ -747,7 +747,7 @@ kgmGameMap::Node kgmGameMap::next()
 
         m_xml->attribute("value", value);
 
-        ((kgmMaterial*)node.obj)->m_transparency = kgmConvert::toDouble(value);
+        ((kgmMaterial*)node.obj)->transparency(kgmConvert::toDouble(value));
       }
       else if(id == "Collision")
       {
