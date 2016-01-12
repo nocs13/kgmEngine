@@ -48,6 +48,11 @@ public:
       r = rx, g = gx, b = bx, a = ax;
     }
 
+    vec4 get()
+    {
+      return vec4(r, g, b, a);
+    }
+
     void get(uchar &r, uchar &g, uchar &b, uchar &a)
     {
       r = 255.0 * this->r;
@@ -56,13 +61,18 @@ public:
       a = 255.0 * this->a;
     }
 
+    void set(vec4 v)
+    {
+      r = v.x; g = v.y; b = v.z; a = v.w;
+    }
+
     void set(uchar r, uchar g, uchar b, uchar a)
     {
       this->r = (float)(r / 255.0);
       this->g = (float)(g / 255.0);
       this->b = (float)(b / 255.0);
       this->a = (float)(a / 255.0);
-    }
+    }    
   };
 
 protected:

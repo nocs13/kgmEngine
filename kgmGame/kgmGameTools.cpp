@@ -421,10 +421,10 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
     mem_vsh[s.length()] = '\0';
   }
 
-  kgmString vsource, psource;
+  kgmString vsource, fsource;
 
   vsource = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
-  psource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
+  fsource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
 
   if(mem_vsh)
     free(mem_vsh);
@@ -432,9 +432,14 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   if(mem_fsh)
     free(mem_fsh);
 
+  FILE* out = fopen("/tmp/z_shader.txt", "w");
+  fprintf(out, vsource.data());
+  fprintf(out, "\nXXXX\n");
+  fprintf(out, fsource.data());
+  fclose(out);
   kgmShader* shader = new kgmShader(gc);
 
-  shader->m_shader = gc->gcGenShader((const char*)vsource, (const char*)psource);
+  shader->m_shader = gc->gcGenShader((const char*)vsource, (const char*)fsource);
 
   if(!shader->m_shader)
   {

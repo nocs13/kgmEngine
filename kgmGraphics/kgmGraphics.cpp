@@ -67,6 +67,8 @@ u32        g_mtx_joints_count = 0;
 //vec4       g_vec_light   = vec4(0, 0, 0, 1);
 vec4       g_vec_ambient = vec4(1, 1, 1, 1);
 
+vec4       g_vec_color = vec4(1, 1, 1, 1);
+
 kgmShader* g_shd_active = null;
 
 kgmLight*  g_light_active = null;
@@ -449,6 +451,9 @@ void kgmGraphics::render()
 #endif
 
     render(vis);
+
+    if (!vis->lighting())
+      continue;
 
     // draw meshes to add light, bump and specular.
 
@@ -1016,8 +1021,8 @@ void kgmGraphics::render(kgmIcon* icon)
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
 
-void kgmGraphics::render(kgmMaterial* m){
-
+void kgmGraphics::render(kgmMaterial* m)
+{
   if(!m)
   {
     gc->gcSetTexture(0, 0);
@@ -1047,6 +1052,8 @@ void kgmGraphics::render(kgmMaterial* m){
 
     return;
   }
+
+  g_vec_color = m->m_color.get();
 
   g_fShine = m->shininess();
   g_fAlpha = 1.0f / (1.0f + (float)m->transparency());
@@ -1140,6 +1147,7 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_mTran",     g_mtx_world);
   s->set("g_mNorm",     g_mtx_normal);
   s->set("g_vAmbient",  g_vec_ambient);
+  s->set("g_vColor",    g_vec_color);
   s->set("g_vLight",    v_light);
   s->set("g_vEye",      m_camera->mPos);
   s->set("g_vEyeDir",   m_camera->mDir);

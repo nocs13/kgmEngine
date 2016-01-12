@@ -1136,7 +1136,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #else
       glGetInfoLog(vshad, 256, &size, tbuf);
 #endif
-      //kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
+      kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
 
       glDeleteObject(vshad);
@@ -1164,7 +1164,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 #else
       glGetInfoLog(fshad, 256, &size, tbuf);
 #endif
-      //kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
+      kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
     }
     else

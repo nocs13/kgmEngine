@@ -117,7 +117,7 @@ kEditor::kEditor(kgmGameBase* g)
     gridline = new kgmVisual();
     gridline->set(mtlLines);
     gridline->set(meshGridline);
-    //gridline->
+    gridline->lighting(false);
     game->getRender()->add(gridline);
 
     meshPivot = new kPivot();
@@ -128,6 +128,7 @@ kEditor::kEditor(kgmGameBase* g)
     pivot->set(mtlPivot);
     pivot->set(meshPivot);
     pivot->set(&mtr);
+    pivot->lighting(false);
     game->getRender()->add(pivot);
 
     game->getRender()->setBgColor(0xffbbaa99);

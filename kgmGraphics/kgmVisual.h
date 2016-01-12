@@ -142,6 +142,8 @@ public:
 private:
   mtx4  m_transform;
 
+  bool  m_lighting;
+
 public:
   Type        m_type;
   TypeShadow  m_typeshadow;
@@ -173,8 +175,6 @@ public:
 
   kgmArray<mtx4>  m_tm_joints;
 
-  static  bool  AnimateVertices;
-
 public:
   kgmVisual()
   {
@@ -197,6 +197,8 @@ public:
     m_last_update = kgmTime::getTicks();
 
     m_transform.identity();
+
+    m_lighting = true;
   }
 
   kgmVisual(const kgmVisual &v)
@@ -239,6 +241,8 @@ public:
     m_bound       = v.m_bound;
     m_last_update = kgmTime::getTicks();
     m_transform   = v.m_transform;
+
+    m_lighting = true;
   }
 
   ~kgmVisual()
@@ -498,6 +502,16 @@ public:
     }
 
     m_last_update = kgmTime::getTicks();
+  }
+
+  bool lighting() const
+  {
+    return m_lighting;
+  }
+
+  void lighting(bool l)
+  {
+    m_lighting = l;
   }
 
 private:
