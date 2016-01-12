@@ -1,11 +1,11 @@
 vec4 kgm_main()
 {
-  return ( g_mProj * g_mView * g_mTran * vec4(g_Vertex, 1.0) );
+  return ( g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1.0) );
 }
 
 //Fragment Shader
 
-vec4 main()
+vec4 kgm_main()
 {
   return  g_vColor;
 }

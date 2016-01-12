@@ -170,13 +170,13 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   {
     shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    shaders.add(kgmShader::TypeBump,   rc->getShader("bump.glsl"));
-    shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
-    shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
-    shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
+    //shaders.add(kgmShader::TypeBump,   rc->getShader("bump.glsl"));
+    //shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
+    //shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
+    //shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
-    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+    //shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
+    //shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -446,7 +446,8 @@ void kgmGraphics::render()
     if(mtl->m_shader)
       render(mtl->m_shader);
     else
-      render(shaders[kgmShader_TypeAmbient]);
+      render(shaders[kgmShader::TypeBase]);
+      //render(shaders[kgmShader_TypeAmbient]);
 
 #endif
 

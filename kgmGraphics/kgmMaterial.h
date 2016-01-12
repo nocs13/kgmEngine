@@ -80,7 +80,7 @@ protected:
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
 
-  float  m_shininess, m_transparency;
+  float  m_shininess;
 
 public:
   Color  m_color, m_specular, m_emision;
@@ -126,12 +126,12 @@ public:
 
   float transparency() const
   {
-    return m_transparency;
+    return m_color.a;
   }
 
   void transparency(float t)
   {
-    m_transparency = t;
+    m_color.a = t;
 
     if(t > 0.0)
       m_alpha = true;
@@ -157,7 +157,7 @@ public:
     if(m_alpha == a)
       return;
 
-    if(!a && m_transparency > 0.0)
+    if(!a && m_color.a > 0.0)
       return;
 
     m_alpha = a;

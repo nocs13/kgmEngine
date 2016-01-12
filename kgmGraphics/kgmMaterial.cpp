@@ -11,7 +11,6 @@ kgmMaterial::kgmMaterial()
   m_color        = Color(1.0, 1.0, 1.0, 1.0);
   m_specular     = Color(1.0, 1.0, 1.0, 1.0);
   m_shininess    = 1.0;
-  m_transparency = 0.0;
 
   m_alpha  = false;
   m_blend  = false;
@@ -32,7 +31,6 @@ kgmMaterial* kgmMaterial::clone()
   m->m_specular  = m_specular;
 
   m->m_shininess    = m_shininess;
-  m->m_transparency = m_transparency;
 
   m->m_shader = m_shader;
 

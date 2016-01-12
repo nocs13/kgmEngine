@@ -1099,7 +1099,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 //GLint v_shad;
 void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 {
-  kgm_log() << "gcGenShader: Cenerating.\n";
+  kgm_log() << "gcGenShader: Generating.\n";
 
   GLhandle prog = 0;
   GLhandle vshad = 0, fshad = 0;
