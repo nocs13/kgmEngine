@@ -27,7 +27,7 @@ const char* const end_vshader = "\n"
 "void main(void)                   \n"
 "{                                 \n"
 "    //gl_Position = kgm_main();     \n"
-"    gl_Position = g_mProj * g_mView * vec4(a_Vertex, 1);     \n"
+"    gl_Position = g_mProj * g_mView * g_mTran *vec4(a_Vertex, 1);     \n"
 "}";
 
 const char* begin_pshader = "#ifdef GL_ES\n"
