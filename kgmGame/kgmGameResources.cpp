@@ -284,6 +284,8 @@ kgmTexture* kgmGameResources::getTexture(char* id)
 
 kgmShader* kgmGameResources::getShader(char* id)
 {
+  kgm_log() << "Resources: get shader " << id << "\n";
+
   kgmShader* shader = (kgmShader*)get(id);
 
   if(shader)

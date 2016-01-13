@@ -6,12 +6,6 @@ vec4 kgm_main(void)
 
    v_V = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
 
-   v_N = normalize(mRot * a_Normal);
-
-   v_I = g_vLight.w;
-
-   v_L = g_vLight.xyz;
-
    v_UV = a_UV;
 
    return ( g_mProj * g_mView * vec4(v_V, 1.0) );

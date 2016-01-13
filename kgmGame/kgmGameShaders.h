@@ -7,8 +7,8 @@ const char* const begin_vshader = "uniform mat4   g_mView;       \n"
 "uniform vec3   g_vEyeDir;     \n"
 "uniform float  g_fTime;       \n"
 "uniform float  g_fShine;      \n"
-"uniform float  g_fAlpha;      \n"
 "uniform float  g_fRandom;     \n"
+"uniform float  g_fAmbient;    \n"
 
 "varying vec3   v_N;           \n"
 "varying vec3   v_V;           \n"
@@ -17,16 +17,17 @@ const char* const begin_vshader = "uniform mat4   g_mView;       \n"
 "varying vec2   v_UV;          \n"
 "varying float  v_I;           \n"
 "varying float  v_shine;       \n"
-"varying float  v_alpha;       \n"
 
 "attribute vec3 a_Vertex;      \n"
 "attribute vec3 a_Normal;      \n"
 "attribute vec4 a_Color;       \n"
 "attribute vec2 a_UV;          \n";
 
-const char* const end_vshader = "void main(void)                   \n"
+const char* const end_vshader = "\n"
+"void main(void)                   \n"
 "{                                 \n"
-"    gl_Position = kgm_main();     \n"
+"    //gl_Position = kgm_main();     \n"
+"    gl_Position = g_mProj * g_mView * vec4(a_Vertex, 1);     \n"
 "}";
 
 const char* begin_pshader = "#ifdef GL_ES\n"
@@ -44,12 +45,11 @@ const char* begin_pshader = "#ifdef GL_ES\n"
 "varying vec3   v_Y;\n"
 "varying vec2   v_UV;\n"
 "varying float  v_I;\n"
-"varying float  v_shine;\n"
-"varying float  v_alpha;\n";
+"varying float  v_shine;\n";
 
-const char* end_pshader = "void main( void )\n"
+const char* end_pshader = "\n"
+"void main( void )\n"
 "{\n"
-"   vec4 color = kgm_main();\n"
-"   gl_FragColor = color;\n"
+"   gl_FragColor = vec4(1, 1, 0, 1); //g_vColor;//kgm_main();\n"
 "}";
 

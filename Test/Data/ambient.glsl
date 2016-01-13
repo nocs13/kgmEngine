@@ -1,43 +1,23 @@
-uniform mat4   g_mView;
-uniform mat4   g_mProj;
-uniform mat4   g_mTran;
-uniform float  g_fAmbient;
-
-varying vec3   V;
-varying vec2   Texcoord;
-varying float  I;
-
-attribute vec3 g_Vertex;
-attribute vec3 g_Normal;
-attribute vec4 g_Color;
-attribute vec2 g_Texcoord;
-
-void main(void)
+vec4 kgm_main(void)
 {
-   V = vec4(g_mTran * vec4(g_Vertex, 1.0)).xyz;
-   I = g_fAmbient;
+   v_V = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
 
-   gl_Position   = g_mProj * g_mView * vec4(V, 1.0);
-   Texcoord      = g_Texcoord;
+   v_UV = a_UV;
+
+   v_I = g_fAmbient;
+
+   return (g_mProj * g_mView * vec4(v_V, 1.0));
 }
 
 //Fragment Shader
-#ifdef GL_ES
-precision lowp float;
-#endif
 
-uniform sampler2D g_txColor;
-uniform float     g_fAlpha;
-
-varying vec3   V;
-varying vec2   Texcoord;
-varying float  I;
-
-void main( void )
+vec4 kgm_main( void )
 {
- vec4 color = texture2D(g_txColor, Texcoord);
+  vec4 color = texture2D(g_txColor, v_UV);
 
- vec4  col = vec4(color.xyz * I, color.w * g_fAlpha);
+  color *= g_vColor;
 
- gl_FragColor = col;
+  color.xyz *= v_I;
+
+  return color;
 }

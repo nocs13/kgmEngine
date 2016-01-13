@@ -65,7 +65,7 @@ mtx3       g_mtx_normal;
 u32        g_mtx_joints_count = 0;
 
 //vec4       g_vec_light   = vec4(0, 0, 0, 1);
-vec4       g_vec_ambient = vec4(1, 1, 1, 1);
+//vec4       g_vec_ambient = vec4(1, 1, 1, 1);
 
 vec4       g_vec_color = vec4(1, 1, 1, 1);
 
@@ -170,13 +170,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   {
     shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    //shaders.add(kgmShader::TypeBump,   rc->getShader("bump.glsl"));
-    //shaders.add(kgmShader::TypeSkin,   rc->getShader("skin.glsl"));
-    //shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
-    //shaders.add(kgmShader::TypeBlend,  rc->getShader("blend.glsl"));
+    shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    //shaders.add(kgmShader_TypeIcon,    rc->getShader("icon.glsl"));
-    //shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -446,8 +442,7 @@ void kgmGraphics::render()
     if(mtl->m_shader)
       render(mtl->m_shader);
     else
-      render(shaders[kgmShader::TypeBase]);
-      //render(shaders[kgmShader_TypeAmbient]);
+      render(shaders[kgmShader_TypeAmbient]);
 
 #endif
 
@@ -581,15 +576,18 @@ void kgmGraphics::render()
       }
       else
       {
-        kgm_ptr<kgmMaterial> mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
-        gc->gcAlpha(true, gccmp_great, 0.5);
-        mtl->setTexColor(icon->getIcon());
-        render(mtl);
-        render(shaders[kgmShader_TypeIcon]);
+        kgmMaterial mtl;
+
+        //gc->gcAlpha(true, gccmp_great, 0.5);
+        gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+        mtl.setTexColor(icon->getIcon());
+        render(&mtl);
+        render(shaders[kgmShader::TypeBase]);
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
-        gc->gcAlpha(false, gccmp_great, 0.0);
+        gc->gcBlend(false, gcblend_srcalpha, gcblend_srcialpha);
+        //gc->gcAlpha(false, gccmp_great, 0.0);
       }
     }
   }
@@ -1147,7 +1145,6 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_mView",     g_mtx_view);
   s->set("g_mTran",     g_mtx_world);
   s->set("g_mNorm",     g_mtx_normal);
-  s->set("g_vAmbient",  g_vec_ambient);
   s->set("g_vColor",    g_vec_color);
   s->set("g_vLight",    v_light);
   s->set("g_vEye",      m_camera->mPos);
