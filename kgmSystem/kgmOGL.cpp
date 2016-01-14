@@ -756,7 +756,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, v_size, pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Vertex");
+    ah = glGetAttribLocation(g_shader, "a_Vertex");
     glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
     glEnableVertexAttribArray(ah);
 #endif
@@ -770,7 +770,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(GL_FLOAT,v_size,pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Normal");
+    ah = glGetAttribLocation(g_shader, "a_Normal");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
@@ -783,7 +783,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Color");
+    ah = glGetAttribLocation(g_shader, "a_Color");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
 #endif
@@ -797,7 +797,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Texcoord");
+    ah = glGetAttribLocation(g_shader, "a_UV");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
@@ -811,7 +811,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Texcoord2");
+    ah = glGetAttribLocation(g_shader, "a_UV2");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
@@ -825,7 +825,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
-    ah = glGetAttribLocation(g_shader, "g_Texcoord3");
+    ah = glGetAttribLocation(g_shader, "a_UV3");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
@@ -835,11 +835,11 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   if(v_fmt & gcv_bn0)
   {
 #ifdef GLES_2
-    ah = glGetAttribLocation(g_shader, "g_Weights");
+    ah = glGetAttribLocation(g_shader, "a_Weights");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
-    ah = glGetAttribLocation(g_shader, "g_Indices");
+    ah = glGetAttribLocation(g_shader, "a_Indices");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));

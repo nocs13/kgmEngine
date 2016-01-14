@@ -1,4 +1,4 @@
-vec4 kgm_main(void)
+void kgm_main(out vec4 pos)
 {
    v_V = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
 
@@ -6,12 +6,12 @@ vec4 kgm_main(void)
 
    v_I = g_fAmbient;
 
-   return (g_mProj * g_mView * vec4(v_V, 1.0));
+   pos = (g_mProj * g_mView * vec4(v_V, 1.0));
 }
 
 //Fragment Shader
 
-vec4 kgm_main( void )
+void kgm_main(out vec4 col)
 {
   vec4 color = texture2D(g_txColor, v_UV);
 
@@ -19,5 +19,5 @@ vec4 kgm_main( void )
 
   color.xyz *= v_I;
 
-  return color;
+  col = color;
 }

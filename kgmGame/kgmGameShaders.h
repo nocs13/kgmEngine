@@ -26,8 +26,10 @@ const char* const begin_vshader = "uniform mat4   g_mView;       \n"
 const char* const end_vshader = "\n"
 "void main(void)                   \n"
 "{                                 \n"
-"    //gl_Position = kgm_main();     \n"
-"    gl_Position = g_mProj * g_mView * g_mTran *vec4(a_Vertex, 1);     \n"
+"    vec4 position;                \n"
+"    kgm_main(position);           \n"
+"    gl_Position = position;       \n"
+"    //gl_Position = g_mProj * g_mView * g_mTran *vec4(a_Vertex, 1);     \n"
 "}";
 
 const char* begin_pshader = "#ifdef GL_ES\n"
@@ -50,6 +52,8 @@ const char* begin_pshader = "#ifdef GL_ES\n"
 const char* end_pshader = "\n"
 "void main( void )\n"
 "{\n"
-"   gl_FragColor = vec4(1, 1, 0, 1); //g_vColor;//kgm_main();\n"
+"    vec4 color;                \n"
+"    kgm_main(color);           \n"
+"   gl_FragColor = color;       \n"
 "}";
 
