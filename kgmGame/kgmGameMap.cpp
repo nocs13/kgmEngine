@@ -371,14 +371,14 @@ bool kgmGameMap::addMaterial(Node n)
   snode->m_name = "Transparency";
   snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->transparency())));
 
-  if(mtl->m_alpha)
+  if(mtl->alpha())
   {
     snode = new kgmXml::Node(node);
     snode->m_name = "Alpha";
     snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
   }
 
-  if(!mtl->m_cull)
+  if(!mtl->cull())
   {
     snode = new kgmXml::Node(node);
     snode->m_name = "Cull";

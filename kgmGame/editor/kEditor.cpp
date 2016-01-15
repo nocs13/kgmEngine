@@ -105,11 +105,11 @@ kEditor::kEditor(kgmGameBase* g)
 
     mtlLines = new kgmMaterial();
     mtlLines->setShader(null);
-    mtlLines->m_depth = false;
+    mtlLines->depth(false);
 
     mtlPivot = new kgmMaterial();
     mtlPivot->setShader(null);
-    mtlPivot->m_depth = false;
+    mtlPivot->depth(false);
 
     meshGridline = new kGridline(100);
     meshGridline->rebound();

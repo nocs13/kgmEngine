@@ -561,13 +561,13 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
 
         if(a < 1.0f)
         {
-          mtl->m_alpha = true;
+          mtl->alpha(true);
         }
       }
     }
     else if(id == "Cull")
     {
-      mtl->m_cull = true;
+      mtl->cull(true);
     }
     else if(id == "map_color")
     {

@@ -348,7 +348,7 @@ void kgmGraphics::render()
         {
           vis_particles.add((*i));
         }
-        else if((*i)->getMaterial() && (*i)->getMaterial()->m_blend)
+        else if((*i)->getMaterial() && (*i)->getMaterial()->blend())
         {
           vis_blend.add((*i));
         }
@@ -507,7 +507,7 @@ void kgmGraphics::render()
   //if(m_has_shaders)
   //  render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
 
-  /*for(int i = 0; i < vis_particles.size(); i++)
+  for(int i = 0; i < vis_particles.size(); i++)
   {
     kgmVisual*    vis = vis_particles[i];
     kgmParticles* par = vis->getParticles();
@@ -515,7 +515,7 @@ void kgmGraphics::render()
 
     if(par && mtl)
     {
-      if(mtl->m_depth == false)
+      if(mtl->depth() == false)
       {
         depthless_particles.add(vis);
 
@@ -529,13 +529,13 @@ void kgmGraphics::render()
       render((kgmShader*)null);
       render((kgmMaterial*)null);
     }
-  }*/
+  }
 
   // depthless meshes
 
   //depthless particles
 
-  /*for(int i = 0; i < depthless_particles.size(); i++)
+  for(int i = 0; i < depthless_particles.size(); i++)
   {
     kgmVisual*    vis = vis_particles[i];
     kgmMaterial*  mtl = vis->getMaterial();
@@ -546,7 +546,7 @@ void kgmGraphics::render()
     render(vis->getParticles());
     render((kgmShader*)null);
     render((kgmMaterial*)null);
-  }*/
+  }
 
   depthless_particles.clear();
 
@@ -560,7 +560,7 @@ void kgmGraphics::render()
 
   // draw icons
 
-  /*if(m_editor)
+  if(m_editor)
   {
     mtx4 mtx;
     mtx.identity();
@@ -590,7 +590,7 @@ void kgmGraphics::render()
         //gc->gcAlpha(false, gccmp_great, 0.0);
       }
     }
-  }*/
+  }
 
 #ifdef DEBUG
   mtx4 mid;
@@ -1062,21 +1062,20 @@ void kgmGraphics::render(kgmMaterial* m)
     gc->gcBlend(true, gcblend_srcalpha, gcblend_dstialpha);
     m_alpha = true;
   }
-
-  if(m->m_blend)
+  else if(m->blend())
   {
     gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
     m_alpha = true;
   }
 
-  if(!m->m_depth)
+  if(!m->depth())
   {
     gc->gcDepth(false, false, gccmp_less);
     m_depth = false;
   }
 
 
-  if(!m->m_cull)
+  if(!m->cull())
   {
     gc->gcCull(0);
     m_culling = false;

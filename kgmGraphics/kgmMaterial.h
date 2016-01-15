@@ -75,6 +75,12 @@ public:
     }    
   };
 
+private:
+  bool        m_cull;
+  bool        m_alpha;
+  bool        m_blend;
+  bool        m_depth;
+
 protected:
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
@@ -89,10 +95,6 @@ public:
 
   u32         m_flags;
 
-  bool        m_cull;
-  bool        m_alpha;
-  bool        m_blend;
-  bool        m_depth;
 
   u32         m_srcblend, m_dstblend;
 
@@ -161,6 +163,36 @@ public:
       return;
 
     m_alpha = a;
+  }
+
+  bool depth() const
+  {
+    return m_depth;
+  }
+
+  void depth(bool d)
+  {
+    m_depth = d;
+  }
+
+  bool blend() const
+  {
+    return m_blend;
+  }
+
+  void blend(bool b)
+  {
+    m_blend = b;
+  }
+
+  bool cull() const
+  {
+    return m_cull;
+  }
+
+  void cull(bool c)
+  {
+    m_cull = c;
   }
 };
 
