@@ -339,7 +339,7 @@ void kViewOptionsForMaterial::onTransparency(u32 s)
   if(!mtl)
     return;
 
-  mtl->transparency((float)s);
+  mtl->transparency((float)s / 100.0f);
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)

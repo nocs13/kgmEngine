@@ -75,7 +75,6 @@ kgmLight*  g_light_active = null;
 kgmLight*  g_lights[MAX_LIGHTS] = {null};
 u32        g_lights_count = 0;
 f32        g_fShine = 0.0f;
-f32        g_fAlpha = 1.0f;
 f32        g_fAmbient = 0.1f;
 void*      g_tex_black = null;
 void*      g_tex_white = null;
@@ -136,7 +135,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   g_def_material = new kgmMaterial();
   g_def_material->setShader(null);
-  g_def_material->m_color = kgmMaterial::Color(0.7, 0.7, 0.7, 1.0);
+  g_def_material->m_color = kgmMaterial::Color(0.7f, 0.7f, 0.7f, 1.0f);
 
   if(g)
   {
@@ -439,8 +438,8 @@ void kgmGraphics::render()
 
 #ifndef NO_SHADERS
 
-    if(mtl->m_shader)
-      render(mtl->m_shader);
+    if(!mtl->shade())
+      render(shaders[kgmShader::TypeBase]);
     else
       render(shaders[kgmShader_TypeAmbient]);
 
@@ -456,31 +455,34 @@ void kgmGraphics::render()
     //if(m_depth)
     //  gc->gcDepth(true, false, gccmp_lequal);
 
-    gc->gcBlend(true, gcblend_one, gcblend_one);
-
-    for(int i = 0; i < g_lights_count; i++)
+    if (0)//mtl->shade())
     {
-      g_light_active = g_lights[i];
+      gc->gcBlend(true, gcblend_one, gcblend_one);
 
-      tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
-      gc->gcSetTexture(0, tcolor);
-      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
-      gc->gcSetTexture(1, tnormal);
-      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-      gc->gcSetTexture(2, tspecular);
+      for(int i = 0; i < g_lights_count; i++)
+      {
+        g_light_active = g_lights[i];
+
+        tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
+        gc->gcSetTexture(0, tcolor);
+        tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
+        gc->gcSetTexture(1, tnormal);
+        tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
+        gc->gcSetTexture(2, tspecular);
 
 #ifndef NO_SHADERS
 
-      render(shaders[kgmShader::TypeLight]);
+        render(shaders[kgmShader::TypeLight]);
 
 #endif
 
-      render(vis);
+        render(vis);
 
-      render((kgmShader*)null);
+        render((kgmShader*)null);
+      }
+
+      gc->gcBlend(false, null, null);
     }
-
-    gc->gcBlend(false, null, null);
 
     //if(m_depth)
     //  gc->gcDepth(true, true, gccmp_lequal);
@@ -1055,10 +1057,10 @@ void kgmGraphics::render(kgmMaterial* m)
   g_vec_color = m->m_color.get();
 
   g_fShine = m->shininess();
-  g_fAlpha = 1.0f / (1.0f + (float)m->transparency());
 
-  if(m->alpha())
+  if(m->alpha() || m->transparency() > 0.0f)
   {
+    g_vec_color.x = g_vec_color.w;
     gc->gcBlend(true, gcblend_srcalpha, gcblend_dstialpha);
     m_alpha = true;
   }
@@ -1138,7 +1140,6 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_fTime",     kgmTime::getTime());
   s->set("g_fRandom",   random);
   s->set("g_fShine",    g_fShine);
-  s->set("g_fAlpha",    g_fAlpha);
   s->set("g_fAmbient",  g_fAmbient);
   s->set("g_mProj",     g_mtx_proj);
   s->set("g_mView",     g_mtx_view);

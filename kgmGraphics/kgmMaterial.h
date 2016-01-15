@@ -48,6 +48,19 @@ public:
       r = rx, g = gx, b = bx, a = ax;
     }
 
+    Color(u32 rx, u32 gx, u32 bx, u32 ax)
+    {
+      if(rx > 255) rx = 255;
+      if(gx > 255) gx = 255;
+      if(bx > 255) bx = 255;
+      if(ax > 255) ax = 255;
+
+      r = rx / 255.0;
+      g = gx / 255.0;
+      b = bx / 255.0;
+      a = ax / 255.0;
+    }
+
     vec4 get()
     {
       return vec4(r, g, b, a);
@@ -76,12 +89,12 @@ public:
   };
 
 private:
-  bool        m_cull;
-  bool        m_alpha;
-  bool        m_blend;
-  bool        m_depth;
+  bool  m_cull  = true;
+  bool  m_alpha = false;
+  bool  m_blend = false;
+  bool  m_depth = true;
+  bool  m_shade = true;
 
-protected:
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
@@ -128,15 +141,15 @@ public:
 
   float transparency() const
   {
-    return m_color.a;
+    return 1.0f - m_color.a;
   }
 
   void transparency(float t)
   {
-    m_color.a = t;
+    if (t > 1.0f)
+      t = 1.0f;
 
-    if(t > 0.0)
-      m_alpha = true;
+    m_color.a = 1.0f - t;
   }
 
   float shininess() const
@@ -183,6 +196,16 @@ public:
   void blend(bool b)
   {
     m_blend = b;
+  }
+
+  bool shade() const
+  {
+    return m_shade;
+  }
+
+  void shade(bool s)
+  {
+    m_shade = s;
   }
 
   bool cull() const
