@@ -644,7 +644,7 @@ kgmGameMap::Node kgmGameMap::next()
       }
       else if(id == "kgmMaterial")
       {
-        ntype = "obstacle";
+        ntype = "material";
 
         kgmString id;
         m_xml->attribute("name", id);
@@ -816,9 +816,10 @@ kgmGameMap::Node kgmGameMap::next()
         if(node.obj)
           ((kgmObstacle*)node.obj)->add(va, vb, vc);
       }
-      else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect") ||
+      else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect")  ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
-              (id == "kgmUnit") || (id == "kgmCamera") || (id == "kgmObstacle"))
+              (id == "kgmUnit") || (id == "kgmCamera") || (id == "kgmObstacle") ||
+              (id == "kgmMaterial"))
       {
         closed = true;
 

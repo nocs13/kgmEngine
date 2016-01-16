@@ -564,6 +564,18 @@ bool kEditor::mapOpen(kgmString s)
       node->setPosition(mnode.pos);
       node->setRotation(mnode.rot);
     }
+    else if(mnode.typ == kgmGameMap::NodeMtl)
+    {
+      oquered++;
+      node = new kNode((kgmMaterial*)mnode.obj);
+
+      node->nam  = mnode.nam;
+      node->lock = true;
+
+      node->setPosition(vec3(0, 0, -1000));
+
+      add(node);
+    }
 
     mnode = map.next();
   }
@@ -1509,6 +1521,7 @@ void kEditor::onAddMaterial()
   kNode* node = new kNode(new kgmMaterial());
 
   node->nam = kgmString("Material_") + kgmConvert::toString((s32)(++oquered));
+  node->setPosition(vec3(0, 0, -1000));
 
   node->lock = true;
 

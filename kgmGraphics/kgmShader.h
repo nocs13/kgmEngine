@@ -46,6 +46,7 @@ public:
     TypeFlame,
     TypeMirror,
     TypeIce,
+    TypeAmbient,
     TypeExtend = 0x1f
   };
 

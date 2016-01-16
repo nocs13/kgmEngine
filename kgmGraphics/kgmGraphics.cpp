@@ -88,7 +88,6 @@ enum
 {
   kgmShader_TypeGui = 100,
   kgmShader_TypeIcon,
-  kgmShader_TypeAmbient
 };
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
@@ -172,7 +171,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
     shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
     shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    shaders.add(kgmShader_TypeAmbient, rc->getShader("ambient.glsl"));
+    shaders.add(kgmShader::TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
 #endif
@@ -439,10 +438,16 @@ void kgmGraphics::render()
 
 #ifndef NO_SHADERS
 
-    if(!mtl->shade())
+    if(!mtl->shade() || g_lights_count < 1)
+    {
       render(shaders[kgmShader::TypeBase]);
+    }
     else
-      render(shaders[kgmShader_TypeAmbient]);
+    {
+      g_light_active = g_lights[0];
+
+      render(shaders[kgmShader::TypeAmbient]);
+    }
 
 #endif
 
@@ -458,18 +463,11 @@ void kgmGraphics::render()
 
     // draw meshes to add light, bump and specular.
 
-    gc->gcBlend(true, gcblend_one, gcblend_one);
+    gc->gcBlend(true, gcblend_one, gcblend_srccol);
 
     for(int i = 0; i < g_lights_count; i++)
     {
       g_light_active = g_lights[i];
-
-      tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
-      gc->gcSetTexture(0, tcolor);
-      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
-      gc->gcSetTexture(1, tnormal);
-      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-      gc->gcSetTexture(2, tspecular);
 
 #ifndef NO_SHADERS
 
