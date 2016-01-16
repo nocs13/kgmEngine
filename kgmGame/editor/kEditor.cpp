@@ -133,6 +133,12 @@ kEditor::kEditor(kgmGameBase* g)
     pivot->lighting(false);
     game->getRender()->add(pivot);
 
+    textData = new kgmText();
+    textData->rect(uRect(600, 200, 300, 100));
+    text     = new kgmVisual();
+    text->set(textData);
+    game->getRender()->add(text);
+
     game->getRender()->setBgColor(0xffbbaa99);
   }
 }
@@ -141,11 +147,13 @@ kEditor::~kEditor()
 {
   clear();
 
+  game->getRender()->remove(text);
   game->getRender()->remove(pivot);
   game->getRender()->remove(gridline);
 
   delete pivot;
   delete gridline;
+  delete textData;
 
   delete meshGridline;
   delete meshPivot;
@@ -180,10 +188,13 @@ void kEditor::select(kgmString name)
     {
       selected = (*i);
 
+      textData->m_text =  "Selected: ";
+      textData->m_text += name;
+
       if(pivot)
       {
-        //((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
-        //pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
+        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
       break;
@@ -244,69 +255,82 @@ void kEditor::select(int x, int y)
 
   //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
   //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
-  kgmList<kNode*>::iterator i = nodes.begin();
+  float distance = -1.0f;
+  kNode* peeked = null;
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
-    vec3  c, n;
-    plane3 pln;
+    vec3  c, n_x, n_y, n_z;
+    plane3 pln_x, pln_y, pln_z;
 
-    n = vec3(1, 0, 0);
+    n_x = vec3(1, 0, 0);
+    n_y = vec3(0, 1, 0);
+    n_z = vec3(0, 0, 1);
 
-    if (*i == null)
-      break;
+    pln_x = plane3(n_x, (*i)->getPosition());
+    pln_y = plane3(n_y, (*i)->getPosition());
+    pln_z = plane3(n_z, (*i)->getPosition());
 
-    pln = plane3(n, (*i)->getPosition());
+    if (*i == null || (*i)->typ == kNode::MATERIAL)
+      continue;
 
-    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    if(pln_x.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      select((*i)->nam);
-
-      if(pivot)
+      if(distance < 0.0)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
-        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
+        peeked = (*i);
+        distance = cam.mPos.distance((*i)->getPosition());
+      }
+      else
+      {
+        if (distance > cam.mPos.distance((*i)->getPosition()))
+        {
+          peeked   = (*i);
+          distance = cam.mPos.distance((*i)->getPosition());
+        }
       }
 
-      break;
     }
-
-    n = vec3(0, 1, 0);
-    pln = plane3(n, (*i)->getPosition());
-
-    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    else if(pln_y.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      select((*i)->nam);
-
-      if(pivot)
+      if(distance < 0.0)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
-        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
+        peeked = (*i);
+        distance = cam.mPos.distance((*i)->getPosition());
       }
-
-      break;
+      else
+      {
+        if (distance > cam.mPos.distance((*i)->getPosition()))
+        {
+          peeked   = (*i);
+          distance = cam.mPos.distance((*i)->getPosition());
+        }
+      }
     }
-
-    n = vec3(0, 0, 1);
-    pln = plane3(n, (*i)->getPosition());
-
-    if(pln.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    else if(pln_z.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
-      select((*i)->nam);
-
-      if(pivot)
+      if(distance < 0.0)
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
-        pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
+        peeked = (*i);
+        distance = cam.mPos.distance((*i)->getPosition());
       }
-
-      break;
+      else
+      {
+        if (distance > cam.mPos.distance((*i)->getPosition()))
+        {
+          peeked   = (*i);
+          distance = cam.mPos.distance((*i)->getPosition());
+        }
+      }
     }
   }
 
-  if(((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray) != kPivot::AXIS_NONE)
+  if(peeked)
   {
-    int k = 0;
+    select(peeked->nam);
+
+    if(pivot)
+      ((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray);
   }
 }
 
@@ -1461,18 +1485,6 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  /*kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
-
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addActor));
-
-  for(int i = 0; i < kgmUnit::g_list_actors.length(); i++)
-  {
-    kgmString s = kgmUnit::g_list_actors[i];
-    vs->addItem(s);
-  }
-
-  game->guiAdd(vs);*/
-
   kFileDialog *fdd = new kFileDialog();
   fdd->showHidden(false);
 
@@ -1537,6 +1549,7 @@ void kEditor::onAddMaterial()
   kNode* node = new kNode(new kgmMaterial());
 
   node->nam = kgmString("Material_") + kgmConvert::toString((s32)(++oquered));
+  node->mtl->name(node->nam);
   node->setPosition(vec3(0, 0, -1000));
 
   node->lock = true;

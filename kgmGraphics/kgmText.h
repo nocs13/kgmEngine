@@ -22,6 +22,16 @@ public:
   {
     m_text.clear();
   }
+
+  uRect rect() const
+  {
+    return m_rect;
+  }
+
+  void rect(uRect r)
+  {
+    m_rect = r;
+  }
 };
 
 #endif // KGMTEXT_H

@@ -41,9 +41,11 @@ private:
 
   kGridline* meshGridline = null;
   kPivot*    meshPivot    = null;
+  kgmText*   textData     = null;
 
   kgmVisual *gridline = null;
   kgmVisual *pivot    = null;
+  kgmVisual *text     = null;
 
   vec3  pv_pos;
   vec3  pv_rot;

@@ -29,6 +29,8 @@ kPivot::kPivot()
 
   pos = vec3(0, 0, 0);
   rot = vec3(0, 0, 0);
+
+  axis = AXIS_NONE;
 }
 
 u32 kPivot::peekAxis(ray3 r)

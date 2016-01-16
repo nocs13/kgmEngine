@@ -374,7 +374,7 @@ void kgmGraphics::render()
   g_mtx_world.identity();
 
   gc->gcBegin();
-  gc->gcDepth(true, 1, gccmp_lequal);
+  gc->gcDepth(true, true, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
 
   //prepare for render
@@ -463,7 +463,8 @@ void kgmGraphics::render()
 
     // draw meshes to add light, bump and specular.
 
-    gc->gcBlend(true, gcblend_one, gcblend_srccol);
+    //gc->gcDepth(true, false, gccmp_lequal);
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
     for(int i = 0; i < g_lights_count; i++)
     {
@@ -481,6 +482,7 @@ void kgmGraphics::render()
     }
 
     gc->gcBlend(false, null, null);
+    gc->gcDepth(true, true, gccmp_lequal);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
