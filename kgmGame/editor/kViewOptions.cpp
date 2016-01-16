@@ -364,7 +364,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
 void kViewOptionsForVisual::onShowMaterials(int s)
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
   vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForVisual::onSelectMaterial));
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();

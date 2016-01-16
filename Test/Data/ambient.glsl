@@ -19,6 +19,5 @@ void kgm_main(out vec4 col)
 
   color.xyz *= v_I;
 
-  color = g_vColor;
   col = color;
 }

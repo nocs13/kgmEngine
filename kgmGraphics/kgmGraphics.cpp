@@ -135,7 +135,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   g_def_material = new kgmMaterial();
   g_def_material->setShader(null);
-  g_def_material->m_color = kgmMaterial::Color(0.7f, 0.7f, 0.7f, 1.0f);
+  g_def_material->shade(false);
+  g_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
   if(g)
   {
@@ -447,45 +448,41 @@ void kgmGraphics::render()
 
     render(vis);
 
-    if (!vis->lighting())
+    if (!mtl->shade())
+    {
+      render((kgmMaterial*)null);
+      render((kgmShader*)null);
+
       continue;
+    }
 
     // draw meshes to add light, bump and specular.
 
-    //if(m_depth)
-    //  gc->gcDepth(true, false, gccmp_lequal);
+    gc->gcBlend(true, gcblend_one, gcblend_one);
 
-    if (0)//mtl->shade())
+    for(int i = 0; i < g_lights_count; i++)
     {
-      gc->gcBlend(true, gcblend_one, gcblend_one);
+      g_light_active = g_lights[i];
 
-      for(int i = 0; i < g_lights_count; i++)
-      {
-        g_light_active = g_lights[i];
-
-        tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
-        gc->gcSetTexture(0, tcolor);
-        tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
-        gc->gcSetTexture(1, tnormal);
-        tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
-        gc->gcSetTexture(2, tspecular);
+      tcolor = (mtl->getTexColor())?(mtl->getTexColor()->m_texture):(g_tex_white);
+      gc->gcSetTexture(0, tcolor);
+      tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->m_texture):(g_tex_gray);
+      gc->gcSetTexture(1, tnormal);
+      tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->m_texture):(g_tex_black);
+      gc->gcSetTexture(2, tspecular);
 
 #ifndef NO_SHADERS
 
-        render(shaders[kgmShader::TypeLight]);
+      render(shaders[kgmShader::TypeLight]);
 
 #endif
 
-        render(vis);
+      render(vis);
 
-        render((kgmShader*)null);
-      }
-
-      gc->gcBlend(false, null, null);
+      render((kgmShader*)null);
     }
 
-    //if(m_depth)
-    //  gc->gcDepth(true, true, gccmp_lequal);
+    gc->gcBlend(false, null, null);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
@@ -503,6 +500,7 @@ void kgmGraphics::render()
   }
 
   //draw particles
+  /*
   kgmList<kgmVisual*>  depthless_particles;
 
   //I pass with depth category
@@ -559,7 +557,7 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
 #endif
-
+  */
   // draw icons
 
   if(m_editor)
@@ -580,7 +578,6 @@ void kgmGraphics::render()
       {
         kgmMaterial mtl;
 
-        //gc->gcAlpha(true, gccmp_great, 0.5);
         gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
         mtl.setTexColor(icon->getIcon());
         render(&mtl);
@@ -589,7 +586,6 @@ void kgmGraphics::render()
         render((kgmShader*)null);
         render((kgmMaterial*)null);
         gc->gcBlend(false, gcblend_srcalpha, gcblend_srcialpha);
-        //gc->gcAlpha(false, gccmp_great, 0.0);
       }
     }
   }
@@ -1060,8 +1056,9 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->alpha() || m->transparency() > 0.0f)
   {
-    g_vec_color.x = g_vec_color.w;
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_dstialpha);
+    //g_vec_color.x = g_vec_color.y = g_vec_color.z = g_vec_color.w;
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+    //gc->gcBlend(true, gcblend_one, gcblend_srccol);
     m_alpha = true;
   }
   else if(m->blend())
