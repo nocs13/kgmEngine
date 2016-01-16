@@ -111,7 +111,7 @@ public:
 
   u32         m_srcblend, m_dstblend;
 
-  kgmString   m_type;
+  kgmString   m_type, m_name;
 
 public:
   kgmMaterial();
@@ -216,6 +216,16 @@ public:
   void cull(bool c)
   {
     m_cull = c;
+  }
+
+  kgmString name() const
+  {
+    return m_name;
+  }
+
+  void name(kgmString n)
+  {
+    m_name = n;
   }
 };
 

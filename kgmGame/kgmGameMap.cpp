@@ -99,7 +99,6 @@ bool kgmGameMap::addVisual(Node n)
 
     node->m_name = "kgmVisual";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    //node->m_attributes.add(new kgmXml::Attribute("mesh", n.lnk));
 
     kgmVisual* vis = (kgmVisual*)n.obj;
 
@@ -120,49 +119,9 @@ bool kgmGameMap::addVisual(Node n)
 
     if(mtl)
     {
-      kgmXml::Node* tnode = null;
-
-      kgmString value;
-      u8 color[4];
-
       snode = new kgmXml::Node(node);
       snode->m_name = "Material";
-      snode->m_attributes.add(new kgmXml::Attribute("shininess", kgmConvert::toString(mtl->shininess())));
-      snode->m_attributes.add(new kgmXml::Attribute("transparency", kgmConvert::toString(mtl->transparency())));
-
-      mtl->m_color.get(color[0], color[1], color[2], color[3]);
-      value = kgmConvert::toString((int)color[0]) + " " + kgmConvert::toString((int)color[1]) + " " +
-              kgmConvert::toString((int)color[2]) + " " + kgmConvert::toString((int)color[3]);
-
-      snode->m_attributes.add(new kgmXml::Attribute("color", value));
-
-      if(mtl->getShader())
-      {
-        tnode = new kgmXml::Node(snode);
-        tnode->m_name = "Shader";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getShader()->m_id));
-      }
-
-      if(mtl->getTexColor())
-      {
-        tnode = new kgmXml::Node(snode);
-        tnode->m_name = "TexColor";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexColor()->m_id));
-      }
-
-      if(mtl->getTexNormal())
-      {
-        tnode = new kgmXml::Node(snode);
-        tnode->m_name = "TexNormal";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexNormal()->m_id));
-      }
-
-      if(mtl->getTexSpecular())
-      {
-        tnode = new kgmXml::Node(snode);
-        tnode->m_name = "TexSpecular";
-        tnode->m_attributes.add(new kgmXml::Attribute("value", mtl->getTexSpecular()->m_id));
-      }
+      snode->m_attributes.add(new kgmXml::Attribute("id", mtl->name()));
     }
 
     addPosition(*node, n.pos);
@@ -650,6 +609,7 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("name", id);
 
         kgmMaterial* mtl= new kgmMaterial();
+        mtl->name(id);
 
         node.obj = mtl;
         node.nam = id;
@@ -748,6 +708,14 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("value", value);
 
         ((kgmMaterial*)node.obj)->transparency(kgmConvert::toDouble(value));
+      }
+      else if(id == "Material")
+      {
+        kgmString value;
+
+        m_xml->attribute("id", value);
+
+        node.mtl = value;
       }
       else if(id == "Collision")
       {

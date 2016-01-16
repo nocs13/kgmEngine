@@ -427,6 +427,22 @@ bool kEditor::mapOpen(kgmString s)
       node->bnd = mnode.bnd;
       node->lock = mnode.lck;
 
+      if(mnode.mtl.length() > 0)
+      {
+        kgmMaterial* mtl = null;
+
+        for(int i = 0; i < nodes.length(); i++)
+          if(nodes[i]->typ == kNode::MATERIAL && nodes[i]->nam == mnode.mtl)
+          {
+            mtl = nodes[i]->mtl;
+
+            break;
+          }
+
+        if(mtl)
+          node->vis->set(mtl);
+      }
+
       add(node);
 
       node->setPosition(mnode.pos);

@@ -352,7 +352,10 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
   {
     kgmGui* g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
     g->setText("Material");
-    g = new kgmGuiText(tvisual, 51, y_coord, 70, 20);
+    g = vis_text = new kgmGuiText(tvisual, 51, y_coord, 70, 20);
+
+    if(n->vis->getMaterial())
+      vis_text->setText(n->vis->getMaterial()->name());
 
     kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
     btn->setText("select");
@@ -391,6 +394,8 @@ void kViewOptionsForVisual::onSelectMaterial(kgmString id)
       if (nodes[i]->nam == id)
       {
         node->vis->set(nodes[i]->mtl);
+
+        vis_text->setText(nodes[i]->mtl->name());
 
         break;
       }

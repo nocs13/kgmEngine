@@ -91,6 +91,8 @@ class kViewOptionsForVisual : public kViewOptions
 {
   Slot<kViewOptionsForVisual, int> slotSelectMaterial;
 
+  kgmGuiText* vis_text = null;
+
 public:
   kViewOptionsForVisual(kNode* n, int x, int y, int w, int h);
 
