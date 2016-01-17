@@ -207,8 +207,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g = new kgmGuiScroll(tmaterial, 51, y_coord, 140, 20);
   g->show();
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
-  ((kgmGuiScroll*)g)->setRange(100);
-  ((kgmGuiScroll*)g)->setPosition(mtl->shininess() - 1);
+  ((kgmGuiScroll*)g)->setRange(512);
+  ((kgmGuiScroll*)g)->setPosition(mtl->shininess());
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onShininess));
 
   y_coord += 23;
@@ -218,7 +218,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->show();
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(100);
-  ((kgmGuiScroll*)g)->setPosition(mtl->transparency());
+  ((kgmGuiScroll*)g)->setPosition(100.f * mtl->transparency());
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
