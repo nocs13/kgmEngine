@@ -453,7 +453,6 @@ void kgmGraphics::render()
       continue;
     }
 
-    //gc->gcDepth(true, false, gccmp_lequal);
     gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
     for(int i = 0; i < g_lights_count; i++)
@@ -472,7 +471,6 @@ void kgmGraphics::render()
     }
 
     gc->gcBlend(false, null, null);
-    gc->gcDepth(true, true, gccmp_lequal);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
@@ -534,7 +532,9 @@ void kgmGraphics::render()
 
 #endif
 
+    gc->gcDepth(true, false, gccmp_lequal);
     render(vis);
+    gc->gcDepth(true, true, gccmp_lequal);
 
     if (!mtl->shade())
     {
@@ -544,7 +544,7 @@ void kgmGraphics::render()
       continue;
     }
 
-    //gc->gcDepth(true, false, gccmp_lequal);
+    gc->gcDepth(false, false, gccmp_lequal);
     gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
     for(int i = 0; i < g_lights_count; i++)
@@ -557,7 +557,9 @@ void kgmGraphics::render()
 
 #endif
 
+      gc->gcDepth(true, false, gccmp_lequal);
       render(vis);
+      gc->gcDepth(true, true, gccmp_lequal);
 
       render((kgmShader*)null);
     }
@@ -1169,8 +1171,8 @@ void kgmGraphics::render(kgmMaterial* m)
   }
   else
   {
-    gc->gcSetTexture(1, g_tex_black);
-    tnormal = g_tex_black;
+    gc->gcSetTexture(1, g_tex_gray);
+    tnormal = g_tex_gray;
   }
 
   if(m->hasTexSpecular())

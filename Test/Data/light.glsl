@@ -38,11 +38,11 @@ void kgm_main( out vec4 color )
     vec3 E  = normalize(v_Y - VV); //VV
 
     //Normal
-    /*{
+    {
       vec3 bump = texture2D(g_txNormal, v_UV).xyz * 2.0 - 1.0;
       bump = normalize(bump);
       NN = normalize(NN + bump);
-    }*/
+    }
 
     float distance = 1.0 + length(v_L - v_V);
     float intensity = max(0.0, (v_I * dot(NN, LN) / distance));
