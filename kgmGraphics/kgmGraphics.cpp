@@ -129,8 +129,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_editor      = false;
 
-  m_vis_mesh_scene.alloc(4096);
-  m_cnt_vis_mesh_scene = 0;
+  m_visible_sprites.alloc(4096);
+  m_visible_visuals.alloc(4096);
+  m_visible_visuals_alpha.alloc(4096);
 
   g_def_material = new kgmMaterial();
   g_def_material->setShader(null);
@@ -139,8 +140,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   if(g)
   {
-    int val;
-
     char txd[16] = {0};
 
     if(!gc)
@@ -300,18 +299,13 @@ void kgmGraphics::resize(float width, float height)
 
 void kgmGraphics::render()
 {
-  static float alpha = 0.0;
   static float m_time[4];
-  s32 rect[4];
   vec3 v[2];
   mtx4 m;
-  vec4 myvar;
-  int i = 0, k = 0;
+  int k = 0;
   bool lighting = false;
 
-  mtx4 mvw, mpr;
-
-  kgmList<kgmVisual*> vis_text, vis_blend, vis_sprite, vis_particles;
+  u32 count_sprites = 0, count_visible = 0, count_visible_alpha = 0;
 
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
@@ -325,13 +319,13 @@ void kgmGraphics::render()
     {
       continue;
     }
-    else if((*i)->type() == kgmVisual::TypeText)
+    else if((*i)->type() == kgmVisual::TypeText ||
+            (*i)->type() == kgmVisual::TypeSprite)
     {
-      vis_text.add((*i));
-    }
-    else if((*i)->type() == kgmVisual::TypeSprite)
-    {
-      vis_sprite.add((*i));
+      if(count_sprites == m_visible_sprites.length())
+        m_visible_sprites.realloc(m_visible_sprites.length() + 4096);
+
+      m_visible_sprites[count_sprites++] = (*i);
     }
     else
     {
@@ -343,21 +337,19 @@ void kgmGraphics::render()
 
       if(m_camera->isSphereCross(v, 0.5 * l.length()))
       {
-        if((*i)->type() == kgmVisual::TypeParticles)
+        if((*i)->getMaterial() && (*i)->getMaterial()->blend())
         {
-          vis_particles.add((*i));
-        }
-        else if((*i)->getMaterial() && (*i)->getMaterial()->blend())
-        {
-          vis_blend.add((*i));
+          if(count_visible_alpha == m_visible_visuals_alpha.length())
+            m_visible_visuals_alpha.realloc(m_visible_visuals_alpha.length() + 4096);
+
+          m_visible_visuals_alpha[count_visible_alpha++] = (*i);
         }
         else
         {
-          if(m_cnt_vis_mesh_scene == m_vis_mesh_scene.length())
-            m_vis_mesh_scene.realloc(m_vis_mesh_scene.length() + 4096);
+          if(count_visible == m_visible_visuals.length())
+            m_visible_visuals.realloc(m_visible_visuals.length() + 4096);
 
-          m_vis_mesh_scene[m_cnt_vis_mesh_scene] = (*i);
-          m_cnt_vis_mesh_scene++;
+          m_visible_visuals[count_visible++] = (*i);
         }
       }
       else
@@ -419,9 +411,9 @@ void kgmGraphics::render()
 
 #endif
 
-  for(int i = 0; i < m_cnt_vis_mesh_scene; i++)
+  for(int i = 0; i < count_visible; i++)
   {
-    kgmVisual* vis = m_vis_mesh_scene[i];
+    kgmVisual* vis = m_visible_visuals[i];
     kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(g_def_material);
     
     box3    bbound = vis->getBound();
@@ -461,7 +453,96 @@ void kgmGraphics::render()
       continue;
     }
 
-    // draw meshes to add light, bump and specular.
+    //gc->gcDepth(true, false, gccmp_lequal);
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+
+    for(int i = 0; i < g_lights_count; i++)
+    {
+      g_light_active = g_lights[i];
+
+#ifndef NO_SHADERS
+
+      render(shaders[kgmShader::TypeLight]);
+
+#endif
+
+      render(vis);
+
+      render((kgmShader*)null);
+    }
+
+    gc->gcBlend(false, null, null);
+    gc->gcDepth(true, true, gccmp_lequal);
+
+    render((kgmMaterial*)null);
+    render((kgmShader*)null);
+  }
+
+  // Sort alpha objects.
+
+  for(u32 i = 0; i < count_visible_alpha; i++)
+  {
+    vec3 pos_i;
+    m_visible_visuals_alpha[i]->getTransform().translate(pos_i);
+
+    for(u32 j = i + 1; i < count_visible_alpha; i++)
+    {
+      vec3 pos_j;
+      m_visible_visuals_alpha[j]->getTransform().translate(pos_j);
+
+      if(camera().mPos.distance(pos_j) > camera().mPos.distance(pos_i))
+      {
+        kgmVisual* vis = m_visible_visuals_alpha[i];
+
+        m_visible_visuals_alpha[i] = m_visible_visuals_alpha[j];
+        m_visible_visuals_alpha[j] = vis;
+      }
+    }
+  }
+
+  // Draw alpha objects.
+
+  for(int i = 0; i < count_visible_alpha; i++)
+  {
+    kgmVisual* vis = m_visible_visuals_alpha[i];
+    kgmMaterial* mtl = vis->getMaterial();
+
+    box3    bbound = vis->getBound();
+    sphere3 sbound;
+
+    bbound.min    = vis->getTransform() * bbound.min;
+    bbound.max    = vis->getTransform() * bbound.max;
+    sbound.center = bbound.center();
+    sbound.radius = 0.5f * bbound.dimension().length();
+
+    setWorldMatrix(vis->getTransform());
+
+    render(mtl);
+
+#ifndef NO_SHADERS
+
+    if(!mtl->shade() || g_lights_count < 1)
+    {
+      render(shaders[kgmShader::TypeBase]);
+    }
+    else
+    {
+      g_light_active = g_lights[0];
+
+      render(shaders[kgmShader::TypeAmbient]);
+    }
+
+#endif
+
+    render(vis);
+
+    if (!mtl->shade())
+    {
+      render((kgmMaterial*)null);
+      render((kgmShader*)null);
+
+      continue;
+    }
 
     //gc->gcDepth(true, false, gccmp_lequal);
     gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
@@ -717,14 +798,21 @@ void kgmGraphics::render()
 
 #endif
 
-  //draw sprites
-
-  for(kgmList<kgmVisual*>::iterator i = vis_sprite.begin(); i != vis_sprite.end(); ++i)
+  for(u32 i = 0; i < count_sprites; i++)
   {
-    render((*i)->getSprite());
-  }
+    if(m_visible_sprites[i]->type() == kgmVisual::TypeSprite)
+    {
+      render(m_visible_sprites[i]->getSprite());
+    }
+    else if(m_visible_sprites[i]->type() == kgmVisual::TypeText)
+    {
+      kgmText* text = m_visible_sprites[i]->getText();
+      kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
+                      text->m_rect.w, text->m_rect.h);
 
-  // render guis
+      gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
+    }
+  }
 
   for(int i = m_guis.size(); i > 0; i--)
   {
@@ -740,16 +828,6 @@ void kgmGraphics::render()
     }
   }
 
-  // render text
-
-  for(int i = 0; i < vis_text.size(); i++)
-  {
-    kgmText* text = vis_text[i]->getText();
-    kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
-                    text->m_rect.w, text->m_rect.h);
-
-    gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
-  }
 
 #ifdef DEBUG
   char info[4096] = {0};
@@ -798,13 +876,6 @@ void kgmGraphics::render()
   gc->gcSetTexture(1, 0);
   gc->gcSetTexture(2, 0);
   gc->gcSetTexture(3, 0);
-
-  vis_particles.clear();
-  vis_sprite.clear();
-  vis_blend.clear();
-  vis_text.clear();
-
-  m_cnt_vis_mesh_scene = 0;
 }
 
 void kgmGraphics::render(kgmVisual* visual)
@@ -1213,7 +1284,7 @@ void kgmGraphics::render(kgmGui* gui){
 
   text = gui->getText();
 
-  if(gui->m_hasAlpha)
+  if(gui->alpha())
     gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
 
   if(gui->isClass(kgmGuiButton::Class))
@@ -1353,15 +1424,6 @@ void kgmGraphics::render(kgmGui* gui){
   }
   else if(gui->isClass(kgmGuiMenu::Class))
   {
-    /*if(gui->m_hasMouse )
-    {
-      gcDrawRect(rect, gui_style->smenu.fg_color, gui_style->smenu.image);
-    }
-    else
-    {
-      gcDrawRect(rect, gui_style->smenu.bg_color, gui_style->smenu.image);
-    }*/
-
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
 
     if(menu->getItem())
@@ -1462,7 +1524,7 @@ void kgmGraphics::render(kgmGui* gui){
     }
   }
 
-  if(gui->m_hasAlpha)
+  if(gui->alpha())
     gc->gcBlend(false, gcblend_zero, gcblend_zero);
 
   for(int i = 0; i < gui->m_childs.length(); i++)

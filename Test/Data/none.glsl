@@ -7,5 +7,5 @@ void kgm_main(out vec4 pos)
 
 void kgm_main(out vec4 col)
 {
-  col = g_vColor;
+  col = vec4(1, 1, 1, 1);
 }

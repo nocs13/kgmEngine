@@ -16,9 +16,10 @@ kgmGui::kgmGui()
   m_resize   = true;
   m_hasMouse = false;
   m_hasInput = false;
-  m_hasAlpha = false;
   m_useStyle = true;
   m_focus    = null;
+
+  m_alpha = false;
 
   m_draw       = 0;
   m_base.scale = true;
@@ -39,7 +40,7 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
   m_resize   = true;
   m_hasMouse = false;
   m_hasInput = false;
-  m_hasAlpha = false;
+  m_alpha    = false;
   m_useStyle = true;
 
   m_focus = null;

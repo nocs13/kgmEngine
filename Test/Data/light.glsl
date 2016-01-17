@@ -44,7 +44,7 @@ void kgm_main( out vec4 color )
     float distance = 1.0 + length(v_L - v_V);
     float intensity = max(0.0, (v_I * dot(NN, LN) / distance));
 
-    vec4 col = g_vColor * texture2D(g_txColor, v_UV);
+    vec4 col = texture2D(g_txColor, v_UV);
     col.xyz *= intensity;
 
     //Specular

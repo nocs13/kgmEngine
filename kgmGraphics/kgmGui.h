@@ -66,7 +66,7 @@ public:
   bool       m_useStyle; //for draw manager, use predefined style
   bool       m_hasMouse; //is mouse inside widget
   bool       m_hasInput; //is input(keyboard/joystick) inside widget
-  bool       m_hasAlpha; //test alpha in color
+  bool       m_alpha;    //test alpha in color
   bool       m_freeze;   //have or not input events
   bool       m_resize;   //should be gui resizable
   kgmString  m_text;     //gui text
@@ -118,7 +118,9 @@ public:
   void         setXdata(void* x){ m_xdata = x;    }
   void*        getXdata()       { return m_xdata; }
 
-  void         setAlpha(bool  a) { m_hasAlpha = a; }
+  bool         alpha()        { return m_alpha; }
+  void         alpha(bool  a) { m_alpha = a;    }
+
   void         setColor(Color c) { m_color = c;    }
   void         setImage(Image i) { m_image = i;    }
   void         useStyle(bool  s) { m_useStyle = s; }

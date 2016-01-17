@@ -77,8 +77,9 @@ private:
 
   kgmTab<u16, kgmShader*>  shaders;
 
-  kgmArray<kgmVisual*> m_vis_mesh_scene;
-  s32                  m_cnt_vis_mesh_scene;
+  kgmArray<kgmVisual*> m_visible_sprites;
+  kgmArray<kgmVisual*> m_visible_visuals;
+  kgmArray<kgmVisual*> m_visible_visuals_alpha;
 
   kgmTexture *m_shadowmap;
 

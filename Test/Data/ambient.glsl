@@ -15,8 +15,6 @@ void kgm_main(out vec4 col)
 {
   vec4 color = texture2D(g_txColor, v_UV);
 
-  color *= g_vColor;
-
   color.xyz *= v_I;
 
   col = color;
