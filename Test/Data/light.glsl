@@ -38,6 +38,7 @@ void kgm_main( out vec4 color )
     //Normal
     {
       vec3 bump = texture2D(g_txNormal, v_UV).xyz * 2.0 - 1.0;
+      bump = normalize(bump);
       NN = normalize(NN + bump);
     }
 
