@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<kgm>
+ <kgmLight name='Light_1'>
+  <Position value='-2.403319 0.458879 0.312678'/>
+ </kgmLight>
+ <kgmMesh name='Mesh_2' link='GunFA.msh'>
+  <Material value=''/>
+  <Position value='0.445399 0.000000 1.274216'/>
+  <Rotation value='0.000000 0.000000 0.000000'/>
+ </kgmMesh>
+</kgm>

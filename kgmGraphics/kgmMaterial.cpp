@@ -10,7 +10,7 @@ kgmMaterial::kgmMaterial()
 
   m_color        = Color(1.0f, 1.0f, 1.0f, 1.0f);
   m_specular     = Color(1.0f, 1.0f, 1.0f, 1.0f);
-  m_shininess    = 1.0;
+  m_shininess    = 0.0;
 
   m_alpha  = false;
   m_blend  = false;
