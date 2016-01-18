@@ -299,8 +299,6 @@ void kgmGraphics::resize(float width, float height)
 
 void kgmGraphics::render()
 {
-  static float m_time[4];
-  vec3 v[2];
   mtx4 m;
   int k = 0;
   bool lighting = false;
@@ -500,76 +498,6 @@ void kgmGraphics::render()
 
   // Draw alpha objects.
 
-  for(int i = 0; i < count_visible_alpha; i++)
-  {
-    kgmVisual* vis = m_visible_visuals_alpha[i];
-    kgmMaterial* mtl = vis->getMaterial();
-
-    box3    bbound = vis->getBound();
-    sphere3 sbound;
-
-    bbound.min    = vis->getTransform() * bbound.min;
-    bbound.max    = vis->getTransform() * bbound.max;
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
-
-    setWorldMatrix(vis->getTransform());
-
-    render(mtl);
-
-#ifndef NO_SHADERS
-
-    if(!mtl->shade() || g_lights_count < 1)
-    {
-      render(shaders[kgmShader::TypeBase]);
-    }
-    else
-    {
-      g_light_active = g_lights[0];
-
-      render(shaders[kgmShader::TypeAmbient]);
-    }
-
-#endif
-
-    gc->gcDepth(true, false, gccmp_lequal);
-    render(vis);
-    gc->gcDepth(true, true, gccmp_lequal);
-
-    if (!mtl->shade())
-    {
-      render((kgmMaterial*)null);
-      render((kgmShader*)null);
-
-      continue;
-    }
-
-    gc->gcDepth(false, false, gccmp_lequal);
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-
-    for(int i = 0; i < g_lights_count; i++)
-    {
-      g_light_active = g_lights[i];
-
-#ifndef NO_SHADERS
-
-      render(shaders[kgmShader::TypeLight]);
-
-#endif
-
-      gc->gcDepth(true, false, gccmp_lequal);
-      render(vis);
-      gc->gcDepth(true, true, gccmp_lequal);
-
-      render((kgmShader*)null);
-    }
-
-    gc->gcBlend(false, null, null);
-    gc->gcDepth(true, true, gccmp_lequal);
-
-    render((kgmMaterial*)null);
-    render((kgmShader*)null);
-  }
 
 #ifndef NO_SHADERS
 
@@ -861,6 +789,78 @@ void kgmGraphics::render()
 
   gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(m_viewport.width() - 200, 1, 100, 20), fps_text);
 #endif
+
+  for(int i = 0; i < count_visible_alpha; i++)
+  {
+    kgmVisual* vis = m_visible_visuals_alpha[i];
+    kgmMaterial* mtl = vis->getMaterial();
+
+    box3    bbound = vis->getBound();
+    sphere3 sbound;
+
+    bbound.min    = vis->getTransform() * bbound.min;
+    bbound.max    = vis->getTransform() * bbound.max;
+    sbound.center = bbound.center();
+    sbound.radius = 0.5f * bbound.dimension().length();
+
+    setWorldMatrix(vis->getTransform());
+
+    render(mtl);
+
+#ifndef NO_SHADERS
+
+    if(!mtl->shade() || g_lights_count < 1)
+    {
+      render(shaders[kgmShader::TypeBase]);
+    }
+    else
+    {
+      g_light_active = g_lights[0];
+
+      render(shaders[kgmShader::TypeAmbient]);
+    }
+
+#endif
+
+    gc->gcDepth(true, false, gccmp_lequal);
+    render(vis);
+    gc->gcDepth(true, true, gccmp_lequal);
+
+    if (!mtl->shade())
+    {
+      render((kgmMaterial*)null);
+      render((kgmShader*)null);
+
+      continue;
+    }
+
+    gc->gcDepth(false, false, gccmp_lequal);
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+
+    for(int i = 0; i < g_lights_count; i++)
+    {
+      g_light_active = g_lights[i];
+
+#ifndef NO_SHADERS
+
+      render(shaders[kgmShader::TypeLight]);
+
+#endif
+
+      gc->gcDepth(true, false, gccmp_lequal);
+      render(vis);
+      gc->gcDepth(true, true, gccmp_lequal);
+
+      render((kgmShader*)null);
+    }
+
+    gc->gcBlend(false, null, null);
+    gc->gcDepth(true, true, gccmp_lequal);
+
+    render((kgmMaterial*)null);
+    render((kgmShader*)null);
+  }
+
 
 #ifndef NO_SHADERS
 
