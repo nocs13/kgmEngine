@@ -60,7 +60,8 @@ private:
 
   kgmList<kNode*> nodes;
 
-  kNode* selected;
+  kNode* selected = null;
+  kNode* dragging = null;
 
   kgmMaterial* mtlLines = null;
   kgmMaterial* mtlPivot = null;

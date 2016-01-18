@@ -55,6 +55,7 @@ kEditor::kEditor(kgmGameBase* g)
   cam_rot = 0.0f;
 
   selected = null;
+  dragging = null;
 
   oquered = 0;
   view_mode = ViewPerspective;
@@ -176,6 +177,9 @@ void kEditor::clear()
   nodes.clear();
 
   oquered = 0;
+
+  selected = null;
+  dragging = null;
 }
 
 void kEditor::select(kgmString name)
@@ -329,8 +333,14 @@ void kEditor::select(int x, int y)
   {
     select(peeked->nam);
 
+    dragging = peeked;
+
     if(pivot)
       ((kPivot*)pivot->getMesh()->getMesh())->peekAxis(ray);
+  }
+  else
+  {
+    dragging = null;
   }
 }
 
@@ -1052,6 +1062,8 @@ void kEditor::onKeyDown(int k)
 void kEditor::onMsLeftUp(int k, int x, int y)
 {
   ms_click[0] = false;
+
+  dragging = null;
 }
 
 void kEditor::onMsLeftDown(int k, int x, int y)
@@ -1062,9 +1074,6 @@ void kEditor::onMsLeftDown(int k, int x, int y)
     return;
 
   select(x, y);
-
-  //if(selected && pivot && ((kPivot*)pivot->getMesh())->axis != kPivot::AXIS_NONE)
-  //  game->setMsAbsolute(true);
 }
 
 void kEditor::onMsRightUp(int k, int x, int y)
@@ -1215,7 +1224,7 @@ void kEditor::onMsMove(int k, int x, int y)
       }
     }
   }
-  else if(selected && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !selected->lock)
+  else if(dragging && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !dragging->lock)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
@@ -1251,12 +1260,12 @@ void kEditor::onMsMove(int k, int x, int y)
     dir.normalize();
 
     //selected->setPosition(selected->pos + dir * prdist);
-    selected->setPosition(pr);
+    dragging->setPosition(pr);
 
     mtx4 m;
     m.identity();
-    m.translate(selected->pos);
-    ((kPivot*)pivot->getMesh()->getMesh())->setPos(selected->pos);
+    m.translate(dragging->pos);
+    ((kPivot*)pivot->getMesh()->getMesh())->setPos(dragging->pos);
     pivot->set(m);
   }
 }

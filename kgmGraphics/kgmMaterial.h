@@ -164,7 +164,7 @@ public:
 
   bool alpha() const
   {
-    return m_alpha;
+    return (m_alpha || (m_color.a < 1.0f));
   }
 
   void alpha(bool a)
