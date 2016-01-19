@@ -160,6 +160,11 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   kgmGui* tmaterial = tab->addTab("Material");
   y_coord = 1;
 
+  kgmGuiButton* btn = new kgmGuiButton(tmaterial, 1, y_coord, 50, 20);
+  btn->setText("Relect");
+  slotReset.connect(this, &kViewOptionsForMaterial::onReset, &btn->sigClick);
+
+
   y_coord += 23;
   kgmMaterial* mtl = n->mtl;
 
@@ -173,8 +178,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   if(mtl->getTexColor())
     g->setText(mtl->getTexColor()->m_id);
 
-  kgmGuiButton* btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
-  btn->setText("select");
+  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("Select");
   slotSelectColor.connect(this, &kViewOptionsForMaterial::onSelectTexColor, &btn->sigClick);
 
   y_coord += 23;
@@ -186,7 +191,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
     g->setText(mtl->getTexNormal()->m_id);
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
-  btn->setText("select");
+  btn->setText("Select");
   slotSelectNormal.connect(this, &kViewOptionsForMaterial::onSelectTexNormal, &btn->sigClick);
 
   y_coord += 23;
@@ -198,7 +203,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
     g->setText(mtl->getTexSpecular()->m_id);
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
-  btn->setText("select");
+  btn->setText("Select");
   slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
@@ -232,6 +237,21 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
   slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
+}
+
+void kViewOptionsForMaterial::onReset(int)
+{
+  kgmMaterial* m = (kgmMaterial*)node->obj;
+
+  m->setShader(null);
+  m->setTexColor(null);
+  m->setTexNormal(null);
+  m->setTexSpecular(null);
+
+  m->shininess(0.0);
+  m->transparency(0.0);
+
+  erase();
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)

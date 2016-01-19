@@ -31,6 +31,7 @@ enum MENUEVENT
   ME_ADD_TRIGGER,
   ME_ADD_OBSTACLE,
   ME_ADD_MATERIAL,
+  ME_ADD_PARTICLES,
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
@@ -93,6 +94,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
     item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
     item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMaterial));
+    item->add(ME_ADD_PARTICLES, "Particles", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddParticles));
     item = menu->add("Run");
     item->add(ME_RUN_PLAY, "Play", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunPlay));
     item->add(ME_RUN_STOP, "Stop", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunStop));
@@ -1562,6 +1564,19 @@ void kEditor::onAddMaterial()
   node->setPosition(vec3(0, 0, -1000));
 
   node->lock = true;
+
+  add(node);
+}
+
+void kEditor::onAddParticles()
+{
+  kNode* node = new kNode(new kgmVisual());
+  kgmParticles* particles = new kgmParticles();
+
+  node->vis->set(particles);
+
+  node->nam = kgmString("Particles_") + kgmConvert::toString((s32)(++oquered));
+  node->setPosition(vec3(0, 0, 1));
 
   add(node);
 }

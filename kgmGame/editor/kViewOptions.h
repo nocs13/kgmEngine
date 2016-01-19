@@ -63,6 +63,7 @@ class kViewOptionsForMaterial : public kViewOptions
 
   Mode mode;
 
+  Slot<kViewOptionsForMaterial, int> slotReset;
   Slot<kViewOptionsForMaterial, int> slotSelectShader;
 
   Slot<kViewOptionsForMaterial, int> slotSelectColor;
@@ -77,6 +78,7 @@ class kViewOptionsForMaterial : public kViewOptions
 public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 
+  __stdcall void onReset(int);
   __stdcall void onSelectFailed(kFileDialog*);
   __stdcall void onSelectSuccess(kFileDialog*);
   __stdcall void onSelectShader(int);

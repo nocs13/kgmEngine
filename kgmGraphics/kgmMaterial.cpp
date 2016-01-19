@@ -41,25 +41,16 @@ kgmMaterial* kgmMaterial::clone()
 
 void kgmMaterial::setTexColor(kgmTexture* t)
 {
-  if(!t || !t->m_texture)
-    return;
-
   m_tex_color = t;
 }
 
 void kgmMaterial::setTexNormal(kgmTexture* t)
 {
-  if(!t || !t->m_texture)
-    return;
-
   m_tex_normal = t;
 }
 
 void kgmMaterial::setTexSpecular(kgmTexture* t)
 {
-  if(!t || !t->m_texture)
-    return;
-
   m_tex_specular = t;
 }
 
