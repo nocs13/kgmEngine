@@ -26,6 +26,9 @@ private:
   kgmGuiCheck*          m_group_owner;
 
 public:
+  Signal<bool> sigClick;
+
+public:
   kgmGuiCheck();
   kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
   kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call);

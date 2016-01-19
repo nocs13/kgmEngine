@@ -164,6 +164,8 @@ void kgmGuiText::onKeyDown(int k)
 
     if(callback.hasObject() && callback.hasFunction())
       callback(getText());
+
+    sigChange(getText());
   }
     break;
   case KEY_DELETE:
@@ -172,6 +174,8 @@ void kgmGuiText::onKeyDown(int k)
 
     if(callback.hasObject() && callback.hasFunction())
       callback(getText());
+
+    sigChange(getText());
   }
     break;
   default:
@@ -226,8 +230,9 @@ void kgmGuiText::onKeyDown(int k)
     if(callback.hasObject() && callback.hasFunction())
       callback(getText());
 
-    kgm_log() << "kgmGuiTex::delLeft index " << (s32)index << " place " << (s32)place << "\n"; 
+    sigChange(getText());
 
+    kgm_log() << "kgmGuiTex::delLeft index " << (s32)index << " place " << (s32)place << "\n";
   }
     break;
   }

@@ -70,6 +70,8 @@ class kViewOptionsForMaterial : public kViewOptions
   Slot<kViewOptionsForMaterial, int> slotSelectNormal;
   Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
 
+  Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
+
   kgmGuiText*  guiTextTexColor;
   kgmGuiText*  guiTextTexNormal;
   kgmGuiText*  guiTextTexSpecular;
@@ -87,11 +89,17 @@ public:
   __stdcall void onSelectTexSpecular(int);
   __stdcall void onShininess(u32 s);
   __stdcall void onTransparency(u32 s);
+  __stdcall void onAlpha(bool s);
 };
 
 class kViewOptionsForVisual : public kViewOptions
 {
-  Slot<kViewOptionsForVisual, int> slotSelectMaterial;
+  Slot<kViewOptionsForVisual, int>       slotSelectMaterial;
+  Slot<kViewOptionsForVisual, bool>      slotParticlesLoop;
+  Slot<kViewOptionsForVisual, kgmString> slotParticlesCount;
+  Slot<kViewOptionsForVisual, kgmString> slotParticlesSpeed;
+  Slot<kViewOptionsForVisual, kgmString> slotParticlesLife;
+  Slot<kViewOptionsForVisual, kgmString> slotParticlesSize;
 
   kgmGuiText* vis_text = null;
 
@@ -100,6 +108,11 @@ public:
 
   __stdcall void onShowMaterials(int);
   __stdcall void onSelectMaterial(kgmString);
+  __stdcall void onParticlesLoop(bool);
+  __stdcall void onParticlesCount(kgmString);
+  __stdcall void onParticlesSpeed(kgmString);
+  __stdcall void onParticlesLife(kgmString);
+  __stdcall void onParticlesSize(kgmString);
 };
 
 class kViewOptionsForLight : public kViewOptions

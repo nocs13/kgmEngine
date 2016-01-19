@@ -42,6 +42,8 @@ void kgmGuiCheck::onMsLeftUp(int key, int x, int y){
 
     if(callback.hasObject() && callback.hasFunction())
       callback(m_check);
+
+    sigClick(m_check);
   }
 }
 

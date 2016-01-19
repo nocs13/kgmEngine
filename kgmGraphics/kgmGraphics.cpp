@@ -870,6 +870,9 @@ void kgmGraphics::render(kgmVisual* visual)
     gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
   }
     break;
+  case kgmVisual::TypeParticles:
+    render(visual->getParticles());
+    break;
   }
 
   //visual->update();
@@ -1191,7 +1194,8 @@ void kgmGraphics::render(kgmShader* s)
   g_shd_active = s;
 }
 
-void kgmGraphics::render(kgmMesh *m){
+void kgmGraphics::render(kgmMesh *m)
+{
   if(!m)
     return;
 
@@ -1214,7 +1218,8 @@ void kgmGraphics::render(kgmMesh *m){
              2, 3 * m->fcount(), m->faces());
 }
 
-void kgmGraphics::render(kgmGui* gui){
+void kgmGraphics::render(kgmGui* gui)
+{
   kgmGui::Rect rect;
   kgmString    text;
 

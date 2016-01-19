@@ -227,6 +227,12 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
+  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 204, 20);
+  alpha->setText("Alpha");
+  alpha->setCheck(mtl->alpha());
+  slotSelectAlpha.connect(this, &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
+
+  y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shader");
   g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
@@ -362,24 +368,92 @@ void kViewOptionsForMaterial::onTransparency(u32 s)
   mtl->transparency((float)s / 100.0f);
 }
 
+void kViewOptionsForMaterial::onAlpha(bool a)
+{
+  kgmMaterial* mtl = node->mtl;
+
+  if(!mtl)
+    return;
+
+  mtl->alpha(a);
+}
+
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   kgmGui* tvisual = tab->addTab("Visual");
   y_coord = 1;
 
+  kgmGui* g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+  g->setText("Material");
+  g = vis_text = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+
+  if(n->vis->getMaterial())
+    vis_text->setText(n->vis->getMaterial()->name());
+
+  kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
+  btn->setText("select");
+  slotSelectMaterial.connect(this, &kViewOptionsForVisual::onShowMaterials, &btn->sigClick);
+
+  y_coord += 23;
+
   if(n->vis->type() == kgmVisual::TypeMesh)
   {
+  }
+  else if (n->vis->type() == kgmVisual::TypeParticles)
+  {
     kgmGui* g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
-    g->setText("Material");
-    g = vis_text = new kgmGuiText(tvisual, 51, y_coord, 70, 20);
+    g->setText("Count");
+    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g->setSid("Count");
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_count));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
 
-    if(n->vis->getMaterial())
-      vis_text->setText(n->vis->getMaterial()->name());
+    slotParticlesCount.connect(this, &kViewOptionsForVisual::onParticlesCount, &((kgmGuiText*)g)->sigChange);
 
-    kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
-    btn->setText("select");
-    slotSelectMaterial.connect(this, &kViewOptionsForVisual::onShowMaterials, &btn->sigClick);
+    y_coord += 23;
+
+    g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+    g->setText("Speed");
+    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g->setSid("Speed");
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_speed));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+
+    slotParticlesSpeed.connect(this, &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
+
+    y_coord += 23;
+
+    g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+    g->setText("Life");
+    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g->setSid("Life");
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_life));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+
+    slotParticlesLife.connect(this, &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
+
+    y_coord += 23;
+
+    g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+    g->setText("Size");
+    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g->setSid("Size");
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->st_size));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+
+    slotParticlesSize.connect(this, &kViewOptionsForVisual::onParticlesSize, &((kgmGuiText*)g)->sigChange);
+
+    y_coord += 23;
+
+    kgmGuiCheck* loop = new kgmGuiCheck(tvisual, 0, y_coord, 204, 20);
+    loop->setText("Loop");
+    loop->setCheck(node->vis->getParticles()->m_loop);
+    slotParticlesLoop.connect(this, &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
 
     y_coord += 23;
   }
@@ -421,6 +495,35 @@ void kViewOptionsForVisual::onSelectMaterial(kgmString id)
       }
     }
   }
+}
+
+void kViewOptionsForVisual::onParticlesLoop(bool s)
+{
+  node->vis->getParticles()->m_loop = s;
+}
+
+void kViewOptionsForVisual::onParticlesCount(kgmString s)
+{
+  node->vis->getParticles()->m_count = kgmConvert::toInteger(s);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
+{
+  node->vis->getParticles()->m_speed = kgmConvert::toDouble(s);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesLife(kgmString s)
+{
+  node->vis->getParticles()->m_life = kgmConvert::toDouble(s);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesSize(kgmString s)
+{
+  node->vis->getParticles()->st_size = kgmConvert::toDouble(s);
+  node->vis->getParticles()->build();
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)

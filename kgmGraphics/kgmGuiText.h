@@ -21,6 +21,9 @@ private:
   ChangeEventCallback callback;
 
 public:
+  Signal<kgmString> sigChange;
+
+public:
   kgmGuiText();
   kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
   virtual ~kgmGuiText();
