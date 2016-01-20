@@ -70,6 +70,8 @@ private:
 
   bool  move_camera;
 
+  bool mode_play;
+
 public:
   kEditor(kgmGameBase* game);
   ~kEditor();

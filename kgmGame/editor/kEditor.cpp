@@ -67,6 +67,8 @@ kEditor::kEditor(kgmGameBase* g)
   mtlLines = null;
   mtlPivot = null;
 
+  mode_play = false;
+
   if(game->getRender())
   {
     game->getRender()->setEditor(true);
@@ -169,6 +171,9 @@ kEditor::~kEditor()
 
 void kEditor::clear()
 {
+  if(mode_play)
+    onRunStop();
+
   for(u32 i = nodes.length(); i > 0; i--)
   {
     kNode* node = nodes[i - 1];
@@ -1576,13 +1581,16 @@ void kEditor::onAddParticles()
   node->vis->set(particles);
 
   node->nam = kgmString("Particles_") + kgmConvert::toString((s32)(++oquered));
-  node->setPosition(vec3(0, 0, 1));
+  node->setPosition(vec3(0, 0, 0));
 
   add(node);
 }
 
 void kEditor::onRunPlay()
 {
+  if(mode_play)
+    return;
+
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     switch((*i)->typ)
@@ -1598,12 +1606,20 @@ void kEditor::onRunPlay()
     case kNode::OBSTACLE:
       game->getPhysics()->add((*i)->obs);
       break;
+    case kNode::VISUAL:
+      game->getGraphics()->add((*i)->vis);
+      break;
     }
   }
+
+  mode_play = true;
 }
 
 void kEditor::onRunStop()
 {
+  if(!mode_play)
+    return;
+
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     switch((*i)->typ)
@@ -1621,6 +1637,8 @@ void kEditor::onRunStop()
       break;
     }
   }
+
+  mode_play = false;
 }
 
 void kEditor::onViewObjects()
