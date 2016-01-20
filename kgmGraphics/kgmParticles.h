@@ -53,6 +53,7 @@ public:
 
   float      m_life;
   float      m_speed;
+  float      m_angle;
 
   float      div_life;
   float      div_speed;

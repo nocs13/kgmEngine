@@ -427,6 +427,18 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     y_coord += 23;
 
     g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
+    g->setText("Angle");
+    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g->setSid("Angle");
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_angle));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+
+    slotParticlesAngle.connect(this, &kViewOptionsForVisual::onParticlesAngle, &((kgmGuiText*)g)->sigChange);
+
+    y_coord += 23;
+
+    g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
     g->setText("Life");
     g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
     g->setSid("Life");
@@ -511,6 +523,12 @@ void kViewOptionsForVisual::onParticlesCount(kgmString s)
 void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 {
   node->vis->getParticles()->m_speed = kgmConvert::toDouble(s);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesAngle(kgmString s)
+{
+  node->vis->getParticles()->m_angle = kgmConvert::toDouble(s);
   node->vis->getParticles()->build();
 }
 

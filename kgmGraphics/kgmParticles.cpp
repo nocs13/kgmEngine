@@ -18,6 +18,7 @@ kgmParticles::kgmParticles()
   m_count = 10;
   m_life = 2000;
   m_speed = 0.5f;
+  m_angle = 0.0f;
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
@@ -111,7 +112,17 @@ void kgmParticles::init(Particle* pr)
   pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
-  pr->dir   = direction + direction * (div_direction / (1 + rand() % m_count));
+
+  float r1    = (float)rand() / RAND_MAX;
+  float alpha = m_angle * r1 + m_angle * (1 - r1);
+
+  float r2 = (float)rand()/RAND_MAX;
+  float beta = m_angle * r2 + m_angle * (1 - r2);
+  pr->dir.x = cos(beta) * cos(alpha);
+  pr->dir.y = sin(beta) * cos(alpha);
+  pr->dir.z = sin(alpha);
+
+  //pr->dir   = direction + direction * (div_direction / (1 + rand() % m_count));
   pr->dir.normalize();
 
   pr->speed = m_speed - div_speed * s;
