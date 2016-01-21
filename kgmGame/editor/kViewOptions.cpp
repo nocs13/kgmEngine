@@ -161,7 +161,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord = 1;
 
   kgmGuiButton* btn = new kgmGuiButton(tmaterial, 1, y_coord, 50, 20);
-  btn->setText("Relect");
+  btn->setText("Reset");
   slotReset.connect(this, &kViewOptionsForMaterial::onReset, &btn->sigClick);
 
 
@@ -171,7 +171,33 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   if(!mtl)
     return;
 
-  kgmGui* g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  kgmGui* g = null;
+
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Color");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 100, 20);
+  g->setSid("Color");
+  g->setText(kgmConvert::toString(mtl->m_color.getRGBA(), true));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+
+  slotColor.connect(this, &kViewOptionsForMaterial::onColor, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Specular");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 100, 20);
+  g->setSid("Specular");
+  g->setText(kgmConvert::toString(mtl->m_specular.getRGBA(), true));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+
+  slotSpecular.connect(this, &kViewOptionsForMaterial::onSpecular, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
@@ -258,6 +284,18 @@ void kViewOptionsForMaterial::onReset(int)
   m->transparency(0.0);
 
   erase();
+}
+
+void kViewOptionsForMaterial::onColor(kgmString c)
+{
+  u32 color = (u32)kgmConvert::toInteger(c);
+  node->mtl->m_color.setRGBA(color);
+}
+
+void kViewOptionsForMaterial::onSpecular(kgmString s)
+{
+  u32 specular = (u32)kgmConvert::toInteger(s);
+  node->mtl->m_specular.setRGBA(specular);
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)

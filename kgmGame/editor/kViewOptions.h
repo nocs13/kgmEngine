@@ -72,6 +72,9 @@ class kViewOptionsForMaterial : public kViewOptions
 
   Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
 
+  Slot<kViewOptionsForMaterial, kgmString> slotColor;
+  Slot<kViewOptionsForMaterial, kgmString> slotSpecular;
+
   kgmGuiText*  guiTextTexColor;
   kgmGuiText*  guiTextTexNormal;
   kgmGuiText*  guiTextTexSpecular;
@@ -81,6 +84,8 @@ public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 
   __stdcall void onReset(int);
+  __stdcall void onColor(kgmString);
+  __stdcall void onSpecular(kgmString);
   __stdcall void onSelectFailed(kFileDialog*);
   __stdcall void onSelectSuccess(kFileDialog*);
   __stdcall void onSelectShader(int);
