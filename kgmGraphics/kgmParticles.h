@@ -82,14 +82,29 @@ public:
   void build();
   void init(Particle*);
 
-  void setCamera(kgmCamera* c)
+  void camera(kgmCamera* c)
   {
     m_camera = c;
+  }
+
+  kgmCamera* camera() const
+  {
+    return m_camera;
   }
 
   kgmMesh* getMesh()
   {
     return m_mesh;
+  }
+
+  void typeRender(TypeRender t)
+  {
+    m_typerender = t;
+  }
+
+  TypeRender typeRender() const
+  {
+    return m_typerender;
   }
 
   virtual void update(u32 t);

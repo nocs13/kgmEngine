@@ -103,11 +103,8 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  //srand (time(NULL));
   float s = m_speed / (1 + rand() % (10 * m_count));
   float l = m_life  / (1 + rand() % (10 * m_count));
-
-  //if(l > m_life) l = m_life;
 
   pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
@@ -177,13 +174,68 @@ void kgmParticles::update(u32 t)
   {
     kgmMesh::Vertex_P_C_T* parts = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
 
-    if(m_typerender == RTypeBillboard)
+    if(m_typerender == RTypeBillboard && m_camera)
     {
+      vec3    rv, uv;
 
+      rv = vec3(m_camera->mView.m[0], m_camera->mView.m[2], m_camera->mView.m[1]);
+      rv.normalize();
+      uv = rv.cross(m_camera->mDir);
+      uv.normalize();
+
+      kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
+
+      for(s32 i = 0; i < m_count; i+=6)
+      {
+        vec3    pos   = m_particles[i].pos;
+        float   scale = m_particles[i].scale;
+        float   time  = m_particles[i].time;
+        float   life  = m_particles[i].life;
+        vec3    crv = rv * scale,
+                cuv = uv * scale;
+
+        float   txu_s = 0.0f, txv_s = 0.0f;
+        float   txu_e = 1.0f, txv_e = 1.0f;
+
+        if(tex_slide_cols > 1 || tex_slide_rows > 1)
+        {
+          u32 frames = tex_slide_cols * tex_slide_rows;
+          u32 frame  = (u32)((float)frames * time / life);
+
+          float sw = (tex_slide_cols > 1) ? (1.0f / tex_slide_cols) : (1.0f);
+          float sh = (tex_slide_rows > 1) ? (1.0f / tex_slide_rows) : (1.0f);
+
+          u32   ir = frame / tex_slide_cols;
+          u32   ic = frame % tex_slide_cols;
+
+          txu_s = sw * ic;
+          txv_s = sh * ir;
+          txu_e = sw * (ic + 1);
+          txv_e = sh * (ir + 1);
+        }
+
+        points[i].pos = (pos - crv + cuv);
+        points[i].uv = vec2(txu_s, txv_s);
+        points[i + 1].pos = (pos - crv - cuv);
+        points[i + 1].uv = vec2(txu_s, txv_e);
+        points[i + 2].pos = (pos + crv + cuv);
+        points[i + 2].uv = vec2(txu_e, txv_s);
+
+        points[i + 3].pos = (pos + crv - cuv);
+        points[i + 3].uv = vec2(txu_e, txv_e);
+        points[i + 4].pos = (pos + crv + cuv);
+        points[i + 4].uv = vec2(txu_e, txv_s);
+        points[i + 5].pos = (pos - crv - cuv);
+        points[i + 5].uv = vec2(txu_s, txv_e);
+
+        points[i].col = points[i + 1].col =
+        points[i + 2].col = points[i + 3].col =
+        points[i + 4].col = points[i + 5].col = m_particles[i].col.color;
+      }
     }
     else
     {
-      for (s32 i = 0; i < m_count; i++)
+      for (s32 i = 0; i < m_count; i+=18)
       {
         u32   col   = m_particles[i].col.color;
         f32   scale = m_particles[i].scale;

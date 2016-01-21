@@ -1577,6 +1577,7 @@ void kEditor::onAddParticles()
 {
   kNode* node = new kNode(new kgmVisual());
   kgmParticles* particles = new kgmParticles();
+  particles->camera(&game->getRender()->camera());
 
   node->vis->set(particles);
 

@@ -925,7 +925,7 @@ void kgmGraphics::render(kgmParticles* particles)
   if(!particles || !particles->getMesh())
     return;
 
-  mtx4    mtr = g_mtx_view;
+  /*mtx4    mtr = g_mtx_view;
   vec3    rv, uv;
   //float2  dim(1, 1);
 
@@ -951,7 +951,7 @@ void kgmGraphics::render(kgmParticles* particles)
       float   time  = particles->m_particles[i].time;
       float   life  = particles->m_particles[i].life;
       vec3    crv = rv * scale,
-          cuv = uv * scale;
+              cuv = uv * scale;
 
       float   txu_s = 0.0f, txv_s = 0.0f;
       float   txu_e = 1.0f, txv_e = 1.0f;
@@ -991,7 +991,7 @@ void kgmGraphics::render(kgmParticles* particles)
           points[i + 2].col = points[i + 3].col =
           points[i + 4].col = points[i + 5].col = particles->m_particles[i].col.color;
     }
-  }
+  }*/
 
   render(particles->getMesh());
 }
