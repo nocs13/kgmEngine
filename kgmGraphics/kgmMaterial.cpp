@@ -27,7 +27,6 @@ kgmMaterial* kgmMaterial::clone()
   kgmMaterial* m = new kgmMaterial;
 
   m->m_color     = m_color;
-  m->m_emision   = m_emision;
   m->m_specular  = m_specular;
 
   m->m_shininess    = m_shininess;

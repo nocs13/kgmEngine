@@ -102,7 +102,7 @@ private:
   float  m_shininess;
 
 public:
-  Color  m_color, m_specular, m_emision;
+  Color  m_color, m_specular;
 
   kgmShader*  m_shader = null;
 

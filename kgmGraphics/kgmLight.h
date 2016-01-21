@@ -24,7 +24,7 @@ public:
 
   vec3  position;   //light position
   vec3  direction;  //light direction, if 0 then light is omni
-  vec4  color, specular;
+  vec4  color;
 
   float intensity;  //light intensity, 1 mean 10 meter range
   float angle;      //light spot angle if directional
@@ -48,7 +48,6 @@ public:
     direction = vec3(0, 0, 0);
 
     color     = vec4(.7, .7, .7, 1);
-    specular  = vec4(.7, .7, .7, 1);
 
     intensity = 1.0f;
     angle = 0.0f;
@@ -67,7 +66,6 @@ public:
     direction = light.direction;
 
     color     = light.color;
-    specular  = light.specular;
 
     intensity = light.intensity;
     angle     = light.angle;
@@ -93,7 +91,6 @@ public:
     l->position  = position;
     l->direction = direction;
     l->color     = color;
-    l->specular  = specular;
     l->intensity = intensity;
     l->angle     = angle;
     l->shadows   = shadows;

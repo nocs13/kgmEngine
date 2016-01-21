@@ -67,7 +67,8 @@ u32        g_mtx_joints_count = 0;
 //vec4       g_vec_light   = vec4(0, 0, 0, 1);
 //vec4       g_vec_ambient = vec4(1, 1, 1, 1);
 
-vec4       g_vec_color = vec4(1, 1, 1, 1);
+vec4       g_vec_color    = vec4(1, 1, 1, 1);
+vec4       g_vec_specular = vec4(1, 1, 1, 1);
 
 kgmShader* g_shd_active = null;
 
@@ -1141,26 +1142,36 @@ void kgmGraphics::render(kgmShader* s)
 
   //send default parameters
   vec4 v_light(0, 0, 0, 10);
+  vec4 v_light_color(1, 1, 1, 1);
+  vec4 v_light_direction(0, 0, 1, 0);
 
   if(g_light_active)
+  {
     v_light = vec4(g_light_active->position.x, g_light_active->position.y, g_light_active->position.z,
                    g_light_active->intensity);
+    v_light_direction = vec4(g_light_active->direction.x, g_light_active->direction.y, g_light_active->direction.z,
+                             g_light_active->angle);
+    v_light_color = g_light_active->color;
+  }
 
   float random = (float)rand()/(float)RAND_MAX;
 
   s->start();
-  s->set("g_fTime",     kgmTime::getTime());
-  s->set("g_fRandom",   random);
-  s->set("g_fShine",    g_fShine);
-  s->set("g_fAmbient",  g_fAmbient);
-  s->set("g_mProj",     g_mtx_proj);
-  s->set("g_mView",     g_mtx_view);
-  s->set("g_mTran",     g_mtx_world);
-  s->set("g_mNorm",     g_mtx_normal);
-  s->set("g_vColor",    g_vec_color);
-  s->set("g_vLight",    v_light);
-  s->set("g_vEye",      m_camera->mPos);
-  s->set("g_vEyeDir",   m_camera->mDir);
+  s->set("g_fTime",           kgmTime::getTime());
+  s->set("g_fRandom",         random);
+  s->set("g_fShine",          g_fShine);
+  s->set("g_fAmbient",        g_fAmbient);
+  s->set("g_mProj",           g_mtx_proj);
+  s->set("g_mView",           g_mtx_view);
+  s->set("g_mTran",           g_mtx_world);
+  s->set("g_mNorm",           g_mtx_normal);
+  s->set("g_vColor",          g_vec_color);
+  s->set("g_vSpecular",       g_vec_specular);
+  s->set("g_vLight",          v_light);
+  s->set("g_vLightColor",     v_light_color);
+  s->set("g_vLightDirection", v_light_color);
+  s->set("g_vEye",            m_camera->mPos);
+  s->set("g_vEyeDir",         m_camera->mDir);
 
   if(tcolor)
     s->set("g_txColor", 0);

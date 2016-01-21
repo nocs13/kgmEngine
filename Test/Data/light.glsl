@@ -38,6 +38,7 @@ void kgm_main( out vec4 color )
   vec3 E  = normalize(v_Y - VV); //VV
 
   vec4 col = texture2D(g_txColor, v_UV);
+       col.rgb *= v_L_color;
 
   //Normal
   {
