@@ -10,7 +10,6 @@
 #define MIN(x,y)    (x<y)?(x):(y)
 #define MAX(x,y)    (x>y)?(x):(y)
 
-
 template <class T> class kgmVector2d;
 template <class T> class kgmVector3d;
 template <class T> class kgmVector4d;
@@ -88,4 +87,15 @@ inline f32 fround(f32 n, u32 d)
 inline f32 fround(f64 n, u32 d)
 {
  return floor(n * powf(10., d) + 0.5) / powf(10., d);
+}
+
+template<class T>
+T clamp(T x, T min, T max)
+{
+  if(x < min)
+    x = min;
+  else if(x > max)
+    x = max;
+
+  return x;
 }

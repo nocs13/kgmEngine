@@ -175,25 +175,45 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Color");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 100, 20);
-  g->setSid("Color");
-  g->setText(kgmConvert::toString(mtl->m_color.getRGBA(), true));
+  g = new kgmGuiText(tmaterial, 51, y_coord, 30, 20);
+  g->setSid("ColorR");
+  g->setText(kgmConvert::toString((s32)(mtl->m_color.r * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-
-  slotColor.connect(this, &kViewOptionsForMaterial::onColor, &((kgmGuiText*)g)->sigChange);
+  slotColorR.connect(this, &kViewOptionsForMaterial::onColorR, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tmaterial, 83, y_coord, 30, 20);
+  g->setSid("ColorG");
+  g->setText(kgmConvert::toString((s32)(mtl->m_color.g * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotColorG.connect(this, &kViewOptionsForMaterial::onColorG, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tmaterial, 115, y_coord, 30, 20);
+  g->setSid("ColorB");
+  g->setText(kgmConvert::toString((s32)(mtl->m_color.b * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotColorB.connect(this, &kViewOptionsForMaterial::onColorB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
-  g->setText("Specular");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 100, 20);
-  g->setSid("Specular");
-  g->setText(kgmConvert::toString(mtl->m_specular.getRGBA(), true));
+  g->setSid("SpecularR");
+  g->setText(kgmConvert::toString((s32)(mtl->m_specular.r * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-
-  slotSpecular.connect(this, &kViewOptionsForMaterial::onSpecular, &((kgmGuiText*)g)->sigChange);
+  slotSpecularR.connect(this, &kViewOptionsForMaterial::onSpecularR, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tmaterial, 83, y_coord, 30, 20);
+  g->setSid("SpecularG");
+  g->setText(kgmConvert::toString((s32)(mtl->m_specular.g * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotSpecularG.connect(this, &kViewOptionsForMaterial::onSpecularG, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tmaterial, 115, y_coord, 30, 20);
+  g->setSid("SpecularB");
+  g->setText(kgmConvert::toString((s32)(mtl->m_specular.b * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotSpecularB.connect(this, &kViewOptionsForMaterial::onSpecularB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
@@ -286,16 +306,46 @@ void kViewOptionsForMaterial::onReset(int)
   erase();
 }
 
-void kViewOptionsForMaterial::onColor(kgmString c)
+void kViewOptionsForMaterial::onColorR(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  node->mtl->m_color.setRGBA(color);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_color.r = color / 255;
 }
 
-void kViewOptionsForMaterial::onSpecular(kgmString s)
+void kViewOptionsForMaterial::onColorG(kgmString c)
 {
-  u32 specular = (u32)kgmConvert::toInteger(s);
-  node->mtl->m_specular.setRGBA(specular);
+  u32 color = (u32)kgmConvert::toInteger(c);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_color.g = color / 255;
+}
+
+void kViewOptionsForMaterial::onColorB(kgmString c)
+{
+  u32 color = (u32)kgmConvert::toInteger(c);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_color.b = color / 255;
+}
+
+void kViewOptionsForMaterial::onSpecularR(kgmString c)
+{
+  u32 color = (u32)kgmConvert::toInteger(c);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_specular.r = color / 255;
+}
+
+void kViewOptionsForMaterial::onSpecularG(kgmString c)
+{
+  u32 color = (u32)kgmConvert::toInteger(c);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_specular.g = color / 255;
+}
+
+void kViewOptionsForMaterial::onSpecularB(kgmString c)
+{
+  u32 color = (u32)kgmConvert::toInteger(c);
+  clamp<u32>(color, 0, 255);
+  node->mtl->m_specular.b = color / 255;
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)
