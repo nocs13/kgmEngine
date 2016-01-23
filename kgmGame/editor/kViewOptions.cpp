@@ -197,6 +197,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord += 23;
 
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Specular");
+  g = new kgmGuiText(tmaterial, 51, y_coord, 30, 20);
   g->setSid("SpecularR");
   g->setText(kgmConvert::toString((s32)(mtl->m_specular.r * 255)));
   ((kgmGuiText*)g)->setEditable(true);
@@ -309,42 +311,47 @@ void kViewOptionsForMaterial::onReset(int)
 void kViewOptionsForMaterial::onColorR(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.r = color / 255;
+
+  kgmMaterial* mtl = node->mtl;
+
+  float r = mtl->m_color.r;
+  r = 0.0f;
 }
 
 void kViewOptionsForMaterial::onColorG(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.g = color / 255;
 }
 
 void kViewOptionsForMaterial::onColorB(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.b = color / 255;
 }
 
 void kViewOptionsForMaterial::onSpecularR(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.r = color / 255;
 }
 
 void kViewOptionsForMaterial::onSpecularG(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.g = color / 255;
 }
 
 void kViewOptionsForMaterial::onSpecularB(kgmString c)
 {
   u32 color = (u32)kgmConvert::toInteger(c);
-  clamp<u32>(color, 0, 255);
+  color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.b = color / 255;
 }
 
