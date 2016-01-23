@@ -310,6 +310,9 @@ void kViewOptionsForMaterial::onReset(int)
 
 void kViewOptionsForMaterial::onColorR(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.r = color / 255;
@@ -322,6 +325,9 @@ void kViewOptionsForMaterial::onColorR(kgmString c)
 
 void kViewOptionsForMaterial::onColorG(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.g = color / 255;
@@ -329,6 +335,9 @@ void kViewOptionsForMaterial::onColorG(kgmString c)
 
 void kViewOptionsForMaterial::onColorB(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.b = color / 255;
@@ -336,6 +345,9 @@ void kViewOptionsForMaterial::onColorB(kgmString c)
 
 void kViewOptionsForMaterial::onSpecularR(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.r = color / 255;
@@ -343,6 +355,9 @@ void kViewOptionsForMaterial::onSpecularR(kgmString c)
 
 void kViewOptionsForMaterial::onSpecularG(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.g = color / 255;
@@ -350,6 +365,9 @@ void kViewOptionsForMaterial::onSpecularG(kgmString c)
 
 void kViewOptionsForMaterial::onSpecularB(kgmString c)
 {
+  if(c.length() < 1)
+    return;
+
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.b = color / 255;

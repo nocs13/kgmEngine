@@ -31,13 +31,13 @@ public:
 
   class Color
   {
+  public:
     union
     {
       struct { float r, g, b, a; };
       float c[4];
     };
 
-  public:
     Color()
     {
       r = g = b = a = 1.0;
@@ -77,39 +77,6 @@ public:
     void set(vec4 v)
     {
       r = v.x; g = v.y; b = v.z; a = v.w;
-    }
-
-    void setR(float r)
-    {
-      if (r < 0.0 || r > 1.0)
-        return;
-
-      if(isnan(r))
-        return;
-
-      c[0] = r;
-    }
-
-    void setG(float g)
-    {
-      if (g < 0.0 || g > 1.0)
-        return;
-
-      if(isnan(g))
-        return;
-
-      c[1] = g;
-    }
-
-    void setB(float b)
-    {
-      if (b < 0.0 || b > 1.0)
-        return;
-
-      if(isnan(b))
-        return;
-
-      c[2] = b;
     }
 
     void set(uchar r, uchar g, uchar b, uchar a)
