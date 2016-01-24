@@ -10,7 +10,7 @@ kgmGuiList::kgmGuiList()
   m_scroll->setRange(1);
   m_itemSel = -1;
   m_itemStart = 0;
-  m_itemHeight = 20;
+  m_itemHeight = 12;
   m_position = 0;
   m_range    = 0;
 }
@@ -24,7 +24,7 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   m_scroll->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kgmGuiList::onScroll));
   m_itemSel = -1;
   m_itemStart = 0;
-  m_itemHeight = 20;
+  m_itemHeight = 12;
   m_position = 0;
   m_range    = 0;
 }

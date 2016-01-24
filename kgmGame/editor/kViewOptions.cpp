@@ -70,7 +70,8 @@ kgmGuiFrame("Options", x, y, w, h)
     ((kgmGuiText*)g)->setNumeric(true);
 
     y_coord += 23;
-    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
+
+    /*g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotX");
     g = new kgmGuiScroll(tgeneral, 51, y_coord, 153, 20);
     g->show();
@@ -97,7 +98,8 @@ kgmGuiFrame("Options", x, y, w, h)
     ((kgmGuiScroll*)g)->setPosition(RADTODEG(node->rot.z));
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationZ));
 
-    y_coord += 23;
+    y_coord += 23;*/
+
     kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
     lock->setText("Locked");
     lock->setCheck(node->lock);
@@ -275,10 +277,14 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
-  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 204, 20);
+  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 80, 20);
   alpha->setText("Alpha");
   alpha->setCheck(mtl->alpha());
   slotSelectAlpha.connect(this, &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
+  kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 82, y_coord, 80, 20);
+  shade->setText("Shade");
+  shade->setCheck(mtl->shade());
+  slotSelectShade.connect(this, &kViewOptionsForMaterial::onShade, &shade->sigClick);
 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
@@ -316,11 +322,6 @@ void kViewOptionsForMaterial::onColorR(kgmString c)
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_color.r = color / 255;
-
-  kgmMaterial* mtl = node->mtl;
-
-  float r = mtl->m_color.r;
-  r = 0.0f;
 }
 
 void kViewOptionsForMaterial::onColorG(kgmString c)
@@ -489,6 +490,16 @@ void kViewOptionsForMaterial::onAlpha(bool a)
     return;
 
   mtl->alpha(a);
+}
+
+void kViewOptionsForMaterial::onShade(bool a)
+{
+  kgmMaterial* mtl = node->mtl;
+
+  if(!mtl)
+    return;
+
+  mtl->shade(a);
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)
@@ -672,6 +683,29 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
   ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForLight::setIntencity));
   y_coord += 23;
 
+  g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
+  g->setText("Color");
+  g = new kgmGuiText(tlight, 51, y_coord, 30, 20);
+  g->setSid("ColorR");
+  g->setText(kgmConvert::toString((s32)(node->lgt->color.x * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotColorR.connect(this, &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
+  g->setSid("ColorG");
+  g->setText(kgmConvert::toString((s32)(node->lgt->color.y * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotColorG.connect(this, &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
+  g->setSid("ColorB");
+  g->setText(kgmConvert::toString((s32)(node->lgt->color.z * 255)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotColorB.connect(this, &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
   kgmGuiCheck* check = new kgmGuiCheck(tlight, 1, y_coord, 150, 20);
   check->setText("Shadows");
   check->setCheck(node->lgt->shadows);
@@ -689,6 +723,36 @@ void kViewOptionsForLight::setIntencity(kgmString s)
 void kViewOptionsForLight::setShadows(bool s)
 {
   node->lgt->shadows = s;
+}
+
+void kViewOptionsForLight::onColorR(kgmString c)
+{
+  if(c.length() < 1)
+    return;
+
+  u32 color = (u32)kgmConvert::toInteger(c);
+  color = clamp<u32>(color, 0, 255);
+  node->lgt->color.x = color / 255;
+}
+
+void kViewOptionsForLight::onColorG(kgmString c)
+{
+  if(c.length() < 1)
+    return;
+
+  u32 color = (u32)kgmConvert::toInteger(c);
+  color = clamp<u32>(color, 0, 255);
+  node->lgt->color.y = color / 255;
+}
+
+void kViewOptionsForLight::onColorB(kgmString c)
+{
+  if(c.length() < 1)
+    return;
+
+  u32 color = (u32)kgmConvert::toInteger(c);
+  color = clamp<u32>(color, 0, 255);
+  node->lgt->color.z = color / 255;
 }
 
 kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)

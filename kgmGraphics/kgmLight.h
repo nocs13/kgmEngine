@@ -47,7 +47,7 @@ public:
     position  = vec3(0, 0, 0);
     direction = vec3(0, 0, 0);
 
-    color     = vec4(.7, .7, .7, 1);
+    color     = vec4(1, 1, 1, 1);
 
     intensity = 1.0f;
     angle = 0.0f;

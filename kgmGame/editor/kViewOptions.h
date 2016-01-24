@@ -71,6 +71,7 @@ class kViewOptionsForMaterial : public kViewOptions
   Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
 
   Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
+  Slot<kViewOptionsForMaterial, bool> slotSelectShade;
 
   Slot<kViewOptionsForMaterial, kgmString> slotColorR;
   Slot<kViewOptionsForMaterial, kgmString> slotColorG;
@@ -103,6 +104,7 @@ public:
   __stdcall void onShininess(u32 s);
   __stdcall void onTransparency(u32 s);
   __stdcall void onAlpha(bool s);
+  __stdcall void onShade(bool s);
 };
 
 class kViewOptionsForVisual : public kViewOptions
@@ -132,9 +134,16 @@ public:
 
 class kViewOptionsForLight : public kViewOptions
 {
+  Slot<kViewOptionsForLight, kgmString> slotColorR;
+  Slot<kViewOptionsForLight, kgmString> slotColorG;
+  Slot<kViewOptionsForLight, kgmString> slotColorB;
+
 public:
   kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
 
+  __stdcall void onColorR(kgmString);
+  __stdcall void onColorG(kgmString);
+  __stdcall void onColorB(kgmString);
   __stdcall void setIntencity(kgmString s);
   __stdcall void setShadows(bool s);
 };
