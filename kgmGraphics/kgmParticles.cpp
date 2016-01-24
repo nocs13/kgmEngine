@@ -185,7 +185,7 @@ void kgmParticles::update(u32 t)
 
       kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
 
-      for(s32 i = 0; i < m_count; i+=6)
+      for(s32 i = 0; i < m_mesh->vcount(); i+=6)
       {
         vec3    pos   = m_particles[i].pos;
         float   scale = m_particles[i].scale;
@@ -231,11 +231,19 @@ void kgmParticles::update(u32 t)
         points[i].col = points[i + 1].col =
         points[i + 2].col = points[i + 3].col =
         points[i + 4].col = points[i + 5].col = m_particles[i].col.color;
+
+        kgmMesh::Vertex_P_C_T* pt = null;
+        pt = &points[0];
+        pt = &points[1];
+        pt = &points[2];
+        pt = &points[3];
+        pt = &points[4];
+        pt = &points[5];
       }
     }
     else
     {
-      for (s32 i = 0; i < m_count; i+=18)
+      for (s32 i = 0; i < m_mesh->vcount(); i+=18)
       {
         u32   col   = m_particles[i].col.color;
         f32   scale = m_particles[i].scale;

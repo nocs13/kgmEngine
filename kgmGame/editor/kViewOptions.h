@@ -20,6 +20,10 @@ class kViewOptions : public kgmGuiFrame
 
   kgmGuiButton* btn_close;
 
+  Slot<kViewOptions, kgmString> slotRotationX;
+  Slot<kViewOptions, kgmString> slotRotationY;
+  Slot<kViewOptions, kgmString> slotRotationZ;
+
 protected:
   kgmGuiTab*    tab;
 
@@ -39,9 +43,9 @@ public:
   __stdcall void onPositionX(kgmString s);
   __stdcall void onPositionY(kgmString s);
   __stdcall void onPositionZ(kgmString s);
-  __stdcall void onRotationX(u32 s);
-  __stdcall void onRotationY(u32 s);
-  __stdcall void onRotationZ(u32 s);
+  __stdcall void onRotationX(kgmString s);
+  __stdcall void onRotationY(kgmString s);
+  __stdcall void onRotationZ(kgmString s);
   __stdcall void onSelectLock(bool);
 
   void setCloseCallback(CloseCallback cfn)

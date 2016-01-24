@@ -55,19 +55,22 @@ kgmGuiFrame("Options", x, y, w, h)
     g->setText("Rot");
     g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
     g->setSid("rotation_x");
-    g->setText(kgmConvert::toString(n->rot.x));
+    g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.x)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
+    slotRotationX.connect(this, &kViewOptions::onRotationX, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
     g->setSid("rotation_y");
-    g->setText(kgmConvert::toString(n->rot.y));
+    g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.y)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
+    slotRotationY.connect(this, &kViewOptions::onRotationY, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
     g->setSid("rotation_z");
-    g->setText(kgmConvert::toString(n->rot.z));
+    g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.z)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
+    slotRotationZ.connect(this, &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -117,37 +120,49 @@ void kViewOptions::onCloseOptions()
 
 void kViewOptions::onPositionX(kgmString s)
 {
+  if(s.length() < 1) return;
+
   node->pos.x = kgmConvert::toDouble(s);
   node->setPosition(node->pos);
 }
 
 void kViewOptions::onPositionY(kgmString s)
 {
+  if(s.length() < 1) return;
+
   node->pos.y = kgmConvert::toDouble(s);
   node->setPosition(node->pos);
 }
 
 void kViewOptions::onPositionZ(kgmString s)
 {
+  if(s.length() < 1) return;
+
   node->pos.z = kgmConvert::toDouble(s);
   node->setPosition(node->pos);
 }
 
-void kViewOptions::onRotationX(u32 s)
+void kViewOptions::onRotationX(kgmString s)
 {
-  node->rot.x = DEGTORAD(s);
+  if(s.length() < 1) return;
+
+  node->rot.x = DEGTORAD(kgmConvert::toInteger(s));
   node->setRotation(node->rot);
 }
 
-void kViewOptions::onRotationY(u32 s)
+void kViewOptions::onRotationY(kgmString s)
 {
-  node->rot.y = DEGTORAD(s);
+  if(s.length() < 1) return;
+
+  node->rot.y = DEGTORAD(kgmConvert::toInteger(s));
   node->setRotation(node->rot);
 }
 
-void kViewOptions::onRotationZ(u32 s)
+void kViewOptions::onRotationZ(kgmString s)
 {
-  node->rot.z = DEGTORAD(s);
+  if(s.length() < 1) return;
+
+  node->rot.z = DEGTORAD(kgmConvert::toInteger(s));
   node->setRotation(node->rot);
 }
 
