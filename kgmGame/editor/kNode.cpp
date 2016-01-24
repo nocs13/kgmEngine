@@ -26,9 +26,6 @@ void kNode::update()
       icn->setPosition(pos);
 
     break;
-  case VISUAL:
-    vis->update();
-    break;
   }
 }
 

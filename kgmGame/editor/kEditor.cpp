@@ -1036,7 +1036,17 @@ void kEditor::onIdle()
   }
 
   for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
     (*i)->update();
+
+    if(mode_play)
+    {
+      if ((*i)->typ == kNode::VISUAL)
+      {
+        (*i)->vis->update();
+      }
+    }
+  }
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -1606,9 +1616,6 @@ void kEditor::onRunPlay()
       break;
     case kNode::OBSTACLE:
       game->getPhysics()->add((*i)->obs);
-      break;
-    case kNode::VISUAL:
-      game->getGraphics()->add((*i)->vis);
       break;
     }
   }
