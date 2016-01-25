@@ -617,7 +617,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     loop->setCheck(node->vis->getParticles()->loop());
     slotParticlesLoop.connect(this, &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
     kgmGuiCheck* fade = new kgmGuiCheck(tvisual, 76, y_coord, 74, 20);
-    fade->setText("Loop");
+    fade->setText("Fade");
     fade->setCheck(node->vis->getParticles()->fade());
     slotParticlesFade.connect(this, &kViewOptionsForVisual::onParticlesFade, &fade->sigClick);
 
@@ -682,7 +682,6 @@ void kViewOptionsForVisual::onParticlesCount(kgmString s)
 void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 {
   node->vis->getParticles()->m_speed = kgmConvert::toDouble(s);
-  node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesAngle(kgmString s)
@@ -691,19 +690,16 @@ void kViewOptionsForVisual::onParticlesAngle(kgmString s)
     return;
 
   node->vis->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
-  node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesLife(kgmString s)
 {
   node->vis->getParticles()->m_life = kgmConvert::toDouble(s);
-  node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesSize(kgmString s)
 {
   node->vis->getParticles()->st_size = kgmConvert::toDouble(s);
-  node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
@@ -713,7 +709,6 @@ void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
   node->vis->getParticles()->divspeed(f);
-  node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
@@ -723,7 +718,6 @@ void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
   node->vis->getParticles()->divlife(f);
-  node->vis->getParticles()->build();
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)

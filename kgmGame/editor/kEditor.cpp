@@ -146,11 +146,17 @@ kEditor::kEditor(kgmGameBase* g)
 
     game->getRender()->setBgColor(0xffbbaa99);
   }
+
+  m_isVisual = true;
+  m_thVisual.exec((int (*)(void*))doVisUpdate, this);
 }
 
 kEditor::~kEditor()
 {
   clear();
+
+  m_isVisual = false;
+  m_thVisual.join();
 
   game->getRender()->remove(text);
   game->getRender()->remove(pivot);
@@ -1034,19 +1040,6 @@ void kEditor::onIdle()
   {
     ctick = kgmTime::getTicks();
   }
-
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    (*i)->update();
-
-    if(mode_play)
-    {
-      if ((*i)->typ == kNode::VISUAL)
-      {
-        (*i)->vis->update();
-      }
-    }
-  }
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -1293,6 +1286,22 @@ void kEditor::onMsWheel(int k, int x, int y, int z)
 
 void kEditor::onAction(kgmEvent *gui, int id)
 {
+}
+
+void kEditor::update()
+{
+  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    (*i)->update();
+
+    if(mode_play)
+    {
+      if ((*i)->typ == kNode::VISUAL)
+      {
+        (*i)->vis->update();
+      }
+    }
+  }
 }
 
 void kEditor::onQuit()
@@ -1790,4 +1799,18 @@ void kEditor::remove(kNode* node)
   }
 
   delete node;
+}
+
+int kEditor::doVisUpdate(void *v)
+{
+  kEditor* e = (kEditor*)v;
+
+  while(e->m_isVisual)
+  {
+    e->update();
+
+    kgmThread::sleep(0);
+  }
+
+  return 1;
 }

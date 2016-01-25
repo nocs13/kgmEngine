@@ -158,8 +158,8 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_islogic = true;
   m_isphysics = true;
-  m_thLogic = kgmThread((int (*)(void*))doLogic, this);
-  m_thPhysics = kgmThread((int (*)(void*))doPhysics, this);
+  m_thLogic.exec((int (*)(void*))doLogic, this);
+  m_thPhysics.exec((int (*)(void*))doPhysics, this);
 
   kgmUnit::unitRegister("kgmResult",  kgmUnit::Unit, (kgmUnit::Generate)&kgmResult::New);
   kgmUnit::unitRegister("kgmFlame",   kgmUnit::Effect, (kgmUnit::Generate)&kgmFlame::New);
@@ -1623,7 +1623,8 @@ int kgmGameBase::doLogic(kgmGameBase* g)
 {
   while(g->m_islogic && g->m_logic)
   {
-    g->m_logic->update(1000 / g->m_fps);
+    u32 fps = 1 + g->m_fps;
+    g->m_logic->update(1000 / fps);
     kgmThread::sleep(0);
   }
 
@@ -1634,7 +1635,8 @@ int kgmGameBase::doPhysics(kgmGameBase* g)
 {
   while(g->m_isphysics && g->m_physics)
   {
-    g->m_physics->update(1000 / g->m_fps);
+    u32 fps = 1 + g->m_fps;
+    g->m_physics->update(1000 / fps);
     kgmThread::sleep(0);
   }
 

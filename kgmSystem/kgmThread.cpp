@@ -28,13 +28,6 @@ kgmThread::kgmThread()
   m_callback = null;
 }
 
-kgmThread::kgmThread(int (*call)(void*), void* obj, uint sets, uint pr)
-{
-  kgmThread();
-
-  exec(call, obj, sets, pr);
-}
-
 kgmThread::~kgmThread()
 {
   if(m_thread)
@@ -58,7 +51,7 @@ bool kgmThread::exec(uint sets, uint pr)
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
   else
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-  
+
   rc = pthread_create(&m_thread, &attr, (void*(*)(void*))thread, this);
 
   pthread_attr_destroy(&attr);
@@ -80,7 +73,35 @@ bool kgmThread::exec(int (*call)(void*), void* obj, uint sets, uint pr)
   if(!call)
     return false;
 
-  return exec(sets, pr);
+  int rc = 0;
+
+#ifdef WIN32
+  m_thread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)call, obj, 0, 0);
+
+  rc = (int)(m_thread) ? (0) : (-1);
+#else
+  pthread_attr_t attr;
+
+  pthread_attr_init(&attr);
+
+  if(sets & CtDetach)
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  else
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+  rc = pthread_create(&m_thread, &attr, (void*(*)(void*))call, obj);
+
+  pthread_attr_destroy(&attr);
+#endif
+
+  if(!rc)
+  {
+    priority(pr);
+
+    return true;
+  }
+
+  return false;
 }
 
 bool kgmThread::active()
@@ -312,6 +333,13 @@ void kgmThread::sleep(u32 ms)
   Sleep(ms);
 #else
   usleep(ms * 1000);
+  /*struct timespec req = {0, ms * 1000000};
+  int res = nanosleep(&req, NULL);
+
+  if(res != 0)
+  {
+
+  }*/
 #endif
 }
 

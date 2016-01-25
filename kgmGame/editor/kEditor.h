@@ -1,6 +1,7 @@
 #ifndef KEDITOR_H
 #define KEDITOR_H
 
+#include "../../kgmSystem/kgmThread.h"
 #include "../../kgmGraphics/kgmGuiMenu.h"
 
 #include "kNode.h"
@@ -72,6 +73,9 @@ private:
 
   bool mode_play;
 
+  bool      m_isVisual;
+  kgmThread m_thVisual;
+
 public:
   kEditor(kgmGameBase* game);
   ~kEditor();
@@ -112,6 +116,8 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
 
+  void update();
+
   __stdcall void onQuit();
   __stdcall void onEditClone();
   __stdcall void onEditRemove();
@@ -145,6 +151,8 @@ public:
 private:
   void add(kNode*);
   void remove(kNode*);
+
+  static int doVisUpdate(void*);
 };
 
 }
