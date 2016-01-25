@@ -29,10 +29,8 @@ kgmParticles::kgmParticles()
   location  = vec3(0, 0, 0);
   direction = vec3(0.0f, 0.0f, 1.0f);
 
-  div_life     = 0.0f;
-  div_speed    = 0.0f;
-  div_location = 0.0f;
-  div_direction = 0.0f;
+  m_divlife     = 0.0f;
+  m_divspeed    = 0.0f;
 
   st_size  = 0.1f;
   en_size  = 1.0f;
@@ -72,11 +70,6 @@ void kgmParticles::build()
   }
 
   m_particles = new Particle[m_count];
-
-  if(div_life < 0)     div_life = 0;
-  if(div_speed < 0)    div_speed = 0;
-  if(div_life > 1.0)   div_life = 1.0;
-  if(div_speed > 1.0)  div_speed = 1.0;
 
   if(m_typerender != RTypeMesh)
   {
@@ -122,8 +115,8 @@ void kgmParticles::init(Particle* pr)
   //pr->dir   = direction + direction * (div_direction / (1 + rand() % m_count));
   pr->dir.normalize();
 
-  pr->speed = m_speed - div_speed * s;
-  pr->life  = m_life  - div_life  * l;
+  pr->speed = m_speed - m_speed * m_divspeed * r1;
+  pr->life  = m_life  - m_life * m_divlife  * r2;
   pr->col   = m_color;
   pr->scale = st_size;
   pr->time  = 0;
@@ -185,14 +178,15 @@ void kgmParticles::update(u32 t)
 
       kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
 
-      for(s32 i = 0; i < m_mesh->vcount(); i+=6)
+      for(s32 i = 0; i < m_count; i++)
       {
-        vec3    pos   = m_particles[i].pos;
-        float   scale = m_particles[i].scale;
-        float   time  = m_particles[i].time;
-        float   life  = m_particles[i].life;
-        vec3    crv = rv * scale,
-                cuv = uv * scale;
+        s32    vi = i * 6;
+        vec3   pos   = m_particles[i].pos;
+        float  scale = m_particles[i].scale;
+        float  time  = m_particles[i].time;
+        float  life  = m_particles[i].life;
+        vec3   crv = rv * scale,
+               cuv = uv * scale;
 
         float   txu_s = 0.0f, txv_s = 0.0f;
         float   txu_e = 1.0f, txv_e = 1.0f;
@@ -214,59 +208,52 @@ void kgmParticles::update(u32 t)
           txv_e = sh * (ir + 1);
         }
 
-        points[i].pos = (pos - crv + cuv);
-        points[i].uv = vec2(txu_s, txv_s);
-        points[i + 1].pos = (pos - crv - cuv);
-        points[i + 1].uv = vec2(txu_s, txv_e);
-        points[i + 2].pos = (pos + crv + cuv);
-        points[i + 2].uv = vec2(txu_e, txv_s);
+        points[vi].pos = (pos - crv + cuv);
+        points[vi].uv = vec2(txu_s, txv_s);
+        points[vi + 1].pos = (pos - crv - cuv);
+        points[vi + 1].uv = vec2(txu_s, txv_e);
+        points[vi + 2].pos = (pos + crv + cuv);
+        points[vi + 2].uv = vec2(txu_e, txv_s);
 
-        points[i + 3].pos = (pos + crv - cuv);
-        points[i + 3].uv = vec2(txu_e, txv_e);
-        points[i + 4].pos = (pos + crv + cuv);
-        points[i + 4].uv = vec2(txu_e, txv_s);
-        points[i + 5].pos = (pos - crv - cuv);
-        points[i + 5].uv = vec2(txu_s, txv_e);
+        points[vi + 3].pos = (pos + crv - cuv);
+        points[vi + 3].uv = vec2(txu_e, txv_e);
+        points[vi + 4].pos = (pos + crv + cuv);
+        points[vi + 4].uv = vec2(txu_e, txv_s);
+        points[vi + 5].pos = (pos - crv - cuv);
+        points[vi + 5].uv = vec2(txu_s, txv_e);
 
-        points[i].col = points[i + 1].col =
-        points[i + 2].col = points[i + 3].col =
-        points[i + 4].col = points[i + 5].col = m_particles[i].col.color;
-
-        kgmMesh::Vertex_P_C_T* pt = null;
-        pt = &points[0];
-        pt = &points[1];
-        pt = &points[2];
-        pt = &points[3];
-        pt = &points[4];
-        pt = &points[5];
+        points[vi].col = points[vi + 1].col =
+        points[vi + 2].col = points[vi + 3].col =
+        points[vi + 4].col = points[vi + 5].col = m_particles[i].col.color;
       }
     }
     else
     {
-      for (s32 i = 0; i < m_mesh->vcount(); i+=18)
+      for (s32 i = 0; i < m_count; i++)
       {
+        s32   vi = i * 18;
         u32   col   = m_particles[i].col.color;
         f32   scale = m_particles[i].scale;
         vec3  pos   = m_particles[i].pos;
 
-        init_point(parts[18 * i + 0],  pos + vec3(-scale,  scale, 0), col, vec2(0, 0));
-        init_point(parts[18 * i + 1],  pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
-        init_point(parts[18 * i + 2],  pos + vec3(scale, scale, 0),   col, vec2(1, 0));
-        init_point(parts[18 * i + 3],  pos + vec3(scale, scale, 0),   col, vec2(1, 0));
-        init_point(parts[18 * i + 4],  pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
-        init_point(parts[18 * i + 5],  pos + vec3(scale, -scale, 0),  col, vec2(1, 1));
-        init_point(parts[18 * i + 6],  pos + vec3(-scale,  0, scale), col, vec2(0, 0));
-        init_point(parts[18 * i + 7],  pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
-        init_point(parts[18 * i + 8],  pos + vec3(scale, 0, scale),   col, vec2(1, 0));
-        init_point(parts[18 * i + 9],  pos + vec3(scale, 0, scale),   col, vec2(1, 0));
-        init_point(parts[18 * i + 10], pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
-        init_point(parts[18 * i + 11], pos + vec3(scale, 0, -scale),  col, vec2(1, 1));
-        init_point(parts[18 * i + 12], pos + vec3(0, -scale,  scale), col, vec2(0, 0));
-        init_point(parts[18 * i + 13], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
-        init_point(parts[18 * i + 14], pos + vec3(0, scale, scale),   col, vec2(1, 0));
-        init_point(parts[18 * i + 15], pos + vec3(0, scale, scale),   col, vec2(1, 0));
-        init_point(parts[18 * i + 16], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
-        init_point(parts[18 * i + 17], pos + vec3(0, scale, -scale),  col, vec2(1, 1));
+        init_point(parts[vi + 0],  pos + vec3(-scale,  scale, 0), col, vec2(0, 0));
+        init_point(parts[vi + 1],  pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
+        init_point(parts[vi + 2],  pos + vec3(scale, scale, 0),   col, vec2(1, 0));
+        init_point(parts[vi + 3],  pos + vec3(scale, scale, 0),   col, vec2(1, 0));
+        init_point(parts[vi + 4],  pos + vec3(-scale, -scale, 0), col, vec2(0, 1));
+        init_point(parts[vi + 5],  pos + vec3(scale, -scale, 0),  col, vec2(1, 1));
+        init_point(parts[vi + 6],  pos + vec3(-scale,  0, scale), col, vec2(0, 0));
+        init_point(parts[vi + 7],  pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
+        init_point(parts[vi + 8],  pos + vec3(scale, 0, scale),   col, vec2(1, 0));
+        init_point(parts[vi + 9],  pos + vec3(scale, 0, scale),   col, vec2(1, 0));
+        init_point(parts[vi + 10], pos + vec3(-scale, 0, -scale), col, vec2(0, 1));
+        init_point(parts[vi + 11], pos + vec3(scale, 0, -scale),  col, vec2(1, 1));
+        init_point(parts[vi + 12], pos + vec3(0, -scale,  scale), col, vec2(0, 0));
+        init_point(parts[vi + 13], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
+        init_point(parts[vi + 14], pos + vec3(0, scale, scale),   col, vec2(1, 0));
+        init_point(parts[vi + 15], pos + vec3(0, scale, scale),   col, vec2(1, 0));
+        init_point(parts[vi + 16], pos + vec3(0, -scale, -scale), col, vec2(0, 1));
+        init_point(parts[vi + 17], pos + vec3(0, scale, -scale),  col, vec2(1, 1));
       }
     }
   }

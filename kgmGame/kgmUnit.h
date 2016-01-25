@@ -182,6 +182,26 @@ public:
     return m_birth;
   }
 
+  kgmVisual* visual() const
+  {
+    return m_visual;
+  }
+
+  void visual(kgmVisual* v)
+  {
+    m_visual = v;
+  }
+
+  kgmBody* body() const
+  {
+    return m_body;
+  }
+
+  void body(kgmBody* b)
+  {
+    m_body = b;
+  }
+
   void setParameter(kgmString name, kgmString value)
   {
     for(int i = 0; i < m_variables.length(); ++i)

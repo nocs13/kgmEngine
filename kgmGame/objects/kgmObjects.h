@@ -169,12 +169,11 @@ public:
     ptl->m_count       = 25;
     ptl->m_speed       = 2.0f;
     ptl->m_life        = 200;
-    ptl->div_life      = 0.95;
-    ptl->div_speed     = 0.95;
     ptl->direction     = vec3(-1,0,0);
-    ptl->div_direction = 0.5;
     ptl->st_size       = .08f;
     ptl->en_size       = .02f;
+    ptl->divlife(0.95);
+    ptl->divspeed(0.95);
     ptl->build();
 
     visual = new kgmVisual();

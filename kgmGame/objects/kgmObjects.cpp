@@ -85,7 +85,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   particles->m_loop    = loop;
   particles->st_size   = size_start;
   particles->en_size   = size_end;
-  particles->div_life  = div_life;
 
   m_visual->set(material);
   m_visual->set(particles);
@@ -98,11 +97,7 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   m_variables.add(var);
   var = kgmVariable("Speed",  0.0f,  &particles->m_speed);
   m_variables.add(var);
-  var = kgmVariable("dSpeed", 0.0f,  &particles->div_speed);
-  m_variables.add(var);
   var = kgmVariable("Life",   0.0f,  &particles->m_life);
-  m_variables.add(var);
-  var = kgmVariable("dLife",  0.0f,  &particles->div_life);
   m_variables.add(var);
   var = kgmVariable("Loop",   false, &particles->m_loop);
   m_variables.add(var);
@@ -176,8 +171,6 @@ kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
                       size_start, size_end, count, tid, loop)
 {
   timeout(life);
-
-  particles->div_life = 0.8;
 
   particles->build();
 

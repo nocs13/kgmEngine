@@ -555,13 +555,19 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
     g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
     g->setText("Speed");
-    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Speed");
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_speed));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-
     slotParticlesSpeed.connect(this, &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
+    g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
+    g->setSid("DivSpeed");
+    g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divspeed())));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+    slotParticlesDivSpeed.connect(this, &kViewOptionsForVisual::onParticlesDivSpeed, &((kgmGuiText*)g)->sigChange);
+
 
     y_coord += 23;
 
@@ -579,13 +585,18 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
     g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
     g->setText("Life");
-    g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
+    g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Life");
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_life));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-
     slotParticlesLife.connect(this, &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
+    g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
+    g->setSid("DivLife");
+    g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divlife())));
+    ((kgmGuiText*)g)->setEditable(true);
+    ((kgmGuiText*)g)->setNumeric(true);
+    slotParticlesDivLife.connect(this, &kViewOptionsForVisual::onParticlesDivLife, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -680,6 +691,26 @@ void kViewOptionsForVisual::onParticlesLife(kgmString s)
 void kViewOptionsForVisual::onParticlesSize(kgmString s)
 {
   node->vis->getParticles()->st_size = kgmConvert::toDouble(s);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  float f = (float) kgmConvert::toInteger(s) / 100.0f;
+  node->vis->getParticles()->divspeed(f);
+  node->vis->getParticles()->build();
+}
+
+void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  float f = (float) kgmConvert::toInteger(s) / 100.0f;
+  node->vis->getParticles()->divlife(f);
   node->vis->getParticles()->build();
 }
 

@@ -55,11 +55,6 @@ public:
   float      m_speed;
   float      m_angle;
 
-  float      div_life;
-  float      div_speed;
-  float      div_location;
-  float      div_direction;
-
   float      mass;
   float      st_size;
   float      en_size;
@@ -72,6 +67,9 @@ public:
   TypeRender m_typerender;
 
 private:
+  float      m_divlife;
+  float      m_divspeed;
+
   kgmMesh*    m_mesh   = null;
   kgmCamera*  m_camera = null;
 
@@ -81,6 +79,32 @@ public:
 
   void build();
   void init(Particle*);
+
+  f32 divlife() const
+  {
+    return m_divlife;
+  }
+
+  void divlife(f32 s)
+  {
+    if(s > 1.0f) s = 1.0f;
+    else if(s < 0.0f) s = 0.0f;
+
+    m_divlife = s;
+  }
+
+  f32 divspeed() const
+  {
+    return m_divspeed;
+  }
+
+  void divspeed(f32 s)
+  {
+    if(s > 1.0f) s = 1.0f;
+    else if(s < 0.0f) s = 0.0f;
+
+    m_divspeed = s;
+  }
 
   void camera(kgmCamera* c)
   {
