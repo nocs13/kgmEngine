@@ -27,13 +27,13 @@ kgmParticles::kgmParticles()
   force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
   location  = vec3(0, 0, 0);
-  direction = vec3(0.0f, 0.0f, 1.0f);
+  direction = vec3(0.0f, 0.0f, 0.0f);
 
   m_divlife     = 0.0f;
   m_divspeed    = 0.0f;
 
-  st_size  = 0.1f;
-  en_size  = 1.0f;
+  st_size  = .1f;
+  en_size  = .1f;
 
   tex_slide_rows = 0;
   tex_slide_cols = 0;
@@ -96,23 +96,26 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  float s = m_speed / (1 + rand() % (10 * m_count));
-  float l = m_life  / (1 + rand() % (10 * m_count));
-
   pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
 
+  float neg1 = pow(-1.0, rand() % 2);
+  float neg2 = pow(-1.0, rand() % 2);
+
+
   float r1    = (float)rand() / RAND_MAX;
-  float alpha = m_angle * r1 + m_angle * (1 - r1);
+  float angle = m_angle * r1;
+  float alpha = angle * r1 + angle * (1 - r1);
 
-  float r2 = (float)rand()/RAND_MAX;
-  float beta = m_angle * r2 + m_angle * (1 - r2);
-  pr->dir.x = cos(beta) * cos(alpha);
-  pr->dir.y = sin(beta) * cos(alpha);
-  pr->dir.z = sin(alpha);
+  float r2 = (float)rand() / RAND_MAX;
+  float beta = angle * r2 + angle * (1 - r2);
+  float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
+  pr->dir.x = cos(beta) * cos(alpha) * x_side;
+  pr->dir.y = neg1 * sin(beta) * cos(alpha);
+  pr->dir.z = neg2 * sin(alpha);
 
-  //pr->dir   = direction + direction * (div_direction / (1 + rand() % m_count));
+  pr->dir = pr->dir + direction;
   pr->dir.normalize();
 
   pr->speed = m_speed - m_speed * m_divspeed * r1;

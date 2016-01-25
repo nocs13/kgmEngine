@@ -40,8 +40,6 @@ public:
   Particle*  m_particles = null;
   u32        m_count;
 
-  bool       m_loop;
-  bool       m_fade;
   bool       m_fall;
 
   color      m_color;
@@ -53,7 +51,6 @@ public:
 
   float      m_life;
   float      m_speed;
-  float      m_angle;
 
   float      mass;
   float      st_size;
@@ -67,6 +64,10 @@ public:
   TypeRender m_typerender;
 
 private:
+  bool       m_loop;
+  bool       m_fade;
+
+  float      m_angle;
   float      m_divlife;
   float      m_divspeed;
 
@@ -79,6 +80,36 @@ public:
 
   void build();
   void init(Particle*);
+
+  bool loop() const
+  {
+    return m_loop;
+  }
+
+  void loop(bool l)
+  {
+    m_loop = l;
+  }
+
+  bool fade() const
+  {
+    return m_fade;
+  }
+
+  void fade(bool f)
+  {
+    m_fade = f;
+  }
+
+  f32 angle() const
+  {
+    return m_angle;
+  }
+
+  void angle(f32 a)
+  {
+    m_angle = a;
+  }
 
   f32 divlife() const
   {

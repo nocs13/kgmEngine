@@ -82,9 +82,9 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   particles->m_speed   = speed;
   particles->m_count   = count;
   particles->m_life    = life;
-  particles->m_loop    = loop;
   particles->st_size   = size_start;
   particles->en_size   = size_end;
+  particles->loop(loop);
 
   m_visual->set(material);
   m_visual->set(particles);
@@ -98,8 +98,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   var = kgmVariable("Speed",  0.0f,  &particles->m_speed);
   m_variables.add(var);
   var = kgmVariable("Life",   0.0f,  &particles->m_life);
-  m_variables.add(var);
-  var = kgmVariable("Loop",   false, &particles->m_loop);
   m_variables.add(var);
   idTex = tid;
   var = kgmVariable("tId",   kgmString(""),     &idTex);

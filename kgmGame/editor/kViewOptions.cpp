@@ -575,7 +575,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText("Angle");
     g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
     g->setSid("Angle");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_angle));
+    g->setText(kgmConvert::toString((s32)RADTODEG(n->vis->getParticles()->angle())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
@@ -612,10 +612,14 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
     y_coord += 23;
 
-    kgmGuiCheck* loop = new kgmGuiCheck(tvisual, 0, y_coord, 204, 20);
+    kgmGuiCheck* loop = new kgmGuiCheck(tvisual, 0, y_coord, 74, 20);
     loop->setText("Loop");
-    loop->setCheck(node->vis->getParticles()->m_loop);
+    loop->setCheck(node->vis->getParticles()->loop());
     slotParticlesLoop.connect(this, &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
+    kgmGuiCheck* fade = new kgmGuiCheck(tvisual, 76, y_coord, 74, 20);
+    fade->setText("Loop");
+    fade->setCheck(node->vis->getParticles()->fade());
+    slotParticlesFade.connect(this, &kViewOptionsForVisual::onParticlesFade, &fade->sigClick);
 
     y_coord += 23;
   }
@@ -661,7 +665,12 @@ void kViewOptionsForVisual::onSelectMaterial(kgmString id)
 
 void kViewOptionsForVisual::onParticlesLoop(bool s)
 {
-  node->vis->getParticles()->m_loop = s;
+  node->vis->getParticles()->loop(s);
+}
+
+void kViewOptionsForVisual::onParticlesFade(bool s)
+{
+  node->vis->getParticles()->fade(s);
 }
 
 void kViewOptionsForVisual::onParticlesCount(kgmString s)
@@ -678,7 +687,10 @@ void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 
 void kViewOptionsForVisual::onParticlesAngle(kgmString s)
 {
-  node->vis->getParticles()->m_angle = kgmConvert::toDouble(s);
+  if(s.length() < 1)
+    return;
+
+  node->vis->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
   node->vis->getParticles()->build();
 }
 

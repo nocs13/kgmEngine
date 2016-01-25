@@ -115,6 +115,7 @@ class kViewOptionsForVisual : public kViewOptions
 {
   Slot<kViewOptionsForVisual, int>       slotSelectMaterial;
   Slot<kViewOptionsForVisual, bool>      slotParticlesLoop;
+  Slot<kViewOptionsForVisual, bool>      slotParticlesFade;
   Slot<kViewOptionsForVisual, kgmString> slotParticlesCount;
   Slot<kViewOptionsForVisual, kgmString> slotParticlesSpeed;
   Slot<kViewOptionsForVisual, kgmString> slotParticlesAngle;
@@ -131,6 +132,7 @@ public:
   __stdcall void onShowMaterials(int);
   __stdcall void onSelectMaterial(kgmString);
   __stdcall void onParticlesLoop(bool);
+  __stdcall void onParticlesFade(bool);
   __stdcall void onParticlesCount(kgmString);
   __stdcall void onParticlesSpeed(kgmString);
   __stdcall void onParticlesAngle(kgmString);
