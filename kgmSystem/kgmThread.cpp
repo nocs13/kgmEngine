@@ -118,6 +118,8 @@ void kgmThread::join()
 #else
   pthread_join(m_thread, NULL);
 #endif 
+
+  m_thread = null;
 }
 
 void kgmThread::priority(uint prio)

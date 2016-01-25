@@ -87,6 +87,8 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_font = null;
 
+  m_fps = 1;
+
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
 
@@ -154,6 +156,11 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
+  m_islogic = true;
+  m_isphysics = true;
+  m_thLogic = kgmThread((int (*)(void*))doLogic, this);
+  m_thPhysics = kgmThread((int (*)(void*))doPhysics, this);
+
   kgmUnit::unitRegister("kgmResult",  kgmUnit::Unit, (kgmUnit::Generate)&kgmResult::New);
   kgmUnit::unitRegister("kgmFlame",   kgmUnit::Effect, (kgmUnit::Generate)&kgmFlame::New);
   kgmUnit::unitRegister("kgmSmoke",   kgmUnit::Effect, (kgmUnit::Generate)&kgmSmoke::New);
@@ -185,6 +192,11 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
+  m_islogic = false;
+  m_isphysics = false;
+  m_thLogic.join();
+  m_thPhysics.join();
+
 #ifdef EDITOR
   log("free editor...");
 
@@ -334,14 +346,12 @@ void kgmGameBase::onIdle()
 {
   static int tick = kgmTime::getTicks();
   static int frames = 0;
-  static int fps = 1;
-  static char buf[128] = {0};
 
   s32 m_maxFps = 60;
 
   if(kgmTime::getTicks() - tick > 1000)
   {
-    fps = frames;
+    m_fps = frames;
     frames = 1;
     tick =  kgmTime::getTicks();
   }
@@ -364,11 +374,11 @@ void kgmGameBase::onIdle()
   {
   case State_Play:
   case State_Edit:
-    if(m_logic)
-      m_logic->update(1000 / fps);
+    /*if(m_logic)
+      m_logic->update(1000 / m_fps);
 
     if(m_physics)
-      m_physics->update(1000 / fps);
+      m_physics->update(1000 / m_fps);*/
     break;
   }
 
@@ -1607,6 +1617,28 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 #endif
 
   return actor;
+}
+
+int kgmGameBase::doLogic(kgmGameBase* g)
+{
+  while(g->m_islogic && g->m_logic)
+  {
+    g->m_logic->update(1000 / g->m_fps);
+    kgmThread::sleep(0);
+  }
+
+  return 1;
+}
+
+int kgmGameBase::doPhysics(kgmGameBase* g)
+{
+  while(g->m_isphysics && g->m_physics)
+  {
+    g->m_physics->update(1000 / g->m_fps);
+    kgmThread::sleep(0);
+  }
+
+  return 1;
 }
 
 #ifdef EDITOR

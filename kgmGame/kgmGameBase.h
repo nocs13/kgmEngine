@@ -13,6 +13,7 @@
 #include "kgmGameSettings.h"
 
 #include "../kgmBase/kgmQuadTree.h"
+#include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"
 #include "../kgmGraphics/kgmGui.h"
@@ -63,6 +64,12 @@ protected:
   kgmList<kgmBody*>   m_bodies;
   kgmList<kgmLight*>  m_lights;
   kgmList<kgmVisual*> m_visuals;
+
+  u32       m_fps;
+  bool      m_islogic;
+  kgmThread m_thLogic;
+  bool      m_isphysics;
+  kgmThread m_thPhysics;
 
 #ifdef EDITOR
   friend class kEditor;
@@ -178,4 +185,7 @@ public:
 
 private:
   bool  loadXml(kgmString& path);
+
+  static int doLogic(kgmGameBase*);
+  static int doPhysics(kgmGameBase*);
 };
