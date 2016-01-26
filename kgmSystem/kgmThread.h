@@ -30,6 +30,8 @@ class kgmThread: public kgmObject
 public:
   typedef long  TID;
 
+  typedef int (*Thread_Function)(void*);
+
 #ifdef WIN32
   typedef CRITICAL_SECTION* Mutex;
 #else

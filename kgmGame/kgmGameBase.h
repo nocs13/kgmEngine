@@ -3,6 +3,7 @@
 #include "kgmIGame.h"
 #include "kgmGameResources.h"
 #include "kgmGameGraphics.h"
+#include "kgmGameThreader.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
@@ -65,11 +66,13 @@ protected:
   kgmList<kgmLight*>  m_lights;
   kgmList<kgmVisual*> m_visuals;
 
-  u32       m_fps;
-  bool      m_islogic;
+  u32             m_fps;
+  kgmGameThreader m_threader_1;
+
+  /*bool      m_islogic;
   kgmThread m_thLogic;
   bool      m_isphysics;
-  kgmThread m_thPhysics;
+  kgmThread m_thPhysics;*/
 
 #ifdef EDITOR
   friend class kEditor;

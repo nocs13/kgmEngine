@@ -156,10 +156,10 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
-  m_islogic = true;
+  /*m_islogic = true;
   m_isphysics = true;
   m_thLogic.exec((int (*)(void*))doLogic, this);
-  m_thPhysics.exec((int (*)(void*))doPhysics, this);
+  m_thPhysics.exec((int (*)(void*))doPhysics, this);*/
 
   kgmUnit::unitRegister("kgmResult",  kgmUnit::Unit, (kgmUnit::Generate)&kgmResult::New);
   kgmUnit::unitRegister("kgmFlame",   kgmUnit::Effect, (kgmUnit::Generate)&kgmFlame::New);
@@ -192,10 +192,10 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
-  m_islogic = false;
+  /*m_islogic = false;
   m_isphysics = false;
   m_thLogic.join();
-  m_thPhysics.join();
+  m_thPhysics.join();*/
 
 #ifdef EDITOR
   log("free editor...");
@@ -379,6 +379,9 @@ void kgmGameBase::onIdle()
 
     if(m_physics)
       m_physics->update(1000 / m_fps);*/
+      m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
+      m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
+      m_threader_1.ready();
     break;
   }
 
@@ -1621,11 +1624,11 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 
 int kgmGameBase::doLogic(kgmGameBase* g)
 {
-  while(g->m_islogic && g->m_logic)
+  //while(g->m_islogic && g->m_logic)
   {
     u32 fps = 1 + g->m_fps;
     g->m_logic->update(1000 / fps);
-    kgmThread::sleep(0);
+    //kgmThread::sleep(0);
   }
 
   return 1;
@@ -1633,11 +1636,11 @@ int kgmGameBase::doLogic(kgmGameBase* g)
 
 int kgmGameBase::doPhysics(kgmGameBase* g)
 {
-  while(g->m_isphysics && g->m_physics)
+  //while(g->m_isphysics && g->m_physics)
   {
     u32 fps = 1 + g->m_fps;
     g->m_physics->update(1000 / fps);
-    kgmThread::sleep(0);
+    //kgmThread::sleep(0);
   }
 
   return 1;
