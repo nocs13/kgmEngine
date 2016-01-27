@@ -17,7 +17,8 @@ kgmMaterial::kgmMaterial()
   m_depth  = true;
   m_cull   = true;
 
-  m_srcblend = m_dstblend = gcblend_one;
+  m_srcblend = gcblend_srcalpha;
+  m_dstblend = gcblend_one;
 }
 
 kgmMaterial::~kgmMaterial()

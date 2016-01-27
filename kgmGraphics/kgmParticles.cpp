@@ -112,7 +112,7 @@ void kgmParticles::init(Particle* pr)
   float beta = angle * r2 + angle * (1 - r2);
   float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
   pr->dir.x = cos(beta) * cos(alpha) * x_side;
-  pr->dir.y = neg1 * sin(beta) * cos(alpha);
+  pr->dir.y = neg1 * cos(beta) * cos(alpha);
   pr->dir.z = neg2 * sin(alpha);
 
   pr->dir = pr->dir + direction;
