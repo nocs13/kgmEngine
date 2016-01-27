@@ -1070,22 +1070,20 @@ void kgmGraphics::render(kgmMaterial* m)
 
   g_fShine = m->shininess();
 
-  if(m->alpha() || m->transparency() > 0.0f)
-  {
-    //g_vec_color.x = g_vec_color.y = g_vec_color.z = g_vec_color.w;
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-    //gc->gcBlend(true, gcblend_one, gcblend_srccol);
-    m_alpha = true;
-  }
-  else if(m->blend())
+  if(m->blend())
   {
     gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
+    m_alpha = true;
+  }
+  else if(m->alpha() || m->transparency() > 0.0f)
+  {
+    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
     m_alpha = true;
   }
 
   if(!m->depth())
   {
-    gc->gcDepth(false, false, gccmp_less);
+    gc->gcDepth(true, false, gccmp_less);
     m_depth = false;
   }
 

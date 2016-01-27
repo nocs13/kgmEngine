@@ -1599,6 +1599,7 @@ void kEditor::onAddParticles()
   particles->camera(&game->getRender()->camera());
 
   node->vis->set(particles);
+  particles->build();
 
   node->nam = kgmString("Particles_") + kgmConvert::toString((s32)(++oquered));
   node->setPosition(vec3(0, 0, 0));

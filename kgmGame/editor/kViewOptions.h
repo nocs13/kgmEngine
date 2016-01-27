@@ -74,8 +74,11 @@ class kViewOptionsForMaterial : public kViewOptions
   Slot<kViewOptionsForMaterial, int> slotSelectNormal;
   Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
 
+  Slot<kViewOptionsForMaterial, bool> slotSelectCull;
   Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
   Slot<kViewOptionsForMaterial, bool> slotSelectShade;
+  Slot<kViewOptionsForMaterial, bool> slotSelectDepth;
+  Slot<kViewOptionsForMaterial, bool> slotSelectBlend;
 
   Slot<kViewOptionsForMaterial, kgmString> slotColorR;
   Slot<kViewOptionsForMaterial, kgmString> slotColorG;
@@ -107,8 +110,11 @@ public:
   __stdcall void onSelectTexSpecular(int);
   __stdcall void onShininess(u32 s);
   __stdcall void onTransparency(u32 s);
+  __stdcall void onCull(bool s);
+  __stdcall void onBlend(bool s);
   __stdcall void onAlpha(bool s);
   __stdcall void onShade(bool s);
+  __stdcall void onDepth(bool s);
 };
 
 class kViewOptionsForVisual : public kViewOptions

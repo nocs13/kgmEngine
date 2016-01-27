@@ -292,14 +292,29 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
-  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 80, 20);
+  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
   alpha->setText("Alpha");
   alpha->setCheck(mtl->alpha());
   slotSelectAlpha.connect(this, &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
-  kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 82, y_coord, 80, 20);
+  kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 62, y_coord, 60, 20);
   shade->setText("Shade");
   shade->setCheck(mtl->shade());
   slotSelectShade.connect(this, &kViewOptionsForMaterial::onShade, &shade->sigClick);
+  kgmGuiCheck* depth = new kgmGuiCheck(tmaterial, 124, y_coord, 60, 20);
+  depth->setText("Depth");
+  depth->setCheck(mtl->depth());
+  slotSelectDepth.connect(this, &kViewOptionsForMaterial::onDepth, &depth->sigClick);
+  kgmGuiCheck* cull = new kgmGuiCheck(tmaterial, 186, y_coord, 60, 20);
+  cull->setText("Cull");
+  cull->setCheck(mtl->cull());
+  slotSelectCull.connect(this, &kViewOptionsForMaterial::onCull, &cull->sigClick);
+
+  y_coord += 23;
+
+  kgmGuiCheck* blend = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
+  blend->setText("Blend");
+  blend->setCheck(mtl->blend());
+  slotSelectShade.connect(this, &kViewOptionsForMaterial::onBlend, &blend->sigClick);
 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
@@ -515,6 +530,36 @@ void kViewOptionsForMaterial::onShade(bool a)
     return;
 
   mtl->shade(a);
+}
+
+void kViewOptionsForMaterial::onDepth(bool a)
+{
+  kgmMaterial* mtl = node->mtl;
+
+  if(!mtl)
+    return;
+
+  mtl->depth(a);
+}
+
+void kViewOptionsForMaterial::onBlend(bool a)
+{
+  kgmMaterial* mtl = node->mtl;
+
+  if(!mtl)
+    return;
+
+  mtl->blend(a);
+}
+
+void kViewOptionsForMaterial::onCull(bool a)
+{
+  kgmMaterial* mtl = node->mtl;
+
+  if(!mtl)
+    return;
+
+  mtl->cull(a);
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)

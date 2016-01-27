@@ -337,6 +337,20 @@ bool kgmGameMap::addMaterial(Node n)
     snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
   }
 
+  if(!mtl->depth())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Depth";
+    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
+  }
+
+  if(!mtl->shade())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Shade";
+    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
+  }
+
   if(!mtl->cull())
   {
     snode = new kgmXml::Node(node);
@@ -708,6 +722,46 @@ kgmGameMap::Node kgmGameMap::next()
         m_xml->attribute("value", value);
 
         ((kgmMaterial*)node.obj)->transparency(kgmConvert::toDouble(value));
+      }
+      else if(id == "Cull")
+      {
+        kgmString value;
+
+        m_xml->attribute("value", value);
+
+        bool s = (value == "false") ? (false) : (true);
+
+        ((kgmMaterial*)node.obj)->cull(s);
+      }
+      else if(id == "Shade")
+      {
+        kgmString value;
+
+        m_xml->attribute("value", value);
+
+        bool s = (value == "false") ? (false) : (true);
+
+        ((kgmMaterial*)node.obj)->shade(s);
+      }
+      else if(id == "Depth")
+      {
+        kgmString value;
+
+        m_xml->attribute("value", value);
+
+        bool s = (value == "false") ? (false) : (true);
+
+        ((kgmMaterial*)node.obj)->depth(s);
+      }
+      else if(id == "Alpha")
+      {
+        kgmString value;
+
+        m_xml->attribute("value", value);
+
+        bool s = (value == "false") ? (false) : (true);
+
+        ((kgmMaterial*)node.obj)->alpha(s);
       }
       else if(id == "Material")
       {

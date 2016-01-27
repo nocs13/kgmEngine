@@ -186,7 +186,7 @@ public:
     if(m_alpha == a)
       return;
 
-    if(!a && m_color.a > 0.0)
+    if(!a && m_color.a < 1.0)
       return;
 
     m_alpha = a;
