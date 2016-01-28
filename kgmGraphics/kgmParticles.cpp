@@ -106,13 +106,14 @@ void kgmParticles::init(Particle* pr)
 
   float r1    = (float)rand() / RAND_MAX;
   float angle = m_angle * r1;
-  float alpha = angle * r1 + angle * (1 - r1);
+  float alpha = m_angle * r1 + m_angle * (1 - r1);
 
   float r2 = (float)rand() / RAND_MAX;
-  float beta = angle * r2 + angle * (1 - r2);
+  float beta = m_angle * r2 + m_angle * (1 - r2);
   float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
   pr->dir.x = cos(beta) * cos(alpha) * x_side;
-  pr->dir.y = neg1 * cos(beta) * cos(alpha);
+  pr->dir.y = neg1 * sin(beta) * cos(alpha);
+  //pr->dir.y = neg1 * sin(angle);
   pr->dir.z = neg2 * sin(alpha);
 
   pr->dir = pr->dir + direction;
