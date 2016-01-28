@@ -32,8 +32,8 @@ kgmParticles::kgmParticles()
   m_divlife     = 0.0f;
   m_divspeed    = 0.0f;
 
-  st_size  = .1f;
-  en_size  = .1f;
+  m_size  = .1f;
+  m_esize  = .1f;
 
   tex_slide_rows = 0;
   tex_slide_cols = 0;
@@ -121,7 +121,7 @@ void kgmParticles::init(Particle* pr)
   pr->speed = m_speed - m_speed * m_divspeed * r1;
   pr->life  = m_life  - m_life * m_divlife  * r2;
   pr->col   = m_color;
-  pr->scale = st_size;
+  pr->scale = m_size;
   pr->time  = 0;
   pr->mass  = 0;
   pr->mesh  = null;
@@ -143,11 +143,11 @@ void kgmParticles::update(u32 t)
 
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
 
-    if(st_size != en_size)
+    if(m_size != m_esize)
     {
-      float d_size = (st_size - en_size) / pr->life;
+      float d_size = (m_size - m_esize) / pr->life;
 
-      pr->scale = st_size - (d_size * pr->time);
+      pr->scale = m_size - (d_size * pr->time);
     }
 
     if(m_fade && pr->col.a > 1)

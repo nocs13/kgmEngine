@@ -52,10 +52,6 @@ public:
   float      m_life;
   float      m_speed;
 
-  float      mass;
-  float      st_size;
-  float      en_size;
-
   u32        time_start;
   u32        time_update;
   u32        tex_slide_rows;
@@ -67,6 +63,9 @@ private:
   bool       m_loop;
   bool       m_fade;
 
+  float      m_mass;
+  float      m_size;
+  float      m_esize;
   float      m_angle;
   float      m_divlife;
   float      m_divspeed;
@@ -99,6 +98,36 @@ public:
   void fade(bool f)
   {
     m_fade = f;
+  }
+
+  f32 mass() const
+  {
+    return m_mass;
+  }
+
+  void mass(f32 a)
+  {
+    m_mass = a;
+  }
+
+  f32 size() const
+  {
+    return m_size;
+  }
+
+  void size(f32 a)
+  {
+    m_size = a;
+  }
+
+  f32 esize() const
+  {
+    return m_esize;
+  }
+
+  void esize(f32 a)
+  {
+    m_esize = a;
   }
 
   f32 angle() const

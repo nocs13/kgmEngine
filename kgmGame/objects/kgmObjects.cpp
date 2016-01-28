@@ -82,8 +82,8 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   particles->m_speed   = speed;
   particles->m_count   = count;
   particles->m_life    = life;
-  particles->st_size   = size_start;
-  particles->en_size   = size_end;
+  particles->size(size_start);
+  particles->esize(size_end);
   particles->loop(loop);
 
   m_visual->set(material);

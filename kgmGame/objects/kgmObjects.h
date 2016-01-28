@@ -169,9 +169,8 @@ public:
     ptl->m_count       = 25;
     ptl->m_speed       = 2.0f;
     ptl->m_life        = 200;
-    ptl->direction     = vec3(-1,0,0);
-    ptl->st_size       = .08f;
-    ptl->en_size       = .02f;
+    ptl->size(.08f);
+    ptl->esize(.02f);
     ptl->divlife(0.95);
     ptl->divspeed(0.95);
     ptl->build();
