@@ -17,6 +17,8 @@ public:
   kgmGuiSelect();
   kgmGuiSelect(kgmGui *par, int x, int y, int w, int h);
 
+  void add(kgmString);
+
   kgmString getText();
 
 protected:

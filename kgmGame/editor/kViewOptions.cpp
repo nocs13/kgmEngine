@@ -316,6 +316,9 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   blend->setCheck(mtl->blend());
   slotSelectBlend.connect(this, &kViewOptionsForMaterial::onBlend, &blend->sigClick);
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
+  ((kgmGuiSelect*)g)->add("None");
+  ((kgmGuiSelect*)g)->add("Flame");
+  ((kgmGuiSelect*)g)->add("Smoke");
 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);

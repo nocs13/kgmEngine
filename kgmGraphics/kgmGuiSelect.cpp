@@ -20,6 +20,11 @@ kgmGuiSelect::kgmGuiSelect(kgmGui *par, int x, int y, int w, int h)
   m_text->setEditable(false);
 }
 
+void kgmGuiSelect::add(kgmString s)
+{
+  m_list->addItem(s);
+}
+
 kgmString kgmGuiSelect::getText()
 {
   kgmString result;
@@ -42,6 +47,8 @@ void kgmGuiSelect::onMsLeftDown(int k, int x, int y)
 {
   kgmGui::onMsLeftDown(k, x, y);
 
-  if(m_list && !m_list->visible())
+  if(!m_list->visible())
     m_list->show();
+  else
+    m_list->hide();
 }
