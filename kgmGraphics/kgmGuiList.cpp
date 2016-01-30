@@ -127,6 +127,15 @@ char* kgmGuiList::getSelectedItem()
   return getItem(m_itemSel);
 }
 
+bool kgmGuiList::hasItem(kgmString item)
+{
+  for(int i = 0; i < m_items.length(); i++)
+    if(m_items[i] == item)
+      return true;
+
+  return false;
+}
+
 void kgmGuiList::clear()
 {
   for(int i = 0; i < m_items.length(); i++)

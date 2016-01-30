@@ -51,6 +51,7 @@ public:
   char*     getSelectedItem();
   void      clear();
   void      sort();
+  bool      hasItem(kgmString);
 
   void setSelectCallback(SelectEventCallback call)
   {

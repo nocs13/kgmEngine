@@ -14,10 +14,15 @@ class kgmGuiSelect : public kgmGui
   Slot<kgmGuiSelect, u32> slotSelect;
 
 public:
+  Signal<kgmString> sigSelect;
+
+public:
   kgmGuiSelect();
   kgmGuiSelect(kgmGui *par, int x, int y, int w, int h);
 
   void add(kgmString);
+
+  void select(kgmString item);
 
   kgmString getText();
 

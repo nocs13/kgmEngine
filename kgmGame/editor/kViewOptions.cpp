@@ -341,12 +341,16 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiSelect*)g)->add("zero");
   ((kgmGuiSelect*)g)->add("srcalpha");
   ((kgmGuiSelect*)g)->add("isrcalpha");
+  ((kgmGuiSelect*)g)->select(blendToString(mtl->m_srcblend));
+  slotBlendSource.connect(this, &kViewOptionsForMaterial::onBlendSource, &((kgmGuiSelect*)g)->sigSelect);
   g = new kgmGuiSelect(tmaterial, 124, y_coord, 60, 20);
   g->setSid("BlendDestination");
   ((kgmGuiSelect*)g)->add("one");
   ((kgmGuiSelect*)g)->add("zero");
   ((kgmGuiSelect*)g)->add("srcalpha");
   ((kgmGuiSelect*)g)->add("isrcalpha");
+  ((kgmGuiSelect*)g)->select(blendToString(mtl->m_dstblend));
+  slotBlendDestination.connect(this, &kViewOptionsForMaterial::onBlendDestination, &((kgmGuiSelect*)g)->sigSelect);
 
   y_coord += 23;
 }
@@ -424,6 +428,22 @@ void kViewOptionsForMaterial::onSpecularB(kgmString c)
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   node->mtl->m_specular.b = color / 255;
+}
+
+void kViewOptionsForMaterial::onBlendSource(kgmString c)
+{
+  if(c.length() < 1)
+    return;
+
+  ((kgmMaterial*)node->mtl)->m_srcblend = stringToBlend(c);
+}
+
+void kViewOptionsForMaterial::onBlendDestination(kgmString c)
+{
+  if(c.length() < 1)
+    return;
+
+  ((kgmMaterial*)node->mtl)->m_dstblend = stringToBlend(c);
 }
 
 void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)
@@ -589,28 +609,28 @@ kgmString kViewOptionsForMaterial::blendToString(u32 blend)
   switch(blend)
   {
   case gcblend_one:
-    return "One";
+    return "one";
   case gcblend_zero:
-    return "Zero";
+    return "zero";
   case gcblend_srcalpha:
-    return "AlphaSource";
+    return "srcalpha";
   case gcblend_dstalpha:
-    return "AlphaDestination";
+    return "dstalpha";
   case gcblend_srcialpha:
-    return "IAlphaSource";
+    return "isrcalpha";
   case gcblend_dstialpha:
-    return "IAlphaDestination";
+    return "idstalpha";
   }
 }
 
 u32 kViewOptionsForMaterial::stringToBlend(kgmString blend)
 {
-  if(blend == "One") return gcblend_one;
-  else if(blend == "Zero") return gcblend_zero;
-  else if(blend == "AlphaSource") return gcblend_srcalpha;
-  else if(blend == "AlphaDestination") return gcblend_dstalpha;
-  else if(blend == "IAlphaSource") return gcblend_srcialpha;
-  else if(blend == "IAlphaDestination") return gcblend_dstialpha;
+  if(blend == "one") return gcblend_one;
+  else if(blend == "zero") return gcblend_zero;
+  else if(blend == "srcalpha") return gcblend_srcalpha;
+  else if(blend == "dstalpha") return gcblend_dstalpha;
+  else if(blend == "isrcalpha") return gcblend_srcialpha;
+  else if(blend == "idstalpha") return gcblend_dstialpha;
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)

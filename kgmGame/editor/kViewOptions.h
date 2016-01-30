@@ -26,10 +26,10 @@ class kViewOptions : public kgmGuiFrame
   Slot<kViewOptions, kgmString> slotRotationZ;
 
 protected:
-  kgmGuiTab*    tab;
+  kgmGuiTab*  tab;
 
-  kNode*        node;
-  u32           y_coord;
+  kNode*  node;
+  u32     y_coord;
 
 public:
   typedef kgmCallback<void, kgmObject*> CloseCallback;
@@ -87,6 +87,8 @@ class kViewOptionsForMaterial : public kViewOptions
   Slot<kViewOptionsForMaterial, kgmString> slotSpecularR;
   Slot<kViewOptionsForMaterial, kgmString> slotSpecularG;
   Slot<kViewOptionsForMaterial, kgmString> slotSpecularB;
+  Slot<kViewOptionsForMaterial, kgmString> slotBlendSource;
+  Slot<kViewOptionsForMaterial, kgmString> slotBlendDestination;
 
   kgmGuiText*  guiTextTexColor;
   kgmGuiText*  guiTextTexNormal;

@@ -33,6 +33,12 @@ void kgmGuiSelect::add(kgmString s)
   m_list->addItem(s);
 }
 
+void kgmGuiSelect::select(kgmString item)
+{
+  if(m_list->hasItem(item))
+    m_text->setText(item);
+}
+
 kgmString kgmGuiSelect::getText()
 {
   kgmString result;
@@ -46,6 +52,8 @@ kgmString kgmGuiSelect::getText()
 void kgmGuiSelect::onSelect(u32 i)
 {
   m_text->setText(m_list->getItem(i));
+
+  sigSelect(m_text->getText());
 
   if(m_list->visible())
   {
