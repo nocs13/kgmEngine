@@ -161,8 +161,6 @@ public:
     mtl->m_srcblend = gcblend_srcalpha;
     mtl->m_dstblend = gcblend_one;
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
-    mtl->m_type = "simple";
-    mtl->setShader(g->getResources()->getShader("blend.glsl"));
 
     ptl = kgm_ptr<kgmParticles>(new kgmParticles());
     ptl->m_typerender  = kgmParticles::RTypePoint;

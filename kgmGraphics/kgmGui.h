@@ -69,6 +69,7 @@ public:
   bool       m_alpha;    //test alpha in color
   bool       m_freeze;   //have or not input events
   bool       m_resize;   //should be gui resizable
+  bool       m_point;    //should get input even point is out
   kgmString  m_text;     //gui text
   Color      m_color;    //gui bg color
   Image      m_image;    //gui bg texture.

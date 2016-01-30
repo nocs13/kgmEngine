@@ -73,8 +73,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   material->blend(true);
   material->m_srcblend     = gcblend_srcalpha;
   material->m_dstblend     = gcblend_one;
-  material->m_type         = "simple";
-  material->setShader(g->getResources()->getShader("blend.glsl"));
   material->setTexColor(g->getResources()->getTexture(tid));
 
   particles->direction = dir;
@@ -156,10 +154,8 @@ kgmSmoke::kgmSmoke(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
                       size_start, size_end, count, tid, loop)
 {
   material->blend(true);
-  material->m_srcblend     = gcblend_srcalpha;
-  material->m_dstblend     = gcblend_one;
-  material->m_type         = "simple";
-  material->setShader(g->getResources()->getShader("blend.glsl"));
+  material->m_srcblend = gcblend_srcalpha;
+  material->m_dstblend = gcblend_one;
 }
 
 kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,

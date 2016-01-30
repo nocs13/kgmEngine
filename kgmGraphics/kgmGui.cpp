@@ -17,6 +17,7 @@ kgmGui::kgmGui()
   m_hasMouse = false;
   m_hasInput = false;
   m_useStyle = true;
+  m_point    = false;
   m_focus    = null;
 
   m_alpha = false;
@@ -42,6 +43,7 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
   m_hasInput = false;
   m_alpha    = false;
   m_useStyle = true;
+  m_point    = false;
 
   m_focus = null;
 
@@ -402,7 +404,7 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 
   for (int i = 0; i < m_childs.size(); i++)
   {
-    kgmGui* child      = m_childs[i];
+    kgmGui* child = m_childs[i];
 
     if (child->m_view && !child->m_freeze)
     {

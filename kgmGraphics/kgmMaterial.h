@@ -8,7 +8,7 @@ class kgmIGC;
 class kgmTexture;
 class kgmShader;
 
-#define KGM_TEXTURES_PER_MATERIAL 8
+#define KGM_TEXTURES_PER_MATERIAL 4
 
 class kgmMaterial: public kgmObject
 {
@@ -120,12 +120,12 @@ public:
 
   kgmShader*  m_shader = null;
 
-  u32         m_flags;
+  u32  m_type;
+  u32  m_flags;
+  u32  m_srcblend;
+  u32  m_dstblend;
 
-
-  u32         m_srcblend, m_dstblend;
-
-  kgmString   m_type, m_name;
+  kgmString  m_name;
 
 public:
   kgmMaterial();

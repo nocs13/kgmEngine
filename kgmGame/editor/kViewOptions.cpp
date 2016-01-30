@@ -185,6 +185,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   y_coord += 23;
   kgmMaterial* mtl = n->mtl;
 
+  m_srcblend = true;
+
   if(!mtl)
     return;
 
@@ -316,9 +318,10 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   blend->setCheck(mtl->blend());
   slotSelectBlend.connect(this, &kViewOptionsForMaterial::onBlend, &blend->sigClick);
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
-  ((kgmGuiSelect*)g)->add("None");
-  ((kgmGuiSelect*)g)->add("Flame");
-  ((kgmGuiSelect*)g)->add("Smoke");
+  ((kgmGuiSelect*)g)->add("one");
+  ((kgmGuiSelect*)g)->add("zero");
+  ((kgmGuiSelect*)g)->add("srcalpha");
+  ((kgmGuiSelect*)g)->add("isrcalpha");
 
   y_coord += 23;
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
@@ -564,6 +567,35 @@ void kViewOptionsForMaterial::onCull(bool a)
     return;
 
   mtl->cull(a);
+}
+
+kgmString kViewOptionsForMaterial::blendToString(u32 blend)
+{
+  switch(blend)
+  {
+  case gcblend_one:
+    return "One";
+  case gcblend_zero:
+    return "Zero";
+  case gcblend_srcalpha:
+    return "AlphaSource";
+  case gcblend_dstalpha:
+    return "AlphaDestination";
+  case gcblend_srcialpha:
+    return "IAlphaSource";
+  case gcblend_dstialpha:
+    return "IAlphaDestination";
+  }
+}
+
+u32 kViewOptionsForMaterial::stringToBlend(kgmString blend)
+{
+  if(blend == "One") return gcblend_one;
+  else if(blend == "Zero") return gcblend_zero;
+  else if(blend == "AlphaSource") return gcblend_srcalpha;
+  else if(blend == "AlphaDestination") return gcblend_dstalpha;
+  else if(blend == "IAlphaSource") return gcblend_srcialpha;
+  else if(blend == "IAlphaDestination") return gcblend_dstialpha;
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int h)

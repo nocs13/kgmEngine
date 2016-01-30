@@ -93,6 +93,8 @@ class kViewOptionsForMaterial : public kViewOptions
   kgmGuiText*  guiTextTexSpecular;
   kgmGuiText*  guiTextShader;
 
+  bool m_srcblend;
+
 public:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
 
@@ -103,6 +105,8 @@ public:
   __stdcall void onSpecularR(kgmString);
   __stdcall void onSpecularG(kgmString);
   __stdcall void onSpecularB(kgmString);
+  __stdcall void onBlendSource(kgmString);
+  __stdcall void onBlendDestination(kgmString);
   __stdcall void onSelectFailed(kFileDialog*);
   __stdcall void onSelectSuccess(kFileDialog*);
   __stdcall void onSelectShader(int);
@@ -116,6 +120,10 @@ public:
   __stdcall void onAlpha(bool s);
   __stdcall void onShade(bool s);
   __stdcall void onDepth(bool s);
+
+private:
+  kgmString blendToString(u32 blend);
+  u32 stringToBlend(kgmString blend);
 };
 
 class kViewOptionsForVisual : public kViewOptions
