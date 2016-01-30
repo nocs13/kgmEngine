@@ -1765,6 +1765,8 @@ void kEditor::add(kNode* node)
   }
 
   nodes.add(node);
+
+  select(node->nam);
 }
 
 void kEditor::remove(kNode* node)

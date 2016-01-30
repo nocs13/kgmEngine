@@ -182,10 +182,12 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
   Rect rect = Rect(0, 0, m_rect.w, m_rect.h);
   m_itemSel = m_position + (y - rect.y) / m_itemHeight;
 
-  if((m_itemSel < m_items.size()))
+  if((m_itemSel >= 0) && (m_itemSel < m_items.size()))
   {
     if(callback.hasObject() && callback.hasFunction())
       callback();
+
+    sigSelect(m_itemSel);
   }
 }
 
@@ -233,6 +235,8 @@ void kgmGuiList::onKeyDown(int k)
     {
       if(callback.hasObject() && callback.hasFunction())
         callback();
+
+      sigSelect(m_itemSel);
     }
     break;
   }

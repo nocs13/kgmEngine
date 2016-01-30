@@ -6,6 +6,7 @@
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
 #include "../../kgmGraphics/kgmGuiCheck.h"
+#include "../../kgmGraphics/kgmGuiSelect.h"
 #include "../../kgmBase/kgmCallback.h"
 
 namespace kgmGameEditor

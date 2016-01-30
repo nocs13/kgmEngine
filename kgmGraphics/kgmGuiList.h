@@ -31,6 +31,8 @@ public:
 
   SelectEventCallback callback;
 
+  Signal<u32> sigSelect;
+
 public:
   kgmGuiList();
   kgmGuiList(kgmGui *par, int x, int y, int w, int h);
