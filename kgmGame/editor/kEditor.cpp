@@ -1468,7 +1468,7 @@ void kEditor::onEditOptions()
     vop = new kViewOptionsForObstacle(selected, 50, 50, 250, 300);
     break;
   case kNode::MATERIAL:
-    vop = new kViewOptionsForMaterial(selected, 50, 50, 250, 300);
+    vop = new kViewOptionsForMaterial(selected, 50, 50, 250, 350);
     break;
   }
 

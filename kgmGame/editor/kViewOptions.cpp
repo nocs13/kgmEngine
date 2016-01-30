@@ -250,6 +250,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   slotSelectColor.connect(this, &kViewOptionsForMaterial::onSelectTexColor, &btn->sigClick);
 
   y_coord += 23;
+
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexNormal");
   g = guiTextTexNormal = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
@@ -262,6 +263,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   slotSelectNormal.connect(this, &kViewOptionsForMaterial::onSelectTexNormal, &btn->sigClick);
 
   y_coord += 23;
+
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexSpecular");
   g = guiTextTexSpecular = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
@@ -274,6 +276,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
+
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Shininess");
   g = new kgmGuiScroll(tmaterial, 51, y_coord, 140, 20);
@@ -284,6 +287,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onShininess));
 
   y_coord += 23;
+
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("Transparency");
   g = new kgmGuiScroll(tmaterial, 51, y_coord, 140, 20);
@@ -294,6 +298,20 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
 
   y_coord += 23;
+
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
+  g->setText("Shader");
+  g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+
+  if(mtl->getShader())
+    g->setText(mtl->getShader()->m_id);
+
+  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
+  btn->setText("select");
+  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
+
+  y_coord += 23;
+
   kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
   alpha->setText("Alpha");
   alpha->setCheck(mtl->alpha());
@@ -318,22 +336,19 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   blend->setCheck(mtl->blend());
   slotSelectBlend.connect(this, &kViewOptionsForMaterial::onBlend, &blend->sigClick);
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
+  g->setSid("BlendSource");
+  ((kgmGuiSelect*)g)->add("one");
+  ((kgmGuiSelect*)g)->add("zero");
+  ((kgmGuiSelect*)g)->add("srcalpha");
+  ((kgmGuiSelect*)g)->add("isrcalpha");
+  g = new kgmGuiSelect(tmaterial, 124, y_coord, 60, 20);
+  g->setSid("BlendDestination");
   ((kgmGuiSelect*)g)->add("one");
   ((kgmGuiSelect*)g)->add("zero");
   ((kgmGuiSelect*)g)->add("srcalpha");
   ((kgmGuiSelect*)g)->add("isrcalpha");
 
   y_coord += 23;
-  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
-  g->setText("Shader");
-  g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
-
-  if(mtl->getShader())
-    g->setText(mtl->getShader()->m_id);
-
-  btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
-  btn->setText("select");
-  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
 }
 
 void kViewOptionsForMaterial::onReset(int)

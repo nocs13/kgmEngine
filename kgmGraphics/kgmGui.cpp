@@ -303,7 +303,7 @@ void kgmGui::onMsMove(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if(child->m_rect.inside(x, y))
+      if(child->m_point || child->m_rect.inside(x, y))
       {
         if(!child->m_hasMouse)
         {
@@ -344,11 +344,11 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
 
     if(child->m_view && !child->m_freeze)
     {
-      if(child->m_rect.inside(x, y))
+      if(child->m_point || child->m_rect.inside(x, y))
       {
         child->onMsLeftDown(k, x - child->m_rect.x, y - child->m_rect.y);
 
-        break;
+        //break;
       }
     }
   }
@@ -381,11 +381,11 @@ void kgmGui::onMsLeftUp(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if (child->m_rect.inside(x, y))
+      if (child->m_point || child->m_rect.inside(x, y))
       {
         child->onMsLeftUp(k, x - child->m_rect.x, y - child->m_rect.y);
 
-        break;
+        //break;
       }
     }
   }
@@ -408,11 +408,11 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if (child->m_rect.inside(x, y))
+      if (child->m_point || child->m_rect.inside(x, y))
       {
         child->onMsRightDown(k, x - child->m_rect.x, y - child->m_rect.y);
 
-        break;
+        //break;
       }
     }
   }
@@ -435,11 +435,11 @@ void kgmGui::onMsRightUp(int k, int x, int y)
 
     if(child->m_view && !child->m_freeze)
     {
-      if (child->m_rect.inside(x, y))
+      if (child->m_point || child->m_rect.inside(x, y))
       {
         child->onMsRightUp(k, x - child->m_rect.x, y - child->m_rect.y);
 
-        break;
+        //break;
       }
     }
   }
