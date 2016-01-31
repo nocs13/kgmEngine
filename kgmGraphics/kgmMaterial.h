@@ -109,6 +109,9 @@ private:
   bool  m_depth = true;
   bool  m_shade = true;
 
+  u32  m_srcblend;
+  u32  m_dstblend;
+
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
@@ -122,8 +125,6 @@ public:
 
   u32  m_type;
   u32  m_flags;
-  u32  m_srcblend;
-  u32  m_dstblend;
 
   kgmString  m_name;
 
@@ -232,6 +233,26 @@ public:
     m_cull = c;
   }
 
+  u32 srcblend() const
+  {
+    return m_srcblend;
+  }
+
+  void srcblend(u32 s)
+  {
+    m_srcblend = s;
+  }
+
+  u32 dstblend() const
+  {
+    return m_dstblend;
+  }
+
+  void dstblend(u32 s)
+  {
+    m_dstblend = s;
+  }
+
   kgmString name() const
   {
     return m_name;
@@ -241,6 +262,9 @@ public:
   {
     m_name = n;
   }
+
+  static kgmString blendToString(u32 blend);
+  static u32 stringToBlend(kgmString blend);
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

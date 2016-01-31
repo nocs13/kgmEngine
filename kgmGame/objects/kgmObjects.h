@@ -158,8 +158,8 @@ public:
     mtl->cull(false);
     mtl->depth(false);
     mtl->blend(true);
-    mtl->m_srcblend = gcblend_srcalpha;
-    mtl->m_dstblend = gcblend_one;
+    mtl->srcblend(gcblend_srcalpha);
+    mtl->dstblend(gcblend_one);
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
 
     ptl = kgm_ptr<kgmParticles>(new kgmParticles());

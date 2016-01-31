@@ -358,6 +358,16 @@ bool kgmGameMap::addMaterial(Node n)
     snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
   }
 
+  if(mtl->blend())
+  {
+    snode = new kgmXml::Node(node);
+    snode->m_name = "Blending";
+    snode->m_attributes.add(new kgmXml::Attribute("source",
+                            kgmMaterial::blendToString(mtl->srcblend())));
+    snode->m_attributes.add(new kgmXml::Attribute("destination",
+                            kgmMaterial::blendToString(mtl->dstblend())));
+  }
+
   if(mtl->getShader())
   {
     snode = new kgmXml::Node(node);
@@ -762,6 +772,17 @@ kgmGameMap::Node kgmGameMap::next()
         bool s = (value == "false") ? (false) : (true);
 
         ((kgmMaterial*)node.obj)->alpha(s);
+      }
+      else if(id == "Blending")
+      {
+        kgmString src, dst;
+
+        m_xml->attribute("source", src);
+        m_xml->attribute("destination", dst);
+
+        ((kgmMaterial*)node.obj)->blend(true);
+        ((kgmMaterial*)node.obj)->srcblend(kgmMaterial::stringToBlend(src));
+        ((kgmMaterial*)node.obj)->dstblend(kgmMaterial::stringToBlend(dst));
       }
       else if(id == "Material")
       {

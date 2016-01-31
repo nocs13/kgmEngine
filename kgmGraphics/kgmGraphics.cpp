@@ -1072,7 +1072,7 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->blend())
   {
-    gc->gcBlend(true, m->m_srcblend, m->m_dstblend);
+    gc->gcBlend(true, m->srcblend(), m->dstblend());
     m_alpha = true;
   }
   else if(m->alpha() || m->transparency() > 0.0f)

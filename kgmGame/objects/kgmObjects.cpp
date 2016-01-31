@@ -71,8 +71,8 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   material = new kgmMaterial();
   material->depth(false);
   material->blend(true);
-  material->m_srcblend     = gcblend_srcalpha;
-  material->m_dstblend     = gcblend_one;
+  material->srcblend(gcblend_srcalpha);
+  material->dstblend(gcblend_one);
   material->setTexColor(g->getResources()->getTexture(tid));
 
   particles->direction = dir;
@@ -154,8 +154,8 @@ kgmSmoke::kgmSmoke(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
                       size_start, size_end, count, tid, loop)
 {
   material->blend(true);
-  material->m_srcblend = gcblend_srcalpha;
-  material->m_dstblend = gcblend_one;
+  material->srcblend(gcblend_srcalpha);
+  material->dstblend(gcblend_one);
 }
 
 kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
@@ -193,34 +193,34 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   material->cull(false);
   material->depth(false);
   material->blend(true);
-  material->m_srcblend = gcblend_one;
-  material->m_dstblend = gcblend_one;
+  material->srcblend(gcblend_one);
+  material->dstblend(gcblend_one);
   material->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
   material->setShader(g->getResources()->getShader("blend.glsl"));
 
   mesh = new kgmMesh();
   Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
 
-  v[0]  = { {0, -hwid, -hwid}, 0xffffffff, {0, 1}};
-  v[1]  = { {0, -hwid,  hwid}, 0xffffffff, {0, 0}};
-  v[2]  = { {0,  hwid,  hwid}, 0xffffffff, {1, 0}};
-  v[3]  = { {0,  hwid,  hwid}, 0xffffffff, {1, 0}};
-  v[4]  = { {0,  hwid, -hwid}, 0xffffffff, {1, 1}};
-  v[5]  = { {0, -hwid, -hwid}, 0xffffffff, {0, 1}};
+  v[0]  = { {0, -hwid, -hwid}, 0xffffffff, {0, 1} };
+  v[1]  = { {0, -hwid,  hwid}, 0xffffffff, {0, 0} };
+  v[2]  = { {0,  hwid,  hwid}, 0xffffffff, {1, 0} };
+  v[3]  = { {0,  hwid,  hwid}, 0xffffffff, {1, 0} };
+  v[4]  = { {0,  hwid, -hwid}, 0xffffffff, {1, 1} };
+  v[5]  = { {0, -hwid, -hwid}, 0xffffffff, {0, 1} };
 
-  v[6]  = { {hlen,  -hwid, 0}, 0xffffffff, {0, 1}};
-  v[7]  = { {hlen,   hwid, 0}, 0xffffffff, {0, 0}};
-  v[8]  = { {-hlen,  hwid, 0}, 0xffffffff, {1, 0}};
-  v[9]  = { {-hlen,  hwid, 0}, 0xffffffff, {1, 0}};
-  v[10] = { {-hlen, -hwid, 0}, 0xffffffff, {1, 1}};
-  v[11] = { {hlen,  -hwid, 0}, 0xffffffff, {0, 1}};
+  v[6]  = { {hlen,  -hwid, 0}, 0xffffffff, {0, 1} };
+  v[7]  = { {hlen,   hwid, 0}, 0xffffffff, {0, 0} };
+  v[8]  = { {-hlen,  hwid, 0}, 0xffffffff, {1, 0} };
+  v[9]  = { {-hlen,  hwid, 0}, 0xffffffff, {1, 0} };
+  v[10] = { {-hlen, -hwid, 0}, 0xffffffff, {1, 1} };
+  v[11] = { {hlen,  -hwid, 0}, 0xffffffff, {0, 1} };
 
-  v[12] = { {hlen,  0, -hwid}, 0xffffffff, {0, 1}};
-  v[13] = { {hlen,  0, hwid},  0xffffffff, {0, 0}};
-  v[14] = { {-hlen, 0, hwid},  0xffffffff, {1, 0}};
-  v[15] = { {-hlen, 0, hwid},  0xffffffff, {1, 0}};
-  v[16] = { {-hlen, 0, -hwid}, 0xffffffff, {1, 1}};
-  v[17] = { {hlen,  0, -hwid}, 0xffffffff, {0, 1}};
+  v[12] = { {hlen,  0, -hwid}, 0xffffffff, {0, 1} };
+  v[13] = { {hlen,  0, hwid},  0xffffffff, {0, 0} };
+  v[14] = { {-hlen, 0, hwid},  0xffffffff, {1, 0} };
+  v[15] = { {-hlen, 0, hwid},  0xffffffff, {1, 0} };
+  v[16] = { {-hlen, 0, -hwid}, 0xffffffff, {1, 1} };
+  v[17] = { {hlen,  0, -hwid}, 0xffffffff, {0, 1} };
 
   m_visual->set(mesh);
   m_visual->set(material);

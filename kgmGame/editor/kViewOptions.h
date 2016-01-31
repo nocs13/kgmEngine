@@ -124,8 +124,6 @@ public:
   __stdcall void onDepth(bool s);
 
 private:
-  kgmString blendToString(u32 blend);
-  u32 stringToBlend(kgmString blend);
 };
 
 class kViewOptionsForVisual : public kViewOptions
