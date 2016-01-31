@@ -120,6 +120,8 @@ bool kgmGameMap::addVisual(Node n)
       snode->m_attributes.add(new kgmXml::Attribute("divspeed", kgmConvert::toString((s32)vis->getParticles()->divspeed())));
       snode->m_attributes.add(new kgmXml::Attribute("life", kgmConvert::toString((s32)vis->getParticles()->life())));
       snode->m_attributes.add(new kgmXml::Attribute("divlife", kgmConvert::toString((s32)vis->getParticles()->divlife())));
+      snode->m_attributes.add(new kgmXml::Attribute("size", kgmConvert::toString((s32)vis->getParticles()->size())));
+      snode->m_attributes.add(new kgmXml::Attribute("esize", kgmConvert::toString((s32)vis->getParticles()->esize())));
       break;
     }
 
@@ -699,7 +701,27 @@ kgmGameMap::Node kgmGameMap::next()
         {
           ((kgmVisual*)node.obj)->set(m_game->getResources()->getMesh(link));
         }
+      }
+      else if(id == "Particles")
+      {
+        kgmString value;
 
+        if(node.typ == NodeVis && ((kgmVisual*)node.obj)->type() == kgmVisual::TypeNone)
+        {
+          kgmParticles* pts = new kgmParticles();
+          m_xml->attribute("count", value); pts->count(kgmConvert::toInteger(value));
+          m_xml->attribute("fade", value); pts->fade(kgmConvert::toInteger(value));
+          m_xml->attribute("loop", value); pts->loop(kgmConvert::toInteger(value));
+          m_xml->attribute("angle", value); pts->angle(kgmConvert::toDouble(value));
+          m_xml->attribute("speed", value); pts->speed(kgmConvert::toDouble(value));
+          m_xml->attribute("divspeed", value); pts->divspeed(kgmConvert::toDouble(value));
+          m_xml->attribute("life", value); pts->life(kgmConvert::toDouble(value));
+          m_xml->attribute("divlife", value); pts->divlife(kgmConvert::toDouble(value));
+          m_xml->attribute("size", value); pts->size(kgmConvert::toDouble(value));
+          m_xml->attribute("esize", value); pts->esize(kgmConvert::toDouble(value));
+          pts->build();
+          ((kgmVisual*)node.obj)->set(pts);
+        }
       }
       else if(id == "Shader")
       {
