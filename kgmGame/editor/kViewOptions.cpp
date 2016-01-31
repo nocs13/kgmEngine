@@ -632,7 +632,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText("Count");
     g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
     g->setSid("Count");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_count));
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->count()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
@@ -644,7 +644,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText("Speed");
     g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Speed");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_speed));
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->speed()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesSpeed.connect(this, &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
@@ -674,7 +674,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText("Life");
     g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Life");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->m_life));
+    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->life()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesLife.connect(this, &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
@@ -767,13 +767,13 @@ void kViewOptionsForVisual::onParticlesFade(bool s)
 
 void kViewOptionsForVisual::onParticlesCount(kgmString s)
 {
-  node->vis->getParticles()->m_count = kgmConvert::toInteger(s);
+  node->vis->getParticles()->count(kgmConvert::toInteger(s));
   node->vis->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 {
-  node->vis->getParticles()->m_speed = kgmConvert::toDouble(s);
+  node->vis->getParticles()->speed(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesAngle(kgmString s)
@@ -786,7 +786,7 @@ void kViewOptionsForVisual::onParticlesAngle(kgmString s)
 
 void kViewOptionsForVisual::onParticlesLife(kgmString s)
 {
-  node->vis->getParticles()->m_life = kgmConvert::toDouble(s);
+  node->vis->getParticles()->life(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesSize(kgmString s)

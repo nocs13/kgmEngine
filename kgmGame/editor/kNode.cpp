@@ -109,8 +109,7 @@ void kNode::setRotation(vec3 r)
   case VISUAL:
     if(vis->type() == kgmVisual::TypeParticles)
     {
-      vis->getParticles()->direction = mrot * vnor;
-      vis->getParticles()->direction.normalize();
+      vis->getParticles()->direction(mrot * vnor);
     }
     else
     {

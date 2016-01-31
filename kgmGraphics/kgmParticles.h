@@ -38,7 +38,6 @@ public:
 
 public:
   Particle*  m_particles = null;
-  u32        m_count;
 
   bool       m_fall;
 
@@ -46,11 +45,6 @@ public:
 
   vec3       force;
   vec3       volume;
-  vec3       location;
-  vec3       direction;
-
-  float      m_life;
-  float      m_speed;
 
   u32        time_start;
   u32        time_update;
@@ -60,15 +54,22 @@ public:
   TypeRender m_typerender;
 
 private:
+  u32        m_count;
+
   bool       m_loop;
   bool       m_fade;
 
+  float      m_life;
   float      m_mass;
   float      m_size;
   float      m_esize;
+  float      m_speed;
   float      m_angle;
   float      m_divlife;
   float      m_divspeed;
+
+  vec3       m_location;
+  vec3       m_direction;
 
   kgmMesh*    m_mesh   = null;
   kgmCamera*  m_camera = null;
@@ -79,6 +80,16 @@ public:
 
   void build();
   void init(Particle*);
+
+  u32 count() const
+  {
+    return m_count;
+  }
+
+  void count(u32 c)
+  {
+    m_count = c;
+  }
 
   bool loop() const
   {
@@ -100,6 +111,16 @@ public:
     m_fade = f;
   }
 
+  f32 life() const
+  {
+    return m_life;
+  }
+
+  void life(f32 a)
+  {
+    m_life = a;
+  }
+
   f32 mass() const
   {
     return m_mass;
@@ -118,6 +139,16 @@ public:
   void size(f32 a)
   {
     m_size = a;
+  }
+
+  f32 speed() const
+  {
+    return m_speed;
+  }
+
+  void speed(f32 a)
+  {
+    m_speed = a;
   }
 
   f32 esize() const
@@ -189,6 +220,16 @@ public:
   TypeRender typeRender() const
   {
     return m_typerender;
+  }
+
+  vec3 direction() const
+  {
+    return m_direction;
+  }
+
+  void direction(vec3 c)
+  {
+    m_direction = c;
   }
 
   virtual void update(u32 t);

@@ -112,12 +112,14 @@ bool kgmGameMap::addVisual(Node n)
     case kgmVisual::TypeParticles:
       snode = new kgmXml::Node(node);
       snode->m_name = "Particles";
-      snode->m_attributes.add(new kgmXml::Attribute("count", kgmConvert::toString((s32)vis->getParticles()->m_count)));
+      snode->m_attributes.add(new kgmXml::Attribute("count", kgmConvert::toString((s32)vis->getParticles()->count())));
       snode->m_attributes.add(new kgmXml::Attribute("loop", kgmConvert::toString((s32)vis->getParticles()->loop())));
       snode->m_attributes.add(new kgmXml::Attribute("fade", kgmConvert::toString((s32)vis->getParticles()->fade())));
       snode->m_attributes.add(new kgmXml::Attribute("angle", kgmConvert::toString((s32)vis->getParticles()->angle())));
-      snode->m_attributes.add(new kgmXml::Attribute("speed", kgmConvert::toString((s32)vis->getParticles()->m_speed)));
+      snode->m_attributes.add(new kgmXml::Attribute("speed", kgmConvert::toString((s32)vis->getParticles()->speed())));
       snode->m_attributes.add(new kgmXml::Attribute("divspeed", kgmConvert::toString((s32)vis->getParticles()->divspeed())));
+      snode->m_attributes.add(new kgmXml::Attribute("life", kgmConvert::toString((s32)vis->getParticles()->life())));
+      snode->m_attributes.add(new kgmXml::Attribute("divlife", kgmConvert::toString((s32)vis->getParticles()->divlife())));
       break;
     }
 

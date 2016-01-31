@@ -26,8 +26,8 @@ kgmParticles::kgmParticles()
 
   force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
-  location  = vec3(0, 0, 0);
-  direction = vec3(0.0f, 0.0f, 0.0f);
+  m_location  = vec3(0, 0, 0);
+  m_direction = vec3(0.0f, 0.0f, 0.0f);
 
   m_divlife     = 0.0f;
   m_divspeed    = 0.0f;
@@ -118,7 +118,7 @@ void kgmParticles::init(Particle* pr)
   pr->dir.y = neg1 * sin(angle) * cos(angle);
   pr->dir.z = neg2 * sin(angle);
 
-  pr->dir = pr->dir + direction;
+  pr->dir = pr->dir + m_direction;
   pr->dir.normalize();
 
   pr->speed = m_speed - m_speed * m_divspeed * r1;
@@ -144,6 +144,15 @@ void kgmParticles::update(u32 t)
   {
     Particle* pr = &m_particles[i - 1];
 
+    if(pr->time > pr->life)
+    {
+      if(m_loop)
+        init(pr);
+      else
+        continue;
+    }
+
+
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
 
     if(m_size != m_esize)
@@ -159,11 +168,6 @@ void kgmParticles::update(u32 t)
       //pr->col.r = pr->col.g = pr->col.b =
       if(a < pr->col.a)
         pr->col.a = a;
-    }
-
-    if(m_loop && (pr->time > pr->life))
-    {
-      init(pr);
     }
 
     pr->time += t;

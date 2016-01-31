@@ -164,9 +164,9 @@ public:
 
     ptl = kgm_ptr<kgmParticles>(new kgmParticles());
     ptl->m_typerender  = kgmParticles::RTypePoint;
-    ptl->m_count       = 25;
-    ptl->m_speed       = 2.0f;
-    ptl->m_life        = 200;
+    ptl->count(25);
+    ptl->speed(2.0f);
+    ptl->life(200);
     ptl->size(.08f);
     ptl->esize(.02f);
     ptl->divlife(0.95);
@@ -227,7 +227,7 @@ public:
 
   void setSpeed(float speed)
   {
-    ptl->m_speed = 2.0 + 25 * speed;
+    ptl->speed(2.0 + 25 * speed);
   }
 };
 

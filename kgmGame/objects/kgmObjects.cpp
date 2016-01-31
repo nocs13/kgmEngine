@@ -75,11 +75,9 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   material->dstblend(gcblend_one);
   material->setTexColor(g->getResources()->getTexture(tid));
 
-  particles->direction = dir;
-  particles->volume    = vol;
-  particles->m_speed   = speed;
-  particles->m_count   = count;
-  particles->m_life    = life;
+  particles->speed(speed);
+  particles->count(count);
+  particles->life(life);
   particles->size(size_start);
   particles->esize(size_end);
   particles->loop(loop);
@@ -91,12 +89,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
 
   kgmVariable var;
 
-  var = kgmVariable("Count",  0,     &particles->m_count);
-  m_variables.add(var);
-  var = kgmVariable("Speed",  0.0f,  &particles->m_speed);
-  m_variables.add(var);
-  var = kgmVariable("Life",   0.0f,  &particles->m_life);
-  m_variables.add(var);
   idTex = tid;
   var = kgmVariable("tId",   kgmString(""),     &idTex);
   m_variables.add(var);
