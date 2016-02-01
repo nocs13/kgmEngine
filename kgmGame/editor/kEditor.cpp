@@ -1492,7 +1492,7 @@ void kEditor::onAddMesh()
 
 void kEditor::onAddUnit()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+  /*kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
 
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addUnit));
 
@@ -1502,7 +1502,13 @@ void kEditor::onAddUnit()
     vs->addItem(s);
   }
 
-  game->guiAdd(vs);
+  game->guiAdd(vs);*/
+
+  selected = new kNode(new kgmUnit(game));
+  selected->bnd = box3(-1, -1, -1, 1, 1, 1);
+  selected->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
+
+  add(selected);
 }
 
 void kEditor::onAddLight()

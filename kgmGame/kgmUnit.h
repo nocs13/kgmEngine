@@ -86,8 +86,8 @@ public:
   kgmUnit(kgmIGame* g = null);
   ~kgmUnit();
 
-  virtual void         init() = 0;
-  virtual void         exit() = 0;
+  virtual void         init(){}
+  virtual void         exit(){}
   virtual void         update(u32 mls);
   virtual void         event(kgmObject*, kgmString){ }
   virtual kgmBody*     getBody(){   return m_body;   }
