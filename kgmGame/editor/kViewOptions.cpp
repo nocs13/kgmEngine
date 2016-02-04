@@ -907,7 +907,7 @@ void kViewOptionsForLight::onColorB(kgmString c)
 kViewOptionsForObject::kViewOptionsForObject(kNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  kgmGui* gcollision = tab->addTab("Collide");
+  kgmGui* gcollision = tab->addTab("Body");
   y_coord = 1;
 
   kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
