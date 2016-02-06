@@ -175,7 +175,7 @@ public:
   __stdcall void setShadows(bool s);
 };
 
-class kViewOptionsForObject : public kViewOptions
+class kViewOptionsForUnit : public kViewOptions
 {
   class kGuiText: public kgmGuiText
   {
@@ -210,7 +210,7 @@ class kViewOptionsForObject : public kViewOptions
     }
   };
 public:
-  kViewOptionsForObject(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
 
   __stdcall void onSelectCollision(bool);
   __stdcall void onSelectShapeBox(bool);
@@ -227,7 +227,7 @@ public:
   __stdcall void updateVariable(kgmString id, kgmString data);
 };
 
-class kViewOptionsForSensor : public kViewOptionsForObject
+class kViewOptionsForSensor : public kViewOptionsForUnit
 {
 public:
   kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
@@ -259,20 +259,14 @@ public:
   __stdcall void onBox();
 };
 
-class kViewOptionsForUnit : public kViewOptionsForObject
-{
-public:
-  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
-};
-
-class kViewOptionsForEffect : public kViewOptionsForObject
+class kViewOptionsForEffect : public kViewOptionsForUnit
 {
 
 public:
   kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
 };
 
-class kViewOptionsForActor : public kViewOptionsForObject
+class kViewOptionsForActor : public kViewOptionsForUnit
 {
   kViewObjects *vo;
   kgmGuiText   *guiState;
