@@ -209,6 +209,10 @@ class kViewOptionsForUnit : public kViewOptions
         kcallback(getSid(), getText());
     }
   };
+
+  Slot<kViewOptionsForUnit, int>  slotListMeshes;
+  Slot<kViewOptionsForUnit, int>  slotListActions;
+
 public:
   kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
 
@@ -225,6 +229,9 @@ public:
 
   __stdcall void onSelectEnable(bool);
   __stdcall void updateVariable(kgmString id, kgmString data);
+
+  __stdcall void onListMeshes(int);
+  __stdcall void onListActions(int);
 };
 
 class kViewOptionsForSensor : public kViewOptionsForUnit

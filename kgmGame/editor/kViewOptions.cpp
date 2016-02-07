@@ -995,7 +995,26 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
 
   g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
   g->setSid("Visual");
-  g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
+  ((kgmGuiText*)g)->setEditable(false);
+
+  g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
+  g->setSid("btnSelectVisual");
+  g->setText("Select");
+  slotListMeshes.connect(this, &kViewOptionsForUnit::onListMeshes, &((kgmGuiButton*)g)->sigClick);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
+  g->setText("Action");
+
+  g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
+  g->setSid("Action");
+  ((kgmGuiText*)g)->setEditable(false);
+
+  g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
+  g->setSid("btnSelectAction");
+  g->setText("Select");
+  slotListActions.connect(this, &kViewOptionsForUnit::onListActions, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
 
@@ -1103,6 +1122,14 @@ void kViewOptionsForUnit::onSelectEnable(bool state)
     node->unt->enable();
   else
     node->unt->disable();
+}
+
+void kViewOptionsForUnit::onListMeshes(int state)
+{
+}
+
+void kViewOptionsForUnit::onListActions(int state)
+{
 }
 
 void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)
