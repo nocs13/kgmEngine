@@ -952,6 +952,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   chk_grp->addGroup(chk);
 
   if(node->shp == "convex") chk->setCheck(true);
+
   y_coord += 23;
 
   kgmGui* g = new kgmGuiLabel(gcollision, 0, y_coord, 50, 20);
@@ -979,13 +980,22 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   ((kgmGuiText*)g)->setNumeric(true);
   y_coord += 23;
 
-  kgmGui* tobject = tab->addTab("Unit");
+  kgmGui* tunit = tab->addTab("Unit");
   y_coord = 1;
 
-  kgmGuiCheck* enable = new kgmGuiCheck(tobject, 1, y_coord, 150, 20);
+  kgmGuiCheck* enable = new kgmGuiCheck(tunit, 1, y_coord, 150, 20);
   enable->setText("Enabled");
   enable->setCheck(node->unt->valid());
   enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectEnable));
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
+  g->setText("Visual");
+
+  g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
+  g->setSid("Visual");
+  g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
 
   y_coord += 23;
 
@@ -996,10 +1006,10 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   {
     kgmVariable& var = node->unt->m_variables[i];
 
-    kgmGui* g = new kgmGuiLabel(tobject, 0, y_coord, 50, 20);
+    kgmGui* g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
     g->setText(var.getName());
 
-    g = new kGuiText(tobject, 51, y_coord, 70, 20);
+    g = new kGuiText(tunit, 51, y_coord, 70, 20);
     g->setSid(var.getName());
 
     ((kGuiText*)g)->setEditable(true);
