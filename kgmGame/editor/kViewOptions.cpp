@@ -1126,10 +1126,33 @@ void kViewOptionsForUnit::onSelectEnable(bool state)
 
 void kViewOptionsForUnit::onListMeshes(int state)
 {
+  kFileDialog* fd = new kFileDialog();
+  fd->m_rect.x = 300;
+  fd->showHidden(false);
+  fd->show();
+  fd->setFilter(".msh");
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
+  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
+
 }
 
 void kViewOptionsForUnit::onListActions(int state)
 {
+}
+
+void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
+{
+  kgmMesh* m = kgmIGame::getGame()->getResources()->getMesh(fd->getFile());
+
+  if(m)
+  {
+    if(!node->unt->visual())
+    {
+      node->unt->visual(new kgmVisual());
+      node->unt->visual()->set(m);
+      ((kgmGameBase*)kgmIGame::getGame())->getRender()->add(node->unt->visual());
+    }
+  }
 }
 
 void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)

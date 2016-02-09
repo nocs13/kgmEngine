@@ -232,6 +232,8 @@ public:
 
   __stdcall void onListMeshes(int);
   __stdcall void onListActions(int);
+
+  __stdcall void onSelectMesh(kFileDialog*);
 };
 
 class kViewOptionsForSensor : public kViewOptionsForUnit
