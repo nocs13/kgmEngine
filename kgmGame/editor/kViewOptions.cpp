@@ -1005,6 +1005,20 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   y_coord += 23;
 
   g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
+  g->setText("Material");
+
+  g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
+  g->setSid("Material");
+  ((kgmGuiText*)g)->setEditable(false);
+
+  g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
+  g->setSid("btnSelectMaterial");
+  g->setText("Select");
+  slotListMaterials.connect(this, &kViewOptionsForUnit::onListMaterials, &((kgmGuiButton*)g)->sigClick);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
   g->setText("Action");
 
   g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
@@ -1140,6 +1154,22 @@ void kViewOptionsForUnit::onListActions(int state)
 {
 }
 
+void kViewOptionsForUnit::onListMaterials(int state)
+{
+  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectMaterial));
+
+  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+
+  kgmList<kNode*>& nodes = editor->getNodes();
+
+  for(int i = 0; i < nodes.length(); i++)
+    if (nodes[i]->typ == kNode::MATERIAL)
+      vo->addItem(nodes[i]->nam);
+
+  kgmIGame::getGame()->guiAdd(vo);
+}
+
 void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
 {
   kgmMesh* m = kgmIGame::getGame()->getResources()->getMesh(fd->getFile());
@@ -1151,6 +1181,29 @@ void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
       node->unt->visual(new kgmVisual());
       node->unt->visual()->set(m);
       ((kgmGameBase*)kgmIGame::getGame())->getRender()->add(node->unt->visual());
+    }
+  }
+}
+
+void kViewOptionsForUnit::onSelectMaterial(kgmString id)
+{
+  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+
+  kgmList<kNode*>& nodes = editor->getNodes();
+
+  for(int i = 0; i < nodes.length(); i++)
+  {
+    if (nodes[i]->typ == kNode::MATERIAL)
+    {
+      if (nodes[i]->nam == id)
+      {
+        if(node->unt->visual())
+          node->unt->visual()->set(nodes[i]->mtl);
+
+        //vis_text->setText(nodes[i]->mtl->name());
+
+        break;
+      }
     }
   }
 }

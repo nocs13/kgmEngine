@@ -212,6 +212,7 @@ class kViewOptionsForUnit : public kViewOptions
 
   Slot<kViewOptionsForUnit, int>  slotListMeshes;
   Slot<kViewOptionsForUnit, int>  slotListActions;
+  Slot<kViewOptionsForUnit, int>  slotListMaterials;
 
 public:
   kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
@@ -232,8 +233,11 @@ public:
 
   __stdcall void onListMeshes(int);
   __stdcall void onListActions(int);
+  __stdcall void onListMaterials(int);
 
   __stdcall void onSelectMesh(kFileDialog*);
+  __stdcall void onSelectAction(kgmString);
+  __stdcall void onSelectMaterial(kgmString);
 };
 
 class kViewOptionsForSensor : public kViewOptionsForUnit
