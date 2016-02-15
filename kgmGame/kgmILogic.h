@@ -6,6 +6,8 @@
 
 template <class T> class kgmList;
 
+class kgmIGame;
+
 class kgmUnit;
 class kgmActor;
 class kgmEffect;

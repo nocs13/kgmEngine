@@ -21,6 +21,19 @@ class kgmUnit : public kgmObject
 {
   KGM_OBJECT(kgmUnit);
 
+public:
+  typedef void (*ActionCallback)(kgmIGame*, kgmUnit*, Action*);
+
+  struct Action
+  {
+    kgmString id;
+    u32       time;
+
+    kgmList<kgmVariable> variables;
+
+    ActionCallback callback = null;
+  };
+
 private:
   kgmIGame* m_game = null;
 
@@ -39,6 +52,8 @@ private:
   vec3 m_position;
   vec3 m_rotation;
   quat m_quaternion;
+
+  Action m_action;
 
 protected:
   kgmBody*    m_body   = null;
