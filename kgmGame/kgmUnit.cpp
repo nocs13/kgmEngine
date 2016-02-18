@@ -5,6 +5,8 @@ KGMOBJECT_IMPLEMENT(kgmUnit, kgmObject);
 
 kgmTab<kgmString, kgmUnit*(*)(kgmIGame*)> kgmUnit::g_typ_objects;
 
+kgmTab<kgmString, kgmUnit::ActionCallback> kgmUnit::g_list_action;
+
 #ifdef EDITOR
   kgmList<kgmString> kgmUnit::g_list_sensors;
   kgmList<kgmString> kgmUnit::g_list_effects;
@@ -70,6 +72,15 @@ void kgmUnit::update(u32 mls)
     remove();
 
     return;
+  }
+
+  if(m_action.id.length() > 0)
+  {
+    if(!m_action.callback)
+      m_action.callback = getActionCallback(m_action.id);
+
+    if(m_action.callback)
+      m_action.callback(m_game, this, &m_action);
   }
 
   if(m_visual)

@@ -22,12 +22,15 @@ class kgmUnit : public kgmObject
   KGM_OBJECT(kgmUnit);
 
 public:
+  struct Action;
+
   typedef void (*ActionCallback)(kgmIGame*, kgmUnit*, Action*);
 
   struct Action
   {
     kgmString id;
     u32       time;
+    u32       state;
 
     kgmList<kgmVariable> variables;
 
@@ -54,6 +57,8 @@ private:
   quat m_quaternion;
 
   Action m_action;
+
+  static kgmTab<kgmString, ActionCallback> g_list_action;
 
 protected:
   kgmBody*    m_body   = null;
@@ -262,6 +267,26 @@ public:
     g_list_effects.clear();
     g_list_sensors.clear();
 #endif
+  }
+
+  static void setActionCallback(kgmString action, kgmUnit::ActionCallback callback)
+  {
+    if(g_list_action.hasKey(action))
+    {
+      g_list_action[action] = callback;
+
+      return;
+    }
+
+    g_list_action.add(action, callback);
+  }
+
+  static kgmUnit::ActionCallback getActionCallback(kgmString action)
+  {
+    if(!g_list_action.hasKey(action))
+      return null;
+
+    return g_list_action[action];
   }
 
 private:
