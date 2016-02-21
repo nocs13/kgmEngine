@@ -272,6 +272,20 @@ bool kgmGameMap::addUnit(Node n)
     if(n.lck)
       addLocked(*node, n.lck);
 
+    if(((kgmUnit*)n.obj)->visual())
+    {
+      kgmUnit* unt = (kgmUnit*)n.obj;
+
+      kgmXml::Node* vnode = new kgmXml::Node(node);
+      vnode->m_name = "Visual";
+
+      if(unt->visual()->getMaterial())
+        node->m_attributes.add(new kgmXml::Attribute("material", unt->visual()->getMaterial()->name()));
+
+      if(unt->visual()->getMesh())
+        node->m_attributes.add(new kgmXml::Attribute("mesh", unt->visual()->getMesh()->getMesh()->id()));
+    }
+
     addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
   }
 }

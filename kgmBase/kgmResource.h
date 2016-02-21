@@ -58,6 +58,16 @@ public:
       m_references--;
   }
 
+  kgmString id() const
+  {
+    return m_id;
+  }
+
+  void id(kgmString id)
+  {
+    m_id = id;
+  }
+
 private:
   void lock()
   {
