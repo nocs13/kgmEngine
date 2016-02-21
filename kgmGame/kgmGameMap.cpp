@@ -280,10 +280,10 @@ bool kgmGameMap::addUnit(Node n)
       vnode->m_name = "Visual";
 
       if(unt->visual()->getMaterial())
-        node->m_attributes.add(new kgmXml::Attribute("material", unt->visual()->getMaterial()->name()));
+        vnode->m_attributes.add(new kgmXml::Attribute("material", unt->visual()->getMaterial()->name()));
 
       if(unt->visual()->getMesh())
-        node->m_attributes.add(new kgmXml::Attribute("mesh", unt->visual()->getMesh()->getMesh()->id()));
+        vnode->m_attributes.add(new kgmXml::Attribute("mesh", unt->visual()->getMesh()->getMesh()->id()));
     }
 
     addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
@@ -523,6 +523,12 @@ kgmGameMap::Node kgmGameMap::next()
               node.nam = id;
             }
           }
+        }
+        else
+        {
+          node.obj = new kgmUnit(kgmIGame::getGame());
+          node.bnd = box3(-1, -1, -1, 1, 1, 1);
+          node.nam = id;
         }
 
         node.typ = NodeUnt;
@@ -902,6 +908,27 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(node.obj)
           ((kgmObstacle*)node.obj)->add(va, vb, vc);
+      }
+      else if(id == "Visual")
+      {
+        kgmString value;
+
+        m_xml->attribute("material", value);
+
+        if(node.obj && value.length() > 0)
+        {
+
+        }
+
+        m_xml->attribute("mesh", value);
+
+        if(node.obj && value.length() > 0)
+        {
+          if(!((kgmUnit*)node.obj)->visual())
+            ((kgmUnit*)node.obj)->visual(new kgmVisual());
+
+          ((kgmUnit*)node.obj)->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
+        }
       }
       else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect")  ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||

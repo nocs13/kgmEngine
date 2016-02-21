@@ -1743,7 +1743,7 @@ void kEditor::onSelectObject(kgmString id)
 
 void kEditor::add(kNode* node)
 {
-  if(!node)
+  if(!node || !node->obj)
     return;
 
   game->getRender()->add(node->icn);
