@@ -1152,6 +1152,17 @@ void kViewOptionsForUnit::onListMeshes(int state)
 
 void kViewOptionsForUnit::onListActions(int state)
 {
+  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectAction));
+
+  kgmList<kgmString> actions;
+
+  kgmUnit::getAvailableActions(actions);
+
+  for(int i = 0; i < actions.length(); i++)
+      vo->addItem(actions[i]);
+
+  kgmIGame::getGame()->guiAdd(vo);
 }
 
 void kViewOptionsForUnit::onListMaterials(int state)
@@ -1185,6 +1196,14 @@ void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
   }
 }
 
+void kViewOptionsForUnit::onSelectAction(kgmString id)
+{
+  if(id.length() < 1)
+    return;
+
+  node->unt->action(id);
+}
+
 void kViewOptionsForUnit::onSelectMaterial(kgmString id)
 {
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
@@ -1199,8 +1218,6 @@ void kViewOptionsForUnit::onSelectMaterial(kgmString id)
       {
         if(node->unt->visual())
           node->unt->visual()->set(nodes[i]->mtl);
-
-        //vis_text->setText(nodes[i]->mtl->name());
 
         break;
       }

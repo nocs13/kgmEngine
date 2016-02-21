@@ -222,6 +222,16 @@ public:
     m_body = b;
   }
 
+  kgmString action() const
+  {
+    return m_action.id;
+  }
+
+  void action(kgmString a)
+  {
+    m_action.id = a;
+  }
+
   void setParameter(kgmString name, kgmString value)
   {
     for(int i = 0; i < m_variables.length(); ++i)
@@ -267,6 +277,24 @@ public:
     g_list_effects.clear();
     g_list_sensors.clear();
 #endif
+  }
+
+  static bool getAvailableActions(kgmList<kgmString>& actions)
+  {
+    if(g_list_action.length() < 1)
+      return false;
+
+    for(int i = 0; i < g_list_action.length(); i++)
+    {
+      kgmString id;
+      ActionCallback call;
+
+      g_list_action.get(i, id, call);
+
+      actions.add(id);
+    }
+
+    return true;
   }
 
   static void setActionCallback(kgmString action, kgmUnit::ActionCallback callback)
