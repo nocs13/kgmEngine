@@ -997,6 +997,9 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g->setSid("Visual");
   ((kgmGuiText*)g)->setEditable(false);
 
+  if (n->unt && n->unt->visual() && n->unt->visual()->getMesh())
+    g->setText(n->unt->visual()->getMesh()->getMesh()->id());
+
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectVisual");
   g->setText("Select");
@@ -1011,6 +1014,9 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g->setSid("Material");
   ((kgmGuiText*)g)->setEditable(false);
 
+  if (n->unt && n->unt->visual() && n->unt->visual()->getMaterial())
+    g->setText(n->unt->visual()->getMaterial()->name());
+
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectMaterial");
   g->setText("Select");
@@ -1024,6 +1030,9 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiText(tunit, 51, y_coord, 50, 20);
   g->setSid("Action");
   ((kgmGuiText*)g)->setEditable(false);
+
+  if (n->unt)
+    g->setText(n->unt->action());
 
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectAction");

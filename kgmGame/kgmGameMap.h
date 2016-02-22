@@ -86,9 +86,14 @@ private:
 
   kgmIGame*       m_game;
 
+  kgmList<kgmMaterial*>  m_materials;
+
 public:
   kgmGameMap(kgmIGame* g, OpenType ot = OpenRead);
-  ~kgmGameMap(){}
+  ~kgmGameMap()
+  {
+    m_materials.clear();
+  }
 
   void close();
 

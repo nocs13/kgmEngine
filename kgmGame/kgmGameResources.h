@@ -10,6 +10,7 @@
 #include "../kgmGraphics/kgmTexture.h"
 #include "../kgmGraphics/kgmShader.h"
 #include "../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmMaterial.h"
 #include "../kgmPhysics/kgmShapeCollision.h"
 
 #include "kgmGameTools.h"
@@ -46,7 +47,6 @@ protected:
   kgmList<kgmResource*>  m_resources;
   kgmList<Path*>         m_paths;
   kgmGameTools           m_tools;
-
 
 public:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);

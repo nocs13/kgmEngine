@@ -255,6 +255,8 @@ bool kgmGameMap::addUnit(Node n)
   if(m_type == OpenRead || !n.obj)
     return false;
 
+  kgmUnit* unt = (kgmUnit*)n.obj;
+
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
@@ -274,8 +276,6 @@ bool kgmGameMap::addUnit(Node n)
 
     if(((kgmUnit*)n.obj)->visual())
     {
-      kgmUnit* unt = (kgmUnit*)n.obj;
-
       kgmXml::Node* vnode = new kgmXml::Node(node);
       vnode->m_name = "Visual";
 
@@ -284,6 +284,14 @@ bool kgmGameMap::addUnit(Node n)
 
       if(unt->visual()->getMesh())
         vnode->m_attributes.add(new kgmXml::Attribute("mesh", unt->visual()->getMesh()->getMesh()->id()));
+    }
+
+    if(((kgmUnit*)n.obj)->action().length() > 0)
+    {
+      kgmXml::Node* anode = new kgmXml::Node(node);
+      anode->m_name = "Action";
+
+      anode->m_attributes.add(new kgmXml::Attribute("id", unt->action()));
     }
 
     addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
@@ -670,6 +678,8 @@ kgmGameMap::Node kgmGameMap::next()
 
         node.typ = NodeMtl;
         closed = false;
+
+        m_materials.add(mtl);
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -917,7 +927,14 @@ kgmGameMap::Node kgmGameMap::next()
 
         if(node.obj && value.length() > 0)
         {
+          if(!((kgmUnit*)node.obj)->visual())
+            ((kgmUnit*)node.obj)->visual(new kgmVisual());
 
+          for(kgmList<kgmMaterial*>::iterator i = m_materials.begin(); i != m_materials.end(); ++i)
+          {
+            if((*i)->name() == id)
+              ((kgmUnit*)node.obj)->visual()->set((*i));
+          }
         }
 
         m_xml->attribute("mesh", value);
@@ -929,6 +946,15 @@ kgmGameMap::Node kgmGameMap::next()
 
           ((kgmUnit*)node.obj)->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
         }
+      }
+      else if(id == "Action")
+      {
+        kgmString value;
+
+        m_xml->attribute("id", value);
+
+        if(node.obj)
+          ((kgmUnit*)node.obj)->action(value);
       }
       else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect")  ||
               (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
