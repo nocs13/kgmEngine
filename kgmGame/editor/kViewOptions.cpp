@@ -1202,6 +1202,11 @@ void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
       node->unt->visual()->set(m);
       ((kgmGameBase*)kgmIGame::getGame())->getRender()->add(node->unt->visual());
     }
+
+    kgmGui* txt = this->getBySid("Visual");
+
+    if(txt)
+      txt->setText(fd->getFile());
   }
 }
 
@@ -1211,6 +1216,11 @@ void kViewOptionsForUnit::onSelectAction(kgmString id)
     return;
 
   node->unt->action(id);
+
+  kgmGui* act = this->getBySid("Action");
+
+  if(act)
+    act->setText(id);
 }
 
 void kViewOptionsForUnit::onSelectMaterial(kgmString id)
@@ -1227,6 +1237,11 @@ void kViewOptionsForUnit::onSelectMaterial(kgmString id)
       {
         if(node->unt->visual())
           node->unt->visual()->set(nodes[i]->mtl);
+
+        kgmGui* mtl = this->getBySid("Material");
+
+        if(mtl)
+          mtl->setText(id);
 
         break;
       }
