@@ -9,6 +9,8 @@
 /*TODO: Must switch to kgmGameNode. */
 
 class kgmIGame;
+class kgmSound;
+class kgmDummy;
 
 #define KGM_UNIT(o_class)                                                \
   KGM_OBJECT(o_class)                                                    \
@@ -37,6 +39,40 @@ public:
     ActionCallback callback = null;
   };
 
+  struct Input
+  {
+    u32        input;
+    u32        input1;
+    u32        input2;
+    u32        status;
+    kgmString  state;
+  };
+
+  struct State
+  {
+    kgmString id;
+    kgmString type;
+    kgmString switchto;
+    kgmString switchfrom;
+
+    u32 priopity;
+    u32 timeout;
+    u32 stime;
+
+    kgmSound*      sound     = null;
+    kgmAnimation*  animation = null;
+    u32            fstart, fend;
+
+    Action action;
+  };
+
+  struct Animation
+  {
+    kgmAnimation* animation = null;
+    u32           start;
+    u32           end;
+  };
+
 private:
   kgmIGame* m_game = null;
 
@@ -57,6 +93,31 @@ private:
   quat m_quaternion;
 
   Action m_action;
+
+  u32 m_uid;
+  u32 m_type;
+  u32 m_bearing;
+
+  s32 m_group;
+  s32 m_health;
+  s32 m_attack;
+  s32 m_defence;
+  s32 m_evasion;
+  s32 m_accuracy;
+
+  mtx4 m_transform;
+  mtx4 m_dvisual;      //visual transform relative to object transform
+
+  kgmList<State*>     m_states;
+  kgmList<Input>      m_inputs;
+  kgmList<Input>      m_ainputs;
+  kgmList<kgmDummy*>  m_dummies;
+
+  kgmAnimation* m_animation;
+  kgmSkeleton*  m_skeleton;
+  State*        m_state;
+  bool          m_gameplayer;
+
 
   static kgmTab<kgmString, ActionCallback> g_list_action;
 
