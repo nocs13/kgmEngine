@@ -106,8 +106,6 @@ public:
   kGame(bool edit)
     :kgmGameBase(edit)
   {
-    kgmUnit::unitRegister("ACamera",  kgmUnit::Actor, (kgmUnit::Generate)&ACamera::New);
-
     setMsAbsolute(true);
 
     if(m_physics)

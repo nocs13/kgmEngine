@@ -23,7 +23,7 @@
 
 class kgmActor: public kgmUnit
 {
-  KGM_UNIT(kgmActor);
+  KGM_OBJECT(kgmActor);
 
 public:
   struct Action;

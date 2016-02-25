@@ -6,11 +6,10 @@
 
 class kgmCar: public kgmActor
 {
-  KGM_UNIT(kgmCar);
+  KGM_OBJECT(kgmCar);
 
 public:
   kgmCar(kgmIGame*);
-
 };
 
 #endif // KGMCAR_H

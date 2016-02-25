@@ -5,7 +5,7 @@
 
 class kgmSky : public kgmUnit
 {
-  KGM_UNIT(kgmSky);
+  KGM_OBJECT(kgmSky);
 
 public:
   kgmSky(kgmIGame*);

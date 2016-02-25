@@ -3,7 +3,7 @@
 
 class kgmEffect : public kgmUnit
 {
-  KGM_UNIT(kgmEffect);
+  KGM_OBJECT(kgmEffect);
 
 public:
   kgmEffect(kgmIGame *g);

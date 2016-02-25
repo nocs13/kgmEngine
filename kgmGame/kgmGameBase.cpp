@@ -161,15 +161,6 @@ kgmGameBase::kgmGameBase(bool edit)
   m_thLogic.exec((int (*)(void*))doLogic, this);
   m_thPhysics.exec((int (*)(void*))doPhysics, this);*/
 
-  kgmUnit::unitRegister("kgmResult",  kgmUnit::Unit, (kgmUnit::Generate)&kgmResult::New);
-  kgmUnit::unitRegister("kgmFlame",   kgmUnit::Effect, (kgmUnit::Generate)&kgmFlame::New);
-  kgmUnit::unitRegister("kgmSmoke",   kgmUnit::Effect, (kgmUnit::Generate)&kgmSmoke::New);
-  kgmUnit::unitRegister("kgmLaser",   kgmUnit::Effect, (kgmUnit::Generate)&kgmLaser::New);
-  kgmUnit::unitRegister("kgmExplode", kgmUnit::Effect, (kgmUnit::Generate)&kgmExplode::New);
-
-  kgmUnit::unitRegister("kgmCar",       kgmUnit::Actor, (kgmUnit::Generate)&kgmCar::New);
-  kgmUnit::unitRegister("kgmCharacter", kgmUnit::Actor, (kgmUnit::Generate)&kgmCharacter::New);
-
   kgmGuiActions::register_actions();
   kgmBaseActions::register_actions();
 

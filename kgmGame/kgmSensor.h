@@ -5,7 +5,7 @@
 
 class kgmSensor : public kgmUnit
 {
-  KGM_UNIT(kgmSensor);
+  KGM_OBJECT(kgmSensor);
 
   kgmString target;
 

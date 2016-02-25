@@ -5,7 +5,7 @@
 
 class kgmTrigger : public kgmUnit
 {
-  KGM_UNIT(kgmTrigger);
+  KGM_OBJECT(kgmTrigger);
 
   enum Type
   {

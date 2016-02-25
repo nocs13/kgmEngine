@@ -4,7 +4,7 @@
 #endif // ACAMERA_H
 class ACamera: public kgmActor
 {
-  KGM_UNIT(ACamera);
+  KGM_OBJECT(ACamera);
 
   kgmIGame* game;
   float     z_dist, c_dist;
