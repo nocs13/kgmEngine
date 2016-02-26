@@ -279,7 +279,7 @@ public:
   kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
 };
 
-class kViewOptionsForActor : public kViewOptionsForUnit
+class kViewOptionsForActor : public kViewOptions
 {
   kViewObjects *vo;
   kgmGuiText   *guiState;
