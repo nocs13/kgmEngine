@@ -7,13 +7,6 @@ kgmTab<kgmString, kgmUnit*(*)(kgmIGame*)> kgmUnit::g_typ_objects;
 
 kgmTab<kgmString, kgmUnit::ActionCallback> kgmUnit::g_list_action;
 
-#ifdef EDITOR
-  kgmList<kgmString> kgmUnit::g_list_sensors;
-  kgmList<kgmString> kgmUnit::g_list_effects;
-  kgmList<kgmString> kgmUnit::g_list_actors;
-  kgmList<kgmString> kgmUnit::g_list_units;
-#endif
-
 kgmUnit::kgmUnit(kgmIGame* g)
   :kgmObject(),
   m_visual(null),

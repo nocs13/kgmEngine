@@ -1542,12 +1542,6 @@ void kEditor::onAddEffect()
 
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
 
-  for(int i = 0; i < kgmUnit::g_list_effects.length(); i++)
-  {
-    kgmString s = kgmUnit::g_list_effects[i];
-    vs->addItem(s);
-  }
-
   game->guiAdd(vs);
 }
 
@@ -1555,12 +1549,6 @@ void kEditor::onAddSensor()
 {
   kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
   vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
-
-  for(int i = 0; i < kgmUnit::g_list_sensors.length(); i++)
-  {
-    kgmString s = kgmUnit::g_list_sensors[i];
-    vs->addItem(s);
-  }
 
   game->guiAdd(vs);
 }

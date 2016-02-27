@@ -75,11 +75,6 @@ public:
   kgmList<kgmVariable> m_variables;
 
 #ifdef EDITOR
-  static kgmList<kgmString> g_list_sensors;
-  static kgmList<kgmString> g_list_effects;
-  static kgmList<kgmString> g_list_actors;
-  static kgmList<kgmString> g_list_units;
-
   virtual void eupdate()
   {
 
@@ -231,42 +226,6 @@ public:
       if(var.getName() == name)
         var.fromString(value);
     }
-  }
-
-  static void unitRegister(kgmString id, Type type, kgmUnit*(*create)(kgmIGame*))
-  {
-    g_typ_objects.add(id, create);
-
-#ifdef EDITOR
-    switch((int)type)
-    {
-    case Unit:
-      g_list_units.add(id);
-      break;
-    case Actor:
-      g_list_actors.add(id);
-      break;
-    case Effect:
-      g_list_effects.add(id);
-      break;
-    case Sensor:
-      g_list_sensors.add(id);
-      break;
-    default:
-      break;
-    }
-#endif
-  }
-
-  static void unitUnregister()
-  {
-    g_typ_objects.clear();
-
-#ifdef EDITOR
-    g_list_units.clear();
-    g_list_effects.clear();
-    g_list_sensors.clear();
-#endif
   }
 
   static bool getAvailableActions(kgmList<kgmString>& actions)

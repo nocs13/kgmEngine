@@ -241,7 +241,6 @@ kgmGameBase::~kgmGameBase()
     delete m_settings;
 
   kgmActor::g_actions.clear();
-  kgmUnit::unitUnregister();
 }
 
 kgmIPhysics* kgmGameBase::getPhysics()
