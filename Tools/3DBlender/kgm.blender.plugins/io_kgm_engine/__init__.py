@@ -92,7 +92,8 @@ class kgmExport(bpy.types.Operator):
 
   print("Collect Objects...")
 
-  meshes     = [kgm_objects.kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
+  #meshes     = [kgm_objects.kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
+  meshes     = [kgm_objects.kgmMesh(ob) for ob in bpy.data.meshes]
   proxies    = [kgm_objects.kgmProxy(ob) for ob in objects if self.exp_kgmobjects and ob.proxy is not None]
   obstacles  = [kgm_objects.kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
   lights     = [kgm_objects.kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
@@ -113,8 +114,6 @@ class kgmExport(bpy.types.Operator):
         animations.append(kgmBoneAnimation(bone, armature))
 
   print("Animations: " + str(len(animations)))
-  print("Gobjects: "   + str(len(gobjects)))
-  print("Objects: "    + str(len(objects)))
   print("Mehses: "     + str(len(meshes)))
   print("Lights: "     + str(len(lights)))
   print("Materials: "  + str(len(kgm_objects.scene_materials)))
@@ -233,26 +232,26 @@ class kgmExport(bpy.types.Operator):
    file.write(" </kgmSkeleton>\n")
 
   #kgm_objects
-  for a in gobjects:
-   print('kgmObject: ' + a.name)
-   if a.gtype == "actor" or a.gtype == 1:
-    file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "' player='" + a.player + "'>\n")
-    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-    file.write("  <State value='" + a.state + "'/>\n")
-    for k in a.props.keys():
-     file.write("  <" + str(k) + " value='" + str(a.props[k]) + "'/>\n")
-    file.write(" </kgmActor>\n")
-   elif a.gtype == "dummy" or a.gtype == 0:
-    file.write(" <kgmDummy name='" + a.name + "' parent='" + a.linked + "'>\n")
-    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-    file.write(" </kgmDummy>\n")
-   else:
-    file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
-    file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-    file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-    file.write(" </kgmGameObject>\n")
+  #for a in gobjects:
+  # print('kgmObject: ' + a.name)
+  # if a.gtype == "actor" or a.gtype == 1:
+  #  file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "' player='" + a.player + "'>\n")
+  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+  #  file.write("  <State value='" + a.state + "'/>\n")
+  #  for k in a.props.keys():
+  #   file.write("  <" + str(k) + " value='" + str(a.props[k]) + "'/>\n")
+  #  file.write(" </kgmActor>\n")
+  # elif a.gtype == "dummy" or a.gtype == 0:
+  #  file.write(" <kgmDummy name='" + a.name + "' parent='" + a.linked + "'>\n")
+  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+  #  file.write(" </kgmDummy>\n")
+  # else:
+  #  file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
+  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
+  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
+  #  file.write(" </kgmGameObject>\n")
 
   #proxies
   for o in proxies:

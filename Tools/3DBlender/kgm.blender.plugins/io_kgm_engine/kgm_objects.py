@@ -303,8 +303,9 @@ class kgmFace:
 class kgmMesh:
  def __init__(self, o):
 #  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
-  mesh = o.data
-  mtx = o.matrix_local
+#  mesh = o.data
+  mesh = o
+#  mtx = o.matrix_local
 
   print('Current mesh: ' + mesh.name)
   self.name = mesh.name
@@ -312,14 +313,25 @@ class kgmMesh:
   self.faces = []
   self.skin = False
   self.mtls = []
-  self.hasvgroups = True if len(o.vertex_groups) > 0 else False
+  self.hasvgroups = False
+
+  try:
+    self.hasvgroups = True if len(o.vertex_groups) > 0 else False
+  except:
+    self.hasvgroups = False
 
   if self.hasvgroups:
     self.vgroups = o.vertex_groups
   else:
     self.vgroups = None
 
-  armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+  armatures = None
+
+  try:
+    armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+  except:
+    armatures = None
+
   if armatures:
    self.armature = armatures[0].object
    self.bones = self.armature.data.bones
@@ -356,8 +368,10 @@ class kgmMesh:
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
       vi = face.vertices[j]
-      c = mtx * mesh.vertices[vi].co
-      n = mtx.to_3x3() * face.normal
+#      c = mtx * mesh.vertices[vi].co
+#      n = mtx.to_3x3() * face.normal
+      c = mesh.vertices[vi].co
+      n = face.normal
       v.v = [c[0], c[1], c[2]]
       v.n = [n[0], n[1], n[2]]
 
