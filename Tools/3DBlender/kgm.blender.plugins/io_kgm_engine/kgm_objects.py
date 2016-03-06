@@ -3,7 +3,7 @@ from math import radians
 import bpy
 from mathutils import *
 
-scene_materials = []
+#scene_materials = []
 
 Units = []   #(('One', '1', ''), ('Two', '2', ''), ('3', '', ''))
 
@@ -175,7 +175,7 @@ class kgm_obstacle(bpy.types.Operator):
   def draw(self, context):
     layout = self.layout
 
-scene_materials = []
+#scene_materials = []
 
 class kgmMaterial:
  def __init__(self, mtl):
@@ -185,6 +185,7 @@ class kgmMaterial:
   self.specular = mtl.specular_color
   self.shine = 1.0
   self.alpha = mtl.alpha
+  self.use_alpha = mtl.use_transparency
   self.map_color = ''
   self.map_normal = ''
   self.map_specular = ''
@@ -336,18 +337,18 @@ class kgmMesh:
    self.armature = armatures[0].object
    self.bones = self.armature.data.bones
 
-  for m in mesh.materials:
-   b = False
-   self.mtls.append(m.name)
+#  for m in mesh.materials:
+#   b = False
+#   self.mtls.append(m.name)
 
-   for n in scene_materials:
-    if n.name == m.name:
-     b = True
-     break
+#   for n in scene_materials:
+#    if n.name == m.name:
+#     b = True
+#     break
 
-   if b == False:
-    scene_materials.append(kgmMaterial(m))
-    print("add material to scene_materials")
+#   if b == False:
+#    scene_materials.append(kgmMaterial(m))
+#    print("add material to scene_materials")
 
   uvcoord = len(mesh.uv_textures)
 
@@ -673,6 +674,19 @@ class kgmProxy:
   self.pos    = Vector((0, 0, 0)) * self.mtx
   self.quat   = self.mtx.to_quaternion()
   self.euler  = self.mtx.to_euler()
+
+class kgmVisual:
+ def __init__(self, o):
+  self.mtx    = o.matrix_local
+  self.name   = o.name
+  self.type   = ''
+  self.data   = ''
+  self.pos    = Vector((0, 0, 0)) * self.mtx
+  self.quat   = self.mtx.to_quaternion()
+  self.euler  = self.mtx.to_euler()
+
+  if o.type == 'MESH':
+    self.data = o.data.name
 
 import threading
 class kgmThread(threading.Thread):

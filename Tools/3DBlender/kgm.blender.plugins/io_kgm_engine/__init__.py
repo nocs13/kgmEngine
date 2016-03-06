@@ -93,8 +93,10 @@ class kgmExport(bpy.types.Operator):
   print("Collect Objects...")
 
   #meshes     = [kgm_objects.kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
+  materials  = [kgm_objects.kgmMaterial(ob) for ob in bpy.data.materials]
   meshes     = [kgm_objects.kgmMesh(ob) for ob in bpy.data.meshes]
-  proxies    = [kgm_objects.kgmProxy(ob) for ob in objects if self.exp_kgmobjects and ob.proxy is not None]
+
+  visuals    = [kgm_objects.kgmVisual(ob) for ob in objects if self.exp_meshes and ob.type is 'MESH' and ob.collision.use != True]
   obstacles  = [kgm_objects.kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
   lights     = [kgm_objects.kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras    = [kgm_objects.kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
@@ -116,8 +118,8 @@ class kgmExport(bpy.types.Operator):
   print("Animations: " + str(len(animations)))
   print("Mehses: "     + str(len(meshes)))
   print("Lights: "     + str(len(lights)))
-  print("Materials: "  + str(len(kgm_objects.scene_materials)))
-  print("Dummies: "    + str(len(lights)))
+  print("Materials: "  + str(len(materials)))
+  print("Visuals: "    + str(len(visuals)))
 
 #  path = self.filepath
   if not self.filepath.lower().endswith(".kgm"):
@@ -147,15 +149,16 @@ class kgmExport(bpy.types.Operator):
 
    #materials
   if self.exp_materials:
-     for o in scene_materials:
+     for o in materials:
        print("Materials " + str(o.name))
        file.write(" <kgmMaterial name='" + o.name + "'>\n")
        file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
        file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
        file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
        file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
-       file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
 
+       if o.use_alpha:
+         file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
        if o.map_color != "":
          file.write("  <map_color value='" + o.map_color + "'/>\n")
        if o.map_normal != "":
@@ -165,25 +168,6 @@ class kgmExport(bpy.types.Operator):
        if(hasattr(o, 'shader')):
          file.write("  <Shader value='" + o.shader + "'/>\n")
        file.write(" </kgmMaterial>\n")
-
-  #lights
-  for o in lights:
-   file.write(" <kgmLight name='" + o.name + "'>\n")
-   file.write("  <Type value='" + o.type + "'/>\n")
-   file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
-   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
-   file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
-   file.write(" </kgmLight>\n")
-
-  #cameras
-  for o in cameras:
-   file.write(" <kgmCamera name='" + o.name + "'>\n")
-   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
-   file.write(" </kgmCamera>\n")
 
   #meshes
   for o in meshes:
@@ -231,6 +215,37 @@ class kgmExport(bpy.types.Operator):
     file.write("/>\n")
    file.write(" </kgmSkeleton>\n")
 
+#lights
+   for o in lights:
+     file.write(" <kgmLight name='" + o.name + "'>\n")
+     file.write("  <Type value='" + o.type + "'/>\n")
+     file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
+     file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+     file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+     file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
+     file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
+     file.write(" </kgmLight>\n")
+
+    #cameras
+   for o in cameras:
+     file.write(" <kgmCamera name='" + o.name + "'>\n")
+     file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+     file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+     file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
+     file.write(" </kgmCamera>\n")
+
+#visuals
+   for o in visuals:
+     if o.type is not '':
+       file.write(" <kgmVisual name='" + o.name + "' >\n")
+
+       if o.type is 'Mesh':
+         file.write("  <Mesh id='" + o.data + "'/>\n")
+       file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+       file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+       file.write("  <Quaternion value='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'/>\n")
+       file.write(" />\n")
+
   #kgm_objects
   #for a in gobjects:
   # print('kgmObject: ' + a.name)
@@ -252,14 +267,6 @@ class kgmExport(bpy.types.Operator):
   #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
   #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
   #  file.write(" </kgmGameObject>\n")
-
-  #proxies
-  for o in proxies:
-   file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'")
-   file.write(" position='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'")
-   file.write(" quaternion='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'")
-#   file.write("  <Euler value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write(" />\n")
 
   #collisions
   for obstacle in obstacles:
