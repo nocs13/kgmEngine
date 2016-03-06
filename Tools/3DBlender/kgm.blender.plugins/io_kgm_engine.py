@@ -392,14 +392,19 @@ class kgmObstacle:
   self.name = mesh.name
   self.faces = []
 
+  mesh_faces = None
+
   if hasattr(mesh, 'faces'):
-    for i in range(0, len(mesh.faces)):
-     face = mesh.faces[i]
+    mesh_faces = mesh.faces
+  elif hasattr(mesh, 'polygons'):
+    mesh_faces = mesh.polygons
+
+  if mesh_faces is not None:
+    for f in mesh_faces:
      iface = []
 
-     for j in range(0, len(face.vertices)):
-      vi = face.vertices[j]
-      c = mtx * mesh.vertices[vi].co
+     for v in f.vertices:
+      c = mtx * mesh.vertices[v].co
       iface.append(c)
 
      self.faces.append(iface)
