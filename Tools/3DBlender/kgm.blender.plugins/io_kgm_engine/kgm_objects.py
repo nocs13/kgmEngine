@@ -415,46 +415,18 @@ class kgmPanel(bpy.types.Panel):
   bl_region_type = "WINDOW"
   bl_context = "object"
 
-  print("Panel start.\n")
   bpy.types.Object.kgm_state  = bpy.props.StringProperty(name = "kgm_state",  default = "None")
   bpy.types.Object.kgm_object = bpy.props.StringProperty(name = "kgm_object", default = "None")
   bpy.types.Object.kgm_player = bpy.props.BoolProperty(name = "kgm_player", default = False)
   bpy.types.Object.kgm_units  = bpy.props.EnumProperty(name = "Units", items=Units)
-  print("Panel end.\n")
 
   def draw(self, context):
     obj = context.object
 
-    if   hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
-      self.draw_unit(context)
-    elif hasattr(obj, 'kgm_trigger') and obj.kgm_trigger is True:
-      self.draw_trigger(context)
-    elif hasattr(obj, 'kgm_dummy') and obj.kgm_dummy is True:
+    if hasattr(obj, 'kgm_dummy') and obj.kgm_dummy is True:
       self.draw_dummy(context)
     elif hasattr(obj, 'kgm_obstacle') and obj.kgm_obstacle is True:
       self.draw_obstacle(context)
-
-  def draw_unit(self, context):
-    obj = context.object
-    layout = self.layout
-    row = layout.row()
-    row.label(text = "Unit", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
-    row = layout.row()
-    row.prop(obj, "kgm_units")
-
-  def draw_trigger(self, context):
-    obj = context.object
-    layout = self.layout
-    row = layout.row()
-    row.label(text = "Trigger", icon = "WORLD_DATA")
-    row = layout.row()
-    row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
 
   def draw_dummy(self, context):
     obj = context.object
