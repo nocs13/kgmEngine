@@ -96,7 +96,7 @@ class kgmExport(bpy.types.Operator):
   materials  = [kgm_objects.kgmMaterial(ob) for ob in bpy.data.materials]
   meshes     = [kgm_objects.kgmMesh(ob) for ob in bpy.data.meshes]
 
-  visuals    = [kgm_objects.kgmVisual(ob) for ob in objects if self.exp_meshes and ob.type is 'MESH' and ob.collision.use != True]
+  visuals    = [kgm_objects.kgmVisual(ob) for ob in objects if self.exp_meshes and ob.type == 'MESH' and ob.collision.use != True]
   obstacles  = [kgm_objects.kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
   lights     = [kgm_objects.kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras    = [kgm_objects.kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
@@ -216,57 +216,38 @@ class kgmExport(bpy.types.Operator):
    file.write(" </kgmSkeleton>\n")
 
 #lights
-   for o in lights:
-     file.write(" <kgmLight name='" + o.name + "'>\n")
-     file.write("  <Type value='" + o.type + "'/>\n")
-     file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
-     file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-     file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-     file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
-     file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
-     file.write(" </kgmLight>\n")
+  for o in lights:
+    file.write(" <kgmLight name='" + o.name + "'>\n")
+    file.write("  <Type value='" + o.type + "'/>\n")
+    file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
+    file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+    file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+    file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
+    file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
+    file.write(" </kgmLight>\n")
 
-    #cameras
-   for o in cameras:
-     file.write(" <kgmCamera name='" + o.name + "'>\n")
-     file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-     file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-     file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
-     file.write(" </kgmCamera>\n")
+#cameras
+  for o in cameras:
+    file.write(" <kgmCamera name='" + o.name + "'>\n")
+    file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+    file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+    file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
+    file.write(" </kgmCamera>\n")
 
 #visuals
-   for o in visuals:
-     if o.type is not '':
-       file.write(" <kgmVisual name='" + o.name + "' >\n")
+  for o in visuals:
+    if o.type != '':
+      file.write(" <kgmVisual name='" + o.name + "' >\n")
+      file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+      file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+      file.write("  <Quaternion value='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'/>\n")
 
-       if o.type is 'Mesh':
-         file.write("  <Mesh id='" + o.data + "'/>\n")
-       file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-       file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-       file.write("  <Quaternion value='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'/>\n")
-       file.write(" />\n")
+      if o.type is 'Mesh':
+        file.write("  <Mesh id='" + o.data + "'/>\n")
 
-  #kgm_objects
-  #for a in gobjects:
-  # print('kgmObject: ' + a.name)
-  # if a.gtype == "actor" or a.gtype == 1:
-  #  file.write(" <kgmActor name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "' player='" + a.player + "'>\n")
-  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-  #  file.write("  <State value='" + a.state + "'/>\n")
-  #  for k in a.props.keys():
-  #   file.write("  <" + str(k) + " value='" + str(a.props[k]) + "'/>\n")
-  #  file.write(" </kgmActor>\n")
-  # elif a.gtype == "dummy" or a.gtype == 0:
-  #  file.write(" <kgmDummy name='" + a.name + "' parent='" + a.linked + "'>\n")
-  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-  #  file.write(" </kgmDummy>\n")
-  # else:
-  #  file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
-  #  file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
-  #  file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-  #  file.write(" </kgmGameObject>\n")
+      if o.material != '':
+        file.write("  <Material id='" + o.material + "'/>\n")
+      file.write(" </kgmVisual>\n")
 
   #collisions
   for obstacle in obstacles:
@@ -363,33 +344,19 @@ def menu_func(self, context):
   self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='NONE')
 
 def menu_func_a(self, context):
-  self.layout.operator(kgm_objects.kgm_unit.bl_idname,   text="kgmUnit", icon='OUTLINER_OB_EMPTY')
   self.layout.operator(kgm_objects.kgm_dummy.bl_idname,  text="kgmDummy", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_effect.bl_idname, text="kgmEffect", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_trigger.bl_idname,text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
-  self.layout.operator(kgm_objects.kgm_obstacle.bl_idname,text="kgmObstacle", icon='OUTLINER_OB_EMPTY')
-
-def menu_func_b(self, context):
-  #self.layout.operator(kgmProject.bl_idname,   text="kgmProject", icon='OUTLINER_OB_EMPTY')
-  pass
 
 def register():
   kgmProject.prepare()
 
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
-  bpy.types.INFO_MT_file_import.append(menu_func_b)
   bpy.types.INFO_MT_add.append(menu_func_a)
-  #bpy.ops.wm.call_menu(name=kgm_object_menu.bl_idname)
-  #bpy.utils.register_class(kgm_objects.kgmPanel)
 
 def unregister():
   bpy.utils.unregister_module(__name__)
   bpy.types.INFO_MT_file_export.remove(menu_func)
-  bpy.types.INFO_MT_file_import.remove(menu_func_b)
   bpy.types.INFO_MT_add.remove(menu_func_a)
-  #bpy.utils.unregister_class(kgm_objects.kgmPanel)
 
 if __name__ == "__main__":
   register()

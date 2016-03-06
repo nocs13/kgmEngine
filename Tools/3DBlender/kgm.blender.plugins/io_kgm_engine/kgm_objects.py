@@ -3,103 +3,6 @@ from math import radians
 import bpy
 from mathutils import *
 
-#scene_materials = []
-
-Units = []   #(('One', '1', ''), ('Two', '2', ''), ('3', '', ''))
-
-def kgm_units_callback(scene, context):
-  ob = context.object
-  return Units;
-
-def kgm_mask_it(self, context):
-  print('called and changed to,', context.scene.MyEnum)
-
-class kgm_unit(bpy.types.Operator):
-  bl_idname  = "object.kgm_unit"
-  bl_label   = "Add kgmUnit"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  print("unit class start")
-  bpy.types.Object.kgm_unit  = bpy.props.BoolProperty(name = "kgm_unit", default = False)
-  bpy.types.Object.kgm_units = bpy.props.EnumProperty(name = "Units",
-                                                      items = kgm_units_callback,
-                                                      update = kgm_mask_it)
-  print("unit class end")
-
-  def __init__(self):
-    print("unit start")
-
-  def __del__(self):
-    print("unit end")
-
-  def execute(self, context):
-    print("Execute unit\n")
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmUnit"
-    a.kgm_unit   = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    print("Modal unit\n")
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    print("Invoke unit\n")
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmUnit"
-    a.kgm_unit   = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-    print("Draw unit.\n")
-
-  def set_enum(self, value):
-    self.kgm_object = self.units[value]
-
-  def get_enum(self):
-    return 0
-
-class kgm_trigger(bpy.types.Operator):
-  bl_idname  = "object.kgm_trigger"
-  bl_label   = "Add kgmTrigger"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  bpy.types.Object.kgm_trigger = bpy.props.BoolProperty(name = "kgm_trigger", default = False)
-
-  def __init__(self):
-    print("start")
-
-  def __del__(self):
-    print("end")
-
-  def execute(self, context):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name        = "kgmTrigger"
-    a.kgm_trigger = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    print("Modal object.\n")
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name       = "kgmTrigger"
-    a.kgm_trigger = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-
 class kgm_dummy(bpy.types.Operator):
   ''' Add kgmDummy '''
   bl_idname = "object.kgm_dummy"
@@ -136,46 +39,6 @@ class kgm_dummy(bpy.types.Operator):
 
   def draw(self, context):
     layout = self.layout
-
-class kgm_obstacle(bpy.types.Operator):
-  ''' Add kgmDummy '''
-  bl_idname = "object.kgm_obstacle"
-  bl_label = "Add kgmObstacle"
-  bl_options = {'REGISTER', 'UNDO'}
-
-  bpy.types.Object.kgm_obstacle = bpy.props.BoolProperty(name = "kgm_obstacle", default = False)
-  bpy.types.Object.kgm_surface  = bpy.props.StringProperty(name = "kgm_surface")
-
-  def __init__(self):
-    print("start")
-
-  def __del__(self):
-    print("end")
-
-  def execute(self, context):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name = "kgmObstacle"
-    a.kgm_obstacle = True
-    return {'FINISHED'}
-
-  def modal(self, context, event):
-    print("Modal obstacle.\n")
-    return {'RUNNING_MODAL'}
-
-  def invoke(self, context, event):
-    bpy.ops.object.add()
-    a = bpy.context.object
-
-    a.name = "kgmObstacle"
-    a.kgm_obstacle = True
-    return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-
-#scene_materials = []
 
 class kgmMaterial:
  def __init__(self, mtl):
@@ -303,10 +166,7 @@ class kgmFace:
 
 class kgmMesh:
  def __init__(self, o):
-#  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
-#  mesh = o.data
   mesh = o
-#  mtx = o.matrix_local
 
   print('Current mesh: ' + mesh.name)
   self.name = mesh.name
@@ -337,19 +197,6 @@ class kgmMesh:
    self.armature = armatures[0].object
    self.bones = self.armature.data.bones
 
-#  for m in mesh.materials:
-#   b = False
-#   self.mtls.append(m.name)
-
-#   for n in scene_materials:
-#    if n.name == m.name:
-#     b = True
-#     break
-
-#   if b == False:
-#    scene_materials.append(kgmMaterial(m))
-#    print("add material to scene_materials")
-
   uvcoord = len(mesh.uv_textures)
 
   mesh_faces = None
@@ -369,8 +216,6 @@ class kgmMesh:
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
       vi = face.vertices[j]
-#      c = mtx * mesh.vertices[vi].co
-#      n = mtx.to_3x3() * face.normal
       c = mesh.vertices[vi].co
       n = face.normal
       v.v = [c[0], c[1], c[2]]
@@ -394,14 +239,7 @@ class kgmMesh:
             v.uv = [uv[0], uv[1]]
 
       v.idx = vi
-      #iface[j] = self.addVertex(v)
       iface.append(self.addVertex(v))
-
-     #if len(face.vertices) == 4:
-     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
-     # self.faces.append(kgmFace(iface[0], iface[2], iface[3]))
-     #else:
-     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
 
      for k in range(2, len(iface)):
        self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
@@ -514,138 +352,6 @@ class kgmBoneAnimation(kgmAnimation):
      self.frames.append(f)
   currentScene.frame_set(startFrame)
 
-class kgmObject:
- def __init__(self, o):
-  self.name    = o.name
-  self.gtype   = o.get('kgm_type')
-  self.state   = o.get('kgm_state')
-  self.gobject = o.get('kgm_object')
-  self.mtx     = o.matrix_world
-  self.pos     = o.matrix_local.to_translation()
-  self.quat    = self.mtx.to_quaternion()
-  self.euler   = self.mtx.to_euler()
-  self.linked  = 'None'
-  self.props   = {}
-
-  if self.gtype == None:
-    self.gtype = ""
-  if self.gobject == None:
-    self.gobject = ""
-  if self.state == None:
-    self.state = ""
-
-  if o.parent != None:
-    self.linked = o.parent.name
-
-  if o.get('kgm_player'):
-    self.player = "on"
-  else:
-    self.player = "off"
-
-  preds = ['kgm', 'kgm_type', 'kgm_object', 'kgm_player', 'kgm_state']
-
-  for k in o.keys():
-    tk = str(k)
-    print('object option: ' + tk + '\n')
-    #tk.find('kgm_') == -1 or
-    if tk.find('_') == 0 or tk in preds:
-      print('object option: ' + tk + ' in use\n')
-      pass
-    else:
-      self.props[tk] = o.get(k)
-
-class kgmUnit:
-  def __init__(self, o):
-    self.name    = o.name
-    self.state   = o.get('kgm_state')
-    self.gobject = o.get('kgm_object')
-    self.mtx     = o.matrix_world
-    self.pos     = o.matrix_local.to_translation()
-    self.quat    = self.mtx.to_quaternion()
-    self.euler   = self.mtx.to_euler()
-    self.linked  = 'None'
-    self.props   = {}
-
-    if self.gobject == None:
-      self.gobject = ""
-    if self.state == None:
-      self.state = ""
-    if o.parent != None:
-      self.linked = o.parent.name
-
-class kgmActor:
-  def __init__(self, o):
-    self.name    = o.name
-    self.state   = o.get('kgm_state')
-    self.player  = o.get('kgm_player')
-    self.gobject = o.get('kgm_object')
-    self.mtx     = o.matrix_world
-    self.pos     = o.matrix_local.to_translation()
-    self.quat    = self.mtx.to_quaternion()
-    self.euler   = self.mtx.to_euler()
-    self.linked  = 'None'
-    self.props   = {}
-
-    if self.gobject == None:
-      self.gobject = ""
-    if self.player == None:
-      self.player = False
-    if self.state == None:
-      self.state = ""
-    if o.parent != None:
-      self.linked = o.parent.name
-
-class kgmEffect:
-  def __init__(self, o):
-    self.name    = o.name
-    self.state   = o.get('kgm_state')
-    self.gobject = o.get('kgm_object')
-    self.mtx     = o.matrix_world
-    self.pos     = o.matrix_local.to_translation()
-    self.quat    = self.mtx.to_quaternion()
-    self.euler   = self.mtx.to_euler()
-    self.linked  = 'None'
-    self.props   = {}
-
-    if self.gobject == None:
-      self.gobject = ""
-    if self.state == None:
-      self.state = ""
-    if o.parent != None:
-      self.linked = o.parent.name
-
-class kgmSensor:
-  def __init__(self, o):
-    self.name    = o.name
-    self.state   = o.get('kgm_state')
-    self.gobject = o.get('kgm_object')
-    self.mtx     = o.matrix_world
-    self.pos     = o.matrix_local.to_translation()
-    self.quat    = self.mtx.to_quaternion()
-    self.euler   = self.mtx.to_euler()
-    self.linked  = 'None'
-    self.props   = {}
-
-    if self.gobject == None:
-      self.gobject = ""
-    if self.state == None:
-      self.state = ""
-    if o.parent != None:
-      self.linked = o.parent.name
-
-class kgmTrigger:
-  def __init__(self, o):
-    self.name    = o.name
-    self.mtx     = o.matrix_world
-    self.pos     = o.matrix_local.to_translation()
-    self.quat    = self.mtx.to_quaternion()
-    self.euler   = self.mtx.to_euler()
-    self.linked  = 'None'
-    self.props   = {}
-
-    if o.parent != None:
-      self.linked = o.parent.name
-
 class kgmObstacle:
  def __init__(self, o):
   mesh = o.data
@@ -677,15 +383,20 @@ class kgmProxy:
 
 class kgmVisual:
  def __init__(self, o):
-  self.mtx    = o.matrix_local
-  self.name   = o.name
-  self.type   = ''
-  self.data   = ''
-  self.pos    = Vector((0, 0, 0)) * self.mtx
-  self.quat   = self.mtx.to_quaternion()
-  self.euler  = self.mtx.to_euler()
+  self.mtx      = o.matrix_local
+  self.name     = o.name
+  self.type     = ''
+  self.data     = ''
+  self.pos      = Vector((0, 0, 0)) * self.mtx
+  self.rot      = self.mtx.to_euler()
+  self.quat     = self.mtx.to_quaternion()
+  self.material = ''
+
+  if len(o.material_slots) > 0:
+    self.material = o.material_slots[0].name
 
   if o.type == 'MESH':
+    self.type = 'Mesh'
     self.data = o.data.name
 
 import threading
