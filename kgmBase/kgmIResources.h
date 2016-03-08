@@ -23,6 +23,7 @@ protected:
   void unlock(kgmResource* r);
 
 public:
+  virtual void                clear(u32) = 0;
   virtual void                remove(kgmResource*) = 0;
   virtual bool                exists(kgmResource*) = 0;
 

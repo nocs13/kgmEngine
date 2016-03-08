@@ -32,6 +32,7 @@ public:
   kgmString  m_id;
   u32	       m_uid;
   u32        m_type;
+  u32        m_group;
 
 public:
   kgmResource();
@@ -66,6 +67,16 @@ public:
   void id(kgmString id)
   {
     m_id = id;
+  }
+
+  u32 group() const
+  {
+    return m_group;
+  }
+
+  void group(u32 group)
+  {
+    m_group = group;
   }
 
 private:

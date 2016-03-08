@@ -29,41 +29,7 @@ kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 
 kgmGameResources::~kgmGameResources()
 {
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    kgmResource* r = m_resources[i];
-
-    if(r->isClass(kgmTexture::Class))
-    {
-      m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
-
-      delete (kgmTexture*) r;
-    }
-    else if(r->isClass(kgmShader::Class))
-    {
-      m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
-
-      delete (kgmShader*) r;
-    }
-    else if(r->isClass(kgmSound::Class))
-    {
-      m_audio->remove(((kgmSound*)r)->getSound());
-
-      delete (kgmSound*) r;
-    }
-    else if(r->isClass(kgmFont::Class))
-    {
-      m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
-
-      delete (kgmFont*) r;
-    }
-    else if(r->isClass(kgmMesh::Class))
-    {
-      delete (kgmMesh*) r;
-    }
-  }
-
-  m_resources.clear();
+  clear(-1);
 
   for(int i = 0; i < m_paths.size(); i++)
     delete m_paths[i];
@@ -111,6 +77,50 @@ kgmResource* kgmGameResources::get(kgmString& id)
   return get((char *)id);
 }
 
+void kgmGameResources::clear(u32 group)
+{
+  for(int i = m_resources.size(); i > 0; i--)
+  {
+    kgmResource* r = m_resources[i - 1];
+
+    if((group != -1) && (r->group() != group))
+      continue;
+
+    if(r->isClass(kgmTexture::Class))
+    {
+      m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
+
+      delete (kgmTexture*) r;
+    }
+    else if(r->isClass(kgmShader::Class))
+    {
+      m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
+
+      delete (kgmShader*) r;
+    }
+    else if(r->isClass(kgmSound::Class))
+    {
+      m_audio->remove(((kgmSound*)r)->getSound());
+
+      delete (kgmSound*) r;
+    }
+    else if(r->isClass(kgmFont::Class))
+    {
+      m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
+
+      delete (kgmFont*) r;
+    }
+    else if(r->isClass(kgmMesh::Class))
+    {
+      delete (kgmMesh*) r;
+    }
+
+    m_resources.erase(i - 1);
+  }
+
+  if(group == -1)
+    m_resources.clear();
+}
 
 void kgmGameResources::remove(kgmResource* r)
 {

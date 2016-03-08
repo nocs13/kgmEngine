@@ -9,8 +9,9 @@ KGMOBJECT_IMPLEMENT(kgmResource, kgmObject);
 
 kgmResource::kgmResource()
 {
-  m_type = 0;
   m_uid = 0;
+  m_type = 0;
+  m_group = 0;
 
   m_lock = false;
 

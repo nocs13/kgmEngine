@@ -52,6 +52,7 @@ public:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
   ~kgmGameResources();
 
+  void               clear(u32 group);
   void               remove(kgmResource*);
   bool               exists(kgmResource*);
 
