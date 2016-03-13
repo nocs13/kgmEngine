@@ -125,6 +125,7 @@ public:
   __stdcall void onMapNew();
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
+  __stdcall void onMapScene();
   __stdcall void onAddText();
   __stdcall void onAddMesh();
   __stdcall void onAddUnit();

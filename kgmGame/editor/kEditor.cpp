@@ -19,6 +19,7 @@ enum MENUEVENT
   ME_MAP_NEW,
   ME_MAP_OPEN,
   ME_MAP_SAVE,
+  ME_MAP_SCENE,
   ME_EDIT_CLONE,
   ME_EDIT_REMOVE,
   ME_EDIT_OPTIONS,
@@ -81,6 +82,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_MAP_NEW, "New", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapNew));
     item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
     item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));
+    item->add(ME_MAP_SCENE, "Scene", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapScene));
     item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onQuit));
     item = menu->add("Edit");
     item->add(ME_EDIT_CLONE, "Clone", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditClone));
@@ -1332,6 +1334,17 @@ void kEditor::onMapSave()
   game->guiAdd(fdd);
 
   fdd->setFilter(".map");
+  fdd->changeLocation(false);
+  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
+}
+
+void kEditor::onMapScene()
+{
+  kFileDialog *fdd = new kFileDialog();
+  fdd->showHidden(false);
+  game->guiAdd(fdd);
+
+  fdd->setFilter(".scn");
   fdd->changeLocation(false);
   fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
 }
