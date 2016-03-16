@@ -9,8 +9,13 @@ class kgmCamera;
 class kgmIGraphics
 {
 public:
+  virtual void clean() = 0;
+
   virtual void add(kgmLight*)  = 0;
   virtual void add(kgmVisual*) = 0;
+
+  virtual bool resource(kgmResource*)      = 0;
+  virtual kgmResource* resource(kgmString) = 0;
 
   virtual kgmCamera& camera() = 0;
 };

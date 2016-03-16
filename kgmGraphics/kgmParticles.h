@@ -68,8 +68,7 @@ private:
   float      m_divlife;
   float      m_divspeed;
 
-  vec3       m_location;
-  vec3       m_direction;
+  mtx4       m_transform;
 
   kgmMesh*    m_mesh   = null;
   kgmCamera*  m_camera = null;
@@ -222,14 +221,9 @@ public:
     return m_typerender;
   }
 
-  vec3 direction() const
+  void transform(mtx4& m)
   {
-    return m_direction;
-  }
-
-  void direction(vec3 c)
-  {
-    m_direction = c;
+    m_transform = m;
   }
 
   virtual void update(u32 t);

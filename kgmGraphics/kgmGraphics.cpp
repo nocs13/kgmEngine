@@ -219,6 +219,40 @@ void kgmGraphics::build()
 {
 }
 
+void kgmGraphics::clean()
+{
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  {
+    (*i)->release();
+  }
+
+  m_resources.clear();
+}
+
+bool kgmGraphics::resource(kgmResource* r)
+{
+  if (!r)
+    return false;
+
+  kgmResource* keep = resource(r->id());
+
+  if (keep)
+    return false;
+
+  m_resources.add(r);
+}
+
+kgmResource* kgmGraphics::resource(kgmString id)
+{
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  {
+    if (id == (*i)->id())
+      return (*i);
+  }
+
+  return null;
+}
+
 void kgmGraphics::setDefaultFont(kgmFont* f)
 {
   font = f;
@@ -872,7 +906,10 @@ void kgmGraphics::render(kgmVisual* visual)
   }
     break;
   case kgmVisual::TypeParticles:
+    setWorldMatrix(g_mtx_iden);
+    render(g_shd_active);
     render(visual->getParticles());
+    setWorldMatrix(visual->getTransform());
     break;
   }
 

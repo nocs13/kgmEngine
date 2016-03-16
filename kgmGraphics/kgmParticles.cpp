@@ -26,8 +26,6 @@ kgmParticles::kgmParticles()
 
   force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
-  m_location  = vec3(0, 0, 0);
-  m_direction = vec3(0.0f, 0.0f, 0.0f);
 
   m_divlife     = 0.0f;
   m_divspeed    = 0.0f;
@@ -43,6 +41,8 @@ kgmParticles::kgmParticles()
 
   m_camera = null;
   m_mesh   = null;
+
+  m_transform.identity();
 }
 
 kgmParticles::~kgmParticles()
@@ -100,6 +100,8 @@ void kgmParticles::init(Particle* pr)
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
 
+  pr->pos = m_transform * pr->pos;
+
   float neg1 = pow(-1.0, rand() % 2);
   float neg2 = pow(-1.0, rand() % 2);
 
@@ -118,7 +120,7 @@ void kgmParticles::init(Particle* pr)
   pr->dir.y = neg1 * sin(angle) * cos(angle);
   pr->dir.z = neg2 * sin(angle);
 
-  pr->dir = pr->dir + m_direction;
+  pr->dir = pr->dir;
   pr->dir.normalize();
 
   pr->speed = m_speed - m_speed * m_divspeed * r1;

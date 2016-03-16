@@ -56,10 +56,12 @@ private:
   iRect       m_viewport;
   kgmCamera*  m_camera;
 
-  kgmList<kgmLight*>   m_lights;
-  kgmList<kgmVisual*>  m_visuals;
   kgmList<kgmGui*>     m_guis;
   kgmList<kgmIcon*>    m_icons;
+  kgmList<kgmLight*>   m_lights;
+  kgmList<kgmVisual*>  m_visuals;
+
+  kgmList<kgmResource*> m_resources;
 
 #ifdef DEBUG
   kgmList<kgmBody*>      m_bodies;
@@ -106,6 +108,11 @@ public:
   void setDefaultFont(kgmFont*);
 
   s32  getShaderId(kgmString);
+
+  void clean();
+
+  bool resource(kgmResource*);
+  kgmResource* resource(kgmString);
 
 private:
   void render(kgmGui*);

@@ -107,14 +107,7 @@ void kNode::setRotation(vec3 r)
     lgt->direction = getMatrix() * lgt->direction;
     break;
   case VISUAL:
-    if(vis->type() == kgmVisual::TypeParticles)
-    {
-      vis->getParticles()->direction(mrot * vnor);
-    }
-    else
-    {
-      vis->set(mtrn);
-    }
+    vis->set(mtrn);
     break;
   case UNIT:
   case ACTOR:
