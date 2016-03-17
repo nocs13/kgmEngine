@@ -73,6 +73,80 @@ class kgm_dummy(bpy.types.Operator):
   def draw(self, context):
     layout = self.layout
 
+class kgm_unit(bpy.types.Operator):
+  ''' Add kgmUnit '''
+  bl_idname = "object.kgm_unit"
+  bl_label = "Add kgmUnit"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  bpy.types.Object.kgm_unit = bpy.props.BoolProperty(name = "kgm_unit", default = False)
+
+  def __init__(self):
+    print("start")
+
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name = "kgmUnit"
+    a.kgm_unit = True
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal unit.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name = "kgmUnit"
+    a.kgm_unit = True
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
+
+class kgm_actor(bpy.types.Operator):
+  ''' Add kgmActor '''
+  bl_idname = "object.kgm_actor"
+  bl_label = "Add kgmActor"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  bpy.types.Object.kgm_actor = bpy.props.BoolProperty(name = "kgm_actor", default = False)
+
+  def __init__(self):
+    print("start")
+
+  def __del__(self):
+    print("end")
+
+  def execute(self, context):
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name = "kgmActor"
+    a.kgm_actor = True
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal actor.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    bpy.ops.object.add()
+    a = bpy.context.object
+
+    a.name = "kgmActor"
+    a.kgm_actor = True
+    return {'RUNNING_MODAL'}
+
+  def draw(self, context):
+    layout = self.layout
+
 class kgmMaterial:
  def __init__(self, mtl):
   self.name = mtl.name
@@ -759,20 +833,30 @@ class kgmProject(bpy.types.Operator):
 def menu_func(self, context):
   self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='NONE')
 
-def menu_func_a(self, context):
+def menu_func_dummy(self, context):
   self.layout.operator(kgm_dummy.bl_idname,  text="kgmDummy", icon='OUTLINER_OB_EMPTY')
+
+def menu_func_unit(self, context):
+  self.layout.operator(kgm_unit.bl_idname,  text="kgmUnit", icon='OUTLINER_OB_EMPTY')
+
+def menu_func_actor(self, context):
+  self.layout.operator(kgm_actor.bl_idname,  text="kgmActor", icon='OUTLINER_OB_EMPTY')
 
 def register():
   kgmProject.prepare()
 
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
-  bpy.types.INFO_MT_add.append(menu_func_a)
+  bpy.types.INFO_MT_add.append(menu_func_dummy)
+  bpy.types.INFO_MT_add.append(menu_func_unit)
+  bpy.types.INFO_MT_add.append(menu_func_actor)
 
 def unregister():
   bpy.utils.unregister_module(__name__)
   bpy.types.INFO_MT_file_export.remove(menu_func)
-  bpy.types.INFO_MT_add.remove(menu_func_a)
+  bpy.types.INFO_MT_add.remove(menu_func_dummy)
+  bpy.types.INFO_MT_add.remove(menu_func_unit)
+  bpy.types.INFO_MT_add.remove(menu_func_actor)
 
 if __name__ == "__main__":
   register()
