@@ -80,12 +80,14 @@ class kgm_unit(bpy.types.Operator):
   bl_options = {'REGISTER', 'UNDO'}
 
   bpy.types.Object.kgm_unit = bpy.props.BoolProperty(name = "kgm_unit", default = False)
+  bpy.types.Object.kgm_logic = bpy.props.StringProperty(name = "kgm_logic")
+  bpy.types.Object.kgm_state = bpy.props.StringProperty(name = "kgm_state")
 
   def __init__(self):
-    print("start")
+    pass
 
   def __del__(self):
-    print("end")
+    pass
 
   def execute(self, context):
     bpy.ops.object.add()
@@ -96,7 +98,6 @@ class kgm_unit(bpy.types.Operator):
     return {'FINISHED'}
 
   def modal(self, context, event):
-    print("Modal unit.\n")
     return {'RUNNING_MODAL'}
 
   def invoke(self, context, event):
@@ -119,10 +120,11 @@ class kgm_actor(bpy.types.Operator):
   bpy.types.Object.kgm_actor = bpy.props.BoolProperty(name = "kgm_actor", default = False)
 
   def __init__(self):
-    print("start")
+    self.kgm_actor_type  = ''
+    self.kgm_actor_state = ''
 
   def __del__(self):
-    print("end")
+    pass
 
   def execute(self, context):
     bpy.ops.object.add()
@@ -146,6 +148,7 @@ class kgm_actor(bpy.types.Operator):
 
   def draw(self, context):
     layout = self.layout
+    layout.label(text="Hello Actor")
 
 class kgmMaterial:
  def __init__(self, mtl):
@@ -511,6 +514,19 @@ class kgmVisual:
     self.type = 'Mesh'
     self.data = o.data.name
 
+class KgmOperator(bpy.types.Operator):
+  bl_label = "Kgm Operator"
+  bl_idname = "object.kgm_operator"
+
+  kgm_logic = bpy.props.StringProperty(name="AI")
+  kgm_state = bpy.props.StringProperty(name="State")
+
+  def execute(self, context):
+    self.report({'INFO'}, self.kgm_state)
+    self.report({'INFO'}, self.kgm_logic)
+    return {'FINISHED'}
+
+
 class kgmPanel(bpy.types.Panel):
   """kgm object panel."""
   bl_label = "Kgm Object Panel"
@@ -528,8 +544,10 @@ class kgmPanel(bpy.types.Panel):
 
     if hasattr(obj, 'kgm_dummy') and obj.kgm_dummy is True:
       self.draw_dummy(context)
-    elif hasattr(obj, 'kgm_obstacle') and obj.kgm_obstacle is True:
-      self.draw_obstacle(context)
+    elif hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
+      self.draw_unit(context)
+    elif hasattr(obj, 'kgm_actor') and obj.kgm_actor is True:
+      self.draw_actor(context)
 
   def draw_dummy(self, context):
     obj = context.object
@@ -537,13 +555,27 @@ class kgmPanel(bpy.types.Panel):
     row = layout.row()
     row.label(text = "Dummy", icon = "WORLD_DATA")
 
-  def draw_obstacle(self, context):
+  def draw_unit(self, context):
     obj = context.object
     layout = self.layout
     row = layout.row()
-    row.label(text = "Obstacle", icon = "WORLD_DATA")
+    row.label(text = "Unit", icon = "WORLD_DATA")
     row = layout.row()
-    row.prop(obj, "kgm_surface")
+    row.prop(obj, 'kgm_logic')
+    row = layout.row()
+    row.prop(obj, 'kgm_state')
+
+  def draw_actor(self, context):
+    obj = context.object
+    layout = self.layout
+    row = layout.row()
+    row.label(text = "Actor", icon = "WORLD_DATA")
+    row.prop(obj, 'kgm_actor_type')
+    row.prop(obj, 'kgm_actor_state')
+
+    #props = layout.operator(KgmOperator.bl_idname)
+    #props.kgm_logic = obj.kgm_unit_logic
+    #props.kgm_state = obj.kgm_unit_state
 
 class kgmExport(bpy.types.Operator):
  '''This appiers in the tooltip of '''
@@ -850,6 +882,9 @@ def register():
   bpy.types.INFO_MT_add.append(menu_func_dummy)
   bpy.types.INFO_MT_add.append(menu_func_unit)
   bpy.types.INFO_MT_add.append(menu_func_actor)
+
+  bpy.types.Object.kgm_unit_logic = ''
+  bpy.types.Object.kgm_unit_state = ''
 
 def unregister():
   bpy.utils.unregister_module(__name__)
