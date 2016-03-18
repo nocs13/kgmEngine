@@ -51,6 +51,8 @@ private:
   vec3  pv_pos;
   vec3  pv_rot;
 
+  float pv_delta;
+
   //kgm_ptr<kgmGuiMenu> menu;
   kgmGuiMenu* menu = null;
 

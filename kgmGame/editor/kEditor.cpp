@@ -68,6 +68,8 @@ kEditor::kEditor(kgmGameBase* g)
   mtlLines = null;
   mtlPivot = null;
 
+  pv_delta = 0.0f;
+
   mode_play = false;
 
   if(game->getRender())
@@ -193,6 +195,8 @@ void kEditor::clear()
 
   oquered = 0;
 
+  pv_delta = 0.0;
+
   selected = null;
   dragging = null;
 }
@@ -309,6 +313,7 @@ void kEditor::select(int x, int y)
         }
       }
 
+      pv_delta = (*i)->getPosition().distance(c);
     }
     else if(pln_y.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
@@ -325,6 +330,8 @@ void kEditor::select(int x, int y)
           distance = cam.mPos.distance((*i)->getPosition());
         }
       }
+
+      pv_delta = (*i)->getPosition().distance(c);
     }
     else if(pln_z.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
     {
@@ -341,6 +348,8 @@ void kEditor::select(int x, int y)
           distance = cam.mPos.distance((*i)->getPosition());
         }
       }
+
+      pv_delta = (*i)->getPosition().distance(c);
     }
   }
 
@@ -1076,6 +1085,8 @@ void kEditor::onMsLeftUp(int k, int x, int y)
   ms_click[0] = false;
 
   dragging = null;
+
+  pv_delta = 0.0f;
 }
 
 void kEditor::onMsLeftDown(int k, int x, int y)
@@ -1243,9 +1254,8 @@ void kEditor::onMsMove(int k, int x, int y)
     kgmCamera& cam = game->getRender()->camera();
 
     vec3 pt = ray.s + ray.d * cam.mPos.distance(((kPivot*)pivot->getMesh()->getMesh())->pos);
-    vec3 pr, tm;
+    vec3 pr, tm, nd;
     line lax;
-    plane pln;
     float prdist;
 
     switch(paxes)
@@ -1253,26 +1263,29 @@ void kEditor::onMsMove(int k, int x, int y)
     case kPivot::AXIS_X:
       tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(1, 0, 0);
       lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      nd.set(1, 0, 0);
       break;
     case kPivot::AXIS_Y:
       tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(0, 1, 0);
       lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      nd.set(0, 1, 0);
       break;
     case kPivot::AXIS_Z:
       tm = ((kPivot*)pivot->getMesh()->getMesh())->pos + vec3(0, 0, 1);
       lax = line(((kPivot*)pivot->getMesh()->getMesh())->pos, tm);
+      nd.set(0, 0, 1);
       break;
     }
 
     pr = lax.projection(pt);
     prdist = ((kPivot*)pivot->getMesh()->getMesh())->pos.distance(pr);
-    prdist *= 2;
+    //prdist *= 2;
 
     vec3 dir = pr - ((kPivot*)pivot->getMesh()->getMesh())->pos;
     dir.normalize();
 
     //selected->setPosition(selected->pos + dir * prdist);
-    dragging->setPosition(pr);
+    dragging->setPosition(pr - nd * pv_delta);
 
     mtx4 m;
     m.identity();

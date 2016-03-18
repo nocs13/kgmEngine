@@ -36,6 +36,24 @@ from bpy.props import *
 def toGrad(a):
  return a * 180.0 / 3.1415
 
+class kgm_object(bpy.types.Operator):
+  ''' Add kgm object '''
+  bl_idname = "object.kgm_object"
+  bl_label = "Add kgm object"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  bpy.types.Object.kgm_object = bpy.props.EnumProperty( items = ( ('NONE',  "None", ""),
+                                                                  ('UNIT',  "Unit", ""),
+                                                                  ('DUMMY', "Dummy", ""),
+                                                                  ('ACTOR', "Actor", "") ),
+                                                        default='NONE' )
+
+  def __init__(self):
+    pass
+
+  def __del__(self):
+    pass
+
 class kgm_dummy(bpy.types.Operator):
   ''' Add kgmDummy '''
   bl_idname = "object.kgm_dummy"
@@ -45,6 +63,7 @@ class kgm_dummy(bpy.types.Operator):
   bpy.types.Object.kgm_dummy = bpy.props.BoolProperty(name = "kgm_dummy", default = False)
 
   def __init__(self):
+    self.kgm_class = 'Dummy'
     print("start")
 
   def __del__(self):
@@ -56,6 +75,7 @@ class kgm_dummy(bpy.types.Operator):
 
     a.name = "kgmDummy"
     a.kgm_dummy = True
+    a.kgm_class = 'Dummy'
     return {'FINISHED'}
 
   def modal(self, context, event):
@@ -68,6 +88,7 @@ class kgm_dummy(bpy.types.Operator):
 
     a.name = "kgmDummy"
     a.kgm_dummy = True
+    a.kgm_class = 'Dummy'
     return {'RUNNING_MODAL'}
 
   def draw(self, context):
@@ -84,6 +105,7 @@ class kgm_unit(bpy.types.Operator):
   bpy.types.Object.kgm_state = bpy.props.StringProperty(name = "kgm_state")
 
   def __init__(self):
+    self.kgm_class = 'Unit'
     pass
 
   def __del__(self):
@@ -111,17 +133,14 @@ class kgm_unit(bpy.types.Operator):
   def draw(self, context):
     layout = self.layout
 
-class kgm_actor(bpy.types.Operator):
+class kgm_actor(kgm_object):
   ''' Add kgmActor '''
   bl_idname = "object.kgm_actor"
   bl_label = "Add kgmActor"
   bl_options = {'REGISTER', 'UNDO'}
 
-  bpy.types.Object.kgm_actor = bpy.props.BoolProperty(name = "kgm_actor", default = False)
-
   def __init__(self):
-    self.kgm_actor_type  = ''
-    self.kgm_actor_state = ''
+    pass
 
   def __del__(self):
     pass
@@ -131,7 +150,7 @@ class kgm_actor(bpy.types.Operator):
     a = bpy.context.object
 
     a.name = "kgmActor"
-    a.kgm_actor = True
+    a.kgm_object = "ACTOR"
     return {'FINISHED'}
 
   def modal(self, context, event):
@@ -143,12 +162,8 @@ class kgm_actor(bpy.types.Operator):
     a = bpy.context.object
 
     a.name = "kgmActor"
-    a.kgm_actor = True
+    a.kgm_object = "Actor"
     return {'RUNNING_MODAL'}
-
-  def draw(self, context):
-    layout = self.layout
-    layout.label(text="Hello Actor")
 
 class kgmMaterial:
  def __init__(self, mtl):
@@ -570,8 +585,8 @@ class kgmPanel(bpy.types.Panel):
     layout = self.layout
     row = layout.row()
     row.label(text = "Actor", icon = "WORLD_DATA")
-    row.prop(obj, 'kgm_actor_type')
-    row.prop(obj, 'kgm_actor_state')
+    row = layout.row()
+    row.prop(obj, 'kgm_object')
 
     #props = layout.operator(KgmOperator.bl_idname)
     #props.kgm_logic = obj.kgm_unit_logic
@@ -805,63 +820,6 @@ class kgmExport(bpy.types.Operator):
   elif False:
    return self.execute(context)
 
-class kgmProject(bpy.types.Operator):
-  '''This appiers in the tooltip of '''
-  # this is important since its how bpy.ops.export.kgm_export() is constructed
-  bl_idname = "import_scene.kgm"
-  bl_label = "Set Kgm Project"
-
-  # TODO, add better example props
-  filepath = StringProperty(name="File Path",
-                            description="File path used for set the Kgm project",
-                            maxlen=1024,
-                            default="~/")
-
-  def invoke(self, context, event):
-    print('kgmProject: invoke')
-    wm = context.window_manager
-
-    if True:
-      wm.fileselect_add(self)
-      return {'RUNNING_MODAL'}
-    elif True:
-      wm.invoke_search_popup(self)
-      return {'RUNNING_MODAL'}
-    elif False:
-      return wm.invoke_props_popup(self, event) #
-    elif False:
-      return self.execute(context)
-
-    return {'RUNNING_MODAL'}
-
-  @classmethod
-  def poll(self, context):
-    wm = context.window_manager
-
-    if True:
-      wm.fileselect_add(self)
-      return {'RUNNING_MODAL'}
-    elif True:
-      wm.invoke_search_popup(self)
-      return {'RUNNING_MODAL'}
-    elif False:
-      return wm.invoke_props_popup(self, event) #
-    elif False:
-      return self.execute(context)
-    print('kgmProject: poll')
-    return context.active_object != None
-
-  def execute(self, context):
-    from .kgm_project import parse
-    print('kgmProject: execute')
-    print('kgmProject: setting kgm project from file: ' + self.filepath)
-    parse(self.filepath)
-
-    return {'FINISHED'}
-
-  def prepare():
-    pass
-
 def menu_func(self, context):
   self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='NONE')
 
@@ -875,16 +833,15 @@ def menu_func_actor(self, context):
   self.layout.operator(kgm_actor.bl_idname,  text="kgmActor", icon='OUTLINER_OB_EMPTY')
 
 def register():
-  kgmProject.prepare()
-
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
   bpy.types.INFO_MT_add.append(menu_func_dummy)
   bpy.types.INFO_MT_add.append(menu_func_unit)
   bpy.types.INFO_MT_add.append(menu_func_actor)
 
-  bpy.types.Object.kgm_unit_logic = ''
-  bpy.types.Object.kgm_unit_state = ''
+  #bpy.types.Object.kgm_class = ''
+  bpy.types.Object.kgm_logic = ''
+  bpy.types.Object.kgm_state = ''
 
 def unregister():
   bpy.utils.unregister_module(__name__)
