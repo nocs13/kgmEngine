@@ -159,6 +159,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
   }
 
+  m_shadows.alloc(1);
+
 #ifdef DEBUG
   kgm_log() << "Prepare shaders \n";
 #endif

@@ -47,6 +47,12 @@ public:
   static GraphicsQuality textureQuality;
   static GraphicsQuality shadowQuality;
 
+  struct Shadow
+  {
+    kgmLight*   light;
+    kgmTexture* map;
+  };
+
 private:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -84,6 +90,8 @@ private:
   kgmArray<kgmVisual*> m_visible_visuals_alpha;
 
   kgmTexture *m_shadowmap;
+
+  kgmArray<Shadow> m_shadows;
 
   bool  m_depth;
   bool  m_alpha;
