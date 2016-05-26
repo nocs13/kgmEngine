@@ -1,8 +1,6 @@
 #include "kgmUnit.h"
 #include "kgmIGame.h"
 
-KGMOBJECT_IMPLEMENT(kgmUnit, kgmObject);
-
 kgmTab<kgmString, kgmUnit*(*)(kgmIGame*)> kgmUnit::g_typ_objects;
 
 kgmTab<kgmString, kgmUnit::ActionCallback> kgmUnit::g_list_action;

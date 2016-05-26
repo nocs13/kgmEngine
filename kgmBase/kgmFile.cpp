@@ -15,8 +15,6 @@
 #include <sys/stat.h>
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmFile, kgmObject);
-
 kgmFile::kgmFile()
 {
   m_file = 0;

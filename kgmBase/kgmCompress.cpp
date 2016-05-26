@@ -1,7 +1,5 @@
 #include "kgmCompress.h"
 
-KGMOBJECT_IMPLEMENT(kgmCompress, kgmObject);
-
 kgmCompress::kgmCompress()
 {
   type = TypeNone;

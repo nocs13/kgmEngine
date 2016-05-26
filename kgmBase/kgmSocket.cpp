@@ -2,8 +2,6 @@
 
 #include <unistd.h>
 
-KGMOBJECT_IMPLEMENT(kgmSocket, kgmObject);
-
 kgmSocket::kgmSocket(s32 proto, s32 type)
 {
   protocol = proto;

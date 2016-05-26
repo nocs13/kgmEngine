@@ -1,7 +1,5 @@
 #include "kgmFileMemory.h"
 
-KGMOBJECT_IMPLEMENT(kgmFileMemory, kgmObject)
-
 kgmFileMemory::kgmFileMemory()
 {
   base   = null;

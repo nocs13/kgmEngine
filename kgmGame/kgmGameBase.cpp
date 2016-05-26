@@ -673,13 +673,13 @@ bool kgmGameBase::gAppend(kgmUnit* unit)
 
   if(m_logic)
   {
-    if(unit->isType(kgmActor::Class))
+    if(unit->isClass(kgmActor::cClass()))
       m_logic->add(kgm_ptr<kgmActor>((kgmActor*)unit));
-    else if(unit->isType(kgmSensor::Class))
+    else if(unit->isClass(kgmSensor::cClass()))
       m_logic->add(kgm_ptr<kgmSensor>((kgmSensor*)unit));
-    else if(unit->isType(kgmTrigger::Class))
+    else if(unit->isClass(kgmTrigger::cClass()))
       m_logic->add(kgm_ptr<kgmTrigger>((kgmTrigger*)unit));
-    else if(unit->isType(kgmUnit::Class))
+    else if(unit->isClass(kgmUnit::cClass()))
       m_logic->add(kgm_ptr<kgmUnit>((kgmUnit*)unit));
   }
 

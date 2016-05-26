@@ -5,8 +5,6 @@
 #include "kgmLog.h"
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmResource, kgmObject);
-
 kgmResource::kgmResource()
 {
   m_uid = 0;

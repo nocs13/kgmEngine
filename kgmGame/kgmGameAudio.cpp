@@ -12,8 +12,6 @@
 #include "../kgmSystem/kgmDSound.h"
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmGameAudio, kgmIAudio);
-
 kgmGameAudio::kgmGameAudio()
 {
 #ifdef OAL

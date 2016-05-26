@@ -2,8 +2,6 @@
 #include "kgmIGame.h"
 #include "kgmILogic.h"
 
-KGMOBJECT_IMPLEMENT(kgmSensor, kgmUnit);
-
 kgmSensor::kgmSensor(kgmIGame* g)
   :kgmUnit(g)
 {

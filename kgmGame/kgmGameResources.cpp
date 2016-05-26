@@ -86,31 +86,31 @@ void kgmGameResources::clear(u32 group)
     if((group != -1) && (r->group() != group))
       continue;
 
-    if(r->isClass(kgmTexture::Class))
+    if(r->isClass(kgmTexture::cClass()))
     {
       m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
 
       delete (kgmTexture*) r;
     }
-    else if(r->isClass(kgmShader::Class))
+    else if(r->isClass(kgmShader::cClass()))
     {
       m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
 
       delete (kgmShader*) r;
     }
-    else if(r->isClass(kgmSound::Class))
+    else if(r->isClass(kgmSound::cClass()))
     {
       m_audio->remove(((kgmSound*)r)->getSound());
 
       delete (kgmSound*) r;
     }
-    else if(r->isClass(kgmFont::Class))
+    else if(r->isClass(kgmFont::cClass()))
     {
       m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
 
       delete (kgmFont*) r;
     }
-    else if(r->isClass(kgmMesh::Class))
+    else if(r->isClass(kgmMesh::cClass()))
     {
       delete (kgmMesh*) r;
     }

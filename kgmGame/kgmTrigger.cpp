@@ -2,8 +2,6 @@
 #include "kgmIGame.h"
 #include "kgmILogic.h"
 
-KGMOBJECT_IMPLEMENT(kgmTrigger, kgmUnit);
-
 kgmTrigger::kgmTrigger(kgmIGame* g)
   :kgmUnit(g)
 {

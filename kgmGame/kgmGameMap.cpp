@@ -5,8 +5,6 @@
 #include "kgmIGame.h"
 #include "kgmGameResources.h"
 
-KGMOBJECT_IMPLEMENT(kgmGameMap, kgmObject);
-
 kgmGameMap::kgmGameMap(kgmIGame* g, OpenType ot)
 {
   m_game = g;
@@ -184,7 +182,7 @@ bool kgmGameMap::addEffect(Node n)
 
     node->m_name = "kgmEffect";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->runtime().nClass));
+    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->vClass()));
 
     addPosition(*node, n.pos);
     addRotation(*node, n.rot);
@@ -210,7 +208,7 @@ bool kgmGameMap::addSensor(Node n)
 
     node->m_name = "kgmSensor";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmSensor*)n.obj)->runtime().nClass));
+    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmSensor*)n.obj)->vClass()));
     node->m_attributes.add(new kgmXml::Attribute("target", ((kgmSensor*)n.obj)->getTarget()));
 
     addPosition(*node, n.pos);
@@ -263,7 +261,7 @@ bool kgmGameMap::addUnit(Node n)
 
     node->m_name = "kgmUnit";
     node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->runtime().nClass));
+    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->vClass()));
 
     addPosition(*node, n.pos);
     addRotation(*node, n.rot);

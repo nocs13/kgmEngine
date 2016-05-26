@@ -27,9 +27,7 @@ public:
 
   virtual kgmUnit*  getObjectById(kgmString&)             = 0;
   virtual u32       getObjects(kgmList<kgmUnit*>&)        = 0;
-  virtual u32       getObjectsByType(kgmRuntime&,
-                                     kgmList<kgmUnit*>&)  = 0;
-  virtual u32       getObjectsByClass(kgmRuntime&,
+  virtual u32       getObjectsByClass(const char*,
                                       kgmList<kgmUnit*>&) = 0;
 
   virtual void      setPlayer(kgmActor*)          = 0;

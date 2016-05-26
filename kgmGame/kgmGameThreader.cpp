@@ -1,7 +1,5 @@
 #include "kgmGameThreader.h"
 
-KGMOBJECT_IMPLEMENT(kgmGameThreader, kgmObject);
-
 kgmGameThreader::kgmGameThreader()
 {
   m_locked = false;

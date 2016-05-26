@@ -2,8 +2,6 @@
 #include "kgmIGame.h"
 #include "../kgmMedia/kgmIAudio.h"
 
-KGMOBJECT_IMPLEMENT(kgmActor, kgmUnit);
-
 kgmTab<kgmString, kgmActor::ActionCallback> kgmActor::g_actions;
 
 kgmActor::kgmActor(kgmIGame* g)

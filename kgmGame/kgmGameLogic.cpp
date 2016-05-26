@@ -148,25 +148,7 @@ u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
   return count;
 }
 
-u32 kgmGameLogic::getObjectsByType(kgmRuntime& t, kgmList<kgmUnit*>& objs)
-{
-  u32 count = 0;
-
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  {
-    kgmUnit* go = (*i);
-
-    if(!go->removed() && go->valid() && (*i)->isType(t))
-    {
-      objs.add((*i));
-      count++;
-    }
-  }
-
-  return count;
-}
-
-u32 kgmGameLogic::getObjectsByClass(kgmRuntime& t, kgmList<kgmUnit*>& objs)
+u32 kgmGameLogic::getObjectsByClass(const char* t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 

@@ -2,8 +2,9 @@
 #include "kgmList.h"
 #include <stdlib.h>
 #include <string.h>
-//#include <vector>
+#include <kgmIObject.h>
 
+/*
 class kgmObject;
 
 struct kgmRuntime
@@ -24,10 +25,10 @@ struct kgmRuntime
   kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class};  \
   o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }                      \
   kgmRuntime& o_class::runtime() { return o_class::Class; }
-
+*/
 // Base class for kgm_engine objects.
 
-class kgmObject
+class kgmObject: public kgmIObject
 {
   KGM_OBJECT(kgmObject);
 
@@ -166,77 +167,8 @@ public:
   {
   }
 
-  virtual ~kgmObject()
+  ~kgmObject()
   {
-  }
-
-  bool isClass(kgmObject& o)
-  {
-    return !strcmp(runtime().nClass, o.runtime().nClass);
-  }
-
-  bool isClass(kgmRuntime& o)
-  {
-    return !strcmp(runtime().nClass, o.nClass);
-  }
-
-  bool isClass(const char* o)
-  {
-    return !strcmp(runtime().nClass, o);
-  }
-
-  bool isType(kgmObject& o)
-  {
-    kgmRuntime* r = &runtime();
-
-    while(r != 0)
-    {
-      if(!strcmp(r->nClass, o.runtime().nClass))
-        return true;
-
-      if(r == r->pClass)
-        break;
-
-      r = r->pClass;
-    }
-
-    return false;
-  }
-
-  bool isType(kgmRuntime& o)
-  {
-    kgmRuntime* r = &runtime();
-
-    while(r != 0)
-    {
-      if(!strcmp(r->nClass, o.nClass))
-        return true;
-
-      if(r == r->pClass)
-        break;
-
-      r = r->pClass;
-    }
-
-    return false;
-  }
-
-  bool isType(const char* o)
-  {
-    kgmRuntime* r = &runtime();
-
-    while(r != 0)
-    {
-      if(!strcmp(r->nClass, o))
-        return true;
-
-      if(r == r->pClass)
-        break;
-
-      r = r->pClass;
-    }
-
-    return false;
   }
 
   virtual kgmObject* clone()
