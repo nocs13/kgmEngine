@@ -1,10 +1,12 @@
 #ifndef KGMIAI_H
 #define KGMIAI_H
 
-class kgmActor;
+#include "../kgmBase/kgmObject.h"
 
-class kgmIAI
+class kgmAI: public kgmObject
 {
+  KGM_OBJECT(kgmAI);
+
   typedef void (*ActionCallback)(kgmIGame*, kgmAI*, Action*);
 
   struct Action
