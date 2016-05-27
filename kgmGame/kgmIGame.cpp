@@ -5,7 +5,7 @@ kgm_ptr<kgmBody> kgmIGame::Node::getBody()
 {
   kgm_ptr<kgmBody> body;
 
-  if(object && object->isType(kgmUnit::Class))
+  if(object && object->isClass(kgmUnit::cClass()))
   {
     body = kgm_ptr<kgmBody>(kgm_ptr_cast<kgmUnit, kgmObject>(object)->getBody());
   }
@@ -15,7 +15,7 @@ kgm_ptr<kgmBody> kgmIGame::Node::getBody()
 
 kgm_ptr<kgmUnit> kgmIGame::Node::getUnit()
 {
-  if(object && object->isType(kgmUnit::Class))
+  if(object && object->isClass(kgmUnit::cClass()))
     return kgm_ptr<kgmUnit>(kgm_ptr_cast<kgmUnit, kgmObject>(object));
 
   return null;
@@ -23,7 +23,7 @@ kgm_ptr<kgmUnit> kgmIGame::Node::getUnit()
 
 kgm_ptr<kgmLight> kgmIGame::Node::getLight()
 {
-  if(object && object->isType(kgmLight::Class))
+  if(object && object->isClass(kgmLight::cClass()))
     return kgm_ptr<kgmLight>(kgm_ptr_cast<kgmLight, kgmObject>(object));
 
   return null;
@@ -31,9 +31,9 @@ kgm_ptr<kgmLight> kgmIGame::Node::getLight()
 
 kgm_ptr<kgmVisual> kgmIGame::Node::getVisual()
 {
-  if(object && object->isType(kgmUnit::Class))
+  if(object && object->isClass(kgmUnit::cClass()))
     return kgm_ptr<kgmVisual>(kgm_ptr_cast<kgmUnit, kgmObject>(object)->getVisual());
-  else if(object && object->isType(kgmVisual::Class))
+  else if(object && object->isClass(kgmVisual::cClass()))
     return kgm_ptr<kgmVisual>(kgm_ptr_cast<kgmVisual, kgmObject>(object));
 
   return null;

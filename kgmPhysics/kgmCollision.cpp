@@ -1,8 +1,6 @@
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
-KGMOBJECT_IMPLEMENT(kgmCollision, kgmObject);
-
 inline bool crossLineSphere(line3& ln, sphere3& sp)
 {
   if(sp.isin(ln.s) || sp.isin(ln.e))

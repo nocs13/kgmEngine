@@ -1,8 +1,6 @@
 #include "kgmThread.h"
 #include "kgmSystem.h"
 
-KGMOBJECT_IMPLEMENT(kgmThread, kgmObject);
-
 void kgmThread::thread(kgmThread *p)
 {
   if(!p)

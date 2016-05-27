@@ -1,7 +1,5 @@
 #include "kgmGuiScroll.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiScroll, kgmGui)
-
 kgmGuiScroll::kgmGuiScroll()
   :kgmGui(), callback(null, null)
 {

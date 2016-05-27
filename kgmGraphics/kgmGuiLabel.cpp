@@ -1,7 +1,5 @@
 #include "kgmGuiLabel.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiLabel, kgmGui)
-
 kgmGuiLabel::kgmGuiLabel()
 {
   font_width = 6;

@@ -8,8 +8,6 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-KGMOBJECT_IMPLEMENT(kgmSimulation, kgmObject);
-
 kgmSimulation::kgmSimulation()
 {
 

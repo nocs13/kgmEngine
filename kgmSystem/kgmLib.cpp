@@ -1,9 +1,6 @@
 #include "kgmLib.h"
 #include "../kgmBase/kgmTypes.h"
 
-KGMOBJECT_IMPLEMENT(kgmLib, kgmObject);
-
-
 kgmLib::kgmLib()
 {
   handle = 0;

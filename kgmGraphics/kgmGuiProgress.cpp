@@ -1,7 +1,5 @@
 #include "kgmGuiProgress.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiProgress, kgmGui)
-
 kgmGuiProgress::kgmGuiProgress()
 {
 

@@ -18,7 +18,7 @@ public:
 
   kgmArray(const kgmArray& a)
   {
-    alloc(a.m_data, a.m_length);
+    kgmMemory<T>::alloc(a.m_data, a.m_length);
   }
 
   ~kgmArray()

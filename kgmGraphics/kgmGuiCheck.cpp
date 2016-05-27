@@ -1,8 +1,6 @@
 #include "kgmGuiCheck.h"
 #include "../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiCheck, kgmGuiLabel)
-
 kgmGuiCheck::kgmGuiCheck()
 :callback(null, null)
 {

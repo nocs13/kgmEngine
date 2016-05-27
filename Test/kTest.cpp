@@ -16,8 +16,6 @@
  * valgrind --leak-check=full --show-leak-kinds=definite --track-origins=yes --error-limit=no -v  ./kTest > ktest.vlg 2>&1
 */
 
-KGMOBJECT_IMPLEMENT(ACamera, kgmActor);
-
 bool g_ms_camera = true;
 
 const char* maps[] =

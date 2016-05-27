@@ -3,8 +3,6 @@
 #include "../kgmBase/kgmMemory.h"
 #include "../kgmBase/kgmIGC.h"
 
-KGMOBJECT_IMPLEMENT(kgmMesh, kgmResource);
-
 kgmMesh::kgmMesh()
 {
   m_vertices = null;

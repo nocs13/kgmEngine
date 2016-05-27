@@ -2,30 +2,8 @@
 #include "kgmList.h"
 #include <stdlib.h>
 #include <string.h>
-#include <kgmIObject.h>
+#include "kgmIObject.h"
 
-/*
-class kgmObject;
-
-struct kgmRuntime
-{
-  const char* nClass; //class id
-  u32         sClass; //size of class
-  kgmRuntime* pClass; //parent class
-};
-
-#define KGM_OBJECT(o_class)                     \
-  public:                                	      \
-  static  kgmRuntime   Class;	                  \
-  static  o_class*     cast(kgmObject*);        \
-  virtual kgmRuntime&  runtime();               \
-  private:
-
-#define KGMOBJECT_IMPLEMENT(o_class, o_parent)                                         \
-  kgmRuntime  o_class::Class = {  #o_class, sizeof(class o_class), &o_parent::Class};  \
-  o_class*    o_class::cast(kgmObject* o) { return (o_class*)o; }                      \
-  kgmRuntime& o_class::runtime() { return o_class::Class; }
-*/
 // Base class for kgm_engine objects.
 
 class kgmObject: public kgmIObject
@@ -171,8 +149,8 @@ public:
   {
   }
 
-  virtual kgmObject* clone()
+  virtual bool isClass(const char* o)
   {
-    return null;
+    return !strcmp(this->vClass(), o);
   }
 };

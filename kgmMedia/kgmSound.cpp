@@ -1,7 +1,5 @@
 #include "kgmSound.h"
 
-KGMOBJECT_IMPLEMENT(kgmSound, kgmResource);
-
 kgmSound::kgmSound()
   :kgmResource()
 {

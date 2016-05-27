@@ -22,11 +22,6 @@
 
 #include <stdlib.h>
 
-////////////////////
-KGMOBJECT_IMPLEMENT(kgmGraphics,  kgmObject);
-KGMOBJECT_IMPLEMENT(kgmFrustum,   kgmObject);
-KGMOBJECT_IMPLEMENT(kgmCamera,    kgmFrustum);
-
 #define MAX_LIGHTS 48
 
 kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
@@ -1281,7 +1276,7 @@ void kgmGraphics::render(kgmGui* gui)
   if(gui->alpha())
     gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
 
-  if(gui->isClass(kgmGuiButton::Class))
+  if(gui->isClass(kgmGuiButton::cClass()))
   {
     u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
     u32 fheight = (u32)((float)rect.h * (float)0.75f);
@@ -1311,7 +1306,7 @@ void kgmGraphics::render(kgmGui* gui)
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
   }
-  else if(gui->isClass(kgmGuiScroll::Class))
+  else if(gui->isClass(kgmGuiScroll::cClass()))
   {
     kgmGuiScroll* gscroll = (kgmGuiScroll*)gui;
     kgmGui::Rect  srect = gscroll->getScrollerRect();
@@ -1321,7 +1316,7 @@ void kgmGraphics::render(kgmGui* gui)
     gcDrawRect(rect, gui_style->sscroll.bg_color, gui_style->sscroll.image);
     gcDrawRect(srect, gui_style->sscroll.fg_color, gui_style->sscroll.image);
   }
-  else if(gui->isClass(kgmGuiList::Class))
+  else if(gui->isClass(kgmGuiList::cClass()))
   {
     kgmGuiList* glist = (kgmGuiList*)gui;
 
@@ -1367,7 +1362,7 @@ void kgmGraphics::render(kgmGui* gui)
       render(glist->m_scroll);
     }
   }
-  else if(gui->isType(kgmGuiText::Class))
+  else if(gui->isClass(kgmGuiText::cClass()))
   {
     kgmGuiText* gtext = (kgmGuiText*)gui;
 
@@ -1416,22 +1411,22 @@ void kgmGraphics::render(kgmGui* gui)
                  gui_style->stext.ft_size, gui_style->stext.tx_color, rect, c_text);
     }
   }
-  else if(gui->isClass(kgmGuiMenu::Class))
+  else if(gui->isClass(kgmGuiMenu::cClass()))
   {
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
 
     if(menu->getItem())
       renderGuiMenuItem(menu, menu->getItem());
   }
-  else if(gui->isClass(kgmGuiTab::Class))
+  else if(gui->isClass(kgmGuiTab::cClass()))
   {
     //render((kgmGuiTab*)gui);
   }
-  else if(gui->isClass(kgmGuiProgress::Class))
+  else if(gui->isClass(kgmGuiProgress::cClass()))
   {
     //render((kgmGuiProgress*)gui);
   }
-  else if(gui->isClass(kgmGuiLabel::Class))
+  else if(gui->isClass(kgmGuiLabel::cClass()))
   {
     u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
     u32 fheight = (u32)((float)rect.h * (float)0.75f);
@@ -1453,7 +1448,7 @@ void kgmGraphics::render(kgmGui* gui)
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
   }
-  else if(gui->isClass(kgmGuiCheck::Class))
+  else if(gui->isClass(kgmGuiCheck::cClass()))
   {
     u32 fwidth = (u32)((float)(rect.w - 25) / (float)(text.length() + 1));
     u32 fheight = (u32)((float)rect.h * (float)0.75f);
@@ -1506,7 +1501,7 @@ void kgmGraphics::render(kgmGui* gui)
     if(text.length() > 0)
       gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, txClip, text);
   }
-  else if(gui->isType(kgmGui::Class))
+  else if(gui->isClass(kgmGui::cClass()))
   {
     if(gui->m_hasMouse )
     {

@@ -1,7 +1,5 @@
 #include "kgmShapeCollision.h"
 
-KGMOBJECT_IMPLEMENT(kgmShapeCollision, kgmResource);
-
 kgmShapeCollision::kgmShapeCollision()
 {
 }

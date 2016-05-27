@@ -8,8 +8,6 @@
 
 using namespace kgmGameEditor;
 
-KGMOBJECT_IMPLEMENT(kViewOptions, kgmGuiFrame);
-
 kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
 :callClose(null, null),
 kgmGuiFrame("Options", x, y, w, h)

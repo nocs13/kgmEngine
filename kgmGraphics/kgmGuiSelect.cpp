@@ -1,7 +1,5 @@
 #include "kgmGuiSelect.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiSelect, kgmGui)
-
 kgmGuiSelect::kgmGuiSelect()
   :kgmGui()
 {

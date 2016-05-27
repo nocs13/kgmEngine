@@ -1,8 +1,6 @@
 #include "kgmGuiText.h"
 #include "../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiText, kgmGui)
-
 kgmGuiText::kgmGuiText()
   :kgmGui(), callback(null, null)
 {

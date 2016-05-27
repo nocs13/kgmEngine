@@ -2,8 +2,6 @@
 #include "kgmGuiLabel.h"
 #include "kgmGuiButton.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiFrame, kgmGui);
-
 kgmGuiFrame::kgmGuiFrame(kgmString title, int x, int y, int w, int h)
 :kgmGui(null, x, y, w, h)
 {

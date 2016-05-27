@@ -4,8 +4,6 @@
 
 using namespace kgmGameEditor;
 
-KGMOBJECT_IMPLEMENT(kNode, kgmObject);
-
 void kNode::update()
 {
   switch(typ)

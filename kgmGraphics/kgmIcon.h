@@ -31,6 +31,14 @@ public:
     position = v;
   }
 
+  kgmIcon(const kgmIcon& icn)
+  {
+    icon = null;
+    width = icn.width;
+    height = icn.height;
+    position = icn.position;
+  }
+
   ~kgmIcon()
   {
   }

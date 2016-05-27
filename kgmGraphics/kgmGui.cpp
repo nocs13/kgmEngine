@@ -3,8 +3,6 @@
 #include "../kgmBase/kgmIGC.h"
 #include "kgmIGuiDraw.h"
 
-KGMOBJECT_IMPLEMENT(kgmGui, kgmEvent)
-
 kgmGui::kgmGui()
 {
   m_id = 0;

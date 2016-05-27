@@ -3,8 +3,6 @@
 #include "../kgmBase/kgmLog.h"
 #include <math.h>
 
-KGMOBJECT_IMPLEMENT(kgmAudioMixer, kgmObject)
-
 inline s16 snd_normalize(s16 val)
 {
   s16 max = 32000;

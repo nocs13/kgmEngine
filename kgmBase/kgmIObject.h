@@ -21,11 +21,6 @@ public:
   virtual ~kgmIObject()
   {
   }
-
-  bool isClass(const char* o)
-  {
-    return !strcmp(this->vClass(), o);
-  }
 };
 
 #endif // KGMIOBJECT

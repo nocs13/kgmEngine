@@ -1,8 +1,6 @@
 #include "kgmGuiMenu.h"
 #include "../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiMenu, kgmGui)
-
 u32 kgmGuiMenu::ItemHeight = 20;
 
 kgmGuiMenu::kgmGuiMenu(kgmGui* parent)

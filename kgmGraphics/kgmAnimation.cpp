@@ -1,7 +1,5 @@
 #include "kgmAnimation.h"
 
-KGMOBJECT_IMPLEMENT(kgmAnimation, kgmResource);
-
 kgmAnimation::Animation::Animation()
 {
 

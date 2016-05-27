@@ -6,8 +6,6 @@
 #include <windows.h>
 #endif
 
-KGMOBJECT_IMPLEMENT(kgmPhysics, kgmObject);
-
 kgmPhysics::kgmPhysics()
 {
 }

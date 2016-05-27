@@ -6,8 +6,6 @@
 
 #include "../../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmCharacter, kgmActor);
-
 kgmCharacter::kgmCharacter(kgmIGame *g)
   :kgmActor(g)
 {

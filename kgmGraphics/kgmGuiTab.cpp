@@ -1,7 +1,5 @@
 #include "kgmGuiTab.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiTab, kgmGui)
-
 kgmGuiTab::kgmGuiTab()
 {
   m_index  = 0;

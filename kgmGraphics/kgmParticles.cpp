@@ -4,8 +4,6 @@
 #include "kgmMesh.h"
 #include "../kgmBase/kgmTime.h"
 
-KGMOBJECT_IMPLEMENT(kgmParticles, kgmObject);
-
 inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
 {
   v.pos = pos;

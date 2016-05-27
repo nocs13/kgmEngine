@@ -193,35 +193,35 @@ public:
     lock = n.lock;
 
     if(n.icn != null)
-      icn = (kgmIcon*) n.icn->clone();
+      icn = new kgmIcon(*n.icn);
 
     if(n.obj)
     {
       switch(n.typ)
       {
       case UNIT:
-        unt = (kgmUnit*) n.unt->clone();
+        unt = new kgmUnit(*n.unt);
         break;
       case LIGHT:
-        lgt = (kgmLight*) n.lgt->clone();
+        lgt = new kgmLight(*n.lgt);
         break;
       case ACTOR:
-        act = (kgmActor*) n.act->clone();
+        act = new kgmActor(*n.act);
         break;
       case VISUAL:
-        vis = (kgmVisual*) n.vis->clone();
+        vis = new kgmVisual(*n.vis);
         break;
       case EFFECT:
-        eff = (kgmEffect*) n.eff->clone();
+        eff = new kgmEffect(*n.eff);
         break;
       case SENSOR:
-        sns = (kgmSensor*) n.sns->clone();
+        sns = new kgmSensor(*n.sns);
         break;
       case TRIGGER:
-        trg = (kgmTrigger*) n.trg->clone();
+        trg = new kgmTrigger(*n.trg);
         break;
       case OBSTACLE:
-        obs = (kgmObstacle*) n.obs->clone();
+        obs = new kgmObstacle(*n.obs);
         break;
       };
     }
@@ -247,38 +247,38 @@ public:
     n->lock = lock;
 
     if(icn != null)
-      n->icn = (kgmIcon*) icn->clone();
+      n->icn = new kgmIcon(*icn);
 
     if(obj)
     {
       switch(typ)
       {
       case UNIT:
-        n->unt = (kgmUnit*) unt->clone();
+        n->unt = new kgmUnit(*unt);
         break;
       case LIGHT:
-        n->lgt = (kgmLight*) lgt->clone();
+        n->lgt = new kgmLight(*lgt);
         break;
       case ACTOR:
-        n->act = (kgmActor*) act->clone();
+        n->act = new kgmActor(*act);
         break;
       case VISUAL:
-        n->vis = (kgmVisual*) vis->clone();
+        n->vis = new kgmVisual(*vis);
         break;
       case EFFECT:
-        n->eff = (kgmEffect*) eff->clone();
+        n->eff = new kgmEffect(*eff);
         break;
       case SENSOR:
-        n->sns = (kgmSensor*) sns->clone();
+        n->sns = new kgmSensor(*sns);
         break;
       case TRIGGER:
-        n->trg = (kgmTrigger*) trg->clone();
+        n->trg = new kgmTrigger(*trg);
         break;
       case OBSTACLE:
-        n->obs = (kgmObstacle*) obs->clone();
+        n->obs = new kgmObstacle(*obs);
         break;
       case MATERIAL:
-        n->mtl = (kgmMaterial*) obs->clone();
+        n->mtl = new kgmMaterial(*mtl);
         break;
       };
     }

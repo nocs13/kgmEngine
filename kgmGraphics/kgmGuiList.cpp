@@ -1,7 +1,5 @@
 #include "kgmGuiList.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiList, kgmGui)
-
 kgmGuiList::kgmGuiList()
   :kgmGui(), callback(null, null)
 {

@@ -3,8 +3,6 @@
 #include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmPointer.h"
 
-KGMOBJECT_IMPLEMENT(kgmAlsa, kgmIAudio);
-
 #undef DEBUG
 
 #ifdef ALSA

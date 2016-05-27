@@ -1,8 +1,6 @@
 #include "kgmGuiButton.h"
 #include "../kgmBase/kgmLog.h"
 
-KGMOBJECT_IMPLEMENT(kgmGuiButton, kgmGui)
-
 kgmGuiButton::kgmGuiButton()
 :callback(null, null)
 {

@@ -30,7 +30,8 @@ public:
  {
   kgmVector3d<T> vT, vTV;
   kgmVector3d<T> vL = e - s;
-  T t;
+
+  T t = T(0);
 
   if(vL.x != 0)
     t = (v.x - s.x) / vL.x;

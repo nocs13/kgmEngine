@@ -1,5 +1,4 @@
 #include "kgmBody.h"
-KGMOBJECT_IMPLEMENT(kgmBody, kgmObject);
 
 kgmBody::kgmBody()
 {

@@ -2,8 +2,6 @@
 #include "kgmTexture.h"
 #include "../kgmBase/kgmIGC.h"
 
-KGMOBJECT_IMPLEMENT(kgmMaterial, kgmObject);
-
 kgmMaterial::kgmMaterial()
 {
   m_flags = MF_Textures | MF_Depth | MF_Color;
