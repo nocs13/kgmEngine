@@ -37,6 +37,9 @@ public:
     width = icn.width;
     height = icn.height;
     position = icn.position;
+
+    if(icn.icon)
+      icn.icon->assign((kgmResource*&)icon);
   }
 
   ~kgmIcon()

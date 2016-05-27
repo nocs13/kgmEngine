@@ -131,7 +131,7 @@ public:
 public:
   kgmMaterial();
 
-  kgmMaterial* clone();
+  kgmMaterial(const kgmMaterial&);
 
   ~kgmMaterial();
 

@@ -147,10 +147,8 @@ public:
 
 public:
   kgmMesh();
+  kgmMesh(const kgmMesh&);
   ~kgmMesh();
-
-  kgmMesh* clone();
-
 
   void rebound();  //recalculate boundes(box, sphere, ...)
   box3 bound();

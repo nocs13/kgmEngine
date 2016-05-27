@@ -19,24 +19,37 @@ kgmMaterial::kgmMaterial()
   m_dstblend = gcblend_one;
 }
 
-kgmMaterial::~kgmMaterial()
+kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
 {
+  m_color     = mtl.m_color;
+  m_specular  = mtl.m_specular;
+
+  m_shininess    = mtl.m_shininess;
+
+  m_shader = mtl.m_shader;
+
+  m_gc = mtl.m_gc;
+
+  if(mtl.m_tex_color)
+    mtl.m_tex_color->assign((kgmResource *&) m_tex_color);
+
+  if(mtl.m_tex_normal)
+    mtl.m_tex_normal->assign((kgmResource *&) m_tex_normal);
+
+  if(mtl.m_tex_specular)
+    mtl.m_tex_specular->assign((kgmResource *&) m_tex_specular);
 }
 
-kgmMaterial* kgmMaterial::clone()
+kgmMaterial::~kgmMaterial()
 {
-  kgmMaterial* m = new kgmMaterial;
+  if(m_tex_color)
+    m_tex_color->release();
 
-  m->m_color     = m_color;
-  m->m_specular  = m_specular;
+  if(m_tex_normal)
+    m_tex_normal->release();
 
-  m->m_shininess    = m_shininess;
-
-  m->m_shader = m_shader;
-
-  m->m_gc = m_gc;
-
-  return m;
+  if(m_tex_specular)
+    m_tex_specular->release();
 }
 
 void kgmMaterial::setTexColor(kgmTexture* t)

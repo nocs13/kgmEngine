@@ -33,7 +33,7 @@ public:
   bool  shadows;    //cast shadows, need shadow map. not for point type.
 
   kgmString m_id;
-  u32       m_group;     // object group id
+  u32       m_group; // object group id
 
 #ifdef DEBUG
   kgmIcon* m_icon = null;
@@ -84,24 +84,6 @@ public:
   {
   }
 
-  kgmObject* clone()
-  {
-    kgmLight* l = new kgmLight();
-
-    l->position  = position;
-    l->direction = direction;
-    l->color     = color;
-    l->intensity = intensity;
-    l->angle     = angle;
-    l->shadows   = shadows;
-    l->active    = active;
-    l->m_group   = m_group;
-
-#ifdef DEBUG
-    l->setIcon(m_icon);
-#endif
-  }
-
   vec3 getPosition() const
   {
     return position;
@@ -120,6 +102,16 @@ public:
   void setDirection(vec3 v)
   {
     direction = v;
+  }
+
+  void setAngle(f32 a)
+  {
+    angle = a;
+  }
+
+  f32 getAngle() const
+  {
+    return angle;
   }
 
 #ifdef DEBUG

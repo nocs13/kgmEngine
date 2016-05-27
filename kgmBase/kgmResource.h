@@ -79,6 +79,18 @@ public:
     m_group = group;
   }
 
+  bool assign(kgmResource *&resource)
+  {
+    if(resource)
+      return false;
+
+    increment();
+
+    resource = this;
+
+    return true;
+  }
+
 private:
   void lock()
   {

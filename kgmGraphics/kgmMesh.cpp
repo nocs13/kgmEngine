@@ -15,6 +15,23 @@ kgmMesh::kgmMesh()
   m_bound = box3();
 }
 
+kgmMesh::kgmMesh(const kgmMesh& msh)
+{
+  m_rtype = msh.m_rtype;
+
+  m_vcount = msh.m_vcount;
+  m_fcount = msh.m_fcount;
+  m_fvf    = msh.m_fvf;
+  m_fff    = msh.m_fff;
+  m_group  = msh.m_group;
+
+  vAlloc(m_vcount, (kgmMesh::FVF)m_fvf);
+  fAlloc(m_fcount, (kgmMesh::FFF)m_fff);
+
+  memcpy(m_vertices, msh.m_vertices, m_vcount * vsize());
+  memcpy(m_faces, msh.m_faces, m_fcount * fsize());
+}
+
 kgmMesh::~kgmMesh()
 {
   if(m_vertices)
@@ -25,27 +42,6 @@ kgmMesh::~kgmMesh()
 
   if(m_maps)
     free(m_maps);
-}
-
-kgmMesh* kgmMesh::clone()
-{
-  kgmMesh* mesh = new kgmMesh();
-
-  mesh->m_rtype = m_rtype;
-
-  mesh->m_vcount = m_vcount;
-  mesh->m_fcount = m_fcount;
-  mesh->m_fvf    = m_fvf;
-  mesh->m_fff    = m_fff;
-  mesh->m_group  = m_group;
-
-  mesh->vAlloc(m_vcount, (kgmMesh::FVF)m_fvf);
-  mesh->fAlloc(m_fcount, (kgmMesh::FFF)m_fff);
-
-  memcpy(mesh->m_vertices, m_vertices, m_vcount * vsize());
-  memcpy(mesh->m_faces, m_faces, m_fcount * fsize());
-
-  return mesh;
 }
 
 void kgmMesh::rebound()
