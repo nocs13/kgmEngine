@@ -1,9 +1,11 @@
 include Makefile.mac
 
 subdirs := $(wildcard kgm*/)
+subdirs += $(wildcard kgmGraphics/render)
 subdirs += $(wildcard kgmGame/actors)
 subdirs += $(wildcard kgmGame/objects)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
+sources += $(wildcard kgmGraphics/render/*.cpp)
 sources += $(wildcard kgmGame/actions/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
 sources += $(wildcard kgmGame/editor/*.cpp)

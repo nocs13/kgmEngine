@@ -4,7 +4,6 @@ RM =
 
 CC = ccache g++
 AR = ar
-DEFS = -DLINUX -DDEBUG -DLUA
 DSND = -OAL
 DSEP = /
 
@@ -14,7 +13,7 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
-	DEFS = -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR
+	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -std=gnu++11 #-Wno-unknown-pragmas -Werror
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	RM = rm -f
@@ -22,7 +21,7 @@ else
 	CC   = g++
 	OS   = Windows
 	DSEP = \\
-	DEFS = -DWIN32 -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
+	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
 	FLGS = -fPIC -O0 -mwindows -std=gnu++11
 	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm
 	RM = rm -f
