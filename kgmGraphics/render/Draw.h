@@ -1,7 +1,12 @@
 #pragma once
 
 #include "../../kgmBase/kgmIGC.h"
+
 #include "../kgmGui.h"
+#include "../kgmFont.h"
+#include "../kgmTexture.h"
+
+//class kgmTexture;
 
 void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
@@ -16,8 +21,6 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
   if(tex && tex->m_texture)
     gc->gcSetTexture(0, tex->m_texture);
-  else
-    gc->gcSetTexture(0, g_tex_white);
 
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 
@@ -128,6 +131,6 @@ void gcDrawBillboard(kgmIGC* gc, box b, u32 col)
   v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
   m.identity();
-  setViewMatrix(m);
+  //setViewMatrix(m);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 }

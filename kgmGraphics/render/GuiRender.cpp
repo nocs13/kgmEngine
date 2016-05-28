@@ -1,13 +1,14 @@
+#include "GuiRender.h"
 #include "Draw.h"
 
-GuiRender::GuiRender(kgmIGC* gc, kgmList<kgmGui*>& guis)
+#include "../kgmGraphics.h"
+
+GuiRender::GuiRender(kgmGraphics* gr)
 {
-  this->gc   = gs;
-  this->guis = guis;
+  this->gr = gr;
 }
 
-GuiRender::render()
+void GuiRender::render()
 {
 
 }
-
