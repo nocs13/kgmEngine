@@ -106,6 +106,8 @@ private:
   uint32 m_max_faces;
 
   u32    m_bg_color;
+
+  GuiRender* m_r_gui = null;
 public:
   kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();

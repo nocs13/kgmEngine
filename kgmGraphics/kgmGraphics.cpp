@@ -172,10 +172,14 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
+
+  m_r_gui = new GuiRender(this);
 }
 
 kgmGraphics::~kgmGraphics()
 {
+  delete m_r_gui;
+
   m_visuals.clear();
 
   m_lights.clear();
