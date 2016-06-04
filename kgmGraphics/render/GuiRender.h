@@ -3,18 +3,18 @@
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
 
+class kgmGraphics;
+
 class GuiRender
 {
-  class kgmGraphics;
-
-  //kgmIGC* gc;
-  //kgmList<kgmGui*>& guis;
-
   kgmGraphics* gr;
 
 public:
-  //GuiRender(kgmIGC* gc, kgmList<kgmGui*>& guis);
   GuiRender(kgmGraphics* gr);
 
   void render();
+
+private:
+  void render(kgmGui* gui);
+  void renderGuiMenuItem(kgmGui* menu, void *i);
 };
