@@ -27,7 +27,6 @@
 kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shadowQuality  = GraphicsQualityLow;
 
-
 struct Vert
 {
   vec3 v;
@@ -79,12 +78,6 @@ void*      g_map_shadow = null;
 
 kgmLight*     g_def_light = null;
 kgmMaterial*  g_def_material = null;
-
-enum
-{
-  kgmShader_TypeGui = 100,
-  kgmShader_TypeIcon,
-};
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
@@ -795,7 +788,7 @@ void kgmGraphics::render()
     }
   }
 
-  for(int i = m_guis.size(); i > 0; i--)
+  /*for(int i = m_guis.size(); i > 0; i--)
   {
     kgmGui* gui = m_guis[i - 1];
 
@@ -807,8 +800,7 @@ void kgmGraphics::render()
     {
       render(gui);
     }
-  }
-
+  }*/
 
 #ifdef DEBUG
   char info[4096] = {0};
@@ -844,6 +836,9 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
   gc3DMode();
+
+  m_r_gui->render();
+
   gc->gcEnd();
   gc->gcRender();
 

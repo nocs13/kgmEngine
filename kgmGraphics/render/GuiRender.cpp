@@ -8,11 +8,37 @@
 GuiRender::GuiRender(kgmGraphics* gr)
 {
   this->gr = gr;
+
+  mi.identity();
 }
 
 void GuiRender::render()
 {
+  gr->gc->gcSetShader(null);
+  gr->gc->gcDepth(false, 0, 0);
+  gr->gc2DMode();
 
+  gr->setWorldMatrix(mi);
+
+  gr->render((kgmShader*)gr->shaders[kgmGraphics::kgmShader_TypeGui]);
+
+  for(int i = gr->m_guis.size(); i > 0; i--)
+  {
+    kgmGui* gui = gr->m_guis[i - 1];
+
+    if(!gui)
+    {
+      gr->m_guis.erase(i - 1);
+    }
+    else if(gui->visible())
+    {
+      render(gui);
+    }
+  }
+
+  gr->render((kgmShader*)null);
+
+  gr->gc3DMode();
 }
 
 void GuiRender::render(kgmGui* gui)

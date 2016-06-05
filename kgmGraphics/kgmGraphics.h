@@ -57,6 +57,12 @@ public:
     kgmTexture* map;
   };
 
+  enum
+  {
+    kgmShader_TypeGui = 100,
+    kgmShader_TypeIcon,
+  };
+
 private:
   kgmIGC* gc;
   kgmIResources* rc;

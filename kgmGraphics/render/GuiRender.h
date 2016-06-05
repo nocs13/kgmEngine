@@ -9,6 +9,8 @@ class GuiRender
 {
   kgmGraphics* gr;
 
+  mtx4 mi;
+
 public:
   GuiRender(kgmGraphics* gr);
 
