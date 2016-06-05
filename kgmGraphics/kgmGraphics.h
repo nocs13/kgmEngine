@@ -27,6 +27,7 @@
 #include "kgmMaterial.h"
 
 #include "render/GuiRender.h"
+#include "render/SpriteRender.h"
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"
@@ -38,6 +39,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   KGM_OBJECT(kgmGraphics);
 
   friend class GuiRender;
+  friend class SpriteRender;
 public:
 
   enum GraphicsQuality

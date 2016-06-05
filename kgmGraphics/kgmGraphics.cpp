@@ -368,6 +368,11 @@ void kgmGraphics::render()
     }
   }
 
+  if(count_sprites == m_visible_sprites.length())
+    m_visible_sprites.realloc(m_visible_sprites.length() + 1024);
+
+  m_visible_sprites[count_sprites + 1] = null;
+
   gc->gcCull(1);
 
   setProjMatrix(m_camera->mProj);
