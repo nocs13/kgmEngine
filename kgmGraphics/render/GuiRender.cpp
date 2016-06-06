@@ -336,8 +336,6 @@ void GuiRender::renderGuiMenuItem(kgmGui* menu, void *i)
 
     kgmString title = citem->getTitle();
 
-    //float asp = (float)m_viewport.width() / (float)m_viewport.height();
     gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, rc, title);
-    //gcDrawText(font, 10, 10, 0xff000000, rc, title);
   }
 }

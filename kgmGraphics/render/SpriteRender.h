@@ -2,7 +2,6 @@
 #define SPRITERENDERER_H
 
 #include "../../kgmBase/kgmIGC.h"
-#include "../../kgmBase/kgmArray.h"
 
 class kgmGraphics;
 class kgmVisual;

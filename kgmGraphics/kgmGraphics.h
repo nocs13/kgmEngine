@@ -115,7 +115,8 @@ private:
 
   u32    m_bg_color;
 
-  GuiRender* m_r_gui = null;
+  GuiRender*    m_r_gui = null;
+  SpriteRender* m_r_sprite = null;
 public:
   kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();

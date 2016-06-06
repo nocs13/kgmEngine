@@ -68,5 +68,6 @@ void SpriteRender::render(kgmSprite* sprite)
   v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
   v[0].col = v[1].col = v[2].col = v[3].col = sprite->m_color.color;
+
   gr->gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(Point), 4, v, 0, 0, 0);
 }

@@ -167,11 +167,14 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   g_mtx_iden.identity();
 
   m_r_gui = new GuiRender(this);
+  m_r_sprite = new SpriteRender(this);
 }
 
 kgmGraphics::~kgmGraphics()
 {
   delete m_r_gui;
+
+  delete m_r_sprite;
 
   m_visuals.clear();
 
@@ -777,7 +780,7 @@ void kgmGraphics::render()
 
   render((kgmShader*)shaders[kgmShader_TypeGui]);
 
-  for(u32 i = 0; i < count_sprites; i++)
+  /*for(u32 i = 0; i < count_sprites; i++)
   {
     if(m_visible_sprites[i]->type() == kgmVisual::TypeSprite)
     {
@@ -793,7 +796,7 @@ void kgmGraphics::render()
     }
   }
 
-  /*for(int i = m_guis.size(); i > 0; i--)
+  for(int i = m_guis.size(); i > 0; i--)
   {
     kgmGui* gui = m_guis[i - 1];
 
@@ -842,6 +845,7 @@ void kgmGraphics::render()
 
   gc3DMode();
 
+  //m_r_sprite->render();
   m_r_gui->render();
 
   gc->gcEnd();

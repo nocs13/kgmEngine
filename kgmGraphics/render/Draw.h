@@ -44,11 +44,10 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
 
   float tx = 0.0f, ty = 0.0f;
   float tdx = (float)(1.f / font->m_cols),
-      tdy = (float)(1.f / font->m_rows);
+        tdy = (float)(1.f / font->m_rows);
 
   float cx = (float)clip.x, cy = (float)clip.y;
 
-  //gc->gcBlend(true, gcblend_one, gcblend_one);
   gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->m_texture);
 
