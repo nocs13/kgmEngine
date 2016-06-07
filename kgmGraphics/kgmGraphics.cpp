@@ -968,74 +968,6 @@ void kgmGraphics::render(kgmParticles* particles)
   if(!particles || !particles->getMesh())
     return;
 
-  /*mtx4    mtr = g_mtx_view;
-  vec3    rv, uv;
-  //float2  dim(1, 1);
-
-
-  //rv = vec3(m_camera.camera.mView.m[0], m_camera.camera.mView.m[1], m_camera.camera.mView.m[2]);
-  rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
-  rv.normalize();
-  //uv = vec3(m_camera.camera.mView.m[4], m_camera.camera.mView.m[5], m_camera.camera.mView.m[6]);
-  uv = rv.cross(m_camera->mDir);//vec3(mtr.m[4], mtr.m[5], mtr.m[6]);
-  uv.normalize();
-
-  s32           count;
-
-  if(particles->m_typerender == kgmParticles::RTypeBillboard)
-  {
-    count = particles->m_count;
-    kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)particles->getMesh()->vertices();
-
-    for(s32 i = 0; i < count; i++)
-    {
-      vec3    pos   = particles->m_particles[i].pos;
-      float   scale = particles->m_particles[i].scale;
-      float   time  = particles->m_particles[i].time;
-      float   life  = particles->m_particles[i].life;
-      vec3    crv = rv * scale,
-              cuv = uv * scale;
-
-      float   txu_s = 0.0f, txv_s = 0.0f;
-      float   txu_e = 1.0f, txv_e = 1.0f;
-
-      if(particles->tex_slide_cols > 1 || particles->tex_slide_rows > 1)
-      {
-        u32 frames = particles->tex_slide_cols * particles->tex_slide_rows;
-        u32 frame  = (u32)((float)frames * time / life);
-
-        float sw = (particles->tex_slide_cols > 1) ? (1.0f / particles->tex_slide_cols) : (1.0f);
-        float sh = (particles->tex_slide_rows > 1) ? (1.0f / particles->tex_slide_rows) : (1.0f);
-
-        u32   ir = frame / particles->tex_slide_cols;
-        u32   ic = frame % particles->tex_slide_cols;
-
-        txu_s = sw * ic;
-        txv_s = sh * ir;
-        txu_e = sw * (ic + 1);
-        txv_e = sh * (ir + 1);
-      }
-
-      points[i].pos = (pos - crv + cuv);
-      points[i].uv = vec2(txu_s, txv_s);
-      points[i + 1].pos = (pos - crv - cuv);
-      points[i + 1].uv = vec2(txu_s, txv_e);
-      points[i + 2].pos = (pos + crv + cuv);
-      points[i + 2].uv = vec2(txu_e, txv_s);
-
-      points[i + 3].pos = (pos + crv - cuv);
-      points[i + 3].uv = vec2(txu_e, txv_e);
-      points[i + 4].pos = (pos + crv + cuv);
-      points[i + 4].uv = vec2(txu_e, txv_s);
-      points[i + 5].pos = (pos - crv - cuv);
-      points[i + 5].uv = vec2(txu_s, txv_e);
-
-      points[i].col = points[i + 1].col =
-          points[i + 2].col = points[i + 3].col =
-          points[i + 4].col = points[i + 5].col = particles->m_particles[i].col.color;
-    }
-  }*/
-
   render(particles->getMesh());
 }
 
@@ -1051,7 +983,7 @@ void kgmGraphics::render(kgmIcon* icon)
 
   vec3 pos   = icon->getPosition();
   vec3 crv = rv * icon->getWidth(),
-      cuv = uv * icon->getHeight();
+       cuv = uv * icon->getHeight();
 
   kgmMesh::Vertex_P_C_T points[6];
 
@@ -1070,8 +1002,8 @@ void kgmGraphics::render(kgmIcon* icon)
   points[5].uv = vec2(0, 0);
 
   points[0].col = points[1].col =
-      points[2].col = points[3].col =
-      points[4].col = points[5].col = 0xffffffff;
+  points[2].col = points[3].col =
+  points[4].col = points[5].col = 0xffffffff;
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }

@@ -4,7 +4,8 @@
 //#include "kgmQuaternion.h"
 
 //MATRIX3x3
-template <class T> class kgmMatrix3x3{
+template <class T> class kgmMatrix3x3
+{
 public:
   T m[9];
 
@@ -31,7 +32,8 @@ public:
 };
 
 //MATRIX4x4
-template <class T> class kgmMatrix4x4{
+template <class T> class kgmMatrix4x4
+{
 public:
   T m[16];
 
@@ -52,7 +54,8 @@ public:
     translate(v);
   }
 
-  kgmMatrix4x4(kgmQuaternion<T> &q){
+  kgmMatrix4x4(kgmQuaternion<T> &q)
+  {
     T x2 = q.x + q.x,
     y2 = q.y + q.y,
     z2 = q.z + q.z,
