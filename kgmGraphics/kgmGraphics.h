@@ -138,10 +138,8 @@ public:
   kgmResource* resource(kgmString);
 
 private:
-  void render(kgmGui*);
   void render(kgmMesh*);
   void render(kgmVisual*);
-  void render(kgmSprite*);
   void render(kgmShader*);
   void render(kgmMaterial*);
   void render(kgmParticles*);
@@ -150,6 +148,7 @@ private:
   void renderGuiMenuItem(kgmGui*, void*);
 
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
+  void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, s8*);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
   void gcDrawBillboard(box b, u32 col);
 

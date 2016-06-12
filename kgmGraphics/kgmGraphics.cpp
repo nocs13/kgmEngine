@@ -780,56 +780,25 @@ void kgmGraphics::render()
 
   render((kgmShader*)shaders[kgmShader_TypeGui]);
 
-  /*for(u32 i = 0; i < count_sprites; i++)
-  {
-    if(m_visible_sprites[i]->type() == kgmVisual::TypeSprite)
-    {
-      render(m_visible_sprites[i]->getSprite());
-    }
-    else if(m_visible_sprites[i]->type() == kgmVisual::TypeText)
-    {
-      kgmText* text = m_visible_sprites[i]->getText();
-      kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
-                      text->m_rect.w, text->m_rect.h);
+  m_r_sprite->render();
+  m_r_gui->render();
 
-      gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
-    }
-  }
+  gc->gcSetShader(null);
+  gc->gcDepth(false, 0, 0);
+  gc2DMode();
+  m.identity();
+  setWorldMatrix(m);
 
-  for(int i = m_guis.size(); i > 0; i--)
-  {
-    kgmGui* gui = m_guis[i - 1];
-
-    if(!gui)
-    {
-      m_guis.erase(i - 1);
-    }
-    else if(gui->visible())
-    {
-      render(gui);
-    }
-  }*/
+  render((kgmShader*)shaders[kgmShader_TypeGui]);
 
 #ifdef DEBUG
-  char info[4096] = {0};
-  sprintf(info, "camera direction: %f %f %f \ncamera position: %f %f %f \n \
-          unvisible: %i\n",
-          m_camera->mDir.x, m_camera->mDir.y, m_camera->mDir.z,
-          m_camera->mPos.x, m_camera->mPos.y, m_camera->mPos.z,
-          k);
-  //kgmString text(info);
-  //gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(1, 400, 600, 200), text);
-
   static u32 fps_start_time = kgmTime::getTicks();
-  static u32 fps_frame_time = 0;
   static u32 fps_frames = 0;
-  static kgmString fps_text;
+  static s8  fps_text[256] = {0};
 
   if(kgmTime::getTicks() - fps_start_time > 1000)
   {
-    memset(info, 0, sizeof(info));
-    sprintf(info, "FPS: %i\0", fps_frames);
-    fps_text = info;
+    sprintf(fps_text, "FPS: %i\0", fps_frames);
     fps_frames = 0;
     fps_start_time = kgmTime::getTicks();
   }
@@ -844,9 +813,6 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
   gc3DMode();
-
-  //m_r_sprite->render();
-  m_r_gui->render();
 
   gc->gcEnd();
   gc->gcRender();
@@ -943,24 +909,6 @@ void kgmGraphics::render(kgmVisual* visual)
   }
   //*/
 #endif
-}
-
-void kgmGraphics::render(kgmSprite* sprite)
-{
-  struct Point{ vec3 pos; u32 col; vec2 uv; };
-  Point v[4];
-
-  v[0].pos = vec3(sprite->m_rect.x, sprite->m_rect.y, 0);
-  v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
-  v[1].pos = vec3(sprite->m_rect.x, sprite->m_rect.y + sprite->m_rect.h, 0);
-  v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
-  v[2].pos = vec3(sprite->m_rect.x + sprite->m_rect.w, sprite->m_rect.y, 0);
-  v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
-  v[3].pos = vec3(sprite->m_rect.x + sprite->m_rect.w, sprite->m_rect.y + sprite->m_rect.h, 0);
-  v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
-
-  v[0].col = v[1].col = v[2].col = v[3].col = sprite->m_color.color;
-  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(Point), 4, v, 0, 0, 0);
 }
 
 void kgmGraphics::render(kgmParticles* particles)
@@ -1201,307 +1149,6 @@ void kgmGraphics::render(kgmMesh *m)
              2, 3 * m->fcount(), m->faces());
 }
 
-void kgmGraphics::render(kgmGui* gui)
-{
-  kgmGui::Rect rect;
-  kgmString    text;
-
-  if(!gui)
-    return;
-
-  gui->getRect(rect, true);
-
-  text = gui->getText();
-
-  if(gui->alpha())
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-
-  if(gui->isClass(kgmGuiButton::cClass()))
-  {
-    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
-    u32 fheight = (u32)((float)rect.h * (float)0.75f);
-    u32 tlen = text.length();
-    u32 fw = (tlen) * fwidth;
-    u32 fh = fheight;
-    kgmGui::Rect tClip = rect;
-
-    tClip.x = rect.x + rect.w / 2 - fw / 2;
-    tClip.y = rect.y + rect.h / 2 - fh / 2;
-    tClip.w = fw;
-    tClip.h = fh;
-
-    switch(((kgmGuiButton*)gui)->getState())
-    {
-    case kgmGuiButton::StateFocus:
-      gcDrawRect(rect, gui_style->sbutton.ac_color, gui_style->sbutton.image);
-      break;
-    case kgmGuiButton::StateClick:
-      gcDrawRect(rect, gui_style->sbutton.fg_color, gui_style->sbutton.image);
-      break;
-    case kgmGuiButton::StateNone:
-    default:
-      gcDrawRect(rect, gui_style->sbutton.bg_color, gui_style->sbutton.image);
-    }
-
-    if(text.length() > 0)
-      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
-  }
-  else if(gui->isClass(kgmGuiScroll::cClass()))
-  {
-    kgmGuiScroll* gscroll = (kgmGuiScroll*)gui;
-    kgmGui::Rect  srect = gscroll->getScrollerRect();
-
-    srect = gscroll->toAbsolute(srect);
-
-    gcDrawRect(rect, gui_style->sscroll.bg_color, gui_style->sscroll.image);
-    gcDrawRect(srect, gui_style->sscroll.fg_color, gui_style->sscroll.image);
-  }
-  else if(gui->isClass(kgmGuiList::cClass()))
-  {
-    kgmGuiList* glist = (kgmGuiList*)gui;
-
-    u32 item_cnt = ((kgmGuiList*)gui)->m_items.size();
-
-    kgmGui::Rect srect = glist->getItemRect(glist->getFirstVisibleItem());
-    srect = glist->toAbsolute(srect);
-
-    //Draw Main Rect
-    gcDrawRect(rect, gui_style->slist.bg_color, gui_style->slist.image);
-
-    //Draw Items Rects
-    for(int i = glist->getFirstVisibleItem();
-        i < (glist->getFirstVisibleItem() + glist->getVisibleItemsCount());
-        i++)
-    {
-      if(i >= item_cnt)
-        break;
-
-      kgmString item;
-
-      item = ((kgmGuiList*)gui)->m_items[i];
-
-      kgmGui::Rect frect;
-
-      frect = glist->getItemRect(i);
-      frect = glist->toAbsolute(frect);
-
-      if(i == glist->getSel())
-      {
-        gcDrawRect(frect, gui_style->slist.fg_color, gui_style->slist.image);
-      }
-
-      if(rect.inside(frect))
-      {
-        gcDrawText(gui_style->gui_font, frect.height() / 2, frect.height(),
-                   gui_style->slist.tx_color, frect, item);
-      }
-    }
-
-    if(glist->m_scroll && glist->m_scroll->visible())
-    {
-      render(glist->m_scroll);
-    }
-  }
-  else if(gui->isClass(kgmGuiText::cClass()))
-  {
-    kgmGuiText* gtext = (kgmGuiText*)gui;
-
-    if(gui->m_hasMouse )
-    {
-      gcDrawRect(rect, gui_style->stext.fg_color, gui_style->stext.image);
-    }
-    else
-    {
-      gcDrawRect(rect, gui_style->stext.bg_color, gui_style->stext.image);
-    }
-
-    if(text.length() > 0)
-    {
-      if(!gtext->isReadOnly() && gui->getFocus() == gui)
-      {
-        u32 i = gtext->getCursor();
-        kgmGui::Rect rc(rect.x + 1 + (u32)(0.5 * gui_style->stext.ft_size) * i, rect.y + 1,
-                        (u32)(0.5 * gui_style->stext.ft_size - 1), gui_style->stext.ft_size);
-
-        if(rect.inside(rc))
-          gcDrawRect(rc, gui_style->stext.cr_color, null);
-      }
-
-      kgmString c_text;
-      u32       c_len = rect.width() / (u32)(0.5 * gui_style->stext.ft_size);
-      s32       c_idx = gtext->getIndex() - gtext->getCursor();
-
-      if (c_idx < 0)
-        c_idx = 0;
-
-      if(c_idx + c_len > text.length())
-        c_len = text.length() - c_idx;
-
-      c_text.alloc(c_len);
-
-      for(u32 i = 0; i < c_len; i++)
-      {
-        if(c_idx + i >= text.length())
-          break;
-
-        c_text.data()[i] = text.data()[c_idx + i];
-      }
-
-      gcDrawText(gui_style->gui_font, (u32)(0.5 * gui_style->stext.ft_size),
-                 gui_style->stext.ft_size, gui_style->stext.tx_color, rect, c_text);
-    }
-  }
-  else if(gui->isClass(kgmGuiMenu::cClass()))
-  {
-    kgmGuiMenu* menu = (kgmGuiMenu*)gui;
-
-    if(menu->getItem())
-      renderGuiMenuItem(menu, menu->getItem());
-  }
-  else if(gui->isClass(kgmGuiTab::cClass()))
-  {
-    //render((kgmGuiTab*)gui);
-  }
-  else if(gui->isClass(kgmGuiProgress::cClass()))
-  {
-    //render((kgmGuiProgress*)gui);
-  }
-  else if(gui->isClass(kgmGuiLabel::cClass()))
-  {
-    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
-    u32 fheight = (u32)((float)rect.h * (float)0.75f);
-    u32 tlen = text.length();
-    u32 fw = (tlen) * fwidth;
-    u32 fh = fheight;
-    kgmGui::Rect tClip = rect;
-
-    tClip.x = rect.x + rect.w / 2 - fw / 2;
-    tClip.y = rect.y + rect.h / 2 - fh / 2;
-    tClip.w = fw;
-    tClip.h = fh;
-
-    fwidth = ((kgmGuiLabel*)gui)->getFontWidth();
-    fheight = ((kgmGuiLabel*)gui)->getFontHeight();
-
-    gcDrawRect(rect, gui_style->slabel.bg_color, gui_style->slabel.image);
-
-    if(text.length() > 0)
-      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, tClip, text);
-  }
-  else if(gui->isClass(kgmGuiCheck::cClass()))
-  {
-    u32 fwidth = (u32)((float)(rect.w - 25) / (float)(text.length() + 1));
-    u32 fheight = (u32)((float)rect.h * (float)0.75f);
-    u32 tlen = text.length();
-    u32 fw = (tlen) * fwidth;
-    u32 fh = fheight;
-    kgmGui::Rect tClip = rect;
-
-    tClip.x = rect.x + rect.w / 2 - fw / 2;
-    tClip.y = rect.y + rect.h / 2 - fh / 2;
-    tClip.w = fw;
-    tClip.h = fh;
-
-    kgmGui::Rect btClip = rect;
-    kgmGui::Rect txClip = rect;
-    kgmGui::Rect chClip = rect;
-
-    btClip.x += 2;
-    btClip.y += 2;
-    btClip.w = 20;
-    btClip.h = rect.h - 4;
-
-    chClip = btClip;
-    chClip.x += 3;
-    chClip.y += 3;
-    chClip.w -= 6;
-    chClip.h -= 6;
-
-    txClip.x += 25;
-    txClip.w -= 25;
-
-    fwidth = ((kgmGuiCheck*)gui)->getFontWidth();
-    fheight = ((kgmGuiCheck*)gui)->getFontHeight();
-
-    switch(((kgmGuiCheck*)gui)->getState())
-    {
-    case kgmGuiCheck::StateFocus:
-      gcDrawRect(rect, gui_style->scheck.ac_color, gui_style->scheck.image);
-      break;
-    case kgmGuiCheck::StateNone:
-    default:
-      gcDrawRect(rect, gui_style->scheck.bg_color, gui_style->scheck.image);
-    }
-
-    gcDrawRect(btClip, gui_style->scheck.bg_check, gui_style->scheck.image);
-
-    if(((kgmGuiCheck*)gui)->isCheck())
-      gcDrawRect(chClip, gui_style->scheck.fg_check, gui_style->scheck.image);
-
-    if(text.length() > 0)
-      gcDrawText(gui_style->gui_font, fwidth, fheight, gui_style->sbutton.tx_color, txClip, text);
-  }
-  else if(gui->isClass(kgmGui::cClass()))
-  {
-    if(gui->m_hasMouse )
-    {
-      gcDrawRect(rect, gui_style->sgui.fg_color, gui_style->sgui.image);
-    }
-    else
-    {
-      gcDrawRect(rect, gui_style->sgui.bg_color, gui_style->sgui.image);
-    }
-  }
-
-  if(gui->alpha())
-    gc->gcBlend(false, gcblend_zero, gcblend_zero);
-
-  for(int i = 0; i < gui->m_childs.length(); i++)
-  {
-    if(gui->m_childs[i]->m_view)
-      render(gui->m_childs[i]);
-  }
-}
-
-void kgmGraphics::renderGuiMenuItem(kgmGui* menu, void *i)
-{
-  kgmGuiMenu::Item* item = (kgmGuiMenu::Item*)i;
-
-  kgmGui::Rect prect;
-
-  menu->getRect(prect, true);
-
-  iRect rect = item->getRect();
-
-  for(int i = 0; i < item->getItemsCount(); i++)
-  {
-    kgmGuiMenu::Item* citem = item->getItem(i);
-
-    kgmGui::Rect rc = item->getRect(i);
-
-    rc.x += prect.x;
-    rc.y += prect.y;
-
-    if(item->getSelected() == i)
-    {
-      if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
-        renderGuiMenuItem(menu, citem);
-
-      gcDrawRect(rc, gui_style->smenu.fg_color, gui_style->smenu.image);
-    }
-    else
-    {
-      gcDrawRect(rc, gui_style->smenu.bg_color, gui_style->smenu.image);
-    }
-
-    kgmString title = citem->getTitle();
-
-    //float asp = (float)m_viewport.width() / (float)m_viewport.height();
-    gcDrawText(font, 8, 19, gui_style->smenu.tx_color, rc, title);
-    //gcDrawText(font, 10, 10, 0xff000000, rc, title);
-  }
-}
-
 s32 kgmGraphics::getShaderId(kgmString s)
 {
   return -1;
@@ -1597,6 +1244,69 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
       v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = fcolor, v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
       v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
       
+      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+    }
+
+    cx += fwidth;
+  }
+
+  gc->gcBlend(0, 0, 0);
+  gc->gcSetTexture(0, 0);
+}
+
+void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, s8* text)
+{
+  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
+
+  V v[4];
+
+  u32 tlen = strlen(text);
+
+  if(tlen < 1)
+    return;
+
+  if(!font || !font->m_texture)
+    return;
+
+  float tx = 0.0f, ty = 0.0f;
+  float tdx = (float)(1.f / font->m_cols),
+      tdy = (float)(1.f / font->m_rows);
+
+  float cx = (float)clip.x, cy = (float)clip.y;
+
+  gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcSetTexture(0, font->m_texture);
+
+  for(u32 i = 0; i < tlen; i++)
+  {
+    char ch = text[i];
+
+    if(ch == '\n')
+    {
+      cx = (float)clip.x;
+      cy += fheight;
+
+      continue;
+    }
+
+    if((ch == ' ') || (ch == '\t'))
+    {
+      tx = 0.0f;
+      ty = 0.0f;
+    }
+
+    u32 rows = (font->m_rows != 0) ? (font->m_rows) : (1);
+
+    tx = (float)(tdx * (ch % rows));
+    ty = 1.0f - (float)(tdy * (ch / rows));
+
+    if(clip.inside(cx + fwidth, cy + fheight))
+    {
+      v[0].pos = vec3(cx, cy, 0),                v[0].col = fcolor, v[0].uv = vec2(tx + 0.001,     ty - 0.001);
+      v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = fcolor, v[1].uv = vec2(tx + 0.001,     ty - tdy);
+      v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = fcolor, v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
+      v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
+
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
 
