@@ -665,111 +665,11 @@ void kgmGraphics::render()
     }
   }
 
-#ifdef DEBUG
-  mtx4 mid;
-  mid.identity();
-  setViewMatrix(m_camera->mView);
-  setWorldMatrix(mid);
-
-  render(shaders[kgmShader::TypeNone]);
-
-  for(int i = m_bodies.size(); i > 0;  i--)
-  {
-    kgmBody* body = m_bodies[i - 1];
-
-    if(!body)
-    {
-      m_bodies.erase(i - 1);
-
-      continue;
-    }
-    else if(body->m_intersect)
-    {
-      continue;
-    }
-
-    mtx4 mtx_tr;
-    vec3 vec_points[8];
-    s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
-
-    kgmMesh::Vertex_P_C gr_points[8];
-
-    obox3 ob = body->getOBox();
-    ob.points(vec_points);
-
-    for(int i = 0; i < 8; i++)
-    {
-      gr_points[i].pos = vec_points[i];
-      gr_points[i].col = 0xffffffff;
-    }
-
-    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, sizeof(s16), 24, lines);
-  }
-
-  for(int i = m_obstacles.size(); i > 0;  i--)
-  {
-    kgmObstacle* obstacle = m_obstacles[i - 1];
-
-    if(!obstacle)
-    {
-      m_obstacles.erase(i - 1);
-
-      continue;
-    }
-
-    s16  lines[6] = {0,1, 1,2, 2,0};
-
-    kgmMesh::Vertex_P_C points[3];
-
-    points[0].col = points[1].col = points[2].col = 0xffffffff;
-
-    for(int i = 0; i < obstacle->length(); i++)
-    {
-      triangle3 tr = obstacle->get(i);
-
-      points[0].pos = tr.pt[0];
-      points[1].pos = tr.pt[1];
-      points[2].pos = tr.pt[2];
-
-      gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(kgmMesh::Vertex_P_C), 3, points, sizeof(s16), 6, lines);
-    }
-  }
-
-  for(int i = m_lights.size(); i > 0;  i--)
-  {
-    kgmLight* light = m_lights[i - 1];
-
-    if (light == null)
-    {
-      m_lights.erase(i - 1);
-
-      continue;
-    }
-
-    box3 bb;
-    bb.min = light->position - vec3(1,1,1);
-    bb.max = light->position + vec3(1,1,1);
-    vec3 vec_points[8];
-    s16  lines[24] = {0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7};
-
-    kgmMesh::Vertex_P_C gr_points[8];
-
-    bb.points(vec_points);
-
-    for(int i = 0; i < 8; i++)
-    {
-      gr_points[i].pos = vec_points[i];
-      gr_points[i].col = 0xffffffff;
-    }
-
-    gc->gcDraw(gcpmt_lines, gcv_xyz|gcv_col, sizeof(kgmMesh::Vertex_P_C), 8, gr_points, 2, 24, lines);
-  }
 
   gc->gcSetShader(null);
 
-#endif
-
-  // draw gui
+  m_r_sprite->render();
+  m_r_gui->render();
 
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
@@ -779,9 +679,6 @@ void kgmGraphics::render()
   setWorldMatrix(m);
 
   render((kgmShader*)shaders[kgmShader_TypeGui]);
-
-  m_r_sprite->render();
-  m_r_gui->render();
 
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
@@ -883,32 +780,6 @@ void kgmGraphics::render(kgmVisual* visual)
     setWorldMatrix(visual->getTransform());
     break;
   }
-
-  //visual->update();
-
-#ifdef DEBUG
-  /*
-  if(visual->m_tm_joints)
-  {
-    int joints = visual->m_skeleton->m_joints.size();
-
-    for(int i = 0; i < joints; i++)
-    {
-      vec3 v(0, 0, 0);
-      Vert line[2];
-      int  ipar = visual->m_skeleton->m_joints[i]->i;
-
-      if(ipar < 0 || ipar >= visual->m_skeleton->m_joints.size())
-        continue;
-
-      line[0].v = visual->m_tm_joints[ipar] * v;
-      line[1].v = visual->m_tm_joints[i] * v;
-      line[0].c = line[1].c = 0xffffffff;
-      gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(Vert), 2, line, 0, 0, null);
-    }
-  }
-  //*/
-#endif
 }
 
 void kgmGraphics::render(kgmParticles* particles)
