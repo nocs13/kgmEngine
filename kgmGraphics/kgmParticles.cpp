@@ -13,20 +13,20 @@ inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
 
 kgmParticles::kgmParticles()
 {
-  m_count = 10;
+  m_count = 100;
   m_life = 2000;
-  m_speed = 0.5f;
-  m_angle = 0.0f;
+  m_speed = 10.f;
+  m_angle = DEGTORAD(30.0f);
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
-  m_loop  = false;
+  m_loop  = true;
 
   force     = vec3(0, 0, 0);
   volume    = vec3(0, 0, 0);
 
-  m_divlife     = 0.0f;
-  m_divspeed    = 0.0f;
+  m_divlife     = 0.5f;
+  m_divspeed    = 0.5f;
 
   m_size  = .1f;
   m_esize  = .1f;
@@ -114,9 +114,9 @@ void kgmParticles::init(Particle* pr)
   //pr->dir.x = cos(beta) * cos(alpha) * x_side;
   //pr->dir.y = neg1 * sin(beta) * cos(alpha);
   //pr->dir.z = neg2 * sin(alpha);
-  pr->dir.x = cos(angle) * x_side;
-  pr->dir.y = neg1 * sin(angle) * cos(angle);
-  pr->dir.z = neg2 * sin(angle);
+  pr->dir.x = x_side;
+  pr->dir.y = neg1 * sin(angle * r1);
+  pr->dir.z = neg2 * sin(angle * r2);
 
   pr->dir = pr->dir;
   pr->dir.normalize();
