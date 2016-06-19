@@ -22,8 +22,8 @@ kgmParticles::kgmParticles()
   m_fall  = false;
   m_loop  = true;
 
-  force     = vec3(0, 0, 0);
-  volume    = vec3(0, 0, 0);
+  force  = vec3(0, 0, 0);
+  volume = vec3(0, 0, 0);
 
   m_divlife     = 0.5f;
   m_divspeed    = 0.5f;
@@ -114,7 +114,7 @@ void kgmParticles::init(Particle* pr)
   //pr->dir.x = cos(beta) * cos(alpha) * x_side;
   //pr->dir.y = neg1 * sin(beta) * cos(alpha);
   //pr->dir.z = neg2 * sin(alpha);
-  pr->dir.x = x_side;
+  pr->dir.x = cos(angle * r1);//x_side;
   pr->dir.y = neg1 * sin(angle * r1);
   pr->dir.z = neg2 * sin(angle * r2);
 
