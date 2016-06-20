@@ -36,9 +36,11 @@ enum MENUEVENT
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
+  ME_VIEW_MATERIALS,
   ME_VIEW_PERSPECTIVE,
   ME_VIEW_FRONT,
   ME_VIEW_BACK,
+  ME_VIEW_TOP,
   ME_OPTIONS_DATABASE,
   ME_HELP_ABOUT
 };
@@ -106,10 +108,11 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_RUN_STOP, "Stop", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunStop));
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewObjects));
-    item->add(ME_VIEW_OBJECTS, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
-    item->add(ME_VIEW_OBJECTS, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
-    item->add(ME_VIEW_OBJECTS, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
-    item->add(ME_VIEW_OBJECTS, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
+    item->add(ME_VIEW_MATERIALS, "Materials", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewMaterials));
+    item->add(ME_VIEW_PERSPECTIVE, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
+    item->add(ME_VIEW_FRONT, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
+    item->add(ME_VIEW_BACK, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
+    item->add(ME_VIEW_TOP, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
     game->guiAdd(menu);
 
     mtlLines = new kgmMaterial();
@@ -214,7 +217,7 @@ void kEditor::select(kgmString name)
       textData->m_text =  "Selected: ";
       textData->m_text += name;
 
-      if(pivot)
+      if(pivot && selected && selected->typ != kNode::MATERIAL)
       {
         ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
@@ -1685,7 +1688,20 @@ void kEditor::onViewObjects()
   vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
 
   for(int i = 0; i < nodes.length(); i++)
-    vo->addItem(nodes[i]->nam);
+    if(nodes[i]->typ != kNode::MATERIAL)
+      vo->addItem(nodes[i]->nam);
+
+  game->guiAdd(vo);
+}
+
+void kEditor::onViewMaterials()
+{
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+
+  for(int i = 0; i < nodes.length(); i++)
+    if(nodes[i]->typ == kNode::MATERIAL)
+      vo->addItem(nodes[i]->nam);
 
   game->guiAdd(vo);
 }

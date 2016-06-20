@@ -62,6 +62,7 @@ private:
   u32  view_mode;
 
   kgmList<kNode*> nodes;
+  kgmList<kNode*> materials;
 
   kNode* selected = null;
   kNode* dragging = null;
@@ -141,6 +142,7 @@ public:
   __stdcall void onAddMaterial();
   __stdcall void onAddParticles();
   __stdcall void onViewObjects();
+  __stdcall void onViewMaterials();
   __stdcall void onViewPerspective();
   __stdcall void onViewFront();
   __stdcall void onViewLeft();
