@@ -118,6 +118,9 @@ void kgmParticles::init(Particle* pr)
   pr->dir.y = neg1 * sin(angle * r1);
   pr->dir.z = neg2 * sin(angle * r2);
 
+  vec3 vdir(1, 0, 0);
+  pr->dir = m_transform * vdir + pr->dir;
+
   pr->dir = pr->dir;
   pr->dir.normalize();
 
