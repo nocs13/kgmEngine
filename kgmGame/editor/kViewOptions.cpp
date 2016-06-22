@@ -27,6 +27,10 @@ kgmGuiFrame("Options", x, y, w, h)
     g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText(n->nam);
     y_coord += 22;
+
+    if(n->typ == kNode::MATERIAL)
+      return;
+
     g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("Pos");
     g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
