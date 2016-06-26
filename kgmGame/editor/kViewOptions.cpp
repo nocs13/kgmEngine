@@ -24,8 +24,13 @@ kgmGuiFrame("Options", x, y, w, h)
 
     kgmGui* tgeneral = tab->addTab("General");
 
-    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
+    g = new kgmGuiLabel(tgeneral, 1, y_coord, 40, 20);
+    g->setText("Name:");
+    g = new kgmGuiText(tgeneral, 41, y_coord, w - 42, 20);
+    g->setSid("node_name");
     g->setText(n->nam);
+    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onNodeName));
+    ((kgmGuiText*)g)->setEditable(true);
     y_coord += 22;
 
     if(n->typ == kNode::MATERIAL)
@@ -118,6 +123,13 @@ void kViewOptions::onCloseOptions()
     callClose();
 
   erase();
+}
+
+void kViewOptions::onNodeName(kgmString s)
+{
+  if(s.length() < 1) return;
+
+  node->nam = s;
 }
 
 void kViewOptions::onPositionX(kgmString s)
@@ -314,6 +326,13 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   y_coord += 23;
 
+  kgmGuiCheck* cull = new kgmGuiCheck(tmaterial, 1, y_coord, 60, 20);
+  cull->setText("Cull");
+  cull->setCheck(mtl->cull());
+  slotSelectCull.connect(this, &kViewOptionsForMaterial::onCull, &cull->sigClick);
+
+  y_coord += 23;
+
   kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
   alpha->setText("Alpha");
   alpha->setCheck(mtl->alpha());
@@ -326,10 +345,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   depth->setText("Depth");
   depth->setCheck(mtl->depth());
   slotSelectDepth.connect(this, &kViewOptionsForMaterial::onDepth, &depth->sigClick);
-  kgmGuiCheck* cull = new kgmGuiCheck(tmaterial, 186, y_coord, 60, 20);
-  cull->setText("Cull");
-  cull->setCheck(mtl->cull());
-  slotSelectCull.connect(this, &kViewOptionsForMaterial::onCull, &cull->sigClick);
 
   y_coord += 23;
 

@@ -41,6 +41,7 @@ public:
 
   void onAction(kgmGui* from, u32 arg);
   void onCloseOptions();
+  __stdcall void onNodeName(kgmString s);
   __stdcall void onPositionX(kgmString s);
   __stdcall void onPositionY(kgmString s);
   __stdcall void onPositionZ(kgmString s);
