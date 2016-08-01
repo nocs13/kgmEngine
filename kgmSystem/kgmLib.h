@@ -35,6 +35,7 @@ public:
   ~kgmLib();
 
   bool  open(char *p);
+  bool  active();
   void  close();
   void* get(char *sym);
 };

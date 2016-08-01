@@ -50,3 +50,8 @@ void* kgmLib::get(char *sym)
 
   return null;
 }
+
+bool kgmLib::active()
+{
+  return (handle)?(true):(false);
+}
