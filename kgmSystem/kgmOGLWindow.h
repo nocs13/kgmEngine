@@ -56,7 +56,7 @@ private:
   kgmOGL* m_gc = null;
 
 public:
-  kgmOGLWindow(kgmWindow*, char*, int, int, int, int, int, bool);
+  kgmOGLWindow(kgmWindow*, kgmString, int, int, int, int, int, bool);
   virtual ~kgmOGLWindow();
 
   kgmIGC* getGC();

@@ -18,7 +18,7 @@ static const char alsaDevice[] = "default";
 //#pragma GCC diagnostic pop
 //#pragma GCC diagnostic ignored "-fno-permissive"
 
-typedef void* (*PCM_FUNC)(void*,...);
+typedef void* (*PCM_FUNC)(void*, ...);
 
 //#define MAKE_FUNC(f) static typeof(f) p##f
 #define MAKE_FUNC(f) static PCM_FUNC p##f \
@@ -370,7 +370,7 @@ kgmAlsa::kgmAlsa()
           }
           else
           {
-            printf("kgmAlsa: %lu failed: %s\n", (int) err, (char*) psnd_strerror((int) err));
+            printf("kgmAlsa: %d failed: %s\n", (int) err, (char*) psnd_strerror((void*) err));
           }
 
           psnd_pcm_hw_params_free(params);
@@ -381,20 +381,20 @@ kgmAlsa::kgmAlsa()
                                      SND_PCM_ACCESS_RW_INTERLEAVED, 2,
                                      44100, 1, m_mixer.getMsTime() * 1000) < 0)
         {
-          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror((int) err) << ".\n";
+          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror((void*) err) << ".\n";
 
           return;
         }
 
         if(err = psnd_pcm_prepare(m_handle) < 0)
         {
-          kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror((int) err) << ".\n";
+          kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror((void*) err) << ".\n";
 
           return;
         }
 
-        m_thread.start(this, (int(*)(kgmAlsa*))&kgmAlsa::proceed);
-        m_render.start(this, (int(*)(kgmAlsa*))&kgmAlsa::render);
+        m_thread.start(this, &kgmAlsa::proceed);
+        m_render.start(this, &kgmAlsa::render);
 
         m_thread.priority(kgmThread::PrIdle);
         m_render.priority(kgmThread::PrIdle);
@@ -490,8 +490,10 @@ void kgmAlsa::stop(Sound snd)
     ((_Sound*)snd)->stop();
 }
 
-int kgmAlsa::render()
+int kgmAlsa::render(int r)
 {
+  (void*)r;
+  
   while(m_proceed)
   {
 #ifdef ALSA
@@ -504,10 +506,10 @@ int kgmAlsa::render()
       snd_pcm_uframes_t offset, frames;
       const snd_pcm_channel_area_t *areas = NULL;
 
-      avail = psnd_pcm_avail_update(m_handle);
+      avail = (int) psnd_pcm_avail_update((void*) m_handle);
 
       if(avail < 0)
-        run_recovery(m_handle, avail);
+        run_recovery((snd_pcm_t*) m_handle, avail);
 
       avail = m_mixer.getFrames();
 
@@ -551,7 +553,7 @@ int kgmAlsa::render()
           break;
         }*/
 
-        ret = psnd_pcm_writei(m_handle, WritePtr, avail);
+        ret = (int) psnd_pcm_writei(m_handle, WritePtr, avail);
 
         switch (ret)
         {
@@ -560,7 +562,7 @@ int kgmAlsa::render()
         case -ESTRPIPE:
         case -EPIPE:
         case -EINTR:
-          ret = psnd_pcm_recover(m_handle, ret, 1);
+          ret = (int) psnd_pcm_recover(m_handle, ret, 1);
 
           if(ret < 0)
             avail = 0;
@@ -583,7 +585,7 @@ int kgmAlsa::render()
 
         if (ret < 0)
         {
-          ret = psnd_pcm_prepare(m_handle);
+          ret = (int) psnd_pcm_prepare(m_handle);
 
           if(ret < 0)
             break;
@@ -621,10 +623,12 @@ int kgmAlsa::render()
   return 1;
 }
 
-int kgmAlsa::proceed()
+int kgmAlsa::proceed(int p)
 {
   static u32 max_sounds = 10;
 
+  (void*)p;
+  
   m_proceed = true;
 
   while(m_proceed)

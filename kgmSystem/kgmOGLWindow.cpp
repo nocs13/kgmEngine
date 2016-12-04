@@ -6,8 +6,8 @@
 #include "../kgmBase/kgmLog.h"
 
 
-kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
-  :kgmWindow(null, "", x, y, w, h, bpp, fs)
+kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp, bool fs)
+  :kgmWindow(null, wname, x, y, w, h, bpp, fs)
 {
 #ifdef DEBUG
   kgm_log() << "init ogl screen\n";

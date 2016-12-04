@@ -687,7 +687,7 @@ kgmWindow::kgmWindow()
   m_fs = false;
 }
 
-kgmWindow::kgmWindow(kgmWindow* wp, char* wname, int x, int y, int w, int h, int bpp, bool fs)
+kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp, bool fs)
 {
   m_parent = wp;
   m_msAbs = true;
@@ -971,7 +971,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h)
   w = m_wRect[2];
   h = m_wRect[3];
 
-#else LINUX
+#elif defined(LINUX)
 
   unsigned int  width, height, border, depth;
   Window dummy;

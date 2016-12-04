@@ -5,6 +5,7 @@
 #include "../kgmMedia/kgmAudioMixer.h"
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmFunction.h"
 #include "../kgmSystem/kgmLib.h"
 #include "../kgmSystem/kgmThread.h"
 
@@ -18,27 +19,26 @@ class kgmAlsa: public kgmIAudio
   {
     kgmAlsa* object;
 
-    int (*callback)(kgmAlsa*);
+    kgmFunction<int(kgmAlsa*, int)> callback;
+    
   public:
 
     Thread()
     {
       object   = null;
-      callback = null;
     }
 
-    bool start(kgmAlsa* obj, int (*call)(kgmAlsa*))
+    bool start(kgmAlsa* obj, kgmFunction<int(kgmAlsa*, int)> fn)
     {
       object   = obj;
-      callback = call;
+      callback = fn;
 
       exec();
     }
 
     void run()
     {
-      if(object && callback)
-        callback(object);
+      callback(*object, 0);
     }
   };
 
@@ -72,8 +72,8 @@ public:
   void  play(Sound snd, bool loop);
   void  stop(Sound snd);
 
-  int   render();
-  int   proceed();
+  int   render(int);
+  int   proceed(int);
 };
 
 #endif // KGMALSA_H

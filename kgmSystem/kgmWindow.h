@@ -1,6 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmEvent.h"
 #include "../kgmBase/kgmIGC.h"
+#include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmIWindow.h"
 #include "../kgmMath/kgmMath.h"
 
@@ -77,7 +78,7 @@ public:
 #endif
 
 
-  kgmWindow*	m_parent;
+  kgmWindow* m_parent;
 
   bool m_fs;
   bool m_msAbs;
@@ -88,7 +89,7 @@ private:
 
 public:
   kgmWindow();
-  kgmWindow(kgmWindow*, char*, int, int, int, int, int, bool);
+  kgmWindow(kgmWindow*, kgmString, int, int, int, int, int, bool);
   ~kgmWindow();
 
   void   loop();
