@@ -13,7 +13,7 @@
 
 #include "../kgmSystem/kgmThread.h"
 
-#ifdef DSOUND
+#ifndef DSOUND
 #include <windows.h>
 #include "inc/DX/dsound.h"
 
@@ -27,7 +27,8 @@ class kgmDSound: public kgmIAudio
   {
     kgmDSound* object;
 
-    int (*callback)(kgmDSound*);
+    kgmFunction<int(kgmDSound*, int)> callback;
+
   public:
 
     Thread()
@@ -36,18 +37,17 @@ class kgmDSound: public kgmIAudio
       callback = null;
     }
 
-    bool start(kgmDSound* obj, int (*call)(kgmDSound*))
+    bool start(kgmDSound* obj, kgmFunction<int(kgmDSound*, int)> fn)
     {
       object   = obj;
-      callback = call;
+      callback = fn;
 
       exec();
     }
 
     void run()
     {
-      if(object && callback)
-        callback(object);
+      callback(object, 0);
     }
   };
 
@@ -81,7 +81,9 @@ public:
   void  pan(Sound  snd, s16 pan);
   void  stop(Sound snd);
 
-  __stdcall int   proceed();
+  void  clear();
+
+  __stdcall int proceed(int);
 };
 
 #endif

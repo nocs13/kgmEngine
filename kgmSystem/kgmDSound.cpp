@@ -10,17 +10,13 @@
 #include <mmsystem.h>
 #endif
 
-#ifdef DSOUND
-KGMOBJECT_IMPLEMENT(kgmDSound, kgmObject);
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 static u32 error = 0;
 
-#ifdef DSOUND
+#ifndef DSOUND
 
 void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
                               DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
@@ -316,7 +312,7 @@ kgmDSound::kgmDSound()
 
        m_proceed = true;
 
-       m_thread.start(this, (int(*)(kgmDSound*))&kgmDSound::proceed);
+       m_thread.start(this, &kgmDSound::proceed);
        m_thread.priority(kgmThread::PrIdle);
 
        m_mutex = kgmThread::mutex();
@@ -405,9 +401,11 @@ void kgmDSound::stop(Sound snd)
     ((_Sound*)snd)->stop();
 }
 
-int kgmDSound::proceed()
+int kgmDSound::proceed(int p)
 {
   static u32 max_sounds = 10;
+
+  (void*)p;
 
   m_proceed = true;
 
@@ -444,7 +442,7 @@ int kgmDSound::proceed()
       if(sound->state != _Sound::StPlay)
         continue;
 
-      u32 size = m_mixer.mixdata((sound->data + sound->cursor),
+      u32 size = m_mixer.mixdata((void*) (((size_t) sound->data) + sound->cursor),
                                  (sound->size - sound->cursor),
                                  sound->channels,
                                  sound->bps,
@@ -490,4 +488,8 @@ int kgmDSound::proceed()
   return 0;
 }
 
+void kgmDSound::clear()
+{
+
+}
 #endif

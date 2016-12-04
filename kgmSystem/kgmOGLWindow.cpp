@@ -50,8 +50,8 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, 
   if(!wglMakeCurrent(m_hdc,m_hrc))
     return;
 
-  SendMessage(m_wnd, WM_ACTIVATE, NULL, NULL);
-  SendMessage(m_wnd, WM_PAINT, NULL, NULL);
+  SendMessage(m_wnd, WM_ACTIVATE, 0, 0);
+  SendMessage(m_wnd, WM_PAINT, 0, 0);
 
 #elif defined(ANDROID)
 

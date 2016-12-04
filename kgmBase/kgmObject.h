@@ -51,13 +51,16 @@ protected:
   class Slot: public AbstractSlot<Args...>
   {
   public:
+    typedef void(T::*FN)(Args...);
+
+  public:
     Slot()
     {
       this->t = null;
       this->f = null;
     }
 
-    bool connect(T* t, void(T::*f)(Args...), Signal<Args...> *s)
+    bool connect(T* t, FN f, Signal<Args...> *s)
     {
       if (this->t != null || this->f != null)
         return false;
@@ -92,7 +95,7 @@ protected:
 
   private:
     T* t;
-    void (T::*f)(Args...);
+    FN f;
   };
 
   template<class... Args>

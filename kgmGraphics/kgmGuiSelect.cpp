@@ -6,7 +6,7 @@ kgmGuiSelect::kgmGuiSelect()
   m_text = new kgmGuiText(this, 0, 0, 0, 0);
   m_list = new kgmGuiList(this, 0, 0, 0, 0);
 
-  slotSelect.connect(this, &kgmGuiSelect::onSelect, &m_list->sigSelect);
+  slotSelect.connect(this, (void(kgmGuiSelect::*)(u32)) &kgmGuiSelect::onSelect, &m_list->sigSelect);
 
   m_point = true;
 }
@@ -19,7 +19,7 @@ kgmGuiSelect::kgmGuiSelect(kgmGui *par, int x, int y, int w, int h)
   m_text->show();
   m_list->hide();
 
-  slotSelect.connect(this, &kgmGuiSelect::onSelect, &m_list->sigSelect);
+  slotSelect.connect(this, (Slot<kgmGuiSelect, u32>::FN) &kgmGuiSelect::onSelect, &m_list->sigSelect);
 
   m_text->setEditable(false);
 

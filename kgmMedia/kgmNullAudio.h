@@ -11,7 +11,7 @@ public:
 
     }
 
-    Sound* create(FMT fmt, u16 freq, u32 size, void* data)
+    Sound create(FMT fmt, u16 freq, u32 size, void* data)
     {
         return null;
     }

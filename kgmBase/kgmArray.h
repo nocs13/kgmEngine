@@ -37,9 +37,9 @@ public:
     return *this;
   }
 
-  //T& operator[](u32 i){
-  // return kgmMemory<T>::m_data[i];
-  //}
+  T& operator[](const u32 i) const {
+   return kgmMemory<T>::m_data[i];
+  }
 
 
   void realloc(u32 len)

@@ -18,11 +18,16 @@ ifeq ($(OS), Linux)
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	RM = rm -f
 else
+	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
 	CC   = g++
 	OS   = Windows
 	DSEP = \\
 	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
-	FLGS = -fPIC -O0 -mwindows -std=gnu++11
+	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm
 	RM = rm -f
+	
+	#ifeq($(ARCH), I32)
+	#	FLGS += -fPic
+	#endif
 endif
