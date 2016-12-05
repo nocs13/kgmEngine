@@ -32,7 +32,7 @@ public:
 
     chanels.alloc(c);
 
-    for(int i = 0; i < c; i++)
+    for(u32 i = 0; i < c; i++)
       chanels[i] = false;
 
     return true;

@@ -65,19 +65,19 @@ kgmGuiFrame("Options", x, y, w, h)
     g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.x)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationX.connect(this, &kViewOptions::onRotationX, &((kgmGuiText*)g)->sigChange);
+    slotRotationX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationX, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
     g->setSid("rotation_y");
     g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.y)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationY.connect(this, &kViewOptions::onRotationY, &((kgmGuiText*)g)->sigChange);
+    slotRotationY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationY, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
     g->setSid("rotation_z");
     g->setText(kgmConvert::toString((s32)RADTODEG(n->rot.z)));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationZ.connect(this, &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
+    slotRotationZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -113,7 +113,7 @@ kgmGuiFrame("Options", x, y, w, h)
     kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
     lock->setText("Locked");
     lock->setCheck(node->lock);
-    lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
+    //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
   }
 }
 
@@ -193,7 +193,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   kgmGuiButton* btn = new kgmGuiButton(tmaterial, 1, y_coord, 50, 20);
   btn->setText("Reset");
-  slotReset.connect(this, &kViewOptionsForMaterial::onReset, &btn->sigClick);
+  slotReset.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onReset, &btn->sigClick);
 
 
   y_coord += 23;
@@ -213,19 +213,19 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->setText(kgmConvert::toString((s32)(mtl->m_color.r * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorR.connect(this, &kViewOptionsForMaterial::onColorR, &((kgmGuiText*)g)->sigChange);
+  slotColorR.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onColorR, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tmaterial, 83, y_coord, 30, 20);
   g->setSid("ColorG");
   g->setText(kgmConvert::toString((s32)(mtl->m_color.g * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorG.connect(this, &kViewOptionsForMaterial::onColorG, &((kgmGuiText*)g)->sigChange);
+  slotColorG.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onColorG, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tmaterial, 115, y_coord, 30, 20);
   g->setSid("ColorB");
   g->setText(kgmConvert::toString((s32)(mtl->m_color.b * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorB.connect(this, &kViewOptionsForMaterial::onColorB, &((kgmGuiText*)g)->sigChange);
+  slotColorB.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onColorB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
@@ -236,19 +236,19 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   g->setText(kgmConvert::toString((s32)(mtl->m_specular.r * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularR.connect(this, &kViewOptionsForMaterial::onSpecularR, &((kgmGuiText*)g)->sigChange);
+  slotSpecularR.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularR, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tmaterial, 83, y_coord, 30, 20);
   g->setSid("SpecularG");
   g->setText(kgmConvert::toString((s32)(mtl->m_specular.g * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularG.connect(this, &kViewOptionsForMaterial::onSpecularG, &((kgmGuiText*)g)->sigChange);
+  slotSpecularG.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularG, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tmaterial, 115, y_coord, 30, 20);
   g->setSid("SpecularB");
   g->setText(kgmConvert::toString((s32)(mtl->m_specular.b * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularB.connect(this, &kViewOptionsForMaterial::onSpecularB, &((kgmGuiText*)g)->sigChange);
+  slotSpecularB.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
@@ -261,7 +261,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("Select");
-  slotSelectColor.connect(this, &kViewOptionsForMaterial::onSelectTexColor, &btn->sigClick);
+  slotSelectColor.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onSelectTexColor, &btn->sigClick);
 
   y_coord += 23;
 
@@ -274,7 +274,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("Select");
-  slotSelectNormal.connect(this, &kViewOptionsForMaterial::onSelectTexNormal, &btn->sigClick);
+  slotSelectNormal.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onSelectTexNormal, &btn->sigClick);
 
   y_coord += 23;
 
@@ -287,7 +287,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("Select");
-  slotSelectSpecular.connect(this, &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
+  slotSelectSpecular.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onSelectTexSpecular, &btn->sigClick);
 
   y_coord += 23;
 
@@ -322,36 +322,36 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
 
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
-  slotSelectShader.connect(this, &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
+  slotSelectShader.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
 
   y_coord += 23;
 
   kgmGuiCheck* cull = new kgmGuiCheck(tmaterial, 1, y_coord, 60, 20);
   cull->setText("Cull");
   cull->setCheck(mtl->cull());
-  slotSelectCull.connect(this, &kViewOptionsForMaterial::onCull, &cull->sigClick);
+  slotSelectCull.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onCull, &cull->sigClick);
 
   y_coord += 23;
 
   kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
   alpha->setText("Alpha");
   alpha->setCheck(mtl->alpha());
-  slotSelectAlpha.connect(this, &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
+  slotSelectAlpha.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
   kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 62, y_coord, 60, 20);
   shade->setText("Shade");
   shade->setCheck(mtl->shade());
-  slotSelectShade.connect(this, &kViewOptionsForMaterial::onShade, &shade->sigClick);
+  slotSelectShade.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onShade, &shade->sigClick);
   kgmGuiCheck* depth = new kgmGuiCheck(tmaterial, 124, y_coord, 60, 20);
   depth->setText("Depth");
   depth->setCheck(mtl->depth());
-  slotSelectDepth.connect(this, &kViewOptionsForMaterial::onDepth, &depth->sigClick);
+  slotSelectDepth.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onDepth, &depth->sigClick);
 
   y_coord += 23;
 
   kgmGuiCheck* blend = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
   blend->setText("Blend");
   blend->setCheck(mtl->blend());
-  slotSelectBlend.connect(this, &kViewOptionsForMaterial::onBlend, &blend->sigClick);
+  slotSelectBlend.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onBlend, &blend->sigClick);
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
   g->setSid("BlendSource");
   ((kgmGuiSelect*)g)->add("one");
@@ -359,7 +359,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiSelect*)g)->add("srcalpha");
   ((kgmGuiSelect*)g)->add("isrcalpha");
   ((kgmGuiSelect*)g)->select(kgmMaterial::blendToString(mtl->srcblend()));
-  slotBlendSource.connect(this, &kViewOptionsForMaterial::onBlendSource, &((kgmGuiSelect*)g)->sigSelect);
+  slotBlendSource.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlendSource, &((kgmGuiSelect*)g)->sigSelect);
   g = new kgmGuiSelect(tmaterial, 124, y_coord, 60, 20);
   g->setSid("BlendDestination");
   ((kgmGuiSelect*)g)->add("one");
@@ -367,7 +367,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiSelect*)g)->add("srcalpha");
   ((kgmGuiSelect*)g)->add("isrcalpha");
   ((kgmGuiSelect*)g)->select(kgmMaterial::blendToString(mtl->dstblend()));
-  slotBlendDestination.connect(this, &kViewOptionsForMaterial::onBlendDestination, &((kgmGuiSelect*)g)->sigSelect);
+  slotBlendDestination.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlendDestination, &((kgmGuiSelect*)g)->sigSelect);
 
   y_coord += 23;
 }
@@ -636,7 +636,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
   kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
   btn->setText("select");
-  slotSelectMaterial.connect(this, &kViewOptionsForVisual::onShowMaterials, &btn->sigClick);
+  slotSelectMaterial.connect(this, (Slot<kViewOptionsForVisual, int>::FN) &kViewOptionsForVisual::onShowMaterials, &btn->sigClick);
 
   y_coord += 23;
 
@@ -653,7 +653,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
-    slotParticlesCount.connect(this, &kViewOptionsForVisual::onParticlesCount, &((kgmGuiText*)g)->sigChange);
+    slotParticlesCount.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesCount, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -664,13 +664,13 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->speed()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesSpeed.connect(this, &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
+    slotParticlesSpeed.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
     g->setSid("DivSpeed");
     g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divspeed())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesDivSpeed.connect(this, &kViewOptionsForVisual::onParticlesDivSpeed, &((kgmGuiText*)g)->sigChange);
+    slotParticlesDivSpeed.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesDivSpeed, &((kgmGuiText*)g)->sigChange);
 
 
     y_coord += 23;
@@ -682,8 +682,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText(kgmConvert::toString((s32)RADTODEG(n->vis->getParticles()->angle())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-
-    slotParticlesAngle.connect(this, &kViewOptionsForVisual::onParticlesAngle, &((kgmGuiText*)g)->sigChange);
+    slotParticlesAngle.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesAngle, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -694,13 +693,13 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->life()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesLife.connect(this, &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
+    slotParticlesLife.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
     g->setSid("DivLife");
     g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divlife())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesDivLife.connect(this, &kViewOptionsForVisual::onParticlesDivLife, &((kgmGuiText*)g)->sigChange);
+    slotParticlesDivLife.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesDivLife, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
@@ -711,24 +710,24 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->size()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesSize.connect(this, &kViewOptionsForVisual::onParticlesSize, &((kgmGuiText*)g)->sigChange);
+    slotParticlesSize.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesSize, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 103, y_coord, 50, 20);
     g->setSid("Esize");
     g->setText(kgmConvert::toString((s32)n->vis->getParticles()->esize()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
-    slotParticlesEsize.connect(this, &kViewOptionsForVisual::onParticlesEsize, &((kgmGuiText*)g)->sigChange);
+    slotParticlesEsize.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesEsize, &((kgmGuiText*)g)->sigChange);
 
     y_coord += 23;
 
     kgmGuiCheck* loop = new kgmGuiCheck(tvisual, 0, y_coord, 74, 20);
     loop->setText("Loop");
     loop->setCheck(node->vis->getParticles()->loop());
-    slotParticlesLoop.connect(this, &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
+    slotParticlesLoop.connect(this, (Slot<kViewOptionsForVisual, bool>::FN) &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
     kgmGuiCheck* fade = new kgmGuiCheck(tvisual, 76, y_coord, 74, 20);
     fade->setText("Fade");
     fade->setCheck(node->vis->getParticles()->fade());
-    slotParticlesFade.connect(this, &kViewOptionsForVisual::onParticlesFade, &fade->sigClick);
+    slotParticlesFade.connect(this,(Slot<kViewOptionsForVisual, bool>::FN)  &kViewOptionsForVisual::onParticlesFade, &fade->sigClick);
 
     y_coord += 23;
   }
@@ -856,26 +855,27 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
   g->setText(kgmConvert::toString((s32)(node->lgt->color.x * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorR.connect(this, &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
+  slotColorR.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
   g->setSid("ColorG");
   g->setText(kgmConvert::toString((s32)(node->lgt->color.y * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorG.connect(this, &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
+  slotColorG.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
   g->setSid("ColorB");
   g->setText(kgmConvert::toString((s32)(node->lgt->color.z * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
-  slotColorB.connect(this, &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
+  slotColorB.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
   kgmGuiCheck* check = new kgmGuiCheck(tlight, 1, y_coord, 150, 20);
   check->setText("Shadows");
   check->setCheck(node->lgt->shadows);
-  check->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForLight::setShadows));
+  slotShadows.connect(this, (Slot<kViewOptionsForLight, bool>::FN) &kViewOptionsForLight::setShadows, &check->sigClick);
+
   y_coord += 23;
 }
 
@@ -930,19 +930,19 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("collide");
   chk->setCheck(node->col);
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectCollision));
+  //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectCollision));
   y_coord += 23;
 
   kgmGuiCheck* chk_grp = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk_grp->setText("Shape Box");
-  chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeBox));
+  //chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeBox));
 
   if(node->shp == "box") chk_grp->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("Shape Sphere");
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeSphere));
+  //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeSphere));
   chk_grp->addGroup(chk);
 
   if(node->shp == "sphere") chk->setCheck(true);
@@ -950,14 +950,14 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("Shape Mesh");
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeMesh));
+  //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeMesh));
   chk_grp->addGroup(chk);
   if(node->shp == "mesh") chk->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("Shape Plane");
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapePlane));
+  //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapePlane));
   chk_grp->addGroup(chk);
 
   if(node->shp == "plane") chk->setCheck(true);
@@ -965,7 +965,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("Shape Convex");
-  chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeConvex));
+  //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeConvex));
   chk_grp->addGroup(chk);
 
   if(node->shp == "convex") chk->setCheck(true);
@@ -1003,7 +1003,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   kgmGuiCheck* enable = new kgmGuiCheck(tunit, 1, y_coord, 150, 20);
   enable->setText("Enabled");
   enable->setCheck(node->unt->valid());
-  enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectEnable));
+  //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectEnable));
 
   y_coord += 23;
 
@@ -1020,7 +1020,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectVisual");
   g->setText("Select");
-  slotListMeshes.connect(this, &kViewOptionsForUnit::onListMeshes, &((kgmGuiButton*)g)->sigClick);
+  slotListMeshes.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListMeshes, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
 
@@ -1037,7 +1037,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectMaterial");
   g->setText("Select");
-  slotListMaterials.connect(this, &kViewOptionsForUnit::onListMaterials, &((kgmGuiButton*)g)->sigClick);
+  slotListMaterials.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListMaterials, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
 
@@ -1054,7 +1054,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectAction");
   g->setText("Select");
-  slotListActions.connect(this, &kViewOptionsForUnit::onListActions, &((kgmGuiButton*)g)->sigClick);
+  slotListActions.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListActions, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
 
@@ -1072,7 +1072,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
     g->setSid(var.getName());
 
     ((kGuiText*)g)->setEditable(true);
-    ((kGuiText*)g)->setChangeEventCallback(kGuiText::kChangeEventCallback(this, (kGuiText::kChangeEventCallback::Function)&kViewOptionsForUnit::updateVariable));
+    //((kGuiText*)g)->setChangeEventCallback(kGuiText::kChangeEventCallback(this, (kGuiText::kChangeEventCallback::Function)&kViewOptionsForUnit::updateVariable));
 
     switch(var.getType())
     {
@@ -1333,14 +1333,14 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 
   kgmGuiButton* btn = new kgmGuiButton(tactor, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showStates));
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForActor::showStates));
 
   y_coord += 23;
 
   kgmGuiCheck* enable = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
   enable->setText("Player");
   enable->setCheck(node->unt == kgmIGame::getGame()->getLogic()->getPlayer());
-  enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
+  //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
 
   y_coord += 23;
 }
@@ -1437,16 +1437,16 @@ kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, 
 
   kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
   btn->setText("select");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
   y_coord += 23;
 
   btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
   btn->setText("Rect");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
 
   btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
   btn->setText("Box");
-  btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
   y_coord += 23;
 
   g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);

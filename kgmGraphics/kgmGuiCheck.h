@@ -14,13 +14,9 @@ public:
     StateFocus,
   };
 
-  typedef kgmCallback<void, kgmObject*, bool> ClickEventCallback;
-
 private:
   State  m_state;
   bool   m_check;
-
-  ClickEventCallback callback;
 
   kgmList<kgmGuiCheck*> m_group;
   kgmGuiCheck*          m_group_owner;
@@ -31,7 +27,6 @@ public:
 public:
   kgmGuiCheck();
   kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
-  kgmGuiCheck(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call);
   virtual ~kgmGuiCheck();
 
   State getState()
@@ -55,11 +50,6 @@ public:
       else if(m_group.length() > 0)
         groupSelect(this);
     }
-  }
-
-  void  setClickCallback(ClickEventCallback call)
-  {
-    callback = call;
   }
 
   void addGroup(kgmGuiCheck* gui)
@@ -87,7 +77,6 @@ public:
 
 private:
   void onMsLeftUp(int key, int x, int y);
-  //void onMsLeftDown(int key, int x, int y);
   void onMsInside();
   void onMsOutside();
 };

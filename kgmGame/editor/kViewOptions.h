@@ -7,7 +7,7 @@
 #include "../../kgmGraphics/kgmGuiLabel.h"
 #include "../../kgmGraphics/kgmGuiCheck.h"
 #include "../../kgmGraphics/kgmGuiSelect.h"
-#include "../../kgmBase/kgmCallback.h"
+//#include "../../kgmBase/kgmCallback.h"
 
 namespace kgmGameEditor
 {
@@ -165,6 +165,7 @@ class kViewOptionsForLight : public kViewOptions
   Slot<kViewOptionsForLight, kgmString> slotColorR;
   Slot<kViewOptionsForLight, kgmString> slotColorG;
   Slot<kViewOptionsForLight, kgmString> slotColorB;
+  Slot<kViewOptionsForLight, bool>      slotShadows;
 
 public:
   kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
@@ -181,33 +182,21 @@ class kViewOptionsForUnit : public kViewOptions
   class kGuiText: public kgmGuiText
   {
   public:
-    typedef kgmCallback<void, kgmObject*, kgmString, kgmString> kChangeEventCallback;
-
-  private:
-    kChangeEventCallback kcallback;
+    Slot<kGuiText, kgmString>  slotChange;
 
   public:
     kGuiText()
-      : kgmGuiText(), kcallback(null, null)
+      : kgmGuiText()
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
     }
 
     kGuiText(kgmGui* parent, int x, int y, int w, int h)
-      : kgmGuiText(parent, x, y, w, h), kcallback(null, null)
+      : kgmGuiText(parent, x, y, w, h)
     {
-      ((kgmGuiText*)this)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kGuiText::dataChange));
-    }
-
-    void setChangeEventCallback(kChangeEventCallback call)
-    {
-      kcallback = call;
     }
 
     __stdcall void dataChange(kgmString s)
     {
-      if(kcallback.hasFunction())
-        kcallback(getSid(), getText());
     }
   };
 

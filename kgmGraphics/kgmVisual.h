@@ -536,7 +536,7 @@ private:
     if(m_floop && m_fset >= m_fend)
       m_fset = m_fstart;
 
-    for(int i = 0; i < m_skeleton->m_joints.size(); i++)
+    for(u32 i = 0; i < m_skeleton->m_joints.size(); i++)
     {
       kgmSkeleton::Joint* joint = m_skeleton->m_joints[i];
       kgmAnimation::Animation* a = m_animation->getNode(joint->n);
@@ -560,14 +560,14 @@ private:
       kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->mesh->vertices();
       kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)((kgmMesh::Vertex*)m_mesh->vertices);
 
-      for(int i = 0; i < m_mesh->mesh->vcount(); i++)
+      for(u32 i = 0; i < m_mesh->mesh->vcount(); i++)
       {
         vec3   pos(0, 0, 0);
         vec3   bpos = vbase[i].pos;
         float* wght = (float*)(vbase[i].bw);
         int*   indx = (int*)(vbase[i].bi);
 
-        for(int j = 0; j < 4; j++)
+        for(u32 j = 0; j < 4; j++)
         {
           int   bi = (int)indx[j];
           float w  = wght[j];
@@ -576,10 +576,11 @@ private:
           {
             if(j < 1)
               pos = bpos;
+
             break;
           }
 
-          pos = pos + m_tm_joints[bi] * vbase[i].pos * wght[j];
+          pos = pos + m_tm_joints[(u32)bi] * vbase[i].pos * wght[j];
         }
 
         verts[i].pos = pos;

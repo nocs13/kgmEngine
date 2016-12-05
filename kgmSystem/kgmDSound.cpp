@@ -16,7 +16,7 @@
 
 static u32 error = 0;
 
-#ifndef DSOUND
+#ifdef DSOUND
 
 void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
                               DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)
@@ -312,7 +312,7 @@ kgmDSound::kgmDSound()
 
        m_proceed = true;
 
-       m_thread.start(this, &kgmDSound::proceed);
+       //m_thread.start(this, &kgmDSound::proceed);
        m_thread.priority(kgmThread::PrIdle);
 
        m_mutex = kgmThread::mutex();

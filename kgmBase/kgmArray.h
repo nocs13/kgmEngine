@@ -37,7 +37,7 @@ public:
     return *this;
   }
 
-  T& operator[](const u32 i) const {
+  T& operator[](const s32 i) const {
    return kgmMemory<T>::m_data[i];
   }
 

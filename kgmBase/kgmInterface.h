@@ -1,5 +1,5 @@
 class kgmInterface
 {
 public:
-  virtual void clear() = 0;
+  virtual ~kgmInterface() = 0;
 };

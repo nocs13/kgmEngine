@@ -7,13 +7,15 @@
 #include "../kgmMedia/kgmAudioMixer.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmMedia/kgmWave.h"
+
 #include "../kgmMath/kgmMath.h"
 
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmFunction.h"
 
 #include "../kgmSystem/kgmThread.h"
 
-#ifndef DSOUND
+#ifdef DSOUND
 #include <windows.h>
 #include "inc/DX/dsound.h"
 
@@ -34,7 +36,6 @@ class kgmDSound: public kgmIAudio
     Thread()
     {
       object   = null;
-      callback = null;
     }
 
     bool start(kgmDSound* obj, kgmFunction<int(kgmDSound*, int)> fn)
@@ -47,7 +48,7 @@ class kgmDSound: public kgmIAudio
 
     void run()
     {
-      callback(object, 0);
+      callback(*object, 0);
     }
   };
 
@@ -83,7 +84,7 @@ public:
 
   void  clear();
 
-  __stdcall int proceed(int);
+  int proceed(int);
 };
 
 #endif

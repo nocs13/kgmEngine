@@ -15,11 +15,7 @@ public:
     StateClick
   };
 
-  typedef kgmCallback<void, kgmObject*> ClickEventCallback;
-
   State  m_state;
-
-  ClickEventCallback callback;
 
 public:
   Signal<int> sigClick;
@@ -27,17 +23,11 @@ public:
 public:
   kgmGuiButton();
   kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
-  kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h, ClickEventCallback call);
   virtual ~kgmGuiButton();
 
   State getState()
   {
     return m_state;
-  }
-
-  void  setClickCallback(ClickEventCallback call)
-  {
-    callback = call;
   }
 
 private:
