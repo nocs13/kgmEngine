@@ -11,21 +11,12 @@ private:
   class Labels: public kgmGuiMenu
   {
   public:
-    typedef kgmCallback<void, kgmObject*, u32> ClickEventCallback;
-
-  private:
-    ClickEventCallback callback;
+    Signal<u32> sigSwitch;
 
   public:
-    Labels(kgmGui* parent)
-      :kgmGuiMenu(parent), callback(null, null)
+    Labels(kgmGui* parent): kgmGuiMenu(parent)
     {
 
-    }
-
-    void setLabelsCallback(ClickEventCallback call)
-    {
-      callback = call;
     }
 
     void onMsLeftUp(int key, int x, int y)
@@ -38,8 +29,8 @@ private:
         {
           Item* citem = item->getItem(i);
 
-          if(citem == selected && callback.hasObject())
-            callback(i);
+          if(citem == selected)
+            sigSwitch(i);
         }
       }
     }
@@ -53,6 +44,8 @@ private:
   Labels*     labels;
 
   u32 tabs;
+
+  Slot<kgmGuiTab, u32> slotLabel;
 
 public:
  kgmGuiTab();

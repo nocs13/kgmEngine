@@ -1,7 +1,7 @@
 #include "kgmGuiScroll.h"
 
 kgmGuiScroll::kgmGuiScroll()
-  :kgmGui(), callback(null, null)
+  :kgmGui()
 {
   m_ppp = 1;
   m_drag = false;
@@ -13,7 +13,7 @@ kgmGuiScroll::kgmGuiScroll()
 }
 
 kgmGuiScroll::kgmGuiScroll(kgmGui *par, int x, int y, int w, int h)
-  :kgmGui(par, x, y, w, h), callback(null, null)
+  :kgmGui(par, x, y, w, h)
 {
   m_ppp = 1;
   m_drag = false;
@@ -109,8 +109,7 @@ void kgmGuiScroll::onMsMove(int key, int x, int y)
   {
     m_position = pos;
 
-    if(callback.hasObject() && callback.hasFunction())
-      callback(pos);
+    sigChange(pos);
   }
 }
 

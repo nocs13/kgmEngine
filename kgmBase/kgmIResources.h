@@ -27,14 +27,14 @@ public:
   virtual void                remove(kgmResource*) = 0;
   virtual bool                exists(kgmResource*) = 0;
 
-  virtual bool                getFile(char*, kgmMemory<u8>&) = 0;
-  virtual kgmPicture*         getPicture(char*) = 0;
-  virtual kgmTexture*         getTexture(char*) = 0;
-  virtual kgmShader*          getShader(char*) = 0;
-  virtual kgmAnimation*       getAnimation(char*) = 0;
-  virtual kgmSkeleton*        getSkeleton(char*) = 0;
-  virtual kgmSound*           getSound(char*) = 0;
-  virtual kgmMesh*            getMesh(char*) = 0;
-  virtual kgmFont*            getFont(char*, u32 r, u32 c) = 0;
-  virtual kgmShapeCollision*  getShapeCollision(char* id) = 0;
+  virtual bool                getFile(const char*, kgmMemory<u8>&) = 0;
+  virtual kgmPicture*         getPicture(const char*) = 0;
+  virtual kgmTexture*         getTexture(const char*) = 0;
+  virtual kgmShader*          getShader(const char*) = 0;
+  virtual kgmAnimation*       getAnimation(const char*) = 0;
+  virtual kgmSkeleton*        getSkeleton(const char*) = 0;
+  virtual kgmSound*           getSound(const char*) = 0;
+  virtual kgmMesh*            getMesh(const char*) = 0;
+  virtual kgmFont*            getFont(const char*, u32 r, u32 c) = 0;
+  virtual kgmShapeCollision*  getShapeCollision(const char* id) = 0;
 };

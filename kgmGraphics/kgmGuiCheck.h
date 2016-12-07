@@ -1,7 +1,5 @@
 #pragma once
 #include "kgmGuiLabel.h"
-#include "../kgmBase/kgmCallback.h"
-
 
 class kgmGuiCheck: public kgmGuiLabel
 {

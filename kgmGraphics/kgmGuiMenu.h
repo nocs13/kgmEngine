@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kgmGui.h"
-#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiMenu: public kgmGui
 {
@@ -13,9 +12,6 @@ public:
   class Item
   {
   public:
-
-    typedef kgmCallback<void, kgmObject*> ClickEventCallback;
-
     enum Type
     {
       TypeItem,
@@ -23,7 +19,7 @@ public:
       TypeSeparator
     };
 
-    ClickEventCallback callback;
+    Signal<Item*> sigClick;
 
   protected:
     Item*      parent;
@@ -32,6 +28,8 @@ public:
     kgmString  title;
 
     kgmGui::Rect rect;
+
+    kgmTexture* icon;
 
     bool       popup;
     bool       vertical;
@@ -45,7 +43,6 @@ public:
 
   public:
     Item(Item* par, kgmString text, bool horizontal = false)
-    :callback(null, null)
     {
       parent = par;
 
@@ -66,12 +63,9 @@ public:
       rect.h = ItemHeight;
 
       swidth = rect.w;
-
-      callback = null;
     }
 
-    Item(Item* par, u32 eid, kgmString text, ClickEventCallback fncall, bool horizontal = false)
-    :callback(null, null)
+    Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
     {
       parent = par;
 
@@ -92,8 +86,6 @@ public:
       rect.h = ItemHeight;
 
       swidth = rect.w;
-
-      callback = fncall;
     }
 
     ~Item()
@@ -120,6 +112,8 @@ public:
 
       Item* item = new Item(this, title);
 
+      item->icon = icon;
+
       if(vertical)
       {
         if(item->rect.w > swidth)
@@ -143,12 +137,14 @@ public:
       return item;
     }
 
-    Item* add(u32 id, kgmString title, ClickEventCallback fncall, kgmTexture* icon = null)
+    Item* add(u32 id, kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
         return null;
 
-      Item* item = new Item(this, id, title, fncall);
+      Item* item = new Item(this, id, title);
+
+      item->icon = icon;
 
       if(vertical)
       {

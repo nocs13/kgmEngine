@@ -1,7 +1,5 @@
 #pragma once
 #include "kgmGui.h"
-#include "../kgmBase/kgmCallback.h"
-
 
 class kgmGuiButton: public kgmGui
 {

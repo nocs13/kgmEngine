@@ -1,7 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmTime.h"
-#include "../kgmBase/kgmCallback.h"
 
 #include "../kgmGraphics/kgmVisual.h"
 #include "../kgmGraphics/kgmMesh.h"

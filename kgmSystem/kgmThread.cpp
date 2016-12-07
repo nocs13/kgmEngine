@@ -120,7 +120,7 @@ bool kgmThread::active()
 void kgmThread::kill()
 {
 #ifdef WIN32
-  TerminateThread(m_thread, NULL);
+  TerminateThread(m_thread, -1);
 #elif defined(ANDROID)
   pthread_kill(m_thread, 9);
 #else

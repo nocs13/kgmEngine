@@ -42,7 +42,7 @@ HINSTANCE hInst = 0;
 LONG kgmDumper(struct _EXCEPTION_POINTERS* pe)
 {
   MessageBox(0, "Exception", "abort!", 0);
-  return NULL;
+  return 0;
 }
 
 #if defined _USRDLL

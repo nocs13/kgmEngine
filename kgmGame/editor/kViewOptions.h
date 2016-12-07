@@ -32,9 +32,7 @@ protected:
   u32     y_coord;
 
 public:
-  typedef kgmCallback<void, kgmObject*> CloseCallback;
-
-  CloseCallback callClose;
+  Signal<> sigClose;
 
 public:
   kViewOptions(kNode* n, int x, int y, int w, int h);
@@ -49,11 +47,6 @@ public:
   __stdcall void onRotationY(kgmString s);
   __stdcall void onRotationZ(kgmString s);
   __stdcall void onSelectLock(bool);
-
-  void setCloseCallback(CloseCallback cfn)
-  {
-    callClose = cfn;
-  }
 };
 
 class kViewOptionsForMaterial : public kViewOptions

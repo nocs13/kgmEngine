@@ -170,8 +170,8 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
 
     if(chn == 2)
     {
-      memcpy(&s1, data + bpf * i, byps);
-      memcpy(&s2, data + bpf * i + byps, byps);
+      memcpy(&s1, (void*) (((size_t)data) + bpf * i), byps);
+      memcpy(&s2, (void*) (((size_t)data) + bpf * i + byps), byps);
 
       if(byps == 1)
       {
@@ -181,7 +181,7 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     }
     else
     {
-      memcpy(&s1, data + bpf * i, byps);
+      memcpy(&s1, (void*) (((size_t)data) + bpf * i), byps);
 
       if(byps == 1)
         s1 =  (s16)(s1 - 0x80) << 8;
@@ -206,8 +206,8 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
       //r1 = ((s16*)lsample)[bytes_per_frame * j];
       //r2 = ((s16*)lsample)[bytes_per_frame * j + 1];
 
-      memcpy(&r1, lsample + ref1, bytes_per_sample);
-      memcpy(&r2, lsample + ref2, bytes_per_sample);
+      memcpy(&r1, (void*) ((size_t)lsample + ref1), bytes_per_sample);
+      memcpy(&r2, (void*) ((size_t)lsample + ref2), bytes_per_sample);
 
       r1 = ((r1 + s1) >> 1);
       r2 = ((r2 + s2) >> 1);
@@ -224,8 +224,8 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
       //((s16*)lsample)[1] = r2;
       //((s16*)lsample)[bytes_per_frame * j]     = r1;
       //((s16*)lsample)[bytes_per_frame * j + 1] = r2;
-      memcpy(lsample + ref1, &r1, bytes_per_sample);
-      memcpy(lsample + ref2, &r2, bytes_per_sample);
+      memcpy((void*) ((size_t)lsample + ref1), &r1, bytes_per_sample);
+      memcpy((void*) ((size_t)lsample + ref2), &r2, bytes_per_sample);
     }
   }
 

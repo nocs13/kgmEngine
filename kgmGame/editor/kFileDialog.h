@@ -27,21 +27,19 @@ class kFileDialog : public kgmGuiFrame
   bool      localable;
   bool      allsee;
 
-public:
-  typedef kgmCallback<void, kgmObject*, kFileDialog*> ClickEventCallback;
+  Slot<kFileDialog, int> slotSelect, slotFail;
 
-private:
-  ClickEventCallback callback, fail_callback;
+public:
+  Signal<kFileDialog*> sigSelect, sigFail;
 
 public:
   kFileDialog();
 
   void listFolder();
 
-  void forOpen(kgmString dir, ClickEventCallback call);
-  void forSave(kgmString dir, ClickEventCallback call);
+  void forOpen(kgmString dir);
+  void forSave(kgmString dir);
   void setFilter(kgmString flt);
-  void setFailCallback(ClickEventCallback);
 
   void changeLocation(bool s);
   void showHidden(bool s);
@@ -56,8 +54,8 @@ public:
 
 protected:
   __stdcall void onFileSelect();
-  __stdcall void onOpenSelect();
-  __stdcall void onSaveSelect();
+  __stdcall void onOpenSelect(int);
+  __stdcall void onSaveSelect(int);
   __stdcall void onFailSelect();
   __stdcall void onEditFile(kgmString);
 

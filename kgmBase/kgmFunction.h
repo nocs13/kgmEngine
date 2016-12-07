@@ -30,6 +30,33 @@ public:
   }
 };
 
+template <class... Args>
+class kgmFunction<void (Args...)>
+{
+public:
+  typedef __stdcall void(*Function)(Args...);
+
+private:
+  Function function;
+
+  public:
+  kgmFunction(Function fn = null)
+    : function(fn)
+  {
+  }
+
+  void operator()(Args... args)
+  {
+    function(args...);
+  }
+
+  bool valid()
+  {
+    return (function != null);
+  }
+};
+
+
 template <class Res, class Obj, class... Args>
   class kgmFunction<Res (Obj*, Args...)>
 {

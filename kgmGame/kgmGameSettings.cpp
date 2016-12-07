@@ -8,7 +8,7 @@ kgmString kgmGameSettings::m_name = "settings.cfg";
 kgmGameSettings::kgmGameSettings()
 {
   m_xml = null;
-  m_gsid = 0xf0f0f0f0;
+  m_gsid = 0xf0f0;
   m_mouse_camera = true;
 
   load();
@@ -17,7 +17,7 @@ kgmGameSettings::kgmGameSettings()
 kgmGameSettings::kgmGameSettings(const char* path)
 {
   m_xml = null;
-  m_gsid = 0xf0f0f0f0;
+  m_gsid = 0xf0f0;
   m_mouse_camera = true;
 
   if(path && strlen(path) < 128)

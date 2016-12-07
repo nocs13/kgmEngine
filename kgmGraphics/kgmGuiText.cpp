@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 
 kgmGuiText::kgmGuiText()
-  :kgmGui(), callback(null, null)
+  :kgmGui()
 {
   editable = false;
   numeric = false;
@@ -14,7 +14,7 @@ kgmGuiText::kgmGuiText()
 }
 
 kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
- :kgmGui(par, x, y, w, h), callback(null, null)
+ :kgmGui(par, x, y, w, h)
 {
   editable = false;
   numeric = false;
@@ -160,18 +160,12 @@ void kgmGuiText::onKeyDown(int k)
   {
     delLeft();
 
-    if(callback.hasObject() && callback.hasFunction())
-      callback(getText());
-
     sigChange(getText());
   }
     break;
   case KEY_DELETE:
   {
     delRight();
-
-    if(callback.hasObject() && callback.hasFunction())
-      callback(getText());
 
     sigChange(getText());
   }
@@ -224,9 +218,6 @@ void kgmGuiText::onKeyDown(int k)
 
 
     m_text = pt1 + pt3 + pt2;
-
-    if(callback.hasObject() && callback.hasFunction())
-      callback(getText());
 
     sigChange(getText());
 

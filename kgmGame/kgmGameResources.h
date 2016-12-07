@@ -57,20 +57,20 @@ public:
   bool               exists(kgmResource*);
 
   void               addPath(kgmString s);
-  bool               getFile(char* id, kgmMemory<u8>& m);
+  bool               getFile(const char* id, kgmMemory<u8>& m);
 
-  kgmPicture*        getPicture(char* id);
-  kgmTexture*        getTexture(char* id);
-  kgmShader*         getShader(char* id);
-  kgmAnimation*      getAnimation(char* id);
-  kgmSound*          getSound(char*);
-  kgmMesh*           getMesh(char* id);
-  kgmSkeleton*       getSkeleton(char* id);
-  kgmFont*           getFont(char* id, u32 r, u32 c);
-  kgmShapeCollision* getShapeCollision(char* id);
+  kgmPicture*        getPicture(const char* id);
+  kgmTexture*        getTexture(const char* id);
+  kgmShader*         getShader(const char* id);
+  kgmAnimation*      getAnimation(const char* id);
+  kgmSound*          getSound(const char*);
+  kgmMesh*           getMesh(const char* id);
+  kgmSkeleton*       getSkeleton(const char* id);
+  kgmFont*           getFont(const char* id, u32 r, u32 c);
+  kgmShapeCollision* getShapeCollision(const char* id);
 
 private:
   void               add(kgmResource*);
-  kgmResource*       get(char* id);
+  kgmResource*       get(const char* id);
   kgmResource*       get(kgmString& id);
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include "kgmGui.h"
 #include "kgmGuiScroll.h"
-#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiList: public kgmGui
 {
@@ -9,7 +8,6 @@ class kgmGuiList: public kgmGui
 public:
 
   typedef kgmList<kgmString> Items;
-  typedef kgmCallback<void, kgmObject*> SelectEventCallback;
 
   struct Item
   {
@@ -29,9 +27,10 @@ public:
 
   kgmList<Icon> icons;
 
-  SelectEventCallback callback;
-
   Signal<u32> sigSelect;
+
+private:
+  Slot<kgmGuiList, u32> slotScroll;
 
 public:
   kgmGuiList();
@@ -52,11 +51,6 @@ public:
   void      clear();
   void      sort();
   bool      hasItem(kgmString);
-
-  void setSelectCallback(SelectEventCallback call)
-  {
-    callback = call;
-  }
 
 protected:
   void onMsLeftDown(int k, int x, int y);

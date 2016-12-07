@@ -2,30 +2,23 @@
 
 using namespace kgmGameEditor;
 
-kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h, bool selclose)
-  :callClose(null, null), callEclose(null, null), callSelect(null, null),
-    kgmGuiFrame("Objects", x, y, w, h)
+kViewObjects::kViewObjects(kgmEvent* t, int x, int y, int w, int h)
+  :kgmGuiFrame("Objects", x, y, w, h)
 {
   target = t;
 
   list = new kgmGuiList(getClient(), 0, 0, getClient()->m_rect.width(), getClient()->m_rect.height());
-  list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiList::SelectEventCallback::Function)&kViewObjects::onSelectItem));
 
-  closeOnSelect = selclose;
+  slotSelect.connect(this, (Slot<kViewObjects, u32>::FN) &kViewObjects::onSelectItem, &list->sigSelect);
 }
 
 void kViewObjects::onClose()
 {
-  if(callEclose.hasObject() && callEclose.hasFunction())
-    callEclose();
+  close();
 }
 
-void kViewObjects::onSelectItem()
+void kViewObjects::onSelectItem(u32 i)
 {
-
-  if(callSelect.hasObject() && callSelect.hasFunction())
-    callSelect(list->getItem(list->getSel()));
-
-  if(closeOnSelect)
-    close();
+  sigSelect(list->getItem(i));
+  close();
 }

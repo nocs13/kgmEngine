@@ -11,35 +11,21 @@ namespace kgmGameEditor
 class kViewObjects : public kgmGuiFrame
 {
 public:
-  typedef kgmCallback<void, kgmObject*> CloseCallback;
-  typedef kgmCallback<void, kgmObject*, kgmString> SelectCallback;
+  Signal<u32> sigClose;
+  Signal<kgmString> sigSelect;
 
 private:
-  CloseCallback  callClose;
-  CloseCallback  callEclose;
-  SelectCallback callSelect;
-
   kgmEvent* target;
   kgmGuiList* list;
 
-  bool closeOnSelect;
+  Slot<kViewObjects, u32> slotSelect;
 
 public:
-  kViewObjects(kgmEvent* tar = null, int x = 100, int y = 100, int w = 150, int h = 300, bool selclose = true);
+  kViewObjects(kgmEvent* tar = null, int x = 100, int y = 100, int w = 150, int h = 300);
 
   void onClose();
 
-  __stdcall void onSelectItem();
-
-  void setCloseCallback(CloseCallback cc)
-  {
-    callEclose = cc;
-  }
-
-  void setSelectCallback(SelectCallback sc)
-  {
-    callSelect = sc;
-  }
+  __stdcall void onSelectItem(u32);
 
   void onAction(kgmGui* g, u32 id)
   {

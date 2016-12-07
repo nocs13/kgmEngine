@@ -2,14 +2,10 @@
 #define KGMGUITEXT_H
 
 #include "kgmGui.h"
-#include "../kgmBase/kgmCallback.h"
 
 class kgmGuiText : public kgmGui
 {
   KGM_OBJECT(kgmGuiText);
-public:
-
-  typedef kgmCallback<void, kgmObject*, kgmString> ChangeEventCallback;
 
 private:
   bool editable;
@@ -17,8 +13,6 @@ private:
   bool shift;
   u32  index, place;     //cursor index in text and place in view
   u32  fwidth, fheight;  //character width and height
-
-  ChangeEventCallback callback;
 
 public:
   Signal<kgmString> sigChange;
@@ -35,11 +29,6 @@ public:
   bool isNumeric();
   u32  getCursor();
   u32  getIndex();
-
-  void setChangeEventCallback(ChangeEventCallback call)
-  {
-    callback = call;
-  }
 
   void setCharResolution(u32 w, u32 h)
   {

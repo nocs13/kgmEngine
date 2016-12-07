@@ -17,6 +17,8 @@ private:
 
   int            m_prevx, m_prevy;
 
+  Slot<kgmGuiFrame, int> slotClose;
+
 public:
   kgmGuiFrame(kgmString title = "Frame", int x = 50, int y = 50, int w = 200, int h = 300);
 

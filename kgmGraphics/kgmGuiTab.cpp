@@ -24,7 +24,7 @@ kgmGuiTab::kgmGuiTab(kgmGui *par, int x, int y, u32 w, u32 h)
   labels->m_rect.w = w;
   labels->m_rect.h = tab_height;
 
-  labels->setLabelsCallback(Labels::ClickEventCallback(this, (Labels::ClickEventCallback::Function)&kgmGuiTab::select));
+  slotLabel.connect(this, (Slot<kgmGuiTab, u32>::FN) &kgmGuiTab::select, &labels->sigSwitch);
 }
 
 kgmGuiTab::~kgmGuiTab()

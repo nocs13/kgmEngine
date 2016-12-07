@@ -52,7 +52,7 @@ void kgmGameResources::add(kgmResource *r)
   m_resources.add(r);
 }
 
-kgmResource* kgmGameResources::get(char* id)
+kgmResource* kgmGameResources::get(const char* id)
 {
   if(!id)
     return null;
@@ -164,7 +164,7 @@ void kgmGameResources::addPath(kgmString s)
     m_paths.add(path);
 }
 
-bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
+bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 {
   kgmString path;
   int   i = 0;
@@ -242,7 +242,7 @@ bool kgmGameResources::getFile(char* id, kgmMemory<u8>& m)
   return false;
 }
 
-kgmPicture* kgmGameResources::getPicture(char* id)
+kgmPicture* kgmGameResources::getPicture(const char* id)
 {
   kgmPicture* picture = (kgmPicture *)get(id);
 
@@ -267,7 +267,7 @@ kgmPicture* kgmGameResources::getPicture(char* id)
   return picture;
 }
 
-kgmTexture* kgmGameResources::getTexture(char* id)
+kgmTexture* kgmGameResources::getTexture(const char* id)
 {
   kgmTexture* texture = (kgmTexture*)get(id);
 
@@ -292,7 +292,7 @@ kgmTexture* kgmGameResources::getTexture(char* id)
   return texture;
 }
 
-kgmShader* kgmGameResources::getShader(char* id)
+kgmShader* kgmGameResources::getShader(const char* id)
 {
   kgm_log() << "Resources: get shader " << id << "\n";
 
@@ -322,7 +322,7 @@ kgmShader* kgmGameResources::getShader(char* id)
   return shader;
 }
 
-kgmAnimation* kgmGameResources::getAnimation(char* id)
+kgmAnimation* kgmGameResources::getAnimation(const char* id)
 {
   kgmAnimation* animation = (kgmAnimation*)get(id);
 
@@ -354,7 +354,7 @@ kgmAnimation* kgmGameResources::getAnimation(char* id)
   return animation;
 }
 
-kgmSound* kgmGameResources::getSound(char* id)
+kgmSound* kgmGameResources::getSound(const char* id)
 {
   kgmSound* sound = (kgmSound*)get(id);
 
@@ -379,7 +379,7 @@ kgmSound* kgmGameResources::getSound(char* id)
   return sound;
 }
 
-kgmMesh* kgmGameResources::getMesh(char* id)
+kgmMesh* kgmGameResources::getMesh(const char* id)
 {
   kgmMesh* mesh = (kgmMesh*)get(id);
 
@@ -412,7 +412,7 @@ kgmMesh* kgmGameResources::getMesh(char* id)
   return mesh;
 }
 
-kgmSkeleton* kgmGameResources::getSkeleton(char* id)
+kgmSkeleton* kgmGameResources::getSkeleton(const char* id)
 {
   kgmSkeleton* skeleton = (kgmSkeleton*)get(id);
 
@@ -442,7 +442,7 @@ kgmSkeleton* kgmGameResources::getSkeleton(char* id)
   return skeleton;
 }
 
-kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
+kgmFont* kgmGameResources::getFont(const char* id, u32 r, u32 c)
 {
   kgmFont* font = (kgmFont*)get(id);
 
@@ -467,7 +467,7 @@ kgmFont* kgmGameResources::getFont(char* id, u32 r, u32 c)
   return font;
 }
 
-kgmShapeCollision* kgmGameResources::getShapeCollision(char* id)
+kgmShapeCollision* kgmGameResources::getShapeCollision(const char* id)
 {
   kgmShapeCollision* shape = (kgmShapeCollision*)get(id);
 

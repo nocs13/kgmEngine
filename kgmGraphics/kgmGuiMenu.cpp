@@ -48,8 +48,7 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
 
   if(selected && selected->getType() == Item::TypeItem)
   {
-    if(selected->callback.getObject())
-      selected->callback();
+    selected->sigClick(selected);
   }
 }
 

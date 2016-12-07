@@ -193,7 +193,7 @@ void kgmSystem::getTemporaryDirectory(kgmString& s)
 
   DWORD dw = GetTempPath(MAX_PATH, (LPSTR)buf);
 
-  if(dw != NULL)
+  if(dw != 0)
     s = (const char*)buf;
 #else
   DIR* dir = opendir("~/tmp");

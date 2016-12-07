@@ -1,7 +1,7 @@
 #include "kgmGuiList.h"
 
 kgmGuiList::kgmGuiList()
-  :kgmGui(), callback(null, null)
+  :kgmGui()
 {
   m_scroll = new kgmGuiScroll(this, 0, 0, 0, 0);
   m_scroll->show();
@@ -14,12 +14,12 @@ kgmGuiList::kgmGuiList()
 }
 
 kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
-  :kgmGui(par, x, y, w, h), callback(null, null)
+  :kgmGui(par, x, y, w, h)
 {
   m_scroll = new kgmGuiScroll(this, x + w - 10, 0, 10, h);
   m_scroll->show();
   m_scroll->setRange(1);
-  m_scroll->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kgmGuiList::onScroll));
+  slotScroll.connect(this, (Slot<kgmGuiList, u32>::FN) &kgmGuiList::onScroll, &m_scroll->sigChange);
   m_itemSel = -1;
   m_itemStart = 0;
   m_itemHeight = 12;
@@ -156,7 +156,7 @@ void kgmGuiList::sort()
       if(*i == *j)
         continue;
 
-      for(int k = 0; k < (*i).length(); k++)
+      for(u32 k = 0; k < (*i).length(); k++)
       {
         if((k >= (*j).length()) || ((*i)[k] > (*j)[k]))
         {
@@ -191,9 +191,6 @@ void kgmGuiList::onMsLeftUp(int k, int x, int y)
 
   if((m_itemSel >= 0) && (m_itemSel < m_items.size()))
   {
-    if(callback.hasObject() && callback.hasFunction())
-      callback();
-
     sigSelect(m_itemSel);
   }
 }
@@ -240,9 +237,6 @@ void kgmGuiList::onKeyDown(int k)
   case KEY_ENTER:
     if(m_itemSel >= 0 && m_itemSel < m_items.size())
     {
-      if(callback.hasObject() && callback.hasFunction())
-        callback();
-
       sigSelect(m_itemSel);
     }
     break;

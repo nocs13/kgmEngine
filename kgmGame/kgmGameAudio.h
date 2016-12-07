@@ -26,8 +26,6 @@ public:
   kgmGameAudio();
   ~kgmGameAudio();
 
-  void clear();
-
   Sound create(FMT fmt, u16 freq, u32 size, void* data)
   {
     return ((kgmIAudio*)m_audio)->create(fmt, freq, size, data);

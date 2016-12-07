@@ -67,7 +67,7 @@ bool kgmLuaCall(kgmString name, kgmString fmt, ...){
   int nres = 0;
   char* f = fmt.data();
   va_list vl;
-  va_start(vl, f);
+  va_start(vl, fmt);
 
   while((*f != '\0') && (args < 128)){
     switch(*f){
