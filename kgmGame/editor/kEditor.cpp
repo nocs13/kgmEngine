@@ -45,6 +45,91 @@ enum MENUEVENT
   ME_HELP_ABOUT
 };
 
+void kEditor::Menu::onChoose(u32 id)
+{
+  if(!editor)
+    return;
+
+  switch (id) {
+  case ME_QUIT:
+    editor->onQuit();
+    break;
+  case ME_MAP_NEW:
+    editor->onMapNew();
+    break;
+  case ME_MAP_OPEN:
+    editor->onMapOpen();
+    break;
+  case ME_MAP_SAVE:
+    editor->onMapSave();
+    break;
+  case ME_MAP_SCENE:
+    editor->onMapScene();
+    break;
+  case ME_EDIT_CLONE:
+    editor->onEditClone();
+    break;
+  case ME_EDIT_REMOVE:
+    editor->onEditRemove();
+    break;
+  case ME_EDIT_OPTIONS:
+    editor->onEditOptions();
+    break;
+  case ME_ADD_MESH:
+    editor->onAddMesh();
+    break;
+  case ME_ADD_UNIT:
+    editor->onAddUnit();
+    break;
+  case ME_ADD_LIGHT:
+    editor->onAddLight();
+    break;
+  case ME_ADD_ACTOR:
+    editor->onAddActor();
+    break;
+  case ME_ADD_EFFECT:
+    editor->onAddEffect();
+    break;
+  case ME_ADD_SENSOR:
+    editor->onAddSensor();
+    break;
+  case ME_ADD_TRIGGER:
+    editor->onAddTrigger();
+    break;
+  case ME_ADD_OBSTACLE:
+    editor->onAddObstacle();
+    break;
+  case ME_ADD_MATERIAL:
+    editor->onAddMaterial();
+    break;
+  case ME_ADD_PARTICLES:
+    editor->onAddParticles();
+    break;
+  case ME_RUN_PLAY:
+    break;
+  case ME_RUN_STOP:
+    break;
+  case ME_VIEW_OBJECTS:
+    break;
+  case ME_VIEW_MATERIALS:
+    break;
+  case ME_VIEW_PERSPECTIVE:
+    break;
+  case ME_VIEW_FRONT:
+    break;
+  case ME_VIEW_BACK:
+    break;
+  case ME_VIEW_TOP:
+    break;
+  case ME_OPTIONS_DATABASE:
+    break;
+  case ME_HELP_ABOUT:
+    break;
+  default:
+    break;
+  }
+}
+
 kEditor::kEditor(kgmGameBase* g)
 {
   game = g;
@@ -78,12 +163,12 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->getRender()->setEditor(true);
 
-    menu = new kgmGuiMenu(null);
-
+    //menu = new kgmGuiMenu(null);
+    menu = new Menu(this);
     menu->setSid("editor_main_menu");
 
     kgmGuiMenu::Item* item = menu->add("Map");
-    item->add(ME_MAP_NEW, "New", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapNew));
+    /*item->add(ME_MAP_NEW, "New", kgmGuiMenu::Item::ClickEventCallback((kgmObject*)this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapNew));
     item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
     item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));
     item->add(ME_MAP_SCENE, "Scene", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapScene));
@@ -112,7 +197,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_VIEW_PERSPECTIVE, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
     item->add(ME_VIEW_FRONT, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
     item->add(ME_VIEW_BACK, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
-    item->add(ME_VIEW_TOP, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));
+    item->add(ME_VIEW_TOP, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));*/
     game->guiAdd(menu);
 
     mtlLines = new kgmMaterial();
@@ -1340,7 +1425,7 @@ void kEditor::onMapOpen()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapOpen));
+  fdd->forOpen(game->getSettings()->get((char*)"Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapOpen));
 }
 
 void kEditor::onMapSave()

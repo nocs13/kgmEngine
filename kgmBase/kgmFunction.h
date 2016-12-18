@@ -4,7 +4,7 @@
 // Callback function should be __stdcall attribute.
 template <class T> class kgmFunction {};
 
-template <class Res, class... Args>
+/*template <class Res, class... Args>
   class kgmFunction<Res (Args...)>
 {
  public:
@@ -55,7 +55,78 @@ private:
     return (function != null);
   }
 };
+*/
 
+template <class Obj>
+class kgmFunction<void (Obj*)>
+{
+  typedef __stdcall void (*SFunction)(Obj*);
+  typedef __stdcall void (Obj::*MFunction)();
+
+  union Pointers
+  {
+    SFunction f_static;
+    MFunction f_member;
+  };
+
+  typedef __stdcall void Callback(Pointers&, Obj&);
+
+  Pointers pointers;
+  Callback *callback;
+
+  Obj       *object;
+
+  static void call_sfunction(Pointers& pts, Obj& obj)
+  {
+    (*pts.f_static)(&obj);
+  }
+
+  static void call_mfunction(Pointers& pts, Obj& obj)
+  {
+    (obj.*(pts.f_member))();
+  }
+
+ public:
+  kgmFunction() : callback(null), object(null)
+  {
+  }
+
+  kgmFunction(void (*func)(Obj*))
+  {
+    pointers.f_static = func;
+    callback = &call_sfunction;
+  }
+
+  kgmFunction(void (Obj::*func)())
+  {
+    pointers.f_member = func;
+    callback = &call_mfunction;
+  }
+
+  kgmFunction(const kgmFunction& fn)
+  {
+    pointers = fn.pointers;
+    callback = fn.callback;
+  }
+
+  kgmFunction& operator=(const kgmFunction& fn)
+  {
+    pointers = fn.pointers;
+    callback = fn.callback;
+
+    return *this;
+  }
+
+  void operator()(Obj& obj)
+  {
+    (*callback)(pointers, obj);
+  }
+
+  bool valid()
+  {
+    return (pointers.f_static != null);
+  }
+};
 
 template <class Res, class Obj, class... Args>
   class kgmFunction<Res (Obj*, Args...)>
@@ -87,7 +158,7 @@ template <class Res, class Obj, class... Args>
   }
 
  public:
-  kgmFunction() : callback(null)
+  kgmFunction() : callback(null), object(null)
   {
   }
   

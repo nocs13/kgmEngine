@@ -30,6 +30,19 @@ private:
     ViewTop
   };
 
+  class Menu: public kgmGuiMenu
+  {
+    kEditor* editor;
+  public:
+    Menu(kEditor* e = null)
+      :kgmGuiMenu(null)
+    {
+      editor = e;
+    }
+
+    void onChoose(u32 id);
+  };
+
   kgmGameBase* game;
 
   bool ms_click[3];

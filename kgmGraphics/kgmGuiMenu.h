@@ -2,6 +2,8 @@
 
 #include "kgmGui.h"
 
+#include "../kgmBase/kgmCallback.h"
+
 class kgmGuiMenu: public kgmGui
 {
   KGM_OBJECT(kgmGuiMenu)
@@ -19,7 +21,10 @@ public:
       TypeSeparator
     };
 
-    Signal<Item*> sigClick;
+    typedef kgmCallback<void, kgmObject*> ClickEventCallback;
+
+    //Signal<Item*> sigClick;
+    ClickEventCallback callback;
 
   protected:
     Item*      parent;
@@ -43,6 +48,7 @@ public:
 
   public:
     Item(Item* par, kgmString text, bool horizontal = false)
+    : callback(null, null)
     {
       parent = par;
 
@@ -66,6 +72,7 @@ public:
     }
 
     Item(Item* par, u32 eid, kgmString text, bool horizontal = false)
+    :  callback(null, null)
     {
       parent = par;
 
@@ -137,7 +144,7 @@ public:
       return item;
     }
 
-    Item* add(u32 id, kgmString title, kgmTexture* icon = null)
+    Item* add(u32 id, kgmString title, kgmCallback<s32, kgmObject, u32> fn, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
         return null;
@@ -145,6 +152,7 @@ public:
       Item* item = new Item(this, id, title);
 
       item->icon = icon;
+      //item->sigClick = fn;
 
       if(vertical)
       {
@@ -215,6 +223,14 @@ public:
       return rc;
     }
 
+    void emit()
+    {
+      if (type == TypeItem)
+      {
+        //sigClick(id);
+      }
+    }
+
     void movePointer(int x, int y)
     {
       for(u32 i = 0; i < items.length(); i++)
@@ -276,4 +292,6 @@ public:
   void onMsLeftUp(int k, int x, int y);
 
   Item* getItem() { return item; }
+
+  virtual void onChoose(u32 id) {}
 };
