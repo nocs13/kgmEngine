@@ -79,7 +79,6 @@ kEditor::kEditor(kgmGameBase* g)
 
     menu = new kgmGuiMenu(null);
     menu->setSid("editor_main_menu");
-    Slot<kEditor, u32> slotMenu;
     slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
 
     kgmGuiMenu::Item* item = menu->add("Map");
@@ -96,9 +95,9 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_UNIT, "Unit");
     item->add(ME_ADD_LIGHT, "Light");
     item->add(ME_ADD_ACTOR, "Actor");
-    //item->add(ME_ADD_EFFECT, "Effect", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddEffect));
-    //item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
-    //item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
+    item->add(ME_ADD_EFFECT, "Effect");
+    item->add(ME_ADD_SENSOR, "Sensor");
+    item->add(ME_ADD_TRIGGER, "Trigger");
     item->add(ME_ADD_OBSTACLE, "Obstacle");
     item->add(ME_ADD_MATERIAL, "Material");
     item->add(ME_ADD_PARTICLES, "Particles");

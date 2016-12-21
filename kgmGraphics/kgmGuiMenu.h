@@ -10,6 +10,7 @@ class kgmGuiMenu: public kgmGui
 
 public:
   static u32 ItemHeight;
+  static u32 FontWidth;
 
   class Item
   {
@@ -59,8 +60,8 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 0, 0);
-      rect.w = 10 * title.length();
-      rect.h = ItemHeight;
+      rect.w = kgmGuiMenu::FontWidth * title.length();
+      rect.h = kgmGuiMenu::ItemHeight;
 
       swidth = rect.w;
     }
@@ -82,8 +83,8 @@ public:
       xscale = yscale = 1.0f;
 
       rect = iRect(0, 0, 0, 0);
-      rect.w = 10 * title.length();
-      rect.h = ItemHeight;
+      rect.w = kgmGuiMenu::FontWidth * title.length();
+      rect.h = kgmGuiMenu::ItemHeight;
 
       swidth = rect.w;
     }
@@ -279,4 +280,6 @@ public:
   void onMsLeftUp(int k, int x, int y);
 
   Item* getItem() { return root; }
+
+  static u32 fontWidth() { return 10; }
 };

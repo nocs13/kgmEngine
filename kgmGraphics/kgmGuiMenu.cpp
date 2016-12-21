@@ -2,6 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 
 u32 kgmGuiMenu::ItemHeight = 20;
+u32 kgmGuiMenu::FontWidth  = 10;
 
 kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
   :kgmGui(parent, 0, 0, 1, 1)

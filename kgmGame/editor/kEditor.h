@@ -79,6 +79,7 @@ private:
   bool      m_isVisual;
   kgmThread m_thVisual;
 
+  Slot<kEditor, u32> slotMenu;
   Slot<kEditor, kFileDialog*> slotMapOpen, slotMapSave;
 
 public:
@@ -153,7 +154,7 @@ public:
   __stdcall void onRunStop();
   __stdcall void onSelectObject(kgmString);
   __stdcall void onCloseVop();
-  __stdcall void onMenu(u32 id);
+  void onMenu(u32 id);
 
 private:
   void add(kNode*);

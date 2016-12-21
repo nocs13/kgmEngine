@@ -16,10 +16,10 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
   V v[4];
 
-  v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 1);
-  v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 0);
-  v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 1);
-  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 0);
+  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = col; v[0].uv = vec2(0, 1);
+  v[1].pos = vec3(rc.x,        rc.y + rc.h, -1); v[1].col = col; v[1].uv = vec2(0, 0);
+  v[2].pos = vec3(rc.x + rc.w, rc.y,        -1); v[2].col = col; v[2].uv = vec2(1, 1);
+  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[3].col = col; v[3].uv = vec2(1, 0);
 
   if(tex && tex->m_texture)
     gc->gcSetTexture(0, tex->m_texture);

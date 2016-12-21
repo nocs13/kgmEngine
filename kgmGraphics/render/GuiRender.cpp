@@ -311,8 +311,6 @@ void GuiRender::renderGuiMenuItem(kgmGui* menu, void *i)
 
   menu->getRect(prect, true);
 
-  iRect rect = item->getRect();
-
   for(int i = 0; i < item->getItemsCount(); i++)
   {
     kgmGuiMenu::Item* citem = item->getItem(i);
