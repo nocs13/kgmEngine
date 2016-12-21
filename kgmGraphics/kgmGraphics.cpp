@@ -695,7 +695,7 @@ void kgmGraphics::render()
 
   if(kgmTime::getTicks() - fps_start_time > 1000)
   {
-    sprintf(fps_text, "FPS: %i\0", fps_frames);
+    sprintf(fps_text, "FPS: %i", fps_frames);
     fps_frames = 0;
     fps_start_time = kgmTime::getTicks();
   }

@@ -32,13 +32,13 @@ public:
   Obj       object;
 
 public:
-  kgmCallback(Obj ob = null, Function fn = null)
+  kgmCallbackMethod(Obj ob = null, Function fn = null)
   {
     function = fn;
     object   = ob;
   }
 
-  virtual Res operator()(Args... args)
+  Res operator()(Args... args)
   {
     return (object->*function)(args...);
   }

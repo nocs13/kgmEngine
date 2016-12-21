@@ -432,13 +432,6 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   if(mem_fsh)
     free(mem_fsh);
 
-  FILE* out = fopen("/tmp/z_shader.txt", "w");
-  if(out){
-    fprintf(out, vsource.data());
-    fprintf(out, "\n\n");
-    fprintf(out, fsource.data());
-    fclose(out);
-  }
   kgmShader* shader = new kgmShader(gc);
 
   shader->m_shader = gc->gcGenShader((const char*)vsource, (const char*)fsource);
@@ -932,7 +925,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       {
         u32 fi[3];
         mm.reads((u8*)str, 512, (u8*)"\n", 1);
-        sscanf(str, "%i %i %i %i", &fi[0], &fi[1], &fi[2]);
+        sscanf(str, "%ud %ud %ud", &fi[0], &fi[1], &fi[2]);
         f[i].a = fi[0];
         f[i].b = fi[1];
         f[i].c = fi[2];
