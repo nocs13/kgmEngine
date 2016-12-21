@@ -2,57 +2,45 @@
 #define KGMCALLBACK_H
 
 // Callback function should be __stdcall attribute.
-template <class Res, class Obj, class... Args> class kgmCallback
+template <class Res, class... Args>
+class kgmCallback
 {
 public:
   typedef Res(*Function)(Args...);
 
-private:
-  typedef Res(*Fn)(Args...);
-  typedef Res(*Fno)(Obj, Args...);
-
-  Obj object;
-
-  union
-  {
-    Fn  function;
-    Fno functiono;
-  };
+  Function  function;
 
 public:
-  kgmCallback(): object(null), function(null)
+  kgmCallback(Function fn = null)
   {
-    object = null;
-    function = null;
-  }
-
-  kgmCallback(Obj obj = null, Function fn = null)
-  {
-    object = obj;
     function = fn;
   }
 
-  Res operator()(Args... args)
+  virtual Res operator()(Args... args)
   {
-    if(object)
-      return (*functiono)(object, args...);
-
     return (*function)(args...);
   }
+};
 
-  bool hasObject()
+template <class Res, class Obj, class... Args>
+class kgmCallbackMethod: public kgmCallback<Res, Args...>
+{
+public:
+  typedef Res(Obj::*Function)(Args...);
+
+  Function  function;
+  Obj       object;
+
+public:
+  kgmCallback(Obj ob = null, Function fn = null)
   {
-    return (object != null);
+    function = fn;
+    object   = ob;
   }
 
-  bool hasFunction()
+  virtual Res operator()(Args... args)
   {
-    return (function != null);
-  }
-
-  void* getObject()
-  {
-    return object;
+    return (object->*function)(args...);
   }
 };
 

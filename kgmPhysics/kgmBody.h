@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmMath/kgmMath.h"
 
-class kgmBody: public kgmIObject
+class kgmBody: public kgmObject
 {
   KGM_OBJECT(kgmBody);
 

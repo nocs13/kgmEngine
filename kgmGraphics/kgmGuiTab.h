@@ -21,13 +21,13 @@ private:
 
     void onMsLeftUp(int key, int x, int y)
     {
-      Item* selected = item->clickPointer(x, y);
+      Item* selected = root->clickPointer(x, y);
 
       if(selected)
       {
-        for(int i = 0; i < item->getItemsCount(); i++)
+        for(int i = 0; i < root->getItemsCount(); i++)
         {
-          Item* citem = item->getItem(i);
+          Item* citem = root->getItem(i);
 
           if(citem == selected)
             sigSwitch(i);

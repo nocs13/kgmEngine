@@ -209,6 +209,11 @@ public:
     void setRotation(vec3 pos);
   };
 
+  struct Editor
+  {
+
+  };
+
 public:
   //virtuals
   virtual int            gLoad(kgmString)     = 0;    //load game map

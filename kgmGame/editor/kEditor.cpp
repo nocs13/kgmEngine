@@ -19,7 +19,6 @@ enum MENUEVENT
   ME_MAP_NEW,
   ME_MAP_OPEN,
   ME_MAP_SAVE,
-  ME_MAP_SCENE,
   ME_EDIT_CLONE,
   ME_EDIT_REMOVE,
   ME_EDIT_OPTIONS,
@@ -44,91 +43,6 @@ enum MENUEVENT
   ME_OPTIONS_DATABASE,
   ME_HELP_ABOUT
 };
-
-void kEditor::Menu::onChoose(u32 id)
-{
-  if(!editor)
-    return;
-
-  switch (id) {
-  case ME_QUIT:
-    editor->onQuit();
-    break;
-  case ME_MAP_NEW:
-    editor->onMapNew();
-    break;
-  case ME_MAP_OPEN:
-    editor->onMapOpen();
-    break;
-  case ME_MAP_SAVE:
-    editor->onMapSave();
-    break;
-  case ME_MAP_SCENE:
-    editor->onMapScene();
-    break;
-  case ME_EDIT_CLONE:
-    editor->onEditClone();
-    break;
-  case ME_EDIT_REMOVE:
-    editor->onEditRemove();
-    break;
-  case ME_EDIT_OPTIONS:
-    editor->onEditOptions();
-    break;
-  case ME_ADD_MESH:
-    editor->onAddMesh();
-    break;
-  case ME_ADD_UNIT:
-    editor->onAddUnit();
-    break;
-  case ME_ADD_LIGHT:
-    editor->onAddLight();
-    break;
-  case ME_ADD_ACTOR:
-    editor->onAddActor();
-    break;
-  case ME_ADD_EFFECT:
-    editor->onAddEffect();
-    break;
-  case ME_ADD_SENSOR:
-    editor->onAddSensor();
-    break;
-  case ME_ADD_TRIGGER:
-    editor->onAddTrigger();
-    break;
-  case ME_ADD_OBSTACLE:
-    editor->onAddObstacle();
-    break;
-  case ME_ADD_MATERIAL:
-    editor->onAddMaterial();
-    break;
-  case ME_ADD_PARTICLES:
-    editor->onAddParticles();
-    break;
-  case ME_RUN_PLAY:
-    break;
-  case ME_RUN_STOP:
-    break;
-  case ME_VIEW_OBJECTS:
-    break;
-  case ME_VIEW_MATERIALS:
-    break;
-  case ME_VIEW_PERSPECTIVE:
-    break;
-  case ME_VIEW_FRONT:
-    break;
-  case ME_VIEW_BACK:
-    break;
-  case ME_VIEW_TOP:
-    break;
-  case ME_OPTIONS_DATABASE:
-    break;
-  case ME_HELP_ABOUT:
-    break;
-  default:
-    break;
-  }
-}
 
 kEditor::kEditor(kgmGameBase* g)
 {
@@ -163,41 +77,41 @@ kEditor::kEditor(kgmGameBase* g)
   {
     game->getRender()->setEditor(true);
 
-    //menu = new kgmGuiMenu(null);
-    menu = new Menu(this);
+    menu = new kgmGuiMenu(null);
     menu->setSid("editor_main_menu");
+    Slot<kEditor, u32> slotMenu;
+    slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
 
     kgmGuiMenu::Item* item = menu->add("Map");
-    /*item->add(ME_MAP_NEW, "New", kgmGuiMenu::Item::ClickEventCallback((kgmObject*)this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapNew));
-    item->add(ME_MAP_OPEN, "Open", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapOpen));
-    item->add(ME_MAP_SAVE, "Save", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapSave));
-    item->add(ME_MAP_SCENE, "Scene", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onMapScene));
-    item->add(ME_QUIT, "Quit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onQuit));
+    item->add(ME_MAP_NEW, "New");
+    item->add(ME_MAP_OPEN, "Open");
+    item->add(ME_MAP_SAVE, "Save");
+    item->add(ME_QUIT, "Quit");
     item = menu->add("Edit");
-    item->add(ME_EDIT_CLONE, "Clone", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditClone));
-    item->add(ME_EDIT_REMOVE, "Remove", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditRemove));
-    item->add(ME_EDIT_OPTIONS, "Options", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onEditOptions));
+    item->add(ME_EDIT_CLONE, "Clone");
+    item->add(ME_EDIT_REMOVE, "Remove");
+    item->add(ME_EDIT_OPTIONS, "Options");
     item = menu->add("Add");
-    item->add(ME_ADD_MESH, "Mesh", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMesh));
-    item->add(ME_ADD_UNIT, "Unit", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddUnit));
-    item->add(ME_ADD_LIGHT, "Light", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddLight));
-    item->add(ME_ADD_ACTOR, "Actor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddActor));
+    item->add(ME_ADD_MESH, "Mesh");
+    item->add(ME_ADD_UNIT, "Unit");
+    item->add(ME_ADD_LIGHT, "Light");
+    item->add(ME_ADD_ACTOR, "Actor");
     //item->add(ME_ADD_EFFECT, "Effect", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddEffect));
     //item->add(ME_ADD_SENSOR, "Sensor", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddSensor));
     //item->add(ME_ADD_TRIGGER, "Trigger", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddTrigger));
-    item->add(ME_ADD_OBSTACLE, "Obstacle", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddObstacle));
-    item->add(ME_ADD_MATERIAL, "Material", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddMaterial));
-    item->add(ME_ADD_PARTICLES, "Particles", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onAddParticles));
+    item->add(ME_ADD_OBSTACLE, "Obstacle");
+    item->add(ME_ADD_MATERIAL, "Material");
+    item->add(ME_ADD_PARTICLES, "Particles");
     item = menu->add("Run");
-    item->add(ME_RUN_PLAY, "Play", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunPlay));
-    item->add(ME_RUN_STOP, "Stop", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onRunStop));
+    item->add(ME_RUN_PLAY, "Play");
+    item->add(ME_RUN_STOP, "Stop");
     item = menu->add("View");
-    item->add(ME_VIEW_OBJECTS, "Objects", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewObjects));
-    item->add(ME_VIEW_MATERIALS, "Materials", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewMaterials));
-    item->add(ME_VIEW_PERSPECTIVE, "Perspective", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewPerspective));
-    item->add(ME_VIEW_FRONT, "Front", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewFront));
-    item->add(ME_VIEW_BACK, "Left", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewLeft));
-    item->add(ME_VIEW_TOP, "Top", kgmGuiMenu::Item::ClickEventCallback(this, (kgmGuiMenu::Item::ClickEventCallback::Function)&kEditor::onViewTop));*/
+    item->add(ME_VIEW_OBJECTS, "Objects");
+    item->add(ME_VIEW_MATERIALS, "Materials");
+    item->add(ME_VIEW_PERSPECTIVE, "Perspective");
+    item->add(ME_VIEW_FRONT, "Front");
+    item->add(ME_VIEW_BACK, "Left");
+    item->add(ME_VIEW_TOP, "Top");
     game->guiAdd(menu);
 
     mtlLines = new kgmMaterial();
@@ -1407,6 +1321,85 @@ void kEditor::update()
   }
 }
 
+void kEditor::onMenu(u32 id)
+{
+  switch (id) {
+  case ME_QUIT:
+    onQuit();
+    break;
+  case ME_MAP_NEW:
+    onMapNew();
+    break;
+  case ME_MAP_OPEN:
+    onMapOpen();
+    break;
+  case ME_MAP_SAVE:
+    onMapSave();
+    break;
+  case ME_EDIT_CLONE:
+    onEditClone();
+    break;
+  case ME_EDIT_REMOVE:
+    onEditRemove();
+    break;
+  case ME_EDIT_OPTIONS:
+    onEditOptions();
+    break;
+  case ME_ADD_MESH:
+    onAddMesh();
+    break;
+  case ME_ADD_UNIT:
+    onAddUnit();
+    break;
+  case ME_ADD_LIGHT:
+    onAddLight();
+    break;
+  case ME_ADD_ACTOR:
+    onAddActor();
+    break;
+  case ME_ADD_EFFECT:
+    onAddEffect();
+    break;
+  case ME_ADD_SENSOR:
+    onAddSensor();
+    break;
+  case ME_ADD_TRIGGER:
+    onAddTrigger();
+    break;
+  case ME_ADD_OBSTACLE:
+    onAddObstacle();
+    break;
+  case ME_ADD_MATERIAL:
+    onAddMaterial();
+    break;
+  case ME_ADD_PARTICLES:
+    onAddParticles();
+    break;
+  case ME_RUN_PLAY:
+    break;
+  case ME_RUN_STOP:
+    break;
+  case ME_VIEW_OBJECTS:
+    break;
+  case ME_VIEW_MATERIALS:
+    break;
+  case ME_VIEW_PERSPECTIVE:
+    break;
+  case ME_VIEW_FRONT:
+    break;
+  case ME_VIEW_BACK:
+    break;
+  case ME_VIEW_TOP:
+    break;
+  case ME_OPTIONS_DATABASE:
+    break;
+  case ME_HELP_ABOUT:
+    break;
+  default:
+    break;
+  }
+}
+
 void kEditor::onQuit()
 {
   game->close();
@@ -1425,7 +1418,8 @@ void kEditor::onMapOpen()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapOpen));
+  fdd->forOpen(game->getSettings()->get((char*)"Path"));
+  slotMapOpen.connect(this, (Slot<kEditor, kFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
 }
 
 void kEditor::onMapSave()
@@ -1436,18 +1430,8 @@ void kEditor::onMapSave()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
-}
-
-void kEditor::onMapScene()
-{
-  kFileDialog *fdd = new kFileDialog();
-  fdd->showHidden(false);
-  game->guiAdd(fdd);
-
-  fdd->setFilter(".scn");
-  fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdMapSave));
+  fdd->forSave(game->getSettings()->get((char*)"Path"));
+  slotMapOpen.connect(this, (Slot<kEditor, kFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);
 }
 
 void kEditor::onEditClone()
@@ -1601,7 +1585,7 @@ void kEditor::onAddMesh()
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::fdAddMesh));
+  fdd->forOpen(game->getSettings()->get((char*)"Path"));
 }
 
 void kEditor::onAddUnit()
@@ -1645,26 +1629,29 @@ void kEditor::onAddActor()
 
   fdd->setFilter(".act");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kEditor::addActor));
+  fdd->forOpen(game->getSettings()->get((char*)"Path"));
 
   game->guiAdd(fdd);
 }
 
 void kEditor::onAddEffect()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  Slot<kEditor, kgmString> slotSelect;
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
+  //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
 
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
-
-  game->guiAdd(vs);
+  game->guiAdd(vo);
 }
 
 void kEditor::onAddSensor()
 {
-  kViewObjects* vs = new kViewObjects(this, 1, 50, 200, 300);
-  vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
+  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  Slot<kEditor, kgmString> slotSelect;
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addSensor, &vo->sigSelect);
+  //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 
-  game->guiAdd(vs);
+  game->guiAdd(vo);
 }
 
 void kEditor::onAddTrigger()
@@ -1770,7 +1757,9 @@ void kEditor::onRunStop()
 void kEditor::onViewObjects()
 {
   kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+  Slot<kEditor, kgmString> slotSelect;
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
 
   for(int i = 0; i < nodes.length(); i++)
     if(nodes[i]->typ != kNode::MATERIAL)
@@ -1782,7 +1771,9 @@ void kEditor::onViewObjects()
 void kEditor::onViewMaterials()
 {
   kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+  Slot<kEditor, kgmString> slotSelect;
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
 
   for(int i = 0; i < nodes.length(); i++)
     if(nodes[i]->typ == kNode::MATERIAL)
@@ -1839,7 +1830,7 @@ void kEditor::onViewTop()
 
 void kEditor::onOptionsDatabase()
 {
-  kgmString loc = game->getSettings()->get("Path");
+  kgmString loc = game->getSettings()->get((char*)"Path");
 
   if(!loc.length())
   {

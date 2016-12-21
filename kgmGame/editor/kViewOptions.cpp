@@ -5,12 +5,12 @@
 #include "../../kgmGame/kgmGameBase.h"
 #include "kFileDialog.h"
 #include "kViewObjects.h"
+#include "kEditor.h"
 
 using namespace kgmGameEditor;
 
 kViewOptions::kViewOptions(kNode* n, int x, int y, int w, int h)
-:callClose(null, null),
-kgmGuiFrame("Options", x, y, w, h)
+  : kgmGuiFrame("Options", x, y, w, h)
 {
   tab = null;
   node = n;
@@ -29,7 +29,8 @@ kgmGuiFrame("Options", x, y, w, h)
     g = new kgmGuiText(tgeneral, 41, y_coord, w - 42, 20);
     g->setSid("node_name");
     g->setText(n->nam);
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onNodeName));
+    Slot<kViewOptions, kgmString> slotName;
+    slotName.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onNodeName, &((kgmGuiText*)g)->sigChange);
     ((kgmGuiText*)g)->setEditable(true);
     y_coord += 22;
 
@@ -41,19 +42,22 @@ kgmGuiFrame("Options", x, y, w, h)
     g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
     g->setSid("position_x");
     g->setText(kgmConvert::toString(n->pos.x));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionX));
+    Slot<kViewOptions, kgmString> slotPosX;
+    slotPosX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
     g->setSid("position_y");
     g->setText(kgmConvert::toString(n->pos.y));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionY));
+    Slot<kViewOptions, kgmString> slotPosY;
+    slotPosY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionY, &((kgmGuiText*)g)->sigChange);
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
     g->setSid("position_z");
     g->setText(kgmConvert::toString(n->pos.z));
-    ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptions::onPositionZ));
+    Slot<kViewOptions, kgmString> slotPosZ;
+    slotPosZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
@@ -119,8 +123,7 @@ kgmGuiFrame("Options", x, y, w, h)
 
 void kViewOptions::onCloseOptions()
 {
-  if(callClose.hasObject() && callClose.hasFunction())
-    callClose();
+  sigClose();
 
   erase();
 }
@@ -298,7 +301,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(512);
   ((kgmGuiScroll*)g)->setPosition(mtl->shininess());
-  ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onShininess));
+  Slot<kViewOptionsForMaterial, u32> slotShininess;
+  slotShininess.connect(this, (Slot<kViewOptionsForMaterial, u32>::FN) &kViewOptionsForMaterial::onShininess, &((kgmGuiScroll*)g)->sigChange);
 
   y_coord += 23;
 
@@ -309,7 +313,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kNode* n, int x, int y, int w, 
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(100);
   ((kgmGuiScroll*)g)->setPosition(100.f * mtl->transparency());
-  ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptionsForMaterial::onTransparency));
+  Slot<kViewOptionsForMaterial, u32> slotTranparency;
+  slotTranparency.connect(this, (Slot<kViewOptionsForMaterial, u32>::FN) &kViewOptionsForMaterial::onTransparency, &((kgmGuiScroll*)g)->sigChange);
 
   y_coord += 23;
 
@@ -504,8 +509,9 @@ void kViewOptionsForMaterial::onSelectShader(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("glsl");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  Slot<kViewOptionsForMaterial, kFileDialog*> slotShader;
+  slotShader.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectShader, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -518,8 +524,9 @@ void kViewOptionsForMaterial::onSelectTexColor(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexColor;
+  slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexColor, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -532,8 +539,9 @@ void kViewOptionsForMaterial::onSelectTexNormal(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexNormal;
+  slotTexNormal.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexNormal, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -546,8 +554,9 @@ void kViewOptionsForMaterial::onSelectTexSpecular(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  fd->setFailCallback(kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectFailed));
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForMaterial::onSelectSuccess));
+  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexSpecular;
+  slotTexSpecular.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexSpecular, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -736,7 +745,8 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 void kViewOptionsForVisual::onShowMaterials(int s)
 {
   kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForVisual::onSelectMaterial));
+  Slot<kViewOptionsForVisual, kgmString> slotMaterials;
+  slotMaterials.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onSelectMaterial, &vo->sigSelect);
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
@@ -845,7 +855,8 @@ kViewOptionsForLight::kViewOptionsForLight(kNode* n, int x, int y, int w, int h)
 
   g->setText(kgmConvert::toString(node->lgt->intensity));
   ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForLight::setIntencity));
+  Slot<kViewOptionsForLight, kgmString> slotIntensisty;
+  slotIntensisty.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::setIntencity, &((kgmGuiText*)g)->sigChange);
   y_coord += 23;
 
   g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
@@ -978,21 +989,21 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
   g->setSid("Length x");
   g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundX));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundX));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
 
   g = new kgmGuiText(gcollision, 102, y_coord, 50, 20);
   g->setSid("Width y");
   g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundY));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundY));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
 
   g = new kgmGuiText(gcollision, 154, y_coord, 50, 20);
   g->setSid("Height z");
   g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundZ));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundZ));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   y_coord += 23;
@@ -1171,7 +1182,7 @@ void kViewOptionsForUnit::onListMeshes(int state)
   fd->showHidden(false);
   fd->show();
   fd->setFilter(".msh");
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
+  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 
 }
@@ -1179,7 +1190,7 @@ void kViewOptionsForUnit::onListMeshes(int state)
 void kViewOptionsForUnit::onListActions(int state)
 {
   kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectAction));
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectAction));
 
   kgmList<kgmString> actions;
 
@@ -1194,7 +1205,7 @@ void kViewOptionsForUnit::onListActions(int state)
 void kViewOptionsForUnit::onListMaterials(int state)
 {
   kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectMaterial));
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectMaterial));
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
@@ -1306,7 +1317,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kNode* n, int x, int y, int w, int 
 
   g->setText(node->sns->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
 
   y_coord += 23;
 }
@@ -1351,7 +1362,7 @@ void kViewOptionsForActor::showStates()
     return;
   vo = new kViewObjects();
 
-  vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForActor::onState));
+  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForActor::onState));
 
   for(u32 i = 0; i < node->act->getStatesCount(); i++)
     vo->addItem(node->act->getStateName(i));
@@ -1397,7 +1408,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
 
   g->setText(kgmConvert::toString((s32)node->trg->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setChanels));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setChanels));
 
   y_coord += 23;
 
@@ -1408,7 +1419,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kNode* n, int x, int y, int w, in
 
   g->setText(node->trg->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setTarget));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setTarget));
 
   y_coord += 23;
 }
@@ -1454,7 +1465,7 @@ kViewOptionsForObstacle::kViewOptionsForObstacle(kNode* n, int x, int y, int w, 
   g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
   g->setSid("scale");
   g->setText(kgmConvert::toString(n->obs->getScale()));
-  ((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   y_coord += 23;
@@ -1470,7 +1481,7 @@ void kViewOptionsForObstacle::onSelectPolygons()
   fd->showHidden(false);
   fd->show();
   fd->setFilter("plg");
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
+  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 

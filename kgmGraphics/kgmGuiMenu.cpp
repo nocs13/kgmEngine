@@ -6,37 +6,30 @@ u32 kgmGuiMenu::ItemHeight = 20;
 kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
   :kgmGui(parent, 0, 0, 1, 1)
 {
-  item = new Item(null, "", true);
+  root = new Item(null, "", true);
 }
 
 kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)
 {
-  Item* im = item->add(title);
+  Item* im = root->add(title);
 
-  if(!im)
-    return null;
-
-  m_rect = item->getSubRect();
+  m_rect = root->getSubRect();
 
   return im;
 }
 
 kgmGuiMenu::Item* kgmGuiMenu::add(u32 id, kgmString title)
 {
-  Item* im = item->add(title);
+  Item* im = root->add(title);
 
-  if(!im)
-    return null;
-
-  m_rect = item->getSubRect();
+  m_rect = root->getSubRect();
 
   return im;
 }
 
 kgmGuiMenu::~kgmGuiMenu()
 {
-  if(item)
-    delete item;
+  delete root;
 }
 
 void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
@@ -44,13 +37,11 @@ void kgmGuiMenu::onMsLeftUp(int key, int x, int y)
   if(!m_view || m_freeze)
     return;
 
-  Item* selected = item->clickPointer(x, y);
+  Item* selected = root->clickPointer(x, y);
 
   if(selected && selected->getType() == Item::TypeItem)
   {
-    //selected->sigClick(selected);
-    //selected->sigClick();
-    onChoose(selected->getId());
+    sigChoose(selected->getId());
   }
 }
 
@@ -59,5 +50,5 @@ void kgmGuiMenu::onMsMove(int key, int x, int y)
   if(!m_view || m_freeze)
     return;
 
-  item->movePointer(x, y);
+  root->movePointer(x, y);
 }

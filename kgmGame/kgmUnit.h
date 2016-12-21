@@ -9,7 +9,7 @@
 class kgmIGame;
 class kgmSound;
 
-class kgmUnit : public kgmObject, public kgmBody
+class kgmUnit : public kgmObject
 {
   KGM_OBJECT(kgmUnit);
 

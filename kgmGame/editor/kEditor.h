@@ -30,19 +30,6 @@ private:
     ViewTop
   };
 
-  class Menu: public kgmGuiMenu
-  {
-    kEditor* editor;
-  public:
-    Menu(kEditor* e = null)
-      :kgmGuiMenu(null)
-    {
-      editor = e;
-    }
-
-    void onChoose(u32 id);
-  };
-
   kgmGameBase* game;
 
   bool ms_click[3];
@@ -91,6 +78,8 @@ private:
 
   bool      m_isVisual;
   kgmThread m_thVisual;
+
+  Slot<kEditor, kFileDialog*> slotMapOpen, slotMapSave;
 
 public:
   kEditor(kgmGameBase* game);
@@ -141,7 +130,6 @@ public:
   __stdcall void onMapNew();
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
-  __stdcall void onMapScene();
   __stdcall void onAddText();
   __stdcall void onAddMesh();
   __stdcall void onAddUnit();
@@ -165,6 +153,7 @@ public:
   __stdcall void onRunStop();
   __stdcall void onSelectObject(kgmString);
   __stdcall void onCloseVop();
+  __stdcall void onMenu(u32 id);
 
 private:
   void add(kNode*);
