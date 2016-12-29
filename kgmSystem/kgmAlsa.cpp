@@ -12,7 +12,7 @@
 static const char alsaDevice[] = "default";
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic warning "-fpermissive"
+//#pragma GCC diagnostic warning "-fpermissive"
 
 //#pragma GCC diagnostic ignored "-pedantic"
 //#pragma GCC diagnostic pop
