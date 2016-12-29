@@ -1066,7 +1066,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt), icnt, GL_UNSIGNED_INT, (void*)ioff);
 #else
-      glIndexPointer(GL_UNSIGNED_INT, 0, (void*)ioff);
+      glIndexPointer(GL_UNSIGNED_INT, 0, (void*) (long) ioff);
       glDrawRangeElements (gl_enum(pmt), 0, vcnt - 1, icnt, GL_UNSIGNED_INT, ((char*)0L + ioff));
 #endif
       break;
@@ -1206,7 +1206,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 
   kgm_log() << "Generate shader " << (int) prog << ".\n";
 
-  return (void*)prog;
+  return (void*) (long) prog;
 }
 
 void kgmOGL::gcFreeShader(void* s)

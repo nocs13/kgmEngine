@@ -492,7 +492,7 @@ void kgmAlsa::stop(Sound snd)
 
 int kgmAlsa::render(int r)
 {
-  (void*)r;
+  //(void*)r;
   
   while(m_proceed)
   {
@@ -501,12 +501,12 @@ int kgmAlsa::render(int r)
     {
       int pcm = 0;
       int bpp = 1;
-      int avail = 0;
+      long avail = 0;
 
       snd_pcm_uframes_t offset, frames;
       const snd_pcm_channel_area_t *areas = NULL;
 
-      avail = (int) psnd_pcm_avail_update((void*) m_handle);
+      avail = (long) psnd_pcm_avail_update((void*) m_handle);
 
       if(avail < 0)
         run_recovery((snd_pcm_t*) m_handle, avail);
@@ -527,7 +527,7 @@ int kgmAlsa::render(int r)
 
       while(avail > 0)
       {
-        int ret;
+        long ret;
 
         /*frames = avail;
 
@@ -553,7 +553,7 @@ int kgmAlsa::render(int r)
           break;
         }*/
 
-        ret = (int) psnd_pcm_writei(m_handle, WritePtr, avail);
+        ret = (long) psnd_pcm_writei(m_handle, WritePtr, avail);
 
         switch (ret)
         {
@@ -562,7 +562,7 @@ int kgmAlsa::render(int r)
         case -ESTRPIPE:
         case -EPIPE:
         case -EINTR:
-          ret = (int) psnd_pcm_recover(m_handle, ret, 1);
+          ret = (long) psnd_pcm_recover(m_handle, ret, 1);
 
           if(ret < 0)
             avail = 0;
@@ -585,7 +585,7 @@ int kgmAlsa::render(int r)
 
         if (ret < 0)
         {
-          ret = (int) psnd_pcm_prepare(m_handle);
+          ret = (long) psnd_pcm_prepare(m_handle);
 
           if(ret < 0)
             break;
@@ -627,7 +627,7 @@ int kgmAlsa::proceed(int p)
 {
   static u32 max_sounds = 10;
 
-  (void*)p;
+  //(void*)p;
   
   m_proceed = true;
 

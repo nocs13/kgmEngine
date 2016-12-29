@@ -321,7 +321,8 @@ void kgmThread::exit(s32 res)
 #ifdef WIN32
   ExitThread((DWORD)res);
 #else
-  pthread_exit((void*)res);
+  long r = res;
+  pthread_exit((void*) r);
 #endif
 }
 

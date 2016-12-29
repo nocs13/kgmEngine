@@ -270,7 +270,7 @@ public:
       v_boolean = (s == "false") ? (false) : (true);
       break;
     case TPointer:
-      v_pointer = (void*)kgmConvert::toInteger(s);
+      v_pointer = (void*) (long) kgmConvert::toInteger(s);
       break;
     case TString:
       v_string = s;
