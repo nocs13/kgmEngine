@@ -1411,26 +1411,34 @@ void kEditor::onMapNew()
 
 void kEditor::onMapOpen()
 {
-  kFileDialog *fdd = new kFileDialog();
+  kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
+
+  if(!fdd)
+    return;
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get((char*)"Path"));
-  slotMapOpen.connect(this, (Slot<kEditor, kFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
+  slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
 }
 
 void kEditor::onMapSave()
 {
-  kFileDialog *fdd = new kFileDialog();
+  kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
+
+  if(!fdd)
+    return;
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forSave(game->getSettings()->get((char*)"Path"));
-  slotMapOpen.connect(this, (Slot<kEditor, kFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);
+  slotMapSave.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);
 }
 
 void kEditor::onEditClone()

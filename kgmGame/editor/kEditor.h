@@ -3,6 +3,7 @@
 
 #include "../../kgmSystem/kgmThread.h"
 #include "../../kgmGraphics/kgmGuiMenu.h"
+#include "../../kgmGraphics/kgmGuiFileDialog.h"
 
 #include "kNode.h"
 #include "kLine.h"
@@ -80,7 +81,8 @@ private:
   kgmThread m_thVisual;
 
   Slot<kEditor, u32> slotMenu;
-  Slot<kEditor, kFileDialog*> slotMapOpen, slotMapSave;
+  Slot<kEditor, kgmGuiFileDialog*> slotMapSave;
+  Slot<kEditor, kgmGuiFileDialog*> slotMapOpen;
 
 public:
   kEditor(kgmGameBase* game);

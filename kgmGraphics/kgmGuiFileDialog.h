@@ -9,10 +9,14 @@
 
 class kgmGuiFileDialog : public kgmGuiFrame
 {
+  KGM_OBJECT(kgmGuiFileDialog);
+
+private:
+  static kgmGuiFileDialog* single;
+
   kgmGuiList* list;
   kgmGuiText* text;
   kgmGuiButton* btnCmd;
-  kgmGuiButton* btnFail;
 
   static kgmString DIRCON;
 
@@ -50,6 +54,8 @@ public:
   virtual void onOpen(){}
   virtual void onSave(){}
   virtual void onFail(){}
+
+  static kgmGuiFileDialog* getDialog();
 
 protected:
   __stdcall void onFileSelect();

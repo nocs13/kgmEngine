@@ -1,27 +1,25 @@
-#include "kFileDialog.h"
+#include "kgmGuiFileDialog.h"
 #include "../../kgmBase/kgmObject.h"
 #include "../../kgmSystem/kgmSystem.h"
 #include "../../kgmGraphics/kgmGui.h"
 #include <dirent.h>
 
-using namespace kgmGameEditor;
+// This in Singleton type object class.
+// So need to protect to made more objects.
 
-kgmString kFileDialog::DIRCON = "/";
+kgmString kgmGuiFileDialog::DIRCON = "/";
 
-kFileDialog::kFileDialog()
+kgmGuiFileDialog* kgmGuiFileDialog::single = null;
+
+kgmGuiFileDialog::kgmGuiFileDialog()
   :kgmGuiFrame(null, 100, 50, 200, 300)
 {
-  list = new kgmGuiList(this->getClient(), 1, 1, 198, 200);
-  text = new kgmGuiText(this->getClient(), 1, 237, 198, 30);
-  //text->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kFileDialog::onEditFile));
-  btnCmd = new kgmGuiButton(this->getClient(), 1, 201, 99, 35);
-  btnFail = new kgmGuiButton(this->getClient(), 101, 201, 99, 35);
+  Rect rc;
+  this->getClient()->getRect(rc);
 
-  //list->setSelectCallback(kgmGuiList::SelectEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onFileSelect));
-
-  btnFail->setText("Close");
-  slotFail.connect(this, (Slot<kFileDialog, int>::FN) &kFileDialog::onFailSelect, &btnFail->sigClick);
-  //btnFail->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kFileDialog::onFailSelect));
+  list   = new kgmGuiList(this->getClient(),   1, 1, rc.width() - 2, rc.height() - 77);
+  text   = new kgmGuiText(this->getClient(),   1, rc.height() - 31, rc.width() - 2, 30);
+  btnCmd = new kgmGuiButton(this->getClient(), 1, rc.height() - 75, rc.width() - 2, 43);
 
   pathFolder = "";
 
@@ -34,17 +32,22 @@ kFileDialog::kFileDialog()
 #endif
 }
 
-void kFileDialog::onMsLeftUp(int k, int x, int y)
+kgmGuiFileDialog::~kgmGuiFileDialog()
+{
+  kgmGuiFileDialog::single = null;
+}
+
+void kgmGuiFileDialog::onMsLeftUp(int k, int x, int y)
 {
   kgmGuiFrame::onMsLeftUp(k, x, y);
 }
 
-void kFileDialog::onMsMove(int k, int x, int y)
+void kgmGuiFileDialog::onMsMove(int k, int x, int y)
 {
   kgmGuiFrame::onMsMove(k, x, y);
 }
 
-void kFileDialog::onFileSelect()
+void kgmGuiFileDialog::onFileSelect()
 {
   int i = list->getSel();
 
@@ -99,34 +102,34 @@ void kFileDialog::onFileSelect()
   }
 }
 
-void kFileDialog::onOpenSelect(int)
+void kgmGuiFileDialog::onOpenSelect(int)
 {
   sigSelect(this);
 
   close();
 }
 
-void kFileDialog::onSaveSelect(int)
+void kgmGuiFileDialog::onSaveSelect(int)
 {
   sigSelect(this);
 
   close();
 }
 
-void kFileDialog::onFailSelect()
+void kgmGuiFileDialog::onFailSelect()
 {
   sigFail(this);
 
   close();
 }
 
-void kFileDialog::onEditFile(kgmString s)
+void kgmGuiFileDialog::onEditFile(kgmString s)
 {
 
   filePath = pathFolder + DIRCON + s;
 }
 
-void kFileDialog::listFolder()
+void kgmGuiFileDialog::listFolder()
 {
   if(pathFolder.length() < 1)
     return;
@@ -182,7 +185,7 @@ void kFileDialog::listFolder()
   }
 }
 
-void kFileDialog::forOpen(kgmString dir)
+void kgmGuiFileDialog::forOpen(kgmString dir)
 {
   if(dir.length() < 1)
   {
@@ -195,7 +198,7 @@ void kFileDialog::forOpen(kgmString dir)
   }
 
   btnCmd->setText("Open");
-  slotSelect.connect(this, (Slot<kFileDialog, int>::FN) &kFileDialog::onOpenSelect, &btnCmd->sigClick);
+  slotSelect.connect(this, (Slot<kgmGuiFileDialog, int>::FN) &kgmGuiFileDialog::onOpenSelect, &btnCmd->sigClick);
 
   filePath = "";
   modeSave = false;
@@ -205,7 +208,7 @@ void kFileDialog::forOpen(kgmString dir)
   listFolder();
 }
 
-void kFileDialog::forSave(kgmString dir)
+void kgmGuiFileDialog::forSave(kgmString dir)
 {
   if(dir.length() < 1)
   {
@@ -218,7 +221,7 @@ void kFileDialog::forSave(kgmString dir)
   }
 
   btnCmd->setText("Save");
-  slotSelect.connect(this, (Slot<kFileDialog, int>::FN) &kFileDialog::onOpenSelect, &btnCmd->sigClick);
+  slotSelect.connect(this, (Slot<kgmGuiFileDialog, int>::FN) &kgmGuiFileDialog::onOpenSelect, &btnCmd->sigClick);
 
   filePath = "";
   modeSave = true;
@@ -228,17 +231,17 @@ void kFileDialog::forSave(kgmString dir)
   listFolder();
 }
 
-void kFileDialog::setFilter(kgmString flt)
+void kgmGuiFileDialog::setFilter(kgmString flt)
 {
   filter = flt;
 }
 
-kgmString kFileDialog::getFile()
+kgmString kgmGuiFileDialog::getFile()
 {
   return text->m_text;
 }
 
-kgmString kFileDialog::getPath()
+kgmString kgmGuiFileDialog::getPath()
 {
   if(!filePath.length())
     filePath = getFolder() + DIRCON + getFile();
@@ -246,17 +249,25 @@ kgmString kFileDialog::getPath()
   return filePath;
 }
 
-kgmString kFileDialog::getFolder()
+kgmString kgmGuiFileDialog::getFolder()
 {
   return pathFolder;
 }
 
-void kFileDialog::changeLocation(bool s)
+void kgmGuiFileDialog::changeLocation(bool s)
 {
   localable = s;
 }
 
-void kFileDialog::showHidden(bool s)
+void kgmGuiFileDialog::showHidden(bool s)
 {
   allsee = s;
+}
+
+kgmGuiFileDialog* kgmGuiFileDialog::getDialog()
+{
+  if (kgmGuiFileDialog::single)
+    return null;
+
+  return (kgmGuiFileDialog::single = new kgmGuiFileDialog());
 }
