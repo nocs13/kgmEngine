@@ -25,6 +25,8 @@ class kViewOptions : public kgmGuiFrame
   Slot<kViewOptions, kgmString> slotRotationZ;
 
 protected:
+  static kViewOptions* single;
+
   kgmGuiTab*  tab;
 
   kNode*  node;
@@ -33,8 +35,18 @@ protected:
 public:
   Signal<> sigClose;
 
-public:
+protected:
   kViewOptions(kNode* n, int x, int y, int w, int h);
+  ~kViewOptions() { kViewOptions::single = null; }
+
+public:
+  static kViewOptions* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptions::single = new kViewOptions(n, x, y, w, h));
+  }
 
   void onAction(kgmGui* from, u32 arg);
   void onCloseOptions();
@@ -90,8 +102,18 @@ class kViewOptionsForMaterial : public kViewOptions
 
   bool m_srcblend;
 
-public:
+protected:
   kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForMaterial* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForMaterial*) (kViewOptions::single = new kViewOptionsForMaterial(n, x, y, w, h));
+  }
+
 
   __stdcall void onReset(int);
   __stdcall void onColorR(kgmString);
@@ -135,8 +157,17 @@ class kViewOptionsForVisual : public kViewOptions
 
   kgmGuiText* vis_text = null;
 
-public:
+protected:
   kViewOptionsForVisual(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForVisual* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForVisual*) (kViewOptions::single = new kViewOptionsForVisual(n, x, y, w, h));
+  }
 
   __stdcall void onShowMaterials(int);
   __stdcall void onSelectMaterial(kgmString);
@@ -159,8 +190,18 @@ class kViewOptionsForLight : public kViewOptions
   Slot<kViewOptionsForLight, kgmString> slotColorB;
   Slot<kViewOptionsForLight, bool>      slotShadows;
 
-public:
+protected:
   kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForLight* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForLight*)(kViewOptions::single = new kViewOptionsForLight(n, x, y, w, h));
+  }
+
 
   __stdcall void onColorR(kgmString);
   __stdcall void onColorG(kgmString);
@@ -196,8 +237,18 @@ class kViewOptionsForUnit : public kViewOptions
   Slot<kViewOptionsForUnit, int>  slotListActions;
   Slot<kViewOptionsForUnit, int>  slotListMaterials;
 
-public:
+protected:
   kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForUnit* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForUnit*)(kViewOptions::single = new kViewOptionsForUnit(n, x, y, w, h));
+  }
+
 
   __stdcall void onSelectCollision(bool);
   __stdcall void onSelectShapeBox(bool);
@@ -224,16 +275,36 @@ public:
 
 class kViewOptionsForSensor : public kViewOptionsForUnit
 {
-public:
+protected:
   kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForSensor* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForSensor*)(kViewOptions::single = new kViewOptionsForSensor(n, x, y, w, h));
+  }
+
 
   void setTarget(kgmString s);
 };
 
 class kViewOptionsForTrigger : public kViewOptions
 {
-public:
+protected:
   kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForTrigger* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForTrigger*)(kViewOptions::single = new kViewOptionsForTrigger(n, x, y, w, h));
+  }
+
 
   __stdcall void setChanels(kgmString s);
   __stdcall void setTarget(kgmString s);
@@ -244,8 +315,18 @@ class kViewOptionsForObstacle : public kViewOptions
   kgmGuiFileDialog* fd;
   kgmGuiText*  guiCnvText;
 
-public:
+protected:
   kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForObstacle* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForObstacle*)(kViewOptions::single = new kViewOptionsForObstacle(n, x, y, w, h));
+  }
+
 
   __stdcall void onSelectPolygons();
   __stdcall void onSelectedPolygons();
@@ -256,9 +337,17 @@ public:
 
 class kViewOptionsForEffect : public kViewOptionsForUnit
 {
+protected:
+  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
 
 public:
-  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
+  static kViewOptionsForEffect* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForEffect*)(kViewOptions::single = new kViewOptionsForEffect(n, x, y, w, h));
+  }
 };
 
 class kViewOptionsForActor : public kViewOptions
@@ -266,8 +355,18 @@ class kViewOptionsForActor : public kViewOptions
   kViewObjects *vo;
   kgmGuiText   *guiState;
 
-public:
+protected:
   kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForActor* getDialog(kNode* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForActor*)(kViewOptions::single = new kViewOptionsForActor(n, x, y, w, h));
+  }
+
 
   __stdcall void showStates();
   __stdcall void onState(kgmString);

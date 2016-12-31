@@ -1549,31 +1549,31 @@ void kEditor::onEditOptions()
   switch(selected->typ)
   {
   case kNode::VISUAL:
-    vop = new kViewOptionsForVisual(selected, 50, 50, 260, 300);
+    vop = kViewOptionsForVisual::getDialog(selected, 50, 50, 260, 300);
     break;
   case kNode::UNIT:
-    vop = new kViewOptionsForUnit(selected, 50, 50, 300, 300);
+    vop = kViewOptionsForUnit::getDialog(selected, 50, 50, 300, 300);
     break;
   case kNode::EFFECT:
-    vop = new kViewOptionsForEffect(selected, 50, 50, 300, 300);
+    vop = kViewOptionsForEffect::getDialog(selected, 50, 50, 300, 300);
     break;
   case kNode::ACTOR:
-    vop = new kViewOptionsForActor(selected, 50, 50, 300, 300);
+    vop = kViewOptionsForActor::getDialog(selected, 50, 50, 300, 300);
     break;
   case kNode::LIGHT:
-    vop = new kViewOptionsForLight(selected, 50, 50, 250, 300);
+    vop = kViewOptionsForLight::getDialog(selected, 50, 50, 250, 300);
     break;
   case kNode::SENSOR:
-    vop = new kViewOptionsForSensor(selected, 50, 50, 300, 300);
+    vop = kViewOptionsForSensor::getDialog(selected, 50, 50, 300, 300);
     break;
   case kNode::TRIGGER:
-    vop = new kViewOptionsForTrigger(selected, 50, 50, 300, 300);
+    vop = kViewOptionsForTrigger::getDialog(selected, 50, 50, 300, 300);
     break;
   case kNode::OBSTACLE:
-    vop = new kViewOptionsForObstacle(selected, 50, 50, 250, 300);
+    vop = kViewOptionsForObstacle::getDialog(selected, 50, 50, 250, 300);
     break;
   case kNode::MATERIAL:
-    vop = new kViewOptionsForMaterial(selected, 50, 50, 250, 350);
+    vop = kViewOptionsForMaterial::getDialog(selected, 50, 50, 250, 350);
     break;
   }
 
