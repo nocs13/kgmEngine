@@ -3,7 +3,7 @@
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
-#include "kFileDialog.h"
+#include "../../kgmGame/kgmGameBase.h"
 #include "kViewObjects.h"
 #include "kEditor.h"
 
@@ -468,12 +468,7 @@ void kViewOptionsForMaterial::onBlendDestination(kgmString c)
   ((kgmMaterial*)node->mtl)->dstblend(kgmMaterial::stringToBlend(c));
 }
 
-void kViewOptionsForMaterial::onSelectFailed(kFileDialog* fd)
-{
-  fd->erase();
-}
-
-void kViewOptionsForMaterial::onSelectSuccess(kFileDialog* fd)
+void kViewOptionsForMaterial::onSelectSuccess(kgmGuiFileDialog* fd)
 {
   switch (mode)
   {
@@ -504,13 +499,17 @@ void kViewOptionsForMaterial::onSelectShader(int)
 {
   mode = Mode_Shader;
 
-  kFileDialog* fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("glsl");
-  Slot<kViewOptionsForMaterial, kFileDialog*> slotShader;
-  slotShader.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectShader, &fd->sigSelect);
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotShader;
+  slotShader.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectShader, &fd->sigSelect);
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
@@ -519,13 +518,17 @@ void kViewOptionsForMaterial::onSelectTexColor(int)
 {
   mode = Mode_Color;
 
-  kFileDialog* fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexColor;
-  slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexColor, &fd->sigSelect);
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexColor;
+  slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexColor, &fd->sigSelect);
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
@@ -534,13 +537,17 @@ void kViewOptionsForMaterial::onSelectTexNormal(int)
 {
   mode = Mode_Normal;
 
-  kFileDialog* fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexNormal;
-  slotTexNormal.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexNormal, &fd->sigSelect);
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexNormal;
+  slotTexNormal.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexNormal, &fd->sigSelect);
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
@@ -549,13 +556,17 @@ void kViewOptionsForMaterial::onSelectTexSpecular(int)
 {
   mode = Mode_Specular;
 
-  kFileDialog* fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kFileDialog*> slotTexSpecular;
-  slotTexSpecular.connect(this, (Slot<kViewOptionsForMaterial, kFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexSpecular, &fd->sigSelect);
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexSpecular;
+  slotTexSpecular.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexSpecular, &fd->sigSelect);
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
@@ -744,7 +755,11 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
 
 void kViewOptionsForVisual::onShowMaterials(int s)
 {
-  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
   Slot<kViewOptionsForVisual, kgmString> slotMaterials;
   slotMaterials.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onSelectMaterial, &vo->sigSelect);
 
@@ -1177,20 +1192,26 @@ void kViewOptionsForUnit::onSelectEnable(bool state)
 
 void kViewOptionsForUnit::onListMeshes(int state)
 {
-  kFileDialog* fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter(".msh");
-  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
+  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kgmGuiFileDialog::ClickEventCallback(this, (kgmGuiFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 
 }
 
 void kViewOptionsForUnit::onListActions(int state)
 {
-  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectAction));
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
 
   kgmList<kgmString> actions;
 
@@ -1204,8 +1225,10 @@ void kViewOptionsForUnit::onListActions(int state)
 
 void kViewOptionsForUnit::onListMaterials(int state)
 {
-  kViewObjects* vo = new kViewObjects(this, 350, 50, 200, 300);
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForUnit::onSelectMaterial));
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
@@ -1218,7 +1241,7 @@ void kViewOptionsForUnit::onListMaterials(int state)
   kgmIGame::getGame()->guiAdd(vo);
 }
 
-void kViewOptionsForUnit::onSelectMesh(kFileDialog* fd)
+void kViewOptionsForUnit::onSelectMesh(kgmGuiFileDialog* fd)
 {
   kgmMesh* m = kgmIGame::getGame()->getResources()->getMesh(fd->getFile());
 
@@ -1358,11 +1381,10 @@ kViewOptionsForActor::kViewOptionsForActor(kNode* n, int x, int y, int w, int h)
 
 void kViewOptionsForActor::showStates()
 {
-  if(vo)
-    return;
-  vo = new kViewObjects();
+  kViewObjects* vo = kViewObjects::getDialog();
 
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kViewOptionsForActor::onState));
+  if(!vo)
+    return;
 
   for(u32 i = 0; i < node->act->getStatesCount(); i++)
     vo->addItem(node->act->getStateName(i));
@@ -1476,12 +1498,16 @@ void kViewOptionsForObstacle::onSelectPolygons()
   if(fd)
     return;
 
-  fd = new kFileDialog();
+  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
+
+  if(!fd)
+    return;
+
   fd->m_rect.x = 300;
   fd->showHidden(false);
   fd->show();
   fd->setFilter("plg");
-  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kFileDialog::ClickEventCallback(this, (kFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
+  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kgmGuiFileDialog::ClickEventCallback(this, (kgmGuiFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 

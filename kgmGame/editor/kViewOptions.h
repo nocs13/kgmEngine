@@ -7,12 +7,11 @@
 #include "../../kgmGraphics/kgmGuiLabel.h"
 #include "../../kgmGraphics/kgmGuiCheck.h"
 #include "../../kgmGraphics/kgmGuiSelect.h"
-//#include "../../kgmBase/kgmCallback.h"
+#include "../../kgmGraphics/kgmGuiFileDialog.h"
 
 namespace kgmGameEditor
 {
 
-class kFileDialog;
 class kViewObjects;
 
 class kViewOptions : public kgmGuiFrame
@@ -103,8 +102,8 @@ public:
   __stdcall void onSpecularB(kgmString);
   __stdcall void onBlendSource(kgmString);
   __stdcall void onBlendDestination(kgmString);
-  __stdcall void onSelectFailed(kFileDialog*);
-  __stdcall void onSelectSuccess(kFileDialog*);
+  __stdcall void onSelectFailed(kgmGuiFileDialog*);
+  __stdcall void onSelectSuccess(kgmGuiFileDialog*);
   __stdcall void onSelectShader(int);
   __stdcall void onSelectTexColor(int);
   __stdcall void onSelectTexNormal(int);
@@ -218,7 +217,7 @@ public:
   __stdcall void onListActions(int);
   __stdcall void onListMaterials(int);
 
-  __stdcall void onSelectMesh(kFileDialog*);
+  __stdcall void onSelectMesh(kgmGuiFileDialog*);
   __stdcall void onSelectAction(kgmString);
   __stdcall void onSelectMaterial(kgmString);
 };
@@ -242,7 +241,7 @@ public:
 
 class kViewOptionsForObstacle : public kViewOptions
 {
-  kFileDialog* fd;
+  kgmGuiFileDialog* fd;
   kgmGuiText*  guiCnvText;
 
 public:

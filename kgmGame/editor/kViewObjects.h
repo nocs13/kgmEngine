@@ -10,6 +10,7 @@ namespace kgmGameEditor
 
 class kViewObjects : public kgmGuiFrame
 {
+  static kViewObjects* single;
 public:
   Signal<u32> sigClose;
   Signal<kgmString> sigSelect;
@@ -20,12 +21,16 @@ private:
 
   Slot<kViewObjects, u32> slotSelect;
 
-public:
+protected:
   kViewObjects(kgmEvent* tar = null, int x = 100, int y = 100, int w = 150, int h = 300);
+  ~kViewObjects();
 
+public:
   void onClose();
 
   __stdcall void onSelectItem(u32);
+
+  static kViewObjects* getDialog();
 
   void onAction(kgmGui* g, u32 id)
   {

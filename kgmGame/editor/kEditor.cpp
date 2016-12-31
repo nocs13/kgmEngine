@@ -1651,7 +1651,11 @@ void kEditor::onAddActor()
 
 void kEditor::onAddEffect()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
 
@@ -1660,7 +1664,11 @@ void kEditor::onAddEffect()
 
 void kEditor::onAddSensor()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addSensor, &vo->sigSelect);
   //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
@@ -1770,7 +1778,11 @@ void kEditor::onRunStop()
 
 void kEditor::onViewObjects()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
   //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
@@ -1784,7 +1796,11 @@ void kEditor::onViewObjects()
 
 void kEditor::onViewMaterials()
 {
-  kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
   //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));

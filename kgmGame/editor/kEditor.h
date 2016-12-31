@@ -56,8 +56,6 @@ private:
   //kgm_ptr<kgmGuiMenu> menu;
   kgmGuiMenu* menu = null;
 
-  //kFileDialog* fdd;
-
   u32  oquered;
   u32  view_mode;
 
