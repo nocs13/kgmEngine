@@ -421,7 +421,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   return ray;
 }
 
-bool kEditor::fdMapOpen(kFileDialog* fd)
+bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 {
   kgmString s = fd->getPath();
 
@@ -662,7 +662,7 @@ bool kEditor::mapOpen(kgmString s)
   return true;
 }
 
-bool kEditor::fdMapSave(kFileDialog* fd)
+bool kEditor::fdMapSave(kgmGuiFileDialog* fd)
 {
   kgmString s = fd->getPath();
 
@@ -896,7 +896,7 @@ bool kEditor::mapSave(kgmString s)
   return true;
 }
 
-bool kEditor::fdAddMesh(kFileDialog* fd)
+bool kEditor::fdAddMesh(kgmGuiFileDialog* fd)
 {
   return addMesh(fd->getFile());
 }
@@ -950,7 +950,7 @@ bool kEditor::addUnit(kgmString type)
   return false;
 }
 
-bool kEditor::addActor(kFileDialog* fdd)
+bool kEditor::addActor(kgmGuiFileDialog* fdd)
 {
   if(!fdd || fdd->getFile().empty())
     return false;
@@ -1586,7 +1586,11 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddMesh()
 {
-  kFileDialog *fdd = new kFileDialog();
+  kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
+
+  if(!fdd)
+    return;
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
@@ -1631,7 +1635,11 @@ void kEditor::onAddLight()
 
 void kEditor::onAddActor()
 {
-  kFileDialog *fdd = new kFileDialog();
+  kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
+
+  if(!fdd)
+    return;
+
   fdd->showHidden(false);
 
   fdd->setFilter(".act");
@@ -1646,7 +1654,6 @@ void kEditor::onAddEffect()
   kViewObjects* vo = new kViewObjects(this, 1, 50, 200, 300);
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
-  //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addEffect));
 
   game->guiAdd(vo);
 }

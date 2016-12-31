@@ -10,7 +10,6 @@
 #include "kArrow.h"
 #include "kPivot.h"
 #include "kGridline.h"
-#include "kFileDialog.h"
 #include "kViewObjects.h"
 #include "kViewOptions.h"
 
@@ -97,11 +96,11 @@ public:
 
   kgmList<kNode*>& getNodes() { return nodes; }
 
-  __stdcall bool fdMapSave(kFileDialog*);
-  __stdcall bool fdMapOpen(kFileDialog*);
-  __stdcall bool fdAddMesh(kFileDialog*);
+  __stdcall bool fdMapSave(kgmGuiFileDialog*);
+  __stdcall bool fdMapOpen(kgmGuiFileDialog*);
+  __stdcall bool fdAddMesh(kgmGuiFileDialog*);
   __stdcall bool addUnit(kgmString);
-  __stdcall bool addActor(kFileDialog*);
+  __stdcall bool addActor(kgmGuiFileDialog*);
   __stdcall bool addEffect(kgmString);
   __stdcall bool addSensor(kgmString);
 
