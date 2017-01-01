@@ -59,7 +59,7 @@ private:
   u32  oquered;
   u32  view_mode;
 
-  kgmList<kNode*> nodes;
+  //kgmList<kNode*> nodes;
   kgmList<kNode*> materials;
 
   kNode* selected = null;
@@ -92,7 +92,7 @@ public:
 
   kgmRay3d<float> getPointRay(int x, int y);
 
-  kgmList<kNode*>& getNodes() { return nodes; }
+  //kgmList<kNode*>& getNodes() { return nodes; }
 
   __stdcall bool fdMapSave(kgmGuiFileDialog*);
   __stdcall bool fdMapOpen(kgmGuiFileDialog*);
