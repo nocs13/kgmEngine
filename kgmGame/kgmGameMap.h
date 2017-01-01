@@ -102,21 +102,20 @@ public:
 
   bool open(kgmXml& xml);
   bool open(kgmMemory<u8>& mem);
-
-  bool addLight(Node n);
-  bool addCamera(Node n);
-  bool addVisual(Node n);
-  bool addUnit(Node n);
-  bool addActor(kgmActor* n);
-  bool addEffect(Node n);
-  bool addSensor(Node n);
-  bool addTrigger(Node n);
-  bool addObstacle(Node n);
-  bool addMaterial(Node n);
+  bool save(kgmString path);
 
   kgmGameNode* next();
 
 private:
+  bool addLight(kgmGameLight* n);
+  bool addCamera(kgmGameCamera* n);
+  bool addVisual(kgmGameVisual* n);
+  bool addUnit(kgmUnit* n);
+  bool addActor(kgmActor* n);
+  bool addEffect(kgmEffect* n);
+  bool addSensor(kgmSensor* n);
+  bool addTrigger(kgmTrigger* n);
+
   void addCollision(kgmXml::Node& xnode, Node& node);
   void addCollision(kgmXml::Node& xnode, bool col);
 

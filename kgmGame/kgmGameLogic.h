@@ -44,7 +44,7 @@ public:
     m_gameplayer = gp;
   }
 
-  kgmActor* getPlayer() const
+  kgmActor* getPlayer()
   {
     return m_gameplayer;
   }

@@ -11,7 +11,21 @@ class kgmGameNode: public kgmObject//, private kgmBody,  private kgmVisual
 {
   KGM_OBJECT(kgmGameNode);
 
+  enum NodeType
+  {
+    NodeNone,
+    NodeCam,
+    NodeLgt,
+    NodeVis,
+    NodeUnt,
+    NodeAct,
+    NodeSns,
+    NodeTrg
+  };
+
   kgmIGame* m_game = null;
+
+  NodeType type = NodeNone;
 
   kgmString m_id;
   kgmString m_class;
@@ -30,7 +44,6 @@ class kgmGameNode: public kgmObject//, private kgmBody,  private kgmVisual
   vec3 m_rotation;
   quat m_quaternion;
 
-
 protected:
   kgmBody*    m_body   = null;
   kgmVisual*  m_visual = null;
@@ -39,10 +52,17 @@ public:
   kgmGameNode(kgmIGame* g);
   ~kgmGameNode();
 
-  virtual void         init(){}
-  virtual void         exit(){}
-  virtual void         update(u32){ }
-  virtual void         event(kgmObject*, kgmString){ }
+  virtual void init()
+  { }
+
+  virtual void exit()
+  { }
+
+  virtual void update(u32)
+  { }
+
+  virtual void event(kgmObject*, kgmString)
+  { }
 
   void remove();
   u32 timeout();

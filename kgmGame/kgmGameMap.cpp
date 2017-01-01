@@ -3,6 +3,7 @@
 #include "../kgmBase/kgmResource.h"
 
 #include "kgmIGame.h"
+#include "kgmILogic.h"
 #include "kgmGameResources.h"
 
 kgmGameMap::kgmGameMap(kgmIGame* g, OpenType ot)
@@ -36,29 +37,124 @@ bool kgmGameMap::open(kgmMemory<u8>& mem)
   m_mem = &mem;
 }
 
-bool kgmGameMap::addLight(Node n)
+bool kgmGameMap::save(kgmString path)
 {
-  if(m_type == OpenRead || !n.obj)
+  kgmXml     xml;
+
+  if(m_type != OpenWrite)
+    return false;
+
+  open(xml);
+
+  kgmList<kgmGameLight*> lights;
+  kgmList<kgmGameVisual*> visuals;
+  kgmList<kgmGameCamera*> cameras;
+
+  kgmList<kgmUnit*> units;
+  kgmList<kgmActor*> actors;
+  kgmList<kgmEffect*> effects;
+  kgmList<kgmSensor*> sensors;
+  kgmList<kgmTrigger*> triggers;
+
+  kgmList<kgmGameNode*> nodes;
+
+  m_game->getLogic()->getObjects(nodes);
+
+  for(kgmList<kgmGameNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  {
+    if((*i)->isClass("kgmUnit"))
+      units.add((kgmUnit*) (*i));
+    else if((*i)->isClass("kgmGameLight"))
+      lights.add((kgmGameLight*) (*i));
+    else if((*i)->isClass("kgmGameCamera"))
+      cameras.add((kgmGameCamera*) (*i));
+    else if((*i)->isClass("kgmActor"))
+      actors.add((kgmActor*) (*i));
+    else if((*i)->isClass("kgmGameVisual"))
+      visuals.add((kgmGameVisual*) (*i));
+    else if((*i)->isClass("kgmEffect"))
+      effects.add((kgmEffect*) (*i));
+    else if((*i)->isClass("kgmSensor"))
+      sensors.add((kgmSensor*) (*i));
+    else if((*i)->isClass("kgmTrigger"))
+      triggers.add((kgmTrigger*) (*i));
+  }
+
+  kgmGameMap::Node node;
+
+  for(kgmList<kgmGameCamera*>::iterator i = cameras.begin(); i != cameras.end(); ++i)
+    addCamera(*i);
+
+  for(kgmList<kgmGameLight*>::iterator i = lights.begin(); i != lights.end(); ++i)
+    addLight(*i);
+
+  for(kgmList<kgmGameVisual*>::iterator i = visuals.begin(); i != visuals.end(); ++i)
+    addVisual(*i);
+
+  for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); ++i)
+    addUnit(*i);
+
+  for(kgmList<kgmActor*>::iterator i = actors.begin(); i != actors.end(); ++i)
+    addActor(*i);
+
+  for(kgmList<kgmEffect*>::iterator i = effects.begin(); i != effects.end(); ++i)
+    addEffect(*i);
+
+  for(kgmList<kgmSensor*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
+    addSensor(*i);
+
+  for(kgmList<kgmTrigger*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
+    addTrigger(*i);
+
+  triggers.clear();
+  sensors.clear();
+  effects.clear();
+  actors.clear();
+  units.clear();
+  visuals.clear();
+  cameras.clear();
+  lights.clear();
+
+  FILE* f = fopen(path.data(), "w");
+
+  if(!f) {
+    return false;
+  }
+
+  kgmString str;
+
+  if(xml.toString(str) > 1) {
+    fprintf(f, "%s", str.data());
+  }
+
+  fclose(f);
+
+  return true;
+}
+
+bool kgmGameMap::addLight(kgmGameLight* n)
+{
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmLight";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
+    node->m_name = "kgmGameLight";
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
   }
 }
 
-bool kgmGameMap::addCamera(Node n)
+bool kgmGameMap::addCamera(kgmGameCamera* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
@@ -140,6 +236,21 @@ bool kgmGameMap::addVisual(Node n)
   }
 }
 
+bool kgmGameMap::addLight(kgmGameLight* n)
+{
+
+}
+
+bool kgmGameMap::addCamera(kgmGameCamera* n)
+{
+
+}
+
+bool kgmGameMap::addVisual(kgmGameVisual* n)
+{
+
+}
+
 bool kgmGameMap::addActor(kgmActor* n)
 {
   if(m_type == OpenRead || !n)
@@ -171,7 +282,7 @@ bool kgmGameMap::addActor(kgmActor* n)
   }
 }
 
-bool kgmGameMap::addEffect(Node n)
+bool kgmGameMap::addEffect(kgmEffect* n)
 {
   if(m_type == OpenRead || !n.obj)
     return false;
@@ -197,7 +308,7 @@ bool kgmGameMap::addEffect(Node n)
   }
 }
 
-bool kgmGameMap::addSensor(Node n)
+bool kgmGameMap::addSensor(kgmSensor* n)
 {
   if(m_type == OpenRead || !n.obj)
     return false;
@@ -224,7 +335,7 @@ bool kgmGameMap::addSensor(Node n)
   }
 }
 
-bool kgmGameMap::addTrigger(Node n)
+bool kgmGameMap::addTrigger(kgmTrigger* n)
 {
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
@@ -248,7 +359,7 @@ bool kgmGameMap::addTrigger(Node n)
   }
 }
 
-bool kgmGameMap::addUnit(Node n)
+bool kgmGameMap::addUnit(kgmUnit n)
 {
   if(m_type == OpenRead || !n.obj)
     return false;
@@ -294,142 +405,6 @@ bool kgmGameMap::addUnit(Node n)
 
     addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
   }
-}
-
-bool kgmGameMap::addObstacle(Node n)
-{
-  if(m_type == OpenRead || !n.obj)
-    return false;
-
-  if(!m_xml || m_xml->m_node->m_name != "kgm")
-    return false;
-
-  kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
-
-  node->m_name = "kgmObstacle";
-  node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-
-
-  mtx4 tr = ((kgmObstacle*)n.obj)->getTransfom();
-  vec3 pos(0,0,0);
-  pos = tr * pos;
-  quat qt;
-  tr.quaternion(qt);
-  float scale = ((kgmObstacle*)n.obj)->getScale();
-
-  addPosition(*node, pos);
-  addQuaternion(*node, qt);
-
-  kgmXml::Node* snode = new kgmXml::Node(node);
-  snode->m_name = "Scale";
-  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(scale)));
-
-  if(n.lck)
-    addLocked(*node, n.lck);
-
-  for(u32 i = 0; i < ((kgmObstacle*)n.obj)->length(); i++)
-  {
-    triangle3 tr = ((kgmObstacle*)n.obj)->getTriangle(i);
-
-    addTriangle(*node, tr);
-  }
-
-  return true;
-}
-
-bool kgmGameMap::addMaterial(Node n)
-{
-  if(m_type == OpenRead || !n.obj)
-    return false;
-
-  if(!m_xml || m_xml->m_node->m_name != "kgm")
-    return false;
-
-  kgmMaterial* mtl = (kgmMaterial*)n.obj;
-
-  kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
-
-  node->m_name = "kgmMaterial";
-  node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-
-  kgmXml::Node* snode = new kgmXml::Node(node);
-  snode->m_name = "Shininess";
-  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->shininess())));
-
-  snode = new kgmXml::Node(node);
-  snode->m_name = "Transparency";
-  snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(mtl->transparency())));
-
-  if(mtl->alpha())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Alpha";
-    snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
-  }
-
-  if(!mtl->depth())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Depth";
-    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
-  }
-
-  if(!mtl->shade())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Shade";
-    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
-  }
-
-  if(!mtl->cull())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Cull";
-    snode->m_attributes.add(new kgmXml::Attribute("value", "false"));
-  }
-
-  if(mtl->blend())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Blending";
-    snode->m_attributes.add(new kgmXml::Attribute("source",
-                            kgmMaterial::blendToString(mtl->srcblend())));
-    snode->m_attributes.add(new kgmXml::Attribute("destination",
-                            kgmMaterial::blendToString(mtl->dstblend())));
-  }
-
-  if(mtl->getShader())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Shader";
-    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getShader()->m_id));
-  }
-
-  if(mtl->hasTexColor())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Texture";
-    snode->m_attributes.add(new kgmXml::Attribute("type", "color"));
-    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexColor()->m_id));
-  }
-
-  if(mtl->hasTexNormal())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Texture";
-    snode->m_attributes.add(new kgmXml::Attribute("type", "normal"));
-    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexNormal()->m_id));
-  }
-
-  if(mtl->hasTexSpecular())
-  {
-    snode = new kgmXml::Node(node);
-    snode->m_name = "Texture";
-    snode->m_attributes.add(new kgmXml::Attribute("type", "specular"));
-    snode->m_attributes.add(new kgmXml::Attribute("id", mtl->getTexSpecular()->m_id));
-  }
-
-  return true;
 }
 
 kgmGameNode* kgmGameMap::next()

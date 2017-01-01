@@ -150,67 +150,6 @@ public:
     State_Edit
   };
 
-  struct Node
-  {
-    enum NodeType
-    {
-      NodeNone,
-      NodeCam,
-      NodeLgt,
-      NodeVis,
-      NodeUnt,
-      NodeAct,
-      NodeSns,
-      NodeTrg
-    };
-
-    NodeType type = NodeNone;
-
-    kgm_ptr<kgmObject> object;
-
-    kgmString name;
-
-    bool collide = false;  //collision type
-    bool hidden  = false;  // node is hidden
-    bool locked  = false;  //locked. for editor only
-
-    Node()
-    {
-
-    }
-
-    Node(kgm_ptr<kgmObject> obj, NodeType typ, kgmString nam)
-    {
-      object = obj;
-      type   = typ;
-      name   = nam;
-    }
-
-    Node(const Node& node)
-    {
-      type    = node.type;
-      name    = node.name;
-      object  = node.object;
-      collide = node.collide;
-      hidden  = node.hidden;
-      locked  = node.locked;
-    }
-
-    ~Node()
-    {
-    }
-
-    kgm_ptr<kgmBody>   getBody();
-    kgm_ptr<kgmUnit>   getUnit();
-    kgm_ptr<kgmLight>  getLight();
-    kgm_ptr<kgmVisual> getVisual();
-
-    vec3 getPosition();
-    void setPosition(vec3 pos);
-    vec3 getRotation();
-    void setRotation(vec3 pos);
-  };
-
   struct Editor
   {
 

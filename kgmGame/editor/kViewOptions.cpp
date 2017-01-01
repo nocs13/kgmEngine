@@ -755,49 +755,6 @@ kViewOptionsForVisual::kViewOptionsForVisual(kNode* n, int x, int y, int w, int 
   }
 }
 
-void kViewOptionsForVisual::onShowMaterials(int s)
-{
-  kViewObjects* vo = kViewObjects::getDialog();
-
-  if(!vo)
-    return;
-
-  Slot<kViewOptionsForVisual, kgmString> slotMaterials;
-  slotMaterials.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onSelectMaterial, &vo->sigSelect);
-
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
-
-  kgmList<kgmGameNode*>& nodes = editor->getNodes();
-
-  for(int i = 0; i < nodes.length(); i++)
-    if (nodes[i]->getClass() == "kgmMaterial")
-      vo->addItem(nodes[i]->getId());
-
-  kgmIGame::getGame()->guiAdd(vo);
-}
-
-void kViewOptionsForVisual::onSelectMaterial(kgmString id)
-{
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
-
-  kgmList<kgmGameNode*>& nodes = editor->getNodes();
-
-  for(int i = 0; i < nodes.length(); i++)
-  {
-    if (nodes[i]->getClass() == "kgmMaterial")
-    {
-      if (nodes[i]->getId() == id)
-      {
-        //node->vis->set(nodes[i]->mtl);
-
-        vis_text->setText(nodes[i]->getId());
-
-        break;
-      }
-    }
-  }
-}
-
 void kViewOptionsForVisual::onParticlesLoop(bool s)
 {
   node->vis->getParticles()->loop(s);
