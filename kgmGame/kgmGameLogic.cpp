@@ -16,7 +16,7 @@ void kgmGameLogic::clear()
   m_objects.clear();
 }
 
-bool kgmGameLogic::add(kgmUnit* u)
+bool kgmGameLogic::add(kgmGameNode* u)
 {
   if(!u)
     return false;
@@ -28,14 +28,14 @@ bool kgmGameLogic::add(kgmUnit* u)
   return true;
 }
 
-bool kgmGameLogic::remove(kgmUnit* o)
+bool kgmGameLogic::remove(kgmGameNode* o)
 {
   if(!o)
     return false;
 
   for(int i = m_objects.length(); i > 0; i--)
   {
-    kgmUnit* u = m_objects[i - 1];
+    kgmGameNode* u = m_objects[i - 1];
 
     if(o == u)
     {
@@ -53,9 +53,9 @@ bool kgmGameLogic::remove(kgmUnit* o)
   return false;
 }
 
-bool kgmGameLogic::isValid(kgmUnit *go)
+bool kgmGameLogic::isValid(kgmGameNode *go)
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
+  for(kgmList<kgmGameNode*>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
   {
     if(go == (*i))
       return true;
@@ -66,22 +66,22 @@ bool kgmGameLogic::isValid(kgmUnit *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameNode*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmUnit* go = (*i);
+    kgmGameNode* go = (*i);
     go->init();
   }
 }
 
 void kgmGameLogic::update(u32 milliseconds)
 {
-  kgmList<kgmUnit*>::iterator i = m_objects.begin();
+  kgmList<kgmGameNode*>::iterator i = m_objects.begin();
 
   gcount = 0;
 
   while(i != m_objects.end())
   {
-    kgmUnit* go = (*i);
+    kgmGameNode* go = (*i);
 
     if(go->removed())
     {
@@ -111,16 +111,16 @@ void kgmGameLogic::input(int btn, int state)
     m_gameplayer->input(btn, state);
 }
 
-void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)
+void kgmGameLogic::collide(kgmGameNode* src, kgmGameNode* dst)
 {
 
 }
 
-kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
+kgmGameNode* kgmGameLogic::getObjectById(kgmString& id)
 {
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameNode*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmUnit* go = (*i);
+    kgmGameNode* go = (*i);
 
     if(go->removed() || !go->valid())
     {
@@ -135,11 +135,11 @@ kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
   return null;
 }
 
-u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
+u32 kgmGameLogic::getObjects(kgmList<kgmGameNode*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameNode*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     objs.add((*i));
     count++;
@@ -148,13 +148,13 @@ u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
   return count;
 }
 
-u32 kgmGameLogic::getObjectsByClass(const char* t, kgmList<kgmUnit*>& objs)
+u32 kgmGameLogic::getObjectsByClass(kgmString& t, kgmList<kgmGameNode*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmList<kgmGameNode*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
-    kgmUnit* go = (*i);
+    kgmGameNode* go = (*i);
 
     if(!go->removed() && go->valid() && (*i)->isClass(t))
     {

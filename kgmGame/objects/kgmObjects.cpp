@@ -78,7 +78,7 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   m_visual->set(material);
   m_visual->set(particles);
 
-  setPosition(pos);
+  position(pos);
 
   kgmVariable var;
 
@@ -156,7 +156,7 @@ kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
   m_visual->set(material);
   m_visual->set(particles);
 
-  setPosition(pos);
+  position(pos);
 }
 
 kgmLaser::kgmLaser(kgmIGame* g)

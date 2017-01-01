@@ -1,6 +1,7 @@
 #include "kgmGameLight.h"
 
-kgmGameLight::kgmGameLight()
+kgmGameLight::kgmGameLight(kgmIGame* g)
+    :kgmGameNode(g)
 {
-
+  m_light = new kgmLight();
 }

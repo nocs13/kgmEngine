@@ -185,15 +185,6 @@ void kEditor::clear()
   if(mode_play)
     onRunStop();
 
-  for(u32 i = nodes.length(); i > 0; i--)
-  {
-    kNode* node = nodes[i - 1];
-
-    remove(node);
-  }
-
-  nodes.clear();
-
   oquered = 0;
 
   pv_delta = 0.0;
@@ -204,20 +195,24 @@ void kEditor::clear()
 
 void kEditor::select(kgmString name)
 {
-  kgmList<kNode*>::iterator i = nodes.begin();
+  kgmList<kgmGameNode*> nodes;
+
+  this->game->getLogic()->getObjects(nodes);
+
+  kgmList<kgmGameNode*>::iterator i = nodes.begin();
 
   do
   {
-    if((*i)->nam == name)
+    if((*i)->getId() == name)
     {
       selected = (*i);
 
       textData->m_text =  "Selected: ";
       textData->m_text += name;
 
-      if(pivot && selected && selected->typ != kNode::MATERIAL)
+      if(pivot && selected && selected->getClass() != "kgmMaterial")
       {
-        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->getPosition());
+        ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->position());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
       }
 
@@ -280,9 +275,13 @@ void kEditor::select(int x, int y)
   //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
   //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
   float distance = -1.0f;
-  kNode* peeked = null;
+  kgmGameNode* peeked = null;
 
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  kgmList<kgmGameNode*> nodes;
+
+  this->game->getLogic()->getObjects(nodes);
+
+  for(kgmList<kgmGameNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     vec3  c, n_x, n_y, n_z;
     plane3 pln_x, pln_y, pln_z;
@@ -291,72 +290,72 @@ void kEditor::select(int x, int y)
     n_y = vec3(0, 1, 0);
     n_z = vec3(0, 0, 1);
 
-    pln_x = plane3(n_x, (*i)->getPosition());
-    pln_y = plane3(n_y, (*i)->getPosition());
-    pln_z = plane3(n_z, (*i)->getPosition());
+    pln_x = plane3(n_x, (*i)->position());
+    pln_y = plane3(n_y, (*i)->position());
+    pln_z = plane3(n_z, (*i)->position());
 
-    if (*i == null || (*i)->typ == kNode::MATERIAL)
+    if (*i == null)
       continue;
 
-    if(pln_x.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    if(pln_x.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = (*i);
-        distance = cam.mPos.distance((*i)->getPosition());
+        distance = cam.mPos.distance((*i)->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->getPosition()))
+        if (distance > cam.mPos.distance((*i)->position()))
         {
           peeked   = (*i);
-          distance = cam.mPos.distance((*i)->getPosition());
+          distance = cam.mPos.distance((*i)->position());
         }
       }
 
-      pv_delta = (*i)->getPosition().distance(c);
+      pv_delta = (*i)->position().distance(c);
     }
-    else if(pln_y.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    else if(pln_y.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = (*i);
-        distance = cam.mPos.distance((*i)->getPosition());
+        distance = cam.mPos.distance((*i)->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->getPosition()))
+        if (distance > cam.mPos.distance((*i)->position()))
         {
           peeked   = (*i);
-          distance = cam.mPos.distance((*i)->getPosition());
+          distance = cam.mPos.distance((*i)->position());
         }
       }
 
-      pv_delta = (*i)->getPosition().distance(c);
+      pv_delta = (*i)->position().distance(c);
     }
-    else if(pln_z.intersect(ray, c) && ((*i)->getPosition().distance(c) < 1.0))
+    else if(pln_z.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = (*i);
-        distance = cam.mPos.distance((*i)->getPosition());
+        distance = cam.mPos.distance((*i)->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->getPosition()))
+        if (distance > cam.mPos.distance((*i)->position()))
         {
           peeked   = (*i);
-          distance = cam.mPos.distance((*i)->getPosition());
+          distance = cam.mPos.distance((*i)->position());
         }
       }
 
-      pv_delta = (*i)->getPosition().distance(c);
+      pv_delta = (*i)->position().distance(c);
     }
   }
 
   if(peeked)
   {
-    select(peeked->nam);
+    select(peeked->getId());
 
     dragging = peeked;
 
@@ -469,188 +468,12 @@ bool kEditor::mapOpen(kgmString s)
 
   map.open(xml);
 
-  kgmGameMap::Node mnode = map.next();
+  kgmGameNode* mnode = map.next();
 
-  while(mnode.typ != kgmGameMap::NodeNone)
+  while(mnode != null)
   {
-    if(mnode.typ == kgmGameMap::NodeVis)
-    {
-      oquered++;
-      node = new kNode((kgmVisual*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->lnk = mnode.lnk;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      if(mnode.mtl.length() > 0)
-      {
-        kgmMaterial* mtl = null;
-
-        for(int i = 0; i < nodes.length(); i++)
-          if(nodes[i]->typ == kNode::MATERIAL && nodes[i]->nam == mnode.mtl)
-          {
-            mtl = nodes[i]->mtl;
-
-            break;
-          }
-
-        if(mtl)
-          node->vis->set(mtl);
-      }
-
-      add(node);
-
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeLgt)
-    {
-      oquered++;
-      node = new kNode((kgmLight*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeCam)
-    {
-      game->getRender()->camera().mPos = mnode.pos;
-      game->getRender()->camera().mDir = mnode.rot;
-      game->getRender()->camera().mFov = mnode.fov;
-
-      game->getRender()->camera().update();
-    }
-    if(mnode.typ == kgmGameMap::NodeMtl)
-    {
-      oquered++;
-      node = new kNode((kgmMaterial*)mnode.obj);
-
-      node->nam  = mnode.nam;
-      node->lock = true;
-
-      add(node);
-    }
-    else if(mnode.typ == kgmGameMap::NodeUnt)
-    {
-      oquered++;
-      node = new kNode((kgmUnit*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeAct)
-    {
-      oquered++;
-      node = new kNode((kgmActor*)mnode.obj);
-
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->ini = mnode.ini;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeEff)
-    {
-      oquered++;
-      node = new kNode((kgmEffect*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeSns)
-    {
-      oquered++;
-      node = new kNode((kgmSensor*)mnode.obj);
-
-      node->bnd = mnode.bnd;
-      node->nam = mnode.nam;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeTrg)
-    {
-      oquered++;
-      node = new kNode((kgmTrigger*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeObs)
-    {
-      oquered++;
-      node = new kNode((kgmObstacle*)mnode.obj);
-
-      node->nam = mnode.nam;
-      node->bnd = mnode.bnd;
-      node->col = mnode.col;
-      node->shp = mnode.shp;
-      node->bnd = mnode.bnd;
-      node->lock = mnode.lck;
-
-      add(node);
-      node->setPosition(mnode.pos);
-      node->setRotation(mnode.rot);
-    }
-    else if(mnode.typ == kgmGameMap::NodeMtl)
-    {
-      oquered++;
-      node = new kNode((kgmMaterial*)mnode.obj);
-
-      node->nam  = mnode.nam;
-      node->lock = true;
-
-      node->setPosition(vec3(0, 0, -1000));
-
-      add(node);
-    }
+    oquered++;
+    game->getLogic()->add(mnode);
 
     mnode = map.next();
   }

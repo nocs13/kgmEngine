@@ -14,6 +14,9 @@
 #include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
+#include "kgmGameLight.h"
+#include "kgmGameCamera.h"
+#include "kgmGameVisual.h"
 
 class kgmIGame;
 
@@ -111,7 +114,7 @@ public:
   bool addObstacle(Node n);
   bool addMaterial(Node n);
 
-  Node next();
+  kgmGameNode* next();
 
 private:
   void addCollision(kgmXml::Node& xnode, Node& node);

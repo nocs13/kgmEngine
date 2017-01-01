@@ -767,11 +767,11 @@ void kViewOptionsForVisual::onShowMaterials(int s)
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
-  kgmList<kNode*>& nodes = editor->getNodes();
+  kgmList<kgmGameNode*>& nodes = editor->getNodes();
 
   for(int i = 0; i < nodes.length(); i++)
-    if (nodes[i]->typ == kNode::MATERIAL)
-      vo->addItem(nodes[i]->nam);
+    if (nodes[i]->getClass() == "kgmMaterial")
+      vo->addItem(nodes[i]->getId());
 
   kgmIGame::getGame()->guiAdd(vo);
 }
@@ -780,17 +780,17 @@ void kViewOptionsForVisual::onSelectMaterial(kgmString id)
 {
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
-  kgmList<kNode*>& nodes = editor->getNodes();
+  kgmList<kgmGameNode*>& nodes = editor->getNodes();
 
   for(int i = 0; i < nodes.length(); i++)
   {
-    if (nodes[i]->typ == kNode::MATERIAL)
+    if (nodes[i]->getClass() == "kgmMaterial")
     {
-      if (nodes[i]->nam == id)
+      if (nodes[i]->getId() == id)
       {
-        node->vis->set(nodes[i]->mtl);
+        //node->vis->set(nodes[i]->mtl);
 
-        vis_text->setText(nodes[i]->mtl->name());
+        vis_text->setText(nodes[i]->getId());
 
         break;
       }
@@ -1045,11 +1045,6 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
   if (n->unt && n->unt->visual() && n->unt->visual()->getMesh())
     g->setText(n->unt->visual()->getMesh()->getMesh()->id());
 
-  g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
-  g->setSid("btnSelectVisual");
-  g->setText("Select");
-  slotListMeshes.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListMeshes, &((kgmGuiButton*)g)->sigClick);
-
   y_coord += 23;
 
   g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
@@ -1061,11 +1056,6 @@ kViewOptionsForUnit::kViewOptionsForUnit(kNode* n, int x, int y, int w, int h)
 
   if (n->unt && n->unt->visual() && n->unt->visual()->getMaterial())
     g->setText(n->unt->visual()->getMaterial()->name());
-
-  g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
-  g->setSid("btnSelectMaterial");
-  g->setText("Select");
-  slotListMaterials.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListMaterials, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
 
@@ -1192,22 +1182,6 @@ void kViewOptionsForUnit::onSelectEnable(bool state)
     node->unt->disable();
 }
 
-void kViewOptionsForUnit::onListMeshes(int state)
-{
-  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
-
-  if(!fd)
-    return;
-
-  fd->m_rect.x = 300;
-  fd->showHidden(false);
-  fd->show();
-  fd->setFilter(".msh");
-  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kgmGuiFileDialog::ClickEventCallback(this, (kgmGuiFileDialog::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectMesh));
-  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-
-}
-
 void kViewOptionsForUnit::onListActions(int state)
 {
   kViewObjects* vo = kViewObjects::getDialog();
@@ -1225,44 +1199,6 @@ void kViewOptionsForUnit::onListActions(int state)
   kgmIGame::getGame()->guiAdd(vo);
 }
 
-void kViewOptionsForUnit::onListMaterials(int state)
-{
-  kViewObjects* vo = kViewObjects::getDialog();
-
-  if(!vo)
-    return;
-
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
-
-  kgmList<kNode*>& nodes = editor->getNodes();
-
-  for(int i = 0; i < nodes.length(); i++)
-    if (nodes[i]->typ == kNode::MATERIAL)
-      vo->addItem(nodes[i]->nam);
-
-  kgmIGame::getGame()->guiAdd(vo);
-}
-
-void kViewOptionsForUnit::onSelectMesh(kgmGuiFileDialog* fd)
-{
-  kgmMesh* m = kgmIGame::getGame()->getResources()->getMesh(fd->getFile());
-
-  if(m)
-  {
-    if(!node->unt->visual())
-    {
-      node->unt->visual(new kgmVisual());
-      node->unt->visual()->set(m);
-      ((kgmGameBase*)kgmIGame::getGame())->getRender()->add(node->unt->visual());
-    }
-
-    kgmGui* txt = this->getBySid("Visual");
-
-    if(txt)
-      txt->setText(fd->getFile());
-  }
-}
-
 void kViewOptionsForUnit::onSelectAction(kgmString id)
 {
   if(id.length() < 1)
@@ -1274,32 +1210,6 @@ void kViewOptionsForUnit::onSelectAction(kgmString id)
 
   if(act)
     act->setText(id);
-}
-
-void kViewOptionsForUnit::onSelectMaterial(kgmString id)
-{
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
-
-  kgmList<kNode*>& nodes = editor->getNodes();
-
-  for(int i = 0; i < nodes.length(); i++)
-  {
-    if (nodes[i]->typ == kNode::MATERIAL)
-    {
-      if (nodes[i]->nam == id)
-      {
-        if(node->unt->visual())
-          node->unt->visual()->set(nodes[i]->mtl);
-
-        kgmGui* mtl = this->getBySid("Material");
-
-        if(mtl)
-          mtl->setText(id);
-
-        break;
-      }
-    }
-  }
 }
 
 void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)

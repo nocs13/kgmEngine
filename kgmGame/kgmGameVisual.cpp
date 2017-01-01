@@ -1,6 +1,7 @@
 #include "kgmGameVisual.h"
 
-kgmGameVisual::kgmGameVisual()
+kgmGameVisual::kgmGameVisual(kgmIGame* g)
+  :kgmGameNode(g)
 {
 
 }

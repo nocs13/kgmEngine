@@ -1640,15 +1640,15 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
     if(id == "Mass")
     {
       a_node->node(i)->attribute("value", val);
-      sscanf(val.data(), "%f", &actor->getBody()->m_mass);
+      sscanf(val.data(), "%f", &actor->body()->m_mass);
     }
     else if(id == "Bound")
     {
       float a[3];
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
-      actor->getBody()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
-      actor->getBody()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+      actor->body()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      actor->body()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
     }
     else if(id == "Collision")
     {
@@ -1703,7 +1703,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
                     {
                       vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
 
-                      actor->getBody()->addShapeSide(v);
+                      actor->body()->addShapeSide(v);
                     }
 
                     delete [] pol;
@@ -1714,8 +1714,8 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
           }
         }
 
-        if(actor->getBody()->m_convex.size() > 0)
-          actor->getBody()->m_shape == kgmBody::ShapePolyhedron;
+        if(actor->body()->m_convex.size() > 0)
+          actor->body()->m_shape == kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")
@@ -1723,9 +1723,9 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
       a_node->node(i)->attribute("value", val);
 
       if(val == "true")
-        actor->getBody()->m_gravity = true;
+        actor->body()->m_gravity = true;
       else
-        actor->getBody()->m_gravity = false;
+        actor->body()->m_gravity = false;
     }
     else if(id == "Dummies")
     {
@@ -1819,10 +1819,10 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       if(msh)
       {
-        actor->getVisual()->set(msh);
-        actor->getVisual()->set(mtl);
-        actor->getVisual()->setAnimation(anm);
-        actor->getVisual()->setSkeleton(skl);
+        actor->visual()->set(msh);
+        actor->visual()->set(mtl);
+        actor->visual()->setAnimation(anm);
+        actor->visual()->setSkeleton(skl);
 
         msh = null;
         mtl = null;

@@ -50,7 +50,7 @@ void kgmCharacter::update(u32 ms)
       kgmDummy*       dm = m_dummies[i];
       kgmUnit*  go = (kgmUnit*)dm->linked();
 
-      if(go && go->getVisual())
+      if(go && go->visual())
       {
         mtx4 m;
         vec3 v = dm->m_shift;
@@ -64,16 +64,16 @@ void kgmCharacter::update(u32 ms)
     }
   }
 
-  if(getBody())
+  if(body())
   {
-    vec3 pos = getBody()->position();
+    vec3 pos = body()->position();
 
     if(pos.x < -3000) pos.x =  3000;
     if(pos.x >  3000) pos.x = -3000;
     if(pos.y < -3000) pos.y =  3000;
     if(pos.y >  3000) pos.y = -3000;
 
-    getBody()->translate(pos);
+    body()->translate(pos);
   }
 
   if(m_state)

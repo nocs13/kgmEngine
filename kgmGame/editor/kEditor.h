@@ -53,17 +53,13 @@ private:
 
   float pv_delta;
 
-  //kgm_ptr<kgmGuiMenu> menu;
   kgmGuiMenu* menu = null;
 
   u32  oquered;
   u32  view_mode;
 
-  //kgmList<kNode*> nodes;
-  kgmList<kNode*> materials;
-
-  kNode* selected = null;
-  kNode* dragging = null;
+  kgmGameNode* selected = null;
+  kgmGameNode* dragging = null;
 
   kgmMaterial* mtlLines = null;
   kgmMaterial* mtlPivot = null;
@@ -91,8 +87,6 @@ public:
   void select(kgmString name);
 
   kgmRay3d<float> getPointRay(int x, int y);
-
-  //kgmList<kNode*>& getNodes() { return nodes; }
 
   __stdcall bool fdMapSave(kgmGuiFileDialog*);
   __stdcall bool fdMapOpen(kgmGuiFileDialog*);
@@ -143,7 +137,6 @@ public:
   __stdcall void onAddMaterial();
   __stdcall void onAddParticles();
   __stdcall void onViewObjects();
-  __stdcall void onViewMaterials();
   __stdcall void onViewPerspective();
   __stdcall void onViewFront();
   __stdcall void onViewLeft();

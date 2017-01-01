@@ -264,13 +264,9 @@ public:
   __stdcall void onSelectEnable(bool);
   __stdcall void updateVariable(kgmString id, kgmString data);
 
-  __stdcall void onListMeshes(int);
   __stdcall void onListActions(int);
-  __stdcall void onListMaterials(int);
 
-  __stdcall void onSelectMesh(kgmGuiFileDialog*);
   __stdcall void onSelectAction(kgmString);
-  __stdcall void onSelectMaterial(kgmString);
 };
 
 class kViewOptionsForSensor : public kViewOptionsForUnit
