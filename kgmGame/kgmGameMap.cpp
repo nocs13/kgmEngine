@@ -140,9 +140,9 @@ bool kgmGameMap::addVisual(Node n)
   }
 }
 
-bool kgmGameMap::addActor(Node n)
+bool kgmGameMap::addActor(kgmActor* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
@@ -150,24 +150,24 @@ bool kgmGameMap::addActor(Node n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmActor";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("actor", n.ini));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    //node->m_attributes.add(new kgmXml::Attribute("actor", n.ini));
 
-    if(((kgmActor*)n.obj)->m_gameplayer)
+    if(n->m_gameplayer)
     {
       node->m_attributes.add(new kgmXml::Attribute("player", "on"));
     }
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.col)
-      addCollision(*node, n);
+    if(n->body())
+      addCollision(*node, true);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
 
-    addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
+    addParameters(*node, n->m_variables);
   }
 }
 
@@ -1014,7 +1014,7 @@ void kgmGameMap::addLocked(kgmXml::Node& xnode, bool lock)
   snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
 }
 
-void kgmGameMap::addPosition(kgmXml::Node& xnode, vec3& pos)
+void kgmGameMap::addPosition(kgmXml::Node& xnode, vec3 pos)
 {
   kgmXml::Node* snode = new kgmXml::Node(&xnode);
   snode->m_name = "Position";
@@ -1023,7 +1023,7 @@ void kgmGameMap::addPosition(kgmXml::Node& xnode, vec3& pos)
                                                          kgmConvert::toString(pos.z)));
 }
 
-void kgmGameMap::addRotation(kgmXml::Node& xnode, vec3& rot)
+void kgmGameMap::addRotation(kgmXml::Node& xnode, vec3 rot)
 {
   kgmXml::Node* snode = new kgmXml::Node(&xnode);
   snode->m_name = "Rotation";
@@ -1033,7 +1033,7 @@ void kgmGameMap::addRotation(kgmXml::Node& xnode, vec3& rot)
 
 }
 
-void kgmGameMap::addQuaternion(kgmXml::Node& xnode, quat& qt)
+void kgmGameMap::addQuaternion(kgmXml::Node& xnode, quat qt)
 {
   kgmXml::Node* snode = new kgmXml::Node(&xnode);
   snode->m_name = "Quaternion";

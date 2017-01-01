@@ -1,8 +1,9 @@
 #pragma once
-#include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmIObject.h"
+#include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
 
-class kgmBody: public kgmObject
+class kgmBody: public kgmIObject
 {
   KGM_OBJECT(kgmBody);
 
@@ -123,9 +124,10 @@ public:
   void setShape(sphere3& s);
   void addShapeSide(vec3 v[3]);
 
-  vec3 position()  { return m_position;  }
-  vec3 rotation()  { return m_rotation;  }
-  vec3 direction() { return m_direction; }
+  vec3 position()   { return m_position;   }
+  vec3 rotation()   { return m_rotation;   }
+  vec3 direction()  { return m_direction;  }
+  quat quaternion() { return m_quaternion; }
 
   kgmOBox3d<float> getOBox()
   {

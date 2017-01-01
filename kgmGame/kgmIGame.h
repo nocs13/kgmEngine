@@ -134,6 +134,8 @@ class kgmSystem;
 class kgmWindow;
 class kgmEnvironment;
 
+class kgmGameNode;
+
 class kgmIGame
 {
 public:

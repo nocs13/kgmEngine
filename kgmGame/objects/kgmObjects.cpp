@@ -5,7 +5,7 @@ kgmResult::kgmResult(kgmIGame* g, u32 time, s32 res, kgmString txt)
 {
   text = txt;
   result = res;
-  timeout(time);
+  setLiving(time);
 
   int cx, cy, cw, ch, tw, tl;
   //game->getWindow()->getRect(cx, cy, cw, ch);
@@ -56,7 +56,7 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
                                        u32 count,  kgmString tid, bool loop)
   :kgmEffect(g)
 {
-  timeout(life);
+  setLiving(life);
 
   particles = new kgmParticles();
   m_visual  = new kgmVisual();
@@ -149,7 +149,7 @@ kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
   :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life,
                       size_start, size_end, count, tid, loop)
 {
-  timeout(life);
+  setLiving(life);
 
   particles->build();
 
@@ -169,7 +169,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   :kgmEffect(g)
 {
   power = 1;
-  timeout(time);
+  setLiving(time);
   this->setId("laser");
 
   m_visual  = new kgmVisual();

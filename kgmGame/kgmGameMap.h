@@ -46,7 +46,7 @@ public:
   {
     NodeType typ = NodeNone;
 
-    kgmObject*  obj = null;
+    kgmIObject*  obj = null;
 
     vec3  pos;
     vec3  rot;
@@ -104,7 +104,7 @@ public:
   bool addCamera(Node n);
   bool addVisual(Node n);
   bool addUnit(Node n);
-  bool addActor(Node n);
+  bool addActor(kgmActor* n);
   bool addEffect(Node n);
   bool addSensor(Node n);
   bool addTrigger(Node n);
@@ -119,9 +119,9 @@ private:
 
   void addName(kgmXml::Node& xnode, kgmString& name);
   void addLocked(kgmXml::Node& xnode, bool lock);
-  void addPosition(kgmXml::Node& xnode, vec3& pos);
-  void addRotation(kgmXml::Node& xnode, vec3& rot);
-  void addQuaternion(kgmXml::Node& xnode, quat& qt);
+  void addPosition(kgmXml::Node& xnode, vec3 pos);
+  void addRotation(kgmXml::Node& xnode, vec3 rot);
+  void addQuaternion(kgmXml::Node& xnode, quat qt);
   void addTriangle(kgmXml::Node& xnode, triangle3& tr);
   void addParameter(kgmXml::Node& xnode, kgmVariable& param);
   void addParameters(kgmXml::Node& xnode, kgmList<kgmVariable>& params);

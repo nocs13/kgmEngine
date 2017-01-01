@@ -1,19 +1,8 @@
 #pragma once
 #include "kgmList.h"
-//#include <stdlib.h>
-//#include <string.h>
+#include "kgmIObject.h"
 
-#define KGM_OBJECT(o_class)                                         \
-  public:                                                           \
-  static unsigned int  cSize(){ return sizeof(class o_class); }     \
-  static const char*   cClass(){ return #o_class; }                 \
-  virtual unsigned int vSize(){ return sizeof(class o_class); }     \
-  virtual const char*  vClass(){ return #o_class; }                 \
-  private:
-
-// Base class for kgm_engine objects.
-
-class kgmObject
+class kgmObject: public kgmIObject
 {
   KGM_OBJECT(kgmObject);
 
