@@ -4,6 +4,7 @@
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
 #include "../../kgmGame/kgmGameBase.h"
+#include "../../kgmGame/kgmGameLight.h"
 #include "kViewObjects.h"
 #include "kEditor.h"
 
@@ -203,8 +204,8 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
   g->setText("Material");
   g = vis_text = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
 
-  if(n->vis->getMaterial())
-    vis_text->setText(n->vis->getMaterial()->name());
+  if(n->visual()->getMaterial())
+    vis_text->setText(n->visual()->getMaterial()->name());
 
   kgmGuiButton* btn = new kgmGuiButton(tvisual, 125, y_coord, 50, 20);
   btn->setText("select");
@@ -212,16 +213,16 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
 
   y_coord += 23;
 
-  if(n->vis->type() == kgmVisual::TypeMesh)
+  if(n->visual()->type() == kgmVisual::TypeMesh)
   {
   }
-  else if (n->vis->type() == kgmVisual::TypeParticles)
+  else if (n->visual()->type() == kgmVisual::TypeParticles)
   {
     kgmGui* g = new kgmGuiLabel(tvisual, 0, y_coord, 50, 20);
     g->setText("Count");
     g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
     g->setSid("Count");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->count()));
+    g->setText(kgmConvert::toString((s32)n->visual()->getParticles()->count()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
 
@@ -233,13 +234,13 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
     g->setText("Speed");
     g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Speed");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->speed()));
+    g->setText(kgmConvert::toString((s32)n->visual()->getParticles()->speed()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesSpeed.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesSpeed, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
     g->setSid("DivSpeed");
-    g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divspeed())));
+    g->setText(kgmConvert::toString((s32)(100 * n->visual()->getParticles()->divspeed())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesDivSpeed.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesDivSpeed, &((kgmGuiText*)g)->sigChange);
@@ -251,7 +252,7 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
     g->setText("Angle");
     g = new kgmGuiText(tvisual, 51, y_coord, 100, 20);
     g->setSid("Angle");
-    g->setText(kgmConvert::toString((s32)RADTODEG(n->vis->getParticles()->angle())));
+    g->setText(kgmConvert::toString((s32)RADTODEG(n->visual()->getParticles()->angle())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesAngle.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesAngle, &((kgmGuiText*)g)->sigChange);
@@ -262,13 +263,13 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
     g->setText("Life");
     g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Life");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->life()));
+    g->setText(kgmConvert::toString((s32)n->visual()->getParticles()->life()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesLife.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesLife, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 102, y_coord, 50, 20);
     g->setSid("DivLife");
-    g->setText(kgmConvert::toString((s32)(100 * n->vis->getParticles()->divlife())));
+    g->setText(kgmConvert::toString((s32)(100 * n->visual()->getParticles()->divlife())));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesDivLife.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesDivLife, &((kgmGuiText*)g)->sigChange);
@@ -279,13 +280,13 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
     g->setText("Size");
     g = new kgmGuiText(tvisual, 51, y_coord, 50, 20);
     g->setSid("Size");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->size()));
+    g->setText(kgmConvert::toString((s32)n->visual()->getParticles()->size()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesSize.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesSize, &((kgmGuiText*)g)->sigChange);
     g = new kgmGuiText(tvisual, 103, y_coord, 50, 20);
     g->setSid("Esize");
-    g->setText(kgmConvert::toString((s32)n->vis->getParticles()->esize()));
+    g->setText(kgmConvert::toString((s32)n->visual()->getParticles()->esize()));
     ((kgmGuiText*)g)->setEditable(true);
     ((kgmGuiText*)g)->setNumeric(true);
     slotParticlesEsize.connect(this, (Slot<kViewOptionsForVisual, kgmString>::FN) &kViewOptionsForVisual::onParticlesEsize, &((kgmGuiText*)g)->sigChange);
@@ -294,11 +295,11 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
 
     kgmGuiCheck* loop = new kgmGuiCheck(tvisual, 0, y_coord, 74, 20);
     loop->setText("Loop");
-    loop->setCheck(node->vis->getParticles()->loop());
+    loop->setCheck(node->visual()->getParticles()->loop());
     slotParticlesLoop.connect(this, (Slot<kViewOptionsForVisual, bool>::FN) &kViewOptionsForVisual::onParticlesLoop, &loop->sigClick);
     kgmGuiCheck* fade = new kgmGuiCheck(tvisual, 76, y_coord, 74, 20);
     fade->setText("Fade");
-    fade->setCheck(node->vis->getParticles()->fade());
+    fade->setCheck(node->visual()->getParticles()->fade());
     slotParticlesFade.connect(this,(Slot<kViewOptionsForVisual, bool>::FN)  &kViewOptionsForVisual::onParticlesFade, &fade->sigClick);
 
     y_coord += 23;
@@ -307,23 +308,23 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w
 
 void kViewOptionsForVisual::onParticlesLoop(bool s)
 {
-  node->vis->getParticles()->loop(s);
+  node->visual()->getParticles()->loop(s);
 }
 
 void kViewOptionsForVisual::onParticlesFade(bool s)
 {
-  node->vis->getParticles()->fade(s);
+  node->visual()->getParticles()->fade(s);
 }
 
 void kViewOptionsForVisual::onParticlesCount(kgmString s)
 {
-  node->vis->getParticles()->count(kgmConvert::toInteger(s));
-  node->vis->getParticles()->build();
+  node->visual()->getParticles()->count(kgmConvert::toInteger(s));
+  node->visual()->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 {
-  node->vis->getParticles()->speed(kgmConvert::toDouble(s));
+  node->visual()->getParticles()->speed(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesAngle(kgmString s)
@@ -331,22 +332,22 @@ void kViewOptionsForVisual::onParticlesAngle(kgmString s)
   if(s.length() < 1)
     return;
 
-  node->vis->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
+  node->visual()->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
 }
 
 void kViewOptionsForVisual::onParticlesLife(kgmString s)
 {
-  node->vis->getParticles()->life(kgmConvert::toDouble(s));
+  node->visual()->getParticles()->life(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesSize(kgmString s)
 {
-  node->vis->getParticles()->size(kgmConvert::toDouble(s));
+  node->visual()->getParticles()->size(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesEsize(kgmString s)
 {
-  node->vis->getParticles()->esize(kgmConvert::toDouble(s));
+  node->visual()->getParticles()->esize(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
@@ -355,7 +356,7 @@ void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
     return;
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  node->vis->getParticles()->divspeed(f);
+  node->visual()->getParticles()->divspeed(f);
 }
 
 void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
@@ -364,12 +365,13 @@ void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
     return;
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  node->vis->getParticles()->divlife(f);
+  node->visual()->getParticles()->divlife(f);
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmLight* light = ((kgmGameLight*)n)->light();
   kgmGui* tlight = tab->addTab("Light");
   y_coord = 1;
   kgmGui* g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
@@ -377,7 +379,7 @@ kViewOptionsForLight::kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, 
 
   g = new kgmGuiText(tlight, 51, y_coord, 70, 20);
 
-  g->setText(kgmConvert::toString(node->lgt->intensity));
+  g->setText(kgmConvert::toString(light->intensity));
   ((kgmGuiText*)g)->setEditable(true);
   Slot<kViewOptionsForLight, kgmString> slotIntensisty;
   slotIntensisty.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::setIntencity, &((kgmGuiText*)g)->sigChange);
@@ -387,19 +389,19 @@ kViewOptionsForLight::kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, 
   g->setText("Color");
   g = new kgmGuiText(tlight, 51, y_coord, 30, 20);
   g->setSid("ColorR");
-  g->setText(kgmConvert::toString((s32)(node->lgt->color.x * 255)));
+  g->setText(kgmConvert::toString((s32)(light->color.x * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorR.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
   g->setSid("ColorG");
-  g->setText(kgmConvert::toString((s32)(node->lgt->color.y * 255)));
+  g->setText(kgmConvert::toString((s32)(light->color.y * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorG.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
   g->setSid("ColorB");
-  g->setText(kgmConvert::toString((s32)(node->lgt->color.z * 255)));
+  g->setText(kgmConvert::toString((s32)(light->color.z * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorB.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
@@ -408,7 +410,7 @@ kViewOptionsForLight::kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, 
 
   kgmGuiCheck* check = new kgmGuiCheck(tlight, 1, y_coord, 150, 20);
   check->setText("Shadows");
-  check->setCheck(node->lgt->shadows);
+  check->setCheck(light->shadows);
   slotShadows.connect(this, (Slot<kViewOptionsForLight, bool>::FN) &kViewOptionsForLight::setShadows, &check->sigClick);
 
   y_coord += 23;
@@ -418,12 +420,12 @@ void kViewOptionsForLight::setIntencity(kgmString s)
 {
   f32 in = kgmConvert::toDouble(s);
 
-  node->lgt->intensity = in;
+  ((kgmGameLight*)node)->light()->intensity = in;
 }
 
 void kViewOptionsForLight::setShadows(bool s)
 {
-  node->lgt->shadows = s;
+  ((kgmGameLight*)node)->light()->shadows = s;
 }
 
 void kViewOptionsForLight::onColorR(kgmString c)
@@ -433,7 +435,7 @@ void kViewOptionsForLight::onColorR(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->lgt->color.x = color / 255;
+  ((kgmGameLight*)node)->light()->color.x = color / 255;
 }
 
 void kViewOptionsForLight::onColorG(kgmString c)
@@ -443,7 +445,7 @@ void kViewOptionsForLight::onColorG(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->lgt->color.y = color / 255;
+  ((kgmGameLight*)node)->light()->color.y = color / 255;
 }
 
 void kViewOptionsForLight::onColorB(kgmString c)
@@ -453,7 +455,7 @@ void kViewOptionsForLight::onColorB(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->lgt->color.z = color / 255;
+  ((kgmGameLight*)node)->light()->color.z = color / 255;
 }
 
 kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, int h)
@@ -464,7 +466,6 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
 
   kgmGuiCheck* chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("collide");
-  chk->setCheck(node->col);
   //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectCollision));
   y_coord += 23;
 
@@ -472,7 +473,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   chk_grp->setText("Shape Box");
   //chk_grp->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeBox));
 
-  if(node->shp == "box") chk_grp->setCheck(true);
+  //if(node->shp == "box") chk_grp->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
@@ -480,14 +481,14 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeSphere));
   chk_grp->addGroup(chk);
 
-  if(node->shp == "sphere") chk->setCheck(true);
+  //if(node->shp == "sphere") chk->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
   chk->setText("Shape Mesh");
   //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeMesh));
-  chk_grp->addGroup(chk);
-  if(node->shp == "mesh") chk->setCheck(true);
+  //chk_grp->addGroup(chk);
+  //if(node->shp == "mesh") chk->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
@@ -495,7 +496,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapePlane));
   chk_grp->addGroup(chk);
 
-  if(node->shp == "plane") chk->setCheck(true);
+  //if(node->shp == "plane") chk->setCheck(true);
   y_coord += 23;
 
   chk = new kgmGuiCheck(gcollision, 1, y_coord, 150, 20);
@@ -503,7 +504,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   //chk->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectShapeConvex));
   chk_grp->addGroup(chk);
 
-  if(node->shp == "convex") chk->setCheck(true);
+  //if(node->shp == "convex") chk->setCheck(true);
 
   y_coord += 23;
 
@@ -512,21 +513,21 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
 
   g = new kgmGuiText(gcollision, 51, y_coord, 50, 20);
   g->setSid("Length x");
-  g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
+  //g->setText(kgmConvert::toString(n->bnd.max.x - n->bnd.min.x));
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundX));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
 
   g = new kgmGuiText(gcollision, 102, y_coord, 50, 20);
   g->setSid("Width y");
-  g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
+  //g->setText(kgmConvert::toString(n->bnd.max.y - n->bnd.min.y));
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundY));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
 
   g = new kgmGuiText(gcollision, 154, y_coord, 50, 20);
   g->setSid("Height z");
-  g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
+  //g->setText(kgmConvert::toString(n->bnd.max.z - n->bnd.min.z));
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForUnit::onBoundZ));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
@@ -537,7 +538,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
 
   kgmGuiCheck* enable = new kgmGuiCheck(tunit, 1, y_coord, 150, 20);
   enable->setText("Enabled");
-  enable->setCheck(node->unt->valid());
+  //enable->setCheck(node->unt->valid());
   //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForUnit::onSelectEnable));
 
   y_coord += 23;
@@ -549,8 +550,8 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   g->setSid("Visual");
   ((kgmGuiText*)g)->setEditable(false);
 
-  if (n->unt && n->unt->visual() && n->unt->visual()->getMesh())
-    g->setText(n->unt->visual()->getMesh()->getMesh()->id());
+  //if (n->unt && n->unt->visual() && n->unt->visual()->getMesh())
+  //  g->setText(n->unt->visual()->getMesh()->getMesh()->id());
 
   y_coord += 23;
 
@@ -561,8 +562,8 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   g->setSid("Material");
   ((kgmGuiText*)g)->setEditable(false);
 
-  if (n->unt && n->unt->visual() && n->unt->visual()->getMaterial())
-    g->setText(n->unt->visual()->getMaterial()->name());
+  //if (n->unt && n->unt->visual() && n->unt->visual()->getMaterial())
+  //  g->setText(n->unt->visual()->getMaterial()->name());
 
   y_coord += 23;
 
@@ -573,8 +574,8 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
   g->setSid("Action");
   ((kgmGuiText*)g)->setEditable(false);
 
-  if (n->unt)
-    g->setText(n->unt->action());
+  //if (n->unt)
+  //  g->setText(n->unt->action());
 
   g = new kgmGuiButton(tunit, 102, y_coord, 50, 20);
   g->setSid("btnSelectAction");
@@ -583,12 +584,12 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
 
   y_coord += 23;
 
-  if(node->unt->m_variables.length() > 0)
+  if(((kgmUnit*)node)->m_variables.length() > 0)
     y_coord += 23;
 
-  for(int i = 0; i < node->unt->m_variables.length(); i++)
+  for(int i = 0; i < ((kgmUnit*)node)->m_variables.length(); i++)
   {
-    kgmVariable& var = node->unt->m_variables[i];
+    kgmVariable& var = ((kgmUnit*)node)->m_variables[i];
 
     kgmGui* g = new kgmGuiLabel(tunit, 0, y_coord, 50, 20);
     g->setText(var.getName());
@@ -624,69 +625,64 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, in
 
 void kViewOptionsForUnit::onSelectCollision(bool s)
 {
-  node->col = s;
+  //node-> = s;
 }
 
 void kViewOptionsForUnit::onSelectShapeBox(bool s)
 {
-  if(s)
-    node->shp = "box";
+  //if(s) node->shp = "box";
 }
 
 void kViewOptionsForUnit::onSelectShapeMesh(bool s)
 {
-  if(s)
-    node->shp = "mesh";
+  //if(s) node->shp = "mesh";
 }
 
 void kViewOptionsForUnit::onSelectShapePlane(bool s)
 {
-  if(s)
-    node->shp = "plane";
+  //if(s) node->shp = "plane";
 }
 
 void kViewOptionsForUnit::onSelectShapeSphere(bool s)
 {
-  if(s)
-    node->shp = "sphere";
+  //if(s) node->shp = "sphere";
 }
 
 void kViewOptionsForUnit::onSelectShapeConvex(bool s)
 {
-  if(s)
-    node->shp = "convex";
+  //if(s) node->shp = "convex";
 }
 
 void kViewOptionsForUnit::onBoundX(kgmString s)
 {
   double v = kgmConvert::toDouble(s);
 
-  node->bnd.min.x = -0.5 * v;
-  node->bnd.max.x =  0.5 * v;
+  //node->bnd.min.x = -0.5 * v;
+  //node->bnd.max.x =  0.5 * v;
 }
 
 void kViewOptionsForUnit::onBoundY(kgmString s)
 {
   double v = kgmConvert::toDouble(s);
 
-  node->bnd.min.y = -0.5 * v;
-  node->bnd.max.y =  0.5 * v;
+  //node->bnd.min.y = -0.5 * v;
+  //node->bnd.max.y =  0.5 * v;
 }
 
 void kViewOptionsForUnit::onBoundZ(kgmString s)
 {
   double v = kgmConvert::toDouble(s);
 
-  node->bnd.min.z = -0.5 * v;
-  node->bnd.max.z =  0.5 * v;
+  //node->bnd.min.z = -0.5 * v;
+  //node->bnd.max.z =  0.5 * v;
 }
 
 void kViewOptionsForUnit::onSelectEnable(bool state)
 {
   if(state)
-    node->unt->enable();
+    node->enable();
   else
-    node->unt->disable();
+    node->disable();
 }
 
 void kViewOptionsForUnit::onListActions(int state)
@@ -708,20 +704,11 @@ void kViewOptionsForUnit::onListActions(int state)
 
 void kViewOptionsForUnit::onSelectAction(kgmString id)
 {
-  if(id.length() < 1)
-    return;
-
-  node->unt->action(id);
-
-  kgmGui* act = this->getBySid("Action");
-
-  if(act)
-    act->setText(id);
 }
 
 void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)
 {
-  for(int i = 0; i < node->unt->m_variables.length(); i++)
+  /*for(int i = 0; i < node->unt->m_variables.length(); i++)
   {
     if(node->unt->m_variables[i].getName() == id)
     {
@@ -743,7 +730,7 @@ void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)
 
       node->unt->eupdate();
     }
-  }
+  }*/
 }
 
 kViewOptionsForSensor::kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w, int h)
@@ -757,7 +744,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w
 
   g = new kgmGuiText(tsensor, 51, y_coord, 70, 20);
 
-  g->setText(node->sns->getTarget());
+  g->setText(((kgmSensor*)node)->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
 
@@ -766,7 +753,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w
 
 void kViewOptionsForSensor::setTarget(kgmString s)
 {
-  node->sns->setTarget(s);
+  ((kgmSensor*)node)->setTarget(s);
 }
 
 kViewOptionsForActor::kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, int h)
@@ -779,7 +766,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, 
   g->setText("State");
   g = guiState = new kgmGuiText(tactor, 51, y_coord, 70, 20);
 
-  kgmString state = node->act->getState();
+  kgmString state = ((kgmActor*)node)->getState();
 
   if(state.length())
     g->setText(state);
@@ -792,7 +779,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, 
 
   kgmGuiCheck* enable = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
   enable->setText("Player");
-  enable->setCheck(node->unt == kgmIGame::getGame()->getLogic()->getPlayer());
+  enable->setCheck(node == kgmIGame::getGame()->getLogic()->getPlayer());
   //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
 
   y_coord += 23;
@@ -805,15 +792,15 @@ void kViewOptionsForActor::showStates()
   if(!vo)
     return;
 
-  for(u32 i = 0; i < node->act->getStatesCount(); i++)
-    vo->addItem(node->act->getStateName(i));
+  for(u32 i = 0; i < ((kgmActor*)node)->getStatesCount(); i++)
+    vo->addItem(((kgmActor*)node)->getStateName(i));
 
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(vo);
 }
 
 void kViewOptionsForActor::onState(kgmString state)
 {
-  node->act->setState(state);
+  ((kgmActor*)node)->setState(state);
 
   guiState->setText(state);
 
@@ -824,7 +811,7 @@ void kViewOptionsForActor::onState(kgmString state)
 void kViewOptionsForActor::onPlayer(bool state)
 {
   if(state)
-    kgmIGame::getGame()->getLogic()->setPlayer(node->act);
+    kgmIGame::getGame()->getLogic()->setPlayer(((kgmActor*)node));
   else
     kgmIGame::getGame()->getLogic()->setPlayer(null);
 }
@@ -847,7 +834,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kgmGameNode* n, int x, int y, int
 
   g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
-  g->setText(kgmConvert::toString((s32)node->trg->getCount()));
+  g->setText(kgmConvert::toString((s32)((kgmTrigger*)node)->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setChanels));
 
@@ -858,7 +845,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kgmGameNode* n, int x, int y, int
 
   g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
-  g->setText(node->trg->getTarget());
+  g->setText(((kgmTrigger*)node)->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setTarget));
 
@@ -869,86 +856,10 @@ void kViewOptionsForTrigger::setChanels(kgmString s)
 {
   u32 ch = kgmConvert::toDouble(s);
 
-  node->trg->setCount(ch);
+  ((kgmTrigger*)node)->setCount(ch);
 }
 
 void kViewOptionsForTrigger::setTarget(kgmString s)
 {
-  node->trg->setTarget(s);
-}
-
-kViewOptionsForObstacle::kViewOptionsForObstacle(kgmGameNode* n, int x, int y, int w, int h)
-:kViewOptions(n, x, y, w, h)
-{
-  kgmGui* tobstacle = tab->addTab("Obstacle");
-  y_coord = 3;
-  fd = null;
-  kgmGui* g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
-  g->setText("Polygons");
-  g = guiCnvText = new kgmGuiText(tobstacle, 51, y_coord, 70, 20);
-
-  kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
-  btn->setText("select");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
-  y_coord += 23;
-
-  btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
-  btn->setText("Rect");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
-
-  btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
-  btn->setText("Box");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
-  y_coord += 23;
-
-  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
-  g->setText("Scale");
-  g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
-  g->setSid("scale");
-  g->setText(kgmConvert::toString(n->obs->getScale()));
-  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  y_coord += 23;
-}
-
-void kViewOptionsForObstacle::onSelectPolygons()
-{
-  if(fd)
-    return;
-
-  kgmGuiFileDialog* fd = kgmGuiFileDialog::getDialog();
-
-  if(!fd)
-    return;
-
-  fd->m_rect.x = 300;
-  fd->showHidden(false);
-  fd->show();
-  fd->setFilter("plg");
-  //fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get("Path"), kgmGuiFileDialog::ClickEventCallback(this, (kgmGuiFileDialog::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectedPolygons));
-  ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
-}
-
-void kViewOptionsForObstacle::onSelectedPolygons()
-{
-  guiCnvText->setText(fd->getFile());
-
-  fd->erase();
-  fd = null;
-}
-
-void kViewOptionsForObstacle::onScale(kgmString s)
-{
-  node->obs->set((f32) kgmConvert::toDouble(s));
-}
-
-void kViewOptionsForObstacle::onRect()
-{
-  node->obs->fromRect(vec2(-1, -1), vec2(1, 1));
-}
-
-void kViewOptionsForObstacle::onBox()
-{
-  node->obs->fromBox(vec3(-1, -1, -1), vec3(1, 1, 1));
+  ((kgmTrigger*)node)->setTarget(s);
 }

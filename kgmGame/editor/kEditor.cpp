@@ -460,8 +460,6 @@ bool kEditor::mapOpen(kgmString s)
   ((kPivot*)pivot->getMesh()->getMesh())->setPos(vec3(0, 0, 0));
   pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
 
-  kNode* node = null;
-
   oquered = 0;
 
   kgmGameMap map(game, kgmGameMap::OpenRead);
@@ -1146,22 +1144,20 @@ void kEditor::onAddUnit()
 
   game->guiAdd(vs);*/
 
-  selected = new kNode(new kgmUnit(game));
-  selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-  selected->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
+  kgmUnit* unit = new kgmUnit(game);
+  selected = unit;
+
+  selected->setId(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }
 
 void kEditor::onAddLight()
 {
-  kgmLight* light = new kgmLight();
+  kgmGameLight* light = new kgmGameLight(game);
+  selected = light;
 
-  light->m_id = kgmString("Light_") + kgmConvert::toString((s32)(++oquered));
-
-  selected = new kNode(light);
-
-  selected->nam = light->m_id;
+  light->setId(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }

@@ -1,6 +1,7 @@
 #ifndef KVIEWOPTIONS_H
 #define KVIEWOPTIONS_H
 
+#include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmGuiFrame.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
@@ -223,31 +224,6 @@ public:
 
   __stdcall void setChanels(kgmString s);
   __stdcall void setTarget(kgmString s);
-};
-
-class kViewOptionsForObstacle : public kViewOptions
-{
-  kgmGuiFileDialog* fd;
-  kgmGuiText*  guiCnvText;
-
-protected:
-  kViewOptionsForObstacle(kgmGameNode* n, int x, int y, int w, int h);
-
-public:
-  static kViewOptionsForObstacle* getDialog(kgmGameNode* n, int x, int y, int w, int h)
-  {
-    if(kViewOptions::single)
-      return null;
-
-    return (kViewOptionsForObstacle*)(kViewOptions::single = new kViewOptionsForObstacle(n, x, y, w, h));
-  }
-
-
-  __stdcall void onSelectPolygons();
-  __stdcall void onSelectedPolygons();
-  __stdcall void onScale(kgmString);
-  __stdcall void onRect();
-  __stdcall void onBox();
 };
 
 class kViewOptionsForEffect : public kViewOptionsForUnit
