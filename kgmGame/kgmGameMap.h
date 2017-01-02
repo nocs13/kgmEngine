@@ -30,7 +30,7 @@ public:
     OpenWrite
   };
 
-  enum NodeType
+  /*enum NodeType
   {
     NodeNone,
     NodeCam,
@@ -73,7 +73,7 @@ public:
       typ = NodeNone;
       obj = null;
     }
-  };
+  };*/
 
 private:
   enum DataFormat
@@ -116,7 +116,6 @@ private:
   bool addSensor(kgmSensor* n);
   bool addTrigger(kgmTrigger* n);
 
-  void addCollision(kgmXml::Node& xnode, Node& node);
   void addCollision(kgmXml::Node& xnode, bool col);
 
   void addName(kgmXml::Node& xnode, kgmString& name);

@@ -60,11 +60,11 @@ protected:
   kgmGameLogic*    m_logic;
   kgmGameGraphics* m_render;
 
-  kgmList<kgmGui*>    m_guis;
-  kgmList<kgmUnit*>   m_units;
-  kgmList<kgmBody*>   m_bodies;
-  kgmList<kgmLight*>  m_lights;
-  kgmList<kgmVisual*> m_visuals;
+  kgmList<kgmGui*>      m_guis;
+  kgmList<kgmGameNode*> m_nodes;
+  //kgmList<kgmBody*>   m_bodies;
+  //kgmList<kgmLight*>  m_lights;
+  //kgmList<kgmVisual*> m_visuals;
 
   u32             m_fps;
   kgmGameThreader m_threader_1;
@@ -135,7 +135,7 @@ public:
   void           gRender();               //render game scene
   kgmActor*      gSpawn(kgmString);       //spawn the actor
   kgmUnit*       gObject(kgmString);      //spawn game object
-  bool           gAppend(kgmUnit*);       //add game unit in map
+  bool           gAppend(kgmGameNode*);   //add game node in map
   bool           gAppend(kgmBody*);       //add game body in map
   bool           gAppend(kgmLight*);      //add game light in map
   bool           gAppend(kgmVisual*);     //add game object in map

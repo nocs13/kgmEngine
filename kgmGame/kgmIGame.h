@@ -167,10 +167,7 @@ public:
   virtual kgmActor*      gSpawn(kgmString)    = 0;    //spawn game actor
   virtual kgmUnit*       gObject(kgmString)   = 0;    //spawn game object
 
-  virtual bool           gAppend(kgmUnit*)    = 0;    //add game unit in map
-  virtual bool           gAppend(kgmBody*)    = 0;    //add game body in map
-  virtual bool           gAppend(kgmLight*)   = 0;    //add game light in map
-  virtual bool           gAppend(kgmVisual*)  = 0;    //add game object in map
+  virtual bool           gAppend(kgmGameNode*) = 0;    //add game node in map
 
   virtual void           guiAdd(kgmGui* g) = 0;
 

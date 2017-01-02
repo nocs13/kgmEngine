@@ -9,23 +9,24 @@ class kgmIGame;
 
 class kgmGameNode: public kgmObject//, private kgmBody,  private kgmVisual
 {
-  KGM_OBJECT(kgmGameNode);
+  KGM_OBJECT(kgmGameNode)
 
+public:
   enum NodeType
   {
-    NodeNone,
-    NodeCam,
-    NodeLgt,
-    NodeVis,
-    NodeUnt,
-    NodeAct,
-    NodeSns,
-    NodeTrg
+    NONE,
+    CAMERA,
+    LIGHT,
+    VISUAL,
+    UNIT,
+    EFFECT,
+    ACTOR,
+    SENSOR,
+    TRIGGER
   };
 
+private:
   kgmIGame* m_game = null;
-
-  NodeType type = NodeNone;
 
   kgmString m_id;
   kgmString m_class;
@@ -47,6 +48,8 @@ class kgmGameNode: public kgmObject//, private kgmBody,  private kgmVisual
 protected:
   kgmBody*    m_body   = null;
   kgmVisual*  m_visual = null;
+
+  NodeType m_type;
 
 public:
   kgmGameNode(kgmIGame* g);
@@ -225,6 +228,11 @@ public:
   u32 birth()
   {
     return m_birth;
+  }
+
+  NodeType type()
+  {
+    return m_type;
   }
 };
 

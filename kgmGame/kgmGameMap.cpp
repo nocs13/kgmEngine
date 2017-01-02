@@ -80,8 +80,6 @@ bool kgmGameMap::save(kgmString path)
       triggers.add((kgmTrigger*) (*i));
   }
 
-  kgmGameMap::Node node;
-
   for(kgmList<kgmGameCamera*>::iterator i = cameras.begin(); i != cameras.end(); ++i)
     addCamera(*i);
 
@@ -163,27 +161,27 @@ bool kgmGameMap::addCamera(kgmGameCamera* n)
 
     vec3 pos, dir;
 
-    pos = ((kgmCamera*)n.obj)->mPos;
-    dir = ((kgmCamera*)n.obj)->mDir;
+    pos = n->camera()->mPos;
+    dir = n->camera()->mDir;
 
     node->m_name = "kgmCamera";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(((kgmCamera*)n.obj)->mFov)));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(n->camera()->mFov)));
 
     addPosition(*node, pos);
     addRotation(*node, dir);
 
-    if(n.col)
+    if(n->body())
       addCollision(*node, n);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
   }
 }
 
-bool kgmGameMap::addVisual(Node n)
+bool kgmGameMap::addVisual(kgmGameVisual* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
@@ -192,9 +190,9 @@ bool kgmGameMap::addVisual(Node n)
     kgmXml::Node* snode = null;
 
     node->m_name = "kgmVisual";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
 
-    kgmVisual* vis = (kgmVisual*)n.obj;
+    kgmVisual* vis = n->visual();
 
     switch(vis->type())
     {
@@ -228,27 +226,15 @@ bool kgmGameMap::addVisual(Node n)
       snode->m_attributes.add(new kgmXml::Attribute("id", mtl->name()));
     }
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->body())
+      addCollision(*node, n);
+
+    if(n->lock())
+      addLocked(*node, n->lock());
   }
-}
-
-bool kgmGameMap::addLight(kgmGameLight* n)
-{
-
-}
-
-bool kgmGameMap::addCamera(kgmGameCamera* n)
-{
-
-}
-
-bool kgmGameMap::addVisual(kgmGameVisual* n)
-{
-
 }
 
 bool kgmGameMap::addActor(kgmActor* n)
@@ -284,7 +270,7 @@ bool kgmGameMap::addActor(kgmActor* n)
 
 bool kgmGameMap::addEffect(kgmEffect* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
@@ -292,25 +278,24 @@ bool kgmGameMap::addEffect(kgmEffect* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmEffect";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->vClass()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.col)
-      addCollision(*node, n);
+    if(n->body())
+      addCollision(*node, true);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, true);
 
-    addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
+    addParameters(*node, n->m_variables);
   }
 }
 
 bool kgmGameMap::addSensor(kgmSensor* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
@@ -318,92 +303,83 @@ bool kgmGameMap::addSensor(kgmSensor* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmSensor";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmSensor*)n.obj)->vClass()));
-    node->m_attributes.add(new kgmXml::Attribute("target", ((kgmSensor*)n.obj)->getTarget()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.col)
-      addCollision(*node, n);
+    if(n->body())
+      addCollision(*node, true);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
 
-    addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
+    addParameters(*node, n->m_variables);
   }
 }
 
 bool kgmGameMap::addTrigger(kgmTrigger* n)
 {
+  if(m_type == OpenRead || !n)
+    return false;
+
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmTrigger";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("channels", kgmConvert::toString((s32) ((kgmTrigger*)n.obj)->getCount())));
-    node->m_attributes.add(new kgmXml::Attribute("target", ((kgmTrigger*)n.obj)->getTarget()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("channels", kgmConvert::toString((s32) n->getCount())));
+    node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.col)
-      addCollision(*node, n);
+    if(n->body())
+      addCollision(*node, true);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
 
-    addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
+    addParameters(*node, n->m_variables);
   }
 }
 
-bool kgmGameMap::addUnit(kgmUnit n)
+bool kgmGameMap::addUnit(kgmUnit* n)
 {
-  if(m_type == OpenRead || !n.obj)
+  if(m_type == OpenRead || !n)
     return false;
-
-  kgmUnit* unt = (kgmUnit*)n.obj;
 
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmUnit";
-    node->m_attributes.add(new kgmXml::Attribute("name", n.nam));
-    node->m_attributes.add(new kgmXml::Attribute("class", ((kgmUnit*)n.obj)->vClass()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
 
-    addPosition(*node, n.pos);
-    addRotation(*node, n.rot);
+    addPosition(*node, n->position());
+    addRotation(*node, n->rotation());
 
-    if(n.col)
-      addCollision(*node, n);
+    if(n->body())
+      addCollision(*node, true);
 
-    if(n.lck)
-      addLocked(*node, n.lck);
+    if(n->lock())
+      addLocked(*node, n->lock());
 
-    if(((kgmUnit*)n.obj)->visual())
+    if(n->visual())
     {
       kgmXml::Node* vnode = new kgmXml::Node(node);
       vnode->m_name = "Visual";
 
-      if(unt->visual()->getMaterial())
-        vnode->m_attributes.add(new kgmXml::Attribute("material", unt->visual()->getMaterial()->name()));
+      if(n->visual()->getMaterial())
+        vnode->m_attributes.add(new kgmXml::Attribute("material", n->visual()->getMaterial()->name()));
 
-      if(unt->visual()->getMesh())
-        vnode->m_attributes.add(new kgmXml::Attribute("mesh", unt->visual()->getMesh()->getMesh()->id()));
+      if(n->visual()->getMesh())
+        vnode->m_attributes.add(new kgmXml::Attribute("mesh", n->visual()->getMesh()->getMesh()->id()));
     }
 
-    if(((kgmUnit*)n.obj)->action().length() > 0)
-    {
-      kgmXml::Node* anode = new kgmXml::Node(node);
-      anode->m_name = "Action";
-
-      anode->m_attributes.add(new kgmXml::Attribute("id", unt->action()));
-    }
-
-    addParameters(*node, ((kgmUnit*)n.obj)->m_variables);
+    addParameters(*node, n->m_variables);
   }
 }
 
@@ -412,8 +388,6 @@ kgmGameNode* kgmGameMap::next()
   kgmGameNode* node = null;
 
   bool closed = true;
-
-  memset(&node, 0, sizeof(Node));
 
   if(m_type == OpenWrite)
     return node;
@@ -884,29 +858,14 @@ kgmGameNode* kgmGameMap::next()
   return node;
 }
 
-void kgmGameMap::addCollision(kgmXml::Node& xnode, Node& node)
+void kgmGameMap::addCollision(kgmXml::Node& xnode, bool col)
 {
-  if(node.col != 0)
-  {
-    kgmXml::Node* snode = new kgmXml::Node(&xnode);
-    snode->m_name = "Collision";
-    snode->m_attributes.add(new kgmXml::Attribute("value", kgmConvert::toString(node.col)));
+  if(!col)
+    return;
 
-    kgmString shape = node.shp;
-
-    if(shape.length() < 1)
-    {
-      shape = "box";
-    }
-
-    snode->m_attributes.add(new kgmXml::Attribute("shape", shape));
-
-    kgmString bound = kgmString("") + kgmConvert::toString(node.bnd.max.x - node.bnd.min.x) +
-      kgmString(" ") + kgmConvert::toString(node.bnd.max.y - node.bnd.min.y) +
-      kgmString(" ") + kgmConvert::toString(node.bnd.max.z - node.bnd.min.z);
-    
-    snode->m_attributes.add(new kgmXml::Attribute("bound", bound));
-  }
+  kgmXml::Node* snode = new kgmXml::Node(&xnode);
+  snode->m_name = "Collision";
+  snode->m_attributes.add(new kgmXml::Attribute("value", "true"));
 }
 
 void kgmGameMap::addName(kgmXml::Node& xnode, kgmString& name)

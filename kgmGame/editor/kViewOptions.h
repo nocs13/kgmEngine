@@ -1,13 +1,13 @@
 #ifndef KVIEWOPTIONS_H
 #define KVIEWOPTIONS_H
 
-#include "kNode.h"
 #include "../../kgmGraphics/kgmGuiFrame.h"
 #include "../../kgmGraphics/kgmGuiTab.h"
 #include "../../kgmGraphics/kgmGuiLabel.h"
 #include "../../kgmGraphics/kgmGuiCheck.h"
 #include "../../kgmGraphics/kgmGuiSelect.h"
 #include "../../kgmGraphics/kgmGuiFileDialog.h"
+#include "../kgmGameNode.h"
 
 namespace kgmGameEditor
 {
@@ -29,18 +29,18 @@ protected:
 
   kgmGuiTab*  tab;
 
-  kNode*  node;
+  kgmGameNode*  node;
   u32     y_coord;
 
 public:
   Signal<> sigClose;
 
 protected:
-  kViewOptions(kNode* n, int x, int y, int w, int h);
+  kViewOptions(kgmGameNode* n, int x, int y, int w, int h);
   ~kViewOptions() { kViewOptions::single = null; }
 
 public:
-  static kViewOptions* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptions* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -60,87 +60,6 @@ public:
   __stdcall void onSelectLock(bool);
 };
 
-class kViewOptionsForMaterial : public kViewOptions
-{
-  enum Mode
-  {
-    Mode_None,
-    Mode_Shader,
-    Mode_Color,
-    Mode_Normal,
-    Mode_Specular
-  };
-
-  Mode mode;
-
-  Slot<kViewOptionsForMaterial, int> slotReset;
-  Slot<kViewOptionsForMaterial, int> slotSelectShader;
-
-  Slot<kViewOptionsForMaterial, int> slotSelectColor;
-  Slot<kViewOptionsForMaterial, int> slotSelectNormal;
-  Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
-
-  Slot<kViewOptionsForMaterial, bool> slotSelectCull;
-  Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
-  Slot<kViewOptionsForMaterial, bool> slotSelectShade;
-  Slot<kViewOptionsForMaterial, bool> slotSelectDepth;
-  Slot<kViewOptionsForMaterial, bool> slotSelectBlend;
-
-  Slot<kViewOptionsForMaterial, kgmString> slotColorR;
-  Slot<kViewOptionsForMaterial, kgmString> slotColorG;
-  Slot<kViewOptionsForMaterial, kgmString> slotColorB;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularR;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularG;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularB;
-  Slot<kViewOptionsForMaterial, kgmString> slotBlendSource;
-  Slot<kViewOptionsForMaterial, kgmString> slotBlendDestination;
-
-  kgmGuiText*  guiTextTexColor;
-  kgmGuiText*  guiTextTexNormal;
-  kgmGuiText*  guiTextTexSpecular;
-  kgmGuiText*  guiTextShader;
-
-  bool m_srcblend;
-
-protected:
-  kViewOptionsForMaterial(kNode* n, int x, int y, int w, int h);
-
-public:
-  static kViewOptionsForMaterial* getDialog(kNode* n, int x, int y, int w, int h)
-  {
-    if(kViewOptions::single)
-      return null;
-
-    return (kViewOptionsForMaterial*) (kViewOptions::single = new kViewOptionsForMaterial(n, x, y, w, h));
-  }
-
-
-  __stdcall void onReset(int);
-  __stdcall void onColorR(kgmString);
-  __stdcall void onColorG(kgmString);
-  __stdcall void onColorB(kgmString);
-  __stdcall void onSpecularR(kgmString);
-  __stdcall void onSpecularG(kgmString);
-  __stdcall void onSpecularB(kgmString);
-  __stdcall void onBlendSource(kgmString);
-  __stdcall void onBlendDestination(kgmString);
-  __stdcall void onSelectFailed(kgmGuiFileDialog*);
-  __stdcall void onSelectSuccess(kgmGuiFileDialog*);
-  __stdcall void onSelectShader(int);
-  __stdcall void onSelectTexColor(int);
-  __stdcall void onSelectTexNormal(int);
-  __stdcall void onSelectTexSpecular(int);
-  __stdcall void onShininess(u32 s);
-  __stdcall void onTransparency(u32 s);
-  __stdcall void onCull(bool s);
-  __stdcall void onBlend(bool s);
-  __stdcall void onAlpha(bool s);
-  __stdcall void onShade(bool s);
-  __stdcall void onDepth(bool s);
-
-private:
-};
-
 class kViewOptionsForVisual : public kViewOptions
 {
   Slot<kViewOptionsForVisual, int>       slotSelectMaterial;
@@ -158,10 +77,10 @@ class kViewOptionsForVisual : public kViewOptions
   kgmGuiText* vis_text = null;
 
 protected:
-  kViewOptionsForVisual(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForVisual* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForVisual* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -191,10 +110,10 @@ class kViewOptionsForLight : public kViewOptions
   Slot<kViewOptionsForLight, bool>      slotShadows;
 
 protected:
-  kViewOptionsForLight(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForLight* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForLight* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -238,10 +157,10 @@ class kViewOptionsForUnit : public kViewOptions
   Slot<kViewOptionsForUnit, int>  slotListMaterials;
 
 protected:
-  kViewOptionsForUnit(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForUnit* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForUnit* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -272,10 +191,10 @@ public:
 class kViewOptionsForSensor : public kViewOptionsForUnit
 {
 protected:
-  kViewOptionsForSensor(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForSensor* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForSensor* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -290,10 +209,10 @@ public:
 class kViewOptionsForTrigger : public kViewOptions
 {
 protected:
-  kViewOptionsForTrigger(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForTrigger(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForTrigger* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForTrigger* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -312,10 +231,10 @@ class kViewOptionsForObstacle : public kViewOptions
   kgmGuiText*  guiCnvText;
 
 protected:
-  kViewOptionsForObstacle(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForObstacle(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForObstacle* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForObstacle* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -334,10 +253,10 @@ public:
 class kViewOptionsForEffect : public kViewOptionsForUnit
 {
 protected:
-  kViewOptionsForEffect(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForEffect(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForEffect* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForEffect* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -352,10 +271,10 @@ class kViewOptionsForActor : public kViewOptions
   kgmGuiText   *guiState;
 
 protected:
-  kViewOptionsForActor(kNode* n, int x, int y, int w, int h);
+  kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForActor* getDialog(kNode* n, int x, int y, int w, int h)
+  static kViewOptionsForActor* getDialog(kgmGameNode* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;

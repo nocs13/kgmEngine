@@ -499,224 +499,7 @@ bool kEditor::mapSave(kgmString s)
 
   map.open(xml);
 
-  kgmList<kNode*> lights;
-  kgmList<kNode*> visuals;
-
-  kgmList<kNode*> units;
-  kgmList<kNode*> actors;
-  kgmList<kNode*> effects;
-  kgmList<kNode*> sensors;
-  kgmList<kNode*> triggers;
-  kgmList<kNode*> obstacles;
-  kgmList<kNode*> materials;
-
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    switch ((*i)->typ)
-    {
-    case kNode::UNIT:
-      units.add(*i);
-      continue;
-    case kNode::LIGHT:
-      lights.add(*i);
-      continue;
-    case kNode::ACTOR:
-      actors.add(*i);
-      continue;
-    case kNode::VISUAL:
-      visuals.add(*i);
-      continue;
-    case kNode::EFFECT:
-      effects.add(*i);
-      continue;
-    case kNode::SENSOR:
-      sensors.add(*i);
-      continue;
-    case kNode::TRIGGER:
-      triggers.add(*i);
-      continue;
-    case kNode::OBSTACLE:
-      obstacles.add(*i);
-      continue;
-    case kNode::MATERIAL:
-      materials.add(*i);
-      continue;
-    default:
-      continue;
-    }
-  }
-
-  kgmCamera& mcam = game->getRender()->camera();
-
-  kgmGameMap::Node node;
-
-  node.obj = &mcam;
-  node.nam = "main_camera";
-
-  map.addCamera(node);
-
-  for(kgmList<kNode*>::iterator i = materials.begin(); i != materials.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->mtl;
-    node.nam = (*i)->nam;
-
-    map.addMaterial(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = lights.begin(); i != lights.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->lgt;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.lck = (*i)->lock;
-
-    map.addLight(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = visuals.begin(); i != visuals.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    memset(&node, 0, sizeof(node));
-
-    node.obj = (*i)->vis;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.lnk = (*i)->lnk;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.lck = (*i)->lock;
-
-    map.addVisual(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = units.begin(); i != units.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->unt;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addUnit(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = actors.begin(); i != actors.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->act;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.bnd = (*i)->bnd;
-    node.ini = (*i)->ini;
-    node.lck = (*i)->lock;
-
-    map.addActor(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = effects.begin(); i != effects.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->eff;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addEffect(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->sns;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addSensor(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->trg;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addTrigger(node);
-  }
-
-  for(kgmList<kNode*>::iterator i = obstacles.begin(); i != obstacles.end(); ++i)
-  {
-    kgmGameMap::Node node;
-
-    node.obj = (*i)->obs;
-    node.nam = (*i)->nam;
-    node.pos = (*i)->pos;
-    node.rot = (*i)->rot;
-    node.col = (*i)->col;
-    node.shp = (*i)->shp;
-    node.bnd = (*i)->bnd;
-    node.lck = (*i)->lock;
-
-    map.addObstacle(node);
-  }
-
-  obstacles.clear();
-  triggers.clear();
-  sensors.clear();
-  effects.clear();
-  actors.clear();
-  units.clear();
-  visuals.clear();
-  lights.clear();
-
-  FILE* f = fopen(s.data(), "w");
-
-  if(!f)
-    return false;
-
-  kgmString str;
-
-  if(xml.toString(str) > 1)
-  {
-    fprintf(f, "%s", str.data());
-  }
-
-  fclose(f);
-
-  return true;
+  return map.save(s);
 }
 
 bool kEditor::fdAddMesh(kgmGuiFileDialog* fd)
@@ -731,15 +514,15 @@ bool kEditor::addMesh(kgmString name)
   if(!mesh)
     return false;
 
-  kgmVisual* visual = new kgmVisual();
+  kgmGameVisual* visual = new kgmGameVisual(game);
 
-  visual->set(mesh);
+  visual->visual()->set(mesh);
 
-  selected = new kNode(visual);
-  selected->nam = kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered));
-  selected->lnk = name;
+  visual->setId(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
 
-  add(selected);
+  selected = visual;
+
+  game->gAppend(visual);
 
   return true;
 }
@@ -749,28 +532,15 @@ bool kEditor::addUnit(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmUnit::g_typ_objects.hasKey(type))
-  {
-    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
+  kgmUnit* unit = new kgmUnit(game);
 
-    if(fn_new)
-    {
-      kgmUnit* un = (kgmUnit*)fn_new(game);
+  unit->setId(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
-      if(un)
-      {
-        selected = new kNode(un);
-        selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-        selected->nam = kgmString("Unit_") + kgmConvert::toString((s32)(++oquered));
+  game->gAppend(unit);
 
-        add(selected);
+  selected = unit;
 
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return true;
 }
 
 bool kEditor::addActor(kgmGuiFileDialog* fdd)
@@ -778,24 +548,15 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
   if(!fdd || fdd->getFile().empty())
     return false;
 
-  kgmActor* ac = new kgmActor(game);
+  kgmActor* actor = new kgmActor(game);
 
-  if(ac)
-  {
-    kgmGameTools::initActor(game, ac, fdd->getFile());
+  actor->setId(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
-    selected = new kNode(ac);
-    selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-    selected->ini = fdd->getFile();
-    selected->nam = kgmString(ac->getClass()) + kgmString("_") +
-                    kgmConvert::toString((s32)(++oquered));
+  game->gAppend(actor);
 
-    add(selected);
+  selected = actor;
 
-    return true;
-  }
-
-  return false;
+  return true;
 }
 
 bool kEditor::addEffect(kgmString type)
@@ -803,28 +564,15 @@ bool kEditor::addEffect(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmUnit::g_typ_objects.hasKey(type))
-  {
-    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
+  kgmEffect* effect = new kgmEffect(game);
 
-    if(fn_new)
-    {
-      kgmEffect* eff = (kgmEffect*)fn_new(game);
+  effect->setId(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
-      if(eff)
-      {
-        selected = new kNode(eff);
-        selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-        selected->nam = kgmString("Effect_") + kgmConvert::toString((s32)(++oquered));
+  game->gAppend(effect);
 
-        add(selected);
+  selected = effect;
 
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return true;
 }
 
 bool kEditor::addSensor(kgmString type)
@@ -832,28 +580,15 @@ bool kEditor::addSensor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  if(kgmUnit::g_typ_objects.hasKey(type))
-  {
-    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[type];
+  kgmSensor* sensor = new kgmSensor(game);
 
-    if(fn_new)
-    {
-      kgmSensor* sn = (kgmSensor*)fn_new(game);
+  sensor->setId(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
-      if(sn)
-      {
-        selected = new kNode(sn);
-        selected->bnd = box3(-1, -1, -1, 1, 1, 1);
-        selected->nam = kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered));
+  game->gAppend(sensor);
 
-        add(selected);
+  selected = sensor;
 
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return true;
 }
 
 void kEditor::initPhysics()
@@ -990,42 +725,46 @@ void kEditor::onMsMove(int k, int x, int y)
       {
         kgmCamera& cam = game->getRender()->camera();
 
+        vec3 pos = selected->position();
+
         if(cam.isOrthogonal())
         {
           switch(view_mode)
           {
           case ViewFront:
-            selected->pos.y += x * cam_scale;
-            selected->pos.z += y * cam_scale;
+            pos.y += x * cam_scale;
+            pos.z += y * cam_scale;
             break;
           case ViewLeft:
-            selected->pos.x += x * cam_scale;
-            selected->pos.z += y * cam_scale;
+            pos.x += x * cam_scale;
+            pos.z += y * cam_scale;
             break;
           case ViewTop:
-            selected->pos.x += x * cam_scale;
-            selected->pos.y += y * cam_scale;
+            pos.x += x * cam_scale;
+            pos.y += y * cam_scale;
             break;
           }
         }
         else
         {
-          selected->pos.x += 0.01 * x;
-          selected->pos.y += 0.01 * y;
+          pos.x += 0.01 * x;
+          pos.y += 0.01 * y;
         }
+
+        selected->position(pos);
 
         mtx4 m;
         m.identity();
-        m.translate(selected->pos);
+        m.translate(pos);
 
-        if(selected->typ == kNode::VISUAL)
+        if(selected->isClass("kgmGameVisual"))
         {
-          selected->vis->set(m);
+          selected->visual()->set(m);
         }
-        else if(selected->typ == kNode::LIGHT)
+        else if(selected->isClass("kgmGameLight"))
         {
-          selected->lgt->position = selected->pos;
-          selected->icn->setPosition(selected->pos);
+          ((kgmGameLight*)selected)->light()->position = selected->position();
+          //selected->icn->setPosition(selected->pos);
         }
       }
       else
@@ -1071,7 +810,7 @@ void kEditor::onMsMove(int k, int x, int y)
       }
     }
   }
-  else if(dragging && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !dragging->lock)
+  else if(dragging && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !dragging->lock())
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
@@ -1109,12 +848,13 @@ void kEditor::onMsMove(int k, int x, int y)
     dir.normalize();
 
     //selected->setPosition(selected->pos + dir * prdist);
-    dragging->setPosition(pr - nd * pv_delta);
+    vec3 pos = pr - nd * pv_delta;
+    dragging->position(pos);
 
     mtx4 m;
     m.identity();
-    m.translate(dragging->pos);
-    ((kPivot*)pivot->getMesh()->getMesh())->setPos(dragging->pos);
+    m.translate(pos);
+    ((kPivot*)pivot->getMesh()->getMesh())->setPos(pos);
     pivot->set(m);
   }
 }
@@ -1129,18 +869,6 @@ void kEditor::onAction(kgmEvent *gui, int id)
 
 void kEditor::update()
 {
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    (*i)->update();
-
-    if(mode_play)
-    {
-      if ((*i)->typ == kNode::VISUAL)
-      {
-        (*i)->vis->update();
-      }
-    }
-  }
 }
 
 void kEditor::onMenu(u32 id)
@@ -1269,7 +997,7 @@ void kEditor::onEditClone()
   if(!selected)
     return;
 
-  kNode* node = (kNode*) selected->clone();
+  /*kNode* node = (kNode*) selected->clone();
 
   if(!node)
   {
@@ -1336,25 +1064,13 @@ void kEditor::onEditClone()
     break;
   }
 
-  add(node);
+  add(node);*/
 }
 
 void kEditor::onEditRemove()
 {
   if(!selected)
     return;
-
-  for(int i = nodes.length(); i > 0; i--)
-  {
-    kNode* n = nodes[i - 1];
-
-    if(n == selected)
-    {
-      nodes.erase(i - 1);
-
-      break;
-    }
-  }
 
   remove(selected);
 
@@ -1369,34 +1085,28 @@ void kEditor::onEditOptions()
 
   kViewOptions* vop = null;
 
-  switch(selected->typ)
+  switch(selected->type())
   {
-  case kNode::VISUAL:
+  case kgmGameNode::VISUAL:
     vop = kViewOptionsForVisual::getDialog(selected, 50, 50, 260, 300);
     break;
-  case kNode::UNIT:
+  case kgmGameNode::UNIT:
     vop = kViewOptionsForUnit::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kNode::EFFECT:
+  case kgmGameNode::EFFECT:
     vop = kViewOptionsForEffect::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kNode::ACTOR:
+  case kgmGameNode::ACTOR:
     vop = kViewOptionsForActor::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kNode::LIGHT:
+  case kgmGameNode::LIGHT:
     vop = kViewOptionsForLight::getDialog(selected, 50, 50, 250, 300);
     break;
-  case kNode::SENSOR:
+  case kgmGameNode::SENSOR:
     vop = kViewOptionsForSensor::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kNode::TRIGGER:
+  case kgmGameNode::TRIGGER:
     vop = kViewOptionsForTrigger::getDialog(selected, 50, 50, 300, 300);
-    break;
-  case kNode::OBSTACLE:
-    vop = kViewOptionsForObstacle::getDialog(selected, 50, 50, 250, 300);
-    break;
-  case kNode::MATERIAL:
-    vop = kViewOptionsForMaterial::getDialog(selected, 50, 50, 250, 350);
     break;
   }
 
@@ -1700,73 +1410,22 @@ void kEditor::onSelectObject(kgmString id)
   select(id);
 }
 
-void kEditor::add(kNode* node)
-{
-  if(!node || !node->obj)
-    return;
-
-  game->getRender()->add(node->icn);
-
-  switch (node->typ)
-  {
-  case kNode::LIGHT:
-    game->getRender()->add(node->lgt);
-    break;
-  case kNode::VISUAL:
-    game->getRender()->add(node->vis);
-    break;
-  case kNode::UNIT:
-  case kNode::ACTOR:
-  case kNode::EFFECT:
-  case kNode::SENSOR:
-  case kNode::TRIGGER:
-    game->getRender()->add(node->unt->getVisual());
-    break;
-  case kNode::OBSTACLE:
-      game->getRender()->add(node->obs);
-    break;
-  default:
-    break;
-  }
-
-  nodes.add(node);
-
-  select(node->nam);
-}
-
-void kEditor::remove(kNode* node)
+void kEditor::add(kgmGameNode* node)
 {
   if(!node)
     return;
 
-  game->getRender()->remove(node->icn);
+  game->gAppend(node);
 
-  switch (node->typ)
-  {
-  case kNode::LIGHT:
-    game->getRender()->remove(node->lgt);
-    break;
-  case kNode::VISUAL:
-    game->getRender()->remove(node->vis);
-    break;
-  case kNode::UNIT:
-  case kNode::ACTOR:
-  case kNode::EFFECT:
-  case kNode::SENSOR:
-  case kNode::TRIGGER:
-    game->getPhysics()->remove(node->unt->getBody());
-    game->getRender()->remove(node->unt->getVisual());
-    game->getLogic()->remove(node->unt);
-    break;
-  case kNode::OBSTACLE:
-      game->getPhysics()->remove(node->obs);
-      game->getRender()->remove(node->obs);
-    break;
-  default:
-    break;
-  }
+  select(node->getId());
+}
 
-  delete node;
+void kEditor::remove(kgmGameNode* node)
+{
+  if(!node)
+    return;
+
+  node->remove();
 }
 
 int kEditor::doVisUpdate(void *v)

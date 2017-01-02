@@ -5,7 +5,6 @@
 #include "../../kgmGraphics/kgmGuiMenu.h"
 #include "../../kgmGraphics/kgmGuiFileDialog.h"
 
-#include "kNode.h"
 #include "kLine.h"
 #include "kArrow.h"
 #include "kPivot.h"
@@ -149,8 +148,8 @@ public:
   void onMenu(u32 id);
 
 private:
-  void add(kNode*);
-  void remove(kNode*);
+  void add(kgmGameNode*);
+  void remove(kgmGameNode*);
 
   static int doVisUpdate(void*);
 };
