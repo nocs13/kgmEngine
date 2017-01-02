@@ -29,13 +29,9 @@ enum MENUEVENT
   ME_ADD_EFFECT,
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
-  ME_ADD_OBSTACLE,
-  ME_ADD_MATERIAL,
-  ME_ADD_PARTICLES,
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
-  ME_VIEW_MATERIALS,
   ME_VIEW_PERSPECTIVE,
   ME_VIEW_FRONT,
   ME_VIEW_BACK,
@@ -98,15 +94,11 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_EFFECT, "Effect");
     item->add(ME_ADD_SENSOR, "Sensor");
     item->add(ME_ADD_TRIGGER, "Trigger");
-    item->add(ME_ADD_OBSTACLE, "Obstacle");
-    item->add(ME_ADD_MATERIAL, "Material");
-    item->add(ME_ADD_PARTICLES, "Particles");
     item = menu->add("Run");
     item->add(ME_RUN_PLAY, "Play");
     item->add(ME_RUN_STOP, "Stop");
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects");
-    item->add(ME_VIEW_MATERIALS, "Materials");
     item->add(ME_VIEW_PERSPECTIVE, "Perspective");
     item->add(ME_VIEW_FRONT, "Front");
     item->add(ME_VIEW_BACK, "Left");
@@ -914,22 +906,13 @@ void kEditor::onMenu(u32 id)
   case ME_ADD_TRIGGER:
     onAddTrigger();
     break;
-  case ME_ADD_OBSTACLE:
-    onAddObstacle();
-    break;
-  case ME_ADD_MATERIAL:
-    onAddMaterial();
-    break;
-  case ME_ADD_PARTICLES:
-    onAddParticles();
-    break;
   case ME_RUN_PLAY:
+    onRunPlay();
     break;
   case ME_RUN_STOP:
+    onRunStop();
     break;
   case ME_VIEW_OBJECTS:
-    break;
-  case ME_VIEW_MATERIALS:
     break;
   case ME_VIEW_PERSPECTIVE:
     break;
@@ -1209,72 +1192,16 @@ void kEditor::onAddTrigger()
 {
   kgmTrigger* tr = new kgmTrigger();
 
-  selected = new kNode(tr);
-  selected->nam = kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered));
-  tr->setId(selected->nam);
+  selected = tr;
+  selected->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
-}
-
-void kEditor::onAddObstacle()
-{
-  selected = new kNode(new kgmObstacle());
-
-  selected->nam = kgmString("Obstacle_") + kgmConvert::toString((s32)(++oquered));
-
-  add(selected);
-}
-
-void kEditor::onAddMaterial()
-{
-  kNode* node = new kNode(new kgmMaterial());
-
-  node->nam = kgmString("Material_") + kgmConvert::toString((s32)(++oquered));
-  node->mtl->name(node->nam);
-  node->setPosition(vec3(0, 0, -1000));
-
-  node->lock = true;
-
-  add(node);
-}
-
-void kEditor::onAddParticles()
-{
-  kNode* node = new kNode(new kgmVisual());
-  kgmParticles* particles = new kgmParticles();
-  particles->camera(&game->getRender()->camera());
-
-  node->vis->set(particles);
-  particles->build();
-
-  node->nam = kgmString("Particles_") + kgmConvert::toString((s32)(++oquered));
-  node->setPosition(vec3(0, 0, 0));
-
-  add(node);
 }
 
 void kEditor::onRunPlay()
 {
   if(mode_play)
     return;
-
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    switch((*i)->typ)
-    {
-    case kNode::UNIT:
-    case kNode::ACTOR:
-    case kNode::EFFECT:
-    case kNode::SENSOR:
-    case kNode::TRIGGER:
-      game->getPhysics()->add((*i)->unt->getBody());
-      game->getLogic()->add((*i)->unt);
-      break;
-    case kNode::OBSTACLE:
-      game->getPhysics()->add((*i)->obs);
-      break;
-    }
-  }
 
   mode_play = true;
 }
@@ -1283,24 +1210,6 @@ void kEditor::onRunStop()
 {
   if(!mode_play)
     return;
-
-  for(kgmList<kNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
-  {
-    switch((*i)->typ)
-    {
-    case kNode::UNIT:
-    case kNode::ACTOR:
-    case kNode::EFFECT:
-    case kNode::SENSOR:
-    case kNode::TRIGGER:
-      game->getPhysics()->remove((*i)->unt->getBody());
-      game->getLogic()->remove((*i)->unt);
-      break;
-    case kNode::OBSTACLE:
-      game->getPhysics()->remove((*i)->obs);
-      break;
-    }
-  }
 
   mode_play = false;
 }
@@ -1314,29 +1223,13 @@ void kEditor::onViewObjects()
 
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
+
+  kgmList<kgmGameNode*> nodes;
+
+  game->getLogic()->getObjects(nodes);
 
   for(int i = 0; i < nodes.length(); i++)
-    if(nodes[i]->typ != kNode::MATERIAL)
-      vo->addItem(nodes[i]->nam);
-
-  game->guiAdd(vo);
-}
-
-void kEditor::onViewMaterials()
-{
-  kViewObjects* vo = kViewObjects::getDialog();
-
-  if(!vo)
-    return;
-
-  Slot<kEditor, kgmString> slotSelect;
-  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
-  //vo->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::onSelectObject));
-
-  for(int i = 0; i < nodes.length(); i++)
-    if(nodes[i]->typ == kNode::MATERIAL)
-      vo->addItem(nodes[i]->nam);
+      vo->addItem(nodes[i]->getId());
 
   game->guiAdd(vo);
 }
