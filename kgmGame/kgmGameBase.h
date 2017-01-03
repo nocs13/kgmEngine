@@ -62,17 +62,9 @@ protected:
 
   kgmList<kgmGui*>      m_guis;
   kgmList<kgmGameNode*> m_nodes;
-  //kgmList<kgmBody*>   m_bodies;
-  //kgmList<kgmLight*>  m_lights;
-  //kgmList<kgmVisual*> m_visuals;
 
   u32             m_fps;
   kgmGameThreader m_threader_1;
-
-  /*bool      m_islogic;
-  kgmThread m_thLogic;
-  bool      m_isphysics;
-  kgmThread m_thPhysics;*/
 
 #ifdef EDITOR
   friend class kEditor;
@@ -136,6 +128,7 @@ public:
   kgmActor*      gSpawn(kgmString);       //spawn the actor
   kgmUnit*       gObject(kgmString);      //spawn game object
   bool           gAppend(kgmGameNode*);   //add game node in map
+  u32            gObjects(kgmList<kgmGameNode*>&);
   bool           gAppend(kgmBody*);       //add game body in map
   bool           gAppend(kgmLight*);      //add game light in map
   bool           gAppend(kgmVisual*);     //add game object in map

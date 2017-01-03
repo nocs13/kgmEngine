@@ -659,16 +659,19 @@ bool kgmGameBase::gAppend(kgmGameNode* node)
   if(m_physics && node->body())
     m_physics->add(node->body());
 
+  if(node->isClass(kgmGameLight::cClass()))
+    m_render->add(((kgmGameLight*)node)->light());
+
   if(m_logic)
   {
     if(node->isClass(kgmActor::cClass()))
-      m_logic->add(kgm_ptr<kgmActor>((kgmActor*)node));
+      m_logic->add((kgmActor*)node);
     else if(node->isClass(kgmSensor::cClass()))
-      m_logic->add(kgm_ptr<kgmSensor>((kgmSensor*)node));
+      m_logic->add((kgmSensor*)node);
     else if(node->isClass(kgmTrigger::cClass()))
-      m_logic->add(kgm_ptr<kgmTrigger>((kgmTrigger*)node));
+      m_logic->add((kgmTrigger*)node);
     else if(node->isClass(kgmUnit::cClass()))
-      m_logic->add(kgm_ptr<kgmUnit>((kgmUnit*)node));
+      m_logic->add((kgmUnit*)node);
   }
 
 #ifdef DEBUG
@@ -679,6 +682,19 @@ bool kgmGameBase::gAppend(kgmGameNode* node)
   m_nodes.add(node);
 
   return true;
+}
+
+u32 kgmGameBase::gObjects(kgmList<kgmGameNode*>& objs)
+{
+  u32 count = 0;
+
+  for(kgmList<kgmGameNode*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  {
+    objs.add((*i));
+    count++;
+  }
+
+  return count;
 }
 
 inline void xmlAttr(kgmXml::Node* node, const char* id, kgmString& val)

@@ -21,7 +21,6 @@ kViewObjects::~kViewObjects()
 
 void kViewObjects::onClose()
 {
-  close();
 }
 
 void kViewObjects::onSelectItem(u32 i)

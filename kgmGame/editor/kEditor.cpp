@@ -191,9 +191,9 @@ void kEditor::select(kgmString name)
 
   this->game->getLogic()->getObjects(nodes);
 
-  kgmList<kgmGameNode*>::iterator i = nodes.begin();
+  kgmList<kgmGameNode*>::iterator i;
 
-  do
+  for(i = nodes.begin(); i != nodes.end(); ++i)
   {
     if((*i)->getId() == name)
     {
@@ -210,7 +210,7 @@ void kEditor::select(kgmString name)
 
       break;
     }
-  } while(i.next());
+  }
 }
 
 void kEditor::select(int x, int y)
@@ -913,14 +913,19 @@ void kEditor::onMenu(u32 id)
     onRunStop();
     break;
   case ME_VIEW_OBJECTS:
+      onViewObjects();
     break;
   case ME_VIEW_PERSPECTIVE:
+      onViewPerspective();
     break;
   case ME_VIEW_FRONT:
+      onViewFront();
     break;
   case ME_VIEW_BACK:
+      onViewLeft();
     break;
   case ME_VIEW_TOP:
+      onViewTop();
     break;
   case ME_OPTIONS_DATABASE:
     break;
@@ -1226,7 +1231,7 @@ void kEditor::onViewObjects()
 
   kgmList<kgmGameNode*> nodes;
 
-  game->getLogic()->getObjects(nodes);
+  game->gObjects(nodes);
 
   for(int i = 0; i < nodes.length(); i++)
       vo->addItem(nodes[i]->getId());
