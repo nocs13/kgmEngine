@@ -3,5 +3,5 @@
 kgmGameVisual::kgmGameVisual(kgmIGame* g)
   :kgmGameNode(g)
 {
-
+  m_type = VISUAL;
 }

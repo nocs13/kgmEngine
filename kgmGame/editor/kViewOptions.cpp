@@ -19,73 +19,74 @@ kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
   node = n;
   y_coord = 0;
 
-  if(n)
-  {
-    kgmGui* g;
+  if (!n)
+    return;
 
-    tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
+  kgmGui* g;
 
-    kgmGui* tgeneral = tab->addTab("General");
+  tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
 
-    g = new kgmGuiLabel(tgeneral, 1, y_coord, 40, 20);
-    g->setText("Name:");
-    g = new kgmGuiText(tgeneral, 41, y_coord, w - 42, 20);
-    g->setSid("node_name");
-    g->setText(n->getId());
-    Slot<kViewOptions, kgmString> slotName;
-    slotName.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onNodeName, &((kgmGuiText*)g)->sigChange);
-    ((kgmGuiText*)g)->setEditable(true);
-    y_coord += 22;
+  kgmGui* tgeneral = tab->addTab("General");
 
-    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
-    g->setText("Pos");
-    g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
-    g->setSid("position_x");
-    g->setText(kgmConvert::toString(n->position().x));
-    Slot<kViewOptions, kgmString> slotPosX;
-    slotPosX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
-    g->setSid("position_y");
-    g->setText(kgmConvert::toString(n->position().y));
-    Slot<kViewOptions, kgmString> slotPosY;
-    slotPosY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionY, &((kgmGuiText*)g)->sigChange);
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
-    g->setSid("position_z");
-    g->setText(kgmConvert::toString(n->position().z));
-    Slot<kViewOptions, kgmString> slotPosZ;
-    slotPosZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
+  g = new kgmGuiLabel(tgeneral, 1, y_coord, 40, 20);
+  g->setText("Name:");
+  g = new kgmGuiText(tgeneral, 41, y_coord, w - 42, 20);
+  g->setSid("node_name");
+  g->setText(n->getId());
+  Slot<kViewOptions, kgmString> slotName;
+  slotName.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onNodeName, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
+  y_coord += 22;
 
-    y_coord += 23;
-    g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
-    g->setText("Rot");
-    g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
-    g->setSid("rotation_x");
-    g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().x)));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationX, &((kgmGuiText*)g)->sigChange);
-    g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
-    g->setSid("rotation_y");
-    g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().y)));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationY, &((kgmGuiText*)g)->sigChange);
-    g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
-    g->setSid("rotation_z");
-    g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().z)));
-    ((kgmGuiText*)g)->setEditable(true);
-    ((kgmGuiText*)g)->setNumeric(true);
-    slotRotationZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
+  g->setText("Pos");
+  g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
+  g->setSid("position_x");
+  g->setText(kgmConvert::toString(n->position().x));
+  Slot<kViewOptions, kgmString> slotPosX;
+  slotPosX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
+  g->setSid("position_y");
+  g->setText(kgmConvert::toString(n->position().y));
+  Slot<kViewOptions, kgmString> slotPosY;
+  slotPosY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionY, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
+  g->setSid("position_z");
+  g->setText(kgmConvert::toString(n->position().z));
+  Slot<kViewOptions, kgmString> slotPosZ;
+  slotPosZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onPositionX, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
 
-    y_coord += 23;
+  y_coord += 23;
+  g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
+  g->setText("Rot");
+  g = new kgmGuiText(tgeneral, 51, y_coord, 50, 20);
+  g->setSid("rotation_x");
+  g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().x)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotRotationX.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationX, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tgeneral, 102, y_coord, 50, 20);
+  g->setSid("rotation_y");
+  g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().y)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotRotationY.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationY, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tgeneral, 154, y_coord, 50, 20);
+  g->setSid("rotation_z");
+  g->setText(kgmConvert::toString((s32)RADTODEG(n->rotation().z)));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  slotRotationZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
 
-    /*g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
+  y_coord += 23;
+
+  /*g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotX");
     g = new kgmGuiScroll(tgeneral, 51, y_coord, 153, 20);
     g->show();
@@ -114,12 +115,41 @@ kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
 
     y_coord += 23;*/
 
-    kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
-    lock->setText("Locked");
-    lock->setCheck(node->lock());
-    //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
-  }
-}
+  kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
+  lock->setText("Locked");
+  lock->setCheck(node->lock());
+  //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
+
+  kgmGui* tobstacle = tab->addTab("Obstacle");
+  y_coord = 3;
+
+  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
+  g->setText("Polygons");
+  g = new kgmGuiText(tobstacle, 51, y_coord, 70, 20);
+
+  kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
+  btn->setText("select");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
+  y_coord += 23;
+
+  btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
+  btn->setText("Rect");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
+
+  btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
+  btn->setText("Box");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
+  g->setText("Scale");
+  g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
+  g->setSid("scale");
+  //g->setText(kgmConvert::toString(n->obs->getScale()));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+y_coord += 23;}
 
 void kViewOptions::onCloseOptions()
 {

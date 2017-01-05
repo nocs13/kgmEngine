@@ -1073,20 +1073,20 @@ void kEditor::onEditOptions()
 
   switch(selected->type())
   {
+  case kgmGameNode::LIGHT:
+    vop = kViewOptionsForLight::getDialog(selected, 50, 50, 250, 300);
+    break;
   case kgmGameNode::VISUAL:
     vop = kViewOptionsForVisual::getDialog(selected, 50, 50, 260, 300);
     break;
   case kgmGameNode::UNIT:
     vop = kViewOptionsForUnit::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kgmGameNode::EFFECT:
-    vop = kViewOptionsForEffect::getDialog(selected, 50, 50, 300, 300);
-    break;
   case kgmGameNode::ACTOR:
     vop = kViewOptionsForActor::getDialog(selected, 50, 50, 300, 300);
     break;
-  case kgmGameNode::LIGHT:
-    vop = kViewOptionsForLight::getDialog(selected, 50, 50, 250, 300);
+  case kgmGameNode::EFFECT:
+    vop = kViewOptionsForEffect::getDialog(selected, 50, 50, 300, 300);
     break;
   case kgmGameNode::SENSOR:
     vop = kViewOptionsForSensor::getDialog(selected, 50, 50, 300, 300);

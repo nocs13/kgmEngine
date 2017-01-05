@@ -15,6 +15,7 @@ public:
   enum NodeType
   {
     NONE,
+    NODE,
     CAMERA,
     LIGHT,
     VISUAL,

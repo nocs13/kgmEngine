@@ -6,6 +6,8 @@ kgmEffect::kgmEffect(kgmIGame *g)
   m_body = new kgmBody();
 
   m_body->m_collision = false;
+
+  m_type = EFFECT;
 }
 
 void kgmEffect::init()

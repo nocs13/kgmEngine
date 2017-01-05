@@ -15,6 +15,8 @@ kgmGameNode::kgmGameNode(kgmIGame* g)
 
   m_birth   = kgmTime::getTicks();
   m_living  = -1;
+
+  m_type = NODE;
 }
 
 kgmGameNode::~kgmGameNode()

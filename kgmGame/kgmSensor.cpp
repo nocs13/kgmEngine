@@ -6,6 +6,8 @@ kgmSensor::kgmSensor(kgmIGame* g)
   :kgmUnit(g)
 {
   target = "";
+
+  m_type = SENSOR;
 }
 
 void kgmSensor::event(kgmString e)

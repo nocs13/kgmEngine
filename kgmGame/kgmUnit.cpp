@@ -8,6 +8,7 @@ kgmTab<kgmString, kgmUnit::ActionCallback> kgmUnit::g_list_action;
 kgmUnit::kgmUnit(kgmIGame* g)
   :kgmGameNode(g)
 {
+  m_type = UNIT;
 }
 
 kgmUnit::~kgmUnit()

@@ -30,6 +30,8 @@ kgmActor::kgmActor(kgmIGame* g)
 
   m_state      = null;
   m_gameplayer = false;
+
+  m_type = ACTOR;
 }
 
 kgmActor::~kgmActor()

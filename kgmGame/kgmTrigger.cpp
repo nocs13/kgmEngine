@@ -6,6 +6,8 @@ kgmTrigger::kgmTrigger(kgmIGame* g)
   :kgmUnit(g)
 {
   target = "";
+
+  m_type = TRIGGER;
 }
 
 void kgmTrigger::sendToTarget(kgmString e)
