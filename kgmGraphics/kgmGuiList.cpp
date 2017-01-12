@@ -7,6 +7,7 @@ kgmGuiList::kgmGuiList()
   m_scroll->show();
   m_scroll->setRange(1);
   m_itemSel = -1;
+  m_itemPnt = -1;
   m_itemStart = 0;
   m_itemHeight = 12;
   m_position = 0;
@@ -21,6 +22,7 @@ kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   m_scroll->setRange(1);
   slotScroll.connect(this, (Slot<kgmGuiList, u32>::FN) &kgmGuiList::onScroll, &m_scroll->sigChange);
   m_itemSel = -1;
+  m_itemPnt = -1;
   m_itemStart = 0;
   m_itemHeight = 12;
   m_position = 0;
@@ -105,6 +107,11 @@ void kgmGuiList::setSel(int sel)
 int kgmGuiList::getSel()
 {
   return m_itemSel;
+}
+
+int kgmGuiList::getPnt()
+{
+  return m_itemPnt;
 }
 
 int kgmGuiList::getFirstVisibleItem()
@@ -201,7 +208,7 @@ void kgmGuiList::onMsMove(int k, int x, int y)
     return m_scroll->onMsMove(k, x - m_scroll->m_rect.x, y - m_scroll->m_rect.y);
   else if((y / m_itemHeight < m_items.size()) &&
           (y < (m_rect.y + m_rect.h - 1)))
-    m_itemSel = getFirstVisibleItem() +  y / m_itemHeight;
+    m_itemPnt = getFirstVisibleItem() +  y / m_itemHeight;
 }
 
 void kgmGuiList::onMsWheel(int k, int x, int y, int z)

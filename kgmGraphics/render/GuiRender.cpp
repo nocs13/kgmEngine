@@ -129,6 +129,10 @@ void GuiRender::render(kgmGui* gui)
       {
         gcDrawRect(gr->gc, frect, gr->gui_style->slist.fg_color, gr->gui_style->slist.image);
       }
+      else if (i == glist->getPnt())
+      {
+        gcDrawRect(gr->gc, frect, gr->gui_style->slist.ac_color, gr->gui_style->slist.image);
+      }
 
       if(rect.inside(frect))
       {

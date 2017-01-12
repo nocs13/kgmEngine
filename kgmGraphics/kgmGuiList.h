@@ -18,6 +18,7 @@ public:
 public:
   Items     m_items;
   int       m_itemSel;
+  int       m_itemPnt;     //pointed by mouse but may not selected.
   u32       m_itemStart;
   u32       m_itemHeight;
 
@@ -45,6 +46,7 @@ public:
   void      setSel(int sel);
   int       getItem(kgmString n);
   int       getSel();
+  int       getPnt();
   int       getFirstVisibleItem();
   int       getVisibleItemsCount();
   char*     getSelectedItem();
