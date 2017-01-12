@@ -84,6 +84,10 @@ kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
   ((kgmGuiText*)g)->setNumeric(true);
   slotRotationZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
 
+  kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
+  lock->setText("Locked");
+  lock->setCheck(node->lock());
+  //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
   y_coord += 23;
 
   /*g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
@@ -114,42 +118,7 @@ kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
     ((kgmGuiScroll*)g)->setChangeEventCallback(kgmGuiScroll::ChangeEventCallback(this, (kgmGuiScroll::ChangeEventCallback::Function)&kViewOptions::onRotationZ));
 
     y_coord += 23;*/
-
-  kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
-  lock->setText("Locked");
-  lock->setCheck(node->lock());
-  //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
-
-  kgmGui* tobstacle = tab->addTab("Obstacle");
-  y_coord = 3;
-
-  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
-  g->setText("Polygons");
-  g = new kgmGuiText(tobstacle, 51, y_coord, 70, 20);
-
-  kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
-  btn->setText("select");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
-  y_coord += 23;
-
-  btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
-  btn->setText("Rect");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
-
-  btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
-  btn->setText("Box");
-  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
-  y_coord += 23;
-
-  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
-  g->setText("Scale");
-  g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
-  g->setSid("scale");
-  //g->setText(kgmConvert::toString(n->obs->getScale()));
-  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-y_coord += 23;}
+}
 
 void kViewOptions::onCloseOptions()
 {
@@ -227,8 +196,36 @@ void kViewOptions::onSelectLock(bool s)
 kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  //kgmGui* tvisual = tab->addTab("Visual");
-  y_coord = 1;
+  kgmGui* tobstacle = tab->addTab("Obstacle");
+  y_coord = 3;
+
+  kgmGui* g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
+  g->setText("Polygons");
+  g = new kgmGuiText(tobstacle, 51, y_coord, 70, 20);
+
+  kgmGuiButton* btn = new kgmGuiButton(tobstacle, 125, y_coord, 50, 20);
+  btn->setText("select");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onSelectPolygons));
+  y_coord += 23;
+
+  btn = new kgmGuiButton(tobstacle, 0, y_coord, 50, 20);
+  btn->setText("Rect");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onRect));
+
+  btn = new kgmGuiButton(tobstacle, 51, y_coord, 50, 20);
+  btn->setText("Box");
+  //btn->setClickCallback(kgmGuiButton::ClickEventCallback(this, (kgmGuiButton::ClickEventCallback::Function)&kViewOptionsForObstacle::onBox));
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tobstacle, 0, y_coord, 50, 20);
+  g->setText("Scale");
+  g = new kgmGuiText(tobstacle, 51, y_coord, 50, 20);
+  g->setSid("scale");
+  //g->setText(kgmConvert::toString(n->obs->getScale()));
+  //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForObstacle::onScale));
+  ((kgmGuiText*)g)->setEditable(true);
+  ((kgmGuiText*)g)->setNumeric(true);
+  y_coord += 23;
 }
 
 void kViewOptionsForVisual::onParticlesLoop(bool s)
