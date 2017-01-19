@@ -169,7 +169,7 @@ kEditor::~kEditor()
   delete mtlLines;
   delete mtlPivot;
 
-  kgmUnit::g_typ_objects.clear();
+  //kgmUnit::g_typ_objects.clear();
 }
 
 void kEditor::clear()
@@ -1110,12 +1110,16 @@ void kEditor::onAddMesh()
   if(!fdd)
     return;
 
+  slotOpenFile.reset();
+  slotOpenFile.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdAddMesh, &fdd->sigSelect);
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get((char*)"Path"));
+
 }
 
 void kEditor::onAddUnit()

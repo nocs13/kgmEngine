@@ -68,6 +68,12 @@ protected:
       s->connect(this);
     }
 
+    void reset()
+    {
+      this->t = null;
+      this->f = null;
+    }
+
   private:
     Slot(const Slot&)
     {

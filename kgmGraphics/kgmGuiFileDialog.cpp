@@ -27,6 +27,9 @@ kgmGuiFileDialog::kgmGuiFileDialog()
   localable = true;
   allsee = true;
 
+  slotListSelect.connect(this, (Slot<kgmGuiFileDialog, u32>::FN) &kgmGuiFileDialog::onListChange,
+                         &list->sigSelect);
+
 #ifdef WIN32
   DIRCON = "\\";
 #endif
@@ -102,14 +105,14 @@ void kgmGuiFileDialog::onFileSelect()
   }
 }
 
-void kgmGuiFileDialog::onOpenSelect(int)
+void kgmGuiFileDialog::onOpenSelect(int i)
 {
   sigSelect(this);
 
   close();
 }
 
-void kgmGuiFileDialog::onSaveSelect(int)
+void kgmGuiFileDialog::onSaveSelect(int i)
 {
   sigSelect(this);
 
@@ -121,6 +124,11 @@ void kgmGuiFileDialog::onFailSelect()
   sigFail(this);
 
   close();
+}
+
+void kgmGuiFileDialog::onListChange(u32 i)
+{
+  text->setText(list->getItem(i));
 }
 
 void kgmGuiFileDialog::onEditFile(kgmString s)
@@ -238,7 +246,7 @@ void kgmGuiFileDialog::setFilter(kgmString flt)
 
 kgmString kgmGuiFileDialog::getFile()
 {
-  return text->m_text;
+  return text->getText();
 }
 
 kgmString kgmGuiFileDialog::getPath()

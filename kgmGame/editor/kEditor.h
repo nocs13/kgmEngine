@@ -75,6 +75,7 @@ private:
   Slot<kEditor, u32> slotMenu;
   Slot<kEditor, kgmGuiFileDialog*> slotMapSave;
   Slot<kEditor, kgmGuiFileDialog*> slotMapOpen;
+  Slot<kEditor, kgmGuiFileDialog*> slotOpenFile;
 
 public:
   kEditor(kgmGameBase* game);

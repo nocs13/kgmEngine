@@ -28,7 +28,8 @@ private:
   bool      localable;
   bool      allsee;
 
-  Slot<kgmGuiFileDialog, int> slotSelect, slotFail;
+  Slot<kgmGuiFileDialog, int> slotSelect;
+  Slot<kgmGuiFileDialog, u32> slotListSelect;
 
 public:
   Signal<kgmGuiFileDialog*> sigSelect, sigFail;
@@ -61,6 +62,7 @@ protected:
   __stdcall void onFileSelect();
   __stdcall void onOpenSelect(int);
   __stdcall void onSaveSelect(int);
+  __stdcall void onListChange(u32);
   __stdcall void onFailSelect();
   __stdcall void onEditFile(kgmString);
 
