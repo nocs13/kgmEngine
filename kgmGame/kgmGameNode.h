@@ -9,7 +9,7 @@ class kgmIGame;
 
 class kgmGameNode: public kgmObject//, private kgmBody,  private kgmVisual
 {
-  KGM_OBJECT(kgmGameNode)
+  KGM_OBJECT(kgmGameNode);
 
 public:
   enum NodeType

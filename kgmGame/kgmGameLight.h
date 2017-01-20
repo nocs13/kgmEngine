@@ -6,6 +6,9 @@
 
 class kgmGameLight : public kgmGameNode
 {
+  KGM_OBJECT(kgmGameLight);
+
+private:
   kgmLight* m_light;
 
 public:

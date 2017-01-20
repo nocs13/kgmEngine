@@ -5,6 +5,8 @@
 
 class kgmGameVisual : public kgmGameNode
 {
+  KGM_OBJECT(kgmGameVisual);
+
 public:
   kgmGameVisual(kgmIGame*);
 };

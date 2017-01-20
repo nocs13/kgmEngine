@@ -506,6 +506,9 @@ bool kEditor::addMesh(kgmString name)
 
   kgmGameVisual* visual = new kgmGameVisual(game);
 
+  if(!visual)
+    return false;
+
   visual->visual()->set(mesh);
 
   visual->setId(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
