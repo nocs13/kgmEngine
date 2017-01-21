@@ -62,6 +62,7 @@ public:
   kgmPicture*        getPicture(const char* id);
   kgmTexture*        getTexture(const char* id);
   kgmShader*         getShader(const char* id);
+  kgmMaterial*       getMaterial(const char*);
   kgmAnimation*      getAnimation(const char* id);
   kgmSound*          getSound(const char*);
   kgmMesh*           getMesh(const char* id);

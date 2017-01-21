@@ -9,6 +9,7 @@ class kgmTexture;
 class kgmResource;
 class kgmSkeleton;
 class kgmPicture;
+class kgmMaterial;
 class kgmFont;
 class kgmFile;
 class kgmXml;
@@ -31,6 +32,7 @@ public:
   virtual kgmPicture*         getPicture(const char*) = 0;
   virtual kgmTexture*         getTexture(const char*) = 0;
   virtual kgmShader*          getShader(const char*) = 0;
+  virtual kgmMaterial*        getMaterial(const char*) = 0;
   virtual kgmAnimation*       getAnimation(const char*) = 0;
   virtual kgmSkeleton*        getSkeleton(const char*) = 0;
   virtual kgmSound*           getSound(const char*) = 0;

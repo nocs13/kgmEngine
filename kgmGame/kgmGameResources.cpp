@@ -322,6 +322,42 @@ kgmShader* kgmGameResources::getShader(const char* id)
   return shader;
 }
 
+kgmMaterial* kgmGameResources::getMaterial(const char* id)
+{
+  kgm_log() << "Resources: get shader " << id << "\n";
+
+  kgmMaterial* material = (kgmMaterial*)get(id);
+
+  if(material)
+    return material;
+
+  kgmCString name;
+  name = id;
+  kgmMemory<u8> mem;
+
+  if(getFile(name, mem))
+  {
+    kgmXml xml(mem);
+
+    if(!xml.m_node)
+    {
+      return null;
+    }
+
+    material = m_tools.genMaterial(xml);
+  }
+
+  if(material)
+  {
+    material->m_id = id;
+    lock(material);
+
+    add(material);
+  }
+
+  return material;
+}
+
 kgmAnimation* kgmGameResources::getAnimation(const char* id)
 {
   kgmAnimation* animation = (kgmAnimation*)get(id);

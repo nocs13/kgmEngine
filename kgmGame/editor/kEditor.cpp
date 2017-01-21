@@ -509,6 +509,9 @@ bool kEditor::addMesh(kgmString name)
   if(!visual)
     return false;
 
+  if(mesh->getMtlId().length() > 0)
+    visual->visual()->set(game->getResources()->getMaterial(name));
+
   visual->visual()->set(mesh);
 
   visual->setId(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));

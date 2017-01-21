@@ -864,13 +864,10 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x)
 //MESHES
 kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   kgmList<kgmMaterial*> materials;
-  kgmMaterial* mtl = 0;
-
   kgmMesh* m = 0;
   char* key = 0;
   char* val = 0;
   char* str = 0;
-  int   col[4] = {0};
 
   if(mm.empty())
     return null;
@@ -879,7 +876,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   val = new char[128];
   str = new char[512];
 
-  while(!mm.eof()){
+  while(!mm.eof()) {
     memset(key, 0, 128);
     memset(val, 0, 128);
     memset(str, 0, 512);
@@ -889,10 +886,21 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
     if(!strcmp(key, "Mesh"))
     {
       sscanf(str, "%s %s", key, val);
+
       if(m)
         break;
+
       m = new kgmMesh();
+
       strcpy(m->m_id, val);
+    }
+
+    if(!strcmp(key, "Material") && m)
+    {
+      sscanf(str, "%s %s", key, val);
+
+      if(!strcmp(key, "name") && strlen(val))
+        m->setMtlId(val);
     }
 
     if(!strcmp(key, "Vertices"))
@@ -913,7 +921,9 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         v[i].col = 0xffffffff;
       }
     }
-    if(!strcmp(key, "Faces")){
+
+    if(!strcmp(key, "Faces"))
+    {
       u32 count = 0;
       kgmMesh::Face_16*   f = 0;
       kgmArray<u16> fmaps;
@@ -931,7 +941,9 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         f[i].c = fi[2];
       }
     }
-    if(!strcmp(key, "Skin")){
+
+    if(!strcmp(key, "Skin"))
+    {
       u32 count = 0;
       sscanf(str, "%s %i", key, &count);
       kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
@@ -980,10 +992,8 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
 kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 {
   kgmList<kgmMaterial*> materials;
-  kgmMaterial* mtl = 0;
 
   kgmMesh* m = 0;
-  int   col[4] = {0};
 
   kgmXml::Node* mnode = 0;
 
@@ -1001,6 +1011,15 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
       mnode->node(i)->id(id);
     else
       break;
+
+    if(id == "Material")
+    {
+      kgmString mtlId;
+
+      mnode->attribute("Material", mtlId);
+
+      m->setMtlId(mtlId);
+    }
 
     if(id == "Vertices")
     {

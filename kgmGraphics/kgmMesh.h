@@ -132,24 +132,27 @@ public:
 public:
   RenderType m_rtype;
 
-  Vertex* m_vertices; //vertex buffer
-  u32     m_vcount;   //vertex count
-  Face*   m_faces;    //face buffer
-  u32     m_fcount;   //face count
-  u32     m_fvf;      //flexible vertex format
-  u32     m_fff;      //flexible face format
-  u8*     m_maps;     //material id by face
+  Vertex* m_vertices; // vertex buffer
+  u32     m_vcount;   // vertex count
+  Face*   m_faces;    // face buffer
+  u32     m_fcount;   // face count
+  u32     m_fvf;      // flexible vertex format
+  u32     m_fff;      // flexible face format
+  u8*     m_maps;     // material id by face
 
   kgmList<LOD*> m_lods;
 
   u32     m_group;    // object group id
   box3    m_bound;
 
+  kgmString m_mtlId;  // base material name
+
 public:
   kgmMesh();
   kgmMesh(const kgmMesh&);
   ~kgmMesh();
 
+  int  genLods(int);
   void rebound();  //recalculate boundes(box, sphere, ...)
   box3 bound();
 
@@ -160,12 +163,35 @@ public:
   u32     fvf();
   u32     fff();
 
-  Vertex* vertices(){ return m_vertices; }
-  Face*   faces()   { return m_faces; }
-  u32     vcount()  { return m_vcount; }
-  u32     fcount()  { return m_fcount; }
+  Vertex* vertices() const
+  {
+    return m_vertices;
+  }
 
-  int     genLods(int);
+  Face*   faces() const
+  {
+    return m_faces;
+  }
+
+  u32     vcount() const
+  {
+    return m_vcount;
+  }
+
+  u32     fcount() const
+  {
+    return m_fcount;
+  }
+
+  void setMtlId(kgmString s)
+  {
+    m_mtlId = s;
+  }
+
+  kgmString getMtlId() const
+  {
+    return m_mtlId;
+  }
 };
 
 typedef kgmList<kgmMesh*> kgmMeshList;

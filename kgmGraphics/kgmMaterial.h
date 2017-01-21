@@ -10,7 +10,7 @@ class kgmShader;
 
 #define KGM_TEXTURES_PER_MATERIAL 4
 
-class kgmMaterial: public kgmObject
+class kgmMaterial: public kgmResource
 {
   KGM_OBJECT(kgmMaterial);
 
