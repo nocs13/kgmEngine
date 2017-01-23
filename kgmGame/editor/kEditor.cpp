@@ -510,7 +510,7 @@ bool kEditor::addMesh(kgmString name)
     return false;
 
   if(mesh->getMtlId().length() > 0)
-    visual->visual()->set(game->getResources()->getMaterial(name));
+    visual->visual()->set(game->getResources()->getMaterial(mesh->getMtlId()));
 
   visual->visual()->set(mesh);
 

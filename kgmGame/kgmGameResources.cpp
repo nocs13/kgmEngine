@@ -332,7 +332,7 @@ kgmMaterial* kgmGameResources::getMaterial(const char* id)
     return material;
 
   kgmCString name;
-  name = id;
+  name = kgmString(id) + ".mtl";
   kgmMemory<u8> mem;
 
   if(getFile(name, mem))

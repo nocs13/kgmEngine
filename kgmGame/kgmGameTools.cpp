@@ -1014,11 +1014,9 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
     if(id == "Material")
     {
-      kgmString mtlId;
+      mnode->attribute("name", val);
 
-      mnode->attribute("Material", mtlId);
-
-      m->setMtlId(mtlId);
+      m->setMtlId(val);
     }
 
     if(id == "Vertices")
