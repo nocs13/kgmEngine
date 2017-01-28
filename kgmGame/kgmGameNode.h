@@ -29,8 +29,8 @@ public:
 private:
   kgmIGame* m_game = null;
 
-  kgmString m_id;
-  kgmString m_class;
+  u32       m_id;
+  kgmString m_name;
 
   bool m_lock;
   bool m_valid;
@@ -69,7 +69,7 @@ public:
   { }
 
   void remove();
-  u32 timeout();
+  u32  timeout();
 
 private:
   virtual void clear(){}
@@ -78,6 +78,11 @@ public:
   kgmIGame* game() const
   {
     return m_game;
+  }
+
+  NodeType getType() const
+  {
+    return m_type;
   }
 
   kgmBody* body() const
@@ -90,7 +95,7 @@ public:
     return m_visual;
   }
 
-  bool valid()   const
+  bool valid() const
   {
     return m_valid;
   }
@@ -140,24 +145,24 @@ public:
     m_lock = l;
   }
 
-  void setId(kgmString s)
+  void setId(u32 c)
   {
-    m_id = s;
+    m_id = c;
   }
 
-  kgmString getId()
+  u32 getId()
   {
     return m_id;
   }
 
-  void setClass(kgmString c)
+  void setName(kgmString s)
   {
-    m_class = c;
+    m_name = s;
   }
 
-  kgmString getClass()
+  kgmString getName()
   {
-    return m_class;
+    return m_name;
   }
 
   void setGroup(u32 g)

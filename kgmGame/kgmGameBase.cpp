@@ -861,7 +861,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         if(act)
         {
           xml.attribute("name", s);
-          act->setId(s);
+          act->setName(s);
           xml.attribute("player", s);
 
           if(s == "on")
@@ -1433,7 +1433,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 
       if(go)
       {
-        go->setId(cid);
+        go->setName(cid);
 
         kgmDummy* dm = actor->dummy(dummy);
 
@@ -1575,7 +1575,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
   }
 
 #ifdef DEBUG
-  kgm_log() << "\nActor: " << actor->getId();
+  kgm_log() << "\nActor: " << actor->getName();
 #endif
 
   return actor;

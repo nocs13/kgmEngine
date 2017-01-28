@@ -126,7 +126,7 @@ kgmGameNode* kgmGameLogic::getObjectById(kgmString& id)
     {
       continue;
     }
-    else if(id == go->getId())
+    else if(id == go->getName())
     {
       return go;
     }

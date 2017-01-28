@@ -1637,7 +1637,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       xml.m_node->node(i)->attribute("type", type);
 
-      actor->setClass(type);
+      //actor->setClass(type);
 
       break;
     }

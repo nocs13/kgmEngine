@@ -32,7 +32,7 @@ kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
   g->setText("Name:");
   g = new kgmGuiText(tgeneral, 41, y_coord, w - 42, 20);
   g->setSid("node_name");
-  g->setText(n->getId());
+  g->setText(n->getName());
   Slot<kViewOptions, kgmString> slotName;
   slotName.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onNodeName, &((kgmGuiText*)g)->sigChange);
   ((kgmGuiText*)g)->setEditable(true);
@@ -131,7 +131,7 @@ void kViewOptions::onNodeName(kgmString s)
 {
   if(s.length() < 1) return;
 
-  node->setId(s);
+  node->setName(s);
 }
 
 void kViewOptions::onPositionX(kgmString s)

@@ -195,14 +195,14 @@ void kEditor::select(kgmString name)
 
   for(i = nodes.begin(); i != nodes.end(); ++i)
   {
-    if((*i)->getId() == name)
+    if((*i)->getName() == name)
     {
       selected = (*i);
 
       textData->m_text =  "Selected: ";
       textData->m_text += name;
 
-      if(pivot && selected && selected->getClass() != "kgmMaterial")
+      if(pivot && selected)
       {
         ((kPivot*)pivot->getMesh()->getMesh())->setPos((*i)->position());
         pivot->set(((kPivot*)pivot->getMesh()->getMesh())->getTransform());
@@ -347,7 +347,7 @@ void kEditor::select(int x, int y)
 
   if(peeked)
   {
-    select(peeked->getId());
+    select(peeked->getName());
 
     dragging = peeked;
 
@@ -514,7 +514,7 @@ bool kEditor::addMesh(kgmString name)
 
   visual->visual()->set(mesh);
 
-  visual->setId(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
+  visual->setName(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
 
   selected = visual;
 
@@ -530,7 +530,7 @@ bool kEditor::addUnit(kgmString type)
 
   kgmUnit* unit = new kgmUnit(game);
 
-  unit->setId(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
+  unit->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
   game->gAppend(unit);
 
@@ -546,7 +546,7 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
 
   kgmActor* actor = new kgmActor(game);
 
-  actor->setId(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
+  actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
   game->gAppend(actor);
 
@@ -562,7 +562,7 @@ bool kEditor::addEffect(kgmString type)
 
   kgmEffect* effect = new kgmEffect(game);
 
-  effect->setId(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
+  effect->setName(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
   game->gAppend(effect);
 
@@ -578,7 +578,7 @@ bool kEditor::addSensor(kgmString type)
 
   kgmSensor* sensor = new kgmSensor(game);
 
-  sensor->setId(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
+  sensor->setName(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
   game->gAppend(sensor);
 
@@ -1145,7 +1145,7 @@ void kEditor::onAddUnit()
   kgmUnit* unit = new kgmUnit(game);
   selected = unit;
 
-  selected->setId(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
+  selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }
@@ -1155,7 +1155,7 @@ void kEditor::onAddLight()
   kgmGameLight* light = new kgmGameLight(game);
   selected = light;
 
-  light->setId(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
+  light->setName(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }
@@ -1208,7 +1208,7 @@ void kEditor::onAddTrigger()
   kgmTrigger* tr = new kgmTrigger();
 
   selected = tr;
-  selected->setId(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
+  selected->setName(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }
@@ -1244,7 +1244,7 @@ void kEditor::onViewObjects()
   game->gObjects(nodes);
 
   for(int i = 0; i < nodes.length(); i++)
-      vo->addItem(nodes[i]->getId());
+      vo->addItem(nodes[i]->getName());
 
   game->guiAdd(vo);
 }
@@ -1321,7 +1321,7 @@ void kEditor::add(kgmGameNode* node)
 
   game->gAppend(node);
 
-  select(node->getId());
+  select(node->getName());
 }
 
 void kEditor::remove(kgmGameNode* node)

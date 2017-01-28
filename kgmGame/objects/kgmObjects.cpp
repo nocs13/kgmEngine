@@ -170,7 +170,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
 {
   power = 1;
   setLiving(time);
-  this->setId("laser");
+  this->setName("laser");
 
   m_visual  = new kgmVisual();
 

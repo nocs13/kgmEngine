@@ -140,7 +140,7 @@ bool kgmGameMap::addLight(kgmGameLight* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmGameLight";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
@@ -165,7 +165,7 @@ bool kgmGameMap::addCamera(kgmGameCamera* n)
     dir = n->camera()->mDir;
 
     node->m_name = "kgmCamera";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(n->camera()->mFov)));
 
     addPosition(*node, pos);
@@ -190,7 +190,7 @@ bool kgmGameMap::addVisual(kgmGameVisual* n)
     kgmXml::Node* snode = null;
 
     node->m_name = "kgmVisual";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     kgmVisual* vis = n->visual();
 
@@ -247,7 +247,7 @@ bool kgmGameMap::addActor(kgmActor* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmActor";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     //node->m_attributes.add(new kgmXml::Attribute("actor", n.ini));
 
     if(n->m_gameplayer)
@@ -278,7 +278,7 @@ bool kgmGameMap::addEffect(kgmEffect* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmEffect";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
@@ -303,7 +303,7 @@ bool kgmGameMap::addSensor(kgmSensor* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmSensor";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
 
     addPosition(*node, n->position());
@@ -329,7 +329,7 @@ bool kgmGameMap::addTrigger(kgmTrigger* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmTrigger";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("channels", kgmConvert::toString((s32) n->getCount())));
     node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
 
@@ -356,7 +356,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
     node->m_name = "kgmUnit";
-    node->m_attributes.add(new kgmXml::Attribute("name", n->getId()));
+    node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
@@ -421,7 +421,7 @@ kgmGameNode* kgmGameMap::next()
         m_xml->attribute("fov",  fov);
 
         node = new kgmGameCamera(m_game);
-        node->setId(id);
+        node->setName(id);
         ((kgmGameCamera*)node)->camera()->mFov = kgmConvert::toDouble(fov);
 
         closed = false;
@@ -435,7 +435,7 @@ kgmGameNode* kgmGameMap::next()
 
         node = new kgmGameLight(m_game);
 
-        node->setId(id);
+        node->setName(id);
 
         closed = false;
       }
@@ -448,7 +448,7 @@ kgmGameNode* kgmGameMap::next()
 
         node = new kgmGameVisual(m_game);
 
-        node->setId(id);
+        node->setName(id);
 
         closed = false;
       }
@@ -460,7 +460,7 @@ kgmGameNode* kgmGameMap::next()
         m_xml->attribute("name", id);
 
         node = new kgmUnit(m_game);
-        node->setId(id);
+        node->setName(id);
 
         closed = false;
       }
@@ -478,7 +478,7 @@ kgmGameNode* kgmGameMap::next()
 
         //kgmGameTools::initActor(m_game, act, ini);
 
-        node->setId(id);
+        node->setName(id);
         //node.ini = ini;
 
         if(plr == "on")
@@ -496,7 +496,7 @@ kgmGameNode* kgmGameMap::next()
 
         node = new kgmEffect(m_game);
 
-        node->setId(id);
+        node->setName(id);
 
         closed = false;
       }
@@ -511,7 +511,7 @@ kgmGameNode* kgmGameMap::next()
 
         node = new kgmSensor(m_game);
 
-        node->setId(id);
+        node->setName(id);
 
         closed = false;
       }
@@ -526,7 +526,7 @@ kgmGameNode* kgmGameMap::next()
 
         node = new kgmTrigger(m_game);
 
-        node->setId(id);
+        node->setName(id);
         ((kgmTrigger*)node)->setCount(kgmConvert::toInteger(chn));
         ((kgmTrigger*)node)->setTarget(trg);
 
