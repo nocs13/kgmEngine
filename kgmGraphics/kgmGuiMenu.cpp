@@ -8,6 +8,8 @@ kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
   :kgmGui(parent, 0, 0, 1, 1)
 {
   root = new Item(null, "", true);
+
+  choose = null;
 }
 
 kgmGuiMenu::Item* kgmGuiMenu::add(kgmString title)

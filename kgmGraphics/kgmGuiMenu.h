@@ -101,7 +101,8 @@ public:
 
     iRect getRect() const { return rect; }
 
-    u32 getId(){ return id; }
+    u32  getId() const { return id; }
+    void setId(u32 i) { id = i; }
     s32 getType(){ return (s32)type; }
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
@@ -265,6 +266,7 @@ public:
 
 protected:
   Item* root;
+  Item* choose;
 
 public:
   Signal<u32> sigChoose;
@@ -279,7 +281,18 @@ public:
   void onMsMove(int k, int x, int y);
   void onMsLeftUp(int k, int x, int y);
 
-  Item* getItem() { return root; }
+  Item* getItem() const
+  {
+    return root;
+  }
 
-  static u32 fontWidth() { return 10; }
+  Item* getChoose() const
+  {
+    return choose;
+  }
+
+  static u32 fontWidth()
+  {
+    return 10;
+  }
 };

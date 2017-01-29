@@ -307,9 +307,11 @@ void GuiRender::render(kgmGui* gui)
   }
 }
 
-void GuiRender::renderGuiMenuItem(kgmGui* menu, void *i)
+void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 {
-  kgmGuiMenu::Item* item = (kgmGuiMenu::Item*)i;
+  kgmGuiMenu* menu = static_cast<kgmGuiMenu*> (m);
+
+  kgmGuiMenu::Item* item = static_cast<kgmGuiMenu::Item*> (i);
 
   kgmGui::Rect prect;
 
@@ -324,7 +326,15 @@ void GuiRender::renderGuiMenuItem(kgmGui* menu, void *i)
     rc.x += prect.x;
     rc.y += prect.y;
 
-    if(item->getSelected() == i)
+    kgmGuiMenu::Item* choose = menu->getChoose();
+
+    if(citem == choose)
+    {
+      //if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
+      //  renderGuiMenuItem(menu, citem);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.ac_color, gr->gui_style->smenu.image);
+    }
+    else if(item->getSelected() == i)
     {
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);

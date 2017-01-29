@@ -24,8 +24,8 @@ kgmGuiStyle::kgmGuiStyle()
   //gui menu
   smenu.tx_color = 0xffffffff;
   smenu.bg_color = 0xffaaaaaa;
-  smenu.ac_color = 0xffaaaaaa;
   smenu.fg_color = 0xffbbbbbb;
+  smenu.ac_color = 0xff999999;
 
   //gui text
   stext.tx_color = 0xffffffff;

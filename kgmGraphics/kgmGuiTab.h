@@ -29,8 +29,10 @@ private:
         {
           Item* citem = root->getItem(i);
 
-          if(citem == selected)
+          if(citem == selected) {
+            choose = selected;
             sigSwitch(i);
+          }
         }
       }
     }

@@ -82,7 +82,10 @@ kgmGui* kgmGuiTab::addTab(kgmString title)
   if(active() != null)
     active()->hide();
 
-  labels->add(client->m_childs.length(), title);
+  kgmGuiMenu::Item* item = labels->add(client->m_childs.length(), title);
+
+  item->setId(item->getItemsCount());
+
   gui->show();
 }
 
