@@ -27,6 +27,7 @@
 #include "kgmMaterial.h"
 
 #include "render/GuiRender.h"
+#include "render/IconRender.h"
 #include "render/SpriteRender.h"
 
 #ifdef DEBUG
@@ -39,6 +40,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   KGM_OBJECT(kgmGraphics);
 
   friend class GuiRender;
+  friend class IconRender;
   friend class SpriteRender;
 public:
 
@@ -157,6 +159,10 @@ private:
   void setProjMatrix(mtx4&);
   void setViewMatrix(mtx4&);
   void setWorldMatrix(mtx4&);
+
+  mtx4 getProjMatrix();
+  mtx4 getViewMatrix();
+  mtx4 getWorldMatrix();
 
 public:
   void gc2DMode();

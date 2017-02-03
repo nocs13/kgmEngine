@@ -293,6 +293,21 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
   g_mtx_world = m;
 }
 
+mtx4 kgmGraphics::getProjMatrix()
+{
+  return g_mtx_proj;
+}
+
+mtx4 kgmGraphics::getViewMatrix()
+{
+  return g_mtx_view;
+}
+
+mtx4 kgmGraphics::getWorldMatrix()
+{
+  return g_mtx_world;
+}
+
 void kgmGraphics::setEditor(bool e)
 {
   m_editor = e;
