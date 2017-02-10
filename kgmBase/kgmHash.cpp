@@ -1,9 +1,5 @@
 #include "kgmHash.h"
 
-kgmHash::kgmHash()
-{
-}
-
 u32  kgmHash::base(u8* buf, u32 size)
 {
   return simple(buf, size);
