@@ -823,32 +823,13 @@ class kgmExport(bpy.types.Operator):
 def menu_func(self, context):
   self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='NONE')
 
-def menu_func_dummy(self, context):
-  self.layout.operator(kgm_dummy.bl_idname,  text="kgmDummy", icon='OUTLINER_OB_EMPTY')
-
-def menu_func_unit(self, context):
-  self.layout.operator(kgm_unit.bl_idname,  text="kgmUnit", icon='OUTLINER_OB_EMPTY')
-
-def menu_func_actor(self, context):
-  self.layout.operator(kgm_actor.bl_idname,  text="kgmActor", icon='OUTLINER_OB_EMPTY')
-
 def register():
   bpy.utils.register_module(__name__)
   bpy.types.INFO_MT_file_export.append(menu_func)
-  bpy.types.INFO_MT_add.append(menu_func_dummy)
-  bpy.types.INFO_MT_add.append(menu_func_unit)
-  bpy.types.INFO_MT_add.append(menu_func_actor)
-
-  #bpy.types.Object.kgm_class = ''
-  bpy.types.Object.kgm_logic = ''
-  bpy.types.Object.kgm_state = ''
 
 def unregister():
   bpy.utils.unregister_module(__name__)
   bpy.types.INFO_MT_file_export.remove(menu_func)
-  bpy.types.INFO_MT_add.remove(menu_func_dummy)
-  bpy.types.INFO_MT_add.remove(menu_func_unit)
-  bpy.types.INFO_MT_add.remove(menu_func_actor)
 
 if __name__ == "__main__":
   register()
