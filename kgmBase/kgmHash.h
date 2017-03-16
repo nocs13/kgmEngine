@@ -4,6 +4,88 @@
 class kgmHash
 {
 public:
-  static u32  base(u8* buffer, u32 size);
-  static u32  simple(u8* buffer, u32 size);
+  static u32  simple(u8* buf, s32 len)
+  {
+    u32 hash = 0;
+
+    if(!buf || !len)
+      return 0;
+
+    for(s32 i = 0; i < len; i++)
+    {
+      hash &= (((hash << 5) - hash) + buf[i]);
+    }
+
+    return hash;
+  }
+
+  static u32 h37(u8* str, u32 len)
+  {
+    u32 hash = 2139062143;
+
+    for(int i = 0; i < len; i++)
+       hash = 37 * hash + str[i];
+
+    return hash;
+  }
+
+  static u32 faq6(u8* str, s32 len)
+  {
+    u32 hash = 0;
+
+    for(s32 i = 0; i < len; i++)
+    {
+      hash += (u8) str[i];
+      hash += (hash << 10);
+      hash ^= (hash >> 6);
+    }
+
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
+    hash += (hash << 15);
+
+    return hash;
+  }
+
+  static u32 rot13(u8* str, s32 len)
+  {
+    u32 hash = 0;
+
+    for(s32 i = 0; i < len; i++)
+    {
+      hash += (u8) str[i];
+      hash -= (hash << 13) | (hash >> 19);
+    }
+
+    return hash;
+  }
+
+  // recomended
+
+  static u32 ly(u8* str, s32 len)
+  {
+    u32 hash = 0;
+
+    for(s32 i = 0; i < len; i++)
+      hash = (hash * 1664525) + (u8)(str[i]) + 1013904223;
+
+    return hash;
+  }
+
+  // recomended
+
+  static u32 rs(u8* str, s32 len)
+  {
+    static const u32 b = 378551;
+    u32 a = 63689;
+    u32 hash = 0;
+
+    for(s32 i = 0; i < len; i++)
+    {
+      hash = hash * a + (u8)(str[i]);
+      a *= b;
+    }
+
+    return hash;
+  }
 };
