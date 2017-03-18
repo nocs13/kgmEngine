@@ -24,6 +24,7 @@ bl_info = {
     "category": "Import-Export"}
 
 import os
+import threading
 from math import radians
 import bpy
 from mathutils import *
@@ -96,7 +97,7 @@ class kgm_unit(bpy.types.Operator):
  def execute(self, context):
      print("Execute unit.\n")
      
-     animaniacs = [  ( "dummy", "dummy",     "kgmDummy"   ),
+     animaniacs = [  ( "dummy",   "dummy",   "kgmDummy"   ),
                      ( "actor",   "actor",   "kgmActor"   ),
                      ( "sensor",  "sensor",  "kgmSensor"  ),
                      ( "trigger", "trigger", "kgmTrigger" ),
@@ -127,7 +128,7 @@ class kgm_unit(bpy.types.Operator):
  def invoke(self, context, event):
      print("Invoke unit.\n")
      
-     animaniacs = [  ( "dummy", "dummy",     "kgmDummy"   ),
+     animaniacs = [  ( "dummy",   "dummy",   "kgmDummy"   ),
                      ( "actor",   "actor",   "kgmActor"   ),
                      ( "sensor",  "sensor",  "kgmSensor"  ),
                      ( "trigger", "trigger", "kgmTrigger" ),
@@ -585,7 +586,7 @@ class kgmObject:
     else:
       self.props[tk] = o.get(k)
 
-class kgmCollision:
+class kgmObstacle:
  def __init__(self, o):
   mesh = o.data
   mtx = o.matrix_local
@@ -622,6 +623,102 @@ class kgmThread(threading.Thread):
   def run(self):
     pass
 
+def export_animation(file, o):
+  file.write("  <Animation name='" + o.name + "'>\n")
+  for f in o.frames:
+    file.write("   <Frame key='" + str(f.key) + "' position='" + str("%.5f" % f.pos[0]) + " " + str("%.5f" % f.pos[1]) + " " + str("%.5f" % f.pos[2]) + "'")
+    file.write(" quaternion='" + str("%.5f" % f.quat[0]) + " " + str("%.5f" % f.quat[1]) + " " + str("%.5f" % f.quat[2]) + " " + str("%.5f" % f.quat[3]) + "'")
+    file.write(" euler='" + str("%.5f" % toGrad(f.euler[0])) + " " + str("%.5f" % toGrad(f.euler[1])) + " " + str("%.5f" % toGrad(f.euler[2])) + "'")
+    file.write(" />\n")
+  file.write("  </Animation>\n")
+
+def export_material(file, o):
+  file.write(" <Material name='" + o.name + "'>\n")
+  file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
+  file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
+  file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
+  file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
+  file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
+
+  if o.map_color != "":
+    file.write("  <map_color value='" + o.map_color + "'/>\n")
+  if o.map_normal != "":
+    file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
+  if o.map_specular != "":
+    file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
+  if(hasattr(o, 'shader')):
+    file.write("  <Shader value='" + o.shader + "'/>\n")
+  file.write(" </Material>\n")
+
+def export_light(file, o):
+  file.write(" <Light name='" + o.name + "'>\n")
+  file.write("  <Type value='" + o.type + "'/>\n")
+  file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
+  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+  file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
+  file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
+  file.write(" </Light>\n")
+
+def export_camera(file, o):
+  file.write(" <Camera name='" + o.name + "'>\n")
+  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
+  file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
+  file.write(" </Camera>\n")
+
+def export_mesh(file, o):
+  file.write(" <Mesh name='" + o.name + "'>\n")
+  if len(o.mtls) > 0:
+   file.write("  <Material name='" + o.mtls[0] + "' />\n")
+
+  file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
+  for v in o.vertices:
+   file.write("   " + str(v.v[0]) + " " + str(v.v[1]) + " " + str(v.v[2]))
+   file.write(" " + str(v.n[0]) + " " + str(v.n[1]) + " " + str(v.n[2]))
+   file.write(" " + str(v.uv[0]) + " " + str(v.uv[1]))
+   file.write("\n")
+  file.write("  </Vertices>\n")
+
+  file.write("  <Faces length='" + str(len(o.faces)) + "'>\n")
+  for f in o.faces:
+   file.write("   " + str(f.f[0]) + " " + str(f.f[1]) + " " + str(f.f[2]) + "\n")
+  file.write("  </Faces>\n")
+
+  if o.hasvgroups == True:
+   file.write("  <Skin length='" + str(len(o.vertices)) + "'>\n")
+   for v in o.vertices:
+    file.write("   " + str(v.ib[0]) + " " + str(v.ib[1]) + " " + str(v.ib[2]) + " " + str(v.ib[3]))
+    file.write(" " + str(v.wb[0]) + " " + str(v.wb[1]) + " " + str(v.wb[2]) + " " + str(v.wb[3]))
+    file.write("\n")
+   file.write("  </Skin>\n")
+  file.write(" </Mesh>\n")
+
+def export_sceleton(file, o):
+  file.write(" <Skeleton name='" + s.name +
+             "' position='" + str("%.5f" % s.pos.x) + " " + str("%.5f" % s.pos.y) + " " + str("%.5f" % s.pos.z) +
+             "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str("%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
+             "' scale='" + str("%.5f" % s.scale.x) + " " + str("%.5f" % s.scale.y) + " " + str("%.5f" % s.scale.z) +
+             "'>\n")
+  for b in s.bones:
+   file.write("  <Bone name='" + b.name + "' parent='" + b.parent + "'")
+   file.write(" position='" + str("%.5f" % b.pos.x) + " " + str("%.5f" % b.pos.y) + " " + str("%.5f" % b.pos.z) + "'")
+   #file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
+   file.write(" quaternion='" + str("%.5f" % b.quat[1]) + " " + str("%.5f" % b.quat[2]) + " " + str("%.5f" % b.quat[3]) + " " + str("%.5f" % b.quat[0]) + "'")
+   file.write(" euler='" + str("%.5f" % toGrad(b.euler.x)) + " " + str("%.5f" % toGrad(b.euler.y)) + " " + str("%.5f" % toGrad(b.euler.z)) + "'")
+   #file.write(" euler='" + str(b.euler.x) + " " + str(b.euler.y) + " " + str(b.euler.z) + "'")
+   file.write("/>\n")
+  file.write(" </Skeleton>\n")
+
+def export_obstacle(file, o):
+  file.write(" <Obstacle polygons='" + str(len(o.faces)) + "'>\n")
+  for face in collision.faces:
+    file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
+    for v in face:
+     file.write("   " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n")
+    file.write("  </Polygon>\n")
+  file.write(" </Obstacle>\n")
+
 from bpy.props import *
 class kgmExport(bpy.types.Operator):
  '''This appiers in the tooltip of '''
@@ -640,8 +737,8 @@ class kgmExport(bpy.types.Operator):
  exp_cameras = BoolProperty(name="Export Cameras", description="", default=False)
  exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
- exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
- exp_kgmphysics = BoolProperty(name="Export kgmPhysics", description="", default=False)
+ #exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
+ exp_obstacles = BoolProperty(name="Export Obstacles", description="", default=False)
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
@@ -669,12 +766,11 @@ class kgmExport(bpy.types.Operator):
   print("Collect Objects...")
 
   meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
-  proxies    = [kgmProxy(ob) for ob in objects if self.exp_kgmobjects and ob.proxy is not None]
-  collisions = [kgmCollision(ob) for ob in objects if ob.type == 'MESH' and self.exp_kgmphysics and ob.collision.use == True]
+  obstacles  = [kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
   lights     = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras    = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons  = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
-  gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
+  #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
   animations = []
 
   if self.exp_animations:
@@ -707,104 +803,32 @@ class kgmExport(bpy.types.Operator):
 
   #animations
   if self.exp_animations:
-   file.write(" <kgmAnimation fstart='" + str(fstart) + "' fend='" + str(fend) + "'>\n")
+   file.write(" <Animations fstart='" + str(fstart) + "' fend='" + str(fend) + "'>\n")
    for o in animations:
-    file.write("  <Animation name='" + o.name + "'>\n")
-    for f in o.frames:
-     file.write("   <Frame key='" + str(f.key) + "' position='" + str("%.5f" % f.pos[0]) + " " + str("%.5f" % f.pos[1]) + " " + str("%.5f" % f.pos[2]) + "'")
-     file.write(" quaternion='" + str("%.5f" % f.quat[0]) + " " + str("%.5f" % f.quat[1]) + " " + str("%.5f" % f.quat[2]) + " " + str("%.5f" % f.quat[3]) + "'")
-     file.write(" euler='" + str("%.5f" % toGrad(f.euler[0])) + " " + str("%.5f" % toGrad(f.euler[1])) + " " + str("%.5f" % toGrad(f.euler[2])) + "'")
-     file.write(" />\n")
-    file.write("  </Animation>\n")
-   file.write(" </kgmAnimation>\n")
+     export_animation(file, o)
+   file.write(" </Animations>\n")
 
-   #materials
+  #materials
   if self.exp_materials:
      for o in scene_materials:
-       print("Materials " + str(o.name))
-       file.write(" <kgmMaterial name='" + o.name + "'>\n")
-       file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
-       file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
-       file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
-       file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
-       file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
-
-       if o.map_color != "":
-         file.write("  <map_color value='" + o.map_color + "'/>\n")
-       if o.map_normal != "":
-         file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
-       if o.map_specular != "":
-         file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
-       if(hasattr(o, 'shader')):
-         file.write("  <Shader value='" + o.shader + "'/>\n")
-       file.write(" </kgmMaterial>\n")
+       export_material(file, o)
 
   #lights
   for o in lights:
-   file.write(" <kgmLight name='" + o.name + "'>\n")
-   file.write("  <Type value='" + o.type + "'/>\n")
-   file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
-   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
-   file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
-   file.write(" </kgmLight>\n")
+    export_light(file, o)
 
   #cameras
   for o in cameras:
-   file.write(" <kgmCamera name='" + o.name + "'>\n")
-   file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-   file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
-   file.write(" </kgmCamera>\n")
+    export_camera(file, o)
 
   #meshes
-  for o in meshes:
-   file.write(" <kgmMesh name='" + o.name + "'>\n")
-   if len(o.mtls) > 0:
-    file.write("  <Material name='" + o.mtls[0] + "' />\n")
-
-   file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
-   for v in o.vertices:
-    file.write("   " + str(v.v[0]) + " " + str(v.v[1]) + " " + str(v.v[2]))
-    file.write(" " + str(v.n[0]) + " " + str(v.n[1]) + " " + str(v.n[2]))
-    file.write(" " + str(v.uv[0]) + " " + str(v.uv[1]))
-    file.write("\n")
-   file.write("  </Vertices>\n")
-
-   file.write("  <Faces length='" + str(len(o.faces)) + "'>\n")
-   for f in o.faces:
-    file.write("   " + str(f.f[0]) + " " + str(f.f[1]) + " " + str(f.f[2]) + "\n")
-   file.write("  </Faces>\n")
-
-   if o.hasvgroups == True:
-    file.write("  <Skin length='" + str(len(o.vertices)) + "'>\n")
-    for v in o.vertices:
-     file.write("   " + str(v.ib[0]) + " " + str(v.ib[1]) + " " + str(v.ib[2]) + " " + str(v.ib[3]))
-     file.write(" " + str(v.wb[0]) + " " + str(v.wb[1]) + " " + str(v.wb[2]) + " " + str(v.wb[3]))
-     file.write("\n")
-    file.write("  </Skin>\n")
-   file.write(" </kgmMesh>\n")
+    export_mesh(file, o)
 
   #skeletons
   for s in skeletons:
-   file.write(" <kgmSkeleton name='" + s.name +
-              "' position='" + str("%.5f" % s.pos.x) + " " + str("%.5f" % s.pos.y) + " " + str("%.5f" % s.pos.z) +
-              "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str("%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
-#              "' euler='" + str(toGrad(s.euler.x)) + " " + str(toGrad(s.euler.y)) + " " + str(toGrad(s.euler.z)) +
-              "' scale='" + str("%.5f" % s.scale.x) + " " + str("%.5f" % s.scale.y) + " " + str("%.5f" % s.scale.z) +
-              "'>\n")
-   for b in s.bones:
-    file.write("  <Bone name='" + b.name + "' parent='" + b.parent + "'")
-    file.write(" position='" + str("%.5f" % b.pos.x) + " " + str("%.5f" % b.pos.y) + " " + str("%.5f" % b.pos.z) + "'")
-    #file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
-    file.write(" quaternion='" + str("%.5f" % b.quat[1]) + " " + str("%.5f" % b.quat[2]) + " " + str("%.5f" % b.quat[3]) + " " + str("%.5f" % b.quat[0]) + "'")
-    file.write(" euler='" + str("%.5f" % toGrad(b.euler.x)) + " " + str("%.5f" % toGrad(b.euler.y)) + " " + str("%.5f" % toGrad(b.euler.z)) + "'")
-    #file.write(" euler='" + str(b.euler.x) + " " + str(b.euler.y) + " " + str(b.euler.z) + "'")
-    file.write("/>\n")
-   file.write(" </kgmSkeleton>\n")
+    export_sceleton(file, o)
 
-  #kgm_objects
+  '''#kgm_objects
   for a in gobjects:
    print('kgmObject: ' + a.name)
    if a.gtype == "actor" or a.gtype == 1:
@@ -824,25 +848,11 @@ class kgmExport(bpy.types.Operator):
     file.write(" <kgmGameObject name='" + a.name + "' object='" + a.gobject + "' parent='" + a.linked + "'>\n")
     file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
     file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
-    file.write(" </kgmGameObject>\n")
+    file.write(" </kgmGameObject>\n")'''
 
-  #proxies
-  for o in proxies:
-   file.write(" <kgmProxy name='" + o.name + "' type='" + o.type + "' class='" + o.object + "'")
-   file.write(" position='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'")
-   file.write(" quaternion='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'")
-#   file.write("  <Euler value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-   file.write(" />\n")
-
-  #collisions
-  for collision in collisions:
-   file.write(" <kgmCollision polygons='" + str(len(collision.faces)) + "'>\n")
-   for face in collision.faces:
-     file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
-     for v in face:
-      file.write("   " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n")
-     file.write("  </Polygon>\n")
-   file.write(" </kgmCollision>\n")
+  #obstacle
+  for o in collisions:
+    export_obstacle(file, o)
 
   file.write("</kgm>\n")
   file.close()
