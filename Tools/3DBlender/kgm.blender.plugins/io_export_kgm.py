@@ -875,6 +875,18 @@ class kgmExport(bpy.types.Operator):
   elif False:
    return self.execute(context)
 
+ def collect_meshes(self, context):
+   meshes_nodes = [ob for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+
+   for n in meshes_nodes:
+     exist = False
+     for m in meshes:
+       if n.name == m.name:
+         exist = True
+         break
+     if exist is False:
+       meshes.append(kgmMesh(ob))
+
 #---------------------------
 def menu_func(self, context):
     self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='PLUGIN')
