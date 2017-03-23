@@ -695,6 +695,7 @@ def export_mesh_data(file, o):
   file.write(" </Mesh>\n")
 
 def export_mesh_node(file, o):
+    pass
 
 def export_sceleton(file, o):
   file.write(" <Skeleton name='" + s.name +
@@ -744,8 +745,8 @@ class kgmExport(bpy.types.Operator):
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
-  mesh_datas = []
-  mesh_nodes = []
+ mesh_datas = []
+ mesh_nodes = []
 
 
  @classmethod
@@ -789,7 +790,7 @@ class kgmExport(bpy.types.Operator):
         animations.append(kgmBoneAnimation(bone, armature))
 
   print("Animations: " + str(len(animations)))
-  print("Gobjects: "   + str(len(gobjects)))
+  #print("Gobjects: "   + str(len(gobjects)))
   print("Objects: "    + str(len(objects)))
   print("Mehses: "     + str(len(meshes)))
   print("Lights: "     + str(len(lights)))
@@ -830,10 +831,10 @@ class kgmExport(bpy.types.Operator):
     export_camera(file, o)
 
   #meshes
-  for o in mesh_datas:
+  for o in kgmExport.mesh_datas:
     export_mesh_data(file, o)
 
-  for o in mesh_nodes:
+  for o in kgmExport.mesh_nodes:
     export_mesh_node(file, o)
 
   #skeletons
@@ -863,7 +864,7 @@ class kgmExport(bpy.types.Operator):
     file.write(" </kgmGameObject>\n")'''
 
   #obstacle
-  for o in collisions:
+  for o in obstacles:
     export_obstacle(file, o)
 
   file.write("</kgm>\n")
