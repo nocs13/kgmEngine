@@ -667,7 +667,7 @@ def export_camera(file, o):
   file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
   file.write(" </Camera>\n")
 
-def export_mesh(file, o):
+def export_mesh_data(file, o):
   file.write(" <Mesh name='" + o.name + "'>\n")
   if len(o.mtls) > 0:
    file.write("  <Material name='" + o.mtls[0] + "' />\n")
@@ -693,6 +693,8 @@ def export_mesh(file, o):
     file.write("\n")
    file.write("  </Skin>\n")
   file.write(" </Mesh>\n")
+
+def export_mesh_node(file, o):
 
 def export_sceleton(file, o):
   file.write(" <Skeleton name='" + s.name +
@@ -742,6 +744,9 @@ class kgmExport(bpy.types.Operator):
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
+  mesh_datas = []
+  mesh_nodes = []
+
 
  @classmethod
  def poll(cls, context):
@@ -762,6 +767,9 @@ class kgmExport(bpy.types.Operator):
    objects = [ob for ob in scene.objects if ob.is_visible(scene)]
 
   #cFrame = bpy.context.scene.frame_current
+
+  kgmExport.mesh_datas = []
+  kgmExport.mesh_nodes = []
 
   print("Collect Objects...")
 
@@ -822,7 +830,11 @@ class kgmExport(bpy.types.Operator):
     export_camera(file, o)
 
   #meshes
-    export_mesh(file, o)
+  for o in mesh_datas:
+    export_mesh_data(file, o)
+
+  for o in mesh_nodes:
+    export_mesh_node(file, o)
 
   #skeletons
   for s in skeletons:
@@ -875,17 +887,17 @@ class kgmExport(bpy.types.Operator):
   elif False:
    return self.execute(context)
 
- def collect_meshes(self, context):
-   meshes_nodes = [ob for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+ def collect_meshes(self):
+   mesh_nodes = [ob for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
 
-   for n in meshes_nodes:
+   for n in mesh_nodes:
      exist = False
-     for m in meshes:
+     for m in mesh_datas:
        if n.name == m.name:
          exist = True
          break
      if exist is False:
-       meshes.append(kgmMesh(ob))
+       mesh_datas.append(kgmMesh(n))
 
 #---------------------------
 def menu_func(self, context):
