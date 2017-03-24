@@ -695,6 +695,17 @@ def export_mesh_data(file, o):
   file.write(" </Mesh>\n")
 
 def export_mesh_node(file, o):
+    name = o.name
+    mtx = o.matrix_local
+    v = mtx.to_translation()
+    r = mtx.to_euler()
+    file.write(" <Visual type='mesh' name='" + o.name + "' proxy='" + o.data.name + "'>\n")
+    for m in o.data.materials:
+      file.write("  <Material name='" + m.name + "'/>\n")
+
+    file.write("  <Position='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
+    file.write("  <Rotation='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
+    file.write(" </Visual>\n")
     pass
 
 def export_sceleton(file, o):
@@ -745,6 +756,7 @@ class kgmExport(bpy.types.Operator):
  is_selection = BoolProperty(name="Selected only", description="", default=False)
  type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")), name="Format", description="Choose between two items", default='OPT_A')
 
+ objects    = []
  mesh_datas = []
  mesh_nodes = []
 
@@ -763,14 +775,16 @@ class kgmExport(bpy.types.Operator):
    print(o.name + ':' + o.type)
 
   if self.is_selection:
-   objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
+   self.objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
   else:
-   objects = [ob for ob in scene.objects if ob.is_visible(scene)]
+   self.objects = [ob for ob in scene.objects if ob.is_visible(scene)]
+
+  objects = self.objects
 
   #cFrame = bpy.context.scene.frame_current
 
-  kgmExport.mesh_datas = []
-  kgmExport.mesh_nodes = []
+  self.mesh_datas = []
+  self.mesh_nodes = []
 
   print("Collect Objects...")
 
@@ -781,6 +795,10 @@ class kgmExport(bpy.types.Operator):
   skeletons  = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
   #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
   animations = []
+
+  meshThread = threading.Thread(target=self.collect_meshes)
+  meshThread.start()
+  meshThread.join()
 
   if self.exp_animations:
     armatures = [ob for ob in objects if ob.type == 'ARMATURE']
@@ -831,10 +849,12 @@ class kgmExport(bpy.types.Operator):
     export_camera(file, o)
 
   #meshes
-  for o in kgmExport.mesh_datas:
+  print("Export mesh library")
+  for o in self.mesh_datas:
     export_mesh_data(file, o)
 
-  for o in kgmExport.mesh_nodes:
+  print("Export mesh nodes")
+  for o in self.mesh_nodes:
     export_mesh_node(file, o)
 
   #skeletons
@@ -889,16 +909,18 @@ class kgmExport(bpy.types.Operator):
    return self.execute(context)
 
  def collect_meshes(self):
-   mesh_nodes = [ob for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+   self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+   print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
-   for n in mesh_nodes:
+   for n in self.mesh_nodes:
      exist = False
-     for m in mesh_datas:
+     for m in self.mesh_datas:
        if n.name == m.name:
          exist = True
          break
      if exist is False:
-       mesh_datas.append(kgmMesh(n))
+       self.mesh_datas.append(kgmMesh(n))
+   print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
 #---------------------------
 def menu_func(self, context):
