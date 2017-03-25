@@ -634,11 +634,11 @@ def export_animation(file, o):
 
 def export_material(file, o):
   file.write(" <Material name='" + o.name + "'>\n")
-  file.write("  <Color value='" + str(o.diffuse[0]) + " " + str(o.diffuse[1]) + " " + str(o.diffuse[2]) + "'/>\n")
-  file.write("  <Emmision value='" + str(o.emmision[0]) + " " + str(o.emmision[1]) + " " + str(o.emmision[2]) + "'/>\n")
-  file.write("  <Specular value='" + str(o.specular[0]) + " " + str(o.specular[1]) + " " + str(o.specular[2]) + "'/>\n")
-  file.write("  <Shininess value='" + str(o.shine) + "'/>\n")
-  file.write("  <Alpha value='" + str(o.alpha) + "'/>\n")
+  file.write("  <Color value='" + str("%.5f" % o.diffuse[0]) + " " + str("%.5f" % o.diffuse[1]) + " " + str("%.5f" % o.diffuse[2]) + "'/>\n")
+  file.write("  <Emmision value='" + str("%.5f" % o.emmision[0]) + " " + str("%.5f" % o.emmision[1]) + " " + str("%.5f" % o.emmision[2]) + "'/>\n")
+  file.write("  <Specular value='" + str("%.5f" % o.specular[0]) + " " + str("%.5f" % o.specular[1]) + " " + str("%.5f" % o.specular[2]) + "'/>\n")
+  file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
+  file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")
@@ -653,18 +653,18 @@ def export_material(file, o):
 def export_light(file, o):
   file.write(" <Light name='" + o.name + "'>\n")
   file.write("  <Type value='" + o.type + "'/>\n")
-  file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str(o.color[2]) + "'/>\n")
-  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-  file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-  file.write("  <Intensity value='" + str(o.intensity) + "'/>\n")
+  file.write("  <Color value='" + str(o.color[0]) + " " + str(o.color[1]) + " " + str("%.5f" % o.color[2]) + "'/>\n")
+  file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str("%.5f" % o.rot[0]) + " " + str("%.5f" % o.rot[1]) + " " + str("%.5f" % o.rot[2]) + "'/>\n")
+  file.write("  <Intensity value='" + str("%.5f" % o.intensity) + "'/>\n")
   file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
   file.write(" </Light>\n")
 
 def export_camera(file, o):
   file.write(" <Camera name='" + o.name + "'>\n")
-  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-  file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
-  file.write("  <Clip angle='" + str(o.angle) + "' zfar='" + str(o.far) + "' znear='" + str(o.near) + "'/>\n")
+  file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str("%.5f" % o.rot[0]) + " " + str("%.5f" % o.rot[1]) + " " + str("%.5f" % o.rot[2]) + "'/>\n")
+  file.write("  <Clip angle='" + str("%.5f" % o.angle) + "' zfar='" + str("%.5f" % o.far) + "' znear='" + str("%.5f" % o.near) + "'/>\n")
   file.write(" </Camera>\n")
 
 def export_mesh_data(file, o):
@@ -674,9 +674,9 @@ def export_mesh_data(file, o):
 
   file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
   for v in o.vertices:
-   file.write("   " + str(v.v[0]) + " " + str(v.v[1]) + " " + str(v.v[2]))
-   file.write(" " + str(v.n[0]) + " " + str(v.n[1]) + " " + str(v.n[2]))
-   file.write(" " + str(v.uv[0]) + " " + str(v.uv[1]))
+   file.write("   " + str("%.6f" % v.v[0]) + " " + str("%.6f" % v.v[1]) + " " + str("%.6f" % v.v[2]))
+   file.write(" " + str("%.6f" % v.n[0]) + " " + str("%.6f" % v.n[1]) + " " + str("%.6f" % v.n[2]))
+   file.write(" " + str("%.6f" % v.uv[0]) + " " + str("%.6f" % v.uv[1]))
    file.write("\n")
   file.write("  </Vertices>\n")
 
@@ -785,37 +785,50 @@ class kgmExport(bpy.types.Operator):
 
   self.mesh_datas = []
   self.mesh_nodes = []
+  self.obstacles  = []
+  self.lights     = []
+  self.cameras    = []
+  self.skeletons  = []
+  self.animations = []
 
   print("Collect Objects...")
 
-  meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
+  '''meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
   obstacles  = [kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
   lights     = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
   cameras    = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
   skeletons  = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
   #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
-  animations = []
+  animations = []'''
 
-  meshThread = threading.Thread(target=self.collect_meshes)
-  meshThread.start()
-  meshThread.join()
+  threads = list(range(6))
+  threads[0] = threading.Thread(target=self.collect_meshes)
+  threads[1] = threading.Thread(target=self.collect_obstacles)
+  threads[2] = threading.Thread(target=self.collect_lights)
+  threads[3] = threading.Thread(target=self.collect_cameras)
+  threads[4] = threading.Thread(target=self.collect_skeletons)
+  threads[5] = threading.Thread(target=self.collect_animations)
 
-  if self.exp_animations:
+  for thread in threads:
+    thread.start()
+
+  for thread in threads:
+    thread.join()
+
+  '''if self.exp_animations:
     armatures = [ob for ob in objects if ob.type == 'ARMATURE']
     for armature in armatures:
       print("scan armature")
       for bone in armature.data.bones:
-        animations.append(kgmBoneAnimation(bone, armature))
+        animations.append(kgmBoneAnimation(bone, armature))'''
 
-  print("Animations: " + str(len(animations)))
-  #print("Gobjects: "   + str(len(gobjects)))
-  print("Objects: "    + str(len(objects)))
-  print("Mehses: "     + str(len(meshes)))
-  print("Lights: "     + str(len(lights)))
+  print("Animations: " + str(len(self.animations)))
+  print("Objects: "    + str(len(self.objects)))
+  print("Mehses: "     + str(len(self.mesh_nodes)))
+  print("Lights: "     + str(len(self.lights)))
   print("Materials: "  + str(len(scene_materials)))
-  print("Dummies: "    + str(len(lights)))
 
-#  path = self.filepath
+  #path = self.filepath
   if not self.filepath.lower().endswith(".kgm"):
    self.filepath += ".kgm"
 
@@ -831,7 +844,7 @@ class kgmExport(bpy.types.Operator):
   #animations
   if self.exp_animations:
    file.write(" <Animations fstart='" + str(fstart) + "' fend='" + str(fend) + "'>\n")
-   for o in animations:
+   for o in self.animations:
      export_animation(file, o)
    file.write(" </Animations>\n")
 
@@ -841,11 +854,11 @@ class kgmExport(bpy.types.Operator):
        export_material(file, o)
 
   #lights
-  for o in lights:
+  for o in self.lights:
     export_light(file, o)
 
   #cameras
-  for o in cameras:
+  for o in self.cameras:
     export_camera(file, o)
 
   #meshes
@@ -858,7 +871,7 @@ class kgmExport(bpy.types.Operator):
     export_mesh_node(file, o)
 
   #skeletons
-  for s in skeletons:
+  for s in self.skeletons:
     export_sceleton(file, o)
 
   '''#kgm_objects
@@ -884,7 +897,7 @@ class kgmExport(bpy.types.Operator):
     file.write(" </kgmGameObject>\n")'''
 
   #obstacle
-  for o in obstacles:
+  for o in self.obstacles:
     export_obstacle(file, o)
 
   file.write("</kgm>\n")
@@ -921,6 +934,26 @@ class kgmExport(bpy.types.Operator):
      if exist is False:
        self.mesh_datas.append(kgmMesh(n))
    print("Collected mesh datas: " + str(len(self.mesh_datas)))
+
+ def collect_obstacles(self):
+   self.obstacles = [kgmObstacle(ob) for ob in self.objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
+
+ def collect_lights(self):
+   self.lights = [kgmLight(ob) for ob in self.objects if ob.type == 'LAMP' and self.exp_lights]
+
+ def collect_cameras(self):
+   self.cameras = [kgmCamera(ob) for ob in self.objects if ob.type == 'CAMERA' and self.exp_cameras]
+
+ def collect_skeletons(self):
+   self.skeletons = [kgmSkeleton(ob) for ob in self.objects if ob.type == 'ARMATURE' and self.exp_armatures]
+
+ def collect_animations(self):
+   if self.exp_animations:
+     armatures = [ob for ob in self.objects if ob.type == 'ARMATURE']
+     for armature in armatures:
+       print("scan armature")
+       for bone in armature.data.bones:
+         self.animations.append(kgmBoneAnimation(bone, armature))
 
 #---------------------------
 def menu_func(self, context):
