@@ -14,6 +14,7 @@
 #include "kgmGameSettings.h"
 
 #include "../kgmBase/kgmQuadTree.h"
+#include "../kgmBase/kgmHArray.h"
 #include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"
@@ -62,6 +63,7 @@ protected:
 
   kgmList<kgmGui*>      m_guis;
   kgmList<kgmGameNode*> m_nodes;
+  kgmHArray<kgmString, kgmGameNode*> m_gnodes;
 
   u32             m_fps;
   kgmGameThreader m_threader_1;

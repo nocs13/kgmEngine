@@ -2,16 +2,51 @@
 #define KGMHARRAY_H
 
 #include "kgmHash.h"
+#include "kgmString.h"
 
 #define KGM_HARRAY_DEFAULT_SIZE 63
 
-template <class T>
+
+template <class K, class T>
 class kgmHArray
 {
+  static u32 dataLength(K* data)
+  {
+    return sizeof(K);
+  }
+
+  static u32 dataLength(kgmString* data)
+  {
+    if(!data)
+      return 0;
+
+    return data->length();
+  }
+
+  static u32 dataLength(const char* data)
+  {
+    if(!data)
+      return 0;
+
+    return strlen(data);
+  }
+
+  static void* dataCore(K* data)
+  {
+    return data;
+  }
+
+  static void* dataCore(kgmString* data)
+  {
+    if(!data)
+      return 0;
+
+    return data->data();
+  }
+
   struct _Node {
-    void* key;
-    s32   key_len;
-    T     data;
+    K key;
+    T data;
 
     _Node *next;
   };
@@ -22,15 +57,37 @@ class kgmHArray
 
 public:
   //// ITERATOR
+
+  class iterator;
+
+  friend class iterator;
+
   class iterator
   {
-    friend class kgmHArray<T>;
-    _Node* _Ptr;
+    friend class kgmHArray<K, T>;
+    _Node*        _Ptr;
+    u32           index;
+    kgmHArray<K, T>* object;
 
   public:
-    iterator()
+    iterator(kgmHArray<K, T> *o = null)
     {
-      _Ptr = NULL;
+      _Ptr   = NULL;
+      index  = 0;
+      object = null;
+
+      if (o) {
+        object = o->object;
+        _Ptr   = o->_Ptr;
+        index  = o->index;
+      }
+    }
+
+    iterator(const iterator& it)
+    {
+      object = it.object;
+      _Ptr   = it._Ptr;
+      index  = it.index;
     }
 
     T& operator*()
@@ -42,6 +99,14 @@ public:
     {
       if(_Ptr)
         _Ptr = _Ptr->next;
+
+      if(!_Ptr){
+        if(index < object->base_size) {
+          while(!object->root[index] && index < object->base_size)
+            index++;
+          _Ptr = object->root[index];
+        }
+      }
     }
 
     bool operator!=(iterator i)
@@ -54,47 +119,33 @@ public:
       return (_Ptr == i._Ptr);
     }
 
-    bool next()
+    bool isEnd()
     {
-      if(_Ptr)
-        _Ptr = _Ptr->next;
-
-      if(_Ptr)
+      if(!_Ptr && index == (object->base_size - 1))
         return true;
 
       return false;
     }
 
-    bool prev()
-    {
-      if(_Ptr)
-        _Ptr = _Ptr->prev;
-
-      if(_Ptr)
-        return true;
-
-      return false;
-    }
   };
 
 public:
   kgmHArray(u32 size = KGM_HARRAY_DEFAULT_SIZE)
   {
-    root = new Node*[size];
-    memset(root, 0, size * sizeof(Node*));
+    root = new _Node*[size];
+    memset(root, 0, size * sizeof(_Node*));
 
     base_size = size;
   }
 
-  void set(void* key, s32 key_len, T data) {
-    u8 hash = kgmHash::rs(key, key_len);
+  void set(K key, T data) {
+    u32 hash = kgmHash::rs(dataCore(&key), dataLength(&key));
 
     hash %= base_size;
 
-    Node* node = new Node();
+    _Node* node = new _Node();
 
     node->key = key;
-    node->key_len = key_len;
     node->data = data;
     node->next = 0;
 
@@ -104,8 +155,8 @@ public:
       getLast(root[hash])->next = node;
   }
 
-  T& get(void* key, s32 key_len) const {
-    Node* n = find(key, key_len);
+  T& get(K key) const {
+    _Node* n = find(key);
 
     if(!n)
       return T(0);
@@ -114,15 +165,11 @@ public:
   }
 
 
-  bool exist(void* key, s32 key_len) {
-    u8 hash = kgmHash::rs(key, key_len);
-
-    hash %= base_size;
-
-    if(!root[hash])
+  bool exist(K key) {
+    if(!find(key))
       return false;
-    else
-      getLast(root[hash])->next = node;
+
+    return true;
   }
 
 
@@ -132,7 +179,7 @@ private:
 
   }
 
-  Node* getLast(Node* n) {
+  _Node* getLast(_Node* n) {
     if (!n)
       return n;
 
@@ -143,25 +190,25 @@ private:
     return n;
   }
 
-  Node* find(void* key, s32 key_len) {
-    u8 hash = kgmHash::rs(key, key_len);
+  _Node* find(K key) {
+    u32 hash = kgmHash::rs(dataCore(key), dataLength(key));
 
     hash %= base_size;
 
     if(!root[hash])
       return 0;
 
-    Node* n = root[hash];
+    _Node* n = root[hash];
 
     while(n){
-      if(n->key_len == key_len && !memcmp(key, n->key, key_len))
+      if(n->key == key)
         return n;
+
       n = n->next;
     }
 
     return 0;
   }
-
 };
 
 #endif // KGMHARRAY_H
