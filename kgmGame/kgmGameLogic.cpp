@@ -22,6 +22,7 @@ bool kgmGameLogic::add(kgmGameNode* u)
     return false;
 
   m_objects.push_back(u);
+  m_nodes.set(u->getName(), u);
 
   u->init();
 

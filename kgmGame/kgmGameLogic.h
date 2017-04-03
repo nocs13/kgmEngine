@@ -2,6 +2,7 @@
 #define KGMGAMELOGIC_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmHArray.h"
 #include "kgmILogic.h"
 #include "kgmUnit.h"
 #include "kgmActor.h"
@@ -16,6 +17,8 @@ class kgmGameLogic : public kgmILogic, public kgmObject
 
 public:
   kgmList<kgmGameNode*> m_objects;
+  kgmHArray<kgmString, kgmGameNode*> m_nodes;
+
 
   s32 gcount;
 

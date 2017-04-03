@@ -680,7 +680,6 @@ bool kgmGameBase::gAppend(kgmGameNode* node)
 #endif
 
   m_nodes.add(node);
-  m_gnodes.set(node->getName(), node);
 
   return true;
 }

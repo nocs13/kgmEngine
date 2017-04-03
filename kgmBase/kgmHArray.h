@@ -7,46 +7,12 @@
 #define KGM_HARRAY_DEFAULT_SIZE 63
 
 
-template <class K, class T>
+template <class Key, class Data>
 class kgmHArray
 {
-  static u32 dataLength(K* data)
-  {
-    return sizeof(K);
-  }
-
-  static u32 dataLength(kgmString* data)
-  {
-    if(!data)
-      return 0;
-
-    return data->length();
-  }
-
-  static u32 dataLength(const char* data)
-  {
-    if(!data)
-      return 0;
-
-    return strlen(data);
-  }
-
-  static void* dataCore(K* data)
-  {
-    return data;
-  }
-
-  static void* dataCore(kgmString* data)
-  {
-    if(!data)
-      return 0;
-
-    return data->data();
-  }
-
   struct _Node {
-    K key;
-    T data;
+    Key  key;
+    Data data;
 
     _Node *next;
   };
@@ -64,13 +30,13 @@ public:
 
   class iterator
   {
-    friend class kgmHArray<K, T>;
+    friend class kgmHArray<Key, Data>;
     _Node*        _Ptr;
     u32           index;
-    kgmHArray<K, T>* object;
+    kgmHArray<Key, Data>* object;
 
   public:
-    iterator(kgmHArray<K, T> *o = null)
+    iterator(kgmHArray<Key, Data> *o = null)
     {
       _Ptr   = NULL;
       index  = 0;
@@ -90,7 +56,7 @@ public:
       index  = it.index;
     }
 
-    T& operator*()
+    Data& operator*()
     {
       return _Ptr->data;
     }
@@ -138,10 +104,10 @@ public:
     base_size = size;
   }
 
-  void set(K key, T data) {
-    u32 hash = kgmHash::rs(dataCore(&key), dataLength(&key));
+  void set(Key key, Data data) {
+    kgmHash<Key> hash(key);
 
-    hash %= base_size;
+    u32 index = hash() % base_size;
 
     _Node* node = new _Node();
 
@@ -149,23 +115,23 @@ public:
     node->data = data;
     node->next = 0;
 
-    if(!root[hash])
-      root[hash] = node;
+    if(!root[index])
+      root[index] = node;
     else
-      getLast(root[hash])->next = node;
+      getLast(root[index])->next = node;
   }
 
-  T& get(K key) const {
+  Data& get(Key key) const {
     _Node* n = find(key);
 
     if(!n)
-      return T(0);
+      return Data(0);
 
     return n->data;
   }
 
 
-  bool exist(K key) {
+  bool exist(Key key) {
     if(!find(key))
       return false;
 
@@ -190,15 +156,15 @@ private:
     return n;
   }
 
-  _Node* find(K key) {
-    u32 hash = kgmHash::rs(dataCore(key), dataLength(key));
+  _Node* find(Key key) {
+    kgmHash<Key> hash(key);
 
-    hash %= base_size;
+    u32 index = hash() % base_size;
 
-    if(!root[hash])
+    if(!root[index])
       return 0;
 
-    _Node* n = root[hash];
+    _Node* n = root[index];
 
     while(n){
       if(n->key == key)

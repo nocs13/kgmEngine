@@ -1,9 +1,9 @@
 #pragma once
 #include "kgmTypes.h"
+#include "kgmString.h"
 
-class kgmHash
+struct kgmHashFunction
 {
-public:
   static u32  simple(u8* buf, s32 len)
   {
     u32 hash = 0;
@@ -86,6 +86,180 @@ public:
       a *= b;
     }
 
+    return hash;
+  }
+};
+
+template <class K>
+class kgmHash
+{
+public:
+  enum Type
+  {
+    HfnNone,
+    HfnSimple,
+    HfnH37,
+    HfnFaq6,
+    HfnRot13,
+    HfnLy,
+    HfnRs
+  };
+
+private:
+  u32  hash;
+  Type type;
+
+public:
+  kgmHash(K key)
+  {
+    type = HfnNone;
+
+    if (type != HfnNone)
+    {
+      switch(type)
+      {
+      case HfnSimple:
+        hash = kgmHashFunction::simple(&key, sizeof(key));
+        return;
+      case HfnH37:
+        hash = kgmHashFunction::h37(&key, sizeof(key));
+        return;
+      case HfnFaq6:
+        hash = kgmHashFunction::faq6(&key, sizeof(key));
+        return;
+      case HfnRot13:
+        hash = kgmHashFunction::rot13(&key, sizeof(key));
+        return;
+      case HfnLy:
+        hash = kgmHashFunction::ly(&key, sizeof(key));
+        return;
+      case HfnRs:
+        hash = kgmHashFunction::rs(&key, sizeof(key));
+        return;
+      }
+    }
+
+    hash = kgmHashFunction::rs((u8*)&key, sizeof(key));
+  }
+
+  u32 operator()()
+  {
+    return hash;
+  }
+};
+
+template <>
+class kgmHash<kgmString>
+{
+public:
+  enum Type
+  {
+    HfnNone,
+    HfnSimple,
+    HfnH37,
+    HfnFaq6,
+    HfnRot13,
+    HfnLy,
+    HfnRs
+  };
+
+private:
+  u32  hash;
+  Type type;
+
+public:
+  kgmHash(kgmString& key)
+  {
+    type = HfnNone;
+
+    if (type != HfnNone)
+    {
+      switch(type)
+      {
+      case HfnSimple:
+        hash = kgmHashFunction::simple((u8*)key.data(), key.length());
+        return;
+      case HfnH37:
+        hash = kgmHashFunction::h37((u8*)key.data(), key.length());
+        return;
+      case HfnFaq6:
+        hash = kgmHashFunction::faq6((u8*)key.data(), key.length());
+        return;
+      case HfnRot13:
+        hash = kgmHashFunction::rot13((u8*)key.data(), key.length());
+        return;
+      case HfnLy:
+        hash = kgmHashFunction::ly((u8*)key.data(), key.length());
+        return;
+      case HfnRs:
+        hash = kgmHashFunction::rs((u8*)key.data(), key.length());
+        return;
+      }
+    }
+
+    hash = kgmHashFunction::rs((u8*)key.data(), key.length());
+  }
+
+  u32 operator()()
+  {
+    return hash;
+  }
+};
+
+template <>
+class kgmHash<const char*>
+{
+public:
+  enum Type
+  {
+    HfnNone,
+    HfnSimple,
+    HfnH37,
+    HfnFaq6,
+    HfnRot13,
+    HfnLy,
+    HfnRs
+  };
+
+private:
+  u32  hash;
+  Type type;
+
+public:
+  kgmHash(const char* key)
+  {
+    type = HfnNone;
+
+    if (type != HfnNone)
+    {
+      switch(type)
+      {
+      case HfnSimple:
+        hash = kgmHashFunction::simple((u8*)key, strlen(key));
+        return;
+      case HfnH37:
+        hash = kgmHashFunction::h37((u8*)key, strlen(key));
+        return;
+      case HfnFaq6:
+        hash = kgmHashFunction::faq6((u8*)key, strlen(key));
+        return;
+      case HfnRot13:
+        hash = kgmHashFunction::rot13((u8*)key, strlen(key));
+        return;
+      case HfnLy:
+        hash = kgmHashFunction::ly((u8*)key, strlen(key));
+        return;
+      case HfnRs:
+        hash = kgmHashFunction::rs((u8*)key, strlen(key));
+        return;
+      }
+    }
+
+    hash = kgmHashFunction::rs((u8*)key, strlen(key));
+  }
+
+  u32 operator()()
+  {
     return hash;
   }
 };
