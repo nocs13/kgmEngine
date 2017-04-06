@@ -46,32 +46,28 @@ bool kgmGameMap::save(kgmString path)
 
   open(xml);
 
-  kgmList<kgmGameLight*> lights;
-  kgmList<kgmGameVisual*> visuals;
-  kgmList<kgmGameCamera*> cameras;
-
   kgmList<kgmUnit*> units;
   kgmList<kgmActor*> actors;
   kgmList<kgmEffect*> effects;
   kgmList<kgmSensor*> sensors;
   kgmList<kgmTrigger*> triggers;
 
-  kgmList<kgmGameNode*> nodes;
+  kgmList<kgmUnit*> nodes;
 
   m_game->getLogic()->getObjects(nodes);
 
-  for(kgmList<kgmGameNode*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {
     if((*i)->isClass("kgmUnit"))
       units.add((kgmUnit*) (*i));
     else if((*i)->isClass("kgmGameLight"))
-      lights.add((kgmGameLight*) (*i));
+      units.add((*i));
     else if((*i)->isClass("kgmGameCamera"))
-      cameras.add((kgmGameCamera*) (*i));
+      units.add((*i));
     else if((*i)->isClass("kgmActor"))
       actors.add((kgmActor*) (*i));
     else if((*i)->isClass("kgmGameVisual"))
-      visuals.add((kgmGameVisual*) (*i));
+      units.add((*i));
     else if((*i)->isClass("kgmEffect"))
       effects.add((kgmEffect*) (*i));
     else if((*i)->isClass("kgmSensor"))
@@ -383,9 +379,9 @@ bool kgmGameMap::addUnit(kgmUnit* n)
   }
 }
 
-kgmGameNode* kgmGameMap::next()
+kgmUnit* kgmGameMap::next()
 {
-  kgmGameNode* node = null;
+  kgmUnit* node = null;
 
   bool closed = true;
 

@@ -59,9 +59,6 @@ public:
   kgmUnit* next();
 
 private:
-  bool addLight(kgmGameLight* n);
-  bool addCamera(kgmGameCamera* n);
-  bool addVisual(kgmGameVisual* n);
   bool addUnit(kgmUnit* n);
   bool addActor(kgmActor* n);
   bool addEffect(kgmEffect* n);
