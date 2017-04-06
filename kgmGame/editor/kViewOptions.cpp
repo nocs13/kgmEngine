@@ -3,8 +3,7 @@
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
-#include "../../kgmGame/kgmGameBase.h"
-#include "../../kgmGame/kgmGameLight.h"
+#include "kgmUnit.h"
 #include "kViewObjects.h"
 #include "kEditor.h"
 
@@ -12,7 +11,7 @@ using namespace kgmGameEditor;
 
 kViewOptions* kViewOptions::single = null;
 
-kViewOptions::kViewOptions(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   : kgmGuiFrame("Options", x, y, w, h)
 {
   tab = null;

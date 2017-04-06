@@ -8,7 +8,7 @@
 #include "../../kgmGraphics/kgmGuiCheck.h"
 #include "../../kgmGraphics/kgmGuiSelect.h"
 #include "../../kgmGraphics/kgmGuiFileDialog.h"
-#include "../kgmGameNode.h"
+#include "../kgmUnit.h"
 
 namespace kgmGameEditor
 {
@@ -30,18 +30,18 @@ protected:
 
   kgmGuiTab*  tab;
 
-  kgmGameNode*  node;
+  kgmUnit*  node;
   u32     y_coord;
 
 public:
   Signal<> sigClose;
 
 protected:
-  kViewOptions(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptions(kgmUnit* n, int x, int y, int w, int h);
   ~kViewOptions() { kViewOptions::single = null; }
 
 public:
-  static kViewOptions* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptions* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -78,10 +78,10 @@ class kViewOptionsForVisual : public kViewOptions
   kgmGuiText* vis_text = null;
 
 protected:
-  kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForVisual* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForVisual* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -111,10 +111,10 @@ class kViewOptionsForLight : public kViewOptions
   Slot<kViewOptionsForLight, bool>      slotShadows;
 
 protected:
-  kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForLight* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForLight* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -158,10 +158,10 @@ class kViewOptionsForUnit : public kViewOptions
   Slot<kViewOptionsForUnit, int>  slotListMaterials;
 
 protected:
-  kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForUnit* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForUnit* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -192,10 +192,10 @@ public:
 class kViewOptionsForSensor : public kViewOptionsForUnit
 {
 protected:
-  kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForSensor* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForSensor* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -210,10 +210,10 @@ public:
 class kViewOptionsForTrigger : public kViewOptions
 {
 protected:
-  kViewOptionsForTrigger(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForTrigger* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForTrigger* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -229,10 +229,10 @@ public:
 class kViewOptionsForEffect : public kViewOptionsForUnit
 {
 protected:
-  kViewOptionsForEffect(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForEffect(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForEffect* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForEffect* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
@@ -247,10 +247,10 @@ class kViewOptionsForActor : public kViewOptions
   kgmGuiText   *guiState;
 
 protected:
-  kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, int h);
+  kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int h);
 
 public:
-  static kViewOptionsForActor* getDialog(kgmGameNode* n, int x, int y, int w, int h)
+  static kViewOptionsForActor* getDialog(kgmUnit* n, int x, int y, int w, int h)
   {
     if(kViewOptions::single)
       return null;
