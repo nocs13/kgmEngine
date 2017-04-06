@@ -16,8 +16,8 @@ class kgmGameLogic : public kgmILogic, public kgmObject
   kgmActor* m_gameplayer = null;
 
 public:
-  kgmList<kgmGameNode*> m_objects;
-  kgmHArray<kgmString, kgmGameNode*> m_nodes;
+  //kgmList<kgmUnit*> m_objects;
+  kgmHArray<kgmString, kgmUnit*> m_objects;
 
 
   s32 gcount;
@@ -27,20 +27,20 @@ public:
   virtual ~kgmGameLogic();
 
   void clear();
-  bool add(kgmGameNode*);
-  bool remove(kgmGameNode*);
+  bool add(kgmUnit*);
+  bool remove(kgmUnit*);
   bool chooseLogic(kgmString);
-  bool isValid(kgmGameNode*);
+  bool isValid(kgmUnit*);
 
   virtual void build();
   virtual void input(int, int);
   virtual void update(u32 milliseconds);
-  virtual void collide(kgmGameNode*, kgmGameNode*);
+  virtual void collide(kgmUnit*, kgmUnit*);
 
-  virtual kgmGameNode* getObjectById(kgmString&);
+  virtual kgmUnit* getObjectById(kgmString&);
 
-  virtual u32 getObjects(kgmList<kgmGameNode*>&);
-  virtual u32 getObjectsByClass(kgmString&, kgmList<kgmGameNode*>&);
+  virtual u32 getObjects(kgmList<kgmUnit*>&);
+  virtual u32 getObjectsByClass(kgmString&, kgmList<kgmUnit*>&);
 
   void  setPlayer(kgmActor* gp)
   {

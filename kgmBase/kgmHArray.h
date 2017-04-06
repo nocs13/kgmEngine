@@ -4,7 +4,7 @@
 #include "kgmHash.h"
 #include "kgmString.h"
 
-#define KGM_HARRAY_DEFAULT_SIZE 63
+#define KGM_HARRAY_DEFAULT_SIZE 77
 
 
 template <class Key, class Data>
@@ -19,6 +19,7 @@ class kgmHArray
 
   _Node **root;
 
+  u32    set_count;
   u32    base_size;
 
 public:
@@ -43,9 +44,12 @@ public:
       object = null;
 
       if (o) {
-        object = o->object;
-        _Ptr   = o->_Ptr;
-        index  = o->index;
+        object = o;
+        _Ptr   = o->root[0];
+        index  = 0;
+
+        if(!_Ptr)
+          ++(*this);
       }
     }
 
@@ -63,15 +67,35 @@ public:
 
     void operator++()
     {
-      if(_Ptr)
+      if(_Ptr) {
         _Ptr = _Ptr->next;
 
-      if(!_Ptr){
-        if(index < object->base_size) {
-          while(!object->root[index] && index < object->base_size)
-            index++;
-          _Ptr = object->root[index];
-        }
+        return;
+      }
+
+      if(index < object->base_size) {
+        while(!object->root[index] && index < object->base_size)
+          index++;
+        _Ptr = object->root[index];
+      }
+    }
+
+    void erase()
+    {
+      _Node* tmp = _Ptr;
+
+      if(_Ptr && _Ptr->next) {
+        delete _Ptr;
+
+        _Ptr = tmp;
+
+        return;
+      }
+
+      if(index < object->base_size) {
+        while(!object->root[index] && index < object->base_size)
+          index++;
+        _Ptr = object->root[index];
       }
     }
 
@@ -92,16 +116,24 @@ public:
 
       return false;
     }
-
   };
 
 public:
   kgmHArray(u32 size = KGM_HARRAY_DEFAULT_SIZE)
   {
+    if ((size % 2) == 0)
+      size++;
+
     root = new _Node*[size];
     memset(root, 0, size * sizeof(_Node*));
 
     base_size = size;
+    set_count = 0;
+  }
+
+  ~kgmHArray()
+  {
+    clear();
   }
 
   void set(Key key, Data data) {
@@ -115,21 +147,29 @@ public:
     node->data = data;
     node->next = 0;
 
-    if(!root[index])
+    if (!root[index])
       root[index] = node;
     else
       getLast(root[index])->next = node;
+
+    set_count++;
+
+    if (set_count > (base_size / 3)) {
+      u8 fk = fillkind();
+
+      if (fk > 90) {
+        rehash(base_size + base_size / 3);
+      }
+
+      set_count = 0;
+    }
   }
 
-  Data& get(Key key) const {
+  Data& get(Key key) {
     _Node* n = find(key);
-
-    if(!n)
-      return Data(0);
 
     return n->data;
   }
-
 
   bool exist(Key key) {
     if(!find(key))
@@ -138,11 +178,68 @@ public:
     return true;
   }
 
+  void rehash(u32 size) {
+    if ((size % 2) == 0)
+      size++;
 
+    _Node** croot = new _Node*[size];
+    memset(croot, 0, size * sizeof(_Node*));
+
+    for (u32 i = 0; i < base_size; i++) {
+      if (root[i]) {
+        kgmHash<Key> hash(root[i]->key);
+
+        u32 index = hash() % size;
+
+        croot[index] = root[i];
+      }
+    }
+
+    delete [] root;
+
+    root = croot;
+
+    base_size = size;
+  }
+
+  iterator begin()
+  {
+    iterator i(this);
+
+    return i;
+  }
+
+  iterator end()
+  {
+    iterator i;
+
+    return i;
+  }
+
+  iterator erase(iterator i)
+  {
+    if (!i._Ptr || i.object != this)
+      return i;
+
+    i.erase();
+
+    return i;
+  }
 private:
   void clear()
   {
+    for (u32 i = 0; i < base_size; i++) {
+      if (root[i]) {
+        _Node *c = root[i];
 
+        while(c) {
+          _Node* n = c->next;
+          delete c;
+
+          c = n;
+        }
+      }
+    }
   }
 
   _Node* getLast(_Node* n) {
@@ -174,6 +271,17 @@ private:
     }
 
     return 0;
+  }
+
+  u8 fillkind()
+  {
+    u32 c = 0;
+
+    for (u32 i = 0; i < base_size; i++)
+      if (root[i])
+        c++;
+
+    return (100 * ((f32)c / (f32)(base_size)));
   }
 };
 

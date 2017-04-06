@@ -61,18 +61,21 @@ private:
   vec3 m_rotation;
   quat m_quaternion;
 
-  Action m_action;
-
-  static kgmTab<kgmString, ActionCallback> g_list_action;
-
-  kgmBody*    m_body   = null;
-
+protected:
   union
   {
     kgmLight*   m_light  = null;
     kgmCamera*  m_camera;
     kgmVisual*  m_visual;
   };
+
+  kgmBody*    m_body   = null;
+
+  Action m_action;
+
+  static kgmTab<kgmString, ActionCallback> g_list_action;
+
+
 
   UnitType m_type;
 

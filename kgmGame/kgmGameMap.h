@@ -14,9 +14,6 @@
 #include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
-#include "kgmGameLight.h"
-#include "kgmGameCamera.h"
-#include "kgmGameVisual.h"
 
 class kgmIGame;
 
@@ -29,51 +26,6 @@ public:
     OpenRead,
     OpenWrite
   };
-
-  /*enum NodeType
-  {
-    NodeNone,
-    NodeCam,
-    NodeVis,
-    NodeMtl,
-    NodeLgt,
-    NodeUnt,
-    NodeEff,
-    NodeAct,
-    NodeSns,
-    NodeTrg,
-    NodeObs
-  };
-
-  struct Node
-  {
-    NodeType typ = NodeNone;
-
-    kgmIObject*  obj = null;
-
-    vec3  pos;
-    vec3  rot;
-    box3  bnd;
-
-    kgmString  nam;
-    kgmString  lnk;
-    kgmString  shd;
-    kgmString  shp;
-    kgmString  ini;
-    kgmString  mtl;
-
-    bool  col;  //collision type
-    bool  hdn;  // node is hidden
-    bool  lck;  //locked. for editor only
-
-    float  fov;
-
-    Node()
-    {
-      typ = NodeNone;
-      obj = null;
-    }
-  };*/
 
 private:
   enum DataFormat
@@ -104,7 +56,7 @@ public:
   bool open(kgmMemory<u8>& mem);
   bool save(kgmString path);
 
-  kgmGameNode* next();
+  kgmUnit* next();
 
 private:
   bool addLight(kgmGameLight* n);

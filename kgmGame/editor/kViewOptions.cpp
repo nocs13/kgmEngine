@@ -192,7 +192,7 @@ void kViewOptions::onSelectLock(bool s)
   node->lock(s);
 }
 
-kViewOptionsForVisual::kViewOptionsForVisual(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   kgmGui* tobstacle = tab->addTab("Obstacle");
@@ -289,10 +289,10 @@ void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
   node->visual()->getParticles()->divlife(f);
 }
 
-kViewOptionsForLight::kViewOptionsForLight(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
-  kgmLight* light = ((kgmGameLight*)n)->light();
+  kgmLight* light = n->light();
   kgmGui* tlight = tab->addTab("Light");
   y_coord = 1;
   kgmGui* g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
@@ -341,12 +341,12 @@ void kViewOptionsForLight::setIntencity(kgmString s)
 {
   f32 in = kgmConvert::toDouble(s);
 
-  ((kgmGameLight*)node)->light()->intensity = in;
+  node->light()->intensity = in;
 }
 
 void kViewOptionsForLight::setShadows(bool s)
 {
-  ((kgmGameLight*)node)->light()->shadows = s;
+  node->light()->shadows = s;
 }
 
 void kViewOptionsForLight::onColorR(kgmString c)
@@ -356,7 +356,7 @@ void kViewOptionsForLight::onColorR(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  ((kgmGameLight*)node)->light()->color.x = color / 255;
+  node->light()->color.x = color / 255;
 }
 
 void kViewOptionsForLight::onColorG(kgmString c)
@@ -366,7 +366,7 @@ void kViewOptionsForLight::onColorG(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  ((kgmGameLight*)node)->light()->color.y = color / 255;
+  node->light()->color.y = color / 255;
 }
 
 void kViewOptionsForLight::onColorB(kgmString c)
@@ -376,10 +376,10 @@ void kViewOptionsForLight::onColorB(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  ((kgmGameLight*)node)->light()->color.z = color / 255;
+  node->light()->color.z = color / 255;
 }
 
-kViewOptionsForUnit::kViewOptionsForUnit(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   kgmGui* gcollision = tab->addTab("Body");
@@ -654,7 +654,7 @@ void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)
   }*/
 }
 
-kViewOptionsForSensor::kViewOptionsForSensor(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForSensor::kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptionsForUnit(n, x, y, w, h)
 {
   kgmGui* tsensor = tab->addTab("Sensor");
@@ -677,7 +677,7 @@ void kViewOptionsForSensor::setTarget(kgmString s)
   ((kgmSensor*)node)->setTarget(s);
 }
 
-kViewOptionsForActor::kViewOptionsForActor(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   kgmGui* tactor = tab->addTab("Actor");
@@ -737,14 +737,14 @@ void kViewOptionsForActor::onPlayer(bool state)
     kgmIGame::getGame()->getLogic()->setPlayer(null);
 }
 
-kViewOptionsForEffect::kViewOptionsForEffect(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForEffect::kViewOptionsForEffect(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptionsForUnit(n, x, y, w, h)
 {
   //kgmGui* teffect = tab->addTab("Effect");
   y_coord = 1;
 }
 
-kViewOptionsForTrigger::kViewOptionsForTrigger(kgmGameNode* n, int x, int y, int w, int h)
+kViewOptionsForTrigger::kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
   kgmGui* ttrigger = tab->addTab("Trigger");
