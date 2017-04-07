@@ -563,7 +563,7 @@ int kgmGameBase::gUnload()
   if(m_render)
     m_render->clean();
 
-  for(kgmList<kgmGameNode*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
     delete (*i);
 
   m_nodes.clear();
@@ -648,7 +648,7 @@ kgmUnit* kgmGameBase::gObject(kgmString s)
   return null;
 }
 
-bool kgmGameBase::gAppend(kgmGameNode* node)
+bool kgmGameBase::gAppend(kgmUnit* node)
 {
   if(!node)
     return false;
@@ -659,8 +659,8 @@ bool kgmGameBase::gAppend(kgmGameNode* node)
   if(m_physics && node->body())
     m_physics->add(node->body());
 
-  if(node->isClass(kgmGameLight::cClass()))
-    m_render->add(((kgmGameLight*)node)->light());
+  if(node->getType() == kgmUnit::Light)
+    m_render->add(node->light());
 
   if(m_logic)
   {
@@ -684,11 +684,11 @@ bool kgmGameBase::gAppend(kgmGameNode* node)
   return true;
 }
 
-u32 kgmGameBase::gObjects(kgmList<kgmGameNode*>& objs)
+u32 kgmGameBase::gObjects(kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmList<kgmGameNode*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
   {
     objs.add((*i));
     count++;

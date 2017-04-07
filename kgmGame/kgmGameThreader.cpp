@@ -55,7 +55,7 @@ int kgmGameThreader::threader(void *v)
 
     for(u32 i = 0; i < gt->m_count; i++)
     {
-      gt->m_threaders[i].funtion(gt->m_threaders[i].object);
+      //gt->m_threaders[i].funtion(gt->m_threaders[i].object);
     }
 
     gt->m_count = 0;

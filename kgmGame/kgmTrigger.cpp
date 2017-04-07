@@ -7,12 +7,12 @@ kgmTrigger::kgmTrigger(kgmIGame* g)
 {
   target = "";
 
-  m_type = TRIGGER;
+  m_type = Trigger;
 }
 
 void kgmTrigger::sendToTarget(kgmString e)
 {
-  kgmGameNode* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
+  kgmUnit* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
 
   if(o)
     o->event(this, e);

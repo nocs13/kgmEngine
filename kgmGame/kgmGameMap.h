@@ -60,7 +60,10 @@ public:
 
 private:
   bool addUnit(kgmUnit* n);
+  bool addLight(kgmUnit* n);
   bool addActor(kgmActor* n);
+  bool addCamera(kgmUnit* n);
+  bool addVisual(kgmUnit* n);
   bool addEffect(kgmEffect* n);
   bool addSensor(kgmSensor* n);
   bool addTrigger(kgmTrigger* n);

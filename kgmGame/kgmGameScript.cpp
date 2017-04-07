@@ -141,7 +141,7 @@ int kgmLuaListObjects(lua_State *lua)
   if(!game || !game->getLogic())
     return 0;
 
-  kgmList<kgmGameNode*> objects;
+  kgmList<kgmUnit*> objects;
   game->getLogic()->getObjects(objects);
 
   for(int i = 0; i < objects.length(); i++)

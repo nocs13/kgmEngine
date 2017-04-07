@@ -60,14 +60,8 @@ bool kgmGameMap::save(kgmString path)
   {
     if((*i)->isClass("kgmUnit"))
       units.add((kgmUnit*) (*i));
-    else if((*i)->isClass("kgmGameLight"))
-      units.add((*i));
-    else if((*i)->isClass("kgmGameCamera"))
-      units.add((*i));
     else if((*i)->isClass("kgmActor"))
       actors.add((kgmActor*) (*i));
-    else if((*i)->isClass("kgmGameVisual"))
-      units.add((*i));
     else if((*i)->isClass("kgmEffect"))
       effects.add((kgmEffect*) (*i));
     else if((*i)->isClass("kgmSensor"))
@@ -76,17 +70,22 @@ bool kgmGameMap::save(kgmString path)
       triggers.add((kgmTrigger*) (*i));
   }
 
-  for(kgmList<kgmGameCamera*>::iterator i = cameras.begin(); i != cameras.end(); ++i)
-    addCamera(*i);
-
-  for(kgmList<kgmGameLight*>::iterator i = lights.begin(); i != lights.end(); ++i)
-    addLight(*i);
-
-  for(kgmList<kgmGameVisual*>::iterator i = visuals.begin(); i != visuals.end(); ++i)
-    addVisual(*i);
-
-  for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); ++i)
-    addUnit(*i);
+  for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); ++i) {
+    switch((*i)->getType())
+    {
+    case kgmUnit::Light:
+      addLight(*i);
+      break;
+    case kgmUnit::Camera:
+      addCamera(*i);
+      break;
+    case kgmUnit::Visual:
+      addVisual(*i);
+      break;
+    default:
+      addUnit(*i);
+    }
+  }
 
   for(kgmList<kgmActor*>::iterator i = actors.begin(); i != actors.end(); ++i)
     addActor(*i);
@@ -105,9 +104,6 @@ bool kgmGameMap::save(kgmString path)
   effects.clear();
   actors.clear();
   units.clear();
-  visuals.clear();
-  cameras.clear();
-  lights.clear();
 
   FILE* f = fopen(path.data(), "w");
 
@@ -126,7 +122,7 @@ bool kgmGameMap::save(kgmString path)
   return true;
 }
 
-bool kgmGameMap::addLight(kgmGameLight* n)
+bool kgmGameMap::addLight(kgmUnit* n)
 {
   if(m_type == OpenRead || !n)
     return false;
@@ -135,7 +131,7 @@ bool kgmGameMap::addLight(kgmGameLight* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmGameLight";
+    node->m_name = "Light";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     addPosition(*node, n->position());
@@ -146,7 +142,7 @@ bool kgmGameMap::addLight(kgmGameLight* n)
   }
 }
 
-bool kgmGameMap::addCamera(kgmGameCamera* n)
+bool kgmGameMap::addCamera(kgmUnit* n)
 {
   if(m_type == OpenRead || !n)
     return false;
@@ -160,7 +156,7 @@ bool kgmGameMap::addCamera(kgmGameCamera* n)
     pos = n->camera()->mPos;
     dir = n->camera()->mDir;
 
-    node->m_name = "kgmCamera";
+    node->m_name = "Camera";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("fov", kgmConvert::toString(n->camera()->mFov)));
 
@@ -175,7 +171,7 @@ bool kgmGameMap::addCamera(kgmGameCamera* n)
   }
 }
 
-bool kgmGameMap::addVisual(kgmGameVisual* n)
+bool kgmGameMap::addVisual(kgmUnit* n)
 {
   if(m_type == OpenRead || !n)
     return false;
@@ -185,7 +181,7 @@ bool kgmGameMap::addVisual(kgmGameVisual* n)
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
     kgmXml::Node* snode = null;
 
-    node->m_name = "kgmVisual";
+    node->m_name = "Visual";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     kgmVisual* vis = n->visual();
@@ -193,23 +189,21 @@ bool kgmGameMap::addVisual(kgmGameVisual* n)
     switch(vis->type())
     {
     case kgmVisual::TypeMesh:
-      snode = new kgmXml::Node(node);
-      snode->m_name = "Mesh";
-      snode->m_attributes.add(new kgmXml::Attribute("id", vis->getMesh()->getMesh()->m_id));
+      node->m_attributes.add(new kgmXml::Attribute("type", "mesh"));
+      node->m_attributes.add(new kgmXml::Attribute("id", vis->getMesh()->getMesh()->m_id));
       break;
     case kgmVisual::TypeParticles:
-      snode = new kgmXml::Node(node);
-      snode->m_name = "Particles";
-      snode->m_attributes.add(new kgmXml::Attribute("count", kgmConvert::toString((s32)vis->getParticles()->count())));
-      snode->m_attributes.add(new kgmXml::Attribute("loop", kgmConvert::toString((s32)vis->getParticles()->loop())));
-      snode->m_attributes.add(new kgmXml::Attribute("fade", kgmConvert::toString((s32)vis->getParticles()->fade())));
-      snode->m_attributes.add(new kgmXml::Attribute("angle", kgmConvert::toString((s32)vis->getParticles()->angle())));
-      snode->m_attributes.add(new kgmXml::Attribute("speed", kgmConvert::toString((s32)vis->getParticles()->speed())));
-      snode->m_attributes.add(new kgmXml::Attribute("divspeed", kgmConvert::toString((s32)vis->getParticles()->divspeed())));
-      snode->m_attributes.add(new kgmXml::Attribute("life", kgmConvert::toString((s32)vis->getParticles()->life())));
-      snode->m_attributes.add(new kgmXml::Attribute("divlife", kgmConvert::toString((s32)vis->getParticles()->divlife())));
-      snode->m_attributes.add(new kgmXml::Attribute("size", kgmConvert::toString((s32)vis->getParticles()->size())));
-      snode->m_attributes.add(new kgmXml::Attribute("esize", kgmConvert::toString((s32)vis->getParticles()->esize())));
+      node->m_attributes.add(new kgmXml::Attribute("type", "particles"));
+      node->m_attributes.add(new kgmXml::Attribute("count", kgmConvert::toString((s32)vis->getParticles()->count())));
+      node->m_attributes.add(new kgmXml::Attribute("loop", kgmConvert::toString((s32)vis->getParticles()->loop())));
+      node->m_attributes.add(new kgmXml::Attribute("fade", kgmConvert::toString((s32)vis->getParticles()->fade())));
+      node->m_attributes.add(new kgmXml::Attribute("angle", kgmConvert::toString((s32)vis->getParticles()->angle())));
+      node->m_attributes.add(new kgmXml::Attribute("speed", kgmConvert::toString((s32)vis->getParticles()->speed())));
+      node->m_attributes.add(new kgmXml::Attribute("divspeed", kgmConvert::toString((s32)vis->getParticles()->divspeed())));
+      node->m_attributes.add(new kgmXml::Attribute("life", kgmConvert::toString((s32)vis->getParticles()->life())));
+      node->m_attributes.add(new kgmXml::Attribute("divlife", kgmConvert::toString((s32)vis->getParticles()->divlife())));
+      node->m_attributes.add(new kgmXml::Attribute("size", kgmConvert::toString((s32)vis->getParticles()->size())));
+      node->m_attributes.add(new kgmXml::Attribute("esize", kgmConvert::toString((s32)vis->getParticles()->esize())));
       break;
     }
 
@@ -217,9 +211,7 @@ bool kgmGameMap::addVisual(kgmGameVisual* n)
 
     if(mtl)
     {
-      snode = new kgmXml::Node(node);
-      snode->m_name = "Material";
-      snode->m_attributes.add(new kgmXml::Attribute("id", mtl->name()));
+      node->m_attributes.add(new kgmXml::Attribute("material", mtl->name()));
     }
 
     addPosition(*node, n->position());
@@ -242,9 +234,9 @@ bool kgmGameMap::addActor(kgmActor* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmActor";
+    node->m_name = "Actor";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
-    //node->m_attributes.add(new kgmXml::Attribute("actor", n.ini));
+    node->m_attributes.add(new kgmXml::Attribute("type", "*"));
 
     if(n->m_gameplayer)
     {
@@ -273,8 +265,9 @@ bool kgmGameMap::addEffect(kgmEffect* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmEffect";
+    node->m_name = "Effect";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
+    node->m_attributes.add(new kgmXml::Attribute("type", "*"));
 
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
@@ -298,7 +291,7 @@ bool kgmGameMap::addSensor(kgmSensor* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmSensor";
+    node->m_name = "Sensor";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
 
@@ -324,7 +317,7 @@ bool kgmGameMap::addTrigger(kgmTrigger* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmTrigger";
+    node->m_name = "Trigger";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("channels", kgmConvert::toString((s32) n->getCount())));
     node->m_attributes.add(new kgmXml::Attribute("target", n->getTarget()));
@@ -351,7 +344,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
 
-    node->m_name = "kgmUnit";
+    node->m_name = "Unit";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
     addPosition(*node, n->position());
@@ -408,7 +401,7 @@ kgmUnit* kgmGameMap::next()
     {
       id = m_xml->m_tagName;
 
-      if(id == "kgmCamera")
+      if(id == "Camera")
       {
         ntype = "camera";
 
@@ -416,41 +409,41 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("name", id);
         m_xml->attribute("fov",  fov);
 
-        node = new kgmGameCamera(m_game);
+        node = new kgmUnit(m_game, new kgmCamera);
         node->setName(id);
-        ((kgmGameCamera*)node)->camera()->mFov = kgmConvert::toDouble(fov);
+        node->camera()->mFov = kgmConvert::toDouble(fov);
 
         closed = false;
       }
-      else if(id == "kgmLight")
+      else if(id == "Light")
       {
         ntype = "light";
 
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmGameLight(m_game);
+        node = new kgmUnit(m_game, new kgmLight);
 
         node->setName(id);
 
         closed = false;
       }
-      else if(id == "kgmVisual")
+      else if(id == "Visual")
       {
         ntype = "visual";
 
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmGameVisual(m_game);
+        node = new kgmUnit(m_game, new kgmVisual);
 
         node->setName(id);
 
         closed = false;
       }
-      else if(id == "kgmUnit")
+      else if(id == "Unit")
       {
-        ntype = "gobject";
+        ntype = "unit";
 
         kgmString id;
         m_xml->attribute("name", id);
@@ -460,7 +453,7 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      else if(id == "kgmActor")
+      else if(id == "Actor")
       {
         ntype = "actor";
 
@@ -482,7 +475,7 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      else if(id == "kgmEffect")
+      else if(id == "Effect")
       {
         ntype = "effect";
 
@@ -496,7 +489,7 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      else if(id == "kgmSensor")
+      else if(id == "Sensor")
       {
         ntype = "sensor";
 
@@ -511,7 +504,7 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      else if(id == "kgmTrigger")
+      else if(id == "Trigger")
       {
         ntype = "trigger";
 
@@ -528,22 +521,19 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      /*else if(id == "kgmObstacle")
+      else if(id == "Obstacle")
       {
         ntype = "obstacle";
 
         kgmString id;
         m_xml->attribute("name", id);
 
-        kgmObstacle* obs= new kgmObstacle();
+        node = new kgmUnit(m_game, new kgmObstacle());
+        node->setName(id);
 
-        node.obj = obs;
-        node.nam = id;
-
-        node.typ = NodeObs;
         closed = false;
       }
-      else if(id == "kgmMaterial")
+      else if(id == "Material")
       {
         ntype = "material";
 
@@ -553,14 +543,10 @@ kgmUnit* kgmGameMap::next()
         kgmMaterial* mtl= new kgmMaterial();
         mtl->name(id);
 
-        node.obj = mtl;
-        node.nam = id;
-
-        node.typ = NodeMtl;
         closed = false;
 
         m_materials.add(mtl);
-      }*/
+      }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
     {
@@ -609,7 +595,7 @@ kgmUnit* kgmGameMap::next()
 
         if(ntype == "visual")
         {
-          ((kgmGameVisual*)node)->visual()->set(m_game->getResources()->getMesh(link));
+          node->visual()->set(m_game->getResources()->getMesh(link));
         }
       }
       else if(id == "Particles")
@@ -630,7 +616,7 @@ kgmUnit* kgmGameMap::next()
           m_xml->attribute("size", value); pts->size(kgmConvert::toDouble(value));
           m_xml->attribute("esize", value); pts->esize(kgmConvert::toDouble(value));
           pts->build();
-          ((kgmGameVisual*)node)->visual()->set(pts);
+          node->visual()->set(pts);
         }
       }
       /*else if(id == "Shader")
@@ -836,10 +822,10 @@ kgmUnit* kgmGameMap::next()
         if(node)
           ((kgmUnit*)node)->action(value);
       }
-      else if((id == "kgmVisual") || (id == "kgmLight") || (id == "kgmEffect")  ||
-              (id == "kgmActor") || (id == "kgmSensor") || (id == "kgmTrigger") ||
-              (id == "kgmUnit") || (id == "kgmCamera") || (id == "kgmObstacle") ||
-              (id == "kgmMaterial"))
+      else if((id == "Visual") || (id == "Light")  || (id == "Effect")  ||
+              (id == "Actor")  || (id == "Sensor") || (id == "Trigger") ||
+              (id == "Unit")   || (id == "Camera") || (id == "Obstacle") ||
+              (id == "Material"))
       {
         closed = true;
 

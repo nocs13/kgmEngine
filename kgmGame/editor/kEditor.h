@@ -57,8 +57,8 @@ private:
   u32  oquered;
   u32  view_mode;
 
-  kgmGameNode* selected = null;
-  kgmGameNode* dragging = null;
+  kgmUnit* selected = null;
+  kgmUnit* dragging = null;
 
   kgmMaterial* mtlLines = null;
   kgmMaterial* mtlPivot = null;
@@ -149,8 +149,8 @@ public:
   void onMenu(u32 id);
 
 private:
-  void add(kgmGameNode*);
-  void remove(kgmGameNode*);
+  void add(kgmUnit*);
+  void remove(kgmUnit*);
 
   static int doVisUpdate(void*);
 };

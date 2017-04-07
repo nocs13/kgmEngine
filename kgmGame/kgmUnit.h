@@ -4,6 +4,7 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmVariable.h"
 #include "../kgmPhysics/kgmBody.h"
+#include "../kgmPhysics/kgmObstacle.h"
 #include "../kgmGraphics/kgmVisual.h"
 
 class kgmIGame;
@@ -23,7 +24,8 @@ public:
     Camera,
     Effect,
     Sensor,
-    Trigger
+    Trigger,
+    Obstacle
   };
 
   struct Action;
@@ -64,9 +66,10 @@ private:
 protected:
   union
   {
-    kgmLight*   m_light  = null;
-    kgmCamera*  m_camera;
-    kgmVisual*  m_visual;
+    kgmLight*    m_light  = null;
+    kgmCamera*   m_camera;
+    kgmVisual*   m_visual;
+    kgmObstacle* m_obstacle;
   };
 
   kgmBody*    m_body   = null;
@@ -101,6 +104,10 @@ public:
 
 public:
   kgmUnit(kgmIGame* g = null);
+  kgmUnit(kgmIGame* g, kgmLight* lgt);
+  kgmUnit(kgmIGame* g, kgmCamera* cam);
+  kgmUnit(kgmIGame* g, kgmVisual* vis);
+  kgmUnit(kgmIGame* g, kgmObstacle* obs);
   ~kgmUnit();
 
   virtual void init()
@@ -140,6 +147,14 @@ public:
   kgmVisual* visual() const
   {
     return m_visual;
+  }
+
+  kgmObstacle* obstacle()
+  {
+    if (m_type != Obstacle)
+      return null;
+
+    return m_obstacle;
   }
 
   bool valid() const
