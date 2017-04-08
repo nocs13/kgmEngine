@@ -74,7 +74,7 @@ public:
       }
 
       if(index < object->base_size) {
-        while(!object->root[index] && index < object->base_size)
+        while(!object->root[index] && index < (object->base_size - 1))
           index++;
         _Ptr = object->root[index];
       }

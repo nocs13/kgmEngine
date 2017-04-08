@@ -14,6 +14,9 @@ GuiRender::GuiRender(kgmGraphics* gr)
 
 void GuiRender::render()
 {
+  //if(!gr->gui_style)
+  //  return;
+
   gr->gc->gcSetShader(null);
   gr->gc->gcDepth(false, 0, 0);
   gr->gc2DMode();
@@ -343,11 +346,11 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
     }
     else
     {
-      //gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->smenu.image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->smenu.image);
     }
 
     kgmString title = citem->getTitle();
 
-    //gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, rc, title);
+    gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, rc, title);
   }
 }

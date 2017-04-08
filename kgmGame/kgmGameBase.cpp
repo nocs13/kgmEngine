@@ -115,7 +115,12 @@ kgmGameBase::kgmGameBase(bool edit)
   log("open renderer...");
   m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
   //m_render->resize(m_width, m_height);
-  m_render->setGuiStyle(kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm"));
+  kgmGuiStyle* guiStyle = kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm");
+
+  if(!guiStyle)
+    guiStyle = new kgmGuiStyle();
+
+  m_render->setGuiStyle(guiStyle);
 
   log("init game logic...");
   initLogic();
