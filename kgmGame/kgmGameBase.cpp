@@ -115,12 +115,6 @@ kgmGameBase::kgmGameBase(bool edit)
   log("open renderer...");
   m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
   //m_render->resize(m_width, m_height);
-  kgmGuiStyle* guiStyle = kgmGameTools::genGuiStyle(m_resources, "gui_style.kgm");
-
-  if(!guiStyle)
-    guiStyle = new kgmGuiStyle();
-
-  m_render->setGuiStyle(guiStyle);
 
   log("init game logic...");
   initLogic();
@@ -369,11 +363,6 @@ void kgmGameBase::onIdle()
   {
   case State_Play:
   case State_Edit:
-    /*if(m_logic)
-      m_logic->update(1000 / m_fps);
-
-    if(m_physics)
-      m_physics->update(1000 / m_fps);*/
       m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
       m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
       m_threader_1.ready();

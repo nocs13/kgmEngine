@@ -14,9 +14,6 @@ GuiRender::GuiRender(kgmGraphics* gr)
 
 void GuiRender::render()
 {
-  //if(!gr->gui_style)
-  //  return;
-
   gr->gc->gcSetShader(null);
   gr->gc->gcDepth(false, 0, 0);
   gr->gc2DMode();

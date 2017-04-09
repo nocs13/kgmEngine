@@ -104,7 +104,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   shader    = null;
   tnormal   = null;
   tspecular = null;
-  gui_style = null;
 
   m_shadowmap = null;
 
@@ -117,6 +116,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_bg_color    = 0xFF000000;
 
   m_editor      = false;
+
+  gui_style = new kgmGuiStyle();
 
   m_visible_sprites.alloc(4096);
   m_visible_visuals.alloc(4096);
