@@ -2,9 +2,9 @@
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmString.h"
-#include "../kgmBase/kgmEnvironment.h"
+#include "../kgmBase/kgmObject.h"
 
-class kgmGameSettings: public kgmEnvironment
+class kgmGameSettings: public kgmObject
 {
   kgmXml* m_xml;
 

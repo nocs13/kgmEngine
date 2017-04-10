@@ -179,7 +179,6 @@ public:
   virtual kgmIResources*  getResources() = 0;
   virtual kgmWindow*      getWindow() = 0;
   virtual kgmSystem*      getSystem() = 0;
-  virtual kgmEnvironment* getEnvironment() = 0;
 
 protected:
   virtual void  initResources() = 0;

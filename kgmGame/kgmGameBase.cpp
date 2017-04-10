@@ -76,7 +76,6 @@ kgmGameBase::kgmGameBase(bool edit)
   :kgmOGLWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
 {
   m_game = this;
-  kgmString spath;
 
   m_resources = null;
   m_physics   = null;
@@ -94,7 +93,6 @@ kgmGameBase::kgmGameBase(bool edit)
 
   log("open settings...");
   m_settings = new kgmGameSettings();
-  spath = m_settings->get((char*)"Path");
 
   log("open system...");
   initSystem();
@@ -287,16 +285,11 @@ kgmWindow*  kgmGameBase::getWindow()
   return (kgmWindow*)this;
 }
 
-kgmEnvironment*  kgmGameBase::getEnvironment()
-{
-  return m_settings;
-}
-
 void kgmGameBase::initResources()
 {
   m_resources = new kgmGameResources(getGC(), getAudio());
 
-  m_resources->addPath(m_settings->get((char*)"Path"));
+  m_resources->addPath(m_settings->get((char*)"Data"));
 }
 
 void kgmGameBase::initGraphycs()

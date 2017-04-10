@@ -682,8 +682,6 @@ void kgmGraphics::render()
   }
 
 
-  gc->gcSetShader(null);
-
   m_r_sprite->render();
   m_r_gui->render();
 

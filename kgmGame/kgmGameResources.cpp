@@ -3,8 +3,6 @@
 #include "kgmGameApp.h"
 #include "kgmGameTools.h"
 
-
-#include "../kgmBase/kgmEnvironment.h"
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"

@@ -95,7 +95,6 @@ public:
   kgmIResources*     getResources();
   kgmSystem*         getSystem();
   kgmWindow*         getWindow();
-  kgmEnvironment*    getEnvironment();
 
   void quit();
   void log(const char* msg);
