@@ -57,6 +57,9 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   {
     char ch = text[i];
 
+    if (ch == '\0')
+      break;
+
     if(ch == '\n')
     {
       cx = (float)clip.x;

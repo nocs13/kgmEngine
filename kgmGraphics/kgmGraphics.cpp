@@ -167,14 +167,15 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_camera->set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
 
+  m_r_fps = new FpsRender(this);
   m_r_gui = new GuiRender(this);
   m_r_sprite = new SpriteRender(this);
 }
 
 kgmGraphics::~kgmGraphics()
 {
+  delete m_r_fps;
   delete m_r_gui;
-
   delete m_r_sprite;
 
   m_visuals.clear();
@@ -333,7 +334,7 @@ void kgmGraphics::render()
   int k = 0;
   bool lighting = false;
 
-  u32 count_sprites = 0, count_visible = 0, count_visible_alpha = 0;
+  s32 count_sprites = 0, count_visible = 0, count_visible_alpha = 0;
 
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
@@ -440,7 +441,7 @@ void kgmGraphics::render()
   m4_identity.identity();
   setWorldMatrix(m4_identity);
 
-  for(int i = 0; i < count_visible; i++)
+  for(s32 i = 0; i < count_visible; i++)
   {
     kgmVisual* vis = m_visible_visuals[i];
     kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(g_def_material);
@@ -470,17 +471,15 @@ void kgmGraphics::render()
 
     render(vis);
 
-    if (!mtl->shade())
-    {
-      render((kgmMaterial*)null);
-      render((kgmShader*)null);
+    render((kgmMaterial*)null);
+    render((kgmShader*)null);
 
+    if (!mtl->shade())
       continue;
-    }
 
     gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
-    for(int i = 0; i < g_lights_count; i++)
+    for(s32 i = 0; i < g_lights_count; i++)
     {
       g_light_active = g_lights[i];
 
@@ -499,7 +498,7 @@ void kgmGraphics::render()
 
   // Sort alpha objects.
 
-  for(u32 i = 0; i < count_visible_alpha; i++)
+  for(s32 i = 0; i < (count_visible_alpha - 1); i++)
   {
     vec3 pos_i(0, 0, 0);
 
@@ -591,14 +590,14 @@ void kgmGraphics::render()
   }
 
   //draw particles
-  /*
+
   kgmList<kgmVisual*>  depthless_particles;
 
   //I pass with depth category
   //if(m_has_shaders)
   //  render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
 
-  for(int i = 0; i < vis_particles.size(); i++)
+  /*for(int i = 0; i < vis_particles.size(); i++)
   {
     kgmVisual*    vis = vis_particles[i];
     kgmParticles* par = vis->getParticles();
@@ -620,7 +619,7 @@ void kgmGraphics::render()
       render((kgmShader*)null);
       render((kgmMaterial*)null);
     }
-  }
+  }*/
 
   // depthless meshes
 
@@ -628,7 +627,7 @@ void kgmGraphics::render()
 
   for(int i = 0; i < depthless_particles.size(); i++)
   {
-    kgmVisual*    vis = vis_particles[i];
+    kgmVisual*    vis = depthless_particles[i];
     kgmMaterial*  mtl = vis->getMaterial();
 
     setWorldMatrix(vis->getTransform());
@@ -648,7 +647,7 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
 #endif
-  */
+
   // draw icons
 
   if(m_editor)
@@ -703,22 +702,7 @@ void kgmGraphics::render()
   render((kgmShader*)shaders[kgmShader_TypeGui]);
 
 #ifdef DEBUG
-  static u32 fps_start_time = kgmTime::getTicks();
-  static u32 fps_frames = 0;
-  static s8  fps_text[256] = {0};
-
-  if(kgmTime::getTicks() - fps_start_time > 1000)
-  {
-    sprintf(fps_text, "FPS: %i", fps_frames);
-    fps_frames = 0;
-    fps_start_time = kgmTime::getTicks();
-  }
-  else
-  {
-    fps_frames++;
-  }
-
-  gcDrawText(font, 10, 15, 0xffffffff, kgmGui::Rect(m_viewport.width() - 200, 1, 100, 20), fps_text);
+  m_r_fps->render();
 #endif
 
   render((kgmShader*)null);
@@ -869,6 +853,12 @@ void kgmGraphics::render(kgmMaterial* m)
     }
 
     tcolor = tnormal = tspecular = null;
+
+    g_vec_color = vec4(1, 1, 1, 1);
+    g_fShine    = 0.0f;
+    m_alpha     = false;
+    m_depth     = true;
+    m_culling   = true;
 
     return;
   }

@@ -26,6 +26,7 @@
 #include "kgmVisual.h"
 #include "kgmMaterial.h"
 
+#include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
 #include "render/SpriteRender.h"
@@ -39,6 +40,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
 {
   KGM_OBJECT(kgmGraphics);
 
+  friend class FpsRender;
   friend class GuiRender;
   friend class IconRender;
   friend class SpriteRender;
@@ -117,6 +119,7 @@ private:
 
   u32    m_bg_color;
 
+  FpsRender*    m_r_fps;
   GuiRender*    m_r_gui = null;
   SpriteRender* m_r_sprite = null;
 public:
