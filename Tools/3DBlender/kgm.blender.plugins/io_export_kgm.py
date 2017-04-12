@@ -32,48 +32,63 @@ from mathutils import *
 def toGrad(a):
  return a * 180.0 / 3.1415
 
-'''class kgm_panel(bpy.types.Panel):
- bl_idname = "KGM_PANEL"
- bl_label  = "kgm panel"
- bl_space_type = 'PROPERTIES'
- bl_region_type = 'WINDOW'
- bl_context = "object"
+kgm_animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
+                ( "actor",   "actor",   "kgmActor"   )]
 
- @classmethod
- def poll(cls, context):
-  return (context.object is not None)
 
- def draw_header(self, context):
-  layout = self.layout
-  obj = context.object
-  layout.prop(obj, "select", text="")
+class kgm_unit_settings(bpy.types.PropertyGroup):
+    kgm_unit   = bpy.props.BoolProperty()
+    kgm_player = bpy.props.BoolProperty()
+    kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs, description='select kgm unit')
+    kgm_state  = bpy.props.StringProperty()
+    kgm_object = bpy.props.StringProperty()
 
- def draw(self, context):
-#  self.layout.prop(bpy.context.active_object, "object")
-  self.layout.label(text="kgmObject")
-  layout = self.layout
-  obj = context.object
-  row = layout.row()
-  row.prop(obj, "hide_select")
-  row.prop(obj, "hide_render")
-  box = layout.box()
-  box.label("Selection Tools")
-  box.operator("object.select_all")
-  row = box.row()
-  #row.operator("object.select_inverse")
-  #row.operator("object.select_random")
-'''
+class kgm_panel(bpy.types.Panel):
+  bl_idname = "KGM_PANEL"
+  bl_label  = "kgm_panel"
+  bl_space_type = 'PROPERTIES'
+  bl_region_type = 'WINDOW'
+  bl_context = "object"
 
-def enum_items_cb(self, context):
-    l = (('ONE','One','First'), ('TWO','Two','Second'), ('THREE', 'Three', 'Third'))
-    enum_items_cb.lookup = {id: name for id, name, desc in l}
-    return l
+  @classmethod
+  def poll(cls, context):
+    return (context.object is not None)
+
+  def draw_header(self, context):
+    layout = self.layout
+    obj = context.object
+    layout.prop(obj, "select", text="")
+
+  def draw(self, context):
+    obj = context.object
+
+    if hasattr(obj, 'kgm_unit'):
+      self.draw_unit(obj)
+    elif hasattr(obj, 'kgm_dummy'):
+      self.draw_dummy(obj)
+
+  def draw_unit(self, obj):
+    layout = self.layout
+    layout.label(text="kgm_object unit")
+
+    row = layout.row()
+    row.prop(obj, "kgm_unit")
+    row = layout.row()
+    row.prop(obj, "kgm_player")
+    row = layout.row()
+    row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_object dummy")
+
+  def draw_dummy(self, obj):
+    layout = self.layout
+    layout.label(text="kgm_object")
 
 class kgm_unit(bpy.types.Operator):
  ''' Add kgmObject '''
  bl_idname = "object.kgm_unit"
  bl_label = "Add kgmUnit"
- bl_options = {'REGISTER', 'UNDO'}
+ bl_options = {'REGISTER'} #, 'UNDO'
 
  width = bpy.props.FloatProperty(
             name="Width",
@@ -82,14 +97,11 @@ class kgm_unit(bpy.types.Operator):
             default=1.0,
             )
 
- #myprop = bpy.props.EnumProperty(items=enum_items_cb)
-
- #def execute(self, context):
- #   self.report({'INFO'}, enum_items_cb.lookup[self.myprop])
- #   return {'FINISHED'}
+ animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
+                 ( "actor",   "actor",   "kgmActor"   )]
 
  def __init__(self):
-  print("start")
+   print("start")
 
  def __del__(self):
   print("end")
@@ -97,14 +109,7 @@ class kgm_unit(bpy.types.Operator):
  def execute(self, context):
      print("Execute unit.\n")
      
-     animaniacs = [  ( "dummy",   "dummy",   "kgmDummy"   ),
-                     ( "actor",   "actor",   "kgmActor"   ),
-                     ( "sensor",  "sensor",  "kgmSensor"  ),
-                     ( "trigger", "trigger", "kgmTrigger" ),
-                     ( "actor",   "actor",   "kgmActor"   ),
-                     ( "unit",    "unit",    "kgmUnit"    )]
-
-     bpy.types.Object.kgm        = bpy.props.BoolProperty()
+     bpy.types.Object.kgm_unit   = bpy.props.BoolProperty()
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
      bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state  = bpy.props.StringProperty()
@@ -113,11 +118,14 @@ class kgm_unit(bpy.types.Operator):
      bpy.ops.object.add()
      a = bpy.context.object
 
+     if not hasattr(a, 'kgm_unit'):
+       return {'FINISHED'}
+
      a.name       = "kgmUnit"
-     a.kgm        = True
+     a.kgm_unit   = True
      a.kgm_player = False
      a.kgm_type   = "unit";
-     a.kgm_state  = "None"
+     a.kgm_state  = "Idle"
      a.kgm_object = "None"
      return {'FINISHED'}
 
@@ -128,14 +136,10 @@ class kgm_unit(bpy.types.Operator):
  def invoke(self, context, event):
      print("Invoke unit.\n")
      
-     animaniacs = [  ( "dummy",   "dummy",   "kgmDummy"   ),
-                     ( "actor",   "actor",   "kgmActor"   ),
-                     ( "sensor",  "sensor",  "kgmSensor"  ),
-                     ( "trigger", "trigger", "kgmTrigger" ),
-                     ( "actor",   "actor",   "kgmActor"   ),
-                     ( "unit",    "unit",    "kgmUnit"    )]
+     animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
+                     ( "actor",   "actor",   "kgmActor"   )]
 
-     bpy.types.Object.kgm = True
+     bpy.types.Object.kgm_unit   = bpy.props.BoolProperty(options={'HIDDEN'})
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
      bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state = bpy.props.StringProperty()
@@ -144,15 +148,18 @@ class kgm_unit(bpy.types.Operator):
      bpy.ops.object.add()
      a = bpy.context.object
      
-     a.name = "kgmUnit"
+     #if not hasattr(a, 'kgm_unit'):
+     #  return {'FINISHED'}
+
+     a.name       = "kgmUnit"
+     a.kgm_unit   = True
      a.kgm_player = False
-     a.kgm_type = "unit";
-     a.kgm_state = "None"
-     a.kgm_object = "None"
-     return {'RUNNING_MODAL'}
+     a.kgm_type   = "unit";
+     a.kgm_state  = "Idle"
+     return {'FINISHED'}
 
  def draw(self, context):
-   layout = self.layout
+   pass
 
 class kgm_dummy(bpy.types.Operator):
  ''' Add kgmDummy '''
@@ -166,12 +173,6 @@ class kgm_dummy(bpy.types.Operator):
             min=0.01, max=100.0,
             default=5.0,
             )
-
- #myprop = bpy.props.EnumProperty(items=enum_items_cb)
-
- #def execute(self, context):
- #   self.report({'INFO'}, enum_items_cb.lookup[self.myprop])
- #   return {'FINISHED'}
 
  def __init__(self):
   print("start")
@@ -199,7 +200,7 @@ class kgm_dummy(bpy.types.Operator):
      a = bpy.context.object
      
      a.name       = "kgmDummy"
-     return {'RUNNING_MODAL'}
+     return {'FINISHED'}
 
  def draw(self, context):
    layout = self.layout
@@ -969,7 +970,6 @@ def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
-    #bpy.ops.wm.call_menu(name=kgm_object_menu.bl_idname)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
