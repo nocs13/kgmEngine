@@ -165,10 +165,29 @@ public:
     }
   }
 
-  Data& get(Key key) {
-    _Node* n = find(key);
+  iterator get(Key key) {
+    kgmHash<Key> hash(key);
 
-    return n->data;
+    u32 index = hash() % base_size;
+
+    if(!root[index])
+      return end();
+
+    _Node* n = root[index];
+
+    while (n) {
+      if(n->key == key) {
+        iterator i(this);
+        i.index = index;
+        i._Ptr  = n;
+
+        return i;
+      }
+
+      n = n->next;
+    }
+
+    return end();
   }
 
   bool exist(Key key) {
@@ -225,6 +244,7 @@ public:
 
     return i;
   }
+
 private:
   void clear()
   {

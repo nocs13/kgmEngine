@@ -119,8 +119,10 @@ kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
 {
   kgmUnit* go = null;
 
-  if(m_objects.exist(id))
-    go = m_objects.get(id);
+  kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.get(id);
+
+  if(!i.isEnd())
+    go = (*i);
 
   if(go->removed() || !go->valid())
   {
