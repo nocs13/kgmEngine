@@ -28,13 +28,15 @@ import threading
 from math import radians
 import bpy
 from mathutils import *
+import xml.etree.ElementTree
 
 def toGrad(a):
  return a * 180.0 / 3.1415
 
 kgm_animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                ( "actor",   "actor",   "kgmActor"   )]
+                    ( "actor",   "actor",   "kgmActor"   )]
 
+kgm_project_parameters = ''
 
 class kgm_unit_settings(bpy.types.PropertyGroup):
     kgm_unit   = bpy.props.BoolProperty()
@@ -83,6 +85,27 @@ class kgm_panel(bpy.types.Panel):
   def draw_dummy(self, obj):
     layout = self.layout
     layout.label(text="kgm_object")
+
+class kgm_settings(bpy.types.Operator):
+    ''' Import kgm settings '''
+    bl_label = "kgm settings"
+    bl_idname = 'import_scene.kgm_settings'
+
+    def draw(self, context):
+        pass
+
+class kgm_menu(bpy.types.Menu):
+    bl_label = "kgm Menu"
+    bl_idname = 'view3D.kgm_menu'
+
+    def draw(self, context):
+        layout = self.layout
+        op = layout.operator("import_scene.kgm_settings")
+        #op = layout.operator(ShowInfo.bl_idname, text = 'Say Hi', icon='HAND' )
+        #op.info = "Hello"
+        #op = layout.operator(ShowInfo.bl_idname, text = 'Say Yes', icon='HAND' )
+        #op.info = "No"
+        #op = layout.operator_menu_enum(kgm_object.bl_idname, "myprop", text=kgm_object.bl_label)
 
 class kgm_unit(bpy.types.Operator):
  ''' Add kgmObject '''
@@ -204,18 +227,6 @@ class kgm_dummy(bpy.types.Operator):
 
  def draw(self, context):
    layout = self.layout
-
-class kgm_unit_menu(bpy.types.Menu):
-    bl_label = "kgmUnit Custom Menu"
-    bl_idname = "OBJECT_MT_kgmobject_custom_menu"
-
-    def draw(self, context):
-        layout = self.layout
-        op = layout.operator(ShowInfo.bl_idname, text = 'Say Hi', icon='HAND' )
-        op.info = "Hello"
-        op = layout.operator(ShowInfo.bl_idname, text = 'Say Yes', icon='HAND' )
-        op.info = "No"
-        op = layout.operator_menu_enum(kgm_object.bl_idname, "myprop", text=kgm_object.bl_label)
 
 scene_materials = []
 
@@ -735,17 +746,56 @@ def export_obstacle(file, o):
   file.write(" </Obstacle>\n")
 
 from bpy.props import *
+from bpy_extras.io_utils import ImportHelper
+
+class kgmImport(bpy.types.Operator, ImportHelper):
+  '''Kgm settings import'''
+  bl_idname = "import_scene.kgm_settings"
+  bl_label = "Import Kgm settings"
+
+  filename_ext = ".kgs"
+  filter_glob = StringProperty(default="*.kgs", maxlen=1024, options={'HIDDEN'},)
+
+  @classmethod
+  def poll(cls, context):
+    return context.active_object != None
+
+  def execute(self, context):
+    global kgm_project_parameters
+
+    print("Kgm settings file: " + self.filepath)
+
+    try:
+        kgm_project_parameters = xml.etree.ElementTree.parse(self.filepath).getroot()
+    except:
+        print('cannot load ' + self.filepath)
+
+    print('Root tag is ' + str(kgm_project_parameters.tag))
+
+
+    try:
+      file = open(self.filepath, "r")
+    except:
+      return {'FINISHED'}
+
+    file.close()
+    return {'FINISHED'}
+
+
+
 class kgmExport(bpy.types.Operator):
- '''This appiers in the tooltip of '''
- bl_idname = "export_scene.kgm" # this is important since its how bpy.ops.export.kgm_export() is constructed
+ ''' Kgm scene export '''
+ bl_idname = "export_scene.kgm"
  bl_label = "Export Kgm"
 
  # List of operator properties, the attributes will be assigned
  # to the class instance from the operator settings before calling.
 
    # TODO, add better example props
- filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
-   #use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default= True)
+ filename_ext = ".kgm"
+ filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'},)
+ #filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
+ #use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default= True)
  exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
  exp_lights = BoolProperty(name="Export Lights", description="", default=False)
  exp_materials = BoolProperty(name="Export Materials", description="", default=False)
@@ -960,20 +1010,23 @@ class kgmExport(bpy.types.Operator):
 def menu_func(self, context):
     self.layout.operator(kgmExport.bl_idname, text="Karakal game (.kgm)", icon='PLUGIN')
 
+def menu_kgm_imp_set_func(self, context):
+    self.layout.operator(kgmImport.bl_idname, text="kgm setings (.kgs)", icon='PLUGIN')
+
 def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
-    #self.layout.operator_menu_enum(kgm_object.bl_idname, "type", text="kgmObject", icon='OUTLINER_OB_EMPTY')
-    pass
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.INFO_MT_file_import.append(menu_kgm_imp_set_func)
     bpy.types.INFO_MT_add.append(menu_func_a)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.INFO_MT_file_import.remove(menu_kgm_imp_set_func)
     bpy.types.INFO_MT_add.remove(menu_func_a)
 
 if __name__ == "__main__":

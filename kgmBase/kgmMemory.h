@@ -31,17 +31,6 @@ void  kgm_dbg_free(const char*, int, void*);
 
 #endif
 
-/*void* operator new (size_t size)
-{
-  return malloc(size);
-}
-
-void operator delete (void* pointer)
-{
-  free(pointer);
-}*/
-
-
 typedef unsigned int u32;
 
 template <class T> 
