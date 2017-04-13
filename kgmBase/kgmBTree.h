@@ -8,10 +8,11 @@ class kgmBTree
     K     key;
     D     data;
 
+    Node* par;
     Node* left;
     Node* right;
 
-    Node(K k, D d):left(null), right(null) {
+    Node(K k, D d): par(null), left(null), right(null) {
       key  = k;
       data = d;
     }
@@ -28,7 +29,7 @@ public:
 
   class iterator
   {
-    friend class kgmHArray<Key, Data>;
+    friend class kgmBTree<Key, Data>;
     Node*            _Ptr;
     u32              depth;
     kgmBTreey<K, D>* object;
@@ -37,16 +38,22 @@ public:
     iterator(kgmBTreey<K, D>* o = null)
     {
       _Ptr   = NULL;
-      depth  = 0;
-      object = null;
+      object = o;
 
       if (o) {
-        object = o;
-        _Ptr   = o->root;
-        depth  = 0;
+        Node* s = o->root;
 
-        if(!_Ptr)
-          ++(*this);
+        while(true) {
+          if(s->left != nullptr) {
+            s = s->left;
+          } else if(s->right != nullptr) {
+            s = s->right;
+          } else {
+            break;
+          }
+        }
+
+        _Ptr = s;
       }
     }
 
@@ -54,7 +61,6 @@ public:
     {
       object = it.object;
       _Ptr   = it._Ptr;
-      index  = it.index;
     }
 
     Data& operator*()
@@ -64,17 +70,35 @@ public:
 
     void operator++()
     {
-      if(_Ptr) {
-        _Ptr = _Ptr->next;
+      if (!_Ptr)
+        return *this;
 
-        return;
+      Node* par = _Ptr->par;
+
+      if (!par) {
+        _Ptr = nullptr;
+
+        return *this;
       }
 
-      if(index < object->base_size) {
-        while(!object->root[index] && index < (object->base_size - 1))
-          index++;
-        _Ptr = object->root[index];
+      if (_Ptr == par->left && par->right) {
+        _Ptr = par->right;
+      } else {
+        _Ptr = par;
+
+        return *this;
       }
+
+      while (true) {
+        if (_Ptr->left)
+          _Ptr = _Ptr->left;
+        else if (_Ptr->right)
+          _Ptr = _Ptr->right;
+        else
+          break;
+      }
+
+      return *this;
     }
 
     void erase()
@@ -108,7 +132,7 @@ public:
 
     bool isEnd()
     {
-      if(!_Ptr && index == (object->base_size - 1))
+      if(!_Ptr)
         return true;
 
       return false;
@@ -134,6 +158,7 @@ public:
       } else if (key > n->key) {
         if (!n->right) {
           n->right = new Node(k, d);
+          n->right->par = n;
           break;
         } else {
           n = n->right;
@@ -141,12 +166,30 @@ public:
       } else {
         if (!n->left) {
           n->left = new Node(k, d);
+          n->left->par = n;
           break;
         } else {
           n = n->left;
         }
       }
     }
+  }
+
+  void remove(K k) {
+
+  }
+
+  iterator begin() {
+    iterator i(this);
+
+    return i;
+  }
+
+  iterator end() {
+    iterator i(this);
+    i._Ptr = nullptr;
+
+    return i;
   }
 
 private:
