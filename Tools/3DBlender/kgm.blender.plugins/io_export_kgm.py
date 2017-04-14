@@ -33,10 +33,21 @@ import xml.etree.ElementTree
 def toGrad(a):
  return a * 180.0 / 3.1415
 
-kgm_animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                    ( "actor",   "actor",   "kgmActor"   )]
+kgm_animaniacs = [  ( "Unit",    "Unit",    "kgmUnit"    ),
+                    ( "Actor",   "Actor",   "kgmActor"   )]
 
 kgm_project_parameters = ''
+kgm_unit_types = [('a1', 'a1 a1', 'a1 a1 a1'), ('a2', 'a2 a2', 'a2 a2 a2')]
+kgm_actor_types = [('u1', 'a1 u1', 'a1 a1 u1'), ('u2', 'a1 u2', 'a1 a1 u2')]
+
+def choose_unit_types(self, context):
+    print('choosing unit type')
+    o = bpy.context.active_object
+    if o.kgm_type is 'Actor':
+        print('is actor')
+        return kgm_actor_types
+    print('is unit')
+    return kgm_unit_types
 
 class kgm_unit_settings(bpy.types.PropertyGroup):
     kgm_unit   = bpy.props.BoolProperty()
@@ -80,7 +91,7 @@ class kgm_panel(bpy.types.Panel):
     row = layout.row()
     row.prop(obj, "kgm_state")
     row = layout.row()
-    row.prop(obj, "kgm_object dummy")
+    row.prop(obj, "kgm_object")
 
   def draw_dummy(self, obj):
     layout = self.layout
@@ -101,11 +112,6 @@ class kgm_menu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         op = layout.operator("import_scene.kgm_settings")
-        #op = layout.operator(ShowInfo.bl_idname, text = 'Say Hi', icon='HAND' )
-        #op.info = "Hello"
-        #op = layout.operator(ShowInfo.bl_idname, text = 'Say Yes', icon='HAND' )
-        #op.info = "No"
-        #op = layout.operator_menu_enum(kgm_object.bl_idname, "myprop", text=kgm_object.bl_label)
 
 class kgm_unit(bpy.types.Operator):
  ''' Add kgmObject '''
@@ -120,9 +126,6 @@ class kgm_unit(bpy.types.Operator):
             default=1.0,
             )
 
- animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                 ( "actor",   "actor",   "kgmActor"   )]
-
  def __init__(self):
    print("start")
 
@@ -134,9 +137,11 @@ class kgm_unit(bpy.types.Operator):
      
      bpy.types.Object.kgm_unit   = bpy.props.BoolProperty()
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-     bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
+     bpy.types.Object.kgm_type   = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state  = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
+
+     bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
 
      bpy.ops.object.add()
      a = bpy.context.object
@@ -147,7 +152,7 @@ class kgm_unit(bpy.types.Operator):
      a.name       = "kgmUnit"
      a.kgm_unit   = True
      a.kgm_player = False
-     a.kgm_type   = "unit";
+     a.kgm_type   = "Unit";
      a.kgm_state  = "Idle"
      a.kgm_object = "None"
      return {'FINISHED'}
@@ -159,29 +164,27 @@ class kgm_unit(bpy.types.Operator):
  def invoke(self, context, event):
      print("Invoke unit.\n")
      
-     animaniacs = [  ( "unit",    "unit",    "kgmUnit"    ),
-                     ( "actor",   "actor",   "kgmActor"   )]
-
      bpy.types.Object.kgm_unit   = bpy.props.BoolProperty(options={'HIDDEN'})
      bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-     bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=animaniacs, description='select kgm unit')
+     bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs, description='select kgm unit')
      bpy.types.Object.kgm_state = bpy.props.StringProperty()
      bpy.types.Object.kgm_object = bpy.props.StringProperty()
-     
+
+     bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
+
      bpy.ops.object.add()
      a = bpy.context.object
      
-     #if not hasattr(a, 'kgm_unit'):
-     #  return {'FINISHED'}
-
      a.name       = "kgmUnit"
      a.kgm_unit   = True
      a.kgm_player = False
-     a.kgm_type   = "unit";
+     a.kgm_type   = "Unit";
      a.kgm_state  = "Idle"
+     a.kgm_object = "None"
      return {'FINISHED'}
 
  def draw(self, context):
+   print('draw kgm_unit')
    pass
 
 class kgm_dummy(bpy.types.Operator):
@@ -761,29 +764,35 @@ class kgmImport(bpy.types.Operator, ImportHelper):
     return context.active_object != None
 
   def execute(self, context):
+    from xml.dom.minidom import parse
     global kgm_project_parameters
 
     print("Kgm settings file: " + self.filepath)
 
     try:
-        kgm_project_parameters = xml.etree.ElementTree.parse(self.filepath).getroot()
-    except:
+        #kgm_project_parameters = xml.etree.ElementTree.parse(self.filepath).getroot()
+        kgs_dom = parse(self.filepath)
+        kgs_dom_root = kgs_dom.firstChild
+        print('kgs_dom' + str(kgs_dom))
+        print('kgs_dom root tag ' + str(kgs_dom_root.nodeName))
+        for node in kgs_dom_root.childNodes:
+          if node.nodeType is xml.dom.Node.ELEMENT_NODE:
+            print('kgs nodes ' + str(node))
+    except xml.parsers.expat.ExpatError as err:
+        print('xml error: ' + str(err))
+        return {'FINISHED'}
+    except Exception as err:
+        print('kgs load error ' + str(err))
         print('cannot load ' + self.filepath)
 
-    print('Root tag is ' + str(kgm_project_parameters.tag))
+    kgm_project_parameters = kgs_dom_root
 
 
-    try:
-      file = open(self.filepath, "r")
-    except:
-      return {'FINISHED'}
-
-    file.close()
     return {'FINISHED'}
 
+from bpy_extras.io_utils import ExportHelper
 
-
-class kgmExport(bpy.types.Operator):
+class kgmExport(bpy.types.Operator, ExportHelper):
  ''' Kgm scene export '''
  bl_idname = "export_scene.kgm"
  bl_label = "Export Kgm"
