@@ -12,6 +12,7 @@
 #include "kgmSprite.h"
 #include "kgmSkeleton.h"
 #include "kgmParticles.h"
+#include "kgmAnimation.h"
 
 //Graphical Object
 class kgmVisual: public kgmIObject

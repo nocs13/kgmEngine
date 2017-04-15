@@ -169,25 +169,17 @@ public:
   // options
   void setOption(kgmString key, kgmString value)
   {
-    kgmString opt;
-
-    if(m_options.get(key, opt))
-    {
-      m_options[key] = value;
-    }
-    else
-    {
-      m_options.add(key, value);
-    }
+    m_options.set(key, value);
   }
 
   kgmString getOption(kgmString key)
   {
-    kgmString opt;
+    kgmTab<kgmString, kgmString>::iterator i = m_options.get(key);
 
-    m_options.get(key, opt);
+    if (i.isEnd())
+      return kgmString();
 
-    return opt;
+    return i.data();
   }
 };
 

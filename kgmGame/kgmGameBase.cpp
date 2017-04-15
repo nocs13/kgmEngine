@@ -619,19 +619,6 @@ void kgmGameBase::gPause(bool s){
 
 kgmUnit* kgmGameBase::gObject(kgmString s)
 {
-  if(kgmUnit::g_typ_objects.hasKey(s))
-  {
-    kgmUnit::Generate fn_new = kgmUnit::g_typ_objects[s];
-
-    if(fn_new)
-    {
-      kgmUnit* go = fn_new(this);
-
-      if(go)
-        return go;
-    }
-  }
-
   return null;
 }
 
@@ -1556,7 +1543,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
 
       if(a_node->node(i)->attribute("value", val))
       {
-        actor->m_options.add(id, val);
+        actor->m_options.set(id, val);
       }
     }
   }

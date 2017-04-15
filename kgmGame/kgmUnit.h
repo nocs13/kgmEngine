@@ -1,6 +1,7 @@
 #ifndef KGMGAMEOBJECT_H
 #define KGMGAMEOBJECT_H
 
+#include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmVariable.h"
 #include "../kgmPhysics/kgmBody.h"
@@ -345,14 +346,11 @@ public:
     if(g_list_action.length() < 1)
       return false;
 
-    for(int i = 0; i < g_list_action.length(); i++)
+    kgmTab<kgmString, ActionCallback>::iterator i;
+
+    for(i = g_list_action.begin(); i != g_list_action.end(); ++i)
     {
-      kgmString id;
-      ActionCallback call;
-
-      g_list_action.get(i, id, call);
-
-      actions.add(id);
+      actions.add(i.key());
     }
 
     return true;
@@ -360,22 +358,17 @@ public:
 
   static void setActionCallback(kgmString action, kgmUnit::ActionCallback callback)
   {
-    if(g_list_action.hasKey(action))
-    {
-      g_list_action[action] = callback;
-
-      return;
-    }
-
-    g_list_action.add(action, callback);
+    g_list_action.set(action, callback);
   }
 
   static kgmUnit::ActionCallback getActionCallback(kgmString action)
   {
-    if(!g_list_action.hasKey(action))
+    kgmTab<kgmString, ActionCallback>::iterator i = g_list_action.get(action);
+
+    if(i.isEnd())
       return null;
 
-    return g_list_action[action];
+    return i.data();
   }
 };
 

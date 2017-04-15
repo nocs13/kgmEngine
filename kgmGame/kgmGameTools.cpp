@@ -1977,7 +1977,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       if(a_node->node(i)->attribute("value", val))
       {
-        actor->m_options.add(id, val);
+        actor->m_options.set(id, val);
       }
     }
   }

@@ -3,18 +3,8 @@
 #include "../kgmBase/kgmArray.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
-//#include "../kgmMath/kgmVector3d.h"
-//#include "../kgmMath/kgmVector2d.h"
-//#include "../kgmMath/kgmBox3d.h"
-//#include "../kgmMath/kgmQuaternion.h"
-//#include "../kgmMath/kgmMatrix3d.h"
-
-#include "kgmMaterial.h"
-#include "kgmSkeleton.h"
-#include "kgmAnimation.h"
 
 #define KGM_MESH_MAP_CHANNELS 4
-
 
 class kgmMesh: public kgmResource
 {

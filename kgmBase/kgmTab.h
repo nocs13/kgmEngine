@@ -1,267 +1,372 @@
 #pragma once 
 #include "kgmBase.h"
 
-typedef unsigned int u32;
-////////// Hash Tab
+#include "kgmHash.h"
+#include "kgmString.h"
 
-template<class Key, class Value> 
+#define KGM_TAB_DEFAULT_SIZE 77
+
+
+template <class Key, class Data>
 class kgmTab
 {
-private:
-  struct _Node
-  {
-    Key    m_key;
-    Value  m_value;
-    _Node* m_next;
-    _Node* m_prev;
+  struct _Node {
+    Key  key;
+    Data data;
+
+    _Node *next;
   };
 
-  _Node* m_nodes;
-  u32    csize;
+  _Node **root;
+
+  u32    set_count;
+  u32    base_size;
+  u32    data_count;
 
 public:
-   class iterator
-   {
-    friend class kgmTab<Key, Value>;
-    _Node* _Ptr;
+  //// ITERATOR
 
-   public:
-    iterator()
+  class iterator;
+
+  friend class iterator;
+
+  class iterator
+  {
+    friend class kgmTab<Key, Data>;
+    _Node*        _Ptr;
+    u32           index;
+    kgmTab<Key, Data>* object;
+
+  public:
+    iterator(kgmTab<Key, Data> *o = null)
     {
-      _Ptr = 0;
+      _Ptr   = NULL;
+      index  = 0;
+      object = null;
+
+      if (o) {
+        object = o;
+        _Ptr   = o->root[0];
+        index  = 0;
+
+        if(!_Ptr)
+          ++(*this);
+      }
+    }
+
+    iterator(const iterator& it)
+    {
+      object = it.object;
+      _Ptr   = it._Ptr;
+      index  = it.index;
+    }
+
+    Data& operator*()
+    {
+      return _Ptr->data;
     }
 
     void operator++()
     {
-     if(_Ptr) _Ptr = _Ptr->m_next;
-    }
+      if(_Ptr) {
+        _Ptr = _Ptr->next;
 
-    void operator--()
-    {
-     if(_Ptr) _Ptr = _Ptr->m_prev;
+        return;
+      }
+
+      if(index < object->base_size) {
+        while(!object->root[index] && index < (object->base_size - 1))
+          index++;
+        _Ptr = object->root[index];
+      }
     }
 
     bool operator!=(iterator i)
     {
-     return (_Ptr != i._Ptr);
+      return (_Ptr != i._Ptr);
     }
 
     bool operator==(iterator i)
     {
-     return (_Ptr == i._Ptr);
+      return (_Ptr == i._Ptr);
     }
 
-    Key& key()
+    void erase()
     {
-     return _Ptr->m_key;
+      _Node* tmp = _Ptr;
+
+      if(_Ptr && _Ptr->next) {
+        delete _Ptr;
+
+        _Ptr = tmp;
+
+        return;
+      }
+
+      if(index < object->base_size) {
+        while(!object->root[index] && index < object->base_size)
+          index++;
+        _Ptr = object->root[index];
+      }
     }
 
-    Value& value()
+    Key key()
     {
-     return _Ptr->m_value;
+      return _Ptr->key;
     }
-   };
+
+    Data& data()
+    {
+      return _Ptr->data;
+    }
+
+    bool isEnd()
+    {
+      if(!_Ptr && index == (object->base_size - 1))
+        return true;
+
+      return false;
+    }
+  };
 
 public:
-  kgmTab()
+  kgmTab(u32 size = KGM_TAB_DEFAULT_SIZE)
   {
-    m_nodes = null;
-    csize   = 0;
+    if ((size % 2) == 0)
+      size++;
+
+    root = new _Node*[size];
+    memset(root, 0, size * sizeof(_Node*));
+
+    base_size = size;
+    set_count = 0;
+
+    data_count = 0;
   }
 
   ~kgmTab()
   {
+    clear();
+
+    delete [] root;
   }
 
-  Value& operator[](Key key)
+  iterator operator[](Key k)
   {
-    _Node* node = _find(key);
-
-    return node->m_value;
+    return get(k);
   }
 
   void clear()
   {
-    for(int i = length(); i > 0; i--)
-    {
-      _Node* node = _index(i-1);
+    if (!root || data_count < 1)
+      return;
 
-      delete node;
+    for (u32 i = 0; i < base_size; i++) {
+      if (root[i]) {
+        _Node *c = root[i];
+
+        while(c) {
+          _Node* n = c->next;
+
+          delete c;
+
+          data_count--;
+
+          c = n;
+        }
+
+        root[i] = null;
+      }
+    }
+  }
+
+  void reset()
+  {
+    clear();
+
+    if (base_size > KGM_TAB_DEFAULT_SIZE) {
+      delete [] root;
+
+      root = new _Node*[KGM_TAB_DEFAULT_SIZE];
+      memset(root, 0, KGM_TAB_DEFAULT_SIZE * sizeof(_Node*));
     }
 
-    m_nodes = null;
+    base_size = KGM_TAB_DEFAULT_SIZE;
+    set_count = 0;
 
-    csize   = 0;
+    data_count = 0;
   }
 
-  int length()
-  {
-    int    len  = 0;
+  void set(Key key, Data data) {
+    iterator i = get(key);
 
-    _Node* node = m_nodes;
+    if (!i.isEnd()) {
+      i._Ptr->data = data;
 
-    while(node)
-    {
-      len++;
-      node = node->m_next;
+      return;
     }
 
-    return len;
-  }
+    kgmHash<Key> hash(key);
 
-  bool get(u32 index, Key& key, Value& value)
-  {
-    _Node* node = _index(index);
+    u32 index = hash() % base_size;
 
-    if(node == 0)
-      return false;
+    _Node* node = new _Node();
 
-    key = node->m_key;
+    node->key = key;
+    node->data = data;
+    node->next = 0;
 
-    value = node->m_value;
-
-    return true;
-  }
-
-  bool get(Key key, Value& v)
-  {
-    _Node* node = _find(key);
-
-    if(node == 0)
-      return false;
-
-    v = node->m_value;
-
-    return true;
-  }
-
-  Key key(u32 index)
-  {
-    return _index(index)->m_key;
-  }
-
-  Value value(u32 index)
-  {
-    return _index(index)->m_value;
-  }
-
-  void add(Key key, Value value)
-  {
-    _Node* node = new _Node;
-
-    node->m_key   = key;
-    node->m_value = value;
-    node->m_next  = null;
-    node->m_prev  = null;
-
-    if(!m_nodes)
-    {
-      m_nodes = node;
-    }
+    if (!root[index])
+      root[index] = node;
     else
-    {
-      _last()->m_next = node;
+      getLast(root[index])->next = node;
 
-      node->m_prev = _last();
+    set_count++;
+
+    data_count ++;
+
+    if (set_count > (base_size / 3)) {
+      u8 fk = fillkind();
+
+      if (fk > 90) {
+        rehash(base_size + base_size / 3);
+      }
+
+      set_count = 0;
     }
   }
 
-  bool hasKey(Key key)
-  {
-    _Node* node = _find(key);
+  iterator get(Key key) {
+    kgmHash<Key> hash(key);
 
-    if(node == null)
+    u32 index = hash() % base_size;
+
+    if(!root[index])
+      return end();
+
+    _Node* n = root[index];
+
+    while (n) {
+      if(n->key == key) {
+        iterator i(this);
+        i.index = index;
+        i._Ptr  = n;
+
+        return i;
+      }
+
+      n = n->next;
+    }
+
+    return end();
+  }
+
+  bool exist(Key key) {
+    if(!find(key))
       return false;
 
     return true;
+  }
+
+  void rehash(u32 size) {
+    if ((size % 2) == 0)
+      size++;
+
+    _Node** croot = new _Node*[size];
+    memset(croot, 0, size * sizeof(_Node*));
+
+    for (u32 i = 0; i < base_size; i++) {
+      if (root[i]) {
+        kgmHash<Key> hash(root[i]->key);
+
+        u32 index = hash() % size;
+
+        croot[index] = root[i];
+      }
+    }
+
+    delete [] root;
+
+    root = croot;
+
+    base_size = size;
   }
 
   iterator begin()
   {
-   iterator i;
-
-   i._Ptr = m_nodes;
-
-   return i;
-  }
-
-  iterator end()
-  {
-   iterator i;
-
-   i._Ptr = 0;
-
-   return i;
-  }
-
-  iterator erase(iterator i)
-  {
-    if(!i._Ptr)
-      return i;
-
-    _Node *prev, *next;
-
-    prev = i._Ptr->m_prev;
-
-    next = i._Ptr->m_next;
-
-    if(prev)
-      prev->m_next = next;
-
-    if(next)
-      next->m_prev = prev;
-
-    delete i._Ptr;
-
-    if(i._Ptr == m_nodes)
-      m_nodes = i._Ptr = next;
-    else
-      i._Ptr = next;
+    iterator i(this);
 
     return i;
   }
 
+  iterator end()
+  {
+    iterator i(this);
+
+    i.index = base_size - 1;
+    i._Ptr  = null;
+
+    return i;
+  }
+
+  iterator erase(iterator i)
+  {
+    if (i.isEnd() || !i._Ptr || i.object != this)
+      return i;
+
+    i.erase();
+
+    if (data_count > 0)
+      data_count--;
+
+    return i;
+  }
+
+  u32 length()
+  {
+    return data_count;
+  }
+
 private:
-  _Node* _last()
-  {
-    _Node* node = m_nodes;
+  _Node* getLast(_Node* n) {
+    if (!n)
+      return n;
 
-    if(node == 0) return 0;
+    while(n->next) {
+      n = n->next;
+    }
 
-    while(node->m_next != 0)
-      node = node->m_next;
-
-    return node;
+    return n;
   }
 
-  _Node* _index(u32 i)
-  {
-    _Node* node = m_nodes;
+  _Node* find(Key key) {
+    kgmHash<Key> hash(key);
 
-    u32 index = 0;
+    u32 index = hash() % base_size;
 
-    while(node){
-      if(i == index)
-        return node;
-      node = node->m_next;
-      index++;
+    if(!root[index])
+      return 0;
+
+    _Node* n = root[index];
+
+    while(n){
+      if(n->key == key)
+        return n;
+
+      n = n->next;
     }
 
     return 0;
   }
 
-  _Node* _find(Key& key)
+  u8 fillkind()
   {
-    _Node* node = m_nodes;
+    u32 c = 0;
 
-    while(node)
-    {
-      if(node->m_key == key)
-        return node;
+    for (u32 i = 0; i < base_size; i++)
+      if (root[i])
+        c++;
 
-      node = node->m_next;
-    }
-
-    return 0;
+    return (100 * ((f32)c / (f32)(base_size)));
   }
 };

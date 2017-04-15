@@ -119,22 +119,22 @@ public:
       switch(type)
       {
       case HfnSimple:
-        hash = kgmHashFunction::simple(&key, sizeof(key));
+        hash = kgmHashFunction::simple((u8*) &key, sizeof(key));
         return;
       case HfnH37:
-        hash = kgmHashFunction::h37(&key, sizeof(key));
+        hash = kgmHashFunction::h37((u8*) &key, sizeof(key));
         return;
       case HfnFaq6:
-        hash = kgmHashFunction::faq6(&key, sizeof(key));
+        hash = kgmHashFunction::faq6((u8*) &key, sizeof(key));
         return;
       case HfnRot13:
-        hash = kgmHashFunction::rot13(&key, sizeof(key));
+        hash = kgmHashFunction::rot13((u8*) &key, sizeof(key));
         return;
       case HfnLy:
-        hash = kgmHashFunction::ly(&key, sizeof(key));
+        hash = kgmHashFunction::ly((u8*) &key, sizeof(key));
         return;
       case HfnRs:
-        hash = kgmHashFunction::rs(&key, sizeof(key));
+        hash = kgmHashFunction::rs((u8*) &key, sizeof(key));
         return;
       }
     }

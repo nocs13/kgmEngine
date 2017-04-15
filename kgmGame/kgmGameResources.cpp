@@ -27,7 +27,7 @@ kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 
 kgmGameResources::~kgmGameResources()
 {
-  clear(-1);
+  reset();
 
   for(int i = 0; i < m_paths.size(); i++)
     delete m_paths[i];
@@ -37,17 +37,13 @@ kgmGameResources::~kgmGameResources()
 
 void kgmGameResources::add(kgmResource *r)
 {
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    kgmResource* res = m_resources[i];
+  if (!r)
+    return;
 
-    if(r == res)
-    {
-      return;
-    }
-  }
+  kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
 
-  m_resources.add(r);
+  if (i.isEnd())
+    m_resources.set(r->id(), r);
 }
 
 kgmResource* kgmGameResources::get(const char* id)
@@ -55,19 +51,12 @@ kgmResource* kgmGameResources::get(const char* id)
   if(!id)
     return null;
 
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    kgmResource* r = m_resources[i];
+  kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(id);
 
-    if(!strcmp(r->m_id, id))
-    {
-      r->increment();
+  if (i.isEnd())
+    return null;
 
-      return r;
-    }
-  }
-
-  return null;
+  return (*i);
 }
 
 kgmResource* kgmGameResources::get(kgmString& id)
@@ -75,13 +64,20 @@ kgmResource* kgmGameResources::get(kgmString& id)
   return get((char *)id);
 }
 
-void kgmGameResources::clear(u32 group)
+void kgmGameResources::reset()
 {
-  for(int i = m_resources.size(); i > 0; i--)
-  {
-    kgmResource* r = m_resources[i - 1];
 
-    if((group != -1) && (r->group() != group))
+}
+
+void kgmGameResources::clear()
+{
+  kgmTab<const char*, kgmResource*>::iterator i;
+
+  for(i = m_resources.begin(); i != m_resources.end(); ++i)
+  {
+    kgmResource* r = (*i);
+
+    if (r->references() > 0)
       continue;
 
     if(r->isClass(kgmTexture::cClass()))
@@ -113,11 +109,8 @@ void kgmGameResources::clear(u32 group)
       delete (kgmMesh*) r;
     }
 
-    m_resources.erase(i - 1);
+    i = m_resources.erase(i);
   }
-
-  if(group == -1)
-    m_resources.clear();
 }
 
 void kgmGameResources::remove(kgmResource* r)
@@ -127,17 +120,15 @@ void kgmGameResources::remove(kgmResource* r)
 
 bool kgmGameResources::exists(kgmResource* r)
 {
-  for(int i = 0; i < m_resources.size(); i++)
-  {
-    kgmResource* res = m_resources[i];
+  if (!r)
+    return false;
 
-    if(r == res)
-    {
-      return true;
-    }
-  }
+  kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
 
-  return false;
+  if (i.isEnd())
+    return false;
+
+  return true;
 }
 
 void kgmGameResources::addPath(kgmString s)

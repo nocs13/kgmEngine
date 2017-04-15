@@ -51,8 +51,8 @@ bool kgmBaseActions::get(kgmList<kgmVariable>& variables, kgmString id, kgmStrin
 
 void kgmBaseActions::register_actions()
 {
-  kgmActor::g_actions.add("nothing", nothing);
-  kgmActor::g_actions.add("accelerate", accelerate);
+  kgmActor::g_actions.set("nothing", nothing);
+  kgmActor::g_actions.set("accelerate", accelerate);
 }
 
 void kgmBaseActions::nothing(kgmIGame*, kgmActor*, kgmActor::Action*)

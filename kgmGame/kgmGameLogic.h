@@ -1,8 +1,8 @@
 #ifndef KGMGAMELOGIC_H
 #define KGMGAMELOGIC_H
 
+#include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmHArray.h"
 #include "kgmILogic.h"
 #include "kgmUnit.h"
 #include "kgmActor.h"
@@ -16,8 +16,7 @@ class kgmGameLogic : public kgmILogic, public kgmObject
   kgmActor* m_gameplayer = null;
 
 public:
-  //kgmList<kgmUnit*> m_objects;
-  kgmHArray<kgmString, kgmUnit*> m_objects;
+  kgmTab<kgmString, kgmUnit*> m_objects;
 
 
   s32 gcount;

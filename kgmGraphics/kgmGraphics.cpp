@@ -156,11 +156,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   if(rc != null)
   {
-    shaders.add(kgmShader::TypeNone,   rc->getShader("none.glsl"));
-    shaders.add(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    shaders.add(kgmShader::TypeLight,  rc->getShader("light.glsl"));
-    shaders.add(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    shaders.add(kgmShader::TypeAmbient, rc->getShader("ambient.glsl"));
+    shaders.set(kgmShader::TypeNone,   rc->getShader("none.glsl"));
+    shaders.set(kgmShader::TypeBase,   rc->getShader("base.glsl"));
+    shaders.set(kgmShader::TypeLight,  rc->getShader("light.glsl"));
+    shaders.set(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
+    shaders.set(kgmShader::TypeAmbient, rc->getShader("ambient.glsl"));
   }
 
   m_camera = new kgmCamera();
@@ -187,8 +187,8 @@ kgmGraphics::~kgmGraphics()
   m_guis.clear();
 
   for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
-    if(i.value())
-      rc->remove(i.value());
+    if(i.data())
+      rc->remove(i.data());
 
   shaders.clear();
 
@@ -460,13 +460,13 @@ void kgmGraphics::render()
 
     if(!mtl->shade() || g_lights_count < 1)
     {
-      render(shaders[kgmShader::TypeBase]);
+      render(shaders.get(kgmShader::TypeBase).data());
     }
     else
     {
       g_light_active = g_lights[0];
 
-      render(shaders[kgmShader::TypeAmbient]);
+      render(shaders[kgmShader::TypeAmbient].data());
     }
 
     render(vis);
@@ -483,7 +483,7 @@ void kgmGraphics::render()
     {
       g_light_active = g_lights[i];
 
-      render(shaders[kgmShader::TypeLight]);
+      render(shaders[kgmShader::TypeLight].data());
 
       render(vis);
 
@@ -542,13 +542,13 @@ void kgmGraphics::render()
 
     if(!mtl->shade() || g_lights_count < 1)
     {
-      render(shaders[kgmShader::TypeBase]);
+      render(shaders[kgmShader::TypeBase].data());
     }
     else
     {
       g_light_active = g_lights[0];
 
-      render(shaders[kgmShader::TypeAmbient]);
+      render(shaders[kgmShader::TypeAmbient].data());
     }
 
     render(vis);
@@ -567,7 +567,7 @@ void kgmGraphics::render()
     {
       g_light_active = g_lights[i];
 
-      render(shaders[kgmShader::TypeLight]);
+      render(shaders[kgmShader::TypeLight].data());
 
       render(vis);
 
@@ -671,7 +671,7 @@ void kgmGraphics::render()
         gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
         mtl.setTexColor(icon->getIcon());
         render(&mtl);
-        render(shaders[kgmShader::TypeBase]);
+        render(shaders[kgmShader::TypeBase].data());
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
@@ -691,7 +691,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render((kgmShader*)shaders[kgmShader_TypeGui]);
+  render(shaders[kgmShader_TypeGui].data());
 
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
@@ -699,7 +699,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render((kgmShader*)shaders[kgmShader_TypeGui]);
+  render(shaders[kgmShader_TypeGui].data());
 
 #ifdef DEBUG
   m_r_fps->render();
@@ -1237,8 +1237,10 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col)
 
 kgmShader* kgmGraphics::toShader(kgmShader::Shader shader)
 {
-  if(shaders.hasKey(shader))
-    return shaders[shader];
+  auto i = shaders.get(shader);
 
-  return shaders[0];
+  if(i.data())
+    return i.data();
+
+  return shaders.begin().data();
 }

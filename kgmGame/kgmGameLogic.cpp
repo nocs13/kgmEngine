@@ -32,7 +32,7 @@ bool kgmGameLogic::remove(kgmUnit* o)
   if(!o)
     return false;
 
-  for(kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* u = (*i);
 
@@ -54,7 +54,7 @@ bool kgmGameLogic::remove(kgmUnit* o)
 
 bool kgmGameLogic::isValid(kgmUnit *go)
 {
-  for(kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     if(go == (*i))
       return true;
@@ -65,7 +65,7 @@ bool kgmGameLogic::isValid(kgmUnit *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
     go->init();
@@ -74,7 +74,7 @@ void kgmGameLogic::build()
 
 void kgmGameLogic::update(u32 milliseconds)
 {
-  kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin();
+  kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin();
 
   gcount = 0;
 
@@ -119,7 +119,7 @@ kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
 {
   kgmUnit* go = null;
 
-  kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.get(id);
+  kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.get(id);
 
   if(!i.isEnd())
     go = (*i);
@@ -136,7 +136,7 @@ u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     objs.add((*i));
 
@@ -150,7 +150,7 @@ u32 kgmGameLogic::getObjectsByClass(kgmString& t, kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
-  for(kgmHArray<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
   {
     kgmUnit* go = (*i);
 

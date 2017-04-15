@@ -18,7 +18,7 @@ void SpriteRender::render()
 
   gr->setWorldMatrix(mi);
 
-  gr->render((kgmShader*)gr->shaders[kgmGraphics::kgmShader_TypeGui]);
+  gr->render(gr->shaders[kgmGraphics::kgmShader_TypeGui].data());
 
   for(int i = 0; gr->m_visible_sprites[i] != null; i++)
   {

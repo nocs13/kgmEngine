@@ -36,7 +36,6 @@ public:
 
 public:
   kgmResource();
-  ~kgmResource();
 
   void setId(kgmString id){ m_id = id; }
 
@@ -101,5 +100,8 @@ private:
   {
     m_lock = false;
   }
+
+protected:
+  ~kgmResource();
 };
 

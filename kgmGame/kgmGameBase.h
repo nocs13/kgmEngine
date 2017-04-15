@@ -13,8 +13,8 @@
 
 #include "kgmGameSettings.h"
 
+#include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmQuadTree.h"
-#include "../kgmBase/kgmHArray.h"
 #include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmOGLWindow.h"

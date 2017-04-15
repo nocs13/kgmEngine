@@ -100,8 +100,9 @@ void kgmActor::action(Action* action)
   }
   else if (!action->callback)
   {
-    if (!g_actions.get(action->id, action->callback) ||
-        !action->callback)
+    auto i = g_actions.get(action->id);
+
+    if (i.isEnd() || !action->callback)
       return;
   }
 
