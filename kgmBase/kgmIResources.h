@@ -25,6 +25,7 @@ protected:
 
 public:
   virtual void                clear() = 0;
+  virtual void                add(kgmResource*)    = 0;
   virtual void                remove(kgmResource*) = 0;
   virtual bool                exists(kgmResource*) = 0;
 

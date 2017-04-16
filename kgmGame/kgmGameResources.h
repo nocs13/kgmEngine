@@ -56,6 +56,7 @@ public:
 
   void               reset();
   void               clear();
+  void               add(kgmResource*);
   void               remove(kgmResource*);
   bool               exists(kgmResource*);
 
@@ -74,7 +75,6 @@ public:
   kgmShapeCollision* getShapeCollision(const char* id);
 
 private:
-  void               add(kgmResource*);
   kgmResource*       get(const char* id);
   kgmResource*       get(kgmString& id);
 };

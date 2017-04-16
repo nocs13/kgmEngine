@@ -375,6 +375,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
 kgmUnit* kgmGameMap::next()
 {
   kgmUnit* node = null;
+  kgmMaterial* mtl = null;
 
   bool closed = true;
 
@@ -414,6 +415,10 @@ kgmUnit* kgmGameMap::next()
         node->camera()->mFov = kgmConvert::toDouble(fov);
 
         closed = false;
+      }
+      else if (id == "Mesh")
+      {
+
       }
       else if(id == "Light")
       {
@@ -540,12 +545,15 @@ kgmUnit* kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        kgmMaterial* mtl= new kgmMaterial();
-        mtl->name(id);
+        if (!m_game->getResources()->getMaterial(id)) {
 
-        closed = false;
+          mtl= new kgmMaterial();
+          mtl->name(id);
 
-        m_materials.add(mtl);
+          closed = false;
+
+          m_game->getResources()->add(mtl);
+        }
       }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
@@ -619,13 +627,14 @@ kgmUnit* kgmGameMap::next()
           node->visual()->set(pts);
         }
       }
-      /*else if(id == "Shader")
+      else if(id == "Shader")
       {
         kgmString id;
 
         m_xml->attribute("id", id);
 
-        ((kgmMaterial*)node.obj)->setShader(kgmIGame::getGame()->getResources()->getShader(id));
+        if (mtl)
+          mtl->setShader(kgmIGame::getGame()->getResources()->getShader(id));
       }
       else if(id == "Texture")
       {
@@ -634,14 +643,14 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("id", id);
         m_xml->attribute("type", type);
 
-        if(type == "color")
-          ((kgmMaterial*)node.obj)->setTexColor(kgmIGame::getGame()->getResources()->getTexture(id));
+        if(type == "color" && mtl)
+          mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(id));
 
-        if(type == "normal")
-          ((kgmMaterial*)node.obj)->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(id));
+        if(type == "normal" && mtl)
+          mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(id));
 
-        if(type == "specular")
-          ((kgmMaterial*)node.obj)->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(id));
+        if(type == "specular" && mtl)
+          mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(id));
       }
       else if(id == "Shininess")
       {
@@ -649,7 +658,8 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("value", value);
 
-        ((kgmMaterial*)node.obj)->shininess(kgmConvert::toDouble(value));
+        if (mtl)
+          mtl->shininess(kgmConvert::toDouble(value));
       }
       else if(id == "Transparency")
       {
@@ -657,7 +667,8 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("value", value);
 
-        ((kgmMaterial*)node.obj)->transparency(kgmConvert::toDouble(value));
+        if (mtl)
+          mtl->transparency(kgmConvert::toDouble(value));
       }
       else if(id == "Cull")
       {
@@ -667,7 +678,8 @@ kgmUnit* kgmGameMap::next()
 
         bool s = (value == "false") ? (false) : (true);
 
-        ((kgmMaterial*)node.obj)->cull(s);
+        if (mtl)
+          mtl->cull(s);
       }
       else if(id == "Shade")
       {
@@ -677,7 +689,8 @@ kgmUnit* kgmGameMap::next()
 
         bool s = (value == "false") ? (false) : (true);
 
-        ((kgmMaterial*)node.obj)->shade(s);
+        if (mtl)
+          mtl->shade(s);
       }
       else if(id == "Depth")
       {
@@ -687,7 +700,8 @@ kgmUnit* kgmGameMap::next()
 
         bool s = (value == "false") ? (false) : (true);
 
-        ((kgmMaterial*)node.obj)->depth(s);
+        if (mtl)
+          mtl->depth(s);
       }
       else if(id == "Alpha")
       {
@@ -697,7 +711,8 @@ kgmUnit* kgmGameMap::next()
 
         bool s = (value == "false") ? (false) : (true);
 
-        ((kgmMaterial*)node.obj)->alpha(s);
+        if (mtl)
+          mtl->alpha(s);
       }
       else if(id == "Blending")
       {
@@ -706,21 +721,19 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("source", src);
         m_xml->attribute("destination", dst);
 
-        ((kgmMaterial*)node.obj)->blend(true);
-        ((kgmMaterial*)node.obj)->srcblend(kgmMaterial::stringToBlend(src));
-        ((kgmMaterial*)node.obj)->dstblend(kgmMaterial::stringToBlend(dst));
+        if (mtl) {
+          mtl->blend(true);
+          mtl->srcblend(kgmMaterial::stringToBlend(src));
+          mtl->dstblend(kgmMaterial::stringToBlend(dst));
+        }
       }
       else if(id == "Material")
       {
-        kgmString value;
-
-        m_xml->attribute("id", value);
-
-        node.mtl = value;
+        mtl = null;
       }
       else if(id == "Collision")
       {
-        value.clear();
+        /*value.clear();
         m_xml->attribute("value", value);
 
         if(value == "true")
@@ -740,8 +753,8 @@ kgmUnit* kgmGameMap::next()
         node.bnd.min.z = -0.5 * dim[2];
         node.bnd.max.x =  0.5 * dim[0];
         node.bnd.max.y =  0.5 * dim[1];
-        node.bnd.max.z =  0.5 * dim[2];
-      }*/
+        node.bnd.max.z =  0.5 * dim[2];*/
+      }
       else if(id == "Locked")
       {
         value.clear();
@@ -791,27 +804,13 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("material", value);
 
-        if(node && value.length() > 0)
-        {
-          //if(!((kgmUnit*)node)->visual())
-          //  ((kgmUnit*)node)->visual(new kgmVisual());
-
-          for(kgmList<kgmMaterial*>::iterator i = m_materials.begin(); i != m_materials.end(); ++i)
-          {
-            //if((*i)->name() == id)
-            //  ((kgmUnit*)node.obj)->visual()->set((*i));
-          }
-        }
+        if (node && value.length() > 0 && node->visual())
+          node->visual()->set(kgmIGame::getGame()->getResources()->getMaterial(value));
 
         m_xml->attribute("mesh", value);
 
-        if(node && value.length() > 0)
-        {
-          //if(!((kgmUnit*)node)->visual())
-          //  ((kgmUnit*)node)->visual(new kgmVisual());
-
-          ((kgmUnit*)node)->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
-        }
+        if(node && value.length() > 0 && node->visual())
+          node->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
       }
       else if(id == "Action")
       {
@@ -825,7 +824,7 @@ kgmUnit* kgmGameMap::next()
       else if((id == "Visual") || (id == "Light")  || (id == "Effect")  ||
               (id == "Actor")  || (id == "Sensor") || (id == "Trigger") ||
               (id == "Unit")   || (id == "Camera") || (id == "Obstacle") ||
-              (id == "Material"))
+              (id == "Material") || (id == "Mesh"))
       {
         closed = true;
 
