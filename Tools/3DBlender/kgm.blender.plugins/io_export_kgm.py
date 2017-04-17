@@ -59,9 +59,10 @@ class kgm_unit_settings(bpy.types.PropertyGroup):
 class kgm_panel(bpy.types.Panel):
   bl_idname = "KGM_PANEL"
   bl_label  = "kgm_panel"
-  bl_space_type = 'PROPERTIES'
-  bl_region_type = 'WINDOW'
-  bl_context = "object"
+  bl_space_type = 'VIEW_3D'
+  bl_region_type = 'TOOLS'
+  bl_category = 'CTools'
+  #bl_context = "object"
 
   @classmethod
   def poll(cls, context):
@@ -70,6 +71,9 @@ class kgm_panel(bpy.types.Panel):
   def draw_header(self, context):
     layout = self.layout
     obj = context.object
+
+    col = layout.column(align=True)
+    col.operator(operator='export_scene.kgm_group_export', text='export group')
     layout.prop(obj, "select", text="")
 
   def draw(self, context):
@@ -1014,6 +1018,23 @@ class kgmExport(bpy.types.Operator, ExportHelper):
        print("scan armature")
        for bone in armature.data.bones:
          self.animations.append(kgmBoneAnimation(bone, armature))
+
+
+class kgmExportGroup(bpy.types.Operator, ExportHelper):
+  ''' Kgm scene export '''
+  bl_idname = "export_scene.kgm_group_export"
+  bl_label = "Kgm export group"
+
+  filename_ext = ".kgm"
+  filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'},)
+
+  @classmethod
+  def poll(cls, context):
+   return context.active_object != None
+
+  def execute(self, context):
+    print('kgm group export started')
+    return {'FINISHED'}
 
 #---------------------------
 def menu_func(self, context):
