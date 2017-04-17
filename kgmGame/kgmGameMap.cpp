@@ -375,7 +375,6 @@ bool kgmGameMap::addUnit(kgmUnit* n)
 kgmUnit* kgmGameMap::next()
 {
   kgmUnit* node = null;
-  kgmMaterial* mtl = null;
 
   bool closed = true;
 
@@ -538,23 +537,6 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
-      else if(id == "Material")
-      {
-        ntype = "material";
-
-        kgmString id;
-        m_xml->attribute("name", id);
-
-        if (!m_game->getResources()->getMaterial(id)) {
-
-          mtl= new kgmMaterial();
-          mtl->name(id);
-
-          closed = false;
-
-          m_game->getResources()->add(mtl);
-        }
-      }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
     {
@@ -601,10 +583,8 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("id", link);
 
-        if(ntype == "visual")
-        {
+        if(node && node->visual())
           node->visual()->set(m_game->getResources()->getMesh(link));
-        }
       }
       else if(id == "Particles")
       {
@@ -627,133 +607,14 @@ kgmUnit* kgmGameMap::next()
           node->visual()->set(pts);
         }
       }
-      else if(id == "Shader")
-      {
-        kgmString id;
-
-        m_xml->attribute("id", id);
-
-        if (mtl)
-          mtl->setShader(kgmIGame::getGame()->getResources()->getShader(id));
-      }
-      else if(id == "Texture")
-      {
-        kgmString type, id;
-
-        m_xml->attribute("id", id);
-        m_xml->attribute("type", type);
-
-        if(type == "color" && mtl)
-          mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(id));
-
-        if(type == "normal" && mtl)
-          mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(id));
-
-        if(type == "specular" && mtl)
-          mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(id));
-      }
-      else if(id == "Shininess")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        if (mtl)
-          mtl->shininess(kgmConvert::toDouble(value));
-      }
-      else if(id == "Transparency")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        if (mtl)
-          mtl->transparency(kgmConvert::toDouble(value));
-      }
-      else if(id == "Cull")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        bool s = (value == "false") ? (false) : (true);
-
-        if (mtl)
-          mtl->cull(s);
-      }
-      else if(id == "Shade")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        bool s = (value == "false") ? (false) : (true);
-
-        if (mtl)
-          mtl->shade(s);
-      }
-      else if(id == "Depth")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        bool s = (value == "false") ? (false) : (true);
-
-        if (mtl)
-          mtl->depth(s);
-      }
-      else if(id == "Alpha")
-      {
-        kgmString value;
-
-        m_xml->attribute("value", value);
-
-        bool s = (value == "false") ? (false) : (true);
-
-        if (mtl)
-          mtl->alpha(s);
-      }
-      else if(id == "Blending")
-      {
-        kgmString src, dst;
-
-        m_xml->attribute("source", src);
-        m_xml->attribute("destination", dst);
-
-        if (mtl) {
-          mtl->blend(true);
-          mtl->srcblend(kgmMaterial::stringToBlend(src));
-          mtl->dstblend(kgmMaterial::stringToBlend(dst));
-        }
-      }
       else if(id == "Material")
       {
-        mtl = null;
-      }
-      else if(id == "Collision")
-      {
-        /*value.clear();
-        m_xml->attribute("value", value);
+        kgmString link;
 
-        if(value == "true")
-          node.col = true;
+        m_xml->attribute("name", link);
 
-        value.clear();
-        m_xml->attribute("shape", value);
-        node.shp = value;
-
-        float dim[3] = {0};
-        value.clear();
-        m_xml->attribute("bound", value);
-        sscanf(value.data(), "%f %f %f", &dim[0], &dim[1], &dim[2]);
-
-        node.bnd.min.x = -0.5 * dim[0];
-        node.bnd.min.y = -0.5 * dim[1];
-        node.bnd.min.z = -0.5 * dim[2];
-        node.bnd.max.x =  0.5 * dim[0];
-        node.bnd.max.y =  0.5 * dim[1];
-        node.bnd.max.z =  0.5 * dim[2];*/
+        if(node && node->visual())
+          node->visual()->set(m_game->getResources()->getMaterial(link));
       }
       else if(id == "Locked")
       {
@@ -774,14 +635,7 @@ kgmUnit* kgmGameMap::next()
         if(ntype == "gobject")
           ((kgmUnit*)node)->setParameter(name, value);
       }
-      /*else if(id == "Scale")
-      {
-        value.clear();
-        m_xml->attribute("value", value);
-
-        if(node.typ == NodeObs)
-          ((kgmObstacle*)node.obj)->set(kgmConvert::toDouble(value));
-      }
+      /*
       else if(id == "Triangle")
       {
         kgmString ta, tb, tc;
@@ -797,7 +651,8 @@ kgmUnit* kgmGameMap::next()
 
         if(node.obj)
           ((kgmObstacle*)node.obj)->add(va, vb, vc);
-      }*/
+      }
+      */
       else if(id == "Visual")
       {
         kgmString value;
