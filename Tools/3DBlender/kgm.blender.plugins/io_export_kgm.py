@@ -70,14 +70,21 @@ class kgm_panel(bpy.types.Panel):
 
   def draw_header(self, context):
     layout = self.layout
-    obj = context.object
-
-    col = layout.column(align=True)
-    col.operator(operator='export_scene.kgm_group_export', text='export group')
-    layout.prop(obj, "select", text="")
 
   def draw(self, context):
+    layout = self.layout
     obj = context.object
+
+    obj = context.object
+
+    layout.label(text="Export/Import")
+    row = layout.row()
+    box = layout.box()
+
+    col = box.column(align=True)
+    col.operator(operator='export_scene.kgm_group_export', text='export group')
+    col.operator(operator='export_scene.kgm',              text='export scene')
+    col.operator(operator='import_scene.kgm_settings',     text='import setting')
 
     if hasattr(obj, 'kgm_unit'):
       self.draw_unit(obj)
@@ -1025,16 +1032,70 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
   bl_idname = "export_scene.kgm_group_export"
   bl_label = "Kgm export group"
 
-  filename_ext = ".kgm"
-  filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'},)
+  filename_ext  = ".kgm"
+  filter_glob   = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, subtype='DIR_PATH')
+  exp_meshes    = BoolProperty(name="Export Meshes", description="", default=True)
+  exp_materials = BoolProperty(name="Export Materials", description="", default=True)
+  exp_obstacles = BoolProperty(name="Export Obstacles", description="", default=False)
+
+  mesh_datas = []
 
   @classmethod
   def poll(cls, context):
    return context.active_object != None
 
   def execute(self, context):
-    print('kgm group export started')
-    return {'FINISHED'}
+    dirpath = os.path.dirname(self.filepath)
+
+    if self.exp_materials is True:
+      for m in bpy.data.materials:
+        mpath = os.path.join(dirpath, m.name + '.mtl')
+
+        try:
+          file = open(mpath, "w")
+          file.write("<?xml version='1.0'?>\n")
+          file.write("<kgm>\n")
+          mtl = kgmMaterial(m)
+          export_material(file, mtl)
+          file.write("</kgm>\n")
+          file.close()
+        except Exception as err:
+          print('Cannot export material ' + m.name + ' to ' + mpath)
+          print('Error is: ' + str(err))
+
+    if self.exp_meshes is True:
+      self.collect_meshes()
+
+      for m in self.mesh_datas:
+        mpath = os.path.join(dirpath, m.name + '.msh')
+
+        try:
+          file = open(mpath, "w")
+          file.write("<?xml version='1.0'?>\n")
+          file.write("<kgm>\n")
+          export_mesh_data(file, m)
+          file.write("</kgm>\n")
+          file.close()
+        except Exception as err:
+          print('Cannot export material ' + m.name + ' to ' + mpath)
+          print('Error is: ' + str(err))
+
+      print('kgm group export started')
+      return {'FINISHED'}
+
+  def collect_meshes(self):
+    mesh_nodes = [ob for ob in bpy.context.scene.objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+    print("Collected mesh nodes: " + str(len(mesh_nodes)))
+
+    for n in mesh_nodes:
+      exist = False
+      for m in self.mesh_datas:
+        if n.name == m.name:
+          exist = True
+          break
+      if exist is False:
+        self.mesh_datas.append(kgmMesh(n))
+    print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
 #---------------------------
 def menu_func(self, context):
