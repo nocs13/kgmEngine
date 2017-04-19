@@ -1,20 +1,25 @@
 #ifndef KGMBTREE_H
 #define KGMBTREE_H
 
-template <class K, class D>
-class kgmBTree
+#include "kgmHash.h"
+
+template <class Key, class Data>
+class kgmMap
 {
   struct Node {
-    K     key;
-    D     data;
+    Key  key;
+    Data data;
+
+    s32  hash;
 
     Node* par;
     Node* left;
     Node* right;
 
-    Node(K k, D d): par(null), left(null), right(null) {
+    Node(Key k, Data d, s32 h): par(null), left(null), right(null) {
       key  = k;
       data = d;
+      hash = h;
     }
   };
 
@@ -30,12 +35,14 @@ public:
   class iterator
   {
     friend class kgmBTree<Key, Data>;
-    Node*            _Ptr;
-    u32              depth;
-    kgmBTreey<K, D>* object;
+
+    Node* _Ptr;
+    u32   depth;
+
+    kgmMap<Key, Data>* object;
 
   public:
-    iterator(kgmBTreey<K, D>* o = null)
+    iterator(kgmMap<K, D>* o = null)
     {
       _Ptr   = NULL;
       object = o;
@@ -101,25 +108,6 @@ public:
       return *this;
     }
 
-    void erase()
-    {
-      _Node* tmp = _Ptr;
-
-      if(_Ptr && _Ptr->next) {
-        delete _Ptr;
-
-        _Ptr = tmp;
-
-        return;
-      }
-
-      if(index < object->base_size) {
-        while(!object->root[index] && index < object->base_size)
-          index++;
-        _Ptr = object->root[index];
-      }
-    }
-
     bool operator!=(iterator i)
     {
       return (_Ptr != i._Ptr);
@@ -132,19 +120,19 @@ public:
 
     bool isEnd()
     {
-      if(!_Ptr)
-        return true;
-
-      return false;
+      return (!_Ptr);
     }
   };
 
 public:
-  kgmBTree():root(null){}
+  kgmMap():root(null){}
 
-  void add(K k, D d) {
+  void set(Key k, Data d) {
+    kgmHash<Key> hash(k);
+    s32 h = (s32)hash();
+
     if (!root) {
-      root = new Node(k, d);
+      root = new Node(k, d, h);
 
       return;
     }
@@ -152,12 +140,12 @@ public:
     Node* n = root;
 
     while (true) {
-      if (key == n->key) {
-        n->data = data;
+      if (h == n->hash && k == n->key) {
+        n->data = d;
         return;
-      } else if (key > n->key) {
+      } else if (h >= n->hash) {
         if (!n->right) {
-          n->right = new Node(k, d);
+          n->right = new Node(k, d, h);
           n->right->par = n;
           break;
         } else {
@@ -165,7 +153,7 @@ public:
         }
       } else {
         if (!n->left) {
-          n->left = new Node(k, d);
+          n->left = new Node(k, d, h);
           n->left->par = n;
           break;
         } else {
@@ -175,7 +163,7 @@ public:
     }
   }
 
-  void remove(K k) {
+  void remove(Key k) {
 
   }
 
@@ -190,11 +178,6 @@ public:
     i._Ptr = nullptr;
 
     return i;
-  }
-
-private:
-  void insert(K k, D d) {
-
   }
 };
 

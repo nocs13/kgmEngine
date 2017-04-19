@@ -1051,6 +1051,10 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
       for m in bpy.data.materials:
         mpath = os.path.join(dirpath, m.name + '.mtl')
 
+        if os.path.isfile(mpath) is True:
+          print('File ' + mpath + ' already exists')
+          continue
+
         try:
           file = open(mpath, "w")
           file.write("<?xml version='1.0'?>\n")
@@ -1068,6 +1072,10 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
 
       for m in self.mesh_datas:
         mpath = os.path.join(dirpath, m.name + '.msh')
+
+        if os.path.isfile(mpath) is True:
+          print('File ' + mpath + ' already exists')
+          continue
 
         try:
           file = open(mpath, "w")
