@@ -6,6 +6,8 @@
 template <class Key, class Data>
 class kgmMap
 {
+  class iterator;
+
   struct Node {
     Key  key;
     Data data;
@@ -23,12 +25,29 @@ class kgmMap
     }
   };
 
+  class Tree<Key, Data>
+  {
+    friend class iterator;
+
+    Node* root;
+
+  public:
+    Tree()
+    {
+      root = null;
+    }
+
+    void set(Key k, Data d)
+    {
+
+    }
+  };
+
   Node* root;
 
 public:
   //// ITERATOR
 
-  class iterator;
 
   friend class iterator;
 
