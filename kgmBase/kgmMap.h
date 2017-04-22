@@ -6,44 +6,253 @@
 template <class Key, class Data>
 class kgmMap
 {
-  class iterator;
-
   struct Node {
     Key  key;
     Data data;
 
-    s32  hash;
+    s32  hkey;
 
     Node* par;
     Node* left;
     Node* right;
 
-    Node(Key k, Data d, s32 h): par(null), left(null), right(null) {
+    Node(Key k, Data d, s32 h = 0): par(null), left(null), right(null) {
       key  = k;
       data = d;
-      hash = h;
+      hkey = h;
     }
   };
 
-  class Tree<Key, Data>
+  class Tree
   {
     friend class iterator;
 
     Node* root;
 
+    u32   t_depth;
+
   public:
     Tree()
     {
-      root = null;
+      root   = null;
+      t_depth = 8;
     }
 
     void set(Key k, Data d)
     {
+      s32 h = kgmHash<Key>(k)();
 
+      if (!root) {
+        root = new Node(k, d, h);
+
+        return;
+      }
+
+      Node* c = root;
+
+      bool e;
+
+      c = find(h, k, e);
+
+      if (c && e) {
+        c->data = d;
+
+        return;
+      }
+
+      if (!c)
+        c = root;
+
+      while (true) {
+        if ((rand() % t_depth) == 0) {
+          Node *n = new Node(k, d, h);
+
+          if (c->par) {
+            if (c == c->par->left)
+              c->par->left = n;
+            else
+              c->par->right = n;
+          }
+
+          if (c->hkey < n->hkey)
+            n->left = c;
+          else
+            n->right = c;
+
+          n->par = c->par;
+          c->par = n;
+
+          break;
+        }
+
+        if (c->hkey < h) {
+          if (!c->left) {
+            c->left = new Node(k, d, h);
+            c->left->par = c;
+
+            break;
+          } else {
+            c = c->left;
+          }
+        } else {
+          if (!c->right) {
+            c->right = new Node(k, d, h);
+            c->right->par = c;
+
+            break;
+          } else {
+            c = c->right;
+          }
+        }
+      }
+
+      if ((rand() % 10) == 0) {
+        t_depth = height();
+      }
+    }
+
+    void remove(Key k)
+    {
+      s32 h = kgmHash<Key>(k)();
+
+      bool e;
+
+      Node* n = find(h, k, e);
+
+      if (!n || !e)
+        return;
+
+      Node* p = n->par;
+
+      s32 side = 0;
+
+      if (p) {
+        if (n == p->left)
+          side = -1;
+        else
+          side =  1;
+      }
+
+      if (!n->left && !n->right) {
+        if (p) {
+          if (side == -1)
+            p->left = null;
+          else
+            p->right = null;
+        }
+      } else if (n->left && n->right) {
+        Node* l = lastleft(n->right);
+
+        l->left = n->left;
+        n->left->par = l;
+
+        if (side == -1) {
+          p->left = n->right;
+          n->right->par = p;
+        } else if (side == 1) {
+          p->right = n->right;
+          n->right->par = p;
+        } else {
+          root = n->right;
+          root->par = null;
+        }
+      } else if (n->left) {
+        if (side == -1) {
+          p->left = n->left;
+          n->left->par = p;
+        } else if (side == 1) {
+          p->right = n->left;
+          n->left->par = p;
+        } else {
+          root = n->left;
+          root->par = null;
+        }
+      } else {
+        if (side == -1) {
+          p->left = n->right;
+          n->right->par = p;
+        } else if (side == 1) {
+          p->right = n->right;
+          n->right->par = p;
+        } else {
+          root = n->right;
+          root->par = null;
+        }
+      }
+
+      if (n == root)
+        root = null;
+
+      delete n;
+    }
+
+    u32 height()
+    {
+      return height(root);
+    }
+
+  private:
+    u32 height(Node* n)
+    {
+      if (!n)
+        return 0;
+
+      return 1 + max(height(n->left), height(n->right));
+    }
+
+    Node* find(s32 h, Key k, bool& e)
+    {
+      Node* c = root;
+
+      e = false;
+
+      while (c) {
+        if (h == c->hkey && c->key == k) {
+          e = true;
+
+          break;
+        }
+
+        if (h < c->hkey)
+          c = c->left;
+        else
+          c = c->right;
+      }
+
+      return c;
+    }
+
+    Node* lastleft(Node* n)
+    {
+      if (!n)
+        return null;
+
+      while (n->left)
+        n = n->left;
+
+      return n;
+    }
+
+    Node* lastright(Node* n)
+    {
+      if (!n)
+        return null;
+
+      while (n->right)
+        n = n->right;
+
+      return n;
+    }
+
+    s32 hash(Key k)
+    {
+      kgmHash<Key> h(k);
+
+      return (s32) h();
     }
   };
 
-  Node* root;
+  Tree tree;
 
 public:
   //// ITERATOR
@@ -53,7 +262,7 @@ public:
 
   class iterator
   {
-    friend class kgmBTree<Key, Data>;
+    friend class Tree;
 
     Node* _Ptr;
     u32   depth;
@@ -61,7 +270,7 @@ public:
     kgmMap<Key, Data>* object;
 
   public:
-    iterator(kgmMap<K, D>* o = null)
+    iterator(kgmMap<Key, Data>* o = null)
     {
       _Ptr   = NULL;
       object = o;
@@ -144,49 +353,20 @@ public:
   };
 
 public:
-  kgmMap():root(null){}
+  kgmMap(){}
 
-  void set(Key k, Data d) {
-    kgmHash<Key> hash(k);
-    s32 h = (s32)hash();
-
-    if (!root) {
-      root = new Node(k, d, h);
-
-      return;
-    }
-
-    Node* n = root;
-
-    while (true) {
-      if (h == n->hash && k == n->key) {
-        n->data = d;
-        return;
-      } else if (h >= n->hash) {
-        if (!n->right) {
-          n->right = new Node(k, d, h);
-          n->right->par = n;
-          break;
-        } else {
-          n = n->right;
-        }
-      } else {
-        if (!n->left) {
-          n->left = new Node(k, d, h);
-          n->left->par = n;
-          break;
-        } else {
-          n = n->left;
-        }
-      }
-    }
+  void set(Key k, Data d)
+  {
+    tree.set(k, d);
   }
 
-  void remove(Key k) {
-
+  void remove(Key k)
+  {
+    tree.remove(k);
   }
 
-  iterator begin() {
+  iterator begin()
+  {
     iterator i(this);
 
     return i;

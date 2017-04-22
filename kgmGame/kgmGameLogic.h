@@ -1,6 +1,7 @@
 #ifndef KGMGAMELOGIC_H
 #define KGMGAMELOGIC_H
 
+#include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmObject.h"
 #include "kgmILogic.h"
@@ -17,6 +18,7 @@ class kgmGameLogic : public kgmILogic, public kgmObject
 
 public:
   kgmTab<kgmString, kgmUnit*> m_objects;
+  kgmMap<kgmString, kgmUnit*> m_maps;
 
 
   s32 gcount;
