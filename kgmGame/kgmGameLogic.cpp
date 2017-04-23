@@ -13,6 +13,8 @@ kgmGameLogic::~kgmGameLogic()
 
 void kgmGameLogic::clear()
 {
+  m_objects.reset();
+  m_maps.reset();
 }
 
 bool kgmGameLogic::add(kgmUnit* u)
@@ -21,6 +23,7 @@ bool kgmGameLogic::add(kgmUnit* u)
     return false;
 
   m_objects.set(u->getName(), u);
+  m_maps.set(u->getName(), u);
 
   u->init();
 
