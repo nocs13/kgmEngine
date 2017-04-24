@@ -178,11 +178,6 @@ public:
         root[i] = null;
       }
     }
-  }
-
-  void reset()
-  {
-    clear();
 
     if (base_size > KGM_TAB_DEFAULT_SIZE) {
       delete [] root;

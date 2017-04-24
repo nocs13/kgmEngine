@@ -26,9 +26,6 @@ class kgmMap
 
 
 public:
-  //// ITERATOR
-
-
   friend class iterator;
 
   class iterator
@@ -134,6 +131,11 @@ public:
   {
     root   = null;
     t_depth = 8;
+  }
+
+  ~kgmMap()
+  {
+    clear();
   }
 
   void set(Key k, Data d)
@@ -284,9 +286,11 @@ public:
     delete n;
   }
 
-  void reset()
+  void clear()
   {
+    reset(root);
 
+    root = null;
   }
 
   u32 height()
@@ -369,6 +373,17 @@ private:
     i._Ptr = nullptr;
 
     return i;
+  }
+
+  void reset(Node* n)
+  {
+    if (!n)
+      return;
+
+    reset(n->left);
+    reset(n->right);
+
+    delete n;
   }
 };
 
