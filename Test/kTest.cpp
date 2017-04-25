@@ -113,6 +113,21 @@ public:
       delete m_logic;
 
     m_logic = new ASp_Logic(this);
+
+    kgmMap<u32, u32> mm;
+    for(auto i = 0; i < 100; i++)
+      mm.set(i, i);
+
+    u32 h = mm.height();
+    printf("Key val depth %i\n", h);
+
+    kgmMap<u32, u32>::iterator i = mm.get(23);
+    printf("Key val %i/%i\n", i.key(), i.data());
+    mm.print();
+    //while(i != mm.end()) {
+      //printf("Key val %i/%i\n", i.key(), i.data());
+      //++i;
+    //}
   }
 
   ~kGame()

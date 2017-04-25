@@ -30,7 +30,7 @@ public:
 
   class iterator
   {
-    friend class Tree;
+    friend class kgmMap;
 
     Node* _Ptr;
     u32   depth;
@@ -71,7 +71,7 @@ public:
       return _Ptr->data;
     }
 
-    void operator++()
+    iterator operator++()
     {
       if (!_Ptr)
         return *this;
@@ -118,8 +118,19 @@ public:
     {
       return (!_Ptr);
     }
+
+    Key key()
+    {
+      return _Ptr->key;
+    }
+
+    Data data()
+    {
+      return _Ptr->data;
+    }
   };
 
+private:
   friend class iterator;
 
   Node* root;
@@ -185,7 +196,7 @@ public:
         break;
       }
 
-      if (c->hkey < h) {
+      if (h < c->hkey) {
         if (!c->left) {
           c->left = new Node(k, d, h);
           c->left->par = c;
@@ -206,8 +217,11 @@ public:
       }
     }
 
-    if ((rand() % 10) == 0) {
+    if ((rand() % (t_depth)) == 0) {
       t_depth = height();
+
+      if (t_depth < 8)
+        t_depth = 8;
     }
   }
 
@@ -286,6 +300,23 @@ public:
     delete n;
   }
 
+  iterator get(Key k)
+  {
+    s32 h = kgmHash<Key>(k)();
+    bool e = false;
+
+    Node* n = find(h, k, e);
+
+    iterator i(this);
+
+    if (!n || !e)
+      i._Ptr = null;
+    else
+      i._Ptr = n;
+
+    return i;
+  }
+
   void clear()
   {
     reset(root);
@@ -297,6 +328,41 @@ public:
   {
     return height(root);
   }
+
+  iterator begin()
+  {
+    iterator i(this);
+
+    return i;
+  }
+
+  iterator end() {
+    iterator i(this);
+    i._Ptr = nullptr;
+
+    return i;
+  }
+
+  // for testing
+  void print()
+  {
+    print(root);
+  }
+
+  void print(Node* p, s32 indent = 0)
+  {
+    if(p != NULL) {
+      if(p->left)
+        print(p->left, indent + 4);
+      if(p->right)
+        print(p->right, indent + 4);
+
+      for (int i = 0; i < indent; i++)
+        printf(" ");
+      printf("%i/%i\n", (int)p->key, (int)p->data);
+    }
+  }
+  //
 
 private:
   u32 height(Node* n)
@@ -324,9 +390,15 @@ private:
       }
 
       if (h < c->hkey)
-        c = c->left;
+        if (c->left)
+          c = c->left;
+        else
+          break;
       else
-        c = c->right;
+        if (c->right)
+          c = c->right;
+        else
+          break;
     }
 
     return c;
@@ -359,20 +431,6 @@ private:
     kgmHash<Key> h(k);
 
     return (s32) h();
-  }
-
-  iterator begin()
-  {
-    iterator i(this);
-
-    return i;
-  }
-
-  iterator end() {
-    iterator i(this);
-    i._Ptr = nullptr;
-
-    return i;
   }
 
   void reset(Node* n)
