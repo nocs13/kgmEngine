@@ -21,9 +21,16 @@ class kgmMap
       data = d;
       hkey = h;
     }
+
+    ~Node()
+    {
+      if (left)
+        delete left;
+
+      if (right)
+        delete right;
+    }
   };
-
-
 
 public:
   friend class iterator;
@@ -131,6 +138,8 @@ public:
   };
 
 private:
+#define MIN_DEPTH_UPDATE 8
+
   friend class iterator;
 
   Node* root;
@@ -141,7 +150,7 @@ public:
   kgmMap()
   {
     root   = null;
-    t_depth = 8;
+    t_depth = MIN_DEPTH_UPDATE;
   }
 
   ~kgmMap()
@@ -220,8 +229,8 @@ public:
     if ((rand() % (t_depth)) == 0) {
       t_depth = height();
 
-      if (t_depth < 8)
-        t_depth = 8;
+      if (t_depth < MIN_DEPTH_UPDATE)
+        t_depth = MIN_DEPTH_UPDATE;
     }
   }
 
@@ -294,6 +303,8 @@ public:
       }
     }
 
+    n->left = n->right = null;
+
     if (n == root)
       root = null;
 
@@ -319,9 +330,11 @@ public:
 
   void clear()
   {
-    reset(root);
+    if (root)
+      delete root;
 
     root = null;
+    t_depth = MIN_DEPTH_UPDATE;
   }
 
   u32 height()
@@ -351,7 +364,7 @@ public:
 
   void print(Node* p, s32 indent = 0)
   {
-    if(p != NULL) {
+    /*if(p != NULL) {
       if(p->left)
         print(p->left, indent + 4);
       if(p->right)
@@ -360,9 +373,16 @@ public:
       for (int i = 0; i < indent; i++)
         printf(" ");
       printf("%i/%i\n", (int)p->key, (int)p->data);
-    }
+    }*/
+    if (!p)
+      return;
+
+    printf("%i %i/%i\n", indent, (int)p->key, (int)p->data);
+    indent++;
+    print(p->left, indent);
+    print(p->right, indent);
   }
-  //
+  // ***
 
 private:
   u32 height(Node* n)
@@ -431,17 +451,6 @@ private:
     kgmHash<Key> h(k);
 
     return (s32) h();
-  }
-
-  void reset(Node* n)
-  {
-    if (!n)
-      return;
-
-    reset(n->left);
-    reset(n->right);
-
-    delete n;
   }
 };
 
