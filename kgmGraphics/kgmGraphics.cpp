@@ -433,6 +433,14 @@ void kgmGraphics::render()
       break;
   }
 
+  /*
+   * 1. draw all meshes without light effect just with materials.
+   * 2. draw all meshes just lighting parts.
+   * 3. multiply step 1 on step 2
+   * glBlendFunc(GL_DST_COLOR, GL_ZERO) //Blending formula with these factors : srcColor*destColor+0
+   * GL_SRC_COLOR,GL_SRC_COLOR? dst_color, src_color
+  */
+
   //I pass: draw scene by ambient
 
   lighting = true;
