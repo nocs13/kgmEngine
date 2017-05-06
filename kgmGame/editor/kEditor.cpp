@@ -1123,7 +1123,7 @@ void kEditor::onAddMesh()
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Path"));
+  fdd->forOpen(game->getSettings()->get((char*)"Data"));
 
 }
 

@@ -180,4 +180,41 @@ public:
     }
   }
 };
+
+template <class T>
+class kgmSortShell
+{
+  kgmSort::Compare check;
+
+public:
+  kgmSortShell(T* data, u32 len, Compare compare = nullptr)
+  {
+    if (compare)
+      check = compare;
+
+    sort(data, len);
+  }
+
+  void sort(T arr[], u32 n)
+  {
+    u32 i,j,k;
+
+    T t;
+
+    for (k = n/2; k > 0; k /= 2) {
+      for (i = k; i < n; i++) {
+        t = arr[i];
+
+        for (j = i; j>=k; j-=k) {
+          if (t < arr[j-k])
+            arr[j] = arr[j-k];
+          else
+            break;
+        }
+        arr[j] = t;
+      }
+    }
+  }
+};
+
 #endif // KGMSORT_H
