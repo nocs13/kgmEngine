@@ -55,16 +55,19 @@ int   kgmXml::Node::nodes(){
 kgmXml::Node* kgmXml::Node::node(int i){
   if(i >= m_nodes.size())
     return 0;
+
   return m_nodes[i];
 }
 
 kgmXml::Node* kgmXml::Node::node(kgmString id){
-  for( int i = 0; i < nodes(); i++){
+  for( int i = 0; i < nodes(); i++) {
     kgmString nid;
     node(i)->id(nid);
+
     if(id == nid)
       return node(i);
   }
+
   return 0;
 }
 
