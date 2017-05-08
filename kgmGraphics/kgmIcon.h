@@ -3,6 +3,7 @@
 
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmPointer.h"
+#include "kgmTexture.h"
 
 class kgmTexture;
 

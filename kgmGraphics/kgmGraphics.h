@@ -40,10 +40,12 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
 {
   KGM_OBJECT(kgmGraphics);
 
+  friend class BaseRender;
   friend class FpsRender;
   friend class GuiRender;
   friend class IconRender;
   friend class SpriteRender;
+  friend class LightRender;
 public:
 
   enum GraphicsQuality
