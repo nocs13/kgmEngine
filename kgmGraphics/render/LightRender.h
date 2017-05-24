@@ -10,7 +10,7 @@ class LightRender: public BaseRender
 public:
   LightRender(kgmGraphics* gr);
 
-  void render(kgmList<kgmLight*>&, kgmList<kgmVisual*>&);
+  void render(kgmList<kgmLight*>&, kgmArray<kgmVisual*>&);
 };
 
 #endif // LIGHTRENDER_H

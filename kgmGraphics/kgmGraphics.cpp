@@ -20,6 +20,8 @@
 #include "../kgmMath/kgmBase.h"
 #include "../kgmBase/kgmTime.h"
 
+#include "render/LightRender.h"
+
 #include <stdlib.h>
 
 #define MAX_LIGHTS 48
@@ -336,6 +338,8 @@ void kgmGraphics::render()
 
   s32 count_sprites = 0, count_visible = 0, count_visible_alpha = 0;
 
+  kgmList<kgmLight*> lights;
+
   for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
   {
     if((*i) == null)
@@ -429,27 +433,33 @@ void kgmGraphics::render()
 
     g_lights[g_lights_count++] = (*i);
 
+    lights.add((*i));
+
     if(g_lights_count >= MAX_LIGHTS)
       break;
   }
 
   /*
-   * 1. draw all meshes without light effect just with materials.
-   * 2. draw all meshes just lighting parts.
+   * 1. draw all meshes just with light effect.
+   * 2. draw all meshes without lighting parts.
    * 3. multiply step 1 on step 2
    * glBlendFunc(GL_DST_COLOR, GL_ZERO) //Blending formula with these factors : srcColor*destColor+0
    * GL_SRC_COLOR,GL_SRC_COLOR? dst_color, src_color
   */
 
-  //I pass: draw scene by ambient
+  //I pass: draw scene only lights
 
   lighting = true;
+
+  LightRender lr(this);
+
+  lr.render(lights, m_visible_visuals);
 
   mtx4 m4_identity;
   m4_identity.identity();
   setWorldMatrix(m4_identity);
 
-  for(s32 i = 0; i < count_visible; i++)
+  for (s32 i = 0; i < count_visible; i++)
   {
     kgmVisual* vis = m_visible_visuals[i];
     kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(g_def_material);
@@ -478,27 +488,6 @@ void kgmGraphics::render()
     }
 
     render(vis);
-
-    render((kgmMaterial*)null);
-    render((kgmShader*)null);
-
-    if (!mtl->shade())
-      continue;
-
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-
-    for(s32 i = 0; i < g_lights_count; i++)
-    {
-      g_light_active = g_lights[i];
-
-      render(shaders[kgmShader::TypeLight].data());
-
-      render(vis);
-
-      render((kgmShader*)null);
-    }
-
-    gc->gcBlend(false, null, null);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
@@ -561,28 +550,6 @@ void kgmGraphics::render()
 
     render(vis);
 
-    if (!mtl->shade())
-    {
-      render((kgmMaterial*)null);
-      render((kgmShader*)null);
-
-      continue;
-    }
-
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-
-    for(int i = 0; i < g_lights_count; i++)
-    {
-      g_light_active = g_lights[i];
-
-      render(shaders[kgmShader::TypeLight].data());
-
-      render(vis);
-
-      render((kgmShader*)null);
-    }
-
-    gc->gcBlend(false, null, null);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);

@@ -12,15 +12,13 @@ LightRender::LightRender(kgmGraphics* g)
 
 }
 
-void LightRender::render(kgmList<kgmLight*>& lights, kgmList<kgmVisual*>& visuals)
+void LightRender::render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visuals)
 {
 
   vec3 lpositions[MAX_LIGHTS], ldirections[MAX_LIGHTS], lcolors[MAX_LIGHTS];
   f32  lintensities[MAX_LIGHTS], langles[MAX_LIGHTS];
 
   kgmList<kgmVisual*> alpha;
-
-  kgmList<kgmVisual*>::iterator i = visuals.begin();
 
   kgmShader* s = gr->shaders.get(kgmShader::TypeLight).data();
 
@@ -37,10 +35,10 @@ void LightRender::render(kgmList<kgmLight*>& lights, kgmList<kgmVisual*>& visual
   g_mtx_normal[3] = im[4], g_mtx_normal[4] = im[5], g_mtx_normal[5] = im[6];
   g_mtx_normal[6] = im[8], g_mtx_normal[7] = im[9], g_mtx_normal[8] = im[10];
 
-  while (i != visuals.end()) {
-    kgmVisual* v = (*i);
+  gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
-    ++i;
+  for (int i = 0; i < visuals.length(); i++) {
+    kgmVisual* v = visuals[i];
 
     kgmMaterial* m = v->getMaterial();
 
@@ -98,4 +96,6 @@ void LightRender::render(kgmList<kgmLight*>& lights, kgmList<kgmVisual*>& visual
       }
     }
   }
+
+  gc->gcBlend(false, null, null);
 }
