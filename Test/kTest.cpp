@@ -109,10 +109,10 @@ public:
     if(m_physics)
       m_physics->m_gravity = 1.0f;
 
-    if(m_logic)
+    /*if(m_logic)
       delete m_logic;
 
-    m_logic = new ASp_Logic(this);
+    m_logic = new ASp_Logic(this);*/
 
     kgmMap<u32, u32> mm;
     for(auto i = 0; i < 10; i++)

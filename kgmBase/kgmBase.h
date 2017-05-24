@@ -18,3 +18,6 @@
   #define KGM_DECL_IMPORT     __attribute__((visibility("default")))
   #define KGM_DECL_HIDDEN     __attribute__((visibility("hidden")))
 #endif
+
+
+void kgm_abort();

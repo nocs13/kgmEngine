@@ -14,6 +14,7 @@
 #endif
 
 static void kgm_signal_handler(int s);
+static void kgm_sigterm_handler(int s);
 extern void ClearDbgMemory();
 
 //kgmApp
@@ -31,9 +32,25 @@ kgmApp::~kgmApp()
   m_app = 0;
 }
 
-int kgmApp::main(int argc, char **argv)
+s32 kgmApp::main(s32 argc, s8 **argv)
 {
   return 0;
+}
+
+void kgmApp::abort()
+{
+
+}
+
+void kgm_abort()
+{
+  kill(0, SIGTERM);
+}
+
+void kgm_sigterm_handler(int s)
+{
+  if (kgmApp::application())
+    kgmApp::application()->abort();
 }
 
 //FOR WINDOWS
@@ -130,12 +147,12 @@ int main(int argc, char** argv){
 
   signal(SIGINT,   kgm_signal_handler);
   signal(SIGILL,   kgm_signal_handler);
-  signal(SIGTERM,  kgm_signal_handler);
   signal(SIGSEGV,  kgm_signal_handler);
   signal(SIGABRT,  kgm_signal_handler);
+  signal(SIGTERM,  kgm_sigterm_handler);
 
   if(kgmApp::application())
-    rValue = kgmApp::application()->main(argc, argv);
+    rValue = kgmApp::application()->main((s32)argc, (s8**)argv);
 
   // kgmObject::releaseObjects();
   ClearDbgMemory();

@@ -133,6 +133,14 @@ public:
     return 0;
   }
 
+  void abort()
+  {
+    if (!game())
+      exit(1);
+
+    game()->gQuit();
+  }
+
   static kgmGameApp* gameApplication()
   {
     return (kgmGameApp*)kgmApp::application();

@@ -40,6 +40,9 @@ void LightRender::render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visua
   for (int i = 0; i < visuals.length(); i++) {
     kgmVisual* v = visuals[i];
 
+    if (!v)
+      continue;
+
     kgmMaterial* m = v->getMaterial();
 
     if (m && m->alpha()) {
@@ -51,8 +54,11 @@ void LightRender::render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visua
     kgmTexture* tnormal  = m->getTexNormal();
     kgmTexture* tspecular = m->getTexSpecular();
 
-    gr->gc->gcSetTexture(0, tnormal->m_texture);
-    gr->gc->gcSetTexture(1, tspecular->m_texture);
+    if (tnormal && tnormal->m_texture)
+      gr->gc->gcSetTexture(0, tnormal->m_texture);
+
+    if (tnormal && tspecular->m_texture)
+      gr->gc->gcSetTexture(1, tspecular->m_texture);
 
     kgmList<kgmLight*>::iterator j = lights.begin();
 

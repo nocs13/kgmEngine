@@ -1,10 +1,13 @@
 #pragma once
 
+#include "../kgmBase/kgmIApp.h"
+
 class kgmEvent;
 class kgmWindow;
 class kgmEnvironment;
 
-class kgmApp{
+class kgmApp: public kgmIApp
+{
 private:
   static kgmApp* m_app;
 
@@ -14,7 +17,9 @@ public:
   kgmApp();
   ~kgmApp();
 
-  virtual int main(int argc, char **argv);
+  s32 main(s32 argc, s8 **argv);
+
+  void abort();
 
   void setMainWindow(void* w)
   {
