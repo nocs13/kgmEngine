@@ -949,6 +949,7 @@ void kEditor::onQuit()
 void kEditor::onMapNew()
 {
   clear();
+  kgm_abort();
 }
 
 void kEditor::onMapOpen()

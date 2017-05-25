@@ -44,7 +44,10 @@ void kgmApp::abort()
 
 void kgm_abort()
 {
-  kill(0, SIGTERM);
+#ifdef WIN32
+#else
+  kill(getpid(), SIGTERM);
+#endif
 }
 
 void kgm_sigterm_handler(int s)
