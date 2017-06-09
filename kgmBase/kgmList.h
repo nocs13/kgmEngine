@@ -221,7 +221,7 @@ public:
     return i;
   }
 
-  void erase(int i)
+  void erase(u32 i)
   {
     _Node *node = _First;
 
@@ -251,7 +251,6 @@ public:
 #ifdef DEBUG
         if(_First == 0 && csize > 1)
         {
-          int k = 0;
         }
 #endif
       }

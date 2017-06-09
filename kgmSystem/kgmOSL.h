@@ -14,7 +14,7 @@
 
 class kgmOSL: public kgmIAudio, public kgmThread
 {
-  class _Sound: public Sound
+  class _Sound
   {
     kgmOSL*     osl;
   public:
@@ -65,7 +65,7 @@ public:
   kgmOSL();
   virtual ~kgmOSL();
 
-  Sound*   create(FMT fmt, u16 freq, u32 size, void* data);
+  Sound    create(FMT fmt, u16 freq, u32 size, void* data);
   void     listener(vec3& pos, vec3& vel, vec3& ort);
   void     clear();
 

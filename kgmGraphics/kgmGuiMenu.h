@@ -118,7 +118,7 @@ public:
 
       if(vertical)
       {
-        if(item->rect.w > swidth)
+        if((u32) item->rect.w > swidth)
         {
           swidth = item->rect.w;
 
@@ -150,7 +150,7 @@ public:
 
       if(vertical)
       {
-        if(item->rect.w > swidth)
+        if((u32) item->rect.w > swidth)
         {
           swidth = item->rect.w;
 
@@ -219,14 +219,14 @@ public:
 
     void movePointer(int x, int y)
     {
-      for(u32 i = 0; i < items.length(); i++)
+      for(s32 i = 0; i < items.length(); i++)
       {
         if(getRect(i).inside(x, y) && selected != i)
         {
           selected = i;
 
-          Item* ci = items[i];
-          Rect  rc = getRect(i);
+          //Item* ci = items[i];
+          //Rect  rc = getRect(i);
 
           break;
         }

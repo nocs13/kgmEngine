@@ -51,7 +51,7 @@ kgmParticles::~kgmParticles()
 
 void kgmParticles::build()
 {
-  int i = 0;
+  u32 i = 0;
 
   if(m_particles)
   {
@@ -80,7 +80,7 @@ void kgmParticles::build()
     else if(m_typerender == RTypePoint)
       count = m_count * 18;
 
-    kgmMesh::Vertex_P_C_T* v = (kgmMesh::Vertex_P_C_T*)m_mesh->vAlloc(count, kgmMesh::FVF_P_C_T);
+    m_mesh->vAlloc(count, kgmMesh::FVF_P_C_T);
   }
 
   for(i = 0; i < m_count; i++)
@@ -106,11 +106,11 @@ void kgmParticles::init(Particle* pr)
 
   float r1    = (float)rand() / RAND_MAX;
   float angle = m_angle * r1;
-  float alpha = m_angle * r1 + m_angle * (1 - r1);
+  //float alpha = m_angle * r1 + m_angle * (1 - r1);
 
   float r2 = (float)rand() / RAND_MAX;
-  float beta = m_angle * r2 + m_angle * (1 - r2);
-  float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
+  //float beta = m_angle * r2 + m_angle * (1 - r2);
+  //float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
   //pr->dir.x = cos(beta) * cos(alpha) * x_side;
   //pr->dir.y = neg1 * sin(beta) * cos(alpha);
   //pr->dir.z = neg2 * sin(alpha);
@@ -191,7 +191,7 @@ void kgmParticles::update(u32 t)
 
       kgmMesh::Vertex_P_C_T* points = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
 
-      for(s32 i = 0; i < m_count; i++)
+      for(u32 i = 0; i < m_count; i++)
       {
         s32    vi = i * 6;
         vec3   pos   = m_particles[i].pos;
@@ -242,7 +242,7 @@ void kgmParticles::update(u32 t)
     }
     else
     {
-      for (s32 i = 0; i < m_count; i++)
+      for (u32 i = 0; i < m_count; i++)
       {
         s32   vi = i * 18;
         u32   col   = m_particles[i].col.color;

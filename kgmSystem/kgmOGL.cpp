@@ -762,7 +762,9 @@ void kgmOGL::gcClipPlane(bool en, u32 id, float* par)
 {
   GLdouble c[4] = {par[0], par[1], par[2], par[3]};
 
-#ifndef ANDROID
+#ifdef ANDROID
+  (void)c;
+#else
   glClipPlane(GL_CLIP_PLANE0 + id, c);
 #endif
 }
@@ -782,13 +784,9 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     return;
 
   unsigned char *pM = (unsigned char*)v_pnt;
-  unsigned int  p_size  = sizeof(float) * 3;
-  unsigned int  n_size  = sizeof(float) * 3;
-  unsigned int  c_size  = sizeof(unsigned );
   unsigned int  uv_size = sizeof(float) * 2;
 
   int ah = 0;
-  GLenum err = 0;
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -803,7 +801,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
     glEnableVertexAttribArray(ah);
 #endif
-    vec3 pos = *((vec3*)pM);
+
     pM += (sizeof(float) * 3);
   }
 
@@ -817,6 +815,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
+
     pM += (sizeof(float)*3);
   }
 
@@ -830,6 +829,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
 #endif
+
     pM += sizeof(u32);
   }
 
@@ -844,6 +844,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
+
     pM += (uv_size);
   }
 
@@ -858,6 +859,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
+
     pM += (uv_size);
   }
 
@@ -872,6 +874,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
 #endif
+
     pM += (uv_size);
   }
 
@@ -902,7 +905,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #endif
   }
 
-  //  glColor3f(1, 1, 1);
   if(i_pnt && i_cnt)
   {
     switch(i_size)
@@ -911,7 +913,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
 #else
-      //      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
+      //glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_INT, i_pnt);
 #endif
       break;
@@ -919,7 +921,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
 #else
-      //      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
+      //glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_SHORT, i_pnt);
 #endif
     }
@@ -929,19 +931,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glDrawArrays(gl_enum(pmt), 0, v_cnt);
   }
 
-  //#ifdef GLES_2
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(2);
   glDisableVertexAttribArray(3);
   glDisableVertexAttribArray(4);
   glDisableVertexAttribArray(5);
-  //#else
-  //  glDisableClientState(GL_VERTEX_ARRAY);
-  //  glDisableClientState(GL_NORMAL_ARRAY);
-  //  glDisableClientState(GL_COLOR_ARRAY);
-  //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  //#endif
 }
 
 //VERTEX & INDEX BUFFER
@@ -997,7 +992,10 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   if(!vbo)
     return;
 
-#ifndef ANDROID
+#ifdef ANDROID
+  (void)uvt;
+  (void)offset;
+#else
   glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 #endif
 
@@ -1238,6 +1236,12 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 
     return null;
   }
+
+#ifdef ANDROID
+
+#define glDetachObject glDetachShader
+
+#endif
 
   glDetachObject(prog, vshad);
   glDeleteObject(vshad);

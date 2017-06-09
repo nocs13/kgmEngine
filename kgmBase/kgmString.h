@@ -67,7 +67,7 @@ public:
  
   kgmTString<T>& operator+=(const kgmTString<T>& s)
   { 
-    int len = kgmArray<T>::m_length + s.m_length; 
+    u32 len = kgmArray<T>::m_length + s.m_length;
 
     if(len <= kgmArray<T>::m_length) 
       return *this; 

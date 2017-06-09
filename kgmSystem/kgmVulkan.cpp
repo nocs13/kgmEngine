@@ -4,8 +4,6 @@ kgmVulkan::kgmVulkan()
 {
   m_instance = 0;
 
-  m_vk;
-
   VkApplicationInfo appInfo;
 
   memset(&appInfo, 0, sizeof(VkApplicationInfo));

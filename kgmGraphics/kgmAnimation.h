@@ -76,15 +76,15 @@ public:
 
   Animation* getNode(u32 id)
   {
-    if(id >= m_nodes.length())
+    if(id >= (u32) m_nodes.length())
       return 0;
 
     return m_nodes[id];
   }
 
-  Animation* getNode(char* id)
+  Animation* getNode(s8* id)
   {
-    for(u32 i = 0; i < m_nodes.length(); i++)
+    for(u32 i = 0; i < (u32) m_nodes.length(); i++)
       if(!strcmp(id, m_nodes[i]->m_name))
         return m_nodes[i];
 
@@ -93,7 +93,7 @@ public:
 
   Animation* getNode(kgmString id)
   {
-    for(u32 i = 0; i < m_nodes.length(); i++)
+    for(u32 i = 0; i < (u32) m_nodes.length(); i++)
       if(id == m_nodes[i]->m_name)
         return m_nodes[i];
 
@@ -102,7 +102,7 @@ public:
 
   bool getFrames(mtx4 *pmtx, u32 mtx_cnt, u32 time)
   {
-    u32 n = (m_nodes.length() < mtx_cnt)?(m_nodes.length()):(mtx_cnt);
+    u32 n = ((u32) m_nodes.length() < mtx_cnt)?(m_nodes.length()):(mtx_cnt);
 
     if(!pmtx)
       return false;

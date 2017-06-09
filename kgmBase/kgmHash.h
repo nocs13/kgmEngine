@@ -23,7 +23,7 @@ struct kgmHashFunction
   {
     u32 hash = 2139062143;
 
-    for(int i = 0; i < len; i++)
+    for(u32 i = 0; i < len; i++)
        hash = 37 * hash + str[i];
 
     return hash;
@@ -174,7 +174,7 @@ public:
 
     if (type != HfnNone)
     {
-      switch(type)
+      switch((u32) type)
       {
       case HfnSimple:
         hash = kgmHashFunction::simple((u8*)key.data(), key.length());
@@ -232,7 +232,7 @@ public:
 
     if (type != HfnNone)
     {
-      switch(type)
+      switch((u32) type)
       {
       case HfnSimple:
         hash = kgmHashFunction::simple((u8*)key, strlen(key));

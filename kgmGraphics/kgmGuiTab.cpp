@@ -33,12 +33,12 @@ kgmGuiTab::~kgmGuiTab()
 
 u32 kgmGuiTab::set(u32 k)
 {
-  if((k < 0) || (k >= client->m_childs.length()))
+  if((k < 0) || (k >= (u32) client->m_childs.length()))
     return m_index;
   
-  for(int i = 0; i < client->m_childs.length(); i++)
+  for(s32 i = 0; i < client->m_childs.length(); i++)
   {
-    if(i == k)
+    if((u32) i == k)
     {
       m_index = i;
       client->m_childs[i]->show();
@@ -67,7 +67,7 @@ kgmGui* kgmGuiTab::active()
   if(client->m_childs.length() < 1)
     return null;
 
-  if(m_index < 0 || m_index >= client->m_childs.length())
+  if(m_index < 0 || m_index >= (u32) client->m_childs.length())
     return null;
 
   return client->m_childs[m_index];
@@ -87,11 +87,13 @@ kgmGui* kgmGuiTab::addTab(kgmString title)
   item->setId(item->getItemsCount());
 
   gui->show();
+
+  return gui;
 }
 
 void kgmGuiTab::select(u32 i)
 {
-  if(i >= client->m_childs.length())
+  if(i >= (u32) client->m_childs.length())
     return;
 
   set(i);

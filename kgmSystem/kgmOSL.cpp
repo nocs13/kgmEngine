@@ -61,6 +61,10 @@ void kgmOSL::_Sound::stop()
 
   result = (*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED);
 
+  if (result) {
+
+  }
+
 #ifdef DEBUG
   kgm_log() << "OSL sound stopped\n";
 #endif
@@ -245,7 +249,7 @@ kgmOSL::~kgmOSL()
 #endif
 }
 
-kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
+kgmIAudio::Sound kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
 {
   if(!engineObject)
     return null;
@@ -256,7 +260,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   kgm_log() << "OSL create buffer: " << (s32)fmt << " " << (s32)freq << "\n";
 #endif
 
-  switch(fmt)
+  switch((u32) fmt)
   {
   case FMT_MONO8:
     bitsPerSample = SL_PCMSAMPLEFORMAT_FIXED_8;
@@ -385,7 +389,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   }
 
   //OSL_sound_bufferQueue_callback
-  (*sound->audioPlayerQueue)->RegisterCallback(sound->audioPlayerQueue, OSL_sound_bufferQueue_callback, sound);
+  (*sound->audioPlayerQueue)->RegisterCallback(sound->audioPlayerQueue, (slAndroidSimpleBufferQueueCallback) OSL_sound_bufferQueue_callback, sound);
 
 #ifdef DEBUG
   kgm_log() << "OSL init audioPlayer \n";
@@ -450,7 +454,7 @@ kgmIAudio::Sound* kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
 
   sounds.add(sound);
 
-  return sound;
+  return (kgmIAudio::Sound*) sound;
 }
 
 void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
@@ -461,6 +465,9 @@ void kgmOSL::listener(vec3& pos, vec3& vel, vec3& ort)
   position = pos;
   velocity = vel;
   orient   = ort;
+
+  (void)l;
+  (void)dirort;
 }
 
 void kgmOSL::clear()
@@ -506,7 +513,6 @@ void kgmOSL::run()
     for(int i = sounds.length(); i > 0; --i)
     {
       _Sound* s = sounds[i - 1];
-      SLresult result;
 
 #ifdef DEBUG
       kgm_log() << "OSL sound " << i << "\n";

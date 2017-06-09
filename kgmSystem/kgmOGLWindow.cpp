@@ -75,7 +75,8 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, 
     EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE
   };
 
-  EGLint    dummy, format;
+  //EGLint    dummy;
+  EGLint    format;
   EGLint    numConfigs;
   EGLConfig config;
 
@@ -95,8 +96,8 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, 
   }
 
   eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-  ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
-  surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
+  //ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
+  //surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
   context = eglCreateContext(display, config, NULL, NULL);
 
   if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
@@ -121,6 +122,7 @@ kgmOGLWindow::kgmOGLWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, 
   //eglSwapBuffers(display, surface);
 
 #else
+
   /* attributes for a single buffered visual in RGBA format with at least
    4 bits per color and a 16 bit depth buffer
   */
@@ -219,7 +221,7 @@ kgmOGLWindow::~kgmOGLWindow()
   wglMakeCurrent(m_hdc, 0);
   ReleaseDC(m_wnd,m_hdc);
 
-#elif defined(ANDROIDXXX)
+#elif defined(ANDROID)
 
   if (display != EGL_NO_DISPLAY)
   {

@@ -66,6 +66,8 @@ protected:
 
       AbstractSlot<Args...>::add(s);
       s->connect(this);
+
+      return true;
     }
 
     void reset()

@@ -47,7 +47,7 @@ public:
     m_matrices.clear();
     m_imatrices.clear();
 
-    for(u32 i = 0; i < m_joints.size(); i++)
+    for(u32 i = 0; i < (u32) m_joints.size(); i++)
     {
       Joint* j = m_joints[i];
       mtx4 m = mtx4(j->r, j->v);
@@ -60,10 +60,10 @@ public:
 
   void getTMBones(mtx4 *pbm, u32 cnt)
   {
-    if(!pbm || (cnt != m_joints.size()))
+    if(!pbm || (cnt != (u32) m_joints.size()))
       return;
 
-    for(u32 i = 0; i < m_joints.size(); i++)
+    for(u32 i = 0; i < (u32) m_joints.size(); i++)
     {
       pbm[i] = mtx4(m_joints[i]->r, m_joints[i]->v);
     }
@@ -76,7 +76,7 @@ public:
 
   int getJointIndex(char* n)
   {
-    for(u32 i = 0; i < m_joints.size(); i++)
+    for(u32 i = 0; i < (u32) m_joints.size(); i++)
     {
       if(!strncmp(n, m_joints[i]->n, 31))
         return i;

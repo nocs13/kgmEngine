@@ -75,12 +75,12 @@ void kgmGuiText::moveLeft()
 
 void kgmGuiText::moveRight()
 {
-  if(index < m_text.length())
+  if(index < (u32) m_text.length())
     index++;
 
   u32 cpw = m_rect.width() / fwidth; // chars per width
 
-  if(place < cpw && place < m_text.length())
+  if(place < cpw && place < (u32) m_text.length())
     place++;
 }
 
@@ -95,7 +95,7 @@ void kgmGuiText::delLeft()
   if(index > 0)
     pt1 = kgmString(m_text.data(), index - 1);
 
-  if(index < m_text.length())
+  if(index < (u32) m_text.length())
     pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
   moveLeft();
@@ -110,16 +110,16 @@ void kgmGuiText::delRight()
   kgmString pt1;
   kgmString pt2;
 
-  if(!m_text.length() || (index == m_text.length()))
+  if(!m_text.length() || (index == (u32) m_text.length()))
     return;
 
   if(index != 0)
     pt1 = kgmString(m_text.data(), index);
 
-  if(index < m_text.length())
+  if(index < (u32) m_text.length())
     pt2 = kgmString(m_text.data() + index + 1, m_text.length() - index - 1);
 
-  if(index != 0 && index >= m_text.length())
+  if(index != 0 && index >= (u32) m_text.length())
     index--;
 
   m_text = pt1 + pt2;
@@ -211,7 +211,7 @@ void kgmGuiText::onKeyDown(int k)
     if(index != 0)
       pt1 = kgmString(m_text.data(), index);
 
-    if(index < m_text.length())
+    if(index < (u32) m_text.length())
       pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
     moveRight();

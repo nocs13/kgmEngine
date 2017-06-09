@@ -1,7 +1,7 @@
 #include "kgmGuiFileDialog.h"
-#include "../../kgmBase/kgmObject.h"
-#include "../../kgmSystem/kgmSystem.h"
-#include "../../kgmGraphics/kgmGui.h"
+#include "../kgmBase/kgmObject.h"
+#include "../kgmSystem/kgmSystem.h"
+#include "kgmGui.h"
 #include <dirent.h>
 
 // This in Singleton type object class.
@@ -27,8 +27,7 @@ kgmGuiFileDialog::kgmGuiFileDialog()
   localable = true;
   allsee = true;
 
-  slotListSelect.connect(this, (Slot<kgmGuiFileDialog, u32>::FN) &kgmGuiFileDialog::onListChange,
-                         &list->sigSelect);
+  slotListSelect.connect(this, (Slot<kgmGuiFileDialog, u32>::FN) &kgmGuiFileDialog::onListChange, &list->sigSelect);
 
 #ifdef WIN32
   DIRCON = "\\";
@@ -171,7 +170,7 @@ void kgmGuiFileDialog::listFolder()
 
       if(filter.length() > 0)
       {
-        if(filter.length() <= strlen(ent->d_name))
+        if(filter.length() <= (s32) strlen(ent->d_name))
         {
           if(memcmp(filter.data(),
                     ent->d_name + strlen(ent->d_name) - filter.length(),

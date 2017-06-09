@@ -119,6 +119,8 @@ kgmString kgmMaterial::blendToString(u32 blend)
   case gcblend_dstialpha:
     return "idstalpha";
   }
+
+  return "";
 }
 
 u32 kgmMaterial::stringToBlend(kgmString blend)
@@ -129,6 +131,8 @@ u32 kgmMaterial::stringToBlend(kgmString blend)
   else if(blend == "dstalpha") return gcblend_dstalpha;
   else if(blend == "isrcalpha") return gcblend_srcialpha;
   else if(blend == "idstalpha") return gcblend_dstialpha;
+
+  return 0;
 }
 
 
