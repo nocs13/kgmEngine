@@ -8,7 +8,8 @@
 
 #ifdef WIN32
 #include <windows.h>
-#elif defined LINUX
+#elif defined(ANDROID)
+#else
 #endif
 
 #ifdef ANDROID
@@ -32,8 +33,8 @@
 typedef u32 GLu32;
 
 #else
+
 #include <GL/gl.h>
-//#include <GL/glu.h>
 #include "inc/glext.h"
 
 #ifndef GL_OBJECT_COMPILE_STATUS
@@ -42,6 +43,7 @@ typedef u32 GLu32;
 
 #ifndef GL_OBJECT_LINK_STATUS
 #define GL_OBJECT_LINK_STATUS GL_OBJECT_LINK_STATUS_ARB
+
 #endif
 #endif
 
@@ -50,9 +52,11 @@ typedef u32 GLu32;
 #ifdef GLES_1
 #define glClearDepth           glClearDepthf
 #define glOrtho                glOrthof
+
 #endif
 
 #ifdef GLES_2
+
 #define glClearDepth           glClearDepthf
 #define glCreateProgramObject  glCreateProgram
 #define glCreateShaderObject   glCreateShader
@@ -66,6 +70,7 @@ typedef u32 GLu32;
 #define GL_OBJECT_COMPILE_STATUS GL_ATTACHED_SHADERS
 #define GL_OBJECT_LINK_STATUS    GL_LINK_STATUS
 #define GL_GENERATE_MIPMAP       GL_GENERATE_MIPMAP_HINT
+
 #endif
 
 #define GL_RED                   0x1903
@@ -78,7 +83,9 @@ typedef u32 GLu32;
 #define GLcharARB GLchar
 
 #else
+
 #define GLhandle GLhandleARB
+
 #endif
 
 class kgmOGLWindow;
@@ -240,7 +247,7 @@ public:
     return GL_ZERO;
   }
 
-  GLenum gl_blend(gc_enum e)
+  GLenum gl_blend(u32 e)
   {
     switch(e)
     {
@@ -259,7 +266,7 @@ public:
     return GL_ZERO;
   }
 
-  GLenum gl_primitive(gc_enum e)
+  GLenum gl_primitive(u32 e)
   {
     switch(e)
     {

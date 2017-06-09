@@ -9,9 +9,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-static u32 error = 0;
-
 #ifdef OAL
+
+static u32 error = 0;
 
 kgmOAL::_Sound::_Sound(u32 buf, u32 src)
 {

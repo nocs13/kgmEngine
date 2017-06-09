@@ -7,7 +7,7 @@ void kgmThread::thread(kgmThread *p)
     return;
 
 #ifdef WIN32
-
+#elif defined (ANDROID)
 #else
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 #endif

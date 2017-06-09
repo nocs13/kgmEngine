@@ -14,9 +14,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-static u32 error = 0;
-
 #ifdef DSOUND
+static u32 error = 0;
 
 void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
                               DWORD_PTR dwReserved1, DWORD_PTR dwReserved2)

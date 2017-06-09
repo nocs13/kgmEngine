@@ -255,7 +255,7 @@ void kgmOGL::gcRender()
 
   SwapBuffers(m_wnd->m_hdc);
 
-#elif defined(ANDROIDXXX)
+#elif defined(ANDROID)
 
   eglSwapBuffers(m_wnd->display, m_wnd->surface);
 
@@ -281,7 +281,6 @@ void kgmOGL::gcSetTarget(void* t)
 
   if(err != GL_NO_ERROR)
   {
-    int k = 0;
   }
 
   GLint ipar = 0;
@@ -292,7 +291,6 @@ void kgmOGL::gcSetTarget(void* t)
 
   if(ipar == 0)
   {
-    int k = 0;
   }
 #endif
   //  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
@@ -483,7 +481,15 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLu32  fmt_bt = 0;
 
 #ifdef DEBUG
+
   kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
+
+#endif
+
+#ifdef ANDROID
+
+  (void)fmt_bt;
+
 #endif
 
   switch(fmt)
@@ -498,26 +504,42 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     break;
   case gctex_fmt24:
     pic_fmt = GL_RGB;
+
 #ifdef GL_COMPRESSED_RGB_ARB
+
     fmt_bt = GL_COMPRESSED_RGB_ARB;
+
 #else
+
     fmt_bt = 3;
+
 #endif
+
     break;
   case gctex_fmt32:
     pic_fmt = GL_RGBA;
+
 #ifdef GL_COMPRESSED_RGBA_ARB
+
     fmt_bt = GL_COMPRESSED_RGBA_ARB;
+
 #else
+
     fmt_bt = 4;
+
 #endif
+
     break;
+
 #ifdef GL_DEPTH_COMPONENT
+
   case gctex_fmtdepth:
     pic_fmt = GL_DEPTH_COMPONENT;
     fmt_bt = GL_DEPTH_COMPONENT;
     break;
+
 #endif
+
   }
 
   switch(type)
@@ -527,26 +549,34 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glBindTexture(GL_TEXTURE_2D, tex);
     break;
 #ifdef GL_TEXTURE_CUBE_MAP
+
   case gctype_texcube:
     glEnable(GL_TEXTURE_CUBE_MAP);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     break;
+
 #endif
+
 #ifdef GL_FRAMEBUFFER
+
   case gctype_textarget:
     glGenFramebuffers(1, &frame);
     glBindFramebuffer(GL_FRAMEBUFFER, frame);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     break;
+
 #endif
+
   }
 
   if(tex == 0)
   {
 #ifdef DEBUG
+
     kgm_log() << "gl: no generated texture";
+
 #endif
 
     return null;
@@ -555,6 +585,13 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   const  GLubyte* p_str = null;
   GLenum err = 0;
 
+#ifdef ANDROID
+
+  (void)p_str;
+  (void)err;
+
+#endif
+
   switch(type)
   {
   case gctype_tex2d:
@@ -562,18 +599,24 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
 
 #ifdef GL_DEPTH_TEXTURE_MODE
+
     if(fmt == gctex_fmtdepth)
     {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
       glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
     }
+
 #endif
 
 #ifdef ANDROID
+
     glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+
 #else
+
     glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+
 #endif
 
 #ifdef DEBUG

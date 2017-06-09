@@ -3,8 +3,7 @@
 
 #ifdef WIN32
 #include <windows.h>
-#endif
-#ifdef LINUX
+#else
 #include <dlfcn.h>
 #endif
 
@@ -20,7 +19,6 @@
 //  do nothing and hope for the best?
 #define KGM_LIB_EXPORT
 #define KGM_LIB_IMPORT
-#pragma warning Unknown dynamic link import/export semantics.
 #endif
 
 #include "../kgmBase/kgmObject.h"

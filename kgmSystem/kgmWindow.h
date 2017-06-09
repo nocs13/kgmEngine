@@ -110,6 +110,7 @@ public:
 
 #ifdef WIN32
   static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
+#elif defined(ANDROID)
 #else
   static int WndProc(kgmWindow*, XEvent*);
 #endif

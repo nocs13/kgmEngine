@@ -259,9 +259,10 @@ kgmAlsa::kgmAlsa()
   if (m_lib.open((char*) "libasound.so.2") || m_lib.open((char*) "libasound.so.1") ||
       m_lib.open((char*) "libasound.so.0") || m_lib.open((char*) "libasound.so"))
   {
-    size_t err = 0;
 
 #ifdef ALSA
+    size_t err = 0;
+
 #define LOAD_FUNC(f) p##f = (PCM_FUNC) m_lib.get((char*) #f)
     LOAD_FUNC(snd_strerror);
     LOAD_FUNC(snd_pcm_open);

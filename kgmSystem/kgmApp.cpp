@@ -7,10 +7,9 @@
 
 #ifdef WIN32
 #include <windows.h>
-#endif
-
-#ifdef LINUX
+#else
 #include <unistd.h>
+#include <sys/types.h>
 #endif
 
 static void kgm_signal_handler(int s);
@@ -56,6 +55,12 @@ void kgm_sigterm_handler(int s)
     kgmApp::application()->abort();
 }
 
+void kgm_signal_handler(int s)
+{
+  printf("Caught signal %d\n",s);
+  exit(1);
+}
+
 //FOR WINDOWS
 #if defined WIN32
 HINSTANCE hInst = 0;
@@ -66,7 +71,6 @@ LONG kgmDumper(struct _EXCEPTION_POINTERS* pe)
 }
 
 #if defined _USRDLL
-//DLL MAIN Function
 BOOL __stdcall DllMain(HANDLE a, DWORD b, DWORD c){
   hInst = a;
   switch(b)
@@ -81,7 +85,6 @@ BOOL __stdcall DllMain(HANDLE a, DWORD b, DWORD c){
   return TRUE;
 }
 #else
-//WinMain  Function
 int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 {
   typedef char* char_ptr;
@@ -167,7 +170,6 @@ int main(int argc, char** argv){
 
 //FOR ANDROID
 #ifdef ANDROID
-/*
 #include <jni.h>
 #include <android/log.h>
 
@@ -184,10 +186,14 @@ JNIEXPORT int JNICALL Java_com_android_kgmEngine_kgmEngine_main(JNIEnv * env, jo
 {
   int rValue = 0;
 
-  if(kgmApp::application())
-    kgmApp::application()->main();
+  signal(SIGINT,   kgm_signal_handler);
+  signal(SIGILL,   kgm_signal_handler);
+  signal(SIGSEGV,  kgm_signal_handler);
+  signal(SIGABRT,  kgm_signal_handler);
+  signal(SIGTERM,  kgm_sigterm_handler);
 
-  kgmObject::releaseObjects();
+  if(kgmApp::application())
+    kgmApp::application()->main(0, null);
 
   return rValue;
 }
@@ -195,13 +201,6 @@ JNIEXPORT int JNICALL Java_com_android_kgmEngine_kgmEngine_main(JNIEnv * env, jo
 int main()
 {
   return 0;
-}*/
-#endif
-
-void kgm_signal_handler(int s)
-{
-  printf("Caught signal %d\n",s);
-  exit(1);
 }
-/////////
+#endif
 

@@ -25,6 +25,7 @@ const char* maps[] =
   "map test2", "map002.map",
   "map test3", "map003.map",
   "map test4", "map004.map",
+  "map test5", "map005.map",
 };
 
 class kGame;

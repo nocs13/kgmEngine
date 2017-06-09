@@ -33,7 +33,7 @@ class kgmAlsa: public kgmIAudio
       object   = obj;
       callback = fn;
 
-      exec();
+      return exec();
     }
 
     void run()

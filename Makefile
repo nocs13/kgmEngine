@@ -41,6 +41,16 @@ $(OUT_A): $(objects)
 
 $(OUT_SO): $(OUT_A)
 	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+	
+android_static:
+	echo 'Start android static library build'
+	make -C android
+	
+android: android_static
+	echo 'Start android applibuild'
+	make -C android
+	cd android
+	ndk-build
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk

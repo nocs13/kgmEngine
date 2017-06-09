@@ -19,10 +19,6 @@
  #include <signal.h>
 #endif
 
-#ifdef WIN32
-#else
-#endif
-
 class kgmThread: public kgmObject
 {
   KGM_OBJECT(kgmThread);
