@@ -2,7 +2,6 @@
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmMemory.h"
 
-static short g_gsid = 0x0101;
 kgmString kgmGameSettings::m_name = "settings.cfg";
 
 kgmGameSettings::kgmGameSettings()

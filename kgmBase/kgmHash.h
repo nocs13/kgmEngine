@@ -116,7 +116,7 @@ public:
 
     if (type != HfnNone)
     {
-      switch(type)
+      switch((u32) type)
       {
       case HfnSimple:
         hash = kgmHashFunction::simple((u8*) &key, sizeof(key));

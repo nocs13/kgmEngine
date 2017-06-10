@@ -125,7 +125,7 @@ public:
 
   kgmString toString()
   {
-    switch(type)
+    switch((u32) type)
     {
     case TFloat:
       return kgmConvert::toString(v_float);
@@ -138,6 +138,8 @@ public:
     case TString:
       return v_string;
     }
+
+    return "";
   }
 
   kgmString getString()
@@ -214,7 +216,7 @@ public:
 
     if(s == SyncToLink)
     {
-      switch(type)
+      switch((u32) type)
       {
       case TFloat:
         *((f32*)x_linked) = v_float;
@@ -235,7 +237,7 @@ public:
     }
     else if(s == SyncFromLink)
     {
-      switch(type)
+      switch((u32) type)
       {
       case TFloat:
         v_float = *((f32*)x_linked);
@@ -258,7 +260,7 @@ public:
 
   void fromString(kgmString s)
   {
-    switch(type)
+    switch((u32) type)
     {
     case TFloat:
       v_float = kgmConvert::toDouble(s);

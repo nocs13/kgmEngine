@@ -100,9 +100,9 @@ public:
       return false;
     }
     
-    for(int i = 0; i < head.entries; i++)
+    for(u32 i = 0; i < head.entries; i++)
     {
-      Entry entry = {0};
+      Entry entry = {{0}};
       archive.read(entry.name,    64);
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);
@@ -197,10 +197,13 @@ public:
     char  buf[64];
     int   res = 0;
 
-    while(res = narch.read(buf, 64))
+    do
     {
-      res = archive.write(buf, res);
-    }
+      res = narch.read(buf, 64);
+
+      if (res)
+        res = archive.write(buf, res);
+    }while(res);
 
     narch.close();
     kgmFile::remove_file(narch_s);
@@ -220,9 +223,9 @@ public:
       return false;
     }
 
-    for(int i = 0; i < head.entries; i++)
+    for(u32 i = 0; i < head.entries; i++)
     {
-      Entry entry = {0};
+      Entry entry = {{0}};
       archive.read(entry.name,    sizeof(entry.name));
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);
@@ -266,7 +269,7 @@ public:
     else
       pn = f;
     
-    Entry e = {0};
+    Entry e = {{0}};
     strcpy(e.name, pn);
     e.size = ff.length();
     e.valid = true;
@@ -291,12 +294,11 @@ public:
   bool erase(kgmString id)
   {
     u32 i = 0;
-    Entry *pe = 0;
 
     if(!id.length() || !archive.valid())
       return false;
 
-    for(i = 0; i < toc.size(); i++)
+    for(i = 0; i < (u32) toc.size(); i++)
     {
       if(id == (const char*)toc[i].name)
       {
@@ -316,7 +318,7 @@ public:
     if(!id.length() || !archive.valid() || changed)
       return false;
     
-    for(u32 i = 0; i < toc.size(); i++)
+    for(u32 i = 0; i < (u32) toc.size(); i++)
     {
       if(!strcmp(id, toc[i].name))
         pe = &toc[i];
@@ -339,7 +341,7 @@ public:
     if(!archive.valid() || changed)
       return false;
 
-    if(index >= toc.size())
+    if(index >= (u32) toc.size())
       return false;
 
     pe = &toc[index];
@@ -362,7 +364,7 @@ public:
 
   void info(u32 i, kgmString& name, u32& size, u32& offset)
   {
-    if(i < 0 || i >= toc.size())
+    if(i < 0 || i >= (u32) toc.size())
       return;
 
     name   = toc[i].name;

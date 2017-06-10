@@ -48,8 +48,9 @@ kgmXml::Node* kgmXml::Node::parent(){
   return m_parent;
 }
 
-int   kgmXml::Node::nodes(){
-  m_nodes.size();
+int kgmXml::Node::nodes()
+{
+  return m_nodes.size();
 }
 
 kgmXml::Node* kgmXml::Node::node(int i){
@@ -136,25 +137,26 @@ kgmXml::~kgmXml()
     delete m_node;
 }
 
-kgmXml::Node* kgmXml::parse(void* mem, int size){
-  int pos = 0;
-  int cpos = 0;      //select new probably position
-  char a = 0;
-  char charString = 0; //string started with char ' or "
-  bool isTag = false;
-  bool isTab = false;
+kgmXml::Node* kgmXml::parse(void* mem, int size)
+{
+  //int pos = 0;
+  //int cpos = 0;      //select new probably position
+  //char a = 0;
+  //char charString = 0; //string started with char ' or "
+  //bool isTag = false;
+  //bool isTab = false;
   bool isNode = false;
-  bool isString = false;
-  bool isNodeName = false;
+  //bool isString = false;
+  //bool isNodeName = false;
   Node* node = 0;
   Node* base = 0;
-  Attribute* attr = 0;
+  //Attribute* attr = 0;
   unsigned char* p = (unsigned char*)mem;
 
   void* m_name_ref = 0;
   void* m_data_ref = 0;
   int   m_name_len = 0;
-  int   m_data_len = 0;
+  //int   m_data_len = 0;
 
   while((p - (unsigned char*)mem) < size){
     if(*p == '<'){
@@ -204,7 +206,9 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
           if(!memcmp(m_name_ref, cp, m_name_len))
             isNode = false;
           if(node->m_nodes.size())
-            m_data_len = 0;
+          {
+            //m_data_len = 0;
+          }
           else
           {
             kgmString s;
@@ -219,7 +223,7 @@ kgmXml::Node* kgmXml::parse(void* mem, int size){
         m_name_ref = 0;
         m_data_ref = 0;
         m_name_len = 0;
-        m_data_len = 0;
+        //m_data_len = 0;
 
         if(!base)  base = n;
         isNode = true;
@@ -412,7 +416,7 @@ kgmXml::XmlState kgmXml::next()
   m_tagName.alloc(m_position, (int)(pt - m_position));
   Attribute* attr = null;
 
-  while(pt=(char*)exeptSyms((unsigned char*)pt, (char*)" \t"))
+  while((pt = (s8 *) exeptSyms((u8*) pt, (s8*) " \t")))
   {
     if(*pt == '0')
     {
@@ -581,7 +585,7 @@ unsigned char* kgmXml::toSyms(unsigned char* m, char* to, int max){
   {
     char* c = to;
 
-    for(int i = 0; i < strlen(to); i++, c++)
+    for(u32 i = 0; i < strlen(to); i++, c++)
     {
       if(*m == *c)
       {
@@ -614,7 +618,7 @@ unsigned char* kgmXml::exeptSyms(unsigned char* m, char* to){
     char* c = to;
     loop = false;
 
-    for(int i = 0; i < strlen(to); i++)
+    for(u32 i = 0; i < strlen(to); i++)
     {
       if(*m == c[i])
       {

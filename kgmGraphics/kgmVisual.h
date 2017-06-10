@@ -254,7 +254,7 @@ public:
 
   void clear()
   {
-    switch(m_type)
+    switch((u32) m_type)
     {
     case TypeMesh:
       delete m_mesh;
@@ -431,6 +431,8 @@ public:
     m_type = TypeMesh;
 
     m_bound = m->bound();
+
+    return true;
   }
 
   Mesh* getMesh()
@@ -491,7 +493,7 @@ public:
     if(dtick < 50)
       return;
 
-    switch(m_type)
+    switch((u32) m_type)
     {
     case TypeMesh:
       animate();
@@ -538,7 +540,7 @@ private:
     if(m_floop && m_fset >= m_fend)
       m_fset = m_fstart;
 
-    for(u32 i = 0; i < m_skeleton->m_joints.size(); i++)
+    for(s32 i = 0; i <  m_skeleton->m_joints.size(); i++)
     {
       kgmSkeleton::Joint* joint = m_skeleton->m_joints[i];
       kgmAnimation::Animation* a = m_animation->getNode(joint->n);
@@ -571,8 +573,7 @@ private:
 
         for(u32 j = 0; j < 4; j++)
         {
-          int   bi = (int)indx[j];
-          float w  = wght[j];
+          int bi = (int)indx[j];
 
           if(bi < 0)
           {

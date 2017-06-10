@@ -168,7 +168,7 @@ void* kgm_dbg_malloc(const char* file, int line, size_t size)
   return memory;
 }
 
-void* kgm_dbg_free(const char* file, int line, void* memory)
+void kgm_dbg_free(const char* file, int line, void* memory)
 {
   //kgm_free(memory);
 

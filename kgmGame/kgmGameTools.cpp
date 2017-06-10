@@ -14,8 +14,6 @@
 #include "kgmActor.h"
 #include "kgmGameShaders.h"
 
-static char str_buf[1024];
-
 kgmGameTools::kgmGameTools()
 {
 }
@@ -242,7 +240,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   pm += idl;
   pdata = malloc(sizeof(char) * r_size);
   memcpy(pdata, pm, r_size);
-  u32 k = (u32)((u32*)pdata)[0];
+
   width = w;
   height = h;
   bpp = btcnt;
@@ -287,7 +285,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
   {
     int nwidth, nheight;
 
-    switch(kgmGraphics::textureQuality)
+    switch((u32) kgmGraphics::textureQuality)
     {
     case kgmGraphics::GraphicsQualityHight:
       nwidth = (256 >= (pic->width / 2)) ? (pic->width / 2) : (pic->width);
@@ -480,8 +478,6 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
   char* str = 0;
   char* key = 0;
   char* val = 0;
-  char* p   = (char*)m.data();
-  u32  i   = 0;
   float farr[4];
 
   if(m.empty())
@@ -595,8 +591,6 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
   char* str = 0;
   char* key = 0;
   char* val = 0;
-  char* p   = (char*)m.data();
-  u32  i   = 0;
 
   if(m.empty())
     return 0;
@@ -911,7 +905,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       sscanf(str, "%s %i %i", key, &count, &maps);
       v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         mm.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%f %f %f %f %f %f %f %f",
@@ -931,7 +925,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       f = (kgmMesh::Face_16*)m->fAlloc(count);
       fmaps.realloc(count);
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32 fi[3];
         mm.reads((u8*)str, 512, (u8*)"\n", 1);
@@ -950,7 +944,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
       kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32  nw = 0;
         u32  bi[4] = {0};
@@ -1031,7 +1025,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32 rd;
 
@@ -1058,7 +1052,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32 fi[3], rd;
         sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
@@ -1088,9 +1082,9 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
-        u32  nw = 0, rd = 0;
+        u32   rd = 0;
         int   bi[4] = {0};
         float bw[4] = {0.0f};
 
@@ -1162,14 +1156,14 @@ s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
         int       n = 0;
         char*     pdata = node->m_data.data();
 
-        for(int k = 0; k < count; k++)
+        for(u32 k = 0; k < count; k++)
         {
           sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
           (pdata) += (u32)n;
           pol[k] = v;
         }
 
-        for(int k = 2; k < count; k++)
+        for(u32 k = 2; k < count; k++)
         {
           shape.add(triangle3(pol[0], pol[k - 1], pol[k]));
           p_count++;
@@ -1216,14 +1210,14 @@ kgmShapeCollision* kgmGameTools::genShapeCollision(kgmXml& x)
         int       n = 0;
         char*     pdata = node->m_data.data();
 
-        for(int k = 0; k < count; k++)
+        for(u32 k = 0; k < count; k++)
         {
           sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
           (pdata) += (u32)n;
           pol[k] = v;
         }
 
-        for(int k = 2; k < count; k++)
+        for(u32 k = 2; k < count; k++)
         {
           shape->triangles.add(triangle3(pol[0], pol[k - 1], pol[k]));
         }
@@ -1244,7 +1238,7 @@ kgmCollision::Shape* kgmGameTools::genShapeCollision(kgmMesh &m)
   {
     shape = new kgmCollision::Shape();
 
-    for(int i = 0; i < m.fcount(); i++)
+    for(u32 i = 0; i < m.fcount(); i++)
     {
       vec3 a, b, c;
       u32  ia, ib, ic;
@@ -1281,7 +1275,7 @@ kgmCollision::Shape* kgmGameTools::genShapeCollision(kgmMesh &m)
   {
     vec3 a, b, c;
 
-    for(int i = 0; i < m.vcount(); i+=3)
+    for(u32 i = 0; i < m.vcount(); i+=3)
     {
       memcpy(&a, m.vertices() + (i    ) * m.vsize(), m.vsize());
       memcpy(&b, m.vertices() + (i + 1) * m.vsize(), m.vsize());
@@ -1517,7 +1511,7 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
       mnode->node(i)->data(data);
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32 rd;
         sscanf(p, "%f %f %f %f %f %f %f %f %n",
@@ -1538,7 +1532,7 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
       mnode->node(i)->data(data);
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
         u32 fi[3], rd;
         sscanf(p, "%i %i %i %n", &fi[0], &fi[1], &fi[2], &rd);
@@ -1560,9 +1554,9 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
 
       char* p = data.data();
 
-      for(int i = 0; i < count; i++)
+      for(u32 i = 0; i < count; i++)
       {
-        u32  nw = 0, rd = 0;
+        u32   rd = 0;
         int   bi[4] = {0};
         float bw[4] = {0.0f};
         sscanf(p, "%i %i %i %i %f %f %f %f %n",
@@ -1592,17 +1586,17 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
 
 kgmLight* kgmGameTools::parseLight(kgmXml::Node& node)
 {
-
+  return null;
 }
 
 kgmMaterial* kgmGameTools::parseMaterial(kgmXml::Node& node)
 {
-
+  return null;
 }
 
 kgmSkeleton* kgmGameTools::parseSkeleton(kgmXml::Node& node)
 {
-
+  return null;
 }
 
 bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmString id)
@@ -1709,14 +1703,14 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
                     int       n = 0;
                     char*     pdata = node->m_data.data();
 
-                    for(int k = 0; k < count; k++)
+                    for(u32 k = 0; k < count; k++)
                     {
                       sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
                       (pdata) += (u32)n;
                       pol[k] = v;
                     }
 
-                    for(int k = 2; k < count; k++)
+                    for(u32 k = 2; k < count; k++)
                     {
                       vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
 
@@ -1732,7 +1726,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         }
 
         if(actor->body()->m_convex.size() > 0)
-          actor->body()->m_shape == kgmBody::ShapePolyhedron;
+          actor->body()->m_shape = kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")

@@ -241,6 +241,8 @@ bool kgmGraphics::resource(kgmResource* r)
     return false;
 
   m_resources.add(r);
+
+  return true;
 }
 
 kgmResource* kgmGraphics::resource(kgmString id)
@@ -501,7 +503,7 @@ void kgmGraphics::render()
 
     pos_i = m_visible_visuals_alpha[i]->getTransform() * pos_i;
 
-    for(u32 j = i + 1; j < count_visible_alpha; j++)
+    for(s32 j = i + 1; j < count_visible_alpha; j++)
     {
       vec3 pos_j(0, 0, 0);
       pos_j = m_visible_visuals_alpha[j]->getTransform() * pos_i;
@@ -520,7 +522,7 @@ void kgmGraphics::render()
 
   gc->gcDepth(true, false, gccmp_lequal);
 
-  for(int i = 0; i < count_visible_alpha; i++)
+  for(s32 i = 0; i < count_visible_alpha; i++)
   {
     kgmVisual* vis = m_visible_visuals_alpha[i];
     kgmMaterial* mtl = vis->getMaterial();
@@ -961,7 +963,7 @@ void kgmGraphics::render(kgmShader* s)
   {
     static vec4 lights[MAX_LIGHTS - 1];
 
-    for(int i = 0; i < (g_lights_count - 1); i++)
+    for(u32 i = 0; i < (g_lights_count - 1); i++)
     {
       lights[i] = vec4(g_lights[i + 1]->position.x, g_lights[i + 1]->position.y,
           g_lights[i + 1]->position.z, g_lights[i + 1]->intensity);

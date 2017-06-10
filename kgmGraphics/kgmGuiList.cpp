@@ -163,9 +163,9 @@ void kgmGuiList::sort()
       if(*i == *j)
         continue;
 
-      for(u32 k = 0; k < (*i).length(); k++)
+      for(s32 k = 0; k < (*i).length(); k++)
       {
-        if((k >= (*j).length()) || ((*i)[k] > (*j)[k]))
+        if((k >= (*j).length()) || ((*i)[(u32) k] > (*j)[(u32) k]))
         {
           kgmString tmp = (*j);
 
@@ -175,7 +175,7 @@ void kgmGuiList::sort()
 
           break;
         }
-        else if((*i)[k] < (*j)[k])
+        else if((*i)[(u32) k] < (*j)[(u32) k])
         {
           break;
         }
@@ -206,7 +206,7 @@ void kgmGuiList::onMsMove(int k, int x, int y)
 {
   if(m_scroll->visible() && m_scroll->m_rect.inside(x, y))
     return m_scroll->onMsMove(k, x - m_scroll->m_rect.x, y - m_scroll->m_rect.y);
-  else if((y / m_itemHeight < m_items.size()) &&
+  else if((y / (s32) m_itemHeight < m_items.size()) &&
           (y < (m_rect.y + m_rect.h - 1)))
     m_itemPnt = getFirstVisibleItem() +  y / m_itemHeight;
 }
@@ -230,14 +230,14 @@ void kgmGuiList::onKeyDown(int k)
   case KEY_UP:
     if(m_itemSel > 0)
       m_itemSel--;
-    if(m_itemSel < m_position)
+    if(m_itemSel < (s32) m_position)
       m_position = m_itemSel;
     m_scroll->setPosition(m_position);
     break;
   case KEY_DOWN:
     if(m_itemSel < (m_items.size() - 1))
       m_itemSel++;
-    if(m_itemSel >= (m_position + iir))
+    if(m_itemSel >= (s32) (m_position + iir))
       m_position++;
     m_scroll->setPosition(m_position);
     break;

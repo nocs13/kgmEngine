@@ -136,12 +136,10 @@ u32 kgmUnit::timeout()
 
 void kgmUnit::update(u32 mls)
 {
-  u32 ct = kgmTime::getTicks();
-
   if(removed())
     return;
 
-  if((getLiving() != -1) && (timeout() > getLiving()))
+  if((getLiving() != (u32) -1) && (timeout() > getLiving()))
   {
     remove();
 

@@ -11,6 +11,8 @@ inline s16 snd_normalize(s16 val)
     val = max;
   else if(val < -max)
     val = -max;
+
+  return val;
 }
 
 kgmAudioMixer::kgmAudioMixer()
@@ -152,14 +154,12 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     vol_div[1] *= pan2;
   }
 
-  for(int i = 0; i < rframes; i++)
+  for(s32 i = 0; i < (s32) rframes; i++)
   {
     s32 ref = bytes_per_frame * i * divs;
 
     if(ref > buffer.length())
     {
-      int k = 0;
-
       break;
     }
 
@@ -195,7 +195,7 @@ u32  kgmAudioMixer::mixdata(void *data, u32 size, u32 chn, u32 bps, u32 sps, u16
     //a + b - (a * b) - 65535;
     //a + b - (a * b) / 65535;
 
-    for(int j = 0; j < divs; j++)
+    for(s32 j = 0; j < (s32) divs; j++)
     {
       u32 ref1 = bytes_per_frame * j;
       u32 ref2 = ref1 + bytes_per_sample;

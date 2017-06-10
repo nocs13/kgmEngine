@@ -59,7 +59,6 @@ public:
   kgmVector3d<T> vL = e - s;
   kgmVector3d<T> vV = v - s;
 
-  T lL = vL.length();
   T lV = vV.length();
   vL.normalize();
   vV.normalize();

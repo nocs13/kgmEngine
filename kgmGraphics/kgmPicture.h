@@ -200,7 +200,6 @@ public:
     pm += idl;
     pdata = (u8*)malloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);
-    u32 k = (u32)((u32*)pdata)[0];
     width = w;
     height = h;
     bpp = btcnt;

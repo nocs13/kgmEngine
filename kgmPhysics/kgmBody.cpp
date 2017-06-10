@@ -54,8 +54,6 @@ kgmBody::kgmBody(void* udata)
 
 kgmBody::~kgmBody()
 {
-  int i;
-
   m_convex.clear();
 }
 

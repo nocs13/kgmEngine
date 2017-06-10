@@ -21,6 +21,8 @@ bool kgmGameThreader::add(THREADER_FUNCTION fn, void *obj)
     return false;
 
   m_threaders[m_count++] = {fn, obj};
+
+  return true;
 }
 
 bool kgmGameThreader::finish()

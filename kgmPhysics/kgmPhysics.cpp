@@ -137,9 +137,6 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos)
 
 void kgmPhysics::doCollision(float dtime)
 {
-  float G = 1.0f;
-  u32  stime = kgmTime::getTicks();
-
   u16 max_triangles = 5000;
   u16 max_bodies = 50;
 
@@ -157,7 +154,7 @@ void kgmPhysics::doCollision(float dtime)
 
     bool  holddown = false;
     bool  upstare  = false;
-    bool  insect   = false;
+    //bool  insect   = false;
     u32   ccount   = 0;
     cylinder  cbound;
     sphere    sbound;
@@ -179,17 +176,14 @@ void kgmPhysics::doCollision(float dtime)
 
 #ifdef DEBUG
     body->m_intersect = false;
+#else
 #endif
 
     //body->m_V.z = 0.0f;
-    vec3 bdPos = m_ptCurrent = body->m_position;
     float gdist = 5 * ctime * body->m_mass;
     vec3  spos = body->m_position;
     vec3  epos = body->m_position + body->direction() * (body->m_velocity * ctime);
 
-    vec3 b_min = body->m_bound.min;
-    vec3 b_max = body->m_bound.max;
-    float crad = b_min.distance(b_max) * 0.5f;
     float rx = 0.5f * (body->m_bound.max.x - body->m_bound.min.x),//crad,
         ry = 0.5f * (body->m_bound.max.y - body->m_bound.min.y),//crad,
         rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
@@ -202,7 +196,6 @@ void kgmPhysics::doCollision(float dtime)
     }
 
     vec3  pt_ins;
-    float len = 0.0f;
 
     sinteract.center = body->m_position;
     sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
@@ -210,7 +203,7 @@ void kgmPhysics::doCollision(float dtime)
 
     u32 cbodies = getBodies(bodies, max_bodies, sinteract);
 
-    for(int k = 0; k < cbodies; k++)
+    for(u32 k = 0; k < cbodies; k++)
     {
       kgmBody* cbody = bodies[k];
 
@@ -223,10 +216,8 @@ void kgmPhysics::doCollision(float dtime)
       vec3 pt_ins, nr_ins;
       vec3 cs = cbody->m_position;
       vec3 cd = cbody->m_position + cbody->direction();
-      vec3 cr = cbody->rotation();
       vec3 s = body->m_position;
       vec3 d = epos;
-      vec3 r = body->rotation();
 
       //		npos.z = zpos;
 
@@ -295,23 +286,12 @@ void kgmPhysics::doCollision(float dtime)
 
         }
 
-        int  k = 0;
-        insect = binsect = true;
+        binsect = true;
         pt_ins = m_collision.m_point;
         nr_ins = m_collision.m_normal;
         kgmPlane3d<float> pln(nr_ins, pt_ins);
         vec3 pr_end = pln.projection(d);
-        float dist = pln.distance(d);
         ccount++;
-
-        if(dist >= 0.0)
-        {
-          len = (float)fabs(crad - dist);
-        }
-        else
-        {
-          len = crad + (float)fabs(dist);
-        }
 
         vec3 n = m_collision.m_normal;
         n = pln.normal();
@@ -356,11 +336,10 @@ void kgmPhysics::doCollision(float dtime)
 
     u32 ctriangles = getTriangles(triangles, max_triangles, sinteract);
 
-    for(int j = 0; j < ctriangles; j++)
+    for(u32 j = 0; j < ctriangles; j++)
     {
       triangle3  trn = triangles[j];
       plane pln(trn.pt[0], trn.pt[1], trn.pt[2]);
-      bool iscollision = false;
       vec3 n = vec3(0, 0, 0);
       vec3 s = body->m_position;
       vec3 d = epos;
@@ -373,10 +352,8 @@ void kgmPhysics::doCollision(float dtime)
       if(m_collision.collision(s, d, rx, ry, rz, &trn.pt[0], 3))
       {
         vec3 pr_e = m_collision.m_point;
-        vec3 pr_s = pln.projection(s);
         n = m_collision.m_normal;
         float z = 0.0;
-        insect = true;
         ccount++;
 
         if(n.z < 0.0f){
@@ -454,10 +431,9 @@ void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s)
   int i = 0;
   int count = m_triangles.size();
 
-  for(i; i < count; i++)
+  for(; i < count; i++)
   {
     triangle3 t = m_triangles[i];
-    vec3 mn = t.pt[0];
     vec3 ct;
     ct.x = (t.pt[0].x + t.pt[1].x + t.pt[2].x) * 0.3333333;
     ct.y = (t.pt[0].y + t.pt[1].y + t.pt[2].y) * 0.3333333;
@@ -481,7 +457,7 @@ void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s)
   int i = 0;
   int count = m_bodies.size();
 
-  for(i; i < count; i++)
+  for(; i < count; i++)
   {
     sphere3 bs(m_bodies[i]->m_bound);	bs.center = m_bodies[i]->m_position;
     vec3	  ds = s.center - bs.center;

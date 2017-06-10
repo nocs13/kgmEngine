@@ -45,7 +45,7 @@ public:
 
   void set(u32 c, bool p)
   {
-    if(c >= chanels.length() || chanels[c] == p)
+    if(c >= (u32) chanels.length() || chanels[c] == p)
       return;
 
     bool prev = state();

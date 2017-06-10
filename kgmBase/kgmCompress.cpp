@@ -94,5 +94,5 @@ bool kgmCompress::rle0_extract(kgmArray<u8> &data)
   if(type != TypeRle0 || compressed.length() < 2)
     return false;
 
-
+  return true;
 }

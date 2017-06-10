@@ -140,10 +140,10 @@ bool kgmActor::setState(kgmString s, bool force)
 
     if(state->sound && state->sound->getSound())
     {
-      game()->getAudio()->play(state->sound->getSound(), (state->timeout == -1) ? (true) : (false));
+      game()->getAudio()->play(state->sound->getSound(), (state->timeout == (u32) -1) ? (true) : (false));
     }
 
-    m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == -1)?(true):(false));
+    m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == (u32) -1)?(true):(false));
 
     state->stime = kgmTime::getTicks();
 

@@ -17,8 +17,6 @@
   #include <android/asset_manager_jni.h>
 #endif
 
-static char str_buf[256];
-
 kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
   m_gc    = gc;
@@ -156,7 +154,6 @@ void kgmGameResources::addPath(kgmString s)
 bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 {
   kgmString path;
-  int   i = 0;
 
   if(!id)
     return false;
@@ -196,7 +193,7 @@ bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 
 #else
 
-  for(i = 0; i < m_paths.size(); i++)
+  for(s32 i = 0; i < m_paths.size(); i++)
   {
     kgmFile file;
 

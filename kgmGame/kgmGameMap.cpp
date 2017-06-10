@@ -27,6 +27,8 @@ bool kgmGameMap::open(kgmXml& xml)
     m_xml->m_node = new kgmXml::Node(null);
     m_xml->m_node->m_name = "kgm";
   }
+
+  return true;
 }
 
 bool kgmGameMap::open(kgmMemory<u8>& mem)
@@ -35,6 +37,8 @@ bool kgmGameMap::open(kgmMemory<u8>& mem)
     return false;
 
   m_mem = &mem;
+
+  return true;
 }
 
 bool kgmGameMap::save(kgmString path)
@@ -140,6 +144,8 @@ bool kgmGameMap::addLight(kgmUnit* n)
     if(n->lock())
       addLocked(*node, n->lock());
   }
+
+  return true;
 }
 
 bool kgmGameMap::addCamera(kgmUnit* n)
@@ -169,6 +175,8 @@ bool kgmGameMap::addCamera(kgmUnit* n)
     if(n->lock())
       addLocked(*node, n->lock());
   }
+
+  return true;
 }
 
 bool kgmGameMap::addVisual(kgmUnit* n)
@@ -179,7 +187,7 @@ bool kgmGameMap::addVisual(kgmUnit* n)
   if(m_xml && m_xml->m_node->m_name == "kgm")
   {
     kgmXml::Node* node = new kgmXml::Node(m_xml->m_node);
-    kgmXml::Node* snode = null;
+    //kgmXml::Node* snode = null;
 
     node->m_name = "Visual";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
@@ -223,6 +231,8 @@ bool kgmGameMap::addVisual(kgmUnit* n)
     if(n->lock())
       addLocked(*node, n->lock());
   }
+
+  return true;
 }
 
 bool kgmGameMap::addActor(kgmActor* n)
@@ -254,6 +264,8 @@ bool kgmGameMap::addActor(kgmActor* n)
 
     addParameters(*node, n->m_variables);
   }
+
+  return true;
 }
 
 bool kgmGameMap::addEffect(kgmEffect* n)
@@ -280,6 +292,8 @@ bool kgmGameMap::addEffect(kgmEffect* n)
 
     addParameters(*node, n->m_variables);
   }
+
+  return true;
 }
 
 bool kgmGameMap::addSensor(kgmSensor* n)
@@ -306,6 +320,8 @@ bool kgmGameMap::addSensor(kgmSensor* n)
 
     addParameters(*node, n->m_variables);
   }
+
+  return true;
 }
 
 bool kgmGameMap::addTrigger(kgmTrigger* n)
@@ -333,6 +349,8 @@ bool kgmGameMap::addTrigger(kgmTrigger* n)
 
     addParameters(*node, n->m_variables);
   }
+
+  return true;
 }
 
 bool kgmGameMap::addUnit(kgmUnit* n)
@@ -370,6 +388,8 @@ bool kgmGameMap::addUnit(kgmUnit* n)
 
     addParameters(*node, n->m_variables);
   }
+
+  return true;
 }
 
 kgmUnit* kgmGameMap::next()

@@ -19,7 +19,7 @@ inline bool ptInPolygon(vec3& pt, vec3* poly, u32 points)
 {
   double angle = 0.0;
 
-  for(int i = 0; i < points; i++)
+  for(u32 i = 0; i < points; i++)
   {
     vec3 vs;
     vec3 ve;
@@ -45,7 +45,7 @@ inline bool ptInPolygon(vec3& pt, vec3* poly, u32 points)
 
 inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* poly, u32 points)
 {
-  for(int i = 0; i < points; i++)
+  for(u32 i = 0; i < points; i++)
   {
     vec3  vs;
     vec3  ve;
@@ -202,7 +202,7 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius, vec3* poly, u
   {
     sphere3 sphere(pt_insect, radius);
 
-    for(int i = 0; i < points ; i++)
+    for(u32 i = 0; i < points ; i++)
     {
       line3 line;
 
@@ -240,10 +240,10 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
   line3  line(start, end);
   vec3   pt_insect;
   vec3   pr_start, pr_end, pr_delta;
-  bool   b_plinsect = false;
+  //bool   b_plinsect = false;
 
-  float	s_dist = plane.distance(start),
-        e_dist = plane.distance(end);
+  //float	s_dist = plane.distance(start),
+  //      e_dist = plane.distance(end);
 
   // if(s_dist < 0.0) return false;;
   pr_start	= plane.projection(start);
@@ -333,7 +333,7 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
   box_sides[5][2] = box_points[7];
   box_sides[5][3] = box_points[6];
 
-  float dist = -1.0f;
+  //float dist = -1.0f;
   vec3  ptins;
   m_collision = false;
 
@@ -494,10 +494,10 @@ bool kgmCollision::collision(vec3& start, vec3& end,
   vec3 pt_proj;
   vec3 pt_temp;
   float dist_proj;
-  float dist_sbox_proj;
+  //float dist_sbox_proj;
 
-  vec3 pt_mbox = (mbox.min + mbox.max) * 0.5f;
-  pt_mbox.z = mbox.min.z;
+  //vec3 pt_mbox = (mbox.min + mbox.max) * 0.5f;
+  //pt_mbox.z = mbox.min.z;
   vec3 pr_mbox = mbox.max - mbox.min;
   vec3 pt_sbox = (sbox.min + sbox.max) * 0.5f;
   pt_sbox.z = sbox.min.z;
@@ -677,7 +677,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
     polygon3* poly = (*i);
     vec3*     points = new vec3[poly->m_count];
 
-    for(int j = 0; j < poly->m_count; j++)
+    for(u32 j = 0; j < poly->m_count; j++)
     {
       points[j] = d_tran * poly->m_points[j];
     }
@@ -709,7 +709,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
         sides = 0;
         cross = false;
 
-        for(int k = 0; k < poly->m_count; k++)
+        for(u32 k = 0; k < poly->m_count; k++)
         {
           float dist = s_planes[j].distance(s_points[j]);
 

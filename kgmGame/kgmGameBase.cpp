@@ -128,10 +128,10 @@ kgmGameBase::kgmGameBase(bool edit)
   log("set input map...");
   memset(m_keys, 0, sizeof(m_keys));
 
-  for(int i = 0; i < sizeof(m_keymap); i++)
+  for(u32 i = 0; i < sizeof(m_keymap); i++)
     m_keymap[i] = 0;
 
-  for(int i = 0; i < sizeof(m_input); i++)
+  for(u32 i = 0; i < sizeof(m_input); i++)
     m_input[i] = 0;
 
   m_keymap[KEY_LEFT]    = m_keymap[KEY_A] = (char)gbtn_left;
@@ -398,10 +398,10 @@ void kgmGameBase::onKeyUp(int k)
 {
   m_keys[k] = 0;
 
-  if(m_logic && (m_state == State_Play || m_state == State_Edit) && m_input[m_keymap[k]] != 0)
+  if(m_logic && (m_state == State_Play || m_state == State_Edit) && m_input[(u32) m_keymap[k]] != 0)
   {
     m_logic->input(m_keymap[k], 0);
-    m_input[m_keymap[k]] = 0;
+    m_input[(u32) m_keymap[k]] = 0;
   }
 
 #ifdef WIN32
@@ -420,43 +420,43 @@ void kgmGameBase::onKeyUp(int k)
 void kgmGameBase::onKeyDown(int k){
   m_keys[k] = 1;
 
-  if(m_logic && (m_state == State_Play || m_state == State_Edit) && (m_input[m_keymap[k]] != 1))
+  if(m_logic && (m_state == State_Play || m_state == State_Edit) && (m_input[(u32) m_keymap[k]] != 1))
   {
     m_logic->input(m_keymap[k], 1);
-    m_input[m_keymap[k]] = 1;
+    m_input[(u32) m_keymap[k]] = 1;
   }
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBLEFT]] != 0))
+  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBLEFT]] != 0))
   {
     m_logic->input(m_keymap[KEY_MSBLEFT], 0);
-    m_input[m_keymap[KEY_MSBLEFT]] = 0;
+    m_input[(u32) m_keymap[KEY_MSBLEFT]] = 0;
   }
 }
 
 void kgmGameBase::onMsLeftDown(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBLEFT]] != 1))
+  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBLEFT]] != 1))
   {
     m_logic->input(m_keymap[KEY_MSBLEFT], 1);
-    m_input[m_keymap[KEY_MSBLEFT]] = 1;
+    m_input[(u32) m_keymap[KEY_MSBLEFT]] = 1;
   }
 }
 
 void kgmGameBase::onMsRightUp(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBRIGHT]] != 0))
+  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBRIGHT]] != 0))
   {
     m_logic->input(m_keymap[KEY_MSBRIGHT], 0);
-    m_input[m_keymap[KEY_MSBRIGHT]] = 0;
+    m_input[(u32) m_keymap[KEY_MSBRIGHT]] = 0;
   }
 }
 
 void kgmGameBase::onMsRightDown(int k, int x, int y)
 {
-  if(m_logic && (m_state == State_Play) && (m_input[m_keymap[KEY_MSBRIGHT]] != 1))
+  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBRIGHT]] != 1))
   {
     m_logic->input(m_keymap[KEY_MSBRIGHT], 1);
-    m_input[m_keymap[KEY_MSBRIGHT]] = 1;
+    m_input[(u32) m_keymap[KEY_MSBRIGHT]] = 1;
   }
 }
 
@@ -761,18 +761,18 @@ bool kgmGameBase::loadXml(kgmString& path)
 
   u32             type = TypeNone;
   kgmMesh*        msh = 0;
-  kgmCamera*      cam = 0;
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
   kgmActor*       act = 0;
-  kgmUnit*  gob = 0;
+  kgmUnit*        gob = 0;
   kgmObject*      obj = 0;
   kgmVisual*      vis = 0;
 
-  u32             vts = 0,
-      fcs = 0;
+  u32             vts = 0;
 
   kgmString      m_data = "";
+
+  (void)obj;
 
   while(kgmXml::XmlState xstate = xml.next())
   {
@@ -875,28 +875,24 @@ bool kgmGameBase::loadXml(kgmString& path)
       }
       else if(id == "Vertices")
       {
-        int len = 0, n = 0;
-        kgmString data;
+        int len = 0;
 
         xml.attribute("length", value);
         sscanf(value.data(), "%i", &len);
-        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
+        msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
         m_data = "vertices";
       }
       else if(id == "Faces")
       {
-        int len = 0, n = 0;
-        kgmString data;
+        int len = 0;
 
         xml.attribute("length", value);
         sscanf(value.data(), "%i", &len);
-        kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->fAlloc(len, kgmMesh::FFF_16);
+        msh->fAlloc(len, kgmMesh::FFF_16);
         m_data = "faces";
       }
       else if(id == "Polygon")
       {
-        kgmString data;
-
         xml.attribute("vertices", value);
         sscanf(value.data(), "%i", &vts);
         m_data = "polygon";
@@ -1111,7 +1107,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         int n = 0;
         char* pdata = xml.m_tagData.data();
         kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vertices();
-        for(int i = 0; i < msh->vcount(); i++){
+
+        for (u32 i = 0; i < msh->vcount(); i++) {
           sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
                  &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
                  &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
@@ -1119,6 +1116,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           v[i].col = 0xffffffff;
           (pdata) += (u32)n;
         }
+
         m_data = "";
       }
       else if(m_data == "faces")
@@ -1126,7 +1124,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         int n = 0;
         char* pdata = xml.m_tagData.data();
         kgmMesh::Face_16* f = (kgmMesh::Face_16*)msh->faces();
-        for(int i = 0; i < msh->fcount(); i++){
+
+        for (u32 i = 0; i < msh->fcount(); i++) {
           u32 fs[4];
           sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
           f[i].f[0] = fs[0];
@@ -1134,11 +1133,11 @@ bool kgmGameBase::loadXml(kgmString& path)
           f[i].f[2] = fs[2];
           (pdata) += (u32)n;
         }
+
         m_data = "";
       }
       else if(m_data == "skin")
       {
-        char* pdata = xml.m_tagData.data();
         m_data = "";
       }
       else if(m_data == "polygon")
@@ -1150,13 +1149,13 @@ bool kgmGameBase::loadXml(kgmString& path)
         {
           vec3* v = new vec3[vts];
 
-          for(int i = 0; i < vts; i++)
+          for(u32 i = 0; i < vts; i++)
           {
             sscanf(pdata, "%f %f %f %n", &v[i].x, &v[i].y, &v[i].z, &n);
             (pdata) += (u32)n;
           }
 
-          for(int i = 1; i < vts - 1; i++)
+          for(u32 i = 1; i < vts - 1; i++)
           {
             m_physics->add(v[0], v[i], v[i+1]);
           }
@@ -1298,14 +1297,14 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
                     int       n = 0;
                     char*     pdata = node->m_data.data();
 
-                    for(int k = 0; k < count; k++)
+                    for(u32 k = 0; k < count; k++)
                     {
                       sscanf(pdata, "%f %f %f%n", &v.x, &v.y, &v.z, &n);
                       (pdata) += (u32)n;
                       pol[k] = v;
                     }
 
-                    for(int k = 2; k < count; k++)
+                    for(u32 k = 2; k < count; k++)
                     {
                       vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
 
@@ -1321,7 +1320,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
         }
 
         if(actor->body()->m_convex.size() > 0)
-          actor->body()->m_shape == kgmBody::ShapePolyhedron;
+          actor->body()->m_shape = (u32) kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")

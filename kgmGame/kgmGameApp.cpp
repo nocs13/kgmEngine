@@ -17,7 +17,7 @@ bool kgmGameApp::exportProject(kgmString path)
     return false;
   }
 
-  for (int i = 0; i < kgmUnit::g_typ_objects.length(); i++)
+  for (u32 i = 0; i < kgmUnit::g_typ_objects.length(); i++)
   {
 
   }
@@ -37,7 +37,7 @@ static JavaVM*        jvm = null;
 void kgmGameApp::android_init(JNIEnv* env, jobject obj, jint width, jint height, jobject am, jobject surface)
 {
   LOGI("Game init\n");
-  LOGI("args %i %i\n", am, env);
+  LOGI("args %p %p\n", am, env);
   AAssetManager* mgr = AAssetManager_fromJava(env, am);
   g_assetManager = mgr;
   env->NewGlobalRef(am);
@@ -120,7 +120,6 @@ void kgmGameApp::android_onKeyboard(JNIEnv* env, jobject obj, jint a, jint key)
 void kgmGameApp::android_onTouch(JNIEnv* env, jobject obj,  jint a, jint x, jint y)
 {
   static int  prev_x = 0, prev_y = 0;
-  static bool set = false;
 
 #ifdef DEBUG
   LOGI("Game onTouch %i %i %i\n", a, x, y);
