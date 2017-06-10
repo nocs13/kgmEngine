@@ -3,6 +3,11 @@
 
 #define KGM_TSTRING_MAX_COPY 1048576
 
+/*
+  int space=40;
+  printf("%*s",space,"Hello");
+*/
+
 template <class T>
 class kgmTString: public kgmArray<T>
 {
