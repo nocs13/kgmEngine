@@ -50,7 +50,7 @@ android: android_static
 	echo 'Start android applibuild'
 	make -C android
 	cd android
-	ndk-build
+	ant -Dbasedir android -f android/build.xml debug
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk
