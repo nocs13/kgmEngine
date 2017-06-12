@@ -378,7 +378,7 @@ public:
 
   void to_euler(kgmVector3d<T>& r)
   {
-    double angle_x, angle_y, angle_z, c, tr_x, tr_y, tr_z;
+    double angle_x, angle_y, angle_z, c, tr_x, tr_y;
     r.x = (T)asin(m[6]);
     r.y = (T)asin(m[8]);
     r.z = (T)asin(m[1]);

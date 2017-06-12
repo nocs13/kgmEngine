@@ -10,7 +10,7 @@ kgmSensor::kgmSensor(kgmIGame* g)
   m_type = Sensor;
 }
 
-void kgmSensor::event(kgmString e)
+void kgmSensor::event(kgmObject* a, kgmString e)
 {
   kgmUnit* o = kgmIGame::getGame()->getLogic()->getObjectById(target);
 

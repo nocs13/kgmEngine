@@ -10,7 +10,6 @@
 
 #include "kGlobals.h"
 #include "kGui.h"
-#include "Actors/ACamera.h"
 
 /*
  * valgrind --leak-check=full --show-leak-kinds=definite --track-origins=yes --error-limit=no -v  ./kTest > ktest.vlg 2>&1
@@ -28,67 +27,6 @@ const char* maps[] =
   "map test5", "map005.map",
 };
 
-class kGame;
-
-class ASp_Logic: public kgmGameLogic
-{
-  kgmIGame*  game;
-  kgmVisual* vtext;
-  kgmVisual* vresult;
-
-  u32        enemies;
-
-public:
-  ASp_Logic(kgmIGame* g)
-  :kgmGameLogic()
-  {
-    game    = g;
-    vtext   = null;
-    vresult = null;
-
-    enemies = 1;
-  }
-
-  bool add(kgmActor *act, bool input)
-  {
-    if(!act)
-      return false;
-
-    kgmGameLogic::add(kgm_ptr<kgmActor>(act));
-
-    if(act->m_gameplayer){}
-  }
-
-  void prepare()
-  {
-    enemies = 1;
-    kgmList<kgmUnit*> objs;
-    kgmGameLogic::build();
-
-    enemies = objs.size();
-    objs.clear();
-  }
-
-  void collide(kgmUnit *os, kgmUnit *od)
-  {
-    if(!vtext)
-    {
-      vtext = new kgmVisual();
-
-      kgmText* text = new kgmText();
-      text->m_rect  = uRect(10, 250, 500, 200);
-
-      vtext->set(text);
-      ((kgmGameBase*)game)->getRender()->add(vtext);
-//      text->release();
-//      vtext->release();
-    }
-    else
-    {
-    }
-  }
-};
-
 class kGame: public kgmGameBase
 {
   struct GameData
@@ -99,7 +37,8 @@ class kGame: public kgmGameBase
   };
 
   kGui *gui = null;
-  GameData      data;
+
+  //GameData data;
 
 public:
   kGame(bool edit)
@@ -110,13 +49,9 @@ public:
     if(m_physics)
       m_physics->m_gravity = 1.0f;
 
-    /*if(m_logic)
-      delete m_logic;
-
-    m_logic = new ASp_Logic(this);*/
-
     kgmMap<u32, u32> mm;
-    for(auto i = 0; i < 10; i++)
+
+    for (u32 i = 0; i < 10; i++)
       mm.set(i, i);
 
     u32 h = mm.height();
@@ -223,10 +158,10 @@ public:
       m_state = kgmIGame::State_Idle;
       ((kGui*)gui)->viewAgain();
     }
+
+    return 0;
   }
 };
-
-#include "../../kgmBase/kgmPointer.h"
 
 class kApp: public kgmGameApp
 {
@@ -234,7 +169,6 @@ class kApp: public kgmGameApp
 public:
 #endif
 
-  //kgm_ptr<kGame> game;
   kGame* game;
 
 public:
@@ -312,7 +246,7 @@ public:
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
-    game = kgm_ptr<kGame>(new kGame(edit));
+    game = kgm_ptr<kGame>(new kGame(true));
 
     m_game = ((kGame*)game);
     ((kGame*)game)->setRect(0, 0, w, h);

@@ -48,9 +48,7 @@ android_static:
 	
 android: android_static
 	echo 'Start android applibuild'
-	make -C android
-	cd android
-	ant -Dbasedir android -f android/build.xml debug
+	make -C Test android
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk

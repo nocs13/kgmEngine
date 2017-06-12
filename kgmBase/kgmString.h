@@ -216,8 +216,8 @@ public:
   { 
     //not implemented 
     kgmTString<T> r; 
-    bool istok = false; 
-    unsigned int  i = 0; 
+    //bool istok = false;
+    //unsigned int  i = 0;
  
     return r; 
   } 

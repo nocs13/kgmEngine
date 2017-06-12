@@ -385,7 +385,7 @@ void kgmGameBase::onIdle()
 #endif
 }
 
-void kgmGameBase::onPaint(kgmIGC* gc)
+void kgmGameBase::onPaint()
 {
 }
 

@@ -111,8 +111,7 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
   void onResize(int w, int h);
-  void onPaint(kgmIGC*);
-  void onAction(kgmGui* e, u32 arg);
+  void onPaint();
 
   void onInputAction(int action, int argument);
 

@@ -5,6 +5,8 @@
 #include "kgmWindow.h"
 #include "kgmLib.h"
 
+#ifdef VULKAN
+
 #include "inc/vk/vulkan.h"
 
 class kgmVulkan: public kgmIGC
@@ -29,3 +31,5 @@ private:
   static int  vkInit();
   static void vkFree();
 };
+
+#endif

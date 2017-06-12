@@ -364,7 +364,7 @@ public:
 
   void info(u32 i, kgmString& name, u32& size, u32& offset)
   {
-    if(i < 0 || i >= (u32) toc.size())
+    if(i == 0 || i >= (u32) toc.size())
       return;
 
     name   = toc[i].name;

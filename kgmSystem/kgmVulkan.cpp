@@ -1,5 +1,7 @@
 #include "kgmVulkan.h"
 
+#ifdef VULKAN
+
 kgmVulkan::kgmVulkan()
 {
   m_instance = 0;
@@ -63,3 +65,5 @@ void kgmVulkan::vkFree()
   if (m_vk.lib.active())
     m_vk.lib.close();
 }
+
+#endif

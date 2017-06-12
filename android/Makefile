@@ -5,8 +5,9 @@ AR  := $(ANDROID_NDK_BIN)/arm-linux-androideabi-ar
 
 # Compiler flags
 # Specify all the flags below which you want to use for your compilation, For this simple example, we only need to specify the include directory path
-CFLAGS          := -I$(ANDROID_NDK)/platforms/android-9/arch-arm/usr/include
-CFLAGS          += -DANDROID -DOSL -DGLES_2 -fpermissive -std=gnu++11 -Werror -Wall
+CFLAGS  := -I$(ANDROID_NDK)/platforms/android-9/arch-arm/usr/include
+CFLAGS  += -DANDROID -DOSL -DGLES_2 -fpermissive -std=gnu++11 -Werror -Wall
+SYSROOT = $(ANDROID_NDK)/platforms/android-14/arch-arm
 
 subdirs := $(wildcard ../kgm*/)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
@@ -36,6 +37,7 @@ $(objects) : %.o : %.cpp
 $(OUT): $(objects)
 	echo 'compile kgmengine'
 	$(AR) -crs $(OUT) $(objects)
+	$(CPP) -shared -o libkgmEngine.so $(OUT) --sysroot=$(SYSROOT)
 
 clean:
 	rm -f $(objects)

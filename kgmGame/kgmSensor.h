@@ -28,7 +28,7 @@ public:
   }
 
 private:
-  void event(kgmString s);
+  void event(kgmObject* o, kgmString s);
 };
 
 #endif // KGMSENSOR_H

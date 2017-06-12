@@ -37,3 +37,6 @@ clean:
 
 run:
 	./kTest$(EXT)
+	
+android: clean
+	make -C android

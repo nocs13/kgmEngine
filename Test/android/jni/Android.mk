@@ -14,6 +14,8 @@
 #
 LOCAL_PATH := $(call my-dir)
 
+NDK_TOOLCHAIN_VERSION=4.9
+
 include $(CLEAR_VARS)
 	LOCAL_MODULE    := kgmEngine
 	LOCAL_SRC_FILES := ../../../android/libkgmEngine.a
@@ -31,10 +33,10 @@ include $(CLEAR_VARS)
 #	LOCAL_LDLIBS    += -lGLESv1_CM
 	LOCAL_LDLIBS    += -lEGL
 	LOCAL_LDLIBS    += -lOpenSLES
-	LOCAL_CFLAGS    := -DANDROID -DOSL -fpermissive -Wall -g #-Werror
+	LOCAL_CFLAGS    := -DANDROID -DOSL -fpermissive -std=gnu++11 -Werror -Wall -g #-Werror
 	LOCAL_CFLAGS    += -DGLES_2
 #	LOCAL_CFLAGS    += -DGLES_1
-        LOCAL_CFLAGS    += -frtti
+        LOCAL_CFLAGS    += -frtti -stdlib=libc++ -v
 include $(BUILD_SHARED_LIBRARY)
 
 

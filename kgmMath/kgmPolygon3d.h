@@ -69,7 +69,6 @@ public:
     //  a1 = v1.angle(v2);
     //  a2 = v2.angle(v0);
     //  an = a0 + a1 + a2;
-    int i;
 
     for(int i = 0; i < m_count; i++)
     {

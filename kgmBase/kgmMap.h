@@ -54,9 +54,9 @@ public:
         Node* s = o->root;
 
         while(true) {
-          if(s->left != nullptr) {
+          if (s->left != null) {
             s = s->left;
-          } else if(s->right != nullptr) {
+          } else if (s->right != null) {
             s = s->right;
           } else {
             break;
@@ -86,7 +86,7 @@ public:
       Node* par = _Ptr->par;
 
       if (!par) {
-        _Ptr = nullptr;
+        _Ptr = null;
 
         return *this;
       }
@@ -351,7 +351,7 @@ public:
 
   iterator end() {
     iterator i(this);
-    i._Ptr = nullptr;
+    i._Ptr = null;
 
     return i;
   }

@@ -159,7 +159,7 @@ public:
   }
 
   bool      setState(kgmString s, bool force = false);
-  kgmString getState() const { if(m_state) return m_state->id; }
+  kgmString getState() const { if(m_state) return m_state->id; return ""; }
 
 #ifdef EDITOR
   u32       getStatesCount() { return m_states.length(); }
