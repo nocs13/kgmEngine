@@ -45,8 +45,6 @@ private:
   kgmGui*     client;
   Labels*     labels;
 
-  u32 tabs;
-
   Slot<kgmGuiTab, u32> slotLabel;
 
 public:

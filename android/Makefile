@@ -15,7 +15,8 @@ objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT = libkgmEngine.a
 
-all: debug
+all: #debug
+	ndk-build -B
 
 debug: set_debug $(OUT)
 	echo 'debug finished.'
@@ -38,6 +39,7 @@ $(OUT): $(objects)
 	echo 'compile kgmengine'
 	$(AR) -crs $(OUT) $(objects)
 	$(CPP) -shared -o libkgmEngine.so $(OUT) --sysroot=$(SYSROOT)
+	ant jar
 
 clean:
 	rm -f $(objects)

@@ -66,7 +66,6 @@ protected:
   __stdcall void onFailSelect();
   __stdcall void onEditFile(kgmString);
 
-  void onAction(kgmGui*, u32);
   void onMsLeftUp(int, int, int);
   void onMsMove(int, int, int);
 };

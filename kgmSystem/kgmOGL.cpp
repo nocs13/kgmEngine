@@ -46,6 +46,8 @@ kgmOGL::kgmOGL(kgmOGLWindow *wnd)
 
 #ifdef DEBUG
   kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
+#else
+  (void)oglVersion;
 #endif
 
   glInitExt();
@@ -721,7 +723,9 @@ void kgmOGL::gcFreeTexture(void *t)
 
 void kgmOGL::gcSetTexture(u32 stage, void* t)
 {
+#ifdef DEBUG
   GLenum err;
+#endif
 
 #ifdef ANDROID
   //glEnable(GL_TEXTURE_2D);
@@ -1146,7 +1150,10 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   GLhandle vshad = 0, fshad = 0;
   int stat[1] = {0};
   int size = 256;
+
+#ifdef DEBUG
   char tbuf[256];
+#endif
 
 #ifdef GL_VERTEX_SHADER
   prog = glCreateProgramObject();

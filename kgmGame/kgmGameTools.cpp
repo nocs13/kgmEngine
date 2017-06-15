@@ -960,7 +960,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         s[i].bw[2] = bw[2];
         s[i].bi[2] = bi[2];
         s[i].bw[3] = bw[3];
-        s[i].bi[4] = bi[3];
+        s[i].bi[3] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
         s[i].col = v[i].col;

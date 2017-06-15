@@ -9,7 +9,7 @@
 #include "../kgmSystem/kgmLib.h"
 #include "../kgmSystem/kgmThread.h"
 
-class _Sound;
+struct _Sound;
 
 class kgmAlsa: public kgmIAudio
 {

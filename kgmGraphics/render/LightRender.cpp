@@ -12,7 +12,7 @@ LightRender::LightRender(kgmGraphics* g)
 
 }
 
-void LightRender::render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visuals)
+void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visuals)
 {
 
   vec3 lpositions[MAX_LIGHTS], ldirections[MAX_LIGHTS], lcolors[MAX_LIGHTS];

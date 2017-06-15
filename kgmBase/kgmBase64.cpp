@@ -4,6 +4,7 @@ const char base64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 
 kgmBase64::kgmBase64()
 {
+  (void)base64chars;
 }
 
 bool kgmBase64::encode(kgmByteArray& encoded, int8* buffer, int32 length)

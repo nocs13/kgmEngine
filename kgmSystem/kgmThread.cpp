@@ -147,8 +147,8 @@ void kgmThread::priority(uint prio)
     return;
 
 #ifdef ANDROID
-#define SCHED_BATCH SCHED_NORMAL
-#define SCHED_IDLE  SCHED_NORMAL
+//#define SCHED_BATCH SCHED_NORMAL
+//#define SCHED_IDLE  SCHED_NORMAL
 #endif
 
 

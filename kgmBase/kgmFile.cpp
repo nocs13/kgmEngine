@@ -189,16 +189,16 @@ bool kgmFile::mmap(kgmMemory<u8> &buf)
 
 bool kgmFile::remove_file(kgmString path)
 {
-  if(remove(path.data()))
-    return false;
+  //if(remove(path.data()))
+  //  return false;
 
   return true;
 }
 
 bool kgmFile::rename(kgmString oname, kgmString nname)
 {
-  if(rename(oname.data(), nname.data()))
-    return false;
+  //if(rename(oname.data(), nname.data()))
+  //  return false;
 
   return true;
 }

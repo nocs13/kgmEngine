@@ -73,7 +73,7 @@ void kgmParticles::build()
   {
     m_mesh = new kgmMesh();
 
-    u32 count;
+    u32 count = 0;
 
     if(m_typerender == RTypeBillboard)
       count = m_count * 6;
@@ -132,7 +132,8 @@ void kgmParticles::init(Particle* pr)
   pr->mass  = 0;
   pr->mesh  = null;
 
-  if(pr->life < 0) pr->life = 0;
+  pr->life = 0;
+
   if(pr->speed < 0) pr->speed = 0.0f;
 }
 

@@ -33,7 +33,7 @@ kgmGuiTab::~kgmGuiTab()
 
 u32 kgmGuiTab::set(u32 k)
 {
-  if((k < 0) || (k >= (u32) client->m_childs.length()))
+  if(k >= (u32) client->m_childs.length())
     return m_index;
   
   for(s32 i = 0; i < client->m_childs.length(); i++)
@@ -67,7 +67,7 @@ kgmGui* kgmGuiTab::active()
   if(client->m_childs.length() < 1)
     return null;
 
-  if(m_index < 0 || m_index >= (u32) client->m_childs.length())
+  if(m_index >= (u32) client->m_childs.length())
     return null;
 
   return client->m_childs[m_index];
