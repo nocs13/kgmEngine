@@ -23,4 +23,5 @@ public:
   static bool splitPath(kgmString path, kgmString& dir, kgmString& file);
   static int  getProcessId();
   static int  getProcessPath(kgmString&);
+  static int  getCpuConcurrency();
 };

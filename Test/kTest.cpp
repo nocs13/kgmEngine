@@ -207,6 +207,8 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
+    kgm_log() << "CPU COUNT: " << kgmSystem::getCpuConcurrency() << "\n";
+
     //game = kgm_ptr<kGame>(new kGame(edit));
     game = new kGame(edit);
 

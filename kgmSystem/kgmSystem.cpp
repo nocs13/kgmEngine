@@ -318,3 +318,33 @@ int kgmSystem::getProcessPath(kgmString &path)
 
   return 0;
 }
+
+int kgmSystem::getCpuConcurrency()
+{
+  int num = 1;
+
+#ifdef WIN32
+
+  SYSTEM_INFO info;
+  GetSystemInfo(&info);
+
+  num = (int) info.dwNumberOfProcessors;
+#else
+
+#ifdef _SC_NPROCESSORS_ONLN
+
+  num = sysconf(_SC_NPROCESSORS_ONLN);
+
+  if (num > 0)
+    return num;
+  else
+    fprintf(stderr, "Could not determine number of CPUs online: %d\n", num);
+
+#endif
+
+  num = sysconf(_SC_NPROCESSORS_CONF);
+
+#endif
+
+  return num;
+}
