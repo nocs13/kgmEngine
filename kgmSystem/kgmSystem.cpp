@@ -28,18 +28,6 @@
 #include <pwd.h>
 #endif
 
-#ifdef LINUX
-
-struct CPU
-{
-  int num;
-  int id;
-  int mhz;
-  int  cores;
-};
-
-#endif
-
 #ifndef S_ISDIR
 #define S_ISDIR(mode)  (((mode) & _S_IFMT) == _S_IFDIR)
 #endif
@@ -68,75 +56,6 @@ void kgmSystem::sleep(u32 ms)
 #endif
 }
 
-bool kgmSystem::getCpuData(int& cpu_count, int& cpu_cores)
-{
-#ifdef WIN32
-#elif defined LINUX
-
-  kgmList<CPU>  cpus;
-
-  const char* cpu_path = "/proc/cpuinfo";
-  struct stat file_stat;
-
-  if(stat(cpu_path, &file_stat)){
-    return false;
-  }
-
-  FILE* file = fopen(cpu_path, "r");
-  if(!file)
-    return false;
-
-  //char* info = new char[file_stat.st_size + 1];
-  //fread(info, file_stat.st_size, 1, file);
-
-  char* buf = new char[1025];
-
-  CPU cpu = {0};
-
-  while(!feof(file) && !ferror(file))
-  {
-    memset(buf, 0, 1025);
-    fgets(buf, 1024, file);
-
-    if(!strncmp(buf, "processor", 9))
-    {
-      int num = 0;
-      sscanf(buf, "processor : %i", &num);
-      if(num != cpu.num)
-      {
-        cpus.add(cpu);
-        cpu.num = num;
-      }
-    }
-    else if(!strncmp(buf, "physical id", 11))
-    {
-      sscanf(buf, "physical id : %i", &cpu.id);
-    }
-    else if(!strncmp(buf, "cpu cores", 9))
-    {
-      sscanf(buf, "cpu cores : %i", &cpu.cores);
-    }
-    else if(!strncmp(buf, "cpu MHz", 7))
-    {
-      sscanf(buf, "cpu MHz : %i", &cpu.mhz);
-    }
-  }
-
-  fclose(file);
-
-  cpus.add(cpu);
-
-  delete [] buf;
-
-  cpu_count = cpus.size();
-  cpu_cores = cpu.cores;
-
-  cpus.clear();
-#endif
-
-  return true;
-}
-
 void kgmSystem::getDesktopDimension(u32& w, u32& h)
 {
 #ifdef WIN32
@@ -151,7 +70,8 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h)
   XWindowAttributes attr;
   XGetWindowAttributes(dpy, root, &attr);
 
-  w = attr.width; h = attr.height;
+  w = attr.width;
+  h = attr.height;
   XCloseDisplay(dpy);
 #endif
 
@@ -318,7 +238,39 @@ int kgmSystem::getProcessPath(kgmString &path)
 
   return 0;
 }
+/*
+#ifdef _WIN32
+#include <windows.h>
+#elif MACOS
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#else
+#include <unistd.h>
+#endif
 
+int getNumCores() {
+#ifdef WIN32
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo(&sysinfo);
+    return sysinfo.dwNumberOfProcessors;
+#elif MACOS
+    int nm[2];
+    size_t len = 4;
+    uint32_t count;
+
+    nm[0] = CTL_HW; nm[1] = HW_AVAILCPU;
+    sysctl(nm, 2, &count, &len, NULL, 0);
+
+    if(count < 1) {
+        nm[1] = HW_NCPU;
+        sysctl(nm, 2, &count, &len, NULL, 0);
+        if(count < 1) { count = 1; }
+    }
+    return count;
+#else
+    return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
+}*/
 int kgmSystem::getCpuConcurrency()
 {
   int num = 1;
