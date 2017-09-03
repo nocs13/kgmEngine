@@ -2,6 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmPointer.h"
+#include "../kgmBase/kgmFunction.h"
 
 #undef DEBUG
 
@@ -394,15 +395,16 @@ kgmAlsa::kgmAlsa()
           return;
         }
 
-        m_thread.start(this, &kgmAlsa::proceed);
-        m_render.start(this, &kgmAlsa::render);
+        //kgmFunction<void(void*)> fn_a = &kgmAlsa::proceed;
+        m_thread = kgmThread::thread_create((kgmThread::Thread_Function) &kgmAlsa::proceed_a, this);
+        m_render = kgmThread::thread_create((kgmThread::Thread_Function) &kgmAlsa::render_a, this);
 
-        m_thread.priority(kgmThread::PrIdle);
-        m_render.priority(kgmThread::PrIdle);
+        kgmThread::thread_priority(m_thread, kgmThread::PrIdle);
+        kgmThread::thread_priority(m_render, kgmThread::PrIdle);
         
         m_proceed = true;
 
-        m_mutex = kgmThread::mutex();
+        m_mutex = kgmThread::mutex_create();
       }
     }
 #endif
@@ -425,10 +427,10 @@ void kgmAlsa::clear()
 {
   m_proceed = false;
 
-  m_render.join();
-  m_thread.join();
+  kgmThread::thread_join(m_render);
+  kgmThread::thread_join(m_thread);
 
-  kgmThread::mxfree(m_mutex);
+  kgmThread::mutex_free(m_mutex);
 
   m_mutex = null;
 
@@ -491,10 +493,8 @@ void kgmAlsa::stop(Sound snd)
     ((_Sound*)snd)->stop();
 }
 
-int kgmAlsa::render(int r)
+int kgmAlsa::render()
 {
-  //(void*)r;
-  
   while(m_proceed)
   {
 #ifdef ALSA
@@ -518,7 +518,7 @@ int kgmAlsa::render(int r)
 
       //kgm_log() << "Available frames " << avail << "\n";
 
-      kgmThread::lock(m_mutex);
+      kgmThread::mutex_lock(m_mutex);
 
       u32 t1 = kgmTime::getTicks();
 
@@ -608,7 +608,7 @@ int kgmAlsa::render(int r)
       }
 
       m_mixer.clean();
-      kgmThread::unlock(m_mutex);
+      kgmThread::mutex_unlock(m_mutex);
 
 #ifdef DEBUG
       kgm_log() << "kgmAlsa:: render unlock " << kgmTime::getTimeText() << "\n";
@@ -624,19 +624,17 @@ int kgmAlsa::render(int r)
   return 1;
 }
 
-int kgmAlsa::proceed(int p)
+int kgmAlsa::proceed()
 {
   static u32 max_sounds = 10;
 
-  //(void*)p;
-  
   m_proceed = true;
 
   while(m_proceed)
   {
     u32 snd_cound = 0;
 
-    kgmThread::lock(m_mutex);
+    kgmThread::mutex_lock(m_mutex);
 
 #ifdef DEBUG
     kgm_log() << "kgmAlsa:: proceed lock " << kgmTime::getTimeText() << "\n";
@@ -688,7 +686,7 @@ int kgmAlsa::proceed(int p)
       snd_cound++;
     }
 
-    kgmThread::unlock(m_mutex);
+    kgmThread::mutex_unlock(m_mutex);
 
 #ifdef DEBUG
     kgm_log() << "kgmAlsa:: proceed unlock " << kgmTime::getTimeText() << "\n";

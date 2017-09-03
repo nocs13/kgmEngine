@@ -17,145 +17,115 @@ void kgmThread::thread(kgmThread *p)
   kgmThread::exit(p->m_result);
 }
 
-kgmThread::kgmThread()
+void kgmThread::thread_1(kgmThread::Thread_Member_Function* p)
 {
-  m_thread = 0;
-  m_result = 0;
+  if(!p)
+    return;
 
-  m_object   = null;
-  m_callback = null;
+  //(*p)();
 }
 
-kgmThread::~kgmThread()
+kgmThread::Thread kgmThread::thread_create(Thread_Function fn, void* obj, kgmThread::Priority pr)
 {
-  if(m_thread)
-    kill();
-}
-
-bool kgmThread::exec(uint sets, uint pr)
-{
-  int rc = 0;
+  Thread thread;
 
 #ifdef WIN32
-  m_thread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)thread, this,0, 0);
-
-  rc = (int)(m_thread) ? (0) : (-1);
+  thread = (Thread) CreateThread(0, 0, (LPTHREAD_START_ROUTINE) fn, obj, 0, 0);
 #else
   pthread_attr_t attr;
 
   pthread_attr_init(&attr);
 
-  if(sets & CtDetach)
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  else
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-  rc = pthread_create(&m_thread, &attr, (void*(*)(void*))thread, this);
+ int  rc = pthread_create(&thread, &attr, (void*(*)(void*))fn, obj);
+
+ if (rc)
+   thread = (Thread) null;
 
   pthread_attr_destroy(&attr);
 #endif
 
-  if(rc)
-    return false;
+  kgmThread::thread_priority(thread, pr);
 
-  priority(pr);
+  return thread;
+}
+
+kgmThread::Thread thread_create(kgmThread::Thread_Member_Function fn, kgmThread::Priority pr)
+{
+  kgmThread::Thread thread;
+
+#ifdef WIN32
+  thread = (Thread) CreateThread(0, 0, (LPTHREAD_START_ROUTINE) kgmThread::thread_1, &fn, 0, 0);
+#else
+  pthread_attr_t attr;
+
+  pthread_attr_init(&attr);
+
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+ int  rc = pthread_create(&thread, &attr, (void*(*)(void*))kgmThread::thread_1, &fn);
+
+ if (rc)
+   thread = (kgmThread::Thread) null;
+
+  pthread_attr_destroy(&attr);
+#endif
+
+  kgmThread::thread_priority(thread, pr);
+
+  return thread;
+}
+
+bool kgmThread::thread_kill(kgmThread::Thread th)
+{
+#ifdef WIN32
+  TerminateThread(th, -1);
+#elif defined(ANDROID)
+  pthread_kill(th, 9);
+#else
+  pthread_cancel(th);
+#endif
 
   return true;
 }
 
-bool kgmThread::exec(int (*call)(void*), void* obj, uint sets, uint pr)
+bool kgmThread::thread_join(kgmThread::Thread th)
 {
-  m_object   = obj;
-  m_callback = call;
-
-  if(!call)
-    return false;
-
-  int rc = 0;
-
 #ifdef WIN32
-  m_thread = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)call, obj, 0, 0);
-
-  rc = (int)(m_thread) ? (0) : (-1);
+  WaitForSingleObject(th, INFINITE);
 #else
-  pthread_attr_t attr;
-
-  pthread_attr_init(&attr);
-
-  if(sets & CtDetach)
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  else
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-  rc = pthread_create(&m_thread, &attr, (void*(*)(void*))call, obj);
-
-  pthread_attr_destroy(&attr);
+  pthread_join(th, NULL);
 #endif
 
-  if(!rc)
-  {
-    priority(pr);
-
-    return true;
-  }
-
-  return false;
+  return true;
 }
 
-bool kgmThread::active()
+bool kgmThread::thread_active(kgmThread::Thread th)
 {
-  if(!m_thread)
-    return false;
-
 #ifdef WIN32
-  
+  DWORD id = GetThreadId(th);
+
+  if (id && !GetLastError())
+    return true;
 #else
-  if(pthread_kill(m_thread, 0) == 0)
+  if(pthread_kill(th, 0) == 0)
     return true;
 #endif
 
   return false;
 }
 
-void kgmThread::kill()
+bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
 {
-#ifdef WIN32
-  TerminateThread(m_thread, -1);
-#elif defined(ANDROID)
-  pthread_kill(m_thread, 9);
-#else
-  pthread_cancel(m_thread);
-#endif 
-
-  m_thread = null;
-}
-
-void kgmThread::join()
-{
-#ifdef WIN32 
-  WaitForSingleObject(m_thread, INFINITE);
-#else
-  pthread_join(m_thread, NULL);
-#endif 
-
-  m_thread = null;
-}
-
-void kgmThread::priority(uint prio)
-{
-  if(!m_thread)
-    return;
-
-#ifdef ANDROID
-//#define SCHED_BATCH SCHED_NORMAL
-//#define SCHED_IDLE  SCHED_NORMAL
-#endif
-
+  if(!th)
+    return false;
 
 #ifdef WIN32
+
   int policy = THREAD_PRIORITY_NORMAL;
 
-  switch(prio)
+  switch(pr)
   {
   case PrNormal:
     policy = THREAD_PRIORITY_NORMAL;
@@ -177,12 +147,15 @@ void kgmThread::priority(uint prio)
     break;
   }
 
-  SetThreadPriority(m_thread, policy);
+  SetThreadPriority(th, policy);
+
 #else
+
   int policy = SCHED_OTHER;
+
   sched_param param{0};
 
-  switch(prio)
+  switch(pr)
   {
   case PrNormal:
     policy = SCHED_OTHER;
@@ -206,11 +179,13 @@ void kgmThread::priority(uint prio)
     break;
   }
 
-  pthread_setschedparam(m_thread, policy, &param);
+  pthread_setschedparam(th, policy, &param);
 #endif
+
+  return true;
 }
 
-kgmThread::Mutex kgmThread::mutex()
+kgmThread::Mutex kgmThread::mutex_create()
 {
 #ifdef WIN32
   Mutex mutex = (Mutex)malloc(sizeof(CRITICAL_SECTION));
@@ -236,11 +211,11 @@ kgmThread::Mutex kgmThread::mutex()
   return null;
 }
 
-void  kgmThread::mxfree(kgmThread::Mutex m)
+void  kgmThread::mutex_free(kgmThread::Mutex m)
 {
   if(m)
   {
-    unlock(m);
+    mutex_unlock(m);
 
 #ifdef WIN32
     DeleteCriticalSection(m);
@@ -254,7 +229,7 @@ void  kgmThread::mxfree(kgmThread::Mutex m)
   }
 }
 
-void  kgmThread::lock(kgmThread::Mutex m)
+void  kgmThread::mutex_lock(kgmThread::Mutex m)
 {
   if(m)
   {
@@ -267,7 +242,7 @@ void  kgmThread::lock(kgmThread::Mutex m)
   }
 }
 
-void  kgmThread::unlock(kgmThread::Mutex m)
+void  kgmThread::mutex_unlock(kgmThread::Mutex m)
 {
   if(m)
   {
@@ -279,7 +254,7 @@ void  kgmThread::unlock(kgmThread::Mutex m)
   }
 }
 
-bool  kgmThread::lockable(Mutex m)
+bool  kgmThread::mutex_lockable(Mutex m)
 {
   if(m)
   {
@@ -310,7 +285,7 @@ kgmThread::TID  kgmThread::id()
 #ifdef WIN32
   tid = GetCurrentThreadId();
 #else
-  tid = (kgmThread::TID)pthread_self();
+  tid = (kgmThread::TID) pthread_self();
 #endif
 
   return tid;
@@ -340,6 +315,61 @@ void kgmThread::sleep(u32 ms)
 
   }*/
 #endif
+}
+
+
+kgmThread::kgmThread()
+{
+  m_thread = 0;
+  m_result = 0;
+
+  m_object   = null;
+  m_callback = null;
+}
+
+kgmThread::~kgmThread()
+{
+  thread_kill(m_thread);
+}
+
+bool kgmThread::start()
+{
+  m_thread = thread_create((Thread_Function) thread, this);
+
+  if (!m_thread)
+    return false;
+
+  return true;
+}
+
+bool kgmThread::active()
+{
+  if(!m_thread)
+    return false;
+
+  return thread_active(m_thread);
+}
+
+void kgmThread::kill()
+{
+  thread_kill(m_thread);
+
+  m_thread = null;
+}
+
+void kgmThread::join()
+{
+  thread_join(m_thread);
+
+  m_thread = null;
+}
+
+void kgmThread::priority(kgmThread::Priority pr)
+{
+  if(!m_thread)
+    return;
+
+  thread_priority(m_thread, pr);
 }
 
 void kgmThread::run()

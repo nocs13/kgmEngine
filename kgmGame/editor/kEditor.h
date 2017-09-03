@@ -69,8 +69,8 @@ private:
 
   bool mode_play;
 
-  bool      m_isVisual;
-  kgmThread m_thVisual;
+  bool              m_isVisual;
+  kgmThread::Thread m_thVisual;
 
   Slot<kEditor, u32> slotMenu;
   Slot<kEditor, kgmGuiFileDialog*> slotMapSave;

@@ -12,7 +12,7 @@
 #include <SLES/OpenSLES_Android.h>
 #endif
 
-class kgmOSL: public kgmIAudio, public kgmThread
+class kgmOSL: public kgmIAudio
 {
   class _Sound
   {

@@ -7,6 +7,7 @@
 #include "../kgmBase/kgmBase.h"
 #include "../kgmBase/kgmTypes.h"
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmFunction.h"
 
 #ifdef WIN32
  #include <windows.h>
@@ -24,9 +25,18 @@ class kgmThread: public kgmObject
   KGM_OBJECT(kgmThread);
 
 public:
+
+#ifdef WIN32
+ typedef void* Thread;
+#else
+ typedef pthread_t Thread;
+#endif
+
   typedef long  TID;
 
   typedef int (*Thread_Function)(void*);
+
+  typedef kgmFunction<void(void*,...)> Thread_Member_Function;
 
 #ifdef WIN32
   typedef CRITICAL_SECTION* Mutex;
@@ -43,18 +53,25 @@ public:
     PrSuper
   };
 
-  enum Flags
-  {
-    CtNone   = 0,
-    CtDetach = 1L << 1
-  };
+  static Thread thread_create(Thread_Function fn, void* obj = null, Priority pr = PrNormal);
+  static Thread thread_create(Thread_Member_Function fn, Priority pr = PrNormal);
+  static bool   thread_kill(Thread th);
+  static bool   thread_join(Thread th);
+  static bool   thread_active(Thread th);
+  static bool   thread_priority(Thread th, Priority pr);
+
+  static Mutex mutex_create();
+  static void  mutex_free(Mutex);
+  static void  mutex_lock(Mutex);
+  static void  mutex_unlock(Mutex);
+  static bool  mutex_lockable(Mutex);
+
+  static TID   id();
+  static void  exit(s32 res);
+  static void  sleep(u32 ms);
 
 private:
-#ifdef WIN32
- void* m_thread;
-#else
- pthread_t m_thread;
-#endif
+ Thread m_thread;
 
  void   *m_object;
  int   (*m_callback)(void*);
@@ -63,30 +80,20 @@ private:
 
 public:
  kgmThread();
- kgmThread(int (*call)(void*), void* obj = null, uint sets = CtNone, uint pr = PrNormal);
  ~kgmThread();
 
- bool exec(uint sets = CtNone, uint pr = PrNormal);
- bool exec(int (*call)(void*), void* obj = null, uint sets = CtNone, uint pr = PrNormal);
+ bool start();
  bool active();
- 
  void kill();
  void join();
- void priority(uint);
-
- static Mutex mutex();
- static void  mxfree(Mutex);
- static void  lock(Mutex);
- static void  unlock(Mutex);
- static bool  lockable(Mutex);
-
- static TID   id();
- static void  exit(s32 res);
- static void  sleep(u32 ms);
+ void priority(Priority);
 
 protected:
  virtual void run();
 
 private:
  static void thread(kgmThread *p);
+
+public:
+ static void thread_1(Thread_Member_Function* p);
 };

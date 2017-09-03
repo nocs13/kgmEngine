@@ -145,7 +145,7 @@ kEditor::kEditor(kgmGameBase* g)
   }
 
   m_isVisual = true;
-  m_thVisual.exec((int (*)(void*))doVisUpdate, this);
+  m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
 }
 
 kEditor::~kEditor()
@@ -153,7 +153,7 @@ kEditor::~kEditor()
   clear();
 
   m_isVisual = false;
-  m_thVisual.join();
+  kgmThread::thread_join(m_thVisual);
 
   game->getRender()->remove(text);
   game->getRender()->remove(pivot);

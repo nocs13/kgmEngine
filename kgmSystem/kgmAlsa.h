@@ -15,7 +15,7 @@ class kgmAlsa: public kgmIAudio
 {
   KGM_OBJECT(kgmAlsa);
 
-  class Thread: public kgmThread
+  /*class Thread: public kgmThread
   {
     kgmAlsa* object;
 
@@ -33,23 +33,23 @@ class kgmAlsa: public kgmIAudio
       object   = obj;
       callback = fn;
 
-      return exec();
+      return false;//exec();
     }
 
     void run()
     {
       callback(*object, 0);
     }
-  };
+  };*/
 
 private:
   void*         m_handle;
 
   kgmLib        m_lib;
 
-  Thread        m_thread;
-  Thread        m_render;
-  Thread::Mutex m_mutex;
+  kgmThread::Thread m_thread;
+  kgmThread::Thread m_render;
+  kgmThread::Mutex  m_mutex;
 
   kgmList<_Sound*> m_sounds;
 
@@ -72,8 +72,18 @@ public:
   void  play(Sound snd, bool loop);
   void  stop(Sound snd);
 
-  int   render(int);
-  int   proceed(int);
+  int   render();
+  int   proceed();
+
+  static int render_a(kgmAlsa* a)
+  {
+    a->render();
+  }
+
+  static int proceed_a(kgmAlsa* a)
+  {
+    a->proceed();
+  }
 };
 
 #endif // KGMALSA_H

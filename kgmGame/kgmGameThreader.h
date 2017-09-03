@@ -28,7 +28,7 @@ private:
 
   Threader m_threaders[MAX_THREADERS];
 
-  kgmThread m_thread;
+  kgmThread::Thread m_thread;
 
 public:
   kgmGameThreader();

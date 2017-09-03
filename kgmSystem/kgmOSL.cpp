@@ -202,13 +202,13 @@ kgmOSL::kgmOSL()
 
   }
 
-  mux = mutex();
+  mux = kgmThread::mutex_create();
 
 #ifdef DEBUG
   kgm_log() << "OSL start control thread\n";
 #endif
 
-  exec();
+  start();
   //priority(-2);
 }
 
@@ -242,7 +242,7 @@ kgmOSL::~kgmOSL()
     (*engineObject)->Destroy(engineObject);
   }
 
-  mxfree(mux);
+  kgmThread::mutex_free(mux);
 
 #ifdef DEBUG
   kgm_log() << "OSL finish\n";
@@ -508,7 +508,7 @@ void kgmOSL::run()
 
   while(active)
   {
-    lock(mux);
+    kgmThread::mutex_lock(mux);
 
     for(int i = sounds.length(); i > 0; --i)
     {
@@ -536,7 +536,7 @@ void kgmOSL::run()
       s->volume(vol);
     }
 
-    unlock(mux);
+    kgmThread::mutex_unlock(mux);
 
     kgmSystem::sleep(500);
   }

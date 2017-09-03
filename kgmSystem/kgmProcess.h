@@ -21,7 +21,7 @@ class kgmProcess: public kgmObject
     {
       m_command = cmd;
 
-      exec();
+      start();
 
       if(m_wait)
         join();

@@ -7,7 +7,7 @@ kgmGameThreader::kgmGameThreader()
 
   m_count = 0;
 
-  m_thread.exec(threader, this);
+  m_thread = kgmThread::thread_create(kgmGameThreader::threader, this);
 }
 
 kgmGameThreader::~kgmGameThreader()
@@ -28,7 +28,7 @@ bool kgmGameThreader::add(THREADER_FUNCTION fn, void *obj)
 bool kgmGameThreader::finish()
 {
   m_active = false;
-  m_thread.join();
+  kgmThread::thread_join(m_thread);
 
   return true;
 }

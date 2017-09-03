@@ -1,5 +1,5 @@
-#ifndef KGMCALLBACK_H
-#define KGMCALLBACK_H
+#ifndef KGMFUNCTION_H
+#define KGMFUNCTION_H
 
 // Callback function should be __stdcall attribute.
 template <class T> class kgmFunction {};
@@ -199,4 +199,4 @@ template <class Res, class Obj, class... Args>
   }
 };
 
-#endif // KGMCALLBACK_H
+#endif // KGMFUNCTION_H
