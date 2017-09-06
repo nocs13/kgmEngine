@@ -7,6 +7,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmGraphics/kgmGuiButton.h"
+#include "../kgmSystem/kgmVulkan.h"
 
 #include "kGlobals.h"
 #include "kGui.h"
@@ -215,6 +216,12 @@ public:
     m_game = ((kGame*)game);
 
     game->setRect(0, 0, w, h);
+
+#ifdef VULKAN
+    kgmVulkan *vk = new kgmVulkan();
+
+    delete vk;
+#endif
   }
 
   void gameLoop()

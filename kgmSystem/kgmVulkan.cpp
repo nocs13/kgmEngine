@@ -68,7 +68,7 @@ int kgmVulkan::vkInit()
 #endif
 
   #pragma GCC diagnostic push
-  #pragma GCC diagnostic warning "-fpermissive"
+  //#pragma GCC diagnostic warning "-fpermissive"
 
   m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
   m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
