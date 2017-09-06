@@ -13,13 +13,13 @@ class kgmVulkan: public kgmIGC
 {
   struct vk
   {
-    kgmLib lib;
-
     VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
     void (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
   };
 
-  static vk m_vk;
+  static kgmLib vk_lib;  
+  static vk     m_vk;
+  static u32    g_vulkans;
 
   VkInstance m_instance;
 

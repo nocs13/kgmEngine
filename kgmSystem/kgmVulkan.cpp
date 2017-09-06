@@ -2,9 +2,21 @@
 
 #ifdef VULKAN
 
+
+u32           kgmVulkan::g_vulkans = 0;
+kgmLib        kgmVulkan::vk_lib;
+kgmVulkan::vk kgmVulkan::m_vk      = {0};
+
 kgmVulkan::kgmVulkan()
 {
   m_instance = 0;
+
+  if (g_vulkans < 1) {
+    if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
+      return;
+  }
+
+  g_vulkans++;
 
   VkApplicationInfo appInfo;
 
@@ -34,36 +46,42 @@ kgmVulkan::~kgmVulkan()
 {
   if (m_instance)
     m_vk.vkDestroyInstance(m_instance, null);
+
+  g_vulkans--;
+
+  if (g_vulkans < 1)
+    vkFree();
 }
 
 int kgmVulkan::vkInit()
 {
-  if (m_vk.lib.active())
+  if (vk_lib.active())
     return -1;
 
 #ifdef WIN32
-  if (!m_vk.lib.open((char*) "vulkan.dll"))
+  if (!vk_lib.open((char*) "vulkan.dll"))
     return -2;
 #else
-  if (!m_vk.lib.open((char*) "vulkan.so"))
-    return -2;
+  if (!vk_lib.open((char*) "vulkan.so"))
+    if (!vk_lib.open((char*) "vulkan.so.1"))
+      return -2;
 #endif
 
-  //#pragma GCC diagnostic push
-  //#pragma GCC diagnostic warning "-fpermissive"
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic warning "-fpermissive"
 
-  //m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) m_vk.lib.get((char*) "vkCreateInstance");
-  //m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) m_vk.lib.get((char*) "vkDestroyInstance");
+  m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
+  m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
 
-  //#pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
 
   return 1;
 }
 
 void kgmVulkan::vkFree()
 {
-  if (m_vk.lib.active())
-    m_vk.lib.close();
+  if (vk_lib.active())
+    vk_lib.close();
 }
 
 #endif

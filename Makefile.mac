@@ -13,8 +13,8 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
-	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR
-	FLGS = -fPIC -O0 -std=gnu++11 -Werror 
+	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR -DVULKAN
+	FLGS = -fPIC -O0 -std=gnu++11 -Werror
 	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	RM = rm -f
 else
@@ -26,7 +26,7 @@ else
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm
 	RM = rm -f
-	
+
 	#ifeq($(ARCH), I32)
 	#	FLGS += -fPic
 	#endif
