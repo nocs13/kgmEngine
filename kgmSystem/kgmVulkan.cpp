@@ -62,8 +62,8 @@ int kgmVulkan::vkInit()
   if (!vk_lib.open((char*) "vulkan.dll"))
     return -2;
 #else
-  if (!vk_lib.open((char*) "vulkan.so"))
-    if (!vk_lib.open((char*) "vulkan.so.1"))
+  if (!vk_lib.open((char*) "libvulkan.so"))
+    if (!vk_lib.open((char*) "libvulkan.so.1"))
       return -2;
 #endif
 
@@ -83,5 +83,59 @@ void kgmVulkan::vkFree()
   if (vk_lib.active())
     vk_lib.close();
 }
+
+void  kgmVulkan::gcSet(u32 param, void* value) {}
+void  kgmVulkan::gcGet(u32 param, void* value) {}
+void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
+void  kgmVulkan::gcBegin() {}
+void  kgmVulkan::gcEnd() {}
+void  kgmVulkan::gcRender() {}
+void  kgmVulkan::gcSetTarget(void*  rt) {}
+
+// DRAWING
+void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt) {}
+
+// TEXTURE
+void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) {}
+void  kgmVulkan::gcFreeTexture(void *t) {}
+void  kgmVulkan::gcSetTexture(u32 stage, void *t) {}
+
+// MATRIX
+void  kgmVulkan::gcSetMatrix(u32 mode, float* mtx) {}
+void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
+void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f) {}
+
+//BLEND
+void  kgmVulkan::gcBlend(bool, u32, u32) {}
+
+//ALPHA
+void  kgmVulkan::gcAlpha(bool, u32, float) {}
+
+//CULL
+void  kgmVulkan::gcCull(u32 mode) {}
+
+//DEPTH
+void  kgmVulkan::gcDepth(bool en, bool mask, u32 mode) {}
+
+//LIGHT
+void kgmVulkan::gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle) {}
+
+//VERTEX & INDEX BUFFERS
+void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) {}
+void  kgmVulkan::gcFreeVertexBuffer(void*) {}
+void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) {}
+
+// SHADER
+void* kgmVulkan::gcGenShader(const char*, const char*) {}
+void  kgmVulkan::gcFreeShader(void* s) {}
+void  kgmVulkan::gcSetShader(void* s) {}
+void  kgmVulkan::gcBindAttribute(void* s, int, const char*) {}
+void  kgmVulkan::gcUniform(void* s, u32, u32, const char*, void*) {}
+void  kgmVulkan::gcUniformMatrix(void* s, u32, u32, u32, const char*, void*) {}
+void  kgmVulkan::gcUniformSampler(void* s, const char*, void*) {}
+
+#ifdef DEBUG
+void  kgmVulkan::gcGetUniform(void* s, const char*, void*) {}
+#endif
 
 #endif
