@@ -2,14 +2,18 @@
 
 #ifdef VULKAN
 
+#include "inc/vk/vulkan.h"
 
 u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
-kgmVulkan::kgmVulkan()
+kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
+
+  if (wnd == nullptr)
+    return;
 
   if (g_vulkans < 1) {
     if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
@@ -40,6 +44,30 @@ kgmVulkan::kgmVulkan()
   {
     return;
   }
+
+  VkSurfaceKHR surface;
+
+#ifdef WIN32
+  VkWin32SurfaceCreateInfoKHR sfCreateInfo;
+  sfCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+  sfCreateInfo.hwnd = wnd->m_wnd;
+  sfCreateInfo.hinstance = GetModuleHandle(nullptr);
+
+  if (m_vk.vkCreateXlibSurfaceKHR(instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
+  {
+    return;
+  }
+#else
+  VkXlibSurfaceCreateInfoKHR sfCreateInfo;
+  sfCreateInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+  sfCreateInfo.window = wnd->m_wnd;
+  sfCreateInfo.dpy    = wnd->m_dpy;
+
+  if (m_vk.vkCreateXlibSurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
+  {
+    return;
+  }
+#endif
 }
 
 kgmVulkan::~kgmVulkan()
@@ -68,10 +96,11 @@ int kgmVulkan::vkInit()
 #endif
 
   #pragma GCC diagnostic push
-  //#pragma GCC diagnostic warning "-fpermissive"
+  //#pragma GCC diagnostic ignored "-fpermissive"
 
   m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
   m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
+  m_vk.vkCreateXlibSurfaceKHR = (typeof m_vk.vkCreateXlibSurfaceKHR) vk_lib.get((char*) "vkCreateXlibSurfaceKHR");
 
   #pragma GCC diagnostic pop
 

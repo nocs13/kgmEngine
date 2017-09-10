@@ -5,16 +5,25 @@
 #include "kgmWindow.h"
 #include "kgmLib.h"
 
+#ifndef VULKAN
+#define VULKAN
+#endif
+
 #ifdef VULKAN
 
+#define VK_USE_PLATFORM_XLIB_KHR
+
 #include "inc/vk/vulkan.h"
+
+//struct VkXlibSurfaceCreateInfoKHR;
 
 class kgmVulkan: public kgmIGC
 {
   struct vk
   {
     VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
-    void (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+    void     (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+    VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
   };
 
   static kgmLib vk_lib;  
@@ -24,7 +33,7 @@ class kgmVulkan: public kgmIGC
   VkInstance m_instance;
 
 public:
-  kgmVulkan();
+  kgmVulkan(kgmWindow* wnd);
   ~kgmVulkan();
 
   void  gcSet(u32 param, void* value);

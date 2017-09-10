@@ -14,8 +14,10 @@
 
 static void kgm_signal_handler(int s);
 static void kgm_sigterm_handler(int s);
+
 extern void ClearDbgMemory();
 
+static void* exit_target = nullptr;
 //kgmApp
 
 //Application object, unique only  
@@ -36,14 +38,10 @@ s32 kgmApp::main(s32 argc, s8 **argv)
   return 0;
 }
 
-void kgmApp::abort()
-{
-
-}
-
-void kgm_abort()
+void kgm_app_abort()
 {
 #ifdef WIN32
+  TerminateProcess(GetCurrentProcessId(), -1);
 #else
   kill(getpid(), SIGTERM);
 #endif
@@ -51,8 +49,7 @@ void kgm_abort()
 
 void kgm_sigterm_handler(int s)
 {
-  if (kgmApp::application())
-    kgmApp::application()->abort();
+  goto *exit_target;
 }
 
 void kgm_signal_handler(int s)
@@ -71,20 +68,24 @@ LONG kgmDumper(struct _EXCEPTION_POINTERS* pe)
 }
 
 #if defined _USRDLL
+
 BOOL __stdcall DllMain(HANDLE a, DWORD b, DWORD c){
   hInst = a;
   switch(b)
   {
   case DLL_PROCESS_DETACH:
-    kgmMemoryClear();
-    break;
   case DLL_THREAD_DETACH:
-    kgmMemoryClear();
     break;
   }
+
+KGM_APP_EXIT:
+  exit_target = &&KGM_APP_EXIT;
+
   return TRUE;
 }
+
 #else
+
 int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 {
   typedef char* char_ptr;
@@ -133,15 +134,18 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
   if(kgmApp::application())
     kgmApp::application()->main(argc, argv);
 
+KGM_APP_EXIT:
+  exit_target = &&KGM_APP_EXIT;
+
   if(args)
     delete [] args;
 
   if(argv)
     delete [] argv;
 
-  //kgmClearAllocatedMemory();
   return rValue;
 }
+
 #endif
 #endif
 
@@ -161,7 +165,9 @@ int main(int argc, char** argv){
     rValue = kgmApp::application()->main((s32)argc, (s8**)argv);
 
   // kgmObject::releaseObjects();
-  ClearDbgMemory();
+  //ClearDbgMemory();
+KGM_APP_EXIT:
+  exit_target = &&KGM_APP_EXIT;
 
   return rValue;
 }

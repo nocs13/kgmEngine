@@ -5,6 +5,5 @@
 class kgmIApp: public kgmInterface
 {
 public:
-  virtual s32 main(s32, s8**) = 0;
-  virtual void abort() = 0;
+  virtual s32  main(s32, s8**) = 0;
 };

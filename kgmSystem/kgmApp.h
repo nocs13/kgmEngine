@@ -6,6 +6,8 @@ class kgmEvent;
 class kgmWindow;
 class kgmEnvironment;
 
+void kgm_app_abort();
+
 class kgmApp: public kgmIApp
 {
 private:
@@ -18,8 +20,6 @@ public:
   ~kgmApp();
 
   s32 main(s32 argc, s8 **argv);
-
-  void abort();
 
   void setMainWindow(void* w)
   {
