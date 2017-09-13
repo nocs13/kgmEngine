@@ -73,13 +73,13 @@ kgmCamera* g_cam = null;
 ////////////////////////////////////
 //                kgmGameBase
 kgmGameBase::kgmGameBase(bool edit)
-  :kgmOGLWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
+  :kgmWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
 {
   m_game = this;
 
   m_resources = null;
   m_physics   = null;
-  m_render    = null;
+  m_graphics  = null;
   m_system    = null;
   m_logic     = null;
   m_audio     = null;
@@ -100,19 +100,18 @@ kgmGameBase::kgmGameBase(bool edit)
   log("init game audio...");
   initAudio();
 
+  log("open graphics...");
+  initGC();
+
   log("init resources...");
   initResources();
-
-  log("open graphics...");
-  if(!kgmOGLWindow::getGC())
-    return;
 
   log("init physics...");
   initPhysics();
 
   log("open renderer...");
-  m_render = new kgmGameGraphics(kgmOGLWindow::getGC(), m_resources);
-  //m_render->resize(m_width, m_height);
+  m_graphics = new kgmGameGraphics(m_gc, m_resources);
+  //m_graphics->resize(m_width, m_height);
 
   log("init game logic...");
   initLogic();
@@ -122,8 +121,8 @@ kgmGameBase::kgmGameBase(bool edit)
 
   if(!m_font)
     log("can't load font");
-  else if(m_render)
-    m_render->setDefaultFont(m_font );
+  else if(m_graphics)
+    m_graphics->setDefaultFont(m_font );
 
   log("set input map...");
   memset(m_keys, 0, sizeof(m_keys));
@@ -174,7 +173,7 @@ kgmGameBase::kgmGameBase(bool edit)
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
-  :kgmOGLWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
+  :kgmWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
 }
 
@@ -207,8 +206,8 @@ kgmGameBase::~kgmGameBase()
 
   log("free renderer...");
 
-  if(m_render)
-    delete m_render;
+  if(m_graphics)
+    delete m_graphics;
 
   log("free gui...");
 
@@ -240,6 +239,11 @@ kgmGameBase::~kgmGameBase()
   kgmActor::g_actions.clear();
 }
 
+kgmIGC* kgmGameBase::getGC()
+{
+  return m_game->m_gc;
+}
+
 kgmIPhysics* kgmGameBase::getPhysics()
 {
   return m_game->m_physics;
@@ -267,7 +271,7 @@ kgmILogic*  kgmGameBase::getLogic()
 
 kgmIGraphics*  kgmGameBase::getGraphics()
 {
-  return m_game->m_render;
+  return m_game->m_graphics;
 }
 
 kgmIResources* kgmGameBase::getResources()
@@ -319,6 +323,11 @@ void kgmGameBase::initLogic()
   m_logic = new kgmGameLogic();
 }
 
+void kgmGameBase::initGC()
+{
+  m_gc = new kgmOGL(this);
+}
+
 void kgmGameBase::log(const char* msg)
 {
   kgmLog::log(msg);
@@ -362,8 +371,8 @@ void kgmGameBase::onIdle()
     break;
   }
 
-  if(m_render)
-    m_render->render();
+  if(m_graphics)
+    m_graphics->render();
 
   for(int i = m_guis.size(); i > 0; i--)
   {
@@ -391,7 +400,7 @@ void kgmGameBase::onPaint()
 
 void kgmGameBase::onClose()
 {
-  kgmOGLWindow::onClose();
+  kgmWindow::onClose();
 }
 
 void kgmGameBase::onKeyUp(int k)
@@ -488,8 +497,8 @@ void kgmGameBase::onResize(int w, int h)
 {
   kgmWindow::onResize(w, h);
 
-  if(m_render)
-    m_render->resize(w, h);
+  if(m_graphics)
+    m_graphics->resize(w, h);
 
   float sw = (float)w / (float)prev_width;
   float sh = (float)h / (float)prev_height;
@@ -529,7 +538,7 @@ int kgmGameBase::gLoad(kgmString s)
   loadXml(s);
 
   if(m_logic)   m_logic->build();
-  if(m_render)  m_render->build();
+  if(m_graphics)  m_graphics->build();
   if(m_physics) m_physics->build();
 
   m_state = State_Play;
@@ -547,8 +556,8 @@ int kgmGameBase::gUnload()
   if(m_physics)
     m_physics->clear();
 
-  if(m_render)
-    m_render->clean();
+  if(m_graphics)
+    m_graphics->clean();
 
   for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
     delete (*i);
@@ -556,10 +565,6 @@ int kgmGameBase::gUnload()
   m_nodes.clear();
 
   m_state = State_Idle;
-
-#ifdef DEBUG
-  kgm_log() << "\nUnloaded";
-#endif
 
   return m_state;
 }
@@ -627,14 +632,14 @@ bool kgmGameBase::gAppend(kgmUnit* node)
   if(!node)
     return false;
 
-  if(m_render && node->visual())
-    m_render->add(node->visual());
+  if(m_graphics && node->visual())
+    m_graphics->add(node->visual());
 
   if(m_physics && node->body())
     m_physics->add(node->body());
 
   if(node->getType() == kgmUnit::Light)
-    m_render->add(node->light());
+    m_graphics->add(node->light());
 
   if(m_logic)
   {
@@ -649,8 +654,8 @@ bool kgmGameBase::gAppend(kgmUnit* node)
   }
 
 #ifdef DEBUG
-  if(m_render && node->body())
-    m_render->add(node->body());
+  if(m_graphics && node->body())
+    m_graphics->add(node->body());
 #endif
 
   m_nodes.add(node);
@@ -814,7 +819,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       {
         type = TypeLight;
         obj = lgt = new kgmLight();
-        m_render->add(lgt);
+        m_graphics->add(lgt);
       }
       else if(id == "kgmMesh")
       {
@@ -822,7 +827,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         obj = msh = new kgmMesh();
         vis = new kgmVisual();
         vis->set(msh);
-        m_render->add(vis);
+        m_graphics->add(vis);
       }
       else if(id == "kgmActor")
       {
@@ -842,7 +847,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           {
             act->m_gameplayer = true;
 
-            //if(m_gamemode) m_render->linkCamera(act->visual(), 10.0f, 10.0f);
+            //if(m_gamemode) m_graphics->linkCamera(act->visual(), 10.0f, 10.0f);
           }
 
           if(sgrp.length() > 0)
@@ -851,7 +856,7 @@ bool kgmGameBase::loadXml(kgmString& path)
           gAppend((kgmActor*)act);
 #ifdef DEBUG
           if(act && act->body())
-            m_render->add(act->body());
+            m_graphics->add(act->body());
 #endif
         }
       }
@@ -870,7 +875,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         gAppend((kgmUnit*)gob);
 #ifdef DEBUG
         if(gob && gob->body())
-          m_render->add(gob->body());
+          m_graphics->add(gob->body());
 #endif
       }
       else if(id == "Vertices")
@@ -979,7 +984,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         switch(type){
         case TypeCamera:
-          m_render->camera().mPos = v;
+          m_graphics->camera().mPos = v;
           break;
         case TypeLight:
           if(lgt)
@@ -1068,7 +1073,7 @@ bool kgmGameBase::loadXml(kgmString& path)
               vis->set(mesh);
               vis->set(mtl);
               vis->set(&mtx);
-              m_render->add(vis);
+              m_graphics->add(vis);
             }
 
             kgmList<triangle3> tr_list;

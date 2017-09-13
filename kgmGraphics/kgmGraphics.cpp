@@ -455,7 +455,7 @@ void kgmGraphics::render()
 
   LightRender lr(this);
 
-  lr.l_render(lights, m_visible_visuals);
+  //lr.l_render(lights, m_visible_visuals);
 
   mtx4 m4_identity;
   m4_identity.identity();

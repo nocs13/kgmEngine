@@ -17,7 +17,6 @@
 #include "../kgmBase/kgmQuadTree.h"
 #include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmWindow.h"
-#include "../kgmSystem/kgmOGLWindow.h"
 #include "../kgmGraphics/kgmGui.h"
 #include "../kgmGraphics/kgmGuiList.h"
 #include "../kgmGraphics/kgmGuiButton.h"
@@ -29,12 +28,13 @@
 using namespace kgmGameEditor;
 #endif
 
-class kgmGameBase: public kgmOGLWindow, public kgmIGame
+class kgmGameBase: public kgmWindow, public kgmIGame
 {
 public:
   static kgmGameBase* m_game;
 
 protected:
+  kgmIGC*           m_gc;
   kgmIVideo*        m_video;
   kgmGameAudio*     m_audio;
   kgmGamePhysics*   m_physics;
@@ -59,7 +59,7 @@ protected:
   bool m_result;
 
   kgmGameLogic*    m_logic;
-  kgmGameGraphics* m_render;
+  kgmGameGraphics* m_graphics;
 
   kgmList<kgmGui*>  m_guis;
   kgmList<kgmUnit*> m_nodes;
@@ -86,6 +86,7 @@ public:
   kgmGameBase(kgmString &conf);
   virtual ~kgmGameBase();
 
+  kgmIGC*            getGC();
   kgmIPhysics*       getPhysics();
   kgmISpawner*       getSpawner();
   kgmIAudio*         getAudio();
@@ -143,6 +144,7 @@ public:
   void  initSystem();
   void  initAudio();
   void  initLogic();
+  void  initGC();
 
   void guiAdd(kgmGui* g)
   {
@@ -158,14 +160,14 @@ public:
 
       m_guis.add(g);
 
-      if(m_render)
-        m_render->add(g);
+      if(m_graphics)
+        m_graphics->add(g);
     }
   }
 
   kgmGraphics* getRender()
   {
-    return m_render;
+    return m_graphics;
   }
 
   kgmGameSettings* getSettings()

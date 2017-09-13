@@ -116,7 +116,26 @@ public:
   };
 
 private:
-  kgmOGLWindow* m_wnd = null;
+
+#ifdef WIN32
+
+  HDC        m_hdc;
+  HGLRC      m_hrc;
+
+#elif defined(ANDROID)
+
+  EGLSurface surface;
+  EGLContext context;
+  EGLDisplay display;
+
+#else
+
+  XVisualInfo* m_visual = null;
+  GLXContext   m_glctx  = null;
+
+#endif
+
+  kgmWindow* m_wnd = null;
 
   //Current Render Buffer
   RenderBuffer* m_renderbuffer = null;
@@ -133,8 +152,9 @@ private:
 
   int m_min_filter;
   int m_mag_filter;
+
 public:
-  kgmOGL(kgmOGLWindow* wnd);
+  kgmOGL(kgmWindow* wnd);
   virtual ~kgmOGL();
 
 
