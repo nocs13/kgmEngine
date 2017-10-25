@@ -55,7 +55,6 @@ private:
     return (function != null);
   }
 };
-*/
 
 template <class Obj>
 class kgmFunction<void (Obj*)>
@@ -198,5 +197,6 @@ template <class Res, class Obj, class... Args>
     return (pointers.f_static != null);
   }
 };
+*/
 
 #endif // KGMFUNCTION_H

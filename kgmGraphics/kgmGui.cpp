@@ -316,7 +316,7 @@ void kgmGui::onMsMove(int k, int x, int y)
         child->onMsOutside();
         child->m_hasMouse = false;
       }
-      else if(guiPointed == child->getPointed())
+      else if(guiPointed && (guiPointed == child->getPointed()))
       {
         guiPointed->onMsOutside();
         guiPointed->m_hasMouse = false;

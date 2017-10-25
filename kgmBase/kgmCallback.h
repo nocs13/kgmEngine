@@ -2,15 +2,15 @@
 #define KGMCALLBACK_H
 
 // Callback function should be __stdcall attribute.
-template <class Res, class Obj, class... Args>
+template <class Ret, class Obj, class... Args>
 class kgmCallback
 {
 public:
-  typedef Res(*Function)(Args...);
+  typedef Ret(*Function)(Args...);
 
 private:
-  typedef Res(*Fn)(Args...);
-  typedef Res(*Fno)(Obj, Args...);
+  typedef Ret(*Fn)(Args...);
+  typedef Ret(*Fno)(Obj, Args...);
 
   Obj object;
 
@@ -33,7 +33,7 @@ public:
     function = fn;
   }
 
-  Res operator()(Args... args)
+  Ret operator()(Args... args)
   {
     if(object)
       return (*functiono)(object, args...);
@@ -57,11 +57,11 @@ public:
   }
 };
 /*
-template <class Res, class... Args>
+template <class Ret, class... Args>
 class kgmCallback
 {
 public:
-  typedef Res(*Function)(Args...);
+  typedef Ret(*Function)(Args...);
 
   Function  function;
 
@@ -71,17 +71,17 @@ public:
     function = fn;
   }
 
-  virtual Res operator()(Args... args)
+  virtual Ret operator()(Args... args)
   {
     return (*function)(args...);
   }
 };
 
-template <class Res, class Obj, class... Args>
-class kgmCallbackMethod: public kgmCallback<Res, Args...>
+template <class Ret, class Obj, class... Args>
+class kgmCallbackMethod: public kgmCallback<Ret, Args...>
 {
 public:
-  typedef Res(Obj::*Function)(Args...);
+  typedef Ret(Obj::*Function)(Args...);
 
   Function  function;
   Obj       object;
@@ -93,7 +93,7 @@ public:
     object   = ob;
   }
 
-  Res operator()(Args... args)
+  Ret operator()(Args... args)
   {
     return (object->*function)(args...);
   }
