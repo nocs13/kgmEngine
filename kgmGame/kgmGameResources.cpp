@@ -230,6 +230,10 @@ bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 
 kgmPicture* kgmGameResources::getPicture(const char* id)
 {
+#ifdef DEBUG
+  kgm_log() << "kgmGameResources::getPicture: " << id << "\n";
+#endif
+
   kgmPicture* picture = (kgmPicture *)get(id);
 
   if(picture)
@@ -255,6 +259,10 @@ kgmPicture* kgmGameResources::getPicture(const char* id)
 
 kgmTexture* kgmGameResources::getTexture(const char* id)
 {
+#ifdef DEBUG
+  kgm_log() << "kgmGameResources::getTexture: " << id << "\n";
+#endif
+
   kgmTexture* texture = (kgmTexture*)get(id);
 
   if(texture)
@@ -280,7 +288,9 @@ kgmTexture* kgmGameResources::getTexture(const char* id)
 
 kgmShader* kgmGameResources::getShader(const char* id)
 {
-  kgm_log() << "Resources: get shader " << id << "\n";
+#ifdef DEBUG
+  kgm_log() << "kgmGameResources::getShader: " << id << "\n";
+#endif
 
   kgmShader* shader = (kgmShader*)get(id);
 

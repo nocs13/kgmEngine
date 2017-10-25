@@ -13,7 +13,7 @@ kgmGuiStyle::kgmGuiStyle()
   sbutton.tx_color = 0xffffffff;
   sbutton.bg_color = 0xff999999;
   sbutton.fg_color = 0xffbbbbbb;
-  sbutton.ac_color = 0xffbbbbbb;
+  sbutton.ac_color = 0xffcccccc;
 
   //gui list
   slist.tx_color = 0xffffffff;
@@ -54,6 +54,8 @@ kgmGuiStyle::kgmGuiStyle()
   sscroll.bg_color = 0xff999999;
   sscroll.ac_color = 0xffaaaaaa;
   sscroll.fg_color = 0xffbbbbbb;
+
+  gui_image = null;
 }
 
 kgmGuiStyle::~kgmGuiStyle()

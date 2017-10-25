@@ -122,7 +122,7 @@ kgmGameBase::kgmGameBase(bool edit)
   if(!m_font)
     log("can't load font");
   else if(m_graphics)
-    m_graphics->setDefaultFont(m_font );
+    m_graphics->setDefaultFont(m_font);
 
   log("set input map...");
   memset(m_keys, 0, sizeof(m_keys));

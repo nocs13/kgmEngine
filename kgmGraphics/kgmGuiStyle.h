@@ -71,8 +71,8 @@ class kgmGuiStyle: public kgmObject
   };
 
   //gui
-  //kgm_ptr<kgmFont>  gui_font;
   Font  gui_font;
+  Image gui_image;
 
   SGui         sgui;
   SGuiList     slist;
