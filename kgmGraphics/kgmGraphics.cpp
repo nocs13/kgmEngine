@@ -81,6 +81,8 @@ void*      g_map_shadow = null;
 kgmLight*     g_def_light = null;
 kgmMaterial*  g_def_material = null;
 
+kgmTexture*   g_def_style_texture = null;
+
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
   if(lights == null || count < 1)
@@ -148,6 +150,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     //generic gray texture
     memset(txd, 0x80, sizeof(txd));
     g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
+
+    g_def_style_texture = new kgmTexture(g_tex_white);
   }
 
   m_shadows.alloc(1);
@@ -172,6 +176,15 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_r_fps = new FpsRender(this);
   m_r_gui = new GuiRender(this);
   m_r_sprite = new SpriteRender(this);
+
+  gui_style->gui_image = g_def_style_texture;
+  gui_style->sgui.image = g_def_style_texture;
+  gui_style->sbutton.image = g_def_style_texture;
+  gui_style->smenu.image = g_def_style_texture;
+  gui_style->scheck.image = g_def_style_texture;
+  gui_style->slist.image = g_def_style_texture;
+  gui_style->slabel.image = g_def_style_texture;
+  gui_style->sprogess.image = g_def_style_texture;
 }
 
 kgmGraphics::~kgmGraphics()
@@ -207,6 +220,9 @@ kgmGraphics::~kgmGraphics()
 
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
+
+  if (g_def_style_texture)
+    delete g_def_style_texture;
 
   if(gui_style)
     delete gui_style;
@@ -657,7 +673,6 @@ void kgmGraphics::render()
     }
   }
 
-
   m_r_sprite->render();
   m_r_gui->render();
 
@@ -870,8 +885,8 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->hasTexColor())
   {
-    gc->gcSetTexture(0, m->getTexColor()->m_texture);
-    tcolor = m->getTexColor()->m_texture;
+    gc->gcSetTexture(0, m->getTexColor()->texture());
+    tcolor = m->getTexColor()->texture();
   }
   else
   {
@@ -881,8 +896,8 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->hasTexNormal())
   {
-    gc->gcSetTexture(1, m->getTexNormal()->m_texture);
-    tnormal = m->getTexNormal()->m_texture;
+    gc->gcSetTexture(1, m->getTexNormal()->texture());
+    tnormal = m->getTexNormal()->texture();
   }
   else
   {
@@ -892,8 +907,8 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->hasTexSpecular())
   {
-    gc->gcSetTexture(2, m->getTexSpecular()->m_texture);
-    tspecular = m->getTexSpecular()->m_texture;
+    gc->gcSetTexture(2, m->getTexSpecular()->texture());
+    tspecular = m->getTexSpecular()->texture();
   }
   else
   {
@@ -1031,8 +1046,8 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex)
   v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 1);
   v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 0);
 
-  if(tex && tex->m_texture)
-    gc->gcSetTexture(0, tex->m_texture);
+  if(tex && tex->texture())
+    gc->gcSetTexture(0, tex->texture());
   else
     gc->gcSetTexture(0, g_tex_white);
 
@@ -1053,7 +1068,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   if(tlen < 1)
     return;
 
-  if(!font || !font->m_texture)
+  if(!font || !font->texture())
     return;
 
   float tx = 0.0f, ty = 0.0f;
@@ -1064,7 +1079,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
 
   //gc->gcBlend(true, gcblend_one, gcblend_one);
   gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-  gc->gcSetTexture(0, font->m_texture);
+  gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
   {
@@ -1117,7 +1132,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   if(tlen < 1)
     return;
 
-  if(!font || !font->m_texture)
+  if(!font || !font->texture())
     return;
 
   float tx = 0.0f, ty = 0.0f;
@@ -1127,7 +1142,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   float cx = (float)clip.x, cy = (float)clip.y;
 
   gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-  gc->gcSetTexture(0, font->m_texture);
+  gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
   {

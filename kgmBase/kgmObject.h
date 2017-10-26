@@ -1,8 +1,17 @@
 #pragma once
 #include "kgmList.h"
-#include "kgmIObject.h"
+#include "kgmInterface.h"
 
-class kgmObject: public kgmIObject
+#define KGM_OBJECT(o_class)                                         \
+  public:                                                           \
+  static unsigned int  cSize(){ return sizeof(class o_class); }     \
+  static const char*   cClass(){ return #o_class; }                 \
+  unsigned int         vSize(){ return sizeof(class o_class); }     \
+  const char*          vClass(){ return #o_class; }                 \
+  private:
+
+
+class kgmObject: public kgmInterface
 {
   KGM_OBJECT(kgmObject);
 

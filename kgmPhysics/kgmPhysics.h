@@ -32,6 +32,8 @@ public:
   kgmCollision    m_collision;
   kgmIntersection m_intersection;
 
+  u32 m_time_update;
+
 public:
   kgmPhysics();
   ~kgmPhysics();
@@ -39,7 +41,7 @@ public:
   //virtual
   virtual void clear();
   virtual void build();
-  virtual void update(float time);
+  virtual void update();
   virtual void collision(kgmBody* cbody, kgmBody* tobody);
 
   // static objects
@@ -58,7 +60,7 @@ public:
   // bool checkCollision(vec3& spos, vec3& epos, box& bound, vec3& rpos);
 
 protected:
-  void doCollision(float);
+  void doCollision(f32);
   void getTriangles(kgmList<triangle3>& triangles, sphere& s);
   void getBodies(kgmList<kgmBody*>& bodies, sphere& s);
 

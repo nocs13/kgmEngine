@@ -1573,15 +1573,7 @@ int kgmGameBase::doLogic(kgmGameBase* g)
 
 int kgmGameBase::doPhysics(kgmGameBase* g)
 {
-  //while(g->m_isphysics && g->m_physics)
-  {
-    u32 fps = 1 + g->m_fps;
-    g->m_physics->update(1000 / fps);
-    //kgmThread::sleep(0);
-  }
+  g->m_physics->update();
 
   return 1;
 }
-
-#ifdef EDITOR
-#endif

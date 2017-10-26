@@ -323,13 +323,13 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
     break;
   };
 
-  kgmTexture* tex = new kgmTexture();
+  void* t = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
 
-  tex->m_texture = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+  kgmTexture* tex = new kgmTexture(t);
 
   delete pic;
 
-  if(!tex->m_texture)
+  if(!tex->texture())
   {
     delete tex;
 
@@ -364,19 +364,20 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
     break;
   };
 
-  kgmFont* font = new kgmFont();
 
   gc->gcSet(gctex_fltmag, (void*)gcflt_near);
   gc->gcSet(gctex_fltmin, (void*)gcflt_near);
 
-  font->m_texture  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
+  void* t  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
 
   gc->gcSet(gctex_fltmag, (void*)gcflt_linear);
   gc->gcSet(gctex_fltmin, (void*)gcflt_linear);
 
   delete pic;
 
-  if(!font->m_texture)
+  kgmFont* font = new kgmFont(t);
+
+  if(!font->texture())
   {
     delete font;
 

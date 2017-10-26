@@ -8,6 +8,7 @@
 
 kgmPhysics::kgmPhysics()
 {
+  m_time_update = kgmTime::getTicks();
 }
 
 kgmPhysics::~kgmPhysics()
@@ -15,9 +16,14 @@ kgmPhysics::~kgmPhysics()
   clear();
 }
 
-void kgmPhysics::update(float time)
+void kgmPhysics::update()
 {
-  doCollision(time);
+  u32 current = kgmTime::getTicks();
+  u32 delta   = current - m_time_update;
+
+  m_time_update = current;
+
+  doCollision((f32) delta / (f32) 1000.0f);
 }
 
 void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
@@ -135,7 +141,7 @@ bool kgmPhysics::checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos)
   return insect;
 }
 
-void kgmPhysics::doCollision(float dtime)
+void kgmPhysics::doCollision(f32 dtime)
 {
   u16 max_triangles = 5000;
   u16 max_bodies = 50;

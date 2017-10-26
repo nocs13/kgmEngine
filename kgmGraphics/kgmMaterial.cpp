@@ -69,17 +69,17 @@ void kgmMaterial::setTexSpecular(kgmTexture* t)
 
 bool kgmMaterial::hasTexColor()
 {
-  return (m_tex_color && m_tex_color->m_texture);
+  return (m_tex_color && m_tex_color->texture());
 }
 
 bool kgmMaterial::hasTexNormal()
 {
-  return (m_tex_normal && m_tex_normal->m_texture);
+  return (m_tex_normal && m_tex_normal->texture());
 }
 
 bool kgmMaterial::hasTexSpecular()
 {
-  return (m_tex_specular && m_tex_specular->m_texture);
+  return (m_tex_specular && m_tex_specular->texture());
 }
 
 kgmTexture* kgmMaterial::getTexColor()

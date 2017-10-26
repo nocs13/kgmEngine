@@ -1,9 +1,9 @@
 #pragma once
-#include "../kgmBase/kgmIObject.h"
+#include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
 
-class kgmBody: public kgmIObject
+class kgmBody: public kgmObject
 {
   KGM_OBJECT(kgmBody);
 

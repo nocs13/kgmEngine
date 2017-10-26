@@ -21,8 +21,8 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
   v[2].pos = vec3(rc.x + rc.w, rc.y,        -1); v[2].col = col; v[2].uv = vec2(1, 1);
   v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[3].col = col; v[3].uv = vec2(1, 0);
 
-  if(tex && tex->m_texture)
-    gc->gcSetTexture(0, tex->m_texture);
+  if(tex && tex->texture())
+    gc->gcSetTexture(0, tex->texture());
 
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
 
@@ -41,7 +41,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   if(tlen < 1)
     return;
 
-  if(!font || !font->m_texture)
+  if(!font || !font->texture())
     return;
 
   float tx = 0.0f, ty = 0.0f;
@@ -51,7 +51,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   float cx = (float)clip.x, cy = (float)clip.y;
 
   gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-  gc->gcSetTexture(0, font->m_texture);
+  gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
   {

@@ -7,8 +7,10 @@ class kgmIGC;
 class kgmTexture: public kgmResource
 {
   KGM_OBJECT(kgmTexture)
+
   public:
-    enum Type
+
+  enum Type
   {
     Type_Color,
     Type_Depth,
@@ -54,9 +56,10 @@ class kgmTexture: public kgmResource
     obj_plane,
   };
 
-public:
+private:
   void* m_texture = null;
 
+public:
   u32 m_stage = 0;
   u32 m_type = 0;
   u32 m_flags = 0;
@@ -91,9 +94,11 @@ public:
 
 public:
   kgmTexture();
-  kgmTexture(kgmIGC*, u32 type);
+  kgmTexture(void* tex, u32 type = 0);
   ~kgmTexture();
 
   void setFlags(u32 f);
   void addFlags(u32 f);
+
+  void* texture() const { return m_texture; }
 };

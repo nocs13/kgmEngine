@@ -10,9 +10,9 @@ kgmTexture::kgmTexture()
   m_transform.identity();
 }
 
-kgmTexture::kgmTexture(kgmIGC* gc, u32 type)
+kgmTexture::kgmTexture(void* tex, u32 type)
 {
-  m_texture = 0;
+  m_texture = tex;
   m_type = type;
   m_flags = 0;
 

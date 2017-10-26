@@ -54,11 +54,11 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
     kgmTexture* tnormal  = m->getTexNormal();
     kgmTexture* tspecular = m->getTexSpecular();
 
-    if (tnormal && tnormal->m_texture)
-      gr->gc->gcSetTexture(0, tnormal->m_texture);
+    if (tnormal && tnormal->texture())
+      gr->gc->gcSetTexture(0, tnormal->texture());
 
-    if (tnormal && tspecular->m_texture)
-      gr->gc->gcSetTexture(1, tspecular->m_texture);
+    if (tnormal && tspecular->texture())
+      gr->gc->gcSetTexture(1, tspecular->texture());
 
     kgmList<kgmLight*>::iterator j = lights.begin();
 

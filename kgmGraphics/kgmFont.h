@@ -22,6 +22,12 @@ public:
     m_rows = m_cols = 0, m_base = 32;
   }
 
+  kgmFont(void* t, uint type = 0): kgmTexture(t, type)
+  {
+    m_twidth = m_theight = m_fwidth = m_fheight = 0;
+    m_rows = m_cols = 0, m_base = 32;
+  }
+
   ~kgmFont()
   {
   }

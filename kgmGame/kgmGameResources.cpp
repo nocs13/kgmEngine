@@ -80,7 +80,7 @@ void kgmGameResources::clear()
 
     if(r->isClass(kgmTexture::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmTexture*)r)->m_texture);
+      m_gc->gcFreeTexture(((kgmTexture*)r)->texture());
 
       delete (kgmTexture*) r;
     }
@@ -98,7 +98,7 @@ void kgmGameResources::clear()
     }
     else if(r->isClass(kgmFont::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmFont*)r)->m_texture);
+      m_gc->gcFreeTexture(((kgmFont*)r)->texture());
 
       delete (kgmFont*) r;
     }

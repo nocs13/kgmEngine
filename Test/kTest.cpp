@@ -166,6 +166,8 @@ public:
 
 class kApp: public kgmGameApp
 {
+  KGM_OBJECT(kApp);
+
 #ifdef ANDROID
 public:
 #endif

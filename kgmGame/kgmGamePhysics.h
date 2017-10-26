@@ -11,6 +11,6 @@ public:
  kgmGamePhysics();
  ~kgmGamePhysics();
 
- void update(float);
+ void update();
  void collision(kgmBody*, kgmBody*);
 };

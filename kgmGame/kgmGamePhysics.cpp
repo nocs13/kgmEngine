@@ -19,9 +19,9 @@ kgmGamePhysics::~kgmGamePhysics()
 {
 }
 
-void kgmGamePhysics::update(float dtime)
+void kgmGamePhysics::update()
 {
-  kgmPhysics::update(dtime);
+  kgmPhysics::update();
 }
 
 void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)

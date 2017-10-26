@@ -8,6 +8,8 @@ class kgmProcess: public kgmObject
 {
   class Thread : public kgmThread
   {
+    KGM_OBJECT(Thread);
+
     kgmString m_command;
     bool      m_wait;
 
