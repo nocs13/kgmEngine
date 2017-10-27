@@ -519,8 +519,8 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
   }
 
 #ifdef EDITOR
-  //if(editor)
-  //  editor->onEvent(e);
+  if(editor)
+    editor->onEvent(e);
 #endif
 }
 

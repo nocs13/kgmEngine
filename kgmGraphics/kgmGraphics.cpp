@@ -181,8 +181,10 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   gui_style->sgui.image = g_def_style_texture;
   gui_style->sbutton.image = g_def_style_texture;
   gui_style->smenu.image = g_def_style_texture;
+  gui_style->stext.image = g_def_style_texture;
   gui_style->scheck.image = g_def_style_texture;
   gui_style->slist.image = g_def_style_texture;
+  gui_style->sscroll.image = g_def_style_texture;
   gui_style->slabel.image = g_def_style_texture;
   gui_style->sprogess.image = g_def_style_texture;
 }
