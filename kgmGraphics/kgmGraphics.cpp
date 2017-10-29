@@ -79,7 +79,6 @@ void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
 kgmLight*     g_def_light = null;
-kgmMaterial*  g_def_material = null;
 
 kgmTexture*   g_def_style_texture = null;
 
@@ -127,10 +126,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_visible_visuals.alloc(4096);
   m_visible_visuals_alpha.alloc(4096);
 
-  g_def_material = new kgmMaterial();
-  g_def_material->setShader(null);
-  g_def_material->shade(false);
-  g_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
+  m_def_material = new kgmMaterial();
+  m_def_material->setShader(null);
+  m_def_material->shade(false);
+  m_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
+  m_def_material->m_specular = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
   if(g)
   {
@@ -162,11 +162,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   if(rc != null)
   {
-    shaders.set(kgmShader::TypeNone,   rc->getShader("none.glsl"));
-    shaders.set(kgmShader::TypeBase,   rc->getShader("base.glsl"));
-    shaders.set(kgmShader::TypeLight,  rc->getShader("light.glsl"));
-    shaders.set(kgmShader_TypeGui,     rc->getShader("gui.glsl"));
-    shaders.set(kgmShader::TypeAmbient, rc->getShader("ambient.glsl"));
+    memset(m_shaders, 0, sizeof(m_shaders));
+    m_shaders[kgmShader::TypeNone] = rc->getShader("none.glsl");
+    m_shaders[kgmShader::TypeBase] = rc->getShader("base.glsl");
+    m_shaders[kgmShader::TypeLight] = rc->getShader("light.glsl");
+    m_shaders[kgmShader_TypeGui]    = rc->getShader("gui.glsl");
+    m_shaders[kgmShader::TypeAmbient] = rc->getShader("ambient.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -176,17 +177,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_r_fps = new FpsRender(this);
   m_r_gui = new GuiRender(this);
   m_r_sprite = new SpriteRender(this);
-
-  gui_style->gui_image = g_def_style_texture;
-  gui_style->sgui.image = g_def_style_texture;
-  gui_style->sbutton.image = g_def_style_texture;
-  gui_style->smenu.image = g_def_style_texture;
-  gui_style->stext.image = g_def_style_texture;
-  gui_style->scheck.image = g_def_style_texture;
-  gui_style->slist.image = g_def_style_texture;
-  gui_style->sscroll.image = g_def_style_texture;
-  gui_style->slabel.image = g_def_style_texture;
-  gui_style->sprogess.image = g_def_style_texture;
 }
 
 kgmGraphics::~kgmGraphics()
@@ -213,6 +203,9 @@ kgmGraphics::~kgmGraphics()
   m_bodies.clear();
   m_obstacles.clear();
 #endif
+
+  if (m_def_material)
+    delete m_def_material;
 
   if(g_tex_black)
     gc->gcFreeTexture(g_tex_black);
@@ -280,19 +273,6 @@ void kgmGraphics::setDefaultFont(kgmFont* f)
 
   if(gui_style)
     gui_style->gui_font = f;
-}
-
-void kgmGraphics::setGuiStyle(kgmGuiStyle* s)
-{
-  if(!s)
-    return;
-
-  if(gui_style)
-  {
-    delete gui_style;
-  }
-
-  gui_style = s;
 }
 
 void kgmGraphics::setProjMatrix(mtx4 &m)
@@ -482,7 +462,7 @@ void kgmGraphics::render()
   for (s32 i = 0; i < count_visible; i++)
   {
     kgmVisual* vis = m_visible_visuals[i];
-    kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(g_def_material);
+    kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(m_def_material);
     
     box3    bbound = vis->getBound();
     sphere3 sbound;
@@ -675,6 +655,8 @@ void kgmGraphics::render()
     }
   }
 
+  render(m_def_material);
+  render(Sha);
   m_r_sprite->render();
   m_r_gui->render();
 

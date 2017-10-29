@@ -101,7 +101,7 @@ private:
   void* shader;
   mtx4  location;
 
-  kgmTab<u16, kgmShader*>  shaders;
+  kgmShader*  m_shaders[32];
 
   kgmArray<kgmVisual*> m_visible_sprites;
   kgmArray<kgmVisual*> m_visible_visuals;
@@ -110,6 +110,9 @@ private:
   kgmTexture *m_shadowmap;
 
   kgmArray<Shadow> m_shadows;
+
+  kgmMaterial*  m_def_material = null;
+
 
   bool  m_depth;
   bool  m_alpha;
@@ -134,7 +137,6 @@ public:
   void resize(float, float);
   void setEditor(bool);
 
-  void setGuiStyle(kgmGuiStyle*);
   void setDefaultFont(kgmFont*);
 
   s32  getShaderId(kgmString);

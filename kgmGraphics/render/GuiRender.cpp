@@ -73,14 +73,14 @@ void GuiRender::render(kgmGui* gui)
     switch(((kgmGuiButton*)gui)->getState())
     {
     case kgmGuiButton::StateFocus:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.ac_color, gr->gui_style->sbutton.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.ac_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateClick:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.fg_color, gr->gui_style->sbutton.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.fg_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateNone:
     default:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->sbutton.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->gui_image);
     }
 
     if(text.length() > 0)
@@ -93,8 +93,8 @@ void GuiRender::render(kgmGui* gui)
 
     srect = gscroll->toAbsolute(srect);
 
-    gcDrawRect(gr->gc, rect, gr->gui_style->sscroll.bg_color, gr->gui_style->sscroll.image);
-    gcDrawRect(gr->gc, srect, gr->gui_style->sscroll.fg_color, gr->gui_style->sscroll.image);
+    gcDrawRect(gr->gc, rect, gr->gui_style->sscroll.bg_color, gr->gui_style->gui_image);
+    gcDrawRect(gr->gc, srect, gr->gui_style->sscroll.fg_color, gr->gui_style->gui_image);
   }
   else if(gui->isClass(kgmGuiList::cClass()))
   {
@@ -106,7 +106,7 @@ void GuiRender::render(kgmGui* gui)
     srect = glist->toAbsolute(srect);
 
     //Draw Main Rect
-    gcDrawRect(gr->gc, rect, gr->gui_style->slist.bg_color, gr->gui_style->slist.image);
+    gcDrawRect(gr->gc, rect, gr->gui_style->slist.bg_color, gr->gui_style->gui_image);
 
     //Draw Items Rects
     for(int i = glist->getFirstVisibleItem();
@@ -127,11 +127,11 @@ void GuiRender::render(kgmGui* gui)
 
       if(i == glist->getSel())
       {
-        gcDrawRect(gr->gc, frect, gr->gui_style->slist.fg_color, gr->gui_style->slist.image);
+        gcDrawRect(gr->gc, frect, gr->gui_style->slist.fg_color, gr->gui_style->gui_image);
       }
       else if (i == glist->getPnt())
       {
-        gcDrawRect(gr->gc, frect, gr->gui_style->slist.ac_color, gr->gui_style->slist.image);
+        gcDrawRect(gr->gc, frect, gr->gui_style->slist.ac_color, gr->gui_style->gui_image);
       }
 
       if(rect.inside(frect))
@@ -152,11 +152,11 @@ void GuiRender::render(kgmGui* gui)
 
     if(gui->m_hasMouse )
     {
-      gcDrawRect(gr->gc, rect, gr->gui_style->stext.fg_color, gr->gui_style->stext.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->stext.fg_color, gr->gui_style->gui_image);
     }
     else
     {
-      gcDrawRect(gr->gc, rect, gr->gui_style->stext.bg_color, gr->gui_style->stext.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->stext.bg_color, gr->gui_style->gui_image);
     }
 
     if(text.length() > 0)
@@ -227,7 +227,7 @@ void GuiRender::render(kgmGui* gui)
     fwidth = ((kgmGuiLabel*)gui)->getFontWidth();
     fheight = ((kgmGuiLabel*)gui)->getFontHeight();
 
-    gcDrawRect(gr->gc, rect, gr->gui_style->slabel.bg_color, gr->gui_style->slabel.image);
+    gcDrawRect(gr->gc, rect, gr->gui_style->slabel.bg_color, gr->gui_style->gui_image);
 
     if(text.length() > 0)
       gcDrawText(gr->gc, gr->gui_style->gui_font, fwidth, fheight, gr->gui_style->sbutton.tx_color, tClip, text);
@@ -270,17 +270,17 @@ void GuiRender::render(kgmGui* gui)
     switch(((kgmGuiCheck*)gui)->getState())
     {
     case kgmGuiCheck::StateFocus:
-      gcDrawRect(gr->gc, rect, gr->gui_style->scheck.ac_color, gr->gui_style->scheck.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->scheck.ac_color, gr->gui_style->gui_image);
       break;
     case kgmGuiCheck::StateNone:
     default:
-      gcDrawRect(gr->gc, rect, gr->gui_style->scheck.bg_color, gr->gui_style->scheck.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->scheck.bg_color, gr->gui_style->gui_image);
     }
 
-    gcDrawRect(gr->gc, btClip, gr->gui_style->scheck.bg_check, gr->gui_style->scheck.image);
+    gcDrawRect(gr->gc, btClip, gr->gui_style->scheck.bg_check, gr->gui_style->gui_image);
 
     if(((kgmGuiCheck*)gui)->isCheck())
-      gcDrawRect(gr->gc, chClip, gr->gui_style->scheck.fg_check, gr->gui_style->scheck.image);
+      gcDrawRect(gr->gc, chClip, gr->gui_style->scheck.fg_check, gr->gui_style->gui_image);
 
     if(text.length() > 0)
       gcDrawText(gr->gc, gr->gui_style->gui_font, fwidth, fheight, gr->gui_style->sbutton.tx_color, txClip, text);
@@ -289,11 +289,11 @@ void GuiRender::render(kgmGui* gui)
   {
     if(gui->m_hasMouse )
     {
-      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.fg_color, gr->gui_style->sgui.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.fg_color, gr->gui_style->gui_image);
     }
     else
     {
-      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->sgui.image);
+      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->gui_image);
     }
   }
 
@@ -330,20 +330,18 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
     if(citem == choose)
     {
-      //if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
-      //  renderGuiMenuItem(menu, citem);
-      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.ac_color, gr->gui_style->smenu.image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.ac_color, gr->gui_style->gui_image);
     }
     else if(item->getSelected() == i)
     {
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);
 
-      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.fg_color, gr->gui_style->smenu.image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.fg_color, gr->gui_style->gui_image);
     }
     else
     {
-      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->smenu.image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
     }
 
     kgmString title = citem->getTitle();

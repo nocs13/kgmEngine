@@ -24,9 +24,6 @@ class kgmGuiStyle: public kgmObject
     Color fg_color; // Foreground color
     Color ac_color; // Active color
     u32   ft_size;  // Font height
-
-    //kgm_ptr<kgmTexture> image;    // Background image
-    Image image;    // Background image
   };
 
   struct SGuiButton: SGui
