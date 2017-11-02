@@ -193,12 +193,6 @@ kgmGraphics::~kgmGraphics()
 
   m_guis.clear();
 
-  for(kgmTab<u16, kgmShader*>::iterator i = shaders.begin(); i != shaders.end(); ++i)
-    if(i.data())
-      rc->remove(i.data());
-
-  shaders.clear();
-
 #ifdef DEBUG
   m_bodies.clear();
   m_obstacles.clear();
@@ -478,13 +472,13 @@ void kgmGraphics::render()
 
     if(!mtl->shade() || g_lights_count < 1)
     {
-      render(shaders.get(kgmShader::TypeBase).data());
+      render(m_shaders[kgmShader::TypeBase]);
     }
     else
     {
       g_light_active = g_lights[0];
 
-      render(shaders[kgmShader::TypeAmbient].data());
+      render(m_shaders[kgmShader::TypeAmbient]);
     }
 
     render(vis);
@@ -539,13 +533,13 @@ void kgmGraphics::render()
 
     if(!mtl->shade() || g_lights_count < 1)
     {
-      render(shaders[kgmShader::TypeBase].data());
+      render(m_shaders[kgmShader::TypeBase]);
     }
     else
     {
       g_light_active = g_lights[0];
 
-      render(shaders[kgmShader::TypeAmbient].data());
+      render(m_shaders[kgmShader::TypeAmbient]);
     }
 
     render(vis);
@@ -646,7 +640,7 @@ void kgmGraphics::render()
         gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
         mtl.setTexColor(icon->getIcon());
         render(&mtl);
-        render(shaders[kgmShader::TypeBase].data());
+        render(m_shaders[kgmShader::TypeBase]);
         render(icon);
         render((kgmShader*)null);
         render((kgmMaterial*)null);
@@ -656,7 +650,7 @@ void kgmGraphics::render()
   }
 
   render(m_def_material);
-  render(Sha);
+  //render(Sha);
   m_r_sprite->render();
   m_r_gui->render();
 
@@ -667,7 +661,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render(shaders[kgmShader_TypeGui].data());
+  render(m_shaders[kgmShader_TypeGui]);
 
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
@@ -675,7 +669,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render(shaders[kgmShader_TypeGui].data());
+  render(m_shaders[kgmShader_TypeGui]);
 
 #ifdef DEBUG
   m_r_fps->render();
@@ -1209,14 +1203,4 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col)
   m.identity();
   setViewMatrix(m);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-}
-
-kgmShader* kgmGraphics::toShader(kgmShader::Shader shader)
-{
-  auto i = shaders.get(shader);
-
-  if(i.data())
-    return i.data();
-
-  return shaders.begin().data();
 }

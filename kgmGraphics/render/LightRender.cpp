@@ -20,7 +20,7 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
   kgmList<kgmVisual*> alpha;
 
-  kgmShader* s = gr->shaders.get(kgmShader::TypeLight).data();
+  kgmShader* s = gr->m_shaders[kgmShader::TypeLight];
 
   if (!gr || !s)
     return;

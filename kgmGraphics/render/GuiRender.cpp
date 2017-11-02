@@ -20,7 +20,7 @@ void GuiRender::render()
 
   gr->setWorldMatrix(mi);
 
-  gr->render(gr->shaders[kgmGraphics::kgmShader_TypeGui].data());
+  gr->render(gr->m_shaders[kgmGraphics::kgmShader_TypeGui]);
 
   for(int i = gr->m_guis.size(); i > 0; i--)
   {

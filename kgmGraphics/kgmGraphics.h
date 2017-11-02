@@ -101,7 +101,7 @@ private:
   void* shader;
   mtx4  location;
 
-  kgmShader*  m_shaders[32];
+  kgmShader*  m_shaders[32] = {0};
 
   kgmArray<kgmVisual*> m_visible_sprites;
   kgmArray<kgmVisual*> m_visible_visuals;
@@ -321,6 +321,4 @@ public:
   {
     m_bg_color = col;
   }
-
-  kgmShader* toShader(kgmShader::Shader shader);
 };

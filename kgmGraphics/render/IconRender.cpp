@@ -26,7 +26,7 @@ void IconRender::render()
       gr->gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
       mtl.setTexColor(icon->getIcon());
       gr->render(&mtl);
-      gr->render(gr->shaders[kgmShader::TypeBase].data());
+      gr->render(gr->m_shaders[kgmShader::TypeBase]);
       gr->render(icon);
       gr->render((kgmShader*)null);
       gr->render((kgmMaterial*)null);
