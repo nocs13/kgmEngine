@@ -24,6 +24,7 @@ public:
     FVF_P_C,        // = (gcv_xyz|gcv_col) ,
     FVF_P_N,        // = (gcv_xyz|gcv_nor) ,
     FVF_P_T,        // = (gcv_xyz|gcv_uv0) ,
+    FVF_P_N_T,      // = (gcv_xyz|gcv_nor|gcv_uv0) ,
     FVF_P_C_T,      // = (gcv_xyz|gcv_col|gcv_uv0) ,
     FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
@@ -56,6 +57,12 @@ public:
   struct Vertex_P_N: public Vertex
   {
     vec3 nor;
+  };
+
+  struct Vertex_P_N_T: public Vertex
+  {
+    vec3 nor;
+    vec2 uv;
   };
 
   struct Vertex_P_C_T: public Vertex

@@ -104,6 +104,10 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
     v_size = sizeof(Vertex_P_C_T) * count;
     m_fvf = FVF_P_C_T;
     break;
+  case FVF_P_N_T:
+    v_size = sizeof(Vertex_P_N_T) * count;
+    m_fvf = FVF_P_N_T;
+    break;
   case FVF_P_T:
     v_size = sizeof(Vertex_P_T) * count;
     m_fvf = FVF_P_T;
@@ -125,7 +129,8 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
     m_fvf = FVF_P_N_C;
   }
 
-  m_vertices = (Vertex*)malloc(v_size);
+  m_vertices = (Vertex*) malloc(v_size);
+
   m_vcount = count;
 
   return m_vertices;
