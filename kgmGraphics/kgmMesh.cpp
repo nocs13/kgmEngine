@@ -62,6 +62,8 @@ void kgmMesh::rebound()
   {
     v += size;
 
+    Vertex* vt = (Vertex*)v;
+
     min.x = MIN(min.x, ((Vertex*)v)->pos.x);
     min.y = MIN(min.y, ((Vertex*)v)->pos.y);
     min.z = MIN(min.z, ((Vertex*)v)->pos.z);
@@ -173,6 +175,9 @@ u32 kgmMesh::fvf()
   case FVF_P_N_C_T:
     return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0);
     break;
+  case FVF_P_N_T:
+    return (gcv_xyz|gcv_nor|gcv_uv0);
+    break;
   case FVF_P_N_C:
     return (gcv_xyz|gcv_nor|gcv_col);
     break;
@@ -215,30 +220,24 @@ u32 kgmMesh::vsize()
   {
   case FVF_P_N_C_T2_BW_BI:
     return sizeof(Vertex_P_N_C_T2_BW_BI);
-    break;
   case FVF_P_N_C_T_BW_BI:
     return sizeof(Vertex_P_N_C_T_BW_BI);
-    break;
   case FVF_P_N_C_T2:
     return sizeof(Vertex_P_N_C_T2);
-    break;
   case FVF_P_N_C_T:
     return sizeof(Vertex_P_N_C_T);
-    break;
+  case FVF_P_N_T:
+    return sizeof(Vertex_P_N_T);
   case FVF_P_C_T:
     return sizeof(Vertex_P_C_T);
   case FVF_P_T:
     return sizeof(Vertex_P_T);
-    break;
   case FVF_P_N:
     return sizeof(Vertex_P_N);
-    break;
   case FVF_P_C:
     return sizeof(Vertex_P_C);
-    break;
   case FVF_P:
     return sizeof(Vertex);
-    break;
   }
 
   return 0;

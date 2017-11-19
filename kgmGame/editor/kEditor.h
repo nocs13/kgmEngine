@@ -125,6 +125,10 @@ public:
   __stdcall void onMapOpen();
   __stdcall void onMapSave();
   __stdcall void onAddText();
+  __stdcall void onAddBox();
+  __stdcall void onAddPlane();
+  __stdcall void onAddSphere();
+  __stdcall void onAddCylinder();
   __stdcall void onAddMesh();
   __stdcall void onAddUnit();
   __stdcall void onAddLight();

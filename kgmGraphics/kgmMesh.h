@@ -15,7 +15,8 @@ public:
   {
     RT_TRIANGLE,
     RT_POINT,
-    RT_LINE
+    RT_LINE,
+    RT_TRIANGLESTRIP
   };
 
   enum FVF

@@ -152,6 +152,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
 
     g_def_style_texture = new kgmTexture(g_tex_white);
+
+    gui_style->gui_image = g_def_style_texture;
   }
 
   m_shadows.alloc(1);
@@ -174,8 +176,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_camera->set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
 
-  m_r_fps = new FpsRender(this);
-  m_r_gui = new GuiRender(this);
+  m_r_fps    = new FpsRender(this);
+  m_r_gui    = new GuiRender(this);
   m_r_sprite = new SpriteRender(this);
 }
 
@@ -362,7 +364,7 @@ void kgmGraphics::render()
 
       vec3  l = (*i)->getBound().max - (*i)->getBound().min;
 
-      if(m_camera->isSphereCross(v, 0.5 * l.length()))
+      //if(m_camera->isSphereCross(v, 0.5 * l.length()))
       {
         if((*i)->getMaterial() && (*i)->getMaterial()->alpha())
         {
@@ -379,10 +381,10 @@ void kgmGraphics::render()
           m_visible_visuals[count_visible++] = (*i);
         }
       }
-      else
+      /*else
       {
         k++;
-      }
+      }*/
     }
   }
 
@@ -650,7 +652,7 @@ void kgmGraphics::render()
   }
 
   render(m_def_material);
-  //render(Sha);
+
   m_r_sprite->render();
   m_r_gui->render();
 
@@ -720,6 +722,9 @@ void kgmGraphics::render(kgmVisual* visual)
       break;
     case kgmMesh::RT_POINT:
       pmt = gcpmt_points;
+      break;
+    case kgmMesh::RT_TRIANGLESTRIP:
+      pmt = gcpmt_trianglestrip;
       break;
     default:
       pmt = gcpmt_triangles;
@@ -984,6 +989,9 @@ void kgmGraphics::render(kgmMesh *m)
     break;
   case kgmMesh::RT_POINT:
     pmt = gcpmt_points;
+    break;
+  case kgmMesh::RT_TRIANGLESTRIP:
+    gcpmt_trianglestrip;
     break;
   default:
     pmt = gcpmt_triangles;

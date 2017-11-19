@@ -7,6 +7,8 @@
 #include "../kgmGameBase.h"
 #include "../kgmGameMap.h"
 
+#include "../../kgmGraphics/kgmShape.h"
+
 using namespace kgmGameEditor;
 
 static float cam_scale = 1.0;
@@ -22,6 +24,10 @@ enum MENUEVENT
   ME_EDIT_CLONE,
   ME_EDIT_REMOVE,
   ME_EDIT_OPTIONS,
+  ME_ADD_BOX,
+  ME_ADD_PLANE,
+  ME_ADD_SPHERE,
+  ME_ADD_CYLINDER,
   ME_ADD_MESH,
   ME_ADD_UNIT,
   ME_ADD_LIGHT,
@@ -87,6 +93,10 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_EDIT_REMOVE, "Remove");
     item->add(ME_EDIT_OPTIONS, "Options");
     item = menu->add("Add");
+    item->add(ME_ADD_BOX, "Box");
+    item->add(ME_ADD_PLANE, "Plane");
+    item->add(ME_ADD_SPHERE, "Sphere");
+    item->add(ME_ADD_CYLINDER, "Cylinder");
     item->add(ME_ADD_MESH, "Mesh");
     item->add(ME_ADD_UNIT, "Unit");
     item->add(ME_ADD_LIGHT, "Light");
@@ -890,6 +900,18 @@ void kEditor::onMenu(u32 id)
   case ME_EDIT_OPTIONS:
     onEditOptions();
     break;
+  case ME_ADD_BOX:
+    onAddBox();
+    break;
+  case ME_ADD_PLANE:
+    onAddPlane();
+    break;
+  case ME_ADD_SPHERE:
+    onAddSphere();
+    break;
+  case ME_ADD_CYLINDER:
+    onAddCylinder();
+    break;
   case ME_ADD_MESH:
     onAddMesh();
     break;
@@ -1108,6 +1130,40 @@ void kEditor::onEditOptions()
   }
 }
 
+void kEditor::onAddBox()
+{
+  kgmUnit* unit = new kgmUnit(game, new kgmVisual());
+
+  unit->visual()->set((kgmMesh*) (new kgmShape(1.f, 1.f, 1.f)));
+
+  selected = unit;
+
+  selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
+
+  add(selected);
+}
+
+void kEditor::onAddPlane()
+{
+  kgmUnit* unit = new kgmUnit(game, new kgmVisual());
+
+  unit->visual()->set((kgmMesh*) (new kgmShape(1.f, 1.f)));
+
+  selected = unit;
+
+  selected->setName(kgmString("Unit_plane_") + kgmConvert::toString((s32)(++oquered)));
+
+  add(selected);
+}
+
+void kEditor::onAddSphere()
+{
+}
+
+void kEditor::onAddCylinder()
+{
+}
+
 void kEditor::onAddMesh()
 {
   kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
@@ -1124,7 +1180,6 @@ void kEditor::onAddMesh()
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get((char*)"Data"));
-
 }
 
 void kEditor::onAddUnit()
