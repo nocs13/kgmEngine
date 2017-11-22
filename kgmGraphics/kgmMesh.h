@@ -190,6 +190,11 @@ public:
   {
     return m_mtlId;
   }
+
+  RenderType rtype() const
+  {
+    return m_rtype;
+  }
 };
 
 typedef kgmList<kgmMesh*> kgmMeshList;

@@ -38,105 +38,6 @@ public:
     ShadowFull
   };
 
-  class Mesh: public kgmObject
-  {
-    friend class  kgmVisual;
-
-    kgmMesh* mesh = null;
-
-    bool skin = false;
-
-    kgmMesh::Vertex* vertices = null;
-  public:
-
-    Mesh()
-    {
-      skin     = false;
-      mesh     = null;
-      vertices = null;
-    }
-
-    Mesh(kgmMesh* m)
-    {
-      mesh = m;
-
-      skin      = false;
-      vertices  = null;
-
-      if(mesh)
-      {
-        if(mesh->fvf() & gcv_bn0)
-        {
-          vertices = (kgmMesh::Vertex*) new kgmMesh::Vertex_P_N_C_T_BW_BI[mesh->vcount()];
-
-          memcpy(vertices, mesh->vertices(),
-                 sizeof(kgmMesh::Vertex_P_N_C_T_BW_BI) * mesh->vcount());
-
-          skin = true;
-        }
-      }
-    }
-
-    ~Mesh()
-    {
-      if(vertices)
-        delete [] vertices;
-    }
-
-    bool hasSkin()
-    {
-      return skin;
-    }
-
-    kgmMesh::Vertex* getVertices()
-    {
-      if(vertices)
-        return vertices;
-
-      return mesh->vertices();
-    }
-
-    kgmMesh::Face* getFaces()
-    {
-      return mesh->faces();
-    }
-
-    u32 getVcount()
-    {
-      return mesh->vcount();
-    }
-
-    u32 getFcount()
-    {
-      return mesh->fcount();
-    }
-
-    u32 getVsize()
-    {
-      return mesh->vsize();
-    }
-
-    u32 getFvf()
-    {
-      return mesh->fvf();
-    }
-
-    u32 getFff()
-    {
-      return mesh->fff();
-    }
-
-    kgmMesh::RenderType getRenderType()
-    {
-      return mesh->m_rtype;
-    }
-
-    kgmMesh* getMesh() const
-    {
-      return mesh;
-    }
-  };
-
   bool  m_valid;
   bool  m_remove;
   bool  m_visible;
@@ -154,7 +55,7 @@ public:
 
   union
   {
-    Mesh*          m_mesh;
+    kgmMesh*       m_mesh;
     kgmText*       m_text;
     kgmSprite*     m_sprite;
     kgmParticles*  m_particles;
@@ -226,9 +127,9 @@ public:
     {
       if(m_type == TypeMesh)
       {
-        Mesh* mesh = (Mesh*) ((kgmObject*)v.m_visual);
+        kgmMesh* mesh = (kgmMesh*) ((kgmObject*)v.m_visual);
 
-        m_visual = new Mesh(mesh->mesh);
+        m_visual = new kgmMesh(*mesh);
       }
       else
       {
@@ -424,9 +325,7 @@ public:
     if(!m || m_visual)
       return false;
 
-    Mesh* mesh = new Mesh(m);
-
-    m_mesh = mesh;
+    m_mesh = m;
 
     m_type = TypeMesh;
 
@@ -435,7 +334,7 @@ public:
     return true;
   }
 
-  Mesh* getMesh()
+  kgmMesh* getMesh()
   {
     if(m_type != TypeMesh)
       return null;
@@ -490,26 +389,6 @@ public:
   {
     u32 dtick = kgmTime::getTicks() - m_last_update;
 
-    if(dtick < 50)
-      return;
-
-    switch((u32) m_type)
-    {
-    case TypeMesh:
-      animate();
-    break;
-    case TypeParticles:
-      if(m_visual)
-      {
-        getParticles()->update(dtick);
-      }
-      break;
-    case TypeSprite:
-      if(m_visual)
-      {
-      }
-    }
-
     m_last_update = kgmTime::getTicks();
   }
 
@@ -521,75 +400,5 @@ public:
   void lighting(bool l)
   {
     m_lighting = l;
-  }
-
-private:
-  void animate()
-  {
-    if(!m_valid)
-      return;
-
-    Mesh* m_mesh = getMesh();
-
-    if(!m_animation || !m_skeleton || !m_mesh || !m_mesh->skin)
-      return;
-
-    if(!m_floop && m_fset >= m_fend)
-      return;
-
-    if(m_floop && m_fset >= m_fend)
-      m_fset = m_fstart;
-
-    for(s32 i = 0; i <  m_skeleton->m_joints.size(); i++)
-    {
-      kgmSkeleton::Joint* joint = m_skeleton->m_joints[i];
-      kgmAnimation::Animation* a = m_animation->getNode(joint->n);
-
-      if(!a)
-      {
-        m_tm_joints[i].identity();
-
-        continue;
-      }
-
-      mtx4 jframe;
-      a->getFrame(m_fset, jframe);
-
-      m_tm_joints[i] = m_skeleton->m_imatrices[i] * jframe;
-      //m_tm_joints[i] = jframe;
-    }
-
-    if(m_mesh)
-    {
-      kgmMesh::Vertex_P_N_C_T_BW_BI* vbase = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m_mesh->mesh->vertices();
-      kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*)((kgmMesh::Vertex*)m_mesh->vertices);
-
-      for(u32 i = 0; i < m_mesh->mesh->vcount(); i++)
-      {
-        vec3   pos(0, 0, 0);
-        vec3   bpos = vbase[i].pos;
-        float* wght = (float*)(vbase[i].bw);
-        int*   indx = (int*)(vbase[i].bi);
-
-        for(u32 j = 0; j < 4; j++)
-        {
-          int bi = (int)indx[j];
-
-          if(bi < 0)
-          {
-            if(j < 1)
-              pos = bpos;
-
-            break;
-          }
-
-          pos = pos + m_tm_joints[(u32)bi] * vbase[i].pos * wght[j];
-        }
-
-        verts[i].pos = pos;
-      }
-    }
-
-    m_fset++;
   }
 };

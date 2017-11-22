@@ -708,14 +708,14 @@ void kgmGraphics::render(kgmVisual* visual)
   case kgmVisual::TypeNone:
   case kgmVisual::TypeMesh:
   {
-    kgmVisual::Mesh* msh = visual->getMesh();
+    kgmMesh* msh = visual->getMesh();
 
     u32  pmt;
 
     if(!msh)
       return;
 
-    switch(msh->getRenderType())
+    switch(msh->rtype())
     {
     case kgmMesh::RT_LINE:
       pmt = gcpmt_lines;
@@ -730,9 +730,9 @@ void kgmGraphics::render(kgmVisual* visual)
       pmt = gcpmt_triangles;
     };
 
-    gc->gcDraw(pmt, msh->getFvf(),
-               msh->getVsize(), msh->getVcount(), msh->getVertices(),
-               2, 3 * msh->getFcount(), msh->getFaces());
+    gc->gcDraw(pmt, msh->fvf(),
+               msh->vsize(), msh->vcount(), msh->vertices(),
+               2, 3 * msh->fcount(), msh->faces());
 
     g_mtx_joints       = null;
     g_mtx_joints_count = 0;

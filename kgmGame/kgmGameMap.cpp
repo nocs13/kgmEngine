@@ -198,7 +198,7 @@ bool kgmGameMap::addVisual(kgmUnit* n)
     {
     case kgmVisual::TypeMesh:
       node->m_attributes.add(new kgmXml::Attribute("type", "mesh"));
-      node->m_attributes.add(new kgmXml::Attribute("id", vis->getMesh()->getMesh()->m_id));
+      node->m_attributes.add(new kgmXml::Attribute("id", vis->getMesh()->m_id));
       break;
     case kgmVisual::TypeParticles:
       node->m_attributes.add(new kgmXml::Attribute("type", "particles"));
@@ -383,7 +383,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
         vnode->m_attributes.add(new kgmXml::Attribute("material", n->visual()->getMaterial()->name()));
 
       if(n->visual()->getMesh())
-        vnode->m_attributes.add(new kgmXml::Attribute("mesh", n->visual()->getMesh()->getMesh()->id()));
+        vnode->m_attributes.add(new kgmXml::Attribute("mesh", n->visual()->getMesh()->id()));
     }
 
     addParameters(*node, n->m_variables);
