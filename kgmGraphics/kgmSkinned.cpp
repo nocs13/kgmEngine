@@ -2,20 +2,17 @@
 #include "kgmSkeleton.h"
 #include "kgmAnimation.h"
 
-kgmSkinned::kgmSkinned()
-{
-
-}
-
-kgmSkinned::kgmSkinned(kgmSkeleton* s, kgmAnimation* a)
+kgmSkinned::kgmSkinned(kgmMesh* m, kgmSkeleton* s, kgmAnimation* a)
 {
   set(s);
   set(a);
-}
 
-kgmMesh::Vertex* kgmSkinned::vAlloc(u32 count)
-{
-  return kgmMesh::vAlloc(count, kgmMesh::FVF_P_N_C_T_BW_BI);
+  if (m && m->fvf() == kgmMesh::FVF_P_N_C_T_BW_BI)
+  {
+    kgmMesh::vAlloc(m->vcount(), kgmMesh::FVF_P_N_C_T_BW_BI);
+
+    memcpy(vertices(), m->vertices(), m->vcount() * sizeof(kgmMesh::FVF_P_N_C_T_BW_BI));
+  }
 }
 
 void kgmSkinned::set(kgmSkeleton* s)

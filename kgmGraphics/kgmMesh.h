@@ -161,22 +161,22 @@ public:
   u32     fvf();
   u32     fff();
 
-  Vertex* vertices() const
+  virtual Vertex* vertices() const
   {
     return m_vertices;
   }
 
-  Face*   faces() const
+  virtual Face*   faces() const
   {
     return m_faces;
   }
 
-  u32     vcount() const
+  virtual u32     vcount() const
   {
     return m_vcount;
   }
 
-  u32     fcount() const
+  virtual u32     fcount() const
   {
     return m_fcount;
   }

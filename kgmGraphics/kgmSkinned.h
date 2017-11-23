@@ -10,8 +10,9 @@ class kgmSkinned : public kgmMesh
 {
   KGM_OBJECT(kgmSkinned);
 
-  kgmAnimation* m_animation = null;
+  kgmMesh*      m_mesh      = null;
   kgmSkeleton*  m_skeleton  = null;
+  kgmAnimation* m_animation = null;
 
   u32 m_start = 0;
   u32 m_end   = -1;
@@ -24,10 +25,15 @@ class kgmSkinned : public kgmMesh
   kgmArray<mtx4>  m_tm_joints;
 
 public:
-  kgmSkinned();
-  kgmSkinned(kgmSkeleton*, kgmAnimation*);
+  kgmSkinned(kgmMesh* m, kgmSkeleton* s = null, kgmAnimation* a = null);
 
-  Vertex* vAlloc(u32 count);
+  Face* faces() const
+  {
+    if (m_mesh)
+      return m_mesh->faces();
+
+    return null;
+  }
 
   void set(kgmSkeleton*);
   void set(kgmAnimation*);
