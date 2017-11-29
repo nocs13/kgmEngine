@@ -73,6 +73,7 @@ kgmLight*  g_lights[MAX_LIGHTS] = {null};
 u32        g_lights_count = 0;
 f32        g_fShine = 0.0f;
 f32        g_fAmbient = 0.1f;
+
 void*      g_tex_black = null;
 void*      g_tex_white = null;
 void*      g_tex_gray  = null;

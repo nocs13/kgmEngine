@@ -158,7 +158,7 @@ public:
     switch((u32) m_type)
     {
     case TypeMesh:
-      delete m_mesh;
+      m_mesh = null;
       break;
     case TypeText:
       break;

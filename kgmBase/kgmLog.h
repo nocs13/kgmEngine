@@ -72,6 +72,13 @@ public:
       return *this;
     }
 
+    kgmLog& operator << (void* p)
+    {
+      log_(kgmConvert::toString(p));
+
+      return *this;
+    }
+
     static void log(kgmString s);
 
 private:

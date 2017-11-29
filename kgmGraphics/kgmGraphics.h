@@ -101,8 +101,6 @@ private:
   void* shader;
   mtx4  location;
 
-  kgmShader*  m_shaders[32] = {0};
-
   kgmArray<kgmVisual*> m_visible_sprites;
   kgmArray<kgmVisual*> m_visible_visuals;
   kgmArray<kgmVisual*> m_visible_visuals_alpha;
@@ -127,6 +125,10 @@ private:
   FpsRender*    m_r_fps;
   GuiRender*    m_r_gui = null;
   SpriteRender* m_r_sprite = null;
+
+protected:
+  kgmShader*  m_shaders[32] = {0};
+
 public:
   kgmGraphics(kgmIGC*, kgmIResources*);
   ~kgmGraphics();
@@ -146,7 +148,7 @@ public:
   bool resource(kgmResource*);
   kgmResource* resource(kgmString);
 
-private:
+protected:
   void render(kgmMesh*);
   void render(kgmVisual*);
   void render(kgmShader*);

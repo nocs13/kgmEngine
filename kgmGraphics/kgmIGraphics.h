@@ -5,11 +5,13 @@ class kgmIcon;
 class kgmLight;
 class kgmVisual;
 class kgmCamera;
+class kgmResource;
 
 class kgmIGraphics
 {
 public:
-  virtual void clean() = 0;
+  virtual void clean()  = 0;
+  virtual void render() = 0;
 
   virtual void add(kgmLight*)  = 0;
   virtual void add(kgmVisual*) = 0;

@@ -871,7 +871,8 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
 #else
 
-    glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+    glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+    //glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 
 #endif
 
@@ -964,12 +965,20 @@ void kgmOGL::gcFreeTexture(void *t)
   if(!t)
     return;
 
+#ifdef DEBUG
+  Texture* tex = (Texture*) t;
+#endif
+
   if(((Texture*)t)->texture)
-    glDeleteTextures(1,&((Texture*)t)->texture);
+    glDeleteTextures(1, &((Texture*)t)->texture);
 
 #ifdef GL_FRAMEBUFFER
   if(((Texture*)t)->buffer)
     glDeleteFramebuffers(1, &((Texture*)t)->buffer);
+#endif
+
+#ifdef DEBUG
+  kgm_log() << "Free texture: " << (s32)tex->texture << "/" << (void*)tex << "\n";
 #endif
 
   delete (Texture*)t;

@@ -28,3 +28,8 @@ kGridline::kGridline(u8 count, f32 space, u32 color)
 
   m_rtype = kgmMesh::RT_LINE;
 }
+
+kGridline::~kGridline()
+{
+
+}

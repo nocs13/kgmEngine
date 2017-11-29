@@ -1,6 +1,7 @@
 #ifndef KEDITOR_H
 #define KEDITOR_H
 
+#include "../kgmGameGraphics.h"
 #include "../../kgmSystem/kgmThread.h"
 #include "../../kgmGraphics/kgmGuiMenu.h"
 #include "../../kgmGraphics/kgmGuiFileDialog.h"
@@ -29,7 +30,8 @@ private:
     ViewTop
   };
 
-  kgmGameBase* game;
+  kgmGameBase*     game     = null;
+  kgmGameGraphics* graphics = null;
 
   bool ms_click[3];
 
@@ -39,12 +41,10 @@ private:
   vec3 cam_pos_bk;
   vec3 cam_dir_bk;
 
-  kGridline* meshGridline = null;
-  kPivot*    meshPivot    = null;
-  kgmText*   textData     = null;
+  kGridline* gridline = null;
+  kPivot*    pivot    = null;
+  kgmText*   textData = null;
 
-  kgmVisual *gridline = null;
-  kgmVisual *pivot    = null;
   kgmVisual *text     = null;
 
   vec3  pv_pos;

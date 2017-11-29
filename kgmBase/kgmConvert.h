@@ -59,4 +59,18 @@ class kgmConvert: public kgmObject
 
     return kgmString("false");
   }
+
+  static kgmString toString(void *p)
+  {
+    char* a = new char[24];
+
+    memset(a, 0, 24);
+    sprintf(a, "%p", p);
+
+    kgmString s(a, strlen(a));
+    delete [] a;
+
+    return s;
+  }
+
 };
