@@ -127,6 +127,10 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_visible_visuals.alloc(4096);
   m_visible_visuals_alpha.alloc(4096);
 
+  m_visible_sprites[0] = null;
+  m_visible_visuals[0] = null;
+  m_visible_visuals_alpha[0] = null;
+
   m_def_material = new kgmMaterial();
   m_def_material->setShader(null);
   m_def_material->shade(false);
@@ -681,6 +685,8 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
   gc3DMode();
+
+  render_a();
 
   gc->gcEnd();
   gc->gcRender();

@@ -35,7 +35,7 @@ public:
   kgmGameGraphics(kgmIGC*, kgmIResources*);
   ~kgmGameGraphics();
 
-  void render();
+  void render_a();
 
 #ifdef EDITOR
   void set(kPivot* p)

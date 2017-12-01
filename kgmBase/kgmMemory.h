@@ -11,6 +11,9 @@ void	kgmfree(void*);
 template <class X> bool	kgmnew(X*, unsigned int count = 0);
 template <class X> void	kgmdelete(X*, unsigned int count = 0);
 
+void* kgm_alloc(size_t);
+void  kgm_free(void* m);
+
 void *kgm_malloc(size_t);
 void  kgm_free(void*);
 

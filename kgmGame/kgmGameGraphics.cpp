@@ -9,12 +9,11 @@ kgmGameGraphics::~kgmGameGraphics()
 {
 }
 
-void kgmGameGraphics::render()
+void kgmGameGraphics::render_a()
 {
-  kgmGraphics::render();
-
 #ifdef EDITOR
 
+  kgmGraphics::render(m_def_material);
   kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
 
   if (m_gridline)

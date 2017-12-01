@@ -71,7 +71,7 @@ public:
     kgmShader_TypeIcon,
   };
 
-private:
+protected:
   kgmIGC* gc;
   kgmIResources* rc;
 
@@ -176,6 +176,10 @@ protected:
 public:
   void gc2DMode();
   void gc3DMode();
+
+  void render_a()
+  {
+  }
 
   void add(kgmMaterial* mtl)
   {

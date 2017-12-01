@@ -10,7 +10,7 @@ void kgm_main(out vec4 pos)
 
    v_UV = a_UV;
 
-   PxColor = g_vColor;
+   PxColor = g_vColor * a_Color;
 
    pos = ( g_mProj * g_mView * vec4(v_V, 1.0) );
 }
