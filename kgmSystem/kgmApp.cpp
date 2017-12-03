@@ -155,11 +155,11 @@ KGM_APP_EXIT:
 int main(int argc, char** argv){
   int rValue = 0;
 
-  signal(SIGINT,   kgm_signal_handler);
+  /*signal(SIGINT,   kgm_signal_handler);
   signal(SIGILL,   kgm_signal_handler);
   signal(SIGSEGV,  kgm_signal_handler);
   signal(SIGABRT,  kgm_signal_handler);
-  signal(SIGTERM,  kgm_sigterm_handler);
+  signal(SIGTERM,  kgm_sigterm_handler);*/
 
   if(kgmApp::application())
     rValue = kgmApp::application()->main((s32)argc, (s8**)argv);

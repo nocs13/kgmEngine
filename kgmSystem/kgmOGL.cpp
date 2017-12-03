@@ -6,6 +6,7 @@
 #include "kgmOGLExt.h"
 #include "kgmWindow.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmMemory.h"
 
 
 #ifdef WIN32
@@ -945,7 +946,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif
 
-  Texture* t = new Texture;
+  Texture* t = kgm_new<Texture>();
   t->width = w;
   t->height = h;
   t->texture = tex;
@@ -981,7 +982,7 @@ void kgmOGL::gcFreeTexture(void *t)
   kgm_log() << "Free texture: " << (s32)tex->texture << "/" << (void*)tex << "\n";
 #endif
 
-  delete (Texture*)t;
+  kgm_delete<Texture>(tex);
 }
 
 void kgmOGL::gcSetTexture(u32 stage, void* t)

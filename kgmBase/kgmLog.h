@@ -1,5 +1,4 @@
 #pragma once
-
 #include <time.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -107,7 +106,6 @@ inline const char* kgm_log_label()
 inline void kgm_log_print(const char* s)
 {
 #ifdef DEBUG
-  //kgm_log(s);
   fprintf(stderr, "%s\n", s);
 #endif
 }
