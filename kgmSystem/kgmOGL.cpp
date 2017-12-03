@@ -954,7 +954,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   t->type = type;
 
 #ifdef DEBUG
-  kgm_log() << "gcGenTexture generated tex: " << (s32)tex << "\n";
+  kgm_log() << "Gen texture: " << (s32)t->texture << "/" << (void*)t << "\n";
 #endif
 
   return (void*)t;
