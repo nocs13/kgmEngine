@@ -300,3 +300,51 @@ int kgmSystem::getCpuConcurrency()
 
   return num;
 }
+
+bool kgmSystem::getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h)
+{
+  bool result = true;
+
+#ifdef WIN32
+#else
+  Display *display;
+  Atom     actual_type;
+  u32      actual_format;
+  u32      nitems;
+  u32      bytes;
+  u64      *data;
+  u32      status;
+
+  display = XOpenDisplay(0);
+
+  if (display)
+  {
+    status = XGetWindowProperty(
+          display,
+          RootWindow(display, 0),
+          XInternAtom(display, "_NET_WORKAREA", True),
+          0,
+          (~0L),
+          False,
+          AnyPropertyType,
+          &actual_type,
+          (int *) &actual_format,
+          (long unsigned int*) &nitems,
+          (long unsigned int*) &bytes,
+          (unsigned char**) &data);
+
+    if (status == Success)
+    {
+      x = data[0];
+      y = data[1];
+      w = data[2];
+      h = data[3];
+
+      XFree(data);
+    }
+  }
+
+#endif
+
+  return result;
+}

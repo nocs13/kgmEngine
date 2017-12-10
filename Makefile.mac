@@ -15,7 +15,8 @@ LIBS =
 ifeq ($(OS), Linux)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 -Werror
-	LIBS = -lpthread -lXxf86vm -lX11 -lGL
+#	LIBS = -lpthread -lXxf86vm -lX11 -lGL
+	LIBS = -lpthread -lX11 -lGL
 	RM = rm -f
 else
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)

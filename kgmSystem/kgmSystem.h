@@ -24,4 +24,5 @@ public:
   static int  getProcessId();
   static int  getProcessPath(kgmString&);
   static int  getCpuConcurrency();
+  static bool getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h);
 };

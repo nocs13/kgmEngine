@@ -2,6 +2,7 @@
 // kgmWindow
 #include "kgmWindow.h"
 #include "kgmApp.h"
+#include "kgmSystem.h"
 #include "../kgmBase/kgmLog.h"
 
 #ifdef WIN32
@@ -727,6 +728,27 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
   m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
   m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
+
+  {
+
+    /*
+    Atom wm_state = XInternAtom(m_dpy, "_NET_WM_STATE", False);
+    Atom work = XInternAtom(m_dpy, "_NET_WORKAREA", False);
+
+    memset(&xev, 0, sizeof(xev));
+    xev.type = ClientMessage;
+    xev.xclient.window = m_wnd;
+    xev.xclient.message_type = wm_state;
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = fs ? 1 : 0;
+    xev.xclient.data.l[1] = work;
+    xev.xclient.data.l[2] = 0;
+
+    XSendEvent(m_dpy, DefaultRootWindow(m_dpy), False, SubstructureNotifyMask, &xev);
+    */
+  }
+
+  kgmSystem::getDesktopWorkaround((u32&)x, (u32&)y, (u32&)w, (u32&)h);
 
   m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
                               x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
