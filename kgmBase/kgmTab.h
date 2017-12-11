@@ -68,7 +68,7 @@ public:
 
     void operator++()
     {
-      if(_Ptr) {
+      if(_Ptr && _Ptr->next) {
         _Ptr = _Ptr->next;
 
         return;

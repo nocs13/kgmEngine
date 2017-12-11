@@ -13,7 +13,7 @@ LIBS = -lpthread -lXxf86vm -lGL -lopenal
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DLUA -DEDITOR -DVULKAN
 	FLGS = -g -fPIC -O0 -ansi -std=gnu++11
-	LIBS = -lpthread -lXxf86vm -lX11 -lGL -ldl
+	LIBS = -lpthread -lX11 -lGL -ldl
 	RM = rm -f
 else
 	CC = g++

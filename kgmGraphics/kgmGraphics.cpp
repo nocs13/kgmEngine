@@ -565,6 +565,8 @@ void kgmGraphics::render()
     lighting = false;
   }
 
+  render_3d();
+
   //draw particles
 
   kgmList<kgmVisual*>  depthless_particles;
@@ -663,6 +665,7 @@ void kgmGraphics::render()
 
   gc->gcSetShader(null);
   gc->gcDepth(false, 0, 0);
+
   gc2DMode();
 
   m.identity();
@@ -684,9 +687,7 @@ void kgmGraphics::render()
 
   render((kgmShader*)null);
 
-  gc3DMode();
-
-  render_a();
+  render_2d();
 
   gc->gcEnd();
   gc->gcRender();

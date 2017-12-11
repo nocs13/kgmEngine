@@ -13,7 +13,8 @@ public:
   virtual void clean()  = 0;
   virtual void render() = 0;
 
-  virtual void render_a() = 0;
+  virtual void render_3d() = 0;
+  virtual void render_2d() = 0;
 
   virtual void add(kgmLight*)  = 0;
   virtual void add(kgmVisual*) = 0;

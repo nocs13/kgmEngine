@@ -15,33 +15,6 @@ class kgmAlsa: public kgmIAudio
 {
   KGM_OBJECT(kgmAlsa);
 
-  /*class Thread: public kgmThread
-  {
-    kgmAlsa* object;
-
-    kgmFunction<int(kgmAlsa*, int)> callback;
-    
-  public:
-
-    Thread()
-    {
-      object   = null;
-    }
-
-    bool start(kgmAlsa* obj, kgmFunction<int(kgmAlsa*, int)> fn)
-    {
-      object   = obj;
-      callback = fn;
-
-      return false;//exec();
-    }
-
-    void run()
-    {
-      callback(*object, 0);
-    }
-  };*/
-
 private:
   void*         m_handle;
 

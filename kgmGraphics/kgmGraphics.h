@@ -177,7 +177,11 @@ public:
   void gc2DMode();
   void gc3DMode();
 
-  void render_a()
+  void render_3d()
+  {
+  }
+
+  void render_2d()
   {
   }
 

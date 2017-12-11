@@ -14,20 +14,13 @@
 
 kgmGameAudio::kgmGameAudio()
 {
-#ifdef OAL
-  m_audio = kgm_ptr<kgmIAudio>(new kgmOAL());
-#elif defined(ALSA)
+#if defined(ALSA)
   m_audio = new kgmAlsa();
-  //m_audio = kgm_ptr<kgmIAudio>(new kgmAlsa());
 #elif defined(OSL)
-  //m_audio = kgm_ptr<kgmIAudio>(new kgmOSL());
-  //m_audio = new kgmOSL();
-  m_audio = new kgmNullAudio();
+  m_audio = new kgmOSL();
 #elif defined(DSOUND)
-  //m_audio = kgm_ptr<kgmIAudio>(new kgmDSound());
   m_audio = new kgmDSound();
 #else
-  //m_audio = kgm_ptr<kgmIAudio>(new kgmNullAudio());
   m_audio = new kgmNullAudio();
 #endif
 }

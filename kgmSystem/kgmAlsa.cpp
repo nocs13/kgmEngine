@@ -413,6 +413,8 @@ kgmAlsa::kgmAlsa()
 
 kgmAlsa::~kgmAlsa()
 {
+  clear();
+
   for(int i = m_sounds.length(); i > 0; i--)
     delete m_sounds[i - 1];
 
@@ -439,8 +441,12 @@ void kgmAlsa::clear()
 
   if(m_handle)
   {
+    kgm_log() << "kgmAlsa closing snd_pcm handler.\n";
+
     psnd_pcm_reset(m_handle);
     psnd_pcm_close(m_handle);
+
+    m_handle = null;
   }
 #endif
 

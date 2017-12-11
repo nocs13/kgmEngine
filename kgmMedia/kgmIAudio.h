@@ -39,7 +39,7 @@ public:
   typedef void* Sound;
 
 public:
-  ~kgmIAudio(){};
+  virtual ~kgmIAudio(){}
 
   virtual Sound  create(FMT fmt, u16 freq, u32 size, void* data) = 0;
   virtual void   remove(Sound snd)                               = 0;

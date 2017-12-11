@@ -9,9 +9,11 @@ kgmGameGraphics::~kgmGameGraphics()
 {
 }
 
-void kgmGameGraphics::render_a()
+void kgmGameGraphics::render_3d()
 {
 #ifdef EDITOR
+
+  gc3DMode();
 
   kgmGraphics::render(m_def_material);
   kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
@@ -24,5 +26,11 @@ void kgmGameGraphics::render_a()
 
   kgmGraphics::render((kgmShader*) null);
 
+#endif
+}
+
+void kgmGameGraphics::render_2d()
+{
+#ifdef EDITOR
 #endif
 }

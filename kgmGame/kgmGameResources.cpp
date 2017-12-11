@@ -25,7 +25,7 @@ kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 
 kgmGameResources::~kgmGameResources()
 {
-  reset();
+  clear();
 
   for(int i = 0; i < m_paths.size(); i++)
     delete m_paths[i];
@@ -75,7 +75,7 @@ void kgmGameResources::clear()
   {
     kgmResource* r = (*i);
 
-    if (r->references() > 0)
+    if (r->references() > 1)
       continue;
 
     if(r->isClass(kgmTexture::cClass()))
@@ -107,8 +107,10 @@ void kgmGameResources::clear()
       delete (kgmMesh*) r;
     }
 
-    i = m_resources.erase(i);
+    //i = m_resources.erase(i);
   }
+
+  m_resources.clear();
 }
 
 void kgmGameResources::remove(kgmResource* r)
