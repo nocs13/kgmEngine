@@ -220,9 +220,9 @@ public:
     game->setRect(0, 0, w, h);
 
 #ifdef VULKAN
-    kgmVulkan *vk = new kgmVulkan(game);
+    //kgmVulkan *vk = new kgmVulkan(game);
 
-    delete vk;
+    //delete vk;
 #endif
   }
 

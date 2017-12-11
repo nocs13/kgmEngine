@@ -372,10 +372,10 @@ kgmOGL::~kgmOGL()
   {
     if (m_visual->visual)
     {
-      /*if (m_visual->visual->ext_data)
+      if (m_visual->visual->ext_data)
         XFree(m_visual->visual->ext_data);
 
-      XFree(m_visual->visual);*/
+      XFree(m_visual->visual);
     }
 
     XFree(m_visual);

@@ -1,5 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmIResources.h"
+#include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmArchive.h"
@@ -45,8 +46,9 @@ protected:
   kgmIGC*                m_gc;
   kgmIAudio*             m_audio;
 
-  //kgmList<kgmResource*>  m_resources;
-  kgmTab<const char*, kgmResource*> m_resources;
+  kgmList<kgmResource*>  m_resources;
+  //kgmTab<const char*, kgmResource*> m_resources;
+  //kgmMap<const char*, kgmResource*> m_resources;
   kgmList<Path*>         m_paths;
   kgmGameTools           m_tools;
 
