@@ -1,7 +1,9 @@
 #pragma once
 #include "../kgmMath/kgmMath.h"
+#include "kgmObject.h"
 
-class   kgmIGC;
+class kgmIGC;
+class kgmObject;
 
 // RENDER DEVICE
 enum gc_flags
@@ -135,7 +137,7 @@ enum gc_enum
   gcsup_fbuffers,       // frame buffers
 };
 
-class kgmIGC
+class kgmIGC: public kgmObject
 {
 public:
   typedef void* Shader;

@@ -184,27 +184,18 @@ void kEditor::clear()
 
 void kEditor::select(kgmString name)
 {
-  kgmList<kgmUnit*> nodes;
+  kgmUnit* node = game->getLogic()->getObject(name);
 
-  this->game->getLogic()->getObjects(nodes);
-
-  kgmList<kgmUnit*>::iterator i;
-
-  for(i = nodes.begin(); i != nodes.end(); ++i)
+  if(node)
   {
-    if((*i)->getName() == name)
+    selected = node;
+
+    textData->m_text =  "Selected: ";
+    textData->m_text += name;
+
+    if(pivot && selected)
     {
-      selected = (*i);
-
-      textData->m_text =  "Selected: ";
-      textData->m_text += name;
-
-      if(pivot && selected)
-      {
-        pivot->setPos((*i)->position());
-      }
-
-      break;
+      pivot->setPos(node->position());
     }
   }
 }
@@ -267,7 +258,7 @@ void kEditor::select(int x, int y)
 
   kgmList<kgmUnit*> nodes;
 
-  this->game->getLogic()->getObjects(nodes);
+  //this->game->getLogic()->getObjects(nodes);
 
   for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {

@@ -38,10 +38,10 @@ public:
   virtual void update(u32 milliseconds);
   virtual void collide(kgmUnit*, kgmUnit*);
 
-  virtual kgmUnit* getObjectById(kgmString&);
+  virtual kgmUnit* getObject(kgmString&);
 
-  virtual u32 getObjects(kgmList<kgmUnit*>&);
-  virtual u32 getObjectsByClass(kgmString&, kgmList<kgmUnit*>&);
+  //virtual u32 getObjects(kgmList<kgmUnit*>&);
+  //virtual u32 getObjectsByClass(kgmString&, kgmList<kgmUnit*>&);
 
   void  setPlayer(kgmActor* gp)
   {

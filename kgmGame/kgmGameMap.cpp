@@ -58,7 +58,7 @@ bool kgmGameMap::save(kgmString path)
 
   kgmList<kgmUnit*> nodes;
 
-  m_game->getLogic()->getObjects(nodes);
+  //m_game->getLogic()->getObjects(nodes);
 
   for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
   {

@@ -192,6 +192,7 @@ kgmGameBase::~kgmGameBase()
 #endif
 
   log("free scene...");
+
   gUnload();
 
   log("free logic...");
@@ -225,6 +226,11 @@ kgmGameBase::~kgmGameBase()
 
   if(m_audio)
     delete m_audio;
+
+  log("free graphic context...");
+
+  if (m_gc)
+    delete m_gc;
 
   log("free system...");
 

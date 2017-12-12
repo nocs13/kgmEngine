@@ -15,7 +15,8 @@
 kgmGameAudio::kgmGameAudio()
 {
 #if defined(ALSA)
-  m_audio = new kgmAlsa();
+  //m_audio = new kgmAlsa();
+  m_audio = new kgmNullAudio();
 #elif defined(OSL)
   m_audio = new kgmOSL();
 #elif defined(DSOUND)

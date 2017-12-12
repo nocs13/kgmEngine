@@ -142,7 +142,7 @@ int kgmLuaListObjects(lua_State *lua)
     return 0;
 
   kgmList<kgmUnit*> objects;
-  game->getLogic()->getObjects(objects);
+  //game->getLogic()->getObjects(objects);
 
   for(int i = 0; i < objects.length(); i++)
     kgmLuaCall(fn_name, "v", objects[i]);

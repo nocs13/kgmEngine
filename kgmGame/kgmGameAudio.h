@@ -17,7 +17,6 @@ class kgmGameAudio: public kgmIAudio
   };
 
 private:
-  //kgm_ptr<kgmIAudio> m_audio;
   kgmIAudio* m_audio = null;
 
   Listener m_listener;

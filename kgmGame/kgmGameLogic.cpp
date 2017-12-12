@@ -118,7 +118,7 @@ void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)
 
 }
 
-kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
+kgmUnit* kgmGameLogic::getObject(kgmString& id)
 {
   kgmUnit* go = null;
 
@@ -135,7 +135,7 @@ kgmUnit* kgmGameLogic::getObjectById(kgmString& id)
   return go;
 }
 
-u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
+/*u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
 {
   u32 count = 0;
 
@@ -165,4 +165,4 @@ u32 kgmGameLogic::getObjectsByClass(kgmString& t, kgmList<kgmUnit*>& objs)
   }
 
   return count;
-}
+}*/
