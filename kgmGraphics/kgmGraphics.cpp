@@ -715,13 +715,18 @@ void kgmGraphics::render(kgmVisual* visual)
   {
   case kgmVisual::TypeNone:
   case kgmVisual::TypeMesh:
+  case kgmVisual::TypeShape:
   {
     kgmMesh* msh = visual->getMesh();
 
     u32  pmt;
 
-    if(!msh)
-      return;
+    if(!msh) {
+      msh = visual->getShape();
+
+      if(!msh)
+        return;
+    }
 
     switch(msh->rtype())
     {

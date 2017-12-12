@@ -9,6 +9,7 @@
 #include "kgmMesh.h"
 #include "kgmText.h"
 #include "kgmLight.h"
+#include "kgmShape.h"
 #include "kgmSprite.h"
 #include "kgmSkeleton.h"
 #include "kgmParticles.h"
@@ -25,6 +26,7 @@ public:
     TypeNone,
     TypeMesh,
     TypeText,
+    TypeShape,
     TypeSprite,
     TypeBillboard,
     TypeParticles
@@ -57,6 +59,7 @@ public:
   {
     kgmMesh*       m_mesh;
     kgmText*       m_text;
+    kgmShape*      m_shape;
     kgmSprite*     m_sprite;
     kgmParticles*  m_particles;
 
@@ -158,9 +161,16 @@ public:
     switch((u32) m_type)
     {
     case TypeMesh:
+      if(m_mesh)
+        m_mesh->release();
       m_mesh = null;
       break;
     case TypeText:
+      break;
+    case TypeShape:
+      if(m_shape)
+        delete m_shape;
+      m_shape = null;
       break;
     case TypeSprite:
       break;
@@ -340,6 +350,26 @@ public:
       return null;
 
     return m_mesh;
+  }
+
+  bool set(kgmShape* s)
+  {
+    if(!s || m_visual)
+      return false;
+
+    m_shape = s;
+
+    m_type = TypeShape;
+
+    return true;
+  }
+
+  kgmShape* getShape()
+  {
+    if(m_type != TypeShape)
+      return null;
+
+    return m_shape;
   }
 
   void setAnimation(kgmAnimation* a, u32 start = 0, u32 end = 0, bool loop = false)
