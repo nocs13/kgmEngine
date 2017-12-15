@@ -575,18 +575,6 @@ int kgmGameBase::gUnload()
   return m_state;
 }
 
-int kgmGameBase::gCommand(kgmString s)
-{
-  if(s == "exit")
-    gQuit();
-  else if(s == "pause")
-    m_state = State_Pause;
-  else if(s == "resume")
-    m_state = State_Play;
-
-  return true;
-}
-
 int kgmGameBase::gQuit()
 {
   m_state = State_Quit;
@@ -628,11 +616,6 @@ void kgmGameBase::gPause(bool s){
   }
 }
 
-kgmUnit* kgmGameBase::gObject(kgmString s)
-{
-  return null;
-}
-
 bool kgmGameBase::gAppend(kgmUnit* node)
 {
   if(!node)
@@ -669,17 +652,35 @@ bool kgmGameBase::gAppend(kgmUnit* node)
   return true;
 }
 
-u32 kgmGameBase::gObjects(kgmList<kgmUnit*>& objs)
+kgmUnit* kgmGameBase::gUnit(kgmString id)
 {
-  u32 count = 0;
+  kgmUnit* un = null;
 
-  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  kgmList<kgmUnit*>::iterator i = m_nodes.begin();
+
+  for (; i != m_nodes.end(); ++i)
   {
-    objs.add((*i));
-    count++;
+    if ((*i)->getName() == id)
+    {
+      un = (*i);
+
+      if(un->removed() || !un->valid())
+      {
+        return null;
+      }
+
+      break;
+    }
   }
 
-  return count;
+  return un;
+}
+
+kgmIGame::Iterator* kgmGameBase::gObjects()
+{
+  GIterator* it = new GIterator(this);
+
+  return it;
 }
 
 inline void xmlAttr(kgmXml::Node* node, const char* id, kgmString& val)
@@ -841,7 +842,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         kgmString s, sgrp;
         xml.attribute("object", s);
         xml.attribute("group", sgrp);
-        obj = act = gSpawn(s);
+        obj = act = (kgmActor*) gSpawn(s);
 
         if(act)
         {
@@ -873,7 +874,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         xml.attribute("object", s);
         xml.attribute("group", sgrp);
-        obj = gob = gObject(s);
+        obj = gob = gSpawn(s);
 
         if(sgrp.length() > 0)
           gob->setGroup(kgmConvert::toInteger(sgrp));
@@ -1194,7 +1195,7 @@ bool kgmGameBase::gMapBinary(kgmString& path)
 }
 
 /////////////////
-kgmActor* kgmGameBase::gSpawn(kgmString a)
+kgmUnit* kgmGameBase::gSpawn(kgmString a)
 {
   kgmActor*       actor = 0;
   kgmString       type = a;
@@ -1210,7 +1211,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
     {
       if(!m_resources->getFile(a += ".kgm", mem))
       {
-        return (kgmActor*)gObject(type);
+        return new kgmUnit();
       }
     }
   }
@@ -1239,8 +1240,10 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
     return null;
 
   kgmString stype;
+
   a_node->attribute("type", stype);
-  actor = (m_logic)?((kgmActor*)gObject(stype)):(new kgmActor(this));
+
+  actor = new kgmActor(this);
 
   if(!actor)
     return null;
@@ -1413,7 +1416,7 @@ kgmActor* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("type",  type);
       a_node->node(i)->attribute("dummy", dummy);
 
-      kgmUnit* go = (isactor) ? (gSpawn(type)) : (gObject(type));
+      kgmUnit* go = gSpawn(type);
 
       if(go)
       {

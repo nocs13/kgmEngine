@@ -12,7 +12,7 @@ kgmSensor::kgmSensor(kgmIGame* g)
 
 void kgmSensor::event(kgmObject* a, kgmString e)
 {
-  kgmUnit* o = kgmIGame::getGame()->getLogic()->getObject(target);
+  kgmUnit* o = kgmIGame::getGame()->gUnit(target);
 
   if(o)
     o->event(this, e);

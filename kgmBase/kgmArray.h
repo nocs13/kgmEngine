@@ -47,7 +47,7 @@ public:
     T*   old  = kgmMemory<T>::m_data;
     u32 scpy = (kgmMemory<T>::m_length < len)?(kgmMemory<T>::m_length):(len);
 
-    kgmMemory<T>::m_data = (T*)malloc(sizeof(T) * len);
+    kgmMemory<T>::m_data = (T*)kgm_alloc(sizeof(T) * len);
     kgmMemory<T>::m_length = len;
 
     if(old)

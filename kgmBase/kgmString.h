@@ -149,7 +149,7 @@ public:
   { 
     kgmArray<T>::clear(); 
     kgmArray<T>::m_length = len; 
-    kgmArray<T>::m_data   = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1)); 
+    kgmArray<T>::m_data   = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
     kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0); 
   } 
  
@@ -157,7 +157,7 @@ public:
   { 
     kgmArray<T>::clear(); 
     kgmArray<T>::m_length = len; 
-    kgmArray<T>::m_data = (T*)malloc(sizeof(T) * (kgmArray<T>::m_length + 1)); 
+    kgmArray<T>::m_data = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
     memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length); 
     kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0); 
   } 
@@ -255,10 +255,6 @@ public:
     return *this;
   } 
  
-  //kgmTString<T>& operator=(double str){ 
-  //}
-
-
   //int split(T sym, kgmList<>) 
 protected: 
   //find symbol position 
@@ -300,9 +296,9 @@ typedef kgmTString<char>  kgmCString;
 typedef kgmTString<short> kgmWString; 
  
 #ifndef KGM_UNICODE_STRING 
-typedef kgmTString<char>		kgmString; 
+typedef kgmTString<char>  kgmString;
 #else 
-typedef kgmTString<short>		kgmString; 
+typedef kgmTString<short> kgmString;
 #endif 
  
 //string between symbols 

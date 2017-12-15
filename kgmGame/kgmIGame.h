@@ -153,20 +153,24 @@ public:
 
   };
 
+  struct Iterator
+  {
+    virtual kgmUnit* next() { return null; }
+  };
+
 public:
   //virtuals
   virtual int            gLoad(kgmString)     = 0;    //load game map
   virtual int            gUnload()            = 0;    //unload game map
-  virtual int            gCommand(kgmString)  = 0;    //do command
   virtual int            gQuit()              = 0;    //close game
   virtual int            gButton(game_button) = 0;    //game input button state
   virtual u32            gState()             = 0;    //check game active  state
   virtual int            gSwitch(u32)         = 0;    //switch game state
-  virtual kgmActor*      gSpawn(kgmString)    = 0;    //spawn game actor
-  virtual kgmUnit*       gObject(kgmString)   = 0;    //spawn game object
+  virtual kgmUnit*       gSpawn(kgmString)    = 0;    //spawn game actor
 
   virtual bool           gAppend(kgmUnit*) = 0;            //add game node in map
-  virtual u32            gObjects(kgmList<kgmUnit*>&) = 0; //collect nodes in map
+  virtual kgmUnit*       gUnit(kgmString)  = 0;            //collect nodes in map
+  virtual Iterator*      gObjects()        = 0;            //collect nodes in map
 
   virtual void           guiAdd(kgmGui* g) = 0;
 

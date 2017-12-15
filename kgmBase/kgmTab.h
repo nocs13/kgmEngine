@@ -6,6 +6,7 @@
 
 #define KGM_TAB_DEFAULT_SIZE 77
 
+// Key hashing based virtual array.
 
 template <class Key, class Data>
 class kgmTab

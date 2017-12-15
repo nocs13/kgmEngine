@@ -8,7 +8,7 @@
 void	kgmClearAllocatedMemory(void);
 
 void* kgm_alloc(size_t);
-void  kgm_free(void* m);
+void  kgm_free(void*);
 
 template <class T> T* kgm_new()
 {
@@ -81,9 +81,10 @@ public:
     if(!m.m_length)
       return *this;
 
-    m_data = (T*)malloc(sizeof(T) * m.m_length);
-    m_length = m.m_length;
+    m_data = (T*)kgm_alloc(sizeof(T) * m.m_length);
     memcpy(m_data, m.m_data, sizeof(T) * m_length);
+
+    m_length = m.m_length;
 
     return *this;
   }
@@ -101,7 +102,7 @@ public:
   void clear()
   {
     if(m_data)
-      free(m_data);
+      kgm_free(m_data);
 
     m_data = null;
     m_length = 0;
@@ -130,7 +131,7 @@ public:
     if(!len)
       return false;
 
-    m_data = (T*)malloc(sizeof(T) * len);
+    m_data = (T*)kgm_alloc(sizeof(T) * len);
     m_length = len;
 
     return true;
@@ -143,9 +144,10 @@ public:
     if(!data || !len)
       return false;
 
-    m_data = (T*)malloc(sizeof(T) * len);
-    m_length = len;
+    m_data = (T*)kgm_alloc(sizeof(T) * len);
     memcpy(m_data, data, sizeof(T) * m_length);
+
+    m_length = len;
 
     return true;
   }

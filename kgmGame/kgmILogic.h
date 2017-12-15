@@ -23,8 +23,6 @@ public:
 
   virtual void collide(kgmUnit*, kgmUnit*) = 0;
 
-  virtual kgmUnit*  getObject(kgmString&)  = 0;
-
   virtual void      setPlayer(kgmActor*)   = 0;
   virtual kgmActor* getPlayer()            = 0;
 };

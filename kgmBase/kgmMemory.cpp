@@ -6,10 +6,11 @@
 
 void* kgm_alloc(size_t size)
 {
-  void* p = malloc(size);
+  //void* p = malloc(size);
+  void* p = calloc(size, 1);
 
 #ifdef DEBUG
-  kgm_log() << "Alloc memory: " << p << " size: " << (s32)size << "\n";
+  printf("Alloc memory: %p, size: %ld.\n", p, size);
 #endif
 
   return p;
@@ -18,7 +19,7 @@ void* kgm_alloc(size_t size)
 void kgm_free(void* p)
 {
 #ifdef DEBUG
-  kgm_log() << "Free memory: " << p << "\n";
+  printf("Free memory: %p.\n", p);
 #endif
 
   free(p);

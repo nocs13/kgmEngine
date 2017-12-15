@@ -166,6 +166,8 @@ kEditor::~kEditor()
   delete mtlLines;
   delete mtlPivot;
 
+  delete text;
+
   //kgmUnit::g_typ_objects.clear();
 }
 
@@ -184,7 +186,7 @@ void kEditor::clear()
 
 void kEditor::select(kgmString name)
 {
-  kgmUnit* node = game->getLogic()->getObject(name);
+  kgmUnit* node = game->gUnit(name);
 
   if(node)
   {
@@ -258,9 +260,9 @@ void kEditor::select(int x, int y)
 
   kgmList<kgmUnit*> nodes;
 
-  //this->game->getLogic()->getObjects(nodes);
+  kgmIGame::Iterator* i = game->gObjects();
 
-  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  while(kgmUnit* un = i->next())
   {
     vec3  c, n_x, n_y, n_z;
     plane3 pln_x, pln_y, pln_z;
@@ -269,68 +271,68 @@ void kEditor::select(int x, int y)
     n_y = vec3(0, 1, 0);
     n_z = vec3(0, 0, 1);
 
-    pln_x = plane3(n_x, (*i)->position());
-    pln_y = plane3(n_y, (*i)->position());
-    pln_z = plane3(n_z, (*i)->position());
+    pln_x = plane3(n_x, un->position());
+    pln_y = plane3(n_y, un->position());
+    pln_z = plane3(n_z, un->position());
 
-    if (*i == null)
-      continue;
 
-    if(pln_x.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
+    if(pln_x.intersect(ray, c) && (un->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
-        peeked = (*i);
-        distance = cam.mPos.distance((*i)->position());
+        peeked = un;
+        distance = cam.mPos.distance(un->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->position()))
+        if (distance > cam.mPos.distance(un->position()))
         {
-          peeked   = (*i);
-          distance = cam.mPos.distance((*i)->position());
+          peeked   = un;
+          distance = cam.mPos.distance(un->position());
         }
       }
 
-      pv_delta = (*i)->position().distance(c);
+      pv_delta = un->position().distance(c);
     }
-    else if(pln_y.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
+    else if(pln_y.intersect(ray, c) && (un->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
-        peeked = (*i);
-        distance = cam.mPos.distance((*i)->position());
+        peeked = un;
+        distance = cam.mPos.distance(un->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->position()))
+        if (distance > cam.mPos.distance(un->position()))
         {
-          peeked   = (*i);
-          distance = cam.mPos.distance((*i)->position());
+          peeked   = un;
+          distance = cam.mPos.distance(un->position());
         }
       }
 
-      pv_delta = (*i)->position().distance(c);
+      pv_delta = un->position().distance(c);
     }
-    else if(pln_z.intersect(ray, c) && ((*i)->position().distance(c) < 1.0))
+    else if(pln_z.intersect(ray, c) && (un->position().distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
-        peeked = (*i);
-        distance = cam.mPos.distance((*i)->position());
+        peeked = un;
+        distance = cam.mPos.distance(un->position());
       }
       else
       {
-        if (distance > cam.mPos.distance((*i)->position()))
+        if (distance > cam.mPos.distance(un->position()))
         {
-          peeked   = (*i);
-          distance = cam.mPos.distance((*i)->position());
+          peeked   = un;
+          distance = cam.mPos.distance(un->position());
         }
       }
 
-      pv_delta = (*i)->position().distance(c);
+      pv_delta = un->position().distance(c);
     }
   }
+
+  delete i;
 
   if(peeked)
   {
@@ -1261,12 +1263,12 @@ void kEditor::onViewObjects()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
 
-  kgmList<kgmUnit*> nodes;
+  kgmIGame::Iterator* i = game->gObjects();
 
-  game->gObjects(nodes);
+  while(kgmUnit* un = i->next())
+      vo->addItem(un->getName());
 
-  for(int i = 0; i < nodes.length(); i++)
-      vo->addItem(nodes[i]->getName());
+  delete i;
 
   game->guiAdd(vo);
 }

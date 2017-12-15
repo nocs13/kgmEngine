@@ -134,35 +134,3 @@ kgmUnit* kgmGameLogic::getObject(kgmString& id)
 
   return go;
 }
-
-/*u32 kgmGameLogic::getObjects(kgmList<kgmUnit*>& objs)
-{
-  u32 count = 0;
-
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  {
-    objs.add((*i));
-
-    count++;
-  }
-
-  return count;
-}
-
-u32 kgmGameLogic::getObjectsByClass(kgmString& t, kgmList<kgmUnit*>& objs)
-{
-  u32 count = 0;
-
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-  {
-    kgmUnit* go = (*i);
-
-    if(!go->removed() && go->valid() && (*i)->isClass(t))
-    {
-      objs.add((*i));
-      count++;
-    }
-  }
-
-  return count;
-}*/

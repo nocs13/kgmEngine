@@ -20,7 +20,6 @@ public:
   kgmTab<kgmString, kgmUnit*> m_objects;
   kgmMap<kgmString, kgmUnit*> m_maps;
 
-
   s32 gcount;
 
 public:
@@ -39,9 +38,6 @@ public:
   virtual void collide(kgmUnit*, kgmUnit*);
 
   virtual kgmUnit* getObject(kgmString&);
-
-  //virtual u32 getObjects(kgmList<kgmUnit*>&);
-  //virtual u32 getObjectsByClass(kgmString&, kgmList<kgmUnit*>&);
 
   void  setPlayer(kgmActor* gp)
   {

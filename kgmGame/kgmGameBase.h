@@ -77,9 +77,34 @@ public:
   {
     return editor;
   }
+#endif
 
 private:
-#endif
+  struct GIterator: public kgmIGame::Iterator
+  {
+    kgmGameBase* game;
+
+    kgmList<kgmUnit*>::iterator i;
+
+  public:
+    GIterator(kgmGameBase* g)
+    {
+      game = g;
+      i = g->m_nodes.begin();
+    }
+
+    kgmUnit* next()
+    {
+      if (i == game->m_nodes.end())
+        return null;
+
+      kgmUnit* u = (*i);
+
+      ++i;
+
+      return u;
+    }
+  };
 
 public:
   kgmGameBase(bool edit = false);
@@ -118,20 +143,16 @@ public:
 
   int            gLoad(kgmString);        //load game level
   int            gUnload();               //unload game level
-  int            gCommand(kgmString);     //do string command
   int            gQuit();                 //quit from level
   int            gButton(game_button);
   u32            gState();                //check game state
   int            gSwitch(u32);            //switch game state
   void           gPause(bool);            //render game scene
   void           gRender();               //render game scene
-  kgmActor*      gSpawn(kgmString);       //spawn the actor
-  kgmUnit*       gObject(kgmString);      //spawn game object
+  kgmUnit*       gSpawn(kgmString);       //spawn the actor
   bool           gAppend(kgmUnit*);       //add game node in map
-  u32            gObjects(kgmList<kgmUnit*>&);
-  bool           gAppend(kgmBody*);       //add game body in map
-  bool           gAppend(kgmLight*);      //add game light in map
-  bool           gAppend(kgmVisual*);     //add game object in map
+  kgmUnit*       gUnit(kgmString);        // get unit by name
+  Iterator*      gObjects();
 
   bool gMapBinary(kgmString&);
   bool gMapAscii(kgmString&);
