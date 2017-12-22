@@ -1,10 +1,6 @@
 #include "kgmNode.h"
 
-kgmNode::kgmNode(kgmNode *parent)
+kgmNode::kgmNode()
 {
-  m_parent = parent;
-}
 
-kgmNode::~kgmNode()
-{
 }

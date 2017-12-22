@@ -2,8 +2,9 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmMath/kgmMath.h"
+#include "kgmIPhysics.h"
 
-class kgmBody: public kgmObject
+class kgmBody: public kgmObject//, public kgmIPhysics::IBody
 {
   KGM_OBJECT(kgmBody);
 
@@ -23,7 +24,7 @@ public:
     kgmBody* body;
   };
 
-
+//protected:
   u32     m_type;
   u32     m_shape;
 
@@ -59,8 +60,9 @@ private:
 
 public:
   kgmBody();
-  kgmBody(void* udata);
   virtual ~kgmBody();
+
+
 
   virtual void collision(kgmBody*); //callback when collision
 

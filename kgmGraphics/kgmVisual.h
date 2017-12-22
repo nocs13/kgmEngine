@@ -258,9 +258,6 @@ public:
   void set(mtx4 mtx)
   {
     m_transform = mtx;
-
-    if (m_type == TypeParticles && m_particles != null)
-      m_particles->transform(m_transform);
   }
 
   mtx4& getTransform()
@@ -274,8 +271,6 @@ public:
       return false;
 
     m_particles = p;
-
-    m_particles->transform(m_transform);
 
     m_type = TypeParticles;
 

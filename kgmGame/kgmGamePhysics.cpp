@@ -26,12 +26,12 @@ void kgmGamePhysics::update()
 
 void kgmGamePhysics::collision(kgmBody* body, kgmBody* tobody)
 {
-  if(!body || !tobody || !body->m_udata || !tobody->m_udata)
+  /*if(!body || !tobody || !body->m_udata || !tobody->m_udata)
     return;
 
   kgmUnit* go_body   = (kgmUnit*)body->m_udata;
-  kgmUnit* go_tobody = (kgmUnit*)tobody->m_udata;
+  kgmUnit* go_tobody = (kgmUnit*)tobody->m_udata;*/
 
-  kgmIGame::getGame()->getLogic()->collide(go_body, go_tobody);
+  //kgmIGame::getGame()->getLogic()->collide(go_body, go_tobody);
 }
 

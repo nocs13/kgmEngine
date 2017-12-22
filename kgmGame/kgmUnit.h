@@ -8,10 +8,13 @@
 #include "../kgmPhysics/kgmObstacle.h"
 #include "../kgmGraphics/kgmVisual.h"
 
+#include "../kgmGraphics/kgmIGraphics.h"
+#include "../kgmPhysics/kgmIPhysics.h"
+
 class kgmIGame;
 class kgmSound;
 
-class kgmUnit : public kgmObject
+class kgmUnit : public kgmObject, public kgmIGraphics::INode//, public kgmIPhysics::IBody
 {
   KGM_OBJECT(kgmUnit);
 
@@ -124,6 +127,11 @@ public:
 
   void remove();
   u32  timeout();
+
+  kgmObject* getNodeObject(){ return null; }
+  kgmIGraphics::TypeNode   getNodeType(){ return kgmIGraphics::NodeNone; }
+  bool       isNodeValid() { return true; }
+  mtx4       getNodeTransform() { return mtx4(); }
 
 private:
   virtual void clear()

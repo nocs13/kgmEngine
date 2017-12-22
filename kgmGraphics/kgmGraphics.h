@@ -5,7 +5,6 @@
 
 #include "../kgmSystem/kgmWindow.h"
 
-#include "kgmNode.h"
 #include "kgmGui.h"
 #include "kgmGuiTab.h"
 #include "kgmGuiList.h"
@@ -14,7 +13,6 @@
 #include "kgmGuiScroll.h"
 #include "kgmGuiProgress.h"
 #include "kgmGuiStyle.h"
-#include "kgmIGuiDraw.h"
 #include "kgmIGraphics.h"
 
 #include "kgmMesh.h"
@@ -84,6 +82,8 @@ protected:
   kgmList<kgmIcon*>    m_icons;
   kgmList<kgmLight*>   m_lights;
   kgmList<kgmVisual*>  m_visuals;
+
+  kgmList<INode*>      m_nodes;
 
   kgmList<kgmResource*> m_resources;
 
@@ -219,6 +219,14 @@ public:
       return;
 
     m_guis.add(gui);
+  }
+
+  void add(INode* nod)
+  {
+    if (!nod)
+      return;
+
+    m_nodes.add(nod);
   }
 
 #ifdef DEBUG

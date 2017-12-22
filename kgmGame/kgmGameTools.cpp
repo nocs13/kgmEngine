@@ -1629,8 +1629,6 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       xml.m_node->node(i)->attribute("type", type);
 
-      //actor->setClass(type);
-
       break;
     }
   }
@@ -1648,16 +1646,24 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
     if(id == "Mass")
     {
+      f32 mass;
+
       a_node->node(i)->attribute("value", val);
-      sscanf(val.data(), "%f", &actor->body()->m_mass);
+      sscanf(val.data(), "%f", &mass);
+
+      //actor->body()->m_mass
     }
     else if(id == "Bound")
     {
       float a[3];
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
-      actor->body()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
-      actor->body()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+
+      box3 box;
+      box.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      box.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+      //actor->body()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      //actor->body()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
     }
     else if(id == "Collision")
     {
@@ -1723,18 +1729,18 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
           }
         }
 
-        if(actor->body()->m_convex.size() > 0)
-          actor->body()->m_shape = kgmBody::ShapePolyhedron;
+        //if(actor->body()->m_convex.size() > 0)
+        //  actor->body()->m_shape = kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")
     {
       a_node->node(i)->attribute("value", val);
 
-      if(val == "true")
+      /*if(val == "true")
         actor->body()->m_gravity = true;
       else
-        actor->body()->m_gravity = false;
+        actor->body()->m_gravity = false;*/
     }
     else if(id == "Dummies")
     {

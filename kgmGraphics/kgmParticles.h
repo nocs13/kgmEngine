@@ -32,8 +32,6 @@ public:
     float    mass;  //mass of particle
     u32      life;  //life time
     u32      time;  //current time
-
-    kgmMesh* mesh = null;  //ref mesh
   };
 
 public:
@@ -67,8 +65,6 @@ private:
   float      m_angle;
   float      m_divlife;
   float      m_divspeed;
-
-  mtx4       m_transform;
 
   kgmMesh*    m_mesh   = null;
   kgmCamera*  m_camera = null;
@@ -219,11 +215,6 @@ public:
   TypeRender typeRender() const
   {
     return m_typerender;
-  }
-
-  void transform(mtx4& m)
-  {
-    m_transform = m;
   }
 
   virtual void update(u32 t);

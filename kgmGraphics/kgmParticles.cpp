@@ -39,8 +39,6 @@ kgmParticles::kgmParticles()
 
   m_camera = null;
   m_mesh   = null;
-
-  m_transform.identity();
 }
 
 kgmParticles::~kgmParticles()
@@ -98,8 +96,6 @@ void kgmParticles::init(Particle* pr)
   pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
 
-  pr->pos = m_transform * pr->pos;
-
   float neg1 = pow(-1.0, rand() % 2);
   float neg2 = pow(-1.0, rand() % 2);
 
@@ -119,7 +115,7 @@ void kgmParticles::init(Particle* pr)
   pr->dir.z = neg2 * sin(angle * r2);
 
   vec3 vdir(1, 0, 0);
-  pr->dir = m_transform * vdir + pr->dir;
+  pr->dir = vdir + pr->dir;
 
   pr->dir = pr->dir;
   pr->dir.normalize();
@@ -130,11 +126,11 @@ void kgmParticles::init(Particle* pr)
   pr->scale = m_size;
   pr->time  = 0;
   pr->mass  = 0;
-  pr->mesh  = null;
 
   pr->life = 0;
 
-  if(pr->speed < 0) pr->speed = 0.0f;
+  if(pr->speed < 0)
+    pr->speed = 0.0f;
 }
 
 void kgmParticles::update(u32 t)

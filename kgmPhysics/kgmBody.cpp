@@ -28,30 +28,6 @@ kgmBody::kgmBody()
   m_udata = 0;
 }
 
-kgmBody::kgmBody(void* udata)
-{
-  m_mass = 1.0f;
-  m_friction = 0.0f;
-//  m_force = 0.0f;
-  m_velocity      = 0.0f;
-  //m_speed_forward = 0.0f;
-  //m_speed_side    = 0.0f;
-  //m_speed_up      = 0.0f;
-
-  m_valid     = true;
-  m_remove    = false;
-  m_collision = true;
-  m_gravity   = true;
-  m_falling   = false;
-
-  m_position = vec3(0, 0, 0);
-  m_direction = vec3(0, 1, 0);
-
-  m_shape = ShapeBox;
-
-  m_udata = udata;
-}
-
 kgmBody::~kgmBody()
 {
   m_convex.clear();

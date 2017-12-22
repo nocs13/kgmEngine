@@ -418,9 +418,7 @@ class kgmMesh:
     print('Faces: ' + str(len(mesh_faces)))
     for i in range(0, len(mesh_faces)):
      face = mesh_faces[i]
-     #iface = [-1, -1, -1, -1]
      iface = []
-
      for j in range(0, len(face.vertices)):
       v = kgmVertex();
       vi = face.vertices[j]
@@ -428,14 +426,12 @@ class kgmMesh:
       n = mtx.to_3x3() * face.normal
       v.v = [c[0], c[1], c[2]]
       v.n = [n[0], n[1], n[2]]
-
       if self.hasvgroups == True:
        for g in range(0, len(mesh.vertices[vi].groups)):
         if g < 4:
          #print(mesh.vertices[vi].groups[g].id)
          v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
          v.wb[g] = mesh.vertices[vi].groups[g].weight
-
       if uvcoord:
         if hasattr(mesh, 'uv_layers'):
           uv = mesh.uv_layers.active.data[face.loop_start + j].uv
@@ -445,17 +441,8 @@ class kgmMesh:
           if uvface:
             uv = uvface.uv[j]
             v.uv = [uv[0], uv[1]]
-
       v.idx = vi
-      #iface[j] = self.addVertex(v)
       iface.append(self.addVertex(v))
-
-     #if len(face.vertices) == 4:
-     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
-     # self.faces.append(kgmFace(iface[0], iface[2], iface[3]))
-     #else:
-     # self.faces.append(kgmFace(iface[0], iface[1], iface[2]))
-
      for k in range(2, len(iface)):
        self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 

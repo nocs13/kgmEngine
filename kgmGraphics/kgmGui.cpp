@@ -1,7 +1,6 @@
 #include "kgmGui.h"
 #include "kgmFont.h"
 #include "../kgmBase/kgmIGC.h"
-#include "kgmIGuiDraw.h"
 
 kgmGui::kgmGui()
 {
@@ -20,7 +19,6 @@ kgmGui::kgmGui()
 
   m_alpha = false;
 
-  m_draw       = 0;
   m_base.scale = true;
 
   m_color = 0xffffffff;
@@ -51,7 +49,6 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
     m_parent = par;
   }
 
-  m_draw        = 0;
   m_base.scale  = true;
 
   m_color = 0xffffffff;
@@ -118,18 +115,6 @@ void kgmGui::resize(int w, int h)
   }
 
   onResize(w, h);
-}
-
-void kgmGui::repaint(kgmGui* gui)
-{
-  if(m_draw)
-  {
-    m_draw->update(gui);
-  }
-  else if(m_parent)
-  {
-    m_parent->repaint(gui);
-  }
 }
 
 void kgmGui::setParent(kgmGui* pr)

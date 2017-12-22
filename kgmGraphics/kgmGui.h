@@ -10,7 +10,6 @@
 
 //Class of GUI
 class   kgmGui;
-class   kgmIGuiDraw;
 class   kgmTexture;
 
 class kgmGui: public kgmEvent
@@ -80,7 +79,6 @@ protected:
 
 private:
   Base          m_base;
-  kgmIGuiDraw*  m_draw;
   
 public:
   kgmGui();
@@ -92,7 +90,6 @@ public:
   void close();
   void scale(float, float);
   void resize(int, int);
-  void repaint(kgmGui*);
   void setParent(kgmGui*);
   void setRect(Rect&);
   void setRect(u32, u32, u32, u32);
