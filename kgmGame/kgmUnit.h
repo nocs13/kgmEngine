@@ -128,10 +128,10 @@ public:
   void remove();
   u32  timeout();
 
-  kgmObject* getNodeObject(){ return null; }
-  kgmIGraphics::TypeNode   getNodeType(){ return kgmIGraphics::NodeNone; }
-  bool       isNodeValid() { return true; }
-  mtx4       getNodeTransform() { return mtx4(); }
+  kgmObject*             getNodeObject();
+  kgmIGraphics::TypeNode getNodeType();
+  bool                   isNodeValid();
+  mtx4                   getNodeTransform();
 
 private:
   virtual void clear()

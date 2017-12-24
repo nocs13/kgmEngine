@@ -179,3 +179,24 @@ void kgmUnit::update(u32 mls)
     m_visual->update();
   }
 }
+
+kgmObject* kgmUnit::getNodeObject()
+{
+  return null;
+}
+
+kgmIGraphics::TypeNode kgmUnit::getNodeType()
+{
+  return kgmIGraphics::NodeNone;
+}
+
+bool kgmUnit::isNodeValid()
+{
+  return true;
+}
+
+mtx4 kgmUnit::getNodeTransform()
+{
+  return mtx4();
+}
+

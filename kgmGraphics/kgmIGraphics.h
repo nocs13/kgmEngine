@@ -18,8 +18,14 @@ public:
   enum TypeNode
   {
     NodeNone,
+    NodeMesh,
+    NodeText,
     NodeLight,
-    NodeVisual
+    NodeSprite,
+    NodeVisual,
+    NodeCamera,
+    NodeSkinned,
+    NodeParticles
   };
 
   class INode
@@ -28,6 +34,7 @@ public:
     virtual kgmObject* getNodeObject()    = 0;
     virtual TypeNode   getNodeType()      = 0;
     virtual bool       isNodeValid()      = 0;
+    virtual box3       getNodeBound()     = 0;
     virtual mtx4       getNodeTransform() = 0;
   };
 
