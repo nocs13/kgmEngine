@@ -95,7 +95,7 @@ private:
 
     kgmUnit* next()
     {
-      if (i == game->m_nodes.end())
+      if (i.end())
         return null;
 
       kgmUnit* u = (*i);

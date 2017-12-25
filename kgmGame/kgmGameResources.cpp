@@ -38,7 +38,7 @@ void kgmGameResources::add(kgmResource *r)
   if (!r)
     return;
 
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
     if (r == (*i))
       return;
 
@@ -55,7 +55,7 @@ kgmResource* kgmGameResources::get(const char* id)
   if(!id)
     return null;
 
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
     if ((*i)->id() == id)
       return (*i);
 
@@ -83,7 +83,7 @@ void kgmGameResources::clear()
 {
   kgmList<kgmResource*>::iterator i;
 
-  for(i = m_resources.begin(); i != m_resources.end(); ++i)
+  for(i = m_resources.begin(); !i.end(); ++i)
   {
     kgmResource* r = (*i);
 

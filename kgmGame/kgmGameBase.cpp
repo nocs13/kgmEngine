@@ -212,7 +212,7 @@ kgmGameBase::~kgmGameBase()
 
   log("free gui...");
 
-  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); !i.end(); ++i)
     delete (*i);
 
   m_guis.clear();
@@ -565,7 +565,7 @@ int kgmGameBase::gUnload()
   if(m_graphics)
     m_graphics->clean();
 
-  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); !i.end(); ++i)
     delete (*i);
 
   m_nodes.clear();
@@ -658,7 +658,7 @@ kgmUnit* kgmGameBase::gUnit(kgmString id)
 
   kgmList<kgmUnit*>::iterator i = m_nodes.begin();
 
-  for (; i != m_nodes.end(); ++i)
+  for (; !i.end(); ++i)
   {
     if ((*i)->getName() == id)
     {

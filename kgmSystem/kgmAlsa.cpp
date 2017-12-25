@@ -650,7 +650,7 @@ int kgmAlsa::proceed()
 
     u32 t1 = kgmTime::getTicks();
 
-    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
+    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); !i.end(); ++i)
     {
       _Sound* sound = (*i);
 

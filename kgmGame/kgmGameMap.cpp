@@ -60,7 +60,7 @@ bool kgmGameMap::save(kgmString path)
 
   //m_game->getLogic()->getObjects(nodes);
 
-  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); !i.end(); ++i)
   {
     if((*i)->isClass("kgmUnit"))
       units.add((kgmUnit*) (*i));
@@ -74,7 +74,7 @@ bool kgmGameMap::save(kgmString path)
       triggers.add((kgmTrigger*) (*i));
   }
 
-  for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); ++i) {
+  for(kgmList<kgmUnit*>::iterator i = units.begin(); !i.end(); ++i) {
     switch((*i)->getType())
     {
     case kgmUnit::Light:
@@ -91,16 +91,16 @@ bool kgmGameMap::save(kgmString path)
     }
   }
 
-  for(kgmList<kgmActor*>::iterator i = actors.begin(); i != actors.end(); ++i)
+  for(kgmList<kgmActor*>::iterator i = actors.begin(); !i.end(); ++i)
     addActor(*i);
 
-  for(kgmList<kgmEffect*>::iterator i = effects.begin(); i != effects.end(); ++i)
+  for(kgmList<kgmEffect*>::iterator i = effects.begin(); !i.end(); ++i)
     addEffect(*i);
 
-  for(kgmList<kgmSensor*>::iterator i = sensors.begin(); i != sensors.end(); ++i)
+  for(kgmList<kgmSensor*>::iterator i = sensors.begin(); !i.end(); ++i)
     addSensor(*i);
 
-  for(kgmList<kgmTrigger*>::iterator i = triggers.begin(); i != triggers.end(); ++i)
+  for(kgmList<kgmTrigger*>::iterator i = triggers.begin(); !i.end(); ++i)
     addTrigger(*i);
 
   triggers.clear();

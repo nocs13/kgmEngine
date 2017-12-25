@@ -234,7 +234,7 @@ void kgmGraphics::build()
 
 void kgmGraphics::clean()
 {
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
   {
     (*i)->release();
   }
@@ -259,7 +259,7 @@ bool kgmGraphics::resource(kgmResource* r)
 
 kgmResource* kgmGraphics::resource(kgmString id)
 {
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
   {
     if (id == (*i)->id())
       return (*i);
@@ -341,7 +341,7 @@ void kgmGraphics::render()
 
   kgmList<kgmLight*> lights;
 
-  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); i.next())
+  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); !i.end(); i.next())
   {
     if((*i) == null)
     {
@@ -417,7 +417,7 @@ void kgmGraphics::render()
 
   g_lights_count = 0;
 
-  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
+  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); !i.end(); i.next())
   {
     if((*i) == null)
     {

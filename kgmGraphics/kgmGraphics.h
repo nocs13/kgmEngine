@@ -248,7 +248,7 @@ public:
 
   void remove(kgmBody* a)
   {
-    for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
+    for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
     {
       if(a == (*i))
       {
@@ -261,7 +261,7 @@ public:
 
   void remove(kgmObstacle* o)
   {
-    for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); ++i)
+    for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); !i.end(); ++i)
     {
       if(o == (*i))
       {
@@ -275,7 +275,7 @@ public:
 
   void remove(kgmVisual* v)
   {
-    for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); i != m_visuals.end(); ++i)
+    for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); !i.end(); ++i)
     {
       if((*i) == v)
       {
@@ -288,7 +288,7 @@ public:
 
   void remove(kgmLight* l)
   {
-    for(kgmList<kgmLight*>::iterator i = m_lights.begin(); i != m_lights.end(); ++i)
+    for(kgmList<kgmLight*>::iterator i = m_lights.begin(); !i.end(); ++i)
     {
       if((*i) == l)
       {
@@ -301,7 +301,7 @@ public:
 
   void remove(kgmGui* g)
   {
-    for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); ++i)
+    for(kgmList<kgmGui*>::iterator i = m_guis.begin(); !i.end(); ++i)
     {
       if((*i) == g)
       {
@@ -314,7 +314,7 @@ public:
 
   void remove(kgmIcon* c)
   {
-    for(kgmList<kgmIcon*>::iterator i = m_icons.begin(); i != m_icons.end(); ++i)
+    for(kgmList<kgmIcon*>::iterator i = m_icons.begin(); !i.end(); ++i)
     {
       if((*i) == c)
       {

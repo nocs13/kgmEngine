@@ -131,6 +131,7 @@ public:
   kgmObject*             getNodeObject();
   kgmIGraphics::TypeNode getNodeType();
   bool                   isNodeValid();
+  box3                   getNodeBound();
   mtx4                   getNodeTransform();
 
 private:

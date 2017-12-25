@@ -195,6 +195,11 @@ bool kgmUnit::isNodeValid()
   return true;
 }
 
+box3 kgmUnit::getNodeBound()
+{
+  return box3();
+}
+
 mtx4 kgmUnit::getNodeTransform()
 {
   return mtx4();

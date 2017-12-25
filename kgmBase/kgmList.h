@@ -90,6 +90,11 @@ public:
 
       return false;
     }
+
+    bool end()
+    {
+      return (_Ptr == null);
+    }
   };
 
 protected:
@@ -319,11 +324,11 @@ public:
     return i;
   }
 
-  iterator end()
+/*  iterator end()
   {
     iterator i;
     i._Ptr = 0;
 
     return i;
-  }
+  } */
 };

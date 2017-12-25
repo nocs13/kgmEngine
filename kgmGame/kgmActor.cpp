@@ -114,7 +114,7 @@ bool kgmActor::setState(kgmString s, bool force)
 {
   State* state = null;
 
-  for(kgmList<State*>::iterator i = m_states.begin(); i != m_states.end(); ++i)
+  for(kgmList<State*>::iterator i = m_states.begin(); !i.end(); ++i)
   {
     if(((*i)->id == s) && ((*i)->switchfrom.length() > 0) &&
        m_state && (m_state->id == (*i)->switchfrom))

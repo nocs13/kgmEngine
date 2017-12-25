@@ -64,7 +64,7 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
     u32 k = 0;
 
-    while (j != lights.end()) {
+    while (!j.end()) {
       kgmLight* l = (*j);
 
       ++j;
@@ -77,7 +77,7 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
       k++;
 
-      if (k == 15 || j == lights.end()) {
+      if (k == 15 || j.end()) {
         s->start();
         s->set("g_mProj",           gr->camera().mProj);
         s->set("g_mView",           gr->camera().mView);

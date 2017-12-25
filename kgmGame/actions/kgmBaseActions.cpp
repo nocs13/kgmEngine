@@ -4,7 +4,7 @@ kgmVariable kgmBaseActions::find(kgmList<kgmVariable>& variables, kgmString id)
 {
   kgmVariable v;
 
-  for (kgmList<kgmVariable>::iterator i = variables.begin(); i != variables.end(); ++i)
+  for (kgmList<kgmVariable>::iterator i = variables.begin(); !i.end(); ++i)
   {
     if ((*i).getName() == id)
       return (*i);

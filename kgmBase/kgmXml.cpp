@@ -560,7 +560,7 @@ bool kgmXml::attribute(int i, kgmString& key, kgmString& value)
 bool kgmXml::attribute(kgmString key, kgmString& value)
 {
 
-  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
+  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); ++i)
   {
 
     if(key == (*i)->m_name)

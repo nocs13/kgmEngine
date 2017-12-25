@@ -672,7 +672,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<polygon3*>& d_poly, mtx4& 
   int  sides = 0;
   bool cross = false;
 
-  for(kgmList<polygon3*>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
+  for(kgmList<polygon3*>::iterator i = d_poly.begin(); !i.end(); ++i)
   {
     polygon3* poly = (*i);
     vec3*     points = new vec3[poly->m_count];
@@ -749,7 +749,7 @@ bool kgmCollision::ob_collision(obox3& s_box, kgmList<triangle3>& d_poly, mtx4& 
   int  sides = 0;
   bool cross = false;
 
-  for(kgmList<triangle3>::iterator i = d_poly.begin(); i != d_poly.end(); ++i)
+  for(kgmList<triangle3>::iterator i = d_poly.begin(); !i.end(); ++i)
   {
     triangle3 poly = (*i);
     vec3     points[3];
