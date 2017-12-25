@@ -1,2 +1,5 @@
 all:
-	g++ -o calc calc.cpp 
+	g++ -o calc calc.cpp
+
+clean:
+	rm -f calc

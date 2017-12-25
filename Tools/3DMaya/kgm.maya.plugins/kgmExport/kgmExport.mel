@@ -1,0 +1,25 @@
+global proc kgmexp_window()
+{
+string $wnd = `window -title "kgmExport 1.0" -widthHeight 200 250`;
+columnLayout -columnAttach "both" 5 -rowSpacing 10 -columnWidth 220;
+string $btn_mesh = `button -command "kgmexp -m" "mesh"`;
+string $btn_phys = `button -command "kgmexp -p" "physics"`;
+string $btn_geom = `button -command "kgmexp -g" "geometry"`;
+string $btn_skel = `button -command "kgmexp -s" "skeleton"`;
+string $btn_anim = `button -command "kgmexp -a" "animation"`;
+setParent ..;
+showWindow $wnd;
+
+}
+
+global proc kgmexp(string $arg)
+{
+ string $path = `fileDialog -mode 1`;
+ 
+ if($path == "")
+  return;
+
+ kgmexport $arg $path; 
+}
+
+kgmexp_window;

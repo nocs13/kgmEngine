@@ -1,0 +1,232 @@
+#! /bin/sh
+#Tag 0x00270237
+
+# ============================================================================
+# Copyright (C) 1995 - 2005 Alias Systems Corp. and/or its licensors.  All 
+# rights reserved. 
+# 
+# The coded instructions, statements, computer programs, and/or related 
+# material (collectively the "Data") in these files are provided by Alias 
+# Systems Corp. ("Alias") and/or its licensors for the exclusive use of the 
+# Customer (as defined in the Alias Software License Agreement that 
+# accompanies this Alias software). Such Customer has the right to use, 
+# modify, and incorporate the Data into other products and to distribute such 
+# products for use by end-users.
+#  
+# THE DATA IS PROVIDED "AS IS".  ALIAS HEREBY DISCLAIMS ALL WARRANTIES 
+# RELATING TO THE DATA, INCLUDING, WITHOUT LIMITATION, ANY AND ALL EXPRESS OR 
+# IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND/OR FITNESS FOR A 
+# PARTICULAR PURPOSE. IN NO EVENT SHALL ALIAS BE LIABLE FOR ANY DAMAGES 
+# WHATSOEVER, WHETHER DIRECT, INDIRECT, SPECIAL, OR PUNITIVE, WHETHER IN AN 
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, OR IN EQUITY, 
+# ARISING OUT OF ACCESS TO, USE OF, OR RELIANCE UPON THE DATA.
+#==============================================================================
+
+#
+# mayald script
+#	The mayald script is used to link standalone API applications on
+# 	Irix, Linux and Mac OS X.  We now support several options for
+#	this script:
+#	1) The MAYA_LDCMD environment variable can be set to the linker
+#	you wish to use.
+#	2) The Makefiles we supply invoke the mayald script with a 
+#	new parameter: MAYA_LOCATION=$(MAYA_LOCATION).  This allows
+#	the Makefile to pass a required environment setting to
+# 	this script.  NOTE: there should be no spaces between at the 
+#	equals sign.
+#	3) The precedence for the MAYA_LOCATION is:
+#		- parameter to the mayald script if set
+#		- environment setting in the shell
+#		- default environment setting( /usr/autodesk... )
+#
+# NOTE: MAYA_LOCATION on the Mac OS X includes the path to the
+# Maya.app/Contents directory.
+#  
+#
+
+# Default location for different platforms
+MAYA_LOCATION_OS="/usr/autodesk/maya2008"
+UNAME_OS=`uname`
+if [ "${UNAME_OS}" = "Darwin" ]
+then 
+    MAYA_LOCATION_OS="/Applications/Autodesk/maya2008/Maya.app/Contents"
+fi
+
+if [ "${UNAME_OS}" = "Linux" ]
+then
+	UNAME_OS_PLATFORM="i386"	
+	if [ `uname -i` = "x86_64" ]
+	then 
+    	MAYA_LOCATION_OS="/usr/autodesk/maya2008-x64"
+		UNAME_OS_PLATFORM="x86_64"
+	fi
+	UNAME_OS="${UNAME_OS}_${UNAME_OS_PLATFORM}"
+fi
+
+
+if [ "${UNAME_OS}" = "Darwin" ]
+then
+	UNAME_OS_PLATFORM="powerpc"	
+	if [ `uname -p` = "i386" ]
+	then 
+		UNAME_OS_PLATFORM="i386"
+	fi
+	UNAME_OS="${UNAME_OS}_${UNAME_OS_PLATFORM}"
+fi
+
+# Extract parameter MAYA_LOCATION if it was passed in
+MAYA_LOCATION_PARAM=
+case $1 in
+	MAYA_LOCATION=*)
+		MAYA_LOCATION_PARAM=`echo $1 | sed -e s/MAYA_LOCATION=//`
+		shift
+	;;
+esac
+
+MAYA_LOCATION_ENV=${MAYA_LOCATION:=${MAYA_LOCATION_OS}}
+MAYA_LOCATION=${MAYA_LOCATION_PARAM:=${MAYA_LOCATION_ENV}}
+
+# Detect the 32/64 bit flag we need to use on Linux
+LINUX_BITS_COMPILER_FLAG="-m32"
+if [ "${UNAME_OS}" = "Linux_x86_64" ]
+then
+	FILE32_INFO=`file ${MAYA_LOCATION}/lib/libFoundation.so|grep 80386|wc -l`
+	FILE64_INFO=`file ${MAYA_LOCATION}/lib/libFoundation.so|grep x86-64|wc -l`
+	
+	if [ ${FILE32_INFO} = 1 ]
+	then
+		LINUX_BITS_COMPILER_FLAG="-m32"
+	fi
+	if [ ${FILE64_INFO} = 1 ]
+	then
+		LINUX_BITS_COMPILER_FLAG="-m64"
+	fi
+fi
+	
+case "${UNAME_OS}" in
+    Linux_i386*)
+		LDCMD=${MAYA_LDCMD:=g++}
+		WARNFLAGS=
+		LDFLAGS="${WARNFLAGS} ${LINUX_BITS_COMPILER_FLAG} -pthread -shared -Wl,-rpath,${MAYA_LOCATION}/lib"
+		LIBS="-L${MAYA_LOCATION}/lib \
+		  -lOpenMayalib \
+		  -lOpenMaya \
+		  -lOpenMayaAnim \
+		  -lAnimSlice \
+		  -lDeformSlice \
+		  -lModifiers \
+		  -lDynSlice \
+		  -lKinSlice \
+		  -lModelSlice \
+		  -lNurbsSlice \
+		  -lPolySlice \
+		  -lProjectSlice \
+		  -lImage \
+		  -lShared \
+		  -lTranslators \
+		  -lDataModel \
+		  -lRenderModel \
+		  -lNurbsEngine \
+		  -lDependEngine \
+		  -lCommandEngine \
+		  -lFoundation \
+		  -lIMFbase \
+		  -lm -ldl"
+		;;
+
+    Linux_x86_64*)
+		LDCMD=${MAYA_LDCMD:=g++}
+		WARNFLAGS=
+		LDFLAGS="${WARNFLAGS} ${LINUX_BITS_COMPILER_FLAG} -pthread -Wl,-rpath,${MAYA_LOCATION}/lib"
+		LIBS="-L${MAYA_LOCATION}/lib \
+		  -lOpenMayalib \
+		  -lOpenMaya \
+		  -lAnimSlice \
+		  -lDeformSlice \
+		  -lModifiers \
+		  -lDynSlice \
+		  -lKinSlice \
+		  -lModelSlice \
+		  -lNurbsSlice \
+		  -lPolySlice \
+		  -lProjectSlice \
+		  -lImage \
+		  -lShared \
+		  -lTranslators \
+		  -lDataModel \
+		  -lRenderModel \
+		  -lNurbsEngine \
+		  -lDependEngine \
+		  -lCommandEngine \
+		  -lFoundation \
+		  -lIMFbase \
+		  -lm -ldl"
+		;;
+
+   Darwin_i386*)
+        	LDCMD=${MAYA_LDCMD:=g++}
+        	WARNFLAGS=
+        	DYNLIB_LOCATION=${MAYA_LOCATION}/MacOS
+        	FRAMEWORK_LOCATION=${MAYA_LOCATION}/Frameworks
+        	OTHERFLAGS="-F${FRAMEWORK_LOCATION} -framework Python -isysroot /Developer/SDKs/MacOSX10.4u.sdk -headerpad_max_install_names -dynamic"
+        	LREMAP="-Wl,-executable_path,${DYNLIB_LOCATION}"
+        	LDFLAGS="-fno-gnu-keywords -fpascal-strings -O3 -arch=i386 ${LREMAP} ${OTHERFLAGS}"
+			LIBS="-L${DYNLIB_LOCATION} \
+			  -lShared \
+			  -lDataModel \
+			  -lOpenMaya \
+			  -lAnimSlice \
+			  -lDeformSlice \
+			  -lModifiers \
+			  -lDynSlice \
+			  -lKinSlice \
+			  -lModelSlice \
+			  -lNurbsSlice \
+			  -lPolySlice \
+			  -lProjectSlice \
+			  -lImage \
+			  -lTranslators \
+			  -lRenderModel \
+			  -lNurbsEngine \
+			  -lDependEngine \
+			  -lCommandEngine \
+			  -lFoundation \
+			  -lIMFbase \
+			  -lm"
+        	;;
+
+   Darwin_powerpc*)
+        	LDCMD=${MAYA_LDCMD:=g++}
+        	WARNFLAGS=
+        	DYNLIB_LOCATION=${MAYA_LOCATION}/MacOS
+        	FRAMEWORK_LOCATION=${MAYA_LOCATION}/Frameworks
+        	OTHERFLAGS="-F${FRAMEWORK_LOCATION} -framework Python -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch ppc -headerpad_max_install_names -dynamic"
+        	LREMAP="-Wl,-executable_path,${DYNLIB_LOCATION}"
+        	LDFLAGS="-fno-gnu-keywords -fpascal-strings -O3 -mtune=970 ${LREMAP} ${OTHERFLAGS}"
+			LIBS="-L${DYNLIB_LOCATION} \
+			  -lShared \
+			  -lDataModel \
+			  -lOpenMaya \
+			  -lAnimSlice \
+			  -lDeformSlice \
+			  -lModifiers \
+			  -lDynSlice \
+			  -lKinSlice \
+			  -lModelSlice \
+			  -lNurbsSlice \
+			  -lPolySlice \
+			  -lProjectSlice \
+			  -lImage \
+			  -lTranslators \
+			  -lRenderModel \
+			  -lNurbsEngine \
+			  -lDependEngine \
+			  -lCommandEngine \
+			  -lFoundation \
+			  -lIMFbase \
+			  -lm"
+        	;;
+
+esac
+
+${LDCMD} ${LDFLAGS} $* ${LIBS}

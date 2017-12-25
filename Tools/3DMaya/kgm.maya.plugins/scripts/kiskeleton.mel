@@ -1,0 +1,71 @@
+/*
+proc string kgmJoint(int $id)
+{
+ $objs = `ls -et joint`;
+  
+ for($o in $objs)
+ {
+ 
+ }
+ return $objs[$id];
+}
+*/
+
+
+proc kgmImportSkeleton()
+{
+ string $path = `fileDialog`;
+ string $joints[];
+ int	$ijoint = 0;
+ 
+ if($path == "")
+  return;
+  
+ print $path;
+ 
+ $fileid = fopen($path, "r");
+ while(!feof($fileid))
+ {
+  string $nline = `fgetline $fileid`;
+  string $fields[];
+  int $numf = `tokenize $nline " \t" $fields`;
+  if($fields[0] == "Bone")
+  {
+   string $bname = "";
+   for($i = 1; $i < $numf; $i++)
+   {
+    $bname = $bname + $fields[$i];
+	if($i != ($numf - 1))
+	 $bname = $bname + "_";
+   }
+   $joints[$ijoint] = $bname; $ijoint++;
+   
+   $nline = `fgetline $fileid`;
+   $numf = `tokenize $nline " \t\n\r" $fields`;
+   int   $id = $fields[0];
+   float $pos[3];// = {$fields[1], $fields[2], $fields[3]};
+   float $rot[4];
+   
+//   for($o in $joints){
+//    print $o; print "\n";
+//   }
+   if($id < 0){
+    $res = `joint -absolute -position $fields[1] $fields[2] $fields[3] -name $bname`;
+   }else{
+	$par = $joints[$id];
+	print "creating... "; print $bname; print "->"; print $par; print "\n";
+	select $par;
+	joint -absolute -position $fields[1] $fields[2] $fields[3] -name $bname;
+//	select -d;
+   }
+  }
+  print $nline;
+ }
+ fclose($fileid);
+};
+
+
+global proc kiskeleton()
+{
+ kgmImportSkeleton();
+};
