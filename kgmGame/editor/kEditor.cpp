@@ -859,7 +859,7 @@ void kEditor::onMenu(u32 id)
     onMapOpen();
     break;
   case ME_MAP_SAVE:
-    onMapSave();
+    //onMapSave();
     break;
   case ME_EDIT_CLONE:
     onEditClone();
