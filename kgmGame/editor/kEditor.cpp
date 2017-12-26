@@ -412,6 +412,7 @@ bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 
 bool kEditor::mapOpen(kgmString s)
 {
+  /*
   kgmFile file;
 
   if(!kgmSystem::isFile(s) || kgmSystem::isDirectory(s))
@@ -454,6 +455,9 @@ bool kEditor::mapOpen(kgmString s)
   }
 
   xml.close();
+  */
+
+  game->gLoad(s);
 
   selected = null;
 
@@ -955,7 +959,7 @@ void kEditor::onMapOpen()
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Path"));
+  fdd->forOpen(game->getSettings()->get((char*)"Data"));
   slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
 }
 

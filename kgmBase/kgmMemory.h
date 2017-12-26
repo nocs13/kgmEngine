@@ -61,11 +61,19 @@ public:
 
   kgmMemory(u32 len)
   {
+    m_data = null;
+    m_length = 0;
+    m_position = 0;
+
     alloc(len);
   }
 
   kgmMemory(const kgmMemory<T>& m)
   {
+    m_data = null;
+    m_length = 0;
+    m_position = 0;
+
     alloc(m.m_data, m.m_length);
   }
 

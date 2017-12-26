@@ -21,7 +21,7 @@ kgmGuiFileDialog::kgmGuiFileDialog()
   text   = new kgmGuiText(this->getClient(),   1, rc.height() - 31, rc.width() - 2, 30);
   btnCmd = new kgmGuiButton(this->getClient(), 1, rc.height() - 75, rc.width() - 2, 43);
 
-  pathFolder = "";
+  kgmSystem::getCurrentDirectory(pathFolder);
 
   modeSave = false;
   localable = true;
