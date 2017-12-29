@@ -11,6 +11,7 @@ class kgmLight;
 class kgmVisual;
 class kgmCamera;
 class kgmResource;
+class kgmMaterial;
 
 class kgmIGraphics
 {
@@ -36,6 +37,9 @@ public:
     virtual bool       isNodeValid()      = 0;
     virtual box3       getNodeBound()     = 0;
     virtual mtx4       getNodeTransform() = 0;
+
+    virtual void         setNodeMaterial(kgmMaterial*) = 0;
+    virtual kgmMaterial* getNodeMaterial()             = 0;
   };
 
 public:
@@ -45,9 +49,7 @@ public:
   virtual void render_3d() = 0;
   virtual void render_2d() = 0;
 
-  virtual void add(INode*)     = 0;
-  virtual void add(kgmLight*)  = 0;
-  virtual void add(kgmVisual*) = 0;
+  virtual void add(INode*) = 0;
 
   virtual bool resource(kgmResource*)      = 0;
   virtual kgmResource* resource(kgmString) = 0;

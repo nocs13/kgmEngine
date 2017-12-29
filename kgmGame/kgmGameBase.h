@@ -61,8 +61,9 @@ protected:
   kgmGameLogic*    m_logic;
   kgmGameGraphics* m_graphics;
 
-  kgmList<kgmGui*>  m_guis;
-  kgmList<kgmUnit*> m_nodes;
+  kgmList<kgmGui*>    m_guis;
+  kgmList<kgmUnit*>   m_units;
+  kgmList<kgmObject*> m_objects;
 
   u32             m_fps;
   kgmGameThreader m_threader_1;
@@ -90,7 +91,7 @@ private:
     GIterator(kgmGameBase* g)
     {
       game = g;
-      i = g->m_nodes.begin();
+      i = g->m_units.begin();
     }
 
     kgmUnit* next()

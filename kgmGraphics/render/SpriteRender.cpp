@@ -20,10 +20,6 @@ void SpriteRender::render()
 
   gr->render(gr->m_shaders[kgmGraphics::kgmShader_TypeGui]);
 
-  for(int i = 0; gr->m_visible_sprites[i] != null; i++)
-  {
-  }
-
   gr->render((kgmShader*)null);
 
   gr->gc3DMode();

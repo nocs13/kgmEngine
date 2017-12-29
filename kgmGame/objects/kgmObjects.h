@@ -152,7 +152,7 @@ public:
     :kgmEffect(g)
   {
     game     = g;
-    m_visual = new kgmVisual();
+    //m_visual = new kgmVisual();
 
     mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
     mtl->cull(false);
@@ -198,8 +198,8 @@ public:
     v[16]  = { {-0.5, 0, -0.1}, 0xffffffff, {1, 1} };
     v[17]  = { {0, 0, -0.1},  0xffffffff, {0.5, 1} };
 
-    m_visual->set(mesh);
-    m_visual->set(mtl);
+    //m_visual->set(mesh);
+    //m_visual->set(mtl);
     visual->set(ptl);
     visual->set(mtl);
   }
@@ -213,7 +213,7 @@ public:
     if(!valid())
       return;
 
-    visual->getTransform() = m_visual->getTransform();
+    //visual->getTransform() = m_visual->getTransform();
     visual->update();
   }
 

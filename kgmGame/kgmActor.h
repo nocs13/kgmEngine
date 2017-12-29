@@ -154,7 +154,7 @@ public:
     if(a)
     {
       m_animation = a;
-      m_visual->setAnimation(a);
+      //m_visual->setAnimation(a);
     }
   }
 

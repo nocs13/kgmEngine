@@ -1,10 +1,7 @@
 #pragma once
-//#include "kgmVector3d.h"
-//#include "kgmVector4d.h"
-//#include "kgmQuaternion.h"
 
-//MATRIX3x3
-template <class T> class kgmMatrix3x3
+template <class T>
+class kgmMatrix3x3
 {
 public:
   T m[9];
@@ -22,17 +19,20 @@ public:
     memcpy(m, f, sizeof(T) * 3);
   }
 
-  T& operator[](int i){
+  T& operator[](int i)
+  {
     return m[i];
   }
 
-  T& operator()(int row, int col){
+  T& operator()(int row, int col)
+  {
     return m[col * 3 + row];
   }
 };
 
-//MATRIX4x4
-template <class T> class kgmMatrix4x4
+
+template <class T>
+class kgmMatrix4x4
 {
 public:
   T m[16];
@@ -403,13 +403,13 @@ public:
       angle_z  = atan2( tr_y, tr_x );
     }
     /*
-  if(angle_x < 0.0) angle_x = 0.0;
-   if(angle_x > (2 * PI)) angle_x = (2 * PI);
-  if(angle_y < 0.0) angle_y = 0.0;
-   if(angle_y > (2 * PI)) angle_y = (2 * PI);
-  if(angle_z < 0.0) angle_z = 0.0;
-   if(angle_z > (2 * PI)) angle_z = (2 * PI);
-*/
+    if(angle_x < 0.0) angle_x = 0.0;
+     if(angle_x > (2 * PI)) angle_x = (2 * PI);
+    if(angle_y < 0.0) angle_y = 0.0;
+     if(angle_y > (2 * PI)) angle_y = (2 * PI);
+    if(angle_z < 0.0) angle_z = 0.0;
+     if(angle_z > (2 * PI)) angle_z = (2 * PI);
+    */
     r.x = (T)angle_x;
     r.y = (T)angle_y;
     r.z = (T)angle_z;
@@ -506,18 +506,16 @@ public:
     *this = r;
   }
 
-  //matrix perspective
-
   void perspective(T fov, T asp, T znear, T zfar)
   {
-    T y = (T)tan(fov),	 x = y * asp;
+    T y = (T)tan(fov), x = y * asp;
+
     m[0] =  1.0f/x;       m[1] =                                   m[2] = m[3] = 0.0f;
     m[4] =  0.0f;         m[5] = 1.0f / y;                         m[6] = m[7] = 0.0f;
     m[8] =  m[9] = 0.0f;  m[10] = -(zfar + znear)/(zfar-znear);    m[11] = -1.0f;
     m[12] = m[13] = 0.0f; m[14] = -(2.0f*zfar*znear)/(zfar-znear); m[15] = 0.0f;
   }
 
-  //matrix lookat for 3D
   void lookat(const kgmVector3d<T>& eye, const kgmVector3d<T>& dir, const kgmVector3d<T>& up)
   {
     kgmVector3d<T> x, y, z, ieye = eye;
@@ -538,10 +536,9 @@ public:
     *this =  m1 * m0;
   }
 
-  //matrix lookat for 3D
-  void lookat(T x, T y, T z,
-  T lx, T ly, T lz,
-  T ux, T uy, T uz)
+  void lookat(T x,  T y,  T z,
+              T lx, T ly, T lz,
+              T ux, T uy, T uz)
   {
     kgmVector3d<T> dir(lx - x, ly - y, lz - z);
     kgmVector3d<T> pos(x, y, z);
@@ -549,7 +546,8 @@ public:
     lookat(pos, dir, ups);
   }
 
-  void shadow(kgmVector4d<T> light, kgmVector4d<T> plane){
+  void shadow(kgmVector4d<T> light, kgmVector4d<T> plane)
+  {
     T  d;
     plane.normalize();
     d = plane.dot(light);
@@ -571,8 +569,8 @@ public:
     m[15] = plane.w * light.w + d;
   }
 
-  // multiply vector 3d to matrix rotate component
-  kgmVector3d<T> multiply(kgmVector3d<T>& v){
+  kgmVector3d<T> multiply(kgmVector3d<T>& v)
+  {
     kgmVector3d<T> r;
     r.x = v.x*m[0] + v.y*m[4] + v.z*m[8];
     r.y = v.x*m[1] + v.y*m[5] + v.z*m[9];
@@ -580,16 +578,16 @@ public:
     return r;
   }
 
-  //Orthogonal projection
-  void ortho(T l, T r, T b, T t, T n, T f){
+  void ortho(T l, T r, T b, T t, T n, T f)
+  {
     m[0] = (T)2.0 / (r - l),		m[1] = (T)0,				m[2] = (T)0,				m[3] = (T)0;
     m[4] = (T)0,					m[5] = (T)2.0 / (t - b),	m[6] = (T)0,				m[7] = (T)0;
     m[8] = (T)0,					m[9] = (T)0,				m[10] = (T)-2.0 / (f- n),	m[11] = (T)0;
     m[12] = - (r + l) / (r - l);  m[13] = - (t + b) / (t - b);m[14] = - (f + n) / (f - n);m[15] = (T)1.0;
   }
 
-  //transpose
-  void transpose(){
+  void transpose()
+  {
     kgmMatrix4x4<T> t = *this;
     m[0]  = t[0],  m[1]  = t[4], m[2]  = t[8],  m[3]  = t[12];
     m[4]  = t[1],  m[5]  = t[5], m[6]  = t[9],  m[7]  = t[13];
@@ -598,13 +596,15 @@ public:
   }
 
 protected:
-  inline T det(T& a00, T& a01, T& a10, T& a11){
+  inline T det(T& a00, T& a01, T& a10, T& a11)
+  {
     return (a00*a11 - a01*a10);
   }
 
   inline T det(T& a00, T& a01, T& a02,
-  T& a10, T& a11, T& a12,
-  T& a20, T& a21, T& a22){
+               T& a10, T& a11, T& a12,
+               T& a20, T& a21, T& a22)
+  {
     T mn0, mn1, mn2;
     mn0 = det(a11, a12, a21, a22);
     mn1 = det(a10, a12, a20, a22);
@@ -613,9 +613,10 @@ protected:
   }
 
   inline T det(T& a00, T& a01, T& a02, T& a03,
-  T& a10, T& a11, T& a12, T& a13,
-  T& a20, T& a21, T& a22, T& a23,
-  T& a30, T& a31, T& a32, T& a33){
+               T& a10, T& a11, T& a12, T& a13,
+               T& a20, T& a21, T& a22, T& a23,
+               T& a30, T& a31, T& a32, T& a33)
+  {
     T mn0, mn1, mn2, mn3;
     mn0 = det(a11, a12, a13, a21, a22, a23, a31, a32, a33);
     mn1 = det(a10, a12, a13, a20, a22, a23, a30, a32, a33);
@@ -624,7 +625,8 @@ protected:
     return (a00*mn0 - a01*mn1 + a02*mn2 - a03*mn3);
   }
 
-  inline T det(){
+  inline T det()
+  {
     T det = m[0] * m[5] * m[10];
     det += m[4] * m[9] * m[2];
     det += m[8] * m[1] * m[6];

@@ -9,7 +9,7 @@ kgmActor::kgmActor(kgmIGame* g)
 {
   vec3 tv(0, 0, 1);
 
-  m_visual = new kgmVisual();
+  //m_visual = new kgmVisual();
 
   m_body              = new kgmBody();
   m_body->m_udata     = this;
@@ -143,7 +143,7 @@ bool kgmActor::setState(kgmString s, bool force)
       game()->getAudio()->play(state->sound->getSound(), (state->timeout == (u32) -1) ? (true) : (false));
     }
 
-    m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == (u32) -1)?(true):(false));
+    //m_visual->setAnimation(m_visual->m_animation, state->fstart, state->fend, (state->timeout == (u32) -1)?(true):(false));
 
     state->stime = kgmTime::getTicks();
 

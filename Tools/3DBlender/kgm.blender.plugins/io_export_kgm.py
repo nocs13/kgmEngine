@@ -34,8 +34,8 @@ import xml.etree.ElementTree
 def toGrad(a):
   return a * 180.0 / 3.1415
 
-kgm_animaniacs = [  ( "Unit",    "Unit",    "kgmUnit"    ),
-                    ( "Actor",   "Actor",   "kgmActor"   )]
+kgm_animaniacs = [( "Unit",    "Unit",    "kgmUnit"    ),
+                  ( "Actor",   "Actor",   "kgmActor"   )]
 
 kgm_project_parameters = ''
 kgm_unit_types = [('a1', 'a1 a1', 'a1 a1 a1'), ('a2', 'a2 a2', 'a2 a2 a2')]
@@ -381,7 +381,13 @@ class kgmMesh:
   def __init__(self, o):
     #  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
     mesh = o.data
-    mtx = o.matrix_local
+    mtx  = o.matrix_local
+
+    self.position = mtx.to_translation()
+    self.rotation = mtx.to_euler()
+
+    if len(mesh.materials) > 0:
+        self.mtl_name = mesh.materials[0].name
 
     print('Current mesh: ' + mesh.name)
     self.name = mesh.name
@@ -710,9 +716,18 @@ def export_camera(file, o):
 
 
 def export_mesh_data(file, o):
-  file.write(" <Mesh name='" + o.name + "'>\n")
-  if len(o.mtls) > 0:
-    file.write("  <Material name='" + o.mtls[0] + "' />\n")
+  v = o.position
+  r = o.rotation
+
+  file.write(" <Mesh name='" + o.name + "'")
+
+  if o.mtl_name != "":
+    file.write(" material='" + o.mtl_name + "'")
+
+  file.write(">\n");
+
+  file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
+  file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
 
   file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
   for v in o.vertices:
@@ -746,8 +761,8 @@ def export_mesh_node(file, o):
   for m in o.data.materials:
     file.write("  <Material name='" + m.name + "'/>\n")
 
-  file.write("  <Position='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
-  file.write("  <Rotation='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
+  file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
+  file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
   file.write(" </Visual>\n")
   pass
 
@@ -875,14 +890,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
 
     objects = self.objects
 
-    # cFrame = bpy.context.scene.frame_current
+    #cFrame = bpy.context.scene.frame_current
 
     self.mesh_datas = []
     self.mesh_nodes = []
-    self.obstacles = []
-    self.lights = []
-    self.cameras = []
-    self.skeletons = []
+    self.obstacles  = []
+    self.lights     = []
+    self.cameras    = []
+    self.skeletons  = []
     self.animations = []
 
     print("Collect Objects...")
@@ -895,7 +910,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
     animations = []'''
 
-    threads = list(range(6))
+    threads    = list(range(6))
     threads[0] = threading.Thread(target=self.collect_meshes)
     threads[1] = threading.Thread(target=self.collect_obstacles)
     threads[2] = threading.Thread(target=self.collect_lights)
@@ -960,9 +975,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     for o in self.mesh_datas:
       export_mesh_data(file, o)
 
-    print("Export mesh nodes")
-    for o in self.mesh_nodes:
-      export_mesh_node(file, o)
+    #print("Export mesh nodes")
+    #for o in self.mesh_nodes:
+    #  export_mesh_node(file, o)
 
     # skeletons
     for s in self.skeletons:
@@ -1020,13 +1035,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
     for n in self.mesh_nodes:
-      exist = False
+      self.mesh_datas.append(kgmMesh(n))
+      '''exist = False
       for m in self.mesh_datas:
         if n.name == m.name:
           exist = True
           break
       if exist is False:
-        self.mesh_datas.append(kgmMesh(n))
+        self.mesh_datas.append(kgmMesh(n))'''
     print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
   def collect_obstacles(self):

@@ -22,6 +22,7 @@ public:
   enum UnitType
   {
     Unit,
+    Mesh,
     Light,
     Actor,
     Visual,
@@ -70,19 +71,21 @@ private:
 protected:
   union
   {
-    kgmLight*    m_light  = null;
+    kgmObject*   m_object = null;
+
+    kgmLight*    m_light;
     kgmCamera*   m_camera;
-    kgmVisual*   m_visual;
+    //kgmVisual*   m_visual;
     kgmObstacle* m_obstacle;
   };
 
-  kgmBody*    m_body   = null;
+  kgmBody* m_body   = null;
 
   Action m_action;
 
   static kgmTab<kgmString, ActionCallback> g_list_action;
 
-
+  kgmMaterial* m_material = null;
 
   UnitType m_type;
 
@@ -108,6 +111,7 @@ public:
 
 public:
   kgmUnit(kgmIGame* g = null);
+  kgmUnit(kgmIGame* g, kgmMesh* msh);
   kgmUnit(kgmIGame* g, kgmLight* lgt);
   kgmUnit(kgmIGame* g, kgmCamera* cam);
   kgmUnit(kgmIGame* g, kgmVisual* vis);
@@ -133,6 +137,8 @@ public:
   bool                   isNodeValid();
   box3                   getNodeBound();
   mtx4                   getNodeTransform();
+  kgmMaterial*           getNodeMaterial();
+  void                   setNodeMaterial(kgmMaterial*);
 
 private:
   virtual void clear()
@@ -154,10 +160,10 @@ public:
     return m_body;
   }
 
-  kgmVisual* visual() const
-  {
-    return m_visual;
-  }
+  //kgmVisual* visual() const
+  //{
+  //  return null;//m_visual;
+  //}
 
   kgmObstacle* obstacle()
   {

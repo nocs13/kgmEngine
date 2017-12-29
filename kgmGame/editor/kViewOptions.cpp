@@ -229,23 +229,23 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, in
 
 void kViewOptionsForVisual::onParticlesLoop(bool s)
 {
-  node->visual()->getParticles()->loop(s);
+  //node->visual()->getParticles()->loop(s);
 }
 
 void kViewOptionsForVisual::onParticlesFade(bool s)
 {
-  node->visual()->getParticles()->fade(s);
+  //node->visual()->getParticles()->fade(s);
 }
 
 void kViewOptionsForVisual::onParticlesCount(kgmString s)
 {
-  node->visual()->getParticles()->count(kgmConvert::toInteger(s));
-  node->visual()->getParticles()->build();
+  //node->visual()->getParticles()->count(kgmConvert::toInteger(s));
+  //node->visual()->getParticles()->build();
 }
 
 void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
 {
-  node->visual()->getParticles()->speed(kgmConvert::toDouble(s));
+  //node->visual()->getParticles()->speed(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesAngle(kgmString s)
@@ -253,22 +253,22 @@ void kViewOptionsForVisual::onParticlesAngle(kgmString s)
   if(s.length() < 1)
     return;
 
-  node->visual()->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
+  //node->visual()->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
 }
 
 void kViewOptionsForVisual::onParticlesLife(kgmString s)
 {
-  node->visual()->getParticles()->life(kgmConvert::toDouble(s));
+  //node->visual()->getParticles()->life(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesSize(kgmString s)
 {
-  node->visual()->getParticles()->size(kgmConvert::toDouble(s));
+  //node->visual()->getParticles()->size(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesEsize(kgmString s)
 {
-  node->visual()->getParticles()->esize(kgmConvert::toDouble(s));
+  //node->visual()->getParticles()->esize(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
@@ -277,7 +277,7 @@ void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
     return;
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  node->visual()->getParticles()->divspeed(f);
+  //node->visual()->getParticles()->divspeed(f);
 }
 
 void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
@@ -286,7 +286,7 @@ void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
     return;
 
   float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  node->visual()->getParticles()->divlife(f);
+  //node->visual()->getParticles()->divlife(f);
 }
 
 kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int h)

@@ -31,7 +31,7 @@ void kgmCharacter::update(u32 ms)
 {
   kgmActor::update(ms);
 
-  if(m_visual)
+  /*if(m_visual)
   {
     vec3 vz(0, 0, 1), vy(0, 0, 0), vx(1, 0, 0);
     mtx4 mz, mx, my, mr;
@@ -62,7 +62,7 @@ void kgmCharacter::update(u32 ms)
         go->update(ms);
       }
     }
-  }
+  }*/
 
   if(body())
   {

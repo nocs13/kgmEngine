@@ -17,13 +17,13 @@ kgmResult::kgmResult(kgmIGame* g, u32 time, s32 res, kgmString txt)
 
   tw = 300 / tl;
 
-  m_visual  = new kgmVisual();
+  //m_visual  = new kgmVisual();
   m_text = new kgmText();
   m_text->m_rect  = uRect(10, ch - 2 * tw, 300, 2 * tw);
   m_text->m_text  = txt;
   m_text->m_size  = tw;
 
-  m_visual->set(m_text);
+  //m_visual->set(m_text);
 }
 
 kgmResult::~kgmResult()
@@ -59,7 +59,7 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   setLiving(life);
 
   particles = new kgmParticles();
-  m_visual  = new kgmVisual();
+  //m_visual  = new kgmVisual();
 
   material = new kgmMaterial();
   material->depth(false);
@@ -75,8 +75,8 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   particles->esize(size_end);
   particles->loop(loop);
 
-  m_visual->set(material);
-  m_visual->set(particles);
+  //m_visual->set(material);
+  //m_visual->set(particles);
 
   position(pos);
 
@@ -153,8 +153,8 @@ kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
 
   particles->build();
 
-  m_visual->set(material);
-  m_visual->set(particles);
+  //m_visual->set(material);
+  //m_visual->set(particles);
 
   position(pos);
 }
@@ -172,7 +172,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   setLiving(time);
   this->setName("laser");
 
-  m_visual  = new kgmVisual();
+  //m_visual  = new kgmVisual();
 
   material = new kgmMaterial();
   material->cull(false);
@@ -207,8 +207,8 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   v[16] = { {-hlen, 0, -hwid}, 0xffffffff, {1, 1} };
   v[17] = { {hlen,  0, -hwid}, 0xffffffff, {0, 1} };
 
-  m_visual->set(mesh);
-  m_visual->set(material);
+  //m_visual->set(mesh);
+  //m_visual->set(material);
 
   m_body = new kgmBody();
 

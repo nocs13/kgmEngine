@@ -192,7 +192,10 @@ bool kgmGameMap::addVisual(kgmUnit* n)
     node->m_name = "Visual";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
-    kgmVisual* vis = n->visual();
+    kgmVisual* vis = null; //n->visual();
+
+    if (!vis)
+      return false;
 
     switch(vis->type())
     {
@@ -374,7 +377,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
     if(n->lock())
       addLocked(*node, n->lock());
 
-    if(n->visual())
+    /*if(n->visual())
     {
       kgmXml::Node* vnode = new kgmXml::Node(node);
       vnode->m_name = "Visual";
@@ -384,7 +387,7 @@ bool kgmGameMap::addUnit(kgmUnit* n)
 
       if(n->visual()->getMesh())
         vnode->m_attributes.add(new kgmXml::Attribute("mesh", n->visual()->getMesh()->id()));
-    }
+    }*/
 
     addParameters(*node, n->m_variables);
   }
@@ -603,8 +606,8 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("id", link);
 
-        if(node && node->visual())
-          node->visual()->set(m_game->getResources()->getMesh(link));
+        //if(node && node->visual())
+        //  node->visual()->set(m_game->getResources()->getMesh(link));
       }
       else if(id == "Particles")
       {
@@ -624,7 +627,7 @@ kgmUnit* kgmGameMap::next()
           m_xml->attribute("size", value); pts->size(kgmConvert::toDouble(value));
           m_xml->attribute("esize", value); pts->esize(kgmConvert::toDouble(value));
           pts->build();
-          node->visual()->set(pts);
+          //node->visual()->set(pts);
         }
       }
       else if(id == "Material")
@@ -633,8 +636,8 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("name", link);
 
-        if(node && node->visual())
-          node->visual()->set(m_game->getResources()->getMaterial(link));
+        //if(node && node->visual())
+        //  node->visual()->set(m_game->getResources()->getMaterial(link));
       }
       else if(id == "Locked")
       {
@@ -679,13 +682,13 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("material", value);
 
-        if (node && value.length() > 0 && node->visual())
-          node->visual()->set(kgmIGame::getGame()->getResources()->getMaterial(value));
+        //if (node && value.length() > 0 && node->visual())
+        //  node->visual()->set(kgmIGame::getGame()->getResources()->getMaterial(value));
 
         m_xml->attribute("mesh", value);
 
-        if(node && value.length() > 0 && node->visual())
-          node->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
+        //if(node && value.length() > 0 && node->visual())
+        //  node->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
       }
       else if(id == "Action")
       {

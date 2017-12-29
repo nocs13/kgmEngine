@@ -565,10 +565,14 @@ int kgmGameBase::gUnload()
   if(m_graphics)
     m_graphics->clean();
 
-  for(kgmList<kgmUnit*>::iterator i = m_nodes.begin(); !i.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_units.begin(); !i.end(); ++i)
     delete (*i);
 
-  m_nodes.clear();
+  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+    delete (*i);
+
+  m_units.clear();
+  m_objects.clear();
 
   m_state = State_Idle;
 
@@ -621,14 +625,11 @@ bool kgmGameBase::gAppend(kgmUnit* node)
   if(!node)
     return false;
 
-  if(m_graphics && node->visual())
-    m_graphics->add(node->visual());
+  if(m_graphics)
+    m_graphics->add(node);
 
   if(m_physics && node->body())
     m_physics->add(node->body());
-
-  if(node->getType() == kgmUnit::Light)
-    m_graphics->add(node->light());
 
   if(m_logic)
   {
@@ -642,12 +643,7 @@ bool kgmGameBase::gAppend(kgmUnit* node)
       m_logic->add((kgmUnit*)node);
   }
 
-#ifdef DEBUG
-  if(m_graphics && node->body())
-    m_graphics->add(node->body());
-#endif
-
-  m_nodes.add(node);
+  m_units.add(node);
 
   return true;
 }
@@ -656,7 +652,7 @@ kgmUnit* kgmGameBase::gUnit(kgmString id)
 {
   kgmUnit* un = null;
 
-  kgmList<kgmUnit*>::iterator i = m_nodes.begin();
+  kgmList<kgmUnit*>::iterator i = m_units.begin();
 
   for (; !i.end(); ++i)
   {
@@ -746,7 +742,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   kgmString sid; \
   sid = id; \
   node->attribute(sid, val); \
-}
+  }
 
   kgmMemory<u8> mem;
 
@@ -772,19 +768,17 @@ bool kgmGameBase::loadXml(kgmString& path)
   }
 
   u32             type = TypeNone;
+  kgmUnit*        gob = 0;
+
   kgmMesh*        msh = 0;
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
   kgmActor*       act = 0;
-  kgmUnit*        gob = 0;
-  kgmObject*      obj = 0;
   kgmVisual*      vis = 0;
 
   u32             vts = 0;
 
   kgmString      m_data = "";
-
-  (void)obj;
 
   while(kgmXml::XmlState xstate = xml.next())
   {
@@ -806,43 +800,48 @@ bool kgmGameBase::loadXml(kgmString& path)
       kgm_log() << "Node: " << (char*)id << "\n";
 #endif
 
-      if(id == "kgmMaterial")
+      if(id == "Material")
       {
         kgmString id;
         xml.attribute("name", id);
         type = TypeMaterial;
-        obj = mtl = new kgmMaterial();
 
-        if(vis)
-        {
-          vis->set(mtl);
-        }
+        mtl = new kgmMaterial();
+
+        m_objects.add(mtl);
       }
-      else if(id == "kgmCamera")
+      else if(id == "Camera")
       {
         type = TypeCamera;
       }
-      else if(id == "kgmLight")
+      else if(id == "Light")
       {
         type = TypeLight;
-        obj = lgt = new kgmLight();
-        m_graphics->add(lgt);
+
+        lgt = new kgmLight();
+        gob = new kgmUnit(this, lgt);
+
+        m_graphics->add((kgmIGraphics::INode*) gob);
       }
-      else if(id == "kgmMesh")
+      else if(id == "Mesh")
       {
         type = TypeMesh;
-        obj = msh = new kgmMesh();
-        vis = new kgmVisual();
-        vis->set(msh);
-        m_graphics->add(vis);
+
+        msh = new kgmMesh();
+        gob = new kgmUnit(this, msh);
+
+        m_units.add(gob);
+        m_graphics->add((kgmIGraphics::INode*) gob);
       }
-      else if(id == "kgmActor")
+      else if(id == "Actor")
       {
         type = TypeActor;
         kgmString s, sgrp;
+
         xml.attribute("object", s);
         xml.attribute("group", sgrp);
-        obj = act = (kgmActor*) gSpawn(s);
+
+        gob = act = (kgmActor*) gSpawn(s);
 
         if(act)
         {
@@ -851,39 +850,28 @@ bool kgmGameBase::loadXml(kgmString& path)
           xml.attribute("player", s);
 
           if(s == "on")
-          {
             act->m_gameplayer = true;
-
-            //if(m_gamemode) m_graphics->linkCamera(act->visual(), 10.0f, 10.0f);
-          }
 
           if(sgrp.length() > 0)
             act->setGroup(kgmConvert::toInteger(sgrp));
 
           gAppend((kgmActor*)act);
-#ifdef DEBUG
-          if(act && act->body())
-            m_graphics->add(act->body());
-#endif
         }
       }
-      else if(id == "kgmUnit")
+      else if(id == "Unit")
       {
         type = TypeGameObject;
         kgmString s, sgrp;
 
         xml.attribute("object", s);
         xml.attribute("group", sgrp);
-        obj = gob = gSpawn(s);
+
+        gob = gSpawn(s);
 
         if(sgrp.length() > 0)
           gob->setGroup(kgmConvert::toInteger(sgrp));
 
         gAppend((kgmUnit*)gob);
-#ifdef DEBUG
-        if(gob && gob->body())
-          m_graphics->add(gob->body());
-#endif
       }
       else if(id == "Vertices")
       {
@@ -993,19 +981,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         case TypeCamera:
           m_graphics->camera().mPos = v;
           break;
-        case TypeLight:
-          if(lgt)
-            lgt->position = v;
-          break;
-        case TypeActor:
-          if(act)
-            act->position(v);
-          break;
-        case TypeGameObject:
-          if(gob)
-            gob->position(v);
-          break;
         default:
+          gob->position(v);
           break;
         }
       }
@@ -1040,69 +1017,6 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(act && type == TypeActor)
           act->setState(s);
-      }
-      else if(id == "kgmProxy")
-      {
-        kgmString sname, stype, sclass, spos, squat;
-
-        xml.attribute("name", sname);
-        xml.attribute("type", stype);
-        xml.attribute("class", sclass);
-        xml.attribute("position", spos);
-        xml.attribute("quaternion", squat);
-
-        if(stype == "MESH" || stype == "mesh")
-        {
-          kgmMemory<u8> mem;
-          vec3          pos;
-          quat          rot;
-          mtx4          mtx, mrot, mpos;
-
-          sclass = sclass + ".kgm";
-          sscanf(spos.data(), "%f %f %f", &pos.x, &pos.y, &pos.z);
-          sscanf(squat.data(), "%f %f %f %f", &rot.x, &rot.y, &rot.z, &rot.w);
-
-          mpos.translate(pos);
-          mrot = mtx4(rot);
-          mtx = mrot * mpos;
-          //mtx.identity();
-
-          if(m_resources->getFile((char*)sclass, mem))
-          {
-            kgmXml  xml(mem);
-
-            kgmMesh* mesh = m_resources->getMesh(sclass.data());
-            kgmMaterial* mtl = null;//m_resources->getMaterial(sclass.data());
-
-            if(mesh)
-            {
-              kgmVisual *vis = new kgmVisual();
-              vis->set(mesh);
-              vis->set(mtl);
-              vis->set(&mtx);
-              m_graphics->add(vis);
-            }
-
-            kgmList<triangle3> tr_list;
-            kgmShapeCollision* shape = m_resources->getShapeCollision(sclass.data());
-
-            if(shape && shape->triangles.size() > 0)
-            {
-              vec3 v[3];
-
-              for(int i = 0; i < shape->triangles.size(); i++)
-              {
-                triangle3 tr = shape->triangles[i];
-
-                v[0] = mtx * tr.pt[0];
-                v[1] = mtx * tr.pt[1];
-                v[2] = mtx * tr.pt[2];
-
-                m_physics->add(v[0], v[1], v[2]);
-              }
-            }
-          }
-        }
       }
       else
       {
@@ -1183,18 +1097,6 @@ bool kgmGameBase::loadXml(kgmString& path)
   return true;
 }
 
-//kgmNode* kgmGameMap::loadBin(kgmString& path)
-//{
-//  return 0;
-//}
-
-
-bool kgmGameBase::gMapBinary(kgmString& path)
-{
-  return true;
-}
-
-/////////////////
 kgmUnit* kgmGameBase::gSpawn(kgmString a)
 {
   kgmActor*       actor = 0;
@@ -1463,10 +1365,10 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
       if(msh)
       {
-        actor->visual()->set(msh);
-        actor->visual()->set(mtl);
-        actor->visual()->setAnimation(anm);
-        actor->visual()->setSkeleton(skl);
+        //actor->visual()->set(msh);
+        //actor->visual()->set(mtl);
+        //actor->visual()->setAnimation(anm);
+        //actor->visual()->setSkeleton(skl);
 
         msh = null;
         mtl = null;

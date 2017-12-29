@@ -24,6 +24,27 @@ kgmUnit::kgmUnit(kgmIGame* g)
   m_living  = -1;
 }
 
+kgmUnit::kgmUnit(kgmIGame* g, kgmMesh* msh)
+{
+  m_type = Mesh;
+
+  m_game = g;
+
+  m_object = msh;
+
+  m_valid   = true;
+  m_remove  = false;
+  m_culled  = false;
+  m_visible = true;
+
+  m_position   = vec3(0, 0, 0);
+  m_rotation   = vec3(0, 0, 0);
+  m_quaternion = quat(0, 0, 0, 1);
+
+  m_birth   = kgmTime::getTicks();
+  m_living  = -1;
+}
+
 kgmUnit::kgmUnit(kgmIGame* g, kgmLight* lgt)
 {
   m_type = Light;
@@ -72,7 +93,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmVisual* vis)
 
   m_game = g;
 
-  m_visual = vis;
+  //m_visual = vis;
 
   m_valid   = true;
   m_remove  = false;
@@ -113,8 +134,8 @@ kgmUnit::~kgmUnit()
   if(m_body)
     delete m_body;
 
-  if(m_visual)
-    delete m_visual;
+  //if(m_visual)
+  //  delete m_visual;
 
   if(m_remove)
     remove();
@@ -155,7 +176,7 @@ void kgmUnit::update(u32 mls)
       m_action.callback(game(), this, &m_action);
   }
 
-  if(m_visual)
+  if(null)
   {
     mtx4 tm;
 
@@ -175,18 +196,21 @@ void kgmUnit::update(u32 mls)
       tm = rt * tr;
     }
 
-    m_visual->getTransform() = tm;
-    m_visual->update();
+    //m_visual->getTransform() = tm;
+    //m_visual->update();
   }
 }
 
 kgmObject* kgmUnit::getNodeObject()
 {
-  return null;
+  return m_object;
 }
 
 kgmIGraphics::TypeNode kgmUnit::getNodeType()
 {
+  if (m_type == Mesh)
+    return kgmIGraphics::NodeMesh;
+
   return kgmIGraphics::NodeNone;
 }
 
@@ -203,5 +227,15 @@ box3 kgmUnit::getNodeBound()
 mtx4 kgmUnit::getNodeTransform()
 {
   return mtx4();
+}
+
+kgmMaterial* kgmUnit::getNodeMaterial()
+{
+  return m_material;
+}
+
+void kgmUnit::setNodeMaterial(kgmMaterial*)
+{
+
 }
 

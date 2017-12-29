@@ -80,17 +80,20 @@ protected:
 
   kgmList<kgmGui*>     m_guis;
   kgmList<kgmIcon*>    m_icons;
-  kgmList<kgmLight*>   m_lights;
-  kgmList<kgmVisual*>  m_visuals;
 
-  kgmList<INode*>      m_nodes;
+  kgmList<INode*>      m_lights;
+  kgmList<INode*>      m_meshes;
+  kgmList<INode*>      m_particles;
+
+  //active nodes.
+  kgmArray<INode*> m_a_lights;
+  kgmArray<INode*> m_a_meshes;
+  kgmArray<INode*> m_a_particles;
+
+  INode*           m_a_light       = null;
+  u32              m_a_light_count = 0;
 
   kgmList<kgmResource*> m_resources;
-
-#ifdef DEBUG
-  kgmList<kgmBody*>      m_bodies;
-  kgmList<kgmObstacle*>  m_obstacles;
-#endif
 
   kgmGuiStyle* gui_style = null;
 
@@ -100,10 +103,6 @@ protected:
   void* tdepth;
   void* shader;
   mtx4  location;
-
-  kgmArray<kgmVisual*> m_visible_sprites;
-  kgmArray<kgmVisual*> m_visible_visuals;
-  kgmArray<kgmVisual*> m_visible_visuals_alpha;
 
   kgmTexture *m_shadowmap;
 
@@ -185,26 +184,6 @@ public:
   {
   }
 
-  void add(kgmMaterial* mtl)
-  {
-  }
-
-  void add(kgmLight* lgt)
-  {
-    if(!lgt)
-      return;
-
-    m_lights.add(lgt);
-  }
-
-  void add(kgmVisual* a)
-  {
-    if(!a)
-      return;
-
-    m_visuals.add(a);
-  }
-
   void add(kgmIcon* ico)
   {
     if(!ico)
@@ -226,76 +205,17 @@ public:
     if (!nod)
       return;
 
-    m_nodes.add(nod);
-  }
-
-#ifdef DEBUG
-  void add(kgmBody* a)
-  {
-    if(a)
+    switch(nod->getNodeType())
     {
-      m_bodies.add(a);
-    }
-  }
-
-  void add(kgmObstacle* a)
-  {
-    if(a)
-    {
-      m_obstacles.add(a);
-    }
-  }
-
-  void remove(kgmBody* a)
-  {
-    for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
-    {
-      if(a == (*i))
-      {
-        (*i) = null;
-
-        break;
-      }
-    }
-  }
-
-  void remove(kgmObstacle* o)
-  {
-    for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); !i.end(); ++i)
-    {
-      if(o == (*i))
-      {
-        (*i) = null;
-
-        break;
-      }
-    }
-  }
-#endif
-
-  void remove(kgmVisual* v)
-  {
-    for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); !i.end(); ++i)
-    {
-      if((*i) == v)
-      {
-        (*i) = null;
-
-        break;
-      }
-    }
-  }
-
-  void remove(kgmLight* l)
-  {
-    for(kgmList<kgmLight*>::iterator i = m_lights.begin(); !i.end(); ++i)
-    {
-      if((*i) == l)
-      {
-        (*i) = null;
-
-        break;
-      }
+    case  NodeMesh:
+      m_meshes.add(nod);
+      break;
+    case NodeLight:
+      m_lights.add(nod);
+      break;
+    case NodeParticles:
+      m_particles.add(nod);
+      break;
     }
   }
 

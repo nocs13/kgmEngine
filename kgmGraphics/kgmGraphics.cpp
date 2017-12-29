@@ -68,9 +68,6 @@ vec4       g_vec_specular = vec4(1, 1, 1, 1);
 
 kgmShader* g_shd_active = null;
 
-kgmLight*  g_light_active = null;
-kgmLight*  g_lights[MAX_LIGHTS] = {null};
-u32        g_lights_count = 0;
 f32        g_fShine = 0.0f;
 f32        g_fAmbient = 0.1f;
 
@@ -123,13 +120,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   gui_style = new kgmGuiStyle();
 
-  m_visible_sprites.alloc(4096);
-  m_visible_visuals.alloc(4096);
-  m_visible_visuals_alpha.alloc(4096);
-
-  m_visible_sprites[0] = null;
-  m_visible_visuals[0] = null;
-  m_visible_visuals_alpha[0] = null;
 
   m_def_material = new kgmMaterial();
   m_def_material->setShader(null);
@@ -184,6 +174,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_r_fps    = new FpsRender(this);
   m_r_gui    = new GuiRender(this);
   m_r_sprite = new SpriteRender(this);
+
+  m_a_lights.alloc(MAX_LIGHTS);
 }
 
 kgmGraphics::~kgmGraphics()
@@ -192,18 +184,11 @@ kgmGraphics::~kgmGraphics()
   delete m_r_gui;
   delete m_r_sprite;
 
-  m_visuals.clear();
 
+  m_meshes.clear();
   m_lights.clear();
-
   m_icons.clear();
-
   m_guis.clear();
-
-#ifdef DEBUG
-  m_bodies.clear();
-  m_obstacles.clear();
-#endif
 
   if (m_def_material)
     delete m_def_material;
@@ -334,69 +319,34 @@ void kgmGraphics::resize(float width, float height)
 void kgmGraphics::render()
 {
   mtx4 m;
-  int k = 0;
+
   bool lighting = false;
 
-  s32 count_sprites = 0, count_visible = 0, count_visible_alpha = 0;
+  s32 count_meshes = 0;
 
-  kgmList<kgmLight*> lights;
-
-  for(kgmList<kgmVisual*>::iterator i = m_visuals.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
-    if((*i) == null)
-    {
-      i = m_visuals.erase(i);
-
+    if (!(*i)->isNodeValid())
       continue;
-    }
-    else if(!(*i)->valid() || !(*i)->visible())
-    {
+
+    box3 bound = (*i)->getNodeBound();
+
+    vec3  l = bound.max - bound.min;
+    vec3  v = (bound.min + bound.max) * 0.5;
+
+    if(!m_camera->isSphereCross(v, 0.5 * l.length()))
       continue;
-    }
-    else if((*i)->type() == kgmVisual::TypeText ||
-            (*i)->type() == kgmVisual::TypeSprite)
-    {
-      if(count_sprites == m_visible_sprites.length())
-        m_visible_sprites.realloc(m_visible_sprites.length() + 4096);
 
-      m_visible_sprites[count_sprites++] = (*i);
-    }
-    else
-    {
-      vec3 v(0, 0, 0);
+    if (count_meshes == m_a_meshes.length())
+      m_a_meshes.realloc(count_meshes + 1024);
 
-      v = (*i)->getTransform() * v;
-
-      vec3  l = (*i)->getBound().max - (*i)->getBound().min;
-
-      //if(m_camera->isSphereCross(v, 0.5 * l.length()))
-      {
-        if((*i)->getMaterial() && (*i)->getMaterial()->alpha())
-        {
-          if(count_visible_alpha == m_visible_visuals_alpha.length())
-            m_visible_visuals_alpha.realloc(m_visible_visuals_alpha.length() + 4096);
-
-          m_visible_visuals_alpha[count_visible_alpha++] = (*i);
-        }
-        else
-        {
-          if(count_visible == m_visible_visuals.length())
-            m_visible_visuals.realloc(m_visible_visuals.length() + 4096);
-
-          m_visible_visuals[count_visible++] = (*i);
-        }
-      }
-      /*else
-      {
-        k++;
-      }*/
-    }
+    m_a_meshes[count_meshes] = (*i);
+    count_meshes++;
   }
 
-  if(count_sprites == m_visible_sprites.length())
-    m_visible_sprites.realloc(m_visible_sprites.length() + 1024);
+  if (m_a_meshes.length() > count_meshes)
+    m_a_meshes[count_meshes] = null;
 
-  m_visible_sprites[count_sprites + 1] = null;
 
   gc->gcCull(1);
 
@@ -415,28 +365,26 @@ void kgmGraphics::render()
 
   //colect lights in viewport
 
-  g_lights_count = 0;
+  m_a_light_count = 0;
 
-  for(kgmList<kgmLight*>::iterator i = m_lights.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
   {
-    if((*i) == null)
-    {
-      i = m_lights.erase(i);
-
-      continue;
-    }
-
-    if(!(*i)->active)
+    if(!(*i)->isNodeValid())
       continue;
 
-    if(!m_camera->isSphereCross((*i)->position, kgmLight::LIGHT_RANGE * (*i)->intensity))
+    mtx4 m = (*i)->getNodeTransform();
+
+    vec3 pos(0, 0, 0);
+    pos = m * pos;
+
+    kgmLight* l = (kgmLight*) (*i)->getNodeObject();
+
+    if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity))
       continue;
 
-    g_lights[g_lights_count++] = (*i);
+    m_a_lights[m_a_light_count++] = (*i);
 
-    lights.add((*i));
-
-    if(g_lights_count >= MAX_LIGHTS)
+    if(m_a_light_count >= MAX_LIGHTS)
       break;
   }
 
@@ -460,43 +408,47 @@ void kgmGraphics::render()
   m4_identity.identity();
   setWorldMatrix(m4_identity);
 
-  for (s32 i = 0; i < count_visible; i++)
+  for (s32 i = 0; i < count_meshes; i++)
   {
-    kgmVisual* vis = m_visible_visuals[i];
-    kgmMaterial* mtl = (vis->getMaterial())?(vis->getMaterial()):(m_def_material);
+    INode*       nod = m_a_meshes[i];
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (m_def_material);
     
-    box3    bbound = vis->getBound();
+    box3    bbound = nod->getNodeBound();
     sphere3 sbound;
 
-    bbound.min    = vis->getTransform() * bbound.min;
-    bbound.max    = vis->getTransform() * bbound.max;
+    bbound.min    = nod->getNodeTransform() * bbound.min;
+    bbound.max    = nod->getNodeTransform() * bbound.max;
+
     sbound.center = bbound.center();
     sbound.radius = 0.5f * bbound.dimension().length();
 
-    setWorldMatrix(vis->getTransform());
+    m = nod->getNodeTransform();
+    setWorldMatrix(m);
 
     render(mtl);
 
-    if(!mtl->shade() || g_lights_count < 1)
+    if(!mtl->shade() || m_a_light_count < 1)
     {
       render(m_shaders[kgmShader::TypeBase]);
     }
     else
     {
-      g_light_active = g_lights[0];
+      m_a_light = m_a_lights[0];
 
       render(m_shaders[kgmShader::TypeAmbient]);
     }
 
-    render(vis);
+    render(msh);
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
   }
 
+
   // Sort alpha objects.
 
-  for(s32 i = 0; i < (count_visible_alpha - 1); i++)
+  /*for(s32 i = 0; i < (count_visible_alpha - 1); i++)
   {
     vec3 pos_i(0, 0, 0);
 
@@ -515,13 +467,13 @@ void kgmGraphics::render()
         m_visible_visuals_alpha[j] = vis;
       }
     }
-  }
+  }*/
 
   // Draw alpha objects.
 
   gc->gcDepth(true, false, gccmp_lequal);
 
-  for(s32 i = 0; i < count_visible_alpha; i++)
+  /*for(s32 i = 0; i < count_visible_alpha; i++)
   {
     kgmVisual* vis = m_visible_visuals_alpha[i];
     kgmMaterial* mtl = vis->getMaterial();
@@ -554,7 +506,7 @@ void kgmGraphics::render()
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
-  }
+  }*/
 
   gc->gcDepth(true, true, gccmp_lequal);
 
@@ -928,13 +880,14 @@ void kgmGraphics::render(kgmShader* s)
   vec4 v_light_color(1, 1, 1, 1);
   vec4 v_light_direction(0, 0, 1, 0);
 
-  if(g_light_active)
+  if(m_a_light)
   {
-    v_light = vec4(g_light_active->position.x, g_light_active->position.y, g_light_active->position.z,
-                   g_light_active->intensity);
-    v_light_direction = vec4(g_light_active->direction.x, g_light_active->direction.y, g_light_active->direction.z,
-                             g_light_active->angle);
-    v_light_color = g_light_active->color;
+    kgmLight* l = (kgmLight*) m_a_light->getNodeObject();
+
+    //v_light = vec4(g_light_active->position.x, g_light_active->position.y, g_light_active->position.z,
+    //               g_light_active->intensity);
+    v_light_direction = vec4(l->direction.x, l->direction.y, l->direction.z, l->angle);
+    v_light_color     = l->color;
   }
 
   float random = (float)rand()/(float)RAND_MAX;
@@ -970,20 +923,21 @@ void kgmGraphics::render(kgmShader* s)
     s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
   }
 
-  if(g_lights_count > 1)
+  /*if(m_a_light_count > 1)
   {
     static vec4 lights[MAX_LIGHTS - 1];
 
-    for(u32 i = 0; i < (g_lights_count - 1); i++)
+    for(u32 i = 0; i < (m_a_light_count - 1); i++)
     {
+      kgmLight* l = (kgmLight*)
       lights[i] = vec4(g_lights[i + 1]->position.x, g_lights[i + 1]->position.y,
           g_lights[i + 1]->position.z, g_lights[i + 1]->intensity);
 
     }
 
-    s->set("g_vLights", lights[0], g_lights_count - 1);
-    s->set("g_iLights", g_lights_count - 1);
-  }
+    s->set("g_vLights", lights[0], m_a_light_count - 1);
+    s->set("g_iLights", m_a_light_count - 1);
+  }*/
 
   g_shd_active = s;
 }

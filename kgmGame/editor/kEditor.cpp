@@ -141,7 +141,6 @@ kEditor::kEditor(kgmGameBase* g)
     textData->rect(uRect(600, 200, 300, 100));
     text     = new kgmVisual();
     text->set(textData);
-    game->getRender()->add(text);
 
     graphics->setBgColor(0xffbbaa99);
   }
@@ -156,8 +155,6 @@ kEditor::~kEditor()
 
   m_isVisual = false;
   kgmThread::thread_join(m_thVisual);
-
-  game->getRender()->remove(text);
 
   delete pivot;
   delete gridline;
@@ -403,7 +400,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
 
 bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 {
-  kgmString s = fd->getPath();
+  kgmString s = fd->getFile();
 
   fd->erase();
 
@@ -498,10 +495,10 @@ bool kEditor::addMesh(kgmString name)
   if(!visual)
     return false;
 
-  if(mesh->getMtlId().length() > 0)
-    visual->visual()->set(game->getResources()->getMaterial(mesh->getMtlId()));
+  //if(mesh->getMtlId().length() > 0)
+  //  visual->visual()->set(game->getResources()->getMaterial(mesh->getMtlId()));
 
-  visual->visual()->set(mesh);
+  //visual->visual()->set(mesh);
 
   visual->setName(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -740,11 +737,11 @@ void kEditor::onMsMove(int k, int x, int y)
 
         if(selected->isClass("kgmGameVisual"))
         {
-          selected->visual()->set(m);
+          //selected->visual()->set(m);
         }
         else if(selected->isClass("kgmGameLight"))
         {
-          selected->light()->position = selected->position();
+          //selected->light()->position = selected->position();
         }
       }
       else
@@ -1108,7 +1105,7 @@ void kEditor::onAddBox()
 {
   kgmUnit* unit = new kgmUnit(game, new kgmVisual());
 
-  unit->visual()->set(new kgmShape(1.f, 1.f, 1.f));
+  //unit->visual()->set(new kgmShape(1.f, 1.f, 1.f));
 
   selected = unit;
 
@@ -1121,7 +1118,7 @@ void kEditor::onAddPlane()
 {
   kgmUnit* unit = new kgmUnit(game, new kgmVisual());
 
-  unit->visual()->set(new kgmShape(1.f, 1.f));
+  //unit->visual()->set(new kgmShape(1.f, 1.f));
 
   selected = unit;
 

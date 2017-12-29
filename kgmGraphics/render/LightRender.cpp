@@ -69,7 +69,7 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
       ++j;
 
-      lpositions[k]   = l->position;
+      //lpositions[k]   = l->position;
       ldirections[k]  = l->direction;
       lcolors[k]      = vec3(l->color.x, l->color.y, l->color.z);
       lintensities[k] = l->intensity;

@@ -1834,10 +1834,10 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       if(msh)
       {
-        actor->visual()->set(msh);
-        actor->visual()->set(mtl);
-        actor->visual()->setAnimation(anm);
-        actor->visual()->setSkeleton(skl);
+        //actor->visual()->set(msh);
+        //actor->visual()->set(mtl);
+        //actor->visual()->setAnimation(anm);
+        //actor->visual()->setSkeleton(skl);
 
         msh = null;
         mtl = null;
