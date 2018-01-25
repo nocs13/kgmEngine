@@ -15,6 +15,20 @@ kgmMesh::kgmMesh()
   m_bound = box3();
 }
 
+kgmMesh::kgmMesh(kgmMesh* m)
+{
+  m_linked = m;
+
+  m_vertices = null;
+  m_faces = null;
+  m_maps = null;
+  m_vcount = m_fcount = 0;
+  m_fvf = m_linked->m_fvf;
+  m_fff = m_linked->m_fff;
+  m_rtype = m_linked->m_rtype;
+  m_bound = m_linked->m_bound;
+}
+
 kgmMesh::kgmMesh(const kgmMesh& msh)
 {
   m_rtype = msh.m_rtype;

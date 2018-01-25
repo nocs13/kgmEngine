@@ -145,8 +145,11 @@ public:
 
   kgmString m_mtlId;  // base material name
 
+  kgmMesh* m_linked;
+
 public:
   kgmMesh();
+  kgmMesh(kgmMesh*);
   kgmMesh(const kgmMesh&);
   ~kgmMesh();
 
@@ -163,21 +166,33 @@ public:
 
   virtual Vertex* vertices() const
   {
+    if (m_linked)
+      return m_linked->vertices();
+
     return m_vertices;
   }
 
   virtual Face*   faces() const
   {
+    if (m_linked)
+      return m_linked->faces();
+
     return m_faces;
   }
 
   virtual u32     vcount() const
   {
+    if (m_linked)
+      return m_linked->vcount();
+
     return m_vcount;
   }
 
   virtual u32     fcount() const
   {
+    if (m_linked)
+      return m_linked->fcount();
+
     return m_fcount;
   }
 

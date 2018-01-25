@@ -1103,7 +1103,7 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddBox()
 {
-  kgmUnit* unit = new kgmUnit(game, new kgmVisual());
+  kgmUnit* unit = new kgmUnit(game, new kgmShape(1.f, 1.f, 1.f));
 
   //unit->visual()->set(new kgmShape(1.f, 1.f, 1.f));
 
