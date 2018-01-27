@@ -136,7 +136,6 @@ public:
   u32     m_fcount;   // face count
   u32     m_fvf;      // flexible vertex format
   u32     m_fff;      // flexible face format
-  u8*     m_maps;     // material id by face
 
   kgmList<LOD*> m_lods;
 
@@ -145,7 +144,7 @@ public:
 
   kgmString m_mtlId;  // base material name
 
-  kgmMesh* m_linked;
+  kgmMesh* m_linked = null;
 
 public:
   kgmMesh();

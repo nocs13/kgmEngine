@@ -7,7 +7,6 @@ kgmMesh::kgmMesh()
 {
   m_vertices = null;
   m_faces = null;
-  m_maps = null;
   m_vcount = m_fcount = 0;
   m_fvf = m_fff = 0;
   m_rtype = RT_TRIANGLE;
@@ -21,7 +20,7 @@ kgmMesh::kgmMesh(kgmMesh* m)
 
   m_vertices = null;
   m_faces = null;
-  m_maps = null;
+
   m_vcount = m_fcount = 0;
   m_fvf = m_linked->m_fvf;
   m_fff = m_linked->m_fff;
@@ -53,14 +52,14 @@ kgmMesh::~kgmMesh()
 
   if(m_faces)
     free(m_faces);
-
-  if(m_maps)
-    free(m_maps);
 }
 
 void kgmMesh::rebound()
 {
   m_bound = box3();
+
+  if (m_linked)
+    return;
 
   if(!m_vertices)
     return;
