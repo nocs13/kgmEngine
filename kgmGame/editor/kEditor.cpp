@@ -1105,8 +1105,6 @@ void kEditor::onAddBox()
 {
   kgmUnit* unit = new kgmUnit(game, new kgmShape(1.f, 1.f, 1.f));
 
-  //unit->visual()->set(new kgmShape(1.f, 1.f, 1.f));
-
   selected = unit;
 
   selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
@@ -1116,9 +1114,7 @@ void kEditor::onAddBox()
 
 void kEditor::onAddPlane()
 {
-  kgmUnit* unit = new kgmUnit(game, new kgmVisual());
-
-  //unit->visual()->set(new kgmShape(1.f, 1.f));
+  kgmUnit* unit = new kgmUnit(game, new kgmShape(1.f, 1.f));
 
   selected = unit;
 

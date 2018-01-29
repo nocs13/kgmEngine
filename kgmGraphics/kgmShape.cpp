@@ -17,9 +17,9 @@ kgmShape::kgmShape(f32 w, f32 l)
   kgmMesh::Face_16* f = (kgmMesh::Face_16*) fAlloc(2);
 
   f[0].a = 0, f[0].b = 1, f[0].c = 2;
-  f[0].a = 3, f[0].b = 2, f[0].c = 1;
+  f[1].a = 3, f[1].b = 2, f[1].c = 1;
 
-  m_rtype = RT_TRIANGLESTRIP;
+  m_rtype = RT_TRIANGLE;
 
   rebound();
 }
@@ -46,17 +46,17 @@ kgmShape::kgmShape(f32 w, f32 l, f32 h)
   f[2].a = 4, f[2].b = 5, f[2].c = 6;
   f[3].a = 7, f[3].b = 6, f[3].c = 5;
 
-  f[4].a = 0, f[2].b = 5, f[2].c = 4;
-  f[5].a = 0, f[3].b = 1, f[3].c = 5;
+  f[4].a = 0, f[4].b = 5, f[4].c = 4;
+  f[5].a = 0, f[5].b = 1, f[5].c = 5;
 
-  f[6].a = 1, f[2].b = 7, f[2].c = 5;
-  f[7].a = 1, f[3].b = 3, f[3].c = 7;
+  f[6].a = 1, f[6].b = 7, f[6].c = 5;
+  f[7].a = 1, f[7].b = 3, f[7].c = 7;
 
-  f[8].a = 3, f[2].b = 6, f[2].c = 7;
-  f[9].a = 3, f[3].b = 2, f[3].c = 6;
+  f[8].a = 3, f[8].b = 6, f[8].c = 7;
+  f[9].a = 3, f[9].b = 2, f[9].c = 6;
 
-  f[10].a = 2, f[2].b = 4, f[2].c = 6;
-  f[11].a = 2, f[3].b = 0, f[3].c = 4;
+  f[10].a = 2, f[10].b = 4, f[10].c = 6;
+  f[11].a = 2, f[11].b = 0, f[11].c = 4;
 
   m_rtype = RT_TRIANGLE;
 
