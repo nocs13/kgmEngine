@@ -4,7 +4,7 @@
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmMath/kgmMath.h"
-#include "kgm4Color.h"
+#include "kgmColor.h"
 
 class kgmMesh;
 class kgmCamera;

@@ -1,7 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmPointer.h"
-#include "kgm4Color.h"
+#include "kgmColor.h"
 #include "kgmShader.h"
 
 class kgmIGC;

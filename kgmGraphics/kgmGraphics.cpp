@@ -49,6 +49,44 @@ float b = (temp & 0x00f0)/255.0;
 float a = (temp & 0x000f)/255.0;*/
 }
 
+inline vec4 packLight(kgmLight& l, vec3 pos)
+{
+  float distance = pos.length();
+  vec3  normal   = pos.normal();
+
+  kgmVector3d<u16> nc;
+
+  nc.x = (1.0f / normal.x);
+  nc.y = (1.0f / normal.y);
+  nc.z = (1.0f / normal.z);
+
+  u16 c; /*= (l.color.x * 6 / 256) * 36 +
+          (l.color.y * 6 / 256) * 6 +
+          (l.color.z * 6 / 256);*/
+
+  u16 i = 1.0f / l.intensity;
+
+  u16 a = l.angle;
+
+  vec4 res;
+
+  res.x = distance;
+
+  u8* p = (u8*) &res.y;
+
+  memcpy(p, &nc.x, 2 * sizeof(u16));
+  p += 2 * sizeof(u16);
+  memcpy(p, &nc.z, sizeof(u16));
+  p += sizeof(u16);
+  memcpy(p, &c, sizeof(u16));
+  p += sizeof(u16);
+  memcpy(p, &i, sizeof(u16));
+  p += sizeof(u16);
+  memcpy(p, &a, sizeof(u16));
+
+  return res;
+}
+
 mtx4       g_mtx_orto;
 mtx4       g_mtx_iden;
 mtx4       g_mtx_proj;
@@ -887,7 +925,7 @@ void kgmGraphics::render(kgmShader* s)
     //v_light = vec4(g_light_active->position.x, g_light_active->position.y, g_light_active->position.z,
     //               g_light_active->intensity);
     v_light_direction = vec4(l->direction.x, l->direction.y, l->direction.z, l->angle);
-    v_light_color     = l->color;
+    //v_light_color     = l->color;
   }
 
   float random = (float)rand()/(float)RAND_MAX;

@@ -24,7 +24,7 @@ public:
 
   //vec3  position;   //light position
   vec3  direction;  //light direction, if 0 then light is omni
-  vec4  color;
+  u32   color;
 
   float intensity;  //light intensity, 1 mean 10 meter range
   float angle;      //light spot angle if directional
@@ -43,7 +43,7 @@ public:
     //position  = vec3(0, 0, 0);
     direction = vec3(0, 0, 0);
 
-    color     = vec4(1, 1, 1, 1);
+    color = 0xffffffff;
 
     intensity = 1.0f;
     angle = 0.0f;

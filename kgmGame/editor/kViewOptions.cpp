@@ -310,19 +310,19 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
   g->setText("Color");
   g = new kgmGuiText(tlight, 51, y_coord, 30, 20);
   g->setSid("ColorR");
-  g->setText(kgmConvert::toString((s32)(light->color.x * 255)));
+  //g->setText(kgmConvert::toString((s32)(light->color.x * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorR.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
   g->setSid("ColorG");
-  g->setText(kgmConvert::toString((s32)(light->color.y * 255)));
+  //g->setText(kgmConvert::toString((s32)(light->color.y * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorG.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
   g->setSid("ColorB");
-  g->setText(kgmConvert::toString((s32)(light->color.z * 255)));
+  //g->setText(kgmConvert::toString((s32)(light->color.z * 255)));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   slotColorB.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
@@ -356,7 +356,7 @@ void kViewOptionsForLight::onColorR(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->light()->color.x = color / 255;
+  //node->light()->color.x = color / 255;
 }
 
 void kViewOptionsForLight::onColorG(kgmString c)
@@ -366,7 +366,7 @@ void kViewOptionsForLight::onColorG(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->light()->color.y = color / 255;
+  //node->light()->color.y = color / 255;
 }
 
 void kViewOptionsForLight::onColorB(kgmString c)
@@ -376,7 +376,7 @@ void kViewOptionsForLight::onColorB(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  node->light()->color.z = color / 255;
+  //node->light()->color.z = color / 255;
 }
 
 kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)

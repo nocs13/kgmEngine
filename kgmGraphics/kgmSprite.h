@@ -1,7 +1,7 @@
 #pragma once
 #include "../kgmBase/kgmObject.h"
 #include "../kgmMath/kgmMath.h"
-#include "kgm4Color.h"
+#include "kgmColor.h"
 
 class kgmSprite: public kgmObject
 {
