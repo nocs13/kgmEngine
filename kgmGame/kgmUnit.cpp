@@ -87,27 +87,6 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmCamera* cam)
   m_living  = -1;
 }
 
-kgmUnit::kgmUnit(kgmIGame* g, kgmVisual* vis)
-{
-  m_type = Visual;
-
-  m_game = g;
-
-  //m_visual = vis;
-
-  m_valid   = true;
-  m_remove  = false;
-  m_culled  = false;
-  m_visible = true;
-
-  m_position   = vec3(0, 0, 0);
-  m_rotation   = vec3(0, 0, 0);
-  m_quaternion = quat(0, 0, 0, 1);
-
-  m_birth   = kgmTime::getTicks();
-  m_living  = -1;
-}
-
 kgmUnit::kgmUnit(kgmIGame* g, kgmObstacle* obs)
 {
   m_type = Obstacle;
@@ -226,7 +205,7 @@ box3 kgmUnit::getNodeBound()
 
 mtx4 kgmUnit::getNodeTransform()
 {
-  return mtx4();
+  return m_transform;
 }
 
 kgmMaterial* kgmUnit::getNodeMaterial()

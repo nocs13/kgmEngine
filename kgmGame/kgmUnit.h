@@ -25,7 +25,6 @@ public:
     Mesh,
     Light,
     Actor,
-    Visual,
     Camera,
     Effect,
     Sensor,
@@ -67,6 +66,8 @@ private:
   vec3 m_position;
   vec3 m_rotation;
   quat m_quaternion;
+
+  mtx4 m_transform;
 
 protected:
   union
@@ -277,6 +278,9 @@ public:
       m_body->translate(v.x, v.y, v.z);
     else
       m_position = v;
+
+    m_transform.identity();
+    m_transform.translate(v);
   }
 
   vec3 rotation()

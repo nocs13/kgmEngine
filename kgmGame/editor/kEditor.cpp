@@ -409,51 +409,6 @@ bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 
 bool kEditor::mapOpen(kgmString s)
 {
-  /*
-  kgmFile file;
-
-  if(!kgmSystem::isFile(s) || kgmSystem::isDirectory(s))
-    return false;
-
-  if(!file.open(s, kgmFile::Read))
-    return false;
-
-  kgmMemory<u8> mem;
-
-  mem.alloc(file.length());
-  file.read(mem.data(), mem.length());
-  file.close();
-
-  kgmXml xml;
-
-  xml.open(mem);
-  mem.clear();
-
-  selected = null;
-
-  clear();
-
-  pivot->setPos(vec3(0, 0, 0));
-
-  oquered = 0;
-
-  kgmGameMap map(game, kgmGameMap::OpenRead);
-
-  map.open(xml);
-
-  kgmUnit* mnode = map.next();
-
-  while(mnode != null)
-  {
-    oquered++;
-    game->getLogic()->add(mnode);
-
-    mnode = map.next();
-  }
-
-  xml.close();
-  */
-
   game->gLoad(s);
 
   selected = null;
@@ -490,15 +445,10 @@ bool kEditor::addMesh(kgmString name)
   if(!mesh)
     return false;
 
-  kgmUnit* visual = new kgmUnit(game, new kgmVisual);
+  kgmUnit* visual = new kgmUnit(game, mesh);
 
   if(!visual)
     return false;
-
-  //if(mesh->getMtlId().length() > 0)
-  //  visual->visual()->set(game->getResources()->getMaterial(mesh->getMtlId()));
-
-  //visual->visual()->set(mesh);
 
   visual->setName(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -1074,7 +1024,7 @@ void kEditor::onEditOptions()
   case kgmUnit::Light:
     vop = kViewOptionsForLight::getDialog(selected, 50, 50, 250, 300);
     break;
-  case kgmUnit::Visual:
+  case kgmUnit::Mesh:
     vop = kViewOptionsForVisual::getDialog(selected, 50, 50, 260, 300);
     break;
   case kgmUnit::Unit:
