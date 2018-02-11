@@ -70,6 +70,7 @@ class kgmGuiStyle: public kgmObject
   //gui
   Font  gui_font;
   Image gui_image;
+  Color gui_border;
 
   SGui         sgui;
   SGuiList     slist;

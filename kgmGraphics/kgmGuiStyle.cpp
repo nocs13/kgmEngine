@@ -55,7 +55,10 @@ kgmGuiStyle::kgmGuiStyle()
   sscroll.ac_color = 0xffaaaaaa;
   sscroll.fg_color = 0xffbbbbbb;
 
+  gui_font  = null;
   gui_image = null;
+
+  gui_border = 0xffffffff;
 }
 
 kgmGuiStyle::~kgmGuiStyle()

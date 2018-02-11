@@ -125,6 +125,11 @@ protected:
   GuiRender*    m_r_gui = null;
   SpriteRender* m_r_sprite = null;
 
+  kgmTexture*  m_tex_black = null;
+  kgmTexture*  m_tex_white = null;
+  kgmTexture*  m_tex_gray  = null;
+  kgmTexture*  m_map_shadow = null;
+
 protected:
   kgmShader*  m_shaders[32] = {0};
 

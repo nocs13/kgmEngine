@@ -83,6 +83,8 @@ void GuiRender::render(kgmGui* gui)
       gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->gui_image);
     }
 
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
+
     if(text.length() > 0)
       gcDrawText(gr->gc, gr->gui_style->gui_font, fwidth, fheight, gr->gui_style->sbutton.tx_color, tClip, text);
   }
@@ -94,7 +96,9 @@ void GuiRender::render(kgmGui* gui)
     srect = gscroll->toAbsolute(srect);
 
     gcDrawRect(gr->gc, rect, gr->gui_style->sscroll.bg_color, gr->gui_style->gui_image);
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
     gcDrawRect(gr->gc, srect, gr->gui_style->sscroll.fg_color, gr->gui_style->gui_image);
+    gcDrawBorder(gr->gc, srect, gr->gui_style->gui_border, gr->m_tex_white);
   }
   else if(gui->isClass(kgmGuiList::cClass()))
   {
@@ -107,6 +111,7 @@ void GuiRender::render(kgmGui* gui)
 
     //Draw Main Rect
     gcDrawRect(gr->gc, rect, gr->gui_style->slist.bg_color, gr->gui_style->gui_image);
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
 
     //Draw Items Rects
     for(int i = glist->getFirstVisibleItem();
@@ -158,6 +163,8 @@ void GuiRender::render(kgmGui* gui)
     {
       gcDrawRect(gr->gc, rect, gr->gui_style->stext.bg_color, gr->gui_style->gui_image);
     }
+
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
 
     if(text.length() > 0)
     {
@@ -228,6 +235,7 @@ void GuiRender::render(kgmGui* gui)
     fheight = ((kgmGuiLabel*)gui)->getFontHeight();
 
     gcDrawRect(gr->gc, rect, gr->gui_style->slabel.bg_color, gr->gui_style->gui_image);
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
 
     if(text.length() > 0)
       gcDrawText(gr->gc, gr->gui_style->gui_font, fwidth, fheight, gr->gui_style->sbutton.tx_color, tClip, text);
@@ -343,6 +351,8 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
     {
       gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
     }
+
+    gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
 
     kgmString title = citem->getTitle();
 

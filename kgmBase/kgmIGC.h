@@ -79,6 +79,7 @@ enum gc_enum
   gcpmt_lines,
   gcpmt_triangles,
   gcpmt_linestrip,
+  //gcpmt_lineloop; /* disabled as no in d3d. */
   gcpmt_trianglestrip,
   gcpmt_trianglefan,
 

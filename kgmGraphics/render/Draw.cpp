@@ -30,6 +30,27 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
     gc->gcSetTexture(0, 0);
 }
 
+void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
+  typedef struct{  vec3 pos;  u32 col;} V;
+
+  V v[5];
+
+  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = col;
+  v[1].pos = vec3(rc.x + rc.w, rc.y,        -1); v[1].col = col;
+  v[2].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[2].col = col;
+  v[3].pos = vec3(rc.x,        rc.y + rc.h, -1); v[3].col = col;
+  v[4].pos = vec3(rc.x,        rc.y,        -1); v[4].col = col;
+
+  if(tex && tex->texture())
+    gc->gcSetTexture(0, tex->texture());
+
+  gc->gcDraw(gcpmt_linestrip, gcv_xyz | gcv_col, sizeof(V), 5, v, 0, 0, 0);
+
+  if(tex)
+    gc->gcSetTexture(0, 0);
+}
+
 void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text)
 {
   typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
