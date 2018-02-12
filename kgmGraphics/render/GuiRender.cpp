@@ -285,6 +285,8 @@ void GuiRender::render(kgmGui* gui)
       gcDrawRect(gr->gc, rect, gr->gui_style->scheck.bg_color, gr->gui_style->gui_image);
     }
 
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
+
     gcDrawRect(gr->gc, btClip, gr->gui_style->scheck.bg_check, gr->gui_style->gui_image);
 
     if(((kgmGuiCheck*)gui)->isCheck())
@@ -295,14 +297,17 @@ void GuiRender::render(kgmGui* gui)
   }
   else if(gui->isClass(kgmGui::cClass()))
   {
-    if(gui->m_hasMouse )
+    /*if(gui->m_hasMouse )
     {
       gcDrawRect(gr->gc, rect, gr->gui_style->sgui.fg_color, gr->gui_style->gui_image);
     }
     else
     {
       gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->gui_image);
-    }
+    }*/
+
+    gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->gui_image);
+    gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
   }
 
   if(gui->alpha())

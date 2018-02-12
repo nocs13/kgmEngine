@@ -4,9 +4,9 @@ kgmGuiStyle::kgmGuiStyle()
 {
   //gui
   sgui.tx_color = 0xffffffff;
-  sgui.bg_color = 0xffffffff;
-  sgui.ac_color = 0xffffffff;
-  sgui.fg_color = 0xffffffff;
+  sgui.bg_color = 0xff999999;
+  sgui.ac_color = 0xffcccccc;
+  sgui.fg_color = 0xffaaaaaa;
   sgui.ft_size  = 20;
 
   //gui button
