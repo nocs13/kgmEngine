@@ -73,21 +73,21 @@ void GuiRender::render(kgmGui* gui)
     switch(((kgmGuiButton*)gui)->getState())
     {
     case kgmGuiButton::StateFocus:
-      if(!((kgmGuiButton*)gui)->m_notheme)
-        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.fground, gr->gui_style->gui_image);
+      if(((kgmGuiButton*)gui)->m_close)
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbtnclose.ac_color, gr->gui_style->gui_image);
       else
         gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.ac_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateClick:
-      if(!((kgmGuiButton*)gui)->m_notheme)
-        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.fground, gr->gui_style->gui_image);
+      if(((kgmGuiButton*)gui)->m_close)
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbtnclose.fg_color, gr->gui_style->gui_image);
       else
         gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.fg_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateNone:
     default:
-      if(!((kgmGuiButton*)gui)->m_notheme)
-        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.bground, gr->gui_style->gui_image);
+      if(((kgmGuiButton*)gui)->m_close)
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbtnclose.bg_color, gr->gui_style->gui_image);
       else
         gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->gui_image);
     }

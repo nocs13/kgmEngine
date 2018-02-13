@@ -164,8 +164,6 @@ kEditor::~kEditor()
   delete mtlPivot;
 
   delete text;
-
-  //kgmUnit::g_typ_objects.clear();
 }
 
 void kEditor::clear()

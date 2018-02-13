@@ -82,6 +82,8 @@ class kgmGuiStyle: public kgmObject
   SGuiButton   sbutton;
   SGuiProgress sprogess;
 
+  SGuiButton   sbtnclose;
+
  public:
   kgmGuiStyle();
   ~kgmGuiStyle();

@@ -32,6 +32,8 @@ kgmGuiFileDialog::kgmGuiFileDialog()
 #ifdef WIN32
   DIRCON = "\\";
 #endif
+
+  m_text = "guiFileDialog";
 }
 
 kgmGuiFileDialog::~kgmGuiFileDialog()

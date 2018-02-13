@@ -55,6 +55,12 @@ kgmGuiStyle::kgmGuiStyle()
   sscroll.ac_color = 0xffaaaaaa;
   sscroll.fg_color = 0xffbbbbbb;
 
+  //gui close button
+  sbtnclose.tx_color = 0xffffffff;
+  sbtnclose.bg_color = 0xff0000aa;
+  sbtnclose.fg_color = 0xff0000ff;
+  sbtnclose.ac_color = 0xff0000cc;
+
   gui_font  = null;
   gui_image = null;
 
