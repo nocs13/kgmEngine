@@ -58,29 +58,38 @@ void GuiRender::render(kgmGui* gui)
 
   if(gui->isClass(kgmGuiButton::cClass()))
   {
-    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
-    u32 fheight = (u32)((float)rect.h * (float)0.75f);
+    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 2));
+    u32 fheight = (u32)((float)rect.h * (float)0.8f);
     u32 tlen = text.length();
     u32 fw = (tlen) * fwidth;
     u32 fh = fheight;
     kgmGui::Rect tClip = rect;
 
-    tClip.x = rect.x + rect.w / 2 - fw / 2;
-    tClip.y = rect.y + rect.h / 2 - fh / 2;
+    tClip.x = rect.x + 1 + rect.w / 2 - fw / 2;
+    tClip.y = rect.y + 1 + rect.h / 2 - fh / 2;
     tClip.w = fw;
     tClip.h = fh;
 
     switch(((kgmGuiButton*)gui)->getState())
     {
     case kgmGuiButton::StateFocus:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.ac_color, gr->gui_style->gui_image);
+      if(!((kgmGuiButton*)gui)->m_notheme)
+        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.fground, gr->gui_style->gui_image);
+      else
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.ac_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateClick:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.fg_color, gr->gui_style->gui_image);
+      if(!((kgmGuiButton*)gui)->m_notheme)
+        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.fground, gr->gui_style->gui_image);
+      else
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.fg_color, gr->gui_style->gui_image);
       break;
     case kgmGuiButton::StateNone:
     default:
-      gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->gui_image);
+      if(!((kgmGuiButton*)gui)->m_notheme)
+        gcDrawRect(gr->gc, rect, ((kgmGuiButton*)gui)->m_theme.bground, gr->gui_style->gui_image);
+      else
+        gcDrawRect(gr->gc, rect, gr->gui_style->sbutton.bg_color, gr->gui_style->gui_image);
     }
 
     gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
@@ -361,6 +370,10 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
     kgmString title = citem->getTitle();
 
-    gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, rc, title);
+    kgmGui::Rect trc = rc;
+
+    trc.x++;
+
+    gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, trc, title);
   }
 }

@@ -313,6 +313,11 @@ public:
       m_body->rotate(q);
   }
 
+  mtx4 transform()
+  {
+    return m_transform;
+  }
+
   u32 birth()
   {
     return m_birth;

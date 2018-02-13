@@ -22,6 +22,9 @@ using namespace  kgmGameEditor;
 
 #endif
 
+class kgmIGame;
+class kgmUnit;
+
 class kgmGameGraphics: public kgmGraphics
 {
   KGM_OBJECT(kgmGameGraphics);
@@ -31,6 +34,8 @@ class kgmGameGraphics: public kgmGraphics
   kGridline* m_gridline = null;
 #endif
 
+  kgmIGame* m_game = null;
+
 public:
   kgmGameGraphics(kgmIGC*, kgmIResources*);
   ~kgmGameGraphics();
@@ -39,6 +44,8 @@ public:
   void render_2d();
 
 #ifdef EDITOR
+  void drawLight(kgmUnit*);
+
   void set(kPivot* p)
   {
     m_pivot = p;

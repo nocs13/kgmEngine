@@ -4,12 +4,14 @@
 kgmGuiButton::kgmGuiButton()
 {
   m_state = StateNone;
+  m_notheme = true;
 }
 
 kgmGuiButton::kgmGuiButton(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
-:kgmGui(par, x, y, w, h)
+  :kgmGui(par, x, y, w, h)
 {
   m_state = StateNone;
+  m_notheme  = true;
 }
 
 kgmGuiButton::~kgmGuiButton()
@@ -25,7 +27,7 @@ void kgmGuiButton::onMsLeftUp(int key, int x, int y)
 
 void kgmGuiButton::onMsLeftDown(int key, int x, int y)
 {
-    m_state = StateClick;
+  m_state = StateClick;
 }
 
 void kgmGuiButton::onMsInside()
@@ -40,7 +42,7 @@ void kgmGuiButton::onMsOutside()
 {
   if(m_state != StateNone)
   {
-      m_state = StateNone;
+    m_state = StateNone;
   }
 }
 

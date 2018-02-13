@@ -8,7 +8,10 @@ kgmGuiFrame::kgmGuiFrame(kgmString title, int x, int y, int w, int h)
   m_title = new kgmGuiLabel(this, 0, 0, w - 20, 20);
   m_title->setText(title);
   m_close = new kgmGuiButton(this, w - 20, 0, 20, 20);
-  m_close->setText("X");
+  m_close->m_notheme = false;
+  m_close->m_theme.bground = 0xff0000cc;
+  m_close->m_theme.fground = 0xff0000ff;
+
   slotClose.connect(this, (Slot<kgmGuiFrame, int>::FN) &kgmGuiFrame::onFrameClose, &m_close->sigClick);
   m_client = new kgmGui(this, 0, 20, w, h - 20);
 }

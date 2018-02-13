@@ -57,8 +57,8 @@ public:
 
   bool inside(kgmRect2d<T> rc)
   {
-    if((rc.x > x) && ((rc.x + rc.w) < (x + w)) &&
-       (rc.y > y) && ((rc.y + rc.h) < (y + h)))
+    if((rc.x >= x) && ((rc.x + rc.w) <= (x + w)) &&
+       (rc.y >= y) && ((rc.y + rc.h) <= (y + h)))
       return true;
 
     return false;

@@ -13,7 +13,17 @@ public:
     StateClick
   };
 
+  struct Theme
+  {
+    Color bground;
+    Color fground;
+  };
+
   State  m_state;
+
+  Theme m_theme;
+
+  bool m_notheme;
 
 public:
   Signal<int> sigClick;
