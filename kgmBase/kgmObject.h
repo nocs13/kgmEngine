@@ -38,7 +38,8 @@ protected:
 
     virtual void add(Signal<Args...>* e)
     {
-      signals.add(e);
+      if (!signals.has(e))
+        signals.add(e);
     }
 
     virtual void remove(Signal<Args...>* e)
@@ -130,7 +131,7 @@ protected:
 
     void connect(AbstractSlot<Args...> *s)
     {
-      if(!s)
+      if(!s || list.has(s))
         return;
 
       list.add(s);
@@ -140,6 +141,9 @@ protected:
 
     void disconnect(AbstractSlot<Args...> *s)
     {
+      if (s)
+        s->remove(this);
+
       list.erase(s);
     }
 

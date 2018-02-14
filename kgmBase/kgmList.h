@@ -223,6 +223,11 @@ public:
 
     csize--;
 
+    if (!csize && _First)
+    {
+      int k = 0;
+    }
+
     return i;
   }
 
@@ -249,20 +254,17 @@ public:
 
       if(node == _First)
       {
-        if(_First->next)
-          _First = _First->next;
-        else
-          _First = 0;
-#ifdef DEBUG
-        if(_First == 0 && csize > 1)
-        {
-        }
-#endif
+        _First = _First->next;
       }
 
       delete node;
 
       csize--;
+    }
+
+    if (!csize && _First)
+    {
+      int k = 0;
     }
   }
 
@@ -288,15 +290,17 @@ public:
 
       if(node == _First)
       {
-        if(_First->next)
-          _First = _First->next;
-        else
-          _First = 0;
+        _First = _First->next;
       }
 
       delete node;
 
       csize--;
+    }
+
+    if (!csize && _First)
+    {
+      int k = 0;
     }
   }
 
@@ -324,11 +328,18 @@ public:
     return i;
   }
 
-/*  iterator end()
+  bool has(T val)
   {
-    iterator i;
-    i._Ptr = 0;
+    _Node *node = _First;
 
-    return i;
-  } */
+    while(node)
+    {
+      if(node->data == val)
+        return true;
+
+      node = node->next;
+    }
+
+    return false;
+  }
 };
