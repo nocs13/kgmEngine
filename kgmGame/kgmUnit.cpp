@@ -203,6 +203,11 @@ box3 kgmUnit::getNodeBound()
   return box3();
 }
 
+vec3 kgmUnit::getNodePosition()
+{
+  return m_position;
+}
+
 mtx4 kgmUnit::getNodeTransform()
 {
   return m_transform;

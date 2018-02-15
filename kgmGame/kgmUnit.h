@@ -137,6 +137,7 @@ public:
   kgmIGraphics::TypeNode getNodeType();
   bool                   isNodeValid();
   box3                   getNodeBound();
+  vec3                   getNodePosition();
   mtx4                   getNodeTransform();
   kgmMaterial*           getNodeMaterial();
   void                   setNodeMaterial(kgmMaterial*);

@@ -44,6 +44,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class IconRender;
   friend class SpriteRender;
   friend class LightRender;
+  friend class RndAmbient;
 public:
 
   enum GraphicsQuality
@@ -90,8 +91,12 @@ protected:
   kgmArray<INode*> m_a_meshes;
   kgmArray<INode*> m_a_particles;
 
+  u32              m_a_meshes_count;
+
   INode*           m_a_light       = null;
   u32              m_a_light_count = 0;
+
+  INode*           m_def_light;
 
   kgmList<kgmResource*> m_resources;
 

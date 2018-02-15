@@ -1,3 +1,7 @@
+#include "../kgmBase/kgmLog.h"
+#include "../kgmMath/kgmBase.h"
+#include "../kgmBase/kgmTime.h"
+
 #include "kgmGraphics.h"
 #include "kgmGuiProgress.h"
 #include "kgmGuiButton.h"
@@ -16,10 +20,9 @@
 #include "kgmSkeleton.h"
 #include "kgmFrustum.h"
 #include "kgmCamera.h"
-#include "../kgmBase/kgmLog.h"
-#include "../kgmMath/kgmBase.h"
-#include "../kgmBase/kgmTime.h"
+#include "kgmNodeLight.h"
 
+#include "render/RndAmbient.h"
 #include "render/LightRender.h"
 
 #include <stdlib.h>
@@ -114,8 +117,6 @@ void*      g_tex_white = null;
 void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
-kgmLight*     g_def_light = null;
-
 kgmTexture*   g_def_style_texture = null;
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
@@ -190,6 +191,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_def_style_texture = new kgmTexture(g_tex_white);
 
     gui_style->gui_image = g_def_style_texture;
+
+    m_def_light = new kgmNodeLight();
   }
 
   m_shadows.alloc(1);
@@ -258,6 +261,7 @@ kgmGraphics::~kgmGraphics()
 }
 
 kgmShader* s_def = null;
+
 void kgmGraphics::build()
 {
 }
@@ -367,7 +371,7 @@ void kgmGraphics::render()
 
   bool lighting = false;
 
-  s32 count_meshes = 0;
+  m_a_meshes_count = 0;
 
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
@@ -382,15 +386,15 @@ void kgmGraphics::render()
     if(!m_camera->isSphereCross(v, 0.5 * l.length()))
       continue;
 
-    if (count_meshes == m_a_meshes.length())
-      m_a_meshes.realloc(count_meshes + 1024);
+    if (m_a_meshes_count == m_a_meshes.length())
+      m_a_meshes.realloc(m_a_meshes_count + 1024);
 
-    m_a_meshes[count_meshes] = (*i);
-    count_meshes++;
+    m_a_meshes[m_a_meshes_count] = (*i);
+    m_a_meshes_count++;
   }
 
-  if (m_a_meshes.length() > count_meshes)
-    m_a_meshes[count_meshes] = null;
+  if (m_a_meshes.length() > m_a_meshes_count)
+    m_a_meshes[m_a_meshes_count] = null;
 
 
   gc->gcCull(1);
@@ -433,6 +437,11 @@ void kgmGraphics::render()
       break;
   }
 
+  if (m_a_lights > 0)
+    m_a_light = m_a_lights[0];
+  else
+    m_a_light = m_def_light;
+
   /*
    * 1. draw all meshes just with light effect.
    * 2. draw all meshes without lighting parts.
@@ -445,15 +454,19 @@ void kgmGraphics::render()
 
   lighting = true;
 
+  RndAmbient  ar(this);
+
+  ar.render();
+
   LightRender lr(this);
 
   //lr.l_render(lights, m_visible_visuals);
 
-  mtx4 m4_identity;
+  /*mtx4 m4_identity;
   m4_identity.identity();
   setWorldMatrix(m4_identity);
 
-  for (s32 i = 0; i < count_meshes; i++)
+  for (s32 i = 0; i < m_a_meshes_count; i++)
   {
     INode*       nod = m_a_meshes[i];
     kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
@@ -488,7 +501,7 @@ void kgmGraphics::render()
 
     render((kgmMaterial*)null);
     render((kgmShader*)null);
-  }
+  }*/
 
 
   // Sort alpha objects.
@@ -927,12 +940,12 @@ void kgmGraphics::render(kgmShader* s)
 
   if(m_a_light)
   {
-    kgmLight* l = (kgmLight*) m_a_light->getNodeObject();
+    kgmLight* l   = (kgmLight*) m_a_light->getNodeObject();
+    vec3      pos = m_a_light->getNodePosition();
 
-    //v_light = vec4(g_light_active->position.x, g_light_active->position.y, g_light_active->position.z,
-    //               g_light_active->intensity);
+    v_light           = vec4(pos.x, pos.y, pos.z, l->intensity);
     v_light_direction = vec4(l->direction.x, l->direction.y, l->direction.z, l->angle);
-    //v_light_color     = l->color;
+    v_light_color     = vec4(1, 1, 1, 1); //l->color;
   }
 
   float random = (float)rand()/(float)RAND_MAX;

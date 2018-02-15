@@ -16,6 +16,16 @@ public:
   {
     return kgmIGraphics::NodeLight;
   }
+
+  kgmObject* getNodeObject()
+  {
+    return m_light;
+  }
+
+  bool isNodeValid()
+  {
+    return true;
+  }
 };
 
 #endif // KGMNODELIGHT_H
