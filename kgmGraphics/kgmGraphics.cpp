@@ -206,9 +206,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     memset(m_shaders, 0, sizeof(m_shaders));
     m_shaders[kgmShader::TypeNone] = rc->getShader("none.glsl");
     m_shaders[kgmShader::TypeBase] = rc->getShader("base.glsl");
-    m_shaders[kgmShader::TypeLight] = rc->getShader("light.glsl");
+    m_shaders[kgmShader::TypePhong] = rc->getShader("phong.glsl");
     m_shaders[kgmShader_TypeGui]    = rc->getShader("gui.glsl");
-    m_shaders[kgmShader::TypeAmbient] = rc->getShader("ambient.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -454,9 +453,9 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  RndAmbient  ar(this);
+  //RndAmbient  ar(this);
 
-  ar.render();
+  //ar.render();
 
   LightRender lr(this);
 

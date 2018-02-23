@@ -12,7 +12,31 @@ LightRender::LightRender(kgmGraphics* g)
 
 }
 
-void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& visuals)
+void LightRender::render()
+{
+  gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+
+  kgmShader* s = gr->m_shaders[kgmShader::TypePhong];
+
+  for(u32 il = 0; il < gr->m_a_light_count; il++)
+  {
+    kgmIGraphics::INode* light = gr->m_a_lights[il];
+
+    for(u32 im = 0; im < gr->m_a_meshes_count; im++)
+    {
+      kgmIGraphics::INode* mesh = gr->m_a_meshes[il];
+
+      gr->render(mesh->getNodeMaterial());
+
+
+    }
+  }
+
+  gc->gcBlend(false, null, null);
+}
+
+/*
+void LightRender::render()
 {
 
   vec3 lpositions[MAX_LIGHTS], ldirections[MAX_LIGHTS], lcolors[MAX_LIGHTS];
@@ -20,7 +44,7 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
   kgmList<kgmVisual*> alpha;
 
-  kgmShader* s = gr->m_shaders[kgmShader::TypeLight];
+  kgmShader* s = gr->m_shaders[kgmShader::TypePhong];
 
   if (!gr || !s)
     return;
@@ -105,3 +129,4 @@ void LightRender::l_render(kgmList<kgmLight*>& lights, kgmArray<kgmVisual*>& vis
 
   gc->gcBlend(false, null, null);
 }
+*/

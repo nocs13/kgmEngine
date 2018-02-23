@@ -70,12 +70,9 @@ const char *kgmShader::toString(Shader type)
 {
 #define s_text(x) if(x == type) return #x
   s_text(TypeNone);
-  s_text(TypeNone);
   s_text(TypeBase);
   s_text(TypeSkin);
-  s_text(TypePoor);
-  s_text(TypeLight);
-  s_text(TypeBlend);
+  s_text(TypePhong);
   s_text(TypeWater);
   s_text(TypeRiver);
   s_text(TypeOcean);
@@ -92,12 +89,9 @@ kgmShader::Shader kgmShader::toType(const char* str)
 {
 #define s_type(x) if(strcmp(str, #x) == 0) return x
   s_type(TypeNone);
-  s_type(TypeNone);
   s_type(TypeBase);
   s_type(TypeSkin);
-  s_type(TypePoor);
-  s_type(TypeLight);
-  s_type(TypeBlend);
+  s_type(TypePhong);
   s_type(TypeWater);
   s_type(TypeRiver);
   s_type(TypeOcean);

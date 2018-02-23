@@ -36,7 +36,7 @@ void RndAmbient::render()
 
     gr->render(mtl);
 
-    gr->render(gr->m_shaders[kgmShader::TypeAmbient]);
+    gr->render(gr->m_shaders[kgmShader::TypeBase]);
 
     gr->render(msh);
 

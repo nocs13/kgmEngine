@@ -21,7 +21,7 @@ void FpsRender::render()
 
   gr->setWorldMatrix(mi);
 
-  gr->render(gr->m_shaders[kgmGraphics::kgmShader_TypeGui]);
+  gr->render(gr->m_shaders[kgmShader::TypeBase]);
 
   static u32 fps_start_time = kgmTime::getTicks();
   static u32 fps_frames = 0;

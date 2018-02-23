@@ -66,8 +66,8 @@ public:
 
   enum
   {
-    kgmShader_TypeGui = 100,
-    kgmShader_TypeIcon,
+    //kgmShader_TypeGui = 100,
+    kgmShader_TypeIcon
   };
 
 protected:
@@ -134,6 +134,8 @@ protected:
   kgmTexture*  m_tex_white = null;
   kgmTexture*  m_tex_gray  = null;
   kgmTexture*  m_map_shadow = null;
+
+  u32 kgmShader_TypeGui = kgmShader::TypeBase;
 
 protected:
   kgmShader*  m_shaders[32] = {0};
