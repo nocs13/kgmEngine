@@ -135,7 +135,8 @@ protected:
   kgmTexture*  m_tex_gray  = null;
   kgmTexture*  m_map_shadow = null;
 
-  u32 kgmShader_TypeGui = kgmShader::TypeBase;
+  mtx4 m_g_mtx_world;
+
 
 protected:
   kgmShader*  m_shaders[32] = {0};

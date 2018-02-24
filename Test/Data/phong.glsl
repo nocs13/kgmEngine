@@ -4,17 +4,21 @@ varying vec3   eye;
 void kgm_main(out vec4 pos)
 {
   mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
-      g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
-      g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
+                    g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
+                    g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
 
   v_V  = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
+
   VV = vec4(g_mView * vec4(v_V, 1.0)).xyz;
 
   v_N = normalize(mRot * a_Normal);
 
   v_I = g_vLight.w;
+
   v_L = g_vLight.xyz;
+
   eye = g_vEye;
+
   v_Y = -vec3(g_mView * vec4(v_V, 1.0));
 
   v_shine = g_fShine;

@@ -7,6 +7,7 @@
 class kgmObject;
 
 class kgmIcon;
+class kgmText;
 class kgmLight;
 class kgmVisual;
 class kgmCamera;

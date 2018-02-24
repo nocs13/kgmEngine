@@ -94,7 +94,6 @@ mtx4       g_mtx_orto;
 mtx4       g_mtx_iden;
 mtx4       g_mtx_proj;
 mtx4       g_mtx_view;
-mtx4       g_mtx_world;
 mtx4*      g_mtx_joints = null;
 
 mtx3       g_mtx_normal;
@@ -206,8 +205,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     memset(m_shaders, 0, sizeof(m_shaders));
     m_shaders[kgmShader::TypeNone] = rc->getShader("none.glsl");
     m_shaders[kgmShader::TypeBase] = rc->getShader("base.glsl");
+    m_shaders[kgmShader::TypeToon] = rc->getShader("toon.glsl");
     m_shaders[kgmShader::TypePhong] = rc->getShader("phong.glsl");
-    m_shaders[kgmShader_TypeGui]    = rc->getShader("gui.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -328,7 +327,7 @@ void kgmGraphics::setViewMatrix(mtx4 &m)
 
 void kgmGraphics::setWorldMatrix(mtx4 &m)
 {
-  g_mtx_world = m;
+  m_g_mtx_world = m;
 }
 
 mtx4 kgmGraphics::getProjMatrix()
@@ -343,7 +342,7 @@ mtx4 kgmGraphics::getViewMatrix()
 
 mtx4 kgmGraphics::getWorldMatrix()
 {
-  return g_mtx_world;
+  return m_g_mtx_world;
 }
 
 void kgmGraphics::setEditor(bool e)
@@ -400,7 +399,7 @@ void kgmGraphics::render()
 
   setProjMatrix(m_camera->mProj);
   setViewMatrix(m_camera->mView);
-  g_mtx_world.identity();
+  m_g_mtx_world.identity();
 
   gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
@@ -441,129 +440,21 @@ void kgmGraphics::render()
   else
     m_a_light = m_def_light;
 
-  /*
-   * 1. draw all meshes just with light effect.
-   * 2. draw all meshes without lighting parts.
-   * 3. multiply step 1 on step 2
-   * glBlendFunc(GL_DST_COLOR, GL_ZERO) //Blending formula with these factors : srcColor*destColor+0
-   * GL_SRC_COLOR,GL_SRC_COLOR? dst_color, src_color
-  */
-
   //I pass: draw scene only lights
+
+  render((kgmMaterial*)null);
 
   lighting = true;
 
-  //RndAmbient  ar(this);
+  RndAmbient  ar(this);
 
-  //ar.render();
+  ar.render();
 
   LightRender lr(this);
 
-  //lr.l_render(lights, m_visible_visuals);
-
-  /*mtx4 m4_identity;
-  m4_identity.identity();
-  setWorldMatrix(m4_identity);
-
-  for (s32 i = 0; i < m_a_meshes_count; i++)
-  {
-    INode*       nod = m_a_meshes[i];
-    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
-    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (m_def_material);
-    
-    box3    bbound = nod->getNodeBound();
-    sphere3 sbound;
-
-    bbound.min    = nod->getNodeTransform() * bbound.min;
-    bbound.max    = nod->getNodeTransform() * bbound.max;
-
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
-
-    m = nod->getNodeTransform();
-    setWorldMatrix(m);
-
-    render(mtl);
-
-    if(!mtl->shade() || m_a_light_count < 1)
-    {
-      render(m_shaders[kgmShader::TypeBase]);
-    }
-    else
-    {
-      m_a_light = m_a_lights[0];
-
-      render(m_shaders[kgmShader::TypeAmbient]);
-    }
-
-    render(msh);
-
-    render((kgmMaterial*)null);
-    render((kgmShader*)null);
-  }*/
-
-
-  // Sort alpha objects.
-
-  /*for(s32 i = 0; i < (count_visible_alpha - 1); i++)
-  {
-    vec3 pos_i(0, 0, 0);
-
-    pos_i = m_visible_visuals_alpha[i]->getTransform() * pos_i;
-
-    for(s32 j = i + 1; j < count_visible_alpha; j++)
-    {
-      vec3 pos_j(0, 0, 0);
-      pos_j = m_visible_visuals_alpha[j]->getTransform() * pos_i;
-
-      if(camera().mPos.distance(pos_j) > camera().mPos.distance(pos_i))
-      {
-        kgmVisual* vis = m_visible_visuals_alpha[i];
-
-        m_visible_visuals_alpha[i] = m_visible_visuals_alpha[j];
-        m_visible_visuals_alpha[j] = vis;
-      }
-    }
-  }*/
+  //lr.render();
 
   // Draw alpha objects.
-
-  gc->gcDepth(true, false, gccmp_lequal);
-
-  /*for(s32 i = 0; i < count_visible_alpha; i++)
-  {
-    kgmVisual* vis = m_visible_visuals_alpha[i];
-    kgmMaterial* mtl = vis->getMaterial();
-
-    box3    bbound = vis->getBound();
-    sphere3 sbound;
-
-    bbound.min    = vis->getTransform() * bbound.min;
-    bbound.max    = vis->getTransform() * bbound.max;
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
-
-    setWorldMatrix(vis->getTransform());
-
-    render(mtl);
-
-    if(!mtl->shade() || g_lights_count < 1)
-    {
-      render(m_shaders[kgmShader::TypeBase]);
-    }
-    else
-    {
-      g_light_active = g_lights[0];
-
-      render(m_shaders[kgmShader::TypeAmbient]);
-    }
-
-    render(vis);
-
-
-    render((kgmMaterial*)null);
-    render((kgmShader*)null);
-  }*/
 
   gc->gcDepth(true, true, gccmp_lequal);
 
@@ -577,56 +468,6 @@ void kgmGraphics::render()
   render_3d();
 
   //draw particles
-
-  kgmList<kgmVisual*>  depthless_particles;
-
-  //I pass with depth category
-  //if(m_has_shaders)
-  //  render((kgmShader*)shaders[kgmMaterial::ShaderNone]);
-
-  /*for(int i = 0; i < vis_particles.size(); i++)
-  {
-    kgmVisual*    vis = vis_particles[i];
-    kgmParticles* par = vis->getParticles();
-    kgmMaterial*  mtl = vis->getMaterial();
-
-    if(par && mtl)
-    {
-      if(mtl->depth() == false)
-      {
-        depthless_particles.add(vis);
-
-        continue;
-      }
-
-      setWorldMatrix(vis->getTransform());
-      render(mtl);
-      render(mtl->getShader());
-      render(vis->getParticles());
-      render((kgmShader*)null);
-      render((kgmMaterial*)null);
-    }
-  }*/
-
-  // depthless meshes
-
-  //depthless particles
-
-  for(int i = 0; i < depthless_particles.size(); i++)
-  {
-    kgmVisual*    vis = depthless_particles[i];
-    kgmMaterial*  mtl = vis->getMaterial();
-
-    setWorldMatrix(vis->getTransform());
-    render(mtl);
-    render(mtl->getShader());
-    render(vis->getParticles());
-    render((kgmShader*)null);
-    render((kgmMaterial*)null);
-  }
-
-  depthless_particles.clear();
-
   gc->gcCull(gccull_back);
 
 #ifndef NO_SHADERS
@@ -634,38 +475,6 @@ void kgmGraphics::render()
   render((kgmShader*)null);
 
 #endif
-
-  // draw icons
-
-  if(m_editor)
-  {
-    mtx4 mtx;
-    mtx.identity();
-    setWorldMatrix(mtx);
-
-    for(int i = m_icons.size(); i > 0; i--)
-    {
-      kgmIcon* icon = m_icons[i - 1];
-
-      if(icon == null)
-      {
-        m_icons.erase(i - 1);
-      }
-      else
-      {
-        kgmMaterial mtl;
-
-        gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
-        mtl.setTexColor(icon->getIcon());
-        render(&mtl);
-        render(m_shaders[kgmShader::TypeBase]);
-        render(icon);
-        render((kgmShader*)null);
-        render((kgmMaterial*)null);
-        gc->gcBlend(false, gcblend_srcalpha, gcblend_srcialpha);
-      }
-    }
-  }
 
   render(m_def_material);
 
@@ -680,23 +489,18 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render(m_shaders[kgmShader_TypeGui]);
+  render(m_shaders[kgmShader::TypeBase]);
 
-  gc->gcSetShader(null);
-  gc->gcDepth(false, 0, 0);
-  gc2DMode();
-  m.identity();
-  setWorldMatrix(m);
-
-  render(m_shaders[kgmShader_TypeGui]);
+  render_2d();
 
 #ifdef DEBUG
   m_r_fps->render();
 #endif
 
   render((kgmShader*)null);
+  render((kgmMaterial*)null);
 
-  render_2d();
+  gc->gcDepth(true, true, gccmp_lequal);
 
   gc->gcEnd();
   gc->gcRender();
@@ -956,13 +760,13 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_fAmbient",        g_fAmbient);
   s->set("g_mProj",           g_mtx_proj);
   s->set("g_mView",           g_mtx_view);
-  s->set("g_mTran",           g_mtx_world);
+  s->set("g_mTran",           m_g_mtx_world);
   s->set("g_mNorm",           g_mtx_normal);
   s->set("g_vColor",          g_vec_color);
   s->set("g_vSpecular",       g_vec_specular);
   s->set("g_vLight",          v_light);
   s->set("g_vLightColor",     v_light_color);
-  s->set("g_vLightDirection", v_light_color);
+  s->set("g_vLightDirection", v_light_direction);
   s->set("g_vEye",            m_camera->mPos);
   s->set("g_vEyeDir",         m_camera->mDir);
 

@@ -15,14 +15,6 @@ FpsRender::FpsRender(kgmGraphics* g)
 
 void FpsRender::render()
 {
-  gr->gc->gcSetShader(null);
-  gr->gc->gcDepth(false, 0, 0);
-  gr->gc2DMode();
-
-  gr->setWorldMatrix(mi);
-
-  gr->render(gr->m_shaders[kgmShader::TypeBase]);
-
   static u32 fps_start_time = kgmTime::getTicks();
   static u32 fps_frames = 0;
   static s8  fps_text[256] = {0};
@@ -40,8 +32,4 @@ void FpsRender::render()
   }
 
   gcDrawText(gr->gc, gr->font, 10, 15, 0xffffffff, kgmGui::Rect(gr->m_viewport.width() - 200, 1, 90, 20), text);
-
-  gr->render((kgmShader*)null);
-
-  gr->gc3DMode();
 }

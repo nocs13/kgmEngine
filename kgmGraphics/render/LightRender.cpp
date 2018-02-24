@@ -18,7 +18,7 @@ void LightRender::render()
 
   kgmShader* s = gr->m_shaders[kgmShader::TypePhong];
 
-  for(u32 il = 0; il < gr->m_a_light_count; il++)
+  for(u32 il = 1; il < gr->m_a_light_count; il++)
   {
     kgmIGraphics::INode* light = gr->m_a_lights[il];
 
@@ -26,9 +26,17 @@ void LightRender::render()
     {
       kgmIGraphics::INode* mesh = gr->m_a_meshes[il];
 
+      mtx4 m = mesh->getNodeTransform();
+
       gr->render(mesh->getNodeMaterial());
 
+      gr->setWorldMatrix(m);
 
+      gr->m_a_light = light;
+
+      gr->render(s);
+
+      gr->render((kgmMesh*)mesh->getNodeObject());
     }
   }
 
