@@ -31,5 +31,8 @@ void FpsRender::render()
     fps_frames++;
   }
 
+  gr->render((kgmMaterial*)gr->m_def_material);
+  gr->render((kgmShader*)gr->m_shaders[kgmShader::TypeBase]);
+
   gcDrawText(gr->gc, gr->font, 10, 15, 0xffffffff, kgmGui::Rect(gr->m_viewport.width() - 200, 1, 90, 20), text);
 }

@@ -36,8 +36,8 @@ void RndAmbient::render()
 
     gr->render(mtl);
 
-    //gr->render(gr->m_shaders[kgmShader::TypePhong]);
-    gr->render(gr->m_shaders[kgmShader::TypeToon]);
+    gr->render(gr->m_shaders[kgmShader::TypePhong]);
+    //gr->render(gr->m_shaders[kgmShader::TypeToon]);
 
     gr->render(msh);
 

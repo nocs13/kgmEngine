@@ -1,4 +1,3 @@
-varying vec4 PxColor;
 varying vec3 L_Dir;
 
 void kgm_main(out vec4 pos)
@@ -23,12 +22,11 @@ void kgm_main(out vec4 pos)
   }
 
   v_UV = a_UV;
-  PxColor = g_vColor * a_Color;
+
   pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
 
 //Fragment Shader
-varying vec4   PxColor;
 varying vec3 L_Dir;
 
 void kgm_main(out vec4 col)
@@ -47,6 +45,6 @@ void kgm_main(out vec4 col)
   else
     color = vec4(0.2, 0.2, 0.2, 1.0);
 
-  //col = color * PxColor * texture2D(g_txColor, v_UV);
-  col = vec4(1, 0, 0, 1); //color;
+  //col = color * texture2D(g_txColor, v_UV);
+  col = color;
 }

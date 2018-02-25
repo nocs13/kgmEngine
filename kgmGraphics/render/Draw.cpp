@@ -72,7 +72,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   float cx = (float)clip.x,
         cy = (float)clip.y;
 
-  //gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
@@ -109,13 +109,12 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
       v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-      //gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col, sizeof(V), 4, v, 0, 0, 0);
     }
 
     cx += fwidth;
   }
 
-  //gc->gcBlend(0, 0, 0);
+  gc->gcBlend(0, 0, 0);
   gc->gcSetTexture(0, 0);
 }
 

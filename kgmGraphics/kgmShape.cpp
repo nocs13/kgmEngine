@@ -7,12 +7,14 @@ kgmShape::kgmShape()
 
 kgmShape::kgmShape(f32 w, f32 l)
 {
-  kgmMesh::Vertex_P_N_T* v = (kgmMesh::Vertex_P_N_T*) vAlloc(4, kgmMesh::FVF_P_N_T);
+  kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*) vAlloc(4, kgmMesh::FVF_P_N_C_T);
 
   v[0].pos = vec3(-.5f * w,  .5f * l, 0.0f), v[0].nor = vec3(0, 0, 1), v[0].uv = vec2(0, 0);
   v[1].pos = vec3(-.5f * w, -.5f * l, 0.0f), v[1].nor = vec3(0, 0, 1), v[1].uv = vec2(0, 1);
   v[2].pos = vec3( .5f * w,  .5f * l, 0.0f), v[2].nor = vec3(0, 0, 1), v[2].uv = vec2(1, 0);
   v[3].pos = vec3( .5f * w, -.5f * l, 0.0f), v[3].nor = vec3(0, 0, 1), v[3].uv = vec2(1, 1);
+
+  v[0].col = v[1].col = v[2].col = v[3].col = 0xffffffff;
 
   kgmMesh::Face_16* f = (kgmMesh::Face_16*) fAlloc(2);
 
@@ -26,17 +28,29 @@ kgmShape::kgmShape(f32 w, f32 l)
 
 kgmShape::kgmShape(f32 w, f32 l, f32 h)
 {
-  kgmMesh::Vertex_P_N_T* v = (kgmMesh::Vertex_P_N_T*) vAlloc(8, kgmMesh::FVF_P_N_T);
+  kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*) vAlloc(8, kgmMesh::FVF_P_N_C_T);
 
-  v[0].pos = vec3(-.5f * w,  .5f * l, -.5f * h), v[0].nor = vec3(0, 0, -1), v[0].uv = vec2(0, 0);
-  v[1].pos = vec3(-.5f * w, -.5f * l, -.5f * h), v[1].nor = vec3(0, 0, -1), v[1].uv = vec2(0, 1);
-  v[2].pos = vec3( .5f * w,  .5f * l, -.5f * h), v[2].nor = vec3(0, 0, -1), v[2].uv = vec2(1, 0);
-  v[3].pos = vec3( .5f * w, -.5f * l, -.5f * h), v[3].nor = vec3(0, 0, -1), v[3].uv = vec2(1, 1);
+  v[0].pos = vec3(-.5f * w,  .5f * l, -.5f * h), v[0].uv = vec2(0, 0);
+  v[1].pos = vec3(-.5f * w, -.5f * l, -.5f * h), v[1].uv = vec2(0, 1);
+  v[2].pos = vec3( .5f * w,  .5f * l, -.5f * h), v[2].uv = vec2(1, 0);
+  v[3].pos = vec3( .5f * w, -.5f * l, -.5f * h), v[3].uv = vec2(1, 1);
 
-  v[4].pos = vec3(-.5f * w,  .5f * l, .5f * h), v[4].nor = vec3(0, 0, 1), v[4].uv = vec2(0, 0);
-  v[5].pos = vec3(-.5f * w, -.5f * l, .5f * h), v[5].nor = vec3(0, 0, 1), v[5].uv = vec2(0, 1);
-  v[6].pos = vec3( .5f * w,  .5f * l, .5f * h), v[6].nor = vec3(0, 0, 1), v[6].uv = vec2(1, 0);
-  v[7].pos = vec3( .5f * w, -.5f * l, .5f * h), v[7].nor = vec3(0, 0, 1), v[7].uv = vec2(1, 1);
+  v[4].pos = vec3(-.5f * w,  .5f * l, .5f * h), v[4].uv = vec2(0, 0);
+  v[5].pos = vec3(-.5f * w, -.5f * l, .5f * h), v[5].uv = vec2(0, 1);
+  v[6].pos = vec3( .5f * w,  .5f * l, .5f * h), v[6].uv = vec2(1, 0);
+  v[7].pos = vec3( .5f * w, -.5f * l, .5f * h), v[7].uv = vec2(1, 1);
+
+  v[0].nor = vec3(0, 0, -1) + vec3(-1, 0, 0) + vec3(0,  1, 0);
+  v[1].nor = vec3(0, 0, -1) + vec3(-1, 0, 0) + vec3(0, -1, 0);
+  v[2].nor = vec3(0, 0, -1) + vec3(1,  0, 0) + vec3(0,  1, 0);
+  v[3].nor = vec3(0, 0, -1) + vec3(1,  0, 0) + vec3(0, -1, 0);
+  v[4].nor = vec3(0, 0, 1) + vec3(-1, 0, 0) + vec3(0,  1, 0);
+  v[5].nor = vec3(0, 0, 1) + vec3(-1, 0, 0) + vec3(0, -1, 0);
+  v[6].nor = vec3(0, 0, 1) + vec3(1,  0, 0) + vec3(0,  1, 0);
+  v[7].nor = vec3(0, 0, 1) + vec3(1,  0, 0) + vec3(0, -1, 0);
+
+  v[0].col = v[1].col = v[2].col = v[3].col = 0xffffffff;
+  v[4].col = v[5].col = v[6].col = v[7].col = 0xffffffff;
 
   kgmMesh::Face_16* f = (kgmMesh::Face_16*) fAlloc(12);
 

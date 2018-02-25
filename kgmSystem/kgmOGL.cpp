@@ -395,10 +395,10 @@ void kgmOGL::gcSet(u32 param, void* value)
   switch(param)
   {
   case gcpar_blending:
-    if(value)
-      glEnable(GL_BLEND);
-    else
-      glDisable(GL_BLEND);
+    //if(value)
+      //glEnable(GL_BLEND);
+    //else
+      //glDisable(GL_BLEND);
     break;
   case gcpar_culling:
     if(value)
@@ -645,24 +645,8 @@ void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, 
 #endif
 }
 
-//FOG
-/*
-void kgmOGL::gcFog(kgmFog* fog){
- if(!fog){
-  glDisable(GL_FOG);
-  return;
- }
-
- glFogi(GL_FOG_MODE, (fog->m_mode)?(GL_EXP):(GL_LINEAR));
- glFogf(GL_FOG_DENSITY, fog->m_density);
- glFogf(GL_FOG_START, fog->m_start);
- glFogf(GL_FOG_END, fog->m_end);
- glFogfv(GL_FOG_COLOR, (float*)&fog->m_color);
- glEnable(GL_FOG);
-}
-*/
-
 //BLEND
+
 void  kgmOGL::gcBlend(bool en, u32 fnsrc, u32 fndst)
 {
   if(!en)

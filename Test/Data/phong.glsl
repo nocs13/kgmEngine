@@ -42,7 +42,7 @@ void kgm_main( out vec4 color )
   vec3 E  = normalize(v_Y - VV); //VV
 
   vec4 col = texture2D(g_txColor, v_UV);
-       col.rgb *= v_L_color;
+       //col.rgb *= v_L_color;
 
   //Normal
   {
@@ -52,10 +52,11 @@ void kgm_main( out vec4 color )
   }
 
   float distance = 1.0 + length(v_L - v_V);
-  float intensity = max(0.0, (v_I * dot(NN, LN) / distance));
+  //float intensity = max(0.0, (v_I * dot(NN, LN) / distance));
+  float intensity = max(0.0, dot(NN, LN));
 
   //Specular
-  if(v_shine > 1.0)
+  /*if(v_shine > 1.0)
   {
     vec3  specular = texture2D(g_txSpecular, v_UV).rgb;
     vec3  viewDir  = normalize(eye - v_V);
@@ -64,11 +65,12 @@ void kgm_main( out vec4 color )
 
     specular = specular * spec;
     col.xyz +=  specular;
-  }
+  }*/
 
   col.xyz *= intensity;
 
-  col.xyz = clamp(col.xyz, 0.0, 1.0);
+  //col.xyz = clamp(col.xyz, 0.0, 1.0);
+  //col.xyz = dot(NN, LN);
 
   color = col;
 }
