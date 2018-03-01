@@ -231,10 +231,13 @@ class kgm_dummy(bpy.types.Operator):
   def execute(self, context):
     print("Execute dummy.\n")
 
-    bpy.ops.object.add()
-    a = bpy.context.object
+    bpy.types.Object.kgm_dummy = bpy.props.BoolProperty(options={'HIDDEN'})
 
-    a.name = "kgmDummy"
+    bpy.ops.object.add()
+    a            = bpy.context.object
+    a.name       = "kgmDummy"
+    a.kgm_dummy = True
+
     return {'FINISHED'}
 
   def modal(self, context, event):
@@ -244,10 +247,13 @@ class kgm_dummy(bpy.types.Operator):
   def invoke(self, context, event):
     print("Invoke dummy.\n")
 
-    bpy.ops.object.add()
-    a = bpy.context.object
+    bpy.types.Object.kgm_dummy = bpy.props.BoolProperty(options={'HIDDEN'})
 
-    a.name = "kgmDummy"
+    bpy.ops.object.add()
+    a            = bpy.context.object
+    a.name       = "kgmDummy"
+    a.kgm_dummy = True
+
     return {'FINISHED'}
 
   def draw(self, context):
@@ -678,6 +684,23 @@ class kgmBoneAnimation(kgmAnimation):
           self.frames.append(f)
     currentScene.frame_set(startFrame)
 
+class kgmBaseObject:
+  def __init__(self, o):
+    self.name = o.name
+    self.mtx = o.matrix_world
+    self.pos = o.matrix_local.to_translation()
+    self.quat = self.mtx.to_quaternion()
+    self.euler = self.mtx.to_euler()
+    self.linked = 'None'
+    self.props = {}
+
+    if o.parent != None:
+      self.linked = o.parent.name
+
+class kgmDummy(kgmBaseObject):
+  def __init__(self, o):
+    super().__init__(o)
+    self.kgm_dummy = True
 
 class kgmObject:
   def __init__(self, o):
@@ -899,6 +922,40 @@ def export_obstacle(file, o):
     file.write("  </Polygon>\n")
   file.write(" </Obstacle>\n")
 
+def export_kgmdummy(file, o):
+  d = kgmDummy(o)
+
+  file.write(" <kgmDummy name='" + d.name + "' parent='" + d.linked + "'>\n")
+  file.write("  <Position value='" + str(d.pos[0]) + " " + str(d.pos[1]) + " " + str(d.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str(d.euler[0]) + " " + str(d.euler[1]) + " " + str(d.euler[2]) + "'/>\n")
+  file.write(" </kgmDummy>\n")
+
+
+def export_kgmsensor(file, o):
+  pass
+
+def export_kgmtrigger(file, o):
+  pass
+
+def export_kgmactor(file, o):
+  pass
+
+def export_kgmunit(file, o):
+  pass
+
+def export_kgmobject(file, o):
+  if hasattr(o, "kgm_dummy") and o.kgm_dummy is True:
+    export_kgmdummy(file, o)
+  elif hasattr(o, "kgm_sensor") and o.kgm_sensor is True:
+    export_kgmsensor(file, o)
+  elif hasattr(o, "kgm_trigger") and o.kgm_trigger is True:
+    export_kgmtrigger(file, o)
+  elif hasattr(o, "kgm_unit") and o.kgm_unit is True:
+    export_kgmunit(file, o)
+  elif hasattr(o, "kgm_actor") and o.kgm_actor is True:
+    export_kgmactor(file, o)
+  pass
+
 
 from bpy.props import *
 from bpy_extras.io_utils import ImportHelper
@@ -1023,7 +1080,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     threads[3] = threading.Thread(target=self.collect_cameras)
     threads[4] = threading.Thread(target=self.collect_skeletons)
     threads[5] = threading.Thread(target=self.collect_animations)
-    threads[5] = threading.Thread(target=self.collect_kgmobjects)
+    threads[6] = threading.Thread(target=self.collect_kgmobjects)
 
     for thread in threads:
       thread.start()
@@ -1089,6 +1146,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     # skeletons
     for s in self.skeletons:
       export_sceleton(file, o)
+
+    for o in self.kgmobjects:
+      export_kgmobject(file, o)
 
     '''#kgm_objects
     for a in gobjects:
