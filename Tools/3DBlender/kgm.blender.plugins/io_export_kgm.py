@@ -253,6 +253,109 @@ class kgm_dummy(bpy.types.Operator):
   def draw(self, context):
     layout = self.layout
 
+class kgm_sensor(bpy.types.Operator):
+  ''' Add kgmSensor '''
+  bl_idname = "object.kgm_sensor"
+  bl_label = "Add kgmSensor"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  width = bpy.props.FloatProperty(
+    name="Width",
+    description="Box Width",
+    min=0.01, max=100.0,
+    default=5.0,
+  )
+
+  def __init__(self):
+    print("kgm_sensor start")
+
+  def __del__(self):
+    print("kgm_sensor end")
+
+  def execute(self, context):
+    print("Execute sensor.\n")
+
+    bpy.types.Object.kgm_sensor = bpy.props.BoolProperty(options={'HIDDEN'})
+
+    bpy.ops.object.add()
+
+    a            = bpy.context.object
+    a.name       = "kgmSensor"
+    a.kgm_sensor = True
+
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal sensor.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    print("Invoke sensor.\n")
+
+    bpy.types.Object.kgm_sensor = bpy.props.BoolProperty(options={'HIDDEN'})
+
+    bpy.ops.object.add()
+
+    a            = bpy.context.object
+    a.name       = "kgmSensor"
+    a.kgm_sensor = True
+
+    return {'FINISHED'}
+
+  def draw(self, context):
+    layout = self.layout
+
+class kgm_trigger(bpy.types.Operator):
+  ''' Add kgmSensor '''
+  bl_idname = "object.kgm_trigger"
+  bl_label = "Add kgmTrigger"
+  bl_options = {'REGISTER', 'UNDO'}
+
+  width = bpy.props.FloatProperty(
+    name="Width",
+    description="Box Width",
+    min=0.01, max=100.0,
+    default=5.0,
+  )
+
+  def __init__(self):
+    print("kgm_trigger start")
+
+  def __del__(self):
+    print("kgm_trigger end")
+
+  def execute(self, context):
+    print("Execute trigger.\n")
+
+    bpy.types.Object.kgm_trigger = bpy.props.BoolProperty(options={'HIDDEN'})
+
+    bpy.ops.object.add()
+
+    a            = bpy.context.object
+    a.name       = "kgmTrigger"
+    a.kgm_trigger = True
+
+    return {'FINISHED'}
+
+  def modal(self, context, event):
+    print("Modal trigger.\n")
+    return {'RUNNING_MODAL'}
+
+  def invoke(self, context, event):
+    print("Invoke trigger.\n")
+
+    bpy.types.Object.kgm_trigger = bpy.props.BoolProperty(options={'HIDDEN'})
+
+    bpy.ops.object.add()
+
+    a            = bpy.context.object
+    a.name       = "kgmTrigger"
+    a.kgm_trigger = True
+
+    return {'FINISHED'}
+
+  def draw(self, context):
+    layout = self.layout
 
 scene_materials = []
 
@@ -853,20 +956,20 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   filename_ext = ".kgm"
   filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, )
   # filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
-  # use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default= True)
-  exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
-  exp_lights = BoolProperty(name="Export Lights", description="", default=False)
-  exp_materials = BoolProperty(name="Export Materials", description="", default=False)
-  exp_cameras = BoolProperty(name="Export Cameras", description="", default=False)
-  exp_armatures = BoolProperty(name="Export Armatures", description="", default=False)
+  exp_meshes     = BoolProperty(name="Export Meshes", description="", default=True)
+  exp_lights     = BoolProperty(name="Export Lights", description="", default=False)
+  exp_materials  = BoolProperty(name="Export Materials", description="", default=False)
+  exp_cameras    = BoolProperty(name="Export Cameras", description="", default=False)
+  exp_armatures  = BoolProperty(name="Export Armatures", description="", default=False)
   exp_animations = BoolProperty(name="Export Animations", description="", default=False)
-  # exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
-  exp_obstacles = BoolProperty(name="Export Obstacles", description="", default=False)
-  is_selection = BoolProperty(name="Selected only", description="", default=False)
+  exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
+  exp_obstacles  = BoolProperty(name="Export Obstacles", description="", default=False)
+  is_selection   = BoolProperty(name="Selected only", description="", default=False)
+
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
                                 name="Format", description="Choose between two items", default='OPT_A')
 
-  objects = []
+  kgmobjects = []
   mesh_datas = []
   mesh_nodes = []
 
@@ -882,6 +985,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     scene = context.scene
     for o in scene.objects:
       print(o.name + ':' + o.type)
+
+    self.objects = []
 
     if self.is_selection:
       self.objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
@@ -899,6 +1004,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.cameras    = []
     self.skeletons  = []
     self.animations = []
+    self.kgmobjects = []
 
     print("Collect Objects...")
 
@@ -910,13 +1016,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
     animations = []'''
 
-    threads    = list(range(6))
+    threads    = list(range(7))
     threads[0] = threading.Thread(target=self.collect_meshes)
     threads[1] = threading.Thread(target=self.collect_obstacles)
     threads[2] = threading.Thread(target=self.collect_lights)
     threads[3] = threading.Thread(target=self.collect_cameras)
     threads[4] = threading.Thread(target=self.collect_skeletons)
     threads[5] = threading.Thread(target=self.collect_animations)
+    threads[5] = threading.Thread(target=self.collect_kgmobjects)
 
     for thread in threads:
       thread.start()
@@ -1058,6 +1165,12 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   def collect_skeletons(self):
     self.skeletons = [kgmSkeleton(ob) for ob in self.objects if ob.type == 'ARMATURE' and self.exp_armatures]
 
+  def collect_kgmobjects(self):
+    for ob in self.objects:
+      if ((hasattr(ob, "kgm_dummy") and ob.kgm_dummy is True) or (hasattr(ob, "kgm_sensor") and ob.kgm_sensor is True)) \
+          or (hasattr(ob, "kgm_trigger") and ob.kgm_trigger is True) or (hasattr(ob, "kgm_unit") and ob.kgm_unit is True):
+        self.kgmobjects.append(ob)
+
   def collect_animations(self):
     if self.exp_animations:
       armatures = [ob for ob in self.objects if ob.type == 'ARMATURE']
@@ -1072,9 +1185,9 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
   bl_idname = "export_scene.kgm_group_export"
   bl_label = "Kgm export group"
 
-  filename_ext = ".kgm"
-  filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, subtype='DIR_PATH')
-  exp_meshes = BoolProperty(name="Export Meshes", description="", default=True)
+  filename_ext  = ".kgm"
+  filter_glob   = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, subtype='DIR_PATH')
+  exp_meshes    = BoolProperty(name="Export Meshes",    description="", default=True)
   exp_materials = BoolProperty(name="Export Materials", description="", default=True)
   exp_obstacles = BoolProperty(name="Export Obstacles", description="", default=False)
 
@@ -1156,6 +1269,8 @@ def menu_kgm_imp_set_func(self, context):
 def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
+    self.layout.operator(kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
+    self.layout.operator(kgm_trigger.bl_idname, text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
 
 def register():
     bpy.utils.register_module(__name__)

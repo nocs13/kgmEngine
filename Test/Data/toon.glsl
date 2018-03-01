@@ -1,4 +1,5 @@
 varying vec3 L_Dir;
+varying vec3 Y_Dir;
 
 void kgm_main(out vec4 pos)
 {
@@ -8,9 +9,9 @@ void kgm_main(out vec4 pos)
 
   v_V  = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
 
-  //VV = vec4(g_mView * vec4(v_V, 1.0)).xyz;
-
   v_N = normalize(mRot * a_Normal);
+
+  Y_Dir = g_vEyeDir;
 
   if (length(g_vLightDirection.xyz) == 0.0)
   {
@@ -28,6 +29,7 @@ void kgm_main(out vec4 pos)
 
 //Fragment Shader
 varying vec3 L_Dir;
+varying vec3 Y_Dir;
 
 void kgm_main(out vec4 col)
 {
@@ -45,6 +47,10 @@ void kgm_main(out vec4 col)
   else
     color = vec4(0.2, 0.2, 0.2, 1.0);
 
-  //col = color * texture2D(g_txColor, v_UV);
+  float contour = abs(dot(Y_Dir, v_N));
+
+  if (contour < 0.3)
+    color = vec4(0.1, 0.1, 0.1, 1.0);
+
   col = color;
 }

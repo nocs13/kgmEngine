@@ -49,6 +49,11 @@ public:
  {
   v = vec4(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
  }
+
+ float gray()
+ {
+   r * 0.2125 + g * 0.7154 + b * 0.0721;
+ }
 };
 
 typedef kgmColor color;
