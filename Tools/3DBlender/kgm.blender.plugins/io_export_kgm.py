@@ -702,6 +702,26 @@ class kgmDummy(kgmBaseObject):
     super().__init__(o)
     self.kgm_dummy = True
 
+class kgmParticles:
+  def __init__(self, o):
+    super().__init__(o)
+
+    if hasattr(o, 'particle_systems') is False or len(o.particle_systems) < 1:
+      return
+
+    p = o.particle_systems[0]
+    ps = p.settings
+
+    self.count   = ps.count
+    self.start   = ps.frame_start
+    self.stop    = ps.frame_end
+    self.life    = ps.lifetime
+    self.rlife   = ps.lifetime_random
+    self.speed   = ps.normal_factor
+    self.size    = ps.particle_size
+    self.rsize   = ps.size_random
+    self.mass    = ps.mass
+
 class kgmObject:
   def __init__(self, o):
     self.name = o.name
@@ -1019,8 +1039,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   exp_cameras    = BoolProperty(name="Export Cameras", description="", default=False)
   exp_armatures  = BoolProperty(name="Export Armatures", description="", default=False)
   exp_animations = BoolProperty(name="Export Animations", description="", default=False)
-  exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
+  exp_particles = BoolProperty(name="Export Particles", description="", default=False)
   exp_obstacles  = BoolProperty(name="Export Obstacles", description="", default=False)
+  exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
   is_selection   = BoolProperty(name="Selected only", description="", default=False)
 
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
@@ -1061,9 +1082,17 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.cameras    = []
     self.skeletons  = []
     self.animations = []
+    self.particles  = []
     self.kgmobjects = []
 
     print("Collect Objects...")
+
+    print("Filter objects to remove particles")
+
+    for o in self.objects:
+      if o.type == 'MESH' and len(o.particle_systems) > 0:
+        self.objects.remove(o)
+        self.particles.append(kgmParticles(o))
 
     '''meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
     obstacles  = [kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
