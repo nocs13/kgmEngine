@@ -8,7 +8,7 @@
 
 typedef unsigned int u32;
 
-class kgmXml  
+class kgmXml
 {
 public:
   enum XmlState
@@ -63,6 +63,7 @@ public:
     int   attributes();
     bool  attribute(int i, kgmString& id, kgmString& data);
     bool  attribute(kgmString id, kgmString& value);
+    bool  hasattr(kgmString id);
   };
 
 public:
@@ -95,6 +96,7 @@ public:
   int      attributes();
   bool     attribute(int i, kgmString& key, kgmString& value);
   bool     attribute(kgmString key, kgmString& value);
+  bool     hasattr(kgmString id);
 
   u32      toString(kgmString&);
 

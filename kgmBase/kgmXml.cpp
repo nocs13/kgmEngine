@@ -107,6 +107,19 @@ bool  kgmXml::Node::attribute(kgmString id, kgmString& value){
   return false;
 }
 
+bool kgmXml::Node::hasattr(kgmString id)
+{
+  for(int i = 0; i < m_attributes.length(); i++) {
+    Attribute *a = m_attributes[i];
+
+    if(a->m_name == id) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 kgmXml::kgmXml()
 {
   m_node = 0;
@@ -559,7 +572,6 @@ bool kgmXml::attribute(int i, kgmString& key, kgmString& value)
 
 bool kgmXml::attribute(kgmString key, kgmString& value)
 {
-
   for(kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); ++i)
   {
 
@@ -567,6 +579,19 @@ bool kgmXml::attribute(kgmString key, kgmString& value)
     {
       value = (*i)->m_data;
 
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool kgmXml::hasattr(kgmString id)
+{
+  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); ++i)
+  {
+    if(id == (*i)->m_name)
+    {
       return true;
     }
   }

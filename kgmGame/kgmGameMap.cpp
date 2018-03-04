@@ -438,7 +438,16 @@ kgmUnit* kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmUnit(m_game, (kgmMesh*)null);
+        if(m_xml->hasattr("link")) {
+          kgmString v;
+
+          m_xml->attribute("link", v);
+          node = new kgmUnit(m_game, m_game->getResources()->getMesh(v));
+        }
+        else
+        {
+          node = new kgmUnit(m_game, new kgmMesh());
+        }
 
         node->setName(id);
 

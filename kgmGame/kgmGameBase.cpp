@@ -541,7 +541,26 @@ int kgmGameBase::gLoad(kgmString s)
 
   m_state = State_Load;
 
-  loadXml(s);
+  //loadXml(s);
+  {
+    kgmGameMap map(this);
+
+    kgmMemory<u8> mem;
+
+    if(!kgmIGame::getGame()->getResources()->getFile(s, mem))
+    {
+      return false;
+    }
+
+    kgmXml xml;
+
+    if(kgmXml::XML_ERROR == xml.open(mem))
+    {
+      return false;
+    }
+
+    map.open(xml);
+  }
 
   if(m_logic)   m_logic->build();
   if(m_graphics)  m_graphics->build();
