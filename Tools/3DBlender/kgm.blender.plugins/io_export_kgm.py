@@ -378,6 +378,11 @@ class kgmMaterial:
     self.map_normal = ''
     self.map_specular = ''
     self.images = ()
+    self.depth = True
+
+    print('tranparency_method ' + mtl.transparency_method)
+    if mtl.transparency_method == 'Z_TRANSPARENCY':
+      self.depth = False
 
     for TS in mtl.texture_slots.keys():
       TextureSlot = mtl.texture_slots[TS]
@@ -702,12 +707,11 @@ class kgmDummy(kgmBaseObject):
     super().__init__(o)
     self.kgm_dummy = True
 
-class kgmParticles:
+class kgmParticles(kgmBaseObject):
   def __init__(self, o):
     super().__init__(o)
 
-    if hasattr(o, 'particle_systems') is False or len(o.particle_systems) < 1:
-      return
+    print("Create kgmParticles object")
 
     p = o.particle_systems[0]
     ps = p.settings
@@ -721,6 +725,19 @@ class kgmParticles:
     self.size    = ps.particle_size
     self.rsize   = ps.size_random
     self.mass    = ps.mass
+    self.dir     = [ps.object_align_factor[0], ps.object_align_factor[0], ps.object_align_factor[0]]
+    self.gravity = ps.effector_weights.gravity
+    self.bound   = [o.dimensions.x, o.dimensions.y, o.dimensions.z]
+
+    mesh = o.data
+
+    if len(mesh.materials) > 0:
+      self.material = mesh.materials[0].name
+    else:
+      self.material = 'None'
+
+    print("Particles matrial is " + self.material)
+
 
 class kgmObject:
   def __init__(self, o):
@@ -825,6 +842,9 @@ def export_material(file, o):
     "%.5f" % o.specular[2]) + "'/>\n")
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
   file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
+
+  if o.depth is False:
+    file.write("  <Depth value='0'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")
@@ -941,6 +961,19 @@ def export_obstacle(file, o):
       file.write("   " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n")
     file.write("  </Polygon>\n")
   file.write(" </Obstacle>\n")
+
+def export_particles(file, o):
+  file.write(" <Particles name='" + o.name + "' material='" + o.material + "'>\n")
+  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str(o.euler[0]) + " " + str(o.euler[1]) + " " + str(o.euler[2]) + "'/>\n")
+  file.write("  <PrData count='" + str(o.count) + "' speed='" + str(o.speed) + "'/>\n")
+  file.write("  <PrData life='" + str(o.life) + "' dlife='" + str(o.rlife) + "'/>\n")
+  file.write("  <PrData start='" + str(o.start) + "' stop='" + str(o.stop) + "'/>\n")
+  file.write("  <PrData size='" + str(o.size) + "' dsize='" + str(o.rsize) + "'/>\n")
+  file.write("  <PrData mass='" + str(o.mass) + "' gravity='" + str(o.gravity) + "'/>\n")
+  file.write("  <PrData direction='" + str(o.dir[0]) + " " + str(o.dir[1]) + " " + str(o.dir[2]) + "'/>\n")
+  file.write("  <PrData volume='" + str(o.bound[0]) + " " + str(o.bound[1]) + " " + str(o.bound[2]) + "'/>\n")
+  file.write(" </Particles>\n")
 
 def export_kgmdummy(file, o):
   d = kgmDummy(o)
@@ -1090,9 +1123,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     print("Filter objects to remove particles")
 
     for o in self.objects:
-      if o.type == 'MESH' and len(o.particle_systems) > 0:
-        self.objects.remove(o)
+      if (o.type == 'MESH') and (len(o.particle_systems) > 0):
         self.particles.append(kgmParticles(o))
+        self.objects.remove(o)
 
     '''meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
     obstacles  = [kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
@@ -1102,7 +1135,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
     animations = []'''
 
-    threads    = list(range(7))
+    threads    = list(range(8))
     threads[0] = threading.Thread(target=self.collect_meshes)
     threads[1] = threading.Thread(target=self.collect_obstacles)
     threads[2] = threading.Thread(target=self.collect_lights)
@@ -1110,6 +1143,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     threads[4] = threading.Thread(target=self.collect_skeletons)
     threads[5] = threading.Thread(target=self.collect_animations)
     threads[6] = threading.Thread(target=self.collect_kgmobjects)
+    threads[7] = threading.Thread(target=self.collect_materials)
 
     for thread in threads:
       thread.start()
@@ -1173,8 +1207,16 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     #  export_mesh_node(file, o)
 
     # skeletons
-    for s in self.skeletons:
+    for o in self.skeletons:
       export_sceleton(file, o)
+
+    # particles
+    for o in self.particles:
+      export_particles(file, o)
+
+    # obstacle
+    for o in self.obstacles:
+      export_obstacle(file, o)
 
     for o in self.kgmobjects:
       export_kgmobject(file, o)
@@ -1200,10 +1242,6 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       file.write("  <Position value='" + str(a.pos[0]) + " " + str(a.pos[1]) + " " + str(a.pos[2]) + "'/>\n")
       file.write("  <Rotation value='" + str(a.euler[0]) + " " + str(a.euler[1]) + " " + str(a.euler[2]) + "'/>\n")
       file.write(" </kgmGameObject>\n")'''
-
-    # obstacle
-    for o in self.obstacles:
-      export_obstacle(file, o)
 
     file.write("</kgm>\n")
     file.close()
@@ -1259,6 +1297,17 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       if ((hasattr(ob, "kgm_dummy") and ob.kgm_dummy is True) or (hasattr(ob, "kgm_sensor") and ob.kgm_sensor is True)) \
           or (hasattr(ob, "kgm_trigger") and ob.kgm_trigger is True) or (hasattr(ob, "kgm_unit") and ob.kgm_unit is True):
         self.kgmobjects.append(ob)
+
+  def collect_materials(self):
+    for m in bpy.data.materials:
+      exist = False
+      for o in scene_materials:
+        if o.name == m.name:
+          exist = True
+          break
+      if exist is False:
+        scene_materials.append(kgmMaterial(m))
+
 
   def collect_animations(self):
     if self.exp_animations:
