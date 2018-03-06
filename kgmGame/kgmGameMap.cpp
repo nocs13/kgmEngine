@@ -392,11 +392,17 @@ kgmUnit* kgmGameMap::next()
 {
   kgmUnit* node = null;
 
-  bool closed = true;
+  bool closed   = true;
+
+  s32  vint;
+  f32  vfloat;
+  vec3 vfloat3;
+
+  kgmString m_data = "";
+
 
   if(m_type == OpenWrite)
     return node;
-
 
   while(kgmXml::XmlState xstate = m_xml->next())
   {
@@ -438,16 +444,7 @@ kgmUnit* kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        if(m_xml->hasattr("link")) {
-          kgmString v;
-
-          m_xml->attribute("link", v);
-          node = new kgmUnit(m_game, m_game->getResources()->getMesh(v));
-        }
-        else
-        {
-          node = new kgmUnit(m_game, new kgmMesh());
-        }
+        node = new kgmUnit(m_game, new kgmMesh());
 
         node->setName(id);
 
@@ -558,6 +555,39 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
+      else if(id == "Particles")
+      {
+        ntype = "particles";
+
+        kgmString id, mtl;
+        m_xml->attribute("name", id);
+        m_xml->attribute("material", mtl);
+
+        node = new kgmUnit(m_game, new kgmParticles());
+        node->setName(id);
+
+        closed = false;
+      }
+      else if(id == "Vertices")
+      {
+        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        xmlAttr(m_xml, "length", vint);
+        m->vAlloc(vint, kgmMesh::FVF_P_N_C_T);
+        m_data = "vertices";
+      }
+      else if(id == "Faces")
+      {
+        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        xmlAttr(m_xml, "length", vint);
+        m->fAlloc(vint, kgmMesh::FFF_16);
+        m_data = "faces";
+      }
+      else if(id == "Polygon")
+      {
+        //xml.attribute("vertices", value);
+        //sscanf(value.data(), "%i", &vts);
+        m_data = "polygon";
+      }
     }
     else if(xstate == kgmXml::XML_TAG_CLOSE)
     {
@@ -604,28 +634,70 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("id", link);
 
-        //if(node && node->visual())
-        //  node->visual()->set(m_game->getResources()->getMesh(link));
-      }
-      else if(id == "Particles")
-      {
-        kgmString value;
-
-        if(ntype == "visual")
+        if (m_xml->hasattr("link"))
         {
-          kgmParticles* pts = new kgmParticles();
-          m_xml->attribute("count", value); pts->count(kgmConvert::toInteger(value));
-          m_xml->attribute("fade", value); pts->fade(kgmConvert::toInteger(value));
-          m_xml->attribute("loop", value); pts->loop(kgmConvert::toInteger(value));
-          m_xml->attribute("angle", value); pts->angle(kgmConvert::toDouble(value));
-          m_xml->attribute("speed", value); pts->speed(kgmConvert::toDouble(value));
-          m_xml->attribute("divspeed", value); pts->divspeed(kgmConvert::toDouble(value));
-          m_xml->attribute("life", value); pts->life(kgmConvert::toDouble(value));
-          m_xml->attribute("divlife", value); pts->divlife(kgmConvert::toDouble(value));
-          m_xml->attribute("size", value); pts->size(kgmConvert::toDouble(value));
-          m_xml->attribute("esize", value); pts->esize(kgmConvert::toDouble(value));
-          pts->build();
-          //node->visual()->set(pts);
+          kgmString v;
+
+          m_xml->attribute("link", v);
+
+          kgmMesh* mesh =  m_game->getResources()->getMesh(v);
+
+          if (mesh && node)
+            node->set(mesh);
+        }
+      }
+      else if(id == "PrData")
+      {
+        kgmParticles* p = (kgmParticles* ) node->getNodeObject();
+
+        if (m_xml->hasattr("count")) {
+          xmlAttr(m_xml, "count", vint);
+          p->count(vint);
+        }
+
+        if (m_xml->hasattr("speed")) {
+          xmlAttr(m_xml, "count", vfloat);
+          p->speed(vfloat);
+        }
+
+        if (m_xml->hasattr("life")) {
+          xmlAttr(m_xml, "life", vfloat);
+          p->life(vfloat);
+        }
+
+        if (m_xml->hasattr("dlife")) {
+          xmlAttr(m_xml, "dlife", vfloat);
+          p->divlife(vfloat);
+        }
+
+        if (m_xml->hasattr("size")) {
+          xmlAttr(m_xml, "size", vfloat);
+          p->size(vfloat);
+        }
+
+        if (m_xml->hasattr("dsize")) {
+          xmlAttr(m_xml, "dsize", vfloat);
+          p->esize(vfloat);
+        }
+
+        if (m_xml->hasattr("mass")) {
+          xmlAttr(m_xml, "mass", vfloat);
+          p->mass(vfloat);
+        }
+
+        if (m_xml->hasattr("gravity")) {
+          xmlAttr(m_xml, "gravity", vint);
+          p->gravity((vint != 0));
+        }
+
+        if (m_xml->hasattr("direction")) {
+          xmlAttr(m_xml, "direction", vfloat3);
+          p->direction(vfloat3);
+        }
+
+        if (m_xml->hasattr("volume")) {
+          xmlAttr(m_xml, "volume", vfloat3);
+          p->volume(vfloat3);
         }
       }
       else if(id == "Material")
@@ -656,7 +728,6 @@ kgmUnit* kgmGameMap::next()
         if(ntype == "gobject")
           ((kgmUnit*)node)->setParameter(name, value);
       }
-      /*
       else if(id == "Triangle")
       {
         kgmString ta, tb, tc;
@@ -670,23 +741,8 @@ kgmUnit* kgmGameMap::next()
         sscanf(tb.data(), "%f %f %f", &vb.x, &vb.y, &vb.z);
         sscanf(tc.data(), "%f %f %f", &vc.x, &vc.y, &vc.z);
 
-        if(node.obj)
-          ((kgmObstacle*)node.obj)->add(va, vb, vc);
-      }
-      */
-      else if(id == "Visual")
-      {
-        kgmString value;
-
-        m_xml->attribute("material", value);
-
-        //if (node && value.length() > 0 && node->visual())
-        //  node->visual()->set(kgmIGame::getGame()->getResources()->getMaterial(value));
-
-        m_xml->attribute("mesh", value);
-
-        //if(node && value.length() > 0 && node->visual())
-        //  node->visual()->set(kgmIGame::getGame()->getResources()->getMesh(value));
+        //if(node.obj)
+          //((kgmObstacle*)node.obj)->add(va, vb, vc);
       }
       else if(id == "Action")
       {
@@ -709,6 +765,44 @@ kgmUnit* kgmGameMap::next()
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
     {
+      if(m_data == "vertices")
+      {
+        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+
+        s32 n = 0;
+        s8* pdata = m_xml->m_tagData.data();
+        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)m->vertices();
+
+        for (u32 i = 0; i < m->vcount(); i++) {
+          sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
+                 &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
+                 &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
+                 &v[i].uv.x, &v[i].uv.y, &n);
+          v[i].col = 0xffffffff;
+          (pdata) += (u32)n;
+        }
+
+        m_data = "";
+      }
+      else if(m_data == "faces")
+      {
+        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+
+        s32 n = 0;
+        s8* pdata = m_xml->m_tagData.data();
+        kgmMesh::Face_16* f = (kgmMesh::Face_16*)m->faces();
+
+        for (u32 i = 0; i < m->fcount(); i++) {
+          u32 fs[4];
+          sscanf(pdata, "%i %i %i %n", &fs[0], &fs[1], &fs[2], &n);
+          f[i].f[0] = fs[0];
+          f[i].f[1] = fs[1];
+          f[i].f[2] = fs[2];
+          (pdata) += (u32)n;
+        }
+
+        m_data = "";
+      }
     }
   }
 

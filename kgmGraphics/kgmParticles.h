@@ -42,7 +42,7 @@ public:
   color      m_color;
 
   vec3       force;
-  vec3       volume;
+  vec3       m_volume;
 
   u32        time_start;
   u32        time_update;
@@ -56,6 +56,7 @@ private:
 
   bool       m_loop;
   bool       m_fade;
+  bool       m_gravity;
 
   float      m_life;
   float      m_mass;
@@ -65,6 +66,8 @@ private:
   float      m_angle;
   float      m_divlife;
   float      m_divspeed;
+
+  vec3       m_direction;
 
   kgmMesh*    m_mesh   = null;
   kgmCamera*  m_camera = null;
@@ -104,6 +107,16 @@ public:
   void fade(bool f)
   {
     m_fade = f;
+  }
+
+  bool gravity() const
+  {
+    return m_gravity;
+  }
+
+  void gravity(bool f)
+  {
+    m_gravity = f;
   }
 
   f32 life() const
@@ -190,6 +203,26 @@ public:
     else if(s < 0.0f) s = 0.0f;
 
     m_divspeed = s;
+  }
+
+  vec3 direction() const
+  {
+    return m_direction;
+  }
+
+  void direction(vec3 v)
+  {
+    m_direction = v;
+  }
+
+  vec3 volume() const
+  {
+    return m_volume;
+  }
+
+  void volume(vec3 v)
+  {
+    m_volume = v;
   }
 
   void camera(kgmCamera* c)

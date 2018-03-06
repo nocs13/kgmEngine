@@ -30,7 +30,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmMesh* msh)
 
   m_game = g;
 
-  m_object = msh;
+  m_mesh = msh;
 
   m_valid   = true;
   m_remove  = false;
@@ -94,6 +94,27 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmObstacle* obs)
   m_game = g;
 
   m_obstacle = obs;
+
+  m_valid   = true;
+  m_remove  = false;
+  m_culled  = false;
+  m_visible = true;
+
+  m_position   = vec3(0, 0, 0);
+  m_rotation   = vec3(0, 0, 0);
+  m_quaternion = quat(0, 0, 0, 1);
+
+  m_birth   = kgmTime::getTicks();
+  m_living  = -1;
+}
+
+kgmUnit::kgmUnit(kgmIGame* g, kgmParticles* par)
+{
+  m_type = Particles;
+
+  m_game = g;
+
+  m_particles = par;
 
   m_valid   = true;
   m_remove  = false;

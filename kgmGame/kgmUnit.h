@@ -29,7 +29,8 @@ public:
     Effect,
     Sensor,
     Trigger,
-    Obstacle
+    Obstacle,
+    Particles
   };
 
   struct Action;
@@ -74,10 +75,11 @@ protected:
   {
     kgmObject*   m_object = null;
 
-    kgmLight*    m_light;
-    kgmCamera*   m_camera;
-    //kgmVisual*   m_visual;
-    kgmObstacle* m_obstacle;
+    kgmMesh*      m_mesh;
+    kgmLight*     m_light;
+    kgmCamera*    m_camera;
+    kgmObstacle*  m_obstacle;
+    kgmParticles* m_particles;
   };
 
   kgmBody* m_body   = null;
@@ -117,6 +119,7 @@ public:
   kgmUnit(kgmIGame* g, kgmCamera* cam);
   kgmUnit(kgmIGame* g, kgmVisual* vis);
   kgmUnit(kgmIGame* g, kgmObstacle* obs);
+  kgmUnit(kgmIGame* g, kgmParticles* prt);
   ~kgmUnit();
 
   virtual void init()
@@ -141,6 +144,18 @@ public:
   mtx4                   getNodeTransform();
   kgmMaterial*           getNodeMaterial();
   void                   setNodeMaterial(kgmMaterial*);
+
+  void set(kgmMesh* m)
+  {
+    if (m && m_type == Mesh)
+      m_mesh = m;
+  }
+
+  void set(kgmMaterial* m)
+  {
+    if (m)
+      m_material = m;
+  }
 
 private:
   virtual void clear()

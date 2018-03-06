@@ -23,7 +23,7 @@ kgmParticles::kgmParticles()
   m_loop  = true;
 
   force  = vec3(0, 0, 0);
-  volume = vec3(0, 0, 0);
+  m_volume = vec3(0, 0, 0);
 
   m_divlife     = 0.5f;
   m_divspeed    = 0.5f;
@@ -92,9 +92,9 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  pr->pos.x = 0.5f * volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
-  pr->pos.y = 0.5f * volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
-  pr->pos.z = 0.5f * volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->pos.x = 0.5f * m_volume.x * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->pos.y = 0.5f * m_volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
+  pr->pos.z = 0.5f * m_volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
 
   float neg1 = pow(-1.0, rand() % 2);
   float neg2 = pow(-1.0, rand() % 2);

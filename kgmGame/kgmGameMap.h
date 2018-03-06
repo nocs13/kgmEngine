@@ -75,6 +75,62 @@ private:
   void addTriangle(kgmXml::Node& xnode, triangle3& tr);
   void addParameter(kgmXml::Node& xnode, kgmVariable& param);
   void addParameters(kgmXml::Node& xnode, kgmList<kgmVariable>& params);
+
+  //
+
+  void xmlAttr(kgmXml* node, kgmString id, kgmString& val)
+  {
+    if(node->hasattr(id))
+      node->attribute(id, val);
+  }
+
+  void xmlAttr(kgmXml* node, kgmString id, s32& val)
+  {
+    kgmString v;
+
+    if(node->hasattr(id))
+    {
+      node->attribute(id, v);
+      val = atoi(v.data());
+    }
+  }
+
+  void xmlAttr(kgmXml* node, kgmString id, f32& val)
+  {
+    kgmString v;
+
+    if(node->hasattr(id))
+    {
+      node->attribute(id, v);
+      val = atof(v.data());
+    }
+  }
+
+  void xmlAttr(kgmXml* node, kgmString id, vec3& val)
+  {
+    kgmString v;
+    float     a[3];
+
+    if(node->hasattr(id))
+    {
+      node->attribute(id, v);
+      sscanf(v.data(), "%f %f %f", &a[0], &a[1], &a[2]);
+      val = vec3(a[0], a[1], a[2]);
+    }
+  }
+
+  void xmlAttr(kgmXml* node, kgmString id, quat& val)
+  {
+    kgmString v;
+    float     a[4];
+
+    if(node->hasattr(id))
+    {
+      node->attribute(id, v);
+      sscanf(v.data(), "%f %f %f %f", &a[0], &a[1], &a[2], &a[3]);
+      val = quat(a[0], a[1], a[2], a[3]);
+    }
+  }
 };
 
 #endif // KGMGAMEMAP_H
