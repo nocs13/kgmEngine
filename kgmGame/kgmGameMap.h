@@ -16,6 +16,7 @@
 #include "kgmTrigger.h"
 
 class kgmIGame;
+class kgmGameBase;
 
 class kgmGameMap : public kgmObject
 {
@@ -39,10 +40,10 @@ private:
   kgmXml*         m_xml;
   kgmMemory<u8>*  m_mem;
 
-  kgmIGame*       m_game;
+  kgmGameBase*    m_game;
 
 public:
-  kgmGameMap(kgmIGame* g, OpenType ot = OpenRead);
+  kgmGameMap(kgmGameBase* g, OpenType ot = OpenRead);
   ~kgmGameMap()
   {
   }
@@ -77,6 +78,8 @@ private:
   void addParameters(kgmXml::Node& xnode, kgmList<kgmVariable>& params);
 
   //
+
+  kgmMaterial* getGameMaterial(kgmString id);
 
   void xmlAttr(kgmXml* node, kgmString id, kgmString& val)
   {
@@ -116,6 +119,19 @@ private:
       node->attribute(id, v);
       sscanf(v.data(), "%f %f %f", &a[0], &a[1], &a[2]);
       val = vec3(a[0], a[1], a[2]);
+    }
+  }
+
+  void xmlAttr(kgmXml* node, kgmString id, vec4& val)
+  {
+    kgmString v;
+    float     a[4];
+
+    if(node->hasattr(id))
+    {
+      node->attribute(id, v);
+      sscanf(v.data(), "%f %f %f %f", &a[0], &a[1], &a[2], &a[3]);
+      val = vec4(a[0], a[1], a[2], a[3]);
     }
   }
 

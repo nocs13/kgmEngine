@@ -4,9 +4,10 @@
 
 #include "kgmIGame.h"
 #include "kgmILogic.h"
+#include "kgmGameBase.h"
 #include "kgmGameResources.h"
 
-kgmGameMap::kgmGameMap(kgmIGame* g, OpenType ot)
+kgmGameMap::kgmGameMap(kgmGameBase* g, OpenType ot)
 {
   m_game = g;
   m_type = ot;
@@ -390,13 +391,17 @@ bool kgmGameMap::addUnit(kgmUnit* n)
 
 kgmUnit* kgmGameMap::next()
 {
-  kgmUnit* node = null;
+  kgmUnit*   node = null;
+  kgmObject* data = null;
+
 
   bool closed   = true;
 
-  s32  vint;
-  f32  vfloat;
-  vec3 vfloat3;
+  s32       vint;
+  f32       vfloat;
+  vec3      vfloat3;
+  vec4      vfloat4;
+  kgmString vtext;
 
   kgmString m_data = "";
 
@@ -407,7 +412,7 @@ kgmUnit* kgmGameMap::next()
   while(kgmXml::XmlState xstate = m_xml->next())
   {
 
-    kgmString id, value, t;
+    kgmString id, value;
     kgmString ntype;
 
     if(xstate == kgmXml::XML_ERROR)
@@ -431,20 +436,50 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("name", id);
         m_xml->attribute("fov",  fov);
 
-        node = new kgmUnit(m_game, new kgmCamera);
+        kgmCamera* c = new kgmCamera;
+
+        m_game->m_objects.add(c);
+
+        data = c;
+
+        node = new kgmUnit(m_game, c);
+
         node->setName(id);
         node->camera()->mFov = kgmConvert::toDouble(fov);
 
         closed = false;
       }
-      else if (id == "Mesh")
+      else if (id == "Material")
       {
-        ntype = "Mesh";
+        ntype = "material";
 
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmUnit(m_game, new kgmMesh());
+        kgmMaterial* m = new kgmMaterial;
+
+        m_game->m_objects.add(m);
+
+        m->setId(id);
+
+        data = m;
+
+        closed = false;
+      }
+      else if (id == "Mesh")
+      {
+        ntype = "mesh";
+
+        kgmString id;
+        m_xml->attribute("name", id);
+
+        kgmMesh* m = new kgmMesh;
+
+        m_game->m_objects.add(m);
+
+        data = m;
+
+        node = new kgmUnit(m_game, m);
 
         node->setName(id);
 
@@ -457,7 +492,13 @@ kgmUnit* kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmUnit(m_game, new kgmLight);
+        kgmLight* l = new kgmLight;
+
+        m_game->m_objects.add(l);
+
+        data = l;
+
+        node = new kgmUnit(m_game, l);
 
         node->setName(id);
 
@@ -472,6 +513,8 @@ kgmUnit* kgmGameMap::next()
 
         node = new kgmUnit(m_game);
         node->setName(id);
+
+        data = null;
 
         closed = false;
       }
@@ -495,6 +538,8 @@ kgmUnit* kgmGameMap::next()
         if(plr == "on")
           ((kgmActor*)node)->m_gameplayer = true;
 
+        data = null;
+
         closed = false;
       }
       else if(id == "Effect")
@@ -508,6 +553,8 @@ kgmUnit* kgmGameMap::next()
         node = new kgmEffect(m_game);
 
         node->setName(id);
+
+        data = null;
 
         closed = false;
       }
@@ -523,6 +570,8 @@ kgmUnit* kgmGameMap::next()
         node = new kgmSensor(m_game);
 
         node->setName(id);
+
+        data = null;
 
         closed = false;
       }
@@ -541,6 +590,8 @@ kgmUnit* kgmGameMap::next()
         ((kgmTrigger*)node)->setCount(kgmConvert::toInteger(chn));
         ((kgmTrigger*)node)->setTarget(trg);
 
+        data = null;
+
         closed = false;
       }
       else if(id == "Obstacle")
@@ -550,7 +601,13 @@ kgmUnit* kgmGameMap::next()
         kgmString id;
         m_xml->attribute("name", id);
 
-        node = new kgmUnit(m_game, new kgmObstacle());
+        kgmObstacle* o = new kgmObstacle;
+
+        m_game->m_objects.add(o);
+
+        data = o;
+
+        node = new kgmUnit(m_game, o);
         node->setName(id);
 
         closed = false;
@@ -563,7 +620,13 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("name", id);
         m_xml->attribute("material", mtl);
 
-        node = new kgmUnit(m_game, new kgmParticles());
+        kgmParticles* p = new kgmParticles;
+
+        m_game->m_objects.add(p);
+
+        data = p;
+
+        node = new kgmUnit(m_game, p);
         node->setName(id);
 
         closed = false;
@@ -627,6 +690,49 @@ kgmUnit* kgmGameMap::next()
         sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
 
         node->quaternion(q);
+      }
+      else if(id == "Color")
+      {
+        xmlAttr(m_xml, "value", vfloat4);
+        ((kgmMaterial*)data)->m_color = kgmMaterial::Color(vfloat4.x, vfloat4.x, vfloat4.x, vfloat4.w);
+      }
+      else if(id == "Specular")
+      {
+        xmlAttr(m_xml, "value", vfloat4);
+        ((kgmMaterial*)data)->m_specular = kgmMaterial::Color(vfloat4.x, vfloat4.x, vfloat4.x, vfloat4.w);
+      }
+      else if(id == "Shininess")
+      {
+        xmlAttr(m_xml, "value", vfloat);
+        ((kgmMaterial*)data)->shininess(vfloat);
+      }
+      else if(id == "Alpha")
+      {
+        xmlAttr(m_xml, "value", vfloat);
+        ((kgmMaterial*)data)->alpha(vfloat);
+      }
+      else if(id == "Cull")
+      {
+        xmlAttr(m_xml, "value", vint);
+        ((kgmMaterial*)data)->cull((vint != 0));
+      }
+      else if(id == "map_color")
+      {
+        xmlAttr(m_xml, "value", vtext);
+        ((kgmMaterial*)data)->setTexColor(m_game->getResources()->getTexture(vtext));
+      }
+      else if(id == "map_normal")
+      {
+        xmlAttr(m_xml, "value", vtext);
+        ((kgmMaterial*)data)->setTexNormal(m_game->getResources()->getTexture(vtext));
+      }
+      else if(id == "map_specular")
+      {
+        xmlAttr(m_xml, "value", vtext);
+        ((kgmMaterial*)data)->setTexSpecular(m_game->getResources()->getTexture(vtext));
+      }
+      else if(id == "Shader")
+      {
       }
       else if(id == "Mesh")
       {
@@ -706,8 +812,7 @@ kgmUnit* kgmGameMap::next()
 
         m_xml->attribute("name", link);
 
-        //if(node && node->visual())
-        //  node->visual()->set(m_game->getResources()->getMaterial(link));
+        node->setNodeMaterial(getGameMaterial(link));
       }
       else if(id == "Locked")
       {
@@ -725,8 +830,7 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("type",  type);
         m_xml->attribute("value", value);
 
-        if(ntype == "gobject")
-          ((kgmUnit*)node)->setParameter(name, value);
+        node->setParameter(name, value);
       }
       else if(id == "Triangle")
       {
@@ -807,6 +911,24 @@ kgmUnit* kgmGameMap::next()
   }
 
   return node;
+}
+
+kgmMaterial* kgmGameMap::getGameMaterial(kgmString id)
+{
+  for(kgmList<kgmObject*>::iterator i = m_game->m_objects.begin(); !i.end(); ++i)
+  {
+    kgmObject* o = (*i);
+
+    if (!strcmp("kgmMaterial", o->vClass()))
+    {
+      kgmMaterial* m = (kgmMaterial*)o;
+
+      if (m->id() == id)
+        return m;
+    }
+  }
+
+  return null;
 }
 
 void kgmGameMap::addCollision(kgmXml::Node& xnode, bool col)

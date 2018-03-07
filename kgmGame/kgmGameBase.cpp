@@ -560,11 +560,24 @@ int kgmGameBase::gLoad(kgmString s)
     }
 
     map.open(xml);
+
+    while(kgmUnit* u = map.next())
+    {
+      m_units.add(u);
+
+      m_logic->add(u);
+      m_graphics->add(u);
+    }
   }
 
-  if(m_logic)   m_logic->build();
-  if(m_graphics)  m_graphics->build();
-  if(m_physics) m_physics->build();
+  if(m_logic)
+    m_logic->build();
+
+  if(m_graphics)
+    m_graphics->build();
+
+  if(m_physics)
+    m_physics->build();
 
   m_state = State_Play;
 

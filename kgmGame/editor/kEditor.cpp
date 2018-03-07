@@ -424,7 +424,7 @@ bool kEditor::fdMapSave(kgmGuiFileDialog* fd)
 bool kEditor::mapSave(kgmString s)
 {
   kgmXml     xml;
-  kgmGameMap map(game, kgmGameMap::OpenWrite);
+  kgmGameMap map((kgmGameBase*)game, kgmGameMap::OpenWrite);
 
   map.open(xml);
 

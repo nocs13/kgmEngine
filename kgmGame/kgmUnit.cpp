@@ -134,9 +134,6 @@ kgmUnit::~kgmUnit()
   if(m_body)
     delete m_body;
 
-  //if(m_visual)
-  //  delete m_visual;
-
   if(m_remove)
     remove();
 }
