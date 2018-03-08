@@ -79,6 +79,7 @@ private:
 
   //
 
+  kgmMesh*     getGameMesh(kgmString id);
   kgmMaterial* getGameMaterial(kgmString id);
 
   void xmlAttr(kgmXml* node, kgmString id, kgmString& val)

@@ -149,6 +149,18 @@ public:
 
   void setShader(kgmShader* shader);
 
+  static u32 toRgba(float x, float y, float z)
+  {
+    return ( ((u8)(255. * x) << 0)  | ((u8)(255. * y) << 8) |
+             ((u8)(255. * z) << 16) | ((u8)(255.)     << 24) );
+  }
+
+  static u32 toRgba(float x, float y, float z, float w)
+  {
+    return ( ((u8)(255 * x) << 0)  | ((u8)(255 * y) << 8) |
+             ((u8)(255 * z) << 16) | ((u8)(255 * w) << 24) );
+  }
+
   kgmShader* getShader() const
   {
     return m_shader;

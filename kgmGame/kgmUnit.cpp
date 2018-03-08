@@ -205,8 +205,15 @@ kgmObject* kgmUnit::getNodeObject()
 
 kgmIGraphics::TypeNode kgmUnit::getNodeType()
 {
-  if (m_type == Mesh)
+  switch(m_type)
+  {
+  case Mesh:
     return kgmIGraphics::NodeMesh;
+  case  Light:
+    return kgmIGraphics::NodeLight;
+  case  Particles:
+    return kgmIGraphics::NodeParticles;
+  };
 
   return kgmIGraphics::NodeNone;
 }

@@ -35,7 +35,7 @@ bool kgmGameLogic::remove(kgmUnit* o)
   if(!o)
     return false;
 
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
     kgmUnit* u = (*i);
 
@@ -57,7 +57,7 @@ bool kgmGameLogic::remove(kgmUnit* o)
 
 bool kgmGameLogic::isValid(kgmUnit *go)
 {
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
     if(go == (*i))
       return true;
@@ -68,7 +68,7 @@ bool kgmGameLogic::isValid(kgmUnit *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
     kgmUnit* go = (*i);
     go->init();
@@ -81,7 +81,7 @@ void kgmGameLogic::update(u32 milliseconds)
 
   gcount = 0;
 
-  while(i != m_objects.end())
+  while(!i.end())
   {
     kgmUnit* go = (*i);
 

@@ -388,7 +388,7 @@ public:
 
     kgmTab<kgmString, ActionCallback>::iterator i;
 
-    for(i = g_list_action.begin(); i != g_list_action.end(); ++i)
+    for(i = g_list_action.begin(); !i.end(); ++i)
     {
       actions.add(i.key());
     }

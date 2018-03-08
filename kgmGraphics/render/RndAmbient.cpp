@@ -14,8 +14,6 @@ void RndAmbient::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  gr->m_a_light = gr->m_def_light;
-
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
@@ -36,8 +34,8 @@ void RndAmbient::render()
 
     gr->render(mtl);
 
-    //gr->render(gr->m_shaders[kgmShader::TypePhong]);
-    gr->render(gr->m_shaders[kgmShader::TypeToon]);
+    gr->render(gr->m_shaders[kgmShader::TypePhong]);
+    //gr->render(gr->m_shaders[kgmShader::TypeToon]);
 
     gr->render(msh);
 

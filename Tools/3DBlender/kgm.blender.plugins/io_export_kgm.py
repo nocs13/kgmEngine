@@ -725,7 +725,7 @@ class kgmParticles(kgmBaseObject):
     self.size    = ps.particle_size
     self.rsize   = ps.size_random
     self.mass    = ps.mass
-    self.dir     = [ps.object_align_factor[0], ps.object_align_factor[0], ps.object_align_factor[0]]
+    self.dir     = [ps.object_align_factor[0], ps.object_align_factor[1], ps.object_align_factor[2]]
     self.gravity = ps.effector_weights.gravity
     self.bound   = [o.dimensions.x, o.dimensions.y, o.dimensions.z]
 

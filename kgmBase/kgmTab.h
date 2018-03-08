@@ -78,7 +78,10 @@ public:
       if(index < object->base_size) {
         while(!object->root[index] && index < (object->base_size - 1))
           index++;
+
         _Ptr = object->root[index];
+
+        index++;
       }
     }
 
@@ -90,6 +93,19 @@ public:
     bool operator==(iterator i)
     {
       return (_Ptr == i._Ptr);
+    }
+
+    bool end()
+    {
+      return isEnd();
+    }
+
+    bool valid()
+    {
+      if (!object)
+        return false;
+
+      return true;
     }
 
     void erase()
@@ -123,7 +139,7 @@ public:
 
     bool isEnd()
     {
-      if(!_Ptr && index == (object->base_size - 1))
+      if(!_Ptr)
         return true;
 
       return false;
@@ -196,7 +212,7 @@ public:
   void set(Key key, Data data) {
     iterator i = get(key);
 
-    if (!i.isEnd()) {
+    if (i.valid()&&  !i.isEnd()) {
       i._Ptr->data = data;
 
       return;
@@ -238,7 +254,7 @@ public:
     u32 index = hash() % base_size;
 
     if(!root[index])
-      return end();
+      return iterator();
 
     _Node* n = root[index];
 
@@ -254,7 +270,7 @@ public:
       n = n->next;
     }
 
-    return end();
+    return iterator();
   }
 
   bool exist(Key key) {
@@ -291,16 +307,6 @@ public:
   iterator begin()
   {
     iterator i(this);
-
-    return i;
-  }
-
-  iterator end()
-  {
-    iterator i(this);
-
-    i.index = base_size - 1;
-    i._Ptr  = null;
 
     return i;
   }

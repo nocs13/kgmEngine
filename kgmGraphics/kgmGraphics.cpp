@@ -419,10 +419,7 @@ void kgmGraphics::render()
     if(!(*i)->isNodeValid())
       continue;
 
-    mtx4 m = (*i)->getNodeTransform();
-
-    vec3 pos(0, 0, 0);
-    pos = m * pos;
+    vec3 pos = (*i)->getNodePosition();
 
     kgmLight* l = (kgmLight*) (*i)->getNodeObject();
 
