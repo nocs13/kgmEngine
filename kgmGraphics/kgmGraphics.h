@@ -155,7 +155,7 @@ public:
 
   s32  getShaderId(kgmString);
 
-  void clean();
+  void clear();
 
   bool resource(kgmResource*);
   kgmResource* resource(kgmString);

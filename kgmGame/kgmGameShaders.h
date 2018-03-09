@@ -68,5 +68,5 @@ const char* end_pshader = "\n"
 "{\n"
 "    vec4 color;                     \n"
 "    kgm_main(color);                \n"
-"    gl_FragColor = v_color * color; \n"
+"    gl_FragColor = color; \n"
 "}";

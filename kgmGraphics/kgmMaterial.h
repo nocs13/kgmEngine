@@ -126,8 +126,6 @@ public:
   u32  m_type;
   u32  m_flags;
 
-  kgmString  m_name;
-
 public:
   kgmMaterial();
 
@@ -263,16 +261,6 @@ public:
   void dstblend(u32 s)
   {
     m_dstblend = s;
-  }
-
-  kgmString name() const
-  {
-    return m_name;
-  }
-
-  void name(kgmString n)
-  {
-    m_name = n;
   }
 
   static kgmString blendToString(u32 blend);

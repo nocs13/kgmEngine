@@ -216,7 +216,7 @@ bool kgmGameMap::addMesh(kgmUnit* n)
 
     if(mtl)
     {
-      node->m_attributes.add(new kgmXml::Attribute("material", mtl->name()));
+      node->m_attributes.add(new kgmXml::Attribute("material", mtl->id()));
     }
 
     addPosition(*node, n->position());
@@ -495,6 +495,15 @@ kgmUnit* kgmGameMap::next()
 
         node->setName(id);
 
+        if(m_xml->hasattr("material"))
+        {
+          kgmString v;
+
+          m_xml->attribute("material", v);
+
+          node->setNodeMaterial(getGameMaterial(v));
+        }
+
         closed = false;
       }
       else if(id == "Light")
@@ -708,14 +717,14 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vfloat3);
 
         if(ntype == "material")
-          ((kgmMaterial*)data)->m_color = kgmMaterial::Color(vfloat3.x, vfloat3.x, vfloat3.x, 1.0);
+          ((kgmMaterial*)data)->m_color = kgmMaterial::Color(vfloat3.x, vfloat3.y, vfloat3.z, 1.0);
         else if(ntype == "light")
-          ((kgmLight*)data)->color = kgmMaterial::toRgba(vfloat3.x, vfloat3.x, vfloat3.x);
+          ((kgmLight*)data)->color = kgmMaterial::toRgba(vfloat3.x, vfloat3.y, vfloat3.z);
       }
       else if(id == "Specular")
       {
         xmlAttr(m_xml, "value", vfloat3);
-        ((kgmMaterial*)data)->m_specular = kgmMaterial::Color(vfloat3.x, vfloat3.x, vfloat3.x, 1.0);
+        ((kgmMaterial*)data)->m_specular = kgmMaterial::Color(vfloat3.x, vfloat3.y, vfloat3.z, 1.0);
       }
       else if(id == "Shininess")
       {

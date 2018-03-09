@@ -264,7 +264,7 @@ void kgmGraphics::build()
 {
 }
 
-void kgmGraphics::clean()
+void kgmGraphics::clear()
 {
   for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
   {
@@ -272,6 +272,14 @@ void kgmGraphics::clean()
   }
 
   m_resources.clear();
+  m_meshes.clear();
+  m_lights.clear();
+  m_particles.clear();
+
+  m_a_light = m_def_light;
+
+  m_a_light_count  = 0;
+  m_a_meshes_count = 0;
 }
 
 bool kgmGraphics::resource(kgmResource* r)
@@ -432,7 +440,7 @@ void kgmGraphics::render()
       break;
   }
 
-  if (m_a_lights > 0)
+  if (m_a_light_count > 0)
     m_a_light = m_a_lights[0];
   else
     m_a_light = m_def_light;

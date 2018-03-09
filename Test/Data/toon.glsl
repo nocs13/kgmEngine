@@ -1,5 +1,7 @@
 varying vec3 L_Dir;
+varying vec3 L_Pos;
 varying vec3 Y_Dir;
+varying float shininess;
 
 void kgm_main(out vec4 pos)
 {
@@ -13,6 +15,8 @@ void kgm_main(out vec4 pos)
 
   Y_Dir = g_vEyeDir;
 
+  L_Pos = g_vLight.xyz;
+
   if (length(g_vLightDirection.xyz) == 0.0)
   {
     L_Dir = g_vLight.xyz - v_V.xyz;
@@ -24,33 +28,49 @@ void kgm_main(out vec4 pos)
 
   v_UV = a_UV;
 
+  shininess = g_fShine;
+
   pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
 
 //Fragment Shader
 varying vec3 L_Dir;
+varying vec3 L_Pos;
 varying vec3 Y_Dir;
+varying vec3  specular;
+varying float shininess;
 
 void kgm_main(out vec4 col)
 {
   float intensity;
   vec4 color;
+  vec3 specular = vec3(0, 0, 0);
 
   intensity = dot(normalize(L_Dir), normalize(v_N));
 
   if (intensity > 0.95)
-    color = vec4(1.0, 1.0, 1.0, 1.0);
+    intensity = 1.0;
   else if (intensity > 0.5)
-    color = vec4(0.6, 0.6, 0.6, 1.0);
+    intensity = 0.6;
   else if (intensity > 0.25)
-    color = vec4(0.4, 0.4, 0.4, 1.0);
+    intensity = 0.4;
   else
-    color = vec4(0.2, 0.2, 0.2, 1.0);
+    intensity = 0.2;
 
-  float contour = abs(dot(Y_Dir, v_N));
+  if (dot(v_N, L_Dir) >= 0.0)
+  {
+    vec3 L = normalize(L_Pos - v_V);
+    vec3 E = normalize(v_V);
+    vec3 R = normalize(reflect(L_Dir, v_N));
+    specular = v_specular.xyz * pow(max(dot(R, E), 0.0), shininess);
+    //specular = v_specular.xyz * pow(max(dot(v_N, -Y_Dir), 0.0), shininess);
 
-  if (contour < 0.3)
-    color = vec4(0.1, 0.1, 0.1, 1.0);
+    specular = clamp(specular, 0.0, 0.8);
+  }
+
+  color.xyz = intensity * v_color.xyz + specular;
+  color.xyz = clamp(color.xyz, 0.0, 1.0);
+  color.w   = v_color.w;
 
   col = color;
 }

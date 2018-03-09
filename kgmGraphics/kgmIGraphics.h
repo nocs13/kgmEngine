@@ -45,7 +45,7 @@ public:
   };
 
 public:
-  virtual void clean()  = 0;
+  virtual void clear()  = 0;
   virtual void render() = 0;
 
   virtual void render_3d() = 0;

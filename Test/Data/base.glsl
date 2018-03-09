@@ -12,5 +12,5 @@ varying vec4   PxColor;
 
 void kgm_main(out vec4 col)
 {
-  col = PxColor * texture2D(g_txColor, v_UV);
+  col = v_color * PxColor * texture2D(g_txColor, v_UV);
 }

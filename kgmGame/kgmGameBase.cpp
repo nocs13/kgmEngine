@@ -595,7 +595,7 @@ int kgmGameBase::gUnload()
     m_physics->clear();
 
   if(m_graphics)
-    m_graphics->clean();
+    m_graphics->clear();
 
   for(kgmList<kgmUnit*>::iterator i = m_units.begin(); !i.end(); ++i)
     delete (*i);

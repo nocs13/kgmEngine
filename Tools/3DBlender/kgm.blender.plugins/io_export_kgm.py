@@ -369,10 +369,9 @@ scene_materials = []
 class kgmMaterial:
   def __init__(self, mtl):
     self.name = mtl.name
-    self.diffuse = mtl.diffuse_color
-    self.emmision = [1.0, 1.0, 1.0]
+    self.diffuse  = mtl.diffuse_color
     self.specular = mtl.specular_color
-    self.shine = 1.0
+    self.shine = mtl.specular_intensity * mtl.specular_hardness
     self.alpha = mtl.alpha
     self.map_color = ''
     self.map_normal = ''
@@ -836,8 +835,6 @@ def export_material(file, o):
   file.write(" <Material name='" + o.name + "'>\n")
   file.write("  <Color value='" + str("%.5f" % o.diffuse[0]) + " " + str("%.5f" % o.diffuse[1]) + " " + str(
     "%.5f" % o.diffuse[2]) + "'/>\n")
-  file.write("  <Emmision value='" + str("%.5f" % o.emmision[0]) + " " + str("%.5f" % o.emmision[1]) + " " + str(
-    "%.5f" % o.emmision[2]) + "'/>\n")
   file.write("  <Specular value='" + str("%.5f" % o.specular[0]) + " " + str("%.5f" % o.specular[1]) + " " + str(
     "%.5f" % o.specular[2]) + "'/>\n")
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
@@ -964,15 +961,15 @@ def export_obstacle(file, o):
 
 def export_particles(file, o):
   file.write(" <Particles name='" + o.name + "' material='" + o.material + "'>\n")
-  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-  file.write("  <Rotation value='" + str(o.euler[0]) + " " + str(o.euler[1]) + " " + str(o.euler[2]) + "'/>\n")
-  file.write("  <PrData count='" + str(o.count) + "' speed='" + str(o.speed) + "'/>\n")
-  file.write("  <PrData life='" + str(o.life) + "' dlife='" + str(o.rlife) + "'/>\n")
+  file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str("%.5f" % o.euler[0]) + " " + str("%.5f" % o.euler[1]) + " " + str("%.5f" % o.euler[2]) + "'/>\n")
+  file.write("  <PrData count='" + str(o.count) + "' speed='" + str("%.5f" % o.speed) + "'/>\n")
+  file.write("  <PrData life='" + str("%.5f" % o.life) + "' dlife='" + str("%.5f" % o.rlife) + "'/>\n")
   file.write("  <PrData start='" + str(o.start) + "' stop='" + str(o.stop) + "'/>\n")
-  file.write("  <PrData size='" + str(o.size) + "' dsize='" + str(o.rsize) + "'/>\n")
-  file.write("  <PrData mass='" + str(o.mass) + "' gravity='" + str(o.gravity) + "'/>\n")
-  file.write("  <PrData direction='" + str(o.dir[0]) + " " + str(o.dir[1]) + " " + str(o.dir[2]) + "'/>\n")
-  file.write("  <PrData volume='" + str(o.bound[0]) + " " + str(o.bound[1]) + " " + str(o.bound[2]) + "'/>\n")
+  file.write("  <PrData size='" + str("%.5f" % o.size) + "' dsize='" + str("%.5f" % o.rsize) + "'/>\n")
+  file.write("  <PrData mass='" + str("%.5f" % o.mass) + "' gravity='" + str("%.5f" % o.gravity) + "'/>\n")
+  file.write("  <PrData direction='" + str("%.5f" % o.dir[0]) + " " + str("%.5f" % o.dir[1]) + " " + str("%.5f" % o.dir[2]) + "'/>\n")
+  file.write("  <PrData volume='" + str("%.5f" % o.bound[0]) + " " + str("%.5f" % o.bound[1]) + " " + str("%.5f" % o.bound[2]) + "'/>\n")
   file.write(" </Particles>\n")
 
 def export_kgmdummy(file, o):

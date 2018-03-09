@@ -171,6 +171,8 @@ void kEditor::clear()
   if(mode_play)
     onRunStop();
 
+  game->gUnload();
+
   oquered = 0;
 
   pv_delta = 0.0;
@@ -905,6 +907,8 @@ void kEditor::onMapOpen()
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forOpen(game->getSettings()->get((char*)"Data"));
+
+  slotMapOpen.reset();
   slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
 }
 
@@ -921,6 +925,8 @@ void kEditor::onMapSave()
   fdd->setFilter(".map");
   fdd->changeLocation(false);
   fdd->forSave(game->getSettings()->get((char*)"Path"));
+
+  slotMapOpen.reset();
   slotMapSave.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);
 }
 

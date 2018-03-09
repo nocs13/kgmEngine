@@ -243,8 +243,8 @@ kgmMaterial* kgmUnit::getNodeMaterial()
   return m_material;
 }
 
-void kgmUnit::setNodeMaterial(kgmMaterial*)
+void kgmUnit::setNodeMaterial(kgmMaterial* m)
 {
-
+  m_material = m;
 }
 
