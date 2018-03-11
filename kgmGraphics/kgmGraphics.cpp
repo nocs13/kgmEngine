@@ -480,7 +480,7 @@ void kgmGraphics::render()
   //draw particles
   gc->gcCull(gccull_back);
 
-  for(s32 i = 0; i < m_a_particles; i++)
+  for(s32 i = 0; i < m_a_particles.length(); i++)
   {
     kgmIGraphics::INode* np = m_a_particles[i];
 
