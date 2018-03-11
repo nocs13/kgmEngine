@@ -44,6 +44,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class IconRender;
   friend class SpriteRender;
   friend class LightRender;
+  friend class ColorRender;
   friend class RndAmbient;
 public:
 

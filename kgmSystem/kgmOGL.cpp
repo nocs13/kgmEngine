@@ -165,7 +165,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
     GLX_RED_SIZE, 4,
     GLX_GREEN_SIZE, 4,
     GLX_BLUE_SIZE, 4,
-    GLX_DEPTH_SIZE, 16,
+    GLX_DEPTH_SIZE, 24,
     None
   };
 
@@ -176,7 +176,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
                            GLX_RED_SIZE, 4,
                            GLX_GREEN_SIZE, 4,
                            GLX_BLUE_SIZE, 4,
-                           GLX_DEPTH_SIZE, 16,
+                           GLX_DEPTH_SIZE, 24,
                            None
                          };
 
@@ -311,6 +311,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   //init local values
   glEnable(GL_TEXTURE_2D);
 
+  glPolygonOffset (1.0f, 1.0f);
+
   m_renderbuffer = 0;
   m_lights       = 0;
 
@@ -395,10 +397,10 @@ void kgmOGL::gcSet(u32 param, void* value)
   switch(param)
   {
   case gcpar_blending:
-    //if(value)
-      //glEnable(GL_BLEND);
-    //else
-      //glDisable(GL_BLEND);
+    if(value)
+      glEnable(GL_BLEND);
+    else
+      glDisable(GL_BLEND);
     break;
   case gcpar_culling:
     if(value)

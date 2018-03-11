@@ -550,8 +550,10 @@ class kgmMesh:
         for j in range(0, len(face.vertices)):
           v = kgmVertex();
           vi = face.vertices[j]
-          c = mtx * mesh.vertices[vi].co
-          n = mtx.to_3x3() * face.normal
+          #c = mtx * mesh.vertices[vi].co
+          #n = mtx.to_3x3() * face.normal
+          c = mesh.vertices[vi].co
+          n = face.normal
           v.v = [c[0], c[1], c[2]]
           v.n = [n[0], n[1], n[2]]
           if self.hasvgroups == True:

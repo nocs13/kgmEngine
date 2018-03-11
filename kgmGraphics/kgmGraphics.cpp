@@ -24,6 +24,7 @@
 
 #include "render/RndAmbient.h"
 #include "render/LightRender.h"
+#include "render/ColorRender.h"
 
 #include <stdlib.h>
 
@@ -360,9 +361,9 @@ void kgmGraphics::setEditor(bool e)
 
 void kgmGraphics::resize(float width, float height)
 {
-  gc->gcSetViewport(0, 0, width, height, 1.0, 100000.0);
+  gc->gcSetViewport(0, 0, width, height, .1, 100.0);
 
-  m_camera->set(PI / 6, width / height, .1f, 100000.0,
+  m_camera->set(PI / 6, width / height, .1, 100.0,
                m_camera->mPos, m_camera->mDir, m_camera->mUp);
 
   m_camera->viewport((float)width, (float)height);
@@ -451,13 +452,17 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  RndAmbient  ar(this);
+  //RndAmbient  ar(this);
 
-  ar.render();
+  //ar.render();
 
   LightRender lr(this);
 
-  //lr.render();
+  lr.render();
+
+  ColorRender cr(this);
+
+  cr.render();
 
   // Draw alpha objects.
 
@@ -474,6 +479,13 @@ void kgmGraphics::render()
 
   //draw particles
   gc->gcCull(gccull_back);
+
+  for(s32 i = 0; i < m_a_particles; i++)
+  {
+    kgmIGraphics::INode* np = m_a_particles[i];
+
+
+  }
 
 #ifndef NO_SHADERS
 
@@ -654,7 +666,7 @@ void kgmGraphics::render(kgmMaterial* m)
 
     if(!m_depth)
     {
-      gc->gcDepth(true, true, gccmp_lequal);
+      //gc->gcDepth(true, true, gccmp_lequal);
       m_depth = true;
     }
 

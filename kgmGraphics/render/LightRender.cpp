@@ -14,33 +14,48 @@ LightRender::LightRender(kgmGraphics* g)
 
 void LightRender::render()
 {
-  gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+  mtx4 m4_identity;
+  m4_identity.identity();
 
-  kgmShader* s = gr->m_shaders[kgmShader::TypePhong];
+  gr->setWorldMatrix(m4_identity);
 
-  for(u32 il = 1; il < gr->m_a_light_count; il++)
+  for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
-    kgmIGraphics::INode* light = gr->m_a_lights[il];
+    kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
-    for(u32 im = 0; im < gr->m_a_meshes_count; im++)
+    box3    bbound = nod->getNodeBound();
+    sphere3 sbound;
+
+    bbound.min = nod->getNodeTransform() * bbound.min;
+    bbound.max = nod->getNodeTransform() * bbound.max;
+
+    sbound.center = bbound.center();
+    sbound.radius = 0.5f * bbound.dimension().length();
+
+    mtx4 m = nod->getNodeTransform();
+    gr->setWorldMatrix(m);
+
+    gr->render(mtl);
+
+    for(s32 j = 0; j < gr->m_a_light_count; j++)
     {
-      kgmIGraphics::INode* mesh = gr->m_a_meshes[il];
+      gr->m_a_light = gr->m_a_lights[j];
 
-      mtx4 m = mesh->getNodeTransform();
+      if(j > 0)
+        gc->gcBlend(true, gcblend_one, gcblend_one);
 
-      gr->render(mesh->getNodeMaterial());
+      gr->render(gr->m_shaders[kgmShader::TypePhong]);
+      //gr->render(gr->m_shaders[kgmShader::TypeToon]);
 
-      gr->setWorldMatrix(m);
-
-      gr->m_a_light = light;
-
-      gr->render(s);
-
-      gr->render((kgmMesh*)mesh->getNodeObject());
+      gr->render(msh);
     }
+
+    gr->render(mtl);
   }
 
-  gc->gcBlend(false, null, null);
+    gc->gcBlend(false, null, null);
 }
 
 /*

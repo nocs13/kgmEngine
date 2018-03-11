@@ -152,7 +152,7 @@ u32 kgmUnit::timeout()
   return (kgmTime::getTicks() - m_birth);
 }
 
-void kgmUnit::update(u32 mls)
+void kgmUnit::update(u32 ms)
 {
   if(removed())
     return;
@@ -192,10 +192,16 @@ void kgmUnit::update(u32 mls)
 
       tm = rt * tr;
     }
-
-    //m_visual->getTransform() = tm;
-    //m_visual->update();
   }
+
+  if (m_type == Particles && m_particles)
+    m_particles->update(ms);
+}
+
+void kgmUnit::init()
+{
+  if (m_type == Particles && m_particles)
+    m_particles->build();
 }
 
 kgmObject* kgmUnit::getNodeObject()

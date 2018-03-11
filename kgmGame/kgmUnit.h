@@ -122,8 +122,7 @@ public:
   kgmUnit(kgmIGame* g, kgmParticles* prt);
   ~kgmUnit();
 
-  virtual void init()
-  { }
+  virtual void init();
 
   virtual void exit()
   { }
