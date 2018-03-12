@@ -22,9 +22,9 @@
 #include "kgmCamera.h"
 #include "kgmNodeLight.h"
 
-#include "render/RndAmbient.h"
 #include "render/LightRender.h"
 #include "render/ColorRender.h"
+#include "render/ParticlesRender.h"
 
 #include <stdlib.h>
 
@@ -228,6 +228,7 @@ kgmGraphics::~kgmGraphics()
   delete m_r_sprite;
 
 
+  m_particles.clear();
   m_meshes.clear();
   m_lights.clear();
   m_icons.clear();
@@ -446,6 +447,20 @@ void kgmGraphics::render()
   else
     m_a_light = m_def_light;
 
+  m_a_particles_count = 0;
+
+  for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
+  {
+    if(!(*i)->isNodeValid())
+      continue;
+
+    if (m_a_particles_count == m_a_particles.length())
+      m_a_particles.realloc(m_a_particles_count + 1024);
+
+    m_a_particles[m_a_particles_count] = (*i);
+    m_a_particles_count++;
+  }
+
   //I pass: draw scene only lights
 
   render((kgmMaterial*)null);
@@ -480,12 +495,10 @@ void kgmGraphics::render()
   //draw particles
   gc->gcCull(gccull_back);
 
-  for(s32 i = 0; i < m_a_particles.length(); i++)
-  {
-    kgmIGraphics::INode* np = m_a_particles[i];
+  ParticlesRender pr(this);
 
+  pr.render();
 
-  }
 
 #ifndef NO_SHADERS
 

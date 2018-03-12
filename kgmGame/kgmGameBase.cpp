@@ -152,11 +152,7 @@ kgmGameBase::kgmGameBase(bool edit)
 
   m_state    = State_Idle;
 
-  /*m_islogic = true;
-  m_isphysics = true;
-  m_thLogic.exec((int (*)(void*))doLogic, this);
-  m_thPhysics.exec((int (*)(void*))doPhysics, this);*/
-
+  //m_threader_1.
   kgmGuiActions::register_actions();
   kgmBaseActions::register_actions();
 
@@ -371,9 +367,6 @@ void kgmGameBase::onIdle()
   {
   case State_Play:
   case State_Edit:
-      m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
-      m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
-      m_threader_1.ready();
     break;
   }
 
@@ -624,6 +617,19 @@ int kgmGameBase::gQuit()
 
 int kgmGameBase::gSwitch(u32 state)
 {
+  switch(state)
+  {
+  case State_Play:
+    m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
+    m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
+    m_threader_1.ready();
+    break;
+  case State_Pause:
+    m_threader_1.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic);
+    m_threader_1.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
+    m_threader_1.ready();
+    break;
+  }
   m_state = state;
 
   return m_state;
@@ -637,7 +643,8 @@ int kgmGameBase::gButton(game_button gb)
   return m_input[(int)gb];
 }
 
-u32 kgmGameBase::gState(){
+u32 kgmGameBase::gState()
+{
   return m_state;
 }
 
@@ -1504,12 +1511,8 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
 int kgmGameBase::doLogic(kgmGameBase* g)
 {
-  //while(g->m_islogic && g->m_logic)
-  {
-    u32 fps = 1 + g->m_fps;
-    g->m_logic->update(1000 / fps);
-    //kgmThread::sleep(0);
-  }
+  u32 fps = 1 + g->m_fps;
+  g->m_logic->update(1000 / fps);
 
   return 1;
 }

@@ -890,9 +890,9 @@ kgmUnit* kgmGameMap::next()
         if(node)
           ((kgmUnit*)node)->action(value);
       }
-      else if((id == "Visual") || (id == "Light")  || (id == "Effect")  ||
-              (id == "Actor")  || (id == "Sensor") || (id == "Trigger") ||
-              (id == "Unit")   || (id == "Camera") || (id == "Obstacle") ||
+      else if((id == "Particles") || (id == "Light")  || (id == "Effect") ||
+              (id == "Actor")  || (id == "Sensor") || (id == "Trigger")   ||
+              (id == "Unit")   || (id == "Camera") || (id == "Obstacle")  ||
               (id == "Material") || (id == "Mesh"))
       {
         closed = true;

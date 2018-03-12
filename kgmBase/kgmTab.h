@@ -212,7 +212,7 @@ public:
   void set(Key key, Data data) {
     iterator i = get(key);
 
-    if (i.valid()&&  !i.isEnd()) {
+    if (i.valid() && !i.isEnd()) {
       i._Ptr->data = data;
 
       return;

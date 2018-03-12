@@ -45,6 +45,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class SpriteRender;
   friend class LightRender;
   friend class ColorRender;
+  friend class ParticlesRender;
   friend class RndAmbient;
 public:
 
@@ -92,10 +93,11 @@ protected:
   kgmArray<INode*> m_a_meshes;
   kgmArray<INode*> m_a_particles;
 
-  u32              m_a_meshes_count;
+  u32  m_a_meshes_count    = 0;
+  u32  m_a_light_count     = 0;
+  u32  m_a_particles_count = 0;
 
   INode*           m_a_light       = null;
-  u32              m_a_light_count = 0;
 
   INode*           m_def_light;
 

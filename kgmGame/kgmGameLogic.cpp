@@ -14,7 +14,6 @@ kgmGameLogic::~kgmGameLogic()
 void kgmGameLogic::clear()
 {
   m_objects.clear();
-  m_maps.clear();
 }
 
 bool kgmGameLogic::add(kgmUnit* u)
@@ -23,7 +22,6 @@ bool kgmGameLogic::add(kgmUnit* u)
     return false;
 
   m_objects.set(u->getName(), u);
-  m_maps.set(u->getName(), u);
 
   u->init();
 
@@ -68,11 +66,11 @@ bool kgmGameLogic::isValid(kgmUnit *go)
 
 void kgmGameLogic::build()
 {
-  for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  /*for(kgmTab<kgmString, kgmUnit*>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
     kgmUnit* go = (*i);
     go->init();
-  }
+  }*/
 }
 
 void kgmGameLogic::update(u32 milliseconds)

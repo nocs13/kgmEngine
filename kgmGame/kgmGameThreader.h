@@ -12,7 +12,7 @@ public:
 
 private:
 
-#define MAX_THREADERS 128
+#define MAX_THREADERS 32
 
   struct Threader
   {
@@ -20,11 +20,8 @@ private:
     void*             object;
   };
 
-  bool m_ready  = false;
   bool m_locked = false;
   bool m_active = true;
-
-  u32  m_count = 0;
 
   Threader m_threaders[MAX_THREADERS];
 
@@ -41,6 +38,8 @@ public:
   }
 
   bool add(THREADER_FUNCTION fn, void* obj);
+  bool remove(THREADER_FUNCTION fn);
+
   void ready();
   bool finish();
 

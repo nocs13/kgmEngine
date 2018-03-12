@@ -18,7 +18,7 @@ class kgmGameLogic : public kgmILogic, public kgmObject
 
 public:
   kgmTab<kgmString, kgmUnit*> m_objects;
-  kgmMap<kgmString, kgmUnit*> m_maps;
+  //kgmMap<kgmString, kgmUnit*> m_maps;
 
   s32 gcount;
 

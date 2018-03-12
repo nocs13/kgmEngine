@@ -1194,6 +1194,8 @@ void kEditor::onRunPlay()
     return;
 
   mode_play = true;
+
+  game->gSwitch(kgmIGame::State_Play);
 }
 
 void kEditor::onRunStop()
@@ -1202,6 +1204,8 @@ void kEditor::onRunStop()
     return;
 
   mode_play = false;
+
+  game->gSwitch(kgmIGame::State_Pause);
 }
 
 void kEditor::onViewObjects()

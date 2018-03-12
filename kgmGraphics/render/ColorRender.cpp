@@ -33,9 +33,9 @@ void ColorRender::render()
 
     mtx4 m = nod->getNodeTransform();
 
-    m.m[0]  *= 1.001f;
-    m.m[5]  *= 1.001f;
-    m.m[10] *= 1.001f;
+    m.m[0]  *= 1.000001f;
+    m.m[5]  *= 1.000001f;
+    m.m[10] *= 1.000001f;
 
     gr->setWorldMatrix(m);
 

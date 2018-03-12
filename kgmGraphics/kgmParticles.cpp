@@ -177,9 +177,12 @@ void kgmParticles::update(u32 t)
   {
     kgmMesh::Vertex_P_C_T* parts = (kgmMesh::Vertex_P_C_T*)m_mesh->vertices();
 
-    if(m_typerender == RTypeBillboard && m_camera)
+    if(m_typerender == RTypeBillboard)
     {
       vec3    rv, uv;
+
+      if (!m_camera)
+        return;
 
       rv = vec3(m_camera->mView.m[0], m_camera->mView.m[2], m_camera->mView.m[1]);
       rv.normalize();
