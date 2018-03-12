@@ -2,23 +2,29 @@
 
 kgmGameThreader::kgmGameThreader()
 {
-  m_locked = false;
   m_active = true;
 
   memset(m_threaders, 0, sizeof(m_threaders));
 
   m_thread = kgmThread::thread_create(kgmGameThreader::threader, this);
+  m_mutex  = kgmThread::mutex_create();
 }
 
 kgmGameThreader::~kgmGameThreader()
 {
   finish();
+
+  kgmThread::mutex_free(m_mutex);
 }
 
 bool kgmGameThreader::add(THREADER_FUNCTION fn, void *obj)
 {
-  if(!fn || locked())
+  if(!fn)
     return false;
+
+  kgmThread::mutex_lock(m_mutex);
+
+  bool result = false;
 
   for (s32 i = 0; i < MAX_THREADERS; i++)
   {
@@ -26,17 +32,23 @@ bool kgmGameThreader::add(THREADER_FUNCTION fn, void *obj)
     {
       m_threaders[i] = {fn, obj};
 
-      return true;
+      result = true;
     }
   }
 
-  return false;
+  kgmThread::mutex_unlock(m_mutex);
+
+  return result;
 }
 
 bool kgmGameThreader::remove(THREADER_FUNCTION fn)
 {
-  if(!fn || locked())
+  if(!fn)
     return false;
+
+  kgmThread::mutex_lock(m_mutex);
+
+  bool result = false;
 
   for (s32 i = 0; i < MAX_THREADERS; i++)
   {
@@ -44,11 +56,13 @@ bool kgmGameThreader::remove(THREADER_FUNCTION fn)
     {
       m_threaders[i] = {null, null};
 
-      return true;
+      result = true;
     }
   }
 
-  return false;
+  kgmThread::mutex_unlock(m_mutex);
+
+  return result;
 }
 
 bool kgmGameThreader::finish()
@@ -57,11 +71,6 @@ bool kgmGameThreader::finish()
   kgmThread::thread_join(m_thread);
 
   return true;
-}
-
-void kgmGameThreader::ready()
-{
-  m_locked = true;
 }
 
 int kgmGameThreader::threader(void *v)
@@ -75,7 +84,7 @@ int kgmGameThreader::threader(void *v)
   {
     kgmThread::sleep(0);
 
-    gt->m_locked = true;
+    kgmThread::mutex_lock(gt->m_mutex);
 
     for(u32 i = 0; i < MAX_THREADERS; i++)
     {
@@ -83,7 +92,7 @@ int kgmGameThreader::threader(void *v)
         gt->m_threaders[i].funtion(gt->m_threaders[i].object);
     }
 
-    gt->m_locked = false;
+    kgmThread::mutex_unlock(gt->m_mutex);
   }
 
   return 0;

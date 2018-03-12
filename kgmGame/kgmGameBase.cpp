@@ -622,12 +622,10 @@ int kgmGameBase::gSwitch(u32 state)
   case State_Play:
     m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
     m_threader_1.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
-    m_threader_1.ready();
     break;
   case State_Pause:
     m_threader_1.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic);
     m_threader_1.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
-    m_threader_1.ready();
     break;
   }
   m_state = state;

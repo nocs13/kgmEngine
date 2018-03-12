@@ -231,6 +231,11 @@ public:
       break;
     case NodeParticles:
       m_particles.add(nod);
+
+      if (nod->getNodeObject())
+      {
+        ((kgmParticles*)nod->getNodeObject())->camera(m_camera);
+      }
       break;
     }
   }

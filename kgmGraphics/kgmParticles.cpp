@@ -120,7 +120,7 @@ void kgmParticles::init(Particle* pr)
   pr->dir = pr->dir;
   pr->dir.normalize();
 
-  pr->speed = m_speed - m_speed * m_divspeed * r1;
+  pr->speed = 0.001f * (m_speed - m_speed * m_divspeed * r1);
   pr->life  = m_life  - m_life * m_divlife  * r2;
   pr->col   = m_color;
   pr->scale = m_size;
@@ -157,7 +157,7 @@ void kgmParticles::update(u32 t)
 
     if(m_size != m_esize)
     {
-      float d_size = (m_size - m_esize) / pr->life;
+      float d_size = (m_size - m_esize) / (1.0f + pr->life);
 
       pr->scale = m_size - (d_size * pr->time);
     }

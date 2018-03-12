@@ -20,27 +20,20 @@ private:
     void*             object;
   };
 
-  bool m_locked = false;
   bool m_active = true;
 
   Threader m_threaders[MAX_THREADERS];
 
   kgmThread::Thread m_thread;
+  kgmThread::Mutex  m_mutex;
 
 public:
   kgmGameThreader();
   ~kgmGameThreader();
 
-
-  bool locked() const
-  {
-    return m_locked;
-  }
-
   bool add(THREADER_FUNCTION fn, void* obj);
   bool remove(THREADER_FUNCTION fn);
 
-  void ready();
   bool finish();
 
   static int threader(void*);
