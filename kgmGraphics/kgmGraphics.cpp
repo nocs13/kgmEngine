@@ -362,9 +362,9 @@ void kgmGraphics::setEditor(bool e)
 
 void kgmGraphics::resize(float width, float height)
 {
-  gc->gcSetViewport(0, 0, width, height, .1, 100.0);
+  gc->gcSetViewport(0, 0, width, height, .1, 1000.0);
 
-  m_camera->set(PI / 6, width / height, .1, 100.0,
+  m_camera->set(PI / 6, width / height, .1, 1000.0,
                m_camera->mPos, m_camera->mDir, m_camera->mUp);
 
   m_camera->viewport((float)width, (float)height);
@@ -477,7 +477,7 @@ void kgmGraphics::render()
 
   ColorRender cr(this);
 
-  cr.render();
+  //cr.render();
 
   // Draw alpha objects.
 

@@ -46,8 +46,8 @@ void LightRender::render()
       if(j > 0)
         gc->gcBlend(true, gcblend_one, gcblend_one);
 
-      gr->render(gr->m_shaders[kgmShader::TypePhong]);
-      //gr->render(gr->m_shaders[kgmShader::TypeToon]);
+      //gr->render(gr->m_shaders[kgmShader::TypePhong]);
+      gr->render(gr->m_shaders[kgmShader::TypeToon]);
 
       gr->render(msh);
     }

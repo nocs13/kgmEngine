@@ -730,6 +730,13 @@ class kgmParticles(kgmBaseObject):
     self.gravity = ps.effector_weights.gravity
     self.bound   = [o.dimensions.x, o.dimensions.y, o.dimensions.z]
 
+    f_r = ps.factor_random
+
+    if f_r > self.speed:
+        f_r = self.speed
+
+    self.angle   = (0.5 * 3.1415) * f_r / self.speed
+
     mesh = o.data
 
     if len(mesh.materials) > 0:
@@ -965,7 +972,7 @@ def export_particles(file, o):
   file.write(" <Particles name='" + o.name + "' material='" + o.material + "'>\n")
   file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % o.euler[0]) + " " + str("%.5f" % o.euler[1]) + " " + str("%.5f" % o.euler[2]) + "'/>\n")
-  file.write("  <PrData count='" + str(o.count) + "' speed='" + str("%.5f" % o.speed) + "'/>\n")
+  file.write("  <PrData count='" + str(o.count) + "' speed='" + str("%.5f" % o.speed) + "' angle='" + str("%.5f" % o.angle) + "'/>\n")
   file.write("  <PrData life='" + str("%.5f" % o.life) + "' dlife='" + str("%.5f" % o.rlife) + "'/>\n")
   file.write("  <PrData start='" + str(o.start) + "' stop='" + str(o.stop) + "'/>\n")
   file.write("  <PrData size='" + str("%.5f" % o.size) + "' dsize='" + str("%.5f" % o.rsize) + "'/>\n")

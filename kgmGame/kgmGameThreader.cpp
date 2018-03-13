@@ -6,8 +6,11 @@ kgmGameThreader::kgmGameThreader()
 
   memset(m_threaders, 0, sizeof(m_threaders));
 
-  m_thread = kgmThread::thread_create(kgmGameThreader::threader, this);
   m_mutex  = kgmThread::mutex_create();
+
+  kgmThread::sleep(1);
+
+  m_thread = kgmThread::thread_create(kgmGameThreader::threader, this);
 }
 
 kgmGameThreader::~kgmGameThreader()

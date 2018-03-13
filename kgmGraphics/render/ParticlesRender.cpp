@@ -21,6 +21,8 @@ void ParticlesRender::render()
 
     kgmParticles* pr = (kgmParticles*) np->getNodeObject();
 
+    gr->render(gr->m_shaders[kgmShader::TypeBase]);
+
     kgmMesh* pm = pr->getMesh();
 
     gr->render(pm);

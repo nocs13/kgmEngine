@@ -796,6 +796,11 @@ kgmUnit* kgmGameMap::next()
           p->speed(vfloat);
         }
 
+        if (m_xml->hasattr("angle")) {
+          xmlAttr(m_xml, "angle", vfloat);
+          p->angle(vfloat);
+        }
+
         if (m_xml->hasattr("life")) {
           xmlAttr(m_xml, "life", vfloat);
           p->life(vfloat);

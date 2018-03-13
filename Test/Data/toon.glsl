@@ -1,7 +1,7 @@
+varying vec3 VV;
 varying vec3 L_Dir;
-varying vec3 L_Pos;
 varying vec3 Y_Dir;
-varying float shininess;
+varying vec3   eye;
 
 void kgm_main(out vec4 pos)
 {
@@ -13,9 +13,17 @@ void kgm_main(out vec4 pos)
 
   v_N = normalize(mRot * a_Normal);
 
-  Y_Dir = g_vEyeDir;
+  VV = vec4(g_mView * vec4(v_V, 1.0)).xyz;
 
-  L_Pos = g_vLight.xyz;
+  v_I = g_vLight.w;
+
+  v_L = g_vLight.xyz;
+
+  eye = g_vEye;
+
+  v_Y = -vec3(g_mView * vec4(v_V, 1.0));
+
+  Y_Dir = g_vEyeDir;
 
   if (length(g_vLightDirection.xyz) == 0.0)
   {
@@ -28,49 +36,55 @@ void kgm_main(out vec4 pos)
 
   v_UV = a_UV;
 
-  shininess = g_fShine;
+  v_shine = g_fShine;
+
 
   pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
 
 //Fragment Shader
-varying vec3 L_Dir;
-varying vec3 L_Pos;
-varying vec3 Y_Dir;
+varying vec3  VV;
+varying vec3  L_Dir;
+varying vec3  Y_Dir;
+varying vec3  eye;
 varying vec3  specular;
-varying float shininess;
 
 void kgm_main(out vec4 col)
 {
+  vec3 NN = normalize(v_N);
+  vec3 LN = normalize(v_L - v_V);
+  vec3 R  = normalize(-reflect(LN, NN));
+  vec3 E  = normalize(v_Y - VV);
+
   float intensity;
-  vec4 color;
-  vec3 specular = vec3(0, 0, 0);
+  vec4 color =  texture2D(g_txColor, v_UV);
+       color.rgb *= (v_color.rgb * v_L_color);
 
   intensity = dot(normalize(L_Dir), normalize(v_N));
 
   if (intensity > 0.95)
     intensity = 1.0;
   else if (intensity > 0.5)
-    intensity = 0.6;
-  else if (intensity > 0.25)
-    intensity = 0.4;
+    intensity = 0.5;
+  else if (intensity > 0.3)
+    intensity = 0.3;
   else
     intensity = 0.2;
 
-  if (dot(v_N, L_Dir) >= 0.0)
+  //Specular
+  if(v_shine > 1.5)
   {
-    vec3 L = normalize(L_Pos - v_V);
-    vec3 E = normalize(v_V);
-    vec3 R = normalize(reflect(L_Dir, v_N));
-    specular = v_specular.xyz * pow(max(dot(R, E), 0.0), shininess);
-    //specular = v_specular.xyz * pow(max(dot(v_N, -Y_Dir), 0.0), shininess);
+    vec3  specular = texture2D(g_txSpecular, v_UV).rgb;
+    vec3  viewDir  = normalize(eye - v_V);
+    vec3  reflDir  = reflect(-LN, NN);
+    float spec     = pow(max(dot(viewDir, reflDir), 0.0), v_shine);
+    specular = specular * spec;
 
-    specular = clamp(specular, 0.0, 0.8);
+    color.xyz += specular;
   }
 
-  color.xyz = intensity * v_color.xyz + specular;
+  color.xyz *= intensity;
   color.xyz = clamp(color.xyz, 0.0, 1.0);
-  color.w   = v_color.w;
 
   col = color;
 }

@@ -29,20 +29,18 @@ void kgm_main(out vec4 pos)
 }
 
 //Fragment Shader
-
 varying vec3   VV;
 varying vec3   eye;
 
 void kgm_main( out vec4 color )
 {
-
   vec3 NN = normalize(v_N);
   vec3 LN = normalize(v_L - v_V);
   vec3 R  = normalize(-reflect(LN, NN));
-  vec3 E  = normalize(v_Y - VV); //VV
+  vec3 E  = normalize(v_Y - VV);
 
   vec4 col = texture2D(g_txColor, v_UV);
-       //col.rgb *= v_L_color;
+       col.rgb *= (v_color.rgb * v_L_color);
 
   //Normal
   //{
@@ -56,7 +54,7 @@ void kgm_main( out vec4 color )
   float intensity = max(0.0, dot(NN, LN) * (3.0 * v_I / distance));
 
   //Specular
-  /*if(v_shine > 1.0)
+  if(v_shine > 1.5)
   {
     vec3  specular = texture2D(g_txSpecular, v_UV).rgb;
     vec3  viewDir  = normalize(eye - v_V);
@@ -65,10 +63,9 @@ void kgm_main( out vec4 color )
 
     specular = specular * spec;
     col.xyz +=  specular;
-  }*/
+  }
 
   col.xyz *= intensity;
-
   col.xyz = clamp(col.xyz, 0.0, 1.0);
 
   color = col;

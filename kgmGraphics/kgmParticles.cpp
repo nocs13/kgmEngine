@@ -16,7 +16,7 @@ kgmParticles::kgmParticles()
   m_count = 100;
   m_life = 2000;
   m_speed = 10.f;
-  m_angle = DEGTORAD(30.0f);
+  m_angle = DEGTORAD(60.0f);
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
@@ -105,22 +105,16 @@ void kgmParticles::init(Particle* pr)
   //float alpha = m_angle * r1 + m_angle * (1 - r1);
 
   float r2 = (float)rand() / RAND_MAX;
-  //float beta = m_angle * r2 + m_angle * (1 - r2);
-  //float x_side = (sin(2 * angle) < 0.0f) ? (-1) : (1);
-  //pr->dir.x = cos(beta) * cos(alpha) * x_side;
-  //pr->dir.y = neg1 * sin(beta) * cos(alpha);
-  //pr->dir.z = neg2 * sin(alpha);
-  pr->dir.x = cos(angle * r1);//x_side;
+
+  pr->dir.x = cos(angle * r1);
   pr->dir.y = neg1 * sin(angle * r1);
   pr->dir.z = neg2 * sin(angle * r2);
 
-  vec3 vdir(1, 0, 0);
-  pr->dir = vdir + pr->dir;
+  pr->dir = m_direction;
 
-  pr->dir = pr->dir;
   pr->dir.normalize();
 
-  pr->speed = 0.001f * (m_speed - m_speed * m_divspeed * r1);
+  pr->speed = 0.00001f * (m_speed - m_speed * m_divspeed * r1);
   pr->life  = m_life  - m_life * m_divlife  * r2;
   pr->col   = m_color;
   pr->scale = m_size;
