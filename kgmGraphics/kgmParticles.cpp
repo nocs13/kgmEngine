@@ -11,12 +11,19 @@ inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
   v.uv  = uv;
 }
 
+inline float p_rand()
+{
+  return (float) rand() / (float) RAND_MAX;
+}
+
 kgmParticles::kgmParticles()
 {
   m_count = 100;
-  m_life = 2000;
-  m_speed = 10.f;
-  m_angle = DEGTORAD(60.0f);
+  m_life  = 2000;
+  m_speed = 1.0;
+  m_noise = 0.1;
+
+  //m_angle = DEGTORAD(60.0f);
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
@@ -96,32 +103,21 @@ void kgmParticles::init(Particle* pr)
   pr->pos.y = 0.5f * m_volume.y * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
   pr->pos.z = 0.5f * m_volume.z * pow(-1.0, rand() % 2) / (1 + rand() % m_count);
 
-  float neg1 = pow(-1.0, rand() % 2);
-  float neg2 = pow(-1.0, rand() % 2);
 
-
-  float r1    = (float)rand() / RAND_MAX;
-  float angle = m_angle * r1;
-  //float alpha = m_angle * r1 + m_angle * (1 - r1);
-
-  float r2 = (float)rand() / RAND_MAX;
-
-  pr->dir.x = cos(angle * r1);
-  pr->dir.y = neg1 * sin(angle * r1);
-  pr->dir.z = neg2 * sin(angle * r2);
-
-  pr->dir = m_direction;
+  pr->dir.x = m_direction.x - (m_noise * m_direction.x * p_rand());
+  pr->dir.y = m_direction.y - (m_noise * m_direction.y * p_rand());
+  pr->dir.z = m_direction.z - (m_noise * m_direction.z * p_rand());
 
   pr->dir.normalize();
 
-  pr->speed = 0.00001f * (m_speed - m_speed * m_divspeed * r1);
-  pr->life  = m_life  - m_life * m_divlife  * r2;
+  pr->speed = m_speed - m_speed * m_divspeed * p_rand();
+  pr->life  = m_life  - m_life  * m_divlife  * p_rand();
   pr->col   = m_color;
   pr->scale = m_size;
   pr->time  = 0;
-  pr->mass  = 0;
+  pr->mass  = m_mass * pr->scale;
 
-  pr->life = 0;
+  pr->speed *= 0.0001;
 
   if(pr->speed < 0)
     pr->speed = 0.0f;
@@ -146,7 +142,6 @@ void kgmParticles::update(u32 t)
         continue;
     }
 
-
     pr->pos = pr->pos + pr->dir * (pr->speed * t * 0.001f);
 
     if(m_size != m_esize)
@@ -159,7 +154,7 @@ void kgmParticles::update(u32 t)
     if(m_fade && pr->col.a > 1)
     {
       uchar a = (uchar)(255.0 - 255.0 * pr->time / pr->life);
-      //pr->col.r = pr->col.g = pr->col.b =
+
       if(a < pr->col.a)
         pr->col.a = a;
     }

@@ -63,7 +63,8 @@ private:
   float      m_size;
   float      m_esize;
   float      m_speed;
-  float      m_angle;
+  float      m_noise;
+  //float      m_angle;
   float      m_divlife;
   float      m_divspeed;
 
@@ -169,14 +170,14 @@ public:
     m_esize = a;
   }
 
-  f32 angle() const
+  f32 noise() const
   {
-    return m_angle;
+    return m_noise;
   }
 
-  void angle(f32 a)
+  void noise(f32 a)
   {
-    m_angle = a;
+    m_noise = a;
   }
 
   f32 divlife() const

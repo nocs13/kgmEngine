@@ -717,10 +717,12 @@ class kgmParticles(kgmBaseObject):
     p = o.particle_systems[0]
     ps = p.settings
 
+    tpf = 1.0 / bpy.context.scene.render.fps
+
     self.count   = ps.count
-    self.start   = ps.frame_start
-    self.stop    = ps.frame_end
-    self.life    = ps.lifetime
+    self.start   = ps.frame_start * tpf
+    self.stop    = ps.frame_end   * tpf
+    self.life    = ps.lifetime    * tpf
     self.rlife   = ps.lifetime_random
     self.speed   = ps.normal_factor
     self.size    = ps.particle_size
@@ -735,7 +737,10 @@ class kgmParticles(kgmBaseObject):
     if f_r > self.speed:
         f_r = self.speed
 
-    self.angle   = (0.5 * 3.1415) * f_r / self.speed
+    self.noise   = f_r / self.speed
+
+    if ps.frame_end == bpy.context.scene.frame_end:
+      self.stop = -1
 
     mesh = o.data
 
@@ -972,7 +977,7 @@ def export_particles(file, o):
   file.write(" <Particles name='" + o.name + "' material='" + o.material + "'>\n")
   file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % o.euler[0]) + " " + str("%.5f" % o.euler[1]) + " " + str("%.5f" % o.euler[2]) + "'/>\n")
-  file.write("  <PrData count='" + str(o.count) + "' speed='" + str("%.5f" % o.speed) + "' angle='" + str("%.5f" % o.angle) + "'/>\n")
+  file.write("  <PrData count='" + str(o.count) + "' speed='" + str("%.5f" % o.speed) + "' noise='" + str("%.5f" % o.noise) + "'/>\n")
   file.write("  <PrData life='" + str("%.5f" % o.life) + "' dlife='" + str("%.5f" % o.rlife) + "'/>\n")
   file.write("  <PrData start='" + str(o.start) + "' stop='" + str(o.stop) + "'/>\n")
   file.write("  <PrData size='" + str("%.5f" % o.size) + "' dsize='" + str("%.5f" % o.rsize) + "'/>\n")

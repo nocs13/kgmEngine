@@ -796,9 +796,9 @@ kgmUnit* kgmGameMap::next()
           p->speed(vfloat);
         }
 
-        if (m_xml->hasattr("angle")) {
-          xmlAttr(m_xml, "angle", vfloat);
-          p->angle(vfloat);
+        if (m_xml->hasattr("noise")) {
+          xmlAttr(m_xml, "noise", vfloat);
+          p->noise(vfloat);
         }
 
         if (m_xml->hasattr("life")) {
