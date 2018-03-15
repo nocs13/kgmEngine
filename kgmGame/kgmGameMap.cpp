@@ -650,6 +650,15 @@ kgmUnit* kgmGameMap::next()
         node = new kgmUnit(m_game, p);
         node->setName(id);
 
+        if(m_xml->hasattr("material"))
+        {
+          kgmString v;
+
+          m_xml->attribute("material", v);
+
+          node->setNodeMaterial(getGameMaterial(v));
+        }
+
         closed = false;
       }
       else if(id == "Vertices")
@@ -736,10 +745,21 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vfloat);
         ((kgmMaterial*)data)->alpha(vfloat);
       }
+      else if(id == "Blend")
+      {
+        xmlAttr(m_xml, "value", vtext);
+
+        ((kgmMaterial*)data)->blend(kgmMaterial::stringToBlend(vtext));
+      }
       else if(id == "Cull")
       {
         xmlAttr(m_xml, "value", vint);
         ((kgmMaterial*)data)->cull((vint != 0));
+      }
+      else if(id == "Depth")
+      {
+        xmlAttr(m_xml, "value", vint);
+        ((kgmMaterial*)data)->depth((vint != 0));
       }
       else if(id == "map_color")
       {

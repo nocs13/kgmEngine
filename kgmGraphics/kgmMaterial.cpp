@@ -11,22 +11,18 @@ kgmMaterial::kgmMaterial()
   m_shininess    = 0.0;
 
   m_alpha  = false;
-  m_blend  = false;
   m_depth  = true;
   m_cull   = true;
 
-  m_srcblend = gcblend_srcalpha;
-  m_dstblend = gcblend_one;
+  m_blend  = Blend_None;
 }
 
 kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
 {
   m_color     = mtl.m_color;
   m_specular  = mtl.m_specular;
-
-  m_shininess    = mtl.m_shininess;
-
-  m_shader = mtl.m_shader;
+  m_shininess = mtl.m_shininess;
+  m_shader    = mtl.m_shader;
 
   m_gc = mtl.m_gc;
 
@@ -102,37 +98,31 @@ void kgmMaterial::setShader(kgmShader* shader)
   m_shader = shader;
 }
 
-kgmString kgmMaterial::blendToString(u32 blend)
+kgmString kgmMaterial::blendToString(Blend blend)
 {
   switch(blend)
   {
-  case gcblend_one:
-    return "one";
-  case gcblend_zero:
-    return "zero";
-  case gcblend_srcalpha:
-    return "srcalpha";
-  case gcblend_dstalpha:
-    return "dstalpha";
-  case gcblend_srcialpha:
-    return "isrcalpha";
-  case gcblend_dstialpha:
-    return "idstalpha";
+  case Blend_None:
+    return "none";
+  case Blend_Add:
+    return "add";
+  case Blend_Mul:
+    return "mul";
   }
 
   return "";
 }
 
-u32 kgmMaterial::stringToBlend(kgmString blend)
+kgmMaterial::Blend kgmMaterial::stringToBlend(kgmString blend)
 {
-  if(blend == "one") return gcblend_one;
-  else if(blend == "zero") return gcblend_zero;
-  else if(blend == "srcalpha") return gcblend_srcalpha;
-  else if(blend == "dstalpha") return gcblend_dstalpha;
-  else if(blend == "isrcalpha") return gcblend_srcialpha;
-  else if(blend == "idstalpha") return gcblend_dstialpha;
+  if(blend == "none")
+    return Blend_None;
+  else if(blend == "add")
+    return Blend_Add;
+  else if(blend == "mul")
+    return Blend_Mul;
 
-  return 0;
+  return Blend_None;
 }
 
 

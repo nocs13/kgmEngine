@@ -63,9 +63,7 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
 
   material = new kgmMaterial();
   material->depth(false);
-  material->blend(true);
-  material->srcblend(gcblend_srcalpha);
-  material->dstblend(gcblend_one);
+  material->blend(kgmMaterial::Blend_Add);
   material->setTexColor(g->getResources()->getTexture(tid));
 
   particles->speed(speed);
@@ -138,9 +136,7 @@ kgmSmoke::kgmSmoke(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
   :kgmParticlesObject(g, pos, vol, dir, speed, div_speed, life, div_life,
                       size_start, size_end, count, tid, loop)
 {
-  material->blend(true);
-  material->srcblend(gcblend_srcalpha);
-  material->dstblend(gcblend_one);
+  material->blend(kgmMaterial::Blend_Add);
 }
 
 kgmExplode::kgmExplode(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
@@ -177,9 +173,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   material = new kgmMaterial();
   material->cull(false);
   material->depth(false);
-  material->blend(true);
-  material->srcblend(gcblend_one);
-  material->dstblend(gcblend_one);
+  material->blend(kgmMaterial::Blend_Add);
   material->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
   material->setShader(g->getResources()->getShader("blend.glsl"));
 

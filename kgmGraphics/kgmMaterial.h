@@ -29,6 +29,13 @@ public:
     MF_Textures  = 1 << 6L,
   };
 
+  enum Blend
+  {
+    Blend_None,
+    Blend_Add,
+    Blend_Mul
+  };
+
   class Color
   {
   public:
@@ -105,12 +112,10 @@ public:
 private:
   bool  m_cull  = true;
   bool  m_alpha = false;
-  bool  m_blend = false;
   bool  m_depth = true;
   bool  m_shade = true;
 
-  u32  m_srcblend;
-  u32  m_dstblend;
+  Blend m_blend = Blend_None;
 
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
@@ -213,12 +218,12 @@ public:
     m_depth = d;
   }
 
-  bool blend() const
+  Blend blend() const
   {
     return m_blend;
   }
 
-  void blend(bool b)
+  void blend(Blend b)
   {
     m_blend = b;
   }
@@ -243,28 +248,8 @@ public:
     m_cull = c;
   }
 
-  u32 srcblend() const
-  {
-    return m_srcblend;
-  }
-
-  void srcblend(u32 s)
-  {
-    m_srcblend = s;
-  }
-
-  u32 dstblend() const
-  {
-    return m_dstblend;
-  }
-
-  void dstblend(u32 s)
-  {
-    m_dstblend = s;
-  }
-
-  static kgmString blendToString(u32 blend);
-  static u32 stringToBlend(kgmString blend);
+  static kgmString blendToString(Blend Blend);
+  static Blend     stringToBlend(kgmString blend);
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

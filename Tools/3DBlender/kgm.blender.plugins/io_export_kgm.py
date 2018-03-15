@@ -378,6 +378,7 @@ class kgmMaterial:
     self.map_specular = ''
     self.images = ()
     self.depth = True
+    self.blend = None
 
     print('tranparency_method ' + mtl.transparency_method)
     if mtl.transparency_method == 'Z_TRANSPARENCY':
@@ -400,6 +401,9 @@ class kgmMaterial:
 
     if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
       self.shader = bpy.data.materials[mtl.name]['Shader']
+
+    if len(mtl.texture_slots.keys()) > 0:
+      self.blend = mtl.texture_slots[0].blend_type
 
 
 class kgmLight:
@@ -856,6 +860,9 @@ def export_material(file, o):
 
   if o.depth is False:
     file.write("  <Depth value='0'/>\n")
+
+  if o.blend is not None:
+      file.write("  <Blend value='" + str(o.blend.lower()) + "'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")

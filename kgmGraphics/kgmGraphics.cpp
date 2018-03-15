@@ -673,13 +673,13 @@ void kgmGraphics::render(kgmMaterial* m)
 
     if(m_alpha)
     {
-      gc->gcBlend(false, gcblend_srcalpha, gcblend_one);
+      gc->gcBlend(false, 0, 0);
       m_alpha = false;
     }
 
     if(!m_depth)
     {
-      //gc->gcDepth(true, true, gccmp_lequal);
+      gc->gcDepth(true, true, gccmp_lequal);
       m_depth = true;
     }
 
@@ -700,7 +700,16 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(m->blend())
   {
-    gc->gcBlend(true, m->srcblend(), m->dstblend());
+    switch(m->blend())
+    {
+    case kgmMaterial::Blend_Add:
+      gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Mul:
+      gc->gcBlend(true, gcblend_dstcol, gcblend_zero);
+      break;
+    }
+
     m_alpha = true;
   }
   else if(m->alpha() || m->transparency() > 0.0f)
@@ -711,7 +720,7 @@ void kgmGraphics::render(kgmMaterial* m)
 
   if(!m->depth())
   {
-    gc->gcDepth(true, false, gccmp_less);
+    gc->gcDepth(false, true, gccmp_less);
     m_depth = false;
   }
 

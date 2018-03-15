@@ -64,7 +64,6 @@ private:
   float      m_esize;
   float      m_speed;
   float      m_noise;
-  //float      m_angle;
   float      m_divlife;
   float      m_divspeed;
 

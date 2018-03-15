@@ -157,9 +157,7 @@ public:
     mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
     mtl->cull(false);
     mtl->depth(false);
-    mtl->blend(true);
-    mtl->srcblend(gcblend_srcalpha);
-    mtl->dstblend(gcblend_one);
+    mtl->blend(kgmMaterial::Blend_Add);
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
 
     ptl = kgm_ptr<kgmParticles>(new kgmParticles());
