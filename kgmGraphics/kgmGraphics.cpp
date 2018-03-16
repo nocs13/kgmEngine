@@ -703,7 +703,8 @@ void kgmGraphics::render(kgmMaterial* m)
     switch(m->blend())
     {
     case kgmMaterial::Blend_Add:
-      gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+      //gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+      gc->gcBlend(true, gcblend_one, gcblend_one);
       break;
     case kgmMaterial::Blend_Mul:
       gc->gcBlend(true, gcblend_dstcol, gcblend_zero);

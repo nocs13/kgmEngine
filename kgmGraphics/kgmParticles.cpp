@@ -115,7 +115,7 @@ void kgmParticles::init(Particle* pr)
   pr->speed = m_speed - m_speed * m_divspeed * p_rand();
   pr->life  = 1000 * (m_life  - m_life  * m_divlife  * p_rand());
   pr->col   = m_color;
-  pr->scale = m_size;
+  pr->scale = 100.0f * m_size;
   pr->time  = 0;
   pr->mass  = m_mass * pr->scale;
 

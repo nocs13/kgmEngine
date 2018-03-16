@@ -743,7 +743,7 @@ kgmUnit* kgmGameMap::next()
       else if(id == "Alpha")
       {
         xmlAttr(m_xml, "value", vfloat);
-        ((kgmMaterial*)data)->alpha(vfloat);
+        ((kgmMaterial*)data)->transparency(1.0f - vfloat);
       }
       else if(id == "Blend")
       {

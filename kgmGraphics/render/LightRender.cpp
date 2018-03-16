@@ -50,6 +50,9 @@ void LightRender::render()
       gr->render(gr->m_shaders[kgmShader::TypeToon]);
 
       gr->render(msh);
+
+      if(j > 0)
+        gc->gcBlend(false, gcblend_one, gcblend_one);
     }
 
     gr->render(mtl);
