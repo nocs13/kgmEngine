@@ -381,7 +381,7 @@ class kgmMaterial:
     self.blend = None
 
     print('tranparency_method ' + mtl.transparency_method)
-    if mtl.transparency_method == 'Z_TRANSPARENCY':
+    if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
       self.depth = False
 
     for TS in mtl.texture_slots.keys():

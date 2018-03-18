@@ -23,7 +23,6 @@ kgmParticles::kgmParticles()
   m_speed = 1.0;
   m_noise = 0.1;
 
-  //m_angle = DEGTORAD(60.0f);
   m_color.color = 0xffffffff;
   m_fade  = true;
   m_fall  = false;
@@ -115,7 +114,7 @@ void kgmParticles::init(Particle* pr)
   pr->speed = m_speed - m_speed * m_divspeed * p_rand();
   pr->life  = 1000 * (m_life  - m_life  * m_divlife  * p_rand());
   pr->col   = m_color;
-  pr->scale = 100.0f * m_size;
+  pr->scale = m_size;
   pr->time  = 0;
   pr->mass  = m_mass * pr->scale;
 
