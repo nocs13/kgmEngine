@@ -28,8 +28,8 @@ void ParticlesRender::render()
     gr->render(mtl);
 
     gr->render(gr->m_shaders[kgmShader::TypeBase]);
-    gr->gc->gcDepth(false, true, gccmp_lequal);
-    gr->gc->gcBlend(true, gcblend_one, gcblend_one);
+    gr->gc->gcDepth(true, false, gccmp_lequal);
+    gr->gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
 
     kgmMesh* pm = pr->getMesh();
 

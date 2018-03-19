@@ -461,8 +461,7 @@ void kgmGraphics::render()
     m_a_particles_count++;
   }
 
-  //I pass: draw scene only lights
-
+  //draw scene only lights
   render((kgmMaterial*)null);
 
   lighting = true;
@@ -475,9 +474,14 @@ void kgmGraphics::render()
 
   lr.render();
 
-  ColorRender cr(this);
+  //ColorRender cr(this);
 
   //cr.render();
+
+  //draw particles
+  ParticlesRender pr(this);
+
+  pr.render();
 
   // Draw alpha objects.
 
@@ -492,13 +496,7 @@ void kgmGraphics::render()
 
   render_3d();
 
-  //draw particles
   gc->gcCull(gccull_back);
-
-  ParticlesRender pr(this);
-
-  pr.render();
-
 
 #ifndef NO_SHADERS
 
