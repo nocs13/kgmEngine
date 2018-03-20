@@ -165,7 +165,6 @@ public:
   void  gcBegin();
   void  gcEnd();
   void  gcRender();
-  void  gcSetTarget(void* t);
 
   //DRAW  
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
@@ -174,6 +173,11 @@ public:
   void* gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);
   void  gcFreeTexture(void* tex);
   void  gcSetTexture(u32 stage, void* tex);
+
+  // TARGET
+  void* gcGenTarget(u32 w, u32 h, bool depth);
+  void  gcFreeTarget(void* t);
+  void  gcSetTarget(void*  t);
 
   //MATRIX
   void  gcSetMatrix(u32 mm, float* mtx);

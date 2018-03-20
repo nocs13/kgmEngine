@@ -1011,6 +1011,40 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 #endif
 }
 
+// TARGET
+void* kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
+{
+  GLu32 buffer = 0;
+  glGenFramebuffers(1, &buffer);
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, buffer);
+
+  GLu32 texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, w, h, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  GLu32 depth = 0;
+
+  if (d)
+  {
+    glGenRenderbuffers(1, &depth);
+    glBindRenderbuffer(GL_RENDERBUFFER_EXT, depth);
+    glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, w, h);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+  }
+}
+
+void  kgmOGL::gcFreeTarget(void* t)
+{
+
+}
+
+//void  kgmOGL::gcSetTarget(void*  t)
+//{
+//}
+
 //CLIP PLANE
 void kgmOGL::gcClipPlane(bool en, u32 id, float* par)
 {

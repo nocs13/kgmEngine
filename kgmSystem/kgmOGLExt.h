@@ -51,12 +51,15 @@ extern PFNGLBUFFERSUBDATAARBPROC		glBufferSubDataARB;
 extern PFNGLGETBUFFERSUBDATAARBPROC		glGetBufferSubDataARB;
 extern PFNGLMAPBUFFERARBPROC			glMapBufferARB;
 extern PFNGLUNMAPBUFFERARBPROC			glUnmapBufferARB;
+
 //FRAME BUFFER EXTENTIONS
 extern PFNGLGENFRAMEBUFFERSEXTPROC        glGenFramebuffersEXT;
 extern PFNGLDELETEFRAMEBUFFERSEXTPROC     glDeleteFramebuffersEXT;
 extern PFNGLBINDFRAMEBUFFEREXTPROC        glBindFramebufferEXT;
 extern PFNGLFRAMEBUFFERTEXTURE2DEXTPROC   glFramebufferTexture2DEXT;
 extern PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT;
+extern PFNGLGENRENDERBUFFERSEXTPROC       glGenRenderbuffersEXT;
+extern PFNGLBINDRENDERBUFFEREXTPROC       glBindRenderbufferEXT;
 
 //GLSL SHADER EXTENTIONS
 extern PFNGLCREATESHADEROBJECTARBPROC   glCreateShaderObjectARB;
@@ -111,6 +114,8 @@ extern PFNGLDELETESHADERPROC                glDeleteShader;
 #define glBindFramebuffer        glBindFramebufferEXT
 #define glFramebufferTexture2D   glFramebufferTexture2DEXT
 #define glCheckFramebufferStatus glCheckFramebufferStatusEXT
+#define glGenRenderbuffers       glGenRenderbuffersEXT
+#define glBindRenderbuffer       glBindRenderbufferEXT
 #define glCreateShaderObject     glCreateShaderObjectARB
 #define glCreateProgramObject    glCreateProgramObjectARB
 #define glDeleteObject           glDeleteObjectARB

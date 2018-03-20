@@ -151,7 +151,6 @@ public:
   virtual void  gcBegin() = 0;
   virtual void  gcEnd() = 0;
   virtual void  gcRender() = 0;
-  virtual void  gcSetTarget(void*  rt) = 0;
 
   // DRAWING
   virtual void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt) = 0;
@@ -161,27 +160,32 @@ public:
   virtual void  gcFreeTexture(void *t) = 0;
   virtual void  gcSetTexture(u32 stage, void *t) = 0;
 
+  // TARGET
+  virtual void* gcGenTarget(u32 w, u32 h, bool depth) = 0;
+  virtual void  gcFreeTarget(void* t) = 0;
+  virtual void  gcSetTarget(void*  t) = 0;
+
   // MATRIX
   virtual void  gcSetMatrix(u32 mode, float* mtx) = 0;
   virtual void  gcGetMatrix(u32 mode, float* mtx) = 0;
   virtual void  gcSetViewport(int x, int y, int w, int h, float n, float f) = 0;
 
-  //BLEND
+  // BLEND
   virtual void  gcBlend(bool, u32, u32) = 0;
 
-  //ALPHA
+  // ALPHA
   virtual void  gcAlpha(bool, u32, float) = 0;
 
-  //CULL
+  // CULL
   virtual void  gcCull(u32 mode) = 0;
 
-  //DEPTH
+  // DEPTH
   virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
 
-  //LIGHT
+  // LIGHT
   virtual void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle) = 0;
 
-  //VERTEX & INDEX BUFFERS
+  // VERTEX & INDEX BUFFERS
   virtual void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
   virtual void  gcFreeVertexBuffer(void*) = 0;
   virtual void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) = 0;

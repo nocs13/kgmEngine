@@ -118,6 +118,7 @@ void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
 kgmTexture*   g_def_style_texture = null;
+kgmIGC
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
