@@ -105,14 +105,14 @@ public:
   struct RenderBuffer
   {
     GLu32 frame, color, depth, stencil;
-    u16 width, height;
+    u16   width, height;
   };
 
   struct Texture
   {
     u32   type;
     GLu32 buffer, texture;
-    u16 width,  height, format;
+    u16   width,  height, format;
   };
 
 private:
@@ -175,7 +175,8 @@ public:
   void  gcSetTexture(u32 stage, void* tex);
 
   // TARGET
-  void* gcGenTarget(u32 w, u32 h, bool depth);
+  void* gcGenTarget(u32 w, u32 h, u32 type, bool depth);
+  void* gcTexTarget(void* t);
   void  gcFreeTarget(void* t);
   void  gcSetTarget(void*  t);
 

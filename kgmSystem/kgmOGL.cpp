@@ -525,39 +525,6 @@ void kgmOGL::gcRender()
 #endif
 }
 
-void kgmOGL::gcSetTarget(void* t)
-{
-#ifdef GL_FRAMEBUFFER
-  if(!t || !((Texture*)t)->buffer)
-  {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    return;
-  }
-
-  glBindFramebuffer(GL_FRAMEBUFFER, ((Texture*)t)->buffer);
-  GLenum err = glGetError();
-
-  if(err != GL_NO_ERROR)
-  {
-  }
-
-  GLint ipar = 0;
-  glEnable(GL_DEPTH_TEST);
-  glDepthMask(true);
-  glDepthFunc(GL_LEQUAL);
-  glGetIntegerv(GL_DEPTH_BITS, &ipar);
-
-  if(ipar == 0)
-  {
-  }
-#endif
-  //  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  //  glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  //  glDrawBuffer(GL_BACK);
-  //  glReadBuffer(GL_BACK);
-}
-
 void kgmOGL::gcSetMatrix(u32 mode, float* mtx)
 {
 #ifdef GL_PROJECTION
@@ -1012,18 +979,55 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
 }
 
 // TARGET
-void* kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
+void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
 {
   GLu32 buffer = 0;
   glGenFramebuffers(1, &buffer);
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, buffer);
 
-  GLu32 texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, w, h, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  GLu32 texture = 0;
+
+  switch (type)
+  {
+  case gctype_texcube:
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+0, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+1, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+2, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+3, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+4, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+5, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    break;
+  case gctype_texdepth:
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    break;
+  case gctype_tex2d:
+  default:
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  };
 
   GLu32 depth = 0;
 
@@ -1032,18 +1036,74 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
     glGenRenderbuffers(1, &depth);
     glBindRenderbuffer(GL_RENDERBUFFER_EXT, depth);
     glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, w, h);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+    glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
   }
+
+  GLu32 stencil = 0;
+
+  GLenum status;
+  status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+
+  if(status != GL_FRAMEBUFFER_COMPLETE_EXT)
+  {
+    return null;
+  }
+
+  RenderBuffer* rb = (RenderBuffer*) kgm_alloc(sizeof(RenderBuffer));
+
+  rb->frame   = buffer;
+  rb->color   = texture;
+  rb->depth   = depth;
+  rb->stencil = stencil;
+  rb->width   = w;
+  rb->height  = h;
+}
+
+void* kgmOGL::gcTexTarget(void *t)
+{
+  RenderBuffer* rb = (RenderBuffer*) t;
+
+  if(!rb)
+    return null;
+
+  return (void*) ((size_t) rb->color);
 }
 
 void  kgmOGL::gcFreeTarget(void* t)
 {
+  RenderBuffer* rb = (RenderBuffer*) t;
 
+  if(!rb)
+    return;
+
+  glDeleteTextures(1, &rb->color);
+  glDeleteRenderbuffers(1, &rb->depth);
+  glDeleteFramebuffers(1, &rb->frame);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+
+  kgm_free(rb);
 }
 
-//void  kgmOGL::gcSetTarget(void*  t)
-//{
-//}
+void kgmOGL::gcSetTarget(void* t)
+{
+  RenderBuffer* rb = (RenderBuffer*) t;
+
+  if(!rb || !rb->frame)
+  {
+    glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+
+    return;
+  }
+
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+
+  if(glGetError() != GL_NO_ERROR)
+  {
+  }
+}
 
 //CLIP PLANE
 void kgmOGL::gcClipPlane(bool en, u32 id, float* par)

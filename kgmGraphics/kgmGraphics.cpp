@@ -118,7 +118,8 @@ void*      g_tex_gray  = null;
 void*      g_map_shadow = null;
 
 kgmTexture*   g_def_style_texture = null;
-kgmIGC
+
+void* g_fbo = null;
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
@@ -194,6 +195,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     gui_style->gui_image = g_def_style_texture;
 
     m_def_light = new kgmNodeLight();
+
+    g_fbo = g->gcGenTarget(512, 512, 0, true);
   }
 
   m_shadows.alloc(1);
@@ -224,6 +227,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
+  gc->gcFreeTarget(g_fbo);
+
   delete m_r_fps;
   delete m_r_gui;
   delete m_r_sprite;

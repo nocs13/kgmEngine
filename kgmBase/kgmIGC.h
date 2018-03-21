@@ -108,6 +108,7 @@ enum gc_enum
 
   gctype_tex2d,
   gctype_texcube,
+  gctype_texdepth,
   gctype_textarget,
 
   gccull_back,
@@ -161,7 +162,8 @@ public:
   virtual void  gcSetTexture(u32 stage, void *t) = 0;
 
   // TARGET
-  virtual void* gcGenTarget(u32 w, u32 h, bool depth) = 0;
+  virtual void* gcGenTarget(u32 w, u32 h, u32 type, bool depth) = 0;
+  virtual void* gcTexTarget(void* t)  = 0;
   virtual void  gcFreeTarget(void* t) = 0;
   virtual void  gcSetTarget(void*  t) = 0;
 
