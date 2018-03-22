@@ -410,6 +410,29 @@ void kgmGraphics::render()
   if (m_a_meshes.length() > m_a_meshes_count)
     m_a_meshes[m_a_meshes_count] = null;
 
+  {
+    static u32 zzz = 0;
+
+    if (zzz == 0)
+    {
+      gc->gcSetTarget(g_fbo);
+      gc->gcSetViewport(0, 0, 512, 512, 1.0, 100.0);
+      zzz++;
+    }
+    else
+    {
+      if (zzz == 1)
+      {
+        gc->gcSetTarget(null);
+        gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), 1.0, 100.0);
+      }
+
+      zzz++;
+
+      if (zzz == 100)
+        zzz = 0;
+    }
+  }
 
   gc->gcCull(1);
 
@@ -524,6 +547,8 @@ void kgmGraphics::render()
   setWorldMatrix(m);
 
   render(m_shaders[kgmShader::TypeBase]);
+
+  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(g_fbo));
 
   render_2d();
 
@@ -906,6 +931,28 @@ void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
   if(tex && tex->texture())
     gc->gcSetTexture(0, tex->texture());
+  else
+    gc->gcSetTexture(0, g_tex_white);
+
+  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
+
+  if(tex)
+    gc->gcSetTexture(0, 0);
+}
+
+void kgmGraphics::gcDrawRect(kgmGui::Rect rc, u32 col, void* tex)
+{
+  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
+
+  V v[4];
+
+  v[0].pos = vec3(rc.x,        rc.y,        0); v[0].col = col; v[0].uv = vec2(0, 1);
+  v[1].pos = vec3(rc.x,        rc.y + rc.h, 0); v[1].col = col; v[1].uv = vec2(0, 0);
+  v[2].pos = vec3(rc.x + rc.w, rc.y,        0); v[2].col = col; v[2].uv = vec2(1, 1);
+  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, 0); v[3].col = col; v[3].uv = vec2(1, 0);
+
+  if(tex)
+    gc->gcSetTexture(0, tex);
   else
     gc->gcSetTexture(0, g_tex_white);
 

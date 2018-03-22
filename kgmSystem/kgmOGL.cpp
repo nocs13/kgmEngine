@@ -768,17 +768,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
 #endif
 
-#ifdef GL_FRAMEBUFFER
-
-  case gctype_textarget:
-    glGenFramebuffers(1, &frame);
-    glBindFramebuffer(GL_FRAMEBUFFER, frame);
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    break;
-
-#endif
-
   }
 
   if(tex == 0)
@@ -865,53 +854,15 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glDisable(GL_TEXTURE_CUBE_MAP);
     break;
 #endif
-  case gctype_textarget:
-    if(fmt == gctex_fmtdepth)
-    {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-#ifndef ANDROID
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-#endif
-#ifdef GL_DEPTH_ATTACHMENT
-      glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-      //  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_LUMINANCE, GL_UNSIGNED_INT, NULL);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex, 0);
-#endif
-    }
-    else
-    {
-#ifdef GL_FRAMEBUFFER
-      glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, NULL);
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-#endif
-    }
-    break;
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);
 
-#ifdef GL_FRAMEBUFFER
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif
-
-  Texture* t = kgm_new<Texture>();
-  t->width = w;
-  t->height = h;
-  t->texture = tex;
-  t->buffer = frame;
-  t->format = fmt;
-  t->type = type;
-
 #ifdef DEBUG
-  kgm_log() << "Gen texture: " << (s32)t->texture << "/" << (void*)t << "\n";
+  kgm_log() << "Gen texture: " << (s32) tex << "\n";
 #endif
 
-  return (void*)t;
+  return (void*) (size_t) tex;
 }
 
 void kgmOGL::gcFreeTexture(void *t)
@@ -919,23 +870,15 @@ void kgmOGL::gcFreeTexture(void *t)
   if(!t)
     return;
 
-#ifdef DEBUG
-  Texture* tex = (Texture*) t;
-#endif
+  GLu32 tex = (GLu32) (size_t) t;
 
-  if(((Texture*)t)->texture)
-    glDeleteTextures(1, &((Texture*)t)->texture);
+  if(t)
+    glDeleteTextures(1, &tex);
 
-#ifdef GL_FRAMEBUFFER
-  if(((Texture*)t)->buffer)
-    glDeleteFramebuffers(1, &((Texture*)t)->buffer);
-#endif
 
 #ifdef DEBUG
-  kgm_log() << "Free texture: " << (s32)tex->texture << "/" << (void*)tex << "\n";
+  kgm_log() << "Free texture: " << (s32) tex << "\n";
 #endif
-
-  kgm_delete<Texture>(tex);
 }
 
 void kgmOGL::gcSetTexture(u32 stage, void* t)
@@ -966,14 +909,14 @@ void kgmOGL::gcSetTexture(u32 stage, void* t)
   }
 
   glActiveTexture(GL_TEXTURE0 + stage);
-  glBindTexture(GL_TEXTURE_2D, ((Texture*)t)->texture);
+  glBindTexture(GL_TEXTURE_2D, (GLu32) (size_t) t);
 
 #ifdef DEBUG
   err = glGetError();
 
   if(err != GL_NO_ERROR)
   {
-    //kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32)((Texture*)t)->texture << " stage: " << (s32)stage << "\n";
+    //kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32) t << " stage: " << (s32)stage << "\n";
   }
 #endif
 }
@@ -1015,7 +958,6 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
-    glBindTexture(GL_TEXTURE_2D, 0);
     break;
   case gctype_tex2d:
   default:
@@ -1026,7 +968,6 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
   };
 
   GLu32 depth = 0;
@@ -1037,7 +978,6 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
     glBindRenderbuffer(GL_RENDERBUFFER_EXT, depth);
     glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, w, h);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
-    glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
   }
 
   GLu32 stencil = 0;
@@ -1049,6 +989,10 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   {
     return null;
   }
+
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+  glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   RenderBuffer* rb = (RenderBuffer*) kgm_alloc(sizeof(RenderBuffer));
 

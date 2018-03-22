@@ -176,6 +176,7 @@ protected:
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, kgmString&);
   void gcDrawText(kgmFont*, u32, u32, u32, kgmGui::Rect, s8*);
   void gcDrawRect(kgmGui::Rect, u32, kgmTexture*);
+  void gcDrawRect(kgmGui::Rect, u32, void*);
   void gcDrawBillboard(box b, u32 col);
 
   void trash();
