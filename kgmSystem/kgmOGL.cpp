@@ -982,6 +982,15 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
 
   GLu32 stencil = 0;
 
+  switch (type)
+  {
+  case gctype_texdepth:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texture, 0);
+  case gctype_tex2d:
+  default:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture, 0);
+  };
+
   GLenum status;
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
 

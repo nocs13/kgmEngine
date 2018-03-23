@@ -560,7 +560,7 @@ void kgmGraphics::render()
   render((kgmMaterial*)null);
 
   gc->gcDepth(true, true, gccmp_lequal);
-
+  gc->gcSetTarget(null);
   gc->gcEnd();
   gc->gcRender();
 
