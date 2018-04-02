@@ -176,11 +176,6 @@ public:
     return m_body;
   }
 
-  //kgmVisual* visual() const
-  //{
-  //  return null;//m_visual;
-  //}
-
   kgmObstacle* obstacle()
   {
     if (m_type != Obstacle)

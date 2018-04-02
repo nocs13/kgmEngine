@@ -548,7 +548,7 @@ void kgmGraphics::render()
 
   render(m_shaders[kgmShader::TypeBase]);
 
-  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(g_fbo));
+  //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(g_fbo));
 
   render_2d();
 

@@ -35,6 +35,7 @@ enum MENUEVENT
   ME_ADD_EFFECT,
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
+  ME_ADD_PARTICLES,
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
@@ -106,6 +107,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_EFFECT, "Effect");
     item->add(ME_ADD_SENSOR, "Sensor");
     item->add(ME_ADD_TRIGGER, "Trigger");
+    item->add(ME_ADD_PARTICLES, "Particles");
     item = menu->add("Run");
     item->add(ME_RUN_PLAY, "Play");
     item->add(ME_RUN_STOP, "Stop");
@@ -854,6 +856,9 @@ void kEditor::onMenu(u32 id)
   case ME_ADD_TRIGGER:
     onAddTrigger();
     break;
+  case ME_ADD_PARTICLES:
+    onAddParticles();
+    break;
   case ME_RUN_PLAY:
     onRunPlay();
     break;
@@ -1184,6 +1189,16 @@ void kEditor::onAddTrigger()
 
   selected = tr;
   selected->setName(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
+
+  add(selected);
+}
+
+void kEditor::onAddParticles()
+{
+  kgmUnit* pr = new kgmUnit(this->game, new kgmParticles());
+
+  selected = pr;
+  selected->setName(kgmString("Particle_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
 }
