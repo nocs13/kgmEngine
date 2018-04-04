@@ -264,6 +264,24 @@ public:
   __stdcall void onPlayer(bool);
 };
 
+class kViewOptionsForParticles : public kViewOptions
+{
+  kViewObjects *vo;
+  kgmGuiText   *guiState;
+
+protected:
+  kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForParticles* getDialog(kgmUnit* n, int x, int y, int w, int h)
+  {
+    if(kViewOptions::single)
+      return null;
+
+    return (kViewOptionsForParticles*)(kViewOptions::single = new kViewOptionsForParticles(n, x, y, w, h));
+  }
+};
+
 }
 
 #endif // KVIEWOPTIONS_H

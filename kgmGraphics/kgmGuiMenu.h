@@ -107,6 +107,13 @@ public:
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
 
+    void select(bool s) {
+      if (s)
+        selected = id;
+      else
+        selected = -1;
+    }
+
     Item* add(kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)

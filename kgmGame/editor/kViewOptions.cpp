@@ -784,3 +784,13 @@ void kViewOptionsForTrigger::setTarget(kgmString s)
 {
   ((kgmTrigger*)node)->setTarget(s);
 }
+
+kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h)
+:kViewOptions(n, x, y, w, h)
+{
+  kgmGui* tparticles = tab->addTab("Particles");
+  y_coord = 1;
+  y_coord += 23;
+
+  tab->set(1);
+}

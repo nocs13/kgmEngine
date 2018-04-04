@@ -355,6 +355,7 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
       gcDrawRect(gr->gc, rc, gr->gui_style->smenu.ac_color, gr->gui_style->gui_image);
     }
     else if(item->getSelected() == i)
+    //else if(item->getSelected() == item->getId())
     {
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);

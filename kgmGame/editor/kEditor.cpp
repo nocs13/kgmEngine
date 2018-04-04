@@ -175,6 +175,11 @@ void kEditor::clear()
 
   game->gUnload();
 
+  for(auto i = m_objects.begin(); !i.end(); ++i)
+    delete (*i);
+
+  m_objects.clear();
+
   oquered = 0;
 
   pv_delta = 0.0;
@@ -1051,6 +1056,9 @@ void kEditor::onEditOptions()
   case kgmUnit::Trigger:
     vop = kViewOptionsForTrigger::getDialog(selected, 50, 50, 300, 300);
     break;
+  case kgmUnit::Particles:
+    vop = kViewOptionsForParticles::getDialog(selected, 50, 50, 300, 300);
+    break;
   }
 
   if(vop)
@@ -1195,7 +1203,11 @@ void kEditor::onAddTrigger()
 
 void kEditor::onAddParticles()
 {
-  kgmUnit* pr = new kgmUnit(this->game, new kgmParticles());
+  kgmParticles* p = new kgmParticles();
+
+  m_objects.add(p);
+
+  kgmUnit* pr = new kgmUnit(this->game, p);
 
   selected = pr;
   selected->setName(kgmString("Particle_") + kgmConvert::toString((s32)(++oquered)));

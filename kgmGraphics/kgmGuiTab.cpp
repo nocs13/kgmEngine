@@ -49,6 +49,16 @@ u32 kgmGuiTab::set(u32 k)
     }
   }
 
+  for(s32 i = 0; i < labels->getItem()->getItemsCount(); i++)
+  {
+    kgmGuiMenu::Item* it = labels->getItem()->getItem(i);
+
+    if (it->getId() == k)
+      labels->getItem()->getItem(i)->select(true);
+    else
+      labels->getItem()->getItem(i)->select(false);
+  }
+
   return m_index;
 }
 
@@ -84,7 +94,7 @@ kgmGui* kgmGuiTab::addTab(kgmString title)
 
   kgmGuiMenu::Item* item = labels->add(client->m_childs.length(), title);
 
-  item->setId(item->getItemsCount());
+  item->setId(client->m_childs.length());
 
   gui->show();
 
