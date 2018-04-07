@@ -744,10 +744,13 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g->setText("Volume");
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().x)));
+  slotVolumeX.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeX, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().y)));
+  slotVolumeY.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeY, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().z)));
+  slotVolumeZ.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeZ, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
@@ -777,10 +780,13 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g->setText("Direction");
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().x)));
+  slotDirectionX.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionX, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().y)));
+  slotDirectionY.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionY, &((kgmGuiText*)g)->sigChange);
   g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().z)));
+  slotDirectionZ.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionZ, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
@@ -872,5 +878,77 @@ void kViewOptionsForParticles::onGravity(kgmString s)
   float f = (float) kgmConvert::toDouble(s);
 
   ((kgmParticles*)node->getNodeObject())->gravity(f);
+}
+
+void kViewOptionsForParticles::onVolumeX(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->volume();
+
+  v.x = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->volume(v);
+}
+
+void kViewOptionsForParticles::onVolumeY(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->volume();
+
+  v.y = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->volume(v);
+}
+
+void kViewOptionsForParticles::onVolumeZ(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->volume();
+
+  v.z = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->volume(v);
+}
+
+void kViewOptionsForParticles::onDirectionX(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->direction();
+
+  v.x = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->direction(v);
+}
+
+void kViewOptionsForParticles::onDirectionY(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->direction();
+
+  v.y = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->direction(v);
+}
+
+void kViewOptionsForParticles::onDirectionZ(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  vec3 v = ((kgmParticles*)node->getNodeObject())->direction();
+
+  v.z = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->direction(v);
 }
 

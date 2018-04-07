@@ -267,6 +267,12 @@ class kViewOptionsForParticles : public kViewOptions
   Slot<kViewOptionsForParticles, kgmString>  slotDivSpeed;
   Slot<kViewOptionsForParticles, kgmString>  slotDivLife;
   Slot<kViewOptionsForParticles, kgmString>  slotGravity;
+  Slot<kViewOptionsForParticles, kgmString>  slotVolumeX;
+  Slot<kViewOptionsForParticles, kgmString>  slotVolumeY;
+  Slot<kViewOptionsForParticles, kgmString>  slotVolumeZ;
+  Slot<kViewOptionsForParticles, kgmString>  slotDirectionX;
+  Slot<kViewOptionsForParticles, kgmString>  slotDirectionY;
+  Slot<kViewOptionsForParticles, kgmString>  slotDirectionZ;
 
 protected:
   kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h);
@@ -291,6 +297,12 @@ public:
   __stdcall void onDivSpeed(kgmString);
   __stdcall void onDivLife(kgmString);
   __stdcall void onGravity(kgmString);
+  __stdcall void onVolumeX(kgmString);
+  __stdcall void onVolumeY(kgmString);
+  __stdcall void onVolumeZ(kgmString);
+  __stdcall void onDirectionX(kgmString);
+  __stdcall void onDirectionY(kgmString);
+  __stdcall void onDirectionZ(kgmString);
 };
 
 }
