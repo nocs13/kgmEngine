@@ -91,16 +91,6 @@ public:
 
   __stdcall void onShowMaterials(int);
   __stdcall void onSelectMaterial(kgmString);
-  __stdcall void onParticlesLoop(bool);
-  __stdcall void onParticlesFade(bool);
-  __stdcall void onParticlesCount(kgmString);
-  __stdcall void onParticlesSpeed(kgmString);
-  __stdcall void onParticlesAngle(kgmString);
-  __stdcall void onParticlesLife(kgmString);
-  __stdcall void onParticlesSize(kgmString);
-  __stdcall void onParticlesEsize(kgmString);
-  __stdcall void onParticlesDivSpeed(kgmString);
-  __stdcall void onParticlesDivLife(kgmString);
 };
 
 class kViewOptionsForLight : public kViewOptions
@@ -258,7 +248,6 @@ public:
     return (kViewOptionsForActor*)(kViewOptions::single = new kViewOptionsForActor(n, x, y, w, h));
   }
 
-
   __stdcall void showStates();
   __stdcall void onState(kgmString);
   __stdcall void onPlayer(bool);
@@ -268,6 +257,16 @@ class kViewOptionsForParticles : public kViewOptions
 {
   kViewObjects *vo;
   kgmGuiText   *guiState;
+
+  Slot<kViewOptionsForParticles, kgmString>  slotCount;
+  Slot<kViewOptionsForParticles, kgmString>  slotSpeed;
+  Slot<kViewOptionsForParticles, kgmString>  slotNoise;
+  Slot<kViewOptionsForParticles, kgmString>  slotLife;
+  Slot<kViewOptionsForParticles, kgmString>  slotSize;
+  Slot<kViewOptionsForParticles, kgmString>  slotESize;
+  Slot<kViewOptionsForParticles, kgmString>  slotDivSpeed;
+  Slot<kViewOptionsForParticles, kgmString>  slotDivLife;
+  Slot<kViewOptionsForParticles, kgmString>  slotGravity;
 
 protected:
   kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h);
@@ -280,6 +279,18 @@ public:
 
     return (kViewOptionsForParticles*)(kViewOptions::single = new kViewOptionsForParticles(n, x, y, w, h));
   }
+
+  __stdcall void onLoop(bool);
+  __stdcall void onFade(bool);
+  __stdcall void onCount(kgmString);
+  __stdcall void onSpeed(kgmString);
+  __stdcall void onNoise(kgmString);
+  __stdcall void onLife(kgmString);
+  __stdcall void onSize(kgmString);
+  __stdcall void onEsize(kgmString);
+  __stdcall void onDivSpeed(kgmString);
+  __stdcall void onDivLife(kgmString);
+  __stdcall void onGravity(kgmString);
 };
 
 }

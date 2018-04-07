@@ -56,7 +56,6 @@ private:
 
   bool       m_loop;
   bool       m_fade;
-  bool       m_gravity;
 
   float      m_life;
   float      m_mass;
@@ -64,6 +63,7 @@ private:
   float      m_esize;
   float      m_speed;
   float      m_noise;
+  float      m_gravity;
   float      m_divlife;
   float      m_divspeed;
 
@@ -109,13 +109,18 @@ public:
     m_fade = f;
   }
 
-  bool gravity() const
+  float gravity() const
   {
     return m_gravity;
   }
 
-  void gravity(bool f)
+  void gravity(float f)
   {
+    if (f < 0.0f)
+      f = 0.0f;
+    else if (f > 1.0f)
+      f = 1.0f;
+
     m_gravity = f;
   }
 

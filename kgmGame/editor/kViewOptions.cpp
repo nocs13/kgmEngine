@@ -227,67 +227,6 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, in
   y_coord += 23;
 }
 
-void kViewOptionsForVisual::onParticlesLoop(bool s)
-{
-  //node->visual()->getParticles()->loop(s);
-}
-
-void kViewOptionsForVisual::onParticlesFade(bool s)
-{
-  //node->visual()->getParticles()->fade(s);
-}
-
-void kViewOptionsForVisual::onParticlesCount(kgmString s)
-{
-  //node->visual()->getParticles()->count(kgmConvert::toInteger(s));
-  //node->visual()->getParticles()->build();
-}
-
-void kViewOptionsForVisual::onParticlesSpeed(kgmString s)
-{
-  //node->visual()->getParticles()->speed(kgmConvert::toDouble(s));
-}
-
-void kViewOptionsForVisual::onParticlesAngle(kgmString s)
-{
-  if(s.length() < 1)
-    return;
-
-  //node->visual()->getParticles()->angle(DEGTORAD(kgmConvert::toInteger(s)));
-}
-
-void kViewOptionsForVisual::onParticlesLife(kgmString s)
-{
-  //node->visual()->getParticles()->life(kgmConvert::toDouble(s));
-}
-
-void kViewOptionsForVisual::onParticlesSize(kgmString s)
-{
-  //node->visual()->getParticles()->size(kgmConvert::toDouble(s));
-}
-
-void kViewOptionsForVisual::onParticlesEsize(kgmString s)
-{
-  //node->visual()->getParticles()->esize(kgmConvert::toDouble(s));
-}
-
-void kViewOptionsForVisual::onParticlesDivSpeed(kgmString s)
-{
-  if(s.length() < 1)
-    return;
-
-  float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  //node->visual()->getParticles()->divspeed(f);
-}
-
-void kViewOptionsForVisual::onParticlesDivLife(kgmString s)
-{
-  if(s.length() < 1)
-    return;
-
-  float f = (float) kgmConvert::toInteger(s) / 100.0f;
-  //node->visual()->getParticles()->divlife(f);
-}
 
 kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
@@ -788,9 +727,150 @@ void kViewOptionsForTrigger::setTarget(kgmString s)
 kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  kgmParticles* pr = (kgmParticles*) n->getNodeObject();
+
   kgmGui* tparticles = tab->addTab("Particles");
   y_coord = 1;
+
+  kgmGui* g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Count");
+  g = new kgmGuiText(tparticles, 51, y_coord, 70, 20);
+  g->setText(kgmConvert::toString((s32)(pr->count())));
+  slotCount.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onCount, &((kgmGuiText*)g)->sigChange);
+
   y_coord += 23;
 
-  tab->set(1);
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Volume");
+  g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->volume().x)));
+  g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->volume().y)));
+  g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->volume().z)));
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Speed");
+  g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((s32)(pr->speed())));
+  slotSpeed.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onSpeed, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->divspeed())));
+  slotDivSpeed.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDivSpeed, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Life");
+  g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->life())));
+  slotLife.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onLife, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->divlife())));
+  slotDivLife.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDivLife, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Direction");
+  g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->direction().x)));
+  g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->direction().y)));
+  g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->direction().z)));
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Gravity");
+  g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->gravity())));
+  slotGravity.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onGravity, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Noise");
+  g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->noise())));
+  slotNoise.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onNoise, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
 }
+
+void kViewOptionsForParticles::onLoop(bool s)
+{
+  ((kgmParticles*)node->getNodeObject())->loop(s);
+}
+
+void kViewOptionsForParticles::onFade(bool s)
+{
+  ((kgmParticles*)node->getNodeObject())->fade(s);
+}
+
+void kViewOptionsForParticles::onCount(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->count(kgmConvert::toInteger(s));
+  ((kgmParticles*)node->getNodeObject())->build();
+}
+
+void kViewOptionsForParticles::onSpeed(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->speed(kgmConvert::toDouble(s));
+}
+
+void kViewOptionsForParticles::onNoise(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  ((kgmParticles*)node->getNodeObject())->noise((kgmConvert::toDouble(s)));
+}
+
+void kViewOptionsForParticles::onLife(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->life(kgmConvert::toDouble(s));
+}
+
+void kViewOptionsForParticles::onSize(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->size(kgmConvert::toDouble(s));
+}
+
+void kViewOptionsForParticles::onEsize(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->esize(kgmConvert::toDouble(s));
+}
+
+void kViewOptionsForParticles::onDivSpeed(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  float f = (float) kgmConvert::toInteger(s) / 100.0f;
+  ((kgmParticles*)node->getNodeObject())->divspeed(f);
+}
+
+void kViewOptionsForParticles::onDivLife(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  float f = (float) kgmConvert::toInteger(s) / 100.0f;
+
+  ((kgmParticles*)node->getNodeObject())->divlife(f);
+}
+
+void kViewOptionsForParticles::onGravity(kgmString s)
+{
+  if(s.length() < 1)
+    return;
+
+  float f = (float) kgmConvert::toDouble(s);
+
+  ((kgmParticles*)node->getNodeObject())->gravity(f);
+}
+
