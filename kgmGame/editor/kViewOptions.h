@@ -258,10 +258,13 @@ class kViewOptionsForParticles : public kViewOptions
   kViewObjects *vo;
   kgmGuiText   *guiState;
 
+  Slot<kViewOptionsForParticles, bool>       slotLoop;
+  Slot<kViewOptionsForParticles, bool>       slotFade;
   Slot<kViewOptionsForParticles, kgmString>  slotCount;
   Slot<kViewOptionsForParticles, kgmString>  slotSpeed;
   Slot<kViewOptionsForParticles, kgmString>  slotNoise;
   Slot<kViewOptionsForParticles, kgmString>  slotLife;
+  Slot<kViewOptionsForParticles, kgmString>  slotMass;
   Slot<kViewOptionsForParticles, kgmString>  slotSize;
   Slot<kViewOptionsForParticles, kgmString>  slotESize;
   Slot<kViewOptionsForParticles, kgmString>  slotDivSpeed;
@@ -292,6 +295,7 @@ public:
   __stdcall void onSpeed(kgmString);
   __stdcall void onNoise(kgmString);
   __stdcall void onLife(kgmString);
+  __stdcall void onMass(kgmString);
   __stdcall void onSize(kgmString);
   __stdcall void onEsize(kgmString);
   __stdcall void onDivSpeed(kgmString);

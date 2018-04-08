@@ -766,6 +766,17 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   y_coord += 23;
 
   g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Size");
+  g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
+  g->setText(kgmConvert::toString((s32)(pr->size())));
+  slotSize.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onSize, &((kgmGuiText*)g)->sigChange);
+  g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->esize())));
+  slotESize.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onEsize, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
   g->setText("Life");
   g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->life())));
@@ -799,10 +810,30 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   y_coord += 23;
 
   g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
+  g->setText("Mass");
+  g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
+  g->setText(kgmConvert::toString((f32)(pr->mass())));
+  slotMass.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onMass, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
   g->setText("Noise");
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->noise())));
   slotNoise.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onNoise, &((kgmGuiText*)g)->sigChange);
+
+  y_coord += 23;
+
+  g = new kgmGuiCheck(tparticles, 0, y_coord, 60, 20);
+  ((kgmGuiCheck*)g)->setText("Loop");
+  ((kgmGuiCheck*)g)->setCheck(pr->loop());
+  slotLoop.connect(this, (Slot<kViewOptionsForParticles, bool>::FN) &kViewOptionsForParticles::onLoop, &((kgmGuiCheck*)g)->sigClick);
+
+  g = new kgmGuiCheck(tparticles, 62, y_coord, 60, 20);
+  ((kgmGuiCheck*)g)->setText("Fade");
+  ((kgmGuiCheck*)g)->setCheck(pr->fade());
+  slotFade.connect(this, (Slot<kViewOptionsForParticles, bool>::FN) &kViewOptionsForParticles::onFade, &((kgmGuiCheck*)g)->sigClick);
 
   y_coord += 23;
 }
@@ -839,6 +870,11 @@ void kViewOptionsForParticles::onNoise(kgmString s)
 void kViewOptionsForParticles::onLife(kgmString s)
 {
   ((kgmParticles*)node->getNodeObject())->life(kgmConvert::toDouble(s));
+}
+
+void kViewOptionsForParticles::onMass(kgmString s)
+{
+  ((kgmParticles*)node->getNodeObject())->mass(kgmConvert::toDouble(s));
 }
 
 void kViewOptionsForParticles::onSize(kgmString s)
