@@ -117,6 +117,11 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
 
+  kgmList<kgmObject*>& getObjects()
+  {
+    return m_objects;
+  }
+
   void update();
 
   __stdcall void onQuit();

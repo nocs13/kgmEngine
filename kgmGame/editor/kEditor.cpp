@@ -36,6 +36,7 @@ enum MENUEVENT
   ME_ADD_SENSOR,
   ME_ADD_TRIGGER,
   ME_ADD_PARTICLES,
+  ME_ADD_MATERIAL,
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
@@ -108,6 +109,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_ADD_SENSOR, "Sensor");
     item->add(ME_ADD_TRIGGER, "Trigger");
     item->add(ME_ADD_PARTICLES, "Particles");
+    item->add(ME_ADD_MATERIAL, "Material");
     item = menu->add("Run");
     item->add(ME_RUN_PLAY, "Play");
     item->add(ME_RUN_STOP, "Stop");
@@ -864,6 +866,9 @@ void kEditor::onMenu(u32 id)
   case ME_ADD_PARTICLES:
     onAddParticles();
     break;
+  case ME_ADD_MATERIAL:
+    onAddMaterial();
+    break;
   case ME_RUN_PLAY:
     onRunPlay();
     break;
@@ -1213,6 +1218,17 @@ void kEditor::onAddParticles()
   selected->setName(kgmString("Particle_") + kgmConvert::toString((s32)(++oquered)));
 
   add(selected);
+}
+
+void kEditor::onAddMaterial()
+{
+  kgmMaterial* m = new kgmMaterial();
+
+  m_objects.add(m);
+
+  m->setId(kgmString("Material_") + kgmConvert::toString((s32)(++oquered)));
+
+  kViewOptionsForMaterial::getDialog(m, 50, 50, 250, 300);
 }
 
 void kEditor::onRunPlay()

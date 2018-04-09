@@ -15,7 +15,7 @@ namespace kgmGameEditor
 
 class kViewObjects;
 
-class kViewOptions : public kgmGuiFrame
+class kViewOptions: public kgmGuiFrame
 {
   KGM_OBJECT(kViewOptions);
 
@@ -24,6 +24,7 @@ class kViewOptions : public kgmGuiFrame
   Slot<kViewOptions, kgmString> slotRotationX;
   Slot<kViewOptions, kgmString> slotRotationY;
   Slot<kViewOptions, kgmString> slotRotationZ;
+  Slot<kViewOptions, int>       slotSelectMaterial;
 
 protected:
   static kViewOptions* single;
@@ -51,6 +52,7 @@ public:
 
   void onAction(kgmGui* from, u32 arg);
   void onCloseOptions();
+
   __stdcall void onNodeName(kgmString s);
   __stdcall void onPositionX(kgmString s);
   __stdcall void onPositionY(kgmString s);
@@ -59,11 +61,96 @@ public:
   __stdcall void onRotationY(kgmString s);
   __stdcall void onRotationZ(kgmString s);
   __stdcall void onSelectLock(bool);
+  __stdcall void onShowMaterials(int);
+  __stdcall void onSelectMaterial(kgmString);
+};
+
+class kViewOptionsForMaterial : public kgmGuiFrame
+{
+  enum Mode
+  {
+    Mode_None,
+    Mode_Shader,
+    Mode_Color,
+    Mode_Normal,
+    Mode_Specular
+  };
+
+  static kViewOptionsForMaterial* single;
+
+  Mode mode;
+
+  kgmGuiTab*  tab;
+
+  u32     y_coord;
+
+  Slot<kViewOptionsForMaterial, int> slotReset;
+  Slot<kViewOptionsForMaterial, int> slotSelectShader;
+
+  Slot<kViewOptionsForMaterial, int> slotSelectColor;
+  Slot<kViewOptionsForMaterial, int> slotSelectNormal;
+  Slot<kViewOptionsForMaterial, int> slotSelectSpecular;
+
+  Slot<kViewOptionsForMaterial, bool> slotSelectCull;
+  Slot<kViewOptionsForMaterial, bool> slotSelectAlpha;
+  Slot<kViewOptionsForMaterial, bool> slotSelectShade;
+  Slot<kViewOptionsForMaterial, bool> slotSelectDepth;
+  Slot<kViewOptionsForMaterial, bool> slotSelectBlend;
+
+  Slot<kViewOptionsForMaterial, kgmString> slotColorR;
+  Slot<kViewOptionsForMaterial, kgmString> slotColorG;
+  Slot<kViewOptionsForMaterial, kgmString> slotColorB;
+  Slot<kViewOptionsForMaterial, kgmString> slotSpecularR;
+  Slot<kViewOptionsForMaterial, kgmString> slotSpecularG;
+  Slot<kViewOptionsForMaterial, kgmString> slotSpecularB;
+  Slot<kViewOptionsForMaterial, kgmString> slotBlending;
+
+  kgmGuiText*  guiTextTexColor;
+  kgmGuiText*  guiTextTexNormal;
+  kgmGuiText*  guiTextTexSpecular;
+  kgmGuiText*  guiTextShader;
+
+  bool m_srcblend;
+
+  kgmMaterial* mtl = null;
+
+protected:
+  kViewOptionsForMaterial(kgmMaterial* m, int x, int y, int w, int h);
+
+public:
+  static kViewOptionsForMaterial* getDialog(kgmMaterial* m, int x, int y, int w, int h)
+  {
+    if(kViewOptionsForMaterial::single)
+      return null;
+
+    return (kViewOptionsForMaterial*) (kViewOptionsForMaterial::single = new kViewOptionsForMaterial(m, x, y, w, h));
+  }
+
+  __stdcall void onReset(int);
+  __stdcall void onColorR(kgmString);
+  __stdcall void onColorG(kgmString);
+  __stdcall void onColorB(kgmString);
+  __stdcall void onSpecularR(kgmString);
+  __stdcall void onSpecularG(kgmString);
+  __stdcall void onSpecularB(kgmString);
+  __stdcall void onBlending(kgmString);
+  __stdcall void onSelectFailed(kgmGuiFileDialog*);
+  __stdcall void onSelectSuccess(kgmGuiFileDialog*);
+  __stdcall void onSelectShader(int);
+  __stdcall void onSelectTexColor(int);
+  __stdcall void onSelectTexNormal(int);
+  __stdcall void onSelectTexSpecular(int);
+  __stdcall void onShininess(u32 s);
+  __stdcall void onTransparency(u32 s);
+  __stdcall void onCull(bool s);
+  __stdcall void onBlend(bool s);
+  __stdcall void onAlpha(bool s);
+  __stdcall void onShade(bool s);
+  __stdcall void onDepth(bool s);
 };
 
 class kViewOptionsForVisual : public kViewOptions
 {
-  Slot<kViewOptionsForVisual, int>       slotSelectMaterial;
   Slot<kViewOptionsForVisual, bool>      slotParticlesLoop;
   Slot<kViewOptionsForVisual, bool>      slotParticlesFade;
   Slot<kViewOptionsForVisual, kgmString> slotParticlesCount;
