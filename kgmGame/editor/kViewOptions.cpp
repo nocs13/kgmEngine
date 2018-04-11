@@ -10,6 +10,7 @@
 using namespace kgmGameEditor;
 
 kViewOptions* kViewOptions::single = null;
+kViewOptionsForMaterial* kViewOptionsForMaterial::single = null;
 
 kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   : kgmGuiFrame("Options", x, y, w, h)
