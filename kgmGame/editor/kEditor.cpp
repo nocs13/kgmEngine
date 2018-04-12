@@ -40,6 +40,7 @@ enum MENUEVENT
   ME_RUN_PLAY,
   ME_RUN_STOP,
   ME_VIEW_OBJECTS,
+  ME_VIEW_MATERIALS,
   ME_VIEW_PERSPECTIVE,
   ME_VIEW_FRONT,
   ME_VIEW_BACK,
@@ -115,6 +116,7 @@ kEditor::kEditor(kgmGameBase* g)
     item->add(ME_RUN_STOP, "Stop");
     item = menu->add("View");
     item->add(ME_VIEW_OBJECTS, "Objects");
+    item->add(ME_VIEW_MATERIALS, "Materials");
     item->add(ME_VIEW_PERSPECTIVE, "Perspective");
     item->add(ME_VIEW_FRONT, "Front");
     item->add(ME_VIEW_BACK, "Left");
@@ -878,6 +880,9 @@ void kEditor::onMenu(u32 id)
   case ME_VIEW_OBJECTS:
       onViewObjects();
     break;
+  case ME_VIEW_MATERIALS:
+      onViewMaterials();
+    break;
   case ME_VIEW_PERSPECTIVE:
       onViewPerspective();
     break;
@@ -1228,7 +1233,13 @@ void kEditor::onAddMaterial()
 
   m->setId(kgmString("Material_") + kgmConvert::toString((s32)(++oquered)));
 
-  kViewOptionsForMaterial::getDialog(m, 50, 50, 250, 300);
+  kViewOptionsForMaterial* vop = kViewOptionsForMaterial::getDialog(m, 50, 50, 250, 350);
+
+  if(vop)
+  {
+    game->guiAdd(vop);
+    vop->show();
+  }
 }
 
 void kEditor::onRunPlay()
@@ -1267,6 +1278,31 @@ void kEditor::onViewObjects()
       vo->addItem(un->getName());
 
   delete i;
+
+  game->guiAdd(vo);
+}
+
+void kEditor::onViewMaterials()
+{
+  kViewObjects* vo = kViewObjects::getDialog();
+
+  if(!vo)
+    return;
+
+  slotSelect.reset();
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectMaterial, &vo->sigSelect);
+
+  kgmList<kgmObject*>::iterator i = m_objects.begin();
+
+  while(!i.end())
+  {
+    if (kgmString((*i)->vClass()) == "kgmMaterial")
+    {
+      vo->addItem(((kgmMaterial*)(*i))->id());
+    }
+
+    ++i;
+  }
 
   game->guiAdd(vo);
 }
@@ -1334,6 +1370,26 @@ void kEditor::onOptionsDatabase()
 void kEditor::onSelectObject(kgmString id)
 {
   select(id);
+}
+
+void kEditor::onSelectMaterial(kgmString id)
+{
+  kViewOptionsForMaterial* vop = null;
+
+  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  {
+    if (kgmString((*i)->vClass()) == "kgmMaterial" && ((kgmMaterial*)(*i))->id() == id)
+    {
+      vop = kViewOptionsForMaterial::getDialog(((kgmMaterial*)(*i)), 50, 50, 250, 350);
+      break;
+    }
+  }
+
+  if(vop)
+  {
+    game->guiAdd(vop);
+    vop->show();
+  }
 }
 
 void kEditor::add(kgmUnit* node)

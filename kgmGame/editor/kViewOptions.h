@@ -116,6 +116,9 @@ class kViewOptionsForMaterial : public kgmGuiFrame
 
 protected:
   kViewOptionsForMaterial(kgmMaterial* m, int x, int y, int w, int h);
+  ~kViewOptionsForMaterial() {
+    kViewOptionsForMaterial::single = null;
+  }
 
 public:
   static kViewOptionsForMaterial* getDialog(kgmMaterial* m, int x, int y, int w, int h)

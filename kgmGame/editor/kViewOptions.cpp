@@ -9,7 +9,7 @@
 
 using namespace kgmGameEditor;
 
-kViewOptions* kViewOptions::single = null;
+kViewOptions*            kViewOptions::single            = null;
 kViewOptionsForMaterial* kViewOptionsForMaterial::single = null;
 
 kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
@@ -252,6 +252,8 @@ void kViewOptions::onSelectMaterial(kgmString id)
 kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, int w, int h)
   : kgmGuiFrame("Options", x, y, w, h)
 {
+  tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
+
   kgmGui* tmaterial = tab->addTab("Material");
   y_coord = 1;
 

@@ -74,10 +74,11 @@ private:
 
   kgmList<kgmObject*> m_objects;
 
-  Slot<kEditor, u32> slotMenu;
+  Slot<kEditor, u32>               slotMenu;
   Slot<kEditor, kgmGuiFileDialog*> slotMapSave;
   Slot<kEditor, kgmGuiFileDialog*> slotMapOpen;
   Slot<kEditor, kgmGuiFileDialog*> slotOpenFile;
+  Slot<kEditor, kgmString>         slotSelect;
 
 public:
   kEditor(kgmGameBase* game);
@@ -148,6 +149,7 @@ public:
   __stdcall void onAddMaterial();
   __stdcall void onAddParticles();
   __stdcall void onViewObjects();
+  __stdcall void onViewMaterials();
   __stdcall void onViewPerspective();
   __stdcall void onViewFront();
   __stdcall void onViewLeft();
@@ -156,6 +158,7 @@ public:
   __stdcall void onRunPlay();
   __stdcall void onRunStop();
   __stdcall void onSelectObject(kgmString);
+  __stdcall void onSelectMaterial(kgmString);
   __stdcall void onCloseVop();
   void onMenu(u32 id);
 
