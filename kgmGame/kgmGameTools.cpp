@@ -541,7 +541,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
       sscanf(val.data(), "%f %f %f ", &farr[0], &farr[1], &farr[2]);
       mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], 1.0);
     }
-    else if(id == "Alpha")
+    /*else if(id == "Alpha")
     {
       if(mnode->node(i)->attribute("value", val))
       {
@@ -554,7 +554,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
           mtl->alpha(true);
         }
       }
-    }
+    }*/
     else if(id == "Cull")
     {
       mtl->cull(true);

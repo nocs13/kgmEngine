@@ -111,7 +111,7 @@ public:
 
 private:
   bool  m_cull  = true;
-  bool  m_alpha = false;
+  //bool  m_alpha = false;
   bool  m_depth = true;
   bool  m_shade = true;
 
@@ -192,7 +192,7 @@ public:
     m_shininess = s;
   }
 
-  bool alpha() const
+  /*bool alpha() const
   {
     return (m_alpha || (m_color.a < 1.0f));
   }
@@ -206,7 +206,7 @@ public:
       return;
 
     m_alpha = a;
-  }
+  }*/
 
   bool depth() const
   {

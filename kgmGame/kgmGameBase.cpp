@@ -956,7 +956,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       else if(id == "Shininess")
       {
       }
-      else if(id == "Alpha")
+      /*else if(id == "Alpha")
       {
         if(xml.attribute("value", data))
         {
@@ -969,7 +969,7 @@ bool kgmGameBase::loadXml(kgmString& path)
             mtl->alpha(true);
           }
         }
-      }
+      }*/
       else if(id == "Cull")
       {
         mtl->cull(true);

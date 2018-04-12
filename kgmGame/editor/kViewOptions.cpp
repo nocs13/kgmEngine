@@ -400,12 +400,12 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   cull->setCheck(mtl->cull());
   slotSelectCull.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onCull, &cull->sigClick);
 
-  y_coord += 23;
+  //y_coord += 23;
 
-  kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
-  alpha->setText("Alpha");
-  alpha->setCheck(mtl->alpha());
-  slotSelectAlpha.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
+  //kgmGuiCheck* alpha = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
+  //alpha->setText("Alpha");
+  //alpha->setCheck(mtl->alpha());
+  //slotSelectAlpha.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
   kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 62, y_coord, 60, 20);
   shade->setText("Shade");
   shade->setCheck(mtl->shade());
@@ -636,7 +636,7 @@ void kViewOptionsForMaterial::onAlpha(bool a)
   if(!mtl)
     return;
 
-  mtl->alpha(a);
+  //mtl->alpha(a);
 }
 
 void kViewOptionsForMaterial::onShade(bool a)
