@@ -1080,7 +1080,11 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddBox()
 {
-  kgmUnit* unit = new kgmUnit(game, new kgmShape(1.f, 1.f, 1.f));
+  kgmShape* s = new kgmShape(1.f, 1.f, 1.f);
+
+  m_objects.add(s);
+
+  kgmUnit* unit = new kgmUnit(game, s);
 
   selected = unit;
 
@@ -1091,7 +1095,11 @@ void kEditor::onAddBox()
 
 void kEditor::onAddPlane()
 {
-  kgmUnit* unit = new kgmUnit(game, new kgmShape(1.f, 1.f));
+  kgmShape* s = new kgmShape(1.f, 1.f);
+
+  m_objects.add(s);
+
+  kgmUnit* unit = new kgmUnit(game, s);
 
   selected = unit;
 

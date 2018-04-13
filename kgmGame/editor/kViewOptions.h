@@ -24,7 +24,9 @@ class kViewOptions: public kgmGuiFrame
   Slot<kViewOptions, kgmString> slotRotationX;
   Slot<kViewOptions, kgmString> slotRotationY;
   Slot<kViewOptions, kgmString> slotRotationZ;
+  Slot<kViewOptions, kgmString> slotMaterials;
   Slot<kViewOptions, int>       slotSelectMaterial;
+  Slot<kViewOptions, bool>      slotLock;
 
 protected:
   static kViewOptions* single;
@@ -60,7 +62,7 @@ public:
   __stdcall void onRotationX(kgmString s);
   __stdcall void onRotationY(kgmString s);
   __stdcall void onRotationZ(kgmString s);
-  __stdcall void onSelectLock(bool);
+  __stdcall void onLock(bool);
   __stdcall void onShowMaterials(int);
   __stdcall void onSelectMaterial(kgmString);
 };

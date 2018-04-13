@@ -58,7 +58,7 @@ void LightRender::render()
     gr->render(mtl);
   }
 
-    gc->gcBlend(false, null, null);
+  gc->gcBlend(false, null, null);
 }
 
 /*

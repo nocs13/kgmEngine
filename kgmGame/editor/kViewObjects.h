@@ -22,7 +22,7 @@ private:
   Slot<kViewObjects, u32> slotSelect;
 
 protected:
-  kViewObjects(kgmEvent* tar = null, int x = 100, int y = 100, int w = 150, int h = 300);
+  kViewObjects(kgmEvent* tar = null, int x = 300, int y = 100, int w = 150, int h = 300);
   ~kViewObjects();
 
 public:

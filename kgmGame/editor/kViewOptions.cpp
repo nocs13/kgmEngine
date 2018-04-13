@@ -84,6 +84,8 @@ kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   ((kgmGuiText*)g)->setNumeric(true);
   slotRotationZ.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onRotationZ, &((kgmGuiText*)g)->sigChange);
 
+  y_coord += 23;
+
   g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
   ((kgmGuiLabel*)g)->setText("Material");
   g = new kgmGuiText(tgeneral, 51, y_coord, 100, 20);
@@ -95,10 +97,12 @@ kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   btn->setText("select");
   slotSelectMaterial.connect(this, (Slot<kViewOptions, int>::FN) &kViewOptions::onShowMaterials, &btn->sigClick);
 
+  y_coord += 23;
 
   kgmGuiCheck* lock = new kgmGuiCheck(tgeneral, 0, y_coord, 204, 20);
   lock->setText("Locked");
   lock->setCheck(node->lock());
+  slotLock.connect(this, (Slot<kViewOptions, bool>::FN) &kViewOptions::onLock, &lock->sigClick);
   //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
   y_coord += 23;
 
@@ -200,7 +204,7 @@ void kViewOptions::onRotationZ(kgmString s)
   node->rotation(rot);
 }
 
-void kViewOptions::onSelectLock(bool s)
+void kViewOptions::onLock(bool s)
 {
   node->lock(s);
 }
@@ -212,7 +216,6 @@ void kViewOptions::onShowMaterials(int s)
   if(!vo)
     return;
 
-  Slot<kViewOptions, kgmString> slotMaterials;
   slotMaterials.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onSelectMaterial, &vo->sigSelect);
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
@@ -221,7 +224,7 @@ void kViewOptions::onShowMaterials(int s)
 
   for(kgmList<kgmObject*>::iterator i = ms.begin(); !i.end(); ++i)
   {
-    if((*i)->cClass() == "kgmMaterial")
+    if(kgmString((*i)->vClass()) == "kgmMaterial")
       vo->addItem(((kgmMaterial*)(*i))->id());
   }
 
@@ -236,12 +239,13 @@ void kViewOptions::onSelectMaterial(kgmString id)
 
   for(kgmList<kgmObject*>::iterator i = ms.begin(); !i.end(); ++i)
   {
-    if((*i)->cClass() == "kgmMaterial")
+    kgmString s1 = (*i)->vClass();
+
+    if(kgmString((*i)->vClass()) == "kgmMaterial")
     {
       if (((kgmMaterial*)(*i))->id() == id)
       {
         node->setNodeMaterial(((kgmMaterial*)(*i)));
-
 
         break;
       }

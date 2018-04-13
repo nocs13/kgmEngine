@@ -471,10 +471,14 @@ void kgmGraphics::render()
       break;
   }
 
-  if (m_a_light_count > 0)
-    m_a_light = m_a_lights[0];
-  else
-    m_a_light = m_def_light;
+  if (m_a_light_count == 0)
+  {
+    m_a_lights[0] = m_def_light;
+
+    m_a_light_count = 1;
+  }
+
+  m_a_light = m_a_lights[0];
 
   m_a_particles_count = 0;
 
