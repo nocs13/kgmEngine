@@ -385,7 +385,9 @@ void kgmGraphics::render()
 
   bool lighting = false;
 
-  m_a_meshes_count = 0;
+  m_a_meshes_count    = 0;
+  m_a_bmeshes_count   = 0;
+  m_a_particles_count = 0;
 
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
@@ -400,11 +402,24 @@ void kgmGraphics::render()
     if(!m_camera->isSphereCross(v, 0.5 * l.length()))
       continue;
 
-    if (m_a_meshes_count == m_a_meshes.length())
-      m_a_meshes.realloc(m_a_meshes_count + 1024);
+    kgmMaterial* m = (*i)->getNodeMaterial();
 
-    m_a_meshes[m_a_meshes_count] = (*i);
-    m_a_meshes_count++;
+    if(m && (m->blend() != kgmMaterial::Blend_None || m->transparency() > 0.0f))
+    {
+      if (m_a_bmeshes_count == m_a_bmeshes.length())
+        m_a_bmeshes.realloc(m_a_bmeshes_count + 1024);
+
+      m_a_bmeshes[m_a_bmeshes_count] = (*i);
+      m_a_bmeshes_count++;
+    }
+    else
+    {
+      if (m_a_meshes_count == m_a_meshes.length())
+        m_a_meshes.realloc(m_a_meshes_count + 1024);
+
+      m_a_meshes[m_a_meshes_count] = (*i);
+      m_a_meshes_count++;
+    }
   }
 
   if (m_a_meshes.length() > m_a_meshes_count)

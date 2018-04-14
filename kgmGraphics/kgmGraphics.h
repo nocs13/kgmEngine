@@ -91,10 +91,12 @@ protected:
   //active nodes.
   kgmArray<INode*> m_a_lights;
   kgmArray<INode*> m_a_meshes;
+  kgmArray<INode*> m_a_bmeshes;
   kgmArray<INode*> m_a_particles;
 
-  u32  m_a_meshes_count    = 0;
   u32  m_a_light_count     = 0;
+  u32  m_a_meshes_count    = 0;
+  u32  m_a_bmeshes_count   = 0;
   u32  m_a_particles_count = 0;
 
   INode*           m_a_light       = null;

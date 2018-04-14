@@ -19,6 +19,8 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
+  kgmShader* shader = gr->m_shaders[kgmShader::TypeToon];
+
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
@@ -46,8 +48,7 @@ void LightRender::render()
       if(j > 0)
         gc->gcBlend(true, gcblend_one, gcblend_one);
 
-      //gr->render(gr->m_shaders[kgmShader::TypePhong]);
-      gr->render(gr->m_shaders[kgmShader::TypeToon]);
+      gr->render(shader);
 
       gr->render(msh);
 
@@ -59,6 +60,30 @@ void LightRender::render()
   }
 
   gc->gcBlend(false, null, null);
+
+  gr->m_a_light = gr->m_a_lights[0];
+
+  for (s32 i = 0; i < gr->m_a_bmeshes_count; i++)
+  {
+    kgmIGraphics::INode*       nod = gr->m_a_bmeshes[i];
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+    kgmMaterial* mtl = nod->getNodeMaterial();
+
+    if(!mtl)
+      continue;
+
+    mtx4 m = nod->getNodeTransform();
+    gr->setWorldMatrix(m);
+
+    gr->render(mtl);
+
+    gr->render(shader);
+
+    gr->render(msh);
+
+    gr->render((kgmMaterial*)null);
+    gr->render((kgmShader*)null);
+  }
 }
 
 /*
