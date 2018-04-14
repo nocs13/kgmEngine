@@ -59,6 +59,7 @@ void kgm_main(out vec4 col)
   float intensity;
   vec4 color =  texture2D(g_txColor, v_UV);
        color.rgb *= (v_color.rgb * v_L_color);
+       color.a   *= v_color.a;
 
   intensity = dot(normalize(L_Dir), normalize(v_N));
 
