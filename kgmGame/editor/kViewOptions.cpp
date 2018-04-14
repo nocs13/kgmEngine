@@ -89,6 +89,7 @@ kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
   ((kgmGuiLabel*)g)->setText("Material");
   g = new kgmGuiText(tgeneral, 51, y_coord, 100, 20);
+  g->setSid("o_sel_material");
 
   if(n->getNodeMaterial())
     ((kgmGuiText*)g)->setText(n->getNodeMaterial()->id());
@@ -220,7 +221,7 @@ void kViewOptions::onShowMaterials(int s)
 
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
-  kgmList<kgmObject*> ms = editor->getObjects();
+  kgmList<kgmObject*> &ms = editor->getObjects();
 
   for(kgmList<kgmObject*>::iterator i = ms.begin(); !i.end(); ++i)
   {
@@ -235,21 +236,15 @@ void kViewOptions::onSelectMaterial(kgmString id)
 {
   kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
 
-  kgmList<kgmObject*> ms = editor->getObjects();
+  kgmMaterial* m = editor->getMaterial(id);
 
-  for(kgmList<kgmObject*>::iterator i = ms.begin(); !i.end(); ++i)
+  if (m)
   {
-    kgmString s1 = (*i)->vClass();
+    node->setNodeMaterial(m);
+    kgmGuiText* g = (kgmGuiText*) getBySid("o_sel_material");
 
-    if(kgmString((*i)->vClass()) == "kgmMaterial")
-    {
-      if (((kgmMaterial*)(*i))->id() == id)
-      {
-        node->setNodeMaterial(((kgmMaterial*)(*i)));
-
-        break;
-      }
-    }
+    if (g)
+      g->setText(id);
   }
 }
 
@@ -369,7 +364,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(512);
   ((kgmGuiScroll*)g)->setPosition(mtl->shininess());
-  Slot<kViewOptionsForMaterial, u32> slotShininess;
   slotShininess.connect(this, (Slot<kViewOptionsForMaterial, u32>::FN) &kViewOptionsForMaterial::onShininess, &((kgmGuiScroll*)g)->sigChange);
 
   y_coord += 23;
@@ -381,7 +375,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   ((kgmGuiScroll*)g)->setOrientation(kgmGuiScroll::ORIENT_HORIZONTAL);
   ((kgmGuiScroll*)g)->setRange(100);
   ((kgmGuiScroll*)g)->setPosition(100.f * mtl->transparency());
-  Slot<kViewOptionsForMaterial, u32> slotTranparency;
   slotTranparency.connect(this, (Slot<kViewOptionsForMaterial, u32>::FN) &kViewOptionsForMaterial::onTransparency, &((kgmGuiScroll*)g)->sigChange);
 
   y_coord += 23;
@@ -455,7 +448,7 @@ void kViewOptionsForMaterial::onColorR(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_color.r = color / 255;
+  mtl->m_color.r = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onColorG(kgmString c)
@@ -465,7 +458,7 @@ void kViewOptionsForMaterial::onColorG(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_color.g = color / 255;
+  mtl->m_color.g = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onColorB(kgmString c)
@@ -475,7 +468,7 @@ void kViewOptionsForMaterial::onColorB(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_color.b = color / 255;
+  mtl->m_color.b = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onSpecularR(kgmString c)
@@ -485,7 +478,7 @@ void kViewOptionsForMaterial::onSpecularR(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.r = color / 255;
+  mtl->m_specular.r = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onSpecularG(kgmString c)
@@ -495,7 +488,7 @@ void kViewOptionsForMaterial::onSpecularG(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.g = color / 255;
+  mtl->m_specular.g = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onSpecularB(kgmString c)
@@ -505,7 +498,7 @@ void kViewOptionsForMaterial::onSpecularB(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.b = color / 255;
+  mtl->m_specular.b = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onBlending(kgmString c)

@@ -107,6 +107,9 @@ class kViewOptionsForMaterial : public kgmGuiFrame
   Slot<kViewOptionsForMaterial, kgmString> slotSpecularB;
   Slot<kViewOptionsForMaterial, kgmString> slotBlending;
 
+  Slot<kViewOptionsForMaterial, u32> slotShininess;
+  Slot<kViewOptionsForMaterial, u32> slotTranparency;
+
   kgmGuiText*  guiTextTexColor;
   kgmGuiText*  guiTextTexNormal;
   kgmGuiText*  guiTextTexSpecular;

@@ -118,6 +118,8 @@ public:
   void onMsRightUp(int k, int x, int y);
   void onMsRightDown(int k, int x, int y);
 
+  kgmMaterial* getMaterial(kgmString id);
+
   kgmList<kgmObject*>& getObjects()
   {
     return m_objects;

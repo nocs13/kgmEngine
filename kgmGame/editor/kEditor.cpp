@@ -1431,3 +1431,22 @@ int kEditor::doVisUpdate(void *v)
 
   return 1;
 }
+
+kgmMaterial* kEditor::getMaterial(kgmString id)
+{
+  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  {
+    kgmString s1 = (*i)->vClass();
+
+    if(kgmString((*i)->vClass()) == "kgmMaterial")
+    {
+      if (((kgmMaterial*)(*i))->id() == id)
+      {
+        return (kgmMaterial*)(*i);
+      }
+    }
+  }
+
+  return null;
+}
+
