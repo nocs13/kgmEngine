@@ -110,6 +110,10 @@ class kViewOptionsForMaterial : public kgmGuiFrame
   Slot<kViewOptionsForMaterial, u32> slotShininess;
   Slot<kViewOptionsForMaterial, u32> slotTranparency;
 
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexColor;
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexNormal;
+  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexSpecular;
+
   kgmGuiText*  guiTextTexColor;
   kgmGuiText*  guiTextTexNormal;
   kgmGuiText*  guiTextTexSpecular;
@@ -142,12 +146,11 @@ public:
   __stdcall void onSpecularG(kgmString);
   __stdcall void onSpecularB(kgmString);
   __stdcall void onBlending(kgmString);
-  __stdcall void onSelectFailed(kgmGuiFileDialog*);
-  __stdcall void onSelectSuccess(kgmGuiFileDialog*);
   __stdcall void onSelectShader(int);
   __stdcall void onSelectTexColor(int);
   __stdcall void onSelectTexNormal(int);
   __stdcall void onSelectTexSpecular(int);
+  __stdcall void onSelectTexture(kgmGuiFileDialog*);
   __stdcall void onShininess(u32 s);
   __stdcall void onTransparency(u32 s);
   __stdcall void onCull(bool s);

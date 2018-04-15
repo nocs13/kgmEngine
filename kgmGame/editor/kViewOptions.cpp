@@ -321,6 +321,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g->setSid("TexColor");
 
   if(mtl->getTexColor())
     g->setText(mtl->getTexColor()->m_id);
@@ -334,6 +335,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexNormal");
   g = guiTextTexNormal = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g->setSid("TexNormal");
 
   if(mtl->getTexNormal())
     g->setText(mtl->getTexNormal()->m_id);
@@ -347,6 +349,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexSpecular");
   g = guiTextTexSpecular = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
+  g->setSid("TexSpecular");
 
   if(mtl->getTexSpecular())
     g->setText(mtl->getTexSpecular()->m_id);
@@ -414,15 +417,14 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
 
   y_coord += 23;
 
-  kgmGuiCheck* blend = new kgmGuiCheck(tmaterial, 0, y_coord, 60, 20);
-  blend->setText("Blend");
-  blend->setCheck(mtl->blend());
-  slotSelectBlend.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onBlend, &blend->sigClick);
+  g = new kgmGuiLabel(tmaterial, 0, y_coord, 60, 20);
+  g->setText("Blending");
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
   g->setSid("Blending");
-  ((kgmGuiSelect*)g)->add("none");
-  ((kgmGuiSelect*)g)->add("add");
-  ((kgmGuiSelect*)g)->add("mul");
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_None));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Add));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Mul));
+  ((kgmGuiSelect*)g)->select(mtl->blendToString(mtl->blend()));
   slotBlending.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlending, &((kgmGuiSelect*)g)->sigSelect);
 
   y_coord += 23;
@@ -506,10 +508,10 @@ void kViewOptionsForMaterial::onBlending(kgmString c)
   if(c.length() < 1)
     return;
 
-  //mtl->srcblend(kgmMaterial::stringToBlend(c));
+  mtl->blend(kgmMaterial::stringToBlend(c));
 }
 
-void kViewOptionsForMaterial::onSelectSuccess(kgmGuiFileDialog* fd)
+void kViewOptionsForMaterial::onSelectTexture(kgmGuiFileDialog* fd)
 {
   switch (mode)
   {
@@ -568,9 +570,8 @@ void kViewOptionsForMaterial::onSelectTexColor(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexColor;
-  slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexColor, &fd->sigSelect);
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
+  slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexture, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Data"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -587,9 +588,8 @@ void kViewOptionsForMaterial::onSelectTexNormal(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexNormal;
-  slotTexNormal.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexNormal, &fd->sigSelect);
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
+  slotTexNormal.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexture, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Data"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
 
@@ -606,11 +606,30 @@ void kViewOptionsForMaterial::onSelectTexSpecular(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
-  Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexSpecular;
-  slotTexSpecular.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexSpecular, &fd->sigSelect);
-  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Path"));
+  slotTexSpecular.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexture, &fd->sigSelect);
+  fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Data"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
 }
+
+/*void kViewOptionsForMaterial::onSelectTexture(kgmGuiFileDialog* fd)
+{
+  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+
+  kgmTexture* t = kgmIGame::getGame()->getResources()->getTexture(fd->getFile());
+
+  if (!t)
+    return;
+
+  kgmGuiText* gt = null;
+
+  switch(mode)
+  {
+  case Mode_Color:
+    mtl->setTexColor(t);
+    gt = getBySid("")
+    break;
+  }
+}*/
 
 void kViewOptionsForMaterial::onShininess(u32 s)
 {
