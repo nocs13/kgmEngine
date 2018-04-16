@@ -37,6 +37,7 @@ public:
 public:
   Particle*  m_particles = null;
 
+  bool       m_lock;
   bool       m_fall;
 
   color      m_color;
@@ -67,6 +68,7 @@ private:
   float      m_divlife;
   float      m_divspeed;
 
+  vec3       m_position;
   vec3       m_direction;
 
   kgmMesh*    m_mesh   = null;
@@ -210,6 +212,16 @@ public:
     m_divspeed = s;
   }
 
+  vec3 position() const
+  {
+    return m_position;
+  }
+
+  void position(vec3 v)
+  {
+    m_position = v;
+  }
+
   vec3 direction() const
   {
     return m_direction;
@@ -242,6 +254,9 @@ public:
 
   kgmMesh* getMesh()
   {
+    if (m_lock)
+      return null;
+
     return m_mesh;
   }
 

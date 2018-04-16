@@ -25,6 +25,7 @@ kgmParticles::kgmParticles()
 
   m_color.color = 0xffffffff;
   m_fade  = true;
+  m_lock  = false;
   m_fall  = false;
   m_loop  = true;
 
@@ -101,9 +102,9 @@ void kgmParticles::init(Particle* pr)
   if(!pr)
     return;
 
-  pr->pos.x = -0.5f * m_volume.x + m_volume.x * p_rand();
-  pr->pos.y = -0.5f * m_volume.y + m_volume.y * p_rand();
-  pr->pos.z = -0.5f * m_volume.z + m_volume.z * p_rand();
+  pr->pos.x = m_position.x + -0.5f * m_volume.x + m_volume.x * p_rand();
+  pr->pos.y = m_position.y + -0.5f * m_volume.y + m_volume.y * p_rand();
+  pr->pos.z = m_position.z + -0.5f * m_volume.z + m_volume.z * p_rand();
 
   pr->dir.x = m_direction.x - (m_noise * m_direction.x * p_rand());
   pr->dir.y = m_direction.y - (m_noise * m_direction.y * p_rand());
@@ -129,7 +130,9 @@ void kgmParticles::update(u32 t)
   int i = 0;
 
   if(m_particles == null)
+  {
     return;
+  }
 
   float ftime = t * 0.001f;
 

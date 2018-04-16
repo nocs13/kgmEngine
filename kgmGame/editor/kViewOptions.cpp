@@ -1232,6 +1232,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51, y_coord, 70, 20);
   g->setText(kgmConvert::toString((s32)(pr->count())));
   slotCount.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onCount, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1240,12 +1241,15 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().x)));
   slotVolumeX.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeX, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().y)));
   slotVolumeY.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeY, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->volume().z)));
   slotVolumeZ.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onVolumeZ, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1254,9 +1258,11 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
   g->setText(kgmConvert::toString((s32)(pr->speed())));
   slotSpeed.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onSpeed, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->divspeed())));
   slotDivSpeed.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDivSpeed, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1265,9 +1271,11 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
   g->setText(kgmConvert::toString((s32)(pr->size())));
   slotSize.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onSize, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->esize())));
   slotESize.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onEsize, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1276,9 +1284,11 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->life())));
   slotLife.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onLife, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->divlife())));
   slotDivLife.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDivLife, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1287,12 +1297,15 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().x)));
   slotDirectionX.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionX, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().y)));
   slotDirectionY.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionY, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 154, y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->direction().z)));
   slotDirectionZ.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onDirectionZ, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1301,6 +1314,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->gravity())));
   slotGravity.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onGravity, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1309,6 +1323,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->mass())));
   slotMass.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onMass, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 
@@ -1317,6 +1332,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiText(tparticles, 51,  y_coord, 50, 20);
   g->setText(kgmConvert::toString((f32)(pr->noise())));
   slotNoise.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onNoise, &((kgmGuiText*)g)->sigChange);
+  ((kgmGuiText*)g)->setEditable(true);
 
   y_coord += 23;
 

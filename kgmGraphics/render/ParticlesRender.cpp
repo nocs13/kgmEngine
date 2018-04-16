@@ -33,7 +33,8 @@ void ParticlesRender::render()
 
     kgmMesh* pm = pr->getMesh();
 
-    gr->render(pm);
+    if (pm)
+      gr->render(pm);
 
     gr->gc->gcBlend(false, gcblend_one, gcblend_one);
     gr->gc->gcDepth(true, true, gccmp_lequal);

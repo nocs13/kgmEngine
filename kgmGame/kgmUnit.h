@@ -289,6 +289,9 @@ public:
     else
       m_position = v;
 
+    if (m_object && m_type == Particles)
+      ((kgmParticles*)m_object)->position(v);
+
     m_transform.identity();
     m_transform.translate(v);
   }
