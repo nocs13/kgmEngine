@@ -214,10 +214,9 @@ void kgmGuiText::onKeyDown(int k)
     if(index < (u32) m_text.length())
       pt2 = kgmString(m_text.data() + index, m_text.length() - index);
 
-    moveRight();
-
-
     m_text = pt1 + pt3 + pt2;
+
+    moveRight();
 
     sigChange(getText());
 

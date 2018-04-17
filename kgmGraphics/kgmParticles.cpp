@@ -150,6 +150,8 @@ void kgmParticles::update(u32 t)
 
     pr->pos = pr->pos + pr->dir * (pr->speed * ftime);
 
+    pr->speed -= (m_gravity * ftime * 0.001f);
+
     if(m_size != m_esize)
     {
       float d_size = (m_size - m_esize) / (1.0f + pr->life);
