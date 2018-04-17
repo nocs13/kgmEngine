@@ -570,6 +570,7 @@ void kViewOptionsForMaterial::onSelectTexColor(int)
   fd->showHidden(false);
   fd->show();
   fd->setFilter("tga");
+  slotTexColor.reset();
   slotTexColor.connect(this, (Slot<kViewOptionsForMaterial, kgmGuiFileDialog*>::FN) &kViewOptionsForMaterial::onSelectTexture, &fd->sigSelect);
   fd->forOpen(((kgmGameBase*)kgmGameApp::gameApplication()->game())->getSettings()->get((char*)"Data"));
   ((kgmGameBase*)kgmGameApp::gameApplication()->game())->guiAdd(fd);
@@ -1269,7 +1270,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   g = new kgmGuiLabel(tparticles, 0, y_coord, 50, 20);
   g->setText("Size");
   g = new kgmGuiText(tparticles, 51, y_coord, 50, 20);
-  g->setText(kgmConvert::toString((s32)(pr->size())));
+  g->setText(kgmConvert::toString((f32)(pr->size())));
   slotSize.connect(this, (Slot<kViewOptionsForParticles, kgmString>::FN) &kViewOptionsForParticles::onSize, &((kgmGuiText*)g)->sigChange);
   ((kgmGuiText*)g)->setEditable(true);
   g = new kgmGuiText(tparticles, 102,  y_coord, 50, 20);
