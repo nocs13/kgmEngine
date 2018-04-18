@@ -193,9 +193,11 @@ public:
 
 class kViewOptionsForLight : public kViewOptions
 {
-  Slot<kViewOptionsForLight, kgmString> slotColorR;
-  Slot<kViewOptionsForLight, kgmString> slotColorG;
-  Slot<kViewOptionsForLight, kgmString> slotColorB;
+  //Slot<kViewOptionsForLight, kgmString> slotColorR;
+  //Slot<kViewOptionsForLight, kgmString> slotColorG;
+  //Slot<kViewOptionsForLight, kgmString> slotColorB;
+  Slot<kViewOptionsForLight, kgmString> slotColor;
+  Slot<kViewOptionsForLight, kgmString> slotIntencity;
   Slot<kViewOptionsForLight, bool>      slotShadows;
 
 protected:
@@ -211,9 +213,10 @@ public:
   }
 
 
-  __stdcall void onColorR(kgmString);
-  __stdcall void onColorG(kgmString);
-  __stdcall void onColorB(kgmString);
+  //__stdcall void onColorR(kgmString);
+  //__stdcall void onColorG(kgmString);
+  //__stdcall void onColorB(kgmString);
+  __stdcall void onColor(kgmString);
   __stdcall void setIntencity(kgmString s);
   __stdcall void setShadows(bool s);
 };
@@ -256,7 +259,6 @@ public:
 
     return (kViewOptionsForUnit*)(kViewOptions::single = new kViewOptionsForUnit(n, x, y, w, h));
   }
-
 
   __stdcall void onSelectCollision(bool);
   __stdcall void onSelectShapeBox(bool);

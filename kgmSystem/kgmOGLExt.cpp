@@ -69,6 +69,7 @@ PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB = 0;
 PFNGLUSEPROGRAMPROC               glUseProgram = 0;
 PFNGLDELETESHADERPROC             glDeleteShader = 0;
 
+PFNGLBLENDEQUATIONEXTPROC         glBlendEquationEXT = 0;
 #endif
 
 #ifdef WIN32
@@ -141,6 +142,8 @@ bool glInitExt(){
 
   GLEXT_FN(glUseProgram,    PFNGLUSEPROGRAMPROC);
   GLEXT_FN(glDeleteShader,  PFNGLDELETESHADERPROC);
+
+  GLEXT_FN(glBlendEquation,  PFNGLBLENDEQUATIONEXTPROC);
 #endif
 
 #ifdef WIN32

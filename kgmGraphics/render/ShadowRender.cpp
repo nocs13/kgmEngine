@@ -1,6 +1,13 @@
 #include "ShadowRender.h"
+#include "../../kgmGraphics/kgmGraphics.h"
 
-ShadowRender::ShadowRender()
+ShadowRender::ShadowRender(kgmGraphics* g)
+  :BaseRender(g)
+{
+
+}
+
+void ShadowRender::render()
 {
 
 }

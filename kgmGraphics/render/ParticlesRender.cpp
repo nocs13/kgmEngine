@@ -31,7 +31,7 @@ void ParticlesRender::render()
     gr->gc->gcDepth(true, false, gccmp_lequal);
 
     if (pr->fade())
-      gr->gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+      gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
 
     kgmMesh* pm = pr->getMesh();
 
@@ -39,7 +39,7 @@ void ParticlesRender::render()
       gr->render(pm);
 
     if (pr->fade())
-      gr->gc->gcBlend(false, gcblend_one, gcblend_one);
+      gr->gc->gcBlend(false, 0, gcblend_one, gcblend_one);
 
     gr->gc->gcDepth(true, true, gccmp_lequal);
   }

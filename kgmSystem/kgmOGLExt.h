@@ -102,6 +102,8 @@ extern PFNGLGETATTRIBLOCATIONARBPROC        glGetAttribLocationARB;
 extern PFNGLUSEPROGRAMPROC                  glUseProgram;
 extern PFNGLDELETESHADERPROC                glDeleteShader;
 
+extern PFNGLBLENDEQUATIONEXTPROC            glBlendEquationEXT;
+
 #define glActiveTexture           glActiveTextureARB
 #define glClientActiveTexture     glClientActiveTextureARB
 #define glGenBuffers              glGenBuffersARB
@@ -157,6 +159,9 @@ extern PFNGLDELETESHADERPROC                glDeleteShader;
 #define glGetAttribLocation        glGetAttribLocationARB
 
 #define glUseProgram       glUseProgram
+
+#define glBlendEquation    glBlendEquationEXT
+
 #endif
 
 #ifdef WIN32

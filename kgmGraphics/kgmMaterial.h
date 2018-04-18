@@ -33,7 +33,16 @@ public:
   {
     Blend_None,
     Blend_Add,
-    Blend_Mul
+    Blend_Mul,
+    Blend_Sub,
+    Blend_Inter,
+    Blend_CBurn,
+    Blend_LBurn,
+    Blend_CDodge,
+    Blend_LDodge,
+    Blend_Screen,
+    Blend_Darken,
+    Blend_Lighten,
   };
 
   class Color

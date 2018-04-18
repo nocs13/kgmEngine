@@ -10,6 +10,7 @@ class kgmGuiText : public kgmGui
 private:
   bool editable;
   bool numeric;
+  bool hexnum;
   bool shift;
   u32  index, place;     //cursor index in text and place in view
   u32  fwidth, fheight;  //character width and height
@@ -24,6 +25,7 @@ public:
 
   void setEditable(bool e);
   void setNumeric(bool e);
+  void setHexnum(bool e);
   void dropCursor();
   bool isReadOnly();
   bool isNumeric();

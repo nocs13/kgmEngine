@@ -28,6 +28,7 @@
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
 #include "render/SpriteRender.h"
+#include "render/ShadowRender.h"
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"
@@ -46,7 +47,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class LightRender;
   friend class ColorRender;
   friend class ParticlesRender;
-  friend class RndAmbient;
+  friend class ShadowRender;
 public:
 
   enum GraphicsQuality

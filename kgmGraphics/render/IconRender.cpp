@@ -23,14 +23,14 @@ void IconRender::render()
     {
       kgmMaterial mtl;
 
-      gr->gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+      gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       mtl.setTexColor(icon->getIcon());
       gr->render(&mtl);
       gr->render(gr->m_shaders[kgmShader::TypeBase]);
       gr->render(icon);
       gr->render((kgmShader*)null);
       gr->render((kgmMaterial*)null);
-      gr->gc->gcBlend(false, gcblend_srcalpha, gcblend_srcialpha);
+      gr->gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
     }
   }
 }

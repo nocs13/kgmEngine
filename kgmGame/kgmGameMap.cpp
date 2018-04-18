@@ -728,7 +728,7 @@ kgmUnit* kgmGameMap::next()
         if(ntype == "material")
           ((kgmMaterial*)data)->m_color = kgmMaterial::Color(vfloat3.x, vfloat3.y, vfloat3.z, 1.0);
         else if(ntype == "light")
-          ((kgmLight*)data)->color = kgmMaterial::toRgba(vfloat3.x, vfloat3.y, vfloat3.z);
+          ((kgmLight*)data)->color(kgmMaterial::toRgba(vfloat3.x, vfloat3.y, vfloat3.z));
       }
       else if(id == "Specular")
       {

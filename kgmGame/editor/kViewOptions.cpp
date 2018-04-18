@@ -424,6 +424,15 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_None));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Add));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Mul));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Sub));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Inter));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_CBurn));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_LBurn));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_CDodge));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_LDodge));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Screen));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Darken));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Lighten));
   ((kgmGuiSelect*)g)->select(mtl->blendToString(mtl->blend()));
   slotBlending.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlending, &((kgmGuiSelect*)g)->sigSelect);
 
@@ -735,7 +744,7 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
 
   g = new kgmGuiText(tlight, 51, y_coord, 70, 20);
 
-  g->setText(kgmConvert::toString(light->intensity));
+  g->setText(kgmConvert::toString(light->intensity()));
   ((kgmGuiText*)g)->setEditable(true);
   Slot<kViewOptionsForLight, kgmString> slotIntensisty;
   slotIntensisty.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::setIntencity, &((kgmGuiText*)g)->sigChange);
@@ -743,30 +752,30 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
 
   g = new kgmGuiLabel(tlight, 0, y_coord, 50, 20);
   g->setText("Color");
-  g = new kgmGuiText(tlight, 51, y_coord, 30, 20);
-  g->setSid("ColorR");
-  //g->setText(kgmConvert::toString((s32)(light->color.x * 255)));
+  g = new kgmGuiText(tlight, 51, y_coord, 80, 20);
+  g->setSid("Color");
+  g->setText(kgmConvert::toString((s32)(light->color()), true));
   ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotColorR.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorR, &((kgmGuiText*)g)->sigChange);
-  g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
-  g->setSid("ColorG");
+  ((kgmGuiText*)g)->setHexnum(true);
+  slotColor.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColor, &((kgmGuiText*)g)->sigChange);
+  //g = new kgmGuiText(tlight, 83, y_coord, 30, 20);
+  //g->setSid("ColorG");
   //g->setText(kgmConvert::toString((s32)(light->color.y * 255)));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotColorG.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
-  g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
-  g->setSid("ColorB");
+  //((kgmGuiText*)g)->setEditable(true);
+  //((kgmGuiText*)g)->setNumeric(true);
+  //slotColorG.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorG, &((kgmGuiText*)g)->sigChange);
+  //g = new kgmGuiText(tlight, 115, y_coord, 30, 20);
+  //g->setSid("ColorB");
   //g->setText(kgmConvert::toString((s32)(light->color.z * 255)));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotColorB.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
+  //((kgmGuiText*)g)->setEditable(true);
+  //((kgmGuiText*)g)->setNumeric(true);
+  //slotColorB.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColorB, &((kgmGuiText*)g)->sigChange);
 
   y_coord += 23;
 
   kgmGuiCheck* check = new kgmGuiCheck(tlight, 1, y_coord, 150, 20);
   check->setText("Shadows");
-  check->setCheck(light->shadows);
+  check->setCheck(light->shadows());
   slotShadows.connect(this, (Slot<kViewOptionsForLight, bool>::FN) &kViewOptionsForLight::setShadows, &check->sigClick);
 
   y_coord += 23;
@@ -774,27 +783,27 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
 
 void kViewOptionsForLight::setIntencity(kgmString s)
 {
-  f32 in = kgmConvert::toDouble(s);
+  f32 i = kgmConvert::toDouble(s);
 
-  node->light()->intensity = in;
+  node->light()->intensity(i);
 }
 
 void kViewOptionsForLight::setShadows(bool s)
 {
-  node->light()->shadows = s;
+  node->light()->shadows(s);
 }
 
-void kViewOptionsForLight::onColorR(kgmString c)
+void kViewOptionsForLight::onColor(kgmString c)
 {
   if(c.length() < 1)
     return;
 
-  u32 color = (u32)kgmConvert::toInteger(c);
-  color = clamp<u32>(color, 0, 255);
-  //node->light()->color.x = color / 255;
+  u32 color = (u32)kgmConvert::toInteger(c, true);
+
+  node->light()->color(0xff000000 | color);
 }
 
-void kViewOptionsForLight::onColorG(kgmString c)
+/*void kViewOptionsForLight::onColorG(kgmString c)
 {
   if(c.length() < 1)
     return;
@@ -812,7 +821,7 @@ void kViewOptionsForLight::onColorB(kgmString c)
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   //node->light()->color.z = color / 255;
-}
+}*/
 
 kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)

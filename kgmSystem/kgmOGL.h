@@ -188,7 +188,7 @@ public:
   void  gcSetViewport(int x, int y, int w, int h, float n, float f);
 
   //BLEND
-  void  gcBlend(bool enabla, u32 fnsrc, u32 fndst);
+  void  gcBlend(bool enabla, u32 eq, u32 fnsrc, u32 fndst);
 
   //ALPHA
   void  gcAlpha(bool en, u32 fn, float ref);

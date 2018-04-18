@@ -46,20 +46,20 @@ void LightRender::render()
       gr->m_a_light = gr->m_a_lights[j];
 
       if(j > 0)
-        gc->gcBlend(true, gcblend_one, gcblend_one);
+        gc->gcBlend(true, 0, gcblend_one, gcblend_one);
 
       gr->render(shader);
 
       gr->render(msh);
 
       if(j > 0)
-        gc->gcBlend(false, gcblend_one, gcblend_one);
+        gc->gcBlend(false, 0, gcblend_one, gcblend_one);
     }
 
     gr->render(mtl);
   }
 
-  gc->gcBlend(false, null, null);
+  gc->gcBlend(false, 0, null, null);
 
   gr->m_a_light = gr->m_a_lights[0];
 

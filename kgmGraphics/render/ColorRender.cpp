@@ -43,10 +43,10 @@ void ColorRender::render()
 
     gr->render(gr->m_shaders[kgmShader::TypeBase]);
 
-    gc->gcBlend(true, gcblend_dstcol, gcblend_zero);
+    gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
 
     gr->render(msh);
 
-    gc->gcBlend(false, null, null);
+    gc->gcBlend(false, 0, null, null);
   }
 }

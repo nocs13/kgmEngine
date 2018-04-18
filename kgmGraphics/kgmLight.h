@@ -19,55 +19,52 @@ public:
       TypeSun
     };
 
-public:
-  Type  type;
+private:
+  Type  m_type;
 
-  //vec3  position;   //light position
-  vec3  direction;  //light direction, if 0 then light is omni
-  u32   color;
+  vec3  m_direction;
+  u32   m_color;
 
-  float intensity;  //light intensity, 1 mean 10 meter range
-  float angle;      //light spot angle if directional
+  float m_intensity;
+  float m_angle;
 
-  bool  active;     //light switched on
-  bool  shadows;    //cast shadows, need shadow map. not for point type.
+  bool  m_active;
+  bool  m_shadows;
 
   kgmString m_id;
-  u32       m_group; // object group id
+  u32       m_group;
 
 public:
   kgmLight()
   {
-    type = TypePoint;
+    m_type = TypePoint;
 
-    //position  = vec3(0, 0, 0);
-    direction = vec3(0, 0, 0);
+    m_direction = vec3(0, 0, 0);
 
-    color = 0xffffffff;
+    m_color = 0xffffffff;
 
-    intensity = 1.0f;
-    angle = 0.0f;
+    m_intensity = 1.0f;
+    m_angle = 0.0f;
 
-    shadows = false;
-    active = true;
+    m_shadows = false;
+    m_active = true;
 
     m_group = 0;
   }
 
   kgmLight(const kgmLight& light)
   {
-    type = light.TypePoint;
+    m_type = light.m_type;
 
-    //position  = light.position;
-    direction = light.direction;
+    m_direction = light.m_direction;
 
-    color     = light.color;
+    m_color     = light.m_color;
 
-    intensity = light.intensity;
-    angle     = light.angle;
+    m_intensity = light.m_intensity;
+    m_angle     = light.m_angle;
 
-    shadows   = light.shadows;
-    active    = light.active;
+    m_shadows   = light.m_shadows;
+    m_active    = light.m_active;
 
     m_group   = light.m_group;
   }
@@ -76,34 +73,54 @@ public:
   {
   }
 
-  /*vec3 getPosition() const
+  vec3 direction() const
   {
-    return position;
-  }*/
-
-  vec3 getDirection() const
-  {
-    return direction;
+    return m_direction;
   }
 
-  /*void setPosition(vec3 v)
+  void direction(vec3 v)
   {
-    position = v;
-  }*/
-
-  void setDirection(vec3 v)
-  {
-    direction = v;
+    m_direction = v;
   }
 
-  void setAngle(f32 a)
+  void angle(f32 a)
   {
-    angle = a;
+    m_angle = a;
   }
 
-  f32 getAngle() const
+  f32 angle() const
   {
-    return angle;
+    return m_angle;
+  }
+
+  f32 intensity() const
+  {
+    return m_intensity;
+  }
+
+  void intensity(f32 i)
+  {
+    m_intensity = i;
+  }
+
+  u32 color() const
+  {
+    return m_color;
+  }
+
+  void color(u32 c)
+  {
+    m_color = c;
+  }
+
+  bool shadows() const
+  {
+    return m_shadows;
+  }
+
+  void shadows(bool s)
+  {
+    m_shadows = s;
   }
 };
 

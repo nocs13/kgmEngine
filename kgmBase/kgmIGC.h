@@ -75,6 +75,12 @@ enum gc_enum
   gcblend_dstsatalpha,
   gcblend_srcsatalpha,
 
+  gcblend_eqadd,
+  gcblend_eqsub,
+  gcblend_eqmin,
+  gcblend_eqmax,
+  gcblend_eqrsub,
+
   gcpmt_points,
   gcpmt_lines,
   gcpmt_triangles,
@@ -173,7 +179,7 @@ public:
   virtual void  gcSetViewport(int x, int y, int w, int h, float n, float f) = 0;
 
   // BLEND
-  virtual void  gcBlend(bool, u32, u32) = 0;
+  virtual void  gcBlend(bool, u32, u32, u32) = 0;
 
   // ALPHA
   virtual void  gcAlpha(bool, u32, float) = 0;

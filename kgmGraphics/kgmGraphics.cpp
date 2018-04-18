@@ -68,9 +68,9 @@ inline vec4 packLight(kgmLight& l, vec3 pos)
           (l.color.y * 6 / 256) * 6 +
           (l.color.z * 6 / 256);*/
 
-  u16 i = 1.0f / l.intensity;
+  u16 i = 1.0f / l.intensity();
 
-  u16 a = l.angle;
+  u16 a = l.angle();
 
   vec4 res;
 
@@ -461,7 +461,7 @@ void kgmGraphics::render()
 
   //prepare for render
 
-  gc->gcBlend(false, null, null);
+  gc->gcBlend(false, 0, null, null);
   gc->gcAlpha(false, null, null);
 
   //colect lights in viewport
@@ -477,7 +477,7 @@ void kgmGraphics::render()
 
     kgmLight* l = (kgmLight*) (*i)->getNodeObject();
 
-    if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity))
+    if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
       continue;
 
     m_a_lights[m_a_light_count++] = (*i);
@@ -525,6 +525,9 @@ void kgmGraphics::render()
   //ColorRender cr(this);
 
   //cr.render();
+
+  ShadowRender sr(this);
+  sr.render();
 
   //draw particles
   ParticlesRender pr(this);
@@ -721,7 +724,7 @@ void kgmGraphics::render(kgmMaterial* m)
 
     if(m_alpha)
     {
-      gc->gcBlend(false, 0, 0);
+      gc->gcBlend(false, 0, 0, 0);
       m_alpha = false;
     }
 
@@ -751,11 +754,38 @@ void kgmGraphics::render(kgmMaterial* m)
     switch(m->blend())
     {
     case kgmMaterial::Blend_Add:
-      gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
       //gc->gcBlend(true, gcblend_one, gcblend_one);
       break;
     case kgmMaterial::Blend_Mul:
-      gc->gcBlend(true, gcblend_dstcol, gcblend_zero);
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Sub:
+      gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Inter:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+      break;
+    case kgmMaterial::Blend_CBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_LBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_CDodge:
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_LDodge:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Screen:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_Darken:
+      gc->gcBlend(true, gcblend_eqmin, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Lighten:
+      gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
       break;
     }
 
@@ -763,7 +793,7 @@ void kgmGraphics::render(kgmMaterial* m)
   }
   else if(m->transparency() > 0.0f)
   {
-    gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+    gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
     m_alpha = true;
   }
 
@@ -834,9 +864,10 @@ void kgmGraphics::render(kgmShader* s)
     kgmLight* l   = (kgmLight*) m_a_light->getNodeObject();
     vec3      pos = m_a_light->getNodePosition();
 
-    v_light           = vec4(pos.x, pos.y, pos.z, l->intensity);
-    v_light_direction = vec4(l->direction.x, l->direction.y, l->direction.z, l->angle);
-    v_light_color     = vec4(1, 1, 1, 1); //l->color;
+    v_light           = vec4(pos.x, pos.y, pos.z, l->intensity());
+    v_light_direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
+    //v_light_color     = vec4(1, 1, 1, 1); //l->color;
+    v_light_color     = kgmColor::toVector(l->color());
   }
 
   float random = (float)rand()/(float)RAND_MAX;
@@ -1002,7 +1033,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
   float cx = (float)clip.x, cy = (float)clip.y;
 
   //gc->gcBlend(true, gcblend_one, gcblend_one);
-  gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
@@ -1041,7 +1072,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     cx += fwidth;
   }
 
-  gc->gcBlend(0, 0, 0);
+  gc->gcBlend(0, 0, 0, 0);
   gc->gcSetTexture(0, 0);
 }
 
@@ -1065,7 +1096,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
 
   float cx = (float)clip.x, cy = (float)clip.y;
 
-  gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->texture());
 
   for(u32 i = 0; i < tlen; i++)
@@ -1104,7 +1135,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     cx += fwidth;
   }
 
-  gc->gcBlend(0, 0, 0);
+  gc->gcBlend(0, 0, 0, 0);
   gc->gcSetTexture(0, 0);
 }
 

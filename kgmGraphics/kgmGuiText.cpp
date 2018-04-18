@@ -6,6 +6,7 @@ kgmGuiText::kgmGuiText()
 {
   editable = false;
   numeric = false;
+  hexnum  = false;
   shift = false;
   index = 0;
   place = 0;
@@ -18,6 +19,7 @@ kgmGuiText::kgmGuiText(kgmGui *par, u32 x, u32 y, u32 w, u32 h)
 {
   editable = false;
   numeric = false;
+  hexnum  = false;
   shift = false;
   index = 0;
   place = 0;
@@ -37,6 +39,17 @@ void kgmGuiText::setEditable(bool e)
 void kgmGuiText::setNumeric(bool n)
 {
   numeric = n;
+
+  if (numeric)
+    hexnum = false;
+}
+
+void kgmGuiText::setHexnum(bool n)
+{
+  hexnum = n;
+
+  if (hexnum)
+    numeric = false;
 }
 
 void kgmGuiText::dropCursor()
@@ -204,6 +217,22 @@ void kgmGuiText::onKeyDown(int k)
           return;
         }
       }
+    }
+    else if (hexnum)
+    {
+      bool pass = false;
+
+      if(akey >= '0' && akey <= '9')
+        pass = true;
+
+      if (akey >= 'a' && akey <= 'f')
+        pass = true;
+
+      if (akey >= 'A' && akey <= 'F')
+        pass = true;
+
+      if (!pass)
+        return;
     }
 
     pt3.fromSym(akey);

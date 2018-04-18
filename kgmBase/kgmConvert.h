@@ -8,8 +8,11 @@
 class kgmConvert: public kgmObject
 {
  public:
-  static s32 toInteger(kgmString& s)
+  static s32 toInteger(kgmString& s, bool hex = false)
   {
+    if (hex)
+      return strtol(s.data(), NULL, 16);
+
     return atoi(s.data());
   }
 

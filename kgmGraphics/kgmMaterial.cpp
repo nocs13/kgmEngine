@@ -108,6 +108,24 @@ kgmString kgmMaterial::blendToString(Blend blend)
     return "add";
   case Blend_Mul:
     return "mul";
+  case Blend_Sub:
+    return "sub";
+  case Blend_Inter:
+    return "inter";
+  case Blend_CBurn:
+    return "cburn";
+  case Blend_LBurn:
+    return "lburn";
+  case Blend_CDodge:
+    return "cdodge";
+  case Blend_LDodge:
+    return "ldodge";
+  case Blend_Screen:
+    return "screen";
+  case Blend_Darken:
+    return "darken";
+  case Blend_Lighten:
+    return "lighten";
   }
 
   return "";
@@ -121,6 +139,24 @@ kgmMaterial::Blend kgmMaterial::stringToBlend(kgmString blend)
     return Blend_Add;
   else if(blend == "mul")
     return Blend_Mul;
+  else if(blend == "sub")
+    return Blend_Sub;
+  else if(blend == "inter")
+    return Blend_Inter;
+  else if(blend == "cburn")
+    return Blend_CBurn;
+  else if(blend == "lburn")
+    return Blend_LBurn;
+  else if(blend == "cdodge")
+    return Blend_CDodge;
+  else if(blend == "ldodge")
+    return Blend_LDodge;
+  else if(blend == "screen")
+    return Blend_Screen;
+  else if(blend == "darken")
+    return Blend_Darken;
+  else if(blend == "lighten")
+    return Blend_Lighten;
 
   return Blend_None;
 }

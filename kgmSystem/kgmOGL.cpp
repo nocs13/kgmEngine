@@ -616,13 +616,34 @@ void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, 
 
 //BLEND
 
-void  kgmOGL::gcBlend(bool en, u32 fnsrc, u32 fndst)
+void  kgmOGL::gcBlend(bool en, u32 eq, u32 fnsrc, u32 fndst)
 {
   if(!en)
   {
     glDisable(GL_BLEND);
 
     return;
+  }
+
+  switch(eq)
+  {
+  case gcblend_eqadd:
+    glBlendEquation(GL_FUNC_ADD_EXT);
+    break;
+  case gcblend_eqsub:
+    glBlendEquation(GL_FUNC_SUBTRACT_EXT);
+    break;
+  case gcblend_eqmin:
+    glBlendEquation(GL_MIN);
+    break;
+  case gcblend_eqmax:
+    glBlendEquation(GL_MAX);
+    break;
+  case gcblend_eqrsub:
+    glBlendEquation(GL_FUNC_REVERSE_SUBTRACT_EXT);
+    break;
+  default:
+    glBlendEquation(GL_FUNC_ADD);
   }
 
   glBlendFunc(gl_enum(fnsrc), gl_enum(fndst));

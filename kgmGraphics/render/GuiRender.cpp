@@ -54,7 +54,7 @@ void GuiRender::render(kgmGui* gui)
   text = gui->getText();
 
   if(gui->alpha())
-    gr->gc->gcBlend(true, gcblend_srcalpha, gcblend_srcialpha);
+    gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   if(gui->isClass(kgmGuiButton::cClass()))
   {
@@ -320,7 +320,7 @@ void GuiRender::render(kgmGui* gui)
   }
 
   if(gui->alpha())
-    gr->gc->gcBlend(false, gcblend_zero, gcblend_zero);
+    gr->gc->gcBlend(false, 0, gcblend_zero, gcblend_zero);
 
   for(int i = 0; i < gui->m_childs.length(); i++)
   {

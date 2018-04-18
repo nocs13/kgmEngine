@@ -54,6 +54,19 @@ public:
  {
    r * 0.2125 + g * 0.7154 + b * 0.0721;
  }
+
+ static vec4 toVector(u32 c)
+ {
+   u8 r, g, b, a;
+
+   r = (u8) (0x000000ff & c);
+   g = (u8) (0x000000ff & (c >> 8));
+   b = (u8) (0x000000ff & (c >> 16));
+   a = (u8) (0x000000ff & (c >> 24));
+
+   return vec4((float) r / 255.f, (float) g / 255.f,
+               (float) b / 255.f, (float) a / 255.f);
+ }
 };
 
 typedef kgmColor color;
