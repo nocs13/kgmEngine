@@ -119,7 +119,7 @@ void*      g_map_shadow = null;
 
 kgmTexture*   g_def_style_texture = null;
 
-void* g_fbo = null;
+//void* g_fbo = null;
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
@@ -146,8 +146,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   shader    = null;
   tnormal   = null;
   tspecular = null;
-
-  m_shadowmap = null;
 
   m_max_faces = 5000000;
 
@@ -196,10 +194,13 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     m_def_light = new kgmNodeLight();
 
-    g_fbo = g->gcGenTarget(512, 512, 0, true);
+    //g_fbo = g->gcGenTarget(512, 512, 0, true);
+    m_shadows.alloc(1);
+    m_shadows[0].valid = false;
+    m_shadows[0].w = m_shadows[0].h = 512;
+    m_shadows[0].fbo = g->gcGenTarget(512, 512, gctype_texdepth, false);
   }
 
-  m_shadows.alloc(1);
 
 #ifdef DEBUG
   kgm_log() << "Prepare shaders \n";
@@ -227,7 +228,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
-  gc->gcFreeTarget(g_fbo);
+  //gc->gcFreeTarget(g_fbo);
 
   delete m_r_fps;
   delete m_r_gui;
@@ -425,7 +426,7 @@ void kgmGraphics::render()
   if (m_a_meshes.length() > m_a_meshes_count)
     m_a_meshes[m_a_meshes_count] = null;
 
-  {
+  /*{
     static u32 zzz = 0;
 
     if (zzz == 0)
@@ -447,7 +448,7 @@ void kgmGraphics::render()
       if (zzz == 100)
         zzz = 0;
     }
-  }
+  }*/
 
   gc->gcCull(1);
 
@@ -496,6 +497,10 @@ void kgmGraphics::render()
   m_a_light = m_a_lights[0];
 
   m_a_particles_count = 0;
+
+  m_shadows[0].valid = true;
+  m_shadows[0].lpos = m_a_light->getNodePosition();
+  m_shadows[0].ldir = vec3(0, 0, -1);
 
   for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
   {

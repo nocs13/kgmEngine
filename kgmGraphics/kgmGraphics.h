@@ -63,8 +63,10 @@ public:
 
   struct Shadow
   {
-    kgmLight*   light;
-    kgmTexture* map;
+    vec3  lpos, ldir;
+    void* fbo;
+    bool  valid;
+    u16   w, h;
   };
 
   enum
@@ -100,9 +102,8 @@ protected:
   u32  m_a_bmeshes_count   = 0;
   u32  m_a_particles_count = 0;
 
-  INode*           m_a_light       = null;
-
-  INode*           m_def_light;
+  INode*  m_a_light   = null;
+  INode*  m_def_light = null;
 
   kgmList<kgmResource*> m_resources;
 
@@ -114,8 +115,6 @@ protected:
   void* tdepth;
   void* shader;
   mtx4  location;
-
-  kgmTexture *m_shadowmap;
 
   kgmArray<Shadow> m_shadows;
 
