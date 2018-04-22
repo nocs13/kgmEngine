@@ -61,6 +61,12 @@ public:
   static GraphicsQuality textureQuality;
   static GraphicsQuality shadowQuality;
 
+  struct Viewport
+  {
+    u32 x, y, w, h;
+    f32 n, f;
+  };
+
   struct Shadow
   {
     vec3  lpos, ldir;
