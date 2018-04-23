@@ -1007,6 +1007,7 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   {
   case gctype_texdepth:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texture, 0);
+    break;
   case gctype_tex2d:
   default:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture, 0);
@@ -1068,6 +1069,12 @@ void kgmOGL::gcSetTarget(void* t)
   if(!rb || !rb->frame)
   {
     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+
+    if(glGetError() != GL_NO_ERROR)
+    {
+      kgm_log() << "SetTarget: set 0 error \n";
+    }
 
     return;
   }
@@ -1076,6 +1083,7 @@ void kgmOGL::gcSetTarget(void* t)
 
   if(glGetError() != GL_NO_ERROR)
   {
+    kgm_log() << "SetTarget: set F error \n";
   }
 }
 

@@ -213,6 +213,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[kgmShader::TypeBase] = rc->getShader("base.glsl");
     m_shaders[kgmShader::TypeToon] = rc->getShader("toon.glsl");
     m_shaders[kgmShader::TypePhong] = rc->getShader("phong.glsl");
+    m_shaders[kgmShader::TypeShadow] = rc->getShader("shadow.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -456,6 +457,7 @@ void kgmGraphics::render()
   setViewMatrix(m_camera->mView);
   m_g_mtx_world.identity();
 
+  gc->gcSetTarget(null);
   gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
@@ -499,8 +501,8 @@ void kgmGraphics::render()
   m_a_particles_count = 0;
 
   m_shadows[0].valid = true;
-  m_shadows[0].lpos = m_a_light->getNodePosition();
-  m_shadows[0].ldir = vec3(0, 0, -1);
+  m_shadows[0].lpos = vec3(1, 1, 5); //m_a_light->getNodePosition();
+  m_shadows[0].ldir = vec3(1, 0, -1);
 
   for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
   {
@@ -575,7 +577,7 @@ void kgmGraphics::render()
 
   render(m_shaders[kgmShader::TypeBase]);
 
-  //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(g_fbo));
+  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(m_shadows[0].fbo));
 
   render_2d();
 
