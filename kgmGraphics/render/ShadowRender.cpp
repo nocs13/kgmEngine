@@ -20,8 +20,6 @@ void ShadowRender::render()
 
     cm.set(gr->camera().mFov, 1.0f, 1.0f, 1000.f, s->lpos, s->ldir, vec3(0, 0, 1));
 
-    //gr->setProjMatrix(cm.mProj);
-    //gr->setViewMatrix(cm.mView);
     gr->setProjMatrix(s->mp);
     gr->setViewMatrix(s->mv);
 
@@ -55,7 +53,7 @@ void ShadowRender::render()
   gr->setProjMatrix(gr->camera().mProj);
   gr->setViewMatrix(gr->camera().mView);
 
-  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {
