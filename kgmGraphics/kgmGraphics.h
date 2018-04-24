@@ -58,6 +58,12 @@ public:
     GraphicsQualitySuper
   };
 
+  enum Shader
+  {
+    ShaderShadowKeep = kgmShader::TypeExtend + 1,
+    ShaderShadowDraw
+  };
+
   static GraphicsQuality textureQuality;
   static GraphicsQuality shadowQuality;
 
@@ -70,6 +76,7 @@ public:
   struct Shadow
   {
     vec3  lpos, ldir;
+    mtx4  mvp, mv, mp;
     void* fbo;
     bool  valid;
     u16   w, h;

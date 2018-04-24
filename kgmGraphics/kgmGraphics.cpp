@@ -209,11 +209,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    m_shaders[kgmShader::TypeNone] = rc->getShader("none.glsl");
-    m_shaders[kgmShader::TypeBase] = rc->getShader("base.glsl");
-    m_shaders[kgmShader::TypeToon] = rc->getShader("toon.glsl");
+    m_shaders[kgmShader::TypeNone]  = rc->getShader("none.glsl");
+    m_shaders[kgmShader::TypeBase]  = rc->getShader("base.glsl");
+    m_shaders[kgmShader::TypeToon]  = rc->getShader("toon.glsl");
     m_shaders[kgmShader::TypePhong] = rc->getShader("phong.glsl");
-    m_shaders[kgmShader::TypeShadow] = rc->getShader("shadow.glsl");
+    m_shaders[ShaderShadowKeep]     = rc->getShader("shkeep.glsl");
+    m_shaders[ShaderShadowDraw]     = rc->getShader("shdraw.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -501,8 +502,28 @@ void kgmGraphics::render()
   m_a_particles_count = 0;
 
   m_shadows[0].valid = true;
-  m_shadows[0].lpos = vec3(1, 1, 5); //m_a_light->getNodePosition();
-  m_shadows[0].ldir = vec3(1, 0, -1);
+
+  //m_shadows[0].lpos  = m_a_light->getNodePosition();
+  //m_shadows[0].ldir  = vec3(0, 0, -1);
+  m_shadows[0].lpos  = m_camera->mPos;
+  m_shadows[0].ldir  = m_camera->mDir;
+
+  {
+    mtx4 mp, mv, mb;
+
+    f32 b[16] = {0.5, 0, 0, 0,
+                 0,   0.5, 0, 0,
+                 0,   0,   0.5, 0,
+                 0.5, 0.5, 0.5, 1};
+
+    mp.perspective(PI / 6, 1.0, 1.0, 1000);
+    mv.lookat(m_shadows[0].lpos, m_shadows[0].ldir, vec3(0, 0, 1));
+    mb = mtx4(b);
+
+    m_shadows[0].mv = mv;
+    m_shadows[0].mp = mp;
+    m_shadows[0].mvp = /*mb */ mv * mp;
+  }
 
   for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
   {
@@ -521,17 +542,9 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  //RndAmbient  ar(this);
-
-  //ar.render();
-
   LightRender lr(this);
 
-  lr.render();
-
-  //ColorRender cr(this);
-
-  //cr.render();
+  //lr.render();
 
   ShadowRender sr(this);
   sr.render();

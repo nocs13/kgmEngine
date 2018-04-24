@@ -971,6 +971,7 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   case gctype_texdepth:
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1476,18 +1477,24 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   GLhandle vshad = 0, fshad = 0;
   int stat[1] = {0};
   int size = 256;
+  int gerr = 0;
 
 #ifdef DEBUG
   char tbuf[256];
 #endif
 
 #ifdef GL_VERTEX_SHADER
-  prog = glCreateProgramObject();
+  glGetError();
 
-  if(GL_NO_ERROR != glGetError())
+  prog = glCreateProgramObject();
+  gerr = glGetError();
+
+  if(GL_NO_ERROR != gerr)
   {
+    int s = gerr;
+
 #ifdef DEBUG
-  kgm_log() << "gcGenShader error is " << (s32)glGetError() << "\n";
+  kgm_log() << "gcGenShader error is " << (s32)gerr << "\n";
 #endif
 
     return null;

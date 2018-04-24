@@ -20,8 +20,10 @@ void ShadowRender::render()
 
     cm.set(gr->camera().mFov, 1.0f, 1.0f, 1000.f, s->lpos, s->ldir, vec3(0, 0, 1));
 
-    gr->setProjMatrix(cm.mProj);
-    gr->setViewMatrix(cm.mView);
+    //gr->setProjMatrix(cm.mProj);
+    //gr->setViewMatrix(cm.mView);
+    gr->setProjMatrix(s->mp);
+    gr->setViewMatrix(s->mv);
 
     gr->gc->gcBegin();
     gr->gc->gcDepth(true, true, gccmp_lequal);
@@ -33,11 +35,12 @@ void ShadowRender::render()
 
       kgmMesh* m = (kgmMesh*)n->getNodeObject();
 
-      gr->render(gr->m_shaders[kgmShader::TypeNone]);
-      gr->render(gr->m_def_material);
-
       mtx4 mt = n->getNodeTransform();
       gr->setWorldMatrix(mt);
+
+      gr->render(gr->m_def_material);
+      gr->render(gr->m_shaders[kgmGraphics::ShaderShadowKeep]);
+
       gr->render(m);
 
     }
@@ -50,16 +53,13 @@ void ShadowRender::render()
                         gr->m_viewport.w, gr->m_viewport.h, 1.0f, 1000.0f);
 
   gr->setProjMatrix(gr->camera().mProj);
-  gr->setViewMatrix(gr->camera().mProj);
+  gr->setViewMatrix(gr->camera().mView);
 
-  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {
     kgmGraphics::Shadow* s = &gr->m_shadows[i];
-
-    gr->setProjMatrix(cm.mProj);
-    gr->setViewMatrix(cm.mView);
 
     for(u32 j = 0; j < gr->m_a_meshes_count; j++)
     {
@@ -67,12 +67,18 @@ void ShadowRender::render()
 
       kgmMesh* m = (kgmMesh*)n->getNodeObject();
 
-      gr->render(gr->m_shaders[kgmShader::TypeNone]);
       gr->render(gr->m_def_material);
       gr->gc->gcSetTexture(0, gr->gc->gcTexTarget(s->fbo));
 
       mtx4 mt = n->getNodeTransform();
       gr->setWorldMatrix(mt);
+
+      kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderShadowDraw];
+      //kgmShader* sh = gr->m_shaders[kgmShader::TypeNone];
+
+      gr->render(sh);
+      sh->set("g_mLight", s->mvp);
+
       gr->render(m);
     }
   }

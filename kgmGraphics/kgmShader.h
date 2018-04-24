@@ -44,9 +44,8 @@ public:
     TypeGlass,
     TypeFlame,
     TypeMirror,
-    TypeShadow,
     TypeIce,
-    TypeExtend = 0x1f
+    TypeExtend
   };
 
 protected:
