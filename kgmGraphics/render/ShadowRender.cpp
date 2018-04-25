@@ -53,7 +53,7 @@ void ShadowRender::render()
   gr->setProjMatrix(gr->camera().mProj);
   gr->setViewMatrix(gr->camera().mView);
 
-  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {

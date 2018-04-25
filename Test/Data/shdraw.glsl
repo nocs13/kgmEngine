@@ -14,8 +14,8 @@ void kgm_main(out vec4 pos)
 }
 
 //Fragment Shader
-//uniform sampler2DShadow txDepth;
-uniform sampler2D txDepth;
+uniform sampler2DShadow txDepth;
+//uniform sampler2D txDepth;
 
 varying vec4 q;
 
@@ -36,9 +36,13 @@ void kgm_main(out vec4 col)
   scoord = clamp(scoord, 0.0, 1.0);*/
 
   //float shadow = 1.0;
-  //float shadow = shadow2D(txDepth, scoord).r;
-  float shadow = texture2D(txDepth, scoord.xy).r;
+  scoord.z += 0.0002f;
+  float shadow = shadow2D(txDepth, scoord).r;
+  //float shadow = texture2D(txDepth, scoord.xy).r;
   float depth  = scoord.z;
+
+  //if (shadow >= depth)
+  //    discard;
 
   //if(shadow > 0.99 || shadow < 0.01)
   //  discard;
@@ -46,14 +50,14 @@ void kgm_main(out vec4 col)
   //if (shadow >= depth)
   //  discard;
 
-  float d = abs(depth - shadow);
-  d = clamp(d, 0.0, 1.0);
-  vec3 color = vec3(depth, depth, depth);
+  float d = depth - shadow;
+  //d = clamp(d, 0.0, 1.0);
+  //vec3 color = vec3(depth, depth, depth);
   //vec3 color = vec3(shadow, shadow, shadow);
-  //vec3 color = vec3(d, d, d);
+  vec3 color = vec3(d, d, d);
 
-  if (d == 0.0)
-    discard;
+  //if (d < 0.000001)
+  //  discard;
 
   //color *= shadow;
   col = vec4(color.xyz, 0.5);
