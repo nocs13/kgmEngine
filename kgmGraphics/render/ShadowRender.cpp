@@ -16,9 +16,9 @@ void ShadowRender::render()
     kgmGraphics::Shadow* s = &gr->m_shadows[i];
 
     gr->gc->gcSetTarget(s->fbo);
-    gr->gc->gcSetViewport(0, 0, s->w, s->h, 1.0f, 1000.0f);
+    gr->gc->gcSetViewport(0, 0, s->w, s->h, .1f, 1000.0f);
 
-    cm.set(gr->camera().mFov, 1.0f, 1.0f, 1000.f, s->lpos, s->ldir, vec3(0, 0, 1));
+    cm.set(gr->camera().mFov, 1.0f, .1f, 1000.f, s->lpos, s->ldir, vec3(0, 0, 1));
 
     gr->setProjMatrix(s->mp);
     gr->setViewMatrix(s->mv);
@@ -48,12 +48,12 @@ void ShadowRender::render()
   }
 
   gr->gc->gcSetViewport(gr->m_viewport.x, gr->m_viewport.y,
-                        gr->m_viewport.w, gr->m_viewport.h, 1.0f, 1000.0f);
+                        gr->m_viewport.w, gr->m_viewport.h, .1f, 1000.0f);
 
   gr->setProjMatrix(gr->camera().mProj);
   gr->setViewMatrix(gr->camera().mView);
 
-  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {
