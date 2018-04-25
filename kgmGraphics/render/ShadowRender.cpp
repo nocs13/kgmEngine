@@ -72,12 +72,12 @@ void ShadowRender::render()
       gr->setWorldMatrix(mt);
 
       kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderShadowDraw];
-      //kgmShader* sh = gr->m_shaders[kgmShader::TypeNone];
 
       gr->render(sh);
       sh->set("g_mLight", s->mvp);
 
       gr->render(m);
+      gr->render((kgmShader*)null);
     }
   }
 

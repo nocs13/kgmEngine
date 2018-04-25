@@ -139,6 +139,7 @@ protected:
   bool  m_culling;
 
   bool  m_editor;
+  bool  m_wired;
 
   uint32 m_max_faces;
 
@@ -290,6 +291,16 @@ public:
   kgmCamera& camera()
   {
     return *m_camera;
+  }
+
+  bool wired() const
+  {
+    return m_wired;
+  }
+
+  void wired(bool w)
+  {
+    m_wired = w;
   }
 
   void setBgColor(u32 col)

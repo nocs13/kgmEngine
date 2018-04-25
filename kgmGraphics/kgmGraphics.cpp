@@ -156,6 +156,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_bg_color    = 0xFF000000;
 
   m_editor      = false;
+  m_wired       = false;
 
   gui_style = new kgmGuiStyle();
 
@@ -503,10 +504,11 @@ void kgmGraphics::render()
 
   m_shadows[0].valid = true;
 
-  //m_shadows[0].lpos  = m_a_light->getNodePosition();
-  //m_shadows[0].ldir  = vec3(0, 0, -1);
-  m_shadows[0].lpos  = m_camera->mPos;
-  m_shadows[0].ldir  = m_camera->mDir;
+  m_shadows[0].lpos  = m_a_light->getNodePosition();
+  m_shadows[0].ldir  = vec3(.1, .1, -1);
+  m_shadows[0].ldir.normalize();
+  //m_shadows[0].lpos  = m_camera->mPos;
+  //m_shadows[0].ldir  = m_camera->mDir;
 
   {
     mtx4 mp, mv, mb;
@@ -543,15 +545,13 @@ void kgmGraphics::render()
   lighting = true;
 
   LightRender lr(this);
-
-  //lr.render();
+  lr.render();
 
   ShadowRender sr(this);
   sr.render();
 
   //draw particles
   ParticlesRender pr(this);
-
   pr.render();
 
   // Draw alpha objects.
@@ -963,6 +963,9 @@ void kgmGraphics::render(kgmMesh *m)
   default:
     pmt = gcpmt_triangles;
   };
+
+  if (m_wired)
+    pmt = gcpmt_lines;
 
   gc->gcDraw(pmt, m->fvf(), m->vsize(),
              m->vcount(), m->vertices(),
