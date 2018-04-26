@@ -199,7 +199,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shadows.alloc(1);
     m_shadows[0].valid = false;
     m_shadows[0].w = m_shadows[0].h = 512;
-    m_shadows[0].fbo = g->gcGenTarget(512, 512, gctype_texdepth, false);
+    m_shadows[0].fbo = g->gcGenTarget(512, 512, gctype_texdepth, true);
   }
 
 
@@ -518,7 +518,7 @@ void kgmGraphics::render()
                  0,   0,   0.5, 0,
                  0.5, 0.5, 0.5, 1};
 
-    mp.perspective(PI / 6, 1.0, 1.0, 1000);
+    mp.perspective(PI / 6, 1.0, 1.0, 20);
     mv.lookat(m_shadows[0].lpos, m_shadows[0].ldir, vec3(0, 0, 1));
     mb = mtx4(b);
 
@@ -545,7 +545,7 @@ void kgmGraphics::render()
   lighting = true;
 
   LightRender lr(this);
-  lr.render();
+  //lr.render();
 
   ShadowRender sr(this);
   sr.render();

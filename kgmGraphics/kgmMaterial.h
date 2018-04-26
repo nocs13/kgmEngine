@@ -45,6 +45,14 @@ public:
     Blend_Lighten,
   };
 
+  enum Reflection
+  {
+    Reflection_None,
+    Reflection_Plane,
+    Reflection_Cube,
+    Reflection_Sphere
+  };
+
   class Color
   {
   public:
@@ -131,6 +139,8 @@ private:
   kgmTexture* m_tex_specular = null;
 
   float  m_shininess;
+
+  Reflection m_reflection = Reflection_None;
 
 public:
   Color  m_color, m_specular;
@@ -255,6 +265,16 @@ public:
   void cull(bool c)
   {
     m_cull = c;
+  }
+
+  Reflection reflection() const
+  {
+    return m_reflection;
+  }
+
+  void reflection(Reflection r)
+  {
+    m_reflection = r;
   }
 
   static kgmString blendToString(Blend Blend);

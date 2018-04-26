@@ -8,4 +8,5 @@ void kgm_main(out vec4 pos)
 void kgm_main(out vec4 col)
 {
   //col = gl_FragCoord.z;
+  gl_FragDepth = gl_FragCoord.z;
 }

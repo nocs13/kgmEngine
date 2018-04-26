@@ -9,23 +9,23 @@ ShadowRender::ShadowRender(kgmGraphics* g)
 
 void ShadowRender::render()
 {
-  kgmCamera cm;
+  u32       cmask = 0x00000000;
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {
     kgmGraphics::Shadow* s = &gr->m_shadows[i];
 
     gr->gc->gcSetTarget(s->fbo);
-    gr->gc->gcSetViewport(0, 0, s->w, s->h, .1f, 1000.0f);
-
-    cm.set(gr->camera().mFov, 1.0f, .1f, 1000.f, s->lpos, s->ldir, vec3(0, 0, 1));
+    gr->gc->gcSetViewport(0, 0, s->w, s->h, .1f, 20.0f);
 
     gr->setProjMatrix(s->mp);
     gr->setViewMatrix(s->mv);
 
-    gr->gc->gcBegin();
+    gr->gc->gcSet(gcpar_colormask, &cmask);
     gr->gc->gcDepth(true, true, gccmp_lequal);
-    gr->gc->gcClear(gcflag_color | gcflag_depth, 0x00, 1.0f, 0);
+    gr->gc->gcClear(gcflag_depth, 0x00, 1.0f, 0);
+
+    gr->gc->gcBegin();
 
     for(u32 j = 0; j < gr->m_a_meshes_count; j++)
     {
@@ -40,7 +40,6 @@ void ShadowRender::render()
       gr->render(gr->m_shaders[kgmGraphics::ShaderShadowKeep]);
 
       gr->render(m);
-
     }
 
     gr->gc->gcEnd();
@@ -53,7 +52,9 @@ void ShadowRender::render()
   gr->setProjMatrix(gr->camera().mProj);
   gr->setViewMatrix(gr->camera().mView);
 
-  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  cmask = 0xffffffff;
+  gr->gc->gcSet(gcpar_colormask, &cmask);
+  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {
