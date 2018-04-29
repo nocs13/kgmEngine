@@ -19,10 +19,10 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  //kgmShader* shader = gr->m_shaders[kgmShader::TypeToon];
-  kgmShader* shader = gr->m_shaders[kgmShader::TypeBase];
+  kgmShader* shader = gr->m_shaders[kgmShader::TypeToon];
+  //kgmShader* shader = gr->m_shaders[kgmShader::TypeBase];
 
-  gr->wired(true);
+  gr->wired(false);
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {

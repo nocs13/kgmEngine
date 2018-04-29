@@ -13,7 +13,7 @@ SpriteRender::SpriteRender(kgmGraphics* gr)
 void SpriteRender::render()
 {
   gr->gc->gcSetShader(null);
-  gr->gc->gcDepth(false, 0, 0);
+  gr->gc->gcDepth(false, false, gccmp_lequal);
   gr->gc2DMode();
 
   gr->setWorldMatrix(mi);

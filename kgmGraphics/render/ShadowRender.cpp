@@ -21,7 +21,7 @@ void ShadowRender::render()
     gr->setProjMatrix(s->mp);
     gr->setViewMatrix(s->mv);
 
-    gr->gc->gcSet(gcpar_colormask, &cmask);
+    //gr->gc->gcSet(gcpar_colormask, &cmask);
     gr->gc->gcDepth(true, true, gccmp_lequal);
     gr->gc->gcClear(gcflag_depth, 0x00, 1.0f, 0);
 
@@ -54,7 +54,7 @@ void ShadowRender::render()
 
   cmask = 0xffffffff;
   gr->gc->gcSet(gcpar_colormask, &cmask);
-  //gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < gr->m_shadows.length(); i++)
   {

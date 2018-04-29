@@ -28,7 +28,8 @@
 
 #include <stdlib.h>
 
-#define MAX_LIGHTS 48
+#define MAX_LIGHTS   48
+#define MAX_SHADOWS  2
 
 kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shadowQuality  = GraphicsQualityLow;
@@ -196,10 +197,14 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_def_light = new kgmNodeLight();
 
     //g_fbo = g->gcGenTarget(512, 512, 0, true);
-    m_shadows.alloc(1);
-    m_shadows[0].valid = false;
-    m_shadows[0].w = m_shadows[0].h = 512;
-    m_shadows[0].fbo = g->gcGenTarget(512, 512, gctype_texdepth, true);
+    m_shadows.alloc(MAX_SHADOWS);
+
+    for (u32 i = 0; i < MAX_SHADOWS; i++)
+    {
+      m_shadows[i].valid = false;
+      m_shadows[i].w = m_shadows[i].h = 512;
+      m_shadows[i].fbo = g->gcGenTarget(m_shadows[i].w, m_shadows[i].h, gctype_texdepth, false);
+    }
   }
 
 
@@ -507,8 +512,6 @@ void kgmGraphics::render()
   m_shadows[0].lpos  = m_a_light->getNodePosition();
   m_shadows[0].ldir  = vec3(.1, .1, -1);
   m_shadows[0].ldir.normalize();
-  //m_shadows[0].lpos  = m_camera->mPos;
-  //m_shadows[0].ldir  = m_camera->mDir;
 
   {
     mtx4 mp, mv, mb;
@@ -545,7 +548,7 @@ void kgmGraphics::render()
   lighting = true;
 
   LightRender lr(this);
-  //lr.render();
+  lr.render();
 
   ShadowRender sr(this);
   sr.render();
@@ -581,7 +584,7 @@ void kgmGraphics::render()
   m_r_gui->render();
 
   gc->gcSetShader(null);
-  gc->gcDepth(false, 0, 0);
+  gc->gcDepth(false, false, gccmp_lequal);
 
   gc2DMode();
 
@@ -590,7 +593,7 @@ void kgmGraphics::render()
 
   render(m_shaders[kgmShader::TypeBase]);
 
-  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(m_shadows[0].fbo));
+  //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(m_shadows[0].fbo));
 
   render_2d();
 

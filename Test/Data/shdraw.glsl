@@ -27,21 +27,28 @@ void kgm_main(out vec4 col)
   float shadow = texture2D(txDepth, scoord.xy).r;
   float depth  = scoord.z;
 
-  //shadow += 0.0001;
+  if (shadow > 0.99)
+    discard;
+
+  shadow -= 0.01;
+
+  if (depth < shadow)
+    discard;
 
   //if ((shadow + 0.0001) >= depth)
   //    discard;
 
   float d = abs(depth - shadow);
 
-  //if (d < 0.1)
-  //  discard;
+  if (d < 0.001)
+    discard;
 
   //vec3 color = vec3(depth, depth, depth);
   //vec3 color = vec3(shadow, shadow, shadow);
-  vec3 color = vec3(shadow);
+  vec3 color = vec3(d);
 
+  float a = clamp(abs(0.8 - d), 0.1, 0.8);
 
   //color *= shadow;
-  col = vec4(color.xyz, 1.0);
+  col = vec4(color.xyz, a);
 }

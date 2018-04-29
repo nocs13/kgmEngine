@@ -38,8 +38,10 @@ void kgmGameGraphics::render_3d()
   {
     mtx4 mt = m_pivot->getTransform();
     setWorldMatrix(mt);
+    gc->gcDepth(false, false, gccmp_lequal);
     kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
     kgmGraphics::render((kgmMesh*) m_pivot);
+    gc->gcDepth(true, true, gccmp_lequal);
   }
 
   if (!m_game)

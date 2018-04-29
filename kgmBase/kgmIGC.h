@@ -115,7 +115,6 @@ enum gc_enum
   gctype_tex2d,
   gctype_texcube,
   gctype_texdepth,
-  gctype_textarget,
 
   gccull_back,
   gccull_front,

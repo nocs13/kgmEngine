@@ -225,7 +225,28 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
     kgmLog::log("\nGot Doublebuffered Visual");
   }
 
-  m_glctx = glXCreateContext(wnd->m_dpy, m_visual, 0, GL_TRUE);
+  //Get a pointer to the GL 3.0 context creation
+  PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddress((GLubyte*)"glXCreateContextAttribsARB");
+
+  /*if (glXCreateContextAttribs)
+  {
+    int attribs[] = {
+      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+      GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+      0
+    };
+
+    GLXFBConfig          *fbConfigs;
+    int numReturned;
+
+    fbConfigs = glXGetFBConfigs( wnd->m_dpy, DefaultScreen(wnd->m_dpy),
+                                       &numReturned );
+
+    m_glctx = glXCreateContextAttribs(wnd->m_dpy, *fbConfigs, 0, true, &attribs[0]);
+  }*/
+
+  if (!m_glctx)
+    m_glctx = glXCreateContext(wnd->m_dpy, m_visual, 0, GL_TRUE);
 
   if(!glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, m_glctx))
   {
@@ -243,12 +264,13 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
 #ifdef DEBUG
   kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
+  fprintf(stderr, "OpenGL Version: %s\n", (char*)oglVersion);
 #else
   (void)oglVersion;
 #endif
 
   glInitExt();
-  glEnable(GL_ACTIVE_TEXTURE);
+  glEnable(GL_TEXTURE_2D);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_CULL_FACE);
@@ -270,6 +292,11 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   //FILE* f = fopen("/tmp/glext", "w");
   //fprintf(f, "%s", ext);
   //fclose(f);
+
+  if (!ext)
+  {
+    return;
+  }
 
   if(strstr((char*)ext, "GL_ARB_shader_objects"))
   {
@@ -972,12 +999,12 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
     break;
@@ -991,6 +1018,8 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
   };
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   GLu32 depth = 0;
 
@@ -1007,6 +1036,8 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   switch (type)
   {
   case gctype_texdepth:
+    //glDrawBuffer(GL_NONE);
+    //glReadBuffer(GL_NONE);
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texture, 0);
     break;
   case gctype_tex2d:
@@ -1019,12 +1050,14 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
 
   if(status != GL_FRAMEBUFFER_COMPLETE_EXT)
   {
+#ifdef DEBUG
+    kgm_log() << "Error: cannot use framebuffer object!\n";
+#endif
     return null;
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
-  glBindTexture(GL_TEXTURE_2D, 0);
 
   RenderBuffer* rb = (RenderBuffer*) kgm_alloc(sizeof(RenderBuffer));
 
@@ -1129,8 +1162,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glVertexPointer(3, GL_FLOAT, v_size, pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_Vertex");
-    glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
-    glEnableVertexAttribArray(ah);
+
+    if(ah != -1)
+    {
+      glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+      glEnableVertexAttribArray(ah);
+    }
 #endif
 
     pM += (sizeof(float) * 3);
@@ -1143,8 +1180,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glNormalPointer(GL_FLOAT,v_size,pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_Normal");
-    glEnableVertexAttribArray(ah);
-    glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+
+    if(ah != -1)
+    {
+      glEnableVertexAttribArray(ah);
+      glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
+    }
 #endif
 
     pM += (sizeof(float)*3);
@@ -1157,8 +1198,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_Color");
-    glEnableVertexAttribArray(ah);
-    glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
+
+    if(ah != -1)
+    {
+      glEnableVertexAttribArray(ah);
+      glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
+    }
 #endif
 
     pM += sizeof(u32);
@@ -1172,8 +1217,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_UV");
-    glEnableVertexAttribArray(ah);
-    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+
+    if(ah != -1)
+    {
+      glEnableVertexAttribArray(ah);
+      glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    }
 #endif
 
     pM += (uv_size);
@@ -1187,8 +1236,11 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_UV2");
-    glEnableVertexAttribArray(ah);
-    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    if(ah != -1)
+    {
+      glEnableVertexAttribArray(ah);
+      glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    }
 #endif
 
     pM += (uv_size);
@@ -1202,8 +1254,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glTexCoordPointer(2,GL_FLOAT,v_size,pM);
 #else
     ah = glGetAttribLocation(g_shader, "a_UV3");
-    glEnableVertexAttribArray(ah);
-    glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+
+    if(ah != -1)
+    {
+      glEnableVertexAttribArray(ah);
+      glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
+    }
 #endif
 
     pM += (uv_size);
