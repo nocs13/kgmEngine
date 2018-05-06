@@ -144,6 +144,8 @@ enum gc_enum
   gcsup_fbuffers,       // frame buffers
 };
 
+#define GC_MAX_TERTURE_UNITS 8
+
 class kgmIGC: public kgmObject
 {
 public:

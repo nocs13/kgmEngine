@@ -122,11 +122,13 @@ protected:
 
   kgmGuiStyle* gui_style = null;
 
+  void* textures[GC_MAX_TERTURE_UNITS];
   void* tcolor;
   void* tnormal;
   void* tspecular;
   void* tdepth;
   void* shader;
+
   mtx4  location;
 
   kgmArray<Shadow> m_shadows;
