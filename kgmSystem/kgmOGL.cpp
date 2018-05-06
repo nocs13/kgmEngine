@@ -335,6 +335,10 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   //if(glxSwapIntervalSGI) glxSwapIntervalSGI(0);
 #endif
 
+  GLint max_image_units = 0;
+
+  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_image_units);
+
   //init local values
   glEnable(GL_TEXTURE_2D);
 

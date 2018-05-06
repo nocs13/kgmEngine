@@ -94,6 +94,11 @@ box3 kgmMesh::bound()
   return m_bound;
 }
 
+vec3 normal()
+{
+  return vec3();
+}
+
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
 {
   if(m_vertices)

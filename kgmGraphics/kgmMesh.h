@@ -153,8 +153,9 @@ public:
   ~kgmMesh();
 
   int  genLods(int);
-  void rebound();  //recalculate boundes(box, sphere, ...)
+  void rebound();  //recalculate bound box
   box3 bound();
+  vec3 normal();   //calculate average normal
 
   Vertex* vAlloc(u32 count, FVF f=FVF_P_N_C);
   Face*   fAlloc(u32 count, FFF f=FFF_16);
