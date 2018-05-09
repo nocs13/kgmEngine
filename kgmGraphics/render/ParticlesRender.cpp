@@ -27,7 +27,7 @@ void ParticlesRender::render()
 
     gr->render(mtl);
 
-    gr->render(gr->m_shaders[kgmShader::TypeBase]);
+    gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
     gr->gc->gcDepth(true, false, gccmp_lequal);
 
     if (pr->fade())

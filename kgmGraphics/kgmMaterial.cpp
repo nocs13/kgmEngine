@@ -161,4 +161,41 @@ kgmMaterial::Blend kgmMaterial::stringToBlend(kgmString blend)
   return Blend_None;
 }
 
+kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
+{
+#define s_text(x) if(x == type) return #x
+  s_text(TypeNone);
+  s_text(TypeBase);
+  s_text(TypeSkin);
+  s_text(TypePhong);
+  s_text(TypeWater);
+  s_text(TypeRiver);
+  s_text(TypeOcean);
+  s_text(TypeGlass);
+  s_text(TypeFlame);
+  s_text(TypeMirror);
+  s_text(TypeIce);
+#undef s_text
+
+  return "TypeNone";
+}
+
+kgmMaterial::Type kgmMaterial::stringToType(kgmString str)
+{
+#define s_type(x) if(strcmp(str, #x) == 0) return x
+  s_type(TypeNone);
+  s_type(TypeBase);
+  s_type(TypeSkin);
+  s_type(TypePhong);
+  s_type(TypeWater);
+  s_type(TypeRiver);
+  s_type(TypeOcean);
+  s_type(TypeGlass);
+  s_type(TypeFlame);
+  s_type(TypeMirror);
+  s_type(TypeIce);
+#undef s_type
+
+  return TypeNone;
+}
 

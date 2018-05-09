@@ -29,7 +29,7 @@ void kgmGameGraphics::render_3d()
   setWorldMatrix(mi);
 
   kgmGraphics::render(m_def_material);
-  kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
+  kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
 
   if (m_gridline)
     kgmGraphics::render((kgmMesh*) m_gridline);
@@ -39,7 +39,7 @@ void kgmGameGraphics::render_3d()
     mtx4 mt = m_pivot->getTransform();
     setWorldMatrix(mt);
     gc->gcDepth(false, false, gccmp_lequal);
-    kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
+    kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
     kgmGraphics::render((kgmMesh*) m_pivot);
     gc->gcDepth(true, true, gccmp_lequal);
   }
@@ -90,7 +90,7 @@ void kgmGameGraphics::drawLight(kgmUnit* u)
 
   mtx4 mt = u->transform();
   setWorldMatrix(mt);
-  kgmGraphics::render(m_shaders[kgmShader::TypeBase]);
+  kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(V), 6, v, 0, 0, 0);
 }
 

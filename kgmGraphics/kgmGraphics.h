@@ -60,7 +60,7 @@ public:
 
   enum Shader
   {
-    ShaderShadowKeep = kgmShader::TypeExtend + 1,
+    ShaderShadowKeep = kgmMaterial::TypeExtend + 1,
     ShaderShadowDraw
   };
 

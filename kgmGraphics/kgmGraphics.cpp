@@ -215,10 +215,10 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    m_shaders[kgmShader::TypeNone]  = rc->getShader("none.glsl");
-    m_shaders[kgmShader::TypeBase]  = rc->getShader("base.glsl");
-    m_shaders[kgmShader::TypeToon]  = rc->getShader("toon.glsl");
-    m_shaders[kgmShader::TypePhong] = rc->getShader("phong.glsl");
+    m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
+    m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
+    m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
+    m_shaders[kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
     m_shaders[ShaderShadowKeep]     = rc->getShader("shkeep.glsl");
     m_shaders[ShaderShadowDraw]     = rc->getShader("shdraw.glsl");
   }
@@ -591,7 +591,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render(m_shaders[kgmShader::TypeBase]);
+  render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(m_shadows[0].fbo));
 

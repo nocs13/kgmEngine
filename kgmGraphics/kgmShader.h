@@ -29,25 +29,6 @@ class kgmShader: public kgmResource
   IN_MAP_SPECULAR   = 1 << 18
 };
 
-public:
-  enum Shader
-  {
-    TypeNone,
-    TypeBase,
-    TypeToon,
-    TypePhong,
-    TypeSkin,
-    TypePoor,
-    TypeWater,
-    TypeRiver,
-    TypeOcean,
-    TypeGlass,
-    TypeFlame,
-    TypeMirror,
-    TypeIce,
-    TypeExtend
-  };
-
 protected:
   kgmIGC* m_gc;
   u8      m_maps;
@@ -72,8 +53,8 @@ public:
   void set(const char*, int,    int count = 1);
   void attr(int, const char*);
 
-  static const char* toString(Shader);
-  static Shader toType(const char*);
+  //static const char* toString(Shader);
+  //static Shader toType(const char*);
 
   void addInput(Input i)
   {

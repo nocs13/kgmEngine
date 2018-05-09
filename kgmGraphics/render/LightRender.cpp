@@ -19,8 +19,8 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  kgmShader* shader = gr->m_shaders[kgmShader::TypeToon];
-  //kgmShader* shader = gr->m_shaders[kgmShader::TypeBase];
+  kgmShader* shader = gr->m_shaders[kgmMaterial::TypeToon];
+  //kgmShader* shader = gr->m_shaders[kgmMaterial::TypeBase];
 
   gr->wired(false);
 

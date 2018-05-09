@@ -45,6 +45,24 @@ public:
     Blend_Lighten,
   };
 
+  enum Type
+  {
+    TypeNone,
+    TypeBase,
+    TypeToon,
+    TypePhong,
+    TypeSkin,
+    TypePoor,
+    TypeWater,
+    TypeRiver,
+    TypeOcean,
+    TypeGlass,
+    TypeFlame,
+    TypeMirror,
+    TypeIce,
+    TypeExtend
+  };
+
   enum Reflection
   {
     Reflection_None,
@@ -132,6 +150,7 @@ private:
   bool  m_depth = true;
   bool  m_shade = true;
 
+  Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
 
   kgmTexture* m_tex_color = null;
@@ -147,7 +166,6 @@ public:
 
   kgmShader*  m_shader = null;
 
-  u32  m_type;
   u32  m_flags;
 
 public:
@@ -181,6 +199,16 @@ public:
   {
     return ( ((u8)(255 * x) << 0)  | ((u8)(255 * y) << 8) |
              ((u8)(255 * z) << 16) | ((u8)(255 * w) << 24) );
+  }
+
+  Type type() const
+  {
+    return m_type;
+  }
+
+  void type(Type t)
+  {
+    m_type = t;
   }
 
   kgmShader* getShader() const
@@ -279,6 +307,8 @@ public:
 
   static kgmString blendToString(Blend Blend);
   static Blend     stringToBlend(kgmString blend);
+  static kgmString typeToString(Type type);
+  static Type      stringToType(kgmString type);
 };
 
 typedef kgmList<kgmMaterial*> kgmMaterialList;

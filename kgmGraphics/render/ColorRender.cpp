@@ -41,7 +41,7 @@ void ColorRender::render()
 
     gr->render(mtl);
 
-    gr->render(gr->m_shaders[kgmShader::TypeBase]);
+    gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
 
     gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
 
