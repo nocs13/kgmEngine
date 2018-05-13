@@ -24,6 +24,8 @@ protected:
 public:
   BaseRender(kgmGraphics* gr);
 
+  virtual void build() {}
+  virtual void clear() {}
   virtual void render() {}
 
 protected:

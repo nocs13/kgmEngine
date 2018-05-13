@@ -1,11 +1,23 @@
 #ifndef WATERRENDER_H
 #define WATERRENDER_H
 
+#include "../../kgmBase/kgmIGC.h"
+#include "../kgmGui.h"
+#include "BaseRender.h"
 
-class WaterRender
+class kgmGraphics;
+
+class WaterRender: public BaseRender
 {
+  kgmGraphics* gr;
+
 public:
-  WaterRender();
+  WaterRender(kgmGraphics* gr);
+
+  void build();
+  void clear();
+
+  void render();
 };
 
 #endif // WATERRENDER_H

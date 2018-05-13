@@ -109,6 +109,8 @@ class kViewOptionsForMaterial : public kgmGuiFrame
 
   Slot<kViewOptionsForMaterial, u32> slotShininess;
   Slot<kViewOptionsForMaterial, u32> slotTranparency;
+  Slot<kViewOptionsForMaterial, u32> slotReflection;
+  Slot<kViewOptionsForMaterial, u32> slotRefraction;
 
   Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexColor;
   Slot<kViewOptionsForMaterial, kgmGuiFileDialog*> slotTexNormal;
@@ -153,6 +155,8 @@ public:
   __stdcall void onSelectTexture(kgmGuiFileDialog*);
   __stdcall void onShininess(u32 s);
   __stdcall void onTransparency(u32 s);
+  __stdcall void onReflection(u32 s);
+  __stdcall void onRefraction(u32 s);
   __stdcall void onCull(bool s);
   __stdcall void onBlend(bool s);
   __stdcall void onAlpha(bool s);
