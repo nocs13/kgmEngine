@@ -11,7 +11,11 @@
 
 #ifdef VULKAN
 
+#ifdef WIN32
+#define VK_USE_PLATFORM_WIN32_KHR
+#else
 #define VK_USE_PLATFORM_XLIB_KHR
+#endif
 
 #include "inc/vk/vulkan.h"
 
@@ -23,7 +27,12 @@ class kgmVulkan: public kgmIGC
   {
     VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
     void     (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+
+#ifdef WIN32
+    VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+#else
     VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+#endif
   };
 
   static kgmLib vk_lib;  

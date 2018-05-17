@@ -179,7 +179,7 @@ inline u16 keyTranslate(int key)
 long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
 {
   static bool set_cursor = false;
-  kgmWindow* wnd = (kgmWindow*)GetWindowLong(hWnd, GWL_USERDATA);
+  kgmWindow* wnd = (kgmWindow*) (size_t) GetWindowLong(hWnd, GWLP_USERDATA);
   kgmEvent::Event evt;
   RECT     wRect;
   RECT     wcRect;
@@ -709,7 +709,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
                        x, y, w, h,
                        (wp)?(wp->m_wnd):(0), 0, 0, 0);
 
-  SetWindowLong(m_wnd, GWL_USERDATA, (LONG)this);
+  SetWindowLong(m_wnd, GWLP_USERDATA, (size_t) this);
   ShowWindow(m_wnd, SW_SHOW);
   UpdateWindow(m_wnd);
 

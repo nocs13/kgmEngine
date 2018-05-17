@@ -56,7 +56,7 @@ kgmThread::Thread thread_create(kgmThread::Thread_Member_Function fn, kgmThread:
   kgmThread::Thread thread;
 
 #ifdef WIN32
-  thread = (Thread) CreateThread(0, 0, (LPTHREAD_START_ROUTINE) kgmThread::thread_1, &fn, 0, 0);
+  thread = (kgmThread::Thread) CreateThread(0, 0, (LPTHREAD_START_ROUTINE) kgmThread::thread_1, &fn, 0, 0);
 #else
   pthread_attr_t attr;
 

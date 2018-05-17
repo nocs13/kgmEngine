@@ -214,7 +214,7 @@ bool kgmSystem::splitPath(kgmString path, kgmString& dir, kgmString& file)
 int kgmSystem::getProcessId()
 {
 #ifdef WIN32
-  return (int)GetModuleHandle(NULL);
+  return (int) (size_t) GetModuleHandle(NULL);
 #else
   return (int)getpid();
 #endif

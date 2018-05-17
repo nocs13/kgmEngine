@@ -25,11 +25,11 @@ class kgmDSound: public kgmIAudio
 {
   KGM_OBJECT(kgmDSound);
 
-  class Thread: public kgmThread
+  /*class Thread: public kgmThread
   {
     kgmDSound* object;
 
-    kgmFunction<int(kgmDSound*, int)> callback;
+    //kgmFunction<int(kgmDSound*, int)> callback;
 
   public:
 
@@ -43,14 +43,14 @@ class kgmDSound: public kgmIAudio
       object   = obj;
       callback = fn;
 
-      exec();
+      //exec();
     }
 
     void run()
     {
       callback(*object, 0);
     }
-  };
+  };*/
 
   LPDIRECTSOUND       m_pSnd;
   LPDIRECTSOUNDBUFFER m_pSbuf;
@@ -61,8 +61,8 @@ class kgmDSound: public kgmIAudio
 
   u32 m_timer;
 
-  Thread        m_thread;
-  Thread::Mutex m_mutex;
+  kgmThread::Thread m_thread;
+  kgmThread::Mutex  m_mutex;
 
   bool     m_proceed;
 

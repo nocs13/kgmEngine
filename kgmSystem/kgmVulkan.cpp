@@ -53,7 +53,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   sfCreateInfo.hwnd = wnd->m_wnd;
   sfCreateInfo.hinstance = GetModuleHandle(nullptr);
 
-  if (m_vk.vkCreateXlibSurfaceKHR(instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
+  if (m_vk.vkCreateWin32SurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
   {
     return;
   }
@@ -100,7 +100,12 @@ int kgmVulkan::vkInit()
 
   m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
   m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
+
+#ifdef WIN32
+  m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
+#else
   m_vk.vkCreateXlibSurfaceKHR = (typeof m_vk.vkCreateXlibSurfaceKHR) vk_lib.get((char*) "vkCreateXlibSurfaceKHR");
+#endif
 
   #pragma GCC diagnostic pop
 

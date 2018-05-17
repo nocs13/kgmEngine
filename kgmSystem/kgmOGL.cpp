@@ -63,7 +63,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   pfd.iPixelType = PFD_TYPE_RGBA;
   pfd.iLayerType = PFD_MAIN_PLANE;
 
-  m_hdc = GetDC(m_wnd);
+  m_hdc = GetDC(wnd->m_wnd);
 
   if(!m_hdc)
     return;
@@ -84,8 +84,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   if(!wglMakeCurrent(m_hdc,m_hrc))
     return;
 
-  SendMessage(m_wnd, WM_ACTIVATE, 0, 0);
-  SendMessage(m_wnd, WM_PAINT, 0, 0);
+  SendMessage(wnd->m_wnd, WM_ACTIVATE, 0, 0);
+  SendMessage(wnd->m_wnd, WM_PAINT, 0, 0);
 
 #elif defined(ANDROID)
 
@@ -364,7 +364,7 @@ kgmOGL::~kgmOGL()
 
   wglDeleteContext(m_hrc);
   wglMakeCurrent(m_hdc, 0);
-  ReleaseDC(m_wnd,m_hdc);
+  ReleaseDC(m_wnd->m_wnd,m_hdc);
 
 #elif defined(ANDROID)
 
@@ -543,7 +543,7 @@ void kgmOGL::gcRender()
 {
 #ifdef WIN32
 
-  SwapBuffers(m_wnd->m_hdc);
+  SwapBuffers(m_hdc);
 
 #elif defined(ANDROID)
 
@@ -1498,7 +1498,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 #ifdef ANDROID
       glDrawElements(gl_enum(pmt), icnt, GL_UNSIGNED_INT, (void*)ioff);
 #else
-      glIndexPointer(GL_UNSIGNED_INT, 0, (void*) (long) ioff);
+      glIndexPointer(GL_UNSIGNED_INT, 0, (void*) (size_t) ioff);
       glDrawRangeElements (gl_enum(pmt), 0, vcnt - 1, icnt, GL_UNSIGNED_INT, ((char*)0L + ioff));
 #endif
       break;
@@ -1653,7 +1653,7 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
 
   kgm_log() << "Generate shader " << (int) prog << ".\n";
 
-  return (void*) (long) prog;
+  return (void*) (size_t) prog;
 }
 
 void kgmOGL::gcFreeShader(void* s)
