@@ -14,9 +14,10 @@
 
 class NodeRender: public BaseRender
 {
+
 public:
 	NodeRender();
-	virtual ~NodeRender();
+	~NodeRender();
 };
 
 #endif /* KGMGRAPHICS_RENDER_NODERENDER_H_ */
