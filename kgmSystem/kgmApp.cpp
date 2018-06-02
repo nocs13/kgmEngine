@@ -41,7 +41,7 @@ s32 kgmApp::main(s32 argc, s8 **argv)
 void kgm_app_abort()
 {
 #ifdef WIN32
-  TerminateProcess(GetCurrentProcessId(), -1);
+  TerminateProcess((HANDLE) GetCurrentProcess(), -1);
 #else
   kill(getpid(), SIGTERM);
 #endif
