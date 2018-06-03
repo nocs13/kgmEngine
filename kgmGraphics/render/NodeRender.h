@@ -10,13 +10,16 @@
 
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
+
 #include "BaseRender.h"
+
+class kgmGraphics;
 
 class NodeRender: public BaseRender
 {
 
 public:
-	NodeRender();
+	NodeRender(kgmGraphics*);
 	~NodeRender();
 };
 

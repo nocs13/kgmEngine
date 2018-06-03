@@ -7,12 +7,13 @@
 
 #include "NodeRender.h"
 
-NodeRender::NodeRender() {
+NodeRender::NodeRender(kgmGraphics* g)
+  :BaseRender(g)
+{
 	// TODO Auto-generated constructor stub
-
 }
 
-NodeRender::~NodeRender() {
+NodeRender::~NodeRender()
+{
 	// TODO Auto-generated destructor stub
 }
-
