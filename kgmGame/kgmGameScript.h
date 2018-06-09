@@ -1,10 +1,12 @@
+#include "../kgmScript/kgmIScript.h"
 #include "../kgmBase/kgmString.h"
+
 #ifdef LUA
 extern "C"
 {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include <lua/lua.h>
+#include <lua/lualib.h>
+#include <lua/lauxlib.h>
 }
 
 //extern lua_State* lua_main;
@@ -23,5 +25,14 @@ void kgmLuaPush(int arg);
 void kgmLuaPush(double arg);
 void kgmLuaPush(char* arg);
 void kgmLuaPush(void* arg);
+
+class kgmGameScript: public kgmObject
+{
+  kgmIScript* handler;
+
+ public:
+  kgmGameScript();
+  ~kgmGameScript();
+};
 
 #endif

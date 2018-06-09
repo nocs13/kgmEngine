@@ -8,12 +8,12 @@ DSND = -OAL
 DSEP = /
 
 FLGS =
-DIRS = -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics -I./kgmExtern/lua/include
-LIBS =
+DIRS = -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics
+LIBS = -L./kgmSystem/lib
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
-	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DLUA -DEDITOR -DVULKAN
+	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DEDITOR -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 -Werror
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	LIBS = -lpthread -lX11 -lGL
@@ -23,7 +23,7 @@ else
 	CC   = g++
 	OS   = Windows
 	DSEP = \\
-	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DLUA -DEDITOR
+	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DEDITOR
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	LIBS = -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm
 	RM = rm -f

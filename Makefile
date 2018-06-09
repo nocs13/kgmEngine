@@ -9,15 +9,20 @@ sources += $(wildcard kgmGraphics/render/*.cpp)
 sources += $(wildcard kgmGame/actions/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
 sources += $(wildcard kgmGame/editor/*.cpp)
+sources += kgmSystem/lib/liblua.a
+
 objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine.a
 
-all: debug
+all: extern debug 
 	echo $(subdirs)
 	echo $(sources)
 	make -C Test
+
+extern:
+	make -C kgmExtern
 
 debug: set_debug $(OUT_SO)
 	echo 'debug finished.'
@@ -56,6 +61,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 	cp $(OUT_SO) sdk/.
 
 clean:
+	make -C kgmExtern clean
 	$(RM) $(objects)
 
 distclean: clean
