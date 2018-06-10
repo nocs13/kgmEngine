@@ -276,7 +276,7 @@ protected:
   Item* choose;
 
 public:
-  Signal<u32> sigChoose;
+  Signal<u32, kgmString> sigChoose;
 
 public:
   kgmGuiMenu(kgmGui* parent);
