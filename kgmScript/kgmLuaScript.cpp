@@ -1,4 +1,5 @@
 #include "kgmLuaScript.h"
+#include "../kgmBase/kgmIResources.h"
 #include <lua/lua.h>
 #include <lua/lualib.h>
 #include <stdarg.h>
@@ -33,9 +34,16 @@ bool kgmLuaScript::load(kgmString s)
 
   kgmString ls = s + ".lua";
 
-  kgmString data;
+  kgmString script;
 
-  if(lua_dostring(handler, data.data()))
+  kgmMemory<u8> content;
+
+  if (!resources->getFile(ls, content))
+    return false;
+
+  script = (const s8*) content.data();
+
+  if(lua_dostring(handler, script.data()))
     return false;
 
   return true;
