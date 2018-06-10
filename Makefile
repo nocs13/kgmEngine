@@ -9,7 +9,6 @@ sources += $(wildcard kgmGraphics/render/*.cpp)
 sources += $(wildcard kgmGame/actions/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
 sources += $(wildcard kgmGame/editor/*.cpp)
-sources += kgmSystem/lib/liblua.a
 
 objects := $(patsubst %.cpp,%.o,$(sources))
 
@@ -24,7 +23,7 @@ all: extern debug
 extern:
 	make -C kgmExtern
 
-debug: set_debug $(OUT_SO)
+debug: set_debug $(OUT_SO) $(OUT_A)
 	echo 'debug finished.'
 	make -C Tools/Packer
 
@@ -44,8 +43,10 @@ $(objects) : %.o : %.cpp %.h
 $(OUT_A): $(objects)
 	$(AR) -r -c -s $(OUT_A) $(objects)
 
-$(OUT_SO): $(OUT_A)
-	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+#$(OUT_SO): $(OUT_A)
+#	$(CC) -shared -o $(OUT_SO) $(OUT_A) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+$(OUT_SO): $(objects)
+	$(CC) -shared -o $(OUT_SO) $(objects) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 android_static:
 	echo 'Start android static library build'
