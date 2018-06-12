@@ -81,6 +81,7 @@ kgmGameBase::kgmGameBase(bool edit)
   m_physics   = null;
   m_graphics  = null;
   m_system    = null;
+  m_script    = null;
   m_logic     = null;
   m_audio     = null;
 
@@ -115,6 +116,9 @@ kgmGameBase::kgmGameBase(bool edit)
 
   log("init game logic...");
   initLogic();
+
+  log("init game scripts...");
+  initScript();
 
   log("open font...");
   m_font = m_resources->getFont((char*)"font.tga", 16, 16);
@@ -190,6 +194,11 @@ kgmGameBase::~kgmGameBase()
   log("free scene...");
 
   gUnload();
+
+  log("free scripts...");
+
+  if(m_script)
+    delete m_script;
 
   log("free logic...");
 
@@ -323,6 +332,11 @@ void kgmGameBase::initAudio()
 void kgmGameBase::initLogic()
 {
   m_logic = new kgmGameLogic();
+}
+
+void kgmGameBase::initScript()
+{
+  m_script = new kgmGameScript(this);
 }
 
 void kgmGameBase::initGC()

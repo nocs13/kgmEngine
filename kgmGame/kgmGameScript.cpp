@@ -1,5 +1,5 @@
 #include "kgmGameScript.h"
-#include "kgmGameBase.h"
+#include "kgmIGame.h"
 #include "../kgmScript/kgmLuaScript.h"
 
 kgmGameScript::kgmGameScript(kgmIGame* g)

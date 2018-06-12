@@ -1,7 +1,6 @@
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
-#include "../kgmGame/kgmGameScript.h"
 
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"

@@ -5,6 +5,7 @@
 #include "kgmGameGraphics.h"
 #include "kgmGameThreader.h"
 #include "kgmGamePhysics.h"
+#include "kgmGameScript.h"
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
 
@@ -40,6 +41,7 @@ protected:
   kgmIGC*           m_gc;
   kgmIVideo*        m_video;
   kgmGameAudio*     m_audio;
+  kgmGameScript*    m_script;
   kgmGamePhysics*   m_physics;
   kgmGameResources* m_resources;
   kgmGameSettings*  m_settings;
@@ -169,6 +171,7 @@ public:
   void  initSystem();
   void  initAudio();
   void  initLogic();
+  void  initScript();
   void  initGC();
 
   void guiAdd(kgmGui* g)
