@@ -72,7 +72,7 @@ RANLIB= ranlib
 # ------------------------------------------------------------------ install
 
 # Locations for "make install". You may need to be root do "make install".
-INSTALL_ROOT= /usr/local
+INSTALL_ROOT= ./local
 INSTALL_BIN= $(INSTALL_ROOT)/bin
 INSTALL_INC= $(INSTALL_ROOT)/include
 INSTALL_LIB= $(INSTALL_ROOT)/lib
@@ -93,7 +93,7 @@ LIB= $(LUA)/lib
 INCS= -I$(INC) $(EXTRA_INCS)
 DEFS= $(COMPAT) $(NUMBER) $(OLD_ANSI) $(EXTRA_DEFS)
 
-CFLAGS= -O2 $(WARN) $(INCS) $(DEFS)
+CFLAGS= -O2 -fPIC $(WARN) $(INCS) $(DEFS)
 
 V=4.0
 

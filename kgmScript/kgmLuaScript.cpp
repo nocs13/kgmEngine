@@ -1,8 +1,11 @@
 #include "kgmLuaScript.h"
 #include "../kgmBase/kgmIResources.h"
+#include <stdarg.h>
+
+extern "C" {
 #include <lua/lua.h>
 #include <lua/lualib.h>
-#include <stdarg.h>
+}
 
 kgmLuaScript::kgmLuaScript(kgmIResources *r)
 {
