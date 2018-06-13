@@ -16,7 +16,6 @@ kgmLuaScript::kgmLuaScript(kgmIResources *r)
   if(!handler)
     return;
 
-
   //lua_baselibopen (handler);
   //lua_iolibopen (handler);
   //lua_strlibopen (handler);
@@ -35,7 +34,9 @@ bool kgmLuaScript::load(kgmString s)
   if (!resources)
     return false;
 
-  kgmString ls = s + ".lua";
+  kgmString ls = "scripts/";
+
+  ls += (s + ".lua");
 
   kgmString script;
 

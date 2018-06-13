@@ -12,4 +12,6 @@ class kgmGameScript: public kgmObject
  public:
   kgmGameScript(kgmIGame*);
   ~kgmGameScript();
+
+  void update();
 };

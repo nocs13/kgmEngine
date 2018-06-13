@@ -12,7 +12,7 @@ public:
 
 private:
 
-#define MAX_THREADERS 32
+#define MAX_THREADERS 8
 
   struct Threader
   {

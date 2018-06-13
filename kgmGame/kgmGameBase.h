@@ -71,7 +71,7 @@ protected:
   kgmList<kgmObject*> m_objects;
 
   u32             m_fps;
-  kgmGameThreader m_threader_1;
+  kgmGameThreader m_threader;
 
 #ifdef EDITOR
   friend class kEditor;
@@ -213,4 +213,5 @@ private:
 
   static int doLogic(kgmGameBase*);
   static int doPhysics(kgmGameBase*);
+  static int doScript(kgmGameBase*);
 };
