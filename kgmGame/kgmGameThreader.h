@@ -28,6 +28,8 @@ private:
 
     Worker workers[MAX_WORKERS];
     u32    count;
+
+    kgmGameThreader* gt;
   };
 
   bool m_active = true;
@@ -43,5 +45,5 @@ public:
 
   bool finish();
 
-  static int threader(kgmGameThreader*, Thread*);
+  static int threader(Thread*);
 };
