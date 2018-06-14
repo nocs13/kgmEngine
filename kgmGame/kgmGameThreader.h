@@ -12,20 +12,27 @@ public:
 
 private:
 
-#define MAX_THREADERS 8
+#define MAX_THREADS 8
+#define MAX_WORKERS 8
 
-  struct Threader
+  struct Worker
   {
     THREADER_FUNCTION funtion;
     void*             object;
   };
 
+  struct Thread
+  {
+    kgmThread::Thread thread;
+    kgmThread::Mutex  mutex;
+
+    Worker workers[MAX_WORKERS];
+    u32    count;
+  };
+
   bool m_active = true;
 
-  Threader m_threaders[MAX_THREADERS];
-
-  kgmThread::Thread m_thread;
-  kgmThread::Mutex  m_mutex;
+  Thread m_threads[MAX_THREADS];
 
 public:
   kgmGameThreader();
@@ -36,5 +43,5 @@ public:
 
   bool finish();
 
-  static int threader(void*);
+  static int threader(kgmGameThreader*, Thread*);
 };
