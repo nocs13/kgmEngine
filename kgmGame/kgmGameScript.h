@@ -14,4 +14,15 @@ class kgmGameScript: public kgmObject
   ~kgmGameScript();
 
   void update();
+
+  kgmIScript* getHandler() const
+  {
+    return handler;
+  }
+
+private:
+  static void kgmGameExit(void*);
+  static void kgmGamePlay(void*);
+  static void kgmGamePause(void*);
+  static void kgmGameState(void*);
 };

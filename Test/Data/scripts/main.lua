@@ -5,4 +5,5 @@ function main_exit()
 end
 
 function main_update()
+  kgmGameExit()
 end

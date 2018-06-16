@@ -16,14 +16,9 @@ kgmPhysics::~kgmPhysics()
   clear();
 }
 
-void kgmPhysics::update()
+void kgmPhysics::update(u32 ms)
 {
-  u32 current = kgmTime::getTicks();
-  u32 delta   = current - m_time_update;
-
-  m_time_update = current;
-
-  doCollision((f32) delta / (f32) 1000.0f);
+  doCollision((f32) ms / (f32) 1000.0f);
 }
 
 void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)

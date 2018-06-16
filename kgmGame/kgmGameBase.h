@@ -71,6 +71,7 @@ protected:
   kgmList<kgmObject*> m_objects;
 
   u32             m_fps;
+  u32             m_tpf;
   kgmGameThreader m_threader;
 
 #ifdef EDITOR
@@ -123,10 +124,13 @@ public:
   kgmIAudio*         getAudio();
   kgmIVideo*         getVideo();
   kgmILogic*         getLogic();
+  kgmIScript*        getScript();
   kgmIGraphics*      getGraphics();
   kgmIResources*     getResources();
   kgmSystem*         getSystem();
   kgmWindow*         getWindow();
+
+  u32                timeUpdate();
 
   void quit();
   void log(const char* msg);

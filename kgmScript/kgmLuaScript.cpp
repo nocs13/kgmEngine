@@ -53,9 +53,73 @@ bool kgmLuaScript::load(kgmString s)
   return true;
 }
 
-bool kgmLuaScript::set(kgmString name, void* fn)
+bool kgmLuaScript::set(kgmString name, void (*fn)(void*))
 {
   lua_register(handler, name.data(), (int (*)(lua_State*))fn);
+
+  return true;
+}
+
+bool kgmLuaScript::args(kgmString fmt, ...)
+{
+  int args = 0;
+  char* f = fmt.data();
+  va_list vl;
+  va_start(vl, fmt);
+
+  while((*f != '\0') && (args < 128))
+  {
+    switch(*f)
+    {
+    case 's':
+      pop((char**)va_arg(vl, char**));
+      break;
+    case 'i':
+      pop((int*)va_arg(vl, int*));
+      break;
+    case 'd':
+      pop((double*)va_arg(vl, double*));
+      break;
+    case 'p':
+      pop((void**)va_arg(vl, void**));
+      break;
+    }
+
+    f++;
+    args++;
+  }
+
+  return true;
+}
+
+bool kgmLuaScript::resl(kgmString fmt, ...)
+{
+  int args = 0;
+  char* f = fmt.data();
+  va_list vl;
+  va_start(vl, fmt);
+
+  while((*f != '\0') && (args < 128))
+  {
+    switch(*f)
+    {
+    case 's':
+      push((char*)va_arg(vl, char*));
+      break;
+    case 'i':
+      push((int)va_arg(vl, int));
+      break;
+    case 'd':
+      push((double)va_arg(vl, double));
+      break;
+    case 'p':
+      push((void*)va_arg(vl, void*));
+      break;
+    }
+
+    f++;
+    args++;
+  }
 
   return true;
 }
@@ -86,7 +150,7 @@ void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
     case 'd':
       push((double)va_arg(vl, double));
       break;
-    case 'v':
+    case 'p':
       push((void*)va_arg(vl, void*));
       break;
     }
@@ -138,4 +202,28 @@ void kgmLuaScript::push(char* arg)
 void kgmLuaScript::push(void* arg)
 {
   lua_pushuserdata(handler, arg);
+}
+
+void kgmLuaScript::pop(int* arg)
+{
+  if(lua_isnumber(handler, -1))
+    *arg = lua_tonumber(handler, -1);
+}
+
+void kgmLuaScript::pop(double* arg)
+{
+  if(lua_isnumber(handler, -1))
+    *arg = lua_tonumber(handler, -1);
+}
+
+void kgmLuaScript::pop(char** arg)
+{
+  if(lua_isnumber(handler, -1))
+    *arg = (char*) lua_tostring(handler, -1);
+}
+
+void kgmLuaScript::pop(void** arg)
+{
+  if(lua_isuserdata(handler, -1))
+    *arg = (void*) lua_topointer(handler, -1);
 }

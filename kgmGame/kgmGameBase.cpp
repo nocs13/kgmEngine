@@ -88,6 +88,7 @@ kgmGameBase::kgmGameBase(bool edit)
   m_font = null;
 
   m_fps = 1;
+  m_tpf = 1000;
 
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
@@ -190,6 +191,10 @@ kgmGameBase::~kgmGameBase()
     delete editor;
 #endif
 
+  log("stop threader...");
+
+  m_threader.finish();
+
   log("free scene...");
 
   gUnload();
@@ -279,6 +284,11 @@ kgmILogic*  kgmGameBase::getLogic()
   return m_game->m_logic;
 }
 
+kgmIScript*  kgmGameBase::getScript()
+{
+  return m_game->m_script->getHandler();
+}
+
 kgmIGraphics*  kgmGameBase::getGraphics()
 {
   return m_game->m_graphics;
@@ -297,6 +307,11 @@ kgmSystem*  kgmGameBase::getSystem()
 kgmWindow*  kgmGameBase::getWindow()
 {
   return (kgmWindow*)this;
+}
+
+u32 kgmGameBase::timeUpdate()
+{
+  return m_tpf;
 }
 
 void kgmGameBase::initResources()
@@ -353,7 +368,7 @@ void kgmGameBase::log(const char* msg)
 void kgmGameBase::onIdle()
 {
   static int tick = kgmTime::getTicks();
-  static int frames = 0;
+  static int frames = 1;
 
   s32 m_maxFps = 60;
 
@@ -377,6 +392,8 @@ void kgmGameBase::onIdle()
       }
     }
   }
+
+  m_tpf = 1000 / m_fps;
 
   switch(m_state)
   {
@@ -1524,15 +1541,14 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
 int kgmGameBase::doLogic(kgmGameBase* g)
 {
-  u32 fps = 1 + g->m_fps;
-  g->m_logic->update(1000 / fps);
+  g->m_logic->update(g->timeUpdate());
 
   return 1;
 }
 
 int kgmGameBase::doPhysics(kgmGameBase* g)
 {
-  g->m_physics->update();
+  g->m_physics->update(g->timeUpdate());
 
   return 1;
 }

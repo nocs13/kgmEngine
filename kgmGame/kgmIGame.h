@@ -125,6 +125,7 @@ class kgmIGC;
 class kgmIAudio;
 class kgmIVideo;
 class kgmILogic;
+class kgmIScript;
 class kgmISpawner;
 class kgmIPhysics;
 class kgmIGraphics;
@@ -168,9 +169,9 @@ public:
   virtual int            gSwitch(u32)         = 0;    //switch game state
   virtual kgmUnit*       gSpawn(kgmString)    = 0;    //spawn game actor
 
-  virtual bool           gAppend(kgmUnit*) = 0;            //add game node in map
-  virtual kgmUnit*       gUnit(kgmString)  = 0;            //collect nodes in map
-  virtual Iterator*      gObjects()        = 0;            //collect nodes in map
+  virtual bool           gAppend(kgmUnit*) = 0;       //add game node in map
+  virtual kgmUnit*       gUnit(kgmString)  = 0;       //collect nodes in map
+  virtual Iterator*      gObjects()        = 0;       //collect nodes in map
 
   virtual void           guiAdd(kgmGui* g) = 0;
 
@@ -179,10 +180,13 @@ public:
   virtual kgmIAudio*      getAudio() = 0;
   virtual kgmIVideo*      getVideo() = 0;
   virtual kgmILogic*      getLogic() = 0;
+  virtual kgmIScript*     getScript() = 0;
   virtual kgmIGraphics*   getGraphics() = 0;
   virtual kgmIResources*  getResources() = 0;
   virtual kgmWindow*      getWindow() = 0;
   virtual kgmSystem*      getSystem() = 0;
+
+  virtual u32             timeUpdate() = 0;
 
 protected:
   virtual void  initResources() = 0;

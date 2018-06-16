@@ -17,10 +17,18 @@ class kgmLuaScript: public kgmIScript
   ~kgmLuaScript();
 
   bool load(kgmString id);
-  bool set(kgmString name, void* fn);
+  bool set(kgmString name,  void (*fn)(void*));
+  bool args(kgmString fmt, ...);
+  bool resl(kgmString fmt, ...);
   void* call(kgmString name, kgmString fmt, ...);
+
+private:
   void push(int arg);
   void push(double arg);
   void push(char* arg);
   void push(void* arg);
+  void pop(int* arg);
+  void pop(double* arg);
+  void pop(char** arg);
+  void pop(void** arg);
 };
