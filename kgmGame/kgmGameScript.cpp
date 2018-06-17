@@ -1,6 +1,7 @@
 #include "kgmGameScript.h"
 #include "kgmIGame.h"
 #include "kgmGameApp.h"
+#include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
@@ -10,6 +11,8 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler = new kgmLuaScript(g->getResources());
 
   handler->load("main");
+
+  handler->set("kgmLog",   kgmGameScript::kgmLog);
 
   handler->set("kgmGameExit",   kgmGameScript::kgmGameExit);
   handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
@@ -25,6 +28,20 @@ kgmGameScript::~kgmGameScript()
 void kgmGameScript::update()
 {
   handler->call("main_update", "i", game->timeUpdate());
+}
+
+void kgmGameScript::kgmLog(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  s8* log = null;
+
+  game->getScript()->args("s", &log);
+
+  kgm_log_print(log);
 }
 
 void kgmGameScript::kgmGameExit(void*)

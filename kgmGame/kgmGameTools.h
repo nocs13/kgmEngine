@@ -24,6 +24,7 @@ class kgmParticles;
 class kgmIPhysics;
 class kgmBody;
 class kgmIGame;
+class kgmGui;
 
 class kgmGameTools
 {
@@ -70,6 +71,9 @@ public:
 
  //PARTICLES
  static kgmParticles* genParticles(kgmXml& x);
+
+ //GUI
+ static kgmGui* genGui(kgmXml& x);
 
  //PARSING TOOLS
  static kgmMesh*     parseMesh(kgmXml::Node& node);

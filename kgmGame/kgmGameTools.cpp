@@ -11,6 +11,8 @@
 #include "../kgmGraphics/kgmGraphics.h"
 #include "../kgmGraphics/kgmParticles.h"
 
+#include "../kgmGraphics/kgmGui.h"
+
 #include "kgmActor.h"
 #include "kgmGameShaders.h"
 
@@ -1477,6 +1479,17 @@ kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<u8>& m){
 kgmParticles* kgmGameTools::genParticles(kgmXml &x)
 {
   return null;
+}
+
+kgmGui* kgmGameTools::genGui(kgmXml &x)
+{
+  if(!x.m_node)
+    return null;
+
+  if(x.m_node->m_name == "kgmGui")
+  {
+
+  }
 }
 
 kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)

@@ -218,7 +218,7 @@ void kgmLuaScript::pop(double* arg)
 
 void kgmLuaScript::pop(char** arg)
 {
-  if(lua_isnumber(handler, -1))
+  if(lua_isstring(handler, -1))
     *arg = (char*) lua_tostring(handler, -1);
 }
 
