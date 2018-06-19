@@ -118,16 +118,13 @@ kgmGameBase::kgmGameBase(bool edit)
   log("init game logic...");
   initLogic();
 
-  log("init game scripts...");
-  initScript();
-
-  log("open font...");
-  m_font = m_resources->getFont((char*)"font.tga", 16, 16);
-
   if(!m_font)
     log("can't load font");
   else if(m_graphics)
     m_graphics->setDefaultFont(m_font);
+
+  log("init game scripts...");
+  initScript();
 
   log("set input map...");
   memset(m_keys, 0, sizeof(m_keys));
@@ -202,7 +199,11 @@ kgmGameBase::~kgmGameBase()
   log("free scripts...");
 
   if(m_script)
+  {
+    m_script->free();
+
     delete m_script;
+  }
 
   log("free logic...");
 

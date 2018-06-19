@@ -1,8 +1,10 @@
 #include "kgmGameScript.h"
 #include "kgmIGame.h"
 #include "kgmGameApp.h"
+#include "kgmGameTools.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
+#include "../kgmGraphics/kgmGui.h"
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
@@ -23,6 +25,16 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 kgmGameScript::~kgmGameScript()
 {
   delete handler;
+}
+
+void kgmGameScript::init()
+{
+  handler->call("main_init", "");
+}
+
+void kgmGameScript::free()
+{
+  handler->call("main_free", "");
 }
 
 void kgmGameScript::update()
@@ -80,6 +92,45 @@ void kgmGameScript::kgmGamePause(void*)
 }
 
 void kgmGameScript::kgmGameState(void*)
+{
+  s32 state = 0;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  state = game->gState();
+
+  game->getScript()->resl("i", state);
+}
+
+void kgmGameScript::kgmGui(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  s8* sid = null;
+
+  void* gui = null;
+
+  game->getScript()->args("s", &sid);
+
+  if (sid)
+  {
+    kgmMemory<u8> mem;
+    game->getResources()->getFile(sid, mem);
+
+    kgmXml xml(mem);
+    gui = kgmGameTools::genGui(xml);
+  }
+
+  game->getScript()->resl("p", gui);
+}
+
+void kgmGameScript::kgmGuiShow(void*)
 {
   s32 state = 0;
 

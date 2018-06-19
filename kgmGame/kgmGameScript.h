@@ -13,6 +13,8 @@ class kgmGameScript: public kgmObject
   kgmGameScript(kgmIGame*);
   ~kgmGameScript();
 
+  void init();
+  void free();
   void update();
 
   kgmIScript* getHandler() const
@@ -29,5 +31,5 @@ private:
   static void kgmGamePause(void*);
   static void kgmGameState(void*);
   static void kgmGui(void*);
-  static void kgmGuiAdd(void*);
+  static void kgmGuiShow(void*);
 };
