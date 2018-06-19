@@ -12,6 +12,7 @@
 #include "../kgmGraphics/kgmParticles.h"
 
 #include "../kgmGraphics/kgmGui.h"
+#include "../kgmGraphics/kgmGuiFrame.h"
 
 #include "kgmActor.h"
 #include "kgmGameShaders.h"
@@ -1481,15 +1482,124 @@ kgmParticles* kgmGameTools::genParticles(kgmXml &x)
   return null;
 }
 
-kgmGui* kgmGameTools::genGui(kgmXml &x)
+kgmGui* kgmGameTools::genGui(kgmXml &xml)
 {
-  if(!x.m_node)
-    return null;
+  kgmGui *base = null, *gui = null;
 
-  if(x.m_node->m_name == "kgmGui")
+  while(kgmXml::XmlState xstate = xml.next())
   {
+    kgmString id, value, handler;
 
+    u32 x, y, w, h;
+
+    if(xstate == kgmXml::XML_ERROR || xstate == kgmXml::XML_FINISH)
+    {
+      return base;
+    }
+    else if(xstate == kgmXml::XML_TAG_OPEN)
+    {
+      id = xml.m_tagName;
+
+      if(!strncmp("kgmGui", id.data(), 6))
+      {
+        xml.attribute("x", value);
+        x = kgmConvert::toInteger(value);
+        xml.attribute("y", value);
+        y = kgmConvert::toInteger(value);
+        xml.attribute("w", value);
+        w = kgmConvert::toInteger(value);
+        xml.attribute("h", value);
+        h = kgmConvert::toInteger(value);
+        xml.attribute("handler", handler);
+      }
+
+      if(id == "kgmGui")
+      {
+        gui = new kgmGui(gui, x, y, w, h);
+      }
+      else if(id == "kgmGuiTab")
+      {
+        gui = new kgmGuiTab(gui, x, y, w, h);
+      }
+      else if(id == "kgmGuiMenu")
+      {
+        gui = new kgmGuiMenu(gui);
+      }
+      else if(id == "kgmGuiList")
+      {
+        gui = new kgmGuiList(gui, x, y, w, h);
+      }
+      else if(id == "kgmGuiFrame")
+      {
+        xml.attribute("title", value);
+
+        gui = new kgmGuiFrame(value, x, y, w, h);
+      }
+
+      if (!base)
+        base = gui;
+    }
+    else if(xstate == kgmXml::XML_TAG_CLOSE)
+    {
+      bool isgui = false;
+
+      id = xml.m_tagName;
+
+      if(!strncmp("kgmGui", id.data(), 6))
+      {
+        xml.attribute("x", value);
+        x = kgmConvert::toInteger(value);
+        xml.attribute("y", value);
+        y = kgmConvert::toInteger(value);
+        xml.attribute("w", value);
+        w = kgmConvert::toInteger(value);
+        xml.attribute("h", value);
+        h = kgmConvert::toInteger(value);
+        xml.attribute("handler", handler);
+
+        isgui = true;
+      }
+
+      if(id == "kgmGuiText")
+      {
+        gui = new kgmGuiText(gui, x, y, w, h);
+      }
+      else if (id == "kgmGuiButton")
+      {
+        gui = new kgmGuiButton(gui, x, y, w, h);
+      }
+      else if(id == "kgmGuiProgress")
+      {
+        gui = new kgmGuiProgress(gui, x, y, w, h);
+      }
+      else if (id == "ListItem")
+      {
+        xml.attribute("value", value);
+
+        ((kgmGuiList*)gui)->addItem(value);
+      }
+      else if (id == "MenuItem")
+      {
+        kgmString oid;
+
+        xml.attribute("title", value);
+        xml.attribute("id", oid);
+
+        if (oid.length() < 1)
+          ((kgmGuiMenu*)gui)->add(value);
+        else
+          ((kgmGuiMenu*)gui)->add(kgmConvert::toInteger(oid), value);
+      }
+
+      if (!base)
+        base = gui;
+
+      if (isgui)
+        gui = gui->getParent();
+    }
   }
+
+  return base;
 }
 
 kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)

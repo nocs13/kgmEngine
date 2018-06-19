@@ -106,6 +106,8 @@ public:
 
   void         setSid(kgmString  sid){ m_sid = sid;  }
   kgmString    getSid()              { return m_sid; }
+  
+  kgmGui*      getParent() const { return m_parent; }
 
   kgmGui*      getRoot();
   kgmGui*      getById(u32 id);
