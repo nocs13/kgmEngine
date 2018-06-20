@@ -16,6 +16,7 @@
 
 #include "kgmActor.h"
 #include "kgmGameShaders.h"
+#include "kgmGameScript.h"
 
 kgmGameTools::kgmGameTools()
 {
@@ -24,81 +25,6 @@ kgmGameTools::kgmGameTools()
 kgmGameTools::~kgmGameTools()
 {
 }
-
-//*************** DRAWING ***************
-/*
-void kgmGameTools::gcDrawRect(kgmIGC* gc, int x, int y, int w, int h, u32 col, void* tex){
-  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
-  V v[4];
-
-  v[0].pos = vec3(x,     y,     0); v[0].col = col; v[0].uv = vec2(0, 0);
-  v[1].pos = vec3(x,     y + h, 0); v[1].col = col; v[1].uv = vec2(0, 1);
-  v[2].pos = vec3(x + w, y,     0); v[2].col = col; v[2].uv = vec2(1, 0);
-  v[3].pos = vec3(x + w, y + h, 0); v[3].col = col; v[3].uv = vec2(1, 1);
-
-  if(tex)
-    gc->gcSetTexture(0, tex);
-  gc->gc2DMode();
-  gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-  gc->gc3DMode();
-  if(tex)
-    gc->gcSetTexture(0, 0);
-}
-
-void kgmGameTools::gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text){
-  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
-  V v[4];
-  kgmRect2d<int> clip(x, y, x + w, y + h);
-
-  if(text.length() < 1)
-    return;
-
-  if(!font || !font->m_texture)
-    return;
-
-  u32 tlen = text.length();
-  float tx = 0.0f, ty = 0.0f;
-  float tdx = (float)(1.f / font->m_cols),
-  tdy = (float)(1.f / font->m_rows);
-
-  float cx = (float)x, cy = (float)y;
-
-  gc->gc2DMode();
-  gc->gcAlpha(true, gccmp_great, 0.5f);
-  gc->gcSetTexture(0, font->m_texture);
-
-
-  for(u32 i = 0; i < tlen; i++){
-    char ch = text[i];
-
-    if(ch == '\n'){
-      cx = (float)x;
-      cy += fh;
-      continue;
-    }
-    if((ch == ' ') || ((ch == '\t')))
-      tx = 0.0f, ty = 0.0f;
-
-    tx = (float)(tdx * (ch % font->m_rows));
-    ty = 1.0f - (float)(tdy * (ch / font->m_rows));
-
-    if(clip.inside(cx + fw, cy + fh))
-    {
-      v[0].pos = vec3(cx, cy, 0),    v[0].col = col, v[0].uv = vec2(tx, ty);
-      v[1].pos = vec3(cx, cy+fh, 0),  v[1].col = col, v[1].uv = vec2(tx, ty-tdy);
-      v[2].pos = vec3(cx+fw, cy, 0),  v[2].col = col, v[2].uv = vec2(tx+tdx, ty);
-      v[3].pos = vec3(cx+fw, cy+fh, 0),v[3].col = col, v[3].uv = vec2(tx+tdx, ty-tdy);
-      gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
-    }
-
-    cx += fw;
-  }
-
-  gc->gcAlpha(false, 0, 0.0);
-  gc->gcSetTexture(0, 0);
-  gc->gc3DMode();
-}
-*/
 
 kgmPicture* kgmGameTools::genPicture(kgmMemory<u8>& m)
 {
@@ -1482,7 +1408,7 @@ kgmParticles* kgmGameTools::genParticles(kgmXml &x)
   return null;
 }
 
-kgmGui* kgmGameTools::genGui(kgmXml &xml)
+kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
 {
   kgmGui *base = null, *gui = null;
 
@@ -1524,10 +1450,14 @@ kgmGui* kgmGameTools::genGui(kgmXml &xml)
       else if(id == "kgmGuiMenu")
       {
         gui = new kgmGuiMenu(gui);
+
+	gs->setSlot(gui, handler);
       }
       else if(id == "kgmGuiList")
       {
         gui = new kgmGuiList(gui, x, y, w, h);
+
+	gs->setSlot(gui, handler);
       }
       else if(id == "kgmGuiFrame")
       {
@@ -1563,10 +1493,14 @@ kgmGui* kgmGameTools::genGui(kgmXml &xml)
       if(id == "kgmGuiText")
       {
         gui = new kgmGuiText(gui, x, y, w, h);
+
+	gs->setSlot(gui, handler);
       }
       else if (id == "kgmGuiButton")
       {
         gui = new kgmGuiButton(gui, x, y, w, h);
+
+	gs->setSlot(gui, handler);
 
         xml.attribute("text", value);
 

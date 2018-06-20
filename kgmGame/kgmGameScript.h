@@ -3,25 +3,28 @@
 #include "../kgmBase/kgmObject.h"
 
 class kgmIGame;
+class kgmGui;
 
 class kgmGameScript: public kgmObject
 {
   kgmIScript* handler;
   kgmIGame*   game;
-
+  
  public:
   kgmGameScript(kgmIGame*);
   ~kgmGameScript();
-
+  
   void init();
   void update();
 
+  void setSlot(kgmGui*, kgmString);
+  
   kgmIScript* getHandler() const
   {
     return handler;
   }
-
-private:
+  
+ private:
   void free();
 
   static void kgmLog(void*);

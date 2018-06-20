@@ -6,10 +6,14 @@
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmGraphics/kgmGui.h"
 
+static kgmGameScript* gscript = null;
+
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
 
+  gscript = this;
+  
   handler = new kgmLuaScript(g->getResources());
 
   handler->load("main");
@@ -45,6 +49,10 @@ void kgmGameScript::free()
 void kgmGameScript::update()
 {
   handler->call("main_update", "i", game->timeUpdate());
+}
+
+void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
+{
 }
 
 void kgmGameScript::kgmLog(void*)
@@ -132,7 +140,7 @@ void kgmGameScript::kgmGuiLoad(void*)
 
     xml.open(mem);
 
-    gui = kgmGameTools::genGui(xml);
+    gui = kgmGameTools::genGui(gscript, xml);
 
     if (gui)
       game->guiAdd(gui);
