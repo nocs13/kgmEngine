@@ -151,17 +151,18 @@ public:
 
   void onInputAction(int action, int argument);
 
-  int            gLoad(kgmString);        //load game level
-  int            gUnload();               //unload game level
-  int            gQuit();                 //quit from level
+  int            gQuit();
+  int            gInit();
+  int            gLoad(kgmString);
+  int            gUnload();
   int            gButton(game_button);
-  u32            gState();                //check game state
-  int            gSwitch(u32);            //switch game state
-  void           gPause(bool);            //render game scene
-  void           gRender();               //render game scene
-  kgmUnit*       gSpawn(kgmString);       //spawn the actor
-  bool           gAppend(kgmUnit*);       //add game node in map
-  kgmUnit*       gUnit(kgmString);        // get unit by name
+  u32            gState();
+  int            gSwitch(u32);
+  void           gPause(bool);
+  void           gRender();
+  kgmUnit*       gSpawn(kgmString);
+  bool           gAppend(kgmUnit*);
+  kgmUnit*       gUnit(kgmString);
   Iterator*      gObjects();
 
   bool gMapBinary(kgmString&);
@@ -170,6 +171,7 @@ public:
 
   //init interfaces
   void  initResources();
+  void  initSettings();
   void  initGraphycs();
   void  initPhysics();
   void  initSystem();

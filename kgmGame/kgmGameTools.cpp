@@ -1545,7 +1545,7 @@ kgmGui* kgmGameTools::genGui(kgmXml &xml)
 
       id = xml.m_tagName;
 
-      if(!strncmp("kgmGui", id.data(), 6))
+      if(!strncmp("kgmGui", id.data(), 6) && xml.attributes())
       {
         xml.attribute("x", value);
         x = kgmConvert::toInteger(value);
@@ -1567,6 +1567,10 @@ kgmGui* kgmGameTools::genGui(kgmXml &xml)
       else if (id == "kgmGuiButton")
       {
         gui = new kgmGuiButton(gui, x, y, w, h);
+
+        xml.attribute("text", value);
+
+        gui->setText(value);
       }
       else if(id == "kgmGuiProgress")
       {

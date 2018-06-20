@@ -723,6 +723,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
 #else
 
+  XInitThreads();
+
   XSetWindowAttributes   swa;
   int cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
 
@@ -1095,7 +1097,7 @@ int main(int argc, char *argv[]){
   XSetWindowAttributes   swa;
   XEvent                 xev;
 
-  Display           *dpy    = XOpenDisplay(NULL);
+  Display                 *dpy    = XOpenDisplay(NULL);
   Window                  root    = DefaultRootWindow(dpy);
   GLint                   att[]   = {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, True, None};
   XVisualInfo             *vi     = glXChooseVisual(dpy, 0, att);

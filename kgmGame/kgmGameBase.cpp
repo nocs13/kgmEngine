@@ -93,80 +93,13 @@ kgmGameBase::kgmGameBase(bool edit)
   prev_width  = BWIDTH;
   prev_height = BHEIGHT;
 
-  log("open settings...");
-  m_settings = new kgmGameSettings();
-
-  log("open system...");
-  initSystem();
-
-  log("init game audio...");
-  initAudio();
-
-  log("open graphics...");
-  initGC();
-
-  log("init resources...");
-  initResources();
-
-  log("init physics...");
-  initPhysics();
-
-  log("open renderer...");
-  m_graphics = new kgmGameGraphics(m_gc, m_resources);
-  //m_graphics->resize(m_width, m_height);
-
-  log("init game logic...");
-  initLogic();
-
-  if(!m_font)
-    log("can't load font");
-  else if(m_graphics)
-    m_graphics->setDefaultFont(m_font);
-
-  log("init game scripts...");
-  initScript();
-
-  log("set input map...");
-  memset(m_keys, 0, sizeof(m_keys));
-
-  for(u32 i = 0; i < sizeof(m_keymap); i++)
-    m_keymap[i] = 0;
-
-  for(u32 i = 0; i < sizeof(m_input); i++)
-    m_input[i] = 0;
-
-  m_keymap[KEY_LEFT]    = m_keymap[KEY_A] = (char)gbtn_left;
-  m_keymap[KEY_RIGHT]   = m_keymap[KEY_D] = (char)gbtn_right;
-  m_keymap[KEY_UP]      = m_keymap[KEY_W] = (char)gbtn_up;
-  m_keymap[KEY_DOWN]    = m_keymap[KEY_S] = (char)gbtn_down;
-  m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
-  m_keymap[KEY_ENTER]   = (char)gbtn_start;
-  m_keymap[KEY_LSHIFT]  = (char)gbtn_n;
-  m_keymap[KEY_RSHIFT]  = (char)gbtn_n;
-
-  m_keymap[KEY_X] = (char)gbtn_x;
-  m_keymap[KEY_Y] = (char)gbtn_y;
-  m_keymap[KEY_Z] = (char)gbtn_z;
-
-  m_keymap[KEY_MSBLEFT]   = (char)gbtn_a;
-  m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
-  m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
-
-  m_state    = State_Idle;
-
-  kgmGuiActions::register_actions();
-  kgmBaseActions::register_actions();
-
-#ifdef EDITOR
-  if(edit)
-    editor = new kEditor(this);
-#endif
-
   int rc[4];
 
   getRect(rc[0], rc[1], rc[2], rc[3]);
 
   onResize(rc[2], rc[3]);
+
+  m_state = -1;
 }
 
 kgmGameBase::kgmGameBase(kgmString &conf)
@@ -176,11 +109,6 @@ kgmGameBase::kgmGameBase(kgmString &conf)
 
 kgmGameBase::~kgmGameBase()
 {
-  /*m_islogic = false;
-  m_isphysics = false;
-  m_thLogic.join();
-  m_thPhysics.join();*/
-
 #ifdef EDITOR
   log("free editor...");
 
@@ -199,11 +127,7 @@ kgmGameBase::~kgmGameBase()
   log("free scripts...");
 
   if(m_script)
-  {
-    m_script->free();
-
     delete m_script;
-  }
 
   log("free logic...");
 
@@ -353,12 +277,19 @@ void kgmGameBase::initScript()
 {
   m_script = new kgmGameScript(this);
 
+  m_script->init();
+
   m_threader.add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
 }
 
 void kgmGameBase::initGC()
 {
   m_gc = new kgmOGL(this);
+}
+
+void kgmGameBase::initSettings()
+{
+  m_settings = new kgmGameSettings();
 }
 
 void kgmGameBase::log(const char* msg)
@@ -557,6 +488,96 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 }
 
 //Game Functions
+int kgmGameBase::gInit()
+{
+  if (m_state != -1)
+    return 0;
+
+  log("open settings...");
+  initSettings();
+
+  log("open system...");
+  initSystem();
+
+  log("init game audio...");
+  initAudio();
+
+  log("open graphics...");
+  initGC();
+
+  log("init resources...");
+  initResources();
+
+  log("init physics...");
+  initPhysics();
+
+  log("open renderer...");
+  m_graphics = new kgmGameGraphics(m_gc, m_resources);
+  m_graphics->resize(m_width, m_height);
+
+  log("init game logic...");
+  initLogic();
+
+  if(!m_font)
+    log("can't load font");
+  else if(m_graphics)
+    m_graphics->setDefaultFont(m_font);
+
+  log("set input map...");
+  memset(m_keys, 0, sizeof(m_keys));
+
+  for(u32 i = 0; i < sizeof(m_keymap); i++)
+    m_keymap[i] = 0;
+
+  for(u32 i = 0; i < sizeof(m_input); i++)
+    m_input[i] = 0;
+
+  m_keymap[KEY_LEFT]    = m_keymap[KEY_A] = (char)gbtn_left;
+  m_keymap[KEY_RIGHT]   = m_keymap[KEY_D] = (char)gbtn_right;
+  m_keymap[KEY_UP]      = m_keymap[KEY_W] = (char)gbtn_up;
+  m_keymap[KEY_DOWN]    = m_keymap[KEY_S] = (char)gbtn_down;
+  m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
+  m_keymap[KEY_ENTER]   = (char)gbtn_start;
+  m_keymap[KEY_LSHIFT]  = (char)gbtn_n;
+  m_keymap[KEY_RSHIFT]  = (char)gbtn_n;
+
+  m_keymap[KEY_X] = (char)gbtn_x;
+  m_keymap[KEY_Y] = (char)gbtn_y;
+  m_keymap[KEY_Z] = (char)gbtn_z;
+
+  m_keymap[KEY_MSBLEFT]   = (char)gbtn_a;
+  m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
+  m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
+
+  m_state    = State_Idle;
+
+  kgmGuiActions::register_actions();
+  kgmBaseActions::register_actions();
+
+#ifdef EDITOR
+  if (!editor)
+    editor = new kEditor(this);
+#endif
+
+  log("init game script...");
+  initScript();
+
+  m_state = State_Idle;
+
+  return 1;
+}
+
+int kgmGameBase::gQuit()
+{
+  m_state = State_Quit;
+  m_quit = true;
+  m_state = State_Idle;
+
+  close();
+
+  return 1;
+}
+
 int kgmGameBase::gLoad(kgmString s)
 {
   gUnload();
@@ -637,17 +658,6 @@ int kgmGameBase::gUnload()
   return m_state;
 }
 
-int kgmGameBase::gQuit()
-{
-  m_state = State_Quit;
-  m_quit = true;
-  m_state = State_Idle;
-
-  close();
-
-  return 1;
-}
-
 int kgmGameBase::gSwitch(u32 state)
 {
   switch(state)
@@ -661,6 +671,7 @@ int kgmGameBase::gSwitch(u32 state)
     m_threader.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
     break;
   }
+
   m_state = state;
 
   return m_state;

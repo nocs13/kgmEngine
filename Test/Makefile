@@ -8,7 +8,7 @@ DEFS =
 FLGS = -ansi -std=gnu++11
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
 	-I../kgmGraphics -L../kgmSystem/lib -L../
-LIBS = -llua  
+LIBS = -llua
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DEDITOR -DVULKAN
@@ -27,16 +27,16 @@ endif
 all:
 #	make -C ..
 #	$(CC) -g -c $(DEFS) $(FLAGS) *.cpp
-	$(CC) -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
+	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 #	$(CC) -g -c $(DEFS) $(INCS) $(LIBD) $(libs) kTest.cpp
 #	$(CC) -g -o kTest $(DEFS) $(FLAGS) $(OBJS) $(INCS) $(libs) -L../ -L../kgmLua
-	$(CC) -o kTest$(EXT) *.o ../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
+	$(CC) -g -o kTest$(EXT) *.o ../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
 clean:
 	$(RM) kTest$(EXT) *.o
 
 run:
 	./kTest$(EXT)
-	
+
 android: clean
 	make -C android

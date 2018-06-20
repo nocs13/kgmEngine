@@ -23,14 +23,14 @@ public:
   typedef kgmTexture*       Icon;
   typedef kgmTexture*       Image;
   typedef u32               Color;
-  
+
   struct Styles
   {
     u32 fgColor;
     u32 bgColor;
     u32 acColor;
   };
-  
+
 protected:
   enum OptionValue
   {
@@ -49,7 +49,7 @@ protected:
     Rect rect;
     bool scale;
   };
-  
+
   bool       m_erase;
 public:
   typedef    kgmList<kgmGui*> Guis;
@@ -79,7 +79,7 @@ protected:
 
 private:
   Base          m_base;
-  
+
 public:
   kgmGui();
   kgmGui(kgmGui *par, int x, int y, int w, int h);
@@ -106,7 +106,7 @@ public:
 
   void         setSid(kgmString  sid){ m_sid = sid;  }
   kgmString    getSid()              { return m_sid; }
-  
+
   kgmGui*      getParent() const { return m_parent; }
 
   kgmGui*      getRoot();
@@ -177,14 +177,13 @@ protected:
   kgmGui*       getFocus(Point pos);
   kgmGui*       getPointed();
 
-  void          setId(u32 id){ this->m_id = id; };
-  u32           getId(){ return this->m_id; };
+  void  setId(u32 id)
+  {
+    this->m_id = id;
+  }
 
-  //*************** DRAWING ***************
-  //void gcDrawRect(kgmIGC* gc, Rect rc, u32 col, void* tex);
-  //void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, Rect clip, kgmString& text);
+  u32  getId() const
+  {
+    return this->m_id;
+  };
 };
-
-
-
-

@@ -89,11 +89,6 @@ public:
   void onIdle()
   {
     kgmGameBase::onIdle();
-
-    if(m_state == State_Play)
-    {
-
-    }
   }
 
   void onKeyUp(int k)
@@ -215,6 +210,8 @@ public:
     game = new kGame(edit);
 
     m_game = ((kGame*)game);
+
+    game->gInit();
 
     game->setRect(0, 0, w, h);
 

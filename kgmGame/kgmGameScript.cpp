@@ -20,10 +20,15 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
+
+  handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
+  handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
 }
 
 kgmGameScript::~kgmGameScript()
 {
+  free();
+
   delete handler;
 }
 
@@ -105,7 +110,7 @@ void kgmGameScript::kgmGameState(void*)
   game->getScript()->resl("i", state);
 }
 
-void kgmGameScript::kgmGui(void*)
+void kgmGameScript::kgmGuiLoad(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -114,7 +119,7 @@ void kgmGameScript::kgmGui(void*)
 
   s8* sid = null;
 
-  void* gui = null;
+  kgmGui* gui = null;
 
   game->getScript()->args("s", &sid);
 
@@ -123,8 +128,14 @@ void kgmGameScript::kgmGui(void*)
     kgmMemory<u8> mem;
     game->getResources()->getFile(sid, mem);
 
-    kgmXml xml(mem);
+    kgmXml xml;
+
+    xml.open(mem);
+
     gui = kgmGameTools::genGui(xml);
+
+    if (gui)
+      game->guiAdd(gui);
   }
 
   game->getScript()->resl("p", gui);
@@ -132,14 +143,21 @@ void kgmGameScript::kgmGui(void*)
 
 void kgmGameScript::kgmGuiShow(void*)
 {
-  s32 state = 0;
+  kgmGui* gui  = null;
+  u32     show = -1;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
     return;
 
-  state = game->gState();
+  game->getScript()->args("pi", &gui, &show);
 
-  game->getScript()->resl("i", state);
+  if (gui && show != -1)
+  {
+    if (show)
+      gui->show();
+    else
+      gui->hide();
+  }
 }

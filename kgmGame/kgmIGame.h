@@ -161,9 +161,10 @@ public:
 
 public:
   //virtuals
+  virtual int            gQuit()              = 0;    //close game
+  virtual int            gInit()              = 0;    //start game
   virtual int            gLoad(kgmString)     = 0;    //load game map
   virtual int            gUnload()            = 0;    //unload game map
-  virtual int            gQuit()              = 0;    //close game
   virtual int            gButton(game_button) = 0;    //game input button state
   virtual u32            gState()             = 0;    //check game active  state
   virtual int            gSwitch(u32)         = 0;    //switch game state
