@@ -89,7 +89,7 @@ public:
 
   }
 
-  virtual void gameInit(bool edit) = 0;
+  virtual void gameInit() = 0;
   virtual void gameLoop() = 0;
   virtual void gameFree() = 0;
   virtual void gameEdit() = 0;
@@ -101,30 +101,7 @@ public:
 
   int main(int argc, char **argv)
   {
-    int o_edit = 0;
-    int o_map  = 0;
-
-    if(argc > 1)
-    {
-      if(strncmp(argv[1], "map", 3) == 0 && argc > 2)
-      {
-        o_map = 1;
-      }
-      else if(strncmp(argv[1], "edit", 4) == 0)
-      {
-        o_edit = 1;
-      }
-    }
-
-    gameInit((o_edit)?(true):(false));
-
-    if(game() == NULL)
-      return 1;
-
-    if(o_edit)
-      gameEdit();
-    else if(o_map)
-      game()->gLoad(argv[2]);
+    gameInit();
 
     gameLoop();
 

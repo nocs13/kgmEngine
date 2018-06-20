@@ -72,7 +72,7 @@ kgmCString c_map;
 kgmCamera* g_cam = null;
 ////////////////////////////////////
 //                kgmGameBase
-kgmGameBase::kgmGameBase(bool edit)
+kgmGameBase::kgmGameBase()
   :kgmWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
 {
   m_game = this;

@@ -114,7 +114,7 @@ private:
   };
 
 public:
-  kgmGameBase(bool edit = false);
+  kgmGameBase();
   kgmGameBase(kgmString &conf);
   virtual ~kgmGameBase();
 

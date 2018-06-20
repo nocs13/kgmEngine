@@ -41,8 +41,7 @@ class kGame: public kgmGameBase
   //GameData data;
 
 public:
-  kGame(bool edit)
-    :kgmGameBase(edit)
+  kGame()
   {
     setMsAbsolute(true);
 
@@ -199,7 +198,7 @@ public:
     return 0;
   }*/
 
-  void gameInit(bool edit)
+  void gameInit()
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
@@ -207,9 +206,9 @@ public:
     kgm_log() << "CPU COUNT: " << kgmSystem::getCpuConcurrency() << "\n";
 
     //game = kgm_ptr<kGame>(new kGame(edit));
-    game = new kGame(edit);
+    game = new kGame();
 
-    m_game = ((kGame*)game);
+    m_game = game;
 
     game->gInit();
 
