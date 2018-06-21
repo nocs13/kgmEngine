@@ -12,7 +12,6 @@ class kgmGameScript: public kgmObject
   kgmIScript* handler;
   kgmIGame*   game;
 
-  kgmList<AbstractSlot<>*>   slots;
   kgmMap<kgmGui*, kgmString> slotters;
 
  public:
@@ -29,6 +28,10 @@ class kgmGameScript: public kgmObject
     return handler;
   }
 
+  __stdcall void onSlotGuiMenu(kgmGui*, u32);
+  __stdcall void onSlotGuiList(kgmGui*, u32);
+  __stdcall void onSlotGuiText(kgmGui*, kgmString);
+  __stdcall void onSlotGuiCheck(kgmGui*, bool);
   __stdcall void onSlotGuiButton(kgmGui*, int);
 
  private:

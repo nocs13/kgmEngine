@@ -37,9 +37,6 @@ kgmGameScript::~kgmGameScript()
 {
   free();
 
-  for(kgmList<AbstractSlot<>*>::iterator i = slots.begin(); i.end(); ++i)
-    delete (*i);
-
   delete handler;
 }
 
@@ -69,9 +66,60 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
     slotGuiButton->connect(this, (Slot<kgmGameScript, int>::FNS) &kgmGameScript::onSlotGuiButton,
                            gui, &((kgmGuiButton*)gui)->sigClick);
 
-    slots.add((AbstractSlot<>*) slotGuiButton);
     slotters.set(gui, call);
   }
+}
+
+__stdcall void kgmGameScript::onSlotGuiList(kgmGui* g, u32 s)
+{
+  if (!g)
+    return;
+
+  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+
+  if (!i.isValid())
+    return;
+
+  handler->call(i.data(), "i", s);
+}
+
+__stdcall void kgmGameScript::onSlotGuiMenu(kgmGui* g, u32 s)
+{
+  if (!g)
+    return;
+
+  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+
+  if (!i.isValid())
+    return;
+
+  handler->call(i.data(), "i", s);
+}
+
+__stdcall void kgmGameScript::onSlotGuiText(kgmGui* g, kgmString s)
+{
+  if (!g)
+    return;
+
+  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+
+  if (!i.isValid())
+    return;
+
+  handler->call(i.data(), "s", s.data());
+}
+
+__stdcall void kgmGameScript::onSlotGuiCheck(kgmGui* g, bool n)
+{
+  if (!g)
+    return;
+
+  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+
+  if (!i.isValid())
+    return;
+
+  handler->call(i.data(), "i", n);
 }
 
 __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)

@@ -27,7 +27,7 @@ protected:
   template <class... Args>
   class AbstractSlot: public BaseSlot
   {
-  public:
+  protected:
     virtual ~AbstractSlot()
     {
       for(int i = 0; i < signals.length(); i++)
@@ -48,9 +48,11 @@ protected:
     }
 
     virtual void call(Args... args) = 0;
+    virtual void call(kgmObject* sender, Args... args) = 0;
 
   protected:
     kgmList<Signal<Args...>*> signals;
+    kgmObject*                sender;
   };
 
   template <class T, class... Args>
@@ -65,8 +67,6 @@ protected:
     {
       this->t = null;
       this->f = null;
-
-      this->s = null;
     }
 
     bool connect(T* t, FN f, Signal<Args...> *s)
@@ -90,7 +90,8 @@ protected:
 
       this->t = t;
       this->f = (FN) f;
-      this->s = S;
+
+      s->sender(S);
 
       AbstractSlot<Args...>::add(s);
       s->connect(this);
@@ -102,8 +103,6 @@ protected:
     {
       this->t = null;
       this->f = null;
-
-      this->s = null;
     }
 
   private:
@@ -124,26 +123,28 @@ protected:
       if(!t || !f)
         return;
 
-      if(s)
-      {
-        FNS ff = (FNS) f;
-        (t->*ff)(s, args...);
-      }
-      else
-        (t->*f)(args...);
+      (t->*f)(args...);
+    }
+
+    virtual void call(kgmObject* sender, Args... args)
+    {
+      if(!t || !f)
+        return;
+
+      FNS ff = (FNS) f;
+      (t->*ff)(sender, args...);
     }
 
   private:
     T* t;
     FN f;
-
-    kgmObject *s = null;
   };
 
   template<class... Args>
   class Signal
   {
     kgmList<AbstractSlot<Args...>*> list;
+    kgmObject* sobject = null;
 
   public:
     Signal()
@@ -151,10 +152,25 @@ protected:
 
     }
 
+    Signal(kgmObject *s)
+    {
+      sobject = s;
+    }
+
     ~Signal()
     {
       for(int i = 0; i < list.length(); i++)
         list[i]->remove(this);
+    }
+
+    void sender(kgmObject* s)
+    {
+      sobject = s;
+    }
+
+    kgmObject* sender() const
+    {
+      return sobject;
     }
 
     void connect(AbstractSlot<Args...> *s)
@@ -179,7 +195,14 @@ protected:
     {
       for(int i = 0; i < list.length(); i++)
       {
-        list[i]->call(args...);
+        if(sobject)
+        {
+          list[i]->call(sobject, args...);
+        }
+        else
+        {
+          list[i]->call(args...);
+        }
       }
     }
   };
