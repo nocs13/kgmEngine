@@ -5,16 +5,20 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmGraphics/kgmGui.h"
-
-static kgmGameScript* gscript = null;
+#include "../kgmGraphics/kgmGuiMenu.h"
+#include "../kgmGraphics/kgmGuiText.h"
+#include "../kgmGraphics/kgmGuiList.h"
+#include "../kgmGraphics/kgmGuiCheck.h"
+#include "../kgmGraphics/kgmGuiButton.h"
+#include "../kgmGraphics/kgmGuiProgress.h"
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
 
-  gscript = this;
-  
   handler = new kgmLuaScript(g->getResources());
+
+  handler->setX(this);
 
   handler->load("main");
 
@@ -32,6 +36,9 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 kgmGameScript::~kgmGameScript()
 {
   free();
+
+  for(kgmList<AbstractSlot<>*>::iterator i = slots.begin(); i.end(); ++i)
+    delete (*i);
 
   delete handler;
 }
@@ -53,6 +60,31 @@ void kgmGameScript::update()
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
 {
+  if (!gui || call.length() < 1)
+    return;
+
+  if (!strcmp(gui->vClass(), "kgmGuiButton"))
+  {
+    Slot<kgmGameScript, int>* slotGuiButton = new Slot<kgmGameScript, int>();
+    slotGuiButton->connect(this, (Slot<kgmGameScript, int>::FNS) &kgmGameScript::onSlotGuiButton,
+                           gui, &((kgmGuiButton*)gui)->sigClick);
+
+    slots.add((AbstractSlot<>*) slotGuiButton);
+    slotters.set(gui, call);
+  }
+}
+
+__stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
+{
+  if (!s)
+    return;
+
+  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(s);
+
+  if (!i.isValid())
+    return;
+
+  handler->call(i.data(), "i", n);
 }
 
 void kgmGameScript::kgmLog(void*)
@@ -140,7 +172,7 @@ void kgmGameScript::kgmGuiLoad(void*)
 
     xml.open(mem);
 
-    gui = kgmGameTools::genGui(gscript, xml);
+    gui = kgmGameTools::genGui((kgmGameScript *)game->getScript()->getX(), xml);
 
     if (gui)
       game->guiAdd(gui);

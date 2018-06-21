@@ -12,6 +12,9 @@ class kgmLuaScript: public kgmIScript
   kgmIResources* resources = null;
 
   void* r_call = null;
+
+  void* X = null;
+
  public:
   kgmLuaScript(kgmIResources *);
   ~kgmLuaScript();
@@ -21,6 +24,9 @@ class kgmLuaScript: public kgmIScript
   bool args(kgmString fmt, ...);
   bool resl(kgmString fmt, ...);
   void* call(kgmString name, kgmString fmt, ...);
+
+  void  setX(void* x);
+  void* getX();
 
 private:
   void push(int arg);

@@ -125,6 +125,11 @@ public:
     {
       return (!_Ptr);
     }
+    
+    bool isValid()
+    {
+      return (_Ptr != null);
+    }
 
     Key key()
     {

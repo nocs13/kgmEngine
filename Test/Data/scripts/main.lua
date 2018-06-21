@@ -4,10 +4,16 @@ function main_init()
   gui_main = kgmGuiLoad('main.gui')
 end
 
-function main_exit()
+function main_free()
 end
 
 function main_update()
-  --kgmLog('hello from lua')
-  --kgmGameExit()
+end
+
+function main_log()
+   kgmLog('hello from lua')
+end
+
+function main_quit()
+   kgmGameExit()
 end

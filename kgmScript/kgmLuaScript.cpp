@@ -29,6 +29,16 @@ kgmLuaScript::~kgmLuaScript()
     lua_close(handler);
 }
 
+void kgmLuaScript::setX(void* x)
+{
+  X = x;
+}
+
+void* kgmLuaScript::getX()
+{
+  return X;
+}
+
 bool kgmLuaScript::load(kgmString s)
 {
   if (!resources)

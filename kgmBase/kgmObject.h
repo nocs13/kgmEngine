@@ -27,7 +27,7 @@ protected:
   template <class... Args>
   class AbstractSlot: public BaseSlot
   {
-  protected:
+  public:
     virtual ~AbstractSlot()
     {
       for(int i = 0; i < signals.length(); i++)
@@ -58,12 +58,15 @@ protected:
   {
   public:
     typedef void(T::*FN)(Args...);
+    typedef void(T::*FNS)(kgmObject*, Args...);
 
   public:
     Slot()
     {
       this->t = null;
       this->f = null;
+
+      this->s = null;
     }
 
     bool connect(T* t, FN f, Signal<Args...> *s)
@@ -80,10 +83,27 @@ protected:
       return true;
     }
 
+    bool connect(T* t, FNS f, kgmObject* S, Signal<Args...> *s)
+    {
+      if (this->t != null || this->f != null)
+        return false;
+
+      this->t = t;
+      this->f = (FN) f;
+      this->s = S;
+
+      AbstractSlot<Args...>::add(s);
+      s->connect(this);
+
+      return true;
+    }
+
     void reset()
     {
       this->t = null;
       this->f = null;
+
+      this->s = null;
     }
 
   private:
@@ -104,12 +124,20 @@ protected:
       if(!t || !f)
         return;
 
-      (t->*f)(args...);
+      if(s)
+      {
+        FNS ff = (FNS) f;
+        (t->*ff)(s, args...);
+      }
+      else
+        (t->*f)(args...);
     }
 
   private:
     T* t;
     FN f;
+
+    kgmObject *s = null;
   };
 
   template<class... Args>
@@ -150,7 +178,9 @@ protected:
     void operator()(Args... args)
     {
       for(int i = 0; i < list.length(); i++)
+      {
         list[i]->call(args...);
+      }
     }
   };
 
