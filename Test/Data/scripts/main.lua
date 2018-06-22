@@ -1,7 +1,7 @@
 gui_main = nil
 
 function main_init()
-  gui_main = kgmGuiLoad('main.gui')
+  gui_main = kgmGuiLoad('guis/main.gui')
 end
 
 function main_free()
@@ -17,3 +17,4 @@ end
 function main_quit()
    kgmGameExit()
 end
+

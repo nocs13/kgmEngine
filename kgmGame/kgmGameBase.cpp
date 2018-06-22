@@ -519,8 +519,14 @@ int kgmGameBase::gInit()
   initLogic();
 
   if(!m_font)
-    log("can't load font");
-  else if(m_graphics)
+  {
+    m_font = m_resources->getFont("font.tga", 16, 16);
+
+    if (!m_font)
+      log("can't load font");
+  }
+
+  if(m_graphics)
     m_graphics->setDefaultFont(m_font);
 
   log("set input map...");
