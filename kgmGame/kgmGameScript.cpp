@@ -19,18 +19,6 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler = new kgmLuaScript(g->getResources());
 
   handler->setX(this);
-
-  handler->load("main");
-
-  handler->set("kgmLog",   kgmGameScript::kgmLog);
-
-  handler->set("kgmGameExit",   kgmGameScript::kgmGameExit);
-  handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
-  handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
-  handler->set("kgmGameState",  kgmGameScript::kgmGameState);
-
-  handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
-  handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
 }
 
 kgmGameScript::~kgmGameScript()
@@ -42,6 +30,21 @@ kgmGameScript::~kgmGameScript()
 
 void kgmGameScript::init()
 {
+
+  handler->set("kgmLog",   kgmGameScript::kgmLog);
+
+  handler->set("kgmImport",   kgmGameScript::kgmImport);
+
+  handler->set("kgmGameExit",   kgmGameScript::kgmGameExit);
+  handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
+  handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
+  handler->set("kgmGameState",  kgmGameScript::kgmGameState);
+
+  handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
+  handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
+
+  handler->load("main");
+
   handler->call("main_init", "");
 }
 
@@ -147,6 +150,23 @@ void kgmGameScript::kgmLog(void*)
   game->getScript()->args("s", &log);
 
   kgm_log_print(log);
+}
+
+void kgmGameScript::kgmImport(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  s8* script = null;
+
+  game->getScript()->args("s", &script);
+
+  if (script)
+  {
+    game->getScript()->load(script);
+  }
 }
 
 void kgmGameScript::kgmGameExit(void*)

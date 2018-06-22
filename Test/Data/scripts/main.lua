@@ -1,7 +1,10 @@
-gui_main = nil
+--gui_main = nil
+
+kgmImport('guis')
 
 function main_init()
-  gui_main = kgmGuiLoad('guis/main.gui')
+  --gui_main = kgmGuiLoad('guis/main.gui')
+  guis_init()
 end
 
 function main_free()

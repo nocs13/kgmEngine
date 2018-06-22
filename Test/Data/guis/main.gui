@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kgmGui x="10" y="10" w="300" h="300">
+  <kgmGuiButton x="1" y="1" w="70" h="20" handler="main_log" text="button1" />
+  <kgmGuiButton x="1" y="21" w="70" h="20" handler="main_quit" text="button2" />
+  <kgmGuiButton x="1" y="42" w="70" h="20" handler="main_quit" text="button3" />
+  <kgmGuiList x="1" y="63" w="50" h="80" handler="">
+    <ListItem value="value1"/>
+    <ListItem value="value2"/>
+    <ListItem value="value3"/>
+  <kgmGuiList/>
+</kgmGui>
