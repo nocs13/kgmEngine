@@ -38,13 +38,19 @@ class kgmGameScript: public kgmObject
   void free();
 
   static void kgmLog(void*);
+
   static void kgmImport(void*);
+
   static void kgmGameExit(void*);
   static void kgmGameLoad(void*);
   static void kgmGameEdit(void*);
   static void kgmGamePlay(void*);
   static void kgmGamePause(void*);
   static void kgmGameState(void*);
+
   static void kgmGuiLoad(void*);
   static void kgmGuiShow(void*);
+  static void kgmGuiResolution(void*);
+
+  static void kgmScreenResolution(void*);
 };

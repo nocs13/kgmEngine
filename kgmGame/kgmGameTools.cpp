@@ -1412,6 +1412,8 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
 {
   kgmGui *base = null, *gui = null;
 
+  kgmGuiMenu::Item * item = null;
+
   while(kgmXml::XmlState xstate = xml.next())
   {
     kgmString id, value, handler;
@@ -1451,19 +1453,36 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
       {
         gui = new kgmGuiMenu(gui);
 
-	gs->setSlot(gui, handler);
+        gs->setSlot(gui, handler);
       }
       else if(id == "kgmGuiList")
       {
         gui = new kgmGuiList(gui, x, y, w, h);
 
-	gs->setSlot(gui, handler);
+        gs->setSlot(gui, handler);
       }
       else if(id == "kgmGuiFrame")
       {
         xml.attribute("title", value);
 
         gui = new kgmGuiFrame(value, x, y, w, h);
+      }
+      else if(id == "MenuItem")
+      {
+        xml.attribute("title", value);
+
+        if (xml.hasattr("id"))
+        {
+          kgmString oid;
+
+          xml.attribute("id", oid);
+
+          ((kgmGuiMenu*)gui)->add(kgmConvert::toInteger(oid), value);
+        }
+        else
+        {
+          item = ((kgmGuiMenu*)gui)->add(value);
+        }
       }
 
       if (!base)
@@ -1494,13 +1513,13 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
       {
         gui = new kgmGuiText(gui, x, y, w, h);
 
-	gs->setSlot(gui, handler);
+        gs->setSlot(gui, handler);
       }
       else if (id == "kgmGuiButton")
       {
         gui = new kgmGuiButton(gui, x, y, w, h);
 
-	gs->setSlot(gui, handler);
+        gs->setSlot(gui, handler);
 
         xml.attribute("text", value);
 
@@ -1520,13 +1539,14 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
       {
         kgmString oid;
 
-        xml.attribute("title", value);
-        xml.attribute("id", oid);
+        if (xml.hasattr("title") && xml.hasattr("id"))
+        {
+          xml.attribute("title", value);
+          xml.attribute("id", oid);
 
-        if (oid.length() < 1)
-          ((kgmGuiMenu*)gui)->add(value);
-        else
-          ((kgmGuiMenu*)gui)->add(kgmConvert::toInteger(oid), value);
+          if (item && oid.length() > 0)
+            item->add(kgmConvert::toInteger(oid), value);
+        }
       }
 
       if (!base)

@@ -11,6 +11,7 @@
 #include "../kgmGraphics/kgmGuiCheck.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGuiProgress.h"
+#include "../kgmSystem/kgmWindow.h"
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
@@ -269,3 +270,39 @@ void kgmGameScript::kgmGuiShow(void*)
       gui->hide();
   }
 }
+
+void kgmGameScript::kgmGuiResolution(void*)
+{
+  kgmGui* gui  = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  game->getScript()->args("p", &gui);
+
+  if (gui)
+  {
+    kgmGui::Rect rc = gui->getRect();
+
+    game->getScript()->args("ii", rc.width(), rc.height());
+  }
+}
+
+void kgmGameScript::kgmScreenResolution(void*)
+{
+  kgmGui* gui  = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return;
+
+  int rc[4];
+
+  game->getWindow()->getRect(rc[0], rc[1], rc[2], rc[3]);
+
+  game->getScript()->args("ii", rc[2], rc[3]);
+}
+
