@@ -8,7 +8,7 @@ kgmGuiSelect::kgmGuiSelect()
 
   slotSelect.connect(this, (void(kgmGuiSelect::*)(u32)) &kgmGuiSelect::onSelect, &m_list->sigSelect);
 
-  m_point = true;
+  m_onpoint = true;
 }
 
 kgmGuiSelect::kgmGuiSelect(kgmGui *par, int x, int y, int w, int h)
@@ -23,7 +23,7 @@ kgmGuiSelect::kgmGuiSelect(kgmGui *par, int x, int y, int w, int h)
 
   m_text->setEditable(false);
 
-  m_point = true;
+  m_onpoint = true;
 }
 
 void kgmGuiSelect::add(kgmString s)

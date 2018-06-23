@@ -14,7 +14,7 @@ kgmGui::kgmGui()
   m_hasMouse = false;
   m_hasInput = false;
   m_useStyle = true;
-  m_point    = false;
+  m_onpoint  = false;
   m_focus    = null;
 
   m_alpha = false;
@@ -39,7 +39,7 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
   m_hasInput = false;
   m_alpha    = false;
   m_useStyle = true;
-  m_point    = false;
+  m_onpoint  = false;
 
   m_focus = null;
 
@@ -286,7 +286,7 @@ void kgmGui::onMsMove(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if(child->m_point || child->m_rect.inside(x, y))
+      if(child->m_onpoint || child->m_rect.inside(x, y))
       {
         if(!child->m_hasMouse)
         {
@@ -327,7 +327,7 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
 
     if(child->m_view && !child->m_freeze)
     {
-      if(child->m_point || child->m_rect.inside(x, y))
+      if(child->m_onpoint || child->m_rect.inside(x, y))
       {
         child->onMsLeftDown(k, x - child->m_rect.x, y - child->m_rect.y);
 
@@ -364,7 +364,7 @@ void kgmGui::onMsLeftUp(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if (child->m_point || child->m_rect.inside(x, y))
+      if (child->m_onpoint || child->m_rect.inside(x, y))
       {
         child->onMsLeftUp(k, x - child->m_rect.x, y - child->m_rect.y);
 
@@ -391,7 +391,7 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 
     if (child->m_view && !child->m_freeze)
     {
-      if (child->m_point || child->m_rect.inside(x, y))
+      if (child->m_onpoint || child->m_rect.inside(x, y))
       {
         child->onMsRightDown(k, x - child->m_rect.x, y - child->m_rect.y);
 
@@ -418,7 +418,7 @@ void kgmGui::onMsRightUp(int k, int x, int y)
 
     if(child->m_view && !child->m_freeze)
     {
-      if (child->m_point || child->m_rect.inside(x, y))
+      if (child->m_onpoint || child->m_rect.inside(x, y))
       {
         child->onMsRightUp(k, x - child->m_rect.x, y - child->m_rect.y);
 

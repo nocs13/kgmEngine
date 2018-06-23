@@ -9,6 +9,8 @@ kgmGuiMenu::kgmGuiMenu(kgmGui* parent)
 {
   root = new Item(null, "", true);
 
+  m_onpoint = true;
+
   choose = null;
 }
 

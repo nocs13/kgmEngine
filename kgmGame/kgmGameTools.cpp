@@ -1418,7 +1418,7 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
   {
     kgmString id, value, handler;
 
-    u32 x, y, w, h;
+    u32 x = 0, y = 0, w = 1, h = 1;
 
     if(xstate == kgmXml::XML_ERROR || xstate == kgmXml::XML_FINISH)
     {
@@ -1494,17 +1494,20 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
 
       id = xml.m_tagName;
 
-      if(!strncmp("kgmGui", id.data(), 6) && xml.attributes())
+      if(!strncmp("kgmGui", id.data(), 6))
       {
-        xml.attribute("x", value);
-        x = kgmConvert::toInteger(value);
-        xml.attribute("y", value);
-        y = kgmConvert::toInteger(value);
-        xml.attribute("w", value);
-        w = kgmConvert::toInteger(value);
-        xml.attribute("h", value);
-        h = kgmConvert::toInteger(value);
-        xml.attribute("handler", handler);
+        if (xml.attributes())
+        {
+          xml.attribute("x", value);
+          x = kgmConvert::toInteger(value);
+          xml.attribute("y", value);
+          y = kgmConvert::toInteger(value);
+          xml.attribute("w", value);
+          w = kgmConvert::toInteger(value);
+          xml.attribute("h", value);
+          h = kgmConvert::toInteger(value);
+          xml.attribute("handler", handler);
+        }
 
         isgui = true;
       }
@@ -1548,9 +1551,6 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
             item->add(kgmConvert::toInteger(oid), value);
         }
       }
-
-      if (!base)
-        base = gui;
 
       if (isgui)
         gui = gui->getParent();

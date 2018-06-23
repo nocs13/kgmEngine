@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kgmGui x="10" y="10" w="300" h="300">
-  <kgmGuiButton x="1" y="1" w="70" h="20" handler="main_log" text="button1" />
-  <kgmGuiButton x="1" y="21" w="70" h="20" handler="main_quit" text="button2" />
-  <kgmGuiButton x="1" y="42" w="70" h="20" handler="main_quit" text="button3" />
-  <kgmGuiList x="1" y="63" w="50" h="80" handler="">
-    <ListItem value="value1"/>
-    <ListItem value="value2"/>
-    <ListItem value="value3"/>
-  <kgmGuiList/>
-  <kgmMenu orientation="horizontal" x="1" y="1" w="70" h="20" handler="main_menu_handler">
+  <kgmGuiMenu orientation="horizontal" x="100" y="1" w="70" h="20" handler="main_menu_handler">
     <MenuItem title="item 0">
-      <MenuItem title="item 01"/>
-      <MenuItem title="item 02"/>
-      <MenuItem title="item 03"/>
+      <MenuItem title="item 01" id="1" />
+      <MenuItem title="item 02" id="2" />
+      <MenuItem title="item 03" id="3" />
     </MenuItem>
     <MenuItem title="item 1">
     </MenuItem>
     <MenuItem title="item 2">
     </MenuItem>
-  </kgmMenu>
+  </kgmGuiMenu>
+  <kgmGuiButton x="1" y="21" w="70" h="20" handler="main_log" text="button1" />
+  <kgmGuiButton x="1" y="41" w="70" h="20" handler="main_quit" text="button2" />
+  <kgmGuiButton x="1" y="62" w="70" h="20" handler="main_quit" text="button3" />
+  <kgmGuiList x="1" y="83" w="50" h="80" handler="">
+    <ListItem value="value1"/>
+    <ListItem value="value2"/>
+    <ListItem value="value3"/>
+  <kgmGuiList/>
 </kgmGui>

@@ -561,8 +561,7 @@ int kgmGameBase::gInit()
   kgmBaseActions::register_actions();
 
 #ifdef EDITOR
-  if (!editor)
-    editor = new kEditor(this);
+  //if (!editor) editor = new kEditor(this);
 #endif
 
   log("init game script...");
