@@ -15,12 +15,14 @@ class kgmLuaScript: public kgmIScript
 
   void* X = null;
 
+  s32 m_carg = 0;
+
  public:
   kgmLuaScript(kgmIResources *);
   ~kgmLuaScript();
 
   bool load(kgmString id);
-  bool set(kgmString name,  void (*fn)(void*));
+  bool set(kgmString name,  FN);
   bool args(kgmString fmt, ...);
   bool resl(kgmString fmt, ...);
   void* call(kgmString name, kgmString fmt, ...);

@@ -8,7 +8,7 @@ DEFS =
 FLGS = -ansi -std=gnu++11
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
 	-I../kgmGraphics -L../kgmSystem/lib -L../
-LIBS = -llua
+LIBS = -llua -llualib
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DEDITOR -DVULKAN

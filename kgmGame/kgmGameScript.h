@@ -37,20 +37,21 @@ class kgmGameScript: public kgmObject
  private:
   void free();
 
-  static void kgmLog(void*);
+  static s32 kgmLog(void*);
 
-  static void kgmImport(void*);
+  static s32 kgmImport(void*);
 
-  static void kgmGameExit(void*);
-  static void kgmGameLoad(void*);
-  static void kgmGameEdit(void*);
-  static void kgmGamePlay(void*);
-  static void kgmGamePause(void*);
-  static void kgmGameState(void*);
+  static s32 kgmGameExit(void*);
+  static s32 kgmGameLoad(void*);
+  static s32 kgmGameEdit(void*);
+  static s32 kgmGamePlay(void*);
+  static s32 kgmGamePause(void*);
+  static s32 kgmGameState(void*);
 
-  static void kgmGuiLoad(void*);
-  static void kgmGuiShow(void*);
-  static void kgmGuiResolution(void*);
+  static int  kgmGuiLoad(void*);
+  static s32 kgmGuiShow(void*);
+  static s32 kgmGuiScale(void*);
+  static s32 kgmGuiResolution(void*);
 
-  static void kgmScreenResolution(void*);
+  static s32 kgmScreenResolution(void*);
 };

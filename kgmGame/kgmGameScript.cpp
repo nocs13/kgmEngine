@@ -43,6 +43,10 @@ void kgmGameScript::init()
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
+  handler->set("kgmGuiScale",  kgmGameScript::kgmGuiScale);
+  handler->set("kgmGuiResolution",  kgmGameScript::kgmGuiResolution);
+
+  handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
   handler->load("main");
 
@@ -139,12 +143,12 @@ __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
   handler->call(i.data(), "i", n);
 }
 
-void kgmGameScript::kgmLog(void*)
+s32 kgmGameScript::kgmLog(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   s8* log = null;
 
@@ -153,12 +157,12 @@ void kgmGameScript::kgmLog(void*)
   kgm_log_print(log);
 }
 
-void kgmGameScript::kgmImport(void*)
+s32 kgmGameScript::kgmImport(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   s8* script = null;
 
@@ -170,61 +174,61 @@ void kgmGameScript::kgmImport(void*)
   }
 }
 
-void kgmGameScript::kgmGameExit(void*)
+s32 kgmGameScript::kgmGameExit(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   if(game->gState() != kgmIGame::State_Quit)
     game->gQuit();
 }
 
-void kgmGameScript::kgmGamePlay(void*)
+s32 kgmGameScript::kgmGamePlay(void*)
 {
   s32 state = 0;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   game->gSwitch(kgmIGame::State_Play);
 }
 
-void kgmGameScript::kgmGamePause(void*)
+s32 kgmGameScript::kgmGamePause(void*)
 {
   s32 state = 0;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   game->gSwitch(kgmIGame::State_Pause);
 }
 
-void kgmGameScript::kgmGameState(void*)
+s32 kgmGameScript::kgmGameState(void*)
 {
   s32 state = 0;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   state = game->gState();
 
   game->getScript()->resl("i", state);
 }
 
-void kgmGameScript::kgmGuiLoad(void*)
+int kgmGameScript::kgmGuiLoad(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   s8* sid = null;
 
@@ -248,9 +252,11 @@ void kgmGameScript::kgmGuiLoad(void*)
   }
 
   game->getScript()->resl("p", gui);
+
+  return 1;
 }
 
-void kgmGameScript::kgmGuiShow(void*)
+s32 kgmGameScript::kgmGuiShow(void*)
 {
   kgmGui* gui  = null;
   u32     show = -1;
@@ -258,7 +264,7 @@ void kgmGameScript::kgmGuiShow(void*)
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   game->getScript()->args("pi", &gui, &show);
 
@@ -271,14 +277,36 @@ void kgmGameScript::kgmGuiShow(void*)
   }
 }
 
-void kgmGameScript::kgmGuiResolution(void*)
+s32 kgmGameScript::kgmGuiScale(void*)
+{
+  kgmGui* gui  = null;
+  double  sw = 1.0, sh = 1.0;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  game->getScript()->args("pdd", &gui, &sw, &sh);
+
+  if (gui)
+  {
+    gui->scale(sw, sh);
+  }
+  else
+  {
+    kgm_log() << "No gui for scale. \n";
+  }
+}
+
+s32 kgmGameScript::kgmGuiResolution(void*)
 {
   kgmGui* gui  = null;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   game->getScript()->args("p", &gui);
 
@@ -286,23 +314,27 @@ void kgmGameScript::kgmGuiResolution(void*)
   {
     kgmGui::Rect rc = gui->getRect();
 
-    game->getScript()->args("ii", rc.width(), rc.height());
+    game->getScript()->resl("ii", rc.width(), rc.height());
   }
+
+  return 2;
 }
 
-void kgmGameScript::kgmScreenResolution(void*)
+s32 kgmGameScript::kgmScreenResolution(void*)
 {
   kgmGui* gui  = null;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-    return;
+    return 0;
 
   int rc[4];
 
   game->getWindow()->getRect(rc[0], rc[1], rc[2], rc[3]);
 
-  game->getScript()->args("ii", rc[2], rc[3]);
+  game->getScript()->resl("ii", rc[2], rc[3]);
+
+  return 2;
 }
 

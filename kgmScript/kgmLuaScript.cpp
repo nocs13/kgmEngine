@@ -16,10 +16,10 @@ kgmLuaScript::kgmLuaScript(kgmIResources *r)
   if(!handler)
     return;
 
-  //lua_baselibopen (handler);
+  lua_baselibopen (handler);
   //lua_iolibopen (handler);
-  //lua_strlibopen (handler);
-  //lua_mathlibopen (handler);
+  lua_strlibopen (handler);
+  lua_mathlibopen (handler);
   //lua_dblibopen (handler);
 }
 
@@ -63,9 +63,9 @@ bool kgmLuaScript::load(kgmString s)
   return true;
 }
 
-bool kgmLuaScript::set(kgmString name, void (*fn)(void*))
+bool kgmLuaScript::set(kgmString name, FN fn)
 {
-  lua_register(handler, name.data(), (int (*)(lua_State*))fn);
+  lua_register(handler, name.data(), (int (*)(lua_State*)) fn);
 
   return true;
 }
@@ -76,6 +76,13 @@ bool kgmLuaScript::args(kgmString fmt, ...)
   char* f = fmt.data();
   va_list vl;
   va_start(vl, fmt);
+
+  s32 largs = lua_gettop(handler);
+
+  if(largs < 2)
+    m_carg = -1;
+  else
+    m_carg = 1;
 
   while((*f != '\0') && (args < 128))
   {
@@ -97,6 +104,9 @@ bool kgmLuaScript::args(kgmString fmt, ...)
 
     f++;
     args++;
+
+    if(largs > 1)
+      m_carg = args + 1;
   }
 
   return true;
@@ -216,24 +226,24 @@ void kgmLuaScript::push(void* arg)
 
 void kgmLuaScript::pop(int* arg)
 {
-  if(lua_isnumber(handler, -1))
-    *arg = lua_tonumber(handler, -1);
+  if(lua_isnumber(handler, m_carg))
+    *arg = lua_tonumber(handler, m_carg);
 }
 
 void kgmLuaScript::pop(double* arg)
 {
-  if(lua_isnumber(handler, -1))
-    *arg = lua_tonumber(handler, -1);
+  if(lua_isnumber(handler, m_carg))
+    *arg = lua_tonumber(handler, m_carg);
 }
 
 void kgmLuaScript::pop(char** arg)
 {
-  if(lua_isstring(handler, -1))
-    *arg = (char*) lua_tostring(handler, -1);
+  if(lua_isstring(handler, m_carg))
+    *arg = (char*) lua_tostring(handler, m_carg);
 }
 
 void kgmLuaScript::pop(void** arg)
 {
-  if(lua_isuserdata(handler, -1))
-    *arg = (void*) lua_topointer(handler, -1);
+  if(lua_isuserdata(handler, m_carg))
+    *arg = (void*) lua_touserdata(handler, m_carg);
 }
