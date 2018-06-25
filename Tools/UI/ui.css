@@ -1,0 +1,79 @@
+ul
+{
+  list-style-type: none;
+  user-select: none;
+  align-self: left;
+  text-align: left;
+  float: left;
+  border-style: solid;
+}
+
+li {
+  text-align: left;
+  border-style: solid;
+}
+
+.kgm_base {
+	border-style: solid;
+}
+
+.kgm_gui {
+  	width:  400px;
+  	height: 200px;
+}
+
+.kgm_menu {
+  	width:  40px;
+  	height: 20px;
+}
+
+.kgm_list {
+  	width:  150px;
+  	height: 100px;
+}
+
+.kgm_Text {
+  	width:  60px;
+  	height: 22px;
+}
+
+.kgm_check {
+  	width:  40px;
+  	height: 20px;
+}
+
+.kgm_button {
+  	width:  60px;
+  	height: 20px;
+}
+
+.kgm_progress {
+  	width:  200px;
+  	height: 20px;
+}
+
+div.main {
+	border-style: slim;
+}
+
+div.menu {
+	border-style: double;
+	position: absolute;
+    left: 10px;
+    top:  15px;	
+
+  	width:  200px;
+  	height: 800px;
+
+  	align-items: left;
+  	float: left;
+}
+
+div.palette {
+	border-style: dashed;
+	position: absolute;
+    left: 212px;
+    top:  15px;	
+	width: 1000px;
+  	height: 800px;
+}
