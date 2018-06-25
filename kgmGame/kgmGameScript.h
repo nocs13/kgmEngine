@@ -48,9 +48,9 @@ class kgmGameScript: public kgmObject
   static s32 kgmGamePause(void*);
   static s32 kgmGameState(void*);
 
-  static int  kgmGuiLoad(void*);
+  static int kgmGuiLoad(void*);
   static s32 kgmGuiShow(void*);
-  static s32 kgmGuiScale(void*);
+  static s32 kgmGuiResize(void*);
   static s32 kgmGuiResolution(void*);
 
   static s32 kgmScreenResolution(void*);

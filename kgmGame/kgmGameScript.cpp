@@ -43,7 +43,7 @@ void kgmGameScript::init()
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
-  handler->set("kgmGuiScale",  kgmGameScript::kgmGuiScale);
+  handler->set("kgmGuiResize",  kgmGameScript::kgmGuiResize);
   handler->set("kgmGuiResolution",  kgmGameScript::kgmGuiResolution);
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
@@ -277,7 +277,7 @@ s32 kgmGameScript::kgmGuiShow(void*)
   }
 }
 
-s32 kgmGameScript::kgmGuiScale(void*)
+s32 kgmGameScript::kgmGuiResize(void*)
 {
   kgmGui* gui  = null;
   double  sw = 1.0, sh = 1.0;
@@ -291,7 +291,14 @@ s32 kgmGameScript::kgmGuiScale(void*)
 
   if (gui)
   {
-    gui->scale(sw, sh);
+    kgmGui::Rect rc;
+
+    gui->getRect(rc);
+
+    rc.w = sw;
+    rc.h = sh;
+
+    gui->setRect(rc);
   }
   else
   {
