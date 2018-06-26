@@ -1,72 +1,134 @@
 var id_num = 0;
 
+var selected = null;
+
+var guis = []
+
 function newId()
 {
 	return id_num++;
 }
 
-function gui_move(event)
+function gui_options()
 {
-    $palette = $("#palette");
 
-    var dx = $("#" + event.target.id).position.left - $palette.position().left;
-    var dy = $("#" + event.target.id).position.top - $palette.position().top;
-  	console.log("lol " + event.target.id + " " + event.pageX + " " + event.pageY);
 }
 
 function new_gui()
 {
-	var $gui = $ ("<div class='kgm_gui kgm_base'>gui</div>");
+  var id = "gui" + newId();
+	var $gui = $ ("<div class='kgm_base kgm_gui'>gui</div>");
 	$("#palette").append($gui);
+  $gui.draggable();
+  $gui.onclick(function(){
+    selected = $gui;
+    gui_options($gui);
+  });
 }
 
 function new_menu()
 {
 	var id = 'menu' + newId();
-	var $menu = $ ("<div id='" + id +"' class='kgm_menu kgm_base'>menu</div>");
+	var $menu = $ ("<div id='" + id +"' class='kgm_base kgm_menu'>menu</div>");
 	$("#palette").append($menu);
-	$("#" + id + "").mousemove(function (event) { 
-		gui_move(event); 
-	});
+  $menu.menu()
+	$menu.draggable();
+  $menu.onclick(function(){
+    selected = $menu;
+    gui_options($menu);
+  });
 }
 
 function new_list()
 {
-	var $list = $ ("<div class='kgm_list kgm_base'>list</div>");
+  var id = "list" + newId();
+	var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list' size='5'></select>");
 	$("#palette").append($list);
+  $list.draggable({cancel: false});
+  $list.onclick(function(){
+    selected = $list;
+    gui_options($list);
+  });
 }
 
 function new_text()
 {
-	var $text = $ ("<div class='kgm_text kgm_base'>text</div>");
+  var id = "text" + newId();
+	var $text = $ ("<input id='" + id + "' class='kgm_base kgm_text' type='text' value='Text'></input>");
 	$("#palette").append($text);
+  $text.draggable({cancel: false});
+  $text.onclick(function(){
+    selected = $text;
+    gui_options($text);
+  });
 }
 
 function new_check()
 {
-	var $check = $ ("<div class='kgm_list kgm_base'>check</div>");
-	$("#palette").append($check);
+  var id = "check" + newId();
+  var $div = $("<div id='div" + id + "'></div>");
+  var $check = $ ("<input id='" + id + "' class='ui-checkboxradio kgm_base kgm_check' type='checkbox' value='Check'>Check</input>");
+  $div.append($check);
+  $("#palette").append($div);
+  $div.draggable();
+  $check.onclick(function(){
+    selected = $check;
+    gui_options($check);
+  });
+}
+
+function new_label()
+{
+  var id = "label" + newId();
+  var $label = $("<div id='" + id + "' class='ui-state-highlight kgm_base kgm_label'>Label</div>");
+  $("#palette").append($label);
+  $label.draggable();
+  $label.onclick(function(){
+    selected = $label;
+    gui_options($label);
+  });
 }
 
 function new_button()
 {
-	var $button = $ ("<div class='kgm_button kgm_base'>button</div>");
+  var id = "button" + newId();
+	var $button = $ ("<button id='" + id + "' class='ui-button kgm_base kgm_button'>Button</button>");
 	$("#palette").append($button);
+  $button.draggable({cancel: false});
+  $button.onclick(function(){
+    selected = $button;
+    gui_options($button);
+  });
 }
 
 function new_progress()
 {
-	var $progress = $ ("<div class='kgm_progress kgm_base'>progress</div>");
+  var id = "progress" + newId();
+	var $progress = $ ("<div id='" + id + "' class='kgm_base kgm_progress'></div>");
 	$("#palette").append($progress);
+  $progress.progressbar({value: 45});
+  $progress.draggable();
+  $progress.onclick(function(){
+    selected = $progress;
+    gui_options($progress);
+  });
+}
+
+function on_palette()
+{
+  selected = null;
 }
 
 function kgm_init()
 {
-	//$("#new_gui").click(new_gui);
-	$("#new_menu").click(new_menu);
-	$("#new_list").click(new_list);
-	$("#new_text").click(new_text);
-	$("#new_check").click(new_check);
-	$("#new_button").click(new_button);
-	$("#new_progress").click(new_progress);
+  //$("#new_gui").click(new_gui);
+  $("#new_menu").click(new_menu);
+  $("#new_list").click(new_list);
+  $("#new_text").click(new_text);
+  $("#new_check").click(new_check);
+  $("#new_label").click(new_label);
+  $("#new_button").click(new_button);
+  $("#new_progress").click(new_progress);
+  
+  $("#palette").click(on_palette);
 }

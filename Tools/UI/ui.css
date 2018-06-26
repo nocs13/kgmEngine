@@ -1,16 +1,15 @@
 ul
 {
   list-style-type: none;
-  user-select: none;
-  align-self: left;
   text-align: left;
   float: left;
-  border-style: solid;
+  left: 1px;
+  top:  1px;
 }
 
 li {
   text-align: left;
-  border-style: solid;
+  border-style: groove;
 }
 
 .kgm_base {
@@ -23,8 +22,8 @@ li {
 }
 
 .kgm_menu {
-  	width:  40px;
-  	height: 20px;
+  	width:  50px;
+  	height: 30px;
 }
 
 .kgm_list {
@@ -33,47 +32,65 @@ li {
 }
 
 .kgm_Text {
-  	width:  60px;
-  	height: 22px;
+  	width:  100px;
+  	height: 30px;
 }
 
 .kgm_check {
-  	width:  40px;
-  	height: 20px;
+  width:  50px;
+  height: 30px;
+  border-style: ridge;
+}
+
+.kgm_label {
+  width:  90px;
+  height: 30px;
+  border-style: ridge;
 }
 
 .kgm_button {
-  	width:  60px;
-  	height: 20px;
+  width:  80px;
+  height: 30px;
 }
 
 .kgm_progress {
-  	width:  200px;
-  	height: 20px;
+  width:  200px;
+  height: 30px;
 }
 
 div.main {
-	border-style: slim;
+  border-style: none;
 }
 
 div.menu {
-	border-style: double;
-	position: absolute;
-    left: 10px;
-    top:  15px;	
+  border-style: double;
+  position: absolute;
+  left: 10px;
+  top:  15px;
 
-  	width:  200px;
-  	height: 800px;
+  width:  200px;
+  height: 220px;
 
-  	align-items: left;
-  	float: left;
+  align-items: left;
+  float: left;
 }
 
 div.palette {
-	border-style: dashed;
-	position: absolute;
-    left: 212px;
-    top:  15px;	
-	width: 1000px;
-  	height: 800px;
+  border-style: dashed;
+  position: absolute;
+  left: 220px;
+  top:  15px;	
+  width: 800px;
+  height: 600px;
+}
+
+div.options {
+  border-style: groove;
+  position: absolute;
+  left: 10px;
+  top:  240px;
+  width:  200px;
+
+  align-items: left;
+  float: left;
 }
