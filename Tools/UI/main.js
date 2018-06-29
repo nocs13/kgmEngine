@@ -9,9 +9,20 @@ function newId()
 	return id_num++;
 }
 
-function gui_options()
+function gui_options(gui)
 {
+    if (gui == null || selected == gui)
+        return;
 
+    $("#options").empty();
+
+    $table = $("<table id='tboptions'></table>");
+    $("#options").append($table);
+
+    $table.append("<tr><td>x</td><td>" + gui.position().left + "</td></tr>");
+    $table.append("<tr><td>y</td><td>" + gui.position().top + "</td></tr>");
+
+    selected = gui;
 }
 
 function new_gui()
@@ -21,14 +32,14 @@ function new_gui()
 	$("#palette").append($gui);
     $gui.draggable();
     $gui.onclick(function(){
-        selected = $gui;
         gui_options($gui);
     });
 
     var g = { target: $gui,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_menu()
@@ -38,15 +49,15 @@ function new_menu()
 	$("#palette").append($menu);
     $menu.menu()
 	$menu.draggable();
-    $menu.onclick(function(){
-        selected = $menu;
+    $menu.click(function(){
         gui_options($menu);
     });
 
     var g = { target: $menu,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_list()
@@ -55,15 +66,15 @@ function new_list()
 	var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list' size='5'></select>");
 	$("#palette").append($list);
     $list.draggable({cancel: false});
-    $list.onclick(function(){
-        selected = $list;
+    $list.click(function(){
         gui_options($list);
     });
 
     var g = { target: $list,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_text()
@@ -72,15 +83,16 @@ function new_text()
 	var $text = $ ("<input id='" + id + "' class='kgm_base kgm_text' type='text' value='Text'></input>");
 	$("#palette").append($text);
     $text.draggable({cancel: false});
-    $text.onclick(function(){
+    $text.click(function(){
     selected = $text;
         gui_options($text);
     });
 
     var g = { target: $text,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_check()
@@ -91,15 +103,15 @@ function new_check()
     $div.append($check);
     $("#palette").append($div);
     $div.draggable();
-    $check.onclick(function(){
-        selected = $check;
+    $check.click(function(){
         gui_options($check);
     });
 
     var g = { target: $check,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_label()
@@ -108,15 +120,15 @@ function new_label()
     var $label = $("<div id='" + id + "' class='ui-state-highlight kgm_base kgm_label'>Label</div>");
     $("#palette").append($label);
     $label.draggable();
-    $label.onclick(function(){
-        selected = $label;
+    $label.click(function(){
         gui_options($label);
     });
 
     var g = { target: $label,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_button()
@@ -125,15 +137,15 @@ function new_button()
 	var $button = $ ("<button id='" + id + "' class='ui-button kgm_base kgm_button'>Button</button>");
 	$("#palette").append($button);
     $button.draggable({cancel: false});
-    $button.onclick(function(){
-        selected = $button;
+    $button.click(function(){
         gui_options($button);
     });
 
     var g = { target: $label,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function new_progress()
@@ -143,15 +155,15 @@ function new_progress()
 	$("#palette").append($progress);
     $progress.progressbar({value: 45});
     $progress.draggable();
-    $progress.onclick(function(){
-        selected = $progress;
+    $progress.click(function(){
         gui_options($progress);
     });
 
     var g = { target: $progress,
+              id: id
             };
 
-    guis.pushBack(g);
+    guis.push(g);
 }
 
 function on_palette()
