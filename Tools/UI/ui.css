@@ -10,6 +10,7 @@ ul
 li {
   text-align: left;
   border-style: groove;
+  width: 100px;
 }
 
 .kgm_base {
@@ -37,7 +38,7 @@ li {
 }
 
 .kgm_check {
-  width:  50px;
+  width:  80px;
   height: 30px;
   border-style: ridge;
 }
@@ -69,7 +70,7 @@ div.menu {
   top:  15px;
 
   width:  200px;
-  height: 220px;
+  height: 285px;
 
   align-items: left;
   float: left;
@@ -79,7 +80,7 @@ div.palette {
   border-style: dashed;
   position: absolute;
   left: 220px;
-  top:  15px;	
+  top:  15px;
   width: 800px;
   height: 600px;
 }
@@ -88,7 +89,7 @@ div.options {
   border-style: groove;
   position: absolute;
   left: 10px;
-  top:  240px;
+  top:  307px;
   width:  200px;
 
   align-items: left;

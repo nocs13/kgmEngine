@@ -1,6 +1,6 @@
 var id_num = 0;
 
-var selected = null;
+var gui_selected = null;
 
 var guis = []
 
@@ -11,18 +11,43 @@ function newId()
 
 function gui_options(gui)
 {
-    if (gui == null || selected == gui)
+    if (gui == null || gui_selected == gui)
         return;
+
+    gui_selected = gui;
 
     $("#options").empty();
 
     $table = $("<table id='tboptions'></table>");
     $("#options").append($table);
 
-    $table.append("<tr><td>x</td><td>" + gui.position().left + "</td></tr>");
-    $table.append("<tr><td>y</td><td>" + gui.position().top + "</td></tr>");
+    $table.append("<tr><td>x</td><td><input id='gui_x' type='text' value='" + gui.position().left + "'/></td></tr>");
+    $table.append("<tr><td>y</td><td><input id='gui_y' type='text' value='" + gui.position().top + "'/></td></tr>");
+    $table.append("<tr><td>w</td><td><input id='gui_w' type='text' value='" + gui.width() + "'/></td></tr>");
+    $table.append("<tr><td>h</td><td><input id='gui_h' type='text' value='" + gui.height() + "'/></td></tr>");
 
-    selected = gui;
+    $('#gui_x').on('input', function(){
+        gui_selected.offset().left = parseInt($('#gui_x').val());
+    });
+    $('#gui_y').on('input', function(){
+        gui_selected.offset().top = parseInt($('#gui_y').val());
+    });
+    $('#gui_w').on('input', function(){
+        gui_selected.width(parseInt($('#gui_w').val()));
+    });
+    $('#gui_h').on('input', function(){
+        gui_selected.height(parseInt($('#gui_h').val()));
+    });
+}
+
+function gui_list_context()
+{
+    alert('Implementing');
+}
+
+function gui_menu_context()
+{
+    alert('Implementing');
 }
 
 function new_gui()
@@ -31,12 +56,13 @@ function new_gui()
 	var $gui = $ ("<div class='kgm_base kgm_gui'>gui</div>");
 	$("#palette").append($gui);
     $gui.draggable();
-    $gui.onclick(function(){
+    $gui.click(function(){
         gui_options($gui);
     });
 
     var g = { target: $gui,
-              id: id
+              id: id,
+              type: 'gui'
             };
 
     guis.push(g);
@@ -52,9 +78,11 @@ function new_menu()
     $menu.click(function(){
         gui_options($menu);
     });
+    $menu.contextmenu(gui_menu_context);
 
     var g = { target: $menu,
-              id: id
+              id: id,
+              type: 'menu'
             };
 
     guis.push(g);
@@ -69,9 +97,11 @@ function new_list()
     $list.click(function(){
         gui_options($list);
     });
+    $menu.contextmenu(gui_list_context);
 
     var g = { target: $list,
-              id: id
+              id: id,
+              type: 'list'
             };
 
     guis.push(g);
@@ -89,7 +119,8 @@ function new_text()
     });
 
     var g = { target: $text,
-              id: id
+              id: id,
+              type: 'text'
             };
 
     guis.push(g);
@@ -98,17 +129,17 @@ function new_text()
 function new_check()
 {
     var id = "check" + newId();
-    var $div = $("<div id='div" + id + "'></div>");
-    var $check = $ ("<input id='" + id + "' class='ui-checkboxradio kgm_base kgm_check' type='checkbox' value='Check'>Check</input>");
-    $div.append($check);
+    var $div = $("<div id='div" + id + "'  class='ui-checkboxradio kgm_base kgm_check'></div>");
+    $div.append($ ("<input class='' type='checkbox'>Check</input>"));
     $("#palette").append($div);
-    $div.draggable();
-    $check.click(function(){
-        gui_options($check);
+    $div.draggable({cancel: false});
+    $div.click(function(){
+        gui_options($div);
     });
 
-    var g = { target: $check,
-              id: id
+    var g = { target: $div,
+              id: id,
+              type: 'check'
             };
 
     guis.push(g);
@@ -125,7 +156,8 @@ function new_label()
     });
 
     var g = { target: $label,
-              id: id
+              id: id,
+              type: 'label'
             };
 
     guis.push(g);
@@ -142,7 +174,8 @@ function new_button()
     });
 
     var g = { target: $label,
-              id: id
+              id: id,
+              type: 'button'
             };
 
     guis.push(g);
