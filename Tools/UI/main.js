@@ -9,6 +9,32 @@ function newId()
 	return id_num++;
 }
 
+function gui_sizer_show()
+{
+    //$('div.resizer').css('visibility', 'visible');
+    //$('.resizer').css('visibility', 'visible');
+    //$('#gui_size').css('visibility', 'visible');
+    $('#gui_size').show();
+}
+
+function gui_sizer_hide()
+{
+    //$('div.resizer').css('visibility', 'hidden');
+    //$('#gui_size').css('visibility', 'hidden');
+    $('#gui_size').hide();
+}
+
+function gui_sizer_move(x, y)
+{
+    $('#gui_size').position().left = x;
+    $('#gui_size').position().top  = y;
+}
+
+function gui_sizer_drag()
+{
+
+}
+
 function gui_options(gui)
 {
     if (gui == null || gui_selected == gui)
@@ -38,6 +64,12 @@ function gui_options(gui)
     $('#gui_h').on('input', function(){
         gui_selected.height(parseInt($('#gui_h').val()));
     });
+
+    var x = gui.position().left + gui.width();
+    var y = gui.position().top  + gui.height();
+
+    gui_sizer_move(x, y);
+    gui_sizer_show();
 }
 
 function gui_list_context()
@@ -45,7 +77,7 @@ function gui_list_context()
     alert('Implementing');
 }
 
-function gui_menu_context()
+function gui_menu_context(e)
 {
     alert('Implementing');
 }
@@ -78,6 +110,7 @@ function new_menu()
     $menu.click(function(){
         gui_options($menu);
     });
+
     $menu.contextmenu(gui_menu_context);
 
     var g = { target: $menu,
@@ -202,18 +235,25 @@ function new_progress()
 function on_palette()
 {
     selected = null;
+    gui_sizer_hide();
 }
 
 function kgm_init()
 {
-  //$("#new_gui").click(new_gui);
-  $("#new_menu").click(new_menu);
-  $("#new_list").click(new_list);
-  $("#new_text").click(new_text);
-  $("#new_check").click(new_check);
-  $("#new_label").click(new_label);
-  $("#new_button").click(new_button);
-  $("#new_progress").click(new_progress);
+    //$("#new_gui").click(new_gui);
+    $("#new_menu").click(new_menu);
+    $("#new_list").click(new_list);
+    $("#new_text").click(new_text);
+    $("#new_check").click(new_check);
+    $("#new_label").click(new_label);
+    $("#new_button").click(new_button);
+    $("#new_progress").click(new_progress);
 
-  $("#palette").click(on_palette);
+    $("#palette").click(on_palette);
+
+    $("#gui_size").draggable({
+        drag: gui_sizer_drag
+    });
+
+    gui_sizer_hide();
 }

@@ -95,3 +95,11 @@ div.options {
   align-items: left;
   float: left;
 }
+
+div.resizer {
+    position: absolute;
+    width:  10px;
+    height:  10px;
+
+    color: blue;
+}
