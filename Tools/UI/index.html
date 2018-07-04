@@ -10,8 +10,8 @@
     <div class="main">
       <div class="menu">
         <ul>
-          <li><div id="new_gui"><button class='ui-button' style='width: 100px;'>Gui</button></div></li>
-          <li><div id="new_menu"><button class='ui-button' style='width: 100px;'>Menu</button></div></li>
+          <!-- <li><div id="new_gui"><button class='ui-button' style='width: 100px;'>Gui</button></div></li> -->
+          <!-- <li><div id="new_menu"><button class='ui-button' style='width: 100px;'>Menu</button></div></li> -->
           <li><div id="new_list"><button class='ui-button' style='width: 100px;'>List</button></div></li>
           <li><div id="new_text"><button class='ui-button' style='width: 100px;'>Text</button></div></li>
           <li><div id="new_check"><button class='ui-button' style='width: 100px;'>Check</button></div></li>
@@ -25,8 +25,16 @@
       <div id="palette" class="palette">
       </div>
     </div>
-    <div id="gui_size" class="resizer">
+    <ul id="gui_list_menu" class="gui_list_menu">
+      <li><div id="gui_list_menu_add">add</div></li>
+      <li><div id="gui_list_menu_remove">remove</div></li>
+      <li><div id="gui_list_menu_dragging">drag</div></li>
+    </ul>
+    <div id="gui_list_menu_add_dialog">
+      <input id="gui_list_text_for_add" type="text" value="text" />
+      <input id="gui_list_add_text" type="button" value="add" />
     </div>
+    <div id="gui_size" class="resizer">x</div>
     <script>
       kgm_init();
     </script>

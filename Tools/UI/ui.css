@@ -70,7 +70,7 @@ div.menu {
   top:  15px;
 
   width:  200px;
-  height: 285px;
+  height: 230px;
 
   align-items: left;
   float: left;
@@ -89,7 +89,7 @@ div.options {
   border-style: groove;
   position: absolute;
   left: 10px;
-  top:  307px;
+  top:  255px;
   width:  200px;
 
   align-items: left;
@@ -97,9 +97,20 @@ div.options {
 }
 
 div.resizer {
+    display: block;
     position: absolute;
     width:  10px;
     height:  10px;
 
     color: blue;
+}
+
+div.gui_list_menu_add_dialog {
+    display: none;
+    position: absolute;
+}
+
+ul.gui_list_menu {
+    position: absolute;
+    display: none;
 }

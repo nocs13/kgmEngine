@@ -11,28 +11,38 @@ function newId()
 
 function gui_sizer_show()
 {
-    //$('div.resizer').css('visibility', 'visible');
-    //$('.resizer').css('visibility', 'visible');
-    //$('#gui_size').css('visibility', 'visible');
     $('#gui_size').show();
 }
 
 function gui_sizer_hide()
 {
-    //$('div.resizer').css('visibility', 'hidden');
-    //$('#gui_size').css('visibility', 'hidden');
-    $('#gui_size').hide();
+    //$('#gui_size').hide();
 }
 
 function gui_sizer_move(x, y)
 {
-    $('#gui_size').position().left = x;
-    $('#gui_size').position().top  = y;
+    $('#gui_size').css('left', x);
+    $('#gui_size').css('top', y);
 }
 
-function gui_sizer_drag()
+function gui_sizer_drag(e)
 {
 
+}
+
+function gui_get_by_target(g)
+{
+    var i;
+
+    for(i = 0; i < guis.length; i++)
+    {
+        var c = guis[i];
+
+        if (c.target == g)
+            return c;
+    }
+
+    return null;
 }
 
 function gui_options(gui)
@@ -42,15 +52,23 @@ function gui_options(gui)
 
     gui_selected = gui;
 
+    var gui_data = gui_get_by_target(gui);
+
     $("#options").empty();
 
     $table = $("<table id='tboptions'></table>");
     $("#options").append($table);
 
-    $table.append("<tr><td>x</td><td><input id='gui_x' type='text' value='" + gui.position().left + "'/></td></tr>");
-    $table.append("<tr><td>y</td><td><input id='gui_y' type='text' value='" + gui.position().top + "'/></td></tr>");
-    $table.append("<tr><td>w</td><td><input id='gui_w' type='text' value='" + gui.width() + "'/></td></tr>");
-    $table.append("<tr><td>h</td><td><input id='gui_h' type='text' value='" + gui.height() + "'/></td></tr>");
+    $table.append("<tr><td>x</td><td><input size='15' id='gui_x' type='text' value='" + gui.position().left + "'/></td></tr>");
+    $table.append("<tr><td>y</td><td><input size='15' id='gui_y' type='text' value='" + gui.position().top + "'/></td></tr>");
+    $table.append("<tr><td>w</td><td><input size='15' id='gui_w' type='text' value='" + gui.width() + "'/></td></tr>");
+    $table.append("<tr><td>h</td><td><input size='15' id='gui_h' type='text' value='" + gui.height() + "'/></td></tr>");
+    $table.append("<tr><td>handler</td><td><input size='15' id='gui_handler' type='text' value='" +
+                  gui_data.handler + "'/></td></tr>");
+
+    if(gui_data.type != 'list' && gui_data.type != 'menu' && gui_data.type != 'progress')
+        $table.append("<tr><td>text</td><td><input size='15' id='gui_text' type='text' value='" +
+                      gui_data.text + "'/></td></tr>");
 
     $('#gui_x').on('input', function(){
         gui_selected.offset().left = parseInt($('#gui_x').val());
@@ -64,17 +82,98 @@ function gui_options(gui)
     $('#gui_h').on('input', function(){
         gui_selected.height(parseInt($('#gui_h').val()));
     });
+    $('#gui_text').on('input', function(){
+        var c = gui_get_by_target(gui_selected);
+        c.text = $('#gui_text').val();
 
-    var x = gui.position().left + gui.width();
-    var y = gui.position().top  + gui.height();
+        if (c.type == 'text')
+            c.target.val(c.text);
+        else if (c.type == 'button')
+            c.target.text(c.text);
+    });
+    $('#gui_handler').on('input', function(){
+        var c = gui_get_by_target(gui_selected);
+        c.handler = $('#gui_handler').val();
+    });
+
+    var x = $('#palette').position().x + gui.position().left + gui.width();
+    var y = $('#palette').position().y + gui.position().top  + gui.height();
 
     gui_sizer_move(x, y);
     gui_sizer_show();
 }
 
-function gui_list_context()
+function gui_list_menu_add()
 {
-    alert('Implementing');
+    $("#gui_list_menu").hide();
+    $("#gui_list_menu_add_dialog").dialog('open');
+}
+
+function gui_list_menu_remove()
+{
+    $("#gui_list_menu").hide();
+
+    gui_selected.each(function(i, el){
+        for (var j = el.options.length; j > 0; j--)
+        {
+            var o = this.options[j - 1];
+
+            if (o.selected)
+            {
+                $(o).remove();
+            }
+        }
+    });
+}
+
+function gui_list_menu_dragging()
+{
+    $("#gui_list_menu").hide();
+
+    var c = gui_get_by_target(gui_selected);
+
+    if (c.dragging == undefined)
+    {
+        c.dragging = true;
+    }
+    else
+    {
+        c.dragging = !c.dragging;
+    }
+
+    if (c.dragging)
+    {
+        c.target.draggable({cancel: false});
+        c.target.draggable('enable');
+        $("#gui_list_menu_dragging").text('undrag');
+    }
+    else
+    {
+        c.target.draggable();
+        c.target.draggable('disable');
+        $("#gui_list_menu_dragging").text('drag');
+    }
+}
+
+function gui_list_add_text()
+{
+    gui_selected.append("<option>" + $("#gui_list_text_for_add").val() + "</option>");
+    $("#gui_list_menu_add_dialog").dialog('close');
+}
+
+function gui_list_remove_text()
+{
+}
+
+function gui_list_context(e)
+{
+    if (gui_selected == null)
+        return;
+
+    $("#gui_list_menu").show();
+    $("#gui_list_menu").css('left', e.clientX);
+    $("#gui_list_menu").css('top', e.clientY);
+
 }
 
 function gui_menu_context(e)
@@ -124,13 +223,13 @@ function new_menu()
 function new_list()
 {
     var id = "list" + newId();
-	var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list' size='5'></select>");
+	var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list'size='5'></select>");
 	$("#palette").append($list);
-    $list.draggable({cancel: false});
+    $list.draggable(); //{cancel: false}
     $list.click(function(){
         gui_options($list);
     });
-    $menu.contextmenu(gui_list_context);
+    $list.contextmenu(gui_list_context);
 
     var g = { target: $list,
               id: id,
@@ -206,7 +305,7 @@ function new_button()
         gui_options($button);
     });
 
-    var g = { target: $label,
+    var g = { target: $button,
               id: id,
               type: 'button'
             };
@@ -226,7 +325,8 @@ function new_progress()
     });
 
     var g = { target: $progress,
-              id: id
+              id: id,
+              type: 'progress'
             };
 
     guis.push(g);
@@ -235,13 +335,14 @@ function new_progress()
 function on_palette()
 {
     selected = null;
+
     gui_sizer_hide();
 }
 
 function kgm_init()
 {
     //$("#new_gui").click(new_gui);
-    $("#new_menu").click(new_menu);
+    //$("#new_menu").click(new_menu);
     $("#new_list").click(new_list);
     $("#new_text").click(new_text);
     $("#new_check").click(new_check);
@@ -254,6 +355,13 @@ function kgm_init()
     $("#gui_size").draggable({
         drag: gui_sizer_drag
     });
-
     gui_sizer_hide();
+
+    $("#gui_list_menu").menu();
+    $("#gui_list_menu_add").click(gui_list_menu_add);
+    $("#gui_list_menu_remove").click(gui_list_menu_remove);
+    $("#gui_list_menu_dragging").click(gui_list_menu_dragging);
+    $("#gui_list_menu_add_dialog").dialog();
+    $("#gui_list_menu_add_dialog").dialog('close');
+    $("#gui_list_add_text").click(gui_list_add_text);
 }
