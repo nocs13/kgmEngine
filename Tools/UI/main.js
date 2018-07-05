@@ -27,7 +27,14 @@ function gui_sizer_move(x, y)
 
 function gui_sizer_drag(e)
 {
+    if(!gui_selected)
+        return;
 
+    var w = e.pageX - gui_selected.position().left - $('#palette').position().left;
+    var h = e.pageY - gui_selected.position().top - $('#palette').position().top;
+
+    gui_selected.css('width', w);
+    gui_selected.css('height', h);
 }
 
 function gui_get_by_target(g)
@@ -96,8 +103,8 @@ function gui_options(gui)
         c.handler = $('#gui_handler').val();
     });
 
-    var x = $('#palette').position().x + gui.position().left + gui.width();
-    var y = $('#palette').position().y + gui.position().top  + gui.height();
+    var x = $('#palette').position().left + gui.position().left + gui.width();
+    var y = $('#palette').position().top + gui.position().top  + gui.height();
 
     gui_sizer_move(x, y);
     gui_sizer_show();
@@ -131,6 +138,9 @@ function gui_list_menu_dragging()
     $("#gui_list_menu").hide();
 
     var c = gui_get_by_target(gui_selected);
+
+    if (c.type != 'list')
+        return;
 
     if (c.dragging == undefined)
     {
@@ -337,6 +347,8 @@ function on_palette()
     selected = null;
 
     gui_sizer_hide();
+
+    $("#gui_list_menu").hide();
 }
 
 function kgm_init()
