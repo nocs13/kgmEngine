@@ -54,8 +54,10 @@ function gui_get_by_target(g)
 
 function gui_options(gui)
 {
-    if (gui == null || gui_selected == gui)
+    if (gui == null)
+    {
         return;
+    }
 
     gui_selected = gui;
 
@@ -76,6 +78,19 @@ function gui_options(gui)
     if(gui_data.type != 'list' && gui_data.type != 'menu' && gui_data.type != 'progress')
         $table.append("<tr><td>text</td><td><input size='15' id='gui_text' type='text' value='" +
                       gui_data.text + "'/></td></tr>");
+
+    $("#options").append("<button id='cmd_gui_delete'>delete</button>");
+    $("#cmd_gui_delete").click(function(){
+        var c = gui_get_by_target(gui_selected);
+        var ci = 0;
+
+        while(guis[ci] != c)
+            ci++;
+        guis.splice(ci, 1);
+        gui_selected.remove();
+        gui_selected = null;
+        $("#options").empty();
+    });
 
     $('#gui_x').on('input', function(){
         gui_selected.offset().left = parseInt($('#gui_x').val());
@@ -351,6 +366,53 @@ function on_palette()
     $("#gui_list_menu").hide();
 }
 
+function build_gui_xml()
+{
+}
+
+function cmd_save(name)
+{
+    var textToWrite = "Hello is it me....";
+    var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+    var fileNameToSaveAs = name; //document.getElementById("inputFileNameToSaveAs").value;
+    var downloadLink = document.createElement("a");
+    downloadLink.download = fileNameToSaveAs;
+    downloadLink.innerHTML = "Download File";
+
+    if (window.webkitURL != null)
+    {
+        downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    }
+    else
+    {
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+    }
+
+    downloadLink.click();
+
+    $('#cmd_save_dialog').dialog('destroy').remove();
+}
+
+function cmd_save_dialog()
+{
+    var div = $("<div id='cmd_save_dialog'><input type='text' id='cmd_save_dialog_text' value='gui_layout.ui'/><button id='cmd_save_dialog_save' value='save'>save</button></div>");
+    $(document.body).append(div);
+    $('#cmd_save_dialog_save').click(function(){
+        cmd_save($('#cmd_save_dialog_text').val());
+    });
+    $('#cmd_save_dialog').dialog({
+        title: 'Save',
+        close: function(event, ui)
+        {
+            $(this).dialog('destroy').remove();
+        }
+    });
+    $('#cmd_save_dialog').dialog('open');
+}
+
 function kgm_init()
 {
     //$("#new_gui").click(new_gui);
@@ -376,4 +438,6 @@ function kgm_init()
     $("#gui_list_menu_add_dialog").dialog();
     $("#gui_list_menu_add_dialog").dialog('close');
     $("#gui_list_add_text").click(gui_list_add_text);
+
+    $("#cmd_save").click(cmd_save_dialog);
 }

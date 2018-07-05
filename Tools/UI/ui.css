@@ -70,7 +70,7 @@ div.menu {
   top:  15px;
 
   width:  200px;
-  height: 230px;
+  height: 300px;
 
   align-items: left;
   float: left;
@@ -89,7 +89,7 @@ div.options {
   border-style: groove;
   position: absolute;
   left: 10px;
-  top:  255px;
+  top:  330px;
   width:  200px;
 
   align-items: left;
