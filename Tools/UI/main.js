@@ -73,9 +73,9 @@ function gui_options(gui)
     $table.append("<tr><td>w</td><td><input size='15' id='gui_w' type='text' value='" + gui.width() + "'/></td></tr>");
     $table.append("<tr><td>h</td><td><input size='15' id='gui_h' type='text' value='" + gui.height() + "'/></td></tr>");
     $table.append("<tr><td>handler</td><td><input size='15' id='gui_handler' type='text' value='" +
-                  gui_data.handler + "'/></td></tr>");
+                  gui_data.handler + "' readonly/></td></tr>");
 
-    if(gui_data.type != 'list' && gui_data.type != 'menu' && gui_data.type != 'progress')
+    if(gui_data.type != 'list' && gui_data.type != 'menu' && gui_data.type != 'progress' && gui_data.type != 'text')
         $table.append("<tr><td>text</td><td><input size='15' id='gui_text' type='text' value='" +
                       gui_data.text + "'/></td></tr>");
 
@@ -110,6 +110,12 @@ function gui_options(gui)
 
         if (c.type == 'text')
             c.target.val(c.text);
+        else if (c.type == 'check')
+            c.target.contents().filter(function(){
+                return (this.nodeType == 3);
+            }).text(c.text);
+        else if (c.type == 'label')
+            c.target.text(c.text);
         else if (c.type == 'button')
             c.target.text(c.text);
     });
@@ -239,7 +245,8 @@ function new_menu()
 
     var g = { target: $menu,
               id: id,
-              type: 'menu'
+              type: 'menu',
+              handler: 'onGuiMenuHandler'
             };
 
     guis.push(g);
@@ -258,7 +265,8 @@ function new_list()
 
     var g = { target: $list,
               id: id,
-              type: 'list'
+              type: 'list',
+              handler: 'onGuiListHandler'
             };
 
     guis.push(g);
@@ -277,7 +285,9 @@ function new_text()
 
     var g = { target: $text,
               id: id,
-              type: 'text'
+              type: 'text',
+              handler: 'onGuiTextHandler',
+              text: $text.val()
             };
 
     guis.push(g);
@@ -296,7 +306,9 @@ function new_check()
 
     var g = { target: $div,
               id: id,
-              type: 'check'
+              type: 'check',
+              handler: 'onGuiCheckHandler',
+              text: $div.text()
             };
 
     guis.push(g);
@@ -314,7 +326,9 @@ function new_label()
 
     var g = { target: $label,
               id: id,
-              type: 'label'
+              type: 'label',
+              handler: 'onGuiLabelHandler',
+              text: $label.text()
             };
 
     guis.push(g);
@@ -332,7 +346,8 @@ function new_button()
 
     var g = { target: $button,
               id: id,
-              type: 'button'
+              type: 'button',
+              handler: 'onGuiButtonHandler'
             };
 
     guis.push(g);
@@ -351,7 +366,8 @@ function new_progress()
 
     var g = { target: $progress,
               id: id,
-              type: 'progress'
+              type: 'progress',
+              handler: 'onGuiProgressHandler'
             };
 
     guis.push(g);
@@ -368,11 +384,96 @@ function on_palette()
 
 function build_gui_xml()
 {
+    var text = "<?xml version=1.0?>\n";
+
+    text += "<kgmGui x='0' y='0' w='" + $("#palette").width() + "' h='" + $("#palette").height() + "'>\n";
+
+    for (var i = 0; i < guis.length; i++)
+    {
+        var g = guis[i];
+
+        var gtype = "kgmGui";
+
+        var x = g.target.position().left;
+        var y = g.target.position().top;
+        var w = g.target.width();
+        var h = g.target.height();
+
+        var gtext = null;
+        var gitms = null;
+        var ghand = g.handler;
+
+        var gclose = true;
+
+        if (g.type == 'list')
+        {
+            gtype = 'kgmGuiList';
+            gitms = new Array();
+            gclose = false;
+        }
+        else if (g.type == 'text')
+        {
+            gtype = 'kgmGuiText';
+            gtext = g.target.val();
+        }
+        else if (g.type == 'check')
+        {
+            gtype = 'kgmGuiCheck';
+        }
+        else if (g.type == 'label')
+        {
+            gtype = 'kgmGuiLabel';
+            gtext = g.target.text();
+        }
+        else if (g.type == 'button')
+        {
+            gtype = 'kgmGuiButton';
+            gtext = g.target.text();
+        }
+        else if (g.type == 'progress')
+        {
+            gtype = 'kgmGuiProgress';
+        }
+
+        text += " <" + gtype + " id='" + g.id + "' x='" + x + "' y='" + y + "' w='" + w + "' h='" + h + "'";
+        text += " handler='" + ghand + "'";
+
+        if (gtext != null)
+            text += " text='" + gtext + "'";
+
+        if (gclose)
+        {
+            text += " />\n";
+        }
+        else
+        {
+            text += " >\n";
+
+            if (g.type == 'list')
+            {
+                var el = g.target[0];
+
+                for (var j = 0; j < el.options.length; j++)
+                {
+                    var o = el.options[j];
+
+                    text += "  <ListItem text='" + $(o).text() + "' />\n";
+                }
+
+            }
+
+            text += " </" + gtype + ">\n";
+        }
+    }
+
+    text += "</kgmGui>\n";
+
+    return text;
 }
 
 function cmd_save(name)
 {
-    var textToWrite = "Hello is it me....";
+    var textToWrite = build_gui_xml();
     var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
     var fileNameToSaveAs = name; //document.getElementById("inputFileNameToSaveAs").value;
     var downloadLink = document.createElement("a");
