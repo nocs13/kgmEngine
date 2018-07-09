@@ -111,9 +111,7 @@ function gui_options(gui)
         if (c.type == 'text')
             c.target.val(c.text);
         else if (c.type == 'check')
-            c.target.contents().filter(function(){
-                return (this.nodeType == 3);
-            }).text(c.text);
+            c.target[0].childNodes[1].data = c.text;
         else if (c.type == 'label')
             c.target.text(c.text);
         else if (c.type == 'button')
