@@ -83,9 +83,9 @@ class kgm_panel(bpy.types.Panel):
 
     obj = context.object
 
-    layout.label(text="Export/Import")
-    row = layout.row()
-    box = layout.box()
+    #layout.label(text="Export/Import")
+    #row = layout.row()
+    #box = layout.box()
 
     #col = box.column(align=True)
     #col.operator(operator='export_scene.kgm_group_export', text='export group')
@@ -99,18 +99,18 @@ class kgm_panel(bpy.types.Panel):
 
   def draw_unit(self, obj):
     layout = self.layout
-    layout.label(text="kgm_object unit")
+    layout.label(text="kgm_unit")
 
     row = layout.row()
-    row.prop(obj, "kgm_unit")
-    row = layout.row()
-    row.prop(obj, "kgm_player")
+    row.prop(obj, "kgm_type")
     row = layout.row()
     row.prop(obj, "kgm_state")
+    row = layout.row()
+    row.prop(obj, "kgm_player")
 
   def draw_dummy(self, obj):
     layout = self.layout
-    layout.label(text="kgm_object")
+    layout.label(text="kgm_dummy")
 
 
 class kgm_settings(bpy.types.Operator):
@@ -153,14 +153,15 @@ class kgm_unit(bpy.types.Operator):
   def execute(self, context):
     print("Execute unit.\n")
 
-    bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
-    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-    bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
-                                                     description='select kgm unit')
+    #bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
+    bpy.types.Object.kgm_type = bpy.props.StringProperty()
     bpy.types.Object.kgm_state = bpy.props.StringProperty()
-    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
+    #bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
+    #                                                 description='select kgm unit')
+    #bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
-    bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
+    #bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
 
     bpy.ops.object.add()
     a = bpy.context.object
@@ -171,9 +172,8 @@ class kgm_unit(bpy.types.Operator):
     a.name = "kgmUnit"
     a.kgm_unit = True
     a.kgm_player = False
-    a.kgm_type = "Unit";
+    a.kgm_type = "kgmUnit";
     a.kgm_state = "Idle"
-    a.kgm_object = "None"
     return {'FINISHED'}
 
   def modal(self, context, event):
@@ -183,14 +183,15 @@ class kgm_unit(bpy.types.Operator):
   def invoke(self, context, event):
     print("Invoke unit.\n")
 
-    bpy.types.Object.kgm_unit = bpy.props.BoolProperty(options={'HIDDEN'})
-    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-    bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
-                                                     description='select kgm unit')
+    #bpy.types.Object.kgm_unit = bpy.props.BoolProperty(options={'HIDDEN'})
+    bpy.types.Object.kgm_type = bpy.props.StringProperty()
     bpy.types.Object.kgm_state = bpy.props.StringProperty()
-    bpy.types.Object.kgm_object = bpy.props.StringProperty()
+    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
+    #bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
+    #                                                 description='select kgm unit')
+    #bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
-    bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
+    #bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
 
     bpy.ops.object.add()
     a = bpy.context.object
@@ -198,9 +199,8 @@ class kgm_unit(bpy.types.Operator):
     a.name = "kgmUnit"
     a.kgm_unit = True
     a.kgm_player = False
-    a.kgm_type = "Unit";
+    a.kgm_type = "kgmUnit";
     a.kgm_state = "Idle"
-    a.kgm_object = "None"
     return {'FINISHED'}
 
   def draw(self, context):
@@ -756,6 +756,7 @@ class kgmParticles(kgmBaseObject):
 
 class kgmUnit:
   def __init__(self, o):
+    print('Init unit')
     self.name = o.name
     self.gtype = o.get('kgm_type')
     self.state = o.get('kgm_state')
@@ -763,7 +764,8 @@ class kgmUnit:
     self.pos = o.matrix_local.to_translation()
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
-    self.size = o.dimensions
+    #self.size = o.dimensions
+    self.size = o.scale * o.empty_draw_size
     self.linked = 'None'
     self.props = {}
 
@@ -989,38 +991,43 @@ def export_particles(file, o):
   file.write("  <PrData volume='" + str("%.5f" % o.bound[0]) + " " + str("%.5f" % o.bound[1]) + " " + str("%.5f" % o.bound[2]) + "'/>\n")
   file.write(" </Particles>\n")
 
-def export_kgmdummy(file, o):
+def export_dummy(file, o):
   d = kgmDummy(o)
 
-  file.write(" <kgmDummy name='" + d.name + "' parent='" + d.linked + "'>\n")
+  file.write(" <Dummy name='" + d.name + "' parent='" + d.linked + "'>\n")
   file.write("  <Position value='" + str(d.pos[0]) + " " + str(d.pos[1]) + " " + str(d.pos[2]) + "'/>\n")
   file.write("  <Rotation value='" + str(d.euler[0]) + " " + str(d.euler[1]) + " " + str(d.euler[2]) + "'/>\n")
-  file.write(" </kgmDummy>\n")
+  file.write(" </Dummy>\n")
 
 
-def export_kgmsensor(file, o):
-  pass
+#def export_kgmsensor(file, o):
+#  pass
 
-def export_kgmtrigger(file, o):
-  pass
+#def export_kgmtrigger(file, o):
+#  pass
 
-def export_kgmactor(file, o):
-  pass
+#def export_kgmactor(file, o):
+#  pass
 
-def export_kgmunit(file, o):
+def export_unit(file, o):
+  file.write(" <Unit name='" + o.name + "' type='" + o.gtype + "'>\n")
+  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + str(o.euler[0]) + " " + str(o.euler[1]) + " " + str(o.euler[2]) + "'/>\n")
+  file.write("  <Dimension value='" + str(o.size[0]) + " " + str(o.size[1]) + " " + str(o.size[2]) + "'/>\n")
+  file.write(" </Unit>\n")
   pass
 
 def export_kgmobject(file, o):
   if hasattr(o, "kgm_dummy") and o.kgm_dummy is True:
     export_kgmdummy(file, o)
-  elif hasattr(o, "kgm_sensor") and o.kgm_sensor is True:
-    export_kgmsensor(file, o)
-  elif hasattr(o, "kgm_trigger") and o.kgm_trigger is True:
-    export_kgmtrigger(file, o)
+  #elif hasattr(o, "kgm_sensor") and o.kgm_sensor is True:
+  #  export_kgmsensor(file, o)
+  #elif hasattr(o, "kgm_trigger") and o.kgm_trigger is True:
+  #  export_kgmtrigger(file, o)
   elif hasattr(o, "kgm_unit") and o.kgm_unit is True:
     export_kgmunit(file, o)
-  elif hasattr(o, "kgm_actor") and o.kgm_actor is True:
-    export_kgmactor(file, o)
+  #elif hasattr(o, "kgm_actor") and o.kgm_actor is True:
+  #  export_kgmactor(file, o)
   pass
 
 
@@ -1131,6 +1138,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.animations = []
     self.particles  = []
     self.kgmobjects = []
+    self.dummies    = []
+    self.units      = []
 
     print("Collect Objects...")
 
@@ -1232,8 +1241,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     for o in self.obstacles:
       export_obstacle(file, o)
 
-    for o in self.kgmobjects:
-      export_kgmobject(file, o)
+    for o in self.dummies:
+      export_dummy(file, o)
+
+    for o in self.units:
+      export_unit(file, o)
+
+    #for o in self.kgmobjects:
+    #  export_kgmobject(file, o)
 
     '''#kgm_objects
     for a in gobjects:
@@ -1308,9 +1323,13 @@ class kgmExport(bpy.types.Operator, ExportHelper):
 
   def collect_kgmobjects(self):
     for ob in self.objects:
-      if ((hasattr(ob, "kgm_dummy") and ob.kgm_dummy is True) or (hasattr(ob, "kgm_sensor") and ob.kgm_sensor is True)) \
-          or (hasattr(ob, "kgm_trigger") and ob.kgm_trigger is True) or (hasattr(ob, "kgm_unit") and ob.kgm_unit is True):
-        self.kgmobjects.append(ob)
+      #if ((hasattr(ob, "kgm_dummy") and ob.kgm_dummy is True) or (hasattr(ob, "kgm_sensor") and ob.kgm_sensor is True)) \
+      #    or (hasattr(ob, "kgm_trigger") and ob.kgm_trigger is True) or (hasattr(ob, "kgm_unit") and ob.kgm_unit is True):
+      #  self.kgmobjects.append(ob)
+      if (hasattr(ob, "kgm_dummy") and ob.kgm_dummy is True):
+        self.dummies.append(kgmDummy(ob))
+      elif (hasattr(ob, "kgm_unit") and ob.kgm_unit is True):
+        self.units.append(kgmUnit(ob))
 
   def collect_materials(self):
     for m in bpy.data.materials:
