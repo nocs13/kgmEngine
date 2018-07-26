@@ -87,10 +87,10 @@ class kgm_panel(bpy.types.Panel):
     row = layout.row()
     box = layout.box()
 
-    col = box.column(align=True)
-    col.operator(operator='export_scene.kgm_group_export', text='export group')
-    col.operator(operator='export_scene.kgm',              text='export scene')
-    col.operator(operator='import_scene.kgm_settings',     text='import setting')
+    #col = box.column(align=True)
+    #col.operator(operator='export_scene.kgm_group_export', text='export group')
+    #col.operator(operator='export_scene.kgm',              text='export scene')
+    #col.operator(operator='import_scene.kgm_settings',     text='import setting')
 
     if hasattr(obj, 'kgm_unit'):
       self.draw_unit(obj)
@@ -107,8 +107,6 @@ class kgm_panel(bpy.types.Panel):
     row.prop(obj, "kgm_player")
     row = layout.row()
     row.prop(obj, "kgm_state")
-    row = layout.row()
-    row.prop(obj, "kgm_object")
 
   def draw_dummy(self, obj):
     layout = self.layout
@@ -756,25 +754,23 @@ class kgmParticles(kgmBaseObject):
     print("Particles matrial is " + self.material)
 
 
-class kgmObject:
+class kgmUnit:
   def __init__(self, o):
     self.name = o.name
     self.gtype = o.get('kgm_type')
     self.state = o.get('kgm_state')
-    self.gobject = o.get('kgm_object')
     self.mtx = o.matrix_world
     self.pos = o.matrix_local.to_translation()
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
+    self.size = o.dimensions
     self.linked = 'None'
     self.props = {}
 
     if self.gtype == None:
-      self.gtype = ""
-    if self.gobject == None:
-      self.gobject = ""
+      self.gtype = "kgmUnit"
     if self.state == None:
-      self.state = ""
+      self.state = "Idle"
 
     if o.parent != None:
       self.linked = o.parent.name
@@ -1425,8 +1421,8 @@ def menu_kgm_imp_set_func(self, context):
 def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
-    self.layout.operator(kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
-    self.layout.operator(kgm_trigger.bl_idname, text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
+    #self.layout.operator(kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
+    #self.layout.operator(kgm_trigger.bl_idname, text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
 
 def register():
     bpy.utils.register_module(__name__)
