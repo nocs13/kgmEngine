@@ -34,6 +34,9 @@ import xml.etree.ElementTree
 def toGrad(a):
   return a * 180.0 / 3.1415
 
+def toSnum(a):
+  return str("%.6f" % a)
+
 kgm_animaniacs = [( "Unit",    "Unit",    "kgmUnit"    ),
                   ( "Actor",   "Actor",   "kgmActor"   )]
 
@@ -92,14 +95,23 @@ class kgm_panel(bpy.types.Panel):
     #col.operator(operator='export_scene.kgm',              text='export scene')
     #col.operator(operator='import_scene.kgm_settings',     text='import setting')
 
-    if hasattr(obj, 'kgm_unit'):
+    if hasattr(obj, 'kgm_unit') and obj.kgm_unit is True:
       self.draw_unit(obj)
-    elif hasattr(obj, 'kgm_dummy'):
+    elif hasattr(obj, 'kgm_dummy') and obj.kgm_unit is True:
       self.draw_dummy(obj)
+    else:
+      self.draw_none()
+
+  def draw_none():
+    print('draw_none')
+    pass
 
   def draw_unit(self, obj):
+    print('draw_unit')
     layout = self.layout
     layout.label(text="kgm_unit")
+
+    scene = bpy.context.scene
 
     row = layout.row()
     row.prop(obj, "kgm_type")
@@ -107,8 +119,11 @@ class kgm_panel(bpy.types.Panel):
     row.prop(obj, "kgm_state")
     row = layout.row()
     row.prop(obj, "kgm_player")
+    row = layout.row()
+    row.prop_search(obj, "kgm_capture", scene, "objects")
 
   def draw_dummy(self, obj):
+    print('draw_dummy')
     layout = self.layout
     layout.label(text="kgm_dummy")
 
@@ -153,24 +168,19 @@ class kgm_unit(bpy.types.Operator):
   def execute(self, context):
     print("Execute unit.\n")
 
-    #bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
+    bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
     bpy.types.Object.kgm_type = bpy.props.StringProperty()
     bpy.types.Object.kgm_state = bpy.props.StringProperty()
     bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-    #bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
-    #                                                 description='select kgm unit')
-    #bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
-    #bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
+    bpy.types.Object.kgm_capture = bpy.props.StringProperty()
 
     bpy.ops.object.add()
     a = bpy.context.object
 
-    if not hasattr(a, 'kgm_unit'):
-      return {'FINISHED'}
+    a.kgm_unit = True
 
     a.name = "kgmUnit"
-    a.kgm_unit = True
     a.kgm_player = False
     a.kgm_type = "kgmUnit";
     a.kgm_state = "Idle"
@@ -183,21 +193,19 @@ class kgm_unit(bpy.types.Operator):
   def invoke(self, context, event):
     print("Invoke unit.\n")
 
-    #bpy.types.Object.kgm_unit = bpy.props.BoolProperty(options={'HIDDEN'})
+    bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
     bpy.types.Object.kgm_type = bpy.props.StringProperty()
     bpy.types.Object.kgm_state = bpy.props.StringProperty()
     bpy.types.Object.kgm_player = bpy.props.BoolProperty()
-    #bpy.types.Object.kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs,
-    #                                                 description='select kgm unit')
-    #bpy.types.Object.kgm_object = bpy.props.StringProperty()
 
-    #bpy.types.Object.kgm_unit_type = bpy.props.EnumProperty(items=choose_unit_types, name='unit types')
+    bpy.types.Object.kgm_capture = bpy.props.StringProperty()
 
     bpy.ops.object.add()
     a = bpy.context.object
 
-    a.name = "kgmUnit"
     a.kgm_unit = True
+
+    a.name = "kgmUnit"
     a.kgm_player = False
     a.kgm_type = "kgmUnit";
     a.kgm_state = "Idle"
@@ -374,9 +382,14 @@ class kgmMaterial:
     self.map_color = ''
     self.map_normal = ''
     self.map_specular = ''
+    self.map_environment = False
     self.images = ()
     self.depth = True
     self.blend = None
+    self.env_source = 'Static'
+    self.env_mapping = 'Cube'
+    self.env_viewpoint = None
+    self.env_image = ''
 
     print('tranparency_method ' + mtl.transparency_method)
     if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
@@ -396,6 +409,20 @@ class kgmMaterial:
             self.map_specular_strength = TextureSlot.normal_factor
           else:
             self.map_color = tf_path
+      elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
+        self.map_environment = True
+
+        if TextureSlot.texture.environment_map.mapping == "PLANE":
+          self.env_mapping = 'Plane'
+          self.env_viewpoint = TextureSlot.texture.viewpoint_object
+
+        if TextureSlot.texture.environment_map.source == "ANIMATED":
+          self.env_source = 'Animated'
+        elif TextureSlot.texture.environment_map.source == "IMAGE_FILE":
+          self.env_source = 'Image'
+          if TextureSlot.texture.image is not None:
+            self.env_image = TextureSlot.texture.image.name
+
 
     if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
       self.shader = bpy.data.materials[mtl.name]['Shader']
@@ -767,6 +794,7 @@ class kgmUnit:
     #self.size = o.dimensions
     self.size = o.scale * o.empty_draw_size
     self.linked = 'None'
+    self.capture = o.kgm_capture
     self.props = {}
 
     if self.gtype == None:
@@ -952,8 +980,7 @@ def export_mesh_node(file, o):
 def export_sceleton(file, o):
   file.write(" <Skeleton name='" + s.name +
              "' position='" + str("%.5f" % s.pos.x) + " " + str("%.5f" % s.pos.y) + " " + str("%.5f" % s.pos.z) +
-             "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str(
-    "%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
+             "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str("%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
              "' scale='" + str("%.5f" % s.scale.x) + " " + str("%.5f" % s.scale.y) + " " + str("%.5f" % s.scale.z) +
              "'>\n")
   for b in s.bones:
@@ -995,45 +1022,38 @@ def export_dummy(file, o):
   d = kgmDummy(o)
 
   file.write(" <Dummy name='" + d.name + "' parent='" + d.linked + "'>\n")
-  file.write("  <Position value='" + str(d.pos[0]) + " " + str(d.pos[1]) + " " + str(d.pos[2]) + "'/>\n")
-  file.write("  <Rotation value='" + str(d.euler[0]) + " " + str(d.euler[1]) + " " + str(d.euler[2]) + "'/>\n")
+  file.write("  <Position value='" + toSnum(d.pos[0]) + " " + toSnum(d.pos[1]) + " " + toSnum(d.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + toSnum(d.euler[0]) + " " + toSnum(d.euler[1]) + " " + toSnum(d.euler[2]) + "'/>\n")
   file.write(" </Dummy>\n")
 
 
-#def export_kgmsensor(file, o):
-#  pass
-
-#def export_kgmtrigger(file, o):
-#  pass
-
-#def export_kgmactor(file, o):
-#  pass
-
 def export_unit(file, o):
   file.write(" <Unit name='" + o.name + "' type='" + o.gtype + "'>\n")
-  file.write("  <Position value='" + str(o.pos[0]) + " " + str(o.pos[1]) + " " + str(o.pos[2]) + "'/>\n")
-  file.write("  <Rotation value='" + str(o.euler[0]) + " " + str(o.euler[1]) + " " + str(o.euler[2]) + "'/>\n")
-  file.write("  <Dimension value='" + str(o.size[0]) + " " + str(o.size[1]) + " " + str(o.size[2]) + "'/>\n")
+  file.write("  <Position value='" + toSnum(o.pos[0]) + " " + toSnum(o.pos[1]) + " " + toSnum(o.pos[2]) + "'/>\n")
+  file.write("  <Rotation value='" + toSnum(o.euler[0]) + " " + toSnum(o.euler[1]) + " " + toSnum(o.euler[2]) + "'/>\n")
+  file.write("  <Dimension value='" + toSnum(o.size[0]) + " " + toSnum(o.size[1]) + " " + toSnum(o.size[2]) + "'/>\n")
+
+  if o.capture is not None and o.capture != "":
+    file.write("  <Capture id='" + o.capture + "'/>\n")
+
+  if o.linked is not None and o.linked != "":
+    file.write("  <Parent id='" + o.linked + "'/>\n")
+
+  file.write("  <State value='" + o.state + "'/>\n")
+
+  for k in o.props.keys():
+   file.write("  <Property id='" + str(k) + "' value='" + str(o.props[k]) + "'/>\n")
+
   file.write(" </Unit>\n")
-  pass
 
 def export_kgmobject(file, o):
   if hasattr(o, "kgm_dummy") and o.kgm_dummy is True:
     export_kgmdummy(file, o)
-  #elif hasattr(o, "kgm_sensor") and o.kgm_sensor is True:
-  #  export_kgmsensor(file, o)
-  #elif hasattr(o, "kgm_trigger") and o.kgm_trigger is True:
-  #  export_kgmtrigger(file, o)
   elif hasattr(o, "kgm_unit") and o.kgm_unit is True:
     export_kgmunit(file, o)
-  #elif hasattr(o, "kgm_actor") and o.kgm_actor is True:
-  #  export_kgmactor(file, o)
-  pass
-
 
 from bpy.props import *
 from bpy_extras.io_utils import ImportHelper
-
 
 class kgmImport(bpy.types.Operator, ImportHelper):
   '''Kgm settings import'''
@@ -1093,9 +1113,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   exp_cameras    = BoolProperty(name="Export Cameras", description="", default=False)
   exp_armatures  = BoolProperty(name="Export Armatures", description="", default=False)
   exp_animations = BoolProperty(name="Export Animations", description="", default=False)
-  exp_particles = BoolProperty(name="Export Particles", description="", default=False)
+  exp_particles  = BoolProperty(name="Export Particles", description="", default=False)
   exp_obstacles  = BoolProperty(name="Export Obstacles", description="", default=False)
-  exp_kgmobjects = BoolProperty(name="Export kgmObjects", description="", default=False)
+  exp_kgmobjects = BoolProperty(name="Export Units", description="", default=False)
   is_selection   = BoolProperty(name="Selected only", description="", default=False)
 
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
@@ -1432,7 +1452,7 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
 
 
 def menu_func(self, context):
-    self.layout.operator(kgmExport.bl_idname, text="Karakal game map (.kgm)", icon='PLUGIN')
+    self.layout.operator(kgmExport.bl_idname, text="Karakal game map (.kgm)")
 
 def menu_kgm_imp_set_func(self, context):
     self.layout.operator(kgmImport.bl_idname, text="Karakal game settings (.kgs)", icon='PLUGIN')
@@ -1440,8 +1460,6 @@ def menu_kgm_imp_set_func(self, context):
 def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
-    #self.layout.operator(kgm_sensor.bl_idname, text="kgmSensor", icon='OUTLINER_OB_EMPTY')
-    #self.layout.operator(kgm_trigger.bl_idname, text="kgmTrigger", icon='OUTLINER_OB_EMPTY')
 
 def register():
     bpy.utils.register_module(__name__)
