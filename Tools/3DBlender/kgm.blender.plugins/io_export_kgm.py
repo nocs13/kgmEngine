@@ -388,8 +388,9 @@ class kgmMaterial:
     self.blend = None
     self.env_source = 'Static'
     self.env_mapping = 'Cube'
-    self.env_viewpoint = None
+    self.env_viewpoint = ''
     self.env_image = ''
+    self.env_intensity = 0.0
 
     print('tranparency_method ' + mtl.transparency_method)
     if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
@@ -411,6 +412,7 @@ class kgmMaterial:
             self.map_color = tf_path
       elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
         self.map_environment = True
+        self.env_intensity = TextureSlot.diffuse_factor
 
         if TextureSlot.texture.environment_map.mapping == "PLANE":
           self.env_mapping = 'Plane'
@@ -898,6 +900,9 @@ def export_material(file, o):
     file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
   if (hasattr(o, 'shader')):
     file.write("  <Shader value='" + o.shader + "'/>\n")
+  if hasattr(o, 'map_environment') and o.map_environment is not False:
+    file.write("  <map_environment type='" + o.env_source + "' mapping='" + o.env_mapping + "' viewpoint='" + o.env_viewpoint \
+                  + "' image='" + o.env_image + "' intensity='" + toSnum(o.env_intensity) + "' />\n")
   file.write(" </Material>\n")
 
 
