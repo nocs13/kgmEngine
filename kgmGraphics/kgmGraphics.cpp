@@ -198,7 +198,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_def_light = new kgmNodeLight();
 
     g_fbo = g->gcGenTarget(512, 512, true);
-    g_tex = g->gcGenTexture(null, 512, 512, 24, gctex_fmt24);
+    g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
 
     m_shadows.alloc(MAX_SHADOWS);
@@ -583,11 +583,7 @@ void kgmGraphics::render()
 
   gc->gcCull(gccull_back);
 
-#ifndef NO_SHADERS
-
   render((kgmShader*)null);
-
-#endif
 
   render(m_def_material);
 

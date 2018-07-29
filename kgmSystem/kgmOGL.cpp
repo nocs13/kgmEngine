@@ -989,6 +989,7 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
     break;
   case gctype_tex2d:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
+    break;
   default:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint)            0, 0);
   };

@@ -80,8 +80,16 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_##proj##_##proj##Lib_onGyroscope(JNIEn
 
 class kgmGameApp: public kgmApp
 {
+public:
+  typedef struct {
+    bool  edit;
+    bool  map;
+    char* mapid;
+  } Options;
+
 protected:
   kgmIGame*  m_game;
+  Options    m_options;
 
 public:
   virtual ~kgmGameApp()
@@ -92,15 +100,33 @@ public:
   virtual void gameInit() = 0;
   virtual void gameLoop() = 0;
   virtual void gameFree() = 0;
-  virtual void gameEdit() = 0;
 
   kgmIGame* game()
   {
     return m_game;
   }
 
+  Options* options() const
+  {
+    return (Options*) &m_options;
+  }
+
   int main(int argc, char **argv)
   {
+    memset(&m_options, 0, sizeof(Options));
+
+    for (int i = 1; i < argc; i++) {
+      if (!strcmp("edit",  argv[i]) || !strcmp("--edit",  argv[i])) {
+        if (!m_options.edit)
+          m_options.edit = true;
+      } else if (!strcmp("map",  argv[i]) || !strcmp("--map",  argv[i])) {
+        if (argc > ( i + 1) && !m_options.map) {
+          m_options.map = true;
+          m_options.mapid = argv[i + 1];
+        }
+      }
+    }
+
     gameInit();
 
     gameLoop();

@@ -184,28 +184,11 @@ public:
 #endif
   }
 
-  /*int main(int argc, char **argv)
-  {
-    u32 w, h;
-    kgmSystem::getDesktopDimension(w, h);
-    m_game = game = new kGame();
-
-    game->setRect(0, 0, w, h);
-    game->guiShow(false);
-    game->loop();
-    game->release();
-
-    return 0;
-  }*/
-
   void gameInit()
   {
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
-    kgm_log() << "CPU COUNT: " << kgmSystem::getCpuConcurrency() << "\n";
-
-    //game = kgm_ptr<kGame>(new kGame(edit));
     game = new kGame();
 
     m_game = game;
@@ -213,6 +196,14 @@ public:
     game->gInit();
 
     game->setRect(0, 0, w, h);
+
+    kgmGameApp::Options* options = kgmGameApp::gameApplication()->options();
+
+    if (options->map)
+      game->gLoad(options->mapid);
+
+    if (options->edit)
+      game->gSwitch(kgmIGame::State_Edit);
 
 #ifdef VULKAN
     //kgmVulkan *vk = new kgmVulkan(game);
@@ -242,10 +233,10 @@ public:
     }
   }
 
-  void gameEdit()
+  /*void gameEdit()
   {
     game->edit();
-  }
+  }*/
 
 #ifdef ANDROID
   kgmIGame* android_init_game()
