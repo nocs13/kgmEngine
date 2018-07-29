@@ -564,8 +564,8 @@ int kgmGameBase::gInit()
   //if (!editor) editor = new kEditor(this);
 #endif
 
-  log("init game script...");
-  initScript();
+  //log("init game script...");
+  //initScript();
 
   m_state = State_Idle;
 

@@ -5,6 +5,8 @@
 class kgmIGC;
 class kgmObject;
 
+typedef void* gchandle;
+
 // RENDER DEVICE
 enum gc_flags
 {
@@ -149,12 +151,11 @@ enum gc_enum
 class kgmIGC: public kgmObject
 {
 public:
-  typedef void* Shader;
-  typedef void* Texture;
-
-public:
   virtual void  gcSet(u32 param, void* value) = 0;
   virtual void  gcGet(u32 param, void* value) = 0;
+
+  virtual u32   gcError() = 0;
+
   virtual void  gcClear(u32 flag, u32 col, float depth, u32 sten) = 0;
   virtual void  gcBegin() = 0;
   virtual void  gcEnd() = 0;
@@ -164,15 +165,15 @@ public:
   virtual void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt) = 0;
 
   // TEXTURE
-  virtual void* gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) = 0;
-  virtual void  gcFreeTexture(void *t) = 0;
-  virtual void  gcSetTexture(u32 stage, void *t) = 0;
+  virtual gchandle gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) = 0;
+  virtual void     gcFreeTexture(gchandle t) = 0;
+  virtual void     gcSetTexture(u32 stage, gchandle t) = 0;
 
   // TARGET
-  virtual void* gcGenTarget(u32 w, u32 h, u32 type, bool depth) = 0;
-  virtual void* gcTexTarget(void* t)  = 0;
-  virtual void  gcFreeTarget(void* t) = 0;
-  virtual void  gcSetTarget(void*  t) = 0;
+  virtual gchandle gcGenTarget(u32 w, u32 h, bool depth) = 0;
+  virtual bool     gcTexTarget(gchandle tar, gchandle tex, u32 type) = 0;
+  virtual void     gcFreeTarget(gchandle t) = 0;
+  virtual void     gcSetTarget(gchandle t) = 0;
 
   // MATRIX
   virtual void  gcSetMatrix(u32 mode, float* mtx) = 0;
@@ -191,23 +192,20 @@ public:
   // DEPTH
   virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
 
-  // LIGHT
-  virtual void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle) = 0;
-
   // VERTEX & INDEX BUFFERS
-  virtual void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
-  virtual void  gcFreeVertexBuffer(void*) = 0;
-  virtual void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) = 0;
+  virtual gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
+  virtual void     gcFreeVertexBuffer(gchandle) = 0;
+  virtual void     gcDrawVertexBuffer(gchandle, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) = 0;
 
   // SHADER
-  virtual void* gcGenShader(const char*, const char*) = 0;
-  virtual void  gcFreeShader(void* s) = 0;
-  virtual void  gcSetShader(void* s) = 0;
-  virtual void  gcBindAttribute(void* s, int, const char*) = 0;
-  virtual void  gcUniform(void* s, u32, u32, const char*, void*) = 0;
-  virtual void  gcUniformMatrix(void* s, u32, u32, u32, const char*, void*) = 0;
-  virtual void  gcUniformSampler(void* s, const char*, void*) = 0;
+  virtual gchandle gcGenShader(const char*, const char*) = 0;
+  virtual void     gcFreeShader(gchandle s) = 0;
+  virtual void     gcSetShader(gchandle s) = 0;
+  virtual void     gcBindAttribute(gchandle s, int, const char*) = 0;
+  virtual void     gcUniform(gchandle s, u32, u32, const char*, void*) = 0;
+  virtual void     gcUniformMatrix(gchandle s, u32, u32, u32, const char*, void*) = 0;
+  virtual void     gcUniformSampler(gchandle s, const char*, void*) = 0;
 #ifdef DEBUG
-  virtual void  gcGetUniform(void* s, const char*, void*) = 0;
+  virtual void  gcGetUniform(gchandle s, const char*, void*) = 0;
 #endif
 };

@@ -63,6 +63,11 @@ void kgmMaterial::setTexSpecular(kgmTexture* t)
   m_tex_specular = t;
 }
 
+void kgmMaterial::setTexEnvironment(kgmTexture* t)
+{
+  m_tex_environment = t;
+}
+
 bool kgmMaterial::hasTexColor()
 {
   return (m_tex_color && m_tex_color->texture());
@@ -78,6 +83,11 @@ bool kgmMaterial::hasTexSpecular()
   return (m_tex_specular && m_tex_specular->texture());
 }
 
+bool kgmMaterial::hasTexEnvironment()
+{
+  return (m_tex_environment && m_tex_environment->texture());
+}
+
 kgmTexture* kgmMaterial::getTexColor()
 {
   return m_tex_color;
@@ -91,6 +101,11 @@ kgmTexture* kgmMaterial::getTexNormal()
 kgmTexture* kgmMaterial::getTexSpecular()
 {
   return m_tex_specular;
+}
+
+kgmTexture* kgmMaterial::getTexEnvironment()
+{
+  return m_tex_environment;
 }
 
 void kgmMaterial::setShader(kgmShader* shader)

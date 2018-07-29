@@ -141,17 +141,19 @@ private:
   RenderBuffer* m_renderbuffer = null;
 
   // Mode Matrices
-  float mtx_mode_view[16],
-        mtx_mode_proj[16];
+  f32 mtx_mode_view[16],
+      mtx_mode_proj[16];
 
   // Active lights
-  int m_lights;
+  s32 m_lights;
 
-  int m_is_shader;
-  int m_is_framebuffer;
+  s32 m_is_shader;
+  s32 m_is_framebuffer;
 
-  int m_min_filter;
-  int m_mag_filter;
+  s32 m_min_filter;
+  s32 m_mag_filter;
+
+  u32 m_error = 0;
 
 public:
   kgmOGL(kgmWindow* wnd);
@@ -161,6 +163,9 @@ public:
   //RENDER
   void  gcSet(u32 param, void* value);
   void  gcGet(u32 param, void* value);
+
+  u32   gcError();
+
   void  gcClear(u32 flag, u32 col, f32 depth, u32 sten);
   void  gcBegin();
   void  gcEnd();
@@ -170,15 +175,15 @@ public:
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
 
   //TEXTURE
-  void* gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);
-  void  gcFreeTexture(void* tex);
-  void  gcSetTexture(u32 stage, void* tex);
+  gchandle gcGenTexture(void *mf, u32 w, u32 h, u32 bpp, u32 type);
+  void     gcFreeTexture(gchandle tex);
+  void     gcSetTexture(u32 stage, gchandle tex);
 
   // TARGET
-  void* gcGenTarget(u32 w, u32 h, u32 type, bool depth);
-  void* gcTexTarget(void* t);
-  void  gcFreeTarget(void* t);
-  void  gcSetTarget(void*  t);
+  gchandle gcGenTarget(u32 w, u32 h, bool depth);
+  bool     gcTexTarget(gchandle tar, gchandle tex, u32 type);
+  void     gcFreeTarget(gchandle t);
+  void     gcSetTarget(gchandle  t);
 
   //MATRIX
   void  gcSetMatrix(u32 mm, float* mtx);
@@ -206,24 +211,21 @@ public:
   void  gcStencil(bool en, u32 func, u32 mask, u32 ref,
                   u32 fail, u32 zfail, u32 zpass);
 
-  //LIGHT
-  void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle);
-
   //VERTEX & INDEX BUFFER
-  void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
-  void  gcFreeVertexBuffer(void*);
-  void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
+  gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
+  void     gcFreeVertexBuffer(gchandle);
+  void     gcDrawVertexBuffer(gchandle buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
 
   // SHADER
-  void* gcGenShader(const char*, const char*);
-  void  gcFreeShader(void* s);
-  void  gcSetShader(void* s);
-  void  gcBindAttribute(void* s, int i, const char* attr);
-  void  gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val);
-  void  gcUniformMatrix(void* s, u32 type, u32 cnt, u32 tsp, const char*, void*);
-  void  gcUniformSampler(void* s, const char*, void*);
+  gchandle gcGenShader(const char*, const char*);
+  void     gcFreeShader(gchandle s);
+  void     gcSetShader(gchandle s);
+  void     gcBindAttribute(gchandle s, int i, const char* attr);
+  void     gcUniform(gchandle s, u32 type, u32 cnt, const char* par, void* val);
+  void     gcUniformMatrix(gchandle s, u32 type, u32 cnt, u32 tsp, const char*, void*);
+  void     gcUniformSampler(gchandle s, const char*, void*);
 #ifdef DEBUG
-  void  gcGetUniform(void* s, const char*, void*);
+  void  gcGetUniform(gchandle s, const char*, void*);
 #endif
 
   //////////////////////////// inlines

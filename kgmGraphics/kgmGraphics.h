@@ -77,7 +77,7 @@ public:
   {
     vec3  lpos, ldir;
     mtx4  mvp, mv, mp;
-    void* fbo;
+    gchandle fbo, tex;
     bool  valid;
     u16   w, h;
   };

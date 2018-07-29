@@ -120,7 +120,8 @@ void*      g_map_shadow = null;
 
 kgmTexture*   g_def_style_texture = null;
 
-//void* g_fbo = null;
+gchandle g_fbo = null;
+gchandle g_tex = null;
 
 inline void sort_lights(kgmLight *lights = null, u32 count = 0, vec3 pos = vec3(0, 0, 0))
 {
@@ -196,14 +197,19 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     m_def_light = new kgmNodeLight();
 
-    //g_fbo = g->gcGenTarget(512, 512, 0, true);
+    g_fbo = g->gcGenTarget(512, 512, true);
+    g_tex = g->gcGenTexture(null, 512, 512, 24, gctex_fmt24);
+    g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
+
     m_shadows.alloc(MAX_SHADOWS);
 
     for (u32 i = 0; i < MAX_SHADOWS; i++)
     {
       m_shadows[i].valid = false;
       m_shadows[i].w = m_shadows[i].h = 512;
-      m_shadows[i].fbo = g->gcGenTarget(m_shadows[i].w, m_shadows[i].h, gctype_texdepth, false);
+      m_shadows[i].fbo = g->gcGenTarget(m_shadows[i].w, m_shadows[i].h, false);
+      m_shadows[i].tex = g->gcGenTexture(null, 512, 512, 24, gctype_texdepth);
+      g->gcTexTarget(m_shadows[i].fbo, m_shadows[i].tex, gctype_texdepth);
     }
   }
 
@@ -236,12 +242,17 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
-  //gc->gcFreeTarget(g_fbo);
+  gc->gcFreeTarget(g_fbo);
+
+  for (u32 i = 0; i < MAX_SHADOWS; i++)
+  {
+    gc->gcFreeTarget(m_shadows[i].fbo);
+    gc->gcFreeTexture(m_shadows[i].tex);
+  }
 
   delete m_r_fps;
   delete m_r_gui;
   delete m_r_sprite;
-
 
   m_particles.clear();
   m_meshes.clear();
@@ -434,7 +445,7 @@ void kgmGraphics::render()
   if (m_a_meshes.length() > m_a_meshes_count)
     m_a_meshes[m_a_meshes_count] = null;
 
-  /*{
+  {
     static u32 zzz = 0;
 
     if (zzz == 0)
@@ -456,7 +467,7 @@ void kgmGraphics::render()
       if (zzz == 100)
         zzz = 0;
     }
-  }*/
+  }
 
   gc->gcCull(1);
 
@@ -593,7 +604,7 @@ void kgmGraphics::render()
 
   render(m_shaders[kgmMaterial::TypeBase]);
 
-  //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, gc->gcTexTarget(m_shadows[0].fbo));
+  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
 
   render_2d();
 

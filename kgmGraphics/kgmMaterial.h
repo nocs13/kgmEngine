@@ -63,12 +63,14 @@ public:
     TypeExtend
   };
 
-  enum Reflection
+  enum Environment
   {
-    Reflection_None,
-    Reflection_Plane,
-    Reflection_Cube,
-    Reflection_Sphere
+    EnvironmentTypeImage = 0,
+    EnvironmentTypeStatic,
+    EnvironmentTypeAnimate,
+
+    EnvironmentMappingCube = 0,
+    EnvironmentMappingPlane,
   };
 
   class Color
@@ -146,20 +148,23 @@ public:
 
 private:
   bool  m_cull  = true;
-  //bool  m_alpha = false;
   bool  m_depth = true;
   bool  m_shade = true;
 
   Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
 
+  float  m_shininess;
+
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
+  kgmTexture* m_tex_environment = null;
 
-  float  m_shininess;
-
-  Reflection m_reflection = Reflection_None;
+  Environment m_env_type = EnvironmentTypeImage;
+  Environment m_env_mapping = EnvironmentMappingCube;
+  vec3        m_env_viewpoint = vec3(0, 0, 0);
+  f32         m_env_intensity = 1.0;
 
 public:
   Color  m_color, m_specular;
@@ -178,14 +183,17 @@ public:
   void setTexColor(kgmTexture* t);
   void setTexNormal(kgmTexture* t);
   void setTexSpecular(kgmTexture* t);
+  void setTexEnvironment(kgmTexture* t);
 
   bool hasTexColor();
   bool hasTexNormal();
   bool hasTexSpecular();
+  bool hasTexEnvironment();
 
   kgmTexture* getTexColor();
   kgmTexture* getTexNormal();
   kgmTexture* getTexSpecular();
+  kgmTexture* getTexEnvironment();
 
   void setShader(kgmShader* shader);
 
@@ -239,22 +247,6 @@ public:
     m_shininess = s;
   }
 
-  /*bool alpha() const
-  {
-    return (m_alpha || (m_color.a < 1.0f));
-  }
-
-  void alpha(bool a)
-  {
-    if(m_alpha == a)
-      return;
-
-    if(!a && m_color.a < 1.0)
-      return;
-
-    m_alpha = a;
-  }*/
-
   bool depth() const
   {
     return m_depth;
@@ -295,14 +287,44 @@ public:
     m_cull = c;
   }
 
-  Reflection reflection() const
+  Environment envType() const
   {
-    return m_reflection;
+    return m_env_type;
   }
 
-  void reflection(Reflection r)
+  void envType(Environment e)
   {
-    m_reflection = r;
+    m_env_type = e;
+  }
+
+  Environment envMapping() const
+  {
+    return m_env_mapping;
+  }
+
+  void envMapping(Environment e)
+  {
+    m_env_mapping = e;
+  }
+
+  vec3 envViewpoint() const
+  {
+    return m_env_viewpoint;
+  }
+
+  void envViewpoint(vec3 v)
+  {
+    m_env_viewpoint = v;
+  }
+
+  f32 envIntensity() const
+  {
+    return m_env_intensity;
+  }
+
+  void envIntensity(f32 i)
+  {
+    m_env_intensity = i;
   }
 
   static kgmString blendToString(Blend Blend);

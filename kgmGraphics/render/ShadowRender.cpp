@@ -67,7 +67,7 @@ void ShadowRender::render()
       kgmMesh* m = (kgmMesh*)n->getNodeObject();
 
       gr->render(gr->m_def_material);
-      gr->gc->gcSetTexture(0, gr->gc->gcTexTarget(s->fbo));
+      gr->gc->gcSetTexture(0, s->tex);
 
       mtx4 mt = n->getNodeTransform();
       gr->setWorldMatrix(mt);

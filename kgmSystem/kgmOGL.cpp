@@ -500,6 +500,11 @@ void kgmOGL::gcGet(u32 param, void* value)
   }
 }
 
+u32 kgmOGL::gcError()
+{
+  return m_error;
+}
+
 void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
   GLu32 cl = 0;
@@ -599,54 +604,8 @@ void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f)
   glViewport(x, y, w, h);
 }
 
-//Light
-void kgmOGL::gcSetLight(int i, float* pos, float range, float* col, float* dir, float angle)
-{
-#ifndef GLES_2
-  if(i > GL_MAX_LIGHTS)
-    return;
-
-  if(i < 0)
-  {
-    int l = (int)fabs(i) - 1;
-
-    if(glIsEnabled(GL_LIGHT0 + l))
-    {
-      glDisable(GL_LIGHT0 + l);
-      m_lights--;
-    }
-
-    if(m_lights < 1)
-      glDisable(GL_LIGHTING);
-    return;
-  }
-
-  if(!glIsEnabled(GL_LIGHT0 + i))
-  {
-    glEnable(GL_LIGHT0 + i);
-    m_lights++;
-
-    if(!glIsEnabled(GL_LIGHTING))
-      glEnable(GL_LIGHTING);
-  }
-
-  glLightfv(GL_LIGHT0 + i, GL_POSITION, (float*)pos);
-  glLightfv(GL_LIGHT0 + i, GL_AMBIENT,  (float*)col);
-  glLightfv(GL_LIGHT0 + i, GL_DIFFUSE,  (float*)col);
-  glLightf(GL_LIGHT0  + i, GL_LINEAR_ATTENUATION, 1.0f - range);
-
-  vec3 v(dir[0], dir[1], dir[2]);
-
-  if(v.length() > 0)
-  {
-    glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION,  (float*)dir);
-    glLightfv(GL_LIGHT0 + i, GL_SPOT_CUTOFF,  (float*)&angle);
-  }
-#endif
-}
 
 //BLEND
-
 void  kgmOGL::gcBlend(bool en, u32 eq, u32 fnsrc, u32 fndst)
 {
   if(!en)
@@ -736,9 +695,9 @@ void kgmOGL::gcDepth(bool depth, bool mask, u32 mode)
 }
 
 //TEXTURE
-void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
+gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 {
-  GLu32  tex = 0, frame = 0;
+  GLu32  tex = 0;
   GLenum pic_fmt;
   GLu32  fmt_bt = 0;
 
@@ -833,16 +792,6 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     return null;
   }
 
-  const  GLubyte* p_str = null;
-  GLenum err = 0;
-
-#ifdef ANDROID
-
-  (void)p_str;
-  (void)err;
-
-#endif
-
   switch(type)
   {
   case gctype_tex2d:
@@ -860,39 +809,11 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 
 #endif
 
-#ifdef ANDROID
-
     glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
 
-#else
-
-    glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
-    //glTexImage2D(GL_TEXTURE_2D, 0, fmt_bt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
-
-#endif
-
-#ifdef DEBUG
-#ifdef GL_TEXTURE_COMPRESSED_ARB
-    int compressed;
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_ARB, &compressed);
-
-    if (compressed == GL_TRUE)
-    {
-      kgm_log() << "OK \n";
-    }
-    else
-    {
-      kgm_log() << "NO \n";
-    }
-
-    err = glGetError();
-
-    if(GL_NO_ERROR != err)
-      kgm_log() << "gcGenTexture has error: " << (s32)err << "\n";
-#endif
-#endif
     break;
 #ifdef GL_TEXTURE_CUBE_MAP
+
   case gctype_texcube:
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -905,6 +826,7 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
     glDisable(GL_TEXTURE_CUBE_MAP);
     break;
+
 #endif
   }
 
@@ -914,10 +836,10 @@ void* kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   kgm_log() << "Gen texture: " << (s32) tex << "\n";
 #endif
 
-  return (void*) (size_t) tex;
+  return (gchandle) (size_t) tex;
 }
 
-void kgmOGL::gcFreeTexture(void *t)
+void kgmOGL::gcFreeTexture(gchandle t)
 {
   if(!t)
     return;
@@ -933,53 +855,28 @@ void kgmOGL::gcFreeTexture(void *t)
 #endif
 }
 
-void kgmOGL::gcSetTexture(u32 stage, void* t)
+void kgmOGL::gcSetTexture(u32 stage, gchandle t)
 {
-#ifdef DEBUG
-  GLenum err;
-#endif
-
-#ifdef ANDROID
-  //glEnable(GL_TEXTURE_2D);
-#endif
-
   if(!t)
   {
     glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-#ifdef DEBUG
-    err = glGetError();
-
-    if(err != GL_NO_ERROR)
-    {
-      //kgm_log() << "gcSetTexture to 0 has error: " << (s32)err << "\n";
-    }
-#endif
 
     return;
   }
 
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, (GLu32) (size_t) t);
-
-#ifdef DEBUG
-  err = glGetError();
-
-  if(err != GL_NO_ERROR)
-  {
-    //kgm_log() << "gcSetTexture has error: " << (s32)err << " tex: " << (s32) t << " stage: " << (s32)stage << "\n";
-  }
-#endif
 }
 
 // TARGET
-void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
+gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
 {
   GLu32 buffer = 0;
   glGenFramebuffers(1, &buffer);
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, buffer);
 
+  /*
   GLu32 texture = 0;
 
   switch (type)
@@ -1024,6 +921,7 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   };
 
   glBindTexture(GL_TEXTURE_2D, 0);
+  */
 
   GLu32 depth = 0;
 
@@ -1037,17 +935,17 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
 
   GLu32 stencil = 0;
 
+  /*
   switch (type)
   {
   case gctype_texdepth:
-    //glDrawBuffer(GL_NONE);
-    //glReadBuffer(GL_NONE);
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texture, 0);
     break;
   case gctype_tex2d:
   default:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture, 0);
   };
+  */
 
   GLenum status;
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
@@ -1066,63 +964,68 @@ void* kgmOGL::gcGenTarget(u32 w, u32 h, u32 type, bool d)
   RenderBuffer* rb = (RenderBuffer*) kgm_alloc(sizeof(RenderBuffer));
 
   rb->frame   = buffer;
-  rb->color   = texture;
+  rb->color   = 0;
   rb->depth   = depth;
   rb->stencil = stencil;
   rb->width   = w;
   rb->height  = h;
+
+  return (gchandle) rb;
 }
 
-void* kgmOGL::gcTexTarget(void *t)
+bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 {
-  RenderBuffer* rb = (RenderBuffer*) t;
+  RenderBuffer* rb = (RenderBuffer*) tar;
 
   if(!rb)
-    return null;
+    return false;
 
-  return (void*) ((size_t) rb->color);
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+
+  switch (type)
+  {
+  case gctype_texdepth:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D,  (GLint) (size_t) tex, 0);
+    break;
+  case gctype_tex2d:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
+  default:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint)            0, 0);
+  };
+
+  glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
 }
 
-void  kgmOGL::gcFreeTarget(void* t)
+void kgmOGL::gcFreeTarget(gchandle t)
 {
   RenderBuffer* rb = (RenderBuffer*) t;
 
   if(!rb)
     return;
 
-  glDeleteTextures(1, &rb->color);
-  glDeleteRenderbuffers(1, &rb->depth);
-  glDeleteFramebuffers(1, &rb->frame);
+  if (rb->depth)
+    glDeleteRenderbuffers(1, &rb->depth);
+
+  if (rb->frame)
+    glDeleteFramebuffers(1, &rb->frame);
 
   glBindTexture(GL_TEXTURE_2D, 0);
-  glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
 
   kgm_free(rb);
 }
 
-void kgmOGL::gcSetTarget(void* t)
+void kgmOGL::gcSetTarget(gchandle t)
 {
   RenderBuffer* rb = (RenderBuffer*) t;
 
   if(!rb || !rb->frame)
   {
     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
-    glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
-
-    if(glGetError() != GL_NO_ERROR)
-    {
-      kgm_log() << "SetTarget: set 0 error \n";
-    }
 
     return;
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
-
-  if(glGetError() != GL_NO_ERROR)
-  {
-    kgm_log() << "SetTarget: set F error \n";
-  }
 }
 
 //CLIP PLANE
