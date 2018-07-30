@@ -3,7 +3,11 @@
 #include <stdint.h>
 
 #ifndef null
-  #define null 0L
+  #ifdef nullptr
+    #define null nullptr
+  #else
+    #define null 0L
+  #endif
 #endif
 
 #ifndef nil

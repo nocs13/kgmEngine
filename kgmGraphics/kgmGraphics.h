@@ -48,8 +48,8 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class ColorRender;
   friend class ParticlesRender;
   friend class ShadowRender;
-public:
 
+public:
   enum GraphicsQuality
   {
     GraphicsQualityLow,
@@ -86,6 +86,11 @@ public:
   {
     //kgmShader_TypeGui = 100,
     kgmShader_TypeIcon
+  };
+
+  struct Options
+  {
+
   };
 
 protected:
@@ -182,6 +187,7 @@ public:
   kgmResource* resource(kgmString);
 
 protected:
+  void render(gchandle buf, kgmCamera &cam, Options &op);
   void render(kgmMesh*);
   void render(kgmVisual*);
   void render(kgmShader*);

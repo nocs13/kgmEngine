@@ -8,24 +8,17 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmMemory.h"
 
+#define GL_DEPTH_STENCIL_EXT GL_DEPTH_STENCIL_NV
 
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 #endif
 
-#ifdef DEBUG
-#ifndef ANDROID
-//#include <GL/glu.h>
-#endif
-#endif
-
-GLu32          m_rendertarget = 0;
 GLint*         g_compressed_format = null;
 GLint          g_num_compressed_format = 0;
 
 GLhandle       g_shader = null;
-
 
 #ifdef ANDROID
 EGLDisplay  m_display       = EGL_NO_DISPLAY;
@@ -353,8 +346,6 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
 kgmOGL::~kgmOGL()
 {
-  m_rendertarget = 0;
-
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   if(g_compressed_format)
     free(g_compressed_format);
@@ -507,7 +498,7 @@ u32 kgmOGL::gcError()
 
 void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
-  GLu32 cl = 0;
+  GLbitfield cl = 0;
 
   if(flag & gcflag_color)
   {
@@ -697,70 +688,40 @@ void kgmOGL::gcDepth(bool depth, bool mask, u32 mode)
 //TEXTURE
 gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 {
-  GLu32  tex = 0;
-  GLenum pic_fmt;
-  GLu32  fmt_bt = 0;
+  GLu32  tex     = 0;
+  GLenum pic_fmt = 0;
+  GLu32  int_fmt = 0;
 
 #ifdef DEBUG
-
   kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
-
-#endif
-
-#ifdef ANDROID
-
-  (void)fmt_bt;
-
 #endif
 
   switch(fmt)
   {
   case gctex_fmt8:
     pic_fmt = GL_RED;
-    fmt_bt = 1;
+    int_fmt = GL_RED;
     break;
   case gctex_fmt16:
     pic_fmt = GL_RGB;
-    fmt_bt = 2;
+    int_fmt = GL_RGB5;
     break;
   case gctex_fmt24:
     pic_fmt = GL_RGB;
-
-#ifdef GL_COMPRESSED_RGB_ARB
-
-    fmt_bt = GL_COMPRESSED_RGB_ARB;
-
-#else
-
-    fmt_bt = 3;
-
-#endif
-
+    int_fmt = GL_RGB8;
     break;
   case gctex_fmt32:
     pic_fmt = GL_RGBA;
-
-#ifdef GL_COMPRESSED_RGBA_ARB
-
-    fmt_bt = GL_COMPRESSED_RGBA_ARB;
-
-#else
-
-    fmt_bt = 4;
-
-#endif
-
+    int_fmt = GL_RGBA8;
     break;
-
-#ifdef GL_DEPTH_COMPONENT
-
   case gctex_fmtdepth:
     pic_fmt = GL_DEPTH_COMPONENT;
-    fmt_bt = GL_DEPTH_COMPONENT;
+    int_fmt = GL_DEPTH_COMPONENT;
     break;
-
-#endif
-
+  case gctex_fmtdepten:
+    pic_fmt = GL_DEPTH_STENCIL_EXT;
+    int_fmt = GL_DEPTH_STENCIL_EXT;
+    break;
   }
 
   switch(type)
@@ -769,65 +730,48 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     break;
-#ifdef GL_TEXTURE_CUBE_MAP
-
   case gctype_texcube:
     glEnable(GL_TEXTURE_CUBE_MAP);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     break;
-
-#endif
-
-  }
-
-  if(tex == 0)
-  {
-#ifdef DEBUG
-
-    kgm_log() << "gl: no generated texture";
-
-#endif
-
-    return null;
   }
 
   switch(type)
   {
   case gctype_tex2d:
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_mag_filter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_mag_filter);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
 
-#ifdef GL_DEPTH_TEXTURE_MODE
+    //if(fmt == gctex_fmtdepth)
+    //{
+    //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //  glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+    //}
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    if(fmt == gctex_fmtdepth)
-    {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-    }
-
+    glTexImage2D(GL_TEXTURE_2D, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
+#ifdef DEBUG
+    if (glGetError() != GL_NO_ERROR)
+      kgm_log() << "Error: Cannot create 2D texture. eid=" << (s32) glGetError() << ".\n";
 #endif
-
-    glTexImage2D(GL_TEXTURE_2D, 0, pic_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, pd);
-
     break;
-#ifdef GL_TEXTURE_CUBE_MAP
-
   case gctype_texcube:
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE,NULL);
+    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
     glDisable(GL_TEXTURE_CUBE_MAP);
     break;
-
-#endif
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -836,7 +780,7 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   kgm_log() << "Gen texture: " << (s32) tex << "\n";
 #endif
 
-  return (gchandle) (size_t) tex;
+  return (gchandle) ((size_t) tex);
 }
 
 void kgmOGL::gcFreeTexture(gchandle t)
@@ -947,16 +891,16 @@ gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
   };
   */
 
+#ifdef DEBUG
   GLenum status;
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
 
   if(status != GL_FRAMEBUFFER_COMPLETE_EXT)
   {
-#ifdef DEBUG
     kgm_log() << "Error: cannot use framebuffer object!\n";
-#endif
     return null;
   }
+#endif
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
@@ -975,12 +919,13 @@ gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
 
 bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 {
-  RenderBuffer* rb = (RenderBuffer*) tar;
+  RenderBuffer* rb = static_cast<RenderBuffer*>(tar);
 
   if(!rb)
     return false;
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+  glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
 
   switch (type)
   {
@@ -994,12 +939,22 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint)            0, 0);
   };
 
+#ifdef DEBUG
+  GLenum err = glGetError();
+
+  if (err != GL_NO_ERROR) {
+    kgm_log() << "Error: Cannot attach texture to framebuffer.\n";
+    kgm_log() << "Error: Eid is " << (s32) err << ".\n";
+  }
+#endif
+
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+  glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
 }
 
 void kgmOGL::gcFreeTarget(gchandle t)
 {
-  RenderBuffer* rb = (RenderBuffer*) t;
+  RenderBuffer* rb = static_cast<RenderBuffer*>(t);
 
   if(!rb)
     return;
@@ -1009,8 +964,6 @@ void kgmOGL::gcFreeTarget(gchandle t)
 
   if (rb->frame)
     glDeleteFramebuffers(1, &rb->frame);
-
-  glBindTexture(GL_TEXTURE_2D, 0);
 
   kgm_free(rb);
 }
@@ -1022,11 +975,22 @@ void kgmOGL::gcSetTarget(gchandle t)
   if(!rb || !rb->frame)
   {
     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
 
     return;
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+  glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
+
+#ifdef DEBUG
+  GLenum err = glGetError();
+
+  if (err != GL_NO_ERROR) {
+    kgm_log() << "Error: Cannot set framebuffer.\n";
+    kgm_log() << "Error: Eid is " << (s32) err << ".\n";
+  }
+#endif
 }
 
 //CLIP PLANE
@@ -1065,10 +1029,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_xyz)
   {
-#ifdef GLES_1
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, v_size, pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_Vertex");
 
     if(ah != -1)
@@ -1076,17 +1036,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
       glEnableVertexAttribArray(ah);
     }
-#endif
 
     pM += (sizeof(float) * 3);
   }
 
   if(v_fmt & gcv_nor)
   {
-#ifdef GLES_1
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT,v_size,pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_Normal");
 
     if(ah != -1)
@@ -1094,17 +1049,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 3, GL_FLOAT, GL_FALSE, v_size, pM);
     }
-#endif
 
     pM += (sizeof(float)*3);
   }
 
   if(v_fmt & gcv_col)
   {
-#ifdef GLES_1
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4,GL_UNSIGNED_BYTE,v_size,pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_Color");
 
     if(ah != -1)
@@ -1112,18 +1062,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
     }
-#endif
 
     pM += sizeof(u32);
   }
 
   if(v_fmt & gcv_uv0)
   {
-#ifdef GLES_1
-    glClientActiveTexture(GL_TEXTURE0);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_UV");
 
     if(ah != -1)
@@ -1131,36 +1075,24 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
     }
-#endif
 
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv1)
   {
-#ifdef GLES_1
-    glClientActiveTexture(GL_TEXTURE1);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_UV2");
     if(ah != -1)
     {
       glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
     }
-#endif
 
     pM += (uv_size);
   }
 
   if(v_fmt & gcv_uv2)
   {
-#ifdef GLES_1
-    glClientActiveTexture(GL_TEXTURE1);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,v_size,pM);
-#else
     ah = glGetAttribLocation(g_shader, "a_UV3");
 
     if(ah != -1)
@@ -1168,7 +1100,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
       glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 2, GL_FLOAT, GL_FALSE, v_size, pM);
     }
-#endif
 
     pM += (uv_size);
   }

@@ -17,4 +17,3 @@ end
 function main_quit()
    kgmGameExit()
 end
-

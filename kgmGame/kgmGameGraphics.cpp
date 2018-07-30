@@ -60,6 +60,8 @@ void kgmGameGraphics::render_3d()
         drawLight(un);
       }
     }
+
+    delete i;
   }
 
   kgmGraphics::render((kgmShader*) null);

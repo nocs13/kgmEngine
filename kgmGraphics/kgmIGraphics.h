@@ -33,6 +33,8 @@ public:
   class INode
   {
   public:
+    virtual ~INode(){}
+
     virtual kgmObject* getNodeObject()    = 0;
     virtual TypeNode   getNodeType()      = 0;
     virtual bool       isNodeValid()      = 0;

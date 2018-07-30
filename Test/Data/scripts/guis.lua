@@ -19,6 +19,7 @@ function guis_init()
   kgmLog('gui scaling is ' .. tostring(scw) .. ' ' .. tostring(sch))
 
   kgmGuiResize(gui_main, sw, sh)
-
+  kgmGuiShow(gui_main, 0)
   kgmLog('main gui 2 is ' .. tostring(gui_main))
 end
+

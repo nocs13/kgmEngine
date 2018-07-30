@@ -109,7 +109,7 @@ enum gc_enum
   gctex_fmt24,
   gctex_fmt32,
   gctex_fmtdepth,
-  gctex_fmtfloat,
+  gctex_fmtdepten,
 
   gctex_fltmin,
   gctex_fltmag,
