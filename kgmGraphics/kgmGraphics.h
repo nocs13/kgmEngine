@@ -162,7 +162,11 @@ protected:
   kgmTexture*  m_map_shadow = null;
 
   mtx4 m_g_mtx_world;
+  mtx4 m_g_mtx_proj;
+  mtx4 m_g_mtx_view;
+  mtx3 m_g_mtx_normal;
 
+  gchandle m_rnd_target = null;
 
 protected:
   kgmShader*  m_shaders[32] = {0};

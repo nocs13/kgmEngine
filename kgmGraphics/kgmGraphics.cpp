@@ -94,11 +94,7 @@ inline vec4 packLight(kgmLight& l, vec3 pos)
 
 mtx4       g_mtx_orto;
 mtx4       g_mtx_iden;
-mtx4       g_mtx_proj;
-mtx4       g_mtx_view;
 mtx4*      g_mtx_joints = null;
-
-mtx3       g_mtx_normal;
 
 u32        g_mtx_joints_count = 0;
 
@@ -349,19 +345,19 @@ void kgmGraphics::setDefaultFont(kgmFont* f)
 
 void kgmGraphics::setProjMatrix(mtx4 &m)
 {
-  g_mtx_proj = m;
+  m_g_mtx_proj = m;
 }
 
 void kgmGraphics::setViewMatrix(mtx4 &m)
 {
-  g_mtx_view = m;
+  m_g_mtx_view = m;
 
   mtx4 im = m;
 
   im.invert();
-  g_mtx_normal[0] = im[0], g_mtx_normal[1] = im[1], g_mtx_normal[2] = im[2];
-  g_mtx_normal[3] = im[4], g_mtx_normal[4] = im[5], g_mtx_normal[5] = im[6];
-  g_mtx_normal[6] = im[8], g_mtx_normal[7] = im[9], g_mtx_normal[8] = im[10];
+  m_g_mtx_normal[0] = im[0], m_g_mtx_normal[1] = im[1], m_g_mtx_normal[2] = im[2];
+  m_g_mtx_normal[3] = im[4], m_g_mtx_normal[4] = im[5], m_g_mtx_normal[5] = im[6];
+  m_g_mtx_normal[6] = im[8], m_g_mtx_normal[7] = im[9], m_g_mtx_normal[8] = im[10];
 }
 
 void kgmGraphics::setWorldMatrix(mtx4 &m)
@@ -371,12 +367,12 @@ void kgmGraphics::setWorldMatrix(mtx4 &m)
 
 mtx4 kgmGraphics::getProjMatrix()
 {
-  return g_mtx_proj;
+  return m_g_mtx_proj;
 }
 
 mtx4 kgmGraphics::getViewMatrix()
 {
-  return g_mtx_view;
+  return m_g_mtx_view;
 }
 
 mtx4 kgmGraphics::getWorldMatrix()
@@ -675,9 +671,11 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 
   gc->gcCull(1);
 
+  m.identity();
+
   setProjMatrix(cam.mProj);
   setViewMatrix(cam.mView);
-  m_g_mtx_world.identity();
+  setWorldMatrix(m);
 
   gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
@@ -762,12 +760,12 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   LightRender lr(this);
   lr.render();
 
-  ShadowRender sr(this);
+  //ShadowRender sr(this);
   //sr.render();
 
   //draw particles
-  ParticlesRender pr(this);
-  pr.render();
+  //ParticlesRender pr(this);
+  //pr.render();
 
   // Draw alpha objects.
 
@@ -886,7 +884,7 @@ void kgmGraphics::render(kgmParticles* particles)
 
 void kgmGraphics::render(kgmIcon* icon)
 {
-  mtx4    mtr = g_mtx_view;
+  mtx4    mtr = m_g_mtx_view;
   vec3    rv, uv;
 
   rv = vec3(mtr.m[0], mtr.m[2], mtr.m[1]);
@@ -1091,10 +1089,10 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_fRandom",         random);
   s->set("g_fShine",          g_fShine);
   s->set("g_fAmbient",        g_fAmbient);
-  s->set("g_mProj",           g_mtx_proj);
-  s->set("g_mView",           g_mtx_view);
+  s->set("g_mProj",           m_g_mtx_proj);
+  s->set("g_mView",           m_g_mtx_view);
   s->set("g_mTran",           m_g_mtx_world);
-  s->set("g_mNorm",           g_mtx_normal);
+  s->set("g_mNorm",           m_g_mtx_normal);
   s->set("g_vColor",          g_vec_color);
   s->set("g_vSpecular",       g_vec_specular);
   s->set("g_vLight",          v_light);
