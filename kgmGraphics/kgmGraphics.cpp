@@ -624,91 +624,6 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 {
   mtx4 m;
 
-  bool lighting = false;
-
-  m_a_meshes_count    = 0;
-  m_a_bmeshes_count   = 0;
-  m_a_particles_count = 0;
-
-  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
-  {
-    if (!(*i)->isNodeValid())
-      continue;
-
-    box3 bound = (*i)->getNodeBound();
-
-    vec3  l = bound.max - bound.min;
-    vec3  v = (bound.min + bound.max) * 0.5;
-
-    if(!cam.isSphereCross(v, 0.5 * l.length()))
-      continue;
-
-    kgmMaterial* m = (*i)->getNodeMaterial();
-
-    if(m && (m->blend() != kgmMaterial::Blend_None || m->transparency() > 0.0f))
-    {
-      if (m_a_bmeshes_count == m_a_bmeshes.length())
-        m_a_bmeshes.realloc(m_a_bmeshes_count + 1024);
-
-      m_a_bmeshes[m_a_bmeshes_count] = (*i);
-      m_a_bmeshes_count++;
-    }
-    else
-    {
-      if (m_a_meshes_count == m_a_meshes.length())
-        m_a_meshes.realloc(m_a_meshes_count + 1024);
-
-      m_a_meshes[m_a_meshes_count] = (*i);
-      m_a_meshes_count++;
-    }
-  }
-
-  if (m_a_meshes.length() > m_a_meshes_count)
-    m_a_meshes[m_a_meshes_count] = null;
-
-  //colect lights in viewport
-  m_a_light_count = 0;
-  m_a_lights[0] = null;
-
-  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
-  {
-    if(!(*i)->isNodeValid())
-      continue;
-
-    vec3 pos = (*i)->getNodePosition();
-
-    kgmLight* l = (kgmLight*) (*i)->getNodeObject();
-
-    if(!cam.isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
-      continue;
-
-    if (!m_a_lights[0])
-    {
-      m_a_lights[0] = (*i);
-    }
-    else
-    {
-      f32 lforce[2];
-      lforce[0] = kgmLight::LIGHT_RANGE * l->intensity();
-      lforce[1] = kgmLight::LIGHT_RANGE * ((kgmLight*)m_a_lights[0]->getNodeObject())->intensity();
-
-      if (lforce[0] > lforce[1])
-        m_a_lights[0] = (*i);
-    }
-  }
-
-  if (m_a_lights[0])
-    m_a_light_count = 1;
-
-  if (m_a_light_count == 0)
-  {
-    m_a_lights[0] = m_def_light;
-
-    m_a_light_count = 1;
-  }
-
-  m_a_light = m_a_lights[0];
-
   //prepare for render
   gc->gcSetTarget(buf);
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), cam.mNear, cam.mFar);
@@ -728,11 +643,64 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcBlend(false, 0, null, null);
   gc->gcAlpha(false, null, null);
 
-  for (s32 i = 0; i < m_a_meshes_count; i++)
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
-    kgmIGraphics::INode*       nod = m_a_meshes[i];
-    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
-    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (m_def_material);
+    if (!(*i)->isNodeValid())
+      continue;
+
+    box3 bound = (*i)->getNodeBound();
+
+    vec3  l = bound.max - bound.min;
+    vec3  v = (bound.min + bound.max) * 0.5;
+
+    if(!cam.isSphereCross(v, 0.5 * l.length()))
+      continue;
+
+    kgmIGraphics::INode* nod = (*i);
+    kgmMaterial*         mtl = nod->getNodeMaterial();
+    kgmMesh*             msh = (kgmMesh*) nod->getNodeObject();
+
+    if (!mtl)
+      mtl = m_def_material;
+
+    if(mtl && (mtl->blend() != kgmMaterial::Blend_None || mtl->transparency() > 0.0f))
+    {
+      continue;
+    }
+
+    kgmNodeLight* light = null;
+
+    for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
+    {
+      if(!(*i)->isNodeValid())
+        continue;
+
+      vec3 pos = (*i)->getNodePosition();
+
+      kgmLight* l = (kgmLight*) (*i)->getNodeObject();
+
+      if(!cam.isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
+        continue;
+
+      if (!light)
+      {
+        light = (kgmNodeLight*) (*i);
+      }
+      else
+      {
+        f32 lforce[2];
+        lforce[0] = kgmLight::LIGHT_RANGE * l->intensity();
+        lforce[1] = kgmLight::LIGHT_RANGE * ((kgmLight*)light->getNodeObject())->intensity();
+
+        if (lforce[0] > lforce[1])
+          light = (kgmNodeLight*) (*i);
+      }
+    }
+
+    if (!light)
+      light = (kgmNodeLight*) m_def_light;
+
+    m_a_light = light;
 
     mtx4 m = nod->getNodeTransform();
     setWorldMatrix(m);
