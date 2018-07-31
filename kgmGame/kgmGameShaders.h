@@ -1,4 +1,5 @@
-const char* const begin_vshader = "uniform mat4   g_mView;       \n"
+const char* const begin_vshader =  "#version 120 \n"
+"uniform mat4   g_mView;           \n"
 "uniform mat4   g_mProj;           \n"
 "uniform mat4   g_mTran;           \n"
 "uniform vec4   g_vColor;          \n"
@@ -43,9 +44,10 @@ const char* const end_vshader =   " \n"
 "   gl_Position = position;         \n"
 "}";
 
-const char* begin_pshader = "#ifdef GL_ES\n"
+const char* begin_pshader = "#version 120 \n"
+"#ifdef GL_ES         \n"
 "precision lowp float;\n"
-"#endif\n"
+"#endif               \n"
 
 "uniform sampler2D g_txColor;\n"
 "uniform sampler2D g_txNormal;\n"

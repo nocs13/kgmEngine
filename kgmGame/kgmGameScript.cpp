@@ -26,6 +26,9 @@ kgmGameScript::~kgmGameScript()
 {
   free();
 
+  for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); !i.end(); ++i)
+    delete (*i);
+
   delete handler;
 }
 
@@ -75,6 +78,7 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
                            gui, &((kgmGuiButton*)gui)->sigClick);
 
     slotters.set(gui, call);
+    slots.add( (Slot<kgmGameScript>*) slotGuiButton);
   }
 }
 

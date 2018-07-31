@@ -13,6 +13,7 @@ class kgmGameScript: public kgmObject
   kgmIGame*   game;
 
   kgmMap<kgmGui*, kgmString> slotters;
+  kgmList< Slot<kgmGameScript>* > slots;
 
  public:
   kgmGameScript(kgmIGame*);

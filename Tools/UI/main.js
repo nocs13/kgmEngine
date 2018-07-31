@@ -16,7 +16,7 @@ function gui_sizer_show()
 
 function gui_sizer_hide()
 {
-    //$('#gui_size').hide();
+    $('#gui_size').hide();
 }
 
 function gui_sizer_move(x, y)
@@ -56,9 +56,11 @@ function gui_options(gui)
 {
     if (gui == null)
     {
-        return;
-    }
+      $("#options").empty();
 
+      return;
+    } 
+    
     gui_selected = gui;
 
     var gui_data = gui_get_by_target(gui);
@@ -213,11 +215,12 @@ function gui_menu_context(e)
 function new_gui()
 {
     var id = "gui" + newId();
-	var $gui = $ ("<div class='kgm_base kgm_gui'>gui</div>");
-	$("#palette").append($gui);
+    var $gui = $ ("<div class='kgm_base kgm_gui'>gui</div>");
+    $("#palette").append($gui);
     $gui.draggable();
     $gui.click(function(){
         gui_options($gui);
+        evt.stopPropagation();
     });
 
     var g = { target: $gui,
@@ -230,13 +233,14 @@ function new_gui()
 
 function new_menu()
 {
-	var id = 'menu' + newId();
-	var $menu = $ ("<div id='" + id +"' class='kgm_base kgm_menu'>menu</div>");
-	$("#palette").append($menu);
+    var id = 'menu' + newId();
+    var $menu = $ ("<div id='" + id +"' class='kgm_base kgm_menu'>menu</div>");
+    $("#palette").append($menu);
     $menu.menu()
-	$menu.draggable();
-    $menu.click(function(){
+    $menu.draggable();
+    $menu.click(function(evt){
         gui_options($menu);
+        evt.stopPropagation();
     });
 
     $menu.contextmenu(gui_menu_context);
@@ -253,11 +257,12 @@ function new_menu()
 function new_list()
 {
     var id = "list" + newId();
-	var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list'size='5'></select>");
-	$("#palette").append($list);
+    var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list'size='5'></select>");
+    $("#palette").append($list);
     $list.draggable(); //{cancel: false}
-    $list.click(function(){
-        gui_options($list);
+    $list.click(function(evt){
+      gui_options($list);
+      evt.stopPropagation();
     });
     $list.contextmenu(gui_list_context);
 
@@ -273,12 +278,13 @@ function new_list()
 function new_text()
 {
     var id = "text" + newId();
-	var $text = $ ("<input id='" + id + "' class='kgm_base kgm_text' type='text' value='Text'></input>");
-	$("#palette").append($text);
+    var $text = $ ("<input id='" + id + "' class='kgm_base kgm_text' type='text' value='Text'></input>");
+    $("#palette").append($text);
     $text.draggable({cancel: false});
-    $text.click(function(){
-    selected = $text;
-        gui_options($text);
+    $text.click(function(evt){
+      selected = $text;
+      gui_options($text);
+      evt.stopPropagation();
     });
 
     var g = { target: $text,
@@ -298,8 +304,9 @@ function new_check()
     $div.append($ ("<input class='' type='checkbox'>Check</input>"));
     $("#palette").append($div);
     $div.draggable({cancel: false});
-    $div.click(function(){
+    $div.click(function(evt){
         gui_options($div);
+        evt.stopPropagation();
     });
 
     var g = { target: $div,
@@ -318,8 +325,9 @@ function new_label()
     var $label = $("<div id='" + id + "' class='ui-state-highlight kgm_base kgm_label'>Label</div>");
     $("#palette").append($label);
     $label.draggable();
-    $label.click(function(){
+    $label.click(function(evt){
         gui_options($label);
+        evt.stopPropagation();
     });
 
     var g = { target: $label,
@@ -335,11 +343,12 @@ function new_label()
 function new_button()
 {
     var id = "button" + newId();
-	var $button = $ ("<button id='" + id + "' class='ui-button kgm_base kgm_button'>Button</button>");
-	$("#palette").append($button);
+    var $button = $ ("<button id='" + id + "' class='ui-button kgm_base kgm_button'>Button</button>");
+    $("#palette").append($button);
     $button.draggable({cancel: false});
-    $button.click(function(){
+    $button.click(function(evt){
         gui_options($button);
+        evt.stopPropagation();
     });
 
     var g = { target: $button,
@@ -358,8 +367,9 @@ function new_progress()
 	$("#palette").append($progress);
     $progress.progressbar({value: 45});
     $progress.draggable();
-    $progress.click(function(){
+    $progress.click(function(evt){
         gui_options($progress);
+        evt.stopPropagation();
     });
 
     var g = { target: $progress,
@@ -376,8 +386,21 @@ function on_palette()
     selected = null;
 
     gui_sizer_hide();
+    
+    var gui = $("palette");
 
     $("#gui_list_menu").hide();
+    
+    $("#options").empty();
+
+    $table = $("<table id='tboptions'></table>");
+    $("#options").append($table);
+
+    $table.append("<tr><td>x</td><td><input readonly size='15' id='gui_x' type='text' value='" + this.offsetLeft + "'/></td></tr>");
+    $table.append("<tr><td>y</td><td><input readonly size='15' id='gui_y' type='text' value='" + this.offsetTop + "'/></td></tr>");
+    $table.append("<tr><td>w</td><td><input readonly size='15' id='gui_w' type='text' value='" + this.clientWidth + "'/></td></tr>");
+    $table.append("<tr><td>h</td><td><input readonly size='15' id='gui_h' type='text' value='" + this.clientHeight + "'/></td></tr>");
+
 }
 
 function build_gui_xml()

@@ -103,6 +103,7 @@ div.resizer {
     height:  10px;
 
     color: blue;
+    background-color: lightblue;
 }
 
 div.gui_list_menu_add_dialog {

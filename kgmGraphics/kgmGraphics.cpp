@@ -221,8 +221,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
     m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
     m_shaders[kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
-    m_shaders[ShaderShadowKeep]     = rc->getShader("shkeep.glsl");
-    m_shaders[ShaderShadowDraw]     = rc->getShader("shdraw.glsl");
+    m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
+    m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
   }
 
   m_camera = new kgmCamera();
@@ -666,27 +666,9 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   if (m_a_meshes.length() > m_a_meshes_count)
     m_a_meshes[m_a_meshes_count] = null;
 
-  gc->gcSetTarget(buf);
-  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), cam.mNear, cam.mFar);
-
-  gc->gcCull(1);
-
-  m.identity();
-
-  setProjMatrix(cam.mProj);
-  setViewMatrix(cam.mView);
-  setWorldMatrix(m);
-
-  gc->gcBegin();
-  gc->gcDepth(true, true, gccmp_lequal);
-  gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
-
-  //prepare for render
-  gc->gcBlend(false, 0, null, null);
-  gc->gcAlpha(false, null, null);
-
   //colect lights in viewport
   m_a_light_count = 0;
+  m_a_lights[0] = null;
 
   for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
   {
@@ -700,11 +682,23 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     if(!cam.isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
       continue;
 
-    m_a_lights[m_a_light_count++] = (*i);
+    if (!m_a_lights[0])
+    {
+      m_a_lights[0] = (*i);
+    }
+    else
+    {
+      f32 lforce[2];
+      lforce[0] = kgmLight::LIGHT_RANGE * l->intensity();
+      lforce[1] = kgmLight::LIGHT_RANGE * ((kgmLight*)m_a_lights[0]->getNodeObject())->intensity();
 
-    if(m_a_light_count >= MAX_LIGHTS)
-      break;
+      if (lforce[0] > lforce[1])
+        m_a_lights[0] = (*i);
+    }
   }
+
+  if (m_a_lights[0])
+    m_a_light_count = 1;
 
   if (m_a_light_count == 0)
   {
@@ -715,94 +709,53 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 
   m_a_light = m_a_lights[0];
 
-  m_a_particles_count = 0;
-
-  m_shadows[0].valid = true;
-
-  m_shadows[0].lpos  = m_a_light->getNodePosition();
-  m_shadows[0].ldir  = vec3(.1, .1, -1);
-  m_shadows[0].ldir.normalize();
-
-  {
-    mtx4 mp, mv, mb;
-
-    f32 b[16] = {0.5, 0, 0, 0,
-                 0,   0.5, 0, 0,
-                 0,   0,   0.5, 0,
-                 0.5, 0.5, 0.5, 1};
-
-    mp.perspective(PI / 6, 1.0, 1.0, 20);
-    mv.lookat(m_shadows[0].lpos, m_shadows[0].ldir, vec3(0, 0, 1));
-    mb = mtx4(b);
-
-    m_shadows[0].mv = mv;
-    m_shadows[0].mp = mp;
-    m_shadows[0].mvp = /*mb */ mv * mp;
-  }
-
-  for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
-  {
-    if(!(*i)->isNodeValid())
-      continue;
-
-    if (m_a_particles_count == m_a_particles.length())
-      m_a_particles.realloc(m_a_particles_count + 1024);
-
-    m_a_particles[m_a_particles_count] = (*i);
-    m_a_particles_count++;
-  }
-
-  //draw scene only lights
-  render((kgmMaterial*)null);
-
-  lighting = true;
-
-  LightRender lr(this);
-  lr.render();
-
-  //ShadowRender sr(this);
-  //sr.render();
-
-  //draw particles
-  //ParticlesRender pr(this);
-  //pr.render();
-
-  // Draw alpha objects.
-
-  gc->gcDepth(true, true, gccmp_lequal);
-
-  gc->gcSetShader(null);
-
-  if(lighting)
-  {
-    lighting = false;
-  }
-
-  render_3d();
+  //prepare for render
+  gc->gcSetTarget(buf);
+  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
 
-  render((kgmShader*)null);
-
-  render(m_def_material);
-
-  gc->gcSetShader(null);
-  gc->gcDepth(false, false, gccmp_lequal);
-
-  gc2DMode();
-
   m.identity();
+
+  setProjMatrix(cam.mProj);
+  setViewMatrix(cam.mView);
   setWorldMatrix(m);
 
-  render(m_shaders[kgmMaterial::TypeBase]);
+  gc->gcBegin();
+  gc->gcDepth(true, true, gccmp_lequal);
+  gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
 
-  render_2d();
+  gc->gcBlend(false, 0, null, null);
+  gc->gcAlpha(false, null, null);
+
+  for (s32 i = 0; i < m_a_meshes_count; i++)
+  {
+    kgmIGraphics::INode*       nod = m_a_meshes[i];
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (m_def_material);
+
+    mtx4 m = nod->getNodeTransform();
+    setWorldMatrix(m);
+
+    if (!op.color)
+      render(m_def_material);
+    else
+      render(mtl);
+
+    if (!op.light)
+      render(m_shaders[kgmMaterial::TypeBase]);
+    else
+      render(m_shaders[kgmMaterial::TypePhong]);
+
+    render(msh);
+  }
 
   render((kgmShader*)null);
   render((kgmMaterial*)null);
 
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcEnd();
+
   gc->gcRender();
 }
 

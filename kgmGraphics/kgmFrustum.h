@@ -5,20 +5,25 @@
 class kgmFrustum: public kgmObject
 {
   KGM_OBJECT(kgmFrustum);
+public:
+  enum {
+    PLANE_LEFT,
+    PLANE_RIGHT,
+    PLANE_TOP,
+    PLANE_BOTTOM,
+    PLANE_NEAR,
+    PLANE_FAR,
+  };
 
 public:
-  //union{
-  // struct{ plane plnR, plnL, plnB, plnT, plnF, plnN; };
-  // struct{
   plane3 frs[6];
-  //};
-  //};
+
 public:
   kgmFrustum()
   {
   }
 
-  void Frustum(mtx4& mvp)
+  void frustum(mtx4& mvp)
   {
     plane3   pln;
     float    len;

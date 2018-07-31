@@ -90,7 +90,8 @@ public:
 
   struct Options
   {
-
+    bool color;
+    bool light;
   };
 
 protected:

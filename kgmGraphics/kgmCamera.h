@@ -114,7 +114,8 @@ public:
     }
 
     mVwPj = mView * mProj;
-    Frustum(mVwPj);
+
+    frustum(mVwPj);
   }
   
   void viewport(float width, float height)
