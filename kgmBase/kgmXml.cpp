@@ -345,6 +345,12 @@ kgmXml::XmlState kgmXml::next()
 {
   m_tagData.clear();
   m_tagName.clear();
+
+  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); i.next())
+  {
+    delete (*i);
+  }
+
   m_attributes.clear();
 
   if(!m_position)
@@ -545,6 +551,12 @@ kgmXml::XmlState kgmXml::close()
   m_position = null;
   m_tagData.clear();
   m_tagName.clear();
+
+  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); i.next())
+  {
+    delete (*i);
+  }
+
   m_attributes.clear();
 
   if(m_xmlString.length())

@@ -444,28 +444,9 @@ void kgmGraphics::render()
   if (m_a_meshes.length() > m_a_meshes_count)
     m_a_meshes[m_a_meshes_count] = null;
 
-  {
-    static u32 zzz = 0;
-
-    if (zzz == 0)
-    {
-      gc->gcSetTarget(g_fbo);
-      gc->gcSetViewport(0, 0, 512, 512, 1.0, 1000.0);
-
-      zzz = 1;
-    }
-    else
-    {
-      if (zzz == 1)
-      {
-        gc->gcSetTarget(null);
-        gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), 1.0, 1000.0);
-      }
-
-      if (++zzz == 20)
-        zzz = 0;
-    }
-  }
+  //prepare for render
+  gc->gcSetTarget(null);
+  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 
   gc->gcCull(1);
 
@@ -477,7 +458,6 @@ void kgmGraphics::render()
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
 
-  //prepare for render
 
   gc->gcBlend(false, 0, null, null);
   gc->gcAlpha(false, null, null);
@@ -597,7 +577,7 @@ void kgmGraphics::render()
 
   render(m_shaders[kgmMaterial::TypeBase]);
 
-  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
+  //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
 
   render_2d();
 
@@ -622,19 +602,11 @@ void kgmGraphics::render()
 
 void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 {
-  mtx4 m;
-
   //prepare for render
   gc->gcSetTarget(buf);
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
-
-  m.identity();
-
-  setProjMatrix(cam.mProj);
-  setViewMatrix(cam.mView);
-  setWorldMatrix(m);
 
   gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
@@ -700,22 +672,59 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     if (!light)
       light = (kgmNodeLight*) m_def_light;
 
-    m_a_light = light;
-
-    mtx4 m = nod->getNodeTransform();
-    setWorldMatrix(m);
+    mtx4 transform = nod->getNodeTransform();
 
     if (!op.color)
       render(m_def_material);
     else
       render(mtl);
 
+    kgmShader* shader = null;
+
     if (!op.light)
-      render(m_shaders[kgmMaterial::TypeBase]);
+      shader = m_shaders[kgmMaterial::TypeBase];
     else
-      render(m_shaders[kgmMaterial::TypePhong]);
+      shader = m_shaders[kgmMaterial::TypePhong];
+
+    kgmShader s = (*shader);
+
+    float shine   = mtl->shininess();
+    float ambient = g_fAmbient;
+
+    vec4 v_light;
+    vec4 v_light_color;
+    vec4 v_light_direction;
+
+    if (light)
+    {
+      kgmLight* l   = (kgmLight*) m_a_light->getNodeObject();
+      vec3      pos = m_a_light->getNodePosition();
+
+      v_light           = vec4(pos.x, pos.y, pos.z, l->intensity());
+      v_light_direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
+      v_light_color     = kgmColor::toVector(l->color());
+    }
+
+    s.setValue("g_fShine",    kgmShader::Val_Float, &shine, 1);
+    s.setValue("g_fAmbient",  kgmShader::Val_Float, &ambient, 1);
+    s.setValue("g_mProj",     kgmShader::Val_Mtx4,  cam.mProj.m, 1);
+    s.setValue("g_mView",     kgmShader::Val_Mtx4,  cam.mView.m, 1);
+    s.setValue("g_mTran",     kgmShader::Val_Mtx4,  transform.m, 1);
+    //s.setValue("g_mNorm",     kgmShader::Val_Mtx3,  m_g_mtx_normal.m, 1);
+    s.setValue("g_vColor",    kgmShader::Val_Vec4,  &g_vec_color, 1);
+    s.setValue("g_vSpecular", kgmShader::Val_Vec4,  &g_vec_specular, 1);
+    s.setValue("g_vLight",          kgmShader::Val_Vec4, &v_light, 1);
+    s.setValue("g_vLightColor",     kgmShader::Val_Vec4, &v_light_color, 1);
+    s.setValue("g_vLightDirection", kgmShader::Val_Vec4, &v_light_direction, 1);
+    s.setValue("g_vEye",            kgmShader::Val_Vec3, &m_camera->mPos, 1);
+    s.setValue("g_vEyeDir",         kgmShader::Val_Vec3, &m_camera->mDir, 1);
+
+    s.start();
+    s.useValues();
 
     render(msh);
+
+    s.stop();
   }
 
   render((kgmShader*)null);
@@ -749,7 +758,7 @@ void kgmGraphics::render(kgmVisual* visual)
     u32  pmt;
 
     if(!msh) {
-      msh = visual->getShape();
+      msh = (kgmMesh*) visual->getShape();
 
       if(!msh)
         return;

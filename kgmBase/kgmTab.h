@@ -108,6 +108,26 @@ public:
       return true;
     }
 
+    bool next()
+    {
+      if(_Ptr && _Ptr->next) {
+        _Ptr = _Ptr->next;
+
+        return true;
+      }
+
+      if(index < object->base_size) {
+        while(!object->root[index] && index < (object->base_size - 1))
+          index++;
+
+        _Ptr = object->root[index];
+
+        index++;
+      }
+
+      return (_Ptr != null);
+    }
+
     void erase()
     {
       _Node* tmp = _Ptr;

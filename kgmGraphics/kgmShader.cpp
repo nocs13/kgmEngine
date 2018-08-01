@@ -12,8 +12,16 @@ kgmShader::kgmShader(kgmIGC* g)
             IN_MAP_COLOR | IN_MAP_NORMAL | IN_MAP_SPECULAR;
 }
 
+kgmShader::kgmShader(const kgmShader& s)
+{
+  m_gc     = s.m_gc;
+  m_input  = s.m_input;
+  m_shader = s.m_shader;
+}
+
 kgmShader::~kgmShader()
 {
+  m_values.clear();
 }
 
 void kgmShader::start()
@@ -24,6 +32,60 @@ void kgmShader::start()
 void kgmShader::stop()
 {
   m_gc->gcSetShader(0);
+}
+
+void kgmShader::setValue(const char* id, kgmShader::TypeValue type, void* data, u32 count)
+{
+  if (!id)
+    return;
+
+  Value val = {id, type, data, count};
+
+  m_values.set(id, val);
+}
+
+void kgmShader::delValue(const char* id)
+{
+  if (!id)
+    return;
+
+  kgmTab<const char*, Value>::iterator i = m_values[id];
+
+  m_values.erase(i);
+}
+
+void kgmShader::useValues()
+{
+  kgmTab<const char*, Value>::iterator i;
+
+  for(i = m_values.begin(); i.valid() && !i.isEnd(); i.next())
+  {
+    Value val = (*i);
+
+    switch(val.type)
+    {
+    case Val_Float:
+      m_gc->gcUniform(m_shader, gcunitype_float1, val.count, val.id, val.data);
+      break;
+    case Val_Vec2:
+      m_gc->gcUniform(m_shader, gcunitype_float2, val.count, val.id, val.data);
+      break;
+    case Val_Vec3:
+      m_gc->gcUniform(m_shader, gcunitype_float3, val.count, val.id, val.data);
+      break;
+    case Val_Vec4:
+      m_gc->gcUniform(m_shader, gcunitype_float4, val.count, val.id, val.data);
+      break;
+    case Val_Mtx3:
+      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx3, val.count, 0, val.id, val.data);
+      break;
+    case Val_Mtx4:
+      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx4, val.count, 0, val.id, val.data);
+      break;
+    default:
+      break;
+    }
+  }
 }
 
 void kgmShader::set(const char* id, float& v, int count)
