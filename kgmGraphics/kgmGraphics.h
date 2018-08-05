@@ -29,6 +29,7 @@
 #include "render/IconRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
+#include "render/EnvironmentRender.h"
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"
@@ -43,11 +44,12 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class FpsRender;
   friend class GuiRender;
   friend class IconRender;
-  friend class SpriteRender;
   friend class LightRender;
   friend class ColorRender;
-  friend class ParticlesRender;
+  friend class SpriteRender;
   friend class ShadowRender;
+  friend class ParticlesRender;
+  friend class EnvironmentRender;
 
 public:
   enum GraphicsQuality
@@ -90,8 +92,8 @@ public:
 
   struct Options
   {
-    bool color;
-    bool light;
+    bool color = true;
+    bool light = false;
   };
 
 protected:
@@ -137,10 +139,7 @@ protected:
 
   mtx4  location;
 
-  kgmArray<Shadow> m_shadows;
-
   kgmMaterial*  m_def_material = null;
-
 
   bool  m_depth;
   bool  m_alpha;
@@ -168,6 +167,8 @@ protected:
   mtx3 m_g_mtx_normal;
 
   gchandle m_rnd_target = null;
+
+  ShadowRender* m_rnd_shadows = null;
 
 protected:
   kgmShader*  m_shaders[32] = {0};

@@ -8,7 +8,8 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmMemory.h"
 
-#define GL_DEPTH_STENCIL_EXT GL_DEPTH_STENCIL_NV
+#define GL_DEPTH_STENCIL_EXT             GL_DEPTH_STENCIL_NV
+#define GL_DEPTH_STENCIL_ATTACHMENT_EXT  0x821A
 
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
@@ -814,7 +815,7 @@ void kgmOGL::gcSetTexture(u32 stage, gchandle t)
 }
 
 // TARGET
-gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
+gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d, bool s)
 {
   GLu32 buffer = 0;
   glGenFramebuffers(1, &buffer);
@@ -873,8 +874,17 @@ gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
   {
     glGenRenderbuffers(1, &depth);
     glBindRenderbuffer(GL_RENDERBUFFER_EXT, depth);
-    glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, w, h);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+
+    if (s)
+    {
+      glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_STENCIL_EXT, w, h);
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+    }
+    else
+    {
+      glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, w, h);
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+    }
   }
 
   GLu32 stencil = 0;
@@ -913,6 +923,7 @@ gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d)
   rb->stencil = stencil;
   rb->width   = w;
   rb->height  = h;
+  rb->cmside  = 0;
 
   return (gchandle) rb;
 }
@@ -935,9 +946,21 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
   case gctype_tex2d:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
     break;
+  case gctype_texcube:
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X + rb->cmside, (GLint) (size_t) tex, 0);
+
+    ++rb->cmside;
+
+    if (rb->cmside > 5)
+      rb->cmside = 0;
+    break;
   default:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint)            0, 0);
   };
+
+  rb->type = type;
+  rb->color = (GLint) (size_t) tex;
 
 #ifdef DEBUG
   GLenum err = glGetError();
@@ -977,11 +1000,15 @@ void kgmOGL::gcSetTarget(gchandle t)
     glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
     glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
 
+    m_renderbuffer = null;
+
     return;
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
+
+  m_renderbuffer = rb;
 
 #ifdef DEBUG
   GLenum err = glGetError();
@@ -994,15 +1021,17 @@ void kgmOGL::gcSetTarget(gchandle t)
 }
 
 //CLIP PLANE
-void kgmOGL::gcClipPlane(bool en, u32 id, float* par)
+void kgmOGL::gcClipPlane(bool en, u32 id, f64 plane[4])
 {
-  GLdouble c[4] = {par[0], par[1], par[2], par[3]};
-
-#ifdef ANDROID
-  (void)c;
-#else
-  glClipPlane(GL_CLIP_PLANE0 + id, c);
-#endif
+  if (!en)
+  {
+    glDisable(GL_CLIP_PLANE0 + id);
+  }
+  else
+  {
+    glEnable(GL_CLIP_PLANE0 + id);
+    glClipPlane(GL_CLIP_PLANE0 + id, plane);
+  }
 }
 
 //STENCIL

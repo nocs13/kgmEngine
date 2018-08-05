@@ -23,6 +23,7 @@ protected:
 
 public:
   BaseRender(kgmGraphics* gr);
+  virtual ~BaseRender(){}
 
   virtual void build() {}
   virtual void clear() {}

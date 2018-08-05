@@ -22,7 +22,6 @@ kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
   m_color     = mtl.m_color;
   m_specular  = mtl.m_specular;
   m_shininess = mtl.m_shininess;
-  m_shader    = mtl.m_shader;
 
   m_gc = mtl.m_gc;
 
@@ -106,11 +105,6 @@ kgmTexture* kgmMaterial::getTexSpecular()
 kgmTexture* kgmMaterial::getTexEnvironment()
 {
   return m_tex_environment;
-}
-
-void kgmMaterial::setShader(kgmShader* shader)
-{
-  m_shader = shader;
 }
 
 kgmString kgmMaterial::blendToString(Blend blend)

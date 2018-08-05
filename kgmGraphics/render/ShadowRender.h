@@ -6,8 +6,13 @@
 
 class ShadowRender: public BaseRender
 {
+  gchandle m_target = null;
+  kgmArray<gchandle> m_textures;
+  kgmArray<mtx4>     m_mvps;
+
 public:
   ShadowRender(kgmGraphics* gr);
+  ~ShadowRender();
 
   void render();
 };

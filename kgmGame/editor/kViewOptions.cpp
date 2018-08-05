@@ -386,9 +386,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g->setText("Shader");
   g = guiTextShader = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
 
-  if(mtl->getShader())
-    g->setText(mtl->getShader()->m_id);
-
   btn = new kgmGuiButton(tmaterial, 125, y_coord, 50, 20);
   btn->setText("select");
   slotSelectShader.connect(this, (Slot<kViewOptionsForMaterial, int>::FN) &kViewOptionsForMaterial::onSelectShader, &btn->sigClick);
@@ -408,7 +405,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   //slotSelectAlpha.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onAlpha, &alpha->sigClick);
   kgmGuiCheck* shade = new kgmGuiCheck(tmaterial, 62, y_coord, 60, 20);
   shade->setText("Shade");
-  shade->setCheck(mtl->shade());
+  //shade->setCheck(mtl->shade());
   slotSelectShade.connect(this, (Slot<kViewOptionsForMaterial, bool>::FN) &kViewOptionsForMaterial::onShade, &shade->sigClick);
   kgmGuiCheck* depth = new kgmGuiCheck(tmaterial, 124, y_coord, 60, 20);
   depth->setText("Depth");
@@ -441,7 +438,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
 
 void kViewOptionsForMaterial::onReset(int)
 {
-  mtl->setShader(null);
   mtl->setTexColor(null);
   mtl->setTexNormal(null);
   mtl->setTexSpecular(null);
@@ -525,7 +521,7 @@ void kViewOptionsForMaterial::onSelectTexture(kgmGuiFileDialog* fd)
   switch (mode)
   {
     case Mode_Shader:
-      mtl->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
+      //mtl->setShader(kgmIGame::getGame()->getResources()->getShader(fd->getFile()));
       guiTextShader->setText(fd->getFile());
       break;
     case Mode_Color:
@@ -670,7 +666,7 @@ void kViewOptionsForMaterial::onShade(bool a)
   if(!mtl)
     return;
 
-  mtl->shade(a);
+  //mtl->shade(a);
 }
 
 void kViewOptionsForMaterial::onDepth(bool a)

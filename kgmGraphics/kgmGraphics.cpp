@@ -160,8 +160,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 
   m_def_material = new kgmMaterial();
-  m_def_material->setShader(null);
-  m_def_material->shade(false);
   m_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
   m_def_material->m_specular = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -193,20 +191,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     m_def_light = (INode*) new kgmNodeLight();
 
-    g_fbo = g->gcGenTarget(512, 512, true);
+    g_fbo = g->gcGenTarget(512, 512, true, false);
     g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
 
-    m_shadows.alloc(MAX_SHADOWS);
-
-    for (u32 i = 0; i < MAX_SHADOWS; i++)
-    {
-      m_shadows[i].valid = false;
-      m_shadows[i].w = m_shadows[i].h = 512;
-      m_shadows[i].fbo = g->gcGenTarget(m_shadows[i].w, m_shadows[i].h, false);
-      m_shadows[i].tex = g->gcGenTexture(null, 512, 512, 24, gctype_texdepth);
-      g->gcTexTarget(m_shadows[i].fbo, m_shadows[i].tex, gctype_texdepth);
-    }
+    m_rnd_shadows = new ShadowRender(this);
   }
 
 
@@ -239,12 +228,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 kgmGraphics::~kgmGraphics()
 {
   gc->gcFreeTarget(g_fbo);
-
-  for (u32 i = 0; i < MAX_SHADOWS; i++)
-  {
-    gc->gcFreeTarget(m_shadows[i].fbo);
-    gc->gcFreeTexture(m_shadows[i].tex);
-  }
 
   delete m_r_fps;
   delete m_r_gui;
@@ -495,29 +478,6 @@ void kgmGraphics::render()
 
   m_a_particles_count = 0;
 
-  m_shadows[0].valid = true;
-
-  m_shadows[0].lpos  = m_a_light->getNodePosition();
-  m_shadows[0].ldir  = vec3(.1, .1, -1);
-  m_shadows[0].ldir.normalize();
-
-  {
-    mtx4 mp, mv, mb;
-
-    f32 b[16] = {0.5, 0, 0, 0,
-                 0,   0.5, 0, 0,
-                 0,   0,   0.5, 0,
-                 0.5, 0.5, 0.5, 1};
-
-    mp.perspective(PI / 6, 1.0, 1.0, 20);
-    mv.lookat(m_shadows[0].lpos, m_shadows[0].ldir, vec3(0, 0, 1));
-    mb = mtx4(b);
-
-    m_shadows[0].mv = mv;
-    m_shadows[0].mp = mp;
-    m_shadows[0].mvp = /*mb */ mv * mp;
-  }
-
   for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
   {
     if(!(*i)->isNodeValid())
@@ -538,8 +498,10 @@ void kgmGraphics::render()
   LightRender lr(this);
   lr.render();
 
-  ShadowRender sr(this);
+  //ShadowRender sr(this);
   //sr.render();
+
+  m_rnd_shadows->render();
 
   //draw particles
   ParticlesRender pr(this);

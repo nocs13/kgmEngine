@@ -1055,7 +1055,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         if(xml.attribute("value", data))
         {
-          mtl->setShader(m_resources->getShader(value));
+          //mtl->setShader(m_resources->getShader(value));
         }
       }
       else if(id == "Position")

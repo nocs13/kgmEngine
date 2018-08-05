@@ -124,13 +124,9 @@ kEditor::kEditor(kgmGameBase* g)
     game->guiAdd(menu);
 
     mtlLines = new kgmMaterial();
-    mtlLines->setShader(null);
-    mtlLines->shade(false);
     mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
 
     mtlPivot = new kgmMaterial();
-    mtlPivot->setShader(null);
-    mtlPivot->shade(false);
     mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
 
     gridline = new kGridline(100);

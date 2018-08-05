@@ -106,6 +106,7 @@ public:
   {
     GLu32 frame, color, depth, stencil;
     u16   width, height;
+    u32   type, cmside;
   };
 
   struct Texture
@@ -180,7 +181,7 @@ public:
   void     gcSetTexture(u32 stage, gchandle tex);
 
   // TARGET
-  gchandle gcGenTarget(u32 w, u32 h, bool depth);
+  gchandle gcGenTarget(u32 w, u32 h, bool depth, bool stencil);
   bool     gcTexTarget(gchandle tar, gchandle tex, u32 type);
   void     gcFreeTarget(gchandle t);
   void     gcSetTarget(gchandle  t);
@@ -205,7 +206,7 @@ public:
   void  gcDepth(bool en, bool mask, u32 mode);
 
   //CLIP PLANE
-  void  gcClipPlane(bool, u32 id, float*);
+  void  gcClipPlane(bool, u32 id, f64 plane[4]);
 
   //STENCIL
   void  gcStencil(bool en, u32 func, u32 mask, u32 ref,

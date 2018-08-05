@@ -391,6 +391,9 @@ class kgmMaterial:
     self.env_viewpoint = ''
     self.env_image = ''
     self.env_intensity = 0.0
+    self.sh_off  = mtl.use_shadeless
+    self.sh_cast = mtl.use_cast_shadows
+    self.sh_recv = mtl.use_shadows
 
     print('tranparency_method ' + mtl.transparency_method)
     if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
@@ -529,6 +532,8 @@ class kgmMesh:
 
     self.position = mtx.to_translation()
     self.rotation = mtx.to_euler()
+
+    self.mtl_name = ""
 
     if len(mesh.materials) > 0:
         self.mtl_name = mesh.materials[0].name
@@ -885,6 +890,7 @@ def export_material(file, o):
     "%.5f" % o.specular[2]) + "'/>\n")
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
   file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
+  file.write("  <Shadow shadeless='" + str(o.sh_off) + "' cast='" + str(o.sh_cast) + "' receive='" + str(o.sh_recv) + "'/>\n")
 
   if o.depth is False:
     file.write("  <Depth value='0'/>\n")

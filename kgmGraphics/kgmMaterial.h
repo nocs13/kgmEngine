@@ -149,7 +149,9 @@ public:
 private:
   bool  m_cull  = true;
   bool  m_depth = true;
-  bool  m_shade = true;
+
+  bool  m_shade_cast    = false;
+  bool  m_shade_receive = false;
 
   Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
@@ -168,8 +170,6 @@ private:
 
 public:
   Color  m_color, m_specular;
-
-  kgmShader*  m_shader = null;
 
   u32  m_flags;
 
@@ -219,11 +219,6 @@ public:
     m_type = t;
   }
 
-  kgmShader* getShader() const
-  {
-    return m_shader;
-  }
-
   float transparency() const
   {
     return 1.0f - m_color.a;
@@ -267,14 +262,24 @@ public:
     m_blend = b;
   }
 
-  bool shade() const
+  bool shade_cast() const
   {
-    return m_shade;
+    return m_shade_cast;
   }
 
-  void shade(bool s)
+  void shade_cast(bool s)
   {
-    m_shade = s;
+    m_shade_cast = s;
+  }
+
+  bool shade_receive() const
+  {
+    return m_shade_receive;
+  }
+
+  void shade_receive(bool s)
+  {
+    m_shade_receive = s;
   }
 
   bool cull() const

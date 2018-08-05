@@ -434,9 +434,9 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
     if(!strcmp(key, "map_texture")){
       mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
     }
-    if(!strcmp(key, "shader")){
-      mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
-    }
+    //if(!strcmp(key, "shader")){
+    //  mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
+    //}
   }
 
   delete str;
@@ -506,7 +506,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     else if(id == "Shader")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
+      //mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
     }
   }
 

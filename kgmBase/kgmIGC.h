@@ -170,7 +170,7 @@ public:
   virtual void     gcSetTexture(u32 stage, gchandle t) = 0;
 
   // TARGET
-  virtual gchandle gcGenTarget(u32 w, u32 h, bool depth) = 0;
+  virtual gchandle gcGenTarget(u32 w, u32 h, bool depth, bool stencil) = 0;
   virtual bool     gcTexTarget(gchandle tar, gchandle tex, u32 type) = 0;
   virtual void     gcFreeTarget(gchandle t) = 0;
   virtual void     gcSetTarget(gchandle t) = 0;
@@ -191,6 +191,9 @@ public:
 
   // DEPTH
   virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
+
+  // CLIPPING
+  virtual void  gcClipPlane(bool en, u32 i, f64 plane[4]) = 0;
 
   // VERTEX & INDEX BUFFERS
   virtual gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
