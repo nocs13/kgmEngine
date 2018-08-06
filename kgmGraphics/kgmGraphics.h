@@ -1,5 +1,6 @@
 #pragma once
 #include "../kgmBase/kgmIGC.h"
+#include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmIResources.h"
 
@@ -111,6 +112,8 @@ protected:
   kgmList<INode*>      m_lights;
   kgmList<INode*>      m_meshes;
   kgmList<INode*>      m_particles;
+
+  kgmMap<INode*, gchandle> m_environments;
 
   //active nodes.
   kgmArray<INode*> m_a_lights;
@@ -252,10 +255,26 @@ public:
     if (!nod)
       return;
 
+    kgmMaterial* mtl = null;
+
     switch(nod->getNodeType())
     {
     case  NodeMesh:
       m_meshes.add(nod);
+      mtl = nod->getNodeMaterial();
+
+      if (mtl && mtl->envType() && mtl->envType() != kgmMaterial::EnvironmentTypeImage)
+      {
+        gchandle map = null;
+
+        if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
+          map = gc->gcGenTexture(null, 256, 256, 3, gctype_tex2d);
+        else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
+          map = gc->gcGenTexture(null, 512, 512, 3, gctype_texcube);
+
+        if (map)
+          m_environments.set(nod, map);
+      }
       break;
     case NodeLight:
       m_lights.add(nod);

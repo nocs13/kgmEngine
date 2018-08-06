@@ -1126,12 +1126,12 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   # to the class instance from the operator settings before calling.
 
   # TODO, add better example props
-  filename_ext = ".kgm"
-  filter_glob = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, )
+  filename_ext = "" #".kgm"
+  filter_glob = StringProperty(default="*.*", maxlen=1024, options={'HIDDEN'}, )
   # filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
   exp_meshes     = BoolProperty(name="Export Meshes", description="", default=True)
-  exp_lights     = BoolProperty(name="Export Lights", description="", default=False)
-  exp_materials  = BoolProperty(name="Export Materials", description="", default=False)
+  exp_lights     = BoolProperty(name="Export Lights", description="", default=True)
+  exp_materials  = BoolProperty(name="Export Materials", description="", default=True)
   exp_cameras    = BoolProperty(name="Export Cameras", description="", default=False)
   exp_armatures  = BoolProperty(name="Export Armatures", description="", default=False)
   exp_animations = BoolProperty(name="Export Animations", description="", default=False)
@@ -1230,8 +1230,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     print("Materials: " + str(len(scene_materials)))
 
     # path = self.filepath
-    if not self.filepath.lower().endswith(".kgm"):
-      self.filepath += ".kgm"
+    #if not self.filepath.lower().endswith(".kgm"):
+    #  self.filepath += ".kgm"
 
     file = open(self.filepath, "w")
     file.write("<?xml version='1.0'?>\n")
@@ -1474,7 +1474,7 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
 
 
 def menu_func(self, context):
-    self.layout.operator(kgmExport.bl_idname, text="Karakal game map (.kgm)")
+    self.layout.operator(kgmExport.bl_idname, text="Karakal game map")
 
 def menu_kgm_imp_set_func(self, context):
     self.layout.operator(kgmImport.bl_idname, text="Karakal game settings (.kgs)", icon='PLUGIN')
