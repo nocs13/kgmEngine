@@ -721,6 +721,14 @@ kgmUnit* kgmGameMap::next()
 
         node->quaternion(q);
       }
+      else if(id == "Scale")
+      {
+        vec3 v;
+        m_xml->attribute("value", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        node->scale(v);
+      }
       else if(id == "Color")
       {
         xmlAttr(m_xml, "value", vfloat3);
@@ -776,8 +784,62 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vtext);
         ((kgmMaterial*)data)->setTexSpecular(m_game->getResources()->getTexture(vtext));
       }
+      else if(id == "map_environment")
+      {
+        xmlAttr(m_xml, "type", vtext);
+
+        if (vtext == "Animated")
+        {
+          ((kgmMaterial*)data)->envType(kgmMaterial::EnvironmentTypeAnimate);
+        }
+        else if (vtext == "Static")
+        {
+          ((kgmMaterial*)data)->envType(kgmMaterial::EnvironmentTypeStatic);
+        }
+        else if (vtext == "Image")
+        {
+          ((kgmMaterial*)data)->envType(kgmMaterial::EnvironmentTypeImage);
+
+          xmlAttr(m_xml, "image", vtext);
+          ((kgmMaterial*)data)->setTexEnvironment(m_game->getResources()->getTexture(vtext));
+        }
+        else
+        {
+          ((kgmMaterial*)data)->envType(kgmMaterial::EnvironmentTypeNone);
+        }
+
+        xmlAttr(m_xml, "mapping", vtext);
+
+        if (vtext == "Cube") {
+          ((kgmMaterial*)data)->envMapping(kgmMaterial::EnvironmentMappingCube);
+        } else if (vtext == "Plane") {
+          ((kgmMaterial*)data)->envMapping(kgmMaterial::EnvironmentMappingPlane);
+        }
+
+        xmlAttr(m_xml, "intensity", vfloat);
+        ((kgmMaterial*)data)->envIntensity(vfloat);
+      }
+      else if(id == "Shadow")
+      {
+        xmlAttr(m_xml, "shadeless", vtext);
+
+        if (vtext == "True" ||  vtext == "true")
+          ((kgmMaterial*)data)->shading(false);
+
+        xmlAttr(m_xml, "cast", vtext);
+
+        if (vtext == "True" ||  vtext == "true")
+          ((kgmMaterial*)data)->shade_cast(true);
+
+        xmlAttr(m_xml, "receive", vtext);
+
+        if (vtext == "True" ||  vtext == "true")
+          ((kgmMaterial*)data)->shade_receive(true);
+      }
       else if(id == "Shader")
       {
+        xmlAttr(m_xml, "value", vtext);
+        ((kgmMaterial*)data)->type(kgmMaterial::stringToType(vtext));
       }
       else if(id == "Mesh")
       {

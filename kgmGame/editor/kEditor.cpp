@@ -130,12 +130,12 @@ kEditor::kEditor(kgmGameBase* g)
     mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
 
     gridline = new kGridline(100);
-    gridline->rebound();
+    gridline->rebuild();
 
     graphics->set(gridline);
 
     pivot = new kPivot();
-    pivot->rebound();
+    pivot->rebuild();
 
     graphics->set(pivot);
 

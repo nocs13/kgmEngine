@@ -183,14 +183,16 @@ void kgmUnit::update(u32 ms)
     }
     else
     {
-      mtx4 rt, tr;
+      mtx4 rt, tr, sc;
 
       tr.identity();
-      //tr.translate(m_position);
+      tr.translate(m_position);
       rt.identity();
-      //rt.rotate(m_rotation);
+      rt.rotate(m_rotation);
+      sc.identity();
+      sc.scale(m_scale);
 
-      tm = rt * tr;
+      tm = rt * tr * sc;
     }
   }
 

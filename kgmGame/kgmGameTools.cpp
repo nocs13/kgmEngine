@@ -1049,7 +1049,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
   materials.clear();
 
-  m->rebound();
+  m->rebuild();
 
   return m;
 }

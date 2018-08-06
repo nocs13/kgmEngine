@@ -182,7 +182,6 @@ kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
   s_text(TypeOcean);
   s_text(TypeGlass);
   s_text(TypeFlame);
-  s_text(TypeMirror);
   s_text(TypeIce);
 #undef s_text
 
@@ -201,7 +200,6 @@ kgmMaterial::Type kgmMaterial::stringToType(kgmString str)
   s_type(TypeOcean);
   s_type(TypeGlass);
   s_type(TypeFlame);
-  s_type(TypeMirror);
   s_type(TypeIce);
 #undef s_type
 

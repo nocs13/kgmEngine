@@ -946,6 +946,11 @@ void kgmGraphics::render(kgmMaterial* m)
     gc->gcSetTexture(2, g_tex_white);
     tspecular = g_tex_white;
   }
+
+  if (m->envType() != kgmMaterial::EnvironmentTypeNone)
+  {
+
+  }
 }
 
 void kgmGraphics::render(kgmShader* s)

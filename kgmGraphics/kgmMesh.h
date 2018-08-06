@@ -141,6 +141,7 @@ public:
 
   u32     m_group;    // object group id
   box3    m_bound;
+  vec3    m_normal;   // average normal.
 
   kgmString m_mtlId;  // base material name
 
@@ -152,10 +153,8 @@ public:
   kgmMesh(const kgmMesh&);
   ~kgmMesh();
 
+  void rebuild();
   int  genLods(int);
-  void rebound();  //recalculate bound box
-  box3 bound();
-  vec3 normal();   //calculate average normal
 
   Vertex* vAlloc(u32 count, FVF f=FVF_P_N_C);
   Face*   fAlloc(u32 count, FFF f=FFF_16);
@@ -163,6 +162,16 @@ public:
   u32     fsize();
   u32     fvf();
   u32     fff();
+
+  box3 bound() const
+  {
+    return m_bound;
+  }
+
+  vec3 normal()
+  {
+    return m_normal;
+  }
 
   virtual Vertex* vertices() const
   {

@@ -12,6 +12,7 @@ kgmMesh::kgmMesh()
   m_rtype = RT_TRIANGLE;
   m_group = 0;
   m_bound = box3();
+  m_normal = vec3(0, 0, 0);
 }
 
 kgmMesh::kgmMesh(kgmMesh* m)
@@ -26,6 +27,7 @@ kgmMesh::kgmMesh(kgmMesh* m)
   m_fff = m_linked->m_fff;
   m_rtype = m_linked->m_rtype;
   m_bound = m_linked->m_bound;
+  m_normal = m_linked->m_normal;
 }
 
 kgmMesh::kgmMesh(const kgmMesh& msh)
@@ -37,6 +39,8 @@ kgmMesh::kgmMesh(const kgmMesh& msh)
   m_fvf    = msh.m_fvf;
   m_fff    = msh.m_fff;
   m_group  = msh.m_group;
+  m_bound  = msh.m_bound;
+  m_normal = msh.m_normal;
 
   vAlloc(m_vcount, (kgmMesh::FVF)m_fvf);
   fAlloc(m_fcount, (kgmMesh::FFF)m_fff);
@@ -54,10 +58,8 @@ kgmMesh::~kgmMesh()
     free(m_faces);
 }
 
-void kgmMesh::rebound()
+void kgmMesh::rebuild()
 {
-  m_bound = box3();
-
   if (m_linked)
     return;
 
@@ -87,16 +89,44 @@ void kgmMesh::rebound()
 
   m_bound.min = min;
   m_bound.max = max;
-}
 
-box3 kgmMesh::bound()
-{
-  return m_bound;
-}
+  u8* f     = (u8*)m_faces;
 
-vec3 normal()
-{
-  return vec3();
+  if (!f)
+    return;
+
+  m_normal = vec3(0, 0, 0);
+
+  v = (u8*) m_vertices;
+
+  for (i = 0; i < m_fcount; i++)
+  {
+    triangle tr;
+    Face*    fc = (Face*)f;
+
+    Vertex *v1, *v2, *v3;
+
+    if (m_fvf == FFF_16) {
+      v1 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->a);
+      v2 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->b);
+      v3 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->c);
+      //tr = triangle((Face_16*)f)->a, (Face_16*)f)->b, (Face_16*)f)->c);
+    } else {
+      v1 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->a);
+      v2 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->b);
+      v3 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->c);
+      //tr = triangle((Face_32*)f)->a, (Face_32*)f)->b, (Face_32*)f)->c);
+    }
+
+    tr = triangle(v1->pos, v2->pos, v3->pos);
+
+    vec3 n = tr.normal();
+
+    n.normalize();
+    m_normal = m_normal + n;
+
+    f += fsize();
+  }
 }
 
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)

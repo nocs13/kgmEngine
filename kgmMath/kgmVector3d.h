@@ -1,7 +1,8 @@
 #pragma once
 
 // VECTOR 3D
-template <class T> class kgmVector3d{
+template <class T> class kgmVector3d
+{
 public:
   T x, y, z;
 public:
@@ -58,7 +59,7 @@ public:
   }
 
   void set(T a, T b, T c){
-   x = a, y = b, z = c;
+    x = a, y = b, z = c;
   }
 
   T length(){

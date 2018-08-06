@@ -23,7 +23,7 @@ kgmShape::kgmShape(f32 w, f32 l)
 
   m_rtype = RT_TRIANGLE;
 
-  rebound();
+  rebuild();
 }
 
 kgmShape::kgmShape(f32 w, f32 l, f32 h)
@@ -74,7 +74,7 @@ kgmShape::kgmShape(f32 w, f32 l, f32 h)
 
   m_rtype = RT_TRIANGLE;
 
-  rebound();
+  rebuild();
 }
 
 kgmMesh::Vertex* kgmShape::vAlloc(u32 count, FVF f)

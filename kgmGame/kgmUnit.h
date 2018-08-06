@@ -64,6 +64,7 @@ private:
   u32 m_birth;
   u32 m_living;
 
+  vec3 m_scale;
   vec3 m_position;
   vec3 m_rotation;
   quat m_quaternion;
@@ -286,8 +287,8 @@ public:
   {
     if(m_body)
       m_body->translate(v.x, v.y, v.z);
-    else
-      m_position = v;
+
+    m_position = v;
 
     if (m_object && m_type == Particles)
       ((kgmParticles*)m_object)->position(v);
@@ -324,6 +325,18 @@ public:
   {
     if(m_body)
       m_body->rotate(q);
+  }
+
+  quat scale()
+  {
+    return m_scale;
+  }
+
+  void scale(vec3& s)
+  {
+    m_scale = s;
+
+    m_transform.scale(s);
   }
 
   mtx4 transform()

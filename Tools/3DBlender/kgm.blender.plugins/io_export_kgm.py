@@ -394,6 +394,12 @@ class kgmMaterial:
     self.sh_off  = mtl.use_shadeless
     self.sh_cast = mtl.use_cast_shadows
     self.sh_recv = mtl.use_shadows
+    self.refraction = 1.0;
+
+    if hasattr(mtl, 'raytrace_mirror') is True:
+      if mtl.raytrace_mirror is not None:
+        self.refraction = mtl.raytrace_mirror.fresnel
+
 
     print('tranparency_method ' + mtl.transparency_method)
     if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
@@ -532,6 +538,7 @@ class kgmMesh:
 
     self.position = mtx.to_translation()
     self.rotation = mtx.to_euler()
+    self.scale    = mtx.to_scale()
 
     self.mtl_name = ""
 
@@ -939,6 +946,7 @@ def export_camera(file, o):
 def export_mesh_data(file, o):
   v = o.position
   r = o.rotation
+  s = o.scale
 
   file.write(" <Mesh name='" + o.name + "'")
 
@@ -949,6 +957,7 @@ def export_mesh_data(file, o):
 
   file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
+  file.write("  <Scale value='"    + str("%.5f" % s.x) + " " + str("%.5f" % s.y) + " " + str("%.5f" % s.z) + "'/>\n")
 
   file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
   for v in o.vertices:
@@ -978,12 +987,14 @@ def export_mesh_node(file, o):
   mtx = o.matrix_local
   v = mtx.to_translation()
   r = mtx.to_euler()
+  s = mtx.to_scale()
   file.write(" <Visual type='mesh' name='" + o.name + "' proxy='" + o.data.name + "'>\n")
   for m in o.data.materials:
     file.write("  <Material name='" + m.name + "'/>\n")
 
   file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
+  file.write("  <Scale value='"    + str("%.5f" % s.x) + " " + str("%.5f" % s.y) + " " + str("%.5f" % s.z) + "'/>\n")
   file.write(" </Visual>\n")
   pass
 

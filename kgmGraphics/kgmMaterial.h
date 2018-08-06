@@ -52,20 +52,18 @@ public:
     TypeToon,
     TypePhong,
     TypeSkin,
-    TypePoor,
     TypeWater,
     TypeRiver,
     TypeOcean,
     TypeGlass,
     TypeFlame,
-    TypeMirror,
-    TypeIce,
-    TypeExtend
+    TypeIce
   };
 
   enum Environment
   {
-    EnvironmentTypeImage = 0,
+    EnvironmentTypeNone,
+    EnvironmentTypeImage,
     EnvironmentTypeStatic,
     EnvironmentTypeAnimate,
 
@@ -150,8 +148,9 @@ private:
   bool  m_cull  = true;
   bool  m_depth = true;
 
-  bool  m_shade_cast    = false;
-  bool  m_shade_receive = false;
+  bool m_shading       = true;
+  bool m_shade_cast    = false;
+  bool m_shade_receive = false;
 
   Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
@@ -163,8 +162,8 @@ private:
   kgmTexture* m_tex_specular = null;
   kgmTexture* m_tex_environment = null;
 
-  Environment m_env_type = EnvironmentTypeImage;
-  Environment m_env_mapping = EnvironmentMappingCube;
+  Environment m_env_type = EnvironmentTypeNone;
+  Environment m_env_mapping = EnvironmentMappingPlane;
   vec3        m_env_viewpoint = vec3(0, 0, 0);
   f32         m_env_intensity = 1.0;
 
@@ -260,6 +259,16 @@ public:
   void blend(Blend b)
   {
     m_blend = b;
+  }
+
+  bool shading() const
+  {
+    return m_shading;
+  }
+
+  void shading(bool s)
+  {
+    m_shading = s;
   }
 
   bool shade_cast() const

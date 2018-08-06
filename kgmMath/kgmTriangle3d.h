@@ -5,7 +5,7 @@ template <class T> class kgmTriangle3d
 {
 public:
   kgmVector3d<T> pt[3];
-  kgmPlane3d<T> plane;
+  kgmPlane3d<T>  plane;
 
 public:
   kgmTriangle3d()
@@ -40,5 +40,10 @@ public:
   bool intersect(kgmVector3d<T> v, float r)
   {
     return false;
+  }
+
+  kgmVector3d<T> normal()
+  {
+    return plane.normal();
   }
 };
