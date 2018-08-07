@@ -857,8 +857,13 @@ kgmUnit* kgmGameMap::next()
 
           if (mesh && node)
             node->set(mesh);
-        }else if(ntype == "mesh")
+        }
+        else if(ntype == "mesh")
         {
+          kgmMesh* m = (kgmMesh*) node->getNodeObject();
+
+          m->rebuild();
+
           closed = true;
 
           break;

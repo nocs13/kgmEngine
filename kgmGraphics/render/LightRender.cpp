@@ -43,6 +43,11 @@ void LightRender::render()
     gr->setWorldMatrix(m);
 
     gr->render(mtl);
+    
+    if (mtl->envType())
+    {
+      
+    }
 
     for(s32 j = 0; j < gr->m_a_light_count; j++)
     {
@@ -59,7 +64,13 @@ void LightRender::render()
         gc->gcBlend(false, 0, gcblend_one, gcblend_one);
     }
 
-    gr->render(mtl);
+    gr->render((kgmMaterial*)null);
+    gr->render((kgmShader*)null);
+
+    if (mtl->envType() != kgmMaterial::EnvironmentTypeNone)
+    {
+      gr->m_rnd_environment->render(nod);
+    }
   }
 
   gc->gcBlend(false, 0, null, null);

@@ -3,10 +3,16 @@
 
 #include "BaseRender.h"
 #include "../kgmCamera.h"
+#include "../kgmIGraphics.h"
 
 class EnvironmentRender: public BaseRender
 {
-  gchandle m_target = null;
+public:
+  gchandle   m_target   = null;
+  gchandle   m_tx_plane = null;
+  gchandle   m_tx_cube  = null;
+  kgmShader* m_sd_cube  = null;
+  kgmShader* m_sd_plane = null;
 
 public:
   EnvironmentRender(kgmGraphics* gr);
@@ -14,7 +20,9 @@ public:
 
   void render();
 
+  void render(kgmIGraphics::INode*);
   void render(vec3, box, gchandle);
+  void render(vec3, vec3, f32, gchandle);
 
   void prepare(kgmCamera&, vec3, f32, u32);
 };

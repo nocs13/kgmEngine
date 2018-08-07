@@ -425,7 +425,7 @@ class kgmMaterial:
 
         if TextureSlot.texture.environment_map.mapping == "PLANE":
           self.env_mapping = 'Plane'
-          self.env_viewpoint = TextureSlot.texture.viewpoint_object
+          self.env_viewpoint = TextureSlot.texture.environment_map.viewpoint_object
 
         if TextureSlot.texture.environment_map.source == "ANIMATED":
           self.env_source = 'Animated'
@@ -914,8 +914,8 @@ def export_material(file, o):
   if (hasattr(o, 'shader')):
     file.write("  <Shader value='" + o.shader + "'/>\n")
   if hasattr(o, 'map_environment') and o.map_environment is not False:
-    file.write("  <map_environment type='" + o.env_source + "' mapping='" + o.env_mapping + "' viewpoint='" + o.env_viewpoint \
-                  + "' image='" + o.env_image + "' intensity='" + toSnum(o.env_intensity) + "' />\n")
+    file.write("  <map_environment type='" + o.env_source + "' mapping='" + o.env_mapping + "' viewpoint='" + str(o.env_viewpoint) \
+                  + "' image='" + str(o.env_image) + "' intensity='" + toSnum(o.env_intensity) + "' />\n")
   file.write(" </Material>\n")
 
 

@@ -2,5 +2,4 @@
 
 kgmNodeVisual::kgmNodeVisual()
 {
-
 }

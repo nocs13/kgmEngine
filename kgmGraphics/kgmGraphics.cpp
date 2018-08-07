@@ -195,7 +195,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
 
-    m_rnd_shadows = new ShadowRender(this);
+    m_rnd_shadows     = new ShadowRender(this);
+    m_rnd_environment = new EnvironmentRender(this);
   }
 
 
@@ -228,6 +229,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 kgmGraphics::~kgmGraphics()
 {
   gc->gcFreeTarget(g_fbo);
+
+  if (m_rnd_shadows)
+    delete m_rnd_shadows;
+
+  if (m_rnd_environment)
+    delete m_rnd_environment;
 
   delete m_r_fps;
   delete m_r_gui;
@@ -379,6 +386,46 @@ void kgmGraphics::resize(float width, float height)
 
   g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);
+}
+
+void kgmGraphics::add(INode* nod)
+{
+  if (!nod)
+    return;
+
+  kgmMaterial* mtl = null;
+
+  switch(nod->getNodeType())
+  {
+  case  NodeMesh:
+    m_meshes.add(nod);
+    mtl = nod->getNodeMaterial();
+
+    if (mtl && mtl->envType() && mtl->envType() != kgmMaterial::EnvironmentTypeImage)
+    {
+      gchandle map = null;
+
+      if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
+        map = gc->gcGenTexture(null, 256, 256, 3, gctype_tex2d);
+      else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
+        map = gc->gcGenTexture(null, 512, 512, 3, gctype_texcube);
+
+      if (map)
+        m_environments.set(nod, map);
+    }
+    break;
+  case NodeLight:
+    m_lights.add(nod);
+    break;
+  case NodeParticles:
+    m_particles.add(nod);
+
+    if (nod->getNodeObject())
+    {
+      ((kgmParticles*)nod->getNodeObject())->camera(m_camera);
+    }
+    break;
+  }
 }
 
 void kgmGraphics::render()
@@ -540,6 +587,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
+  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, m_rnd_environment->m_tx_plane);
 
   render_2d();
 
@@ -566,7 +614,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 {
   //prepare for render
   gc->gcSetTarget(buf);
-  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), cam.mNear, cam.mFar);
+  gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
 
@@ -692,10 +740,8 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   render((kgmShader*)null);
   render((kgmMaterial*)null);
 
-  gc->gcDepth(true, true, gccmp_lequal);
   gc->gcEnd();
-
-  gc->gcRender();
+  gc->gcSetTarget(null);
 }
 
 void kgmGraphics::render(kgmVisual* visual)

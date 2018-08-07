@@ -95,9 +95,14 @@ void kgmMesh::rebuild()
   if (!f)
     return;
 
+  v = (u8*) m_vertices;
+
+  if (!v)
+    return;
+
   m_normal = vec3(0, 0, 0);
 
-  v = (u8*) m_vertices;
+  i = 0;
 
   for (i = 0; i < m_fcount; i++)
   {
@@ -105,18 +110,21 @@ void kgmMesh::rebuild()
     Face*    fc = (Face*)f;
 
     Vertex *v1, *v2, *v3;
+    u32     f1,  f2,  f3;
 
-    if (m_fvf == FFF_16) {
-      v1 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->a);
-      v2 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->b);
-      v3 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_16*)fc)->c);
-      //tr = triangle((Face_16*)f)->a, (Face_16*)f)->b, (Face_16*)f)->c);
+    if (m_fff == FFF_16) {
+      f1 = ((Face_16*)fc)->a;
+      f2 = ((Face_16*)fc)->b;
+      f3 = ((Face_16*)fc)->c;
     } else {
-      v1 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->a);
-      v2 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->b);
-      v3 = (Vertex*) ((u8*)m_vertices + vsize() * ((Face_32*)fc)->c);
-      //tr = triangle((Face_32*)f)->a, (Face_32*)f)->b, (Face_32*)f)->c);
+      f1 = ((Face_32*)fc)->a;
+      f2 = ((Face_32*)fc)->b;
+      f3 = ((Face_32*)fc)->c;
     }
+
+    v1 = (Vertex*) ((u8*)m_vertices + vsize() * f1);
+    v2 = (Vertex*) ((u8*)m_vertices + vsize() * f2);
+    v3 = (Vertex*) ((u8*)m_vertices + vsize() * f3);
 
     tr = triangle(v1->pos, v2->pos, v3->pos);
 
@@ -127,6 +135,8 @@ void kgmMesh::rebuild()
 
     f += fsize();
   }
+
+  m_normal.normalize();
 }
 
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)

@@ -95,6 +95,8 @@ public:
   {
     bool color = true;
     bool light = false;
+
+    u32  width, height;
   };
 
 protected:
@@ -171,7 +173,8 @@ protected:
 
   gchandle m_rnd_target = null;
 
-  ShadowRender* m_rnd_shadows = null;
+  ShadowRender*      m_rnd_shadows = null;
+  EnvironmentRender* m_rnd_environment = null;
 
 protected:
   kgmShader*  m_shaders[32] = {0};
@@ -234,6 +237,8 @@ public:
   {
   }
 
+  void add(INode* nod);
+
   void add(kgmIcon* ico)
   {
     if(!ico)
@@ -248,46 +253,6 @@ public:
       return;
 
     m_guis.add(gui);
-  }
-
-  void add(INode* nod)
-  {
-    if (!nod)
-      return;
-
-    kgmMaterial* mtl = null;
-
-    switch(nod->getNodeType())
-    {
-    case  NodeMesh:
-      m_meshes.add(nod);
-      mtl = nod->getNodeMaterial();
-
-      if (mtl && mtl->envType() && mtl->envType() != kgmMaterial::EnvironmentTypeImage)
-      {
-        gchandle map = null;
-
-        if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
-          map = gc->gcGenTexture(null, 256, 256, 3, gctype_tex2d);
-        else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
-          map = gc->gcGenTexture(null, 512, 512, 3, gctype_texcube);
-
-        if (map)
-          m_environments.set(nod, map);
-      }
-      break;
-    case NodeLight:
-      m_lights.add(nod);
-      break;
-    case NodeParticles:
-      m_particles.add(nod);
-
-      if (nod->getNodeObject())
-      {
-        ((kgmParticles*)nod->getNodeObject())->camera(m_camera);
-      }
-      break;
-    }
   }
 
   void remove(kgmGui* g)

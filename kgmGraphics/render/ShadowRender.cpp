@@ -9,21 +9,21 @@ ShadowRender::ShadowRender(kgmGraphics* g)
   m_mvps.alloc(MAX_SHADOWS);
   m_textures.alloc(MAX_SHADOWS);
 
-  m_target = g->gc->gcGenTarget(512, 512, false, false);
+  m_target = gc->gcGenTarget(512, 512, false, false);
 
   for (u32 i = 0; i < MAX_SHADOWS; i++)
   {
-    m_textures[i] = g->gc->gcGenTexture(null, 512, 512, 24, gctype_texdepth);
+    m_textures[i] = gc->gcGenTexture(null, 512, 512, 24, gctype_texdepth);
   }
 }
 
 ShadowRender::~ShadowRender()
 {
-  gr->gc->gcFreeTarget(m_target);
+  gc->gcFreeTarget(m_target);
 
   for (u32 i = 0; i < MAX_SHADOWS; i++)
   {
-    gr->gc->gcFreeTexture(m_textures[i]);
+    gc->gcFreeTexture(m_textures[i]);
   }
 }
 
@@ -72,18 +72,18 @@ void ShadowRender::render()
     mv.lookat(lpos, ldir, vec3(0, 0, 1));
     m_mvps[i] = mv * mp;
 
-    gr->gc->gcSetTarget(m_target);
-    gr->gc->gcTexTarget(m_target, m_textures[i], gctype_texdepth);
+    gc->gcSetTarget(m_target);
+    gc->gcTexTarget(m_target, m_textures[i], gctype_texdepth);
 
-    gr->gc->gcSetViewport(0, 0, 512, 512, .1f, 1000.0f);
+    gc->gcSetViewport(0, 0, 512, 512, .1f, 1000.0f);
 
     gr->setProjMatrix(mp);
     gr->setViewMatrix(mv);
 
-    gr->gc->gcDepth(true, true, gccmp_lequal);
-    gr->gc->gcClear(gcflag_depth, 0x00, 1.0f, 0);
+    gc->gcDepth(true, true, gccmp_lequal);
+    gc->gcClear(gcflag_depth, 0x00, 1.0f, 0);
 
-    gr->gc->gcBegin();
+    gc->gcBegin();
 
     for(u32 j = 0; j < gr->m_a_meshes_count; j++)
     {
@@ -100,19 +100,19 @@ void ShadowRender::render()
       gr->render(m);
     }
 
-    gr->gc->gcEnd();
-    gr->gc->gcSetTarget(null);
+    gc->gcEnd();
+    gc->gcSetTarget(null);
   }
 
-  gr->gc->gcSetViewport(gr->m_viewport.x, gr->m_viewport.y,
+  gc->gcSetViewport(gr->m_viewport.x, gr->m_viewport.y,
                         gr->m_viewport.w, gr->m_viewport.h, .1f, 1000.0f);
 
   gr->setProjMatrix(gr->camera().mProj);
   gr->setViewMatrix(gr->camera().mView);
 
   cmask = 0xffffffff;
-  gr->gc->gcSet(gcpar_colormask, &cmask);
-  gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcSet(gcpar_colormask, &cmask);
+  gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
 
   for (u32 i = 0; i < count; i++)
   {
@@ -123,7 +123,7 @@ void ShadowRender::render()
       kgmMesh* m = (kgmMesh*)n->getNodeObject();
 
       gr->render(gr->m_def_material);
-      gr->gc->gcSetTexture(0, m_textures[i]);
+      gc->gcSetTexture(0, m_textures[i]);
 
       mtx4 mt = n->getNodeTransform();
       gr->setWorldMatrix(mt);
@@ -138,5 +138,5 @@ void ShadowRender::render()
     }
   }
 
-  gr->gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
 }
