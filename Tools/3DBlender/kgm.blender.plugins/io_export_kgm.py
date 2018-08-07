@@ -422,7 +422,7 @@ class kgmMaterial:
       elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
         self.map_environment = True
         self.env_intensity = TextureSlot.diffuse_factor
-
+        print("env Mapping is " + TextureSlot.texture.environment_map.mapping)
         if TextureSlot.texture.environment_map.mapping == "PLANE":
           self.env_mapping = 'Plane'
           self.env_viewpoint = TextureSlot.texture.environment_map.viewpoint_object

@@ -720,7 +720,6 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     s.setValue("g_mProj",     kgmShader::Val_Mtx4,  cam.mProj.m, 1);
     s.setValue("g_mView",     kgmShader::Val_Mtx4,  cam.mView.m, 1);
     s.setValue("g_mTran",     kgmShader::Val_Mtx4,  transform.m, 1);
-    //s.setValue("g_mNorm",     kgmShader::Val_Mtx3,  m_g_mtx_normal.m, 1);
     s.setValue("g_vColor",    kgmShader::Val_Vec4,  &g_vec_color, 1);
     s.setValue("g_vSpecular", kgmShader::Val_Vec4,  &g_vec_specular, 1);
     s.setValue("g_vLight",          kgmShader::Val_Vec4, &v_light, 1);
