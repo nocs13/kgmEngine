@@ -69,12 +69,12 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
                     gr->m_camera->mNear, gr->m_camera->mFar);
   gc->gcSetTexture(3, tx);
 
-  gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+  //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
-  sh->set("g_mProj",           gr->m_camera->mProj);
-  sh->set("g_mView",           gr->m_camera->mView);
-  sh->set("g_mTran",           m);
-  sh->set("g_vColor",          col);
+  sh->set("g_mProj",  gr->m_camera->mProj);
+  sh->set("g_mView",  gr->m_camera->mView);
+  sh->set("g_mTran",  m);
+  sh->set("g_vColor", col);
 
   sh->set("g_txEnvironment", 3);
 
@@ -138,35 +138,38 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
   {
   case 0:
     cpos = pos;
-    cpos.x += shift;
+    //cpos.x += shift;
     cdir = vec3(1, 0, 0);
     break;
   case 1:
     cpos = pos;
-    cpos.x -= shift;
+    //cpos.x -= shift;
     cdir = vec3(-1, 0, 0);
     break;
   case 2:
     cpos = pos;
-    cpos.y += shift;
+    //cpos.y += shift;
     cdir = vec3(0, 1, 0);
     break;
   case 3:
     cpos = pos;
-    cpos.y -= shift;
+    //cpos.y -= shift;
     cdir = vec3(0, -1, 0);
     break;
   case 4:
     cpos = pos;
-    cpos.z += shift;
+    //cpos.z += shift;
     cdir = vec3(0, 0, 1);
     break;
   case 5:
     cpos = pos;
-    cpos.z -= shift;
+    //cpos.z -= shift;
     cdir = vec3(0, 0, -1);
     break;
   }
 
-  cam.set(PI / 6, 1.0, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  f32  fov  = gr->m_camera->mFov;
+  f32  asp  = gr->m_camera->mAspect;
+
+  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 }

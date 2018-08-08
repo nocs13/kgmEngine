@@ -590,13 +590,13 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_plane);
+  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_cube);
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
 
     if (((kgmGameBase*)gapp->game())->getKeyState(KEY_Z))
-      gcDrawRect(m_viewport, 0xffffffff, m_rnd_environment->m_tx_plane);
+      gcDrawRect(m_viewport, 0xffffffff, m_rnd_environment->m_tx_cube);
   }
   render_2d();
 

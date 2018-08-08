@@ -264,6 +264,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 #endif
 
   glInitExt();
+  glEnable(GL_TEXTURE_CUBE_MAP);
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
@@ -732,7 +733,6 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glBindTexture(GL_TEXTURE_2D, tex);
     break;
   case gctype_texcube:
-    glEnable(GL_TEXTURE_CUBE_MAP);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     break;
@@ -764,6 +764,9 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   case gctype_texcube:
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
@@ -771,11 +774,18 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glDisable(GL_TEXTURE_CUBE_MAP);
+    //glDisable(GL_TEXTURE_CUBE_MAP);
     break;
   }
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  switch(type)
+  {
+  case gctype_texcube:
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    break;
+  default:
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
 
 #ifdef DEBUG
   kgm_log() << "Gen texture: " << (s32) tex << "\n";
@@ -807,11 +817,31 @@ void kgmOGL::gcSetTexture(u32 stage, gchandle t)
     glActiveTexture(GL_TEXTURE0 + stage);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    if (glGetError() == GL_INVALID_OPERATION)
+    {
+      glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+      if (glGetError() != GL_NO_ERROR)
+      {
+        int k = 0;
+      }
+    }
+
     return;
   }
 
   glActiveTexture(GL_TEXTURE0 + stage);
   glBindTexture(GL_TEXTURE_2D, (GLu32) (size_t) t);
+
+  if (glGetError() == GL_INVALID_OPERATION)
+  {
+    glBindTexture(GL_TEXTURE_CUBE_MAP, (GLu32) (size_t) t);
+
+    if (glGetError() != GL_NO_ERROR)
+    {
+      int k = 0;
+    }
+  }
 }
 
 // TARGET
@@ -963,11 +993,11 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
   rb->color = (GLint) (size_t) tex;
 
 #ifdef DEBUG
-  GLenum err = glGetError();
+  GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 
-  if (err != GL_NO_ERROR) {
-    kgm_log() << "Error: Cannot attach texture to framebuffer.\n";
-    kgm_log() << "Error: Eid is " << (s32) err << ".\n";
+  if (status != GL_FRAMEBUFFER_COMPLETE) {
+    kgm_log() << "Error: Attaching texture to framebuffer not completed.\n";
+    kgm_log() << "Error: " << (s32)status << ".\n";
   }
 #endif
 
