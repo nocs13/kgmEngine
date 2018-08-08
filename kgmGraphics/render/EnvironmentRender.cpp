@@ -69,7 +69,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
                     gr->m_camera->mNear, gr->m_camera->mFar);
   gc->gcSetTexture(3, tx);
 
-  gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+  //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
   sh->set("g_mProj",           gr->m_camera->mProj);
   sh->set("g_mView",           gr->m_camera->mView);
@@ -113,11 +113,13 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
 
   vec3 cpos = gr->m_camera->mPos;
   vec3 cdir = gr->m_camera->mDir;
+  f32  fov  = gr->m_camera->mFov;
+  f32  asp  = gr->m_camera->mAspect;
 
   cpos.z *= -1;
   cdir.z *= -1;
 
-  cam.set(PI / 6, 1.0, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 

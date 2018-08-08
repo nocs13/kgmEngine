@@ -22,6 +22,9 @@
 #include "kgmCamera.h"
 #include "kgmNodeLight.h"
 
+#include "../kgmGame/kgmGameApp.h"
+#include "../kgmGame/kgmGameBase.h"
+
 #include "render/LightRender.h"
 #include "render/ColorRender.h"
 #include "render/ParticlesRender.h"
@@ -587,8 +590,14 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, m_rnd_environment->m_tx_plane);
+  //gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_plane);
 
+  {
+    kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
+
+    if (((kgmGameBase*)gapp->game())->getKeyState(KEY_Z))
+      gcDrawRect(m_viewport, 0xffffffff, m_rnd_environment->m_tx_plane);
+  }
   render_2d();
 
 #ifdef DEBUG

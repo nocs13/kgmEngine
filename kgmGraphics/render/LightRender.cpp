@@ -58,7 +58,8 @@ void LightRender::render()
 
       gr->render(shader);
 
-      gr->render(msh);
+      if (mtl->envType() == kgmMaterial::EnvironmentTypeNone)
+        gr->render(msh);
 
       if(j > 0)
         gc->gcBlend(false, 0, gcblend_one, gcblend_one);
