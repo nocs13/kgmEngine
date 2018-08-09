@@ -119,8 +119,8 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   cpos.z *= -1;
   cdir.z *= -1;
 
-  //cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
-  cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  //cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 

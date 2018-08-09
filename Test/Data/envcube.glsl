@@ -9,7 +9,7 @@ void kgm_main(out vec4 pos)
    txCoord = a_Vertex;
    PxColor = g_vColor * a_Color;
    //txCoord = (transpose(g_mView * g_mTran) * vec4(normal, 0.0)).xyz;
-   txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 0.0)).xyz;
+   //txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 0.0)).xyz;
    pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
 

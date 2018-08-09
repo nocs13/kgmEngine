@@ -602,7 +602,6 @@ class kgmMesh:
           if self.hasvgroups == True:
             for g in range(0, len(mesh.vertices[vi].groups)):
               if g < 4:
-                # print(mesh.vertices[vi].groups[g].id)
                 v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
                 v.wb[g] = mesh.vertices[vi].groups[g].weight
           if uvcoord:
@@ -626,13 +625,15 @@ class kgmMesh:
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
         if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
-          iv = i
-          if (v.n[0] != vx.n[0]) or (v.n[1] != vx.n[1]) or (v.n[2] != vx.n[2]):
-            n1 = Vector((v.n[0], v.n[1], v.n[2]))
-            n2 = Vector((vx.n[0], vx.n[1], vx.n[2]))
-            n = n1 + n2
-            n.normalize()
-            v.n = [n.x, n.y, n.z]
+          #iv = i
+          #if (v.n[0] != vx.n[0]) or (v.n[1] != vx.n[1]) or (v.n[2] != vx.n[2]):
+          if (v.n[0] == vx.n[0]) or (v.n[1] == vx.n[1]) or (v.n[2] == vx.n[2]):
+            iv = i
+            #n1 = Vector((v.n[0], v.n[1], v.n[2]))
+            #n2 = Vector((vx.n[0], vx.n[1], vx.n[2]))
+            #n = n1 + n2
+            #n.normalize()
+            #v.n = [n.x, n.y, n.z]
           break
 
     if iv < 0:
