@@ -49,12 +49,6 @@ typedef u32 GLu32;
 
 #ifdef ANDROID
 
-#ifdef GLES_1
-#define glClearDepth           glClearDepthf
-#define glOrtho                glOrthof
-
-#endif
-
 #ifdef GLES_2
 
 #define glClearDepth           glClearDepthf
@@ -146,11 +140,6 @@ private:
       mtx_mode_proj[16];
 
   // Active lights
-  s32 m_lights;
-
-  s32 m_is_shader;
-  s32 m_is_framebuffer;
-
   s32 m_min_filter;
   s32 m_mag_filter;
 

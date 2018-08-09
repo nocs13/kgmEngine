@@ -630,6 +630,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
+  //gc->gcClear(gcflag_color | gcflag_depth, rand(), 1, 0);
 
   gc->gcBlend(false, 0, null, null);
   gc->gcAlpha(false, null, null);

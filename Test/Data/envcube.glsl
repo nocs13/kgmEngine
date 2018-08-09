@@ -3,9 +3,13 @@ varying vec3 txCoord;
 
 void kgm_main(out vec4 pos)
 {
+   vec3 normal = normalize(a_Normal);
+
    v_UV = a_UV;
    txCoord = a_Vertex;
    PxColor = g_vColor * a_Color;
+   //txCoord = (transpose(g_mView * g_mTran) * vec4(normal, 0.0)).xyz;
+   txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 0.0)).xyz;
    pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
 
@@ -16,6 +20,6 @@ uniform samplerCube g_txEnvironment;
 
 void kgm_main(out vec4 col)
 {
-  col = v_color * PxColor * textureCube(g_txEnvironment, -txCoord * 0.5);
+  col = PxColor * textureCube(g_txEnvironment, txCoord);
   //col = vec4(1, 0, 0, 1);
 }

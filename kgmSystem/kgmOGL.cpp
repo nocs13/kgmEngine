@@ -29,9 +29,6 @@ EGLContext  m_context       = EGL_NO_CONTEXT;
 
 kgmOGL::kgmOGL(kgmWindow *wnd)
 {
-  m_is_shader      = 0;
-  m_is_framebuffer = 0;
-
   if(!wnd)
     return;
 
@@ -295,18 +292,13 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
   if(strstr((char*)ext, "GL_ARB_shader_objects"))
   {
-    m_is_shader = 1;
+    m_error = 2;
   }
 
   if(strstr((char*)ext, "GL_ARB_framebuffer_object"))
   {
-    m_is_framebuffer = 1;
+    m_error = 3;
   }
-
-#ifdef GLES_2
-  m_is_shader = 1;
-  m_is_framebuffer = 1;
-#endif
 
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, &g_num_compressed_format);
@@ -340,7 +332,6 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   glPolygonOffset (1.0f, 1.0f);
 
   m_renderbuffer = 0;
-  m_lights       = 0;
 
   m_min_filter = GL_LINEAR;
   m_mag_filter = GL_LINEAR;
@@ -482,10 +473,10 @@ void kgmOGL::gcGet(u32 param, void* value)
   switch(param)
   {
   case gcsup_shaders:
-    *((u32*)value) = m_is_shader;
+    *((u32*)value) = 1;
     break;
   case gcsup_fbuffers:
-    *((u32*)value) = m_is_framebuffer;
+    *((u32*)value) = 1;
     break;
   case gc_rdev:
     //*((const char*)value) = "opengl";
@@ -693,6 +684,7 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   GLu32  tex     = 0;
   GLenum pic_fmt = 0;
   GLu32  int_fmt = 0;
+  u32    bpc     = 1;
 
 #ifdef DEBUG
   kgm_log() << "gcGenTexture " << (s32)w << " " << (s32)h << " " << (s32)fmt << "\n";
@@ -707,14 +699,17 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   case gctex_fmt16:
     pic_fmt = GL_RGB;
     int_fmt = GL_RGB5;
+    bpc = 2;
     break;
   case gctex_fmt24:
     pic_fmt = GL_RGB;
     int_fmt = GL_RGB8;
+    bpc = 3;
     break;
   case gctex_fmt32:
     pic_fmt = GL_RGBA;
     int_fmt = GL_RGBA8;
+    bpc = 4;
     break;
   case gctex_fmtdepth:
     pic_fmt = GL_DEPTH_COMPONENT;
@@ -725,6 +720,8 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     int_fmt = GL_DEPTH_STENCIL_EXT;
     break;
   }
+
+  u8* cnt = null;
 
   switch(type)
   {
@@ -762,19 +759,21 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
     break;
   case gctype_texcube:
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    cnt = (u8*) malloc(bpc * w * h);
+    memset(cnt, 0xff, bpc * w * h);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, NULL);
-    //glDisable(GL_TEXTURE_CUBE_MAP);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
+    free(cnt);
     break;
   }
 
@@ -850,6 +849,7 @@ gchandle kgmOGL::gcGenTarget(u32 w, u32 h, bool d, bool s)
   GLu32 buffer = 0;
   glGenFramebuffers(1, &buffer);
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, buffer);
+  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 
   /*
   GLu32 texture = 0;
@@ -966,6 +966,7 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
     return false;
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
 
   switch (type)
@@ -1036,6 +1037,7 @@ void kgmOGL::gcSetTarget(gchandle t)
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
+  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
 
   m_renderbuffer = rb;

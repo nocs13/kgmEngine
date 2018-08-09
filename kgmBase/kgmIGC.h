@@ -44,7 +44,6 @@ enum gc_enum
 
   gc_rdev,
 
-  gcpar_lighting,
   gcpar_blending,
   gcpar_culling,
   gcpar_textures,
@@ -87,7 +86,7 @@ enum gc_enum
   gcpmt_lines,
   gcpmt_triangles,
   gcpmt_linestrip,
-  //gcpmt_lineloop; /* disabled as no in d3d. */
+  //gcpmt_lineloop;     /* disabled as no in d3d. */
   gcpmt_trianglestrip,
   gcpmt_trianglefan,
 

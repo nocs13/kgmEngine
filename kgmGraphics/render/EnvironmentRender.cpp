@@ -119,7 +119,8 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   cpos.z *= -1;
   cdir.z *= -1;
 
-  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  //cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
@@ -139,32 +140,32 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
   case 0:
     cpos = pos;
     //cpos.x += shift;
-    cdir = vec3(1, 0, 0);
+    cdir = vec3(1, 0.01, 0.01);
     break;
   case 1:
     cpos = pos;
     //cpos.x -= shift;
-    cdir = vec3(-1, 0, 0);
+    cdir = vec3(-1, 0.01, 0.01);
     break;
   case 2:
     cpos = pos;
     //cpos.y += shift;
-    cdir = vec3(0, 1, 0);
+    cdir = vec3(0.01, 1, 0.01);
     break;
   case 3:
     cpos = pos;
     //cpos.y -= shift;
-    cdir = vec3(0, -1, 0);
+    cdir = vec3(0.01, -1, 0.01);
     break;
   case 4:
     cpos = pos;
     //cpos.z += shift;
-    cdir = vec3(0, 0, 1);
+    cdir = vec3(0.01, 0.01, 0.9);
     break;
   case 5:
     cpos = pos;
     //cpos.z -= shift;
-    cdir = vec3(0, 0, -1);
+    cdir = vec3(0.1, 0.1, -1);
     break;
   }
 
