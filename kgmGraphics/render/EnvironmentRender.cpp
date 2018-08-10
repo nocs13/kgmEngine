@@ -133,7 +133,7 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
 
 void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
 {
-  vec3 cpos, cdir;
+  vec3 cpos, cdir, cup;
 
   switch(face)
   {
@@ -141,36 +141,44 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
     cpos = pos;
     //cpos.x += shift;
     cdir = vec3(1, 0.01, 0.01);
+    cup = vec3(0, 0, 1);
     break;
   case 1:
     cpos = pos;
     //cpos.x -= shift;
     cdir = vec3(-1, 0.01, 0.01);
+    cup = vec3(0, 0, 1);
     break;
   case 2:
     cpos = pos;
     //cpos.y += shift;
     cdir = vec3(0.01, 1, 0.01);
+    cup = vec3(0, 0, 1);
     break;
   case 3:
     cpos = pos;
     //cpos.y -= shift;
     cdir = vec3(0.01, -1, 0.01);
+    cup = vec3(0, 0, 1);
     break;
   case 4:
     cpos = pos;
     //cpos.z += shift;
-    cdir = vec3(0.01, 0.01, 0.9);
+    cdir = vec3(0.01, 0.01, 1);
+    cup = vec3(1, 0, 0);
     break;
   case 5:
     cpos = pos;
     //cpos.z -= shift;
     cdir = vec3(0.1, 0.1, -1);
+    cup = vec3(1, 0, 0);
     break;
   }
 
-  f32  fov  = gr->m_camera->mFov;
-  f32  asp  = gr->m_camera->mAspect;
+  f32  fov = gr->m_camera->mFov;
+  f32  asp = gr->m_camera->mAspect;
+  f32  far = gr->m_camera->mFar;
+  f32  ner = gr->m_camera->mNear;
 
-  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, ner, far, cpos, cdir, cup);
 }

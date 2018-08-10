@@ -219,7 +219,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   }
 
   m_camera = new kgmCamera();
-  m_camera->set(PI / 6, 1, 1, 1000, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
+  m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   g_mtx_iden.identity();
 
   m_r_fps    = new FpsRender(this);
@@ -645,8 +645,8 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     vec3  l = bound.max - bound.min;
     vec3  v = (bound.min + bound.max) * 0.5;
 
-    if(!cam.isSphereCross(v, 0.5 * l.length()))
-      continue;
+    //if(!cam.isSphereCross(v, 0.5 * l.length()))
+    //  continue;
 
     kgmIGraphics::INode* nod = (*i);
     kgmMaterial*         mtl = nod->getNodeMaterial();
