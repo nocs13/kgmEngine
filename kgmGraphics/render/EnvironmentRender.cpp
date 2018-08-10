@@ -140,38 +140,38 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
   case 0:
     cpos = pos;
     //cpos.x += shift;
-    cdir = vec3(1, 0.01, 0.01);
+    cdir = vec3(1, 0.0, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 1:
     cpos = pos;
     //cpos.x -= shift;
-    cdir = vec3(-1, 0.01, 0.01);
+    cdir = vec3(-1, 0.0, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 2:
     cpos = pos;
     //cpos.y += shift;
-    cdir = vec3(0.01, 1, 0.01);
+    cdir = vec3(0.0, 1, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 3:
     cpos = pos;
     //cpos.y -= shift;
-    cdir = vec3(0.01, -1, 0.01);
+    cdir = vec3(0.0, -1, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 4:
     cpos = pos;
     //cpos.z += shift;
-    cdir = vec3(0.01, 0.01, 1);
-    cup = vec3(1, 0, 0);
+    cdir = vec3(0.0, 0.0, 1);
+    cup = vec3(0, 1, 0);
     break;
   case 5:
     cpos = pos;
     //cpos.z -= shift;
-    cdir = vec3(0.1, 0.1, -1);
-    cup = vec3(1, 0, 0);
+    cdir = vec3(0.0, 0.0, -1);
+    cup = vec3(0, 1, 0);
     break;
   }
 

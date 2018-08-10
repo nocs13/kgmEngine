@@ -285,15 +285,12 @@ public:
 
   void position(vec3& v)
   {
-    if(m_body)
-      m_body->translate(v.x, v.y, v.z);
-
     m_position = v;
 
-    if (m_object && m_type == Particles)
-      ((kgmParticles*)m_object)->position(v);
+    //if (m_object && m_type == Particles)
+    //  ((kgmParticles*)m_object)->position(v);
 
-    m_transform.identity();
+    //m_transform.identity();
     m_transform.translate(v);
   }
 
