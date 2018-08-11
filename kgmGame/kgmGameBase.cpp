@@ -352,7 +352,7 @@ void kgmGameBase::onIdle()
   }
 
 #ifdef EDITOR
-  if(editor)
+  if(!editor)
     editor->onIdle();
 #endif
 }

@@ -59,8 +59,12 @@ void kgmSystem::sleep(u32 ms)
 void kgmSystem::getDesktopDimension(u32& w, u32& h)
 {
 #ifdef WIN32
-  w = GetDeviceCaps(GetDC(GetDesktopWindow()), HORZRES);
-  h = GetDeviceCaps(GetDC(GetDesktopWindow()), VERTRES);
+  HWND desktop = GetDesktopWindow();
+  HDC  hdc     = GetDC(desktop);
+  w = GetDeviceCaps(hdc, HORZRES);
+  h = GetDeviceCaps(hdc, VERTRES);
+  ReleaseDC(desktop, hdc);
+  CloseHandle(desktop);
 #endif
 
 #ifdef LINUX

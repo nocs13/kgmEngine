@@ -14,6 +14,8 @@ public:
   kgmShader* m_sd_cube  = null;
   kgmShader* m_sd_plane = null;
 
+  u32 m_cubemapside = 0;
+
 public:
   EnvironmentRender(kgmGraphics* gr);
   ~EnvironmentRender();

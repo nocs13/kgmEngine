@@ -53,6 +53,7 @@ enum gc_enum
   gcpar_stencil,
   gcpar_depthmask,
   gcpar_colormask,
+  gcpar_cubemapside,
 
   gccmp_never,
   gccmp_always,

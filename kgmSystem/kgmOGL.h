@@ -143,6 +143,8 @@ private:
   s32 m_min_filter;
   s32 m_mag_filter;
 
+  u32 m_cubemapside = 0;
+
   u32 m_error = 0;
 
 public:

@@ -10,6 +10,10 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_tx_cube  = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_texcube);
   m_sd_cube  = gr->rc->getShader("envcube.glsl");
   m_sd_plane = gr->rc->getShader("envplane.glsl");
+
+  m_cubemapside = 2;
+
+  gc->gcSet(gcpar_cubemapside, &m_cubemapside);
 }
 
 EnvironmentRender::~EnvironmentRender()
@@ -99,7 +103,7 @@ void EnvironmentRender::render(vec3 pos, box bnd, gchandle tex)
 
   for (u32 i = 0; i < 6; i++)
   {
-    prepare(cam, pos, shift, i);
+    prepare(cam, pos, shift, m_cubemapside);
     gc->gcTexTarget(m_target, tex, gctype_texcube);
     gr->render(m_target, cam, o);
   }
@@ -159,7 +163,7 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
     cpos = pos;
     //cpos.y -= shift;
     cdir = vec3(0.0, -1, 0.0);
-    cup = vec3(0, 0, 1);
+    cup = vec3(0, 0, -1);
     break;
   case 4:
     cpos = pos;

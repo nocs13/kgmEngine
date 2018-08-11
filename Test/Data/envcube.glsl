@@ -9,11 +9,11 @@ void kgm_main(out vec4 pos)
 
    v_UV = a_UV;
    txCoord.x = a_Vertex.x;
-   txCoord.y = a_Vertex.y;
-   txCoord.z = a_Vertex.z;
+   txCoord.y = -a_Vertex.z;
+   txCoord.z = a_Vertex.y;
    PxColor = g_vColor * a_Color;
    //txCoord = (transpose(g_mView * g_mTran) * vec4(normal, 1.0)).xyz;
-   txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 1.0)).xyz;
+   //txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 1.0)).xyz;
    //position = g_mView * g_mTran * vec4(a_Vertex, 0.0)
 
    pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);

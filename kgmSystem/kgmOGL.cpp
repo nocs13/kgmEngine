@@ -465,6 +465,8 @@ void kgmOGL::gcSet(u32 param, void* value)
   case gctex_fltmin:
       m_min_filter = gl_enum((u32)(size_t)value);
     break;
+  case gcpar_cubemapside:
+    m_cubemapside = *(u32*) value;
   }
 }
 
@@ -979,7 +981,7 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
     break;
   case gctype_texcube:
     glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
-                           GL_TEXTURE_CUBE_MAP_POSITIVE_X + rb->cmside, (GLint) (size_t) tex, 0);
+                           GL_TEXTURE_CUBE_MAP_POSITIVE_X + m_cubemapside, (GLint) (size_t) tex, 0);
 
     ++rb->cmside;
 
