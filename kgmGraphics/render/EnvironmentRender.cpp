@@ -11,7 +11,7 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_sd_cube  = gr->rc->getShader("envcube.glsl");
   m_sd_plane = gr->rc->getShader("envplane.glsl");
 
-  m_cubemapside = 2;
+  m_cubemapside = 5;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
 }
@@ -103,6 +103,8 @@ void EnvironmentRender::render(vec3 pos, box bnd, gchandle tex)
 
   for (u32 i = 0; i < 6; i++)
   {
+    m_cubemapside = i;
+    gc->gcSet(gcpar_cubemapside, &m_cubemapside);
     prepare(cam, pos, shift, m_cubemapside);
     gc->gcTexTarget(m_target, tex, gctype_texcube);
     gr->render(m_target, cam, o);
@@ -139,43 +141,39 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
 {
   vec3 cpos, cdir, cup;
 
+  cpos = pos;
+
   switch(face)
   {
   case 0:
-    cpos = pos;
     //cpos.x += shift;
     cdir = vec3(1, 0.0, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 1:
-    cpos = pos;
     //cpos.x -= shift;
     cdir = vec3(-1, 0.0, 0.0);
     cup = vec3(0, 0, 1);
     break;
   case 2:
-    cpos = pos;
     //cpos.y += shift;
+    cdir = vec3(0.0, 0.0, -1);
+    cup = vec3(0, 1, 0);
+    break;
+  case 3:
+    //cpos.y -= shift;
+    cdir = vec3(0.0, 0.0, 1);
+    cup = vec3(0, -1, 0);
+    break;
+  case 4:
+    //cpos.z += shift;
     cdir = vec3(0.0, 1, 0.0);
     cup = vec3(0, 0, 1);
     break;
-  case 3:
-    cpos = pos;
-    //cpos.y -= shift;
-    cdir = vec3(0.0, -1, 0.0);
-    cup = vec3(0, 0, -1);
-    break;
-  case 4:
-    cpos = pos;
-    //cpos.z += shift;
-    cdir = vec3(0.0, 0.0, 1);
-    cup = vec3(0, 1, 0);
-    break;
   case 5:
-    cpos = pos;
     //cpos.z -= shift;
-    cdir = vec3(0.0, 0.0, -1);
-    cup = vec3(0, 1, 0);
+    cdir = vec3(0.0, -1, 0.0);
+    cup = vec3(0, 0, 1);
     break;
   }
 
