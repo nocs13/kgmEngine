@@ -19,8 +19,8 @@ else
 	CC = g++
 	EXT = .exe
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DEDITOR
-	FLGS = -m32 -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
-	LIBS += -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm -llua
+	FLGS = -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
+	LIBS += -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm -llua -llualib -lwsock32
 	RM = del
 endif
 

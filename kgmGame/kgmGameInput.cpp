@@ -1,6 +1,11 @@
 #include "kgmGameInput.h"
 
+/*
 kgmGameInput::kgmGameInput()
+{
+}
+
+kgmGameInput::~kgmGameInput()
 {
 }
 
@@ -23,3 +28,4 @@ void movePoint(s16 x, s16 y, s16 z)
 {
 
 }
+*/

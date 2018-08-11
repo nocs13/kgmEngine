@@ -29,6 +29,7 @@ class GlassRender: public BaseRender
 
  public:
   GlassRender(kgmGraphics* gr);
+  ~GlassRender();
 
   void clear();
   void render();

@@ -4,3 +4,8 @@ kgmTexRender::kgmTexRender()
 {
 
 }
+
+kgmTexRender::~kgmTexRender()
+{
+
+}

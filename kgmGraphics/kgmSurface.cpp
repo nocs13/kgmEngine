@@ -3,3 +3,7 @@
 kgmSurface::kgmSurface()
 {
 }
+
+kgmSurface::~kgmSurface()
+{
+}

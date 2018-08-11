@@ -5,3 +5,15 @@ GlassRender::GlassRender(kgmGraphics* g)
 {
 
 }
+
+GlassRender::~GlassRender()
+{
+}
+
+void GlassRender::clear()
+{
+}
+
+void GlassRender::render()
+{
+}

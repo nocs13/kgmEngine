@@ -18,7 +18,7 @@ ifeq ($(OS), Linux)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DEDITOR -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 -Werror
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
-	LIBS = -llua -lpthread -lX11 -lGL
+	LIBS = -llua -llualib -lpthread -lX11 -lGL
 	RM = rm -f
 else
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
@@ -27,7 +27,7 @@ else
 	DSEP = \\
 	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DEDITOR
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror
-	LIBS = -llua -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm
+	LIBS = -llua -llualib -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound
 	RM = rm -f
 
 	#ifeq($(ARCH), I32)

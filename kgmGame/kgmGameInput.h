@@ -3,11 +3,14 @@
 
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmIInput.h"
-
+/*
 class kgmGameInput: public kgmObject, public kgmIInput
 {
+  //KGM_OBJECT(kgmGameInput);
+
 public:
   kgmGameInput();
+  ~kgmGameInput();
 
   void clear();
 
@@ -15,5 +18,5 @@ public:
   void keyDown(u8 key);
   void movePoint(s16 x, s16 y, s16 z);
 };
-
+*/
 #endif // KGMGAMEINPUT_H

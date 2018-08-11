@@ -57,7 +57,7 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
 
   if (DSRes==DS_OK)
   {
-    kgmThread::lock(self->m_mutex);
+    kgmThread::mutex_lock(self->m_mutex);
     u32 t1 = kgmTime::getTicks();
 
     memcpy(WritePtr1, self->m_mixer.getBuffer(), WriteCnt1);
@@ -77,7 +77,7 @@ void CALLBACK DirectSoundProc(UINT uID, UINT uReserved, DWORD_PTR dwUser,
       kgmThread::sleep(wtime - 10);
     }
 
-    kgmThread::unlock(self->m_mutex);
+    kgmThread::mutex_unlock(self->m_mutex);
   }
 }
 
@@ -306,15 +306,15 @@ kgmDSound::kgmDSound()
      }
      else
      {
-       m_timer = timeSetEvent(m_mixer.getMsTime() - 10, 0, (LPTIMECALLBACK)DirectSoundProc, (DWORD)this,
+       m_timer = timeSetEvent(m_mixer.getMsTime() - 10, 0, (LPTIMECALLBACK) DirectSoundProc, (DWORD_PTR) this,
                               (UINT)TIME_CALLBACK_FUNCTION | TIME_PERIODIC);
 
        m_proceed = true;
 
        //m_thread.start(this, &kgmDSound::proceed);
-       m_thread.priority(kgmThread::PrIdle);
+       kgmThread::thread_priority(m_thread, kgmThread::PrIdle);
 
-       m_mutex = kgmThread::mutex();
+       m_mutex = kgmThread::mutex_create();
      }
    }
 }
@@ -328,9 +328,9 @@ kgmDSound::~kgmDSound()
 
   Sleep(100);
 
-  m_thread.join();
+  kgmThread::thread_join(m_thread);
 
-  kgmThread::mxfree(m_mutex);
+  kgmThread::mutex_free(m_mutex);
 
 
   if(m_pSbuf)
@@ -404,7 +404,7 @@ int kgmDSound::proceed(int p)
 {
   static u32 max_sounds = 10;
 
-  (void*)p;
+  (void*) (size_t) p;
 
   m_proceed = true;
 
@@ -412,7 +412,7 @@ int kgmDSound::proceed(int p)
   {
     u32 snd_cound = 0;
 
-    kgmThread::lock(m_mutex);
+    kgmThread::mutex_lock(m_mutex);
 
 #ifdef DEBUG
     kgm_log() << "kgmDSound:: proceed lock " << kgmTime::getTimeText() << "\n";
@@ -422,7 +422,7 @@ int kgmDSound::proceed(int p)
 
     u32 t1 = kgmTime::getTicks();
 
-    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
+    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); !i.end(); ++i)
     {
       _Sound* sound = (*i);
 
@@ -466,7 +466,7 @@ int kgmDSound::proceed(int p)
 
     //render();
 
-    kgmThread::unlock(m_mutex);
+    kgmThread::mutex_unlock(m_mutex);
 
 #ifdef DEBUG
     kgm_log() << "kgmDSound:: proceed unlock " << kgmTime::getTimeText() << "\n";

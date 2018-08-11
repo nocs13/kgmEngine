@@ -175,10 +175,10 @@ void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)
     break;
   }
 
-  f32  fov = gr->m_camera->mFov;
-  f32  asp = gr->m_camera->mAspect;
-  f32  far = gr->m_camera->mFar;
-  f32  ner = gr->m_camera->mNear;
+  f32  cfov = gr->m_camera->mFov;
+  f32  casp = gr->m_camera->mAspect;
+  f32  cfar = gr->m_camera->mFar;
+  f32  cner = gr->m_camera->mNear;
 
-  cam.set(fov, asp, ner, far, cpos, cdir, cup);
+  cam.set(cfov, casp, cner, cfar, cpos, cdir, cup);
 }

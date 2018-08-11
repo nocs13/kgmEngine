@@ -175,7 +175,6 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   material->depth(false);
   material->blend(kgmMaterial::Blend_Add);
   material->setTexColor(g->getResources()->getTexture((char*)"point_redd.tga"));
-  material->setShader(g->getResources()->getShader("blend.glsl"));
 
   mesh = new kgmMesh();
   Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
