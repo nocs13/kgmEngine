@@ -16,6 +16,8 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_cubemapside = 0;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
+
+  dudv = gr->rc->getTexture("water_dudv_map.tga");
 }
 
 EnvironmentRender::~EnvironmentRender()
@@ -73,6 +75,10 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
 
   gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(),
                     gr->m_camera->mNear, gr->m_camera->mFar);
+
+  if (dudv)
+    gc->gcSetTexture(1, dudv->texture());
+
   gc->gcSetTexture(3, tx);
 
   m.m[0] += 0.001;
@@ -92,7 +98,10 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_mView",  gr->m_camera->mView);
   sh->set("g_mTran",  m);
   sh->set("g_vColor", col);
+  sh->set("g_fTime", (float) kgmTime::getTicks());
+  sh->set("g_fRandom", (float) rand() / (float) RAND_MAX);
 
+  sh->set("g_txNormal", 1);
   sh->set("g_txEnvironment", 3);
 
   gc->gcBegin();
