@@ -1088,8 +1088,10 @@ void kgmGraphics::render(kgmShader* s)
 
 void kgmGraphics::render(kgmMesh *m)
 {
-  if(!m)
+  if(!m || !m->vcount() || !m->vertices())
     return;
+
+  kgm_log() << "render mesh id " << m->id() << "\n";
 
   u32  pmt;
 

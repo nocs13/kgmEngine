@@ -394,11 +394,16 @@ class kgmMaterial:
     self.sh_off  = mtl.use_shadeless
     self.sh_cast = mtl.use_cast_shadows
     self.sh_recv = mtl.use_shadows
-    self.refraction = 1.0;
+    self.mir_fresnel = 0.0;
+    self.trn_fresnel = 0.0;
 
     if hasattr(mtl, 'raytrace_mirror') is True:
       if mtl.raytrace_mirror is not None:
-        self.refraction = mtl.raytrace_mirror.fresnel
+        self.mir_fresnel = mtl.raytrace_mirror.fresnel
+    
+    if hasattr(mtl, 'raytrace_transparency') is True:
+      if mtl.raytrace_mirror is not None:
+        self.trn_fresnel = mtl.raytrace_transparency.fresnel
 
 
     print('tranparency_method ' + mtl.transparency_method)
@@ -411,10 +416,10 @@ class kgmMaterial:
         print("TPATH: " + TextureSlot.texture.image.filepath)
         tf_path = os.path.basename(TextureSlot.texture.image.filepath)
         if tf_path != "":
-          if TextureSlot.use_map_normal != 0.0:
+          if hasattr(TextureSlot, "use_map_normal") and TextureSlot.use_map_normal is True:
             self.map_normal = tf_path
             self.map_normal_strength = TextureSlot.normal_factor
-          elif TextureSlot.use_map_specular != 0.0:
+          elif hasattr(TextureSlot, "use_map_specular") and TextureSlot.use_map_specular is True:
             self.map_specular = tf_path
             self.map_specular_strength = TextureSlot.normal_factor
           else:
@@ -899,6 +904,7 @@ def export_material(file, o):
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
   file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
   file.write("  <Shadow shadeless='" + str(o.sh_off) + "' cast='" + str(o.sh_cast) + "' receive='" + str(o.sh_recv) + "'/>\n")
+  file.write("  <Fresnel mirror='" + str(o.mir_fresnel) + "' transparency='" + str(o.trn_fresnel) + "'/>\n")
 
   if o.depth is False:
     file.write("  <Depth value='0'/>\n")

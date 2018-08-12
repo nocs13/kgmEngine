@@ -2,6 +2,8 @@
 #include "../kgmCamera.h"
 #include "../kgmGraphics.h"
 
+#include "../kgmSystem/inc/GL/gl.h"
+
 EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   :BaseRender(g)
 {
@@ -11,7 +13,7 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_sd_cube  = gr->rc->getShader("envcube.glsl");
   m_sd_plane = gr->rc->getShader("envplane.glsl");
 
-  m_cubemapside = 5;
+  m_cubemapside = 0;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
 }
@@ -73,7 +75,18 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
                     gr->m_camera->mNear, gr->m_camera->mFar);
   gc->gcSetTexture(3, tx);
 
-  //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+  m.m[0] += 0.001;
+  m.m[5] += 0.001;
+  m.m[10] += 0.001;
+
+  vec3 cn = gr->m_camera->mPos - vec3(m.m[12], m.m[13], m.m[14]);
+
+  cn.normalize();
+  m.m[12] += 0.001 * cn.x;
+  m.m[13] += 0.001 * cn.y;
+  m.m[14] += 0.001 * cn.z;
+
+  gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
   sh->set("g_mProj",  gr->m_camera->mProj);
   sh->set("g_mView",  gr->m_camera->mView);
