@@ -30,6 +30,9 @@ public:
   void render(vec3, box, gchandle);
   void render(vec3, vec3, f32, gchandle);
 
+  void refraction(vec3, box, gchandle);
+  void refraction(vec3, vec3, gchandle);
+
   void prepare(kgmCamera&, vec3, f32, u32);
 };
 

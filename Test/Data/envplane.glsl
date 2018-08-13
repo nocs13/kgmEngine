@@ -59,7 +59,8 @@ void kgm_main(out vec4 col)
 
   vec3 view = normalize(look);
   float mixfactor = dot(view, vec3(0, 1, 0));
-  mixfactor = g_fFresnel * pow(mixfactor, 20.0);
+  //mixfactor = g_fFresnel * pow(mixfactor, 0.0);
+  mixfactor = 0.5;
 
   col = mix(rlcol, rrcol, mixfactor);
 

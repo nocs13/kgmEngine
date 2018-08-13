@@ -166,7 +166,34 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
 {
   kgmCamera cam;
 
-  f32 shift = dis;
+  vec3 cpos = gr->m_camera->mPos;
+  vec3 cdir = gr->m_camera->mDir;
+  f32  fov  = gr->m_camera->mFov;
+  f32  asp  = gr->m_camera->mAspect;
+
+  cpos.z *= -1;
+  cdir.z *= -1;
+
+  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  //cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+
+  kgmGraphics::Options o;
+
+  o.width = 512;
+  o.height = 512;
+
+  gc->gcTexTarget(m_target, tex, gctype_tex2d);
+  gr->render(m_target, cam, o);
+}
+
+void EnvironmentRender::refraction(vec3, box, gchandle)
+{
+
+}
+
+void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
+{
+  kgmCamera cam;
 
   vec3 cpos = gr->m_camera->mPos;
   vec3 cdir = gr->m_camera->mDir;
