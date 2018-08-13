@@ -852,6 +852,11 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vtext);
         ((kgmMaterial*)data)->type(kgmMaterial::stringToType(vtext));
       }
+      else if(id == "TexMove")
+      {
+        xmlAttr(m_xml, "value", vfloat3);
+        ((kgmMaterial*)data)->move(vfloat3);
+      }
       else if(id == "Mesh")
       {
         kgmString link;

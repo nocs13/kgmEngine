@@ -1,3 +1,4 @@
+uniform float  g_fForce;
 uniform float  g_fFresnel;
 uniform vec3   g_vMove;
 
@@ -29,6 +30,7 @@ void kgm_main(out vec4 pos)
 }
 
 //Fragment Shader
+uniform float  g_fForce;
 uniform float  g_fFresnel;
 uniform vec3   g_vMove;
 
@@ -42,19 +44,27 @@ varying float random;
 
 uniform sampler2D g_txEnvironment;
 
-const float strength = 0.3;
+const float strength = 0.06;
 
 void kgm_main(out vec4 col)
 {
-  vec2 distortion = (texture2D(g_txNormal, vec2(dudv.x + g_vMove.x, dudv.y)).rg * 2.0 - 1.0) * strength;
+  vec2 distortion = (texture2D(g_txNormal, vec2(dudv.x + g_vMove.x, dudv.y + g_vMove.y)).rg * 2.0 - 1.0) * strength;
+
   vec2 ndc = (clip.xy / clip.w) / 2.0 + 0.5;
+  vec2 rrc = vec2(ndc.x,  ndc.y);
   vec2 rlc = vec2(ndc.x, -ndc.y);
 
-  col = v_color * PxColor * texture2D(g_txEnvironment, rlc + distortion);
+  vec4 rlcol = texture2D(g_txEnvironment, rlc + distortion);
+  vec4 rrcol = texture2D(g_txSpecular,    rrc + distortion);
 
   vec3 view = normalize(look);
-  float rffactor = dot(view, vec3(0, 1, 0));
-  rffactor = pow(rffactor, 1.0);
+  float mixfactor = dot(view, vec3(0, 1, 0));
+  mixfactor = g_fFresnel * pow(mixfactor, 20.0);
 
-  col = mix(col, v_color, rffactor);
+  col = mix(rlcol, rrcol, mixfactor);
+
+  //col = texture2D(g_txEnvironment, rlc + distortion);
+  //col = mix(col, v_color, rffactor);
+
+  col *= g_fForce;
 }

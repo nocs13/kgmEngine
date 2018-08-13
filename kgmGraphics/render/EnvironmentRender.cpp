@@ -10,8 +10,11 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   :BaseRender(g)
 {
   m_target   = gc->gcGenTarget(512, 512, true, false);
-  m_tx_plane = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
-  m_tx_cube  = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_texcube);
+
+  m_tx_cube       = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_texcube);
+  m_tx_plane      = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
+  m_tx_refraction = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
+
   m_sd_cube  = gr->rc->getShader("envcube.glsl");
   m_sd_plane = gr->rc->getShader("envplane.glsl");
 
@@ -23,6 +26,9 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
 EnvironmentRender::~EnvironmentRender()
 {
   gc->gcFreeTarget(m_target);
+  gc->gcFreeTexture(m_tx_cube);
+  gc->gcFreeTexture(m_tx_plane);
+  gc->gcFreeTexture(m_tx_refraction);
 }
 
 void EnvironmentRender::render()
@@ -73,13 +79,23 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     return;
   }
 
+  if (m_refraction)
+  {
+
+  }
+
   gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(),
                     gr->m_camera->mNear, gr->m_camera->mFar);
 
   if (mtl->getTexNormal())
     gc->gcSetTexture(1, mtl->getTexNormal()->texture());
   else
-    gc->gcSetTexture(1, gr->m_tex_black->texture());
+    gc->gcSetTexture(1, gr->m_tex_gray->texture());
+
+  if (m_refraction)
+    gc->gcSetTexture(2, m_tx_refraction);
+  else
+    gc->gcSetTexture(2, gr->m_tex_white->texture());
 
   gc->gcSetTexture(3, tx);
 
@@ -94,7 +110,12 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   m.m[13] += 0.001 * cn.y;
   m.m[14] += 0.001 * cn.z;
 
-  move.x += 0.001;
+  move.x += 0.001 * mtl->move().x;
+  move.y += 0.001 * mtl->move().y;
+
+  f32 force = mtl->envIntensity();
+  f32 random = (f32) rand() / (f32) RAND_MAX;
+  f32 fresnel = 1.0 + (float) mtl->fresnel();
 
   gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
@@ -105,9 +126,9 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_vEyeDir", gr->m_camera->mDir);
   sh->set("g_vColor", col);
   sh->set("g_vMove", move);
-  sh->set("g_fTime", (float) kgmTime::getTicks());
-  sh->set("g_fRandom", (float) rand() / (float) RAND_MAX);
-  sh->set("g_fFresnel", 1.0 + (float) mtl->fresnel());
+  sh->set("g_fRandom", random);
+  sh->set("g_fFresnel", fresnel);
+  sh->set("g_fForce", force);
 
   sh->set("g_txNormal", 1);
   sh->set("g_txEnvironment", 3);

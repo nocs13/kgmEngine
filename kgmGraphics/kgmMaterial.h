@@ -168,6 +168,8 @@ private:
   vec3        m_env_viewpoint = vec3(0, 0, 0);
   f32         m_env_intensity = 1.0;
 
+  vec3        m_move;
+
 public:
   Color  m_color, m_specular;
 
@@ -350,6 +352,16 @@ public:
   void envIntensity(f32 i)
   {
     m_env_intensity = i;
+  }
+
+  vec3 move() const
+  {
+    return m_move;
+  }
+
+  void move(vec3 v)
+  {
+    m_move = v;
   }
 
   static kgmString blendToString(Blend Blend);

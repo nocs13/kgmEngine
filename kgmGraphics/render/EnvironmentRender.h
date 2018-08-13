@@ -8,13 +8,18 @@
 class EnvironmentRender: public BaseRender
 {
 public:
-  gchandle   m_target   = null;
-  gchandle   m_tx_plane = null;
-  gchandle   m_tx_cube  = null;
+  gchandle   m_target         = null;
+  gchandle   m_tx_plane       = null;
+  gchandle   m_tx_cube        = null;
+  gchandle   m_tx_refraction  = null;
+
   kgmShader* m_sd_cube  = null;
   kgmShader* m_sd_plane = null;
 
   u32 m_cubemapside = 0;
+
+  bool m_refraction = false;
+
 public:
   EnvironmentRender(kgmGraphics* gr);
   ~EnvironmentRender();

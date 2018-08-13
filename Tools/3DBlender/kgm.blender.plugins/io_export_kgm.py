@@ -396,6 +396,7 @@ class kgmMaterial:
     self.sh_recv = mtl.use_shadows
     self.mir_fresnel = 0.0;
     self.trn_fresnel = 0.0;
+    self.tex_move    = None
 
     if hasattr(mtl, 'raytrace_mirror') is True:
       if mtl.raytrace_mirror is not None:
@@ -442,6 +443,10 @@ class kgmMaterial:
 
     if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
       self.shader = bpy.data.materials[mtl.name]['Shader']
+
+    if mtl.name in bpy.data.materials and 'TexMove' in bpy.data.materials[mtl.name]:
+      self.tex_move = bpy.data.materials[mtl.name]['TexMove']
+      print("Tex move is " + str(self.tex_move))
 
     if len(mtl.texture_slots.keys()) > 0:
       self.blend = mtl.texture_slots[0].blend_type
@@ -911,6 +916,9 @@ def export_material(file, o):
 
   if o.blend is not None:
       file.write("  <Blend value='" + str(o.blend.lower()) + "'/>\n")
+
+  if o.tex_move is not None:
+    file.write("  <TexMove value='" + str(o.tex_move) + "'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")

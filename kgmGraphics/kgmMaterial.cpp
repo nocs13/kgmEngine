@@ -15,6 +15,8 @@ kgmMaterial::kgmMaterial()
   m_depth  = true;
   m_cull   = true;
 
+  m_move = vec3(0, 0, 0);
+
   m_blend  = Blend_None;
 }
 
