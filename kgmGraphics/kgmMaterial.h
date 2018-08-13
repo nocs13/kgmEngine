@@ -155,7 +155,8 @@ private:
   Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
 
-  float  m_shininess;
+  f32  m_shininess;
+  f32  m_fresnel;
 
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
@@ -239,6 +240,16 @@ public:
   void shininess(float s)
   {
     m_shininess = s;
+  }
+
+  float fresnel() const
+  {
+    return m_fresnel;
+  }
+
+  void fresnel(float f)
+  {
+    m_fresnel = f;
   }
 
   bool depth() const

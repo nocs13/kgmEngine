@@ -4,6 +4,8 @@
 
 #include "../kgmSystem/inc/GL/gl.h"
 
+vec3 move(0, 0, 0);
+
 EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   :BaseRender(g)
 {
@@ -16,8 +18,6 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_cubemapside = 0;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
-
-  dudv = gr->rc->getTexture("water_dudv_map.tga");
 }
 
 EnvironmentRender::~EnvironmentRender()
@@ -76,8 +76,10 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(),
                     gr->m_camera->mNear, gr->m_camera->mFar);
 
-  if (dudv)
-    gc->gcSetTexture(1, dudv->texture());
+  if (mtl->getTexNormal())
+    gc->gcSetTexture(1, mtl->getTexNormal()->texture());
+  else
+    gc->gcSetTexture(1, gr->m_tex_black->texture());
 
   gc->gcSetTexture(3, tx);
 
@@ -92,14 +94,20 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   m.m[13] += 0.001 * cn.y;
   m.m[14] += 0.001 * cn.z;
 
+  move.x += 0.001;
+
   gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
   sh->set("g_mProj",  gr->m_camera->mProj);
   sh->set("g_mView",  gr->m_camera->mView);
   sh->set("g_mTran",  m);
+  sh->set("g_vEye", gr->m_camera->mPos);
+  sh->set("g_vEyeDir", gr->m_camera->mDir);
   sh->set("g_vColor", col);
+  sh->set("g_vMove", move);
   sh->set("g_fTime", (float) kgmTime::getTicks());
   sh->set("g_fRandom", (float) rand() / (float) RAND_MAX);
+  sh->set("g_fFresnel", 1.0 + (float) mtl->fresnel());
 
   sh->set("g_txNormal", 1);
   sh->set("g_txEnvironment", 3);

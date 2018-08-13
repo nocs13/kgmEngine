@@ -753,6 +753,17 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vfloat);
         ((kgmMaterial*)data)->transparency(1.0f - vfloat);
       }
+      else if(id == "Fresnel")
+      {
+        f32 fm = 0.0, ft = 0.0;
+
+        xmlAttr(m_xml, "mirror", vfloat);
+        fm = vfloat;
+        xmlAttr(m_xml, "transparency", vfloat);
+        ft = vfloat;
+
+        ((kgmMaterial*)data)->fresnel(fm + ft);
+      }
       else if(id == "Blend")
       {
         xmlAttr(m_xml, "value", vtext);
