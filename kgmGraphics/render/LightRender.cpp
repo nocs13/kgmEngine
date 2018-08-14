@@ -58,7 +58,7 @@ void LightRender::render()
 
       gr->render(shader);
 
-      //if (mtl->envType() == kgmMaterial::EnvironmentTypeNone)
+      if (mtl->envType() == kgmMaterial::EnvironmentTypeNone)
         gr->render(msh);
 
       if(j > 0)

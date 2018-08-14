@@ -19,6 +19,7 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_sd_plane = gr->rc->getShader("envplane.glsl");
 
   m_cubemapside = 0;
+  m_refraction  = true;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
 }
@@ -70,9 +71,14 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   }
   else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
   {
+    m_discard = n;
+
     render(p, nr, gr->m_camera->mPos.z, m_tx_plane);
     sh = m_sd_plane;
     tx = m_tx_plane;
+
+    if (m_refraction)
+      refraction(p, nr, m_tx_refraction);
   }
   else
   {
@@ -117,7 +123,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   f32 random = (f32) rand() / (f32) RAND_MAX;
   f32 fresnel = 1.0 + (float) mtl->fresnel();
 
-  gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+  //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
   sh->start();
   sh->set("g_mProj",  gr->m_camera->mProj);
   sh->set("g_mView",  gr->m_camera->mView);
@@ -131,6 +137,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_fForce", force);
 
   sh->set("g_txNormal", 1);
+  sh->set("g_txSpecular", 2);
   sh->set("g_txEnvironment", 3);
 
   gc->gcBegin();
@@ -170,17 +177,21 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   vec3 cdir = gr->m_camera->mDir;
   f32  fov  = gr->m_camera->mFov;
   f32  asp  = gr->m_camera->mAspect;
+  f32  zfar  = gr->m_camera->mFar;
+  f32  zner  = gr->m_camera->mNear;
 
   cpos.z *= -1;
   cdir.z *= -1;
 
-  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, zner, zfar, cpos, cdir, vec3(0, 0, 1));
   //cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
   o.width = 512;
   o.height = 512;
+
+  o.discard = m_discard;
 
   gc->gcTexTarget(m_target, tex, gctype_tex2d);
   gr->render(m_target, cam, o);
@@ -200,16 +211,23 @@ void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
   f32  fov  = gr->m_camera->mFov;
   f32  asp  = gr->m_camera->mAspect;
 
-  cpos.z *= -1;
-  cdir.z *= -1;
-
-  cam.set(fov, asp, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
-  //cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, cpos.distance(pos), gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
   o.width = 512;
   o.height = 512;
+
+  o.clipping = true;
+
+  vec3 inor = nor.inverse();
+  inor.normalize();
+  o.plane[0] = inor.x;
+  o.plane[1] = inor.y;
+  o.plane[2] = inor.z;
+  o.plane[3] = pos.length();
+
+  o.discard = m_discard;
 
   gc->gcTexTarget(m_target, tex, gctype_tex2d);
   gr->render(m_target, cam, o);

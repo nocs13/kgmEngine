@@ -151,6 +151,9 @@ enum gc_enum
 class kgmIGC: public kgmObject
 {
 public:
+  struct ClipPlane {bool on; u32 id; f32 plane[4]; };
+
+public:
   virtual void  gcSet(u32 param, void* value) = 0;
   virtual void  gcGet(u32 param, void* value) = 0;
 
@@ -191,9 +194,6 @@ public:
 
   // DEPTH
   virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
-
-  // CLIPPING
-  virtual void  gcClipPlane(bool en, u32 i, f64 plane[4]) = 0;
 
   // VERTEX & INDEX BUFFERS
   virtual gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;

@@ -38,6 +38,7 @@ public:
     Val_Vec4,
     Val_Mtx3,
     Val_Mtx4,
+    Val_Int
   };
 private:
   struct Value
@@ -72,7 +73,8 @@ public:
   void set(const char*, vec4&,  int count = 1);
   void set(const char*, mtx4&,  int count = 1);
   void set(const char*, mtx3&,  int count = 1);
-  void set(const char*, int,    int count = 1);
+  void set(const char*, int);
+  void set(const char*, int*,   int count = 1);
   void attr(int, const char*);
 
   void setValue(const char*, TypeValue, void*, u32);

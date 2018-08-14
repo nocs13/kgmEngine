@@ -44,7 +44,7 @@ varying float random;
 
 uniform sampler2D g_txEnvironment;
 
-const float strength = 0.06;
+const float strength = 0.006;
 
 void kgm_main(out vec4 col)
 {
@@ -55,7 +55,7 @@ void kgm_main(out vec4 col)
   vec2 rlc = vec2(ndc.x, -ndc.y);
 
   vec4 rlcol = texture2D(g_txEnvironment, rlc + distortion);
-  vec4 rrcol = texture2D(g_txSpecular,    rrc + distortion);
+  vec4 rrcol = texture2D(g_txSpecular,    rrc - distortion);
 
   vec3 view = normalize(look);
   float mixfactor = dot(view, vec3(0, 1, 0));
@@ -65,7 +65,8 @@ void kgm_main(out vec4 col)
   col = mix(rlcol, rrcol, mixfactor);
 
   //col = texture2D(g_txEnvironment, rlc + distortion);
+  //col = texture2D(g_txSpecular, rrc - distortion);
   //col = mix(col, v_color, rffactor);
 
-  col *= g_fForce;
+  //col *= g_fForce;
 }

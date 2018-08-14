@@ -1,7 +1,7 @@
 varying vec3 VV;
 varying vec3 L_Dir;
 varying vec3 Y_Dir;
-varying vec3   eye;
+varying vec3 eye;
 
 void kgm_main(out vec4 pos)
 {
@@ -23,7 +23,7 @@ void kgm_main(out vec4 pos)
 
   v_Y = -vec3(g_mView * vec4(v_V, 1.0));
 
-  Y_Dir = g_vEyeDir;
+  Y_Dir = g_vLook;
 
   if (length(g_vLightDirection.xyz) == 0.0)
   {

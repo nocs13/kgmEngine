@@ -93,10 +93,14 @@ public:
 
   struct Options
   {
-    bool color = true;
-    bool light = false;
+    bool color    = true;
+    bool light    = false;
+    bool clipping = false;
 
     u32  width, height;
+    f32  plane[4];
+
+    kgmIGraphics::INode *discard = null;
   };
 
 protected:

@@ -20,6 +20,8 @@ public:
 
   bool m_refraction = false;
 
+  kgmIGraphics::INode* m_discard = null;
+
 public:
   EnvironmentRender(kgmGraphics* gr);
   ~EnvironmentRender();

@@ -82,6 +82,9 @@ void kgmShader::useValues()
     case Val_Mtx4:
       m_gc->gcUniformMatrix(m_shader, gcunitype_mtx4, val.count, 0, val.id, val.data);
       break;
+    case Val_Int:
+      m_gc->gcUniform(m_shader, gcunitype_int1, val.count, val.id, val.data);
+      break;
     default:
       break;
     }
@@ -108,9 +111,14 @@ void kgmShader::set(const char* id, vec4& v, int count)
   m_gc->gcUniform(m_shader, gcunitype_float4, count, id, &v);
 }
 
-void kgmShader::set(const char* id, int v, int count)
+void kgmShader::set(const char* id, int v)
 {
-  m_gc->gcUniform(m_shader, gcunitype_int1, count, id, &v);
+  m_gc->gcUniform(m_shader, gcunitype_int1, 1, id, &v);
+}
+
+void kgmShader::set(const char* id, int *v, int count)
+{
+  m_gc->gcUniform(m_shader, gcunitype_int1, count, id, v);
 }
 
 void kgmShader::set(const char* id, mtx4& v, int count)

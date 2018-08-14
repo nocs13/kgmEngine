@@ -590,7 +590,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_cube);
+  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
@@ -637,7 +637,9 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
-    if (!(*i)->isNodeValid())
+    kgmIGraphics::INode* nod = (*i);
+
+    if (!nod || !(*i)->isNodeValid() || nod == op.discard)
       continue;
 
     box3 bound = (*i)->getNodeBound();
@@ -648,7 +650,6 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     //if(!cam.isSphereCross(v, 0.5 * l.length()))
     //  continue;
 
-    kgmIGraphics::INode* nod = (*i);
     kgmMaterial*         mtl = nod->getNodeMaterial();
     kgmMesh*             msh = (kgmMesh*) nod->getNodeObject();
 
@@ -736,7 +737,15 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     s.setValue("g_vLightColor",     kgmShader::Val_Vec4, &v_light_color, 1);
     s.setValue("g_vLightDirection", kgmShader::Val_Vec4, &v_light_direction, 1);
     s.setValue("g_vEye",            kgmShader::Val_Vec3, &m_camera->mPos, 1);
-    s.setValue("g_vEyeDir",         kgmShader::Val_Vec3, &m_camera->mDir, 1);
+    s.setValue("g_vLook",           kgmShader::Val_Vec3, &m_camera->mDir, 1);
+
+    if (op.clipping)
+    {
+      s32 pc  = 1;
+      vec4 pv = vec4(op.plane[0], op.plane[1], op.plane[2], op.plane[3]);
+      s.setValue("g_iClipping",  kgmShader::Val_Int, &pc, 1);
+      s.setValue("g_vClipPlane", kgmShader::Val_Vec4, &pv, 1);
+    }
 
     s.start();
     s.useValues();
@@ -1051,7 +1060,7 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_vLightColor",     v_light_color);
   s->set("g_vLightDirection", v_light_direction);
   s->set("g_vEye",            m_camera->mPos);
-  s->set("g_vEyeDir",         m_camera->mDir);
+  s->set("g_vLook",           m_camera->mDir);
 
   if(tcolor)
     s->set("g_txColor", 0);
