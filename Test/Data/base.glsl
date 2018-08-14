@@ -13,7 +13,7 @@ void kgm_main(out vec4 pos)
    clipplane = g_vClipPlane;
    clipping = 0.0;
 
-   if (g_iClipping < 5)
+   if (g_iClipping > 0)
    {
      clipping = 1.5;
    }
@@ -38,13 +38,13 @@ void kgm_distance(out float distance, in vec4 plane, in vec3 point)
 
 void kgm_main(out vec4 col)
 {
-  if (clipping == 0.25)
+  if (clipping == 1.5)
   {
     float distance = 0.0;
     kgm_distance(distance, clipplane, position.xyz);
 
-    //if (distance <= 0.0)
-    //  discard;
+    if (distance <= 0.0)
+      discard;
   }
 
   col = v_color * PxColor * texture2D(g_txColor, v_UV);

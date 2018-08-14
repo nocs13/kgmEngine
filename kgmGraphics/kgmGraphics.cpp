@@ -1061,6 +1061,7 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_vLightDirection", v_light_direction);
   s->set("g_vEye",            m_camera->mPos);
   s->set("g_vLook",           m_camera->mDir);
+  s->set("g_iClipping",       0);
 
   if(tcolor)
     s->set("g_txColor", 0);

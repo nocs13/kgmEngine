@@ -159,6 +159,8 @@ void EnvironmentRender::render(vec3 pos, box bnd, gchandle tex)
   o.width = 512;
   o.height = 512;
 
+  o.clipping = false;
+
   for (u32 i = 0; i < 6; i++)
   {
     m_cubemapside = i;
@@ -184,12 +186,19 @@ void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   cdir.z *= -1;
 
   cam.set(fov, asp, zner, zfar, cpos, cdir, vec3(0, 0, 1));
-  //cam.set(PI / 6, 1, 0.1, 1000, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
   o.width = 512;
   o.height = 512;
+
+  o.clipping = true;
+
+  nor.normalize();
+  o.plane[0] = nor.x;
+  o.plane[1] = nor.y;
+  o.plane[2] = nor.z;
+  o.plane[3] = pos.length();
 
   o.discard = m_discard;
 
@@ -211,7 +220,7 @@ void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
   f32  fov  = gr->m_camera->mFov;
   f32  asp  = gr->m_camera->mAspect;
 
-  cam.set(fov, asp, cpos.distance(pos), gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, gr->m_camera->mNear, gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
