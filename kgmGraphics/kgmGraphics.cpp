@@ -626,14 +626,19 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
-
-  gc->gcBegin();
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
-  //gc->gcClear(gcflag_color | gcflag_depth, rand(), 1, 0);
 
   gc->gcBlend(false, 0, null, null);
   gc->gcAlpha(false, null, null);
+
+  if (op.clipping)
+  {
+    kgmIGC::ClipPlane cp = {true, 0, { op.plane[0], op.plane[1], op.plane[2], op.plane[3]}};
+    gc->gcSet(gcpar_clipplane, &cp);
+  }
+
+  gc->gcBegin();
 
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
@@ -759,6 +764,13 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   render((kgmMaterial*)null);
 
   gc->gcEnd();
+
+  if (op.clipping)
+  {
+    kgmIGC::ClipPlane cp = {false, 0, { op.plane[0], op.plane[1], op.plane[2], op.plane[3]}};
+    gc->gcSet(gcpar_clipplane, &cp);
+  }
+
   gc->gcSetTarget(null);
 }
 

@@ -397,6 +397,7 @@ class kgmMaterial:
     self.mir_fresnel = 0.0;
     self.trn_fresnel = 0.0;
     self.tex_move    = None
+    self.distortion  = 0.0
 
     if hasattr(mtl, 'raytrace_mirror') is True:
       if mtl.raytrace_mirror is not None:
@@ -413,6 +414,7 @@ class kgmMaterial:
 
     for TS in mtl.texture_slots.keys():
       TextureSlot = mtl.texture_slots[TS]
+      print("Tex: " + str(TS))
       if TextureSlot.texture.type == "IMAGE" and TextureSlot.texture.image.source == "FILE":
         print("TPATH: " + TextureSlot.texture.image.filepath)
         tf_path = os.path.basename(TextureSlot.texture.image.filepath)
@@ -446,7 +448,9 @@ class kgmMaterial:
 
     if mtl.name in bpy.data.materials and 'TexMove' in bpy.data.materials[mtl.name]:
       self.tex_move = bpy.data.materials[mtl.name]['TexMove']
-      print("Tex move is " + str(self.tex_move))
+
+    if mtl.name in bpy.data.materials and 'Distort' in bpy.data.materials[mtl.name]:
+      self.distortion = bpy.data.materials[mtl.name]['Distort']
 
     if len(mtl.texture_slots.keys()) > 0:
       self.blend = mtl.texture_slots[0].blend_type
@@ -919,6 +923,9 @@ def export_material(file, o):
 
   if o.tex_move is not None:
     file.write("  <TexMove value='" + str(o.tex_move) + "'/>\n")
+
+  if o.distortion > 0.0:
+    file.write("  <Distortion value='" + str(o.distortion) + "'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")

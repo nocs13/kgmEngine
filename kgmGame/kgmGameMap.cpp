@@ -743,6 +743,11 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vfloat3);
         ((kgmMaterial*)data)->m_specular = kgmMaterial::Color(vfloat3.x, vfloat3.y, vfloat3.z, 1.0);
       }
+      else if(id == "Distortion")
+      {
+        xmlAttr(m_xml, "value", vfloat);
+        ((kgmMaterial*)data)->distortion(vfloat);
+      }
       else if(id == "Shininess")
       {
         xmlAttr(m_xml, "value", vfloat);

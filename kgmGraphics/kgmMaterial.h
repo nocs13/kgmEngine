@@ -155,6 +155,7 @@ private:
   Type  m_type  = TypeNone;
   Blend m_blend = Blend_None;
 
+  f32  m_distortion;
   f32  m_shininess;
   f32  m_fresnel;
 
@@ -234,22 +235,32 @@ public:
     m_color.a = 1.0f - t;
   }
 
-  float shininess() const
+  f32 distortion() const
+  {
+    return m_distortion;
+  }
+
+  void distortion(f32 s)
+  {
+    m_distortion = s;
+  }
+
+  f32 shininess() const
   {
     return m_shininess;
   }
 
-  void shininess(float s)
+  void shininess(f32 s)
   {
     m_shininess = s;
   }
 
-  float fresnel() const
+  f32 fresnel() const
   {
     return m_fresnel;
   }
 
-  void fresnel(float f)
+  void fresnel(f32 f)
   {
     m_fresnel = f;
   }

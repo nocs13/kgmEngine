@@ -29,8 +29,9 @@ public:
   void render();
 
   void render(kgmIGraphics::INode*);
-  void render(vec3, box, gchandle);
-  void render(vec3, vec3, f32, gchandle);
+
+  void reflection(vec3, box, gchandle);
+  void reflection(vec3, vec3, f32, gchandle);
 
   void refraction(vec3, box, gchandle);
   void refraction(vec3, vec3, gchandle);

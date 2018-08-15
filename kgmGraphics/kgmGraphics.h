@@ -95,6 +95,7 @@ public:
   {
     bool color    = true;
     bool light    = false;
+    bool shadows  = false;
     bool clipping = false;
 
     u32  width, height;

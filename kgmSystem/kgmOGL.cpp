@@ -459,6 +459,25 @@ void kgmOGL::gcSet(u32 param, void* value)
     glColorMask(r, g, b, a);
   }
     break;
+  case gcpar_clipplane:
+  {
+    if (value)
+    {
+      ClipPlane* cp = (ClipPlane*) value;
+
+      if (cp->on)
+      {
+        double pl[] = { cp->plane[0], cp->plane[1], cp->plane[2], cp->plane[3] };
+        glEnable(GL_CLIP_PLANE0 + cp->id);
+        glClipPlane(GL_CLIP_PLANE0 + cp->id, pl);
+      }
+      else
+      {
+        glDisable(GL_CLIP_PLANE0 + cp->id);
+      }
+    }
+  }
+    break;
   case gctex_fltmag:
       m_mag_filter = gl_enum((u32)(size_t)value);
     break;

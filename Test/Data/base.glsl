@@ -43,8 +43,8 @@ void kgm_main(out vec4 col)
     float distance = 0.0;
     kgm_distance(distance, clipplane, position.xyz);
 
-    if (distance <= 0.0)
-      discard;
+    //if (distance <= 0.0)
+    //  discard;
   }
 
   col = v_color * PxColor * texture2D(g_txColor, v_UV);

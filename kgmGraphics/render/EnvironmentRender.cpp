@@ -65,15 +65,19 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
 
   if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
   {
-    render(p, b, m_tx_cube);
+    reflection(p, b, m_tx_cube);
     sh = m_sd_cube;
     tx = m_tx_cube;
+
+    if (m_refraction)
+      refraction(p, b, m_tx_refraction);
   }
   else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
   {
     m_discard = n;
 
-    render(p, nr, gr->m_camera->mPos.z, m_tx_plane);
+    reflection(p, nr, gr->m_camera->mPos.z, m_tx_plane);
+
     sh = m_sd_plane;
     tx = m_tx_plane;
 
@@ -119,22 +123,27 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   move.x += 0.001 * mtl->move().x;
   move.y += 0.001 * mtl->move().y;
 
-  f32 force = mtl->envIntensity();
+  f32 force = 0.2 * mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
   f32 fresnel = 1.0 + (float) mtl->fresnel();
+  f32 distortion = mtl->distortion();
 
+  gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  //gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
   //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+
   sh->start();
-  sh->set("g_mProj",  gr->m_camera->mProj);
-  sh->set("g_mView",  gr->m_camera->mView);
-  sh->set("g_mTran",  m);
-  sh->set("g_vEye", gr->m_camera->mPos);
+  sh->set("g_mProj", gr->m_camera->mProj);
+  sh->set("g_mView", gr->m_camera->mView);
+  sh->set("g_mTran", m);
+  sh->set("g_vEye",    gr->m_camera->mPos);
   sh->set("g_vEyeDir", gr->m_camera->mDir);
-  sh->set("g_vColor", col);
-  sh->set("g_vMove", move);
+  sh->set("g_vColor",  col);
+  sh->set("g_vMove",   move);
   sh->set("g_fRandom", random);
   sh->set("g_fFresnel", fresnel);
-  sh->set("g_fForce", force);
+  sh->set("g_fForce",   force);
+  sh->set("g_fDistort", distortion);
 
   sh->set("g_txNormal", 1);
   sh->set("g_txSpecular", 2);
@@ -148,7 +157,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   gc->gcBlend(false, 0, 0, 0);
 }
 
-void EnvironmentRender::render(vec3 pos, box bnd, gchandle tex)
+void EnvironmentRender::reflection(vec3 pos, box bnd, gchandle tex)
 {
   kgmCamera cam;
 
@@ -171,7 +180,7 @@ void EnvironmentRender::render(vec3 pos, box bnd, gchandle tex)
   }
 }
 
-void EnvironmentRender::render(vec3 pos, vec3 nor, f32 dis, gchandle tex)
+void EnvironmentRender::reflection(vec3 pos, vec3 nor, f32 dis, gchandle tex)
 {
   kgmCamera cam;
 
@@ -229,8 +238,9 @@ void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
 
   o.clipping = true;
 
-  vec3 inor = nor.inverse();
+  vec3 inor = nor;
   inor.normalize();
+  inor.invert();
   o.plane[0] = inor.x;
   o.plane[1] = inor.y;
   o.plane[2] = inor.z;
