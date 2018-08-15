@@ -123,7 +123,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   move.x += 0.001 * mtl->move().x;
   move.y += 0.001 * mtl->move().y;
 
-  f32 force = 0.2 * mtl->envIntensity();
+  f32 force = 0.5 * mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
   f32 fresnel = 1.0 + (float) mtl->fresnel();
   f32 distortion = mtl->distortion();

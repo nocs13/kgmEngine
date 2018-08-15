@@ -427,9 +427,13 @@ class kgmMaterial:
             self.map_specular_strength = TextureSlot.normal_factor
           else:
             self.map_color = tf_path
+      elif TextureSlot.texture.type == "DISTORTED_NOISE":
+        self.distortion = TextureSlot.texture.distortion
       elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
+        offset = TextureSlot.offset
         self.map_environment = True
         self.env_intensity = TextureSlot.diffuse_factor
+        self.tex_move = str(offset[0]) + " " + str(offset[1]) + " " + str(offset[2])
         print("env Mapping is " + TextureSlot.texture.environment_map.mapping)
         if TextureSlot.texture.environment_map.mapping == "PLANE":
           self.env_mapping = 'Plane'
@@ -445,12 +449,6 @@ class kgmMaterial:
 
     if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
       self.shader = bpy.data.materials[mtl.name]['Shader']
-
-    if mtl.name in bpy.data.materials and 'TexMove' in bpy.data.materials[mtl.name]:
-      self.tex_move = bpy.data.materials[mtl.name]['TexMove']
-
-    if mtl.name in bpy.data.materials and 'Distort' in bpy.data.materials[mtl.name]:
-      self.distortion = bpy.data.materials[mtl.name]['Distort']
 
     if len(mtl.texture_slots.keys()) > 0:
       self.blend = mtl.texture_slots[0].blend_type
