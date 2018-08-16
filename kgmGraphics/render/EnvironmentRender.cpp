@@ -126,9 +126,9 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   f32 force = 0.5 * mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
   f32 fresnel = 1.0 + (float) mtl->fresnel();
-  f32 distortion = 0.0 * mtl->distortion();
+  f32 distortion = 0.5 * mtl->distortion();
 
-  //gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   //gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
   //gc->gcBlend(true, 0, gcblend_one, gcblend_one);
 
@@ -169,6 +169,7 @@ void EnvironmentRender::reflection(vec3 pos, box bnd, gchandle tex)
   o.height = 512;
 
   o.clipping = false;
+  o.light    = true;
 
   for (u32 i = 0; i < 6; i++)
   {
@@ -202,13 +203,15 @@ void EnvironmentRender::reflection(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   o.height = 512;
 
   o.clipping = true;
-  o.light    = true;
+  o.light    = false;
 
   nor.normalize();
-  o.plane[0] = nor.x;
-  o.plane[1] = nor.y;
-  o.plane[2] = nor.z;
-  o.plane[3] = pos.length();
+
+  plane plane(nor, pos);
+  o.plane[0] = plane.x;
+  o.plane[1] = plane.y;
+  o.plane[2] = plane.z;
+  o.plane[3] = plane.w;
 
   o.discard = m_discard;
 

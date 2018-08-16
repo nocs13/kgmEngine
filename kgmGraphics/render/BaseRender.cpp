@@ -67,7 +67,16 @@ void BaseRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   s->set("g_vSpecular",       specular);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
-  s->set("g_iClipping",       0);
+
+  if (m_clip_planes[0].on)
+  {
+    s->set("g_iClipping", 1);
+    s->set("g_vClipPlane", m_clip_planes[0].plane);
+  }
+  else
+  {
+    s->set("g_iClipping", 0);
+  }
 
   s->set("g_txColor", 0);
 

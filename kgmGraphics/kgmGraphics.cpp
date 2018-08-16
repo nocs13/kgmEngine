@@ -197,10 +197,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_fbo = g->gcGenTarget(512, 512, true, false);
     g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
-
-    m_rnd_lights      = new LightRender(this);
-    m_rnd_shadows     = new ShadowRender(this);
-    m_rnd_environment = new EnvironmentRender(this);
   }
 
 
@@ -218,6 +214,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
     m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
   }
+
+  m_rnd_lights      = new LightRender(this);
+  m_rnd_shadows     = new ShadowRender(this);
+  m_rnd_environment = new EnvironmentRender(this);
+
 
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
@@ -675,6 +676,10 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     else
     {
       BaseRender br(this);
+
+      if (op.clipping)
+        br.setClipPlane(true, 0, vec4(op.plane[0], op.plane[1], op.plane[2], op.plane[3]));
+
       br.render(&cam, nod);
     }
   }

@@ -17,10 +17,18 @@ class kgmCamera;
 
 class BaseRender
 {
+  struct ClipPlane
+  {
+    bool on     = false;
+    vec4 plane  = vec4(0, 0, 1, 0);
+  };
+
 protected:
   kgmGraphics* gr;
   kgmIGC*      gc;
   kgmTexture*  font;
+
+  ClipPlane  m_clip_planes[1];
 
 private:
   kgmShader* m_sh_base = null;
@@ -34,6 +42,14 @@ public:
   virtual void build() {}
   virtual void clear() {}
   virtual void render() {}
+
+  void setClipPlane(bool st, u32 id, vec4 cp)
+  {
+    id = 0;
+
+    m_clip_planes[id].on = st;
+    m_clip_planes[id].plane = cp;
+  }
 
 protected:
   void draw(kgmMesh*);

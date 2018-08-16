@@ -22,8 +22,7 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  //kgmShader* shader = gr->m_shaders[kgmMaterial::TypeToon];
-  kgmShader* shader = gr->m_shaders[kgmMaterial::TypePhong];
+  kgmShader* shader = m_sh_phong;
 
   gr->wired(false);
 
