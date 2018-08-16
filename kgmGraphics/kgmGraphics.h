@@ -28,6 +28,7 @@
 #include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
+#include "render/LightRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
 #include "render/EnvironmentRender.h"
@@ -178,6 +179,7 @@ protected:
 
   gchandle m_rnd_target = null;
 
+  LightRender*       m_rnd_lights = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
 

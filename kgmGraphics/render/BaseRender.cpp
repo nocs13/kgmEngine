@@ -12,6 +12,74 @@ BaseRender::BaseRender(kgmGraphics* g)
 {
   gr = g;
   gc = g->gc;
+
+  m_sh_base = gr->m_shaders[kgmMaterial::TypeBase];
+}
+
+void BaseRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
+{
+  if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
+    return;
+
+  box3 bound = nod->getNodeBound();
+
+  vec3  l = bound.max - bound.min;
+  vec3  v = (bound.min + bound.max) * 0.5;
+
+  kgmShader*   s = m_sh_base;
+  kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+  kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
+
+  box3    bbound = nod->getNodeBound();
+  sphere3 sbound;
+
+  bbound.min = nod->getNodeTransform() * bbound.min;
+  bbound.max = nod->getNodeTransform() * bbound.max;
+
+  sbound.center = bbound.center();
+  sbound.radius = 0.5f * bbound.dimension().length();
+
+  mtx4 m        = nod->getNodeTransform();
+  float shine   = mtl->shininess();
+  vec4 color    = mtl->m_color.get();
+  vec4 specular = mtl->m_specular.get();
+
+  gchandle tcolor = null;
+
+  if(mtl->hasTexColor())
+  {
+    gc->gcSetTexture(0, mtl->getTexColor()->texture());
+    tcolor = mtl->getTexColor()->texture();
+  }
+  else
+  {
+    gc->gcSetTexture(0, gr->m_tex_white->texture());
+    tcolor = gr->m_tex_white->texture();
+  }
+
+  s->start();
+
+  s->set("g_fShine",          mtl->shininess());
+  s->set("g_mProj",           cam->mProj);
+  s->set("g_mView",           cam->mView);
+  s->set("g_mTran",           m);
+  s->set("g_vColor",          color);
+  s->set("g_vSpecular",       specular);
+  s->set("g_vEye",            cam->mPos);
+  s->set("g_vLook",           cam->mDir);
+  s->set("g_iClipping",       0);
+
+  s->set("g_txColor", 0);
+
+  draw(msh);
+
+  s->stop();
+
+  gc->gcSetTexture(0, 0);
+  gc->gcSetTexture(1, 0);
+  gc->gcSetTexture(2, 0);
+  gc->gcSetTexture(3, 0);
+
 }
 
 void BaseRender::draw(kgmVisual* visual)

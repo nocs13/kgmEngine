@@ -47,17 +47,17 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
   if(m.empty())
     return 0;
 
-  u16 f_type;
-  u32   f_size;
-  u16 f_res0,f_res1;
-  u32   f_boffs;
-  u32   b_size;
-  long   b_width,b_height;
-  u16 b_planes,b_btcnt;
-  u32   b_compr,b_sizeimg;
-  long   b_xppm,b_yppm;
-  u32   b_clus,b_climp;
-  char*  pm = (char*)m.data();
+  u16 f_type = 0;
+  u32 f_size = 0;
+  u16 f_res0 = 0, f_res1 = 0;
+  u32 f_boffs = 0;
+  u32 b_size = 0;
+  long b_width = 0, b_height = 0;
+  u16  b_planes = 0, b_btcnt = 0;
+  u32  b_compr = 0, b_sizeimg = 0;
+  long b_xppm = 0, b_yppm = 0;
+  u32  b_clus = 0, b_climp = 0;
+  char* pm = (char*) m.data();
 
   int   width = 0;
   int   height = 0;

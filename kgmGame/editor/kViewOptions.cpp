@@ -750,7 +750,7 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
   g->setText("Color");
   g = new kgmGuiText(tlight, 51, y_coord, 80, 20);
   g->setSid("Color");
-  g->setText(kgmConvert::toString((s32)(light->color()), true));
+  //g->setText(kgmConvert::toString((s32)(light->color()), true));
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setHexnum(true);
   slotColor.connect(this, (Slot<kViewOptionsForLight, kgmString>::FN) &kViewOptionsForLight::onColor, &((kgmGuiText*)g)->sigChange);
@@ -796,7 +796,7 @@ void kViewOptionsForLight::onColor(kgmString c)
 
   u32 color = (u32)kgmConvert::toInteger(c, true);
 
-  node->light()->color(0xff000000 | color);
+  //node->light()->color(0xff000000 | color);
 }
 
 /*void kViewOptionsForLight::onColorG(kgmString c)

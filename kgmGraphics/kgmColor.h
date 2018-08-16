@@ -67,6 +67,17 @@ public:
    return vec4((float) r / 255.f, (float) g / 255.f,
                (float) b / 255.f, (float) a / 255.f);
  }
+
+ static vec3 toVector3(u32 c)
+ {
+   u8 r, g, b, a;
+
+   r = (u8) (0x000000ff & c);
+   g = (u8) (0x000000ff & (c >> 8));
+   b = (u8) (0x000000ff & (c >> 16));
+
+   return vec3((float) r / 255.f, (float) g / 255.f, (float) b / 255.f);
+ }
 };
 
 typedef kgmColor color;

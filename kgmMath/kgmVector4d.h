@@ -1,6 +1,5 @@
 #pragma once
 
-
 // VECTOR4D
 template <class T> class kgmVector4d
 {

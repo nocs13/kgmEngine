@@ -7,7 +7,7 @@
 #include "../kgmMath/kgmVector3d.h"
 #include "../kgmMath/kgmBox3d.h"
 
-class kgmNode: public kgmObject, public kgmIGraphics::INode
+class kgmNode: public kgmIGraphics::INode, public kgmObject
 {
   KGM_OBJECT(kgmNode);
 

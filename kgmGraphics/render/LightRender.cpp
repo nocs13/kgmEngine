@@ -1,15 +1,18 @@
 #include "LightRender.h"
+#include "../../kgmGraphics/kgmIGraphics.h"
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmVisual.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
+#include "../../kgmGraphics/kgmNodeLight.h"
 
 #define MAX_LIGHTS 16
 
 LightRender::LightRender(kgmGraphics* g)
   :BaseRender(g)
 {
-
+  m_sh_toon  = gr->m_shaders[kgmMaterial::TypeToon];
+  m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
 }
 
 void LightRender::render()
@@ -102,6 +105,145 @@ void LightRender::render()
 
   gr->wired(false);
 }
+
+void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
+{
+  if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
+    return;
+
+  kgmShader* s = m_sh_phong;
+  kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+  kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
+
+  box3    bbound = nod->getNodeBound();
+  sphere3 sbound;
+
+  bbound.min = nod->getNodeTransform() * bbound.min;
+  bbound.max = nod->getNodeTransform() * bbound.max;
+
+  sbound.center = bbound.center();
+  sbound.radius = 0.5f * bbound.dimension().length();
+
+  mtx4 m = nod->getNodeTransform();
+
+  kgmIGraphics::INode* light = null;
+
+  for(kgmList<kgmIGraphics::INode*>::iterator i = gr->m_lights.begin(); !i.end(); i.next())
+  {
+    if(!(*i)->isNodeValid())
+      continue;
+
+    vec3 pos = (*i)->getNodePosition();
+
+    kgmLight* l = (kgmLight*) (*i)->getNodeObject();
+
+    if(!cam->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
+      continue;
+
+    if (!light)
+    {
+      light = (*i);
+    }
+    else
+    {
+      f32 lforce[2];
+      lforce[0] = kgmLight::LIGHT_RANGE * l->intensity();
+      lforce[1] = kgmLight::LIGHT_RANGE * ((kgmLight*)light->getNodeObject())->intensity();
+
+      if (lforce[0] > lforce[1])
+        light = (*i);
+    }
+  }
+
+  if (!light)
+    light = gr->m_def_light;
+
+  mtx4 transform = nod->getNodeTransform();
+
+  vec4 v_light;
+  vec4 v_light_color;
+  vec4 v_light_direction;
+
+  if (light)
+  {
+    kgmLight* l   = (kgmLight*) light->getNodeObject();
+    vec3      pos = light->getNodePosition();
+
+    v_light           = vec4(pos.x, pos.y, pos.z, l->intensity());
+    v_light_direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
+    v_light_color     = vec4(l->color().x, l->color().y, l->color().z, 1.0);
+  }
+
+  float shine   = mtl->shininess();
+  vec4 color    = mtl->m_color.get();
+  vec4 specular = mtl->m_specular.get();
+
+  gchandle tcolor = null;
+  gchandle tnormal = null;
+  gchandle tspecular = null;
+
+  if(mtl->hasTexColor())
+  {
+    gc->gcSetTexture(0, mtl->getTexColor()->texture());
+    tcolor = mtl->getTexColor()->texture();
+  }
+  else
+  {
+    gc->gcSetTexture(0, gr->m_tex_white->texture());
+    tcolor = gr->m_tex_white->texture();
+  }
+
+  if(mtl->hasTexNormal())
+  {
+    gc->gcSetTexture(1, mtl->getTexNormal()->texture());
+    tnormal = mtl->getTexNormal()->texture();
+  }
+  else
+  {
+    gc->gcSetTexture(1, gr->m_tex_gray->texture());
+    tnormal = gr->m_tex_gray->texture();
+  }
+
+  if(mtl->hasTexSpecular())
+  {
+    gc->gcSetTexture(2, mtl->getTexSpecular()->texture());
+    tspecular = mtl->getTexSpecular()->texture();
+  }
+  else
+  {
+    gc->gcSetTexture(2, gr->m_tex_white->texture());
+    tspecular = gr->m_tex_white->texture();
+  }
+
+  s->start();
+
+  s->set("g_fShine",          mtl->shininess());
+  s->set("g_mProj",           cam->mProj);
+  s->set("g_mView",           cam->mView);
+  s->set("g_mTran",           m);
+  s->set("g_vColor",          color);
+  s->set("g_vSpecular",       specular);
+  s->set("g_vLight",          v_light);
+  s->set("g_vLightColor",     v_light_color);
+  s->set("g_vLightDirection", v_light_direction);
+  s->set("g_vEye",            cam->mPos);
+  s->set("g_vLook",           cam->mDir);
+  s->set("g_iClipping",       0);
+
+  s->set("g_txColor", 0);
+  s->set("g_txNormal", 1);
+  s->set("g_txSpecular", 2);
+
+  draw(msh);
+
+  s->stop();
+
+  gc->gcSetTexture(0, 0);
+  gc->gcSetTexture(1, 0);
+  gc->gcSetTexture(2, 0);
+  gc->gcSetTexture(3, 0);
+}
+
 
 /*
 void LightRender::render()

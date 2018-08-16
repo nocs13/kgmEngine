@@ -198,6 +198,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
 
+    m_rnd_lights      = new LightRender(this);
     m_rnd_shadows     = new ShadowRender(this);
     m_rnd_environment = new EnvironmentRender(this);
   }
@@ -232,6 +233,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 kgmGraphics::~kgmGraphics()
 {
   gc->gcFreeTarget(g_fbo);
+
+  if (m_rnd_lights)
+    delete m_rnd_lights;
 
   if (m_rnd_shadows)
     delete m_rnd_shadows;
@@ -545,12 +549,12 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  LightRender lr(this);
-  lr.render();
+  //LightRender lr(this);
+  //lr.render();
+  m_rnd_lights->render();
 
   //ShadowRender sr(this);
   //sr.render();
-
   m_rnd_shadows->render();
 
   //draw particles
@@ -590,7 +594,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
+  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_plane);
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
@@ -619,6 +623,66 @@ void kgmGraphics::render()
   gc->gcSetTexture(3, 0);
 }
 
+void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
+{
+  //prepare for render
+  gc->gcSetTarget(buf);
+
+  gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
+
+  gc->gcCull(gccull_back);
+  gc->gcDepth(true, true, gccmp_lequal);
+  gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
+
+  gc->gcBlend(false, 0, null, null);
+  gc->gcAlpha(false, null, null);
+
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  {
+    kgmIGraphics::INode* nod = (*i);
+
+    if (!nod || !(*i)->isNodeValid() || nod == op.discard)
+      continue;
+
+    box3 bound = (*i)->getNodeBound();
+
+    vec3  l = bound.max - bound.min;
+    vec3  v = (bound.min + bound.max) * 0.5;
+
+    //if(!cam.isSphereCross(v, 0.5 * l.length()))
+    //  continue;
+
+    kgmMaterial*         mtl = nod->getNodeMaterial();
+    kgmMesh*             msh = (kgmMesh*) nod->getNodeObject();
+
+    if (!mtl)
+      mtl = m_def_material;
+
+    if(mtl && (mtl->blend() != kgmMaterial::Blend_None || mtl->transparency() > 0.0f))
+    {
+      continue;
+    }
+
+    kgmNodeLight* light = null;
+
+    mtx4 transform = nod->getNodeTransform();
+
+    if (op.light)
+    {
+      LightRender lr(this);
+      lr.render(&cam, nod);
+    }
+    else
+    {
+      BaseRender br(this);
+      br.render(&cam, nod);
+    }
+  }
+
+  gc->gcSetTarget(null);
+}
+
+/*
 void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 {
   //prepare for render
@@ -773,7 +837,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 
   gc->gcSetTarget(null);
 }
-
+*/
 void kgmGraphics::render(kgmVisual* visual)
 {
   if(!visual)
@@ -1052,7 +1116,7 @@ void kgmGraphics::render(kgmShader* s)
     v_light           = vec4(pos.x, pos.y, pos.z, l->intensity());
     v_light_direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
     //v_light_color     = vec4(1, 1, 1, 1); //l->color;
-    v_light_color     = kgmColor::toVector(l->color());
+    v_light_color     = vec4(l->color().x, l->color().y, l->color().z, 1.0);
   }
 
   float random = (float)rand()/(float)RAND_MAX;

@@ -14,7 +14,7 @@
 class kgmIGame;
 class kgmSound;
 
-class kgmUnit : public kgmObject, public kgmIGraphics::INode//, public kgmIPhysics::IBody
+class kgmUnit : public kgmIGraphics::INode, public kgmObject //, public kgmIPhysics::IBody
 {
   KGM_OBJECT(kgmUnit);
 
@@ -99,19 +99,6 @@ public:
   static kgmTab<kgmString, Generate> g_typ_objects;
 
   kgmList<kgmVariable> m_variables;
-
-#ifdef EDITOR
-  virtual void eupdate()
-  {
-
-  }
-
-  virtual void resetToVariables()
-  {
-    for(int i = 0; i < m_variables.length(); i++)
-      m_variables[i].sync(kgmVariable::SyncToLink);
-  }
-#endif
 
 public:
   kgmUnit(kgmIGame* g = null);

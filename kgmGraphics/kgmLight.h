@@ -23,7 +23,7 @@ private:
   Type  m_type;
 
   vec3  m_direction;
-  u32   m_color;
+  vec3  m_color;
 
   float m_intensity;
   float m_angle;
@@ -41,13 +41,13 @@ public:
 
     m_direction = vec3(0, 0, 0);
 
-    m_color = 0xffffffff;
+    m_color = vec3(1, 1, 1);
 
     m_intensity = 1.0f;
-    m_angle = 0.0f;
+    m_angle     = 0.0f;
 
     m_shadows = false;
-    m_active = true;
+    m_active  = true;
 
     m_group = 0;
   }
@@ -103,12 +103,12 @@ public:
     m_intensity = i;
   }
 
-  u32 color() const
+  vec3 color() const
   {
     return m_color;
   }
 
-  void color(u32 c)
+  void color(vec3 c)
   {
     m_color = c;
   }

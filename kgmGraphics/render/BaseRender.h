@@ -3,6 +3,7 @@
 
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
+#include "../kgmIGraphics.h"
 
 class kgmGraphics;
 class kgmVisual;
@@ -21,9 +22,14 @@ protected:
   kgmIGC*      gc;
   kgmTexture*  font;
 
+private:
+  kgmShader* m_sh_base = null;
+
 public:
   BaseRender(kgmGraphics* gr);
   virtual ~BaseRender(){}
+
+  void render(kgmCamera*, kgmIGraphics::INode*);
 
   virtual void build() {}
   virtual void clear() {}
