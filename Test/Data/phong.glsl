@@ -1,11 +1,14 @@
-varying vec3   VV;
-varying vec3   eye;
+varying vec3  VV;
+varying vec3  eye;
+varying float clipping;
 
 void kgm_main(out vec4 pos)
 {
   mat3  mRot = mat3(g_mTran[0][0], g_mTran[0][1], g_mTran[0][2],
                     g_mTran[1][0], g_mTran[1][1], g_mTran[1][2],
                     g_mTran[2][0], g_mTran[2][1], g_mTran[2][2]);
+
+  vec4 position = g_mTran * vec4(a_Vertex, 1.0);
 
   v_V  = vec4(g_mTran * vec4(a_Vertex, 1.0)).xyz;
 
@@ -25,15 +28,28 @@ void kgm_main(out vec4 pos)
 
   v_UV = a_UV;
 
+  if (g_iClipping > 0)
+  {
+    clipping = dot(position, g_vClipPlane);
+  }
+  else
+  {
+    clipping = 1.0;
+  }
+
   pos = ( g_mProj * g_mView * vec4(v_V, 1.0) );
 }
 
 //Fragment Shader
-varying vec3   VV;
-varying vec3   eye;
+varying vec3  VV;
+varying vec3  eye;
+varying float clipping;
 
 void kgm_main( out vec4 color )
 {
+  if (clipping < 0.0)
+    discard;
+
   vec3 NN = normalize(v_N);
   vec3 LN = normalize(v_L - v_V);
   vec3 R  = normalize(-reflect(LN, NN));

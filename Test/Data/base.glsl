@@ -22,7 +22,6 @@ void kgm_main(out vec4 pos)
 //Fragment Shader
 varying vec4  PxColor;
 varying vec4  position;
-varying vec4  clipplane;
 varying float clipping;
 
 void kgm_main(out vec4 col)
