@@ -219,9 +219,29 @@ void EnvironmentRender::reflection(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   gr->render(m_target, cam, o);
 }
 
-void EnvironmentRender::refraction(vec3, box, gchandle)
+void EnvironmentRender::refraction(vec3 pos, box bb, gchandle tex)
 {
+  kgmCamera cam;
 
+  vec3 cpos = gr->m_camera->mPos;
+  vec3 cdir = gr->m_camera->mDir;
+  f32  fov  = gr->m_camera->mFov;
+  f32  asp  = gr->m_camera->mAspect;
+
+  cam.set(fov, asp, cpos.distance(pos), gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
+
+  kgmGraphics::Options o;
+
+  o.width = 512;
+  o.height = 512;
+
+  o.light = true;
+  o.clipping = false;
+
+  o.discard = m_discard;
+
+  gc->gcTexTarget(m_target, tex, gctype_tex2d);
+  gr->render(m_target, cam, o);
 }
 
 void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
