@@ -9,6 +9,8 @@ varying vec3 normal;
 varying vec3 position;
 varying vec2 dudv;
 
+varying vec4 projTexCoord;
+
 const float tiling = 1.0;
 
 void kgm_main(out vec4 pos)
@@ -23,8 +25,9 @@ void kgm_main(out vec4 pos)
    //txCoord = (transpose(g_mView * g_mTran) * vec4(normal, 1.0)).xyz;
    //txCoord = (transpose(g_mView * g_mTran) * vec4(a_Vertex, 1.0)).xyz;
    //position = g_mView * g_mTran * vec4(a_Vertex, 0.0)
-   clip = g_mProj * g_mView * g_mTran * vec4(a_Vertex.x, a_Vertex.y, 0, 1);
+   clip = g_mProj * g_mView * g_mTran * vec4(a_Vertex.x, a_Vertex.y, a_Vertex.z, 1);
    dudv = vec2(a_Vertex.x / 2.0 + 0.5, a_Vertex.y / 2.0 + 0.5) * tiling;
+   projTextCoord = g_mProj *  g_mTran * vec4(a_Vertex, 1);
 
    pos = g_mProj * g_mView * g_mTran * vec4(a_Vertex, 1);
 }
@@ -34,6 +37,8 @@ varying vec3 txCoord;
 varying vec4 PxColor;
 varying vec4 clip;
 varying vec2 dudv;
+
+varying vec4 projTexCoord;
 
 uniform float  g_fForce   = 1.0;
 uniform float  g_fFresnel = 1.0;
@@ -48,7 +53,8 @@ void kgm_main(out vec4 col)
 
   vec2 ndc = (clip.xy / clip.w) / 2.0 + 0.5;
   vec2 rrc = vec2(ndc.x,  ndc.y);
-  vec4 rrcol = texture2D(g_txSpecular,    rrc - distortion);
+  //vec4 rrcol = texture2D(g_txSpecular, ndc);//rrc - distortion);
+  vec4 rrcol = textureProj(g_txSpecular, projTexCoord);//rrc - distortion);
   vec4 rfcol = PxColor * textureCube(g_txEnvironment, txCoord);
 
   //col = mix(rfcol, rrcol, 0.5);

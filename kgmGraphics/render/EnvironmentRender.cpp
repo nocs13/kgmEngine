@@ -81,8 +81,8 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     sh = m_sd_plane;
     tx = m_tx_plane;
 
-    if (m_refraction)
-      refraction(p, nr, m_tx_refraction);
+    //if (m_refraction)
+    //  refraction(p, nr, m_tx_refraction);
   }
   else
   {
@@ -228,7 +228,7 @@ void EnvironmentRender::refraction(vec3 pos, box bb, gchandle tex)
   f32  fov  = gr->m_camera->mFov;
   f32  asp  = gr->m_camera->mAspect;
 
-  cam.set(fov, asp, cpos.distance(pos), gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
+  cam.set(fov, asp, gr->m_camera->mNear, gr->m_camera->mFar, cpos, cdir, vec3(0, 0, 1));
 
   kgmGraphics::Options o;
 
