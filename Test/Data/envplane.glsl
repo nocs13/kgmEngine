@@ -65,7 +65,5 @@ void kgm_main(out vec4 col)
 
   //col = texture2D(g_txEnvironment, rlc + distortion);
   //col = texture2D(g_txSpecular, rrc - distortion);
-  //col = mix(col, v_color, rffactor);
-
   col.w *= g_fForce;
 }

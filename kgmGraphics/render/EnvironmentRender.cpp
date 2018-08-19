@@ -65,6 +65,8 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
 
   if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
   {
+    m_discard = n;
+
     reflection(p, b, m_tx_cube);
     sh = m_sd_cube;
     tx = m_tx_cube;
@@ -85,6 +87,11 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     //  refraction(p, nr, m_tx_refraction);
   }
   else
+  {
+    return;
+  }
+
+  if (!sh)
   {
     return;
   }
@@ -123,10 +130,10 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   move.x += 0.001 * mtl->move().x;
   move.y += 0.001 * mtl->move().y;
 
-  f32 force = 0.5 * mtl->envIntensity();
+  f32 force = mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
-  f32 fresnel = 1.0 + (float) mtl->fresnel();
-  f32 distortion = 0.5 * mtl->distortion();
+  f32 fresnel = mtl->fresnel();
+  f32 distortion = mtl->distortion();
 
   gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   //gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
