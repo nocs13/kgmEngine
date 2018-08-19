@@ -122,6 +122,16 @@ public:
   {
     m_shadows = s;
   }
+
+  bool active() const
+  {
+    return m_active;
+  }
+
+  void active(bool a)
+  {
+    m_active = a;
+  }
 };
 
 typedef kgmList<kgmLight*> kgmLights;

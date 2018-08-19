@@ -7,7 +7,7 @@
 #include "../../kgmGraphics/kgmGraphics.h"
 #include "../../kgmGraphics/kgmNodeLight.h"
 
-#define MAX_LIGHTS 16
+#define MAX_LIGHTS 8
 
 LightRender::LightRender(kgmGraphics* g)
   :BaseRender(g)
@@ -25,13 +25,21 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  kgmShader* shader = m_sh_phong;
+  kgmShader* sh = m_sh_phong;
 
   gr->wired(false);
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
+
+    Light lights[MAX_LIGHTS];
+
+    u32 lcount = collect(gr->m_camera, nod, lights);
+
+    if (lcount < 1)
+      continue;
+
     kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
     kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
@@ -47,13 +55,9 @@ void LightRender::render()
     mtx4 m = nod->getNodeTransform();
     gr->setWorldMatrix(m);
 
-    gr->render(mtl);
+    material(mtl);
+    shader(sh, gr->m_camera, mtl, nod, lights);
     
-    if (mtl->envType())
-    {
-      
-    }
-
     /*for(s32 j = 0; j < gr->m_a_light_count; j++)
     {
       gr->m_a_light = gr->m_a_lights[j];
@@ -70,8 +74,8 @@ void LightRender::render()
         gc->gcBlend(false, 0, gcblend_one, gcblend_one);
     }*/
 
-    gr->render((kgmMaterial*)null);
-    gr->render((kgmShader*)null);
+    material(null);
+    shader(null, null, null, null, null);
 
     if (mtl->envType() != kgmMaterial::EnvironmentTypeNone)
     {
@@ -97,7 +101,7 @@ void LightRender::render()
 
     gr->render(mtl);
 
-    gr->render(shader);
+    gr->render(sh);
 
     gr->render(msh);
 
@@ -346,7 +350,7 @@ void LightRender::material(kgmMaterial* m)
   }
 }
 
-void LightRender::shader(kgmShader* s, kgmMaterial* mtl, kgmIGraphics::INode* nod, Light lights[8])
+void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod, Light lights[8])
 {
   if(!s)
   {
@@ -369,36 +373,79 @@ void LightRender::shader(kgmShader* s, kgmMaterial* mtl, kgmIGraphics::INode* no
   s->set("g_fTime",           kgmTime::getTime());
   s->set("g_fRandom",         random);
   s->set("g_fShine",          mtl->shininess());
-  s->set("g_mProj",           gr->m_camera->mProj);
-  s->set("g_mView",           gr->m_camera->mView);
+  s->set("g_mProj",           cam->mProj);
+  s->set("g_mView",           cam->mView);
   s->set("g_mTran",           transform);
   s->set("g_vColor",          color);
   s->set("g_vSpecular",       specular);
   s->set("g_vLight",          v_light);
   s->set("g_vLightColor",     v_light_color);
   s->set("g_vLightDirection", v_light_direction);
-  s->set("g_vEye",            gr->m_camera->mPos);
-  s->set("g_vLook",           gr->m_camera->mDir);
+  s->set("g_vEye",            cam->mPos);
+  s->set("g_vLook",           cam->mDir);
   s->set("g_iClipping",       0);
 
   s->set("g_txColor", 0);
   s->set("g_txNormal", 1);
   s->set("g_txSpecular", 2);
 
-  char* lcolor = (char*) "g_vLights[*].color";
-  char* lposition = (char*) "g_vLights[*].position";
-  char* ldirection = (char*) "g_vLights[*].direction";
+  kgmString lcolor = "g_vLights[*].color";
+  kgmString lposition = "g_vLights[*].position";
+  kgmString ldirection = "g_vLights[*].direction";
+
 
   for(u32 i = 0; i < 8; i++)
   {
-    lcolor[10] = '0' + (char) i;
-    lposition[10] = '0' + (char) i;
-    ldirection[10] = '0' + (char) i;
+    char c = '0' + (char) i;
+    lcolor[10] = c;
+    lposition[10] = c;
+    ldirection[10] = c;
 
      s->set(lcolor, lights[i].color);
      s->set(lposition, lights[i].position);
      s->set(ldirection, lights[i].direction);
   }
+}
+
+u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light lights[])
+{
+  if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
+    return 0;
+
+  u32 count = 0;
+
+  box  bb = nod->getNodeBound();
+
+  vec3 pos = nod->getNodePosition();
+
+  for(kgmList<kgmGraphics::INode*>::iterator i = gr->m_lights.begin(); !i.end(); i.next())
+  {
+    memset(&lights[count], 0, sizeof(Light));
+
+    if(!(*i)->isNodeValid())
+      continue;
+
+    vec3 pos = (*i)->getNodePosition();
+
+    kgmLight* l = (kgmLight*) (*i)->getNodeObject();
+
+    if (!l->active())
+      continue;
+
+    if(!cam->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
+      continue;
+
+    lights[count].color = vec4(l->color().x, l->color().y, l->color().z, 1.0);
+    lights[count].position = vec4(pos.x, pos.y, pos.z, l->intensity());
+    lights[count].direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
+
+    count++;
+
+    if(count >= MAX_LIGHTS)
+      break;
+  }
+
+  return count;
 }
 
 /*
