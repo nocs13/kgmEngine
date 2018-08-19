@@ -1,4 +1,5 @@
 #include "LightRender.h"
+#include "../../kgmBase/kgmTime.h"
 #include "../../kgmGraphics/kgmIGraphics.h"
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmVisual.h"
@@ -13,6 +14,8 @@ LightRender::LightRender(kgmGraphics* g)
 {
   m_sh_toon  = gr->m_shaders[kgmMaterial::TypeToon];
   m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
+
+  m_sh_phong = gr->rc->getShader("phong2.glsl");
 }
 
 void LightRender::render()
@@ -51,7 +54,7 @@ void LightRender::render()
       
     }
 
-    for(s32 j = 0; j < gr->m_a_light_count; j++)
+    /*for(s32 j = 0; j < gr->m_a_light_count; j++)
     {
       gr->m_a_light = gr->m_a_lights[j];
 
@@ -61,11 +64,11 @@ void LightRender::render()
       gr->render(shader);
 
       //if (mtl->envType() == kgmMaterial::EnvironmentTypeNone)
-        gr->render(msh);
+      gr->render(msh);
 
       if(j > 0)
         gc->gcBlend(false, 0, gcblend_one, gcblend_one);
-    }
+    }*/
 
     gr->render((kgmMaterial*)null);
     gr->render((kgmShader*)null);
@@ -243,6 +246,160 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   gc->gcSetTexture(3, 0);
 }
 
+void LightRender::material(kgmMaterial* m)
+{
+  if(!m)
+  {
+    gc->gcSetTexture(0, 0);
+    gc->gcSetTexture(1, 0);
+    gc->gcSetTexture(2, 0);
+    gc->gcSetTexture(3, 0);
+
+    gc->gcCull(1);
+    gc->gcBlend(false, 0, 0, 0);
+    gc->gcDepth(true, true, gccmp_lequal);
+
+    return;
+  }
+
+  if(m->blend())
+  {
+    switch(m->blend())
+    {
+    case kgmMaterial::Blend_Add:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      //gc->gcBlend(true, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Mul:
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Sub:
+      gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Inter:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+      break;
+    case kgmMaterial::Blend_CBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_LBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_CDodge:
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_LDodge:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Screen:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_Darken:
+      gc->gcBlend(true, gcblend_eqmin, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Lighten:
+      gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
+      break;
+    }
+  }
+  else if(m->transparency() > 0.0f)
+  {
+    gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  }
+
+  if(!m->depth())
+  {
+    gc->gcDepth(false, true, gccmp_less);
+  }
+
+
+  if(!m->cull())
+  {
+    gc->gcCull(0);
+  }
+
+  if(m->hasTexColor())
+  {
+    gc->gcSetTexture(0, m->getTexColor()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(0, gr->m_tex_white->texture());
+  }
+
+  if(m->hasTexNormal())
+  {
+    gc->gcSetTexture(1, m->getTexNormal()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(1, gr->m_tex_gray->texture());
+  }
+
+  if(m->hasTexSpecular())
+  {
+    gc->gcSetTexture(2, m->getTexSpecular()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(2, gr->m_tex_black->texture());
+  }
+}
+
+void LightRender::shader(kgmShader* s, kgmMaterial* mtl, kgmIGraphics::INode* nod, Light lights[8])
+{
+  if(!s)
+  {
+    gc->gcSetShader(null);
+
+    return;
+  }
+
+  //send default parameters
+  vec4 v_light(0, 0, 0, 10);
+  vec4 v_light_color(1, 1, 1, 1);
+  vec4 v_light_direction(0, 0, 1, 0);
+
+  float random = (float)rand() / (float)RAND_MAX;
+  mtx4  transform = nod->getNodeTransform();
+  vec4 color = mtl->m_color.get();
+  vec4 specular = mtl->m_specular.get();
+
+  s->start();
+  s->set("g_fTime",           kgmTime::getTime());
+  s->set("g_fRandom",         random);
+  s->set("g_fShine",          mtl->shininess());
+  s->set("g_mProj",           gr->m_camera->mProj);
+  s->set("g_mView",           gr->m_camera->mView);
+  s->set("g_mTran",           transform);
+  s->set("g_vColor",          color);
+  s->set("g_vSpecular",       specular);
+  s->set("g_vLight",          v_light);
+  s->set("g_vLightColor",     v_light_color);
+  s->set("g_vLightDirection", v_light_direction);
+  s->set("g_vEye",            gr->m_camera->mPos);
+  s->set("g_vLook",           gr->m_camera->mDir);
+  s->set("g_iClipping",       0);
+
+  s->set("g_txColor", 0);
+  s->set("g_txNormal", 1);
+  s->set("g_txSpecular", 2);
+
+  char* lcolor = (char*) "g_vLights[*].color";
+  char* lposition = (char*) "g_vLights[*].position";
+  char* ldirection = (char*) "g_vLights[*].direction";
+
+  for(u32 i = 0; i < 8; i++)
+  {
+    lcolor[10] = '0' + (char) i;
+    lposition[10] = '0' + (char) i;
+    ldirection[10] = '0' + (char) i;
+
+     s->set(lcolor, lights[i].color);
+     s->set(lposition, lights[i].position);
+     s->set(ldirection, lights[i].direction);
+  }
+}
 
 /*
 void LightRender::render()

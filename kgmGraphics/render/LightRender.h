@@ -8,6 +8,13 @@
 
 class LightRender: public BaseRender
 {
+  struct Light
+  {
+    vec4 position;
+    vec4 direction;
+    vec4 color;
+  };
+
   kgmShader* m_sh_phong = null;
   kgmShader* m_sh_toon  = null;
 
@@ -16,6 +23,10 @@ public:
 
   void render();
   void render(kgmCamera*, kgmIGraphics::INode*);
+
+private:
+  void material(kgmMaterial*);
+  void shader(kgmShader*, kgmMaterial*, kgmIGraphics::INode*, Light[8]);
 };
 
 #endif // LIGHTRENDER_H
