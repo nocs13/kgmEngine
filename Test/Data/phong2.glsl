@@ -16,7 +16,8 @@ void kgm_main(out vec4 pos)
 
   VV = vec4(g_mView * vec4(v_V, 1.0)).xyz;
 
-  v_N = normalize(mRot * a_Normal);
+  //v_N = normalize(mRot * a_Normal);
+  v_N = a_Normal;
 
   v_I = g_vLight.w;
 
@@ -101,7 +102,44 @@ void kgm_main( out vec4 color )
     vec3 diffuse  = g_vLights[0].color.xyz  * diff * vec3(texture2D(g_txColor, v_UV));
     vec3 specular = spec * vec3(texture2D(g_txSpecular, v_UV));
 
-    col *= (diffuse + specular);
+    specular = clamp(specular, 0.0, 1.0);
+
+    col *= diffuse;
+    col += specular;
+  }
+
+  for (int i = 1; i < 8; i++)
+  {
+    float lintensity = g_vLights[i].position.w;
+
+    if (lintensity < 0.1)
+      break;
+
+    vec3 lcolor    = g_vLights[i].color.xyz;
+    vec3 lposition = g_vLights[i].position.xyz;
+    vec3 lightDir = normalize(lposition - v_V);
+
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+
+    // specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(g_vLook, reflectDir), 0.0), g_fShine);
+
+    // attenuation
+    float distance    = length(lposition - v_V);
+    float attenuation = lintensity / (.5 + distance);
+
+    // combine results
+    vec3 diffuse  = lcolor * diff * vec3(texture2D(g_txColor, v_UV));
+    vec3 specular = spec * vec3(texture2D(g_txSpecular, v_UV));
+
+    specular = clamp(specular, 0.0, 1.0);
+
+    diffuse  *= attenuation;
+    specular *= attenuation;
+
+    col += (diffuse + specular);
   }
 
   color.xyz = col;

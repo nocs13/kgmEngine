@@ -883,7 +883,8 @@ kgmUnit* kgmGameMap::next()
         {
           kgmMesh* m = (kgmMesh*) node->getNodeObject();
 
-          m->rebuild();
+          if (m)
+            m->rebuild();
 
           closed = true;
 

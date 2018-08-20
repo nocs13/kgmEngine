@@ -424,7 +424,7 @@ class kgmMaterial:
             self.map_normal_strength = TextureSlot.normal_factor
           elif hasattr(TextureSlot, "use_map_specular") and TextureSlot.use_map_specular is True:
             self.map_specular = tf_path
-            self.map_specular_strength = TextureSlot.normal_factor
+            self.map_specular_strength = TextureSlot.specular_factor
           else:
             self.map_color = tf_path
       elif TextureSlot.texture.type == "DISTORTED_NOISE":
@@ -632,21 +632,27 @@ class kgmMesh:
 
   def addVertex(self, vx):
     iv = -1
+    nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
     # check if such vertex already exist
     for i in range(0, len(self.vertices)):
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
         if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
-          #iv = i
-          #if (v.n[0] != vx.n[0]) or (v.n[1] != vx.n[1]) or (v.n[2] != vx.n[2]):
-          if (v.n[0] == vx.n[0]) or (v.n[1] == vx.n[1]) or (v.n[2] == vx.n[2]):
+          nc = Vector((v.n[0], v.n[1], v.n[2]))
+          if nx == nc:
             iv = i
             #n1 = Vector((v.n[0], v.n[1], v.n[2]))
             #n2 = Vector((vx.n[0], vx.n[1], vx.n[2]))
             #n = n1 + n2
             #n.normalize()
             #v.n = [n.x, n.y, n.z]
-          break
+            break
+          elif nc.dot(nx) > 0.866 and nc.dot(nx) < 1.001:
+            iv = i
+            n = nc + nx
+            n.normalize()
+            v.n = [n.x, n.y, n.z]
+            break
 
     if iv < 0:
       self.vertices.append(vx)
@@ -925,14 +931,15 @@ def export_material(file, o):
   if o.distortion > 0.0:
     file.write("  <Distortion value='" + str(o.distortion) + "'/>\n")
 
+  if (hasattr(o, 'shader')):
+    file.write("  <Shader value='" + o.shader + "'/>\n")
+
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")
   if o.map_normal != "":
     file.write("  <map_normal value='" + o.map_normal + "' strength='" + str(o.map_normal_strength) + "' />\n")
   if o.map_specular != "":
     file.write("  <map_specular value='" + o.map_specular + "' strength='" + str(o.map_specular_strength) + "' />\n")
-  if (hasattr(o, 'shader')):
-    file.write("  <Shader value='" + o.shader + "'/>\n")
   if hasattr(o, 'map_environment') and o.map_environment is not False:
     file.write("  <map_environment type='" + o.env_source + "' mapping='" + o.env_mapping + "' viewpoint='" + str(o.env_viewpoint) \
                   + "' image='" + str(o.env_image) + "' intensity='" + toSnum(o.env_intensity) + "' />\n")
