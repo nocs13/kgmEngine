@@ -57,7 +57,9 @@ void LightRender::render()
 
     material(mtl);
     shader(sh, gr->m_camera, mtl, nod, lights);
-    
+
+    gr->render(msh);
+
     /*for(s32 j = 0; j < gr->m_a_light_count; j++)
     {
       gr->m_a_light = gr->m_a_lights[j];
@@ -79,7 +81,7 @@ void LightRender::render()
 
     if (mtl->envType() != kgmMaterial::EnvironmentTypeNone)
     {
-      gr->m_rnd_environment->render(nod);
+      //gr->m_rnd_environment->render(nod);
     }
   }
 
@@ -218,7 +220,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   else
   {
     gc->gcSetTexture(2, gr->m_tex_white->texture());
-    tspecular = gr->m_tex_white->texture();
+    tspecular = gr->m_tex_black->texture();
   }
 
   s->start();

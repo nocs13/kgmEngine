@@ -1,5 +1,6 @@
 varying vec3  VV;
 varying vec3  eye;
+varying vec4  px_color;
 
 varying float clipping;
 
@@ -38,12 +39,15 @@ void kgm_main(out vec4 pos)
     clipping = 1.0;
   }
 
+  px_color = g_vColor * a_Color;
   pos = ( g_mProj * g_mView * vec4(v_V, 1.0) );
 }
 
 //Fragment Shader
 varying vec3  VV;
 varying vec3  eye;
+varying vec4  px_color;
+
 varying float clipping;
 
 struct Light
@@ -63,13 +67,28 @@ void kgm_main( out vec4 color )
   if (clipping < 0.0)
     discard;
 
-  vec3 col;
+  vec3 col = px_color.xyz;
 
   vec3 normal = normalize(v_N);
   vec3 view   = normalize(g_vEye - v_V);
 
   {
-    vec3 lightDir = normalize(-g_vLights[0].direction.xyz);
+    vec3 bump  = vec3(texture2D(g_txNormal, v_UV).xyz * 2.0 - 1.0);
+
+    normal = normalize(normal + bump);
+  }
+
+  {
+    vec3 lightDir = -g_vLights[0].direction.xyz;
+
+    float ll = length(lightDir);
+
+    if (ll < 0.2)
+    {
+      lightDir = g_vLights[0].position.xyz - v_V;
+    }
+
+    lightDir = normalize(lightDir);
 
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
@@ -82,8 +101,7 @@ void kgm_main( out vec4 color )
     vec3 diffuse  = g_vLights[0].color.xyz  * diff * vec3(texture2D(g_txColor, v_UV));
     vec3 specular = spec * vec3(texture2D(g_txSpecular, v_UV));
 
-    //col = (diffuse + specular);
-    col = vec3(texture2D(g_txColor, v_UV));
+    col *= (diffuse + specular);
   }
 
   color.xyz = col;
