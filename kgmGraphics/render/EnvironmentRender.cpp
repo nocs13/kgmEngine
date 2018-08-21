@@ -19,7 +19,6 @@ EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   m_sd_plane = gr->rc->getShader("envplane.glsl");
 
   m_cubemapside = 0;
-  m_refraction  = true;
 
   gc->gcSet(gcpar_cubemapside, &m_cubemapside);
 }
@@ -34,6 +33,24 @@ EnvironmentRender::~EnvironmentRender()
 
 void EnvironmentRender::render()
 {
+  for (s32 i = 0; i < gr->m_a_meshes_count; i++)
+  {
+    kgmIGraphics::INode* nod = gr->m_a_meshes[i];
+
+    kgmMaterial* mtl = nod->getNodeMaterial();
+
+    if (!mtl || mtl->envType() != kgmMaterial::EnvironmentTypeNone)
+      render(nod);
+  }
+
+  for (s32 i = 0; i < gr->m_a_bmeshes_count; i++)
+  {
+    kgmIGraphics::INode* nod = gr->m_a_bmeshes[i];
+    kgmMaterial* mtl = nod->getNodeMaterial();
+
+    if (!mtl ||mtl->envType() != kgmMaterial::EnvironmentTypeNone)
+      render(nod);
+  }
 }
 
 void EnvironmentRender::render(kgmIGraphics::INode* n)
@@ -57,8 +74,8 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
 
   vec3 nr = mesh->normal();
 
-  vec4 col = mtl->m_color.get();
-  col.w = mtl->envIntensity();
+  vec4 col  = mtl->color();
+  vec4 spec = mtl->specular();
 
   kgmShader* sh = null;
   gchandle   tx = null;
@@ -71,7 +88,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     sh = m_sd_cube;
     tx = m_tx_cube;
 
-    if (m_refraction)
+    if (mtl->transparency() > 0.01)
       refraction(p, b, m_tx_refraction);
   }
   else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
@@ -83,8 +100,8 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     sh = m_sd_plane;
     tx = m_tx_plane;
 
-    //if (m_refraction)
-    //  refraction(p, nr, m_tx_refraction);
+    if (mtl->transparency() > 0.01)
+      refraction(p, nr, m_tx_refraction);
   }
   else
   {
@@ -96,11 +113,6 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     return;
   }
 
-  if (m_refraction)
-  {
-
-  }
-
   gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(),
                     gr->m_camera->mNear, gr->m_camera->mFar);
 
@@ -109,7 +121,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   else
     gc->gcSetTexture(1, gr->m_tex_gray->texture());
 
-  if (m_refraction)
+  if (mtl->transparency() > 0.01)
     gc->gcSetTexture(2, m_tx_refraction);
   else
     gc->gcSetTexture(2, gr->m_tex_white->texture());
@@ -133,7 +145,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   f32 force = mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
   f32 fresnel = mtl->fresnel();
-  f32 distortion = mtl->distortion();
+  f32 distortion = 0.02 + mtl->distortion();
 
   gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   //gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);

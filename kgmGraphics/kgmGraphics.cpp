@@ -558,6 +558,8 @@ void kgmGraphics::render()
   //sr.render();
   m_rnd_shadows->render();
 
+  m_rnd_environment->render();
+
   //draw particles
   ParticlesRender pr(this);
   pr.render();

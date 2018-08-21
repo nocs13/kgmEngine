@@ -31,7 +31,7 @@ void LightRender::render()
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
-    kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
+    kgmIGraphics::INode* nod = gr->m_a_meshes[i];
 
     Light lights[MAX_LIGHTS];
 
@@ -74,15 +74,11 @@ void LightRender::render()
 
       if(j > 0)
         gc->gcBlend(false, 0, gcblend_one, gcblend_one);
-    }*/
+    }
+    */
 
     material(null);
     shader(null, null, null, null, null);
-
-    if (mtl->envType() != kgmMaterial::EnvironmentTypeNone)
-    {
-      //gr->m_rnd_environment->render(nod);
-    }
   }
 
   gc->gcBlend(false, 0, null, null);

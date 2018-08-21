@@ -375,6 +375,20 @@ public:
     m_move = v;
   }
 
+  vec4 color()
+  {
+    vec4 col = m_color.get();
+
+    return col;
+  }
+
+  vec4 specular()
+  {
+    vec4 col = m_specular.get();
+
+    return col;
+  }
+
   static kgmString blendToString(Blend Blend);
   static Blend     stringToBlend(kgmString blend);
   static kgmString typeToString(Type type);

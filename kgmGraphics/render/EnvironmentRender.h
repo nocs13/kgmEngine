@@ -18,8 +18,6 @@ public:
 
   u32 m_cubemapside = 0;
 
-  bool m_refraction = false;
-
   kgmIGraphics::INode* m_discard = null;
 
 public:
