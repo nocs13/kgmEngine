@@ -60,6 +60,7 @@ struct Light
 
 uniform vec3   g_vEye;
 uniform vec3   g_vLook;
+uniform vec4   g_vSpecular;
 uniform float  g_fShine;
 uniform Light  g_vLights[8];
 
@@ -80,29 +81,37 @@ void kgm_main( out vec4 color )
   }
 
   {
-    vec3 lightDir = -g_vLights[0].direction.xyz;
+    vec3 lightDir = g_vLights[0].direction.xyz;
 
     float ll = length(lightDir);
 
     if (ll < 0.2)
     {
-      lightDir = g_vLights[0].position.xyz - v_V;
+      lightDir = v_V - g_vLights[0].position.xyz;
     }
 
     lightDir = normalize(lightDir);
 
     // diffuse shading
-    float diff = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, -lightDir), 0.0);
 
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(g_vLook, reflectDir), 0.0), g_fShine);
+    vec3  reflectDir = reflect(lightDir, normal);
+    float shininess = clamp(g_fShine, 1, 256);
+    float spec = pow(max(dot(g_vLook, reflectDir), 0.0), 250);
 
     // combine results
     vec3 diffuse  = g_vLights[0].color.xyz  * diff * vec3(texture2D(g_txColor, v_UV));
-    vec3 specular = spec * vec3(texture2D(g_txSpecular, v_UV));
+    vec3 specular = vec3(0, 0, 0);
 
-    specular = clamp(specular, 0.0, 1.0);
+    if (diff > 0.0)
+    {
+      vec3 scolor = g_vSpecular.xyz + texture2D(g_txSpecular, v_UV).xyz;
+
+      scolor = clamp(scolor, 0.0, 1.0);
+      specular = spec * scolor;
+      //specular = clamp(specular, 0.0, 1.0);
+    }
 
     col *= diffuse;
     col += specular;
@@ -139,7 +148,8 @@ void kgm_main( out vec4 color )
     diffuse  *= attenuation;
     specular *= attenuation;
 
-    col += (diffuse + specular);
+    //col += (diffuse + specular);
+    col += (diffuse);
   }
 
   color.xyz = col;

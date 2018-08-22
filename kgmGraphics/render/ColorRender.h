@@ -7,6 +7,7 @@
 
 class ColorRender : public BaseRender
 {
+  kgmShader* m_sh_color = null;
 public:
   ColorRender(kgmGraphics* gr);
 

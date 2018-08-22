@@ -24,6 +24,8 @@ public:
   void render();
   void render(kgmCamera*, kgmIGraphics::INode*);
 
+  void lightmap();
+
 private:
   void material(kgmMaterial*);
   void shader(kgmShader*, kgmCamera*, kgmMaterial*, kgmIGraphics::INode*, Light[8]);

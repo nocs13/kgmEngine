@@ -6,15 +6,14 @@
 ColorRender::ColorRender(kgmGraphics* g)
   :BaseRender(g)
 {
-
+  m_sh_color = gr->rc->getShader("base.glsl");
 }
 
 void ColorRender::render()
 {
-  mtx4 m4_identity;
-  m4_identity.identity();
+  kgmShader* s = m_sh_color;
 
-  gr->setWorldMatrix(m4_identity);
+  kgmCamera* cam = gr->m_camera;
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
@@ -22,31 +21,29 @@ void ColorRender::render()
     kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
     kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
-    box3    bbound = nod->getNodeBound();
-    sphere3 sbound;
+    mtx4     m = nod->getNodeTransform();
+    vec4 color = mtl->color();
 
-    bbound.min    = nod->getNodeTransform() * bbound.min;
-    bbound.max    = nod->getNodeTransform() * bbound.max;
+    material(mtl);
 
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
+    s->start();
 
-    mtx4 m = nod->getNodeTransform();
+    s->set("g_fShine",          mtl->shininess());
+    s->set("g_mProj",           cam->mProj);
+    s->set("g_mView",           cam->mView);
+    s->set("g_mTran",           m);
+    s->set("g_vColor",          color);
+    s->set("g_vUp",             cam->mUp);
+    s->set("g_vEye",            cam->mPos);
+    s->set("g_vLook",           cam->mDir);
+    s->set("g_iClipping",       0);
 
-    m.m[0]  *= 1.000001f;
-    m.m[5]  *= 1.000001f;
-    m.m[10] *= 1.000001f;
+    s->set("g_txColor", 0);
 
-    gr->setWorldMatrix(m);
+    draw(msh);
 
-    gr->render(mtl);
+    s->stop();
 
-    gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
-
-    gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
-
-    gr->render(msh);
-
-    gc->gcBlend(false, 0, null, null);
+    material(null);
   }
 }

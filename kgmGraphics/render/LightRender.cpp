@@ -216,7 +216,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   else
   {
     gc->gcSetTexture(2, gr->m_tex_white->texture());
-    tspecular = gr->m_tex_black->texture();
+    tspecular = gr->m_tex_white->texture();
   }
 
   s->start();
@@ -230,6 +230,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   s->set("g_vLight",          v_light);
   s->set("g_vLightColor",     v_light_color);
   s->set("g_vLightDirection", v_light_direction);
+  s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
   s->set("g_iClipping",       0);
@@ -379,6 +380,7 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   s->set("g_vLight",          v_light);
   s->set("g_vLightColor",     v_light_color);
   s->set("g_vLightDirection", v_light_direction);
+  s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
   s->set("g_iClipping",       0);
@@ -445,6 +447,81 @@ u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light lights[
 
   return count;
 }
+
+void LightRender::lightmap()
+{
+  kgmShader* s = m_sh_phong;
+
+  kgmCamera* cam = gr->m_camera;
+
+  kgmString lcolor = "g_vLights[*].color";
+  kgmString lposition = "g_vLights[*].position";
+  kgmString ldirection = "g_vLights[*].direction";
+
+  for (s32 i = 0; i < gr->m_a_meshes_count; i++)
+  {
+    kgmIGraphics::INode* nod = gr->m_a_meshes[i];
+
+    Light lights[MAX_LIGHTS];
+
+    u32 lcount = collect(gr->m_camera, nod, lights);
+
+    if (lcount < 1)
+      continue;
+
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
+    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
+
+
+    gchandle tcolor = gr->m_tex_white->texture();
+    gchandle tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->texture()):(gr->m_tex_gray->texture());
+    gchandle tspecular = (mtl->getTexSpecular())?(mtl->getTexSpecular()->texture()):(gr->m_tex_black->texture());
+
+    mtx4 m = nod->getNodeTransform();
+    vec4 color = vec4(1, 1, 1, 1);
+    vec4 specular = mtl->specular();
+
+    gc->gcSetTexture(0, tcolor);
+    gc->gcSetTexture(1, tnormal);
+    gc->gcSetTexture(2, tspecular);
+
+    s->start();
+
+    s->set("g_fShine",          mtl->shininess());
+    s->set("g_mProj",           cam->mProj);
+    s->set("g_mView",           cam->mView);
+    s->set("g_mTran",           m);
+    s->set("g_vColor",          color);
+    s->set("g_vSpecular",       specular);
+    s->set("g_vUp",             cam->mUp);
+    s->set("g_vEye",            cam->mPos);
+    s->set("g_vLook",           cam->mDir);
+    s->set("g_iClipping",       0);
+
+    s->set("g_txColor", 0);
+    s->set("g_txNormal", 1);
+    s->set("g_txSpecular", 2);
+
+    for(u32 i = 0; i < 8; i++)
+    {
+      char c = '0' + (char) i;
+      lcolor[10] = c;
+      lposition[10] = c;
+      ldirection[10] = c;
+
+       s->set(lcolor, lights[i].color);
+       s->set(lposition, lights[i].position);
+       s->set(ldirection, lights[i].direction);
+    }
+
+    draw(msh);
+
+    s->stop();
+
+    material(null);
+  }
+}
+
 
 /*
 void LightRender::render()

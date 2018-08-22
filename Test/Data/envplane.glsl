@@ -36,6 +36,7 @@ uniform float  g_fForce   = 1.0;
 uniform float  g_fFresnel = 1.0;
 uniform float  g_fDistort = 0.0;
 uniform vec3   g_vMove;
+uniform vec3   g_vUp;
 
 varying vec4 PxColor;
 varying vec4 clip;
@@ -60,7 +61,7 @@ void kgm_main(out vec4 col)
   vec4 rrcol = texture2D(g_txSpecular,    rrc - distortion);
 
   vec3 view = normalize(look);
-  float mixfactor = (.5 - rrforce) * dot(look, vec3(0, 0, 1));
+  float mixfactor = (.3 - rrforce) * dot(look, g_vUp);
 
   col = mix(rlcol, rrcol, mixfactor);
 

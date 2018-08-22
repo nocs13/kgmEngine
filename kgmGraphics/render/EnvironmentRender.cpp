@@ -155,8 +155,9 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_mProj", gr->m_camera->mProj);
   sh->set("g_mView", gr->m_camera->mView);
   sh->set("g_mTran", m);
-  sh->set("g_vEye",    gr->m_camera->mPos);
-  sh->set("g_vEyeDir", gr->m_camera->mDir);
+  sh->set("g_vUp",   gr->m_camera->mUp);
+  sh->set("g_vEye",  gr->m_camera->mPos);
+  sh->set("g_vLook", gr->m_camera->mDir);
   sh->set("g_vColor",  col);
   sh->set("g_vMove",   move);
   sh->set("g_fRandom", random);

@@ -207,3 +207,104 @@ void BaseRender::draw(kgmIcon* icon, kgmCamera* c)
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
+
+void BaseRender::material(kgmMaterial* m)
+{
+  if(!m)
+  {
+    gc->gcSetTexture(0, 0);
+    gc->gcSetTexture(1, 0);
+    gc->gcSetTexture(2, 0);
+    gc->gcSetTexture(3, 0);
+
+    gc->gcCull(1);
+    gc->gcBlend(false, 0, 0, 0);
+    gc->gcDepth(true, true, gccmp_lequal);
+
+    return;
+  }
+
+  if(m->blend())
+  {
+    switch(m->blend())
+    {
+    case kgmMaterial::Blend_Add:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      //gc->gcBlend(true, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Mul:
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Sub:
+      gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_Inter:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+      break;
+    case kgmMaterial::Blend_CBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_LBurn:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_CDodge:
+      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+      break;
+    case kgmMaterial::Blend_LDodge:
+      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Screen:
+      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
+      break;
+    case kgmMaterial::Blend_Darken:
+      gc->gcBlend(true, gcblend_eqmin, gcblend_one, gcblend_one);
+      break;
+    case kgmMaterial::Blend_Lighten:
+      gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
+      break;
+    }
+  }
+  else if(m->transparency() > 0.0f)
+  {
+    gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+  }
+
+  if(!m->depth())
+  {
+    gc->gcDepth(false, true, gccmp_less);
+  }
+
+
+  if(!m->cull())
+  {
+    gc->gcCull(0);
+  }
+
+  if(m->hasTexColor())
+  {
+    gc->gcSetTexture(0, m->getTexColor()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(0, gr->m_tex_white->texture());
+  }
+
+  if(m->hasTexNormal())
+  {
+    gc->gcSetTexture(1, m->getTexNormal()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(1, gr->m_tex_gray->texture());
+  }
+
+  if(m->hasTexSpecular())
+  {
+    gc->gcSetTexture(2, m->getTexSpecular()->texture());
+  }
+  else
+  {
+    gc->gcSetTexture(2, gr->m_tex_black->texture());
+  }
+}
+

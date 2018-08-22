@@ -56,6 +56,8 @@ protected:
   void draw(kgmVisual*);
   void draw(kgmParticles*);
   void draw(kgmIcon*, kgmCamera*);
+
+  void material(kgmMaterial*);
 };
 
 #endif // BASERENDER_H
