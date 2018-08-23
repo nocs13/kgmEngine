@@ -550,14 +550,14 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  //m_rnd_lights->render();
-  m_rnd_lights->lightmap();
+  m_rnd_lights->render();
+  //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);
   //sr.render();
   m_rnd_shadows->render();
 
-  //m_rnd_environment->render();
+  m_rnd_environment->render();
 
   //draw particles
   ParticlesRender pr(this);

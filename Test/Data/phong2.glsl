@@ -93,25 +93,37 @@ void kgm_main( out vec4 color )
     lightDir = normalize(lightDir);
 
     // diffuse shading
-    float diff = max(dot(normal, -lightDir), 0.0);
+    float diff = 0.9 * max(dot(normal, -lightDir), 0.0);
+    float angle = acos(max(dot(normal, -lightDir), 0.0));
+
+    diff = clamp(diff, 0.01, 0.91);
+
+    if (g_vLights[0].direction.w > 0.0)
+    {
+      if (angle > g_vLights[0].direction.w)
+      {
+        diff *= 0.1;
+      }
+    }
 
     // specular shading
     vec3  reflectDir = reflect(lightDir, normal);
-    float shininess = clamp(g_fShine, 1, 256);
-    float spec = pow(max(dot(g_vLook, reflectDir), 0.0), 250);
+    vec3  specular   = vec3(0, 0, 0);
+    float shininess  = clamp(g_fShine, 0, 512);
+    float spec       = pow(max(dot(g_vLook, -reflectDir), 0.0), shininess);
 
-    // combine results
-    vec3 diffuse  = g_vLights[0].color.xyz  * diff * vec3(texture2D(g_txColor, v_UV));
-    vec3 specular = vec3(0, 0, 0);
-
-    if (diff > 0.0)
+    if (shininess > 1.0)
     {
       vec3 scolor = g_vSpecular.xyz + texture2D(g_txSpecular, v_UV).xyz;
 
+      diff *= 0.7;
       scolor = clamp(scolor, 0.0, 1.0);
-      specular = spec * scolor;
-      //specular = clamp(specular, 0.0, 1.0);
+      specular = diff * spec * scolor;
+      specular = clamp(specular, 0.0, 1.0);
     }
+
+    // combine results
+    vec3 diffuse  = diff * g_vLights[0].color.xyz * vec3(texture2D(g_txColor, v_UV));
 
     col *= diffuse;
     col += specular;
@@ -126,7 +138,7 @@ void kgm_main( out vec4 color )
 
     vec3 lcolor    = g_vLights[i].color.xyz;
     vec3 lposition = g_vLights[i].position.xyz;
-    vec3 lightDir = normalize(lposition - v_V);
+    vec3 lightDir  = normalize(lposition - v_V);
 
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
@@ -148,8 +160,8 @@ void kgm_main( out vec4 color )
     diffuse  *= attenuation;
     specular *= attenuation;
 
-    //col += (diffuse + specular);
-    col += (diffuse);
+    col += (diffuse + specular);
+    //col += (diffuse);
   }
 
   color.xyz = col;

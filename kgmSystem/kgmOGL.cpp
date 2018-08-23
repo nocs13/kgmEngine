@@ -1611,26 +1611,24 @@ void kgmOGL::gcSetShader(void* s)
 
 void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
 {
-#ifdef GL_VERTEX_SHADER
   if(s)
   {
     glBindAttribLocation((GLhandle)(size_t)s, i, attr);
 #ifdef DEBUG
 #ifndef ANDROID
     GLenum err = glGetError();
+
     if(err != GL_NO_ERROR)
     {
-      //kgm_log() << "Error glBindAttribLocation: " << (s8*)gluErrorString(err) << " i " << (s32)i << "\n";
+      fprintf(stderr, "Error glBindAttribLocation: %d/%d.\n", err, i);
     }
 #endif
 #endif
   }
-#endif
 }
 
 void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 {
-#ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
 
   if(link < 0)
@@ -1661,6 +1659,14 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
   case gcunitype_int4:
     glUniform4iv(link, cnt, (const int*)val);
     break;
+  }
+
+#ifdef DEBUG
+  GLenum error = glGetError();
+
+  if (glGetError() != GL_NO_ERROR)
+  {
+    fprintf(stderr, "Error glUniform: %d.\n", error);
   }
 #endif
 }
