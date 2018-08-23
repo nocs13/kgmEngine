@@ -15,15 +15,20 @@ class LightRender: public BaseRender
     vec4 color;
   };
 
+  gchandle   m_target      = null;
+  gchandle   m_tx_lightmap = null;
+
   kgmShader* m_sh_phong = null;
   kgmShader* m_sh_toon  = null;
 
 public:
   LightRender(kgmGraphics* gr);
+  ~LightRender();
 
   void render();
   void render(kgmCamera*, kgmIGraphics::INode*);
 
+  void basic();
   void lightmap();
 
 private:

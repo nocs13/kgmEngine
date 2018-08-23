@@ -16,7 +16,19 @@ LightRender::LightRender(kgmGraphics* g)
   m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
 
   m_sh_phong = gr->rc->getShader("phong2.glsl");
+  m_sh_phong = gr->rc->getShader("phongbase.glsl");
+
+  m_target      = gc->gcGenTarget(512, 512, true, false);
+  m_tx_lightmap = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
+
 }
+
+LightRender::~LightRender()
+{
+  gc->gcFreeTarget(m_target);
+  gc->gcFreeTexture(m_tx_lightmap);
+}
+
 
 void LightRender::render()
 {
