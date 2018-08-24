@@ -22,6 +22,8 @@ public:
   kgmShader* m_sh_toon  = null;
   kgmShader* m_sh_lmap  = null;
 
+  bool m_lightmap = false;
+
 public:
   LightRender(kgmGraphics* gr);
   ~LightRender();
@@ -31,6 +33,14 @@ public:
 
   void basic();
   void lightmap();
+
+  gchandle getLightmap() const
+  {
+    if (m_lightmap)
+      return m_tx_lightmap;
+
+    return null;
+  }
 
 private:
   void material(kgmMaterial*);

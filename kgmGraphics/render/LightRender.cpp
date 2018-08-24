@@ -504,8 +504,10 @@ void LightRender::lightmap()
       continue;
 
     kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
-    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
+    kgmMaterial* mtl = nod->getNodeMaterial();
 
+    if (!mtl || mtl->envType() == kgmMaterial::EnvironmentTypeNone)
+      continue;
 
     gchandle tcolor = gr->m_tex_white->texture();
     gchandle tnormal = (mtl->getTexNormal())?(mtl->getTexNormal()->texture()):(gr->m_tex_gray->texture());
@@ -558,4 +560,7 @@ void LightRender::lightmap()
 
   gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(), gr->m_camera->mNear, gr->m_camera->mFar);
   gc->gcSetTarget(null);
+
+  if (!m_lightmap)
+    m_lightmap = true;
 }
