@@ -9,6 +9,8 @@
 
 #define MAX_LIGHTS 8
 
+const u32 g_res = 512;
+
 LightRender::LightRender(kgmGraphics* g)
   :BaseRender(g)
 {
@@ -16,10 +18,15 @@ LightRender::LightRender(kgmGraphics* g)
   m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
 
   m_sh_phong = gr->rc->getShader("phong2.glsl");
-  m_sh_phong = gr->rc->getShader("phongbase.glsl");
+  //m_sh_phong = gr->rc->getShader("phongbase.glsl");
+  m_sh_lmap  = gr->rc->getShader("phonglmap.glsl");
 
-  m_target      = gc->gcGenTarget(512, 512, true, false);
-  m_tx_lightmap = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
+  m_target      = gc->gcGenTarget(g_res, g_res, true, false);
+
+  kgmIGC::TexFilter filter = { gcflt_linear, gcflt_linear };
+  gc->gcSet(gcpar_texfltmag, (void*)gcflt_linear);
+  gc->gcSet(gcpar_texfltmin, (void*)gcflt_linear);
+  m_tx_lightmap = gc->gcGenTexture(null, g_res, g_res, gctex_fmt24, gctype_tex2d);
 
 }
 
@@ -464,13 +471,26 @@ u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light lights[
 
 void LightRender::lightmap()
 {
-  kgmShader* s = m_sh_phong;
+  kgmShader* s = m_sh_lmap;
 
   kgmCamera* cam = gr->m_camera;
 
   kgmString lcolor = "g_vLights[*].color";
   kgmString lposition = "g_vLights[*].position";
   kgmString ldirection = "g_vLights[*].direction";
+
+  gc->gcTexTarget(m_target, m_tx_lightmap, gctype_tex2d);
+  gc->gcSetTarget(m_target);
+
+  gc->gcSetViewport(0, 0, g_res, g_res, 0.1, 1000);
+
+  gc->gcCull(gccull_back);
+  gc->gcDepth(true, true, gccmp_lequal);
+  gc->gcClear(gcflag_color | gcflag_depth, 0xff000000, 1, 0);
+
+  gc->gcBlend(false, 0, null, null);
+  gc->gcAlpha(false, null, null);
+
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
@@ -535,101 +555,7 @@ void LightRender::lightmap()
 
     material(null);
   }
+
+  gc->gcSetViewport(0, 0, gr->m_viewport.width(), gr->m_viewport.height(), gr->m_camera->mNear, gr->m_camera->mFar);
+  gc->gcSetTarget(null);
 }
-
-
-/*
-void LightRender::render()
-{
-
-  vec3 lpositions[MAX_LIGHTS], ldirections[MAX_LIGHTS], lcolors[MAX_LIGHTS];
-  f32  lintensities[MAX_LIGHTS], langles[MAX_LIGHTS];
-
-  kgmList<kgmVisual*> alpha;
-
-  kgmShader* s = gr->m_shaders[kgmShader::TypePhong];
-
-  if (!gr || !s)
-    return;
-
-  mtx4 im = gr->camera().mView;
-
-  im.invert();
-
-  mtx3 g_mtx_normal;
-
-  g_mtx_normal[0] = im[0], g_mtx_normal[1] = im[1], g_mtx_normal[2] = im[2];
-  g_mtx_normal[3] = im[4], g_mtx_normal[4] = im[5], g_mtx_normal[5] = im[6];
-  g_mtx_normal[6] = im[8], g_mtx_normal[7] = im[9], g_mtx_normal[8] = im[10];
-
-  gc->gcBlend(true, gcblend_srcalpha, gcblend_one);
-
-  for (int i = 0; i < visuals.length(); i++) {
-    kgmVisual* v = visuals[i];
-
-    if (!v)
-      continue;
-
-    kgmMaterial* m = v->getMaterial();
-
-    if (m && m->alpha()) {
-      alpha.add(v);
-
-      continue;
-    }
-
-    kgmTexture* tnormal  = m->getTexNormal();
-    kgmTexture* tspecular = m->getTexSpecular();
-
-    if (tnormal && tnormal->texture())
-      gr->gc->gcSetTexture(0, tnormal->texture());
-
-    if (tnormal && tspecular->texture())
-      gr->gc->gcSetTexture(1, tspecular->texture());
-
-    kgmList<kgmLight*>::iterator j = lights.begin();
-
-    u32 k = 0;
-
-    while (!j.end()) {
-      kgmLight* l = (*j);
-
-      ++j;
-
-      //lpositions[k]   = l->position;
-      ldirections[k]  = l->direction;
-      //lcolors[k]      = vec3(l->color.x, l->color.y, l->color.z);
-      lintensities[k] = l->intensity;
-      langles[k]      = l->angle;
-
-      k++;
-
-      if (k == 15 || j.end()) {
-        s->start();
-        s->set("g_mProj",           gr->camera().mProj);
-        s->set("g_mView",           gr->camera().mView);
-        s->set("g_mTran",           v->getTransform());
-        s->set("g_mNorm",           g_mtx_normal);
-        //s->set("g_vLight",          l->position);
-        //s->set("g_vLightColor",     l->color);
-        //s->set("g_vLightDirection", l->direction);
-        s->set("g_vEye",            gr->camera().mPos);
-        s->set("g_vEyeDir",         gr->camera().mDir);
-
-        s->set("g_txNormal", 0);
-        s->set("g_txSpecular", 1);
-
-        s->set("g_vLpositions", lpositions[0], k);
-        s->set("g_vLdirections", ldirections[0], k);
-        s->set("g_iLights", k);
-
-        draw(v);
-
-        s->stop();
-      }
-    }
-  }
-
-  gc->gcBlend(false, null, null);
-}
-*/

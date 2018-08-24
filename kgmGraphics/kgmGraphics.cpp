@@ -550,14 +550,25 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  m_rnd_lights->render();
+  //m_rnd_lights->render();
   //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);
   //sr.render();
-  m_rnd_shadows->render();
+  //m_rnd_shadows->render();
 
   m_rnd_environment->render();
+
+  //gc->gcBlend(true,  0, gcblend_dstcol, gcblend_zero);
+  //gc2DMode();
+  //m.identity();
+  //setWorldMatrix(m);
+  //render(m_shaders[kgmMaterial::TypeBase]);
+  //gcDrawRect(kgmGui::Rect(0, 0, m_viewport.width(), m_viewport.height()), 0xffffffff, m_rnd_lights->m_tx_lightmap);
+  //render((kgmShader*)null);
+  //gc3DMode();
+  //gc->gcBlend(false, 0, 0, 0);
+
 
   //draw particles
   ParticlesRender pr(this);
@@ -596,7 +607,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
+  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_lights->m_tx_lightmap);
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
@@ -672,6 +683,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
     if (op.light)
     {
       LightRender lr(this);
+
       lr.render(&cam, nod);
     }
     else
@@ -684,6 +696,8 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
       br.render(&cam, nod);
     }
   }
+
+  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 
   gc->gcSetTarget(null);
 }

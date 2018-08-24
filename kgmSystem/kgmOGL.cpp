@@ -409,6 +409,7 @@ kgmOGL::~kgmOGL()
 
 void kgmOGL::gcSet(u32 param, void* value)
 {
+  u32 tmp = 0;
   switch(param)
   {
   case gcpar_blending:
@@ -478,11 +479,18 @@ void kgmOGL::gcSet(u32 param, void* value)
     }
   }
     break;
-  case gctex_fltmag:
-      m_mag_filter = gl_enum((u32)(size_t)value);
+  case gcpar_texfltmag:
+    m_mag_filter = gl_enum((u32)(size_t)value);
     break;
-  case gctex_fltmin:
-      m_min_filter = gl_enum((u32)(size_t)value);
+  case gcpar_texfltmin:
+    m_min_filter = gl_enum((u32)(size_t)value);
+    break;
+  case gcpar_texfilter:
+  {
+    TexFilter *filter = (TexFilter *) value;
+    m_mag_filter = gl_enum(filter->mag);
+    m_min_filter = gl_enum(filter->min);
+  }
     break;
   case gcpar_cubemapside:
     m_cubemapside = *(u32*) value;

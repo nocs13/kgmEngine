@@ -252,8 +252,8 @@ public:
       case gcpmt_trianglestrip: return GL_TRIANGLE_STRIP;
       case gcpmt_trianglefan:   return GL_TRIANGLE_FAN;
 
-      case gctex_fltmag: return GL_TEXTURE_MAG_FILTER;
-      case gctex_fltmin: return GL_TEXTURE_MIN_FILTER;
+      case gcpar_texfltmag: return GL_TEXTURE_MAG_FILTER;
+      case gcpar_texfltmin: return GL_TEXTURE_MIN_FILTER;
 
       case gcflt_linear:            return GL_LINEAR;
       case gcflt_near:              return GL_NEAREST;

@@ -69,7 +69,7 @@ void kgm_main( out vec4 color )
   if (clipping < 0.0)
     discard;
 
-  vec3 col = px_color.xyz * vec3(texture2D(g_txColor, v_UV).xyz);
+  vec3 col = vec3(1, 1, 1);
 
   vec3 normal = normalize(v_N);
   vec3 view   = normalize(g_vEye - v_V);
@@ -106,24 +106,8 @@ void kgm_main( out vec4 color )
       }
     }
 
-    // specular shading
-    vec3  reflectDir = reflect(lightDir, normal);
-    vec3  specular   = vec3(0, 0, 0);
-    float shininess  = clamp(g_fShine, 0, 512);
-    float spec       = pow(max(dot(g_vLook, -reflectDir), 0.0), shininess);
-
-    if (shininess > 1.0)
-    {
-      vec3 scolor = g_vSpecular.xyz + texture2D(g_txSpecular, v_UV).xyz;
-
-      diff *= 0.7;
-      scolor = clamp(scolor, 0.0, 1.0);
-      specular = diff * spec * scolor;
-      specular = clamp(specular, 0.0, 1.0);
-    }
-
     // combine results
-    col += specular;
+    col *= diff;
   }
 
   for (int i = 1; i < 8; i++)
@@ -133,9 +117,12 @@ void kgm_main( out vec4 color )
     if (lintensity < 0.1)
       break;
 
+    if (length(g_vLights[i].color) < 0.1)
+      break;
+
     vec3 lcolor    = g_vLights[i].color.xyz;
     vec3 lposition = g_vLights[i].position.xyz;
-    vec3 lightDir  = normalize(lposition - v_V);
+    vec3 lightDir  = normalize(v_V - lposition);
 
     // diffuse shading
     float diff = 0.9 * max(dot(normal, -lightDir), 0.0);
@@ -151,22 +138,14 @@ void kgm_main( out vec4 color )
       }
     }
 
-    // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(g_vLook, reflectDir), 0.0), g_fShine);
-
     // attenuation
     float distance    = length(lposition - v_V);
-    float attenuation = lintensity / (.5 + distance);
+    float attenuation = lintensity / (1.0 + distance);
 
     // combine results
-    vec3 specular = spec * vec3(texture2D(g_txSpecular, v_UV));
+    vec3 diffuse  = lcolor * diff * attenuation;
 
-    specular = clamp(specular, 0.0, 1.0);
-
-    specular *= attenuation;
-
-    col += specular;
+    col += diffuse;
   }
 
   color.xyz = col;

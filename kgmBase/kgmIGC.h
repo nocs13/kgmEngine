@@ -55,6 +55,9 @@ enum gc_enum
   gcpar_colormask,
   gcpar_cubemapside,
   gcpar_clipplane,
+  gcpar_texfilter,
+  gcpar_texfltmag,
+  gcpar_texfltmin,
 
   gccmp_never,
   gccmp_always,
@@ -112,9 +115,6 @@ enum gc_enum
   gctex_fmtdepth,
   gctex_fmtdepten,
 
-  gctex_fltmin,
-  gctex_fltmag,
-
   gctype_tex2d,
   gctype_texcube,
   gctype_texdepth,
@@ -153,6 +153,7 @@ class kgmIGC: public kgmObject
 {
 public:
   struct ClipPlane {bool on; u32 id; f32 plane[4]; };
+  struct TexFilter { u32 min, mag; };
 
 public:
   virtual void  gcSet(u32 param, void* value) = 0;

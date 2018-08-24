@@ -14,12 +14,13 @@ class LightRender: public BaseRender
     vec4 direction;
     vec4 color;
   };
-
+public:
   gchandle   m_target      = null;
   gchandle   m_tx_lightmap = null;
 
   kgmShader* m_sh_phong = null;
   kgmShader* m_sh_toon  = null;
+  kgmShader* m_sh_lmap  = null;
 
 public:
   LightRender(kgmGraphics* gr);

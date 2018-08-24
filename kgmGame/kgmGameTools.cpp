@@ -294,13 +294,13 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
   };
 
 
-  gc->gcSet(gctex_fltmag, (void*)gcflt_near);
-  gc->gcSet(gctex_fltmin, (void*)gcflt_near);
+  gc->gcSet(gcpar_texfltmag, (void*)gcflt_near);
+  gc->gcSet(gcpar_texfltmin, (void*)gcflt_near);
 
   void* t  = gc->gcGenTexture(pic->pdata, pic->width, pic->height, fmt, gctype_tex2d);
 
-  gc->gcSet(gctex_fltmag, (void*)gcflt_linear);
-  gc->gcSet(gctex_fltmin, (void*)gcflt_linear);
+  gc->gcSet(gcpar_texfltmag, (void*)gcflt_linear);
+  gc->gcSet(gcpar_texfltmin, (void*)gcflt_linear);
 
   delete pic;
 
