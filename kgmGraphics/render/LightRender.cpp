@@ -23,7 +23,6 @@ LightRender::LightRender(kgmGraphics* g)
 
   m_target      = gc->gcGenTarget(g_res, g_res, true, false);
 
-  kgmIGC::TexFilter filter = { gcflt_linear, gcflt_linear };
   gc->gcSet(gcpar_texfltmag, (void*)gcflt_linear);
   gc->gcSet(gcpar_texfltmin, (void*)gcflt_linear);
   m_tx_lightmap = gc->gcGenTexture(null, g_res, g_res, gctex_fmt24, gctype_tex2d);
@@ -78,23 +77,6 @@ void LightRender::render()
     shader(sh, gr->m_camera, mtl, nod, lights);
 
     gr->render(msh);
-
-    /*for(s32 j = 0; j < gr->m_a_light_count; j++)
-    {
-      gr->m_a_light = gr->m_a_lights[j];
-
-      if(j > 0)
-        gc->gcBlend(true, 0, gcblend_one, gcblend_one);
-
-      gr->render(shader);
-
-      //if (mtl->envType() == kgmMaterial::EnvironmentTypeNone)
-      gr->render(msh);
-
-      if(j > 0)
-        gc->gcBlend(false, 0, gcblend_one, gcblend_one);
-    }
-    */
 
     material(null);
     shader(null, null, null, null, null);

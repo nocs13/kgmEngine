@@ -374,11 +374,11 @@ scene_materials = []
 
 class kgmMaterial:
   def __init__(self, mtl):
-    self.name = mtl.name
+    self.name     = mtl.name
     self.diffuse  = mtl.diffuse_color
-    self.specular = mtl.specular_color
-    self.shine = mtl.specular_intensity * mtl.specular_hardness
-    self.alpha = mtl.alpha
+    self.specular = mtl.specular_color * mtl.specular_intensity
+    self.shine    = mtl.specular_intensity * mtl.specular_hardness
+    self.alpha    = mtl.alpha
     self.map_color = ''
     self.map_normal = ''
     self.map_specular = ''

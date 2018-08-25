@@ -1068,8 +1068,8 @@ void kgmOGL::gcSetTarget(gchandle t)
   }
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, rb->frame);
-  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
+  //glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+  //glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
 
   m_renderbuffer = rb;
 

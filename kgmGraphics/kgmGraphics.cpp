@@ -550,8 +550,8 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  //m_rnd_lights->render();
-  m_rnd_lights->lightmap();
+  m_rnd_lights->render();
+  //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);
   //sr.render();
@@ -641,7 +641,8 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   //prepare for render
   gc->gcSetTarget(buf);
 
-  gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
+  //gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
+  gc->gcSetViewport(0, 0, 128, 128, cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
   gc->gcDepth(true, true, gccmp_lequal);
