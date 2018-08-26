@@ -11,6 +11,8 @@ kgmGameGraphics::kgmGameGraphics(kgmIGC *g, kgmIResources* r)
   :kgmGraphics(g, r)
 {
   m_game = ((kgmGameApp*)kgmGameApp::application())->game();
+
+  m_gridline = null;
 }
 
 kgmGameGraphics::~kgmGameGraphics()

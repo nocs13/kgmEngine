@@ -112,8 +112,8 @@ kgmGameBase::~kgmGameBase()
 #ifdef EDITOR
   log("free editor...");
 
-  if(editor)
-    delete editor;
+  //if(editor)
+  //  delete editor;
 #endif
 
   log("stop threader...");
