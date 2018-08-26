@@ -559,17 +559,6 @@ void kgmGraphics::render()
 
   m_rnd_environment->render();
 
-  //gc->gcBlend(true,  0, gcblend_dstcol, gcblend_zero);
-  //gc2DMode();
-  //m.identity();
-  //setWorldMatrix(m);
-  //render(m_shaders[kgmMaterial::TypeBase]);
-  //gcDrawRect(kgmGui::Rect(0, 0, m_viewport.width(), m_viewport.height()), 0xffffffff, m_rnd_lights->m_tx_lightmap);
-  //render((kgmShader*)null);
-  //gc3DMode();
-  //gc->gcBlend(false, 0, 0, 0);
-
-
   //draw particles
   ParticlesRender pr(this);
   pr.render();
@@ -607,7 +596,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_lights->m_tx_lightmap);
+  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
@@ -641,8 +630,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   //prepare for render
   gc->gcSetTarget(buf);
 
-  //gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
-  gc->gcSetViewport(0, 0, 128, 128, cam.mNear, cam.mFar);
+  gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
   gc->gcDepth(true, true, gccmp_lequal);

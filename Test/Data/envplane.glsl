@@ -62,7 +62,7 @@ void kgm_main(out vec4 col)
 
   vec3 view = normalize(look);
   float mixfactor = (.3 - rrforce) * dot(look, g_vUp);
-
+  mixfactor = 0.3;
   col = mix(rlcol, rrcol, mixfactor);
 
   //col = texture2D(g_txEnvironment, rlc + distortion);

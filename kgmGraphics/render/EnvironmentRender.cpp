@@ -95,13 +95,13 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   {
     m_discard = n;
 
-    //reflection(p, nr, gr->m_camera->mPos.z, m_tx_plane);
+    reflection(p, nr, gr->m_camera->mPos.z, m_tx_plane);
 
     sh = m_sd_plane;
     tx = m_tx_plane;
 
     //if (mtl->transparency() > 0.01)
-    //  refraction(p, nr, m_tx_refraction);
+      refraction(p, nr, m_tx_refraction);
   }
   else
   {
