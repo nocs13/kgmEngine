@@ -215,6 +215,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
   }
 
+  m_rnd_base        = new BaseRender(this);
   m_rnd_lights      = new LightRender(this);
   m_rnd_shadows     = new ShadowRender(this);
   m_rnd_environment = new EnvironmentRender(this);
@@ -560,8 +561,8 @@ void kgmGraphics::render()
   m_rnd_environment->render();
 
   //draw particles
-  ParticlesRender pr(this);
-  pr.render();
+  //ParticlesRender pr(this);
+  //pr.render();
 
   // Draw alpha objects.
 
@@ -625,11 +626,9 @@ void kgmGraphics::render()
   gc->gcSetTexture(3, 0);
 }
 
-void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
+void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
 {
   //prepare for render
-  gc->gcSetTarget(buf);
-
   gc->gcSetViewport(0, 0, op.width, op.height, cam.mNear, cam.mFar);
 
   gc->gcCull(gccull_back);
@@ -671,24 +670,18 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 
     if (op.light)
     {
-      LightRender lr(this);
-
-      lr.render(&cam, nod);
+      m_rnd_lights->render(&cam, nod);
     }
     else
     {
-      BaseRender br(this);
-
       if (op.clipping)
-        br.setClipPlane(true, 0, vec4(op.plane[0], op.plane[1], op.plane[2], op.plane[3]));
+        m_rnd_base->setClipPlane(true, 0, vec4(op.plane[0], op.plane[1], op.plane[2], op.plane[3]));
 
-      br.render(&cam, nod);
+      m_rnd_base->render(&cam, nod);
     }
   }
 
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
-
-  gc->gcSetTarget(null);
 }
 
 /*

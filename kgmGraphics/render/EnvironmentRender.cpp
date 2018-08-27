@@ -191,14 +191,18 @@ void EnvironmentRender::reflection(vec3 pos, box bnd, gchandle tex)
   o.clipping = false;
   o.light    = true;
 
+
   for (u32 i = 0; i < 6; i++)
   {
     m_cubemapside = i;
     gc->gcSet(gcpar_cubemapside, &m_cubemapside);
     prepare(cam, pos, shift, m_cubemapside);
     gc->gcTexTarget(m_target, tex, gctype_texcube);
-    gr->render(m_target, cam, o);
+    gc->gcSetTarget(m_target);
+    gr->render(cam, o);
   }
+
+  gc->gcSetTarget(null);
 }
 
 void EnvironmentRender::reflection(vec3 pos, vec3 nor, f32 dis, gchandle tex)
@@ -236,7 +240,9 @@ void EnvironmentRender::reflection(vec3 pos, vec3 nor, f32 dis, gchandle tex)
   o.discard = m_discard;
 
   gc->gcTexTarget(m_target, tex, gctype_tex2d);
-  gr->render(m_target, cam, o);
+  gc->gcSetTarget(m_target);
+  gr->render(cam, o);
+  gc->gcSetTarget(null);
 }
 
 void EnvironmentRender::refraction(vec3 pos, box bb, gchandle tex)
@@ -261,7 +267,9 @@ void EnvironmentRender::refraction(vec3 pos, box bb, gchandle tex)
   o.discard = m_discard;
 
   gc->gcTexTarget(m_target, tex, gctype_tex2d);
-  gr->render(m_target, cam, o);
+  gc->gcSetTarget(m_target);
+  gr->render(cam, o);
+  gc->gcSetTarget(null);
 }
 
 void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
@@ -293,7 +301,9 @@ void EnvironmentRender::refraction(vec3 pos, vec3 nor, gchandle tex)
   o.discard = m_discard;
 
   gc->gcTexTarget(m_target, tex, gctype_tex2d);
-  gr->render(m_target, cam, o);
+  gc->gcSetTarget(m_target);
+  gr->render(cam, o);
+  gc->gcSetTarget(null);
 }
 
 void EnvironmentRender::prepare(kgmCamera& cam, vec3 pos, f32 shift, u32 face)

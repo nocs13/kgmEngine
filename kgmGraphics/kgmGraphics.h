@@ -179,6 +179,7 @@ protected:
 
   gchandle m_rnd_target = null;
 
+  BaseRender*        m_rnd_base = null;
   LightRender*       m_rnd_lights = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
@@ -206,7 +207,7 @@ public:
   kgmResource* resource(kgmString);
 
 protected:
-  void render(gchandle buf, kgmCamera &cam, Options &op);
+  void render(kgmCamera &cam, Options &op);
   void render(kgmMesh*);
   void render(kgmVisual*);
   void render(kgmShader*);
