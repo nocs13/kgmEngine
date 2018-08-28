@@ -100,7 +100,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
     sh = m_sd_plane;
     tx = m_tx_plane;
 
-    //if (mtl->transparency() > 0.01)
+    if (mtl->transparency() > 0.01)
       refraction(p, nr, m_tx_refraction);
   }
   else
