@@ -9,6 +9,11 @@ public:
   //Return true if a < b
   typedef bool (*Compare)(T& a, T& b);
 
+  static bool Check(T& a, T& b)
+  {
+    return (a < b);
+  }
+
 protected:
   T*  data;
   u32 len;
@@ -139,20 +144,40 @@ public:
   {
     if (compare)
       check = compare;
+    else
+      check = Check;
 
     sort(data, len);
+  }
+
+  void sort(T arr[], u32 n)
+  {
+    for (u32 i = n / 2 - 1; i >= 0; i--)
+      heapify(arr, n, i);
+
+    for (u32 i = n - 1; i >= 0; i--)
+    {
+      T t = arr[0];
+      arr[0] = arr[i];
+      arr[i] = t;
+
+      heapify(arr, i, 0);
+    }
   }
 
   void heapify(T arr[], u32 n, u32 i)
   {
     u32 largest = i;
+
     u32 l = 2 * i + 1;
     u32 r = 2 * i + 2;
 
-    if (l < n && arr[l] > arr[largest])
+    //if (l < n && arr[l] > arr[largest])
+    if (l < n && check(arr[largest], arr[l]))
       largest = l;
 
-    if (r < n && arr[r] > arr[largest])
+    //if (r < n && arr[r] > arr[largest])
+    if (l < n && check(arr[largest], arr[r]))
       largest = r;
 
     if (largest != i)
@@ -165,19 +190,9 @@ public:
     }
   }
 
-  void sort(T arr[], u32 n)
+  static bool Check(T& a, T& b)
   {
-    for (u32 i = n / 2 - 1; i >= 0; i--)
-      heapify(arr, n, i);
-
-    for (u32 i=n-1; i>=0; i--)
-    {
-      T t = arr[0];
-      arr[0] = arr[i];
-      arr[i] = t;
-
-      heapify(arr, i, 0);
-    }
+    return (a <= b);
   }
 };
 
@@ -201,19 +216,90 @@ public:
 
     T t;
 
-    for (k = n/2; k > 0; k /= 2) {
-      for (i = k; i < n; i++) {
+    for (k = n/2; k > 0; k /= 2)
+    {
+      for (i = k; i < n; i++)
+      {
         t = arr[i];
 
-        for (j = i; j>=k; j-=k) {
-          if (t < arr[j-k])
-            arr[j] = arr[j-k];
+        for (j = i; j >= k; j -= k)
+        {
+          if (t < arr[j - k])
+            arr[j] = arr[j - k];
           else
             break;
         }
+
         arr[j] = t;
       }
     }
+  }
+};
+
+template <class T>
+class kgmSortQuick
+{
+  kgmSort::Compare check;
+
+public:
+  kgmSortQuick(T* data, u32 len, Compare compare = nullptr)
+  {
+    if (compare)
+      check = compare;
+    else
+      check = Check;
+
+    sort(data, len);
+  }
+
+  void sort(T arr[], u32 n)
+  {
+    quicksort(arr, 1, n);
+  }
+
+  void quicksort(T* arr, u32 low, u32 hight)
+  {
+    u32 p_index;
+
+    if (low < hight)
+    {
+      p_index = partition(arr, low, hight);
+
+      quicksort(arr, low, hight - 1);
+      quicksort(arr, low + 1, hight);
+    }
+  }
+
+  s32 partition(T* arr, s32 low, s32 hight)
+  {
+    s32 pivot = hight;
+
+    s32 i = (low - 1);
+
+    for (u32 j = low; j <= (hight - 1); j++)
+    {
+      if (check(arr[j], arr[pivot]))
+      {
+        i++;
+
+        swap(arr, i, j);
+      }
+    }
+
+    swap(arr, i + 1, hight);
+  }
+
+  void swap(T* arr, s32 a, s32 b)
+  {
+    T t = arr[a];
+
+    arr[a] = arr[b];
+    arr[b] = t;
+  }
+
+  static bool Check(T& a, T& b)
+  {
+    return (a <= b);
   }
 };
 
