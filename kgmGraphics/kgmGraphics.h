@@ -233,6 +233,8 @@ protected:
   mtx4 getViewMatrix();
   mtx4 getWorldMatrix();
 
+  u32 collectLights(kgmCamera*, kgmArray<kgmINode*>&, u32);
+
 public:
   void gc2DMode();
   void gc3DMode();
