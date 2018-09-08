@@ -1211,6 +1211,123 @@ s32 kgmGraphics::getShaderId(kgmString s)
   return -1;
 }
 
+u32 kgmGraphics::collectLights(kgmCamera* cam, kgmArray<INode*>& nodes, u32 max)
+{
+  const s32 max_lights = 64;
+  const f32 min_lforce = 0.05;
+
+  if (!cam || nodes.length() < max)
+    return 0;
+
+  if (max > max_lights)
+    max = max_lights;
+
+  u32 count = 0;
+
+  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
+  {
+    INode* lnod = (*i);
+
+    if(!lnod->isNodeValid())
+      continue;
+
+    vec3 pos = lnod->getNodePosition();
+
+    kgmLight* l = (kgmLight*) lnod->getNodeObject();
+
+    f32 lforce = l->intensity() / (1.0 + pos.distance(cam->mPos));
+
+    if (lforce > 1.0)
+      lforce = 1.0;
+
+    bool isdir = false;
+
+    if (l->angle() < 0.01 && l->direction().length() > 0.9)
+    {
+      isdir = true;
+      lforce = 1.0;
+    }
+
+    if(!isdir && (lforce < min_lforce || !m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity())))
+      continue;
+
+    if (count < max)
+    {
+      nodes[count++] = lnod;
+    }
+    else
+    {
+      s32 min = -1;
+      f32 cforce = 1.0;
+
+      for (s32 i = 0; i < max; i++)
+      {
+        kgmLight* l = (kgmLight*) nodes[i]->getNodeObject();
+        f32 lforce = l->intensity() / (1.0 + pos.distance(cam->mPos));
+
+        if (l->angle() < 0.01 && l->direction().length() > 0.9)
+        {
+          lforce = 1.0;
+        }
+
+        if (lforce < cforce)
+        {
+          cforce = lforce;
+
+          min = i;
+        }
+      }
+
+      if (lforce > cforce && min > -1)
+        nodes[min] = lnod;
+    }
+  }
+
+  return count;
+}
+
+u32 kgmGraphics::collectMeshes(kgmCamera *cam, kgmArray<INode *> &nodes, u32 max)
+{
+  const s32 max_meshes = 10000;
+  const f32 min_mforce = 0.1;
+
+  if (!cam || nodes.length() < max)
+    return 0;
+
+  if (max > max_meshes)
+    max = max_meshes;
+
+  u32 count = 0;
+
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  {
+    INode* mnod = (*i);
+
+    if (!mnod->isNodeValid())
+      continue;
+
+    box3 bound = mnod->getNodeBound();
+
+    vec3  pos = mnod->getNodePosition();
+
+    vec3  l = bound.max - bound.min;
+    vec3  v = (bound.min + bound.max) * 0.5;
+
+    f32 mforce = l.length() / (1.0 + pos.distance(cam->mPos));
+
+    if(mforce < min_mforce || !m_camera->isSphereCross(v, 0.5 * l.length()))
+      continue;
+
+
+    if (count >= max)
+      break;
+    else
+      nodes[count++] = mnod;
+  }
+
+  return count;
+}
+
 //*************** VIEW MODE *************
 void kgmGraphics::gc2DMode()
 {
