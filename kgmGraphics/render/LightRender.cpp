@@ -5,7 +5,6 @@
 #include "../../kgmGraphics/kgmVisual.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
-#include "../../kgmGraphics/kgmNodeLight.h"
 
 #define MAX_LIGHTS 8
 

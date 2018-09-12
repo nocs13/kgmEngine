@@ -20,7 +20,6 @@
 #include "kgmSkeleton.h"
 #include "kgmFrustum.h"
 #include "kgmCamera.h"
-#include "kgmNodeLight.h"
 
 #include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
