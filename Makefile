@@ -13,7 +13,7 @@ sources += $(wildcard kgmGame/editor/*.cpp)
 objects := $(patsubst %.cpp,%.o,$(sources))
 
 OUT_SO = libkgmEngine.so
-OUT_A  = libkgmEngine.a
+OUT_A  = libkgmEngine_s.a
 
 all: extern debug 
 	echo $(subdirs)

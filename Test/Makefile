@@ -30,7 +30,7 @@ all:
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 #	$(CC) -g -c $(DEFS) $(INCS) $(LIBD) $(libs) kTest.cpp
 #	$(CC) -g -o kTest $(DEFS) $(FLAGS) $(OBJS) $(INCS) $(libs) -L../ -L../kgmLua
-	$(CC) -g -o kTest$(EXT) *.o ../libkgmEngine.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
+	$(CC) -g -o kTest$(EXT) *.o ../libkgmEngine_s.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
 clean:
 	$(RM) kTest$(EXT) *.o
