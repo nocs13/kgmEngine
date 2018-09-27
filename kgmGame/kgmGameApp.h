@@ -111,7 +111,7 @@ public:
     return (Options*) &m_options;
   }
 
-  int main(int argc, char **argv)
+  s32 exec(s32 argc, s8 **argv)
   {
     memset(&m_options, 0, sizeof(Options));
 

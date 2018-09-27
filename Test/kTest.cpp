@@ -254,7 +254,12 @@ public:
 };
 
 //main object
-kApp theApp;
+int main(int argc, char** argv)
+{
+  kApp app;
+
+  return  app.exec(argc, argv);
+}
 //////////////
 
 //FOR ANDROID

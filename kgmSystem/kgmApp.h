@@ -19,7 +19,7 @@ public:
   kgmApp();
   ~kgmApp();
 
-  s32 main(s32 argc, s8 **argv);
+  s32 exec(s32 argc, s8 **argv);
 
   void setMainWindow(void* w)
   {
