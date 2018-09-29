@@ -30,13 +30,15 @@ kgmPicture* kgmGameTools::genPicture(kgmMemory<u8>& m)
 {
   u32 id_tga = 0x00020000;
 
+  u32 id_tga_comp = 0x000a0000;
+
   if(m.empty() || !m.data())
     return 0;
 
   if(!memcmp("BM", m.data(), 2))
     return genPictureFromBmp(m);
 
-  if(!memcmp(&id_tga, m.data(), 4))
+  if(!memcmp(&id_tga, m.data(), 4) || !memcmp(&id_tga_comp, m.data(), 4))
     return genPictureFromTga(m);
 
   return 0;
@@ -183,10 +185,91 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   if (compr)
   {
     u32 bt_pp = btcnt / 8;
+    u8* ptm = pm;
 
     for(u32 i = 0; i < (w * h); i++)
     {
+      u8 rle = ptm[0]; ptm += 1;
+      u8 cnt = rle & 0x7f;
 
+      switch(bt_pp)
+      {
+      case 2:
+        pdata[3 * i + 0] = ( ptm[0] & 0x1f) << 3;
+        pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
+        pdata[3 * i + 2] = ( ptm[1] & 0x7c) << 1;
+        break;
+      case 3:
+        pdata[3 * i + 0] = ptm[0];
+        pdata[3 * i + 1] = ptm[1];
+        pdata[3 * i + 2] = ptm[2];
+        break;
+      case 4:
+        pdata[4 * i + 0] = ptm[0];
+        pdata[4 * i + 1] = ptm[1];
+        pdata[4 * i + 2] = ptm[2];
+        pdata[4 * i + 3] = ptm[3];
+        break;
+      }
+
+      i++;
+
+      if (rle & 0x80)
+      {
+        for (u32 k = 0; k < cnt; k++)
+        {
+          switch(bt_pp)
+          {
+          case 2:
+            pdata[3 * i + 0] = ( ptm[0] & 0x1f) << 3;
+            pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
+            pdata[3 * i + 2] = ( ptm[1] & 0x7c) << 1;
+            break;
+          case 3:
+            pdata[3 * i + 0] = ptm[0];
+            pdata[3 * i + 1] = ptm[1];
+            pdata[3 * i + 2] = ptm[2];
+            break;
+          case 4:
+            pdata[4 * i + 0] = ptm[0];
+            pdata[4 * i + 1] = ptm[1];
+            pdata[4 * i + 2] = ptm[2];
+            pdata[4 * i + 3] = ptm[3];
+            break;
+          }
+
+          i++;
+        }
+      }
+      else
+      {
+        for (u32 k = 0; k < cnt; k++)
+        {
+          ptm += bt_pp;
+
+          switch(bt_pp)
+          {
+          case 2:
+            pdata[3 * i + 0] =  (ptm[0] & 0x1f) << 3;
+            pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
+            pdata[3 * i + 2] =  (ptm[1] & 0x7c) << 1;
+            break;
+          case 3:
+            pdata[3 * i + 0] = ptm[0];
+            pdata[3 * i + 1] = ptm[1];
+            pdata[3 * i + 2] = ptm[2];
+            break;
+          case 4:
+            pdata[3 * i + 0] = ptm[0];
+            pdata[3 * i + 1] = ptm[1];
+            pdata[3 * i + 2] = ptm[2];
+            pdata[3 * i + 3] = ptm[3];
+            break;
+          }
+
+          i++;
+        }
+      }
     }
   }
   else
