@@ -12,6 +12,8 @@ class kgmGameScript: public kgmObject
   kgmIScript* handler;
   kgmIGame*   game;
 
+  bool script = false;
+
   kgmMap<kgmGui*, kgmString> slotters;
   kgmList< Slot<kgmGameScript>* > slots;
 

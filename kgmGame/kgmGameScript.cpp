@@ -51,19 +51,22 @@ void kgmGameScript::init()
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
-  handler->load("main");
+  script = handler->load("main");
 
-  handler->call("main_init", "");
+  if (script)
+    handler->call("main_init", "");
 }
 
 void kgmGameScript::free()
 {
-  handler->call("main_free", "");
+  if (script)
+    handler->call("main_free", "");
 }
 
 void kgmGameScript::update()
 {
-  handler->call("main_update", "i", game->timeUpdate());
+  if (script)
+    handler->call("main_update", "i", game->timeUpdate());
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
