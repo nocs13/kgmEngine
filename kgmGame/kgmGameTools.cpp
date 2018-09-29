@@ -139,6 +139,113 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   uchar idl, cmp, dt, btcnt, dsc;
   uchar clmap[5];
   u16   xorgn, yorgn, w, h;
+  u8*   pm = (u8*)m.data();
+
+  int   width = 0;
+  int   height = 0;
+  int   bpp = 0;
+  int   frames = 0;
+  u8*   pdata = 0;
+
+  memcpy(&idl,   pm, 1);  pm += 1;
+  memcpy(&cmp,   pm, 1);  pm += 1;
+  memcpy(&dt,    pm, 1);  pm += 1;
+  memcpy(&clmap, pm, 5);  pm += 5;
+  memcpy(&xorgn, pm, 2);  pm += 2;
+  memcpy(&yorgn, pm, 2);  pm += 2;
+  memcpy(&w,     pm, 2);  pm += 2;
+  memcpy(&h,     pm, 2);  pm += 2;
+  memcpy(&btcnt, pm, 1);  pm += 1;
+  memcpy(&dsc,   pm, 1);  pm += 1;
+
+  bool compr;
+
+  if(dt == 2)
+    compr = false;
+  else if (dt == 10)
+    compr = true;
+  else
+    return 0;
+
+  if((btcnt != 16) && (btcnt != 24) && (btcnt != 32))
+    return 0;
+
+  u32 bt_pp = btcnt / 8;
+
+  if (bt_pp < 3)
+    bt_pp = 3;
+
+  u32 r_size = w * h * bt_pp;
+  pm += idl;
+  pdata = (u8*) malloc(sizeof(char) * r_size);
+  //memcpy(pdata, pm, r_size);
+
+  if (compr)
+  {
+    u32 bt_pp = btcnt / 8;
+
+    for(u32 i = 0; i < (w * h); i++)
+    {
+
+    }
+  }
+  else
+  {
+    if (btcnt == 16)
+    {
+      for(u32 i = 0; i < (w * h); i++)
+      {
+        pdata[3 * i + 0] = (pm[2 * i + 0] & 0x1f) << 3;
+        pdata[3 * i + 1] = ((pm[2 * i + 0] & 0xe0) >> 2) | ((pm[2 * i + 1] & 0x03) << 6);
+        pdata[3 * i + 2] = (pm[2 * i + 1] & 0x7c) << 1;
+      }
+    }
+    else
+    {
+      memcpy(pdata, pm, r_size);
+    }
+  }
+
+  width = w;
+  height = h;
+  bpp = btcnt;
+
+  u32 order = (dsc & 0x20);
+
+  if(order)
+  {
+    for(int i = (w * h); i > 0; i--)
+    {
+      char* pt = (char*)(((char*)pdata) + (i - 1) * bt_pp);
+      char  t  = pt[0];
+
+      pt[0] = pt[2];
+      pt[2] = t;
+    }
+  }
+  else
+  {
+    for(int i = 0; i < (w * h); i++)
+    {
+      char* pt = (char*)(((char*)pdata) + i * bt_pp);
+      char  t  = pt[0];
+
+      pt[0] = pt[2];
+      pt[2] = t;
+    }
+  }
+
+  return new kgmPicture(width, height, bpp, frames, pdata);
+}
+/*
+kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
+{
+  if(m.empty())
+    return 0;
+
+  uchar idl, cmp, dt, btcnt, dsc;
+  uchar clmap[5];
+  u16   xorgn, yorgn, w, h;
   char* pm = (char*)m.data();
 
   int   width = 0;
@@ -201,7 +308,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
-
+*/
 kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
 {
   kgmPicture* pic = genPicture(m);
