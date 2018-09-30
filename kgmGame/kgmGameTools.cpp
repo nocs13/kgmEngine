@@ -187,10 +187,17 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
     u32 bt_pp = btcnt / 8;
     u8* ptm = pm;
 
-    for(u32 i = 0; i < (w * h); i++)
+    typedef u8 pixel_t[4];
+    u32 i = 0;
+
+    while(i < (w * h))
     {
       u8 rle = ptm[0]; ptm += 1;
       u8 cnt = rle & 0x7f;
+
+      pixel_t t_px;
+
+      memcpy(t_px, ptm, sizeof(pixel_t));
 
       switch(bt_pp)
       {
@@ -240,12 +247,14 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
           i++;
         }
+        ptm += bt_pp;
+        int k = 0;
       }
       else
       {
         for (u32 k = 0; k < cnt; k++)
         {
-          ptm += bt_pp;
+          memcpy(t_px, ptm, sizeof(pixel_t));
 
           switch(bt_pp)
           {
@@ -268,7 +277,9 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
           }
 
           i++;
+          ptm += bt_pp;
         }
+        int k = 0;
       }
     }
   }
