@@ -520,7 +520,7 @@ int kgmGameBase::gInit()
 
   if(!m_font)
   {
-    m_font = m_resources->getFont("font.tga", 16, 16);
+    m_font = m_resources->getFont("fontbb.tga", 16, 16);
 
     if (!m_font)
       log("can't load font");

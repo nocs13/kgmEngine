@@ -722,12 +722,12 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
   switch(fmt)
   {
   case gctex_fmt8:
-    pic_fmt = GL_RED;
-    int_fmt = GL_RED;
+    pic_fmt = GL_RGB;
+    int_fmt = GL_UNSIGNED_BYTE_3_3_2;
     break;
   case gctex_fmt16:
     pic_fmt = GL_RGB;
-    int_fmt = GL_RGB5;
+    int_fmt = GL_UNSIGNED_SHORT_5_6_5;
     bpc = 2;
     break;
   case gctex_fmt24:

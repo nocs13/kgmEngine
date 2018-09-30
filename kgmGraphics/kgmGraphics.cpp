@@ -596,7 +596,8 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
-  gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
+  //gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
+  gcDrawRect(kgmGui::Rect(1, 250, 300, 300), 0xffffffff, (gchandle) font->texture());
 
   {
     kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
