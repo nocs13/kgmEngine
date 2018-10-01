@@ -85,7 +85,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
     if(ch == '\n')
     {
       cx = (float)clip.x;
-      cy += fheight;
+      cy += (fheight + 1);
 
       continue;
     }
@@ -111,7 +111,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
 
-    cx += fwidth;
+    cx += (fwidth + 1);
   }
 
   gc->gcBlend(0, 0, 0, 0);

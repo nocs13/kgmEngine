@@ -221,10 +221,16 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
       i++;
 
-      if ((t_px[0] != 0 && t_px[0] != 255) || (t_px[1] != 0 && t_px[1] != 255) || (t_px[2] != 0 && t_px[2] != 255))
+      if (cnt == 0)
       {
-        int k = 0;
+        ptm += bt_pp;
+        continue;
       }
+
+//      if ((t_px[0] != 0 && t_px[0] != 255) || (t_px[1] != 0 && t_px[1] != 255) || (t_px[2] != 0 && t_px[2] != 255))
+//      {
+//        int k = 0;
+//      }
 
       if (rle & 0x80)
       {
@@ -257,7 +263,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
       }
       else
       {
-        /*for (u32 k = 0; k < cnt; k++)
+        for (u32 k = 0; k < cnt; k++)
         {
           memcpy(t_px, ptm, sizeof(pixel_t));
 
@@ -283,7 +289,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
           i++;
           ptm += bt_pp;
-        }*/
+        }
       }
     }
   }
