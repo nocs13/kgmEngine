@@ -1,5 +1,7 @@
 #include "kgmTga.h"
 
+#define MAX_RES (12 * 1000)
+
 kgmTga::kgmTga()
 {
   memset(&header, 0, sizeof(Header));
@@ -32,15 +34,24 @@ bool kgmTga::create(kgmMemory<u8>& m)
   memcpy(&header.bpp,    pm, 1); pm += 1;
   memcpy(&header.desc,   pm, 1); pm += 1;
 
-  if ((header.type != 2) && (header.type != 10))
+  if ((header.type != Type::Rgb) && (header.type != Type::RleRgb))
   {
     return false;
   }
 
-  if (header.width > 4096 || header.height > 4096)
+  if (header.width > MAX_RES || header.height > MAX_RES)
   {
     return false;
   }
+
+  bool compr;
+
+  if(header.type == Type::Rgb)
+    compr = false;
+  else if (header.type == Type::RleRgb)
+    compr = true;
+  else
+    return false;
 
   return true;
 }
