@@ -1237,6 +1237,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.kgmobjects = []
     self.dummies    = []
     self.units      = []
+    self.landscape  = None
 
     print("Collect Objects...")
 
@@ -1398,10 +1399,16 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True]
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
+    landscapes = []
+
     for i in reversed(range(len(self.mesh_nodes))):
       if hasModifier(self.mesh_nodes[i], 'Displace') is True:
         print("Removing mesh: " + self.mesh_nodes[i].name + " as had displace modifier.")
+        landscapes.append(self.mesh_nodes[i])
         del self.mesh_nodes[i]
+
+    if len(landscapes) > 0:
+      self.landscape = kgmLandscape(landscapes[-1])
 
     for n in self.mesh_nodes:
       self.mesh_datas.append(kgmMesh(n))
