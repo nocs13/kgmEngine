@@ -31,18 +31,36 @@ import bpy
 from mathutils import *
 import xml.etree.ElementTree
 
+
 def toGrad(a):
   return a * 180.0 / 3.1415
+
 
 def toSnum(a):
   return str("%.6f" % a)
 
+
 kgm_animaniacs = [( "Unit",    "Unit",    "kgmUnit"    ),
                   ( "Actor",   "Actor",   "kgmActor"   )]
+
 
 kgm_project_parameters = ''
 kgm_unit_types = [('a1', 'a1 a1', 'a1 a1 a1'), ('a2', 'a2 a2', 'a2 a2 a2')]
 kgm_actor_types = [('u1', 'a1 u1', 'a1 a1 u1'), ('u2', 'a1 u2', 'a1 a1 u2')]
+
+
+def hasModifier(o, mname):
+  if o is None:
+    return False
+
+  if len(o.modifiers) < 1:
+    return False
+
+  for m in o.modifiers:
+    if m.name == mname:
+      return True
+
+  return False
 
 
 def choose_unit_types(self, context):
@@ -886,6 +904,16 @@ class kgmProxy:
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
 
+class kgmLandscape:
+  def  __init__(self, o):
+    self.mtx = o.matrix_local
+    self.name = o.name
+    self.type = o.type
+    self.object = o.proxy.name
+    self.pos = Vector((0, 0, 0)) * self.mtx
+    self.quat = self.mtx.to_quaternion()
+    self.euler = self.mtx.to_euler()
+
 
 class kgmThread(threading.Thread):
   def __init__(self, c):
@@ -1363,8 +1391,17 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       return self.execute(context)
 
   def collect_meshes(self):
-    self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True]
+    if self.exp_meshes is not True:
+      print("Export meshes are not enabled.")
+      return
+
+    self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True]
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
+
+    for i in reversed(range(len(self.mesh_nodes))):
+      if hasModifier(self.mesh_nodes[i], 'Displace') is True:
+        print("Removing mesh: " + self.mesh_nodes[i].name + " as had displace modifier.")
+        del self.mesh_nodes[i]
 
     for n in self.mesh_nodes:
       self.mesh_datas.append(kgmMesh(n))
