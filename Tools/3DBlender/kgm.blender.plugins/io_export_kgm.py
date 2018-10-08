@@ -1027,6 +1027,10 @@ def export_camera(file, o):
   file.write(" </Camera>\n")
 
 
+def export_landscape(file, o):
+  file.write(" <Landscape name='" + o.name + "'>\n")
+  file.write(" </Landscape>\n")
+
 def export_mesh_data(file, o):
   v = o.position
   r = o.rotation
