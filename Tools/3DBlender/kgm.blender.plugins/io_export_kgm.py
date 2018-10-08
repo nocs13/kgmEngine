@@ -63,6 +63,20 @@ def hasModifier(o, mname):
   return False
 
 
+def getModifier(o, mname):
+  if o is None:
+    return None
+
+  if len(o.modifiers) < 1:
+    return None
+
+  for m in o.modifiers:
+    if m.name == mname:
+      return m
+
+  return None
+
+
 def choose_unit_types(self, context):
   print('choosing unit type')
   o = bpy.context.active_object
@@ -913,6 +927,21 @@ class kgmLandscape:
     self.pos = Vector((0, 0, 0)) * self.mtx
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
+    self.image = ""
+    self.strength = 0.0
+    self.direction = [0, 0, 0]
+
+
+    disp = getModifier(o, 'Displace')
+
+    if disp is None:
+      return
+
+    if disp.texture is not None and disp.texture.image is not None:
+      self.image = disp.texture.image.name
+
+    self.strength = disp.strength
+    self.direction = disp.direction
 
 
 class kgmThread(threading.Thread):
