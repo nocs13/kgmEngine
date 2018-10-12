@@ -930,6 +930,8 @@ class kgmLandscape:
     self.image = ""
     self.strength = 0.0
     self.direction = [0, 0, 0]
+    self.width = o.dimensions[0]
+    self.height = o.dimensions[1]
 
 
     disp = getModifier(o, 'Displace')
