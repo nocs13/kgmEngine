@@ -447,7 +447,7 @@ class kgmMaterial:
     for TS in mtl.texture_slots.keys():
       TextureSlot = mtl.texture_slots[TS]
       print("Tex: " + str(TS))
-      if TextureSlot.texture.type == "IMAGE" and TextureSlot.texture.image.source == "FILE":
+      if TextureSlot.texture.type == "IMAGE" and TextureSlot.texture.image is not None and TextureSlot.texture.image.source == "FILE":
         print("TPATH: " + TextureSlot.texture.image.filepath)
         tf_path = os.path.basename(TextureSlot.texture.image.filepath)
         if tf_path != "":
@@ -918,20 +918,21 @@ class kgmProxy:
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
 
-class kgmLandscape:
+class kgmTerrain:
   def  __init__(self, o):
     self.mtx = o.matrix_local
     self.name = o.name
     self.type = o.type
-    self.object = o.proxy.name
+    self.object = o.name
     self.pos = Vector((0, 0, 0)) * self.mtx
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
     self.image = ""
     self.strength = 0.0
     self.direction = [0, 0, 0]
-    self.width = o.dimensions[0]
-    self.height = o.dimensions[1]
+    self.width  = o.dimensions[0]
+    self.length = o.dimensions[1]
+    self.height = o.dimensions[2]
 
 
     disp = getModifier(o, 'Displace')
@@ -1029,9 +1030,10 @@ def export_camera(file, o):
   file.write(" </Camera>\n")
 
 
-def export_landscape(file, o):
-  file.write(" <Landscape name='" + o.name + "'>\n")
-  file.write(" </Landscape>\n")
+def export_terrain(file, o):
+  file.write(" <Terrain name='" + o.name + "' dimensions='" + toSnum(o.width) + " " + toSnum(o.length) + " " + toSnum(o.height) + "'>\n")
+  file.write("  <HeightMap value='" + o.image + "'/>\n")
+  file.write(" </Terrain>\n")
 
 def export_mesh_data(file, o):
   v = o.position
@@ -1117,6 +1119,7 @@ def export_obstacle(file, o):
     file.write("  </Polygon>\n")
   file.write(" </Obstacle>\n")
 
+
 def export_particles(file, o):
   file.write(" <Particles name='" + o.name + "' material='" + o.material + "'>\n")
   file.write("  <Position value='" + str("%.5f" % o.pos[0]) + " " + str("%.5f" % o.pos[1]) + " " + str("%.5f" % o.pos[2]) + "'/>\n")
@@ -1129,6 +1132,7 @@ def export_particles(file, o):
   file.write("  <PrData direction='" + str("%.5f" % o.dir[0]) + " " + str("%.5f" % o.dir[1]) + " " + str("%.5f" % o.dir[2]) + "'/>\n")
   file.write("  <PrData volume='" + str("%.5f" % o.bound[0]) + " " + str("%.5f" % o.bound[1]) + " " + str("%.5f" % o.bound[2]) + "'/>\n")
   file.write(" </Particles>\n")
+
 
 def export_dummy(file, o):
   d = kgmDummy(o)
@@ -1158,14 +1162,17 @@ def export_unit(file, o):
 
   file.write(" </Unit>\n")
 
+
 def export_kgmobject(file, o):
   if hasattr(o, "kgm_dummy") and o.kgm_dummy is True:
     export_kgmdummy(file, o)
   elif hasattr(o, "kgm_unit") and o.kgm_unit is True:
     export_kgmunit(file, o)
 
+
 from bpy.props import *
 from bpy_extras.io_utils import ImportHelper
+
 
 class kgmImport(bpy.types.Operator, ImportHelper):
   '''Kgm settings import'''
@@ -1272,7 +1279,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.kgmobjects = []
     self.dummies    = []
     self.units      = []
-    self.landscape  = None
+    self.terrain    = None
 
     print("Collect Objects...")
 
@@ -1354,9 +1361,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       export_camera(file, o)
 
     # meshes
-    print("Export mesh library")
-    for o in self.mesh_datas:
-      export_mesh_data(file, o)
+    if self.exp_meshes:
+      if self.terrain is not None:
+        print("Export terrain")
+        export_terrain(file, self.terrain)
+
+      print("Export mesh library")
+      for o in self.mesh_datas:
+        export_mesh_data(file, o)
 
     #print("Export mesh nodes")
     #for o in self.mesh_nodes:
@@ -1434,16 +1446,16 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True]
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
-    landscapes = []
+    terrains = []
 
     for i in reversed(range(len(self.mesh_nodes))):
       if hasModifier(self.mesh_nodes[i], 'Displace') is True:
         print("Removing mesh: " + self.mesh_nodes[i].name + " as had displace modifier.")
-        landscapes.append(self.mesh_nodes[i])
+        terrains.append(self.mesh_nodes[i])
         del self.mesh_nodes[i]
 
-    if len(landscapes) > 0:
-      self.landscape = kgmLandscape(landscapes[-1])
+    if len(terrains) > 0:
+      self.terrain = kgmTerrain(terrains[-1])
 
     for n in self.mesh_nodes:
       self.mesh_datas.append(kgmMesh(n))
