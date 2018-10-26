@@ -5,9 +5,11 @@
 
 #include "../kgmBase/kgmObject.h"
 
-class kgmLandscape: public kgmObject
+class kgmPicture;
+
+class kgmTerrain: public kgmObject
 {
-  KGM_OBJECT(kgmLandscape);
+  KGM_OBJECT(kgmTerrain);
 
 private:
   f32 m_width;
@@ -17,10 +19,10 @@ private:
   kgmPicture *m_heighmap;
 
 protected:
-  ~kgmLandscape();
+  ~kgmTerrain();
 
 public:
-  kgmLandscape();
+  kgmTerrain();
 
   f32 width() const
   {
@@ -32,16 +34,6 @@ public:
     m_width = w;
   }
 
-  f32 height() const
-  {
-    return m_height;
-  }
-
-  void height(f32 h)
-  {
-    m_height = wh;
-  }
-
   f32 length() const
   {
     return m_length;
@@ -51,5 +43,17 @@ public:
   {
     m_length = l;
   }
+
+  f32 height() const
+  {
+    return m_height;
+  }
+
+  void height(f32 h)
+  {
+    m_height = h;
+  }
+
+  bool heightmap(kgmPicture* map);
 };
 

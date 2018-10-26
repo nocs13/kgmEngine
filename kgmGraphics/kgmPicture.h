@@ -1,10 +1,13 @@
 #pragma once
 #include "../kgmBase/kgmTypes.h"
+#include "../kgmBase/kgmResource.h"
 
 /////////
 // INTERFACE FOR PICTURE
 class kgmPicture: public kgmResource
 {
+    KGM_OBJECT(kgmPicture);
+
 public:
   u32  width, height, bpp, frames;
   u8*  pdata;

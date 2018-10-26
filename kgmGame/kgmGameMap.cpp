@@ -7,6 +7,10 @@
 #include "kgmGameBase.h"
 #include "kgmGameResources.h"
 
+#include "../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmLight.h"
+#include "../kgmGraphics/kgmTerrain.h"
+
 kgmGameMap::kgmGameMap(kgmGameBase* g, OpenType ot)
 {
   m_game = g;
@@ -525,6 +529,33 @@ kgmUnit* kgmGameMap::next()
 
         closed = false;
       }
+      else if(id == "Terrain")
+      {
+        ntype = "terrain";
+
+        kgmString id;
+        m_xml->attribute("name", id);
+
+        vec3 v;
+        m_xml->attribute("dimensions", value);
+        sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
+
+        kgmTerrain* t = new kgmTerrain();
+
+        t->width(v.x);
+        t->length(v.y);
+        t->height(v.z);
+
+        m_game->m_objects.add(t);
+
+        data = t;
+
+        node = new kgmUnit(m_game, t);
+
+        node->setName(id);
+
+        closed = false;
+      }
       else if(id == "Unit")
       {
         ntype = "unit";
@@ -851,6 +882,14 @@ kgmUnit* kgmGameMap::next()
 
         if (vtext == "True" ||  vtext == "true")
           ((kgmMaterial*)data)->shade_receive(true);
+      }
+      else if (id == "HeightMap")
+      {
+        xmlAttr(m_xml, "value", vtext);
+        kgmPicture* map = m_game->getResources()->getPicture(vtext);
+
+        if (map)
+          ((kgmTerrain*)data)->heightmap(map);
       }
       else if(id == "Shader")
       {

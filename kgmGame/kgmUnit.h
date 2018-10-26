@@ -13,6 +13,7 @@
 
 class kgmIGame;
 class kgmSound;
+class kgmTerrain;
 
 class kgmUnit : public kgmIGraphics::INode, public kgmObject //, public kgmIPhysics::IBody
 {
@@ -29,6 +30,7 @@ public:
     Effect,
     Sensor,
     Trigger,
+    Terrain,
     Obstacle,
     Particles
   };
@@ -79,6 +81,7 @@ protected:
     kgmMesh*      m_mesh;
     kgmLight*     m_light;
     kgmCamera*    m_camera;
+    kgmTerrain*   m_terrain;
     kgmObstacle*  m_obstacle;
     kgmParticles* m_particles;
   };
@@ -106,6 +109,7 @@ public:
   kgmUnit(kgmIGame* g, kgmLight* lgt);
   kgmUnit(kgmIGame* g, kgmCamera* cam);
   kgmUnit(kgmIGame* g, kgmVisual* vis);
+  kgmUnit(kgmIGame* g, kgmTerrain* ter);
   kgmUnit(kgmIGame* g, kgmObstacle* obs);
   kgmUnit(kgmIGame* g, kgmParticles* prt);
   ~kgmUnit();
