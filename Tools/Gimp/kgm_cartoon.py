@@ -13,6 +13,13 @@ def cartoon(r, g, b):
 
   return color
 
+def to_gray(r, g, b):
+  gray = 0.299 * r + 0.587 * g + 0.114 * b
+  return int(gray)
+
+def to_rgb(gray):
+  pass
+
 def kgm_cartoon(image, layer) :
   # Indicates that the process has started.
   gimp.progress_init("kgm cartoonizing " + layer.name + "...")
@@ -28,11 +35,13 @@ def kgm_cartoon(image, layer) :
         pixel = layer.get_pixel(x, y)
 
         if(len(pixel) >= 3):
-          sum = pixel[0] + pixel[1] + pixel[2]
-          gray = int(sum/3)
-          #newColor = (gray, gray, gray) + pixel[3:]
+          #sum = pixel[0] + pixel[1] + pixel[2]
+          #gray = int(sum/3)
+          gray = to_gray(pixel[0], pixel[1], pixel[2])
+          newColor = (gray, gray, gray)
           #newColor = (0, gray, 0)
-          newColor = cartoon(pixel[0], pixel[1], pixel[2])
+          #newColor = cartoon(pixel[0], pixel[1], pixel[2])
+          #newColor = cartoon(pixel[0], pixel[1], pixel[2])
           layer.set_pixel(x,y, newColor)
         gimp.progress_update(pc * x)
 
