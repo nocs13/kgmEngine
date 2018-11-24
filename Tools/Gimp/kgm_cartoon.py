@@ -4,27 +4,25 @@ from gimpfu import *
 
 class Colormap:
   def __init__(self):
-    self.ranges = []
-    self.ranges[0] = [0,   30]
-    self.ranges[1] = [31,  60]
-    self.ranges[2] = [61,  90]
-    self.ranges[3] = [91,  120]
-    self.ranges[4] = [121, 150]
+    self.ranges = [None] * 9
+    self.ranges[0] = [0,   33]
+    self.ranges[1] = [14,  90]
+    self.ranges[2] = [37,  115]
+    self.ranges[3] = [91,  151]
+    self.ranges[4] = [121, 160]
     self.ranges[5] = [151, 180]
     self.ranges[6] = [181, 210]
-    self.ranges[7] = [211, 249]
-    self.ranges[8] = [250, 255]
+    self.ranges[7] = [211, 255]
 
-    self.colors = []
+    self.colors = [None] * 9
     self.colors[0] = [0, 0, 0]
-    self.colors[1] = [101, 69, 39]
-    self.colors[2] = [150, 140, 200]
-    self.colors[3] = [90, 167, 90]
-    self.colors[4] = [255, 105, 180]
-    self.colors[5] = [145, 90, 199]
-    self.colors[6] = [45, 200, 120]
-    self.colors[7] = [78, 145, 134]
-    self.colors[8] = [255, 255, 255]
+    self.colors[1] = [143, 56, 143]
+    self.colors[2] = [212, 53, 39]
+    self.colors[3] = [229, 120, 40]
+    self.colors[4] = [57, 170, 216]
+    self.colors[5] = [121, 199, 70]
+    self.colors[6] = [245, 194, 38]
+    self.colors[7] = [255, 255, 255]
 
   def rgb(self, gray):
     for i in range(0, len(self.ranges)):
