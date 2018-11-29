@@ -886,10 +886,15 @@ kgmUnit* kgmGameMap::next()
       else if (id == "HeightMap")
       {
         xmlAttr(m_xml, "value", vtext);
-        kgmPicture* map = m_game->getResources()->getPicture(vtext);
 
-        if (map)
+        //kgmPicture* map = m_game->getResources()->getPicture(vtext);
+
+        //if (map)
+        //  ((kgmTerrain*)data)->heightmap(map);
+
+        if (vtext.length() > 0)
           ((kgmTerrain*)data)->heightmap(map);
+
       }
       else if(id == "Shader")
       {

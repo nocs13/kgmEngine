@@ -54,6 +54,7 @@ public:
     m_height = h;
   }
 
-  bool heightmap(kgmPicture* map);
+  //bool heightmap(kgmPicture* map);
+  bool heightmap(kgmString map);
 };
 
