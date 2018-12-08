@@ -22,6 +22,7 @@
           <li><div id="new_label"><button class='ui-button' style='width: 100px;'>Label</button></div></li>
           <li><div id="new_button"><button class='ui-button' style='width: 100px;'>Button</button></div></li>
           <li><div id="new_progress"><button class='ui-button' style='width: 100px;'>Progress</button></div></li>
+          <li><div id="new_tabbar"><button class='ui-button' style='width: 100px;'>TabSpace</button></div></li>
         </ul>
       </div>
       <div id="options" class="options">
@@ -34,9 +35,17 @@
       <li><div id="gui_list_menu_remove">remove</div></li>
       <li><div id="gui_list_menu_dragging">drag</div></li>
     </ul>
+    <ul id="gui_tabbar_menu" class="gui_list_menu">
+      <li><div id="gui_tabbar_menu_add">add</div></li>
+      <li><div id="gui_tabbar_menu_remove">remove</div></li>
+    </ul>
     <div id="gui_list_menu_add_dialog">
       <input id="gui_list_text_for_add" type="text" value="text" />
       <input id="gui_list_add_text" type="button" value="add" />
+    </div>
+    <div id="gui_tabbar_menu_add_dialog">
+      <input id="gui_tabbar_text_for_add" type="text" value="text" />
+      <input id="gui_tabbar_add_text" type="button" value="add" />
     </div>
     <div id="gui_size" class="resizer"></div>
     <script>

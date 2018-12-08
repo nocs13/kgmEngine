@@ -207,6 +207,46 @@ function gui_list_context(e)
 
 }
 
+function gui_tabbar_menu_add()
+{
+    $("#gui_tabbar_menu").hide();
+    $("#gui_tabbar_menu_add_dialog").dialog('open');
+}
+
+function gui_tabbar_menu_remove()
+{
+    $("#gui_tabbar_menu").hide();
+
+    gui_selected.each(function(i, el){
+        for (var j = el.options.length; j > 0; j--)
+        {
+            var o = this.options[j - 1];
+
+            if (o.selected)
+            {
+                $(o).remove();
+            }
+        }
+    });
+}
+
+function gui_tabbar_add_tab()
+{
+    gui_selected.append("<option>" + $("#gui_tabbar_text_for_add").val() + "</option>");
+    $("#gui_tabbar_menu_add_dialog").dialog('close');
+}
+
+function gui_tabbar_context(e)
+{
+    if (gui_selected == null)
+        return;
+
+    $("#gui_tabbar_menu").show();
+    $("#gui_tabbar_menu").css('left', e.clientX);
+    $("#gui_tabbar_menu").css('top', e.clientY);
+
+}
+
 function gui_menu_context(e)
 {
     alert('Implementing');
@@ -381,6 +421,28 @@ function new_progress()
     guis.push(g);
 }
 
+function new_tabbar()
+{
+    var id = "tabbar" + newId();
+	var $tabbar = $ ("<div id='" + id + "' class='kgm_base kgm_tabbar'><ul id='tab_menu'></ul></div>");
+    $("#palette").append($tabbar);
+    $tabbar.tabs();
+    $tabbar.draggable();
+    $tabbar.click(function(evt){
+        gui_options($tabbar);
+        evt.stopPropagation();
+    });
+
+    var g = { target: $tabbar,
+              id: id,
+              type: 'tabbar',
+              handler: 'onGuiTabbarHandler'
+            };
+
+    guis.push(g);
+
+}
+
 function on_palette()
 {
     selected = null;
@@ -545,6 +607,7 @@ function kgm_init()
     $("#new_label").click(new_label);
     $("#new_button").click(new_button);
     $("#new_progress").click(new_progress);
+    $("#new_tabbar").click(new_tabbar);
 
     $("#palette").click(on_palette);
 
@@ -560,6 +623,13 @@ function kgm_init()
     $("#gui_list_menu_add_dialog").dialog();
     $("#gui_list_menu_add_dialog").dialog('close');
     $("#gui_list_add_text").click(gui_list_add_text);
+
+    $("#gui_tabbar_menu").menu();
+    $("#gui_tabbar_menu_add").click(gui_tabbar_menu_add);
+    $("#gui_tabbar_menu_remove").click(gui_tabbar_menu_remove);
+    $("#gui_tabbar_menu_add_dialog").dialog();
+    $("#gui_tabbar_menu_add_dialog").dialog('close');
+    $("#gui_tabbar_add_tab").click(gui_tabbar_add_tab);
 
     $("#cmd_save").click(cmd_save_dialog);
 }
