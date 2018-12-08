@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmString.h"
 
 class kgmPicture;
 
@@ -54,7 +55,6 @@ public:
     m_height = h;
   }
 
-  //bool heightmap(kgmPicture* map);
-  bool heightmap(kgmString map);
+  bool heightmap(kgmPicture* map);
 };
 

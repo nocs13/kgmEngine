@@ -892,8 +892,8 @@ kgmUnit* kgmGameMap::next()
         //if (map)
         //  ((kgmTerrain*)data)->heightmap(map);
 
-        if (vtext.length() > 0)
-          ((kgmTerrain*)data)->heightmap(map);
+        //if (vtext.length() > 0)
+        //  ((kgmTerrain*)data)->heightmap(map);
 
       }
       else if(id == "Shader")
