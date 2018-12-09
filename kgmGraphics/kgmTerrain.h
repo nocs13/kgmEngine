@@ -5,13 +5,25 @@
 
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
+#include "../kgmBase/kgmList.h"
 
 class kgmPicture;
+class kgmCamera;
+class kgmMesh;
+class kgmMaterial;
 
 class kgmTerrain: public kgmObject
 {
   KGM_OBJECT(kgmTerrain);
 
+public:
+  struct Mesh
+  {
+    kgmMesh* msh;
+    kgmMaterial* mtl;
+  };
+
+  typedef kgmList<Mesh>::iterator MeshIt;
 private:
   f32 m_width;
   f32 m_length;
@@ -24,6 +36,9 @@ protected:
 
 public:
   kgmTerrain();
+
+  virtual void prepare(kgmCamera*);
+  virtual MeshIt meshes();
 
   f32 width() const
   {

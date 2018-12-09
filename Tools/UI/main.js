@@ -232,8 +232,17 @@ function gui_tabbar_menu_remove()
 
 function gui_tabbar_add_tab()
 {
-    gui_selected.append("<option>" + $("#gui_tabbar_text_for_add").val() + "</option>");
-    $("#gui_tabbar_menu_add_dialog").dialog('close');
+  var menu = gui_selected.find('tab_menu');
+  
+  menu = gui_selected.children('tab_menu').first();
+	
+  if (menu != null)
+  {
+    $('#tab_menu').append("<li>" + $("#gui_tabbar_text_for_add").val() + "</li>");
+    //gui_selected.tabs();
+  }
+
+  $("#gui_tabbar_menu_add_dialog").dialog('close');
 }
 
 function gui_tabbar_context(e)
@@ -432,6 +441,8 @@ function new_tabbar()
         gui_options($tabbar);
         evt.stopPropagation();
     });
+    
+    $tabbar.contextmenu(gui_tabbar_context);
 
     var g = { target: $tabbar,
               id: id,
@@ -440,7 +451,6 @@ function new_tabbar()
             };
 
     guis.push(g);
-
 }
 
 function on_palette()

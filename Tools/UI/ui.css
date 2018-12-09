@@ -59,6 +59,11 @@ li {
   height: 30px;
 }
 
+.kgm_tabbar {
+  	width:  300px;
+  	height: 100px;
+}
+
 div.main {
   border-style: none;
 }

@@ -29,3 +29,16 @@ bool kgmTerrain::heightmap(kgmPicture* map)
 
   return true;
 }
+
+void kgmTerrain::prepare(kgmCamera* cam)
+{
+
+}
+
+kgmTerrain::MeshIt kgmTerrain::meshes()
+{
+  MeshIt it;
+
+  return it;
+}
+

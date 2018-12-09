@@ -6,6 +6,7 @@
 #include "kgmILogic.h"
 #include "kgmGameBase.h"
 #include "kgmGameResources.h"
+#include "kgmGameTerrain.h"
 
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmLight.h"
@@ -540,7 +541,7 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("dimensions", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        kgmTerrain* t = new kgmTerrain();
+        kgmGameTerrain* t = new kgmGameTerrain();
 
         t->width(v.x);
         t->length(v.y);
@@ -887,13 +888,10 @@ kgmUnit* kgmGameMap::next()
       {
         xmlAttr(m_xml, "value", vtext);
 
-        //kgmPicture* map = m_game->getResources()->getPicture(vtext);
+        kgmPicture* map = m_game->getResources()->getPicture(vtext);
 
-        //if (map)
-        //  ((kgmTerrain*)data)->heightmap(map);
-
-        //if (vtext.length() > 0)
-        //  ((kgmTerrain*)data)->heightmap(map);
+        if (map)
+          ((kgmTerrain*)data)->heightmap(map);
 
       }
       else if(id == "Shader")
