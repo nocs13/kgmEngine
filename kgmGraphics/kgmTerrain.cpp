@@ -4,28 +4,51 @@
 
 #include "kgmTerrain.h"
 #include "kgmPicture.h"
+#include "kgmMesh.h"
+#include "kgmMaterial.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 kgmTerrain::kgmTerrain()
 {
-  m_heighmap = null;
+  m_mesh = new kgmMesh();
 }
 
 kgmTerrain::~kgmTerrain()
 {
-  if (m_heighmap)
-    m_heighmap->release();
+  m_heightmap.clear();
+
+  delete m_mesh;
 }
 
 bool kgmTerrain::heightmap(kgmPicture* map)
 {
-  if (!map || m_heighmap)
+  if (!map || map->bpp != 2 || m_heightmap.data())
     return false;
 
-  m_heighmap = map;
   map->increment();
+
+  u32 count = map->height * map->width;
+
+  u32 bpp = map->bpp;
+
+  m_heightmap.alloc(count);
+
+  for (u32 j = 0; j < map->height; j++)
+  {
+    for (u32 i = 0; i < map->width; i++)
+    {
+      u8 r, g, b;
+      u8 *p = (u8*) (map->pdata + bpp *  map->width * j + bpp * i);
+
+      u16 h = *((u16*)p);
+
+      m_heightmap[map->width * j + i] = h;
+    }
+  }
+
+  map->release();
 
   return true;
 }
@@ -42,3 +65,10 @@ kgmTerrain::MeshIt kgmTerrain::meshes()
   return it;
 }
 
+kgmMesh* kgmTerrain::mesh()
+{
+  if (m_mesh->vcount() > 0)
+    m_mesh;
+
+  return null;
+}

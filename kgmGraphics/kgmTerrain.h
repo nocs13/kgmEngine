@@ -24,12 +24,15 @@ public:
   };
 
   typedef kgmList<Mesh>::iterator MeshIt;
+
 private:
   f32 m_width;
   f32 m_length;
   f32 m_height;
 
-  kgmPicture *m_heighmap;
+  kgmArray<u16> m_heightmap;
+
+  kgmMesh* m_mesh;
 
 protected:
   ~kgmTerrain();
@@ -71,5 +74,7 @@ public:
   }
 
   bool heightmap(kgmPicture* map);
+
+  kgmMesh* mesh();
 };
 
