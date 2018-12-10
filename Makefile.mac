@@ -25,7 +25,7 @@ else
 	CC   = g++
 	OS   = Windows
 	DSEP = \\
-	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DEDITOR
+	DEFS =  -DDEBUG -DWIN32 -DGPUSHADERS -DDSOUND -DEDITOR -DVULKAN
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	LIBS = -llua -llualib -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound
 	RM = rm -f

@@ -6,7 +6,10 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmGraphics/kgmGuiButton.h"
+
+#ifdef VULKAN
 #include "../kgmSystem/kgmVulkan.h"
+#endif
 
 #include "kGlobals.h"
 #include "kGui.h"
@@ -191,6 +194,12 @@ public:
 
     game = new kGame();
 
+#ifdef VULKAN
+    kgmVulkan *vk = new kgmVulkan(game);
+
+    delete vk;
+#endif
+
     m_game = game;
 
     game->gInit();
@@ -204,12 +213,6 @@ public:
 
     if (options->edit)
       game->gSwitch(kgmIGame::State_Edit);
-
-#ifdef VULKAN
-    //kgmVulkan *vk = new kgmVulkan(game);
-
-    //delete vk;
-#endif
   }
 
   void gameLoop()

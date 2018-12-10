@@ -27,10 +27,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   memset(&appInfo, 0, sizeof(VkApplicationInfo));
 
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  appInfo.pApplicationName = "";
+  appInfo.pApplicationName = "kTest";
   appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.pEngineName = "";
-  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+  appInfo.engineVersion = 1;//VK_MAKE_VERSION(1, 0, 0);
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
   VkInstanceCreateInfo createInfo;
@@ -88,7 +87,8 @@ int kgmVulkan::vkInit()
 
 #ifdef WIN32
   if (!vk_lib.open((char*) "vulkan.dll"))
-    return -2;
+    if (!vk_lib.open((char*) "vulkan-1.dll"))
+      return -2;
 #else
   if (!vk_lib.open((char*) "libvulkan.so"))
     if (!vk_lib.open((char*) "libvulkan.so.1"))
@@ -118,6 +118,11 @@ void kgmVulkan::vkFree()
     vk_lib.close();
 }
 
+u32 kgmVulkan::gcError()
+{
+  return 0;
+}
+
 void  kgmVulkan::gcSet(u32 param, void* value) {}
 void  kgmVulkan::gcGet(u32 param, void* value) {}
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
@@ -134,13 +139,19 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) {}
 void  kgmVulkan::gcFreeTexture(void *t) {}
 void  kgmVulkan::gcSetTexture(u32 stage, void *t) {}
 
+// TARGET
+gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil){}
+bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type){}
+void     kgmVulkan::gcFreeTarget(gchandle t){}
+
+
 // MATRIX
 void  kgmVulkan::gcSetMatrix(u32 mode, float* mtx) {}
 void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f) {}
 
 //BLEND
-void  kgmVulkan::gcBlend(bool, u32, u32) {}
+void  kgmVulkan::gcBlend(bool, u32, u32, u32) {}
 
 //ALPHA
 void  kgmVulkan::gcAlpha(bool, u32, float) {}

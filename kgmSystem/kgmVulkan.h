@@ -45,6 +45,8 @@ public:
   kgmVulkan(kgmWindow* wnd);
   ~kgmVulkan();
 
+  u32   gcError();
+
   void  gcSet(u32 param, void* value);
   void  gcGet(u32 param, void* value);
   void  gcClear(u32 flag, u32 col, float depth, u32 sten);
@@ -67,7 +69,7 @@ public:
   void  gcSetViewport(int x, int y, int w, int h, float n, float f);
 
   //BLEND
-  void  gcBlend(bool, u32, u32);
+  void  gcBlend(bool, u32, u32, u32);
 
   //ALPHA
   void  gcAlpha(bool, u32, float);
@@ -94,6 +96,12 @@ public:
   void  gcUniform(void* s, u32, u32, const char*, void*);
   void  gcUniformMatrix(void* s, u32, u32, u32, const char*, void*);
   void  gcUniformSampler(void* s, const char*, void*);
+
+  // TARGET
+  gchandle gcGenTarget(u32 w, u32 h, bool depth, bool stencil);
+  bool     gcTexTarget(gchandle tar, gchandle tex, u32 type);
+  void     gcFreeTarget(gchandle t);
+
 #ifdef DEBUG
   void  gcGetUniform(void* s, const char*, void*);
 #endif

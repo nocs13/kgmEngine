@@ -18,7 +18,7 @@ ifeq ($(OS), Linux)
 else
 	CC = g++
 	EXT = .exe
-	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DEDITOR
+	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DEDITOR -DVULKAN
 	FLGS = -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
 	LIBS += -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm -llua -llualib -lwsock32
 	RM = del
