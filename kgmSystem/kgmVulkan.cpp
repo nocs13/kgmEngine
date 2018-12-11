@@ -1,4 +1,5 @@
 #include "kgmVulkan.h"
+#include "../kgmBase/kgmLog.h"
 
 #ifdef VULKAN
 
@@ -22,6 +23,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   g_vulkans++;
 
+  u32 vk_res;
+
   VkApplicationInfo appInfo;
 
   memset(&appInfo, 0, sizeof(VkApplicationInfo));
@@ -29,8 +32,33 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   appInfo.pApplicationName = "kTest";
   appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.engineVersion = 1;//VK_MAKE_VERSION(1, 0, 0);
+  appInfo.pEngineName = "No Engine";
+  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.apiVersion = VK_API_VERSION_1_0;
+
+  u32 ecount = 0;
+
+  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &ecount, nullptr);
+
+  if (ecount == 0)
+  {
+    kgm_log() << "Vulkan error: No extensions supported!\n";
+    return;
+  }
+
+  VkExtensionProperties eprops[ecount];
+  const char* enames[ecount];
+
+  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &ecount, eprops);
+
+  u32 iname = 0;
+
+  for (const auto& ep: eprops)
+  {
+    kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
+
+    enames[iname++] = ep.extensionName;
+  }
 
   VkInstanceCreateInfo createInfo;
 
@@ -38,9 +66,25 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   createInfo.pApplicationInfo = &appInfo;
+  createInfo.enabledExtensionCount = ecount;
+  createInfo.ppEnabledExtensionNames = enames;
 
-  if (m_vk.vkCreateInstance(&createInfo, null, &m_instance) != VK_SUCCESS)
+  vk_res = m_vk.vkCreateInstance(&createInfo, null, &m_instance);
+
+  if (vk_res != VK_SUCCESS)
   {
+    switch(vk_res)
+    {
+    case VK_ERROR_LAYER_NOT_PRESENT:
+    kgm_log() << "kgmVulkan error: vkCreateInstance no layers\n";
+      break;
+    case VK_ERROR_EXTENSION_NOT_PRESENT:
+      kgm_log() << "kgmVulkan error: vkCreateInstance no extentions\n";
+      break;
+    default:
+      kgm_log() << "kgmVulkan error: vkCreateInstance failed " << vk_res << "\n";
+    }
+
     return;
   }
 
@@ -52,21 +96,21 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   sfCreateInfo.hwnd = wnd->m_wnd;
   sfCreateInfo.hinstance = GetModuleHandle(nullptr);
 
-  if (m_vk.vkCreateWin32SurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
-  {
-    return;
-  }
+  vk_res = m_vk.vkCreateWin32SurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface);
 #else
   VkXlibSurfaceCreateInfoKHR sfCreateInfo;
   sfCreateInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
   sfCreateInfo.window = wnd->m_wnd;
   sfCreateInfo.dpy    = wnd->m_dpy;
 
-  if (m_vk.vkCreateXlibSurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface) != VK_SUCCESS)
+  vk_res = m_vk.vkCreateXlibSurfaceKHR(m_instance, &sfCreateInfo, nullptr, &surface);
+#endif
+
+  if (vk_res != VK_SUCCESS)
   {
+    kgm_log() << "kgmVulkan error: vkCreate**SurfaceKHR " << vk_res << "\n";
     return;
   }
-#endif
 }
 
 kgmVulkan::~kgmVulkan()
@@ -98,8 +142,9 @@ int kgmVulkan::vkInit()
   #pragma GCC diagnostic push
   //#pragma GCC diagnostic ignored "-fpermissive"
 
-  m_vk.vkCreateInstance = (VkResult (*)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
-  m_vk.vkDestroyInstance = (void (*)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
+  m_vk.vkCreateInstance = (VkResult (VKAPI_PTR *)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
+  m_vk.vkDestroyInstance = (void (VKAPI_PTR *)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
+  m_vk.vkEnumerateInstanceExtensionProperties = (VkResult (*)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");

@@ -27,6 +27,7 @@ class kgmVulkan: public kgmIGC
   {
     VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
     void     (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
+    VkResult (VKAPI_PTR *vkEnumerateInstanceExtensionProperties)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
 
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);

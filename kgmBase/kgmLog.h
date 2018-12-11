@@ -64,6 +64,13 @@ public:
       return *this;
     }
 
+    kgmLog& operator << (u32 s)
+    {
+      log_(kgmConvert::toString(s));
+
+      return *this;
+    }
+
     kgmLog& operator << (f64 s)
     {
       log_(kgmConvert::toString(s));

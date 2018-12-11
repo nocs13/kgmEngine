@@ -44,6 +44,19 @@ class kgmConvert: public kgmObject
     return s;
   }
 
+  static kgmString toString(u32 i, bool hex = false)
+  {
+    char* a = new char[64];
+    memset(a, 0, 64);
+    if(hex)
+      sprintf(a, "%x", i);
+    else
+      sprintf(a, "%u", i);
+    kgmString s(a, strlen(a));
+    delete [] a;
+    return s;
+  }
+
   static kgmString toString(f64 i)
   {
     char* a = new char[65];
