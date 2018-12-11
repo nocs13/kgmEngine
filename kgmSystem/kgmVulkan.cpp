@@ -209,9 +209,9 @@ int kgmVulkan::vkInit()
   #pragma GCC diagnostic push
   //#pragma GCC diagnostic ignored "-fpermissive"
 
-  m_vk.vkCreateInstance = (VkResult (VKAPI_PTR *)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
-  m_vk.vkDestroyInstance = (void (VKAPI_PTR *)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
-  m_vk.vkEnumerateInstanceExtensionProperties = (VkResult (*)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
+  m_vk.vkCreateInstance = (typeof m_vk.vkCreateInstance) vk_lib.get((char*) "vkCreateInstance");
+  m_vk.vkDestroyInstance = (typeof m_vk.vkDestroyInstance) vk_lib.get((char*) "vkDestroyInstance");
+  m_vk.vkEnumerateInstanceExtensionProperties = (typeof m_vk.vkEnumerateInstanceExtensionProperties) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
   m_vk.vkEnumeratePhysicalDevices = (typeof m_vk.vkEnumeratePhysicalDevices) vk_lib.get((char*) "vkEnumeratePhysicalDevices");
   m_vk.vkEnumerateDeviceExtensionProperties = (typeof m_vk.vkEnumerateDeviceExtensionProperties) vk_lib.get((char*) "vkEnumerateDeviceExtensionProperties");
 

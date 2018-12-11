@@ -1,11 +1,13 @@
-#ifndef KGMGAMETERRAIN_H
-#define KGMGAMETERRAIN_H
+#ifndef KGMGAME_KGMGAMETERRAIN_H_
+#define KGMGAME_KGMGAMETERRAIN_H_
 
 #include "../kgmGraphics/kgmTerrain.h"
 
 class kgmGameTerrain: public kgmTerrain
 {
-
+public:
+  kgmGameTerrain();
+  virtual ~kgmGameTerrain();
 };
 
-#endif // KGMGAMETERRAIN_H
+#endif /* KGMGAME_KGMGAMETERRAIN_H_ */

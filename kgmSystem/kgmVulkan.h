@@ -5,16 +5,20 @@
 #include "kgmWindow.h"
 #include "kgmLib.h"
 
-#ifndef VULKAN
-#define VULKAN
-#endif
-
 #ifdef VULKAN
 
 #ifdef WIN32
+
+#ifndef _WIN32
+#define _WIN32
+#endif
+
 #define VK_USE_PLATFORM_WIN32_KHR
+
 #else
+
 #define VK_USE_PLATFORM_XLIB_KHR
+
 #endif
 
 #include "inc/vk/vulkan.h"
