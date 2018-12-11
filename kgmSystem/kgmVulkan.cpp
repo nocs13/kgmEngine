@@ -148,6 +148,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  VkPhysicalDevice physicalDevice = devs[0];
+
   VkExtensionProperties dexsts[decount];
 
   vk_res = m_vk.vkEnumerateDeviceExtensionProperties(devs[0], nullptr, &decount, dexsts);
@@ -163,7 +165,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   for (const auto dexst: dexsts)
   {
-    if (strcmp(dexst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+    if (strcmp(dexst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+    {
       isswapchain = true;
 
       break;
@@ -175,6 +178,82 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (!isswapchain)
   {
     kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+
+    return;
+  }
+
+  u32 queueFamilyCount = 0;
+
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(devs[0], &queueFamilyCount, nullptr);
+
+  if (queueFamilyCount < 1)
+  {
+    kgm_log() << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no count\n";
+
+    return;
+  }
+
+  VkQueueFamilyProperties queueFamilies[queueFamilyCount];
+
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(devs[0], &queueFamilyCount, queueFamilies);
+
+  if (queueFamilyCount < 1)
+  {
+    kgm_log() << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no families\n";
+
+    return;
+  }
+
+  bool hasGraphicsQueueFamily = false;
+  bool hasPresentQueueFamily = false;
+
+  u32 graphicsQueueFamily = -1, presentQueueFamily = -1;
+
+  for (u32 i = 0; i < queueFamilyCount; i++)
+  {
+    VkBool32 presentSupport = false;
+    m_vk.vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
+
+    if (queueFamilies[i].queueCount > 0
+        && queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+    {
+      graphicsQueueFamily = i;
+      hasGraphicsQueueFamily = true;
+
+      if (presentSupport)
+      {
+        presentQueueFamily = i;
+        hasPresentQueueFamily = true;
+        break;
+      }
+    }
+
+    if (!hasPresentQueueFamily && presentSupport)
+    {
+      presentQueueFamily = i;
+      hasPresentQueueFamily = true;
+    }
+  }
+
+  if (hasGraphicsQueueFamily)
+  {
+    kgm_log() << "Vulkan: queue family #" << graphicsQueueFamily << " supports graphics.\n";
+
+    if (hasPresentQueueFamily)
+    {
+      kgm_log() << "Vulkan queue family #" << presentQueueFamily
+          << " supports presentation.\n";
+    }
+    else
+    {
+      kgm_log() << "Vulkan error: could not find a valid queue family with present support.\n";
+
+      return;
+    }
+  }
+  else
+  {
+    kgm_log() << "Vulkan error: could not find a valid queue family with graphics support.\n";
 
     return;
   }
@@ -214,6 +293,8 @@ int kgmVulkan::vkInit()
   m_vk.vkEnumerateInstanceExtensionProperties = (typeof m_vk.vkEnumerateInstanceExtensionProperties) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
   m_vk.vkEnumeratePhysicalDevices = (typeof m_vk.vkEnumeratePhysicalDevices) vk_lib.get((char*) "vkEnumeratePhysicalDevices");
   m_vk.vkEnumerateDeviceExtensionProperties = (typeof m_vk.vkEnumerateDeviceExtensionProperties) vk_lib.get((char*) "vkEnumerateDeviceExtensionProperties");
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties = (typeof m_vk.vkGetPhysicalDeviceQueueFamilyProperties) vk_lib.get((char*) "vkGetPhysicalDeviceQueueFamilyProperties");
+  m_vk.vkGetPhysicalDeviceSurfaceSupportKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceSupportKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceSupportKHR");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
