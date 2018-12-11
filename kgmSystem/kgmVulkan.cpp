@@ -5,6 +5,8 @@
 
 #include "inc/vk/vulkan.h"
 
+//https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
+
 u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
@@ -109,6 +111,71 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (vk_res != VK_SUCCESS)
   {
     kgm_log() << "kgmVulkan error: vkCreate**SurfaceKHR " << vk_res << "\n";
+
+    return;
+  }
+
+  u32 dcount = 0;
+
+  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &dcount, nullptr);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: vkEnumeratePhysicalDevices " << vk_res << "\n";
+
+    return;
+  }
+
+  VkPhysicalDevice devs[dcount];
+
+  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &dcount, devs);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: vkEnumeratePhysicalDevices no devs\n";
+
+    return;
+  }
+
+  u32 decount = 0;
+
+  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(devs[0], nullptr, &decount, nullptr);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties " << vk_res << "\n";
+
+    return;
+  }
+
+  VkExtensionProperties dexsts[decount];
+
+  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(devs[0], nullptr, &decount, dexsts);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
+
+    return;
+  }
+
+  bool isswapchain = false;
+
+  for (const auto dexst: dexsts)
+  {
+    if (strcmp(dexst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+      isswapchain = true;
+
+      break;
+    }
+
+    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties " << dexst.extensionName << "\n";
+  }
+
+  if (!isswapchain)
+  {
+    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+
     return;
   }
 }
@@ -145,6 +212,8 @@ int kgmVulkan::vkInit()
   m_vk.vkCreateInstance = (VkResult (VKAPI_PTR *)(const VkInstanceCreateInfo*, const VkAllocationCallbacks*, VkInstance_T**)) vk_lib.get((char*) "vkCreateInstance");
   m_vk.vkDestroyInstance = (void (VKAPI_PTR *)(VkInstance, const VkAllocationCallbacks*)) vk_lib.get((char*) "vkDestroyInstance");
   m_vk.vkEnumerateInstanceExtensionProperties = (VkResult (*)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties)) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
+  m_vk.vkEnumeratePhysicalDevices = (typeof m_vk.vkEnumeratePhysicalDevices) vk_lib.get((char*) "vkEnumeratePhysicalDevices");
+  m_vk.vkEnumerateDeviceExtensionProperties = (typeof m_vk.vkEnumerateDeviceExtensionProperties) vk_lib.get((char*) "vkEnumerateDeviceExtensionProperties");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
