@@ -5,6 +5,10 @@
 #include "kgmWindow.h"
 #include "kgmLib.h"
 
+#ifndef VULKAN
+#define VULKAN
+#endif
+
 #ifdef VULKAN
 
 #ifdef WIN32
@@ -36,6 +40,11 @@ class kgmVulkan: public kgmIGC
     VkResult (VKAPI_PTR *vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR     vkGetPhysicalDeviceSurfaceSupportKHR;
+    PFN_vkCreateDevice vkCreateDevice;
+    PFN_vkGetDeviceQueue vkGetDeviceQueue;
+    PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
+    PFN_vkCreateSemaphore vkCreateSemaphore;
+    PFN_vkCreateCommandPool vkCreateCommandPool;
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #else

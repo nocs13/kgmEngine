@@ -257,6 +257,100 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     return;
   }
+
+  f32 queuePriority = 1.0f;
+
+  VkDeviceQueueCreateInfo queueCreateInfo[2] = {};
+
+  queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+  queueCreateInfo[0].queueFamilyIndex = graphicsQueueFamily;
+  queueCreateInfo[0].queueCount = 1;
+  queueCreateInfo[0].pQueuePriorities = &queuePriority;
+
+  queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+  queueCreateInfo[0].queueFamilyIndex = presentQueueFamily;
+  queueCreateInfo[0].queueCount = 1;
+  queueCreateInfo[0].pQueuePriorities = &queuePriority;
+
+  VkDeviceCreateInfo deviceCreateInfo = {};
+  deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+  deviceCreateInfo.pQueueCreateInfos = queueCreateInfo;
+
+  if (graphicsQueueFamily == presentQueueFamily)
+  {
+    deviceCreateInfo.queueCreateInfoCount = 1;
+  }
+  else
+  {
+    deviceCreateInfo.queueCreateInfoCount = 2;
+  }
+
+  // Necessary for shader (for some reason)
+  VkPhysicalDeviceFeatures enabledFeatures = {};
+  enabledFeatures.shaderClipDistance = VK_TRUE;
+  enabledFeatures.shaderCullDistance = VK_TRUE;
+
+  const char* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+  deviceCreateInfo.enabledExtensionCount = 1;
+  deviceCreateInfo.ppEnabledExtensionNames = &deviceExtensions;
+  deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
+
+  VkDevice device;
+
+  if (m_vk.vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan: failed to create logical device\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: created logical device.\n";
+
+  VkQueue graphicsQueue, presentQueue;
+
+  // Get graphics and presentation queues (which may be the same)
+  m_vk.vkGetDeviceQueue(device, graphicsQueueFamily, 0, &graphicsQueue);
+  m_vk.vkGetDeviceQueue(device, presentQueueFamily, 0, &presentQueue);
+
+  kgm_log() << "Vulkan: acquired graphics and presentation queues.\n";
+
+  VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
+
+  m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
+
+  VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
+  VkSemaphoreCreateInfo semaphoreCreateInfo = {};
+  createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+  if (m_vk.vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+      m_vk.vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderingFinishedSemaphore) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan: failed to create semaphores.\n";
+
+    return;
+  }
+  else
+  {
+    kgm_log() << "Vulkan: created semaphores.\n";
+  }
+
+  VkCommandPool commandPool;
+  VkCommandPoolCreateInfo poolCreateInfo = {};
+  poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  poolCreateInfo.queueFamilyIndex = graphicsQueueFamily;
+
+  if (m_vk.vkCreateCommandPool(device, &poolCreateInfo, nullptr, &commandPool) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan: failed to create command queue for graphics queue family.\n";
+
+    return;
+  }
+  else
+  {
+    kgm_log() << "Vulkan: created command pool for graphics queue family.\n";
+  }
+
+  kgm_log() << "Vulkan: Successfully prepared.\n";
 }
 
 kgmVulkan::~kgmVulkan()
@@ -295,6 +389,11 @@ int kgmVulkan::vkInit()
   m_vk.vkEnumerateDeviceExtensionProperties = (typeof m_vk.vkEnumerateDeviceExtensionProperties) vk_lib.get((char*) "vkEnumerateDeviceExtensionProperties");
   m_vk.vkGetPhysicalDeviceQueueFamilyProperties = (typeof m_vk.vkGetPhysicalDeviceQueueFamilyProperties) vk_lib.get((char*) "vkGetPhysicalDeviceQueueFamilyProperties");
   m_vk.vkGetPhysicalDeviceSurfaceSupportKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceSupportKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceSupportKHR");
+  m_vk.vkCreateDevice = (typeof m_vk.vkCreateDevice) vk_lib.get((char*) "vkCreateDevice");
+  m_vk.vkGetDeviceQueue = (typeof m_vk.vkGetDeviceQueue) vk_lib.get((char*) "vkGetDeviceQueue");
+  m_vk.vkGetPhysicalDeviceMemoryProperties = (typeof m_vk.vkGetPhysicalDeviceMemoryProperties) vk_lib.get((char*) "vkGetPhysicalDeviceMemoryProperties");
+  m_vk.vkCreateSemaphore = (typeof m_vk.vkCreateSemaphore) vk_lib.get((char*) "vkCreateSemaphore");
+  m_vk.vkCreateCommandPool= (typeof m_vk.vkCreateCommandPool) vk_lib.get((char*) "vkCreateCommandPool");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
