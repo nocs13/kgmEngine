@@ -520,7 +520,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
 
-  VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
+  /*VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
   VkSemaphoreCreateInfo semaphoreCreateInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -532,7 +532,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  kgm_log() << "Vulkan: created semaphores.\n";
+  kgm_log() << "Vulkan: created semaphores.\n";*/
 
   VkCommandPool commandPool;
   VkCommandPoolCreateInfo poolCreateInfo = {};
@@ -657,6 +657,95 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   kgm_log() << "Vulkan: Filled command buffers.\n";
 
+  VkFence fence;
+
+  VkFenceCreateInfo fenceCreateInfo;
+  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceCreateInfo.pNext = nullptr;
+  fenceCreateInfo.flags = 0;
+
+  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create fence.\n";
+
+    return;
+  }
+
+  u32 swapChainImage;
+
+  if(m_vk.vkAcquireNextImageKHR(m_device, swapChain, UINT64_MAX, VK_NULL_HANDLE, fence, &swapChainImage) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: got next swap chain image.\n";
+
+  if(m_vk.vkWaitForFences(m_device, 1, &fence, VK_TRUE, UINT64_MAX) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for fence.\n";
+
+    return;
+  }
+
+  if(m_vk.vkResetFences(m_device, 1, &fence) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to reset fence.\n";
+
+    return;
+  }
+
+  auto &commandBuffer = commandBuffers[swapChainImage];
+
+  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  VkSubmitInfo submitInfo;
+
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.pNext = nullptr;
+  submitInfo.waitSemaphoreCount = 0;
+  submitInfo.pWaitSemaphores = nullptr;
+  submitInfo.pWaitDstStageMask = &waitMask;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+  submitInfo.signalSemaphoreCount = 0;
+  submitInfo.pSignalSemaphores = nullptr;
+
+  if(m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to submit command buffer.\n";
+
+    return;
+  }
+
+  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for queue.\n";
+
+    return;
+  }
+
+  VkResult result;
+  VkPresentInfoKHR presentInfo;
+
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  presentInfo.pNext = nullptr;
+  presentInfo.waitSemaphoreCount = 0;
+  presentInfo.pWaitSemaphores = nullptr;
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = &swapChain;
+  presentInfo.pImageIndices = &swapChainImage;
+  presentInfo.pResults = &result;
+
+
+  if(m_vk.vkQueuePresentKHR(queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to present swapchain.\n";
+
+    return;
+  }
+
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
 
@@ -717,6 +806,12 @@ int kgmVulkan::vkInit()
   m_vk.vkResetCommandBuffer = (typeof m_vk.vkResetCommandBuffer) vk_lib.get((char*) "vkResetCommandBuffer");
   m_vk.vkEndCommandBuffer = (typeof m_vk.vkEndCommandBuffer) vk_lib.get((char*) "vkEndCommandBuffer");
   m_vk.vkCmdPipelineBarrier = (typeof m_vk.vkCmdPipelineBarrier) vk_lib.get((char*) "vkCmdPipelineBarrier");
+  m_vk.vkCreateFence = (typeof m_vk.vkCreateFence) vk_lib.get((char*) "vkCreateFence");
+  m_vk.vkResetFences = (typeof m_vk.vkResetFences) vk_lib.get((char*) "vkResetFences");
+  m_vk.vkWaitForFences = (typeof m_vk.vkWaitForFences) vk_lib.get((char*) "vkWaitForFences");
+  m_vk.vkAcquireNextImageKHR = (typeof m_vk.vkAcquireNextImageKHR) vk_lib.get((char*) "vkAcquireNextImageKHR");
+  m_vk.vkQueueSubmit = (typeof m_vk.vkQueueSubmit) vk_lib.get((char*) "vkQueueSubmit");
+  m_vk.vkQueuePresentKHR = (typeof m_vk.vkQueuePresentKHR) vk_lib.get((char*) "vkQueuePresentKHR");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");

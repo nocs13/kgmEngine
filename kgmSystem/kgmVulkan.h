@@ -61,6 +61,12 @@ class kgmVulkan: public kgmIGC
     PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
     PFN_vkEndCommandBuffer vkEndCommandBuffer;
     PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier;
+    PFN_vkCreateFence vkCreateFence;
+    PFN_vkResetFences vkResetFences;
+    PFN_vkWaitForFences vkWaitForFences;
+    PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
+    PFN_vkQueueSubmit vkQueueSubmit;
+    PFN_vkQueuePresentKHR vkQueuePresentKHR;
 
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
