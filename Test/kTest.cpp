@@ -194,12 +194,6 @@ public:
 
     game = new kGame();
 
-#ifdef VULKAN
-    kgmVulkan *vk = new kgmVulkan(game);
-
-    delete vk;
-#endif
-
     m_game = game;
 
     game->gInit();

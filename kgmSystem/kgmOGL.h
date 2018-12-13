@@ -151,6 +151,8 @@ public:
   kgmOGL(kgmWindow* wnd);
   virtual ~kgmOGL();
 
+  //BASE
+  gc_enum gcGetBase() { return gc_opengl; }
 
   //RENDER
   void  gcSet(u32 param, void* value);

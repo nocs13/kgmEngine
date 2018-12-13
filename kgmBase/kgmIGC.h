@@ -36,11 +36,9 @@ enum gc_enum
   gc_none = 0,
   gc_null = 0,
   gc_opengl = 0,
-  gc_soft,
-  gc_d3d8,
-  gc_d3d9,
-  gc_d3d10,
+  gc_vulkan,
   gc_d3d11,
+  gc_soft,
 
   gc_rdev,
 
@@ -156,6 +154,8 @@ public:
   struct TexFilter { u32 min, mag; };
 
 public:
+  virtual gc_enum gcGetBase() = 0;
+
   virtual void  gcSet(u32 param, void* value) = 0;
   virtual void  gcGet(u32 param, void* value) = 0;
 

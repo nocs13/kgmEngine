@@ -17,7 +17,7 @@ bool kgmLib::open(char *p)
 #ifdef WIN32
   handle = (void*)LoadLibrary(p);
 #else
-  handle = dlopen(p, RTLD_NOW);
+  handle = dlopen(p, RTLD_LAZY);
 #endif
 
   return (handle)?(true):(false);

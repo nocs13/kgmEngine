@@ -13,6 +13,7 @@
 #include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmOAL.h"
 #include "../kgmSystem/kgmOSL.h"
+#include "../kgmSystem/kgmVulkan.h"
 
 #include "kgmIGame.h"
 #include "kgmGameMap.h"
@@ -284,7 +285,12 @@ void kgmGameBase::initScript()
 
 void kgmGameBase::initGC()
 {
-  m_gc = new kgmOGL(this);
+#ifdef VULKAN
+  m_gc = new kgmVulkan(this);
+#endif
+
+  if (m_gc == null)
+    m_gc = new kgmOGL(this);
 }
 
 void kgmGameBase::initSettings()

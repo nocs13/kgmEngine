@@ -39,12 +39,29 @@ class kgmVulkan: public kgmIGC
     VkResult (VKAPI_PTR *vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
     VkResult (VKAPI_PTR *vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
+    PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR     vkGetPhysicalDeviceSurfaceSupportKHR;
+    PFN_vkGetPhysicalDeviceSurfaceFormatsKHR     vkGetPhysicalDeviceSurfaceFormatsKHR;
     PFN_vkCreateDevice vkCreateDevice;
     PFN_vkGetDeviceQueue vkGetDeviceQueue;
+    PFN_vkQueueWaitIdle vkQueueWaitIdle;
     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
+    PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR;
+    PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
     PFN_vkCreateSemaphore vkCreateSemaphore;
     PFN_vkCreateCommandPool vkCreateCommandPool;
+    PFN_vkResetCommandPool  vkResetCommandPool;
+    PFN_vkCreateRenderPass vkCreateRenderPass;
+    PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
+    PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
+    PFN_vkCreateImageView vkCreateImageView;
+    PFN_vkCreateFramebuffer vkCreateFramebuffer;
+    PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
+    PFN_vkResetCommandBuffer vkResetCommandBuffer;
+    PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
+    PFN_vkEndCommandBuffer vkEndCommandBuffer;
+    PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier;
+
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #else
@@ -56,13 +73,21 @@ class kgmVulkan: public kgmIGC
   static vk     m_vk;
   static u32    g_vulkans;
 
-  VkInstance m_instance;
+  VkInstance   m_instance;
+  VkSurfaceKHR m_surface;
+  VkDevice     m_device;
 
+  VkPhysicalDevice m_physicalDevice;
+
+  kgmArray<VkImage> m_swapChainImages;
 public:
   kgmVulkan(kgmWindow* wnd);
   ~kgmVulkan();
 
   u32   gcError();
+
+  //BASE
+  gc_enum gcGetBase() { return gc_vulkan; }
 
   void  gcSet(u32 param, void* value);
   void  gcGet(u32 param, void* value);
