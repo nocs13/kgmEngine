@@ -68,6 +68,8 @@ class kgmVulkan: public kgmIGC
     PFN_vkQueueSubmit vkQueueSubmit;
     PFN_vkQueuePresentKHR vkQueuePresentKHR;
 
+    PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #else

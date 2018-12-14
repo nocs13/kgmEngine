@@ -95,6 +95,52 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+#ifdef DEBUG
+
+  VkDebugReportCallbackEXT debugReportCallback;
+  VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
+
+  debugReportCallbackCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+  debugReportCallbackCreateInfo.pNext = nullptr;
+  debugReportCallbackCreateInfo.flags = VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+  debugReportCallbackCreateInfo.pfnCallback = [](
+          VkDebugReportFlagsEXT flags,
+          VkDebugReportObjectTypeEXT objectType,
+          uint64_t object,
+          size_t location,
+          int32_t messageCode,
+          const char* pLayerPrefix,
+          const char* pMessage,
+          void* pUserData) -> VkBool32
+      {
+        kgm_log() << "Vulkan DEBUG: (";
+
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
+        kgm_log() << ")";
+        kgm_log() << "{" << pLayerPrefix << "} " << pMessage << "\n";
+        return VK_FALSE;
+      };
+  debugReportCallbackCreateInfo.pUserData = nullptr;
+
+  if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
+      &debugReportCallbackCreateInfo, nullptr, &debugReportCallback)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create debug collback.\n";
+
+    return;
+  }
+
+#endif
+
   VkSurfaceKHR surface;
 
 #ifdef WIN32
@@ -838,6 +884,8 @@ int kgmVulkan::vkInit()
   m_vk.vkAcquireNextImageKHR = (typeof m_vk.vkAcquireNextImageKHR) vk_lib.get((char*) "vkAcquireNextImageKHR");
   m_vk.vkQueueSubmit = (typeof m_vk.vkQueueSubmit) vk_lib.get((char*) "vkQueueSubmit");
   m_vk.vkQueuePresentKHR = (typeof m_vk.vkQueuePresentKHR) vk_lib.get((char*) "vkQueuePresentKHR");
+
+  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) vk_lib.get((char*) "vkCreateDebugReportCallbackEXT");
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
