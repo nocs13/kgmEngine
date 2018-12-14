@@ -85,7 +85,19 @@ class kgmVulkan: public kgmIGC
 
   VkPhysicalDevice m_physicalDevice;
 
+  VkSwapchainKHR   m_swapChain;
+  VkRenderPass     m_renderPass;
+  VkCommandPool    m_commandPool;
+
+  VkFence          m_fence;
+
   kgmArray<VkImage> m_swapChainImages;
+  kgmArray<VkFramebuffer> m_framebuffers;
+  kgmArray<VkImageView> m_imageViews;
+  kgmArray<VkCommandBuffer> m_commandBuffers;
+
+  u32 m_swapChainImage;
+
 public:
   kgmVulkan(kgmWindow* wnd);
   ~kgmVulkan();

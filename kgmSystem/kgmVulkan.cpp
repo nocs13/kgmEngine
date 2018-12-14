@@ -1,5 +1,6 @@
 #include "kgmVulkan.h"
 #include "../kgmBase/kgmLog.h"
+#include "kgmSystem.h"
 
 #ifdef VULKAN
 
@@ -24,6 +25,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   g_vulkans++;
+
+  s32 wrc[4];
+
+  wnd->getRect(wrc[0], wrc[1], wrc[2], wrc[3]);
 
   u32 vk_res;
 
@@ -304,6 +309,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   queueCreateInfo[0].pQueuePriorities = &queuePriority;
 
   VkDeviceCreateInfo deviceCreateInfo = {};
+
   deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   deviceCreateInfo.pQueueCreateInfos = queueCreateInfo;
 
@@ -317,11 +323,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   // Necessary for shader (for some reason)
-  VkPhysicalDeviceFeatures enabledFeatures = {};
+  VkPhysicalDeviceFeatures enabledFeatures = {0};
+
   enabledFeatures.shaderClipDistance = VK_TRUE;
   enabledFeatures.shaderCullDistance = VK_TRUE;
 
   const char* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+
   deviceCreateInfo.enabledExtensionCount = 1;
   deviceCreateInfo.ppEnabledExtensionNames = &deviceExtensions;
   deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
@@ -347,6 +355,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_device = device;
 
+  u32 ddim[2];
+
+  kgmSystem::getDesktopDimension(ddim[0], ddim[1]);
+
   VkSwapchainKHR swapChain;
 
   VkSwapchainCreateInfoKHR swapChainCreateInfo;
@@ -358,7 +370,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   swapChainCreateInfo.minImageCount = 2;
   swapChainCreateInfo.imageFormat = surfaceFormats[0].format;
   swapChainCreateInfo.imageColorSpace = surfaceFormats[0].colorSpace;
-  swapChainCreateInfo.imageExtent = VkExtent2D{800, 600};
+  swapChainCreateInfo.imageExtent = VkExtent2D{ddim[0], ddim[1]};
   swapChainCreateInfo.imageArrayLayers = 1;
   swapChainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapChainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
@@ -376,6 +388,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     return;
   }
+
+  m_swapChain = swapChain;
 
   kgm_log() << "Vulkan: created swap chain.\n";
 
@@ -398,6 +412,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   VkRenderPass renderPass;
+
   VkAttachmentDescription attachmentDescription;
   attachmentDescription.flags = 0;
   attachmentDescription.format = surfaceFormats[0].format;
@@ -445,12 +460,15 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   kgm_log() << "Vulkan: created render pass.\n";
 
-  VkFramebuffer framebuffers[m_swapChainImages.length()];
-  VkImageView imageViews[m_swapChainImages.length()];
+  m_renderPass = renderPass;
+
+  m_framebuffers.alloc(m_swapChainImages.length());
+
+  m_imageViews.alloc(m_swapChainImages.length());
 
   for (u32 i = 0; i < m_swapChainImages.length(); i++)
   {
-    auto& imageView = imageViews[i];
+    auto& imageView = m_imageViews[i];
 
     VkImageViewCreateInfo imageViewCreateInfo;
     imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -480,7 +498,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
       return;
     }
 
-    auto &framebuffer = framebuffers[i];
+    auto &framebuffer = m_framebuffers[i];
 
     VkFramebufferCreateInfo framebufferCreateInfo;
 
@@ -535,6 +553,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   kgm_log() << "Vulkan: created semaphores.\n";*/
 
   VkCommandPool commandPool;
+
   VkCommandPoolCreateInfo poolCreateInfo = {};
   poolCreateInfo.flags = VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
   poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -557,7 +576,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   kgm_log() << "Vulkan: created/reseted command pool for graphics queue family.\n";
 
-  VkCommandBuffer commandBuffers[m_swapChainImages.length()];
+  m_commandPool = commandPool;
+
+  m_commandBuffers.alloc(m_swapChainImages.length());
 
   VkCommandBufferAllocateInfo commandBufferAllocateInfo;
   commandBufferAllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -566,7 +587,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   commandBufferAllocateInfo.level = VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   commandBufferAllocateInfo.commandBufferCount = m_swapChainImages.length();
 
-  if(m_vk.vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, commandBuffers) != VkResult::VK_SUCCESS)
+  if(m_vk.vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, m_commandBuffers) != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to allocate command buffers\n";
 
@@ -575,9 +596,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   for(u32 i = 0; i < m_swapChainImages.length(); ++i)
   {
-    auto &commandBuffer = commandBuffers[i];
+    auto &commandBuffer = m_commandBuffers[i];
     auto &image = m_swapChainImages[i];
-    auto &framebuffer = framebuffers[i];
+    auto &framebuffer = m_framebuffers[i];
 
     if(m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VkResult::VK_SUCCESS)
     {
@@ -618,12 +639,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = nullptr;
     renderPassBeginInfo.renderPass = renderPass;
-    renderPassBeginInfo.framebuffer = framebuffers[i];
+    renderPassBeginInfo.framebuffer = m_framebuffers[i];
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
       VkExtent2D  {
-        surfaceCapabilities.currentExtent.width,
-        surfaceCapabilities.currentExtent.height
+        (u32) wrc[2], (u32) wrc[3]
+        //surfaceCapabilities.currentExtent.width,
+        //surfaceCapabilities.currentExtent.height
       }
     };
     renderPassBeginInfo.clearValueCount = 1;
@@ -672,6 +694,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  m_fence = fence;
+
   u32 swapChainImage;
 
   if(m_vk.vkAcquireNextImageKHR(m_device, swapChain, UINT64_MAX, VK_NULL_HANDLE, fence, &swapChainImage) != VkResult::VK_SUCCESS)
@@ -680,6 +704,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     return;
   }
+
+  m_swapChainImage = swapChainImage;
 
   kgm_log() << "Vulkan: got next swap chain image.\n";
 
@@ -697,7 +723,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  auto &commandBuffer = commandBuffers[swapChainImage];
+  auto &commandBuffer = m_commandBuffers[swapChainImage];
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
   VkSubmitInfo submitInfo;
@@ -840,7 +866,94 @@ void  kgmVulkan::gcGet(u32 param, void* value) {}
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
 void  kgmVulkan::gcBegin() {}
 void  kgmVulkan::gcEnd() {}
-void  kgmVulkan::gcRender() {}
+
+void  kgmVulkan::gcRender()
+{
+  VkResult result;
+
+  u32 swapChainImage;
+
+  if(m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+
+    return;
+  }
+
+  VkQueue queue;
+
+  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
+
+  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for queue.\n";
+
+    return;
+  }
+
+  if(m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for fence.\n";
+
+    return;
+  }
+
+  if(m_vk.vkResetFences(m_device, 1, &m_fence) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to reset fence.\n";
+
+    return;
+  }
+
+  auto &commandBuffer = m_commandBuffers[m_swapChainImage];
+
+  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  VkSubmitInfo submitInfo;
+
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.pNext = nullptr;
+  submitInfo.waitSemaphoreCount = 0;
+  submitInfo.pWaitSemaphores = nullptr;
+  submitInfo.pWaitDstStageMask = &waitMask;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+  submitInfo.signalSemaphoreCount = 0;
+  submitInfo.pSignalSemaphores = nullptr;
+
+  if(m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to submit command buffer.\n";
+
+    return;
+  }
+
+  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for queue.\n";
+
+    return;
+  }
+
+  VkPresentInfoKHR presentInfo;
+
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  presentInfo.pNext = nullptr;
+  presentInfo.waitSemaphoreCount = 0;
+  presentInfo.pWaitSemaphores = nullptr;
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = &m_swapChain;
+  presentInfo.pImageIndices = &swapChainImage;
+  presentInfo.pResults = &result;
+
+
+  if(m_vk.vkQueuePresentKHR(queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to present swapchain.\n";
+
+    return;
+  }
+}
+
 void  kgmVulkan::gcSetTarget(void*  rt) {}
 
 // DRAWING
