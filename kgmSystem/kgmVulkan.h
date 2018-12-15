@@ -33,6 +33,8 @@ class kgmVulkan: public kgmIGC
 {
   struct vk
   {
+    PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+
     VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
     void     (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
     VkResult (VKAPI_PTR *vkEnumerateInstanceExtensionProperties)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
