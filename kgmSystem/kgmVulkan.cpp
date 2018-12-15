@@ -919,34 +919,40 @@ void  kgmVulkan::gcRender()
 {
   VkResult result;
 
-  u32 swapChainImage;
+  u32 swapChainImage = m_swapChainImage;
 
-  if(m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+  //if(m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage) != VkResult::VK_SUCCESS)
+  //{
+  //  kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
 
-    return;
-  }
+  //  return;
+  //}
 
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  result = m_vk.vkQueueWaitIdle(queue);
+
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to wait for queue.\n";
 
     return;
   }
 
-  if(m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX) != VkResult::VK_SUCCESS)
+  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, 1000);
+
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to wait for fence.\n";
 
-    return;
+    //return;
   }
 
-  if(m_vk.vkResetFences(m_device, 1, &m_fence) != VkResult::VK_SUCCESS)
+  result = m_vk.vkResetFences(m_device, 1, &m_fence);
+
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to reset fence.\n";
 
@@ -968,14 +974,18 @@ void  kgmVulkan::gcRender()
   submitInfo.signalSemaphoreCount = 0;
   submitInfo.pSignalSemaphores = nullptr;
 
-  if(m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VkResult::VK_SUCCESS)
+  result = m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to submit command buffer.\n";
 
     return;
   }
 
-  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  result = m_vk.vkQueueWaitIdle(queue);
+
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to wait for queue.\n";
 
