@@ -12,6 +12,8 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
+u32 rFrames = 0;
+
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
@@ -19,7 +21,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (wnd == nullptr)
     return;
 
-  if (g_vulkans < 1) {
+  if (g_vulkans < 1)
+  {
     if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
       return;
   }
@@ -50,11 +53,12 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (extentionsCount == 0)
   {
     kgm_log() << "Vulkan error: No extensions supported!\n";
+
     return;
   }
 
-  /* VkExtensionProperties extentionProperties[extentionsCount];
-  const char* extentionNames[extentionsCount];
+  VkExtensionProperties extentionProperties[extentionsCount];
+  const char* extensionNames[extentionsCount];
 
   vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extentionsCount, extentionProperties);
 
@@ -64,15 +68,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   {
     kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
 
-    extentionNames[iname++] = ep.extensionName;
-  } */
-
-  const s8* extensionNames[3] = {
-    VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
-    VK_KHR_SURFACE_EXTENSION_NAME,
-    VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-  };
-
+    extensionNames[iname++] = ep.extensionName;
+  }
 
   VkInstanceCreateInfo createInfo;
 
@@ -80,8 +77,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   createInfo.pApplicationInfo = &appInfo;
-  createInfo.enabledExtensionCount = 3; //extentionsCount;
-  createInfo.ppEnabledExtensionNames = (typeof createInfo.ppEnabledExtensionNames) extensionNames;
+  createInfo.enabledExtensionCount = extentionsCount;
+  createInfo.ppEnabledExtensionNames = extensionNames;
 
   vk_res = m_vk.vkCreateInstance(&createInfo, null, &m_instance);
 
@@ -90,13 +87,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     switch(vk_res)
     {
     case VK_ERROR_LAYER_NOT_PRESENT:
-    kgm_log() << "kgmVulkan error: vkCreateInstance no layers\n";
+    kgm_log() << "Vulkan error: vkCreateInstance no layers\n";
       break;
     case VK_ERROR_EXTENSION_NOT_PRESENT:
-      kgm_log() << "kgmVulkan error: vkCreateInstance no extentions\n";
+      kgm_log() << "Vulkan error: vkCreateInstance no extentions\n";
       break;
     default:
-      kgm_log() << "kgmVulkan error: vkCreateInstance failed " << vk_res << "\n";
+      kgm_log() << "Vulkan error: vkCreateInstance failed " << vk_res << "\n";
     }
 
     return;
@@ -175,7 +172,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   if (vk_res != VK_SUCCESS)
   {
-    kgm_log() << "kgmVulkan error: vkCreate**SurfaceKHR " << vk_res << "\n";
+    kgm_log() << "Vulkan error: vkCreate**SurfaceKHR " << vk_res << "\n";
 
     return;
   }
@@ -190,7 +187,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   if (vk_res != VK_SUCCESS)
   {
-    kgm_log() << "kgmVulkan error: vkEnumeratePhysicalDevices " << vk_res << "\n";
+    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices " << vk_res << "\n";
 
     return;
   }
@@ -201,7 +198,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   if (vk_res != VK_SUCCESS)
   {
-    kgm_log() << "kgmVulkan error: vkEnumeratePhysicalDevices no devs\n";
+    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices no devs\n";
 
     return;
   }
@@ -214,7 +211,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   if (vk_res != VK_SUCCESS)
   {
-    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties " << vk_res << "\n";
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties " << vk_res << "\n";
 
     return;
   }
@@ -229,7 +226,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   if (vk_res != VK_SUCCESS)
   {
-    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
 
     return;
   }
@@ -247,12 +244,12 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
       break;
     }
 
-    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties " << dexst.extensionName << "\n";
+    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << dexst.extensionName << "\n";
   }
 
   if (!isswapchain)
   {
-    kgm_log() << "kgmVulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
 
     return;
   }
@@ -912,6 +909,7 @@ int kgmVulkan::vkInit()
   m_vk.vkCreateFence = (typeof m_vk.vkCreateFence) vk_lib.get((char*) "vkCreateFence");
   m_vk.vkResetFences = (typeof m_vk.vkResetFences) vk_lib.get((char*) "vkResetFences");
   m_vk.vkWaitForFences = (typeof m_vk.vkWaitForFences) vk_lib.get((char*) "vkWaitForFences");
+  m_vk.vkDeviceWaitIdle = (typeof m_vk.vkDeviceWaitIdle) vk_lib.get((char*) "vkDeviceWaitIdle");
   m_vk.vkAcquireNextImageKHR = (typeof m_vk.vkAcquireNextImageKHR) vk_lib.get((char*) "vkAcquireNextImageKHR");
   m_vk.vkQueueSubmit = (typeof m_vk.vkQueueSubmit) vk_lib.get((char*) "vkQueueSubmit");
   m_vk.vkQueuePresentKHR = (typeof m_vk.vkQueuePresentKHR) vk_lib.get((char*) "vkQueuePresentKHR");
@@ -1046,6 +1044,8 @@ void  kgmVulkan::gcRender()
   }
 
   m_swapChainImage = swapChainImage;
+
+  rFrames++;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -1069,21 +1069,23 @@ void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
 
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
-  m_vk.vkDeviceWaitIdle(m_device);
-
-  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
-
-  //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
-  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
-
-  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  if (rFrames > 0)
   {
-    m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
-    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+    m_vk.vkDeviceWaitIdle(m_device);
+
+    m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+
+    //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
+    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+    for (size_t i = 0; i < m_swapChainImages.length(); i++)
+    {
+      m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+    }
+
+    //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
   }
-
-  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
-
 }
 
 //BLEND

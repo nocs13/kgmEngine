@@ -90,9 +90,9 @@ class kgmVulkan: public kgmIGC
   static vk     m_vk;
   static u32    g_vulkans;
 
-  VkInstance   m_instance;
-  VkSurfaceKHR m_surface;
-  VkDevice     m_device;
+  VkInstance   m_instance = 0;
+  VkSurfaceKHR m_surface = 0;
+  VkDevice     m_device = 0;
 
   VkPhysicalDevice m_physicalDevice;
 
