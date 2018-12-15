@@ -886,6 +886,12 @@ int kgmVulkan::vkInit()
   m_vk.vkAcquireNextImageKHR = (typeof m_vk.vkAcquireNextImageKHR) vk_lib.get((char*) "vkAcquireNextImageKHR");
   m_vk.vkQueueSubmit = (typeof m_vk.vkQueueSubmit) vk_lib.get((char*) "vkQueueSubmit");
   m_vk.vkQueuePresentKHR = (typeof m_vk.vkQueuePresentKHR) vk_lib.get((char*) "vkQueuePresentKHR");
+  m_vk.vkDestroyPipeline = (typeof m_vk.vkDestroyPipeline) vk_lib.get((char*) "vkDestroyPipeline");
+  m_vk.vkDestroyRenderPass = (typeof m_vk.vkDestroyRenderPass) vk_lib.get((char*) "vkDestroyRenderPass");
+  m_vk.vkDestroyFramebuffer = (typeof m_vk.vkDestroyFramebuffer) vk_lib.get((char*) "vkDestroyFramebuffer");
+  m_vk.vkDestroyImageView = (typeof m_vk.vkDestroyImageView) vk_lib.get((char*) "vkDestroyImageView");
+  m_vk.vkDestroyDescriptorSetLayout = (typeof m_vk.vkDestroyDescriptorSetLayout) vk_lib.get((char*) "vkDestroyDescriptorSetLayout");
+  m_vk.vkFreeCommandBuffers = (typeof m_vk.vkFreeCommandBuffers) vk_lib.get((char*) "vkFreeCommandBuffers");
 
   m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) vk_lib.get((char*) "vkCreateDebugReportCallbackEXT");
 
@@ -1011,6 +1017,8 @@ void  kgmVulkan::gcRender()
 
     return;
   }
+
+  m_swapChainImage = swapChainImage;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -1028,11 +1036,28 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil){}
 bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type){}
 void     kgmVulkan::gcFreeTarget(gchandle t){}
 
-
 // MATRIX
 void  kgmVulkan::gcSetMatrix(u32 mode, float* mtx) {}
 void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
-void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f) {}
+
+void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
+{
+  m_vk.vkDeviceWaitIdle(m_device);
+
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+
+  //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
+  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  {
+    m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  }
+
+  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
+
+}
 
 //BLEND
 void  kgmVulkan::gcBlend(bool, u32, u32, u32) {}

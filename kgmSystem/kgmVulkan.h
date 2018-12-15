@@ -67,6 +67,13 @@ class kgmVulkan: public kgmIGC
     PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
     PFN_vkQueueSubmit vkQueueSubmit;
     PFN_vkQueuePresentKHR vkQueuePresentKHR;
+    PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
+    PFN_vkDestroyPipeline vkDestroyPipeline;
+    PFN_vkDestroyRenderPass vkDestroyRenderPass;
+    PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
+    PFN_vkDestroyImageView vkDestroyImageView;
+    PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
+    PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 
