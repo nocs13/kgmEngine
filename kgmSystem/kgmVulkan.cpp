@@ -580,6 +580,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  m_queue = queue;
+
   VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
 
   m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
@@ -742,7 +744,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_fence = fence;
 
-  u32 swapChainImage;
+  /* u32 swapChainImage;
 
   if(m_vk.vkAcquireNextImageKHR(m_device, swapChain, UINT64_MAX, VK_NULL_HANDLE, fence, &swapChainImage) != VkResult::VK_SUCCESS)
   {
@@ -816,7 +818,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 
     return;
-  }
+  } */
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -921,18 +923,17 @@ void  kgmVulkan::gcRender()
 
   u32 swapChainImage = m_swapChainImage;
 
-  //if(m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage) != VkResult::VK_SUCCESS)
-  //{
-  //  kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
-  //  return;
-  //}
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+    fprintf(stderr, "Vulkan error code %X\n", result);
 
-  VkQueue queue;
+    return;
+  }
 
-  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
-
-  result = m_vk.vkQueueWaitIdle(queue);
+  result = m_vk.vkQueueWaitIdle(m_queue);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -947,7 +948,7 @@ void  kgmVulkan::gcRender()
   {
     kgm_log() << "Vulkan error: failed to wait for fence.\n";
 
-    //return;
+    return;
   }
 
   result = m_vk.vkResetFences(m_device, 1, &m_fence);
@@ -974,7 +975,7 @@ void  kgmVulkan::gcRender()
   submitInfo.signalSemaphoreCount = 0;
   submitInfo.pSignalSemaphores = nullptr;
 
-  result = m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+  result = m_vk.vkQueueSubmit(m_queue, 1, &submitInfo, VK_NULL_HANDLE);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -983,7 +984,7 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  result = m_vk.vkQueueWaitIdle(queue);
+  result = m_vk.vkQueueWaitIdle(m_queue);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1004,7 +1005,7 @@ void  kgmVulkan::gcRender()
   presentInfo.pResults = &result;
 
 
-  if(m_vk.vkQueuePresentKHR(queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
+  if(m_vk.vkQueuePresentKHR(m_queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 

@@ -92,6 +92,7 @@ class kgmVulkan: public kgmIGC
   VkCommandPool    m_commandPool;
 
   VkFence          m_fence;
+  VkQueue          m_queue;
 
   kgmArray<VkImage> m_swapChainImages;
   kgmArray<VkFramebuffer> m_framebuffers;
