@@ -1039,6 +1039,7 @@ void  kgmVulkan::gcRender()
   if(m_vk.vkQueuePresentKHR(m_queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
+    fprintf(stderr, "Error: %x.\n", result);
 
     return;
   }
@@ -1120,5 +1121,10 @@ void  kgmVulkan::gcUniformSampler(void* s, const char*, void*) {}
 #ifdef DEBUG
 void  kgmVulkan::gcGetUniform(void* s, const char*, void*) {}
 #endif
+
+void kgmVulkan::printResult(VkResult result)
+{
+
+}
 
 #endif

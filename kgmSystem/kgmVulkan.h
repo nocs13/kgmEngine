@@ -181,6 +181,8 @@ public:
 private:
   static int  vkInit();
   static void vkFree();
+
+  void printResult(VkResult result);
 };
 
 #endif
