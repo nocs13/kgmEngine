@@ -959,7 +959,8 @@ void  kgmVulkan::gcRender()
   if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
-    fprintf(stderr, "Vulkan error code %X\n", result);
+
+    printResult(result);
 
     return;
   }
@@ -970,6 +971,8 @@ void  kgmVulkan::gcRender()
   {
     kgm_log() << "Vulkan error: failed to wait for queue.\n";
 
+    printResult(result);
+
     return;
   }
 
@@ -979,6 +982,8 @@ void  kgmVulkan::gcRender()
   {
     kgm_log() << "Vulkan error: failed to wait for fence.\n";
 
+    printResult(result);
+
     return;
   }
 
@@ -987,6 +992,8 @@ void  kgmVulkan::gcRender()
   if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to reset fence.\n";
+
+    printResult(result);
 
     return;
   }
@@ -1012,6 +1019,8 @@ void  kgmVulkan::gcRender()
   {
     kgm_log() << "Vulkan error: failed to submit command buffer.\n";
 
+    printResult(result);
+
     return;
   }
 
@@ -1020,6 +1029,8 @@ void  kgmVulkan::gcRender()
   if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to wait for queue.\n";
+
+    printResult(result);
 
     return;
   }
@@ -1039,7 +1050,8 @@ void  kgmVulkan::gcRender()
   if(m_vk.vkQueuePresentKHR(m_queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
-    fprintf(stderr, "Error: %x.\n", result);
+
+    printResult(result);
 
     return;
   }
@@ -1124,7 +1136,86 @@ void  kgmVulkan::gcGetUniform(void* s, const char*, void*) {}
 
 void kgmVulkan::printResult(VkResult result)
 {
-
+  switch(result)
+  {
+  case VK_SUCCESS:
+    kgm_log() << "Vulkan result: Is success.\n";
+  break;
+  case VK_NOT_READY:
+    kgm_log() << "Vulkan result: Not ready.\n";
+  break;
+  case VK_TIMEOUT:
+    kgm_log() << "Vulkan result: Timeout.\n";
+  break;
+  case VK_EVENT_SET:
+    kgm_log() << "Vulkan result: Event set.\n";
+  break;
+  case VK_EVENT_RESET:
+    kgm_log() << "Vulkan result: Event reset.\n";
+  break;
+  case VK_INCOMPLETE:
+    kgm_log() << "Vulkan result: Incomplete.\n";
+  break;
+  case VK_ERROR_OUT_OF_HOST_MEMORY:
+    kgm_log() << "Vulkan result: Error out of host memory.\n";
+  break;
+  case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+    kgm_log() << "Vulkan result: Error of device memory.\n";
+  break;
+  case VK_ERROR_INITIALIZATION_FAILED:
+    kgm_log() << "Vulkan result: Error initialization failed.\n";
+  break;
+  case VK_ERROR_DEVICE_LOST:
+    kgm_log() << "Vulkan result: Error device lost.\n";
+  break;
+  case VK_ERROR_MEMORY_MAP_FAILED:
+    kgm_log() << "Vulkan result: Error memory map failed.\n";
+  break;
+  case VK_ERROR_LAYER_NOT_PRESENT:
+    kgm_log() << "Vulkan result: Error laayer not present.\n";
+  break;
+  case VK_ERROR_EXTENSION_NOT_PRESENT:
+    kgm_log() << "Vulkan result: Error extension not present.\n";
+  break;
+  case VK_ERROR_FEATURE_NOT_PRESENT:
+    kgm_log() << "Vulkan result: Error feature not present.\n";
+  break;
+  case VK_ERROR_INCOMPATIBLE_DRIVER:
+    kgm_log() << "Vulkan result: Error incompatible driver.\n";
+  break;
+  case VK_ERROR_TOO_MANY_OBJECTS:
+    kgm_log() << "Vulkan result: Error too maby objects.\n";
+  break;
+  case VK_ERROR_FORMAT_NOT_SUPPORTED:
+    kgm_log() << "Vulkan result: Error format not supported.\n";
+  break;
+  case VK_ERROR_FRAGMENTED_POOL:
+    kgm_log() << "Vulkan result: Error fragmented pool.\n";
+  break;
+  case VK_ERROR_SURFACE_LOST_KHR:
+    kgm_log() << "Vulkan result: Error surface lost.\n";
+  break;
+  case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+    kgm_log() << "Vulkan result: Error native window in use.\n";
+  break;
+  case VK_SUBOPTIMAL_KHR:
+    kgm_log() << "Vulkan result: Suboptimal.\n";
+  break;
+  case VK_ERROR_OUT_OF_DATE_KHR:
+    kgm_log() << "Vulkan result: Error out of date.\n";
+  break;
+  case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
+    kgm_log() << "Vulkan result: Error incompatible display.\n";
+  break;
+  case VK_ERROR_VALIDATION_FAILED_EXT:
+    kgm_log() << "Vulkan result: Error validation failed.\n";
+  break;
+  case VK_ERROR_INVALID_SHADER_NV:
+    kgm_log() << "Vulkan result: Error invalid shaders.\n";
+  break;
+  default:
+    kgm_log() << "Vulkan result: Unknown.\n";
+  }
 }
 
 #endif
