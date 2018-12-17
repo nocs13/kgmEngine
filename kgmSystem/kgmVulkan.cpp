@@ -6,6 +6,8 @@
 
 #include "inc/vk/vulkan.h"
 
+#define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
+
 //https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
 
 u32           kgmVulkan::g_vulkans = 0;
@@ -33,7 +35,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   wnd->getRect(wrc[0], wrc[1], wrc[2], wrc[3]);
 
-  u32 vk_res;
+  VkResult vk_res;
 
   VkApplicationInfo appInfo;
 
@@ -46,25 +48,25 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
-  u32 extentionsCount = 0;
+  u32 extensionsCount = 0;
 
-  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extentionsCount, nullptr);
+  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
 
-  if (extentionsCount == 0)
+  if (extensionsCount == 0)
   {
     kgm_log() << "Vulkan error: No extensions supported!\n";
 
     return;
   }
 
-  VkExtensionProperties extentionProperties[extentionsCount];
-  const char* extensionNames[extentionsCount];
+  VkExtensionProperties extensionProperties[extensionsCount];
+  const char* extensionNames[extensionsCount];
 
-  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extentionsCount, extentionProperties);
+  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionProperties);
 
   u32 iname = 0;
 
-  for (const auto& ep: extentionProperties)
+  for (const auto& ep: extensionProperties)
   {
     kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
 
@@ -77,7 +79,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   createInfo.pApplicationInfo = &appInfo;
-  createInfo.enabledExtensionCount = extentionsCount;
+  createInfo.enabledExtensionCount = extensionsCount;
   createInfo.ppEnabledExtensionNames = extensionNames;
 
   vk_res = m_vk.vkCreateInstance(&createInfo, null, &m_instance);
@@ -93,7 +95,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
       kgm_log() << "Vulkan error: vkCreateInstance no extentions\n";
       break;
     default:
-      kgm_log() << "Vulkan error: vkCreateInstance failed " << vk_res << "\n";
+      kgm_log() << "Vulkan error: vkCreateInstance failed.\n";
+
+      printResult(vk_res);
     }
 
     return;
@@ -152,6 +156,85 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
 #endif
 
+  u32 deviceCount = 0;
+
+  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices.\n";
+
+    printResult(vk_res);
+
+    return;
+  }
+
+  VkPhysicalDevice physicalDevices[deviceCount];
+
+  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &deviceCount, physicalDevices);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices no devs\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: [" << deviceCount << "] Physical devices enumerated.\n";
+
+  VkPhysicalDevice physicalDevice = physicalDevices[0];
+
+  m_physicalDevice = physicalDevice;
+
+  extensionsCount = 0;
+
+  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, nullptr);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties.\n";
+
+    printResult(vk_res);
+
+    return;
+  }
+
+  VkExtensionProperties deviceExtensionProperties[extensionsCount];
+
+  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, deviceExtensionProperties);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: Device extentions enumerated.\n";
+
+  bool isswapchain = false;
+
+  for (const auto exst: deviceExtensionProperties)
+  {
+    if (strcmp(exst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+    {
+      isswapchain = true;
+
+      break;
+    }
+
+    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << exst.extensionName << "\n";
+  }
+
+  if (!isswapchain)
+  {
+    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: Has swap chain.\n";
+
   VkSurfaceKHR surface;
 
 #ifdef WIN32
@@ -181,81 +264,6 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_surface = surface;
 
-  u32 dcount = 0;
-
-  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &dcount, nullptr);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices " << vk_res << "\n";
-
-    return;
-  }
-
-  VkPhysicalDevice devs[dcount];
-
-  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &dcount, devs);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices no devs\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Physical devices enumerated.\n";
-
-  u32 decount = 0;
-
-  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(devs[0], nullptr, &decount, nullptr);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties " << vk_res << "\n";
-
-    return;
-  }
-
-  VkPhysicalDevice physicalDevice = devs[0];
-
-  m_physicalDevice = physicalDevice;
-
-  VkExtensionProperties dexsts[decount];
-
-  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(devs[0], nullptr, &decount, dexsts);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Device extentions enumerated.\n";
-
-  bool isswapchain = false;
-
-  for (const auto dexst: dexsts)
-  {
-    if (strcmp(dexst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
-    {
-      isswapchain = true;
-
-      break;
-    }
-
-    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << dexst.extensionName << "\n";
-  }
-
-  if (!isswapchain)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Has swap chain.\n";
-
   VkSurfaceCapabilitiesKHR surfaceCapabilities;
 
   if(m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities) != VkResult::VK_SUCCESS)
@@ -265,9 +273,29 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  u32 surfaceFormatsCount = 0;
+
+  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, nullptr) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
+
+    return;
+  }
+
+  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
+
+  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, surfaceFormats) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats.\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: Got surface formats.\n";
+
   u32 queueFamilyCount = 0;
 
-  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(devs[0], &queueFamilyCount, nullptr);
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
 
   if (queueFamilyCount < 1)
   {
@@ -278,7 +306,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   VkQueueFamilyProperties queueFamilies[queueFamilyCount];
 
-  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(devs[0], &queueFamilyCount, queueFamilies);
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies);
 
   if (queueFamilyCount < 1)
   {
@@ -345,29 +373,11 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   kgm_log() << "Vulkan: Found valid queue family graphics support.\n";
 
-  u32 surfaceFormatsCount = 0;
-
-  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, nullptr) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
-
-    return;
-  }
-
-  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
-
-  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, surfaceFormats) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Got surface formats.\n";
-
   f32 queuePriority = 1.0f;
 
   VkDeviceQueueCreateInfo queueCreateInfo[2] = {};
+
+  memset(queueCreateInfo, 0, 2 * sizeof(VkDeviceQueueCreateInfo));
 
   queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   queueCreateInfo[0].queueFamilyIndex = graphicsQueueFamily;
@@ -379,7 +389,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   queueCreateInfo[0].queueCount = 1;
   queueCreateInfo[0].pQueuePriorities = &queuePriority;
 
-  VkDeviceCreateInfo deviceCreateInfo = {};
+  VkDeviceCreateInfo deviceCreateInfo;
+
+  memset(&deviceCreateInfo, 0, sizeof(VkDeviceCreateInfo));
 
   deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   deviceCreateInfo.pQueueCreateInfos = queueCreateInfo;
@@ -394,7 +406,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   // Necessary for shader (for some reason)
-  VkPhysicalDeviceFeatures enabledFeatures = {0};
+  VkPhysicalDeviceFeatures enabledFeatures;
+
+  memset(&enabledFeatures, 0, sizeof(VkPhysicalDeviceFeatures));
 
   enabledFeatures.shaderClipDistance = VK_TRUE;
   enabledFeatures.shaderCullDistance = VK_TRUE;
@@ -433,6 +447,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   VkSwapchainKHR swapChain;
 
   VkSwapchainCreateInfoKHR swapChainCreateInfo;
+
+  memset(&swapChainCreateInfo, 0, sizeof(VkSwapchainCreateInfoKHR));
 
   swapChainCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapChainCreateInfo.pNext = nullptr;
@@ -485,6 +501,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   VkRenderPass renderPass;
 
   VkAttachmentDescription attachmentDescription;
+
+  memset(&attachmentDescription, 0, sizeof(VkAttachmentDescription));
+
   attachmentDescription.flags = 0;
   attachmentDescription.format = surfaceFormats[0].format;
   attachmentDescription.samples = VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
@@ -496,10 +515,16 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   attachmentDescription.finalLayout = VkImageLayout::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
   VkAttachmentReference attachmentReference;
+
+  memset(&attachmentReference, 0, sizeof(VkAttachmentReference));
+
   attachmentReference.attachment = 0;
   attachmentReference.layout = VkImageLayout::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
   VkSubpassDescription subpassDescription;
+
+  memset(&subpassDescription, 0, sizeof(VkSubpassDescription));
+
   subpassDescription.flags = 0;
   subpassDescription.pipelineBindPoint = VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS;
   subpassDescription.inputAttachmentCount = 0;
@@ -512,6 +537,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   subpassDescription.pPreserveAttachments = nullptr;
 
   VkRenderPassCreateInfo renderPassCreateInfo;
+
+  memset(&renderPassCreateInfo, 0, sizeof(VkRenderPassCreateInfo));
+
   renderPassCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   renderPassCreateInfo.pNext = nullptr;
   renderPassCreateInfo.flags = 0;
@@ -542,6 +570,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     auto& imageView = m_imageViews[i];
 
     VkImageViewCreateInfo imageViewCreateInfo;
+
+    memset(&imageViewCreateInfo, 0, sizeof(VkImageViewCreateInfo));
+
     imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     imageViewCreateInfo.pNext = nullptr;
     imageViewCreateInfo.flags = 0;
@@ -572,6 +603,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     auto &framebuffer = m_framebuffers[i];
 
     VkFramebufferCreateInfo framebufferCreateInfo;
+
+    memset(&framebufferCreateInfo, 0, sizeof(VkFramebufferCreateInfo));
 
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     framebufferCreateInfo.pNext = nullptr;
@@ -607,11 +640,11 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_queue = queue;
 
-  VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
+  /*VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
 
   m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
 
-  /*VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
+  VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
   VkSemaphoreCreateInfo semaphoreCreateInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -627,7 +660,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   VkCommandPool commandPool;
 
-  VkCommandPoolCreateInfo poolCreateInfo = {};
+  VkCommandPoolCreateInfo poolCreateInfo;
+
+  memset(&poolCreateInfo, 0, sizeof(VkCommandPoolCreateInfo));
+
   poolCreateInfo.flags = VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
   poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   poolCreateInfo.pNext = null;
@@ -654,6 +690,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_commandBuffers.alloc(m_swapChainImages.length());
 
   VkCommandBufferAllocateInfo commandBufferAllocateInfo;
+
+  ZeroObject(commandBufferAllocateInfo);
+
   commandBufferAllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
   commandBufferAllocateInfo.pNext = nullptr;
   commandBufferAllocateInfo.commandPool = commandPool;
@@ -682,6 +721,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
 
+    ZeroObject(commandBufferInheritanceInfo);
+
     commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
     commandBufferInheritanceInfo.pNext = nullptr;
     commandBufferInheritanceInfo.renderPass = renderPass;
@@ -693,6 +734,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     VkCommandBufferBeginInfo commandBufferBeginInfo;
 
+    ZeroObject(commandBufferBeginInfo);
+
     commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     commandBufferBeginInfo.pNext = nullptr;
     commandBufferBeginInfo.flags = 0;
@@ -702,12 +745,16 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     VkClearValue clearValue;
 
+    ZeroObject(clearValue);
+
     clearValue.color.float32[0] = 1.0f;
     clearValue.color.float32[1] = 0.0f;
     clearValue.color.float32[2] = 0.0f;
     clearValue.color.float32[3] = 1.0f;
 
     VkRenderPassBeginInfo renderPassBeginInfo;
+
+    ZeroObject(renderPassBeginInfo);
 
     renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = nullptr;
@@ -728,6 +775,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     m_vk.vkCmdEndRenderPass(commandBuffer);
 
     VkImageMemoryBarrier imageMemoryBarrier;
+
+    ZeroObject(imageMemoryBarrier);
+
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     imageMemoryBarrier.pNext = nullptr;
     imageMemoryBarrier.srcAccessMask = 0;
@@ -755,6 +805,9 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   VkFence fence;
 
   VkFenceCreateInfo fenceCreateInfo;
+
+  ZeroObject(fenceCreateInfo);
+
   fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
   fenceCreateInfo.pNext = nullptr;
   fenceCreateInfo.flags = 0;
@@ -887,11 +940,13 @@ int kgmVulkan::vkInit()
   m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
   m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceFormatsKHR");
   m_vk.vkGetPhysicalDeviceSurfaceSupportKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceSupportKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceSupportKHR");
+  m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR = (typeof m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfacePresentModesKHR");
   m_vk.vkCreateDevice = (typeof m_vk.vkCreateDevice) vk_lib.get((char*) "vkCreateDevice");
   m_vk.vkGetDeviceQueue = (typeof m_vk.vkGetDeviceQueue) vk_lib.get((char*) "vkGetDeviceQueue");
   m_vk.vkQueueWaitIdle = (typeof m_vk.vkQueueWaitIdle) vk_lib.get((char*) "vkQueueWaitIdle");
   m_vk.vkGetPhysicalDeviceMemoryProperties = (typeof m_vk.vkGetPhysicalDeviceMemoryProperties) vk_lib.get((char*) "vkGetPhysicalDeviceMemoryProperties");
   m_vk.vkCreateSwapchainKHR = (typeof m_vk.vkCreateSwapchainKHR) vk_lib.get((char*) "vkCreateSwapchainKHR");
+  m_vk.vkDestroySwapchainKHR = (typeof m_vk.vkDestroySwapchainKHR) vk_lib.get((char*) "vkDestroySwapchainKHR");
   m_vk.vkGetSwapchainImagesKHR = (typeof m_vk.vkGetSwapchainImagesKHR) vk_lib.get((char*) "vkGetSwapchainImagesKHR");
   m_vk.vkCreateSemaphore = (typeof m_vk.vkCreateSemaphore) vk_lib.get((char*) "vkCreateSemaphore");
   m_vk.vkCreateCommandPool = (typeof m_vk.vkCreateCommandPool) vk_lib.get((char*) "vkCreateCommandPool");
@@ -965,6 +1020,8 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
+
   result = m_vk.vkQueueWaitIdle(m_queue);
 
   if(result != VkResult::VK_SUCCESS)
@@ -975,6 +1032,8 @@ void  kgmVulkan::gcRender()
 
     return;
   }
+
+  kgm_log() << "Vulkan: Idle wait for queue passed.\n";
 
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, 1000);
 
@@ -987,6 +1046,8 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  kgm_log() << "Vulkan: Wait for fence passed.\n";
+
   result = m_vk.vkResetFences(m_device, 1, &m_fence);
 
   if(result != VkResult::VK_SUCCESS)
@@ -998,10 +1059,15 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  kgm_log() << "Vulkan: Reset fence passed.\n";
+
   auto &commandBuffer = m_commandBuffers[m_swapChainImage];
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+
   VkSubmitInfo submitInfo;
+
+  ZeroObject(submitInfo);
 
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submitInfo.pNext = nullptr;
@@ -1024,6 +1090,8 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  kgm_log() << "Vulkan: Submit queue passed.\n";
+
   result = m_vk.vkQueueWaitIdle(m_queue);
 
   if(result != VkResult::VK_SUCCESS)
@@ -1035,7 +1103,11 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  kgm_log() << "Vulkan: Idle wait for queue passed again.\n";
+
   VkPresentInfoKHR presentInfo;
+
+  ZeroObject(presentInfo);
 
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.pNext = nullptr;
@@ -1056,7 +1128,9 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  m_swapChainImage = swapChainImage;
+  kgm_log() << "Vulkan: Queue present passed.\n";
+
+  //m_swapChainImage = swapChainImage;
 
   rFrames++;
 }
@@ -1082,20 +1156,37 @@ void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
 
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
-  if (rFrames > 0)
+  if (rFrames > 1)
   {
-    m_vk.vkDeviceWaitIdle(m_device);
+    kgm_log() << "Vulkan: Viewport need update.\n";
+
+    VkResult result = m_vk.vkDeviceWaitIdle(m_device);
+
+    if (result != VkResult::VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: device wait idle failed.\n";
+
+      printResult(result);
+
+      return;
+    }
 
     m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
+    kgm_log() << "Vulkan: Command buffer deleted.\n";
+
     //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
     m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+    kgm_log() << "Vulkan: Render pass destroyed.\n";
 
     for (size_t i = 0; i < m_swapChainImages.length(); i++)
     {
       m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
       m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
     }
+
+    kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
     //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
   }
@@ -1133,6 +1224,183 @@ void  kgmVulkan::gcUniformSampler(void* s, const char*, void*) {}
 #ifdef DEBUG
 void  kgmVulkan::gcGetUniform(void* s, const char*, void*) {}
 #endif
+
+void kgmVulkan::clean(u32 options)
+{
+
+}
+
+void kgmVulkan::createSwapChain()
+{
+  VkResult result;
+
+  VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: failed to get surface capabilities.\n";
+
+    printResult(result);
+
+    return;
+  }
+
+  u32 surfaceFormatsCount = 0;
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, nullptr);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
+
+    printResult(result);
+
+    return;
+  }
+
+  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, surfaceFormats);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats.\n";
+
+    printResult(result);
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: Got surface formats.\n";
+
+  // Find supported present modes
+  u32 presentModeCount;
+
+  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+
+  if (result != VK_SUCCESS || presentModeCount == 0)
+  {
+    kgm_log() << "Vulkan error: Failed to get number of supported presentation modes.\n";
+
+    return;
+  }
+
+  VkPresentModeKHR presentModes[presentModeCount];
+
+  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get supported presentation modes.\n";
+
+    return;
+  }
+
+  // Determine number of images for swap chain
+  u32 imageCount = surfaceCapabilities.minImageCount + 1;
+
+  if (surfaceCapabilities.maxImageCount != 0 && imageCount > surfaceCapabilities.maxImageCount)
+  {
+    imageCount = surfaceCapabilities.maxImageCount;
+  }
+
+  kgm_log() << "Vulkan: using " << imageCount << " images for swap chain.\n";
+
+  // Select a surface format
+  VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR }; //chooseSurfaceFormat(surfaceFormats);
+
+  // Select swap chain size
+  VkExtent2D swapChainExtent;// = chooseSwapExtent(surfaceCapabilities);
+
+  swapChainExtent.height = m_rect[3];
+  swapChainExtent.width  = m_rect[2];
+
+  // Determine transformation to use (preferring no transform)
+  VkSurfaceTransformFlagBitsKHR surfaceTransform;
+
+  if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+  {
+    surfaceTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  }
+  else
+  {
+    surfaceTransform = surfaceCapabilities.currentTransform;
+  }
+
+  // Choose presentation mode (preferring MAILBOX ~= triple buffering)
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR; //choosePresentMode(presentModes);
+
+  // Finally, create the swap chain
+  VkSwapchainCreateInfoKHR createInfo;
+
+  ZeroObject(createInfo);
+
+  createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  createInfo.surface = m_surface;
+  createInfo.minImageCount = imageCount;
+  createInfo.imageFormat = surfaceFormat.format;
+  createInfo.imageColorSpace = surfaceFormat.colorSpace;
+  createInfo.imageExtent = swapChainExtent;
+  createInfo.imageArrayLayers = 1;
+  createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  createInfo.queueFamilyIndexCount = 0;
+  createInfo.pQueueFamilyIndices = nullptr;
+  createInfo.preTransform = surfaceTransform;
+  createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  createInfo.presentMode = presentMode;
+  createInfo.clipped = VK_TRUE;
+  createInfo.oldSwapchain = m_swapChain;
+
+  VkSwapchainKHR swapChain = m_swapChain;
+
+  m_vk.vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create swap chain.\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulkan: Created swap chain.\n";
+
+  if (swapChain != VK_NULL_HANDLE)
+  {
+    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+  }
+
+  m_swapChainFormat = surfaceFormat.format;
+
+  // Store the images used by the swap chain
+  // Note: these are the images that swap chain image indices refer to
+  // Note: actual number of images may differ from requested number, since it's a lower bound
+  u32 actualImageCount = 0;
+
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
+
+  if (result != VK_SUCCESS || actualImageCount == 0)
+  {
+    kgm_log() << "Vulkan: failed to acquire number of swap chain images.\n";
+
+    return;
+  }
+
+  m_swapChainImages.alloc(actualImageCount);
+
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, m_swapChainImages.data());
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to acquire swap chain images.\n";
+
+    return;
+  }
+
+  kgm_log() << "Vulcan: Acquired swap chain images.\n";
+}
 
 void kgmVulkan::printResult(VkResult result)
 {

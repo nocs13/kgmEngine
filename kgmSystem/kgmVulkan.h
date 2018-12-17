@@ -44,11 +44,13 @@ class kgmVulkan: public kgmIGC
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR     vkGetPhysicalDeviceSurfaceSupportKHR;
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR     vkGetPhysicalDeviceSurfaceFormatsKHR;
+    PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
     PFN_vkCreateDevice vkCreateDevice;
     PFN_vkGetDeviceQueue vkGetDeviceQueue;
     PFN_vkQueueWaitIdle vkQueueWaitIdle;
     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
     PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR;
+    PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
     PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
     PFN_vkCreateSemaphore vkCreateSemaphore;
     PFN_vkCreateCommandPool vkCreateCommandPool;
@@ -108,7 +110,11 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkImageView> m_imageViews;
   kgmArray<VkCommandBuffer> m_commandBuffers;
 
+  VkFormat m_swapChainFormat;
+
   u32 m_swapChainImage;
+
+  u32 m_rect[4];
 
 public:
   kgmVulkan(kgmWindow* wnd);
@@ -183,6 +189,9 @@ private:
   static void vkFree();
 
   void printResult(VkResult result);
+
+  void clean(u32);
+  void createSwapChain();
 };
 
 #endif
