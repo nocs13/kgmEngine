@@ -165,6 +165,9 @@ public:
   void  gcEnd();
   void  gcRender();
 
+  //RESIZE MAIN BUFFER
+  void gcResize(u32 width, u32 height);
+
   //DRAW  
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
 

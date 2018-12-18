@@ -14,8 +14,6 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
-u32 rFrames = 0;
-
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
@@ -1000,6 +998,51 @@ u32 kgmVulkan::gcError()
 void  kgmVulkan::gcSet(u32 param, void* value) {}
 void  kgmVulkan::gcGet(u32 param, void* value) {}
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
+
+void kgmVulkan::gcResize(u32 width, u32 height)
+{
+  m_rect[2] = width;
+  m_rect[3] = height;
+
+  kgm_log() << "Vulkan: Viewport need update.\n";
+
+  VkResult result = m_vk.vkDeviceWaitIdle(m_device);
+
+  if (result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: device wait idle failed.\n";
+
+    printResult(result);
+
+    return;
+  }
+
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+
+  kgm_log() << "Vulkan: Command buffer deleted.\n";
+
+  //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
+  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+  kgm_log() << "Vulkan: Render pass destroyed.\n";
+
+  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  {
+    m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  }
+
+  kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
+
+  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
+
+  createSwapChain();
+  createRenderPass();
+  createImageViews();
+  createFramebuffers();
+  createCommandBuffers();
+}
+
 void  kgmVulkan::gcBegin() {}
 void  kgmVulkan::gcEnd() {}
 
@@ -1131,8 +1174,6 @@ void  kgmVulkan::gcRender()
   kgm_log() << "Vulkan: Queue present passed.\n";
 
   //m_swapChainImage = swapChainImage;
-
-  rFrames++;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -1156,40 +1197,6 @@ void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
 
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
-  if (rFrames > 1)
-  {
-    kgm_log() << "Vulkan: Viewport need update.\n";
-
-    VkResult result = m_vk.vkDeviceWaitIdle(m_device);
-
-    if (result != VkResult::VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: device wait idle failed.\n";
-
-      printResult(result);
-
-      return;
-    }
-
-    m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
-
-    kgm_log() << "Vulkan: Command buffer deleted.\n";
-
-    //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
-    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
-
-    kgm_log() << "Vulkan: Render pass destroyed.\n";
-
-    for (size_t i = 0; i < m_swapChainImages.length(); i++)
-    {
-      m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
-      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
-    }
-
-    kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
-
-    //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
-  }
 }
 
 //BLEND
@@ -1309,10 +1316,10 @@ void kgmVulkan::createSwapChain()
   kgm_log() << "Vulkan: using " << imageCount << " images for swap chain.\n";
 
   // Select a surface format
-  VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR }; //chooseSurfaceFormat(surfaceFormats);
+  VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_R8G8B8A8_SRGB, VK_COLORSPACE_SRGB_NONLINEAR_KHR }; //chooseSurfaceFormat(surfaceFormats);
 
   // Select swap chain size
-  VkExtent2D swapChainExtent;// = chooseSwapExtent(surfaceCapabilities);
+  VkExtent2D swapChainExtent; // = chooseSwapExtent(surfaceCapabilities);
 
   swapChainExtent.height = m_rect[3];
   swapChainExtent.width  = m_rect[2];
@@ -1401,6 +1408,287 @@ void kgmVulkan::createSwapChain()
 
   kgm_log() << "Vulcan: Acquired swap chain images.\n";
 }
+
+void kgmVulkan::createRenderPass()
+{
+  VkAttachmentDescription attachmentDescription;
+
+  ZeroObject(attachmentDescription);
+
+  attachmentDescription.format = m_swapChainFormat;
+  attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+  attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+  // Note: hardware will automatically transition attachment to the specified layout
+  // Note: index refers to attachment descriptions array
+  VkAttachmentReference colorAttachmentReference;
+
+  ZeroObject(colorAttachmentReference);
+
+  colorAttachmentReference.attachment = 0;
+  colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  // Note: this is a description of how the attachments of the render pass will be used in this sub pass
+  // e.g. if they will be read in shaders and/or drawn to
+  VkSubpassDescription subPassDescription = {};
+
+  ZeroObject(subPassDescription);
+
+  subPassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subPassDescription.colorAttachmentCount = 1;
+  subPassDescription.pColorAttachments = &colorAttachmentReference;
+
+  // Create the render pass
+  VkRenderPassCreateInfo createInfo;
+
+  ZeroObject(createInfo);
+
+  createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+  createInfo.attachmentCount = 1;
+  createInfo.pAttachments = &attachmentDescription;
+  createInfo.subpassCount = 1;
+  createInfo.pSubpasses = &subPassDescription;
+
+  VkResult result = m_vk.vkCreateRenderPass(m_device, &createInfo, nullptr, &m_renderPass);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create render pass.\n";
+
+    return;
+  }
+  else
+  {
+    kgm_log() << "Vulkan: Created render pass.\n";
+  }
+}
+
+void kgmVulkan::createImageViews()
+{
+  m_imageViews.alloc(m_swapChainImages.length());
+
+  // Create an image view for every image in the swap chain
+  for (u32 i = 0; i < m_swapChainImages.length(); i++)
+  {
+    VkImageViewCreateInfo createInfo;
+
+    ZeroObject(createInfo);
+
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    createInfo.image = m_swapChainImages[i];
+    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    createInfo.format = m_swapChainFormat;
+    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    createInfo.subresourceRange.baseMipLevel = 0;
+    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.baseArrayLayer = 0;
+    createInfo.subresourceRange.layerCount = 1;
+
+    VkResult result = m_vk.vkCreateImageView(m_device, &createInfo, nullptr, &m_imageViews[i]);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulak error: failed to create image view for swap chain image #" << i << ".\n";
+
+      return;
+    }
+  }
+
+  kgm_log() << "Vulkan: Created image views for swap chain images.\n";
+}
+
+void kgmVulkan::createFramebuffers()
+{
+  m_framebuffers.alloc(m_swapChainImages.length());
+
+  // Note: Framebuffer is basically a specific choice of attachments for a render pass
+  // That means all attachments must have the same dimensions, interesting restriction
+  for (u32 i = 0; i < m_swapChainImages.length(); i++)
+  {
+    VkFramebufferCreateInfo createInfo;
+
+    ZeroObject(createInfo);
+
+    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    createInfo.renderPass = m_renderPass;
+    createInfo.attachmentCount = 1;
+    createInfo.pAttachments = &m_imageViews[i];
+    createInfo.width = m_rect[2];
+    createInfo.height = m_rect[3];
+    createInfo.layers = 1;
+
+    VkResult result = m_vk.vkCreateFramebuffer(m_device, &createInfo, nullptr, &m_framebuffers[i]);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to create framebuffer for swap chain image view #" << i << ".\n";
+
+      return;
+    }
+  }
+
+  kgm_log() << "Vulkan: Created framebuffers for swap chain image views.\n";
+}
+
+void kgmVulkan::createGraphicsPipeline()
+{
+
+}
+
+void kgmVulkan::createCommandBuffers()
+{
+  // Allocate graphics command buffers
+  m_commandBuffers.alloc(m_swapChainImages.length());
+
+  VkCommandBufferAllocateInfo allocInfo;
+
+  ZeroObject(allocInfo);
+
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.commandPool = m_commandPool;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = (u32) m_swapChainImages.length();
+
+  VkResult result = m_vk.vkAllocateCommandBuffers(m_device, &allocInfo, m_commandBuffers.data());
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate graphics command buffers.\n";
+
+    return;
+  }
+  else
+  {
+    kgm_log() << "Vulkan: Allocated command buffers." << "\n";
+  }
+
+  // Prepare data for recording command buffers
+  VkCommandBufferBeginInfo beginInfo;
+
+  ZeroObject(beginInfo);
+
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+  VkImageSubresourceRange subResourceRange;
+
+  ZeroObject(subResourceRange);
+
+  subResourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  subResourceRange.baseMipLevel = 0;
+  subResourceRange.levelCount = 1;
+  subResourceRange.baseArrayLayer = 0;
+  subResourceRange.layerCount = 1;
+
+  VkClearValue clearColor =
+  {
+    { 0.1f, 0.1f, 0.1f, 1.0f } // R, G, B, A
+  };
+
+  for(u32 i = 0; i < m_swapChainImages.length(); ++i)
+  {
+    auto &commandBuffer = m_commandBuffers[i];
+    auto &image = m_swapChainImages[i];
+    auto &framebuffer = m_framebuffers[i];
+
+    if(m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VkResult::VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: failed to reset command buffer\n";
+
+      return;
+    }
+
+    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
+
+    ZeroObject(commandBufferInheritanceInfo);
+
+    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+    commandBufferInheritanceInfo.pNext = nullptr;
+    commandBufferInheritanceInfo.renderPass = m_renderPass;
+    commandBufferInheritanceInfo.subpass = 0;
+    commandBufferInheritanceInfo.framebuffer = framebuffer;
+    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
+    commandBufferInheritanceInfo.queryFlags = 0;
+    commandBufferInheritanceInfo.pipelineStatistics = 0;
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo;
+
+    ZeroObject(commandBufferBeginInfo);
+
+    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    commandBufferBeginInfo.pNext = nullptr;
+    commandBufferBeginInfo.flags = 0;
+    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
+
+    m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+
+    VkClearValue clearValue;
+
+    ZeroObject(clearValue);
+
+    clearValue.color.float32[0] = 1.0f;
+    clearValue.color.float32[1] = 0.0f;
+    clearValue.color.float32[2] = 0.0f;
+    clearValue.color.float32[3] = 1.0f;
+
+    VkRenderPassBeginInfo renderPassBeginInfo;
+
+    ZeroObject(renderPassBeginInfo);
+
+    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassBeginInfo.pNext = nullptr;
+    renderPassBeginInfo.renderPass = m_renderPass;
+    renderPassBeginInfo.framebuffer = m_framebuffers[i];
+    renderPassBeginInfo.renderArea = VkRect2D {
+      VkOffset2D  {0, 0},
+      VkExtent2D  {
+        (u32) m_rect[2], (u32) m_rect[3]
+        //surfaceCapabilities.currentExtent.width,
+        //surfaceCapabilities.currentExtent.height
+      }
+    };
+    renderPassBeginInfo.clearValueCount = 1;
+    renderPassBeginInfo.pClearValues = &clearValue;
+
+    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+    m_vk.vkCmdEndRenderPass(commandBuffer);
+
+    VkImageMemoryBarrier imageMemoryBarrier;
+
+    ZeroObject(imageMemoryBarrier);
+
+    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier.pNext = nullptr;
+    imageMemoryBarrier.srcAccessMask = 0;
+    imageMemoryBarrier.dstAccessMask =
+        VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+        VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    imageMemoryBarrier.srcQueueFamilyIndex = 0;
+    imageMemoryBarrier.dstQueueFamilyIndex = 0;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange = {
+      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
+    };
+
+    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
+                              1, &imageMemoryBarrier);
+
+    m_vk.vkEndCommandBuffer(commandBuffer);
+  }
+}
+
 
 void kgmVulkan::printResult(VkResult result)
 {

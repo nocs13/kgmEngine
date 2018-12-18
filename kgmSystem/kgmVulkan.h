@@ -133,6 +133,8 @@ public:
   void  gcRender();
   void  gcSetTarget(void*  rt);
 
+  void gcResize(u32 width, u32 height);
+
   // DRAWING
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
 
@@ -192,6 +194,11 @@ private:
 
   void clean(u32);
   void createSwapChain();
+  void createRenderPass();
+  void createImageViews();
+  void createFramebuffers();
+  void createGraphicsPipeline();
+  void createCommandBuffers();
 };
 
 #endif

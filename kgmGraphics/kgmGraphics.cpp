@@ -385,6 +385,8 @@ void kgmGraphics::setEditor(bool e)
 
 void kgmGraphics::resize(float width, float height)
 {
+  gc->gcResize(width, height);
+
   gc->gcSetViewport(0, 0, width, height, .1, 1000.0);
 
   m_camera->set(PI / 6, width / height, .1, 1000.0,

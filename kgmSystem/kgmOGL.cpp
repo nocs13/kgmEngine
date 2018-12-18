@@ -574,6 +574,11 @@ void kgmOGL::gcRender()
 #endif
 }
 
+void kgmOGL::gcResize(u32 width, u32 height)
+{
+
+}
+
 void kgmOGL::gcSetMatrix(u32 mode, float* mtx)
 {
 #ifdef GL_PROJECTION
