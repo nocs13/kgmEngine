@@ -1006,6 +1006,13 @@ void kgmVulkan::gcResize(u32 width, u32 height)
 
   kgm_log() << "Vulkan: Viewport need update.\n";
 
+  if(!m_instance || !m_device || !m_surface)
+  {
+    kgm_log() << "Vulkan error: Device is not valid.\n";
+
+    return;
+  }
+
   VkResult result = m_vk.vkDeviceWaitIdle(m_device);
 
   if (result != VkResult::VK_SUCCESS)
@@ -1031,6 +1038,8 @@ void kgmVulkan::gcResize(u32 width, u32 height)
     m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
     m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
   }
+
+  m_swapChainImages.clear();
 
   kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
@@ -1359,9 +1368,12 @@ void kgmVulkan::createSwapChain()
   createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
-  createInfo.oldSwapchain = m_swapChain;
 
   VkSwapchainKHR swapChain = m_swapChain;
+
+  createInfo.oldSwapchain = swapChain;
+
+  m_swapChain = nullptr;
 
   m_vk.vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain);
 
@@ -1377,6 +1389,8 @@ void kgmVulkan::createSwapChain()
   if (swapChain != VK_NULL_HANDLE)
   {
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+
+    swapChain = m_swapChain;
   }
 
   m_swapChainFormat = surfaceFormat.format;
@@ -1384,7 +1398,7 @@ void kgmVulkan::createSwapChain()
   // Store the images used by the swap chain
   // Note: these are the images that swap chain image indices refer to
   // Note: actual number of images may differ from requested number, since it's a lower bound
-  u32 actualImageCount = 0;
+  uint32_t actualImageCount = 0;
 
   result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
 
@@ -1470,6 +1484,8 @@ void kgmVulkan::createRenderPass()
 
 void kgmVulkan::createImageViews()
 {
+  u32 swi = m_swapChainImages.length();
+
   m_imageViews.alloc(m_swapChainImages.length());
 
   // Create an image view for every image in the swap chain
