@@ -35,17 +35,18 @@ class kgmVulkan: public kgmIGC
   {
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 
-    VkResult (VKAPI_PTR *vkCreateInstance)(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
-    void     (VKAPI_PTR *vkDestroyInstance)(VkInstance instance, const VkAllocationCallbacks* pAllocator);
-    VkResult (VKAPI_PTR *vkEnumerateInstanceExtensionProperties)(const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
-    VkResult (VKAPI_PTR *vkEnumeratePhysicalDevices)(VkInstance instance, uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
-    VkResult (VKAPI_PTR *vkEnumerateDeviceExtensionProperties)(VkPhysicalDevice physicalDevice, const char* pLayerName, uint32_t* pPropertyCount, VkExtensionProperties* pProperties);
+    PFN_vkCreateInstance vkCreateInstance;
+    PFN_vkDestroyInstance vkDestroyInstance;
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+    PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices ;
+    PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR     vkGetPhysicalDeviceSurfaceSupportKHR;
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR     vkGetPhysicalDeviceSurfaceFormatsKHR;
     PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
     PFN_vkCreateDevice vkCreateDevice;
+    PFN_vkDestroyDevice vkDestroyDevice;
     PFN_vkGetDeviceQueue vkGetDeviceQueue;
     PFN_vkQueueWaitIdle vkQueueWaitIdle;
     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
@@ -55,6 +56,7 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateSemaphore vkCreateSemaphore;
     PFN_vkCreateCommandPool vkCreateCommandPool;
     PFN_vkResetCommandPool  vkResetCommandPool;
+    PFN_vkDestroyCommandPool vkDestroyCommandPool;
     PFN_vkCreateRenderPass vkCreateRenderPass;
     PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
     PFN_vkCmdEndRenderPass vkCmdEndRenderPass;

@@ -938,6 +938,53 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
 kgmVulkan::~kgmVulkan()
 {
+  if (m_device)
+  {
+    m_vk.vkDeviceWaitIdle(m_device);
+
+    if (m_commandPool)
+    {
+      m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+
+      m_commandBuffers.clear();
+
+      kgm_log() << "Vulkan: Command buffer destroyed.\n";
+
+      m_vk.vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+    }
+
+
+    //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
+    if (m_renderPass)
+    {
+      m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+      kgm_log() << "Vulkan: Render pass destroyed.\n";
+    }
+
+    for (size_t i = 0; i < m_swapChainImages.length(); i++)
+    {
+      m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+    }
+
+    m_swapChainImages.clear();
+    m_imageViews.clear();
+    m_framebuffers.clear();
+
+
+    if (m_swapChain != VK_NULL_HANDLE)
+    {
+      m_vk.vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+
+      kgm_log() << "Vulkan: SwapChain destroyed.\n";
+    }
+
+    m_vk.vkDestroyDevice(m_device, nullptr);
+
+    kgm_log() << "Vulkan: Device destroyed.\n";
+  }
+
   if (m_instance)
     m_vk.vkDestroyInstance(m_instance, null);
 
@@ -977,6 +1024,7 @@ int kgmVulkan::vkInit()
   m_vk.vkGetPhysicalDeviceSurfaceSupportKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceSupportKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceSupportKHR");
   m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR = (typeof m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfacePresentModesKHR");
   m_vk.vkCreateDevice = (typeof m_vk.vkCreateDevice) vk_lib.get((char*) "vkCreateDevice");
+  m_vk.vkDestroyDevice = (typeof m_vk.vkDestroyDevice) vk_lib.get((char*) "vkDestroyDevice");
   m_vk.vkGetDeviceQueue = (typeof m_vk.vkGetDeviceQueue) vk_lib.get((char*) "vkGetDeviceQueue");
   m_vk.vkQueueWaitIdle = (typeof m_vk.vkQueueWaitIdle) vk_lib.get((char*) "vkQueueWaitIdle");
   m_vk.vkGetPhysicalDeviceMemoryProperties = (typeof m_vk.vkGetPhysicalDeviceMemoryProperties) vk_lib.get((char*) "vkGetPhysicalDeviceMemoryProperties");
@@ -986,6 +1034,7 @@ int kgmVulkan::vkInit()
   m_vk.vkCreateSemaphore = (typeof m_vk.vkCreateSemaphore) vk_lib.get((char*) "vkCreateSemaphore");
   m_vk.vkCreateCommandPool = (typeof m_vk.vkCreateCommandPool) vk_lib.get((char*) "vkCreateCommandPool");
   m_vk.vkResetCommandPool = (typeof m_vk.vkResetCommandPool) vk_lib.get((char*) "vkResetCommandPool");
+  m_vk.vkDestroyCommandPool = (typeof m_vk.vkDestroyCommandPool) vk_lib.get((char*) "vkDestroyCommandPool");
   m_vk.vkCreateRenderPass = (typeof m_vk.vkCreateRenderPass) vk_lib.get((char*) "vkCreateRenderPass");
   m_vk.vkCmdBeginRenderPass = (typeof m_vk.vkCmdBeginRenderPass) vk_lib.get((char*) "vkCmdBeginRenderPass");
   m_vk.vkCmdEndRenderPass = (typeof m_vk.vkCmdEndRenderPass) vk_lib.get((char*) "vkCmdEndRenderPass");
@@ -1038,8 +1087,6 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
-
-  return;
   m_rect[2] = width;
   m_rect[3] = height;
 
@@ -1364,7 +1411,7 @@ void kgmVulkan::createSwapChain()
   kgm_log() << "Vulkan: using " << imageCount << " images for swap chain.\n";
 
   // Select a surface format
-  VkSurfaceFormatKHR surfaceFormat = { surfaceFormats[0].format, surfaceFormats[0].colorSpace }; //chooseSurfaceFormat(surfaceFormats);
+  VkSurfaceFormatKHR surfaceFormat = { surfaceFormats[0].format, surfaceFormats[0].colorSpace };
 
   // Select swap chain size
   VkExtent2D swapChainExtent; // = chooseSwapExtent(surfaceCapabilities);
