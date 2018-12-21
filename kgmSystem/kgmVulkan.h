@@ -195,6 +195,8 @@ private:
   void printResult(VkResult result);
 
   void clean(u32);
+
+  bool initInstance();
   void createSwapChain();
   void createRenderPass();
   void createImageViews();

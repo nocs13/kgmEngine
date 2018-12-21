@@ -1333,6 +1333,49 @@ void kgmVulkan::clean(u32 options)
 
 }
 
+bool kgmVulkan::initInstance()
+{
+  if(m_instance != nullptr)
+  {
+    kgm_log() << "Vulkan error: Instance already initialized.\n";
+
+    return false;
+  }
+
+  VkApplicationInfo appInfo = {};
+  appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+  appInfo.pNext = nullptr;
+  appInfo.pApplicationName = "";
+  appInfo.applicationVersion = 1;
+  appInfo.pEngineName = "";
+  appInfo.engineVersion = 1;
+  appInfo.apiVersion = VK_API_VERSION_1_0;
+
+  VkInstanceCreateInfo instanceInfo = {};
+  instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+  instanceInfo.pNext = NULL;
+  instanceInfo.flags = 0;
+  instanceInfo.pApplicationInfo = &appInfo;
+  instanceInfo.enabledExtensionCount = 0;
+  instanceInfo.ppEnabledExtensionNames = NULL;
+  instanceInfo.enabledLayerCount = 0;
+  instanceInfo.ppEnabledLayerNames = NULL;
+
+  VkResult result;
+
+  result = m_vk.vkCreateInstance(&instanceInfo, NULL, &m_instance);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Unable to create instance.\n";
+    printResult(result);
+
+    return false;
+  }
+
+  return true;
+}
+
 void kgmVulkan::createSwapChain()
 {
   VkResult result;
@@ -1883,7 +1926,7 @@ void kgmVulkan::printResult(VkResult result)
     kgm_log() << "Vulkan result: Error invalid shaders.\n";
   break;
   default:
-    kgm_log() << "Vulkan result: Unknown.\n";
+    kgm_log() << "Vulkan result: Error unknown.\n";
   }
 }
 
