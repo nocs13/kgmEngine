@@ -1,6 +1,7 @@
 #include "kgmVulkan.h"
 #include "../kgmBase/kgmLog.h"
 #include "kgmSystem.h"
+#include "kgmThread.h"
 
 #ifdef VULKAN
 
