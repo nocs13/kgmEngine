@@ -212,16 +212,16 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   bool isswapchain = false;
 
-  for (const auto exst: deviceExtensionProperties)
+  for (const auto e: deviceExtensionProperties)
   {
-    if (strcmp(exst.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+    if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
     {
       isswapchain = true;
 
       break;
     }
 
-    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << exst.extensionName << "\n";
+    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
   }
 
   if (!isswapchain)
@@ -287,6 +287,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     kgm_log() << "Vulkan error: failed to get surface formats.\n";
 
     return;
+  }
+  for (auto &sf: surfaceFormats)
+  {
+    kgm_log() << "Vulkan: Surface formats > colorSpace " << sf.colorSpace << ", format " << sf.format << ".\n";
   }
 
   kgm_log() << "Vulkan: Got surface formats.\n";
@@ -438,9 +442,42 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_device = device;
 
-  u32 ddim[2];
+  wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
 
-  kgmSystem::getDesktopDimension(ddim[0], ddim[1]);
+  // Find supported present modes
+  u32 presentModeCount;
+
+  vk_res = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+
+  if (vk_res != VK_SUCCESS || presentModeCount == 0)
+  {
+    kgm_log() << "Vulkan error: Failed to get number of supported presentation modes.\n";
+
+    return;
+  }
+
+  VkPresentModeKHR presentModes[presentModeCount];
+
+  vk_res = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes);
+
+  if (vk_res != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get supported presentation modes.\n";
+
+    return;
+  }
+
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  for (const auto &i: presentModes)
+  {
+    if (i == VK_PRESENT_MODE_MAILBOX_KHR)
+    {
+      presentMode == i;
+
+      break;
+    }
+  }
 
   VkSwapchainKHR swapChain;
 
@@ -455,7 +492,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   swapChainCreateInfo.minImageCount = 2;
   swapChainCreateInfo.imageFormat = surfaceFormats[0].format;
   swapChainCreateInfo.imageColorSpace = surfaceFormats[0].colorSpace;
-  swapChainCreateInfo.imageExtent = VkExtent2D{ddim[0], ddim[1]};
+  swapChainCreateInfo.imageExtent = VkExtent2D{(u32) m_rect[2], (u32) m_rect[3]};
   swapChainCreateInfo.imageArrayLayers = 1;
   swapChainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapChainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
@@ -463,7 +500,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   swapChainCreateInfo.pQueueFamilyIndices = nullptr;
   swapChainCreateInfo.preTransform = VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
   swapChainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-  swapChainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
+  swapChainCreateInfo.presentMode = presentMode;
   swapChainCreateInfo.clipped = VK_FALSE;
   swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
@@ -1001,6 +1038,8 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
+
+  return;
   m_rect[2] = width;
   m_rect[3] = height;
 
@@ -1182,7 +1221,7 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Queue present passed.\n";
 
-  //m_swapChainImage = swapChainImage;
+  m_swapChainImage = swapChainImage;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -1325,13 +1364,13 @@ void kgmVulkan::createSwapChain()
   kgm_log() << "Vulkan: using " << imageCount << " images for swap chain.\n";
 
   // Select a surface format
-  VkSurfaceFormatKHR surfaceFormat = { VK_FORMAT_R8G8B8A8_SRGB, VK_COLORSPACE_SRGB_NONLINEAR_KHR }; //chooseSurfaceFormat(surfaceFormats);
+  VkSurfaceFormatKHR surfaceFormat = { surfaceFormats[0].format, surfaceFormats[0].colorSpace }; //chooseSurfaceFormat(surfaceFormats);
 
   // Select swap chain size
   VkExtent2D swapChainExtent; // = chooseSwapExtent(surfaceCapabilities);
 
-  swapChainExtent.height = m_rect[3];
   swapChainExtent.width  = m_rect[2];
+  swapChainExtent.height = m_rect[3];
 
   // Determine transformation to use (preferring no transform)
   VkSurfaceTransformFlagBitsKHR surfaceTransform;
@@ -1346,7 +1385,17 @@ void kgmVulkan::createSwapChain()
   }
 
   // Choose presentation mode (preferring MAILBOX ~= triple buffering)
-  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR; //choosePresentMode(presentModes);
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  for (const auto &i: presentModes)
+  {
+    if (i == VK_PRESENT_MODE_MAILBOX_KHR)
+    {
+      presentMode == i;
+
+      break;
+    }
+  }
 
   // Finally, create the swap chain
   VkSwapchainCreateInfoKHR createInfo;

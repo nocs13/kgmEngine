@@ -114,7 +114,7 @@ class kgmVulkan: public kgmIGC
 
   u32 m_swapChainImage;
 
-  u32 m_rect[4];
+  s32 m_rect[4];
 
 public:
   kgmVulkan(kgmWindow* wnd);
