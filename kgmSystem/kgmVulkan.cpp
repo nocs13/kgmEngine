@@ -1560,13 +1560,20 @@ bool kgmVulkan::initSurface()
     createInfo.display = m_window->m_display;
     createInfo.surface = m_window->m_window;
     result = m_vk.vkCreateWaylandSurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
-#else
+#elif defined(XCB)
     VkXcbSurfaceCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.connection = m_instance;
     createInfo.window = m_window->m_window;
-    res = vkCreateXcbSurfaceKHR(m_instance, &createInfo, NULL, &info.surface);
+    result = vkCreateXcbSurfaceKHR(m_instance, &createInfo, NULL, &info.surface);
+#else
+    VkXlibSurfaceCreateInfoKHR createInfo;
+    createInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+    createInfo.window = m_window->m_wnd;
+    createInfo.dpy    = m_window->m_dpy;
+
+    result = m_vk.vkCreateXlibSurfaceKHR(m_instance, &createInfo, nullptr, &m_surface);
 #endif
 
   if(result != VK_SUCCESS)
