@@ -1376,6 +1376,51 @@ bool kgmVulkan::initInstance()
   return true;
 }
 
+bool kgmVulkan::listDevices()
+{
+  if (!m_instance)
+  {
+    kgm_log() << "Vulkan error: Not valid instance.\n";
+
+    return false;
+  }
+
+  u32 count = 1;
+
+  VkResult result = m_vk.vkEnumeratePhysicalDevices(m_instance, &count, nullptr);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot get devices count.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  if (count < 1)
+  {
+    kgm_log() << "Vulkan error: No valid devices.\n";
+
+    return false;
+  }
+
+  m_physicalDevices.alloc(count);
+
+  result = m_vk.vkEnumeratePhysicalDevices(m_instance, &count, m_physicalDevices.data());
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot list devices.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  return true;
+ }
+
 void kgmVulkan::createSwapChain()
 {
   VkResult result;

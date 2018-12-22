@@ -107,6 +107,7 @@ class kgmVulkan: public kgmIGC
   VkFence          m_fence;
   VkQueue          m_queue;
 
+  kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage> m_swapChainImages;
   kgmArray<VkFramebuffer> m_framebuffers;
   kgmArray<VkImageView> m_imageViews;
@@ -197,6 +198,7 @@ private:
   void clean(u32);
 
   bool initInstance();
+  bool listDevices();
   void createSwapChain();
   void createRenderPass();
   void createImageViews();
