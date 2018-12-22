@@ -22,6 +22,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (wnd == nullptr)
     return;
 
+  m_window = wnd;
+
   if (g_vulkans < 1)
   {
     if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
@@ -1470,6 +1472,8 @@ bool kgmVulkan::initDevice()
       {
         found = true;
 
+        m_graphicsQueueFamilyIndex = i;
+
         break;
       }
     }
@@ -1525,6 +1529,105 @@ bool kgmVulkan::initDevice()
 
   m_physicalDevice = physicalDevice;
   m_device         = device;
+
+  return true;
+}
+
+bool kgmVulkan::initSurface()
+{
+  VkResult result = VK_SUCCESS;
+
+#ifdef WIN32
+    VkWin32SurfaceCreateInfoKHR createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext = null;
+    createInfo.hinstance = GetModuleHandle(nullptr);;
+    createInfo.hwnd = m_window->m_wnd;
+    result = m_vk.vkCreateWin32SurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
+#elif defined(ANDROID)
+    GET_INSTANCE_PROC_ADDR(info.inst, CreateAndroidSurfaceKHR);
+
+    VkAndroidSurfaceCreateInfoKHR createInfo;
+    createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+    createInfo.window = AndroidGetApplicationWindow();
+    res = info.fpCreateAndroidSurfaceKHR(info.inst, &createInfo, nullptr, &info.surface);
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    VkWaylandSurfaceCreateInfoKHR createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext = NULL;
+    createInfo.display = m_window->m_display;
+    createInfo.surface = m_window->m_window;
+    result = m_vk.vkCreateWaylandSurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
+#else
+    VkXcbSurfaceCreateInfoKHR createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext = NULL;
+    createInfo.connection = m_instance;
+    createInfo.window = m_window->m_window;
+    res = vkCreateXcbSurfaceKHR(m_instance, &createInfo, NULL, &info.surface);
+#endif
+
+  if(result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create surtface.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  return true;
+}
+
+bool kgmVulkan::initCommands()
+{
+  VkCommandPoolCreateInfo infoPool = { };
+
+  if (!m_instance || !m_device)
+  {
+    kgm_log() << "Vulkan error: Not prepared to init commands.\n";
+
+    return false;
+  }
+
+  infoPool.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  infoPool.pNext = null;
+  infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
+  infoPool.flags = 0;
+
+  VkResult result = m_vk.vkCreateCommandPool(m_device, &infoPool, nullptr, &m_commandPool);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create command pool.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  VkCommandBufferAllocateInfo infoCommand = { };
+
+  infoCommand.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  infoCommand.pNext = null;
+  infoCommand.commandPool = m_commandPool;
+  infoCommand.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  infoCommand.commandBufferCount = 1;
+
+  m_commandBuffers.alloc(1);
+
+  result = m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, m_commandBuffers.data());
+
+  if(result != VK_SUCCESS);
+  {
+    kgm_log() << "Vulkan error: Cannot allocate command buffer.\n";
+
+    printResult(result);
+
+    return false;
+  }
 
   return true;
 }

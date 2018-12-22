@@ -94,6 +94,8 @@ class kgmVulkan: public kgmIGC
   static vk     m_vk;
   static u32    g_vulkans;
 
+  kgmWindow* m_window = null;
+
   VkInstance   m_instance = 0;
   VkSurfaceKHR m_surface = 0;
   VkDevice     m_device = 0;
@@ -116,6 +118,7 @@ class kgmVulkan: public kgmIGC
   VkFormat m_swapChainFormat;
 
   u32 m_swapChainImage;
+  u32 m_graphicsQueueFamilyIndex = -1;
 
   s32 m_rect[4];
 
@@ -200,6 +203,8 @@ private:
   bool initInstance();
   bool listDevices();
   bool initDevice();
+  bool initSurface();
+  bool initCommands();
 
   void createSwapChain();
   void createRenderPass();
