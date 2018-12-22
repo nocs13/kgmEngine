@@ -1419,7 +1419,115 @@ bool kgmVulkan::listDevices()
   }
 
   return true;
- }
+}
+
+bool kgmVulkan::initDevice()
+{
+  VkResult result = VK_SUCCESS;
+
+  if (!m_instance || m_physicalDevices.length() < 1)
+  {
+    kgm_log() << "Vulkan error: Not prepared to create device.\n";
+
+    return false;
+  }
+
+  VkPhysicalDevice physicalDevice = NULL;
+
+  kgmArray<VkQueueFamilyProperties> familyProperties;
+
+  for (u32 i = 0; i < m_physicalDevices.length(); i++)
+  {
+    auto& device = m_physicalDevices[i];
+
+    u32 count = 0;
+
+    m_vk.vkGetPhysicalDeviceQueueFamilyProperties(device, &count, null);
+
+    if(count < 0)
+    {
+      kgm_log() << "kgmVulkan error: Unable get family properties count.\n";
+
+      continue;
+    }
+
+    familyProperties.alloc(count);
+
+    m_vk.vkGetPhysicalDeviceQueueFamilyProperties(device, &count, familyProperties.data());
+
+    if(count < 0)
+    {
+      kgm_log() << "kgmVulkan error: Unable get family properties.\n";
+
+      continue;
+    }
+
+    bool found = false;
+
+    for (u32 i = 0; i < count; i++)
+    {
+      if (familyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+      {
+        found = true;
+
+        break;
+      }
+    }
+
+    if (found)
+    {
+      physicalDevice = device;
+
+      break;
+    }
+  }
+
+  if (!physicalDevice)
+  {
+    kgm_log() << "kgmVulkan error: Physical devices are not valid.\n";
+
+    return false;
+  }
+
+  float priorities[1] = {0.0};
+
+  VkDeviceQueueCreateInfo infoQueue = {};
+
+  infoQueue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+  infoQueue.pNext = NULL;
+  infoQueue.queueCount = 1;
+  infoQueue.pQueuePriorities = priorities;
+
+  VkDeviceCreateInfo infoDevice = {};
+
+  infoDevice.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+  infoDevice.pNext = NULL;
+  infoDevice.queueCreateInfoCount = 1;
+  infoDevice.pQueueCreateInfos = &infoQueue;
+  infoDevice.enabledExtensionCount = 0;
+  infoDevice.ppEnabledExtensionNames = NULL;
+  infoDevice.enabledLayerCount = 0;
+  infoDevice.ppEnabledLayerNames = NULL;
+  infoDevice.pEnabledFeatures = NULL;
+
+  VkDevice device = null;
+
+  result = m_vk.vkCreateDevice(physicalDevice, &infoDevice, nullptr, &device);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: Cannot create device.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  m_physicalDevice = physicalDevice;
+  m_device         = device;
+
+  return true;
+}
 
 void kgmVulkan::createSwapChain()
 {

@@ -199,6 +199,8 @@ private:
 
   bool initInstance();
   bool listDevices();
+  bool initDevice();
+
   void createSwapChain();
   void createRenderPass();
   void createImageViews();
