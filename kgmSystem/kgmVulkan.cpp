@@ -483,11 +483,11 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     }
   }
 
-  VkSwapchainKHR swapChain;
+  VkSwapchainKHR swapChain = null;
 
   VkSwapchainCreateInfoKHR swapChainCreateInfo;
 
-  memset(&swapChainCreateInfo, 0, sizeof(VkSwapchainCreateInfoKHR));
+  ZeroObject(swapChainCreateInfo);
 
   swapChainCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapChainCreateInfo.pNext = nullptr;
