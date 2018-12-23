@@ -118,7 +118,9 @@ class kgmVulkan: public kgmIGC
   VkFormat m_swapChainFormat;
 
   u32 m_swapChainImage;
+  u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
+  u32 m_presentQueueFamilyIndex  = -1;
 
   s32 m_rect[4];
 
@@ -205,6 +207,7 @@ private:
   bool initDevice();
   bool initSurface();
   bool initCommands();
+  bool initSwapchains();
 
   void createSwapChain();
   void createRenderPass();
