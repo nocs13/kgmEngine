@@ -1919,9 +1919,6 @@ bool kgmVulkan::initSwapchains()
     swapChain = m_swapChain;
   }
 
-  // Store the images used by the swap chain
-  // Note: these are the images that swap chain image indices refer to
-  // Note: actual number of images may differ from requested number, since it's a lower bound
   u32 actualImageCount = 0;
 
   result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
@@ -1974,6 +1971,11 @@ bool kgmVulkan::initSwapchains()
     }
   }
 
+  return true;
+}
+
+bool kgmVulkan::initDepthBuffer()
+{
   return true;
 }
 

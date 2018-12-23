@@ -208,6 +208,7 @@ private:
   bool initSurface();
   bool initCommands();
   bool initSwapchains();
+  bool initDepthBuffer();
 
   void createSwapChain();
   void createRenderPass();
