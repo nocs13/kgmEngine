@@ -330,6 +330,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   for (u32 i = 0; i < queueFamilyCount; i++)
   {
     VkBool32 presentSupport = false;
+
     m_vk.vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
 
     if (queueFamilies[i].queueCount > 0
@@ -1585,6 +1586,88 @@ bool kgmVulkan::initSurface()
     return false;
   }
 
+  u32 queueFamilyCount = 0;
+
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, nullptr);
+
+  if (queueFamilyCount < 1)
+  {
+    kgm_log()
+        << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no count\n";
+
+    return false;
+  }
+
+  VkQueueFamilyProperties queueFamilies[queueFamilyCount];
+
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilies);
+
+  if (queueFamilyCount < 1)
+  {
+    kgm_log() << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no families\n";
+
+    return false;
+  }
+
+  bool hasGraphicsQueueFamily = false;
+  bool hasPresentQueueFamily = false;
+
+  u32 graphicsQueueFamily = -1, presentQueueFamily = -1;
+
+  for (u32 i = 0; i < queueFamilyCount; i++)
+  {
+    VkBool32 presentSupport = false;
+
+    m_vk.vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, i, m_surface, &presentSupport);
+
+    if (queueFamilies[i].queueCount > 0
+        && queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+    {
+      graphicsQueueFamily = i;
+      hasGraphicsQueueFamily = true;
+
+      if (presentSupport)
+      {
+        presentQueueFamily = i;
+        hasPresentQueueFamily = true;
+        break;
+      }
+    }
+
+    if (!hasPresentQueueFamily && presentSupport)
+    {
+      presentQueueFamily = i;
+      hasPresentQueueFamily = true;
+    }
+  }
+
+  if (hasGraphicsQueueFamily)
+  {
+    kgm_log() << "Vulkan: queue family #" << graphicsQueueFamily
+        << " supports graphics.\n";
+
+    if (hasPresentQueueFamily)
+    {
+      kgm_log() << "Vulkan queue family #" << presentQueueFamily
+          << " supports presentation.\n";
+    } else
+    {
+      kgm_log()
+          << "Vulkan error: could not find a valid queue family with present support.\n";
+
+      return false;
+    }
+  } else
+  {
+    kgm_log()
+        << "Vulkan error: could not find a valid queue family with graphics support.\n";
+
+    return false;
+  }
+
+  m_graphicsQueueFamilyIndex = graphicsQueueFamily;
+  m_presentQueueFamilyIndex  = presentQueueFamily;
+
   return true;
 }
 
@@ -1636,6 +1719,263 @@ bool kgmVulkan::initCommands()
     return false;
   }
 
+  return true;
+}
+
+bool kgmVulkan::initSwapchains()
+{
+  VkResult result;
+
+  VkSurfaceCapabilitiesKHR surfaceCapabilities;
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: failed to get surface capabilities.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  u32 surfaceFormatsCount = 0;
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, nullptr);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
+
+  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, surfaceFormats);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get surface formats.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  if(surfaceFormatsCount < 1)
+  {
+    kgm_log() << "Vulkan error: Failed to get valid surface formats.\n";
+
+    return false;
+  }
+
+  if (surfaceFormatsCount == 1 && surfaceFormats[0].format == VK_FORMAT_UNDEFINED)
+  {
+    m_swapChainFormat = VK_FORMAT_B8G8R8A8_UNORM;
+  }
+  else
+  {
+    m_swapChainFormat = surfaceFormats[0].format;
+  }
+
+  u32 presentModeCount;
+
+  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+
+  if (result != VK_SUCCESS || presentModeCount == 0)
+  {
+    kgm_log() << "Vulkan error: Failed to get number of supported presentation modes.\n";
+
+    return false;
+  }
+
+  VkPresentModeKHR presentModes[presentModeCount];
+
+  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to get supported presentation modes.\n";
+
+    return false;
+  }
+
+  VkExtent2D swapChainExtent;
+
+  if (surfaceCapabilities.currentExtent.width == 0xFFFFFFFF)
+  {
+    swapChainExtent.width  = m_rect[2];
+    swapChainExtent.height = m_rect[3];
+
+    if (swapChainExtent.width < surfaceCapabilities.minImageExtent.width)
+    {
+      swapChainExtent.width = surfaceCapabilities.minImageExtent.width;
+    }
+    else if (swapChainExtent.width > surfaceCapabilities.maxImageExtent.width)
+    {
+      swapChainExtent.width = surfaceCapabilities.maxImageExtent.width;
+    }
+
+    if (swapChainExtent.height < surfaceCapabilities.minImageExtent.height)
+    {
+      swapChainExtent.height = surfaceCapabilities.minImageExtent.height;
+    }
+    else if (swapChainExtent.height > surfaceCapabilities.maxImageExtent.height)
+    {
+      swapChainExtent.height = surfaceCapabilities.maxImageExtent.height;
+    }
+  }
+  else
+  {
+    swapChainExtent = surfaceCapabilities.currentExtent;
+  }
+
+  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  u32 swapChainImagesCount = surfaceCapabilities.minImageCount;
+
+  VkSurfaceTransformFlagBitsKHR surfaceTransform;
+
+  if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+  {
+    surfaceTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  }
+  else
+  {
+    surfaceTransform = surfaceCapabilities.currentTransform;
+  }
+
+  VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+  VkCompositeAlphaFlagBitsKHR compositeAlphaFlags[4] =
+  { VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+      VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
+      VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
+      VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+  };
+
+  for (uint32_t i = 0; i < sizeof(compositeAlphaFlags); i++)
+  {
+    if (surfaceCapabilities.supportedCompositeAlpha & compositeAlphaFlags[i])
+    {
+      compositeAlpha = compositeAlphaFlags[i];
+
+      break;
+    }
+  }
+
+  VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+
+  swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  swapchainCreateInfo.pNext = NULL;
+  swapchainCreateInfo.surface = m_surface;
+  swapchainCreateInfo.minImageCount = swapChainImagesCount;
+  swapchainCreateInfo.imageFormat = m_swapChainFormat;
+  swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
+  swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
+  swapchainCreateInfo.preTransform = surfaceTransform;
+  swapchainCreateInfo.compositeAlpha = compositeAlpha;
+  swapchainCreateInfo.imageArrayLayers = 1;
+  swapchainCreateInfo.presentMode = presentMode;
+  swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
+  swapchainCreateInfo.clipped = true;
+  swapchainCreateInfo.imageColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+  swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  swapchainCreateInfo.queueFamilyIndexCount = 0;
+  swapchainCreateInfo.pQueueFamilyIndices = NULL;
+
+  u32 queueFamilyIndices[2] = {m_graphicsQueueFamilyIndex, m_presentQueueFamilyIndex};
+
+  if (m_graphicsQueueFamilyIndex != m_presentQueueFamilyIndex)
+  {
+    swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+    swapchainCreateInfo.queueFamilyIndexCount = 2;
+    swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
+  }
+
+  VkSwapchainKHR swapChain = m_swapChain;
+
+  swapchainCreateInfo.oldSwapchain = swapChain;
+
+  m_swapChain = nullptr;
+
+  m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create swap chain.\n";
+
+    return false;
+  }
+
+  if (swapChain != VK_NULL_HANDLE)
+  {
+    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+
+    swapChain = m_swapChain;
+  }
+
+  u32 actualImageCount = 0;
+
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
+
+  if (result != VK_SUCCESS || actualImageCount == 0)
+  {
+    kgm_log() << "Vulkan: failed to acquire number of swap chain images.\n";
+
+    return false;
+  }
+
+  m_swapChainImages.alloc(actualImageCount);
+
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, m_swapChainImages.data());
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to acquire swap chain images.\n";
+
+    return false;
+  }
+
+  for (u32 i = 0; i < actualImageCount; i++)
+  {
+    VkImageViewCreateInfo createInfo = { };
+
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    createInfo.pNext = NULL;
+    createInfo.flags = 0;
+    createInfo.image = m_swapChainImages[i];
+    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    createInfo.format = m_swapChainFormat;
+    createInfo.components.r = VK_COMPONENT_SWIZZLE_R;
+    createInfo.components.g = VK_COMPONENT_SWIZZLE_G;
+    createInfo.components.b = VK_COMPONENT_SWIZZLE_B;
+    createInfo.components.a = VK_COMPONENT_SWIZZLE_A;
+    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    createInfo.subresourceRange.baseMipLevel = 0;
+    createInfo.subresourceRange.levelCount = 1;
+    createInfo.subresourceRange.baseArrayLayer = 0;
+    createInfo.subresourceRange.layerCount = 1;
+
+    VkResult result = m_vk.vkCreateImageView(m_device, &createInfo, nullptr, &m_imageViews[i]);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulak error: failed to create image view for swap chain image #" << i << ".\n";
+
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool kgmVulkan::initDepthBuffer()
+{
   return true;
 }
 
