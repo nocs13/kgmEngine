@@ -39,12 +39,14 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyInstance vkDestroyInstance;
     PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
     PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices ;
+    PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties;
     PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
     PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
     PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     PFN_vkGetPhysicalDeviceSurfaceSupportKHR     vkGetPhysicalDeviceSurfaceSupportKHR;
     PFN_vkGetPhysicalDeviceSurfaceFormatsKHR     vkGetPhysicalDeviceSurfaceFormatsKHR;
     PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
+    PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements;
     PFN_vkCreateDevice vkCreateDevice;
     PFN_vkDestroyDevice vkDestroyDevice;
     PFN_vkGetDeviceQueue vkGetDeviceQueue;
@@ -60,8 +62,11 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateRenderPass vkCreateRenderPass;
     PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
     PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
+    PFN_vkCreateImage vkCreateImage;
     PFN_vkCreateImageView vkCreateImageView;
     PFN_vkCreateFramebuffer vkCreateFramebuffer;
+    PFN_vkAllocateMemory vkAllocateMemory;
+    PFN_vkBindImageMemory vkBindImageMemory;
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
     PFN_vkResetCommandBuffer vkResetCommandBuffer;
     PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
@@ -73,6 +78,8 @@ class kgmVulkan: public kgmIGC
     PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
     PFN_vkQueueSubmit vkQueueSubmit;
     PFN_vkQueuePresentKHR vkQueuePresentKHR;
+    PFN_vkCreateShaderModule vkCreateShaderModule;
+    PFN_vkDestroyShaderModule vkDestroyShaderModule;
     PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
     PFN_vkDestroyPipeline vkDestroyPipeline;
     PFN_vkDestroyRenderPass vkDestroyRenderPass;
@@ -88,6 +95,12 @@ class kgmVulkan: public kgmIGC
 #else
     VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #endif
+  };
+
+  struct Shader
+  {
+    VkShaderModule vertex;
+    VkShaderModule fragment;
   };
 
   static kgmLib vk_lib;  
@@ -116,6 +129,11 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkCommandBuffer> m_commandBuffers;
 
   VkFormat m_swapChainFormat;
+
+  VkFormat m_depthFormat;
+  VkImage  m_depthImage;
+  VkImageView  m_depthImageView;
+  VkDeviceMemory m_depthMemory;
 
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;

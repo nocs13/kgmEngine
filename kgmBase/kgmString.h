@@ -151,6 +151,25 @@ public:
   } 
  
   //////////////////// 
+
+  void init(const T* str)
+  {
+    if(!str)
+      return;
+
+    u32 len = 0;
+
+    while(str[len] && (len < KGM_TSTRING_MAX_COPY))
+      len++;
+
+    alloc((T*)str, len);
+  }
+
+  void init(const T* str, u32 len)
+  {
+    alloc((T*)str, len);
+  }
+
   void alloc(u32 len)
   { 
     kgmArray<T>::clear(); 

@@ -1,5 +1,6 @@
 #include "kgmVulkan.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmUtils/kgmBase64.h"
 #include "kgmSystem.h"
 #include "kgmThread.h"
 
@@ -1022,11 +1023,13 @@ int kgmVulkan::vkInit()
   m_vk.vkEnumerateInstanceExtensionProperties = (typeof m_vk.vkEnumerateInstanceExtensionProperties) vk_lib.get((char*) "vkEnumerateInstanceExtensionProperties");
   m_vk.vkEnumeratePhysicalDevices = (typeof m_vk.vkEnumeratePhysicalDevices) vk_lib.get((char*) "vkEnumeratePhysicalDevices");
   m_vk.vkEnumerateDeviceExtensionProperties = (typeof m_vk.vkEnumerateDeviceExtensionProperties) vk_lib.get((char*) "vkEnumerateDeviceExtensionProperties");
+  m_vk.vkGetPhysicalDeviceFormatProperties = (typeof m_vk.vkGetPhysicalDeviceFormatProperties) vk_lib.get((char*) "vkGetPhysicalDeviceFormatProperties");
   m_vk.vkGetPhysicalDeviceQueueFamilyProperties = (typeof m_vk.vkGetPhysicalDeviceQueueFamilyProperties) vk_lib.get((char*) "vkGetPhysicalDeviceQueueFamilyProperties");
   m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
   m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceFormatsKHR");
   m_vk.vkGetPhysicalDeviceSurfaceSupportKHR = (typeof m_vk.vkGetPhysicalDeviceSurfaceSupportKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfaceSupportKHR");
   m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR = (typeof m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR) vk_lib.get((char*) "vkGetPhysicalDeviceSurfacePresentModesKHR");
+  m_vk.vkGetImageMemoryRequirements = (typeof m_vk.vkGetImageMemoryRequirements) vk_lib.get((char*) "vkGetImageMemoryRequirements");
   m_vk.vkCreateDevice = (typeof m_vk.vkCreateDevice) vk_lib.get((char*) "vkCreateDevice");
   m_vk.vkDestroyDevice = (typeof m_vk.vkDestroyDevice) vk_lib.get((char*) "vkDestroyDevice");
   m_vk.vkGetDeviceQueue = (typeof m_vk.vkGetDeviceQueue) vk_lib.get((char*) "vkGetDeviceQueue");
@@ -1042,8 +1045,13 @@ int kgmVulkan::vkInit()
   m_vk.vkCreateRenderPass = (typeof m_vk.vkCreateRenderPass) vk_lib.get((char*) "vkCreateRenderPass");
   m_vk.vkCmdBeginRenderPass = (typeof m_vk.vkCmdBeginRenderPass) vk_lib.get((char*) "vkCmdBeginRenderPass");
   m_vk.vkCmdEndRenderPass = (typeof m_vk.vkCmdEndRenderPass) vk_lib.get((char*) "vkCmdEndRenderPass");
+  m_vk.vkCreateShaderModule = (typeof m_vk.vkCreateShaderModule) vk_lib.get((char*) "vkCreateShaderModule");
+  m_vk.vkDestroyShaderModule = (typeof m_vk.vkDestroyShaderModule) vk_lib.get((char*) "vkDestroyShaderModule");
+  m_vk.vkCreateImage = (typeof m_vk.vkCreateImage) vk_lib.get((char*) "vkCreateImage");
   m_vk.vkCreateImageView = (typeof m_vk.vkCreateImageView) vk_lib.get((char*) "vkCreateImageView");
   m_vk.vkCreateFramebuffer = (typeof m_vk.vkCreateFramebuffer) vk_lib.get((char*) "vkCreateFramebuffer");
+  m_vk.vkAllocateMemory = (typeof m_vk.vkAllocateMemory) vk_lib.get((char*) "vkAllocateMemory");
+  m_vk.vkBindImageMemory = (typeof m_vk.vkBindImageMemory) vk_lib.get((char*) "vkBindImageMemory");
   m_vk.vkAllocateCommandBuffers = (typeof m_vk.vkAllocateCommandBuffers) vk_lib.get((char*) "vkAllocateCommandBuffers");
   m_vk.vkBeginCommandBuffer = (typeof m_vk.vkBeginCommandBuffer) vk_lib.get((char*) "vkBeginCommandBuffer");
   m_vk.vkResetCommandBuffer = (typeof m_vk.vkResetCommandBuffer) vk_lib.get((char*) "vkResetCommandBuffer");
@@ -1319,8 +1327,106 @@ void  kgmVulkan::gcFreeVertexBuffer(void*) {}
 void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) {}
 
 // SHADER
-void* kgmVulkan::gcGenShader(const char*, const char*) {}
-void  kgmVulkan::gcFreeShader(void* s) {}
+void* kgmVulkan::gcGenShader(const char* v, const char* f)
+{
+  if (!m_device)
+  {
+    kgm_log() << "Vulkan error: Device not initialized.\n";
+
+    return null;
+  }
+
+  if (!v)
+  {
+    kgm_log() << "Vulkan error: Fragment shader absent.\n";
+
+    return null;
+  }
+
+  Shader* shader = new Shader{null};
+
+  kgmArray<u8> binary;
+
+  kgmString base64;
+
+  base64.init(v);
+
+  kgmBase64::decode(base64, binary);
+
+  VkShaderModuleCreateInfo createInfo;
+
+  createInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+  createInfo.pNext = nullptr;
+  createInfo.flags = 0;
+  createInfo.codeSize = binary.length();
+  createInfo.pCode = (typeof createInfo.pCode) binary.data();
+
+  VkResult result = m_vk.vkCreateShaderModule(m_device, &createInfo, nullptr, &shader->vertex);
+
+  if(result  != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create vertex shader.\n";
+
+    printResult(result);
+
+    delete shader;
+
+    return null;
+  }
+
+  base64.init(v);
+
+  binary.clear();
+
+  kgmBase64::decode(base64, binary);
+
+  createInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+  createInfo.pNext = nullptr;
+  createInfo.flags = 0;
+  createInfo.codeSize = binary.length();
+  createInfo.pCode = (typeof createInfo.pCode) binary.data();
+
+  result = m_vk.vkCreateShaderModule(m_device, &createInfo, nullptr, &shader->fragment);
+
+  if(result  != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
+
+    printResult(result);
+  }
+
+  return shader;
+}
+
+void  kgmVulkan::gcFreeShader(void* s)
+{
+  if (!s)
+  {
+    kgm_log() << "Vulkan error: Shader is invalid for free.\n";
+
+    return;
+  }
+
+  if (m_device)
+  {
+    kgm_log() << "Vulkan error: Device is invalid for free shader.\n";
+
+    return;
+  }
+
+  if (((Shader*)s)->vertex)
+  {
+    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->vertex, null);
+  }
+
+  if (((Shader*)s)->fragment)
+  {
+    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
+  }
+
+  delete (Shader *) s;
+}
+
 void  kgmVulkan::gcSetShader(void* s) {}
 void  kgmVulkan::gcBindAttribute(void* s, int, const char*) {}
 void  kgmVulkan::gcUniform(void* s, u32, u32, const char*, void*) {}
@@ -1976,6 +2082,112 @@ bool kgmVulkan::initSwapchains()
 
 bool kgmVulkan::initDepthBuffer()
 {
+  VkImageCreateInfo infoImage = {};
+
+  const VkFormat format = VK_FORMAT_D16_UNORM;
+
+  VkFormatProperties properties;
+
+  m_vk.vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &properties);
+
+  if (properties.linearTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+  {
+    infoImage.tiling = VK_IMAGE_TILING_LINEAR;
+  }
+  else if (properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+  {
+    infoImage.tiling = VK_IMAGE_TILING_OPTIMAL;
+  }
+  else
+  {
+    /* Try other depth formats? */
+    kgm_log() << "Vulkan error: VK_FORMAT_D16_UNORM Unsupported.\n";
+
+    return false;
+  }
+
+  infoImage.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  infoImage.pNext = NULL;
+  infoImage.imageType = VK_IMAGE_TYPE_2D;
+  infoImage.format = format;
+  infoImage.extent.width = m_rect[2];
+  infoImage.extent.height = m_rect[3];
+  infoImage.extent.depth = 1;
+  infoImage.mipLevels = 1;
+  infoImage.arrayLayers = 1;
+  infoImage.samples = VK_SAMPLE_COUNT_16_BIT;
+  infoImage.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  infoImage.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+  infoImage.queueFamilyIndexCount = 0;
+  infoImage.pQueueFamilyIndices = NULL;
+  infoImage.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  infoImage.flags = 0;
+
+  VkMemoryAllocateInfo alloc = {};
+
+  alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  alloc.pNext = NULL;
+  alloc.allocationSize = 0;
+  alloc.memoryTypeIndex = 0;
+
+  VkImageViewCreateInfo infoView = {};
+  infoView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  infoView.pNext = NULL;
+  infoView.image = VK_NULL_HANDLE;
+  infoView.format = format;
+  infoView.components.r = VK_COMPONENT_SWIZZLE_R;
+  infoView.components.g = VK_COMPONENT_SWIZZLE_G;
+  infoView.components.b = VK_COMPONENT_SWIZZLE_B;
+  infoView.components.a = VK_COMPONENT_SWIZZLE_A;
+  infoView.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+  infoView.subresourceRange.baseMipLevel = 0;
+  infoView.subresourceRange.levelCount = 1;
+  infoView.subresourceRange.baseArrayLayer = 0;
+  infoView.subresourceRange.layerCount = 1;
+  infoView.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  infoView.flags = 0;
+
+  VkMemoryRequirements requirements;
+
+  m_depthFormat = format;
+
+  VkResult result = m_vk.vkCreateImage(m_device, &infoImage, NULL, &m_depthImage);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create depth image.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  m_vk.vkGetImageMemoryRequirements(m_device, m_depthImage, &requirements);
+
+  alloc.allocationSize = requirements.size;
+
+  result = m_vk.vkAllocateMemory(m_device, &alloc, NULL, &m_depthMemory);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot allocate memory for depth image.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  result = m_vk.vkBindImageMemory(m_device, m_depthImage, m_depthMemory, 0);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot bind memory to depth image.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
   return true;
 }
 
