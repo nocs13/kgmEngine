@@ -1211,7 +1211,8 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Reset fence passed.\n";
 
-  auto &commandBuffer = m_commandBuffers[m_swapChainImage];
+  //auto &commandBuffer = m_commandBuffers[m_swapChainImage];
+  auto &commandBuffer = m_commandBuffers[0];
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
@@ -1407,7 +1408,7 @@ void  kgmVulkan::gcFreeShader(void* s)
     return;
   }
 
-  if (m_device)
+  if (!m_device)
   {
     kgm_log() << "Vulkan error: Device is invalid for free shader.\n";
 
