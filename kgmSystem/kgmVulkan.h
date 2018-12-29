@@ -27,6 +27,10 @@
 
 #include "inc/vk/vulkan.h"
 
+#if !defined(VK_EXPORTED_FUNCTION)
+#define VK_EXPORTED_FUNCTION( fn ) PFN_##fn fn;
+#endif
+
 //struct VkXlibSurfaceCreateInfoKHR;
 
 class kgmVulkan: public kgmIGC
@@ -228,12 +232,14 @@ private:
   bool initSwapchains();
   bool initDepthBuffer();
 
+  /*
   void createSwapChain();
   void createRenderPass();
   void createImageViews();
   void createFramebuffers();
   void createGraphicsPipeline();
   void createCommandBuffers();
+  */
 };
 
 #endif

@@ -30,6 +30,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
       return;
   }
+  else
+  {
+    return;
+  }
 
   g_vulkans++;
 
@@ -37,6 +41,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   wnd->getRect(wrc[0], wrc[1], wrc[2], wrc[3]);
 
+  /*
   VkResult vk_res;
 
   VkApplicationInfo appInfo;
@@ -679,7 +684,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   m_queue = queue;
-
+  */
   /*VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
 
   m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
@@ -697,7 +702,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   kgm_log() << "Vulkan: created semaphores.\n";*/
-
+  /*
   VkCommandPool commandPool;
 
   VkCommandPoolCreateInfo poolCreateInfo;
@@ -936,7 +941,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 
     return;
-  } */
+  }
+  */
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -998,6 +1004,10 @@ kgmVulkan::~kgmVulkan()
   if (g_vulkans < 1)
     vkFree();
 }
+
+#if !defined(VK_IMPORT_FUNCTION)
+#define VK_IMPORT_FUNCTION( fn ) m_vk.fn = (typeof m_vk.fn) vk_lib.get((s8*) #fn)
+#endif
 
 int kgmVulkan::vkInit()
 {
@@ -1143,11 +1153,11 @@ void kgmVulkan::gcResize(u32 width, u32 height)
 
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
-  createSwapChain();
-  createRenderPass();
-  createImageViews();
-  createFramebuffers();
-  createCommandBuffers();
+  //createSwapChain();
+  //createRenderPass();
+  //createImageViews();
+  //createFramebuffers();
+  //createCommandBuffers();
 }
 
 void  kgmVulkan::gcBegin() {}
@@ -1158,6 +1168,9 @@ void  kgmVulkan::gcRender()
   VkResult result;
 
   u32 swapChainImage = m_swapChainImage;
+
+  if (!m_device)
+    return;
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
@@ -2101,7 +2114,7 @@ bool kgmVulkan::initDepthBuffer()
   }
   else
   {
-    /* Try other depth formats? */
+    // Try other depth formats?
     kgm_log() << "Vulkan error: VK_FORMAT_D16_UNORM Unsupported.\n";
 
     return false;
@@ -2192,6 +2205,7 @@ bool kgmVulkan::initDepthBuffer()
   return true;
 }
 
+/*
 void kgmVulkan::createSwapChain()
 {
   VkResult result;
@@ -2660,7 +2674,7 @@ void kgmVulkan::createCommandBuffers()
     m_vk.vkEndCommandBuffer(commandBuffer);
   }
 }
-
+*/
 
 void kgmVulkan::printResult(VkResult result)
 {
