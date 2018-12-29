@@ -494,7 +494,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   swapChainCreateInfo.pNext = nullptr;
   swapChainCreateInfo.flags = 0;
   swapChainCreateInfo.surface = surface;
-  swapChainCreateInfo.minImageCount = 2;
+  swapChainCreateInfo.minImageCount = 1;
   swapChainCreateInfo.imageFormat = surfaceFormats[0].format;
   swapChainCreateInfo.imageColorSpace = surfaceFormats[0].colorSpace;
   swapChainCreateInfo.imageExtent = VkExtent2D{(u32) m_rect[2], (u32) m_rect[3]};
