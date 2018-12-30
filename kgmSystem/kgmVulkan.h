@@ -92,6 +92,8 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
+    VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
+
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
 
 #ifdef WIN32
@@ -114,17 +116,17 @@ class kgmVulkan: public kgmIGC
   kgmWindow* m_window = null;
 
   VkInstance   m_instance = 0;
-  VkSurfaceKHR m_surface = 0;
-  VkDevice     m_device = 0;
+  VkSurfaceKHR m_surface  = 0;
+  VkDevice     m_device   = 0;
 
-  VkPhysicalDevice m_physicalDevice;
+  VkPhysicalDevice m_physicalDevice = 0;
 
-  VkSwapchainKHR   m_swapChain;
-  VkRenderPass     m_renderPass;
-  VkCommandPool    m_commandPool;
+  VkSwapchainKHR   m_swapChain      = 0;
+  VkRenderPass     m_renderPass     = 0;
+  VkCommandPool    m_commandPool    = 0;
 
-  VkFence          m_fence;
-  VkQueue          m_queue;
+  VkFence          m_fence           = 0;
+  VkQueue          m_queue           = 0;
 
   kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage> m_swapChainImages;
@@ -145,6 +147,8 @@ class kgmVulkan: public kgmIGC
   u32 m_presentQueueFamilyIndex  = -1;
 
   s32 m_rect[4];
+
+  u32 m_error = 0;
 
 public:
   kgmVulkan(kgmWindow* wnd);
@@ -223,6 +227,7 @@ private:
   void printResult(VkResult result);
 
   void clean(u32);
+  void freeSurface();
 
   bool initInstance();
   bool listDevices();

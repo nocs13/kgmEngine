@@ -28,10 +28,16 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   if (g_vulkans < 1)
   {
     if (vkInit() != 1 || m_vk.vkCreateInstance == nullptr)
+    {
+      m_error = 1;
+
       return;
+    }
   }
   else
   {
+    m_error = -1;
+
     return;
   }
 
@@ -40,6 +46,77 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   s32 wrc[4];
 
   wnd->getRect(wrc[0], wrc[1], wrc[2], wrc[3]);
+
+  if (!initInstance())
+  {
+    m_error = 1;
+
+    return;
+  }
+
+#ifdef DEBUG
+
+  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");;
+
+  VkDebugReportCallbackEXT debugReportCallback;
+  VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
+
+  debugReportCallbackCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+  debugReportCallbackCreateInfo.pNext = nullptr;
+  debugReportCallbackCreateInfo.flags = VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+  debugReportCallbackCreateInfo.pfnCallback = [](
+          VkDebugReportFlagsEXT flags,
+          VkDebugReportObjectTypeEXT objectType,
+          uint64_t object,
+          size_t location,
+          int32_t messageCode,
+          const char* pLayerPrefix,
+          const char* pMessage,
+          void* pUserData) -> VkBool32
+      {
+        kgm_log() << "Vulkan DEBUG: (";
+
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
+        kgm_log() << ")";
+        kgm_log() << "{" << pLayerPrefix << "} ";
+        kgm_log() << pMessage << "\n";
+
+        return VK_FALSE;
+      };
+  debugReportCallbackCreateInfo.pUserData = nullptr;
+
+  if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
+      &debugReportCallbackCreateInfo, nullptr, &debugReportCallback)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create debug collback.\n";
+  }
+
+  kgm_log() << "Vulkan: Debug callback created.\n";
+
+#endif
+
+  if (!listDevices() || !initDevice())
+  {
+    m_error = 1;
+
+    return;
+  }
+
+  if (!initSurface() || !initSwapchains())
+  {
+    m_error = 1;
+
+    return;
+  }
 
   /*
   VkResult vk_res;
@@ -997,7 +1074,12 @@ kgmVulkan::~kgmVulkan()
   }
 
   if (m_instance)
+  {
+    if (m_surface)
+      m_vk.vkDestroySurfaceKHR(m_instance, m_surface, null);
+
     m_vk.vkDestroyInstance(m_instance, null);
+  }
 
   g_vulkans--;
 
@@ -1081,6 +1163,8 @@ int kgmVulkan::vkInit()
   m_vk.vkDestroyDescriptorSetLayout = (typeof m_vk.vkDestroyDescriptorSetLayout) vk_lib.get((char*) "vkDestroyDescriptorSetLayout");
   m_vk.vkFreeCommandBuffers = (typeof m_vk.vkFreeCommandBuffers) vk_lib.get((char*) "vkFreeCommandBuffers");
 
+  VK_IMPORT_FUNCTION(vkDestroySurfaceKHR);
+
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
 #else
@@ -1100,7 +1184,7 @@ void kgmVulkan::vkFree()
 
 u32 kgmVulkan::gcError()
 {
-  return 0;
+  return m_error;
 }
 
 void  kgmVulkan::gcSet(u32 param, void* value) {}
@@ -1169,7 +1253,7 @@ void  kgmVulkan::gcRender()
 
   u32 swapChainImage = m_swapChainImage;
 
-  if (!m_device)
+  if (!m_device || !m_swapChain)
     return;
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
@@ -1456,6 +1540,18 @@ void kgmVulkan::clean(u32 options)
 
 }
 
+void kgmVulkan::freeSurface()
+{
+  if (!m_surface)
+  {
+    return;
+  }
+
+  m_vk.vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+
+  m_surface = 0;
+}
+
 bool kgmVulkan::initInstance()
 {
   if(m_instance != nullptr)
@@ -1465,32 +1561,73 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
+  u32 extensionsCount = 0;
+
+  VkResult result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
+
+  if (result != VK_SUCCESS || extensionsCount == 0)
+  {
+    kgm_log() << "Vulkan error: No extensions supported!\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  VkExtensionProperties extensionProperties[extensionsCount];
+  const char* extensionNames[extensionsCount];
+
+  result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionProperties);
+
+  if (result != VK_SUCCESS || extensionsCount == 0)
+  {
+    kgm_log() << "Vulkan error: No extensions supported!\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  u32 iname = 0;
+
+  for (const auto& ep: extensionProperties)
+  {
+    kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
+
+    extensionNames[iname++] = ep.extensionName;
+  }
+
   VkApplicationInfo appInfo = {};
+
+  ZeroObject(appInfo);
+
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   appInfo.pNext = nullptr;
-  appInfo.pApplicationName = "";
+  appInfo.pApplicationName = "kgmEngine";
   appInfo.applicationVersion = 1;
-  appInfo.pEngineName = "";
+  appInfo.pEngineName = "kgmEngine";
   appInfo.engineVersion = 1;
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
   VkInstanceCreateInfo instanceInfo = {};
+
+  ZeroObject(instanceInfo);
+
   instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   instanceInfo.pNext = NULL;
   instanceInfo.flags = 0;
   instanceInfo.pApplicationInfo = &appInfo;
-  instanceInfo.enabledExtensionCount = 0;
-  instanceInfo.ppEnabledExtensionNames = NULL;
+  instanceInfo.enabledExtensionCount = extensionsCount;
+  instanceInfo.ppEnabledExtensionNames = extensionNames;
   instanceInfo.enabledLayerCount = 0;
   instanceInfo.ppEnabledLayerNames = NULL;
-
-  VkResult result;
 
   result = m_vk.vkCreateInstance(&instanceInfo, NULL, &m_instance);
 
   if (result != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Unable to create instance.\n";
+
     printResult(result);
 
     return false;
@@ -1601,6 +1738,51 @@ bool kgmVulkan::initDevice()
 
     if (found)
     {
+      u32 extensionsCount = 0;
+
+      result = m_vk.vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, nullptr);
+
+      if (result != VK_SUCCESS)
+      {
+        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties.\n";
+
+        printResult(result);
+
+        continue;
+      }
+
+      VkExtensionProperties deviceExtensionProperties[extensionsCount];
+
+      result = m_vk.vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, deviceExtensionProperties);
+
+      if (result != VK_SUCCESS)
+      {
+        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
+
+        continue;
+      }
+
+      bool isswapchain = false;
+
+      for (const auto e: deviceExtensionProperties)
+      {
+        if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+        {
+          isswapchain = true;
+
+          //break;
+        }
+
+        kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
+      }
+
+      if (!isswapchain)
+      {
+        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+
+        continue;
+      }
+
       physicalDevice = device;
 
       break;
@@ -1618,12 +1800,16 @@ bool kgmVulkan::initDevice()
 
   VkDeviceQueueCreateInfo infoQueue = {};
 
+  ZeroObject(infoQueue);
+
   infoQueue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   infoQueue.pNext = NULL;
   infoQueue.queueCount = 1;
   infoQueue.pQueuePriorities = priorities;
 
   VkDeviceCreateInfo infoDevice = {};
+
+  ZeroObject(infoDevice);
 
   infoDevice.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   infoDevice.pNext = NULL;
@@ -1659,16 +1845,22 @@ bool kgmVulkan::initSurface()
   VkResult result = VK_SUCCESS;
 
 #ifdef WIN32
-    VkWin32SurfaceCreateInfoKHR createInfo = {};
+    VkWin32SurfaceCreateInfoKHR createInfo;
+
+    ZeroObject(createInfo);
+
     createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = null;
-    createInfo.hinstance = GetModuleHandle(nullptr);;
+    createInfo.hinstance = GetModuleHandle(nullptr);
     createInfo.hwnd = m_window->m_wnd;
+
     result = m_vk.vkCreateWin32SurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
 #elif defined(ANDROID)
     GET_INSTANCE_PROC_ADDR(info.inst, CreateAndroidSurfaceKHR);
 
     VkAndroidSurfaceCreateInfoKHR createInfo;
+
+    ZeroObject(createInfo);
+
     createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = nullptr;
     createInfo.flags = 0;
@@ -1676,6 +1868,9 @@ bool kgmVulkan::initSurface()
     res = info.fpCreateAndroidSurfaceKHR(info.inst, &createInfo, nullptr, &info.surface);
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     VkWaylandSurfaceCreateInfoKHR createInfo = {};
+
+    ZeroObject(createInfo);
+
     createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.display = m_window->m_display;
@@ -1683,6 +1878,9 @@ bool kgmVulkan::initSurface()
     result = m_vk.vkCreateWaylandSurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
 #elif defined(XCB)
     VkXcbSurfaceCreateInfoKHR createInfo = {};
+
+    ZeroObject(createInfo);
+
     createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.connection = m_instance;
@@ -1690,6 +1888,9 @@ bool kgmVulkan::initSurface()
     result = vkCreateXcbSurfaceKHR(m_instance, &createInfo, NULL, &info.surface);
 #else
     VkXlibSurfaceCreateInfoKHR createInfo;
+
+    ZeroObject(createInfo);
+
     createInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
     createInfo.window = m_window->m_wnd;
     createInfo.dpy    = m_window->m_dpy;
@@ -2035,9 +2236,9 @@ bool kgmVulkan::initSwapchains()
   if (swapChain != VK_NULL_HANDLE)
   {
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
-
-    swapChain = m_swapChain;
   }
+
+  swapChain = m_swapChain;
 
   u32 actualImageCount = 0;
 
