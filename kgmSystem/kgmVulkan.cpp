@@ -54,55 +54,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-#ifdef DEBUG
-
-  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");;
-
-  VkDebugReportCallbackEXT debugReportCallback;
-  VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
-
-  debugReportCallbackCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-  debugReportCallbackCreateInfo.pNext = nullptr;
-  debugReportCallbackCreateInfo.flags = VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-  debugReportCallbackCreateInfo.pfnCallback = [](
-          VkDebugReportFlagsEXT flags,
-          VkDebugReportObjectTypeEXT objectType,
-          uint64_t object,
-          size_t location,
-          int32_t messageCode,
-          const char* pLayerPrefix,
-          const char* pMessage,
-          void* pUserData) -> VkBool32
-      {
-        kgm_log() << "Vulkan DEBUG: (";
-
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
-        kgm_log() << ")";
-        kgm_log() << "{" << pLayerPrefix << "} ";
-        kgm_log() << pMessage << "\n";
-
-        return VK_FALSE;
-      };
-  debugReportCallbackCreateInfo.pUserData = nullptr;
-
-  if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
-      &debugReportCallbackCreateInfo, nullptr, &debugReportCallback)
-      != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create debug collback.\n";
-  }
-
-  kgm_log() << "Vulkan: Debug callback created.\n";
-
-#endif
+  initDebug();
 
   if (!listDevices() || !initDevice())
   {
@@ -1078,6 +1030,13 @@ kgmVulkan::~kgmVulkan()
     if (m_surface)
       m_vk.vkDestroySurfaceKHR(m_instance, m_surface, null);
 
+#ifdef DEBUG
+    m_vk.vkDestroyDebugReportCallbackEXT = (typeof m_vk.vkDestroyDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkDestroyDebugReportCallbackEXT");;
+
+    if (m_vk.vkDestroyDebugReportCallbackEXT)
+      m_vk.vkDestroyDebugReportCallbackEXT(m_instance, m_debugReportCallback, nullptr);
+#endif
+
     m_vk.vkDestroyInstance(m_instance, null);
   }
 
@@ -1636,6 +1595,62 @@ bool kgmVulkan::initInstance()
   return true;
 }
 
+bool kgmVulkan::initDebug()
+{
+#ifdef DEBUG
+
+  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");;
+
+  VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
+
+  debugReportCallbackCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+  debugReportCallbackCreateInfo.pNext = nullptr;
+  debugReportCallbackCreateInfo.flags = VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
+          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+  debugReportCallbackCreateInfo.pfnCallback = [](
+          VkDebugReportFlagsEXT flags,
+          VkDebugReportObjectTypeEXT objectType,
+          uint64_t object,
+          size_t location,
+          int32_t messageCode,
+          const char* pLayerPrefix,
+          const char* pMessage,
+          void* pUserData) -> VkBool32
+      {
+        kgm_log() << "Vulkan DEBUG: (";
+
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
+        kgm_log() << ")";
+        kgm_log() << "{" << pLayerPrefix << "} ";
+        kgm_log() << pMessage << "\n";
+
+        return VK_FALSE;
+      };
+  debugReportCallbackCreateInfo.pUserData = nullptr;
+
+  if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
+      &debugReportCallbackCreateInfo, nullptr, &m_debugReportCallback)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create debug collback.\n";
+
+    return false;
+  }
+
+  kgm_log() << "Vulkan: Debug callback created.\n";
+
+#endif
+
+  return true;
+}
+
 bool kgmVulkan::listDevices()
 {
   if (!m_instance)
@@ -2156,7 +2171,7 @@ bool kgmVulkan::initSwapchains()
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-  u32 swapChainImagesCount = surfaceCapabilities.minImageCount;
+  u32 swapChainImagesCount = surfaceCapabilities.minImageCount + 1;
 
   VkSurfaceTransformFlagBitsKHR surfaceTransform;
 
@@ -2189,6 +2204,8 @@ bool kgmVulkan::initSwapchains()
   }
 
   VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+
+  ZeroObject(swapchainCreateInfo);
 
   swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapchainCreateInfo.pNext = NULL;

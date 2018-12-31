@@ -95,6 +95,7 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
+    VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
 
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
@@ -149,6 +150,10 @@ class kgmVulkan: public kgmIGC
   s32 m_rect[4];
 
   u32 m_error = 0;
+
+#ifdef DEBUG
+  VkDebugReportCallbackEXT m_debugReportCallback = 0;
+#endif
 
 public:
   kgmVulkan(kgmWindow* wnd);
@@ -230,6 +235,7 @@ private:
   void freeSurface();
 
   bool initInstance();
+  bool initDebug();
   bool listDevices();
   bool initDevice();
   bool initSurface();
