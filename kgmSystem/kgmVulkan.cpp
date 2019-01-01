@@ -77,7 +77,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initCommands())
+  if (!initSemaphores() || !initCommands())
   {
     m_error = 1;
 
@@ -1339,8 +1339,9 @@ void  kgmVulkan::gcRender()
   presentInfo.pImageIndices = &swapChainImage;
   presentInfo.pResults = &result;
 
+  result = m_vk.vkQueuePresentKHR(m_queue, &presentInfo);
 
-  if(m_vk.vkQueuePresentKHR(m_queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 
@@ -2115,7 +2116,7 @@ bool kgmVulkan::initCommands()
 
     printResult(result);
 
-    return false;
+    //return false;
   }
 
   return true;
@@ -2606,6 +2607,25 @@ bool kgmVulkan::initDepthBuffer()
     kgm_log() << "Vulkan error: Cannot bind memory to depth image.\n";
 
     printResult(result);
+
+    return false;
+  }
+
+  return true;
+}
+
+bool kgmVulkan::initSemaphores()
+{
+  VkSemaphoreCreateInfo createInfo = {};
+
+  ZeroObject(createInfo);
+
+  createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+  if (m_vk.vkCreateSemaphore(m_device, &createInfo, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS ||
+      m_vk.vkCreateSemaphore(m_device, &createInfo, nullptr, &m_renderingFinishedSemaphore) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create semaphores.\n";
 
     return false;
   }

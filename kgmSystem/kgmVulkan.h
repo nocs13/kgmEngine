@@ -142,6 +142,9 @@ class kgmVulkan: public kgmIGC
   VkImageView  m_depthImageView;
   VkDeviceMemory m_depthMemory;
 
+  VkSemaphore m_imageAvailableSemaphore;
+  VkSemaphore m_renderingFinishedSemaphore;
+
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
@@ -247,6 +250,7 @@ private:
   bool initImageViews();
   bool initFrameBuffers();
   bool initDepthBuffer();
+  bool initSemaphores();
 
   /*
   void createSwapChain();
