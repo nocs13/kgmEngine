@@ -131,7 +131,7 @@ class kgmVulkan: public kgmIGC
 
   kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage> m_swapChainImages;
-  kgmArray<VkFramebuffer> m_framebuffers;
+  kgmArray<VkFramebuffer> m_frameBuffers;
   kgmArray<VkImageView> m_imageViews;
   kgmArray<VkCommandBuffer> m_commandBuffers;
 

@@ -1004,13 +1004,13 @@ kgmVulkan::~kgmVulkan()
 
     for (size_t i = 0; i < m_swapChainImages.length(); i++)
     {
-      m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
       m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
     }
 
     m_swapChainImages.clear();
     m_imageViews.clear();
-    m_framebuffers.clear();
+    m_frameBuffers.clear();
 
 
     if (m_swapChain != VK_NULL_HANDLE)
@@ -1186,7 +1186,7 @@ void kgmVulkan::gcResize(u32 width, u32 height)
 
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
-    m_vk.vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
     m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
   }
 
@@ -2237,7 +2237,17 @@ bool kgmVulkan::initSwapchains()
 
   VkSwapchainKHR swapChain = m_swapChain;
 
-  swapchainCreateInfo.oldSwapchain = swapChain;
+  //swapchainCreateInfo.oldSwapchain = swapChain;
+  swapchainCreateInfo.imageArrayLayers = 1;
+  swapchainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+  swapchainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+  swapchainCreateInfo.queueFamilyIndexCount = 0;
+  swapchainCreateInfo.pQueueFamilyIndices = nullptr;
+  swapchainCreateInfo.preTransform = VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+  swapchainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  swapchainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
+  swapchainCreateInfo.clipped = VK_TRUE;
+  swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
   m_swapChain = nullptr;
 
@@ -2255,11 +2265,9 @@ bool kgmVulkan::initSwapchains()
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
   }
 
-  swapChain = m_swapChain;
+  uint32_t actualImageCount = swapChainImagesCount;
 
-  u32 actualImageCount = 0;
-
-  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, m_swapChain, &actualImageCount, nullptr);
 
   if (result != VK_SUCCESS || actualImageCount == 0)
   {
@@ -2269,8 +2277,10 @@ bool kgmVulkan::initSwapchains()
   }
 
   m_swapChainImages.alloc(actualImageCount);
+  m_imageViews.alloc(actualImageCount);
+  m_frameBuffers.alloc(actualImageCount);
 
-  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, m_swapChainImages.data());
+  result = m_vk.vkGetSwapchainImagesKHR(m_device, m_swapChain, &actualImageCount, m_swapChainImages);
 
   if (result != VK_SUCCESS)
   {
