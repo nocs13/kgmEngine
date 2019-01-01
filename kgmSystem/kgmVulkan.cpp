@@ -70,6 +70,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  if (!initRenderPass() || !initImageViews() || !initFrameBuffers())
+  {
+    m_error = 1;
+
+    return;
+  }
+
   /*
   VkResult vk_res;
 
@@ -2277,8 +2284,6 @@ bool kgmVulkan::initSwapchains()
   }
 
   m_swapChainImages.alloc(actualImageCount);
-  m_imageViews.alloc(actualImageCount);
-  m_frameBuffers.alloc(actualImageCount);
 
   result = m_vk.vkGetSwapchainImagesKHR(m_device, m_swapChain, &actualImageCount, m_swapChainImages);
 
@@ -2289,7 +2294,77 @@ bool kgmVulkan::initSwapchains()
     return false;
   }
 
-  for (u32 i = 0; i < actualImageCount; i++)
+  return true;
+}
+
+bool kgmVulkan::initRenderPass()
+{
+  VkAttachmentDescription attachmentDescription = {};
+
+  ZeroObject(attachmentDescription);
+
+  attachmentDescription.format = m_swapChainFormat;
+  attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+  attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+  VkAttachmentReference colorAttachmentReference = {};
+
+  ZeroObject(colorAttachmentReference);
+
+  colorAttachmentReference.attachment = 0;
+  colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  VkSubpassDescription subPassDescription = {};
+
+  ZeroObject(subPassDescription);
+
+  subPassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subPassDescription.colorAttachmentCount = 1;
+  subPassDescription.pColorAttachments = &colorAttachmentReference;
+
+  VkRenderPassCreateInfo createInfo = {};
+
+  ZeroObject(createInfo);
+
+  createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+  createInfo.attachmentCount = 1;
+  createInfo.pAttachments = &attachmentDescription;
+  createInfo.subpassCount = 1;
+  createInfo.pSubpasses = &subPassDescription;
+
+  VkResult result = m_vk.vkCreateRenderPass(m_device, &createInfo, nullptr, &m_renderPass);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create render pass.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  return true;
+}
+
+bool kgmVulkan::initImageViews()
+{
+  u32 count = m_swapChainImages.length();
+
+  if (count < 1)
+  {
+    kgm_log() << "Vulak error: Cannot init image views as swap images not initialized.\n";
+
+    return false;
+  }
+
+  m_imageViews.alloc(count);
+
+  for (u32 i = 0; i < count; i++)
   {
     VkImageViewCreateInfo createInfo = { };
 
@@ -2314,6 +2389,55 @@ bool kgmVulkan::initSwapchains()
     if (result != VK_SUCCESS)
     {
       kgm_log() << "Vulak error: failed to create image view for swap chain image #" << i << ".\n";
+
+      printResult(result);
+
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool kgmVulkan::initFrameBuffers()
+{
+  u32 count = m_swapChainImages.length();
+
+  if (count < 1)
+  {
+    kgm_log() << "Vulak error: Cannot init frame buffers as swap images not initialized.\n";
+
+    return false;
+  }
+
+  if (m_imageViews.length() < 1)
+  {
+    kgm_log() << "Vulak error: Cannot init frame buffers as image views not initialized.\n";
+
+    return false;
+  }
+
+  m_frameBuffers.alloc(count);
+
+  for (u32 i = 0; i < count; i++)
+  {
+    VkFramebufferCreateInfo createInfo = {};
+
+    ZeroObject(createInfo);
+
+    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+    createInfo.renderPass = m_renderPass;
+    createInfo.attachmentCount = 1;
+    createInfo.pAttachments = &m_imageViews[i];
+    createInfo.width = m_rect[2];
+    createInfo.height = m_rect[3];
+    createInfo.layers = 1;
+
+    VkResult result = m_vk.vkCreateFramebuffer(m_device, &createInfo, nullptr, &m_frameBuffers[i]);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to create framebuffer for swap chain image view #" << i << ".\n";
 
       return false;
     }

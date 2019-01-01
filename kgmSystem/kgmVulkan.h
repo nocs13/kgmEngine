@@ -241,6 +241,9 @@ private:
   bool initSurface();
   bool initCommands();
   bool initSwapchains();
+  bool initRenderPass();
+  bool initImageViews();
+  bool initFrameBuffers();
   bool initDepthBuffer();
 
   /*
