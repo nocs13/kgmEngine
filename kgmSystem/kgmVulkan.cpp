@@ -77,6 +77,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
+  if (!initCommands())
+  {
+    m_error = 1;
+
+    return;
+  }
+
   /*
   VkResult vk_res;
 
@@ -1874,6 +1881,39 @@ bool kgmVulkan::initDevice()
 
   m_physicalDevice = physicalDevice;
   m_device         = device;
+
+  VkQueue queue;
+
+  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
+
+  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to wait for queue.\n";
+
+    return false;
+  }
+
+  m_queue = queue;
+
+  VkFence fence;
+
+  VkFenceCreateInfo fenceCreateInfo;
+
+  ZeroObject(fenceCreateInfo);
+
+  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceCreateInfo.pNext = nullptr;
+  fenceCreateInfo.flags = 0;
+
+  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create fence.\n";
+
+    return false;
+  }
+
+  m_fence = fence;
 
   return true;
 }
