@@ -151,6 +151,8 @@ class kgmVulkan: public kgmIGC
 
   u32 m_error = 0;
 
+  const s8* m_debugLayer = null;
+
 #ifdef DEBUG
   VkDebugReportCallbackEXT m_debugReportCallback = 0;
 #endif

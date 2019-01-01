@@ -1541,7 +1541,7 @@ bool kgmVulkan::initInstance()
   }
 
   VkExtensionProperties extensionProperties[extensionsCount];
-  const char* extensionNames[extensionsCount];
+  const s8*             extensionNames[extensionsCount];
 
   result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionProperties);
 
@@ -1570,9 +1570,9 @@ bool kgmVulkan::initInstance()
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   appInfo.pNext = nullptr;
   appInfo.pApplicationName = "kgmEngine";
-  appInfo.applicationVersion = 1;
+  appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);;
   appInfo.pEngineName = "kgmEngine";
-  appInfo.engineVersion = 1;
+  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);;
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
   VkInstanceCreateInfo instanceInfo = {};
@@ -1667,7 +1667,7 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
-  u32 count = 1;
+  u32 count = 0;
 
   VkResult result = m_vk.vkEnumeratePhysicalDevices(m_instance, &count, nullptr);
 
@@ -1818,7 +1818,7 @@ bool kgmVulkan::initDevice()
     return false;
   }
 
-  float priorities[1] = {0.0};
+  float priorities = 1.0f;
 
   VkDeviceQueueCreateInfo infoQueue = {};
 
@@ -1827,7 +1827,16 @@ bool kgmVulkan::initDevice()
   infoQueue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   infoQueue.pNext = NULL;
   infoQueue.queueCount = 1;
-  infoQueue.pQueuePriorities = priorities;
+  infoQueue.pQueuePriorities = &priorities;
+
+  VkPhysicalDeviceFeatures enabledFeatures;
+
+  ZeroObject(enabledFeatures);
+
+  enabledFeatures.shaderClipDistance = VK_TRUE;
+  enabledFeatures.shaderCullDistance = VK_TRUE;
+
+  const s8* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 
   VkDeviceCreateInfo infoDevice = {};
 
@@ -1837,11 +1846,18 @@ bool kgmVulkan::initDevice()
   infoDevice.pNext = NULL;
   infoDevice.queueCreateInfoCount = 1;
   infoDevice.pQueueCreateInfos = &infoQueue;
-  infoDevice.enabledExtensionCount = 0;
-  infoDevice.ppEnabledExtensionNames = NULL;
+  infoDevice.enabledExtensionCount = 1;
+  infoDevice.ppEnabledExtensionNames = &deviceExtensions;
   infoDevice.enabledLayerCount = 0;
   infoDevice.ppEnabledLayerNames = NULL;
-  infoDevice.pEnabledFeatures = NULL;
+  infoDevice.pEnabledFeatures = &enabledFeatures;
+
+#ifdef DEBUG
+  m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
+
+  infoDevice.enabledLayerCount = 1;
+  infoDevice.ppEnabledLayerNames = &m_debugLayer;
+#endif
 
   VkDevice device = null;
 
