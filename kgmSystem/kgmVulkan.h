@@ -126,7 +126,7 @@ class kgmVulkan: public kgmIGC
 
   kgmWindow* m_window = null;
 
-  VkInstance   m_instance = 0;
+  VkInstance   m_instance = VK_NULL_HANDLE;
   VkSurfaceKHR m_surface  = 0;
   VkDevice     m_device   = 0;
 
@@ -171,6 +171,8 @@ class kgmVulkan: public kgmIGC
     VkPipelineLayoutCreateInfo   layoutCreateInfo;
     VkPipelineCacheCreateInfo    cacheCreateInfo;
     VkGraphicsPipelineCreateInfo graphicsCreateInfo;
+
+    VkPipeline                   graphics = VK_NULL_HANDLE;
   } m_pipeline;
 
   u32 m_swapChainImage;
@@ -185,7 +187,7 @@ class kgmVulkan: public kgmIGC
   const s8* m_debugLayer = null;
 
 #ifdef DEBUG
-  VkDebugReportCallbackEXT m_debugReportCallback = 0;
+  VkDebugReportCallbackEXT m_debugReportCallback = VK_NULL_HANDLE;
 #endif
 
 public:

@@ -1194,14 +1194,14 @@ void kgmVulkan::gcResize(u32 width, u32 height)
     return;
   }
 
-  //m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
-  //kgm_log() << "Vulkan: Command buffer deleted.\n";
+  kgm_log() << "Vulkan: Command buffer deleted.\n";
 
-  //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
-  //m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+  if (m_renderPass)
+    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-  //kgm_log() << "Vulkan: Render pass destroyed.\n";
+  kgm_log() << "Vulkan: Render pass destroyed.\n";
 
   //for (size_t i = 0; i < m_swapChainImages.length(); i++)
   //{
