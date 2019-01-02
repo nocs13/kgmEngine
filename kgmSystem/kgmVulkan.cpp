@@ -1116,6 +1116,7 @@ int kgmVulkan::vkInit()
   m_vk.vkCreateImageView = (typeof m_vk.vkCreateImageView) vk_lib.get((char*) "vkCreateImageView");
   m_vk.vkCreateFramebuffer = (typeof m_vk.vkCreateFramebuffer) vk_lib.get((char*) "vkCreateFramebuffer");
   m_vk.vkAllocateMemory = (typeof m_vk.vkAllocateMemory) vk_lib.get((char*) "vkAllocateMemory");
+  m_vk.vkFreeMemory = (typeof m_vk.vkFreeMemory) vk_lib.get((char*) "vkFreeMemory");
   m_vk.vkBindImageMemory = (typeof m_vk.vkBindImageMemory) vk_lib.get((char*) "vkBindImageMemory");
   m_vk.vkAllocateCommandBuffers = (typeof m_vk.vkAllocateCommandBuffers) vk_lib.get((char*) "vkAllocateCommandBuffers");
   m_vk.vkBeginCommandBuffer = (typeof m_vk.vkBeginCommandBuffer) vk_lib.get((char*) "vkBeginCommandBuffer");
@@ -1137,6 +1138,10 @@ int kgmVulkan::vkInit()
   m_vk.vkFreeCommandBuffers = (typeof m_vk.vkFreeCommandBuffers) vk_lib.get((char*) "vkFreeCommandBuffers");
 
   VK_IMPORT_FUNCTION(vkDestroySurfaceKHR);
+  VK_IMPORT_FUNCTION(vkDestroyImage);
+  VK_IMPORT_FUNCTION(vkMapMemory);
+  VK_IMPORT_FUNCTION(vkUnmapMemory);
+
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
@@ -1189,24 +1194,24 @@ void kgmVulkan::gcResize(u32 width, u32 height)
     return;
   }
 
-  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+  //m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
-  kgm_log() << "Vulkan: Command buffer deleted.\n";
+  //kgm_log() << "Vulkan: Command buffer deleted.\n";
 
   //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
-  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+  //m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-  kgm_log() << "Vulkan: Render pass destroyed.\n";
+  //kgm_log() << "Vulkan: Render pass destroyed.\n";
 
-  for (size_t i = 0; i < m_swapChainImages.length(); i++)
-  {
-    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
-    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
-  }
+  //for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  //{
+  //  m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+  //  m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  //}
 
-  m_swapChainImages.clear();
+  //m_swapChainImages.clear();
 
-  kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
+  //kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
@@ -1361,8 +1366,169 @@ void  kgmVulkan::gcSetTarget(void*  rt) {}
 void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt) {}
 
 // TEXTURE
-void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type) {}
-void  kgmVulkan::gcFreeTexture(void *t) {}
+void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
+{
+  if (!m_device || !w || !h)
+    return null;
+
+  Texture* t = new Texture;
+
+  t->image = VK_NULL_HANDLE;
+  t->memory = VK_NULL_HANDLE;
+
+  u32 bypp = 1;
+
+  VkFormat format;
+
+  switch(bpp)
+  {
+  case gctex_fmt8:
+    format = VK_FORMAT_R8_UNORM;
+    bypp = 1;
+    break;
+  case gctex_fmt16:
+    format = VK_FORMAT_R5G6B5_UNORM_PACK16;
+    bypp = 2;
+    break;
+  case gctex_fmt24:
+    format = VK_FORMAT_R8G8B8_UNORM;
+    bypp = 3;
+    break;
+  case gctex_fmt32:
+    format = VK_FORMAT_R8G8B8A8_UNORM;
+    bypp = 4;
+    break;
+  case gctex_fmtdepth:
+    format = VK_FORMAT_D16_UNORM;
+    bypp = 2;
+    break;
+  case gctex_fmtdepten:
+    format = VK_FORMAT_D16_UNORM_S8_UINT;
+    bypp = 3;
+    break;
+  default:
+    format = VK_FORMAT_R8G8B8A8_UNORM;
+    bypp = 4;
+  };
+
+  VkImageCreateInfo imageInfo = {};
+
+  ZeroObject(imageInfo);
+
+  imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  imageInfo.imageType = VK_IMAGE_TYPE_2D;
+  imageInfo.extent.width = w;
+  imageInfo.extent.height = h;
+  imageInfo.extent.depth = 1;
+  imageInfo.mipLevels = 1;
+  imageInfo.arrayLayers = 1;
+  imageInfo.format = format;
+  imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+  imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  VkResult result = m_vk.vkCreateImage(m_device, &imageInfo, nullptr, &t->image);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image.\n";
+
+    printResult(result);
+
+    delete t;
+
+    return null;
+  }
+
+  VkMemoryRequirements requirements;
+
+  m_vk.vkGetImageMemoryRequirements(m_device, t->image, &requirements);
+
+  VkMemoryAllocateInfo allocInfo = {};
+
+  ZeroObject(allocInfo);
+
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = requirements.size;
+
+  result = m_vk.vkAllocateMemory(m_device, &allocInfo, null, &t->memory);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+
+    delete t;
+
+    return null;
+  }
+
+  result = m_vk.vkBindImageMemory(m_device, t->image, t->memory, null);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+    m_vk.vkFreeMemory(m_device, t->memory, null);
+
+    delete t;
+
+    return null;
+  }
+
+  if (m)
+  {
+    void* data = null;
+
+    u32 size = w * h * bypp;
+
+    result = m_vk.vkMapMemory(m_device, t->memory, 0, size, 0, &data);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to fill texture image memory.\n";
+
+      printResult(result);
+
+      m_vk.vkDestroyImage(m_device, t->image, null);
+
+      m_vk.vkFreeMemory(m_device, t->memory, null);
+
+      delete t;
+
+      return null;
+    }
+
+    memcpy(data, m, size);
+
+    m_vk.vkUnmapMemory(m_device, t->memory);
+  }
+
+  return t;
+}
+
+void  kgmVulkan::gcFreeTexture(void *t)
+{
+  if (!m_device || !t)
+    return;
+
+  if (((Texture*)t)->memory)
+    m_vk.vkFreeMemory(m_device, ((Texture*)t)->memory, null);
+
+  if (((Texture*)t)->image)
+    m_vk.vkDestroyImage(m_device, ((Texture*)t)->image, null);
+
+  delete (Texture*)t;
+}
+
 void  kgmVulkan::gcSetTexture(u32 stage, void *t) {}
 
 // TARGET

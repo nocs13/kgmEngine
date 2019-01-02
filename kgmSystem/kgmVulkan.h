@@ -70,6 +70,7 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateImageView vkCreateImageView;
     PFN_vkCreateFramebuffer vkCreateFramebuffer;
     PFN_vkAllocateMemory vkAllocateMemory;
+    PFN_vkFreeMemory vkFreeMemory;
     PFN_vkBindImageMemory vkBindImageMemory;
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
     PFN_vkResetCommandBuffer vkResetCommandBuffer;
@@ -93,6 +94,9 @@ class kgmVulkan: public kgmIGC
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
     VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
+    VK_EXPORTED_FUNCTION(vkDestroyImage);
+    VK_EXPORTED_FUNCTION(vkMapMemory);
+    VK_EXPORTED_FUNCTION(vkUnmapMemory);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
@@ -108,6 +112,12 @@ class kgmVulkan: public kgmIGC
   {
     VkShaderModule vertex;
     VkShaderModule fragment;
+  };
+
+  struct Texture
+  {
+    VkImage        image;
+    VkDeviceMemory memory;
   };
 
   static kgmLib vk_lib;  
