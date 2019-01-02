@@ -2799,6 +2799,18 @@ bool kgmVulkan::initSemaphores()
   return true;
 }
 
+bool kgmVulkan::initPipeline()
+{
+  if (!m_device)
+  {
+    kgm_log() << "Vulkan error: Failed create pipelines as no device.\n";
+
+    return false;
+  }
+
+  return true;
+}
+
 /*
 void kgmVulkan::createSwapChain()
 {

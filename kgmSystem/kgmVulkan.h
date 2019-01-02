@@ -155,6 +155,24 @@ class kgmVulkan: public kgmIGC
   VkSemaphore m_imageAvailableSemaphore;
   VkSemaphore m_renderingFinishedSemaphore;
 
+  struct
+  {
+    VkPipelineShaderStageCreateInfo           stages;
+    VkPipelineVertexInputStateCreateInfo      vertexInputState;
+    VkPipelineInputAssemblyStateCreateInfo    inputAssemblyState;
+    VkPipelineTessellationStateCreateInfo     tessellationState;
+    VkPipelineViewportStateCreateInfo         viewportState;
+    VkPipelineRasterizationStateCreateInfo    rasterizationState;
+    VkPipelineMultisampleStateCreateInfo      multisampleState;
+    VkPipelineDepthStencilStateCreateInfo     depthStencilState;
+    VkPipelineColorBlendStateCreateInfo       colorBlendState;
+    VkPipelineDynamicStateCreateInfo          dynamicState;
+
+    VkPipelineLayoutCreateInfo   layoutCreateInfo;
+    VkPipelineCacheCreateInfo    cacheCreateInfo;
+    VkGraphicsPipelineCreateInfo graphicsCreateInfo;
+  } m_pipeline;
+
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
@@ -261,6 +279,7 @@ private:
   bool initFrameBuffers();
   bool initDepthBuffer();
   bool initSemaphores();
+  bool initPipeline();
 
   /*
   void createSwapChain();
