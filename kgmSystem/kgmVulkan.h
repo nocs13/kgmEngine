@@ -117,6 +117,7 @@ class kgmVulkan: public kgmIGC
   struct Texture
   {
     VkImage        image;
+    VkImageView    iview;
     VkDeviceMemory memory;
   };
 

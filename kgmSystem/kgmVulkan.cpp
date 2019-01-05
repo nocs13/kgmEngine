@@ -1374,11 +1374,14 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   Texture* t = new Texture;
 
   t->image = VK_NULL_HANDLE;
+  t->iview = VK_NULL_HANDLE;
   t->memory = VK_NULL_HANDLE;
 
   u32 bypp = 1;
 
   VkFormat format;
+
+  VkImageType itype;
 
   switch(bpp)
   {
@@ -1411,12 +1414,26 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     bypp = 4;
   };
 
+  switch (type)
+  {
+  case gctype_texcube:
+    itype = VK_IMAGE_TYPE_3D;
+    break;
+  case gctype_texdepth:
+    itype = VK_IMAGE_TYPE_2D;
+    break;
+  case gctype_tex2d:
+  default:
+    itype = VK_IMAGE_TYPE_2D;
+    break;
+  }
+
   VkImageCreateInfo imageInfo = {};
 
   ZeroObject(imageInfo);
 
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-  imageInfo.imageType = VK_IMAGE_TYPE_2D;
+  imageInfo.imageType = itype;
   imageInfo.extent.width = w;
   imageInfo.extent.height = h;
   imageInfo.extent.depth = 1;
@@ -1512,6 +1529,37 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     m_vk.vkUnmapMemory(m_device, t->memory);
   }
 
+  VkImageViewCreateInfo viewInfo;
+
+  ZeroObject(viewInfo);
+
+  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  viewInfo.format = format;
+  viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+  viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  viewInfo.subresourceRange.baseMipLevel = 0;
+  viewInfo.subresourceRange.baseArrayLayer = 0;
+  viewInfo.subresourceRange.layerCount = 1;
+  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.image = t->image;
+
+  result = m_vk.vkCreateImageView(m_device, &viewInfo, null, &t->iview);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image view.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+
+    m_vk.vkFreeMemory(m_device, t->memory, null);
+
+    delete t;
+
+    return null;
+  }
+
   return t;
 }
 
@@ -1520,11 +1568,14 @@ void  kgmVulkan::gcFreeTexture(void *t)
   if (!m_device || !t)
     return;
 
-  if (((Texture*)t)->memory)
-    m_vk.vkFreeMemory(m_device, ((Texture*)t)->memory, null);
+  if (((Texture*)t)->iview)
+    m_vk.vkDestroyImageView(m_device, ((Texture*)t)->iview, null);
 
   if (((Texture*)t)->image)
     m_vk.vkDestroyImage(m_device, ((Texture*)t)->image, null);
+
+  if (((Texture*)t)->memory)
+    m_vk.vkFreeMemory(m_device, ((Texture*)t)->memory, null);
 
   delete (Texture*)t;
 }
