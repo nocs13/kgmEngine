@@ -1194,14 +1194,14 @@ void kgmVulkan::gcResize(u32 width, u32 height)
     return;
   }
 
-  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+  //m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
-  kgm_log() << "Vulkan: Command buffer deleted.\n";
+  //kgm_log() << "Vulkan: Command buffer deleted.\n";
 
-  if (m_renderPass)
-    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+  //if (m_renderPass)
+  //  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-  kgm_log() << "Vulkan: Render pass destroyed.\n";
+  //kgm_log() << "Vulkan: Render pass destroyed.\n";
 
   //for (size_t i = 0; i < m_swapChainImages.length(); i++)
   //{
@@ -1286,8 +1286,8 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Reset fence passed.\n";
 
-  //auto &commandBuffer = m_commandBuffers[m_swapChainImage];
-  auto &commandBuffer = m_commandBuffers[0];
+  auto &commandBuffer = m_commandBuffers[swapChainImage];
+  //auto &commandBuffer = m_commandBuffers[0];
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
@@ -2301,7 +2301,8 @@ bool kgmVulkan::initCommands()
 
   infoPool.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   infoPool.pNext = null;
-  infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
+  //infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
+  infoPool.queueFamilyIndex = 0;
   infoPool.flags = 0;
 
   VkResult result = m_vk.vkCreateCommandPool(m_device, &infoPool, nullptr, &m_commandPool);
@@ -2315,15 +2316,26 @@ bool kgmVulkan::initCommands()
     return false;
   }
 
+  result = m_vk.vkResetCommandPool(m_device, m_commandPool, VkCommandPoolResetFlagBits::VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot reset command pool.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
   VkCommandBufferAllocateInfo infoCommand = { };
 
   infoCommand.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
   infoCommand.pNext = null;
   infoCommand.commandPool = m_commandPool;
   infoCommand.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  infoCommand.commandBufferCount = 1;
+  infoCommand.commandBufferCount = 2;
 
-  m_commandBuffers.alloc(1);
+  m_commandBuffers.alloc(2);
 
   result = m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, m_commandBuffers.data());
 
@@ -2333,7 +2345,7 @@ bool kgmVulkan::initCommands()
 
     printResult(result);
 
-    //return false;
+    return false;
   }
 
   return true;
@@ -2452,7 +2464,7 @@ bool kgmVulkan::initSwapchains()
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-  u32 swapChainImagesCount = surfaceCapabilities.minImageCount + 1;
+  u32 swapChainImagesCount = 2;
 
   VkSurfaceTransformFlagBitsKHR surfaceTransform;
 
@@ -2518,7 +2530,9 @@ bool kgmVulkan::initSwapchains()
 
   VkSwapchainKHR swapChain = m_swapChain;
 
-  //swapchainCreateInfo.oldSwapchain = swapChain;
+  m_swapChain = nullptr;
+
+  swapchainCreateInfo.oldSwapchain = swapChain;
   swapchainCreateInfo.imageArrayLayers = 1;
   swapchainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapchainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
@@ -2528,9 +2542,7 @@ bool kgmVulkan::initSwapchains()
   swapchainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
   swapchainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
   swapchainCreateInfo.clipped = VK_TRUE;
-  swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-
-  m_swapChain = nullptr;
+  //swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
   m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
 
@@ -2567,6 +2579,8 @@ bool kgmVulkan::initSwapchains()
 
     return false;
   }
+
+  m_swapChainImage = 0;
 
   return true;
 }
