@@ -1167,7 +1167,89 @@ u32 kgmVulkan::gcError()
 
 void  kgmVulkan::gcSet(u32 param, void* value) {}
 void  kgmVulkan::gcGet(u32 param, void* value) {}
-void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten) {}
+
+void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
+{
+  auto &commandBuffer = m_commandBuffers[m_swapChainImage];
+  auto &image = m_swapChainImages[m_swapChainImage];
+  auto &framebuffer = m_frameBuffers[m_swapChainImage];
+
+  VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+
+  VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
+  commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+  commandBufferInheritanceInfo.pNext = nullptr;
+  commandBufferInheritanceInfo.renderPass = m_renderPass;
+  commandBufferInheritanceInfo.subpass = 0;
+  commandBufferInheritanceInfo.framebuffer = framebuffer;
+  commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
+  commandBufferInheritanceInfo.queryFlags = 0;
+  commandBufferInheritanceInfo.pipelineStatistics = 0;
+
+  VkCommandBufferBeginInfo commandBufferBeginInfo;
+  commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  commandBufferBeginInfo.pNext = nullptr;
+  commandBufferBeginInfo.flags = 0;
+  commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
+
+  result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+
+  VkClearValue clearValue;
+
+  ZeroObject(clearValue);
+
+  clearValue.color.float32[0] = 1.0f;
+  clearValue.color.float32[1] = 0.0f;
+  clearValue.color.float32[2] = 0.0f;
+  clearValue.color.float32[3] = 1.0f;
+
+  VkRenderPassBeginInfo renderPassBeginInfo;
+
+  ZeroObject(renderPassBeginInfo);
+
+  renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  renderPassBeginInfo.pNext = nullptr;
+  renderPassBeginInfo.renderPass = m_renderPass;
+  renderPassBeginInfo.framebuffer = framebuffer;
+  renderPassBeginInfo.renderArea = VkRect2D {
+    VkOffset2D  {0, 0},
+    VkExtent2D  {
+      (u32) m_rect[2], (u32) m_rect[3]
+      //surfaceCapabilities.currentExtent.width,
+      //surfaceCapabilities.currentExtent.height
+    }
+  };
+  renderPassBeginInfo.clearValueCount = 1;
+  renderPassBeginInfo.pClearValues = &clearValue;
+
+  m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+  m_vk.vkCmdEndRenderPass(commandBuffer);
+
+  VkImageMemoryBarrier imageMemoryBarrier;
+
+  ZeroObject(imageMemoryBarrier);
+
+  imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  imageMemoryBarrier.pNext = nullptr;
+  imageMemoryBarrier.srcAccessMask = 0;
+  imageMemoryBarrier.dstAccessMask =
+      VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+      VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+  imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+  imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  imageMemoryBarrier.srcQueueFamilyIndex = 0;
+  imageMemoryBarrier.dstQueueFamilyIndex = 0;
+  imageMemoryBarrier.image = image;
+  imageMemoryBarrier.subresourceRange = {
+    VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
+  };
+
+  m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                            VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
+                            1, &imageMemoryBarrier);
+
+  m_vk.vkEndCommandBuffer(commandBuffer);
+}
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
@@ -1194,26 +1276,40 @@ void kgmVulkan::gcResize(u32 width, u32 height)
     return;
   }
 
-  //m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
-  //kgm_log() << "Vulkan: Command buffer deleted.\n";
+  m_commandBuffers.clear();
 
-  //if (m_renderPass)
-  //  m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+  kgm_log() << "Vulkan: Command buffer deleted.\n";
 
-  //kgm_log() << "Vulkan: Render pass destroyed.\n";
+  if (m_renderPass)
+  {
+    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-  //for (size_t i = 0; i < m_swapChainImages.length(); i++)
-  //{
-  //  m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
-  //  m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
-  //}
+    m_renderPass = VK_NULL_HANDLE;
+  }
 
-  //m_swapChainImages.clear();
+  kgm_log() << "Vulkan: Render pass destroyed.\n";
 
-  //kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
+  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  {
+    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  }
+
+  m_frameBuffers.clear();
+  m_imageViews.clear();
+  m_swapChainImages.clear();
+
+  kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
+
+  initSwapchains();
+  initRenderPass();
+  initImageViews();
+  initFrameBuffers();
+  initCommands();
 
   //createSwapChain();
   //createRenderPass();
@@ -2339,7 +2435,7 @@ bool kgmVulkan::initCommands()
 
   result = m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, m_commandBuffers.data());
 
-  if(result != VK_SUCCESS);
+  if(result != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Cannot allocate command buffer.\n";
 
