@@ -1325,7 +1325,7 @@ void  kgmVulkan::gcRender()
 {
   VkResult result;
 
-  u32 swapChainImage = m_swapChainImage;
+  u32 swapChainImage = 0;// = m_swapChainImage;
 
   if (!m_device || !m_swapChain)
     return;
@@ -1343,7 +1343,7 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
 
-  result = m_vk.vkQueueWaitIdle(m_queue);
+  /*result = m_vk.vkQueueWaitIdle(m_queue);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1354,9 +1354,9 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  kgm_log() << "Vulkan: Idle wait for queue passed.\n";
+  kgm_log() << "Vulkan: Idle wait for queue passed.\n";*/
 
-  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, 1000);
+  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1440,13 +1440,14 @@ void  kgmVulkan::gcRender()
   presentInfo.pImageIndices = &swapChainImage;
   presentInfo.pResults = &result;
 
-  result = m_vk.vkQueuePresentKHR(m_queue, &presentInfo);
+  VkResult result2 = m_vk.vkQueuePresentKHR(m_queue, &presentInfo);
 
-  if(result != VkResult::VK_SUCCESS)
+  if(result != VkResult::VK_SUCCESS || result2 != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 
     printResult(result);
+    printResult(result2);
 
     return;
   }
@@ -2200,12 +2201,12 @@ bool kgmVulkan::initDevice()
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
+  /*if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to wait for queue.\n";
 
     return false;
-  }
+  }*/
 
   m_queue = queue;
 
