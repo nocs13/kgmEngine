@@ -1325,12 +1325,14 @@ void  kgmVulkan::gcRender()
 {
   VkResult result;
 
-  u32 swapChainImage = 0;// = m_swapChainImage;
+  kgm_log() << "Vulkan info: start render.\n";
+
+  u32 swapChainImage = 0;
 
   if (!m_device || !m_swapChain)
     return;
 
-  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
+  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, 1000000, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
   if(result != VkResult::VK_SUCCESS)
   {
