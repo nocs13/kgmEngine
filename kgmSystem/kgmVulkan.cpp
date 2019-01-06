@@ -1329,10 +1329,12 @@ void  kgmVulkan::gcRender()
 
   u32 swapChainImage = 0;
 
+  u32 waitTimeout = 1000000;
+
   if (!m_device || !m_swapChain)
     return;
 
-  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, 1000000, VK_NULL_HANDLE, m_fence, &swapChainImage);
+  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, waitTimeout, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1358,7 +1360,7 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Idle wait for queue passed.\n";*/
 
-  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
+  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, waitTimeout);
 
   if(result != VkResult::VK_SUCCESS)
   {
