@@ -1342,6 +1342,8 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
+    exit(0);
+
     return;
   }
 
@@ -1491,7 +1493,8 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     bypp = 1;
     break;
   case gctex_fmt16:
-    format = VK_FORMAT_R5G6B5_UNORM_PACK16;
+    //format = VK_FORMAT_R5G6B5_UNORM_PACK16;
+    format = VK_FORMAT_B5G6R5_UNORM_PACK16;
     bypp = 2;
     break;
   case gctex_fmt24:
@@ -1514,6 +1517,8 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     format = VK_FORMAT_R8G8B8A8_UNORM;
     bypp = 4;
   };
+
+  format = VK_FORMAT_R8G8B8A8_UNORM;
 
   switch (type)
   {
@@ -1590,7 +1595,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 
   if (result != VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+    kgm_log() << "Vulkan error: Failed to bind texture image memory.\n";
 
     printResult(result);
 
@@ -1625,7 +1630,22 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
       return null;
     }
 
-    memcpy(data, m, size);
+    if (bypp == 4)
+    {
+      memcpy(data, m, size);
+    }
+    else if (bypp == 3)
+    {
+
+    }
+    else if (bypp == 2)
+    {
+
+    }
+    else
+    {
+
+    }
 
     m_vk.vkUnmapMemory(m_device, t->memory);
   }
@@ -2143,6 +2163,10 @@ bool kgmVulkan::initDevice()
 
     return false;
   }
+
+  VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
+
+  m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
 
   float priorities = 1.0f;
 
