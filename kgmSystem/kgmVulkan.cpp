@@ -63,7 +63,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initSurface() || !initSwapchains())
+  if (!initSurface() || !initSwapchain())
   {
     m_error = 1;
 
@@ -1171,8 +1171,8 @@ void  kgmVulkan::gcGet(u32 param, void* value) {}
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
   auto &commandBuffer = m_commandBuffers[m_swapChainImage];
-  auto &image = m_swapChainImages[m_swapChainImage];
-  auto &framebuffer = m_frameBuffers[m_swapChainImage];
+  auto &image         = m_swapChainImages[m_swapChainImage];
+  auto &framebuffer   = m_frameBuffers[m_swapChainImage];
 
   VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
@@ -1305,7 +1305,7 @@ void kgmVulkan::gcResize(u32 width, u32 height)
 
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
-  initSwapchains();
+  initSwapchain();
   initRenderPass();
   initImageViews();
   initFrameBuffers();
@@ -1388,6 +1388,10 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Reset fence passed.\n";
 
+  VkQueue queue;
+
+  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
+
   auto &commandBuffer = m_commandBuffers[swapChainImage];
   //auto &commandBuffer = m_commandBuffers[0];
 
@@ -1407,7 +1411,7 @@ void  kgmVulkan::gcRender()
   submitInfo.signalSemaphoreCount = 0;
   submitInfo.pSignalSemaphores = nullptr;
 
-  result = m_vk.vkQueueSubmit(m_queue, 1, &submitInfo, VK_NULL_HANDLE);
+  result = m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1420,7 +1424,7 @@ void  kgmVulkan::gcRender()
 
   kgm_log() << "Vulkan: Submit queue passed.\n";
 
-  result = m_vk.vkQueueWaitIdle(m_queue);
+  result = m_vk.vkQueueWaitIdle(queue);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1446,7 +1450,7 @@ void  kgmVulkan::gcRender()
   presentInfo.pImageIndices = &swapChainImage;
   presentInfo.pResults = &result;
 
-  VkResult result2 = m_vk.vkQueuePresentKHR(m_queue, &presentInfo);
+  VkResult result2 = m_vk.vkQueuePresentKHR(queue, &presentInfo);
 
   if(result != VkResult::VK_SUCCESS || result2 != VkResult::VK_SUCCESS)
   {
@@ -1493,8 +1497,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     bypp = 1;
     break;
   case gctex_fmt16:
-    //format = VK_FORMAT_R5G6B5_UNORM_PACK16;
-    format = VK_FORMAT_B5G6R5_UNORM_PACK16;
+    format = VK_FORMAT_R5G6B5_UNORM_PACK16;
     bypp = 2;
     break;
   case gctex_fmt24:
@@ -1873,6 +1876,23 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
+  const s8* layerNames[] = {
+    "VK_LAYER_LUNARG_api_dump",
+    "VK_LAYER_LUNARG_core_validation",
+    "VK_LAYER_LUNARG_image",
+    "VK_LAYER_LUNARG_object_tracker",
+    "VK_LAYER_LUNARG_parameter_validation",
+    "VK_LAYER_LUNARG_screenshot",
+    "VK_LAYER_LUNARG_swapchain",
+    "VK_LAYER_GOOGLE_threading",
+    "VK_LAYER_GOOGLE_unique_objects",
+    "VK_LAYER_LUNARG_vktrace",
+    "VK_LAYER_RENDERDOC_Capture",
+    "VK_LAYER_NV_optimus",
+    "VK_LAYER_VALVE_steam_overlay",
+    "VK_LAYER_LUNARG_standard_validation",
+  };
+
   u32 extensionsCount = 0;
 
   VkResult result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
@@ -1886,10 +1906,10 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
-  VkExtensionProperties extensionProperties[extensionsCount];
-  const s8*             extensionNames[extensionsCount];
+  m_extensionProperties.alloc(extensionsCount);
+  m_extensionNames.alloc(extensionsCount);
 
-  result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionProperties);
+  result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, m_extensionProperties.data());
 
   if (result != VK_SUCCESS || extensionsCount == 0)
   {
@@ -1902,11 +1922,13 @@ bool kgmVulkan::initInstance()
 
   u32 iname = 0;
 
-  for (const auto& ep: extensionProperties)
+  for (s32 i = 0; i < extensionsCount; i++)
   {
+    const auto& ep = m_extensionProperties[i];
+
     kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
 
-    extensionNames[iname++] = ep.extensionName;
+    m_extensionNames[iname++] = ep.extensionName;
   }
 
   VkApplicationInfo appInfo = {};
@@ -1930,9 +1952,9 @@ bool kgmVulkan::initInstance()
   instanceInfo.flags = 0;
   instanceInfo.pApplicationInfo = &appInfo;
   instanceInfo.enabledExtensionCount = extensionsCount;
-  instanceInfo.ppEnabledExtensionNames = extensionNames;
-  instanceInfo.enabledLayerCount = 0;
-  instanceInfo.ppEnabledLayerNames = NULL;
+  instanceInfo.ppEnabledExtensionNames = m_extensionNames.data();
+  //instanceInfo.enabledLayerCount = 14;
+  //instanceInfo.ppEnabledLayerNames = layerNames;
 
   result = m_vk.vkCreateInstance(&instanceInfo, NULL, &m_instance);
 
@@ -2046,6 +2068,17 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
+  if (count < 1)
+  {
+    m_physicalDevices.clear();
+
+    kgm_log() << "Vulkan error: No valid device.\n";
+
+    return false;
+  }
+
+  m_physicalDevice = m_physicalDevices[0];
+
   return true;
 }
 
@@ -2053,115 +2086,97 @@ bool kgmVulkan::initDevice()
 {
   VkResult result = VK_SUCCESS;
 
-  if (!m_instance || m_physicalDevices.length() < 1)
+  if (!m_physicalDevice)
   {
-    kgm_log() << "Vulkan error: Not prepared to create device.\n";
+    kgm_log() << "Vulkan error: Not choosed physical device.\n";
 
     return false;
   }
 
-  VkPhysicalDevice physicalDevice = NULL;
+  VkPhysicalDevice physicalDevice = m_physicalDevice;
 
   kgmArray<VkQueueFamilyProperties> familyProperties;
 
-  for (u32 i = 0; i < m_physicalDevices.length(); i++)
+  u32 count = 0;
+
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, null);
+
+  if(count < 0)
   {
-    auto& device = m_physicalDevices[i];
+    kgm_log() << "kgmVulkan error: Unable get family properties count.\n";
 
-    u32 count = 0;
+    return false;
+  }
 
-    m_vk.vkGetPhysicalDeviceQueueFamilyProperties(device, &count, null);
+  familyProperties.alloc(count);
 
-    if(count < 0)
+  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &count, familyProperties.data());
+
+  if(count < 0)
+  {
+    kgm_log() << "kgmVulkan error: Unable get family properties.\n";
+
+    return false;
+  }
+
+  bool found = false;
+
+  for (u32 i = 0; i < count; i++)
+  {
+    if (familyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
     {
-      kgm_log() << "kgmVulkan error: Unable get family properties count.\n";
-
-      continue;
-    }
-
-    familyProperties.alloc(count);
-
-    m_vk.vkGetPhysicalDeviceQueueFamilyProperties(device, &count, familyProperties.data());
-
-    if(count < 0)
-    {
-      kgm_log() << "kgmVulkan error: Unable get family properties.\n";
-
-      continue;
-    }
-
-    bool found = false;
-
-    for (u32 i = 0; i < count; i++)
-    {
-      if (familyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-      {
-        found = true;
-
-        m_graphicsQueueFamilyIndex = i;
-
-        break;
-      }
-    }
-
-    if (found)
-    {
-      u32 extensionsCount = 0;
-
-      result = m_vk.vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, nullptr);
-
-      if (result != VK_SUCCESS)
-      {
-        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties.\n";
-
-        printResult(result);
-
-        continue;
-      }
-
-      VkExtensionProperties deviceExtensionProperties[extensionsCount];
-
-      result = m_vk.vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionsCount, deviceExtensionProperties);
-
-      if (result != VK_SUCCESS)
-      {
-        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
-
-        continue;
-      }
-
-      bool isswapchain = false;
-
-      for (const auto e: deviceExtensionProperties)
-      {
-        if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
-        {
-          isswapchain = true;
-
-          //break;
-        }
-
-        kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
-      }
-
-      if (!isswapchain)
-      {
-        kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
-
-        continue;
-      }
-
-      physicalDevice = device;
+      found = true;
 
       break;
     }
   }
 
-  if (!physicalDevice)
+  if (found)
   {
-    kgm_log() << "kgmVulkan error: Physical devices are not valid.\n";
+    u32 extensionsCount = 0;
 
-    return false;
+    result = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, nullptr);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties.\n";
+
+      printResult(result);
+
+      return false;
+    }
+
+    VkExtensionProperties deviceExtensionProperties[extensionsCount];
+
+    result = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, deviceExtensionProperties);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
+
+      return false;
+    }
+
+    bool isswapchain = false;
+
+    for (const auto e: deviceExtensionProperties)
+    {
+      if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
+      {
+        isswapchain = true;
+
+        //break;
+      }
+
+      kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
+    }
+
+    if (!isswapchain)
+    {
+      kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
+
+      return false;
+    }
   }
 
   VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
@@ -2228,15 +2243,6 @@ bool kgmVulkan::initDevice()
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
-
-  /*if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to wait for queue.\n";
-
-    return false;
-  }*/
-
-  m_queue = queue;
 
   VkFence fence;
 
@@ -2426,8 +2432,7 @@ bool kgmVulkan::initCommands()
 
   infoPool.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   infoPool.pNext = null;
-  //infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
-  infoPool.queueFamilyIndex = 0;
+  infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
   infoPool.flags = 0;
 
   VkResult result = m_vk.vkCreateCommandPool(m_device, &infoPool, nullptr, &m_commandPool);
@@ -2476,7 +2481,7 @@ bool kgmVulkan::initCommands()
   return true;
 }
 
-bool kgmVulkan::initSwapchains()
+bool kgmVulkan::initSwapchain()
 {
   VkResult result;
 
@@ -2557,35 +2562,7 @@ bool kgmVulkan::initSwapchains()
     return false;
   }
 
-  VkExtent2D swapChainExtent;
-
-  if (surfaceCapabilities.currentExtent.width == 0xFFFFFFFF)
-  {
-    swapChainExtent.width  = m_rect[2];
-    swapChainExtent.height = m_rect[3];
-
-    if (swapChainExtent.width < surfaceCapabilities.minImageExtent.width)
-    {
-      swapChainExtent.width = surfaceCapabilities.minImageExtent.width;
-    }
-    else if (swapChainExtent.width > surfaceCapabilities.maxImageExtent.width)
-    {
-      swapChainExtent.width = surfaceCapabilities.maxImageExtent.width;
-    }
-
-    if (swapChainExtent.height < surfaceCapabilities.minImageExtent.height)
-    {
-      swapChainExtent.height = surfaceCapabilities.minImageExtent.height;
-    }
-    else if (swapChainExtent.height > surfaceCapabilities.maxImageExtent.height)
-    {
-      swapChainExtent.height = surfaceCapabilities.maxImageExtent.height;
-    }
-  }
-  else
-  {
-    swapChainExtent = surfaceCapabilities.currentExtent;
-  }
+  VkExtent2D swapChainExtent = surfaceCapabilities.currentExtent;
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 

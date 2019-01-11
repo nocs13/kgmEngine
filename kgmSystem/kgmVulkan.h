@@ -131,6 +131,10 @@ class kgmVulkan: public kgmIGC
   VkSurfaceKHR m_surface  = 0;
   VkDevice     m_device   = 0;
 
+  kgmArray<VkExtensionProperties> m_extensionProperties;
+  kgmArray<const s8*>             m_extensionNames;
+
+
   VkPhysicalDevice m_physicalDevice = 0;
 
   VkSwapchainKHR   m_swapChain      = 0;
@@ -138,13 +142,12 @@ class kgmVulkan: public kgmIGC
   VkCommandPool    m_commandPool    = 0;
 
   VkFence          m_fence           = 0;
-  VkQueue          m_queue           = 0;
 
   kgmArray<VkPhysicalDevice> m_physicalDevices;
-  kgmArray<VkImage> m_swapChainImages;
-  kgmArray<VkFramebuffer> m_frameBuffers;
-  kgmArray<VkImageView> m_imageViews;
-  kgmArray<VkCommandBuffer> m_commandBuffers;
+  kgmArray<VkImage>          m_swapChainImages;
+  kgmArray<VkFramebuffer>    m_frameBuffers;
+  kgmArray<VkImageView>      m_imageViews;
+  kgmArray<VkCommandBuffer>  m_commandBuffers;
 
   VkFormat m_swapChainFormat;
 
@@ -276,7 +279,7 @@ private:
   bool initDevice();
   bool initSurface();
   bool initCommands();
-  bool initSwapchains();
+  bool initSwapchain();
   bool initRenderPass();
   bool initImageViews();
   bool initFrameBuffers();
