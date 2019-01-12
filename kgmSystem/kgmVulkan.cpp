@@ -1256,6 +1256,7 @@ m_vk.vkEndCommandBuffer(commandBuffer);
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
+  return;
   m_rect[2] = width;
   m_rect[3] = height;
 
@@ -1326,7 +1327,7 @@ void  kgmVulkan::gcRender()
 
   u32 swapChainImage = 0;
 
-  u32 waitTimeout = 1000000;
+  //u32 waitTimeout = 1000000;
 
   if (!m_device || !m_swapChain)
     return;
@@ -1339,27 +1340,14 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    //exit(0);
+    exit (0);
 
     return;
   }
 
   kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
 
-  /*result = m_vk.vkQueueWaitIdle(m_queue);
-
-  if(result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to wait for queue.\n";
-
-    printResult(result);
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Idle wait for queue passed.\n";
-
-  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, waitTimeout);
+  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1384,7 +1372,7 @@ void  kgmVulkan::gcRender()
   }
 
   kgm_log() << "Vulkan: Reset fence passed.\n";
-*/
+
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
@@ -1449,12 +1437,25 @@ void  kgmVulkan::gcRender()
 
   VkResult result2 = m_vk.vkQueuePresentKHR(queue, &presentInfo);
 
+  if (result2 == VK_ERROR_OUT_OF_DATE_KHR || result2 == VK_SUBOPTIMAL_KHR)
+  {
+    kgm_log() << "Vulkan info: Surface incompatible, updating swapchans.\n";
+
+    initSwapchain();
+    initImageViews();
+    initFrameBuffers();
+
+    return;
+  }
+
   if(result != VkResult::VK_SUCCESS || result2 != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: failed to present swapchain.\n";
 
     printResult(result);
     printResult(result2);
+
+    exit(0);
 
     return;
   }
@@ -1474,6 +1475,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 {
   if (!m_device || !w || !h)
     return null;
+  return null;
 
   Texture* t = new Texture;
 
@@ -2601,7 +2603,6 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.compositeAlpha = compositeAlpha;
   swapchainCreateInfo.imageArrayLayers = 1;
   swapchainCreateInfo.presentMode = presentMode;
-  swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
   swapchainCreateInfo.clipped = true;
   swapchainCreateInfo.imageColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
   swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -2632,7 +2633,6 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
   swapchainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
   swapchainCreateInfo.clipped = VK_TRUE;
-  //swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
   m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
 
@@ -2646,6 +2646,16 @@ bool kgmVulkan::initSwapchain()
   if (swapChain != VK_NULL_HANDLE)
   {
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+
+    for (size_t i = 0; i < m_swapChainImages.length(); i++)
+    {
+      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+    }
+
+    m_frameBuffers.clear();
+    m_imageViews.clear();
+    m_swapChainImages.clear();
   }
 
   uint32_t actualImageCount = swapChainImagesCount;
