@@ -1331,7 +1331,7 @@ void  kgmVulkan::gcRender()
   if (!m_device || !m_swapChain)
     return;
 
-  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, waitTimeout, VK_NULL_HANDLE, m_fence, &swapChainImage);
+  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -1339,7 +1339,7 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(0);
+    //exit(0);
 
     return;
   }
