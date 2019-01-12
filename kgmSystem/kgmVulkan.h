@@ -286,15 +286,6 @@ private:
   bool initDepthBuffer();
   bool initSemaphores();
   bool initPipeline();
-
-  /*
-  void createSwapChain();
-  void createRenderPass();
-  void createImageViews();
-  void createFramebuffers();
-  void createGraphicsPipeline();
-  void createCommandBuffers();
-  */
 };
 
 #endif

@@ -1170,85 +1170,88 @@ void  kgmVulkan::gcGet(u32 param, void* value) {}
 
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
-  auto &commandBuffer = m_commandBuffers[m_swapChainImage];
-  auto &image         = m_swapChainImages[m_swapChainImage];
-  auto &framebuffer   = m_frameBuffers[m_swapChainImage];
+  for (u32 i = 0; i < m_swapChainImages.length(); i++)
+  {
+    auto &commandBuffer = m_commandBuffers[i];
+    auto &image         = m_swapChainImages[i];
+    auto &framebuffer   = m_frameBuffers[i];
 
-  VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+    VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
-  VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-  commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-  commandBufferInheritanceInfo.pNext = nullptr;
-  commandBufferInheritanceInfo.renderPass = m_renderPass;
-  commandBufferInheritanceInfo.subpass = 0;
-  commandBufferInheritanceInfo.framebuffer = framebuffer;
-  commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
-  commandBufferInheritanceInfo.queryFlags = 0;
-  commandBufferInheritanceInfo.pipelineStatistics = 0;
+    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
+    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+    commandBufferInheritanceInfo.pNext = nullptr;
+    commandBufferInheritanceInfo.renderPass = m_renderPass;
+    commandBufferInheritanceInfo.subpass = 0;
+    commandBufferInheritanceInfo.framebuffer = framebuffer;
+    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
+    commandBufferInheritanceInfo.queryFlags = 0;
+    commandBufferInheritanceInfo.pipelineStatistics = 0;
 
-  VkCommandBufferBeginInfo commandBufferBeginInfo;
-  commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  commandBufferBeginInfo.pNext = nullptr;
-  commandBufferBeginInfo.flags = 0;
-  commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
+    VkCommandBufferBeginInfo commandBufferBeginInfo;
+    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    commandBufferBeginInfo.pNext = nullptr;
+    commandBufferBeginInfo.flags = 0;
+    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
-  result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+    result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
 
-  VkClearValue clearValue;
+    VkClearValue clearValue;
 
-  ZeroObject(clearValue);
+    ZeroObject(clearValue);
 
-  clearValue.color.float32[0] = 1.0f;
-  clearValue.color.float32[1] = 0.0f;
-  clearValue.color.float32[2] = 0.0f;
-  clearValue.color.float32[3] = 1.0f;
+    clearValue.color.float32[0] = 1.0f;
+    clearValue.color.float32[1] = 0.0f;
+    clearValue.color.float32[2] = 0.0f;
+    clearValue.color.float32[3] = 1.0f;
 
-  VkRenderPassBeginInfo renderPassBeginInfo;
+    VkRenderPassBeginInfo renderPassBeginInfo;
 
-  ZeroObject(renderPassBeginInfo);
+    ZeroObject(renderPassBeginInfo);
 
-  renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-  renderPassBeginInfo.pNext = nullptr;
-  renderPassBeginInfo.renderPass = m_renderPass;
-  renderPassBeginInfo.framebuffer = framebuffer;
-  renderPassBeginInfo.renderArea = VkRect2D {
+    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassBeginInfo.pNext = nullptr;
+    renderPassBeginInfo.renderPass = m_renderPass;
+    renderPassBeginInfo.framebuffer = framebuffer;
+    renderPassBeginInfo.renderArea = VkRect2D {
     VkOffset2D  {0, 0},
     VkExtent2D  {
-      (u32) m_rect[2], (u32) m_rect[3]
-      //surfaceCapabilities.currentExtent.width,
-      //surfaceCapabilities.currentExtent.height
-    }
-  };
-  renderPassBeginInfo.clearValueCount = 1;
-  renderPassBeginInfo.pClearValues = &clearValue;
+    (u32) m_rect[2], (u32) m_rect[3]
+    //surfaceCapabilities.currentExtent.width,
+    //surfaceCapabilities.currentExtent.height
+  }
+};
+renderPassBeginInfo.clearValueCount = 1;
+renderPassBeginInfo.pClearValues = &clearValue;
 
-  m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-  m_vk.vkCmdEndRenderPass(commandBuffer);
+m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+m_vk.vkCmdEndRenderPass(commandBuffer);
 
-  VkImageMemoryBarrier imageMemoryBarrier;
+VkImageMemoryBarrier imageMemoryBarrier;
 
-  ZeroObject(imageMemoryBarrier);
+ZeroObject(imageMemoryBarrier);
 
-  imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  imageMemoryBarrier.pNext = nullptr;
-  imageMemoryBarrier.srcAccessMask = 0;
-  imageMemoryBarrier.dstAccessMask =
-      VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-      VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-  imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-  imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-  imageMemoryBarrier.srcQueueFamilyIndex = 0;
-  imageMemoryBarrier.dstQueueFamilyIndex = 0;
-  imageMemoryBarrier.image = image;
-  imageMemoryBarrier.subresourceRange = {
-    VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-  };
+imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+imageMemoryBarrier.pNext = nullptr;
+imageMemoryBarrier.srcAccessMask = 0;
+imageMemoryBarrier.dstAccessMask =
+VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+imageMemoryBarrier.srcQueueFamilyIndex = 0;
+imageMemoryBarrier.dstQueueFamilyIndex = 0;
+imageMemoryBarrier.image = image;
+imageMemoryBarrier.subresourceRange = {
+VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
+};
 
-  m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                            VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-                            1, &imageMemoryBarrier);
+m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
+1, &imageMemoryBarrier);
 
-  m_vk.vkEndCommandBuffer(commandBuffer);
+m_vk.vkEndCommandBuffer(commandBuffer);
+}
 }
 
 void kgmVulkan::gcResize(u32 width, u32 height)
@@ -1310,12 +1313,6 @@ void kgmVulkan::gcResize(u32 width, u32 height)
   initImageViews();
   initFrameBuffers();
   initCommands();
-
-  //createSwapChain();
-  //createRenderPass();
-  //createImageViews();
-  //createFramebuffers();
-  //createCommandBuffers();
 }
 
 void  kgmVulkan::gcBegin() {}
@@ -1360,7 +1357,7 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  kgm_log() << "Vulkan: Idle wait for queue passed.\n";*/
+  kgm_log() << "Vulkan: Idle wait for queue passed.\n";
 
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, waitTimeout);
 
@@ -1387,7 +1384,7 @@ void  kgmVulkan::gcRender()
   }
 
   kgm_log() << "Vulkan: Reset fence passed.\n";
-
+*/
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
@@ -2162,11 +2159,7 @@ bool kgmVulkan::initDevice()
     for (const auto e: deviceExtensionProperties)
     {
       if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
-      {
         isswapchain = true;
-
-        //break;
-      }
 
       kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
     }
@@ -2237,12 +2230,7 @@ bool kgmVulkan::initDevice()
     return false;
   }
 
-  m_physicalDevice = physicalDevice;
-  m_device         = device;
-
-  VkQueue queue;
-
-  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
+  m_device = device;
 
   VkFence fence;
 
@@ -2977,477 +2965,6 @@ bool kgmVulkan::initPipeline()
 
   return true;
 }
-
-/*
-void kgmVulkan::createSwapChain()
-{
-  VkResult result;
-
-  VkSurfaceCapabilitiesKHR surfaceCapabilities;
-
-  result = m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
-
-  if(result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "kgmVulkan error: failed to get surface capabilities.\n";
-
-    printResult(result);
-
-    return;
-  }
-
-  u32 surfaceFormatsCount = 0;
-
-  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, nullptr);
-
-  if(result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
-
-    printResult(result);
-
-    return;
-  }
-
-  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
-
-  result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, surfaceFormats);
-
-  if(result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats.\n";
-
-    printResult(result);
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Got surface formats.\n";
-
-  // Find supported present modes
-  u32 presentModeCount;
-
-  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
-
-  if (result != VK_SUCCESS || presentModeCount == 0)
-  {
-    kgm_log() << "Vulkan error: Failed to get number of supported presentation modes.\n";
-
-    return;
-  }
-
-  VkPresentModeKHR presentModes[presentModeCount];
-
-  result = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes);
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get supported presentation modes.\n";
-
-    return;
-  }
-
-  // Determine number of images for swap chain
-  u32 imageCount = surfaceCapabilities.minImageCount + 1;
-
-  if (surfaceCapabilities.maxImageCount != 0 && imageCount > surfaceCapabilities.maxImageCount)
-  {
-    imageCount = surfaceCapabilities.maxImageCount;
-  }
-
-  kgm_log() << "Vulkan: using " << imageCount << " images for swap chain.\n";
-
-  // Select a surface format
-  VkSurfaceFormatKHR surfaceFormat = { surfaceFormats[0].format, surfaceFormats[0].colorSpace };
-
-  // Select swap chain size
-  VkExtent2D swapChainExtent; // = chooseSwapExtent(surfaceCapabilities);
-
-  swapChainExtent.width  = m_rect[2];
-  swapChainExtent.height = m_rect[3];
-
-  // Determine transformation to use (preferring no transform)
-  VkSurfaceTransformFlagBitsKHR surfaceTransform;
-
-  if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
-  {
-    surfaceTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-  }
-  else
-  {
-    surfaceTransform = surfaceCapabilities.currentTransform;
-  }
-
-  // Choose presentation mode (preferring MAILBOX ~= triple buffering)
-  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-
-  for (const auto &i: presentModes)
-  {
-    if (i == VK_PRESENT_MODE_MAILBOX_KHR)
-    {
-      presentMode == i;
-
-      break;
-    }
-  }
-
-  // Finally, create the swap chain
-  VkSwapchainCreateInfoKHR createInfo;
-
-  ZeroObject(createInfo);
-
-  createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-  createInfo.surface = m_surface;
-  createInfo.minImageCount = imageCount;
-  createInfo.imageFormat = surfaceFormat.format;
-  createInfo.imageColorSpace = surfaceFormat.colorSpace;
-  createInfo.imageExtent = swapChainExtent;
-  createInfo.imageArrayLayers = 1;
-  createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-  createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-  createInfo.queueFamilyIndexCount = 0;
-  createInfo.pQueueFamilyIndices = nullptr;
-  createInfo.preTransform = surfaceTransform;
-  createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-  createInfo.presentMode = presentMode;
-  createInfo.clipped = VK_TRUE;
-
-  VkSwapchainKHR swapChain = m_swapChain;
-
-  createInfo.oldSwapchain = swapChain;
-
-  m_swapChain = nullptr;
-
-  m_vk.vkCreateSwapchainKHR(m_device, &createInfo, nullptr, &m_swapChain);
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to create swap chain.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Created swap chain.\n";
-
-  if (swapChain != VK_NULL_HANDLE)
-  {
-    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
-
-    swapChain = m_swapChain;
-  }
-
-  m_swapChainFormat = surfaceFormat.format;
-
-  // Store the images used by the swap chain
-  // Note: these are the images that swap chain image indices refer to
-  // Note: actual number of images may differ from requested number, since it's a lower bound
-  uint32_t actualImageCount = 0;
-
-  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, nullptr);
-
-  if (result != VK_SUCCESS || actualImageCount == 0)
-  {
-    kgm_log() << "Vulkan: failed to acquire number of swap chain images.\n";
-
-    return;
-  }
-
-  m_swapChainImages.alloc(actualImageCount);
-
-  result = m_vk.vkGetSwapchainImagesKHR(m_device, swapChain, &actualImageCount, m_swapChainImages.data());
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to acquire swap chain images.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulcan: Acquired swap chain images.\n";
-}
-
-void kgmVulkan::createRenderPass()
-{
-  VkAttachmentDescription attachmentDescription;
-
-  ZeroObject(attachmentDescription);
-
-  attachmentDescription.format = m_swapChainFormat;
-  attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-  attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-  attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-  attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-  attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-  // Note: hardware will automatically transition attachment to the specified layout
-  // Note: index refers to attachment descriptions array
-  VkAttachmentReference colorAttachmentReference;
-
-  ZeroObject(colorAttachmentReference);
-
-  colorAttachmentReference.attachment = 0;
-  colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-  // Note: this is a description of how the attachments of the render pass will be used in this sub pass
-  // e.g. if they will be read in shaders and/or drawn to
-  VkSubpassDescription subPassDescription = {};
-
-  ZeroObject(subPassDescription);
-
-  subPassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-  subPassDescription.colorAttachmentCount = 1;
-  subPassDescription.pColorAttachments = &colorAttachmentReference;
-
-  // Create the render pass
-  VkRenderPassCreateInfo createInfo;
-
-  ZeroObject(createInfo);
-
-  createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-  createInfo.attachmentCount = 1;
-  createInfo.pAttachments = &attachmentDescription;
-  createInfo.subpassCount = 1;
-  createInfo.pSubpasses = &subPassDescription;
-
-  VkResult result = m_vk.vkCreateRenderPass(m_device, &createInfo, nullptr, &m_renderPass);
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to create render pass.\n";
-
-    return;
-  }
-  else
-  {
-    kgm_log() << "Vulkan: Created render pass.\n";
-  }
-}
-
-void kgmVulkan::createImageViews()
-{
-  u32 swi = m_swapChainImages.length();
-
-  m_imageViews.alloc(m_swapChainImages.length());
-
-  // Create an image view for every image in the swap chain
-  for (u32 i = 0; i < m_swapChainImages.length(); i++)
-  {
-    VkImageViewCreateInfo createInfo;
-
-    ZeroObject(createInfo);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    createInfo.image = m_swapChainImages[i];
-    createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    createInfo.format = m_swapChainFormat;
-    createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    createInfo.subresourceRange.baseMipLevel = 0;
-    createInfo.subresourceRange.levelCount = 1;
-    createInfo.subresourceRange.baseArrayLayer = 0;
-    createInfo.subresourceRange.layerCount = 1;
-
-    VkResult result = m_vk.vkCreateImageView(m_device, &createInfo, nullptr, &m_imageViews[i]);
-
-    if (result != VK_SUCCESS)
-    {
-      kgm_log() << "Vulak error: failed to create image view for swap chain image #" << i << ".\n";
-
-      return;
-    }
-  }
-
-  kgm_log() << "Vulkan: Created image views for swap chain images.\n";
-}
-
-void kgmVulkan::createFramebuffers()
-{
-  m_framebuffers.alloc(m_swapChainImages.length());
-
-  // Note: Framebuffer is basically a specific choice of attachments for a render pass
-  // That means all attachments must have the same dimensions, interesting restriction
-  for (u32 i = 0; i < m_swapChainImages.length(); i++)
-  {
-    VkFramebufferCreateInfo createInfo;
-
-    ZeroObject(createInfo);
-
-    createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    createInfo.renderPass = m_renderPass;
-    createInfo.attachmentCount = 1;
-    createInfo.pAttachments = &m_imageViews[i];
-    createInfo.width = m_rect[2];
-    createInfo.height = m_rect[3];
-    createInfo.layers = 1;
-
-    VkResult result = m_vk.vkCreateFramebuffer(m_device, &createInfo, nullptr, &m_framebuffers[i]);
-
-    if (result != VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: Failed to create framebuffer for swap chain image view #" << i << ".\n";
-
-      return;
-    }
-  }
-
-  kgm_log() << "Vulkan: Created framebuffers for swap chain image views.\n";
-}
-
-void kgmVulkan::createGraphicsPipeline()
-{
-
-}
-
-void kgmVulkan::createCommandBuffers()
-{
-  // Allocate graphics command buffers
-  m_commandBuffers.alloc(m_swapChainImages.length());
-
-  VkCommandBufferAllocateInfo allocInfo;
-
-  ZeroObject(allocInfo);
-
-  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-  allocInfo.commandPool = m_commandPool;
-  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  allocInfo.commandBufferCount = (u32) m_swapChainImages.length();
-
-  VkResult result = m_vk.vkAllocateCommandBuffers(m_device, &allocInfo, m_commandBuffers.data());
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to allocate graphics command buffers.\n";
-
-    return;
-  }
-  else
-  {
-    kgm_log() << "Vulkan: Allocated command buffers." << "\n";
-  }
-
-  // Prepare data for recording command buffers
-  VkCommandBufferBeginInfo beginInfo;
-
-  ZeroObject(beginInfo);
-
-  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-  VkImageSubresourceRange subResourceRange;
-
-  ZeroObject(subResourceRange);
-
-  subResourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-  subResourceRange.baseMipLevel = 0;
-  subResourceRange.levelCount = 1;
-  subResourceRange.baseArrayLayer = 0;
-  subResourceRange.layerCount = 1;
-
-  VkClearValue clearColor =
-  {
-    { 0.1f, 0.1f, 0.1f, 1.0f } // R, G, B, A
-  };
-
-  for(u32 i = 0; i < m_swapChainImages.length(); ++i)
-  {
-    auto &commandBuffer = m_commandBuffers[i];
-    auto &image = m_swapChainImages[i];
-    auto &framebuffer = m_framebuffers[i];
-
-    if(m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VkResult::VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: failed to reset command buffer\n";
-
-      return;
-    }
-
-    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-
-    ZeroObject(commandBufferInheritanceInfo);
-
-    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-    commandBufferInheritanceInfo.pNext = nullptr;
-    commandBufferInheritanceInfo.renderPass = m_renderPass;
-    commandBufferInheritanceInfo.subpass = 0;
-    commandBufferInheritanceInfo.framebuffer = framebuffer;
-    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
-    commandBufferInheritanceInfo.queryFlags = 0;
-    commandBufferInheritanceInfo.pipelineStatistics = 0;
-
-    VkCommandBufferBeginInfo commandBufferBeginInfo;
-
-    ZeroObject(commandBufferBeginInfo);
-
-    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    commandBufferBeginInfo.pNext = nullptr;
-    commandBufferBeginInfo.flags = 0;
-    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
-
-    m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
-
-    VkClearValue clearValue;
-
-    ZeroObject(clearValue);
-
-    clearValue.color.float32[0] = 1.0f;
-    clearValue.color.float32[1] = 0.0f;
-    clearValue.color.float32[2] = 0.0f;
-    clearValue.color.float32[3] = 1.0f;
-
-    VkRenderPassBeginInfo renderPassBeginInfo;
-
-    ZeroObject(renderPassBeginInfo);
-
-    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.pNext = nullptr;
-    renderPassBeginInfo.renderPass = m_renderPass;
-    renderPassBeginInfo.framebuffer = m_framebuffers[i];
-    renderPassBeginInfo.renderArea = VkRect2D {
-      VkOffset2D  {0, 0},
-      VkExtent2D  {
-        (u32) m_rect[2], (u32) m_rect[3]
-        //surfaceCapabilities.currentExtent.width,
-        //surfaceCapabilities.currentExtent.height
-      }
-    };
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
-
-    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-    m_vk.vkCmdEndRenderPass(commandBuffer);
-
-    VkImageMemoryBarrier imageMemoryBarrier;
-
-    ZeroObject(imageMemoryBarrier);
-
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.pNext = nullptr;
-    imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask =
-        VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-        VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    imageMemoryBarrier.srcQueueFamilyIndex = 0;
-    imageMemoryBarrier.dstQueueFamilyIndex = 0;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {
-      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-    };
-
-    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-                              1, &imageMemoryBarrier);
-
-    m_vk.vkEndCommandBuffer(commandBuffer);
-  }
-}
-*/
 
 void kgmVulkan::printResult(VkResult result)
 {
