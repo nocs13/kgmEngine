@@ -1200,8 +1200,10 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 
     ZeroObject(clearValue);
 
+    float ggg = (float) ((float) rand() / (float) RAND_MAX);
+
     clearValue.color.float32[0] = 1.0f;
-    clearValue.color.float32[1] = 0.0f;
+    clearValue.color.float32[1] = ggg; //0.0f;
     clearValue.color.float32[2] = 0.0f;
     clearValue.color.float32[3] = 1.0f;
 
@@ -1280,6 +1282,15 @@ void  kgmVulkan::gcRender()
     return;
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+  {
+    kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
+
+    refreshSwapchain();
+
+    return;
+  }
 
   if(result != VkResult::VK_SUCCESS)
   {
