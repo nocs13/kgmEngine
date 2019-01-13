@@ -286,6 +286,8 @@ private:
   bool initDepthBuffer();
   bool initSemaphores();
   bool initPipeline();
+
+  bool refreshSwapchain();
 };
 
 #endif

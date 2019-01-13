@@ -1256,64 +1256,13 @@ m_vk.vkEndCommandBuffer(commandBuffer);
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
-  return;
+  //return;
   m_rect[2] = width;
   m_rect[3] = height;
 
-  kgm_log() << "Vulkan: Viewport need update.\n";
+  kgm_log() << "Vulkan: Window resized, viewport need update.\n";
 
-  if(!m_instance || !m_device || !m_surface)
-  {
-    kgm_log() << "Vulkan error: Device is not valid.\n";
-
-    return;
-  }
-
-  VkResult result = m_vk.vkDeviceWaitIdle(m_device);
-
-  if (result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: device wait idle failed.\n";
-
-    printResult(result);
-
-    return;
-  }
-
-  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
-
-  m_commandBuffers.clear();
-
-  kgm_log() << "Vulkan: Command buffer deleted.\n";
-
-  if (m_renderPass)
-  {
-    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
-
-    m_renderPass = VK_NULL_HANDLE;
-  }
-
-  kgm_log() << "Vulkan: Render pass destroyed.\n";
-
-  for (size_t i = 0; i < m_swapChainImages.length(); i++)
-  {
-    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
-    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
-  }
-
-  m_frameBuffers.clear();
-  m_imageViews.clear();
-  m_swapChainImages.clear();
-
-  kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
-
-  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
-
-  initSwapchain();
-  initRenderPass();
-  initImageViews();
-  initFrameBuffers();
-  initCommands();
+  refreshSwapchain();
 }
 
 void  kgmVulkan::gcBegin() {}
@@ -1323,11 +1272,9 @@ void  kgmVulkan::gcRender()
 {
   VkResult result;
 
-  kgm_log() << "Vulkan info: start render.\n";
+  //kgm_log() << "Vulkan info: start render.\n";
 
   u32 swapChainImage = 0;
-
-  //u32 waitTimeout = 1000000;
 
   if (!m_device || !m_swapChain)
     return;
@@ -1336,42 +1283,38 @@ void  kgmVulkan::gcRender()
 
   if(result != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
+    kgm_log() << "Vulkan render error: failed to get next swapchain image.\n";
 
     printResult(result);
 
-    exit (0);
+    exit(0);
 
     return;
   }
 
-  kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
+  //kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
 
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to wait for fence.\n";
+    kgm_log() << "Vulkan render error: failed to wait for fence.\n";
 
     printResult(result);
 
     return;
   }
-
-  kgm_log() << "Vulkan: Wait for fence passed.\n";
 
   result = m_vk.vkResetFences(m_device, 1, &m_fence);
 
   if(result != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to reset fence.\n";
+    kgm_log() << "Vulkan render error: failed to reset fence.\n";
 
     printResult(result);
 
     return;
   }
-
-  kgm_log() << "Vulkan: Reset fence passed.\n";
 
   VkQueue queue;
 
@@ -1400,27 +1343,23 @@ void  kgmVulkan::gcRender()
 
   if(result != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to submit command buffer.\n";
+    kgm_log() << "Vulkan render error: failed to submit command buffer.\n";
 
     printResult(result);
 
     return;
   }
-
-  kgm_log() << "Vulkan: Submit queue passed.\n";
 
   result = m_vk.vkQueueWaitIdle(queue);
 
   if(result != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to wait for queue.\n";
+    kgm_log() << "Vulkan render error: failed to wait for queue.\n";
 
     printResult(result);
 
     return;
   }
-
-  kgm_log() << "Vulkan: Idle wait for queue passed again.\n";
 
   VkPresentInfoKHR presentInfo;
 
@@ -1439,18 +1378,16 @@ void  kgmVulkan::gcRender()
 
   if (result2 == VK_ERROR_OUT_OF_DATE_KHR || result2 == VK_SUBOPTIMAL_KHR)
   {
-    kgm_log() << "Vulkan info: Surface incompatible, updating swapchans.\n";
+    kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
 
-    initSwapchain();
-    initImageViews();
-    initFrameBuffers();
+    refreshSwapchain();
 
     return;
   }
 
   if(result != VkResult::VK_SUCCESS || result2 != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to present swapchain.\n";
+    kgm_log() << "Vulkan render error: failed to present swapchain.\n";
 
     printResult(result);
     printResult(result2);
@@ -1460,7 +1397,7 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  kgm_log() << "Vulkan: Queue present passed.\n";
+  //kgm_log() << "Vulkan: Queue present passed.\n";
 
   m_swapChainImage = swapChainImage;
 }
@@ -2972,6 +2909,64 @@ bool kgmVulkan::initPipeline()
 
     return false;
   }
+
+  return true;
+}
+
+bool kgmVulkan::refreshSwapchain()
+{
+  if(!m_instance || !m_device || !m_surface)
+  {
+    kgm_log() << "Vulkan error: Device is not valid.\n";
+
+    return false;
+  }
+
+  VkResult result = m_vk.vkDeviceWaitIdle(m_device);
+
+  if (result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: device wait idle failed.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+
+  m_commandBuffers.clear();
+
+  kgm_log() << "Vulkan: Command buffer deleted.\n";
+
+  if (m_renderPass)
+  {
+    m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+
+    m_renderPass = VK_NULL_HANDLE;
+  }
+
+  kgm_log() << "Vulkan: Render pass destroyed.\n";
+
+  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  {
+    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+    m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  }
+
+  m_frameBuffers.clear();
+  m_imageViews.clear();
+  m_swapChainImages.clear();
+
+  kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
+
+  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
+
+  initSwapchain();
+  initRenderPass();
+  initImageViews();
+  initFrameBuffers();
+  initCommands();
 
   return true;
 }
