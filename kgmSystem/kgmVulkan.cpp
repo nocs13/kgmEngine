@@ -1256,7 +1256,9 @@ m_vk.vkEndCommandBuffer(commandBuffer);
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
-  //return;
+  if (width == m_rect[2] && height == m_rect[3])
+    return;
+
   m_rect[2] = width;
   m_rect[3] = height;
 
