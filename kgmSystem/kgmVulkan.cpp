@@ -43,9 +43,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   g_vulkans++;
 
-  s32 wrc[4];
-
-  wnd->getRect(wrc[0], wrc[1], wrc[2], wrc[3]);
+  wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
 
   if (!initInstance())
   {
@@ -1303,8 +1301,6 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  //kgm_log() << "Vulkan: Current swapchain image is " << swapChainImage << ".\n";
-
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
@@ -1369,7 +1365,7 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    return;
+    //return;
   }
 
   VkPresentInfoKHR presentInfo;
@@ -2545,8 +2541,10 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.surface = m_surface;
   swapchainCreateInfo.minImageCount = swapChainImagesCount;
   swapchainCreateInfo.imageFormat = m_swapChainFormat;
-  swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
-  swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
+  //swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
+  //swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
+  swapchainCreateInfo.imageExtent.width = m_rect[2];
+  swapchainCreateInfo.imageExtent.height = m_rect[3];
   swapchainCreateInfo.preTransform = surfaceTransform;
   swapchainCreateInfo.compositeAlpha = compositeAlpha;
   swapchainCreateInfo.imageArrayLayers = 1;
@@ -2592,19 +2590,7 @@ bool kgmVulkan::initSwapchain()
   }
 
   if (swapChain != VK_NULL_HANDLE)
-  {
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
-
-    for (size_t i = 0; i < m_swapChainImages.length(); i++)
-    {
-      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
-      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
-    }
-
-    m_frameBuffers.clear();
-    m_imageViews.clear();
-    m_swapChainImages.clear();
-  }
 
   uint32_t actualImageCount = swapChainImagesCount;
 
