@@ -156,6 +156,19 @@ void kgmSystem::getPathDelim(kgmString &s)
 #endif
 }
 
+kgmString kgmSystem::getPathDelim()
+{
+  kgmString s;
+
+#ifdef WIN32
+  s = "\\";
+#else
+  s = "/";
+#endif
+
+  return s;
+}
+
 bool kgmSystem::isFile(kgmString& s)
 {
   struct stat file_stat;

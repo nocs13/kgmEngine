@@ -314,8 +314,15 @@ kgmShader* kgmGameResources::getShader(const char* id)
   if(shader)
     return shader;
 
+  kgmString sid = id;
+
   kgmCString name;
-  name = id;
+
+  if (m_gc->gcGetBase() == gc_vulkan)
+    name = kgmString("shaders") + kgmSystem::getPathDelim() + id + ".spv";
+  else
+    name = id;
+
   kgmMemory<u8> mem;
 
   if(getFile(name, mem))
