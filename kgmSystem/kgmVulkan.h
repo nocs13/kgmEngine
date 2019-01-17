@@ -86,7 +86,6 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateShaderModule vkCreateShaderModule;
     PFN_vkDestroyShaderModule vkDestroyShaderModule;
     PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
-    PFN_vkDestroyPipeline vkDestroyPipeline;
     PFN_vkDestroyRenderPass vkDestroyRenderPass;
     PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
     PFN_vkDestroyImageView vkDestroyImageView;
@@ -97,6 +96,14 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkDestroyImage);
     VK_EXPORTED_FUNCTION(vkMapMemory);
     VK_EXPORTED_FUNCTION(vkUnmapMemory);
+
+    VK_EXPORTED_FUNCTION(vkCreateGraphicsPipelines);
+    VK_EXPORTED_FUNCTION(vkDestroyPipeline);
+
+    VK_EXPORTED_FUNCTION(vkCreatePipelineLayout);
+    VK_EXPORTED_FUNCTION(vkDestroyPipelineLayout);
+    VK_EXPORTED_FUNCTION(vkCreatePipelineCache);
+    VK_EXPORTED_FUNCTION(vkDestroyPipelineCache);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
@@ -110,8 +117,11 @@ class kgmVulkan: public kgmIGC
 
   struct Shader
   {
-    VkShaderModule vertex;
-    VkShaderModule fragment;
+    VkShaderModule   vertex;
+    VkShaderModule   fragment;
+    VkPipeline       pipeline;
+    VkPipelineLayout layout;
+    VkPipelineCache  cache;
   };
 
   struct Texture
@@ -159,30 +169,15 @@ class kgmVulkan: public kgmIGC
   VkSemaphore m_imageAvailableSemaphore;
   VkSemaphore m_renderingFinishedSemaphore;
 
-  struct
-  {
-    VkPipelineShaderStageCreateInfo           stages;
-    VkPipelineVertexInputStateCreateInfo      vertexInputState;
-    VkPipelineInputAssemblyStateCreateInfo    inputAssemblyState;
-    VkPipelineTessellationStateCreateInfo     tessellationState;
-    VkPipelineViewportStateCreateInfo         viewportState;
-    VkPipelineRasterizationStateCreateInfo    rasterizationState;
-    VkPipelineMultisampleStateCreateInfo      multisampleState;
-    VkPipelineDepthStencilStateCreateInfo     depthStencilState;
-    VkPipelineColorBlendStateCreateInfo       colorBlendState;
-    VkPipelineDynamicStateCreateInfo          dynamicState;
-
-    VkPipelineLayoutCreateInfo   layoutCreateInfo;
-    VkPipelineCacheCreateInfo    cacheCreateInfo;
-    VkGraphicsPipelineCreateInfo graphicsCreateInfo;
-
-    VkPipeline                   graphics = VK_NULL_HANDLE;
-  } m_pipeline;
+  VkViewport m_viewport;
+  VkRect2D   m_scissor;
 
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
   u32 m_presentQueueFamilyIndex  = -1;
+
+  Shader* m_shader = null;
 
   s32 m_rect[4];
 
@@ -288,6 +283,8 @@ private:
   bool initPipeline();
 
   bool refreshSwapchain();
+
+  void clear(Shader*);
 };
 
 #endif
