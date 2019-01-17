@@ -118,7 +118,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   gc->gcSetTexture(0, 0);
 }
 
-void gcDrawBillboard(kgmIGC* gc, box b, u32 col)
+void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, box b, u32 col)
 {
   mtx4 mv, mp, m;
   vec3 rv, uv;
@@ -129,8 +129,8 @@ void gcDrawBillboard(kgmIGC* gc, box b, u32 col)
   vec3 pos(0, 0, 10);
   float2 dim(10, 10);
 
-  gc->gcGetMatrix(gcmtx_view, mv.m);
-  gc->gcGetMatrix(gcmtx_proj, mp.m);
+  mv = cam->mView;
+  mp = cam->mProj;
 
   m = mv * mp;
 
@@ -216,13 +216,13 @@ void gcDraw(kgmIGC* gc, kgmParticles* particles)
   gcDraw(gc, particles->getMesh());
 }
 
-void gcDraw(kgmIGC* gc, kgmIcon* icon)
+void gcDraw(kgmIGC* gc, kgmCamera* cam, kgmIcon* icon)
 {
   mtx4 mtr;
   vec3 dir;
   vec3 rv, uv;
 
-  gc->gcGetMatrix(gcmtx_view, mtr.m);
+  mtr = cam->mView;
 
   dir = vec3(mtr.m[2], mtr.m[6], mtr.m[10]);
 

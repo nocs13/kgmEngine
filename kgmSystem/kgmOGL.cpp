@@ -579,44 +579,6 @@ void kgmOGL::gcResize(u32 width, u32 height)
 
 }
 
-void kgmOGL::gcSetMatrix(u32 mode, float* mtx)
-{
-#ifdef GL_PROJECTION
-  switch(mode)
-  {
-  case gcmtx_proj:
-    glMatrixMode(GL_PROJECTION);
-    break;
-  case gcmtx_view:
-    glMatrixMode(GL_MODELVIEW);
-    break;
-  case gcmtx_text:
-    glMatrixMode(GL_TEXTURE);
-    break;
-  }
-
-  glLoadMatrixf(mtx);
-#endif
-}
-
-void kgmOGL::gcGetMatrix(u32 mode, float* mtx)
-{
-#ifdef GL_PROJECTION
-  switch(mode)
-  {
-  case gcmtx_proj:
-    glGetFloatv(GL_PROJECTION_MATRIX, mtx);
-    break;
-  case gcmtx_view:
-    glGetFloatv(GL_MODELVIEW_MATRIX, mtx);
-    break;
-  case gcmtx_text:
-    glGetFloatv(GL_TEXTURE_MATRIX, mtx);
-    break;
-  }
-#endif
-}
-
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
   glViewport(x, y, w, h);

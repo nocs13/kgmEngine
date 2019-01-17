@@ -184,8 +184,6 @@ public:
   virtual void     gcSetTarget(gchandle t) = 0;
 
   // MATRIX
-  virtual void  gcSetMatrix(u32 mode, float* mtx) = 0;
-  virtual void  gcGetMatrix(u32 mode, float* mtx) = 0;
   virtual void  gcSetViewport(int x, int y, int w, int h, float n, float f) = 0;
 
   // BLEND

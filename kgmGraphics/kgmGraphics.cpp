@@ -1527,8 +1527,10 @@ void kgmGraphics::gcDrawBillboard(box b, u32 col)
   vec3 pos(0, 0, 10);
   float2 dim(10, 10);
 
-  gc->gcGetMatrix(gcmtx_view, mv.m);
-  gc->gcGetMatrix(gcmtx_proj, mp.m);
+  //gc->gcGetMatrix(gcmtx_view, mv.m);
+  //gc->gcGetMatrix(gcmtx_proj, mp.m);
+  mv = m_camera->mView;
+  mp = m_camera->mProj;
 
   m = mv * mp;
 

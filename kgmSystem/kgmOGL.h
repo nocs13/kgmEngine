@@ -182,10 +182,6 @@ public:
   void     gcFreeTarget(gchandle t);
   void     gcSetTarget(gchandle  t);
 
-  //MATRIX
-  void  gcSetMatrix(u32 mm, float* mtx);
-  void  gcGetMatrix(u32 mm, float* mtx);
-
   //VIEWPORT
   void  gcSetViewport(int x, int y, int w, int h, float n, float f);
 
