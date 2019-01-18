@@ -536,10 +536,12 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   char* mem_vsh = 0;
   char* mem_fsh = 0;
 
+  char* separator = (char*) "//Fragment Shader";
+
   if(!gc || s.empty())
     return null;
 
-  mem_fsh = (char*)strstr((char*)s, "//Fragment Shader");
+  mem_fsh = (char*)strstr((char*)s, separator);
 
   if(mem_fsh)
   {
@@ -565,7 +567,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   if (gc->gcGetBase() == gc_vulkan)
   {
     vsource = kgmString(mem_vsh);
-    fsource = kgmString(mem_fsh);
+    fsource = kgmString(&mem_fsh[strlen(separator)]);
   }
   else
   {
