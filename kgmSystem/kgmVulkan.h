@@ -131,6 +131,28 @@ class kgmVulkan: public kgmIGC
     VkDeviceMemory memory;
   };
 
+  struct Uniforms
+  {
+    mtx4   g_mView;
+    mtx4   g_mProj;
+    mtx4   g_mTran;
+    vec4   g_vColor;
+    vec4   g_vSpecular;
+    vec4   g_vLight;
+    vec4   g_vLightColor;
+    vec4   g_vLightDirection;
+    vec4   g_vClipPlane;
+    vec3   g_vUp;
+    vec3   g_vEye;
+    vec3   g_vLook;
+    float  g_fTime;
+    float  g_fShine;
+    float  g_fRandom;
+    float  g_fAmbient;
+    float  g_fLightPower;
+    int    g_iClipping = 0;
+  };
+
   static kgmLib vk_lib;  
   static vk     m_vk;
   static u32    g_vulkans;
