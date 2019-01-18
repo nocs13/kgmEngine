@@ -1746,7 +1746,7 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
     return null;
   }
 
-  base64.init(v);
+  base64.init(f);
 
   binary.clear();
 
@@ -1767,8 +1767,11 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
     printResult(result);
   }
 
-  createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, shader->buffer, shader->memory);
+  if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, shader->buffer, shader->memory))
+  {
+    kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
+  }
 
   return shader;
 }
@@ -3353,7 +3356,16 @@ bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryProper
     return false;
   }
 
-  m_vk.vkBindBufferMemory(m_device, buffer, memory, 0);
+  result = m_vk.vkBindBufferMemory(m_device, buffer, memory, 0);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: cannot bind memory.\n";
+
+    printResult(result);
+
+    return false;
+  }
 
   return true;
 }

@@ -19,7 +19,7 @@ for i in *.vert; do
     echo "Fragment convert result is $?"
     
     base64 "$file.vspv" > "$file.spv"
-    echo "//Fragment shader" >>  "$file.spv"
+    echo "//Fragment Shader" >>  "$file.spv"
     base64 "$file.fspv" >> "$file.spv"
 
     rm -f "$file.vspv"

@@ -562,8 +562,16 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
 
   kgmString vsource, fsource;
 
-  vsource = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
-  fsource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
+  if (gc->gcGetBase() == gc_vulkan)
+  {
+    vsource = kgmString(mem_vsh);
+    fsource = kgmString(mem_fsh);
+  }
+  else
+  {
+    vsource = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
+    fsource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
+  }
 
   if(mem_vsh)
     free(mem_vsh);
