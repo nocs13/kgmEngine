@@ -69,7 +69,7 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateImage vkCreateImage;
     PFN_vkCreateImageView vkCreateImageView;
     PFN_vkCreateFramebuffer vkCreateFramebuffer;
-    PFN_vkAllocateMemory vkAllocateMemory;
+    //PFN_vkAllocateMemory vkAllocateMemory;
     PFN_vkFreeMemory vkFreeMemory;
     PFN_vkBindImageMemory vkBindImageMemory;
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
@@ -105,6 +105,12 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkCreatePipelineCache);
     VK_EXPORTED_FUNCTION(vkDestroyPipelineCache);
 
+    VK_EXPORTED_FUNCTION(vkCreateBuffer);
+    VK_EXPORTED_FUNCTION(vkGetBufferMemoryRequirements);
+    VK_EXPORTED_FUNCTION(vkAllocateMemory);
+    VK_EXPORTED_FUNCTION(vkBindBufferMemory);
+    VK_EXPORTED_FUNCTION(vkDestroyBuffer);
+
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
 
@@ -113,15 +119,6 @@ class kgmVulkan: public kgmIGC
 #else
     VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #endif
-  };
-
-  struct Shader
-  {
-    VkShaderModule   vertex;
-    VkShaderModule   fragment;
-    VkPipeline       pipeline;
-    VkPipelineLayout layout;
-    VkPipelineCache  cache;
   };
 
   struct Texture
@@ -153,6 +150,19 @@ class kgmVulkan: public kgmIGC
     int    g_iClipping = 0;
   };
 
+  struct Shader
+  {
+    Uniforms         uo;
+
+    VkBuffer         buffer;
+    VkDeviceMemory   memory;
+    VkShaderModule   vertex;
+    VkShaderModule   fragment;
+    VkPipeline       pipeline;
+    VkPipelineLayout layout;
+    VkPipelineCache  cache;
+  };
+
   static kgmLib vk_lib;  
   static vk     m_vk;
   static u32    g_vulkans;
@@ -173,7 +183,7 @@ class kgmVulkan: public kgmIGC
   VkRenderPass     m_renderPass     = 0;
   VkCommandPool    m_commandPool    = 0;
 
-  VkFence          m_fence           = 0;
+  VkFence          m_fence          = 0;
 
   kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage>          m_swapChainImages;
@@ -305,6 +315,10 @@ private:
   bool initPipeline();
 
   bool refreshSwapchain();
+  bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
+  u32  memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties);
+
+  void* uniformLocation(Shader*, char*);
 
   void clear(Shader*);
 };

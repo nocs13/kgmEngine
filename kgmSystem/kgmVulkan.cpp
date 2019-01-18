@@ -1145,6 +1145,13 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkDestroyPipelineLayout);
   VK_IMPORT_FUNCTION(vkCreatePipelineCache);
   VK_IMPORT_FUNCTION(vkDestroyPipelineCache);
+  VK_IMPORT_FUNCTION(vkCreateBuffer);
+  VK_IMPORT_FUNCTION(vkGetBufferMemoryRequirements);
+  VK_IMPORT_FUNCTION(vkAllocateMemory);
+  VK_IMPORT_FUNCTION(vkBindBufferMemory);
+  VK_IMPORT_FUNCTION(vkDestroyBuffer);
+
+  //VK_IMPORT_FUNCTION(vkGetPhysicalDeviceMemoryProperties);
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
@@ -1706,7 +1713,9 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
     return null;
   }
 
-  Shader* shader = new Shader{null};
+  Shader* shader = new Shader{};
+
+  ZeroObject(*shader);
 
   kgmArray<u8> binary;
 
@@ -1758,11 +1767,16 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
     printResult(result);
   }
 
+  createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, shader->buffer, shader->memory);
+
   return shader;
 }
 
 void  kgmVulkan::gcFreeShader(void* s)
 {
+  Shader* shader = (Shader *) s;
+
   if (!s)
   {
     kgm_log() << "Vulkan error: Shader is invalid for free.\n";
@@ -1777,12 +1791,19 @@ void  kgmVulkan::gcFreeShader(void* s)
     return;
   }
 
-  if (((Shader*)s)->vertex)
+  if (shader->buffer)
+    m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
+
+  if (shader->memory)
+    m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
+
+
+  if (shader->vertex)
   {
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->vertex, null);
   }
 
-  if (((Shader*)s)->fragment)
+  if (shader->fragment)
   {
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
   }
@@ -1804,6 +1825,14 @@ void  kgmVulkan::gcSetShader(void* s)
   }
 
   VkResult result = VK_SUCCESS;
+
+  VkDeviceSize uosize = sizeof(Shader::uo);
+
+  void* data = null;
+
+  m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
+  memcpy(data, &shader->uo, uosize);
+  m_vk.vkUnmapMemory(m_device, shader->memory);
 
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 
@@ -2022,10 +2051,88 @@ void  kgmVulkan::gcSetShader(void* s)
   }
 }
 
-void  kgmVulkan::gcBindAttribute(void* s, int, const char*) {}
-void  kgmVulkan::gcUniform(void* s, u32, u32, const char*, void*) {}
-void  kgmVulkan::gcUniformMatrix(void* s, u32, u32, u32, const char*, void*) {}
-void  kgmVulkan::gcUniformSampler(void* s, const char*, void*) {}
+void  kgmVulkan::gcBindAttribute(void* s, int, const char*)
+{
+
+}
+
+void  kgmVulkan::gcUniform(void* s,  u32 type, u32 cnt, const char* par, void* val)
+{
+  Shader* shader = (Shader *) s;
+
+  if (!s)
+    return;
+
+  void* data = null;
+  u32   size = 0;
+
+  switch(type)
+  {
+  case gcunitype_float1:
+    size = cnt * sizeof(float);
+    break;
+  case gcunitype_float2:
+    size = 2 * cnt * sizeof(float);
+    break;
+  case gcunitype_float3:
+    size = 3 * cnt * sizeof(float);
+    break;
+  case gcunitype_float4:
+    size = 4 * cnt * sizeof(float);
+    break;
+  case gcunitype_int1:
+    size = cnt * sizeof(int);
+    break;
+  case gcunitype_int2:
+    size = 2 * cnt * sizeof(int);
+    break;
+  case gcunitype_int3:
+    size = 3 * cnt * sizeof(int);
+    break;
+  case gcunitype_int4:
+    size = 4 * cnt * sizeof(int);
+    break;
+  }
+
+  data = uniformLocation(shader, (char *) par);
+
+  if (data)
+    memcpy(data, val, size);
+}
+
+void  kgmVulkan::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* par, void* val)
+{
+  Shader* shader = (Shader *) s;
+
+  if (!s)
+    return;
+
+  void* data = null;
+  u32   size = 0;
+
+  switch(type)
+  {
+  case gcunitype_mtx2:
+    size = cnt * 4 * sizeof(float);
+    break;
+  case gcunitype_mtx3:
+    size = cnt * 9 * sizeof(float);
+    break;
+  case gcunitype_mtx4:
+    size = cnt * 16 * sizeof(float);
+    break;
+  }
+
+  data = uniformLocation(shader, (char *) par);
+
+  if (data)
+    memcpy(data, val, size);
+}
+
+void  kgmVulkan::gcUniformSampler(void* s, const char*, void*)
+{
+
+}
 
 #ifdef DEBUG
 void  kgmVulkan::gcGetUniform(void* s, const char*, void*) {}
@@ -3204,6 +3311,110 @@ bool kgmVulkan::refreshSwapchain()
   initCommands();
 
   return true;
+}
+
+bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties,
+                             VkBuffer& buffer, VkDeviceMemory& memory)
+{
+  VkBufferCreateInfo bufferInfo = {};
+  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  bufferInfo.size = size;
+  bufferInfo.usage = usage;
+  bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  VkResult result = m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &buffer);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: cannot create buffer.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  VkMemoryRequirements memRequirements;
+
+  m_vk.vkGetBufferMemoryRequirements(m_device, buffer, &memRequirements);
+
+  VkMemoryAllocateInfo allocInfo = { };
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = memRequirements.size;
+  allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, properties);
+
+  result = m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &memory);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: cannot allocate memory.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  m_vk.vkBindBufferMemory(m_device, buffer, memory, 0);
+
+  return true;
+}
+
+u32 kgmVulkan::memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties)
+{
+  VkPhysicalDeviceMemoryProperties memProperties;
+
+  m_vk.vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memProperties);
+
+  for (u32 i = 0; i < memProperties.memoryTypeCount; i++)
+  {
+    if (type & (1 << i))
+    {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+void* kgmVulkan::uniformLocation(Shader* s, char* u)
+{
+  if (!strcmp(u, "g_mView"))
+    return &s->uo.g_mView;
+  else if (!strcmp(u, "g_mProj"))
+    return &s->uo.g_mProj;
+  else if (!strcmp(u, "g_mTran"))
+    return &s->uo.g_mTran;
+  else if (!strcmp(u, "g_vColor"))
+    return &s->uo.g_vColor;
+  else if (!strcmp(u, "g_vSpecular"))
+    return &s->uo.g_vSpecular;
+  else if (!strcmp(u, "g_vLight"))
+    return &s->uo.g_vLight;
+  else if (!strcmp(u, "g_vLightColor"))
+    return &s->uo.g_vLightColor;
+  else if (!strcmp(u, "g_vLightDirection"))
+    return &s->uo.g_vLightDirection;
+  else if (!strcmp(u, "g_vClipPlane"))
+    return &s->uo.g_vClipPlane;
+  else if (!strcmp(u, "g_vUp"))
+    return &s->uo.g_vUp;
+  else if (!strcmp(u, "g_vEye"))
+    return &s->uo.g_vEye;
+  else if (!strcmp(u, "g_vLook"))
+    return &s->uo.g_vLook;
+  else if (!strcmp(u, "g_fTime"))
+    return &s->uo.g_fTime;
+  else if (!strcmp(u, "g_fShine"))
+    return &s->uo.g_fShine;
+  else if (!strcmp(u, "g_fRandom"))
+    return &s->uo.g_fRandom;
+  else if (!strcmp(u, "g_fAmbient"))
+    return &s->uo.g_fAmbient;
+  else if (!strcmp(u, "g_fLightPower"))
+    return &s->uo.g_fLightPower;
+  else if (!strcmp(u, "g_iClipping"))
+    return &s->uo.g_iClipping;
+
+  return nullptr;
 }
 
 void  kgmVulkan::clear(Shader* s)
