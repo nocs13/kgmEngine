@@ -1668,12 +1668,15 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil){}
 bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type){}
 void     kgmVulkan::gcFreeTarget(gchandle t){}
 
-// MATRIX
-void  kgmVulkan::gcSetMatrix(u32 mode, float* mtx) {}
-void  kgmVulkan::gcGetMatrix(u32 mode, float* mtx) {}
-
+// VIEWPORT
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
+  m_viewport.x = x;
+  m_viewport.y = y;
+  m_viewport.width = w;
+  m_viewport.height = h;
+  m_viewport.minDepth = n;
+  m_viewport.maxDepth = f;
 }
 
 //BLEND

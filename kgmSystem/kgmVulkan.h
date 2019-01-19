@@ -248,9 +248,7 @@ public:
   void  gcFreeTexture(void *t);
   void  gcSetTexture(u32 stage, void *t);
 
-  // MATRIX
-  void  gcSetMatrix(u32 mode, float* mtx);
-  void  gcGetMatrix(u32 mode, float* mtx);
+  // VIEWPORT
   void  gcSetViewport(int x, int y, int w, int h, float n, float f);
 
   //BLEND
