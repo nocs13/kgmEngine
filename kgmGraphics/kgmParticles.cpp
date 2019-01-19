@@ -22,6 +22,7 @@ kgmParticles::kgmParticles()
   m_life  = 2000;
   m_speed = 1.0;
   m_noise = 0.1;
+  m_gravity = 9.8;
 
   m_color.color = 0xffffffff;
   m_fade  = true;
@@ -29,7 +30,7 @@ kgmParticles::kgmParticles()
   m_fall  = false;
   m_loop  = true;
 
-  force  = vec3(0, 0, 0);
+  m_force  = vec3(0, 0, 0);
   m_volume = vec3(0, 0, 0);
 
   m_divlife     = 0.5f;
@@ -57,9 +58,6 @@ kgmParticles::~kgmParticles()
 void kgmParticles::build()
 {
   u32 i = 0;
-
-  if (m_direction.length() == 0.0)
-    m_direction.z = 1.0;
 
   if(m_particles)
   {

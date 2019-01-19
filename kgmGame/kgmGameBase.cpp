@@ -85,6 +85,7 @@ kgmGameBase::kgmGameBase()
   m_script    = null;
   m_logic     = null;
   m_audio     = null;
+  m_gc        = null;
 
   m_font = null;
 
@@ -286,7 +287,7 @@ void kgmGameBase::initScript()
 void kgmGameBase::initGC()
 {
 #ifdef VULKAN
-  m_gc = new kgmVulkan(this);
+  //m_gc = new kgmVulkan(this);
 #endif
 
   if (m_gc == null)

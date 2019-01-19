@@ -42,7 +42,7 @@ public:
 
   color      m_color;
 
-  vec3       force;
+  vec3       m_force;
   vec3       m_volume;
 
   u32        time_start;
@@ -240,6 +240,16 @@ public:
   void volume(vec3 v)
   {
     m_volume = v;
+  }
+
+  vec3 force() const
+  {
+    return m_force;
+  }
+
+  void force(vec3 v)
+  {
+    m_force = v;
   }
 
   void camera(kgmCamera* c)

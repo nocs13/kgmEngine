@@ -165,12 +165,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
   m_def_material->m_specular = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
-  if(g)
+  if(gc)
   {
     char txd[16] = {0};
-
-    if(!gc)
-      return;
 
     //generic black texture
     memset(txd, 0x00, sizeof(txd));
