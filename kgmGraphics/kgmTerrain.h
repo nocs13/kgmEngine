@@ -6,6 +6,10 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmMath/kgmBase.h"
+#include "../kgmMath/kgmVector3d.h"
+#include "../kgmMath/kgmPlane3d.h"
+#include "../kgmMath/kgmTriangle3d.h"
 
 class kgmPicture;
 class kgmCamera;
@@ -19,8 +23,16 @@ class kgmTerrain: public kgmObject
 public:
   struct Mesh
   {
-    kgmMesh* msh;
+    kgmMesh*     msh;
     kgmMaterial* mtl;
+  };
+
+  struct Chunk
+  {
+    triangle chunk;
+
+    Chunk* left;
+    Chunk* right;
   };
 
   typedef kgmList<Mesh>::iterator MeshIt;
@@ -33,6 +45,8 @@ private:
   kgmArray<u16> m_heightmap;
 
   kgmMesh* m_mesh;
+
+  Chunk* m_chunks[2];
 
 protected:
   ~kgmTerrain();
