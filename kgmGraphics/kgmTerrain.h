@@ -35,6 +35,14 @@ public:
     Chunk* right;
   };
 
+  struct Heightmap
+  {
+    u16 width;
+    u16 height;
+
+    kgmArray<u16> map;
+  };
+
   typedef kgmList<Mesh>::iterator MeshIt;
 
 private:
@@ -42,7 +50,7 @@ private:
   f32 m_length;
   f32 m_height;
 
-  kgmArray<u16> m_heightmap;
+  Heightmap m_heightmap;
 
   kgmMesh* m_mesh;
 

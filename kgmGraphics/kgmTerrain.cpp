@@ -17,14 +17,14 @@ kgmTerrain::kgmTerrain()
 
 kgmTerrain::~kgmTerrain()
 {
-  m_heightmap.clear();
+  m_heightmap.map.clear();
 
   delete m_mesh;
 }
 
 bool kgmTerrain::heightmap(kgmPicture* map)
 {
-  if (!map || map->bpp != 2 || m_heightmap.data())
+  if (!map || map->bpp != 2 || m_heightmap.map.data())
     return false;
 
   map->increment();
@@ -33,18 +33,20 @@ bool kgmTerrain::heightmap(kgmPicture* map)
 
   u32 bpp = map->bpp;
 
-  m_heightmap.alloc(count);
+  m_heightmap.width = map->width;
+  m_heightmap.height = map->height;
+  m_heightmap.map.alloc(count);
 
   for (u32 j = 0; j < map->height; j++)
   {
     for (u32 i = 0; i < map->width; i++)
     {
       u8 r, g, b;
-      u8 *p = (u8*) (map->pdata + bpp *  map->width * j + bpp * i);
+      u8 *p = (u8*) (map->pdata + bpp * map->width * j + bpp * i);
 
       u16 h = *((u16*)p);
 
-      m_heightmap[map->width * j + i] = h;
+      m_heightmap.map[map->width * j + i] = h;
     }
   }
 
