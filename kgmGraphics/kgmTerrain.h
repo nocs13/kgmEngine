@@ -46,6 +46,10 @@ public:
   typedef kgmList<Mesh>::iterator MeshIt;
 
 private:
+
+  typedef kgmVector2d<u32> uint2;
+  typedef kgmVector3d<f32> float3;
+
   f32 m_width;
   f32 m_length;
   f32 m_height;
@@ -55,6 +59,8 @@ private:
   kgmMesh* m_mesh;
 
   Chunk* m_chunks[2];
+
+  kgmCamera* m_camera = nullptr;
 
 protected:
   ~kgmTerrain();
@@ -100,6 +106,9 @@ public:
   kgmMesh* mesh();
 
 private:
-  void buildROAM(Chunk* chunk);
+  void buildROAM(triangle3& tr);
+
+  float3 from_uint2(uint2 v);
+  uint2  from_float3(float3 v);
 };
 

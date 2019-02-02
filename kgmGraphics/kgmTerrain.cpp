@@ -59,6 +59,8 @@ void kgmTerrain::prepare(kgmCamera* camera)
 {
   if (!camera)
     return;
+
+  m_camera = camera;
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
@@ -76,8 +78,37 @@ kgmMesh* kgmTerrain::mesh()
   return null;
 }
 
-void kgmTerrain::buildROAM(Chunk *chunk)
+void kgmTerrain::buildROAM(triangle3& tr)
 {
-  if (!chunk)
+  if (!m_camera)
     return;
 }
+
+kgmTerrain::float3 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
+{
+  f32 w_pp = m_heightmap.width / m_width;
+  f32 h_pp = m_heightmap.width / m_height;
+
+  if (v.x >= m_heightmap.width)
+    v.x = m_heightmap.width;
+
+  if (v.y >= m_heightmap.height)
+    v.y = m_heightmap.height;
+
+  u16 z = v.y * m_heightmap.width + v.x;
+
+  f32 zh = (f32) z * ((f32)m_height / (f32)0xffff);
+
+  float3 result = float3(v.x * w_pp, v.y * h_pp, zh);
+
+  return result;
+}
+
+kgmTerrain::uint2  kgmTerrain::from_float3(kgmTerrain::float3 v)
+{
+  f32 w_pp = m_heightmap.width / m_width;
+  f32 h_pp = m_heightmap.width / m_height;
+
+  return uint2(v.x / w_pp, v.y / h_pp);
+}
+
