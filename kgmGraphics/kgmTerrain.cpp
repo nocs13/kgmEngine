@@ -55,9 +55,10 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   return true;
 }
 
-void kgmTerrain::prepare(kgmCamera* cam)
+void kgmTerrain::prepare(kgmCamera* camera)
 {
-
+  if (!camera)
+    return;
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
@@ -73,4 +74,10 @@ kgmMesh* kgmTerrain::mesh()
     m_mesh;
 
   return null;
+}
+
+void kgmTerrain::buildROAM(Chunk *chunk)
+{
+  if (!chunk)
+    return;
 }

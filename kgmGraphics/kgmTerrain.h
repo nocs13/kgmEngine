@@ -98,5 +98,8 @@ public:
   bool heightmap(kgmPicture* map);
 
   kgmMesh* mesh();
+
+private:
+  void buildROAM(Chunk* chunk);
 };
 
