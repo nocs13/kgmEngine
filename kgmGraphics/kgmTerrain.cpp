@@ -84,7 +84,7 @@ void kgmTerrain::buildROAM(triangle3& tr)
     return;
 }
 
-kgmTerrain::float3 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
+kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
 {
   f32 w_pp = m_heightmap.width / m_width;
   f32 h_pp = m_heightmap.width / m_height;
@@ -95,16 +95,10 @@ kgmTerrain::float3 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
   if (v.y >= m_heightmap.height)
     v.y = m_heightmap.height;
 
-  u16 z = v.y * m_heightmap.width + v.x;
-
-  f32 zh = (f32) z * ((f32)m_height / (f32)0xffff);
-
-  float3 result = float3(v.x * w_pp, v.y * h_pp, zh);
-
-  return result;
+  return float2(v.x * w_pp, v.y * h_pp);
 }
 
-kgmTerrain::uint2  kgmTerrain::from_float3(kgmTerrain::float3 v)
+kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
 {
   f32 w_pp = m_heightmap.width / m_width;
   f32 h_pp = m_heightmap.width / m_height;
@@ -112,3 +106,11 @@ kgmTerrain::uint2  kgmTerrain::from_float3(kgmTerrain::float3 v)
   return uint2(v.x / w_pp, v.y / h_pp);
 }
 
+f32 kgmTerrain::get_height(uint2 v)
+{
+  u16 data = m_heightmap.map[v.y * m_heightmap.width + v.x];
+
+  f32 height = (f32) data * ((f32)m_height / (f32)0xffff);
+
+  return height;
+}

@@ -48,7 +48,7 @@ public:
 private:
 
   typedef kgmVector2d<u32> uint2;
-  typedef kgmVector3d<f32> float3;
+  typedef kgmVector2d<f32> float2;
 
   f32 m_width;
   f32 m_length;
@@ -108,7 +108,8 @@ public:
 private:
   void buildROAM(triangle3& tr);
 
-  float3 from_uint2(uint2 v);
-  uint2  from_float3(float3 v);
+  float2 from_uint2(uint2 v);
+  uint2  from_float2(float2 v);
+  f32    get_height(uint2 v);
 };
 
