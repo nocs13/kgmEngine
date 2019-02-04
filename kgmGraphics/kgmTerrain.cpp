@@ -7,11 +7,12 @@
 #include "kgmMesh.h"
 #include "kgmMaterial.h"
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+#include "../kgmMath/kgmBound.h"
+
 kgmTerrain::kgmTerrain()
 {
+  m_chunks[0] = m_chunks[1] = null;
+  
   m_mesh = new kgmMesh();
 }
 
@@ -32,8 +33,8 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   u32 count = map->height * map->width;
 
   u32 bpp = map->bpp;
-
-  m_heightmap.width = map->width;
+  
+  m_heightmap.width  = map->width;
   m_heightmap.height = map->height;
   m_heightmap.map.alloc(count);
 
@@ -51,6 +52,8 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   }
 
   map->release();
+
+  build();
 
   return true;
 }
@@ -73,14 +76,44 @@ kgmTerrain::MeshIt kgmTerrain::meshes()
 kgmMesh* kgmTerrain::mesh()
 {
   if (m_mesh->vcount() > 0)
-    m_mesh;
+    return m_mesh;
 
   return null;
 }
 
-void kgmTerrain::buildROAM(triangle3& tr)
+void kgmTerrain::build()
 {
-  if (!m_camera)
+  f32 w_pp = m_heightmap.width / m_width;
+  f32 h_pp = m_heightmap.width / m_height;
+
+  m_chunks[0] = new Chunk();
+  m_chunks[1] = new Chunk();
+
+  triangle3 tr;
+  
+  tr.pt[0] = vec3(-0.5f * m_width,  0.5f * m_height, get_height(uint2(0, 0)));
+  tr.pt[1] = vec3( 0.5f * m_width,  0.5f * m_height, get_height(uint2(m_heightmap.width, 0)));
+  tr.pt[2] = vec3(-0.5f * m_width, -0.5f * m_height, get_height(uint2(0, m_heightmap.height)));
+  
+  m_chunks[0]->chunk = tr;
+
+  tr.pt[0] = vec3( 0.5f * m_width, -0.5f * m_height, get_height(uint2(m_heightmap.width, m_heightmap.height)));
+  tr.pt[1] = vec3(-0.5f * m_width, -0.5f * m_height, get_height(uint2(0, m_heightmap.height)));
+  tr.pt[2] = vec3( 0.5f * m_width,  0.5f * m_height, get_height(uint2(m_heightmap.width, 0)));
+
+  m_chunks[1]->chunk = tr;
+
+  buildROAM(m_chunks[0]);
+  buildROAM(m_chunks[1]);
+}
+
+void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
+{
+  kgmBound3d<f32> bound(c->chunk.pt, 3);
+
+  sphere3 sbound = bound.sphere();
+
+  if (sbound.radius < 0.6)
     return;
 }
 
@@ -111,6 +144,6 @@ f32 kgmTerrain::get_height(uint2 v)
   u16 data = m_heightmap.map[v.y * m_heightmap.width + v.x];
 
   f32 height = (f32) data * ((f32)m_height / (f32)0xffff);
-
+  
   return height;
 }

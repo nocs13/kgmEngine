@@ -29,7 +29,7 @@ public:
 
   struct Chunk
   {
-    triangle chunk;
+    triangle3 chunk;
 
     Chunk* left;
     Chunk* right;
@@ -106,7 +106,8 @@ public:
   kgmMesh* mesh();
 
 private:
-  void buildROAM(triangle3& tr);
+  void build();
+  void buildROAM(Chunk* c);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
