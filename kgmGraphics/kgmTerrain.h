@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include "kgmMesh.h"
+
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmList.h"
@@ -13,7 +15,6 @@
 
 class kgmPicture;
 class kgmCamera;
-class kgmMesh;
 class kgmMaterial;
 
 class kgmTerrain: public kgmObject
@@ -21,18 +22,50 @@ class kgmTerrain: public kgmObject
   KGM_OBJECT(kgmTerrain);
 
 public:
-  struct Mesh
-  {
-    kgmMesh*     msh;
-    kgmMaterial* mtl;
-  };
 
   struct Chunk
   {
     triangle3 chunk;
 
-    Chunk* left;
-    Chunk* right;
+    Chunk* left  = null;
+    Chunk* right = null;
+  };
+
+  class Mesh: public kgmMesh
+  {
+    u32 count = 0;
+
+    kgmArray<Vertex_P_N_T> triangles;
+
+  public:
+
+    Mesh()
+    {
+       m_fvf = FVF_P_N_T;
+       m_fff = 0;
+    }
+
+    ~Mesh()
+    {
+      triangles.clear();
+    }
+
+    void reset()
+    {
+      count = 0;
+    }
+
+    void add(triangle3& tr)
+    {
+      if ((count + 1) >= triangles.length())
+        triangles.realloc(triangles.length() + 0xffff);
+
+      triangles[3 * count + 0].pos = tr.pt[0];
+      triangles[3 * count + 1].pos = tr.pt[1];
+      triangles[3 * count + 2].pos = tr.pt[2];
+
+      count ++;
+    }
   };
 
   struct Heightmap
@@ -56,7 +89,7 @@ private:
 
   Heightmap m_heightmap;
 
-  kgmMesh* m_mesh;
+  Mesh* m_mesh;
 
   Chunk* m_chunks[2];
 
@@ -108,6 +141,7 @@ public:
 private:
   void build();
   void buildROAM(Chunk* c);
+  void updateMesh(kgmCamera* cam, Chunk* chk);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
