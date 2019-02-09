@@ -175,6 +175,15 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
     return;
   }
 
+  f32 distance = sbound.center.distance(cam->mPos);
+
+  if ((sbound.radius / (distance + 1.0)) < 0.3)
+  {
+    m_mesh->add(c->chunk);
+
+    return;
+  }
+
   if (c->left)
     updateMesh(cam,  c->left);
 
