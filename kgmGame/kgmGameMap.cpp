@@ -1,6 +1,7 @@
 #include "kgmGameMap.h"
 
 #include "../kgmBase/kgmResource.h"
+#include "../kgmBase/kgmConvert.h"
 
 #include "kgmIGame.h"
 #include "kgmILogic.h"

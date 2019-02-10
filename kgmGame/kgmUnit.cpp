@@ -240,6 +240,8 @@ kgmIGraphics::TypeNode kgmUnit::getNodeType()
     return kgmIGraphics::NodeMesh;
   case  Light:
     return kgmIGraphics::NodeLight;
+  case  Terrain:
+    return kgmIGraphics::NodeTerrain;
   case  Particles:
     return kgmIGraphics::NodeParticles;
   };

@@ -11,6 +11,7 @@ class kgmText;
 class kgmLight;
 class kgmVisual;
 class kgmCamera;
+class kgmTerrain;
 class kgmResource;
 class kgmMaterial;
 
@@ -27,6 +28,7 @@ public:
     NodeVisual,
     NodeCamera,
     NodeSkinned,
+    NodeTerrain,
     NodeParticles
   };
 
@@ -54,6 +56,7 @@ public:
   virtual void render_2d() = 0;
 
   virtual void add(INode*) = 0;
+  virtual void terrain(INode*) = 0;
 
   virtual bool resource(kgmResource*)      = 0;
   virtual kgmResource* resource(kgmString) = 0;

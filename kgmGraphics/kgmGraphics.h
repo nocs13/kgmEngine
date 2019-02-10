@@ -196,6 +196,8 @@ protected:
   kgmArray<INode*> m_a_bmeshes;
   kgmArray<INode*> m_a_particles;
 
+  INode* m_terrain = null;
+
   u32  m_a_light_count     = 0;
   u32  m_a_meshes_count    = 0;
   u32  m_a_bmeshes_count   = 0;
@@ -331,6 +333,11 @@ public:
       return;
 
     m_guis.add(gui);
+  }
+
+  void terrain(INode* t)
+  {
+    m_terrain = t;
   }
 
   void remove(kgmGui* g)
