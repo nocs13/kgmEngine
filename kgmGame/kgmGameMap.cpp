@@ -542,7 +542,7 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("dimensions", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        kgmGameTerrain* t = new kgmGameTerrain();
+        kgmTerrain* t = new kgmTerrain();
 
         t->width(v.x);
         t->length(v.y);

@@ -625,8 +625,15 @@ int kgmGameBase::gLoad(kgmString s)
     {
       m_units.add(u);
 
-      m_logic->add(u);
-      m_graphics->add(u);
+      if (u->type() == kgmUnit::Terrain)
+      {
+        m_graphics->terrain(u);
+      }
+      else
+      {
+        m_logic->add(u);
+        m_graphics->add(u);
+      }
     }
   }
 

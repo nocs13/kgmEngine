@@ -304,6 +304,8 @@ void kgmGraphics::clear()
 
   m_a_light_count  = 0;
   m_a_meshes_count = 0;
+
+  m_terrain = null;
 }
 
 bool kgmGraphics::resource(kgmResource* r)
