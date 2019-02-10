@@ -217,7 +217,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_rnd_lights      = new LightRender(this);
   m_rnd_shadows     = new ShadowRender(this);
   m_rnd_environment = new EnvironmentRender(this);
-
+  m_rnd_terrain     = new Render::Terrain(this);
 
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
@@ -560,6 +560,10 @@ void kgmGraphics::render()
 
   m_rnd_environment->render();
 
+  //draw terrain
+  if (m_terrain)
+    m_rnd_terrain->render();
+  
   //draw particles
   //ParticlesRender pr(this);
   //pr.render();

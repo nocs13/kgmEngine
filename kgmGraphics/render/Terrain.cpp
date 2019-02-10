@@ -6,20 +6,57 @@
  */
 
 #include "Terrain.h"
+#include "../kgmGraphics.h"
+#include "../kgmTerrain.h"
 
 namespace Render
 {
 
-Terrain::Terrain(kgmGraphics* gr)
-:BaseRender(gr)
-{
-  // TODO Auto-generated constructor stub
+  Terrain::Terrain(kgmGraphics* gr)
+    :BaseRender(gr)
+  {
+    // TODO Auto-generated constructor stub
+    m_shader = gr->rc->getShader("phong2.glsl");
+  }
 
-}
+  Terrain::~Terrain()
+  {
+    // TODO Auto-generated destructor stub
+  }
+  
+  void Terrain::render()
+  {
+    mtx4 identity;
+    identity.identity();
 
-Terrain::~Terrain()
-{
-  // TODO Auto-generated destructor stub
-}
+    gr->setWorldMatrix(identity);
+
+    kgmShader* sh = m_shader;
+
+    gr->wired(false);
+
+    kgmIGraphics::INode* nod = gr->m_terrain;
+
+    kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
+
+    ter->prepare(gr->m_camera);
+
+    kgmMesh*     msh = (kgmMesh*) ter->mesh();
+    
+    kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
+
+    sphere3 sbound(gr->m_camera->mPos, 1000);
+
+    mtx4 m = nod->getNodeTransform();
+    gr->setWorldMatrix(m);
+
+    material(mtl);
+    shader(m_shader, gr->m_camera, mtl, nod);
+
+    gr->render(msh);
+
+    material(null);
+    shader(null, null, null, null);
+  }
 
 } /* namespace Render */

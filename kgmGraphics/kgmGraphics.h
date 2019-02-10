@@ -32,6 +32,7 @@
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
 #include "render/EnvironmentRender.h"
+#include "render/Terrain.h"
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"
@@ -52,6 +53,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class ShadowRender;
   friend class ParticlesRender;
   friend class EnvironmentRender;
+  friend class Render::Terrain;
 
 public:
   class kgmNodeLight: public INode
@@ -252,6 +254,7 @@ protected:
   LightRender*       m_rnd_lights = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
+  Render::Terrain*   m_rnd_terrain = null;
 
 protected:
   kgmShader*  m_shaders[32] = {0};

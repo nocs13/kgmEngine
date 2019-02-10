@@ -229,8 +229,8 @@ void BaseRender::material(kgmMaterial* m)
     switch(m->blend())
     {
     case kgmMaterial::Blend_Add:
-      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
-      //gc->gcBlend(true, gcblend_one, gcblend_one);
+      //gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
+      gc->gcBlend(true, 0, gcblend_one, gcblend_one);
       break;
     case kgmMaterial::Blend_Mul:
       gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
@@ -274,7 +274,6 @@ void BaseRender::material(kgmMaterial* m)
     gc->gcDepth(false, true, gccmp_less);
   }
 
-
   if(!m->cull())
   {
     gc->gcCull(0);
@@ -308,3 +307,61 @@ void BaseRender::material(kgmMaterial* m)
   }
 }
 
+void BaseRender::shader(kgmShader* shd, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod)
+{
+  if(!shd)
+  {
+    gc->gcSetShader(null);
+
+    return;
+  }
+
+  //send default parameters
+  vec4 v_light(0, 0, 0, 10);
+  vec4 v_light_color(1, 1, 1, 1);
+  vec4 v_light_direction(0, 0, 1, 0);
+
+  float random    = (float)rand() / (float)RAND_MAX;
+  mtx4  transform = nod->getNodeTransform();
+  vec4 color      = mtl->m_color.get();
+  vec4 specular   = mtl->m_specular.get();
+  f32  shininess  = mtl->shininess();
+  f32  time       = kgmTime::getTime();
+
+  shd->start();
+  shd->set("g_fTime",           time);
+  shd->set("g_fRandom",         random);
+  shd->set("g_fShine",          shininess);
+  shd->set("g_mProj",           cam->mProj);
+  shd->set("g_mView",           cam->mView);
+  shd->set("g_mTran",           transform);
+  shd->set("g_vColor",          color);
+  shd->set("g_vSpecular",       specular);
+  shd->set("g_vLight",          v_light);
+  shd->set("g_vLightColor",     v_light_color);
+  shd->set("g_vLightDirection", v_light_direction);
+  shd->set("g_vUp",             cam->mUp);
+  shd->set("g_vEye",            cam->mPos);
+  shd->set("g_vLook",           cam->mDir);
+  shd->set("g_iClipping",       0);
+
+  shd->set("g_txColor", 0);
+  shd->set("g_txNormal", 1);
+  shd->set("g_txSpecular", 2);
+
+  kgmString lcolor = "g_vLights[*].color";
+  kgmString lposition = "g_vLights[*].position";
+  kgmString ldirection = "g_vLights[*].direction";
+
+  /* for(u32 i = 0; i < 1; i++)
+  {
+    char c = '0' + (char) i;
+    lcolor[10] = c;
+    lposition[10] = c;
+    ldirection[10] = c;
+
+     s->set(lcolor, lights[i].color);
+     s->set(lposition, lights[i].position);
+     s->set(ldirection, lights[i].direction);
+   } */
+}

@@ -12,18 +12,20 @@
 
 class kgmGraphics;
 
+class kgmShader;
 
 namespace Render
 {
 
 class Terrain: public BaseRender
 {
+  kgmShader* m_shader;
+  
 public:
   Terrain(kgmGraphics* gr);
   ~Terrain();
 
-  void render() {}
-
+  void render();
 };
 
 } /* namespace Render */

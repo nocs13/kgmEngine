@@ -58,6 +58,7 @@ protected:
   void draw(kgmIcon*, kgmCamera*);
 
   void material(kgmMaterial*);
+  void shader(kgmShader* shd, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod);
 };
 
 #endif // BASERENDER_H
