@@ -195,6 +195,9 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
       u8 rle = ptm[0]; ptm += 1;
       u8 cnt = rle & 0x7f;
 
+      if (cnt < 1)
+        continue;
+
       pixel_t t_px;
 
       memcpy(t_px, ptm, sizeof(pixel_t));

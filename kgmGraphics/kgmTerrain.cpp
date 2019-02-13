@@ -50,6 +50,11 @@ bool kgmTerrain::heightmap(kgmPicture* map)
 
       u16 h = *((u16*)p);
 
+      if(h)
+      {
+        int k = 0;
+      }
+
       m_heightmap.map[map->width * j + i] = h;
     }
   }
@@ -133,16 +138,17 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
 
   vec3 split = (c->chunk.pt[1] + c->chunk.pt[2]) * 0.5;
 
+  uint2 split2 = from_float2(float2(split.x, split.y));
 
-  split.z = get_height(from_float2(float2(split.x, split.y)));
+  split.z = get_height(split2);
 
   triangle3 tr1(split, c->chunk.pt[1], c->chunk.pt[0]);
-  triangle3 tr2(split, c->chunk.pt[2], c->chunk.pt[0]);
+  triangle3 tr2(split, c->chunk.pt[0], c->chunk.pt[2]);
 
   vec3 nr1 = tr1.normal();
   vec3 nr2 = tr2.normal();
 
-  if (normal.angle(nr1) > 0.1)
+  //if (normal.angle(nr1) > 0.1)
   {
     c->right = new Chunk();
     c->right->chunk = tr1;
@@ -150,7 +156,7 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
     buildROAM(c->right);
   }
 
-  if (normal.angle(nr2) > 0.1)
+  //if (normal.angle(nr2) > 0.1)
   {
     c->left = new Chunk();
     c->left->chunk = tr2;
@@ -165,8 +171,8 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 
   sphere3 sbound = bound.sphere();
 
-  if (!cam->isSphereCross(sbound.center, sbound.radius))
-    return;
+  //if (!cam->isSphereCross(sbound.center, sbound.radius))
+  //  return;
 
   if (!c->left && !c->right)
   {
@@ -194,7 +200,7 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
 {
   f32 w_pp = m_heightmap.width / m_width;
-  f32 h_pp = m_heightmap.width / m_height;
+  f32 h_pp = m_heightmap.height / m_length;
 
   if (v.x >= m_heightmap.width)
     v.x = m_heightmap.width;
@@ -208,9 +214,9 @@ kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
 kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
 {
   f32 w_pp = m_heightmap.width / m_width;
-  f32 h_pp = m_heightmap.width / m_height;
+  f32 h_pp = m_heightmap.height / m_length;
 
-  return uint2(v.x / w_pp, v.y / h_pp);
+  return uint2((v.x + 0.5 * m_width) * w_pp, (v.y + 0.5 * m_length) * h_pp);
 }
 
 f32 kgmTerrain::get_height(uint2 v)
