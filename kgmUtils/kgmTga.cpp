@@ -53,10 +53,118 @@ bool kgmTga::create(kgmMemory<u8>& m)
   else
     return false;
 
+  ppBytes = header.bpp / 8;
+
+  if (ppBytes < 3)
+    ppBytes = 3;
+
+  u32 size = header.width * header.height * ppBytes;
+
+  data.alloc(size);
+
+  if (compr)
+    fromCompressed(pm, header.width * header.height);
+  else
+    fromUncompressed(pm, header.width * header.height);
+
   return true;
 }
 
 kgmPicture* kgmTga::toPicture()
 {
+  if (data.data() || data.length())
+  {
+    u8* pdata = (u8*) kgm_alloc(data.length());
 
+    memcpy(pdata, data.data(), data.length());
+
+    return new kgmPicture(header.width, header.height, header.bpp, 1, pdata);
+  }
+
+  return null;
+}
+
+void kgmTga::fromCompressed(u8* pdata, u32 pixels)
+{
+  u32 cpixel = 0, cbyte = 0;
+
+  u8 hchunk = 0;
+
+  u32 index = 0;
+
+  u8 ppbytes = header.bpp / 8;
+
+  u8 rgba[4];
+
+  while(true)
+  {
+    if (cbyte >= data.length())
+      break;
+
+    memcpy(&hchunk, &pdata[index], 1); index++;
+
+    if (hchunk < 128)
+    {
+      hchunk++;
+
+      for (u32 i = 0; i < hchunk; i++)
+      {
+        memcpy(rgba, &pdata[index], ppbytes); index += ppbytes;
+
+        switch(ppbytes)
+        {
+        case 2:
+          break;
+        case 4:
+          data.data()[cbyte + 3] = rgba[3];
+        default:
+          data.data()[cbyte]     = rgba[2];
+          data.data()[cbyte + 1] = rgba[1];
+          data.data()[cbyte + 2] = rgba[0];
+
+          cbyte += ppBytes;
+        };
+      }
+    }
+    else
+    {
+      hchunk -= 127;
+
+      memcpy(rgba, &pdata[index], ppbytes); index += ppbytes;
+
+      for (u32 i = 0; i < hchunk; i++)
+      {
+        switch(ppbytes)
+        {
+        case 2:
+          break;
+        case 4:
+          data.data()[cbyte + 3] = rgba[3];
+        default:
+          data.data()[cbyte]     = rgba[2];
+          data.data()[cbyte + 1] = rgba[1];
+          data.data()[cbyte + 2] = rgba[0];
+
+          cbyte += ppBytes;
+        };
+      }
+    }
+  }
+}
+
+void kgmTga::fromUncompressed(u8* pdata, u32 pixels)
+{
+  if (header.bpp == 16)
+  {
+    for(u32 i = 0; i < pixels; i++)
+    {
+      data.data()[3 * i + 0] = ( pdata[2 * i + 0] & 0x1f) << 3;
+      data.data()[3 * i + 1] = ((pdata[2 * i + 0] & 0xe0) >> 2) | ((pdata[2 * i + 1] & 0x03) << 6);
+      data.data()[3 * i + 2] = ( pdata[2 * i + 1] & 0x7c) << 1;
+    }
+  }
+  else if (header.bpp > 16)
+  {
+    memcpy(data.data(), pdata, pixels * ppBytes);
+  }
 }

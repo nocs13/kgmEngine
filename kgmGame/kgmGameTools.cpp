@@ -14,6 +14,8 @@
 #include "../kgmGraphics/kgmGui.h"
 #include "../kgmGraphics/kgmGuiFrame.h"
 
+#include "../kgmUtils/kgmTga.h"
+
 #include "kgmActor.h"
 #include "kgmGameShaders.h"
 #include "kgmGameScript.h"
@@ -137,6 +139,19 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 {
   if(m.empty())
     return 0;
+
+  {
+    kgmTga* tga = new kgmTga();
+
+    if (!tga->create(m))
+      return null;
+
+    kgmPicture* pic = tga->toPicture();
+
+    delete tga;
+
+    return pic;
+  }
 
   uchar idl, cmp, dt, btcnt, dsc;
   uchar clmap[5];

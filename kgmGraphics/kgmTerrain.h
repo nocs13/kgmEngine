@@ -35,6 +35,8 @@ public:
   {
     u32 count = 0;
 
+    Vertex* v = null;
+
     kgmArray<Vertex_P_N_T> triangles;
 
   public:
@@ -43,11 +45,25 @@ public:
     {
        m_fvf = FVF_P_N_T;
        m_fff = 0;
+
+       triangles.alloc(333);
+
+       v = triangles.data();
     }
 
     ~Mesh()
     {
       triangles.clear();
+    }
+
+    Vertex* vertices() const
+    {
+      return v;
+    }
+
+    u32 vcount() const
+    {
+      return (3 * count);
     }
 
     void reset()
@@ -58,11 +74,19 @@ public:
     void add(triangle3& tr)
     {
       if ((count + 1) >= triangles.length())
+      {
         triangles.realloc(triangles.length() + 0xffff);
+
+        v = triangles.data();
+      }
 
       triangles[3 * count + 0].pos = tr.pt[0];
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
+
+      triangles[3 * count + 0].nor = vec3(0, 0, 1);
+      triangles[3 * count + 1].pos = vec3(0, 0, 1);
+      triangles[3 * count + 2].pos = vec3(0, 0, 1);
 
       count ++;
     }

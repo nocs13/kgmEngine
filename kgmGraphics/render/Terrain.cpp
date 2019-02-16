@@ -53,6 +53,9 @@ namespace Render
     material(mtl);
     shader(m_shader, gr->m_camera, mtl, nod);
 
+    kgmMesh::Vertex* v = msh->vertices();
+    u32 vcount = msh->vcount();
+
     gr->render(msh);
 
     material(null);

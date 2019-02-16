@@ -43,6 +43,8 @@ class kgmTga
   Header        header;
   kgmMemory<u8> data;
 
+  u16 ppBytes;
+
 public:
   kgmTga();
   ~kgmTga();
@@ -50,4 +52,8 @@ public:
   bool create(kgmMemory<u8>& m);
 
   kgmPicture* toPicture();
+
+private:
+  void fromCompressed(u8* pdata, u32 pixels);
+  void fromUncompressed(u8* pdata, u32 pixels);
 };

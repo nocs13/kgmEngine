@@ -129,7 +129,7 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
 
   sphere3 sbound = bound.sphere();
 
-  if (sbound.radius < 0.6)
+  if (sbound.radius < 100.0)
     return;
 
   kgm_log() << "Warning: Splitting chunk.\n";
