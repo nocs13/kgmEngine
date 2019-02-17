@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "kgmLog.h"
+//#include "kgmLog.h"
 
 void* kgm_alloc(size_t size)
 {
-  //void* p = malloc(size);
-  void* p = calloc(size, 1);
+  void* p = ::malloc(size);
+  //void* p = calloc(size, 1);
 
 #ifdef DEBUGXXX
   printf("Alloc memory: %p, size: %ld.\n", p, size);
@@ -22,5 +22,5 @@ void kgm_free(void* p)
   printf("Free memory: %p.\n", p);
 #endif
 
-  free(p);
+  ::free(p);
 }

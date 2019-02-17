@@ -57,7 +57,7 @@ public:
 
     ~Mesh()
     {
-      triangles.clear();
+      //triangles.clear();
     }
 
     Vertex* vertices() const
@@ -79,7 +79,7 @@ public:
     {
       if ((count + 1) >= triangles.length())
       {
-        triangles.realloc(triangles.length() + 0xff);
+        triangles.realloc(triangles.length() + 300);
 
         v = triangles.data();
       }
