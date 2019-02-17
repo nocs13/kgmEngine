@@ -11,6 +11,7 @@
 #include "../kgmMath/kgmBound.h"
 
 #include "../kgmBase/kgmLog.h"
+#include "../kgmMath/kgmBase.h"
 
 kgmTerrain::kgmTerrain()
 {
@@ -107,15 +108,15 @@ void kgmTerrain::build()
 
   triangle3 tr;
   
-  tr.pt[0] = vec3(-0.5f * m_width,  0.5f * m_length, get_height(uint2(0, 0)));
-  tr.pt[1] = vec3( 0.5f * m_width,  0.5f * m_length, get_height(uint2(m_heightmap.width, 0)));
-  tr.pt[2] = vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height)));
+  tr.set(vec3(-0.5f * m_width, 0.5f * m_length, get_height(uint2(0, 0))),
+         vec3(0.5f * m_width, 0.5f * m_length, get_height(uint2(m_heightmap.width, 0))),
+         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))));
   
   m_chunks[0]->chunk = tr;
 
-  tr.pt[0] = vec3( 0.5f * m_width, -0.5f * m_length, get_height(uint2(m_heightmap.width, m_heightmap.height)));
-  tr.pt[1] = vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height)));
-  tr.pt[2] = vec3( 0.5f * m_width,  0.5f * m_length, get_height(uint2(m_heightmap.width, 0)));
+  tr.set(vec3( 0.5f * m_width, -0.5f * m_length, get_height(uint2(m_heightmap.width, m_heightmap.height))),
+         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))),
+         vec3( 0.5f * m_width,  0.5f * m_length, get_height(uint2(m_heightmap.width, 0))));
 
   m_chunks[1]->chunk = tr;
 
@@ -129,7 +130,7 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
 
   sphere3 sbound = bound.sphere();
 
-  if (sbound.radius < 100.0)
+  if (sbound.radius < 10.0)
     return;
 
   kgm_log() << "Warning: Splitting chunk.\n";
@@ -183,12 +184,12 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 
   f32 distance = sbound.center.distance(cam->mPos);
 
-  if ((sbound.radius / (distance + 1.0)) < 0.3)
-  {
-    m_mesh->add(c->chunk);
+  //if ((sbound.radius / (distance + 1.0)) < 0.3)
+  //{
+  //  m_mesh->add(c->chunk);
 
-    return;
-  }
+  //  return;
+  //}
 
   if (c->left)
     updateMesh(cam,  c->left);

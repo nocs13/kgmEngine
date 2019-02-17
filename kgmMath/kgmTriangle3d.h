@@ -18,6 +18,12 @@ public:
     plane = kgmPlane3d<T>(aa, bb, cc);
   }
 
+  void set(kgmVector3d<T> aa, kgmVector3d<T> bb, kgmVector3d<T> cc)
+  {
+    pt[0] = aa, pt[1] = bb, pt[2] = cc;
+    plane = kgmPlane3d<T>(aa, bb, cc);
+  }
+
   bool isin(kgmVector3d<T> v)
   {
     kgmVector3d<T> v0, v1, v2;
@@ -36,6 +42,8 @@ public:
 
     return false;
   }
+
+  //FIXME
 
   bool intersect(kgmVector3d<T> v, float r)
   {

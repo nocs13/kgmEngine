@@ -53,7 +53,8 @@ public:
     if(old)
     {
       memcpy(kgmMemory<T>::m_data, old, sizeof(T) * scpy);
-      free(old);
+
+      kgm_free(old);
     }
   }
 

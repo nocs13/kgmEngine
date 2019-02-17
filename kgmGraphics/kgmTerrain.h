@@ -27,6 +27,10 @@ public:
   {
     triangle3 chunk;
 
+    vec3 normal;
+
+    vec2 uv[3];
+
     Chunk* left  = null;
     Chunk* right = null;
   };
@@ -75,7 +79,7 @@ public:
     {
       if ((count + 1) >= triangles.length())
       {
-        triangles.realloc(triangles.length() + 0xffff);
+        triangles.realloc(triangles.length() + 0xff);
 
         v = triangles.data();
       }
@@ -84,9 +88,9 @@ public:
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
 
-      triangles[3 * count + 0].nor = vec3(0, 0, 1);
-      triangles[3 * count + 1].pos = vec3(0, 0, 1);
-      triangles[3 * count + 2].pos = vec3(0, 0, 1);
+      triangles[3 * count + 0].nor = tr.normal();
+      triangles[3 * count + 1].nor = tr.normal();
+      triangles[3 * count + 2].nor = tr.normal();
 
       count ++;
     }
