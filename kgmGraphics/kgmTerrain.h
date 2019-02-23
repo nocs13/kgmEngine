@@ -77,7 +77,7 @@ public:
 
     void add(triangle3& tr)
     {
-      if ((count + 1) >= triangles.length())
+      if ((3 * count + 1) >= triangles.length())
       {
         triangles.realloc(triangles.length() + 300);
 
