@@ -16,7 +16,7 @@ namespace Render
     :BaseRender(gr)
   {
     // TODO Auto-generated constructor stub
-    m_shader = gr->rc->getShader("phong2.glsl");
+    m_shader = gr->rc->getShader("phong.glsl");
   }
 
   Terrain::~Terrain()

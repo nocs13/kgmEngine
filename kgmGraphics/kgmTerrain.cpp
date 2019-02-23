@@ -130,7 +130,7 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
 
   sphere3 sbound = bound.sphere();
 
-  if (sbound.radius < 10.0)
+  if (sbound.radius < 3.0)
     return;
 
   kgm_log() << "Warning: Splitting chunk.\n";
@@ -148,6 +148,9 @@ void kgmTerrain::buildROAM(kgmTerrain::Chunk* c)
 
   vec3 nr1 = tr1.normal();
   vec3 nr2 = tr2.normal();
+
+  if ((sbound.radius < 100.0) && (nr1.angle(nr2) < (PI / 20.0)))
+	  return;
 
   //if (normal.angle(nr1) > 0.1)
   {
@@ -172,8 +175,8 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 
   sphere3 sbound = bound.sphere();
 
-  //if (!cam->isSphereCross(sbound.center, sbound.radius))
-  //  return;
+  if (!cam->isSphereCross(sbound.center, sbound.radius))
+    return;
 
   if (!c->left && !c->right)
   {
@@ -184,12 +187,12 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 
   f32 distance = sbound.center.distance(cam->mPos);
 
-  //if ((sbound.radius / (distance + 1.0)) < 0.3)
-  //{
-  //  m_mesh->add(c->chunk);
+  if ((sbound.radius / (distance + 1.0)) < 0.05)
+  {
+    m_mesh->add(c->chunk);
 
-  //  return;
-  //}
+    return;
+  }
 
   if (c->left)
     updateMesh(cam,  c->left);

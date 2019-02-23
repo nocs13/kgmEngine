@@ -41,13 +41,13 @@ public:
 
     Vertex* v = null;
 
-    kgmArray<Vertex_P_N_T> triangles;
+    kgmArray<Vertex_P_N_C_T> triangles;
 
   public:
 
     Mesh()
     {
-       m_fvf = FVF_P_N_T;
+       m_fvf = FVF_P_N_C_T;
        m_fff = 0;
 
        triangles.alloc(333);
@@ -87,6 +87,10 @@ public:
       triangles[3 * count + 0].pos = tr.pt[0];
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
+
+      triangles[3 * count + 0].col = 0xffffffff;
+      triangles[3 * count + 1].col = 0xffffffff;
+      triangles[3 * count + 2].col = 0xffffffff;
 
       triangles[3 * count + 0].nor = tr.normal();
       triangles[3 * count + 1].nor = tr.normal();
