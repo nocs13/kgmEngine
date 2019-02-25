@@ -201,6 +201,14 @@ void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
     updateMesh(cam,  c->right);
 }
 
+void kgmTerrain::updateMesh(kgmCamera* cam, box2* rc)
+{
+  if (!cam || !rc)
+    return;
+
+  box3 bb = box3(vec3(rc->min.x, rc->min.y, get_height(rc->min)), vec3(rc->max.x, rc->max.y, get_height(rc->max)));
+}
+
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
 {
   f32 w_pp = m_heightmap.width / m_width;
@@ -230,4 +238,11 @@ f32 kgmTerrain::get_height(uint2 v)
   f32 height = (f32) data * ((f32)m_height / (f32)0xffff);
   
   return height;
+}
+
+f32 kgmTerrain::get_height(float2 v)
+{
+  uint2 uv = from_float2(v);
+  
+  return get_height(uv);
 }

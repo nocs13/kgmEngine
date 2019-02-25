@@ -65,13 +65,12 @@ typedef kgmBox2d<f32>      box2;
 typedef kgmBox3d<f32>      box3;
 typedef kgmBox3d<f32>      box;
 typedef kgmOBox3d<f32>     obox3;
-typedef kgmLine3d<f32> line;
-typedef kgmLine3d<f32> line3;
-typedef kgmRay3d<f32> ray3;
+typedef kgmLine3d<f32>     line;
+typedef kgmLine3d<f32>     line3;
+typedef kgmRay3d<f32>      ray3;
 typedef kgmSphere3d<f32> sphere;
 typedef kgmSphere3d<f32> sphere3;
 
-typedef kgmBox2d<f32>   box2;
 
 typedef kgmRect2d<s32>   iRect;
 typedef kgmRect2d<u32>   uRect;

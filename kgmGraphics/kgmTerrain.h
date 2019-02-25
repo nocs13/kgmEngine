@@ -174,9 +174,11 @@ private:
   void build();
   void buildROAM(Chunk* c);
   void updateMesh(kgmCamera* cam, Chunk* chk);
+  void updateMesh(kgmCamera* cam, box2* rc);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
   f32    get_height(uint2 v);
+  f32    get_height(float2 v);
 };
 
