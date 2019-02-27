@@ -35,6 +35,13 @@ public:
     Chunk* right = null;
   };
 
+  struct RcChunk
+  {
+    box2 rect;
+
+    RcChunk childs[4];
+  };
+
   class Mesh: public kgmMesh
   {
     u32 count = 0;
