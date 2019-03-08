@@ -79,8 +79,12 @@ void kgmTerrain::prepare(kgmCamera* camera)
 
   m_mesh->reset();
 
-  updateMesh(camera,  m_chunks[0]);
-  updateMesh(camera,  m_chunks[1]);
+  //updateMesh(camera,  m_chunks[0]);
+  //updateMesh(camera,  m_chunks[1]);
+
+  box2 box(vec2(-0.5f * m_width, -0.5f * m_height), vec2(0.5f * m_width, 0.5f * m_height));
+
+  updateMesh(camera, &box);
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
