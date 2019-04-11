@@ -25,14 +25,13 @@ public:
 
   struct Chunk
   {
-    triangle3 chunk;
+    fRect area;
 
     vec3 normal;
 
     vec2 uv[3];
 
-    Chunk* left  = null;
-    Chunk* right = null;
+    Chunk* childs[4] = {null};
   };
 
   class Mesh: public kgmMesh
@@ -172,9 +171,7 @@ public:
 
 private:
   void build();
-  void buildROAM(Chunk* c);
   void updateMesh(kgmCamera* cam, Chunk* chk);
-  void updateMesh(kgmCamera* cam, box2* rc);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
