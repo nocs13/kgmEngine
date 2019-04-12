@@ -79,7 +79,12 @@ void kgmTerrain::prepare(kgmCamera* camera)
 
   m_mesh->reset();
 
-  box2 box(vec2(-0.5f * m_width, -0.5f * m_height), vec2(0.5f * m_width, 0.5f * m_height));
+  vec3 vlook = camera->mDir;
+  vec3 vup(0, 0, 1);
+
+  vec3 vright = vlook.cross(vup);
+
+  vright.normalize();
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
@@ -105,8 +110,6 @@ void kgmTerrain::build()
 
 void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
 {
-  for (auto& n: c->childs)
-    updateMesh(cam,  n);
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)

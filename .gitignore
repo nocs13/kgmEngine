@@ -19,6 +19,7 @@
 .dep
 .inc
 .user
+.vscode
 ~*
 *~
 bin/
