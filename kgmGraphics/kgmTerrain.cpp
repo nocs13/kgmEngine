@@ -80,11 +80,33 @@ void kgmTerrain::prepare(kgmCamera* camera)
   m_mesh->reset();
 
   vec3 vlook = camera->mDir;
+  vec3 veye = camera->mPos;
   vec3 vup(0, 0, 1);
 
   vec3 vright = vlook.cross(vup);
 
   vright.normalize();
+
+  f32 range = camera->mFar;
+
+  f32 rchunk = range / 5.0f;
+
+  for (u32 ir = 0; ir < 5; ir++) 
+  {
+    vec3 trapezoid[4];
+
+    trapezoid[0] = veye - vright * (rchunk * ir) * tan(camera->mFov);
+    trapezoid[1] = veye + vright * (rchunk * ir) * tan(camera->mFov);
+    trapezoid[2] = veye - vright * (rchunk * (ir + 1)) * tan(camera->mFov);
+    trapezoid[3] = veye + vright * (rchunk * (ir + 1)) * tan(camera->mFov);
+
+    generate(trapezoid, ir + 1);
+  }
+}
+
+void kgmTerrain::generate(vec3 points[4], u32 level)
+{
+
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()

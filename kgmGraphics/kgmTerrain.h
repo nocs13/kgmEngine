@@ -172,6 +172,7 @@ public:
 private:
   void build();
   void updateMesh(kgmCamera* cam, Chunk* chk);
+  void generate(vec3 points[4], u32 level);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
