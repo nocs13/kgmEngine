@@ -106,7 +106,22 @@ void kgmTerrain::prepare(kgmCamera* camera)
 
 void kgmTerrain::generate(vec3 points[4], u32 level)
 {
+  vec3 d_lr = points[1] - points[0];
+  vec3 d_lu = points[2] - points[0];
+  vec3 d_ru = points[3] - points[1];
 
+  f32 length = d_lu.length();
+
+  d_lr.normalize();
+  d_lu.normalize();
+  d_ru.normalize();
+
+  u32 n = 500 / level;
+
+  for (int i = 0; i < n; i++)
+  {
+    
+  }
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
