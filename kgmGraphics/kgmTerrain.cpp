@@ -118,10 +118,29 @@ void kgmTerrain::generate(vec3 points[4], u32 level)
 
   u32 n = 500 / level;
 
-  for (int i = 0; i < n; i++)
-  {
+  //for (int i = 0; i < n; i++)
+  //{
     
-  }
+  //}
+
+  triangle3 chunks[2];
+
+  triangle3 tr;
+  
+  tr.set(vec3(-0.5f * m_width, 0.5f * m_length, get_height(uint2(0, 0))),
+         vec3(0.5f * m_width, 0.5f * m_length, get_height(uint2(m_heightmap.width, 0))),
+         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))));
+  
+  chunks[0] = tr;
+
+  tr.set(vec3( 0.5f * m_width, -0.5f * m_length, get_height(uint2(m_heightmap.width, m_heightmap.height))),
+         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))),
+         vec3( 0.5f * m_width,  0.5f * m_length, get_height(uint2(m_heightmap.width, 0))));
+
+  chunks[1] = tr;
+
+  gen_by_roam(&chunks[0]);
+  gen_by_roam(&chunks[1]);
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
@@ -185,4 +204,40 @@ f32 kgmTerrain::get_height(float2 v)
   uint2 uv = from_float2(v);
   
   return get_height(uv);
+}
+
+void kgmTerrain::gen_by_roam(triangle3* tr)
+{
+ kgmBound3d<f32> bound(tr->pt, 3);
+
+  sphere3 sbound = bound.sphere();
+
+  if (sbound.radius < 10.0)
+    return;
+
+  kgm_log() << "Warning: Splitting chunk.\n";
+
+  vec3 normal = tr->normal();
+
+  vec3 split = (tr->pt[1] + tr->pt[2]) * 0.5;
+
+  uint2 split2 = from_float2(float2(split.x, split.y));
+
+  split.z = get_height(split2);
+
+  triangle3 tr1(split, tr->pt[1], tr->pt[0]);
+  triangle3 tr2(split, tr->pt[0], tr->pt[2]);
+
+  vec3 nr1 = tr1.normal();
+  vec3 nr2 = tr2.normal();
+
+  //if (normal.angle(nr1) > 0.1)
+  {
+    gen_by_roam(&tr1);
+  }
+
+  //if (normal.angle(nr2) > 0.1)
+  {
+    gen_by_roam(&tr2);
+  }
 }
