@@ -175,6 +175,13 @@ void kgmTerrain::update(kgmCamera* cam)
   sphere3 sbound;
 
   sbound = sphere3(cen, cam->mFar * 0.5);
+
+  vec2 box[2];
+
+  box[0] = vec2(cen.x, cen.y) + vec2(-sbound.radius, -sbound.radius);
+  box[1] = vec2(cen.x, cen.y) + vec2( sbound.radius,  sbound.radius);
+
+  
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
