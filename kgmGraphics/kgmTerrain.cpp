@@ -15,8 +15,6 @@
 
 kgmTerrain::kgmTerrain()
 {
-  m_chunks[0] = m_chunks[1] = null;
-  
   m_mesh = new Mesh();
 }
 
@@ -73,9 +71,6 @@ void kgmTerrain::prepare(kgmCamera* camera)
     return;
 
   m_camera = camera;
-
-  if (!m_chunks[0] || !m_chunks[1])
-    return;
 
   m_mesh->reset();
 
@@ -164,8 +159,22 @@ void kgmTerrain::build()
   f32 h_pp = m_heightmap.width / m_height;
 }
 
-void kgmTerrain::updateMesh(kgmCamera* cam, kgmTerrain::Chunk* c)
+void kgmTerrain::update(kgmCamera* cam)
 {
+  vec3 line[2];
+
+  vec3 dir = cam->mDir;
+
+  dir.normalize();
+
+  line[0] = cam->mPos;
+  line[1] = line[0] + dir * cam->mFar;
+
+  vec3 cen = (line[0] + line[1]) * 0.5;
+
+  sphere3 sbound;
+
+  sbound = sphere3(cen, cam->mFar * 0.5);
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
