@@ -181,7 +181,17 @@ void kgmTerrain::update(kgmCamera* cam)
   box[0] = vec2(cen.x, cen.y) + vec2(-sbound.radius, -sbound.radius);
   box[1] = vec2(cen.x, cen.y) + vec2( sbound.radius,  sbound.radius);
 
-  
+  vec2 cur = box[0];
+
+  f32 chunk = 500.0f;
+
+  for (cur.y = box[0].y; cur.y < box[1].y; cur.y += chunk)
+  {
+    for (cur.x = box[0].x; cur.x < box[1].x; cur.x += chunk)
+    {
+      vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + chunk, cur.y + chunk) };
+    }
+  }
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
