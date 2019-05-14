@@ -9,6 +9,8 @@
 #include "kgmCamera.h"
 
 #include "../kgmMath/kgmBound.h"
+#include "../kgmMath/kgmVector2d.h"
+#include "../kgmMath/kgmSphere2d.h"
 
 #include "../kgmBase/kgmLog.h"
 #include "../kgmMath/kgmBase.h"
@@ -165,6 +167,8 @@ void kgmTerrain::update(kgmCamera* cam)
 
   vec3 dir = cam->mDir;
 
+  vec2 cpos(cam->mPos.x, cam->mPos.y);
+
   dir.normalize();
 
   line[0] = cam->mPos;
@@ -190,6 +194,9 @@ void kgmTerrain::update(kgmCamera* cam)
     for (cur.x = box[0].x; cur.x < box[1].x; cur.x += chunk)
     {
       vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + chunk, cur.y + chunk) };
+      circle cr(rect, 2);
+
+      f32 ds = cr.distance(cpos);
     }
   }
 }

@@ -72,4 +72,11 @@ public:
 
     return false;
   }
+
+  T distance(kgmVector3d<T>& v)
+  {
+    kgmVector3d<T> d = v - center;
+
+    return d.length() - radius;
+  }
 };

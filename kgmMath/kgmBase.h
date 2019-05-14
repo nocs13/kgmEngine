@@ -26,6 +26,7 @@ template <class T> class kgmPlane3d;
 template <class T> class kgmPolygon3d;
 template <class T> class kgmTriangle3d;
 template <class T> class kgmSphere3d;
+template <class T> class kgmSphere2d;
 template <class T> class kgmCylinder3d;
 template <class T> class kgmFrustum3d;
 
@@ -70,6 +71,8 @@ typedef kgmLine3d<f32>     line3;
 typedef kgmRay3d<f32>      ray3;
 typedef kgmSphere3d<f32> sphere;
 typedef kgmSphere3d<f32> sphere3;
+typedef kgmSphere2d<f32> circle;
+typedef kgmSphere2d<f32> sphere2;
 
 
 typedef kgmRect2d<s32>   iRect;
