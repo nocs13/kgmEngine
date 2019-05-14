@@ -71,73 +71,10 @@ void kgmTerrain::prepare(kgmCamera* camera)
 {
   if (!camera)
     return;
-
-  m_camera = camera;
-
-  m_mesh->reset();
-
-  vec3 vlook = camera->mDir;
-  vec3 veye = camera->mPos;
-  vec3 vup(0, 0, 1);
-
-  vec3 vright = vlook.cross(vup);
-
-  vright.normalize();
-
-  f32 range = camera->mFar;
-
-  f32 rchunk = range / 5.0f;
-
-  for (u32 ir = 0; ir < 5; ir++) 
-  {
-    vec3 trapezoid[4];
-
-    trapezoid[0] = veye - vright * (rchunk * ir) * tan(camera->mFov);
-    trapezoid[1] = veye + vright * (rchunk * ir) * tan(camera->mFov);
-    trapezoid[2] = veye - vright * (rchunk * (ir + 1)) * tan(camera->mFov);
-    trapezoid[3] = veye + vright * (rchunk * (ir + 1)) * tan(camera->mFov);
-
-    generate(trapezoid, ir + 1);
-  }
 }
 
 void kgmTerrain::generate(vec3 points[4], u32 level)
 {
-  vec3 d_lr = points[1] - points[0];
-  vec3 d_lu = points[2] - points[0];
-  vec3 d_ru = points[3] - points[1];
-
-  f32 length = d_lu.length();
-
-  d_lr.normalize();
-  d_lu.normalize();
-  d_ru.normalize();
-
-  u32 n = 500 / level;
-
-  //for (int i = 0; i < n; i++)
-  //{
-    
-  //}
-
-  triangle3 chunks[2];
-
-  triangle3 tr;
-  
-  tr.set(vec3(-0.5f * m_width, 0.5f * m_length, get_height(uint2(0, 0))),
-         vec3(0.5f * m_width, 0.5f * m_length, get_height(uint2(m_heightmap.width, 0))),
-         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))));
-  
-  chunks[0] = tr;
-
-  tr.set(vec3( 0.5f * m_width, -0.5f * m_length, get_height(uint2(m_heightmap.width, m_heightmap.height))),
-         vec3(-0.5f * m_width, -0.5f * m_length, get_height(uint2(0, m_heightmap.height))),
-         vec3( 0.5f * m_width,  0.5f * m_length, get_height(uint2(m_heightmap.width, 0))));
-
-  chunks[1] = tr;
-
-  gen_by_roam(&chunks[0]);
-  gen_by_roam(&chunks[1]);
 }
 
 kgmTerrain::MeshIt kgmTerrain::meshes()
@@ -195,6 +132,11 @@ void kgmTerrain::update(kgmCamera* cam)
     {
       vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + chunk, cur.y + chunk) };
       circle cr(rect, 2);
+      sphere sp(vec3(cr.center.x, cr.center.y, 0), cr.radius);
+
+      if (cam->isSphereCross(sp.center, sp.radius)){
+        continue;
+      }
 
       f32 ds = cr.distance(cpos);
     }
@@ -237,40 +179,4 @@ f32 kgmTerrain::get_height(float2 v)
   uint2 uv = from_float2(v);
   
   return get_height(uv);
-}
-
-void kgmTerrain::gen_by_roam(triangle3* tr)
-{
- kgmBound3d<f32> bound(tr->pt, 3);
-
-  sphere3 sbound = bound.sphere();
-
-  if (sbound.radius < 10.0)
-    return;
-
-  kgm_log() << "Warning: Splitting chunk.\n";
-
-  vec3 normal = tr->normal();
-
-  vec3 split = (tr->pt[1] + tr->pt[2]) * 0.5;
-
-  uint2 split2 = from_float2(float2(split.x, split.y));
-
-  split.z = get_height(split2);
-
-  triangle3 tr1(split, tr->pt[1], tr->pt[0]);
-  triangle3 tr2(split, tr->pt[0], tr->pt[2]);
-
-  vec3 nr1 = tr1.normal();
-  vec3 nr2 = tr2.normal();
-
-  //if (normal.angle(nr1) > 0.1)
-  {
-    gen_by_roam(&tr1);
-  }
-
-  //if (normal.angle(nr2) > 0.1)
-  {
-    gen_by_roam(&tr2);
-  }
 }

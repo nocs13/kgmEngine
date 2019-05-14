@@ -23,15 +23,20 @@ class kgmTerrain: public kgmObject
 
 public:
 
-  struct RcChunk
+  struct Chunk
   {
     fRect area;
 
     vec3 normal;
 
     vec2 uv[3];
+  };
 
-    RcChunk* childs[4] = {null};
+  struct Sector
+  {
+    kgmList<Chunk*> chunks;
+
+    Sector *parent, *child;
   };
 
   class Mesh: public kgmMesh
@@ -124,6 +129,8 @@ private:
 
   kgmCamera* m_camera = nullptr;
 
+  Sector* root = nullptr;
+
 protected:
   ~kgmTerrain();
 
@@ -171,7 +178,6 @@ private:
   void build();
   void update(kgmCamera* cam);
   void generate(vec3 points[4], u32 level);
-  void gen_by_roam(triangle3* tr);
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
