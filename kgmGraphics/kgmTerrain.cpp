@@ -132,7 +132,8 @@ void kgmTerrain::update(kgmCamera* cam)
     {
       vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + chunk, cur.y + chunk) };
       circle cr(rect, 2);
-      sphere sp(vec3(cr.center.x, cr.center.y, 0), cr.radius);
+      vec3 center = vec3(cr.center.x, cr.center.y, 0);
+      sphere sp(center, cr.radius);
 
       if (cam->isSphereCross(sp.center, sp.radius)){
         continue;
