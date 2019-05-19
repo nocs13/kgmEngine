@@ -8,12 +8,13 @@
 #include "kgmMaterial.h"
 #include "kgmCamera.h"
 
+#include "../kgmMath/kgmBase.h"
 #include "../kgmMath/kgmBound.h"
 #include "../kgmMath/kgmVector2d.h"
 #include "../kgmMath/kgmSphere2d.h"
 
 #include "../kgmBase/kgmLog.h"
-#include "../kgmMath/kgmBase.h"
+#include "../kgmBase/kgmSort.h"
 
 kgmTerrain::kgmTerrain()
 {
@@ -100,6 +101,11 @@ void kgmTerrain::build()
 
 void kgmTerrain::update(kgmCamera* cam)
 {
+  typedef struct {
+    box2 rect;
+    u32  details;
+  } Chunk;
+
   vec3 line[2];
 
   vec3 dir = cam->mDir;
@@ -126,6 +132,10 @@ void kgmTerrain::update(kgmCamera* cam)
 
   f32 chunk = 500.0f;
 
+  Chunk chunks[256];
+
+  u32 cnt_chunks = 0;
+
   for (cur.y = box[0].y; cur.y < box[1].y; cur.y += chunk)
   {
     for (cur.x = box[0].x; cur.x < box[1].x; cur.x += chunk)
@@ -140,8 +150,20 @@ void kgmTerrain::update(kgmCamera* cam)
       }
 
       f32 ds = cr.distance(cpos);
+
+      float detalization = ds / chunk;
+
+      Chunk current;
+
+      current.rect = box2(rect[0], rect[1]);
+      current.details = (u32) ceil(detalization);
+
+      chunks[cnt_chunks] = current;
+      cnt_chunks++;
     }
   }
+
+  kgmSort<Chunk> sort(chunks, cnt_chunks, [](Chunk& a, Chunk& b){ return (a.details < b.detasils); });
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)

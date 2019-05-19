@@ -39,8 +39,8 @@ protected:
     else
       compare = compare_default;
 
-    for (u32 i = 0; i < (length - 1); i++) {
-      for (u32 j = i + 1; j < length; j++) {
+    for (u32 i = 0; i < (len - 1); i++) {
+      for (u32 j = i + 1; j < len; j++) {
         if (compare(data[j], data[i])) {
           T t = data[j];
           data[j] = data[i];
@@ -62,7 +62,9 @@ protected:
 template <class T>
 class kgmSortMerge
 {
-  kgmSort::Compare check;
+  typedef bool (*Compare)(T& a, T& b);
+
+  Compare check;
 
 public:
   kgmSortMerge(T* data, u32 len, Compare compare = nullptr)
@@ -137,7 +139,9 @@ public:
 template <class T>
 class kgmSortHeap
 {
-  kgmSort::Compare check;
+  typedef bool (*Compare)(T& a, T& b);
+
+  Compare check;
 
 public:
   kgmSortHeap(T* data, u32 len, Compare compare = nullptr)
@@ -199,7 +203,9 @@ public:
 template <class T>
 class kgmSortShell
 {
-  kgmSort::Compare check;
+  typedef bool (*Compare)(T& a, T& b);
+
+  Compare check;
 
 public:
   kgmSortShell(T* data, u32 len, Compare compare = nullptr)
@@ -239,7 +245,9 @@ public:
 template <class T>
 class kgmSortQuick
 {
-  kgmSort::Compare check;
+  typedef bool (*Compare)(T& a, T& b);
+
+  Compare check;
 
 public:
   kgmSortQuick(T* data, u32 len, Compare compare = nullptr)
