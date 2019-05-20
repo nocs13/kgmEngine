@@ -101,10 +101,20 @@ void kgmTerrain::build()
 
 void kgmTerrain::update(kgmCamera* cam)
 {
-  typedef struct {
+  struct Chunk {
     box2 rect;
     u32  details;
-  } Chunk;
+
+    static bool compare(Chunk& a, Chunk& b)
+    {
+      return (a.details < b.details);
+    }
+
+    bool operator<(Chunk& a)
+    {
+      return (details < a.details);
+    }
+  };
 
   vec3 line[2];
 
@@ -163,7 +173,12 @@ void kgmTerrain::update(kgmCamera* cam)
     }
   }
 
-  kgmSort<Chunk> sort(chunks, cnt_chunks, [](Chunk& a, Chunk& b){ return (a.details < b.detasils); });
+  kgmSort<Chunk> sort(chunks, cnt_chunks, (kgmSort<Chunk>::Compare) Chunk::compare);
+
+  for (u32 i = 0; i < cnt_chunks; i++)
+  {
+
+  }
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)

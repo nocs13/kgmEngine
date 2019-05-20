@@ -17,7 +17,7 @@ public:
 protected:
   T*  data;
   u32 len;
-  Compare check;
+  Compare check = nullptr;
 
 public:
   kgmSort(T* array, u32 length, Compare compare = nullptr)
