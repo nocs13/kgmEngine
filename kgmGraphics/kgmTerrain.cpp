@@ -177,8 +177,13 @@ void kgmTerrain::update(kgmCamera* cam)
 
   for (u32 i = 0; i < cnt_chunks; i++)
   {
-
+    generate(chunks[i].rect, chunks[i].details);
   }
+}
+
+void kgmTerrain::generate(box2 rect, u32 level)
+{
+
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
