@@ -183,7 +183,41 @@ void kgmTerrain::update(kgmCamera* cam)
 
 void kgmTerrain::generate(box2 rect, u32 level)
 {
+  if (level > 5)
+    return;
 
+  if (level < 1)
+    level = 1;
+
+  vec2 dv = rect.max - rect.min;
+
+  vec2 cv = rect.min;
+
+  while(cv.y < rect.max.y)
+  {
+    while(cv.x < rect.max.x)
+    {
+      triangle tr;
+      vec2     v;
+
+      v.x = cv.x, v.y = cv.y;         tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+      v.x = cv.x + level, v.y = cv.y; tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + level; tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
+
+      m_mesh->add(tr);
+
+      v.x = cv.x + level, v.y = cv.y + level; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + level;         tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x + level, v.y = cv.y;         tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
+
+      m_mesh->add(tr);
+
+      cv.x += level;
+    }
+
+    cv.y += level;
+    cv.x = rect.min.x;
+  }
 }
 
 kgmTerrain::float2 kgmTerrain::from_uint2(kgmTerrain::uint2 v)
