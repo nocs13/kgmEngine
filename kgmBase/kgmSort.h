@@ -26,6 +26,9 @@ public:
     len   = length;
     check = compare;
 
+    if (length < 2)
+      return;
+
     sort(data, len);
   }
 

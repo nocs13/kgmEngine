@@ -9,6 +9,8 @@
 #include "../kgmGraphics.h"
 #include "../kgmTerrain.h"
 
+#include "../kgmBase/kgmLog.h"
+
 namespace Render
 {
 
@@ -38,8 +40,9 @@ namespace Render
     kgmIGraphics::INode* nod = gr->m_terrain;
 
     kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
-
+    kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
     ter->prepare(gr->m_camera);
+    kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
 
     kgmMesh*     msh = (kgmMesh*) ter->mesh();
     

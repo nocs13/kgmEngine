@@ -72,6 +72,8 @@ void kgmTerrain::prepare(kgmCamera* camera)
 {
   if (!camera)
     return;
+
+  update(camera);
 }
 
 void kgmTerrain::generate(vec3 points[4], u32 level)
@@ -140,7 +142,7 @@ void kgmTerrain::update(kgmCamera* cam)
 
   vec2 cur = box[0];
 
-  f32 chunk = 500.0f;
+  f32 chunk = 100.0f;
 
   Chunk chunks[256];
 
@@ -155,13 +157,16 @@ void kgmTerrain::update(kgmCamera* cam)
       vec3 center = vec3(cr.center.x, cr.center.y, 0);
       sphere sp(center, cr.radius);
 
-      if (cam->isSphereCross(sp.center, sp.radius)){
+      if (!cam->isSphereCross(sp.center, sp.radius)){
         continue;
       }
 
       f32 ds = cr.distance(cpos);
 
       float detalization = ds / chunk;
+
+      if (detalization < 1.0)
+        detalization = 1.0f;
 
       Chunk current;
 
@@ -193,6 +198,8 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
   vec2 cv = rect.min;
 
+  f32 len = 10.0f * level;
+
   while(cv.y < rect.max.y)
   {
     while(cv.x < rect.max.x)
@@ -200,22 +207,22 @@ void kgmTerrain::generate(box2 rect, u32 level)
       triangle tr;
       vec2     v;
 
-      v.x = cv.x, v.y = cv.y;         tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
-      v.x = cv.x + level, v.y = cv.y; tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
-      v.x = cv.x, v.y = cv.y + level; tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
+      v.x = cv.x, v.y = cv.y;       tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+      v.x = cv.x + len, v.y = cv.y; tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + len; tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
       m_mesh->add(tr);
 
-      v.x = cv.x + level, v.y = cv.y + level; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
-      v.x = cv.x, v.y = cv.y + level;         tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
-      v.x = cv.x + level, v.y = cv.y;         tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
+      v.x = cv.x + len, v.y = cv.y + level; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + level;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x + len, v.y = cv.y;         tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
       m_mesh->add(tr);
 
-      cv.x += level;
+      cv.x += len;
     }
 
-    cv.y += level;
+    cv.y += len;
     cv.x = rect.min.x;
   }
 }
