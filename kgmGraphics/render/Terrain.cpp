@@ -14,9 +14,32 @@
 namespace Render
 {
 
+  void Terrain::Thread::run()
+  {
+    if (!tr)
+      return;
+
+    valid = true;
+
+    while(valid)
+    {
+      kgmTerrain*  ter = (kgmTerrain*) tr->gr->m_terrain->getNodeObject();
+
+      if (ter)
+      {
+        lock();
+        ter->prepare(tr->gr->m_camera);
+        unlock();
+      }
+
+      kgmThread::sleep(0);
+    }
+  }
+
   Terrain::Terrain(kgmGraphics* gr)
     :BaseRender(gr)
   {
+    m_thread = new Thread(this);
     // TODO Auto-generated constructor stub
     m_shader = gr->rc->getShader("phong.glsl");
   }
@@ -24,10 +47,17 @@ namespace Render
   Terrain::~Terrain()
   {
     // TODO Auto-generated destructor stub
+    m_thread->stop();
+    m_thread->wait();
+
+    delete m_thread;
   }
   
   void Terrain::render()
   {
+    if(!m_thread->active())
+      m_thread->start();
+
     mtx4 identity;
     identity.identity();
 
@@ -40,9 +70,15 @@ namespace Render
     kgmIGraphics::INode* nod = gr->m_terrain;
 
     kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
-    kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
-    ter->prepare(gr->m_camera);
-    kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
+
+    //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
+    //ter->prepare(gr->m_camera);
+    //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
+
+    if (!ter)
+      return;
+
+    m_thread->lock();
 
     kgmMesh*     msh = (kgmMesh*) ter->mesh();
     
@@ -61,6 +97,8 @@ namespace Render
       material(null);
       shader(null, null, null, null);
 
+      m_thread->unlock();
+
       return;
     }
 
@@ -72,6 +110,8 @@ namespace Render
 
     material(null);
     shader(null, null, null, null);
+
+    m_thread->unlock();
   }
 
 } /* namespace Render */

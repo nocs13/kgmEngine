@@ -16,6 +16,8 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmSort.h"
 
+f32 chunk = 100.0f;
+
 kgmTerrain::kgmTerrain()
 {
   m_mesh = new Mesh();
@@ -142,8 +144,6 @@ void kgmTerrain::update(kgmCamera* cam)
 
   vec2 cur = box[0];
 
-  f32 chunk = 100.0f;
-
   Chunk chunks[256];
 
   u32 cnt_chunks = 0;
@@ -194,11 +194,30 @@ void kgmTerrain::generate(box2 rect, u32 level)
   if (level < 1)
     level = 1;
 
-  vec2 dv = rect.max - rect.min;
+    vec2 dv = rect.max - rect.min;
 
   vec2 cv = rect.min;
 
   f32 len = 10.0f * level;
+
+  switch(level)
+  {
+  case 1:
+    len = 0.1 * chunk;
+    break;
+  case 2:
+    len = 0.2 * chunk;
+    break;
+  case 3:
+    len = 0.3 * chunk;
+    break;
+  case 4:
+    len = 0.4 * chunk;
+    break;
+  case 5:
+    len = 0.5 * chunk;
+    break;
+  }
 
   while(cv.y < rect.max.y)
   {
@@ -214,7 +233,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
       m_mesh->add(tr);
 
       v.x = cv.x + len, v.y = cv.y + level; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
-      v.x = cv.x, v.y = cv.y + level;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + len;         tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
       v.x = cv.x + len, v.y = cv.y;         tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
       m_mesh->add(tr);
