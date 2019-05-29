@@ -200,23 +200,12 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
   f32 len = 10.0f * level;
 
-  switch(level)
-  {
-  case 1:
-    len = 0.1 * chunk;
-    break;
-  case 2:
+  if (level < 2) {
     len = 0.2 * chunk;
-    break;
-  case 3:
-    len = 0.3 * chunk;
-    break;
-  case 4:
-    len = 0.4 * chunk;
-    break;
-  case 5:
+  } else if (level < 4) {
+    len = 0.3333 * chunk;
+  } else if (level < 6) {
     len = 0.5 * chunk;
-    break;
   }
 
   while(cv.y < rect.max.y)
@@ -232,9 +221,9 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
       m_mesh->add(tr);
 
-      v.x = cv.x + len, v.y = cv.y + level; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
-      v.x = cv.x, v.y = cv.y + len;         tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
-      v.x = cv.x + len, v.y = cv.y;         tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
+      v.x = cv.x + len, v.y = cv.y + len; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+      v.x = cv.x, v.y = cv.y + len;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+      v.x = cv.x + len, v.y = cv.y;       tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
       m_mesh->add(tr);
 

@@ -62,6 +62,11 @@ class Terrain: public BaseRender
     {
       kgmThread::mutex_unlock(mx);
     }
+
+    bool canlock()
+    {
+      return kgmThread::mutex_lockable(mx);
+    }
   };
 
   kgmShader* m_shader;
