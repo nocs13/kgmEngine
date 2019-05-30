@@ -234,6 +234,9 @@ kgmGraphics::~kgmGraphics()
 {
   gc->gcFreeTarget(g_fbo);
 
+  if (m_rnd_terrain)
+    delete m_rnd_terrain;
+
   if (m_rnd_lights)
     delete m_rnd_lights;
 

@@ -212,6 +212,9 @@ void kgmTerrain::generate(box2 rect, u32 level)
   {
     while(cv.x < rect.max.x)
     {
+      if (m_mesh->fcount() > 150000)
+        return;
+
       triangle tr;
       vec2     v;
 
@@ -259,7 +262,12 @@ kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
 
 f32 kgmTerrain::get_height(uint2 v)
 {
-  u16 data = m_heightmap.map[v.y * m_heightmap.width + v.x];
+  u32 offset = v.y * m_heightmap.width + v.x;
+
+  if (offset >= (m_heightmap.width * m_heightmap.height))
+    return 0.0f;
+
+  u16 data = m_heightmap.map[offset];
 
   f32 height = (f32) data * ((f32)m_height / (f32)0xffff);
   

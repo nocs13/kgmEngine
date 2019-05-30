@@ -74,6 +74,11 @@ public:
       return (3 * count);
     }
 
+    u32 fcount()
+    {
+      return triangles.length();
+    }
+
     void reset()
     {
       count = 0;
@@ -88,6 +93,10 @@ public:
         v = triangles.data();
       }
 
+      plane3 pn(tr.pt[0], tr.pt[1], tr.pt[2]);
+
+      vec3 n = pn.normal();
+
       triangles[3 * count + 0].pos = tr.pt[0];
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
@@ -96,9 +105,9 @@ public:
       triangles[3 * count + 1].col = 0xffffffff;
       triangles[3 * count + 2].col = 0xffffffff;
 
-      triangles[3 * count + 0].nor = tr.normal();
-      triangles[3 * count + 1].nor = tr.normal();
-      triangles[3 * count + 2].nor = tr.normal();
+      triangles[3 * count + 0].nor = n;
+      triangles[3 * count + 1].nor = n;
+      triangles[3 * count + 2].nor = n;
 
       count ++;
     }
