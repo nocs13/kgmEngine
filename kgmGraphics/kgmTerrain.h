@@ -76,7 +76,7 @@ public:
 
     u32 fcount()
     {
-      return triangles.length();
+      return count;
     }
 
     void reset()

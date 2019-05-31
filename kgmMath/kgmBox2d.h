@@ -1,7 +1,9 @@
 #pragma once
 
 //BOX 2D
-template <class T> class kgmBox2d{
+
+template <class T> class kgmBox2d
+{
 public:
   kgmVector2d<T> min, max;
 
@@ -26,6 +28,12 @@ public:
   kgmVector2d<T> Center()
   {
     return kgmVector2d<T>((max.x - min.x) / 2, (max.y - min.y) / 2);
+  }
+
+  bool intersect(kgmBox2d<T>& b)
+  {
+    return !( (min.x > b.max.x) || (min.y > b.max.y) ||
+              (max.x < b.min.x) || (max.y < b.min.y));
   }
 
   bool InRect(kgmVector2d<T> pt){

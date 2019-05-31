@@ -17,12 +17,12 @@ public:
     radius = r;
   }
 
-  kgmSphere2d(kgmBox2d<T>& b)\
+  kgmSphere2d(kgmBox2d<T>& b)
   {
     kgmVector2d<T> d = b.max - b.min;
-    center.x = (b.min.x + b.max.x) / 2;
-    center.y = (b.min.y + b.max.y) / 2;
-    radius = d.length() / 2;
+    center.x = 0.5 * (b.min.x + b.max.x);
+    center.y = 0.5 * (b.min.y + b.max.y);
+    radius = 0.5 * d.length();
   }
 
   kgmSphere2d(kgmVector2d<T>* points, int count)
@@ -31,7 +31,8 @@ public:
                    max;
 
     min = max = points[0];
-    center = kgmVector2d<T>(0, 0);
+
+    center = min;
 
     for(int i = 1; i < count; i++)
     {

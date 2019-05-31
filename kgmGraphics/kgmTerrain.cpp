@@ -16,7 +16,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmSort.h"
 
-f32 chunk = 100.0f;
+f32 chunk = 200.0f;
 
 kgmTerrain::kgmTerrain()
 {
@@ -120,27 +120,12 @@ void kgmTerrain::update(kgmCamera* cam)
     }
   };
 
-  vec3 line[2];
-
-  vec3 dir = cam->mDir;
-
   vec2 cpos(cam->mPos.x, cam->mPos.y);
-
-  dir.normalize();
-
-  line[0] = cam->mPos;
-  line[1] = line[0] + dir * cam->mFar;
-
-  vec3 cen = (line[0] + line[1]) * 0.5;
-
-  sphere3 sbound;
-
-  sbound = sphere3(cen, cam->mFar * 0.5);
 
   vec2 box[2];
 
-  box[0] = vec2(cen.x, cen.y) + vec2(-sbound.radius, -sbound.radius);
-  box[1] = vec2(cen.x, cen.y) + vec2( sbound.radius,  sbound.radius);
+  box[0] = vec2(-0.5 * m_width, -0.5 * m_length);
+  box[1] = vec2( 0.5 * m_width,  0.5 * m_length);
 
   vec2 cur = box[0];
 
@@ -167,6 +152,8 @@ void kgmTerrain::update(kgmCamera* cam)
 
       if (detalization < 1.0)
         detalization = 1.0f;
+      else if (detalization > 5.0)
+        continue;
 
       Chunk current;
 
@@ -179,6 +166,8 @@ void kgmTerrain::update(kgmCamera* cam)
   }
 
   kgmSort<Chunk> sort(chunks, cnt_chunks, (kgmSort<Chunk>::Compare) Chunk::compare);
+
+  m_mesh->reset();
 
   for (u32 i = 0; i < cnt_chunks; i++)
   {
@@ -201,6 +190,8 @@ void kgmTerrain::generate(box2 rect, u32 level)
   f32 len = 10.0f * level;
 
   if (level < 2) {
+    len = 0.1 * chunk;
+  } else if (level < 3) {
     len = 0.2 * chunk;
   } else if (level < 4) {
     len = 0.3333 * chunk;
