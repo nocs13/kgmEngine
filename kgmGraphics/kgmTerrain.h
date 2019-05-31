@@ -132,6 +132,10 @@ private:
   f32 m_length;
   f32 m_height;
 
+  f32 m_chunk;
+
+
+
   Heightmap m_heightmap;
 
   Mesh* m_mesh;
@@ -147,7 +151,6 @@ public:
   kgmTerrain();
 
   virtual void prepare(kgmCamera*);
-  virtual MeshIt meshes();
 
   f32 width() const
   {

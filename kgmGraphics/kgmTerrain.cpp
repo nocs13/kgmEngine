@@ -16,11 +16,14 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmSort.h"
 
-f32 chunk = 200.0f;
-
 kgmTerrain::kgmTerrain()
 {
   m_mesh = new Mesh();
+
+  m_width  = 1000;
+  m_length = 1000;
+  m_height = 500;
+  m_chunk  = 100.0f;
 }
 
 kgmTerrain::~kgmTerrain()
@@ -70,23 +73,20 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   return true;
 }
 
+void kgmTerrain::build()
+{
+  f32 w_pp = m_heightmap.width / m_width;
+  f32 h_pp = m_heightmap.width / m_height;
+}
+
 void kgmTerrain::prepare(kgmCamera* camera)
 {
   if (!camera)
     return;
 
+  m_chunk = m_width / 20.0f;
+
   update(camera);
-}
-
-void kgmTerrain::generate(vec3 points[4], u32 level)
-{
-}
-
-kgmTerrain::MeshIt kgmTerrain::meshes()
-{
-  MeshIt it;
-
-  return it;
 }
 
 kgmMesh* kgmTerrain::mesh()
@@ -95,12 +95,6 @@ kgmMesh* kgmTerrain::mesh()
     return m_mesh;
 
   return null;
-}
-
-void kgmTerrain::build()
-{
-  f32 w_pp = m_heightmap.width / m_width;
-  f32 h_pp = m_heightmap.width / m_height;
 }
 
 void kgmTerrain::update(kgmCamera* cam)
@@ -129,17 +123,17 @@ void kgmTerrain::update(kgmCamera* cam)
 
   vec2 cur = box[0];
 
-  Chunk chunks[256];
+  Chunk chunks[512];
 
   u32 cnt_chunks = 0;
 
-  for (cur.y = box[0].y; cur.y < box[1].y; cur.y += chunk)
+  for (cur.y = box[0].y; cur.y < box[1].y; cur.y += m_chunk)
   {
-    for (cur.x = box[0].x; cur.x < box[1].x; cur.x += chunk)
+    for (cur.x = box[0].x; cur.x < box[1].x; cur.x += m_chunk)
     {
-      vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + chunk, cur.y + chunk) };
+      vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + m_chunk, cur.y + m_chunk) };
       circle cr(rect, 2);
-      vec3 center = vec3(cr.center.x, cr.center.y, 0);
+      vec3 center = vec3(cr.center.x, cr.center.y, cam->mPos.z);
       sphere sp(center, cr.radius);
 
       if (!cam->isSphereCross(sp.center, sp.radius)){
@@ -148,11 +142,11 @@ void kgmTerrain::update(kgmCamera* cam)
 
       f32 ds = cr.distance(cpos);
 
-      float detalization = ds / chunk;
+      float detalization = ds / m_chunk;
 
       if (detalization < 1.0)
         detalization = 1.0f;
-      else if (detalization > 5.0)
+      else if (detalization > 7.0)
         continue;
 
       Chunk current;
@@ -190,20 +184,20 @@ void kgmTerrain::generate(box2 rect, u32 level)
   f32 len = 10.0f * level;
 
   if (level < 2) {
-    len = 0.1 * chunk;
+    len = 0.1 * m_chunk;
   } else if (level < 3) {
-    len = 0.2 * chunk;
+    len = 0.2 * m_chunk;
   } else if (level < 4) {
-    len = 0.3333 * chunk;
-  } else if (level < 6) {
-    len = 0.5 * chunk;
+    len = 0.3333 * m_chunk;
+  } else if (level < 10) {
+    len = 0.5 * m_chunk;
   }
 
   while(cv.y < rect.max.y)
   {
     while(cv.x < rect.max.x)
     {
-      if (m_mesh->fcount() > 150000)
+      if (m_mesh->fcount() > 200000)
         return;
 
       triangle tr;
