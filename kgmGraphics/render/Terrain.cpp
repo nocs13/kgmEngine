@@ -48,11 +48,15 @@ namespace Render
 
   Terrain::~Terrain()
   {
-    // TODO Auto-generated destructor stub
-    m_thread->stop();
-    m_thread->wait();
+    clear();
 
     delete m_thread;
+  }
+
+  void Terrain::clear()
+  {
+    m_thread->stop();
+    m_thread->wait();
   }
   
   void Terrain::render()
@@ -110,10 +114,11 @@ namespace Render
 
     gr->render(msh);
 
+    m_thread->unlock();
+
     material(null);
     shader(null, null, null, null);
 
-    m_thread->unlock();
   }
 
 } /* namespace Render */

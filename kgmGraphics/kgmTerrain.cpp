@@ -146,7 +146,7 @@ void kgmTerrain::update(kgmCamera* cam)
 
       if (detalization < 1.0)
         detalization = 1.0f;
-      else if (detalization > 7.0)
+      else if (detalization > 10.0)
         continue;
 
       Chunk current;
@@ -171,9 +171,6 @@ void kgmTerrain::update(kgmCamera* cam)
 
 void kgmTerrain::generate(box2 rect, u32 level)
 {
-  if (level > 5)
-    return;
-
   if (level < 1)
     level = 1;
 
@@ -184,12 +181,16 @@ void kgmTerrain::generate(box2 rect, u32 level)
   f32 len = 10.0f * level;
 
   if (level < 2) {
-    len = 0.1 * m_chunk;
+    len = 0.025 * m_chunk;
   } else if (level < 3) {
-    len = 0.2 * m_chunk;
+    len = 0.05 * m_chunk;
   } else if (level < 4) {
-    len = 0.3333 * m_chunk;
-  } else if (level < 10) {
+    len = 0.1 * m_chunk;
+  } else if (level < 5) {
+    len = 0.2 * m_chunk;
+  }else if (level < 6) {
+    len = 0.333 * m_chunk;
+  }else {
     len = 0.5 * m_chunk;
   }
 

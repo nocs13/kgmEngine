@@ -293,6 +293,8 @@ void kgmGraphics::build()
 
 void kgmGraphics::clear()
 {
+  m_rnd_terrain->clear();
+
   for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
   {
     (*i)->release();

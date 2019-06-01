@@ -78,6 +78,7 @@ public:
   ~Terrain();
 
   void render();
+  void clear();
 };
 
 } /* namespace Render */
