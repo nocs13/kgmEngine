@@ -25,18 +25,19 @@ public:
 
   struct Chunk
   {
-    fRect area;
+    box2 rect;
+    u32  details;
+    s32  id[2];
 
-    vec3 normal;
+    static bool compare(Chunk& a, Chunk& b)
+    {
+      return (a.details < b.details);
+    }
 
-    vec2 uv[3];
-  };
-
-  struct Sector
-  {
-    kgmList<Chunk*> chunks;
-
-    Sector *parent, *child;
+    bool operator<(Chunk& a)
+    {
+      return (details < a.details);
+    }
   };
 
   class Mesh: public kgmMesh
@@ -141,8 +142,6 @@ private:
   Mesh* m_mesh;
 
   kgmCamera* m_camera = nullptr;
-
-  Sector* root = nullptr;
 
 protected:
   ~kgmTerrain();

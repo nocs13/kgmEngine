@@ -99,21 +99,6 @@ kgmMesh* kgmTerrain::mesh()
 
 void kgmTerrain::update(kgmCamera* cam)
 {
-  struct Chunk {
-    box2 rect;
-    u32  details;
-
-    static bool compare(Chunk& a, Chunk& b)
-    {
-      return (a.details < b.details);
-    }
-
-    bool operator<(Chunk& a)
-    {
-      return (details < a.details);
-    }
-  };
-
   vec2 cpos(cam->mPos.x, cam->mPos.y);
 
   vec2 box[2];
@@ -126,11 +111,16 @@ void kgmTerrain::update(kgmCamera* cam)
   Chunk chunks[512];
 
   u32 cnt_chunks = 0;
+  s32 ic[2] = {-1, -1};
 
   for (cur.y = box[0].y; cur.y < box[1].y; cur.y += m_chunk)
   {
+    ic[1]++;
+
     for (cur.x = box[0].x; cur.x < box[1].x; cur.x += m_chunk)
     {
+      ic[0]++;
+
       vec2 rect[2] = { vec2(cur.x, cur.y), vec2(cur.x + m_chunk, cur.y + m_chunk) };
       circle cr(rect, 2);
       vec3 center = vec3(cr.center.x, cr.center.y, cam->mPos.z);
@@ -153,6 +143,7 @@ void kgmTerrain::update(kgmCamera* cam)
 
       current.rect = box2(rect[0], rect[1]);
       current.details = (u32) ceil(detalization);
+      current.id[0] = ic[0], current.id[1] = ic[1];
 
       chunks[cnt_chunks] = current;
       cnt_chunks++;
