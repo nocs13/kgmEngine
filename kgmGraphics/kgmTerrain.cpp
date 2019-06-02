@@ -148,6 +148,8 @@ void kgmTerrain::update(kgmCamera* cam)
       chunks[cnt_chunks] = current;
       cnt_chunks++;
     }
+
+    ic[0] = -1;
   }
 
   kgmSort<Chunk> sort(chunks, cnt_chunks, (kgmSort<Chunk>::Compare) Chunk::compare);
@@ -156,7 +158,30 @@ void kgmTerrain::update(kgmCamera* cam)
 
   for (u32 i = 0; i < cnt_chunks; i++)
   {
+    Chunk* c = &chunks[i];
+
     generate(chunks[i].rect, chunks[i].details);
+
+
+    Chunk* neibours[2] = {null};
+
+    for (u32 j = 0; j < cnt_chunks; j++) {
+      if (c == &chunks[j])
+        continue;
+
+      if (chunks[j].id[0] == c->id[0] + 1)
+        neibours[0] = &chunks[j];
+      else if (chunks[j].id[1] == c->id[1] + 1)
+        neibours[1] = &chunks[j];
+    }
+
+    if (neibours[0] && (c->details != neibours[0]->details)) {
+      //fillx(c, neibours[0]);
+    }
+
+    if (neibours[1] && (c->details != neibours[1]->details)) {
+      //filly(c, neibours[1]);
+    }
   }
 }
 
@@ -171,19 +196,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
   f32 len = 10.0f * level;
 
-  if (level < 2) {
-    len = 0.025 * m_chunk;
-  } else if (level < 3) {
-    len = 0.05 * m_chunk;
-  } else if (level < 4) {
-    len = 0.1 * m_chunk;
-  } else if (level < 5) {
-    len = 0.2 * m_chunk;
-  }else if (level < 6) {
-    len = 0.333 * m_chunk;
-  }else {
-    len = 0.5 * m_chunk;
-  }
+  len = len_from_details(level);
 
   while(cv.y < rect.max.y)
   {
@@ -199,7 +212,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
       v.x = cv.x + len, v.y = cv.y; tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
       v.x = cv.x, v.y = cv.y + len; tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
-      m_mesh->add(tr);
+      //m_mesh->add(tr);
 
       v.x = cv.x + len, v.y = cv.y + len; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
       v.x = cv.x, v.y = cv.y + len;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
@@ -212,6 +225,104 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
     cv.y += len;
     cv.x = rect.min.x;
+  }
+}
+
+void kgmTerrain::fillx(Chunk *c, Chunk *n)
+{
+  f32 len[2];
+
+  len[0] = len_from_details(c->details);
+  len[1] = len_from_details(n->details);
+
+  f32 lbig, lsmall, laspect;
+
+  if (len[0] > len[1]) {
+    lbig = len[0];
+    lsmall = len[1];
+  } else {
+    lbig = len[1];
+    lsmall = len[0];
+  }
+
+  laspect = lbig / lsmall;
+
+  laspect = ceil(laspect);
+
+   vec2 vstart;
+
+   vstart.x = -0.5 * m_width  + m_chunk * n->id[0];
+   vstart.y = -0.5 * m_height + m_chunk * n->id[1];
+
+   f32 max_y = vstart.y + m_chunk;
+
+  vec2 cbig   = vstart;
+  vec2 csmall = vstart;
+
+  while (cbig.y < max_y)
+  {
+    cbig.y += lbig;
+
+    while (csmall.y < cbig.y) {
+      triangle tr;
+
+      tr.pt[0] = vec3(cbig.x, cbig.y, get_height(cbig));
+      tr.pt[2] = vec3(csmall.x, csmall.y + lsmall, get_height(vec2(csmall.x, csmall.y + lsmall)));
+      tr.pt[1] = vec3(csmall.x, csmall.y, get_height(csmall));
+
+      m_mesh->add(tr);
+
+      csmall.y += lsmall;
+    }
+  }
+}
+
+void kgmTerrain::filly(Chunk *c, Chunk *n)
+{
+  f32 len[2];
+
+  len[0] = len_from_details(c->details);
+  len[1] = len_from_details(n->details);
+
+  f32 lbig, lsmall, laspect;
+
+  if (len[0] > len[1]) {
+    lbig = len[0];
+    lsmall = len[1];
+  } else {
+    lbig = len[1];
+    lsmall = len[0];
+  }
+
+  laspect = lbig / lsmall;
+
+  laspect = ceil(laspect);
+
+   vec2 vstart;
+
+   vstart.x = -0.5 * m_width  + m_chunk * n->id[0];
+   vstart.y = -0.5 * m_height + m_chunk * n->id[1];
+
+   f32 max_x = vstart.x + m_chunk;
+
+  vec2 cbig   = vstart;
+  vec2 csmall = vstart;
+
+  while (cbig.x < max_x)
+  {
+    cbig.x += lbig;
+
+    while (csmall.x < cbig.x) {
+      triangle tr;
+
+      tr.pt[0] = vec3(cbig.x, cbig.y, get_height(cbig));
+      tr.pt[2] = vec3(csmall.x + lsmall, csmall.y, get_height(vec2(csmall.x + lsmall, csmall.y)));
+      tr.pt[1] = vec3(csmall.x, csmall.y, get_height(csmall));
+
+      m_mesh->add(tr);
+
+      csmall.x += lsmall;
+    }
   }
 }
 
@@ -256,4 +367,25 @@ f32 kgmTerrain::get_height(float2 v)
   uint2 uv = from_float2(v);
   
   return get_height(uv);
+}
+
+f32 kgmTerrain::len_from_details(u32 details)
+{
+  f32 len;
+
+  if (details < 2) {
+    len = 0.025 * m_chunk;
+  } else if (details < 3) {
+    len = 0.05 * m_chunk;
+  } else if (details < 4) {
+    len = 0.1 * m_chunk;
+  } else if (details < 5) {
+    len = 0.2 * m_chunk;
+  } else if (details < 6) {
+    len = 0.333 * m_chunk;
+  } else {
+    len = 0.5 * m_chunk;
+  }
+
+  return len;
 }
