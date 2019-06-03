@@ -194,7 +194,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
   if (level < 1)
     level = 1;
 
-    vec2 dv = rect.max - rect.min;
+  vec2 dv = rect.max - rect.min;
 
   vec2 cv = rect.min;
 
@@ -229,6 +229,34 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
     cv.y += len;
     cv.x = rect.min.x;
+  }
+
+  {
+    triangle tr;
+
+    tr.pt[0].x = rect.min.x, tr.pt[0].y = rect.min.y, tr.pt[0].z = 0;
+    tr.pt[1].x = rect.max.x, tr.pt[1].y = rect.min.y, tr.pt[1].z = 0;
+    tr.pt[2].x = rect.min.x + 0.5 * (rect.max.x - rect.min.x), tr.pt[2].y = rect.min.y, tr.pt[2].z = -50;
+
+    m_mesh->add(tr, 0xffaabbcc);
+
+    tr.pt[0].x = rect.min.x, tr.pt[0].y = rect.min.y, tr.pt[0].z = 0;
+    tr.pt[1].x = rect.min.x, tr.pt[1].y = rect.max.y, tr.pt[1].z = 0;
+    tr.pt[2].x = rect.min.x, tr.pt[2].y = rect.min.y + 0.5 * (rect.max.y - rect.min.y), tr.pt[2].z = -50;
+
+    m_mesh->add(tr, 0xffaabbcc);
+
+    tr.pt[0].x = rect.min.x, tr.pt[0].y = rect.max.y, tr.pt[0].z = 0;
+    tr.pt[1].x = rect.max.x, tr.pt[1].y = rect.max.y, tr.pt[1].z = 0;
+    tr.pt[2].x = rect.min.x + 0.5 * (rect.max.x - rect.min.x), tr.pt[2].y = rect.max.y, tr.pt[2].z = -50;
+
+    m_mesh->add(tr, 0xffaabbcc);
+
+    tr.pt[0].x = rect.max.x, tr.pt[0].y = rect.min.y, tr.pt[0].z = 0;
+    tr.pt[1].x = rect.max.x, tr.pt[1].y = rect.max.y, tr.pt[1].z = 0;
+    tr.pt[2].x = rect.max.x, tr.pt[2].y = rect.min.y + 0.5 * (rect.max.y - rect.min.y), tr.pt[2].z = -50;
+
+    m_mesh->add(tr, 0xffaabbcc);
   }
 }
 
