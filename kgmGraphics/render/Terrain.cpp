@@ -43,7 +43,7 @@ namespace Render
   {
     m_thread = new Thread(this);
     // TODO Auto-generated constructor stub
-    m_shader = gr->rc->getShader("phong.glsl");
+    m_shader = gr->rc->getShader("base.glsl");
   }
 
   Terrain::~Terrain()
@@ -112,13 +112,14 @@ namespace Render
 
     u32 vcount = msh->vcount();
 
+    gr->gc->gcCull(gc_null);
     gr->render(msh);
+    gr->gc->gcCull(gccull_back);
 
     m_thread->unlock();
 
     material(null);
     shader(null, null, null, null);
-
   }
 
 } /* namespace Render */

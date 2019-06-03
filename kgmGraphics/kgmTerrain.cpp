@@ -84,7 +84,7 @@ void kgmTerrain::prepare(kgmCamera* camera)
   if (!camera)
     return;
 
-  m_chunk = m_width / 20.0f;
+  m_chunk = m_width / 5.0f;
 
   update(camera);
 }
@@ -169,18 +169,22 @@ void kgmTerrain::update(kgmCamera* cam)
       if (c == &chunks[j])
         continue;
 
-      if (chunks[j].id[0] == c->id[0] + 1)
+      if ((chunks[j].id[1] == c->id[1]) && (chunks[j].id[0] == c->id[0] + 1))
         neibours[0] = &chunks[j];
-      else if (chunks[j].id[1] == c->id[1] + 1)
+
+      if ((chunks[j].id[0] == c->id[0]) && (chunks[j].id[1] == c->id[1] + 1))
         neibours[1] = &chunks[j];
+
+      c->sis[0] = neibours[0];
+      c->sis[1] = neibours[1];
     }
 
-    if (neibours[0] && (c->details != neibours[0]->details)) {
-      //fillx(c, neibours[0]);
+    if (neibours[0]/* && (c->details != neibours[0]->details)*/) {
+      fillx(c, neibours[0]);
     }
 
-    if (neibours[1] && (c->details != neibours[1]->details)) {
-      //filly(c, neibours[1]);
+    if (neibours[1]/* && (c->details != neibours[1]->details)*/) {
+      filly(c, neibours[1]);
     }
   }
 }
@@ -218,7 +222,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
       v.x = cv.x, v.y = cv.y + len;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
       v.x = cv.x + len, v.y = cv.y;       tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
 
-      m_mesh->add(tr);
+      //m_mesh->add(tr);
 
       cv.x += len;
     }
@@ -270,10 +274,19 @@ void kgmTerrain::fillx(Chunk *c, Chunk *n)
       tr.pt[2] = vec3(csmall.x, csmall.y + lsmall, get_height(vec2(csmall.x, csmall.y + lsmall)));
       tr.pt[1] = vec3(csmall.x, csmall.y, get_height(csmall));
 
-      m_mesh->add(tr);
+      m_mesh->add(tr, 0xff0000ff);
 
       csmall.y += lsmall;
     }
+  }
+
+  {
+    triangle tr;
+
+    tr.pt[0] = vec3(vstart.x, vstart.y, get_height(vstart));
+    tr.pt[1] = vec3(vstart.x, vstart.y + m_chunk, get_height(vec2(vstart.x, vstart.y + m_chunk)));
+    tr.pt[2] = vec3(vstart.x, vstart.y + 0.5 * m_chunk, -50.f);
+    m_mesh->add(tr, 0xff00ffff);
   }
 }
 
@@ -316,13 +329,22 @@ void kgmTerrain::filly(Chunk *c, Chunk *n)
       triangle tr;
 
       tr.pt[0] = vec3(cbig.x, cbig.y, get_height(cbig));
-      tr.pt[2] = vec3(csmall.x + lsmall, csmall.y, get_height(vec2(csmall.x + lsmall, csmall.y)));
-      tr.pt[1] = vec3(csmall.x, csmall.y, get_height(csmall));
+      tr.pt[1] = vec3(csmall.x + lsmall, csmall.y, get_height(vec2(csmall.x + lsmall, csmall.y)));
+      tr.pt[2] = vec3(csmall.x, csmall.y, get_height(csmall));
 
-      m_mesh->add(tr);
+      m_mesh->add(tr, 0xffff0000);
 
       csmall.x += lsmall;
     }
+  }
+
+  {
+    triangle tr;
+
+    tr.pt[0] = vec3(vstart.x, vstart.y, get_height(vstart));
+    tr.pt[1] = vec3(vstart.x + m_chunk, vstart.y, get_height(vec2(vstart.x + m_chunk, vstart.y)));
+    tr.pt[2] = vec3(vstart.x + 0.5 * m_chunk, vstart.y, -50.f);
+    m_mesh->add(tr, 0xffff00ff);
   }
 }
 

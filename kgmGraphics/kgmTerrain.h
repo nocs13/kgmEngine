@@ -29,6 +29,8 @@ public:
     u32  details;
     s32  id[2];
 
+    Chunk* sis[2] = {null};
+
     static bool compare(Chunk& a, Chunk& b)
     {
       return (a.details < b.details);
@@ -85,7 +87,7 @@ public:
       count = 0;
     }
 
-    void add(triangle3& tr)
+    void add(triangle3& tr, u32 col = 0xff999999)
     {
       if ((3 * count + 1) >= triangles.length())
       {
@@ -102,9 +104,9 @@ public:
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
 
-      triangles[3 * count + 0].col = 0xffffffff;
-      triangles[3 * count + 1].col = 0xffffffff;
-      triangles[3 * count + 2].col = 0xffffffff;
+      triangles[3 * count + 0].col = col;
+      triangles[3 * count + 1].col = col;
+      triangles[3 * count + 2].col = col;
 
       triangles[3 * count + 0].nor = n;
       triangles[3 * count + 1].nor = n;
