@@ -116,6 +116,71 @@ public:
     }
   };
 
+  class MLines: public kgmMesh
+  {
+    u32 count = 0;
+
+    Vertex* v = null;
+
+    kgmArray<Vertex_P_C> lines;
+
+  public:
+
+    MLines()
+    {
+       m_fvf = FVF_P_C;
+       m_fff = 0;
+
+       lines.alloc(222);
+
+       v = lines.data();
+    }
+
+    ~MLines()
+    {
+      //triangles.clear();
+    }
+
+    Vertex* vertices() const
+    {
+      return v;
+    }
+
+    u32 vcount() const
+    {
+      return (2 * count);
+    }
+
+    u32 fcount()
+    {
+      return count;
+    }
+
+    void reset()
+    {
+      count = 0;
+    }
+
+    void add(vec3& a, vec3& b, u32 col = 0xff999999)
+    {
+      if ((2 * count + 1) >= lines.length())
+      {
+        lines.realloc(lines.length() + 300);
+
+        v = lines.data();
+      }
+
+
+      lines[2 * count + 0].pos = a;
+      lines[2 * count + 1].pos = b;
+
+      lines[2 * count + 0].col = col;
+      lines[2 * count + 1].col = col;
+
+      count ++;
+    }
+  };
+
   struct Heightmap
   {
     u16 width;
@@ -141,7 +206,8 @@ private:
 
   Heightmap m_heightmap;
 
-  Mesh* m_mesh;
+  Mesh*   m_mesh;
+  MLines* m_lines;
 
   kgmCamera* m_camera = nullptr;
 
@@ -186,6 +252,7 @@ public:
   bool heightmap(kgmPicture* map);
 
   kgmMesh* mesh();
+  kgmMesh* lines();
 
 private:
   void build();

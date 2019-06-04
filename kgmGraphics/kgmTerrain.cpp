@@ -19,6 +19,7 @@
 kgmTerrain::kgmTerrain()
 {
   m_mesh = new Mesh();
+  m_lines = new MLines();
 
   m_width  = 1000;
   m_length = 1000;
@@ -30,6 +31,7 @@ kgmTerrain::~kgmTerrain()
 {
   m_heightmap.map.clear();
   
+  delete m_lines;
   delete m_mesh;
 }
 
@@ -93,6 +95,14 @@ kgmMesh* kgmTerrain::mesh()
 {
   if (m_mesh->vcount() > 0)
     return m_mesh;
+
+  return null;
+}
+
+kgmMesh* kgmTerrain::lines()
+{
+  if (m_lines->vcount() > 0)
+    return m_lines;
 
   return null;
 }
@@ -293,7 +303,15 @@ void kgmTerrain::fillx(Chunk *c, Chunk *n)
 
   while (cbig.y < max_y)
   {
+    vec3 vl[2];
+
+    vl[0] = vec3(cbig.x, cbig.y, get_height(cbig));
+
     cbig.y += lbig;
+
+    vl[1] = vec3(cbig.x, cbig.y, get_height(cbig));
+
+    m_lines->add(vl[0], vl[1], 0xff0000ff);
 
     while (csmall.y < cbig.y) {
       triangle tr;
@@ -304,7 +322,13 @@ void kgmTerrain::fillx(Chunk *c, Chunk *n)
 
       m_mesh->add(tr, 0xff0000ff);
 
+      vl[0] = vec3(csmall.x, csmall.y, get_height(csmall));
+
       csmall.y += lsmall;
+
+      vl[1] = vec3(csmall.x, csmall.y, get_height(csmall));
+
+      m_lines->add(vl[0], vl[1], 0xff0000ff);
     }
   }
 
@@ -351,7 +375,15 @@ void kgmTerrain::filly(Chunk *c, Chunk *n)
 
   while (cbig.x < max_x)
   {
+    vec3 vl[2];
+
+    vl[0] = vec3(cbig.x, cbig.y, get_height(cbig));
+
     cbig.x += lbig;
+
+    vl[1] = vec3(cbig.x, cbig.y, get_height(cbig));
+
+    m_lines->add(vl[0], vl[1], 0xff0000ff);
 
     while (csmall.x < cbig.x) {
       triangle tr;
@@ -362,7 +394,13 @@ void kgmTerrain::filly(Chunk *c, Chunk *n)
 
       m_mesh->add(tr, 0xffff0000);
 
+      vl[0] = vec3(csmall.x, csmall.y, get_height(csmall));
+
       csmall.x += lsmall;
+
+      vl[1] = vec3(csmall.x, csmall.y, get_height(csmall));
+
+      m_lines->add(vl[0], vl[1], 0xff0000ff);
     }
   }
 

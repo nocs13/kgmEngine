@@ -116,6 +116,17 @@ namespace Render
     gr->render(msh);
     gr->gc->gcCull(gccull_back);
 
+    {
+      kgmMesh* lines = ter->lines();
+
+      if (lines)
+      {
+        gc->gcDraw(gcpmt_lines, lines->fvf(), lines->vsize(),
+                   lines->vcount(), lines->vertices(),
+                   0, 0, 0);
+      }
+    }
+
     m_thread->unlock();
 
     material(null);
