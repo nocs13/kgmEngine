@@ -57,4 +57,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmGuiResolution(void*);
 
   static s32 kgmScreenResolution(void*);
+
+  static s32 kgmGoFind(void*);
+  static s32 kgmGoCamera(void*);
 };

@@ -61,13 +61,11 @@ namespace Render
   
   void Terrain::render()
   {
-    if(!m_thread->active())
-      m_thread->start();
+    //if(!m_thread->active())
+    //  m_thread->start();
 
     mtx4 identity;
     identity.identity();
-
-    gr->setWorldMatrix(identity);
 
     kgmShader* sh = m_shader;
 
@@ -77,12 +75,12 @@ namespace Render
 
     kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
 
-    //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
-    //ter->prepare(gr->m_camera);
-    //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
-
     if (!ter)
       return;
+
+    //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
+    ter->prepare(gr->m_camera);
+    //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
 
     m_thread->lock();
 
