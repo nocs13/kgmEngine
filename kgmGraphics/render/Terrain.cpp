@@ -62,8 +62,8 @@ namespace Render
   
   void Terrain::render()
   {
-    //if(!m_thread->active())
-    //  m_thread->start();
+    if(!m_thread->active())
+      m_thread->start();
 
     mtx4 identity;
     identity.identity();
@@ -76,11 +76,11 @@ namespace Render
 
     kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
 
-    if (!ter)
-      return;
+    //if (!ter)
+    //  return;
 
     //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
-    ter->prepare(gr->m_camera);
+    //ter->prepare(gr->m_camera);
     //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
 
     m_thread->lock();
@@ -111,12 +111,12 @@ namespace Render
 
     u32 vcount = msh->vcount();
 
-    gr->gc->gcCull(gc_null);
+    //gr->gc->gcCull(gc_null);
     gr->render(msh);
-    gr->gc->gcCull(gccull_back);
+    //gr->gc->gcCull(gccull_back);
 
     {
-      kgmMesh* lines = ter->lines();
+      kgmMesh* lines = null;//ter->lines();
 
       if (lines)
       {

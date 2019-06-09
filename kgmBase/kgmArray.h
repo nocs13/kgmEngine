@@ -45,17 +45,9 @@ public:
   void realloc(u32 len)
   {
     T*   old  = kgmMemory<T>::m_data;
-    u32 scpy = (kgmMemory<T>::m_length < len)?(kgmMemory<T>::m_length):(len);
 
-    kgmMemory<T>::m_data = (T*)kgm_alloc(sizeof(T) * len);
+    kgmMemory<T>::m_data   = (T*)kgm_realloc(old, sizeof(T) * len);
     kgmMemory<T>::m_length = len;
-
-    if(old)
-    {
-      memcpy(kgmMemory<T>::m_data, old, sizeof(T) * scpy);
-
-      kgm_free(old);
-    }
   }
 
   void add(const T& el)

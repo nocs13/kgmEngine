@@ -45,6 +45,7 @@ public:
   class Mesh: public kgmMesh
   {
     u32 count = 0;
+    u32 limit = 0;
 
     Vertex* v = null;
 
@@ -60,6 +61,8 @@ public:
        triangles.alloc(333);
 
        v = triangles.data();
+
+       limit = 300000;
     }
 
     ~Mesh()
@@ -87,8 +90,29 @@ public:
       count = 0;
     }
 
+    u32 getLimit()
+    {
+      return limit;
+    }
+
+    void setLimit(u32 l)
+    {
+      limit = l;
+    }
+
+    bool atLimit()
+    {
+      if (count >= limit)
+        return true;
+
+      return false;
+    }
+
     void add(triangle3& tr, u32 col = 0xff999999)
     {
+      if (count > limit)
+        return;
+
       if ((3 * count + 1) >= triangles.length())
       {
         triangles.realloc(triangles.length() + 300);

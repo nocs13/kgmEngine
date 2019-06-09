@@ -234,8 +234,7 @@ void  kgmThread::mutex_lock(kgmThread::Mutex m)
   if(m)
   {
 #ifdef WIN32
-    if(TryEnterCriticalSection(m))
-      EnterCriticalSection(m);
+    EnterCriticalSection(m);
 #else
     pthread_mutex_lock(m);
 #endif

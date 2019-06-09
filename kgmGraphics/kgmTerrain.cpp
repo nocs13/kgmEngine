@@ -86,7 +86,7 @@ void kgmTerrain::prepare(kgmCamera* camera)
   if (!camera)
     return;
 
-  m_chunk = m_width / 10.0f;
+  m_chunk = m_width / 4.0f;
 
   update(camera);
 }
@@ -216,9 +216,6 @@ void kgmTerrain::generate(box2 rect, u32 level)
   {
     while(cv.x < rect.max.x)
     {
-      if (m_mesh->fcount() > 200000)
-        return;
-
       triangle tr;
       vec2     v;
 
@@ -239,6 +236,9 @@ void kgmTerrain::generate(box2 rect, u32 level)
 
     cv.y += len;
     cv.x = rect.min.x;
+
+    if (m_mesh->atLimit())
+      break;
   }
 }
 

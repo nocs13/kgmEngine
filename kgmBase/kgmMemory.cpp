@@ -16,6 +16,13 @@ void* kgm_alloc(size_t size)
   return p;
 }
 
+void* kgm_realloc(void *p, size_t size)
+{
+  void* pr = ::realloc(p, size);
+
+  return pr;
+}
+
 void kgm_free(void* p)
 {
 #ifdef DEBUGXXX
