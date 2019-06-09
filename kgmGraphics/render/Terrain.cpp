@@ -43,7 +43,8 @@ namespace Render
   {
     m_thread = new Thread(this);
     // TODO Auto-generated constructor stub
-    m_shader = gr->rc->getShader("base.glsl");
+    //m_shader = gr->rc->getShader("base.glsl");
+    m_shader = gr->rc->getShader("phong.glsl");
   }
 
   Terrain::~Terrain()
