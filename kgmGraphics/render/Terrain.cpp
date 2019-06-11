@@ -43,8 +43,8 @@ namespace Render
   {
     m_thread = new Thread(this);
     // TODO Auto-generated constructor stub
-    m_shader = gr->rc->getShader("base.glsl");
-    //m_shader = gr->rc->getShader("phong.glsl");
+    //m_shader = gr->rc->getShader("base.glsl");
+    m_shader = gr->rc->getShader("phong.glsl");
   }
 
   Terrain::~Terrain()
@@ -113,10 +113,10 @@ namespace Render
 
     gr->gc->gcCull(gc_null);
     gr->render(msh);
-    gr->gc->gcCull(gccull_back);
 
+#ifdef DEBUG
     {
-      kgmMesh* lines = ter->lines();
+      kgmMesh* lines = null;//ter->lines();
 
       if (lines)
       {
@@ -125,6 +125,9 @@ namespace Render
                    0, 0, 0);
       }
     }
+#endif
+
+    gr->gc->gcCull(gccull_back);
 
     m_thread->unlock();
 
