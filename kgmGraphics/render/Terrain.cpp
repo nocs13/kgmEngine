@@ -111,8 +111,18 @@ namespace Render
 
     u32 vcount = msh->vcount();
 
-    gr->gc->gcCull(gc_null);
     gr->render(msh);
+
+    msh = ter->fill();
+
+    if (msh)
+    {
+      gr->gc->gcCull(gc_null);
+
+      gr->render(msh);
+
+      gr->gc->gcCull(gccull_back);
+    }
 
 #ifdef DEBUG
     {
@@ -126,8 +136,6 @@ namespace Render
       }
     }
 #endif
-
-    gr->gc->gcCull(gccull_back);
 
     m_thread->unlock();
 

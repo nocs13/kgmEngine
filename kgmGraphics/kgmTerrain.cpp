@@ -6,6 +6,7 @@
 #include "kgmPicture.h"
 #include "kgmMesh.h"
 #include "kgmMaterial.h"
+#include "kgmTexture.h"
 #include "kgmCamera.h"
 
 #include "../kgmMath/kgmBase.h"
@@ -19,7 +20,12 @@
 kgmTerrain::kgmTerrain()
 {
   m_mesh = new Mesh();
+  m_fill = new Mesh();
   m_lines = new MLines();
+
+  memset(m_tex_color, 0, sizeof(m_tex_color));
+
+  m_tex_blend = null;
 
   m_width  = 1000;
   m_length = 1000;
@@ -33,6 +39,13 @@ kgmTerrain::~kgmTerrain()
   
   delete m_lines;
   delete m_mesh;
+
+  if (m_tex_blend)
+    m_tex_blend->release();
+
+  for (s32 i = 0; i < 4; i++)
+    if (m_tex_color[i])
+      m_tex_color[i]->release();
 }
 
 bool kgmTerrain::heightmap(kgmPicture* map)
@@ -75,6 +88,35 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   return true;
 }
 
+bool kgmTerrain::texColor(u32 id, kgmTexture* tex)
+{
+  if (!tex || !tex->texture())
+    return false;
+
+  if (id > 3)
+    return false;
+
+  if (m_tex_color[id])
+    m_tex_color[id]->release();
+
+  m_tex_color[id] = tex;
+
+  tex->increment();
+}
+
+bool kgmTerrain::texBlend(kgmTexture* tex)
+{
+  if (!tex || !tex->texture())
+    return false;
+
+  if (m_tex_blend)
+    m_tex_blend->release();
+
+  m_tex_blend = tex;
+
+  tex->increment();
+}
+
 void kgmTerrain::build()
 {
   f32 w_pp = m_heightmap.width / m_width;
@@ -95,6 +137,14 @@ kgmMesh* kgmTerrain::mesh()
 {
   if (m_mesh->vcount() > 0)
     return m_mesh;
+
+  return null;
+}
+
+kgmMesh* kgmTerrain::fill()
+{
+  if (m_fill->vcount() > 0)
+    return m_fill;
 
   return null;
 }
@@ -165,6 +215,7 @@ void kgmTerrain::update(kgmCamera* cam)
   kgmSort<Chunk> sort(chunks, cnt_chunks, (kgmSort<Chunk>::Compare) Chunk::compare);
 
   m_mesh->reset();
+  m_fill->reset();
   m_lines->reset();
 
   for (u32 i = 0; i < cnt_chunks; i++)
@@ -295,7 +346,7 @@ void kgmTerrain::fillx(Chunk *c, Chunk *n)
       tr.pt[1] = vec3(csmall.x, csmall.y, get_height(csmall));
 
       //m_mesh->add(tr, 0xff00ff00);
-      m_mesh->add(tr);
+      m_fill->add(tr);
 
       vl[0] = vec3(csmall.x, csmall.y, get_height(csmall));
 
@@ -310,7 +361,7 @@ void kgmTerrain::fillx(Chunk *c, Chunk *n)
     tr.pt[1] = vec3(cbig.x, cbig.y + lbig, get_height(vec2(cbig.x, cbig.y + lbig)));
     tr.pt[2] = vec3(csmall.x, csmall.y, get_height(csmall));
 
-    m_mesh->add(tr, 0xff00ff00);
+    m_fill->add(tr, 0xff00ff00);
   }
 }
 
@@ -366,7 +417,7 @@ void kgmTerrain::filly(Chunk *c, Chunk *n)
       tr.pt[2] = vec3(csmall.x, csmall.y, get_height(csmall));
 
       //m_mesh->add(tr, 0xff00ff00);
-      m_mesh->add(tr);
+      m_fill->add(tr);
 
       vl[0] = vec3(csmall.x, csmall.y, get_height(csmall));
 
@@ -381,7 +432,7 @@ void kgmTerrain::filly(Chunk *c, Chunk *n)
     tr.pt[1] = vec3(cbig.x + lbig, cbig.y, get_height(vec2(cbig.x + lbig, cbig.y)));
     tr.pt[2] = vec3(csmall.x, csmall.y, get_height(csmall));
 
-    m_mesh->add(tr, 0xff00ff00);
+    m_fill->add(tr, 0xff00ff00);
   }
 }
 

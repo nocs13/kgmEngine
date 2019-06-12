@@ -16,6 +16,7 @@
 class kgmPicture;
 class kgmCamera;
 class kgmMaterial;
+class kgmTexture;
 
 class kgmTerrain: public kgmObject
 {
@@ -67,7 +68,6 @@ public:
 
     ~Mesh()
     {
-      //triangles.clear();
     }
 
     Vertex* vertices() const
@@ -162,7 +162,6 @@ public:
 
     ~MLines()
     {
-      //triangles.clear();
     }
 
     Vertex* vertices() const
@@ -231,9 +230,13 @@ private:
   Heightmap m_heightmap;
 
   Mesh*   m_mesh;
+  Mesh*   m_fill;
   MLines* m_lines;
 
   kgmCamera* m_camera = nullptr;
+
+  kgmTexture* m_tex_color[4];
+  kgmTexture* m_tex_blend;
 
 protected:
   ~kgmTerrain();
@@ -274,8 +277,11 @@ public:
   }
 
   bool heightmap(kgmPicture* map);
+  bool texColor(u32 id, kgmTexture* tex);
+  bool texBlend(kgmTexture* tex);
 
   kgmMesh* mesh();
+  kgmMesh* fill();
   kgmMesh* lines();
 
 private:
