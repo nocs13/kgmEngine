@@ -434,7 +434,7 @@ class kgmMaterial:
     if hasattr(mtl, 'raytrace_mirror') is True:
       if mtl.raytrace_mirror is not None:
         self.mir_fresnel = mtl.raytrace_mirror.fresnel
-    
+
     if hasattr(mtl, 'raytrace_transparency') is True:
       if mtl.raytrace_mirror is not None:
         self.trn_fresnel = mtl.raytrace_transparency.fresnel
@@ -928,12 +928,17 @@ class kgmTerrain:
     self.quat = self.mtx.to_quaternion()
     self.euler = self.mtx.to_euler()
     self.image = ""
-    self.strength = 0.0
+    self.strength = 1.0
     self.direction = [0, 0, 0]
     self.width  = o.dimensions[0]
     self.length = o.dimensions[1]
     self.height = o.dimensions[2]
-
+    self.map_bump   = None
+    self.map_spec   = None
+    self.map_blend  = None
+    self.map_colors = list()
+    self.uv_scale_u = 1.0
+    self.uv_scale_v = 1.0
 
     disp = getModifier(o, 'Displace')
 
@@ -945,6 +950,36 @@ class kgmTerrain:
 
     self.strength = disp.strength
     self.direction = disp.direction
+
+    mtl = o.material_slots[0].material
+
+    if mtl is not None:
+      for ts in mtl.texture_slots:
+        if ts is None:
+          break
+
+        print('ts is: ' + str(ts))
+        print('ts type is ' + str(ts.texture.type))
+        print('ts image is ' + str(ts.texture.image))
+        print('ts source is ' + str(ts.texture.image.source))
+        print('ts file name is ' + str(ts.texture.image.name))
+
+        if ts.texture is not None and ts.texture.type == 'IMAGE' and ts.texture.image is not None \
+           and ts.texture.image.source == "FILE":
+
+          if ts.use_stencil is True and self.map_blend is None:
+            self.map_blend = ts.texture.image.name
+          elif ts.use_map_specular is True and self.map_spec is None:
+            self.map_spec = ts.texture.image.name
+          elif ts.use_map_normal is True and self.map_bump is None:
+            self.map_bump = ts.texture.image.name
+          elif ts.use_map_color_diffuse is True:
+            self.map_colors.append(ts.texture.image.name)
+
+            if len(self.map_colors) == 1:
+              self.uv_scale_u = ts.scale[0]
+              self.uv_scale_v = ts.scale[1]
+
 
 
 class kgmThread(threading.Thread):
@@ -1031,8 +1066,23 @@ def export_camera(file, o):
 
 
 def export_terrain(file, o):
-  file.write(" <Terrain name='" + o.name + "' dimensions='" + toSnum(o.width) + " " + toSnum(o.length) + " " + toSnum(o.height) + "'>\n")
+  file.write(" <Terrain name='" + o.name + "' dimensions='" + toSnum(o.width) + " " + toSnum(o.length) + " " + toSnum(o.strength) + "'>\n")
+  file.write("  <UVScale u='" + str(toSnum(o.uv_scale_u)) + "' u='" + str(toSnum(o.uv_scale_v)) + "' />\n")
   file.write("  <HeightMap value='" + o.image + "'/>\n")
+
+  if o.map_blend is not None:
+    file.write("  <BlendMap value='" + o.map_blend + "'/>\n")
+
+  if o.map_bump is not None:
+    file.write("  <NormalMap value='" + o.map_bump + "'/>\n")
+
+  if o.map_spec is not None:
+    file.write("  <SpecularMap value='" + o.map_spec + "'/>\n")
+
+  for cm in o.map_colors:
+    if cm is not None:
+      file.write("  <ColorMap value='" + cm + "'/>\n")
+
   file.write(" </Terrain>\n")
 
 def export_mesh_data(file, o):
@@ -1459,13 +1509,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
 
     for n in self.mesh_nodes:
       self.mesh_datas.append(kgmMesh(n))
-      '''exist = False
-      for m in self.mesh_datas:
-        if n.name == m.name:
-          exist = True
-          break
-      if exist is False:
-        self.mesh_datas.append(kgmMesh(n))'''
+
     print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
   def collect_obstacles(self):
