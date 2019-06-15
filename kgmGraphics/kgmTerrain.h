@@ -50,20 +50,20 @@ public:
 
     Vertex* v = null;
 
-    kgmArray<Vertex_P_N_C_T> triangles;
+    kgmArray<Vertex_P_N_C_T2> triangles;
 
   public:
 
     Mesh()
     {
-       m_fvf = FVF_P_N_C_T;
+       m_fvf = FVF_P_N_C_T2;
        m_fff = 0;
 
        triangles.alloc(333);
 
        v = triangles.data();
 
-       limit = 300000;
+       limit = 100000;
     }
 
     ~Mesh()
@@ -108,7 +108,7 @@ public:
       return false;
     }
 
-    void add(triangle3& tr, u32 col = 0xff999999)
+    void add(triangle3& tr, triangle3& uv1, triangle3& uv2, u32 col = 0xff999999, vec3 n = vec3(0, 0, 1))
     {
       if (count > limit)
         return;
@@ -120,13 +120,22 @@ public:
         v = triangles.data();
       }
 
+      /*
       plane3 pn(tr.pt[0], tr.pt[1], tr.pt[2]);
 
       vec3 n = pn.normal();
-
+      */
       triangles[3 * count + 0].pos = tr.pt[0];
       triangles[3 * count + 1].pos = tr.pt[1];
       triangles[3 * count + 2].pos = tr.pt[2];
+
+      triangles[3 * count + 0].uv[0] = vec2(uv1.pt[0].x, uv1.pt[0].y);
+      triangles[3 * count + 1].uv[0] = vec2(uv1.pt[1].x, uv1.pt[1].y);
+      triangles[3 * count + 2].uv[0] = vec2(uv1.pt[2].x, uv1.pt[2].y);
+
+      triangles[3 * count + 0].uv[1] = vec2(uv2.pt[0].x, uv2.pt[0].y);
+      triangles[3 * count + 1].uv[1] = vec2(uv2.pt[1].x, uv2.pt[1].y);
+      triangles[3 * count + 2].uv[1] = vec2(uv2.pt[2].x, uv2.pt[2].y);
 
       triangles[3 * count + 0].col = col;
       triangles[3 * count + 1].col = col;
@@ -287,6 +296,9 @@ public:
   kgmMesh* mesh();
   kgmMesh* fill();
   kgmMesh* lines();
+
+  kgmTexture* texColor(u32);
+  kgmTexture* texBlend();
 
 private:
   void build();

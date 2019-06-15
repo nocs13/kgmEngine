@@ -43,8 +43,7 @@ namespace Render
   {
     m_thread = new Thread(this);
     // TODO Auto-generated constructor stub
-    //m_shader = gr->rc->getShader("base.glsl");
-    m_shader = gr->rc->getShader("phong.glsl");
+    m_shader = gr->rc->getShader("terrain.glsl");
   }
 
   Terrain::~Terrain()
@@ -62,8 +61,8 @@ namespace Render
   
   void Terrain::render()
   {
-    if(!m_thread->active())
-      m_thread->start();
+    //if(!m_thread->active())
+    //  m_thread->start();
 
     mtx4 identity;
     identity.identity();
@@ -80,7 +79,7 @@ namespace Render
     //  return;
 
     //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
-    //ter->prepare(gr->m_camera);
+    ter->prepare(gr->m_camera);
     //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
 
     m_thread->lock();
@@ -107,6 +106,19 @@ namespace Render
       return;
     }
 
+    if (ter->texBlend())
+    {
+      gr->gc->gcSetTexture(0, ter->texBlend()->texture());
+
+      for (u32 i = 0; i < 4; i++)
+      {
+        if (ter->texColor(i))
+          gr->gc->gcSetTexture(1 + i, ter->texColor(i)->texture());
+        else
+          gr->gc->gcSetTexture(1 + i, gr->m_tex_black->texture());
+      }
+    }
+
     kgmMesh::Vertex* v = msh->vertices();
 
     u32 vcount = msh->vcount();
@@ -126,7 +138,7 @@ namespace Render
 
 #ifdef DEBUG
     {
-      kgmMesh* lines = null;//ter->lines();
+      kgmMesh* lines = ter->lines();
 
       if (lines)
       {
