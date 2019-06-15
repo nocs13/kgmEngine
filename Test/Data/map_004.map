@@ -1,0 +1,38 @@
+<?xml version='1.0'?>
+<kgm>
+ <Material name='mtl_terrain'>
+  <Color value='0.80000 0.80000 0.80000'/>
+  <Specular value='0.50000 0.50000 0.50000'/>
+  <Shininess value='25.00000'/>
+  <Alpha value='1.00000'/>
+  <Shadow shadeless='False' cast='True' receive='True'/>
+  <Fresnel mirror='0.0' transparency='0.0'/>
+  <Blend value='mix'/>
+  <map_color value='ter_tex_grn_d.tga'/>
+ </Material>
+ <Light name='Sun'>
+  <Type value='Spot'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-63.07967 27.69719 45.97502'/>
+  <Rotation value='0.00000 -0.00000 0.00000'/>
+  <Intensity value='0.23000'/>
+  <Shadows value='No'/>
+ </Light>
+ <Light name='Lamp'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='16.78810 1.00545 41.00669'/>
+  <Rotation value='0.65033 0.05522 1.86639'/>
+  <Intensity value='10.00000'/>
+  <Shadows value='Yes'/>
+ </Light>
+ <Terrain name='Plane' dimensions='1999.316895 1999.316895 100.000000'>
+  <UVScale u='200.000000' u='200.000000' />
+  <HeightMap value='terrain.tga'/>
+  <BlendMap value='tex_ter_blend_a.tga'/>
+  <ColorMap value='ter_tex_grn_a.tga'/>
+  <ColorMap value='ter_tex_grn_b.tga'/>
+  <ColorMap value='ter_tex_grn_c.tga'/>
+  <ColorMap value='ter_tex_grn_d.tga'/>
+ </Terrain>
+</kgm>

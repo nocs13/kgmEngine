@@ -412,6 +412,7 @@ kgmUnit* kgmGameMap::next()
   kgmString ntype  = "";
   kgmString m_data = "";
 
+  u32 index = 0;
 
   if(m_type == OpenWrite)
     return node;
@@ -557,6 +558,8 @@ kgmUnit* kgmGameMap::next()
         node->setName(id);
 
         closed = false;
+
+        index = 0;
       }
       else if(id == "Unit")
       {
@@ -894,6 +897,36 @@ kgmUnit* kgmGameMap::next()
         if (map)
           ((kgmTerrain*)data)->heightmap(map);
 
+      }
+      else if (id == "UVScale")
+      {
+        kgmString u, v;
+
+        xmlAttr(m_xml, "u", u);
+        xmlAttr(m_xml, "v", v);
+
+        ((kgmTerrain*)data)->uvScale(kgmConvert::toDouble(u), kgmConvert::toDouble(v));
+      }
+      else if (id == "BlendMap")
+      {
+        xmlAttr(m_xml, "value", vtext);
+
+        kgmTexture* map = m_game->getResources()->getTexture(vtext);
+
+        if (map)
+          ((kgmTerrain*)data)->texBlend(map);
+      }
+      else if (id == "ColorMap")
+      {
+        xmlAttr(m_xml, "value", vtext);
+
+        kgmTexture* map = m_game->getResources()->getTexture(vtext);
+
+        if (map) {
+          ((kgmTerrain*)data)->texColor(index, map);
+
+          index++;
+        }
       }
       else if(id == "Shader")
       {

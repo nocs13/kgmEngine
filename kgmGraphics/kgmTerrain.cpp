@@ -31,6 +31,8 @@ kgmTerrain::kgmTerrain()
   m_length = 1000;
   m_height = 500;
   m_chunk  = 100.0f;
+
+  m_uv_scale[0] = m_uv_scale[1] = 1.0f;
 }
 
 kgmTerrain::~kgmTerrain()
@@ -115,6 +117,12 @@ bool kgmTerrain::texBlend(kgmTexture* tex)
   m_tex_blend = tex;
 
   tex->increment();
+}
+
+void kgmTerrain::uvScale(f32 u, f32 v)
+{
+  m_uv_scale[0] = u;
+  m_uv_scale[1] = v;
 }
 
 void kgmTerrain::build()

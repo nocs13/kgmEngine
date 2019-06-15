@@ -1067,7 +1067,7 @@ def export_camera(file, o):
 
 def export_terrain(file, o):
   file.write(" <Terrain name='" + o.name + "' dimensions='" + toSnum(o.width) + " " + toSnum(o.length) + " " + toSnum(o.strength) + "'>\n")
-  file.write("  <UVScale u='" + str(toSnum(o.uv_scale_u)) + "' u='" + str(toSnum(o.uv_scale_v)) + "' />\n")
+  file.write("  <UVScale u='" + str(toSnum(o.uv_scale_u)) + "' v='" + str(toSnum(o.uv_scale_v)) + "' />\n")
   file.write("  <HeightMap value='" + o.image + "'/>\n")
 
   if o.map_blend is not None:

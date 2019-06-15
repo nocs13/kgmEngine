@@ -238,6 +238,8 @@ private:
   kgmTexture* m_tex_color[4];
   kgmTexture* m_tex_blend;
 
+  f32 m_uv_scale[2];
+
 protected:
   ~kgmTerrain();
 
@@ -279,6 +281,8 @@ public:
   bool heightmap(kgmPicture* map);
   bool texColor(u32 id, kgmTexture* tex);
   bool texBlend(kgmTexture* tex);
+
+  void uvScale(f32 u, f32 v);
 
   kgmMesh* mesh();
   kgmMesh* fill();
