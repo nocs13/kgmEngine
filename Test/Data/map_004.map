@@ -27,9 +27,9 @@
   <Shadows value='Yes'/>
  </Light>
  <Terrain name='Plane' dimensions='1999.316895 1999.316895 100.000000'>
-  <UVScale u='200.000000' u='200.000000' />
+  <UVScale u='200.000000' v='200.000000' />
   <HeightMap value='terrain.tga'/>
-  <BlendMap value='tex_ter_blend_a.tga'/>
+  <BlendMap value='ter_tex_blend_a.tga'/>
   <ColorMap value='ter_tex_grn_a.tga'/>
   <ColorMap value='ter_tex_grn_b.tga'/>
   <ColorMap value='ter_tex_grn_c.tga'/>

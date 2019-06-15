@@ -111,6 +111,12 @@ namespace Render
       gr->gc->gcSetTexture(0, ter->texBlend()->texture());
     }
 
+    vec2 uvscale = ter->uvScale();
+
+    m_shader->set("g_vUVScale", uvscale);
+    m_shader->set("g_txColor1", 3);
+    m_shader->set("g_txColor2", 4);
+
     for (u32 i = 0; i < 4; i++)
     {
       if (ter->texColor(i))
