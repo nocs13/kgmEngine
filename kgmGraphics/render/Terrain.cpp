@@ -109,14 +109,14 @@ namespace Render
     if (ter->texBlend())
     {
       gr->gc->gcSetTexture(0, ter->texBlend()->texture());
+    }
 
-      for (u32 i = 0; i < 4; i++)
-      {
-        if (ter->texColor(i))
-          gr->gc->gcSetTexture(1 + i, ter->texColor(i)->texture());
-        else
-          gr->gc->gcSetTexture(1 + i, gr->m_tex_black->texture());
-      }
+    for (u32 i = 0; i < 4; i++)
+    {
+      if (ter->texColor(i))
+        gr->gc->gcSetTexture(1 + i, ter->texColor(i)->texture());
+      else
+        gr->gc->gcSetTexture(1 + i, gr->m_tex_black->texture());
     }
 
     kgmMesh::Vertex* v = msh->vertices();

@@ -35,17 +35,22 @@ void kgm_main(out vec4 col)
   if (clipping < 0.0)
     discard;
 
-  vec3 color0 = texture2D(g_txNormal,   v_UV1);
-  vec3 color1 = texture2D(g_txSpecular, v_UV1);
-  vec3 color2 = texture2D(g_txColor1,   v_UV1);
-  vec3 color3 = texture2D(g_txColor2,   v_UV1);
+  vec3 color0 = texture2D(g_txNormal,   v_UV1).rgb;
+  vec3 color1 = texture2D(g_txSpecular, v_UV1).rgb;
+  vec3 color2 = texture2D(g_txColor1,   v_UV1).rgb;
+  vec3 color3 = texture2D(g_txColor2,   v_UV1).rgb;
 
-  vec3 level = texture2D(g_txColor, v_UV);
+  vec3 level = texture2D(g_txColor, v_UV).rgb;
 
-  float blevel = 1.0 - (level.x + level.y + level.z);
+  float blevel = 1.0 - (level.r + level.g + level.b);
 
-  vec3 color = blevel * color0  + level.x * color1 +
-               level.y * color2 + level.z * color3;
+  //vec3 color = blevel * color0  + level.x * color1 +
+  //             level.y * color2 + level.z * color3;
+  vec3 color  = blevel  * color0;
+       color += level.r * color1;
+       //color += level.g * color2;
+       //color += level.b * color3;
 
-  col = vec4(v_color * color, 1.0);
+  col = vec4(v_color.xyz * color, 1.0);
+  //col = vec4(1, 0, 0, 1.0);
 }
