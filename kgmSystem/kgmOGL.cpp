@@ -698,12 +698,14 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     bpc = 2;
     break;
   case gctex_fmt24:
-    pic_fmt = GL_RGB;
+    //pic_fmt = GL_RGB;
+    pic_fmt = GL_BGR;
     int_fmt = GL_RGB8;
     bpc = 3;
     break;
   case gctex_fmt32:
-    pic_fmt = GL_RGBA;
+    //pic_fmt = GL_RGBA;
+    pic_fmt = GL_BGRA;
     int_fmt = GL_RGBA8;
     bpc = 4;
     break;
