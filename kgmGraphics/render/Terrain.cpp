@@ -114,6 +114,9 @@ namespace Render
     vec2 uvscale = ter->uvScale();
 
     m_shader->set("g_vUVScale", uvscale);
+    m_shader->set("g_txColor", 0);
+    m_shader->set("g_txNormal", 1);
+    m_shader->set("g_txSpecular", 2);
     m_shader->set("g_txColor1", 3);
     m_shader->set("g_txColor2", 4);
 

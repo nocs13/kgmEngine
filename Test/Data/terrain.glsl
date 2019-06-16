@@ -44,17 +44,15 @@ void kgm_main(out vec4 col)
 
   vec3 level = texture2D(g_txColor, v_UV).rgb;
 
-  //level.g = 0;
-
   float blevel = 1.0 - (level.r + level.g + level.b);
 
   //vec3 color = blevel * color0  + level.x * color1 +
   //             level.y * color2 + level.z * color3;
-  vec3 color;//  = blevel  * color0;
-       color += level.r * color1;
-       color += level.g * color2;
-       color += level.b * color3;
+  vec3 color.rgb = level;//  = blevel  * color0;
+       //color += level.r * color1;
+       //color += level.g * color2;
+       //color += level.b * color3;
 
-  col = vec4(v_color.xyz * color, 1.0);
-  //col = vec4(1, 0, 0, 1.0);
+  //col = vec4(v_color.xyz * color, 1.0);
+  col = vec4(level, 1.0);
 }
