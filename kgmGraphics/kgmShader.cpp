@@ -21,6 +21,16 @@ kgmShader::kgmShader(const kgmShader& s)
 
 kgmShader::~kgmShader()
 {
+  kgmTab<kgmString, Value*>::iterator i;
+
+  for(i = m_values.begin(); i.valid() && !i.isEnd(); i.next())
+  {
+    Value* val = (*i);
+
+    if (val)
+      delete val;
+  }
+
   m_values.clear();
 }
 
@@ -34,14 +44,57 @@ void kgmShader::stop()
   m_gc->gcSetShader(0);
 }
 
-void kgmShader::setValue(const char* id, kgmShader::TypeValue type, void* data, u32 count)
+void kgmShader::setValue(const char* id, kgmShader::TypeValue type, void* data, u32 count, bool local)
 {
   if (!id)
     return;
 
-  Value val = {id, type, data, count};
+  Value* val = m_values.get(id).data();
 
-  m_values.set(id, val);
+  if(!val)
+  {
+    val = new Value(id, type, data, count, local);
+    m_values.set(id, val);
+  }
+  else
+  {
+    val->update(data);
+  }
+}
+
+void kgmShader::setValue(const char* id, int val)
+{
+  setValue(id, Val_Int, &val);
+}
+
+void kgmShader::setValue(const char* id, f32 val)
+{
+  setValue(id, Val_Float, &val);
+}
+
+void kgmShader::setValue(const char* id, vec2& val)
+{
+  setValue(id, Val_Vec2, &val);
+}
+
+void kgmShader::setValue(const char* id, vec3& val)
+{
+  setValue(id, Val_Vec3, &val);
+}
+
+void kgmShader::setValue(const char* id, vec4& val)
+{
+  setValue(id, Val_Vec4, &val);
+}
+
+void kgmShader::setValue(const char* id, mtx4& val)
+{
+  setValue(id, Val_Mtx3, &val);
+}
+
+void kgmShader::setValue(const char* id, mtx3& val)
+{
+  setValue(id, Val_Mtx4, &val);
 }
 
 void kgmShader::delValue(const char* id)
@@ -49,41 +102,46 @@ void kgmShader::delValue(const char* id)
   if (!id)
     return;
 
-  kgmTab<const char*, Value>::iterator i = m_values[id];
+  kgmTab<kgmString, Value*>::iterator i = m_values[id];
+
+  Value* val = i.data();
+
+  if (val)
+    delete val;
 
   m_values.erase(i);
 }
 
 void kgmShader::useValues()
 {
-  kgmTab<const char*, Value>::iterator i;
+  kgmTab<kgmString, Value*>::iterator i;
 
   for(i = m_values.begin(); i.valid() && !i.isEnd(); i.next())
   {
-    Value val = (*i);
+    Value* val = (*i);
 
-    switch(val.type)
+    switch(val->type)
     {
     case Val_Float:
-      m_gc->gcUniform(m_shader, gcunitype_float1, val.count, val.id, val.data);
+      m_gc->gcUniform(m_shader, gcunitype_float1, val->count, val->id, val->data);
       break;
     case Val_Vec2:
-      m_gc->gcUniform(m_shader, gcunitype_float2, val.count, val.id, val.data);
+      m_gc->gcUniform(m_shader, gcunitype_float2, val->count, val->id, val->data);
       break;
     case Val_Vec3:
-      m_gc->gcUniform(m_shader, gcunitype_float3, val.count, val.id, val.data);
+      m_gc->gcUniform(m_shader, gcunitype_float3, val->count, val->id, val->data);
       break;
     case Val_Vec4:
-      m_gc->gcUniform(m_shader, gcunitype_float4, val.count, val.id, val.data);
+      m_gc->gcUniform(m_shader, gcunitype_float4, val->count, val->id, val->data);
       break;
     case Val_Mtx3:
-      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx3, val.count, 0, val.id, val.data);
+      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx3, val->count, 0, val->id, val->data);
       break;
     case Val_Mtx4:
-      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx4, val.count, 0, val.id, val.data);
+      m_gc->gcUniformMatrix(m_shader, gcunitype_mtx4, val->count, 0, val->id, val->data);
       break;
     case Val_Int:
-      m_gc->gcUniform(m_shader, gcunitype_int1, val.count, val.id, val.data);
+      m_gc->gcUniform(m_shader, gcunitype_int1, val->count, val->id, val->data);
       break;
     default:
       break;

@@ -69,7 +69,8 @@ class Terrain: public BaseRender
     }
   };
 
-  kgmShader* m_shader;
+  kgmShader* m_sh_cmap;
+  kgmShader* m_sh_lmap;
 
   Thread*    m_thread = null;
   
@@ -78,6 +79,7 @@ public:
   ~Terrain();
 
   void render();
+  void lightmap();
   void clear();
 };
 

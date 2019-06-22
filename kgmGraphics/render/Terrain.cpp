@@ -42,13 +42,22 @@ namespace Render
     :BaseRender(gr)
   {
     m_thread = new Thread(this);
+
     // TODO Auto-generated constructor stub
-    m_shader = gr->rc->getShader("terrain.glsl");
+
+    m_sh_cmap = gr->rc->getShader("terrain_cmap.glsl");
+    m_sh_lmap = gr->rc->getShader("terrain_lmap.glsl");
   }
 
   Terrain::~Terrain()
   {
     clear();
+
+    if (m_sh_cmap)
+      m_sh_cmap->release();
+
+    if (m_sh_lmap)
+      m_sh_lmap->release();
 
     delete m_thread;
   }
@@ -61,13 +70,13 @@ namespace Render
   
   void Terrain::render()
   {
-    //if(!m_thread->active())
-    //  m_thread->start();
+    if(!m_thread->active())
+      m_thread->start();
 
     mtx4 identity;
     identity.identity();
 
-    kgmShader* sh = m_shader;
+    kgmShader* sh = m_sh_cmap;
 
     gr->wired(false);
 
@@ -79,7 +88,7 @@ namespace Render
     //  return;
 
     //kgm_log() << "terrain time before " << kgmTime::getTicks() << "\n";
-    ter->prepare(gr->m_camera);
+    //ter->prepare(gr->m_camera);
     //kgm_log() << "terrain time after  " << kgmTime::getTicks() << "\n";
 
     m_thread->lock();
@@ -94,7 +103,7 @@ namespace Render
     gr->setWorldMatrix(m);
 
     material(mtl);
-    shader(m_shader, gr->m_camera, mtl, nod);
+    shader(sh, gr->m_camera, mtl, nod);
 
     if (!msh)
     {
@@ -113,12 +122,15 @@ namespace Render
 
     vec2 uvscale = ter->uvScale();
 
-    m_shader->set("g_vUVScale", uvscale);
-    m_shader->set("g_txColor", 0);
-    m_shader->set("g_txNormal", 1);
-    m_shader->set("g_txSpecular", 2);
-    m_shader->set("g_txColor1", 3);
-    m_shader->set("g_txColor2", 4);
+    if (!sh)
+      return;
+
+    sh->set("g_vUVScale", uvscale);
+    sh->set("g_txColor", 0);
+    sh->set("g_txNormal", 1);
+    sh->set("g_txSpecular", 2);
+    sh->set("g_txColor1", 3);
+    sh->set("g_txColor2", 4);
 
     for (u32 i = 0; i < 4; i++)
     {
@@ -159,6 +171,81 @@ namespace Render
 #endif
 
     m_thread->unlock();
+
+    material(null);
+    shader(null, null, null, null);
+  }
+
+  void Terrain::lightmap()
+  {
+    mtx4 identity;
+    identity.identity();
+
+    kgmShader* sh = m_sh_lmap;
+
+    gr->wired(false);
+
+    kgmIGraphics::INode* nod = gr->m_terrain;
+
+    kgmTerrain*  ter = (kgmTerrain*) gr->m_terrain->getNodeObject();
+
+    if (!ter)
+      return;
+
+    kgmMesh*     msh = (kgmMesh*) ter->mesh();
+
+    if (!msh)
+      return;
+
+    sphere3 sbound(gr->m_camera->mPos, 1000);
+
+    mtx4 m = nod->getNodeTransform();
+    gr->setWorldMatrix(m);
+
+    shader(sh, gr->m_camera, null, nod);
+
+
+    if (ter->texBlend())
+    {
+      gr->gc->gcSetTexture(0, ter->texBlend()->texture());
+    }
+
+    vec2 uvscale = ter->uvScale();
+
+    if (!sh)
+      return;
+
+    sh->set("g_vUVScale", uvscale);
+    sh->set("g_txColor", 0);
+    sh->set("g_txNormal", 1);
+    sh->set("g_txSpecular", 2);
+    sh->set("g_txColor1", 3);
+    sh->set("g_txColor2", 4);
+
+    for (u32 i = 0; i < 4; i++)
+    {
+      if (ter->texColor(i))
+        gr->gc->gcSetTexture(1 + i, ter->texColor(i)->texture());
+      else
+        gr->gc->gcSetTexture(1 + i, gr->m_tex_black->texture());
+    }
+
+    kgmMesh::Vertex* v = msh->vertices();
+
+    u32 vcount = msh->vcount();
+
+    gr->render(msh);
+
+    msh = ter->fill();
+
+    if (msh)
+    {
+      gr->gc->gcCull(gc_null);
+
+      gr->render(msh);
+
+      gr->gc->gcCull(gccull_back);
+    }
 
     material(null);
     shader(null, null, null, null);
