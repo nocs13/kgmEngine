@@ -176,7 +176,7 @@ namespace Render
     shader(null, null, null, null);
   }
 
-  void Terrain::lightmap()
+  void Terrain::lightmap(bool blend)
   {
     mtx4 identity;
     identity.identity();
@@ -197,13 +197,12 @@ namespace Render
     if (!msh)
       return;
 
-    sphere3 sbound(gr->m_camera->mPos, 1000);
+    kgmCamera* cam = &gr->camera();
 
     mtx4 m = nod->getNodeTransform();
     gr->setWorldMatrix(m);
 
     shader(sh, gr->m_camera, null, nod);
-
 
     if (ter->texBlend())
     {
@@ -215,12 +214,18 @@ namespace Render
     if (!sh)
       return;
 
+    sh->set("g_mTran",           m);
+    sh->set("g_mProj",           cam->mProj);
+    sh->set("g_mView",           cam->mView);
+    sh->set("g_vEye",            cam->mPos);
+    sh->set("g_vLook",           cam->mDir);
+
     sh->set("g_vUVScale", uvscale);
-    sh->set("g_txColor", 0);
-    sh->set("g_txNormal", 1);
+    sh->set("g_txColor",    0);
+    sh->set("g_txNormal",   1);
     sh->set("g_txSpecular", 2);
-    sh->set("g_txColor1", 3);
-    sh->set("g_txColor2", 4);
+    sh->set("g_txColor1",   3);
+    sh->set("g_txColor2",   4);
 
     for (u32 i = 0; i < 4; i++)
     {
@@ -232,7 +237,10 @@ namespace Render
 
     kgmMesh::Vertex* v = msh->vertices();
 
-    u32 vcount = msh->vcount();
+    if (blend)
+    {
+      gr->gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
+    }
 
     gr->render(msh);
 
@@ -245,6 +253,11 @@ namespace Render
       gr->render(msh);
 
       gr->gc->gcCull(gccull_back);
+    }
+
+    if (blend)
+    {
+      gr->gc->gcBlend(false, 0, 0, 0);
     }
 
     material(null);
