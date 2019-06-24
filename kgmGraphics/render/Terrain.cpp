@@ -192,6 +192,8 @@ namespace Render
     if (!ter)
       return;
 
+    ter->prepare(gr->m_camera);
+
     kgmMesh*     msh = (kgmMesh*) ter->mesh();
 
     if (!msh)
@@ -201,8 +203,6 @@ namespace Render
 
     mtx4 m = nod->getNodeTransform();
     gr->setWorldMatrix(m);
-
-    shader(sh, gr->m_camera, null, nod);
 
     if (ter->texBlend())
     {
@@ -214,6 +214,7 @@ namespace Render
     if (!sh)
       return;
 
+    sh->start();
     sh->set("g_mTran",           m);
     sh->set("g_mProj",           cam->mProj);
     sh->set("g_mView",           cam->mView);
