@@ -125,6 +125,11 @@ namespace Render
     if (!sh)
       return;
 
+    sh->set("g_vPosLights", gr->m_light_data.pos_pow[0], MAX_LIGHTS);
+    sh->set("g_vDirLights", gr->m_light_data.dir_ang[0], MAX_LIGHTS);
+    sh->set("g_vColLights", gr->m_light_data.col_per[0], MAX_LIGHTS);
+    sh->set("g_vCntLights", gr->m_light_data.count);
+
     sh->set("g_vUVScale", uvscale);
     sh->set("g_txColor", 0);
     sh->set("g_txNormal", 1);

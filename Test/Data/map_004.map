@@ -26,6 +26,30 @@
   <Intensity value='10.00000'/>
   <Shadows value='Yes'/>
  </Light>
+ <Light name='Point.001'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-3.04744 6.29221 4.32205'/>
+  <Rotation value='0.00000 -0.00000 0.00000'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='No'/>
+ </Light>
+ <Light name='Point'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-2.19658 -2.04043 5.13428'/>
+  <Rotation value='0.00000 -0.00000 0.00000'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='No'/>
+ </Light>
+ <Light name='Lamp'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='4.07625 1.00545 5.90386'/>
+  <Rotation value='0.65033 0.05522 1.86639'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='Yes'/>
+ </Light>
  <Terrain name='Plane' dimensions='1999.316895 1999.316895 100.000000'>
   <UVScale u='200.000000' v='200.000000' />
   <HeightMap value='terrain.tga'/>

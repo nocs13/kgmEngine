@@ -563,6 +563,27 @@ void kgmGraphics::render()
     m_a_light_count = 1;
   }
 
+  for (u32 li = 0; li < m_a_light_count; li++)
+  {
+    INode* lnode = m_a_lights[li];
+
+    vec3 v = lnode->getNodePosition();
+
+    kgmLight* light = (kgmLight*) lnode->getNodeObject();
+
+    m_light_data.pos_pow[li] = vec4(v.x, v.y, v.z, light->intensity());
+
+    v = light->direction();
+
+    m_light_data.dir_ang[li] = vec4(v.x, v.y, v.z, light->angle());
+
+    v = light->color();
+
+    m_light_data.col_per[li] = vec4(v.x, v.y, v.z, 0);
+  }
+
+  m_light_data.count = m_a_light_count;
+
   m_a_light = m_a_lights[0];
 
   m_a_particles_count = 0;

@@ -1,3 +1,10 @@
+#define MAX_LIGHTS 32
+
+uniform vec4  g_vPosLights[MAX_LIGHTS];
+uniform vec4  g_vDirLights[MAX_LIGHTS];
+uniform vec4  g_vColLights[MAX_LIGHTS];
+uniform float g_vCntLights;
+
 varying vec3  VV;
 varying vec3  eye;
 varying float clipping;
@@ -41,6 +48,10 @@ void kgm_main(out vec4 pos)
 }
 
 //Fragment Shader
+uniform vec4 g_vPosLights[MAX_LIGHTS];
+uniform vec4 g_vDirLights[MAX_LIGHTS];
+uniform vec4 g_vColLights[MAX_LIGHTS];
+
 varying vec3  VV;
 varying vec3  eye;
 varying float clipping;
