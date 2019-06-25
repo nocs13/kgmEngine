@@ -32,9 +32,6 @@
 
 #include <stdlib.h>
 
-#define MAX_LIGHTS   48
-#define MAX_SHADOWS  2
-
 kgmGraphics::GraphicsQuality kgmGraphics::textureQuality = GraphicsQualityHight;
 kgmGraphics::GraphicsQuality kgmGraphics::shadowQuality  = GraphicsQualityLow;
 
@@ -454,6 +451,8 @@ void kgmGraphics::render()
   m_a_bmeshes_count   = 0;
   m_a_particles_count = 0;
 
+  m_light_data.count = 0;
+
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {
     if (!(*i)->isNodeValid())
@@ -524,10 +523,37 @@ void kgmGraphics::render()
     if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
       continue;
 
-    m_a_lights[m_a_light_count++] = (*i);
+    f32 lc = l->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
 
-    if(m_a_light_count >= MAX_LIGHTS)
-      break;
+    for (u32 li = 0; li < m_a_light_count; li++)
+    {
+      INode* lnode = m_a_lights[li];
+
+      f32 cc = ((kgmLight*) lnode->getNodeObject())->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
+
+      if (lc > cc)
+      {
+        if (li < (MAX_LIGHTS - 1))
+        {
+          for (u32 j = m_a_light_count - 1; j > li; j--)
+          {
+            if (j != (MAX_LIGHTS - 1))
+            {
+              m_a_lights[j + 1] = m_a_lights[j];
+            }
+          }
+
+          m_a_lights[li + 1] = m_a_lights[li];
+        }
+
+        m_a_lights[li] = (*i);
+
+        if(m_a_light_count < MAX_LIGHTS)
+          m_a_light_count++;
+
+        break;
+      }
+    }
   }
 
   if (m_a_light_count == 0)

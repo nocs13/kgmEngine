@@ -6,7 +6,9 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
+#ifndef MAX_LIGHTS
 #define MAX_LIGHTS 8
+#endif
 
 const u32 g_res = 512;
 

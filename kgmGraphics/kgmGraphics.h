@@ -55,6 +55,9 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class EnvironmentRender;
   friend class Render::Terrain;
 
+#define MAX_LIGHTS   48
+#define MAX_SHADOWS  2
+
 public:
   class kgmNodeLight: public INode
   {
@@ -174,6 +177,15 @@ public:
     kgmIGraphics::INode *discard = null;
   };
 
+  struct LightData
+  {
+    vec4 pos_pow[MAX_LIGHTS];
+    vec4 dir_ang[MAX_LIGHTS];
+    vec4 col_per[MAX_LIGHTS];
+
+    u32 count;
+  };
+
 protected:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -204,6 +216,8 @@ protected:
   u32  m_a_meshes_count    = 0;
   u32  m_a_bmeshes_count   = 0;
   u32  m_a_particles_count = 0;
+
+  LightData m_light_data;
 
   INode*  m_a_light   = null;
   INode*  m_def_light = null;
