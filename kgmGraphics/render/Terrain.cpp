@@ -216,9 +216,18 @@ namespace Render
 
     sh->start();
 
-    sh->set("g_vPosLights", gr->m_light_data.pos_pow[0], MAX_LIGHTS);
-    sh->set("g_vDirLights", gr->m_light_data.dir_ang[0], MAX_LIGHTS);
-    sh->set("g_vColLights", gr->m_light_data.col_per[0], MAX_LIGHTS);
+    for (u32 i = 0; i < gr->m_light_data.count; i++)
+    {
+      char par[24];
+
+      sprintf(par, "g_vPosLights[%d]\0", i);
+      sh->set(par, gr->m_light_data.pos_pow[i], 1);
+      sprintf(par, "g_vDirLights[%d]\0", i);
+      sh->set(par, gr->m_light_data.dir_ang[i], 1);
+      sprintf(par, "g_vColLights[%d]\0", i);
+      sh->set(par, gr->m_light_data.col_per[i], 1);
+    }
+
     sh->set("g_vCntLights", gr->m_light_data.count);
 
     sh->set("g_mTran",           m);

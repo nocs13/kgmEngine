@@ -1,9 +1,9 @@
 #define MAX_LIGHTS 32
 
-uniform vec4  g_vPosLights[MAX_LIGHTS];
-uniform vec4  g_vDirLights[MAX_LIGHTS];
-uniform vec4  g_vColLights[MAX_LIGHTS];
-uniform float g_vCntLights;
+//uniform vec4  g_vPosLights[MAX_LIGHTS];
+//uniform vec4  g_vDirLights[MAX_LIGHTS];
+//uniform vec4  g_vColLights[MAX_LIGHTS];
+//uniform float g_vCntLights;
 
 varying vec3  VV;
 varying vec3  eye;
@@ -68,7 +68,7 @@ void kgm_main( out vec4 color )
 
     vec3 ldir = normalize(g_vDirLights[i].xyz);
 
-    if (length(ldir) < 0.001)
+    if (ldir == vec3(0.0))
     {
       ldir = normalize(v_V - g_vPosLights[i].xyz);
     }
@@ -78,8 +78,8 @@ void kgm_main( out vec4 color )
     intensity += pow;
   }
 
-  vec3 ldir = normalize(g_vDirLights[0].xyz);
+  vec3 ldir = normalize(v_V.xyz);
 
-  color = vec4(v_N.xyz, 1);
+  color = vec4(ldir, 1);
   //color = vec4(intensity, intensity, intensity, 1);
 }
