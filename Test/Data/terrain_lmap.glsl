@@ -63,7 +63,7 @@ void kgm_main( out vec4 color )
   vec3 NN = normalize(v_N);
 
 
-  float intensity = 0.0;
+  vec3 col = vec3(0.0);
 
   int count = int(g_fCntLights);
 
@@ -71,15 +71,14 @@ void kgm_main( out vec4 color )
   {
     float len = distance(g_vPosLights[i].xyz, v_V);
 
-    vec3 lnor = normalize(g_vPosLights[i].xyz - v_V);
+    vec3  lnor = normalize(g_vPosLights[i].xyz - v_V);
 
     float pow = max(0.1, dot(NN, lnor)) * g_vPosLights[i].w / (len + 1.0);
 
-    intensity += pow;
+    vec3 lcol = g_vColLights[i].xyz * pow;
+
+    col += lcol;
   }
 
-  vec3 ldir = normalize(v_V.xyz);
-
-  //color = vec4(ldir, 1);
-  color = vec4(intensity, intensity, intensity, 1);
+  color = vec4(col, 1);
 }

@@ -20,7 +20,7 @@
  </Light>
  <Light name='Lamp'>
   <Type value='Point'/>
-  <Color value='1.0 1.0 1.00000'/>
+  <Color value='1.0 0.5 1.00000'/>
   <Position value='16.78810 1.00545 41.00669'/>
   <Rotation value='0.65033 0.05522 1.86639'/>
   <Intensity value='10.00000'/>
@@ -28,7 +28,7 @@
  </Light>
  <Light name='Point.001'>
   <Type value='Point'/>
-  <Color value='1.0 1.0 1.00000'/>
+  <Color value='1.0 0.0 1.00000'/>
   <Position value='-3.04744 6.29221 4.32205'/>
   <Rotation value='0.00000 -0.00000 0.00000'/>
   <Intensity value='1.00000'/>
@@ -36,7 +36,7 @@
  </Light>
  <Light name='Point'>
   <Type value='Point'/>
-  <Color value='1.0 1.0 1.00000'/>
+  <Color value='1.0 0.0 0.00000'/>
   <Position value='-2.19658 -2.04043 5.13428'/>
   <Rotation value='0.00000 -0.00000 0.00000'/>
   <Intensity value='1.00000'/>
