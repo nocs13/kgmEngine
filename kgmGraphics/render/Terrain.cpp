@@ -220,15 +220,17 @@ namespace Render
     {
       char par[24];
 
-      sprintf(par, "g_vPosLights[%d]\0", i);
+      sprintf(par, "g_vPosLights[%d]", i);
       sh->set(par, gr->m_light_data.pos_pow[i], 1);
-      sprintf(par, "g_vDirLights[%d]\0", i);
+      sprintf(par, "g_vDirLights[%d]", i);
       sh->set(par, gr->m_light_data.dir_ang[i], 1);
-      sprintf(par, "g_vColLights[%d]\0", i);
+      sprintf(par, "g_vColLights[%d]", i);
       sh->set(par, gr->m_light_data.col_per[i], 1);
     }
 
-    sh->set("g_vCntLights", gr->m_light_data.count);
+    f32 cnt_lights = gr->m_light_data.count;
+
+    sh->set("g_fCntLights", cnt_lights);
 
     sh->set("g_mTran",           m);
     sh->set("g_mProj",           cam->mProj);

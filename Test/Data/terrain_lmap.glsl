@@ -3,7 +3,7 @@
 //uniform vec4  g_vPosLights[MAX_LIGHTS];
 //uniform vec4  g_vDirLights[MAX_LIGHTS];
 //uniform vec4  g_vColLights[MAX_LIGHTS];
-//uniform float g_vCntLights;
+//uniform float g_fCntLights;
 
 varying vec3  VV;
 varying vec3  eye;
@@ -49,7 +49,7 @@ void kgm_main(out vec4 pos)
 uniform vec4  g_vPosLights[MAX_LIGHTS];
 uniform vec4  g_vDirLights[MAX_LIGHTS];
 uniform vec4  g_vColLights[MAX_LIGHTS];
-uniform float g_vCntLights;
+uniform float g_fCntLights;
 
 varying vec3  VV;
 varying vec3  eye;
@@ -60,26 +60,26 @@ void kgm_main( out vec4 color )
   if (clipping < 0.0)
     discard;
 
+  vec3 NN = normalize(v_N);
+
+
   float intensity = 0.0;
 
-  for (int i = 0; i < g_vCntLights; i++)
+  int count = int(g_fCntLights);
+
+  for (int i = 0; i < count; i++)
   {
     float len = distance(g_vPosLights[i].xyz, v_V);
 
-    vec3 ldir = normalize(g_vDirLights[i].xyz);
+    vec3 lnor = normalize(g_vPosLights[i].xyz - v_V);
 
-    if (ldir == vec3(0.0))
-    {
-      ldir = normalize(v_V - g_vPosLights[i].xyz);
-    }
-
-    float pow = dot(normalize(v_N), ldir);// * g_vPosLights[i].w / (len + 1.0);
+    float pow = max(0.1, dot(NN, lnor)) * g_vPosLights[i].w / (len + 1.0);
 
     intensity += pow;
   }
 
   vec3 ldir = normalize(v_V.xyz);
 
-  color = vec4(ldir, 1);
-  //color = vec4(intensity, intensity, intensity, 1);
+  //color = vec4(ldir, 1);
+  color = vec4(intensity, intensity, intensity, 1);
 }
