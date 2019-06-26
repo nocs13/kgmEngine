@@ -888,6 +888,29 @@ kgmUnit* kgmGameMap::next()
         if (vtext == "True" ||  vtext == "true")
           ((kgmMaterial*)data)->shade_receive(true);
       }
+      else if (id == "Type")
+      {
+        if (ntype == "light")
+        {
+          xmlAttr(m_xml, "value", vtext);
+
+          if (vtext == "Spot")
+            ((kgmLight*)data)->type(kgmLight::TypeSpot);
+          else if (vtext == "Sun")
+            ((kgmLight*)data)->type(kgmLight::TypeSun);
+          else
+            ((kgmLight*)data)->type(kgmLight::TypePoint);
+        }
+      }
+      else if (id == "Intensity")
+      {
+        if (ntype == "light")
+        {
+          xmlAttr(m_xml, "value", vfloat);
+
+          ((kgmLight*)data)->intensity(vfloat);
+        }
+      }
       else if (id == "HeightMap")
       {
         xmlAttr(m_xml, "value", vtext);

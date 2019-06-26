@@ -523,7 +523,18 @@ void kgmGraphics::render()
     if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
       continue;
 
+    if (m_a_light_count < 1)
+    {
+      m_a_lights[0] = (*i);
+
+      m_a_light_count = 1;
+
+      continue;
+    }
+
     f32 lc = l->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
+
+    bool insert = false;
 
     for (u32 li = 0; li < m_a_light_count; li++)
     {
@@ -548,11 +559,18 @@ void kgmGraphics::render()
 
         m_a_lights[li] = (*i);
 
+        insert = true;
+
         if(m_a_light_count < MAX_LIGHTS)
           m_a_light_count++;
 
         break;
       }
+    }
+
+    if (!insert && (m_a_light_count < MAX_LIGHTS))
+    {
+      m_a_lights[m_a_light_count++] = (*i);
     }
   }
 

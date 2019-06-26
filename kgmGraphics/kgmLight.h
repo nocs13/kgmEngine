@@ -132,6 +132,16 @@ public:
   {
     m_active = a;
   }
+
+  Type type() const
+  {
+    return m_type;
+  }
+
+  void type(Type t)
+  {
+    m_type = t;
+  }
 };
 
 typedef kgmList<kgmLight*> kgmLights;

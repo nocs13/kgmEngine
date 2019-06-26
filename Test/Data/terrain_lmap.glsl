@@ -23,10 +23,6 @@ void kgm_main(out vec4 pos)
 
   v_N = normalize(mRot * a_Normal);
 
-  v_I = g_vLight.w;
-
-  v_L = g_vLight.xyz;
-
   eye = g_vEye;
 
   v_Y = -vec3(g_mView * vec4(v_V, 1.0));
@@ -48,9 +44,12 @@ void kgm_main(out vec4 pos)
 }
 
 //Fragment Shader
-uniform vec4 g_vPosLights[MAX_LIGHTS];
-uniform vec4 g_vDirLights[MAX_LIGHTS];
-uniform vec4 g_vColLights[MAX_LIGHTS];
+#define MAX_LIGHTS 32
+
+uniform vec4  g_vPosLights[MAX_LIGHTS];
+uniform vec4  g_vDirLights[MAX_LIGHTS];
+uniform vec4  g_vColLights[MAX_LIGHTS];
+uniform float g_vCntLights;
 
 varying vec3  VV;
 varying vec3  eye;
@@ -61,39 +60,26 @@ void kgm_main( out vec4 color )
   if (clipping < 0.0)
     discard;
 
-  vec3 NN = normalize(v_N);
-  vec3 LN = normalize(v_L - v_V);
-  vec3 R  = normalize(-reflect(LN, NN));
-  vec3 E  = normalize(v_Y - VV);
+  float intensity = 0.0;
 
-  vec4 col = texture2D(g_txColor, v_UV);
-       col.rgb *= (v_color.rgb * v_L_color);
-
-  //Normal
+  for (int i = 0; i < g_vCntLights; i++)
   {
-    vec3 bump = texture2D(g_txNormal, v_UV).xyz * 2.0 - 1.0;
-    bump = normalize(bump);
-    NN   = normalize(NN + bump);
+    float len = distance(g_vPosLights[i].xyz, v_V);
+
+    vec3 ldir = normalize(g_vDirLights[i].xyz);
+
+    if (length(ldir) < 0.001)
+    {
+      ldir = normalize(v_V - g_vPosLights[i].xyz);
+    }
+
+    float pow = dot(normalize(v_N), ldir);// * g_vPosLights[i].w / (len + 1.0);
+
+    intensity += pow;
   }
 
-  float distance = 1.0 + length(v_L - v_V);
-  //float intensity = max(0.0, (v_I * dot(NN, LN) / distance));
-  float intensity = max(0.0, dot(NN, LN) * (3.0 * v_I / distance));
+  vec3 ldir = normalize(g_vDirLights[0].xyz);
 
-  //Specular
-  if(v_shine > 1.5)
-  {
-    vec3  specular = texture2D(g_txSpecular, v_UV).rgb;
-    vec3  viewDir  = normalize(eye - v_V);
-    vec3  reflDir  = reflect(-LN, NN);
-    float spec     = pow(max(dot(viewDir, reflDir), 0.0), v_shine);
-
-    specular = specular * spec;
-    col.xyz +=  specular;
-  }
-
-  col.xyz *= intensity;
-  col.xyz = clamp(col.xyz, 0.0, 1.0);
-
-  color = col;
+  color = vec4(v_N.xyz, 1);
+  //color = vec4(intensity, intensity, intensity, 1);
 }
