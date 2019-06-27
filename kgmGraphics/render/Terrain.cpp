@@ -178,9 +178,6 @@ namespace Render
 
   void Terrain::lightmap(bool blend)
   {
-    mtx4 identity;
-    identity.identity();
-
     kgmShader* sh = m_sh_lmap;
 
     gr->wired(false);
@@ -192,7 +189,7 @@ namespace Render
     if (!ter)
       return;
 
-    ter->prepare(gr->m_camera);
+    //ter->prepare(gr->m_camera);
 
     kgmMesh*     msh = (kgmMesh*) ter->mesh();
 
@@ -201,8 +198,22 @@ namespace Render
 
     kgmCamera* cam = &gr->camera();
 
-    mtx4 m = nod->getNodeTransform();
-    gr->setWorldMatrix(m);
+    mtx4 m;
+
+    {
+      vec3 v;
+      vec3 n = gr->camera().mDir.normal();
+
+      n.invert();
+
+      v = n * 20.0f;
+
+      m.identity();
+
+      gr->setWorldMatrix(m);
+
+      m.translate(v);
+    }
 
     if (ter->texBlend())
     {

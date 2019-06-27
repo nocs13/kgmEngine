@@ -635,8 +635,8 @@ void kgmGraphics::render()
   //draw terrain
   if (m_terrain)
   {
-    //m_rnd_terrain->render();
-    m_rnd_terrain->lightmap();
+    m_rnd_terrain->render();
+    m_rnd_terrain->lightmap(true);
   }
   
   //draw particles
