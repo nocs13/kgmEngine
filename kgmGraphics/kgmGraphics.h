@@ -186,6 +186,13 @@ public:
     u32 count;
   };
 
+  struct MapLight
+  {
+    gchandle m_fbo;
+    gchandle m_col;
+    gchandle m_dep;
+  };
+
 protected:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -256,6 +263,8 @@ protected:
   kgmTexture*  m_tex_white = null;
   kgmTexture*  m_tex_gray  = null;
   kgmTexture*  m_map_shadow = null;
+
+  MapLight m_map_light;
 
   mtx4 m_g_mtx_world;
   mtx4 m_g_mtx_proj;

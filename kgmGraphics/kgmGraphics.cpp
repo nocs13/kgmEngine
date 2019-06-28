@@ -25,6 +25,8 @@
 #include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
 
+#include "../kgmSystem/kgmSystem.h"
+
 #include "render/Terrain.h"
 #include "render/LightRender.h"
 #include "render/ColorRender.h"
@@ -164,23 +166,31 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
   m_def_material->m_specular = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
+  u32 scr_size[2] = {0};
+
+  kgmSystem::getDesktopDimension(scr_size[0], scr_size[1]);
+
+  m_map_light.m_fbo = null;
+  m_map_light.m_col = null;
+  m_map_light.m_dep = null;
+
   if(gc)
   {
-    char txd[16] = {0};
+    char txd[12] = {0};
 
     //generic black texture
     memset(txd, 0x00, sizeof(txd));
-    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
+    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
     m_tex_black = new kgmTexture(g_tex_black);
 
     //generic white texture
     memset(txd, 0xff, sizeof(txd));
-    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
+    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
     m_tex_white = new kgmTexture(g_tex_white);
 
     //generic gray texture
     memset(txd, 0x80, sizeof(txd));
-    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
+    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
     m_tex_gray = new kgmTexture(g_tex_gray);
 
     g_def_style_texture = new kgmTexture(g_tex_white);
@@ -192,6 +202,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     g_fbo = g->gcGenTarget(512, 512, true, false);
     g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
+
+    m_map_light.m_fbo = g->gcGenTarget(scr_size[0], scr_size[1], true, false);
+    m_map_light.m_col = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmt24, gctype_tex2d);
+    m_map_light.m_dep = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmtdepth, gctype_tex2d);
+    g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_col, gctype_tex2d);
+    g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_dep, gctype_texdepth);
   }
 
 
@@ -230,6 +246,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 kgmGraphics::~kgmGraphics()
 {
   gc->gcFreeTarget(g_fbo);
+
+  if (m_map_light.m_fbo)
+    gc->gcFreeTarget(m_map_light.m_fbo);
 
   if (m_rnd_terrain)
     delete m_rnd_terrain;

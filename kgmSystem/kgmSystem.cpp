@@ -80,6 +80,8 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h)
 #endif
 
 #ifdef ANDROID
+  w = 2;
+  h = 2;
 #endif
 }
 
