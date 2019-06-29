@@ -125,6 +125,21 @@ namespace Render
     if (!sh)
       return;
 
+    for (u32 i = 0; i < gr->m_light_data.count; i++)
+    {
+      char par[24];
+
+      sprintf(par, "g_vPosLights[%d]", i);
+      sh->set(par, gr->m_light_data.pos_pow[i], 1);
+      sprintf(par, "g_vDirLights[%d]", i);
+      sh->set(par, gr->m_light_data.dir_ang[i], 1);
+      sprintf(par, "g_vColLights[%d]", i);
+      sh->set(par, gr->m_light_data.col_per[i], 1);
+    }
+
+    f32 cnt_lights = gr->m_light_data.count;
+    sh->set("g_fCntLights", cnt_lights);
+
     sh->set("g_vUVScale", uvscale);
     sh->set("g_txColor", 0);
     sh->set("g_txNormal", 1);
@@ -176,6 +191,7 @@ namespace Render
     shader(null, null, null, null);
   }
 
+  /*
   void Terrain::lightmap(bool blend)
   {
     kgmShader* sh = m_sh_lmap;
@@ -271,6 +287,8 @@ namespace Render
       gr->gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
     }
 
+    m_thread->lock();
+
     gr->render(msh);
 
     msh = ter->fill();
@@ -284,6 +302,8 @@ namespace Render
       gr->gc->gcCull(gccull_back);
     }
 
+    m_thread->unlock();
+
     if (blend)
     {
       gr->gc->gcBlend(false, 0, 0, 0);
@@ -292,5 +312,6 @@ namespace Render
     material(null);
     shader(null, null, null, null);
   }
+  */
 
 } /* namespace Render */

@@ -79,7 +79,7 @@ public:
   ~Terrain();
 
   void render();
-  void lightmap(bool blend = false);
+  //void lightmap(bool blend = false);
   void clear();
 };
 

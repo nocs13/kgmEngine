@@ -95,8 +95,6 @@ inline vec4 packLight(kgmLight& l, vec3 pos)
   return res;
 }
 
-mtx4       g_mtx_orto;
-mtx4       g_mtx_iden;
 mtx4*      g_mtx_joints = null;
 
 u32        g_mtx_joints_count = 0;
@@ -208,6 +206,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_map_light.m_dep = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmtdepth, gctype_tex2d);
     g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_col, gctype_tex2d);
     g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_dep, gctype_texdepth);
+    m_map_light.m_res[0] = scr_size[0];
+    m_map_light.m_res[1] = scr_size[1];
   }
 
 
@@ -234,7 +234,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
-  g_mtx_iden.identity();
+  m_g_mtx_iden.identity();
 
   m_r_fps    = new FpsRender(this);
   m_r_gui    = new GuiRender(this);
@@ -416,7 +416,7 @@ void kgmGraphics::resize(float width, float height)
 
   m_camera->viewport((float)width, (float)height);
 
-  g_mtx_orto.ortho(0, width, height, 0, 1, -1);
+  m_g_mtx_orto.ortho(0, width, height, 0, 1, -1);
   m_viewport = iRect(0, 0, width, height);
 }
 
@@ -655,7 +655,6 @@ void kgmGraphics::render()
   if (m_terrain)
   {
     m_rnd_terrain->render();
-    m_rnd_terrain->lightmap(true);
   }
   
   //draw particles
@@ -695,6 +694,7 @@ void kgmGraphics::render()
   render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
+  //gcDrawRect(kgmGui::Rect(1, 200, 300, 300), 0xffffffff, m_map_light.m_col);
   //gcDrawRect(kgmGui::Rect(1, 250, 256, 256), 0xffffffff, m_rnd_environment->m_tx_refraction);
   //if (font)
   //  gcDrawRect(kgmGui::Rect(1, 250, 300, 300), 0xffffffff, (gchandle) font->texture());
@@ -1000,7 +1000,7 @@ void kgmGraphics::render(kgmVisual* visual)
   }
     break;
   case kgmVisual::TypeParticles:
-    setWorldMatrix(g_mtx_iden);
+    setWorldMatrix(m_g_mtx_iden);
     render(g_shd_active);
     render(visual->getParticles());
     setWorldMatrix(visual->getTransform());
@@ -1431,8 +1431,8 @@ u32 kgmGraphics::collectMeshes(kgmCamera *cam, kgmArray<INode *> &nodes, u32 max
 //*************** VIEW MODE *************
 void kgmGraphics::gc2DMode()
 {
-  setProjMatrix(g_mtx_orto);
-  setViewMatrix(g_mtx_iden);
+  setProjMatrix(m_g_mtx_orto);
+  setViewMatrix(m_g_mtx_iden);
 }
 
 void kgmGraphics::gc3DMode()

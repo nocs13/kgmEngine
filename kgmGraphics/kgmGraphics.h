@@ -191,6 +191,8 @@ public:
     gchandle m_fbo;
     gchandle m_col;
     gchandle m_dep;
+
+    u32      m_res[2];
   };
 
 protected:
@@ -270,6 +272,9 @@ protected:
   mtx4 m_g_mtx_proj;
   mtx4 m_g_mtx_view;
   mtx3 m_g_mtx_normal;
+  mtx4 m_g_mtx_orto;
+  mtx4 m_g_mtx_iden;
+
 
   gchandle m_rnd_target = null;
 

@@ -62,7 +62,6 @@ void kgm_main( out vec4 color )
 
   vec3 NN = normalize(v_N);
 
-
   vec3 col = vec3(0.0);
 
   int count = int(g_fCntLights);
@@ -79,6 +78,8 @@ void kgm_main( out vec4 color )
 
     col += lcol;
   }
+
+  col = clamp(col, vec3(0.2), vec3(1.0));
 
   color = vec4(col, 1);
 }
