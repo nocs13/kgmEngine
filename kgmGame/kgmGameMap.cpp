@@ -747,7 +747,9 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        node->rotation(v);
+        //node->rotation(v);
+        if (ntype == "light")
+          ((kgmLight*)data)->direction(v);
       }
       else if(id == "Quaternion")
       {
@@ -909,6 +911,15 @@ kgmUnit* kgmGameMap::next()
           xmlAttr(m_xml, "value", vfloat);
 
           ((kgmLight*)data)->intensity(vfloat);
+        }
+      }
+      else if (id == "Spot")
+      {
+        if (ntype == "light")
+        {
+          xmlAttr(m_xml, "value", vfloat);
+
+          ((kgmLight*)data)->angle(vfloat);
         }
       }
       else if (id == "HeightMap")

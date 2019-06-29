@@ -18,7 +18,7 @@
   <Intensity value='0.23000'/>
   <Shadows value='No'/>
  </Light>
- <Light name='Lamp'>
+ <Light name='Lamp2'>
   <Type value='Point'/>
   <Color value='1.0 0.5 1.00000'/>
   <Position value='16.78810 1.00545 41.00669'/>
@@ -47,6 +47,24 @@
   <Color value='1.0 1.0 1.00000'/>
   <Position value='4.07625 1.00545 5.90386'/>
   <Rotation value='0.65033 0.05522 1.86639'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='Yes'/>
+ </Light>
+  <Light name='Spot'>
+  <Type value='Sun'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-8.60812 2.00000 12.72664'/>
+  <Rotation value='0.00000 -0.71328 0.00000'/>
+  <Intensity value='-1.00000'/>
+  <Shadows value='No'/>
+ </Light>
+  <Light name='Spot1'>
+  <Type value='Spot'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-8.60812 0.00000 10.72664'/>
+  <Rotation value='0.00000 -0.71328 0.00000'/>
+  <Direction value='0.65431 0.00000 -0.75622'/>
+  <Spot value='0.75224'/>
   <Intensity value='1.00000'/>
   <Shadows value='Yes'/>
  </Light>

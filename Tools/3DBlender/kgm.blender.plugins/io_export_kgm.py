@@ -496,7 +496,23 @@ class kgmLight:
     self.shadows = 'No' if lamp.shadow_method == 'NOSHADOW' else 'Yes'
     self.range = 2 * lamp.distance
     self.color = lamp.color
-    self.type = 'Point' if lamp.type == 'POINT' else 'Spot'
+
+    self.type = 'Point'
+
+    if lamp.type == 'SPOT':
+      self.type = 'Spot'
+    elif lamp.type == 'SUN':
+      self.type = 'Sun'
+      self.intensity = -1
+    else:
+      self.type = 'Point'
+
+    if lamp.type == 'SPOT':
+      end = o.matrix_world * Vector((0, 0, -lamp.shadow_buffer_clip_end))
+      nor = end - o.matrix_world.to_translation()
+      nor.normalize()
+      self.dir = nor
+      self.angle = lamp.spot_size
 
 
 class kgmCamera:
@@ -1049,6 +1065,11 @@ def export_light(file, o):
     "%.5f" % o.pos[2]) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % o.rot[0]) + " " + str("%.5f" % o.rot[1]) + " " + str(
     "%.5f" % o.rot[2]) + "'/>\n")
+  if o.type == 'Spot':
+    file.write("  <Direction value='" + str("%.5f" % o.dir[0]) + " " + str("%.5f" % o.dir[1]) + " " + str(
+               "%.5f" % o.dir[2]) + "'/>\n")
+    file.write("  <Spot value='" + str("%.5f" % o.angle) + "'/>\n")
+
   file.write("  <Intensity value='" + str("%.5f" % o.intensity) + "'/>\n")
   file.write("  <Shadows value='" + str(o.shadows) + "'/>\n")
   file.write(" </Light>\n")

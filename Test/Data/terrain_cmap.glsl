@@ -89,7 +89,27 @@ void kgm_main(out vec4 col)
 
     vec3  lnor = normalize(g_vPosLights[i].xyz - v_V);
 
-    float pow = max(0.1, dot(NN, lnor)) * g_vPosLights[i].w / (len + 1.0);
+    float pow = 0.0;
+
+    if (g_vPosLights[i].w < 0.0)
+    {
+      pow = max(0.1, dot(NN, lnor));
+    }
+    else if (length(g_vDirLights[i].xyz) < 0.9)
+    {
+      vec3 ldir = normalize(g_vDirLights[i].xyz);
+
+      float angle = acos( max( dot(ldir, -lnor), 0.0) );
+
+      if (angle > (0.5 * g_vDirLights[i].w))
+        pow = 0.1;
+      else
+        pow = g_vDirLights[i].w * max(0.1, dot(NN, lnor)) / (1.0 + len);
+    }
+    else
+    {
+      pow = g_vDirLights[i].w * max(0.1, dot(NN, lnor)) / (1.0 + len);
+    }
 
     vec3 lcol = g_vColLights[i].xyz * pow;
 
