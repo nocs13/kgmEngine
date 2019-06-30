@@ -539,8 +539,11 @@ void kgmGraphics::render()
 
     kgmLight* l = (kgmLight*) (*i)->getNodeObject();
 
-    if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
-      continue;
+    if (l->type() != kgmLight::TypeSun)
+    {
+      if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
+        continue;
+    }
 
     if (m_a_light_count < 1)
     {
@@ -553,11 +556,17 @@ void kgmGraphics::render()
 
     f32 lc = l->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
 
+    if (l->type() == kgmLight::TypeSun)
+      lc = 9999999999999.99;
+
     bool insert = false;
 
     for (u32 li = 0; li < m_a_light_count; li++)
     {
       INode* lnode = m_a_lights[li];
+
+      if (((kgmLight*) lnode->getNodeObject())->type() == kgmLight::TypeSun)
+        continue;
 
       f32 cc = ((kgmLight*) lnode->getNodeObject())->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
 
