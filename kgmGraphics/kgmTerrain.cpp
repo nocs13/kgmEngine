@@ -144,8 +144,25 @@ kgmTexture* kgmTerrain::texColor(u32 id)
 
 void kgmTerrain::build()
 {
-  f32 w_pp = m_heightmap.width / m_width;
-  f32 h_pp = m_heightmap.width / m_height;
+  f32 w_pp = m_heightmap.width  / m_width;
+  f32 h_pp = m_heightmap.height / m_length;
+}
+
+void kgmTerrain::normals()
+{
+  if (m_heightmap.map.length() < 1)
+    return;
+
+  f32 w_pp = m_heightmap.width  / m_width;
+  f32 h_pp = m_heightmap.height / m_length;
+
+  for (u32 i = 0; i < (m_heightmap.width - 1); i++)
+  {
+    for (u32 j = 0; j < (m_heightmap.height - 1); j++)
+    {
+
+    }
+  }
 }
 
 void kgmTerrain::prepare(kgmCamera* camera)

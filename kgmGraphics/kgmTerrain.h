@@ -218,7 +218,8 @@ public:
     u16 width;
     u16 height;
 
-    kgmArray<u16> map;
+    kgmArray<u16>  map;
+    kgmArray<vec3> nor;
   };
 
   typedef kgmList<Mesh>::iterator MeshIt;
@@ -309,6 +310,7 @@ private:
   void generate(box2 rect, u32 level);
   void fillx(Chunk* c, Chunk* n);
   void filly(Chunk* c, Chunk* n);
+  void normals();
 
   float2 from_uint2(uint2 v);
   uint2  from_float2(float2 v);
