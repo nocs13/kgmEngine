@@ -174,21 +174,21 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   if(gc)
   {
-    char txd[12] = {0};
+    char txd[16] = {0};
 
     //generic black texture
     memset(txd, 0x00, sizeof(txd));
-    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
+    g_tex_black = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
     m_tex_black = new kgmTexture(g_tex_black);
 
     //generic white texture
     memset(txd, 0xff, sizeof(txd));
-    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
+    g_tex_white = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
     m_tex_white = new kgmTexture(g_tex_white);
 
     //generic gray texture
     memset(txd, 0x80, sizeof(txd));
-    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt24, gctype_tex2d);
+    g_tex_gray = gc->gcGenTexture(txd, 2, 2, gctex_fmt32, gctype_tex2d);
     m_tex_gray = new kgmTexture(g_tex_gray);
 
     g_def_style_texture = new kgmTexture(g_tex_white);
