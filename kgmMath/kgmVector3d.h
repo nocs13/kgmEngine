@@ -31,7 +31,7 @@ public:
     return kgmVector3d<T>(x + v.x, y + v.y, z + v.z);
   }
 
-  kgmVector3d<T> operator+=(const kgmVector3d<T>& v) const{
+  kgmVector3d<T> operator+=(const kgmVector3d<T>& v) {
     x += v.x, y += v.y, z += v.z;
     return *this;
   }
@@ -40,7 +40,7 @@ public:
     return kgmVector3d<T>(x - v.x, y - v.y, z - v.z);
   }
 
-  kgmVector3d<T> operator-=(const kgmVector3d<T>& v) const{
+  kgmVector3d<T> operator-=(const kgmVector3d<T>& v) {
     x -= v.x, y -= v.y, z -= v.z;
     return *this;
   }

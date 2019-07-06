@@ -52,8 +52,8 @@
  </Light>
   <Light name='Spot'>
   <Type value='Sun'/>
-  <Color value='1.0 1.0 1.00000'/>
-  <Position value='-8.60812 2.00000 120.72664'/>
+  <Color value='1.0 1.0 1.0'/>
+  <Position value='-8.60812 2.00000 500.72664'/>
   <Rotation value='0.00000 -0.71328 0.00000'/>
   <Intensity value='-1.00000'/>
   <Shadows value='No'/>

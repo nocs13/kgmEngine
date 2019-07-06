@@ -83,7 +83,7 @@ void kgm_main(out vec4 col)
 
   int count = int(g_fCntLights);
 
-  for (int i = 0; i < count; i++)
+  for (int i = 0; i < 1; i++)
   {
     float len = distance(g_vPosLights[i].xyz, v_V);
 
@@ -110,6 +110,8 @@ void kgm_main(out vec4 col)
     {
       pow = g_vDirLights[i].w * max(0.1, dot(NN, lnor)) / (1.0 + len);
     }
+
+    pow = clamp(pow, 0.2, 0.99);
 
     vec3 lcol = g_vColLights[i].xyz * pow;
 
