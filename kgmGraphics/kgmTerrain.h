@@ -289,6 +289,7 @@ public:
   }
 
   bool heightmap(kgmPicture* map);
+  bool normalmap(kgmPicture* map);
   bool texColor(u32 id, kgmTexture* tex);
   bool texBlend(kgmTexture* tex);
 

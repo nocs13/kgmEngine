@@ -68,9 +68,10 @@
   <Intensity value='1.00000'/>
   <Shadows value='Yes'/>
  </Light>
- <Terrain name='Plane' dimensions='1999.316895 1999.316895 100.000000'>
+ <Terrain name='Plane' dimensions='3000.0 3000.0 100.000000'>
   <UVScale u='200.000000' v='200.000000' />
   <HeightMap value='terrain.tga'/>
+  <NormalMap value='ter_tex_nor_a.tga'/>
   <BlendMap value='ter_tex_blend_a.tga'/>
   <ColorMap value='ter_tex_grn_a.tga'/>
   <ColorMap value='ter_tex_grn_b.tga'/>

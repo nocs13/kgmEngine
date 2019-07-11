@@ -63,6 +63,7 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   
   m_heightmap.width  = map->width;
   m_heightmap.height = map->height;
+
   m_heightmap.map.alloc(count);
   m_heightmap.nor.alloc(count);
 
@@ -87,6 +88,48 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   map->release();
 
   build();
+
+  return true;
+}
+
+bool kgmTerrain::normalmap(kgmPicture* map)
+{
+  if (!map || m_heightmap.nor.data())
+    return false;
+
+  map->increment();
+
+  u32 count = map->height * map->width;
+
+  u32 bpp = map->bpp / 8;
+
+  //m_heightmap.width  = map->width;
+  //m_heightmap.height = map->height;
+
+  m_heightmap.nor.alloc(count);
+
+  for (u32 j = 0; j < map->height; j++)
+  {
+    for (u32 i = 0; i < map->width; i++)
+    {
+      u8 r, g, b;
+      u8 *p = (u8*) (map->pdata + bpp * map->width * j + bpp * i);
+
+      r = (u8) p[0];
+      g = (u8) p[1];
+      b = (u8) p[2];
+
+      vec3 v;
+
+      v.x = (f32)r / 255.0;
+      v.y = (f32)g / 255.0;
+      v.z = (f32)b / 255.0;
+
+      m_heightmap.nor[map->width * j + i] = v;
+    }
+  }
+
+  map->release();
 
   return true;
 }
@@ -153,6 +196,8 @@ void kgmTerrain::build()
 
 void kgmTerrain::normals()
 {
+  return;
+
   if (m_heightmap.map.length() < 1)
     return;
 
@@ -399,7 +444,7 @@ void kgmTerrain::generate(box2 rect, u32 level)
       vec3     n;
 
       v.x = cv.x, v.y = cv.y;       tr[0].pt[0].x = v.x, tr[0].pt[0].y = v.y, tr[0].pt[0].z = get_height(v);
-      //n = get_normal(v); n.normalize();
+      n = get_normal(v); n.normalize();
       v.x = cv.x + len, v.y = cv.y; tr[0].pt[1].x = v.x, tr[0].pt[1].y = v.y, tr[0].pt[1].z = get_height(v);
       v.x = cv.x, v.y = cv.y + len; tr[0].pt[2].x = v.x, tr[0].pt[2].y = v.y, tr[0].pt[2].z = get_height(v);
 
@@ -407,8 +452,8 @@ void kgmTerrain::generate(box2 rect, u32 level)
       uv[0].pt[1] = vec3(uvs.x * (tr[0].pt[1].x - vstart.x), uvs.y * (tr[0].pt[1].y - vstart.y), 0);
       uv[0].pt[2] = vec3(uvs.x * (tr[0].pt[2].x - vstart.x), uvs.y * (tr[0].pt[2].y - vstart.y), 0);
 
-      tn[0] = triangle(tr[0].pt[0], tr[0].pt[1], tr[0].pt[2]);
-      n = tn[0].normal();
+      //tn[0] = triangle(tr[0].pt[0], tr[0].pt[1], tr[0].pt[2]);
+      //n = tn[0].normal();
 
 
       v.x = cv.x + len, v.y = cv.y + len; tr[1].pt[0].x = v.x, tr[1].pt[0].y = v.y, tr[1].pt[0].z = get_height(v);
@@ -419,8 +464,8 @@ void kgmTerrain::generate(box2 rect, u32 level)
       uv[1].pt[1] = vec3(uvs.x * (tr[1].pt[1].x - vstart.x), uvs.y * (tr[1].pt[1].y - vstart.y), 0);
       uv[1].pt[2] = vec3(uvs.x * (tr[1].pt[2].x - vstart.x), uvs.y * (tr[1].pt[2].y - vstart.y), 0);
 
-      tn[1] = triangle(tr[1].pt[0], tr[1].pt[1], tr[1].pt[2]);
-      n += tn[1].normal();
+      //tn[1] = triangle(tr[1].pt[0], tr[1].pt[1], tr[1].pt[2]);
+      //n += tn[1].normal();
 
       m_mesh->add(tr[0], uv[0], 0xffffffff, n);
       m_mesh->add(tr[1], uv[1], 0xffffffff, n);
@@ -602,7 +647,7 @@ kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
 
 f32 kgmTerrain::get_height(uint2 v)
 {
-  u32 offset = v.x * m_heightmap.width + v.y;
+  u32 offset = v.x * m_heightmap.width + v.x;
 
   if (offset >= (m_heightmap.width * m_heightmap.height))
     return 0.0f;
@@ -610,7 +655,7 @@ f32 kgmTerrain::get_height(uint2 v)
   u16 data = m_heightmap.map[offset];
 
   f32 height = (f32) data * ((f32)m_height / (f32)0xffff);
-  
+
   return height;
 }
 
@@ -642,76 +687,6 @@ f32 kgmTerrain::len_from_details(u32 details)
   return len;
 }
 
-vec3 kgmTerrain::get_normal(float2 v)
-{
-  uint2 u = from_float2(v);
-
-  vec3 n = get_normal(u);
-
-  vec3 nn[4];
-
-  nn[0] = get_normal(uint2(u.x + 1, u.y));
-  nn[1] = get_normal(uint2(u.x, u.y + 1));
-  nn[2] = get_normal(uint2(u.x - 1, u.y));
-  nn[3] = get_normal(uint2(u.x, u.y - 1));
-
-  n += nn[0];
-  n += nn[1];
-  n += nn[2];
-  n += nn[3];
-
-  n.normalize();
-
-  /*if (n.x < -1)
-    n.x = -1;
-  else if (n.x < -.5)
-    n.x = -.5;
-  else if (n.x < 0)
-    n.x = 0;
-  if (n.x > 1)
-    n.x = 1;
-  else if (n.x > .5)
-    n.x = .5;
-  else if (n.x > 0)
-    n.x = 0;
-
-  if (n.y < -1)
-    n.y = -1;
-  else if (n.y < -.5)
-    n.y = -.5;
-  else if (n.y < 0)
-    n.y = 0;
-  if (n.y > 1)
-    n.y = 1;
-  else if (n.y > .5)
-    n.x = .5;
-  else if (n.y > 0)
-    n.y = 0;
-
-  if (n.z < -1)
-    n.z = -1;
-  else if (n.z < -.5)
-    n.z = -.5;
-  else if (n.z < 0)
-    n.z = 0;
-  if (n.z > 1)
-    n.z = 1;
-  else if (n.z > .5)
-    n.z = .5;
-  else if (n.z > 0)
-    n.z = 0;
-
-  n.normalize();
-
-  return n;*/
-  //n.set(0, 0, 1);
-  vec3 nv = vec3(0, 0, 0);
-
-  nv += (n * 0.95f);
-  return nv;
-//  return get_normal(u);
-}
-
 vec3 kgmTerrain::get_normal(uint2 v)
 {
   vec3 n, nn;
@@ -721,33 +696,16 @@ vec3 kgmTerrain::get_normal(uint2 v)
 
   n = m_heightmap.nor[m_heightmap.width * v.x + v.y];
 
-  /*
-  if (v.x > 1)
-  {
-    nn = m_heightmap.nor[m_heightmap.width * (v.x - 1) + v.y];
-    n += nn;
-  }
-
-  if (v.y > 1)
-  {
-    nn = m_heightmap.nor[m_heightmap.width * v.x + (v.y - 1)];
-    n += nn;
-  }
-
-  if (v.x < m_heightmap.width)
-  {
-    nn = m_heightmap.nor[m_heightmap.width * (v.x + 1) + v.y];
-    n += nn;
-  }
-
-  if (v.y < m_heightmap.height)
-  {
-    nn = m_heightmap.nor[m_heightmap.width * v.x + (v.y + 1)];
-    n += nn;
-  }
-  */
-
   n.normalize();
+
+  return n;
+}
+
+vec3 kgmTerrain::get_normal(float2 v)
+{
+  uint2 u = from_float2(v);
+
+  vec3 n = get_normal(u);
 
   return n;
 }

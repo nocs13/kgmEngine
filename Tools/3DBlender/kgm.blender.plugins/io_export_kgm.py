@@ -1091,11 +1091,11 @@ def export_terrain(file, o):
   file.write("  <UVScale u='" + str(toSnum(o.uv_scale_u)) + "' v='" + str(toSnum(o.uv_scale_v)) + "' />\n")
   file.write("  <HeightMap value='" + o.image + "'/>\n")
 
-  if o.map_blend is not None:
-    file.write("  <BlendMap value='" + o.map_blend + "'/>\n")
-
   if o.map_bump is not None:
     file.write("  <NormalMap value='" + o.map_bump + "'/>\n")
+
+  if o.map_blend is not None:
+    file.write("  <BlendMap value='" + o.map_blend + "'/>\n")
 
   if o.map_spec is not None:
     file.write("  <SpecularMap value='" + o.map_spec + "'/>\n")

@@ -932,6 +932,18 @@ kgmUnit* kgmGameMap::next()
           ((kgmTerrain*)data)->heightmap(map);
 
       }
+      else if (id == "NormalMap")
+      {
+        xmlAttr(m_xml, "value", vtext);
+
+        if (ntype == "terrain")
+        {
+          kgmPicture* map = m_game->getResources()->getPicture(vtext);
+
+          if (map)
+            ((kgmTerrain*)data)->normalmap(map);
+        }
+      }
       else if (id == "UVScale")
       {
         kgmString u, v;

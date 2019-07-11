@@ -111,7 +111,7 @@ void kgm_main(out vec4 col)
       pow = g_vDirLights[i].w * max(0.1, dot(NN, lnor)) / (1.0 + len);
     }
 
-    pow = clamp(pow, 0.2, 0.99);
+    pow = clamp(pow, 0.25, 0.99);
 
     vec3 lcol = g_vColLights[i].xyz * pow;
 
@@ -120,7 +120,7 @@ void kgm_main(out vec4 col)
 
   icol = clamp(icol, vec3(0.2), vec3(1.0));
 
-  col = vec4(v_color.rgb * color * icol, 1.0);
-
+  //col = vec4(v_color.rgb * color * icol, 1.0);
+  col = vec4(NN.rgb, 1.0);
   //col = vec4(color, 1.0);
 }
