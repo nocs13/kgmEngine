@@ -53,7 +53,7 @@
   <Light name='Spot'>
   <Type value='Sun'/>
   <Color value='1.0 1.0 1.0'/>
-  <Position value='-8.60812 2.00000 500.72664'/>
+  <Position value='-8.60812 2.00000 100.72664'/>
   <Rotation value='0.00000 -0.71328 0.00000'/>
   <Intensity value='-1.00000'/>
   <Shadows value='No'/>
@@ -68,7 +68,7 @@
   <Intensity value='1.00000'/>
   <Shadows value='Yes'/>
  </Light>
- <Terrain name='Plane' dimensions='3000.0 3000.0 100.000000'>
+ <Terrain name='Plane' dimensions='1000.0 1000.0 100.000000'>
   <UVScale u='200.000000' v='200.000000' />
   <HeightMap value='terrain.tga'/>
   <NormalMap value='ter_tex_nor_a.tga'/>

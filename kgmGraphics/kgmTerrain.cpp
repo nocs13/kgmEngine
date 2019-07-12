@@ -65,14 +65,13 @@ bool kgmTerrain::heightmap(kgmPicture* map)
   m_heightmap.height = map->height;
 
   m_heightmap.map.alloc(count);
-  m_heightmap.nor.alloc(count);
 
-  for (u32 j = 0; j < map->height; j++)
+  for (u32 i = 0; i < map->width; i++)
   {
-    for (u32 i = 0; i < map->width; i++)
+    for (u32 j = 0; j < map->height; j++)
     {
       u8 r, g, b;
-      u8 *p = (u8*) (map->pdata + bpp * map->width * j + bpp * i);
+      u8 *p = (u8*) (map->pdata + bpp * map->width * i + bpp * j);
 
       u16 h = *((u16*)p);
 
@@ -81,7 +80,7 @@ bool kgmTerrain::heightmap(kgmPicture* map)
         int k = 0;
       }
 
-      m_heightmap.map[map->width * j + i] = h;
+      m_heightmap.map[map->width * i + j] = h;
     }
   }
 
@@ -103,17 +102,14 @@ bool kgmTerrain::normalmap(kgmPicture* map)
 
   u32 bpp = map->bpp / 8;
 
-  //m_heightmap.width  = map->width;
-  //m_heightmap.height = map->height;
-
   m_heightmap.nor.alloc(count);
 
-  for (u32 j = 0; j < map->height; j++)
+  for (u32 i = 0; i < map->width; i++)
   {
-    for (u32 i = 0; i < map->width; i++)
+    for (u32 j = 0; j < map->height; j++)
     {
       u8 r, g, b;
-      u8 *p = (u8*) (map->pdata + bpp * map->width * j + bpp * i);
+      u8 *p = (u8*) (map->pdata + bpp * map->width * i + bpp * j);
 
       r = (u8) p[0];
       g = (u8) p[1];
@@ -125,7 +121,9 @@ bool kgmTerrain::normalmap(kgmPicture* map)
       v.y = (f32)g / 255.0;
       v.z = (f32)b / 255.0;
 
-      m_heightmap.nor[map->width * j + i] = v;
+      //v.normalize();
+
+      m_heightmap.nor[map->width * i + j] = v;
     }
   }
 
@@ -647,7 +645,7 @@ kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
 
 f32 kgmTerrain::get_height(uint2 v)
 {
-  u32 offset = v.x * m_heightmap.width + v.x;
+  u32 offset = v.x * m_heightmap.width + v.y;
 
   if (offset >= (m_heightmap.width * m_heightmap.height))
     return 0.0f;

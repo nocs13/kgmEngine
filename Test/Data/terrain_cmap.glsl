@@ -120,7 +120,8 @@ void kgm_main(out vec4 col)
 
   icol = clamp(icol, vec3(0.2), vec3(1.0));
 
-  //col = vec4(v_color.rgb * color * icol, 1.0);
-  col = vec4(NN.rgb, 1.0);
+  col = vec4(v_color.rgb * color * icol, 1.0);
+  //col = vec4(NN.rgb, 1.0);
   //col = vec4(color, 1.0);
+  //col = vec4(1, 0, 0, 1.0);
 }
