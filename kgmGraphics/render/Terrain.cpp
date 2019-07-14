@@ -172,7 +172,7 @@ namespace Render
       gr->gc->gcCull(gccull_back);
     }
 
-#ifdef DEBUG
+#ifdef DEBUGXXX
     {
       kgmMesh* lines = ter->lines();
 
