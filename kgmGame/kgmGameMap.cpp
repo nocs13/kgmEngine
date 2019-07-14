@@ -176,8 +176,8 @@ bool kgmGameMap::addCamera(kgmUnit* n)
     addPosition(*node, pos);
     addRotation(*node, dir);
 
-    if(n->body())
-      addCollision(*node, n);
+    //if(n->body())
+    //  addCollision(*node, n);
 
     if(n->lock())
       addLocked(*node, n->lock());
@@ -228,8 +228,8 @@ bool kgmGameMap::addMesh(kgmUnit* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, n);
+    //if(n->body())
+    //  addCollision(*node, n);
 
     if(n->lock())
       addLocked(*node, n->lock());
@@ -259,8 +259,8 @@ bool kgmGameMap::addActor(kgmActor* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, true);
+    //if(n->body())
+    //  addCollision(*node, true);
 
     if(n->lock())
       addLocked(*node, n->lock());
@@ -287,8 +287,8 @@ bool kgmGameMap::addEffect(kgmEffect* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, true);
+    //if(n->body())
+    //  addCollision(*node, true);
 
     if(n->lock())
       addLocked(*node, true);
@@ -315,8 +315,8 @@ bool kgmGameMap::addSensor(kgmSensor* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, true);
+    //if(n->body())
+    //  addCollision(*node, true);
 
     if(n->lock())
       addLocked(*node, n->lock());
@@ -344,8 +344,8 @@ bool kgmGameMap::addTrigger(kgmTrigger* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, true);
+    //if(n->body())
+    //  addCollision(*node, true);
 
     if(n->lock())
       addLocked(*node, n->lock());
@@ -371,8 +371,8 @@ bool kgmGameMap::addUnit(kgmUnit* n)
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
 
-    if(n->body())
-      addCollision(*node, true);
+    //if(n->body())
+    //  addCollision(*node, true);
 
     if(n->lock())
       addLocked(*node, n->lock());

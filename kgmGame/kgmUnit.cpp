@@ -152,8 +152,8 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmParticles* par)
 
 kgmUnit::~kgmUnit()
 {
-  if(m_body)
-    delete m_body;
+  //if(m_body)
+  //  delete m_body;
 
   if(m_remove)
     remove();
@@ -198,11 +198,11 @@ void kgmUnit::update(u32 ms)
   {
     mtx4 tm;
 
-    if(m_body)
-    {
-      m_body->transform(tm);
-    }
-    else
+    //if(m_body)
+    //{
+    //  m_body->transform(tm);
+    //}
+    //else
     {
       mtx4 rt, tr, sc;
 

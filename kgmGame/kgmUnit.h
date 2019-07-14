@@ -15,7 +15,7 @@ class kgmIGame;
 class kgmSound;
 class kgmTerrain;
 
-class kgmUnit : public kgmIGraphics::INode, public kgmObject //, public kgmIPhysics::IBody
+class kgmUnit : public kgmIGraphics::INode, public kgmObject, public kgmIPhysics::IBody
 {
   KGM_OBJECT(kgmUnit);
 
@@ -86,7 +86,7 @@ protected:
     kgmParticles* m_particles;
   };
 
-  kgmBody* m_body   = null;
+  //kgmBody* m_body   = null;
 
   Action m_action;
 
@@ -163,10 +163,10 @@ public:
     return m_type;
   }
 
-  kgmBody* body() const
-  {
-    return m_body;
-  }
+  //kgmBody* body() const
+  //{
+  //  return m_body;
+  //}
 
   kgmObstacle* obstacle()
   {
@@ -268,8 +268,8 @@ public:
 
   vec3 position()
   {
-    if(m_body)
-      return m_body->position();
+    //if(m_body)
+    //  return m_body->position();
 
     return m_position;
   }
@@ -287,32 +287,32 @@ public:
 
   vec3 rotation()
   {
-    if(m_body)
-      return m_body->rotation();
+    //if(m_body)
+    //  return m_body->rotation();
 
     return m_rotation;
   }
 
   void rotation(vec3& r)
   {
-    if(m_body)
-      m_body->rotate(r.x, r.y, r.z);
-    else
+    //if(m_body)
+    //  m_body->rotate(r.x, r.y, r.z);
+    //else
       m_rotation = r;
   }
 
   quat quaternion()
   {
-    if(m_body)
-      return m_body->quaternion();
+    //if(m_body)
+    //  return m_body->quaternion();
 
     return quat();
   }
 
   void quaternion(quat& q)
   {
-    if(m_body)
-      m_body->rotate(q);
+    //if(m_body)
+    //  m_body->rotate(q);
   }
 
   quat scale()
