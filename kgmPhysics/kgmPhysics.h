@@ -52,6 +52,7 @@ public:
   void remove(kgmObstacle*);
 
   // dynamic objects
+  void add(kgmIPhysics::IBody*);
   void add(kgmBody*);
   void remove(kgmBody*);
 

@@ -61,6 +61,7 @@ private:
   bool m_remove;
   bool m_culled;
   bool m_visible;
+  bool m_gravity;
 
   u32 m_group;
   u32 m_birth;
@@ -72,6 +73,10 @@ private:
   quat m_quaternion;
 
   mtx4 m_transform;
+
+  f32 m_mass;
+
+  box m_bound;
 
 protected:
   union
@@ -167,6 +172,56 @@ public:
   //{
   //  return m_body;
   //}
+
+  bool bodyIsValid()
+  {
+    return m_valid;
+  }
+
+  bool bodyGravity()
+  {
+    return m_gravity;
+  }
+
+  void bodyGravity(bool g)
+  {
+    m_gravity = g;
+  }
+
+  f32   bodyMass()
+  {
+    return m_mass;
+  }
+
+  void  bodyMass(f32 m)
+  {
+    m_mass = m;
+  }
+
+  vec3  bodyForce()
+  {
+    return vec3(0, 0, 0);
+  }
+
+  vec3 bodyPosition()
+  {
+    return vec3(0, 0, 0);
+  }
+
+  void bodyPosition(vec3)
+  {
+
+  }
+
+  box   bodyBound()
+  {
+    return m_bound;
+  }
+
+  void  bodyBound(box b)
+  {
+    m_bound = b;
+  }
 
   kgmObstacle* obstacle()
   {

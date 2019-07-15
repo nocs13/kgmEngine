@@ -729,8 +729,8 @@ bool kgmGameBase::gAppend(kgmUnit* node)
   if(m_graphics)
     m_graphics->add(node);
 
-  if(m_physics && node->body())
-    m_physics->add(node->body());
+  if(m_physics && node->bodyIsValid())
+    m_physics->add(node);
 
   if(m_logic)
   {
@@ -1261,16 +1261,24 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
     if(id == "Mass")
     {
+      f32 mass;
+
       a_node->node(i)->attribute("value", val);
-      sscanf(val.data(), "%f", &actor->body()->m_mass);
+      sscanf(val.data(), "%f", &mass);
+
+      actor->bodyMass(mass);
     }
     else if(id == "Bound")
     {
       float a[3];
+      box bb;
+
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f%f%f", &a[0], &a[1], &a[2]);
-      actor->body()->m_bound.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
-      actor->body()->m_bound.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+      bb.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
+      bb.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
+
+      actor->bodyBound(bb);
     }
     else if(id == "Collision")
     {
@@ -1325,7 +1333,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
                     {
                       vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
 
-                      actor->body()->addShapeSide(v);
+                      //actor->body()->addShapeSide(v);
                     }
 
                     delete [] pol;
@@ -1336,8 +1344,8 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
           }
         }
 
-        if(actor->body()->m_convex.size() > 0)
-          actor->body()->m_shape = (u32) kgmBody::ShapePolyhedron;
+        //if(actor->body()->m_convex.size() > 0)
+        //  actor->body()->m_shape = (u32) kgmBody::ShapePolyhedron;
       }
     }
     else if(id == "Gravity")
@@ -1345,9 +1353,9 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("value", val);
 
       if(val == "true")
-        actor->body()->m_gravity = true;
+        actor->bodyGravity(true);
       else
-        actor->body()->m_gravity = false;
+        actor->bodyGravity(false);
     }
     else if(id == "Dummies")
     {

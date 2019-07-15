@@ -67,6 +67,12 @@ void kgmPhysics::remove(kgmObstacle* o)
 }
 
 // dynamic objects
+void kgmPhysics::add(kgmPhysics::IBody* body)
+{
+  if(!body)
+    return;
+}
+
 void kgmPhysics::add(kgmBody* body)
 {
   if(!body)

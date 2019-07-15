@@ -203,7 +203,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   //m_visual->set(mesh);
   //m_visual->set(material);
 
-  m_body = new kgmBody();
+  /*m_body = new kgmBody();
 
   m_body->translate(pos);
   m_body->rotate(rot);
@@ -212,7 +212,7 @@ kgmLaser::kgmLaser(kgmIGame* g, u32 time, vec3 pos, vec3 rot,
   m_body->m_udata     = this;
   m_body->m_mass      = 0.0f;
   m_body->m_bound.min = vec3(-hlen, -hwid, -hwid);
-  m_body->m_bound.max = vec3( hlen,  hwid,  hwid);
+  m_body->m_bound.max = vec3( hlen,  hwid,  hwid);*/
 }
 
 kgmLaser::~kgmLaser()

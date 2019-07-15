@@ -65,10 +65,8 @@ void kgmBaseActions::accelerate(kgmIGame* g, kgmActor* a, kgmActor::Action* c)
   u32 ms = kgmTime::getTicks() - c->time;
   float acc = 0.0;
 
-  if(!a->body())
-    return;
 
   get(c->variables, "accelerate", acc);
 
-  a->body()->m_velocity += acc * ms / 1000;
+  //a->body()->m_velocity += acc * ms / 1000;
 }

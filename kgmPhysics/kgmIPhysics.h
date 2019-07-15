@@ -18,16 +18,21 @@ public:
   class IBody
   {
   public:
-    virtual bool isBodyValid()      = 0;
-    virtual f32  getBodyMass()      = 0;
-    virtual f32  getBodyVelocity()  = 0;
-    virtual vec3 getBodyPosition()  = 0;
-    virtual vec3 getBodyDirection() = 0;
+    virtual bool bodyIsValid() = 0;
 
-    virtual void  setBodyMass(f32)       = 0;
-    virtual void  setBodyVelocity(f32)   = 0;
-    virtual void  setBodyPosition(vec3)  = 0;
-    virtual void  setBodyDirection(vec3) = 0;
+    virtual bool bodyGravity()     = 0;
+    virtual void bodyGravity(bool) = 0;
+
+    virtual f32   bodyMass()     = 0;
+    virtual void  bodyMass(f32)  = 0;
+
+    virtual vec3  bodyForce() = 0;
+
+    virtual vec3 bodyPosition()     = 0;
+    virtual void bodyPosition(vec3) = 0;
+
+    virtual box   bodyBound()     = 0;
+    virtual void  bodyBound(box)  = 0;
   };
 
   class IObstacle
@@ -45,6 +50,7 @@ public:
  virtual void update(u32 ms) = 0;
 
  virtual void add(vec3& a, vec3& b, vec3& c) = 0;
+ virtual void add(kgmIPhysics::IBody*)        = 0;
  virtual void add(kgmBody*)                  = 0;
  virtual void add(kgmObstacle*)              = 0;
  virtual void remove(kgmBody*)               = 0;

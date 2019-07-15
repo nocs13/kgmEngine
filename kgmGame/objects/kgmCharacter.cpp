@@ -64,17 +64,14 @@ void kgmCharacter::update(u32 ms)
     }
   }*/
 
-  if(body())
-  {
-    vec3 pos = body()->position();
+  vec3 pos = bodyPosition();
 
-    if(pos.x < -3000) pos.x =  3000;
-    if(pos.x >  3000) pos.x = -3000;
-    if(pos.y < -3000) pos.y =  3000;
-    if(pos.y >  3000) pos.y = -3000;
+  if(pos.x < -3000) pos.x =  3000;
+  if(pos.x >  3000) pos.x = -3000;
+  if(pos.y < -3000) pos.y =  3000;
+  if(pos.y >  3000) pos.y = -3000;
 
-    body()->translate(pos);
-  }
+  bodyPosition(pos);
 
   if(m_state)
   {
@@ -124,15 +121,15 @@ void kgmCharacter::action(kgmString &a)
 
   if(a == "idle")
   {
-    m_body->m_velocity = speed_idl;
+    //m_body->m_velocity = speed_idl;
   }
   else if(a == "walk")
   {
-    m_body->m_velocity = speed_wlk;
+    //m_body->m_velocity = speed_wlk;
   }
   else if(a == "run")
   {
-    m_body->m_velocity = speed_run;
+    //m_body->m_velocity = speed_run;
   }
   else if(a == "jump")
   {

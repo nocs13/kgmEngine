@@ -2032,7 +2032,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
                     {
                       vec3 v[3] = {pol[0], pol[k - 1], pol[k]};
 
-                      actor->body()->addShapeSide(v);
+                      //actor->body()->addShapeSide(v);
                     }
 
                     delete [] pol;

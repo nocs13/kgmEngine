@@ -4,7 +4,7 @@
 #include "../kgmMath/kgmMath.h"
 #include "kgmIPhysics.h"
 
-class kgmBody: public kgmObject//, public kgmIPhysics::IBody
+class kgmBody: public kgmObject, public kgmIPhysics::IBody
 {
   KGM_OBJECT(kgmBody);
 

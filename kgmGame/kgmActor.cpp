@@ -11,13 +11,13 @@ kgmActor::kgmActor(kgmIGame* g)
 
   //m_visual = new kgmVisual();
 
-  m_body              = new kgmBody();
-  m_body->m_udata     = this;
-  m_body->m_mass      = 1.0f;
-  m_body->m_position  = vec3(0, 0, 1);
-  m_body->m_rotation  = vec3(0, 0, 0);
-  m_body->m_bound.min = vec3(-1, -1, 0);
-  m_body->m_bound.max = vec3(1, 1, 2);
+  //m_body              = new kgmBody();
+  //m_body->m_udata     = this;
+  //m_body->m_mass      = 1.0f;
+  //m_body->m_position  = vec3(0, 0, 1);
+  //m_body->m_rotation  = vec3(0, 0, 0);
+  //m_body->m_bound.min = vec3(-1, -1, 0);
+  //m_body->m_bound.max = vec3(1, 1, 2);
 
   m_transform.identity();
   m_dvisual.identity();
@@ -54,7 +54,7 @@ void kgmActor::exit()
 
 void kgmActor::init()
 {
-  m_transform.translate(m_body->m_position);
+  //m_transform.translate(m_body->m_position);
 }
 
 void kgmActor::update(u32 time)
