@@ -79,6 +79,8 @@ private:
 
   box m_bound;
 
+  kgmIPhysics::BodyShape m_shape;
+
 protected:
   union
   {
@@ -227,6 +229,16 @@ public:
   void  bodyBound(box b)
   {
     m_bound = b;
+  }
+
+  kgmIPhysics::BodyShape bodyShape()
+  {
+    return m_shape;
+  }
+
+  void bodyShape(kgmIPhysics::BodyShape s)
+  {
+    m_shape = s;
   }
 
   kgmObstacle* obstacle()

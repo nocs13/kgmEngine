@@ -65,5 +65,5 @@ protected:
   void getBodies(kgmList<IBody*>& bodies, sphere& s);
 
   u32 getTriangles(triangle3 triangles[], u32 max, sphere& s);
-  u32 getBodies(kgmBody* bodies[], u32 max, sphere& s);
+  u32 getBodies(IBody* bodies[], u32 max, sphere& s);
 };

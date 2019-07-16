@@ -12,7 +12,8 @@ public:
   {
     BodyShapeBox,
     BodyShapeSphere,
-    BodyShapeCylinder
+    BodyShapeCylinder,
+    BodyShapePolyhedron
   };
 
   class IBody
@@ -35,6 +36,9 @@ public:
 
     virtual box   bodyBound()     = 0;
     virtual void  bodyBound(box)  = 0;
+
+    virtual BodyShape bodyShape()           = 0;
+    virtual void      bodyShape(BodyShape ) = 0;
   };
 
   class IObstacle
