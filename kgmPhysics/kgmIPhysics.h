@@ -20,6 +20,8 @@ public:
   public:
     virtual bool bodyIsValid() = 0;
 
+    virtual bool bodyUseCollision() = 0;
+
     virtual bool bodyGravity()     = 0;
     virtual void bodyGravity(bool) = 0;
 
@@ -50,9 +52,8 @@ public:
  virtual void update(u32 ms) = 0;
 
  virtual void add(vec3& a, vec3& b, vec3& c) = 0;
- virtual void add(kgmIPhysics::IBody*)        = 0;
- virtual void add(kgmBody*)                  = 0;
+ virtual void add(IBody*)                    = 0;
  virtual void add(kgmObstacle*)              = 0;
- virtual void remove(kgmBody*)               = 0;
+ virtual void remove(IBody*)                 = 0;
  virtual void remove(kgmObstacle*)           = 0;
 };

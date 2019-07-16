@@ -71,19 +71,13 @@ void kgmPhysics::add(kgmPhysics::IBody* body)
 {
   if(!body)
     return;
-}
-
-void kgmPhysics::add(kgmBody* body)
-{
-  if(!body)
-    return;
 
   m_bodies.add(body);
 }
 
-void kgmPhysics::remove(kgmBody* body)
+void kgmPhysics::remove(kgmPhysics::IBody* body)
 {
-  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
+  for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
   {
     if(body == (*i))
     {
@@ -150,9 +144,9 @@ void kgmPhysics::doCollision(f32 dtime)
   triangle3  triangles[max_triangles];
   kgmBody*   bodies[max_bodies];
 
-  for(kgmList<kgmBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
+  for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
   {
-    if(*i == null || (*i)->removed())
+    if(*i == null)
     {
       m_bodies.erase(i);
 
@@ -163,41 +157,58 @@ void kgmPhysics::doCollision(f32 dtime)
     bool  upstare  = false;
     //bool  insect   = false;
     u32   ccount   = 0;
+
+    box       bbound;
     cylinder  cbound;
     sphere    sbound;
     sphere    sinteract;
 
-    float ctime  = dtime;
+    float ctime = dtime;
 
-    kgmBody* body = (*i);
+    IBody* body = (*i);
 
-    if(!body->m_valid)
+    if(!body->bodyIsValid())
       continue;
 
-    if(!body->m_collision)
+    float mass = body->bodyMass();
+
+    if (mass < 0.5)
+      mass = 0.5;
+
+    float gdist = 5 * ctime * mass;
+
+    vec3  spos = body->bodyPosition();
+
+    vec3 force = body->bodyForce();
+
+    vec3 accel = force * (1.0 / mass);
+
+    vec3 speed = accel;
+
+    vec3  epos = spos + speed * ctime;
+
+    if(!body->bodyUseCollision())
     {
-      body->m_position = body->m_position + body->direction() * body->m_velocity * dtime;
+      body->bodyPosition(epos);
 
       continue;
     }
 
 #ifdef DEBUG
-    body->m_intersect = false;
-#else
+    //body->m_intersect = false;
 #endif
 
     //body->m_V.z = 0.0f;
-    float gdist = 5 * ctime * body->m_mass;
-    vec3  spos = body->m_position;
-    vec3  epos = body->m_position + body->direction() * (body->m_velocity * ctime);
 
-    float rx = 0.5f * (body->m_bound.max.x - body->m_bound.min.x),//crad,
-        ry = 0.5f * (body->m_bound.max.y - body->m_bound.min.y),//crad,
-        rz = 0.5f * (body->m_bound.max.z - body->m_bound.min.z);//10.0f;
+    bbound = body->bodyBound();
+
+    float rx = 0.5f * (bbound.max.x - bbound.min.x),//crad,
+          ry = 0.5f * (bbound.max.y - bbound.min.y),//crad,
+          rz = 0.5f * (bbound.max.z - bbound.min.z);//10.0f;
 
     //body->m_V = body->m_P = body->m_F = vec3(0, 0, 0);
 
-    if(m_gravity && body->m_gravity && !upstare)
+    if(m_gravity && body->bodyGravity() && !upstare)
     {
       epos.z -= gdist;
     }
@@ -223,10 +234,10 @@ void kgmPhysics::doCollision(f32 dtime)
       vec3 pt_ins, nr_ins;
       vec3 cs = cbody->m_position;
       vec3 cd = cbody->m_position + cbody->direction();
-      vec3 s = body->m_position;
+      vec3 s = body->bodyPosition();
       vec3 d = epos;
 
-      //		npos.z = zpos;
+      //npos.z = zpos;
 
       bool  binsect = false;
       mtx4  mtr;
@@ -459,14 +470,18 @@ void kgmPhysics::getTriangles(kgmList<triangle3>& triangles, sphere& s)
   }
 }
 
-void kgmPhysics::getBodies(kgmList<kgmBody*>& bodies, sphere& s)
+void kgmPhysics::getBodies(kgmList<IBody*>& bodies, sphere& s)
 {
   int i = 0;
   int count = m_bodies.size();
 
   for(; i < count; i++)
   {
-    sphere3 bs(m_bodies[i]->m_bound);	bs.center = m_bodies[i]->m_position;
+    box     bb = m_bodies[i]->bodyBound();
+    sphere3 bs(bb);
+
+    bs.center = m_bodies[i]->bodyPosition();
+
     vec3	  ds = s.center - bs.center;
     float	  mgn = SQR(ds.x) + SQR(ds.y) + SQR(ds.z);
 

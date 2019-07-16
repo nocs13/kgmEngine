@@ -62,6 +62,7 @@ private:
   bool m_culled;
   bool m_visible;
   bool m_gravity;
+  bool m_collision;
 
   u32 m_group;
   u32 m_birth;
@@ -176,6 +177,11 @@ public:
   bool bodyIsValid()
   {
     return m_valid;
+  }
+
+  bool bodyUseCollision()
+  {
+    return m_collision;
   }
 
   bool bodyGravity()

@@ -18,7 +18,7 @@ public:
   float  m_gravity;
   bool   m_isgravity;
 
-  kgmList<kgmBody*>       m_bodies;
+  kgmList<IBody*>         m_bodies;
   kgmList<triangle3>      m_triangles;
   kgmList<kgmObstacle*>   m_obstacles;
   kgmOctTree<triangle3*>  m_treestatic;
@@ -52,9 +52,8 @@ public:
   void remove(kgmObstacle*);
 
   // dynamic objects
-  void add(kgmIPhysics::IBody*);
-  void add(kgmBody*);
-  void remove(kgmBody*);
+  void add(IBody*);
+  void remove(IBody*);
 
   //collision detection
   bool checkCollision(vec3& spos, vec3& epos, float& rad, vec3& rpos);
@@ -63,7 +62,7 @@ public:
 protected:
   void doCollision(f32);
   void getTriangles(kgmList<triangle3>& triangles, sphere& s);
-  void getBodies(kgmList<kgmBody*>& bodies, sphere& s);
+  void getBodies(kgmList<IBody*>& bodies, sphere& s);
 
   u32 getTriangles(triangle3 triangles[], u32 max, sphere& s);
   u32 getBodies(kgmBody* bodies[], u32 max, sphere& s);
