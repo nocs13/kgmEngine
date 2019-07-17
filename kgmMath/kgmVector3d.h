@@ -101,21 +101,37 @@ public:
     return (x*v.x + y*v.y + z*v.z);
   }
 
-  kgmVector3d<T> cross(const kgmVector3d<T>& v) const{
+  kgmVector3d<T> cross(const kgmVector3d<T>& v) const {
     return kgmVector3d<T>(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
   }
 
-  kgmVector3d<T> slerp(const kgmVector3d<T>& v, T t){
+  kgmVector3d<T> slerp(const kgmVector3d<T>& v, T t) {
     return kgmVector3d<T>(x + (v.x - x) * t, y + (v.y - y) * t, z + (v.z - z) * t);
   }
 
-  T angle(const kgmVector3d<T>& v){
+  T angle(const kgmVector3d<T>& v)
+  {
     T smul = (T)(x * v.x + y * v.y + z * v.z);
     T denm = (T)(sqrt(x*x + y*y + z*z) *
                  sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
+
     if(denm == 0)
       return 0;
+
     T cosa = smul / denm;
+
     return (T)acos(cosa);
+  }
+
+  kgmVector3d<T> angles()
+  {
+    kgmVector3d<T> a;
+    kgmVector3d<T> x(1, 0, 0), y(0, 1, 0), z(0, 0, 1);
+
+    a.x = angle(x);
+    a.y = angle(y);
+    a.z = angle(z);
+
+    return a;
   }
 };

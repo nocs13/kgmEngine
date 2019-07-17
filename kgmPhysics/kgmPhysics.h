@@ -42,7 +42,7 @@ public:
   virtual void clear();
   virtual void build();
   virtual void update(u32 ms);
-  virtual void collision(kgmBody* cbody, kgmBody* tobody);
+  virtual void collision(IBody* cbody, IBody* tobody);
 
   // static objects
   void add(vec3& a, vec3& b, vec3& c);

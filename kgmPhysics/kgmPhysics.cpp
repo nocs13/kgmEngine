@@ -21,7 +21,7 @@ void kgmPhysics::update(u32 ms)
   doCollision((f32) ms / (f32) 1000.0f);
 }
 
-void kgmPhysics::collision(kgmBody* cbody, kgmBody* tobody)
+void kgmPhysics::collision(IBody* cbody, IBody* tobody)
 {
 }
 
@@ -142,7 +142,7 @@ void kgmPhysics::doCollision(f32 dtime)
   u16 max_bodies = 50;
 
   triangle3  triangles[max_triangles];
-  kgmBody*   bodies[max_bodies];
+  IBody*     bodies[max_bodies];
 
   for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
   {
@@ -283,14 +283,18 @@ void kgmPhysics::doCollision(f32 dtime)
       box_cbody.max.y += 0.5 * cbbound.dimension().y;
       box_cbody.max.z += 0.5 * cbbound.dimension().z;
 
-      obox3 ob_body = body->getOBox();
-      obox3 ob_cbody = cbody->getOBox();
-      mtx4  mtx_cbody(cbody->m_quaternion, cbody->m_position);
+      vec3 bdir  = body->bodyForce().normal();
+      vec3 cbdir = cbody->bodyForce().normal();
+      vec3 bangles  = bdir.angles();
+      vec3 cbangles = cbdir.angles();
+      obox3 ob_body  = obox3(body->bodyPosition(), bdir, body->bodyBound().dimension());
+      obox3 ob_cbody = obox3(cbody->bodyPosition(), cbdir, cbody->bodyBound().dimension());
+      quat  cbquat = quat(cbangles);
+      mtx4  mtx_cbody(cbquat, cs);
 
       if(box_body.intersect(box_cbody) &&
-         ((cbody->m_shape == kgmBody::ShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
-           || (cbody->m_shape == kgmBody::ShapePolyhedron && m_collision.ob_collision(ob_body, ob_cbody)
-               && m_collision.ob_collision(ob_cbody, cbody->m_convex, mtx_cbody)))
+         ((cbody->bodyShape() == BodyShapeBox && m_collision.ob_collision(ob_body, ob_cbody))
+          || (cbody->bodyShape() == BodyShapePolyhedron && m_collision.ob_collision(ob_body, ob_cbody)))
          //&& ob_body.intersect(ob_cbody)
          //&& ob_cbody.intersect(ob_body)
          //m_collision.ob_collision(body->m_bound, s, r, 2.0f, cbody->m_bound, s, cr, 1.0f)
@@ -341,17 +345,12 @@ void kgmPhysics::doCollision(f32 dtime)
       if(binsect)
       {
         collision(body, cbody);
-
-        if(cbody->m_velocity > 0.0f)
-        {
-          //body->m_V = body->m_V + cbody->m_direction * cbody->m_velocity;
-        }
       }
     }
 
-    sinteract.center = body->m_position;
-    sinteract.radius = body->m_bound.min.distance(body->m_bound.max) +
-                       body->m_position.distance(epos);
+    sinteract.center = body->bodyPosition();
+    sinteract.radius = body->bodyBound().dimension().length() +
+                       body->bodyPosition().distance(epos);
 
     u32 ctriangles = getTriangles(triangles, max_triangles, sinteract);
 
@@ -360,7 +359,7 @@ void kgmPhysics::doCollision(f32 dtime)
       triangle3  trn = triangles[j];
       plane pln(trn.pt[0], trn.pt[1], trn.pt[2]);
       vec3 n = vec3(0, 0, 0);
-      vec3 s = body->m_position;
+      vec3 s = body->bodyPosition();
       vec3 d = epos;
       d.z = s.z += rz;
 
@@ -425,7 +424,7 @@ void kgmPhysics::doCollision(f32 dtime)
       }
     }
 
-    if(!upstare)
+    /*if(!upstare)
     {
       if(holddown)
         body->m_falling = false;
@@ -440,7 +439,7 @@ void kgmPhysics::doCollision(f32 dtime)
     if(epos.z <= (spos.z - gdist))
       body->m_falling = true;
 
-    body->m_falling = false;
+    body->m_falling = false;*/
     body->bodyPosition(epos);
   }
 }
