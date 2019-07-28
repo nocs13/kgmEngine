@@ -132,7 +132,8 @@ class kgm_panel(bpy.types.Panel):
     elif hasattr(obj, 'kgm_dummy') and obj.kgm_unit is True:
       self.draw_dummy(obj)
     else:
-      self.draw_none()
+      pass
+      #self.draw_none()
 
   def draw_none():
     print('draw_none')
@@ -908,12 +909,13 @@ class kgmObstacle:
   def __init__(self, o):
     mesh = o.data
     mtx = o.matrix_local
-    self.name = mesh.name
+    self.name = o.name
     self.faces = []
+    self.absorption = o.collision.absorption
 
-    if hasattr(mesh, 'faces'):
-      for i in range(0, len(mesh.faces)):
-        face = mesh.faces[i]
+    if hasattr(mesh, 'polygons'):
+      for i in range(0, len(mesh.polygons)):
+        face = mesh.polygons[i]
         iface = []
 
         for j in range(0, len(face.vertices)):
@@ -1182,11 +1184,12 @@ def export_sceleton(file, o):
 
 
 def export_obstacle(file, o):
-  file.write(" <Obstacle polygons='" + str(len(o.faces)) + "'>\n")
-  for face in collision.faces:
+  
+  file.write(" <Obstacle polygons='" + str(len(o.faces)) + "' absorption='" + toSnum(o.absorption) + "'>\n")
+  for face in o.faces:
     file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
     for v in face:
-      file.write("   " + str(v[0]) + " " + str(v[1]) + " " + str(v[2]) + "\n")
+      file.write("   " + toSnum(v[0]) + " " + toSnum(v[1]) + " " + toSnum(v[2]) + "\n")
     file.write("  </Polygon>\n")
   file.write(" </Obstacle>\n")
 
