@@ -159,8 +159,9 @@ public:
     virtual kgmUnit* next() { return null; }
   };
 
+  typedef kgmUnit* (*NEW_UNIT)();
+
 public:
-  //virtuals
   virtual int            gQuit()              = 0;    //close game
   virtual int            gInit()              = 0;    //start game
   virtual int            gLoad(kgmString)     = 0;    //load game map
@@ -168,16 +169,17 @@ public:
   virtual int            gButton(game_button) = 0;    //game input button state
   virtual u32            gState()             = 0;    //check game active  state
   virtual int            gSwitch(u32)         = 0;    //switch game state
-  virtual kgmUnit*       gSpawn(kgmString)    = 0;    //spawn game actor
+  virtual kgmUnit*       gSpawn(kgmString)    = 0;    //spawn game unit
+  
+  virtual bool*          gUnitRegister(kgmString, NEW_UNIT)    = 0;    //register unit alocator by type
 
   virtual bool           gAppend(kgmUnit*) = 0;       //add game node in map
-  virtual kgmUnit*       gUnit(kgmString)  = 0;       //collect nodes in map
+  virtual kgmUnit*       gUnit(kgmString)  = 0;       //find unit by name
   virtual Iterator*      gObjects()        = 0;       //collect nodes in map
 
-  virtual void           guiAdd(kgmGui* g) = 0;
+  virtual void           guiAdd(kgmGui* g) = 0;       //add gui.
 
   virtual kgmIPhysics*    getPhysics() = 0;
-  virtual kgmISpawner*    getSpawner() = 0;
   virtual kgmIAudio*      getAudio() = 0;
   virtual kgmIVideo*      getVideo() = 0;
   virtual kgmILogic*      getLogic() = 0;

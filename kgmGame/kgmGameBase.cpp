@@ -191,11 +191,6 @@ kgmIPhysics* kgmGameBase::getPhysics()
   return m_game->m_physics;
 }
 
-kgmISpawner* kgmGameBase::getSpawner()
-{
-  return null;
-}
-
 kgmIAudio*  kgmGameBase::getAudio()
 {
   return (kgmIAudio*)m_game->m_audio;

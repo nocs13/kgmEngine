@@ -15,7 +15,7 @@ class kgmIGame;
 class kgmSound;
 class kgmTerrain;
 
-class kgmUnit : public kgmIGraphics::INode, public kgmObject, public kgmIPhysics::IBody
+class kgmUnit : public kgmIGraphics::INode, public kgmIPhysics::IBody, public kgmObject
 {
   KGM_OBJECT(kgmUnit);
 
