@@ -775,6 +775,11 @@ kgmIGame::Iterator* kgmGameBase::gObjects()
   return it;
 }
 
+bool kgmGameBase::gUnitRegister(kgmString, NEW_UNIT)
+{
+  return true;
+}
+
 inline void xmlAttr(kgmXml::Node* node, const char* id, kgmString& val)
 {
   kgmString sid;

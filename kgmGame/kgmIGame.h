@@ -169,10 +169,10 @@ public:
   virtual int            gButton(game_button) = 0;    //game input button state
   virtual u32            gState()             = 0;    //check game active  state
   virtual int            gSwitch(u32)         = 0;    //switch game state
-  virtual kgmUnit*       gSpawn(kgmString)    = 0;    //spawn game unit
-  
-  virtual bool*          gUnitRegister(kgmString, NEW_UNIT)    = 0;    //register unit alocator by type
 
+  virtual bool           gUnitRegister(kgmString, NEW_UNIT) = 0;    //Register additional unit alocator by type
+
+  virtual kgmUnit*       gSpawn(kgmString) = 0;       //spawn game unit
   virtual bool           gAppend(kgmUnit*) = 0;       //add game node in map
   virtual kgmUnit*       gUnit(kgmString)  = 0;       //find unit by name
   virtual Iterator*      gObjects()        = 0;       //collect nodes in map

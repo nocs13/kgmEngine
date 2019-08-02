@@ -164,6 +164,7 @@ public:
   bool           gAppend(kgmUnit*);
   kgmUnit*       gUnit(kgmString);
   Iterator*      gObjects();
+  bool           gUnitRegister(kgmString, NEW_UNIT);
 
   bool gMapBinary(kgmString&);
   bool gMapAscii(kgmString&);
