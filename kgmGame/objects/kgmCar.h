@@ -7,6 +7,7 @@
 class kgmCar: public kgmActor
 {
   KGM_OBJECT(kgmCar);
+  KGM_UNIT(kgmCar);
 
 public:
   kgmCar(kgmIGame*);

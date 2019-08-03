@@ -9,7 +9,7 @@
 
 
 
-class kgmGameObject: public kgmIGraphics::INode, public kgmObject
+class kgmGameObject: public kgmIGraphics::INode, public kgmIPhysics::IBody, public kgmObject
 {
 public:
   kgmGameObject();

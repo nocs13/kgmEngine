@@ -11,8 +11,9 @@
 class kgmResult: public kgmUnit
 {
   KGM_OBJECT(kgmResult);
-public:
+  KGM_UNIT(kgmResult);
 
+public:
   kgmText* m_text = null;
 
   kgmString text;
@@ -32,6 +33,7 @@ public:
 class kgmParticlesObject: public kgmEffect
 {
   KGM_OBJECT(kgmParticlesObject);
+  KGM_UNIT(kgmParticlesObject);
 
 protected:
   kgmParticles* particles = null;
@@ -65,6 +67,7 @@ public:
 class kgmFlame: public kgmParticlesObject
 {
   KGM_OBJECT(kgmFlame);
+  KGM_UNIT(kgmFlame);
 
 public:
   kgmFlame(kgmIGame* g,
@@ -80,6 +83,7 @@ public:
 class kgmSmoke: public kgmParticlesObject
 {
   KGM_OBJECT(kgmSmoke);
+  KGM_UNIT(kgmSmoke);
 
 public:
   kgmSmoke(kgmIGame* g,
@@ -95,6 +99,7 @@ public:
 class kgmExplode: public kgmParticlesObject
 {
   KGM_OBJECT(kgmExplode);
+  KGM_UNIT(kgmExplode);
 
 public:
   kgmExplode(kgmIGame* g,
@@ -109,6 +114,7 @@ public:
 class kgmLaser: public kgmEffect
 {
   KGM_OBJECT(kgmLaser);
+  KGM_UNIT(kgmLaser);
 
   struct Vertex
   {
@@ -132,6 +138,7 @@ public:
 class kgmIonNozzle: public kgmEffect
 {
   KGM_OBJECT(kgmIonNozzle);
+  KGM_UNIT(kgmIonNozzle);
 
   struct Vertex
   {

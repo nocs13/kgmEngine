@@ -9,6 +9,7 @@ class kgmIGame;
 class kgmCharacter : public kgmActor
 {
   KGM_OBJECT(kgmCharacter);
+  KGM_UNIT(kgmCharacter);
 
   float roll;
   float yaaw;

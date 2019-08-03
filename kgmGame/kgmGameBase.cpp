@@ -775,8 +775,19 @@ kgmIGame::Iterator* kgmGameBase::gObjects()
   return it;
 }
 
-bool kgmGameBase::gUnitRegister(kgmString, NEW_UNIT)
+bool kgmGameBase::gUnitRegister(kgmString type, NEW_UNIT fn)
 {
+  if (fn == NULL || type.length() < 1)
+    return false;
+
+  auto i = m_unit_generators.get(type);
+
+  if (i.isValid() && i.data() != NULL) {
+
+  }
+
+  m_unit_generators.set(type, fn);
+  
   return true;
 }
 

@@ -56,11 +56,11 @@ protected:
   kgmFont*  m_font;
   kgmString m_paths;
 
-  char m_keys[130];
-  char m_input[gbtn_end];
-  char m_keymap[150];
+  u8 m_keys[130];
+  u8 m_input[gbtn_end];
+  u8 m_keymap[150];
 
-  int  m_state;
+  s32  m_state;
   bool m_result;
 
   kgmGameLogic*    m_logic;
@@ -69,6 +69,8 @@ protected:
   kgmList<kgmGui*>    m_guis;
   kgmList<kgmUnit*>   m_units;
   kgmList<kgmObject*> m_objects;
+
+  kgmMap<kgmString, NEW_UNIT> m_unit_generators;
 
   u32             m_fps;
   u32             m_tpf;

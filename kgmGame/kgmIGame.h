@@ -159,7 +159,7 @@ public:
     virtual kgmUnit* next() { return null; }
   };
 
-  typedef kgmUnit* (*NEW_UNIT)();
+  typedef kgmUnit* (*NEW_UNIT)(kgmIGame*);
 
 public:
   virtual int            gQuit()              = 0;    //close game

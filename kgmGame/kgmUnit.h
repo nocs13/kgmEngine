@@ -11,6 +11,12 @@
 #include "../kgmGraphics/kgmIGraphics.h"
 #include "../kgmPhysics/kgmIPhysics.h"
 
+#define KGM_UNIT(o_class)                                             \
+  public:                                                             \
+  static kgmUnit* gen_unit(kgmIGame* g) { return new o_class(g); } \
+  private:
+
+
 class kgmIGame;
 class kgmSound;
 class kgmTerrain;

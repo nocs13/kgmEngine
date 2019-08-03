@@ -257,7 +257,7 @@ int kgmSystem::getProcessPath(kgmString &path)
 
   return 0;
 }
-/*
+
 #ifdef _WIN32
 #include <windows.h>
 #elif MACOS
@@ -267,11 +267,14 @@ int kgmSystem::getProcessPath(kgmString &path)
 #include <unistd.h>
 #endif
 
-int getNumCores() {
+int getNumCpuCores() 
+{
+  int cores = 1;
+
 #ifdef WIN32
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
-    return sysinfo.dwNumberOfProcessors;
+    cores = sysinfo.dwNumberOfProcessors;
 #elif MACOS
     int nm[2];
     size_t len = 4;
@@ -285,11 +288,14 @@ int getNumCores() {
         sysctl(nm, 2, &count, &len, NULL, 0);
         if(count < 1) { count = 1; }
     }
-    return count;
+    cores = count;
 #else
-    return sysconf(_SC_NPROCESSORS_ONLN);
+    cores = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
-}*/
+
+  return cores;
+}
+
 int kgmSystem::getCpuConcurrency()
 {
   int num = 1;
