@@ -768,9 +768,9 @@ kgmUnit* kgmGameBase::gUnit(kgmString id)
   return un;
 }
 
-kgmIGame::Iterator* kgmGameBase::gObjects()
+kgmIGame::Iterator* kgmGameBase::gUnits()
 {
-  GIterator* it = new GIterator(this);
+  UnitIterator* it = new UnitIterator(this);
 
   return it;
 }

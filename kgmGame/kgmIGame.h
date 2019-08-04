@@ -175,7 +175,7 @@ public:
   virtual kgmUnit*       gSpawn(kgmString) = 0;       //spawn game unit
   virtual bool           gAppend(kgmUnit*) = 0;       //add game node in map
   virtual kgmUnit*       gUnit(kgmString)  = 0;       //find unit by name
-  virtual Iterator*      gObjects()        = 0;       //collect nodes in map
+  virtual Iterator*      gUnits()          = 0;       //collect nodes in map
 
   virtual void           guiAdd(kgmGui* g) = 0;       //add gui.
 

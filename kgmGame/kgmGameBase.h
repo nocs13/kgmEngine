@@ -89,14 +89,14 @@ public:
 #endif
 
 private:
-  struct GIterator: public kgmIGame::Iterator
+  struct UnitIterator: public kgmIGame::Iterator
   {
     kgmGameBase* game;
 
     kgmList<kgmUnit*>::iterator i;
 
   public:
-    GIterator(kgmGameBase* g)
+    UnitIterator(kgmGameBase* g)
     {
       game = g;
       i = g->m_units.begin();
@@ -165,7 +165,7 @@ public:
   kgmUnit*       gSpawn(kgmString);
   bool           gAppend(kgmUnit*);
   kgmUnit*       gUnit(kgmString);
-  Iterator*      gObjects();
+  Iterator*      gUnits();
   bool           gUnitRegister(kgmString, NEW_UNIT);
 
   bool gMapBinary(kgmString&);

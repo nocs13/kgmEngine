@@ -53,7 +53,7 @@ void kgmGameGraphics::render_3d()
 
   if (m_game)
   {
-    kgmIGame::Iterator* i = m_game->gObjects();
+    kgmIGame::Iterator* i = m_game->gUnits();
 
     while(kgmUnit* un = i->next())
     {

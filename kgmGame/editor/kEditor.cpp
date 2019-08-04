@@ -264,7 +264,7 @@ void kEditor::select(int x, int y)
 
   kgmList<kgmUnit*> nodes;
 
-  kgmIGame::Iterator* i = game->gObjects();
+  kgmIGame::Iterator* i = game->gUnits();
 
   while(kgmUnit* un = i->next())
   {
@@ -1276,7 +1276,7 @@ void kEditor::onViewObjects()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
 
-  kgmIGame::Iterator* i = game->gObjects();
+  kgmIGame::Iterator* i = game->gUnits();
 
   while(kgmUnit* un = i->next())
       vo->addItem(un->getName());
