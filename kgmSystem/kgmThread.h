@@ -36,7 +36,7 @@ public:
 
   typedef int (*Thread_Function)(void*);
 
-  typedef kgmFunction<void(void*,...)> Thread_Member_Function;
+  typedef kgmFunction<void(void*)> Thread_Member_Function;
 
 #ifdef WIN32
   typedef CRITICAL_SECTION* Mutex;
@@ -54,7 +54,7 @@ public:
   };
 
   static Thread thread_create(Thread_Function fn, void* obj = null, Priority pr = PrNormal);
-  static Thread thread_create(Thread_Member_Function fn, Priority pr = PrNormal);
+  static Thread thread_create(Thread_Member_Function fn, void* obj = null, Priority pr = PrNormal);
   static bool   thread_kill(Thread th);
   static bool   thread_join(Thread th);
   static bool   thread_active(Thread th);
@@ -95,5 +95,5 @@ private:
  static void thread(kgmThread *p);
 
 public:
- static void thread_1(Thread_Member_Function* p);
+ static void thread_1(Thread_Member_Function& p, void* obj = null);
 };

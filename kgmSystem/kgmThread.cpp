@@ -17,12 +17,9 @@ void kgmThread::thread(kgmThread *p)
   kgmThread::exit(p->m_result);
 }
 
-void kgmThread::thread_1(kgmThread::Thread_Member_Function* p)
+void kgmThread::thread_1(kgmThread::Thread_Member_Function& p, void* obj)
 {
-  if(!p)
-    return;
-
-  //(*p)();
+  p(obj);
 }
 
 kgmThread::Thread kgmThread::thread_create(Thread_Function fn, void* obj, kgmThread::Priority pr)
