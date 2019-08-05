@@ -31,11 +31,13 @@ class kgmFunction<Return(Args...)>
   };
 
   ICall* m_call = nullptr;
+  //kgmWPointer<ICall> m_call;
+  
 public:
-
   template <typename T>
   kgmFunction& operator=(T t)
   {
+    //m_call = kgmWPointer<Call>();
     return *this;
   }
 

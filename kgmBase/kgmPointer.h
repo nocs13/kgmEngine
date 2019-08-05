@@ -48,6 +48,8 @@ public:
     if((*counter) > 0)
       return;
 
+    *counter = 0;
+    
     delete counter;
 
     if(pointer)
@@ -140,6 +142,84 @@ kgmPointer<A> kgm_ptr_cast(kgmPointer<B>& var)
 
   return cast;
 }
+
+template <class T>
+class kgmWPointer
+{
+  T*   pointer = nullptr;
+
+public:
+
+  kgmWPointer()
+  {
+    pointer = nullptr;
+  }
+
+  kgmWPointer(T* ptr)
+  {
+    if(!ptr)
+      return;
+
+    pointer = ptr;
+  }
+
+  kgmWPointer(const kgmPointer<T> &o)
+  {
+    if(!o.pointer)
+      return;
+
+    pointer = o.pointer;
+    o.pointer = nullptr;
+  }
+
+  ~kgmWPointer()
+  {
+    if(pointer)
+      delete pointer;
+
+    pointer = nullptr;
+  }
+
+  void operator=(const kgmPointer<T>& o)
+  {
+    if(!o.pointer)
+      return;
+
+    if (pointer)
+      delete pointer;
+
+    pointer = o.pointer;
+    
+    o.pointer = nullptr;
+  }
+
+  T* operator->() const
+  {
+    return pointer;
+  }
+
+  operator T*() const
+  {
+    return pointer;
+  }
+
+  bool valid()
+  {
+    if(pointer)
+      return true;
+
+    return false;
+  }
+
+  void reset()
+  {
+    if(pointer)
+      delete pointer;
+    
+    pointer = 0;
+  }
+};
+
 
 #define kgmPtr  kgmPointer
 
