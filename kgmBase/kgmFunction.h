@@ -2,7 +2,35 @@
 #define KGMFUNCTION_H
 
 // Callback function should be __stdcall attribute.
-template <class T> class kgmFunction {};
+template <typename>
+class kgmFunction;
+
+template <typename Return, typename... Args>
+class kgmFunction<Return(Args...)>
+{
+  class ICall {
+  public:
+    Return invoke(Args...) = 0;
+  };
+
+  template<typename T>
+  class Call: public ICall
+  {
+    T m_t;
+  public:
+    Call(const T& t)
+      : m_t(t)
+    {
+      
+    }
+
+    Return invoke(Args... args)
+    {
+      return m_t(args);
+    }
+  };
+public:
+};
 
 /*template <class Res, class... Args>
   class kgmFunction<Res (Args...)>
