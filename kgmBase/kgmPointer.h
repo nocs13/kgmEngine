@@ -144,18 +144,18 @@ kgmPointer<A> kgm_ptr_cast(kgmPointer<B>& var)
 }
 
 template <class T>
-class kgmWPointer
+class kgmUPointer
 {
   T*   pointer = nullptr;
 
 public:
 
-  kgmWPointer()
+  kgmUPointer()
   {
     pointer = nullptr;
   }
 
-  kgmWPointer(T* ptr)
+  kgmUPointer(T* ptr)
   {
     if(!ptr)
       return;
@@ -163,7 +163,7 @@ public:
     pointer = ptr;
   }
 
-  kgmWPointer(const kgmPointer<T> &o)
+  kgmUPointer(const kgmPointer<T> &o)
   {
     if(!o.pointer)
       return;
@@ -172,7 +172,7 @@ public:
     o.pointer = nullptr;
   }
 
-  ~kgmWPointer()
+  ~kgmUPointer()
   {
     if(pointer)
       delete pointer;
@@ -198,7 +198,7 @@ public:
     return pointer;
   }
 
-  operator T*() const
+  T* operator*()
   {
     return pointer;
   }

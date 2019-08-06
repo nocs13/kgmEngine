@@ -1,6 +1,8 @@
 #ifndef KGMFUNCTION_H
 #define KGMFUNCTION_H
 
+#include "kgmPointer.h"
+
 // Callback function should be __stdcall attribute.
 template <typename>
 class kgmFunction;
@@ -30,20 +32,21 @@ class kgmFunction<Return(Args...)>
     }
   };
 
-  ICall* m_call = nullptr;
-  //kgmWPointer<ICall> m_call;
+  //ICall* m_call = nullptr;
+  kgmUPointer<ICall> m_call;
   
 public:
   template <typename T>
   kgmFunction& operator=(T t)
   {
-    //m_call = kgmWPointer<Call>();
+    m_call = kgmUPointer<ICall>(new Call<T>(t));
+    
     return *this;
   }
 
   Return operator()(Args... args)
   {
-    assert(m_call);
+    assert(m_call.valid());
 
     return m_call->invoke(args...);
   }
