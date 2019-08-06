@@ -163,7 +163,7 @@ public:
     pointer = ptr;
   }
 
-  kgmUPointer(const kgmPointer<T> &o)
+  kgmUPointer(const kgmUPointer<T> &o)
   {
     if(!o.pointer)
       return;
@@ -180,7 +180,7 @@ public:
     pointer = nullptr;
   }
 
-  void operator=(const kgmPointer<T>& o)
+  void operator=(const kgmUPointer<T>& o)
   {
     if(!o.pointer)
       return;
