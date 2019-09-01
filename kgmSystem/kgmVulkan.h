@@ -272,7 +272,7 @@ public:
   void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
 
   // SHADER
-  void* gcGenShader(const char*, const char*);
+  void* gcGenShader(kgmMemory<u8>&, kgmMemory<u8>&);
   void  gcFreeShader(void* s);
   void  gcSetShader(void* s);
   void  gcBindAttribute(void* s, int, const char*);

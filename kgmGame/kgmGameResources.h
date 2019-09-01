@@ -79,4 +79,7 @@ public:
 private:
   kgmResource*       get(const char* id);
   kgmResource*       get(kgmString& id);
+
+  bool               fileFromData(kgmMemory<u8>& mem, kgmString path);
+  bool               dataFromFile(kgmString path, kgmMemory<u8>& mem);
 };

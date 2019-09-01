@@ -9,6 +9,7 @@
 #include "../kgmMedia/kgmSound.h"
 
 #include "../kgmSystem/kgmSystem.h"
+#include "../kgmSystem/kgmProcess.h"
 
 #include "kgmActor.h"
 
@@ -142,6 +143,50 @@ bool kgmGameResources::exists(kgmResource* r)
 
   //if (i.isEnd())
   //  return false;
+
+  return true;
+}
+
+bool kgmGameResources::fileFromData(kgmMemory<u8>& mem, kgmString path)
+{
+  if (!mem.data() || !path.data())
+    return false;
+
+  kgmFile file;
+
+  if (!file.open(path, kgmFile::Write | kgmFile::Read | kgmFile::Create))
+    return false;
+
+  file.write(mem.data(), mem.length());
+
+  file.close();
+
+  return true;
+}
+
+bool kgmGameResources::dataFromFile(kgmString path, kgmMemory<u8> &mem)
+{
+  kgmFile file;
+
+  if (!file.open(path, kgmFile::Read))
+    return false;
+
+  u32 size = file.length();
+
+  if (size == -1)
+  {
+    file.close();
+
+    return false;
+  }
+
+  mem.clear();
+
+  mem.alloc(size);
+
+  file.read(mem.data(), size);
+
+  file.close();
 
   return true;
 }
@@ -318,17 +363,94 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
   kgmCString name;
 
+  name = id;
+
+
   if (m_gc->gcGetBase() == gc_vulkan)
-    name = kgmString("shaders") + kgmSystem::getPathDelim() + id + ".spv";
-  else
-    name = id;
-
-  kgmMemory<u8> mem;
-
-  if(getFile(name, mem))
   {
-    kgmString s((const char*)mem.data(), mem.length());
-    shader = m_tools.genShader(m_gc, s);
+    kgmString cmd;
+
+    #ifdef WIN32
+    cmd = "..\\Tools\\Spirv\\win32\\glslc.exe ";
+    #else
+    cmd = "../Tools/Spirv/linux/glslc ";
+    #endif
+
+    kgmString tmp;
+
+    kgmSystem::getTemporaryDirectory(tmp);
+
+    #ifdef DEBUG
+    kgm_log() << "Temporary folder is " << (char *) tmp << "\n";
+    #endif
+
+    kgmString args;
+
+    kgmMemory<u8> data;
+
+    if (!getFile(kgmString("shaders") + kgmSystem::getPathDelim() + id + ".vert", data))
+      return null;
+
+    if (!fileFromData(data, tmp + id + ".vert"))
+      return null;
+
+    data.clear();
+
+    if (!getFile(kgmString("shaders") + kgmSystem::getPathDelim() + id + ".frag", data))
+      return null;
+
+    if (!fileFromData(data, tmp + id + ".frag"))
+      return null;
+
+    data.clear();
+
+    kgmProcess proc;
+
+    args = tmp + id + ".vert -o " + tmp + id + ".vspv";
+
+    kgmString cline = cmd + " " + args;
+
+    #ifdef DEBUG
+    kgm_log() << "Command line is: " << (char *) cline << "\n";
+    #endif
+
+    //proc.run(cmd, args);
+    proc.run(kgmString(), cline);
+    proc.wait();
+
+    args = tmp + id + ".frag -o " + tmp + id + ".fspv";
+
+    cline = cmd + " " + args;
+
+    //proc.run(cmd, args);
+    proc.run(kgmString(), cline);
+    proc.wait();
+
+    kgmMemory<u8> vmem, fmem;
+
+    kgmString vname = tmp + id + ".vspv";
+    kgmString fname = tmp + id + ".fspv";
+
+    if(dataFromFile(vname, vmem) && dataFromFile(fname, fmem))
+    {
+      shader = m_tools.genShader(m_gc, vmem, fmem);
+    }
+    else
+    {
+      #ifdef DEBUG
+      kgm_log() << "Shader spirv not loaded for " << id << "\n";
+      #endif
+    }
+  }
+  else
+  {
+    kgmMemory<u8> mem;
+
+    if(getFile(name, mem))
+    {
+      kgmString s((const char*)mem.data(), mem.length());
+      shader = m_tools.genShader(m_gc, s);
+    }
   }
 
   if(shader)

@@ -574,18 +574,12 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
     mem_vsh[s.length()] = '\0';
   }
 
-  kgmString vsource, fsource;
+  kgmMemory<u8> vsource, fsource;
 
-  if (gc->gcGetBase() == gc_vulkan)
-  {
-    vsource = kgmString(mem_vsh);
-    fsource = kgmString(&mem_fsh[strlen(separator)]);
-  }
-  else
-  {
-    vsource = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
-    fsource = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
-  }
+  kgmString vstr, fstr;
+
+  vstr = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
+  fstr = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
 
   if(mem_vsh)
     free(mem_vsh);
@@ -593,9 +587,31 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   if(mem_fsh)
     free(mem_fsh);
 
+  vsource.alloc((u8*) vstr.data(), vstr.length() + 1);
+  fsource.alloc((u8*) fstr.data(), fstr.length() + 1);
+
   kgmShader* shader = new kgmShader(gc);
 
-  shader->m_shader = gc->gcGenShader((const char*)vsource, (const char*)fsource);
+  shader->m_shader = gc->gcGenShader(vsource, fsource);
+
+  if(!shader->m_shader)
+  {
+    delete shader;
+
+    shader = null;
+  }
+
+  return shader;
+}
+
+kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
+{
+  if(!gc)
+    return null;
+
+  kgmShader* shader = new kgmShader(gc);
+
+  shader->m_shader = gc->gcGenShader(vsrc, fsrc);
 
   if(!shader->m_shader)
   {

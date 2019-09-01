@@ -3,6 +3,8 @@
 #include "../kgmUtils/kgmBase64.h"
 #include "kgmSystem.h"
 #include "kgmThread.h"
+#include "../kgmBase/kgmIResources.h"
+#include "../kgmGame/kgmIGame.h"
 
 #ifdef VULKAN
 
@@ -1212,10 +1214,15 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 
     float ggg = (float) ((float) rand() / (float) RAND_MAX);
 
-    clearValue.color.float32[0] = 1.0f;
-    clearValue.color.float32[1] = ggg; //0.0f;
-    clearValue.color.float32[2] = 0.0f;
-    clearValue.color.float32[3] = 1.0f;
+    u8 r = (col & 0x000000ff);
+    u8 g = ((col & 0x0000ff00) >> 8);
+    u8 b = ((col & 0x00ff0000) >> 16);
+    u8 a = ((col & 0xff000000) >> 24);
+
+    clearValue.color.float32[0] = (f32) r / 255.f;
+    clearValue.color.float32[1] = (f32) g / 255.f;
+    clearValue.color.float32[2] = (f32) b / 255.f;
+    clearValue.color.float32[3] = (f32) a / 255.f;
 
     VkRenderPassBeginInfo renderPassBeginInfo;
 
@@ -1226,44 +1233,44 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     renderPassBeginInfo.renderPass = m_renderPass;
     renderPassBeginInfo.framebuffer = framebuffer;
     renderPassBeginInfo.renderArea = VkRect2D {
-    VkOffset2D  {0, 0},
-    VkExtent2D  {
-    (u32) m_rect[2], (u32) m_rect[3]
-    //surfaceCapabilities.currentExtent.width,
-    //surfaceCapabilities.currentExtent.height
+      VkOffset2D  {0, 0},
+      VkExtent2D  {
+      (u32) m_rect[2], (u32) m_rect[3]
+      //surfaceCapabilities.currentExtent.width,
+      //surfaceCapabilities.currentExtent.height
+      }
+    };
+
+    renderPassBeginInfo.clearValueCount = 1;
+    renderPassBeginInfo.pClearValues = &clearValue;
+
+    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+    m_vk.vkCmdEndRenderPass(commandBuffer);
+
+    VkImageMemoryBarrier imageMemoryBarrier;
+
+    ZeroObject(imageMemoryBarrier);
+
+    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier.pNext = nullptr;
+    imageMemoryBarrier.srcAccessMask = 0;
+    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                       VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    imageMemoryBarrier.srcQueueFamilyIndex = 0;
+    imageMemoryBarrier.dstQueueFamilyIndex = 0;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange = {
+      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
+    };
+
+    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
+                              1, &imageMemoryBarrier);
+
+    m_vk.vkEndCommandBuffer(commandBuffer);
   }
-};
-renderPassBeginInfo.clearValueCount = 1;
-renderPassBeginInfo.pClearValues = &clearValue;
-
-m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-m_vk.vkCmdEndRenderPass(commandBuffer);
-
-VkImageMemoryBarrier imageMemoryBarrier;
-
-ZeroObject(imageMemoryBarrier);
-
-imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-imageMemoryBarrier.pNext = nullptr;
-imageMemoryBarrier.srcAccessMask = 0;
-imageMemoryBarrier.dstAccessMask =
-VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-imageMemoryBarrier.srcQueueFamilyIndex = 0;
-imageMemoryBarrier.dstQueueFamilyIndex = 0;
-imageMemoryBarrier.image = image;
-imageMemoryBarrier.subresourceRange = {
-VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-};
-
-m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-1, &imageMemoryBarrier);
-
-m_vk.vkEndCommandBuffer(commandBuffer);
-}
 }
 
 void kgmVulkan::gcResize(u32 width, u32 height)
@@ -1700,7 +1707,7 @@ void  kgmVulkan::gcFreeVertexBuffer(void*) {}
 void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) {}
 
 // SHADER
-void* kgmVulkan::gcGenShader(const char* v, const char* f)
+void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 {
   if (!m_device)
   {
@@ -1720,21 +1727,13 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
 
   ZeroObject(*shader);
 
-  kgmArray<u8> binary;
-
-  kgmString base64;
-
-  base64.init(v);
-
-  kgmBase64::decode(base64, binary);
-
   VkShaderModuleCreateInfo createInfo;
 
   createInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
   createInfo.pNext = nullptr;
   createInfo.flags = 0;
-  createInfo.codeSize = binary.length();
-  createInfo.pCode = (typeof createInfo.pCode) binary.data();
+  createInfo.codeSize = v.length();
+  createInfo.pCode = (typeof createInfo.pCode) v.data();
 
   VkResult result = m_vk.vkCreateShaderModule(m_device, &createInfo, nullptr, &shader->vertex);
 
@@ -1749,17 +1748,11 @@ void* kgmVulkan::gcGenShader(const char* v, const char* f)
     return null;
   }
 
-  base64.init(f);
-
-  binary.clear();
-
-  kgmBase64::decode(base64, binary);
-
   createInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
   createInfo.pNext = nullptr;
   createInfo.flags = 0;
-  createInfo.codeSize = binary.length();
-  createInfo.pCode = (typeof createInfo.pCode) binary.data();
+  createInfo.codeSize = f.length();
+  createInfo.pCode = (typeof createInfo.pCode) f.data();
 
   result = m_vk.vkCreateShaderModule(m_device, &createInfo, nullptr, &shader->fragment);
 

@@ -1425,7 +1425,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 
 // SHADERS
 //GLint v_shad;
-void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
+void* kgmOGL::gcGenShader(kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
 {
   kgm_log() << "gcGenShader: Generating.\n";
 
@@ -1457,11 +1457,13 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
   }
 
   //GL_VERTEX_SHADER
-  if(vsrc)
+  if(vsrc.data() && vsrc.length())
   {
-    size = strlen(vsrc);
+    const char *ptr = (const char*) vsrc.data();
+
+    size = strlen(ptr);
     vshad = glCreateShaderObject(GL_VERTEX_SHADER);
-    glShaderSource(vshad, 1, (const GLcharARB**)&vsrc, &size);
+    glShaderSource(vshad, 1, (const GLcharARB**)&ptr, &size);
     glCompileShader(vshad);
     glGetObjectParameteriv(vshad, GL_OBJECT_COMPILE_STATUS, stat);
 
@@ -1487,11 +1489,13 @@ void* kgmOGL::gcGenShader(const char* vsrc, const char* fsrc)
     }
   }
 
-  if(fsrc)
+  if(fsrc.data() && fsrc.length())
   {
-    size = strlen(fsrc);
+    const char *ptr = (const char*) fsrc.data();
+
+    size = strlen(ptr);
     fshad = glCreateShaderObject(GL_FRAGMENT_SHADER);
-    glShaderSource(fshad, 1, (const GLcharARB**)&fsrc, NULL);
+    glShaderSource(fshad, 1, (const GLcharARB**)&ptr, NULL);
     glCompileShader(fshad);
     glGetObjectParameteriv(fshad, GL_OBJECT_COMPILE_STATUS, stat);
 

@@ -1,4 +1,5 @@
 #include "kgmFile.h"
+#include "../kgmBase/kgmLog.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,18 +49,23 @@ bool kgmFile::open(kgmCString& path, u32 mode)
     smode = O_RDONLY;
 
   if(mode & Create)
-    smode |= (O_CREAT | O_EXCL);
+    smode |= O_CREAT;
+  //smode |= (O_CREAT | O_EXCL);
 
   smode |= O_BINARY;
 
 #ifdef WIN32
-  m_file = _open(path, smode);
+  m_file = _open(path, smode, _S_IREAD | _S_IWRITE);
 #else
   m_file = ::open(path, smode);
 #endif
 
   if(m_file < 1)
+  {
+    kgm_log() << "Error to open file [" << (char *) path << "], error is " << errno << "\n";
+
     return false;
+  }
 
   return true;
 }

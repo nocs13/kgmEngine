@@ -282,7 +282,7 @@ void kgmGameBase::initScript()
 void kgmGameBase::initGC()
 {
 #ifdef VULKAN
-  //m_gc = new kgmVulkan(this);
+  m_gc = new kgmVulkan(this);
 #endif
 
   if (m_gc == null)
