@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 #endif
 
 kgmFile::kgmFile()
@@ -57,7 +58,7 @@ bool kgmFile::open(kgmCString& path, u32 mode)
 #ifdef WIN32
   m_file = _open(path, smode, _S_IREAD | _S_IWRITE);
 #else
-  m_file = ::open(path, smode);
+  m_file = ::open(path, smode, S_IRUSR | S_IWUSR);
 #endif
 
   if(m_file < 1)

@@ -1,6 +1,11 @@
 #include "kgmProcess.h"
 #include "../kgmBase/kgmLog.h"
 
+#ifdef WIN32
+#else
+  #include <sys/wait.h>
+#endif
+
 kgmProcess::kgmProcess()
 {
   m_process = 0;
@@ -40,7 +45,11 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
   pid_t pid = fork();
   if (pid == 0)
   {
-    exit(exec(cmd.data(), args.data()));
+    kgmString cline;
+
+    cline = cmd + " " + args;
+
+    exit(system((const char *) cline));
   }
   else if (pid > 0)
   {
@@ -71,7 +80,8 @@ bool kgmProcess::wait()
   #else
 
   s32 status = 0;
-  waitpid((pid_t) m_process, &status, NULL);
+
+  while(::wait(&status) != m_process);
 
   #endif
 

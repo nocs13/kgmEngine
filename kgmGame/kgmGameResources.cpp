@@ -373,7 +373,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
     #ifdef WIN32
     cmd = "..\\Tools\\Spirv\\win32\\glslc.exe ";
     #else
-    cmd = "../Tools/Spirv/linux/glslc ";
+    cmd = "../Tools/Spirv/nix/glslc";
     #endif
 
     kgmString tmp;
@@ -406,7 +406,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
     kgmProcess proc;
 
-    args = tmp + id + ".vert -o " + tmp + id + ".vspv";
+    args = kgmString("-V ") + tmp + id + ".vert -o " + tmp + id + ".vert.spv";
 
     kgmString cline = cmd + " " + args;
 
@@ -418,7 +418,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
     proc.run(kgmString(), cline);
     proc.wait();
 
-    args = tmp + id + ".frag -o " + tmp + id + ".fspv";
+    args = kgmString("-V ") + tmp + id + ".frag -o " + tmp + id + ".frag.spv";
 
     cline = cmd + " " + args;
 
@@ -428,8 +428,8 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
     kgmMemory<u8> vmem, fmem;
 
-    kgmString vname = tmp + id + ".vspv";
-    kgmString fname = tmp + id + ".fspv";
+    kgmString vname = tmp + id + ".vert.spv";
+    kgmString fname = tmp + id + ".frag.spv";
 
     if(dataFromFile(vname, vmem) && dataFromFile(fname, fmem))
     {

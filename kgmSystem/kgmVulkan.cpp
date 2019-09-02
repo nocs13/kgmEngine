@@ -2911,7 +2911,10 @@ bool kgmVulkan::initSwapchain()
 
   VkSwapchainKHR swapChain = m_swapChain;
 
-  m_swapChain = nullptr;
+  //if (swapChain != VK_NULL_HANDLE)
+  //  m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+
+  m_swapChain = swapChain = nullptr;
 
   swapchainCreateInfo.oldSwapchain = swapChain;
   swapchainCreateInfo.imageArrayLayers = 1;
@@ -2932,9 +2935,6 @@ bool kgmVulkan::initSwapchain()
 
     return false;
   }
-
-  if (swapChain != VK_NULL_HANDLE)
-    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
 
   uint32_t actualImageCount = swapChainImagesCount;
 

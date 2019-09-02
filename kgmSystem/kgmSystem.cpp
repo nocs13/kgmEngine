@@ -122,16 +122,17 @@ void kgmSystem::getTemporaryDirectory(kgmString& s)
   if(dw != 0)
     s = (const char*)buf;
 #else
-  DIR* dir = opendir("~/tmp");
+  DIR* dir = opendir("~/tmp/");
 
   if(dir != 0)
   {
     closedir(dir);
-    s = (char*)"~/tmp";
+
+    s = (char*)"~/tmp/";
   }
   else
   {
-     s = "/tmp";
+     s = "/tmp/";
   }
 #endif
 }
