@@ -1152,6 +1152,9 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkAllocateMemory);
   VK_IMPORT_FUNCTION(vkBindBufferMemory);
   VK_IMPORT_FUNCTION(vkDestroyBuffer);
+  VK_IMPORT_FUNCTION(vkCmdBindVertexBuffers);
+  VK_IMPORT_FUNCTION(vkCmdBindPipeline);
+  VK_IMPORT_FUNCTION(vkCmdDraw);
 
   //VK_IMPORT_FUNCTION(vkGetPhysicalDeviceMemoryProperties);
 
@@ -1351,6 +1354,22 @@ void  kgmVulkan::gcRender()
   auto &commandBuffer = m_commandBuffers[swapChainImage];
   //auto &commandBuffer = m_commandBuffers[0];
 
+  /*kgmList<Mesh>::iterator mi;
+
+  for (mi = m_meshes.begin(); !mi.end(); mi.next())
+  {
+    Shader* shader = (*mi).shader;
+
+    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->pipeline);
+
+    VkBuffer vertexBuffers[] = {(*mi).vbuffer};
+    VkDeviceSize offsets[] = {0};
+
+    m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+    m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(0), 1, 0, 0);
+  }*/
+
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
   VkSubmitInfo submitInfo;
@@ -1427,13 +1446,91 @@ void  kgmVulkan::gcRender()
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
+  kgmList<Mesh>::iterator i = m_meshes.begin();
+
+  for(; !i.end(); i.next())
+  {
+    if((*i).vmemory != VK_NULL_HANDLE)
+      m_vk.vkFreeMemory(m_device, (*i).vmemory, NULL);
+
+    if((*i).vbuffer != VK_NULL_HANDLE)
+      m_vk.vkDestroyBuffer(m_device, (*i).vbuffer, NULL);
+
+    if((*i).imemory != VK_NULL_HANDLE)
+      m_vk.vkFreeMemory(m_device, (*i).imemory, NULL);
+
+    if((*i).ibuffer != VK_NULL_HANDLE)
+      m_vk.vkDestroyBuffer(m_device, (*i).ibuffer, NULL);
+  }
+
+  m_meshes.clear();
+
   m_swapChainImage = swapChainImage;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
 
 // DRAWING
-void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt) {}
+void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt)
+{
+  Mesh mesh = {0};
+
+  VkBufferCreateInfo bufferInfo = {};
+  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  bufferInfo.size = v_size * v_cnt;
+  bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+  bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  if (m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &mesh.vbuffer) != VK_SUCCESS) {
+    kgm_log() << "Vulkan error: Failed to create vertex buffer!\n";
+
+    return;
+  }
+
+  VkMemoryRequirements memRequirements;
+  m_vk.vkGetBufferMemoryRequirements(m_device, mesh.vbuffer, &memRequirements);
+
+  VkMemoryAllocateInfo allocInfo = {};
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = memRequirements.size;
+  allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits,
+                                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+  if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS) {
+      kgm_log() << "Vulkan error: Failed to allocate vertex buffer memory!\n";
+
+      return;
+  }
+
+  m_vk.vkBindBufferMemory(m_device, mesh.vbuffer, mesh.vmemory, 0);
+
+  void* data;
+
+  if (m_vk.vkMapMemory(m_device, mesh.vmemory, 0, bufferInfo.size, 0, &data) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to map mamory!\n";
+
+    return;
+  }
+
+  memcpy(data, v_pnt, (size_t) bufferInfo.size);
+  m_vk.vkUnmapMemory(m_device, mesh.vmemory);
+
+  mesh.shader = m_shader;
+
+  m_meshes.add(mesh);
+
+  auto commandBuffer = m_commandBuffers[m_swapChainImage];
+
+  m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
+
+  VkBuffer vertexBuffers[] = { mesh.vbuffer };
+  VkDeviceSize offsets[] = {0};
+
+  m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+  m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(v_cnt), 1, 0, 0);
+}
 
 // TEXTURE
 void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
@@ -2048,6 +2145,8 @@ void  kgmVulkan::gcSetShader(void* s)
 
     printResult(result);
   }
+
+  m_shader = shader;
 }
 
 void  kgmVulkan::gcBindAttribute(void* s, int, const char*)
@@ -2911,10 +3010,7 @@ bool kgmVulkan::initSwapchain()
 
   VkSwapchainKHR swapChain = m_swapChain;
 
-  //if (swapChain != VK_NULL_HANDLE)
-  //  m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
-
-  m_swapChain = swapChain = nullptr;
+  m_swapChain = nullptr;
 
   swapchainCreateInfo.oldSwapchain = swapChain;
   swapchainCreateInfo.imageArrayLayers = 1;
@@ -2945,6 +3041,13 @@ bool kgmVulkan::initSwapchain()
     kgm_log() << "Vulkan: failed to acquire number of swap chain images.\n";
 
     return false;
+  }
+
+  if (swapChain != VK_NULL_HANDLE)
+  {
+    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
+
+    swapChain = nullptr;
   }
 
   m_swapChainImages.alloc(actualImageCount);

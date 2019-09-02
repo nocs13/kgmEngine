@@ -69,7 +69,6 @@ class kgmVulkan: public kgmIGC
     PFN_vkCreateImage vkCreateImage;
     PFN_vkCreateImageView vkCreateImageView;
     PFN_vkCreateFramebuffer vkCreateFramebuffer;
-    //PFN_vkAllocateMemory vkAllocateMemory;
     PFN_vkFreeMemory vkFreeMemory;
     PFN_vkBindImageMemory vkBindImageMemory;
     PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
@@ -110,6 +109,10 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkAllocateMemory);
     VK_EXPORTED_FUNCTION(vkBindBufferMemory);
     VK_EXPORTED_FUNCTION(vkDestroyBuffer);
+
+    VK_EXPORTED_FUNCTION(vkCmdBindVertexBuffers);
+    VK_EXPORTED_FUNCTION(vkCmdBindPipeline);
+    VK_EXPORTED_FUNCTION(vkCmdDraw);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
@@ -161,6 +164,22 @@ class kgmVulkan: public kgmIGC
     VkPipeline       pipeline;
     VkPipelineLayout layout;
     VkPipelineCache  cache;
+  };
+
+  struct Mesh
+  {
+    VkDeviceMemory vmemory;
+    VkBuffer       vbuffer;
+
+    VkDeviceMemory imemory;
+    VkBuffer       ibuffer;
+
+    VkDeviceMemory umemory;
+    VkBuffer       ubuffer;
+
+    VkDescriptorBufferInfo descriptor;
+
+    Shader* shader;
   };
 
   static kgmLib vk_lib;  
@@ -216,6 +235,8 @@ class kgmVulkan: public kgmIGC
   u32 m_error = 0;
 
   const s8* m_debugLayer = null;
+
+  kgmList<Mesh> m_meshes;
 
 #ifdef DEBUG
   VkDebugReportCallbackEXT m_debugReportCallback = VK_NULL_HANDLE;
