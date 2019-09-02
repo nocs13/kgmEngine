@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PLAT=`uname`
+
+#echo "Platform is $PLAT"
+
+ARCH=`uname -m`
+
+#echo "Arch is $ARCH"
+
+CMD=''
+
+case $PLAT in
+     'Linux')
+     case $ARCH in
+     	  'x86_64')
+	  CMD='linux/glslc64'
+	  ;;
+	  'i386')
+	  CMD='linux/glslc32'
+	  ;;
+     esac
+     ;;
+     *) ;;
+esac
+
+#echo "Command choosed $CMD"
+
+cd "$(dirname "$0")"
+
+$CMD $1 $2 $3 $4
