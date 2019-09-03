@@ -9,6 +9,7 @@
 #ifdef VULKAN
 
 #include "inc/vk/vulkan.h"
+#include "inc/vk/vk_kgm.h"
 
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
@@ -1866,70 +1867,6 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
   }
 
-  return shader;
-}
-
-void  kgmVulkan::gcFreeShader(void* s)
-{
-  Shader* shader = (Shader *) s;
-
-  if (!s)
-  {
-    kgm_log() << "Vulkan error: Shader is invalid for free.\n";
-
-    return;
-  }
-
-  if (!m_device)
-  {
-    kgm_log() << "Vulkan error: Device is invalid for free shader.\n";
-
-    return;
-  }
-
-  if (shader->buffer)
-    m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
-
-  if (shader->memory)
-    m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
-
-
-  if (shader->vertex)
-  {
-    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->vertex, null);
-  }
-
-  if (shader->fragment)
-  {
-    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
-  }
-
-  delete (Shader *) s;
-}
-
-void  kgmVulkan::gcSetShader(void* s)
-{
-  Shader* shader = (Shader*) s;
-
-  if (shader == null)
-  {
-    clear(shader);
-
-    m_shader = null;
-
-    return;
-  }
-
-  VkResult result = VK_SUCCESS;
-
-  VkDeviceSize uosize = sizeof(Shader::uo);
-
-  void* data = null;
-
-  m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
-  memcpy(data, &shader->uo, uosize);
-  m_vk.vkUnmapMemory(m_device, shader->memory);
-
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 
   pipelineLayoutCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -1948,7 +1885,7 @@ void  kgmVulkan::gcSetShader(void* s)
 
     printResult(result);
 
-    return;
+    return null;
   }
 
   VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
@@ -1967,7 +1904,7 @@ void  kgmVulkan::gcSetShader(void* s)
 
     printResult(result);
 
-    return;
+    return null;
   }
 
   VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfos[2];
@@ -2069,7 +2006,6 @@ void  kgmVulkan::gcSetShader(void* s)
   pipelineColorBlendAttachmentState.colorWriteMask = VkColorComponentFlagBits::VK_COLOR_COMPONENT_R_BIT |
             VkColorComponentFlagBits::VK_COLOR_COMPONENT_G_BIT | VkColorComponentFlagBits::VK_COLOR_COMPONENT_B_BIT;
 
-
   VkPipelineColorBlendStateCreateInfo pipelineColorBlendStateCreateInfo;
 
   pipelineColorBlendStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -2144,7 +2080,73 @@ void  kgmVulkan::gcSetShader(void* s)
     kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
 
     printResult(result);
+
+    return null;
   }
+
+  return shader;
+}
+
+void  kgmVulkan::gcFreeShader(void* s)
+{
+  Shader* shader = (Shader *) s;
+
+  if (!s)
+  {
+    kgm_log() << "Vulkan error: Shader is invalid for free.\n";
+
+    return;
+  }
+
+  if (!m_device)
+  {
+    kgm_log() << "Vulkan error: Device is invalid for free shader.\n";
+
+    return;
+  }
+
+  if (shader->buffer)
+    m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
+
+  if (shader->memory)
+    m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
+
+
+  if (shader->vertex)
+  {
+    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->vertex, null);
+  }
+
+  if (shader->fragment)
+  {
+    m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
+  }
+
+  delete (Shader *) s;
+}
+
+void  kgmVulkan::gcSetShader(void* s)
+{
+  Shader* shader = (Shader*) s;
+
+  if (shader == null)
+  {
+    clear(shader);
+
+    m_shader = null;
+
+    return;
+  }
+
+  VkResult result = VK_SUCCESS;
+
+  VkDeviceSize uosize = sizeof(Shader::uo);
+
+  void* data = null;
+
+  m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
+  memcpy(data, &shader->uo, uosize);
+  m_vk.vkUnmapMemory(m_device, shader->memory);
 
   m_shader = shader;
 }
@@ -2356,6 +2358,20 @@ bool kgmVulkan::initInstance()
   return true;
 }
 
+#ifdef DEBUG
+
+VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageType,
+    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+    void *pUserData) {
+
+    kgm_log() << "validation layer: " << pCallbackData->pMessage << ".\n";
+    return VK_FALSE;
+}
+
+#endif
+
 bool kgmVulkan::initDebug()
 {
 #ifdef DEBUG
@@ -2406,6 +2422,34 @@ bool kgmVulkan::initDebug()
   }
 
   kgm_log() << "Vulkan: Debug callback created.\n";
+
+  VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+  debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+  debugCreateInfo.messageSeverity =
+      VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+      VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+      VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+      VkDebugUtilsMessageSeverityFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+  debugCreateInfo.messageType =
+      VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+      VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+      VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+  debugCreateInfo.pfnUserCallback = DebugMessageCallback;    // global function
+  debugCreateInfo.pUserData = nullptr;
+
+  VkDebugUtilsMessengerEXT debugMessenger;
+
+  auto fd_mesg = (PFN_vkCreateDebugUtilsMessengerEXT)m_vk.vkGetInstanceProcAddr(m_instance,
+                                                                                "vkCreateDebugUtilsMessengerEXT");
+  if (fd_mesg)
+  {
+    if (fd_mesg(m_instance, &debugCreateInfo, NULL, &debugMessenger) != VK_SUCCESS)
+      kgm_log() << "Vulkan error: Cannot create debug messenger.\n";
+  }
+  else
+  {
+    kgm_log() << "Vulkan error: Cannot find vkCreateDebugUtilsMessengerEXT.\n";
+  }
 
 #endif
 
