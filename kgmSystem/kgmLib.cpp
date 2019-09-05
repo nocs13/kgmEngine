@@ -1,5 +1,6 @@
 #include "kgmLib.h"
 #include "../kgmBase/kgmTypes.h"
+#include "../kgmBase/kgmLog.h"
 
 kgmLib::kgmLib()
 {
@@ -16,6 +17,9 @@ bool kgmLib::open(char *p)
 {
 #ifdef WIN32
   handle = (void*)LoadLibrary(p);
+
+  if (!handle)
+    kgm_log() << "Cannot load dll [" << p << "], error is " << (s32) GetLastError() << "\n";
 #else
   handle = dlopen(p, RTLD_LAZY);
 #endif

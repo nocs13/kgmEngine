@@ -39,7 +39,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
   else
   {
-    m_error = -1;
+    m_error = 0;
 
     return;
   }
@@ -1083,6 +1083,7 @@ int kgmVulkan::vkInit()
     return -1;
 
 #ifdef WIN32
+  //if(!vk_lib.open((char*) "C:\\VulkanSDK\\1.1.92.1\\RunTimeInstaller\\x64\\vulkan-1.dll"))
   if (!vk_lib.open((char*) "vulkan.dll"))
     if (!vk_lib.open((char*) "vulkan-1.dll"))
       return -2;
@@ -1489,6 +1490,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   bufferInfo.size = v_size * v_cnt;
   bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
   bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  if (!m_device)
+    return;
 
   if (m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &mesh.vbuffer) != VK_SUCCESS)
   {
@@ -2371,23 +2375,6 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
-  const s8* layerNames[] = {
-    "VK_LAYER_LUNARG_api_dump",
-    "VK_LAYER_LUNARG_core_validation",
-    "VK_LAYER_LUNARG_image",
-    "VK_LAYER_LUNARG_object_tracker",
-    "VK_LAYER_LUNARG_parameter_validation",
-    "VK_LAYER_LUNARG_screenshot",
-    "VK_LAYER_LUNARG_swapchain",
-    "VK_LAYER_GOOGLE_threading",
-    "VK_LAYER_GOOGLE_unique_objects",
-    "VK_LAYER_LUNARG_vktrace",
-    "VK_LAYER_RENDERDOC_Capture",
-    "VK_LAYER_NV_optimus",
-    "VK_LAYER_VALVE_steam_overlay",
-    "VK_LAYER_LUNARG_standard_validation",
-  };
-
   u32 extensionsCount = 0;
 
   VkResult result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
@@ -2448,8 +2435,6 @@ bool kgmVulkan::initInstance()
   instanceInfo.pApplicationInfo = &appInfo;
   instanceInfo.enabledExtensionCount = extensionsCount;
   instanceInfo.ppEnabledExtensionNames = m_extensionNames.data();
-  //instanceInfo.enabledLayerCount = 14;
-  //instanceInfo.ppEnabledLayerNames = layerNames;
 
   result = m_vk.vkCreateInstance(&instanceInfo, NULL, &m_instance);
 
@@ -2473,7 +2458,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
     void *pUserData) {
 
-    kgm_log() << "validation layer: " << pCallbackData->pMessage << ".\n";
+    kgm_log() << "Vulkan validation layer: " << pCallbackData->pMessage << ".\n";
     return VK_FALSE;
 }
 
@@ -2517,13 +2502,13 @@ bool kgmVulkan::initDebug()
 
         return VK_FALSE;
       };
-  debugReportCallbackCreateInfo.pUserData = nullptr;
+  debugReportCallbackCreateInfo.pUserData = this;
 
   if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
       &debugReportCallbackCreateInfo, nullptr, &m_debugReportCallback)
       != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: failed to create debug collback.\n";
+    kgm_log() << "Vulkan error: failed to create debug callback.\n";
 
     return false;
   }
@@ -2542,7 +2527,7 @@ bool kgmVulkan::initDebug()
       VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
       VkDebugUtilsMessageTypeFlagBitsEXT::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
   debugCreateInfo.pfnUserCallback = DebugMessageCallback;    // global function
-  debugCreateInfo.pUserData = nullptr;
+  debugCreateInfo.pUserData = this;
 
   VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -2751,7 +2736,8 @@ bool kgmVulkan::initDevice()
   infoDevice.pEnabledFeatures = &enabledFeatures;
 
 #ifdef DEBUG
-  m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
+  //m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
+  m_debugLayer = "VK_LAYER_KHRONOS_validation";
 
   infoDevice.enabledLayerCount = 1;
   infoDevice.ppEnabledLayerNames = &m_debugLayer;
