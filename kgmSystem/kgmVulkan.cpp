@@ -48,6 +48,18 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
 
+  m_viewport.x = 0;
+  m_viewport.y = 0;
+  m_viewport.width = m_rect[2];
+  m_viewport.height = m_rect[3];
+  m_viewport.minDepth = 0.1;
+  m_viewport.maxDepth = 1000.0;
+
+  m_scissor.offset.x = 0;
+  m_scissor.offset.y = 0;
+  m_scissor.extent.width = m_rect[2];
+  m_scissor.extent.height = m_rect[3];
+
   if (!initInstance())
   {
     m_error = 1;
@@ -1195,6 +1207,8 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
+
+    ZeroObject(commandBufferInheritanceInfo);
     commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
     commandBufferInheritanceInfo.pNext = nullptr;
     commandBufferInheritanceInfo.renderPass = m_renderPass;
@@ -1205,12 +1219,19 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     commandBufferInheritanceInfo.pipelineStatistics = 0;
 
     VkCommandBufferBeginInfo commandBufferBeginInfo;
+
+    ZeroObject(commandBufferBeginInfo);
     commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     commandBufferBeginInfo.pNext = nullptr;
     commandBufferBeginInfo.flags = 0;
     commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
     result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+
+    if (result != VK_SUCCESS)
+    {
+      continue;
+    }
 
     VkClearValue clearValue;
 
@@ -1231,7 +1252,6 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     VkRenderPassBeginInfo renderPassBeginInfo;
 
     ZeroObject(renderPassBeginInfo);
-
     renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = nullptr;
     renderPassBeginInfo.renderPass = m_renderPass;
@@ -1239,9 +1259,7 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
       VkExtent2D  {
-      (u32) m_rect[2], (u32) m_rect[3]
-      //surfaceCapabilities.currentExtent.width,
-      //surfaceCapabilities.currentExtent.height
+        (u32) m_rect[2], (u32) m_rect[3]
       }
     };
 
@@ -1249,12 +1267,10 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     renderPassBeginInfo.pClearValues = &clearValue;
 
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-    m_vk.vkCmdEndRenderPass(commandBuffer);
 
     VkImageMemoryBarrier imageMemoryBarrier;
 
     ZeroObject(imageMemoryBarrier);
-
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     imageMemoryBarrier.pNext = nullptr;
     imageMemoryBarrier.srcAccessMask = 0;
@@ -1273,7 +1289,8 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
                               VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
                               1, &imageMemoryBarrier);
 
-    m_vk.vkEndCommandBuffer(commandBuffer);
+    //m_vk.vkCmdEndRenderPass(commandBuffer);
+    //m_vk.vkEndCommandBuffer(commandBuffer);
   }
 }
 
@@ -1353,6 +1370,10 @@ void  kgmVulkan::gcRender()
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
   auto &commandBuffer = m_commandBuffers[swapChainImage];
+
+  m_vk.vkCmdEndRenderPass(commandBuffer);
+  m_vk.vkEndCommandBuffer(commandBuffer);
+
   //auto &commandBuffer = m_commandBuffers[0];
 
   /*kgmList<Mesh>::iterator mi;
@@ -1406,7 +1427,9 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    //return;
+    exit(0);
+
+    return;
   }
 
   VkPresentInfoKHR presentInfo;
@@ -1447,24 +1470,7 @@ void  kgmVulkan::gcRender()
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
-  kgmList<Mesh>::iterator i = m_meshes.begin();
-
-  for(; !i.end(); i.next())
-  {
-    if((*i).vmemory != VK_NULL_HANDLE)
-      m_vk.vkFreeMemory(m_device, (*i).vmemory, NULL);
-
-    if((*i).vbuffer != VK_NULL_HANDLE)
-      m_vk.vkDestroyBuffer(m_device, (*i).vbuffer, NULL);
-
-    if((*i).imemory != VK_NULL_HANDLE)
-      m_vk.vkFreeMemory(m_device, (*i).imemory, NULL);
-
-    if((*i).ibuffer != VK_NULL_HANDLE)
-      m_vk.vkDestroyBuffer(m_device, (*i).ibuffer, NULL);
-  }
-
-  m_meshes.clear();
+  clearDraws();
 
   m_swapChainImage = swapChainImage;
 }
@@ -1474,31 +1480,41 @@ void  kgmVulkan::gcSetTarget(void*  rt) {}
 // DRAWING
 void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt)
 {
-  Mesh mesh = {0};
+  Draw mesh = {0};
 
   VkBufferCreateInfo bufferInfo = {};
+
+  ZeroObject(bufferInfo);
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferInfo.size = v_size * v_cnt;
   bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
   bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-  if (m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &mesh.vbuffer) != VK_SUCCESS) {
+  if (m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &mesh.vbuffer) != VK_SUCCESS)
+  {
     kgm_log() << "Vulkan error: Failed to create vertex buffer!\n";
 
     return;
   }
 
   VkMemoryRequirements memRequirements;
+
+  ZeroObject(memRequirements);
   m_vk.vkGetBufferMemoryRequirements(m_device, mesh.vbuffer, &memRequirements);
 
   VkMemoryAllocateInfo allocInfo = {};
+
+  ZeroObject(allocInfo);
   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits,
                                               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-  if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS) {
+  if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS)
+  {
       kgm_log() << "Vulkan error: Failed to allocate vertex buffer memory!\n";
+
+      m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
 
       return;
   }
@@ -1511,6 +1527,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   {
     kgm_log() << "Vulkan error: Failed to map mamory!\n";
 
+    m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
+    m_vk.vkFreeMemory(m_device, mesh.vmemory, null);
+
     return;
   }
 
@@ -1519,18 +1538,58 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   mesh.shader = m_shader;
 
-  m_meshes.add(mesh);
+  mesh.vcnt = v_cnt;
+  mesh.icnt = i_cnt;
+
+  m_draws.add(mesh);
 
   auto commandBuffer = m_commandBuffers[m_swapChainImage];
 
-  m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
+  if (m_shader && m_shader->pipeline)
+  {
+    //m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
 
-  VkBuffer vertexBuffers[] = { mesh.vbuffer };
-  VkDeviceSize offsets[] = {0};
+    //VkBuffer vertexBuffers[] = { mesh.vbuffer };
+    //VkDeviceSize offsets[] = {0};
 
-  m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+    //m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-  m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(v_cnt), 1, 0, 0);
+    //m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(v_cnt), 1, 0, 0);
+
+    for (u32 i = 0; i < m_swapChainImages.length(); i++)
+    {
+      auto &commandBuffer = m_commandBuffers[i];
+      auto &image         = m_swapChainImages[i];
+      auto &framebuffer   = m_frameBuffers[i];
+
+      VkRenderPassBeginInfo renderPassBeginInfo;
+
+      ZeroObject(renderPassBeginInfo);
+      renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+      renderPassBeginInfo.pNext = nullptr;
+      renderPassBeginInfo.renderPass = m_renderPass;
+      renderPassBeginInfo.framebuffer = framebuffer;
+      renderPassBeginInfo.renderArea = VkRect2D{
+          VkOffset2D{0, 0},
+          VkExtent2D{(u32)m_rect[2], (u32)m_rect[3]}
+      };
+      renderPassBeginInfo.clearValueCount = 1;
+      renderPassBeginInfo.pClearValues = NULL;
+
+      //m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo,
+      //                          VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+      //m_vk.vkCmdBindPipeline(commandBuffer, VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS,
+      //                       m_shader->pipeline);
+
+      VkBuffer vbuffers[] = {mesh.vbuffer};
+      VkDeviceSize dsizes[] = {0};
+
+      m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vbuffers, dsizes);
+      m_vk.vkCmdDraw(commandBuffer, v_cnt, 1, 0, 0);
+      //m_vk.vkCmdEndRenderPass(commandBuffer);
+    }
+  }
 }
 
 // TEXTURE
@@ -1814,9 +1873,9 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
-  if (!v)
+  if (!v.length() || !f.length())
   {
-    kgm_log() << "Vulkan error: Fragment shader absent.\n";
+    kgm_log() << "Vulkan error: Shader source absent.\n";
 
     return null;
   }
@@ -1858,17 +1917,31 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   {
     kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
 
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+
+    delete shader;
+
     printResult(result);
+
+    return null;
   }
 
   if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, shader->buffer, shader->memory))
   {
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
+
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+
+    delete shader;
+
+    return null;
   }
 
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 
+  ZeroObject(pipelineLayoutCreateInfo);
   pipelineLayoutCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutCreateInfo.pNext = nullptr;
   pipelineLayoutCreateInfo.flags = 0;
@@ -1885,11 +1958,17 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     printResult(result);
 
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+
+    delete shader;
+
     return null;
   }
 
   VkPipelineCacheCreateInfo pipelineCacheCreateInfo;
 
+  ZeroObject(pipelineCacheCreateInfo);
   pipelineCacheCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
   pipelineCacheCreateInfo.pNext = nullptr;
   pipelineCacheCreateInfo.flags = 0;
@@ -1904,11 +1983,18 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     printResult(result);
 
+    m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+
+    delete shader;
+
     return null;
   }
 
   VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfos[2];
 
+  ZeroObject(pipelineShaderStageCreateInfos[0]);
   pipelineShaderStageCreateInfos[0].sType  = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   pipelineShaderStageCreateInfos[0].pNext  = nullptr;
   pipelineShaderStageCreateInfos[0].flags  = 0;
@@ -1917,6 +2003,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineShaderStageCreateInfos[0].pName = "main";
   pipelineShaderStageCreateInfos[0].pSpecializationInfo = nullptr;
 
+  ZeroObject(pipelineShaderStageCreateInfos[1]);
   pipelineShaderStageCreateInfos[1].sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   pipelineShaderStageCreateInfos[1].pNext = nullptr;
   pipelineShaderStageCreateInfos[1].flags = 0;
@@ -1927,12 +2014,14 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkVertexInputBindingDescription vertexInputBindingDescription;
 
+  ZeroObject(vertexInputBindingDescription);
   vertexInputBindingDescription.binding = 0;
   vertexInputBindingDescription.stride = sizeof(float) * 2;
   vertexInputBindingDescription.inputRate = VkVertexInputRate::VK_VERTEX_INPUT_RATE_VERTEX;
 
   VkVertexInputAttributeDescription vertexInputAttributeDescription;
 
+  ZeroObject(vertexInputAttributeDescription);
   vertexInputAttributeDescription.location = 0;
   vertexInputAttributeDescription.binding = 0;
   vertexInputAttributeDescription.format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
@@ -1940,6 +2029,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo;
 
+  ZeroObject(pipelineVertexInputStateCreateInfo);
   pipelineVertexInputStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
   pipelineVertexInputStateCreateInfo.pNext = nullptr;
   pipelineVertexInputStateCreateInfo.flags = 0;
@@ -1950,6 +2040,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo;
 
+  ZeroObject(pipelineInputAssemblyStateCreateInfo);
   pipelineInputAssemblyStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
   pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
   pipelineInputAssemblyStateCreateInfo.flags = 0;
@@ -1958,6 +2049,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineViewportStateCreateInfo pipelineViewportStateCreateInfo;
 
+  ZeroObject(pipelineViewportStateCreateInfo);
   pipelineViewportStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
   pipelineViewportStateCreateInfo.pNext = nullptr;
   pipelineViewportStateCreateInfo.flags = 0;
@@ -1968,6 +2060,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineRasterizationStateCreateInfo pipelineRasterizationStateCreateInfo;
 
+  ZeroObject(pipelineRasterizationStateCreateInfo);
   pipelineRasterizationStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
   pipelineRasterizationStateCreateInfo.pNext = nullptr;
   pipelineRasterizationStateCreateInfo.flags = 0;
@@ -1984,6 +2077,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineMultisampleStateCreateInfo pipelineMultisampleStateCreateInfo;
 
+  ZeroObject(pipelineMultisampleStateCreateInfo);
   pipelineMultisampleStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
   pipelineMultisampleStateCreateInfo.pNext = nullptr;
   pipelineMultisampleStateCreateInfo.flags = 0;
@@ -1996,6 +2090,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineColorBlendAttachmentState pipelineColorBlendAttachmentState;
 
+  ZeroObject(pipelineColorBlendAttachmentState);
   pipelineColorBlendAttachmentState.blendEnable = VK_FALSE;
   pipelineColorBlendAttachmentState.srcColorBlendFactor = VkBlendFactor::VK_BLEND_FACTOR_ONE;
   pipelineColorBlendAttachmentState.dstColorBlendFactor = VkBlendFactor::VK_BLEND_FACTOR_ONE;
@@ -2008,6 +2103,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineColorBlendStateCreateInfo pipelineColorBlendStateCreateInfo;
 
+  ZeroObject(pipelineColorBlendStateCreateInfo);
   pipelineColorBlendStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
   pipelineColorBlendStateCreateInfo.pNext = nullptr;
   pipelineColorBlendStateCreateInfo.flags = 0;
@@ -2023,6 +2119,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   VkPipelineDepthStencilStateCreateInfo pipelineDepthStencilStateCreateInfo;
 
+  ZeroObject(pipelineDepthStencilStateCreateInfo);
   pipelineDepthStencilStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   pipelineDepthStencilStateCreateInfo.pNext = nullptr;
   pipelineDepthStencilStateCreateInfo.flags = 0;
@@ -2051,7 +2148,6 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo;
 
   ZeroObject(graphicsPipelineCreateInfo);
-
   graphicsPipelineCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
   graphicsPipelineCreateInfo.pNext = nullptr;
   graphicsPipelineCreateInfo.flags = 0;
@@ -2080,6 +2176,13 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
 
     printResult(result);
+
+    m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
+    m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+
+    delete shader;
 
     return null;
   }
@@ -2121,6 +2224,10 @@ void  kgmVulkan::gcFreeShader(void* s)
   {
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
   }
+
+  m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
+  m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
+  m_vk.vkDestroyPipeline(m_device, shader->pipeline, null);
 
   delete (Shader *) s;
 }
@@ -2875,6 +2982,10 @@ bool kgmVulkan::initCommands()
 
     printResult(result);
 
+    m_vk.vkDestroyCommandPool(m_device, m_commandPool, null);
+
+    m_commandPool = VK_NULL_HANDLE;
+
     return false;
   }
 
@@ -2895,6 +3006,12 @@ bool kgmVulkan::initCommands()
     kgm_log() << "Vulkan error: Cannot allocate command buffer.\n";
 
     printResult(result);
+
+    m_vk.vkDestroyCommandPool(m_device, m_commandPool, null);
+
+    m_commandPool = VK_NULL_HANDLE;
+
+    m_commandBuffers.clear();
 
     return false;
   }
@@ -3463,6 +3580,8 @@ bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryProper
                              VkBuffer& buffer, VkDeviceMemory& memory)
 {
   VkBufferCreateInfo bufferInfo = {};
+
+  ZeroObject(bufferInfo);
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferInfo.size = size;
   bufferInfo.usage = usage;
@@ -3481,9 +3600,12 @@ bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryProper
 
   VkMemoryRequirements memRequirements;
 
+  ZeroObject(memRequirements);
   m_vk.vkGetBufferMemoryRequirements(m_device, buffer, &memRequirements);
 
   VkMemoryAllocateInfo allocInfo = { };
+
+  ZeroObject(allocInfo);
   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, properties);
@@ -3496,6 +3618,8 @@ bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryProper
 
     printResult(result);
 
+    m_vk.vkDestroyBuffer(m_device, buffer, null);
+
     return false;
   }
 
@@ -3503,9 +3627,12 @@ bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryProper
 
   if (result != VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: cannot bind memory.\n";
+    kgm_log() << "Vulkan error: Cannot bind memory.\n";
 
     printResult(result);
+
+    m_vk.vkFreeMemory(m_device, memory, null);
+    m_vk.vkDestroyBuffer(m_device, buffer, null);
 
     return false;
   }
@@ -3584,6 +3711,29 @@ void  kgmVulkan::clear(Shader* s)
   s->pipeline = VK_NULL_HANDLE;
   s->layout = VK_NULL_HANDLE;
   s->cache = VK_NULL_HANDLE;
+}
+
+void kgmVulkan::clearDraws()
+{
+
+  kgmList<Draw>::iterator i = m_draws.begin();
+
+  for(; !i.end(); i.next())
+  {
+    if((*i).vmemory != VK_NULL_HANDLE)
+      m_vk.vkFreeMemory(m_device, (*i).vmemory, NULL);
+
+    if((*i).vbuffer != VK_NULL_HANDLE)
+      m_vk.vkDestroyBuffer(m_device, (*i).vbuffer, NULL);
+
+    if((*i).imemory != VK_NULL_HANDLE)
+      m_vk.vkFreeMemory(m_device, (*i).imemory, NULL);
+
+    if((*i).ibuffer != VK_NULL_HANDLE)
+      m_vk.vkDestroyBuffer(m_device, (*i).ibuffer, NULL);
+  }
+
+  m_draws.clear();
 }
 
 void kgmVulkan::printResult(VkResult result)

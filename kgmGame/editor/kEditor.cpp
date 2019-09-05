@@ -144,7 +144,7 @@ kEditor::kEditor(kgmGameBase* g)
     text     = new kgmVisual();
     text->set(textData);
 
-    graphics->setBgColor(0xffbbaa99);
+    graphics->setBgColor(0xff222222);
   }
 
   m_isVisual = true;

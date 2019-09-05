@@ -166,7 +166,7 @@ class kgmVulkan: public kgmIGC
     VkPipelineCache  cache;
   };
 
-  struct Mesh
+  struct Draw
   {
     VkDeviceMemory vmemory;
     VkBuffer       vbuffer;
@@ -178,6 +178,8 @@ class kgmVulkan: public kgmIGC
     VkBuffer       ubuffer;
 
     VkDescriptorBufferInfo descriptor;
+
+    u32 vcnt, icnt;
 
     Shader* shader;
   };
@@ -236,7 +238,7 @@ class kgmVulkan: public kgmIGC
 
   const s8* m_debugLayer = null;
 
-  kgmList<Mesh> m_meshes;
+  kgmList<Draw> m_draws;
 
 #ifdef DEBUG
   VkDebugReportCallbackEXT m_debugReportCallback = VK_NULL_HANDLE;
@@ -340,6 +342,7 @@ private:
   void* uniformLocation(Shader*, char*);
 
   void clear(Shader*);
+  void clearDraws();
 };
 
 #endif
