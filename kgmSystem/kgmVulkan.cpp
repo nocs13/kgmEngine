@@ -1289,9 +1289,6 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                               VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
                               1, &imageMemoryBarrier);
-
-    //m_vk.vkCmdEndRenderPass(commandBuffer);
-    //m_vk.vkEndCommandBuffer(commandBuffer);
   }
 }
 
@@ -1308,8 +1305,15 @@ void kgmVulkan::gcResize(u32 width, u32 height)
   refreshSwapchain();
 }
 
-void  kgmVulkan::gcBegin() {}
-void  kgmVulkan::gcEnd() {}
+void  kgmVulkan::gcBegin()
+{
+
+}
+
+void  kgmVulkan::gcEnd()
+{
+
+}
 
 void  kgmVulkan::gcRender()
 {
@@ -1344,6 +1348,8 @@ void  kgmVulkan::gcRender()
     return;
   }
 
+  auto &commandBuffer = m_commandBuffers[swapChainImage];
+
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
@@ -1370,18 +1376,22 @@ void  kgmVulkan::gcRender()
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  auto &commandBuffer = m_commandBuffers[swapChainImage];
+  kgmList<Draw>::iterator mi;
 
-  m_vk.vkCmdEndRenderPass(commandBuffer);
-  m_vk.vkEndCommandBuffer(commandBuffer);
-
-  //auto &commandBuffer = m_commandBuffers[0];
-
-  /*kgmList<Mesh>::iterator mi;
-
-  for (mi = m_meshes.begin(); !mi.end(); mi.next())
+  for (mi = m_draws.begin(); !mi.end(); mi.next())
   {
     Shader* shader = (*mi).shader;
+
+    if (!shader && !m_shader)
+    {
+      continue;
+    }
+
+    if (m_shader)
+      shader = m_shader;
+
+    if (!shader)
+      continue;
 
     m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->pipeline);
 
@@ -1389,9 +1399,11 @@ void  kgmVulkan::gcRender()
     VkDeviceSize offsets[] = {0};
 
     m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
     m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(0), 1, 0, 0);
-  }*/
+  }
+
+  m_vk.vkCmdEndRenderPass(commandBuffer);
+  m_vk.vkEndCommandBuffer(commandBuffer);
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
@@ -1523,8 +1535,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
       return;
   }
 
-  m_vk.vkBindBufferMemory(m_device, mesh.vbuffer, mesh.vmemory, 0);
-
   void* data;
 
   if (m_vk.vkMapMemory(m_device, mesh.vmemory, 0, bufferInfo.size, 0, &data) != VK_SUCCESS)
@@ -1538,7 +1548,24 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   }
 
   memcpy(data, v_pnt, (size_t) bufferInfo.size);
+
   m_vk.vkUnmapMemory(m_device, mesh.vmemory);
+
+  if (m_vk.vkBindBufferMemory(m_device, mesh.vbuffer, mesh.vmemory, 0) != VK_SUCCESS)
+  {
+    m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
+    m_vk.vkFreeMemory(m_device, mesh.vmemory, null);
+
+    kgm_log() << "Vulkan error: Failed bind vertex memory to buffer!\n";
+
+    return;
+  }
+
+  if (i_cnt && i_pnt)
+  {
+
+  }
+
 
   mesh.shader = m_shader;
 
@@ -1547,7 +1574,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   m_draws.add(mesh);
 
-  auto commandBuffer = m_commandBuffers[m_swapChainImage];
+  return;
+
+  //auto commandBuffer = m_commandBuffers[m_swapChainImage];
 
   if (m_shader && m_shader->pipeline)
   {
@@ -1563,7 +1592,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     for (u32 i = 0; i < m_swapChainImages.length(); i++)
     {
       auto &commandBuffer = m_commandBuffers[i];
-      auto &image         = m_swapChainImages[i];
       auto &framebuffer   = m_frameBuffers[i];
 
       VkRenderPassBeginInfo renderPassBeginInfo;
@@ -2191,6 +2219,9 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
+  if (!m_shader)
+    m_shader = shader;
+
   return shader;
 }
 
@@ -2239,6 +2270,9 @@ void  kgmVulkan::gcFreeShader(void* s)
 void  kgmVulkan::gcSetShader(void* s)
 {
   Shader* shader = (Shader*) s;
+
+  if (!s)
+    return;
 
   if (shader == null)
   {
