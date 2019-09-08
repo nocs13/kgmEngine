@@ -1554,6 +1554,23 @@ bool kgmVulkan::initInstance()
   appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);;
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
+  const char* layerNames[] = {
+    "VK_LAYER_LUNARG_standard_validation",
+    //"VK_LAYER_LUNARG_api_dump",
+    //"VK_LAYER_LUNARG_core_validation",
+    //"VK_LAYER_LUNARG_image",
+    //"VK_LAYER_LUNARG_object_tracker",
+    //"VK_LAYER_LUNARG_parameter_validation",
+    //"VK_LAYER_LUNARG_screenshot",
+    //"VK_LAYER_LUNARG_swapchain",
+    //"VK_LAYER_GOOGLE_threading",
+    //"VK_LAYER_GOOGLE_unique_objects",
+    "VK_LAYER_LUNARG_vktrace",
+    //"VK_LAYER_RENDERDOC_Capture",
+    //"VK_LAYER_NV_optimus",
+    //"VK_LAYER_VALVE_steam_overlay",
+  };
+
   VkInstanceCreateInfo instanceInfo = {};
 
   ZeroObject(instanceInfo);
@@ -1562,6 +1579,8 @@ bool kgmVulkan::initInstance()
   instanceInfo.pNext = NULL;
   instanceInfo.flags = 0;
   instanceInfo.pApplicationInfo = &appInfo;
+  instanceInfo.enabledLayerCount = 2;
+  instanceInfo.ppEnabledLayerNames = layerNames;
   instanceInfo.enabledExtensionCount = extensionsCount;
   instanceInfo.ppEnabledExtensionNames = m_extensionNames.data();
 
@@ -1851,10 +1870,11 @@ bool kgmVulkan::initDevice()
 
   ZeroObject(enabledFeatures);
 
-  //enabledFeatures.shaderClipDistance = VK_TRUE;
-  //enabledFeatures.shaderCullDistance = VK_TRUE;
+  enabledFeatures.shaderClipDistance = VK_TRUE;
+  enabledFeatures.shaderCullDistance = VK_TRUE;
 
-  const s8* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+  const s8* deviceExtensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+                                 };
 
   VkDeviceCreateInfo infoDevice = {};
 
@@ -1865,17 +1885,25 @@ bool kgmVulkan::initDevice()
   infoDevice.queueCreateInfoCount = 1;
   infoDevice.pQueueCreateInfos = &infoQueue;
   infoDevice.enabledExtensionCount = 1;
-  infoDevice.ppEnabledExtensionNames = &deviceExtensions;
+  infoDevice.ppEnabledExtensionNames = deviceExtensions;
   infoDevice.enabledLayerCount = 0;
   infoDevice.ppEnabledLayerNames = NULL;
   infoDevice.pEnabledFeatures = &enabledFeatures;
 
 #ifdef DEBUG
+  const char* layerNames[] = {
+    "VK_LAYER_NV_optimus",
+    "VK_LAYER_LUNARG_api_dump",
+    "VK_LAYER_LUNARG_screenshot",
+    "VK_LAYER_RENDERDOC_Capture",
+    "VK_LAYER_VALVE_steam_overlay",
+    "VK_LAYER_LUNARG_standard_validation",
+  };
   //m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
-  m_debugLayer = "VK_LAYER_KHRONOS_validation";
+  //m_debugLayer = "VK_LAYER_KHRONOS_validation";
 
-  infoDevice.enabledLayerCount = 1;
-  infoDevice.ppEnabledLayerNames = &m_debugLayer;
+  infoDevice.enabledLayerCount = 6;
+  infoDevice.ppEnabledLayerNames = layerNames;
 #endif
 
   VkDevice device = null;
@@ -2082,8 +2110,8 @@ bool kgmVulkan::initCommands()
 
   infoPool.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   infoPool.pNext = null;
-  infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
-  infoPool.flags = 0;
+  infoPool.queueFamilyIndex = 0;//m_graphicsQueueFamilyIndex;
+  infoPool.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
   VkResult result = m_vk.vkCreateCommandPool(m_device, &infoPool, nullptr, &m_commandPool);
 
@@ -2749,7 +2777,7 @@ void kgmVulkan::fillCommands()
     auto &image         = m_swapChainImages[i];
     auto &framebuffer   = m_frameBuffers[i];
 
-    //result = m_vk.vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+    result = m_vk.vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
 
@@ -3044,7 +3072,7 @@ void kgmVulkan::printResult(VkResult result)
     kgm_log() << "Vulkan result: Error memory map failed.\n";
   break;
   case VK_ERROR_LAYER_NOT_PRESENT:
-    kgm_log() << "Vulkan result: Error laayer not present.\n";
+    kgm_log() << "Vulkan result: Error layer not present.\n";
   break;
   case VK_ERROR_EXTENSION_NOT_PRESENT:
     kgm_log() << "Vulkan result: Error extension not present.\n";
