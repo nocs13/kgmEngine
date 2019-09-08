@@ -334,6 +334,7 @@ private:
   bool initDepthBuffer();
   bool initSemaphores();
   bool initPipeline();
+  bool initFence();
 
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
@@ -343,6 +344,8 @@ private:
 
   void clear(Shader*);
   void clearDraws();
+
+  void fillCommands();
 };
 
 #endif

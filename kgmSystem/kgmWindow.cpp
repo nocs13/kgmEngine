@@ -1009,7 +1009,10 @@ void kgmWindow::setRect(int x, int y, int w, int h)
 #ifdef WIN32
 
   RECT r;
-  //GetClientRect(m_hWnd, (LPRECT)&r);
+
+  GetWindowRect(m_wnd, (LPRECT)&r);
+
+  SetWindowPos(m_wnd, NULL, x, y, w, h, 0);
 
 #elif defined(ANDROID)
 

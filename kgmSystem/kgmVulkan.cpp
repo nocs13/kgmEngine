@@ -19,6 +19,8 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
+float cc_color[4] = {1.0, 0.0, 0.0, 1.0};
+
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
@@ -52,8 +54,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_viewport.y = 0;
   m_viewport.width = m_rect[2];
   m_viewport.height = m_rect[3];
-  m_viewport.minDepth = 0.1;
-  m_viewport.maxDepth = 1000.0;
+  m_viewport.minDepth = 0.0;
+  m_viewport.maxDepth = 1.0;
 
   m_scissor.offset.x = 0;
   m_scissor.offset.y = 0;
@@ -90,915 +92,12 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initSemaphores() || !initCommands())
+  if (!initSemaphores() || !initCommands() || !initFence())
   {
     m_error = 1;
 
     return;
   }
-
-  /*
-  VkResult vk_res;
-
-  VkApplicationInfo appInfo;
-
-  memset(&appInfo, 0, sizeof(VkApplicationInfo));
-
-  appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  appInfo.pApplicationName = "kTest";
-  appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.pEngineName = "No Engine";
-  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.apiVersion = VK_API_VERSION_1_0;
-
-  u32 extensionsCount = 0;
-
-  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
-
-  if (extensionsCount == 0)
-  {
-    kgm_log() << "Vulkan error: No extensions supported!\n";
-
-    return;
-  }
-
-  VkExtensionProperties extensionProperties[extensionsCount];
-  const char* extensionNames[extensionsCount];
-
-  vk_res = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, extensionProperties);
-
-  u32 iname = 0;
-
-  for (const auto& ep: extensionProperties)
-  {
-    kgm_log() << "Vulkan info: Extension name " << ep.extensionName << "\n";
-
-    extensionNames[iname++] = ep.extensionName;
-  }
-
-  VkInstanceCreateInfo createInfo;
-
-  memset(&createInfo, 0, sizeof(VkInstanceCreateInfo));
-
-  createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  createInfo.pApplicationInfo = &appInfo;
-  createInfo.enabledExtensionCount = extensionsCount;
-  createInfo.ppEnabledExtensionNames = extensionNames;
-
-  vk_res = m_vk.vkCreateInstance(&createInfo, null, &m_instance);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    switch(vk_res)
-    {
-    case VK_ERROR_LAYER_NOT_PRESENT:
-    kgm_log() << "Vulkan error: vkCreateInstance no layers\n";
-      break;
-    case VK_ERROR_EXTENSION_NOT_PRESENT:
-      kgm_log() << "Vulkan error: vkCreateInstance no extentions\n";
-      break;
-    default:
-      kgm_log() << "Vulkan error: vkCreateInstance failed.\n";
-
-      printResult(vk_res);
-    }
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Instance created.\n";
-
-#ifdef DEBUG
-
-  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");;
-
-  VkDebugReportCallbackEXT debugReportCallback;
-  VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
-
-  debugReportCallbackCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-  debugReportCallbackCreateInfo.pNext = nullptr;
-  debugReportCallbackCreateInfo.flags = VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
-          | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-  debugReportCallbackCreateInfo.pfnCallback = [](
-          VkDebugReportFlagsEXT flags,
-          VkDebugReportObjectTypeEXT objectType,
-          uint64_t object,
-          size_t location,
-          int32_t messageCode,
-          const char* pLayerPrefix,
-          const char* pMessage,
-          void* pUserData) -> VkBool32
-      {
-        kgm_log() << "Vulkan DEBUG: (";
-
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
-        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
-        kgm_log() << ")";
-        kgm_log() << "{" << pLayerPrefix << "} ";
-        kgm_log() << pMessage << "\n";
-        return VK_FALSE;
-      };
-  debugReportCallbackCreateInfo.pUserData = nullptr;
-
-  if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
-      &debugReportCallbackCreateInfo, nullptr, &debugReportCallback)
-      != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create debug collback.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Debug callback created.\n";
-
-#endif
-
-  u32 deviceCount = 0;
-
-  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices.\n";
-
-    printResult(vk_res);
-
-    return;
-  }
-
-  VkPhysicalDevice physicalDevices[deviceCount];
-
-  vk_res = m_vk.vkEnumeratePhysicalDevices(m_instance, &deviceCount, physicalDevices);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumeratePhysicalDevices no devs\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: [" << deviceCount << "] Physical devices enumerated.\n";
-
-  VkPhysicalDevice physicalDevice = physicalDevices[0];
-
-  m_physicalDevice = physicalDevice;
-
-  extensionsCount = 0;
-
-  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, nullptr);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties.\n";
-
-    printResult(vk_res);
-
-    return;
-  }
-
-  VkExtensionProperties deviceExtensionProperties[extensionsCount];
-
-  vk_res = m_vk.vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, deviceExtensionProperties);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no extentions\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Device extentions enumerated.\n";
-
-  bool isswapchain = false;
-
-  for (const auto e: deviceExtensionProperties)
-  {
-    if (strcmp(e.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0)
-    {
-      isswapchain = true;
-
-      break;
-    }
-
-    kgm_log() << "Vulkan: vkEnumerateDeviceExtensionProperties " << e.extensionName << "\n";
-  }
-
-  if (!isswapchain)
-  {
-    kgm_log() << "Vulkan error: vkEnumerateDeviceExtensionProperties no swap chain!\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Has swap chain.\n";
-
-  VkSurfaceKHR surface;
-
-#ifdef WIN32
-  VkWin32SurfaceCreateInfoKHR surfaceCreateInfo;
-  surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-  surfaceCreateInfo.hwnd = wnd->m_wnd;
-  surfaceCreateInfo.hinstance = GetModuleHandle(nullptr);
-
-  vk_res = m_vk.vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &surface);
-#else
-  VkXlibSurfaceCreateInfoKHR surfaceCreateInfo;
-  surfaceCreateInfo.sType  = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-  surfaceCreateInfo.window = wnd->m_wnd;
-  surfaceCreateInfo.dpy    = wnd->m_dpy;
-
-  vk_res = m_vk.vkCreateXlibSurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &surface);
-#endif
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: vkCreate**SurfaceKHR " << vk_res << "\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Surface created.\n";
-
-  m_surface = surface;
-
-  VkSurfaceCapabilitiesKHR surfaceCapabilities;
-
-  if(m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "kgmVulkan error: failed to get surface capabilities.\n";
-
-    return;
-  }
-
-  u32 surfaceFormatsCount = 0;
-
-  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, nullptr) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats count.\n";
-
-    return;
-  }
-
-  VkSurfaceFormatKHR surfaceFormats[surfaceFormatsCount];
-
-  if(m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatsCount, surfaceFormats) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get surface formats.\n";
-
-    return;
-  }
-  for (auto &sf: surfaceFormats)
-  {
-    kgm_log() << "Vulkan: Surface formats > colorSpace " << sf.colorSpace << ", format " << sf.format << ".\n";
-  }
-
-  kgm_log() << "Vulkan: Got surface formats.\n";
-
-  u32 queueFamilyCount = 0;
-
-  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
-
-  if (queueFamilyCount < 1)
-  {
-    kgm_log() << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no count\n";
-
-    return;
-  }
-
-  VkQueueFamilyProperties queueFamilies[queueFamilyCount];
-
-  m_vk.vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies);
-
-  if (queueFamilyCount < 1)
-  {
-    kgm_log() << "kgmVulkan error: vkGetPhysicalDeviceQueueFamilyProperties no families\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Physical devices queue family properties checked.\n";
-
-  bool hasGraphicsQueueFamily = false;
-  bool hasPresentQueueFamily = false;
-
-  u32 graphicsQueueFamily = -1, presentQueueFamily = -1;
-
-  for (u32 i = 0; i < queueFamilyCount; i++)
-  {
-    VkBool32 presentSupport = false;
-
-    m_vk.vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
-
-    if (queueFamilies[i].queueCount > 0
-        && queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-    {
-      graphicsQueueFamily = i;
-      hasGraphicsQueueFamily = true;
-
-      if (presentSupport)
-      {
-        presentQueueFamily = i;
-        hasPresentQueueFamily = true;
-        break;
-      }
-    }
-
-    if (!hasPresentQueueFamily && presentSupport)
-    {
-      presentQueueFamily = i;
-      hasPresentQueueFamily = true;
-    }
-  }
-
-  if (hasGraphicsQueueFamily)
-  {
-    kgm_log() << "Vulkan: queue family #" << graphicsQueueFamily << " supports graphics.\n";
-
-    if (hasPresentQueueFamily)
-    {
-      kgm_log() << "Vulkan queue family #" << presentQueueFamily
-          << " supports presentation.\n";
-    }
-    else
-    {
-      kgm_log() << "Vulkan error: could not find a valid queue family with present support.\n";
-
-      return;
-    }
-  }
-  else
-  {
-    kgm_log() << "Vulkan error: could not find a valid queue family with graphics support.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: Found valid queue family graphics support.\n";
-
-  f32 queuePriority = 1.0f;
-
-  VkDeviceQueueCreateInfo queueCreateInfo[2] = {};
-
-  memset(queueCreateInfo, 0, 2 * sizeof(VkDeviceQueueCreateInfo));
-
-  queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  queueCreateInfo[0].queueFamilyIndex = graphicsQueueFamily;
-  queueCreateInfo[0].queueCount = 1;
-  queueCreateInfo[0].pQueuePriorities = &queuePriority;
-
-  queueCreateInfo[0].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  queueCreateInfo[0].queueFamilyIndex = presentQueueFamily;
-  queueCreateInfo[0].queueCount = 1;
-  queueCreateInfo[0].pQueuePriorities = &queuePriority;
-
-  VkDeviceCreateInfo deviceCreateInfo;
-
-  memset(&deviceCreateInfo, 0, sizeof(VkDeviceCreateInfo));
-
-  deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-  deviceCreateInfo.pQueueCreateInfos = queueCreateInfo;
-
-  if (graphicsQueueFamily == presentQueueFamily)
-  {
-    deviceCreateInfo.queueCreateInfoCount = 1;
-  }
-  else
-  {
-    deviceCreateInfo.queueCreateInfoCount = 2;
-  }
-
-  // Necessary for shader (for some reason)
-  VkPhysicalDeviceFeatures enabledFeatures;
-
-  memset(&enabledFeatures, 0, sizeof(VkPhysicalDeviceFeatures));
-
-  enabledFeatures.shaderClipDistance = VK_TRUE;
-  enabledFeatures.shaderCullDistance = VK_TRUE;
-
-  const char* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-
-  deviceCreateInfo.enabledExtensionCount = 1;
-  deviceCreateInfo.ppEnabledExtensionNames = &deviceExtensions;
-  deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
-
-  VkDevice device;
-
-  if (m_vk.vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan: failed to create logical device\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: created logical device.\n";
-
-  VkQueue graphicsQueue, presentQueue;
-
-  // Get graphics and presentation queues (which may be the same)
-  m_vk.vkGetDeviceQueue(device, graphicsQueueFamily, 0, &graphicsQueue);
-  m_vk.vkGetDeviceQueue(device, presentQueueFamily, 0, &presentQueue);
-
-  kgm_log() << "Vulkan: acquired graphics and presentation queues.\n";
-
-  m_device = device;
-
-  wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
-
-  // Find supported present modes
-  u32 presentModeCount;
-
-  vk_res = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
-
-  if (vk_res != VK_SUCCESS || presentModeCount == 0)
-  {
-    kgm_log() << "Vulkan error: Failed to get number of supported presentation modes.\n";
-
-    return;
-  }
-
-  VkPresentModeKHR presentModes[presentModeCount];
-
-  vk_res = m_vk.vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes);
-
-  if (vk_res != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get supported presentation modes.\n";
-
-    return;
-  }
-
-  VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-
-  for (const auto &i: presentModes)
-  {
-    if (i == VK_PRESENT_MODE_MAILBOX_KHR)
-    {
-      presentMode == i;
-
-      break;
-    }
-  }
-
-  VkSwapchainKHR swapChain = null;
-
-  VkSwapchainCreateInfoKHR swapChainCreateInfo;
-
-  ZeroObject(swapChainCreateInfo);
-
-  swapChainCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-  swapChainCreateInfo.pNext = nullptr;
-  swapChainCreateInfo.flags = 0;
-  swapChainCreateInfo.surface = surface;
-  swapChainCreateInfo.minImageCount = 1;
-  swapChainCreateInfo.imageFormat = surfaceFormats[0].format;
-  swapChainCreateInfo.imageColorSpace = surfaceFormats[0].colorSpace;
-  swapChainCreateInfo.imageExtent = VkExtent2D{(u32) m_rect[2], (u32) m_rect[3]};
-  swapChainCreateInfo.imageArrayLayers = 1;
-  swapChainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-  swapChainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-  swapChainCreateInfo.queueFamilyIndexCount = 0;
-  swapChainCreateInfo.pQueueFamilyIndices = nullptr;
-  swapChainCreateInfo.preTransform = VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-  swapChainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-  swapChainCreateInfo.presentMode = presentMode;
-  swapChainCreateInfo.clipped = VK_FALSE;
-  swapChainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
-
-  if(m_vk.vkCreateSwapchainKHR(device, &swapChainCreateInfo, nullptr, &swapChain) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create swapchain.\n";
-
-    return;
-  }
-
-  m_swapChain = swapChain;
-
-  kgm_log() << "Vulkan: created swap chain.\n";
-
-  u32 swapChainImagesCount;
-
-  if(m_vk.vkGetSwapchainImagesKHR(device, swapChain, &swapChainImagesCount, nullptr) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get swapchain images count.\n";
-
-    return;
-  }
-
-  m_swapChainImages.alloc(swapChainImagesCount);
-
-  if(m_vk.vkGetSwapchainImagesKHR(device, swapChain, &swapChainImagesCount, m_swapChainImages.data()) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get swapchain images.\n";
-
-    return;
-  }
-
-  VkRenderPass renderPass;
-
-  VkAttachmentDescription attachmentDescription;
-
-  memset(&attachmentDescription, 0, sizeof(VkAttachmentDescription));
-
-  attachmentDescription.flags = 0;
-  attachmentDescription.format = surfaceFormats[0].format;
-  attachmentDescription.samples = VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
-  attachmentDescription.loadOp = VkAttachmentLoadOp::VK_ATTACHMENT_LOAD_OP_CLEAR;
-  attachmentDescription.storeOp = VkAttachmentStoreOp::VK_ATTACHMENT_STORE_OP_STORE;
-  attachmentDescription.stencilLoadOp = VkAttachmentLoadOp::VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-  attachmentDescription.stencilStoreOp = VkAttachmentStoreOp::VK_ATTACHMENT_STORE_OP_DONT_CARE;
-  attachmentDescription.initialLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-  attachmentDescription.finalLayout = VkImageLayout::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-  VkAttachmentReference attachmentReference;
-
-  memset(&attachmentReference, 0, sizeof(VkAttachmentReference));
-
-  attachmentReference.attachment = 0;
-  attachmentReference.layout = VkImageLayout::VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-  VkSubpassDescription subpassDescription;
-
-  memset(&subpassDescription, 0, sizeof(VkSubpassDescription));
-
-  subpassDescription.flags = 0;
-  subpassDescription.pipelineBindPoint = VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS;
-  subpassDescription.inputAttachmentCount = 0;
-  subpassDescription.pInputAttachments = nullptr;
-  subpassDescription.colorAttachmentCount = 1;
-  subpassDescription.pColorAttachments = &attachmentReference;
-  subpassDescription.pResolveAttachments = nullptr;
-  subpassDescription.pDepthStencilAttachment = nullptr;
-  subpassDescription.preserveAttachmentCount = 0;
-  subpassDescription.pPreserveAttachments = nullptr;
-
-  VkRenderPassCreateInfo renderPassCreateInfo;
-
-  memset(&renderPassCreateInfo, 0, sizeof(VkRenderPassCreateInfo));
-
-  renderPassCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-  renderPassCreateInfo.pNext = nullptr;
-  renderPassCreateInfo.flags = 0;
-  renderPassCreateInfo.attachmentCount = 1;
-  renderPassCreateInfo.pAttachments = &attachmentDescription;
-  renderPassCreateInfo.subpassCount = 1;
-  renderPassCreateInfo.pSubpasses = &subpassDescription;
-  renderPassCreateInfo.dependencyCount = 0;
-  renderPassCreateInfo.pDependencies = nullptr;
-
-  if(m_vk.vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &renderPass) != VkResult::VK_SUCCESS)
-  {
-      kgm_log() << "Vulkan error: failed to create render pass.\n";
-
-      return;
-  }
-
-  kgm_log() << "Vulkan: created render pass.\n";
-
-  m_renderPass = renderPass;
-
-  m_framebuffers.alloc(m_swapChainImages.length());
-
-  m_imageViews.alloc(m_swapChainImages.length());
-
-  for (u32 i = 0; i < m_swapChainImages.length(); i++)
-  {
-    auto& imageView = m_imageViews[i];
-
-    VkImageViewCreateInfo imageViewCreateInfo;
-
-    memset(&imageViewCreateInfo, 0, sizeof(VkImageViewCreateInfo));
-
-    imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    imageViewCreateInfo.pNext = nullptr;
-    imageViewCreateInfo.flags = 0;
-    imageViewCreateInfo.image = m_swapChainImages[i];
-    imageViewCreateInfo.viewType = VkImageViewType::VK_IMAGE_VIEW_TYPE_2D;
-    imageViewCreateInfo.format = surfaceFormats[0].format;
-
-    imageViewCreateInfo.components = {
-      VkComponentSwizzle::VK_COMPONENT_SWIZZLE_R,
-      VkComponentSwizzle::VK_COMPONENT_SWIZZLE_G,
-      VkComponentSwizzle::VK_COMPONENT_SWIZZLE_B,
-      VkComponentSwizzle::VK_COMPONENT_SWIZZLE_A
-    };
-
-    imageViewCreateInfo.subresourceRange.aspectMask = VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-    imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-    imageViewCreateInfo.subresourceRange.levelCount = 1;
-    imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-    imageViewCreateInfo.subresourceRange.layerCount = 1;
-
-    if(m_vk.vkCreateImageView(m_device, &imageViewCreateInfo, nullptr, &imageView) != VkResult::VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: failed to create image view\n";
-
-      return;
-    }
-
-    auto &framebuffer = m_framebuffers[i];
-
-    VkFramebufferCreateInfo framebufferCreateInfo;
-
-    memset(&framebufferCreateInfo, 0, sizeof(VkFramebufferCreateInfo));
-
-    framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    framebufferCreateInfo.pNext = nullptr;
-    framebufferCreateInfo.flags = 0;
-    framebufferCreateInfo.renderPass = renderPass;
-    framebufferCreateInfo.attachmentCount = 1;
-    framebufferCreateInfo.pAttachments = &imageView;
-    framebufferCreateInfo.width = surfaceCapabilities.currentExtent.width;
-    framebufferCreateInfo.height = surfaceCapabilities.currentExtent.height;
-    framebufferCreateInfo.layers = 1;
-
-
-    if(m_vk.vkCreateFramebuffer(m_device, &framebufferCreateInfo, nullptr, &framebuffer) != VkResult::VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: failed to create framebuffer\n";
-
-      return;
-    }
-  }
-
-  kgm_log() << "Vulkan: created framebuffer and image views.\n";
-
-  VkQueue queue;
-
-  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
-
-  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to wait for queue.\n";
-
-    return;
-  }
-
-  m_queue = queue;
-  */
-  /*VkPhysicalDeviceMemoryProperties deviceMemoryProperties;
-
-  m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
-
-  VkSemaphore imageAvailableSemaphore, renderingFinishedSemaphore;
-  VkSemaphoreCreateInfo semaphoreCreateInfo = {};
-  createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-  if (m_vk.vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-      m_vk.vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderingFinishedSemaphore) != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan: failed to create semaphores.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: created semaphores.\n";*/
-  /*
-  VkCommandPool commandPool;
-
-  VkCommandPoolCreateInfo poolCreateInfo;
-
-  memset(&poolCreateInfo, 0, sizeof(VkCommandPoolCreateInfo));
-
-  poolCreateInfo.flags = VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-  poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-  poolCreateInfo.pNext = null;
-  poolCreateInfo.queueFamilyIndex = graphicsQueueFamily;
-
-  if (m_vk.vkCreateCommandPool(device, &poolCreateInfo, nullptr, &commandPool) != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create command queue for graphics queue family.\n";
-
-    return;
-  }
-
-  if(m_vk.vkResetCommandPool(m_device, commandPool, VkCommandPoolResetFlagBits::VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to reset command pool.\n";
-
-    return;
-  }
-
-  kgm_log() << "Vulkan: created/reseted command pool for graphics queue family.\n";
-
-  m_commandPool = commandPool;
-
-  m_commandBuffers.alloc(m_swapChainImages.length());
-
-  VkCommandBufferAllocateInfo commandBufferAllocateInfo;
-
-  ZeroObject(commandBufferAllocateInfo);
-
-  commandBufferAllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-  commandBufferAllocateInfo.pNext = nullptr;
-  commandBufferAllocateInfo.commandPool = commandPool;
-  commandBufferAllocateInfo.level = VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  commandBufferAllocateInfo.commandBufferCount = m_swapChainImages.length();
-
-  if(m_vk.vkAllocateCommandBuffers(m_device, &commandBufferAllocateInfo, m_commandBuffers) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to allocate command buffers\n";
-
-    return;
-  }
-
-  for(u32 i = 0; i < m_swapChainImages.length(); ++i)
-  {
-    auto &commandBuffer = m_commandBuffers[i];
-    auto &image = m_swapChainImages[i];
-    auto &framebuffer = m_framebuffers[i];
-
-    if(m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT) != VkResult::VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: failed to reset command buffer\n";
-
-      return;
-    }
-
-    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-
-    ZeroObject(commandBufferInheritanceInfo);
-
-    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-    commandBufferInheritanceInfo.pNext = nullptr;
-    commandBufferInheritanceInfo.renderPass = renderPass;
-    commandBufferInheritanceInfo.subpass = 0;
-    commandBufferInheritanceInfo.framebuffer = framebuffer;
-    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
-    commandBufferInheritanceInfo.queryFlags = 0;
-    commandBufferInheritanceInfo.pipelineStatistics = 0;
-
-    VkCommandBufferBeginInfo commandBufferBeginInfo;
-
-    ZeroObject(commandBufferBeginInfo);
-
-    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    commandBufferBeginInfo.pNext = nullptr;
-    commandBufferBeginInfo.flags = 0;
-    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
-
-    m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
-
-    VkClearValue clearValue;
-
-    ZeroObject(clearValue);
-
-    clearValue.color.float32[0] = 1.0f;
-    clearValue.color.float32[1] = 0.0f;
-    clearValue.color.float32[2] = 0.0f;
-    clearValue.color.float32[3] = 1.0f;
-
-    VkRenderPassBeginInfo renderPassBeginInfo;
-
-    ZeroObject(renderPassBeginInfo);
-
-    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.pNext = nullptr;
-    renderPassBeginInfo.renderPass = renderPass;
-    renderPassBeginInfo.framebuffer = m_framebuffers[i];
-    renderPassBeginInfo.renderArea = VkRect2D {
-      VkOffset2D  {0, 0},
-      VkExtent2D  {
-        (u32) wrc[2], (u32) wrc[3]
-        //surfaceCapabilities.currentExtent.width,
-        //surfaceCapabilities.currentExtent.height
-      }
-    };
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
-
-    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-    m_vk.vkCmdEndRenderPass(commandBuffer);
-
-    VkImageMemoryBarrier imageMemoryBarrier;
-
-    ZeroObject(imageMemoryBarrier);
-
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.pNext = nullptr;
-    imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask =
-        VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-        VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    imageMemoryBarrier.srcQueueFamilyIndex = 0;
-    imageMemoryBarrier.dstQueueFamilyIndex = 0;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {
-      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-    };
-
-    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-                              1, &imageMemoryBarrier);
-
-    m_vk.vkEndCommandBuffer(commandBuffer);
-  }
-
-  kgm_log() << "Vulkan: Filled command buffers.\n";
-
-  VkFence fence;
-
-  VkFenceCreateInfo fenceCreateInfo;
-
-  ZeroObject(fenceCreateInfo);
-
-  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-  fenceCreateInfo.pNext = nullptr;
-  fenceCreateInfo.flags = 0;
-
-  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
-      != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create fence.\n";
-
-    return;
-  }
-
-  m_fence = fence;
-
-  /* u32 swapChainImage;
-
-  if(m_vk.vkAcquireNextImageKHR(m_device, swapChain, UINT64_MAX, VK_NULL_HANDLE, fence, &swapChainImage) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to get next swapchain image.\n";
-
-    return;
-  }
-
-  m_swapChainImage = swapChainImage;
-
-  kgm_log() << "Vulkan: got next swap chain image.\n";
-
-  if(m_vk.vkWaitForFences(m_device, 1, &fence, VK_TRUE, UINT64_MAX) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to wait for fence.\n";
-
-    return;
-  }
-
-  if(m_vk.vkResetFences(m_device, 1, &fence) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to reset fence.\n";
-
-    return;
-  }
-
-  auto &commandBuffer = m_commandBuffers[swapChainImage];
-
-  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-  VkSubmitInfo submitInfo;
-
-  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-  submitInfo.pNext = nullptr;
-  submitInfo.waitSemaphoreCount = 0;
-  submitInfo.pWaitSemaphores = nullptr;
-  submitInfo.pWaitDstStageMask = &waitMask;
-  submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &commandBuffer;
-  submitInfo.signalSemaphoreCount = 0;
-  submitInfo.pSignalSemaphores = nullptr;
-
-  if(m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to submit command buffer.\n";
-
-    return;
-  }
-
-  if(m_vk.vkQueueWaitIdle(queue) != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to wait for queue.\n";
-
-    return;
-  }
-
-  VkResult result;
-  VkPresentInfoKHR presentInfo;
-
-  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  presentInfo.pNext = nullptr;
-  presentInfo.waitSemaphoreCount = 0;
-  presentInfo.pWaitSemaphores = nullptr;
-  presentInfo.swapchainCount = 1;
-  presentInfo.pSwapchains = &swapChain;
-  presentInfo.pImageIndices = &swapChainImage;
-  presentInfo.pResults = &result;
-
-
-  if(m_vk.vkQueuePresentKHR(queue, &presentInfo) != VkResult::VK_SUCCESS || result != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to present swapchain.\n";
-
-    return;
-  }
-  */
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -1199,6 +298,18 @@ void  kgmVulkan::gcGet(u32 param, void* value) {}
 
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
+  u8 r = (col & 0x000000ff);
+  u8 g = ((col & 0x0000ff00) >> 8);
+  u8 b = ((col & 0x00ff0000) >> 16);
+  u8 a = ((col & 0xff000000) >> 24);
+
+  cc_color[0] = (f32) r / 255.f;
+  cc_color[1] = (f32) g / 255.f;
+  cc_color[2] = (f32) b / 255.f;
+  cc_color[3] = (f32) a / 255.f;
+
+  return;
+
   for (u32 i = 0; i < m_swapChainImages.length(); i++)
   {
     auto &commandBuffer = m_commandBuffers[i];
@@ -1239,11 +350,6 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     ZeroObject(clearValue);
 
     float ggg = (float) ((float) rand() / (float) RAND_MAX);
-
-    u8 r = (col & 0x000000ff);
-    u8 g = ((col & 0x0000ff00) >> 8);
-    u8 b = ((col & 0x00ff0000) >> 16);
-    u8 a = ((col & 0xff000000) >> 24);
 
     clearValue.color.float32[0] = (f32) r / 255.f;
     clearValue.color.float32[1] = (f32) g / 255.f;
@@ -1328,6 +434,8 @@ void  kgmVulkan::gcRender()
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
+  auto commandBuffer = m_commandBuffers[swapChainImage];
+
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
   {
     kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
@@ -1347,8 +455,6 @@ void  kgmVulkan::gcRender()
 
     return;
   }
-
-  auto &commandBuffer = m_commandBuffers[swapChainImage];
 
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
@@ -1375,35 +481,6 @@ void  kgmVulkan::gcRender()
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
-
-  kgmList<Draw>::iterator mi;
-
-  for (mi = m_draws.begin(); !mi.end(); mi.next())
-  {
-    Shader* shader = (*mi).shader;
-
-    if (!shader && !m_shader)
-    {
-      continue;
-    }
-
-    if (m_shader)
-      shader = m_shader;
-
-    if (!shader)
-      continue;
-
-    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->pipeline);
-
-    VkBuffer vertexBuffers[] = {(*mi).vbuffer};
-    VkDeviceSize offsets[] = {0};
-
-    m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-    m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(0), 1, 0, 0);
-  }
-
-  m_vk.vkCmdEndRenderPass(commandBuffer);
-  m_vk.vkEndCommandBuffer(commandBuffer);
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 
@@ -1464,7 +541,7 @@ void  kgmVulkan::gcRender()
   {
     kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
 
-    refreshSwapchain();
+    //refreshSwapchain();
 
     return;
   }
@@ -1483,17 +560,31 @@ void  kgmVulkan::gcRender()
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
-  clearDraws();
+  //clearDraws();
 
-  m_swapChainImage = swapChainImage;
+  //m_swapChainImage = swapChainImage;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
 
 // DRAWING
+static s32 yyy = 0;
 void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt)
 {
   Draw mesh = {0};
+  if(yyy > 0)
+    return;
+  yyy=1;
+  float source[] = {
+    -0.5f, +0.5f,
+    +0.5f, +0.5f,
+    +0.0f, -0.5f
+  };
+
+  v_pnt = source;
+  v_cnt = 3;
+  v_size = sizeof(float) * 2;
+
 
   VkBufferCreateInfo bufferInfo = {};
 
@@ -1565,7 +656,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   {
 
   }
-
 
   mesh.shader = m_shader;
 
@@ -1871,8 +961,10 @@ void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
   m_viewport.y = y;
   m_viewport.width = w;
   m_viewport.height = h;
-  m_viewport.minDepth = n;
-  m_viewport.maxDepth = f;
+  //m_viewport.minDepth = n;
+  //m_viewport.maxDepth = f;
+  m_viewport.minDepth = 0.0;
+  m_viewport.maxDepth = 1.0;
 }
 
 //BLEND
@@ -2131,7 +1223,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineColorBlendAttachmentState.dstAlphaBlendFactor = VkBlendFactor::VK_BLEND_FACTOR_ONE;
   pipelineColorBlendAttachmentState.alphaBlendOp = VkBlendOp::VK_BLEND_OP_ADD;
   pipelineColorBlendAttachmentState.colorWriteMask = VkColorComponentFlagBits::VK_COLOR_COMPONENT_R_BIT |
-            VkColorComponentFlagBits::VK_COLOR_COMPONENT_G_BIT | VkColorComponentFlagBits::VK_COLOR_COMPONENT_B_BIT;
+                                                     VkColorComponentFlagBits::VK_COLOR_COMPONENT_G_BIT |
+                                                     VkColorComponentFlagBits::VK_COLOR_COMPONENT_B_BIT;
 
   VkPipelineColorBlendStateCreateInfo pipelineColorBlendStateCreateInfo;
 
@@ -2422,6 +1515,8 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
+  kgm_log() << "Vulkan: Listed extensions supported!\n";
+
   m_extensionProperties.alloc(extensionsCount);
   m_extensionNames.alloc(extensionsCount);
 
@@ -2480,6 +1575,8 @@ bool kgmVulkan::initInstance()
 
     return false;
   }
+
+  kgm_log() << "Vulkan: Instance created!\n";
 
   return true;
 }
@@ -2611,6 +1708,8 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
+  kgm_log() << "Vulkan: Physical device count is " << count << ".\n";
+
   m_physicalDevices.alloc(count);
 
   result = m_vk.vkEnumeratePhysicalDevices(m_instance, &count, m_physicalDevices.data());
@@ -2634,6 +1733,8 @@ bool kgmVulkan::listDevices()
   }
 
   m_physicalDevice = m_physicalDevices[0];
+
+  kgm_log() << "Vulkan: Physical device choosen\n";
 
   return true;
 }
@@ -2735,7 +1836,7 @@ bool kgmVulkan::initDevice()
 
   m_vk.vkGetPhysicalDeviceMemoryProperties(physicalDevice, &deviceMemoryProperties);
 
-  float priorities = 1.0f;
+  float priorities[] = {0.0f};
 
   VkDeviceQueueCreateInfo infoQueue = {};
 
@@ -2744,14 +1845,14 @@ bool kgmVulkan::initDevice()
   infoQueue.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   infoQueue.pNext = NULL;
   infoQueue.queueCount = 1;
-  infoQueue.pQueuePriorities = &priorities;
+  infoQueue.pQueuePriorities = priorities;
 
   VkPhysicalDeviceFeatures enabledFeatures;
 
   ZeroObject(enabledFeatures);
 
-  enabledFeatures.shaderClipDistance = VK_TRUE;
-  enabledFeatures.shaderCullDistance = VK_TRUE;
+  //enabledFeatures.shaderClipDistance = VK_TRUE;
+  //enabledFeatures.shaderCullDistance = VK_TRUE;
 
   const s8* deviceExtensions = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 
@@ -2789,28 +1890,9 @@ bool kgmVulkan::initDevice()
 
     return false;
   }
+  kgm_log() << "Vulkan: Create device.\n";
 
   m_device = device;
-
-  VkFence fence;
-
-  VkFenceCreateInfo fenceCreateInfo;
-
-  ZeroObject(fenceCreateInfo);
-
-  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-  fenceCreateInfo.pNext = nullptr;
-  fenceCreateInfo.flags = 0;
-
-  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
-      != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create fence.\n";
-
-    return false;
-  }
-
-  m_fence = fence;
 
   return true;
 }
@@ -2882,6 +1964,24 @@ bool kgmVulkan::initSurface()
     return false;
   }
 
+  kgm_log() << "Vulkan: Created surtface.\n";
+
+  #ifdef WIN32
+
+  VkBool32 isSupported = 0;
+
+  if(m_vk.vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, 0, m_surface, &isSupported) != VkResult::VK_SUCCESS || isSupported == VK_FALSE)
+  {
+    kgm_log() << "Vulkan error: Surtface not supported.\n";
+
+    printResult(result);
+
+    return false;
+  }
+  kgm_log() << "Vulkan: Surface supported.\n";
+
+  #endif
+
   u32 queueFamilyCount = 0;
 
   m_vk.vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, nullptr);
@@ -2946,14 +2046,16 @@ bool kgmVulkan::initSurface()
     {
       kgm_log() << "Vulkan queue family #" << presentQueueFamily
           << " supports presentation.\n";
-    } else
+    }
+    else
     {
       kgm_log()
           << "Vulkan error: could not find a valid queue family with present support.\n";
 
       return false;
     }
-  } else
+  }
+  else
   {
     kgm_log()
         << "Vulkan error: could not find a valid queue family with graphics support.\n";
@@ -3213,6 +2315,8 @@ bool kgmVulkan::initSwapchain()
     return false;
   }
 
+  kgm_log() << "Vulkan: Created swapchain.\n";
+
   uint32_t actualImageCount = swapChainImagesCount;
 
   result = m_vk.vkGetSwapchainImagesKHR(m_device, m_swapChain, &actualImageCount, nullptr);
@@ -3223,7 +2327,7 @@ bool kgmVulkan::initSwapchain()
 
     return false;
   }
-
+  kgm_log() << "Vulkan: Got swapchain images count.\n";
   if (swapChain != VK_NULL_HANDLE)
   {
     m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
@@ -3242,6 +2346,8 @@ bool kgmVulkan::initSwapchain()
     return false;
   }
 
+  kgm_log() << "Vulkan: Got swapchain images.\n";
+
   m_swapChainImage = 0;
 
   return true;
@@ -3259,8 +2365,8 @@ bool kgmVulkan::initRenderPass()
   attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
   attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
   attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
   VkAttachmentReference colorAttachmentReference = {};
 
@@ -3297,6 +2403,7 @@ bool kgmVulkan::initRenderPass()
 
     return false;
   }
+  kgm_log() << "Vulkan: Created render pass.\n";
 
   return true;
 }
@@ -3346,6 +2453,8 @@ bool kgmVulkan::initImageViews()
     }
   }
 
+  kgm_log() << "Vulkan: Creates image views.\n";
+
   return true;
 }
 
@@ -3392,6 +2501,8 @@ bool kgmVulkan::initFrameBuffers()
       return false;
     }
   }
+
+  kgm_log() << "Vulkan: Created framebuffers.\n";
 
   return true;
 }
@@ -3593,7 +2704,146 @@ bool kgmVulkan::refreshSwapchain()
   initFrameBuffers();
   initCommands();
 
+  fillCommands();
+
   return true;
+}
+
+bool kgmVulkan::initFence()
+{
+  VkFence fence;
+
+  VkFenceCreateInfo fenceCreateInfo;
+
+  ZeroObject(fenceCreateInfo);
+
+  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceCreateInfo.pNext = nullptr;
+  fenceCreateInfo.flags = 0;
+
+  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create fence.\n";
+
+    return false;
+  }
+
+  kgm_log() << "Vulkan: Created fence.\n";
+
+  m_fence = fence;
+
+  return true;
+}
+
+void kgmVulkan::fillCommands()
+{
+  VkResult result = VK_SUCCESS;
+
+  if (!m_shader)
+    return;
+
+  for (s32 i = 0; i < m_swapChainImages.length(); i++)
+  {
+    auto &commandBuffer = m_commandBuffers[i];
+    auto &image         = m_swapChainImages[i];
+    auto &framebuffer   = m_frameBuffers[i];
+
+    //result = m_vk.vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+
+    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
+
+    ZeroObject(commandBufferInheritanceInfo);
+    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+    commandBufferInheritanceInfo.pNext = nullptr;
+    commandBufferInheritanceInfo.renderPass = m_renderPass;
+    commandBufferInheritanceInfo.subpass = 0;
+    commandBufferInheritanceInfo.framebuffer = framebuffer;
+    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
+    commandBufferInheritanceInfo.queryFlags = 0;
+    commandBufferInheritanceInfo.pipelineStatistics = 0;
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo;
+
+    ZeroObject(commandBufferBeginInfo);
+    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    commandBufferBeginInfo.pNext = nullptr;
+    commandBufferBeginInfo.flags = 0;
+    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
+
+    result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+
+    if (result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Cannot begin command buffer.\n";
+    }
+
+    VkClearValue clearValue;
+
+    ZeroObject(clearValue);
+
+    clearValue.color.float32[0] = 0.1;
+    clearValue.color.float32[1] = 0.2;
+    clearValue.color.float32[2] = 0.5;
+    clearValue.color.float32[3] = 1.0;
+
+    VkRenderPassBeginInfo renderPassBeginInfo;
+
+    ZeroObject(renderPassBeginInfo);
+    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassBeginInfo.pNext = nullptr;
+    renderPassBeginInfo.renderPass = m_renderPass;
+    renderPassBeginInfo.framebuffer = framebuffer;
+    renderPassBeginInfo.renderArea = VkRect2D {
+      VkOffset2D  {0, 0},
+      VkExtent2D  { (u32) m_rect[2], (u32) m_rect[3] }
+    };
+
+    renderPassBeginInfo.clearValueCount = 1;
+    renderPassBeginInfo.pClearValues = &clearValue;
+
+    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
+
+    kgmList<Draw>::iterator mi;
+
+    for (mi = m_draws.begin(); !mi.end(); mi.next())
+    {
+      VkBuffer vertexBuffers[] = {(*mi).vbuffer};
+      VkDeviceSize offsets[] = {0};
+
+      m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+      m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(0), 1, 0, 0);
+
+      break;
+    }
+
+    m_vk.vkCmdEndRenderPass(commandBuffer);
+
+    VkImageMemoryBarrier imageMemoryBarrier;
+
+    ZeroObject(imageMemoryBarrier);
+    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier.pNext = nullptr;
+    imageMemoryBarrier.srcAccessMask = 0;
+    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                       VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    imageMemoryBarrier.srcQueueFamilyIndex = 0;
+    imageMemoryBarrier.dstQueueFamilyIndex = 0;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange = {
+      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
+    };
+
+    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
+                              1, &imageMemoryBarrier);
+
+    m_vk.vkEndCommandBuffer(commandBuffer);
+  }
 }
 
 bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties,
