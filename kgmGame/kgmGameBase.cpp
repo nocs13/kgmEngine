@@ -47,8 +47,8 @@ kgmIGame* kgmIGame::getGame()
   return kgmGameBase::m_game;
 }
 
-#define BWIDTH  640
-#define BHEIGHT 480
+#define BWIDTH  1920
+#define BHEIGHT 1080
 
 //const char *log_file = "kgmLog.txt";
 //const char *set_file = "kgmEngine.conf";

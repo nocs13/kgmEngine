@@ -49,6 +49,10 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   g_vulkans++;
 
   wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
+  //u32 wr[2];
+  //kgmSystem::getDesktopDimension(wr[0], wr[1]);
+  //m_rect[2] = wr[0];
+  //m_rect[3] = wr[1];
 
   m_viewport.x = 0;
   m_viewport.y = 0;
@@ -98,6 +102,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
     return;
   }
+
+  fillCommands();
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -182,7 +188,6 @@ int kgmVulkan::vkInit()
     return -1;
 
 #ifdef WIN32
-  //if(!vk_lib.open((char*) "C:\\VulkanSDK\\1.1.92.1\\RunTimeInstaller\\x64\\vulkan-1.dll"))
   if (!vk_lib.open((char*) "vulkan.dll"))
     if (!vk_lib.open((char*) "vulkan-1.dll"))
       return -2;
@@ -406,9 +411,9 @@ void kgmVulkan::gcResize(u32 width, u32 height)
   m_rect[2] = width;
   m_rect[3] = height;
 
-  kgm_log() << "Vulkan: Window resized, viewport need update.\n";
+  //kgm_log() << "Vulkan: Window resized, viewport need update.\n";
 
-  refreshSwapchain();
+  //refreshSwapchain();
 }
 
 void  kgmVulkan::gcBegin()
@@ -436,20 +441,20 @@ void  kgmVulkan::gcRender()
 
   auto commandBuffer = m_commandBuffers[swapChainImage];
 
-  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
-  {
-    kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
-
-    refreshSwapchain();
-
-    return;
-  }
-
   if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan render error: failed to get next swapchain image.\n";
 
     printResult(result);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR)
+    {
+      kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
+
+      refreshSwapchain();
+
+      return;
+    }
 
     exit(0);
 
@@ -537,7 +542,7 @@ void  kgmVulkan::gcRender()
 
   VkResult result2 = m_vk.vkQueuePresentKHR(queue, &presentInfo);
 
-  if (result2 == VK_ERROR_OUT_OF_DATE_KHR || result2 == VK_SUBOPTIMAL_KHR)
+  if (result2 == VK_ERROR_OUT_OF_DATE_KHR)
   {
     kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
 
@@ -562,7 +567,7 @@ void  kgmVulkan::gcRender()
 
   //clearDraws();
 
-  //m_swapChainImage = swapChainImage;
+  m_swapChainImage = swapChainImage;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -614,8 +619,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   ZeroObject(allocInfo);
   allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
   allocInfo.allocationSize = memRequirements.size;
-  allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits,
-                                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+  allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+  kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
 
   if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS)
   {
@@ -663,6 +669,10 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   mesh.icnt = i_cnt;
 
   m_draws.add(mesh);
+
+  fillCommands();
+
+  kgm_log() << "Vulkan: Mesh add and filled commands.\n";
 
   return;
 
@@ -2110,7 +2120,7 @@ bool kgmVulkan::initCommands()
 
   infoPool.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
   infoPool.pNext = null;
-  infoPool.queueFamilyIndex = 0;//m_graphicsQueueFamilyIndex;
+  infoPool.queueFamilyIndex = m_graphicsQueueFamilyIndex;
   infoPool.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
   VkResult result = m_vk.vkCreateCommandPool(m_device, &infoPool, nullptr, &m_commandPool);
@@ -2842,7 +2852,7 @@ void kgmVulkan::fillCommands()
       VkDeviceSize offsets[] = {0};
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-      m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(0), 1, 0, 0);
+      m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
 
       break;
     }
@@ -2862,13 +2872,12 @@ void kgmVulkan::fillCommands()
     imageMemoryBarrier.srcQueueFamilyIndex = 0;
     imageMemoryBarrier.dstQueueFamilyIndex = 0;
     imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {
-      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-    };
+    imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
 
-    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-                              1, &imageMemoryBarrier);
+    m_vk.vkCmdPipelineBarrier(commandBuffer,
+                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                              0, 0, null, 0, null, 1, &imageMemoryBarrier);
 
     m_vk.vkEndCommandBuffer(commandBuffer);
   }
@@ -2946,9 +2955,12 @@ u32 kgmVulkan::memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties)
 
   for (u32 i = 0; i < memProperties.memoryTypeCount; i++)
   {
-    if (type & (1 << i))
+    auto bit = ((u32)1 << i);
+
+    if (type & bit)
     {
-      return i;
+      if((memProperties.memoryTypes[i].propertyFlags & properties) != 0)
+        return i;
     }
   }
 
