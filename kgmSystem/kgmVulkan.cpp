@@ -374,9 +374,8 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     renderPassBeginInfo.framebuffer = framebuffer;
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
-      VkExtent2D  {
-        (u32) m_rect[2], (u32) m_rect[3]
-      }
+      //VkExtent2D  {(u32) m_rect[2], (u32) m_rect[3]}
+      VkExtent2D  {m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height}
     };
 
     renderPassBeginInfo.clearValueCount = 1;
@@ -415,9 +414,9 @@ void kgmVulkan::gcResize(u32 width, u32 height)
   m_rect[2] = width;
   m_rect[3] = height;
 
-  //kgm_log() << "Vulkan: Window resized, viewport need update.\n";
+  kgm_log() << "Vulkan: Window resized, viewport need update.\n";
 
-  //refreshSwapchain();
+  refreshSwapchain();
 }
 
 void  kgmVulkan::gcBegin()
@@ -443,8 +442,6 @@ void  kgmVulkan::gcRender()
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
 
-  auto commandBuffer = m_commandBuffers[swapChainImage];
-
   if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan render error: failed to get next swapchain image.\n";
@@ -460,10 +457,10 @@ void  kgmVulkan::gcRender()
       return;
     }
 
-    exit(0);
-
     return;
   }
+
+  auto commandBuffer = m_commandBuffers[swapChainImage];
 
   result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
@@ -542,25 +539,22 @@ void  kgmVulkan::gcRender()
   presentInfo.pImageIndices = &swapChainImage;
   presentInfo.pResults = &result;
 
-  VkResult result2 = m_vk.vkQueuePresentKHR(queue, &presentInfo);
+  result = m_vk.vkQueuePresentKHR(queue, &presentInfo);
 
-  if (result2 == VK_ERROR_OUT_OF_DATE_KHR)
+  if (result == VK_ERROR_OUT_OF_DATE_KHR)
   {
     kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
 
-    //refreshSwapchain();
+    refreshSwapchain();
 
     return;
   }
 
-  if(result != VkResult::VK_SUCCESS || result2 != VkResult::VK_SUCCESS)
+  if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan render error: failed to present swapchain.\n";
 
     printResult(result);
-    printResult(result2);
-
-    exit(0);
 
     return;
   }
@@ -2287,7 +2281,7 @@ bool kgmVulkan::initSwapchain()
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 
-  u32 swapChainImagesCount = 2;
+  u32 swapChainImagesCount = surfaceCapabilities.minImageCount;
 
   VkSurfaceTransformFlagBitsKHR surfaceTransform;
 
@@ -2328,10 +2322,10 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.surface = m_surface;
   swapchainCreateInfo.minImageCount = swapChainImagesCount;
   swapchainCreateInfo.imageFormat = m_swapChainFormat;
-  //swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
-  //swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
-  swapchainCreateInfo.imageExtent.width = m_rect[2];
-  swapchainCreateInfo.imageExtent.height = m_rect[3];
+  swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
+  swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
+  //swapchainCreateInfo.imageExtent.width = m_rect[2];
+  //swapchainCreateInfo.imageExtent.height = m_rect[3];
   swapchainCreateInfo.preTransform = surfaceTransform;
   swapchainCreateInfo.compositeAlpha = compositeAlpha;
   swapchainCreateInfo.imageArrayLayers = 1;
@@ -2548,10 +2542,10 @@ bool kgmVulkan::initFrameBuffers()
     createInfo.renderPass = m_renderPass;
     createInfo.attachmentCount = 1;
     createInfo.pAttachments = &m_imageViews[i];
-    //createInfo.width = m_surfaceCapabilities.currentExtent.width;
-    //createInfo.height = m_surfaceCapabilities.currentExtent.height;
-    createInfo.width = m_rect[2];
-    createInfo.height = m_rect[3];
+    createInfo.width = m_surfaceCapabilities.currentExtent.width;
+    createInfo.height = m_surfaceCapabilities.currentExtent.height;
+    //createInfo.width = m_rect[2];
+    //createInfo.height = m_rect[3];
     createInfo.layers = 1;
 
     VkResult result = m_vk.vkCreateFramebuffer(m_device, &createInfo, nullptr, &m_frameBuffers[i]);
@@ -2858,7 +2852,8 @@ void kgmVulkan::fillCommands()
     renderPassBeginInfo.framebuffer = framebuffer;
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
-      VkExtent2D  { (u32) m_rect[2], (u32) m_rect[3] }
+      //VkExtent2D  { (u32) m_rect[2], (u32) m_rect[3] }
+      VkExtent2D  {m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height}
     };
 
     renderPassBeginInfo.clearValueCount = 1;
