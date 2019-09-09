@@ -212,6 +212,8 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkImageView>      m_imageViews;
   kgmArray<VkCommandBuffer>  m_commandBuffers;
 
+  VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
+
   VkFormat m_swapChainFormat;
 
   VkFormat m_depthFormat;

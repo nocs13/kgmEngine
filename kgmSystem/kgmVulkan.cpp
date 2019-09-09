@@ -25,6 +25,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
 
+  m_error = 0;
+
   if (wnd == nullptr)
     return;
 
@@ -104,6 +106,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   }
 
   fillCommands();
+
+  m_error = 0;
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -1589,8 +1593,19 @@ bool kgmVulkan::initInstance()
   instanceInfo.pNext = NULL;
   instanceInfo.flags = 0;
   instanceInfo.pApplicationInfo = &appInfo;
-  instanceInfo.enabledLayerCount = 2;
-  instanceInfo.ppEnabledLayerNames = layerNames;
+
+#ifdef DEBUG
+  if (getenv("VK_LAYER_PATH") || getenv("VULKAN_LAYER_WIN32"))
+  {
+    instanceInfo.enabledLayerCount = 2;
+    instanceInfo.ppEnabledLayerNames = layerNames;
+  }
+  else
+  {
+    kgm_log() << "Vulkan: Layer environment not provided.";
+  }
+#endif
+
   instanceInfo.enabledExtensionCount = extensionsCount;
   instanceInfo.ppEnabledExtensionNames = m_extensionNames.data();
 
@@ -1909,11 +1924,19 @@ bool kgmVulkan::initDevice()
     "VK_LAYER_VALVE_steam_overlay",
     "VK_LAYER_LUNARG_standard_validation",
   };
-  //m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
-  //m_debugLayer = "VK_LAYER_KHRONOS_validation";
 
-  infoDevice.enabledLayerCount = 6;
-  infoDevice.ppEnabledLayerNames = layerNames;
+  if (getenv("VK_LAYER_PATH") || getenv("VULKAN_LAYER_WIN32"))
+  {
+    infoDevice.enabledLayerCount = 6;
+    infoDevice.ppEnabledLayerNames = layerNames;
+  }
+  else
+  {
+    //m_debugLayer = "VK_LAYER_LUNARG_standard_validation";
+    m_debugLayer = "VK_LAYER_KHRONOS_validation";
+    infoDevice.enabledLayerCount = 1;
+    infoDevice.ppEnabledLayerNames = &m_debugLayer;
+  }
 #endif
 
   VkDevice device = null;
@@ -2196,6 +2219,8 @@ bool kgmVulkan::initSwapchain()
     return false;
   }
 
+  m_surfaceCapabilities = surfaceCapabilities;
+
   u32 surfaceFormatsCount = 0;
 
   result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, nullptr);
@@ -2334,7 +2359,6 @@ bool kgmVulkan::initSwapchain()
   m_swapChain = nullptr;
 
   swapchainCreateInfo.oldSwapchain = swapChain;
-  swapchainCreateInfo.imageArrayLayers = 1;
   swapchainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapchainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
   swapchainCreateInfo.queueFamilyIndexCount = 0;
@@ -2526,6 +2550,8 @@ bool kgmVulkan::initFrameBuffers()
     createInfo.renderPass = m_renderPass;
     createInfo.attachmentCount = 1;
     createInfo.pAttachments = &m_imageViews[i];
+    //createInfo.width = m_surfaceCapabilities.currentExtent.width;
+    //createInfo.height = m_surfaceCapabilities.currentExtent.height;
     createInfo.width = m_rect[2];
     createInfo.height = m_rect[3];
     createInfo.layers = 1;

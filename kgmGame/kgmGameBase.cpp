@@ -283,6 +283,14 @@ void kgmGameBase::initGC()
 {
 #ifdef VULKAN
   m_gc = new kgmVulkan(this);
+
+  if(m_gc->gcError())
+  {
+    kgm_log() << "Vulkan initialization failed.\n";
+    delete m_gc;
+
+    m_gc = nullptr;
+  }
 #endif
 
   if (m_gc == null)
