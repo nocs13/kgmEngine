@@ -526,8 +526,6 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(0);
-
     return;
   }
 
@@ -2891,7 +2889,7 @@ void kgmVulkan::fillCommands()
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     imageMemoryBarrier.pNext = nullptr;
     imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+    imageMemoryBarrier.dstAccessMask = //VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
                                        VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
     imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
     imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
@@ -2899,6 +2897,7 @@ void kgmVulkan::fillCommands()
     imageMemoryBarrier.dstQueueFamilyIndex = 0;
     imageMemoryBarrier.image = image;
     imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
+
 
     m_vk.vkCmdPipelineBarrier(commandBuffer,
                               VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
