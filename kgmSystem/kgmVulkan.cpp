@@ -105,13 +105,6 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initUboPool())
-  {
-    m_error = 1;
-
-    return;
-  }
-
   m_error = 0;
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
@@ -133,7 +126,6 @@ kgmVulkan::~kgmVulkan()
 
       m_vk.vkDestroyCommandPool(m_device, m_commandPool, nullptr);
     }
-
 
     //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
     if (m_renderPass)
@@ -697,6 +689,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   mesh.shader = m_shader;
 
+  if (m_shader)
+    mesh.model = m_shader->ubo.g_mTran;
+
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
 
@@ -1101,8 +1096,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
-  /*
-  if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+
+  if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     shader->buffer,
                     shader->memory))
@@ -1116,7 +1111,6 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     return null;
   }
-  */
 
   VkDescriptorSetLayoutBinding uboLayoutBinding;
 
@@ -1133,20 +1127,79 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   layoutCreateInfo.bindingCount = 1;
   layoutCreateInfo.pBindings = &uboLayoutBinding;
 
-  result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &shader->desclayout);
-
-  if(result != VkResult::VK_SUCCESS)
+  if (v.length() > 1024)
   {
-    kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
+    result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &shader->setlayout);
 
-    printResult(result);
+    if(result != VkResult::VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
 
-    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
-    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+      printResult(result);
 
-    delete shader;
+      m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+      m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
 
-    return null;
+      delete shader;
+
+      return null;
+    }
+
+    VkDescriptorPoolSize poolSize;
+
+    ZeroObject(poolSize);
+    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSize.descriptorCount = 1;
+
+    VkDescriptorPoolCreateInfo poolInfo;
+
+    ZeroObject(poolInfo);
+    poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.poolSizeCount = 1;
+    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.maxSets = 1;
+
+    if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &shader->setpool) != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to create descriptor pool.\n";
+
+      return null;
+    }
+
+    VkDescriptorSetAllocateInfo allocInfo;
+
+    ZeroObject(allocInfo);
+    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocInfo.descriptorPool = shader->setpool;
+    allocInfo.descriptorSetCount = 1;
+    allocInfo.pSetLayouts = &shader->setlayout;
+
+    if (m_vk.vkAllocateDescriptorSets(m_device, &allocInfo, &shader->descriptor) != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to create descriptor set.\n";
+
+      return null;
+    }
+
+    VkDescriptorBufferInfo bufferInfo;
+
+    ZeroObject(bufferInfo);
+    bufferInfo.buffer = shader->buffer;
+    bufferInfo.offset = 0;
+    bufferInfo.range = sizeof(Uniforms);
+
+    VkWriteDescriptorSet descriptorWrite;
+
+    ZeroObject(descriptorWrite);
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.dstSet = shader->descriptor;
+    descriptorWrite.dstBinding = 0;
+    descriptorWrite.dstArrayElement = 0;
+    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWrite.descriptorCount = 1;
+    descriptorWrite.pBufferInfo = &bufferInfo;
+
+    m_vk.vkUpdateDescriptorSets(m_device, 1, &descriptorWrite, 0, nullptr);
   }
 
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
@@ -1155,8 +1208,13 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineLayoutCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutCreateInfo.pNext = nullptr;
   pipelineLayoutCreateInfo.flags = 0;
-  pipelineLayoutCreateInfo.setLayoutCount = 1;
-  pipelineLayoutCreateInfo.pSetLayouts = &shader->desclayout;
+
+  if (shader->setlayout)
+  {
+    pipelineLayoutCreateInfo.setLayoutCount = 1;
+    pipelineLayoutCreateInfo.pSetLayouts = &shader->setlayout;
+  }
+
   pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
   pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
@@ -1170,7 +1228,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
     m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
-    m_vk.vkDestroyDescriptorSetLayout(m_device, shader->desclayout, null);
+    m_vk.vkDestroyDescriptorSetLayout(m_device, shader->setlayout, null);
 
     delete shader;
 
@@ -1424,11 +1482,11 @@ void  kgmVulkan::gcFreeShader(void* s)
     return;
   }
 
-  //if (shader->buffer)
-  //  m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
+  if (shader->buffer)
+    m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
 
-  //if (shader->memory)
-  //  m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
+  if (shader->memory)
+    m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
 
 
   if (shader->vertex)
@@ -1441,9 +1499,14 @@ void  kgmVulkan::gcFreeShader(void* s)
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
   }
 
+  if (shader->setpool)
+  {
+    m_vk.vkDestroyDescriptorPool(m_device, shader->setpool, nullptr);
+  }
+
   m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
   m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
-  m_vk.vkDestroyDescriptorSetLayout(m_device, shader->desclayout, null);
+  m_vk.vkDestroyDescriptorSetLayout(m_device, shader->setlayout, null);
   m_vk.vkDestroyPipeline(m_device, shader->pipeline, null);
 
   delete (Shader *) s;
@@ -2866,44 +2929,6 @@ bool kgmVulkan::initFence()
   return true;
 }
 
-bool kgmVulkan::initUboPool()
-{
-  if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    m_uboBuffer,
-                    m_uboMemory))
-  {
-    kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
-
-    return false;
-  }
-
-  VkDescriptorPoolSize poolSize;
-
-  ZeroObject(poolSize);
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = 1;
-
-  VkDescriptorPoolCreateInfo poolInfo;
-
-  ZeroObject(poolInfo);
-  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 1;
-  poolInfo.pPoolSizes = &poolSize;
-  poolInfo.maxSets = 1;
-
-  VkDescriptorPool descPool;
-
-  if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &descPool) != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to create descriptor pool.\n";
-
-    return false;
-  }
-
-  return true;
-}
-
 void kgmVulkan::fillCommands()
 {
   VkResult result = VK_SUCCESS;
@@ -2980,8 +3005,31 @@ void kgmVulkan::fillCommands()
 
     for (mi = m_draws.begin(); !mi.end(); mi.next())
     {
-      VkBuffer vertexBuffers[] = {(*mi).vbuffer};
+      Draw* draw = &(*mi);
+
+      VkBuffer vertexBuffers[] = {draw->vbuffer};
       VkDeviceSize offsets[] = {0};
+
+      if (draw->shader && draw->shader->pipeline)
+      {
+        m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
+
+        if (draw->shader->descriptor)
+        {
+          m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->layout,
+                                       0, 1, &draw->shader->descriptor, 0, nullptr);
+
+          draw->shader->ubo.g_mTran = draw->model;
+
+          void *data;
+
+          if (m_vk.vkMapMemory(m_device, draw->shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+          {
+            memcpy(data, &draw->shader->ubo, sizeof(Shader::ubo));
+            m_vk.vkUnmapMemory(m_device, draw->shader->memory);
+          }
+        }
+      }
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
       m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
@@ -3101,41 +3149,41 @@ u32 kgmVulkan::memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties)
 void* kgmVulkan::uniformLocation(Shader* s, char* u)
 {
   if (!strcmp(u, "g_mView"))
-    return &s->uo.g_mView;
+    return &s->ubo.g_mView;
   else if (!strcmp(u, "g_mProj"))
-    return &s->uo.g_mProj;
+    return &s->ubo.g_mProj;
   else if (!strcmp(u, "g_mTran"))
-    return &s->uo.g_mTran;
+    return &s->ubo.g_mTran;
   else if (!strcmp(u, "g_vColor"))
-    return &s->uo.g_vColor;
+    return &s->ubo.g_vColor;
   else if (!strcmp(u, "g_vSpecular"))
-    return &s->uo.g_vSpecular;
+    return &s->ubo.g_vSpecular;
   else if (!strcmp(u, "g_vLight"))
-    return &s->uo.g_vLight;
+    return &s->ubo.g_vLight;
   else if (!strcmp(u, "g_vLightColor"))
-    return &s->uo.g_vLightColor;
+    return &s->ubo.g_vLightColor;
   else if (!strcmp(u, "g_vLightDirection"))
-    return &s->uo.g_vLightDirection;
+    return &s->ubo.g_vLightDirection;
   else if (!strcmp(u, "g_vClipPlane"))
-    return &s->uo.g_vClipPlane;
+    return &s->ubo.g_vClipPlane;
   else if (!strcmp(u, "g_vUp"))
-    return &s->uo.g_vUp;
+    return &s->ubo.g_vUp;
   else if (!strcmp(u, "g_vEye"))
-    return &s->uo.g_vEye;
+    return &s->ubo.g_vEye;
   else if (!strcmp(u, "g_vLook"))
-    return &s->uo.g_vLook;
+    return &s->ubo.g_vLook;
   else if (!strcmp(u, "g_fTime"))
-    return &s->uo.g_fTime;
+    return &s->ubo.g_fTime;
   else if (!strcmp(u, "g_fShine"))
-    return &s->uo.g_fShine;
+    return &s->ubo.g_fShine;
   else if (!strcmp(u, "g_fRandom"))
-    return &s->uo.g_fRandom;
+    return &s->ubo.g_fRandom;
   else if (!strcmp(u, "g_fAmbient"))
-    return &s->uo.g_fAmbient;
+    return &s->ubo.g_fAmbient;
   else if (!strcmp(u, "g_fLightPower"))
-    return &s->uo.g_fLightPower;
+    return &s->ubo.g_fLightPower;
   else if (!strcmp(u, "g_iClipping"))
-    return &s->uo.g_iClipping;
+    return &s->ubo.g_iClipping;
 
   return nullptr;
 }

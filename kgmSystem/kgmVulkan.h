@@ -162,16 +162,21 @@ class kgmVulkan: public kgmIGC
 
   struct Shader
   {
-    Uniforms         uo;
+    Uniforms         ubo;
 
-    //VkBuffer         buffer;
-    //VkDeviceMemory   memory;
+    VkBuffer         buffer;
+    VkDeviceMemory   memory;
+
     VkShaderModule   vertex;
     VkShaderModule   fragment;
+
     VkPipeline       pipeline;
     VkPipelineLayout layout;
     VkPipelineCache  cache;
-    VkDescriptorSetLayout desclayout;
+
+    VkDescriptorSetLayout setlayout;
+    VkDescriptorPool      setpool;
+    VkDescriptorSet       descriptor;
   };
 
   struct Draw
@@ -188,6 +193,8 @@ class kgmVulkan: public kgmIGC
     VkDescriptorBufferInfo descriptor;
 
     u32 vcnt, icnt;
+
+    mtx4 model;
 
     Shader* shader;
   };
@@ -235,9 +242,6 @@ class kgmVulkan: public kgmIGC
   VkViewport m_viewport;
   VkRect2D   m_scissor;
 
-  VkBuffer        m_uboBuffer;
-  VkDeviceMemory  m_uboMemory;
-
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
@@ -253,6 +257,10 @@ class kgmVulkan: public kgmIGC
   const s8* m_debugLayer = null;
 
   kgmList<Draw> m_draws;
+
+  Draw* m_draw = null;
+
+  Uniforms         m_ubo;
 
 #ifdef DEBUG
   VkDebugReportCallbackEXT m_debugReportCallback = VK_NULL_HANDLE;
@@ -349,7 +357,6 @@ private:
   bool initSemaphores();
   bool initPipeline();
   bool initFence();
-  bool initUboPool();
 
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
