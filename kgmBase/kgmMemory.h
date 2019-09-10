@@ -154,7 +154,7 @@ public:
       return false;
 
     m_data = (T*)kgm_alloc(sizeof(T) * len);
-    memcpy(m_data, data, sizeof(T) * m_length);
+    memcpy(m_data, data, sizeof(T) * len);
 
     m_length = len;
 

@@ -1429,6 +1429,9 @@ void* kgmOGL::gcGenShader(kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
 {
   kgm_log() << "gcGenShader: Generating.\n";
 
+  kgmString vstr;
+  vstr.alloc((char *) vsrc.data(), vsrc.length());
+
   GLhandle prog = 0;
   GLhandle vshad = 0, fshad = 0;
   int stat[1] = {0};

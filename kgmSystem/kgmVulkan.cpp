@@ -19,7 +19,7 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
-float cc_color[4] = {1.0, 0.0, 0.0, 1.0};
+bool add_draw = true;
 
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
@@ -105,7 +105,12 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  fillCommands();
+  if (!initUboPool())
+  {
+    m_error = 1;
+
+    return;
+  }
 
   m_error = 0;
 
@@ -269,11 +274,18 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkDestroyPipelineLayout);
   VK_IMPORT_FUNCTION(vkCreatePipelineCache);
   VK_IMPORT_FUNCTION(vkDestroyPipelineCache);
+  VK_IMPORT_FUNCTION(vkCreateDescriptorSetLayout);
+  VK_IMPORT_FUNCTION(vkDestroyDescriptorSetLayout);
+  VK_IMPORT_FUNCTION(vkCreateDescriptorPool);
+  VK_IMPORT_FUNCTION(vkDestroyDescriptorPool);
+  VK_IMPORT_FUNCTION(vkAllocateDescriptorSets);
+  VK_IMPORT_FUNCTION(vkUpdateDescriptorSets);
   VK_IMPORT_FUNCTION(vkCreateBuffer);
   VK_IMPORT_FUNCTION(vkGetBufferMemoryRequirements);
   VK_IMPORT_FUNCTION(vkAllocateMemory);
   VK_IMPORT_FUNCTION(vkBindBufferMemory);
   VK_IMPORT_FUNCTION(vkDestroyBuffer);
+  VK_IMPORT_FUNCTION(vkCmdBindDescriptorSets);
   VK_IMPORT_FUNCTION(vkCmdBindVertexBuffers);
   VK_IMPORT_FUNCTION(vkCmdBindPipeline);
   VK_IMPORT_FUNCTION(vkCmdDraw);
@@ -312,12 +324,15 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
   u8 b = ((col & 0x00ff0000) >> 16);
   u8 a = ((col & 0xff000000) >> 24);
 
-  cc_color[0] = (f32) r / 255.f;
-  cc_color[1] = (f32) g / 255.f;
-  cc_color[2] = (f32) b / 255.f;
-  cc_color[3] = (f32) a / 255.f;
+  m_bgColor[0] = (f32) r / 255.f;
+  m_bgColor[1] = (f32) g / 255.f;
+  m_bgColor[2] = (f32) b / 255.f;
+  m_bgColor[3] = (f32) a / 255.f;
 
   return;
+
+  if (!m_shader)
+    return;
 
   for (u32 i = 0; i < m_swapChainImages.length(); i++)
   {
@@ -361,7 +376,7 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     float ggg = (float) ((float) rand() / (float) RAND_MAX);
 
     clearValue.color.float32[0] = (f32) r / 255.f;
-    clearValue.color.float32[1] = (f32) g / 255.f;
+    clearValue.color.float32[1] = (f32) ggg / 255.f;
     clearValue.color.float32[2] = (f32) b / 255.f;
     clearValue.color.float32[3] = (f32) a / 255.f;
 
@@ -375,13 +390,16 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
       //VkExtent2D  {(u32) m_rect[2], (u32) m_rect[3]}
-      VkExtent2D  {m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height}
+      VkExtent2D  { m_surfaceCapabilities.currentExtent.width,
+                    m_surfaceCapabilities.currentExtent.height  }
     };
 
     renderPassBeginInfo.clearValueCount = 1;
     renderPassBeginInfo.pClearValues = &clearValue;
 
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
+    m_vk.vkCmdEndRenderPass(commandBuffer);
 
     VkImageMemoryBarrier imageMemoryBarrier;
 
@@ -403,6 +421,7 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
     m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                               VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
                               1, &imageMemoryBarrier);
+    m_vk.vkEndCommandBuffer(commandBuffer);
   }
 }
 
@@ -434,6 +453,8 @@ void  kgmVulkan::gcRender()
   VkResult result;
 
   //kgm_log() << "Vulkan info: start render.\n";
+
+  fillCommands();
 
   u32 swapChainImage = 0;
 
@@ -562,6 +583,7 @@ void  kgmVulkan::gcRender()
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
   //clearDraws();
+  add_draw = false;
 
   m_swapChainImage = swapChainImage;
 }
@@ -569,18 +591,32 @@ void  kgmVulkan::gcRender()
 void  kgmVulkan::gcSetTarget(void*  rt) {}
 
 // DRAWING
-static s32 yyy = 0;
 void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt)
 {
   Draw mesh = {0};
-  if(yyy > 0)
+
+  if (!add_draw)
     return;
-  yyy=1;
+
+  if (pmt != gcpmt_trianglestrip)
+    return;
+
+  float fx =  ((float) rand() / (float)RAND_MAX);
+  float fy =  ((float) rand() / (float)RAND_MAX);
   float source[] = {
     -0.5f, +0.5f,
     +0.5f, +0.5f,
-    +0.0f, -0.5f
+    fx,//+0.0f,
+    fy//-0.5f
   };
+
+  float* p_f = (float*) v_pnt;
+
+  float v[3];
+
+  v[0] = p_f[0];
+  v[1] = p_f[1];
+  v[2] = p_f[2];
 
   v_pnt = source;
   v_cnt = 3;
@@ -666,9 +702,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   m_draws.add(mesh);
 
-  fillCommands();
+  //fillCommands();
 
-  kgm_log() << "Vulkan: Mesh add and filled commands.\n";
+  //kgm_log() << "Vulkan: Mesh add and filled commands.\n";
 
   return;
 
@@ -688,34 +724,43 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     for (u32 i = 0; i < m_swapChainImages.length(); i++)
     {
       auto &commandBuffer = m_commandBuffers[i];
-      auto &framebuffer   = m_frameBuffers[i];
+      auto &framebuffer = m_frameBuffers[i];
 
-      VkRenderPassBeginInfo renderPassBeginInfo;
+      VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
 
-      ZeroObject(renderPassBeginInfo);
-      renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-      renderPassBeginInfo.pNext = nullptr;
-      renderPassBeginInfo.renderPass = m_renderPass;
-      renderPassBeginInfo.framebuffer = framebuffer;
-      renderPassBeginInfo.renderArea = VkRect2D{
-          VkOffset2D{0, 0},
-          VkExtent2D{(u32)m_rect[2], (u32)m_rect[3]}
-      };
-      renderPassBeginInfo.clearValueCount = 1;
-      renderPassBeginInfo.pClearValues = NULL;
+      ZeroObject(commandBufferInheritanceInfo);
+      commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+      commandBufferInheritanceInfo.pNext = nullptr;
+      commandBufferInheritanceInfo.renderPass = m_renderPass;
+      commandBufferInheritanceInfo.subpass = 0;
+      commandBufferInheritanceInfo.framebuffer = framebuffer;
+      commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
+      commandBufferInheritanceInfo.queryFlags = 0;
+      commandBufferInheritanceInfo.pipelineStatistics = 0;
 
-      //m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo,
-      //                          VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+      VkCommandBufferBeginInfo commandBufferBeginInfo;
 
-      //m_vk.vkCmdBindPipeline(commandBuffer, VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS,
-      //                       m_shader->pipeline);
+      ZeroObject(commandBufferBeginInfo);
+      commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+      commandBufferBeginInfo.pNext = nullptr;
+      commandBufferBeginInfo.flags = 0;
+      commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
+
+      VkResult result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+
+      if (result != VK_SUCCESS)
+      {
+        kgm_log() << "Vulkan error: Cannot begin command buffer while draw.\n";
+
+        continue;
+      }
 
       VkBuffer vbuffers[] = {mesh.vbuffer};
       VkDeviceSize dsizes[] = {0};
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vbuffers, dsizes);
       m_vk.vkCmdDraw(commandBuffer, v_cnt, 1, 0, 0);
-      //m_vk.vkCmdEndRenderPass(commandBuffer);
+      m_vk.vkEndCommandBuffer(commandBuffer);
     }
   }
 }
@@ -1056,10 +1101,45 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
+  /*
   if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, shader->buffer, shader->memory))
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    shader->buffer,
+                    shader->memory))
   {
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
+
+    m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
+    m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+
+    delete shader;
+
+    return null;
+  }
+  */
+
+  VkDescriptorSetLayoutBinding uboLayoutBinding;
+
+  ZeroObject(uboLayoutBinding);
+  uboLayoutBinding.binding = 0;
+  uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  uboLayoutBinding.descriptorCount = 1;
+  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+  VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
+
+  ZeroObject(layoutCreateInfo);
+  layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  layoutCreateInfo.bindingCount = 1;
+  layoutCreateInfo.pBindings = &uboLayoutBinding;
+
+  result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &shader->desclayout);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create fragment shader.\n";
+
+    printResult(result);
 
     m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
     m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
@@ -1075,8 +1155,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineLayoutCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutCreateInfo.pNext = nullptr;
   pipelineLayoutCreateInfo.flags = 0;
-  pipelineLayoutCreateInfo.setLayoutCount = 0;
-  pipelineLayoutCreateInfo.pSetLayouts = nullptr;
+  pipelineLayoutCreateInfo.setLayoutCount = 1;
+  pipelineLayoutCreateInfo.pSetLayouts = &shader->desclayout;
   pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
   pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
@@ -1090,6 +1170,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     m_vk.vkDestroyShaderModule(m_device, shader->vertex, null);
     m_vk.vkDestroyShaderModule(m_device, shader->fragment, null);
+    m_vk.vkDestroyDescriptorSetLayout(m_device, shader->desclayout, null);
 
     delete shader;
 
@@ -1174,7 +1255,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineInputAssemblyStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
   pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
   pipelineInputAssemblyStateCreateInfo.flags = 0;
-  pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  //pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  pipelineInputAssemblyStateCreateInfo.topology = VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
   pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
 
   VkPipelineViewportStateCreateInfo pipelineViewportStateCreateInfo;
@@ -1342,11 +1424,11 @@ void  kgmVulkan::gcFreeShader(void* s)
     return;
   }
 
-  if (shader->buffer)
-    m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
+  //if (shader->buffer)
+  //  m_vk.vkDestroyBuffer(m_device, shader->buffer, nullptr);
 
-  if (shader->memory)
-    m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
+  //if (shader->memory)
+  //  m_vk.vkFreeMemory(m_device, shader->memory, nullptr);
 
 
   if (shader->vertex)
@@ -1361,6 +1443,7 @@ void  kgmVulkan::gcFreeShader(void* s)
 
   m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
   m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
+  m_vk.vkDestroyDescriptorSetLayout(m_device, shader->desclayout, null);
   m_vk.vkDestroyPipeline(m_device, shader->pipeline, null);
 
   delete (Shader *) s;
@@ -1373,26 +1456,17 @@ void  kgmVulkan::gcSetShader(void* s)
   if (!s)
     return;
 
-  if (shader == null)
-  {
-    clear(shader);
+  //VkResult result = VK_SUCCESS;
 
-    m_shader = null;
+  //VkDeviceSize uosize = sizeof(Shader::uo);
 
-    return;
-  }
+  //void* data = null;
 
-  VkResult result = VK_SUCCESS;
+  //m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
+  //memcpy(data, &shader->uo, uosize);
+  //m_vk.vkUnmapMemory(m_device, shader->memory);
 
-  VkDeviceSize uosize = sizeof(Shader::uo);
-
-  void* data = null;
-
-  m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
-  memcpy(data, &shader->uo, uosize);
-  m_vk.vkUnmapMemory(m_device, shader->memory);
-
-  m_shader = shader;
+  //m_shader = shader;
 }
 
 void  kgmVulkan::gcBindAttribute(void* s, int, const char*)
@@ -2760,7 +2834,7 @@ bool kgmVulkan::refreshSwapchain()
   initFrameBuffers();
   initCommands();
 
-  fillCommands();
+  //fillCommands();
 
   return true;
 }
@@ -2788,6 +2862,44 @@ bool kgmVulkan::initFence()
   kgm_log() << "Vulkan: Created fence.\n";
 
   m_fence = fence;
+
+  return true;
+}
+
+bool kgmVulkan::initUboPool()
+{
+  if (!createBuffer(sizeof(Shader::uo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    m_uboBuffer,
+                    m_uboMemory))
+  {
+    kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
+
+    return false;
+  }
+
+  VkDescriptorPoolSize poolSize;
+
+  ZeroObject(poolSize);
+  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize.descriptorCount = 1;
+
+  VkDescriptorPoolCreateInfo poolInfo;
+
+  ZeroObject(poolInfo);
+  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  poolInfo.poolSizeCount = 1;
+  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.maxSets = 1;
+
+  VkDescriptorPool descPool;
+
+  if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &descPool) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create descriptor pool.\n";
+
+    return false;
+  }
 
   return true;
 }
@@ -2838,10 +2950,11 @@ void kgmVulkan::fillCommands()
 
     ZeroObject(clearValue);
 
-    clearValue.color.float32[0] = 0.1;
-    clearValue.color.float32[1] = 0.2;
-    clearValue.color.float32[2] = 0.5;
-    clearValue.color.float32[3] = 1.0;
+    //clearValue.color.float32[0] = 0.1;
+    //clearValue.color.float32[1] = 0.2;
+    //clearValue.color.float32[2] = 0.5;
+    //clearValue.color.float32[3] = 1.0;
+    memcpy(clearValue.color.float32, m_bgColor, sizeof(float) * 4);
 
     VkRenderPassBeginInfo renderPassBeginInfo;
 
@@ -2872,8 +2985,6 @@ void kgmVulkan::fillCommands()
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
       m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
-
-      break;
     }
 
     m_vk.vkCmdEndRenderPass(commandBuffer);

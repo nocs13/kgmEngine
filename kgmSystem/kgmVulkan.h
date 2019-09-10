@@ -88,7 +88,6 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyRenderPass vkDestroyRenderPass;
     PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
     PFN_vkDestroyImageView vkDestroyImageView;
-    PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
     VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
@@ -104,12 +103,20 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkCreatePipelineCache);
     VK_EXPORTED_FUNCTION(vkDestroyPipelineCache);
 
+    VK_EXPORTED_FUNCTION(vkCreateDescriptorSetLayout);
+    VK_EXPORTED_FUNCTION(vkDestroyDescriptorSetLayout);
+    VK_EXPORTED_FUNCTION(vkCreateDescriptorPool);
+    VK_EXPORTED_FUNCTION(vkDestroyDescriptorPool);
+    VK_EXPORTED_FUNCTION(vkAllocateDescriptorSets);
+    VK_EXPORTED_FUNCTION(vkUpdateDescriptorSets);
+
     VK_EXPORTED_FUNCTION(vkCreateBuffer);
     VK_EXPORTED_FUNCTION(vkGetBufferMemoryRequirements);
     VK_EXPORTED_FUNCTION(vkAllocateMemory);
     VK_EXPORTED_FUNCTION(vkBindBufferMemory);
     VK_EXPORTED_FUNCTION(vkDestroyBuffer);
 
+    VK_EXPORTED_FUNCTION(vkCmdBindDescriptorSets);
     VK_EXPORTED_FUNCTION(vkCmdBindVertexBuffers);
     VK_EXPORTED_FUNCTION(vkCmdBindPipeline);
     VK_EXPORTED_FUNCTION(vkCmdDraw);
@@ -157,13 +164,14 @@ class kgmVulkan: public kgmIGC
   {
     Uniforms         uo;
 
-    VkBuffer         buffer;
-    VkDeviceMemory   memory;
+    //VkBuffer         buffer;
+    //VkDeviceMemory   memory;
     VkShaderModule   vertex;
     VkShaderModule   fragment;
     VkPipeline       pipeline;
     VkPipelineLayout layout;
     VkPipelineCache  cache;
+    VkDescriptorSetLayout desclayout;
   };
 
   struct Draw
@@ -227,6 +235,9 @@ class kgmVulkan: public kgmIGC
   VkViewport m_viewport;
   VkRect2D   m_scissor;
 
+  VkBuffer        m_uboBuffer;
+  VkDeviceMemory  m_uboMemory;
+
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
@@ -235,6 +246,7 @@ class kgmVulkan: public kgmIGC
   Shader* m_shader = null;
 
   s32 m_rect[4];
+  f32 m_bgColor[4];
 
   u32 m_error = 0;
 
@@ -337,6 +349,7 @@ private:
   bool initSemaphores();
   bool initPipeline();
   bool initFence();
+  bool initUboPool();
 
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);

@@ -136,7 +136,8 @@ public:
 
   enum Shader
   {
-    ShaderShadowKeep = 10,
+    ShaderTest       = 10,
+    ShaderShadowKeep,
     ShaderShadowDraw
   };
 

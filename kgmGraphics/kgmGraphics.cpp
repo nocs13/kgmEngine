@@ -218,6 +218,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
+    m_shaders[ShaderTest]             = rc->getShader("test.glsl");
     m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
     m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
     m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
