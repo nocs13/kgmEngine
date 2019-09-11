@@ -607,14 +607,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     fy//-0.5f
   };
 
-  float* p_f = (float*) v_pnt;
-
-  float v[3];
-
-  v[0] = p_f[0];
-  v[1] = p_f[1];
-  v[2] = p_f[2];
-
   //v_pnt = source;
   //v_cnt = 3;
   //v_size = sizeof(float) * 2;
