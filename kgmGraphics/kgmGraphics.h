@@ -136,7 +136,8 @@ public:
 
   enum Shader
   {
-    ShaderTest       = 10,
+    ShaderTest       = kgmMaterial::TypeFree + 1,
+    ShaderGui,
     ShaderShadowKeep,
     ShaderShadowDraw
   };

@@ -57,7 +57,8 @@ public:
     TypeOcean,
     TypeGlass,
     TypeFlame,
-    TypeIce
+    TypeIce,
+    TypeFree = 15
   };
 
   enum Environment

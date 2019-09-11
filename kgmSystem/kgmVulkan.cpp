@@ -279,8 +279,13 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkDestroyBuffer);
   VK_IMPORT_FUNCTION(vkCmdBindDescriptorSets);
   VK_IMPORT_FUNCTION(vkCmdBindVertexBuffers);
+  VK_IMPORT_FUNCTION(vkCmdBindIndexBuffer);
   VK_IMPORT_FUNCTION(vkCmdBindPipeline);
+  VK_IMPORT_FUNCTION(vkCmdSetViewport);
+  VK_IMPORT_FUNCTION(vkCmdSetScissor);
+  VK_IMPORT_FUNCTION(vkCmdSetBlendConstants);
   VK_IMPORT_FUNCTION(vkCmdDraw);
+  VK_IMPORT_FUNCTION(vkCmdDrawIndexed);
 
   //VK_IMPORT_FUNCTION(vkGetPhysicalDeviceMemoryProperties);
 
@@ -574,8 +579,8 @@ void  kgmVulkan::gcRender()
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
-  //clearDraws();
-  add_draw = false;
+  clearDraws();
+  //add_draw = false;
 
   m_swapChainImage = swapChainImage;
 }
@@ -587,8 +592,8 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 {
   Draw mesh = {0};
 
-  if (!add_draw)
-    return;
+  //if (!add_draw)
+  //  return;
 
   if (pmt != gcpmt_trianglestrip)
     return;
@@ -610,9 +615,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   v[1] = p_f[1];
   v[2] = p_f[2];
 
-  v_pnt = source;
-  v_cnt = 3;
-  v_size = sizeof(float) * 2;
+  //v_pnt = source;
+  //v_cnt = 3;
+  //v_size = sizeof(float) * 2;
 
 
   VkBufferCreateInfo bufferInfo = {};
@@ -684,13 +689,37 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   if (i_cnt && i_pnt)
   {
+     VkDeviceSize bufferSize = i_size * i_cnt;
 
+     if (!createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                       mesh.ibuffer, mesh.imemory) != VK_SUCCESS)
+     {
+       kgm_log() << "Vulkan error: Failed create staging buffer!\n";
+
+       return;
+     }
+
+     void* data;
+     m_vk.vkMapMemory(m_device, mesh.imemory, 0, bufferSize, 0, &data);
+     memcpy(data, i_pnt, (size_t) bufferSize);
+     m_vk.vkUnmapMemory(m_device, mesh.imemory);
+
+     mesh.isize = bufferSize;
+     mesh.icnt = i_cnt;
+
+     if (i_size == 2)
+       mesh.itype = VK_INDEX_TYPE_UINT16;
+     else
+       mesh.itype = VK_INDEX_TYPE_UINT32;
   }
 
   mesh.shader = m_shader;
 
   if (m_shader)
+  {
     mesh.model = m_shader->ubo.g_mTran;
+    mesh.color = m_shader->ubo.g_vColor;
+  }
 
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
@@ -1285,16 +1314,36 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   ZeroObject(vertexInputBindingDescription);
   vertexInputBindingDescription.binding = 0;
-  vertexInputBindingDescription.stride = sizeof(float) * 2;
+  vertexInputBindingDescription.stride = 24;
+  //vertexInputBindingDescription.stride = sizeof(float) * 2;
   vertexInputBindingDescription.inputRate = VkVertexInputRate::VK_VERTEX_INPUT_RATE_VERTEX;
 
-  VkVertexInputAttributeDescription vertexInputAttributeDescription;
+
+  /*VkVertexInputAttributeDescription vertexInputAttributeDescription;
 
   ZeroObject(vertexInputAttributeDescription);
   vertexInputAttributeDescription.location = 0;
   vertexInputAttributeDescription.binding = 0;
   vertexInputAttributeDescription.format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
-  vertexInputAttributeDescription.offset = 0;
+  vertexInputAttributeDescription.offset = 0;*/
+
+  VkVertexInputAttributeDescription vertexInputAttributeDescription[3];
+
+  ZeroObject(vertexInputAttributeDescription[0]);
+  vertexInputAttributeDescription[0].location = 0;
+  vertexInputAttributeDescription[0].binding = 0;
+  vertexInputAttributeDescription[0].format = VkFormat::VK_FORMAT_R32G32B32_SFLOAT;
+  vertexInputAttributeDescription[0].offset = 0;
+  ZeroObject(vertexInputAttributeDescription[1]);
+  vertexInputAttributeDescription[1].location = 1;
+  vertexInputAttributeDescription[1].binding = 0;
+  vertexInputAttributeDescription[1].format = VkFormat::VK_FORMAT_R8G8B8A8_UINT;
+  vertexInputAttributeDescription[1].offset = 12;
+  ZeroObject(vertexInputAttributeDescription[2]);
+  vertexInputAttributeDescription[2].location = 2;
+  vertexInputAttributeDescription[2].binding = 0;
+  vertexInputAttributeDescription[2].format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
+  vertexInputAttributeDescription[2].offset = 16;
 
   VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo;
 
@@ -1304,8 +1353,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineVertexInputStateCreateInfo.flags = 0;
   pipelineVertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
   pipelineVertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexInputBindingDescription;
-  pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = 1;
-  pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = &vertexInputAttributeDescription;
+  pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = 3;
+  pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescription;
 
   VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo;
 
@@ -1416,6 +1465,16 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineDepthStencilStateCreateInfo.minDepthBounds = 0.0f;
   pipelineDepthStencilStateCreateInfo.maxDepthBounds = 0.0f;
 
+  VkDynamicState dynamicStates[3] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR,
+                                      VK_DYNAMIC_STATE_BLEND_CONSTANTS };
+
+  VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo;
+
+  ZeroObject(dynamicStateCreateInfo);
+  dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+  dynamicStateCreateInfo.dynamicStateCount = 3;
+  dynamicStateCreateInfo.pDynamicStates = dynamicStates;
+
   VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo;
 
   ZeroObject(graphicsPipelineCreateInfo);
@@ -1432,7 +1491,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   graphicsPipelineCreateInfo.pMultisampleState = &pipelineMultisampleStateCreateInfo;
   graphicsPipelineCreateInfo.pDepthStencilState = &pipelineDepthStencilStateCreateInfo;
   graphicsPipelineCreateInfo.pColorBlendState = &pipelineColorBlendStateCreateInfo;
-  graphicsPipelineCreateInfo.pDynamicState = nullptr;
+  graphicsPipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
   graphicsPipelineCreateInfo.layout = shader->layout;
   graphicsPipelineCreateInfo.renderPass = m_renderPass;
   graphicsPipelineCreateInfo.subpass = 0;
@@ -1516,7 +1575,7 @@ void  kgmVulkan::gcSetShader(void* s)
 {
   Shader* shader = (Shader*) s;
 
-  if (!s)
+  if (!shader)
     return;
 
   //VkResult result = VK_SUCCESS;
@@ -1529,7 +1588,7 @@ void  kgmVulkan::gcSetShader(void* s)
   //memcpy(data, &shader->uo, uosize);
   //m_vk.vkUnmapMemory(m_device, shader->memory);
 
-  //m_shader = shader;
+  m_shader = shader;
 }
 
 void  kgmVulkan::gcBindAttribute(void* s, int, const char*)
@@ -1591,6 +1650,8 @@ void  kgmVulkan::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char
   void* data = null;
   u32   size = 0;
 
+  mtx4 m4;
+
   switch(type)
   {
   case gcunitype_mtx2:
@@ -1601,6 +1662,9 @@ void  kgmVulkan::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char
     break;
   case gcunitype_mtx4:
     size = cnt * 16 * sizeof(float);
+    memcpy(m4.m, val, 16 * sizeof(float));
+    //m4.transpose();
+    val = m4.m;
     break;
   }
 
@@ -2991,7 +3055,7 @@ void kgmVulkan::fillCommands()
     renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
       //VkExtent2D  { (u32) m_rect[2], (u32) m_rect[3] }
-      VkExtent2D  {m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height}
+      VkExtent2D  { m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height }
     };
 
     renderPassBeginInfo.clearValueCount = 1;
@@ -3000,6 +3064,8 @@ void kgmVulkan::fillCommands()
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
     m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
+    m_vk.vkCmdSetViewport(commandBuffer, 0, 1, &m_viewport);
+    m_vk.vkCmdSetScissor(commandBuffer, 0, 1, &m_scissor);
 
     kgmList<Draw>::iterator mi;
 
@@ -3020,6 +3086,7 @@ void kgmVulkan::fillCommands()
                                        0, 1, &draw->shader->descriptor, 0, nullptr);
 
           draw->shader->ubo.g_mTran = draw->model;
+          draw->shader->ubo.g_vColor = draw->color;
 
           void *data;
 
@@ -3032,7 +3099,16 @@ void kgmVulkan::fillCommands()
       }
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-      m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
+
+      if (draw->ibuffer)
+      {
+        m_vk.vkCmdBindIndexBuffer(commandBuffer, draw->ibuffer, 0, draw->itype);
+        m_vk.vkCmdDrawIndexed(commandBuffer, draw->icnt, 1, 0, 0, 0);
+      }
+      else
+      {
+        m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
+      }
     }
 
     m_vk.vkCmdEndRenderPass(commandBuffer);

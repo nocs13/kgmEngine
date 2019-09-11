@@ -118,8 +118,13 @@ class kgmVulkan: public kgmIGC
 
     VK_EXPORTED_FUNCTION(vkCmdBindDescriptorSets);
     VK_EXPORTED_FUNCTION(vkCmdBindVertexBuffers);
+    VK_EXPORTED_FUNCTION(vkCmdBindIndexBuffer);
     VK_EXPORTED_FUNCTION(vkCmdBindPipeline);
+    VK_EXPORTED_FUNCTION(vkCmdSetViewport);
+    VK_EXPORTED_FUNCTION(vkCmdSetScissor);
+    VK_EXPORTED_FUNCTION(vkCmdSetBlendConstants);
     VK_EXPORTED_FUNCTION(vkCmdDraw);
+    VK_EXPORTED_FUNCTION(vkCmdDrawIndexed);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
@@ -192,9 +197,11 @@ class kgmVulkan: public kgmIGC
 
     VkDescriptorBufferInfo descriptor;
 
-    u32 vcnt, icnt;
+    u32 vcnt, icnt, isize;
+    VkIndexType itype;
 
     mtx4 model;
+    vec4 color;
 
     Shader* shader;
   };
