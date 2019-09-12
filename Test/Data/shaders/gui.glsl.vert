@@ -32,8 +32,17 @@ layout(location = 0) out vec4  color;
 void main() 
 {
   color = ubo.g_vColor;
-  color.g = 0.1;
-  pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
+  
+  vec4 acolor;
+  
+  acolor.r = ((a_Color & 0x000000ff) >> 0)  / 255.0;
+  acolor.g = ((a_Color & 0x0000ff00) >> 8)  / 255.0;
+  acolor.b = ((a_Color & 0x00ff0000) >> 16) / 255.0;
+  acolor.a = ((a_Color & 0xff000000) >> 24) / 255.0;
+  
+  color = vec4(acolor.b);
+  
+  vec4 pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
   
   pos.y *= -1;
 

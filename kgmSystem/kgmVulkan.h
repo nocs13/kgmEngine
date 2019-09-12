@@ -216,6 +216,8 @@ class kgmVulkan: public kgmIGC
     mtx4 model;
     vec4 color;
 
+    VK_RT render;
+
     Shader* shader;
   };
 
@@ -392,6 +394,41 @@ private:
   void clearDraws();
 
   void fillCommands();
+
+private:
+  VkBlendFactor vk_blend(u32 e)
+  {
+    switch(e)
+    {
+    case gcblend_zero:		  return VK_BLEND_FACTOR_ZERO;
+    case gcblend_one:		    return VK_BLEND_FACTOR_ONE;
+    case gcblend_dstcol:		return VK_BLEND_FACTOR_DST_COLOR;
+    case gcblend_srccol:		return VK_BLEND_FACTOR_SRC_COLOR;
+    case gcblend_dsticol:		return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+    case gcblend_srcicol:		return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+    case gcblend_dstalpha:	return VK_BLEND_FACTOR_DST_ALPHA;
+    case gcblend_srcalpha:	return VK_BLEND_FACTOR_SRC_ALPHA;
+    case gcblend_dstialpha:	return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+    case gcblend_srcialpha:	return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    }
+
+    return VK_BLEND_FACTOR_ZERO;
+  }
+
+  VkPrimitiveTopology vk_primitive(u32 e)
+  {
+    switch(e)
+    {
+    case gcpmt_points:         return  VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    case gcpmt_lines:          return  VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+    case gcpmt_triangles:      return  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    case gcpmt_linestrip:      return  VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    case gcpmt_trianglestrip:  return  VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+    }
+
+    return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+  }
+
 };
 
 #endif

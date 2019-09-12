@@ -632,11 +632,13 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //if (!add_draw)
   //  return;
 
-  if (pmt != gcpmt_trianglestrip)
+  if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
+      pmt != gcpmt_triangles && pmt != gcpmt_points)
     return;
 
   float fx =  ((float) rand() / (float)RAND_MAX);
   float fy =  ((float) rand() / (float)RAND_MAX);
+
   float source[] = {
     -0.5f, +0.5f,
     +0.5f, +0.5f,
@@ -749,6 +751,24 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     mesh.model = m_shader->ubo.g_mTran;
     mesh.color = m_shader->ubo.g_vColor;
   }
+
+  switch(pmt)
+  {
+  case gcpmt_triangles:
+    mesh.render = VK_RT_TRIANGLE;
+    break;
+  case gcpmt_trianglestrip:
+    mesh.render = VK_RT_TRIANGLESTRIP;
+    break;
+  case gcpmt_lines:
+    mesh.render = VK_RT_LINE;
+    break;
+  case gcpmt_points:
+    mesh.render = VK_RT_POINT;
+    break;
+  default:
+    mesh.render = (VK_RT) 0;
+  };
 
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
@@ -1356,23 +1376,80 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   vertexInputAttributeDescription.format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
   vertexInputAttributeDescription.offset = 0;*/
 
-  VkVertexInputAttributeDescription vertexInputAttributeDescription[3];
+  u32 offset = 0, location = 0;
+  VkFormat format = VK_FORMAT_R32G32B32_SFLOAT;
+
+  VkVertexInputAttributeDescription vertexInputAttributeDescription[m_vertexAttributes];
 
   ZeroObject(vertexInputAttributeDescription[0]);
-  vertexInputAttributeDescription[0].location = 0;
+  vertexInputAttributeDescription[0].location = location;
   vertexInputAttributeDescription[0].binding = 0;
-  vertexInputAttributeDescription[0].format = VkFormat::VK_FORMAT_R32G32B32_SFLOAT;
-  vertexInputAttributeDescription[0].offset = 0;
-  ZeroObject(vertexInputAttributeDescription[1]);
-  vertexInputAttributeDescription[1].location = 1;
+  vertexInputAttributeDescription[0].format = format;
+  vertexInputAttributeDescription[0].offset = offset;
+
+  offset += (sizeof(float) * 3);
+  location++;
+
+  u32 attributes = m_vertexFormat;
+
+  for (u32 i = 1; i < m_vertexAttributes; i++)
+  {
+    u32 size = 0;
+
+    if (attributes & gcv_nor)
+    {
+      format = VK_FORMAT_R32G32B32_SFLOAT;
+      size = sizeof(float) * 3;
+
+      attributes = (attributes ^ gcv_nor);
+    }
+    else if (attributes & gcv_col)
+    {
+      format = VK_FORMAT_R8G8B8A8_UINT;
+      size = sizeof(u32);
+
+      attributes = (attributes ^ gcv_col);
+    }
+    else if (attributes & gcv_uv0)
+    {
+      format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
+      size = sizeof(float) * 2;
+
+      attributes = (attributes ^ gcv_uv0);
+    }
+    else if (attributes & gcv_uv1)
+    {
+      format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
+      size = sizeof(float) * 2;
+
+      attributes = (attributes ^ gcv_uv1);
+    }
+    else
+    {
+      continue;
+    }
+
+    ZeroObject(vertexInputAttributeDescription[i]);
+    vertexInputAttributeDescription[i].location = location;
+    vertexInputAttributeDescription[i].binding = 0;
+    vertexInputAttributeDescription[i].format = format;
+    vertexInputAttributeDescription[i].offset = offset;
+
+    location++;
+    offset += size;
+  }
+
+  /*ZeroObject(vertexInputAttributeDescription[1]);
+  vertexInputAttributeDescription[1].location = location;
   vertexInputAttributeDescription[1].binding = 0;
   vertexInputAttributeDescription[1].format = VkFormat::VK_FORMAT_R8G8B8A8_UINT;
   vertexInputAttributeDescription[1].offset = 12;
+
   ZeroObject(vertexInputAttributeDescription[2]);
   vertexInputAttributeDescription[2].location = 2;
   vertexInputAttributeDescription[2].binding = 0;
   vertexInputAttributeDescription[2].format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
-  vertexInputAttributeDescription[2].offset = 16;
+  vertexInputAttributeDescription[2].offset = 16;*/
 
   VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo;
 
@@ -1545,6 +1622,23 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     return null;
   }
+
+  shader->pipelines[VK_RT_TRIANGLESTRIP] = shader->pipeline;
+
+  pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+  result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
+                                          nullptr, &shader->pipelines[VK_RT_TRIANGLE]);
+
+  pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+
+  result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
+                                          nullptr, &shader->pipelines[VK_RT_LINE]);
+
+  pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+
+  result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
+                                          nullptr, &shader->pipelines[VK_RT_POINT]);
 
   if (!m_shader)
     m_shader = shader;
@@ -3107,7 +3201,10 @@ void kgmVulkan::fillCommands()
 
       if (draw->shader && draw->shader->pipeline)
       {
-        m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
+        if (draw->render >= 0 && draw->render < VK_RT_END)
+          m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipelines[draw->render]);
+        else
+          m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
 
         if (draw->shader->descriptor)
         {
