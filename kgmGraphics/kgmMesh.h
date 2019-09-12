@@ -21,15 +21,15 @@ public:
 
   enum FVF
   {
-    FVF_P,        // = (gcv_xyz) ,
-    FVF_P_C,        // = (gcv_xyz|gcv_col) ,
-    FVF_P_N,        // = (gcv_xyz|gcv_nor) ,
-    FVF_P_T,        // = (gcv_xyz|gcv_uv0) ,
-    FVF_P_N_T,      // = (gcv_xyz|gcv_nor|gcv_uv0) ,
-    FVF_P_C_T,      // = (gcv_xyz|gcv_col|gcv_uv0) ,
-    FVF_P_N_C,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T2,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P,                  // = (gcv_xyz) ,
+    FVF_P_C,                // = (gcv_xyz|gcv_col) ,
+    FVF_P_N,                // = (gcv_xyz|gcv_nor) ,
+    FVF_P_T,                // = (gcv_xyz|gcv_uv0) ,
+    FVF_P_N_T,              // = (gcv_xyz|gcv_nor|gcv_uv0) ,
+    FVF_P_C_T,              // = (gcv_xyz|gcv_col|gcv_uv0) ,
+    FVF_P_N_C,              // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_C_T,            // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_C_T2,           // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T_BW_BI,      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
     FVF_P_N_C_T2_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
   };

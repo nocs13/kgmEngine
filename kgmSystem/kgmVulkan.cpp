@@ -277,6 +277,7 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkAllocateMemory);
   VK_IMPORT_FUNCTION(vkBindBufferMemory);
   VK_IMPORT_FUNCTION(vkDestroyBuffer);
+  VK_IMPORT_FUNCTION(vkFlushMappedMemoryRanges);
   VK_IMPORT_FUNCTION(vkCmdBindDescriptorSets);
   VK_IMPORT_FUNCTION(vkCmdBindVertexBuffers);
   VK_IMPORT_FUNCTION(vkCmdBindIndexBuffer);
@@ -311,7 +312,43 @@ u32 kgmVulkan::gcError()
   return m_error;
 }
 
-void  kgmVulkan::gcSet(u32 param, void* value) {}
+void  kgmVulkan::gcSet(u32 param, void* value)
+{
+  if (param == gcpar_vertype)
+  {
+    u32 size = 0, attr = 0;
+    size_t vert = (size_t) value;
+
+    if (vert & gcv_xyz) {
+      size += (sizeof(float) * 3);
+      attr++;
+    }
+    if (vert & gcv_nor){
+      size += (sizeof(float) * 3);
+      attr++;
+    }
+    if (vert & gcv_uv0){
+      size += (sizeof(float) * 2);
+      attr++;
+    }
+    if (vert & gcv_uv1){
+      size += (sizeof(float) * 2);
+      attr++;
+    }
+    if (vert & gcv_col){
+      size += sizeof(int);
+      attr++;
+    }
+
+    if (size > 0)
+    {
+      m_vertexAttributes = attr;
+      m_vertexStride     = size;
+      m_vertexFormat     = vert;
+    }
+  }
+}
+
 void  kgmVulkan::gcGet(u32 param, void* value) {}
 
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
@@ -1306,7 +1343,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   ZeroObject(vertexInputBindingDescription);
   vertexInputBindingDescription.binding = 0;
-  vertexInputBindingDescription.stride = 24;
+  vertexInputBindingDescription.stride = m_vertexStride;
   //vertexInputBindingDescription.stride = sizeof(float) * 2;
   vertexInputBindingDescription.inputRate = VkVertexInputRate::VK_VERTEX_INPUT_RATE_VERTEX;
 
@@ -3084,7 +3121,15 @@ void kgmVulkan::fillCommands()
 
           if (m_vk.vkMapMemory(m_device, draw->shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
           {
+            int k = sizeof(Shader::ubo);
             memcpy(data, &draw->shader->ubo, sizeof(Shader::ubo));
+            VkMappedMemoryRange memoryRange;
+
+            ZeroObject(memoryRange);
+            memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+            memoryRange.size = VK_WHOLE_SIZE;
+            memoryRange.memory = draw->shader->memory;
+            m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
             m_vk.vkUnmapMemory(m_device, draw->shader->memory);
           }
         }

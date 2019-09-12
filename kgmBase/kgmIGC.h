@@ -56,6 +56,7 @@ enum gc_enum
   gcpar_texfilter,
   gcpar_texfltmag,
   gcpar_texfltmin,
+  gcpar_vertype,
 
   gccmp_never,
   gccmp_always,

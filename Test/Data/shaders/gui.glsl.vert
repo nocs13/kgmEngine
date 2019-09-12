@@ -31,14 +31,13 @@ layout(location = 0) out vec4  color;
 
 void main() 
 {
-    color = ubo.g_vColor;
-	color.g = 0.1;
-	vec4 pos;
-	pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
-	
-	pos.y *= -1;
+  color = ubo.g_vColor;
+  color.g = 0.1;
+  pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
+  
+  pos.y *= -1;
 
-	gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
+  gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
     //gl_Position = ubo.g_mProj * ubo.g_mView * ubo.g_mTran * vec4(a_Vertex, 1.0);
 }
 

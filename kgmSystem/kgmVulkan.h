@@ -116,6 +116,8 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkBindBufferMemory);
     VK_EXPORTED_FUNCTION(vkDestroyBuffer);
 
+    VK_EXPORTED_FUNCTION(vkFlushMappedMemoryRanges);
+
     VK_EXPORTED_FUNCTION(vkCmdBindDescriptorSets);
     VK_EXPORTED_FUNCTION(vkCmdBindVertexBuffers);
     VK_EXPORTED_FUNCTION(vkCmdBindIndexBuffer);
@@ -134,6 +136,15 @@ class kgmVulkan: public kgmIGC
 #else
     VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #endif
+  };
+
+  enum VK_RT
+  {
+    VK_RT_POINT = 0,
+    VK_RT_LINE,
+    VK_RT_TRIANGLE,
+    VK_RT_TRIANGLESTRIP,
+    VK_RT_END,
   };
 
   struct Texture
@@ -174,6 +185,8 @@ class kgmVulkan: public kgmIGC
 
     VkShaderModule   vertex;
     VkShaderModule   fragment;
+
+    VkPipeline       pipelines[VK_RT_END];
 
     VkPipeline       pipeline;
     VkPipelineLayout layout;
@@ -249,10 +262,14 @@ class kgmVulkan: public kgmIGC
   VkViewport m_viewport;
   VkRect2D   m_scissor;
 
+
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
   u32 m_presentQueueFamilyIndex  = -1;
+  u32 m_vertexAttributes         = 1;
+  u32 m_vertexStride             = 12;
+  u32 m_vertexFormat             = gcv_xyz;
 
   Shader* m_shader = null;
 
