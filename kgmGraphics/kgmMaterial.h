@@ -86,6 +86,14 @@ public:
       r = g = b = a = 1.0;
     }
 
+    Color(u32 c)
+    {
+      r = ((c & 0x000000ff))       / 255.0;
+      g = ((c & 0x0000ff00) >> 8)  / 255.0;
+      b = ((c & 0x00ff0000) >> 16) / 255.0;
+      a = ((c & 0xff000000) >> 24) / 255.0;
+    }
+
     Color(float rx, float gx, float bx, float ax)
     {
       r = rx, g = gx, b = bx, a = ax;
@@ -211,6 +219,18 @@ public:
   {
     return ( ((u8)(255 * x) << 0)  | ((u8)(255 * y) << 8) |
              ((u8)(255 * z) << 16) | ((u8)(255 * w) << 24) );
+  }
+
+  static vec4 toVector(u32 c)
+  {
+    vec4 v;
+
+    v.x = ((c & 0x000000ff))       / 255.0;
+    v.y = ((c & 0x0000ff00) >> 8)  / 255.0;
+    v.z = ((c & 0x00ff0000) >> 16) / 255.0;
+    v.w = ((c & 0xff000000) >> 24) / 255.0;
+
+    return v;
   }
 
   Type type() const

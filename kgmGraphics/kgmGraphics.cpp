@@ -1105,9 +1105,9 @@ void kgmGraphics::render(kgmMaterial* m)
     return;
   }
 
-  g_vec_color = m->m_color.get();
-
-  g_fShine = m->shininess();
+  g_vec_color    = m->m_color.get();
+  g_vec_specular = m->m_specular.get();
+  g_fShine       = m->shininess();
 
   if(m->blend())
   {
@@ -1163,7 +1163,6 @@ void kgmGraphics::render(kgmMaterial* m)
     m_depth = false;
   }
 
-
   if(!m->cull())
   {
     gc->gcCull(0);
@@ -1206,6 +1205,13 @@ void kgmGraphics::render(kgmMaterial* m)
   if (m->envType() != kgmMaterial::EnvironmentTypeNone)
   {
 
+  }
+
+  if (g_shd_active)
+  {
+    g_shd_active->set("g_vColor",    g_vec_color);
+    g_shd_active->set("g_vSpecular", g_vec_specular);
+    g_shd_active->set("g_fShine",    g_fShine);
   }
 }
 

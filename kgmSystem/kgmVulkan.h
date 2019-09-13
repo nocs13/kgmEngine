@@ -92,6 +92,8 @@ class kgmVulkan: public kgmIGC
 
     VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
     VK_EXPORTED_FUNCTION(vkDestroyImage);
+    VK_EXPORTED_FUNCTION(vkCreateSampler);
+    VK_EXPORTED_FUNCTION(vkDestroySampler);
     VK_EXPORTED_FUNCTION(vkMapMemory);
     VK_EXPORTED_FUNCTION(vkUnmapMemory);
 
@@ -127,6 +129,10 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkCmdSetBlendConstants);
     VK_EXPORTED_FUNCTION(vkCmdDraw);
     VK_EXPORTED_FUNCTION(vkCmdDrawIndexed);
+    VK_EXPORTED_FUNCTION(vkCmdCopyBuffer);
+    VK_EXPORTED_FUNCTION(vkCmdFillBuffer);
+    VK_EXPORTED_FUNCTION(vkCmdUpdateBuffer);
+    VK_EXPORTED_FUNCTION(vkCmdExecuteCommands);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
     VK_EXPORTED_FUNCTION(vkDestroyDebugReportCallbackEXT);
@@ -142,6 +148,7 @@ class kgmVulkan: public kgmIGC
   {
     VK_RT_POINT = 0,
     VK_RT_LINE,
+    VK_RT_LINESTRIP,
     VK_RT_TRIANGLE,
     VK_RT_TRIANGLESTRIP,
     VK_RT_END,
@@ -210,11 +217,14 @@ class kgmVulkan: public kgmIGC
 
     VkDescriptorBufferInfo descriptor;
 
+    //VkCommandBuffer command;
+
     u32 vcnt, icnt, isize;
     VkIndexType itype;
 
     mtx4 model;
     vec4 color;
+    vec4 specular;
 
     VK_RT render;
 
@@ -253,10 +263,13 @@ class kgmVulkan: public kgmIGC
 
   VkFormat m_swapChainFormat;
 
-  VkFormat m_depthFormat;
-  VkImage  m_depthImage;
-  VkImageView  m_depthImageView;
+  VkFormat       m_depthFormat;
+  VkImage        m_depthImage;
+  VkImageView    m_depthImageView;
   VkDeviceMemory m_depthMemory;
+
+  VkImageView    m_textureImageView = VK_NULL_HANDLE;
+  VkSampler      m_textureSampler   = VK_NULL_HANDLE;
 
   VkSemaphore m_imageAvailableSemaphore;
   VkSemaphore m_renderingFinishedSemaphore;

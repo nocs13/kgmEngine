@@ -95,6 +95,14 @@ public:
     {
       return (_Ptr == null);
     }
+
+    bool haveNext()
+    {
+      if (!_Ptr || !_Ptr->next)
+        return false;
+
+      return true;
+    }
   };
 
 protected:

@@ -32,7 +32,7 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
 void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
-  typedef struct{  vec3 pos;  u32 col;} V;
+  typedef struct{  vec3 pos;  u32 col; vec2 uv; } V;
 
   V v[5];
 
@@ -45,7 +45,7 @@ void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
   if(tex && tex->texture())
     gc->gcSetTexture(0, tex->texture());
 
-  gc->gcDraw(gcpmt_linestrip, gcv_xyz | gcv_col, sizeof(V), 5, v, 0, 0, 0);
+  gc->gcDraw(gcpmt_linestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 5, v, 0, 0, 0);
 
   if(tex)
     gc->gcSetTexture(0, 0);

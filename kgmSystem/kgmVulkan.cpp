@@ -4,6 +4,7 @@
 #include "kgmSystem.h"
 #include "kgmThread.h"
 #include "../kgmBase/kgmIResources.h"
+#include "../kgmBase/kgmTime.h"
 #include "../kgmGame/kgmIGame.h"
 
 #ifdef VULKAN
@@ -258,6 +259,8 @@ int kgmVulkan::vkInit()
 
   VK_IMPORT_FUNCTION(vkDestroySurfaceKHR);
   VK_IMPORT_FUNCTION(vkDestroyImage);
+  VK_IMPORT_FUNCTION(vkCreateSampler);
+  VK_IMPORT_FUNCTION(vkDestroySampler);
   VK_IMPORT_FUNCTION(vkMapMemory);
   VK_IMPORT_FUNCTION(vkUnmapMemory);
   VK_IMPORT_FUNCTION(vkCreateGraphicsPipelines);
@@ -287,6 +290,11 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkCmdSetBlendConstants);
   VK_IMPORT_FUNCTION(vkCmdDraw);
   VK_IMPORT_FUNCTION(vkCmdDrawIndexed);
+  VK_IMPORT_FUNCTION(vkCmdCopyBuffer);
+  VK_IMPORT_FUNCTION(vkCmdFillBuffer);
+  VK_IMPORT_FUNCTION(vkCmdUpdateBuffer);
+  VK_IMPORT_FUNCTION(vkCmdExecuteCommands);
+
 
   //VK_IMPORT_FUNCTION(vkGetPhysicalDeviceMemoryProperties);
 
@@ -482,6 +490,9 @@ void  kgmVulkan::gcEnd()
 
 }
 
+static int frames = 0;
+static int ticks = 0;
+
 void  kgmVulkan::gcRender()
 {
   VkResult result;
@@ -633,7 +644,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //  return;
 
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
-      pmt != gcpmt_triangles && pmt != gcpmt_points)
+      pmt != gcpmt_triangles && pmt != gcpmt_points && !gcpmt_linestrip)
     return;
 
   float fx =  ((float) rand() / (float)RAND_MAX);
@@ -748,9 +759,18 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   if (m_shader)
   {
-    mesh.model = m_shader->ubo.g_mTran;
-    mesh.color = m_shader->ubo.g_vColor;
+    mesh.model    = m_shader->ubo.g_mTran;
+    mesh.color    = m_shader->ubo.g_vColor;
+    mesh.specular = m_shader->ubo.g_vSpecular;
   }
+
+  if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    mesh.ubuffer, mesh.umemory))
+  {
+    kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
+  }
+
 
   switch(pmt)
   {
@@ -763,6 +783,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   case gcpmt_lines:
     mesh.render = VK_RT_LINE;
     break;
+  case gcpmt_linestrip:
+    mesh.render = VK_RT_LINESTRIP;
+    break;
   case gcpmt_points:
     mesh.render = VK_RT_POINT;
     break;
@@ -773,69 +796,24 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
 
+  VkCommandBufferAllocateInfo infoCommand = { };
+
+  infoCommand.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  infoCommand.pNext = null;
+  infoCommand.commandPool = m_commandPool;
+  infoCommand.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+  infoCommand.commandBufferCount = 1;
+
+  //if (m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, &mesh.command) != VK_SUCCESS)
+  //{
+  //  kgm_log() << "Vulkan error: Failed create command fro mesh.\n";
+  //}
+
   m_draws.add(mesh);
 
   //fillCommands();
 
   //kgm_log() << "Vulkan: Mesh add and filled commands.\n";
-
-  return;
-
-  //auto commandBuffer = m_commandBuffers[m_swapChainImage];
-
-  if (m_shader && m_shader->pipeline)
-  {
-    //m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
-
-    //VkBuffer vertexBuffers[] = { mesh.vbuffer };
-    //VkDeviceSize offsets[] = {0};
-
-    //m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
-    //m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(v_cnt), 1, 0, 0);
-
-    for (u32 i = 0; i < m_swapChainImages.length(); i++)
-    {
-      auto &commandBuffer = m_commandBuffers[i];
-      auto &framebuffer = m_frameBuffers[i];
-
-      VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-
-      ZeroObject(commandBufferInheritanceInfo);
-      commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-      commandBufferInheritanceInfo.pNext = nullptr;
-      commandBufferInheritanceInfo.renderPass = m_renderPass;
-      commandBufferInheritanceInfo.subpass = 0;
-      commandBufferInheritanceInfo.framebuffer = framebuffer;
-      commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
-      commandBufferInheritanceInfo.queryFlags = 0;
-      commandBufferInheritanceInfo.pipelineStatistics = 0;
-
-      VkCommandBufferBeginInfo commandBufferBeginInfo;
-
-      ZeroObject(commandBufferBeginInfo);
-      commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-      commandBufferBeginInfo.pNext = nullptr;
-      commandBufferBeginInfo.flags = 0;
-      commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
-
-      VkResult result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
-
-      if (result != VK_SUCCESS)
-      {
-        kgm_log() << "Vulkan error: Cannot begin command buffer while draw.\n";
-
-        continue;
-      }
-
-      VkBuffer vbuffers[] = {mesh.vbuffer};
-      VkDeviceSize dsizes[] = {0};
-
-      m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vbuffers, dsizes);
-      m_vk.vkCmdDraw(commandBuffer, v_cnt, 1, 0, 0);
-      m_vk.vkEndCommandBuffer(commandBuffer);
-    }
-  }
 }
 
 // TEXTURE
@@ -843,7 +821,6 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 {
   if (!m_device || !w || !h)
     return null;
-  return null;
 
   Texture* t = new Texture;
 
@@ -981,7 +958,9 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   {
     void* data = null;
 
-    u32 size = w * h * bypp;
+    u32 size  = w * h * bypp;
+
+    u32 count = w * h;
 
     result = m_vk.vkMapMemory(m_device, t->memory, 0, size, 0, &data);
 
@@ -1006,15 +985,45 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     }
     else if (bypp == 3)
     {
+      u8* src = (u8*) m;
+      u8* dst = (u8*) data;
 
+      for (u8 i = 0; i < count; i++)
+      {
+        memcpy(dst, src, 3);
+        dst[3] = 0xff;
+
+        src += 3;
+        dst += 4;
+      }
     }
     else if (bypp == 2)
     {
+      u16 red_mask   = 0xF800;
+      u16 green_mask = 0x7E0;
+      u16 blue_mask  = 0x1F;
 
+      u8* src = (u8*) m;
+      u8* dst = (u8*) data;
+
+      for (u8 i = 0; i < count; i++)
+      {
+        u16 rgb16;
+
+        memcpy(&rgb16, src, 2);
+
+        dst[0] = (rgb16 & red_mask)   >> 11;
+        dst[1] = (rgb16 & green_mask) >> 5;
+        dst[2] = (rgb16 & blue_mask)  >> 0;
+        dst[3] = 0xff;
+
+        src += 2;
+        dst += 4;
+      }
     }
     else
     {
-
+      memset(data, 0xff, size);
     }
 
     m_vk.vkUnmapMemory(m_device, t->memory);
@@ -1051,6 +1060,25 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     return null;
   }
 
+  VkSamplerCreateInfo samplerInfo;
+
+  ZeroObject(samplerInfo);
+  samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+  samplerInfo.magFilter = VK_FILTER_LINEAR;
+  samplerInfo.minFilter = VK_FILTER_LINEAR;
+  samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.anisotropyEnable = VK_FALSE;
+  samplerInfo.maxAnisotropy = 1;
+  samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+  samplerInfo.compareEnable = VK_FALSE;
+  samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+  samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+  samplerInfo.mipLodBias = 0.0f;
+  samplerInfo.minLod = 0.0f;
+  samplerInfo.maxLod = 0.0f;
+
   return t;
 }
 
@@ -1071,7 +1099,10 @@ void  kgmVulkan::gcFreeTexture(void *t)
   delete (Texture*)t;
 }
 
-void  kgmVulkan::gcSetTexture(u32 stage, void *t) {}
+void  kgmVulkan::gcSetTexture(u32 stage, void *t)
+{
+
+}
 
 // TARGET
 gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil){}
@@ -1175,7 +1206,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   }
 
 
-  if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+  if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     shader->buffer,
                     shader->memory))
@@ -1198,12 +1229,23 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   uboLayoutBinding.descriptorCount = 1;
   uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
+  VkDescriptorSetLayoutBinding samplerLayoutBinding;
+
+  ZeroObject(samplerLayoutBinding);
+  samplerLayoutBinding.binding = 1;
+  samplerLayoutBinding.descriptorCount = 1;
+  samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  samplerLayoutBinding.pImmutableSamplers = nullptr;
+  samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+  VkDescriptorSetLayoutBinding layoutBinding[] = {uboLayoutBinding, samplerLayoutBinding};
+
   VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
 
   ZeroObject(layoutCreateInfo);
   layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutCreateInfo.bindingCount = 1;
-  layoutCreateInfo.pBindings = &uboLayoutBinding;
+  layoutCreateInfo.bindingCount = 2;//1;
+  layoutCreateInfo.pBindings = layoutBinding;//&uboLayoutBinding;
 
   if (v.length() > 1024)
   {
@@ -1223,18 +1265,21 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
       return null;
     }
 
-    VkDescriptorPoolSize poolSize;
+    VkDescriptorPoolSize poolSizes[2];
 
-    ZeroObject(poolSize);
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = 1;
+    ZeroObject(poolSizes[0]);
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = 1;
+    ZeroObject(poolSizes[1]);
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[2].descriptorCount = 1;
 
     VkDescriptorPoolCreateInfo poolInfo;
 
     ZeroObject(poolInfo);
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
+    poolInfo.poolSizeCount = 2;
+    poolInfo.pPoolSizes = poolSizes;
     poolInfo.maxSets = 1;
 
     if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &shader->setpool) != VK_SUCCESS)
@@ -1266,18 +1311,33 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     bufferInfo.offset = 0;
     bufferInfo.range = sizeof(Uniforms);
 
-    VkWriteDescriptorSet descriptorWrite;
+    VkDescriptorImageInfo imageInfo;
 
-    ZeroObject(descriptorWrite);
-    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = shader->descriptor;
-    descriptorWrite.dstBinding = 0;
-    descriptorWrite.dstArrayElement = 0;
-    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    descriptorWrite.descriptorCount = 1;
-    descriptorWrite.pBufferInfo = &bufferInfo;
+    ZeroObject(imageInfo);
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.imageView   = m_textureImageView;
+    imageInfo.sampler     = m_textureSampler;
 
-    m_vk.vkUpdateDescriptorSets(m_device, 1, &descriptorWrite, 0, nullptr);
+    VkWriteDescriptorSet descriptorWrites[2];
+
+    ZeroObject(descriptorWrites[0]);
+    descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[0].dstSet = shader->descriptor;
+    descriptorWrites[0].dstBinding = 0;
+    descriptorWrites[0].dstArrayElement = 0;
+    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWrites[0].descriptorCount = 1;
+    descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+    ZeroObject(descriptorWrites[1]);
+    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[1].dstSet = shader->descriptor;
+    descriptorWrites[1].dstBinding = 1;
+    descriptorWrites[1].dstArrayElement = 0;
+    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrites[1].descriptorCount = 1;
+    descriptorWrites[1].pImageInfo = &imageInfo;
+    m_vk.vkUpdateDescriptorSets(m_device, 2, descriptorWrites, 0, nullptr);
   }
 
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
@@ -1634,6 +1694,11 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
                                           nullptr, &shader->pipelines[VK_RT_LINE]);
+
+  pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+
+  result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
+                                          nullptr, &shader->pipelines[VK_RT_LINESTRIP]);
 
   pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 
@@ -3131,6 +3196,21 @@ void kgmVulkan::fillCommands()
 
     result = m_vk.vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
+    VkImageMemoryBarrier imageMemoryBarrier;
+
+    ZeroObject(imageMemoryBarrier);
+    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier.pNext = nullptr;
+    imageMemoryBarrier.srcAccessMask = 0;
+    imageMemoryBarrier.dstAccessMask = //VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                       VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    imageMemoryBarrier.srcQueueFamilyIndex = 0;
+    imageMemoryBarrier.dstQueueFamilyIndex = 0;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
+
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
 
     ZeroObject(commandBufferInheritanceInfo);
@@ -3162,10 +3242,6 @@ void kgmVulkan::fillCommands()
 
     ZeroObject(clearValue);
 
-    //clearValue.color.float32[0] = 0.1;
-    //clearValue.color.float32[1] = 0.2;
-    //clearValue.color.float32[2] = 0.5;
-    //clearValue.color.float32[3] = 1.0;
     memcpy(clearValue.color.float32, m_bgColor, sizeof(float) * 4);
 
     VkRenderPassBeginInfo renderPassBeginInfo;
@@ -3186,7 +3262,6 @@ void kgmVulkan::fillCommands()
 
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
-    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
     m_vk.vkCmdSetViewport(commandBuffer, 0, 1, &m_viewport);
     m_vk.vkCmdSetScissor(commandBuffer, 0, 1, &m_scissor);
 
@@ -3211,25 +3286,39 @@ void kgmVulkan::fillCommands()
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->layout,
                                        0, 1, &draw->shader->descriptor, 0, nullptr);
 
-          draw->shader->ubo.g_mTran = draw->model;
-          draw->shader->ubo.g_vColor = draw->color;
+          draw->shader->ubo.g_mTran     = draw->model;
+          draw->shader->ubo.g_vColor    = draw->color;
+          draw->shader->ubo.g_vSpecular = draw->specular;
 
           void *data;
 
-          if (m_vk.vkMapMemory(m_device, draw->shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+          if (m_vk.vkMapMemory(m_device, draw->umemory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
           {
-            int k = sizeof(Shader::ubo);
             memcpy(data, &draw->shader->ubo, sizeof(Shader::ubo));
             VkMappedMemoryRange memoryRange;
 
             ZeroObject(memoryRange);
             memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
             memoryRange.size = VK_WHOLE_SIZE;
-            memoryRange.memory = draw->shader->memory;
+            memoryRange.memory = draw->umemory;
             m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
-            m_vk.vkUnmapMemory(m_device, draw->shader->memory);
+            m_vk.vkUnmapMemory(m_device, draw->umemory);
+
+            VkBufferCopy bufferCopy;
+
+            bufferCopy.srcOffset = 0;
+            bufferCopy.dstOffset = 0;
+            bufferCopy.size      = VK_WHOLE_SIZE;
+
+            //m_vk.vkCmdCopyBuffer(commandBuffer, draw->ubuffer, draw->shader->buffer, 1, &bufferCopy);
+            //m_vk.vkCmdFillBuffer(commandBuffer, draw->shader->buffer, 0, VK_WHOLE_SIZE, 0x00);
+            m_vk.vkCmdUpdateBuffer(commandBuffer, draw->shader->buffer, 0, sizeof(Shader::ubo), &draw->shader->ubo);
           }
         }
+      }
+      else
+      {
+        m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
       }
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
@@ -3243,25 +3332,12 @@ void kgmVulkan::fillCommands()
       {
         m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
       }
+
+      //m_vk.vkEndCommandBuffer(commandBuffer);
+      //m_vk.vkCmdExecuteCommands(commandBuffer, 1, &d_commandBuffer);
     }
 
     m_vk.vkCmdEndRenderPass(commandBuffer);
-
-    VkImageMemoryBarrier imageMemoryBarrier;
-
-    ZeroObject(imageMemoryBarrier);
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.pNext = nullptr;
-    imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask = //VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                                       VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    imageMemoryBarrier.srcQueueFamilyIndex = 0;
-    imageMemoryBarrier.dstQueueFamilyIndex = 0;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
-
 
     m_vk.vkCmdPipelineBarrier(commandBuffer,
                               VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
@@ -3430,6 +3506,15 @@ void kgmVulkan::clearDraws()
 
     if((*i).ibuffer != VK_NULL_HANDLE)
       m_vk.vkDestroyBuffer(m_device, (*i).ibuffer, NULL);
+
+    if((*i).umemory != VK_NULL_HANDLE)
+      m_vk.vkFreeMemory(m_device, (*i).umemory, NULL);
+
+    if((*i).ubuffer != VK_NULL_HANDLE)
+      m_vk.vkDestroyBuffer(m_device, (*i).ubuffer, NULL);
+
+    //if((*i).command != VK_NULL_HANDLE)
+    //  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, 1, &(*i).command);
   }
 
   m_draws.clear();
