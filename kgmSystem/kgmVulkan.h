@@ -129,6 +129,7 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkCmdSetBlendConstants);
     VK_EXPORTED_FUNCTION(vkCmdDraw);
     VK_EXPORTED_FUNCTION(vkCmdDrawIndexed);
+    VK_EXPORTED_FUNCTION(vkCmdCopyBufferToImage);
     VK_EXPORTED_FUNCTION(vkCmdCopyBuffer);
     VK_EXPORTED_FUNCTION(vkCmdFillBuffer);
     VK_EXPORTED_FUNCTION(vkCmdUpdateBuffer);
@@ -146,8 +147,8 @@ class kgmVulkan: public kgmIGC
 
   enum VK_RT
   {
-    VK_RT_POINT = 0,
-    VK_RT_LINE,
+    //VK_RT_POINT = 0,
+    VK_RT_LINE = 0,
     VK_RT_LINESTRIP,
     VK_RT_TRIANGLE,
     VK_RT_TRIANGLESTRIP,
@@ -159,6 +160,7 @@ class kgmVulkan: public kgmIGC
     VkImage        image;
     VkImageView    iview;
     VkDeviceMemory memory;
+    VkSampler      sampler;
   };
 
   struct Uniforms
@@ -229,6 +231,7 @@ class kgmVulkan: public kgmIGC
     VK_RT render;
 
     Shader* shader;
+    Texture* texture;
   };
 
   static kgmLib vk_lib;  
@@ -268,14 +271,15 @@ class kgmVulkan: public kgmIGC
   VkImageView    m_depthImageView;
   VkDeviceMemory m_depthMemory;
 
-  VkImageView    m_textureImageView = VK_NULL_HANDLE;
-  VkSampler      m_textureSampler   = VK_NULL_HANDLE;
 
   VkSemaphore m_imageAvailableSemaphore;
   VkSemaphore m_renderingFinishedSemaphore;
 
   VkViewport m_viewport;
   VkRect2D   m_scissor;
+
+  VkQueue    m_graphicsQueue = VK_NULL_HANDLE;
+  VkQueue    m_presentQueue  = VK_NULL_HANDLE;
 
 
   u32 m_swapChainImage;
@@ -287,6 +291,8 @@ class kgmVulkan: public kgmIGC
   u32 m_vertexFormat             = gcv_xyz;
 
   Shader* m_shader = null;
+
+  Texture* m_texture = null;
 
   s32 m_rect[4];
   f32 m_bgColor[4];
@@ -400,6 +406,11 @@ private:
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
   u32  memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties);
+
+  VkCommandBuffer beginSingleTimeCommand();
+  void endSingleTimeCommand(VkCommandBuffer commandBuffer);
+  bool transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
   void* uniformLocation(Shader*, char*);
 

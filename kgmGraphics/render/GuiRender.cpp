@@ -381,8 +381,8 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
     trc.x++;
 
-    //mtl.m_color = kgmMaterial::Color(gr->gui_style->smenu.tx_color);
-    //gr->render(&mtl);
-    //gcDrawText(gr->gc, gr->font, 8, 19, 0xffffffff, trc, title);
+    mtl.m_color = kgmMaterial::Color(gr->gui_style->smenu.tx_color);
+    gr->render(&mtl);
+    gcDrawText(gr->gc, gr->font, 8, 19, 0xffffffff, trc, title);
   }
 }

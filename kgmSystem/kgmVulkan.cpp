@@ -291,6 +291,7 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkCmdDraw);
   VK_IMPORT_FUNCTION(vkCmdDrawIndexed);
   VK_IMPORT_FUNCTION(vkCmdCopyBuffer);
+  VK_IMPORT_FUNCTION(vkCmdCopyBufferToImage);
   VK_IMPORT_FUNCTION(vkCmdFillBuffer);
   VK_IMPORT_FUNCTION(vkCmdUpdateBuffer);
   VK_IMPORT_FUNCTION(vkCmdExecuteCommands);
@@ -644,7 +645,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //  return;
 
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
-      pmt != gcpmt_triangles && pmt != gcpmt_points && !gcpmt_linestrip)
+      pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
 
   float fx =  ((float) rand() / (float)RAND_MAX);
@@ -692,7 +693,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-  kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
+  //kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
 
   if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS)
   {
@@ -764,13 +765,15 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     mesh.specular = m_shader->ubo.g_vSpecular;
   }
 
+  if(m_texture)
+    mesh.texture = m_texture;
+
   if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     mesh.ubuffer, mesh.umemory))
   {
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
   }
-
 
   switch(pmt)
   {
@@ -786,9 +789,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   case gcpmt_linestrip:
     mesh.render = VK_RT_LINESTRIP;
     break;
-  case gcpmt_points:
-    mesh.render = VK_RT_POINT;
-    break;
+  //case gcpmt_points:
+  //  mesh.render = VK_RT_POINT;
+  //  break;
   default:
     mesh.render = (VK_RT) 0;
   };
@@ -822,11 +825,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   if (!m_device || !w || !h)
     return null;
 
-  Texture* t = new Texture;
-
-  t->image = VK_NULL_HANDLE;
-  t->iview = VK_NULL_HANDLE;
-  t->memory = VK_NULL_HANDLE;
+  kgm_log() << "Vulkan: Generating texture.\n";
 
   u32 bypp = 1;
 
@@ -837,31 +836,24 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   switch(bpp)
   {
   case gctex_fmt8:
-    format = VK_FORMAT_R8_UNORM;
     bypp = 1;
     break;
   case gctex_fmt16:
-    format = VK_FORMAT_R5G6B5_UNORM_PACK16;
     bypp = 2;
     break;
   case gctex_fmt24:
-    format = VK_FORMAT_R8G8B8_UNORM;
     bypp = 3;
     break;
   case gctex_fmt32:
-    format = VK_FORMAT_R8G8B8A8_UNORM;
     bypp = 4;
     break;
   case gctex_fmtdepth:
-    format = VK_FORMAT_D16_UNORM;
     bypp = 2;
     break;
   case gctex_fmtdepten:
-    format = VK_FORMAT_D16_UNORM_S8_UINT;
     bypp = 3;
     break;
   default:
-    format = VK_FORMAT_R8G8B8A8_UNORM;
     bypp = 4;
   };
 
@@ -881,104 +873,41 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     break;
   }
 
-  VkImageCreateInfo imageInfo = {};
+  VkBuffer       sbuffer = VK_NULL_HANDLE;
+  VkDeviceMemory smemory = VK_NULL_HANDLE;
 
-  ZeroObject(imageInfo);
+  void* data = null;
 
-  imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-  imageInfo.imageType = itype;
-  imageInfo.extent.width = w;
-  imageInfo.extent.height = h;
-  imageInfo.extent.depth = 1;
-  imageInfo.mipLevels = 1;
-  imageInfo.arrayLayers = 1;
-  imageInfo.format = format;
-  imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-  imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-  imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-  imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-  imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  u32 size  = w * h * 4;
 
-  VkResult result = m_vk.vkCreateImage(m_device, &imageInfo, nullptr, &t->image);
+  u32 count = w * h;
 
-  if (result != VK_SUCCESS)
+  if (!createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    sbuffer, smemory))
   {
-    kgm_log() << "Vulkan error: Failed to create texture image.\n";
-
-    printResult(result);
-
-    delete t;
+    kgm_log() << "Vulkan error: Failed create image stage buffer.\n";
 
     return null;
   }
 
-  VkMemoryRequirements requirements;
-
-  m_vk.vkGetImageMemoryRequirements(m_device, t->image, &requirements);
-
-  VkMemoryAllocateInfo allocInfo = {};
-
-  ZeroObject(allocInfo);
-
-  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-  allocInfo.allocationSize = requirements.size;
-
-  result = m_vk.vkAllocateMemory(m_device, &allocInfo, null, &t->memory);
+  VkResult result = m_vk.vkMapMemory(m_device, smemory, 0, VK_WHOLE_SIZE, 0, &data);
 
   if (result != VK_SUCCESS)
   {
-    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+    kgm_log() << "Vulkan error: Failed to fill texture image memory.\n";
 
     printResult(result);
 
-    m_vk.vkDestroyImage(m_device, t->image, null);
+    m_vk.vkDestroyBuffer(m_device, sbuffer, null);
 
-    delete t;
-
-    return null;
-  }
-
-  result = m_vk.vkBindImageMemory(m_device, t->image, t->memory, null);
-
-  if (result != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to bind texture image memory.\n";
-
-    printResult(result);
-
-    m_vk.vkDestroyImage(m_device, t->image, null);
-    m_vk.vkFreeMemory(m_device, t->memory, null);
-
-    delete t;
+    m_vk.vkFreeMemory(m_device, smemory, null);
 
     return null;
   }
 
   if (m)
   {
-    void* data = null;
-
-    u32 size  = w * h * bypp;
-
-    u32 count = w * h;
-
-    result = m_vk.vkMapMemory(m_device, t->memory, 0, size, 0, &data);
-
-    if (result != VK_SUCCESS)
-    {
-      kgm_log() << "Vulkan error: Failed to fill texture image memory.\n";
-
-      printResult(result);
-
-      m_vk.vkDestroyImage(m_device, t->image, null);
-
-      m_vk.vkFreeMemory(m_device, t->memory, null);
-
-      delete t;
-
-      return null;
-    }
-
     if (bypp == 4)
     {
       memcpy(data, m, size);
@@ -1025,14 +954,121 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     {
       memset(data, 0xff, size);
     }
-
-    m_vk.vkUnmapMemory(m_device, t->memory);
   }
+  else
+  {
+    memset(data, 0xff, size);
+  }
+
+  m_vk.vkUnmapMemory(m_device, smemory);
+
+  Texture* t = new Texture;
+
+  t->image = VK_NULL_HANDLE;
+  t->iview = VK_NULL_HANDLE;
+  t->memory = VK_NULL_HANDLE;
+
+  VkImageCreateInfo imageInfo = {};
+
+  ZeroObject(imageInfo);
+
+  imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  imageInfo.imageType = itype;
+  imageInfo.extent.width = w;
+  imageInfo.extent.height = h;
+  imageInfo.extent.depth = 1;
+  imageInfo.mipLevels = 1;
+  imageInfo.arrayLayers = 1;
+  imageInfo.format = format;
+  imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+  imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  result = m_vk.vkCreateImage(m_device, &imageInfo, nullptr, &t->image);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyBuffer(m_device, sbuffer, null);
+    m_vk.vkFreeMemory(m_device, smemory, null);
+
+    delete t;
+
+    return null;
+  }
+
+  VkMemoryRequirements requirements;
+
+  m_vk.vkGetImageMemoryRequirements(m_device, t->image, &requirements);
+
+  VkMemoryAllocateInfo allocInfo;
+
+  ZeroObject(allocInfo);
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = requirements.size;
+  allocInfo.memoryTypeIndex = memoryTypeIndex(requirements.memoryTypeBits,
+                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+  result = m_vk.vkAllocateMemory(m_device, &allocInfo, null, &t->memory);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+
+    m_vk.vkDestroyBuffer(m_device, sbuffer, null);
+    m_vk.vkFreeMemory(m_device, smemory, null);
+
+    delete t;
+
+    return null;
+  }
+
+  result = m_vk.vkBindImageMemory(m_device, t->image, t->memory, null);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to bind texture image memory.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+
+    m_vk.vkFreeMemory(m_device, t->memory, null);
+
+    m_vk.vkDestroyBuffer(m_device, sbuffer, null);
+    m_vk.vkFreeMemory(m_device, smemory, null);
+
+    delete t;
+
+    return null;
+  }
+
+  kgm_log() << "Vulkan: Bind image memory to buffer.\n";
+
+  transitionImageLayout(t->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+  copyBufferToImage(sbuffer, t->image, w, h);
+
+  transitionImageLayout(t->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+  m_vk.vkDestroyBuffer(m_device, sbuffer, null);
+  m_vk.vkFreeMemory(m_device, smemory, null);
+
+  kgm_log() << "Vulkan: Copied image from stage buffer to image.\n";
 
   VkImageViewCreateInfo viewInfo;
 
   ZeroObject(viewInfo);
-
+  viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
   viewInfo.format = format;
   viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
@@ -1060,6 +1096,8 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     return null;
   }
 
+  kgm_log() << "Vulkan: Generated image view.\n";
+
   VkSamplerCreateInfo samplerInfo;
 
   ZeroObject(samplerInfo);
@@ -1078,6 +1116,32 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   samplerInfo.mipLodBias = 0.0f;
   samplerInfo.minLod = 0.0f;
   samplerInfo.maxLod = 0.0f;
+
+  result = m_vk.vkCreateSampler(m_device, &samplerInfo, null, &t->sampler);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image view.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImageView(m_device, t->iview, null);
+
+    m_vk.vkDestroyImage(m_device, t->image, null);
+
+    m_vk.vkFreeMemory(m_device, t->memory, null);
+
+    delete t;
+
+    return null;
+  }
+
+  kgm_log() << "Vulkan: Generated sampler.\n";
+
+  if (!m_texture)
+    m_texture = t;
+
+  kgm_log() << "Vulkan: Generated texture.\n";
 
   return t;
 }
@@ -1101,7 +1165,8 @@ void  kgmVulkan::gcFreeTexture(void *t)
 
 void  kgmVulkan::gcSetTexture(u32 stage, void *t)
 {
-
+  if (t)
+    m_texture = (Texture*)t;
 }
 
 // TARGET
@@ -1244,7 +1309,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   ZeroObject(layoutCreateInfo);
   layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutCreateInfo.bindingCount = 2;//1;
+  layoutCreateInfo.bindingCount = 2;
   layoutCreateInfo.pBindings = layoutBinding;//&uboLayoutBinding;
 
   if (v.length() > 1024)
@@ -1315,8 +1380,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     ZeroObject(imageInfo);
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imageInfo.imageView   = m_textureImageView;
-    imageInfo.sampler     = m_textureSampler;
+    imageInfo.imageView   = (m_texture) ? (m_texture->iview) : (VK_NULL_HANDLE);
+    imageInfo.sampler     = (m_texture) ? (m_texture->sampler) : (VK_NULL_HANDLE);
 
     VkWriteDescriptorSet descriptorWrites[2];
 
@@ -1337,6 +1402,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     descriptorWrites[1].descriptorCount = 1;
     descriptorWrites[1].pImageInfo = &imageInfo;
+
+    //m_vk.vkUpdateDescriptorSets(m_device, (imageInfo.sampler) ? (2) : (1), descriptorWrites, 0, nullptr);
     m_vk.vkUpdateDescriptorSets(m_device, 2, descriptorWrites, 0, nullptr);
   }
 
@@ -1519,7 +1586,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   pipelineVertexInputStateCreateInfo.flags = 0;
   pipelineVertexInputStateCreateInfo.vertexBindingDescriptionCount = 1;
   pipelineVertexInputStateCreateInfo.pVertexBindingDescriptions = &vertexInputBindingDescription;
-  pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = 3;
+  pipelineVertexInputStateCreateInfo.vertexAttributeDescriptionCount = location;
   pipelineVertexInputStateCreateInfo.pVertexAttributeDescriptions = vertexInputAttributeDescription;
 
   VkPipelineInputAssemblyStateCreateInfo pipelineInputAssemblyStateCreateInfo;
@@ -1700,10 +1767,9 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
                                           nullptr, &shader->pipelines[VK_RT_LINESTRIP]);
 
-  pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-
-  result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
-                                          nullptr, &shader->pipelines[VK_RT_POINT]);
+  //pipelineInputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+  //result = m_vk.vkCreateGraphicsPipelines(m_device, shader->cache, 1, &graphicsPipelineCreateInfo,
+  //                                        nullptr, &shader->pipelines[VK_RT_POINT]);
 
   if (!m_shader)
     m_shader = shader;
@@ -2508,6 +2574,9 @@ bool kgmVulkan::initSurface()
   m_graphicsQueueFamilyIndex = graphicsQueueFamily;
   m_presentQueueFamilyIndex  = presentQueueFamily;
 
+  m_vk.vkGetDeviceQueue(m_device, graphicsQueueFamily, 0, &m_graphicsQueue);
+  m_vk.vkGetDeviceQueue(m_device, presentQueueFamily, 0, &m_presentQueue);
+
   return true;
 }
 
@@ -3283,6 +3352,45 @@ void kgmVulkan::fillCommands()
 
         if (draw->shader->descriptor)
         {
+          if (draw->texture)
+          {
+            VkDescriptorBufferInfo bufferInfo;
+
+            ZeroObject(bufferInfo);
+            bufferInfo.buffer = draw->shader->buffer;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(Uniforms);
+
+            VkDescriptorImageInfo imageInfo;
+
+            ZeroObject(imageInfo);
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo.imageView   = draw->texture->iview;
+            imageInfo.sampler     = draw->texture->sampler;
+
+            VkWriteDescriptorSet descriptorWrites[2];
+
+            ZeroObject(descriptorWrites[0]);
+            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[0].dstSet = draw->shader->descriptor;
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+            ZeroObject(descriptorWrites[1]);
+            descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[1].dstSet = draw->shader->descriptor;
+            descriptorWrites[1].dstBinding = 1;
+            descriptorWrites[1].dstArrayElement = 0;
+            descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorWrites[1].descriptorCount = 1;
+            descriptorWrites[1].pImageInfo = &imageInfo;
+
+            m_vk.vkUpdateDescriptorSets(m_device, 2, descriptorWrites, 0, nullptr);
+          }
+
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->layout,
                                        0, 1, &draw->shader->descriptor, 0, nullptr);
 
@@ -3430,6 +3538,162 @@ u32 kgmVulkan::memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties)
   }
 
   return -1;
+}
+
+VkCommandBuffer kgmVulkan::beginSingleTimeCommand()
+{
+  VkCommandBufferAllocateInfo allocInfo;
+
+  ZeroObject(allocInfo);
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = m_commandPool;
+  allocInfo.commandBufferCount = 1;
+
+  VkCommandBuffer commandBuffer;
+
+  VkResult result = m_vk.vkAllocateCommandBuffers(m_device, &allocInfo, &commandBuffer);
+
+  if(result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate single command.\n";
+
+    printResult(result);
+
+    return VK_NULL_HANDLE;
+  }
+
+  VkCommandBufferBeginInfo beginInfo = {};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  result = m_vk.vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+  if(result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to begin single command.\n";
+
+    printResult(result);
+
+    m_vk.vkFreeCommandBuffers(m_device, m_commandPool, 1, &commandBuffer);
+
+    return VK_NULL_HANDLE;
+  }
+
+  return commandBuffer;
+}
+
+void kgmVulkan::endSingleTimeCommand(VkCommandBuffer commandBuffer)
+{
+  m_vk.vkEndCommandBuffer(commandBuffer);
+
+  VkSubmitInfo submitInfo;
+
+  ZeroObject(submitInfo);
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffer;
+
+  VkResult result = m_vk.vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+  if (result == VK_SUCCESS)
+  {
+    result = m_vk.vkQueueWaitIdle(m_graphicsQueue);
+
+    if(result != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to wait idle of single command.\n";
+
+      printResult(result);
+    }
+  }
+  else
+  {
+    kgm_log() << "Vulkan error: Failed submit queue for single command.\n";
+
+    printResult(result);
+  }
+
+  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, 1, &commandBuffer);
+}
+
+bool kgmVulkan::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+{
+  VkCommandBuffer commandBuffer = beginSingleTimeCommand();
+
+  VkImageMemoryBarrier barrier;
+
+  ZeroObject(barrier);
+  barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  barrier.oldLayout = oldLayout;
+  barrier.newLayout = newLayout;
+  barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+  barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+  barrier.image = image;
+  barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  barrier.subresourceRange.baseMipLevel = 0;
+  barrier.subresourceRange.levelCount = 1;
+  barrier.subresourceRange.baseArrayLayer = 0;
+  barrier.subresourceRange.layerCount = 1;
+
+  VkPipelineStageFlags sourceStage;
+  VkPipelineStageFlags destinationStage;
+
+  if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+  {
+    barrier.srcAccessMask = 0;
+    barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+    sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+  }
+  else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+  {
+    barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+    sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+    destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  }
+  else
+  {
+    return false;
+  }
+
+  m_vk.vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage,
+                            0, 0, nullptr, 0, nullptr, 1, &barrier);
+
+  endSingleTimeCommand(commandBuffer);
+
+  return true;
+}
+
+void kgmVulkan::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height)
+{
+  kgm_log() << "Vulkan: Start copy buffer to image.\n";
+  VkCommandBuffer commandBuffer = beginSingleTimeCommand();
+
+  VkBufferImageCopy region;
+
+  ZeroObject(region);
+  region.bufferOffset = 0;
+  region.bufferRowLength = 0;
+  region.bufferImageHeight = 0;
+  region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  region.imageSubresource.mipLevel = 0;
+  region.imageSubresource.baseArrayLayer = 0;
+  region.imageSubresource.layerCount = 1;
+  region.imageOffset = {0, 0, 0};
+  region.imageExtent = {
+    width,
+    height,
+    1
+  };
+
+  m_vk.vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+  endSingleTimeCommand(commandBuffer);
+  kgm_log() << "Vulkan: End copy buffer to image.\n";
 }
 
 void* kgmVulkan::uniformLocation(Shader* s, char* u)
