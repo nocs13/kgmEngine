@@ -863,6 +863,9 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   {
   case gctype_texcube:
     itype = VK_IMAGE_TYPE_3D;
+    kgm_log() << "Vulkan info: 3D images not supports now.";
+
+    return null;
     break;
   case gctype_texdepth:
     itype = VK_IMAGE_TYPE_2D;
@@ -2778,7 +2781,6 @@ bool kgmVulkan::initSwapchain()
   VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
 
   ZeroObject(swapchainCreateInfo);
-
   swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
   swapchainCreateInfo.pNext = NULL;
   swapchainCreateInfo.surface = m_surface;
@@ -2808,11 +2810,11 @@ bool kgmVulkan::initSwapchain()
     swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
   }
 
-  VkSwapchainKHR swapChain = m_swapChain;
+  //VkSwapchainKHR swapChain = m_swapChain;
 
-  m_swapChain = nullptr;
+  //m_swapChain = nullptr;
 
-  swapchainCreateInfo.oldSwapchain = swapChain;
+  //swapchainCreateInfo.oldSwapchain = swapChain;
   swapchainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapchainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
   swapchainCreateInfo.queueFamilyIndexCount = 0;
@@ -2822,7 +2824,7 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
   swapchainCreateInfo.clipped = VK_TRUE;
 
-  m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
+  result = m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
 
   if (result != VK_SUCCESS)
   {
@@ -2842,13 +2844,6 @@ bool kgmVulkan::initSwapchain()
     kgm_log() << "Vulkan: failed to acquire number of swap chain images.\n";
 
     return false;
-  }
-  kgm_log() << "Vulkan: Got swapchain images count.\n";
-  if (swapChain != VK_NULL_HANDLE)
-  {
-    m_vk.vkDestroySwapchainKHR(m_device, swapChain, nullptr);
-
-    swapChain = nullptr;
   }
 
   m_swapChainImages.alloc(actualImageCount);
@@ -3187,6 +3182,11 @@ bool kgmVulkan::refreshSwapchain()
     return false;
   }
 
+  for (size_t i = 0; i < m_swapChainImages.length(); i++)
+  {
+    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+  }
+
   m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
   m_commandBuffers.clear();
@@ -3204,9 +3204,12 @@ bool kgmVulkan::refreshSwapchain()
 
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
-    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
     m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
   }
+
+  m_vk.vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+
+  m_swapChain = VK_NULL_HANDLE;
 
   m_frameBuffers.clear();
   m_imageViews.clear();
@@ -3221,8 +3224,6 @@ bool kgmVulkan::refreshSwapchain()
   initImageViews();
   initFrameBuffers();
   initCommands();
-
-  //fillCommands();
 
   return true;
 }

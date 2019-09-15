@@ -25,7 +25,7 @@ layout(binding = 0) uniform UniformBufferObject
 
 layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in vec4 a_Color;
+layout(location = 2) in uint a_Color;
 layout(location = 3) in vec2 a_UV;
 
 layout(location = 0) out vec4  color;
