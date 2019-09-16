@@ -206,6 +206,22 @@ class kgmVulkan: public kgmIGC
     VkDescriptorSet       descriptor;
   };
 
+  struct Pipeline
+  {
+    Uniforms         ubo;
+
+    VkBuffer         buffer;
+    VkDeviceMemory   memory;
+
+    VkPipeline       pipeline;
+    VkPipelineLayout layout;
+    VkPipelineCache  cache;
+
+    VkDescriptorSetLayout setlayout;
+    VkDescriptorPool      setpool;
+    VkDescriptorSet       descriptor;
+  };
+
   struct Draw
   {
     VkDeviceMemory vmemory;
@@ -281,6 +297,9 @@ class kgmVulkan: public kgmIGC
   VkQueue    m_graphicsQueue = VK_NULL_HANDLE;
   VkQueue    m_presentQueue  = VK_NULL_HANDLE;
 
+  VkBlendFactor m_blendSource;
+  VkBlendFactor m_blendDestination;
+  VkBool32      m_blending = VK_FALSE;
 
   u32 m_swapChainImage;
   u32 m_graphicsQueueFamilyCount =  0;
@@ -407,11 +426,6 @@ private:
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
   u32  memoryTypeIndex(u32 type,  VkMemoryPropertyFlags properties);
 
-  VkCommandBuffer beginSingleTimeCommand();
-  void endSingleTimeCommand(VkCommandBuffer commandBuffer);
-  bool transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
-
   void* uniformLocation(Shader*, char*);
 
   void clear(Shader*);
@@ -420,6 +434,14 @@ private:
   void fillCommands();
 
 private:
+  VkCommandBuffer beginSingleTimeCommand();
+  void endSingleTimeCommand(VkCommandBuffer commandBuffer);
+  bool transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+
+  Pipeline* createPipeline();
+  void freePipeline(Pipeline*);
+
   VkBlendFactor vk_blend(u32 e)
   {
     switch(e)
