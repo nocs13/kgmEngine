@@ -248,6 +248,8 @@ class kgmVulkan: public kgmIGC
 
     Shader* shader;
     Texture* texture;
+
+    Pipeline* pipeline;
   };
 
   static kgmLib vk_lib;  
@@ -296,6 +298,8 @@ class kgmVulkan: public kgmIGC
 
   VkQueue    m_graphicsQueue = VK_NULL_HANDLE;
   VkQueue    m_presentQueue  = VK_NULL_HANDLE;
+
+  VkPrimitiveTopology m_topology;
 
   VkBlendFactor m_blendSource;
   VkBlendFactor m_blendDestination;

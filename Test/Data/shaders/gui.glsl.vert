@@ -27,7 +27,7 @@ layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in uint a_Color;
 layout(location = 2) in vec2 a_UV;
 
-layout(location = 0) out vec4  color;
+layout(location = 0) out vec4 color;
 layout(location = 1) out vec2 uv0;
 
 void main() 

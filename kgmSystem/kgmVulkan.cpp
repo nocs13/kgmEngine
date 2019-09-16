@@ -644,6 +644,12 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //if (!add_draw)
   //  return;
 
+  if (!m_shader)
+    return;
+
+  if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
+    return;
+
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
       pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
@@ -756,7 +762,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
        mesh.itype = VK_INDEX_TYPE_UINT32;
   }
 
-  mesh.shader = m_shader;
+  //mesh.shader = m_shader;
 
   if (m_shader)
   {
@@ -779,22 +785,30 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   {
   case gcpmt_triangles:
     mesh.render = VK_RT_TRIANGLE;
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     break;
   case gcpmt_trianglestrip:
     mesh.render = VK_RT_TRIANGLESTRIP;
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
     break;
   case gcpmt_lines:
     mesh.render = VK_RT_LINE;
+    m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
     break;
   case gcpmt_linestrip:
     mesh.render = VK_RT_LINESTRIP;
+    m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
     break;
   //case gcpmt_points:
   //  mesh.render = VK_RT_POINT;
+  //  m_topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
   //  break;
   default:
     mesh.render = (VK_RT) 0;
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   };
+
+  m_vertexFormat = v_fmt;
 
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
@@ -811,6 +825,8 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //{
   //  kgm_log() << "Vulkan error: Failed create command fro mesh.\n";
   //}
+
+  mesh.pipeline = createPipeline();
 
   m_draws.add(mesh);
 
@@ -1841,9 +1857,6 @@ void  kgmVulkan::gcFreeShader(void* s)
 void  kgmVulkan::gcSetShader(void* s)
 {
   Shader* shader = (Shader*) s;
-
-  if (!shader)
-    return;
 
   //VkResult result = VK_SUCCESS;
 
@@ -3171,6 +3184,33 @@ bool kgmVulkan::initPipeline()
   return true;
 }
 
+bool kgmVulkan::initFence()
+{
+  VkFence fence;
+
+  VkFenceCreateInfo fenceCreateInfo;
+
+  ZeroObject(fenceCreateInfo);
+
+  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceCreateInfo.pNext = nullptr;
+  fenceCreateInfo.flags = 0;
+
+  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
+      != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: failed to create fence.\n";
+
+    return false;
+  }
+
+  kgm_log() << "Vulkan: Created fence.\n";
+
+  m_fence = fence;
+
+  return true;
+}
+
 bool kgmVulkan::refreshSwapchain()
 {
   if(!m_instance || !m_device || !m_surface)
@@ -3193,6 +3233,7 @@ bool kgmVulkan::refreshSwapchain()
 
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
+    m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
   }
 
@@ -3222,6 +3263,8 @@ bool kgmVulkan::refreshSwapchain()
 
   kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
+  clearDraws();
+
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
   initSwapchain();
@@ -3229,33 +3272,6 @@ bool kgmVulkan::refreshSwapchain()
   initImageViews();
   initFrameBuffers();
   initCommands();
-
-  return true;
-}
-
-bool kgmVulkan::initFence()
-{
-  VkFence fence;
-
-  VkFenceCreateInfo fenceCreateInfo;
-
-  ZeroObject(fenceCreateInfo);
-
-  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-  fenceCreateInfo.pNext = nullptr;
-  fenceCreateInfo.flags = 0;
-
-  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
-      != VkResult::VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: failed to create fence.\n";
-
-    return false;
-  }
-
-  kgm_log() << "Vulkan: Created fence.\n";
-
-  m_fence = fence;
 
   return true;
 }
@@ -3353,7 +3369,8 @@ void kgmVulkan::fillCommands()
       VkBuffer vertexBuffers[] = {draw->vbuffer};
       VkDeviceSize offsets[] = {0};
 
-      if (draw->shader && draw->shader->pipeline)
+      continue;
+      /*if (draw->shader && draw->shader->pipeline)
       {
         if (draw->render >= 0 && draw->render < VK_RT_END)
           m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipelines[draw->render]);
@@ -3437,7 +3454,12 @@ void kgmVulkan::fillCommands()
       else
       {
         m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
-      }
+      }*/
+
+      m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->pipeline->layout,
+                                   0, 1, &draw->pipeline->descriptor, 0, nullptr);
+
+      m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->pipeline->pipeline);
 
       m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
@@ -4030,7 +4052,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineInputAssemblyStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
   pipelineInputAssemblyStateCreateInfo.pNext = nullptr;
   pipelineInputAssemblyStateCreateInfo.flags = 0;
-  pipelineInputAssemblyStateCreateInfo.topology = vk_primitive(m_vertexFormat);
+  pipelineInputAssemblyStateCreateInfo.topology = m_topology;
   pipelineInputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
 
   VkPipelineViewportStateCreateInfo pipelineViewportStateCreateInfo;
@@ -4245,6 +4267,7 @@ void kgmVulkan::clearDraws()
 
   for(; !i.end(); i.next())
   {
+    Draw& d = (*i);
     if((*i).vmemory != VK_NULL_HANDLE)
       m_vk.vkFreeMemory(m_device, (*i).vmemory, NULL);
 
@@ -4265,6 +4288,9 @@ void kgmVulkan::clearDraws()
 
     //if((*i).command != VK_NULL_HANDLE)
     //  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, 1, &(*i).command);
+
+    if(d.pipeline)
+      freePipeline(d.pipeline);
   }
 
   m_draws.clear();
