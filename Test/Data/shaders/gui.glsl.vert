@@ -33,7 +33,7 @@ layout(location = 1) out vec2 uv0;
 void main() 
 {
   color = ubo.g_vColor;
-  //uv0   = a_UV;
+  uv0   = a_UV;
   
   vec4 pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
   

@@ -654,22 +654,22 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   //    pmt != gcpmt_triangles && !gcpmt_linestrip)
   //  return;
 
-  float fx =  ((float) rand() / (float)RAND_MAX);
-  float fy =  ((float) rand() / (float)RAND_MAX);
+  //float fx =  ((float) rand() / (float)RAND_MAX);
+  //float fy =  ((float) rand() / (float)RAND_MAX);
 
-  float source[] = {
-    -0.5f, +0.5f,
-    +0.5f, +0.5f,
-    fx,//+0.0f,
-    fy//-0.5f
-  };
+  //float source[] = {
+  //  -0.5f, +0.5f,
+  //  +0.5f, +0.5f,
+  //  fx,//+0.0f,
+  //  fy//-0.5f
+  //};
 
   //v_pnt = source;
   //v_cnt = 3;
   //v_size = sizeof(float) * 2;
 
 
-  VkBufferCreateInfo bufferInfo = {};
+  /*VkBufferCreateInfo bufferInfo = {};
 
   ZeroObject(bufferInfo);
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -699,7 +699,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   allocInfo.allocationSize = memRequirements.size;
   allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-  //kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
+  kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
 
   if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS)
   {
@@ -708,11 +708,21 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
       m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
 
       return;
+  }*/
+
+  u32 size = v_size * v_cnt;
+
+  if (!createBuffer(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                    mesh.vbuffer, mesh.vmemory))
+  {
+    kgm_log() << "Vulkan error: Failed to prepare vertex buffer and memory!\n";
+
+    return;
   }
 
   void* data;
 
-  if (m_vk.vkMapMemory(m_device, mesh.vmemory, 0, bufferInfo.size, 0, &data) != VK_SUCCESS)
+  if (m_vk.vkMapMemory(m_device, mesh.vmemory, 0, size, 0, &data) != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Failed to map mamory!\n";
 
@@ -722,19 +732,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     return;
   }
 
-  memcpy(data, v_pnt, (size_t) bufferInfo.size);
+  memcpy(data, v_pnt, (size_t) size);
 
   m_vk.vkUnmapMemory(m_device, mesh.vmemory);
-
-  if (m_vk.vkBindBufferMemory(m_device, mesh.vbuffer, mesh.vmemory, 0) != VK_SUCCESS)
-  {
-    m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
-    m_vk.vkFreeMemory(m_device, mesh.vmemory, null);
-
-    kgm_log() << "Vulkan error: Failed bind vertex memory to buffer!\n";
-
-    return;
-  }
 
   if (i_cnt && i_pnt)
   {
@@ -809,6 +809,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   };
 
   m_vertexFormat = v_fmt;
+  m_vertexStride = v_size;
 
   mesh.vcnt = v_cnt;
   mesh.icnt = i_cnt;
@@ -3280,9 +3281,6 @@ void kgmVulkan::fillCommands()
 {
   VkResult result = VK_SUCCESS;
 
-  //if (!m_shader)
-  //  return;
-
   for (s32 i = 0; i < m_swapChainImages.length(); i++)
   {
     auto &commandBuffer = m_commandBuffers[i];
@@ -3758,6 +3756,9 @@ void kgmVulkan::freePipeline(Pipeline* p)
 
 kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 {
+  if (!m_shader)
+    return null;
+
   Pipeline* pipeline = new Pipeline;
 
   ZeroObject(*pipeline);
@@ -3773,6 +3774,23 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     freePipeline(pipeline);
 
     return null;
+  }
+
+  //pipeline->ubo = m_shader->ubo;
+
+  void *data;
+
+  if (m_vk.vkMapMemory(m_device, pipeline->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+  {
+    memcpy(data, &m_shader->ubo, sizeof(Shader::ubo));
+    VkMappedMemoryRange memoryRange;
+
+    ZeroObject(memoryRange);
+    memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    memoryRange.size = VK_WHOLE_SIZE;
+    memoryRange.memory = pipeline->memory;
+    m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
+    m_vk.vkUnmapMemory(m_device, pipeline->memory);
   }
 
   VkDescriptorSetLayoutBinding uboLayoutBinding;
