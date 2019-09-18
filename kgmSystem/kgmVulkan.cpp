@@ -20,8 +20,6 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
-bool add_draw = true;
-
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
@@ -626,7 +624,6 @@ void  kgmVulkan::gcRender()
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
   clearDraws();
-  //add_draw = false;
 
   m_swapChainImage = swapChainImage;
 }
@@ -638,77 +635,15 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 {
   Draw mesh = {0};
 
-  //if (!add_draw)
-  //  return;
-
   if (!m_shader)
     return;
 
   if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
     return;
 
-  if (pmt != gcpmt_trianglestrip)
+  if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
+      pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
-
-  //if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
-  //    pmt != gcpmt_triangles && !gcpmt_linestrip)
-  //  return;
-
-  //float fx =  ((float) rand() / (float)RAND_MAX);
-  //float fy =  ((float) rand() / (float)RAND_MAX);
-
-  //float source[] = {
-  //  -0.5f, +0.5f,
-  //  +0.5f, +0.5f,
-  //  fx,//+0.0f,
-  //  fy//-0.5f
-  //};
-
-  //v_pnt = source;
-  //v_cnt = 3;
-  //v_size = sizeof(float) * 2;
-
-
-  /*VkBufferCreateInfo bufferInfo = {};
-
-  ZeroObject(bufferInfo);
-  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-  bufferInfo.size = v_size * v_cnt;
-  bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-  bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-  if (!m_device)
-    return;
-
-  if (m_vk.vkCreateBuffer(m_device, &bufferInfo, nullptr, &mesh.vbuffer) != VK_SUCCESS)
-  {
-    kgm_log() << "Vulkan error: Failed to create vertex buffer!\n";
-
-    return;
-  }
-
-  VkMemoryRequirements memRequirements;
-
-  ZeroObject(memRequirements);
-  m_vk.vkGetBufferMemoryRequirements(m_device, mesh.vbuffer, &memRequirements);
-
-  VkMemoryAllocateInfo allocInfo = {};
-
-  ZeroObject(allocInfo);
-  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-  allocInfo.allocationSize = memRequirements.size;
-  allocInfo.memoryTypeIndex = memoryTypeIndex(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-  kgm_log() << "Vulkan: memoryTypeIndex is " << allocInfo.memoryTypeIndex <<  "!\n";
-
-  if (m_vk.vkAllocateMemory(m_device, &allocInfo, nullptr, &mesh.vmemory) != VK_SUCCESS)
-  {
-      kgm_log() << "Vulkan error: Failed to allocate vertex buffer memory!\n";
-
-      m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
-
-      return;
-  }*/
 
   u32 size = v_size * v_cnt;
 
@@ -1311,7 +1246,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
     return null;
   }
-
+  /*
   VkDescriptorSetLayoutBinding uboLayoutBinding;
 
   ZeroObject(uboLayoutBinding);
@@ -1519,7 +1454,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   vertexInputBindingDescription.stride = m_vertexStride;
   //vertexInputBindingDescription.stride = sizeof(float) * 2;
   vertexInputBindingDescription.inputRate = VkVertexInputRate::VK_VERTEX_INPUT_RATE_VERTEX;
-
+  */
 
   /*VkVertexInputAttributeDescription vertexInputAttributeDescription;
 
@@ -1528,7 +1463,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   vertexInputAttributeDescription.binding = 0;
   vertexInputAttributeDescription.format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
   vertexInputAttributeDescription.offset = 0;*/
-
+  /*
   u32 offset = 0, location = 0;
   VkFormat format = VK_FORMAT_R32G32B32_SFLOAT;
 
@@ -1591,7 +1526,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     location++;
     offset += size;
   }
-
+  */
   /*ZeroObject(vertexInputAttributeDescription[1]);
   vertexInputAttributeDescription[1].location = location;
   vertexInputAttributeDescription[1].binding = 0;
@@ -1603,7 +1538,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
   vertexInputAttributeDescription[2].binding = 0;
   vertexInputAttributeDescription[2].format = VkFormat::VK_FORMAT_R32G32_SFLOAT;
   vertexInputAttributeDescription[2].offset = 16;*/
-
+  /*
   VkPipelineVertexInputStateCreateInfo pipelineVertexInputStateCreateInfo;
 
   ZeroObject(pipelineVertexInputStateCreateInfo);
@@ -1803,7 +1738,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 
   if (!m_shader)
     m_shader = shader;
-
+  */
   return shader;
 }
 
@@ -1833,24 +1768,25 @@ void  kgmVulkan::gcFreeShader(void* s)
 
 
   if (shader->vertex)
-  {
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->vertex, null);
-  }
 
   if (shader->fragment)
-  {
     m_vk.vkDestroyShaderModule(m_device, ((Shader*)s)->fragment, null);
-  }
 
   if (shader->setpool)
-  {
     m_vk.vkDestroyDescriptorPool(m_device, shader->setpool, nullptr);
-  }
 
-  m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
-  m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
-  m_vk.vkDestroyDescriptorSetLayout(m_device, shader->setlayout, null);
-  m_vk.vkDestroyPipeline(m_device, shader->pipeline, null);
+  if (shader->cache)
+    m_vk.vkDestroyPipelineCache(m_device, shader->cache, null);
+
+  if (shader->layout)
+    m_vk.vkDestroyPipelineLayout(m_device, shader->layout, null);
+
+  if (shader->setlayout)
+    m_vk.vkDestroyDescriptorSetLayout(m_device, shader->setlayout, null);
+
+  if (shader->pipeline)
+    m_vk.vkDestroyPipeline(m_device, shader->pipeline, null);
 
   delete (Shader *) s;
 }
@@ -1858,16 +1794,6 @@ void  kgmVulkan::gcFreeShader(void* s)
 void  kgmVulkan::gcSetShader(void* s)
 {
   Shader* shader = (Shader*) s;
-
-  //VkResult result = VK_SUCCESS;
-
-  //VkDeviceSize uosize = sizeof(Shader::uo);
-
-  //void* data = null;
-
-  //m_vk.vkMapMemory(m_device, shader->memory, 0, uosize, 0, &data);
-  //memcpy(data, &shader->uo, uosize);
-  //m_vk.vkUnmapMemory(m_device, shader->memory);
 
   m_shader = shader;
 }

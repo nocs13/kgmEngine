@@ -3,6 +3,7 @@
 
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
+#include "../kgmMaterial.h"
 
 class kgmGraphics;
 
@@ -13,6 +14,8 @@ class FpsRender
   mtx4 mi;
 
   kgmString text;
+
+  kgmMaterial mtl;
 
 public:
   FpsRender(kgmGraphics* g);
