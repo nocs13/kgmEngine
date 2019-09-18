@@ -317,6 +317,8 @@ class kgmVulkan: public kgmIGC
 
   Texture* m_texture = null;
 
+  kgmArray<Pipeline*> m_pipelines;
+
   s32 m_rect[4];
   f32 m_bgColor[4];
 

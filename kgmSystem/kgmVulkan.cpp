@@ -491,9 +491,6 @@ void  kgmVulkan::gcEnd()
 
 }
 
-static int frames = 0;
-static int ticks = 0;
-
 void  kgmVulkan::gcRender()
 {
   VkResult result;
@@ -650,9 +647,12 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
     return;
 
-  if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
-      pmt != gcpmt_triangles && !gcpmt_linestrip)
+  if (pmt != gcpmt_trianglestrip)
     return;
+
+  //if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
+  //    pmt != gcpmt_triangles && !gcpmt_linestrip)
+  //  return;
 
   float fx =  ((float) rand() / (float)RAND_MAX);
   float fy =  ((float) rand() / (float)RAND_MAX);
@@ -3280,8 +3280,8 @@ void kgmVulkan::fillCommands()
 {
   VkResult result = VK_SUCCESS;
 
-  if (!m_shader)
-    return;
+  //if (!m_shader)
+  //  return;
 
   for (s32 i = 0; i < m_swapChainImages.length(); i++)
   {
@@ -3369,7 +3369,6 @@ void kgmVulkan::fillCommands()
       VkBuffer vertexBuffers[] = {draw->vbuffer};
       VkDeviceSize offsets[] = {0};
 
-      continue;
       /*if (draw->shader && draw->shader->pipeline)
       {
         if (draw->render >= 0 && draw->render < VK_RT_END)
