@@ -220,6 +220,45 @@ class kgmVulkan: public kgmIGC
     VkDescriptorSetLayout setlayout;
     VkDescriptorPool      setpool;
     VkDescriptorSet       descriptor;
+
+    Shader* shader;
+    VkPrimitiveTopology topology;
+    u32 vertexFormat;
+  };
+
+  struct ActualPipelines
+  {
+    kgmArray<Pipeline*> pipelines;
+    u32 count;
+
+    ActualPipelines()
+    {
+      pipelines.alloc(1024);
+      count = 0;
+    }
+
+    Pipeline* get()
+    {
+      for(u32 i = 0; i < count; i++)
+      {
+      }
+
+      return null;
+    }
+
+    void add(Pipeline* p)
+    {
+
+    }
+
+    bool have(Pipeline* p)
+    {
+      for(u32 i = 0; i < count; i++)
+        if (p == pipelines[i])
+          return true;
+
+      return false;
+    }
   };
 
   struct Draw
@@ -317,7 +356,7 @@ class kgmVulkan: public kgmIGC
 
   Texture* m_texture = null;
 
-  kgmArray<Pipeline*> m_pipelines;
+  ActualPipelines m_pipelines;
 
   s32 m_rect[4];
   f32 m_bgColor[4];
