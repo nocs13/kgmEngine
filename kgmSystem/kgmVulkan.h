@@ -226,10 +226,19 @@ class kgmVulkan: public kgmIGC
     u32 vertexFormat;
   };
 
+
   struct ActualPipelines
   {
     kgmArray<Pipeline*> pipelines;
     u32 count;
+
+    void clear(kgmVulkan* vk)
+    {
+      for (u32 i = 0; i < count; i++)
+        vk->freePipeline(pipelines[i]);
+
+      pipelines.clear();
+    }
 
     ActualPipelines()
     {
@@ -237,7 +246,7 @@ class kgmVulkan: public kgmIGC
       count = 0;
     }
 
-    Pipeline* get()
+    Pipeline* get(Shader* sh, VkPrimitiveTopology tp, u32 vf)
     {
       for(u32 i = 0; i < count; i++)
       {
@@ -248,7 +257,21 @@ class kgmVulkan: public kgmIGC
 
     void add(Pipeline* p)
     {
+      if (!p)
+        return;
 
+      for (u32 i = 0; i < count; i++)
+      {
+        if (pipelines[i] == p)
+          return;
+      }
+
+      if (count >= pipelines.length())
+        pipelines.realloc(count + 256);
+
+      pipelines[count] = p;
+
+      count++;
     }
 
     bool have(Pipeline* p)
@@ -289,6 +312,40 @@ class kgmVulkan: public kgmIGC
     Texture* texture;
 
     Pipeline* pipeline;
+  };
+
+  struct DrawGroup
+  {
+    Pipeline* pipeline;
+
+    kgmList<Draw*> draws;
+
+    ~DrawGroup()
+    {
+      draws.clear();
+    }
+  };
+
+  struct DrawGroups
+  {
+    kgmList<DrawGroup*> groups;
+
+    ~DrawGroups()
+    {
+      kgmList<DrawGroup*>::iterator i = groups.begin();
+
+      while(!i.end())
+      {
+        delete (*i);
+      }
+
+      groups.clear();
+    }
+
+    void add(Draw* d, Pipeline *p)
+    {
+
+    }
   };
 
   static kgmLib vk_lib;  
