@@ -221,6 +221,10 @@ class kgmVulkan: public kgmIGC
     VkDescriptorPool      setpool;
     VkDescriptorSet       descriptor;
 
+    VkBool32 blending;
+    VkBlendFactor bsrc;
+    VkBlendFactor bdst;
+
     Shader* shader;
     VkPrimitiveTopology topology;
     u32 vertexFormat;
@@ -246,10 +250,23 @@ class kgmVulkan: public kgmIGC
       count = 0;
     }
 
-    Pipeline* get(Shader* sh, VkPrimitiveTopology tp, u32 vf)
+    Pipeline* get(Shader* sh, VkPrimitiveTopology tp, u32 vf, VkBool32 bl,
+                  VkBlendFactor bs, VkBlendFactor bd)
     {
       for(u32 i = 0; i < count; i++)
       {
+        Pipeline* ppl = pipelines[i];
+
+        if (sh == pipelines[i]->shader && tp == pipelines[i]->topology && vf == pipelines[i]->vertexFormat)
+        {
+          if (pipelines[i]->blending == VK_TRUE)
+          {
+            if (bl == VK_TRUE && bs == pipelines[i]->bsrc && bd == pipelines[i]->bdst)
+              return pipelines[i];
+          }
+          else if (bl == VK_FALSE)
+            return pipelines[i];
+        }
       }
 
       return null;
@@ -297,8 +314,6 @@ class kgmVulkan: public kgmIGC
 
     VkDescriptorBufferInfo descriptor;
 
-    //VkCommandBuffer command;
-
     u32 vcnt, icnt, isize;
     VkIndexType itype;
 
@@ -306,12 +321,7 @@ class kgmVulkan: public kgmIGC
     vec4 color;
     vec4 specular;
 
-    VK_RT render;
-
-    Shader* shader;
     Texture* texture;
-
-    Pipeline* pipeline;
   };
 
   struct DrawGroup
@@ -332,6 +342,16 @@ class kgmVulkan: public kgmIGC
 
     ~DrawGroups()
     {
+      clear();
+    }
+
+    void add(Draw* d, Pipeline *p)
+    {
+
+    }
+
+    void clear()
+    {
       kgmList<DrawGroup*>::iterator i = groups.begin();
 
       while(!i.end())
@@ -340,11 +360,6 @@ class kgmVulkan: public kgmIGC
       }
 
       groups.clear();
-    }
-
-    void add(Draw* d, Pipeline *p)
-    {
-
     }
   };
 
@@ -422,9 +437,7 @@ class kgmVulkan: public kgmIGC
 
   const s8* m_debugLayer = null;
 
-  kgmList<Draw> m_draws;
-
-  Draw* m_draw = null;
+  DrawGroups m_drawGroups;
 
   Uniforms         m_ubo;
 
@@ -531,6 +544,7 @@ private:
   void* uniformLocation(Shader*, char*);
 
   void clear(Shader*);
+  void clear(Draw*);
   void clearDraws();
 
   void fillCommands();

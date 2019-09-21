@@ -633,8 +633,6 @@ void  kgmVulkan::gcSetTarget(void*  rt) {}
 // DRAWING
 void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt)
 {
-  Draw mesh = {0};
-
   if (!m_shader)
     return;
 
@@ -645,10 +643,14 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
       pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
 
+  Draw* mesh = new Draw();
+
+  ZeroObject(*mesh);
+
   u32 size = v_size * v_cnt;
 
   if (!createBuffer(size, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                    mesh.vbuffer, mesh.vmemory))
+                    mesh->vbuffer, mesh->vmemory))
   {
     kgm_log() << "Vulkan error: Failed to prepare vertex buffer and memory!\n";
 
@@ -657,26 +659,26 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   void* data;
 
-  if (m_vk.vkMapMemory(m_device, mesh.vmemory, 0, size, 0, &data) != VK_SUCCESS)
+  if (m_vk.vkMapMemory(m_device, mesh->vmemory, 0, size, 0, &data) != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Failed to map mamory!\n";
 
-    m_vk.vkDestroyBuffer(m_device, mesh.vbuffer, null);
-    m_vk.vkFreeMemory(m_device, mesh.vmemory, null);
+    m_vk.vkDestroyBuffer(m_device, mesh->vbuffer, null);
+    m_vk.vkFreeMemory(m_device, mesh->vmemory, null);
 
     return;
   }
 
   memcpy(data, v_pnt, (size_t) size);
 
-  m_vk.vkUnmapMemory(m_device, mesh.vmemory);
+  m_vk.vkUnmapMemory(m_device, mesh->vmemory);
 
   if (i_cnt && i_pnt)
   {
      VkDeviceSize bufferSize = i_size * i_cnt;
 
      if (!createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                       mesh.ibuffer, mesh.imemory) != VK_SUCCESS)
+                       mesh->ibuffer, mesh->imemory) != VK_SUCCESS)
      {
        kgm_log() << "Vulkan error: Failed create staging buffer!\n";
 
@@ -684,34 +686,29 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
      }
 
      void* data;
-     m_vk.vkMapMemory(m_device, mesh.imemory, 0, bufferSize, 0, &data);
+     m_vk.vkMapMemory(m_device, mesh->imemory, 0, bufferSize, 0, &data);
      memcpy(data, i_pnt, (size_t) bufferSize);
-     m_vk.vkUnmapMemory(m_device, mesh.imemory);
+     m_vk.vkUnmapMemory(m_device, mesh->imemory);
 
-     mesh.isize = bufferSize;
-     mesh.icnt = i_cnt;
+     mesh->isize = bufferSize;
+     mesh->icnt = i_cnt;
 
      if (i_size == 2)
-       mesh.itype = VK_INDEX_TYPE_UINT16;
+       mesh->itype = VK_INDEX_TYPE_UINT16;
      else
-       mesh.itype = VK_INDEX_TYPE_UINT32;
+       mesh->itype = VK_INDEX_TYPE_UINT32;
   }
 
-  //mesh.shader = m_shader;
-
-  if (m_shader)
-  {
-    mesh.model    = m_shader->ubo.g_mTran;
-    mesh.color    = m_shader->ubo.g_vColor;
-    mesh.specular = m_shader->ubo.g_vSpecular;
-  }
+  mesh->model    = m_shader->ubo.g_mTran;
+  mesh->color    = m_shader->ubo.g_vColor;
+  mesh->specular = m_shader->ubo.g_vSpecular;
 
   if(m_texture)
-    mesh.texture = m_texture;
+    mesh->texture = m_texture;
 
   if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                    mesh.ubuffer, mesh.umemory))
+                    mesh->ubuffer, mesh->umemory))
   {
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
   }
@@ -719,54 +716,40 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   switch(pmt)
   {
   case gcpmt_triangles:
-    mesh.render = VK_RT_TRIANGLE;
     m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     break;
   case gcpmt_trianglestrip:
-    mesh.render = VK_RT_TRIANGLESTRIP;
     m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
     break;
   case gcpmt_lines:
-    mesh.render = VK_RT_LINE;
     m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
     break;
   case gcpmt_linestrip:
-    mesh.render = VK_RT_LINESTRIP;
     m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
     break;
-  //case gcpmt_points:
-  //  mesh.render = VK_RT_POINT;
-  //  m_topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-  //  break;
+  case gcpmt_points:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    break;
   default:
-    mesh.render = (VK_RT) 0;
     m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   };
 
   m_vertexFormat = v_fmt;
   m_vertexStride = v_size;
 
-  mesh.vcnt = v_cnt;
-  mesh.icnt = i_cnt;
+  mesh->vcnt = v_cnt;
+  mesh->icnt = i_cnt;
 
-  VkCommandBufferAllocateInfo infoCommand = { };
 
-  infoCommand.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-  infoCommand.pNext = null;
-  infoCommand.commandPool = m_commandPool;
-  infoCommand.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-  infoCommand.commandBufferCount = 1;
+  Pipeline* pipeline = m_pipelines.get(m_shader, m_topology, m_vertexFormat,
+                                       m_blending, m_blendSource, m_blendDestination);
 
-  //if (m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, &mesh.command) != VK_SUCCESS)
-  //{
-  //  kgm_log() << "Vulkan error: Failed create command fro mesh.\n";
-  //}
+  if (!pipeline)
+    pipeline = createPipeline();
 
-  mesh.pipeline = createPipeline();
+  m_pipelines.add(pipeline);
 
-  m_draws.add(mesh);
-
-  //fillCommands();
+  m_drawGroups.add(mesh, pipeline);
 
   //kgm_log() << "Vulkan: Mesh add and filled commands.\n";
 }
@@ -3284,22 +3267,24 @@ void kgmVulkan::fillCommands()
     m_vk.vkCmdSetViewport(commandBuffer, 0, 1, &m_viewport);
     m_vk.vkCmdSetScissor(commandBuffer, 0, 1, &m_scissor);
 
-    kgmList<Draw>::iterator mi;
+    kgmList<DrawGroup*>::iterator ig = m_drawGroups.groups.begin();
 
-    for (mi = m_draws.begin(); !mi.end(); mi.next())
+    for(; !ig.end(); ig.next())
     {
-      Draw* draw = &(*mi);
+      kgmList<Draw*>::iterator di = (*ig)->draws.begin();
 
-      VkBuffer vertexBuffers[] = {draw->vbuffer};
-      VkDeviceSize offsets[] = {0};
+      Pipeline* pipeline = (*ig)->pipeline;
 
-      /*if (draw->shader && draw->shader->pipeline)
+      m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+
+      for (; !di.end(); di.next())
       {
-        if (draw->render >= 0 && draw->render < VK_RT_END)
-          m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipelines[draw->render]);
-        else
-          m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
+        Draw* draw = (*di);
 
+        VkBuffer vertexBuffers[] = {draw->vbuffer};
+        VkDeviceSize offsets[] = {0};
+
+        /*
         if (draw->shader->descriptor)
         {
           if (draw->texture)
@@ -3374,30 +3359,25 @@ void kgmVulkan::fillCommands()
           }
         }
       }
-      else
-      {
-        m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->shader->pipeline);
-      }*/
+      */
 
-      m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->pipeline->layout,
-                                   0, 1, &draw->pipeline->descriptor, 0, nullptr);
+        m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
+                                     0, 1, &pipeline->descriptor, 0, nullptr);
 
-      m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, draw->pipeline->pipeline);
+        m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
 
-      m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+        m_vk.vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-      if (draw->ibuffer)
-      {
-        m_vk.vkCmdBindIndexBuffer(commandBuffer, draw->ibuffer, 0, draw->itype);
-        m_vk.vkCmdDrawIndexed(commandBuffer, draw->icnt, 1, 0, 0, 0);
+        if (draw->ibuffer)
+        {
+          m_vk.vkCmdBindIndexBuffer(commandBuffer, draw->ibuffer, 0, draw->itype);
+          m_vk.vkCmdDrawIndexed(commandBuffer, draw->icnt, 1, 0, 0, 0);
+        }
+        else
+        {
+          m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>(draw->vcnt), 1, 0, 0);
+        }
       }
-      else
-      {
-        m_vk.vkCmdDraw(commandBuffer, static_cast<uint32_t>((*mi).vcnt), 1, 0, 0);
-      }
-
-      //m_vk.vkEndCommandBuffer(commandBuffer);
-      //m_vk.vkCmdExecuteCommands(commandBuffer, 1, &d_commandBuffer);
     }
 
     m_vk.vkCmdEndRenderPass(commandBuffer);
@@ -3408,8 +3388,8 @@ void kgmVulkan::fillCommands()
                               0, 0, null, 0, null, 1, &imageMemoryBarrier);
 
     m_vk.vkEndCommandBuffer(commandBuffer);
+    }
   }
-}
 
 bool kgmVulkan::createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties,
                              VkBuffer& buffer, VkDeviceMemory& memory)
@@ -4144,6 +4124,13 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     return null;
   }
 
+  pipeline->blending     = m_blending;
+  pipeline->bsrc         = m_blendSource;
+  pipeline->bdst         = m_blendDestination;
+  pipeline->topology     = m_topology;
+  pipeline->vertexFormat = m_vertexFormat;
+  pipeline->shader       = m_shader;
+
   return pipeline;
 }
 
@@ -4203,40 +4190,46 @@ void  kgmVulkan::clear(Shader* s)
   s->cache = VK_NULL_HANDLE;
 }
 
+void kgmVulkan::clear(Draw* d)
+{
+  if(d->vmemory != VK_NULL_HANDLE)
+    m_vk.vkFreeMemory(m_device, d->vmemory, NULL);
+
+  if(d->vbuffer != VK_NULL_HANDLE)
+    m_vk.vkDestroyBuffer(m_device, d->vbuffer, NULL);
+
+  if(d->imemory != VK_NULL_HANDLE)
+    m_vk.vkFreeMemory(m_device, d->imemory, NULL);
+
+  if(d->ibuffer != VK_NULL_HANDLE)
+    m_vk.vkDestroyBuffer(m_device, d->ibuffer, NULL);
+
+  if(d->umemory != VK_NULL_HANDLE)
+    m_vk.vkFreeMemory(m_device, d->umemory, NULL);
+
+  if(d->ubuffer != VK_NULL_HANDLE)
+    m_vk.vkDestroyBuffer(m_device, d->ubuffer, NULL);
+
+  delete d;
+}
+
 void kgmVulkan::clearDraws()
 {
+  kgmList<DrawGroup*>::iterator i = m_drawGroups.groups.begin();
 
-  kgmList<Draw>::iterator i = m_draws.begin();
-
-  for(; !i.end(); i.next())
+  while(!i.end())
   {
-    Draw& d = (*i);
-    if((*i).vmemory != VK_NULL_HANDLE)
-      m_vk.vkFreeMemory(m_device, (*i).vmemory, NULL);
+    kgmList<Draw*>::iterator j = (*i)->draws.begin();
 
-    if((*i).vbuffer != VK_NULL_HANDLE)
-      m_vk.vkDestroyBuffer(m_device, (*i).vbuffer, NULL);
+    while(!j.end())
+    {
+      clear((*j));
 
-    if((*i).imemory != VK_NULL_HANDLE)
-      m_vk.vkFreeMemory(m_device, (*i).imemory, NULL);
-
-    if((*i).ibuffer != VK_NULL_HANDLE)
-      m_vk.vkDestroyBuffer(m_device, (*i).ibuffer, NULL);
-
-    if((*i).umemory != VK_NULL_HANDLE)
-      m_vk.vkFreeMemory(m_device, (*i).umemory, NULL);
-
-    if((*i).ubuffer != VK_NULL_HANDLE)
-      m_vk.vkDestroyBuffer(m_device, (*i).ubuffer, NULL);
-
-    //if((*i).command != VK_NULL_HANDLE)
-    //  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, 1, &(*i).command);
-
-    if(d.pipeline)
-      freePipeline(d.pipeline);
+      j.next();
+    }
   }
 
-  m_draws.clear();
+
 }
 
 void kgmVulkan::printResult(VkResult result)
