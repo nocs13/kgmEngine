@@ -208,11 +208,6 @@ class kgmVulkan: public kgmIGC
 
   struct Pipeline
   {
-    Uniforms         ubo;
-
-    VkBuffer         buffer;
-    VkDeviceMemory   memory;
-
     VkPipeline       pipeline;
     VkPipelineLayout layout;
     VkPipelineCache  cache;
@@ -340,14 +335,47 @@ class kgmVulkan: public kgmIGC
   {
     kgmList<DrawGroup*> groups;
 
-    ~DrawGroups()
-    {
-      clear();
-    }
-
     void add(Draw* d, Pipeline *p)
     {
+      DrawGroup* g = null;
 
+      if (!p)
+        return;
+
+      if (p)
+      {
+        auto gi = groups.begin();
+
+        bool have = false;
+
+        while(!gi.end())
+        {
+          if ((*gi)->pipeline == p)
+          {
+            have = true;
+
+            break;
+          }
+
+          gi.next();
+        }
+
+        if (!have)
+        {
+          g = new DrawGroup();
+
+          g->pipeline = p;
+
+          groups.add(g);
+        }
+        else
+        {
+          g = (*gi);
+        }
+      }
+
+      if (g && d)
+        g->draws.add(d);
     }
 
     void clear()
@@ -357,6 +385,8 @@ class kgmVulkan: public kgmIGC
       while(!i.end())
       {
         delete (*i);
+
+        i.next();
       }
 
       groups.clear();
