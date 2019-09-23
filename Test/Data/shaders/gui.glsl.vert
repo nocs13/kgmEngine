@@ -1,5 +1,6 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+#extension GL_EXT_gpu_shader4 : enable
 
 layout(binding = 0) uniform UniformBufferObject 
 {
@@ -32,7 +33,12 @@ layout(location = 1) out vec2 uv0;
 
 void main() 
 {
-  color = ubo.g_vColor;
+  vec4 v_col = vec4((a_Color & 0x000000FF) >> 0, (a_Color & 0x0000FF00) >> 8,
+                    (a_Color & 0x00FF0000) >> 16, (a_Color & 0xFF000000)>> 24);
+
+  //color = ubo.g_vColor;
+  color = vec4(v_col.g);
+
   uv0   = a_UV;
   
   vec4 pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
