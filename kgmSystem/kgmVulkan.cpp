@@ -316,6 +316,7 @@ void kgmVulkan::vkFree()
 
 u32 kgmVulkan::gcError()
 {
+
   return m_error;
 }
 
@@ -356,7 +357,10 @@ void  kgmVulkan::gcSet(u32 param, void* value)
   }
 }
 
-void  kgmVulkan::gcGet(u32 param, void* value) {}
+void  kgmVulkan::gcGet(u32 param, void* value)
+{
+
+}
 
 void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 {
@@ -370,100 +374,9 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
   m_bgColor[2] = (f32) b / 255.f;
   m_bgColor[3] = (f32) a / 255.f;
 
-  return;
-
-  if (!m_shader)
-    return;
-
-  for (u32 i = 0; i < m_swapChainImages.length(); i++)
-  {
-    auto &commandBuffer = m_commandBuffers[i];
-    auto &image         = m_swapChainImages[i];
-    auto &framebuffer   = m_frameBuffers[i];
-
-    VkResult result = m_vk.vkResetCommandBuffer(commandBuffer, VkCommandBufferResetFlagBits::VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-
-    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-
-    ZeroObject(commandBufferInheritanceInfo);
-    commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-    commandBufferInheritanceInfo.pNext = nullptr;
-    commandBufferInheritanceInfo.renderPass = m_renderPass;
-    commandBufferInheritanceInfo.subpass = 0;
-    commandBufferInheritanceInfo.framebuffer = framebuffer;
-    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE;
-    commandBufferInheritanceInfo.queryFlags = 0;
-    commandBufferInheritanceInfo.pipelineStatistics = 0;
-
-    VkCommandBufferBeginInfo commandBufferBeginInfo;
-
-    ZeroObject(commandBufferBeginInfo);
-    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    commandBufferBeginInfo.pNext = nullptr;
-    commandBufferBeginInfo.flags = 0;
-    commandBufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
-
-    result = m_vk.vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
-
-    if (result != VK_SUCCESS)
-    {
-      continue;
-    }
-
-    VkClearValue clearValue;
-
-    ZeroObject(clearValue);
-
-    float ggg = (float) ((float) rand() / (float) RAND_MAX);
-
-    clearValue.color.float32[0] = (f32) r / 255.f;
-    clearValue.color.float32[1] = (f32) ggg / 255.f;
-    clearValue.color.float32[2] = (f32) b / 255.f;
-    clearValue.color.float32[3] = (f32) a / 255.f;
-
-    VkRenderPassBeginInfo renderPassBeginInfo;
-
-    ZeroObject(renderPassBeginInfo);
-    renderPassBeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.pNext = nullptr;
-    renderPassBeginInfo.renderPass = m_renderPass;
-    renderPassBeginInfo.framebuffer = framebuffer;
-    renderPassBeginInfo.renderArea = VkRect2D {
-      VkOffset2D  {0, 0},
-      //VkExtent2D  {(u32) m_rect[2], (u32) m_rect[3]}
-      VkExtent2D  { m_surfaceCapabilities.currentExtent.width,
-                    m_surfaceCapabilities.currentExtent.height  }
-    };
-
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
-
-    m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-    m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_shader->pipeline);
-    m_vk.vkCmdEndRenderPass(commandBuffer);
-
-    VkImageMemoryBarrier imageMemoryBarrier;
-
-    ZeroObject(imageMemoryBarrier);
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.pNext = nullptr;
-    imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-                                       VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
-    imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-    imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    imageMemoryBarrier.srcQueueFamilyIndex = 0;
-    imageMemoryBarrier.dstQueueFamilyIndex = 0;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {
-      VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1
-    };
-
-    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, null, 0, null,
-                              1, &imageMemoryBarrier);
-    m_vk.vkEndCommandBuffer(commandBuffer);
-  }
+  m_depth   = depth;
+  m_stensil = sten;
+  m_clear   = flag;
 }
 
 void kgmVulkan::gcResize(u32 width, u32 height)
@@ -636,8 +549,8 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   if (!m_shader)
     return;
 
-  if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
-    return;
+  //if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
+  //  return;
 
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
       pmt != gcpmt_triangles && !gcpmt_linestrip)
@@ -1308,6 +1221,24 @@ void  kgmVulkan::gcSetShader(void* s)
 {
   Shader* shader = (Shader*) s;
 
+  if (shader && shader->buffer)
+  {
+    void *data;
+
+    if (m_vk.vkMapMemory(m_device, shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+    {
+      memcpy(data, &shader->ubo, sizeof(Shader::ubo));
+      VkMappedMemoryRange memoryRange;
+
+      ZeroObject(memoryRange);
+      memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+      memoryRange.size = VK_WHOLE_SIZE;
+      memoryRange.memory = shader->memory;
+      m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
+      m_vk.vkUnmapMemory(m_device, shader->memory);
+    }
+  }
+
   m_shader = shader;
 }
 
@@ -1383,7 +1314,6 @@ void  kgmVulkan::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char
   case gcunitype_mtx4:
     size = cnt * 16 * sizeof(float);
     memcpy(m4.m, val, 16 * sizeof(float));
-    //m4.transpose();
     val = m4.m;
     break;
   }
@@ -2770,11 +2700,23 @@ void kgmVulkan::fillCommands()
       kgm_log() << "Vulkan error: Cannot begin command buffer.\n";
     }
 
-    VkClearValue clearValue;
+    VkClearValue clearValue[2];
 
-    ZeroObject(clearValue);
+    u32 clearCount = 1;
 
-    memcpy(clearValue.color.float32, m_bgColor, sizeof(float) * 4);
+    ZeroObject(clearValue[0]);
+
+    memcpy(clearValue[0].color.float32, m_bgColor, sizeof(float) * 4);
+
+    if ((m_clear | gcflag_color) || (m_clear | gcflag_stencil))
+    {
+      ZeroObject(clearValue[1]);
+
+      clearValue[1].depthStencil.depth = m_depth;
+      clearValue[1].depthStencil.stencil = m_stensil;
+
+      clearCount++;
+    }
 
     VkRenderPassBeginInfo renderPassBeginInfo;
 
@@ -2789,10 +2731,15 @@ void kgmVulkan::fillCommands()
       VkExtent2D  { m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height }
     };
 
-    renderPassBeginInfo.clearValueCount = 1;
-    renderPassBeginInfo.pClearValues = &clearValue;
+    renderPassBeginInfo.clearValueCount = clearCount;
+    renderPassBeginInfo.pClearValues = clearValue;
 
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+    m_viewport.x      = 0;
+    m_viewport.y      = 0; //m_surfaceCapabilities.currentExtent.height;
+    m_viewport.width  = m_surfaceCapabilities.currentExtent.width;
+    m_viewport.height = m_surfaceCapabilities.currentExtent.height; //* -1;
 
     m_vk.vkCmdSetViewport(commandBuffer, 0, 1, &m_viewport);
     m_vk.vkCmdSetScissor(commandBuffer, 0, 1, &m_scissor);

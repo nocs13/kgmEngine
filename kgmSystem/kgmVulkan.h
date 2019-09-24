@@ -468,6 +468,10 @@ class kgmVulkan: public kgmIGC
 
   s32 m_rect[4];
   f32 m_bgColor[4];
+  f32 m_depth;
+  u32 m_stensil;
+
+  u32 m_clear;
 
   u32 m_error = 0;
 

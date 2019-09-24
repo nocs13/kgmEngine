@@ -22,12 +22,25 @@ layout(binding = 0)  uniform UBO {
 	int    g_iClipping;
 } ubo;
 
+layout(push_constant) uniform ConstBlock
+{
+  mat4   model;
+  vec4   color;
+  vec4   specular;
+} cb;
+
 layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in uint a_Color;
 layout(location = 3) in vec2 a_UV;
 
+layout(location = 0) out vec4 color;
+
 void main() 
 {
-    gl_Position = ubo.g_mProj * ubo.g_mView * ubo.g_mTran * vec4(a_Vertex, 1.0);
+  color = cb.color;
+
+  gl_Position = ubo.g_mProj * ubo.g_mView * cb.model * vec4(a_Vertex, 1.0);
+
+  gl_Position.y *= -1;
 }

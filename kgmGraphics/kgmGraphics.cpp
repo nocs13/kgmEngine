@@ -220,8 +220,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     memset(m_shaders, 0, sizeof(m_shaders));
     m_shaders[ShaderTest]             = rc->getShader("test.glsl");
     m_shaders[ShaderGui]              = rc->getShader("gui.glsl");
-    //m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
-    //m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
+    m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
+    m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
     //m_shaders[kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
     //m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
@@ -1241,6 +1241,7 @@ void kgmGraphics::render(kgmShader* s)
   float random = (float)rand()/(float)RAND_MAX;
 
   s->start();
+
   s->set("g_fTime",           kgmTime::getTime());
   s->set("g_fRandom",         random);
   s->set("g_fShine",          g_fShine);
@@ -1271,6 +1272,9 @@ void kgmGraphics::render(kgmShader* s)
   {
     s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
   }
+
+  if (gc->gcGetBase() == gc_vulkan)
+    s->start();
 
   /*if(m_a_light_count > 1)
   {
