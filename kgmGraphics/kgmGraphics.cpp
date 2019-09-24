@@ -218,11 +218,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    gc->gcSet(gcpar_vertype, (void*) (gcv_xyz | gcv_col | gcv_uv0));
     m_shaders[ShaderTest]             = rc->getShader("test.glsl");
-    gc->gcSet(gcpar_vertype, (void*) (gcv_xyz | gcv_col | gcv_uv0));
     m_shaders[ShaderGui]              = rc->getShader("gui.glsl");
-    gc->gcSet(gcpar_vertype, (void*) (gcv_xyz | gcv_nor | gcv_col | gcv_uv0));
     //m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
     //m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");

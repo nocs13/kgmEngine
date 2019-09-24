@@ -117,8 +117,8 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
 
     for(u32 i = 0; i < MAX_WORKERS; i++)
     {
-      if(t->workers[i].funtion)
-        t->workers[i].funtion(t->workers[i].object);
+      //if(t->workers[i].funtion)
+      //  t->workers[i].funtion(t->workers[i].object);
     }
 
     kgmThread::mutex_unlock(t->mutex);

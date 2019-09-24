@@ -360,20 +360,14 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);
 
-      mtl.m_color = kgmMaterial::Color(gr->gui_style->smenu.fg_color);
-      gr->render(&mtl);
-      gcDrawRect(gr->gc, rc, 0xffffffff, gr->gui_style->gui_image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.fg_color, gr->gui_style->gui_image);
     }
     else
     {
-      mtl.m_color = kgmMaterial::Color(gr->gui_style->smenu.bg_color);
-      gr->render(&mtl);
-      gcDrawRect(gr->gc, rc, 0xffffffff, gr->gui_style->gui_image);
+      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
     }
 
-    mtl.m_color = kgmMaterial::Color(gr->gui_style->gui_border);
-    gr->render(&mtl);
-    gcDrawBorder(gr->gc, rc, 0xffffffff, gr->m_tex_white);
+    gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
 
     kgmString title = citem->getTitle();
 
@@ -381,8 +375,28 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
     trc.x++;
 
-    mtl.m_color = kgmMaterial::Color(gr->gui_style->smenu.tx_color);
-    gr->render(&mtl);
-    gcDrawText(gr->gc, gr->font, 8, 19, 0xffffffff, trc, title);
+    gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, trc, title);
   }
+}
+
+void GuiRender::gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
+  mtl.m_color = kgmMaterial::Color(col);
+  gr->render(&mtl);
+  ::gcDrawRect(gr->gc, rc, 0xffffffff, tex);
+}
+
+void GuiRender::gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
+  mtl.m_color = kgmMaterial::Color(col);
+  gr->render(&mtl);
+  ::gcDrawBorder(gr->gc, rc, 0xffffffff, gr->m_tex_white);
+}
+
+void GuiRender::gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
+                           kgmGui::Rect clip, kgmString& text)
+{
+  mtl.m_color = kgmMaterial::Color(fcolor);
+  gr->render(&mtl);
+  ::gcDrawText(gr->gc, font, fwidth, fheight, 0xffffffff, clip, text);
 }

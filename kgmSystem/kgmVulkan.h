@@ -133,6 +133,7 @@ class kgmVulkan: public kgmIGC
     VK_EXPORTED_FUNCTION(vkCmdCopyBuffer);
     VK_EXPORTED_FUNCTION(vkCmdFillBuffer);
     VK_EXPORTED_FUNCTION(vkCmdUpdateBuffer);
+    VK_EXPORTED_FUNCTION(vkCmdPushConstants);
     VK_EXPORTED_FUNCTION(vkCmdExecuteCommands);
 
     PFN_vkCreateDebugReportCallbackEXT vkCreateDebugReportCallbackEXT;
@@ -183,6 +184,13 @@ class kgmVulkan: public kgmIGC
     float  g_fAmbient;
     float  g_fLightPower;
     int    g_iClipping = 0;
+  };
+
+  struct PushConstants
+  {
+    mtx4 model;
+    vec4 color;
+    vec4 specular;
   };
 
   struct Shader
@@ -312,9 +320,7 @@ class kgmVulkan: public kgmIGC
     u32 vcnt, icnt, isize;
     VkIndexType itype;
 
-    mtx4 model;
-    vec4 color;
-    vec4 specular;
+    PushConstants constants;
 
     Texture* texture;
   };

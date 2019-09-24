@@ -292,8 +292,8 @@ int kgmVulkan::vkInit()
   VK_IMPORT_FUNCTION(vkCmdCopyBufferToImage);
   VK_IMPORT_FUNCTION(vkCmdFillBuffer);
   VK_IMPORT_FUNCTION(vkCmdUpdateBuffer);
+  VK_IMPORT_FUNCTION(vkCmdPushConstants);
   VK_IMPORT_FUNCTION(vkCmdExecuteCommands);
-
 
   //VK_IMPORT_FUNCTION(vkGetPhysicalDeviceMemoryProperties);
 
@@ -699,9 +699,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
        mesh->itype = VK_INDEX_TYPE_UINT32;
   }
 
-  mesh->model    = m_shader->ubo.g_mTran;
-  mesh->color    = m_shader->ubo.g_vColor;
-  mesh->specular = m_shader->ubo.g_vSpecular;
+  mesh->constants.model    = m_shader->ubo.g_mTran;
+  mesh->constants.color    = m_shader->ubo.g_vColor;
+  mesh->constants.specular = m_shader->ubo.g_vSpecular;
 
   if(m_texture)
     mesh->texture = m_texture;
@@ -733,6 +733,28 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   default:
     m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   };
+
+  {
+    u32 attr = 0;
+
+    if (v_fmt & gcv_xyz) {
+      attr++;
+    }
+    if (v_fmt & gcv_nor){
+      attr++;
+    }
+    if (v_fmt & gcv_uv0){
+      attr++;
+    }
+    if (v_fmt & gcv_uv1){
+      attr++;
+    }
+    if (v_fmt & gcv_col){
+      attr++;
+    }
+
+    m_vertexAttributes = attr;
+  }
 
   m_vertexFormat = v_fmt;
   m_vertexStride = v_size;
@@ -2791,7 +2813,7 @@ void kgmVulkan::fillCommands()
 
         VkBuffer vertexBuffer = draw->vbuffer;
 
-        VkBuffer vertexBuffers[] = {draw->vbuffer};
+        VkBuffer vertexBuffers[] = {vertexBuffer};
 
         VkDeviceSize offsets[] = {0};
 
@@ -2839,34 +2861,8 @@ void kgmVulkan::fillCommands()
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
                                        0, 1, &pipeline->descriptor, 0, nullptr);
 
-          pipeline->shader->ubo.g_mTran     = draw->model;
-          pipeline->shader->ubo.g_vColor    = draw->color;
-          pipeline->shader->ubo.g_vSpecular = draw->specular;
-
-          void *data;
-
-          if (m_vk.vkMapMemory(m_device, draw->umemory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
-          {
-            memcpy(data, &pipeline->shader->ubo, sizeof(Shader::ubo));
-            VkMappedMemoryRange memoryRange;
-
-            ZeroObject(memoryRange);
-            memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-            memoryRange.size = VK_WHOLE_SIZE;
-            memoryRange.memory = draw->umemory;
-            m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
-            m_vk.vkUnmapMemory(m_device, draw->umemory);
-
-            VkBufferCopy bufferCopy;
-
-            bufferCopy.srcOffset = 0;
-            bufferCopy.dstOffset = 0;
-            bufferCopy.size      = VK_WHOLE_SIZE;
-
-            //m_vk.vkCmdCopyBuffer(commandBuffer, draw->ubuffer, draw->shader->buffer, 1, &bufferCopy);
-            //m_vk.vkCmdFillBuffer(commandBuffer, draw->shader->buffer, 0, VK_WHOLE_SIZE, 0x00);
-            m_vk.vkCmdUpdateBuffer(commandBuffer, pipeline->shader->buffer, 0, sizeof(Shader::ubo), &pipeline->shader->ubo);
-          }
+          m_vk.vkCmdPushConstants(commandBuffer, pipeline->layout, VK_SHADER_STAGE_VERTEX_BIT, 0,
+                                  sizeof(PushConstants), &draw->constants);
         }
 
         m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
@@ -3254,6 +3250,24 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     return null;
   }
 
+  if (m_shader && m_shader->buffer)
+  {
+    void *data;
+
+    if (m_vk.vkMapMemory(m_device, m_shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+    {
+      memcpy(data, &m_shader->ubo, sizeof(Shader::ubo));
+      VkMappedMemoryRange memoryRange;
+
+      ZeroObject(memoryRange);
+      memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+      memoryRange.size = VK_WHOLE_SIZE;
+      memoryRange.memory = m_shader->memory;
+      m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
+      m_vk.vkUnmapMemory(m_device, m_shader->memory);
+    }
+  }
+
   VkDescriptorBufferInfo bufferInfo;
 
   ZeroObject(bufferInfo);
@@ -3303,8 +3317,13 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     pipelineLayoutCreateInfo.pSetLayouts = &pipeline->setlayout;
   }
 
-  pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
-  pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
+  VkPushConstantRange pushConstRange;
+  pushConstRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  pushConstRange.size       = sizeof(PushConstants);
+  pushConstRange.offset     = 0;
+
+  pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
+  pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstRange;
 
   result = m_vk.vkCreatePipelineLayout(m_device, &pipelineLayoutCreateInfo, nullptr, &pipeline->layout);
 

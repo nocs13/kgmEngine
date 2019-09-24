@@ -24,6 +24,13 @@ layout(binding = 0) uniform UniformBufferObject
  int    g_iClipping;
 } ubo;
 
+layout(push_constant) uniform ConstBlock
+{
+  mat4   model;
+  vec4   color;
+  vec4   specular;
+} cb;
+
 layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in uint a_Color;
 layout(location = 2) in vec2 a_UV;
@@ -37,7 +44,8 @@ void main()
                     (a_Color & 0x00FF0000) >> 16, (a_Color & 0xFF000000)>> 24);
 
   //color = ubo.g_vColor;
-  color = vec4(v_col.g);
+  color = cb.color;
+  //color = vec4(v_col.g);
 
   uv0   = a_UV;
   
