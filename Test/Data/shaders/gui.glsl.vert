@@ -1,6 +1,5 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-#extension GL_EXT_gpu_shader4 : enable
 
 layout(binding = 0) uniform UniformBufferObject 
 {

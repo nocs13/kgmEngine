@@ -228,7 +228,9 @@ class kgmVulkan: public kgmIGC
     VkBlendFactor bsrc;
     VkBlendFactor bdst;
 
-    Shader* shader;
+    Shader*  shader;
+    Uniforms ubo;
+
     VkPrimitiveTopology topology;
     u32 vertexFormat;
   };

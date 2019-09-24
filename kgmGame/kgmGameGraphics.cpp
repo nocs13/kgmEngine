@@ -33,8 +33,8 @@ void kgmGameGraphics::render_3d()
   kgmGraphics::render(m_def_material);
   kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
 
-  if (m_gridline)
-    kgmGraphics::render((kgmMesh*) m_gridline);
+  //if (m_gridline)
+  //  kgmGraphics::render((kgmMesh*) m_gridline);
 
   if (m_pivot)
   {

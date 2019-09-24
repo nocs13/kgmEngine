@@ -50,10 +50,6 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   g_vulkans++;
 
   wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
-  //u32 wr[2];
-  //kgmSystem::getDesktopDimension(wr[0], wr[1]);
-  //m_rect[2] = wr[0];
-  //m_rect[3] = wr[1];
 
   m_viewport.x = 0;
   m_viewport.y = 0;
@@ -681,6 +677,8 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   if (!pipeline)
     pipeline = createPipeline();
+
+  pipeline->ubo = m_shader->ubo;
 
   m_pipelines.add(pipeline);
 
@@ -2650,6 +2648,29 @@ void kgmVulkan::fillCommands()
 {
   VkResult result = VK_SUCCESS;
 
+  for(u32 pi = 0; pi < m_pipelines.count; pi++)
+  {
+    Shader* shader = m_pipelines.pipelines[pi]->shader;
+
+    if (shader && shader->buffer)
+    {
+      void *data;
+
+      if (m_vk.vkMapMemory(m_device, shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+      {
+        memcpy(data, &m_pipelines.pipelines[pi]->ubo, sizeof(Shader::ubo));
+        VkMappedMemoryRange memoryRange;
+
+        ZeroObject(memoryRange);
+        memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+        memoryRange.size = VK_WHOLE_SIZE;
+        memoryRange.memory = shader->memory;
+        m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
+        m_vk.vkUnmapMemory(m_device, shader->memory);
+      }
+    }
+  }
+
   for (s32 i = 0; i < m_swapChainImages.length(); i++)
   {
     auto &commandBuffer = m_commandBuffers[i];
@@ -2784,6 +2805,11 @@ void kgmVulkan::fillCommands()
 
             VkWriteDescriptorSet descriptorWrites[2];
 
+            u32 descriptorWritesCount = 1;
+
+            if (pipeline->vertexFormat & gcv_uv0)
+              descriptorWritesCount++;
+
             ZeroObject(descriptorWrites[0]);
             descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
             descriptorWrites[0].dstSet = pipeline->descriptor;
@@ -2802,7 +2828,7 @@ void kgmVulkan::fillCommands()
             descriptorWrites[1].descriptorCount = 1;
             descriptorWrites[1].pImageInfo = &imageInfo;
 
-            m_vk.vkUpdateDescriptorSets(m_device, 2, descriptorWrites, 0, nullptr);
+            m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
           }
 
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
@@ -3138,7 +3164,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(layoutCreateInfo);
   layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutCreateInfo.bindingCount = 2;
+  layoutCreateInfo.bindingCount = (m_vertexFormat & gcv_uv0) ? (2) : (1);
   layoutCreateInfo.pBindings = layoutBinding;
 
   result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &pipeline->setlayout);
@@ -3167,7 +3193,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 2;
+  poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
   poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 1;
 
@@ -3196,7 +3222,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
     return null;
   }
-
+  /*
   if (m_shader && m_shader->buffer)
   {
     void *data;
@@ -3214,7 +3240,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
       m_vk.vkUnmapMemory(m_device, m_shader->memory);
     }
   }
-
+  */
   VkDescriptorBufferInfo bufferInfo;
 
   ZeroObject(bufferInfo);
@@ -3231,6 +3257,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   VkWriteDescriptorSet descriptorWrites[2];
 
+  u32 descriptorWritesCount = 1;
+
   ZeroObject(descriptorWrites[0]);
   descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   descriptorWrites[0].dstSet = pipeline->descriptor;
@@ -3240,16 +3268,21 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[0].descriptorCount = 1;
   descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-  ZeroObject(descriptorWrites[1]);
-  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  descriptorWrites[1].dstSet = pipeline->descriptor;
-  descriptorWrites[1].dstBinding = 1;
-  descriptorWrites[1].dstArrayElement = 0;
-  descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = 1;
-  descriptorWrites[1].pImageInfo = &imageInfo;
+  if ((layoutCreateInfo.bindingCount > 1) && m_texture)
+  {
+    ZeroObject(descriptorWrites[1]);
+    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[1].dstSet = pipeline->descriptor;
+    descriptorWrites[1].dstBinding = 1;
+    descriptorWrites[1].dstArrayElement = 0;
+    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrites[1].descriptorCount = 1;
+    descriptorWrites[1].pImageInfo = &imageInfo;
 
-  m_vk.vkUpdateDescriptorSets(m_device, 2, descriptorWrites, 0, nullptr);
+    descriptorWritesCount++;
+  }
+
+  m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
 
   VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
 
@@ -3363,7 +3396,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     }
     else if (attributes & gcv_col)
     {
-      format = VK_FORMAT_R8G8B8A8_UINT;
+      //format = VK_FORMAT_R8G8B8A8_UINT;
+      format = VK_FORMAT_A8B8G8R8_UINT_PACK32;
       size = sizeof(u32);
 
       attributes = (attributes ^ gcv_col);
@@ -3569,6 +3603,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipeline->topology     = m_topology;
   pipeline->vertexFormat = m_vertexFormat;
   pipeline->shader       = m_shader;
+  pipeline->ubo          = m_shader->ubo;
 
   return pipeline;
 }
