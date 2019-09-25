@@ -39,7 +39,7 @@ void main()
 {
   vec4 col =  unpackUnorm4x8(a_Color);
 
-  color = cb.color;
+  color = col; //cb.color;
 
   vec4 position = cb.model * vec4(a_Vertex, 1.0);
 
