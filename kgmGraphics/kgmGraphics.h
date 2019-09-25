@@ -138,6 +138,7 @@ public:
   {
     ShaderTest       = kgmMaterial::TypeFree + 1,
     ShaderGui,
+    ShaderLines,
     ShaderShadowKeep,
     ShaderShadowDraw
   };

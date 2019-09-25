@@ -31,17 +31,26 @@ void kgmGameGraphics::render_3d()
   setWorldMatrix(mi);
 
   kgmGraphics::render(m_def_material);
-  kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
+  kgmGraphics::render(m_shaders[ShaderLines]);
 
-  //if (m_gridline)
-  //  kgmGraphics::render((kgmMesh*) m_gridline);
+  if (m_gridline)
+  {
+    kgmMaterial mtl;
+    mtl.m_color = kgmMaterial::Color(m_gridline->color());
+    kgmGraphics::render(&mtl);
+    kgmGraphics::render((kgmMesh*) m_gridline);
+  }
 
   if (m_pivot)
   {
     mtx4 mt = m_pivot->getTransform();
     setWorldMatrix(mt);
+
+    kgmMaterial mtl;
+    mtl.m_color = kgmMaterial::Color(0xff00ff00);
     gc->gcDepth(false, false, gccmp_lequal);
-    kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
+    kgmGraphics::render(&mtl);
+    kgmGraphics::render(m_shaders[ShaderLines]);
     kgmGraphics::render((kgmMesh*) m_pivot);
     gc->gcDepth(true, true, gccmp_lequal);
   }
@@ -85,16 +94,16 @@ void kgmGameGraphics::drawLight(kgmUnit* u)
 
   V v[6];
 
-  v[0].pos.x = - .2, v[0].pos.y = 0, v[0].pos.z = 0, v[0].col = 0xffffffff;
-  v[1].pos.x =   .2, v[1].pos.y = 0, v[1].pos.z = 0, v[1].col = 0xffffffff;
-  v[2].pos.x =    0, v[2].pos.y = - .2, v[2].pos.z = 0, v[2].col = 0xffffffff;
-  v[3].pos.x =    0, v[3].pos.y =   .2, v[3].pos.z = 0, v[3].col = 0xffffffff;
-  v[4].pos.x =    0, v[4].pos.y = 0, v[4].pos.z = - .2, v[4].col = 0xffffffff;
-  v[5].pos.x =    0, v[5].pos.y = 0, v[5].pos.z =   .2, v[5].col = 0xffffffff;
+  v[0].pos.x = - .2, v[0].pos.y = 0,    v[0].pos.z = 0,    v[0].col = 0xffffffff;
+  v[1].pos.x =   .2, v[1].pos.y = 0,    v[1].pos.z = 0,    v[1].col = 0xffffffff;
+  v[2].pos.x =    0, v[2].pos.y = - .2, v[2].pos.z = 0,    v[2].col = 0xffffffff;
+  v[3].pos.x =    0, v[3].pos.y =   .2, v[3].pos.z = 0,    v[3].col = 0xffffffff;
+  v[4].pos.x =    0, v[4].pos.y = 0,    v[4].pos.z = - .2, v[4].col = 0xffffffff;
+  v[5].pos.x =    0, v[5].pos.y = 0,    v[5].pos.z =   .2, v[5].col = 0xffffffff;
 
   mtx4 mt = u->transform();
   setWorldMatrix(mt);
-  kgmGraphics::render(m_shaders[kgmMaterial::TypeBase]);
+  kgmGraphics::render(m_shaders[ShaderLines]);
   gc->gcDraw(gcpmt_lines, gcv_xyz | gcv_col, sizeof(V), 6, v, 0, 0, 0);
 }
 

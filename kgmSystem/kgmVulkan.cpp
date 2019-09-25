@@ -578,6 +578,16 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     return;
   }
 
+  /*{
+    struct V {vec3 pos; u32 col; };
+
+    V* p = (V*)v_pnt;
+    p = (V*)((size_t)v_pnt + sizeof(V));
+    p = (V*)((size_t)v_pnt + 2 * sizeof(V));
+    p = (V*)((size_t)v_pnt + 2 * sizeof(V));
+    p = null;
+  }*/
+
   memcpy(data, v_pnt, (size_t) size);
 
   m_vk.vkUnmapMemory(m_device, mesh->vmemory);
@@ -3222,25 +3232,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
     return null;
   }
-  /*
-  if (m_shader && m_shader->buffer)
-  {
-    void *data;
 
-    if (m_vk.vkMapMemory(m_device, m_shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
-    {
-      memcpy(data, &m_shader->ubo, sizeof(Shader::ubo));
-      VkMappedMemoryRange memoryRange;
-
-      ZeroObject(memoryRange);
-      memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-      memoryRange.size = VK_WHOLE_SIZE;
-      memoryRange.memory = m_shader->memory;
-      m_vk.vkFlushMappedMemoryRanges(m_device, 1, &memoryRange);
-      m_vk.vkUnmapMemory(m_device, m_shader->memory);
-    }
-  }
-  */
   VkDescriptorBufferInfo bufferInfo;
 
   ZeroObject(bufferInfo);
