@@ -90,6 +90,9 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyImageView vkDestroyImageView;
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
+    VK_EXPORTED_FUNCTION(vkDestroySemaphore);
+    VK_EXPORTED_FUNCTION(vkDestroyFence);
+
     VK_EXPORTED_FUNCTION(vkDestroySurfaceKHR);
     VK_EXPORTED_FUNCTION(vkDestroyImage);
     VK_EXPORTED_FUNCTION(vkCreateSampler);
@@ -421,7 +424,9 @@ class kgmVulkan: public kgmIGC
   VkRenderPass     m_renderPass     = 0;
   VkCommandPool    m_commandPool    = 0;
 
-  VkFence          m_fence          = 0;
+  kgmArray<VkSemaphore> m_imageSemaphores;
+  kgmArray<VkSemaphore> m_renderSemaphores;
+  kgmArray<VkFence>     m_fences;
 
   kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage>          m_swapChainImages;
@@ -454,7 +459,7 @@ class kgmVulkan: public kgmIGC
   VkBlendFactor m_blendDestination;
   VkBool32      m_blending = VK_FALSE;
 
-  u32 m_swapChainImage;
+  u32 m_currentFrame             = 0;
   u32 m_graphicsQueueFamilyCount =  0;
   u32 m_graphicsQueueFamilyIndex = -1;
   u32 m_presentQueueFamilyIndex  = -1;
@@ -577,7 +582,7 @@ private:
   bool initDepthBuffer();
   bool initSemaphores();
   bool initPipeline();
-  bool initFence();
+  bool initSynchronizers();
 
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);

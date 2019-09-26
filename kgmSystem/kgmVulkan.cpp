@@ -14,6 +14,8 @@
 
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
+#define SWAPCHAIN_IMAGES 2
+
 //https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
 
 u32           kgmVulkan::g_vulkans = 0;
@@ -93,7 +95,7 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initSemaphores() || !initCommands() || !initFence())
+  if (!initSemaphores() || !initCommands() || !initSynchronizers())
   {
     m_error = 1;
 
@@ -111,6 +113,17 @@ kgmVulkan::~kgmVulkan()
   {
     m_vk.vkDeviceWaitIdle(m_device);
 
+    for (u32 i = 0; i < SWAPCHAIN_IMAGES; i++)
+    {
+      m_vk.vkWaitForFences(m_device, 1, &m_fences[i], VK_TRUE, UINT64_MAX);
+    }
+
+    for (size_t i = 0; i < SWAPCHAIN_IMAGES; i++)
+    {
+      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+    }
+
     if (m_commandPool)
     {
       m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
@@ -122,23 +135,28 @@ kgmVulkan::~kgmVulkan()
       m_vk.vkDestroyCommandPool(m_device, m_commandPool, nullptr);
     }
 
-    //m_vk.vkDestroyPipeline(m_device, graphicsPipeline, nullptr);
     if (m_renderPass)
     {
       m_vk.vkDestroyRenderPass(m_device, m_renderPass, nullptr);
 
-      kgm_log() << "Vulkan: Render pass destroyed.\n";
+      m_renderPass = VK_NULL_HANDLE;
     }
 
-    for (size_t i = 0; i < m_swapChainImages.length(); i++)
+    kgm_log() << "Vulkan: Render pass destroyed.\n";
+
+    for (size_t i = 0; i < SWAPCHAIN_IMAGES; i++)
     {
-      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
-      m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+      m_vk.vkDestroySemaphore(m_device, m_renderSemaphores[i], nullptr);
+      m_vk.vkDestroySemaphore(m_device, m_imageSemaphores[i], nullptr);
+      m_vk.vkDestroyFence(m_device, m_fences[i], nullptr);
     }
 
     m_swapChainImages.clear();
     m_imageViews.clear();
     m_frameBuffers.clear();
+    m_fences.clear();
+    m_imageSemaphores.clear();
+    m_renderSemaphores.clear();
 
 
     if (m_swapChain != VK_NULL_HANDLE)
@@ -251,6 +269,8 @@ int kgmVulkan::vkInit()
   m_vk.vkDestroyDescriptorSetLayout = (typeof m_vk.vkDestroyDescriptorSetLayout) vk_lib.get((char*) "vkDestroyDescriptorSetLayout");
   m_vk.vkFreeCommandBuffers = (typeof m_vk.vkFreeCommandBuffers) vk_lib.get((char*) "vkFreeCommandBuffers");
 
+  VK_IMPORT_FUNCTION(vkDestroySemaphore);
+  VK_IMPORT_FUNCTION(vkDestroyFence);
   VK_IMPORT_FUNCTION(vkDestroySurfaceKHR);
   VK_IMPORT_FUNCTION(vkDestroyImage);
   VK_IMPORT_FUNCTION(vkCreateSampler);
@@ -411,29 +431,31 @@ void  kgmVulkan::gcRender()
   if (!m_device || !m_swapChain)
     return;
 
-  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, VK_NULL_HANDLE, m_fence, &swapChainImage);
+  m_vk.vkWaitForFences(m_device, 1, &m_fences[m_currentFrame], VK_TRUE, UINT64_MAX);
 
-  if(result != VkResult::VK_SUCCESS)
+  result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_imageSemaphores[m_currentFrame], VK_NULL_HANDLE, &swapChainImage);
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR)
+  {
+    kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
+
+    refreshSwapchain();
+
+    return;
+  }
+  else if(result != VkResult::VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
   {
     kgm_log() << "Vulkan render error: failed to get next swapchain image.\n";
 
     printResult(result);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR)
-    {
-      kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
-
-      refreshSwapchain();
-
-      return;
-    }
 
     return;
   }
 
   auto commandBuffer = m_commandBuffers[swapChainImage];
 
-  result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
+  /*result = m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, UINT64_MAX);
 
   if(result != VkResult::VK_SUCCESS)
   {
@@ -453,13 +475,16 @@ void  kgmVulkan::gcRender()
     printResult(result);
 
     return;
-  }
+  }*/
 
   VkQueue queue;
 
   m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  VkSemaphore waitSemaphores[] = { m_imageSemaphores[m_currentFrame] };
+  VkSemaphore signalSemaphores[] = { m_renderSemaphores[m_currentFrame] };
 
   VkSubmitInfo submitInfo;
 
@@ -467,17 +492,17 @@ void  kgmVulkan::gcRender()
 
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submitInfo.pNext = nullptr;
-  submitInfo.waitSemaphoreCount = 0;
-  submitInfo.pWaitSemaphores = nullptr;
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
   submitInfo.pWaitDstStageMask = &waitMask;
   submitInfo.commandBufferCount = 1;
   submitInfo.pCommandBuffers = &commandBuffer;
-  submitInfo.signalSemaphoreCount = 0;
-  submitInfo.pSignalSemaphores = nullptr;
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
 
   result = m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
 
-  if(result != VkResult::VK_SUCCESS)
+  /*if(result != VkResult::VK_SUCCESS)
   {
     kgm_log() << "Vulkan render error: failed to submit command buffer.\n";
 
@@ -495,7 +520,9 @@ void  kgmVulkan::gcRender()
     printResult(result);
 
     return;
-  }
+  }*/
+
+  VkResult resultPresent = VK_SUCCESS;
 
   VkPresentInfoKHR presentInfo;
 
@@ -503,8 +530,8 @@ void  kgmVulkan::gcRender()
 
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.pNext = nullptr;
-  presentInfo.waitSemaphoreCount = 0;
-  presentInfo.pWaitSemaphores = nullptr;
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
   presentInfo.swapchainCount = 1;
   presentInfo.pSwapchains = &m_swapChain;
   presentInfo.pImageIndices = &swapChainImage;
@@ -512,29 +539,26 @@ void  kgmVulkan::gcRender()
 
   result = m_vk.vkQueuePresentKHR(queue, &presentInfo);
 
-  if (result == VK_ERROR_OUT_OF_DATE_KHR)
+  if (result == VK_ERROR_OUT_OF_DATE_KHR  || result == VK_SUBOPTIMAL_KHR)
   {
     kgm_log() << "Vulkan render info: Surface incompatible, updating swapchans.\n";
 
     refreshSwapchain();
-
-    return;
   }
 
-  if(result != VkResult::VK_SUCCESS)
+  if(resultPresent != VkResult::VK_SUCCESS)
   {
-    kgm_log() << "Vulkan render error: failed to present swapchain.\n";
+    kgm_log() << "Vulkan render error: Failed to present swapchain.\n";
 
     printResult(result);
-
-    return;
   }
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
+  m_vk.vkQueueWaitIdle(queue);
 
   clearDraws();
 
-  m_swapChainImage = swapChainImage;
+  m_currentFrame = (m_currentFrame + 1) % SWAPCHAIN_IMAGES;
 }
 
 void  kgmVulkan::gcSetTarget(void*  rt) {}
@@ -2259,7 +2283,7 @@ bool kgmVulkan::initSwapchain()
 
   kgm_log() << "Vulkan: Got swapchain images.\n";
 
-  m_swapChainImage = 0;
+  m_currentFrame = 0;
 
   return true;
 }
@@ -2562,29 +2586,34 @@ bool kgmVulkan::initPipeline()
   return true;
 }
 
-bool kgmVulkan::initFence()
+bool kgmVulkan::initSynchronizers()
 {
-  VkFence fence;
+  m_imageSemaphores.realloc(SWAPCHAIN_IMAGES);
+  m_renderSemaphores.realloc(SWAPCHAIN_IMAGES);
+  m_fences.realloc(SWAPCHAIN_IMAGES);
 
-  VkFenceCreateInfo fenceCreateInfo;
+  VkSemaphoreCreateInfo semaphoreInfo;
 
-  ZeroObject(fenceCreateInfo);
+  ZeroObject(semaphoreInfo);
+  semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-  fenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-  fenceCreateInfo.pNext = nullptr;
-  fenceCreateInfo.flags = 0;
+  VkFenceCreateInfo fenceInfo;
 
-  if (m_vk.vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence)
-      != VkResult::VK_SUCCESS)
+  ZeroObject(fenceInfo);
+  fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+  for (size_t i = 0; i < SWAPCHAIN_IMAGES; i++)
   {
-    kgm_log() << "Vulkan error: failed to create fence.\n";
+    if (m_vk.vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_imageSemaphores[i]) != VK_SUCCESS ||
+        m_vk.vkCreateSemaphore(m_device, &semaphoreInfo, nullptr, &m_renderSemaphores[i]) != VK_SUCCESS ||
+        m_vk.vkCreateFence(m_device, &fenceInfo, nullptr, &m_fences[i]) != VK_SUCCESS)
+    {
+      kgm_log() << "Vulkan error: Failed to create synchronizers.\n";
 
-    return false;
+      return false;
+    }
   }
-
-  kgm_log() << "Vulkan: Created fence.\n";
-
-  m_fence = fence;
 
   return true;
 }
