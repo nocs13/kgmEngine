@@ -439,9 +439,9 @@ class kgmVulkan: public kgmIGC
   VkFormat m_swapChainFormat;
 
   VkFormat       m_depthFormat;
-  VkImage        m_depthImage;
-  VkImageView    m_depthImageView;
-  VkDeviceMemory m_depthMemory;
+  VkImage        m_depthImage     = VK_NULL_HANDLE;
+  VkImageView    m_depthImageView = VK_NULL_HANDLE;
+  VkDeviceMemory m_depthMemory    = VK_NULL_HANDLE;
 
 
   VkSemaphore m_imageAvailableSemaphore;
@@ -460,7 +460,7 @@ class kgmVulkan: public kgmIGC
   VkBool32      m_blending = VK_FALSE;
 
   u32 m_currentFrame             = 0;
-  u32 m_graphicsQueueFamilyCount =  0;
+  u32 m_graphicsQueueFamilyCount = 0;
   u32 m_graphicsQueueFamilyIndex = -1;
   u32 m_presentQueueFamilyIndex  = -1;
   u32 m_vertexAttributes         = 1;

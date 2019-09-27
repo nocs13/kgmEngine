@@ -7,13 +7,13 @@ kPivot::kPivot()
 {
   Vertex_P_C* v = (Vertex_P_C*)vAlloc(6, FVF_P_C);
 
-  v[0].pos = vec3(0, 0, 0);
+  v[0].pos = vec3(0, 0, -0.1);
   v[1].pos = vec3(1, 0, 0);
 
-  v[2].pos = vec3(0, 0, 0);
+  v[2].pos = vec3(0, 0, -0.1);
   v[3].pos = vec3(0, 1, 0);
 
-  v[4].pos = vec3(0, 0, 0);
+  v[4].pos = vec3(0, 0, -0.1);
   v[5].pos = vec3(0, 0, 1);
 
   v[0].col = 0xff0000ff;

@@ -41,15 +41,18 @@ layout(location = 2) out float clipping;
 
 void main() 
 {
-    vec4 col =  unpackUnorm4x8(a_Color);
-    color = col;
-    //color = vec4(1.0, 0.0, 0.0, 1.0);
+  vec4 col =  unpackUnorm4x8(a_Color);
+  //color = col;
+  //color = cb.color;
+  color = vec4(1.0, 0.1, 1.0, 1.0);
 
-    position = cb.model * vec4(a_Vertex, 1.0);
+  vec4 pos = cb.model * vec4(a_Vertex, 1.0);
 
-    vec4 pos = ubo.g_mProj * ubo.g_mView * position;
+  position = pos;
 
-    pos.y *= -1;
+  pos = ubo.g_mProj * ubo.g_mView * pos;
 
-    gl_Position = pos;
+  pos.y *= - 1.0;
+
+  gl_Position = pos;
 }

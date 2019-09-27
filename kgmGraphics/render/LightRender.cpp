@@ -221,6 +221,9 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
     tspecular = gr->m_tex_white->texture();
   }
 
+  if (!s)
+    return;
+
   s->start();
 
   s->set("g_fShine",          shininess);

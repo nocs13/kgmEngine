@@ -124,6 +124,16 @@ kgmVulkan::~kgmVulkan()
       m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
     }
 
+    if (m_depthImageView)
+      m_vk.vkDestroyImageView(m_device, m_depthImageView, null);
+
+    if (m_depthImage)
+      m_vk.vkDestroyImage(m_device, m_depthImage, null);
+
+    if (m_depthMemory)
+      m_vk.vkFreeMemory(m_device, m_depthMemory, null);
+
+
     if (m_commandPool)
     {
       m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
@@ -2290,43 +2300,79 @@ bool kgmVulkan::initSwapchain()
 
 bool kgmVulkan::initRenderPass()
 {
-  VkAttachmentDescription attachmentDescription = {};
+  VkAttachmentDescription colorAttachmentDescription;
 
-  ZeroObject(attachmentDescription);
+  ZeroObject(colorAttachmentDescription);
 
-  attachmentDescription.format = m_swapChainFormat;
-  attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
-  attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-  attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-  attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-  attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-  attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-  attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  colorAttachmentDescription.format = m_swapChainFormat;
+  colorAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+  colorAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  colorAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  colorAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  colorAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  colorAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  colorAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-  VkAttachmentReference colorAttachmentReference = {};
+  VkAttachmentDescription depthAttachmentDescription;
+
+  ZeroObject(depthAttachmentDescription);
+  depthAttachmentDescription.format = m_depthFormat;
+  depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+  depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  depthAttachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  depthAttachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  depthAttachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  depthAttachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  VkAttachmentReference colorAttachmentReference;
 
   ZeroObject(colorAttachmentReference);
 
   colorAttachmentReference.attachment = 0;
   colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-  VkSubpassDescription subPassDescription = {};
+  VkAttachmentReference depthAttachmentReference;
+
+  ZeroObject(depthAttachmentReference);
+
+  depthAttachmentReference.attachment = 1;
+  depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  VkSubpassDescription subPassDescription;
 
   ZeroObject(subPassDescription);
 
   subPassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
   subPassDescription.colorAttachmentCount = 1;
   subPassDescription.pColorAttachments = &colorAttachmentReference;
+  subPassDescription.pDepthStencilAttachment = &depthAttachmentReference;
 
-  VkRenderPassCreateInfo createInfo = {};
+  VkSubpassDependency subPassDependency;
+
+  ZeroObject(subPassDependency);
+
+  subPassDependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
+  subPassDependency.dstSubpass    = 0;
+  subPassDependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  subPassDependency.srcAccessMask = 0;
+  subPassDependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  subPassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                    VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+  VkAttachmentDescription attachmentDescriptions[2] = { colorAttachmentDescription,
+                                                        depthAttachmentDescription };
+  VkRenderPassCreateInfo createInfo;
 
   ZeroObject(createInfo);
 
   createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-  createInfo.attachmentCount = 1;
-  createInfo.pAttachments = &attachmentDescription;
+  createInfo.attachmentCount = 2;
+  createInfo.pAttachments = attachmentDescriptions;
   createInfo.subpassCount = 1;
   createInfo.pSubpasses = &subPassDescription;
+  createInfo.dependencyCount = 1;
+  createInfo.pDependencies = &subPassDependency;
 
   VkResult result = m_vk.vkCreateRenderPass(m_device, &createInfo, nullptr, &m_renderPass);
 
@@ -2419,10 +2465,12 @@ bool kgmVulkan::initFrameBuffers()
 
     ZeroObject(createInfo);
 
+    VkImageView imageViews[2] = { m_imageViews[i], m_depthImageView };
+
     createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     createInfo.renderPass = m_renderPass;
-    createInfo.attachmentCount = 1;
-    createInfo.pAttachments = &m_imageViews[i];
+    createInfo.attachmentCount = 2;
+    createInfo.pAttachments = imageViews;
     createInfo.width = m_surfaceCapabilities.currentExtent.width;
     createInfo.height = m_surfaceCapabilities.currentExtent.height;
     //createInfo.width = m_rect[2];
@@ -2446,26 +2494,41 @@ bool kgmVulkan::initFrameBuffers()
 
 bool kgmVulkan::initDepthBuffer()
 {
+  VkFormat candidates[3] = { VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,
+                             VK_FORMAT_D16_UNORM_S8_UINT };
   VkImageCreateInfo infoImage = {};
 
-  const VkFormat format = VK_FORMAT_D16_UNORM;
+  ZeroObject(infoImage);
 
-  VkFormatProperties properties;
+  VkFormat format = VK_FORMAT_UNDEFINED;
 
-  m_vk.vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &properties);
-
-  if (properties.linearTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+  for (u32 i = 0; i < 3; i ++)
   {
-    infoImage.tiling = VK_IMAGE_TILING_LINEAR;
+    VkFormatProperties properties;
+
+    m_vk.vkGetPhysicalDeviceFormatProperties(m_physicalDevice, candidates[i], &properties);
+
+    if (properties.linearTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+    {
+      infoImage.tiling = VK_IMAGE_TILING_LINEAR;
+
+      format = candidates[i];
+
+      break;
+    }
+    else if (properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+    {
+      infoImage.tiling = VK_IMAGE_TILING_OPTIMAL;
+
+      format = candidates[i];
+
+      break;
+    }
   }
-  else if (properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+
+  if (format == VK_FORMAT_UNDEFINED)
   {
-    infoImage.tiling = VK_IMAGE_TILING_OPTIMAL;
-  }
-  else
-  {
-    // Try other depth formats?
-    kgm_log() << "Vulkan error: VK_FORMAT_D16_UNORM Unsupported.\n";
+    kgm_log() << "Vulkan error: Cannot choose depth stencil format.\n";
 
     return false;
   }
@@ -2479,7 +2542,7 @@ bool kgmVulkan::initDepthBuffer()
   infoImage.extent.depth = 1;
   infoImage.mipLevels = 1;
   infoImage.arrayLayers = 1;
-  infoImage.samples = VK_SAMPLE_COUNT_16_BIT;
+  infoImage.samples = VK_SAMPLE_COUNT_1_BIT;
   infoImage.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
   infoImage.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
   infoImage.queueFamilyIndexCount = 0;
@@ -2538,6 +2601,10 @@ bool kgmVulkan::initDepthBuffer()
 
     printResult(result);
 
+    m_vk.vkDestroyImage(m_device, m_depthImage, null);
+
+    m_depthImage = VK_NULL_HANDLE;
+
     return false;
   }
 
@@ -2549,8 +2616,47 @@ bool kgmVulkan::initDepthBuffer()
 
     printResult(result);
 
+    m_vk.vkDestroyImage(m_device, m_depthImage, null);
+    m_vk.vkFreeMemory(m_device, m_depthMemory, null);
+
+    m_depthImage = VK_NULL_HANDLE;
+    m_depthMemory = VK_NULL_HANDLE;
+
     return false;
   }
+
+  VkImageViewCreateInfo viewInfo;
+
+  ZeroObject(viewInfo);
+
+  viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  viewInfo.image = m_depthImage;
+  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  viewInfo.format = format;
+  viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+  viewInfo.subresourceRange.baseMipLevel = 0;
+  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.subresourceRange.baseArrayLayer = 0;
+  viewInfo.subresourceRange.layerCount = 1;
+
+  result = m_vk.vkCreateImageView(m_device, &viewInfo, null, &m_depthImageView);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Cannot create depth image view.\n";
+
+    printResult(result);
+
+    m_vk.vkDestroyImage(m_device, m_depthImage, null);
+    m_vk.vkFreeMemory(m_device, m_depthMemory, null);
+
+    m_depthImage = VK_NULL_HANDLE;
+    m_depthMemory = VK_NULL_HANDLE;
+
+    return false;
+  }
+
+  m_depthFormat = format;
 
   return true;
 }
@@ -2638,6 +2744,15 @@ bool kgmVulkan::refreshSwapchain()
     return false;
   }
 
+  if (m_depthImageView)
+    m_vk.vkDestroyImageView(m_device, m_depthImageView, null);
+
+  if (m_depthImage)
+    m_vk.vkDestroyImage(m_device, m_depthImage, null);
+
+  if (m_depthMemory)
+    m_vk.vkFreeMemory(m_device, m_depthMemory, null);
+
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
     m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
@@ -2677,6 +2792,7 @@ bool kgmVulkan::refreshSwapchain()
   initSwapchain();
   initRenderPass();
   initImageViews();
+  initDepthBuffer();
   initFrameBuffers();
   initCommands();
 
@@ -2710,8 +2826,10 @@ void kgmVulkan::fillCommands()
     }
   }
 
-  for (s32 i = 0; i < m_swapChainImages.length(); i++)
+  //for (s32 i = 0; i < m_swapChainImages.length(); i++)
   {
+    s32 i = m_currentFrame;
+
     auto &commandBuffer = m_commandBuffers[i];
     auto &image         = m_swapChainImages[i];
     auto &framebuffer   = m_frameBuffers[i];
@@ -3492,7 +3610,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineRasterizationStateCreateInfo.depthClampEnable = VK_FALSE;
   pipelineRasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
   pipelineRasterizationStateCreateInfo.polygonMode = VkPolygonMode::VK_POLYGON_MODE_FILL;
-  pipelineRasterizationStateCreateInfo.cullMode = VkCullModeFlagBits::VK_CULL_MODE_NONE;
+  pipelineRasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;//VK_CULL_MODE_NONE;
   pipelineRasterizationStateCreateInfo.frontFace = VkFrontFace::VK_FRONT_FACE_COUNTER_CLOCKWISE;
   pipelineRasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
   pipelineRasterizationStateCreateInfo.depthBiasConstantFactor = 0.0f;
@@ -3549,9 +3667,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineDepthStencilStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   pipelineDepthStencilStateCreateInfo.pNext = nullptr;
   pipelineDepthStencilStateCreateInfo.flags = 0;
-  pipelineDepthStencilStateCreateInfo.depthTestEnable = VK_FALSE;
-  pipelineDepthStencilStateCreateInfo.depthWriteEnable = VK_FALSE;
-  pipelineDepthStencilStateCreateInfo.depthCompareOp = VkCompareOp::VK_COMPARE_OP_ALWAYS;
+  pipelineDepthStencilStateCreateInfo.depthTestEnable = VK_TRUE; //VK_FALSE;
+  pipelineDepthStencilStateCreateInfo.depthWriteEnable = VK_TRUE; //VK_FALSE;
+  pipelineDepthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL; //VK_COMPARE_OP_ALWAYS;
   pipelineDepthStencilStateCreateInfo.depthBoundsTestEnable = VK_FALSE;
   pipelineDepthStencilStateCreateInfo.stencilTestEnable = VK_FALSE;
   pipelineDepthStencilStateCreateInfo.front.failOp = VkStencilOp::VK_STENCIL_OP_KEEP;
