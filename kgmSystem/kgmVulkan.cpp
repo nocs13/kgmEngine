@@ -81,14 +81,14 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
     return;
   }
 
-  if (!initSurface() || !initSwapchain())
+  if (!initSurface() || !initSwapchain() || !initRenderPass())
   {
     m_error = 1;
 
     return;
   }
 
-  if (!initRenderPass() || !initImageViews() || !initFrameBuffers())
+  if (!initImageViews() || !initDepthBuffer() || !initFrameBuffers())
   {
     m_error = 1;
 
@@ -2316,7 +2316,7 @@ bool kgmVulkan::initRenderPass()
   VkAttachmentDescription depthAttachmentDescription;
 
   ZeroObject(depthAttachmentDescription);
-  depthAttachmentDescription.format = m_depthFormat;
+  depthAttachmentDescription.format = chooseDepthFormat();
   depthAttachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
   depthAttachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
   depthAttachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -2537,8 +2537,8 @@ bool kgmVulkan::initDepthBuffer()
   infoImage.pNext = NULL;
   infoImage.imageType = VK_IMAGE_TYPE_2D;
   infoImage.format = format;
-  infoImage.extent.width = m_rect[2];
-  infoImage.extent.height = m_rect[3];
+  infoImage.extent.width = m_surfaceCapabilities.currentExtent.width;
+  infoImage.extent.height = m_surfaceCapabilities.currentExtent.height;
   infoImage.extent.depth = 1;
   infoImage.mipLevels = 1;
   infoImage.arrayLayers = 1;
@@ -2550,14 +2550,10 @@ bool kgmVulkan::initDepthBuffer()
   infoImage.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
   infoImage.flags = 0;
 
-  VkMemoryAllocateInfo alloc = {};
+  VkImageViewCreateInfo infoView;
 
-  alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-  alloc.pNext = NULL;
-  alloc.allocationSize = 0;
-  alloc.memoryTypeIndex = 0;
+  ZeroObject(infoView);
 
-  VkImageViewCreateInfo infoView = {};
   infoView.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   infoView.pNext = NULL;
   infoView.image = VK_NULL_HANDLE;
@@ -2591,7 +2587,15 @@ bool kgmVulkan::initDepthBuffer()
 
   m_vk.vkGetImageMemoryRequirements(m_device, m_depthImage, &requirements);
 
+  VkMemoryAllocateInfo alloc;
+
+  ZeroObject(alloc);
+
+  alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  alloc.pNext = NULL;
   alloc.allocationSize = requirements.size;
+  alloc.memoryTypeIndex = memoryTypeIndex(requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
 
   result = m_vk.vkAllocateMemory(m_device, &alloc, NULL, &m_depthMemory);
 
@@ -3262,6 +3266,30 @@ void kgmVulkan::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width
 
   endSingleTimeCommand(commandBuffer);
   kgm_log() << "Vulkan: End copy buffer to image.\n";
+}
+
+VkFormat kgmVulkan::chooseDepthFormat()
+{
+  VkFormat candidates[3] = { VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT,
+                             VK_FORMAT_D16_UNORM_S8_UINT };
+
+  for (u32 i = 0; i < 3; i ++)
+  {
+    VkFormatProperties properties;
+
+    m_vk.vkGetPhysicalDeviceFormatProperties(m_physicalDevice, candidates[i], &properties);
+
+    if (properties.linearTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+    {
+      return candidates[i];
+    }
+    else if (properties.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+    {
+      return candidates[i];
+    }
+  }
+
+  return VK_FORMAT_UNDEFINED;
 }
 
 void kgmVulkan::freePipeline(Pipeline* p)

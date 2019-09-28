@@ -52,7 +52,7 @@ void main()
 
   pos = ubo.g_mProj * ubo.g_mView * pos;
 
-  pos.y *= - 1.0;
+  //pos.y *= - 1.0;
 
   gl_Position = pos;
 }
