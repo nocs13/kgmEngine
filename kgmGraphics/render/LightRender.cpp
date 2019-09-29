@@ -475,8 +475,6 @@ void LightRender::lightmap()
   gc->gcClear(gcflag_color | gcflag_depth, 0xff000000, 1, 0);
 
   gc->gcBlend(false, 0, null, null);
-  gc->gcAlpha(false, null, null);
-
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {

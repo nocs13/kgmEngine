@@ -57,6 +57,7 @@ enum gc_enum
   gcpar_texfltmag,
   gcpar_texfltmin,
   gcpar_vertype,
+  gcpar_polymode,
 
   gccmp_never,
   gccmp_always,
@@ -90,7 +91,6 @@ enum gc_enum
   gcpmt_lines,
   gcpmt_triangles,
   gcpmt_linestrip,
-  //gcpmt_lineloop;     /* disabled as no in d3d. */
   gcpmt_trianglestrip,
   gcpmt_trianglefan,
 
@@ -189,9 +189,6 @@ public:
 
   // BLEND
   virtual void  gcBlend(bool, u32, u32, u32) = 0;
-
-  // ALPHA
-  virtual void  gcAlpha(bool, u32, float) = 0;
 
   // CULL
   virtual void  gcCull(u32 mode) = 0;

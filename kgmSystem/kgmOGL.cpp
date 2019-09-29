@@ -620,21 +620,6 @@ void  kgmOGL::gcBlend(bool en, u32 eq, u32 fnsrc, u32 fndst)
   glEnable(GL_BLEND);
 }
 
-//ALPHA
-void  kgmOGL::gcAlpha(bool en, u32 fn, float ref)
-{
-#ifdef GL_ALPHA_TEST
-  if(!en)
-  {
-    glDisable(GL_ALPHA_TEST);
-
-    return;
-  }
-  glAlphaFunc(gl_enum(fn), ref);
-  glEnable(GL_ALPHA_TEST);
-#endif
-}
-
 //CULL
 void kgmOGL::gcCull(u32 mode)
 {

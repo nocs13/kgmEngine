@@ -527,7 +527,6 @@ void kgmGraphics::render()
 
 
   gc->gcBlend(false, 0, null, null);
-  gc->gcAlpha(false, null, null);
 
   //colect lights in viewport
 
@@ -748,7 +747,6 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
 
   gc->gcBlend(false, 0, null, null);
-  gc->gcAlpha(false, null, null);
 
   for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
   {

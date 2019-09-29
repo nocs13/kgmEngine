@@ -151,8 +151,8 @@ class kgmVulkan: public kgmIGC
 
   enum VK_RT
   {
-    //VK_RT_POINT = 0,
-    VK_RT_LINE = 0,
+    VK_RT_POINT = 0,
+    VK_RT_LINE,
     VK_RT_LINESTRIP,
     VK_RT_TRIANGLE,
     VK_RT_TRIANGLESTRIP,
@@ -219,6 +219,9 @@ class kgmVulkan: public kgmIGC
 
   struct Pipeline
   {
+    Shader*  shader;
+    Uniforms ubo;
+
     VkPipeline       pipeline;
     VkPipelineLayout layout;
     VkPipelineCache  cache;
@@ -227,17 +230,47 @@ class kgmVulkan: public kgmIGC
     VkDescriptorPool      setpool;
     VkDescriptorSet       descriptor;
 
+    VkPrimitiveTopology topology;
+    u32 vertexFormat;
+
     VkBool32 blending;
     VkBlendFactor bsrc;
     VkBlendFactor bdst;
 
-    Shader*  shader;
-    Uniforms ubo;
+    VkBool32       depthTest;
+    VkBool32       depthWrite;
+    VkCompareOp    depthCompare;
 
-    VkPrimitiveTopology topology;
-    u32 vertexFormat;
+    VkCullModeFlags cullMode;
+    VkFrontFace     cullFace;
+
+    VkPolygonMode   polygonMode;
+
+    VkBool32        stencil;
   };
 
+  struct PipelineStatus
+  {
+    Shader*  shader;
+
+    VkPrimitiveTopology topology;
+    u32                 vertexFormat;
+
+    VkBool32            blending;
+    VkBlendFactor       srcBlend;
+    VkBlendFactor       dstBlend;
+
+    VkBool32            depthTest;
+    VkBool32            depthWrite;
+    VkCompareOp         depthCompare;
+
+    VkCullModeFlags     cullMode;
+    VkFrontFace         cullFace;
+
+    VkPolygonMode       polygonMode;
+
+    VkBool32            stencil;
+  };
 
   struct ActualPipelines
   {
@@ -254,7 +287,7 @@ class kgmVulkan: public kgmIGC
 
     ActualPipelines()
     {
-      pipelines.alloc(1024);
+      pipelines.alloc(128);
       count = 0;
     }
 
@@ -280,6 +313,56 @@ class kgmVulkan: public kgmIGC
       return null;
     }
 
+    Pipeline* get(PipelineStatus* ps)
+    {
+      if (!ps)
+        return null;
+
+      for(u32 i = 0; i < count; i++)
+      {
+        Pipeline* ppl = pipelines[i];
+
+        if (ppl->shader != ps->shader)
+          continue;
+
+        if (ppl->vertexFormat != ps->vertexFormat)
+          continue;
+
+        if (ppl->topology != ps->topology)
+          continue;
+
+        if (ppl->polygonMode != ps->polygonMode)
+          continue;
+
+        if (ppl->cullFace != ps->cullFace || ppl->cullMode != ps->cullMode)
+          continue;
+
+        if (ppl->blending == VK_TRUE && ppl->blending != ps->blending)
+        {
+          continue;
+        }
+        else if (ppl->blending == VK_TRUE && ppl->blending == ps->blending)
+        {
+          if (ppl->bsrc != ps->srcBlend || ppl->bdst != ps->dstBlend)
+            continue;
+        }
+
+        if (ppl->depthTest == VK_TRUE && ppl->depthTest != ps->depthTest)
+        {
+          continue;
+        }
+        else if (ppl->depthTest == VK_TRUE && ppl->depthTest == ps->depthTest)
+        {
+          if (ppl->depthWrite != ps->depthWrite || ppl->depthCompare != ps->depthCompare)
+            continue;
+        }
+
+        return ppl;
+      }
+
+      return null;
+    }
+
     void add(Pipeline* p)
     {
       if (!p)
@@ -292,7 +375,7 @@ class kgmVulkan: public kgmIGC
       }
 
       if (count >= pipelines.length())
-        pipelines.realloc(count + 256);
+        pipelines.realloc(count + 64);
 
       pipelines[count] = p;
 
@@ -459,6 +542,17 @@ class kgmVulkan: public kgmIGC
   VkBlendFactor m_blendDestination;
   VkBool32      m_blending = VK_FALSE;
 
+  VkBool32       m_depthTest;
+  VkBool32       m_depthWrite;
+  VkCompareOp    m_depthCompare;
+
+  VkCullModeFlags m_cullMode;
+  VkFrontFace     m_cullFace;
+
+  VkPolygonMode   m_polygonMode;
+
+  VkBool32        m_stencil;
+
   u32 m_currentFrame             = 0;
   u32 m_graphicsQueueFamilyCount = 0;
   u32 m_graphicsQueueFamilyIndex = -1;
@@ -525,17 +619,11 @@ public:
   //BLEND
   void  gcBlend(bool, u32, u32, u32);
 
-  //ALPHA
-  void  gcAlpha(bool, u32, float);
-
   //CULL
   void  gcCull(u32 mode);
 
   //DEPTH
   void  gcDepth(bool en, bool mask, u32 mode);
-
-  //LIGHT
-  void gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle);
 
   //VERTEX & INDEX BUFFERS
   void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
@@ -606,6 +694,25 @@ private:
 
   Pipeline* createPipeline();
   void freePipeline(Pipeline*);
+
+  PipelineStatus getCurrentPipelineStatus();
+
+  VkCompareOp vk_compare(u32 e)
+  {
+    switch(e)
+    {
+      case gccmp_always: return VK_COMPARE_OP_ALWAYS;
+      case gccmp_never:	 return VK_COMPARE_OP_NEVER;
+      case gccmp_equal:	 return VK_COMPARE_OP_EQUAL;
+      case gccmp_nequal: return VK_COMPARE_OP_NOT_EQUAL;
+      case gccmp_less:   return VK_COMPARE_OP_LESS;
+      case gccmp_lequal: return VK_COMPARE_OP_LESS_OR_EQUAL;
+      case gccmp_great:	 return VK_COMPARE_OP_GREATER;
+      case gccmp_gequal: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+    }
+
+    return VK_COMPARE_OP_NEVER;
+  }
 
   VkBlendFactor vk_blend(u32 e)
   {

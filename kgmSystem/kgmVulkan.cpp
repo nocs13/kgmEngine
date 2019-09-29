@@ -104,6 +104,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
   m_error = 0;
 
+  m_polygonMode = VK_POLYGON_MODE_FILL;
+  m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  m_depthTest = VK_TRUE;
+  m_depthWrite = VK_TRUE;
+  m_depthCompare = VK_COMPARE_OP_LESS_OR_EQUAL;
+  m_blending = VK_FALSE;
+
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
 
@@ -379,6 +386,23 @@ void  kgmVulkan::gcSet(u32 param, void* value)
       m_vertexAttributes = attr;
       m_vertexStride     = size;
       m_vertexFormat     = vert;
+    }
+  }
+  else if(param == gcpar_polymode)
+  {
+    u32 mode = (size_t) value;
+
+    switch (mode)
+    {
+    case gcpmt_points:
+      m_polygonMode = VK_POLYGON_MODE_POINT;
+      break;
+    case gcpmt_lines:
+      m_polygonMode = VK_POLYGON_MODE_LINE;
+      break;
+    case gcpmt_triangles:
+    default:
+      m_polygonMode = VK_POLYGON_MODE_FILL;
     }
   }
 }
@@ -716,13 +740,18 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   mesh->icnt = i_cnt;
 
 
-  Pipeline* pipeline = m_pipelines.get(m_shader, m_topology, m_vertexFormat,
+  /*Pipeline* pipeline = m_pipelines.get(m_shader, m_topology, m_vertexFormat,
                                        m_blending, m_blendSource, m_blendDestination);
 
   if (!pipeline)
-    pipeline = createPipeline();
+    pipeline = createPipeline();*/
 
-  pipeline->ubo = m_shader->ubo;
+  PipelineStatus ps = getCurrentPipelineStatus();
+
+  Pipeline* pipeline = m_pipelines.get(&ps);
+
+  if (!pipeline)
+    pipeline = createPipeline();
 
   m_pipelines.add(pipeline);
 
@@ -1085,9 +1114,20 @@ void  kgmVulkan::gcSetTexture(u32 stage, void *t)
 }
 
 // TARGET
-gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil){}
-bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type){}
-void     kgmVulkan::gcFreeTarget(gchandle t){}
+gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
+{
+
+}
+
+bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type)
+{
+
+}
+
+void     kgmVulkan::gcFreeTarget(gchandle t)
+{
+
+}
 
 // VIEWPORT
 void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
@@ -1111,22 +1151,61 @@ void  kgmVulkan::gcBlend(bool e, u32 m, u32 s, u32 d)
   m_blendDestination = vk_blend(d);
 }
 
-//ALPHA
-void  kgmVulkan::gcAlpha(bool, u32, float) {}
-
 //CULL
-void  kgmVulkan::gcCull(u32 mode) {}
+void  kgmVulkan::gcCull(u32 mode)
+{
+  if(!mode)
+  {
+    m_cullMode = VK_CULL_MODE_NONE;
+
+    return;
+  }
+
+  m_cullMode = VK_CULL_MODE_FRONT_BIT;
+
+  switch(mode)
+  {
+  case gccull_back:
+    m_cullFace = VK_FRONT_FACE_CLOCKWISE;
+    break;
+  case gccull_front:
+  default:
+    m_cullFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  }
+}
 
 //DEPTH
-void  kgmVulkan::gcDepth(bool en, bool mask, u32 mode) {}
+void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
+{
+  if(depth)
+    m_depthTest = VK_TRUE;
+  else
+    m_depthTest = VK_FALSE;
 
-//LIGHT
-void kgmVulkan::gcSetLight(int i, float* pos, float forse, float* col, float* dir, float angle) {}
+  if(mask)
+    m_depthWrite = VK_TRUE;
+  else
+    m_depthWrite = VK_FALSE;
+
+
+  m_depthCompare = vk_compare(mode);
+}
 
 //VERTEX & INDEX BUFFERS
-void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) {}
-void  kgmVulkan::gcFreeVertexBuffer(void*) {}
-void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) {}
+void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
+{
+
+}
+
+void  kgmVulkan::gcFreeVertexBuffer(void*)
+{
+
+}
+
+void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff)
+{
+
+}
 
 // SHADER
 void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
@@ -3637,9 +3716,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineRasterizationStateCreateInfo.flags = 0;
   pipelineRasterizationStateCreateInfo.depthClampEnable = VK_FALSE;
   pipelineRasterizationStateCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-  pipelineRasterizationStateCreateInfo.polygonMode = VkPolygonMode::VK_POLYGON_MODE_FILL;
-  pipelineRasterizationStateCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;//VK_CULL_MODE_NONE;
-  pipelineRasterizationStateCreateInfo.frontFace = VkFrontFace::VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  pipelineRasterizationStateCreateInfo.polygonMode = m_polygonMode; //VkPolygonMode::VK_POLYGON_MODE_FILL;
+  pipelineRasterizationStateCreateInfo.cullMode = m_cullMode;  //VK_CULL_MODE_BACK_BIT;//VK_CULL_MODE_NONE;
+  pipelineRasterizationStateCreateInfo.frontFace = m_cullFace; //VkFrontFace::VK_FRONT_FACE_COUNTER_CLOCKWISE;
   pipelineRasterizationStateCreateInfo.depthBiasEnable = VK_FALSE;
   pipelineRasterizationStateCreateInfo.depthBiasConstantFactor = 0.0f;
   pipelineRasterizationStateCreateInfo.depthBiasClamp = 0.0f;
@@ -3695,9 +3774,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineDepthStencilStateCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   pipelineDepthStencilStateCreateInfo.pNext = nullptr;
   pipelineDepthStencilStateCreateInfo.flags = 0;
-  pipelineDepthStencilStateCreateInfo.depthTestEnable = VK_TRUE; //VK_FALSE;
-  pipelineDepthStencilStateCreateInfo.depthWriteEnable = VK_TRUE; //VK_FALSE;
-  pipelineDepthStencilStateCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL; //VK_COMPARE_OP_ALWAYS;
+  pipelineDepthStencilStateCreateInfo.depthTestEnable = m_depthTest; //VK_TRUE; //VK_FALSE;
+  pipelineDepthStencilStateCreateInfo.depthWriteEnable = m_depthWrite; //VK_TRUE; //VK_FALSE;
+  pipelineDepthStencilStateCreateInfo.depthCompareOp = m_depthCompare; //VK_COMPARE_OP_LESS_OR_EQUAL; //VK_COMPARE_OP_ALWAYS;
   pipelineDepthStencilStateCreateInfo.depthBoundsTestEnable = VK_FALSE;
   pipelineDepthStencilStateCreateInfo.stencilTestEnable = VK_FALSE;
   pipelineDepthStencilStateCreateInfo.front.failOp = VkStencilOp::VK_STENCIL_OP_KEEP;
@@ -3764,15 +3843,43 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     return null;
   }
 
+  pipeline->depthCompare = m_depthCompare;
+  pipeline->depthWrite   = m_depthWrite;
+  pipeline->depthTest    = m_depthTest;
   pipeline->blending     = m_blending;
   pipeline->bsrc         = m_blendSource;
   pipeline->bdst         = m_blendDestination;
+  pipeline->cullMode     = m_cullMode;
+  pipeline->cullFace     = m_cullFace;
+  pipeline->polygonMode  = m_polygonMode;
   pipeline->topology     = m_topology;
   pipeline->vertexFormat = m_vertexFormat;
   pipeline->shader       = m_shader;
   pipeline->ubo          = m_shader->ubo;
 
   return pipeline;
+}
+
+kgmVulkan::PipelineStatus kgmVulkan::getCurrentPipelineStatus()
+{
+  PipelineStatus ps;
+
+  ZeroObject(ps);
+
+  ps.shader       = m_shader;
+  ps.topology     = m_topology;
+  ps.vertexFormat = m_vertexFormat;
+  ps.polygonMode  = m_polygonMode;
+  ps.cullFace     = m_cullFace;
+  ps.cullMode     = m_cullMode;
+  ps.depthTest    = m_depthTest;
+  ps.depthWrite   = m_depthWrite;
+  ps.depthCompare = m_depthCompare;
+  ps.blending     = m_blending;
+  ps.srcBlend     = m_blendSource;
+  ps.dstBlend     = m_blendDestination;
+
+  return ps;
 }
 
 void* kgmVulkan::uniformLocation(Shader* s, char* u)
