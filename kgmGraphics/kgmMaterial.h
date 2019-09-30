@@ -50,15 +50,13 @@ public:
     TypeNone,
     TypeBase,
     TypeToon,
-    TypePhong,
     TypeSkin,
     TypeWater,
     TypeRiver,
     TypeOcean,
     TypeGlass,
     TypeFlame,
-    TypeIce,
-    TypeFree = 15
+    TypeIce
   };
 
   enum Environment

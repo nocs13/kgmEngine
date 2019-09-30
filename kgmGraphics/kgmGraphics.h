@@ -28,6 +28,7 @@
 #include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
+#include "render/ColorRender.h"
 #include "render/LightRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
@@ -136,11 +137,16 @@ public:
 
   enum Shader
   {
-    ShaderTest       = kgmMaterial::TypeFree + 1,
+    ShaderNone,
+    ShaderTest,
     ShaderGui,
     ShaderLines,
+    ShaderBase,
+    ShaderLight,
     ShaderShadowKeep,
-    ShaderShadowDraw
+    ShaderShadowDraw,
+    ShaderEnvCube,
+    ShaderEnvPlane
   };
 
   static GraphicsQuality textureQuality;
@@ -282,6 +288,7 @@ protected:
   gchandle m_rnd_target = null;
 
   BaseRender*        m_rnd_base = null;
+  ColorRender*       m_rnd_color = null;
   LightRender*       m_rnd_lights = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;

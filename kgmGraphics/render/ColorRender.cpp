@@ -6,12 +6,11 @@
 ColorRender::ColorRender(kgmGraphics* g)
   :BaseRender(g)
 {
-  m_sh_color = gr->rc->getShader("base.glsl");
 }
 
 void ColorRender::render()
 {
-  kgmShader* s = m_sh_color;
+  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderBase];
 
   kgmCamera* cam = gr->m_camera;
 

@@ -15,12 +15,12 @@ const u32 g_res = 512;
 LightRender::LightRender(kgmGraphics* g)
   :BaseRender(g)
 {
-  m_sh_toon  = gr->m_shaders[kgmMaterial::TypeToon];
-  m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
+  //m_sh_toon  = gr->m_shaders[kgmMaterial::TypeToon];
+  //m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
 
-  m_sh_phong = gr->rc->getShader("phong2.glsl");
+  //m_sh_phong = gr->rc->getShader("phong2.glsl");
   //m_sh_phong = gr->rc->getShader("phongbase.glsl");
-  m_sh_lmap  = gr->rc->getShader("phonglmap.glsl");
+  //m_sh_lmap  = gr->rc->getShader("phonglmap.glsl");
 
   m_target      = gc->gcGenTarget(g_res, g_res, true, false);
 

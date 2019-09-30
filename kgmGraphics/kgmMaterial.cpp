@@ -181,7 +181,6 @@ kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
   s_text(TypeNone);
   s_text(TypeBase);
   s_text(TypeSkin);
-  s_text(TypePhong);
   s_text(TypeWater);
   s_text(TypeRiver);
   s_text(TypeOcean);
@@ -199,7 +198,6 @@ kgmMaterial::Type kgmMaterial::stringToType(kgmString str)
   s_type(TypeNone);
   s_type(TypeBase);
   s_type(TypeSkin);
-  s_type(TypePhong);
   s_type(TypeWater);
   s_type(TypeRiver);
   s_type(TypeOcean);

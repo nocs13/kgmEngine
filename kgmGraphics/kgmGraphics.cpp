@@ -218,11 +218,13 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    m_shaders[ShaderTest]             = rc->getShader("test.glsl");
-    m_shaders[ShaderGui]              = rc->getShader("gui.glsl");
-    m_shaders[ShaderLines]            = rc->getShader("lines.glsl");
-    m_shaders[kgmMaterial::TypeNone]  = rc->getShader("none.glsl");
-    m_shaders[kgmMaterial::TypeBase]  = rc->getShader("base.glsl");
+    m_shaders[ShaderTest]     = rc->getShader("test.glsl");
+    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
+    m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
+    m_shaders[ShaderNone]     = rc->getShader("none.glsl");
+    m_shaders[ShaderBase]     = rc->getShader("base.glsl");
+    m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
+    m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
     //m_shaders[kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
     //m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
@@ -230,6 +232,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   }
 
   m_rnd_base        = new BaseRender(this);
+  m_rnd_color       = new ColorRender(this);
   m_rnd_lights      = new LightRender(this);
   m_rnd_shadows     = new ShadowRender(this);
   m_rnd_environment = new EnvironmentRender(this);
@@ -255,6 +258,9 @@ kgmGraphics::~kgmGraphics()
 
   if (m_rnd_terrain)
     delete m_rnd_terrain;
+
+  if (m_rnd_color)
+    delete m_rnd_color;
 
   if (m_rnd_lights)
     delete m_rnd_lights;
@@ -651,9 +657,11 @@ void kgmGraphics::render()
   //draw scene only lights
   render((kgmMaterial*)null);
 
+  m_rnd_color->render();
+
   lighting = true;
 
-  m_rnd_lights->render();
+  //m_rnd_lights->render();
   //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);

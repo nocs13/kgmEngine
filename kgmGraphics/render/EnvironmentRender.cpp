@@ -9,14 +9,10 @@ vec3 move(0, 0, 0);
 EnvironmentRender::EnvironmentRender(kgmGraphics* g)
   :BaseRender(g)
 {
-  m_target   = gc->gcGenTarget(512, 512, true, false);
-
+  m_target        = gc->gcGenTarget(512, 512, true, false);
   m_tx_cube       = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_texcube);
   m_tx_plane      = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
   m_tx_refraction = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
-
-  m_sd_cube  = gr->rc->getShader("envcube.glsl");
-  m_sd_plane = gr->rc->getShader("envplane.glsl");
 
   m_cubemapside = 0;
 
@@ -33,6 +29,9 @@ EnvironmentRender::~EnvironmentRender()
 
 void EnvironmentRender::render()
 {
+  m_sd_cube  = gr->m_shaders[kgmGraphics::ShaderEnvCube];
+  m_sd_plane = gr->m_shaders[kgmGraphics::ShaderEnvPlane];
+
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode* nod = gr->m_a_meshes[i];
