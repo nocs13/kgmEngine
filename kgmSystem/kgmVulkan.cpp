@@ -1159,7 +1159,6 @@ void  kgmVulkan::gcCull(u32 mode)
 //DEPTH
 void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
 {
-  return;
   if(depth)
     m_depthTest = VK_TRUE;
   else
@@ -2863,7 +2862,7 @@ void kgmVulkan::fillCommands()
 {
   VkResult result = VK_SUCCESS;
 
-  for(u32 pi = 0; pi < m_pipelines.count; pi++)
+  /*for(u32 pi = 0; pi < m_pipelines.count; pi++)
   {
     Shader* shader = m_pipelines.pipelines[pi]->shader;
 
@@ -2873,6 +2872,8 @@ void kgmVulkan::fillCommands()
 
       if (m_vk.vkMapMemory(m_device, shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
       {
+        Pipeline* ppl = m_pipelines.pipelines[pi];
+
         memcpy(data, &m_pipelines.pipelines[pi]->ubo, sizeof(Shader::ubo));
         VkMappedMemoryRange memoryRange;
 
@@ -2884,7 +2885,7 @@ void kgmVulkan::fillCommands()
         m_vk.vkUnmapMemory(m_device, shader->memory);
       }
     }
-  }
+  }*/
 
   //for (s32 i = 0; i < m_swapChainImages.length(); i++)
   {
