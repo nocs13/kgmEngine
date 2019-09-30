@@ -110,6 +110,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_depthWrite = VK_TRUE;
   m_depthCompare = VK_COMPARE_OP_LESS_OR_EQUAL;
   m_blending = VK_FALSE;
+  m_cullMode = VK_CULL_MODE_BACK_BIT;
+  m_cullFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
@@ -603,9 +605,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   if (!m_shader)
     return;
 
-  //if (v_fmt != (gcv_xyz | gcv_col | gcv_uv0))
-  //  return;
-
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
       pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
@@ -635,16 +634,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
     return;
   }
-
-  /*{
-    struct V {vec3 pos; u32 col; };
-
-    V* p = (V*)v_pnt;
-    p = (V*)((size_t)v_pnt + sizeof(V));
-    p = (V*)((size_t)v_pnt + 2 * sizeof(V));
-    p = (V*)((size_t)v_pnt + 2 * sizeof(V));
-    p = null;
-  }*/
 
   memcpy(data, v_pnt, (size_t) size);
 
@@ -740,12 +729,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   mesh->icnt = i_cnt;
 
 
-  /*Pipeline* pipeline = m_pipelines.get(m_shader, m_topology, m_vertexFormat,
-                                       m_blending, m_blendSource, m_blendDestination);
-
-  if (!pipeline)
-    pipeline = createPipeline();*/
-
   PipelineStatus ps = getCurrentPipelineStatus();
 
   Pipeline* pipeline = m_pipelines.get(&ps);
@@ -756,8 +739,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   m_pipelines.add(pipeline);
 
   m_drawGroups.add(mesh, pipeline);
-
-  //kgm_log() << "Vulkan: Mesh add and filled commands.\n";
 }
 
 // TEXTURE
@@ -1154,6 +1135,7 @@ void  kgmVulkan::gcBlend(bool e, u32 m, u32 s, u32 d)
 //CULL
 void  kgmVulkan::gcCull(u32 mode)
 {
+  return;
   if(!mode)
   {
     m_cullMode = VK_CULL_MODE_NONE;
@@ -1177,6 +1159,7 @@ void  kgmVulkan::gcCull(u32 mode)
 //DEPTH
 void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
 {
+  return;
   if(depth)
     m_depthTest = VK_TRUE;
   else
@@ -2252,9 +2235,15 @@ bool kgmVulkan::initSwapchain()
     return false;
   }
 
-  VkExtent2D swapChainExtent = surfaceCapabilities.currentExtent;
-
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  for (u32 i = 0; i < presentModeCount; i++)
+  {
+    if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
+      presentMode == presentModes[i];
+  }
+
+  VkExtent2D swapChainExtent = surfaceCapabilities.currentExtent;
 
   u32 swapChainImagesCount = surfaceCapabilities.minImageCount;
 
@@ -2298,18 +2287,16 @@ bool kgmVulkan::initSwapchain()
   swapchainCreateInfo.imageFormat = m_swapChainFormat;
   swapchainCreateInfo.imageExtent.width = swapChainExtent.width;
   swapchainCreateInfo.imageExtent.height = swapChainExtent.height;
-  //swapchainCreateInfo.imageExtent.width = m_rect[2];
-  //swapchainCreateInfo.imageExtent.height = m_rect[3];
   swapchainCreateInfo.preTransform = surfaceTransform;
   swapchainCreateInfo.compositeAlpha = compositeAlpha;
   swapchainCreateInfo.imageArrayLayers = 1;
   swapchainCreateInfo.presentMode = presentMode;
-  swapchainCreateInfo.clipped = true;
+  swapchainCreateInfo.clipped = VK_TRUE;
   swapchainCreateInfo.imageColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
   swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
   swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
   swapchainCreateInfo.queueFamilyIndexCount = 0;
-  swapchainCreateInfo.pQueueFamilyIndices = NULL;
+  swapchainCreateInfo.pQueueFamilyIndices = nullptr;
 
   u32 queueFamilyIndices[2] = {m_graphicsQueueFamilyIndex, m_presentQueueFamilyIndex};
 
@@ -2320,20 +2307,6 @@ bool kgmVulkan::initSwapchain()
     swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
   }
 
-  VkSwapchainKHR oldSwapChain = m_swapChain;
-
-  m_swapChain = nullptr;
-
-  swapchainCreateInfo.oldSwapchain = oldSwapChain;
-  swapchainCreateInfo.imageUsage = VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-  swapchainCreateInfo.imageSharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-  swapchainCreateInfo.queueFamilyIndexCount = 0;
-  swapchainCreateInfo.pQueueFamilyIndices = nullptr;
-  swapchainCreateInfo.preTransform = VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-  swapchainCreateInfo.compositeAlpha = VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-  swapchainCreateInfo.presentMode = VkPresentModeKHR::VK_PRESENT_MODE_FIFO_KHR;
-  swapchainCreateInfo.clipped = VK_TRUE;
-
   result = m_vk.vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapChain);
 
   if (result != VK_SUCCESS)
@@ -2342,9 +2315,6 @@ bool kgmVulkan::initSwapchain()
 
     return false;
   }
-
-  if (oldSwapChain)
-    m_vk.vkDestroySwapchainKHR(m_device, oldSwapChain, nullptr);
 
   kgm_log() << "Vulkan: Created swapchain.\n";
 
@@ -2860,6 +2830,13 @@ bool kgmVulkan::refreshSwapchain()
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
     m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
+  }
+
+  if (m_swapChain)
+  {
+    m_vk.vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+
+    m_swapChain = VK_NULL_HANDLE;
   }
 
   m_frameBuffers.clear();

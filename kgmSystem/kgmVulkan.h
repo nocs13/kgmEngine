@@ -291,28 +291,6 @@ class kgmVulkan: public kgmIGC
       count = 0;
     }
 
-    Pipeline* get(Shader* sh, VkPrimitiveTopology tp, u32 vf, VkBool32 bl,
-                  VkBlendFactor bs, VkBlendFactor bd)
-    {
-      for(u32 i = 0; i < count; i++)
-      {
-        Pipeline* ppl = pipelines[i];
-
-        if (sh == pipelines[i]->shader && tp == pipelines[i]->topology && vf == pipelines[i]->vertexFormat)
-        {
-          if (pipelines[i]->blending == VK_TRUE)
-          {
-            if (bl == VK_TRUE && bs == pipelines[i]->bsrc && bd == pipelines[i]->bdst)
-              return pipelines[i];
-          }
-          else if (bl == VK_FALSE)
-            return pipelines[i];
-        }
-      }
-
-      return null;
-    }
-
     Pipeline* get(PipelineStatus* ps)
     {
       if (!ps)
@@ -337,21 +315,21 @@ class kgmVulkan: public kgmIGC
         if (ppl->cullFace != ps->cullFace || ppl->cullMode != ps->cullMode)
           continue;
 
-        if (ppl->blending == VK_TRUE && ppl->blending != ps->blending)
+        if (ps->blending == VK_TRUE && ppl->blending != ps->blending)
         {
           continue;
         }
-        else if (ppl->blending == VK_TRUE && ppl->blending == ps->blending)
+        else if (ps->blending == VK_TRUE && ppl->blending == ps->blending)
         {
           if (ppl->bsrc != ps->srcBlend || ppl->bdst != ps->dstBlend)
             continue;
         }
 
-        if (ppl->depthTest == VK_TRUE && ppl->depthTest != ps->depthTest)
+        if (ps->depthTest == VK_TRUE && ppl->depthTest != ps->depthTest)
         {
           continue;
         }
-        else if (ppl->depthTest == VK_TRUE && ppl->depthTest == ps->depthTest)
+        else if (ps->depthTest == VK_TRUE && ppl->depthTest == ps->depthTest)
         {
           if (ppl->depthWrite != ps->depthWrite || ppl->depthCompare != ps->depthCompare)
             continue;
