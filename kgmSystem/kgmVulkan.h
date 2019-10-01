@@ -170,8 +170,8 @@ class kgmVulkan: public kgmIGC
   struct RenderTarget
   {
     VkImage        image;
-    VkImageView    iview;
-    VkDeviceMemory memory;
+    VkImageView    imageView;
+    VkDeviceMemory imageMemory;
 
     VkImage        depth;
     VkImageView    depthView;

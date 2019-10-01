@@ -1111,6 +1111,146 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
   ZeroObject(*target);
 
+  VkImageCreateInfo imageInfo = {};
+
+  ZeroObject(imageInfo);
+
+  imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  imageInfo.imageType = VK_IMAGE_TYPE_2D;
+  imageInfo.extent.width = w;
+  imageInfo.extent.height = h;
+  imageInfo.extent.depth = 1;
+  imageInfo.mipLevels = 1;
+  imageInfo.arrayLayers = 1;
+  imageInfo.format = m_swapChainFormat;
+  imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+  imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  VkResult result;
+
+  result = m_vk.vkCreateImage(m_device, &imageInfo, nullptr, &target->image);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create target texture image.\n";
+
+    printResult(result);
+
+    delete target;
+
+    return null;
+  }
+
+  VkMemoryRequirements requirements;
+
+  m_vk.vkGetImageMemoryRequirements(m_device, target->image, &requirements);
+
+  VkMemoryAllocateInfo allocInfo;
+
+  ZeroObject(allocInfo);
+  allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  allocInfo.allocationSize = requirements.size;
+  allocInfo.memoryTypeIndex = memoryTypeIndex(requirements.memoryTypeBits,
+                                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+  result = m_vk.vkAllocateMemory(m_device, &allocInfo, null, &target->imageMemory);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to allocate texture image memory.\n";
+
+    printResult(result);
+
+    gcFreeTarget(target);
+
+    delete target;
+
+    return null;
+  }
+
+  result = m_vk.vkBindImageMemory(m_device, target->image, target->imageMemory, null);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to bind texture image memory.\n";
+
+    printResult(result);
+
+    gcFreeTarget(target);
+
+    delete target;
+
+    return null;
+  }
+
+  VkImageViewCreateInfo viewInfo;
+
+  ZeroObject(viewInfo);
+  viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  viewInfo.format = m_swapChainFormat;
+  viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+  viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  viewInfo.subresourceRange.baseMipLevel = 0;
+  viewInfo.subresourceRange.baseArrayLayer = 0;
+  viewInfo.subresourceRange.layerCount = 1;
+  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.image = target->image;
+
+  result = m_vk.vkCreateImageView(m_device, &viewInfo, null, &target->imageView);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image view.\n";
+
+    printResult(result);
+
+    gcFreeTarget(target);
+
+    delete target;
+
+    return null;
+  }
+
+  kgm_log() << "Vulkan: Generated image view.\n";
+
+  VkSamplerCreateInfo samplerInfo;
+
+  ZeroObject(samplerInfo);
+  samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+  samplerInfo.magFilter = VK_FILTER_LINEAR;
+  samplerInfo.minFilter = VK_FILTER_LINEAR;
+  samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.anisotropyEnable = VK_FALSE;
+  samplerInfo.maxAnisotropy = 1;
+  samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+  samplerInfo.compareEnable = VK_FALSE;
+  samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+  samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+  samplerInfo.mipLodBias = 0.0f;
+  samplerInfo.minLod = 0.0f;
+  samplerInfo.maxLod = 0.0f;
+
+  result = m_vk.vkCreateSampler(m_device, &samplerInfo, null, &target->sampler);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create texture image view.\n";
+
+    printResult(result);
+
+    gcFreeTarget(target);
+
+    delete target;
+
+    return null;
+  }
+
   if (depth)
   {
     VkImageCreateInfo infoImage;
@@ -1157,7 +1297,7 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
     VkMemoryRequirements requirements;
 
-    VkResult result = m_vk.vkCreateImage(m_device, &infoImage, NULL, &target->depth);
+    result = m_vk.vkCreateImage(m_device, &infoImage, NULL, &target->depth);
 
     if (result != VK_SUCCESS)
     {
@@ -1242,7 +1382,32 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
     }
   }
 
+  VkFramebufferCreateInfo createInfo = {};
 
+  ZeroObject(createInfo);
+
+  VkImageView imageViews[2] = { target->imageView, target->depthView };
+
+  createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+  createInfo.renderPass = m_renderPass;
+  createInfo.attachmentCount = (target->depthView) ? (2) : (1);
+  createInfo.pAttachments = imageViews;
+  createInfo.width = w;
+  createInfo.height = h;
+  createInfo.layers = 1;
+
+  result = m_vk.vkCreateFramebuffer(m_device, &createInfo, nullptr, &target->framebuffer);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create framebuffer for target image view.\n";
+
+    gcFreeTarget(target);
+
+    return null;
+  }
+
+  return (gchandle) target;
 }
 
 bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type)
@@ -1253,6 +1418,29 @@ bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 void kgmVulkan::gcFreeTarget(gchandle t)
 {
   RenderTarget* target = (RenderTarget *) t;
+
+  if (target->framebuffer)
+    m_vk.vkDestroyFramebuffer(m_device, target->framebuffer, null);
+
+  if (target->imageView)
+    m_vk.vkDestroyImageView(m_device, target->imageView, null);
+
+  if (target->image)
+    m_vk.vkDestroyImage(m_device, target->image, null);
+
+  if (target->imageMemory)
+    m_vk.vkFreeMemory(m_device, target->imageMemory, null);
+
+  if (target->depthView)
+    m_vk.vkDestroyImageView(m_device, target->depthView, null);
+
+  if (target->depth)
+    m_vk.vkDestroyImage(m_device, target->depth, null);
+
+  if (target->depthMemory)
+    m_vk.vkFreeMemory(m_device, target->depthMemory, null);
+
+  delete target;
 }
 
 // VIEWPORT
