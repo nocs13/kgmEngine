@@ -18,10 +18,6 @@ public:
   gchandle   m_target      = null;
   gchandle   m_tx_lightmap = null;
 
-  kgmShader* m_sh_phong = null;
-  kgmShader* m_sh_toon  = null;
-  kgmShader* m_sh_lmap  = null;
-
   bool m_lightmap = false;
 
 public:

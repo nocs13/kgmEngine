@@ -16,6 +16,7 @@ void GuiRender::render()
 {
   gr->gc->gcSetShader(null);
   gr->gc->gcDepth(false, false, gccmp_lequal);
+  gr->gc->gcCull(gc_none);
   gr->gc2DMode();
 
   gr->setWorldMatrix(mi);

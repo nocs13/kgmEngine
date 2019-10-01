@@ -44,7 +44,7 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  kgmShader* sh = m_sh_phong;
+  kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderLight];
 
   gr->wired(false);
 
@@ -117,7 +117,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
     return;
 
-  kgmShader* s = m_sh_phong;
+  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderLight];
   kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
   kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
@@ -457,7 +457,7 @@ u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light lights[
 
 void LightRender::lightmap()
 {
-  kgmShader* s = m_sh_lmap;
+  kgmShader* s = null;
 
   kgmCamera* cam = gr->m_camera;
 

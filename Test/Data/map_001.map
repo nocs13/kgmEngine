@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <kgm>
  <Material name='mtl_plane'>
-  <Color value='0.80000 0.80000 0.80000'/>
+  <Color value='0.80000 0.80000 0.10000'/>
   <Specular value='1.00000 1.00000 1.00000'/>
   <Shininess value='25.00000'/>
   <Alpha value='1.00000'/>
@@ -10,14 +10,14 @@
   <map_environment type='Animated' mapping='Plane' viewpoint='None' image='' intensity='1.000000' />
  </Material>
  <Material name='Material.001'>
-  <Color value='0.80000 0.80000 0.80000'/>
+  <Color value='0.80000 0.10000 0.80000'/>
   <Specular value='1.00000 1.00000 1.00000'/>
   <Shininess value='25.00000'/>
   <Alpha value='1.00000'/>
   <Shadow shadeless='False' cast='True' receive='True'/>
  </Material>
  <Material name='mtl_cube'>
-  <Color value='0.80000 0.80000 0.80000'/>
+  <Color value='0.10000 0.80000 0.80000'/>
   <Specular value='1.00000 1.00000 1.00000'/>
   <Shininess value='25.00000'/>
   <Alpha value='1.00000'/>

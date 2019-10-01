@@ -167,6 +167,23 @@ class kgmVulkan: public kgmIGC
     VkSampler      sampler;
   };
 
+  struct RenderTarget
+  {
+    VkImage        image;
+    VkImageView    iview;
+    VkDeviceMemory memory;
+
+    VkImage        depth;
+    VkImageView    depthView;
+    VkDeviceMemory depthMemory;
+
+    VkFramebuffer  framebuffer;
+
+    VkSampler      sampler;
+
+    u32 width, height;
+  };
+
   struct Uniforms
   {
     mtx4   g_mView;
@@ -542,6 +559,8 @@ class kgmVulkan: public kgmIGC
   Shader* m_shader = null;
 
   Texture* m_texture = null;
+
+  Texture* m_textures[4];
 
   ActualPipelines m_pipelines;
 

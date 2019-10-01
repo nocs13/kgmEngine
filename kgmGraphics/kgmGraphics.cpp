@@ -223,10 +223,10 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     m_shaders[ShaderNone]     = rc->getShader("none.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
+    m_shaders[ShaderLight]    = rc->getShader("phong.glsl");
     m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
     m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
-    //m_shaders[kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
     //m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
     //m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
   }
@@ -668,12 +668,12 @@ void kgmGraphics::render()
   //sr.render();
   //m_rnd_shadows->render();
 
-  m_rnd_environment->render();
+  //m_rnd_environment->render();
 
   //draw terrain
   if (m_terrain)
   {
-    m_rnd_terrain->render();
+    //m_rnd_terrain->render();
   }
   
   //draw particles
@@ -710,7 +710,7 @@ void kgmGraphics::render()
   m.identity();
   setWorldMatrix(m);
 
-  render(m_shaders[kgmMaterial::TypeBase]);
+  //render(m_shaders[kgmMaterial::TypeBase]);
 
   //gcDrawRect(kgmGui::Rect(1, 100, 256, 256), 0xffffffff, g_tex);
   //gcDrawRect(kgmGui::Rect(1, 200, 300, 300), 0xffffffff, m_map_light.m_col);
@@ -718,12 +718,12 @@ void kgmGraphics::render()
   //if (font)
   //  gcDrawRect(kgmGui::Rect(1, 250, 300, 300), 0xffffffff, (gchandle) font->texture());
 
-  {
-    kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
+  //{
+  //  kgmGameApp* gapp = (kgmGameApp*) kgmApp::application();
 
-    if (((kgmGameBase*)gapp->game())->getKeyState(KEY_Z))
-      gcDrawRect(m_viewport, 0xffffffff, m_rnd_environment->m_tx_cube);
-  }
+  //  if (((kgmGameBase*)gapp->game())->getKeyState(KEY_Z))
+  //    gcDrawRect(m_viewport, 0xffffffff, m_rnd_environment->m_tx_cube);
+  //}
   render_2d();
 
 #ifdef DEBUG

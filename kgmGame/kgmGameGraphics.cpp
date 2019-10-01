@@ -47,7 +47,7 @@ void kgmGameGraphics::render_3d()
     setWorldMatrix(mt);
 
     kgmMaterial mtl;
-    mtl.m_color = kgmMaterial::Color(0xff00ff00);
+    mtl.m_color = kgmMaterial::Color(0xffffffff);
     gc->gcDepth(false, false, gccmp_lequal);
     kgmGraphics::render(&mtl);
     kgmGraphics::render(m_shaders[ShaderLines]);
