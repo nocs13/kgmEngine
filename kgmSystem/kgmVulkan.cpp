@@ -4348,11 +4348,11 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
   else if (!strcmp(u, "g_vSpecular"))
     return &s->ubo.g_vSpecular;
   else if (!strcmp(u, "g_vLight"))
-    return &s->ubo.g_vLight;
+    return &s->ubo.g_vLight[0];
   else if (!strcmp(u, "g_vLightColor"))
-    return &s->ubo.g_vLightColor;
+    return &s->ubo.g_vLightColor[0];
   else if (!strcmp(u, "g_vLightDirection"))
-    return &s->ubo.g_vLightDirection;
+    return &s->ubo.g_vLightDirection[0];
   else if (!strcmp(u, "g_vClipPlane"))
     return &s->ubo.g_vClipPlane;
   else if (!strcmp(u, "g_vUp"))
@@ -4373,6 +4373,39 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
     return &s->ubo.g_fLightPower;
   else if (!strcmp(u, "g_iClipping"))
     return &s->ubo.g_iClipping;
+
+  char lbuf[32];
+
+  if (!strncmp(u, "g_vLight[", 9))
+  {
+    for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
+    {
+      sprintf(lbuf, "g_vLight[%d]\0", i);
+
+      if (!strcmp(u, lbuf))
+        return &s->ubo.g_vLight[i];
+    }
+  }
+  else if (!strncmp(u, "g_vLightColor[", 14))
+  {
+    for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
+    {
+      sprintf(lbuf, "g_vLightColor[%d]\0", i);
+
+      if (!strcmp(u, lbuf))
+        return &s->ubo.g_vLightColor[i];
+    }
+  }
+  else if (!strncmp(u, "g_vLightDirection[", 18))
+  {
+    for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
+    {
+      sprintf(lbuf, "g_vLightDirection[%d]\0", i);
+
+      if (!strcmp(u, lbuf))
+        return &s->ubo.g_vLightDirection[i];
+    }
+  }
 
   return nullptr;
 }

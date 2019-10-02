@@ -149,6 +149,8 @@ class kgmVulkan: public kgmIGC
 #endif
   };
 
+#define VK_MAX_LIGHTS 8
+
   enum VK_RT
   {
     VK_RT_POINT = 0,
@@ -200,9 +202,9 @@ class kgmVulkan: public kgmIGC
     mtx4   g_mTran;
     vec4   g_vColor;
     vec4   g_vSpecular;
-    vec4   g_vLight;
-    vec4   g_vLightColor;
-    vec4   g_vLightDirection;
+    vec4   g_vLight[VK_MAX_LIGHTS];
+    vec4   g_vLightColor[VK_MAX_LIGHTS];
+    vec4   g_vLightDirection[VK_MAX_LIGHTS];
     vec4   g_vClipPlane;
     vec3   g_vUp;
     vec3   g_vEye;
