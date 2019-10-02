@@ -4380,7 +4380,7 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
   {
     for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
     {
-      sprintf(lbuf, "g_vLight[%d]\0", i);
+      sprintf(lbuf, "g_vLight[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLight[i];
@@ -4390,7 +4390,7 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
   {
     for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
     {
-      sprintf(lbuf, "g_vLightColor[%d]\0", i);
+      sprintf(lbuf, "g_vLightColor[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLightColor[i];
@@ -4400,7 +4400,7 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
   {
     for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
     {
-      sprintf(lbuf, "g_vLightDirection[%d]\0", i);
+      sprintf(lbuf, "g_vLightDirection[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLightDirection[i];

@@ -401,7 +401,7 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   kgmString ldirection = "g_vLights[*].direction";
 
 
-  for(u32 i = 0; i < 8; i++)
+  for(u32 i = 0; i < MAX_LIGHTS; i++)
   {
     char c = '0' + (char) i;
     lcolor[10] = c;
