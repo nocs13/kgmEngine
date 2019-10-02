@@ -184,6 +184,15 @@ class kgmVulkan: public kgmIGC
     u32 width, height;
   };
 
+  struct VertexBuffer
+  {
+    VkDeviceMemory vmemory;
+    VkBuffer       vbuffer;
+
+    VkDeviceMemory imemory;
+    VkBuffer       ibuffer;
+  };
+
   struct Uniforms
   {
     mtx4   g_mView;
@@ -294,17 +303,24 @@ class kgmVulkan: public kgmIGC
     kgmArray<Pipeline*> pipelines;
     u32 count;
 
+    ActualPipelines()
+    {
+      init();
+    }
+
     void clear(kgmVulkan* vk)
     {
       for (u32 i = 0; i < count; i++)
         vk->freePipeline(pipelines[i]);
 
       pipelines.clear();
+      count = 0;
     }
 
-    ActualPipelines()
+    void init()
     {
-      pipelines.alloc(128);
+      if (pipelines.length() < 1)
+        pipelines.alloc(128);
       count = 0;
     }
 
@@ -406,6 +422,8 @@ class kgmVulkan: public kgmIGC
     PushConstants constants;
 
     Texture* texture;
+
+    bool vbo;
   };
 
   struct DrawGroup
@@ -495,12 +513,12 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkExtensionProperties> m_extensionProperties;
   kgmArray<const s8*>             m_extensionNames;
 
-
   VkPhysicalDevice m_physicalDevice = 0;
 
   VkSwapchainKHR   m_swapChain      = 0;
   VkRenderPass     m_renderPass     = 0;
   VkCommandPool    m_commandPool    = 0;
+  VkQueue          m_queue          = 0;
 
   kgmArray<VkSemaphore> m_imageSemaphores;
   kgmArray<VkSemaphore> m_renderSemaphores;

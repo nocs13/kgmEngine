@@ -133,6 +133,8 @@ kgmVulkan::~kgmVulkan()
       m_vk.vkWaitForFences(m_device, 1, &m_fences[i], VK_TRUE, UINT64_MAX);
     }
 
+    m_pipelines.clear(this);
+
     for (size_t i = 0; i < SWAPCHAIN_IMAGES; i++)
     {
       m_vk.vkDestroyImageView(m_device, m_imageViews[i], nullptr);
@@ -439,6 +441,9 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
 
 void kgmVulkan::gcResize(u32 width, u32 height)
 {
+  if (width == 0 || height == 0)
+    return;
+
   if (width == m_rect[2] && height == m_rect[3])
     return;
 
@@ -636,8 +641,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   {
     kgm_log() << "Vulkan error: Failed to map mamory!\n";
 
-    m_vk.vkDestroyBuffer(m_device, mesh->vbuffer, null);
-    m_vk.vkFreeMemory(m_device, mesh->vmemory, null);
+    clear(mesh);
 
     return;
   }
@@ -654,6 +658,8 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
                        mesh->ibuffer, mesh->imemory) != VK_SUCCESS)
      {
        kgm_log() << "Vulkan error: Failed create staging buffer!\n";
+
+       clear(mesh);
 
        return;
      }
@@ -679,12 +685,14 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   if(m_texture)
     mesh->texture = m_texture;
 
+  /*
   if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     mesh->ubuffer, mesh->umemory))
   {
     kgm_log() << "Vulkan error: Cannot create memory buffer for shader.\n";
   }
+  */
 
   switch(pmt)
   {
@@ -1507,17 +1515,182 @@ void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
 //VERTEX & INDEX BUFFERS
 void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
 {
+  VertexBuffer* vb = new VertexBuffer;
 
+  ZeroObject(vb);
+
+  if (!createBuffer(vsize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                    vb->vbuffer, vb->vmemory))
+  {
+    kgm_log() << "Vulkan error: Failed to prepare vertex buffer and memory!\n";
+
+    return null;
+  }
+
+  void* data;
+
+  if (m_vk.vkMapMemory(m_device, vb->vmemory, 0, vsize, 0, &data) != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to map mamory!\n";
+
+    gcFreeVertexBuffer(vb);
+
+    return null;
+  }
+
+  memcpy(data, vdata, (size_t) vsize);
+
+  m_vk.vkUnmapMemory(m_device, vb->vmemory);
+
+  if (isize && idata)
+  {
+     VkDeviceSize bufferSize = isize;
+
+     if (!createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                       vb->ibuffer, vb->imemory) != VK_SUCCESS)
+     {
+       kgm_log() << "Vulkan error: Failed create staging buffer!\n";
+
+       gcFreeVertexBuffer(vb);
+
+       return null;
+     }
+
+     if (m_vk.vkMapMemory(m_device, vb->imemory, 0, vsize, 0, &data) != VK_SUCCESS)
+     {
+       kgm_log() << "Vulkan error: Failed to map memory!\n";
+
+       gcFreeVertexBuffer(vb);
+
+       return null;
+     }
+
+     memcpy(data, idata, (size_t) isize);
+
+     m_vk.vkUnmapMemory(m_device, vb->imemory);
+  }
+
+  return vb;
 }
 
-void  kgmVulkan::gcFreeVertexBuffer(void*)
+void  kgmVulkan::gcFreeVertexBuffer(void* p)
 {
+  VertexBuffer* vb = (VertexBuffer*) p;
 
+  if (!vb)
+    return;
+
+  if (vb->vbuffer)
+    m_vk.vkDestroyBuffer(m_device, vb->vbuffer, null);
+
+  if (vb->vmemory)
+    m_vk.vkFreeMemory(m_device, vb->vmemory, null);
+
+  if (vb->ibuffer)
+    m_vk.vkDestroyBuffer(m_device, vb->ibuffer, null);
+
+  if (vb->imemory)
+    m_vk.vkFreeMemory(m_device, vb->imemory, null);
+
+  delete vb;
 }
 
 void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff)
 {
+  VertexBuffer* vb = (VertexBuffer*) buf;
 
+  if (!vb)
+    return;
+
+  if (!m_shader)
+    return;
+
+  if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
+      pmt != gcpmt_triangles && !gcpmt_linestrip)
+    return;
+
+  Draw* mesh = new Draw();
+
+  ZeroObject(*mesh);
+
+  mesh->constants.model    = m_shader->ubo.g_mTran;
+  mesh->constants.color    = m_shader->ubo.g_vColor;
+  mesh->constants.specular = m_shader->ubo.g_vSpecular;
+
+  if(m_texture)
+    mesh->texture = m_texture;
+
+  if (isize && icnt)
+  {
+    mesh->isize = icnt * isize;
+    mesh->icnt = icnt;
+
+    if (isize == 2)
+      mesh->itype = VK_INDEX_TYPE_UINT16;
+    else
+      mesh->itype = VK_INDEX_TYPE_UINT32;
+  }
+
+  switch(pmt)
+  {
+  case gcpmt_triangles:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    break;
+  case gcpmt_trianglestrip:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+    break;
+  case gcpmt_lines:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+    break;
+  case gcpmt_linestrip:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    break;
+  case gcpmt_points:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    break;
+  default:
+    m_topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  };
+
+  {
+    u32 attr = 0;
+
+    if (vfmt & gcv_xyz) {
+      attr++;
+    }
+    if (vfmt & gcv_nor){
+      attr++;
+    }
+    if (vfmt & gcv_uv0){
+      attr++;
+    }
+    if (vfmt & gcv_uv1){
+      attr++;
+    }
+    if (vfmt & gcv_col){
+      attr++;
+    }
+
+    m_vertexAttributes = attr;
+  }
+
+  m_vertexFormat = vfmt;
+  m_vertexStride = vsize;
+
+  mesh->vcnt = vcnt;
+
+  mesh->vbo = true;
+
+  PipelineStatus ps = getCurrentPipelineStatus();
+
+  Pipeline* pipeline = m_pipelines.get(&ps);
+
+  if (!pipeline)
+    pipeline = createPipeline();
+
+  m_pipelines.add(pipeline);
+
+  m_drawGroups.add(mesh, pipeline);
 }
 
 // SHADER
@@ -3127,6 +3300,9 @@ bool kgmVulkan::refreshSwapchain()
     return false;
   }
 
+  clearDraws();
+  m_pipelines.clear(this);
+
   if (m_depthImageView)
     m_vk.vkDestroyImageView(m_device, m_depthImageView, null);
 
@@ -3164,10 +3340,13 @@ bool kgmVulkan::refreshSwapchain()
 
   if (m_swapChain)
   {
+    kgm_log() << "Vulkan: Desrtoying swapchain...\n";
     m_vk.vkDestroySwapchainKHR(m_device, m_swapChain, nullptr);
+    kgm_log() << "Vulkan: Swapchain destroyied.\n";
 
     m_swapChain = VK_NULL_HANDLE;
   }
+
 
   m_frameBuffers.clear();
   m_imageViews.clear();
@@ -3175,7 +3354,6 @@ bool kgmVulkan::refreshSwapchain()
 
   kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
-  clearDraws();
 
   //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
@@ -4215,16 +4393,16 @@ void  kgmVulkan::clear(Shader* s)
 
 void kgmVulkan::clear(Draw* d)
 {
-  if(d->vmemory != VK_NULL_HANDLE)
+  if(!d->vbo && d->vmemory != VK_NULL_HANDLE)
     m_vk.vkFreeMemory(m_device, d->vmemory, NULL);
 
-  if(d->vbuffer != VK_NULL_HANDLE)
+  if(!d->vbo && d->vbuffer != VK_NULL_HANDLE)
     m_vk.vkDestroyBuffer(m_device, d->vbuffer, NULL);
 
-  if(d->imemory != VK_NULL_HANDLE)
+  if(!d->vbo && d->imemory != VK_NULL_HANDLE)
     m_vk.vkFreeMemory(m_device, d->imemory, NULL);
 
-  if(d->ibuffer != VK_NULL_HANDLE)
+  if(!d->vbo && d->ibuffer != VK_NULL_HANDLE)
     m_vk.vkDestroyBuffer(m_device, d->ibuffer, NULL);
 
   if(d->umemory != VK_NULL_HANDLE)
