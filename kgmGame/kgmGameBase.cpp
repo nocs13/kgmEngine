@@ -296,8 +296,8 @@ void kgmGameBase::initGC()
   if (m_gc == null)
     m_gc = new kgmOGL(this);
 
-  if (m_gc)
-    m_gc->gcResize(m_width, m_height);
+  //if (m_gc)
+  //  m_gc->gcResize(m_width, m_height);
 }
 
 void kgmGameBase::initSettings()
@@ -526,7 +526,7 @@ int kgmGameBase::gInit()
 
   log("open renderer...");
   m_graphics = new kgmGameGraphics(m_gc, m_resources);
-  m_graphics->resize(m_width, m_height);
+  //m_graphics->resize(m_width, m_height);
 
   log("init game logic...");
   initLogic();

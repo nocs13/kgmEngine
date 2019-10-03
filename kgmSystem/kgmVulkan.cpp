@@ -119,6 +119,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_textures[0] = m_textures[1] =
   m_textures[2] = m_textures[3] = null;
 
+  m_pipelines = new ActualPipelines(this);
+
   kgm_log() << "Vulkan: Successfully prepared.\n";
 }
 
@@ -133,7 +135,7 @@ kgmVulkan::~kgmVulkan()
       m_vk.vkWaitForFences(m_device, 1, &m_fences[i], VK_TRUE, UINT64_MAX);
     }
 
-    m_pipelines.clear(this);
+    delete m_pipelines;
 
     for (size_t i = 0; i < SWAPCHAIN_IMAGES; i++)
     {
@@ -524,9 +526,9 @@ void  kgmVulkan::gcRender()
     return;
   }*/
 
-  VkQueue queue;
+  //VkQueue queue;
 
-  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
+  //m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
   //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -547,7 +549,7 @@ void  kgmVulkan::gcRender()
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
-  result = m_vk.vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+  result = m_vk.vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 
   /*if(result != VkResult::VK_SUCCESS)
   {
@@ -584,7 +586,7 @@ void  kgmVulkan::gcRender()
   presentInfo.pImageIndices = &swapChainImage;
   presentInfo.pResults = &result;
 
-  result = m_vk.vkQueuePresentKHR(queue, &presentInfo);
+  result = m_vk.vkQueuePresentKHR(m_presentQueue, &presentInfo);
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR  || result == VK_SUBOPTIMAL_KHR)
   {
@@ -602,7 +604,8 @@ void  kgmVulkan::gcRender()
 
   //kgm_log() << "Vulkan: Queue present passed.\n";
 
-  m_vk.vkQueueWaitIdle(queue);
+  m_vk.vkQueueWaitIdle(m_graphicsQueue);
+  m_vk.vkQueueWaitIdle(m_presentQueue);
 
   clearDraws();
 
@@ -746,12 +749,12 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 
   PipelineStatus ps = getCurrentPipelineStatus();
 
-  Pipeline* pipeline = m_pipelines.get(&ps);
+  Pipeline* pipeline = m_pipelines->get(&ps);
 
   if (!pipeline)
     pipeline = createPipeline();
 
-  m_pipelines.add(pipeline);
+  m_pipelines->add(pipeline);
 
   m_drawGroups.add(mesh, pipeline);
 }
@@ -1683,12 +1686,12 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
 
   PipelineStatus ps = getCurrentPipelineStatus();
 
-  Pipeline* pipeline = m_pipelines.get(&ps);
+  Pipeline* pipeline = m_pipelines->get(&ps);
 
   if (!pipeline)
     pipeline = createPipeline();
 
-  m_pipelines.add(pipeline);
+  m_pipelines->add(pipeline);
 
   m_drawGroups.add(mesh, pipeline);
 }
@@ -3300,9 +3303,6 @@ bool kgmVulkan::refreshSwapchain()
     return false;
   }
 
-  clearDraws();
-  m_pipelines.clear(this);
-
   if (m_depthImageView)
     m_vk.vkDestroyImageView(m_device, m_depthImageView, null);
 
@@ -3314,7 +3314,7 @@ bool kgmVulkan::refreshSwapchain()
 
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
-    m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+    //m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
     m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
   }
 
@@ -3347,15 +3347,14 @@ bool kgmVulkan::refreshSwapchain()
     m_swapChain = VK_NULL_HANDLE;
   }
 
-
   m_frameBuffers.clear();
   m_imageViews.clear();
   m_swapChainImages.clear();
 
+  clearDraws();
+
   kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
-
-  //m_vk.vkDestroyDescriptorSetLayout(m_device, descriptorSetLayout, nullptr);
 
   initSwapchain();
   initRenderPass();

@@ -302,15 +302,23 @@ class kgmVulkan: public kgmIGC
 
   struct ActualPipelines
   {
+    kgmVulkan* vk;
     kgmArray<Pipeline*> pipelines;
     u32 count;
 
-    ActualPipelines()
+    ActualPipelines(kgmVulkan* v)
     {
+      vk = v;
+
       init();
     }
 
-    void clear(kgmVulkan* vk)
+    ~ActualPipelines()
+    {
+      clear();
+    }
+
+    void clear()
     {
       for (u32 i = 0; i < count; i++)
         vk->freePipeline(pipelines[i]);
@@ -582,7 +590,7 @@ class kgmVulkan: public kgmIGC
 
   Texture* m_textures[4];
 
-  ActualPipelines m_pipelines;
+  ActualPipelines* m_pipelines = null;
 
   s32 m_rect[4];
   f32 m_bgColor[4];
