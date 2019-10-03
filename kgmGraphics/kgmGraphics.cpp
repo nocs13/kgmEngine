@@ -223,7 +223,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     m_shaders[ShaderNone]     = rc->getShader("none.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
-    m_shaders[ShaderLight]    = rc->getShader("phong.glsl");
+    m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
     m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
@@ -657,11 +657,11 @@ void kgmGraphics::render()
   //draw scene only lights
   render((kgmMaterial*)null);
 
-  m_rnd_color->render();
+  //m_rnd_color->render();
 
   lighting = true;
 
-  //m_rnd_lights->render();
+  m_rnd_lights->render();
   //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);

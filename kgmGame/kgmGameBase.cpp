@@ -99,7 +99,7 @@ kgmGameBase::kgmGameBase()
 
   getRect(rc[0], rc[1], rc[2], rc[3]);
 
-  onResize(rc[2], rc[3]);
+  //onResize(rc[2], rc[3]);
 
   m_state = -1;
 }
@@ -478,6 +478,7 @@ void kgmGameBase::onResize(int w, int h)
 
   float sw = (float)w / (float)prev_width;
   float sh = (float)h / (float)prev_height;
+
   for(int i = 0; i < m_guis.size(); i++)
     m_guis[i]->scale(sw, sh);
 }
@@ -526,7 +527,7 @@ int kgmGameBase::gInit()
 
   log("open renderer...");
   m_graphics = new kgmGameGraphics(m_gc, m_resources);
-  //m_graphics->resize(m_width, m_height);
+  m_graphics->resize(m_width, m_height);
 
   log("init game logic...");
   initLogic();
