@@ -27,6 +27,7 @@ struct Data
   vec2 uv;
 
   float shine;
+  float lcount;
 
   Light lights[MAX_LIGHTS];
 };
@@ -49,8 +50,9 @@ void main()
 
   float intensity = data.lights[0].power * max(dot(n,l), 0.1);
 
+  vec4 lcolor = vec4(data.lights[0].col, 1.0);
 
-  for(int i = 0; i < MAX_LIGHTS; i++)
+  for (int i = 0; i < data.lcount; i++)
   {
     vec3  l  = normalize(data.lights[i].pos);
     float sh = dot(l, data.eye);
@@ -68,5 +70,6 @@ void main()
   fcolor.xyz  = intensity * tcolor.xyz + spec.xyz;
   fcolor.w    = tcolor.w;
 
-  fragColor = tcolor;
+  fragColor = vec4(normalize(data.lights[0].pos), 1.0);
+  //fragColor = tnormal;
 }

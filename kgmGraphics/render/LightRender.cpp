@@ -15,19 +15,11 @@ const u32 g_res = 512;
 LightRender::LightRender(kgmGraphics* g)
   :BaseRender(g)
 {
-  //m_sh_toon  = gr->m_shaders[kgmMaterial::TypeToon];
-  //m_sh_phong = gr->m_shaders[kgmMaterial::TypePhong];
-
-  //m_sh_phong = gr->rc->getShader("phong2.glsl");
-  //m_sh_phong = gr->rc->getShader("phongbase.glsl");
-  //m_sh_lmap  = gr->rc->getShader("phonglmap.glsl");
-
-  m_target      = gc->gcGenTarget(g_res, g_res, true, false);
+  m_target = gc->gcGenTarget(g_res, g_res, true, false);
 
   gc->gcSet(gcpar_texfltmag, (void*)gcflt_linear);
   gc->gcSet(gcpar_texfltmin, (void*)gcflt_linear);
   m_tx_lightmap = gc->gcGenTexture(null, g_res, g_res, gctex_fmt24, gctype_tex2d);
-
 }
 
 LightRender::~LightRender()
@@ -75,12 +67,12 @@ void LightRender::render()
     gr->setWorldMatrix(m);
 
     material(mtl);
-    shader(sh, gr->m_camera, mtl, nod, lights);
+    shader(sh, gr->m_camera, mtl, nod, lights, lcount);
 
     gr->render(msh);
 
     material(null);
-    shader(null, null, null, null, null);
+    shader(null, null, null, null, null, null);
   }
 
   gc->gcBlend(false, 0, null, null);
@@ -232,9 +224,6 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   s->set("g_mTran",           m);
   s->set("g_vColor",          color);
   s->set("g_vSpecular",       specular);
-  s->set("g_vLight",          v_light);
-  s->set("g_vLightColor",     v_light_color);
-  s->set("g_vLightDirection", v_light_direction);
   s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
@@ -354,7 +343,8 @@ void LightRender::material(kgmMaterial* m)
   }
 }
 
-void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod, Light lights[8])
+void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod,
+                         Light* lights, u32 lcount)
 {
   if(!s)
   {
@@ -384,13 +374,11 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   s->set("g_mTran",           transform);
   s->set("g_vColor",          color);
   s->set("g_vSpecular",       specular);
-  s->set("g_vLight",          v_light);
-  s->set("g_vLightColor",     v_light_color);
-  s->set("g_vLightDirection", v_light_direction);
   s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
   s->set("g_iClipping",       0);
+  s->set("g_iLights",         lcount);
 
   s->set("g_txColor", 0);
   s->set("g_txNormal", 1);
@@ -401,20 +389,20 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   kgmString ldirection = "g_vLights[*].direction";
 
 
-  for(u32 i = 0; i < MAX_LIGHTS; i++)
+  for(u32 i = 0; i < lcount; i++)
   {
     char c = '0' + (char) i;
     lcolor[10] = c;
     lposition[10] = c;
     ldirection[10] = c;
 
-     s->set(lcolor, lights[i].color);
-     s->set(lposition, lights[i].position);
+     s->set(lcolor,     lights[i].color);
+     s->set(lposition,  lights[i].position);
      s->set(ldirection, lights[i].direction);
   }
 }
 
-u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light lights[])
+u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light* lights)
 {
   if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
     return 0;

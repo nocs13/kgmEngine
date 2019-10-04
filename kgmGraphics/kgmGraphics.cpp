@@ -518,6 +518,7 @@ void kgmGraphics::render()
     m_a_meshes[m_a_meshes_count] = null;
 
   //prepare for render
+
   gc->gcSetTarget(null);
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 
@@ -538,77 +539,7 @@ void kgmGraphics::render()
 
   m_a_light_count = 0;
 
-  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
-  {
-    if(!(*i)->isNodeValid())
-      continue;
-
-    vec3 pos = (*i)->getNodePosition();
-
-    kgmLight* l = (kgmLight*) (*i)->getNodeObject();
-
-    if (l->type() != kgmLight::TypeSun)
-    {
-      if(!m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * l->intensity()))
-        continue;
-    }
-
-    if (m_a_light_count < 1)
-    {
-      m_a_lights[0] = (*i);
-
-      m_a_light_count = 1;
-
-      continue;
-    }
-
-    f32 lc = l->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
-
-    if (l->type() == kgmLight::TypeSun)
-      lc = 9999999999999.99;
-
-    bool insert = false;
-
-    for (u32 li = 0; li < m_a_light_count; li++)
-    {
-      INode* lnode = m_a_lights[li];
-
-      if (((kgmLight*) lnode->getNodeObject())->type() == kgmLight::TypeSun)
-        continue;
-
-      f32 cc = ((kgmLight*) lnode->getNodeObject())->intensity() / (m_camera->mPos.distance(pos) + 1.0f);
-
-      if (lc > cc)
-      {
-        if (li < (MAX_LIGHTS - 1))
-        {
-          for (u32 j = m_a_light_count - 1; j > li; j--)
-          {
-            if (j != (MAX_LIGHTS - 1))
-            {
-              m_a_lights[j + 1] = m_a_lights[j];
-            }
-          }
-
-          m_a_lights[li + 1] = m_a_lights[li];
-        }
-
-        m_a_lights[li] = (*i);
-
-        insert = true;
-
-        if(m_a_light_count < MAX_LIGHTS)
-          m_a_light_count++;
-
-        break;
-      }
-    }
-
-    if (!insert && (m_a_light_count < MAX_LIGHTS))
-    {
-      m_a_lights[m_a_light_count++] = (*i);
-    }
-  }
+  m_a_light_count = collectLights(m_camera, m_a_lights, MAX_LIGHTS);
 
   if (m_a_light_count == 0)
   {
@@ -617,42 +548,9 @@ void kgmGraphics::render()
     m_a_light_count = 1;
   }
 
-  for (u32 li = 0; li < m_a_light_count; li++)
-  {
-    INode* lnode = m_a_lights[li];
-
-    vec3 v = lnode->getNodePosition();
-
-    kgmLight* light = (kgmLight*) lnode->getNodeObject();
-
-    m_light_data.pos_pow[li] = vec4(v.x, v.y, v.z, light->intensity());
-
-    v = light->direction();
-
-    m_light_data.dir_ang[li] = vec4(v.x, v.y, v.z, light->angle());
-
-    v = light->color();
-
-    m_light_data.col_per[li] = vec4(v.x, v.y, v.z, 0);
-  }
-
-  m_light_data.count = m_a_light_count;
-
   m_a_light = m_a_lights[0];
 
-  m_a_particles_count = 0;
-
-  for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
-  {
-    if(!(*i)->isNodeValid())
-      continue;
-
-    if (m_a_particles_count == m_a_particles.length())
-      m_a_particles.realloc(m_a_particles_count + 1024);
-
-    m_a_particles[m_a_particles_count] = (*i);
-    m_a_particles_count++;
-  }
+  m_a_particles_count = collectParticles(m_camera, m_a_particles, 128);
 
   //draw scene only lights
   render((kgmMaterial*)null);
@@ -662,6 +560,7 @@ void kgmGraphics::render()
   lighting = true;
 
   m_rnd_lights->render();
+
   //m_rnd_lights->lightmap();
 
   //ShadowRender sr(this);
@@ -1451,6 +1350,28 @@ u32 kgmGraphics::collectMeshes(kgmCamera *cam, kgmArray<INode *> &nodes, u32 max
       break;
     else
       nodes[count++] = mnod;
+  }
+
+  return count;
+}
+
+u32 kgmGraphics::collectParticles(kgmCamera* cam, kgmArray<INode*>& array, u32 max)
+{
+  u32 count = 0;
+
+  for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
+  {
+    if(!(*i)->isNodeValid())
+      continue;
+
+    if(!m_camera->isSphereCross((*i)->getNodePosition(), 10))
+      continue;
+
+    if (count == array.length())
+      array.realloc(count + 32);
+
+    array[count] = (*i);
+    count++;
   }
 
   return count;

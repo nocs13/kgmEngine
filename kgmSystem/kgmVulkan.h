@@ -149,7 +149,8 @@ class kgmVulkan: public kgmIGC
 #endif
   };
 
-#define VK_MAX_LIGHTS 8
+#define VK_MAX_LIGHTS   8
+#define VK_MAX_TEXTURES 4
 
   enum VK_RT
   {
@@ -197,15 +198,22 @@ class kgmVulkan: public kgmIGC
 
   struct Uniforms
   {
+    struct  Light
+    {
+      vec4  position;
+      vec4  direction;
+      vec4  color;
+    };
+
     mtx4   g_mView;
     mtx4   g_mProj;
     mtx4   g_mTran;
     vec4   g_vColor;
     vec4   g_vSpecular;
-    vec4   g_vLight[VK_MAX_LIGHTS];
-    vec4   g_vLightColor[VK_MAX_LIGHTS];
-    vec4   g_vLightDirection[VK_MAX_LIGHTS];
     vec4   g_vClipPlane;
+
+    Light  g_vLights[VK_MAX_LIGHTS];
+
     vec3   g_vUp;
     vec3   g_vEye;
     vec3   g_vLook;
@@ -214,7 +222,8 @@ class kgmVulkan: public kgmIGC
     float  g_fRandom;
     float  g_fAmbient;
     float  g_fLightPower;
-    int    g_iClipping = 0;
+    int    g_iClipping;
+    int    g_iLights;
   };
 
   struct PushConstants
@@ -431,7 +440,7 @@ class kgmVulkan: public kgmIGC
 
     PushConstants constants;
 
-    Texture* texture;
+    Texture* textures[VK_MAX_TEXTURES];
 
     bool vbo;
   };
@@ -586,9 +595,9 @@ class kgmVulkan: public kgmIGC
 
   Shader* m_shader = null;
 
-  Texture* m_texture = null;
+  //Texture* m_texture = null;
 
-  Texture* m_textures[4];
+  Texture* m_textures[4] = { null };
 
   ActualPipelines* m_pipelines = null;
 

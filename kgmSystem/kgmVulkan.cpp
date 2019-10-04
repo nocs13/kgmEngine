@@ -114,7 +114,6 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_cullFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   m_shader  = null;
-  m_texture = null;
 
   m_textures[0] = m_textures[1] =
   m_textures[2] = m_textures[3] = null;
@@ -685,8 +684,13 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   mesh->constants.color    = m_shader->ubo.g_vColor;
   mesh->constants.specular = m_shader->ubo.g_vSpecular;
 
-  if(m_texture)
-    mesh->texture = m_texture;
+  for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
+  {
+    if (m_textures[i] != null)
+      mesh->textures[i] = m_textures[i];
+    else
+      break;
+  }
 
   /*
   if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -1080,10 +1084,6 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   }
 
   kgm_log() << "Vulkan: Generated sampler.\n";
-
-  if (!m_texture)
-    m_texture = t;
-
   kgm_log() << "Vulkan: Generated texture.\n";
 
   return t;
@@ -1108,11 +1108,8 @@ void  kgmVulkan::gcFreeTexture(void *t)
 
 void  kgmVulkan::gcSetTexture(u32 stage, void *t)
 {
-  if (t)
-    m_texture = (Texture *)t;
-
-  if (stage < 4)
-    m_textures[stage] = (Texture *)t;
+  if (stage < VK_MAX_TEXTURES)
+    m_textures[stage] = (Texture*) t;
 }
 
 // TARGET
@@ -1620,8 +1617,13 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
   mesh->constants.color    = m_shader->ubo.g_vColor;
   mesh->constants.specular = m_shader->ubo.g_vSpecular;
 
-  if(m_texture)
-    mesh->texture = m_texture;
+  for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
+  {
+    if (m_textures[i] != null)
+      mesh->textures[i] = m_textures[i];
+    else
+      break;
+  }
 
   if (isize && icnt)
   {
@@ -3447,8 +3449,7 @@ void kgmVulkan::fillCommands()
   renderPassBeginInfo.framebuffer = framebuffer;
   renderPassBeginInfo.renderArea = VkRect2D {
       VkOffset2D  {0, 0},
-      VkExtent2D  { m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height }
-};
+      VkExtent2D  { m_surfaceCapabilities.currentExtent.width, m_surfaceCapabilities.currentExtent.height } };
 
   renderPassBeginInfo.clearValueCount = clearCount;
   renderPassBeginInfo.pClearValues = clearValue;
@@ -3485,7 +3486,7 @@ void kgmVulkan::fillCommands()
 
       if (pipeline->descriptor)
       {
-        if (draw->texture)
+        if (draw->textures[0])
         {
           VkDescriptorBufferInfo bufferInfo;
 
@@ -3494,19 +3495,26 @@ void kgmVulkan::fillCommands()
           bufferInfo.offset = 0;
           bufferInfo.range = sizeof(Uniforms);
 
-          VkDescriptorImageInfo imageInfo;
+          VkDescriptorImageInfo imageInfo[VK_MAX_TEXTURES];
+          u32                   imageInfoCount = 0;
 
           ZeroObject(imageInfo);
-          imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-          imageInfo.imageView   = draw->texture->iview;
-          imageInfo.sampler     = draw->texture->sampler;
 
-          VkWriteDescriptorSet descriptorWrites[2];
+          for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
+          {
+            if (draw->textures[i] == null)
+              break;
+
+            imageInfo[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo[i].imageView   = draw->textures[i]->iview;
+            imageInfo[i].sampler     = draw->textures[i]->sampler;
+
+            imageInfoCount++;
+          }
+
+          VkWriteDescriptorSet descriptorWrites[1 + VK_MAX_TEXTURES];
 
           u32 descriptorWritesCount = 1;
-
-          if (pipeline->vertexFormat & gcv_uv0)
-            descriptorWritesCount++;
 
           ZeroObject(descriptorWrites[0]);
           descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -3517,14 +3525,19 @@ void kgmVulkan::fillCommands()
           descriptorWrites[0].descriptorCount = 1;
           descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-          ZeroObject(descriptorWrites[1]);
-          descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-          descriptorWrites[1].dstSet = pipeline->descriptor;
-          descriptorWrites[1].dstBinding = 1;
-          descriptorWrites[1].dstArrayElement = 0;
-          descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-          descriptorWrites[1].descriptorCount = 1;
-          descriptorWrites[1].pImageInfo = &imageInfo;
+          for (u32 i = 0; i < imageInfoCount; i++)
+          {
+            ZeroObject(descriptorWrites[1 + i]);
+            descriptorWrites[1 + i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[1 + i].dstSet = pipeline->descriptor;
+            descriptorWrites[1 + i].dstBinding = 1 + i;
+            descriptorWrites[1 + i].dstArrayElement = 0;
+            descriptorWrites[1 + i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            descriptorWrites[1 + i].descriptorCount = 1;
+            descriptorWrites[1 + i].pImageInfo = &imageInfo[i];
+
+            descriptorWritesCount++;
+          }
 
           m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
         }
@@ -3865,22 +3878,26 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   uboLayoutBinding.descriptorCount = 1;
   uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
-  VkDescriptorSetLayoutBinding samplerLayoutBinding;
+  VkDescriptorSetLayoutBinding samplerLayoutBinding[VK_MAX_TEXTURES];
 
   ZeroObject(samplerLayoutBinding);
-  samplerLayoutBinding.binding = 1;
-  samplerLayoutBinding.descriptorCount = 1;
-  samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  samplerLayoutBinding.pImmutableSamplers = nullptr;
-  samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-  VkDescriptorSetLayoutBinding layoutBinding[] = {uboLayoutBinding, samplerLayoutBinding};
+  for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
+  {
+    samplerLayoutBinding[i].binding = 1 + i;
+    samplerLayoutBinding[i].descriptorCount = 1;
+    samplerLayoutBinding[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    samplerLayoutBinding[i].pImmutableSamplers = nullptr;
+    samplerLayoutBinding[i].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+  }
+  VkDescriptorSetLayoutBinding layoutBinding[] = { uboLayoutBinding, samplerLayoutBinding[0], samplerLayoutBinding[1],
+                                                   samplerLayoutBinding[2], samplerLayoutBinding[3] };
 
   VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
 
   ZeroObject(layoutCreateInfo);
   layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutCreateInfo.bindingCount = (m_vertexFormat & gcv_uv0) ? (2) : (1);
+  layoutCreateInfo.bindingCount = 5;
   layoutCreateInfo.pBindings = layoutBinding;
 
   result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &pipeline->setlayout);
@@ -3946,14 +3963,24 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   bufferInfo.offset = 0;
   bufferInfo.range = sizeof(Uniforms);
 
-  VkDescriptorImageInfo imageInfo;
+  VkDescriptorImageInfo imageInfo[VK_MAX_TEXTURES];
+  u32                   imageInfoCount = 0;
 
   ZeroObject(imageInfo);
-  imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-  imageInfo.imageView   = (m_texture) ? (m_texture->iview) : (VK_NULL_HANDLE);
-  imageInfo.sampler     = (m_texture) ? (m_texture->sampler) : (VK_NULL_HANDLE);
 
-  VkWriteDescriptorSet descriptorWrites[2];
+  for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
+  {
+    if (m_textures[i] == null)
+      break;
+
+    imageInfo[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo[i].imageView   = m_textures[i]->iview;
+    imageInfo[i].sampler     = m_textures[i]->sampler;
+
+    imageInfoCount++;
+  }
+
+  VkWriteDescriptorSet descriptorWrites[1 + VK_MAX_TEXTURES];
 
   u32 descriptorWritesCount = 1;
 
@@ -3966,18 +3993,21 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[0].descriptorCount = 1;
   descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-  if ((layoutCreateInfo.bindingCount > 1) && m_texture)
+  if ((layoutCreateInfo.bindingCount > 1) && m_textures[0])
   {
-    ZeroObject(descriptorWrites[1]);
-    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrites[1].dstSet = pipeline->descriptor;
-    descriptorWrites[1].dstBinding = 1;
-    descriptorWrites[1].dstArrayElement = 0;
-    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    descriptorWrites[1].descriptorCount = 1;
-    descriptorWrites[1].pImageInfo = &imageInfo;
+    for (u32 i = 0; i < imageInfoCount; i++)
+    {
+      ZeroObject(descriptorWrites[1 + i]);
+      descriptorWrites[1 + i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptorWrites[1 + i].dstSet = pipeline->descriptor;
+      descriptorWrites[1 + i].dstBinding = 1;
+      descriptorWrites[1 + i].dstArrayElement = 0;
+      descriptorWrites[1 + i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      descriptorWrites[1 + i].descriptorCount = 1;
+      descriptorWrites[1 + i].pImageInfo = &imageInfo[i];
 
-    descriptorWritesCount++;
+      descriptorWritesCount++;
+    }
   }
 
   m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
@@ -4346,12 +4376,6 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
     return &s->ubo.g_vColor;
   else if (!strcmp(u, "g_vSpecular"))
     return &s->ubo.g_vSpecular;
-  else if (!strcmp(u, "g_vLight"))
-    return &s->ubo.g_vLight[0];
-  else if (!strcmp(u, "g_vLightColor"))
-    return &s->ubo.g_vLightColor[0];
-  else if (!strcmp(u, "g_vLightDirection"))
-    return &s->ubo.g_vLightDirection[0];
   else if (!strcmp(u, "g_vClipPlane"))
     return &s->ubo.g_vClipPlane;
   else if (!strcmp(u, "g_vUp"))
@@ -4372,37 +4396,29 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
     return &s->ubo.g_fLightPower;
   else if (!strcmp(u, "g_iClipping"))
     return &s->ubo.g_iClipping;
+  else if (!strcmp(u, "g_iLights"))
+    return &s->ubo.g_iLights;
 
   char lbuf[32];
 
-  if (!strncmp(u, "g_vLight[", 9))
+  if (!strncmp(u, "g_vLights[", 9))
   {
     for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
     {
-      sprintf(lbuf, "g_vLight[%d]", i);
+      sprintf(lbuf, "g_vLights[%d].position", i);
 
       if (!strcmp(u, lbuf))
-        return &s->ubo.g_vLight[i];
-    }
-  }
-  else if (!strncmp(u, "g_vLightColor[", 14))
-  {
-    for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
-    {
-      sprintf(lbuf, "g_vLightColor[%d]", i);
+        return &s->ubo.g_vLights[i].position;
+
+      sprintf(lbuf, "g_vLights[%d].direction", i);
 
       if (!strcmp(u, lbuf))
-        return &s->ubo.g_vLightColor[i];
-    }
-  }
-  else if (!strncmp(u, "g_vLightDirection[", 18))
-  {
-    for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
-    {
-      sprintf(lbuf, "g_vLightDirection[%d]", i);
+        return &s->ubo.g_vLights[i].direction;
+
+      sprintf(lbuf, "g_vLights[%d].color", i);
 
       if (!strcmp(u, lbuf))
-        return &s->ubo.g_vLightDirection[i];
+        return &s->ubo.g_vLights[i].color;
     }
   }
 

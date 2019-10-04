@@ -40,7 +40,7 @@ public:
 
 private:
   void material(kgmMaterial*);
-  void shader(kgmShader*, kgmCamera*, kgmMaterial*, kgmIGraphics::INode*, Light[8]);
+  void shader(kgmShader*, kgmCamera*, kgmMaterial*, kgmIGraphics::INode*, Light*, u32);
   u32  collect(kgmCamera*, kgmIGraphics::INode*, Light[8]);
 };
 

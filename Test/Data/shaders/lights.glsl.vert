@@ -3,6 +3,13 @@
 
 #define MAX_LIGHTS 8
 
+struct InLight
+{
+  vec4 position;
+  vec4 direction;
+  vec4 color;
+};
+
 layout(binding = 0) uniform UniformBufferObject 
 {
  mat4   g_mView;           
@@ -10,10 +17,10 @@ layout(binding = 0) uniform UniformBufferObject
  mat4   g_mTran;           
  vec4   g_vColor;          
  vec4   g_vSpecular;       
- vec4   g_vLight[MAX_LIGHTS];
- vec4   g_vLightColor[MAX_LIGHTS];
- vec4   g_vLightDirection[MAX_LIGHTS];
  vec4   g_vClipPlane;      
+
+ InLight g_vLights[MAX_LIGHTS];
+
  vec3   g_vUp;             
  vec3   g_vEye;            
  vec3   g_vLook;           
@@ -23,6 +30,7 @@ layout(binding = 0) uniform UniformBufferObject
  float  g_fAmbient;        
  float  g_fLightPower;     
  int    g_iClipping;
+ int    g_iLights;
 } ubo;
 
 layout(push_constant) uniform ConstBlock
@@ -52,13 +60,14 @@ struct Data
   vec2 uv;
 
   float shine;
+  float lcount;
 
-  Light lights[8];
+  Light lights[MAX_LIGHTS];
 };
 
 layout(location = 0) in vec3 a_Vertex;
 layout(location = 1) in vec3 a_Normal;
-layout(location = 2) in uint a_Color;
+layout(location = 2) in float a_Color;
 layout(location = 3) in vec2 a_UV;
 
 layout(location = 0) out Data data;
@@ -81,19 +90,24 @@ void main()
 
   data.uv = a_UV;
 
+  //data.color = unpackUnorm4x8(uint(a_Color));
   data.color = ubo.g_vColor;
 
   pos =  ubo.g_mProj * ubo.g_mView * pos;
 
-  for (int i = 0; i < MAX_LIGHTS; i++)
-  {
-    data.lights[i].pos = ubo.g_vLight[i].xyz;
-    data.lights[i].col = ubo.g_vLightColor[i].rgb;
-    data.lights[i].dir = ubo.g_vLightDirection[i].xyz;
+  data.lcount = float(ubo.g_iLights);
 
-    data.lights[i].power = ubo.g_vLight[i].w;
-    data.lights[i].angle = ubo.g_vLightDirection[i].w;
+  for (int i = 0; i < ubo.g_iLights; i++)
+  {
+    data.lights[i].pos = ubo.g_vLights[i].position.xyz;
+    data.lights[i].col = ubo.g_vLights[i].color.rgb;
+    data.lights[i].dir = ubo.g_vLights[i].direction.xyz;
+
+    data.lights[i].power = ubo.g_vLights[i].position.w;
+    data.lights[i].angle = ubo.g_vLights[i].direction.w;
   }
+
+  pos.y = -pos.y;
 
   gl_Position = pos;
 }
