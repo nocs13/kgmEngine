@@ -3,13 +3,6 @@
 
 #define MAX_LIGHTS 8
 
-struct InLight
-{
-  vec4 position;
-  vec4 direction;
-  vec4 color;
-};
-
 layout(binding = 0) uniform UniformBufferObject 
 {
  mat4   g_mView;           
@@ -19,7 +12,9 @@ layout(binding = 0) uniform UniformBufferObject
  vec4   g_vSpecular;       
  vec4   g_vClipPlane;      
 
- InLight g_vLights[MAX_LIGHTS];
+ vec4   g_vLightPos[MAX_LIGHTS];
+ vec4   g_vLightDir[MAX_LIGHTS];
+ vec4   g_vLightCol[MAX_LIGHTS];
 
  vec3   g_vUp;             
  vec3   g_vEye;            
@@ -40,20 +35,15 @@ layout(push_constant) uniform ConstBlock
   vec4   specular;
 } cb;
 
-struct Light
-{
-  vec3  pos;
-  vec3  dir;
-  vec3  col;
-  float angle;
-  float power;
-};
-
 struct Data
 {
   vec4 color;
   vec4 position;
   vec4 posinview;
+  vec4 lightpos[MAX_LIGHTS];
+  vec4 lightdir[MAX_LIGHTS];
+  vec4 lightcol[MAX_LIGHTS];
+
   vec3 nor;
   vec3 eye;
   vec3 eyedir;
@@ -61,8 +51,6 @@ struct Data
 
   float shine;
   float lcount;
-
-  Light lights[MAX_LIGHTS];
 };
 
 layout(location = 0) in vec3 a_Vertex;
@@ -99,12 +87,9 @@ void main()
 
   for (int i = 0; i < ubo.g_iLights; i++)
   {
-    data.lights[i].pos = ubo.g_vLights[i].position.xyz;
-    data.lights[i].col = ubo.g_vLights[i].color.rgb;
-    data.lights[i].dir = ubo.g_vLights[i].direction.xyz;
-
-    data.lights[i].power = ubo.g_vLights[i].position.w;
-    data.lights[i].angle = ubo.g_vLights[i].direction.w;
+    data.lightpos[i] = ubo.g_vLightPos[i];
+    data.lightdir[i] = ubo.g_vLightDir[i];
+    data.lightcol[i] = ubo.g_vLightCol[i];
   }
 
   pos.y = -pos.y;

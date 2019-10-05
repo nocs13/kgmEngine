@@ -38,36 +38,45 @@ void LightRender::render()
 
   kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderLight];
 
-  gr->wired(false);
+  Light lights[MAX_LIGHTS];
+
+  if (gr->m_a_light_count < 1)
+    return;
+
+  for (u32 i = 0; i < gr->m_a_light_count; i++)
+  {
+    kgmLight* l = (kgmLight *) gr->m_a_lights[i]->getNodeObject();
+
+    vec3 vec;
+
+
+    vec = l->color();
+    memcpy(&lights[i].color, &vec, 3 * sizeof(float));
+
+    vec = gr->m_a_lights[i]->getNodePosition();
+    memcpy(&lights[i].position, &vec, 3 * sizeof(float));
+
+    vec = l->direction();
+    memcpy(&lights[i].direction, &vec, 3 * sizeof(float));
+
+    lights[i].position.w = l->intensity();
+    lights[i].direction.w = l->angle();
+  }
 
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode* nod = gr->m_a_meshes[i];
 
-    Light lights[MAX_LIGHTS];
-
-    u32 lcount = collect(gr->m_camera, nod, lights);
-
-    if (lcount < 1)
-      continue;
 
     kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
     kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
-    box3    bbound = nod->getNodeBound();
-    sphere3 sbound;
-
-    bbound.min = nod->getNodeTransform() * bbound.min;
-    bbound.max = nod->getNodeTransform() * bbound.max;
-
-    sbound.center = bbound.center();
-    sbound.radius = 0.5f * bbound.dimension().length();
 
     mtx4 m = nod->getNodeTransform();
     gr->setWorldMatrix(m);
 
     material(mtl);
-    shader(sh, gr->m_camera, mtl, nod, lights, lcount);
+    shader(sh, gr->m_camera, mtl, nod, lights, gr->m_a_light_count);
 
     gr->render(msh);
 
@@ -384,9 +393,9 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   s->set("g_txNormal", 1);
   s->set("g_txSpecular", 2);
 
-  kgmString lcolor = "g_vLights[*].color";
-  kgmString lposition = "g_vLights[*].position";
-  kgmString ldirection = "g_vLights[*].direction";
+  kgmString lcolor = "g_vLightCol[*]";
+  kgmString lposition = "g_vLightPos[*]";
+  kgmString ldirection = "g_vLightDir[*]";
 
 
   for(u32 i = 0; i < lcount; i++)

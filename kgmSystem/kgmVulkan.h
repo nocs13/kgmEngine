@@ -198,13 +198,6 @@ class kgmVulkan: public kgmIGC
 
   struct Uniforms
   {
-    struct  Light
-    {
-      vec4  position;
-      vec4  direction;
-      vec4  color;
-    };
-
     mtx4   g_mView;
     mtx4   g_mProj;
     mtx4   g_mTran;
@@ -212,7 +205,9 @@ class kgmVulkan: public kgmIGC
     vec4   g_vSpecular;
     vec4   g_vClipPlane;
 
-    Light  g_vLights[VK_MAX_LIGHTS];
+    vec4   g_vLightPos[VK_MAX_LIGHTS];
+    vec4   g_vLightDir[VK_MAX_LIGHTS];
+    vec4   g_vLightCol[VK_MAX_LIGHTS];
 
     vec3   g_vUp;
     vec3   g_vEye;
