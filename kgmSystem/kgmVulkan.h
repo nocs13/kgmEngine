@@ -180,9 +180,10 @@ class kgmVulkan: public kgmIGC
     VkImageView    depthView;
     VkDeviceMemory depthMemory;
 
-    VkFramebuffer  framebuffer;
-
     VkSampler      sampler;
+
+    VkFramebuffer  framebuffer;
+    VkRenderPass   renderPass;
 
     u32 width, height;
   };

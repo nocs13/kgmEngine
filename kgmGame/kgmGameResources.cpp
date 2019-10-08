@@ -411,7 +411,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
     kgmString cline = cmd + " " + args;
 
     #ifdef DEBUG
-    kgm_log() << "Command line is: " << (char *) cline << "\n";
+    kgm_log() << "Command_v line is: " << (char *) cline << "\n";
     #endif
 
     //proc.run(cmd, args);
@@ -421,6 +421,10 @@ kgmShader* kgmGameResources::getShader(const char* id)
     args = kgmString("-V ") + tmp + id + ".frag -o " + tmp + id + ".frag.spv";
 
     cline = cmd + " " + args;
+
+    #ifdef DEBUG
+    kgm_log() << "Command_f line is: " << (char *) cline << "\n";
+    #endif
 
     //proc.run(cmd, args);
     proc.run(kgmString(), cline);
@@ -441,6 +445,17 @@ kgmShader* kgmGameResources::getShader(const char* id)
       kgm_log() << "Shader spirv not loaded for " << id << "\n";
       #endif
     }
+
+    #ifndef DEBUG
+    cline = tmp + id + ".vert";
+    kgmSystem::removeFile(cline);
+    cline = tmp + id + ".frag";
+    kgmSystem::removeFile(cline);
+    cline = tmp + id + ".vert.spv";
+    kgmSystem::removeFile(cline);
+    cline = tmp + id + ".frag.spv";
+    kgmSystem::removeFile(cline);
+    #endif
   }
   else
   {
@@ -449,6 +464,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
     if(getFile(name, mem))
     {
       kgmString s((const char*)mem.data(), mem.length());
+
       shader = m_tools.genShader(m_gc, s);
     }
   }

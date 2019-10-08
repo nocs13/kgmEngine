@@ -376,3 +376,16 @@ bool kgmSystem::getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h)
 
   return result;
 }
+
+bool kgmSystem::removeFile(kgmString& path)
+{
+  bool res = false;
+
+  #ifdef WIN32
+  res = (bool) DeleteFile(path.data());
+  #else
+  res = !(remove(path.data()));
+  #endif
+
+  return true;
+}

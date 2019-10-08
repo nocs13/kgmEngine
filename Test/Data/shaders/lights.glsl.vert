@@ -81,11 +81,11 @@ void main()
   //data.color = unpackUnorm4x8(uint(a_Color));
   data.color = ubo.g_vColor;
 
-  pos =  ubo.g_mProj * ubo.g_mView * pos;
+  pos = ubo.g_mProj * ubo.g_mView * pos;
 
   data.lcount = float(ubo.g_iLights);
 
-  for (int i = 0; i < ubo.g_iLights; i++)
+  for (int i = 0; i < MAX_LIGHTS; i++)
   {
     data.lightpos[i] = ubo.g_vLightPos[i];
     data.lightdir[i] = ubo.g_vLightDir[i];

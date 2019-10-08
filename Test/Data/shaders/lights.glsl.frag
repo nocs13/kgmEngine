@@ -46,15 +46,17 @@ void main()
 
   float intensity = 0.0;
 
-  for (int i = 0; i < data.lcount; i++)
+  for (int i = 0; i < MAX_LIGHTS; i++)
   {
     vec3  l  = normalize(data.lightpos[i].xyz);
+
+    if (data.lightpos[i].w < 0.001)
+      break;
 
     lpos += l;
 
     intensity += dot(data.nor, l);
   }
-
 
   vec4 fcolor = vec4(0, 0, 0, 0);
   fcolor.xyz  = normalize(lpos); //vec3(1.0, 1.0, 1.0) * intensity;

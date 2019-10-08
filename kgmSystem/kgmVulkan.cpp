@@ -1084,6 +1084,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   }
 
   kgm_log() << "Vulkan: Generated sampler.\n";
+
   kgm_log() << "Vulkan: Generated texture.\n";
 
   return t;
@@ -1119,9 +1120,13 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
   ZeroObject(*target);
 
-  VkImageCreateInfo imageInfo = {};
+  VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
+
+  VkImageCreateInfo imageInfo;
 
   ZeroObject(imageInfo);
+
+  kgm_log() << "Vulkan info: Generating target.\n";
 
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -1130,12 +1135,12 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
   imageInfo.extent.depth = 1;
   imageInfo.mipLevels = 1;
   imageInfo.arrayLayers = 1;
-  imageInfo.format = m_swapChainFormat;
+  imageInfo.format = format;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-  imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+  imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
   imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-  imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  //imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
   VkResult result;
 
@@ -1199,11 +1204,9 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
   ZeroObject(viewInfo);
   viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-  viewInfo.format = m_swapChainFormat;
-  viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+  viewInfo.format = format;
+  //viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
   viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-  viewInfo.subresourceRange.baseMipLevel = 0;
-  viewInfo.subresourceRange.baseArrayLayer = 0;
   viewInfo.subresourceRange.layerCount = 1;
   viewInfo.subresourceRange.levelCount = 1;
   viewInfo.image = target->image;
@@ -1231,9 +1234,9 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
   samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
   samplerInfo.magFilter = VK_FILTER_LINEAR;
   samplerInfo.minFilter = VK_FILTER_LINEAR;
-  samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-  samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-  samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+  samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+  samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+  samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
   samplerInfo.anisotropyEnable = VK_FALSE;
   samplerInfo.maxAnisotropy = 1;
   samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -1242,7 +1245,7 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
   samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
   samplerInfo.mipLodBias = 0.0f;
   samplerInfo.minLod = 0.0f;
-  samplerInfo.maxLod = 0.0f;
+  samplerInfo.maxLod = 1.0f;
 
   result = m_vk.vkCreateSampler(m_device, &samplerInfo, null, &target->sampler);
 
@@ -1268,7 +1271,6 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
     infoImage.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     infoImage.tiling = VK_IMAGE_TILING_OPTIMAL;
     infoImage.format = chooseDepthFormat();
-    infoImage.pNext = NULL;
     infoImage.imageType = VK_IMAGE_TYPE_2D;
     infoImage.extent.width = w;
     infoImage.extent.height = h;
@@ -1278,10 +1280,7 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
     infoImage.samples = VK_SAMPLE_COUNT_1_BIT;
     infoImage.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     infoImage.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    infoImage.queueFamilyIndexCount = 0;
-    infoImage.pQueueFamilyIndices = NULL;
-    infoImage.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    infoImage.flags = 0;
+    //infoImage.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VkImageViewCreateInfo infoView;
 
@@ -1390,15 +1389,99 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
     }
   }
 
-  VkFramebufferCreateInfo createInfo = {};
+  VkAttachmentDescription attchmentDescriptions[2];
+
+  ZeroObject(attchmentDescriptions);
+
+  // Color attachment
+  ZeroObject(attchmentDescriptions[0]);
+
+  attchmentDescriptions[0].format = format;
+  attchmentDescriptions[0].samples = VK_SAMPLE_COUNT_1_BIT;
+  attchmentDescriptions[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attchmentDescriptions[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  attchmentDescriptions[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attchmentDescriptions[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attchmentDescriptions[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  attchmentDescriptions[0].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+  // Depth attachment
+  ZeroObject(attchmentDescriptions[1]);
+
+  attchmentDescriptions[1].format = chooseDepthFormat();
+  attchmentDescriptions[1].samples = VK_SAMPLE_COUNT_1_BIT;
+  attchmentDescriptions[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  attchmentDescriptions[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attchmentDescriptions[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  attchmentDescriptions[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  attchmentDescriptions[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  attchmentDescriptions[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  VkAttachmentReference colorReference = { 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
+  VkAttachmentReference depthReference = { 1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
+
+  VkSubpassDescription subpassDescription;
+
+  ZeroObject(subpassDescription);
+
+  subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subpassDescription.colorAttachmentCount = 1;
+  subpassDescription.pColorAttachments = &colorReference;
+  subpassDescription.pDepthStencilAttachment = &depthReference;
+
+  VkSubpassDependency dependencies[2];
+
+  ZeroObject(dependencies[0]);
+
+  dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+  dependencies[0].dstSubpass = 0;
+  dependencies[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+  dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+  ZeroObject(dependencies[1]);
+
+  dependencies[1].srcSubpass = 0;
+  dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+  dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependencies[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+  dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+  VkRenderPassCreateInfo renderPassInfo;
+
+  ZeroObject(renderPassInfo);
+
+  renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+  renderPassInfo.attachmentCount = 2;
+  renderPassInfo.pAttachments = attchmentDescriptions;
+  renderPassInfo.subpassCount = 1;
+  renderPassInfo.pSubpasses = &subpassDescription;
+  renderPassInfo.dependencyCount = 2;
+  renderPassInfo.pDependencies = dependencies;
+
+  result = m_vk.vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &target->renderPass);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Failed to create render pass for target.\n";
+
+    gcFreeTarget(target);
+
+    return null;
+  }
+
+  VkFramebufferCreateInfo createInfo;
 
   ZeroObject(createInfo);
 
   VkImageView imageViews[2] = { target->imageView, target->depthView };
 
   createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-  createInfo.renderPass = m_renderPass;
-  createInfo.attachmentCount = (target->depthView) ? (2) : (1);
+  createInfo.renderPass = target->renderPass;
+  createInfo.attachmentCount = 2; //(target->depthView) ? (2) : (1);
   createInfo.pAttachments = imageViews;
   createInfo.width = w;
   createInfo.height = h;
@@ -1414,6 +1497,8 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
     return null;
   }
+
+  kgm_log() << "Vulkan info: Generated target.\n";
 
   return (gchandle) target;
 }
@@ -1447,6 +1532,9 @@ void kgmVulkan::gcFreeTarget(gchandle t)
 
   if (target->depthMemory)
     m_vk.vkFreeMemory(m_device, target->depthMemory, null);
+
+  if (target->renderPass)
+    m_vk.vkDestroyRenderPass(m_device, target->renderPass, nullptr);
 
   delete target;
 }
@@ -3947,11 +4035,15 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   allocInfo.descriptorSetCount = 1;
   allocInfo.pSetLayouts = &pipeline->setlayout;
 
-  if (m_vk.vkAllocateDescriptorSets(m_device, &allocInfo, &pipeline->descriptor) != VK_SUCCESS)
+  result = m_vk.vkAllocateDescriptorSets(m_device, &allocInfo, &pipeline->descriptor);
+
+  if (result != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Failed to create descriptor set.\n";
 
     freePipeline(pipeline);
+
+    printResult(result);
 
     return null;
   }
