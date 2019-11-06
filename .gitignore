@@ -20,6 +20,7 @@
 .inc
 .user
 .vscode
+.externalToolBuilders
 ~*
 *~
 bin/

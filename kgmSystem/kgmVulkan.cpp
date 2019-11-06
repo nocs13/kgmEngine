@@ -864,7 +864,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
       u8* src = (u8*) m;
       u8* dst = (u8*) data;
 
-      for (u8 i = 0; i < count; i++)
+      for (u32 i = 0; i < count; i++)
       {
         memcpy(dst, src, 3);
         dst[3] = 0xff;
