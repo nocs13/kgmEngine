@@ -479,7 +479,7 @@ function build_gui_xml()
 {
     var text = "<?xml version=1.0?>\n";
 
-    text += "<kgmGui x='0' y='0' w='" + $("#palette").width() + "' h='" + $("#palette").height() + "'>\n";
+    text += "<kgmGuiLayout x='0' y='0' w='" + $("#palette").width() + "' h='" + $("#palette").height() + "'>\n";
 
     for (var i = 0; i < guis.length; i++)
     {

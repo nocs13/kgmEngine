@@ -1,0 +1,10 @@
+--- kgmGraphics/kgmTerrain.h
++++ kgmGraphics/kgmTerrain.h
+@@ -318,5 +319,7 @@ private:
+   f32    get_height(uint2 v);
+   f32    get_height(float2 v);
+   f32    len_from_details(u32 details);
++  vec3   get_normal(uint2  v);
++  vec3   get_normal(float2 v);
+ };
+ 

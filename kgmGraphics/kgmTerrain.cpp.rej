@@ -1,0 +1,165 @@
+--- kgmGraphics/kgmTerrain.cpp
++++ kgmGraphics/kgmTerrain.cpp
+@@ -189,21 +232,99 @@ void kgmTerrain::build()
+ {
+   f32 w_pp = m_heightmap.width  / m_width;
+   f32 h_pp = m_heightmap.height / m_length;
++
++  normals();
+ }
+ 
+ void kgmTerrain::normals()
+ {
++  return;
++
+   if (m_heightmap.map.length() < 1)
+     return;
+ 
+-  f32 w_pp = m_heightmap.width  / m_width;
+-  f32 h_pp = m_heightmap.height / m_length;
++  for (u32 i = 1; i < (m_heightmap.width - 1); i++)
++  {
++    for (u32 j = 1; j < (m_heightmap.height - 1); j++)
++    {
++      uint2 u[4][3];
++      u[0][0] = uint2(i, j), u[0][1] = uint2(i - 1, j), u[0][2] = uint2(i, j - 1);
++      u[1][0] = uint2(i, j), u[1][1] = uint2(i, j - 1), u[1][2] = uint2(i + 1, j);
++      u[2][0] = uint2(i, j), u[2][1] = uint2(i + 1, j), u[2][2] = uint2(i, j + 1);
++      u[3][0] = uint2(i, j), u[3][1] = uint2(i, j + 1), u[3][2] = uint2(i - 1, j);
++      float2 f[4][3];
++      f[0][0] = from_uint2(u[0][0]), f[0][1] = from_uint2(u[0][1]), f[0][2] = from_uint2(u[0][2]);
++      f[1][0] = from_uint2(u[1][0]), f[1][1] = from_uint2(u[1][1]), f[1][2] = from_uint2(u[1][2]);
++      f[2][0] = from_uint2(u[2][0]), f[2][1] = from_uint2(u[2][1]), f[2][2] = from_uint2(u[2][2]);
++      f[3][0] = from_uint2(u[3][0]), f[3][1] = from_uint2(u[3][1]), f[3][2] = from_uint2(u[3][2]);
++      vec3 v[4][3];
++      v[0][0] = vec3(f[0][0].x, f[0][0].y, get_height(u[0][0]));
++        v[0][1] = vec3(f[0][1].x, f[0][1].y, get_height(u[0][1]));
++        v[0][2] = vec3(f[0][2].x, f[0][2].y, get_height(u[0][2]));
++      v[1][0] = vec3(f[1][0].x, f[1][0].y, get_height(u[1][0]));
++        v[1][1] = vec3(f[1][1].x, f[1][1].y, get_height(u[1][1]));
++        v[1][2] = vec3(f[1][2].x, f[1][2].y, get_height(u[1][2]));
++      v[2][0] = vec3(f[2][0].x, f[2][0].y, get_height(u[2][0]));
++        v[2][1] = vec3(f[2][1].x, f[2][1].y, get_height(u[2][1]));
++        v[2][2] = vec3(f[2][2].x, f[2][2].y, get_height(u[2][2]));
++      v[3][0] = vec3(f[1][0].x, f[3][0].y, get_height(u[3][0]));
++        v[3][1] = vec3(f[3][1].x, f[3][1].y, get_height(u[3][1]));
++        v[3][2] = vec3(f[3][2].x, f[3][2].y, get_height(u[3][2]));
++
++      triangle3 tr[4];
++      tr[0].set(v[0][0], v[0][1], v[0][2]);
++      tr[1].set(v[1][0], v[1][1], v[1][2]);
++      tr[2].set(v[2][0], v[2][1], v[2][2]);
++      tr[3].set(v[3][0], v[3][1], v[3][2]);
++
++      //uint2  u1(i, j), u2(i + 1, j), u3(i, j + 1);
++      //float2 f1 = from_uint2(u1);
++      //float2 f2 = from_uint2(u2);
++      //float2 f3 = from_uint2(u3);
++
++      //vec3  v1 = vec3(f1.x, f1.y, get_height(u1));
++      //vec3  v2 = vec3(f2.x, f2.y, get_height(u2));
++      //vec3  v3 = vec3(f3.x, f3.y, get_height(u3));
++
++      //triangle3 tr1;
++
++      //tr1.set(v1, v2, v3);
++
++      //vec3 n = tr1.normal();
++
++      //n.normalize();
++
++      vec3 n = vec3(0, 0, 0);
++
++      for (u32 k = 0; k < 4; k++)
++      {
++        vec3 nn = tr[k].normal();
++        n += nn;
++      }
++
++      //n.normalize();
++
++      m_heightmap.nor[m_heightmap.width * i + j]       = n;
++    }
++  }
+ 
+   for (u32 i = 0; i < (m_heightmap.width - 1); i++)
+   {
+     for (u32 j = 0; j < (m_heightmap.height - 1); j++)
+     {
++      vec3 n;
+ 
++      vec3 nn[2];
++
++      n = m_heightmap.nor[m_heightmap.width * i + j];
++      nn[0] = m_heightmap.nor[m_heightmap.width * i + (j + 1)];
++      nn[1] = m_heightmap.nor[m_heightmap.width * (i + 1) + j];
++
++      n += nn[0];
++      n += nn[1];
++      n.normalize();
++
++      m_heightmap.nor[m_heightmap.width * i + j] = n;
+     }
+   }
+ }
+@@ -360,28 +481,36 @@ void kgmTerrain::generate(box2 rect, u32 level)
+   {
+     while(cv.x < rect.max.x)
+     {
+-      triangle tr, uv;
++      triangle tr[2], uv[2], tn[2];
+       vec2     v;
++      vec3     n;
++
++      v.x = cv.x, v.y = cv.y;       tr[0].pt[0].x = v.x, tr[0].pt[0].y = v.y, tr[0].pt[0].z = get_height(v);
++      n = get_normal(v); n.normalize();
++      v.x = cv.x + len, v.y = cv.y; tr[0].pt[1].x = v.x, tr[0].pt[1].y = v.y, tr[0].pt[1].z = get_height(v);
++      v.x = cv.x, v.y = cv.y + len; tr[0].pt[2].x = v.x, tr[0].pt[2].y = v.y, tr[0].pt[2].z = get_height(v);
+ 
+-      v.x = cv.x, v.y = cv.y;       tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+-      v.x = cv.x + len, v.y = cv.y; tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+-      v.x = cv.x, v.y = cv.y + len; tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
++      uv[0].pt[0] = vec3(uvs.x * (tr[0].pt[0].x - vstart.x), uvs.y * (tr[0].pt[1].y - vstart.y), 0);
++      uv[0].pt[1] = vec3(uvs.x * (tr[0].pt[1].x - vstart.x), uvs.y * (tr[0].pt[1].y - vstart.y), 0);
++      uv[0].pt[2] = vec3(uvs.x * (tr[0].pt[2].x - vstart.x), uvs.y * (tr[0].pt[2].y - vstart.y), 0);
+ 
+-      uv.pt[0] = vec3(uvs.x * (tr.pt[0].x - vstart.x), uvs.y * (tr.pt[1].y - vstart.y), 0);
+-      uv.pt[1] = vec3(uvs.x * (tr.pt[1].x - vstart.x), uvs.y * (tr.pt[1].y - vstart.y), 0);
+-      uv.pt[2] = vec3(uvs.x * (tr.pt[2].x - vstart.x), uvs.y * (tr.pt[2].y - vstart.y), 0);
++      //tn[0] = triangle(tr[0].pt[0], tr[0].pt[1], tr[0].pt[2]);
++      //n = tn[0].normal();
+ 
+-      m_mesh->add(tr, uv);
+ 
+-      v.x = cv.x + len, v.y = cv.y + len; tr.pt[0].x = v.x, tr.pt[0].y = v.y, tr.pt[0].z = get_height(v);
+-      v.x = cv.x, v.y = cv.y + len;       tr.pt[1].x = v.x, tr.pt[1].y = v.y, tr.pt[1].z = get_height(v);
+-      v.x = cv.x + len, v.y = cv.y;       tr.pt[2].x = v.x, tr.pt[2].y = v.y, tr.pt[2].z = get_height(v);
++      v.x = cv.x + len, v.y = cv.y + len; tr[1].pt[0].x = v.x, tr[1].pt[0].y = v.y, tr[1].pt[0].z = get_height(v);
++      v.x = cv.x, v.y = cv.y + len;       tr[1].pt[1].x = v.x, tr[1].pt[1].y = v.y, tr[1].pt[1].z = get_height(v);
++      v.x = cv.x + len, v.y = cv.y;       tr[1].pt[2].x = v.x, tr[1].pt[2].y = v.y, tr[1].pt[2].z = get_height(v);
+ 
+-      uv.pt[0] = vec3(uvs.x * (tr.pt[0].x - vstart.x), uvs.y * (tr.pt[1].y - vstart.y), 0);
+-      uv.pt[1] = vec3(uvs.x * (tr.pt[1].x - vstart.x), uvs.y * (tr.pt[1].y - vstart.y), 0);
+-      uv.pt[2] = vec3(uvs.x * (tr.pt[2].x - vstart.x), uvs.y * (tr.pt[2].y - vstart.y), 0);
++      uv[1].pt[0] = vec3(uvs.x * (tr[1].pt[0].x - vstart.x), uvs.y * (tr[1].pt[1].y - vstart.y), 0);
++      uv[1].pt[1] = vec3(uvs.x * (tr[1].pt[1].x - vstart.x), uvs.y * (tr[1].pt[1].y - vstart.y), 0);
++      uv[1].pt[2] = vec3(uvs.x * (tr[1].pt[2].x - vstart.x), uvs.y * (tr[1].pt[2].y - vstart.y), 0);
+ 
+-      m_mesh->add(tr, uv);
++      //tn[1] = triangle(tr[1].pt[0], tr[1].pt[1], tr[1].pt[2]);
++      //n += tn[1].normal();
++
++      m_mesh->add(tr[0], uv[0], 0xffffffff, n);
++      m_mesh->add(tr[1], uv[1], 0xffffffff, n);
+ 
+       cv.x += len;
+     }
+@@ -560,7 +689,7 @@ kgmTerrain::uint2  kgmTerrain::from_float2(kgmTerrain::float2 v)
+ 
+ f32 kgmTerrain::get_height(uint2 v)
+ {
+-  u32 offset = v.y * m_heightmap.width + v.x;
++  u32 offset = v.x * m_heightmap.width + v.y;
+ 
+   if (offset >= (m_heightmap.width * m_heightmap.height))
+     return 0.0f;
