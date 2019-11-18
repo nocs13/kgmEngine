@@ -29,12 +29,26 @@ void kgmGuiLayout::onHide()
 
 void kgmGuiLayout::onAddChild(kgmGui *c)
 {
+  Rect rc;
 
+  c->getRect(rc);
+
+  Gui gui = { c, rc };
+
+  m_guis.add(gui);
 }
 
 void kgmGuiLayout::onDelChild(kgmGui *c)
 {
+  for (auto ci = m_guis.begin(); !ci.end(); ci.next())
+  {
+    if (c == (*ci).gui)
+    {
+      m_guis.erase(ci);
 
+      break;
+    }
+  }
 }
 
 void kgmGuiLayout::update()
@@ -53,13 +67,6 @@ void kgmGuiLayout::update()
       }
     }
 
-    Rect rc;
-
-    (*gi)->getRect(rc);
-
-    Gui gui = {(*gi), rc};
-
-    m_guis.add(gui);
   }
 
   for (auto ci = m_guis.begin(); !ci.end(); ci.next())
