@@ -170,6 +170,12 @@ protected:
   virtual void onKeyUp(int k);
   virtual void onResize(int w, int h);
 
+  virtual void onShow();
+  virtual void onHide();
+  virtual void onAddChild(kgmGui *c);
+  virtual void onDelChild(kgmGui *c);
+
+
   //useful functions
   void          addChild(kgmGui *e);
   void          delChild(kgmGui *e);

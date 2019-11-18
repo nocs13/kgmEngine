@@ -27,6 +27,16 @@ void kgmGuiLayout::onHide()
 
 }
 
+void kgmGuiLayout::onAddChild(kgmGui *c)
+{
+
+}
+
+void kgmGuiLayout::onDelChild(kgmGui *c)
+{
+
+}
+
 void kgmGuiLayout::update()
 {
   for (auto gi = m_childs.begin(); !gi.end(); gi.next())

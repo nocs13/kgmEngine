@@ -76,11 +76,15 @@ kgmGui::~kgmGui()
 void kgmGui::show()
 {
   m_view = true;
+
+  onShow();
 }
 
 void kgmGui::hide()
 {
   m_view = false;
+
+  onHide();
 }
 
 void kgmGui::close()
@@ -459,25 +463,51 @@ void kgmGui::onResize(int w, int h)
 
 }
 
+void kgmGui::onShow()
+{
+
+}
+
+void kgmGui::onHide()
+{
+
+}
+
+void kgmGui::onAddChild(kgmGui *c)
+{
+
+}
+
+void kgmGui::onDelChild(kgmGui *c)
+{
+
+}
+
 void kgmGui::onIdle()
 {
 }
 
 void kgmGui::addChild(kgmGui *e)
 {
-  if(!e)
+  if(!e || isChild(e))
     return;
 
-  if(!isChild(e))
-    m_childs.push_back(e);
+  m_childs.push_back(e);
+
+  onAddChild(e);
 }
 
 void kgmGui::delChild(kgmGui *e)
 {
+  if(!e || !isChild(e))
+    return;
+
   for(Guis::iterator i = m_childs.begin(); !i.end(); ++i)
   {
     if(e == *i)
     {
+      onDelChild(e);
+
       i = m_childs.erase(i);
 
       break;

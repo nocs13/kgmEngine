@@ -24,6 +24,8 @@ public:
   void onResize(int w, int h);
   void onShow();
   void onHide();
+  void onAddChild(kgmGui *c);
+  void onDelChild(kgmGui *c);
 
 protected:
   void update();
