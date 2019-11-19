@@ -13,7 +13,14 @@ private:
     Rect    rect;
   };
 
+  struct Scale {
+    f64 x;
+    f64 y;
+  };
+
   Rect m_rcInit;
+
+  Scale m_scaler;
 
   kgmList<Gui> m_guis;
 
@@ -28,8 +35,10 @@ public:
   void onDelChild(kgmGui *c);
 
 protected:
-  void update();
   void realign();
+
+private:
+  Gui find(kgmGui*);
 };
 
 #endif // KGMGUILAYOUT_H
