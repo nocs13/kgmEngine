@@ -16,10 +16,9 @@ bl_info = {
     "name": "Export Kgm Model Format (.kgm)",
     "author": "Karakal",
     "version": (0, 1),
-    "blender": (2, 5, 3),
-    "api": 31343,
+    "blender": (2, 80, 0),
     "location": "File > Export",
-    "description": "Export to the Kgm Model Format (.kgm)",
+    "description": "Export to the karakal game map file (.kgm)",
     "warning": "",
     "category": "Import-Export"
 }
@@ -1581,8 +1580,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
 
 class kgmExportGroup(bpy.types.Operator, ExportHelper):
   ''' Kgm scene export '''
-  bl_idname = "export_scene.kgm_group_export"
-  bl_label = "Kgm export group"
+  bl_idname = "export_shape.kgm"
+  bl_label  = "Export Kgm (.kgm)"
 
   filename_ext  = ".kgm"
   filter_glob   = StringProperty(default="*.kgm", maxlen=1024, options={'HIDDEN'}, subtype='DIR_PATH')
@@ -1670,16 +1669,14 @@ def menu_func_a(self, context):
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
 
 def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_export.append(menu_func)
-    bpy.types.INFO_MT_file_import.append(menu_kgm_imp_set_func)
-    bpy.types.INFO_MT_add.append(menu_func_a)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
+    #bpy.types.TOPBAR_MT_file_import.append(menu_kgm_imp_set_func)
+    #bpy.types.TOPBAR_MT_add.append(menu_func_a)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
-    bpy.types.INFO_MT_file_import.remove(menu_kgm_imp_set_func)
-    bpy.types.INFO_MT_add.remove(menu_func_a)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    #bpy.types.TOPBAR_MT_file_import.remove(menu_kgm_imp_set_func)
+    #bpy.types.TOPBAR_MT_add.remove(menu_func_a)
 
 
 if __name__ == "__main__":
