@@ -1,6 +1,8 @@
 #ifndef KGMPOINTER_H
 #define KGMPOINTER_H
 
+// Shared pointer.
+
 template <class T>
 class kgmPointer
 {
@@ -143,6 +145,8 @@ kgmPointer<A> kgm_ptr_cast(kgmPointer<B>& var)
   return cast;
 }
 
+// Unique pointer.
+
 template <class T>
 class kgmUPointer
 {
@@ -159,6 +163,9 @@ public:
   {
     if(!ptr)
       return;
+
+    if (pointer)
+      delete pointer;
 
     pointer = ptr;
   }
@@ -220,9 +227,7 @@ public:
   }
 };
 
-
-#define kgmPtr  kgmPointer
-
-#define kgm_ptr kgmPointer
+#define kgm_ptr  kgmPointer
+#define kgm_uptr kgmUPointer
 
 #endif // KGMPOINTER_H
