@@ -27,7 +27,6 @@ bool kgmGameApp::exportProject(kgmString path)
   return true;
 }
 
-//FOR ANDROID
 #ifdef ANDROID
 
 static AAssetManager* g_assetManager = NULL;
@@ -176,13 +175,14 @@ void kgmGameApp::android_onGyroscope(JNIEnv* env, jobject obj, jfloat x, jfloat 
 
 }
 
+AAssetManager* kgm_android_getAssetManager()
+{
+  return g_assetManager;
+}
+
 void kgm_android_init(JNIEnv * env, jobject am)
 {
 
 }
 
-AAssetManager* kgm_android_getAssetManager()
-{
-  return g_assetManager;
-}
 #endif

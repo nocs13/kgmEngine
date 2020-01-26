@@ -407,83 +407,78 @@ scene_materials = []
 class kgmMaterial:
   def __init__(self, mtl):
     self.name     = mtl.name
-    self.diffuse  = mtl.diffuse_color
-    self.specular = mtl.specular_color * mtl.specular_intensity
-    self.shine    = mtl.specular_intensity * mtl.specular_hardness
-    self.alpha    = mtl.alpha
+
+    self.diffuse  = [1.0, 1.0, 1.0, 1.0]
+    self.specular = [1.0, 1.0, 1.0, 1.0]
+    self.shine    = 1.0
+    self.alpha    = 1.0
     self.map_color = ''
     self.map_normal = ''
     self.map_specular = ''
     self.map_environment = False
+    self.map_normal_strength = 1.0
+    self.map_specular_strength = 1.0
     self.images = ()
     self.depth = True
     self.blend = None
+    self.shader = ''
     self.env_source = 'Static'
     self.env_mapping = 'Cube'
     self.env_viewpoint = ''
     self.env_image = ''
     self.env_intensity = 0.0
-    self.sh_off  = mtl.use_shadeless
-    self.sh_cast = mtl.use_cast_shadows
-    self.sh_recv = mtl.use_shadows
+    self.sh_off  = False
+    self.sh_cast = False
+    self.sh_recv = False
     self.mir_fresnel = 0.0;
     self.trn_fresnel = 0.0;
     self.tex_move    = None
     self.distortion  = 0.0
 
-    if hasattr(mtl, 'raytrace_mirror') is True:
-      if mtl.raytrace_mirror is not None:
-        self.mir_fresnel = mtl.raytrace_mirror.fresnel
+    self.diffuse  = mtl.diffuse_color
+    self.specular = mtl.specular_color * mtl.specular_intensity
+    self.shine    = mtl.specular_intensity * mtl.metallic
+    self.alpha    = 1.0
 
-    if hasattr(mtl, 'raytrace_transparency') is True:
-      if mtl.raytrace_mirror is not None:
-        self.trn_fresnel = mtl.raytrace_transparency.fresnel
+    if mtl.shadow_method is not "NONE":
+      self.sh_off  = True
+      self.sh_recv = True
 
+    if mtl.blend_method == 'OPAQUE':
+      pass
+    elif mtl.blend_method == 'BLEND':
+      self.blend = 'Mix'
 
-    print('tranparency_method ' + mtl.transparency_method)
-    if mtl.use_transparency and ( mtl.transparency_method == 'Z_TRANSPARENCY'):
-      self.depth = False
+    if mtl.use_nodes is True:
+      for x in mtl.node_tree.nodes:
+        if x.name == 'Image Texture' and x.image is not None:
+          if (len(x.outputs) > 0 and x.outputs[0] is not None) and len(x.outputs[0].links) > 0:
+            for lk in x.outputs[0].links:
+              if lk.to_socket is not None and lk.to_socket.name == 'Base Color':
+                self.map_color = x.image.name
+              elif lk.to_socket is not None and lk.to_socket.name == 'Normal':
+                self.map_normal = x.image.name
+              elif lk.to_socket is not None and lk.to_socket.name == 'Specular':
+                self.map_specular = x.image.name
 
-    for TS in mtl.texture_slots.keys():
-      TextureSlot = mtl.texture_slots[TS]
-      print("Tex: " + str(TS))
-      if TextureSlot.texture.type == "IMAGE" and TextureSlot.texture.image is not None and TextureSlot.texture.image.source == "FILE":
-        print("TPATH: " + TextureSlot.texture.image.filepath)
-        tf_path = os.path.basename(TextureSlot.texture.image.filepath)
-        if tf_path != "":
-          if hasattr(TextureSlot, "use_map_normal") and TextureSlot.use_map_normal is True:
-            self.map_normal = tf_path
-            self.map_normal_strength = TextureSlot.normal_factor
-          elif hasattr(TextureSlot, "use_map_specular") and TextureSlot.use_map_specular is True:
-            self.map_specular = tf_path
-            self.map_specular_strength = TextureSlot.specular_factor
-          else:
-            self.map_color = tf_path
-      elif TextureSlot.texture.type == "DISTORTED_NOISE":
-        self.distortion = TextureSlot.texture.distortion
-      elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
-        offset = TextureSlot.offset
-        self.map_environment = True
-        self.env_intensity = TextureSlot.diffuse_factor
-        self.tex_move = str(offset[0]) + " " + str(offset[1]) + " " + str(offset[2])
-        print("env Mapping is " + TextureSlot.texture.environment_map.mapping)
-        if TextureSlot.texture.environment_map.mapping == "PLANE":
-          self.env_mapping = 'Plane'
-          self.env_viewpoint = TextureSlot.texture.environment_map.viewpoint_object
+        '''elif TextureSlot.texture.type == "DISTORTED_NOISE":
+          self.distortion = TextureSlot.texture.distortion
+        elif TextureSlot.texture.type == "ENVIRONMENT_MAP":
+          offset = TextureSlot.offset
+          self.map_environment = True
+          self.env_intensity = TextureSlot.diffuse_factor
+          self.tex_move = str(offset[0]) + " " + str(offset[1]) + " " + str(offset[2])
+          print("env Mapping is " + TextureSlot.texture.environment_map.mapping)
+          if TextureSlot.texture.environment_map.mapping == "PLANE":
+            self.env_mapping = 'Plane'
+            self.env_viewpoint = TextureSlot.texture.environment_map.viewpoint_object
 
-        if TextureSlot.texture.environment_map.source == "ANIMATED":
-          self.env_source = 'Animated'
-        elif TextureSlot.texture.environment_map.source == "IMAGE_FILE":
-          self.env_source = 'Image'
-          if TextureSlot.texture.image is not None:
-            self.env_image = TextureSlot.texture.image.name
-
-
-    if mtl.name in bpy.data.materials and 'Shader' in bpy.data.materials[mtl.name]:
-      self.shader = bpy.data.materials[mtl.name]['Shader']
-
-    if len(mtl.texture_slots.keys()) > 0:
-      self.blend = mtl.texture_slots[0].blend_type
+          if TextureSlot.texture.environment_map.source == "ANIMATED":
+            self.env_source = 'Animated'
+          elif TextureSlot.texture.environment_map.source == "IMAGE_FILE":
+            self.env_source = 'Image'
+            if TextureSlot.texture.image is not None:
+              self.env_image = TextureSlot.texture.image.name'''
 
 
 class kgmLight:
@@ -619,6 +614,7 @@ class kgmMesh:
       self.vgroups = None
 
     armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+
     if armatures:
       self.armature = armatures[0].object
       self.bones = self.armature.data.bones
@@ -636,14 +632,9 @@ class kgmMesh:
         scene_materials.append(kgmMaterial(m))
         print("add material to scene_materials")
 
-    uvcoord = len(mesh.uv_textures)
-
     mesh_faces = None
 
-    if hasattr(mesh, 'faces'):
-      mesh_faces = mesh.faces
-    elif hasattr(mesh, 'polygons'):
-      mesh_faces = mesh.polygons
+    mesh_faces = mesh.polygons
 
     if mesh_faces:
       print('Faces: ' + str(len(mesh_faces)))
@@ -664,17 +655,14 @@ class kgmMesh:
               if g < 4:
                 v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
                 v.wb[g] = mesh.vertices[vi].groups[g].weight
-          if uvcoord:
-            if hasattr(mesh, 'uv_layers'):
-              uv = mesh.uv_layers.active.data[face.loop_start + j].uv
-              v.uv = [uv[0], uv[1]]
-            else:
-              uvface = mesh.uv_textures.active.data[i] if uvcoord else None
-              if uvface:
-                uv = uvface.uv[j]
-                v.uv = [uv[0], uv[1]]
+          if hasattr(mesh, 'uv_layers'):
+            uv = mesh.uv_layers.active.data[face.loop_start + j].uv
+            v.uv = [uv[0], uv[1]]
+
           v.idx = vi
+
           iface.append(self.addVertex(v))
+
         for k in range(2, len(iface)):
           self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 
@@ -1299,16 +1287,16 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   filename_ext = "" #".kgm"
   filter_glob = StringProperty(default="*.*", maxlen=1024, options={'HIDDEN'}, )
   # filepath = StringProperty(name="File Path", description="File path used for exporting the Kgm file", maxlen=1024, default="~/")
-  exp_meshes     = BoolProperty(name="Export Meshes", description="", default=True)
-  exp_lights     = BoolProperty(name="Export Lights", description="", default=True)
-  exp_materials  = BoolProperty(name="Export Materials", description="", default=True)
-  exp_cameras    = BoolProperty(name="Export Cameras", description="", default=False)
-  exp_armatures  = BoolProperty(name="Export Armatures", description="", default=False)
-  exp_animations = BoolProperty(name="Export Animations", description="", default=False)
-  exp_particles  = BoolProperty(name="Export Particles", description="", default=False)
-  exp_obstacles  = BoolProperty(name="Export Obstacles", description="", default=False)
-  exp_kgmobjects = BoolProperty(name="Export Units", description="", default=False)
-  is_selection   = BoolProperty(name="Selected only", description="", default=False)
+  exp_meshes     : BoolProperty(name="Export Meshes", description="", default=True)
+  exp_lights     : BoolProperty(name="Export Lights", description="", default=True)
+  exp_materials  : BoolProperty(name="Export Materials", description="", default=True)
+  exp_cameras    : BoolProperty(name="Export Cameras", description="", default=False)
+  exp_armatures  : BoolProperty(name="Export Armatures", description="", default=False)
+  exp_animations : BoolProperty(name="Export Animations", description="", default=False)
+  exp_particles  : BoolProperty(name="Export Particles", description="", default=False)
+  exp_obstacles  : BoolProperty(name="Export Obstacles", description="", default=False)
+  exp_kgmobjects : BoolProperty(name="Export Units", description="", default=False)
+  is_selection   : BoolProperty(name="Selected only", description="", default=False)
 
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
                                 name="Format", description="Choose between two items", default='OPT_A')
@@ -1333,9 +1321,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.objects = []
 
     if self.is_selection:
-      self.objects = [ob for ob in scene.objects if ob.is_visible(scene) and ob.select]
+      self.objects = [ob for ob in scene.objects if ob.visible_get() and ob.select]
     else:
-      self.objects = [ob for ob in scene.objects if ob.is_visible(scene)]
+      self.objects = [ob for ob in scene.objects if ob.visible_get()]
 
     objects = self.objects
 
@@ -1659,6 +1647,7 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
 
 
 def menu_func(self, context):
+    print("Apply menu.")
     self.layout.operator(kgmExport.bl_idname, text="Karakal game map")
 
 def menu_kgm_imp_set_func(self, context):
@@ -1668,13 +1657,25 @@ def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
 
+classes = [
+    kgmExport,
+]
+
 def register():
+    print("Registering kgm module.")
+
+    for cls in classes:
+      bpy.utils.register_class(cls)
+
     bpy.types.TOPBAR_MT_file_export.append(menu_func)
     #bpy.types.TOPBAR_MT_file_import.append(menu_kgm_imp_set_func)
     #bpy.types.TOPBAR_MT_add.append(menu_func_a)
 
 def unregister():
     bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+
+    for cls in reversed(classes):
+      bpy.utils.unregister_class(cls)
     #bpy.types.TOPBAR_MT_file_import.remove(menu_kgm_imp_set_func)
     #bpy.types.TOPBAR_MT_add.remove(menu_func_a)
 

@@ -5,6 +5,7 @@
 #include "../kgmBase/kgmArray.h"
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmBase/kgmFunction.h"
+#include "kgmThread.h"
 
 class kgmThread;
 
