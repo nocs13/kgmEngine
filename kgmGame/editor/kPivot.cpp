@@ -1,5 +1,6 @@
 #include "kPivot.h"
 #include "../../kgmBase/kgmLog.h"
+#include "../../kgmGraphics/kgmColor.h"
 
 using namespace kgmGameEditor;
 
@@ -16,14 +17,14 @@ kPivot::kPivot()
   v[4].pos = vec3(0, 0, 0);
   v[5].pos = vec3(0, 0, 1);
 
-  v[0].col = vec4(1, 0, 0, 0);
-  v[1].col = vec4(1, 0, 0, 0);
+  v[0].col =
+  v[1].col = kgmColor::toVector(0x000000ff);
 
-  v[2].col = vec4(0, 1, 0, 0);
-  v[3].col = vec4(0, 1, 0, 0);
+  v[2].col =
+  v[3].col = kgmColor::toVector(0x0000ff00);
 
-  v[4].col = vec4(0, 0, 1, 0);
-  v[5].col = vec4(0, 0, 1, 0);
+  v[4].col =
+  v[5].col = kgmColor::toVector(0x00ff0000);
 
   m_rtype = kgmMesh::RT_LINE;
 

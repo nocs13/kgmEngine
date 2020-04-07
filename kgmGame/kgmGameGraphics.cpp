@@ -36,9 +36,9 @@ void kgmGameGraphics::render_3d()
   if (m_gridline)
   {
     kgmMaterial mtl;
-    mtl.m_color = kgmMaterial::Color(m_gridline->color());
-    kgmGraphics::render(&mtl);
-    kgmGraphics::render((kgmMesh*) m_gridline);
+    //mtl.m_color = kgmMaterial::Color(m_gridline->color());
+    //kgmGraphics::render(&mtl);
+    //kgmGraphics::render((kgmMesh*) m_gridline);
   }
 
   if (m_pivot)

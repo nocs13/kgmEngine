@@ -1,10 +1,11 @@
 #include "kGridline.h"
+#include "../../kgmGraphics/kgmColor.h"
 
 using namespace kgmGameEditor;
 
 kGridline::kGridline(u8 count, f32 space, u32 color)
 {
-  Vertex_P_C* v = (Vertex_P_C*)vAlloc(4 * count, FVF_P_C);
+  Vertex_P_FC* v = (Vertex_P_FC*)vAlloc(4 * count, FVF_P_FC);
 
   f32 step = space / count;
   f32 min  = -0.5f * space;
@@ -19,10 +20,10 @@ kGridline::kGridline(u8 count, f32 space, u32 color)
     v[i * 4 + 2].pos = vec3(min,   start, 0);
     v[i * 4 + 3].pos = vec3(max,   start, 0);
 
-    v[i * 4 + 0].col = color;
-    v[i * 4 + 1].col = color;
-    v[i * 4 + 2].col = color;
-    v[i * 4 + 3].col = color;
+    v[i * 4 + 0].col =
+    v[i * 4 + 1].col =
+    v[i * 4 + 2].col =
+    v[i * 4 + 3].col = kgmColor::toVector(color);
   }
 
   m_rtype = kgmMesh::RT_LINE;

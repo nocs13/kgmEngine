@@ -45,7 +45,7 @@ void main()
 
   vec4 pos = ubo.g_mProj * ubo.g_mView * position;
 
-  pos.y *= -1;
+  //pos.y *= -1;
 
   gl_Position = pos;
 }
