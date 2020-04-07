@@ -391,6 +391,10 @@ void  kgmVulkan::gcSet(u32 param, void* value)
       size += sizeof(int);
       attr++;
     }
+    if (vert & gcv_fcl){
+      size += (sizeof(float) * 4);
+      attr++;
+    }
 
     if (size > 0)
     {
@@ -738,6 +742,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
       attr++;
     }
     if (v_fmt & gcv_col){
+      attr++;
+    }
+    if (v_fmt & gcv_fcl){
       attr++;
     }
 
@@ -1761,6 +1768,9 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
       attr++;
     }
     if (vfmt & gcv_col){
+      attr++;
+    }
+    if (vfmt & gcv_fcl){
       attr++;
     }
 
@@ -4221,6 +4231,14 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
       size = sizeof(u32);
 
       attributes = (attributes ^ gcv_col);
+    }
+    else if (attributes & gcv_fcl)
+    {
+      //format = VK_FORMAT_R8G8B8A8_UINT;
+      format = VK_FORMAT_R32G32B32A32_SFLOAT;
+      size = sizeof(float) * 4;
+
+      attributes = (attributes ^ gcv_fcl);
     }
     else if (attributes & gcv_uv0)
     {

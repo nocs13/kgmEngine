@@ -119,7 +119,8 @@ inline const char* kgm_log_label()
   kgmTime time;
   time.update();
 
-  sprintf(text, "%2d:%2d:%2d %d\0", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
+  memset(text, 0, sizeof(text));
+  sprintf(text, "%2d:%2d:%2d %d", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
   
   //return asctime (timeinfo);
   return (const char*) text;
