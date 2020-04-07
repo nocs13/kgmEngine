@@ -146,6 +146,8 @@ bool kgmTerrain::texColor(u32 id, kgmTexture* tex)
   m_tex_color[id] = tex;
 
   tex->increment();
+
+  return true;
 }
 
 bool kgmTerrain::texBlend(kgmTexture* tex)
@@ -159,6 +161,8 @@ bool kgmTerrain::texBlend(kgmTexture* tex)
   m_tex_blend = tex;
 
   tex->increment();
+
+  return true;
 }
 
 void kgmTerrain::uvScale(f32 u, f32 v)

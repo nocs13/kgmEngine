@@ -52,7 +52,7 @@ public:
 
  float gray()
  {
-   r * 0.2125 + g * 0.7154 + b * 0.0721;
+   return (r * 0.2125 + g * 0.7154 + b * 0.0721);
  }
 
  static vec4 toVector(u32 c)

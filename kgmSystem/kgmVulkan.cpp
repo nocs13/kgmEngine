@@ -57,8 +57,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_viewport.y = 0;
   m_viewport.width = m_rect[2];
   m_viewport.height = m_rect[3];
-  m_viewport.minDepth = 0.0;
-  m_viewport.maxDepth = 1.0;
+  m_viewport.minDepth = 0.1;
+  m_viewport.maxDepth = 1000.0;
 
   m_scissor.offset.x = 0;
   m_scissor.offset.y = 0;
@@ -529,8 +529,8 @@ void  kgmVulkan::gcRender()
 
   //m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
   VkSemaphore waitSemaphores[] = { m_imageSemaphores[m_currentFrame] };
   VkSemaphore signalSemaphores[] = { m_renderSemaphores[m_currentFrame] };
 
@@ -1505,7 +1505,7 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
 bool     kgmVulkan::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 {
-
+  return false;
 }
 
 void kgmVulkan::gcFreeTarget(gchandle t)

@@ -51,11 +51,15 @@ public:
   static int render_a(kgmAlsa* a)
   {
     a->render();
+
+    return 1;
   }
 
   static int proceed_a(kgmAlsa* a)
   {
     a->proceed();
+
+    return 1;
   }
 };
 

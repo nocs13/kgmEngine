@@ -180,6 +180,10 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
     v_size = sizeof(Vertex_P_C) * count;
     m_fvf = FVF_P_C;
     break;
+  case FVF_P_FC:
+    v_size = sizeof(Vertex_P_FC) * count;
+    m_fvf = FVF_P_FC;
+    break;
   case FVF_P:
     v_size = sizeof(Vertex) * count;
     m_fvf = FVF_P;
@@ -250,6 +254,9 @@ u32 kgmMesh::fvf()
   case FVF_P_C:
     return (gcv_xyz|gcv_col);
     break;
+  case FVF_P_FC:
+    return (gcv_xyz|gcv_fcl);
+    break;
   case FVF_P:
     return (gcv_xyz);
     break;
@@ -293,6 +300,8 @@ u32 kgmMesh::vsize()
   case FVF_P_N:
     return sizeof(Vertex_P_N);
   case FVF_P_C:
+    return sizeof(Vertex_P_C);
+  case FVF_P_FC:
     return sizeof(Vertex_P_C);
   case FVF_P:
     return sizeof(Vertex);

@@ -989,6 +989,8 @@ bool kgmOGL::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 
   glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
   glBindRenderbuffer(GL_RENDERBUFFER_EXT, 0);
+
+  return true;
 }
 
 void kgmOGL::gcFreeTarget(gchandle t)

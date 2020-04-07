@@ -31,7 +31,8 @@ public:
     FVF_P_N_C_T,            // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T2,           // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
     FVF_P_N_C_T_BW_BI,      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
-    FVF_P_N_C_T2_BW_BI      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+    FVF_P_N_C_T2_BW_BI,     // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+    FVF_P_FC                // = (gcv_xyz|gcv_fcl) ,
   };
 
   enum FFF
@@ -48,6 +49,11 @@ public:
   struct Vertex_P_C: public Vertex
   {
     u32 col;
+  };
+
+  struct Vertex_P_FC: public Vertex
+  {
+    vec4 col;
   };
 
   struct Vertex_P_T: public Vertex

@@ -281,7 +281,7 @@ void kgmGameBase::initScript()
 
 void kgmGameBase::initGC()
 {
-#ifdef VULKANXXX
+#ifdef VULKAN
   m_gc = new kgmVulkan(this);
 
   if(m_gc->gcError())

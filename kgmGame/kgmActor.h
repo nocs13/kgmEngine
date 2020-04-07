@@ -163,7 +163,7 @@ public:
 
 #ifdef EDITOR
   u32       getStatesCount() { return m_states.length(); }
-  kgmString getStateName(u32 i) { if(i < m_states.length()) return m_states[i]->id; }
+  kgmString getStateName(u32 i) { if(i < m_states.length()) return m_states[i]->id; return ""; }
 #endif
 
   // options

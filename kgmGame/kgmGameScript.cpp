@@ -162,6 +162,8 @@ s32 kgmGameScript::kgmLog(void*)
   game->getScript()->args("s", &log);
 
   kgm_log_print(log);
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmImport(void*)
@@ -179,6 +181,8 @@ s32 kgmGameScript::kgmImport(void*)
   {
     game->getScript()->load(script);
   }
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGameExit(void*)
@@ -190,6 +194,8 @@ s32 kgmGameScript::kgmGameExit(void*)
 
   if(game->gState() != kgmIGame::State_Quit)
     game->gQuit();
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGamePlay(void*)
@@ -202,6 +208,8 @@ s32 kgmGameScript::kgmGamePlay(void*)
     return 0;
 
   game->gSwitch(kgmIGame::State_Play);
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGamePause(void*)
@@ -214,6 +222,8 @@ s32 kgmGameScript::kgmGamePause(void*)
     return 0;
 
   game->gSwitch(kgmIGame::State_Pause);
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGameState(void*)
@@ -228,6 +238,8 @@ s32 kgmGameScript::kgmGameState(void*)
   state = game->gState();
 
   game->getScript()->resl("i", state);
+
+  return 0;
 }
 
 int kgmGameScript::kgmGuiLoad(void*)
@@ -282,6 +294,8 @@ s32 kgmGameScript::kgmGuiShow(void*)
     else
       gui->hide();
   }
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGuiResize(void*)
@@ -311,6 +325,8 @@ s32 kgmGameScript::kgmGuiResize(void*)
   {
     kgm_log() << "No gui for scale. \n";
   }
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGuiResolution(void*)

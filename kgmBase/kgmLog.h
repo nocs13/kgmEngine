@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "kgmTime.h"
 #include "kgmString.h"
 #include "kgmConvert.h"
 
@@ -14,6 +15,9 @@ class kgmLog
 {
 public:
     static kgmLog LOG;
+
+private:
+    kgmTime time;
 
 public:
     kgmLog()
@@ -102,12 +106,23 @@ inline kgmLog& kgm_log()
 inline const char* kgm_log_label()
 {
   time_t rawtime;
-  struct tm * timeinfo;
+  struct tm * ti;
 
   time ( &rawtime );
-  timeinfo = localtime ( &rawtime );
+  ti = localtime ( &rawtime );
+
+  timeval tv;
+  gettimeofday(&tv, 0);
+
+  static char text[128];
+
+  kgmTime time;
+  time.update();
+
+  sprintf(text, "%2d:%2d:%2d %d\0", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
   
-  return asctime (timeinfo);
+  //return asctime (timeinfo);
+  return (const char*) text;
 }
 
 inline void kgm_log_print(const char* s)

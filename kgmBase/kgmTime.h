@@ -16,6 +16,10 @@ typedef unsigned int u32;
 class kgmTime
 {
   timeval tv;
+
+  u8  hour, min, sec;
+  u32 usec;
+
 public:
 
 #ifdef WIN32
@@ -31,17 +35,40 @@ public:
 
   void update()
   {
+    time_t rawtime;
+    struct tm * ti;
+
+    time(&rawtime);
+    ti = localtime(&rawtime);
+
     gettimeofday(&tv, 0);
+
+    hour = ti->tm_hour;
+    min  = ti->tm_min;
+    sec  = ti->tm_sec;
+
+    usec = tv.tv_usec;
   }
 
-  u32 getSeconds()
+  u32 getHour()
   {
-    return tv.tv_sec;
+
+    return hour;
   }
 
-  u32 getUSeconds()
+  u32 getMinute()
   {
-    return tv.tv_usec;
+    return min;
+  }
+
+  u32 getSecond()
+  {
+    return sec;
+  }
+
+  u32 getUSecond()
+  {
+    return usec;
   }
 
   static u32 getTicks()

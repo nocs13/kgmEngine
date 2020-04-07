@@ -281,7 +281,7 @@ public:
     }
   }
 
-  s32 partition(T* arr, s32 low, s32 hight)
+  void partition(T* arr, s32 low, s32 hight)
   {
     s32 pivot = hight;
 

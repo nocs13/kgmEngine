@@ -19,7 +19,7 @@ enum gc_flags
   gcv_xyz = 1L << 0, //vertex position
   gcv_wgh = 1L << 1, //vertex weights
   gcv_nor = 1L << 2, //vertex normal
-  gcv_col = 1L << 3, //vertex diffuse
+  gcv_col = 1L << 3, //vertex color
   gcv_uv0 = 1L << 4, //vertex texture coord 1
   gcv_uv1 = 1L << 5, // ...2 float
   gcv_uv2 = 1L << 6,
@@ -29,6 +29,7 @@ enum gc_flags
   gcv_uv6 = 1L << 10,
   gcv_uv7 = 1L << 11, //vertex texture coord 8
   gcv_bn0 = 1L << 12, //vertex bone weight&index float[4], int[4]
+  gcv_fcl = 1L << 13, //vertex float color
 };
 
 enum gc_enum
