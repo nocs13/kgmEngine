@@ -537,8 +537,8 @@ void  kgmVulkan::gcRender()
 
   //m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
-  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-  //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+  VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
   VkSemaphore waitSemaphores[] = { m_imageSemaphores[m_currentFrame] };
   VkSemaphore signalSemaphores[] = { m_renderSemaphores[m_currentFrame] };
 
@@ -4030,7 +4030,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
+  poolInfo.poolSizeCount = 2;//layoutCreateInfo.bindingCount;
   poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 1;
 
