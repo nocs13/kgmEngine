@@ -186,6 +186,8 @@ class kgmVulkan: public kgmIGC
     VkRenderPass   renderPass;
 
     u32 width, height;
+
+    u32 rp_id;
   };
 
   struct VertexBuffer
@@ -590,8 +592,6 @@ class kgmVulkan: public kgmIGC
   u32 m_vertexFormat             = gcv_xyz;
 
   Shader* m_shader = null;
-
-  //Texture* m_texture = null;
 
   Texture* m_textures[4] = { null };
 

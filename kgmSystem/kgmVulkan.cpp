@@ -22,6 +22,8 @@ u32           kgmVulkan::g_vulkans = 0;
 kgmLib        kgmVulkan::vk_lib;
 kgmVulkan::vk kgmVulkan::m_vk      = {0};
 
+u32 rpass_cnt = 0;
+
 kgmVulkan::kgmVulkan(kgmWindow* wnd)
 {
   m_instance = 0;
@@ -52,6 +54,8 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   g_vulkans++;
 
   wnd->getRect(m_rect[0], m_rect[1], m_rect[2], m_rect[3]);
+  //m_rect[0] = m_rect[1] = 0;
+  //kgmSystem::getDesktopDimension((u32&) m_rect[2], (u32&) m_rect[3]);
 
   m_viewport.x = 0;
   m_viewport.y = 0;
@@ -1479,6 +1483,8 @@ gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 
     return null;
   }
+
+  target->rp_id = ++rpass_cnt;
 
   VkFramebufferCreateInfo createInfo;
 
