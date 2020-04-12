@@ -303,13 +303,6 @@ void kgmThread::sleep(u32 ms)
   Sleep(ms);
 #else
   usleep(ms * 1000);
-  /*struct timespec req = {0, ms * 1000000};
-  int res = nanosleep(&req, NULL);
-
-  if(res != 0)
-  {
-
-  }*/
 #endif
 }
 

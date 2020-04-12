@@ -197,17 +197,17 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     m_def_light = (INode*) new kgmNodeLight();
 
-    g_fbo = g->gcGenTarget(512, 512, true, false);
-    g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
-    g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
+    //g_fbo = g->gcGenTarget(512, 512, true, false);
+    //g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
+    //g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
 
-    m_map_light.m_fbo = g->gcGenTarget(scr_size[0], scr_size[1], true, false);
-    m_map_light.m_col = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmt24, gctype_tex2d);
-    m_map_light.m_dep = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmtdepth, gctype_tex2d);
-    g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_col, gctype_tex2d);
-    g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_dep, gctype_texdepth);
-    m_map_light.m_res[0] = scr_size[0];
-    m_map_light.m_res[1] = scr_size[1];
+    //m_map_light.m_fbo = g->gcGenTarget(scr_size[0], scr_size[1], true, false);
+    //m_map_light.m_col = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmt24, gctype_tex2d);
+    //m_map_light.m_dep = g->gcGenTexture(null, scr_size[0], scr_size[1], gctex_fmtdepth, gctype_tex2d);
+    //g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_col, gctype_tex2d);
+    //g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_dep, gctype_texdepth);
+    //m_map_light.m_res[0] = scr_size[0];
+    //m_map_light.m_res[1] = scr_size[1];
   }
 
 
@@ -232,11 +232,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   }
 
   m_rnd_base        = new BaseRender(this);
-  m_rnd_color       = new ColorRender(this);
-  m_rnd_lights      = new LightRender(this);
-  m_rnd_shadows     = new ShadowRender(this);
-  m_rnd_environment = new EnvironmentRender(this);
-  m_rnd_terrain     = new Render::Terrain(this);
+  //m_rnd_color       = new ColorRender(this);
+  //m_rnd_lights      = new LightRender(this);
+  //m_rnd_shadows     = new ShadowRender(this);
+  //m_rnd_environment = new EnvironmentRender(this);
+  //m_rnd_terrain     = new Render::Terrain(this);
 
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
@@ -318,7 +318,8 @@ void kgmGraphics::build()
 
 void kgmGraphics::clear()
 {
-  m_rnd_terrain->clear();
+  if (m_rnd_terrain)
+    m_rnd_terrain->clear();
 
   for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
   {
@@ -559,7 +560,8 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  m_rnd_lights->render();
+  if (m_rnd_lights)
+    m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 

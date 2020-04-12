@@ -1,8 +1,10 @@
 #include "kgmSystem.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmLog.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -177,7 +179,17 @@ bool kgmSystem::isFile(kgmString& s)
   struct stat file_stat;
 
   if(stat(s, &file_stat) != 0)
+  {
+    kgmString l = "Error: Cannot check file [";
+    l += s;
+    l += "], with error: ";
+    l += kgmConvert::toString(errno);
+    l += "\n";
+
+    kgm_log() << (const char *) l;
+
     return false;
+  }
 
   if(S_ISREG(file_stat.st_mode))
     return true;

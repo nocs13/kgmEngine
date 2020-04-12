@@ -65,6 +65,8 @@ public:
   void               addPath(kgmString s);
   bool               getFile(const char* id, kgmMemory<u8>& m);
 
+  bool               getRFile(const char* id, const char *type, kgmMemory<u8>& m);
+
   kgmPicture*        getPicture(const char* id);
   kgmTexture*        getTexture(const char* id);
   kgmShader*         getShader(const char* id);

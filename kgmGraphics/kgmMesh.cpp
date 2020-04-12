@@ -302,7 +302,7 @@ u32 kgmMesh::vsize()
   case FVF_P_C:
     return sizeof(Vertex_P_C);
   case FVF_P_FC:
-    return sizeof(Vertex_P_C);
+    return sizeof(Vertex_P_FC);
   case FVF_P:
     return sizeof(Vertex);
   }

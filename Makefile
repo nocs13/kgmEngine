@@ -67,3 +67,6 @@ clean:
 
 distclean: clean
 	$(RM) $(OUT_SO) $(OUT_A)
+
+test:
+	make -C Test run

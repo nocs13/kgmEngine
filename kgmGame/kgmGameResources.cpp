@@ -18,6 +18,15 @@
   #include <android/asset_manager_jni.h>
 #endif
 
+#define RMESH       "meshes"
+#define RIMAGE      "images"
+#define RSOUND      "sounds"
+#define RSHADER     "shaders"
+#define RCONVEX     "convexes"
+#define RMATERIAL   "materials"
+#define RSKELETON   "skeletons"
+#define RANIMATION  "animations"
+
 kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
   m_gc    = gc;
@@ -215,6 +224,11 @@ void kgmGameResources::addPath(kgmString s)
 
 bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 {
+  return getRFile(id, null, m);
+}
+
+bool kgmGameResources::getRFile(const char* id, const char *type, kgmMemory<u8>& m)
+{
   kgmString path;
 
   if(!id)
@@ -261,7 +275,10 @@ bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
 
     if(m_paths[i]->type == 2)
     {
-      path = m_paths[i]->path + delim + kgmString(id, strlen(id));
+      if (type)
+        path = m_paths[i]->path + delim + kgmString(type, strlen(type)) + delim + kgmString(id, strlen(id));
+      else
+        path = m_paths[i]->path + delim + kgmString(id, strlen(id));
 
       if(kgmIGame::getGame()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
       {
@@ -274,7 +291,14 @@ bool kgmGameResources::getFile(const char* id, kgmMemory<u8>& m)
     }
     else if(m_paths[i]->type == 1)
     {
-      if(m_paths[i]->archive.copy(id, m))
+      kgmString sid;
+
+      if (type)
+        sid = kgmString(type) + kgmString("/") + kgmString(id);
+      else
+        sid = kgmString(id);
+
+      if(m_paths[i]->archive.copy(sid, m))
       {
         return true;
       }
@@ -303,7 +327,7 @@ kgmPicture* kgmGameResources::getPicture(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RIMAGE, mem))
     return 0;
 
   picture = m_tools.genPicture(mem);
@@ -332,7 +356,7 @@ kgmTexture* kgmGameResources::getTexture(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RIMAGE, mem))
     return 0;
 
   texture = m_tools.genTexture(m_gc, mem);
@@ -461,7 +485,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
   {
     kgmMemory<u8> mem;
 
-    if(getFile(name, mem))
+    if(getRFile(name, RSHADER, mem))
     {
       kgmString s((const char*)mem.data(), mem.length());
 
@@ -493,7 +517,7 @@ kgmMaterial* kgmGameResources::getMaterial(const char* id)
   name = kgmString(id) + ".mtl";
   kgmMemory<u8> mem;
 
-  if(getFile(name, mem))
+  if(getRFile(name, RMATERIAL, mem))
   {
     kgmXml xml(mem);
 
@@ -525,7 +549,7 @@ kgmAnimation* kgmGameResources::getAnimation(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RANIMATION, mem))
     return 0;
 
   kgmXml xml(mem);
@@ -557,7 +581,7 @@ kgmSound* kgmGameResources::getSound(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RSOUND, mem))
     return 0;
 
   sound = m_tools.genSound(kgmIGame::getGame()->getAudio(), mem);
@@ -582,7 +606,7 @@ kgmMesh* kgmGameResources::getMesh(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RMESH, mem))
     return 0;
 
   kgmXml xml(mem);
@@ -615,7 +639,7 @@ kgmSkeleton* kgmGameResources::getSkeleton(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RSKELETON, mem))
     return null;
 
   kgmXml xml(mem);
@@ -645,7 +669,7 @@ kgmFont* kgmGameResources::getFont(const char* id, u32 r, u32 c)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RIMAGE, mem))
     return 0;
 
   font = m_tools.genFont(m_gc, 10, 10, r, c, mem);
@@ -670,7 +694,7 @@ kgmShapeCollision* kgmGameResources::getShapeCollision(const char* id)
 
   kgmMemory<u8> mem;
 
-  if(!getFile(id, mem))
+  if(!getRFile(id, RCONVEX, mem))
     return null;
 
   kgmXml xml(mem);

@@ -917,12 +917,20 @@ void kEditor::onMapOpen()
   if(!fdd)
     return;
 
+  kgmString dir;
+
+  dir = game->getSettings()->get((char*) "Data");
+
+  dir += kgmSystem::getPathDelim();
+
+  dir += "maps";
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Data"));
+  fdd->forOpen(dir);
 
   slotMapOpen.reset();
   slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
@@ -935,12 +943,20 @@ void kEditor::onMapSave()
   if(!fdd)
     return;
 
+  kgmString dir;
+
+  dir = game->getSettings()->get((char*) "Data");
+
+  dir += kgmSystem::getPathDelim();
+
+  dir += "maps";
+
   fdd->showHidden(false);
   game->guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
-  fdd->forSave(game->getSettings()->get((char*)"Path"));
+  fdd->forSave(dir);
 
   slotMapOpen.reset();
   slotMapSave.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);

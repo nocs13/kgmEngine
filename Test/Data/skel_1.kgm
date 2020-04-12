@@ -1,8 +1,0 @@
-<?xml version='1.0'?>
-<kgm>
- <kgmSkeleton name='Armature' position='0.00000 0.00000 0.00000' quaternion='0.00000 0.00000 0.00000 1.00000' scale='1.00000 1.00000 1.00000'>
-  <Bone name='Bone' parent='None' position='0.00000 0.00000 0.00000' quaternion='0.70711 0.00000 0.00000 0.70711' euler='90.00265 -0.00000 0.00000'/>
-  <Bone name='Bone.001' parent='Bone' position='0.00000 0.00000 0.32595' quaternion='0.70711 -0.00000 -0.00000 0.70711' euler='90.00265 -0.00000 -0.00001'/>
-  <Bone name='Bone.002' parent='Bone.001' position='0.00000 0.00000 0.61024' quaternion='0.67729 0.20318 -0.20318 0.67729' euler='90.00265 33.39888 0.00000'/>
- </kgmSkeleton>
-</kgm>

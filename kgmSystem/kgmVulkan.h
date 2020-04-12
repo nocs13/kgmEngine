@@ -90,6 +90,9 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyImageView vkDestroyImageView;
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
+    VK_EXPORTED_FUNCTION(vkGetPhysicalDeviceProperties);
+    VK_EXPORTED_FUNCTION(vkGetPhysicalDeviceFeatures);
+
     VK_EXPORTED_FUNCTION(vkDestroySemaphore);
     VK_EXPORTED_FUNCTION(vkDestroyFence);
 
@@ -533,6 +536,7 @@ class kgmVulkan: public kgmIGC
   VkPhysicalDevice m_physicalDevice = 0;
 
   VkSwapchainKHR   m_swapChain      = 0;
+  VkSwapchainKHR   m_oldSwapChain   = 0;
   VkRenderPass     m_renderPass     = 0;
   VkCommandPool    m_commandPool    = 0;
   VkQueue          m_queue          = 0;
@@ -548,6 +552,8 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkCommandBuffer>  m_commandBuffers;
 
   VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
+  VkPresentModeKHR         m_presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
 
   VkFormat       m_swapChainFormat;
 
@@ -701,6 +707,11 @@ private:
   bool initSemaphores();
   bool initPipeline();
   bool initSynchronizers();
+
+  bool isDeviceSuitable(VkPhysicalDevice);
+
+  bool destroyDevice();
+  bool destroySwapchain();
 
   bool refreshSwapchain();
   bool createBuffer(u32 size, VkBufferUsageFlags  usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
