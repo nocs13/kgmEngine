@@ -18,6 +18,9 @@ static void kgm_sigterm_handler(int s);
 extern void ClearDbgMemory();
 
 static void* exit_target = nullptr;
+
+static bool aborting = false;
+
 //kgmApp
 
 //Application object, unique only  
@@ -36,6 +39,22 @@ kgmApp::~kgmApp()
 s32 kgmApp::exec(s32 argc, s8 **argv)
 {
   return 0;
+}
+
+void kgmApp::exit(s32 e)
+{
+  if (aborting)
+    return;
+
+  if (e != 0)
+    kgm_log() << "ABORT process!!!\n";
+
+  aborting = true;
+
+  if (m_app)
+    m_app->abort();
+
+  exit(e);
 }
 
 void kgm_app_abort()

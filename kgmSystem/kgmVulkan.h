@@ -90,6 +90,8 @@ class kgmVulkan: public kgmIGC
     PFN_vkDestroyImageView vkDestroyImageView;
     PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 
+    VK_EXPORTED_FUNCTION(vkEnumerateInstanceLayerProperties);
+
     VK_EXPORTED_FUNCTION(vkGetPhysicalDeviceProperties);
     VK_EXPORTED_FUNCTION(vkGetPhysicalDeviceFeatures);
 

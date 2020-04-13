@@ -21,6 +21,7 @@ public:
 
   s32 exec(s32 argc, s8 **argv);
 
+
   void setMainWindow(void* w)
   {
     if(w) m_mainWindow = w;
@@ -36,4 +37,6 @@ public:
   {
     return kgmApp::m_app;
   }
+
+  static void exit(s32 e);
 };

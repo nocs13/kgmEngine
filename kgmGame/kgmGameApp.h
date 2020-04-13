@@ -94,7 +94,6 @@ protected:
 public:
   virtual ~kgmGameApp()
   {
-
   }
 
   virtual void gameInit() = 0;
@@ -139,7 +138,7 @@ public:
   void abort()
   {
     if (!game())
-      exit(1);
+      return;
 
     game()->gQuit();
   }

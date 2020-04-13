@@ -6,6 +6,7 @@
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmTime.h"
 #include "../kgmGame/kgmIGame.h"
+#include "../kgmSystem/kgmApp.h"
 
 #ifdef VULKAN
 
@@ -61,13 +62,18 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
   m_viewport.y = 0;
   m_viewport.width = m_rect[2];
   m_viewport.height = m_rect[3];
-  m_viewport.minDepth = 0.1;
-  m_viewport.maxDepth = 1000.0;
+  m_viewport.minDepth = 0.0;
+  m_viewport.maxDepth = 1.0;
 
   m_scissor.offset.x = 0;
   m_scissor.offset.y = 0;
   m_scissor.extent.width = m_rect[2];
   m_scissor.extent.height = m_rect[3];
+
+  m_bgColor[0] = 1.0;
+  m_bgColor[1] = 0.0;
+  m_bgColor[2] = 0.0;
+  m_bgColor[3] = 1.0;
 
   if (!initInstance())
   {
@@ -130,11 +136,13 @@ kgmVulkan::kgmVulkan(kgmWindow* wnd)
 
 kgmVulkan::~kgmVulkan()
 {
+  uint64_t timeout = 3000000000;
+
   if (m_device)
   {
     m_vk.vkDeviceWaitIdle(m_device);
 
-    m_vk.vkWaitForFences(m_device, SWAPCHAIN_IMAGES, m_fences, VK_TRUE, UINT64_MAX);
+    m_vk.vkWaitForFences(m_device, SWAPCHAIN_IMAGES, m_fences, VK_TRUE, timeout);
 
     delete m_pipelines;
 
@@ -298,6 +306,8 @@ int kgmVulkan::vkInit()
   m_vk.vkDestroyImageView = (typeof m_vk.vkDestroyImageView) vk_lib.get((char*) "vkDestroyImageView");
   m_vk.vkDestroyDescriptorSetLayout = (typeof m_vk.vkDestroyDescriptorSetLayout) vk_lib.get((char*) "vkDestroyDescriptorSetLayout");
   m_vk.vkFreeCommandBuffers = (typeof m_vk.vkFreeCommandBuffers) vk_lib.get((char*) "vkFreeCommandBuffers");
+
+  VK_IMPORT_FUNCTION(vkEnumerateInstanceLayerProperties);
 
   VK_IMPORT_FUNCTION(vkGetPhysicalDeviceProperties);
   VK_IMPORT_FUNCTION(vkGetPhysicalDeviceFeatures);
@@ -465,9 +475,9 @@ void kgmVulkan::gcResize(u32 width, u32 height)
   m_rect[2] = width;
   m_rect[3] = height;
 
-  //kgm_log() << "Vulkan: Window resized, viewport need update.\n";
+  kgm_log() << "Vulkan: Window resized, viewport need update.\n";
 
-  //refreshSwapchain();
+  refreshSwapchain();
 }
 
 void  kgmVulkan::gcBegin()
@@ -482,11 +492,11 @@ void  kgmVulkan::gcEnd()
 
 void  kgmVulkan::gcRender()
 {
-  VkResult result;
+  VkResult result = VK_SUCCESS;
 
   //kgm_log() << "Vulkan info: start render.\n";
 
-  //fillCommands();
+  fillCommands();
 
   u32 swapChainImage = 0;
 
@@ -494,25 +504,31 @@ void  kgmVulkan::gcRender()
     return;
 
   //VkFence *fence = &m_fences[m_currentFrame];
-  VkFence *fence = &m_fences[0];
+  VkFence *fence = &m_fences[(m_currentFrame == 1) ? (0) : (1)];
 
-  uint64_t timeout = 5000000000; //UINT64_MAX
+  uint64_t timeout = 3000000000; //UINT64_MAX
 
-  m_vk.vkResetFences(m_device, 1, fence);
+  m_vk.vkResetFences(m_device, 2, m_fences);
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, timeout, VK_NULL_HANDLE, *fence, &swapChainImage);
+
+  fence = &m_fences[swapChainImage];
 
   if(result == VkResult::VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
   {
     result = m_vk.vkWaitForFences(m_device, 1, fence, VK_TRUE, timeout);
 
-    if(result != VkResult::VK_SUCCESS)
+    if (result == VkResult::VK_SUCCESS || result == VkResult::VK_TIMEOUT)
+    {
+
+    }
+    else
     {
       kgm_log() << "Vulkan render info: Cannot wait fence.\n";
 
       printResult(result);
 
-      exit(1);
+      kgmApp::exit(1);
 
       return;
     }
@@ -523,7 +539,7 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(1);
+    kgmApp::exit(1);
 
     return;
   }
@@ -531,10 +547,6 @@ void  kgmVulkan::gcRender()
   m_vk.vkResetFences(m_device, m_fences.length(), m_fences);
 
   auto commandBuffer = m_commandBuffers[swapChainImage];
-
-  VkQueue queue;
-
-  m_vk.vkGetDeviceQueue(m_device, 0, 0, &queue);
 
   VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
   //VkPipelineStageFlags waitMask = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -563,12 +575,12 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(1);
+    kgmApp::exit(1);
 
     return;
   }
 
-  result = m_vk.vkQueueWaitIdle(queue);
+  result = m_vk.vkQueueWaitIdle(m_graphicsQueue);
   //result = m_vk.vkWaitForFences(m_device, 1, fence, VK_TRUE, timeout);
 
   if(result != VkResult::VK_SUCCESS)
@@ -577,7 +589,7 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(1);
+    kgmApp::exit(1);
     //destroySwapchain();
     //destroyDevice();
     //initDevice();
@@ -617,7 +629,7 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
-    exit(1);
+    kgmApp::exit(1);
   }
 
   m_currentFrame = swapChainImage;
@@ -897,6 +909,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 // TEXTURE
 void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 {
+  return null;
   if (!m_device || !w || !h)
     return null;
 
@@ -1247,6 +1260,7 @@ void  kgmVulkan::gcSetTexture(u32 stage, void *t)
 // TARGET
 gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 {
+  return null;
   RenderTarget* target = new RenderTarget;
 
   ZeroObject(*target);
@@ -1739,6 +1753,7 @@ void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
 //VERTEX & INDEX BUFFERS
 void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
 {
+  return null;
   VertexBuffer* vb = new VertexBuffer;
 
   ZeroObject(vb);
@@ -2194,6 +2209,8 @@ void kgmVulkan::freeSurface()
 
 bool kgmVulkan::initInstance()
 {
+  VkResult result = VK_SUCCESS;
+
   if(m_instance != nullptr)
   {
     kgm_log() << "Vulkan error: Instance already initialized.\n";
@@ -2203,7 +2220,7 @@ bool kgmVulkan::initInstance()
 
   u32 extensionsCount = 0;
 
-  VkResult result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
+  result = m_vk.vkEnumerateInstanceExtensionProperties(nullptr, &extensionsCount, nullptr);
 
   if (result != VK_SUCCESS || extensionsCount == 0)
   {
@@ -2253,22 +2270,36 @@ bool kgmVulkan::initInstance()
   appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);;
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
-  const char* layerNames[] = {
-    "VK_LAYER_LUNARG_standard_validation",
-    //"VK_LAYER_LUNARG_api_dump",
-    //"VK_LAYER_LUNARG_core_validation",
-    //"VK_LAYER_LUNARG_image",
-    //"VK_LAYER_LUNARG_object_tracker",
-    //"VK_LAYER_LUNARG_parameter_validation",
-    //"VK_LAYER_LUNARG_screenshot",
-    //"VK_LAYER_LUNARG_swapchain",
-    //"VK_LAYER_GOOGLE_threading",
-    //"VK_LAYER_GOOGLE_unique_objects",
-    "VK_LAYER_LUNARG_vktrace",
-    //"VK_LAYER_RENDERDOC_Capture",
-    //"VK_LAYER_NV_optimus",
-    //"VK_LAYER_VALVE_steam_overlay",
-  };
+  uint32_t layerPropertyCount = 0;
+
+  result = m_vk.vkEnumerateInstanceLayerProperties(&layerPropertyCount, nullptr);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Unable get instance layer properties count.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  VkLayerProperties layerProperties[layerPropertyCount];
+
+  result = m_vk.vkEnumerateInstanceLayerProperties(&layerPropertyCount, layerProperties);
+
+  if (result != VK_SUCCESS)
+  {
+    kgm_log() << "Vulkan error: Unable get instance layer properties.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
+  const char* layerNames[layerPropertyCount];
+
+  for (int i = 0; i < layerPropertyCount; i ++)
+    layerNames[i] = layerProperties[i].layerName;
 
   VkInstanceCreateInfo instanceInfo = {};
 
@@ -2282,7 +2313,7 @@ bool kgmVulkan::initInstance()
 #ifdef DEBUG
   if (getenv("VK_LAYER_PATH") || getenv("VULKAN_LAYER_WIN32"))
   {
-    instanceInfo.enabledLayerCount = 2;
+    instanceInfo.enabledLayerCount = layerPropertyCount;
     instanceInfo.ppEnabledLayerNames = layerNames;
   }
   else
@@ -2833,7 +2864,7 @@ bool kgmVulkan::initSurface()
 
   m_vk.vkGetDeviceQueue(m_device, graphicsQueueFamily, 0, &m_graphicsQueue);
   m_vk.vkGetDeviceQueue(m_device, presentQueueFamily, 0, &m_presentQueue);
-
+  m_vk.vkGetDeviceQueue(m_device, 0, 0, &m_queue);
 
   result = m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &m_surfaceCapabilities);
 
@@ -3732,7 +3763,7 @@ void kgmVulkan::fillCommands()
 
   s32 i = m_currentFrame;
 
-  //m_vk.vkWaitForFences(m_device, 1, m_fences, VK_TRUE, UINT64_MAX);
+  //m_vk.vkWaitForFences(m_device, 2, m_fences, VK_TRUE, UINT64_MAX);
 
   for (i = 0; i < m_swapChainImages.length(); i++)
   {
@@ -3742,21 +3773,22 @@ void kgmVulkan::fillCommands()
 
     result = m_vk.vkResetCommandBuffer(commandBuffer, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
-    VkImageMemoryBarrier imageMemoryBarrier;
+    static VkImageMemoryBarrier imageMemoryBarrier;
 
     ZeroObject(imageMemoryBarrier);
     imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
     imageMemoryBarrier.pNext = nullptr;
     imageMemoryBarrier.srcAccessMask = 0;
-    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-    VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
+    imageMemoryBarrier.dstAccessMask = VkAccessFlagBits::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT
+    | VkAccessFlagBits::VK_ACCESS_MEMORY_READ_BIT;
     imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
     //imageMemoryBarrier.oldLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     imageMemoryBarrier.newLayout = VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     imageMemoryBarrier.srcQueueFamilyIndex = 0;
     imageMemoryBarrier.dstQueueFamilyIndex = 0;
     imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
+    //imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
+    imageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
 
     VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
 
@@ -3932,9 +3964,9 @@ void kgmVulkan::fillCommands()
     */
     m_vk.vkCmdEndRenderPass(commandBuffer);
 
-    m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                              0, 0, nullptr, 0, nullptr,  1, &imageMemoryBarrier);
+    //m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+    //                          VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+    //                          0, 0, nullptr, 0, nullptr,  1, &imageMemoryBarrier);
 
     m_vk.vkEndCommandBuffer(commandBuffer);
   }
