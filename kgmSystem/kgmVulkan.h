@@ -547,6 +547,8 @@ class kgmVulkan: public kgmIGC
   kgmArray<VkSemaphore> m_renderSemaphores;
   kgmArray<VkFence>     m_fences;
 
+  VkFence               m_fence = VK_NULL_HANDLE;
+
   kgmArray<VkPhysicalDevice> m_physicalDevices;
   kgmArray<VkImage>          m_swapChainImages;
   kgmArray<VkFramebuffer>    m_frameBuffers;

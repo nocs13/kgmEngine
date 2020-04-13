@@ -142,7 +142,8 @@ kgmVulkan::~kgmVulkan()
   {
     m_vk.vkDeviceWaitIdle(m_device);
 
-    m_vk.vkWaitForFences(m_device, SWAPCHAIN_IMAGES, m_fences, VK_TRUE, timeout);
+    //m_vk.vkWaitForFences(m_device, SWAPCHAIN_IMAGES, m_fences, VK_TRUE, timeout);
+    m_vk.vkWaitForFences(m_device, 1, &m_fence, VK_TRUE, timeout);
 
     delete m_pipelines;
 
@@ -188,6 +189,10 @@ kgmVulkan::~kgmVulkan()
       m_vk.vkDestroySemaphore(m_device, m_imageSemaphores[i], nullptr);
       m_vk.vkDestroyFence(m_device, m_fences[i], nullptr);
     }
+
+    m_vk.vkDestroyFence(m_device, m_fence, nullptr);
+    m_vk.vkDestroySemaphore(m_device, m_imageAvailableSemaphore, nullptr);
+    m_vk.vkDestroySemaphore(m_device, m_renderingFinishedSemaphore, nullptr);
 
     m_swapChainImages.clear();
     m_imageViews.clear();
@@ -455,7 +460,7 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
   m_bgColor[3] = (f32) a / 255.f;
 
   m_bgColor[0] = 1.0;
-  m_bgColor[1] = 0.0;
+  m_bgColor[1] = (float) rand() / (float) (1.0 * RAND_MAX);
   m_bgColor[2] = 0.0;
   m_bgColor[3] = 1.0;
 
@@ -504,15 +509,16 @@ void  kgmVulkan::gcRender()
     return;
 
   //VkFence *fence = &m_fences[m_currentFrame];
-  VkFence *fence = &m_fences[(m_currentFrame == 1) ? (0) : (1)];
+  VkFence *fence = &m_fence; //&m_fences[(m_currentFrame == 1) ? (0) : (1)];
 
   uint64_t timeout = 3000000000; //UINT64_MAX
 
-  m_vk.vkResetFences(m_device, 2, m_fences);
+  m_vk.vkResetFences(m_device, 1, fence);
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, timeout, VK_NULL_HANDLE, *fence, &swapChainImage);
+  //result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, timeout, VK_NULL_HANDLE, VK_NULL_HANDLE, &swapChainImage);
 
-  fence = &m_fences[swapChainImage];
+  //fence = &m_fences[swapChainImage];
 
   if(result == VkResult::VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
   {
@@ -544,7 +550,7 @@ void  kgmVulkan::gcRender()
     return;
   }
 
-  m_vk.vkResetFences(m_device, m_fences.length(), m_fences);
+  m_vk.vkResetFences(m_device, 1, fence);
 
   auto commandBuffer = m_commandBuffers[swapChainImage];
 
@@ -3021,8 +3027,6 @@ bool kgmVulkan::initCommands()
     return false;
   }
 
-  fillCommands();
-
   return true;
 }
 
@@ -3574,6 +3578,9 @@ bool kgmVulkan::initSynchronizers()
     }
   }
 
+  fenceInfo.flags = 0;
+  m_vk.vkCreateFence(m_device, &fenceInfo, nullptr, &m_fence);
+
   return true;
 }
 
@@ -3709,11 +3716,17 @@ bool kgmVulkan::refreshSwapchain()
     m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
   }
 
-  m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
+  if (m_commandPool)
+  {
+    m_vk.vkFreeCommandBuffers(m_device, m_commandPool, (u32) m_commandBuffers.length(), m_commandBuffers.data());
 
-  m_commandBuffers.clear();
+    m_commandBuffers.clear();
 
-  kgm_log() << "Vulkan: Command buffer deleted.\n";
+    m_vk.vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+
+    kgm_log() << "Vulkan: Command buffer destroyed.\n";
+  }
+
 
   if (m_renderPass)
   {
@@ -3747,6 +3760,17 @@ bool kgmVulkan::refreshSwapchain()
 
   kgm_log() << "Vulkan: Framebuffers/Imageviews are destroyed.\n";
 
+  result = m_vk.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &m_surfaceCapabilities);
+
+  if(result != VkResult::VK_SUCCESS)
+  {
+    kgm_log() << "kgmVulkan error: failed to get surface capabilities.\n";
+
+    printResult(result);
+
+    return false;
+  }
+
   initSwapchain();
   initRenderPass();
   initImageViews();
@@ -3762,8 +3786,6 @@ void kgmVulkan::fillCommands()
   VkResult result = VK_SUCCESS;
 
   s32 i = m_currentFrame;
-
-  //m_vk.vkWaitForFences(m_device, 2, m_fences, VK_TRUE, UINT64_MAX);
 
   for (i = 0; i < m_swapChainImages.length(); i++)
   {
