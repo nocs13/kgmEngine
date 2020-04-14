@@ -9,12 +9,14 @@ FLGS = -ansi -std=gnu++11
 DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem/inc -I../kgmPhysics \
 	-I../kgmGraphics -L../kgmSystem/lib -L../
 LIBS = -llua -llualib
+VSH =
 
 ifeq ($(OS), Linux)
 	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DEDITOR -DVULKAN
 	FLGS = -g -fPIC -O0 -ansi -std=gnu++11
 	LIBS +=  -lpthread -lX11 -lGL -ldl
 	RM = rm -f
+        VHS = Data/shaders/nix
 else
 	CC = g++
 	EXT = .exe
@@ -22,6 +24,7 @@ else
 	FLGS = -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
 	LIBS += -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm -llua -llualib -lwsock32
 	RM = del
+        VHS = Data/shaders/win
 endif
 
 all:
@@ -40,3 +43,7 @@ run:
 
 android: clean
 	make -C android
+
+shaders:
+	./Data/shaders/glsl2spirv.sh
+

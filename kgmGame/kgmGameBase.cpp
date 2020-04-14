@@ -614,9 +614,8 @@ int kgmGameBase::gLoad(kgmString s)
 
     kgmMemory<u8> mem;
 
-    kgmString sf = getSettings()->get((char*) "Data");
+    kgmString sf = kgmString("maps");
 
-    sf += (kgmSystem::getPathDelim() + kgmString("maps"));
     sf += (kgmSystem::getPathDelim() + s);
 
     if(!kgmIGame::getGame()->getResources()->getFile(sf, mem))

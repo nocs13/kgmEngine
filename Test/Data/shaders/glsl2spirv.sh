@@ -1,10 +1,24 @@
 #!/bin/bash
 
-OWD=$PWD
+OS=$(uname -s)
 
-echo "current folder is $OWD"
+echo "Current OS is $OS"
 
-CWD=`dirname $0`
+SDR=''
+
+if [ $OS == 'Linux' ]; then
+  SDR='nix'
+else
+  SDR='win'
+fi
+
+BWD=$(pwd)
+
+echo "Current working folder is $BWD"
+
+echo "Target folder is $sdr"
+
+CWD=$(dirname `which $0`)
 
 echo "need to go $CWD"
 
@@ -21,10 +35,12 @@ for f in *; do
     [ ! -z "$ext" ] || continue
 
     if [ $ext == 'vert' ]; then
-      glslangValidator -V $f -o "nix/$file.vspv"
+      glslangValidator -V $f -o "$SDR/$file.vspv"
     elif [ $ext == 'frag' ]; then
-      glslangValidator -V $f -o "nix/$file.fspv"
+      glslangValidator -V $f -o "$SDR/$file.fspv"
     else
       echo "Wrong extention!"
     fi
 done
+
+cd $BWD

@@ -33,7 +33,6 @@ const char* const begin_vshader =  "#version 120 \n"
 "attribute vec3 a_Vertex;          \n"
 "attribute vec3 a_Normal;          \n"
 "attribute vec4 a_Color;           \n"
-"attribute vec4 a_FColor;          \n"
 "attribute vec2 a_UV;              \n";
 
 const char* const end_vshader =   " \n"

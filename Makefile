@@ -63,6 +63,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 
 clean:
 	make -C kgmExtern clean
+	make -C Test clean
 	$(RM) $(objects)
 
 distclean: clean
