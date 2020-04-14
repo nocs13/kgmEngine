@@ -218,12 +218,12 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    //m_shaders[ShaderTest]     = rc->getShader("test.glsl");
-    //m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
-    //m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
-    //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
-    //m_shaders[ShaderBase]     = rc->getShader("base.glsl");
-    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
+    m_shaders[ShaderTest]     = rc->getShader("test.glsl");
+    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
+    m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
+    m_shaders[ShaderNone]     = rc->getShader("none.glsl");
+    m_shaders[ShaderBase]     = rc->getShader("base.glsl");
+    m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
@@ -964,10 +964,6 @@ void kgmGraphics::render(kgmIcon* icon)
   points[4].uv = vec2(1, 1);
   points[5].pos = (pos - crv - cuv);
   points[5].uv = vec2(0, 0);
-
-  points[0].col = points[1].col =
-  points[2].col = points[3].col =
-  points[4].col = points[5].col = 0xffffffff;
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }

@@ -7,7 +7,7 @@
 inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
 {
   v.pos = pos;
-  v.col = col;
+  v.col = kgmColor::toVector(col);
   v.uv  = uv;
 }
 
@@ -232,7 +232,7 @@ void kgmParticles::update(u32 t)
 
         points[vi].col = points[vi + 1].col =
         points[vi + 2].col = points[vi + 3].col =
-        points[vi + 4].col = points[vi + 5].col = m_particles[i].col.color;
+        points[vi + 4].col = points[vi + 5].col = kgmColor::toVector(m_particles[i].col.color);
       }
     }
     else

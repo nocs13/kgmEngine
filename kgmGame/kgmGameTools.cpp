@@ -1080,9 +1080,9 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
     {
       u32 count = 0;
       u32 maps  = 0;
-      kgmMesh::Vertex_P_N_C_T2*  v = 0;
+      kgmMesh::Vertex_P_N_T2*  v = 0;
       sscanf(str, "%s %i %i", key, &count, &maps);
-      v = (kgmMesh::Vertex_P_N_C_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T2);
+      v = (kgmMesh::Vertex_P_N_T2*)m->vAlloc(count, kgmMesh::FVF_P_N_T2);
 
       for(u32 i = 0; i < count; i++)
       {
@@ -1091,7 +1091,6 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
         &v[i].uv[0].x, &v[i].uv[0].y);
-        v[i].col = 0xffffffff;
       }
     }
 
@@ -1119,9 +1118,9 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
     {
       u32 count = 0;
       sscanf(str, "%s %i", key, &count);
-      kgmMesh::Vertex_P_N_C_T2* v = new kgmMesh::Vertex_P_N_C_T2[ m->vcount() ];
+      kgmMesh::Vertex_P_N_T2* v = new kgmMesh::Vertex_P_N_T2[ m->vcount() ];
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
-      kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
+      kgmMesh::Vertex_P_N_T_BW_BI* s = (kgmMesh::Vertex_P_N_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_T_BW_BI);
 
       for(u32 i = 0; i < count; i++)
       {
@@ -1142,7 +1141,6 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         s[i].bi[3] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
-        s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv[0].x, v[i].uv[0].y);
       }
 
@@ -1195,11 +1193,11 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
     if(id == "Vertices")
     {
       u32 count = 0;
-      kgmMesh::Vertex_P_N_C_T*  v = 0;
+      kgmMesh::Vertex_P_N_T*  v = 0;
 
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
-      v = (kgmMesh::Vertex_P_N_C_T*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T);
+      v = (kgmMesh::Vertex_P_N_T*)m->vAlloc(count, kgmMesh::FVF_P_N_T);
       mnode->node(i)->data(data);
 
       char* p = data.data();
@@ -1212,7 +1210,6 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
         &v[i].uv.x, &v[i].uv.y, &rd);
-        v[i].col = 0xffffffff;
         p = (char*)((size_t)p + rd);
       }
 #ifdef DEBUG
@@ -1251,11 +1248,11 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
 
-      kgmMesh::Vertex_P_N_C_T* v = new kgmMesh::Vertex_P_N_C_T[ m->vcount() ];
+      kgmMesh::Vertex_P_N_T* v = new kgmMesh::Vertex_P_N_T[ m->vcount() ];
 
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
 
-      kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
+      kgmMesh::Vertex_P_N_T_BW_BI* s = (kgmMesh::Vertex_P_N_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_T_BW_BI);
 
       mnode->node(i)->data(data);
 
@@ -1280,7 +1277,6 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
         s[i].bi[3] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
-        s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
         p = (char*)((size_t)p + rd);
       }
@@ -1831,11 +1827,11 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
 
     if(id == "Vertices"){
       u32 count = 0;
-      kgmMesh::Vertex_P_N_C_T*  v = 0;
+      kgmMesh::Vertex_P_N_T*  v = 0;
 
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
-      v = (kgmMesh::Vertex_P_N_C_T*)m->vAlloc(count, kgmMesh::FVF_P_N_C_T);
+      v = (kgmMesh::Vertex_P_N_T*)m->vAlloc(count, kgmMesh::FVF_P_N_T);
       mnode->node(i)->data(data);
       char* p = data.data();
 
@@ -1846,7 +1842,6 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
         &v[i].uv.x, &v[i].uv.y, &rd);
-        v[i].col = 0xffffffff;
         p = (char*)((size_t)p + rd);
       }
     }
@@ -1875,9 +1870,9 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
       u32 count = 0;
       mnode->node(i)->attribute("length", val);
       sscanf(val.data(), "%i", &count);
-      kgmMesh::Vertex_P_N_C_T* v = new kgmMesh::Vertex_P_N_C_T[ m->vcount() ];
+      kgmMesh::Vertex_P_N_T* v = new kgmMesh::Vertex_P_N_T[ m->vcount() ];
       memcpy(v, m->vertices(), m->vcount() * m->vsize());
-      kgmMesh::Vertex_P_N_C_T_BW_BI* s = (kgmMesh::Vertex_P_N_C_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_C_T_BW_BI);
+      kgmMesh::Vertex_P_N_T_BW_BI* s = (kgmMesh::Vertex_P_N_T_BW_BI*)m->vAlloc(count,kgmMesh::FVF_P_N_T_BW_BI);
       mnode->node(i)->data(data);
 
       char* p = data.data();
@@ -1900,7 +1895,6 @@ kgmMesh* kgmGameTools::parseMesh(kgmXml::Node& node)
         s[i].bi[3] = bi[3];
         s[i].pos = v[i].pos;
         s[i].nor = v[i].nor;
-        s[i].col = v[i].col;
         s[i].uv = vec2(v[i].uv.x, v[i].uv.y);
         p = (char*)((size_t)p + rd);
       }

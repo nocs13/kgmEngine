@@ -401,3 +401,8 @@ bool kgmSystem::removeFile(kgmString& path)
 
   return true;
 }
+
+float kgmSystem::getRandom()
+{
+  return (float) rand() / (float) (1.0 * RAND_MAX);
+}

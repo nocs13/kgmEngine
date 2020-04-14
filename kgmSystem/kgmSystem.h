@@ -30,5 +30,7 @@ public:
   static int  getNumCpuCores();
   static bool getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h);
 
+  static float getRandom();
+
   static bool removeFile(kgmString&);
 };

@@ -203,7 +203,7 @@ void BaseRender::draw(kgmIcon* icon, kgmCamera* c)
 
   points[0].col = points[1].col =
   points[2].col = points[3].col =
-  points[4].col = points[5].col = 0xffffffff;
+  points[4].col = points[5].col = kgmColor::toVector(0xffffffff);
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }

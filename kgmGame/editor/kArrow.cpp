@@ -7,7 +7,7 @@ kArrow::kArrow(f32 length, u32 color)
 {
   float al      = length * 0.1;
 
-  Vertex_P_FC* v = (Vertex_P_FC*)vAlloc(10, FVF_P_FC);
+  Vertex_P_C* v = (Vertex_P_C*)vAlloc(10, FVF_P_C);
 
   v[0].pos = vec3(0, 0, 0);
   v[1].pos = vec3(length, 0, 0);

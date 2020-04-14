@@ -1008,7 +1008,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
         xml.attribute("length", value);
         sscanf(value.data(), "%i", &len);
-        msh->vAlloc(len, kgmMesh::FVF_P_N_C_T);
+        msh->vAlloc(len, kgmMesh::FVF_P_N_T);
         m_data = "vertices";
       }
       else if(id == "Faces")
@@ -1161,14 +1161,13 @@ bool kgmGameBase::loadXml(kgmString& path)
       {
         int n = 0;
         char* pdata = xml.m_tagData.data();
-        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)msh->vertices();
+        kgmMesh::Vertex_P_N_T* v = (kgmMesh::Vertex_P_N_T*)msh->vertices();
 
         for (u32 i = 0; i < msh->vcount(); i++) {
           sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
                  &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
                  &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
                  &v[i].uv.x, &v[i].uv.y, &n);
-          v[i].col = 0xffffffff;
           (pdata) += (u32)n;
         }
 

@@ -148,25 +148,21 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
 
   switch(f)
   {
-  case FVF_P_N_C_T_BW_BI:
-    v_size = sizeof(Vertex_P_N_C_T_BW_BI) * count;
-    m_fvf = FVF_P_N_C_T_BW_BI;
+  case FVF_P_N_T_BW_BI:
+    v_size = sizeof(Vertex_P_N_T_BW_BI) * count;
+    m_fvf = FVF_P_N_T_BW_BI;
     break;
-  case FVF_P_N_C_T2:
-    v_size = sizeof(Vertex_P_N_C_T2) * count;
-    m_fvf = FVF_P_N_C_T2;
-    break;
-  case FVF_P_N_C_T:
-    v_size = sizeof(Vertex_P_N_C_T) * count;
-    m_fvf = FVF_P_N_C_T;
-    break;
-  case FVF_P_C_T:
-    v_size = sizeof(Vertex_P_C_T) * count;
-    m_fvf = FVF_P_C_T;
+  case FVF_P_N_T2:
+    v_size = sizeof(Vertex_P_N_T2) * count;
+    m_fvf = FVF_P_N_T2;
     break;
   case FVF_P_N_T:
     v_size = sizeof(Vertex_P_N_T) * count;
     m_fvf = FVF_P_N_T;
+    break;
+  case FVF_P_C_T:
+    v_size = sizeof(Vertex_P_C_T) * count;
+    m_fvf = FVF_P_C_T;
     break;
   case FVF_P_T:
     v_size = sizeof(Vertex_P_T) * count;
@@ -180,17 +176,13 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
     v_size = sizeof(Vertex_P_C) * count;
     m_fvf = FVF_P_C;
     break;
-  case FVF_P_FC:
-    v_size = sizeof(Vertex_P_FC) * count;
-    m_fvf = FVF_P_FC;
-    break;
   case FVF_P:
     v_size = sizeof(Vertex) * count;
     m_fvf = FVF_P;
     break;
   default:
-    v_size = sizeof(Vertex_P_N_C) * count;
-    m_fvf = FVF_P_N_C;
+    v_size = sizeof(Vertex) * count;
+    m_fvf = FVF_P;
   }
 
   m_vertices = (Vertex*) malloc(v_size);
@@ -225,37 +217,28 @@ u32 kgmMesh::fvf()
 {
   switch(m_fvf)
   {
-  case FVF_P_N_C_T2_BW_BI:
-    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_bn0);
+  case FVF_P_N_T2_BW_BI:
+    return (gcv_xyz|gcv_nor|gcv_uv0|gcv_uv1|gcv_bn0);
     break;
-  case FVF_P_N_C_T_BW_BI:
-    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_bn0);
+  case FVF_P_N_T_BW_BI:
+    return (gcv_xyz|gcv_nor|gcv_uv0|gcv_bn0);
     break;
-  case FVF_P_N_C_T2:
-    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1);
-    break;
-  case FVF_P_N_C_T:
-    return (gcv_xyz|gcv_nor|gcv_col|gcv_uv0);
+  case FVF_P_N_T2:
+    return (gcv_xyz|gcv_nor|gcv_uv0|gcv_uv1);
     break;
   case FVF_P_N_T:
     return (gcv_xyz|gcv_nor|gcv_uv0);
     break;
-  case FVF_P_N_C:
-    return (gcv_xyz|gcv_nor|gcv_col);
+  case FVF_P_N:
+    return (gcv_xyz|gcv_nor);
     break;
   case FVF_P_C_T:
     return (gcv_xyz|gcv_col|gcv_uv0);
   case FVF_P_T:
     return (gcv_xyz|gcv_uv0);
     break;
-  case FVF_P_N:
-    return (gcv_xyz|gcv_nor);
-    break;
   case FVF_P_C:
     return (gcv_xyz|gcv_col);
-    break;
-  case FVF_P_FC:
-    return (gcv_xyz|gcv_fcl);
     break;
   case FVF_P:
     return (gcv_xyz);
@@ -283,14 +266,12 @@ u32 kgmMesh::vsize()
 {
   switch(m_fvf)
   {
-  case FVF_P_N_C_T2_BW_BI:
-    return sizeof(Vertex_P_N_C_T2_BW_BI);
-  case FVF_P_N_C_T_BW_BI:
-    return sizeof(Vertex_P_N_C_T_BW_BI);
-  case FVF_P_N_C_T2:
-    return sizeof(Vertex_P_N_C_T2);
-  case FVF_P_N_C_T:
-    return sizeof(Vertex_P_N_C_T);
+  case FVF_P_N_T2_BW_BI:
+    return sizeof(Vertex_P_N_T2_BW_BI);
+  case FVF_P_N_T_BW_BI:
+    return sizeof(Vertex_P_N_T_BW_BI);
+  case FVF_P_N_T2:
+    return sizeof(Vertex_P_N_T2);
   case FVF_P_N_T:
     return sizeof(Vertex_P_N_T);
   case FVF_P_C_T:
@@ -301,8 +282,6 @@ u32 kgmMesh::vsize()
     return sizeof(Vertex_P_N);
   case FVF_P_C:
     return sizeof(Vertex_P_C);
-  case FVF_P_FC:
-    return sizeof(Vertex_P_FC);
   case FVF_P:
     return sizeof(Vertex);
   }

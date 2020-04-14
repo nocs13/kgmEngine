@@ -1,4 +1,5 @@
 #include "kLine.h"
+#include "../../kgmGraphics/kgmColor.h"
 namespace kgmGameEditor
 {
 
@@ -9,7 +10,7 @@ kLine::kLine(u32 color)
   v[0].pos = vec3(0, 0, 0);
   v[1].pos = vec3(0, 0, 0);
 
-  v[0].col = v[1].col = color;
+  v[0].col = v[1].col = kgmColor::toVector(color);
 
   m_rtype = kgmMesh::RT_LINE;
 }

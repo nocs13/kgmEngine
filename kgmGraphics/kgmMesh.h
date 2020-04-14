@@ -27,12 +27,9 @@ public:
     FVF_P_T,                // = (gcv_xyz|gcv_uv0) ,
     FVF_P_N_T,              // = (gcv_xyz|gcv_nor|gcv_uv0) ,
     FVF_P_C_T,              // = (gcv_xyz|gcv_col|gcv_uv0) ,
-    FVF_P_N_C,              // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T,            // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T2,           // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
-    FVF_P_N_C_T_BW_BI,      // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
-    FVF_P_N_C_T2_BW_BI,     // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
-    FVF_P_FC                // = (gcv_xyz|gcv_fcl) ,
+    FVF_P_N_T2,             // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1) ,
+    FVF_P_N_T_BW_BI,        // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
+    FVF_P_N_T2_BW_BI,       // = (gcv_xyz|gcv_nor|gcv_col|gcv_uv0|gcv_uv1|gcv_uv2|gcv_uv3|gcv_uv_f4)
   };
 
   enum FFF
@@ -48,11 +45,6 @@ public:
 
   struct Vertex_P_C: public Vertex
   {
-    u32 col;
-  };
-
-  struct Vertex_P_FC: public Vertex
-  {
     vec4 col;
   };
 
@@ -66,40 +58,28 @@ public:
     vec3 nor;
   };
 
-  struct Vertex_P_N_T: public Vertex
-  {
-    vec3 nor;
-    vec2 uv;
-  };
-
-  struct Vertex_P_C_T: public Vertex
-  {
-    u32  col;
-    vec2 uv;
-  };
-
-  struct Vertex_P_N_C: public Vertex_P_N
-  {
-    u32  col;
-  };
-
-  struct Vertex_P_N_C_T: public Vertex_P_N_C
+  struct Vertex_P_N_T: public Vertex_P_N
   {
     vec2 uv;
   };
 
-  struct Vertex_P_N_C_T2: public Vertex_P_N_C
+  struct Vertex_P_N_T2: public Vertex_P_N
   {
     vec2 uv[2];
   };
 
-  struct Vertex_P_N_C_T_BW_BI: public Vertex_P_N_C_T
+  struct Vertex_P_C_T: public Vertex_P_C
+  {
+    vec2 uv;
+  };
+
+  struct Vertex_P_N_T_BW_BI: public Vertex_P_N_T
   {
     float bw[4];
     int   bi[4];
   };
 
-  struct Vertex_P_N_C_T2_BW_BI: public Vertex_P_N_C_T2
+  struct Vertex_P_N_T2_BW_BI: public Vertex_P_N_T2
   {
     float bw[4];
     int   bi[4];
@@ -162,7 +142,7 @@ public:
   void rebuild();
   int  genLods(int);
 
-  Vertex* vAlloc(u32 count, FVF f=FVF_P_N_C);
+  Vertex* vAlloc(u32 count, FVF f=FVF_P);
   Face*   fAlloc(u32 count, FFF f=FFF_16);
   u32     vsize();
   u32     fsize();

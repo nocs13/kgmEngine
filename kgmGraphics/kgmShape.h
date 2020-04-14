@@ -15,7 +15,7 @@ public:
   kgmShape(f32 r, f32 h, u32 s);
 
 private:
-  Vertex* vAlloc(u32 count, FVF f = FVF_P_N_C);
+  Vertex* vAlloc(u32 count, FVF f = FVF_P_N);
   Face*   fAlloc(u32 count, FFF f = FFF_16);
 };
 

@@ -5,7 +5,7 @@ using namespace kgmGameEditor;
 
 kGridline::kGridline(u8 count, f32 space, u32 color)
 {
-  Vertex_P_FC* v = (Vertex_P_FC*)vAlloc(4 * count, FVF_P_FC);
+  Vertex_P_C* v = (Vertex_P_C*)vAlloc(4 * count, FVF_P_C);
 
   f32 step = space / count;
   f32 min  = -0.5f * space;

@@ -701,7 +701,7 @@ kgmUnit* kgmGameMap::next()
       {
         kgmMesh* m = (kgmMesh*) node->getNodeObject();
         xmlAttr(m_xml, "length", vint);
-        m->vAlloc(vint, kgmMesh::FVF_P_N_C_T);
+        m->vAlloc(vint, kgmMesh::FVF_P_N_T);
         m_data = "vertices";
       }
       else if(id == "Faces")
@@ -1144,14 +1144,13 @@ kgmUnit* kgmGameMap::next()
 
         s32 n = 0;
         s8* pdata = m_xml->m_tagData.data();
-        kgmMesh::Vertex_P_N_C_T* v = (kgmMesh::Vertex_P_N_C_T*)m->vertices();
+        kgmMesh::Vertex_P_N_T* v = (kgmMesh::Vertex_P_N_T*)m->vertices();
 
         for (u32 i = 0; i < m->vcount(); i++) {
           sscanf(pdata, "%f %f %f %f %f %f %f %f%n",
                  &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
                  &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
                  &v[i].uv.x, &v[i].uv.y, &n);
-          v[i].col = 0xffffffff;
           (pdata) += (u32)n;
         }
 

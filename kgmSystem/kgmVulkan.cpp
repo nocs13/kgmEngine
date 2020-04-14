@@ -408,10 +408,6 @@ void  kgmVulkan::gcSet(u32 param, void* value)
       attr++;
     }
     if (vert & gcv_col){
-      size += sizeof(int);
-      attr++;
-    }
-    if (vert & gcv_fcl){
       size += (sizeof(float) * 4);
       attr++;
     }
@@ -459,9 +455,9 @@ void  kgmVulkan::gcClear(u32 flag, u32 col, float depth, u32 sten)
   m_bgColor[2] = (f32) b / 255.f;
   m_bgColor[3] = (f32) a / 255.f;
 
-  m_bgColor[0] = 1.0;
-  m_bgColor[1] = (float) rand() / (float) (1.0 * RAND_MAX);
-  m_bgColor[2] = 0.0;
+  m_bgColor[0] = .1;
+  m_bgColor[1] = .1;
+  m_bgColor[2] = .1;
   m_bgColor[3] = 1.0;
 
   m_depth   = depth;
@@ -495,6 +491,7 @@ void  kgmVulkan::gcEnd()
 
 }
 
+/*
 void  kgmVulkan::gcRender()
 {
   VkResult result = VK_SUCCESS;
@@ -640,13 +637,11 @@ void  kgmVulkan::gcRender()
 
   m_currentFrame = swapChainImage;
 }
+*/
 
-/*
 void  kgmVulkan::gcRender()
 {
   VkResult result;
-
-  //kgm_log() << "Vulkan info: start render.\n";
 
   fillCommands();
 
@@ -655,7 +650,7 @@ void  kgmVulkan::gcRender()
   if (!m_device || !m_swapChain)
     return;
 
-  m_vk.vkWaitForFences(m_device, 1, &m_fences[m_currentFrame], VK_TRUE, UINT64_MAX);
+  //m_vk.vkWaitForFences(m_device, 1, &m_fences[m_currentFrame], VK_TRUE, UINT64_MAX);
 
   result = m_vk.vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_imageSemaphores[m_currentFrame], VK_NULL_HANDLE, &swapChainImage);
 
@@ -750,7 +745,6 @@ void  kgmVulkan::gcRender()
 
   m_currentFrame = (m_currentFrame + 1) % SWAPCHAIN_IMAGES;
 }
-*/
 
 void  kgmVulkan::gcSetTarget(void*  rt)
 {
@@ -762,7 +756,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 {
   if (!m_shader)
     return;
-  return;
+
   if (pmt != gcpmt_trianglestrip && pmt != gcpmt_lines &&
       pmt != gcpmt_triangles && !gcpmt_linestrip)
     return;
@@ -884,9 +878,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     if (v_fmt & gcv_col){
       attr++;
     }
-    if (v_fmt & gcv_fcl){
-      attr++;
-    }
 
     m_vertexAttributes = attr;
   }
@@ -915,7 +906,6 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
 // TEXTURE
 void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 {
-  return null;
   if (!m_device || !w || !h)
     return null;
 
@@ -1266,7 +1256,6 @@ void  kgmVulkan::gcSetTexture(u32 stage, void *t)
 // TARGET
 gchandle kgmVulkan::gcGenTarget(u32 w, u32 h, bool depth, bool stencil)
 {
-  return null;
   RenderTarget* target = new RenderTarget;
 
   ZeroObject(*target);
@@ -1759,7 +1748,6 @@ void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
 //VERTEX & INDEX BUFFERS
 void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
 {
-  return null;
   VertexBuffer* vb = new VertexBuffer;
 
   ZeroObject(vb);
@@ -1920,9 +1908,6 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
     if (vfmt & gcv_col){
       attr++;
     }
-    if (vfmt & gcv_fcl){
-      attr++;
-    }
 
     m_vertexAttributes = attr;
   }
@@ -1951,7 +1936,6 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
 // SHADER
 void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
 {
-  return null;
   if (!m_device)
   {
     kgm_log() << "Vulkan error: Device not initialized.\n";
@@ -3874,13 +3858,13 @@ void kgmVulkan::fillCommands()
     m_vk.vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
     m_viewport.x      = 0;
-    m_viewport.y      = 0; //m_surfaceCapabilities.currentExtent.height;
+    m_viewport.y      = 0;
     m_viewport.width  = m_surfaceCapabilities.currentExtent.width;
-    m_viewport.height = m_surfaceCapabilities.currentExtent.height; //* -1;
+    m_viewport.height = m_surfaceCapabilities.currentExtent.height;
 
     m_vk.vkCmdSetViewport(commandBuffer, 0, 1, &m_viewport);
     m_vk.vkCmdSetScissor(commandBuffer, 0, 1, &m_scissor);
-    /*
+
     kgmList<DrawGroup*>::iterator ig = m_drawGroups.groups.begin();
 
     for(; !ig.end(); ig.next())
@@ -3983,7 +3967,7 @@ void kgmVulkan::fillCommands()
         }
       }
     }
-    */
+
     m_vk.vkCmdEndRenderPass(commandBuffer);
 
     //m_vk.vkCmdPipelineBarrier(commandBuffer, VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
@@ -4551,18 +4535,10 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     else if (attributes & gcv_col)
     {
       //format = VK_FORMAT_R8G8B8A8_UINT;
-      format = VK_FORMAT_A8B8G8R8_UINT_PACK32;
-      size = sizeof(u32);
-
-      attributes = (attributes ^ gcv_col);
-    }
-    else if (attributes & gcv_fcl)
-    {
-      //format = VK_FORMAT_R8G8B8A8_UINT;
       format = VK_FORMAT_R32G32B32A32_SFLOAT;
       size = sizeof(float) * 4;
 
-      attributes = (attributes ^ gcv_fcl);
+      attributes = (attributes ^ gcv_col);
     }
     else if (attributes & gcv_uv0)
     {

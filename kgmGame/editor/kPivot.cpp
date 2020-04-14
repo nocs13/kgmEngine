@@ -6,7 +6,7 @@ using namespace kgmGameEditor;
 
 kPivot::kPivot()
 {
-  Vertex_P_FC* v = (Vertex_P_FC*) vAlloc(6, FVF_P_FC);
+  Vertex_P_C* v = (Vertex_P_C*) vAlloc(6, FVF_P_C);
 
   v[0].pos = vec3(0, 0, 0);
   v[1].pos = vec3(1, 0, 0);

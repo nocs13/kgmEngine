@@ -37,15 +37,13 @@ layout(location = 0) out vec4  color;
 
 void main() 
 {
-  vec4 col =  a_Color; //unpackUnorm4x8(a_Color);
-
-  color = col;//cb.color;
+  color = a_Color;// * ubo.g_vColor;
 
   vec4 position = cb.model * vec4(a_Vertex, 1.0);
 
   vec4 pos = ubo.g_mProj * ubo.g_mView * position;
 
-  //pos.y *= -1;
+  pos.y *= -1;
 
   gl_Position = pos;
 }

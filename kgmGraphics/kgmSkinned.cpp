@@ -7,11 +7,11 @@ kgmSkinned::kgmSkinned(kgmMesh* m, kgmSkeleton* s, kgmAnimation* a)
   set(s);
   set(a);
 
-  if (m && m->fvf() == kgmMesh::FVF_P_N_C_T_BW_BI)
+  if (m && m->fvf() == kgmMesh::FVF_P_N_T_BW_BI)
   {
-    kgmMesh::vAlloc(m->vcount(), kgmMesh::FVF_P_N_C_T_BW_BI);
+    kgmMesh::vAlloc(m->vcount(), kgmMesh::FVF_P_N_T_BW_BI);
 
-    memcpy(vertices(), m->vertices(), m->vcount() * sizeof(kgmMesh::FVF_P_N_C_T_BW_BI));
+    memcpy(vertices(), m->vertices(), m->vcount() * sizeof(kgmMesh::FVF_P_N_T_BW_BI));
   }
 }
 
@@ -65,7 +65,7 @@ void kgmSkinned::update(u32 ms)
     //m_tm_joints[i] = jframe;
   }
 
-  kgmMesh::Vertex_P_N_C_T_BW_BI* verts = (kgmMesh::Vertex_P_N_C_T_BW_BI*) m_vertices;
+  kgmMesh::Vertex_P_N_T_BW_BI* verts = (kgmMesh::Vertex_P_N_T_BW_BI*) m_vertices;
 
   if (m_basic == null)
   {
@@ -79,7 +79,6 @@ void kgmSkinned::update(u32 ms)
   }
 
   kgmMesh::Vertex_P_N* vbase = (kgmMesh::Vertex_P_N*) m_basic;
-
 
   for(u32 i = 0; i < vcount(); i++)
   {

@@ -1108,18 +1108,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     if(ah != -1)
     {
       glEnableVertexAttribArray(ah);
-      glVertexAttribPointer(ah, 4, GL_UNSIGNED_BYTE, GL_TRUE, v_size, pM);
-    }
-
-    pM += sizeof(u32);
-  }
-  else if(v_fmt & gcv_fcl)
-  {
-    ah = glGetAttribLocation(g_shader, "a_FColor");
-
-    if(ah != -1)
-    {
-      glEnableVertexAttribArray(ah);
       glVertexAttribPointer(ah, 4, GL_FLOAT, GL_TRUE, v_size, pM);
     }
 
@@ -1307,12 +1295,6 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   }
 
   if(vfmt & gcv_col)
-  {
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4,GL_UNSIGNED_BYTE, vsize, (void*)offset);
-    offset = offset + sizeof(u32);
-  }
-  else if(vfmt & gcv_fcl)
   {
     glEnableClientState(GL_COLOR_ARRAY);
     glColorPointer(4, GL_FLOAT, vsize, (void*)offset);

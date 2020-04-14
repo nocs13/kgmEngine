@@ -29,7 +29,6 @@ enum gc_flags
   gcv_uv6 = 1L << 10,
   gcv_uv7 = 1L << 11, //vertex texture coord 8
   gcv_bn0 = 1L << 12, //vertex bone weight&index float[4], int[4]
-  gcv_fcl = 1L << 13, //vertex float color
 };
 
 enum gc_enum

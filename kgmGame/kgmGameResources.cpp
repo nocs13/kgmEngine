@@ -392,7 +392,7 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
   if (m_gc->gcGetBase() == gc_vulkan)
   {
-    kgmString cmd;
+    /*kgmString cmd;
 
     #ifdef WIN32
     cmd = "..\\Tools\\Spirv\\win32\\glslc.exe ";
@@ -480,6 +480,31 @@ kgmShader* kgmGameResources::getShader(const char* id)
     cline = tmp + id + ".frag.spv";
     kgmSystem::removeFile(cline);
     #endif
+    */
+
+    kgmString prev;
+
+#if defined(_WIN32)
+    prev = "win\\";
+#elif defined(__unix__)
+    prev = "nix/";
+#endif
+
+    kgmMemory<u8> vmem, fmem;
+
+    kgmString vid = prev + kgmString(id) + ".vspv";
+    kgmString fid = prev + kgmString(id) + ".fspv";
+
+    if(getRFile(vid, RSHADER, vmem) && getRFile(fid, RSHADER, fmem))
+    {
+      shader = m_tools.genShader(m_gc, vmem, fmem);
+    }
+    else
+    {
+      #ifdef DEBUG
+      kgm_log() << "Shader spirv not loaded for " << id << "\n";
+      #endif
+    }
   }
   else
   {

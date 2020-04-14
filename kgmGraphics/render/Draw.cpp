@@ -12,14 +12,14 @@
 
 void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
-  typedef struct{  vec3 pos;  u32 col;  vec2 uv; } V;
+  typedef struct{  vec3 pos;  vec4 col;  vec2 uv; } V;
 
   V v[4];
 
-  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = col; v[0].uv = vec2(0, 1);
-  v[1].pos = vec3(rc.x,        rc.y + rc.h, -1); v[1].col = col; v[1].uv = vec2(0, 0);
-  v[2].pos = vec3(rc.x + rc.w, rc.y,        -1); v[2].col = col; v[2].uv = vec2(1, 1);
-  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[3].col = col; v[3].uv = vec2(1, 0);
+  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = kgmColor::toVector(col); v[0].uv = vec2(0, 1);
+  v[1].pos = vec3(rc.x,        rc.y + rc.h, -1); v[1].col = kgmColor::toVector(col); v[1].uv = vec2(0, 0);
+  v[2].pos = vec3(rc.x + rc.w, rc.y,        -1); v[2].col = kgmColor::toVector(col); v[2].uv = vec2(1, 1);
+  v[3].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[3].col = kgmColor::toVector(col); v[3].uv = vec2(1, 0);
 
   if(tex && tex->texture())
     gc->gcSetTexture(0, tex->texture());
@@ -32,15 +32,15 @@ void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
 void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
-  typedef struct{  vec3 pos;  u32 col; vec2 uv; } V;
+  typedef struct{  vec3 pos;  vec4 col; vec2 uv; } V;
 
   V v[5];
 
-  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = col;
-  v[1].pos = vec3(rc.x + rc.w, rc.y,        -1); v[1].col = col;
-  v[2].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[2].col = col;
-  v[3].pos = vec3(rc.x,        rc.y + rc.h, -1); v[3].col = col;
-  v[4].pos = vec3(rc.x,        rc.y,        -1); v[4].col = col;
+  v[0].pos = vec3(rc.x,        rc.y,        -1); v[0].col = kgmColor::toVector(col);
+  v[1].pos = vec3(rc.x + rc.w, rc.y,        -1); v[1].col = kgmColor::toVector(col);
+  v[2].pos = vec3(rc.x + rc.w, rc.y + rc.h, -1); v[2].col = kgmColor::toVector(col);
+  v[3].pos = vec3(rc.x,        rc.y + rc.h, -1); v[3].col = kgmColor::toVector(col);
+  v[4].pos = vec3(rc.x,        rc.y,        -1); v[4].col = kgmColor::toVector(col);
 
   if(tex && tex->texture())
     gc->gcSetTexture(0, tex->texture());
@@ -53,7 +53,7 @@ void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 
 void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text)
 {
-  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
+  typedef struct{ vec3 pos; vec4 col; vec2 uv; } V;
 
   V v[4];
 
@@ -103,10 +103,10 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
 
     if(clip.inside(cx + fwidth, cy + fheight))
     {
-      v[0].pos = vec3(cx, cy, 0),                v[0].col = fcolor, v[0].uv = vec2(tx + 0.001,     ty - 0.001);
-      v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = fcolor, v[1].uv = vec2(tx + 0.001,     ty - tdy);
-      v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = fcolor, v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
-      v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
+      v[0].pos = vec3(cx, cy, 0),                v[0].col = kgmColor::toVector(fcolor), v[0].uv = vec2(tx + 0.001,     ty - 0.001);
+      v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = kgmColor::toVector(fcolor), v[1].uv = vec2(tx + 0.001,     ty - tdy);
+      v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = kgmColor::toVector(fcolor), v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
+      v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = kgmColor::toVector(fcolor), v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
@@ -123,7 +123,7 @@ void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, box b, u32 col)
   mtx4 mv, mp, m;
   vec3 rv, uv;
 
-  typedef struct{ vec3 pos; u32 col; vec2 uv; } V;
+  typedef struct{ vec3 pos; vec4 col; vec2 uv; } V;
 
   V v[4];
   vec3 pos(0, 0, 10);
@@ -144,16 +144,16 @@ void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, box b, u32 col)
   uv.z *= dim.y * 0.5f;
 
   v[0].pos = pos - rv + uv;
-  v[0].col = 0xff0000ff;
+  v[0].col = kgmColor::toVector(0xff0000ff);
   v[0].uv.x = 0.0f, v[0].uv.y = 0.0f;
   v[1].pos = pos - rv - uv;
-  v[1].col = 0x00ff00ff;
+  v[1].col = kgmColor::toVector(0x00ff00ff);
   v[1].uv.x = 0.0f, v[1].uv.y = 1.0f;
   v[2].pos = pos + rv + uv;
-  v[2].col = 0x0000ffff;
+  v[2].col = kgmColor::toVector(0x0000ffff);
   v[2].uv.x = 1.0f, v[2].uv.y = 0.0f;
   v[3].pos = pos + rv - uv;
-  v[3].col = 0xffffffff;
+  v[3].col = kgmColor::toVector(0xffffffff);
   v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
   m.identity();
@@ -192,7 +192,7 @@ void gcDraw(kgmIGC* gc, kgmVisual* visual)
 
 void gcDraw(kgmIGC* gc, kgmSprite* sprite)
 {
-  struct Point{ vec3 pos; u32 col; vec2 uv; };
+  struct Point{ vec3 pos; vec4 col; vec2 uv; };
   Point v[4];
 
   v[0].pos = vec3(sprite->m_rect.x, sprite->m_rect.y, 0);
@@ -204,7 +204,7 @@ void gcDraw(kgmIGC* gc, kgmSprite* sprite)
   v[3].pos = vec3(sprite->m_rect.x + sprite->m_rect.w, sprite->m_rect.y + sprite->m_rect.h, 0);
   v[3].uv.x = 1.0f, v[3].uv.y = 1.0f;
 
-  v[0].col = v[1].col = v[2].col = v[3].col = sprite->m_color.color;
+  v[0].col = v[1].col = v[2].col = v[3].col = kgmColor::toVector(sprite->m_color.color);
   gc->gcDraw(gcpmt_trianglestrip, gcv_xyz|gcv_col|gcv_uv0, sizeof(Point), 4, v, 0, 0, 0);
 }
 
@@ -257,7 +257,7 @@ void gcDraw(kgmIGC* gc, kgmCamera* cam, kgmIcon* icon)
 
   points[0].col = points[1].col =
   points[2].col = points[3].col =
-  points[4].col = points[5].col = 0xffffffff;
+  points[4].col = points[5].col = kgmColor::toVector(0xffffffff);
 
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
