@@ -24,13 +24,14 @@ kgmUnit::kgmUnit(kgmIGame* g)
   m_living  = -1;
 }
 
-kgmUnit::kgmUnit(kgmIGame* g, kgmMesh* msh)
+kgmUnit::kgmUnit(kgmIGame* g, kgmIMesh* msh)
 {
   m_type = Mesh;
 
   m_game = g;
 
   m_mesh = msh;
+  m_vobject = msh;
 
   m_valid   = true;
   m_remove  = false;
@@ -227,7 +228,7 @@ void kgmUnit::init()
     m_particles->build();
 }
 
-kgmObject* kgmUnit::getNodeObject()
+void* kgmUnit::getNodeObject()
 {
   return m_object;
 }

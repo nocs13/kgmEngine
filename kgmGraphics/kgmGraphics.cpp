@@ -223,7 +223,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     m_shaders[ShaderNone]     = rc->getShader("none.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
-    m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
+    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
     //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
@@ -560,7 +560,7 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  m_rnd_lights->render();
+  //m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 
@@ -1198,36 +1198,49 @@ void kgmGraphics::render(kgmShader* s)
   g_shd_active = s;
 }
 
-void kgmGraphics::render(kgmMesh *m)
+void kgmGraphics::render(kgmIMesh *m)
 {
   if(!m || !m->vcount() || !m->vertices())
     return;
 
   //kgm_log() << "render mesh id " << m->id() << "\n";
 
-  u32  pmt;
+  u32  pmt = 0;
+  u32  ibs = 0;
 
-  switch(m->m_rtype)
+  switch(m->rtype())
   {
   case kgmMesh::RT_LINE:
     pmt = gcpmt_lines;
+    ibs = 2;
     break;
   case kgmMesh::RT_POINT:
     pmt = gcpmt_points;
+    ibs = 1;
     break;
   case kgmMesh::RT_TRIANGLESTRIP:
     gcpmt_trianglestrip;
+    ibs = 3;
     break;
   default:
     pmt = gcpmt_triangles;
+    ibs = 3;
   };
 
   if (m_wired)
     pmt = gcpmt_lines;
 
-  gc->gcDraw(pmt, m->fvf(), m->vsize(),
-             m->vcount(), m->vertices(),
-             2, 3 * m->fcount(), m->faces());
+  if (m->gpu())
+  {
+    gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
+                           m->fsize() / ibs, ibs * m->fcount(), 0);
+  }
+  else
+  {
+    gc->gcDraw(pmt, m->fvf(), m->vsize(),
+               m->vcount(), m->vertices(),
+               m->fsize(), ibs * m->fcount(), m->faces());
+  }
 }
 
 s32 kgmGraphics::getShaderId(kgmString s)

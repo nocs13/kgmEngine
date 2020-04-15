@@ -249,7 +249,7 @@ u32 kgmMesh::fvf()
 
 u32 kgmMesh::fff()
 {
-  switch(m_fvf)
+  switch(m_fff)
   {
   case FFF_16:
     return 16;

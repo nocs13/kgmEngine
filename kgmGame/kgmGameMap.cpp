@@ -377,18 +377,6 @@ bool kgmGameMap::addUnit(kgmUnit* n)
     if(n->lock())
       addLocked(*node, n->lock());
 
-    /*if(n->visual())
-    {
-      kgmXml::Node* vnode = new kgmXml::Node(node);
-      vnode->m_name = "Visual";
-
-      if(n->visual()->getMaterial())
-        vnode->m_attributes.add(new kgmXml::Attribute("material", n->visual()->getMaterial()->name()));
-
-      if(n->visual()->getMesh())
-        vnode->m_attributes.add(new kgmXml::Attribute("mesh", n->visual()->getMesh()->id()));
-    }*/
-
     addParameters(*node, n->m_variables);
   }
 
@@ -493,7 +481,7 @@ kgmUnit* kgmGameMap::next()
         {
           m = new kgmMesh;
 
-          m_game->m_objects.add(m);
+          //m_game->m_objects.add(m);
 
           data = m;
         }
@@ -699,14 +687,14 @@ kgmUnit* kgmGameMap::next()
       }
       else if(id == "Vertices")
       {
-        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        kgmMesh* m = static_cast<kgmMesh*> (node->getNodeObject());
         xmlAttr(m_xml, "length", vint);
         m->vAlloc(vint, kgmMesh::FVF_P_N_T);
         m_data = "vertices";
       }
       else if(id == "Faces")
       {
-        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        kgmMesh* m = static_cast<kgmMesh*> (node->getNodeObject());
         xmlAttr(m_xml, "length", vint);
         m->fAlloc(vint, kgmMesh::FFF_16);
         m_data = "faces";
@@ -1140,7 +1128,7 @@ kgmUnit* kgmGameMap::next()
     {
       if(m_data == "vertices")
       {
-        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        kgmIMesh* m = (kgmIMesh*) node->getNodeObject();
 
         s32 n = 0;
         s8* pdata = m_xml->m_tagData.data();
@@ -1158,7 +1146,7 @@ kgmUnit* kgmGameMap::next()
       }
       else if(m_data == "faces")
       {
-        kgmMesh* m = (kgmMesh*) node->getNodeObject();
+        kgmIMesh* m = (kgmIMesh*) node->getNodeObject();
 
         s32 n = 0;
         s8* pdata = m_xml->m_tagData.data();

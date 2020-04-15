@@ -1299,6 +1299,25 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
   return m;
 }
 
+kgmGpuMesh* kgmGameTools::toGpuMesh(kgmIGC* gc, kgmMesh* m)
+{
+  kgmGpuMesh* gmesh = null;
+
+  if (!gc || !m)
+    return null;
+
+  gchandle h = gc->gcGenVertexBuffer(m->vertices(), m->vcount() * m->vsize(),
+                                     m->faces(), m->fsize() * m->fcount());
+
+  if (h)
+  {
+    gmesh = new kgmGpuMesh(h, m->vcount(), m->fcount(), m->vsize(), m->fsize(),
+                          m->fvf(), m->fff(), (u32) m->rtype(), m->bound());
+  }
+
+  return gmesh;
+}
+
 s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
 {
   kgmXml::Node* c_node = 0;

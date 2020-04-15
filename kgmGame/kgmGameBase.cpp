@@ -281,7 +281,7 @@ void kgmGameBase::initScript()
 
 void kgmGameBase::initGC()
 {
-#ifdef VULKAN
+#ifdef VULKANXXX
   m_gc = new kgmVulkan(this);
 
   if(m_gc->gcError())
@@ -634,6 +634,21 @@ int kgmGameBase::gLoad(kgmString s)
 
     while(kgmUnit* u = map.next())
     {
+      if (u && u->getNodeType() == kgmIGraphics::NodeMesh)
+      {
+        kgmMesh* m = (kgmMesh*) u->getNodeObject();
+
+        kgmIMesh* gm = kgmGameTools::toGpuMesh(m_game->getGC(), m);
+        //kgmIMesh* gm = null;
+
+        if (gm)
+        {
+          u->set(gm);
+
+          delete m;
+        }
+      }
+
       m_units.add(u);
 
       if (u->type() == kgmUnit::Terrain)

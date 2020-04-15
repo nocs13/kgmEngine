@@ -8,8 +8,10 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmMemory.h"
 
-#define GL_DEPTH_STENCIL_EXT             GL_DEPTH_STENCIL_NV
-#define GL_DEPTH_STENCIL_ATTACHMENT_EXT  0x821A
+#define GL_DEPTH_STENCIL_EXT               GL_DEPTH_STENCIL_NV
+#define GL_DEPTH_STENCIL_ATTACHMENT_EXT    0x821A
+#define GLX_CONTEXT_PROFILE_MASK_ARB       0x9126
+#define GLX_CONTEXT_CORE_PROFILE_BIT_ARB   0x00000001
 
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
@@ -18,8 +20,6 @@
 
 GLint*         g_compressed_format = null;
 GLint          g_num_compressed_format = 0;
-
-GLhandle       g_shader = null;
 
 #ifdef ANDROID
 EGLDisplay  m_display       = EGL_NO_DISPLAY;
@@ -219,22 +219,24 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   //Get a pointer to the GL 3.0 context creation
   PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddress((GLubyte*)"glXCreateContextAttribsARB");
 
-  /*if (glXCreateContextAttribs)
+  if (glXCreateContextAttribs)
   {
     int attribs[] = {
-      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-      GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+      GLX_CONTEXT_MAJOR_VERSION_ARB, 2,
+      GLX_CONTEXT_MINOR_VERSION_ARB, 1,
+      GLX_CONTEXT_PROFILE_MASK_ARB,
+      GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
       0
     };
 
-    GLXFBConfig          *fbConfigs;
+    GLXFBConfig    *fbConfigs;
     int numReturned;
 
     fbConfigs = glXGetFBConfigs( wnd->m_dpy, DefaultScreen(wnd->m_dpy),
                                        &numReturned );
 
-    m_glctx = glXCreateContextAttribs(wnd->m_dpy, *fbConfigs, 0, true, &attribs[0]);
-  }*/
+    m_glctx = glXCreateContextAttribs(wnd->m_dpy, *fbConfigs, null, true, &attribs[0]);
+  }
 
   if (!m_glctx)
     m_glctx = glXCreateContext(wnd->m_dpy, m_visual, 0, GL_TRUE);
@@ -1077,7 +1079,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_xyz)
   {
-    ah = glGetAttribLocation(g_shader, "a_Vertex");
+    ah = glGetAttribLocation(m_shader, "a_Vertex");
 
     if(ah != -1)
     {
@@ -1090,7 +1092,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_nor)
   {
-    ah = glGetAttribLocation(g_shader, "a_Normal");
+    ah = glGetAttribLocation(m_shader, "a_Normal");
 
     if(ah != -1)
     {
@@ -1103,7 +1105,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_col)
   {
-    ah = glGetAttribLocation(g_shader, "a_Color");
+    ah = glGetAttribLocation(m_shader, "a_Color");
 
     if(ah != -1)
     {
@@ -1116,7 +1118,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv0)
   {
-    ah = glGetAttribLocation(g_shader, "a_UV");
+    ah = glGetAttribLocation(m_shader, "a_UV");
 
     if(ah != -1)
     {
@@ -1129,7 +1131,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv1)
   {
-    ah = glGetAttribLocation(g_shader, "a_UV2");
+    ah = glGetAttribLocation(m_shader, "a_UV2");
     if(ah != -1)
     {
       glEnableVertexAttribArray(ah);
@@ -1141,7 +1143,7 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv2)
   {
-    ah = glGetAttribLocation(g_shader, "a_UV3");
+    ah = glGetAttribLocation(m_shader, "a_UV3");
 
     if(ah != -1)
     {
@@ -1155,11 +1157,11 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   if(v_fmt & gcv_bn0)
   {
 #ifdef GLES_2
-    ah = glGetAttribLocation(g_shader, "a_Weights");
+    ah = glGetAttribLocation(m_shader, "a_Weights");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
-    ah = glGetAttribLocation(g_shader, "a_Indices");
+    ah = glGetAttribLocation(m_shader, "a_Indices");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
@@ -1224,6 +1226,7 @@ void* kgmOGL::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
     glGenBuffers(1, &vbo->vb);
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vb);
     glBufferData(GL_ARRAY_BUFFER, vsize, vdata, GL_STATIC_DRAW);
+    vbo->vsize = vsize;
   }
 
   if(idata && isize)
@@ -1231,6 +1234,7 @@ void* kgmOGL::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
     glGenBuffers(1, &vbo->ib);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->ib);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, isize, idata, GL_STATIC_DRAW);
+    vbo->isize = isize;
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1256,6 +1260,7 @@ void  kgmOGL::gcFreeVertexBuffer(void* b)
 }
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
+
 void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt,
                                  u32 isize, u32 icnt, u32 ioff)
 {
@@ -1263,56 +1268,82 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   size_t offset = 0;
   u32 uvt = 2;
 
+  int al = 0;
+
   if(!vbo)
     return;
 
-#ifdef ANDROID
-  (void)uvt;
-  (void)offset;
-#else
-  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-#endif
+  //glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
   if(vbo->vb)
   {
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vb);
   }
 
-#ifdef GLES_2
-#else
+  /*{
+    struct V { float v[3], n[3], uv[2]; };
+
+    V *v = (V*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+
+    if (v)
+    {
+      V *c = 0;
+
+      for (int i = 0; i < vcnt; i++)
+      {
+        c = &v[i];
+      }
+
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
+  }*/
+
   if(vfmt & gcv_xyz)
   {
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, vsize, (void*)offset);
-    offset = offset + sizeof(float) * 3;
+    al = glGetAttribLocation(m_shader, "a_Vertex");
+
+    if(al != -1)
+    {
+      glEnableVertexAttribArray(al);
+      glVertexAttribPointer(al, 3, GL_FLOAT, GL_FALSE, vsize, (void*)offset);
+      offset = offset + sizeof(float) * 3;
+    }
   }
 
   if(vfmt & gcv_nor)
   {
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT, vsize, (void*)offset);
-    offset = offset + sizeof(float) * 3;
+    al = glGetAttribLocation(m_shader, "a_Normal");
+
+    if(al != -1)
+    {
+      glEnableVertexAttribArray(al);
+      glVertexAttribPointer(al, 3, GL_FLOAT, GL_FALSE, vsize, (void*)offset);
+      offset = offset + sizeof(float) * 3;
+    }
   }
 
   if(vfmt & gcv_col)
   {
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(4, GL_FLOAT, vsize, (void*)offset);
-    offset = offset + sizeof(float) * 4;
-  }
+    al = glGetAttribLocation(m_shader, "a_Color");
 
-  // if(vfmt & gcv_spc){
-  //  glEnableClientState(GL_COLOR_ARRAY);
-  //   glColorPointer(4,GL_UNSIGNED_BYTE, vsize, (void*)offset);
-  //    offset = offset + sizeof(u32);
-  // }
+    if(al != -1)
+    {
+      glEnableVertexAttribArray(al);
+      glVertexAttribPointer(al, 4, GL_FLOAT, GL_FALSE, vsize, (void*)offset);
+      offset = offset + sizeof(float) * 4;
+    }
+  }
 
   if(vfmt & gcv_uv0)
   {
-    glClientActiveTexture(GL_TEXTURE0);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
+    al = glGetAttribLocation(m_shader, "a_UV");
+
+    if(al != -1)
+    {
+      glEnableVertexAttribArray(al);
+      glVertexAttribPointer(al, 2, GL_FLOAT, GL_FALSE, vsize, (void*)offset);
+      offset = offset + sizeof(float) * uvt;
+    }
   }
 
   if(vfmt & gcv_uv1)
@@ -1371,26 +1402,41 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
     offset = offset + sizeof(float) * uvt;
   }
 
-  // glColor3f(1, 1, 1);
   if(vbo->ib && icnt)
   {
     //  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->ib);
-    switch(isize){
+
+    /*{
+      struct V { short f[3]; };
+
+      V *v = (V*) glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_ONLY);
+
+      if (v)
+      {
+        V *c = 0;
+
+        for (int i = 0; i < icnt; i++)
+        {
+          c = &v[i];
+        }
+
+        glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+      }
+    }*/
+
+
+    switch(isize)
+    {
     case 4:
-#ifdef ANDROID
-      glDrawElements(gl_enum(pmt), icnt, GL_UNSIGNED_INT, (void*)ioff);
-#else
-      glIndexPointer(GL_UNSIGNED_INT, 0, (void*) (size_t) ioff);
-      glDrawRangeElements (gl_enum(pmt), 0, vcnt - 1, icnt, GL_UNSIGNED_INT, ((char*)0L + ioff));
-#endif
+      //glIndexPointer(GL_UNSIGNED_INT, 0, (void*) (size_t) ioff);
+      glDrawElements(gl_enum(pmt), icnt, GL_UNSIGNED_INT, BUFFER_OFFSET(ioff));
+      //glDrawRangeElements (gl_enum(pmt), 0, vcnt - 1, icnt, GL_UNSIGNED_INT, ((char*)0L + ioff));
       break;
     default:
-      //   glIndexPointer(GL_UNSIGNED_SHORT, 0, 0);
+      //glIndexPointer(GL_UNSIGNED_SHORT, 0, 0);
       glDrawElements(gl_enum(pmt), icnt, GL_UNSIGNED_SHORT, BUFFER_OFFSET(ioff));
-      //   glDrawRangeElements (gl_enum(pmt), ioff, ioff + icnt, icnt/3, GL_UNSIGNED_SHORT, (void*)0);
-      //   glDrawRangeElements (gl_enum(pmt), 0, vcnt - 1, icnt, GL_UNSIGNED_INT, (void*)ioff);//(ioff/1000));
+      //glDrawRangeElements (gl_enum(pmt), ioff, ioff + icnt, icnt/3, GL_UNSIGNED_SHORT, (void*)0);
     }
   }
   else
@@ -1404,11 +1450,8 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#endif
 
-#ifndef ANDROID
-  glPopClientAttrib();
-#endif
+  //glPopClientAttrib();
 }
 
 // SHADERS
@@ -1566,19 +1609,18 @@ void kgmOGL::gcFreeShader(void* s)
 
 void kgmOGL::gcSetShader(void* s)
 {
-#ifdef GL_VERTEX_SHADER
   if(s)
   {
     glUseProgramObject((GLhandle)(size_t)s);
-    g_shader = (GLhandle)(size_t)s;
+
+    m_shader = (GLhandle)(size_t)s;
   }
   else
   {
     glUseProgramObject(0);
 
-    g_shader = null;
+    m_shader = null;
   }
-#endif
 }
 
 void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)

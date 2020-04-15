@@ -6,6 +6,7 @@ void kgm_main(out vec4 pos)
    v_UV = a_UV;
    position = g_mTran * vec4(a_Vertex, 1);
    pos = g_mProj * g_mView * position;
+   v_color = g_vColor;
 
    if (g_iClipping > 0)
    {

@@ -137,28 +137,40 @@ void BaseRender::draw(kgmVisual* visual)
   }
 }
 
-void BaseRender::draw(kgmMesh *m)
+void BaseRender::draw(kgmIMesh *m)
 {
   if(!m)
     return;
 
   u32  pmt;
+  u32  ibs;
 
-  switch(m->m_rtype)
+  switch(m->rtype())
   {
   case kgmMesh::RT_LINE:
     pmt = gcpmt_lines;
+    ibs = 2;
     break;
   case kgmMesh::RT_POINT:
     pmt = gcpmt_points;
+    ibs = 1;
     break;
   default:
     pmt = gcpmt_triangles;
+    ibs = 3;
   };
 
-  gc->gcDraw(pmt, m->fvf(), m->vsize(),
-             m->vcount(), m->vertices(),
-             2, 3 * m->fcount(), m->faces());
+  if (m->gpu())
+  {
+    gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
+                           m->fsize() / ibs, ibs * m->fcount(), 0);
+  }
+  else
+  {
+    gc->gcDraw(pmt, m->fvf(), m->vsize(),
+    m->vcount(), m->vertices(),
+    m->fsize() / ibs, ibs * m->fcount(), m->faces());
+  }
 }
 
 void BaseRender::draw(kgmParticles* particles)

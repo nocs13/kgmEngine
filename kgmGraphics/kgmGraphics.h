@@ -87,7 +87,7 @@ public:
       return kgmIGraphics::NodeLight;
     }
 
-    kgmObject* getNodeObject()
+    void* getNodeObject()
     {
       return m_light;
     }
@@ -318,7 +318,7 @@ public:
 
 protected:
   void render(kgmCamera &cam, Options &op);
-  void render(kgmMesh*);
+  void render(kgmIMesh*);
   void render(kgmVisual*);
   void render(kgmShader*);
   void render(kgmMaterial*);

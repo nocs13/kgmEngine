@@ -145,6 +145,8 @@ private:
 
   u32 m_cubemapside = 0;
 
+  GLhandle m_shader = null;
+
   u32 m_error = 0;
 
 public:

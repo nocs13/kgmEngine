@@ -92,7 +92,7 @@ protected:
   {
     kgmObject*   m_object = null;
 
-    kgmMesh*      m_mesh;
+    kgmIMesh*     m_mesh;
     kgmLight*     m_light;
     kgmCamera*    m_camera;
     kgmTerrain*   m_terrain;
@@ -110,6 +110,9 @@ protected:
 
   UnitType m_type;
 
+  void* m_vobject = null;
+
+
 public:
   typedef kgmUnit* (*Generate)(kgmIGame*);
 
@@ -119,7 +122,7 @@ public:
 
 public:
   kgmUnit(kgmIGame* g = null);
-  kgmUnit(kgmIGame* g, kgmMesh* msh);
+  kgmUnit(kgmIGame* g, kgmIMesh* msh);
   kgmUnit(kgmIGame* g, kgmLight* lgt);
   kgmUnit(kgmIGame* g, kgmCamera* cam);
   kgmUnit(kgmIGame* g, kgmVisual* vis);
@@ -141,7 +144,7 @@ public:
   void remove();
   u32  timeout();
 
-  kgmObject*             getNodeObject();
+  void*                  getNodeObject();
   kgmIGraphics::TypeNode getNodeType();
   bool                   isNodeValid();
   box3                   getNodeBound();
@@ -150,7 +153,7 @@ public:
   kgmMaterial*           getNodeMaterial();
   void                   setNodeMaterial(kgmMaterial*);
 
-  void set(kgmMesh* m)
+  void set(kgmIMesh* m)
   {
     if (m && m_type == Mesh)
       m_mesh = m;
