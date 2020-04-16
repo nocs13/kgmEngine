@@ -2284,10 +2284,42 @@ bool kgmVulkan::initInstance()
     return false;
   }
 
-  const char* layerNames[layerPropertyCount];
+  //const char* layerNames[layerPropertyCount];
+  int actualLayerPropertyCount = 0;
 
   for (int i = 0; i < layerPropertyCount; i ++)
-    layerNames[i] = layerProperties[i].layerName;
+  {
+    kgm_log() << "Exist layer: " << layerProperties[i].layerName << "\n";
+    //if (!strcmp(layerProperties[i].layerName, "VK_LAYER_LUNARG_vktrace"))
+    //{
+    //  layerNames[i] = layerProperties[i].layerName;
+    //  actualLayerPropertyCount++;
+    //}
+
+    //if (!strcmp(layerProperties[i].layerName, "VK_LAYER_LUNARG_standard_validation"))
+    //{
+    //  layerNames[i] = layerProperties[i].layerName;
+    //  actualLayerPropertyCount++;
+    //}
+  }
+
+  const char* layerNames[] = {
+    "VK_LAYER_LUNARG_api_dump",
+    "VK_LAYER_LUNARG_core_validation",
+    "VK_LAYER_LUNARG_object_tracker",
+    "VK_LAYER_LUNARG_parameter_validation",
+    "VK_LAYER_LUNARG_screenshot",
+    "VK_LAYER_LUNARG_standard_validation",
+    //"VK_LAYER_LUNARG_image",
+    //"VK_LAYER_LUNARG_swapchain",
+    //"VK_LAYER_GOOGLE_threading",
+    //"VK_LAYER_GOOGLE_unique_objects",
+    //"VK_LAYER_LUNARG_vktrace",
+    //"VK_LAYER_RENDERDOC_Capture",
+    //"VK_LAYER_NV_optimus",
+    //"VK_LAYER_VALVE_steam_overlay",
+  };
+  actualLayerPropertyCount = 0;
 
   VkInstanceCreateInfo instanceInfo = {};
 
@@ -2301,7 +2333,7 @@ bool kgmVulkan::initInstance()
 #ifdef DEBUG
   if (getenv("VK_LAYER_PATH") || getenv("VULKAN_LAYER_WIN32"))
   {
-    instanceInfo.enabledLayerCount = layerPropertyCount;
+    instanceInfo.enabledLayerCount = actualLayerPropertyCount;
     instanceInfo.ppEnabledLayerNames = layerNames;
   }
   else
