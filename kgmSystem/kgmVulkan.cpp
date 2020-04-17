@@ -1748,7 +1748,7 @@ void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isiz
 {
   VertexBuffer* vb = new VertexBuffer;
 
-  ZeroObject(vb);
+  ZeroObject(*vb);
 
   if (!createBuffer(vsize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
                     vb->vbuffer, vb->vmemory))
@@ -1826,10 +1826,10 @@ void  kgmVulkan::gcFreeVertexBuffer(void* p)
   delete vb;
 }
 
-void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff)
+void  kgmVulkan::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff)
 {
-  VertexBuffer* vb = (VertexBuffer*) buf;
-  return;
+  VertexBuffer* vb = (VertexBuffer*) b;
+
   if (!vb)
     return;
 
@@ -1914,6 +1914,11 @@ void  kgmVulkan::gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32
   m_vertexStride = vsize;
 
   mesh->vcnt = vcnt;
+
+  mesh->vbuffer = vb->vbuffer;
+  mesh->vmemory = vb->vmemory;
+  mesh->ibuffer = vb->ibuffer;
+  mesh->imemory = vb->imemory;
 
   mesh->vbo = true;
 
@@ -3910,6 +3915,9 @@ void kgmVulkan::fillCommands()
         Draw* draw = (*di);
 
         VkBuffer vertexBuffer = draw->vbuffer;
+
+        if (!vertexBuffer)
+          continue;
 
         VkBuffer vertexBuffers[] = {vertexBuffer};
 
