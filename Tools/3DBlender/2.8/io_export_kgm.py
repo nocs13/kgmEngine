@@ -638,9 +638,11 @@ class kgmMesh:
 
     if mesh_faces:
       print('Faces: ' + str(len(mesh_faces)))
+
       for i in range(0, len(mesh_faces)):
         face = mesh_faces[i]
         iface = []
+
         for j in range(0, len(face.vertices)):
           v = kgmVertex();
           vi = face.vertices[j]
@@ -650,11 +652,13 @@ class kgmMesh:
           n = face.normal
           v.v = [c[0], c[1], c[2]]
           v.n = [n[0], n[1], n[2]]
+
           if self.hasvgroups == True:
             for g in range(0, len(mesh.vertices[vi].groups)):
               if g < 4:
                 v.ib[g] = self.getBoneIndex(self.vgroups[mesh.vertices[vi].groups[g].group].name)
                 v.wb[g] = mesh.vertices[vi].groups[g].weight
+
           if hasattr(mesh, 'uv_layers'):
             uv = mesh.uv_layers.active.data[face.loop_start + j].uv
             v.uv = [uv[0], uv[1]]
@@ -682,17 +686,18 @@ class kgmMesh:
             #n = n1 + n2
             #n.normalize()
             #v.n = [n.x, n.y, n.z]
-            break
-          elif nc.dot(nx) > 0.866 and nc.dot(nx) < 1.001:
-            iv = i
-            n = nc + nx
-            n.normalize()
-            v.n = [n.x, n.y, n.z]
+            #break
+            #elif nc.dot(nx) > 0.866 and nc.dot(nx) < 1.001:
+            #iv = i
+            #n = nc + nx
+            #n.normalize()
+            #v.n = [n.x, n.y, n.z]
             break
 
     if iv < 0:
       self.vertices.append(vx)
       iv = (len(self.vertices) - 1)
+
     return iv
 
   def skinVertex(self, o, m, v):
