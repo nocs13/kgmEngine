@@ -5,7 +5,8 @@
 *.exe
 *.bin
 *.lib
-*.creator
+*.creator.*
+*.creator.user*
 *.config
 *.files
 *.includes
