@@ -556,11 +556,11 @@ void kgmGraphics::render()
   //draw scene only lights
   render((kgmMaterial*)null);
 
-  m_rnd_color->render();
+  //m_rnd_color->render();
 
   lighting = true;
 
-  //m_rnd_lights->render();
+  m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 

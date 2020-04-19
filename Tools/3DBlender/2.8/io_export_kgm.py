@@ -632,6 +632,13 @@ class kgmMesh:
         scene_materials.append(kgmMaterial(m))
         print("add material to scene_materials")
 
+    self.smooth = kgmMesh.isSmoothed(mesh)
+
+    if self.smooth is True:
+      print('Current mesh is smoothed.')
+    else:
+      print('Current mesh is not smoothed.')
+
     mesh_faces = None
 
     mesh_faces = mesh.polygons
@@ -646,8 +653,6 @@ class kgmMesh:
         for j in range(0, len(face.vertices)):
           v = kgmVertex();
           vi = face.vertices[j]
-          #c = mtx * mesh.vertices[vi].co
-          #n = mtx.to_3x3() * face.normal
           c = mesh.vertices[vi].co
           n = face.normal
           v.v = [c[0], c[1], c[2]]
@@ -673,26 +678,28 @@ class kgmMesh:
   def addVertex(self, vx):
     iv = -1
     nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
+
     # check if such vertex already exist
+
     for i in range(0, len(self.vertices)):
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
         if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
           nc = Vector((v.n[0], v.n[1], v.n[2]))
-          if nx == nc:
-            iv = i
-            #n1 = Vector((v.n[0], v.n[1], v.n[2]))
-            #n2 = Vector((vx.n[0], vx.n[1], vx.n[2]))
-            #n = n1 + n2
-            #n.normalize()
-            #v.n = [n.x, n.y, n.z]
-            #break
-            #elif nc.dot(nx) > 0.866 and nc.dot(nx) < 1.001:
-            #iv = i
-            #n = nc + nx
-            #n.normalize()
-            #v.n = [n.x, n.y, n.z]
-            break
+
+          if self.smooth is False:
+            if nx == nc:
+              iv = i
+              break
+          else:
+            if nc.dot(nx) > 0.866:
+              n = nc + nx
+              n.normalize()
+              v.n = n
+
+              self.vertices[i] = v
+              iv = i
+              break
 
     if iv < 0:
       self.vertices.append(vx)
@@ -733,6 +740,27 @@ class kgmMesh:
         return i
 
     return -1
+
+  @staticmethod
+  def isSmoothed(m):
+    s = 0
+
+    if m is None:
+      return False
+
+    for f in m.polygons:
+      if f.use_smooth == True:
+        s = s + 1
+      else:
+        s = s - 1
+
+    if s > 0:
+      return True
+    
+    return False
+
+
+     
 
 
 class kgmFrame:
