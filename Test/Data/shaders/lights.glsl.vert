@@ -1,7 +1,7 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 4
 
 layout(binding = 0) uniform UniformBufferObject 
 {
@@ -40,10 +40,6 @@ struct Data
   vec4 color;
   vec4 position;
   vec4 posinview;
-
-  vec4 lightpos[MAX_LIGHTS];
-  vec4 lightdir[MAX_LIGHTS];
-  vec4 lightcol[MAX_LIGHTS];
 
   vec3 nor;
   vec3 eye;
@@ -86,14 +82,14 @@ void main()
     data.lcount = MAX_LIGHTS;
   else
     data.lcount = float(ubo.g_iLights);
-
+  /*
   for (int i = 0; i < MAX_LIGHTS; i++)
   {
     data.lightpos[i] = ubo.g_vLightPos[i];
     data.lightdir[i] = ubo.g_vLightDir[i];
     data.lightcol[i] = ubo.g_vLightCol[i];
   }
-
+  */
   pos.y = -pos.y;
 
   gl_Position = pos;

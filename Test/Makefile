@@ -27,7 +27,7 @@ else
         VHS = Data/shaders/win
 endif
 
-all:
+all: shaders
 #	make -C ..
 #	$(CC) -g -c $(DEFS) $(FLAGS) *.cpp
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)

@@ -1,6 +1,31 @@
 #version 450
 #define MAX_LIGHTS 8
 
+layout(binding = 0) uniform UniformBufferObject
+{
+ mat4   g_mView;
+ mat4   g_mProj;
+ mat4   g_mTran;
+ vec4   g_vColor;
+ vec4   g_vSpecular;
+ vec4   g_vClipPlane;
+
+ vec4   g_vLightPos[MAX_LIGHTS];
+ vec4   g_vLightDir[MAX_LIGHTS];
+ vec4   g_vLightCol[MAX_LIGHTS];
+
+ vec3   g_vUp;
+ vec3   g_vEye;
+ vec3   g_vLook;
+ float  g_fTime;
+ float  g_fShine;
+ float  g_fRandom;
+ float  g_fAmbient;
+ float  g_fLightPower;
+ int    g_iClipping;
+ int    g_iLights;
+} ubo;
+
 layout(binding = 1) uniform sampler2D txColor;
 layout(binding = 2) uniform sampler2D txNormal;
 layout(binding = 3) uniform sampler2D txSpecular;
@@ -12,10 +37,6 @@ struct Data
   vec4 color;
   vec4 position;
   vec4 posinview;
-
-  vec4 lightpos[MAX_LIGHTS];
-  vec4 lightdir[MAX_LIGHTS];
-  vec4 lightcol[MAX_LIGHTS];
 
   vec3 nor;
   vec3 eye;
@@ -48,14 +69,14 @@ void main()
 
   for (int i = 0; i < MAX_LIGHTS; i++)
   {
-    vec3  l  = normalize(data.lightpos[i].xyz);
+    //vec3  l  = normalize(ubo.g_vLightPos[i].xyz);
 
-    if (data.lightpos[i].w < 0.001)
-      break;
+    //if (ubo.g_vLightPos[i].w < 0.001)
+    //  break;
 
-    lpos += l;
+    //lpos += l;
 
-    intensity += dot(data.nor, l);
+    //intensity += dot(data.nor, l);
   }
 
   vec4 fcolor = vec4(0, 0, 0, 0);
