@@ -2519,7 +2519,7 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
-  for (int i = count; i > 0; i++)
+  for (int i = count; i > 0; i--)
   {
     auto& dev = m_physicalDevices[i - 1];
 
@@ -2903,7 +2903,7 @@ bool kgmVulkan::initSurface()
   }
 
   if (SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount)
-    SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount;
+    SWAPCHAIN_IMAGES = m_surfaceCapabilities.minImageCount;
 
   u32 surfaceFormatsCount = 0;
 
@@ -3615,7 +3615,8 @@ bool kgmVulkan::isDeviceSuitable(VkPhysicalDevice dev)
   m_vk.vkGetPhysicalDeviceProperties(dev, &deviceProperties);
   m_vk.vkGetPhysicalDeviceFeatures(dev, &deviceFeatures);
 
-  return (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader);
+  //return (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader);
+  return deviceFeatures.geometryShader;
 }
 
 bool kgmVulkan::destroyDevice()
@@ -4361,7 +4362,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     return null;
   }
 
-  VkDescriptorPoolSize poolSizes[2];
+  /*VkDescriptorPoolSize poolSizes[2];
 
   ZeroObject(poolSizes[0]);
   poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -4377,7 +4378,21 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
   //poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes = poolSizes;
-  poolInfo.maxSets = 1;
+  poolInfo.maxSets = 1;*/
+
+  VkDescriptorPoolSize poolSize;
+
+  ZeroObject(poolSize);
+  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize.descriptorCount = SWAPCHAIN_IMAGES;
+
+  VkDescriptorPoolCreateInfo poolInfo;
+
+  ZeroObject(poolInfo);
+  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  poolInfo.poolSizeCount = 1;
+  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.maxSets = SWAPCHAIN_IMAGES;
 
   if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool) != VK_SUCCESS)
   {
