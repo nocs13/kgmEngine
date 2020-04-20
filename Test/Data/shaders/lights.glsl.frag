@@ -62,6 +62,8 @@ void main()
   fcolor.xyz  = normalize(lpos); //vec3(1.0, 1.0, 1.0) * intensity;
   fcolor.w    = tcolor.w;
 
+  //fragColor = vec4(1, 0, 0, 1);
+  //fragColor = data.color;
   fragColor = fcolor;
   //fragColor = tnormal;
 }

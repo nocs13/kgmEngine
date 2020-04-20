@@ -15,7 +15,9 @@
 
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
-#define SWAPCHAIN_IMAGES 2
+//#define SWAPCHAIN_IMAGES 2
+
+static int SWAPCHAIN_IMAGES = 2;
 
 //https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
 
@@ -2517,8 +2519,6 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
-  //m_physicalDevice = m_physicalDevices[0];
-
   for (int i = count; i > 0; i++)
   {
     auto& dev = m_physicalDevices[i - 1];
@@ -2675,7 +2675,7 @@ bool kgmVulkan::initDevice()
   infoDevice.ppEnabledLayerNames = NULL;
   infoDevice.pEnabledFeatures = &enabledFeatures;
 
-#ifdef DEBUG
+/*#ifdef DEBUG
   const char* layerNames[] = {
     "VK_LAYER_NV_optimus",
     "VK_LAYER_LUNARG_api_dump",
@@ -2697,7 +2697,7 @@ bool kgmVulkan::initDevice()
     infoDevice.enabledLayerCount = 1;
     infoDevice.ppEnabledLayerNames = &m_debugLayer;
   }
-#endif
+#endif*/
 
   VkDevice device = null;
 
@@ -2902,6 +2902,9 @@ bool kgmVulkan::initSurface()
     return false;
   }
 
+  if (SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount)
+    SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount;
+
   u32 surfaceFormatsCount = 0;
 
   result = m_vk.vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatsCount, nullptr);
@@ -3025,9 +3028,9 @@ bool kgmVulkan::initCommands()
   infoCommand.pNext = null;
   infoCommand.commandPool = m_commandPool;
   infoCommand.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  infoCommand.commandBufferCount = 2;
+  infoCommand.commandBufferCount = SWAPCHAIN_IMAGES;
 
-  m_commandBuffers.alloc(2);
+  m_commandBuffers.alloc(SWAPCHAIN_IMAGES);
 
   result = m_vk.vkAllocateCommandBuffers(m_device, &infoCommand, m_commandBuffers.data());
 
@@ -3055,7 +3058,8 @@ bool kgmVulkan::initSwapchain()
 
   VkExtent2D swapChainExtent = m_surfaceCapabilities.currentExtent;
 
-  u32 swapChainImagesCount = m_surfaceCapabilities.minImageCount;
+  //u32 swapChainImagesCount = m_surfaceCapabilities.minImageCount;
+  u32 swapChainImagesCount = SWAPCHAIN_IMAGES;
 
   VkSurfaceTransformFlagBitsKHR surfaceTransform;
 
@@ -4370,7 +4374,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 2;//layoutCreateInfo.bindingCount;
+  poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
+  //poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 1;
 

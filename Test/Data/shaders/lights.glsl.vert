@@ -40,6 +40,7 @@ struct Data
   vec4 color;
   vec4 position;
   vec4 posinview;
+
   vec4 lightpos[MAX_LIGHTS];
   vec4 lightdir[MAX_LIGHTS];
   vec4 lightcol[MAX_LIGHTS];
@@ -81,7 +82,10 @@ void main()
 
   pos = ubo.g_mProj * ubo.g_mView * pos;
 
-  data.lcount = float(ubo.g_iLights);
+  if (ubo.g_iLights > MAX_LIGHTS)
+    data.lcount = MAX_LIGHTS;
+  else
+    data.lcount = float(ubo.g_iLights);
 
   for (int i = 0; i < MAX_LIGHTS; i++)
   {

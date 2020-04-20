@@ -1,6 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+#define MAX_LIGHTS 8
+
 layout(binding = 0) uniform UniformBufferObject 
 {
  mat4   g_mView;           
@@ -8,11 +10,13 @@ layout(binding = 0) uniform UniformBufferObject
  mat4   g_mTran;           
  vec4   g_vColor;          
  vec4   g_vSpecular;       
- vec4   g_vLight;          
- vec4   g_vLightColor;     
- vec4   g_vLightDirection; 
- vec4   g_vClipPlane;      
- vec3   g_vUp;             
+ vec4   g_vClipPlane;
+
+ vec4   g_vLightPos[MAX_LIGHTS];
+ vec4   g_vLightDir[MAX_LIGHTS];
+ vec4   g_vLightCol[MAX_LIGHTS];
+
+ vec3   g_vUp;
  vec3   g_vEye;            
  vec3   g_vLook;           
  float  g_fTime;           
@@ -21,6 +25,7 @@ layout(binding = 0) uniform UniformBufferObject
  float  g_fAmbient;        
  float  g_fLightPower;     
  int    g_iClipping;
+ int    g_iLights;
 } ubo;
 
 layout(push_constant) uniform ConstBlock
