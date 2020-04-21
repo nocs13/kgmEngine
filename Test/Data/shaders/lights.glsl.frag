@@ -1,7 +1,9 @@
 #version 450
+#extension GL_ARB_separate_shader_objects : enable
+
 #define MAX_LIGHTS 8
 
-layout(binding = 0) uniform UniformBufferObject
+layout(set = 0, binding = 0) uniform UBO
 {
  mat4   g_mView;
  mat4   g_mProj;
@@ -23,14 +25,12 @@ layout(binding = 0) uniform UniformBufferObject
  float  g_fAmbient;
  float  g_fLightPower;
  int    g_iClipping;
- int    g_iLights;
 } ubo;
 
-layout(binding = 1) uniform sampler2D txColor;
-layout(binding = 2) uniform sampler2D txNormal;
-layout(binding = 3) uniform sampler2D txSpecular;
-layout(binding = 4) uniform sampler2D txFlexible;
-
+layout(set = 0, binding = 1) uniform sampler2D txColor;
+layout(set = 0, binding = 2) uniform sampler2D txNormal;
+layout(set = 0, binding = 3) uniform sampler2D txSpecular;
+layout(set = 0, binding = 4) uniform sampler2D txFlexible;
 
 struct Data
 {
@@ -44,7 +44,6 @@ struct Data
   vec2 uv;
 
   float shine;
-  float lcount;
 };
 
 layout(location = 0) in Data  data;
@@ -67,24 +66,32 @@ void main()
 
   float intensity = 0.0;
 
-  for (int i = 0; i < MAX_LIGHTS; i++)
+  //for (int i = 0; i < MAX_LIGHTS; i++)
+  for (int i = 0; i < 1; ++i)
   {
-    //vec3  l  = normalize(ubo.g_vLightPos[i].xyz);
+    vec3  l  = vec3(1, 0, 0);
+
+    vec3 vp = data.position.xyz;
+
+    vec3 lp = vp; //ubo.g_vLightPos[0].xyz;
+
+    l = normalize(lp);
 
     //if (ubo.g_vLightPos[i].w < 0.001)
     //  break;
 
     //lpos += l;
 
-    //intensity += dot(data.nor, l);
+    intensity += dot(data.nor, l);
   }
 
+  intensity = clamp(intensity, 0.1, 1.0);
+
   vec4 fcolor = vec4(0, 0, 0, 0);
-  fcolor.xyz  = normalize(lpos); //vec3(1.0, 1.0, 1.0) * intensity;
-  fcolor.w    = tcolor.w;
+  fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
+  fcolor.w    = 1.0;
 
   //fragColor = vec4(1, 0, 0, 1);
   //fragColor = data.color;
   fragColor = fcolor;
-  //fragColor = tnormal;
 }

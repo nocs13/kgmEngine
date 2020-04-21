@@ -31,6 +31,7 @@ void kgmGameGraphics::render_3d()
   setWorldMatrix(mi);
 
   kgmGraphics::render(m_def_material);
+
   kgmGraphics::render(m_shaders[ShaderLines]);
 
   if (m_gridline)
@@ -38,6 +39,12 @@ void kgmGameGraphics::render_3d()
     kgmMaterial mtl;
     mtl.m_color = kgmMaterial::Color(m_gridline->color());
     kgmGraphics::render(&mtl);
+
+    //gc->gcSetTexture(0, null);
+    //gc->gcSetTexture(1, null);
+    //gc->gcSetTexture(2, null);
+    //gc->gcSetTexture(3, null);
+
     kgmGraphics::render((kgmMesh*) m_gridline);
   }
 
@@ -50,6 +57,12 @@ void kgmGameGraphics::render_3d()
     mtl.m_color = kgmMaterial::Color(0xffffffff);
     gc->gcDepth(false, false, gccmp_lequal);
     kgmGraphics::render(&mtl);
+
+    //gc->gcSetTexture(0, null);
+    //gc->gcSetTexture(1, null);
+    //gc->gcSetTexture(2, null);
+    //gc->gcSetTexture(3, null);
+
     kgmGraphics::render(m_shaders[ShaderLines]);
     kgmGraphics::render((kgmMesh*) m_pivot);
     gc->gcDepth(true, true, gccmp_lequal);

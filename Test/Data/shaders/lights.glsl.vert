@@ -1,9 +1,9 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 4
+#define MAX_LIGHTS 8
 
-layout(binding = 0) uniform UniformBufferObject 
+layout(set = 0, binding = 0) uniform UBO
 {
  mat4   g_mView;           
  mat4   g_mProj;           
@@ -25,7 +25,6 @@ layout(binding = 0) uniform UniformBufferObject
  float  g_fAmbient;        
  float  g_fLightPower;     
  int    g_iClipping;
- int    g_iLights;
 } ubo;
 
 layout(push_constant) uniform ConstBlock
@@ -47,7 +46,6 @@ struct Data
   vec2 uv;
 
   float shine;
-  float lcount;
 };
 
 layout(location = 0) in vec3 a_Vertex;
@@ -78,18 +76,6 @@ void main()
 
   pos = ubo.g_mProj * ubo.g_mView * pos;
 
-  if (ubo.g_iLights > MAX_LIGHTS)
-    data.lcount = MAX_LIGHTS;
-  else
-    data.lcount = float(ubo.g_iLights);
-  /*
-  for (int i = 0; i < MAX_LIGHTS; i++)
-  {
-    data.lightpos[i] = ubo.g_vLightPos[i];
-    data.lightdir[i] = ubo.g_vLightDir[i];
-    data.lightcol[i] = ubo.g_vLightCol[i];
-  }
-  */
   pos.y = -pos.y;
 
   gl_Position = pos;

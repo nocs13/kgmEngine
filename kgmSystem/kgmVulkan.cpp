@@ -2001,8 +2001,7 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
-
-  if (!createBuffer(sizeof(Shader::ubo), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+  if (!createBuffer(m_uboSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     shader->buffer,
                     shader->memory))
@@ -2077,7 +2076,11 @@ void  kgmVulkan::gcSetShader(void* s)
   {
     void *data;
 
-    if (m_vk.vkMapMemory(m_device, shader->memory, 0, sizeof(Shader::ubo), 0, &data) == VK_SUCCESS)
+    int s = sizeof(Shader::ubo);
+    int n = s / 64;
+    int m = s % 64;
+
+    if (m_vk.vkMapMemory(m_device, shader->memory, 0, m_uboSize, 0, &data) == VK_SUCCESS)
     {
       memcpy(data, &shader->ubo, sizeof(Shader::ubo));
       VkMappedMemoryRange memoryRange;
@@ -2538,7 +2541,14 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
+  m_vk.vkGetPhysicalDeviceProperties(m_physicalDevice, &m_deviceProperties);
+
   kgm_log() << "Vulkan: Physical device choosen\n";
+
+  m_uboSize = m_deviceProperties.limits.nonCoherentAtomSize;
+
+  while(m_uboSize < sizeof(Shader::ubo))
+    m_uboSize += m_deviceProperties.limits.nonCoherentAtomSize;
 
   return true;
 }
@@ -4325,7 +4335,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   uboLayoutBinding.binding = 0;
   uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   uboLayoutBinding.descriptorCount = 1;
-  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
   VkDescriptorSetLayoutBinding samplerLayoutBinding[VK_MAX_TEXTURES];
 
@@ -4864,8 +4874,6 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
     return &s->ubo.g_fLightPower;
   else if (!strcmp(u, "g_iClipping"))
     return &s->ubo.g_iClipping;
-  else if (!strcmp(u, "g_iLights"))
-    return &s->ubo.g_iLights;
 
   char lbuf[32];
 

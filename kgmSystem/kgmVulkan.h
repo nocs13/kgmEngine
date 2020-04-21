@@ -226,7 +226,6 @@ class kgmVulkan: public kgmIGC
     float  g_fAmbient;
     float  g_fLightPower;
     int    g_iClipping;
-    int    g_iLights;
   };
 
   struct PushConstants
@@ -531,6 +530,10 @@ class kgmVulkan: public kgmIGC
   VkInstance   m_instance = VK_NULL_HANDLE;
   VkSurfaceKHR m_surface  = 0;
   VkDevice     m_device   = 0;
+
+  VkPhysicalDeviceProperties m_deviceProperties;
+
+  int m_uboSize = 0;
 
   kgmArray<VkExtensionProperties> m_extensionProperties;
   kgmArray<const s8*>             m_extensionNames;
