@@ -56,7 +56,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class EnvironmentRender;
   friend class Render::Terrain;
 
-#define MAX_LIGHTS   32
+#define MAX_LIGHTS   8
 #define MAX_SHADOWS  2
 
 public:

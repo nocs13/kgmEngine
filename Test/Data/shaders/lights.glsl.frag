@@ -74,8 +74,8 @@ void main()
 
     vec3 vp = data.position.xyz;
 
-    //vec3 lp = ubo.g_vLightPos[0].xyz;
-    vec3 lp = ubo.g_vUp;
+    vec3 lp = ubo.g_vLightPos[0].xyz;
+    //vec3 lp = ubo.g_vUp;
 
     l = normalize(lp);
 
@@ -90,8 +90,8 @@ void main()
   intensity = clamp(intensity, 0.1, 1.0);
 
   vec4 fcolor = vec4(0, 0, 0, 0);
-  //fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
-  fcolor.xyz  = ubo.g_vLightPos[0].xyz;
+  fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
+  //fcolor.xyz  = ubo.g_vLightPos[0].xyz;
   fcolor.w    = 1.0;
 
   //fragColor = vec4(1, 0, 0, 1);

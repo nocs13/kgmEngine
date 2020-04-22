@@ -6,9 +6,7 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
-#ifndef MAX_LIGHTS
 #define MAX_LIGHTS 8
-#endif
 
 const u32 g_res = 512;
 
@@ -401,9 +399,9 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   for(u32 i = 0; i < lcount; i++)
   {
     char c = '0' + (char) i;
-    lcolor[10] = c;
-    lposition[10] = c;
-    ldirection[10] = c;
+    lcolor[12] = c;
+    lposition[12] = c;
+    ldirection[12] = c;
 
      s->set(lcolor,     lights[i].color);
      s->set(lposition,  lights[i].position);
