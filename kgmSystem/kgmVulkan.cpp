@@ -2001,6 +2001,8 @@ void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
     return null;
   }
 
+  int n = sizeof(Shader::ubo);
+
   if (!createBuffer(m_uboSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                     shader->buffer,
@@ -4329,6 +4331,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(*pipeline);
 
+  kgmArray<VkDescriptorSetLayoutBinding> layoutBindings;
+
   VkDescriptorSetLayoutBinding uboLayoutBinding;
 
   ZeroObject(uboLayoutBinding);
@@ -4337,27 +4341,32 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   uboLayoutBinding.descriptorCount = 1;
   uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
-  VkDescriptorSetLayoutBinding samplerLayoutBinding[VK_MAX_TEXTURES];
-
-  ZeroObject(samplerLayoutBinding);
+  layoutBindings.add(uboLayoutBinding);
 
   for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
   {
-    samplerLayoutBinding[i].binding = 1 + i;
-    samplerLayoutBinding[i].descriptorCount = 1;
-    samplerLayoutBinding[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    samplerLayoutBinding[i].pImmutableSamplers = nullptr;
-    samplerLayoutBinding[i].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    VkDescriptorSetLayoutBinding samplerLayoutBinding;
+
+    ZeroObject(samplerLayoutBinding);
+
+    if (m_textures[i] == null)
+      break;
+
+    samplerLayoutBinding.binding = 1 + i;
+    samplerLayoutBinding.descriptorCount = 1;
+    samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    samplerLayoutBinding.pImmutableSamplers = nullptr;
+    samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+    layoutBindings.add(samplerLayoutBinding);
   }
-  VkDescriptorSetLayoutBinding layoutBinding[] = { uboLayoutBinding, samplerLayoutBinding[0], samplerLayoutBinding[1],
-                                                   samplerLayoutBinding[2], samplerLayoutBinding[3] };
 
   VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
 
   ZeroObject(layoutCreateInfo);
   layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutCreateInfo.bindingCount = 5;
-  layoutCreateInfo.pBindings = layoutBinding;
+  layoutCreateInfo.bindingCount = layoutBindings.length();
+  layoutCreateInfo.pBindings = layoutBindings.data();
 
   result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &pipeline->setlayout);
 

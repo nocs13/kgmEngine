@@ -3,7 +3,7 @@
 
 #define MAX_LIGHTS 8
 
-layout(set = 0, binding = 0) uniform UBO
+layout(set = 0, binding = 0) uniform  UBO
 {
  mat4   g_mView;
  mat4   g_mProj;
@@ -26,6 +26,8 @@ layout(set = 0, binding = 0) uniform UBO
  float  g_fLightPower;
  int    g_iClipping;
 } ubo;
+
+// layout(offset = 240) vec4   g_vLightPos[MAX_LIGHTS];
 
 layout(set = 0, binding = 1) uniform sampler2D txColor;
 layout(set = 0, binding = 2) uniform sampler2D txNormal;
@@ -67,13 +69,13 @@ void main()
   float intensity = 0.0;
 
   //for (int i = 0; i < MAX_LIGHTS; i++)
-  for (int i = 0; i < 1; ++i)
   {
     vec3  l  = vec3(1, 0, 0);
 
     vec3 vp = data.position.xyz;
 
-    vec3 lp = vp; //ubo.g_vLightPos[0].xyz;
+    //vec3 lp = ubo.g_vLightPos[0].xyz;
+    vec3 lp = ubo.g_vUp;
 
     l = normalize(lp);
 
@@ -88,7 +90,8 @@ void main()
   intensity = clamp(intensity, 0.1, 1.0);
 
   vec4 fcolor = vec4(0, 0, 0, 0);
-  fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
+  //fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
+  fcolor.xyz  = ubo.g_vLightPos[0].xyz;
   fcolor.w    = 1.0;
 
   //fragColor = vec4(1, 0, 0, 1);
