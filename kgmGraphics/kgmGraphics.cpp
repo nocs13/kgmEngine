@@ -223,6 +223,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     m_shaders[ShaderNone]     = rc->getShader("none.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
+    m_shaders[ShaderColor]    = rc->getShader("color.glsl");
     m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
     //m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");

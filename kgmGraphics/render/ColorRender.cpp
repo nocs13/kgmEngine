@@ -10,7 +10,7 @@ ColorRender::ColorRender(kgmGraphics* g)
 
 void ColorRender::render()
 {
-  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderBase];
+  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderColor];
 
   if (!s)
     return;

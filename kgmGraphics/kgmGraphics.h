@@ -142,6 +142,7 @@ public:
     ShaderGui,
     ShaderLines,
     ShaderBase,
+    ShaderColor,
     ShaderLight,
     ShaderShadowKeep,
     ShaderShadowDraw,
