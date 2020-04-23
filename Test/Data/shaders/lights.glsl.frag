@@ -48,6 +48,16 @@ struct Data
   float shine;
 };
 
+struct Light
+{
+  vec3 pos;
+  vec3 dir;
+  vec3 col;
+
+  float intensity;
+  float angle;
+};
+
 layout(location = 0) in Data  data;
 
 layout(location = 0) out vec4 fragColor;
@@ -63,38 +73,35 @@ void main()
   vec3 n = normalize(b + normalize(data.nor));
   vec3 e = normalize(data.eye);
 
-  vec3 lnor = vec3(0.0);
-  vec3 lpos = vec3(0.0);
+  vec3 lcol = vec3(1.0);
 
   float intensity = 0.0;
 
-  //for (int i = 0; i < MAX_LIGHTS; i++)
+  for (int i = 0; i < MAX_LIGHTS; i++)
   {
-    vec3  l  = vec3(1, 0, 0);
+    Light  l;
 
-    vec3 vp = data.position.xyz;
+    l.pos = ubo.g_vLightPos[0].xyz;
+    l.dir = ubo.g_vLightDir[0].xyz;
+    l.col = ubo.g_vLightCol[0].rgb;
 
-    vec3 lp = ubo.g_vLightPos[0].xyz;
-    //vec3 lp = ubo.g_vUp;
+    l.intensity = ubo.g_vLightPos[0].w;
+    l.angle     = ubo.g_vLightDir[0].w;
 
-    l = normalize(lp);
+    if (length(l.dir) < 0.95)
+    {
+      l.dir = normalize(l.pos - data.position.xyz);
+    }
 
-    //if (ubo.g_vLightPos[i].w < 0.001)
-    //  break;
-
-    //lpos += l;
-
-    intensity += dot(data.nor, l);
+    intensity += (dot(n, l.dir));
+    lcol *= l.col;
   }
 
   intensity = clamp(intensity, 0.1, 1.0);
 
   vec4 fcolor = vec4(0, 0, 0, 0);
-  fcolor.xyz  = vec3(1.0, 1.0, 1.0) * intensity;
-  //fcolor.xyz  = ubo.g_vLightPos[0].xyz;
-  fcolor.w    = 1.0;
+  fcolor.xyz  = data.color.xyz * lcol.xyz * intensity;
+  fcolor.w    = data.color.w * tcolor.w;
 
-  //fragColor = vec4(1, 0, 0, 1);
-  //fragColor = data.color;
   fragColor = fcolor;
 }
