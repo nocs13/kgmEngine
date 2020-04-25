@@ -25,11 +25,11 @@ void IconRender::render()
 
       gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       mtl.setTexColor(icon->getIcon());
-      gr->render(&mtl);
-      gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
-      gr->render(icon);
-      gr->render((kgmShader*)null);
-      gr->render((kgmMaterial*)null);
+      gr->set(&mtl);
+      gr->set(gr->m_shaders[kgmMaterial::TypeBase]);
+      gr->draw(icon);
+      gr->set((kgmShader*)null);
+      gr->set((kgmMaterial*)null);
       gr->gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
     }
   }

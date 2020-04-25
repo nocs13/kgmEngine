@@ -105,8 +105,6 @@ u32        g_mtx_joints_count = 0;
 vec4       g_vec_color    = vec4(1, 1, 1, 1);
 vec4       g_vec_specular = vec4(1, 1, 1, 1);
 
-kgmShader* g_shd_active = null;
-
 f32        g_fShine = 0.0f;
 f32        g_fAmbient = 0.1f;
 
@@ -232,9 +230,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     //m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
   }
 
-  m_rnd_base        = new BaseRender(this);
-  m_rnd_color       = new ColorRender(this);
-  m_rnd_lights      = new LightRender(this);
+  //m_rnd_base        = new BaseRender(this);
+  //m_rnd_color       = new ColorRender(this);
+  //m_rnd_lights      = new LightRender(this);
   //m_rnd_shadows     = new ShadowRender(this);
   //m_rnd_environment = new EnvironmentRender(this);
   //m_rnd_terrain     = new Render::Terrain(this);
@@ -245,7 +243,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_r_fps    = new FpsRender(this);
   m_r_gui    = new GuiRender(this);
-  m_r_sprite = new SpriteRender(this);
+  //m_r_sprite = new SpriteRender(this);
 
   m_a_lights.alloc(MAX_LIGHTS);
 }
@@ -555,13 +553,13 @@ void kgmGraphics::render()
   m_a_particles_count = collectParticles(m_camera, m_a_particles, 128);
 
   //draw scene only lights
-  render((kgmMaterial*)null);
+  set((kgmMaterial*)null);
 
   //m_rnd_color->render();
 
   lighting = true;
 
-  m_rnd_lights->render();
+  //m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 
@@ -592,15 +590,16 @@ void kgmGraphics::render()
     lighting = false;
   }
 
-  render_3d();
+  //render_3d();
 
   gc->gcCull(gccull_back);
 
-  render((kgmShader*)null);
+  set((kgmShader*) null);
 
-  render(m_def_material);
+  set(m_def_material);
 
-  m_r_sprite->render();
+  //m_r_sprite->render();
+  set((kgmShader*) null);
   m_r_gui->render();
 
   gc->gcSetShader(null);
@@ -628,11 +627,12 @@ void kgmGraphics::render()
   render_2d();
 
 #ifdef DEBUG
+  set((kgmShader*) null);
   m_r_fps->render();
 #endif
 
-  render((kgmShader*)null);
-  render((kgmMaterial*)null);
+  set((kgmShader*)null);
+  set((kgmMaterial*)null);
 
   gc->gcDepth(true, true, gccmp_lequal);
   gc->gcEnd();
@@ -859,7 +859,7 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcSetTarget(null);
 }
 */
-void kgmGraphics::render(kgmVisual* visual)
+void kgmGraphics::draw(kgmVisual* visual)
 {
   if(!visual)
     return;
@@ -920,22 +920,22 @@ void kgmGraphics::render(kgmVisual* visual)
     break;
   case kgmVisual::TypeParticles:
     setWorldMatrix(m_g_mtx_iden);
-    render(g_shd_active);
-    render(visual->getParticles());
+    set(m_shd_active);
+    draw(visual->getParticles());
     setWorldMatrix(visual->getTransform());
     break;
   }
 }
 
-void kgmGraphics::render(kgmParticles* particles)
+void kgmGraphics::draw(kgmParticles* particles)
 {
   if(!particles || !particles->getMesh())
     return;
 
-  render(particles->getMesh());
+  draw(particles->getMesh());
 }
 
-void kgmGraphics::render(kgmIcon* icon)
+void kgmGraphics::draw(kgmIcon* icon)
 {
   mtx4    mtr = m_g_mtx_view;
   vec3    rv, uv;
@@ -968,7 +968,7 @@ void kgmGraphics::render(kgmIcon* icon)
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
 
-void kgmGraphics::render(kgmMaterial* m)
+void kgmGraphics::set(kgmMaterial* m)
 {
   if(!m)
   {
@@ -1002,6 +1002,8 @@ void kgmGraphics::render(kgmMaterial* m)
     m_alpha     = false;
     m_depth     = true;
     m_culling   = true;
+
+    set(m_def_material);
 
     return;
   }
@@ -1108,20 +1110,23 @@ void kgmGraphics::render(kgmMaterial* m)
 
   }
 
-  if (g_shd_active)
+  //if (m_shd_active)
+  if (0)
   {
-    g_shd_active->set("g_vColor",    g_vec_color);
-    g_shd_active->set("g_vSpecular", g_vec_specular);
-    g_shd_active->set("g_fShine",    g_fShine);
+    m_shd_active->set("g_vColor",    g_vec_color);
+    m_shd_active->set("g_vSpecular", g_vec_specular);
+    m_shd_active->set("g_fShine",    g_fShine);
   }
+
+  m_mtl_active = m;
 }
 
-void kgmGraphics::render(kgmShader* s)
+void kgmGraphics::set(kgmShader* s)
 {
   if(s == null)
   {
     gc->gcSetShader(null);
-    g_shd_active = null;
+    m_shd_active = null;
 
     return;
   }
@@ -1145,7 +1150,7 @@ void kgmGraphics::render(kgmShader* s)
   float random = (float)rand()/(float)RAND_MAX;
 
   s->start();
-
+  /*
   s->set("g_fTime",           kgmTime::getTime());
   s->set("g_fRandom",         random);
   s->set("g_fShine",          g_fShine);
@@ -1156,9 +1161,6 @@ void kgmGraphics::render(kgmShader* s)
   s->set("g_mNorm",           m_g_mtx_normal);
   s->set("g_vColor",          g_vec_color);
   s->set("g_vSpecular",       g_vec_specular);
-  s->set("g_vLight",          v_light);
-  s->set("g_vLightColor",     v_light_color);
-  s->set("g_vLightDirection", v_light_direction);
   s->set("g_vEye",            m_camera->mPos);
   s->set("g_vLook",           m_camera->mDir);
   s->set("g_iClipping",       0);
@@ -1179,27 +1181,92 @@ void kgmGraphics::render(kgmShader* s)
 
   if (gc->gcGetBase() == gc_vulkan)
     s->start();
-
-  /*if(m_a_light_count > 1)
-  {
-    static vec4 lights[MAX_LIGHTS - 1];
-
-    for(u32 i = 0; i < (m_a_light_count - 1); i++)
-    {
-      kgmLight* l = (kgmLight*)
-      lights[i] = vec4(g_lights[i + 1]->position.x, g_lights[i + 1]->position.y,
-          g_lights[i + 1]->position.z, g_lights[i + 1]->intensity);
-
-    }
-
-    s->set("g_vLights", lights[0], m_a_light_count - 1);
-    s->set("g_iLights", m_a_light_count - 1);
-  }*/
-
-  g_shd_active = s;
+  */
+  m_shd_active = s;
 }
 
-void kgmGraphics::render(kgmIMesh *m)
+void kgmGraphics::shaderSetGeneral()
+{
+  if (!m_shd_active)
+    return;
+
+  kgmShader* s = m_shd_active;
+
+  s->start();
+
+  s->set("g_fAmbient",        g_fAmbient);
+  s->set("g_mProj",           m_g_mtx_proj);
+  s->set("g_mView",           m_g_mtx_view);
+  s->set("g_vEye",            m_camera->mPos);
+  s->set("g_vLook",           m_camera->mDir);
+  s->set("g_iClipping",       0);
+
+  s8 lcolor[] = "g_vLightCol[*]";
+  s8 lposition[] = "g_vLightPos[*]";
+  s8 ldirection[] = "g_vLightDir[*]";
+
+
+  for(u32 i = 0; i < m_a_light_count; i++)
+  {
+    kgmIGraphics::INode* n = m_a_lights[i];
+
+    if (!n)
+      break;
+
+    kgmLight* l = (kgmLight*) n->getNodeObject();
+
+    char c = '0' + (char) i;
+
+    lcolor[12] = c;
+    lposition[12] = c;
+    ldirection[12] = c;
+
+    vec3 col = l->color();
+    vec3 pos = n->getNodePosition();
+    vec3 dir = l->direction();
+
+    float intensity = l->intensity();
+    float angle     = l->angle();
+
+    vec4 lcol(col.x, col.y, col.z, 0);
+    vec4 lpos(pos.x, pos.y, pos.z, intensity);
+    vec4 ldir(dir.x, dir.y, dir.z, angle);
+
+     s->set(lcolor,     lcol);
+     s->set(lposition,  lpos);
+     s->set(ldirection, ldir);
+  }
+
+}
+
+void kgmGraphics::shaderSetPrivate()
+{
+  if (!m_shd_active)
+    return;
+
+  kgmShader* s = m_shd_active;
+
+  f32 random = (f32) rand() / (f32) RAND_MAX;
+
+  s->set("g_mTran",           m_g_mtx_world);
+  s->set("g_mNorm",           m_g_mtx_normal);
+  s->set("g_fTime",           kgmTime::getTime());
+  s->set("g_fRandom",         random);
+  s->set("g_fShine",          g_fShine);
+  s->set("g_vColor",          g_vec_color);
+  s->set("g_vSpecular",       g_vec_specular);
+
+  if(tcolor)
+    s->set("g_txColor", 0);
+
+  if(tnormal)
+    s->set("g_txNormal", 1);
+
+  if(tspecular)
+    s->set("g_txSpecular", 2);
+}
+
+void kgmGraphics::draw(kgmIMesh *m)
 {
   if(!m || !m->vcount() || !m->vertices())
     return;

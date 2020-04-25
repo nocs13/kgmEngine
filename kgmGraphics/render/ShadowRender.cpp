@@ -94,10 +94,10 @@ void ShadowRender::render()
       mtx4 mt = n->getNodeTransform();
       gr->setWorldMatrix(mt);
 
-      gr->render(gr->m_def_material);
-      gr->render(gr->m_shaders[kgmGraphics::ShaderShadowKeep]);
+      gr->set(gr->m_def_material);
+      gr->set(gr->m_shaders[kgmGraphics::ShaderShadowKeep]);
 
-      gr->render(m);
+      gr->draw(m);
     }
 
     gc->gcEnd();
@@ -122,7 +122,7 @@ void ShadowRender::render()
 
       kgmMesh* m = (kgmMesh*)n->getNodeObject();
 
-      gr->render(gr->m_def_material);
+      gr->set(gr->m_def_material);
       gc->gcSetTexture(0, m_textures[i]);
 
       mtx4 mt = n->getNodeTransform();
@@ -130,11 +130,11 @@ void ShadowRender::render()
 
       kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderShadowDraw];
 
-      gr->render(sh);
+      gr->set(sh);
       sh->set("g_mLight", m_mvps[i]);
 
-      gr->render(m);
-      gr->render((kgmShader*)null);
+      gr->draw(m);
+      gr->set((kgmShader*)null);
     }
   }
 

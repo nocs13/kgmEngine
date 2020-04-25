@@ -169,7 +169,7 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_txEnvironment", 3);
 
   gc->gcBegin();
-  gr->render(mesh);
+  gr->draw(mesh);
   gc->gcEnd();
 
   sh->stop();

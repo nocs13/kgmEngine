@@ -18,9 +18,9 @@ void SpriteRender::render()
 
   gr->setWorldMatrix(mi);
 
-  gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
+  gr->set(gr->m_shaders[kgmMaterial::TypeBase]);
 
-  gr->render((kgmShader*)null);
+  gr->set((kgmShader*)null);
 
   gr->gc3DMode();
 }

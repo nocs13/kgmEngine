@@ -256,6 +256,9 @@ protected:
 
   kgmMaterial*  m_def_material = null;
 
+  kgmMaterial*  m_mtl_active = null;
+  kgmShader*    m_shd_active = null;
+
   bool  m_depth;
   bool  m_alpha;
   bool  m_culling;
@@ -284,7 +287,6 @@ protected:
   mtx3 m_g_mtx_normal;
   mtx4 m_g_mtx_orto;
   mtx4 m_g_mtx_iden;
-
 
   gchandle m_rnd_target = null;
 
@@ -319,12 +321,15 @@ public:
 
 protected:
   void render(kgmCamera &cam, Options &op);
-  void render(kgmIMesh*);
-  void render(kgmVisual*);
-  void render(kgmShader*);
-  void render(kgmMaterial*);
-  void render(kgmParticles*);
-  void render(kgmIcon*);
+
+  void draw(kgmIMesh*);
+  void draw(kgmVisual*);
+  void draw(kgmParticles*);
+  void draw(kgmIcon*);
+
+  void set(kgmMaterial*);
+  void set(kgmShader*);
+  void set(kgmLight*, u32);
 
   void renderGuiMenuItem(kgmGui*, void*);
 
@@ -347,6 +352,9 @@ protected:
   u32 collectLights(kgmCamera*, kgmArray<INode*>&, u32);
   u32 collectMeshes(kgmCamera*, kgmArray<INode*>&, u32);
   u32 collectParticles(kgmCamera*, kgmArray<INode*>&, u32);
+
+  void shaderSetGeneral();
+  void shaderSetPrivate();
 
 public:
   void gc2DMode();

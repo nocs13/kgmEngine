@@ -159,7 +159,7 @@ namespace Render
 
     u32 vcount = msh->vcount();
 
-    gr->render(msh);
+    gr->draw(msh);
 
     msh = ter->fill();
 
@@ -167,7 +167,7 @@ namespace Render
     {
       gr->gc->gcCull(gc_null);
 
-      gr->render(msh);
+      gr->draw(msh);
 
       gr->gc->gcCull(gccull_back);
     }

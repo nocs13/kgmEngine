@@ -15,7 +15,7 @@ void ParticlesRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  gr->render((kgmMaterial*)null);
+  gr->set((kgmMaterial*)null);
 
   for(s32 i = 0; i < gr->m_a_particles_count; i++)
   {
@@ -25,9 +25,9 @@ void ParticlesRender::render()
 
     kgmMaterial* mtl = (np->getNodeMaterial()) ? (np->getNodeMaterial()) : (gr->m_def_material);
 
-    gr->render(mtl);
+    gr->set(mtl);
 
-    gr->render(gr->m_shaders[kgmMaterial::TypeBase]);
+    gr->set(gr->m_shaders[kgmMaterial::TypeBase]);
     gr->gc->gcDepth(true, false, gccmp_lequal);
 
     if (pr->fade())
@@ -36,7 +36,7 @@ void ParticlesRender::render()
     kgmMesh* pm = pr->getMesh();
 
     if (pm)
-      gr->render(pm);
+      gr->draw(pm);
 
     if (pr->fade())
       gr->gc->gcBlend(false, 0, gcblend_one, gcblend_one);
@@ -44,5 +44,5 @@ void ParticlesRender::render()
     gr->gc->gcDepth(true, true, gccmp_lequal);
   }
 
-  gr->render((kgmMaterial*)null);
+  gr->set((kgmMaterial*)null);
 }

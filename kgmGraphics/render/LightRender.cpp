@@ -76,7 +76,7 @@ void LightRender::render()
     material(mtl);
     shader(sh, gr->m_camera, mtl, nod, lights, gr->m_a_light_count);
 
-    gr->render(msh);
+    gr->draw(msh);
 
     material(null);
     shader(null, null, null, null, null, null);
@@ -98,14 +98,14 @@ void LightRender::render()
     mtx4 m = nod->getNodeTransform();
     gr->setWorldMatrix(m);
 
-    gr->render(mtl);
+    gr->set(mtl);
 
-    gr->render(sh);
+    gr->set(sh);
 
-    gr->render(msh);
+    gr->draw(msh);
 
-    gr->render((kgmMaterial*)null);
-    gr->render((kgmShader*)null);
+    gr->set((kgmMaterial*)null);
+    gr->set((kgmShader*)null);
   }
 
   gr->wired(false);

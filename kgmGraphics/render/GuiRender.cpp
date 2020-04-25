@@ -14,14 +14,18 @@ GuiRender::GuiRender(kgmGraphics* gr)
 
 void GuiRender::render()
 {
-  gr->gc->gcSetShader(null);
   gr->gc->gcDepth(false, false, gccmp_lequal);
   gr->gc->gcCull(gc_none);
   gr->gc2DMode();
 
+  gr->set(gr->m_def_material);
+
   gr->setWorldMatrix(mi);
 
-  gr->render(gr->m_shaders[kgmGraphics::ShaderGui]);
+  gr->set(gr->m_shaders[kgmGraphics::ShaderGui]);
+
+  gr->shaderSetGeneral();
+  gr->shaderSetPrivate();
 
   for(int i = gr->m_guis.size(); i > 0; i--)
   {
@@ -37,7 +41,7 @@ void GuiRender::render()
     }
   }
 
-  gr->render((kgmShader*)null);
+  gr->set((kgmShader*)null);
 
   gr->gc3DMode();
 }
@@ -383,14 +387,16 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 void GuiRender::gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
   mtl.m_color = kgmMaterial::Color(col);
-  gr->render(&mtl);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
   ::gcDrawRect(gr->gc, rc, 0xffffffff, tex);
 }
 
 void GuiRender::gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
 {
   mtl.m_color = kgmMaterial::Color(col);
-  gr->render(&mtl);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
   ::gcDrawBorder(gr->gc, rc, 0xffffffff, gr->m_tex_white);
 }
 
@@ -398,6 +404,7 @@ void GuiRender::gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u
                            kgmGui::Rect clip, kgmString& text)
 {
   mtl.m_color = kgmMaterial::Color(fcolor);
-  gr->render(&mtl);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
   ::gcDrawText(gr->gc, font, fwidth, fheight, 0xffffffff, clip, text);
 }

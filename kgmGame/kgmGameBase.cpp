@@ -293,8 +293,8 @@ void kgmGameBase::initGC()
   }
 #endif
 
-  //if (m_gc == null)
-  //  m_gc = new kgmOGL(this);
+  if (m_gc == null)
+    m_gc = new kgmOGL(this);
 
   //if (m_gc)
   //  m_gc->gcResize(m_width, m_height);

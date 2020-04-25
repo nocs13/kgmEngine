@@ -32,8 +32,10 @@ void FpsRender::render()
   }
 
   mtl.m_color = kgmMaterial::Color(0xffffffff);
-  gr->render(&mtl);
-  gr->render((kgmShader*)gr->m_shaders[kgmGraphics::ShaderGui]);
+  gr->set(&mtl);
+  gr->set((kgmShader*)gr->m_shaders[kgmGraphics::ShaderGui]);
+  gr->shaderSetGeneral();
+  gr->shaderSetPrivate();
 
   gcDrawText(gr->gc, gr->font, 10, 15, 0xffffffff, kgmGui::Rect(gr->m_viewport.width() - 200, 1, 90, 20), text);
 }
