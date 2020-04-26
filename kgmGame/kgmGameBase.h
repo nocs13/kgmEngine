@@ -180,7 +180,7 @@ public:
   void  initSystem();
   void  initAudio();
   void  initLogic();
-  void  initScript();
+  bool  initScript();
   void  initGC();
 
   void guiAdd(kgmGui* g)

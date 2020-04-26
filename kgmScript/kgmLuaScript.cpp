@@ -55,7 +55,7 @@ bool kgmLuaScript::load(kgmString s)
   if (!resources->getFile(ls, content))
     return false;
 
-  script = (const s8*) content.data();
+  script = kgmString((const s8*) content.data(), content.length());
 
   if(lua_dostring(handler, script.data()))
     return false;

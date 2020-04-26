@@ -170,10 +170,14 @@ public:
 
   kGame* game;
 
+  bool failed;
+
 public:
   kApp()
   {
     game = null;
+
+    failed = false;
   }
 
   ~kApp()
@@ -194,9 +198,12 @@ public:
 
     game = new kGame();
 
-    m_game = game;
+    if (!game->gInit())
+    {
+      failed = true;
 
-    game->gInit();
+      return;
+    }
 
     game->setRect(0, 0, w, h);
 
@@ -207,11 +214,13 @@ public:
 
     if (options->edit)
       game->gSwitch(kgmIGame::State_Edit);
+
+    m_game = game;
   }
 
   void gameLoop()
   {
-    if(game != null)
+    if(game != null && failed != true)
     {
       if(game->gState() == kgmIGame::State_Play)
         game->guiShow(false);

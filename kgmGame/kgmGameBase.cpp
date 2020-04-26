@@ -270,16 +270,18 @@ void kgmGameBase::initLogic()
   m_logic = new kgmGameLogic();
 }
 
-void kgmGameBase::initScript()
+bool kgmGameBase::initScript()
 {
   m_script = new kgmGameScript(this);
 
   m_script->init();
 
   if (!m_script->getStatus())
-    gQuit();
+    return false;
 
   m_threader.add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
+
+  return true;
 }
 
 void kgmGameBase::initGC()
@@ -583,7 +585,9 @@ int kgmGameBase::gInit()
 #endif
 
   log("init game script...");
-  initScript();
+
+  if (!initScript())
+    return 0;
 
   m_state = State_Idle;
 

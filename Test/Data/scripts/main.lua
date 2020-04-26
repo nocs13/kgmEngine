@@ -12,9 +12,9 @@ function main_update()
 end
 
 function main_log()
-  kgmLog('hello from lua')
+  --kgmLog('hello from lua')
 end
 
 function main_quit()
-   kgmGameExit()
+   --kgmGameExit()
 end
