@@ -231,7 +231,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   }
 
   //m_rnd_base        = new BaseRender(this);
-  //m_rnd_color       = new ColorRender(this);
+  m_rnd_color       = new ColorRender(this);
   //m_rnd_lights      = new LightRender(this);
   //m_rnd_shadows     = new ShadowRender(this);
   //m_rnd_environment = new EnvironmentRender(this);
@@ -555,11 +555,13 @@ void kgmGraphics::render()
   //draw scene only lights
   set((kgmMaterial*)null);
 
-  //m_rnd_color->render();
+  if (m_rnd_color)
+    m_rnd_color->render();
 
   lighting = true;
 
-  //m_rnd_lights->render();
+  if (m_rnd_lights)
+    m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 
@@ -590,7 +592,7 @@ void kgmGraphics::render()
     lighting = false;
   }
 
-  //render_3d();
+  render_3d();
 
   gc->gcCull(gccull_back);
 

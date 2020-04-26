@@ -149,6 +149,14 @@ public:
     State_Edit
   };
 
+  enum Event
+  {
+    Event_Quit,
+    Event_Start,
+    Event_Unload,
+    Event_Load,
+  };
+
   struct Editor
   {
 
