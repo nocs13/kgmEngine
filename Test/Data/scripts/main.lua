@@ -8,10 +8,11 @@ function main_free()
 end
 
 function main_update()
+  kgmLog('Log from lua update')
 end
 
 function main_log()
-   kgmLog('hello from lua')
+  kgmLog('hello from lua')
 end
 
 function main_quit()

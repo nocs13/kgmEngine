@@ -276,6 +276,9 @@ void kgmGameBase::initScript()
 
   m_script->init();
 
+  if (!m_script->getStatus())
+    gQuit();
+
   m_threader.add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
 }
 
@@ -590,7 +593,14 @@ int kgmGameBase::gInit()
 int kgmGameBase::gQuit()
 {
   m_state = State_Quit;
+
   m_quit = true;
+
+  gUnload();
+
+  if (m_script)
+    m_script->onQuit();
+
   m_state = State_Idle;
 
   close();
@@ -660,6 +670,9 @@ int kgmGameBase::gLoad(kgmString s)
       {
         m_logic->add(u);
         m_graphics->add(u);
+
+        if (m_script)
+          m_script->onInsert(u);
       }
     }
   }
@@ -672,6 +685,9 @@ int kgmGameBase::gLoad(kgmString s)
 
   if(m_physics)
     m_physics->build();
+
+  if (m_script)
+    m_script->onLoad();
 
   m_state = State_Play;
 
@@ -691,8 +707,16 @@ int kgmGameBase::gUnload()
   if(m_graphics)
     m_graphics->clear();
 
+  if (m_script)
+    m_script->onUnload();
+
   for(kgmList<kgmUnit*>::iterator i = m_units.begin(); !i.end(); ++i)
+  {
+    if (m_script)
+      m_script->onRemove((*i));
+
     delete (*i);
+  }
 
   for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
     delete (*i);

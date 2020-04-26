@@ -5,6 +5,7 @@
 #include "../kgmBase/kgmList.h"
 
 class kgmIGame;
+class kgmUnit;
 class kgmGui;
 
 class kgmGameScript: public kgmObject
@@ -12,7 +13,7 @@ class kgmGameScript: public kgmObject
   kgmIScript* handler;
   kgmIGame*   game;
 
-  bool script = false;
+  bool status = false;
 
   kgmMap<kgmGui*, kgmString> slotters;
   kgmList< Slot<kgmGameScript>* > slots;
@@ -30,6 +31,17 @@ class kgmGameScript: public kgmObject
   {
     return handler;
   }
+
+  bool getStatus() const
+  {
+    return status;
+  }
+
+  __stdcall void onQuit();
+  __stdcall void onLoad();
+  __stdcall void onUnload();
+  __stdcall void onInsert(kgmUnit*);
+  __stdcall void onRemove(kgmUnit*);
 
   __stdcall void onSlotGuiMenu(kgmGui*, u32);
   __stdcall void onSlotGuiList(kgmGui*, u32);

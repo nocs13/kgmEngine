@@ -17,6 +17,8 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
 
+  status = false;
+
   handler = new kgmLuaScript(g->getResources());
 
   handler->setX(this);
@@ -51,21 +53,21 @@ void kgmGameScript::init()
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
-  script = handler->load("main");
+  status = handler->load("main");
 
-  if (script)
+  if (status)
     handler->call("main_init", "");
 }
 
 void kgmGameScript::free()
 {
-  if (script)
+  if (status)
     handler->call("main_free", "");
 }
 
 void kgmGameScript::update()
 {
-  if (script)
+  if (status)
     handler->call("main_update", "i", game->timeUpdate());
 }
 
@@ -83,6 +85,31 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
     slotters.set(gui, call);
     slots.add( (Slot<kgmGameScript>*) slotGuiButton);
   }
+}
+
+__stdcall void kgmGameScript::onQuit()
+{
+  int k = 0;
+}
+
+__stdcall void kgmGameScript::onLoad()
+{
+
+}
+
+__stdcall void kgmGameScript::onUnload()
+{
+
+}
+
+__stdcall void kgmGameScript::onInsert(kgmUnit* u)
+{
+
+}
+
+__stdcall void kgmGameScript::onRemove(kgmUnit* u)
+{
+
 }
 
 __stdcall void kgmGameScript::onSlotGuiList(kgmGui* g, u32 s)

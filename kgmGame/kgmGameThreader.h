@@ -12,7 +12,7 @@ public:
 
 private:
 
-#define MAX_THREADS 8
+#define MAX_THREADS 4
 #define MAX_WORKERS 8
 
   struct Worker
