@@ -119,6 +119,7 @@ enum EVENTS
 class kgmEvent: public kgmObject
 {
   KGM_OBJECT(kgmEvent);
+
 public:
   typedef struct
   {

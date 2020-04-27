@@ -54,6 +54,8 @@ enum
 
 class kgmWindow: public kgmEvent
 {
+  KGM_OBJECT(kgmWindow);
+
 public:
 #ifdef WIN32
 

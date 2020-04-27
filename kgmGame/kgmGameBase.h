@@ -36,6 +36,7 @@ class kgmGameBase: public kgmWindow, public kgmIGame
   friend class kgmGameMap;
 public:
   static kgmGameBase* m_game;
+  static bool         m_need_editor;
 
 protected:
   kgmIGC*           m_gc;
@@ -118,7 +119,7 @@ private:
 public:
   kgmGameBase();
   kgmGameBase(kgmString &conf);
-  virtual ~kgmGameBase();
+  ~kgmGameBase();
 
   kgmIGC*            getGC();
   kgmIPhysics*       getPhysics();
@@ -215,6 +216,11 @@ public:
   s32 getKeyState(u8 key)
   {
     return m_keys[key];
+  }
+
+  static void needEditor(bool s)
+  {
+    kgmGameBase::m_need_editor = s;
   }
 
 private:

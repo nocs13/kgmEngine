@@ -14,18 +14,19 @@
 class kGame: public kgmGameBase
 {
   KGM_OBJECT(kGame);
+
 public:
   kGame()
   {
     setMsAbsolute(true);
   }
 
-  ~kGame()
+  /*~kGame()
   {
 #ifdef DEBUG
-  kgm_log() << "kGame::~kGame.\n";
+    kgm_log() << "kGame::~kGame.\n";
 #endif
-  }
+  }*/
 };
 
 class kApp: public kgmGameApp
@@ -100,7 +101,7 @@ public:
     {
       delete game;
 
-      game = null;
+      m_game = game = null;
     }
   }
 

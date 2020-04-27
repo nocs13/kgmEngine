@@ -41,6 +41,7 @@
 #include <string.h>
 
 kgmGameBase* kgmGameBase::m_game;
+bool         kgmGameBase::m_need_editor = false;
 
 kgmIGame* kgmIGame::getGame()
 {
@@ -114,8 +115,8 @@ kgmGameBase::~kgmGameBase()
 #ifdef EDITOR
   log("free editor...");
 
-  //if(editor)
-  //  delete editor;
+  if(editor)
+    delete editor;
 #endif
 
   log("stop threader...");
@@ -370,7 +371,7 @@ void kgmGameBase::onIdle()
   }
 
 #ifdef EDITOR
-  if(!editor)
+  if(editor && m_need_editor)
     editor->onIdle();
 #endif
 }
@@ -580,7 +581,7 @@ int kgmGameBase::gInit()
   kgmBaseActions::register_actions();
 
 #ifdef EDITOR
-  if (!editor)
+  if (!editor && m_need_editor)
     editor = new kEditor(this);
 #endif
 
