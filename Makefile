@@ -19,6 +19,7 @@ all: extern debug
 	echo $(subdirs)
 	echo $(sources)
 	make -C Test
+	make -C Komble
 
 extern:
 	make -C kgmExtern
@@ -64,6 +65,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 clean:
 	make -C kgmExtern clean
 	make -C Test clean
+	make -C Komble clean
 	$(RM) $(objects)
 
 distclean: clean
@@ -71,3 +73,7 @@ distclean: clean
 
 test:
 	make -C Test run
+
+komble:
+	make -C Komble run
+

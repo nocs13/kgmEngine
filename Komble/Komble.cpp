@@ -7,42 +7,17 @@
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 
-#ifdef VULKAN
-#include "../kgmSystem/kgmVulkan.h"
-#endif
-
 /*
  * valgrind --leak-check=full --show-leak-kinds=definite --track-origins=yes --error-limit=no -v  ./kTest > ktest.vlg 2>&1
 */
 
 class kGame: public kgmGameBase
 {
-  kGui *gui = null;
-
+  KGM_OBJECT(kGame);
 public:
   kGame()
   {
     setMsAbsolute(true);
-
-    if(m_physics)
-      m_physics->m_gravity = 1.0f;
-
-    kgmMap<u32, u32> mm;
-
-    for (u32 i = 0; i < 10; i++)
-      mm.set(i, i);
-
-    u32 h = mm.height();
-    printf("Key val depth %i\n", h);
-
-    kgmMap<u32, u32>::iterator i = mm.get(23);
-    if (!i.isEnd())
-      printf("Key val %i/%i\n", i.key(), i.data());
-    mm.print();
-    //while(i != mm.end()) {
-      //printf("Key val %i/%i\n", i.key(), i.data());
-      //++i;
-    //}
   }
 
   ~kGame()
@@ -50,69 +25,6 @@ public:
 #ifdef DEBUG
   kgm_log() << "kGame::~kGame.\n";
 #endif
-  }
-
-public:
-  void edit()
-  {
-#ifdef EDITOR
-    m_state = State_Edit;
-#endif
-  }
-
-  void guiShow(bool s)
-  {
-  }
-
-  void onIdle()
-  {
-    kgmGameBase::onIdle();
-  }
-
-  void onKeyUp(int k)
-  {
-    kgmGameBase::onKeyUp(k);
-
-#ifdef EDITOR
-#else
-    if(k == KEY_ESCAPE)
-    {
-      if(gState() == State_Play)
-      {
-        gPause(true);
-        gui->m_guiPause->show();
-
-        if(g_ms_camera)
-          setMsAbsolute(true);
-      }
-      else if(gState() == State_Pause)
-      {
-        gPause(false);
-        gui->m_guiPause->hide();
-        m_msAbs = true;
-      }
-    }
-#endif
-  }
-
-  int gCommand(kgmString s)
-  {
-    if(s == "gameover_fail")
-    {
-      m_state = kgmIGame::State_Clean;
-      gUnload();
-      m_state = kgmIGame::State_Idle;
-      ((kGui*)gui)->viewAgain();
-    }
-    else if(s == "gameover_success")
-    {
-      m_state = kgmIGame::State_Clean;
-      gUnload();
-      m_state = kgmIGame::State_Idle;
-      ((kGui*)gui)->viewAgain();
-    }
-
-    return 0;
   }
 };
 
@@ -126,10 +38,14 @@ public:
 
   kGame* game;
 
+  bool failed;
+
 public:
   kApp()
   {
     game = null;
+
+    failed = false;
   }
 
   ~kApp()
@@ -148,11 +64,14 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
-    game = new kGame();
+    m_game = game = new kGame();
 
-    m_game = game;
+    if (!game->gInit())
+    {
+      failed = true;
 
-    game->gInit();
+      return;
+    }
 
     game->setRect(0, 0, w, h);
 
@@ -163,15 +82,14 @@ public:
 
     if (options->edit)
       game->gSwitch(kgmIGame::State_Edit);
+
+    m_game = game;
   }
 
   void gameLoop()
   {
-    if(game != null)
+    if(game != null && failed != true)
     {
-      if(game->gState() == kgmIGame::State_Play)
-        game->guiShow(false);
-
       game->loop();
     }
   }
@@ -186,7 +104,7 @@ public:
     }
   }
 
-#ifdef ANDROID
+  #ifdef ANDROID
   kgmIGame* android_init_game()
   {
     u32 w, h;
@@ -198,7 +116,7 @@ public:
 
     return ((kGame*)game);
   }
-#endif
+  #endif
 };
 
 #ifdef ANDROID
