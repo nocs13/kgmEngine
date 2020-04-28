@@ -16,9 +16,10 @@
 
 #include "../kgmUtils/kgmTga.h"
 
-#include "kgmActor.h"
+#include "kgmGameApp.h"
 #include "kgmGameShaders.h"
 #include "kgmGameScript.h"
+#include "kgmActor.h"
 
 kgmGameTools::kgmGameTools()
 {
@@ -681,7 +682,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
       mtl->m_color = kgmMaterial::Color(farr[0], farr[1], farr[2], farr[3]);
     }
     if(!strcmp(key, "map_texture")){
-      mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
+      mtl->setTexColor(kgmGameApp::gameApp()->game()->getResources()->getTexture(val));
     }
     //if(!strcmp(key, "shader")){
     //  mtl->setShader(kgmIGame::getGame()->getResources()->getShader(val));
@@ -740,17 +741,17 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     else if(id == "map_color")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(val));
+      mtl->setTexColor(kgmGameApp::gameApp()->game()->getResources()->getTexture(val));
     }
     else if(id == "map_normal")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(val));
+      mtl->setTexNormal(kgmGameApp::gameApp()->game()->getResources()->getTexture(val));
     }
     else if(id == "map_specular")
     {
       mnode->node(i)->attribute("value", val);
-      mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(val));
+      mtl->setTexSpecular(kgmGameApp::gameApp()->game()->getResources()->getTexture(val));
     }
     else if(id == "Shader")
     {

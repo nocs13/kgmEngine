@@ -1,6 +1,7 @@
 #include "kgmSensor.h"
 #include "kgmIGame.h"
 #include "kgmILogic.h"
+#include "kgmGameApp.h"
 
 kgmSensor::kgmSensor(kgmIGame* g)
   :kgmUnit(g)
@@ -12,7 +13,7 @@ kgmSensor::kgmSensor(kgmIGame* g)
 
 void kgmSensor::event(kgmObject* a, kgmString e)
 {
-  kgmUnit* o = kgmIGame::getGame()->gUnit(target);
+  kgmUnit* o = kgmGameApp::gameApp()->game()->gUnit(target);
 
   if(o)
     o->event(this, e);

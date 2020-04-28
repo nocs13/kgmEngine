@@ -4,7 +4,6 @@
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmIGC.h"
-#include "../kgmBase/kgmIObject.h"
 
 #include "kgmMesh.h"
 #include "kgmText.h"
@@ -16,7 +15,7 @@
 #include "kgmAnimation.h"
 
 //Graphical Object
-class kgmVisual: public kgmIObject
+class kgmVisual: public kgmObject
 {
   KGM_OBJECT(kgmVisual);
 
@@ -405,7 +404,7 @@ public:
     return m_bound;
   }
 
-  virtual kgmIObject* clone()
+  virtual kgmObject* clone()
   {
     return new kgmVisual(*this);
   }

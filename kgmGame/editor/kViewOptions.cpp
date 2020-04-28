@@ -219,7 +219,7 @@ void kViewOptions::onShowMaterials(int s)
 
   slotMaterials.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onSelectMaterial, &vo->sigSelect);
 
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+  kEditor* editor = ((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
 
   kgmList<kgmObject*> &ms = editor->getObjects();
 
@@ -229,12 +229,12 @@ void kViewOptions::onShowMaterials(int s)
       vo->addItem(((kgmMaterial*)(*i))->id());
   }
 
-  kgmIGame::getGame()->guiAdd(vo);
+  kgmGameApp::gameApp()->game()->guiAdd(vo);
 }
 
 void kViewOptions::onSelectMaterial(kgmString id)
 {
-  kEditor* editor = ((kgmGameBase*)kgmIGame::getGame())->getEditor();
+  kEditor* editor = ((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
 
   kgmMaterial* m = editor->getMaterial(id);
 
@@ -525,15 +525,15 @@ void kViewOptionsForMaterial::onSelectTexture(kgmGuiFileDialog* fd)
       guiTextShader->setText(fd->getFile());
       break;
     case Mode_Color:
-      mtl->setTexColor(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      mtl->setTexColor(kgmGameApp::gameApp()->game()->getResources()->getTexture(fd->getFile()));
       guiTextTexColor->setText(fd->getFile());
       break;
     case Mode_Normal:
-      mtl->setTexNormal(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      mtl->setTexNormal(kgmGameApp::gameApp()->game()->getResources()->getTexture(fd->getFile()));
       guiTextTexNormal->setText(fd->getFile());
       break;
     case Mode_Specular:
-      mtl->setTexSpecular(kgmIGame::getGame()->getResources()->getTexture(fd->getFile()));
+      mtl->setTexSpecular(kgmGameApp::gameApp()->game()->getResources()->getTexture(fd->getFile()));
       guiTextTexSpecular->setText(fd->getFile());
       break;
     default:
@@ -1060,7 +1060,7 @@ void kViewOptionsForUnit::onListActions(int state)
   for(int i = 0; i < actions.length(); i++)
       vo->addItem(actions[i]);
 
-  kgmIGame::getGame()->guiAdd(vo);
+  kgmGameApp::gameApp()->game()->guiAdd(vo);
 }
 
 void kViewOptionsForUnit::onSelectAction(kgmString id)
@@ -1140,7 +1140,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int 
 
   kgmGuiCheck* enable = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
   enable->setText("Player");
-  enable->setCheck(node == kgmIGame::getGame()->getLogic()->getPlayer());
+  enable->setCheck(node == kgmGameApp::gameApp()->game()->getLogic()->getPlayer());
   //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
 
   y_coord += 23;
@@ -1172,9 +1172,9 @@ void kViewOptionsForActor::onState(kgmString state)
 void kViewOptionsForActor::onPlayer(bool state)
 {
   if(state)
-    kgmIGame::getGame()->getLogic()->setPlayer(((kgmActor*)node));
+    kgmGameApp::gameApp()->game()->getLogic()->setPlayer(((kgmActor*)node));
   else
-    kgmIGame::getGame()->getLogic()->setPlayer(null);
+    kgmGameApp::gameApp()->game()->getLogic()->setPlayer(null);
 }
 
 kViewOptionsForEffect::kViewOptionsForEffect(kgmUnit* n, int x, int y, int w, int h)

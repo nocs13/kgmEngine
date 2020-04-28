@@ -2,8 +2,7 @@
 #include "kgmTypes.h"
 #include "kgmInterface.h"
 
-/* Artifisial Inteligence */
-class kgmIInput: public kgmInterface
+class kgmIInput
 {
 public:
   virtual void keyUp(u8 key)   = 0;

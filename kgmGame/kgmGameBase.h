@@ -73,9 +73,9 @@ protected:
 
   kgmMap<kgmString, NEW_UNIT> m_unit_generators;
 
-  u32             m_fps;
-  u32             m_tpf;
-  kgmGameThreader m_threader;
+  u32              m_fps;
+  u32              m_tpf;
+  kgmGameThreader* m_threader;
 
 #ifdef EDITOR
   friend class kEditor;
@@ -183,6 +183,7 @@ public:
   void  initLogic();
   bool  initScript();
   void  initGC();
+  void  initThreader();
 
   void guiAdd(kgmGui* g)
   {

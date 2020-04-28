@@ -75,7 +75,7 @@ public:
   XF86VidModeModeInfo  m_mode;
   XSetWindowAttributes m_xswa;
   Atom                 m_wmDelete;
-  int                  m_screen;
+  s32                  m_screen;
 
 #endif
 

@@ -280,7 +280,7 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmMemory<u8>&
       else
         path = m_paths[i]->path + delim + kgmString(id, strlen(id));
 
-      if(kgmIGame::getGame()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
+      if(kgmGameApp::gameApp()->game()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
       {
         m.alloc(file.length());
         file.read(m.data(), file.length());
@@ -609,7 +609,7 @@ kgmSound* kgmGameResources::getSound(const char* id)
   if(!getRFile(id, RSOUND, mem))
     return 0;
 
-  sound = m_tools.genSound(kgmIGame::getGame()->getAudio(), mem);
+  sound = m_tools.genSound(kgmGameApp::gameApp()->game()->getAudio(), mem);
 
   if(sound)
   {

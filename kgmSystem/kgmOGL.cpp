@@ -274,13 +274,6 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   glShadeModel(GL_SMOOTH);
 #endif
 
-#ifdef GL_PROJECTION
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-#endif
-
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
   //const GLubyte* ext = glGetString(GL_SHADING_LANGUAGE_VERSION);
   //FILE* f = fopen("/tmp/glext", "w");

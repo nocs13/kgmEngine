@@ -21,12 +21,12 @@ public:
     setMsAbsolute(true);
   }
 
-  /*~kGame()
+  ~kGame()
   {
 #ifdef DEBUG
     kgm_log() << "kGame::~kGame.\n";
 #endif
-  }*/
+  }
 };
 
 class kApp: public kgmGameApp
@@ -37,14 +37,14 @@ class kApp: public kgmGameApp
 public:
 #endif
 
-  kGame* game;
-
   bool failed;
+
+  kGame* game;
 
 public:
   kApp()
   {
-    game = null;
+    m_game = game = null;
 
     failed = false;
   }
@@ -55,6 +55,8 @@ public:
     {
       delete game;
     }
+
+    //delete wnd;
 #ifdef DEBUG
     kgm_log() << "kApp::~kApp.\n";
 #endif
@@ -65,26 +67,15 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
-    m_game = game = new kGame();
+    game = new kGame();
+
+    m_game = static_cast<kgmIGame*> (game);
+    //m_game = reinterpret_cast<kgmIGame*>(game);
 
     if (!game->gInit())
     {
       failed = true;
-
-      return;
     }
-
-    game->setRect(0, 0, w, h);
-
-    kgmGameApp::Options* options = kgmGameApp::gameApplication()->options();
-
-    if (options->map)
-      game->gLoad(options->mapid);
-
-    if (options->edit)
-      game->gSwitch(kgmIGame::State_Edit);
-
-    m_game = game;
   }
 
   void gameLoop()
@@ -92,6 +83,10 @@ public:
     if(game != null && failed != true)
     {
       game->loop();
+      //kgmWindow* w = (kgmWindow*) game;
+      //kgmIGame*  g = (kgmIGame*) game;
+
+      //w->loop();
     }
   }
 

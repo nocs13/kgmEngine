@@ -110,42 +110,18 @@ public:
     return (Options*) &m_options;
   }
 
-  s32 exec(s32 argc, s8 **argv)
-  {
-    memset(&m_options, 0, sizeof(Options));
+  s32 exec(s32 argc, s8 **argv);
 
-    for (int i = 1; i < argc; i++) {
-      if (!strcmp("edit",  argv[i]) || !strcmp("--edit",  argv[i])) {
-        if (!m_options.edit)
-          m_options.edit = true;
-      } else if (!strcmp("map",  argv[i]) || !strcmp("--map",  argv[i])) {
-        if (argc > ( i + 1) && !m_options.map) {
-          m_options.map = true;
-          m_options.mapid = argv[i + 1];
-        }
-      }
-    }
-
-    gameInit();
-
-    gameLoop();
-
-    gameFree();
-
-    return 0;
-  }
-
-  void abort()
-  {
-    if (!game())
-      return;
-
-    game()->gQuit();
-  }
+  void abort();
 
   static kgmGameApp* gameApplication()
   {
     return (kgmGameApp*)kgmApp::application();
+  }
+
+  static kgmGameApp* gameApp()
+  {
+    return (kgmGameApp*) kgmApp::application();
   }
 
   bool exportProject(kgmString path);

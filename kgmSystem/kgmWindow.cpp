@@ -686,6 +686,20 @@ kgmWindow::kgmWindow()
   m_msAbs = true;
   m_msf = false;
   m_fs = false;
+
+  #ifdef WIN32
+
+  m_wnd = NULL;
+
+  #elif defined(ANDROID)
+
+  #else
+
+  m_dpy = null;
+  m_wnd = {0};
+  m_screen = 0;
+
+  #endif
 }
 
 kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp, bool fs)
@@ -723,13 +737,20 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
 #else
 
-  XInitThreads();
+  m_dpy    = null;
+  m_wnd    = {0};
+  m_screen = -1;
+
+  //XInitThreads();
 
   XSetWindowAttributes   swa;
   int cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
 
-  m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
-  m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
+  if (!m_dpy)
+    m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
+
+  if (m_screen < 0)
+    m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
   {
 
@@ -750,10 +771,11 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     */
   }
 
-  kgmSystem::getDesktopWorkaround((u32&)x, (u32&)y, (u32&)w, (u32&)h);
+  //kgmSystem::getDesktopWorkaround((u32&)x, (u32&)y, (u32&)w, (u32&)h);
 
   m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
                               x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+
   //m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
   //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
   //                      cmask, &swa);
@@ -770,8 +792,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   XStoreName(m_dpy, m_wnd, wname);
   XFlush(m_dpy);
 
-  Bool b_ret;
-  XkbSetDetectableAutoRepeat(m_dpy, True, &b_ret);
+  //Bool b_ret;
+  //XkbSetDetectableAutoRepeat(m_dpy, True, &b_ret);
 
 #endif
 }

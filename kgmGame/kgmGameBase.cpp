@@ -43,11 +43,6 @@
 kgmGameBase* kgmGameBase::m_game;
 bool         kgmGameBase::m_need_editor = false;
 
-kgmIGame* kgmIGame::getGame()
-{
-  return kgmGameBase::m_game;
-}
-
 #define BWIDTH  1920
 #define BHEIGHT 1080
 
@@ -88,6 +83,8 @@ kgmGameBase::kgmGameBase()
   m_audio     = null;
   m_gc        = null;
 
+  m_threader  = null;
+
   m_font = null;
 
   m_fps = 1;
@@ -121,7 +118,11 @@ kgmGameBase::~kgmGameBase()
 
   log("stop threader...");
 
-  m_threader.finish();
+  if (m_threader)
+  {
+    m_threader->finish();
+    delete m_threader;
+  }
 
   log("free scene...");
 
@@ -280,7 +281,8 @@ bool kgmGameBase::initScript()
   if (!m_script->getStatus())
     return false;
 
-  m_threader.add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
+  if (m_threader)
+    m_threader->add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
 
   return true;
 }
@@ -309,6 +311,12 @@ void kgmGameBase::initGC()
 void kgmGameBase::initSettings()
 {
   m_settings = new kgmGameSettings();
+}
+
+void kgmGameBase::initThreader()
+{
+  if (!m_threader)
+    m_threader = new kgmGameThreader();
 }
 
 void kgmGameBase::log(const char* msg)
@@ -633,7 +641,7 @@ int kgmGameBase::gLoad(kgmString s)
 
     sf += (kgmSystem::getPathDelim() + s);
 
-    if(!kgmIGame::getGame()->getResources()->getFile(sf, mem))
+    if(!getResources()->getFile(sf, mem))
     {
       return false;
     }
@@ -739,12 +747,18 @@ int kgmGameBase::gSwitch(u32 state)
   switch(state)
   {
   case State_Play:
-    m_threader.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
-    m_threader.add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
+    if (m_threader)
+    {
+      m_threader->add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
+      m_threader->add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
+    }
     break;
   case State_Pause:
-    m_threader.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic);
-    m_threader.remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
+    if (m_threader)
+    {
+      m_threader->remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic);
+      m_threader->remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
+    }
     break;
   }
 
@@ -919,7 +933,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 
   kgmMemory<u8> mem;
 
-  if(!kgmIGame::getGame()->getResources()->getFile(path, mem))
+  if(!getResources()->getFile(path, mem))
   {
 #ifdef DEBUG
     kgm_log() << "\nCan't find map " << (char*)path;

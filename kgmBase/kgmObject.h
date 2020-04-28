@@ -6,14 +6,35 @@
   public:                                                           \
   static unsigned int  cSize(){ return sizeof(class o_class); }     \
   static const char*   cClass(){ return #o_class; }                 \
-  virtual unsigned int vSize(){ return sizeof(class o_class); }     \
-  virtual const char*  vClass(){ return #o_class; }                 \
+  unsigned int vSize(){ return sizeof(class o_class); }             \
+  const char*  vClass(){ return #o_class; }                         \
   private:
 
 
-class kgmObject: public kgmInterface
+class kgmObject
 {
-  KGM_OBJECT(kgmObject);
+public:
+static unsigned int  cSize()
+{
+  return sizeof(kgmObject);
+}
+
+static const char*   cClass()
+{
+  return "kgmObject";
+}
+
+virtual unsigned int vSize()
+{
+  return sizeof(kgmObject);
+}
+
+virtual const char*  vClass()
+{
+  return "kgmObject";
+}
+
+private:
 
 protected:
   template <class... Args> class Signal;

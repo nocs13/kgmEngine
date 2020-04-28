@@ -206,8 +206,5 @@ protected:
   virtual void  initSystem() = 0;
   virtual void  initAudio() = 0;
   virtual void  initLogic() = 0;
-
-public:
-  static kgmIGame* getGame();
 };
 
