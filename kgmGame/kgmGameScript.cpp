@@ -89,7 +89,7 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
 
 __stdcall void kgmGameScript::onQuit()
 {
-  int k = 0;
+
 }
 
 __stdcall void kgmGameScript::onLoad()

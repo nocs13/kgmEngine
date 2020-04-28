@@ -14,25 +14,25 @@
 class kgmObject
 {
 public:
-static unsigned int  cSize()
-{
-  return sizeof(kgmObject);
-}
+  static unsigned int  cSize()
+  {
+    return sizeof(kgmObject);
+  }
 
-static const char*   cClass()
-{
-  return "kgmObject";
-}
+  static const char*   cClass()
+  {
+    return "kgmObject";
+  }
 
-virtual unsigned int vSize()
-{
-  return sizeof(kgmObject);
-}
+  virtual unsigned int vSize()
+  {
+    return sizeof(kgmObject);
+  }
 
-virtual const char*  vClass()
-{
-  return "kgmObject";
-}
+  virtual const char*  vClass()
+  {
+    return "kgmObject";
+  }
 
 private:
 

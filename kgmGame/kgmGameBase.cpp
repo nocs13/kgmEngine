@@ -105,6 +105,20 @@ kgmGameBase::kgmGameBase()
 kgmGameBase::kgmGameBase(kgmString &conf)
   :kgmWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
 {
+  m_game = this;
+
+  m_resources = null;
+  m_physics   = null;
+  m_graphics  = null;
+  m_system    = null;
+  m_script    = null;
+  m_logic     = null;
+  m_audio     = null;
+  m_gc        = null;
+
+  m_threader  = null;
+
+  m_font = null;
 }
 
 kgmGameBase::~kgmGameBase()
@@ -520,6 +534,9 @@ int kgmGameBase::gInit()
 {
   if (m_state != -1)
     return 0;
+
+  log("open workers...");
+  initThreader();
 
   log("open settings...");
   initSettings();
