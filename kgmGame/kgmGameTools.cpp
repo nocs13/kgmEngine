@@ -13,6 +13,7 @@
 
 #include "../kgmGraphics/kgmGui.h"
 #include "../kgmGraphics/kgmGuiFrame.h"
+#include "../kgmGraphics/kgmGuiLayout.h"
 
 #include "../kgmUtils/kgmTga.h"
 
@@ -1706,9 +1707,9 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
         xml.attribute("handler", handler);
       }
 
-      if(id == "kgmGui")
+      if(id == "kgmGuiLayout")
       {
-        gui = new kgmGui(gui, x, y, w, h);
+        gui = new kgmGuiLayout(gui, x, y, w, h);
       }
       else if(id == "kgmGuiTab")
       {

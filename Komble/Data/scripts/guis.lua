@@ -5,7 +5,7 @@ function guis_init()
   local gw, gh = 1, 1
   local scw, sch = 1, 1
 
-  gui_main = kgmGuiLoad('guis/main.gui')
+  gui_main = kgmGuiLoad('guis/start.ui')
   kgmLog('main gui is ' .. tostring(gui_main))
 
   sw, sh = kgmScreenResolution()
