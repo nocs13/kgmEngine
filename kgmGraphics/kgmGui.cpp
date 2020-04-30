@@ -97,6 +97,9 @@ void kgmGui::close()
 
 void kgmGui::scale(float sw, float sh)
 {
+  if (!scalable())
+    return;
+
   m_rect.x = m_base.rect.x * sw;
   m_rect.y = m_base.rect.y * sh;
   m_rect.w = m_base.rect.w * sw;

@@ -72,6 +72,8 @@ public:
     m_game = static_cast<kgmIGame*> (game);
     //m_game = reinterpret_cast<kgmIGame*>(game);
 
+    setMainWindow(game);
+
     if (!game->gInit())
     {
       failed = true;

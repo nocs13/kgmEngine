@@ -7,6 +7,16 @@ class kgmGuiLayout : public kgmGui
 {
   KGM_OBJECT(kgmGuiLayout);
 
+public:
+  enum {
+    Align_None,
+    Align_Left,
+    Align_Right,
+    Align_Center,
+    Align_Top = 1,
+    Align_Bottom,
+  } Align;
+
 private:
   struct Gui {
     kgmGui* gui;
@@ -24,6 +34,9 @@ private:
 
   kgmList<Gui> m_guis;
 
+  u32 m_h_align;
+  u32 m_v_align;
+
 public:
   kgmGuiLayout();
   kgmGuiLayout(kgmGui *par, int x, int y, int w, int h);
@@ -34,8 +47,12 @@ public:
   void onAddChild(kgmGui *c);
   void onDelChild(kgmGui *c);
 
+  void setVAlign(u32 a);
+  void setHAlign(u32 a);
+
 protected:
   void realign();
+  void rescale();
 
 private:
   Gui find(kgmGui*);

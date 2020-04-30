@@ -1,6 +1,8 @@
 #include "kgmSystem.h"
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmLog.h"
+#include "kgmApp.h"
+#include "kgmWindow.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -387,6 +389,20 @@ bool kgmSystem::getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h)
 #endif
 
   return result;
+}
+
+bool kgmSystem::getScreenResolution(u32 &w, u32 &h)
+{
+  kgmWindow* wnd = (kgmWindow*) kgmApp::application()->getMainWindow();
+
+  if (!wnd)
+    return false;
+
+  int x, y;
+
+  wnd->getRect(x, y, (s32&) w, (s32&) h);
+
+  return true;
 }
 
 bool kgmSystem::removeFile(kgmString& path)

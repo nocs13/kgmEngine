@@ -29,6 +29,7 @@ public:
   static int  getCpuConcurrency();
   static int  getNumCpuCores();
   static bool getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h);
+  static bool getScreenResolution(u32 &w, u32 &h);
 
   static float getRandom();
 

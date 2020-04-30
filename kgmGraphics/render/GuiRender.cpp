@@ -309,17 +309,8 @@ void GuiRender::render(kgmGui* gui)
     if(text.length() > 0)
       gcDrawText(gr->gc, gr->gui_style->gui_font, fwidth, fheight, gr->gui_style->sbutton.tx_color, txClip, text);
   }
-  else if(gui->isClass(kgmGui::cClass()))
+  else //if(gui->isClass(kgmGui::cClass()))
   {
-    /*if(gui->m_hasMouse )
-    {
-      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.fg_color, gr->gui_style->gui_image);
-    }
-    else
-    {
-      gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->gui_image);
-    }*/
-
     gcDrawRect(gr->gc, rect, gr->gui_style->sgui.bg_color, gr->gui_style->gui_image);
     gcDrawBorder(gr->gc, rect, gr->gui_style->gui_border, gr->m_tex_white);
   }

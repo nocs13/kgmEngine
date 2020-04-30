@@ -192,4 +192,14 @@ protected:
   {
     return this->m_id;
   };
+
+  void scalable(bool s)
+  {
+    m_base.scale = s;
+  }
+
+  bool scalable()
+  {
+    return m_base.scale;
+  }
 };
