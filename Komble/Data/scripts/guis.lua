@@ -19,9 +19,19 @@ function guis_init()
   --kgmLog('gui scaling is ' .. tostring(scw) .. ' ' .. tostring(sch))
 
   --kgmGuiResize(gui_main, sw, sh)
+  gui_quit = kgmGuiGetChild(gui_main, 'button2')
+
+  if gui_quit ~= nil then
+    kgmGuiCallback(gui_quit, 'gui_evt_quit')
+  end
+
   kgmGuiSetVAlign(gui_main, 3);
   kgmGuiSetHAlign(gui_main, 3);
   kgmGuiShow(gui_main, 1)
   kgmLog('main gui 2 is ' .. tostring(gui_main))
+end
+
+function gui_evt_quit()
+  kgmGameQuit()
 end
 

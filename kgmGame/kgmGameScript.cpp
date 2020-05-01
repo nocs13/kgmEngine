@@ -53,6 +53,8 @@ void kgmGameScript::init()
   handler->set("kgmGuiResolution",  kgmGameScript::kgmGuiResolution);
   handler->set("kgmGuiSetVAlign",  kgmGameScript::kgmGuiSetVAlign);
   handler->set("kgmGuiSetHAlign",  kgmGameScript::kgmGuiSetHAlign);
+  handler->set("kgmGuiGetChild",  kgmGameScript::kgmGuiGetChild);
+  handler->set("kgmGuiCallback",  kgmGameScript::kgmGuiCallback);
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
@@ -416,6 +418,56 @@ s32 kgmGameScript::kgmGuiSetHAlign(void*)
   {
     ((kgmGuiLayout*)gui)->setHAlign(a);
   }
+
+  return 0;
+}
+
+int kgmGameScript::kgmGuiGetChild(void*)
+{
+  kgmGui* gui = null;
+  s8* id = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    game->getScript()->resl("p", null);
+
+    return 1;
+  }
+
+  game->getScript()->args("ps", &gui, &id);
+
+  if (!gui || !id)
+  {
+    game->getScript()->resl("p", null);
+
+    return 1;
+  }
+
+  kgmGui* child = ((kgmGuiLayout*)gui)->getChild(id);
+
+  game->getScript()->resl("p", child);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmGuiCallback(void*)
+{
+  kgmGui* gui = null;
+  s8* fn = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    return 0;
+  }
+
+  game->getScript()->args("ps", &gui, &fn);
+
+  if (gui && fn)
+   ((kgmGameScript*) game->getScript())->setSlot(gui, fn);
 
   return 0;
 }
