@@ -1,8 +1,7 @@
 kgmImport('guis')
 
 function main_init()
-  kgmLog('Init interface')
-
+  --kgmLog('Init interface')
   guis_init()
 end
 

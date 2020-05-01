@@ -519,7 +519,7 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
   {
     kgmGui* gui = m_guis[i - 1];
 
-    if(!gui->erased())
+    if(gui->visible() && !gui->erased())
       gui->onEvent(e);
   }
 

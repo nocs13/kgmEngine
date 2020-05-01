@@ -1758,6 +1758,8 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
     {
       bool isgui = false;
 
+      kgmString sid;
+
       id = xml.m_tagName;
 
       if(!strncmp("kgmGui", id.data(), 6))
@@ -1773,6 +1775,7 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
           xml.attribute("h", value);
           h = kgmConvert::toInteger(value);
           xml.attribute("handler", handler);
+          xml.attribute("id", sid);
         }
 
         isgui = true;
@@ -1783,6 +1786,13 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
         gui = new kgmGuiText(gui, x, y, w, h);
 
         gs->setSlot(gui, handler);
+
+        kgmString text;
+
+        xml.attribute("text", text);
+
+        if (text.length() > 0)
+          ((kgmGuiText*) gui)->setText(text);
       }
       else if (id == "kgmGuiButton")
       {
@@ -1817,6 +1827,9 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
             item->add(kgmConvert::toInteger(oid), value);
         }
       }
+
+      if (sid.length() > 0 && gui)
+        gui->setSid(sid);
 
       if (isgui)
         gui = gui->getParent();

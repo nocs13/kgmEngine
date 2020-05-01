@@ -1,4 +1,9 @@
+VALIGN_LEFT   = 1
+VALIGN_RIGHT  = 2
+VALIGN_CENTER = 3
+
 gui_main = nil
+gui_credits = nil
 
 function guis_init()
   local sw, sh = 1, 1
@@ -19,11 +24,7 @@ function guis_init()
   --kgmLog('gui scaling is ' .. tostring(scw) .. ' ' .. tostring(sch))
 
   --kgmGuiResize(gui_main, sw, sh)
-  gui_quit = kgmGuiGetChild(gui_main, 'button2')
-
-  if gui_quit ~= nil then
-    kgmGuiCallback(gui_quit, 'gui_evt_quit')
-  end
+  --gui_quit = kgmGuiGetChild(gui_main, 'button2')
 
   kgmGuiSetVAlign(gui_main, 3);
   kgmGuiSetHAlign(gui_main, 3);
@@ -31,7 +32,32 @@ function guis_init()
   kgmLog('main gui 2 is ' .. tostring(gui_main))
 end
 
-function gui_evt_quit()
-  kgmGameQuit()
+function onGuiButtonQuit()
+    kgmGameExit()
 end
 
+function onGuiButtonNew()
+end
+
+function onGuiButtonLoad()
+end
+
+function onGuiButtonCredits()
+  kgmLog('onGuiButtonCredits')
+
+  if gui_credits == nil then
+    gui_credits = kgmGuiLoad('guis/credits.ui')
+    kgmGuiSetVAlign(gui_credits, VALIGN_CENTER);
+    kgmGuiSetHAlign(gui_credits, VALIGN_CENTER);
+  end
+
+  kgmGuiShow(gui_main, 0)
+  kgmGuiShow(gui_credits, 1)
+end
+
+function onGuiCreditsBack()
+  kgmLog('onGuiCreditsBack')
+
+  kgmGuiShow(gui_credits, 0)
+  kgmGuiShow(gui_main, 1)
+end
