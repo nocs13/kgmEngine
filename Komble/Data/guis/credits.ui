@@ -8,5 +8,5 @@
  <kgmGuiText id='text5' x='171' y='245' w='96' h='25' handler='onGuiTextHandler' text='karakal_1' />
  <kgmGuiText id='text6' x='545' y='168' w='96' h='25' handler='onGuiTextHandler' text='Video' />
  <kgmGuiText id='text7' x='548' y='240' w='96' h='25' handler='onGuiTextHandler' text='karakal_' />
- <kgmGuiButton id='button8' x='400' y='510' w='51.3334' h='17.33334' handler='onGuiCreditsBack' text='Back' />
+ <kgmGuiButton id='button8' x='352.953125' y='520.328125' w='51.3334' h='17.33334' handler='onGuiCreditsBack' text='Back' />
 </kgmGuiLayout>

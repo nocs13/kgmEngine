@@ -515,13 +515,26 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 {
   kgmWindow::onEvent(e);
 
-  for(int i = m_guis.size(); i > 0; i--)
+  kgmGui* visible[4] = {0};
+  s32     count = 0;
+
+  for(s32 i = m_guis.size(); i > 0; i--)
   {
     kgmGui* gui = m_guis[i - 1];
 
     if(gui->visible() && !gui->erased())
-      gui->onEvent(e);
+    {
+      visible[count] = gui;
+
+      if (count < 3)
+        count++;
+      else if (count == 3)
+        break;
+    }
   }
+
+  for (s32 i = 0; i < count; i++)
+    visible[i]->onEvent(e);
 
 #ifdef EDITOR
   if(editor)
