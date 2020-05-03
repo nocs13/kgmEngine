@@ -85,7 +85,7 @@ public:
   Animation* getNode(s8* id)
   {
     for(u32 i = 0; i < (u32) m_nodes.length(); i++)
-      if(!strcmp(id, m_nodes[i]->m_name))
+      if(!strcmp((const char*)id, m_nodes[i]->m_name))
         return m_nodes[i];
 
     return 0;

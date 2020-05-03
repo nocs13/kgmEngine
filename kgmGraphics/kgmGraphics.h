@@ -266,7 +266,7 @@ protected:
   bool  m_editor;
   bool  m_wired;
 
-  uint32 m_max_faces;
+  u32   m_max_faces;
 
   u32    m_bg_color;
 

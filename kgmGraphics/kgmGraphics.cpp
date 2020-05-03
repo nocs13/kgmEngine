@@ -1234,9 +1234,9 @@ void kgmGraphics::shaderSetGeneral()
     vec4 lpos(pos.x, pos.y, pos.z, intensity);
     vec4 ldir(dir.x, dir.y, dir.z, angle);
 
-     s->set(lcolor,     lcol);
-     s->set(lposition,  lpos);
-     s->set(ldirection, ldir);
+     s->set((const char*) lcolor,     lcol);
+     s->set((const char*) lposition,  lpos);
+     s->set((const char*) ldirection, ldir);
   }
 
 }
@@ -1585,7 +1585,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
 
   V v[4];
 
-  u32 tlen = strlen(text);
+  u32 tlen = strlen((const char*) text);
 
   if(tlen < 1)
     return;

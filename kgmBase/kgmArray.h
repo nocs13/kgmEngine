@@ -62,4 +62,4 @@ public:
   }
 };
 
-typedef kgmArray<int8>  kgmByteArray;
+typedef kgmArray<s8>  kgmByteArray;

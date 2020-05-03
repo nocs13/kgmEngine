@@ -5,6 +5,7 @@
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmPointer.h"
+#include "../kgmBase/kgmEncryptor.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 
 /*
@@ -47,6 +48,10 @@ public:
     m_game = game = null;
 
     failed = false;
+
+    kgmEncryptor e;
+
+    e.init();
   }
 
   ~kApp()
