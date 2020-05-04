@@ -8,6 +8,7 @@
 #include "kgmGameScript.h"
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
+#include "kgmGameRetention.h"
 
 #include "kgmUnit.h"
 #include "kgmActor.h"
@@ -46,6 +47,7 @@ protected:
   kgmGamePhysics*   m_physics;
   kgmGameResources* m_resources;
   kgmGameSettings*  m_settings;
+  kgmGameRetention* m_retention;
 
   kgmSystem* m_system;
 
@@ -212,6 +214,11 @@ public:
   kgmGameSettings* getSettings()
   {
     return m_settings;
+  }
+
+  kgmGameRetention* getRetention()
+  {
+    return m_retention;
   }
 
   s32 getKeyState(u8 key)

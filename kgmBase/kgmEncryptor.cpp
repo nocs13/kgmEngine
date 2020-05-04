@@ -10,6 +10,16 @@ kgmEncryptor::kgmEncryptor()
   m_x = m_y = m_e = m_d = m_n = m_t = m_s = 0;
 }
 
+bool kgmEncryptor::init(s32 pr_x, s32 pr_y, s32 pr_e, s32 pr_d)
+{
+  m_x = pr_x;
+  m_y = pr_y;
+  m_e = pr_e;
+  m_d = pr_d;
+
+  return true;
+}
+
 bool kgmEncryptor::init()
 {
   s32 x = 0, y = 0;

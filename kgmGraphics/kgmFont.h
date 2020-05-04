@@ -12,7 +12,7 @@ class kgmFont: public kgmTexture
   KGM_OBJECT(kgmFont);
 
 public:
-  int  m_twidth, m_theight, m_fwidth, m_fheight;
+  s32  m_twidth, m_theight, m_fwidth, m_fheight;
   u32 m_rows, m_cols, m_base;
 
 public:
@@ -22,7 +22,7 @@ public:
     m_rows = m_cols = 0, m_base = 32;
   }
 
-  kgmFont(void* t, uint type = 0): kgmTexture(t, type)
+  kgmFont(void* t, u32 type = 0): kgmTexture(t, type)
   {
     m_twidth = m_theight = m_fwidth = m_fheight = 0;
     m_rows = m_cols = 0, m_base = 32;

@@ -88,8 +88,10 @@ public:
   } Options;
 
 protected:
-  kgmIGame*  m_game;
-  Options    m_options;
+  kgmIGame* m_game;
+  Options   m_options;
+
+  kgmString m_name;
 
 public:
   virtual ~kgmGameApp()
