@@ -2,6 +2,8 @@
 #include "../kgmBase/kgmFile.h"
 #include "../kgmBase/kgmMemory.h"
 
+// This class provide shared options for configuration.
+
 kgmString kgmGameSettings::m_name = "settings.cfg";
 
 kgmGameSettings::kgmGameSettings()
