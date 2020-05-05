@@ -2,6 +2,7 @@
 #include "kgmIGame.h"
 #include "kgmGameApp.h"
 #include "kgmGameTools.h"
+#include "kgmGameRetention.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmGraphics/kgmGui.h"
@@ -270,6 +271,101 @@ s32 kgmGameScript::kgmGameState(void*)
   state = game->gState();
 
   game->getScript()->resl("i", state);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmGenRetention(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmGameRetention* ret = null;
+
+  s8* name = null;
+
+  game->getScript()->args("s", &name);
+
+  if (name)
+  {
+    ret = new kgmGameRetention();
+    ret->name(name);
+    ret->encryptor(83, 107, 643, 7935);
+    ret->load();
+  }
+
+  game->getScript()->resl("p", ret);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmDelRetention(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmGameRetention* ret = null;
+
+  game->getScript()->args("p", &ret);
+
+  if (ret)
+  {
+    ret->keep();
+
+    delete ret;
+  }
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmGetRetention(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmString value;
+
+  kgmGameRetention* ret = null;
+
+  s8* key = null;
+
+  game->getScript()->args("ps", &ret, &key);
+
+  if (ret && key)
+  {
+    value = ret->get(key);
+  }
+
+  game->getScript()->resl("s", value.data());
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmSetRetention(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmGameRetention* ret = null;
+
+  s8* val = null;;
+
+  s8* key = null;
+
+  game->getScript()->args("pss", &ret, &key, &val);
+
+  if (ret && key && val)
+  {
+    ret->set(key, val);
+  }
 
   return 0;
 }

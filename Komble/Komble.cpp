@@ -20,10 +20,16 @@ public:
   kGame()
   {
     setMsAbsolute(true);
+
+    m_retention->name(".komble");
+
+    m_retention->load();
   }
 
   ~kGame()
   {
+    m_retention->keep();
+
 #ifdef DEBUG
     kgm_log() << "kGame::~kGame.\n";
 #endif
