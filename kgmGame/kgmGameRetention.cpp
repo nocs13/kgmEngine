@@ -20,15 +20,13 @@ void kgmGameRetention::encryptor(s32 x, s32 y, s32 e, s32 d)
 
 bool kgmGameRetention::load()
 {
-  kgmString phome;
+  kgmString path;
 
-  kgmSystem::getHomeDirectory(phome);
-
-  phome = phome + kgmSystem::getPathDelim() + m_name;
+  path = getPath();
 
   kgmFile f;
 
-  if (!f.open(phome))
+  if (!f.open(path))
     return false;
 
   kgmMemory<s8> m;
@@ -42,10 +40,12 @@ bool kgmGameRetention::load()
   void* dm = null;
   s32 len = 0;
 
-  len = m_encryptor.encrypt(m.data(), m.length(), &dm);
+  len = m_encryptor.decrypt(m.data(), m.length(), &dm);
 
   if (!dm || !len)
     return false;
+
+  kgmString xs((const s8*) dm, len);
 
   kgmXml x(dm, len);
 
@@ -66,6 +66,9 @@ bool kgmGameRetention::load()
 
         m_data.set(k, v);
       }
+
+      if (!i.next())
+        break;
     }
   }
 
@@ -74,24 +77,48 @@ bool kgmGameRetention::load()
 
 bool kgmGameRetention::keep()
 {
-  if (m_data.length() < 1)
-    return false;
-
   kgmString x = "<?xml version='1.0'?>\n";
 
   x += "<kgm>";
 
   auto i = m_data.begin();
 
-  while(!i.end())
+  while(!i.isEnd())
   {
-
     x += " <Item key='";
-    //x +=
+    x += i.key();
+    x += "' value='";
+    x += i.data();
+    x += "' />\n";
 
+    ++i;
   }
 
   x += "</kgm>";
+
+  void* buf = null;
+
+  s32 len = m_encryptor.encrypt(x.data(), x.length(), &buf);
+
+  if (!buf)
+    return false;
+
+  kgmString path = getPath();
+
+  kgmFile f;
+
+  if (!f.open(path, kgmFile::Create | kgmFile::Write))
+  {
+    free(buf);
+
+    return false;
+  }
+
+  f.write(buf, len);
+
+  free(buf);
+
+  f.close();
 
   return true;
 }
@@ -107,10 +134,20 @@ kgmString kgmGameRetention::get(kgmString key)
 
   auto i = m_data.get(key);
 
-  if (i.end())
+  if (i.isEnd())
     return r;
 
 
   return i.data();
 }
 
+kgmString kgmGameRetention::getPath()
+{
+  kgmString path;
+
+  kgmSystem::getHomeDirectory(path);
+
+  path = path + kgmSystem::getPathDelim() + m_name;
+
+  return path;
+}

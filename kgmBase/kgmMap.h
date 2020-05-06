@@ -50,16 +50,26 @@ public:
       _Ptr   = NULL;
       object = o;
 
-      if (o) {
+      if (o)
+      {
         Node* s = o->root;
 
-        while(true) {
-          if (s->left != null) {
-            s = s->left;
-          } else if (s->right != null) {
-            s = s->right;
-          } else {
-            break;
+        if (s)
+        {
+          while(true)
+          {
+            if (s->left != null)
+            {
+              s = s->left;
+            }
+            else if (s->right != null)
+            {
+              s = s->right;
+            }
+            else
+            {
+              break;
+            }
           }
         }
 

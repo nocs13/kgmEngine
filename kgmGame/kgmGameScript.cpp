@@ -57,6 +57,11 @@ void kgmGameScript::init()
   handler->set("kgmGuiGetChild",  kgmGameScript::kgmGuiGetChild);
   handler->set("kgmGuiCallback",  kgmGameScript::kgmGuiCallback);
 
+  handler->set("kgmGenRetention",  kgmGameScript::kgmGenRetention);
+  handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
+  handler->set("kgmGetRetention",  kgmGameScript::kgmGetRetention);
+  handler->set("kgmSetRetention",  kgmGameScript::kgmSetRetention);
+
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
   status = handler->load("main");

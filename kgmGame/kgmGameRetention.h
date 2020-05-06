@@ -4,6 +4,7 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmTab.h"
+#include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmEncryptor.h"
 
 // Provide ability save game/level/player data.
@@ -12,7 +13,7 @@ class kgmGameRetention : public kgmObject
 {
   KGM_OBJECT(kgmGameRetention);
 
-  kgmTab<kgmString, kgmString> m_data;
+  kgmMap<kgmString, kgmString> m_data;
 
   kgmString m_name;
 
@@ -30,6 +31,9 @@ public:
 
   void      set(kgmString key, kgmString val);
   kgmString get(kgmString key);
+
+private:
+  kgmString getPath();
 };
 
 #endif // KGMGAMERETENTION_H

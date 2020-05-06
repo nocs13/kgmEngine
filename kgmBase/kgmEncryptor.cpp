@@ -17,6 +17,9 @@ bool kgmEncryptor::init(s32 pr_x, s32 pr_y, s32 pr_e, s32 pr_d)
   m_e = pr_e;
   m_d = pr_d;
 
+  m_n = m_x * m_y;
+  m_t = (m_x - 1) * (m_y - 1);
+
   return true;
 }
 
