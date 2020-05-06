@@ -15,6 +15,8 @@
 #include "../kgmGraphics/kgmGuiProgress.h"
 #include "../kgmSystem/kgmWindow.h"
 
+s8* kgmGameScript::value = null;
+
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
@@ -334,8 +336,6 @@ s32 kgmGameScript::kgmGetRetention(void*)
   if (!game)
     return 0;
 
-  kgmString value;
-
   kgmGameRetention* ret = null;
 
   s8* key = null;
@@ -347,7 +347,7 @@ s32 kgmGameScript::kgmGetRetention(void*)
     value = ret->get(key);
   }
 
-  game->getScript()->resl("s", value.data());
+  game->getScript()->resl("s", value);
 
   return 1;
 }

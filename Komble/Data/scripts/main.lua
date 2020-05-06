@@ -5,18 +5,18 @@ mapId = ''
 
 function main_init()
   --kgmLog('Init interface')
-  guis_init()
+  --guis_init()
 
-  retent = kgmGenRetention('.komble')
-  mapId = kgmGetRetention(retent, 'mapCurrent')
+  --retent = kgmGenRetention('.komble')
+  --mapId = kgmGetRetention(retent, 'mapCurrent')
 
-  if mapId == '' then
-    kgmSetRetention(retent, 'mapCurrent', 'map00')
-  end
+  --if mapId == '' then
+  --  kgmSetRetention(retent, 'mapCurrent', 'map00')
+  --end
 end
 
 function main_free()
-  kgmDelRetention(retent)
+  --kgmDelRetention(retent)
 end
 
 function main_update()

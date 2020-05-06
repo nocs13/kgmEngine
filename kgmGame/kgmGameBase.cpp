@@ -83,6 +83,9 @@ kgmGameBase::kgmGameBase()
   m_audio     = null;
   m_gc        = null;
 
+  m_retention = null;
+  m_settings  = null;
+
   m_threader  = null;
 
   m_font = null;
@@ -115,6 +118,9 @@ kgmGameBase::kgmGameBase(kgmString &conf)
   m_logic     = null;
   m_audio     = null;
   m_gc        = null;
+
+  m_retention = null;
+  m_settings  = null;
 
   m_threader  = null;
 
@@ -193,6 +199,9 @@ kgmGameBase::~kgmGameBase()
 
   if(m_settings)
     delete m_settings;
+
+  if (m_retention)
+    delete m_retention;
 
   kgmActor::g_actions.clear();
 }

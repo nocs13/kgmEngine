@@ -18,6 +18,8 @@ class kgmGameScript: public kgmObject
   kgmMap<kgmGui*, kgmString> slotters;
   kgmList< Slot<kgmGameScript>* > slots;
 
+  static s8* value;
+
  public:
   kgmGameScript(kgmIGame*);
   ~kgmGameScript();
