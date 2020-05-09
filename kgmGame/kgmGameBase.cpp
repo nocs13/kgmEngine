@@ -14,6 +14,7 @@
 #include "../kgmSystem/kgmOAL.h"
 #include "../kgmSystem/kgmOSL.h"
 #include "../kgmSystem/kgmVulkan.h"
+#include "../kgmSystem/kgmGCNone.h"
 
 #include "kgmIGame.h"
 #include "kgmGameMap.h"
@@ -310,9 +311,11 @@ bool kgmGameBase::initScript()
   return true;
 }
 
+#define OGL
+
 void kgmGameBase::initGC()
 {
-#ifdef VULKAN
+#ifdef VULKANXXX
   m_gc = new kgmVulkan(this);
 
   if(m_gc->gcError())
@@ -322,10 +325,14 @@ void kgmGameBase::initGC()
 
     m_gc = nullptr;
   }
+#elif defined(OGL)
+  m_gc = new kgmOGL(this);
+#else
+  m_gc = new kgmGCNone(this);
 #endif
 
-  if (m_gc == null)
-    m_gc = new kgmOGL(this);
+  //if (m_gc == null)
+  //  m_gc = new kgmOGL(this);
 
   //if (m_gc)
   //  m_gc->gcResize(m_width, m_height);
@@ -628,8 +635,8 @@ int kgmGameBase::gInit()
   kgmBaseActions::register_actions();
 
 #ifdef EDITOR
-  if (!editor && m_need_editor)
-    editor = new kEditor(this);
+//  if (!editor && m_need_editor)
+//    editor = new kEditor(this);
 #endif
 
   log("init game script...");

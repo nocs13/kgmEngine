@@ -154,6 +154,8 @@ public:
 
   void init(const T* str)
   {
+    kgmArray<T>::clear();
+
     if(!str)
       return;
 
@@ -172,7 +174,11 @@ public:
 
   void alloc(u32 len)
   { 
-    kgmArray<T>::clear(); 
+    kgmArray<T>::clear();
+
+    if (!len)
+      return;
+
     kgmArray<T>::m_length = len; 
     kgmArray<T>::m_data   = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
     kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0); 
@@ -181,6 +187,10 @@ public:
   void alloc(T* m, u32 len)
   { 
     kgmArray<T>::clear(); 
+
+    if (!m || !len)
+      return;
+
     kgmArray<T>::m_length = len; 
     kgmArray<T>::m_data = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
     memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length); 

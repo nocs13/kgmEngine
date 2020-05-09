@@ -119,7 +119,7 @@ bool kgmLuaScript::resl(kgmString fmt, ...)
   va_list vl;
   va_start(vl, fmt);
 
-  while((*f != '\0') && (args < 128))
+  while((f) && (*f != '\0') && (args < 128))
   {
     switch(*f)
     {
@@ -157,12 +157,12 @@ void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
   va_list vl;
   va_start(vl, fmt);
 
-  while((*f != '\0') && (args < 128))
+  while((f) && (*f != '\0') && (args < 128))
   {
     switch(*f)
     {
     case 's':
-      push((char*)va_arg(vl, char*));
+      push((char*) va_arg(vl, char*));
       break;
     case 'i':
       push((int)va_arg(vl, int));

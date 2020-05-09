@@ -1049,7 +1049,7 @@ void kgmOGL::gcClipPlane(bool en, u32 id, f64 plane[4])
 }
 
 //STENCIL
-void gcStencil(bool en, u32 func, u32 mask, u32 ref,
+void kgmOGL::gcStencil(bool en, u32 func, u32 mask, u32 ref,
                u32 fail, u32 zfail, u32 zpass)
 {
 

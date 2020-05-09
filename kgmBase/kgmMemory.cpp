@@ -6,7 +6,11 @@
 
 void* kgm_alloc(size_t size)
 {
+  if (size < 1)
+    return NULL;
+
   void* p = ::malloc(size);
+
   //void* p = calloc(size, 1);
 
 #ifdef DEBUGXXX
