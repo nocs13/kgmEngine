@@ -28,6 +28,12 @@ public:
     kgm_log() << "kGame::~kGame.\n";
 #endif
   }
+
+  void onKeyUp(int k)
+  {
+    if (k == 1)
+      close();
+  }
 };
 
 class kApp: public kgmGameApp
@@ -42,6 +48,8 @@ public:
 
   kGame* game;
 
+  //kgmWindow* wnd = null;
+
 public:
   kApp()
   {
@@ -49,9 +57,9 @@ public:
 
     failed = false;
 
-    kgmEncryptor e;
+    //kgmEncryptor e;
 
-    e.init();
+    //e.init();
   }
 
   ~kApp()
@@ -77,12 +85,14 @@ public:
     m_game = static_cast<kgmIGame*> (game);
     //m_game = reinterpret_cast<kgmIGame*>(game);
 
-    setMainWindow(game);
+    //setMainWindow(game);
 
-    if (!game->gInit())
+    if (game && !game->gInit())
     {
       failed = true;
     }
+
+    //wnd = new kgmWindow((kgmWindow*) null, "kgm", 0, 0, 800, 600, 24, false);
   }
 
   void gameLoop()
@@ -105,6 +115,8 @@ public:
 
       m_game = game = null;
     }
+
+    //delete wnd;
   }
 
   #ifdef ANDROID

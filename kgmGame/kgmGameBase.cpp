@@ -298,6 +298,8 @@ void kgmGameBase::initLogic()
 
 bool kgmGameBase::initScript()
 {
+  return true;
+
   m_script = new kgmGameScript(this);
 
   m_script->init();
@@ -311,7 +313,7 @@ bool kgmGameBase::initScript()
   return true;
 }
 
-#define OGL
+#define OGLXXX
 
 void kgmGameBase::initGC()
 {
@@ -563,7 +565,7 @@ int kgmGameBase::gInit()
 {
   if (m_state != -1)
     return 0;
-
+  /*
   log("open workers...");
   initThreader();
 
@@ -643,7 +645,7 @@ int kgmGameBase::gInit()
 
   if (!initScript())
     return 0;
-
+  */
   m_state = State_Idle;
 
   return 1;
