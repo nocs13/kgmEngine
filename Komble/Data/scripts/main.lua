@@ -1,11 +1,19 @@
 kgmImport('guis')
 
 retent = nil
-mapId = ''
+mapId  = ''
+maps   = {}
 
 function main_init()
   kgmLog('main init')
+
   guis_init()
+
+  maps[1] = 'map00'
+  maps[2] = 'map01'
+  maps[3] = 'map02'
+  maps[4] = 'map03'
+  maps[5] = 'map04'
 
   retent = kgmGenRetention('.komble')
 
