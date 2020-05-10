@@ -1,0 +1,126 @@
+#include "kgmGameKeymap.h"
+#include "kgmIGame.h"
+#include "../kgmBase/kgmEvent.h"
+
+kgmGameKeymap::kgmGameKeymap()
+{
+#define def_key(x) m_keys[x] = #x
+
+  m_keys.alloc(KEY_END + 1);
+
+  def_key(KEY_NONE);
+  def_key(KEY_ESCAPE);
+  def_key(KEY_0);
+  def_key(KEY_1);
+  def_key(KEY_2);
+  def_key(KEY_3);
+  def_key(KEY_4);
+  def_key(KEY_5);
+  def_key(KEY_6);
+  def_key(KEY_7);
+  def_key(KEY_8);
+  def_key(KEY_9);
+  def_key(KEY_SUB);
+  def_key(KEY_EQU);
+  def_key(KEY_BACK);
+  def_key(KEY_TAB);
+  def_key(KEY_DOT);
+  def_key(KEY_COMMA);
+  def_key(KEY_ENTER);
+  def_key(KEY_A);
+  def_key(KEY_B);
+  def_key(KEY_C);
+  def_key(KEY_D);
+  def_key(KEY_E);
+  def_key(KEY_F);
+  def_key(KEY_G);
+  def_key(KEY_H);
+  def_key(KEY_I);
+  def_key(KEY_J);
+  def_key(KEY_K);
+  def_key(KEY_L);
+  def_key(KEY_M);
+  def_key(KEY_N);
+  def_key(KEY_O);
+  def_key(KEY_P);
+  def_key(KEY_Q);
+  def_key(KEY_R);
+  def_key(KEY_S);
+  def_key(KEY_T);
+  def_key(KEY_U);
+  def_key(KEY_V);
+  def_key(KEY_W);
+  def_key(KEY_X);
+  def_key(KEY_Y);
+  def_key(KEY_Z);
+  def_key(KEY_LSHIFT);
+  def_key(KEY_RSHIFT);
+  def_key(KEY_LCTRL);
+  def_key(KEY_RCTRL);
+  def_key(KEY_LALT);
+  def_key(KEY_RALT);
+  def_key(KEY_DELETE);
+  def_key(KEY_SPACE);
+  def_key(KEY_F1);
+  def_key(KEY_F2);
+  def_key(KEY_F3);
+  def_key(KEY_F4);
+  def_key(KEY_F5);
+  def_key(KEY_F6);
+  def_key(KEY_F7);
+  def_key(KEY_F8);
+  def_key(KEY_F9);
+  def_key(KEY_F10);
+  def_key(KEY_F11);
+  def_key(KEY_F12);
+  def_key(KEY_UP);
+  def_key(KEY_LEFT);
+  def_key(KEY_RIGHT);
+  def_key(KEY_DOWN);
+  def_key(KEY_PAUSE);
+  def_key(KEY_MSBLEFT);
+  def_key(KEY_MSBRIGHT);
+  def_key(KEY_MSBMIDDLE);
+  def_key(KEY_END);
+
+  m_btns.alloc(gbtn_end + 1);
+
+  def_key(gbtn_none);
+  def_key(gbtn_up);
+  def_key(gbtn_down);
+  def_key(gbtn_left);
+  def_key(gbtn_right);
+  def_key(gbtn_exit);
+  def_key(gbtn_pause);
+  def_key(gbtn_start);
+  def_key(gbtn_a);
+  def_key(gbtn_b);
+  def_key(gbtn_c);
+  def_key(gbtn_d);
+  def_key(gbtn_e);
+  def_key(gbtn_f);
+  def_key(gbtn_g);
+  def_key(gbtn_h);
+  def_key(gbtn_i);
+  def_key(gbtn_j);
+  def_key(gbtn_k);
+  def_key(gbtn_l);
+  def_key(gbtn_m);
+  def_key(gbtn_n);
+  def_key(gbtn_o);
+  def_key(gbtn_p);
+  def_key(gbtn_q);
+  def_key(gbtn_r);
+  def_key(gbtn_s);
+  def_key(gbtn_t);
+  def_key(gbtn_u);
+  def_key(gbtn_v);
+  def_key(gbtn_w);
+  def_key(gbtn_x);
+  def_key(gbtn_y);
+  def_key(gbtn_z);
+  def_key(grot_x);
+  def_key(grot_y);
+  def_key(grot_z);
+  def_key(gbtn_end);
+}

@@ -85,7 +85,7 @@ public:
     m_game = static_cast<kgmIGame*> (game);
     //m_game = reinterpret_cast<kgmIGame*>(game);
 
-    //setMainWindow(game);
+    setMainWindow(game);
 
     if (game && !game->gInit())
     {

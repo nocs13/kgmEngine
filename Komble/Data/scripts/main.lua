@@ -4,19 +4,20 @@ retent = nil
 mapId = ''
 
 function main_init()
-  --kgmLog('Init interface')
-  --guis_init()
+  kgmLog('main init')
+  guis_init()
 
-  --retent = kgmGenRetention('.komble')
-  --mapId = kgmGetRetention(retent, 'mapCurrent')
+  retent = kgmGenRetention('.komble')
 
-  --if mapId == '' then
-  --  kgmSetRetention(retent, 'mapCurrent', 'map00')
-  --end
+  mapId = kgmGetRetention(retent, 'mapCurrent')
+
+  if mapId == '' then
+    kgmSetRetention(retent, 'mapCurrent', 'map00')
+  end
 end
 
 function main_free()
-  --kgmDelRetention(retent)
+  kgmDelRetention(retent)
 end
 
 function main_update()
@@ -28,5 +29,5 @@ function main_log()
 end
 
 function main_quit()
-   --kgmGameExit()
+   kgmGameExit()
 end

@@ -89,6 +89,8 @@ enum KEY_CODE
   KEY_MSBLEFT = 128,
   KEY_MSBRIGHT,
   KEY_MSBMIDDLE,
+
+  KEY_END = 131
 };
 
 

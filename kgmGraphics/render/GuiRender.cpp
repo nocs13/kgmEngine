@@ -63,7 +63,7 @@ void GuiRender::render(kgmGui* gui)
 
   if(gui->isClass(kgmGuiButton::cClass()))
   {
-    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 2));
+    u32 fwidth = (u32)((float)rect.w / (float)(text.length() + 1));
     u32 fheight = (u32)((float)rect.h * (float)0.8f);
     u32 tlen = text.length();
     u32 fw = (tlen) * fwidth;
