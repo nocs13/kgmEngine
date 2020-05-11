@@ -39,6 +39,8 @@ class kgmGameScript: public kgmObject
     return status;
   }
 
+  void onButton(s32 key, s32 btn, s32 down);
+
   __stdcall void onQuit();
   __stdcall void onLoad();
   __stdcall void onUnload();

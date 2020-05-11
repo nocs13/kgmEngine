@@ -39,3 +39,7 @@ end
 function main_quit()
    kgmGameExit()
 end
+
+function main_button(key, btn, down)
+  kgmLog('got input event')
+end

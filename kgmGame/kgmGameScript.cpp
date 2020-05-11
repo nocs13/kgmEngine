@@ -100,6 +100,12 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
   }
 }
 
+void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
+{
+  if (status && handler)
+    handler->call("main_button", "iii", key, btn, down);
+}
+
 __stdcall void kgmGameScript::onQuit()
 {
 
