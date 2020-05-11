@@ -113,7 +113,8 @@ public:
     {
       delete game;
 
-      m_game = game = null;
+      m_game = null;
+      game   = null;
     }
 
     //delete wnd;

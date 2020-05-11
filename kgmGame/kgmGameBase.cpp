@@ -429,39 +429,19 @@ void kgmGameBase::onKeyUp(int k)
 {
   m_keys[k] = 0;
 
+  m_input[(u32) m_keymap[k]] = 0;
+
   if (m_script)
     m_script->onButton(k, m_keymap[k], 0);
-
-  if(m_logic && (m_state == State_Play || m_state == State_Edit) && m_input[(u32) m_keymap[k]] != 0)
-  {
-    m_logic->input(m_keymap[k], 0);
-    m_input[(u32) m_keymap[k]] = 0;
-  }
-
-#ifdef WIN32
-  if(k == KEY_F11)
-#else
-  if(k == KEY_F12)
-#endif
-  {
-    if(this->m_fs)
-      fullscreen(false);
-    else
-      fullscreen(true);
-  }
 }
 
 void kgmGameBase::onKeyDown(int k){
   m_keys[k] = 1;
 
+  m_input[(u32) m_keymap[k]] = 1;
+
   if (m_script)
     m_script->onButton(k, m_keymap[k], 1);
-
-  if(m_logic && (m_state == State_Play || m_state == State_Edit) && (m_input[(u32) m_keymap[k]] != 1))
-  {
-    m_logic->input(m_keymap[k], 1);
-    m_input[(u32) m_keymap[k]] = 1;
-  }
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y){

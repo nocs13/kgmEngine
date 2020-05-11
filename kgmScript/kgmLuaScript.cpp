@@ -146,6 +146,7 @@ bool kgmLuaScript::resl(kgmString fmt, ...)
 
 void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
 {
+  //fprintf(stderr, "kgmLuaScript::call [%s][%s].\n", name .data(), fmt.data());
   lua_getglobal(handler, name.data());
 
   if( !lua_isfunction(handler, -1) )
