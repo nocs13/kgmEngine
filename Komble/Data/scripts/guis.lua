@@ -37,6 +37,8 @@ function onGuiButtonQuit()
 end
 
 function onGuiButtonNew()
+  kgmLog('onGuiButtonNew')
+  --main_load_new()
 end
 
 function onGuiButtonLoad()

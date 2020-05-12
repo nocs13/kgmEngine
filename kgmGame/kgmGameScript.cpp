@@ -288,6 +288,27 @@ s32 kgmGameScript::kgmGameState(void*)
   return 0;
 }
 
+s32 kgmGameScript::kgmGameLoad(void *)
+{
+  s32 state = 0;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s8* map = null;
+
+  game->getScript()->args("s", &map);
+
+  if (map)
+    state = game->gLoad(map);
+
+  game->getScript()->resl("i", state);
+
+  return 1;
+}
+
 s32 kgmGameScript::kgmGenRetention(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();

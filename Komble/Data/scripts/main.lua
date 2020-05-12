@@ -35,7 +35,6 @@ function main_free()
 end
 
 function main_update()
-  --kgmLog('Log from lua update')
 end
 
 function main_log()
@@ -44,6 +43,13 @@ end
 
 function main_quit()
    kgmGameExit()
+end
+
+function main_load()
+end
+
+function main_load_new()
+  return kgmGameLoad(maps[1])
 end
 
 function main_button(key, btn, down)
