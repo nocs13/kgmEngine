@@ -10,6 +10,15 @@ KEY_1 = 3
 KEY_2 = 4
 KEY_3 = 5
 
+State_Idle  = 0
+State_Quit  = 1
+State_Play  = 2
+State_Load  = 3
+State_Clean = 4
+State_Pause = 5
+State_Edit  = 6
+
+
 function main_init()
   kgmLog('main init')
 
@@ -55,7 +64,13 @@ end
 function main_button(key, btn, down)
   kgmLog('got input event')
 
-  if (key == KEY_ESCAPE and down == 0) then
-    kgmGameExit()
+  if key == KEY_ESCAPE and down == 0 then
+    state = kgmGameState()
+    state = kgmGamePause()
+
+    if state == State_Pause then
+      kgmLog('gui show pause')
+      guiShowPause()
+    end
   end
 end

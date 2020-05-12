@@ -3,6 +3,7 @@ VALIGN_RIGHT  = 2
 VALIGN_CENTER = 3
 
 gui_main = nil
+gui_pause = nil
 gui_credits = nil
 
 function guis_init()
@@ -38,7 +39,11 @@ end
 
 function onGuiButtonNew()
   kgmLog('onGuiButtonNew')
-  --main_load_new()
+  stat = main_load_new()
+
+  if state ~= 0 then
+    kgmGuiShow(gui_main, 0)
+  end
 end
 
 function onGuiButtonLoad()
@@ -62,4 +67,14 @@ function onGuiCreditsBack()
 
   kgmGuiShow(gui_credits, 0)
   kgmGuiShow(gui_main, 1)
+end
+
+function guiShowPause()
+  if gui_pause == nil then
+    gui_pause = kgmGuiLoad('guis/pause.ui')
+    kgmGuiSetVAlign(gui_pause, VALIGN_CENTER);
+    kgmGuiSetHAlign(gui_pause, VALIGN_CENTER);
+  end
+
+  kgmGuiShow(gui_pause, 1)
 end

@@ -46,6 +46,7 @@ void kgmGameScript::init()
   handler->set("kgmImport",   kgmGameScript::kgmImport);
 
   handler->set("kgmGameExit",   kgmGameScript::kgmGameExit);
+  handler->set("kgmGameLoad",   kgmGameScript::kgmGameLoad);
   handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
