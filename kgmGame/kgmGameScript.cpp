@@ -26,10 +26,16 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler = new kgmLuaScript(g->getResources());
 
   handler->setX(this);
+
+  mutex = kgmThread::mutex_create();
 }
 
 kgmGameScript::~kgmGameScript()
 {
+  kgmThread::mutex_lock(mutex);
+
+  kgmThread::mutex_free(mutex);
+
   free();
 
   for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); !i.end(); ++i)
@@ -81,8 +87,12 @@ void kgmGameScript::free()
 
 void kgmGameScript::update()
 {
+  kgmThread::mutex_lock(mutex);
+
   if (status)
     handler->call("main_update", "i", game->timeUpdate());
+
+  kgmThread::mutex_unlock(mutex);
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
@@ -99,6 +109,16 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
     slotters.set(gui, call);
     slots.add( (Slot<kgmGameScript>*) slotGuiButton);
   }
+}
+
+void kgmGameScript::lock()
+{
+  kgmThread::mutex_lock(mutex);
+}
+
+void kgmGameScript::unlock()
+{
+  kgmThread::mutex_unlock(mutex);
 }
 
 void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
@@ -286,7 +306,7 @@ s32 kgmGameScript::kgmGameState(void*)
 
   game->getScript()->resl("i", state);
 
-  return 0;
+  return 1;
 }
 
 s32 kgmGameScript::kgmGameLoad(void *)

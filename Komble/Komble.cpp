@@ -28,12 +28,6 @@ public:
     kgm_log() << "kGame::~kGame.\n";
 #endif
   }
-
-  void onKeyUp(int k)
-  {
-    if (k == 1)
-      close();
-  }
 };
 
 class kApp: public kgmGameApp

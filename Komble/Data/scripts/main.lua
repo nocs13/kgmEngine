@@ -24,11 +24,11 @@ function main_init()
 
   guis_init()
 
-  maps[1] = 'map00'
-  maps[2] = 'map01'
-  maps[3] = 'map02'
-  maps[4] = 'map03'
-  maps[5] = 'map04'
+  maps[1] = 'map00.map'
+  maps[2] = 'map01.map'
+  maps[3] = 'map02.map'
+  maps[4] = 'map03.map'
+  maps[5] = 'map04.map'
 
   retent = kgmGenRetention('.komble')
 
@@ -66,11 +66,19 @@ function main_button(key, btn, down)
 
   if key == KEY_ESCAPE and down == 0 then
     state = kgmGameState()
-    state = kgmGamePause()
+    kgmLog('Game state: ' .. tostring(state))
 
-    if state == State_Pause then
-      kgmLog('gui show pause')
-      guiShowPause()
+    if state == State_Play then
+      kgmLog('state is play')
+
+      kgmGamePause()
+
+      state = kgmGameState()
+
+      if state == State_Pause then
+        kgmLog('gui show pause')
+        guiShowPause()
+      end
     end
   end
 end

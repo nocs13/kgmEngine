@@ -3,6 +3,7 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmSystem/kgmThread.h"
 
 class kgmIGame;
 class kgmUnit;
@@ -19,6 +20,8 @@ class kgmGameScript: public kgmObject
   kgmList< Slot<kgmGameScript>* > slots;
 
   static s8* value;
+
+  kgmThread::Mutex mutex;
 
  public:
   kgmGameScript(kgmIGame*);
@@ -38,6 +41,9 @@ class kgmGameScript: public kgmObject
   {
     return status;
   }
+
+  void lock();
+  void unlock();
 
   void onButton(s32 key, s32 btn, s32 down);
 

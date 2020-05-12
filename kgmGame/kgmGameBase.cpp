@@ -432,7 +432,11 @@ void kgmGameBase::onKeyUp(int k)
   m_input[(u32) m_keymap[k]] = 0;
 
   if (m_script)
+  {
+    m_script->lock();
     m_script->onButton(k, m_keymap[k], 0);
+    m_script->unlock();
+  }
 }
 
 void kgmGameBase::onKeyDown(int k){
@@ -441,7 +445,11 @@ void kgmGameBase::onKeyDown(int k){
   m_input[(u32) m_keymap[k]] = 1;
 
   if (m_script)
+  {
+    m_script->lock();
     m_script->onButton(k, m_keymap[k], 1);
+    m_script->unlock();
+  }
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y){
