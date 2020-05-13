@@ -70,7 +70,7 @@ function main_load_new()
   return kgmGameLoad(maps[1])
 end
 
-function main_button(key, btn, down)
+function main_onbutton(key, btn, down)
   kgmLog('got input event')
 
   if key == KEY_ESCAPE and down == 0 then

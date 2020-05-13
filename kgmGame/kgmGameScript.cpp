@@ -134,34 +134,26 @@ __stdcall void kgmGameScript::onQuit()
 
 __stdcall void kgmGameScript::onLoad()
 {
-  lock();
   if (status && handler)
     handler->call("main_onload", "");
-  unlock();
 }
 
 __stdcall void kgmGameScript::onUnload()
 {
-  lock();
   if (status && handler)
     handler->call("main_onunload", "");
-  unlock();
 }
 
 __stdcall void kgmGameScript::onInsert(kgmUnit* u)
 {
-  lock();
   if (status && handler)
     handler->call("main_oninsert", "p", u);
-  unlock();
 }
 
 __stdcall void kgmGameScript::onRemove(kgmUnit* u)
 {
-  lock();
   if (status && handler)
     handler->call("main_onremove", "p", u);
-  unlock();
 }
 
 __stdcall void kgmGameScript::onSlotGuiList(kgmGui* g, u32 s)
@@ -221,12 +213,12 @@ __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
   if (!s)
     return;
 
-  lock();
-
   kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(s);
 
   if (!i.isValid())
     return;
+
+  lock();
 
   handler->call(i.data(), "i", n);
 
