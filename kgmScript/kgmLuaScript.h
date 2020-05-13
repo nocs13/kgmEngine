@@ -25,6 +25,8 @@ class kgmLuaScript: public kgmIScript
   bool set(kgmString name,  FN);
   bool args(kgmString fmt, ...);
   bool resl(kgmString fmt, ...);
+  bool reslarr(kgmString fmt, void* a, s32 c);
+
   void* call(kgmString name, kgmString fmt, ...);
 
   void  setX(void* x);

@@ -56,6 +56,7 @@ void kgmGameScript::init()
   handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
+  handler->set("kgmGameUnits",  kgmGameScript::kgmGameUnits);
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
@@ -129,27 +130,38 @@ void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
 
 __stdcall void kgmGameScript::onQuit()
 {
-
 }
 
 __stdcall void kgmGameScript::onLoad()
 {
-
+  lock();
+  if (status && handler)
+    handler->call("main_load", "");
+  unlock();
 }
 
 __stdcall void kgmGameScript::onUnload()
 {
-
+  lock();
+  if (status && handler)
+    handler->call("main_unload", "");
+  unlock();
 }
 
 __stdcall void kgmGameScript::onInsert(kgmUnit* u)
 {
-
+  lock();
+  if (status && handler)
+    handler->call("main_insert", "p", u);
+  unlock();
 }
 
 __stdcall void kgmGameScript::onRemove(kgmUnit* u)
 {
-
+  lock();
+  if (status && handler)
+    handler->call("main_remove", "p", u);
+  unlock();
 }
 
 __stdcall void kgmGameScript::onSlotGuiList(kgmGui* g, u32 s)
@@ -326,6 +338,35 @@ s32 kgmGameScript::kgmGameLoad(void *)
     state = game->gLoad(map);
 
   game->getScript()->resl("i", state);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmGameUnits(void *)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s32 i = 0;
+
+  kgmArray<kgmUnit*> units;
+  kgmIGame::Iterator it = game->gUnits();
+
+  units.realloc(128);
+
+  while(kgmUnit* u = it.next())
+  {
+    if (i == units.length())
+      units.realloc(units.length() + 128);
+
+    units[i] = u;
+  }
+
+  units.realloc(i + 1);
+
+  game->getScript()->reslarr("p", units.data(), units.length());
 
   return 1;
 }

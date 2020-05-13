@@ -57,6 +57,15 @@ end
 function main_load()
 end
 
+function main_unload()
+end
+
+function main_insert(u)
+end
+
+function main_remove(u)
+end
+
 function main_load_new()
   return kgmGameLoad(maps[1])
 end

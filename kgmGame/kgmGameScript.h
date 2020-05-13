@@ -72,6 +72,8 @@ class kgmGameScript: public kgmObject
   static s32 kgmGamePlay(void*);
   static s32 kgmGamePause(void*);
   static s32 kgmGameState(void*);
+  static s32 kgmGameUnits(void*);
+  static s32 kgmGameCamera(void*);
 
   static s32 kgmGenRetention(void*);
   static s32 kgmDelRetention(void*);
@@ -88,7 +90,4 @@ class kgmGameScript: public kgmObject
   static s32 kgmGuiCallback(void*);
 
   static s32 kgmScreenResolution(void*);
-
-  static s32 kgmGoFind(void*);
-  static s32 kgmGoCamera(void*);
 };

@@ -144,6 +144,86 @@ bool kgmLuaScript::resl(kgmString fmt, ...)
   return true;
 }
 
+bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
+{
+  if (fmt.length() < 1 || !a || !c)
+    return false;
+
+  s8* f = fmt.data();
+  s32 size = 0;
+
+  lua_createtable(handler, c, 0);
+  s32 table = lua_gettop(handler);
+
+  switch(*f)
+  {
+  case 's':
+    size = sizeof(s8*);
+    break;
+  case 'i':
+    size = sizeof(s32);
+    break;
+  case 'd':
+    size = sizeof(double);
+    break;
+  case 'p':
+    size = sizeof(void*);
+    break;
+  default:
+    return false;
+  }
+
+  s8* p = (s8*)a;
+  s32 i = 0;
+
+  s8*   sdata;
+  s32   idata;
+  f64   fdata;
+  void* pdata;
+
+
+  lua_createtable(handler, c, 0);
+  s32 table = lua_gettop(handler);
+
+  switch(*f)
+  {
+  case 's':
+    for (i = 0; i < c; i++)
+    {
+      memcpy(&sdata, (p + size * i), sizeof(sdata));
+      lua_pushstring(handler, sdata);
+      lua_rawseti(handler, table, i + 1);
+    }
+    break;
+  case 'i':
+    for (i = 0; i < c; i++)
+    {
+      memcpy(&idata, (p + size * i), sizeof(idata));
+      lua_pushnumber(handler, idata);
+      lua_rawseti(handler, table, i + 1);
+    }
+    break;
+  case 'd':
+    for (i = 0; i < c; i++)
+    {
+      memcpy(&fdata, (p + size * i), sizeof(fdata));
+      lua_pushnumber(handler, fdata);
+      lua_rawseti(handler, table, i + 1);
+    }
+    break;
+  case 'p':
+    for (i = 0; i < c; i++)
+    {
+      memcpy(&pdata, (p + size * i), sizeof(pdata));
+      lua_pushuserdata(handler, pdata);
+      lua_rawseti(handler, table, i + 1);
+    }
+    break;
+  }
+
+  return true;
+}
+
 void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
 {
   //fprintf(stderr, "kgmLuaScript::call [%s][%s].\n", name .data(), fmt.data());
