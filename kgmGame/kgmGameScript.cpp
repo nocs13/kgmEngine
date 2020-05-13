@@ -77,13 +77,13 @@ void kgmGameScript::init()
   status = handler->load("main");
 
   if (status)
-    handler->call("main_init", "");
+    handler->call("main_oninit", "");
 }
 
 void kgmGameScript::free()
 {
   if (status)
-    handler->call("main_free", "");
+    handler->call("main_onfree", "");
 }
 
 void kgmGameScript::update()
@@ -91,7 +91,7 @@ void kgmGameScript::update()
   kgmThread::mutex_lock(mutex);
 
   if (status)
-    handler->call("main_update", "i", game->timeUpdate());
+    handler->call("main_onupdate", "i", game->timeUpdate());
 
   kgmThread::mutex_unlock(mutex);
 }
@@ -125,7 +125,7 @@ void kgmGameScript::unlock()
 void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
 {
   if (status && handler)
-    handler->call("main_button", "iii", key, btn, down);
+    handler->call("main_onbutton", "iii", key, btn, down);
 }
 
 __stdcall void kgmGameScript::onQuit()
@@ -136,7 +136,7 @@ __stdcall void kgmGameScript::onLoad()
 {
   lock();
   if (status && handler)
-    handler->call("main_load", "");
+    handler->call("main_onload", "");
   unlock();
 }
 
@@ -144,7 +144,7 @@ __stdcall void kgmGameScript::onUnload()
 {
   lock();
   if (status && handler)
-    handler->call("main_unload", "");
+    handler->call("main_onunload", "");
   unlock();
 }
 
@@ -152,7 +152,7 @@ __stdcall void kgmGameScript::onInsert(kgmUnit* u)
 {
   lock();
   if (status && handler)
-    handler->call("main_insert", "p", u);
+    handler->call("main_oninsert", "p", u);
   unlock();
 }
 
@@ -160,7 +160,7 @@ __stdcall void kgmGameScript::onRemove(kgmUnit* u)
 {
   lock();
   if (status && handler)
-    handler->call("main_remove", "p", u);
+    handler->call("main_onremove", "p", u);
   unlock();
 }
 
@@ -221,12 +221,16 @@ __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
   if (!s)
     return;
 
+  lock();
+
   kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(s);
 
   if (!i.isValid())
     return;
 
   handler->call(i.data(), "i", n);
+
+  unlock();
 }
 
 s32 kgmGameScript::kgmLog(void*)
@@ -352,11 +356,11 @@ s32 kgmGameScript::kgmGameUnits(void *)
   s32 i = 0;
 
   kgmArray<kgmUnit*> units;
-  kgmIGame::Iterator it = game->gUnits();
+  kgmIGame::Iterator* it = game->gUnits();
 
   units.realloc(128);
 
-  while(kgmUnit* u = it.next())
+  while(kgmUnit* u = it->next())
   {
     if (i == units.length())
       units.realloc(units.length() + 128);

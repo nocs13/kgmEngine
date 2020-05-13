@@ -19,7 +19,7 @@ State_Pause = 5
 State_Edit  = 6
 
 
-function main_init()
+function main_oninit()
   kgmLog('main init')
 
   guis_init()
@@ -39,11 +39,11 @@ function main_init()
   end
 end
 
-function main_free()
+function main_onfree()
   kgmDelRetention(retent)
 end
 
-function main_update()
+function main_onupdate()
 end
 
 function main_log()
@@ -54,16 +54,16 @@ function main_quit()
    kgmGameExit()
 end
 
-function main_load()
+function main_onload()
 end
 
-function main_unload()
+function main_onunload()
 end
 
-function main_insert(u)
+function main_oninsert(u)
 end
 
-function main_remove(u)
+function main_onremove(u)
 end
 
 function main_load_new()
