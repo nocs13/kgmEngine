@@ -194,6 +194,9 @@ kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
 
 kgmMaterial::Type kgmMaterial::stringToType(kgmString str)
 {
+  if (str.length() < 1)
+    return TypeNone;
+
 #define s_type(x) if(strcmp(str, #x) == 0) return x
   s_type(TypeNone);
   s_type(TypeBase);

@@ -293,13 +293,11 @@ void kgmGameBase::initAudio()
 
 void kgmGameBase::initLogic()
 {
-  m_logic = new kgmGameLogic();
+  //m_logic = new kgmGameLogic();
 }
 
 bool kgmGameBase::initScript()
 {
-  //return true;
-
   m_script = new kgmGameScript(this);
 
   m_script->init();
@@ -353,7 +351,7 @@ void kgmGameBase::initThreader()
 
 void kgmGameBase::log(const char* msg)
 {
-  kgmLog::log(msg);
+  kgm_log() << msg << "\n";
 }
 
 void kgmGameBase::onIdle()
@@ -685,14 +683,18 @@ int kgmGameBase::gLoad(kgmString s)
 
     if(!getResources()->getFile(sf, mem))
     {
-      return false;
+      m_state = State_Idle;
+
+      return m_state;
     }
 
     kgmXml xml;
 
     if(kgmXml::XML_ERROR == xml.open(mem))
     {
-      return false;
+      m_state = State_Idle;
+
+      return m_state;
     }
 
     map.open(xml);
@@ -723,7 +725,9 @@ int kgmGameBase::gLoad(kgmString s)
       }
       else
       {
-        m_logic->add(u);
+        if (m_logic)
+          m_logic->add(u);
+
         m_graphics->add(u);
 
         if (m_script)
@@ -1708,7 +1712,8 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
 int kgmGameBase::doLogic(kgmGameBase* g)
 {
-  g->m_logic->update(g->timeUpdate());
+  if (g && g->m_logic)
+    g->m_logic->update(g->timeUpdate());
 
   return 1;
 }

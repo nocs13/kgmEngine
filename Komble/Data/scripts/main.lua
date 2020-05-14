@@ -54,6 +54,26 @@ function main_unload()
   return kgmGameUnload()
 end
 
+function main_load_new()
+  state = kgmGameState()
+
+  if state ~= State_Idle then
+    kgm_log('Invalid state to load map.')
+
+    return 0
+  end
+
+  kgm_log('Loading first map.')
+
+  state = kgmGameLoad(maps[1])
+
+  if state ~= State_Play then
+    state = 0
+  end
+
+  return state
+end
+
 function main_oninit()
   kgm_log('main init')
 
@@ -82,6 +102,7 @@ function main_onupdate()
 end
 
 function main_onload()
+  --kgmGamePlay()
 end
 
 function main_onunload()
@@ -105,20 +126,6 @@ function main_onremove(u)
       units[i] = nil
     end
   end
-end
-
-function main_load_new()
-  state = kgmGameState()
-
-  if state ~= State_Idle then
-    kgm_log('Invalid state to load map.')
-
-    return 0
-  end
-
-  kgm_log('Loading first map.')
-
-  return kgmGameLoad(maps[1])
 end
 
 function main_onbutton(key, btn, down)

@@ -243,7 +243,7 @@ s32 kgmGameScript::kgmLog(void*)
 
   game->getScript()->args("s", &log);
 
-  kgm_log_print(log);
+  kgm_log() << log << "\n";
 
   return 0;
 }

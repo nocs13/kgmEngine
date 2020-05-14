@@ -11,6 +11,8 @@ class kgmLogError;
 class kgmLogDebug;
 class kgmLogWarning;
 
+inline const char* kgm_log_label();
+
 class kgmLog
 {
 public:
@@ -97,6 +99,8 @@ private:
 
 inline kgmLog& kgm_log()
 {
+  printf("kgmEngine [%s]: ", kgm_log_label());
+
   return kgmLog::LOG;
 }
 
@@ -119,7 +123,6 @@ inline const char* kgm_log_label()
   memset(text, 0, sizeof(text));
   sprintf(text, "%2d:%2d:%2d %d", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
   
-  //return asctime (timeinfo);
   return (const char*) text;
 }
 

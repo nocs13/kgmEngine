@@ -40,7 +40,7 @@ end
 function onGuiButtonNew()
   kgm_log('onGuiButtonNew')
 
-  stat = main_load_new()
+  state = main_load_new()
 
   if state ~= 0 then
     kgmGuiShow(gui_main, 0)
