@@ -97,10 +97,7 @@ private:
 
 inline kgmLog& kgm_log()
 {
-    //  kgmLog log;
-    //  va_list vl;
-    //  va_start(vl, a);
-    return kgmLog::LOG;
+  return kgmLog::LOG;
 }
 
 inline const char* kgm_log_label()

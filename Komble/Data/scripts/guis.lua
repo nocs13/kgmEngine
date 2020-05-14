@@ -12,7 +12,7 @@ function guis_init()
   local scw, sch = 1, 1
 
   gui_main = kgmGuiLoad('guis/start.ui')
-  kgmLog('main gui is ' .. tostring(gui_main))
+  kgm_log('main gui is ' .. tostring(gui_main))
 
   --sw, sh = kgmScreenResolution()
   --kgmLog('screen resolution is ' .. tostring(sw) .. ' ' .. tostring(sh))
@@ -30,7 +30,7 @@ function guis_init()
   kgmGuiSetVAlign(gui_main, 3);
   kgmGuiSetHAlign(gui_main, 3);
   kgmGuiShow(gui_main, 1)
-  kgmLog('main gui 2 is ' .. tostring(gui_main))
+  kgm_log('main gui 2 is ' .. tostring(gui_main))
 end
 
 function onGuiButtonQuit()
@@ -38,7 +38,8 @@ function onGuiButtonQuit()
 end
 
 function onGuiButtonNew()
-  kgmLog('onGuiButtonNew')
+  kgm_log('onGuiButtonNew')
+
   stat = main_load_new()
 
   if state ~= 0 then
@@ -50,7 +51,7 @@ function onGuiButtonLoad()
 end
 
 function onGuiButtonCredits()
-  kgmLog('onGuiButtonCredits')
+  kgm_log('onGuiButtonCredits')
 
   if gui_credits == nil then
     gui_credits = kgmGuiLoad('guis/credits.ui')
@@ -63,7 +64,7 @@ function onGuiButtonCredits()
 end
 
 function onGuiCreditsBack()
-  kgmLog('onGuiCreditsBack')
+  kgm_log('onGuiCreditsBack')
 
   kgmGuiShow(gui_credits, 0)
   kgmGuiShow(gui_main, 1)
@@ -77,4 +78,21 @@ function guiShowPause()
   end
 
   kgmGuiShow(gui_pause, 1)
+end
+
+function onGuiButtonResume()
+  stat = main_resume()
+
+  if stas ~= 0 then
+    kgmGuiShow(gui_pause, 0)
+  end
+end
+
+function onGuiButtonMain()
+  stat = main_unload()
+
+  if stas ~= 0 then
+    kgmGuiShow(gui_pause, 0)
+    kgmGuiShow(gui_main, 1)
+  end
 end

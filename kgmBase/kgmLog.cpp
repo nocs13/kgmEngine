@@ -28,7 +28,8 @@ void kgmLog::log_(kgmString s)
 #ifdef ANDROID
     LOGI("%s", (char*) s);
 #else
-    printf("%s > %s", kgm_log_label(), (char*) s);
+    //printf("%s > %s", kgm_log_label(), (char*) s);
+    printf("%s", (s8*) s);
     fflush(stdout);
 #endif
 }

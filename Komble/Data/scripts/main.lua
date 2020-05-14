@@ -3,6 +3,8 @@ kgmImport('guis')
 retent = nil
 mapId  = ''
 maps   = {}
+units  = {}
+iunit  = 0
 
 KEY_ESCAPE = 1
 KEY_0 = 2
@@ -18,9 +20,42 @@ State_Clean = 4
 State_Pause = 5
 State_Edit  = 6
 
+function kgm_log(s)
+  kgmLog(s)
+end
+
+function main_quit()
+   kgmGameExit()
+end
+
+function main_resume()
+  state = kgmGameState()
+
+  if state ~= State_Pause then
+    kgm_log('Invalid state to resume.')
+  end
+
+  return kgmGamePlay()
+end
+
+function main_unload()
+  state = kgmGameState()
+
+  if state ~= State_Play and state ~= State_Pause then
+    kgm_log('Invalid state to unload.')
+  end
+
+  if state == State_Play then
+    kgm_log('Pause game before unload.')
+
+    kgmGamePause()
+  end
+
+  return kgmGameUnload()
+end
 
 function main_oninit()
-  kgmLog('main init')
+  kgm_log('main init')
 
   guis_init()
 
@@ -46,46 +81,62 @@ end
 function main_onupdate()
 end
 
-function main_log()
-  --kgmLog('hello from lua')
-end
-
-function main_quit()
-   kgmGameExit()
-end
-
 function main_onload()
 end
 
 function main_onunload()
+  units = {}
 end
 
 function main_oninsert(u)
+  if u ~= nil then
+    iunit = iunit + 1
+    units[iunit] = u
+  end
 end
 
 function main_onremove(u)
+  if u == nil then
+    return
+  end
+
+  for i = 1, iunit do
+    if units[i] == u then
+      units[i] = nil
+    end
+  end
 end
 
 function main_load_new()
+  state = kgmGameState()
+
+  if state ~= State_Idle then
+    kgm_log('Invalid state to load map.')
+
+    return 0
+  end
+
+  kgm_log('Loading first map.')
+
   return kgmGameLoad(maps[1])
 end
 
 function main_onbutton(key, btn, down)
-  kgmLog('got input event')
+  kgm_log('got input event')
 
   if key == KEY_ESCAPE and down == 0 then
     state = kgmGameState()
-    kgmLog('Game state: ' .. tostring(state))
+    kgm_log('Game state: ' .. tostring(state))
 
     if state == State_Play then
-      kgmLog('state is play')
+      kgm_log('state is play')
 
       kgmGamePause()
 
       state = kgmGameState()
 
       if state == State_Pause then
-        kgmLog('gui show pause')
+        kgm_log('gui show pause')
         guiShowPause()
       end
     end

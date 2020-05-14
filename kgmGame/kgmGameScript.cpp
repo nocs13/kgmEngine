@@ -57,6 +57,7 @@ void kgmGameScript::init()
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
   handler->set("kgmGameUnits",  kgmGameScript::kgmGameUnits);
+  handler->set("kgmGameUnload",   kgmGameScript::kgmGameUnload);
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
@@ -84,6 +85,12 @@ void kgmGameScript::free()
 {
   if (status)
     handler->call("main_onfree", "");
+}
+
+bool kgmGameScript::locked()
+{
+  //kgmThread::mute
+  return false;
 }
 
 void kgmGameScript::update()
@@ -284,7 +291,14 @@ s32 kgmGameScript::kgmGamePlay(void*)
 
   game->gSwitch(kgmIGame::State_Play);
 
-  return 0;
+  if (state == kgmIGame::State_Play)
+    state = 1;
+  else
+    state = 0;
+
+  game->getScript()->resl("i", state);
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmGamePause(void*)
@@ -296,9 +310,16 @@ s32 kgmGameScript::kgmGamePause(void*)
   if (!game)
     return 0;
 
-  game->gSwitch(kgmIGame::State_Pause);
+  state = game->gSwitch(kgmIGame::State_Pause);
 
-  return 0;
+  if (state == kgmIGame::State_Pause)
+    state = 1;
+  else
+    state = 0;
+
+  game->getScript()->resl("i", state);
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmGameState(void*)
@@ -332,6 +353,22 @@ s32 kgmGameScript::kgmGameLoad(void *)
 
   if (map)
     state = game->gLoad(map);
+
+  game->getScript()->resl("i", state);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmGameUnload(void *)
+{
+  s32 state = 0;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  state = game->gUnload();
 
   game->getScript()->resl("i", state);
 

@@ -62,6 +62,8 @@ class kgmGameScript: public kgmObject
  private:
   void free();
 
+  bool locked();
+
   static s32 kgmLog(void*);
 
   static s32 kgmImport(void*);
@@ -73,6 +75,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmGamePause(void*);
   static s32 kgmGameState(void*);
   static s32 kgmGameUnits(void*);
+  static s32 kgmGameUnload(void*);
   static s32 kgmGameCamera(void*);
 
   static s32 kgmGenRetention(void*);

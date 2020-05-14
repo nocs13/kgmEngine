@@ -1,5 +1,6 @@
 #include "kgmLuaScript.h"
 #include "../kgmBase/kgmIResources.h"
+#include "../kgmBase/kgmLog.h"
 #include <stdarg.h>
 
 extern "C" {
@@ -58,7 +59,15 @@ bool kgmLuaScript::load(kgmString s)
   script = kgmString((const s8*) content.data(), content.length());
 
   if(lua_dostring(handler, script.data()))
+  {
+    const s8* err = lua_tostring(handler, -1);
+
+    kgm_log() << "Lua dostring error: " << err << "\n";
+
+    lua_pop(handler, 1);
+
     return false;
+  }
 
   return true;
 }
