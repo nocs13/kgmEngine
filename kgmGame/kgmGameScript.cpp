@@ -5,6 +5,7 @@
 #include "kgmGameRetention.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
+#include "../kgmGraphics/kgmIGraphics.h"
 #include "../kgmGraphics/kgmGui.h"
 #include "../kgmGraphics/kgmGuiMenu.h"
 #include "../kgmGraphics/kgmGuiText.h"
@@ -13,6 +14,7 @@
 #include "../kgmGraphics/kgmGuiLayout.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGuiProgress.h"
+#include "../kgmGraphics/kgmCamera.h"
 #include "../kgmSystem/kgmWindow.h"
 
 s8* kgmGameScript::value = null;
@@ -402,6 +404,100 @@ s32 kgmGameScript::kgmGameUnits(void *)
   game->getScript()->reslarr("p", units.data(), units.length());
 
   return 1;
+}
+
+s32 kgmGameScript::kgmGameCamera(void*)
+{
+  kgmCamera* cam = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  cam = &game->getGraphics()->camera();
+
+  game->getScript()->resl("p", cam);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmCamMove(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmCamera* cam    = null;
+  f64        pos[3] = {0.0};
+
+  game->getScript()->args("pddd", &cam, &pos[0], &pos[1], &pos[2]);
+
+  if (!cam)
+    return 0;
+
+  cam->move(pos[0], pos[1], pos[2]);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmCamLook(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmCamera* cam    = null;
+  f64        dir[3] = {0.0};
+
+  game->getScript()->args("pddd", &cam, &dir[0], &dir[1], &dir[2]);
+
+  if (!cam)
+    return 0;
+
+  cam->look(dir[0], dir[1], dir[2]);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmCamPosition(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmCamera* cam    = null;
+
+  if (!cam)
+    return 0;
+
+  vec3 v = cam->mPos;
+
+  game->getScript()->resl("ddd", v.x, v.y, v.z);
+
+  return 3;
+}
+
+s32 kgmGameScript::kgmCamDirection(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmCamera* cam    = null;
+
+  if (!cam)
+    return 0;
+
+  vec3 v = cam->mDir;
+
+  game->getScript()->resl("ddd", v.x, v.y, v.z);
+
+  return 3;
 }
 
 s32 kgmGameScript::kgmGenRetention(void*)

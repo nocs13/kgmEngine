@@ -1,10 +1,16 @@
+kgmImport('vector3')
+kgmImport('player')
 kgmImport('guis')
 
 retent = nil
+
 mapId  = ''
 maps   = {}
+
 units  = {}
 iunit  = 0
+
+player = nil
 
 KEY_ESCAPE = 1
 KEY_0 = 2

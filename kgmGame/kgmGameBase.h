@@ -35,6 +35,7 @@ class kgmGameMap;
 class kgmGameBase: public kgmWindow, public kgmIGame
 {
   friend class kgmGameMap;
+
 public:
   static kgmGameBase* m_game;
   static bool         m_need_editor;

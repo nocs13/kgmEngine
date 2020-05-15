@@ -78,6 +78,11 @@ class kgmGameScript: public kgmObject
   static s32 kgmGameUnload(void*);
   static s32 kgmGameCamera(void*);
 
+  static s32 kgmCamMove(void*);
+  static s32 kgmCamLook(void*);
+  static s32 kgmCamPosition(void*);
+  static s32 kgmCamDirection(void*);
+
   static s32 kgmGenRetention(void*);
   static s32 kgmDelRetention(void*);
   static s32 kgmGetRetention(void*);
