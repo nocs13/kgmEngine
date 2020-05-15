@@ -170,6 +170,9 @@ public:
   typedef kgmUnit* (*NEW_UNIT)(kgmIGame*);
 
 public:
+  //~kgmIGame() = delete;
+  virtual ~kgmIGame() = 0;
+
   virtual int            gQuit()              = 0;    //close game
   virtual int            gInit()              = 0;    //start game
   virtual int            gLoad(kgmString)     = 0;    //load game map

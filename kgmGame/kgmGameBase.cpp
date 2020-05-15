@@ -69,6 +69,8 @@ kgmCString c_map;
 
 kgmCamera* g_cam = null;
 ////////////////////////////////////
+
+kgmIGame::~kgmIGame() {}
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
   :kgmWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
@@ -128,6 +130,7 @@ kgmGameBase::kgmGameBase(kgmString &conf)
   m_font = null;
 }
 
+/*
 kgmGameBase::~kgmGameBase()
 {
 #ifdef EDITOR
@@ -203,9 +206,9 @@ kgmGameBase::~kgmGameBase()
 
   if (m_retention)
     delete m_retention;
-
-  kgmActor::g_actions.clear();
+  //kgmActor::g_actions.clear();
 }
+*/
 
 kgmIGC* kgmGameBase::getGC()
 {

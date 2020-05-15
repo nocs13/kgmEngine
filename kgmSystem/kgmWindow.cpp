@@ -807,7 +807,7 @@ kgmWindow::~kgmWindow()
 
 #ifdef WIN32
 
-  DestroyWindow(m_wnd);
+  //DestroyWindow(m_wnd);
 
 #elif defined(ANDROID)
 

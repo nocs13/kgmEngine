@@ -122,7 +122,7 @@ private:
 public:
   kgmGameBase();
   kgmGameBase(kgmString &conf);
-  ~kgmGameBase();
+  //~kgmGameBase();
 
   kgmIGC*            getGC();
   kgmIPhysics*       getPhysics();

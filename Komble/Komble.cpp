@@ -40,7 +40,8 @@ public:
 
   bool failed;
 
-  kGame* game;
+  //kGame* game;
+  kgmGameBase* game;
 
   //kgmWindow* wnd = null;
 
@@ -74,7 +75,8 @@ public:
     u32 w, h;
     kgmSystem::getDesktopDimension(w, h);
 
-    game = new kGame();
+    //game = new kGame();
+    game = new kgmGameBase();
 
     m_game = static_cast<kgmIGame*> (game);
     //m_game = reinterpret_cast<kgmIGame*>(game);

@@ -102,7 +102,7 @@ void kgmCamera::viewport(float width, float height)
   ortho.height = height;
 }
 
-inline void kgmCamera::scale(float scale)
+void kgmCamera::scale(float scale)
 {
   if(scale < 1)
     return;
@@ -120,12 +120,12 @@ inline void kgmCamera::lookat(const vec3& pos, const vec3& dir, const vec3& up)
   mPos = pos, mDir = dir, mUp = up;
 }
 
-inline void kgmCamera::setOrthogonal(bool on)
+void kgmCamera::setOrthogonal(bool on)
 {
   ortho.on = on;
 }
 
-inline bool kgmCamera::isOrthogonal() const
+bool kgmCamera::isOrthogonal() const
 {
   return ortho.on;
 }

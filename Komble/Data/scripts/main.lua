@@ -11,12 +11,21 @@ units  = {}
 iunit  = 0
 
 player = nil
+camera = nil
+
+state = 0
+
+inputkey = 0
 
 KEY_ESCAPE = 1
 KEY_0 = 2
 KEY_1 = 3
 KEY_2 = 4
 KEY_3 = 5
+KEY_UP    = 76
+KEY_LEFT  = 77
+KEY_RIGHT = 78
+KEY_DOWN  = 79
 
 State_Idle  = 0
 State_Quit  = 1
@@ -105,14 +114,35 @@ function main_onfree()
 end
 
 function main_onupdate()
+  if state == State_Play then
+    if inputkey == Key_Left and cam ~= nil then
+      cam:turn(-1)
+    elseif inputkey == Key_Right and cam ~= nil then
+      cam:turn(1)
+    elseif inputkey == Key_Up and cam ~= nil then
+      cam:move()
+    end
+  end
 end
 
 function main_onload()
-  --kgmGamePlay()
+  c = kgmGameCamera()
+
+  if c ~= nil then
+    camera = Camera:new(c)
+  else
+    kgm_log('No main camera found')
+  end
+
+  state = State_Play
 end
 
 function main_onunload()
   units = {}
+  player = nil
+  camera = nil
+
+  state = State_Idle
 end
 
 function main_oninsert(u)
@@ -153,5 +183,9 @@ function main_onbutton(key, btn, down)
         guiShowPause()
       end
     end
+  end
+
+  if down ~= 0 then
+    inputkey = key
   end
 end
