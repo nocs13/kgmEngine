@@ -121,7 +121,7 @@ inline const char* kgm_log_label()
   time.update();
 
   memset(text, 0, sizeof(text));
-  sprintf(text, "%2d:%2d:%2d %d", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
+  snprintf(text, sizeof(text) - 1, "%2d:%2d:%2d %d", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
   
   return (const char*) text;
 }

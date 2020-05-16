@@ -32,8 +32,8 @@
 #include "objects/kgmObjects.h"
 #include "objects/kgmCharacter.h"
 
-#include "actions/kgmGuiActions.h"
-#include "actions/kgmBaseActions.h"
+//#include "actions/kgmGuiActions.h"
+//#include "actions/kgmBaseActions.h"
 
 /////////////////////////
 
@@ -67,7 +67,7 @@ static int prev_width = 1, prev_height = 1;
 
 kgmCString c_map;
 
-kgmCamera* g_cam = null;
+//kgmCamera* g_cam = null;
 ////////////////////////////////////
 
 kgmIGame::~kgmIGame()
@@ -79,7 +79,7 @@ kgmIGame::~kgmIGame()
 
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
-  :kgmWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
+  :kgmWindow(nullptr, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
 {
   m_game = this;
 
@@ -550,8 +550,8 @@ int kgmGameBase::gInit()
   if (m_state != -1)
     return 0;
 
-  //m_state = State_Idle;
-  //return 1;
+  m_state = State_Idle;
+  return 1;
 
   log("open workers...");
   initThreader();
@@ -591,7 +591,7 @@ int kgmGameBase::gInit()
 
   if(m_graphics)
     m_graphics->setDefaultFont(m_font);
-
+  /*
   log("set input map...");
   memset(m_keys, 0, sizeof(m_keys));
 
@@ -617,11 +617,11 @@ int kgmGameBase::gInit()
   m_keymap[KEY_MSBLEFT]   = (char)gbtn_a;
   m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
   m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
-
+  */
   m_state    = State_Idle;
 
-  kgmGuiActions::register_actions();
-  kgmBaseActions::register_actions();
+  //kgmGuiActions::register_actions();
+  //kgmBaseActions::register_actions();
 
 #ifdef EDITOR
 //  if (!editor && m_need_editor)
