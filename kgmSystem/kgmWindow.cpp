@@ -741,7 +741,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_wnd    = {0};
   m_screen = -1;
 
-  //XInitThreads();
+  XInitThreads();
 
   XSetWindowAttributes   swa;
   int cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
@@ -802,12 +802,15 @@ kgmWindow::~kgmWindow()
 {
   //Prepare to close window
 #ifdef DEBUG
-  kgm_log() << "kgmWindow::~kgmWindow Prepare to close window.\n";
+  //kgm_log() << "Prepare to close window.\n";
 #endif
 
 #ifdef WIN32
 
-  //DestroyWindow(m_wnd);
+  if (m_wnd)
+    DestroyWindow(m_wnd);
+
+  m_wnd = 0;
 
 #elif defined(ANDROID)
 
@@ -822,9 +825,15 @@ kgmWindow::~kgmWindow()
     m_dpy = null;
   }*/
 
-  XDestroyWindow(m_dpy, m_wnd);
+  if (m_dpy)
+  {
+    XDestroyWindow(m_dpy, m_wnd);
 
-  XCloseDisplay(m_dpy);
+    //XCloseDisplay(m_dpy);
+  }
+
+  m_dpy = null;
+  m_wnd = 0;
 
   //XEvent ev;
   /*XClientMessageEvent ev;
@@ -847,7 +856,7 @@ kgmWindow::~kgmWindow()
 #endif
 
 #ifdef DEBUG
-  kgm_log() << "kgmWindow::~kgmWindow.\n";
+  kgm_log() << "kgmWindow::~kgmWindow [" << (void*) this << "]\n";
 #endif
 }
 

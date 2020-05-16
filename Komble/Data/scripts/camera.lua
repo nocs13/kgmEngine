@@ -4,6 +4,7 @@ Camera.__index = Camera
 function Camera:new(c)
   local obj = {}
   setmetatable(obj, Camera)
+  self.__index = self
 
   obj.cam = c
 

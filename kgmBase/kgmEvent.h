@@ -139,9 +139,7 @@ public:
   {
   }
 
-  ~kgmEvent()
-  {
-  }
+  ~kgmEvent();
 
   virtual void onEvent(kgmEvent::Event* e)
   {

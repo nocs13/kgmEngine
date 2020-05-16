@@ -1,4 +1,5 @@
 kgmImport('vector3')
+kgmImport('camera')
 kgmImport('player')
 kgmImport('guis')
 
@@ -11,7 +12,8 @@ units  = {}
 iunit  = 0
 
 player = nil
-camera = nil
+
+cam = nil
 
 state = 0
 
@@ -129,7 +131,7 @@ function main_onload()
   c = kgmGameCamera()
 
   if c ~= nil then
-    camera = Camera:new(c)
+    cam = Camera:new(c)
   else
     kgm_log('No main camera found')
   end
@@ -140,7 +142,8 @@ end
 function main_onunload()
   units = {}
   player = nil
-  camera = nil
+
+  cam = nil
 
   state = State_Idle
 end

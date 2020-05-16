@@ -66,6 +66,8 @@ bool kgmLuaScript::load(kgmString s)
 
     lua_pop(handler, 1);
 
+    kgm_log() << "Lua loading script: " << s.data() << " failed.\n";
+
     return false;
   }
 

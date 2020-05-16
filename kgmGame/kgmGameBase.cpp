@@ -70,7 +70,13 @@ kgmCString c_map;
 kgmCamera* g_cam = null;
 ////////////////////////////////////
 
-kgmIGame::~kgmIGame() {}
+kgmIGame::~kgmIGame()
+{
+#ifdef DEBUG
+    kgm_log() << "kgmIGame::~kgmIGame [" << (void*)this << "]\n";
+#endif
+}
+
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
   :kgmWindow(0, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
@@ -108,29 +114,6 @@ kgmGameBase::kgmGameBase()
   m_state = -1;
 }
 
-kgmGameBase::kgmGameBase(kgmString &conf)
-  :kgmWindow(null, (char*)"kgmGameWindow", 0, 0, 640, 480, 24, false)
-{
-  m_game = this;
-
-  m_resources = null;
-  m_physics   = null;
-  m_graphics  = null;
-  m_system    = null;
-  m_script    = null;
-  m_logic     = null;
-  m_audio     = null;
-  m_gc        = null;
-
-  m_retention = null;
-  m_settings  = null;
-
-  m_threader  = null;
-
-  m_font = null;
-}
-
-/*
 kgmGameBase::~kgmGameBase()
 {
 #ifdef EDITOR
@@ -206,9 +189,14 @@ kgmGameBase::~kgmGameBase()
 
   if (m_retention)
     delete m_retention;
-  //kgmActor::g_actions.clear();
+
+  kgmActor::g_actions.clear();
+
+#ifdef DEBUG
+    kgm_log() << "kgmGameBase::~kgmGameBase [" << (void*)this << "]\n";
+#endif
 }
-*/
+
 
 kgmIGC* kgmGameBase::getGC()
 {
@@ -301,6 +289,7 @@ void kgmGameBase::initLogic()
 
 bool kgmGameBase::initScript()
 {
+  //return true;
   m_script = new kgmGameScript(this);
 
   m_script->init();
@@ -560,6 +549,9 @@ int kgmGameBase::gInit()
 {
   if (m_state != -1)
     return 0;
+
+  //m_state = State_Idle;
+  //return 1;
 
   log("open workers...");
   initThreader();

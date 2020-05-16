@@ -231,20 +231,9 @@ protected:
 private:
 
 public:
-  kgmObject()
-  {
-  }
+  kgmObject();
+  kgmObject(const kgmObject& o);
+  virtual ~kgmObject();
 
-  kgmObject(const kgmObject& o)
-  {
-  }
-
-  virtual ~kgmObject()
-  {
-  }
-
-  virtual bool isClass(const char* o)
-  {
-    return !strcmp(this->vClass(), o);
-  }
+  virtual bool isClass(const char* o);
 };

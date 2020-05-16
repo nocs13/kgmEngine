@@ -59,7 +59,8 @@ void kgmGameScript::init()
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
   handler->set("kgmGameUnits",  kgmGameScript::kgmGameUnits);
-  handler->set("kgmGameUnload",   kgmGameScript::kgmGameUnload);
+  handler->set("kgmGameUnload", kgmGameScript::kgmGameUnload);
+  handler->set("kgmGameCamera", kgmGameScript::kgmGameCamera);
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
