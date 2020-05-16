@@ -1,12 +1,14 @@
-Camera = {}
-Camera.__index = Camera
+Camera = settag({}, newtag())
+--Camera.__index = Camera
 
 function Camera:new(c)
-  local obj = {}
-  setmetatable(obj, Camera)
-  self.__index = self
+  local obj = {cam = c}
 
-  obj.cam = c
+  settag(obj, tag(Camera))
+  --setmetatable(obj, Camera)
+  --self.__index = self
+
+  --obj.cam = c
 
   x, y, z = kgmCamPosition(c)
 

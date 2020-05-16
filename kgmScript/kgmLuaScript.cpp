@@ -240,6 +240,8 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
 void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
 {
   //fprintf(stderr, "kgmLuaScript::call [%s][%s].\n", name .data(), fmt.data());
+  s32 ssize = lua_gettop(handler);
+
   lua_getglobal(handler, name.data());
 
   if( !lua_isfunction(handler, -1) )
@@ -274,6 +276,11 @@ void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
   }
 
   if(lua_call(handler, args, nres))
+    return (void *) -1;
+
+  s32 rnum = lua_gettop(handler) - ssize;
+
+  if (rnum < 1)
     return (void *) -1;
 
   f64 r_number;

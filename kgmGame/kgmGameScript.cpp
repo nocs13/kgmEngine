@@ -62,6 +62,11 @@ void kgmGameScript::init()
   handler->set("kgmGameUnload", kgmGameScript::kgmGameUnload);
   handler->set("kgmGameCamera", kgmGameScript::kgmGameCamera);
 
+  handler->set("kgmCamPosition", kgmGameScript::kgmCamPosition);
+  handler->set("kgmCamDirection", kgmGameScript::kgmCamDirection);
+  handler->set("kgmCamMove", kgmGameScript::kgmCamMove);
+  handler->set("kgmCamLook", kgmGameScript::kgmCamLook);
+
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
   handler->set("kgmGuiResize",  kgmGameScript::kgmGuiResize);

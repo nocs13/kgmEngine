@@ -187,24 +187,7 @@ public:
   void  initGC();
   void  initThreader();
 
-  void guiAdd(kgmGui* g)
-  {
-    if(g)
-    {
-      for(int i = 0; i < m_guis.size(); i++)
-      {
-        if(g == m_guis[i])
-        {
-          return;
-        }
-      }
-
-      m_guis.add(g);
-
-      if(m_graphics)
-        m_graphics->add(g);
-    }
-  }
+  void guiAdd(kgmGui* g);
 
   kgmGraphics* getRender()
   {

@@ -1,14 +1,13 @@
-Vector3 = {}
-Vector3.__index = Vector3
+Vector3 = settag({}, newtag())
+--Vector3.__index = Vector3
 
 function Vector3:new(x, y, z)
-  local v = {}
-  setmetatable(v, Vector3)
-  v.x = x
-  v.y = y
-  v.z = z
+  local obj = {x=x, y=y, z=z}
+  settag(obj, tag(Vector3 ))
 
-  return v
+--setmetatable(v, Vector3)
+
+  return obj
 end
 
 function Vector3:add(x, y, z)

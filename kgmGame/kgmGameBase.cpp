@@ -544,14 +544,32 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 #endif
 }
 
-//Game Functions
+void kgmGameBase::guiAdd(kgmGui* g)
+{
+  if(g)
+  {
+    for(int i = 0; i < m_guis.size(); i++)
+    {
+      if(g == m_guis[i])
+      {
+        return;
+      }
+    }
+
+    m_guis.add(g);
+
+    if(m_graphics)
+      m_graphics->add(g);
+  }
+}
+
 int kgmGameBase::gInit()
 {
   if (m_state != -1)
     return 0;
 
-  m_state = State_Idle;
-  return 1;
+  //m_state = State_Idle;
+  //return 1;
 
   log("open workers...");
   initThreader();
