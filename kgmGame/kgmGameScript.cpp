@@ -3,6 +3,7 @@
 #include "kgmGameApp.h"
 #include "kgmGameTools.h"
 #include "kgmGameRetention.h"
+#include "kgmUnit.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmGraphics/kgmIGraphics.h"
@@ -66,6 +67,10 @@ void kgmGameScript::init()
   handler->set("kgmCamDirection", kgmGameScript::kgmCamDirection);
   handler->set("kgmCamMove", kgmGameScript::kgmCamMove);
   handler->set("kgmCamLook", kgmGameScript::kgmCamLook);
+
+  handler->set("kgmUnitId", kgmGameScript::kgmUnitId);
+  handler->set("kgmUnitName", kgmGameScript::kgmUnitName);
+  handler->set("kgmUnitClass", kgmGameScript::kgmUnitClass);
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
@@ -539,6 +544,63 @@ s32 kgmGameScript::kgmCamDirection(void*)
   game->getScript()->resl("ddd", v.x, v.y, v.z);
 
   return 3;
+}
+
+s32 kgmGameScript::kgmUnitId(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("u", &u);
+
+  if (!u)
+    return 0;
+
+  game->getScript()->resl("i", u->getId());
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitName(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  game->getScript()->resl("s", u->getName().data());
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitClass(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  game->getScript()->resl("s", u->getClass().data());
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmGenRetention(void*)

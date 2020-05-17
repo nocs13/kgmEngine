@@ -61,6 +61,7 @@ private:
 
   u32       m_id;
   kgmString m_name;
+  kgmString m_class;
 
   bool m_lock;
   bool m_valid;
@@ -179,11 +180,6 @@ public:
   {
     return m_type;
   }
-
-  //kgmBody* body() const
-  //{
-  //  return m_body;
-  //}
 
   bool bodyIsValid()
   {
@@ -328,6 +324,16 @@ public:
     return m_name;
   }
 
+  void setClass(kgmString s)
+  {
+    m_class = s;
+  }
+
+  kgmString getClass()
+  {
+    return m_class;
+  }
+
   void setGroup(u32 g)
   {
     m_group = g;
@@ -350,9 +356,6 @@ public:
 
   vec3 position()
   {
-    //if(m_body)
-    //  return m_body->position();
-
     return m_position;
   }
 
@@ -360,41 +363,26 @@ public:
   {
     m_position = v;
 
-    //if (m_object && m_type == Particles)
-    //  ((kgmParticles*)m_object)->position(v);
-
-    //m_transform.identity();
     m_transform.translate(v);
   }
 
   vec3 rotation()
   {
-    //if(m_body)
-    //  return m_body->rotation();
-
     return m_rotation;
   }
 
   void rotation(vec3& r)
   {
-    //if(m_body)
-    //  m_body->rotate(r.x, r.y, r.z);
-    //else
-      m_rotation = r;
+    m_rotation = r;
   }
 
   quat quaternion()
   {
-    //if(m_body)
-    //  return m_body->quaternion();
-
     return quat();
   }
 
   void quaternion(quat& q)
   {
-    //if(m_body)
-    //  m_body->rotate(q);
   }
 
   quat scale()

@@ -86,6 +86,10 @@ class kgmGameScript: public kgmObject
   static s32 kgmCamPosition(void*);
   static s32 kgmCamDirection(void*);
 
+  static s32 kgmUnitId(void*);
+  static s32 kgmUnitName(void*);
+  static s32 kgmUnitClass(void*);
+
   static s32 kgmGenRetention(void*);
   static s32 kgmDelRetention(void*);
   static s32 kgmGetRetention(void*);

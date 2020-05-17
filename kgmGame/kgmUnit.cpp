@@ -22,9 +22,13 @@ kgmUnit::kgmUnit(kgmIGame* g)
 
   m_birth   = kgmTime::getTicks();
   m_living  = -1;
+
+  m_name  = "None";
+  m_class = "None";
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmIMesh* msh)
+  :kgmUnit(g)
 {
   m_type = Mesh;
 
@@ -47,6 +51,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmIMesh* msh)
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmLight* lgt)
+  :kgmUnit(g)
 {
   m_type = Light;
 
@@ -68,6 +73,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmLight* lgt)
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmCamera* cam)
+  :kgmUnit(g)
 {
   m_type = Camera;
 
@@ -89,6 +95,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmCamera* cam)
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmTerrain* ter)
+  :kgmUnit(g)
 {
   m_type = Terrain;
 
@@ -110,6 +117,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmTerrain* ter)
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmObstacle* obs)
+  :kgmUnit(g)
 {
   m_type = Obstacle;
 
@@ -131,6 +139,7 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmObstacle* obs)
 }
 
 kgmUnit::kgmUnit(kgmIGame* g, kgmParticles* par)
+  :kgmUnit(g)
 {
   m_type = Particles;
 
@@ -153,9 +162,6 @@ kgmUnit::kgmUnit(kgmIGame* g, kgmParticles* par)
 
 kgmUnit::~kgmUnit()
 {
-  //if(m_body)
-  //  delete m_body;
-
   if(m_remove)
     remove();
 }

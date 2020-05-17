@@ -152,6 +152,11 @@ function main_oninsert(u)
   if u ~= nil then
     iunit = iunit + 1
     units[iunit] = u
+
+    nm = kgmUnitName(u)
+    cl = kgmUnitClass(u)
+
+    kgm_log('Insert unit name: ' .. nm .. ' class: ' .. cl)
   end
 end
 
