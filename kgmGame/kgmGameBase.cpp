@@ -383,7 +383,7 @@ void kgmGameBase::onIdle()
   {
     kgmGui* gui = m_guis[i - 1];
 
-    if(gui->erased())
+    if(gui && gui->erased())
     {
       getRender()->remove(gui);
 
@@ -508,11 +508,14 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
   kgmGui* visible[4] = {0};
   s32     count = 0;
 
-  for(s32 i = m_guis.size(); i > 0; i--)
-  {
-    kgmGui* gui = m_guis[i - 1];
+  if (e->event == evtKeyDown)
+    count = 0;
 
-    if(gui->visible() && !gui->erased())
+  for(auto i = m_guis.begin(); !i.end(); i.next())
+  {
+    kgmGui* gui = (*i);
+
+    if(gui && gui->visible() && !gui->erased())
     {
       visible[count] = gui;
 

@@ -116,9 +116,12 @@ function main_onfree()
 end
 
 function main_onupdate()
+  kgm_log('Update state is ' .. tostring(state))
   if state == State_Play then
+    kgm_log('Input key is ' .. tostring(inputkey))
     if inputkey == Key_Left and cam ~= nil then
       cam:turn(-1)
+	  kgm_log('Camera direction ' .. tostring(cam.pos.x) .. ' ' .. tostring(cam.pos.y) .. ' ' .. tostring(cam.pos.z))
     elseif inputkey == Key_Right and cam ~= nil then
       cam:turn(1)
     elseif inputkey == Key_Up and cam ~= nil then
@@ -180,7 +183,7 @@ function main_onbutton(key, btn, down)
     kgm_log('Game state: ' .. tostring(state))
 
     if state == State_Play then
-      kgm_log('state is play')
+      kgm_log('State is play')
 
       kgmGamePause()
 
@@ -194,6 +197,9 @@ function main_onbutton(key, btn, down)
   end
 
   if down ~= 0 then
+    kgm_log('Set key ' .. tostring(key))
     inputkey = key
+  elseif down == 0 then
+    inputkey = 0
   end
 end
