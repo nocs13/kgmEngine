@@ -405,6 +405,10 @@ void kgmGameBase::onClose()
 
 void kgmGameBase::onKeyUp(int k)
 {
+#ifdef DEBUG
+  kgm_log() << "kgmGameBase::onKeyUp [" << k << "]\n";
+#endif
+
   m_keys[k] = 0;
 
   m_input[(u32) m_keymap[k]] = 0;
@@ -414,6 +418,10 @@ void kgmGameBase::onKeyUp(int k)
 }
 
 void kgmGameBase::onKeyDown(int k){
+#ifdef DEBUG
+  kgm_log() << "kgmGameBase::onKeyDown [" << k << "]\n";
+#endif
+
   m_keys[k] = 1;
 
   m_input[(u32) m_keymap[k]] = 1;
@@ -778,24 +786,6 @@ int kgmGameBase::gUnload()
 
 int kgmGameBase::gSwitch(u32 state)
 {
-  switch(state)
-  {
-  case State_Play:
-    if (m_threader)
-    {
-      m_threader->add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic, this);
-      m_threader->add((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics, this);
-    }
-    break;
-  case State_Pause:
-    if (m_threader)
-    {
-      m_threader->remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doLogic);
-      m_threader->remove((kgmGameThreader::THREADER_FUNCTION)kgmGameBase::doPhysics);
-    }
-    break;
-  }
-
   m_state = state;
 
   return m_state;

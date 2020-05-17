@@ -64,6 +64,7 @@ public:
   static void  mutex_free(Mutex);
   static void  mutex_lock(Mutex);
   static void  mutex_unlock(Mutex);
+  static bool  mutex_locked(Mutex);
   static bool  mutex_lockable(Mutex);
 
   static TID   id();

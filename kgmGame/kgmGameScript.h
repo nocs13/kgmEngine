@@ -22,6 +22,9 @@ class kgmGameScript: public kgmObject
   static s8* value;
 
   kgmThread::Mutex mutex;
+  s32              mlocker;
+
+  bool log_lock = true;
 
  public:
   kgmGameScript(kgmIGame*);

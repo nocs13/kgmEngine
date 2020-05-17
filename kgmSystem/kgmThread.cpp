@@ -250,6 +250,26 @@ void  kgmThread::mutex_unlock(kgmThread::Mutex m)
   }
 }
 
+bool  kgmThread::mutex_locked(Mutex m)
+{
+  if(m)
+  {
+#ifdef WIN32
+    if(TryEnterCriticalSection(m) == 0)
+      return true;
+#else
+    if(!pthread_mutex_trylock(m))
+    {
+      pthread_mutex_unlock(m);
+
+      return true;
+    }
+#endif
+  }
+
+  return false;
+}
+
 bool  kgmThread::mutex_lockable(Mutex m)
 {
   if(m)
