@@ -24,12 +24,6 @@
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
-#ifdef EDITOR
-#include "editor/kEditor.h"
-
-using namespace kgmGameEditor;
-#endif
-
 class kgmGameMap;
 
 class kgmGameBase: public kgmWindow, public kgmIGame
@@ -79,18 +73,6 @@ protected:
   u32              m_fps;
   u32              m_tpf;
   kgmGameThreader* m_threader;
-
-#ifdef EDITOR
-  friend class kEditor;
-
-  kEditor* editor = null;
-
-public:
-  kEditor* getEditor()
-  {
-    return editor;
-  }
-#endif
 
 private:
   struct UnitIterator: public kgmIGame::Iterator

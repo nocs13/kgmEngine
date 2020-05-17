@@ -13,6 +13,10 @@
 #include "kViewObjects.h"
 #include "kViewOptions.h"
 
+/*
+ * Deprecated. Should move as independent script based engine editor.
+*/
+
 class kgmGameBase;
 
 namespace kgmGameEditor

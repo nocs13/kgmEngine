@@ -116,13 +116,6 @@ kgmGameBase::kgmGameBase()
 
 kgmGameBase::~kgmGameBase()
 {
-#ifdef EDITOR
-  log("free editor...");
-
-  if(editor)
-    delete editor;
-#endif
-
   log("stop threader...");
 
   if (m_threader)
@@ -399,11 +392,6 @@ void kgmGameBase::onIdle()
       m_guis.erase(i - 1);
     }
   }
-
-#ifdef EDITOR
-  if(editor && m_need_editor)
-    editor->onIdle();
-#endif
 }
 
 void kgmGameBase::onPaint()
@@ -537,11 +525,6 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 
   for (s32 i = 0; i < count; i++)
     visible[i]->onEvent(e);
-
-#ifdef EDITOR
-  if(editor)
-    editor->onEvent(e);
-#endif
 }
 
 void kgmGameBase::guiAdd(kgmGui* g)

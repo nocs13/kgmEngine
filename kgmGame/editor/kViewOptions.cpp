@@ -219,7 +219,10 @@ void kViewOptions::onShowMaterials(int s)
 
   slotMaterials.connect(this, (Slot<kViewOptions, kgmString>::FN) &kViewOptions::onSelectMaterial, &vo->sigSelect);
 
-  kEditor* editor = ((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
+  kEditor* editor = null; //((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
+
+  if (!editor)
+    return;
 
   kgmList<kgmObject*> &ms = editor->getObjects();
 
@@ -234,7 +237,10 @@ void kViewOptions::onShowMaterials(int s)
 
 void kViewOptions::onSelectMaterial(kgmString id)
 {
-  kEditor* editor = ((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
+  kEditor* editor = null; //((kgmGameBase*)kgmGameApp::gameApp()->game())->getEditor();
+
+  if (!editor)
+    return;
 
   kgmMaterial* m = editor->getMaterial(id);
 
