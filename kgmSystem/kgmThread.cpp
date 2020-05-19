@@ -294,6 +294,111 @@ bool  kgmThread::mutex_lockable(Mutex m)
   return false;
 }
 
+kgmThread::Condition kgmThread::condition_create()
+{
+#ifdef WIN32
+  Condition condition = (Condition)malloc(sizeof(CRITICAL_SECTION));
+
+  if(mutex)
+  {
+    InitializeCriticalSection(mutex);
+
+    return mutex;
+  }
+
+#else
+  Condition condition = (Condition)malloc(sizeof(pthread_cond_t));
+
+  if(condition)
+  {
+    *condition = PTHREAD_COND_INITIALIZER;
+
+    pthread_cond_init(condition, NULL);
+
+    return condition;
+  }
+#endif
+}
+
+void kgmThread::condition_free(kgmThread::Condition c)
+{
+  if(c)
+  {
+#ifdef WIN32
+    DeleteCriticalSection(m);
+
+    free(m);
+#else
+    s32 res = pthread_cond_destroy((pthread_cond_t*) c);
+
+    if (res != 0)
+    {
+
+    }
+
+    free(c);
+#endif
+  }
+}
+
+bool kgmThread::condition_wait(kgmThread::Condition c, kgmThread::Mutex m)
+{
+#ifdef WIN32
+  DeleteCriticalSection(m);
+
+  free(m);
+#else
+  s32 res = pthread_cond_wait((pthread_cond_t*) c, (pthread_mutex_t*) m);
+
+  if (res != 0)
+    return false;
+#endif
+
+    return true;
+}
+
+bool kgmThread::condition_wait_time(kgmThread::Condition c, kgmThread::Mutex m, s32 ms)
+{
+#ifdef WIN32
+    DeleteCriticalSection(m);
+
+    free(m);
+#else
+  struct timespec ts;
+
+  clock_gettime(CLOCK_REALTIME, &ts);
+
+  ts.tv_nsec += (ms * 1000);
+
+  s32 res = pthread_cond_timedwait((pthread_cond_t*) c, (pthread_mutex_t*) m, &ts);
+
+  if (res != 0)
+  {
+
+  }
+#endif
+
+  return true;
+}
+
+bool kgmThread::condition_signal(kgmThread::Condition c)
+{
+#ifdef WIN32
+  DeleteCriticalSection(m);
+
+  free(m);
+#else
+  s32 res = pthread_cond_signal (c);
+
+  if (res != 0)
+  {
+    return false;
+  }
+#endif
+
+  return true;
+}
+
 kgmThread::TID  kgmThread::id()
 {
   TID tid = 0;

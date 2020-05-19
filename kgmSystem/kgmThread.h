@@ -40,8 +40,10 @@ public:
 
 #ifdef WIN32
   typedef CRITICAL_SECTION* Mutex;
+  typedef void*  Condition;
 #else
   typedef pthread_mutex_t* Mutex;
+  typedef pthread_cond_t*  Condition;
 #endif
 
   enum Priority
@@ -66,6 +68,12 @@ public:
   static void  mutex_unlock(Mutex);
   static bool  mutex_locked(Mutex);
   static bool  mutex_lockable(Mutex);
+
+  static Condition condition_create();
+  static void      condition_free(Condition);
+  static bool      condition_wait(Condition, Mutex);
+  static bool      condition_wait_time(Condition, Mutex, s32 ms);
+  static bool      condition_signal(Condition);
 
   static TID   id();
   static void  exit(s32 res);
