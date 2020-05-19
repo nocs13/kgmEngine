@@ -299,11 +299,11 @@ kgmThread::Condition kgmThread::condition_create()
 #ifdef WIN32
   Condition condition = (Condition)malloc(sizeof(CRITICAL_SECTION));
 
-  if(mutex)
+  if(condition)
   {
-    InitializeCriticalSection(mutex);
+    InitializeConditionVariable(condition);
 
-    return mutex;
+    return condition;
   }
 
 #else
@@ -322,31 +322,31 @@ kgmThread::Condition kgmThread::condition_create()
 
 void kgmThread::condition_free(kgmThread::Condition c)
 {
-  if(c)
-  {
+  if (!c)
+    return;
+
 #ifdef WIN32
-    DeleteCriticalSection(m);
+  WakeAllConditionVariable (c);
 
-    free(m);
+  free(c);
 #else
-    s32 res = pthread_cond_destroy((pthread_cond_t*) c);
+  pthread_cond_broadcast(c);
 
-    if (res != 0)
-    {
+  s32 res = pthread_cond_destroy((pthread_cond_t*) c);
 
-    }
+  if (res != 0)
+  {
 
-    free(c);
-#endif
   }
+
+  free(c);
+#endif
 }
 
 bool kgmThread::condition_wait(kgmThread::Condition c, kgmThread::Mutex m)
 {
 #ifdef WIN32
-  DeleteCriticalSection(m);
-
-  free(m);
+  SleepConditionVariableCS(c, m, INFINITE);
 #else
   s32 res = pthread_cond_wait((pthread_cond_t*) c, (pthread_mutex_t*) m);
 
@@ -360,9 +360,7 @@ bool kgmThread::condition_wait(kgmThread::Condition c, kgmThread::Mutex m)
 bool kgmThread::condition_wait_time(kgmThread::Condition c, kgmThread::Mutex m, s32 ms)
 {
 #ifdef WIN32
-    DeleteCriticalSection(m);
-
-    free(m);
+  SleepConditionVariableCS(c, m, ms / 1000);
 #else
   struct timespec ts;
 
@@ -384,9 +382,7 @@ bool kgmThread::condition_wait_time(kgmThread::Condition c, kgmThread::Mutex m, 
 bool kgmThread::condition_signal(kgmThread::Condition c)
 {
 #ifdef WIN32
-  DeleteCriticalSection(m);
-
-  free(m);
+  WakeConditionVariable(c);
 #else
   s32 res = pthread_cond_signal (c);
 

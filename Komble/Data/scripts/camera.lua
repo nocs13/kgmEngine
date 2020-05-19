@@ -1,22 +1,26 @@
+--Camera = {}
 Camera = settag({}, newtag())
---Camera.__index = Camera
+
+settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
 
 function Camera:new(c)
-  local obj = {cam = c}
-
-  settag(obj, tag(Camera))
-  --setmetatable(obj, Camera)
-  --self.__index = self
-
-  --obj.cam = c
-
+  kgm_log('Inpit camera is ' .. tostring(c))
+  
   x, y, z = kgmCamPosition(c)
+  
+  kgm_log('Camera start position is ' .. tostring(x) .. ' ' .. tostring(y) .. ' ' .. tostring(z))
 
-  obj.pos = Vector3:new(x, y, z)
+  p = Vector3:new(x, y, z)
 
   x, y, z = kgmCamDirection(c)
 
-  obj.dir = Vector3:new(x, y, z)
+  kgm_log('Camera start direction is ' .. tostring(x) .. ' ' .. tostring(y) .. ' ' .. tostring(z))
+
+  d = Vector3:new(x, y, z)
+
+  local obj = {cam = c, pos = p, dir = d}
+
+  settag(obj, tag(Camera))
 
   return obj
 end

@@ -51,8 +51,14 @@ const char* kgmLog::kgm_log_label()
   time.update();
 
   memset(text, 0, sizeof(text));
-  snprintf(text, sizeof(text) - 1, "%p %2d:%2d:%2d %d", (void*) kgmThread::id(),
+
+#ifdef WIN32
+  snprintf(text, sizeof(text) - 1, "%ld  %2d:%2d:%2d %d", kgmThread::id(),
            ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
+#else
+  snprintf(text, sizeof(text) - 1, "%p  %2d:%2d:%2d %d", (void*) kgmThread::id(),
+           ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
+#endif
 
   return (const char*) text;
 }

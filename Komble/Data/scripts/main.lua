@@ -116,38 +116,57 @@ function main_onfree()
 end
 
 function main_onupdate()
-  kgm_log('Update state is ' .. tostring(state))
   if state == State_Play then
-    kgm_log('Input key is ' .. tostring(inputkey))
+    --kgm_log('Main camera is ' .. tostring(cam.cam))
+
     if inputkey == Key_Left and cam ~= nil then
+      kgm_log('Turning left')
       cam:turn(-1)
-	  kgm_log('Camera direction ' .. tostring(cam.pos.x) .. ' ' .. tostring(cam.pos.y) .. ' ' .. tostring(cam.pos.z))
+	  --kgm_log('Camera direction ' .. tostring(cam.pos.x) .. ' ' .. tostring(cam.pos.y) .. ' ' .. tostring(cam.pos.z))
     elseif inputkey == Key_Right and cam ~= nil then
+      kgm_log('Turning right')
       cam:turn(1)
     elseif inputkey == Key_Up and cam ~= nil then
+      kgm_log('Just move')
       cam:move()
     end
   end
 end
 
 function main_onload()
+  kgm_log('On game map load')
+  
   c = kgmGameCamera()
 
-  if c ~= nil then
+  if c ~= nil and c ~= 0 then
+    kgm_log('Found game main camera is ' .. tostring(c))
+	
     cam = Camera:new(c)
+    kgm_log('Main camera is ' .. tostring(cam))
+    kgm_log('Main camera is ' .. tostring(cam.cam))
+    kgm_log('Main camera pos is ' .. tostring(cam.pos))
+    kgm_log('Main camera dir is ' .. tostring(cam.dir))
+	
+	if cam == nil then
+	  kgm_log('LOL current create camera is NIL')
+	end
   else
     kgm_log('No main camera found')
   end
 
+  kgm_log('Switch to play state')
   state = State_Play
 end
 
 function main_onunload()
+  kgm_log('On game map unload, clearing map level data')
+  
   units = {}
   player = nil
 
   cam = nil
 
+  kgm_log('Switch to idle state')
   state = State_Idle
 end
 
@@ -197,10 +216,12 @@ function main_onbutton(key, btn, down)
   end
 
   if down ~= 0 then
-    kgm_log('Set key ' .. tostring(key))
     inputkey = key
   elseif down == 0 then
-  kgm_log('Unset key ' .. tostring(key))
     inputkey = 0
+  end
+  
+  if cam == nil then 
+    kgm_log('main camera is nil') 
   end
 end

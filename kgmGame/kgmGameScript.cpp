@@ -18,6 +18,9 @@
 #include "../kgmGraphics/kgmCamera.h"
 #include "../kgmSystem/kgmWindow.h"
 
+//#define DEBUG2
+#undef DEBUG2
+
 s8* kgmGameScript::value = null;
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
@@ -107,7 +110,9 @@ void kgmGameScript::update()
   if (ctd == mlocker)
     return;
 
-  kgm_log() << "Script onupdate.\n";
+#ifdef DEBUG2
+  kgm_log() << "Call main_onupdate. \n";
+#endif
 
   lock();
 
@@ -115,8 +120,6 @@ void kgmGameScript::update()
     handler->call("main_onupdate", "i", game->timeUpdate());
 
   unlock();
-  //kgmThread::mutex_unlock(mutex);
-  //mlocker = -1;
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
@@ -142,13 +145,13 @@ void kgmGameScript::lock()
   if (mlocker == thread)
     return;
 
-#ifdef DEBUG
+#ifdef DEBUG2
   kgm_log() << "kgmGameScript::locking...\n";
 #endif
 
   kgmThread::mutex_lock(mutex);
 
-#ifdef DEBUG
+#ifdef DEBUG2
   kgm_log() << "kgmGameScript::locked.\n";
 #endif
 
@@ -163,7 +166,7 @@ void kgmGameScript::unlock()
     return;
 
 
-#ifdef DEBUG
+#ifdef DEBUG2
   kgm_log() << "kgmGameScript::unlocked.\n";
 #endif
 
@@ -500,7 +503,7 @@ s32 kgmGameScript::kgmCamMove(void*)
   game->getScript()->args("pddd", &cam, &pos[0], &pos[1], &pos[2]);
 
   if (!cam)
-    return 0;
+    cam = &game->getGraphics()->camera();
 
   cam->move(pos[0], pos[1], pos[2]);
 
@@ -520,7 +523,7 @@ s32 kgmGameScript::kgmCamLook(void*)
   game->getScript()->args("pddd", &cam, &dir[0], &dir[1], &dir[2]);
 
   if (!cam)
-    return 0;
+    cam = &game->getGraphics()->camera();
 
   cam->look(dir[0], dir[1], dir[2]);
 
@@ -536,8 +539,10 @@ s32 kgmGameScript::kgmCamPosition(void*)
 
   kgmCamera* cam    = null;
 
+  game->getScript()->args("p", &cam);
+
   if (!cam)
-    return 0;
+    cam = &game->getGraphics()->camera();
 
   vec3 v = cam->mPos;
 
@@ -555,8 +560,10 @@ s32 kgmGameScript::kgmCamDirection(void*)
 
   kgmCamera* cam    = null;
 
+  game->getScript()->args("p", &cam);
+
   if (!cam)
-    return 0;
+    cam = &game->getGraphics()->camera();
 
   vec3 v = cam->mDir;
 

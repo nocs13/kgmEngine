@@ -10,8 +10,11 @@
 #include "../kgmBase/kgmFunction.h"
 
 #ifdef WIN32
+ // Need update _WIN32_WINNT to 0x0600 in _mingw.h
+
  #include <windows.h>
  #include <winbase.h>
+ #include <synchapi.h>
 #else
  #include <stdlib.h>
  #include <unistd.h>
@@ -39,8 +42,8 @@ public:
   typedef kgmFunction<void(void*)> Thread_Member_Function;
 
 #ifdef WIN32
-  typedef CRITICAL_SECTION* Mutex;
-  typedef void*  Condition;
+  typedef CRITICAL_SECTION*   Mutex;
+  typedef CONDITION_VARIABLE* Condition;
 #else
   typedef pthread_mutex_t* Mutex;
   typedef pthread_cond_t*  Condition;
