@@ -318,6 +318,8 @@ kgmThread::Condition kgmThread::condition_create()
     return condition;
   }
 #endif
+
+  return null;
 }
 
 void kgmThread::condition_free(kgmThread::Condition c)
