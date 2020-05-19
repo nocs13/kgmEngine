@@ -11,8 +11,6 @@ class kgmLogError;
 class kgmLogDebug;
 class kgmLogWarning;
 
-inline const char* kgm_log_label();
-
 class kgmLog
 {
 public:
@@ -92,38 +90,18 @@ public:
     }
 
     static void log(kgmString s);
+    static const char* kgm_log_label();
 
 private:
     static void log_(kgmString s);
+
 };
 
 inline kgmLog& kgm_log()
 {
-  printf("kgmEngine [%s]: ", kgm_log_label());
+  printf("kgmEngine [%s]: ", kgmLog::kgm_log_label());
 
   return kgmLog::LOG;
-}
-
-inline const char* kgm_log_label()
-{
-  time_t rawtime;
-  struct tm * ti;
-
-  time ( &rawtime );
-  ti = localtime ( &rawtime );
-
-  timeval tv;
-  gettimeofday(&tv, 0);
-
-  static char text[128];
-
-  kgmTime time;
-  time.update();
-
-  memset(text, 0, sizeof(text));
-  snprintf(text, sizeof(text) - 1, "%2d:%2d:%2d %d", ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
-  
-  return (const char*) text;
 }
 
 inline void kgm_log_print(const char* s)

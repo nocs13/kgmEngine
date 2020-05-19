@@ -409,82 +409,49 @@ void kgmGameBase::onKeyUp(int k)
   kgm_log() << "kgmGameBase::onKeyUp [" << k << "]\n";
 #endif
 
-  m_keys[k] = 0;
+  if (k < 0 || k > 128)
+    return;
 
-  m_input[(u32) m_keymap[k]] = 0;
+  m_keys[k] = 0;
 
   if (m_script)
     m_script->onButton(k, m_keymap[k], 0);
 }
 
-void kgmGameBase::onKeyDown(int k){
+void kgmGameBase::onKeyDown(int k)
+{
 #ifdef DEBUG
   kgm_log() << "kgmGameBase::onKeyDown [" << k << "]\n";
 #endif
 
-  m_keys[k] = 1;
+  if (k < 0 || k > 128)
+    return;
 
-  m_input[(u32) m_keymap[k]] = 1;
+  m_keys[k] = 1;
 
   if (m_script)
     m_script->onButton(k, m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBLEFT]] != 0))
-  {
-    m_logic->input(m_keymap[KEY_MSBLEFT], 0);
-    m_input[(u32) m_keymap[KEY_MSBLEFT]] = 0;
-  }
 }
 
 void kgmGameBase::onMsLeftDown(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBLEFT]] != 1))
-  {
-    m_logic->input(m_keymap[KEY_MSBLEFT], 1);
-    m_input[(u32) m_keymap[KEY_MSBLEFT]] = 1;
-  }
 }
 
 void kgmGameBase::onMsRightUp(int k, int x, int y){
-  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBRIGHT]] != 0))
-  {
-    m_logic->input(m_keymap[KEY_MSBRIGHT], 0);
-    m_input[(u32) m_keymap[KEY_MSBRIGHT]] = 0;
-  }
 }
 
 void kgmGameBase::onMsRightDown(int k, int x, int y)
 {
-  if(m_logic && (m_state == State_Play) && (m_input[(u32) m_keymap[KEY_MSBRIGHT]] != 1))
-  {
-    m_logic->input(m_keymap[KEY_MSBRIGHT], 1);
-    m_input[(u32) m_keymap[KEY_MSBRIGHT]] = 1;
-  }
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y)
 {
-  m_input[grot_x] = x;
-  m_input[grot_y] = y;
-
-  if(m_logic && m_state == State_Play)
-  {
-    m_logic->input(grot_x, x);
-    m_logic->input(grot_y, y);
-  }
 }
 
 void kgmGameBase::onMsWheel(int k, int x, int y, int z)
 {
-  m_input[grot_x] = x;
-  m_input[grot_y] = y;
-  m_input[grot_z] = z;
-
-  if(m_logic && m_state == State_Play)
-  {
-    m_logic->input(grot_z, z);
-  }
 }
 
 void kgmGameBase::onResize(int w, int h)
@@ -517,12 +484,10 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 
     if(gui && gui->visible() && !gui->erased())
     {
-      visible[count] = gui;
-
-      if (count < 3)
-        count++;
-      else if (count == 3)
+      if (count == 3)
         break;
+      else
+        visible[count++] = gui;
     }
   }
 
@@ -665,7 +630,7 @@ int kgmGameBase::gLoad(kgmString s)
   gUnload();
 
 #ifdef DEBUG
-  kgm_log() << kgm_log_label() << " " << "Loading game map " << (char*)s << "..." << "\n";
+  kgm_log() << " " << "Loading game map " << (char*)s << "..." << "\n";
 #endif
 
   m_state = State_Load;
@@ -796,10 +761,7 @@ int kgmGameBase::gSwitch(u32 state)
 
 int kgmGameBase::gButton(game_button gb)
 {
-  if(gb >= sizeof(m_input))
-    return 0;
-
-  return m_input[(int)gb];
+  return 0;
 }
 
 u32 kgmGameBase::gState()

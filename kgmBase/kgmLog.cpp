@@ -1,5 +1,6 @@
 #include "kgmLog.h"
 #include "kgmString.h"
+#include "../kgmSystem/kgmThread.h"
 
 #ifdef ANDROID
 
@@ -32,3 +33,27 @@ void kgmLog::log_(kgmString s)
     fflush(stdout);
 #endif
 }
+
+const char* kgmLog::kgm_log_label()
+{
+  time_t rawtime;
+  struct tm * ti;
+
+  ::time ( &rawtime );
+  ti = localtime ( &rawtime );
+
+  timeval tv;
+  gettimeofday(&tv, 0);
+
+  static char text[128];
+
+  kgmTime time;
+  time.update();
+
+  memset(text, 0, sizeof(text));
+  snprintf(text, sizeof(text) - 1, "%p %2d:%2d:%2d %d", (void*) kgmThread::id(),
+           ti->tm_hour, ti->tm_min, ti->tm_sec, time.getUSecond());
+
+  return (const char*) text;
+}
+

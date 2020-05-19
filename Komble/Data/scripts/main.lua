@@ -200,6 +200,7 @@ function main_onbutton(key, btn, down)
     kgm_log('Set key ' .. tostring(key))
     inputkey = key
   elseif down == 0 then
+  kgm_log('Unset key ' .. tostring(key))
     inputkey = 0
   end
 end
