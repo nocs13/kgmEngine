@@ -182,7 +182,7 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
   return true;
 }
 
-kgmThread::Mutex kgmThread::mutex_create()
+kgmThread::Mutex kgmThread::mutex_create(bool recursive)
 {
 #ifdef WIN32
   Mutex mutex = (Mutex)malloc(sizeof(CRITICAL_SECTION));
@@ -197,9 +197,24 @@ kgmThread::Mutex kgmThread::mutex_create()
 #else
   Mutex mutex = (Mutex)malloc(sizeof(pthread_mutex_t));
 
+  *mutex = PTHREAD_MUTEX_INITIALIZER;
+
   if(mutex)
   {
-    pthread_mutex_init(mutex, NULL);
+    if (recursive)
+    {
+      pthread_mutexattr_t attr;
+
+      s32 s = 0;
+
+      s = pthread_mutexattr_init(&attr);
+      s = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+      s = pthread_mutex_init(mutex, &attr);
+    }
+    else
+    {
+      pthread_mutex_init(mutex, NULL);
+    }
 
     return mutex;
   }

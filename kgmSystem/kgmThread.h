@@ -65,7 +65,7 @@ public:
   static bool   thread_active(Thread th);
   static bool   thread_priority(Thread th, Priority pr);
 
-  static Mutex mutex_create();
+  static Mutex mutex_create(bool recursive = false);
   static void  mutex_free(Mutex);
   static void  mutex_lock(Mutex);
   static void  mutex_unlock(Mutex);

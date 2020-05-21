@@ -118,15 +118,23 @@ end
 function main_onupdate()
   if state == State_Play then
     --kgm_log('Main camera is ' .. tostring(cam.cam))
-
-    if inputkey == Key_Left and cam ~= nil then
+    
+    if cam ~=nil then
+      --kgm_log('Actual key is ' .. tostring(inputkey))
+    end
+    
+    if inputkey == KEY_LEFT then
+      kgm_log('Actual key is left')
+    end
+    
+    if (inputkey == KEY_LEFT) and (cam ~= nil) then
       kgm_log('Turning left')
       cam:turn(-1)
-	  --kgm_log('Camera direction ' .. tostring(cam.pos.x) .. ' ' .. tostring(cam.pos.y) .. ' ' .. tostring(cam.pos.z))
-    elseif inputkey == Key_Right and cam ~= nil then
+      --kgm_log('Camera direction ' .. tostring(cam.pos.x) .. ' ' .. tostring(cam.pos.y) .. ' ' .. tostring(cam.pos.z))
+    elseif (inputkey == KEY_RIGHT) and (cam ~= nil) then
       kgm_log('Turning right')
       cam:turn(1)
-    elseif inputkey == Key_Up and cam ~= nil then
+    elseif (inputkey == KEY_UP) and (cam ~= nil) then
       kgm_log('Just move')
       cam:move()
     end
@@ -195,12 +203,12 @@ function main_onremove(u)
 end
 
 function main_onbutton(key, btn, down)
+  state = kgmGameState()
+  
   kgm_log('got input event')
+  kgm_log('Game state is ' .. tostring(state))
 
   if key == KEY_ESCAPE and down == 0 then
-    state = kgmGameState()
-    kgm_log('Game state: ' .. tostring(state))
-
     if state == State_Play then
       kgm_log('State is play')
 
@@ -222,6 +230,8 @@ function main_onbutton(key, btn, down)
   end
   
   if cam == nil then 
-    kgm_log('main camera is nil') 
+    kgm_log('main camera is nil')
+  else 
+    kgm_log('main camera present')
   end
 end

@@ -25,6 +25,7 @@ class kgmGameScript: public kgmObject
   kgmThread::TID   mlocker;
 
   bool log_lock = true;
+  s32  locks[2] = {0};
 
  public:
   kgmGameScript(kgmIGame*);

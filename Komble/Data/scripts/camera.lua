@@ -1,20 +1,13 @@
---Camera = {}
 Camera = settag({}, newtag())
 
 settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
 
 function Camera:new(c)
-  kgm_log('Inpit camera is ' .. tostring(c))
-  
   x, y, z = kgmCamPosition(c)
   
-  kgm_log('Camera start position is ' .. tostring(x) .. ' ' .. tostring(y) .. ' ' .. tostring(z))
-
   p = Vector3:new(x, y, z)
 
   x, y, z = kgmCamDirection(c)
-
-  kgm_log('Camera start direction is ' .. tostring(x) .. ' ' .. tostring(y) .. ' ' .. tostring(z))
 
   d = Vector3:new(x, y, z)
 
@@ -32,11 +25,18 @@ end
 function Camera:turn(d)
   a = 0.01
 
-  x = d * mathf.cos(a)
-  y = d * mathf.sin(a)
+  x = d * cos(a)
+  y = d * sin(a)
+
+  kgm_log('Turn vector is ' .. tostring(x) .. ' ' .. tostring(y))
 
   self.dir:add(x, y, 0)
+    
+  kgm_log('Turn add is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
+
   self.dir = self.dir:nor()
+  
+  kgm_log('Turn nor is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
 
   kgmCamLook(self.cam, self.dir.x, self.dir.y, self.dir.z)
 end
