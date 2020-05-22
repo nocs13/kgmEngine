@@ -148,84 +148,23 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
 #else
 
-  /* attributes for a single buffered visual in RGBA format with at least
-   4 bits per color and a 16 bit depth buffer
-  */
-  static int attrSgl[] = {
-    GLX_RGBA,
-    GLX_RED_SIZE, 4,
-    GLX_GREEN_SIZE, 4,
-    GLX_BLUE_SIZE, 4,
-    GLX_DEPTH_SIZE, 24,
-    None
-  };
-
-  /* attributes for a double buffered visual in RGBA format with at least
-   4 bits per color and a 16 bit depth buffer
-  */
-  static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
-                           GLX_RED_SIZE, 4,
-                           GLX_GREEN_SIZE, 4,
-                           GLX_BLUE_SIZE, 4,
-                           GLX_DEPTH_SIZE, 24,
-                           None
-                         };
-
-  //Colormap cmap;
-  //XF86VidModeModeInfo **modes;
   int rx, ry, rw, rh;
-  //int numModes = 0;
-  //int bestMode = -1;
-
-  //XF86VidModeGetAllModeLines(m_dpy, m_screen, &numModes, &modes);
-  //m_mode = *modes[0];
 
   wnd->getRect(rx, ry, rw, rh);
-
-  /*for(int i = 0; i < numModes; i++)
-  {
-    if( (modes[i]->hdisplay == rw) && (modes[i]->vdisplay == rh) )
-    {
-      bestMode = i;
-
-      break;
-    }
-  }*/
-
-  m_visual = glXChooseVisual(wnd->m_dpy, wnd->m_screen, attrDbl);
-
-  if(m_visual == null)
-  {
-    kgmLog::log("No Doublebuffered Visual");
-
-    m_visual = glXChooseVisual(wnd->m_dpy, wnd->m_screen, attrSgl);
-
-    if(m_visual == null)
-    {
-      kgmLog::log("No Singlebuffered Visual");
-
-      return;
-    }
-    else
-    {
-      kgmLog::log("\nGot Singlebuffered Visual");
-    }
-  }
-  else
-  {
-    kgmLog::log("\nGot Doublebuffered Visual");
-  }
-
+  /*
   //Get a pointer to the GL 3.0 context creation
   PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddress((GLubyte*)"glXCreateContextAttribsARB");
 
   if (glXCreateContextAttribs)
   {
-    int attribs[] = {
-      GLX_CONTEXT_MAJOR_VERSION_ARB, 2,
-      GLX_CONTEXT_MINOR_VERSION_ARB, 1,
-      GLX_CONTEXT_PROFILE_MASK_ARB,
-      GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+    s32 attribs[] =
+    {
+      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+      GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+      //GLX_CONTEXT_PROFILE_MASK_ARB,
+      //GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+      GLX_CONTEXT_FLAGS_ARB,
+      GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
       0
     };
 
@@ -237,19 +176,31 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
     m_glctx = glXCreateContextAttribs(wnd->m_dpy, *fbConfigs, null, true, &attribs[0]);
   }
+  */
+
+  if (!m_glctx && wnd->m_visual)
+      m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
 
   if (!m_glctx)
-    m_glctx = glXCreateContext(wnd->m_dpy, m_visual, 0, GL_TRUE);
+  {
+    m_error = 1;
+
+    return;
+  }
 
   if(!glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, m_glctx))
   {
-    kgmLog::log("\nError: Cannot activate ogl context.");
+    kgm_log() << "Error: Cannot activate ogl context.\n";
+
+    m_error = 1;
+
+    return;
   }
 
   if(glXIsDirect(wnd->m_dpy, m_glctx))
-    kgmLog::log("\nDirect Rendering!");
+    kgm_log() << "Direct Rendering!\n";
   else
-    kgmLog::log("\nNo Direct Rendering!\n");
+    kgm_log() << "Not direct Rendering!\n";
 
 #endif
 
@@ -378,21 +329,6 @@ kgmOGL::~kgmOGL()
     glXDestroyContext(m_wnd->m_dpy, m_glctx);
 
     m_glctx = NULL;
-  }
-
-  if (m_visual)
-  {
-    if (m_visual->visual)
-    {
-      if (m_visual->visual->ext_data)
-        XFree(m_visual->visual->ext_data);
-
-      //XFree(m_visual->visual);
-    }
-
-    XFree(m_visual);
-
-    m_visual = null;
   }
 
 #endif

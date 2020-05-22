@@ -740,11 +740,14 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_dpy    = null;
   m_wnd    = {0};
   m_screen = -1;
+  m_visual = nullptr;
+
+  XVisualInfo* vi = nullptr;
 
   XInitThreads();
 
-  XSetWindowAttributes   swa;
-  int cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
+  //XSetWindowAttributes   swa;
+  //s32 cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
 
   if (!m_dpy)
     m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
@@ -752,29 +755,102 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   if (m_screen < 0)
     m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
+  bool m_gl_need = true;
+
+  if (m_gl_need)
   {
+    GLint majorGLX, minorGLX = 0;
 
-    /*
-    Atom wm_state = XInternAtom(m_dpy, "_NET_WM_STATE", False);
-    Atom work = XInternAtom(m_dpy, "_NET_WORKAREA", False);
+    glXQueryVersion(m_dpy, &majorGLX, &minorGLX);
 
-    memset(&xev, 0, sizeof(xev));
-    xev.type = ClientMessage;
-    xev.xclient.window = m_wnd;
-    xev.xclient.message_type = wm_state;
-    xev.xclient.format = 32;
-    xev.xclient.data.l[0] = fs ? 1 : 0;
-    xev.xclient.data.l[1] = work;
-    xev.xclient.data.l[2] = 0;
+    if ((majorGLX > 1) || (majorGLX == 1 && minorGLX >= 2))
+    {
+      GLint glx_attribs[] = {
+          GLX_X_RENDERABLE    , True,
+          GLX_DRAWABLE_TYPE   , GLX_WINDOW_BIT,
+          GLX_RENDER_TYPE     , GLX_RGBA_BIT,
+          GLX_X_VISUAL_TYPE   , GLX_TRUE_COLOR,
+          GLX_RED_SIZE        , 8,
+          GLX_GREEN_SIZE      , 8,
+          GLX_BLUE_SIZE       , 8,
+          GLX_ALPHA_SIZE      , 8,
+          GLX_DEPTH_SIZE      , 24,
+          GLX_STENCIL_SIZE    , 8,
+          GLX_DOUBLEBUFFER    , True,
+          None
+        };
 
-    XSendEvent(m_dpy, DefaultRootWindow(m_dpy), False, SubstructureNotifyMask, &xev);
-    */
+      s32 fbcount;
+
+      GLXFBConfig* fbc = glXChooseFBConfig(m_dpy, m_screen, glx_attribs, &fbcount);
+
+      if (fbc != nullptr)
+      {
+        s32 best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+
+        for (int i = 0; i < fbcount; ++i)
+        {
+          XVisualInfo *vi = glXGetVisualFromFBConfig(m_dpy, fbc[i]);
+
+          if ( vi != 0)
+          {
+            int samp_buf, samples;
+
+            glXGetFBConfigAttrib(m_dpy, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+            glXGetFBConfigAttrib(m_dpy, fbc[i], GLX_SAMPLES       , &samples);
+
+            if (best_fbc < 0 || (samp_buf && samples > best_num_samp) )
+            {
+              best_fbc = i;
+
+              best_num_samp = samples;
+            }
+
+            if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
+              worst_fbc = i;
+
+            worst_num_samp = samples;
+          }
+
+          XFree( vi );
+        }
+
+        GLXFBConfig bestFbc = fbc[ best_fbc ];
+
+        XFree(fbc);
+
+        vi = glXGetVisualFromFBConfig(m_dpy, bestFbc);
+      }
+      else
+      {
+        kgm_log() << "Failed to retrieve framebuffer.\n";
+      }
+    }
+    else
+    {
+      kgm_log() << "GLX 1.2 or greater is required.\n";
+    }
   }
 
-  //kgmSystem::getDesktopWorkaround((u32&)x, (u32&)y, (u32&)w, (u32&)h);
+  if (vi && vi->screen == m_screen)
+  {
+    XSetWindowAttributes windowAttribs;
+    windowAttribs.border_pixel = BlackPixel(m_dpy, m_screen);
+    windowAttribs.background_pixel = WhitePixel(m_dpy, m_screen);
+    windowAttribs.override_redirect = True;
+    windowAttribs.colormap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
+    windowAttribs.event_mask = ExposureMask;
 
-  m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
-                              x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+    m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, m_screen), x, y, w, h, 0, vi->depth, InputOutput, vi->visual,
+                          CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+
+    m_visual = vi;
+  }
+  else
+  {
+    m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
+                                x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+  }
 
   //m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
   //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
@@ -783,7 +859,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
   //                      cmask, &swa);
 
-  Atom delWindow = XInternAtom( m_dpy, "WM_DELETE_WINDOW", 0 );
+  Atom delWindow = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
+
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
 
   XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
@@ -824,6 +901,21 @@ kgmWindow::~kgmWindow()
 
     m_dpy = null;
   }*/
+
+  if (m_visual)
+  {
+    /*if (m_visual->visual)
+    {
+      if (m_visual->visual->ext_data)
+        XFree(m_visual->visual->ext_data);
+
+      //XFree(m_visual->visual);
+    }*/
+
+    XFree(m_visual);
+
+    m_visual = null;
+  }
 
   if (m_dpy)
   {

@@ -125,7 +125,6 @@ private:
 
 #else
 
-  XVisualInfo* m_visual = null;
   GLXContext   m_glctx  = null;
 
 #endif

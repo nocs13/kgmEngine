@@ -71,7 +71,7 @@ public:
 
   Display             *m_dpy;
   Window               m_wnd;
-//  XVisualInfo*         m_visual;
+  XVisualInfo*         m_visual;
   XF86VidModeModeInfo  m_mode;
   XSetWindowAttributes m_xswa;
   Atom                 m_wmDelete;
