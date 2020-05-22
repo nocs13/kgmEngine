@@ -22,7 +22,7 @@ function Vector3:mul(a)
   self.z = self.z * a
 end
 
-function Vector3:len(a)
+function Vector3:len()
   a = self.x * self.x
   b = self.y * self.y
   c = self.z * self.z

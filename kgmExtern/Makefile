@@ -10,6 +10,6 @@ all:
 
 clean:
 	make -C lua-4.0.1 clean
-	rm -rf ../kgmSystem/inc/lua
+#	rm -rf ../kgmSystem/inc/lua
 	rm -f  ../kgmSystem/lib/liblua.a	
 	

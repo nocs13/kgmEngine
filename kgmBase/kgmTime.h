@@ -79,7 +79,13 @@ public:
     timeval tv;
     gettimeofday(&tv, 0);
 
-    return (u32)(tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    u32 sec = tv.tv_sec;
+    u32 usec = tv.tv_usec;
+
+    u32 tick = sec * 1000 + usec / 1000;
+
+    return tick;
+    //return (u32)(tv.tv_sec * 1000) + (tv.tv_usec / 1000000);
 #endif
   }
 

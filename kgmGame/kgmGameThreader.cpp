@@ -1,4 +1,7 @@
 #include "kgmGameThreader.h"
+#include "../kgmBase/kgmTime.h"
+
+#define KGM_FPS 50
 
 kgmGameThreader::kgmGameThreader()
 {
@@ -109,6 +112,9 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
   if(!t)
     return -1;
 
+  s32 fps = 0;
+  u32 stick = kgmTime::getTicks();
+
   kgmGameThreader* gt = (kgmGameThreader*)t->gt;
 
   while(gt->m_active)
@@ -123,7 +129,28 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
 
     kgmThread::mutex_unlock(t->mutex);
 
-    kgmThread::sleep(0);
+    fps++;
+
+    u32 sleep = 0;
+
+    if (fps > KGM_FPS)
+    {
+      fps = 0;
+
+      u32 etick = kgmTime::getTicks();
+      u32 dtick = etick - stick;
+      s32 s = 1000 - dtick;
+
+      if (s > 0)
+      {
+        sleep = s;
+      }
+    }
+
+    kgmThread::sleep(sleep);
+
+    if (fps == 0)
+      stick = kgmTime::getTicks();
   }
 
   return 0;

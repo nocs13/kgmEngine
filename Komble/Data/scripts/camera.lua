@@ -15,18 +15,17 @@ function Camera:new(c)
 
   settag(obj, tag(Camera))
 
+  kgm_log('Camera start position is ' .. tostring(p.x) .. ' ' .. tostring(p.y) .. ' ' .. tostring(p.z))
+  kgm_log('Camera start direction is ' .. tostring(d.x) .. ' ' .. tostring(d.y) .. ' ' .. tostring(d.z))
+
   return obj
 end
 
-function Camera:update(t)
-
-end
-
 function Camera:turn(d)
-  a = 0.01
+  local a = 0.001
 
-  x = d * cos(a)
-  y = d * sin(a)
+  local x = d * cos(a)
+  local y = d * sin(a)
 
   kgm_log('Turn vector is ' .. tostring(x) .. ' ' .. tostring(y))
 
@@ -34,17 +33,30 @@ function Camera:turn(d)
     
   kgm_log('Turn add is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
 
-  self.dir = self.dir:nor()
+  local n = self.dir:nor()
   
-  kgm_log('Turn nor is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
+  kgm_log('Camera direction is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
 
-  kgmCamLook(self.cam, self.dir.x, self.dir.y, self.dir.z)
+  kgmCamLook(self.cam, n.x, n.y, n.z)
 end
 
-function Camera:move()
-  l = 0.5
-  v = self.dir
-  self.pos:add(v.x * l, v.y * l, v.z * l)
+function Camera:move(d)
+  kgm_log('Camera d ' .. tostring(d))
+
+  local l = 0.005 * d
+
+  kgm_log('Camera move length ' .. tostring(l))
+
+  n = self.dir:nor()
+
+  kgm_log('Camera move normal ' .. tostring(n.x) .. ' ' .. tostring(n.y) .. ' ' .. tostring(n.z))
+
+  local x = n.x * l
+  local y = n.y * l
+
+  self.pos:add(x, y, 0.0)
+
+  kgm_log('Camera position is ' .. tostring(self.pos.x) .. ' ' .. tostring(self.pos.y) .. ' ' .. tostring(self.pos.z))
 
   kgmCamMove(self.cam, self.pos.x, self.pos.y, self.pos.z)
 end

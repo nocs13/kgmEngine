@@ -491,8 +491,8 @@ void kgmGraphics::render()
     vec3  l = bound.max - bound.min;
     vec3  v = (bound.min + bound.max) * 0.5;
 
-    if(!m_camera->isSphereCross(v, 0.5 * l.length()))
-      continue;
+    //if(!m_camera->isSphereCross(v, 0.5 * l.length()))
+    //  continue;
 
     kgmMaterial* m = (*i)->getNodeMaterial();
 

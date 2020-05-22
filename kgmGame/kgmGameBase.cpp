@@ -296,11 +296,11 @@ bool kgmGameBase::initScript()
   return true;
 }
 
-#define OGLXXX
+#define OGL
 
 void kgmGameBase::initGC()
 {
-#ifdef VULKAN
+#ifdef VULKANXXX
   m_gc = new kgmVulkan(this);
 
   if(m_gc->gcError())

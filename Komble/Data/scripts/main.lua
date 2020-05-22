@@ -135,8 +135,11 @@ function main_onupdate()
       kgm_log('Turning right')
       cam:turn(1)
     elseif (inputkey == KEY_UP) and (cam ~= nil) then
-      kgm_log('Just move')
-      cam:move()
+      kgm_log('Move forward')
+      cam:move(1.0)
+    elseif (inputkey == KEY_DOWN) and (cam ~= nil) then
+      kgm_log('Move back')
+      cam:move(-1.0)
     end
   end
 end

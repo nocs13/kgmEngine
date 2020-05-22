@@ -18,7 +18,7 @@ OUT_A  = libkgmEngine_s.a
 all: extern debug 
 	echo $(subdirs)
 	echo $(sources)
-	make -C Test
+#	make -C Test
 	make -C Komble
 
 extern:
