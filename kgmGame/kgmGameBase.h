@@ -54,8 +54,8 @@ protected:
   kgmFont*  m_font;
   kgmString m_paths;
 
-  u8 m_keys[160];
-  u8 m_keymap[160];
+  u8 m_keys[128];
+  u8 m_keymap[128];
 
   s32  m_state;
   bool m_result;

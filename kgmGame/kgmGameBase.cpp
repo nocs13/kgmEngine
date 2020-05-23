@@ -409,7 +409,10 @@ void kgmGameBase::onKeyUp(int k)
   kgm_log() << "kgmGameBase::onKeyUp [" << k << "]\n";
 #endif
 
-  if (k < 0 || k > 128)
+  if (k < KEY_NONE || k > KEY_END)
+    return;
+
+  if (!m_keys[k])
     return;
 
   m_keys[k] = 0;
@@ -424,7 +427,10 @@ void kgmGameBase::onKeyDown(int k)
   kgm_log() << "kgmGameBase::onKeyDown [" << k << "]\n";
 #endif
 
-  if (k < 0 || k > 128)
+  if (k < KEY_NONE || k > KEY_END)
+    return;
+
+  if (m_keys[k])
     return;
 
   m_keys[k] = 1;

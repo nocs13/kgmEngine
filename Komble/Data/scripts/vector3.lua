@@ -22,7 +22,7 @@ function Vector3:mul(a)
   self.z = self.z * a
 end
 
-function Vector3:len()
+function Vector3:length()
   a = self.x * self.x
   b = self.y * self.y
   c = self.z * self.z
@@ -31,7 +31,7 @@ function Vector3:len()
 end
 
 function Vector3:nor()
-  l = self:len()
+  l = self:length()
 
   if l == 0.0 then
     return Vector3:new(0, 0, 0)
@@ -42,4 +42,16 @@ function Vector3:nor()
   c = self.z / l
 
   return Vector3:new(a, b, c)
+end
+
+function Vector3:normalize()
+  l = self:length()
+
+  if l < 0.0000000001 then
+    return
+  end
+
+  self.x = self.x / l
+  self.y = self.y / l
+  self.z = self.z / l
 end

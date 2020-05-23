@@ -29,7 +29,7 @@ inline void kgmCamera::move(float l)
 
 void kgmCamera::move(float x, float y, float z)
 {
-  mPos = mPos + vec3(x, y, z);
+  mPos = vec3(x, y, z);
 
   update();
 }

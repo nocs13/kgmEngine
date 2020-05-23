@@ -1,7 +1,8 @@
 #include "kgmGameThreader.h"
 #include "../kgmBase/kgmTime.h"
 
-#define KGM_FPS 50
+#define KGM_FPS 30
+#define KGM_TPF 1000 / KGM_FPS
 
 kgmGameThreader::kgmGameThreader()
 {
@@ -14,6 +15,7 @@ kgmGameThreader::kgmGameThreader()
     m_threads[i].gt     = this;
     m_threads[i].mutex  = kgmThread::mutex_create();
     m_threads[i].thread = kgmThread::thread_create((kgmThread::Thread_Function) kgmGameThreader::threader, &m_threads[i]);
+    kgmThread::thread_priority(m_threads[i].thread, kgmThread::PrLow);
   }
 }
 
@@ -112,13 +114,14 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
   if(!t)
     return -1;
 
-  s32 fps = 0;
   u32 stick = kgmTime::getTicks();
 
   kgmGameThreader* gt = (kgmGameThreader*)t->gt;
 
   while(gt->m_active)
   {
+    stick = kgmTime::getTicks();
+
     kgmThread::mutex_lock(t->mutex);
 
     for(u32 i = 0; i < MAX_WORKERS; i++)
@@ -129,28 +132,18 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
 
     kgmThread::mutex_unlock(t->mutex);
 
-    fps++;
+    u32 etick = kgmTime::getTicks();
+
+    u32 dtick = etick - stick;
 
     u32 sleep = 0;
 
-    if (fps > KGM_FPS)
+    if (dtick < KGM_TPF)
     {
-      fps = 0;
-
-      u32 etick = kgmTime::getTicks();
-      u32 dtick = etick - stick;
-      s32 s = 1000 - dtick;
-
-      if (s > 0)
-      {
-        sleep = s;
-      }
+      sleep = dtick;
     }
 
     kgmThread::sleep(sleep);
-
-    if (fps == 0)
-      stick = kgmTime::getTicks();
   }
 
   return 0;

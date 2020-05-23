@@ -22,7 +22,9 @@ function Camera:new(c)
 end
 
 function Camera:turn(d)
-  local a = 0.001
+  local a = 0.1
+
+  kgm_log('Turn direction is ' .. tostring(d))
 
   local x = d * cos(a)
   local y = d * sin(a)
@@ -30,10 +32,16 @@ function Camera:turn(d)
   kgm_log('Turn vector is ' .. tostring(x) .. ' ' .. tostring(y))
 
   self.dir:add(x, y, 0)
+
+  local l = self.dir:length()
     
+  kgm_log('Turn direction length is ' .. tostring(l))
+
   kgm_log('Turn add is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
 
-  local n = self.dir:nor()
+  self.dir:normalize()
+
+  local n = self.dir
   
   kgm_log('Camera direction is ' .. tostring(self.dir.x) .. ' ' .. tostring(self.dir.y) .. ' ' .. tostring(self.dir.z))
 

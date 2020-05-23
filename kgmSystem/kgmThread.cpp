@@ -176,7 +176,11 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
     break;
   }
 
-  pthread_setschedparam(th, policy, &param);
+  s32 res = pthread_setschedparam(th, policy, &param);
+
+  if (res)
+    return false;
+
 #endif
 
   return true;
