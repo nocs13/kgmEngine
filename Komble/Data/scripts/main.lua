@@ -20,16 +20,6 @@ state = 0
 
 inputkey = 0
 
---KEY_ESCAPE = 1
---KEY_0 = 2
---KEY_1 = 3
---KEY_2 = 4
---KEY_3 = 5
---KEY_UP    = 76
---KEY_LEFT  = 77
---KEY_RIGHT = 78
---KEY_DOWN  = 79
-
 State_Idle  = 0
 State_Quit  = 1
 State_Play  = 2
@@ -130,10 +120,10 @@ function main_onupdate()
     
     if (inputkey == KEY_LEFT) and (cam ~= nil) then
       kgm_log('Turning left')
-      cam:turn(-1.0)
+      cam:turn(1.0)
     elseif (inputkey == KEY_RIGHT) and (cam ~= nil) then
       kgm_log('Turning right')
-      cam:turn(1.0)
+      cam:turn(-1.0)
     elseif (inputkey == KEY_UP) and (cam ~= nil) then
       kgm_log('Move forward')
       cam:move(1.0)

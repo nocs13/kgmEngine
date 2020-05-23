@@ -1,5 +1,6 @@
 #include "kgmGameThreader.h"
 #include "../kgmBase/kgmTime.h"
+#include "../kgmBase/kgmLog.h"
 
 #define KGM_FPS 30
 #define KGM_TPF 1000 / KGM_FPS
@@ -142,6 +143,10 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
     {
       sleep = dtick;
     }
+
+#ifdef DEBUG
+      kgm_log() << "kgmGameThreader: wait " << sleep << "ms.\n";
+#endif
 
     kgmThread::sleep(sleep);
   }
