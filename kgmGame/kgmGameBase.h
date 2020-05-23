@@ -6,6 +6,7 @@
 #include "kgmGameThreader.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameScript.h"
+#include "kgmGameInput.h"
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
 #include "kgmGameRetention.h"
@@ -38,6 +39,7 @@ protected:
   kgmIGC*           m_gc;
   kgmIVideo*        m_video;
   kgmGameAudio*     m_audio;
+  kgmGameInput*     m_input;
   kgmGameScript*    m_script;
   kgmGamePhysics*   m_physics;
   kgmGameResources* m_resources;
@@ -110,6 +112,7 @@ public:
   kgmIAudio*         getAudio();
   kgmIVideo*         getVideo();
   kgmILogic*         getLogic();
+  kgmIInput*         getInput();
   kgmIScript*        getScript();
   kgmIGraphics*      getGraphics();
   kgmIResources*     getResources();
@@ -164,6 +167,7 @@ public:
   void  initSystem();
   void  initAudio();
   void  initLogic();
+  void  initInput();
   bool  initScript();
   void  initGC();
   void  initThreader();

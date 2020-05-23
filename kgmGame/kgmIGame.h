@@ -125,6 +125,7 @@ class kgmIGC;
 class kgmIAudio;
 class kgmIVideo;
 class kgmILogic;
+class kgmIInput;
 class kgmIScript;
 class kgmISpawner;
 class kgmIPhysics;
@@ -194,6 +195,7 @@ public:
   virtual kgmIAudio*      getAudio() = 0;
   virtual kgmIVideo*      getVideo() = 0;
   virtual kgmILogic*      getLogic() = 0;
+  virtual kgmIInput*      getInput() = 0;
   virtual kgmIScript*     getScript() = 0;
   virtual kgmIGraphics*   getGraphics() = 0;
   virtual kgmIResources*  getResources() = 0;

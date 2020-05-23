@@ -108,26 +108,29 @@ end
 
 function main_onupdate()
   if state == State_Play then
-    --kgm_log('Main camera is ' .. tostring(cam.cam))
-    
-    if cam ~=nil then
-      --kgm_log('Actual key is ' .. tostring(inputkey))
+
+    if (kgmKeyState(KEY_ESCAPE) == 1) then
+      kgmGamePause()
+      state = kgmGameState()
+
+      if state == State_Pause then
+        kgm_log('gui show pause')
+        guiShowPause()
+        return
+      end
     end
+
     
-    if inputkey == KEY_LEFT then
-      kgm_log('Actual key is left')
-    end
-    
-    if (inputkey == KEY_LEFT) and (cam ~= nil) then
+    if (kgmKeyState(KEY_LEFT) == 1) and (cam ~= nil) then
       kgm_log('Turning left')
       cam:turn(1.0)
-    elseif (inputkey == KEY_RIGHT) and (cam ~= nil) then
+    elseif (kgmKeyState(KEY_RIGHT) == 1) and (cam ~= nil) then
       kgm_log('Turning right')
       cam:turn(-1.0)
-    elseif (inputkey == KEY_UP) and (cam ~= nil) then
+    elseif (kgmKeyState(KEY_UP) == 1) and (cam ~= nil) then
       kgm_log('Move forward')
       cam:move(1.0)
-    elseif (inputkey == KEY_DOWN) and (cam ~= nil) then
+    elseif (kgmKeyState(KEY_DOWN) == 1) and (cam ~= nil) then
       kgm_log('Move back')
       cam:move(-1.0)
     end

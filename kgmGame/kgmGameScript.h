@@ -106,4 +106,6 @@ class kgmGameScript: public kgmObject
   static s32 kgmGuiCallback(void*);
 
   static s32 kgmScreenResolution(void*);
+
+  static s32 kgmKeyState(void*);
 };

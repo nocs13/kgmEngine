@@ -4,19 +4,25 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmIInput.h"
 
+class kgmIGame;
+
 class kgmGameInput: public kgmObject, public kgmIInput
 {
   KGM_OBJECT(kgmGameInput);
 
+  kgmIGame* m_game;
+
+  u8* m_keys;
+
+  s32 m_length;
+
 public:
-  kgmGameInput();
+  kgmGameInput(kgmIGame* g, u8* keys, s32 len);
   ~kgmGameInput();
 
   void clear();
 
-  void keyUp(u8 key);
-  void keyDown(u8 key);
-  void movePoint(s16 x, s16 y, s16 z);
+  s32 keyState(u8 key);
 };
 
 #endif // KGMGAMEINPUT_H

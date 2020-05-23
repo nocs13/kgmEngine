@@ -89,6 +89,7 @@ kgmGameBase::kgmGameBase()
   m_system    = null;
   m_script    = null;
   m_logic     = null;
+  m_input     = null;
   m_audio     = null;
   m_gc        = null;
 
@@ -170,6 +171,11 @@ kgmGameBase::~kgmGameBase()
   if (m_gc)
     delete m_gc;
 
+  log("free input...");
+
+  if(m_input)
+    delete m_input;
+
   log("free system...");
 
   if(m_system)
@@ -214,6 +220,11 @@ kgmIVideo*  kgmGameBase::getVideo()
 kgmILogic*  kgmGameBase::getLogic()
 {
   return m_game->m_logic;
+}
+
+kgmIInput*  kgmGameBase::getInput()
+{
+  return m_game->m_input;
 }
 
 kgmIScript*  kgmGameBase::getScript()
@@ -278,6 +289,11 @@ void kgmGameBase::initAudio()
 void kgmGameBase::initLogic()
 {
   //m_logic = new kgmGameLogic();
+}
+
+void kgmGameBase::initInput()
+{
+  m_input = new kgmGameInput(this, m_keys, sizeof(m_keys));
 }
 
 bool kgmGameBase::initScript()
@@ -417,8 +433,8 @@ void kgmGameBase::onKeyUp(int k)
 
   m_keys[k] = 0;
 
-  if (m_script)
-    m_script->onButton(k, m_keymap[k], 0);
+  //if (m_script)
+  //  m_script->onButton(k, m_keymap[k], 0);
 }
 
 void kgmGameBase::onKeyDown(int k)
@@ -435,8 +451,8 @@ void kgmGameBase::onKeyDown(int k)
 
   m_keys[k] = 1;
 
-  if (m_script)
-    m_script->onButton(k, m_keymap[k], 1);
+  //if (m_script)
+  //  m_script->onButton(k, m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y){
@@ -556,6 +572,9 @@ int kgmGameBase::gInit()
   log("init game logic...");
   initLogic();
 
+  log("init game input...");
+  initInput();
+
   if(!m_font)
   {
     m_font = m_resources->getFont("font.tga", 16, 16);
@@ -566,33 +585,11 @@ int kgmGameBase::gInit()
 
   if(m_graphics)
     m_graphics->setDefaultFont(m_font);
-  /*
-  log("set input map...");
+
+
+
   memset(m_keys, 0, sizeof(m_keys));
 
-  for(u32 i = 0; i < sizeof(m_keymap); i++)
-    m_keymap[i] = 0;
-
-  for(u32 i = 0; i < sizeof(m_input); i++)
-    m_input[i] = 0;
-
-  m_keymap[KEY_LEFT]    = m_keymap[KEY_A] = (char)gbtn_left;
-  m_keymap[KEY_RIGHT]   = m_keymap[KEY_D] = (char)gbtn_right;
-  m_keymap[KEY_UP]      = m_keymap[KEY_W] = (char)gbtn_up;
-  m_keymap[KEY_DOWN]    = m_keymap[KEY_S] = (char)gbtn_down;
-  m_keymap[KEY_ESCAPE]  = (char)gbtn_exit;
-  m_keymap[KEY_ENTER]   = (char)gbtn_start;
-  m_keymap[KEY_LSHIFT]  = (char)gbtn_n;
-  m_keymap[KEY_RSHIFT]  = (char)gbtn_n;
-
-  m_keymap[KEY_X] = (char)gbtn_x;
-  m_keymap[KEY_Y] = (char)gbtn_y;
-  m_keymap[KEY_Z] = (char)gbtn_z;
-
-  m_keymap[KEY_MSBLEFT]   = (char)gbtn_a;
-  m_keymap[KEY_MSBRIGHT]  = (char)gbtn_b;
-  m_keymap[KEY_MSBMIDDLE] = (char)gbtn_c;
-  */
   m_state    = State_Idle;
 
   //kgmGuiActions::register_actions();

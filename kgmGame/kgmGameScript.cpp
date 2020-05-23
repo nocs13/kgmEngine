@@ -4,6 +4,7 @@
 #include "kgmGameTools.h"
 #include "kgmGameRetention.h"
 #include "kgmUnit.h"
+#include "kgmGameInput.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmGraphics/kgmIGraphics.h"
@@ -90,6 +91,8 @@ void kgmGameScript::init()
   handler->set("kgmSetRetention",  kgmGameScript::kgmSetRetention);
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
+
+  handler->set("kgmKeyState",  kgmGameScript::kgmKeyState);
 
   status = handler->load("main");
 
@@ -936,4 +939,29 @@ s32 kgmGameScript::kgmScreenResolution(void*)
 
   return 2;
 }
+
+s32 kgmGameScript::kgmKeyState(void*)
+{
+  s32 key = -1;
+  s32 state = -1;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  game->getScript()->args("i", &key);
+
+  kgmIInput* input = game->getInput();
+
+  if (!input)
+    return 0;
+
+  state = input->keyState(key);
+
+  game->getScript()->resl("i", state);
+
+  return 1;
+}
+
 
