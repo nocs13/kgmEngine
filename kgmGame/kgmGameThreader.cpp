@@ -141,10 +141,10 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
 
     if (dtick < KGM_TPF)
     {
-      sleep = dtick;
+      sleep = KGM_TPF - dtick;
     }
 
-#ifdef DEBUG
+#ifdef DEBUGXXX
       kgm_log() << "kgmGameThreader: wait " << sleep << "ms.\n";
 #endif
 
