@@ -124,20 +124,11 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
 
   switch(pr)
   {
-  case PrNormal:
-    policy = THREAD_PRIORITY_NORMAL;
-    break;
   case PrLow:
     policy = THREAD_PRIORITY_BELOW_NORMAL;
     break;
-  case PrIdle:
-    policy = THREAD_PRIORITY_IDLE;
-    break;
   case PrHight:
     policy = THREAD_PRIORITY_ABOVE_NORMAL;
-    break;
-  case PrSuper:
-    policy = THREAD_PRIORITY_HIGHEST;
     break;
   default:
     policy = THREAD_PRIORITY_NORMAL;
