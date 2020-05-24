@@ -21,7 +21,7 @@ function Camera:new(c)
 end
 
 function Camera:turn(d)
-  local a = 0.01
+  local a = 0.5
 
   angle = angle + (d * a)
 
@@ -40,7 +40,7 @@ function Camera:turn(d)
 end
 
 function Camera:move(d)
-  local l = 0.005 * d
+  local l = 0.05 * d
 
   n = self.dir:nor()
 

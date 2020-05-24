@@ -108,4 +108,5 @@ class kgmGameScript: public kgmObject
   static s32 kgmScreenResolution(void*);
 
   static s32 kgmKeyState(void*);
+  static s32 kgmPointState(void*);
 };

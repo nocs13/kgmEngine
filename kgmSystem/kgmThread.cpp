@@ -147,54 +147,41 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
   SetThreadPriority(th, policy);
 
 #else
-  pthread_attr_t attr;
-
-  int max_prio = 0, min_prio = 0;
   int policy = 0;
+  int prio = 0;
   int res = 0;
 
-  res = pthread_attr_init(&attr);
-
-  res = pthread_attr_getschedpolicy(&attr, &policy);
-  max_prio = sched_get_priority_max(policy);
-  min_prio = sched_get_priority_min(policy);
-  //int policy = SCHED_OTHER;
+  //max_prio = sched_get_priority_max(policy);
+  //min_prio = sched_get_priority_min(policy);
 
   sched_param param{0};
 
-  int prio = min_prio;
-
   switch(pr)
   {
-  case PrNormal:
-    policy = SCHED_OTHER;
-    break;
   case PrLow:
-    policy = SCHED_BATCH;
-    break;
-  case PrIdle:
     policy = SCHED_IDLE;
+    prio = sched_get_priority_min(policy);
     break;
   case PrHight:
     policy = SCHED_RR;
-    param.sched_priority = 20;
-    break;
-  case PrSuper:
-    policy = SCHED_RR;
-    param.sched_priority = 80;
+    prio = sched_get_priority_max(policy);
     break;
   default:
     policy = SCHED_OTHER;
-    break;
+    prio = sched_get_priority_min(policy);
   }
 
-  pthread_setschedprio(th, prio);
-  pthread_attr_destroy(&attr);
+  param.sched_priority = prio;
 
-  //s32 res = pthread_setschedparam(th, policy, &param);
+  res = pthread_setschedparam(th, policy, &param);
 
-  //if (res)
-  //  return false;
+  if (res)
+    return false;
+  else
+    res = pthread_setschedprio(th, prio);
+
+  if (res)
+    return false;
 
 #endif
 

@@ -93,6 +93,7 @@ void kgmGameScript::init()
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
   handler->set("kgmKeyState",  kgmGameScript::kgmKeyState);
+  handler->set("kgmPointState",  kgmGameScript::kgmPointState);
 
   status = handler->load("main");
 
@@ -964,4 +965,25 @@ s32 kgmGameScript::kgmKeyState(void*)
   return 1;
 }
 
+s32 kgmGameScript::kgmPointState(void*)
+{
+  s32 dev = -1;
 
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  game->getScript()->args("i", &dev);
+
+  kgmIInput* input = game->getInput();
+
+  if (!input)
+    return 0;
+
+  kgmIInput::Point pt = input->pointState(dev);
+
+  game->getScript()->resl("iii", pt.x, pt.y, pt.z);
+
+  return 3;
+}

@@ -399,8 +399,8 @@ kgmAlsa::kgmAlsa()
         m_thread = kgmThread::thread_create((kgmThread::Thread_Function) &kgmAlsa::proceed_a, this);
         m_render = kgmThread::thread_create((kgmThread::Thread_Function) &kgmAlsa::render_a, this);
 
-        kgmThread::thread_priority(m_thread, kgmThread::PrIdle);
-        kgmThread::thread_priority(m_render, kgmThread::PrIdle);
+        kgmThread::thread_priority(m_thread, kgmThread::PrLow);
+        kgmThread::thread_priority(m_render, kgmThread::PrLow);
         
         m_proceed = true;
 

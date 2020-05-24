@@ -53,9 +53,7 @@ public:
   {
     PrNormal = 0,
     PrLow,
-    PrIdle,
-    PrHight,
-    PrSuper
+    PrHight
   };
 
   static Thread thread_create(Thread_Function fn, void* obj = null, Priority pr = PrNormal);

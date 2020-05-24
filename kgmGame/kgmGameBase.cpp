@@ -455,25 +455,46 @@ void kgmGameBase::onKeyDown(int k)
   //  m_script->onButton(k, m_keymap[k], 1);
 }
 
-void kgmGameBase::onMsLeftUp(int k, int x, int y){
+void kgmGameBase::onMsLeftUp(int k, int x, int y)
+{
+  m_keymap[KEY_MSBLEFT] = 0;
 }
 
-void kgmGameBase::onMsLeftDown(int k, int x, int y){
+void kgmGameBase::onMsLeftDown(int k, int x, int y)
+{
+  m_keymap[KEY_MSBLEFT] = 1;
 }
 
-void kgmGameBase::onMsRightUp(int k, int x, int y){
+void kgmGameBase::onMsRightUp(int k, int x, int y)
+{
+  m_keymap[KEY_MSBRIGHT] = 0;
 }
 
 void kgmGameBase::onMsRightDown(int k, int x, int y)
 {
+  m_keymap[KEY_MSBRIGHT] = 1;
 }
 
 void kgmGameBase::onMsMove(int k, int x, int y)
 {
+  m_point[0] = x;
+  m_point[1] = y;
+
+  if(m_input)
+  {
+    m_input->setX(0, x);
+    m_input->setX(0, y);
+  }
 }
 
 void kgmGameBase::onMsWheel(int k, int x, int y, int z)
 {
+  m_point[2] = z;
+
+  if(m_input)
+  {
+    m_input->setZ(0, z);
+  }
 }
 
 void kgmGameBase::onResize(int w, int h)

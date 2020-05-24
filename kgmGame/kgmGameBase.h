@@ -59,6 +59,8 @@ protected:
   u8 m_keys[128];
   u8 m_keymap[128];
 
+  s32 m_point[3];
+
   s32  m_state;
   bool m_result;
 

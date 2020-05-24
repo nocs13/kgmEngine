@@ -34,9 +34,12 @@ typedef kgmQuaternion<f32> quat;
 
 typedef kgmVector3d<f32>   vec3;
 typedef kgmVector3d<f32>   float3;
-typedef kgmVector3d<u32>   u323;
 typedef kgmVector3d<u8>    uchar3;
-typedef kgmVector3d<u16>   u163;
+typedef kgmVector3d<u16>   ushort3;
+typedef kgmVector3d<u32>   uint3;
+typedef kgmVector3d<s8>    schar3;
+typedef kgmVector3d<s16>   sshort3;
+typedef kgmVector3d<s32>   sint3;
 
 typedef kgmVector2d<f32>  float2;
 typedef kgmVector2d<f32>  vec2;
