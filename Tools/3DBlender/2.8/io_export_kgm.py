@@ -1678,7 +1678,26 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
         self.mesh_datas.append(kgmMesh(n))
     print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
+class kgmNodeTree(bpy.types.NodeTree):
+  """ This operator is only visible when Cycles is the selected render engine"""
+  bl_label = "kgm Node Tree"
+  bl_icon = 'NONE'
 
+  @classmethod
+  def poll(cls, context):
+      return context.scene.render.engine == 'CYCLES'
+
+class kgmNode(bpy.types.Node):
+  """ kgm Node """
+  bl_label = "kgmNode"
+  bl_width_default = 160
+    
+  def init(self, context):
+    self.add_input("node color", "Color", (1, 1, 1))
+
+    self.outputs.new("Color", "color")
+
+      
 def menu_func(self, context):
     print("Apply menu.")
     self.layout.operator(kgmExport.bl_idname, text="Karakal game map")
@@ -1692,13 +1711,15 @@ def menu_func_a(self, context):
 
 classes = [
     kgmExport,
+    kgmNodeTree,
+    kgmNode
 ]
 
 def register():
     print("Registering kgm module.")
 
-    for cls in classes:
-      bpy.utils.register_class(cls)
+    for c in classes:
+      bpy.utils.register_class(c)
 
     bpy.types.TOPBAR_MT_file_export.append(menu_func)
     #bpy.types.TOPBAR_MT_file_import.append(menu_kgm_imp_set_func)
@@ -1707,8 +1728,8 @@ def register():
 def unregister():
     bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
-    for cls in reversed(classes):
-      bpy.utils.unregister_class(cls)
+    for c in reversed(classes):
+      bpy.utils.unregister_class(c)
     #bpy.types.TOPBAR_MT_file_import.remove(menu_kgm_imp_set_func)
     #bpy.types.TOPBAR_MT_add.remove(menu_func_a)
 
