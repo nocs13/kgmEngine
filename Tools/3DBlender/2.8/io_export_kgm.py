@@ -756,11 +756,11 @@ class kgmMesh:
 
     if s > 0:
       return True
-    
+
     return False
 
 
-     
+
 
 
 class kgmFrame:
@@ -1204,7 +1204,7 @@ def export_sceleton(file, o):
 
 
 def export_obstacle(file, o):
-  
+
   file.write(" <Obstacle polygons='" + str(len(o.faces)) + "' absorption='" + toSnum(o.absorption) + "'>\n")
   for face in o.faces:
     file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
@@ -1678,26 +1678,79 @@ class kgmExportGroup(bpy.types.Operator, ExportHelper):
         self.mesh_datas.append(kgmMesh(n))
     print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
-class kgmNodeTree(bpy.types.NodeTree):
-  """ This operator is only visible when Cycles is the selected render engine"""
-  bl_label = "kgm Node Tree"
-  bl_icon = 'NONE'
+class KgmTerrainNodeTree(bpy.types.NodeTree):
+    '''Povray Material Nodes'''
 
-  @classmethod
-  def poll(cls, context):
-      return context.scene.render.engine == 'CYCLES'
+    bl_idname = 'KgmTerrainNodeTree'
+    bl_label = 'Kgm Terrain Object Nodes'
+    bl_icon = 'PLUGIN'
 
-class kgmNode(bpy.types.Node):
-  """ kgm Node """
-  bl_label = "kgmNode"
-  bl_width_default = 160
-    
-  def init(self, context):
-    self.add_input("node color", "Color", (1, 1, 1))
+    @classmethod
+    def poll(cls, context):
+        return context.scene.render.engine == 'EEVEE'
 
-    self.outputs.new("Color", "color")
+    @classmethod
+    def get_from_context(cls, context):
+        ob = context.active_object
+        if ob and ob.type not in {'LIGHT'}:
+            ma = ob.active_material
+            if ma is not None:
+                nt_name = ma.node_tree
+                if nt_name != '':
+                    return nt_name, ma, ma
+        return (None, None, None)
 
-      
+    def update(self):
+        self.refresh = True
+
+def create_kgm_terrain_node_group(context, operator, name):
+    bpy.context.scene.use_nodes = True
+    group = bpy.data.node_groups.new(name, 'CompositorNodeTree')
+
+    g_in = group.nodes.new('NodeGroupInput')
+    g_in.location = (-300, 0)
+    group.inputs.new('NodeSocketColor', 'Color A')
+    group.inputs.new('NodeSocketColor', 'Color B')
+    group.inputs.new('NodeSocketColor', 'Color C')
+    group.inputs.new('NodeSocketColor', 'Color D')
+    group.inputs.new('NodeSocketColor', 'Mask')
+
+    g_out = group.nodes.new('NodeGroupOutput')
+    g_out.location = (300, 0)
+    group.outputs.new('NodeSocketColor', 'Result')
+
+    return group
+
+class KgmTerrainNodeGroup(bpy.types.Operator):
+  """ Kgm Terrain Node """
+  bl_label = "KgmTerrainNodeGroup"
+  bl_idname = 'node.kgm_terrain_node_group'
+
+  def execute(self, context):
+      node_name = 'Kgm Terrain Node Group'
+      group = create_kgm_terrain_node_group(self, context, node_name)
+      node = context.scene.node_tree.nodes.new('CompositorNodeGroup')
+      node.node_tree = bpy.data.node_groups[group.name]
+      node.use_custom_color = True
+      node.color = (0.3, 0.6, 0.9)
+
+      return {'FINISHED'}
+
+
+class KgmTerrainNodeTreePanel(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Kgm terrain node tree Panel"
+    bl_idname = "OBJECT_PT_KGM_TERRAIN_NODE_TREE"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Kgm Tab"
+
+    def draw(self, context):
+        layout = self.layout
+
+        row = layout.row()
+        row.operator("node.kgm_terrain_node_group")
+
 def menu_func(self, context):
     print("Apply menu.")
     self.layout.operator(kgmExport.bl_idname, text="Karakal game map")
@@ -1711,8 +1764,9 @@ def menu_func_a(self, context):
 
 classes = [
     kgmExport,
-    kgmNodeTree,
-    kgmNode
+    KgmTerrainNodeTree,
+    KgmTerrainNodeGroup,
+    KgmTerrainNodeTreePanel
 ]
 
 def register():
