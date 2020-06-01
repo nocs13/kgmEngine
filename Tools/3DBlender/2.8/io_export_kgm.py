@@ -1707,8 +1707,10 @@ def create_kgm_terrain_node_group(context, operator, name):
     bpy.context.scene.use_nodes = True
     group = bpy.data.node_groups.new(name, 'CompositorNodeTree')
 
+    x_pos = -300
+
     g_in = group.nodes.new('NodeGroupInput')
-    g_in.location = (-300, 0)
+    g_in.location = (x_pos, 0)
     group.inputs.new('NodeSocketColor', 'Color A')
     group.inputs.new('NodeSocketColor', 'Color B')
     group.inputs.new('NodeSocketColor', 'Color C')
@@ -1718,6 +1720,27 @@ def create_kgm_terrain_node_group(context, operator, name):
     g_out = group.nodes.new('NodeGroupOutput')
     g_out.location = (300, 0)
     group.outputs.new('NodeSocketColor', 'Result')
+
+    n_srgba = group.nodes.new(type='CompositorNodeSepRGBA')
+    x_pos = x_pos + 50
+    n_srgba.location = (x_pos, 0)
+
+    n_mix1 = group.nodes.new(type='CompositorNodeMixRGB')
+    x_pos = x_pos + 50
+    n_mix1.location = (x_pos, -100)
+    n_mix1.blend_type = 'MULTIPLY'
+
+    n_mix2 = group.nodes.new(type='CompositorNodeMixRGB')
+    n_mix2.location = (x_pos, -50)
+    n_mix2.blend_type = 'MULTIPLY'
+
+    n_mix3 = group.nodes.new(type='CompositorNodeMixRGB')
+    n_mix3.location = (x_pos, 50)
+    n_mix3.blend_type = 'MULTIPLY'
+
+    n_mix4 = group.nodes.new(type='CompositorNodeMixRGB')
+    n_mix4.location = (x_pos, 100)
+    n_mix4.blend_type = 'MULTIPLY'
 
     return group
 
