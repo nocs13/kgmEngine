@@ -1707,42 +1707,177 @@ def create_kgm_terrain_node_group(context, operator, name):
     bpy.context.scene.use_nodes = True
     group = bpy.data.node_groups.new(name, 'CompositorNodeTree')
 
-    x_pos = -300
+    x_pos = -500
+    x_len = 150
 
     g_in = group.nodes.new('NodeGroupInput')
     g_in.location = (x_pos, 0)
-    group.inputs.new('NodeSocketColor', 'Color A')
-    group.inputs.new('NodeSocketColor', 'Color B')
-    group.inputs.new('NodeSocketColor', 'Color C')
-    group.inputs.new('NodeSocketColor', 'Color D')
+    group.inputs.new('NodeSocketColor', 'Layer 1')
+    group.inputs.new('NodeSocketColor', 'Layer 2')
+    group.inputs.new('NodeSocketColor', 'Layer 3')
+    group.inputs.new('NodeSocketColor', 'Layer 4')
     group.inputs.new('NodeSocketColor', 'Mask')
 
     g_out = group.nodes.new('NodeGroupOutput')
-    g_out.location = (300, 0)
+    g_out.location = (500, 0)
     group.outputs.new('NodeSocketColor', 'Result')
 
     n_srgba = group.nodes.new(type='CompositorNodeSepRGBA')
-    x_pos = x_pos + 50
+    x_pos = x_pos + x_len
     n_srgba.location = (x_pos, 0)
+    n_srgba.label = "Mask"
 
     n_mix1 = group.nodes.new(type='CompositorNodeMixRGB')
-    x_pos = x_pos + 50
-    n_mix1.location = (x_pos, -100)
+    x_pos = x_pos + x_len
+    n_mix1.location = (x_pos, -200)
     n_mix1.blend_type = 'MULTIPLY'
+    n_mix1.label = "Mask R to Layer 1"
 
     n_mix2 = group.nodes.new(type='CompositorNodeMixRGB')
-    n_mix2.location = (x_pos, -50)
+    n_mix2.location = (x_pos, -100)
     n_mix2.blend_type = 'MULTIPLY'
+    n_mix2.label = "Mask G to Layer 2"
 
     n_mix3 = group.nodes.new(type='CompositorNodeMixRGB')
-    n_mix3.location = (x_pos, 50)
+    n_mix3.location = (x_pos, 100)
     n_mix3.blend_type = 'MULTIPLY'
+    n_mix3.label = "Mask B to Layer 3"
 
     n_mix4 = group.nodes.new(type='CompositorNodeMixRGB')
-    n_mix4.location = (x_pos, 100)
+    n_mix4.location = (x_pos, 200)
     n_mix4.blend_type = 'MULTIPLY'
+    n_mix4.label = "Mask A to Layer 4"
+
+    n_mix5 = group.nodes.new(type='CompositorNodeMixRGB')
+    x_pos = x_pos + x_len
+    n_mix5.location = (x_pos, -100)
+    n_mix5.blend_type = 'ADD'
+    n_mix5.label = "Layer 1 and Layer 2"
+
+    n_mix6 = group.nodes.new(type='CompositorNodeMixRGB')
+    n_mix6.location = (x_pos, 0)
+    n_mix6.blend_type = 'ADD'
+    n_mix6.label = "Layer 3 and Layer 4"
+
+    n_mix7 = group.nodes.new(type='CompositorNodeMixRGB')
+    x_pos = x_pos + x_len
+    n_mix7.location = (x_pos, 100)
+    n_mix7.blend_type = 'ADD'
+    n_mix7.label = "ALayer 1_2 and Layer 3_4"
+
+    link = group.links.new
+
+    link(g_in.outputs[4], n_srgba.inputs[0])
+
+    link(g_in.outputs[0], n_mix1.inputs[1])
+    link(g_in.outputs[1], n_mix2.inputs[1])
+    link(g_in.outputs[2], n_mix3.inputs[1])
+    link(g_in.outputs[3], n_mix4.inputs[1])
+
+    link(n_srgba.outputs[0], n_mix1.inputs[2])
+    link(n_srgba.outputs[1], n_mix2.inputs[2])
+    link(n_srgba.outputs[2], n_mix3.inputs[2])
+    link(n_srgba.outputs[3], n_mix4.inputs[2])
+
+    link(n_mix1.outputs[0], n_mix5.inputs[1])
+    link(n_mix2.outputs[0], n_mix5.inputs[2])
+    link(n_mix3.outputs[0], n_mix6.inputs[1])
+    link(n_mix4.outputs[0], n_mix6.inputs[2])
+
+    link(n_mix5.outputs[0], n_mix7.inputs[1])
+    link(n_mix6.outputs[0], n_mix7.inputs[2])
+
+    link(n_mix7.outputs[0], g_out.inputs[0])
 
     return group
+
+def create_kgm_terrain_node_group(context, operator, name):
+  bpy.context.scene.use_nodes = True
+  group = bpy.data.node_groups.new(name, 'CompositorNodeTree')
+
+  x_pos = -500
+  x_len = 150
+
+  g_in = group.nodes.new('NodeGroupInput')
+  g_in.location = (x_pos, 0)
+  group.inputs.new('NodeSocketColor', 'Diffuse')
+  group.inputs.new('NodeSocketColor', 'Normal')
+  group.inputs.new('NodeSocketColor', 'Specular')
+  group.inputs.new('NodeSocketFloat', 'Shininess')
+  group.inputs.new('NodeSocketFloat', 'Alpha')
+
+  g_out = group.nodes.new('NodeGroupOutput')
+  g_out.location = (500, 0)
+  group.outputs.new('NodeSocketColor', 'Result')
+
+  n_srgba = group.nodes.new(type='CompositorNodeSepRGBA')
+  x_pos = x_pos + x_len
+  n_srgba.location = (x_pos, 0)
+  n_srgba.label = "Mask"
+
+  n_mix1 = group.nodes.new(type='CompositorNodeMixRGB')
+  x_pos = x_pos + x_len
+  n_mix1.location = (x_pos, -200)
+  n_mix1.blend_type = 'MULTIPLY'
+  n_mix1.label = "Mask R to Layer 1"
+
+  n_mix2 = group.nodes.new(type='CompositorNodeMixRGB')
+  n_mix2.location = (x_pos, -100)
+  n_mix2.blend_type = 'MULTIPLY'
+  n_mix2.label = "Mask G to Layer 2"
+
+  n_mix3 = group.nodes.new(type='CompositorNodeMixRGB')
+  n_mix3.location = (x_pos, 100)
+  n_mix3.blend_type = 'MULTIPLY'
+  n_mix3.label = "Mask B to Layer 3"
+
+  n_mix4 = group.nodes.new(type='CompositorNodeMixRGB')
+  n_mix4.location = (x_pos, 200)
+  n_mix4.blend_type = 'MULTIPLY'
+  n_mix4.label = "Mask A to Layer 4"
+
+  n_mix5 = group.nodes.new(type='CompositorNodeMixRGB')
+  x_pos = x_pos + x_len
+  n_mix5.location = (x_pos, -100)
+  n_mix5.blend_type = 'ADD'
+  n_mix5.label = "Layer 1 and Layer 2"
+
+  n_mix6 = group.nodes.new(type='CompositorNodeMixRGB')
+  n_mix6.location = (x_pos, 0)
+  n_mix6.blend_type = 'ADD'
+  n_mix6.label = "Layer 3 and Layer 4"
+
+  n_mix7 = group.nodes.new(type='CompositorNodeMixRGB')
+  x_pos = x_pos + x_len
+  n_mix7.location = (x_pos, 100)
+  n_mix7.blend_type = 'ADD'
+  n_mix7.label = "ALayer 1_2 and Layer 3_4"
+
+  link = group.links.new
+
+  link(g_in.outputs[4], n_srgba.inputs[0])
+
+  link(g_in.outputs[0], n_mix1.inputs[1])
+  link(g_in.outputs[1], n_mix2.inputs[1])
+  link(g_in.outputs[2], n_mix3.inputs[1])
+  link(g_in.outputs[3], n_mix4.inputs[1])
+
+  link(n_srgba.outputs[0], n_mix1.inputs[2])
+  link(n_srgba.outputs[1], n_mix2.inputs[2])
+  link(n_srgba.outputs[2], n_mix3.inputs[2])
+  link(n_srgba.outputs[3], n_mix4.inputs[2])
+
+  link(n_mix1.outputs[0], n_mix5.inputs[1])
+  link(n_mix2.outputs[0], n_mix5.inputs[2])
+  link(n_mix3.outputs[0], n_mix6.inputs[1])
+  link(n_mix4.outputs[0], n_mix6.inputs[2])
+
+  link(n_mix5.outputs[0], n_mix7.inputs[1])
+  link(n_mix6.outputs[0], n_mix7.inputs[2])
+
+  link(n_mix7.outputs[0], g_out.inputs[0])
+
+  return group
 
 class KgmTerrainNodeGroup(bpy.types.Operator):
   """ Kgm Terrain Node """
@@ -1752,6 +1887,21 @@ class KgmTerrainNodeGroup(bpy.types.Operator):
   def execute(self, context):
       node_name = 'Kgm Terrain Node Group'
       group = create_kgm_terrain_node_group(self, context, node_name)
+      node = context.scene.node_tree.nodes.new('CompositorNodeGroup')
+      node.node_tree = bpy.data.node_groups[group.name]
+      node.use_custom_color = True
+      node.color = (0.3, 0.6, 0.9)
+
+      return {'FINISHED'}
+
+class KgmMaterialNodeGroup(bpy.types.Operator):
+  """ Kgm Terrain Node """
+  bl_label = "KgmMaterialNodeGroup"
+  bl_idname = 'node.kgm_material_node_group'
+
+  def execute(self, context):
+      node_name = 'Kgm Material Node Group'
+      group = create_kgm_material_node_group(self, context, node_name)
       node = context.scene.node_tree.nodes.new('CompositorNodeGroup')
       node.node_tree = bpy.data.node_groups[group.name]
       node.use_custom_color = True
@@ -1789,6 +1939,7 @@ classes = [
     kgmExport,
     KgmTerrainNodeTree,
     KgmTerrainNodeGroup,
+    KgmMaterialNodeGroup,
     KgmTerrainNodeTreePanel
 ]
 

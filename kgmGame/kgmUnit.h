@@ -56,6 +56,8 @@ public:
     ActionCallback callback = null;
   };
 
+
+
 private:
   kgmIGame* m_game = null;
 
