@@ -163,6 +163,12 @@ public:
 
   };
 
+  struct Object
+  {
+    virtual void start() = 0;
+    virtual void finish() = 0;
+  };
+
   struct Iterator
   {
     virtual kgmUnit* next() { return null; }

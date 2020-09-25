@@ -23,8 +23,6 @@ bool kgmGameLogic::add(kgmUnit* u)
 
   m_objects.set(u->getName(), u);
 
-  u->init();
-
   return true;
 }
 
@@ -44,7 +42,7 @@ bool kgmGameLogic::remove(kgmUnit* o)
       if(o == m_gameplayer)
         m_gameplayer = null;
 
-      u->exit();
+      u->finish();
 
       return true;
     }

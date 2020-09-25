@@ -228,7 +228,7 @@ void kgmUnit::update(u32 ms)
     m_particles->update(ms);
 }
 
-void kgmUnit::init()
+void kgmUnit::start()
 {
   if (m_type == Particles && m_particles)
     m_particles->build();

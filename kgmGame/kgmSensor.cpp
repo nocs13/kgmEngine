@@ -11,6 +11,21 @@ kgmSensor::kgmSensor(kgmIGame* g)
   m_type = Sensor;
 }
 
+void kgmSensor::start()
+{
+
+}
+
+void kgmSensor::finish()
+{
+
+}
+
+void kgmSensor::update()
+{
+  sense();
+}
+
 void kgmSensor::event(kgmObject* a, kgmString e)
 {
   kgmUnit* o = kgmGameApp::gameApp()->game()->gUnit(target);

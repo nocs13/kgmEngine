@@ -22,8 +22,8 @@ private:
 public:
   kgmTrigger(kgmIGame* g = null);
 
-  void init() {}
-  void exit() {}
+  void start() {}
+  void finish() {}
 
   bool setCount(u32 c)
   {

@@ -134,9 +134,9 @@ public:
   kgmUnit(kgmIGame* g, kgmParticles* prt);
   ~kgmUnit();
 
-  virtual void init();
+  virtual void start();
 
-  virtual void exit()
+  virtual void finish()
   { }
 
   virtual void event(kgmObject*, kgmString)
