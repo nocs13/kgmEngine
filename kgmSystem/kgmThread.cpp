@@ -446,6 +446,7 @@ kgmThread::kgmThread()
 {
   m_thread = 0;
   m_result = 0;
+  m_mutex  = 0;
 
   m_object   = null;
   m_callback = null;
@@ -453,7 +454,11 @@ kgmThread::kgmThread()
 
 kgmThread::~kgmThread()
 {
-  thread_kill(m_thread);
+  if (m_thread)
+    thread_kill(m_thread);
+
+  if (m_mutex)
+    mutex_free(m_mutex);
 }
 
 bool kgmThread::start()
@@ -494,6 +499,20 @@ void kgmThread::priority(kgmThread::Priority pr)
     return;
 
   thread_priority(m_thread, pr);
+}
+
+void kgmThread::lock()
+{
+  if (m_mutex == null)
+    m_mutex = mutex_create();
+
+  mutex_lock(m_mutex);
+}
+
+void kgmThread::unlock()
+{
+  if (m_mutex)
+    mutex_unlock(m_mutex);
 }
 
 void kgmThread::run()

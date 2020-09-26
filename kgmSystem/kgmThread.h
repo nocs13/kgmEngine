@@ -82,6 +82,7 @@ public:
 
 private:
  Thread m_thread;
+ Mutex  m_mutex;
 
  void   *m_object;
  int   (*m_callback)(void*);
@@ -97,6 +98,9 @@ public:
  void kill();
  void join();
  void priority(Priority);
+
+ void lock();
+ void unlock();
 
 protected:
  virtual void run();
