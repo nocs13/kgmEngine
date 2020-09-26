@@ -169,6 +169,17 @@ public:
     virtual void finish() = 0;
   };
 
+  struct Listener
+  {
+
+  };
+
+  struct Messenger
+  {
+    virtual void add(Listener*) = 0;
+    virtual void remove(Listener*) = 0;
+  };
+
   struct Iterator
   {
     virtual kgmUnit* next() { return null; }
@@ -207,6 +218,8 @@ public:
   virtual kgmIResources*  getResources() = 0;
   virtual kgmWindow*      getWindow() = 0;
   virtual kgmSystem*      getSystem() = 0;
+
+  virtual Messenger*      getMessenger() = 0;
 
   virtual u32             timeUpdate() = 0;
 

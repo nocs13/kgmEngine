@@ -134,6 +134,10 @@ kgmGameBase::~kgmGameBase()
   if(m_script)
     delete m_script;
 
+  log("free messenger...");
+  if (m_messenger)
+    delete m_messenger;
+
   log("free logic...");
 
   if(m_logic)
@@ -250,6 +254,11 @@ kgmSystem*  kgmGameBase::getSystem()
 kgmWindow*  kgmGameBase::getWindow()
 {
   return (kgmWindow*)this;
+}
+
+kgmIGame::Messenger*  kgmGameBase::getMessenger()
+{
+  return m_messenger;
 }
 
 u32 kgmGameBase::timeUpdate()
@@ -563,7 +572,6 @@ int kgmGameBase::gInit()
     return 0;
 
   //m_state = State_Idle;
-  //return 1;
 
   log("open workers...");
   initThreader();
@@ -607,7 +615,8 @@ int kgmGameBase::gInit()
   if(m_graphics)
     m_graphics->setDefaultFont(m_font);
 
-
+  if (!m_messenger)
+    m_messenger = new kgmGameMessenger(this);
 
   memset(m_keys, 0, sizeof(m_keys));
 

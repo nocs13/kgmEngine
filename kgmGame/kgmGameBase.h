@@ -9,6 +9,7 @@
 #include "kgmGameInput.h"
 #include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
+#include "kgmGameMessenger.h"
 #include "kgmGameRetention.h"
 
 #include "kgmUnit.h"
@@ -44,6 +45,7 @@ protected:
   kgmGamePhysics*   m_physics;
   kgmGameResources* m_resources;
   kgmGameSettings*  m_settings;
+  kgmGameMessenger* m_messenger;
   kgmGameRetention* m_retention;
 
   kgmSystem* m_system;
@@ -120,6 +122,8 @@ public:
   kgmIResources*     getResources();
   kgmSystem*         getSystem();
   kgmWindow*         getWindow();
+
+  Messenger*         getMessenger();
 
   u32                timeUpdate();
 
