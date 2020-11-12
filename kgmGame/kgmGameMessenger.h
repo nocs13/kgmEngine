@@ -2,6 +2,7 @@
 #define KGMGAMEMESSENGER_H
 
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmEvent.h"
 #include "kgmIGame.h"
 
 class kgmGameMessenger: public kgmObject, public kgmIGame::Messenger
@@ -10,11 +11,15 @@ class kgmGameMessenger: public kgmObject, public kgmIGame::Messenger
 
   kgmIGame* game = nullptr;
 
+  kgmList<kgmIGame::Listener*> list;
+
 public:
   kgmGameMessenger(kgmIGame*);
 
   void add(kgmIGame::Listener*);
   void remove(kgmIGame::Listener*);
+
+  void onEvent(kgmEvent::Event* e);
 };
 
 #endif // KGMGAMEMESSENGER_H

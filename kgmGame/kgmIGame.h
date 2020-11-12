@@ -115,6 +115,18 @@ struct kgmGameCommand
   char* m_cmd;
 };
 
+namespace  kgmIGame_Listener
+{
+  enum TypeSource
+  {
+    SrcNone = 0,
+    SrcUnit,
+    SrcTime,
+    SrcPoint,
+    SrcButton
+  };
+}
+
 class kgmGui;
 class kgmBody;
 class kgmUnit;
@@ -171,7 +183,17 @@ public:
 
   struct Listener
   {
+    enum Source: int {
+      SrcNone,
+      SrcUnit,
+      SrcTime,
+      SrcPoint,
+      SrcButton
+    };
 
+    Source src;
+
+    virtual void onevent() = 0;
   };
 
   struct Messenger

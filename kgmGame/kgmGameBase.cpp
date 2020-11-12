@@ -96,6 +96,8 @@ kgmGameBase::kgmGameBase()
   m_retention = null;
   m_settings  = null;
 
+  m_messenger = null;
+
   m_threader  = null;
 
   m_font = null;
@@ -136,7 +138,7 @@ kgmGameBase::~kgmGameBase()
 
   log("free messenger...");
   if (m_messenger)
-    delete m_messenger;
+    delete (kgmObject*) m_messenger;
 
   log("free logic...");
 
@@ -545,6 +547,9 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
 
   for (s32 i = 0; i < count; i++)
     visible[i]->onEvent(e);
+
+  if (m_messenger)
+    m_messenger->onEvent(e);
 }
 
 void kgmGameBase::guiAdd(kgmGui* g)

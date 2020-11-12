@@ -14,3 +14,8 @@ void kgmGameMessenger::remove(kgmIGame::Listener*)
 {
 
 }
+
+void kgmGameMessenger::onEvent(kgmEvent::Event *e)
+{
+
+}
