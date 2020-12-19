@@ -49,14 +49,7 @@ public:
     m_references++;
   }
 
-  void release()
-  {
-    if (m_lock)
-      return;
-
-    if(m_references > 0)
-      m_references--;
-  }
+  void release();
 
   kgmString id() const
   {

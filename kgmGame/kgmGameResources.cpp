@@ -27,6 +27,16 @@
 #define RSKELETON   "skeletons"
 #define RANIMATION  "animations"
 
+kgmIResources*  kgmGameResources::generate(kgmIGC* gc, kgmIAudio* audio)
+{
+  if (kgmIResources::m_manager != null)
+    return kgmIResources::m_manager;
+
+  kgmIResources::m_manager = new kgmGameResources(gc, audio);
+  
+  return kgmIResources::m_manager;
+}
+
 kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
   m_gc    = gc;

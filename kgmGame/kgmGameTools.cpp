@@ -529,7 +529,7 @@ kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory
 
   delete pic;
 
-  kgmFont* font = new kgmFont(t);
+  kgmFont* font = new kgmFont(t, t, t);
 
   if(!font->texture())
   {

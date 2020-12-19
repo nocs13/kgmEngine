@@ -248,7 +248,7 @@ u32 kgmGameBase::timeUpdate()
 
 void kgmGameBase::initResources()
 {
-  m_resources = new kgmGameResources(getGC(), getAudio());
+  m_resources = (kgmGameResources*) kgmGameResources::generate(getGC(), getAudio());
 
   m_resources->addPath(m_settings->get((char*)"Data"));
 }
