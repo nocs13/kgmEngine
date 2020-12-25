@@ -37,5 +37,5 @@ public:
   {
   }
 
-  kgmTexture* texture();
+  gchandle texture();
 };
