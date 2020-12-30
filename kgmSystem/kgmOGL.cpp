@@ -441,6 +441,12 @@ void kgmOGL::gcGet(u32 param, void* value)
   case gc_rdev:
     //*((const char*)value) = "opengl";
     break;
+  case gcpar_viewrect:
+    ((s32*)value)[0] = m_viewport[0];
+    ((s32*)value)[1] = m_viewport[1];
+    ((s32*)value)[2] = m_viewport[2];
+    ((s32*)value)[3] = m_viewport[3];
+    break;
   }
 }
 
@@ -512,6 +518,10 @@ void kgmOGL::gcResize(u32 width, u32 height)
 
 void kgmOGL::gcSetViewport(int x, int y, int w, int h, float n, float f)
 {
+  m_viewport[0] = x;
+  m_viewport[1] = y;
+  m_viewport[2] = w;
+  m_viewport[3] = h;
   glViewport(x, y, w, h);
 }
 
@@ -989,6 +999,17 @@ void kgmOGL::gcStencil(bool en, u32 func, u32 mask, u32 ref,
                u32 fail, u32 zfail, u32 zpass)
 {
 
+}
+
+//SCISSOR
+void kgmOGL::gcScissor(bool on, int x, int y, int w, int h)
+{
+  glScissor(x, y, w, h);
+
+  if (on)
+    glEnable(GL_SCISSOR_TEST);
+  else
+    glDisable(GL_SCISSOR_TEST);
 }
 
 //Drawing

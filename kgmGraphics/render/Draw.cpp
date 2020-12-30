@@ -72,8 +72,22 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   float cx = (float)clip.x,
         cy = (float)clip.y;
 
+  kgmGui::Rect bound;
+
+  bound.x = clip.x - fwidth;
+  bound.y = clip.y - fheight;
+  bound.w = clip.w + fwidth;
+  bound.h = clip.h + fheight;
+
+  s32 vrect[4];
+
+  gc->gcGet(gcpar_viewrect, vrect);
+
+  s32 clip_y = vrect[3] - clip.y - clip.h;
+
   gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
   gc->gcSetTexture(0, font->texture());
+  gc->gcScissor(true, clip.x, clip_y, clip.w, clip.h);
 
   for(u32 i = 0; i < tlen; i++)
   {
@@ -101,12 +115,12 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
     tx = (float)(tdx * (ch % rows));
     ty = 1.0f - (float)(tdy * (ch / rows));
 
-    if(clip.inside(cx + fwidth, cy + fheight))
+    if(bound.inside(cx + fwidth, cy + fheight))
     {
-      v[0].pos = vec3(cx, cy, 0),                v[0].col = kgmColor::toVector(fcolor), v[0].uv = vec2(tx + 0.001,     ty - 0.001);
-      v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = kgmColor::toVector(fcolor), v[1].uv = vec2(tx + 0.001,     ty - tdy);
-      v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = kgmColor::toVector(fcolor), v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
-      v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = kgmColor::toVector(fcolor), v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
+      v[0].pos = vec3(cx, cy, 0),                    v[0].col = kgmColor::toVector(fcolor), v[0].uv = vec2(tx + 0.001,     ty - 0.001);
+      v[1].pos = vec3(cx, cy + fheight, 0),          v[1].col = kgmColor::toVector(fcolor), v[1].uv = vec2(tx + 0.001,     ty - tdy);
+      v[2].pos = vec3(cx + fwidth, cy, 0),           v[2].col = kgmColor::toVector(fcolor), v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
+      v[3].pos = vec3(cx + fwidth, cy + fheight, 0), v[3].col = kgmColor::toVector(fcolor), v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
 
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
@@ -114,6 +128,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
     cx += (fwidth);
   }
 
+  gc->gcScissor(false, 0, 0, 0, 0);
   gc->gcBlend(0, 0, 0, 0);
   gc->gcSetTexture(0, 0);
 }

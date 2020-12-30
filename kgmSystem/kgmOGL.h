@@ -142,6 +142,8 @@ private:
   s32 m_min_filter;
   s32 m_mag_filter;
 
+  s32 m_viewport[4];
+
   u32 m_cubemapside = 0;
 
   GLhandle m_shader = null;
@@ -201,6 +203,9 @@ public:
   //STENCIL
   void  gcStencil(bool en, u32 func, u32 mask, u32 ref,
                   u32 fail, u32 zfail, u32 zpass);
+
+  //SCISSOR
+  void  gcScissor(bool on, int x, int y, int w, int h);
 
   //VERTEX & INDEX BUFFER
   gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);

@@ -58,6 +58,7 @@ enum gc_enum
   gcpar_texfltmin,
   gcpar_vertype,
   gcpar_polymode,
+  gcpar_viewrect,
 
   gccmp_never,
   gccmp_always,
@@ -195,6 +196,9 @@ public:
 
   // DEPTH
   virtual void  gcDepth(bool en, bool mask, u32 mode) = 0;
+
+  // SCISSOR
+  virtual void  gcScissor(bool on, int x, int y, int w, int h) = 0;
 
   // VERTEX & INDEX BUFFERS
   virtual gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize) = 0;
