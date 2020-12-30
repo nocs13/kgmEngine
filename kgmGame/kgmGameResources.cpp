@@ -130,7 +130,20 @@ void kgmGameResources::clear()
     }
     else if(r->isClass(kgmFont::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmFont*)r)->texture());
+      gchandle tn = ((kgmFont*)r)->texture(12);
+      gchandle ts = ((kgmFont*)r)->texture(10);
+      gchandle tl = ((kgmFont*)r)->texture(22);
+
+      if (tn)
+        m_gc->gcFreeTexture(tn);
+
+      if (ts && ts != tn)
+        m_gc->gcFreeTexture(ts);
+
+      if (tl && tl != tn && tl != ts)
+        m_gc->gcFreeTexture(tl);
+
+      tn = tl = ts = null;
 
       delete (kgmFont*) r;
     }

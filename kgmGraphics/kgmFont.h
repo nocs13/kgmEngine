@@ -38,4 +38,5 @@ public:
   }
 
   gchandle texture();
+  gchandle texture(u32 s);
 };
