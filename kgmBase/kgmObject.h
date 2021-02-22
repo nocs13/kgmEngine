@@ -10,7 +10,6 @@
   const char*  vClass(){ return #o_class; }                         \
   private:
 
-
 class kgmObject
 {
 public:
@@ -229,11 +228,71 @@ protected:
   };
 
 private:
+  u32 m_references = 0;
+
+protected:
+  virtual ~kgmObject();
 
 public:
   kgmObject();
   kgmObject(const kgmObject& o);
-  virtual ~kgmObject();
 
   virtual bool isClass(const char* o);
+
+  u32 references() const
+  {
+    return m_references;
+  }
+
+  void increment()
+  {
+    m_references++;
+  }
+
+  void release()
+  {
+    if(m_references > 0)
+      m_references--;
+
+    if (m_references == 0)
+      delete this;
+  }
 };
+
+template <class D, class S> void kgm_assign(D*& dst, S* src)
+{
+  if (!src)
+    return;
+
+  if (dst)
+    dst->release();
+
+  dst = src;
+
+  src->increment();
+}
+
+template <class D, class S> void kgm_assign(D** dst, S* src)
+{
+  if (!src)
+    return;
+
+  if (*dst)
+    (*dst)->release();
+
+  *dst = src;
+
+  src->increment();
+}
+
+//#define kgm_release(o) if (*o != null) { (*o)->release(); *o = null; }
+
+template <class O> void kgm_release(O*& o)
+{
+  if (o != null)
+  {
+    o->release();
+
+    o = null;
+  }
+}

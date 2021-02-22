@@ -138,7 +138,7 @@ kgmGameBase::~kgmGameBase()
 
   log("free messenger...");
   if (m_messenger)
-    delete (kgmObject*) m_messenger;
+    m_messenger->release();
 
   log("free logic...");
 
@@ -780,7 +780,7 @@ int kgmGameBase::gUnload()
   }
 
   for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
-    delete (*i);
+    (*i)->release();
 
   m_units.clear();
   m_objects.clear();

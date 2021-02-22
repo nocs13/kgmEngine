@@ -39,8 +39,8 @@ kgmTerrain::~kgmTerrain()
 {
   m_heightmap.map.clear();
   
-  delete m_lines;
-  delete m_mesh;
+  m_lines->release();
+  m_mesh->release();
 
   if (m_tex_blend)
     m_tex_blend->release();

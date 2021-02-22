@@ -158,14 +158,14 @@ kEditor::~kEditor()
   m_isVisual = false;
   kgmThread::thread_join(m_thVisual);
 
-  delete pivot;
-  delete gridline;
-  delete textData;
+  pivot->release();
+  gridline->release();
+  textData->release();
 
-  delete mtlLines;
-  delete mtlPivot;
+  mtlLines->release();
+  mtlPivot->release();
 
-  delete text;
+  text->release();
 }
 
 void kEditor::clear()
@@ -176,7 +176,7 @@ void kEditor::clear()
   game->gUnload();
 
   for(auto i = m_objects.begin(); !i.end(); ++i)
-    delete (*i);
+    (*i)->release();
 
   m_objects.clear();
 

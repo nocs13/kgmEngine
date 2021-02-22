@@ -16,7 +16,7 @@ void kApp::main()
 
   editor->loop();
 
-  delete editor;
+  kgm_release(&editor);
 }
 
 kApp theApp;

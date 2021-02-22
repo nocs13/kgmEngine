@@ -184,7 +184,7 @@ public:
   {
     if (game)
     {
-      delete game;
+      game->release();
     }
 #ifdef DEBUG
     kgm_log() << "kApp::~kApp.\n";
@@ -233,7 +233,7 @@ public:
   {
     if(game)
     {
-      delete game;
+      game->release();
 
       game = null;
     }

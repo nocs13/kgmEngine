@@ -120,7 +120,7 @@ public:
   {
     if (game)
     {
-      delete game;
+      game->release();
     }
 
     //delete wnd;
@@ -167,7 +167,7 @@ public:
   {
     if(game)
     {
-      delete game;
+      game->release();
 
       m_game = null;
       game   = null;

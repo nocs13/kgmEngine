@@ -11,9 +11,6 @@ class kgmResource: public kgmObject
   friend class kgmIResources;
 
 private:
-  bool m_lock;
-
-  u32 m_references;
 
 public:
   enum  Type
@@ -39,24 +36,6 @@ public:
 
   void setId(kgmString id){ m_id = id; }
 
-  u32 references() const
-  {
-    return m_references;
-  }
-
-  void increment()
-  {
-    m_references++;
-  }
-
-  void release()
-  {
-    if (m_lock)
-      return;
-
-    if(m_references > 0)
-      m_references--;
-  }
 
   kgmString id() const
   {
@@ -76,29 +55,6 @@ public:
   void group(u32 group)
   {
     m_group = group;
-  }
-
-  bool assign(kgmResource *&resource)
-  {
-    if(resource)
-      return false;
-
-    increment();
-
-    resource = this;
-
-    return true;
-  }
-
-private:
-  void lock()
-  {
-    m_lock = true;
-  }
-
-  void unlock()
-  {
-    m_lock = false;
   }
 
 protected:

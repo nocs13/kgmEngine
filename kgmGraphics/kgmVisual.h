@@ -168,7 +168,7 @@ public:
       break;
     case TypeShape:
       if(m_shape)
-        delete m_shape;
+        m_shape->release();
       m_shape = null;
       break;
     case TypeSprite:

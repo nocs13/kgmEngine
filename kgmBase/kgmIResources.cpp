@@ -3,10 +3,8 @@
 
 void kgmIResources::lock(kgmResource *r)
 {
-  r->lock();
 }
 
 void kgmIResources::unlock(kgmResource *r)
 {
-  r->unlock();
 }

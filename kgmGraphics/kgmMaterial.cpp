@@ -31,13 +31,13 @@ kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
   m_gc = mtl.m_gc;
 
   if(mtl.m_tex_color)
-    mtl.m_tex_color->assign((kgmResource *&) m_tex_color);
+    kgm_assign<kgmTexture, kgmTexture>(m_tex_color, mtl.m_tex_color);
 
   if(mtl.m_tex_normal)
-    mtl.m_tex_normal->assign((kgmResource *&) m_tex_normal);
+    kgm_assign<kgmTexture, kgmTexture>(m_tex_normal, mtl.m_tex_normal);
 
   if(mtl.m_tex_specular)
-    mtl.m_tex_specular->assign((kgmResource *&) m_tex_specular);
+    kgm_assign<kgmTexture, kgmTexture>(m_tex_specular, mtl.m_tex_specular);
 }
 
 kgmMaterial::~kgmMaterial()
