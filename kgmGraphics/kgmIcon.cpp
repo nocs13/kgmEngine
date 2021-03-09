@@ -10,6 +10,7 @@ kgmIcon::kgmIcon(const kgmIcon& icn)
   icon = icn.icon;
 
   kgm_assign<kgmTexture, kgmTexture>(&icon, icn.icon);
+  //if (icn.icon) icn.icon->assign(&icon);
 }
 
 

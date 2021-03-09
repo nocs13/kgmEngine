@@ -257,20 +257,20 @@ public:
     if (m_references == 0)
       delete this;
   }
+
+  void assign(kgmObject** o)
+  {
+    if (!o)
+      return;
+
+    if (*o)
+      (*o)->release();
+
+    *o = this;
+
+    increment();
+  }
 };
-
-template <class D, class S> void kgm_assign(D*& dst, S* src)
-{
-  if (!src)
-    return;
-
-  if (dst)
-    dst->release();
-
-  dst = src;
-
-  src->increment();
-}
 
 template <class D, class S> void kgm_assign(D** dst, S* src)
 {
@@ -284,8 +284,6 @@ template <class D, class S> void kgm_assign(D** dst, S* src)
 
   src->increment();
 }
-
-//#define kgm_release(o) if (*o != null) { (*o)->release(); *o = null; }
 
 template <class O> void kgm_release(O*& o)
 {
