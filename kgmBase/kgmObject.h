@@ -6,12 +6,19 @@
   public:                                                           \
   static unsigned int  cSize(){ return sizeof(class o_class); }     \
   static const char*   cClass(){ return #o_class; }                 \
-  unsigned int vSize(){ return sizeof(class o_class); }             \
-  const char*  vClass(){ return #o_class; }                         \
+  virtual unsigned int vSize(){ return sizeof(class o_class); }             \
+  virtual const char*  vClass(){ return #o_class; }                         \
   private:
+
+class kgmApp;
 
 class kgmObject
 {
+  KGM_OBJECT(kgmObject);
+
+  friend class kgmApp;
+
+/*
 public:
   static unsigned int  cSize()
   {
@@ -32,7 +39,7 @@ public:
   {
     return "kgmObject";
   }
-
+*/
 private:
 
 protected:
@@ -230,8 +237,13 @@ protected:
 private:
   u32 m_references = 0;
 
+private:
+  static void* kgm_object_alloc(size_t size);
+  static void kgm_object_free(void* p);
+
 protected:
   virtual ~kgmObject();
+  static void kgm_objects_cleanup();
 
 public:
   kgmObject();
@@ -269,6 +281,16 @@ public:
     *o = this;
 
     increment();
+  }
+
+  void* operator new(size_t size)
+  {
+    return kgm_object_alloc(size);
+  }
+
+  void operator delete(void* p)
+  {
+    kgm_object_free(p);
   }
 };
 

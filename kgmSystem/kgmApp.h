@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../kgmBase/kgmIApp.h"
+#include <stdlib.h>
 
 class kgmEvent;
 class kgmWindow;
@@ -15,9 +16,12 @@ private:
 
   void* m_mainWindow;
 
+private:
+  void* operator new(size_t s);
+
 public:
   kgmApp();
-  ~kgmApp();
+  virtual ~kgmApp();
 
   s32 exec(s32 argc, s8 **argv);
 

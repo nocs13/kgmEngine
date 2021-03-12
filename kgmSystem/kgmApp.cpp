@@ -33,7 +33,9 @@ kgmApp::kgmApp()
 
 kgmApp::~kgmApp()
 {
-  m_app = 0;
+  m_app = null;
+
+  kgmObject::kgm_objects_cleanup();
 }
 
 s32 kgmApp::exec(s32 argc, s8 **argv)

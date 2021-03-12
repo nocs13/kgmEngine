@@ -72,6 +72,10 @@ bool kgmGameRetention::load()
     }
   }
 
+  free(dm);
+
+  dm = null;
+
   return true;
 }
 

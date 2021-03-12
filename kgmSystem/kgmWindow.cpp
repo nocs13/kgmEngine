@@ -744,7 +744,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
   XVisualInfo* vi = nullptr;
 
-  XInitThreads();
+  //XInitThreads();
 
   //XSetWindowAttributes   swa;
   //s32 cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;

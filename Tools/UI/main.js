@@ -37,6 +37,32 @@ function gui_sizer_drag(e)
     gui_selected.css('height', h);
 }
 
+function gui_drag() 
+{
+    if(!gui_selected)
+        return;
+
+    var x = parseInt(gui_selected.css('left'));
+    var y = parseInt(gui_selected.css('top'));
+    var w = parseInt(gui_selected.css('width'));
+    var h = parseInt(gui_selected.css('height'));
+
+    $('#gui_x').val(x);
+    $('#gui_y').val(y);
+
+    gui_sizer_move($('#palette').position().left + x + w, $('#palette').position().top + y + h);
+}
+
+function gui_drag_start()
+{
+    gui_sizer_hide();
+}
+
+function gui_drag_stop()
+{
+    gui_sizer_show();
+}
+
 function gui_get_by_target(g)
 {
     var i;
@@ -92,6 +118,7 @@ function gui_options(gui)
         gui_selected.remove();
         gui_selected = null;
         $("#options").empty();
+        gui_sizer_hide();
     });
 
     $('#gui_x').on('input', function(){
@@ -261,6 +288,15 @@ function gui_menu_context(e)
     alert('Implementing');
 }
 
+function gui_delete_selected()
+{
+    if (gui_selected == null)
+        return;
+
+    if (confirm("Are you sure to delete element?"))
+        $("#cmd_gui_delete").click();
+}
+
 function new_gui()
 {
     var id = "gui" + newId();
@@ -308,7 +344,7 @@ function new_list()
     var id = "list" + newId();
     var $list = $ ("<select id='" + id + "' class='kgm_base kgm_list'size='5'></select>");
     $("#palette").append($list);
-    $list.draggable(); //{cancel: false}
+    $list.draggable({cansel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $list.click(function(evt){
       gui_options($list);
       evt.stopPropagation();
@@ -329,7 +365,7 @@ function new_text()
     var id = "text" + newId();
     var $text = $ ("<input id='" + id + "' class='kgm_base kgm_text' type='text' value='Text'></input>");
     $("#palette").append($text);
-    $text.draggable({cancel: false});
+    $text.draggable({cancel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $text.click(function(evt){
       selected = $text;
       gui_options($text);
@@ -352,7 +388,7 @@ function new_check()
     var $div = $("<div id='div" + id + "'  class='ui-checkboxradio kgm_base kgm_check'></div>");
     $div.append($ ("<input class='' type='checkbox'>Check</input>"));
     $("#palette").append($div);
-    $div.draggable({cancel: false});
+    $div.draggable({cancel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $div.click(function(evt){
         gui_options($div);
         evt.stopPropagation();
@@ -373,7 +409,7 @@ function new_label()
     var id = "label" + newId();
     var $label = $("<div id='" + id + "' class='ui-state-highlight kgm_base kgm_label'>Label</div>");
     $("#palette").append($label);
-    $label.draggable();
+    $label.draggable({cansel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $label.click(function(evt){
         gui_options($label);
         evt.stopPropagation();
@@ -394,7 +430,7 @@ function new_button()
     var id = "button" + newId();
     var $button = $ ("<button id='" + id + "' class='ui-button kgm_base kgm_button'>Button</button>");
     $("#palette").append($button);
-    $button.draggable({cancel: false});
+    $button.draggable({cancel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $button.click(function(evt){
         gui_options($button);
         evt.stopPropagation();
@@ -415,7 +451,7 @@ function new_progress()
 	var $progress = $ ("<div id='" + id + "' class='kgm_base kgm_progress'></div>");
 	$("#palette").append($progress);
     $progress.progressbar({value: 45});
-    $progress.draggable();
+    $progress.draggable({cansel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $progress.click(function(evt){
         gui_options($progress);
         evt.stopPropagation();
@@ -436,7 +472,7 @@ function new_tabbar()
 	var $tabbar = $ ("<div id='" + id + "' class='kgm_base kgm_tabbar'><ul id='tab_menu'></ul></div>");
     $("#palette").append($tabbar);
     $tabbar.tabs();
-    $tabbar.draggable();
+    $tabbar.draggable({cansel: false, drag: gui_drag, start: gui_drag_start, stop: gui_drag_stop});
     $tabbar.click(function(evt){
         gui_options($tabbar);
         evt.stopPropagation();
@@ -624,6 +660,7 @@ function kgm_init()
     $("#gui_size").draggable({
         drag: gui_sizer_drag
     });
+
     gui_sizer_hide();
 
     $("#gui_list_menu").menu();
@@ -642,4 +679,10 @@ function kgm_init()
     $("#gui_tabbar_add_tab").click(gui_tabbar_add_tab);
 
     $("#cmd_save").click(cmd_save_dialog);
+
+    $('html').keyup(function(e){
+    if(e.keyCode == 46) {
+        //gui_delete_selected();
+    }
+});
 }
