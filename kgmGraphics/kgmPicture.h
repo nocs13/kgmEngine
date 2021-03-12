@@ -31,7 +31,7 @@ public:
   ~kgmPicture()
   {
     if(pdata)
-      free(pdata);
+      kgm_free(pdata);
   }
 
   u32 getWidth()
@@ -61,7 +61,7 @@ public:
 
     int cbpp = bpp / 8;
 
-    u8* ndata = (u8*)malloc(nwidth * nheight * cbpp);
+    u8* ndata = (u8*)kgm_alloc(nwidth * nheight * cbpp);
 
     double swidth =  (double)nwidth / (double)width;
     double sheight = (double)nheight / (double)height;
@@ -141,8 +141,8 @@ public:
     if(b_btcnt == 8)
     {
       u32 r_size = b_width * b_height;
-      pdata    = (u8*)malloc(sizeof(u32) * r_size);
-      u32 *pal = (u32*)malloc(sizeof(u32) * 256);
+      pdata    = (u8*)kgm_alloc(sizeof(u32) * r_size);
+      u32 *pal = (u32*)kgm_alloc(sizeof(u32) * 256);
       memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
 
       for(u32 i = 0; i < r_size; i++)
@@ -163,7 +163,7 @@ public:
     }
 
     u32 r_size = b_width * b_height * (b_btcnt/8);
-    pdata = (u8*)malloc(sizeof(char) * r_size);
+    pdata = (u8*)kgm_alloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);//////
     width = b_width;
     height = b_height;
@@ -201,7 +201,7 @@ public:
 
     u32 r_size = w * h * (btcnt/8);
     pm += idl;
-    pdata = (u8*)malloc(sizeof(char) * r_size);
+    pdata = (u8*)kgm_alloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);
     width = w;
     height = h;

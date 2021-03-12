@@ -182,7 +182,7 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
 kgmThread::Mutex kgmThread::mutex_create(bool recursive)
 {
 #ifdef WIN32
-  Mutex mutex = (Mutex)malloc(sizeof(CRITICAL_SECTION));
+  Mutex mutex = (Mutex)kgm_alloc(sizeof(CRITICAL_SECTION));
 
   if(mutex)
   {
@@ -192,7 +192,7 @@ kgmThread::Mutex kgmThread::mutex_create(bool recursive)
   }
 
 #else
-  Mutex mutex = (Mutex)malloc(sizeof(pthread_mutex_t));
+  Mutex mutex = (Mutex)kgm_alloc(sizeof(pthread_mutex_t));
 
   *mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -229,11 +229,11 @@ void  kgmThread::mutex_free(kgmThread::Mutex m)
 #ifdef WIN32
     DeleteCriticalSection(m);
 
-    free(m);
+    kgm_free(m);
 #else
     pthread_mutex_destroy((pthread_mutex_t*)m);
 
-    free(m);
+    kgm_free(m);
 #endif
   }
 }
@@ -309,7 +309,7 @@ bool  kgmThread::mutex_lockable(Mutex m)
 kgmThread::Condition kgmThread::condition_create()
 {
 #ifdef WIN32
-  Condition condition = (Condition)malloc(sizeof(CRITICAL_SECTION));
+  Condition condition = (Condition)kgm_alloc(sizeof(CRITICAL_SECTION));
 
   if(condition)
   {
@@ -319,7 +319,7 @@ kgmThread::Condition kgmThread::condition_create()
   }
 
 #else
-  Condition condition = (Condition)malloc(sizeof(pthread_cond_t));
+  Condition condition = (Condition)kgm_alloc(sizeof(pthread_cond_t));
 
   if(condition)
   {
@@ -353,7 +353,7 @@ void kgmThread::condition_free(kgmThread::Condition c)
 
   }
 
-  free(c);
+  kgm_free(c);
 #endif
 }
 

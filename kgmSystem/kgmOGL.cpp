@@ -249,7 +249,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, &g_num_compressed_format);
 
-  g_compressed_format = (GLint*)malloc(g_num_compressed_format * sizeof(GLint));
+  g_compressed_format = (GLint*)kgm_alloc(g_num_compressed_format * sizeof(GLint));
 
   glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS_ARB, g_compressed_format);
 
@@ -287,7 +287,7 @@ kgmOGL::~kgmOGL()
 {
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   if(g_compressed_format)
-    free(g_compressed_format);
+    kgm_free(g_compressed_format);
 #endif
 
 #ifdef WIN32
@@ -685,7 +685,7 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 #endif
     break;
   case gctype_texcube:
-    cnt = (u8*) malloc(bpc * w * h);
+    cnt = (u8*) kgm_alloc(bpc * w * h);
     memset(cnt, 0xff, bpc * w * h);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -699,7 +699,7 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, int_fmt, w, h, 0, pic_fmt, GL_UNSIGNED_BYTE, cnt);
-    free(cnt);
+    kgm_free(cnt);
     break;
   }
 

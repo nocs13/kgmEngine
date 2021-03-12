@@ -15,7 +15,8 @@
 static void kgm_signal_handler(int s);
 static void kgm_sigterm_handler(int s);
 
-extern void ClearDbgMemory();
+extern void kgm_memory_init();
+extern void kgm_memory_cleanup();
 
 static void* exit_target = nullptr;
 
@@ -29,6 +30,8 @@ kgmApp* kgmApp::m_app = 0;
 kgmApp::kgmApp()
 {
   m_app = this;
+
+  kgm_memory_init();
 }
 
 kgmApp::~kgmApp()
@@ -36,6 +39,7 @@ kgmApp::~kgmApp()
   m_app = null;
 
   kgmObject::kgm_objects_cleanup();
+  kgm_memory_cleanup();
 }
 
 s32 kgmApp::exec(s32 argc, s8 **argv)

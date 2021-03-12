@@ -30,6 +30,8 @@ void* kgmObject::kgm_object_alloc(size_t size)
 
   g_objects.realloc(len + ADDOBJS);
 
+  void* pp = g_objects.data();
+
   for (s32 i = len; i < (len + ADDOBJS); i++)
     g_objects[i] = null;
 

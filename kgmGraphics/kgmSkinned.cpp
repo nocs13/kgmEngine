@@ -69,7 +69,7 @@ void kgmSkinned::update(u32 ms)
 
   if (m_basic == null)
   {
-    m_basic = (Vertex_P_N*) malloc(vcount() * sizeof(Vertex_P_N));
+    m_basic = (Vertex_P_N*) kgm_alloc(vcount() * sizeof(Vertex_P_N));
 
     for(u32 i = 0; i < vcount(); i++)
     {

@@ -77,7 +77,7 @@ public:
     if(len <= kgmArray<T>::m_length) 
       return *this; 
  
-    T* str = (T*)malloc(sizeof(T) * (len + 1)); 
+    T* str = (T*) kgm_alloc(sizeof(T) * (len + 1));
     memcpy(str, kgmArray<T>::m_data, sizeof(T) * kgmArray<T>::m_length); 
     memcpy(&str[kgmArray<T>::m_length], s.m_data, sizeof(T) * s.m_length); 
     kgmArray<T>::clear(); 

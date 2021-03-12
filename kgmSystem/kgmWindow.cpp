@@ -317,7 +317,7 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
 
 
 void kgmRegisterWindowClass(){
-  WNDCLASS *wcl = (WNDCLASS*)malloc(sizeof(WNDCLASS));
+  WNDCLASS *wcl = (WNDCLASS*)kgm_alloc(sizeof(WNDCLASS));
   memset(wcl, 0, sizeof(WNDCLASS));
   wcl->style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;//CS_CLASSDC;
   wcl->lpfnWndProc = (WNDPROC)kgmWindow::WndProc;
@@ -328,7 +328,7 @@ void kgmRegisterWindowClass(){
 
   if(!RegisterClass(wcl))
     abort();
-  free(wcl);
+  kgm_free(wcl);
 }
 void kgmUnregisterWindowClass(){
   WNDCLASS wcl;
@@ -817,9 +817,11 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
         GLXFBConfig bestFbc = fbc[ best_fbc ];
 
+        vi = glXGetVisualFromFBConfig(m_dpy, bestFbc);
+
         XFree(fbc);
 
-        vi = glXGetVisualFromFBConfig(m_dpy, bestFbc);
+        fbc = null;
       }
       else
       {

@@ -286,7 +286,7 @@ kgmIAudio::Sound kgmOSL::create(FMT fmt, u16 freq, u32 size, void* data)
   _Sound*  sound = new _Sound(this);
   SLresult result;
 
-  sound->buffer = malloc(size);
+  sound->buffer = kgm_alloc(size);
   memcpy(sound->buffer, data, size);
   sound->length = size;
 

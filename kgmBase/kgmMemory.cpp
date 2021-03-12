@@ -2,15 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#include "kgmLog.h"
+#include "kgmMemory.h"
 
 typedef u_int32_t uint32;
-
-void* kgm_alloc(size_t size);
-void* kgm_realloc(void *p, size_t size);
-void kgm_free(void* p);
-
-struct _k_Memory;
 
 struct _k_Memory
 {
@@ -87,36 +81,4 @@ void _k_memory_free(unsigned int i)
   _cur = i;
 
   _memory[i] = {nullptr, 0, (uint32) -1};
-}
-
-void* kgm_alloc(size_t size)
-{
-  if (size < 1)
-    return NULL;
-
-  void* p = ::malloc(size);
-
-  //void* p = calloc(size, 1);
-
-#ifdef DEBUGXXX
-  printf("Alloc memory: %p, size: %ld.\n", p, size);
-#endif
-
-  return p;
-}
-
-void* kgm_realloc(void *p, size_t size)
-{
-  void* pr = ::realloc(p, size);
-
-  return pr;
-}
-
-void kgm_free(void* p)
-{
-#ifdef DEBUGXXX
-  printf("Free memory: %p.\n", p);
-#endif
-
-  ::free(p);
 }

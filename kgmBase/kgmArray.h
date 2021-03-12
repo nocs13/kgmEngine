@@ -41,24 +41,11 @@ public:
    return kgmMemory<T>::m_data[i];
   }
 
-
-  void realloc(u32 len)
-  {
-    T*   old  = kgmMemory<T>::m_data;
-
-    kgmMemory<T>::m_data   = (T*)kgm_realloc(old, sizeof(T) * len);
-    kgmMemory<T>::m_length = len;
-  }
-
   void add(const T& el)
   {
-    realloc(kgmMemory<T>::m_length + 1);
-    kgmMemory<T>::m_data[kgmMemory<T>::m_length - 1] = el;
-  }
+    kgmMemory<T>::realloc(kgmMemory<T>::m_length + 1);
 
-  void erase(u32 index)
-  {
-    //not implemented yet
+    kgmMemory<T>::m_data[kgmMemory<T>::m_length - 1] = el;
   }
 };
 

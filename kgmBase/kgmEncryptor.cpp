@@ -129,7 +129,7 @@ s32 kgmEncryptor::encrypt(void* src, s32 size, void** dst)
     return 0;
 
   s8* s = (s8*) src;
-  s16* pe = (s16*) malloc(size * 2);
+  s16* pe = (s16*) kgm_alloc(size * 2);
 
   for (s32 i = 0; i < size; i++)
   {
@@ -157,7 +157,7 @@ s32 kgmEncryptor::decrypt(void* src, s32 size, void** dst)
 
   size /= 2;
 
-  u8* pd = (u8*) malloc(size);
+  u8* pd = (u8*) kgm_alloc(size);
 
   for (s32 i = 0; i < size; i++)
   {

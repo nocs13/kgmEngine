@@ -72,7 +72,7 @@ bool kgmGameRetention::load()
     }
   }
 
-  free(dm);
+  kgm_free(dm);
 
   dm = null;
 
@@ -113,14 +113,14 @@ bool kgmGameRetention::keep()
 
   if (!f.open(path, kgmFile::Create | kgmFile::Write))
   {
-    free(buf);
+    kgm_free(buf);
 
     return false;
   }
 
   f.write(buf, len);
 
-  free(buf);
+  kgm_free(buf);
 
   f.close();
 

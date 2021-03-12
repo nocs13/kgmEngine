@@ -3,13 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 #include "kgmBase.h"
-//#include "kgmLog.h"
-
-void	kgmClearAllocatedMemory(void);
-
-void* kgm_alloc(size_t);
-void* kgm_realloc(void*, size_t);
-void  kgm_free(void*);
+#include "../kgmSystem/kgmMemory.h"
 
 template <class T> T* kgm_new()
 {
@@ -159,6 +153,14 @@ public:
     m_length = len;
 
     return true;
+  }
+
+  void realloc(u32 len)
+  {
+    T*   old  = m_data;
+
+    m_data   = (T*) kgm_realloc(old, sizeof(T) * len);
+    m_length = len;
   }
 
   void zero()
