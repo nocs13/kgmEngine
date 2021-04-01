@@ -703,38 +703,18 @@ int kgmGameBase::gLoad(kgmString s)
 
     while(kgmUnit* u = map.next())
     {
-      if (u && u->getType() == kgmUnit::Mesh)
-      {
-        kgmMesh* m = (kgmMesh*) u->getNodeObject();
-
-        kgmIMesh* gm = kgmGameTools::toGpuMesh(m_game->getGC(), m);
-
-        if (gm)
-        {
-          u->set(gm);
-
-          m_objects.add((kgmObject*)gm);
-
-          delete m;
-        }
-      }
-
       m_units.add(u);
 
-      if (u->type() == kgmUnit::Terrain)
-      {
-        m_graphics->terrain(u);
-      }
-      else
-      {
-        if (m_logic)
-          m_logic->add(u);
+      kgmGraphics::INode* n = u->getNode();
 
-        m_graphics->add(u);
+      if (m_logic)
+        m_logic->add(u);
 
-        if (m_script)
-          m_script->onInsert(u);
-      }
+      if (m_graphics)
+        m_graphics->add(u->getNode());
+
+      if (m_physics)
+        m_physics->add(u->getBody());
     }
   }
 
@@ -824,10 +804,10 @@ bool kgmGameBase::gAppend(kgmUnit* node)
     return false;
 
   if(m_graphics)
-    m_graphics->add(node);
+    m_graphics->add(node->getNode());
 
-  if(m_physics && node->bodyIsValid())
-    m_physics->add(node);
+  if(m_physics)
+    m_physics->add(node->getBody());
 
   if(m_logic)
   {
@@ -1033,7 +1013,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeLight;
 
         lgt = new kgmLight();
-        gob = new kgmUnit(this, lgt);
+        gob = new kgmUnit(this);
+        gob->setNode(new kgmGNode(gob, lgt, kgmIGraphics::NodeLight));
 
         m_graphics->add((kgmIGraphics::INode*) gob);
       }
@@ -1042,7 +1023,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         type = TypeMesh;
 
         msh = new kgmMesh();
-        gob = new kgmUnit(this, msh);
+        gob = new kgmUnit(this);
 
         m_units.add(gob);
         m_graphics->add((kgmIGraphics::INode*) gob);
@@ -1221,8 +1202,8 @@ bool kgmGameBase::loadXml(kgmString& path)
         xml.attribute("value", value);
         sscanf(value.data(), "%f %f %f %f", &q.x, &q.y, &q.z, &q.w);
 
-        if(act && type == TypeActor)
-          act->quaternion(q);
+        //if(act && type == TypeActor)
+          //act->quaternion(q);
       }
       else if(id == "State")
       {
@@ -1378,7 +1359,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("value", val);
       sscanf(val.data(), "%f", &mass);
 
-      actor->bodyMass(mass);
+      actor->getBody()->bodyMass(mass);
     }
     else if(id == "Bound")
     {
@@ -1390,7 +1371,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
       bb.min = vec3(-0.5 * a[0], -0.5 * a[1], 0.0);
       bb.max = vec3( 0.5 * a[0],  0.5 * a[1], a[2]);
 
-      actor->bodyBound(bb);
+      actor->getBody()->bodyBound(bb);
     }
     else if(id == "Collision")
     {
@@ -1464,10 +1445,10 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
     {
       a_node->node(i)->attribute("value", val);
 
-      if(val == "true")
-        actor->bodyGravity(true);
-      else
-        actor->bodyGravity(false);
+      if(val == "true" && actor->getBody())
+        actor->getBody()->bodyGravity(true);
+      else if (actor->getBody())
+        actor->getBody()->bodyGravity(false);
     }
     else if(id == "Dummies")
     {

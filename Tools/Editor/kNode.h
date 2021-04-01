@@ -42,55 +42,46 @@ public:
   kgmString nam;
   kgmString lnk;
 
-  kgmGraphics::Icon* icn;
-
   kNode()
   {
     typ = NONE;
     msh = null;
-    icn = null;
   }
 
   kNode(kgmMesh* m)
   {
     typ = MESH;
     msh = m;
-    icn = null;
   }
 
   kNode(kgmLight* l)
   {
     typ = LIGHT;
     lgt = l;
-    icn = null;
   }
 
   kNode(kgmActor* a)
   {
     typ = ACTOR;
     act = a;
-    icn = null;
   }
 
   kNode(kgmSensor* s)
   {
     typ = SENSOR;
     sns = s;
-    icn = null;
   }
 
   kNode(kgmTrigger* t)
   {
     typ = TRIGGER;
     trg = t;
-    icn = null;
   }
 
   kNode(kgmMaterial* m)
   {
     typ = MATERIAL;
     mtl = m;
-    icn = null;
   }
 
   ~kNode()
@@ -99,9 +90,6 @@ public:
 
     if(o)
       o->release();
-
-    if(icn)
-      icn->release();
   }
 
   void setPosition(vec3 v);

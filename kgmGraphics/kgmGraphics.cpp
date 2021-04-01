@@ -193,7 +193,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     gui_style->gui_image = g_def_style_texture;
 
-    m_def_light = (INode*) new kgmNodeLight();
+    kgmLight* l = new kgmLight();
+
+    m_def_light = (INode*) new kgmNode(l, kgmIGraphics::NodeLight);
+
+    l->release();
 
     //g_fbo = g->gcGenTarget(512, 512, true, false);
     //g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
@@ -281,10 +285,10 @@ kgmGraphics::~kgmGraphics()
   m_guis.clear();
 
   if (m_def_material)
-    delete m_def_material;
+    m_def_material->release();
 
   if (m_def_light)
-    delete m_def_light;
+    ((kgmNode*)m_def_light)->release();
 
   if(g_tex_black)
     gc->gcFreeTexture(g_tex_black);
@@ -685,7 +689,7 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
       continue;
     }
 
-    kgmNodeLight* light = null;
+    kgmNode* light = null;
 
     mtx4 transform = nod->getNodeTransform();
 

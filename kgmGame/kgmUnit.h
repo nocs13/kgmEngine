@@ -11,9 +11,12 @@
 #include "../kgmGraphics/kgmIGraphics.h"
 #include "../kgmPhysics/kgmIPhysics.h"
 
+#include "kgmPBody.h"
+#include "kgmGNode.h"
+
 #define KGM_UNIT(o_class)                                             \
   public:                                                             \
-  static kgmUnit* gen_unit(kgmIGame* g) { return new o_class(g); } \
+  static kgmUnit* gen_unit(kgmIGame* g) { return new o_class(g); }    \
   private:
 
 
@@ -21,26 +24,11 @@ class kgmIGame;
 class kgmSound;
 class kgmTerrain;
 
-class kgmUnit : public kgmIGraphics::INode, public kgmIPhysics::IBody, public kgmObject
+class kgmUnit : public kgmObject
 {
   KGM_OBJECT(kgmUnit);
 
 public:
-  enum UnitType
-  {
-    Unit,
-    Mesh,
-    Light,
-    Actor,
-    Camera,
-    Effect,
-    Sensor,
-    Trigger,
-    Terrain,
-    Obstacle,
-    Particles
-  };
-
   struct Action;
 
   typedef void (*ActionCallback)(kgmIGame*, kgmUnit*, Action*);
@@ -56,7 +44,7 @@ public:
     ActionCallback callback = null;
   };
 
-
+  kgmList<kgmVariable> m_variables;
 
 private:
   kgmIGame* m_game = null;
@@ -70,68 +58,22 @@ private:
   bool m_remove;
   bool m_culled;
   bool m_visible;
-  bool m_gravity;
-  bool m_collision;
 
   u32 m_group;
   u32 m_birth;
   u32 m_living;
 
-  vec3 m_scale;
-  vec3 m_position;
-  vec3 m_rotation;
-  quat m_quaternion;
-
   mtx4 m_transform;
-
-  f32 m_mass;
 
   box m_bound;
 
-  kgmIPhysics::BodyShape m_shape;
-
 protected:
-  union
-  {
-    kgmObject*   m_object = null;
 
-    kgmIMesh*     m_mesh;
-    kgmLight*     m_light;
-    kgmCamera*    m_camera;
-    kgmTerrain*   m_terrain;
-    kgmObstacle*  m_obstacle;
-    kgmParticles* m_particles;
-  };
-
-  //kgmBody* m_body   = null;
-
-  Action m_action;
-
-  static kgmTab<kgmString, ActionCallback> g_list_action;
-
-  kgmMaterial* m_material = null;
-
-  UnitType m_type;
-
-  void* m_vobject = null;
-
-
-public:
-  typedef kgmUnit* (*Generate)(kgmIGame*);
-
-  static kgmTab<kgmString, Generate> g_typ_objects;
-
-  kgmList<kgmVariable> m_variables;
+  kgmPBody* m_body = null;
+  kgmGNode* m_node = null;
 
 public:
   kgmUnit(kgmIGame* g = null);
-  kgmUnit(kgmIGame* g, kgmIMesh* msh);
-  kgmUnit(kgmIGame* g, kgmLight* lgt);
-  kgmUnit(kgmIGame* g, kgmCamera* cam);
-  kgmUnit(kgmIGame* g, kgmVisual* vis);
-  kgmUnit(kgmIGame* g, kgmTerrain* ter);
-  kgmUnit(kgmIGame* g, kgmObstacle* obs);
-  kgmUnit(kgmIGame* g, kgmParticles* prt);
   ~kgmUnit();
 
   virtual void start();
@@ -139,7 +81,7 @@ public:
   virtual void finish()
   { }
 
-  virtual void event(kgmObject*, kgmString)
+  virtual void event(kgmUnit*, kgmString)
   { }
 
   virtual void update(u32);
@@ -147,26 +89,11 @@ public:
   void remove();
   u32  timeout();
 
-  void*                  getNodeObject();
-  kgmIGraphics::TypeNode getNodeType();
-  bool                   isNodeValid();
-  box3                   getNodeBound();
-  vec3                   getNodePosition();
-  mtx4                   getNodeTransform();
-  kgmMaterial*           getNodeMaterial();
-  void                   setNodeMaterial(kgmMaterial*);
+  kgmIGraphics::INode* getNode() const { return m_node; }
+  kgmBody*             getBody() const { return m_body; }
 
-  void set(kgmIMesh* m)
-  {
-    if (m && m_type == Mesh)
-      m_mesh = m;
-  }
-
-  void set(kgmMaterial* m)
-  {
-    if (m)
-      m_material = m;
-  }
+  void setNode(kgmGNode* n);
+  void setBody(kgmPBody* b);
 
 private:
   virtual void clear()
@@ -178,82 +105,14 @@ public:
     return m_game;
   }
 
-  UnitType getType() const
-  {
-    return m_type;
-  }
-
-  bool bodyIsValid()
-  {
-    return m_valid;
-  }
-
-  bool bodyUseCollision()
-  {
-    return m_collision;
-  }
-
-  bool bodyGravity()
-  {
-    return m_gravity;
-  }
-
-  void bodyGravity(bool g)
-  {
-    m_gravity = g;
-  }
-
-  f32   bodyMass()
-  {
-    return m_mass;
-  }
-
-  void  bodyMass(f32 m)
-  {
-    m_mass = m;
-  }
-
-  vec3  bodyForce()
-  {
-    return vec3(0, 0, 0);
-  }
-
-  vec3 bodyPosition()
-  {
-    return vec3(0, 0, 0);
-  }
-
-  void bodyPosition(vec3)
-  {
-
-  }
-
-  box   bodyBound()
+  box   getBound()
   {
     return m_bound;
   }
 
-  void  bodyBound(box b)
+  void  setBound(box b)
   {
     m_bound = b;
-  }
-
-  kgmIPhysics::BodyShape bodyShape()
-  {
-    return m_shape;
-  }
-
-  void bodyShape(kgmIPhysics::BodyShape s)
-  {
-    m_shape = s;
-  }
-
-  kgmObstacle* obstacle()
-  {
-    if (m_type != Obstacle)
-      return null;
-
-    return m_obstacle;
   }
 
   bool valid() const
@@ -358,45 +217,22 @@ public:
 
   vec3 position()
   {
-    return m_position;
+    return m_transform.position();
   }
 
   void position(vec3& v)
   {
-    m_position = v;
-
     m_transform.translate(v);
   }
 
   vec3 rotation()
   {
-    return m_rotation;
+    return m_transform.rotation();
   }
 
   void rotation(vec3& r)
   {
-    m_rotation = r;
-  }
-
-  quat quaternion()
-  {
-    return quat();
-  }
-
-  void quaternion(quat& q)
-  {
-  }
-
-  quat scale()
-  {
-    return m_scale;
-  }
-
-  void scale(vec3& s)
-  {
-    m_scale = s;
-
-    m_transform.scale(s);
+    m_transform.from_euler(r.x, r.y, r.z);
   }
 
   mtx4 transform()
@@ -409,77 +245,6 @@ public:
     return m_birth;
   }
 
-  UnitType type()
-  {
-    return m_type;
-  }
-
-  kgmLight* light() const
-  {
-    if(m_type != Light)
-      return null;
-
-    return m_light;
-  }
-
-  kgmCamera* camera() const
-  {
-    if(m_type != Camera)
-      return null;
-
-    return m_camera;
-  }
-
-  kgmString action() const
-  {
-    return m_action.id;
-  }
-
-  void action(kgmString a)
-  {
-    m_action.id = a;
-  }
-
-  void setParameter(kgmString name, kgmString value)
-  {
-    for(int i = 0; i < m_variables.length(); ++i)
-    {
-      kgmVariable& var = m_variables[i];
-
-      if(var.getName() == name)
-        var.fromString(value);
-    }
-  }
-
-  static bool getAvailableActions(kgmList<kgmString>& actions)
-  {
-    if(g_list_action.length() < 1)
-      return false;
-
-    kgmTab<kgmString, ActionCallback>::iterator i;
-
-    for(i = g_list_action.begin(); !i.end(); ++i)
-    {
-      actions.add(i.key());
-    }
-
-    return true;
-  }
-
-  static void setActionCallback(kgmString action, kgmUnit::ActionCallback callback)
-  {
-    g_list_action.set(action, callback);
-  }
-
-  static kgmUnit::ActionCallback getActionCallback(kgmString action)
-  {
-    kgmTab<kgmString, ActionCallback>::iterator i = g_list_action.get(action);
-
-    if(i.isEnd())
-      return null;
-
-    return i.data();
-  }
 };
 
 #endif // KGMGAMEOBJECT_H

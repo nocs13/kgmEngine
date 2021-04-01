@@ -1,8 +1,10 @@
 #include "kPivot.h"
+#include "../../kgmBase/kgmLog.h"
+#include "../../kgmGraphics/kgmColor.h"
 
 kPivot::kPivot()
 {
-  Vertex_P_C* v = (Vertex_P_C*)vAlloc(6, FVF_P_C);
+  Vertex_P_C* v = (Vertex_P_C*) vAlloc(6, FVF_P_C);
 
   v[0].pos = vec3(0, 0, 0);
   v[1].pos = vec3(1, 0, 0);
@@ -13,19 +15,21 @@ kPivot::kPivot()
   v[4].pos = vec3(0, 0, 0);
   v[5].pos = vec3(0, 0, 1);
 
-  v[0].col = 0xff0000ff;
-  v[1].col = 0xff0000ff;
+  v[0].col =
+  v[1].col = kgmColor::toVector(0x000000ff);
 
-  v[2].col = 0xff00ff00;
-  v[3].col = 0xff00ff00;
+  v[2].col =
+  v[3].col = kgmColor::toVector(0x0000ff00);
 
-  v[4].col = 0xffff0000;
-  v[5].col = 0xffff0000;
+  v[4].col =
+  v[5].col = kgmColor::toVector(0x00ff0000);
 
   m_rtype = kgmMesh::RT_LINE;
 
   pos = vec3(0, 0, 0);
   rot = vec3(0, 0, 0);
+
+  axis = AXIS_NONE;
 }
 
 u32 kPivot::peekAxis(ray3 r)
@@ -54,25 +58,33 @@ u32 kPivot::peekAxis(ray3 r)
 
   pln = plane3(vnor, v[0]);
 
+  //kgm_log() << "Line S: " << v[0].x << " " << v[0].y << " " << v[0].z << "\n";
+  //kgm_log() << "Line E: " << v[1].x << " " << v[1].y << " " << v[1].z << "\n";
+  //kgm_log() << "Line E: " << v[2].x << " " << v[2].y << " " << v[2].z << "\n";
+
   if(pln.intersect(r, vins))
   {
     line3 l(v[0], v[1]);
 
+    //kgm_log() << "\nZ Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_X;
-
+      vprj = vins;
+      //kgm_log() << "AXIS X: selected\n";
       return axis;
     }
 
-    /*vec3 vnor = v[1] - v[0];
+    l.set(v[0], v[2]);
 
-    if(cylinder3::isPointInCylinder(vins, v[0], vnor, 0.1, 1.0))
+    if(l.ison(vins, 0.1))
     {
-      axis = AXIS_X;
-
+      axis = AXIS_Y;
+      vprj = vins;
+      //kgm_log() << "AXIS Y: selected\n";
       return axis;
-    }*/
+    }
   }
 
   vnor = v[1] - v[0];
@@ -82,12 +94,25 @@ u32 kPivot::peekAxis(ray3 r)
 
   if(pln.intersect(r, vins))
   {
+    //kgm_log() << "\nX Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     line3 l(v[0], v[2]);
 
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_Y;
+      vprj = vins;
 
+      return axis;
+    }
+
+    l.set(v[0], v[3]);
+
+    if(l.ison(vins, 0.1))
+    {
+      axis = AXIS_Z;
+      vprj = vins;
+      //kgm_log() << "AXIS Z: selected\n";
       return axis;
     }
   }
@@ -99,12 +124,25 @@ u32 kPivot::peekAxis(ray3 r)
 
   if(pln.intersect(r, vins))
   {
+    //kgm_log() << "\nY Ins: " << vins.x << " " << vins.y << " " << vins.z << "\n";
+
     line3 l(v[0], v[3]);
 
     if(l.ison(vins, 0.1))
     {
       axis = AXIS_Z;
+      vprj = vins;
 
+      return axis;
+    }
+
+    l.set(v[0], v[1]);
+
+    if(l.ison(vins, 0.1))
+    {
+      axis = AXIS_X;
+      vprj = vins;
+      //kgm_log() << "AXIS X: selected\n";
       return axis;
     }
   }
@@ -112,4 +150,13 @@ u32 kPivot::peekAxis(ray3 r)
   axis = AXIS_NONE;
 
   return AXIS_NONE;
+}
+
+mtx4 kPivot::getTransform()
+{
+  mtx4 m;
+  m.identity();
+  m.translate(pos);
+
+  return m;
 }

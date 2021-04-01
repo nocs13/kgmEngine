@@ -6,27 +6,6 @@
 
 #include "kgmUnit.h"
 
-bool kgmGameApp::exportProject(kgmString path)
-{
-  kgmFile file;
-
-  if (!file.open(path, kgmFile::Write | kgmFile::Create))
-  {
-    kgm_log() << "Cannot open path " << (s8*) path << "\n";
-
-    return false;
-  }
-
-  for (u32 i = 0; i < kgmUnit::g_typ_objects.length(); i++)
-  {
-
-  }
-
-  file.close();
-
-  return true;
-}
-
 s32 kgmGameApp::exec(s32 argc, s8 **argv)
 {
   memset(&m_options, 0, sizeof(Options));

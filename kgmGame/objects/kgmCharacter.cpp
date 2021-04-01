@@ -16,15 +16,6 @@ kgmCharacter::kgmCharacter(kgmIGame *g)
   speed_idl = 0.0;
   speed_wlk = 0.5;
   speed_run = 0.8;
-
-  kgmVariable var;
-
-  var = kgmVariable("sIdle", 0.0f, &speed_idl);
-  m_variables.add(var);
-  var = kgmVariable("sWalk", 0.0f, &speed_wlk);
-  m_variables.add(var);
-  var = kgmVariable("sRun",  0.0f, &speed_run);
-  m_variables.add(var);
 }
 
 void kgmCharacter::update(u32 ms)
@@ -64,14 +55,14 @@ void kgmCharacter::update(u32 ms)
     }
   }*/
 
-  vec3 pos = bodyPosition();
+  vec3 pos = getNode()->getNodeTransform().position();
 
   if(pos.x < -3000) pos.x =  3000;
   if(pos.x >  3000) pos.x = -3000;
   if(pos.y < -3000) pos.y =  3000;
   if(pos.y >  3000) pos.y = -3000;
 
-  bodyPosition(pos);
+  //bodyPosition(pos);
 
   if(m_state)
   {

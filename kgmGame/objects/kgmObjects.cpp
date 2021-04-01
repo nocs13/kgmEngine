@@ -77,12 +77,6 @@ kgmParticlesObject::kgmParticlesObject(kgmIGame* g,  vec3 pos, vec3 vol, vec3 di
   //m_visual->set(particles);
 
   position(pos);
-
-  kgmVariable var;
-
-  idTex = tid;
-  var = kgmVariable("tId",   kgmString(""),     &idTex);
-  m_variables.add(var);
 }
 
 kgmParticlesObject::~kgmParticlesObject()

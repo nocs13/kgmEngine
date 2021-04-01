@@ -7,8 +7,6 @@ kgmSensor::kgmSensor(kgmIGame* g)
   :kgmUnit(g)
 {
   target = "";
-
-  m_type = Sensor;
 }
 
 void kgmSensor::start()

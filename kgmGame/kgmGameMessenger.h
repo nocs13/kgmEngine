@@ -9,7 +9,7 @@ class kgmGameMessenger: public kgmObject, public kgmIGame::Messenger
 {
   KGM_OBJECT(kgmGameMessenger);
 
-  kgmIGame* game = nullptr;
+  kgmIGame* game = null;
 
   kgmList<kgmIGame::Listener*> list;
 

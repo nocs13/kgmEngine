@@ -282,6 +282,13 @@ public:
     translate(v.x, v.y, v.z);
   }
 
+  kgmVector3d<T> position()
+  {
+    kgmVector3d<T> v(m[12],  m[13],  m[14]);
+
+    return v;
+  }
+
   void rotate(T x, T y, T z)
   {
     kgmQuaternion<T> qx, qy, qz, qr;
@@ -336,6 +343,15 @@ public:
     (*this) = mrt * mtr;
   }
 
+  kgmVector3d<T> rotation()
+  {
+    kgmVector3d<T> r;
+
+    to_euler(r);
+
+    return r;
+  }
+
   void scale(T x, T y, T z)
   {
     m[0]  = x;
@@ -346,6 +362,13 @@ public:
   void scale(kgmVector3d<T> &v)
   {
     scale(v.x, v.y, v.z);
+  }
+
+  kgmVector3d<T> scaled()
+  {
+    kgmVector3d<T> s(m[0], m[5], m[10]);
+
+    return s;
   }
 
   void from_euler(T x, T y, T z)

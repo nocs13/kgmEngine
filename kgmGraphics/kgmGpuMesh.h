@@ -1,8 +1,8 @@
 #ifndef KGMGPUMESH_H
 #define KGMGPUMESH_H
 
-#include "kgmIGC.h"
 #include "kgmIMesh.h"
+#include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmResource.h"
 
 class kgmGpuMesh : public kgmIMesh, public kgmResource

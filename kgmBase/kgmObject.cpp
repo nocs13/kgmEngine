@@ -77,10 +77,12 @@ void kgmObject::kgm_objects_cleanup()
 
 kgmObject::kgmObject()
 {
+  increment();
 }
 
 kgmObject::kgmObject(const kgmObject& o)
 {
+  increment();
 }
 
 kgmObject::~kgmObject()

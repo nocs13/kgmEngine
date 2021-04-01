@@ -5,10 +5,16 @@
 
 class kApp : public kgmGameApp
 {
-  kEditor* editor;
+  kEditor* editor = null;
+  bool failed = false;
+
 public:
   kApp();
 
   void main();
+
+  void gameInit();
+  void gameLoop();
+  void gameFree();
 };
 #endif // KAPP_H

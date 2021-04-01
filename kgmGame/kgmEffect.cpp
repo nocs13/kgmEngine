@@ -3,7 +3,6 @@
 kgmEffect::kgmEffect(kgmIGame *g)
 :kgmUnit(g)
 {
-  m_type = Effect;
 }
 
 void kgmEffect::init()

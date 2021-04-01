@@ -25,6 +25,8 @@
 #include "kgmVisual.h"
 #include "kgmMaterial.h"
 
+#include "kgmNode.h"
+
 #include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
@@ -60,73 +62,6 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
 #define MAX_SHADOWS  2
 
 public:
-  class kgmNodeLight: public INode
-  {
-    kgmLight* m_light;
-    vec3      m_pos;
-
-  public:
-    kgmNodeLight()
-    {
-      m_light = new kgmLight();
-      m_pos = vec3(0, 0, 10);
-    }
-
-    ~kgmNodeLight()
-    {
-      delete m_light;
-    }
-
-    void setPos(vec3 pos)
-    {
-      m_pos = pos;
-    }
-
-    kgmIGraphics::TypeNode getNodeType()
-    {
-      return kgmIGraphics::NodeLight;
-    }
-
-    void* getNodeObject()
-    {
-      return m_light;
-    }
-
-    bool isNodeValid()
-    {
-      return true;
-    }
-
-    vec3 getNodePosition()
-    {
-      return vec3(0, 0, 0);
-    }
-
-    mtx4 getNodeTransform()
-    {
-      mtx4 m;
-
-      return m;
-    }
-
-    box3 getNodeBound()
-    {
-      box3 bb;
-
-      return bb;
-    }
-
-    void setNodeMaterial(kgmMaterial*)
-    {
-
-    }
-
-    kgmMaterial* getNodeMaterial()
-    {
-      return null;
-    }
-  };
-
   enum GraphicsQuality
   {
     GraphicsQualityLow,

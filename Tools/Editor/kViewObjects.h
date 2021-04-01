@@ -1,24 +1,47 @@
 #ifndef KVIEWOBJECTS_H
 #define KVIEWOBJECTS_H
-#include "../../kgmGraphics/kgmGui.h"
-#include "../../kgmGraphics/kgmGuiList.h"
 
-class kViewObjects : public kgmGui
+#include "../../kgmGraphics/kgmGuiFrame.h"
+#include "../../kgmGraphics/kgmGuiList.h"
+#include "../../kgmGraphics/kgmGuiButton.h"
+
+class kViewObjects : public kgmGuiFrame
 {
+  static kViewObjects* single;
+public:
+  Signal<u32> sigClose;
+  Signal<kgmString> sigSelect;
+
+private:
   kgmEvent* target;
   kgmGuiList* list;
 
-public:
-  kViewObjects(kgmEvent* tar, int x, int y, int w, int h);
+  Slot<kViewObjects, u32> slotSelect;
 
-  kgmGuiList* getGuiList()
-  {
-    return list;
-  }
+protected:
+  kViewObjects(kgmEvent* tar = null, int x = 300, int y = 100, int w = 150, int h = 300);
+  ~kViewObjects();
+
+public:
+  void onClose();
+
+  __stdcall void onSelectItem(u32);
+
+  static kViewObjects* getDialog();
 
   void onAction(kgmGui* g, u32 id)
   {
     target->onAction(this, id);
+  }
+
+  bool addItem(kgmString item)
+  {
+    if(hasItem(item))
+      return false;
+
+    list->addItem(item);
+
+    return true;
   }
 
   bool hasItem(kgmString item)
@@ -32,4 +55,5 @@ public:
     return false;
   }
 };
+
 #endif // KVIEWOBJECTS_H

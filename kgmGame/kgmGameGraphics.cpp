@@ -80,10 +80,6 @@ void kgmGameGraphics::render_3d()
 
     while(kgmUnit* un = i->next())
     {
-      if (un->getType() == kgmUnit::Light)
-      {
-        drawLight(un);
-      }
     }
 
     delete i;
