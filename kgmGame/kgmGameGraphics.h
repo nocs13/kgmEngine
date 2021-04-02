@@ -12,27 +12,12 @@
 #include "../kgmGraphics/kgmMaterial.h"
 #include "../kgmGraphics/kgmGraphics.h"
 
-#ifdef EDITOR
-
-#include "editor/kArrow.h"
-#include "editor/kPivot.h"
-#include "editor/kGridline.h"
-
-using namespace  kgmGameEditor;
-
-#endif
-
 class kgmIGame;
 class kgmUnit;
 
 class kgmGameGraphics: public kgmGraphics
 {
   KGM_OBJECT(kgmGameGraphics);
-
-#ifdef EDITOR
-  kPivot*    m_pivot    = null;
-  kGridline* m_gridline = null;
-#endif
 
   kgmIGame* m_game = null;
 
@@ -42,18 +27,4 @@ public:
 
   void render_3d();
   void render_2d();
-
-#ifdef EDITOR
-  void drawLight(kgmUnit*);
-
-  void set(kPivot* p)
-  {
-    m_pivot = p;
-  }
-
-  void set(kGridline* g)
-  {
-    m_gridline = g;
-  }
-#endif
 };

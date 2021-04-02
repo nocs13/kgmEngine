@@ -5,7 +5,7 @@ CC = g++
 DEFS = -DLINUX
 FLGS = -ansi -std=c++17
 DIRS =	-I./ -I../../kgmBase -I../../kgmMath -I../../kgmGame -I../../kgmSystem -I../../kgmSystem/inc -I../../kgmPhysics \
-	-I../../kgmGraphics -L../../kgmSystem/lib -L../
+	-I../../kgmGraphics -L../../kgmSystem/lib -L../../
 LIBS = -lpthread -lXxf86vm -lGL -lGLU -lopenal
 
 ifeq ($(OS), Linux)

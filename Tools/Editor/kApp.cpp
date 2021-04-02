@@ -24,6 +24,8 @@ void kApp::gameInit()
       failed = true;
     }
 
+    editor->init();
+
     //wnd = new kgmWindow((kgmWindow*) null, "kgm", 0, 0, 800, 600, 24, false);
 }
 
@@ -55,4 +57,10 @@ void kApp::main()
   editor->loop();
 }
 
-kApp theApp;
+int main(int argc, char** argv)
+{
+  kApp app;
+
+  return  app.exec(argc, argv);
+}
+

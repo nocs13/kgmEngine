@@ -74,73 +74,6 @@ kEditor::kEditor()
 
   mode_play = false;
 
-  if(graphics)
-  {
-    graphics->setEditor(true);
-
-    menu = new kgmGuiMenu(null);
-    menu->setSid("editor_main_menu");
-    slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
-
-    kgmGuiMenu::Item* item = menu->add("Map");
-    item->add(ME_MAP_NEW, "New");
-    item->add(ME_MAP_OPEN, "Open");
-    item->add(ME_MAP_SAVE, "Save");
-    item->add(ME_QUIT, "Quit");
-    item = menu->add("Edit");
-    item->add(ME_EDIT_CLONE, "Clone");
-    item->add(ME_EDIT_REMOVE, "Remove");
-    item->add(ME_EDIT_OPTIONS, "Options");
-    item = menu->add("Add");
-    item->add(ME_ADD_BOX, "Box");
-    item->add(ME_ADD_PLANE, "Plane");
-    item->add(ME_ADD_SPHERE, "Sphere");
-    item->add(ME_ADD_CYLINDER, "Cylinder");
-    item->add(ME_ADD_MESH, "Mesh");
-    item->add(ME_ADD_UNIT, "Unit");
-    item->add(ME_ADD_LIGHT, "Light");
-    item->add(ME_ADD_ACTOR, "Actor");
-    item->add(ME_ADD_EFFECT, "Effect");
-    item->add(ME_ADD_SENSOR, "Sensor");
-    item->add(ME_ADD_TRIGGER, "Trigger");
-    item->add(ME_ADD_PARTICLES, "Particles");
-    item->add(ME_ADD_MATERIAL, "Material");
-    item = menu->add("Run");
-    item->add(ME_RUN_PLAY, "Play");
-    item->add(ME_RUN_STOP, "Stop");
-    item = menu->add("View");
-    item->add(ME_VIEW_OBJECTS, "Objects");
-    item->add(ME_VIEW_MATERIALS, "Materials");
-    item->add(ME_VIEW_PERSPECTIVE, "Perspective");
-    item->add(ME_VIEW_FRONT, "Front");
-    item->add(ME_VIEW_BACK, "Left");
-    item->add(ME_VIEW_TOP, "Top");
-    game->guiAdd(menu);
-
-    mtlLines = new kgmMaterial();
-    mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
-
-    mtlPivot = new kgmMaterial();
-    mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
-
-    gridline = new kGridline(100);
-    gridline->rebuild();
-
-    //graphics->set(gridline);
-
-    pivot = new kPivot();
-    pivot->rebuild();
-
-    //graphics->set(pivot);
-
-    textData = new kgmText();
-    textData->rect(uRect(600, 200, 300, 100));
-    text     = new kgmVisual();
-    text->set(textData);
-
-    graphics->setBgColor(0xff222222);
-  }
-
   m_isVisual = true;
   m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
 }
@@ -182,9 +115,76 @@ void kEditor::clear()
   dragging = null;
 }
 
+void kEditor::init()
+{
+  if(m_graphics)
+  {
+    m_graphics->setEditor(true);
+
+    menu = new kgmGuiMenu(null);
+    menu->setSid("editor_main_menu");
+    slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
+
+    kgmGuiMenu::Item* item = menu->add("Map");
+    item->add(ME_MAP_NEW, "New");
+    item->add(ME_MAP_OPEN, "Open");
+    item->add(ME_MAP_SAVE, "Save");
+    item->add(ME_QUIT, "Quit");
+    item = menu->add("Edit");
+    item->add(ME_EDIT_CLONE, "Clone");
+    item->add(ME_EDIT_REMOVE, "Remove");
+    item->add(ME_EDIT_OPTIONS, "Options");
+    item = menu->add("Add");
+    item->add(ME_ADD_BOX, "Box");
+    item->add(ME_ADD_PLANE, "Plane");
+    item->add(ME_ADD_SPHERE, "Sphere");
+    item->add(ME_ADD_CYLINDER, "Cylinder");
+    item->add(ME_ADD_MESH, "Mesh");
+    item->add(ME_ADD_UNIT, "Unit");
+    item->add(ME_ADD_LIGHT, "Light");
+    item->add(ME_ADD_ACTOR, "Actor");
+    item->add(ME_ADD_EFFECT, "Effect");
+    item->add(ME_ADD_SENSOR, "Sensor");
+    item->add(ME_ADD_TRIGGER, "Trigger");
+    item->add(ME_ADD_PARTICLES, "Particles");
+    item->add(ME_ADD_MATERIAL, "Material");
+    item = menu->add("Run");
+    item->add(ME_RUN_PLAY, "Play");
+    item->add(ME_RUN_STOP, "Stop");
+    item = menu->add("View");
+    item->add(ME_VIEW_OBJECTS, "Objects");
+    item->add(ME_VIEW_MATERIALS, "Materials");
+    item->add(ME_VIEW_PERSPECTIVE, "Perspective");
+    item->add(ME_VIEW_FRONT, "Front");
+    item->add(ME_VIEW_BACK, "Left");
+    item->add(ME_VIEW_TOP, "Top");
+    
+    guiAdd(menu);
+
+    mtlLines = new kgmMaterial();
+    mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
+
+    mtlPivot = new kgmMaterial();
+    mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
+
+    gridline = new kGridline(100);
+    gridline->rebuild();
+
+    pivot = new kPivot();
+    pivot->rebuild();
+
+    textData = new kgmText();
+    textData->rect(uRect(600, 200, 300, 100));
+    text     = new kgmVisual();
+    text->set(textData);
+
+    m_graphics->setBgColor(0xff222222);
+  }
+}
+
 void kEditor::select(kgmString name)
 {
-  kgmUnit* node = game->gUnit(name);
+  kgmUnit* node = gUnit(name);
 
   if(node)
   {
@@ -202,9 +202,9 @@ void kEditor::select(kgmString name)
 
 void kEditor::select(int x, int y)
 {
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
-  iRect vp = game->getRender()->viewport();
+  iRect vp = getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -258,7 +258,7 @@ void kEditor::select(int x, int y)
 
   kgmList<kgmUnit*> nodes;
 
-  kgmIGame::Iterator* i = game->gUnits();
+  kgmIGame::Iterator* i = gUnits();
 
   while(kgmUnit* un = i->next())
   {
@@ -349,9 +349,9 @@ void kEditor::select(int x, int y)
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
-  iRect vp = game->getRender()->viewport();
+  iRect vp = getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -410,7 +410,7 @@ bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 
 bool kEditor::mapOpen(kgmString s)
 {
-  game->gLoad(s);
+  gLoad(s);
 
   selected = null;
 
@@ -427,7 +427,7 @@ bool kEditor::fdMapSave(kgmGuiFileDialog* fd)
 bool kEditor::mapSave(kgmString s)
 {
   kgmXml     xml;
-  kgmGameMap map((kgmGameBase*)game, kgmGameMap::OpenWrite);
+  kgmGameMap map((kgmGameBase*)this, kgmGameMap::OpenWrite);
 
   map.open(xml);
 
@@ -441,12 +441,12 @@ bool kEditor::fdAddMesh(kgmGuiFileDialog* fd)
 
 bool kEditor::addMesh(kgmString name)
 {
-  kgmMesh* mesh = game->getResources()->getMesh(name);
+  kgmMesh* mesh = getResources()->getMesh(name);
 
   if(!mesh)
     return false;
 
-  kgmUnit* visual = new kgmUnit(game);
+  kgmUnit* visual = new kgmUnit(this);
 
   visual->setNode(new kgmGNode(visual, mesh, kgmIGraphics::NodeMesh));
 
@@ -457,7 +457,7 @@ bool kEditor::addMesh(kgmString name)
 
   selected = visual;
 
-  game->gAppend(visual);
+  gAppend(visual);
 
   return true;
 }
@@ -467,11 +467,11 @@ bool kEditor::addUnit(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmUnit* unit = new kgmUnit(game);
+  kgmUnit* unit = new kgmUnit(this);
 
   unit->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
-  game->gAppend(unit);
+  gAppend(unit);
 
   selected = unit;
 
@@ -483,11 +483,11 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
   if(!fdd || fdd->getFile().empty())
     return false;
 
-  kgmActor* actor = new kgmActor(game);
+  kgmActor* actor = new kgmActor(this);
 
   actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
-  game->gAppend(actor);
+  gAppend(actor);
 
   selected = actor;
 
@@ -499,11 +499,11 @@ bool kEditor::addEffect(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmEffect* effect = new kgmEffect(game);
+  kgmEffect* effect = new kgmEffect(this);
 
   effect->setName(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
-  game->gAppend(effect);
+  gAppend(effect);
 
   selected = effect;
 
@@ -515,11 +515,11 @@ bool kEditor::addSensor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmSensor* sensor = new kgmSensor(game);
+  kgmSensor* sensor = new kgmSensor(this);
 
   sensor->setName(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
-  game->gAppend(sensor);
+  gAppend(sensor);
 
   selected = sensor;
 
@@ -557,7 +557,7 @@ void kEditor::onKeyUp(int k)
   if(k == KEY_LCTRL)
   {
     move_camera = false;
-    game->setMsAbsolute(true);
+    setMsAbsolute(true);
     menu->show();
     menu->freeze(false);
   }
@@ -568,7 +568,7 @@ void kEditor::onKeyDown(int k)
   if(k == KEY_LCTRL)
   {
     move_camera = true;
-    game->setMsAbsolute(false);
+    setMsAbsolute(false);
     menu->hide();
     menu->freeze(true);
   }
@@ -607,16 +607,16 @@ void kEditor::onMsMove(int k, int x, int y)
 {
   u32 paxes = kPivot::AXIS_NONE;
 
-  if(game->getRender())
+  if(getRender())
   {
     paxes = pivot->getAxis();
   }
 
-  if(game->getRender() && move_camera)
+  if(getRender() && move_camera)
   {
     if(ms_click[0])
     {
-      kgmCamera& cam = game->getRender()->camera();
+      kgmCamera& cam = getRender()->camera();
 
       if(view_mode == ViewPerspective)
       {
@@ -652,9 +652,9 @@ void kEditor::onMsMove(int k, int x, int y)
     }
     else if(ms_click[1])
     {
-      if(game->getKeyState(KEY_Z) && selected)
+      if(getKeyState(KEY_Z) && selected)
       {
-        kgmCamera& cam = game->getRender()->camera();
+        kgmCamera& cam = getRender()->camera();
 
         vec3 pos = selected->position();
 
@@ -699,7 +699,7 @@ void kEditor::onMsMove(int k, int x, int y)
       }
       else
       {
-        kgmCamera& cam = game->getRender()->camera();
+        kgmCamera& cam = getRender()->camera();
 
         if(view_mode == ViewPerspective)
         {
@@ -744,7 +744,7 @@ void kEditor::onMsMove(int k, int x, int y)
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
-    kgmCamera& cam = game->getRender()->camera();
+    kgmCamera& cam = getRender()->camera();
 
     vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->pos);
     vec3 pr, tm, nd;
@@ -898,7 +898,7 @@ void kEditor::onMenu(u32 id)
 
 void kEditor::onQuit()
 {
-  game->close();
+  close();
 }
 
 void kEditor::onMapNew()
@@ -915,14 +915,14 @@ void kEditor::onMapOpen()
 
   kgmString dir;
 
-  dir = game->getSettings()->get((char*) "Data");
+  dir = getSettings()->get((char*) "Data");
 
   dir += kgmSystem::getPathDelim();
 
   dir += "maps";
 
   fdd->showHidden(false);
-  game->guiAdd(fdd);
+  guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -941,14 +941,14 @@ void kEditor::onMapSave()
 
   kgmString dir;
 
-  dir = game->getSettings()->get((char*) "Data");
+  dir = getSettings()->get((char*) "Data");
 
   dir += kgmSystem::getPathDelim();
 
   dir += "maps";
 
   fdd->showHidden(false);
-  game->guiAdd(fdd);
+  guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -1085,7 +1085,7 @@ void kEditor::onEditOptions()
   */
   if(vop)
   {
-    game->guiAdd(vop);
+    guiAdd(vop);
     vop->show();
   }
 }
@@ -1096,7 +1096,7 @@ void kEditor::onAddBox()
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(game);
+  kgmUnit* unit = new kgmUnit(this);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1113,7 +1113,7 @@ void kEditor::onAddPlane()
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(game);
+  kgmUnit* unit = new kgmUnit(this);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1143,11 +1143,11 @@ void kEditor::onAddMesh()
   slotOpenFile.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdAddMesh, &fdd->sigSelect);
 
   fdd->showHidden(false);
-  game->guiAdd(fdd);
+  guiAdd(fdd);
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Data"));
+  fdd->forOpen(getSettings()->get((char*)"Data"));
 }
 
 void kEditor::onAddUnit()
@@ -1162,9 +1162,9 @@ void kEditor::onAddUnit()
     vs->addItem(s);
   }
 
-  game->guiAdd(vs);*/
+  guiAdd(vs);*/
 
-  kgmUnit* unit = new kgmUnit(game);
+  kgmUnit* unit = new kgmUnit(this);
   selected = unit;
 
   selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
@@ -1174,7 +1174,7 @@ void kEditor::onAddUnit()
 
 void kEditor::onAddLight()
 {
-  kgmUnit* light = new kgmUnit(game);
+  kgmUnit* light = new kgmUnit(this);
   light->setNode(new kgmGNode(light, new kgmLight(), kgmIGraphics::NodeLight));
   selected = light;
 
@@ -1194,9 +1194,9 @@ void kEditor::onAddActor()
 
   fdd->setFilter(".act");
   fdd->changeLocation(false);
-  fdd->forOpen(game->getSettings()->get((char*)"Path"));
+  fdd->forOpen(getSettings()->get((char*)"Path"));
 
-  game->guiAdd(fdd);
+  guiAdd(fdd);
 }
 
 void kEditor::onAddEffect()
@@ -1209,7 +1209,7 @@ void kEditor::onAddEffect()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
 
-  game->guiAdd(vo);
+  guiAdd(vo);
 }
 
 void kEditor::onAddSensor()
@@ -1223,7 +1223,7 @@ void kEditor::onAddSensor()
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addSensor, &vo->sigSelect);
   //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 
-  game->guiAdd(vo);
+  guiAdd(vo);
 }
 
 void kEditor::onAddTrigger()
@@ -1242,7 +1242,7 @@ void kEditor::onAddParticles()
 
   m_objects.add(p);
 
-  kgmUnit* pr = new kgmUnit(this->game);
+  kgmUnit* pr = new kgmUnit(this);
 
   pr->setNode(new kgmGNode(pr, p, kgmIGraphics::NodeParticles));
 
@@ -1265,7 +1265,7 @@ void kEditor::onAddMaterial()
 
   if(vop)
   {
-    game->guiAdd(vop);
+    guiAdd(vop);
     vop->show();
   }
 }
@@ -1277,7 +1277,7 @@ void kEditor::onRunPlay()
 
   mode_play = true;
 
-  game->gSwitch(kgmIGame::State_Play);
+  gSwitch(kgmIGame::State_Play);
 }
 
 void kEditor::onRunStop()
@@ -1287,7 +1287,7 @@ void kEditor::onRunStop()
 
   mode_play = false;
 
-  game->gSwitch(kgmIGame::State_Pause);
+  gSwitch(kgmIGame::State_Pause);
 }
 
 void kEditor::onViewObjects()
@@ -1300,14 +1300,14 @@ void kEditor::onViewObjects()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
 
-  kgmIGame::Iterator* i = game->gUnits();
+  kgmIGame::Iterator* i = gUnits();
 
   while(kgmUnit* un = i->next())
       vo->addItem(un->getName());
 
   delete i;
 
-  game->guiAdd(vo);
+  guiAdd(vo);
 }
 
 void kEditor::onViewMaterials()
@@ -1332,13 +1332,13 @@ void kEditor::onViewMaterials()
     ++i;
   }
 
-  game->guiAdd(vo);
+  guiAdd(vo);
 }
 
 void kEditor::onViewPerspective()
 {
   view_mode = ViewPerspective;
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
   cam.mPos = vec3(-1, -1, 1);
   cam.mDir = vec3( 0.5, 0.5, -0.3).normal();
@@ -1352,7 +1352,7 @@ void kEditor::onViewPerspective()
 void kEditor::onViewFront()
 {
   view_mode = ViewFront;
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
   cam.mDir = vec3(-1, 0, 0);
   cam.mUp  = vec3(0, 0, 1);
@@ -1363,7 +1363,7 @@ void kEditor::onViewFront()
 void kEditor::onViewLeft()
 {
   view_mode = ViewLeft;
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
   cam.mDir = vec3(0, -1, 0);
   cam.mUp  = vec3(0, 0, 1);
@@ -1374,7 +1374,7 @@ void kEditor::onViewLeft()
 void kEditor::onViewTop()
 {
   view_mode = ViewTop;
-  kgmCamera& cam = game->getRender()->camera();
+  kgmCamera& cam = getRender()->camera();
 
   cam.mDir = vec3(0, 0, -1);
   cam.mUp  = vec3(0, 1,  0);
@@ -1384,7 +1384,7 @@ void kEditor::onViewTop()
 
 void kEditor::onOptionsDatabase()
 {
-  kgmString loc = game->getSettings()->get((char*)"Path");
+  kgmString loc = getSettings()->get((char*)"Path");
 
   if(!loc.length())
   {
@@ -1416,7 +1416,7 @@ void kEditor::onSelectMaterial(kgmString id)
 
   if(vop)
   {
-    game->guiAdd(vop);
+    guiAdd(vop);
     vop->show();
   }
 }
@@ -1426,7 +1426,7 @@ void kEditor::add(kgmUnit* node)
   if(!node)
     return;
 
-  game->gAppend(node);
+  gAppend(node);
 
   select(node->getName());
 }

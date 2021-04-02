@@ -12,7 +12,7 @@ LIBS = -llua -llualib
 VSH =
 
 ifeq ($(OS), Linux)
-	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DEDITOR -DVULKAN
+	DEFS = -DLINUX -DDEBUG -DTEST -DALSA -DGPUSHADERS -DVULKAN
 	FLGS = -g -fPIC -O0 -ansi -std=gnu++11
 	LIBS +=  -lpthread -lX11 -lGL -ldl
 	RM = rm -f
@@ -20,7 +20,7 @@ ifeq ($(OS), Linux)
 else
 	CC = g++
 	EXT = .exe
-	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DEDITOR -DVULKAN
+	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS -DDSOUND -DVULKAN
 	FLGS = -g -O0 -std=gnu++11 #-mwindows -static-libgcc -static-libstdc++
 	LIBS += -lopengl32 -luser32 -lkernel32 -lgdi32 -ldsound -lWinmm -llua -llualib -lwsock32
 	RM = del

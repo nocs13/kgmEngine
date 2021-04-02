@@ -106,14 +106,6 @@ void kgmParticlesObject::update(u32 ms)
   particles->update(ms);
 }
 
-#ifdef EDITOR
-void kgmParticlesObject::eupdate()
-{
-  material->setTexColor(game()->getResources()->getTexture(idTex));
-  particles->build();
-}
-#endif
-
 kgmFlame::kgmFlame(kgmIGame* g, vec3 pos, vec3 vol, vec3 dir,
                    float speed, float div_speed, float life,  float div_life,
                    float size_start, float size_end, u32 count,

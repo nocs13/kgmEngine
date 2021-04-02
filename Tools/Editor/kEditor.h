@@ -32,9 +32,6 @@ private:
     ViewTop
   };
 
-  kgmGameBase*     game     = null;
-  kgmGameGraphics* graphics = null;
-
   bool ms_click[3];
 
   vec3 cam_pos;
@@ -87,6 +84,7 @@ public:
   ~kEditor();
 
   void clear();
+  void init();
 
   void select(int x, int y);
   void select(kgmString name);

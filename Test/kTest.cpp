@@ -79,9 +79,6 @@ public:
 public:
   void edit()
   {
-#ifdef EDITOR
-    m_state = State_Edit;
-#endif
   }
 
   void guiShow(bool s)
@@ -97,8 +94,6 @@ public:
   {
     kgmGameBase::onKeyUp(k);
 
-#ifdef EDITOR
-#else
     if(k == KEY_ESCAPE)
     {
       if(gState() == State_Play)
@@ -116,7 +111,6 @@ public:
         m_msAbs = true;
       }
     }
-#endif
   }
 
   void onKeyDown(int k)

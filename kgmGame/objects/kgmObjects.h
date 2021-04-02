@@ -58,10 +58,6 @@ public:
   void setSlideFrames(u32 rows, u32 cols);
   void init();
   void update(u32 ms);
-
-#ifdef EDITOR
-  void eupdate();
-#endif
 };
 
 class kgmFlame: public kgmParticlesObject
