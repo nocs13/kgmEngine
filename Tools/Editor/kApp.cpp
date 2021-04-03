@@ -8,6 +8,10 @@ kApp::kApp()
   editor = null;
 }
 
+kApp::~kApp()
+{
+}
+
 void kApp::gameInit()
 {
     u32 w, h;
@@ -61,6 +65,8 @@ int main(int argc, char** argv)
 {
   kApp app;
 
-  return  app.exec(argc, argv);
+  int res = app.exec(argc, argv);
+
+  return res;
 }
 

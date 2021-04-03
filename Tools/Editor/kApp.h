@@ -10,6 +10,7 @@ class kApp : public kgmGameApp
 
 public:
   kApp();
+  ~kApp();
 
   void main();
 

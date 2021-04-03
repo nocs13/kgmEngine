@@ -22,10 +22,7 @@ public:
     if(!str)
       return;
 
-    u32 len = 0;
-
-    while(str[len] && (len < KGM_TSTRING_MAX_COPY))
-      len++;
+    u32 len = strlen((T*) str);
 
     alloc((T*)str, len);
   }
@@ -52,10 +49,7 @@ public:
     if(!str) 
       return *this; 
  
-    u32 len = 0; 
- 
-    while(str[len] && (len < KGM_TSTRING_MAX_COPY)) 
-      len++; 
+    u32 len = strlen((T*) str); 
  
     alloc((T*)str, len); 
  
@@ -159,10 +153,7 @@ public:
     if(!str)
       return;
 
-    u32 len = 0;
-
-    while(str[len] && (len < KGM_TSTRING_MAX_COPY))
-      len++;
+    u32 len = strlen((T*) str);
 
     alloc((T*)str, len);
   }
@@ -324,6 +315,19 @@ public:
  
     return true; 
   } 
+
+  static u32 strlen(T* s)
+  {
+    if (!s)
+      return null;
+
+    u32 len = 0;
+
+    while(s[len] && (len < KGM_TSTRING_MAX_COPY))
+      len++;
+
+    return len;
+  }
 }; 
  
  
