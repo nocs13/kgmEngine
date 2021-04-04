@@ -117,12 +117,11 @@ void kEditor::clear()
 
 void kEditor::init()
 {
-  if(m_graphics)
-  {
-    m_graphics->setEditor(true);
+  if(!m_graphics)
+    return;
 
     menu = new kgmGuiMenu(null);
-    menu->setSid("editor_main_menu");
+    menu->setSid("main_menu");
     slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
 
     kgmGuiMenu::Item* item = menu->add("Map");
@@ -160,6 +159,7 @@ void kEditor::init()
     item->add(ME_VIEW_TOP, "Top");
     
     guiAdd(menu);
+    menu->show();
 
     mtlLines = new kgmMaterial();
     mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
@@ -179,7 +179,6 @@ void kEditor::init()
     text->set(textData);
 
     m_graphics->setBgColor(0xff222222);
-  }
 }
 
 void kEditor::select(kgmString name)
@@ -536,8 +535,6 @@ void kEditor::initLogic()
 
 void kEditor::onIdle()
 {
-  kgmEvent::onIdle();
-
   static u32 ctick = 0;
   static u32 cdel  = 50;
 
@@ -545,11 +542,13 @@ void kEditor::onIdle()
   {
     ctick = kgmTime::getTicks();
   }
+
+  kgmGameBase::onIdle();
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
 {
-  kgmEvent::onEvent(e);
+  kgmGameBase::onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)

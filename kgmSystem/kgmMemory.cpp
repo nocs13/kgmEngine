@@ -81,6 +81,8 @@ void kgm_free(void* p)
 
       p = null;
       g_objects[i] = null;
+
+      break;
     }
   }
 }

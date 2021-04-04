@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<kgm>
+ <Material name='Material'>
+  <Color value='0.04615 0.80000 0.17389'/>
+  <Specular value='1.00000 0.13967 0.19020'/>
+  <Shininess value='25.00000'/>
+  <Alpha value='1.00000'/>
+  <Blend value='mix'/>
+ </Material>
+ <Material name='mtlParticle'>
+  <Color value='0.80000 0.10466 0.00000'/>
+  <Specular value='1.00000 1.00000 1.00000'/>
+  <Shininess value='25.00000'/>
+  <Alpha value='1.00000'/>
+  <Blend value='add'/>
+  <map_color value='point_a.tga'/>
+ </Material>
+ <Light name='Point.001'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-3.04744 6.29221 4.32205'/>
+  <Rotation value='0.00000 -0.00000 0.00000'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='No'/>
+ </Light>
+ <Light name='Point'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='-2.19658 -2.04043 5.13428'/>
+  <Rotation value='0.00000 -0.00000 0.00000'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='No'/>
+ </Light>
+ <Light name='Lamp'>
+  <Type value='Point'/>
+  <Color value='1.0 1.0 1.00000'/>
+  <Position value='4.07625 1.00545 5.90386'/>
+  <Rotation value='0.65033 0.05522 1.86639'/>
+  <Intensity value='1.00000'/>
+  <Shadows value='Yes'/>
+ </Light>
+ <Terrain name='Terrain' dimensions='1000 1000 100'>
+   <HeightMap value='terrain.tga' />
+ </Terrain>
+</kgm>

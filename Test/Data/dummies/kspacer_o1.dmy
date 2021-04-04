@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<kgm>
+ <kgmDummy name='Gun.3' parent='kspacer'>
+  <Position value='0.9660207033157349 -0.0017674565315246582 0.061619505286216736'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmDummy>
+ <kgmDummy name='Gun.2' parent='kspacer'>
+  <Position value='-0.6534625291824341 -0.7902001142501831 -0.08342686295509338'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmDummy>
+ <kgmDummy name='Gun.1' parent='kspacer'>
+  <Position value='-0.6534625291824341 0.8027130365371704 -0.08342686295509338'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmDummy>
+ <kgmDummy name='Motor.2' parent='kspacer'>
+  <Position value='-0.6534625291824341 -0.08762583136558533 0.2484327256679535'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmDummy>
+ <kgmDummy name='Motor.1' parent='kspacer'>
+  <Position value='-0.6534625291824341 0.08707189559936523 0.2484327256679535'/>
+  <Rotation value='0.0 -0.0 0.0'/>
+ </kgmDummy>
+</kgm>

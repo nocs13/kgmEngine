@@ -152,7 +152,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_bg_color    = 0xFF000000;
 
-  m_editor      = false;
   m_wired       = false;
 
   gui_style = new kgmGuiStyle();
@@ -411,11 +410,6 @@ mtx4 kgmGraphics::getViewMatrix()
 mtx4 kgmGraphics::getWorldMatrix()
 {
   return m_g_mtx_world;
-}
-
-void kgmGraphics::setEditor(bool e)
-{
-  m_editor = e;
 }
 
 void kgmGraphics::resize(float width, float height)

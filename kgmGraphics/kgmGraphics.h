@@ -198,7 +198,6 @@ protected:
   bool  m_alpha;
   bool  m_culling;
 
-  bool  m_editor;
   bool  m_wired;
 
   u32   m_max_faces;
@@ -243,7 +242,6 @@ public:
   void render();
   void update();
   void resize(float, float);
-  void setEditor(bool);
 
   void setDefaultFont(kgmFont*);
 

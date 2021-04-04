@@ -1,0 +1,7 @@
+<!xml version="1.0">
+<Font>
+ <Texture value = "fonta.tga" />
+ <Rows value = "16" />
+ <Columns value = "16" />
+ <Base value = "0" />
+</Font>
