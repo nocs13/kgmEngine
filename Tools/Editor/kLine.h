@@ -9,6 +9,7 @@ class kLine : public kgmMesh
 
 public:
   kLine(u32 color = 0xff7777bb);
+  ~kLine();
 
   void set(vec3 v1, vec3 v2);
 };

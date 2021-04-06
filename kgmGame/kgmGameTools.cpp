@@ -1301,7 +1301,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
   return m;
 }
 
-kgmGpuMesh* kgmGameTools::toGpuMesh(kgmIGC* gc, kgmMesh* m)
+/*kgmGpuMesh* kgmGameTools::toGpuMesh(kgmIGC* gc, kgmMesh* m)
 {
   kgmGpuMesh* gmesh = null;
 
@@ -1318,7 +1318,7 @@ kgmGpuMesh* kgmGameTools::toGpuMesh(kgmIGC* gc, kgmMesh* m)
   }
 
   return gmesh;
-}
+}*/
 
 s32 kgmGameTools::genShapeCollision(kgmXml& x, kgmList<triangle3>& shape)
 {

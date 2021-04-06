@@ -96,8 +96,7 @@ public:
   void setBody(kgmPBody* b);
 
 private:
-  virtual void clear()
-  { }
+  virtual void clear();
 
 public:
   kgmIGame* game() const

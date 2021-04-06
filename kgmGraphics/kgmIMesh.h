@@ -117,8 +117,6 @@ public:
   virtual RenderType rtype() const = 0;
 
   virtual box3 bound() const = 0;
-
-  virtual bool gpu() const = 0;
 };
 
 #endif // KGMIMESH_H

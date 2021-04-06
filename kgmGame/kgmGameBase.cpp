@@ -751,7 +751,7 @@ int kgmGameBase::gUnload()
     if (m_script)
       m_script->onRemove((*i));
 
-    delete (*i);
+    (*i)->release();
   }
 
   for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)

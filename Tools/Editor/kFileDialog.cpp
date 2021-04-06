@@ -214,7 +214,7 @@ void kFileDialog::forOpen(kgmString dir, ClickEventCallback fn_call, void* arg)
   fnArg = arg;
 }
 
-void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call = null, void* arg = null)
+void kFileDialog::forSave(kgmString dir, ClickEventCallback fn_call, void* arg)
 {
   if(dir.length() < 1)
   {

@@ -201,8 +201,7 @@ protected:
   bool  m_wired;
 
   u32   m_max_faces;
-
-  u32    m_bg_color;
+  u32   m_bg_color;
 
   FpsRender*    m_r_fps;
   GuiRender*    m_r_gui = null;

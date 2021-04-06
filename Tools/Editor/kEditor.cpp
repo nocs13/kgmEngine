@@ -179,6 +179,18 @@ void kEditor::init()
     text->set(textData);
 
     m_graphics->setBgColor(0xff222222);
+
+    kgmUnit* u = new kgmUnit(this);
+
+    u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+
+    gAppend(u);
+
+    u = new kgmUnit(this);
+
+    u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+
+    gAppend(u);
 }
 
 void kEditor::select(kgmString name)
@@ -447,10 +459,10 @@ bool kEditor::addMesh(kgmString name)
 
   kgmUnit* visual = new kgmUnit(this);
 
-  visual->setNode(new kgmGNode(visual, mesh, kgmIGraphics::NodeMesh));
-
   if(!visual)
     return false;
+
+  visual->setNode(new kgmGNode(visual, mesh, kgmIGraphics::NodeMesh));
 
   visual->setName(kgmString("Mesh_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -812,7 +824,7 @@ void kEditor::onMenu(u32 id)
     onMapOpen();
     break;
   case ME_MAP_SAVE:
-    //onMapSave();
+    onMapSave();
     break;
   case ME_EDIT_CLONE:
     onEditClone();
@@ -1091,6 +1103,8 @@ void kEditor::onEditOptions()
 
 void kEditor::onAddBox()
 {
+  kgm_log() << "kEditor::onAddBox";
+
   kgmShape* s = new kgmShape(1.f, 1.f, 1.f);
 
   m_objects.add(s);
@@ -1108,6 +1122,8 @@ void kEditor::onAddBox()
 
 void kEditor::onAddPlane()
 {
+  kgm_log() << "kEditor::onAddPlane";
+
   kgmShape* s = new kgmShape(1.f, 1.f);
 
   m_objects.add(s);
@@ -1125,10 +1141,12 @@ void kEditor::onAddPlane()
 
 void kEditor::onAddSphere()
 {
+  kgm_log() << "kEditor::onAddSphere";
 }
 
 void kEditor::onAddCylinder()
 {
+  kgm_log() << "kEditor::onAddCylinder";
 }
 
 void kEditor::onAddMesh()

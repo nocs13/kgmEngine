@@ -142,10 +142,12 @@ void BaseRender::draw(kgmIMesh *m)
   if(!m)
     return;
 
+  kgmMesh* mesh = static_cast<kgmMesh*>(m);
+
   u32  pmt;
   u32  ibs;
 
-  switch(m->rtype())
+  switch(mesh->rtype())
   {
   case kgmMesh::RT_LINE:
     pmt = gcpmt_lines;
@@ -160,17 +162,16 @@ void BaseRender::draw(kgmIMesh *m)
     ibs = 3;
   };
 
-  if (m->gpu())
-  {
-    gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
-                           m->fsize() / ibs, ibs * m->fcount(), 0);
-  }
-  else
-  {
-    gc->gcDraw(pmt, m->fvf(), m->vsize(),
-    m->vcount(), m->vertices(),
-    m->fsize() / ibs, ibs * m->fcount(), m->faces());
-  }
+  //if (m->gpu())
+  //{
+  //  gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
+  //                         m->fsize() / ibs, ibs * m->fcount(), 0);
+  //}
+  //else
+  //{
+    gc->gcDraw(pmt, m->fvf(), m->vsize(), m->vcount(), m->vertices(),
+               m->fsize() / ibs, ibs * m->fcount(), m->faces());
+  //}
 }
 
 void BaseRender::draw(kgmParticles* particles)

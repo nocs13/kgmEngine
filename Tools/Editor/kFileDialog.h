@@ -1,10 +1,10 @@
 #ifndef KFILEDIALOG_H
 #define KFILEDIALOG_H
 
-#include "../../kgmGraphics/kgmGui.h";
-#include "../../kgmGraphics/kgmGuiText.h";
-#include "../../kgmGraphics/kgmGuiList.h";
-#include "../../kgmGraphics/kgmGuiButton.h";
+#include "../../kgmGraphics/kgmGui.h"
+#include "../../kgmGraphics/kgmGuiText.h"
+#include "../../kgmGraphics/kgmGuiList.h"
+#include "../../kgmGraphics/kgmGuiButton.h"
 
 class kFileDialog : public kgmGui
 {

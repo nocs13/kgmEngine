@@ -8,7 +8,6 @@
 #include "../kgmMedia/kgmWave.h"
 #include "../kgmGraphics/kgmFont.h"
 #include "../kgmGraphics/kgmMesh.h"
-#include "../kgmGraphics/kgmGpuMesh.h"
 #include "../kgmGraphics/kgmPolygon.h"
 #include "../kgmGraphics/kgmMaterial.h"
 #include "../kgmGraphics/kgmLight.h"
@@ -64,9 +63,7 @@ public:
  static kgmMesh*  genMesh(kgmMemory<u8>& m);
  static kgmMesh*  genMesh(kgmXml& x);
 
- static kgmGpuMesh* toGpuMesh(kgmIGC*, kgmMesh*);
-
- //SHAPES
+//SHAPES
   static s32                  genShapeCollision(kgmXml& x, kgmList<triangle3>& shape);
   static kgmShapeCollision*   genShapeCollision(kgmXml& x);
   static kgmCollision::Shape* genShapeCollision(kgmMesh& x);

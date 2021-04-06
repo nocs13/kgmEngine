@@ -7,7 +7,7 @@
 
 #define KGM_MESH_MAP_CHANNELS 4
 
-class kgmMesh: public kgmIMesh, public kgmResource
+class kgmMesh:public kgmIMesh,  public kgmResource
 {
   KGM_OBJECT(kgmMesh);
 
@@ -109,11 +109,6 @@ public:
   RenderType rtype() const
   {
     return m_rtype;
-  }
-
-  bool gpu() const
-  {
-    return false;
   }
 };
 

@@ -23,6 +23,17 @@ kgmUnit::~kgmUnit()
     remove();
 }
 
+void kgmUnit::clear()
+{
+  if (m_node)
+    m_node->release();
+
+  if (m_body)
+    m_body->release();
+
+  m_node = null;
+}
+
 void kgmUnit::remove()
 {
   clear();

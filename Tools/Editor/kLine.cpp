@@ -13,6 +13,10 @@ kLine::kLine(u32 color)
   m_rtype = kgmMesh::RT_LINE;
 }
 
+kLine::~kLine()
+{
+}
+
 void kLine::set(vec3 v1, vec3 v2)
 {
   v[0].pos = v1;

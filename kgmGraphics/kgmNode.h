@@ -13,7 +13,7 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
   kgmObject* m_object = null;
   kgmIGraphics::TypeNode m_type;
 
-  kgmMaterial* m_material;
+  kgmMaterial* m_material = null;
 
   mtx4      m_transform;
 
@@ -26,6 +26,8 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
         o->increment();
 
       m_type = t;
+
+      m_transform.identity();
     }
 
     ~kgmNode()

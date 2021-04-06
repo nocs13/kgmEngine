@@ -9,9 +9,4 @@ class kgmGNode : public kgmNode
 public:
   kgmGNode(kgmUnit* u, kgmObject* n, kgmIGraphics::TypeNode t);
   ~kgmGNode();
-
-  kgmIGraphics::TypeNode getNodeType()
-  {
-    return kgmIGraphics::NodeLight;
-  }
 };

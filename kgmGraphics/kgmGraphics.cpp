@@ -438,6 +438,7 @@ void kgmGraphics::add(INode* nod)
   {
   case  NodeMesh:
     m_meshes.add(nod);
+
     mtl = nod->getNodeMaterial();
 
     if (mtl && mtl->envType() && mtl->envType() != kgmMaterial::EnvironmentTypeImage)
@@ -1298,17 +1299,17 @@ void kgmGraphics::draw(kgmIMesh *m)
   if (m_wired)
     pmt = gcpmt_lines;
 
-  if (m->gpu())
-  {
-    gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
-                           m->fsize() / ibs, ibs * m->fcount(), 0);
-  }
-  else
-  {
+  //if (m->gpu())
+  //{
+  //  gc->gcDrawVertexBuffer(m->vertices(), pmt, m->fvf(), m->vsize(), m->vcount(),
+  //                         m->fsize() / ibs, ibs * m->fcount(), 0);
+  //}
+  //else
+  //{
     gc->gcDraw(pmt, m->fvf(), m->vsize(),
                m->vcount(), m->vertices(),
                m->fsize(), ibs * m->fcount(), m->faces());
-  }
+  //}
 }
 
 s32 kgmGraphics::getShaderId(kgmString s)

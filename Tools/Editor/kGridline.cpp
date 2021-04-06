@@ -31,5 +31,4 @@ kGridline::kGridline(u8 count, f32 space, u32 color)
 
 kGridline::~kGridline()
 {
-
 }
