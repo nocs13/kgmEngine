@@ -1531,10 +1531,9 @@ void* kgmOGL::gcGenShader(kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
 
 #endif
 
-  glDetachObject(prog, vshad);
+  //glDetachObject(prog, vshad);
   glDeleteObject(vshad);
-
-  glDetachObject(prog, fshad);
+  //glDetachObject(prog, fshad);
   glDeleteObject(fshad);
 
 #endif
