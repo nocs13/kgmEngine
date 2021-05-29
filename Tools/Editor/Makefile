@@ -17,7 +17,7 @@ else
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS
 	FLGS = -g -O0 -mwindows -fpermissive -std=gnu++11
 	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
-	RM = del
+	RM = rm -f
 endif
 
 all:

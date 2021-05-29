@@ -4,7 +4,11 @@
 
 #include "kgmMemory.h"
 
+#ifdef u_int32_t
 typedef u_int32_t uint32;
+#else
+typedef uint32_t uint32;
+#endif
 
 struct _k_Memory
 {
