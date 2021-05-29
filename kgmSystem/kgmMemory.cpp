@@ -11,7 +11,7 @@ static int     g_o_count = 0;
 void* kgm_alloc(size_t size)
 {
 #ifdef DEBUG
-  fprintf(stderr, "kgm_alloc [%d].\n", size);
+  fprintf(stderr, "kgm_alloc [%ld].\n", size);
 #endif
 
   if (size < 1)
@@ -21,7 +21,7 @@ void* kgm_alloc(size_t size)
 
   p = ::malloc(size);
 
-  fprintf(stderr, "          pointer [%p] size [%d].\n", p, size);
+  fprintf(stderr, "          pointer [%p] size [%ld].\n", p, size);
 
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] == null) {
@@ -48,7 +48,7 @@ void* kgm_alloc(size_t size)
 void* kgm_realloc(void *p, size_t size)
 {
 #ifdef DEBUG
-  fprintf(stderr, "kgm_realloc [%p, %d].\n", p, size);
+  fprintf(stderr, "kgm_realloc [%p, %ld].\n", p, size);
 #endif
 
   if (size < 1)
