@@ -11,11 +11,10 @@
 
 #ifdef WIN32
  // Need update _WIN32_WINNT to 0x0600 in _mingw.h
-
  #include <windows.h>
  #include <winbase.h>
- //#include <synchapi.h>
- typedef PVOID CONDITION_VARIABLE, *PCONDITION_VARIABLE;
+ #include <synchapi.h>
+ //typedef PVOID CONDITION_VARIABLE, *PCONDITION_VARIABLE;
 #else
  #include <stdlib.h>
  #include <unistd.h>

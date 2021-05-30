@@ -312,7 +312,7 @@ kgmDSound::kgmDSound()
        m_proceed = true;
 
        //m_thread.start(this, &kgmDSound::proceed);
-       kgmThread::thread_priority(m_thread, kgmThread::PrIdle);
+       kgmThread::thread_priority(m_thread, kgmThread::PrNormal);
 
        m_mutex = kgmThread::mutex_create();
      }

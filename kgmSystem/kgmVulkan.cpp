@@ -2385,6 +2385,34 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
     return VK_FALSE;
 }
 
+#ifdef WIN32
+
+__stdcall VkBool32 FN_vkDebugReportCallbackEXT(
+    VkDebugReportFlagsEXT                       flags,
+    VkDebugReportObjectTypeEXT                  objectType,
+    uint64_t                                    object,
+    size_t                                      location,
+    int32_t                                     messageCode,
+    const char*                                 pLayerPrefix,
+    const char*                                 pMessage,
+    void*                                       pUserData)
+    {
+        kgm_log() << "Vulkan DEBUG: (";
+
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_INFORMATION_BIT_EXT) != 0) kgm_log() << "INFO";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_WARNING_BIT_EXT) != 0) kgm_log() << "WARNING";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) != 0) kgm_log() << "PERFORMANCE";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT) != 0) kgm_log() << "DEBUG";
+        if((flags & VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT) != 0) kgm_log() << "ERROR";
+        kgm_log() << ")";
+        kgm_log() << "{" << pLayerPrefix << "} ";
+        kgm_log() << pMessage << "\n";
+
+        return VK_FALSE;
+    }
+
+#endif
+
 #endif
 
 bool kgmVulkan::initDebug()
@@ -2402,6 +2430,9 @@ bool kgmVulkan::initDebug()
           | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
           | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_ERROR_BIT_EXT
           | VkDebugReportFlagBitsEXT::VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+  #ifdef WIN32
+  debugReportCallbackCreateInfo.pfnCallback = FN_vkDebugReportCallbackEXT;
+  #else
   debugReportCallbackCreateInfo.pfnCallback = [](
           VkDebugReportFlagsEXT flags,
           VkDebugReportObjectTypeEXT objectType,
@@ -2425,6 +2456,7 @@ bool kgmVulkan::initDebug()
 
         return VK_FALSE;
       };
+  #endif
   debugReportCallbackCreateInfo.pUserData = this;
 
   if (m_vk.vkCreateDebugReportCallbackEXT && m_vk.vkCreateDebugReportCallbackEXT(m_instance,
