@@ -16,7 +16,7 @@ ifeq ($(OS), Linux)
 else
 	DEFS = -DWIN32 -DDEBUG -DTEST -DGPUSHADERS
 	FLGS = -g -O0 -mwindows -fpermissive -std=gnu++11
-	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound
+	LIBS = -lpthread -lopengl32 -luser32 -lkernel32 -lgdi32 -lglu32 -ldsound -llua -llualib -lWinmm
 	RM = rm -f
 endif
 
