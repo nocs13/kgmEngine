@@ -19,6 +19,7 @@ private:
   {
     THREADER_FUNCTION funtion;
     void*             object;
+    u32               stime;
   };
 
   struct Thread
@@ -35,6 +36,7 @@ private:
   bool m_active = true;
 
   Thread m_threads[MAX_THREADS];
+  Thread m_control;
 
 public:
   kgmGameThreader();
@@ -46,4 +48,5 @@ public:
   bool finish();
 
   static int threader(Thread*);
+  static int control(Thread*);
 };

@@ -123,15 +123,19 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
   {
     stick = kgmTime::getTicks();
 
-    kgmThread::mutex_lock(t->mutex);
-
     for(u32 i = 0; i < MAX_WORKERS; i++)
     {
-      if(t->workers[i].funtion)
-        t->workers[i].funtion(t->workers[i].object);
-    }
+      kgmThread::mutex_lock(t->mutex);
 
-    kgmThread::mutex_unlock(t->mutex);
+      if(t->workers[i].funtion)
+      {
+        t->workers[i].stime = kgmTime::getTicks();
+        t->workers[i].funtion(t->workers[i].object);
+        t->workers[i].stime = 0;
+      }
+
+      kgmThread::mutex_unlock(t->mutex);
+    }
 
     u32 etick = kgmTime::getTicks();
 
@@ -149,6 +153,21 @@ int kgmGameThreader::threader(kgmGameThreader::Thread* t)
 #endif
 
     kgmThread::sleep(sleep);
+  }
+
+  return 0;
+}
+
+int kgmGameThreader::control(kgmGameThreader::Thread* t)
+{
+  if(!t)
+    return -1;
+
+  kgmGameThreader* gt = (kgmGameThreader*)t->gt;
+
+  while(gt->m_active)
+  {
+
   }
 
   return 0;
