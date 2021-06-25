@@ -107,16 +107,16 @@ public:
   virtual Vertex* vertices() = 0;
   virtual Face*   faces()    = 0;
 
-  virtual u32 vsize() = 0;
-  virtual u32 fsize() = 0;
-  virtual u32 fvf()   = 0;
-  virtual u32 fff()   = 0;
-  virtual u32 vcount() const = 0;
-  virtual u32 fcount() const = 0;
+  virtual u32 vsize()  = 0;
+  virtual u32 fsize()  = 0;
+  virtual u32 fvf()    = 0;
+  virtual u32 fff()    = 0;
+  virtual u32 vcount() = 0;
+  virtual u32 fcount() = 0;
 
-  virtual RenderType rtype() const = 0;
+  virtual RenderType rtype() = 0;
 
-  virtual box3 bound() const = 0;
+  virtual box3 bound() = 0;
 };
 
 #endif // KGMIMESH_H

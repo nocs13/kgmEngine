@@ -6,8 +6,8 @@
   public:                                                           \
   static unsigned int  cSize(){ return sizeof(class o_class); }     \
   static const char*   cClass(){ return #o_class; }                 \
-  virtual unsigned int vSize(){ return sizeof(class o_class); }             \
-  virtual const char*  vClass(){ return #o_class; }                         \
+  virtual unsigned int vSize(){ return sizeof(class o_class); }     \
+  virtual const char*  vClass(){ return #o_class; }                 \
   private:
 
 class kgmApp;
@@ -17,30 +17,6 @@ class kgmObject
   KGM_OBJECT(kgmObject);
 
   friend class kgmApp;
-
-/*
-public:
-  static unsigned int  cSize()
-  {
-    return sizeof(kgmObject);
-  }
-
-  static const char*   cClass()
-  {
-    return "kgmObject";
-  }
-
-  virtual unsigned int vSize()
-  {
-    return sizeof(kgmObject);
-  }
-
-  virtual const char*  vClass()
-  {
-    return "kgmObject";
-  }
-*/
-private:
 
 protected:
   template <class... Args> class Signal;
@@ -57,7 +33,7 @@ protected:
   protected:
     virtual ~AbstractSlot()
     {
-      for(int i = 0; i < signals.length(); i++)
+      for (int i = 0; i < signals.length(); i++)
         signals[i]->disconnect(this);
     }
 

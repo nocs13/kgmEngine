@@ -147,7 +147,7 @@ void BaseRender::draw(kgmIMesh *m)
   u32  pmt;
   u32  ibs;
 
-  switch(mesh->rtype())
+  switch(m->rtype())
   {
   case kgmMesh::RT_LINE:
     pmt = gcpmt_lines;
@@ -161,6 +161,10 @@ void BaseRender::draw(kgmIMesh *m)
     pmt = gcpmt_triangles;
     ibs = 3;
   };
+
+  u32 fvf    = m->fvf();
+  u32 vsize  = m->vsize();
+  u32 vcount = m->vcount();
 
   //if (m->gpu())
   //{

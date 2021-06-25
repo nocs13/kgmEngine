@@ -7,7 +7,7 @@
 
 #define KGM_MESH_MAP_CHANNELS 4
 
-class kgmMesh:public kgmIMesh,  public kgmResource
+class kgmMesh: public kgmIMesh, public kgmResource
 {
   KGM_OBJECT(kgmMesh);
 
@@ -54,7 +54,7 @@ public:
   u32     fvf();
   u32     fff();
 
-  box3 bound() const
+  box3 bound()
   {
     return m_bound;
   }
@@ -80,7 +80,7 @@ public:
     return m_faces;
   }
 
-  u32 vcount() const
+  u32 vcount()
   {
     if (m_linked)
       return m_linked->vcount();
@@ -88,7 +88,7 @@ public:
     return m_vcount;
   }
 
-  u32 fcount() const
+  u32 fcount()
   {
     if (m_linked)
       return m_linked->fcount();
@@ -106,7 +106,7 @@ public:
     return m_mtlId;
   }
 
-  RenderType rtype() const
+  RenderType rtype()
   {
     return m_rtype;
   }

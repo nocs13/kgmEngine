@@ -28,14 +28,12 @@ else
 endif
 
 all: shaders
-#	make -C ..
-#	$(CC) -g -c $(DEFS) $(FLAGS) *.cpp
+	make -C ..
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
-#	$(CC) -g -c $(DEFS) $(INCS) $(LIBD) $(libs) kTest.cpp
-#	$(CC) -g -o kTest $(DEFS) $(FLAGS) $(OBJS) $(INCS) $(libs) -L../ -L../kgmLua
 	$(CC) -g -o Komble$(EXT) *.o ../libkgmEngine_s.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 
 clean:
+	make -C .. distclean
 	$(RM) Komble$(EXT) *.o
 
 run:
@@ -46,4 +44,3 @@ android: clean
 
 shaders:
 	./Data/shaders/glsl2spirv.sh
-
