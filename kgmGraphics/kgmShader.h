@@ -8,7 +8,7 @@ class kgmIGC;
 
 class kgmShader: public kgmResource
 {
-  KGM_OBJECT(kgmShader);
+  KGM_OBJECT(kgmShader)
 
 public:
   enum Input

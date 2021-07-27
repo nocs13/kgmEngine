@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmBase.h"
 #include "../kgmBase/kgmString.h"
 
-class lua_State;
+struct lua_State;
 class kgmIResources;
 
 class kgmLuaScript: public kgmIScript

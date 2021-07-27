@@ -8,7 +8,7 @@
 class kgmGraphics;
 class kgmVisual;
 class kgmLight;
-class kgmIMesh;
+class kgmMesh;
 class kgmIcon;
 class kgmShader;
 class kgmMaterial;
@@ -52,7 +52,7 @@ public:
   }
 
 protected:
-  void draw(kgmIMesh*);
+  void draw(kgmMesh*);
   void draw(kgmVisual*);
   void draw(kgmParticles*);
   void draw(kgmIcon*, kgmCamera*);

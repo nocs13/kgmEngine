@@ -6,7 +6,7 @@
 // INTERFACE FOR PICTURE
 class kgmPicture: public kgmResource
 {
-    KGM_OBJECT(kgmPicture);
+  KGM_OBJECT(kgmPicture)
 
 public:
   u32  width, height, bpp, frames;

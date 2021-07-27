@@ -319,7 +319,7 @@ kgmAlsa::kgmAlsa()
       //char* device = "plughw:0,0";
       err = (size_t)psnd_pcm_open((void**)&m_handle, device, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
 
-      if(err < 0)
+      if(err)
       {
         usleep(200000);
 
@@ -378,17 +378,19 @@ kgmAlsa::kgmAlsa()
           psnd_pcm_hw_params_free(params);
           //psnd_pcm_close(m_handle);
         }
-
-        if(err = psnd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
-                                     SND_PCM_ACCESS_RW_INTERLEAVED, 2,
-                                     44100, 1, m_mixer.getMsTime() * 1000) < 0)
+        err = (size_t) psnd_pcm_set_params(m_handle, SND_PCM_FORMAT_S16_LE,
+                                           SND_PCM_ACCESS_RW_INTERLEAVED, 2,
+                                           44100, 1, m_mixer.getMsTime() * 1000);
+        if(err != 0)
         {
-          kgm_log() << "kgmAlsa: Playback set param error: " << (char*)psnd_strerror((void*) err) << ".\n";
+          kgm_log() << "kgmAlsa: Playback set param error: " << (char*) psnd_strerror((void*) err) << ".\n";
 
           return;
         }
 
-        if(err = psnd_pcm_prepare(m_handle) < 0)
+        err = (size_t) psnd_pcm_prepare(m_handle);
+
+        if(err != 0)
         {
           kgm_log() << "kgmAlsa ERROR: Can't prepare " << (char*)psnd_strerror((void*) err) << ".\n";
 

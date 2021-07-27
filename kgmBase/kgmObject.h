@@ -2,6 +2,7 @@
 #include "kgmList.h"
 #include "kgmInterface.h"
 
+
 #define KGM_OBJECT(o_class)                                         \
   public:                                                           \
   static unsigned int  cSize(){ return sizeof(class o_class); }     \
@@ -14,7 +15,7 @@ class kgmApp;
 
 class kgmObject
 {
-  KGM_OBJECT(kgmObject);
+  KGM_OBJECT(kgmObject)
 
   friend class kgmApp;
 
@@ -41,7 +42,7 @@ protected:
 
     virtual void add(Signal<Args...>* e)
     {
-      if (!signals.has(e))
+      if (signals.has(e) == false)
         signals.add(e);
     }
 
@@ -54,7 +55,7 @@ protected:
     virtual void call(kgmObject* sender, Args... args) = 0;
 
   protected:
-    kgmList<Signal<Args...>*> signals;
+    kgmList< Signal<Args...>* > signals;
     kgmObject*                sender;
   };
 
@@ -225,7 +226,7 @@ public:
   kgmObject();
   kgmObject(const kgmObject& o);
 
-  virtual bool isClass(const char* o);
+  bool isClass(const char* o);
 
   u32 references() const
   {

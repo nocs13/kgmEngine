@@ -120,7 +120,7 @@ enum EVENTS
 //base class for system and user events
 class kgmEvent: public kgmObject
 {
-  KGM_OBJECT(kgmEvent);
+  KGM_OBJECT(kgmEvent)
 
 public:
   typedef struct
@@ -184,7 +184,7 @@ public:
     }
   }
 
-  virtual void onAction(kgmEvent* e, int a)
+  virtual void onAction(kgmEvent*, int)
   {
   }
 

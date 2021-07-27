@@ -303,3 +303,45 @@ u32 kgmMesh::fsize()
 
   return 0;
 }
+
+kgmMesh::RenderType kgmMesh::rtype()
+{
+  return m_rtype;
+}
+
+box3 kgmMesh::bound()
+{
+  return m_bound;
+}
+
+kgmMesh::Vertex* kgmMesh::vertices()
+{
+  if (m_linked)
+    return m_linked->vertices();
+
+  return m_vertices;
+}
+
+kgmMesh::Face* kgmMesh::faces()
+{
+  if (m_linked)
+    return m_linked->faces();
+
+  return m_faces;
+}
+
+u32 kgmMesh::vcount()
+{
+  if (m_linked)
+    return m_linked->vcount();
+
+  return m_vcount;
+}
+
+u32 kgmMesh::fcount()
+{
+  if (m_linked)
+    return m_linked->fcount();
+
+  return m_fcount;
+}

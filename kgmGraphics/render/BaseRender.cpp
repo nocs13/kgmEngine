@@ -137,17 +137,21 @@ void BaseRender::draw(kgmVisual* visual)
   }
 }
 
-void BaseRender::draw(kgmIMesh *m)
+void BaseRender::draw(kgmMesh *m)
 {
   if(!m)
     return;
 
-  kgmMesh* mesh = static_cast<kgmMesh*>(m);
+  size_t t = (size_t) m;
+
+  kgmMesh* mesh = (kgmMesh*) t;
 
   u32  pmt;
   u32  ibs;
 
-  switch(m->rtype())
+  u32  typ = mesh->rtype();
+
+  switch(typ)
   {
   case kgmMesh::RT_LINE:
     pmt = gcpmt_lines;
@@ -162,9 +166,9 @@ void BaseRender::draw(kgmIMesh *m)
     ibs = 3;
   };
 
-  u32 fvf    = m->fvf();
-  u32 vsize  = m->vsize();
-  u32 vcount = m->vcount();
+  u32 fvf    = mesh->fvf();
+  u32 vsize  = mesh->vsize();
+  u32 vcount = mesh->vcount();
 
   //if (m->gpu())
   //{
@@ -173,8 +177,8 @@ void BaseRender::draw(kgmIMesh *m)
   //}
   //else
   //{
-    gc->gcDraw(pmt, m->fvf(), m->vsize(), m->vcount(), m->vertices(),
-               m->fsize() / ibs, ibs * m->fcount(), m->faces());
+    gc->gcDraw(pmt, mesh->fvf(), mesh->vsize(), mesh->vcount(), mesh->vertices(),
+               mesh->fsize() / ibs, ibs * mesh->fcount(), mesh->faces());
   //}
 }
 

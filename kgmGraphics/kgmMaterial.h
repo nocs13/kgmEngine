@@ -12,7 +12,7 @@ class kgmShader;
 
 class kgmMaterial: public kgmResource
 {
-  KGM_OBJECT(kgmMaterial);
+  KGM_OBJECT(kgmMaterial)
 
 protected:
   kgmIGC*  m_gc;

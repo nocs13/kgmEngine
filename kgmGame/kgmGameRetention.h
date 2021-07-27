@@ -11,7 +11,7 @@
 
 class kgmGameRetention : public kgmObject
 {
-  KGM_OBJECT(kgmGameRetention);
+  KGM_OBJECT(kgmGameRetention)
 
   kgmMap<kgmString, kgmString> m_data;
 

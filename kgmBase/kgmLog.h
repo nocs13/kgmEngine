@@ -16,6 +16,8 @@ class kgmLog
 public:
     static kgmLog LOG;
 
+    kgmString f_path;
+
 private:
     kgmTime time;
 
@@ -26,6 +28,7 @@ public:
 
     kgmLog(const char* path)
     {
+      f_path = path;
     }
 
     ~kgmLog()

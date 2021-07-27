@@ -74,7 +74,7 @@ void kgm_app_abort()
 
 void kgm_sigterm_handler(int s)
 {
-  goto *exit_target;
+  //goto *exit_target;
 }
 
 void kgm_signal_handler(int s)

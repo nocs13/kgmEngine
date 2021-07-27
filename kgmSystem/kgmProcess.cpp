@@ -81,7 +81,7 @@ bool kgmProcess::wait()
 
   s32 status = 0;
 
-  while(::wait(&status) != m_process);
+  while(::wait(&status) != (int) m_process);
 
   #endif
 

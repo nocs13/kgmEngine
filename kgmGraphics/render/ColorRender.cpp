@@ -24,7 +24,7 @@ void ColorRender::render()
   for (s32 i = 0; i < gr->m_a_meshes_count; i++)
   {
     kgmIGraphics::INode*       nod = gr->m_a_meshes[i];
-    kgmIMesh*     msh = (kgmIMesh*) nod->getNodeObject();
+    kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
     kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
     mtx4     m = nod->getNodeTransform();

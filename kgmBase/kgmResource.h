@@ -6,7 +6,7 @@ class kgmIResources;
 
 class kgmResource: public kgmObject
 {
-  KGM_OBJECT(kgmResource);
+  KGM_OBJECT(kgmResource)
 
   friend class kgmIResources;
 

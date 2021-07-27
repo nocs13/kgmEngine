@@ -1267,7 +1267,7 @@ void kgmGraphics::shaderSetPrivate()
     s->set("g_txSpecular", 2);
 }
 
-void kgmGraphics::draw(kgmIMesh *m)
+void kgmGraphics::draw(kgmMesh *m)
 {
   if(!m || !m->vcount() || !m->vertices())
     return;

@@ -254,7 +254,7 @@ public:
 protected:
   void render(kgmCamera &cam, Options &op);
 
-  void draw(kgmIMesh*);
+  void draw(kgmMesh*);
   void draw(kgmVisual*);
   void draw(kgmParticles*);
   void draw(kgmIcon*);

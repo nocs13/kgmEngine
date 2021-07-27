@@ -7,6 +7,7 @@
 
 static size_t* g_objects = null;
 static int     g_o_count = 0;
+static int     g_m_alloc = 0;
 
 void* kgm_alloc(size_t size)
 {
@@ -20,6 +21,7 @@ void* kgm_alloc(size_t size)
   void* p = null;
 
   p = ::malloc(size);
+  g_m_alloc++;
 
   fprintf(stderr, "          pointer [%p] size [%ld].\n", p, size);
 
@@ -77,6 +79,7 @@ void kgm_free(void* p)
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] == (size_t) p) {
       ::free(p);
+      g_m_alloc--;
       fprintf(stderr, "        [%p] released at [%d].\n", p, i);
 
       p = null;
@@ -106,19 +109,23 @@ void kgm_memory_init()
 void kgm_memory_cleanup()
 {
 #ifdef DEBUG
-  fprintf(stderr, "kgm_memory_cleanup.\n");
+  fprintf(stderr, "kgm_memory_cleanup actual allocs %d.\n", g_m_alloc);
 #endif
 
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] != null) {
       fprintf(stderr, "        [%p] releasing at [%d].\n", (void*) g_objects[i], i);
       ::free((void*) g_objects[i]);
-
+      g_m_alloc--;
       g_objects[i] = null;
     }
   }
 
   ::free(g_objects);
+
+#ifdef DEBUG
+  fprintf(stderr, "kgm_memory_cleanup actual allocs %d.\n", g_m_alloc);
+#endif
 
   g_objects = null;
   g_o_count = 0;

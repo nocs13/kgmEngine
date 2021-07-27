@@ -238,15 +238,12 @@ public:
     return &kgmArray<T>::m_data[i]; 
   } 
  
-  kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos)
-  { 
-    //not implemented 
-    kgmTString<T> r; 
-    //bool istok = false;
-    //unsigned int  i = 0;
- 
-    return r; 
-  } 
+  //kgmTString<T> tokenize(kgmTString<T>& tok, unsigned int& pos)
+  //{
+    //FIXME! Not implemented
+    //kgmTString<T> r;
+    //return r;
+  //}
  
   //string between symbols 
   kgmTString<T> string(T ssym, T esym)
@@ -312,6 +309,11 @@ public:
   { 
     if(!buf || !bufLen) 
       return false; 
+
+    hexStr.alloc(bufLen * 2);
+
+    for (int i = 0; i < bufLen; i++)
+      sprintf(&hexStr.data()[2 * i], "%.2x", (u8) buf[i]);
  
     return true; 
   } 

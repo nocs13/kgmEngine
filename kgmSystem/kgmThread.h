@@ -25,7 +25,7 @@
 
 class kgmThread: public kgmObject
 {
-  KGM_OBJECT(kgmThread);
+  KGM_OBJECT(kgmThread)
 
 public:
 

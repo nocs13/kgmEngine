@@ -10,7 +10,8 @@ class kgmMesh;
 class kgmCamera;
 class kgmMaterial;
 
-class kgmParticles: public kgmObject
+class
+kgmParticles: public kgmObject
 {
   KGM_OBJECT(kgmParticles);
 

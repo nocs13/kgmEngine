@@ -7,7 +7,7 @@
 //animation for animated groups
 class kgmAnimation: public kgmResource
 {
-  KGM_OBJECT(kgmAnimation);
+  KGM_OBJECT(kgmAnimation)
 
 public:
   struct Frame

@@ -233,7 +233,7 @@ public:
 
     if (!csize && _First)
     {
-      int k = 0;
+      exit(EXIT_FAILURE);
     }
 
     return i;
@@ -272,7 +272,7 @@ public:
 
     if (!csize && _First)
     {
-      int k = 0;
+      exit(EXIT_FAILURE);
     }
   }
 
@@ -308,7 +308,7 @@ public:
 
     if (!csize && _First)
     {
-      int k = 0;
+      exit(EXIT_FAILURE);
     }
   }
 

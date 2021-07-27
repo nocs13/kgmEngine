@@ -97,7 +97,7 @@ public:
 
   bool from_mem(char *mem, u32 msize)
   {
-    if(!mem)
+    if(!mem || msize < 32)
       return false;
 
     char *pM = mem;

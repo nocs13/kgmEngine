@@ -5,7 +5,7 @@
 
 class kgmFile: public kgmObject
 {
-  KGM_OBJECT(kgmFile);
+  KGM_OBJECT(kgmFile)
 public:
   enum
   {

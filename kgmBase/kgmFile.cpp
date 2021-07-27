@@ -112,7 +112,9 @@ u32 kgmFile::write(void *src, u32 cnt)
 
 u32 kgmFile::length()
 {
-  struct stat state = {0};
+  struct stat state;
+
+  memset(&state, 0, sizeof(state));
 
   if(fstat(m_file, &state) != 0)
     return -1;

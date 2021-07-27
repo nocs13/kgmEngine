@@ -2,11 +2,13 @@ OS = $(shell uname -s)
 
 RM =
 
-CC = ccache g++
-#CC = clang
+#CC = ccache g++
+CC = ccache clang++
 AR = ar
 DSND = -OAL
 DSEP = /
+#ERRS = -Werror
+ERRS= -Wall -Wextra -pedantic
 
 FLGS =
 DIRS =  -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics
@@ -17,7 +19,7 @@ LIBS =
 
 ifeq ($(OS), Linux)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN
-	FLGS = -fPIC -O0 -std=gnu++11 -Werror
+	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	LIBS = -llua -llualib -lpthread -lX11 -lGL
 	RM = rm -f
