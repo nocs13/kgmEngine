@@ -1745,6 +1745,20 @@ void  kgmVulkan::gcDepth(bool depth, bool mask, u32 mode)
   m_depthCompare = vk_compare(mode);
 }
 
+//SCISSOR
+void kgmVulkan::gcScissor(bool on, int x, int y, int w, int h)
+{
+  m_sc_rect[0] = x;
+  m_sc_rect[1] = y;
+  m_sc_rect[2] = w;
+  m_sc_rect[3] = h;
+
+  if (on)
+    m_sc_set = true;
+  else
+    m_sc_set = false;
+}
+
 //VERTEX & INDEX BUFFERS
 void* kgmVulkan::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
 {

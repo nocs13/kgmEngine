@@ -21,7 +21,7 @@ ifeq ($(OS), Linux)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
-	LIBS = -llua -llualib -lpthread -lX11 -lGL
+	LIBS = -llua -llualib -lpthread -lX11 -lGL -ldl
 	RM = rm -f
 else
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)

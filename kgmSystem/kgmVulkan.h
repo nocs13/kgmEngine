@@ -615,6 +615,9 @@ class kgmVulkan: public kgmIGC
   f32 m_depth;
   u32 m_stensil;
 
+  s32  m_sc_rect[4];
+  bool m_sc_set;
+
   u32 m_clear;
 
   u32 m_error = 0;
@@ -652,9 +655,9 @@ public:
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
 
   // TEXTURE
-  void* gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type);
-  void  gcFreeTexture(void *t);
-  void  gcSetTexture(u32 stage, void *t);
+  gchandle gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type);
+  void  gcFreeTexture(gchandle t);
+  void  gcSetTexture(u32 stage, gchandle t);
 
   // VIEWPORT
   void  gcSetViewport(int x, int y, int w, int h, float n, float f);
@@ -668,19 +671,22 @@ public:
   //DEPTH
   void  gcDepth(bool en, bool mask, u32 mode);
 
+  // SCISSOR
+  void  gcScissor(bool on, int x, int y, int w, int h);
+
   //VERTEX & INDEX BUFFERS
-  void* gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
-  void  gcFreeVertexBuffer(void*);
-  void  gcDrawVertexBuffer(void* buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
+  gchandle gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize);
+  void  gcFreeVertexBuffer(gchandle buf);
+  void  gcDrawVertexBuffer(gchandle buf, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff);
 
   // SHADER
-  void* gcGenShader(kgmMemory<u8>&, kgmMemory<u8>&);
-  void  gcFreeShader(void* s);
-  void  gcSetShader(void* s);
-  void  gcBindAttribute(void* s, int, const char*);
-  void  gcUniform(void* s, u32, u32, const char*, void*);
-  void  gcUniformMatrix(void* s, u32, u32, u32, const char*, void*);
-  void  gcUniformSampler(void* s, const char*, void*);
+  gchandle gcGenShader(kgmMemory<u8>&, kgmMemory<u8>&);
+  void  gcFreeShader(gchandle s);
+  void  gcSetShader(gchandle s);
+  void  gcBindAttribute(gchandle s, int, const char*);
+  void  gcUniform(gchandle s, u32, u32, const char*, void*);
+  void  gcUniformMatrix(gchandle s, u32, u32, u32, const char*, void*);
+  void  gcUniformSampler(gchandle s, const char*, void*);
 
   // TARGET
   gchandle gcGenTarget(u32 w, u32 h, bool depth, bool stencil);
