@@ -36,21 +36,6 @@ public:
 
   void setId(kgmString id){ m_id = id; }
 
-<<<<<<< HEAD
-=======
-  u32 references() const
-  {
-    return m_references;
-  }
-
-  void increment()
-  {
-    m_references++;
-  }
-
-  void release();
->>>>>>> vulkan
-
   kgmString id() const
   {
     return m_id;
