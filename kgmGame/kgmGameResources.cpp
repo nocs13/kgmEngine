@@ -27,6 +27,16 @@
 #define RSKELETON   "skeletons"
 #define RANIMATION  "animations"
 
+kgmIResources*  kgmGameResources::generate(kgmIGC* gc, kgmIAudio* audio)
+{
+  if (kgmIResources::m_manager != null)
+    return kgmIResources::m_manager;
+
+  kgmIResources::m_manager = new kgmGameResources(gc, audio);
+  
+  return kgmIResources::m_manager;
+}
+
 kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
 {
   m_gc    = gc;
@@ -120,7 +130,20 @@ void kgmGameResources::clear()
     }
     else if(r->isClass(kgmFont::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmFont*)r)->texture());
+      gchandle tn = ((kgmFont*)r)->texture(12);
+      gchandle ts = ((kgmFont*)r)->texture(10);
+      gchandle tl = ((kgmFont*)r)->texture(22);
+
+      if (tn)
+        m_gc->gcFreeTexture(tn);
+
+      if (ts && ts != tn)
+        m_gc->gcFreeTexture(ts);
+
+      if (tl && tl != tn && tl != ts)
+        m_gc->gcFreeTexture(tl);
+
+      tn = tl = ts = null;
 
       delete (kgmFont*) r;
     }

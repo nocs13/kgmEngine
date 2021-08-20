@@ -15,3 +15,16 @@ kgmResource::kgmResource()
 kgmResource::~kgmResource()
 {
 }
+
+void kgmResource::release()
+{
+  if (m_lock)
+    return;
+  
+  if(m_references > 0)
+    m_references--;
+
+  if (m_references == 0)
+    kgmIResources::manager()->remove(this);
+}
+

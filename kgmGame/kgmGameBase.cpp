@@ -270,7 +270,7 @@ u32 kgmGameBase::timeUpdate()
 
 void kgmGameBase::initResources()
 {
-  m_resources = new kgmGameResources(getGC(), getAudio());
+  m_resources = (kgmGameResources*) kgmGameResources::generate(getGC(), getAudio());
 
   m_resources->addPath(m_settings->get((char*)"Data"));
 }
@@ -343,11 +343,10 @@ void kgmGameBase::initGC()
   m_gc = new kgmGCNone(this);
 #endif
 
-  //if (m_gc == null)
-  //  m_gc = new kgmOGL(this);
-
-  //if (m_gc)
-  //  m_gc->gcResize(m_width, m_height);
+  if (m_gc == null) {
+    m_gc = new kgmOGL(this);
+    m_gc->gcResize(m_width, m_height);
+  }
 }
 
 void kgmGameBase::initSettings()

@@ -52,8 +52,12 @@ protected:
   kgmList<Path*>         m_paths;
   kgmGameTools           m_tools;
 
-public:
+private:
   kgmGameResources(kgmIGC* gc, kgmIAudio* audio);
+  
+public:
+  static kgmIResources* generate(kgmIGC* gc, kgmIAudio* audio);
+  
   ~kgmGameResources();
 
   void               reset();
