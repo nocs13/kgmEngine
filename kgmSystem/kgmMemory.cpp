@@ -2,6 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 
 //#undef DEBUG
+#undef DEBUG_XXX
 
 #define ADDOBJS 128
 
@@ -11,7 +12,7 @@ static int     g_m_alloc = 0;
 
 void* kgm_alloc(size_t size)
 {
-#ifdef DEBUG
+#ifdef DEBUG_XXX
   fprintf(stderr, "kgm_alloc [%ld].\n", size);
 #endif
 
@@ -23,7 +24,9 @@ void* kgm_alloc(size_t size)
   p = ::malloc(size);
   g_m_alloc++;
 
-  fprintf(stderr, "          pointer [%p] size [%ld].\n", p, size);
+#ifdef DEBUG_XXX
+  //fprintf(stderr, "          pointer [%p] size [%ld].\n", p, size);
+#endif
 
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] == null) {
@@ -49,7 +52,7 @@ void* kgm_alloc(size_t size)
 
 void* kgm_realloc(void *p, size_t size)
 {
-#ifdef DEBUG
+#ifdef DEBUG_XXX
   fprintf(stderr, "kgm_realloc [%p, %ld].\n", p, size);
 #endif
 
@@ -69,7 +72,7 @@ void* kgm_realloc(void *p, size_t size)
 
 void kgm_free(void* p)
 {
-#ifdef DEBUG
+#ifdef DEBUG_XXX
   fprintf(stderr, "kgm_free [%p].\n", p);
 #endif
 
@@ -80,7 +83,10 @@ void kgm_free(void* p)
     if (g_objects[i] == (size_t) p) {
       ::free(p);
       g_m_alloc--;
+
+#ifdef DEBUG_X
       fprintf(stderr, "        [%p] released at [%d].\n", p, i);
+#endif
 
       p = null;
       g_objects[i] = null;
@@ -114,7 +120,11 @@ void kgm_memory_cleanup()
 
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] != null) {
+
+#ifdef DEBUG
       fprintf(stderr, "        [%p] releasing at [%d].\n", (void*) g_objects[i], i);
+#endif
+
       ::free((void*) g_objects[i]);
       g_m_alloc--;
       g_objects[i] = null;
@@ -130,4 +140,3 @@ void kgm_memory_cleanup()
   g_objects = null;
   g_o_count = 0;
 }
-

@@ -7,8 +7,8 @@ CC = ccache g++
 AR = ar
 DSND = -OAL
 DSEP = /
-#ERRS = -Werror
-ERRS= -Wall -Wextra -pedantic
+ERRS = -Werror
+#ERRS= -Wall -Wextra -pedantic
 
 FLGS =
 DIRS =  -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics

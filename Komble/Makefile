@@ -41,6 +41,7 @@ DIRS =	-I./ -I../kgmBase -I../kgmMath -I../kgmGame -I../kgmSystem -I../kgmSystem
 #endif
 
 all: shaders ../libkgmEngine_s.a
+	$(RM) Komble$(EXT) *.o
 	$(CC) -g -c *.cpp $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 	$(CC) -g -o Komble$(EXT) *.o ../libkgmEngine_s.a $(DEFS) $(FLGS) $(DIRS) $(LIBS)
 

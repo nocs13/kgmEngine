@@ -7,7 +7,7 @@ static kgmArray<kgmObject*> g_objects;
 
 void* kgmObject::kgm_object_alloc(size_t size)
 {
-#ifdef DEBUG
+#ifdef DEBUG_X
   kgm_log() << "kgmObject::kgm_object_alloc [" << (s32) size << "].\n";
 #endif
 
@@ -42,7 +42,7 @@ void* kgmObject::kgm_object_alloc(size_t size)
 
 void kgmObject::kgm_object_free(void* p)
 {
-#ifdef DEBUG
+#ifdef DEBUG_X
   kgm_log() << "kgmObject::kgm_object_free [" << p << "].\n";
 #endif
 
@@ -87,7 +87,7 @@ kgmObject::kgmObject(const kgmObject& o)
 
 kgmObject::~kgmObject()
 {
-#ifdef DEBUG
+#ifdef DEBUG_X
     kgm_log() << "kgmObject::~kgmObject [" << (void*)this << "] class: [" << this->vClass() << "].\n";
 #endif
 }

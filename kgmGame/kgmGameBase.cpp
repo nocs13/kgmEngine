@@ -309,7 +309,6 @@ void kgmGameBase::initInput()
 
 bool kgmGameBase::initScript()
 {
-  //return true;
   m_script = new kgmGameScript(this);
 
   m_script->init();
@@ -323,30 +322,33 @@ bool kgmGameBase::initScript()
   return true;
 }
 
-#define OGL
-
 void kgmGameBase::initGC()
 {
-#ifdef VULKAN
-  m_gc = new kgmVulkan(this);
+  kgmString v = m_settings->get((char*)"GC");
 
-  if(m_gc->gcError())
-  {
-    kgm_log() << "Vulkan initialization failed.\n";
-    delete m_gc;
-
-    m_gc = nullptr;
+  if (v.length() < 1) {
+    v = "OGL";
   }
-#elif defined(OGL)
-  m_gc = new kgmOGL(this);
-#else
-  m_gc = new kgmGCNone(this);
-#endif
 
-  if (m_gc == null) {
+  kgm_log() << "Choosed GC is " << (char*) v << ".\n";
+
+  if (v == "VK") {
+    m_gc = new kgmVulkan(this);
+
+    if(m_gc->gcError()) {
+      kgm_log() << "Vulkan initialization failed.\n";
+      delete m_gc;
+
+      m_gc = nullptr;
+    }
+  } else if (v == "OGL") {
     m_gc = new kgmOGL(this);
-    m_gc->gcResize(m_width, m_height);
   }
+/*
+  else {
+    m_gc = new kgmGCNone(this);
+  }
+*/
 }
 
 void kgmGameBase::initSettings()
@@ -589,8 +591,14 @@ int kgmGameBase::gInit()
   log("init game audio...");
   initAudio();
 
+  if (m_audio == null)
+    return 0;
+
   log("open graphics...");
   initGC();
+
+  if (m_gc == null)
+    return 0;
 
   log("init resources...");
   initResources();
@@ -863,7 +871,7 @@ bool kgmGameBase::gUnitRegister(kgmString type, NEW_UNIT fn)
   }
 
   m_unit_generators.set(type, fn);
-  
+
   return true;
 }
 
