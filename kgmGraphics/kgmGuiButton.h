@@ -31,6 +31,14 @@ public:
     return m_state;
   }
 
+  void sClose(bool s) {
+    m_close = s;
+  }
+
+  bool sClose() {
+    return m_close;
+  }
+
 private:
   void onMsLeftUp(int key, int x, int y);
   void onMsLeftDown(int key, int x, int y);
