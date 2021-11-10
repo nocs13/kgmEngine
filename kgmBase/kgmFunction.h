@@ -46,7 +46,9 @@ public:
 
   Return operator()(Args... args)
   {
-    assert(m_call.valid());
+    if (!m_call.valid()) {
+      return Return(0);
+    }
 
     return m_call->invoke(args...);
   }

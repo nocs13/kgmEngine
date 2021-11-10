@@ -15,7 +15,6 @@ kgmGui::kgmGui()
   m_hasInput = false;
   m_useStyle = true;
   m_onpoint  = false;
-  m_focus    = null;
 
   m_alpha = false;
 
@@ -41,7 +40,6 @@ kgmGui::kgmGui(kgmGui *par, int x, int y, int w, int h)
   m_useStyle = true;
   m_onpoint  = false;
 
-  m_focus = null;
 
   if(par)
   {

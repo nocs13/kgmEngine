@@ -3,7 +3,7 @@
 
 #include "kgmGui.h"
 
-class kgmGuiLayout : public kgmGui
+class kgmGuiLayout : public kgmObject
 {
   KGM_OBJECT(kgmGuiLayout);
 
@@ -20,7 +20,7 @@ public:
 private:
   struct Gui {
     kgmGui* gui;
-    Rect    rect;
+    kgmGui::Rect    rect;
   };
 
   struct Scale {
@@ -28,29 +28,24 @@ private:
     f64 y;
   };
 
-  Rect m_rcInit;
+  kgmGui::Rect m_rcInit;
 
   Scale m_scaler;
-
-  kgmList<Gui> m_guis;
 
   u32 m_h_align;
   u32 m_v_align;
 
+  kgmGui *m_gui = null;
+
 public:
-  kgmGuiLayout();
-  kgmGuiLayout(kgmGui *par, int x, int y, int w, int h);
+  kgmGuiLayout(kgmGui*);
 
   void onResize(int w, int h);
   void onShow();
   void onHide();
-  void onAddChild(kgmGui *c);
-  void onDelChild(kgmGui *c);
 
   void setVAlign(u32 a);
   void setHAlign(u32 a);
-
-  kgmGui* getChild(kgmString s);
 
 protected:
   void realign();

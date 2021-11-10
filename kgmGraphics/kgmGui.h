@@ -52,14 +52,11 @@ protected:
 
   bool       m_erase;
 public:
-  typedef    kgmList<kgmGui*> Guis;
-  Guis       m_childs;
 
 public:
   u32        m_id;       //numeric id
   kgmString  m_sid;      //string id
   kgmGui*    m_parent;   //parent window whom send messages
-  kgmGui*    m_focus;    //current child active window
   Rect       m_rect;     //rect of window
   bool       m_view;     //view status of window
   bool       m_useStyle; //for draw manager, use predefined style
@@ -110,10 +107,6 @@ public:
   kgmGui*      getParent() const { return m_parent; }
 
   kgmGui*      getRoot();
-  kgmGui*      getById(u32 id);
-  kgmGui*      getBySid(kgmString sid);
-  kgmGui*      getFocus();
-  bool         setFocus(kgmGui*);
 
   void         setXdata(void* x){ m_xdata = x;    }
   void*        getXdata()       { return m_xdata; }
@@ -174,14 +167,6 @@ protected:
   virtual void onHide();
   virtual void onAddChild(kgmGui *c);
   virtual void onDelChild(kgmGui *c);
-
-
-  //useful functions
-  void          addChild(kgmGui *e);
-  void          delChild(kgmGui *e);
-  bool          isChild(kgmGui *e);
-  kgmGui*       getFocus(Point pos);
-  kgmGui*       getPointed();
 
   void  setId(u32 id)
   {

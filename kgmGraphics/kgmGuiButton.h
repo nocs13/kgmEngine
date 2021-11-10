@@ -13,6 +13,7 @@ public:
     StateClick
   };
 
+private:
   State  m_state;
 
   bool m_close;

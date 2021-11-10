@@ -1,12 +1,12 @@
 #ifndef KGMGUIFRAME_H
 #define KGMGUIFRAME_H
 
-#include "kgmGui.h"
+#include "kgmGuiWidget.h"
 
 class kgmGuiLabel;
 class kgmGuiButton;
 
-class kgmGuiFrame : public kgmGui
+class kgmGuiFrame : public kgmGuiWidget
 {
   KGM_OBJECT(kgmGuiFrame);
 private:
