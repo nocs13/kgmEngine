@@ -1,7 +1,8 @@
 <?xml version='1.0'?>
 <kgmGuiLayout x='0' y='0' w='800' h='600'>
- <kgmGuiButton id='button0' x='321' y='58' w='119.9894' h='59.98964' handler='onGuiButtonNew' text='New' />
- <kgmGuiButton id='button1' x='320.984375' y='182' w='119.9894' h='59.98964' handler='onGuiButtonLoad' text='Load' />
- <kgmGuiButton id='button2' x='320.96875' y='302' w='119.9894' h='59.98964' handler='onGuiButtonQuit' text='Quit' />
+ <kgmGuiButton id='button0' x='321'        y='60' w='119.9894' h='59.98964' handler='onGuiButtonNew' text='New' />
+ <kgmGuiButton id='button1' x='320.984375' y='120' w='119.9894' h='59.98964' handler='onGuiButtonLoad' text='Load' />
+ <kgmGuiButton id='button1' x='320.984375' y='180' w='119.9894' h='59.98964' handler='onGuiButtonTest' text='Test' />
+ <kgmGuiButton id='button2' x='320.96875'  y='240' w='119.9894' h='59.98964' handler='onGuiButtonQuit' text='Quit' />
  <kgmGuiButton id='button3' x='352.953125' y='520.328125' w='51.3334' h='17.33334' handler='onGuiButtonCredits' text='Credits' />
 </kgmGuiLayout>

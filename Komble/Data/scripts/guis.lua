@@ -50,6 +50,16 @@ end
 function onGuiButtonLoad()
 end
 
+function onGuiButtonTest()
+    kgm_log('onGuiButtonNew')
+
+    state = main_load_test()
+
+    if state ~= 0 then
+        kgmGuiShow(gui_main, 0)
+    end
+end
+
 function onGuiButtonCredits()
   kgm_log('onGuiButtonCredits')
 

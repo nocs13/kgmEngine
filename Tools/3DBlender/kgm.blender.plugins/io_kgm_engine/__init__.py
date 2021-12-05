@@ -25,6 +25,11 @@ bl_info = {
 
 import bpy
 from .kgm_anim_hair import KgmHairPanel
+from .kgm_anim_hair import KgmHairCircleButtonOperator
+from .kgm_anim_hair import KgmHairSemiCircleButtonOperator
+from .kgm_anim_hair import KgmHairOvalButtonOperator
+from .kgm_anim_hair import KgmHairingButtonOperator
+
 #import kgm_anim_hair
 #import kgm_objects
 
@@ -233,7 +238,7 @@ class kgmExport(bpy.types.Operator):
         file.write("  <Rotation value='" + str(o.rot[0]) + " " + str(o.rot[1]) + " " + str(o.rot[2]) + "'/>\n")
         file.write("  <Quaternion value='" + str(o.quat[1]) + " " + str(o.quat[2]) + " " + str(o.quat[3]) + " " + str(o.quat[0]) + "'/>\n")
 
-        if o.type is 'Mesh':
+        if o.type == 'Mesh':
           file.write("  <Mesh id='" + o.data + "'/>\n")
 
         if o.material != '':
@@ -318,17 +323,18 @@ class kgmProject(bpy.types.Operator):
     return context.active_object != None
 
   def execute(self, context):
-    from .kgm_project import parse
-    print('kgmProject: execute')
-    print('kgmProject: setting kgm project from file: ' + self.filepath)
-    parse(self.filepath)
+    #from .kgm_project import parse
+    #print('kgmProject: execute')
+    #print('kgmProject: setting kgm project from file: ' + self.filepath)
+    #parse(self.filepath)
 
     return {'FINISHED'}
 
   def prepare():
-    from .kgm_project import parse
-    print('kgmProject: execute')
-    parse(os.getenv("HOME") + "/" + ".kgmEngine/project")
+    #from .kgm_project import parse
+    #print('kgmProject: execute')
+    #parse(os.getenv("HOME") + "/" + ".kgmEngine/project")
+    pass
 #---------------------------
 
 def menu_func(self, context):
@@ -343,9 +349,13 @@ def register():
   #bpy.utils.register_module(__name__)
   #bpy.types.INFO_MT_file_export.append(menu_func)
   #bpy.types.INFO_MT_add.append(menu_func_a)
-  bpy.utils.register_class(kgmExport)
   bpy.types.TOPBAR_MT_file_export.append(menu_func)
+  bpy.utils.register_class(kgmExport)
   bpy.utils.register_class(KgmHairPanel)
+  bpy.utils.register_class(KgmHairCircleButtonOperator)
+  bpy.utils.register_class(KgmHairSemiCircleButtonOperator)
+  bpy.utils.register_class(KgmHairOvalButtonOperator)
+  bpy.utils.register_class(KgmHairingButtonOperator)
 
 def unregister():
   bpy.types.TOPBAR_MT_file_export.remove(menu_func)
@@ -354,6 +364,10 @@ def unregister():
   #bpy.types.INFO_MT_add.remove(menu_func_a)
   bpy.utils.unregister_class(kgmExport)
   bpy.utils.unregister_class(KgmHairPanel)
+  bpy.utils.unregister_class(KgmHairCircleButtonOperator)
+  bpy.utils.unregister_class(KgmHairSemiCircleButtonOperator)
+  bpy.utils.unregister_class(KgmHairOvalButtonOperator)
+  bpy.utils.unregister_class(KgmHairingButtonOperator)
 
 if __name__ == "__main__":
   register()
