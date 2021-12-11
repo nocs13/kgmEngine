@@ -83,21 +83,12 @@ function main_load_new()
 end
 
 function main_load_test()
+  kgm_log('Loading test mode.')
+
+  kgmGameUnload()
+  kgmGameLoad('EMPTY')
+
   state = kgmGameState()
-
-  if state ~= State_Idle then
-    kgm_log('Invalid state to load map.')
-
-    return 0
-  end
-
-  kgm_log('Loading first map.')
-
-  state = kgmGameLoad(maps[1])
-
-  if state ~= State_Play then
-    state = 0
-  end
 
   return state
 end

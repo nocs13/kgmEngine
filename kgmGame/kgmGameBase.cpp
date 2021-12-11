@@ -343,12 +343,9 @@ void kgmGameBase::initGC()
     }
   } else if (v == "OGL") {
     m_gc = new kgmOGL(this);
+  } else {
+    //m_gc = new kgmGCNone(this);
   }
-/*
-  else {
-    m_gc = new kgmGCNone(this);
-  }
-*/
 }
 
 void kgmGameBase::initSettings()
@@ -670,10 +667,21 @@ int kgmGameBase::gLoad(kgmString s)
   gUnload();
 
 #ifdef DEBUG
-  kgm_log() << " " << "Loading game map " << (char*)s << "..." << "\n";
+  kgm_log() << "Loading game map " << (char*)s << "..." << "\n";
 #endif
 
   m_state = State_Load;
+
+  if (s == (const char*) "EMPTY")
+  {
+    #ifdef DEBUG
+      kgm_log() << " " << "Loading empty test map." << "\n";
+    #endif
+
+    m_state = State_Play;
+
+    return m_state;
+  }
 
   //loadXml(s);
   {

@@ -111,6 +111,11 @@ public:
     if(!kgmArray<T>::m_data || !s) 
       return false; 
 
+    u32 len = strlen((char*) s);
+
+    if (kgmArray<T>::m_length != len)
+      return false;
+
     return !memcmp(kgmArray<T>::m_data, s, sizeof(T) * (kgmArray<T>::m_length + 1));
   } 
  

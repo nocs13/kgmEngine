@@ -2,13 +2,13 @@ OS = $(shell uname -s)
 
 RM =
 
-CC = ccache g++
-#CC = ccache clang++
+#CC = ccache g++
+CC = ccache clang++
 AR = ar
 DSND = -OAL
 DSEP = /
-ERRS = -Werror
-#ERRS= -Wall -Wextra -pedantic
+#ERRS = -Werror
+ERRS= -Wall -Wextra -pedantic
 
 FLGS =
 DIRS =  -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics
