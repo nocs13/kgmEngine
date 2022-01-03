@@ -362,7 +362,9 @@ s32 kgmGameScript::kgmGamePlay(void*)
   if (!game)
     return 0;
 
-  game->gSwitch(kgmIGame::State_Play);
+  game->gPause(false);
+
+  state = game->gState();
 
   if (state == kgmIGame::State_Play)
     state = 1;
@@ -383,7 +385,9 @@ s32 kgmGameScript::kgmGamePause(void*)
   if (!game)
     return 0;
 
-  state = game->gSwitch(kgmIGame::State_Pause);
+  game->gPause(true);
+
+  state = game->gState();
 
   if (state == kgmIGame::State_Pause)
     state = 1;

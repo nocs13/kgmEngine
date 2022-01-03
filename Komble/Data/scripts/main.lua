@@ -119,7 +119,6 @@ end
 
 function main_onupdate()
   if state == State_Play then
-
     if (kgmKeyState(KEY_ESCAPE) == 1) then
       kgmGamePause()
       state = kgmGameState()

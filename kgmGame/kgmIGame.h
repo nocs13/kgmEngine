@@ -221,6 +221,8 @@ public:
   virtual u32            gState()             = 0;    //check game active  state
   virtual int            gSwitch(u32)         = 0;    //switch game state
 
+  virtual void           gPause(bool)         = 0;    //switch game state
+
   virtual bool           gUnitRegister(kgmString, NEW_UNIT) = 0;    //Register additional unit alocator by type
 
   virtual kgmUnit*       gSpawn(kgmString) = 0;       //spawn game unit
