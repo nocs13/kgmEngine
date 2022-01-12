@@ -3673,8 +3673,8 @@ bool kgmVulkan::isDeviceSuitable(VkPhysicalDevice dev)
   m_vk.vkGetPhysicalDeviceProperties(dev, &deviceProperties);
   m_vk.vkGetPhysicalDeviceFeatures(dev, &deviceFeatures);
 
-  //return (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && deviceFeatures.geometryShader);
-  return deviceFeatures.geometryShader;
+  return ((deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && deviceFeatures.geometryShader);
+  //return deviceFeatures.geometryShader;
 }
 
 bool kgmVulkan::destroyDevice()
