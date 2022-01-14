@@ -946,14 +946,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   switch (type)
   {
   case gctype_texcube:
-    itype = VK_IMAGE_TYPE_3D;
-    kgm_log() << "Vulkan info: 3D images not supports now.";
-
-    return null;
-    break;
   case gctype_texdepth:
-    itype = VK_IMAGE_TYPE_2D;
-    break;
   case gctype_tex2d:
   default:
     itype = VK_IMAGE_TYPE_2D;
@@ -968,6 +961,9 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   u32 count = w * h;
 
   u32 size  = count * 4;
+
+  if (type == gctype_texcube)
+    size * 6;
 
   if (!createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -1065,13 +1061,21 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   imageInfo.extent.height = h;
   imageInfo.extent.depth = 1;
   imageInfo.mipLevels = 1;
-  imageInfo.arrayLayers = 1;
+
+  if(type == gctype_texcube)
+    imageInfo.arrayLayers = 6;
+  else
+    imageInfo.arrayLayers = 1;
+
   imageInfo.format = format;
   imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
   imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
   imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
   imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
   imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  if(type == gctype_texcube)
+    imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
 
   result = m_vk.vkCreateImage(m_device, &imageInfo, nullptr, &t->image);
 
@@ -1143,7 +1147,10 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 
   transitionImageLayout(t->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-  copyBufferToImage(sbuffer, t->image, w, h);
+  if (type == gctype_texcube)
+    copyBufferToImageCube(sbuffer, t->image, w, h, bypp);
+  else
+    copyBufferToImage(sbuffer, t->image, w, h);
 
   transitionImageLayout(t->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
@@ -1156,13 +1163,23 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
 
   ZeroObject(viewInfo);
   viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+
+  if (type == gctype_texcube)
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
+  else
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+
   viewInfo.format = format;
   viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
   viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   viewInfo.subresourceRange.baseMipLevel = 0;
   viewInfo.subresourceRange.baseArrayLayer = 0;
-  viewInfo.subresourceRange.layerCount = 1;
+
+  if (type == gctype_texcube)
+    viewInfo.subresourceRange.layerCount = 6;
+  else
+    viewInfo.subresourceRange.layerCount = 1;
+
   viewInfo.subresourceRange.levelCount = 1;
   viewInfo.image = t->image;
 
@@ -4314,6 +4331,38 @@ void kgmVulkan::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width
   };
 
   m_vk.vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+  endSingleTimeCommand(commandBuffer);
+  kgm_log() << "Vulkan: End copy buffer to image.\n";
+}
+
+void kgmVulkan::copyBufferToImageCube(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t bpp)
+{
+  kgm_log() << "Vulkan: Start copy buffer to cube image.\n";
+  VkCommandBuffer commandBuffer = beginSingleTimeCommand();
+
+  VkBufferImageCopy region[4];
+
+  ZeroObject(region);
+
+  for (int i = 0; i < 6; i++)
+  {
+    region[i].bufferOffset = i * bpp * width * height;
+    region[i].bufferRowLength = 0;
+    region[i].bufferImageHeight = 0;
+    region[i].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region[i].imageSubresource.mipLevel = 0;
+    region[i].imageSubresource.baseArrayLayer = 0;
+    region[i].imageSubresource.layerCount = 1;
+    region[i].imageOffset = {0, 0, 0};
+    region[i].imageExtent = {
+      width,
+      height,
+      1
+    };
+  }
+
+  m_vk.vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 6, region);
 
   endSingleTimeCommand(commandBuffer);
   kgm_log() << "Vulkan: End copy buffer to image.\n";

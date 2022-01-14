@@ -521,7 +521,7 @@ class kgmVulkan: public kgmIGC
     }
   };
 
-  static kgmLib vk_lib;  
+  static kgmLib vk_lib;
   static vk     m_vk;
   static u32    g_vulkans;
 
@@ -743,6 +743,7 @@ private:
   void endSingleTimeCommand(VkCommandBuffer commandBuffer);
   bool transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
   void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+  void copyBufferToImageCube(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t bpp);
 
   VkFormat chooseDepthFormat();
 
