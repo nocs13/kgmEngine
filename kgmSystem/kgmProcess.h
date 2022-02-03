@@ -14,6 +14,8 @@ class kgmProcess: public kgmObject
   size_t m_process;
 
   kgmString m_out;
+
+  bool m_err;
 public:
   kgmProcess();
   bool run(kgmString cmd, kgmString args);

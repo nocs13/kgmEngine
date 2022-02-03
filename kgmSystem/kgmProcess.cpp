@@ -122,6 +122,11 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
   {
     dup2(fd[1], STDOUT_FILENO);
 
+    if (m_err)
+    {
+      dup2(fd[1], STDERR_FILENO);
+    }
+
     close(fd[0]);
     close(fd[1]);
 
