@@ -59,14 +59,6 @@ function onGuiButtonTest()
     if state ~= 0 then
         kgmGuiShow(gui_main, 0)
     end
-
-    r, s = kgmRunProcess('/usr/bin/ls', '-la')
-
-    kgmLog('Process output is:')
-
-    if r == 1 then
-      kgmLog(s)
-    end
 end
 
 function onGuiButtonCredits()
