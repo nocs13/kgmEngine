@@ -18,6 +18,7 @@
 #include "../kgmGraphics/kgmGuiProgress.h"
 #include "../kgmGraphics/kgmCamera.h"
 #include "../kgmSystem/kgmWindow.h"
+#include "../kgmSystem/kgmProcess.h"
 
 //#define DEBUG2
 #undef DEBUG2
@@ -94,6 +95,8 @@ void kgmGameScript::init()
 
   handler->set("kgmKeyState",  kgmGameScript::kgmKeyState);
   handler->set("kgmPointState",  kgmGameScript::kgmPointState);
+
+  handler->set("kgmRunProcess",  kgmGameScript::kgmRunProcess);
 
   status = handler->load("main");
 
@@ -729,7 +732,7 @@ s32 kgmGameScript::kgmSetRetention(void*)
   return 0;
 }
 
-int kgmGameScript::kgmGuiLoad(void*)
+s32 kgmGameScript::kgmGuiLoad(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -990,4 +993,34 @@ s32 kgmGameScript::kgmPointState(void*)
   game->getScript()->resl("iii", pt.x, pt.y, pt.z);
 
   return 3;
+}
+
+s32 kgmGameScript::kgmRunProcess(void*)
+{
+  kgmProcess proc;
+
+   kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s8* cmd;
+  s8* arg;
+
+  game->getScript()->args("ss", &cmd, &arg);
+
+  bool res = proc.run(cmd, arg);
+
+  if (res)
+  {
+    static kgmString s = proc.out();
+
+    game->getScript()->resl("is", 1, s.data());
+  } 
+  else
+  {
+    game->getScript()->resl("i", -1);
+  }
+
+  return 1;
 }

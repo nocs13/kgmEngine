@@ -73,9 +73,5 @@ clean:
 distclean: clean
 	$(RM) $(OUT_SO) $(OUT_A)
 
-test:
-	cd Test; pwd && ./kTest;
-
-
-komble:
+run:
 	make -C Komble run

@@ -96,7 +96,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmGetRetention(void*);
   static s32 kgmSetRetention(void*);
 
-  static int kgmGuiLoad(void*);
+  static s32 kgmGuiLoad(void*);
   static s32 kgmGuiShow(void*);
   static s32 kgmGuiResize(void*);
   static s32 kgmGuiResolution(void*);
@@ -109,4 +109,6 @@ class kgmGameScript: public kgmObject
 
   static s32 kgmKeyState(void*);
   static s32 kgmPointState(void*);
+
+  static s32 kgmRunProcess(void*);
 };
