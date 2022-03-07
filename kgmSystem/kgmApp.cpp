@@ -24,7 +24,7 @@ static bool aborting = false;
 
 //kgmApp
 
-//Application object, unique only  
+//Application object, unique only
 kgmApp* kgmApp::m_app = 0;
 
 kgmApp::kgmApp()
@@ -124,11 +124,13 @@ int __stdcall WinMain(HINSTANCE a, HINSTANCE b, LPSTR pStr, int s)
 
   if(pStr != NULL)
   {
+    int cmdLen = strlen(GetCommandLine());
+
     argv = new char_ptr[sizeof(char_ptr) * 256];
 
-    args = new char[strlen(GetCommandLine()) + 1];
+    args = new char[cmdLen + 1];
 
-    memset(args, 0, strlen(GetCommandLine()) + 1);
+    memset(args, 0, cmdLen + 1);
 
     strcpy(args, GetCommandLine());
 
@@ -234,4 +236,3 @@ int main()
   return 0;
 }
 #endif
-

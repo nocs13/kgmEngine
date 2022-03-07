@@ -16,6 +16,7 @@ class kgmProcess: public kgmObject
   kgmString m_out;
 
   bool m_err;
+  
 public:
   kgmProcess();
   bool run(kgmString cmd, kgmString args);

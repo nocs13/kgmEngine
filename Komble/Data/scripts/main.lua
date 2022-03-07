@@ -111,6 +111,10 @@ function main_oninit()
   if mapId == '' then
     kgmSetRetention(retent, 'mapCurrent', 'map00')
   end
+
+  s, r = kgmRunProcess('/usr/bin/ls', '-la')
+
+  kgmLog(s)
 end
 
 function main_onfree()

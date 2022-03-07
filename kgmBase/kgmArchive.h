@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #pragma once
+
 #include <stdio.h>
 #include <string.h>
 
@@ -13,49 +14,49 @@
 #define   KGMPAK_VER  0x0101
 
 class kgmArchive{
-  //kgmArchive descriptor: kgmArchive
-  /*
+ //kgmArchive descriptor: kgmArchive
+ /*
  10 - bytes: kgmArchive
- 1	- bytes: minor version
- 1	- bytes: major vesion
- 64	- bytes: archived file name
- 4	- bytes: archived file size
- N	- bytes: archived file data N size defend from size
-   * * *
-*/
+ 1  - bytes: minor version
+ 1  - bytes: major vesion
+ 64 - bytes: archived file name
+ 4  - bytes: archived file size
+ N  - bytes: archived file data N size defend from size
+ * * *
+ */
 
-  /*
- struct Node{
-  unsigned	char	name[64];
-  unsigned	int		size;
-  unsigned  int		offset;
+ /*
+ struct Node {
+  unsigned char name[64];
+  unsigned int  size;
+  unsigned int	offset;
  };
 
  FILE*	m_archive;
  FILE*	m_file;
 
  std::vector<Node> m_nodes;
-*/
+ */
 
   struct Header{
     char  signature[6];
     short version;
     u32   entries;
   };
-  
+
   struct Entry{
     char name[64];    //entry file path
     u32  size;        //entry file size
     u32  offset;      //entry file offset from TOC end
     bool valid;
   };
-  
+
 public:
 
   kgmList<Entry> toc;
   Header         head;
   bool           changed;
-  
+
   kgmFile        archive;
   kgmString      path;
 
@@ -73,7 +74,7 @@ public:
     archive.close();
     changed = false;
   }
-  
+
   bool open(kgmString pakf)
   {
     if(archive.valid())
@@ -99,7 +100,7 @@ public:
 
       return false;
     }
-    
+
     for(u32 i = 0; i < head.entries; i++)
     {
       Entry entry = {{0}};
@@ -122,7 +123,7 @@ public:
     memset(&head, 0, sizeof(head));
     memcpy(head.signature, KGMPAK_SIG, 6);
     head.version = KGMPAK_VER;
-    
+
     if(!archive.open(pakf, kgmFile::Create))
       return false;
 
@@ -238,7 +239,7 @@ public:
 
     return true;
   }
-  
+
   bool append(kgmString f)
   {
     kgmFile  ff;
@@ -268,7 +269,7 @@ public:
       pn++;
     else
       pn = f;
-    
+
     Entry e = {{0}};
     strcpy(e.name, pn);
     e.size = ff.length();
@@ -290,7 +291,7 @@ public:
 
     return true;
   }
-  
+
   bool erase(kgmString id)
   {
     u32 i = 0;
@@ -310,27 +311,27 @@ public:
 
     return true;
   }
-  
+
   bool copy(kgmString id, kgmMemory<u8>& m)
   {
     Entry *pe = null;
-    
+
     if(!id.length() || !archive.valid() || changed)
       return false;
-    
+
     for(u32 i = 0; i < (u32) toc.size(); i++)
     {
       if(!strcmp(id, toc[i].name))
         pe = &toc[i];
     }
-    
+
     if(!pe)
       return false;
-    
+
     m.alloc(pe->size);
     archive.seek(pe->offset);
     archive.read(m.data(), pe->size);
-    
+
     return true;
   }
 
@@ -372,4 +373,3 @@ public:
     offset = toc[i].offset;
   }
 };
-

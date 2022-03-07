@@ -3,9 +3,10 @@
 #include "../kgmBase/kgmLog.h"
 #include <stdarg.h>
 
-extern "C" {
-#include <lua/lua.h>
-#include <lua/lualib.h>
+extern "C" 
+{
+  #include <lua/lua.h>
+  #include <lua/lualib.h>
 }
 
 kgmLuaScript::kgmLuaScript(kgmIResources *r)

@@ -103,7 +103,7 @@ void kgm_memory_init()
 #endif
 
   if (!g_objects) {
-    g_objects = (size_t*) malloc(sizeof(size_t) * ADDOBJS);
+    g_objects = (size_t*) ::malloc(sizeof(size_t) * ADDOBJS);
 
     g_o_count = ADDOBJS;
 
