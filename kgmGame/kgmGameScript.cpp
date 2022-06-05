@@ -23,7 +23,7 @@
 //#define DEBUG2
 #undef DEBUG2
 
-s8* kgmGameScript::value = null;
+char* kgmGameScript::value = null;
 
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
@@ -331,7 +331,7 @@ s32 kgmGameScript::kgmImport(void*)
   if (!game)
     return 0;
 
-  s8* script = null;
+  char* script = null;
 
   game->getScript()->args("s", &script);
 
@@ -427,7 +427,7 @@ s32 kgmGameScript::kgmGameLoad(void *)
   if (!game)
     return 0;
 
-  s8* map = null;
+  char* map = null;
 
   game->getScript()->args("s", &map);
 
@@ -648,7 +648,7 @@ s32 kgmGameScript::kgmGenRetention(void*)
 
   kgmGameRetention* ret = null;
 
-  s8* name = null;
+  char* name = null;
 
   game->getScript()->args("s", &name);
 
@@ -695,7 +695,7 @@ s32 kgmGameScript::kgmGetRetention(void*)
 
   kgmGameRetention* ret = null;
 
-  s8* key = null;
+  char* key = null;
 
   game->getScript()->args("ps", &ret, &key);
 
@@ -718,9 +718,9 @@ s32 kgmGameScript::kgmSetRetention(void*)
 
   kgmGameRetention* ret = null;
 
-  s8* val = null;;
+  char* val = null;
 
-  s8* key = null;
+  char* key = null;
 
   game->getScript()->args("pss", &ret, &key, &val);
 
@@ -739,7 +739,7 @@ s32 kgmGameScript::kgmGuiLoad(void*)
   if (!game)
     return 0;
 
-  s8* sid = null;
+  char* sid = null;
 
   kgmGui* gui = null;
 
@@ -883,7 +883,7 @@ s32 kgmGameScript::kgmGuiSetHAlign(void*)
 int kgmGameScript::kgmGuiGetChild(void*)
 {
   kgmGui* gui = null;
-  s8* id = null;
+  char* id = null;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -913,7 +913,7 @@ int kgmGameScript::kgmGuiGetChild(void*)
 s32 kgmGameScript::kgmGuiCallback(void*)
 {
   kgmGui* gui = null;
-  s8* fn = null;
+  char* fn = null;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -1004,8 +1004,8 @@ s32 kgmGameScript::kgmRunProcess(void*)
   if (!game)
     return 0;
 
-  s8* cmd;
-  s8* arg;
+  char* cmd;
+  char* arg;
 
   game->getScript()->args("ss", &cmd, &arg);
 

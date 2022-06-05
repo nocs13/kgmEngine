@@ -45,7 +45,7 @@ bool kgmGameRetention::load()
   if (!dm || !len)
     return false;
 
-  kgmString xs((const s8*) dm, len);
+  kgmString xs((const char*) dm, len);
 
   kgmXml x(dm, len);
 

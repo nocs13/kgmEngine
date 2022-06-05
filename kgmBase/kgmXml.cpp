@@ -435,7 +435,7 @@ kgmXml::XmlState kgmXml::next()
   m_tagName.alloc(m_position, (int)(pt - m_position));
   Attribute* attr = null;
 
-  while((pt = (s8 *) exeptSyms((u8*) pt, (s8*) " \t")))
+  while((pt = (char*) exeptSyms((u8*) pt, (char*) " \t")))
   {
     if(*pt == '0')
     {

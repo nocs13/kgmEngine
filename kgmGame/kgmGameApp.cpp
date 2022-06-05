@@ -11,13 +11,13 @@ s32 kgmGameApp::exec(s32 argc, s8 **argv)
   memset(&m_options, 0, sizeof(Options));
 
   for (int i = 1; i < argc; i++) {
-    if (!strcmp("edit",  argv[i]) || !strcmp("--edit",  argv[i])) {
+    if (!strcmp("edit",  (char*) argv[i]) || !strcmp("--edit",  (char*) argv[i])) {
       if (!m_options.edit)
         m_options.edit = true;
-    } else if (!strcmp("map",  argv[i]) || !strcmp("--map",  argv[i])) {
+    } else if (!strcmp("map",  (char*) argv[i]) || !strcmp("--map",  (char*) argv[i])) {
       if (argc > ( i + 1) && !m_options.map) {
         m_options.map = true;
-        m_options.mapid = argv[i + 1];
+        m_options.mapid = (char*) argv[i + 1];
       }
     }
   }

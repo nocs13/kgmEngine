@@ -29,7 +29,7 @@ void kgmLog::log_(kgmString s)
 #ifdef ANDROID
     LOGI("%s", (char*) s);
 #else
-    printf("%s", (s8*) s);
+    printf("%s", (char*) s);
     fflush(stdout);
 #endif
 }

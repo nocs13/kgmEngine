@@ -57,11 +57,11 @@ bool kgmLuaScript::load(kgmString s)
   if (!resources->getFile(ls, content))
     return false;
 
-  script = kgmString((const s8*) content.data(), content.length());
+  script = kgmString((const char*) content.data(), content.length());
 
   if(lua_dostring(handler, script.data()))
   {
-    const s8* err = lua_tostring(handler, -1);
+    const char* err = lua_tostring(handler, -1);
 
     kgm_log() << "Lua dostring error: " << err << "\n";
 
@@ -161,7 +161,7 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
   if (fmt.length() < 1 || !a || !c)
     return false;
 
-  s8* f = fmt.data();
+  char* f = fmt.data();
   s32 size = 0;
 
   switch(*f)
@@ -182,10 +182,10 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
     return false;
   }
 
-  s8* p = (s8*)a;
+  char* p = (char*)a;
   s32 i = 0;
 
-  s8*   sdata;
+  char*   sdata;
   s32   idata;
   f64   fdata;
   void* pdata;

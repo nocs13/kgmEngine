@@ -19,7 +19,7 @@ class kgmGameScript: public kgmObject
   kgmMap<kgmGui*, kgmString> slotters;
   kgmList< Slot<kgmGameScript>* > slots;
 
-  static s8* value;
+  static char* value;
 
   kgmThread::Mutex mutex;
   kgmThread::TID   mlocker;

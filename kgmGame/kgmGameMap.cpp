@@ -1145,7 +1145,7 @@ kgmUnit* kgmGameMap::next()
         kgmMesh* m = (kgmMesh*) data;
 
         s32 n = 0;
-        s8* pdata = m_xml->m_tagData.data();
+        char* pdata = m_xml->m_tagData.data();
         kgmMesh::Vertex_P_N_T* v = (kgmMesh::Vertex_P_N_T*)m->vertices();
 
         for (u32 i = 0; i < m->vcount(); i++) {
@@ -1163,7 +1163,7 @@ kgmUnit* kgmGameMap::next()
         kgmMesh* m = (kgmMesh*) data;
 
         s32 n = 0;
-        s8* pdata = m_xml->m_tagData.data();
+        char* pdata = m_xml->m_tagData.data();
         kgmMesh::Face_16* f = (kgmMesh::Face_16*) m->faces();
 
         for (u32 i = 0; i < m->fcount(); i++) {

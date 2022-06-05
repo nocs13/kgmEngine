@@ -97,7 +97,7 @@ void kgmSystem::getCurrentDirectory(kgmString& s)
 #ifdef WIN32
   GetCurrentDirectory(1024, (LPSTR)buf.data());
 #else
-  getcwd((s8*)buf.data(), 1024);
+  getcwd((char*)buf.data(), 1024);
 #endif
 
   s = (const char*)buf.data();
@@ -214,7 +214,7 @@ bool kgmSystem::isDirectory(kgmString& s)
 
 bool kgmSystem::splitPath(kgmString path, kgmString& dir, kgmString& file)
 {
-  s8* sym = strrchr(path.data(), delim);
+  char* sym = strrchr(path.data(), delim);
 
   if(sym != null)
   {
