@@ -1,0 +1,2 @@
+class kgmGuiContainer: public kgmGui {
+};
