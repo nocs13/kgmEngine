@@ -512,6 +512,10 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt)
   {
   case Expose:
     m_evt.event = evtPaint;
+    m_evt.x = ((XExposeEvent*)evt)->x;
+    m_evt.y = ((XExposeEvent*)evt)->y;
+    m_evt.width = ((XExposeEvent*)evt)->width;
+    m_evt.height = ((XExposeEvent*)evt)->height;
     break;
   case ConfigureNotify:
     m_evt.event = evtResize;

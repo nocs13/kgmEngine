@@ -1,4 +1,4 @@
-OS = $(uname -s)
+OS = $(shell uname -s)
 #OS = $(cat OS)
 
 RM =
@@ -19,6 +19,7 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(OS), Linux)
+#	echo "XXX OS is " $(OS)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
