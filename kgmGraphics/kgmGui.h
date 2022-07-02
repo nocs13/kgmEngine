@@ -114,6 +114,7 @@ public:
   kgmGui*      getBySid(kgmString sid);
   kgmGui*      getFocus();
   bool         setFocus(kgmGui*);
+  bool         isChild(kgmGui*);
 
   void         setXdata(void* x){ m_xdata = x;    }
   void*        getXdata()       { return m_xdata; }
@@ -179,7 +180,6 @@ protected:
   //useful functions
   void          addChild(kgmGui *e);
   void          delChild(kgmGui *e);
-  bool          isChild(kgmGui *e);
   kgmGui*       getFocus(Point pos);
   kgmGui*       getPointed();
 

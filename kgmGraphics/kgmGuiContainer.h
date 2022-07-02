@@ -6,23 +6,34 @@
 class kgmGuiContainer: public kgmGui {
     KGM_OBJECT(kgmGuiContainer);
 
+public:
+    enum CellSize {
+      CellSize_1 = 1,
+      CellSize_2,
+      CellSize_3,
+      CellSize_4,
+      CellSize_5,
+    };
+
+    enum Align {
+      Align_left = 1,
+      Align_center,
+      Align_right,
+    };
+
+private:
     struct Cell {
-      u32 width, height;
-      u32 align;
       kgmGui* gui;
+      CellSize width, height;
+      Align align;
     };
 
     kgmList<Cell> _cells;
-public:
-    enum {
-      Cell_1 = 1,
-      Cell_2,
-      Cell_3,
-      Cell_4,
-      Cell_5,
-    };
+
 public:
     kgmGuiContainer();
     kgmGuiContainer(kgmGui *par, u32 x, u32 y, u32 w, u32 h);
     ~kgmGuiContainer();
+
+    void add(kgmGui* g, CellSize cw, Align al);
 };

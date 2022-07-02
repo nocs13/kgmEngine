@@ -241,6 +241,24 @@ bool kgmGui::setFocus(kgmGui* g)
   return true;
 }
 
+bool kgmGui::isChild(kgmGui* g)
+{
+  if (!g)
+    return false;
+
+  auto i = m_childs.begin();
+
+  for (; !i.end(); i.next()) {
+    if ((*i) == g)
+      return true;
+    if ((*i)->isChild(g))
+      return true;
+  }
+
+  return false;
+}
+
+
 
 // MESSAGE MANAGER
 void kgmGui::onEvent(kgmEvent::Event* e)
@@ -516,15 +534,6 @@ void kgmGui::delChild(kgmGui *e)
       break;
     }
   }
-}
-
-bool kgmGui::isChild(kgmGui *e)
-{
-  for(int i = 0; i < m_childs.size(); i++)
-    if(m_childs[i] == e)
-      return true;
-
-  return false;
 }
 
 kgmGui* kgmGui::getFocus(Point pos)
