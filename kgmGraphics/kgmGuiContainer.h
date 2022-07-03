@@ -7,6 +7,8 @@ class kgmGuiContainer: public kgmGui {
     KGM_OBJECT(kgmGuiContainer);
 
 public:
+    const u32 cols_per_page = 5;
+
     enum CellSize {
       CellSize_1 = 1,
       CellSize_2,
@@ -36,4 +38,7 @@ public:
     ~kgmGuiContainer();
 
     void add(kgmGui* g, CellSize cw, Align al);
+
+private:
+    void update();
 };
