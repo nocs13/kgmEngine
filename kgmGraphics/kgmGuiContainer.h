@@ -1,10 +1,8 @@
+#pragma once
 #include "kgmGui.h"
 
-/* This container will made similar as bootstrap 's-12' layout but
-   Instead 12 columns will be used 5 only, as 20% of full space. */
-
 class kgmGuiContainer: public kgmGui {
-    KGM_OBJECT(kgmGuiContainer);
+  KGM_OBJECT(kgmGuiContainer);
 
 public:
     const u32 cols_per_page = 5;

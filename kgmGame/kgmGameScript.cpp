@@ -16,6 +16,7 @@
 #include "../kgmGraphics/kgmGuiLayout.h"
 #include "../kgmGraphics/kgmGuiButton.h"
 #include "../kgmGraphics/kgmGuiProgress.h"
+#include "../kgmGraphics/kgmGuiContainer.h"
 #include "../kgmGraphics/kgmCamera.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmProcess.h"
@@ -85,6 +86,7 @@ void kgmGameScript::init()
   handler->set("kgmGuiSetHAlign",  kgmGameScript::kgmGuiSetHAlign);
   handler->set("kgmGuiGetChild",  kgmGameScript::kgmGuiGetChild);
   handler->set("kgmGuiCallback",  kgmGameScript::kgmGuiCallback);
+  handler->set("kgmGuiContainer",  kgmGameScript::kgmGuiContainerA);
 
   handler->set("kgmGenRetention",  kgmGameScript::kgmGenRetention);
   handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
@@ -768,7 +770,7 @@ s32 kgmGameScript::kgmGuiLoad(void*)
 s32 kgmGameScript::kgmGuiShow(void*)
 {
   kgmGui* gui  = null;
-  u32     show = -1;
+  s32     show = -1;
 
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -928,6 +930,30 @@ s32 kgmGameScript::kgmGuiCallback(void*)
    ((kgmGameScript*) game->getScript())->setSlot(gui, fn);
 
   return 0;
+}
+
+s32 kgmGameScript::kgmGuiContainerA(void*)
+{
+  kgmGui* gui = null;
+  s32 w, h;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    return 0;
+  }
+
+  game->getScript()->args("ii", &w, &h);
+
+  gui = new kgmGuiContainer(null, 0, 0, w, h);
+
+  if (gui)
+    game->guiAdd(gui);
+
+  game->getScript()->resl("p", gui);
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmScreenResolution(void*)
