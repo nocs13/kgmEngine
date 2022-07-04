@@ -19,7 +19,7 @@ all: extern debug
 #	echo $(subdirs)
 #	echo $(sources)
 #	make -C Test
-#	make -C Komble
+	make -C Komble
 	make -C Tools/Editor
 
 extern:
@@ -66,7 +66,7 @@ sdk: $(OUT_A)  $(OUT_SO)
 clean:
 	make -C kgmExtern clean
 #	make -C Test clean
-#	make -C Komble clean
+	make -C Komble clean
 	make -C Tools/Editor clean
 	$(RM) $(objects)
 

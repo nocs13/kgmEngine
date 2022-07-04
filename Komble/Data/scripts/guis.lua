@@ -1,3 +1,4 @@
+kgmImport('gui')
 VALIGN_LEFT   = 1
 VALIGN_RIGHT  = 2
 VALIGN_CENTER = 3
@@ -11,8 +12,8 @@ function guis_init()
   local gw, gh = 1, 1
   local scw, sch = 1, 1
 
-  gui_main = kgmGuiLoad('guis/start.ui')
-  kgm_log('main gui is ' .. tostring(gui_main))
+  --gui_main = kgmGuiLoad('guis/start.ui')
+  --kgm_log('main gui is ' .. tostring(gui_main))
 
   --sw, sh = kgmScreenResolution()
   --kgmLog('screen resolution is ' .. tostring(sw) .. ' ' .. tostring(sh))
@@ -27,9 +28,10 @@ function guis_init()
   --kgmGuiResize(gui_main, sw, sh)
   --gui_quit = kgmGuiGetChild(gui_main, 'button2')
 
-  kgmGuiSetVAlign(gui_main, 3);
-  kgmGuiSetHAlign(gui_main, 3);
-  kgmGuiShow(gui_main, 1)
+  --kgmGuiSetVAlign(gui_main, 3);
+  --kgmGuiSetHAlign(gui_main, 3);
+  --kgmGuiShow(gui_main, 1)
+  gui_main = Gui:new(100, 100)
   kgm_log('main gui 2 is ' .. tostring(gui_main))
 end
 

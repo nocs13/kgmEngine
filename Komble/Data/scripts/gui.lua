@@ -1,12 +1,26 @@
-Gui = {}
-Gui.__index = Gui
+--Gui = {}
+--Gui.__index = Gui
 
-function Gui:new(u)
-  local g = {}
-  setmetatable(g, Gui)
+--function Gui:new()
+--  local g = {}
+--  setmetatable(g, Gui)
+--
+--  o = kgmGuiContainer(400, 400)
+--  g.o = o
+--
+--  return g
+--end
 
-  o = kgmGuiContainer(400, 400)
-  g.o = o
+Gui = settag({}, newtag())
+
+settagmethod(tag(Gui), "index", function(t, f) return %Gui[f] end)
+
+function Gui:new(w, h)
+  local g = { o=nil }
+
+  settag(g, tag(Gui))
+
+  g.o = kgmGuiContainer(w, h)
 
   return g
 end
