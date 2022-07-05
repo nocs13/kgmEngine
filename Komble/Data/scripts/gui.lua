@@ -1,26 +1,13 @@
---Gui = {}
---Gui.__index = Gui
-
---function Gui:new()
---  local g = {}
---  setmetatable(g, Gui)
---
---  o = kgmGuiContainer(400, 400)
---  g.o = o
---
---  return g
---end
-
 Gui = settag({}, newtag())
 
 settagmethod(tag(Gui), "index", function(t, f) return %Gui[f] end)
 
 function Gui:new(w, h)
-  local g = { o=nil }
+  local g = { o = nil }
 
   settag(g, tag(Gui))
 
-  g.o = kgmGuiContainer(w, h)
+  g.o = kgmGuiCreate(w, h)
 
   return g
 end
@@ -28,20 +15,27 @@ end
 function Gui:align(s)
 end
 
-function Gui:addList(w, handler)
+function Gui:addList(id, w, handler)
 end
 
-function Gui:addText(w, handler)
+function Gui:addText(id, w, handler)
 end
 
-function Gui:addLabel(w, text)
+function Gui:addLabel(id, w, text)
+  kgmGuiAdd(self.o, 'Label', id, w)
+  kgmGuiSetText(self.o, id, text)
 end
 
-function Gui:addCheck(w, text, status, handler)
+function Gui:addCheck(id, w, text, status, handler)
+  kgmGuiAdd(self.o, 'Check', id, w)
+  kgmGuiSetText(self.o, id, text)
 end
 
-function Gui:addButton(w, text, handler)
+function Gui:addButton(id, w, text, handler)
+  kgmGuiAdd(self.o, 'Button', id, w)
+  kgmGuiSetText(self.o, id, text)
 end
 
-function Gui:addProgress(w, text, handler)
+function Gui:addProgress(id, w, handler)
+  kgmGuiAdd(self.o, 'Progress', id, w)
 end

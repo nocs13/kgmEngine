@@ -158,19 +158,6 @@ void kgmGuiLayout::setHAlign(u32 a)
     m_h_align = a;
 }
 
-kgmGui* kgmGuiLayout::getChild(kgmString s)
-{
-  for (auto i = m_childs.begin(); !i.end(); i.next())
-  {
-    if ((*i)->getSid() == s)
-    {
-      return (*i);
-    }
-  }
-
-  return null;
-}
-
 kgmGuiLayout::Gui kgmGuiLayout::find(kgmGui *g)
 {
   for (auto ci = m_guis.begin(); !ci.end(); ci.next())

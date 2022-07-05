@@ -86,7 +86,9 @@ void kgmGameScript::init()
   handler->set("kgmGuiSetHAlign",  kgmGameScript::kgmGuiSetHAlign);
   handler->set("kgmGuiGetChild",  kgmGameScript::kgmGuiGetChild);
   handler->set("kgmGuiCallback",  kgmGameScript::kgmGuiCallback);
-  handler->set("kgmGuiContainer",  kgmGameScript::kgmGuiContainerA);
+  handler->set("kgmGuiCreate",  kgmGameScript::kgmGuiCreate);
+  handler->set("kgmGuiAdd",  kgmGameScript::kgmGuiAdd);
+  handler->set("kgmGuiSetText",  kgmGameScript::kgmGuiSetText);
 
   handler->set("kgmGenRetention",  kgmGameScript::kgmGenRetention);
   handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
@@ -905,7 +907,7 @@ int kgmGameScript::kgmGuiGetChild(void*)
     return 1;
   }
 
-  kgmGui* child = ((kgmGuiLayout*)gui)->getChild(id);
+  kgmGui* child = gui->getBySid(id);
 
   game->getScript()->resl("p", child);
 
@@ -932,7 +934,7 @@ s32 kgmGameScript::kgmGuiCallback(void*)
   return 0;
 }
 
-s32 kgmGameScript::kgmGuiContainerA(void*)
+s32 kgmGameScript::kgmGuiCreate(void*)
 {
   kgmGui* gui = null;
   s32 w, h;
@@ -954,6 +956,77 @@ s32 kgmGameScript::kgmGuiContainerA(void*)
   game->getScript()->resl("p", gui);
 
   return 1;
+}
+
+s32 kgmGameScript::kgmGuiAdd(void*)
+{
+  kgmGui* child = null;
+  s32 w, h;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    return 0;
+  }
+
+  kgmGuiContainer* g = null;
+  char* t = null;
+  char* id = null;
+  game->getScript()->args("pssi", &g, &t, &id, &w);
+
+  if (!g)
+    return 0;
+
+  kgmString type(t);
+
+  if (type == "Label") {
+    child = new kgmGuiLabel(null, 0, 0, 0, 0);
+    g->add(child, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  } else if (type == "Check") {
+    child = new kgmGuiCheck(null, 0, 0, 0, 0);
+    g->add(child, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  } else if (type == "Button") {
+    child = new kgmGuiButton(null, 0, 0, 0, 0);
+    g->add(child, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  } else if (type == "Progress") {
+    child = new kgmGuiProgress(null, 0, 0, 0, 0);
+    g->add(child, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  } else {
+    g->add(null, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  }
+
+  if (child)
+    child->setSid(id);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmGuiSetText(void*)
+{
+  kgmGui* child = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    return 0;
+  }
+
+  kgmGuiContainer* g = null;
+  char* id = null;
+  char* txt = null;
+  game->getScript()->args("pss", &g, &id, &txt);
+
+  if (!g)
+    return 0;
+
+  child = g->getBySid(id);
+
+  if (child)
+    child->setText(txt);
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmScreenResolution(void*)

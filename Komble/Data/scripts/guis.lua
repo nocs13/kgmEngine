@@ -31,7 +31,9 @@ function guis_init()
   --kgmGuiSetVAlign(gui_main, 3);
   --kgmGuiSetHAlign(gui_main, 3);
   --kgmGuiShow(gui_main, 1)
-  gui_main = Gui:new(100, 100)
+  gui_main = Gui:new(400, 400)
+  gui_main:addLabel('Name', 5, 'LabelA')
+  gui_main:addButton('Quit', 5, 'ButtonQuit')
   kgm_log('main gui 2 is ' .. tostring(gui_main))
 end
 

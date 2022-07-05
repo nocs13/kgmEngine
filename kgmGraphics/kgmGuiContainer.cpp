@@ -24,6 +24,9 @@ void kgmGuiContainer::add(kgmGui* g, CellSize cw, Align al)
   Cell c = {g, cw, CellSize_1, al};
 
   _cells.add(c);
+  addChild(g);
+
+  update();
 }
 
 void kgmGuiContainer::update() {
@@ -33,7 +36,7 @@ void kgmGuiContainer::update() {
   u32 cellWidth = r.w / cols_per_page;
 
   u32 itemHeight = 40;
-  u32 row = 1;
+  u32 row = 0;
   u32 cols = 0;
 
   auto i = _cells.begin();
@@ -44,7 +47,7 @@ void kgmGuiContainer::update() {
       cols = 0;
     }
 
-    u32 x = row * itemHeight + cols * cellWidth;
+    u32 x = cols * cellWidth;
     u32 y = row * itemHeight;
     u32 w = (*i).width;
     u32 h = itemHeight;
@@ -53,8 +56,11 @@ void kgmGuiContainer::update() {
       w = CellSize_5 - cols;
     }
 
-    if (w < 1)
+    if (w < 1) {
+      i.next();
+
       continue;
+    }
 
     if ((*i).gui) {
       Rect rc(x, y, w * cellWidth, h);
@@ -63,6 +69,7 @@ void kgmGuiContainer::update() {
     }
 
     cols += w;
+    i.next();
   }
 }
 

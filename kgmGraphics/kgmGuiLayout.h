@@ -50,8 +50,6 @@ public:
   void setVAlign(u32 a);
   void setHAlign(u32 a);
 
-  kgmGui* getChild(kgmString s);
-
 protected:
   void realign();
   void rescale();
