@@ -305,6 +305,7 @@ int getNumCpuCores()
     }
     cores = count;
 #else
+  //_SC_NPROCESSORS_CONF - for android
     cores = sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 
@@ -410,9 +411,13 @@ bool kgmSystem::removeFile(kgmString& path)
   bool res = false;
 
   #ifdef WIN32
+
   res = (bool) DeleteFile(path.data());
+
   #else
+
   res = !(remove(path.data()));
+
   #endif
 
   return true;

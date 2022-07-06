@@ -1,8 +1,8 @@
 #include "../kgmScript/kgmIScript.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmMap.h"
 #include "../kgmBase/kgmList.h"
+#include "../kgmBase/kgmMapS.h"
 #include "../kgmSystem/kgmThread.h"
 
 class kgmIGame;
@@ -16,7 +16,7 @@ class kgmGameScript: public kgmObject
 
   bool status = false;
 
-  kgmMap<kgmGui*, kgmString> slotters;
+  kgmMapS< kgmGui*, kgmString > slotters;
   kgmList< Slot<kgmGameScript>* > slots;
 
   static char* value;
@@ -107,6 +107,8 @@ class kgmGameScript: public kgmObject
   static s32 kgmGuiCreate(void*);
   static s32 kgmGuiAdd(void*);
   static s32 kgmGuiSetText(void*);
+  static s32 kgmGuiSetWindow(void*);
+  static s32 kgmGuiSetCallback(void*);
 
   static s32 kgmScreenResolution(void*);
 

@@ -108,6 +108,14 @@ public:
       return true;
     }
 
+    bool isValid()
+    {
+      if (!object)
+        return false;
+
+      return true;
+    }
+
     bool next()
     {
       if(_Ptr && _Ptr->next) {
@@ -194,6 +202,7 @@ public:
   }
 
   void clear()
+
   {
     if (!root || data_count < 1)
       return;

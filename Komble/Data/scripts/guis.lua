@@ -33,7 +33,7 @@ function guis_init()
   --kgmGuiShow(gui_main, 1)
   gui_main = Gui:new(400, 400)
   gui_main:addLabel('Name', 5, 'LabelA')
-  gui_main:addButton('Quit', 5, 'ButtonQuit')
+  gui_main:addButton('Quit', 5, 'ButtonQuit', 'onGuiButtonQuit')
   kgm_log('main gui 2 is ' .. tostring(gui_main))
 end
 

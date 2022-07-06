@@ -185,7 +185,7 @@ public:
 
     Node* c = root;
 
-    bool e;
+    bool e = false;
 
     c = find(h, k, e);
 

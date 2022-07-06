@@ -1,20 +1,35 @@
 #ifndef KGMPAIR_H
 #define KGMPAIR_H
 
-template <class T1, class T2> struct kgmPair
+template <class K, class V> struct kgmPair
 {
-  T1 key;
-  T2 value;
+  K _key;
+  V _value;
 
-  kgmPair(T1 k, T2 v)
+  kgmPair(K k, V v)
   {
-    key = k;
-    value = v;
+    _key = k;
+    _value = v;
   }
 
   ~kgmPair()
   {
 
+  }
+
+  bool operator==(K key){
+    if (key == _key)
+      return true;
+
+    return false;
+  }
+
+  K& key() {
+    return _key;
+  }
+
+  V& value() {
+    return value;
   }
 };
 

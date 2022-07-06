@@ -336,6 +336,21 @@ public:
     return i;
   }
 
+  iterator get(T val)
+  {
+    iterator i;
+    i._Ptr = _First;
+
+    do {
+      if (i._Ptr->data == val)
+        break;
+
+      i._Ptr = i._Ptr->next;
+    } while(!i.end());
+
+    return i;
+  }
+
   bool has(T val)
   {
     _Node *node = _First;

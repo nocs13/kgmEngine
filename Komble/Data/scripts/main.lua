@@ -104,13 +104,13 @@ function main_oninit()
   maps[4] = 'map03.map'
   maps[5] = 'map04.map'
 
-  retent = kgmGenRetention('.komble')
+  --retent = kgmGenRetention('.komble')
 
-  mapId = kgmGetRetention(retent, 'mapCurrent')
+  --mapId = kgmGetRetention(retent, 'mapCurrent')
 
-  if mapId == '' then
-    kgmSetRetention(retent, 'mapCurrent', 'map00')
-  end
+  --if mapId == '' then
+  --  kgmSetRetention(retent, 'mapCurrent', 'map00')
+  --end
 
   s, r = kgmRunProcess('/usr/bin/ls', '-la')
 

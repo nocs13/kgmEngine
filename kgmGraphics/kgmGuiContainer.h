@@ -1,6 +1,8 @@
 #pragma once
 #include "kgmGui.h"
 
+class kgmWindow;
+
 class kgmGuiContainer: public kgmGui {
   KGM_OBJECT(kgmGuiContainer);
 
@@ -29,6 +31,7 @@ private:
     };
 
     kgmList<Cell> _cells;
+    kgmWindow*    _wnd = null;
 
 public:
     kgmGuiContainer();
@@ -36,7 +39,9 @@ public:
     ~kgmGuiContainer();
 
     void add(kgmGui* g, CellSize cw, Align al);
+    void setWindow(kgmWindow* w);
 
 private:
     void update();
+    void align(kgmGui* g, Rect inside);
 };

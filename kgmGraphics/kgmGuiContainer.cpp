@@ -1,5 +1,5 @@
 #include "kgmGuiContainer.h"
-
+#include "../kgmSystem/kgmWindow.h"
 
 kgmGuiContainer::kgmGuiContainer()
     :kgmGui(){
@@ -24,12 +24,32 @@ void kgmGuiContainer::add(kgmGui* g, CellSize cw, Align al)
   Cell c = {g, cw, CellSize_1, al};
 
   _cells.add(c);
-  addChild(g);
+  g->setParent(this);
 
   update();
 }
 
-void kgmGuiContainer::update() {
+void kgmGuiContainer::setWindow(kgmWindow* w)
+{
+  _wnd = w;
+}
+
+void kgmGuiContainer::update()
+{
+  Rect pr;
+
+  if (m_parent) {
+    pr = m_parent->getRect();
+  } else if (_wnd) {
+    s32 x, y, w, h;
+
+    _wnd->getRect(x, y, w, h);
+
+    pr = Rect(x, y, w, h);
+  }
+
+  if ((pr.w > getRect().w) || (pr.h > getRect().h))
+    align(null, pr);
 
   Rect r = getRect();
 
@@ -73,4 +93,14 @@ void kgmGuiContainer::update() {
   }
 }
 
+void kgmGuiContainer::align(kgmGui* g, Rect inside)
+{
+  if (g == null) {
+    s32 w = getRect().w;
+    s32 h = getRect().h;
+    s32 x = inside.w / 2 - w / 2;
+    s32 y = inside.h / 2 - h / 2;
 
+    setRect(x, y, w, h);
+  }
+}

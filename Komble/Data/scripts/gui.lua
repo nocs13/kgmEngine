@@ -8,6 +8,7 @@ function Gui:new(w, h)
   settag(g, tag(Gui))
 
   g.o = kgmGuiCreate(w, h)
+  kgmGuiSetWindow(g.o)
 
   return g
 end
@@ -32,8 +33,12 @@ function Gui:addCheck(id, w, text, status, handler)
 end
 
 function Gui:addButton(id, w, text, handler)
-  kgmGuiAdd(self.o, 'Button', id, w)
+  c = kgmGuiAdd(self.o, 'Button', id, w)
   kgmGuiSetText(self.o, id, text)
+
+  if c ~= nil then
+    kgmGuiCallback(c, handler)
+  end
 end
 
 function Gui:addProgress(id, w, handler)

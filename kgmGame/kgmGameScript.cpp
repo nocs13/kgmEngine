@@ -89,6 +89,8 @@ void kgmGameScript::init()
   handler->set("kgmGuiCreate",  kgmGameScript::kgmGuiCreate);
   handler->set("kgmGuiAdd",  kgmGameScript::kgmGuiAdd);
   handler->set("kgmGuiSetText",  kgmGameScript::kgmGuiSetText);
+  handler->set("kgmGuiSetWindow",  kgmGameScript::kgmGuiSetWindow);
+//  handler->set("kgmGuiSetCallback",  kgmGameScript::kgmGuiSetCallback);
 
   handler->set("kgmGenRetention",  kgmGameScript::kgmGenRetention);
   handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
@@ -101,6 +103,8 @@ void kgmGameScript::init()
   handler->set("kgmPointState",  kgmGameScript::kgmPointState);
 
   handler->set("kgmRunProcess",  kgmGameScript::kgmRunProcess);
+
+  slotters.clear();
 
   status = handler->load("main");
 
@@ -246,7 +250,7 @@ __stdcall void kgmGameScript::onSlotGuiList(kgmGui* g, u32 s)
   if (!g)
     return;
 
-  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+  auto i = slotters.get(g);
 
   if (!i.isValid())
     return;
@@ -259,7 +263,7 @@ __stdcall void kgmGameScript::onSlotGuiMenu(kgmGui* g, u32 s)
   if (!g)
     return;
 
-  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+  auto i = slotters.get(g);
 
   if (!i.isValid())
     return;
@@ -272,7 +276,7 @@ __stdcall void kgmGameScript::onSlotGuiText(kgmGui* g, kgmString s)
   if (!g)
     return;
 
-  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+  auto i = slotters.get(g);
 
   if (!i.isValid())
     return;
@@ -285,7 +289,7 @@ __stdcall void kgmGameScript::onSlotGuiCheck(kgmGui* g, bool n)
   if (!g)
     return;
 
-  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(g);
+  auto i = slotters.get(g);
 
   if (!i.isValid())
     return;
@@ -298,7 +302,7 @@ __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
   if (!s)
     return;
 
-  kgmMap<kgmGui*, kgmString>::iterator i = slotters.get(s);
+  auto i = slotters.get(s);
 
   if (!i.isValid())
     return;
@@ -996,10 +1000,15 @@ s32 kgmGameScript::kgmGuiAdd(void*)
     g->add(null, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
   }
 
-  if (child)
-    child->setSid(id);
+  s32 res = 0;
 
-  return 0;
+  if (child) {
+    child->setSid(id);
+    game->getScript()->resl("p", child);
+    res = 1;
+  }
+
+  return res;
 }
 
 s32 kgmGameScript::kgmGuiSetText(void*)
@@ -1025,6 +1034,26 @@ s32 kgmGameScript::kgmGuiSetText(void*)
 
   if (child)
     child->setText(txt);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmGuiSetWindow(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+  {
+    return 0;
+  }
+
+  kgmGuiContainer* g = null;
+  game->getScript()->args("p", &g);
+
+  if (!g)
+    return 0;
+
+  g->setWindow(game->getWindow());
 
   return 0;
 }
