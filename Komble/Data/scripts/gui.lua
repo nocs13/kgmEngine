@@ -37,7 +37,7 @@ function Gui:addButton(id, w, text, handler)
   kgmGuiSetText(self.o, id, text)
 
   if c ~= nil then
-    --kgmGuiCallback(c, handler)
+    kgmGuiCallback(c, handler)
   end
 end
 

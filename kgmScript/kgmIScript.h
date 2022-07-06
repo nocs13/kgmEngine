@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmObject.h"
 
-class kgmIScript: public kgmObject
+class kgmIScript
 {
 public:
 typedef s32 (*FN)(void*);

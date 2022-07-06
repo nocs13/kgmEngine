@@ -3,8 +3,8 @@ OS := $(shell uname -s)
 
 RM =
 
-CC = ccache g++
-#CC = ccache clang++
+#CC = ccache g++
+CC = ccache clang++
 AR = ar
 DSND = -OAL
 DSEP = /

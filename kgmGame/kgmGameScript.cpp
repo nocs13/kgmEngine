@@ -26,6 +26,8 @@
 
 char* kgmGameScript::value = null;
 
+kgmGameScript* sdebug = null;
+
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
@@ -37,6 +39,8 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler->setX(this);
 
   mutex = kgmThread::mutex_create(true);
+
+  sdebug = this;
 }
 
 kgmGameScript::~kgmGameScript()
@@ -926,17 +930,14 @@ s32 kgmGameScript::kgmGuiCallback(void*)
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
   if (!game)
-  {
     return 0;
-  }
 
-  kgmGameScript* gs = (kgmGameScript*) game->getScript();
-  kgmMapS< kgmGui*, kgmString > *slotters = &gs->slotters;
+  kgmGameScript* gs = (kgmGameScript*) game->getScript()->getX();
 
   game->getScript()->args("ps", &gui, &fn);
 
   if (gui && fn)
-   ((kgmGameScript*) game->getScript())->setSlot(gui, fn);
+   gs->setSlot(gui, fn);
 
   return 0;
 }
@@ -950,9 +951,6 @@ s32 kgmGameScript::kgmGuiCreate(void*)
 
   if (!game)
     return 0;
-
-  kgmGameScript* gs = (kgmGameScript*) game->getScript();
-  kgmMapS< kgmGui*, kgmString > *slotters = &gs->slotters;
 
   game->getScript()->args("ii", &w, &h);
 
@@ -975,9 +973,6 @@ s32 kgmGameScript::kgmGuiAdd(void*)
 
   if (!game)
     return 0;
-
-  kgmGameScript* gs = (kgmGameScript*) game->getScript();
-  kgmMapS< kgmGui*, kgmString > *slotters = &gs->slotters;
 
   kgmGuiContainer* g = null;
   char* t = null;
@@ -1025,9 +1020,6 @@ s32 kgmGameScript::kgmGuiSetText(void*)
   if (!game)
     return 0;
 
-  kgmGameScript* gs = (kgmGameScript*) game->getScript();
-  kgmMapS< kgmGui*, kgmString > *slotters = &gs->slotters;
-
   kgmGuiContainer* g = null;
   char* id = null;
   char* txt = null;
@@ -1049,9 +1041,6 @@ s32 kgmGameScript::kgmGuiSetWindow(void*)
 
   if (!game)
     return 0;
-
-  kgmGameScript* gs = (kgmGameScript*) game->getScript();
-  kgmMapS< kgmGui*, kgmString > *slotters = &gs->slotters;
 
   kgmGuiContainer* g = null;
   game->getScript()->args("p", &g);
