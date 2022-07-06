@@ -30,64 +30,6 @@ public:
   }
 };
 
-class kTestGame: public kgmWindow, public kgmIGame
-{
-  KGM_OBJECT(kTestGame);
-
-public:
-  kTestGame()
-  :kgmWindow(0, "kTestGame", 0, 0, 800, 600, 24, false)
-  {
-    //setMsAbsolute(true);
-  }
-
-  ~kTestGame()
-  {
-#ifdef DEBUG
-    kgm_log() << "kTestGame::~kTestGame [" << (void*)this << "]\n";
-#endif
-  }
-
-  int            gQuit()              { return 0; }
-  int            gInit()              { return 1; }
-  int            gLoad(kgmString)     { return 0; }
-  int            gUnload()            { return 0; }
-  int            gButton(game_button) { return 0; }
-  u32            gState()             { return 0; }
-  int            gSwitch(u32)         { return 0; }
-
-  bool           gUnitRegister(kgmString, NEW_UNIT) { return 0; }
-
-  kgmUnit*       gSpawn(kgmString)    { return null; }
-  bool           gAppend(kgmUnit*) { return 0; }
-  kgmUnit*       gUnit(kgmString)  { return 0; }
-  Iterator*      gUnits()          { return 0; }
-
-  void           guiAdd(kgmGui* g) {}
-
-  kgmIPhysics*    getPhysics() { return 0; }
-  kgmIAudio*      getAudio() { return 0; }
-  kgmIVideo*      getVideo() { return 0; }
-  kgmILogic*      getLogic() { return 0; }
-  kgmIScript*     getScript() { return 0; }
-  kgmIGraphics*   getGraphics() { return 0; }
-  kgmIResources*  getResources() { return 0; }
-  kgmWindow*      getWindow() { return 0; }
-  kgmSystem*      getSystem() { return 0; }
-
-  u32             timeUpdate() { return 0; }
-
-  //void loop() {}
-
-protected:
-  void  initResources() {}
-  void  initGraphycs()  {}
-  void  initPhysics()  {}
-  void  initSystem()  {}
-  void  initAudio()  {}
-  void  initLogic()  {}
-};
-
 class kApp: public kgmGameApp
 {
   KGM_OBJECT(kApp);
@@ -100,9 +42,6 @@ public:
 
   //kGame* game;
   kgmGameBase* game;
-  //kTestGame* game;
-
-  //kgmWindow* wnd = null;
 
 public:
   kApp()
@@ -136,7 +75,6 @@ public:
 
     //game = new kGame();
     game = new kgmGameBase();
-    //game = new kTestGame();
 
     m_game = static_cast<kgmIGame*> (game);
     //m_game = reinterpret_cast<kgmIGame*>(game);
@@ -147,8 +85,6 @@ public:
     {
       failed = true;
     }
-
-    //wnd = new kgmWindow((kgmWindow*) null, "kgm", 0, 0, 800, 600, 24, false);
   }
 
   void gameLoop()
@@ -172,8 +108,6 @@ public:
       m_game = null;
       game   = null;
     }
-
-    //delete wnd;
   }
 
   #ifdef ANDROID

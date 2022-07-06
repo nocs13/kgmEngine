@@ -30,6 +30,7 @@ class kgmGameMap;
 
 class kgmGameBase: public kgmWindow, public kgmIGame
 {
+  KGM_OBJECT(kgmGameBase)
   friend class kgmGameMap;
 
 public:

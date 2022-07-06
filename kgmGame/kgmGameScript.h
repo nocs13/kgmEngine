@@ -9,8 +9,10 @@ class kgmIGame;
 class kgmUnit;
 class kgmGui;
 
-class kgmGameScript: public kgmObject
+class kgmGameScript: public kgmIScript
 {
+  KGM_OBJECT(kgmGameScript)
+
   kgmIScript* handler;
   kgmIGame*   game;
 

@@ -131,13 +131,9 @@ public:
   };
 
 private:
-#define MIN_DEPTH_UPDATE 8
-
   friend class iterator;
 
   Node* root;
-
-  u32   t_depth;
 
 public:
   kgmMapS()

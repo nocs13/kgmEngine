@@ -112,9 +112,9 @@ function main_oninit()
   --  kgmSetRetention(retent, 'mapCurrent', 'map00')
   --end
 
-  s, r = kgmRunProcess('/usr/bin/ls', '-la')
+  --s, r = kgmRunProcess('/usr/bin/ls', '-la')
 
-  kgmLog(s)
+  --kgmLog(s)
 end
 
 function main_onfree()
