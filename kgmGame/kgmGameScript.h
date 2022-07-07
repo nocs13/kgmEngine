@@ -2,7 +2,7 @@
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmList.h"
-#include "../kgmBase/kgmMapS.h"
+#include "../kgmBase/kgmMap.h"
 #include "../kgmSystem/kgmThread.h"
 
 class kgmIGame;
@@ -18,7 +18,7 @@ class kgmGameScript: public kgmObject
 
   bool status = false;
 
-  kgmMapS< kgmGui*, kgmString > slotters;
+  kgmMap< kgmGui*, kgmString > slotters;
   kgmList< Slot<kgmGameScript>* > slots;
 
   static char* value;

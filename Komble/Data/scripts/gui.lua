@@ -13,7 +13,16 @@ function Gui:new(w, h)
   return g
 end
 
-function Gui:align(s)
+function Gui:show()
+  kgmGuiShow(self.o, 1)
+end
+
+function Gui:hide()
+  kgmGuiShow(self.o, 0)
+end
+
+function Gui:addEmpty(w)
+  kgmGuiAdd(self.o, '', '', w)
 end
 
 function Gui:addList(id, w, handler)

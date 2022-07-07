@@ -17,11 +17,6 @@ class kgmMapS
 
     ~Node()
     {
-      if (left)
-        delete left;
-
-      if (right)
-        delete right;
     }
   };
 
@@ -33,46 +28,19 @@ public:
     friend class kgmMapS;
 
     Node* _Ptr;
-    u32   depth;
 
-    kgmMapS<Key, Data>* object;
 
   public:
     iterator(kgmMapS<Key, Data>* o = null)
     {
-      _Ptr   = NULL;
-      object = o;
+      _Ptr   = nullptr;
 
       if (o)
-      {
-        Node* s = o->root;
-
-        if (s)
-        {
-          while(true)
-          {
-            if (s->left != null)
-            {
-              s = s->left;
-            }
-            else if (s->right != null)
-            {
-              s = s->right;
-            }
-            else
-            {
-              break;
-            }
-          }
-        }
-
-        _Ptr = s;
-      }
+        _Ptr = o->root;
     }
 
     iterator(const iterator& it)
     {
-      object = it.object;
       _Ptr   = it._Ptr;
     }
 

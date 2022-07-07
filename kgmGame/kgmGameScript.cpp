@@ -984,7 +984,9 @@ s32 kgmGameScript::kgmGuiAdd(void*)
 
   kgmString type(t);
 
-  if (type == "Label") {
+  if (type == "") {
+    g->add(null, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
+  } else if (type == "Label") {
     child = new kgmGuiLabel(null, 0, 0, 0, 0);
     g->add(child, (kgmGuiContainer::CellSize) w, (kgmGuiContainer::Align) 0);
   } else if (type == "Check") {
@@ -1027,6 +1029,7 @@ s32 kgmGameScript::kgmGuiSetText(void*)
 
   if (!g)
     return 0;
+
   child = g->getBySid(id);
 
   if (child)

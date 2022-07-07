@@ -104,17 +104,13 @@ function main_oninit()
   maps[4] = 'map03.map'
   maps[5] = 'map04.map'
 
-  --retent = kgmGenRetention('.komble')
+  retent = kgmGenRetention('.komble')
 
-  --mapId = kgmGetRetention(retent, 'mapCurrent')
+  mapId = kgmGetRetention(retent, 'mapCurrent')
 
-  --if mapId == '' then
-  --  kgmSetRetention(retent, 'mapCurrent', 'map00')
-  --end
-
-  --s, r = kgmRunProcess('/usr/bin/ls', '-la')
-
-  --kgmLog(s)
+  if mapId == '' then
+    kgmSetRetention(retent, 'mapCurrent', 'map00')
+  end
 end
 
 function main_onfree()
@@ -122,33 +118,6 @@ function main_onfree()
 end
 
 function main_onupdate()
-  if state == State_Play then
-    if (kgmKeyState(KEY_ESCAPE) == 1) then
-      kgmGamePause()
-      state = kgmGameState()
-
-      if state == State_Pause then
-        kgm_log('gui show pause')
-        guiShowPause()
-        return
-      end
-    end
-
-    
-    if (kgmKeyState(KEY_LEFT) == 1) and (cam ~= nil) then
-      kgm_log('Turning left')
-      cam:turn(1.0)
-    elseif (kgmKeyState(KEY_RIGHT) == 1) and (cam ~= nil) then
-      kgm_log('Turning right')
-      cam:turn(-1.0)
-    elseif (kgmKeyState(KEY_UP) == 1) and (cam ~= nil) then
-      kgm_log('Move forward')
-      cam:move(1.0)
-    elseif (kgmKeyState(KEY_DOWN) == 1) and (cam ~= nil) then
-      kgm_log('Move back')
-      cam:move(-1.0)
-    end
-  end
 end
 
 function main_onload()

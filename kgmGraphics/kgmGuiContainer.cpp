@@ -24,7 +24,9 @@ void kgmGuiContainer::add(kgmGui* g, CellSize cw, Align al)
   Cell c = {g, cw, CellSize_1, al};
 
   _cells.add(c);
-  g->setParent(this);
+
+  if (g)
+    g->setParent(this);
 
   update();
 }

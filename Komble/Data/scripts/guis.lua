@@ -12,29 +12,52 @@ function guis_init()
   local gw, gh = 1, 1
   local scw, sch = 1, 1
 
-  --gui_main = kgmGuiLoad('guis/start.ui')
-  --kgm_log('main gui is ' .. tostring(gui_main))
+  gui_main = Gui:new(300, 240)
+  gui_main:addEmpty(1)
+  gui_main:addButton('idNew', 3, 'New', 'onGuiButtonNew')
+  gui_main:addEmpty(1)
 
-  --sw, sh = kgmScreenResolution()
-  --kgmLog('screen resolution is ' .. tostring(sw) .. ' ' .. tostring(sh))
-  --gw, gh = kgmGuiResolution(gui_main)
-  --kgmLog('gui resolution is ' .. tostring(gw) .. ' ' .. tostring(gh))
+  gui_main:addEmpty(1)
+  gui_main:addButton('idLoad', 3, 'Load', 'onGuiButtonLoad')
+  gui_main:addEmpty(1)
 
-  --scw = sw / gw
-  --sch = sh / gh
+  gui_main:addEmpty(1)
+  gui_main:addButton('idTest', 3, 'Test', 'onGuiButtonTest')
+  gui_main:addEmpty(1)
 
-  --kgmLog('gui scaling is ' .. tostring(scw) .. ' ' .. tostring(sch))
+  gui_main:addEmpty(1)
+  gui_main:addButton('idQuit', 3, 'Quit', 'onGuiButtonQuit')
+  gui_main:addEmpty(1)
 
-  --kgmGuiResize(gui_main, sw, sh)
-  --gui_quit = kgmGuiGetChild(gui_main, 'button2')
+  gui_main:addEmpty(5)
 
-  --kgmGuiSetVAlign(gui_main, 3);
-  --kgmGuiSetHAlign(gui_main, 3);
-  --kgmGuiShow(gui_main, 1)
-  gui_main = Gui:new(400, 400)
-  gui_main:addLabel('Name', 5, 'LabelA')
-  gui_main:addButton('Quit', 5, 'ButtonQuit', 'onGuiButtonQuit')
-  kgm_log('main gui 2 is ' .. tostring(gui_main))
+  gui_main:addEmpty(1)
+  gui_main:addButton('idCredits', 3, 'Credits', 'onGuiButtonCredits')
+  gui_main:addEmpty(1)
+
+  gui_pause = Gui:new(100, 120)
+  gui_pause:addButton('idBtnResume', 5, 'Resume', 'onGuiButtonResume')
+  gui_pause:addButton('idBtnMain', 5, 'Main', 'onGuiButtonMain')
+  gui_pause:addButton('idBtnQuit', 5, 'Quit', 'onGuiButtonQuit')
+  gui_pause:hide()
+
+  gui_credits = Gui:new(200, 280)
+  gui_credits:addLabel('idCredCredits', 2, 'Credits')
+  gui_credits:addEmpty(3)
+
+  gui_credits:addLabel('idCredDeveloper', 2, 'Developer')
+  gui_credits:addLabel('idCredDeveloperAuth', 3 , 'Karakal_13')
+  gui_credits:addLabel('idCredDesigner', 2, 'Designer')
+  gui_credits:addLabel('idCredDesignerAuth', 3 , 'Karakal_13')
+  gui_credits:addLabel('idCredVideo', 2, 'Video')
+  gui_credits:addLabel('idCredVideoAuth', 3 , 'Karakal_13')
+  gui_credits:addLabel('idCredAudio', 2, 'Audio')
+  gui_credits:addLabel('idCredAudioAuth', 3, 'Karakal_13')
+  gui_credits:addEmpty(5)
+  gui_credits:addEmpty(2)
+  gui_credits:addButton('idBtnBack', 1, 'Back', 'onGuiCreditsBack')
+  gui_credits:addEmpty(2)
+  gui_credits:hide()
 end
 
 function onGuiButtonQuit()
@@ -47,7 +70,7 @@ function onGuiButtonNew()
   state = main_load_new()
 
   if state ~= 0 then
-    kgmGuiShow(gui_main, 0)
+    gui_main:hide()
   end
 end
 
@@ -60,45 +83,33 @@ function onGuiButtonTest()
     state = main_load_test()
 
     if state ~= 0 then
-        kgmGuiShow(gui_main, 0)
+        gui_main:hide()
     end
 end
 
 function onGuiButtonCredits()
   kgm_log('onGuiButtonCredits')
 
-  if gui_credits == nil then
-    gui_credits = kgmGuiLoad('guis/credits.ui')
-    kgmGuiSetVAlign(gui_credits, VALIGN_CENTER);
-    kgmGuiSetHAlign(gui_credits, VALIGN_CENTER);
-  end
-
-  kgmGuiShow(gui_main, 0)
-  kgmGuiShow(gui_credits, 1)
+  gui_main:hide()
+  gui_credits:show()
 end
 
 function onGuiCreditsBack()
   kgm_log('onGuiCreditsBack')
 
-  kgmGuiShow(gui_credits, 0)
-  kgmGuiShow(gui_main, 1)
+  gui_credits:hide()
+  gui_main:show()
 end
 
 function guiShowPause()
-  if gui_pause == nil then
-    gui_pause = kgmGuiLoad('guis/pause.ui')
-    kgmGuiSetVAlign(gui_pause, VALIGN_CENTER);
-    kgmGuiSetHAlign(gui_pause, VALIGN_CENTER);
-  end
-
-  kgmGuiShow(gui_pause, 1)
+  gui_pause:show()
 end
 
 function onGuiButtonResume()
   stat = main_resume()
 
   if stas ~= 0 then
-    kgmGuiShow(gui_pause, 0)
+    gui_pause:hide()
   end
 end
 
@@ -106,7 +117,7 @@ function onGuiButtonMain()
   stat = main_unload()
 
   if stas ~= 0 then
-    kgmGuiShow(gui_pause, 0)
-    kgmGuiShow(gui_main, 1)
+    gui_pause:hide()
+    gui_main:show()
   end
 end
