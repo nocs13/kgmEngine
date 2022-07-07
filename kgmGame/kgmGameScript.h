@@ -80,7 +80,6 @@ class kgmGameScript: public kgmObject
   static s32 kgmGamePlay(void*);
   static s32 kgmGamePause(void*);
   static s32 kgmGameState(void*);
-  static s32 kgmGameUnits(void*);
   static s32 kgmGameUnload(void*);
   static s32 kgmGameCamera(void*);
 
@@ -92,6 +91,10 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitId(void*);
   static s32 kgmUnitName(void*);
   static s32 kgmUnitClass(void*);
+  static s32 kgmUnitIterator(void*);
+
+  static s32 kgmUnitIterNext(void*);
+  static s32 kgmUnitIterFree(void*);
 
   static s32 kgmGenRetention(void*);
   static s32 kgmDelRetention(void*);

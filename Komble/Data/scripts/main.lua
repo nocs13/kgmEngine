@@ -135,6 +135,20 @@ function main_onload()
     cam = Camera:new(c)
   end
 
+  it = kgmUnitIterator()
+
+  if it ~= nil then
+    while 1 do
+      u = kgmUnitIterNext(it)
+
+      if u == nil or u == 0 then break end
+
+      table.insert(units, u)
+    end
+  end
+
+  kgmUnitIterFree(it);
+
   kgm_log('Switch to play state')
   state = State_Play
 end

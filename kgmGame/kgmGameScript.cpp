@@ -69,7 +69,6 @@ void kgmGameScript::init()
   handler->set("kgmGamePlay",   kgmGameScript::kgmGamePlay);
   handler->set("kgmGamePause",  kgmGameScript::kgmGamePause);
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
-  handler->set("kgmGameUnits",  kgmGameScript::kgmGameUnits);
   handler->set("kgmGameUnload", kgmGameScript::kgmGameUnload);
   handler->set("kgmGameCamera", kgmGameScript::kgmGameCamera);
 
@@ -81,6 +80,10 @@ void kgmGameScript::init()
   handler->set("kgmUnitId", kgmGameScript::kgmUnitId);
   handler->set("kgmUnitName", kgmGameScript::kgmUnitName);
   handler->set("kgmUnitClass", kgmGameScript::kgmUnitClass);
+  handler->set("kgmUnitIterator", kgmGameScript::kgmUnitIterator);
+
+  handler->set("kgmUnitIterNext", kgmGameScript::kgmUnitIterNext);
+  handler->set("kgmUnitIterFree", kgmGameScript::kgmUnitIterFree);
 
   handler->set("kgmGuiLoad",  kgmGameScript::kgmGuiLoad);
   handler->set("kgmGuiShow",  kgmGameScript::kgmGuiShow);
@@ -465,7 +468,7 @@ s32 kgmGameScript::kgmGameUnload(void *)
   return 1;
 }
 
-s32 kgmGameScript::kgmGameUnits(void *)
+s32 kgmGameScript::kgmUnitIterator(void *)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -474,24 +477,61 @@ s32 kgmGameScript::kgmGameUnits(void *)
 
   s32 i = 0;
 
-  kgmArray<kgmUnit*> units;
   kgmIGame::Iterator* it = game->gUnits();
 
-  units.realloc(128);
 
-  while(kgmUnit* u = it->next())
-  {
-    if (i == units.length())
-      units.realloc(units.length() + 128);
-
-    units[i] = u;
-  }
-
-  units.realloc(i + 1);
-
-  game->getScript()->reslarr("p", units.data(), units.length());
+  //game->getScript()->reslarr("p", units.data(), units.length());
+  game->getScript()->resl("p", it);
 
   return 1;
+}
+
+s32 kgmGameScript::kgmUnitIterNext(void *)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s32 i = 0;
+
+  kgmIGame::Iterator* it = null;
+
+  game->getScript()->args("p", &it);
+
+  if (!it) {
+    game->getScript()->resl("p", nullptr);
+
+    return 1;
+  }
+
+  kgmUnit* u = it->next();
+
+  game->getScript()->resl("p", u);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitIterFree(void *)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s32 i = 0;
+
+  kgmIGame::Iterator* it = null;
+
+  game->getScript()->args("p", &it);
+
+  if (!it) {
+    return 0;
+  }
+
+  delete it;
+
+  return 0;
 }
 
 s32 kgmGameScript::kgmGameCamera(void*)
