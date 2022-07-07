@@ -4,6 +4,10 @@ settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
 
 angle = 0.0
 
+State_TurnLeft  = 1
+State_TurnRight = 2
+State_Move      = 3
+
 function Camera:new(c)
   x, y, z = kgmCamPosition(c)
   
@@ -13,7 +17,7 @@ function Camera:new(c)
 
   local d = Vector3:new(x, y, z)
 
-  local obj = {cam = c, pos = p, dir = d}
+  local obj = {cam = c, pos = p, dir = d, state = 0}
 
   settag(obj, tag(Camera))
 
@@ -50,4 +54,30 @@ function Camera:move(d)
   self.pos:add(x, y, 0.0)
 
   kgmCamMove(self.cam, self.pos.x, self.pos.y, self.pos.z)
+end
+
+function Camera:button(btn, down)
+  if btn == KEY_LEFT and down == 1 then
+    self.state = State_TurnLeft
+  elseif btn == KEY_RIGHT and down == 1 then
+    self.state = State_TurnRight
+  elseif btn == KEY_UP and down == 1 then
+    self.state = State_Move
+  else
+    self.state = 0
+  end
+
+  if down == 0 then
+    self.state = 0
+  end
+end
+
+function Camera:update()
+  if self.state == State_Move then
+    Camera.move(self, 1)
+  elseif self.state == State_TurnLeft then
+    Camera.turn(self, 1)
+  elseif self.state == State_TurnRight then
+    Camera.turn(self, -1)
+  end
 end

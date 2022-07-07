@@ -102,8 +102,6 @@ class kgmGameScript: public kgmObject
   static s32 kgmGuiShow(void*);
   static s32 kgmGuiResize(void*);
   static s32 kgmGuiResolution(void*);
-  static s32 kgmGuiSetVAlign(void*);
-  static s32 kgmGuiSetHAlign(void*);
   static s32 kgmGuiGetChild(void*);
   static s32 kgmGuiCallback(void*);
   static s32 kgmGuiCreate(void*);

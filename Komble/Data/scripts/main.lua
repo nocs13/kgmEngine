@@ -118,6 +118,11 @@ function main_onfree()
 end
 
 function main_onupdate()
+  if state == State_Play then
+    if cam ~= nil then
+      cam:update()
+    end
+  end
 end
 
 function main_onload()
@@ -125,20 +130,9 @@ function main_onload()
   
   c = kgmGameCamera()
 
-  if c ~= nil and c ~= 0 then
-    kgm_log('Found game main camera is ' .. tostring(c))
-	
+  if c ~= nil then
+    kgm_log('Map have camera')
     cam = Camera:new(c)
-    kgm_log('Main camera is ' .. tostring(cam))
-    kgm_log('Main camera is ' .. tostring(cam.cam))
-    kgm_log('Main camera pos is ' .. tostring(cam.pos))
-    kgm_log('Main camera dir is ' .. tostring(cam.dir))
-	
-	if cam == nil then
-	  kgm_log('LOL current create camera is NIL')
-	end
-  else
-    kgm_log('No main camera found')
   end
 
   kgm_log('Switch to play state')
@@ -148,10 +142,9 @@ end
 function main_onunload()
   kgm_log('On game map unload, clearing map level data')
   
-  units = {}
+  units  = {}
   player = nil
-
-  cam = nil
+  cam    = nil
 
   kgm_log('Switch to idle state')
   state = State_Idle
@@ -207,10 +200,11 @@ function main_onbutton(key, btn, down)
   elseif down == 0 then
     inputkey = 0
   end
-  
-  if cam == nil then 
-    kgm_log('main camera is nil')
-  else 
-    kgm_log('main camera present')
+
+  kgm_log('Setting camera state depend of input.')
+
+  if cam ~= nil and state == State_Play then
+    kgm_log('Have camera.')
+    cam:button(key, down)
   end
 end
