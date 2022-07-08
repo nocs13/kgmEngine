@@ -4,9 +4,10 @@ settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
 
 angle = 0.0
 
-State_TurnLeft  = 1
-State_TurnRight = 2
-State_Move      = 3
+State_TurnLeft     = 1
+State_TurnRight    = 2
+State_MoveForward  = 3
+State_MoveBack     = 4
 
 function Camera:new(c)
   x, y, z = kgmCamPosition(c)
@@ -62,7 +63,9 @@ function Camera:button(btn, down)
   elseif btn == KEY_RIGHT and down == 1 then
     self.state = State_TurnRight
   elseif btn == KEY_UP and down == 1 then
-    self.state = State_Move
+    self.state = State_MoveForward
+  elseif btn == KEY_DOWN and down == 1 then
+    self.state = State_MoveBack
   else
     self.state = 0
   end
@@ -73,8 +76,10 @@ function Camera:button(btn, down)
 end
 
 function Camera:update()
-  if self.state == State_Move then
+  if self.state == State_MoveForward then
     Camera.move(self, 1)
+  elseif self.state == State_MoveBack then
+    Camera.move(self, -1)
   elseif self.state == State_TurnLeft then
     Camera.turn(self, 1)
   elseif self.state == State_TurnRight then

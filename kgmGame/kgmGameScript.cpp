@@ -26,8 +26,6 @@
 
 char* kgmGameScript::value = null;
 
-kgmGameScript* sdebug = null;
-
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
@@ -40,7 +38,9 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 
   mutex = kgmThread::mutex_create(true);
 
-  sdebug = this;
+  mworker = kgmThread::Thread(0);
+
+  mactive = false;
 }
 
 kgmGameScript::~kgmGameScript()
@@ -55,6 +55,23 @@ kgmGameScript::~kgmGameScript()
     delete (*i);
 
   delete handler;
+}
+
+int kgmGameScript::__worker(kgmGameScript* gs)
+{
+  while(true) {
+    gs->update();
+    kgmThread::sleep(50);
+
+    kgmThread::mutex_lock(gs->mutex);
+    if (!gs->mactive) {
+      kgmThread::mutex_unlock(gs->mutex);
+      break;
+    }
+    kgmThread::mutex_unlock(gs->mutex);
+  }
+
+  return 0;
 }
 
 void kgmGameScript::init()
@@ -95,7 +112,6 @@ void kgmGameScript::init()
   handler->set("kgmGuiAdd",  kgmGameScript::kgmGuiAdd);
   handler->set("kgmGuiSetText",  kgmGameScript::kgmGuiSetText);
   handler->set("kgmGuiSetWindow",  kgmGameScript::kgmGuiSetWindow);
-//  handler->set("kgmGuiSetCallback",  kgmGameScript::kgmGuiSetCallback);
 
   handler->set("kgmGenRetention",  kgmGameScript::kgmGenRetention);
   handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
@@ -111,31 +127,29 @@ void kgmGameScript::init()
 
   status = handler->load("main");
 
-  if (status)
+  if (status) {
     handler->call("main_oninit", "");
-
-  int k = 0;
+    mactive = true;
+    mworker = kgmThread::thread_create((kgmThread::Thread_Function) kgmGameScript::__worker, this);
+  }
 }
 
 void kgmGameScript::free()
 {
-  if (status)
+  if (status) {
+    kgmThread::mutex_lock(mutex);
+    mactive = false;
+    kgmThread::mutex_unlock(mutex);
+
+    kgmThread::thread_join(mworker);
     handler->call("main_onfree", "");
+  }
 }
 
 void kgmGameScript::update()
 {
-#ifdef DEBUG2
-  kgm_log() << "Call main_onupdate. \n";
-#endif
-
-  lock();
-  locks[1] ++;
   if (status)
     handler->call("main_onupdate", "i", game->timeUpdate());
-
-  unlock();
-  locks[1] --;
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)

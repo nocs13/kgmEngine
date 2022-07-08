@@ -98,7 +98,7 @@ kgmGameBase::kgmGameBase()
 
   m_messenger = null;
 
-  m_threader  = null;
+  //m_threader  = null;
 
   m_font = null;
 
@@ -121,11 +121,13 @@ kgmGameBase::~kgmGameBase()
 {
   log("stop threader...");
 
+  /*
   if (m_threader)
   {
     m_threader->finish();
     delete m_threader;
   }
+  */
 
   log("free scene...");
 
@@ -316,8 +318,8 @@ bool kgmGameBase::initScript()
   if (!m_script->getStatus())
     return false;
 
-  if (m_threader)
-    m_threader->add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
+  //if (m_threader)
+  //  m_threader->add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
 
   return true;
 }
@@ -355,8 +357,8 @@ void kgmGameBase::initSettings()
 
 void kgmGameBase::initThreader()
 {
-  if (!m_threader)
-    m_threader = new kgmGameThreader();
+  //if (!m_threader)
+  //  m_threader = new kgmGameThreader();
 }
 
 void kgmGameBase::log(const char* msg)
@@ -576,8 +578,8 @@ int kgmGameBase::gInit()
 
   //m_state = State_Idle;
 
-  log("open workers...");
-  initThreader();
+  //log("open workers...");
+  //initThreader();
 
   log("open settings...");
   initSettings();
@@ -1680,26 +1682,4 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 #endif
 
   return actor;
-}
-
-int kgmGameBase::doLogic(kgmGameBase* g)
-{
-  if (g && g->m_logic)
-    g->m_logic->update(g->timeUpdate());
-
-  return 1;
-}
-
-int kgmGameBase::doPhysics(kgmGameBase* g)
-{
-  g->m_physics->update(g->timeUpdate());
-
-  return 1;
-}
-
-int kgmGameBase::doScript(kgmGameBase* g)
-{
-  g->m_script->update();
-
-  return 1;
 }

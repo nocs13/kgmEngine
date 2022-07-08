@@ -10,7 +10,9 @@
 #include "kgmCollision.h"
 #include "kgmIntersection.h"
 
-class kgmPhysics: public kgmObject, public kgmIPhysics
+#include "../kgmSystem/kgmThread.h"
+
+class kgmPhysics: public kgmIPhysics, public kgmObject
 {
   KGM_OBJECT(kgmPhysics);
 
@@ -33,6 +35,10 @@ public:
   kgmIntersection m_intersection;
 
   u32 m_time_update;
+
+  kgmThread::Thread m_worker;
+  kgmThread::Mutex  m_mutex;
+  bool              m_active;
 
 public:
   kgmPhysics();
@@ -66,4 +72,7 @@ protected:
 
   u32 getTriangles(triangle3 triangles[], u32 max, sphere& s);
   u32 getBodies(IBody* bodies[], u32 max, sphere& s);
+
+private:
+  static int __worker(kgmPhysics*);
 };

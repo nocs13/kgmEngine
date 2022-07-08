@@ -9,11 +9,31 @@
 kgmPhysics::kgmPhysics()
 {
   m_time_update = kgmTime::getTicks();
+  m_worker = kgmThread::Thread(0);
+  m_mutex  = kgmThread::mutex_create();
 }
 
 kgmPhysics::~kgmPhysics()
 {
   clear();
+
+  kgmThread::mutex_free(m_mutex);
+}
+
+int kgmPhysics::__worker(kgmPhysics *ph)
+{
+  bool active = true;
+
+  while(active) {
+    ph->update(20);
+
+    kgmThread::mutex_lock(ph->m_mutex);
+    active = ph->m_active;
+    kgmThread::mutex_unlock(ph->m_mutex);
+    kgmThread::sleep(50);
+  }
+
+  return 0;
 }
 
 void kgmPhysics::update(u32 ms)
@@ -27,6 +47,15 @@ void kgmPhysics::collision(IBody* cbody, IBody* tobody)
 
 void kgmPhysics::clear()
 {
+  kgmThread::mutex_lock(m_mutex);
+  m_active = false;
+  kgmThread::mutex_unlock(m_mutex);
+
+  if (m_worker) {
+    kgmThread::thread_join(m_worker);
+    m_worker = kgmThread::Thread(0);
+  }
+
   m_intersection.reset();
   m_collision.reset();
 
@@ -37,6 +66,15 @@ void kgmPhysics::clear()
 
 void kgmPhysics::build()
 {
+  if (m_worker) {
+    m_active = false;
+    kgmThread::thread_join(m_worker);
+
+    m_worker = kgmThread::Thread(0);
+  }
+
+  m_active = true;
+  m_worker = kgmThread::thread_create((kgmThread::Thread_Function) kgmPhysics::__worker, this);
 }
 
 void kgmPhysics::add(vec3& a, vec3& b, vec3& c)

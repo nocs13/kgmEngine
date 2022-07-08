@@ -78,7 +78,7 @@ protected:
 
   u32              m_fps;
   u32              m_tpf;
-  kgmGameThreader* m_threader;
+  //kgmGameThreader* m_threader;
 
 private:
   struct UnitIterator: public kgmIGame::Iterator
@@ -208,8 +208,4 @@ public:
 
 private:
   bool  loadXml(kgmString& path);
-
-  static int doLogic(kgmGameBase*);
-  static int doPhysics(kgmGameBase*);
-  static int doScript(kgmGameBase*);
 };

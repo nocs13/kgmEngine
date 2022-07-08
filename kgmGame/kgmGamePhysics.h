@@ -6,7 +6,7 @@
 #include "../kgmMath/kgmTriangle3d.h"
 
 
-class kgmGamePhysics: public kgmPhysics{
+class kgmGamePhysics: public kgmPhysics {
 public:
  kgmGamePhysics();
  ~kgmGamePhysics();
