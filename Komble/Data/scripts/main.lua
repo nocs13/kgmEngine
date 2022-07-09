@@ -143,6 +143,8 @@ function main_onload()
 
       if u == nil or u == 0 then break end
 
+      kgm_log('Unit got')
+
       table.insert(units, u)
     end
   end

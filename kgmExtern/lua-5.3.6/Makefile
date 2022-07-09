@@ -16,9 +16,9 @@ INSTALL_LIB= $(INSTALL_TOP)/lib
 
 # How to install. If your install program does not support "-p", then
 # you may have to run ranlib on the installed liblua.a.
-INSTALL= install -p
-INSTALL_EXEC= $(INSTALL) -m 0755
-INSTALL_DATA= $(INSTALL) -m 0644
+INSTALL= cp
+INSTALL_EXEC= $(INSTALL) 
+INSTALL_DATA= $(INSTALL) 
 #
 # If you don't have "install" you can use "cp" instead.
 # INSTALL= cp -p

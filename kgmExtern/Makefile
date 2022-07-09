@@ -1,9 +1,15 @@
 include ../Makefile.mac
 LUA=lua-5.3.6
 
+ifeq ($(OS), Linux)
+  ARCH=posix
+else
+  ARCH=mingw
+endif
+
 all:
 	echo "make lua"
-	make -C $(LUA) posix
+	make -C $(LUA) $(ARCH)
 	make -C $(LUA) install
 	pwd
 	cp -r $(LUA)/include/*.h ../kgmSystem/inc/lua/.
