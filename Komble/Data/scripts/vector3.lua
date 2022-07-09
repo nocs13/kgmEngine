@@ -29,7 +29,7 @@ function Vector3:length()
   b = self.y * self.y
   c = self.z * self.z
 
-  return sqrt(a + b + c)
+  return math.sqrt(a + b + c)
 end
 
 function Vector3:nor()

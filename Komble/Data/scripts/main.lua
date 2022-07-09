@@ -139,17 +139,20 @@ function main_onload()
 
   if it ~= nil then
     while 1 do
+      u = nil
       u = kgmUnitIterNext(it)
 
-      if u == nil or u == 0 then break end
-
-      kgm_log('Unit got')
+      if not u then
+        break
+      end
 
       table.insert(units, u)
     end
   end
 
   kgmUnitIterFree(it);
+
+  it = nil
 
   kgm_log('Switch to play state')
   state = State_Play

@@ -491,8 +491,6 @@ s32 kgmGameScript::kgmUnitIterator(void *)
 
   kgmIGame::Iterator* it = game->gUnits();
 
-
-  //game->getScript()->reslarr("p", units.data(), units.length());
   game->getScript()->resl("p", it);
 
   return 1;
@@ -512,12 +510,14 @@ s32 kgmGameScript::kgmUnitIterNext(void *)
   game->getScript()->args("p", &it);
 
   if (!it) {
-    game->getScript()->resl("p", nullptr);
-
-    return 1;
+    return 0;
   }
 
   kgmUnit* u = it->next();
+
+  if (!u) {
+    return 0;
+  }
 
   game->getScript()->resl("p", u);
 

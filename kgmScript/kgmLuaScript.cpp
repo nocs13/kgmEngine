@@ -27,8 +27,8 @@ kgmLuaScript::kgmLuaScript(kgmIResources *r)
   luaL_openlibs(handler);
 #else
   lua_baselibopen (handler);
-  //lua_iolibopen (handler);
-  //lua_strlibopen (handler);
+  lua_iolibopen (handler);
+  lua_strlibopen (handler);
   lua_mathlibopen (handler);
   lua_dblibopen (handler);
 #endif

@@ -32,8 +32,8 @@ function Camera:turn(d)
 
   angle = angle + (d * a)
 
-  local x = cos(angle)
-  local y = sin(angle)
+  local x = math.cos(angle)
+  local y = math.sin(angle)
 
   self.dir:add(x, y, 0)
 
