@@ -45,11 +45,9 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 
 kgmGameScript::~kgmGameScript()
 {
-  kgmThread::mutex_lock(mutex);
+  free();
 
   kgmThread::mutex_free(mutex);
-
-  free();
 
   for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); !i.end(); ++i)
     delete (*i);
