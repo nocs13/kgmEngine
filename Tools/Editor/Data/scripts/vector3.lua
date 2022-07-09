@@ -1,12 +1,14 @@
-Vector3 = settag({}, newtag())
+--Vector3 = settag({}, newtag())
+--settagmethod(tag(Vector3), "index", function(t, f) return %Vector3[f] end)
 
-settagmethod(tag(Vector3), "index", function(t, f) return %Vector3[f] end)
+Vector3 = {x=0, y=0, z=0}
 
 function Vector3:new(x, y, z)
   local obj = {x=x, y=y, z=z}
   
-  settag(obj, tag(Vector3))
-
+  --settag(obj, tag(Vector3))
+  setmetatable(obj, self)
+  self.__index = self
   return obj
 end
 
@@ -27,7 +29,7 @@ function Vector3:length()
   b = self.y * self.y
   c = self.z * self.z
 
-  return sqrt(a + b + c)
+  return math.sqrt(a + b + c)
 end
 
 function Vector3:nor()
