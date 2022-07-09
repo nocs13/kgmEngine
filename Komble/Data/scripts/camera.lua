@@ -1,6 +1,6 @@
-Camera = settag({}, newtag())
-
-settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
+--Camera = settag({}, newtag())
+--settagmethod(tag(Camera), "index", function(t, f) return %Camera[f] end)
+Camera = {c=nil}
 
 angle = 0.0
 
@@ -20,7 +20,9 @@ function Camera:new(c)
 
   local obj = {cam = c, pos = p, dir = d, state = 0}
 
-  settag(obj, tag(Camera))
+  --settag(obj, tag(Camera))
+  setmetatable(obj, self)
+  self.__index = self
 
   return obj
 end

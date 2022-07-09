@@ -7,22 +7,31 @@ extern "C"
 {
   #include <lua/lua.h>
   #include <lua/lualib.h>
+  #include <lua/lauxlib.h>
 }
 
 kgmLuaScript::kgmLuaScript(kgmIResources *r)
 {
   resources = r;
 
+#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+  handler = luaL_newstate();
+#else
   handler = lua_open(0);
+#endif
 
   if(!handler)
     return;
 
+#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+  luaL_openlibs(handler);
+#else
   lua_baselibopen (handler);
   //lua_iolibopen (handler);
-  lua_strlibopen (handler);
+  //lua_strlibopen (handler);
   lua_mathlibopen (handler);
-  //lua_dblibopen (handler);
+  lua_dblibopen (handler);
+#endif
 }
 
 kgmLuaScript::~kgmLuaScript()
@@ -59,7 +68,15 @@ bool kgmLuaScript::load(kgmString s)
 
   script = kgmString((const char*) content.data(), content.length());
 
-  if(lua_dostring(handler, script.data()))
+  s32 res = 0;
+
+  #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+    res = luaL_dostring(handler, script.data());
+  #else
+    res = lua_dostring(handler, script.data()));
+  #endif
+
+  if(res)
   {
     const char* err = lua_tostring(handler, -1);
 
@@ -229,7 +246,11 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
     {
       memcpy(&pdata, (p + size * i), sizeof(pdata));
       lua_pushnumber(handler, i + 1);
-      lua_pushuserdata(handler, pdata);
+      #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+        lua_pushlightuserdata(handler, pdata);
+      #else
+        lua_pushuserdata(handler, pdata);
+      #endif
       lua_rawset(handler, -3);
     }
     break;
@@ -276,8 +297,7 @@ void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
     args++;
   }
 
-  if(lua_call(handler, args, nres))
-    return (void *) -1;
+  lua_call(handler, args, nres);
 
   s32 rnum = lua_gettop(handler) - ssize;
 
@@ -323,7 +343,11 @@ void kgmLuaScript::push(char* arg)
 
 void kgmLuaScript::push(void* arg)
 {
+#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+  lua_pushlightuserdata(handler, arg);
+#else
   lua_pushuserdata(handler, arg);
+#endif
 }
 
 void kgmLuaScript::pop(int* arg)

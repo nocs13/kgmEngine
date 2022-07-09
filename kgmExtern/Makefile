@@ -1,15 +1,20 @@
 include ../Makefile.mac
+LUA=lua-5.3.6
 
 all:
 	echo "make lua"
-	make -C lua-4.0.1
-	mkdir -p ../kgmSystem/inc/lua
-	cp lua-4.0.1/include/*.h ../kgmSystem/inc/lua/.
-	cp lua-4.0.1/lib/liblua.a ../kgmSystem/lib/.
-	cp lua-4.0.1/lib/liblualib.a ../kgmSystem/lib/.
+	make -C $(LUA) posix
+	make -C $(LUA) install
+	pwd
+	cp -r $(LUA)/include/*.h ../kgmSystem/inc/lua/.
+	cp $(LUA)/lib/liblua.a ../kgmSystem/lib/.
+#	cp $(LUA)/lib/liblualib.a ../kgmSystem/lib/.
 
 clean:
-	make -C lua-4.0.1 clean
-#	rm -rf ../kgmSystem/inc/lua
+	make -C $(LUA) clean
+	rm -f $(LUA)/include/*
+	rm -f $(LUA)/lib/*
+	rm -f ../kgmSystem/inc/lua/*
 	rm -f  ../kgmSystem/lib/liblua.a
+	rm -f  ../kgmSystem/lib/liblualib.a
 
