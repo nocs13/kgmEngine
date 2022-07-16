@@ -29,8 +29,6 @@ void kApp::gameInit()
     }
 
     editor->init();
-
-    //wnd = new kgmWindow((kgmWindow*) null, "kgm", 0, 0, 800, 600, 24, false);
 }
 
 void kApp::gameLoop()

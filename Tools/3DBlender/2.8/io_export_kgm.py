@@ -26,6 +26,7 @@ bl_info = {
 import os
 import threading
 from math import radians
+import math
 import bpy
 from mathutils import *
 import xml.etree.ElementTree
@@ -80,7 +81,7 @@ def choose_unit_types(self, context):
   print('choosing unit type')
   o = bpy.context.active_object
 
-  if o.kgm_type is 'Actor':
+  if o.kgm_type == 'Actor':
     print('is actor')
     return kgm_actor_types
 
@@ -440,7 +441,7 @@ class kgmMaterial:
     self.shine    = mtl.specular_intensity * mtl.metallic
     self.alpha    = 1.0
 
-    if mtl.shadow_method is not "NONE":
+    if mtl.shadow_method != "NONE":
       self.sh_off  = True
       self.sh_recv = True
 
@@ -632,13 +633,6 @@ class kgmMesh:
         scene_materials.append(kgmMaterial(m))
         print("add material to scene_materials")
 
-    self.smooth = kgmMesh.isSmoothed(mesh)
-
-    if self.smooth is True:
-      print('Current mesh is smoothed.')
-    else:
-      print('Current mesh is not smoothed.')
-
     mesh_faces = None
 
     mesh_faces = mesh.polygons
@@ -649,14 +643,15 @@ class kgmMesh:
       for i in range(0, len(mesh_faces)):
         face = mesh_faces[i]
         iface = []
+        fsmooth = mesh_faces[i].use_smooth
 
         for j in range(0, len(face.vertices)):
           v = kgmVertex();
           vi = face.vertices[j]
           c = mesh.vertices[vi].co
           n = face.normal
-          v.v = [c[0], c[1], c[2]]
-          v.n = [n[0], n[1], n[2]]
+          v.v = [round(c[0], 4), round(c[1], 4), round(c[2], 4)]
+          v.n = [round(n[0], 4), round(n[1], 4), round(n[2], 4)]
 
           if self.hasvgroups == True:
             for g in range(0, len(mesh.vertices[vi].groups)):
@@ -670,12 +665,13 @@ class kgmMesh:
 
           v.idx = vi
 
-          iface.append(self.addVertex(v))
+          iface.append(self.addVertex(v, vsmooth=fsmooth))
 
         for k in range(2, len(iface)):
           self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 
-  def addVertex(self, vx):
+  def addVertex(self, vx, vsmooth = True):
+    print(f'add vertex smooth: {vsmooth}')
     iv = -1
     nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
 
@@ -684,22 +680,21 @@ class kgmMesh:
     for i in range(0, len(self.vertices)):
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
-        if (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
-          nc = Vector((v.n[0], v.n[1], v.n[2]))
+        nc = Vector((v.n[0], v.n[1], v.n[2]))
+        print(f'add vertex match to: {i}')
 
-          if self.smooth is False:
-            if nx == nc:
-              iv = i
-              break
-          else:
-            if nc.dot(nx) > 0.866:
-              n = nc + nx
-              n.normalize()
-              v.n = n
+        if vsmooth is False:
+          if nx == nc:
+            iv = i
+        else:
+          n = nc + nx
+          n.normalize()
+          v.n = n
 
-              self.vertices[i] = v
-              iv = i
-              break
+          self.vertices[i] = v
+          iv = i
+
+        break
 
     if iv < 0:
       self.vertices.append(vx)
@@ -740,27 +735,6 @@ class kgmMesh:
         return i
 
     return -1
-
-  @staticmethod
-  def isSmoothed(m):
-    s = 0
-
-    if m is None:
-      return False
-
-    for f in m.polygons:
-      if f.use_smooth == True:
-        s = s + 1
-      else:
-        s = s - 1
-
-    if s > 0:
-      return True
-
-    return False
-
-
-
 
 
 class kgmFrame:

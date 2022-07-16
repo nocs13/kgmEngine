@@ -125,9 +125,9 @@ void kEditor::init()
     slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
 
     kgmGuiMenu::Item* item = menu->add("Map");
-    item->add(ME_MAP_NEW, "New");
+    //item->add(ME_MAP_NEW, "New");
     item->add(ME_MAP_OPEN, "Open");
-    item->add(ME_MAP_SAVE, "Save");
+    //item->add(ME_MAP_SAVE, "Save");
     item->add(ME_QUIT, "Quit");
     item = menu->add("Edit");
     item->add(ME_EDIT_CLONE, "Clone");
@@ -422,6 +422,19 @@ bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 bool kEditor::mapOpen(kgmString s)
 {
   gLoad(s);
+
+  kgmUnit* u = new kgmUnit(this);
+
+  u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+
+  gAppend(u);
+
+  u = new kgmUnit(this);
+
+  u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+
+  gAppend(u);
+
 
   selected = null;
 
