@@ -2,14 +2,12 @@
 #define ICONRENDER_H
 
 #include "../../kgmMath/kgmMath.h"
-#include "../kgmGraphics.h"
-#include "../kgmTexture.h"
-#include "../kgmIcon.h"
+#include "BaseRender.h"
 
-class IconRender
+class kgmGraphics;
+
+class IconRender : public BaseRender
 {
-  kgmGraphics* gr;
-
 public:
   IconRender(kgmGraphics* gr);
 

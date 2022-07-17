@@ -44,7 +44,7 @@
 
 class kgmGraphics: public kgmObject, public kgmIGraphics
 {
-  KGM_OBJECT(kgmGraphics);
+  KGM_OBJECT(kgmGraphics)
 
   friend class BaseRender;
   friend class FpsRender;
@@ -205,6 +205,7 @@ protected:
 
   FpsRender*    m_r_fps;
   GuiRender*    m_r_gui = null;
+  IconRender*   m_r_icon;
   SpriteRender* m_r_sprite = null;
 
   kgmTexture*  m_tex_black = null;
@@ -229,6 +230,11 @@ protected:
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
   Render::Terrain*   m_rnd_terrain = null;
+
+  //For virtual visualization.
+
+  bool m_show_lights = false;
+  kgmIcon* m_icon_light = null;
 
 protected:
   kgmShader*  m_shaders[32] = {0};
@@ -372,5 +378,10 @@ public:
   void setBgColor(u32 col)
   {
     m_bg_color = col;
+  }
+
+  void showLights(bool show)
+  {
+    m_show_lights = show;
   }
 };

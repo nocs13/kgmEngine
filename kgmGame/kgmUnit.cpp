@@ -53,11 +53,18 @@ void kgmUnit::update(u32 ms)
   if(removed())
     return;
 
-  if((getLiving() != (u32) -1) && (timeout() > getLiving()))
-  {
+  if((getLiving() != (u32) -1) && (timeout() > getLiving())) {
     remove();
 
     return;
+  }
+
+  if (m_parent) {
+    vec3 v = m_parent->position();
+
+    vec3 f = v + position();
+
+    position(f);
   }
 }
 

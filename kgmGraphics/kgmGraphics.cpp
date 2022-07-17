@@ -198,6 +198,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     l->release();
 
+    kgmTexture* tex = r->getTexture("light_ico.tga");
+
+    if (tex)
+      m_icon_light = new kgmIcon(tex);
+
     //g_fbo = g->gcGenTarget(512, 512, true, false);
     //g_tex = g->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_tex2d);
     //g->gcTexTarget(g_fbo, g_tex, gctype_tex2d);
@@ -246,6 +251,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_r_fps    = new FpsRender(this);
   m_r_gui    = new GuiRender(this);
+  m_r_icon   = new IconRender(this);
   //m_r_sprite = new SpriteRender(this);
 
   m_a_lights.alloc(MAX_LIGHTS);
@@ -275,6 +281,7 @@ kgmGraphics::~kgmGraphics()
 
   delete m_r_fps;
   delete m_r_gui;
+  delete m_r_icon;
   delete m_r_sprite;
 
   m_particles.clear();
@@ -282,6 +289,9 @@ kgmGraphics::~kgmGraphics()
   m_lights.clear();
   m_icons.clear();
   m_guis.clear();
+
+  if (m_icon_light)
+    delete m_icon_light;
 
   if (m_def_material)
     m_def_material->release();
@@ -598,7 +608,7 @@ void kgmGraphics::render()
   set((kgmShader*) null);
 
   set(m_def_material);
-
+  m_r_icon->render();
   //m_r_sprite->render();
   set((kgmShader*) null);
   m_r_gui->render();

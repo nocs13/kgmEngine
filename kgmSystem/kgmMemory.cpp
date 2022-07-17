@@ -124,7 +124,7 @@ void kgm_memory_cleanup()
 #ifdef DEBUG
       fprintf(stderr, "        [%p] releasing at [%d].\n", (void*) g_objects[i], i);
 #endif
-
+      kgmObject* o = (kgmObject*) g_objects[i];
       ::free((void*) g_objects[i]);
       g_m_alloc--;
       g_objects[i] = null;

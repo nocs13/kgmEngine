@@ -120,6 +120,8 @@ void kEditor::init()
   if(!m_graphics)
     return;
 
+    m_graphics->showLights(true);
+
     menu = new kgmGuiMenu(null);
     menu->setSid("main_menu");
     slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
@@ -434,7 +436,6 @@ bool kEditor::mapOpen(kgmString s)
   u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
 
   gAppend(u);
-
 
   selected = null;
 

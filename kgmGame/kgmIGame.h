@@ -205,6 +205,7 @@ public:
   struct Iterator
   {
     virtual kgmUnit* next() { return null; }
+    //virtual bool end() { return true; }
   };
 
   typedef kgmUnit* (*NEW_UNIT)(kgmIGame*);

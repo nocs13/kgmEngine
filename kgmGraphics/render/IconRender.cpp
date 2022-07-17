@@ -1,6 +1,8 @@
 #include "IconRender.h"
+#include "../kgmGraphics.h"
 
 IconRender::IconRender(kgmGraphics* g)
+  :BaseRender(g)
 {
   gr = g;
 }
@@ -33,12 +35,22 @@ void IconRender::render()
       gr->gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
     }
   }
+
+  if (gr->m_show_lights && gr->m_icon_light) {
+    kgmIcon *li = gr->m_icon_light;
+
+    for(int i = gr->m_a_light_count; i > 0; i--)
+    {
+      kgmIGraphics::INode* nl = gr->m_a_lights[i - 1];
+      li->setPosition(nl->getNodePosition());
+      render(li);
+    }
+  }
 }
 
 void IconRender::render(kgmList<kgmLight*>& lights)
 {
   for(kgmList<kgmLight*>::iterator i = lights.begin(); !i.end(); ++i) {
-
   }
 }
 

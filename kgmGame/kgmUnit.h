@@ -67,6 +67,8 @@ private:
 
   box m_bound;
 
+  kgmUnit* m_parent;
+
 protected:
 
   kgmPBody* m_body = null;
@@ -102,6 +104,17 @@ public:
   kgmIGame* game() const
   {
     return m_game;
+  }
+
+  kgmUnit* parent() const {
+    return m_parent;
+  }
+
+  void parent(kgmUnit* p) {
+    if (m_parent)
+      m_parent->release();
+
+    m_parent = p;
   }
 
   box   getBound()
