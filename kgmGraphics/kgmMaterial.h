@@ -47,16 +47,10 @@ public:
 
   enum Type
   {
-    TypeNone,
     TypeBase,
-    TypeToon,
-    TypeSkin,
-    TypeWater,
-    TypeRiver,
-    TypeOcean,
-    TypeGlass,
-    TypeFlame,
-    TypeIce
+    TypePhong,
+    TypeLambert,
+    TypeRefract
   };
 
   enum Environment
@@ -159,7 +153,7 @@ private:
   bool m_shade_cast    = false;
   bool m_shade_receive = false;
 
-  Type  m_type  = TypeNone;
+  Type  m_type  = TypeBase;
   Blend m_blend = Blend_None;
 
   f32  m_distortion;
