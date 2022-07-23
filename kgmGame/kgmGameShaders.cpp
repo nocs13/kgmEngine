@@ -1,13 +1,20 @@
 #include "kgmGameShaders.h"
 
+#define KGM_SHADER_MAX_LIGHT 16
+
 const char* const begin_vshader =  "#version 120 \n"
-"#define MAX_LIGHTS 8 \n"
+"struct Light          \n"
+"{                     \n"
+"  vec4   pos;         \n"
+"  vec4   dir;         \n"
+"};                    \n"
+
+"#define MAX_LIGHTS 16 \n"
 "uniform mat4   g_mView;           \n"
 "uniform mat4   g_mProj;           \n"
 "uniform mat4   g_mTran;           \n"
 "uniform vec4   g_vColor;          \n"
 "uniform vec4   g_vSpecular;       \n"
-"uniform vec4   g_vLights[MAX_LIGHTS]; \n"
 "uniform vec4   g_vClipPlane;      \n"
 "uniform vec3   g_vUp;             \n"
 "uniform vec3   g_vEye;            \n"
@@ -18,6 +25,8 @@ const char* const begin_vshader =  "#version 120 \n"
 "uniform float  g_fAmbient;        \n"
 "uniform float  g_fLightPower;     \n"
 "uniform int    g_iClipping = 0;   \n"
+
+"uniform Light  g_sLights[MAX_LIGHTS]; \n"
 
 "varying vec3   v_N;               \n"
 "varying vec3   v_V;               \n"
