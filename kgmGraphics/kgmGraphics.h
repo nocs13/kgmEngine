@@ -82,7 +82,8 @@ public:
     ShaderShadowKeep,
     ShaderShadowDraw,
     ShaderEnvCube,
-    ShaderEnvPlane
+    ShaderEnvPlane,
+    ShaderEnd = 12,
   };
 
   static GraphicsQuality textureQuality;

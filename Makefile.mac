@@ -26,7 +26,7 @@ ifeq ($(OS), Linux)
 	RM = rm -f
 else
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
-	CC   = g++
+	CC   = ccache g++
 	OS   = Windows
 	DSEP = \\
 	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DGPUSHADERS -DDSOUND -DVULKAN

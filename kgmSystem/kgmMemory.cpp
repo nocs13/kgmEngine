@@ -126,8 +126,8 @@ void kgm_memory_cleanup()
 #endif
       kgmObject* o = (kgmObject*) g_objects[i];
       ::free((void*) g_objects[i]);
-      g_m_alloc--;
       g_objects[i] = null;
+      g_m_alloc--;
     }
   }
 

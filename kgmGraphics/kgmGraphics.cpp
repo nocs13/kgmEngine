@@ -231,11 +231,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
     m_shaders[ShaderColor]    = rc->getShader("color.glsl");
     m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
-    //m_shaders[ShaderEnvCube]  = rc->getShader("envcube.glsl");
-    //m_shaders[ShaderEnvCube]  = rc->getShader("envplane.glsl");
-    //m_shaders[kgmMaterial::TypeToon]  = rc->getShader("toon.glsl");
-    //m_shaders[ShaderShadowKeep]       = rc->getShader("shkeep.glsl");
-    //m_shaders[ShaderShadowDraw]       = rc->getShader("shdraw.glsl");
+    m_shaders[ShaderEnd + kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
+    m_shaders[ShaderEnd + kgmMaterial::TypeLambert] = rc->getShader("lambert.glsl");
   }
 
   //m_rnd_base        = new BaseRender(this);
