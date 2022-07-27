@@ -340,7 +340,7 @@ void kgmGraphics::clear()
   m_lights.clear();
   m_particles.clear();
 
-  m_a_light = m_def_light;
+  //m_a_light = m_def_light;
 
   m_a_light_count  = 0;
   m_a_meshes_count = 0;
@@ -554,7 +554,7 @@ void kgmGraphics::render()
     m_a_light_count = 1;
   }
 
-  m_a_light = m_a_lights[0];
+  //m_a_light = m_a_lights[0];
 
   m_a_particles_count = collectParticles(m_camera, m_a_particles, 128);
 
@@ -1144,6 +1144,7 @@ void kgmGraphics::set(kgmShader* s)
   vec4 v_light_color(1, 1, 1, 1);
   vec4 v_light_direction(0, 0, 1, 0);
 
+  /*
   if(m_a_light)
   {
     kgmLight* l   = (kgmLight*) m_a_light->getNodeObject();
@@ -1154,6 +1155,7 @@ void kgmGraphics::set(kgmShader* s)
     //v_light_color     = vec4(1, 1, 1, 1); //l->color;
     v_light_color     = vec4(l->color().x, l->color().y, l->color().z, 1.0);
   }
+  */
 
   float random = (float)rand()/(float)RAND_MAX;
 
@@ -1209,9 +1211,8 @@ void kgmGraphics::shaderSetGeneral()
   s->set("g_vLook",           m_camera->mDir);
   s->set("g_iClipping",       0);
 
-  s8 lcolor[] = "g_vLightCol[*]";
-  s8 lposition[] = "g_vLightPos[*]";
-  s8 ldirection[] = "g_vLightDir[*]";
+  s8 lposition[] = "g_sLights[  ].pos";
+  s8 ldirection[] = "g_sLights[  ].dir";
 
 
   for(u32 i = 0; i < m_a_light_count; i++)
@@ -1223,11 +1224,8 @@ void kgmGraphics::shaderSetGeneral()
 
     kgmLight* l = (kgmLight*) n->getNodeObject();
 
-    char c = '0' + (char) i;
-
-    lcolor[12] = c;
-    lposition[12] = c;
-    ldirection[12] = c;
+    sprintf(lposition, "g_sLights[%d].pos", i);
+    sprintf(ldirection, "g_sLights[%d].dir", i);
 
     vec3 col = l->color();
     vec3 pos = n->getNodePosition();
@@ -1240,7 +1238,6 @@ void kgmGraphics::shaderSetGeneral()
     vec4 lpos(pos.x, pos.y, pos.z, intensity);
     vec4 ldir(dir.x, dir.y, dir.z, angle);
 
-     s->set((const char*) lcolor,     lcol);
      s->set((const char*) lposition,  lpos);
      s->set((const char*) ldirection, ldir);
   }

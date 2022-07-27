@@ -174,7 +174,7 @@ protected:
 
   LightData m_light_data;
 
-  INode*  m_a_light   = null;
+//  INode*  m_a_light   = null;
   INode*  m_def_light = null;
 
   kgmList<kgmResource*> m_resources;
