@@ -80,7 +80,7 @@ kEditor::kEditor()
 
 kEditor::~kEditor()
 {
-  clear();
+  //clear();
 
   m_isVisual = false;
   kgmThread::thread_join(m_thVisual);
@@ -89,10 +89,10 @@ kEditor::~kEditor()
   gridline->release();
   textData->release();
 
-  mtlLines->release();
-  mtlPivot->release();
+  //mtlLines->release();
+  //mtlPivot->release();
 
-  text->release();
+  //text->release();
 }
 
 void kEditor::clear()

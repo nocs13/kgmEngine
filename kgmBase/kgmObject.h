@@ -270,26 +270,3 @@ public:
     kgm_object_free(p);
   }
 };
-
-template <class D, class S> void kgm_assign(D** dst, S* src)
-{
-  if (!src)
-    return;
-
-  if (*dst)
-    (*dst)->release();
-
-  *dst = src;
-
-  src->increment();
-}
-
-template <class O> void kgm_release(O*& o)
-{
-  if (o != null)
-  {
-    o->release();
-
-    o = null;
-  }
-}

@@ -7,10 +7,6 @@ static kgmArray<kgmObject*> g_objects;
 
 void* kgmObject::kgm_object_alloc(size_t size)
 {
-#ifdef DEBUG_X
-  kgm_log() << "kgmObject::kgm_object_alloc [" << (s32) size << "].\n";
-#endif
-
   if (size < 1)
     return null;
 
@@ -21,6 +17,10 @@ void* kgmObject::kgm_object_alloc(size_t size)
   for (s32 i = 0; i < g_objects.length(); i++) {
     if (g_objects[i] == null) {
       g_objects[i] = p;
+
+    #ifdef DEBUG
+    fprintf(stderr, "kgmObject::kgm_object_alloc [%p %d]\n", p, size);
+    #endif
 
       return p;
     }
@@ -37,17 +37,21 @@ void* kgmObject::kgm_object_alloc(size_t size)
 
   g_objects[len] = p;
 
+  #ifdef DEBUG
+  fprintf(stderr, "kgmObject::kgm_object_alloc [%p %d]\n", p, size);
+  #endif
+
   return p;
 }
 
 void kgmObject::kgm_object_free(void* p)
 {
-#ifdef DEBUG_X
-  kgm_log() << "kgmObject::kgm_object_free [" << p << "].\n";
-#endif
-
   if (!p)
     return;
+
+  #ifdef DEBUG
+  fprintf(stderr, "kgmObject::kgm_object_free [%p]\n", p);
+  #endif
 
   for (s32 i = 0; i < g_objects.length(); i++) {
     if (g_objects[i] == p) {

@@ -11,10 +11,6 @@ static int     g_o_count = 0;
 
 void* kgm_alloc(size_t size)
 {
-#ifdef DEBUG_XXX
-  fprintf(stderr, "kgm_alloc [%ld].\n", size);
-#endif
-
   if (size < 1)
     return null;
 
@@ -22,13 +18,13 @@ void* kgm_alloc(size_t size)
 
   p = ::malloc(size);
 
-#ifdef DEBUG_XXX
-  //fprintf(stderr, "          pointer [%p] size [%ld].\n", p, size);
-#endif
-
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] == null) {
       g_objects[i] = (size_t) p;
+
+      #ifdef DEBUG
+      fprintf(stderr, "kgm_memory_alloc [%p, %ld].\n", p, size);
+      #endif
 
       return p;
     }
@@ -45,21 +41,25 @@ void* kgm_alloc(size_t size)
 
   g_o_count = len + ADDOBJS;
 
+  #ifdef DEBUG
+  fprintf(stderr, "kgm_memory_alloc [%p, %ld].\n", p, size);
+  #endif
+
   return p;
 }
 
 void* kgm_realloc(void *p, size_t size)
 {
-#ifdef DEBUG_XXX
-  fprintf(stderr, "kgm_realloc [%p, %ld].\n", p, size);
-#endif
-
   if (size < 1)
     return p;
 
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] == (size_t) p) {
       g_objects[i] = (size_t) ::realloc(p, size);
+
+      #ifdef DEBUG
+      fprintf(stderr, "kgm_memory_realloc [%p, %p, %ld].\n", p, g_objects[i], size);
+      #endif
 
       return (void *) g_objects[i];
     }
@@ -70,10 +70,6 @@ void* kgm_realloc(void *p, size_t size)
 
 void kgm_free(void* p)
 {
-#ifdef DEBUG_XXX
-  fprintf(stderr, "kgm_free [%p].\n", p);
-#endif
-
   if (!p)
     return;
 
@@ -81,9 +77,9 @@ void kgm_free(void* p)
     if (g_objects[i] == (size_t) p) {
       ::free(p);
 
-#ifdef DEBUG_X
-      fprintf(stderr, "        [%p] released at [%d].\n", p, i);
-#endif
+      #ifdef DEBUG
+      fprintf(stderr, "kgm_memory_free [%p, %d].\n", p, i);
+      #endif
 
       g_objects[i] = null;
 
@@ -94,9 +90,9 @@ void kgm_free(void* p)
 
 void kgm_memory_init()
 {
-#ifdef DEBUG
+  #ifdef DEBUG
   fprintf(stderr, "kgm_memory_init.\n");
-#endif
+  #endif
 
   if (!g_objects) {
     g_objects = (size_t*) ::malloc(sizeof(size_t) * ADDOBJS);
@@ -110,12 +106,16 @@ void kgm_memory_init()
 
 void kgm_memory_cleanup()
 {
+  #ifdef DEBUG
+  fprintf(stderr, "kgm_memory_cleanup.\n");
+  #endif
+
   for (s32 i = 0; i < g_o_count; i++) {
     if (g_objects[i] != null) {
+      #ifdef DEBUG
+      fprintf(stderr, "kgm_memory_cleanup [%p, %d].\n", (void*) g_objects[i], i);
+      #endif
 
-#ifdef DEBUG
-      fprintf(stderr, "        [%p] releasing at [%d].\n", (void*) g_objects[i], i);
-#endif
       kgmObject* o = (kgmObject*) g_objects[i];
       ::free((void*) g_objects[i]);
       g_objects[i] = null;

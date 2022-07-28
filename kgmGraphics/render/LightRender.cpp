@@ -84,8 +84,6 @@ void LightRender::render()
 
   gc->gcBlend(false, 0, null, null);
 
-  gr->m_a_light = gr->m_a_lights[0];
-
   for (s32 i = 0; i < gr->m_a_bmeshes_count; i++)
   {
     kgmIGraphics::INode*       nod = gr->m_a_bmeshes[i];

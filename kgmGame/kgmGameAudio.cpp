@@ -32,5 +32,6 @@ kgmGameAudio::~kgmGameAudio()
   kgm_log() << "kgmGameAudio::~kgmGameAudio.\n";
 #endif
 
-  kgm_release<kgmIAudio>(m_audio);
+  if (m_audio)
+    m_audio->release();
 }
