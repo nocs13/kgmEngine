@@ -151,7 +151,7 @@ struct _Sound
 
     if(data != null && size > 0)
     {
-      this->data = malloc(size);
+      this->data = kgm_alloc(size);
 
       memcpy(this->data, data, size);
 
@@ -162,7 +162,7 @@ struct _Sound
   ~_Sound()
   {
     if(data)
-      free(data);
+      kgm_free(data);
   }
 
   void release()

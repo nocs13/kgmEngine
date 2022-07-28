@@ -52,10 +52,10 @@ kgmMesh::kgmMesh(const kgmMesh& msh)
 kgmMesh::~kgmMesh()
 {
   if(m_vertices)
-    free(m_vertices);
+    kgm_free(m_vertices);
 
   if(m_faces)
-    free(m_faces);
+    kgm_free(m_faces);
 }
 
 void kgmMesh::rebuild()
@@ -142,7 +142,7 @@ void kgmMesh::rebuild()
 kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
 {
   if(m_vertices)
-    free(m_vertices);
+    kgm_free(m_vertices);
 
   u32 v_size = 0;
 
@@ -185,7 +185,7 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
     m_fvf = FVF_P;
   }
 
-  m_vertices = (Vertex*) malloc(v_size);
+  m_vertices = (Vertex*) kgm_alloc(v_size);
 
   m_vcount = count;
 
@@ -195,16 +195,16 @@ kgmMesh::Vertex* kgmMesh::vAlloc(u32 count, FVF f)
 kgmMesh::Face*	kgmMesh::fAlloc(u32 count, FFF f)
 {
   if(m_faces)
-    free(m_faces);
+    kgm_free(m_faces);
 
   switch(f)
   {
   case FFF_32:
-    m_faces = (Face*)malloc(sizeof(Face_32) * count);
+    m_faces = (Face*) kgm_alloc(sizeof(Face_32) * count);
     m_fff = FFF_32;
     break;
   default:
-    m_faces = (Face*)malloc(sizeof(Face_16) * count);
+    m_faces = (Face*) kgm_alloc(sizeof(Face_16) * count);
     m_fff = FFF_16;
   }
 

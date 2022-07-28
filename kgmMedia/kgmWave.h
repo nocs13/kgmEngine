@@ -45,7 +45,7 @@ public:
   virtual ~kgmWave()
   {
     if(data)
-      free(data);
+      kgm_free(data);
   }
 
   bool openWav(char *file)
@@ -76,7 +76,7 @@ public:
 
     if(data_size > 0)
     {
-      data = (char*)malloc(sizeof(char) * data_size);
+      data = (char*) kgm_alloc(sizeof(char) * data_size);
 
       if(!data)
       {
@@ -110,7 +110,7 @@ public:
     memcpy(&fmt_format, pM, sizeof(WAVE_FMT)); pM += fmt_size;
     memcpy(&data_id, pM, sizeof(int)); pM += 4;
     memcpy(&data_size, pM, sizeof(int)); pM += 4;
-    data = (char*)malloc(sizeof(char) * data_size);
+    data = (char*) kgm_alloc(sizeof(char) * data_size);
     memcpy(data, pM, data_size);
     fmt_format.cbSize = sizeof(fmt_format);
 

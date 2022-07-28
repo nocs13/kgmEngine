@@ -22,12 +22,13 @@ private:
 
     inline void* operator new(size_t size)
     {
-      return malloc(size);
+      return kgm_alloc(size);
     }
 
     inline void  operator delete(void *p)
     {
-      if(p) free(p);
+      if(p) 
+        kgm_free(p);
     }
   };
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <malloc.h>
+#include "kgmMemory.h"
 
 template <class T> 
 class kgmStack{
@@ -26,7 +26,7 @@ public:
  }
 
  void push(T data){
-  _Node *node = (_Node*)malloc(sizeof(_Node));
+  _Node *node = (_Node*) kgm_alloc(sizeof(_Node));
   node->data = data;
   node->prev = _Last;
   _Last = node;
@@ -39,7 +39,7 @@ public:
   data = _Last->data;
   _Node* node = _Last;
   _Last = _Last->prev;
-  free(node);
+  kgm_free(node);
   _length--;
   return true;
  }

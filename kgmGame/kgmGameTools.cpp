@@ -100,8 +100,8 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
   if(b_btcnt == 8)
   {
     u32 r_size = b_width * b_height;
-    pdata = (u32*)malloc(sizeof(u32) * r_size);
-    u32 *pal = (u32*)malloc(sizeof(u32) * 256);
+    pdata = (u32*)kgm_alloc(sizeof(u32) * r_size);
+    u32 *pal = (u32*)kgm_alloc(sizeof(u32) * 256);
     memcpy(pal, pm, 256 * 4);	pm += 256 * 4;
 
     for(u32 i = 0; i < r_size; i++)
@@ -114,13 +114,13 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
     width = b_width;
     height = b_height;
     bpp = 32;
-    free(pal);
+    kgm_free(pal);
 
     return new kgmPicture(width, height, bpp, frames, pdata);
   }
 
   u32 r_size = b_width * b_height * (b_btcnt / 8);
-  pdata = malloc(sizeof(char) * r_size);
+  pdata = kgm_alloc(sizeof(char) * r_size);
   memcpy(pdata, pm, r_size);
   width = b_width;
   height = b_height;
@@ -196,7 +196,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
   u32 r_size = w * h * bt_pp;
   pm += idl;
-  pdata = (u8*) malloc(sizeof(char) * r_size);
+  pdata = (u8*) kgm_alloc(sizeof(char) * r_size);
   //memcpy(pdata, pm, r_size);
 
   u32 pixels = w * h;
@@ -355,78 +355,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
 
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
-/*
-kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
-{
-  if(m.empty())
-    return 0;
 
-  uchar idl, cmp, dt, btcnt, dsc;
-  uchar clmap[5];
-  u16   xorgn, yorgn, w, h;
-  char* pm = (char*)m.data();
-
-  int   width = 0;
-  int   height = 0;
-  int   bpp = 0;
-  int   frames = 0;
-  void* pdata = 0;
-
-  memcpy(&idl,   pm, 1);  pm += 1;
-  memcpy(&cmp,   pm, 1);  pm += 1;
-  memcpy(&dt,    pm, 1);  pm += 1;
-  memcpy(&clmap, pm, 5);  pm += 5;
-  memcpy(&xorgn, pm, 2);  pm += 2;
-  memcpy(&yorgn, pm, 2);  pm += 2;
-  memcpy(&w,     pm, 2);  pm += 2;
-  memcpy(&h,     pm, 2);  pm += 2;
-  memcpy(&btcnt, pm, 1);  pm += 1;
-  memcpy(&dsc,   pm, 1);  pm += 1;
-
-  if(dt != 2)
-    return 0;
-
-  if((btcnt != 24) && (btcnt != 32))
-    return 0;
-
-  u32 bt_pp = btcnt / 8;
-  u32 r_size = w * h * bt_pp;
-  pm += idl;
-  pdata = malloc(sizeof(char) * r_size);
-  memcpy(pdata, pm, r_size);
-
-  width = w;
-  height = h;
-  bpp = btcnt;
-
-  u32 order = (dsc & 0x20);
-
-  if(order)
-  {
-    for(int i = (w * h); i > 0; i--)
-    {
-      char* pt = (char*)(((char*)pdata) + (i - 1) * bt_pp);
-      char  t  = pt[0];
-
-      pt[0] = pt[2];
-      pt[2] = t;
-    }
-  }
-  else
-  {
-    for(int i = 0; i < (w * h); i++)
-    {
-      char* pt = (char*)(((char*)pdata) + i * bt_pp);
-      char  t  = pt[0];
-
-      pt[0] = pt[2];
-      pt[2] = t;
-    }
-  }
-
-  return new kgmPicture(width, height, bpp, frames, pdata);
-}
-*/
 kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
 {
   kgmPicture* pic = genPicture(m);
@@ -560,18 +489,18 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   if(mem_fsh)
   {
     size_t sh_s = (size_t)mem_fsh - (size_t)s.data();
-    mem_vsh = (char*)malloc(sh_s + 1);
+    mem_vsh = (char*)kgm_alloc(sh_s + 1);
     memcpy(mem_vsh, s.data(), sh_s);
     mem_vsh[sh_s] = '\0';
     sh_s = s.length() - sh_s;
     char* fsh = mem_fsh;
-    mem_fsh = (char*)malloc(sh_s + 1);
+    mem_fsh = (char*)kgm_alloc(sh_s + 1);
     memcpy(mem_fsh, fsh, sh_s);
     mem_fsh[sh_s] = '\0';
   }
   else
   {
-    mem_vsh = (char*)malloc(s.length() + 1);
+    mem_vsh = (char*)kgm_alloc(s.length() + 1);
     memcpy(mem_vsh, s.data(), s.length());
     mem_vsh[s.length()] = '\0';
   }
@@ -584,10 +513,10 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   fstr = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
 
   if(mem_vsh)
-    free(mem_vsh);
+    kgm_free(mem_vsh);
 
   if(mem_fsh)
-    free(mem_fsh);
+    kgm_free(mem_fsh);
 
   vsource.alloc((u8*) vstr.data(), vstr.length() + 1);
   fsource.alloc((u8*) fstr.data(), fstr.length() + 1);
@@ -598,7 +527,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
 
   if(!shader->m_shader)
   {
-    delete shader;
+    shader->release();
 
     shader = null;
   }
