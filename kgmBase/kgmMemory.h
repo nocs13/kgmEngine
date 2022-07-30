@@ -5,6 +5,8 @@
 #include "kgmBase.h"
 #include "../kgmSystem/kgmMemory.h"
 
+/*
+
 template <class T> T* kgm_new()
 {
   T* p = new T();
@@ -35,6 +37,7 @@ template <class T> void kgm_delete(T* p)
 
   delete p;
 }
+*/
 
 typedef unsigned int u32;
 

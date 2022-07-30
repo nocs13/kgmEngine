@@ -4,6 +4,8 @@
 
 #include "kgmMemory.h"
 
+/*
+
 #ifdef u_int32_t
 typedef u_int32_t uint32;
 #else
@@ -86,3 +88,5 @@ void _k_memory_free(unsigned int i)
 
   _memory[i] = {nullptr, 0, (uint32) -1};
 }
+
+*/
