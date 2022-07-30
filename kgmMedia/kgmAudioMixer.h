@@ -3,14 +3,14 @@
 #define KGMAUDIOMIXER_H
 
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "kgmIAudio.h"
 
 class kgmAudioMixer : public kgmObject
 {
   KGM_OBJECT(kgmAudioMixer);
 private:
-  kgmMemory<s8> buffer;
+  kgmArray<s8> buffer;
 
   u32       time;
   u32       rate;

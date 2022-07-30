@@ -61,7 +61,7 @@ bool kgmLuaScript::load(kgmString s)
 
   kgmString script;
 
-  kgmMemory<u8> content;
+  kgmArray<u8> content;
 
   if (!resources->getFile(ls, content))
     return false;

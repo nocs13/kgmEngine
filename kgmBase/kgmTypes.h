@@ -19,9 +19,9 @@
 #endif
 
 #ifdef __x86_64__
-# define __WORDSIZE__     64
+  # define __WORDSIZE__     64
 #elif defined(__i386__)
-# define __WORDSIZE__     32
+  # define __WORDSIZE__     32
 #endif
 
 typedef uint8_t    u8;

@@ -6,7 +6,7 @@
 #include "kgmOGLExt.h"
 #include "kgmWindow.h"
 #include "../kgmBase/kgmLog.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 
 #define GL_DEPTH_STENCIL_EXT               GL_DEPTH_STENCIL_NV
 #define GL_DEPTH_STENCIL_ATTACHMENT_EXT    0x821A
@@ -1406,7 +1406,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 
 // SHADERS
 //GLint v_shad;
-void* kgmOGL::gcGenShader(kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
+void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 {
   kgm_log() << "gcGenShader: Generating.\n";
 

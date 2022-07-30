@@ -15,7 +15,7 @@ class kgmFile;
 class kgmXml;
 class kgmShapeCollision;
 
-template<class T> class kgmMemory;
+template<class T> class kgmArray;
 
 class kgmIResources
 {
@@ -31,7 +31,7 @@ public:
   virtual void                remove(kgmResource*) = 0;
   virtual bool                exists(kgmResource*) = 0;
 
-  virtual bool                getFile(const char*, kgmMemory<u8>&) = 0;
+  virtual bool                getFile(const char*, kgmArray<u8>&) = 0;
   virtual kgmPicture*         getPicture(const char*) = 0;
   virtual kgmTexture*         getTexture(const char*) = 0;
   virtual kgmShader*          getShader(const char*) = 0;

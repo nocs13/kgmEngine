@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     for(int i = 0; i < arch.count(); i++)
     {
       kgmString     fname;
-      kgmMemory<u8> data;
+      kgmArray<u8> data;
       u32           size, offset;
 
       arch.info(i, fname, size, offset);

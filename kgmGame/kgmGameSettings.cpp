@@ -1,6 +1,6 @@
 #include "kgmGameSettings.h"
 #include "../kgmBase/kgmFile.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 
 // This class provide shared options for configuration.
 
@@ -42,7 +42,7 @@ void kgmGameSettings::load()
   if(!file.open(m_name, kgmFile::Read))
     return;
 
-  kgmMemory<u8> m;
+  kgmArray<u8> m;
 
   m.alloc(file.length());
   file.read(m, m.length());

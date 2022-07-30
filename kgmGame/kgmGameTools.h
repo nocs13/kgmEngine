@@ -3,7 +3,7 @@
 #include "../kgmBase/kgmIResources.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmXml.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmMedia/kgmWave.h"
 #include "../kgmGraphics/kgmFont.h"
@@ -37,30 +37,30 @@ public:
 // static void gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
 
 //  PICTURE & TEXTURE & FONT & STYLE
- static kgmPicture*   genPicture(kgmMemory<u8>& m);
- static kgmPicture*   genPictureFromBmp(kgmMemory<u8>& m);
- static kgmPicture*   genPictureFromTga(kgmMemory<u8>& m);
- static kgmTexture*   genTexture(kgmIGC* gc, kgmMemory<u8>& m);
- static kgmFont*      genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<u8>& m);
+ static kgmPicture*   genPicture(kgmArray<u8>& m);
+ static kgmPicture*   genPictureFromBmp(kgmArray<u8>& m);
+ static kgmPicture*   genPictureFromTga(kgmArray<u8>& m);
+ static kgmTexture*   genTexture(kgmIGC* gc, kgmArray<u8>& m);
+ static kgmFont*      genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmArray<u8>& m);
  static kgmGuiStyle*  genGuiStyle(kgmIResources* rc, kgmString id);
 
 // SHADER & MATERIAL
- static kgmMaterial*  genMaterial(kgmMemory<u8>& m);
+ static kgmMaterial*  genMaterial(kgmArray<u8>& m);
  static kgmMaterial*  genMaterial(kgmXml& x);
  static kgmShader*    genShader(kgmIGC* gc, kgmString& s);
  static kgmShader*    genShader(kgmIGC* gc, kgmXml& s);
- static kgmShader*    genShader(kgmIGC* gc, kgmMemory<u8>&, kgmMemory<u8>&);
+ static kgmShader*    genShader(kgmIGC* gc, kgmArray<u8>&, kgmArray<u8>&);
 
 //////////// SKELETON
- static kgmSkeleton*  genSkeleton(kgmMemory<u8>& m);
+ static kgmSkeleton*  genSkeleton(kgmArray<u8>& m);
  static kgmSkeleton*  genSkeleton(kgmXml& x);
 
 //ANIMATION
- static kgmAnimation* genAnimation(kgmMemory<u8>& m);
+ static kgmAnimation* genAnimation(kgmArray<u8>& m);
  static kgmAnimation* genAnimation(kgmXml& x);
 
 //MESHES
- static kgmMesh*  genMesh(kgmMemory<u8>& m);
+ static kgmMesh*  genMesh(kgmArray<u8>& m);
  static kgmMesh*  genMesh(kgmXml& x);
 
 //SHAPES
@@ -69,7 +69,7 @@ public:
   static kgmCollision::Shape* genShapeCollision(kgmMesh& x);
 
 //SOUNDS
- static kgmSound* genSound(kgmIAudio* snd, kgmMemory<u8>& m);
+ static kgmSound* genSound(kgmIAudio* snd, kgmArray<u8>& m);
 
  //PARTICLES
  static kgmParticles* genParticles(kgmXml& x);

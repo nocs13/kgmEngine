@@ -206,7 +206,7 @@ public:
   virtual void     gcDrawVertexBuffer(gchandle, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt, u32 isize, u32 icnt, u32 ioff) = 0;
 
   // SHADER
-  virtual gchandle gcGenShader(kgmMemory<u8>&, kgmMemory<u8>&) = 0;
+  virtual gchandle gcGenShader(kgmArray<u8>&, kgmArray<u8>&) = 0;
   virtual void     gcFreeShader(gchandle s) = 0;
   virtual void     gcSetShader(gchandle s) = 0;
   virtual void     gcBindAttribute(gchandle s, int, const char*) = 0;

@@ -4,7 +4,7 @@
 #pragma once
 #include "kgmList.h"
 #include "kgmString.h"
-#include "kgmMemory.h"
+#include "kgmArray.h"
 
 typedef unsigned int u32;
 
@@ -82,14 +82,14 @@ public:
 public:
   kgmXml();
   kgmXml(void* mem, int size);
-  kgmXml(kgmMemory<u8>& m);
+  kgmXml(kgmArray<u8>& m);
   kgmXml(kgmString& s);
 
   virtual ~kgmXml();
 
   void print(Node*);
 
-  XmlState open(kgmMemory<u8>& m);
+  XmlState open(kgmArray<u8>& m);
   XmlState next();
   XmlState close();
 

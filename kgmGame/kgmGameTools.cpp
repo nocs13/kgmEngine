@@ -2,9 +2,10 @@
 #include "kgmIGame.h"
 
 #include "../kgmBase/kgmIResources.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmArrayStream.h"
 #include "../kgmMath/kgmRect2d.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmPicture.h"
@@ -30,7 +31,7 @@ kgmGameTools::~kgmGameTools()
 {
 }
 
-kgmPicture* kgmGameTools::genPicture(kgmMemory<u8>& m)
+kgmPicture* kgmGameTools::genPicture(kgmArray<u8>& m)
 {
   u32 id_tga = 0x00020000;
 
@@ -48,7 +49,7 @@ kgmPicture* kgmGameTools::genPicture(kgmMemory<u8>& m)
   return 0;
 }
 
-kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
+kgmPicture* kgmGameTools::genPictureFromBmp(kgmArray<u8>& m)
 {
   if(m.empty())
     return 0;
@@ -137,7 +138,7 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmMemory<u8>& m)
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
 
-kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
+kgmPicture* kgmGameTools::genPictureFromTga(kgmArray<u8>& m)
 {
   if(m.empty())
     return 0;
@@ -356,7 +357,7 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmMemory<u8>& m)
   return new kgmPicture(width, height, bpp, frames, pdata);
 }
 
-kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
+kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmArray<u8>& m)
 {
   kgmPicture* pic = genPicture(m);
 
@@ -422,7 +423,7 @@ kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmMemory<u8>& m)
   return tex;
 }
 
-kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmMemory<u8>& m)
+kgmFont* kgmGameTools::genFont(kgmIGC* gc, u32 w, u32 h, u32 r, u32 c, kgmArray<u8>& m)
 {
   kgmPicture* pic = genPicture(m);
 
@@ -505,7 +506,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
     mem_vsh[s.length()] = '\0';
   }
 
-  kgmMemory<u8> vsource, fsource;
+  kgmArray<u8> vsource, fsource;
 
   kgmString vstr, fstr;
 
@@ -535,7 +536,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
   return shader;
 }
 
-kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
+kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 {
   if(!gc)
     return null;
@@ -583,7 +584,7 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmMemory<u8>& vsrc, kgmMemory<u8
   return shader;
 }*/
 
-kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
+kgmMaterial* kgmGameTools::genMaterial(kgmArray<u8>& m){
   kgmMaterial* mtl = 0;
   char* str = 0;
   char* key = 0;
@@ -598,13 +599,15 @@ kgmMaterial* kgmGameTools::genMaterial(kgmMemory<u8>& m){
   key = new char[128];
   val = new char[128];
 
-  while(!m.eof())
+  kgmArrayStream<u8> am(m);
+
+  while(!am.eof())
   {
     memset(str, 0, 1024);
     memset(key, 0, 128);
     memset(val, 0, 128);
 
-    m.reads((u8*)str, 1024, (u8*)"\n", 1);
+    am.reads((u8*)str, 1024, (u8*)"\n", 1);
     sscanf(str, "%s %s", key, val);
 
     if(!strcmp(key, "color")){
@@ -695,7 +698,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
 
 
 //SKELETON
-kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
+kgmSkeleton* kgmGameTools::genSkeleton(kgmArray<u8>& m)
 {
   kgmSkeleton* skel;
   char* str = 0;
@@ -710,12 +713,14 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
   key = new char[128];
   val = new char[128];
 
-  while(!m.eof()){
+  kgmArrayStream<u8> am(m);
+
+  while(!am.eof()){
     memset(str, 0, 1024);
     memset(key, 0, 128);
     memset(val, 0, 128);
 
-    if(0 == m.reads((u8*)str, 1024, (u8*)"\n", 1))
+    if(0 == am.reads((u8*)str, 1024, (u8*)"\n", 1))
       break;
 
     sscanf(str, "%s %s", key, val);
@@ -732,7 +737,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmMemory<u8>& m)
 
       memset(str, 0, 1024);
 
-      if(0 == m.reads((u8*)str, 1024, (u8*)"\n", 1))
+      if(0 == am.reads((u8*)str, 1024, (u8*)"\n", 1))
         break;
 
       sscanf(str, "%i %f %f %f %f %f %f %f", &joint->i,
@@ -813,7 +818,7 @@ kgmSkeleton* kgmGameTools::genSkeleton(kgmXml& x){
 }
 
 //ANIMATION
-kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m)
+kgmAnimation* kgmGameTools::genAnimation(kgmArray<u8>& m)
 {
   kgmAnimation* anim = 0;
   kgmAnimation::Animation*   f = 0;
@@ -828,11 +833,13 @@ kgmAnimation* kgmGameTools::genAnimation(kgmMemory<u8>& m)
   str = new char[1024];
   key = new char[512];
 
-  while(!m.eof()){
+  kgmArrayStream<u8> am(m);
+
+  while(!am.eof()){
     memset(str, 0, 1024);
     memset(key, 0, 512);
 
-    if(0 == m.reads((u8*)str, 512, (u8*)"\n", 1))
+    if(0 == am.reads((u8*)str, 512, (u8*)"\n", 1))
       break;
     //   str_close(str);
     sscanf(str, "%s", key);
@@ -966,7 +973,7 @@ kgmAnimation* kgmGameTools::genAnimation(kgmXml& x)
 
 
 //MESHES
-kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
+kgmMesh* kgmGameTools::genMesh(kgmArray<u8>& mm){
   kgmList<kgmMaterial*> materials;
   kgmMesh* m = 0;
   char* key = 0;
@@ -980,11 +987,13 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
   val = new char[128];
   str = new char[512];
 
-  while(!mm.eof()) {
+  kgmArrayStream<u8> am(mm);
+
+  while(!am.eof()) {
     memset(key, 0, 128);
     memset(val, 0, 128);
     memset(str, 0, 512);
-    mm.reads((u8*)str, 512, (u8*)"\n", 1);
+    am.reads((u8*)str, 512, (u8*)"\n", 1);
     sscanf(str, "%s", key);
 
     if(!strcmp(key, "Mesh"))
@@ -1017,7 +1026,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
 
       for(u32 i = 0; i < count; i++)
       {
-        mm.reads((u8*)str, 512, (u8*)"\n", 1);
+        am.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%f %f %f %f %f %f %f %f",
         &v[i].pos.x, &v[i].pos.y, &v[i].pos.z,
         &v[i].nor.x, &v[i].nor.y, &v[i].nor.z,
@@ -1037,7 +1046,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
       for(u32 i = 0; i < count; i++)
       {
         u32 fi[3];
-        mm.reads((u8*)str, 512, (u8*)"\n", 1);
+        am.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%ud %ud %ud", &fi[0], &fi[1], &fi[2]);
         f[i].a = fi[0];
         f[i].b = fi[1];
@@ -1058,7 +1067,7 @@ kgmMesh* kgmGameTools::genMesh(kgmMemory<u8>& mm){
         u32  nw = 0;
         u32  bi[4] = {0};
         float bw[4] = {0.0f};
-        mm.reads((u8*)str, 512, (u8*)"\n", 1);
+        am.reads((u8*)str, 512, (u8*)"\n", 1);
         sscanf(str, "%i %i %i %i %i %f %f %f %f", &nw,
         &bi[0], &bi[1], &bi[2], &bi[3],
         &bw[0], &bw[1], &bw[2], &bw[3]);
@@ -1417,7 +1426,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
 {
 #define KGM_STRHEX_TO_INT(s, i) if(s.length() > 0) sscanf(s, "%x", &i)
 
-  kgmMemory<u8> m;
+  kgmArray<u8> m;
 
   if(rc->getFile((char*)id, m))
   {
@@ -1554,7 +1563,7 @@ kgmGuiStyle* kgmGameTools::genGuiStyle(kgmIResources *rc, kgmString id)
 }
 
 //SOUNDS
-kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmMemory<u8>& m){
+kgmSound* kgmGameTools::genSound(kgmIAudio* au, kgmArray<u8>& m){
   kgmWave wav;
 
   if(!au || !wav.from_mem((char*)m.data(), m.length()))
@@ -1886,7 +1895,7 @@ kgmSkeleton* kgmGameTools::parseSkeleton(kgmXml::Node& node)
 
 bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmString id)
 {
-  kgmMemory<u8> mem;
+  kgmArray<u8> mem;
 
   game->getResources()->getFile(id, mem);
 
@@ -1958,7 +1967,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       if(val == "convex")
       {
-        kgmMemory<u8> mem;
+        kgmArray<u8> mem;
         kgmString     dfile;
 
         a_node->node(i)->attribute("data", dfile);
@@ -2031,7 +2040,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
     }
     else if(id == "Dummies")
     {
-      kgmMemory<u8> mem;
+      kgmArray<u8> mem;
       a_node->node(i)->attribute("value", val);
 
       if((val.length() > 0) && game->getResources()->getFile(val, mem))

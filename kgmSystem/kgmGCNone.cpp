@@ -123,7 +123,7 @@ void  kgmGCNone::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 v
 {
 }
 
-void* kgmGCNone::gcGenShader(kgmMemory<u8>& vsrc, kgmMemory<u8>& fsrc)
+void* kgmGCNone::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 {
   return null;
 }

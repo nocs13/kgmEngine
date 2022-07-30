@@ -12,7 +12,7 @@ kgmTga::~kgmTga()
 
 }
 
-bool kgmTga::create(kgmMemory<u8>& m)
+bool kgmTga::create(kgmArray<u8>& m)
 {
   u8 *pm = m.data();
 

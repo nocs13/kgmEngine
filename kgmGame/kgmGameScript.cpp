@@ -809,7 +809,7 @@ s32 kgmGameScript::kgmGuiLoad(void*)
 
   if (sid)
   {
-    kgmMemory<u8> mem;
+    kgmArray<u8> mem;
     game->getResources()->getFile(sid, mem);
 
     kgmXml xml;

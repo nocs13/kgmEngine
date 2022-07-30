@@ -1,5 +1,5 @@
 #pragma once 
-#include "kgmMemory.h"
+#include "kgmArray.h"
 
 typedef unsigned int u32;
 

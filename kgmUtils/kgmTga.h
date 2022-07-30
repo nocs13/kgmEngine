@@ -1,5 +1,5 @@
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "../kgmBase/kgmResource.h"
 #include "../kgmGraphics/kgmPicture.h"
 
@@ -41,7 +41,7 @@ class kgmTga
   };
 
   Header        header;
-  kgmMemory<u8> data;
+  kgmArray<u8> data;
 
   u16 ppBytes;
 
@@ -49,7 +49,7 @@ public:
   kgmTga();
   ~kgmTga();
 
-  bool create(kgmMemory<u8>& m);
+  bool create(kgmArray<u8>& m);
 
   kgmPicture* toPicture();
 

@@ -29,7 +29,7 @@ bool kgmGameRetention::load()
   if (!f.open(path))
     return false;
 
-  kgmMemory<s8> m;
+  kgmArray<s8> m;
 
   m.alloc(f.length());
 

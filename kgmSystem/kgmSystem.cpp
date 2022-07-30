@@ -91,7 +91,7 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h)
 
 void kgmSystem::getCurrentDirectory(kgmString& s)
 {
-  kgmMemory<u8> buf(1024);
+  kgmArray<u8> buf(1024);
   buf.zero();
 
 #ifdef WIN32
@@ -105,7 +105,7 @@ void kgmSystem::getCurrentDirectory(kgmString& s)
 
 void kgmSystem::setCurrentDirectory(kgmString& s)
 {
-  kgmMemory<u8> buf(256);
+  kgmArray<u8> buf(256);
   buf.zero();
 #ifdef WIN32
   SetCurrentDirectory(s);

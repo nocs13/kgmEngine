@@ -181,7 +181,7 @@ public:
       if(!e.valid)
         continue;
 
-      kgmMemory<u8> m;
+      kgmArray<u8> m;
       m.alloc(e.size);
       archive.seek(e.offset);
       archive.read(m.data(), m.length());
@@ -312,7 +312,7 @@ public:
     return true;
   }
 
-  bool copy(kgmString id, kgmMemory<u8>& m)
+  bool copy(kgmString id, kgmArray<u8>& m)
   {
     Entry *pe = null;
 
@@ -335,7 +335,7 @@ public:
     return true;
   }
 
-  bool copy(u32 index, kgmMemory<u8>& m)
+  bool copy(u32 index, kgmArray<u8>& m)
   {
     Entry *pe = 0;
 

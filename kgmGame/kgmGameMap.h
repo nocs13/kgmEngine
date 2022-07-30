@@ -38,7 +38,7 @@ private:
   OpenType        m_type;
 
   kgmXml*         m_xml;
-  kgmMemory<u8>*  m_mem;
+  kgmArray<u8>*   m_mem;
 
   kgmGameBase*    m_game;
 
@@ -51,7 +51,7 @@ public:
   void close();
 
   bool open(kgmXml& xml);
-  bool open(kgmMemory<u8>& mem);
+  bool open(kgmArray<u8>& mem);
   bool save(kgmString path);
 
   kgmUnit* next();

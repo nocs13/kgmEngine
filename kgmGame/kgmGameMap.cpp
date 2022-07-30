@@ -38,7 +38,7 @@ bool kgmGameMap::open(kgmXml& xml)
   return true;
 }
 
-bool kgmGameMap::open(kgmMemory<u8>& mem)
+bool kgmGameMap::open(kgmArray<u8>& mem)
 {
   if(m_xml)
     return false;

@@ -1,24 +1,35 @@
 #pragma once 
-#include "kgmMemory.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <string.h>
+#include "kgmTypes.h"
+#include "../kgmSystem/kgmMemory.h"
 
 ////////// Array
 template <class T> 
-class kgmArray: public kgmMemory<T>
+class kgmArray
 {
+protected:
+  T   *m_data;
+  u32  m_length;
+
 public:
   kgmArray()
-    :kgmMemory<T>()
   {
+    m_data = null;
+    m_length = 0;
   }
 
   kgmArray(u32 len)
-    :kgmMemory<T>(len)
   {
+    m_data = null;
+    m_length = 0;
   }
 
   kgmArray(const kgmArray& a)
   {
-    kgmMemory<T>::alloc(a.m_data, a.m_length);
+    alloc(a.m_data, a.m_length);
   }
 
   ~kgmArray()
@@ -27,25 +38,98 @@ public:
 
   kgmArray<T>& operator=(const kgmArray<T>& a)
   {
-    kgmMemory<T>::clear();
+    clear();
 
     if(!a.m_length)
       return *this;
 
-    kgmMemory<T>::alloc(a.m_data, a.m_length);
+    alloc(a.m_data, a.m_length);
 
     return *this;
   }
 
   T& operator[](const s32 i) const {
-   return kgmMemory<T>::m_data[i];
+   return m_data[i];
+  }
+
+  operator T *()
+  {
+    return m_data;
   }
 
   void add(const T& el)
   {
-    kgmMemory<T>::realloc(kgmMemory<T>::m_length + 1);
+    realloc(m_length + 1);
 
-    kgmMemory<T>::m_data[kgmMemory<T>::m_length - 1] = el;
+    m_data[m_length - 1] = el;
+  }
+
+  void clear()
+  {
+    if(m_data)
+      kgm_free(m_data);
+
+    m_data = null;
+    m_length = 0;
+  }
+
+  bool empty()
+  {
+    return (m_length == 0);
+  }
+
+  int length()
+  {
+    return m_length;
+  }
+
+  T* data()
+  {
+    return m_data;
+  }
+
+  bool alloc(u32 len)
+  {
+    clear();
+
+    if(!len)
+      return false;
+
+    m_data = (T*) kgm_alloc(sizeof(T) * len);
+    m_length = len;
+
+    return true;
+  }
+
+  bool alloc(T* data, u32 len)
+  {
+    clear();
+
+    if(!data || !len)
+      return false;
+
+    m_data = (T*)kgm_alloc(sizeof(T) * len);
+    memcpy(m_data, data, sizeof(T) * len);
+
+    m_length = len;
+
+    return true;
+  }
+
+  void realloc(u32 len)
+  {
+    T*   old  = m_data;
+
+    m_data   = (T*) kgm_realloc(old, sizeof(T) * len);
+    m_length = len;
+  }
+
+  void zero()
+  {
+    if(!m_data || !m_length)
+      return;
+
+    memset(m_data, 0, sizeof(T) * m_length);
   }
 };
 

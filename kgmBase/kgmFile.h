@@ -34,7 +34,7 @@ public:
   u32  seek(u32 pos);
   bool eof();
   bool valid();
-  bool mmap(kgmMemory<u8> &buf);
+  bool mmap(kgmArray<u8> &buf);
 
   static bool remove_file(kgmString path);
   static bool rename(kgmString oname, kgmString nname);

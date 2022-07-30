@@ -5,7 +5,7 @@
 #include "../kgmBase/kgmList.h"
 #include "../kgmBase/kgmArchive.h"
 #include "../kgmBase/kgmResource.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "../kgmMedia/kgmSound.h"
 #include "../kgmGraphics/kgmAnimation.h"
 #include "../kgmGraphics/kgmPicture.h"
@@ -67,9 +67,9 @@ public:
   bool               exists(kgmResource*);
 
   void               addPath(kgmString s);
-  bool               getFile(const char* id, kgmMemory<u8>& m);
+  bool               getFile(const char* id, kgmArray<u8>& m);
 
-  bool               getRFile(const char* id, const char *type, kgmMemory<u8>& m);
+  bool               getRFile(const char* id, const char *type, kgmArray<u8>& m);
 
   kgmPicture*        getPicture(const char* id);
   kgmTexture*        getTexture(const char* id);
@@ -86,6 +86,6 @@ private:
   kgmResource*       get(const char* id);
   kgmResource*       get(kgmString& id);
 
-  bool               fileFromData(kgmMemory<u8>& mem, kgmString path);
-  bool               dataFromFile(kgmString path, kgmMemory<u8>& mem);
+  bool               fileFromData(kgmArray<u8>& mem, kgmString path);
+  bool               dataFromFile(kgmString path, kgmArray<u8>& mem);
 };

@@ -689,7 +689,7 @@ int kgmGameBase::gLoad(kgmString s)
   {
     kgmGameMap map(this);
 
-    kgmMemory<u8> mem;
+    kgmArray<u8> mem;
 
     kgmString sf = kgmString("maps");
 
@@ -950,7 +950,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   node->attribute(sid, val); \
   }
 
-  kgmMemory<u8> mem;
+  kgmArray<u8> mem;
 
   if(!getResources()->getFile(path, mem))
   {
@@ -1307,7 +1307,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 {
   kgmActor*       actor = 0;
   kgmString       type = a;
-  kgmMemory<u8>   mem;
+  kgmArray<u8>   mem;
 
 #ifdef DEBUG
   kgm_log() << "\nSpawning Actor: " << a.data();
@@ -1391,7 +1391,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
       if(val == "convex")
       {
-        kgmMemory<u8> mem;
+        kgmArray<u8> mem;
         kgmString     dfile;
 
         a_node->node(i)->attribute("data", dfile);
@@ -1464,7 +1464,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
     }
     else if(id == "Dummies")
     {
-      kgmMemory<u8> mem;
+      kgmArray<u8> mem;
       a_node->node(i)->attribute("value", val);
 
       if((val.length() > 0) && m_resources->getFile(val, mem))

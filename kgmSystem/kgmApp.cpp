@@ -1,7 +1,7 @@
 #include "kgmApp.h"
 #include "kgmWindow.h"
 #include "../kgmBase/kgmLog.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 
 #include <signal.h>
 

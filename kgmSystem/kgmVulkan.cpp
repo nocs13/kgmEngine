@@ -1970,7 +1970,7 @@ void  kgmVulkan::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 v
 }
 
 // SHADER
-void* kgmVulkan::gcGenShader(kgmMemory<u8>& v, kgmMemory<u8>& f)
+void* kgmVulkan::gcGenShader(kgmArray<u8>& v, kgmArray<u8>& f)
 {
   if (!m_device)
   {
