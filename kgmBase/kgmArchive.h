@@ -8,7 +8,7 @@
 
 #include "kgmList.h"
 #include "kgmFile.h"
-#include "kgmMemory.h"
+#include "kgmArray.h"
 
 #define   KGMPAK_SIG  "kgmpak"
 #define   KGMPAK_VER  0x0101

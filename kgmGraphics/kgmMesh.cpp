@@ -1,6 +1,6 @@
 #include "kgmMesh.h"
 #include "../kgmMath/kgmMath.h"
-#include "../kgmBase/kgmMemory.h"
+#include "../kgmBase/kgmArray.h"
 #include "../kgmBase/kgmIGC.h"
 
 kgmMesh::kgmMesh()
