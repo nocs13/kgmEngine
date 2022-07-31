@@ -80,19 +80,19 @@ kEditor::kEditor()
 
 kEditor::~kEditor()
 {
-  //clear();
+  clear();
 
   m_isVisual = false;
   kgmThread::thread_join(m_thVisual);
 
-  //pivot->release();
-  //gridline->release();
-  //textData->release();
+  pivot->release();
+  gridline->release();
+  textData->release();
 
-  //mtlLines->release();
-  //mtlPivot->release();
+  mtlLines->release();
+  mtlPivot->release();
 
-  //text->release();
+  text->release();
 }
 
 void kEditor::clear()
@@ -163,36 +163,36 @@ void kEditor::init()
     guiAdd(menu);
     menu->show();
 
-    //mtlLines = new kgmMaterial();
-    //mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
+    mtlLines = new kgmMaterial();
+    mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
 
-    //mtlPivot = new kgmMaterial();
-    //mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
+    mtlPivot = new kgmMaterial();
+    mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
 
-    //gridline = new kGridline(100);
-    //gridline->rebuild();
+    gridline = new kGridline(100);
+    gridline->rebuild();
 
-    //pivot = new kPivot();
-    //pivot->rebuild();
+    pivot = new kPivot();
+    pivot->rebuild();
 
-    //textData = new kgmText();
-    //textData->rect(uRect(600, 200, 300, 100));
-    //text     = new kgmVisual();
-    //text->set(textData);
+    textData = new kgmText();
+    textData->rect(uRect(600, 200, 300, 100));
+    text     = new kgmVisual();
+    text->set(textData);
 
     m_graphics->setBgColor(0xff222222);
 
-    //kgmUnit* u = new kgmUnit(this);
+    kgmUnit* u = new kgmUnit(this);
 
-    //u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+    u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
 
-    //gAppend(u);
+    gAppend(u);
 
-    //u = new kgmUnit(this);
+    u = new kgmUnit(this);
 
-    //u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+    u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
 
-    //gAppend(u);
+    gAppend(u);
 }
 
 void kEditor::select(kgmString name)
@@ -425,17 +425,17 @@ bool kEditor::mapOpen(kgmString s)
 {
   gLoad(s);
 
-  //kgmUnit* u = new kgmUnit(this);
+  kgmUnit* u = new kgmUnit(this);
 
-  //u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+  u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
 
-  //gAppend(u);
+  gAppend(u);
 
-  //u = new kgmUnit(this);
+  u = new kgmUnit(this);
 
-  //u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+  u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
 
-  //gAppend(u);
+  gAppend(u);
 
   selected = null;
 

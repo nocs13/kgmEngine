@@ -21,7 +21,13 @@ void* kgm_alloc(size_t size)
 
   p = ::malloc(size);
 
-  for (s32 i = 0; i < g_o_count; i++) {
+  if (size > 200000) {
+    s32 k = 0;
+  }
+
+  s32 i;
+
+  for (i = 0; i < g_o_count; i++) {
     if (g_objects[i] == null) {
       g_objects[i] = (size_t) p;
 

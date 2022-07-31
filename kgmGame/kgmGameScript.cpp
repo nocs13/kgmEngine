@@ -45,7 +45,7 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 
 kgmGameScript::~kgmGameScript()
 {
-  free();
+  clear();
 
   kgmThread::mutex_free(mutex);
 
@@ -132,7 +132,7 @@ void kgmGameScript::init()
   }
 }
 
-void kgmGameScript::free()
+void kgmGameScript::clear()
 {
   if (status) {
     kgmThread::mutex_lock(mutex);

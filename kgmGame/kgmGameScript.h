@@ -70,7 +70,7 @@ class kgmGameScript: public kgmObject
  private:
   static int __worker(kgmGameScript*);
 
-  void free();
+  void clear();
 
   bool locked();
 

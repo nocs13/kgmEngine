@@ -38,7 +38,7 @@ kgmOSL::_Sound::~_Sound()
     kgm_log() << "OSL delete sound buffer\n";
 #endif
 
-    free(buffer);
+    kgm_free(buffer);
   }
 
 #ifdef DEBUG

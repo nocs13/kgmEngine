@@ -342,7 +342,7 @@ void kgmThread::condition_free(kgmThread::Condition c)
 #ifdef WIN32
   WakeAllConditionVariable (c);
 
-  free(c);
+  kgm_free(c);
 #else
   pthread_cond_broadcast(c);
 

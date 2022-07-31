@@ -34,6 +34,7 @@ public:
 
   ~kgmArray()
   {
+    clear();
   }
 
   kgmArray<T>& operator=(const kgmArray<T>& a)
@@ -48,7 +49,8 @@ public:
     return *this;
   }
 
-  T& operator[](const s32 i) const {
+  T& operator[](const s32 i) const 
+  {
    return m_data[i];
   }
 
@@ -66,7 +68,7 @@ public:
 
   void clear()
   {
-    if(m_data)
+    if(m_data != nullptr)
       kgm_free(m_data);
 
     m_data = null;

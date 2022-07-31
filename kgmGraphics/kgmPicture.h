@@ -30,7 +30,7 @@ public:
 
   ~kgmPicture()
   {
-    if(pdata)
+    if(pdata != null)
       kgm_free(pdata);
   }
 
@@ -87,7 +87,7 @@ public:
       }
     }
 
-    free(pdata);
+    kgm_free(pdata);
     pdata = ndata;
     width = nwidth;
     height = nheight;
@@ -156,7 +156,7 @@ public:
       height = b_height;
       bpp = 32;
 
-      free(pal);
+      kgm_free(pal);
       pal = null;
 
       return true;
