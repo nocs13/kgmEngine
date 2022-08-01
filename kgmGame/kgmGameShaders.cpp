@@ -53,6 +53,12 @@ const char* const end_vshader =   " \n"
 "}";
 
 const char* const begin_pshader = "#version 120 \n"
+"struct Light          \n"
+"{                     \n"
+"  vec4   pos;         \n"
+"  vec4   dir;         \n"
+"};                    \n"
+
 "#define MAX_LIGHTS 8 \n"
 "#ifdef GL_ES         \n"
 "precision lowp float;\n"
