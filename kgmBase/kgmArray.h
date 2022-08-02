@@ -25,6 +25,8 @@ public:
   {
     m_data = null;
     m_length = 0;
+
+    alloc(len);
   }
 
   kgmArray(const kgmArray& a)
