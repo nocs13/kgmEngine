@@ -1,7 +1,13 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define MAX_LIGHTS 8
+#define MAX_LIGHTS 16
+
+struct Light
+{
+    vec4 pos;
+    vec4 dir;
+};
 
 layout(set = 0, binding = 0) uniform UBO
 {
@@ -12,9 +18,7 @@ layout(set = 0, binding = 0) uniform UBO
  vec4   g_vSpecular;
  vec4   g_vClipPlane;
 
- vec4   g_vLightPos[MAX_LIGHTS];
- vec4   g_vLightDir[MAX_LIGHTS];
- vec4   g_vLightCol[MAX_LIGHTS];
+ Light  g_sLights[MAX_LIGHTS];
 
  vec3   g_vUp;
  vec3   g_vEye;
