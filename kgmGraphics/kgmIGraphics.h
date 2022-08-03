@@ -32,6 +32,12 @@ public:
     NodeParticles
   };
 
+  enum NodeShading 
+  {
+    ShadingNone,
+    ShadingFull
+  };
+
   class INode
   {
   public:
@@ -47,6 +53,9 @@ public:
 
     virtual void         setNodeMaterial(kgmMaterial*) = 0;
     virtual kgmMaterial* getNodeMaterial()             = 0;
+
+    virtual void         setNodeShading(NodeShading)   = 0;
+    virtual NodeShading  getNodeShading()              = 0;
   };
 
 public:

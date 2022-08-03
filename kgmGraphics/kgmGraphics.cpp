@@ -548,8 +548,8 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  if (m_rnd_lights)
-    m_rnd_lights->render();
+  //if (m_rnd_lights)
+  //  m_rnd_lights->render();
 
   //m_rnd_lights->lightmap();
 

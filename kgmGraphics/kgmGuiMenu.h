@@ -97,7 +97,7 @@ public:
       items.clear();
     }
 
-    kgmString getTitle() { return title; }
+    kgmString& getTitle() { return title; }
 
     iRect getRect() const { return rect; }
 

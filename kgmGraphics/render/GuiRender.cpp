@@ -364,7 +364,7 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
     gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
 
-    kgmString title = citem->getTitle();
+    kgmString& title = citem->getTitle();
 
     kgmGui::Rect trc = rc;
 

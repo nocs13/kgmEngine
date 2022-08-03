@@ -102,10 +102,10 @@ public:
   bool         erased(){ return m_erase; }
 
   void         setText(kgmString s) { m_text = s;    }
-  kgmString    getText()            { return m_text; }
+  kgmString&   getText()            { return m_text; }
 
   void         setSid(kgmString  sid){ m_sid = sid;  }
-  kgmString    getSid()              { return m_sid; }
+  kgmString&   getSid()              { return m_sid; }
 
   kgmGui*      getParent() const { return m_parent; }
 

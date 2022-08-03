@@ -17,6 +17,9 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
 
   mtx4      m_transform;
 
+  kgmIGraphics::NodeShading  m_shading;
+
+
   public:
     kgmNode(kgmObject* o, kgmIGraphics::TypeNode t)
     {
@@ -26,6 +29,7 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
         o->increment();
 
       m_type = t;
+      m_shading = kgmIGraphics::ShadingFull;
 
       m_transform.identity();
     }
@@ -82,4 +86,15 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
     {
       return m_material;
     }
+
+    void setNodeShading(kgmIGraphics::NodeShading s)
+    {
+      m_shading = s;
+    }
+
+    kgmIGraphics::NodeShading  getNodeShading()
+    {
+      return m_shading;
+    }
+
 };

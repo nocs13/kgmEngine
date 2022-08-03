@@ -29,29 +29,13 @@ void ColorRender::render()
 
     mtx4     m = nod->getNodeTransform();
 
+    if (nod->getNodeShading() != kgmIGraphics::ShadingNone)
+      continue;
+
     gr->setWorldMatrix(m);
     gr->set(mtl);
-    //vec4 color = mtl->color();
-
-    //material(mtl);
-
-    //s->start();
-
-    //s->set("g_fShine",          mtl->shininess());
-    //s->set("g_mProj",           cam->mProj);
-    //s->set("g_mView",           cam->mView);
-    //s->set("g_mTran",           m);
-    //s->set("g_vColor",          color);
-    //s->set("g_vUp",             cam->mUp);
-    //s->set("g_vEye",            cam->mPos);
-    //s->set("g_vLook",           cam->mDir);
-    //s->set("g_iClipping",       0);
-    //s->set("g_txColor", 0);
 
     gr->shaderSetPrivate();
     draw(msh);
-
-    //s->stop();
-    //material(null);
   }
 }

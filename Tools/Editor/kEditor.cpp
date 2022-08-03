@@ -186,11 +186,15 @@ void kEditor::init()
 
     u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
 
+    u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
+
     gAppend(u);
 
     u = new kgmUnit(this);
 
     u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+
+    u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
 
     gAppend(u);
 }
@@ -428,12 +432,14 @@ bool kEditor::mapOpen(kgmString s)
   kgmUnit* u = new kgmUnit(this);
 
   u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+  u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
 
   gAppend(u);
 
   u = new kgmUnit(this);
 
   u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+  u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
 
   gAppend(u);
 
