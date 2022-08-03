@@ -3,14 +3,14 @@
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
 #include "../kgmMaterial.h"
+#include "BaseRender.h"
+
 
 class kgmGraphics;
 class kgmFont;
 
-class GuiRender
+class GuiRender: public BaseRender
 {
-  kgmGraphics* gr;
-
   mtx4 mi;
 
   kgmMaterial mtl;

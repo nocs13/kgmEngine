@@ -4,13 +4,13 @@
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
 #include "../kgmMaterial.h"
+#include "BaseRender.h"
+
 
 class kgmGraphics;
 
-class FpsRender
+class FpsRender: public BaseRender
 {
-  kgmGraphics* gr;
-
   mtx4 mi;
 
   kgmString text;

@@ -26,6 +26,7 @@
 #include "../kgmGame/kgmGameBase.h"
 
 #include "../kgmSystem/kgmSystem.h"
+#include "../kgmSystem/kgmMemory.h"
 
 #include "render/Terrain.h"
 #include "render/LightRender.h"
@@ -237,6 +238,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   //m_rnd_base        = new BaseRender(this);
   m_rnd_color       = new ColorRender(this);
+  //m_rnd_phong       = new PhongRender(this);
+  m_rnd_phong       = new PhongRender(this);
   //m_rnd_lights      = new LightRender(this);
   //m_rnd_shadows     = new ShadowRender(this);
   //m_rnd_environment = new EnvironmentRender(this);
@@ -261,25 +264,15 @@ kgmGraphics::~kgmGraphics()
   if (m_map_light.m_fbo)
     gc->gcFreeTarget(m_map_light.m_fbo);
 
-  if (m_rnd_terrain)
-    delete m_rnd_terrain;
-
-  if (m_rnd_color)
-    delete m_rnd_color;
-
-  if (m_rnd_lights)
-    delete m_rnd_lights;
-
-  if (m_rnd_shadows)
-    delete m_rnd_shadows;
-
-  if (m_rnd_environment)
-    delete m_rnd_environment;
-
-  delete m_r_fps;
-  delete m_r_gui;
-  delete m_r_icon;
-  delete m_r_sprite;
+  kgmObject::Release(m_rnd_terrain);
+  kgmObject::Release(m_rnd_color);
+  kgmObject::Release(m_rnd_lights);
+  kgmObject::Release(m_rnd_shadows);
+  kgmObject::Release(m_rnd_environment);
+  kgmObject::Release(m_rnd_phong);
+  kgmObject::Release(m_r_fps);
+  kgmObject::Release(m_r_icon);
+  kgmObject::Release(m_r_sprite);
 
   m_particles.clear();
   m_meshes.clear();
@@ -287,14 +280,9 @@ kgmGraphics::~kgmGraphics()
   m_icons.clear();
   m_guis.clear();
 
-  if (m_icon_light)
-    delete m_icon_light;
-
-  if (m_def_material)
-    m_def_material->release();
-
-  if (m_def_light)
-    ((kgmNode*)m_def_light)->release();
+  kgmObject::Release(m_icon_light);
+  kgmObject::Release(m_def_material);
+  kgmObject::Release((kgmNode*)m_def_light);
 
   if(g_tex_black)
     gc->gcFreeTexture(g_tex_black);
@@ -305,18 +293,12 @@ kgmGraphics::~kgmGraphics()
   if(g_tex_gray)
     gc->gcFreeTexture(g_tex_gray);
 
-  delete m_tex_white;
-  delete m_tex_black;
-  delete m_tex_gray;
-
-  if (g_def_style_texture)
-    delete g_def_style_texture;
-
-  if(gui_style)
-    delete gui_style;
-
-  if(m_camera)
-    delete m_camera;
+  kgmObject::Release(m_tex_white);
+  kgmObject::Release(m_tex_black);
+  kgmObject::Release(m_tex_gray);
+  kgmObject::Release(g_def_style_texture);
+  kgmObject::Release(gui_style);
+  kgmObject::Release(m_camera);
 }
 
 kgmShader* s_def = null;

@@ -15,7 +15,7 @@ class kgmMaterial;
 class kgmParticles;
 class kgmCamera;
 
-class BaseRender
+class BaseRender: public kgmObject
 {
   struct ClipPlane
   {
@@ -35,7 +35,7 @@ private:
 
 public:
   BaseRender(kgmGraphics* gr);
-  virtual ~BaseRender(){}
+  ~BaseRender(){}
 
   void render(kgmCamera*, kgmIGraphics::INode*);
 

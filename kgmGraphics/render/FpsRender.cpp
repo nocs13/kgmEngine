@@ -3,10 +3,9 @@
 
 #include "../kgmGraphics.h"
 
-FpsRender::FpsRender(kgmGraphics* g)
+FpsRender::FpsRender(kgmGraphics* gr)
+  :BaseRender(gr)
 {
-  gr = g;
-
   mi.identity();
 
   text.alloc(24);

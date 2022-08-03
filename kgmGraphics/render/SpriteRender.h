@@ -2,15 +2,14 @@
 #define SPRITERENDERER_H
 
 #include "../../kgmBase/kgmIGC.h"
+#include "BaseRender.h"
 
 class kgmGraphics;
 class kgmVisual;
 class kgmSprite;
 
-class SpriteRender
+class SpriteRender: public BaseRender
 {
-  kgmGraphics* gr;
-
   mtx4 mi;
 
 public:

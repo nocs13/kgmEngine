@@ -6,9 +6,8 @@
 #include "../kgmGuiCheck.h"
 
 GuiRender::GuiRender(kgmGraphics* gr)
+  :BaseRender(gr)
 {
-  this->gr = gr;
-
   mi.identity();
 }
 

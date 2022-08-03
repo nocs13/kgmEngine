@@ -97,7 +97,9 @@ void kgm_free(void* p)
   }
 }
 
-template <class T> T* kgm_new()
+/*
+template <class T> 
+T* kgm_new()
 {
   T* p = new T();
 
@@ -126,8 +128,10 @@ template <class T> T* kgm_new()
 
   return p;
 }
+*/
 
-template <class T, class... Args> T* kgm_new(Args... args)
+template <class T, class... Args> 
+T* kgm_new(Args... args)
 {
   T* p = new T(args...);
 
@@ -157,7 +161,8 @@ template <class T, class... Args> T* kgm_new(Args... args)
   return p;
 }
 
-template <class T> void kgm_delete(T* p)
+template <class T> 
+void kgm_delete(T* p)
 {
 #ifdef DEBUG
   fprintf(stderr, "Delete memory: %p.\n", p);

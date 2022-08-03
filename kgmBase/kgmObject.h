@@ -269,4 +269,6 @@ public:
   {
     kgm_object_free(p);
   }
+
+  static void Release(kgmObject* o);
 };

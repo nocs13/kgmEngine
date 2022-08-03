@@ -4,9 +4,8 @@
 #include "../kgmGraphics.h"
 
 SpriteRender::SpriteRender(kgmGraphics* gr)
+  :BaseRender(gr)
 {
-  this->gr = gr;
-
   mi.identity();
 }
 

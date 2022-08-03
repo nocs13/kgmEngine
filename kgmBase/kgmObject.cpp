@@ -100,3 +100,9 @@ bool kgmObject::isClass(const char* o)
 {
   return !strcmp(this->vClass(), o);
 }
+
+void kgmObject::Release(kgmObject* o)
+{
+  if (o != nullptr)
+    o->release();
+}

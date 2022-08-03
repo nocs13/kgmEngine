@@ -32,6 +32,7 @@
 #include "render/IconRender.h"
 #include "render/ColorRender.h"
 #include "render/LightRender.h"
+#include "render/PhongRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
 #include "render/EnvironmentRender.h"
@@ -52,6 +53,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class IconRender;
   friend class LightRender;
   friend class ColorRender;
+  friend class PhongRender;
   friend class SpriteRender;
   friend class ShadowRender;
   friend class ParticlesRender;
@@ -60,6 +62,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
 
 #define MAX_LIGHTS   8
 #define MAX_SHADOWS  2
+#define MAX_RENDERS  24
 
 public:
   enum GraphicsQuality
@@ -228,9 +231,12 @@ protected:
   BaseRender*        m_rnd_base = null;
   ColorRender*       m_rnd_color = null;
   LightRender*       m_rnd_lights = null;
+  PhongRender*       m_rnd_phong = null;      
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
   Render::Terrain*   m_rnd_terrain = null;
+
+  //BaseRender*        m_rnd_list[];
 
   //For virtual visualization.
 
