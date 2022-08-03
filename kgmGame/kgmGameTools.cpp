@@ -19,7 +19,6 @@
 #include "../kgmUtils/kgmTga.h"
 
 #include "kgmGameApp.h"
-#include "kgmGameShaders.h"
 #include "kgmGameScript.h"
 #include "kgmActor.h"
 
@@ -510,8 +509,8 @@ kgmShader* kgmGameTools::genShader(kgmIGC* gc, kgmString& s)
 
   kgmString vstr, fstr;
 
-  vstr = kgmString(begin_vshader) + kgmString(mem_vsh) + kgmString(end_vshader);
-  fstr = kgmString(begin_pshader) + kgmString(mem_fsh) + kgmString(end_pshader);
+  vstr = kgmString(mem_vsh);
+  fstr = kgmString(mem_fsh);
 
   if(mem_vsh)
     kgm_free(mem_vsh);
