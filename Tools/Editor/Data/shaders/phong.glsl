@@ -23,6 +23,7 @@ uniform float  g_fRandom;
 uniform float  g_fAmbient;
 uniform float  g_fLightPower;
 uniform int    g_iClipping = 0;
+uniform int    g_iLights;
 
 uniform Light  g_sLights[MAX_LIGHTS];
 
@@ -47,7 +48,7 @@ void process(out vec4 pos)
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
   v_N  = vec3(g_mTran * vec4(a_Normal, 1));
   pos = g_mProj * g_mView * vec4(v_P, 1);
-  v_color    = g_vColor * a_Color;
+  v_color    = g_vColor;// * a_Color;
   v_specular = g_vSpecular;
 }
 
@@ -73,6 +74,7 @@ precision lowp float;
 
 #define MAX_LIGHTS 16
 
+uniform int    g_iLights;
 uniform Light  g_sLights[MAX_LIGHTS];
 
 uniform sampler2D g_txColor;
@@ -92,10 +94,28 @@ varying vec4   v_specular;
 varying vec4  position;
 varying float clipping;
 
+void col256torgb(in int c256, out vec3 crgb)
+{
+  crgb.r = (c256 >> 5) * 255 / 7;
+  crgb.g = ((c256 >> 2) & 0x07) * 255 / 7;
+  crgb.b = (c256 & 0x03) * 255 / 3;
+}
+
 void process(out vec4 col)
 {
-  if (clipping < 0.0)
-    discard;
+  vec3 col_light = vec3(0, 0, 0);
+
+  for (int i = 0; i < g_iLigts; i++)
+  {
+    vec3 lpos = vec3(g_sLights[i].pos);
+    vec3 ldir = vec3(g_sLights[i].dir);
+
+    int power = int(g_sLights[i].pos.w);
+    //8bit Color = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255)
+    int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
+    vec3 lcol  = vec3();
+    col256torgb(ilcol, lcol);
+  }
 
   col = v_color * texture2D(g_txColor, v_UV);
 }

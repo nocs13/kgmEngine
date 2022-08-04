@@ -254,6 +254,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   //m_r_sprite = new SpriteRender(this);
 
   m_a_lights.alloc(MAX_LIGHTS);
+  m_a_meshes.alloc(128);
 }
 
 kgmGraphics::~kgmGraphics()
@@ -1210,10 +1211,17 @@ void kgmGraphics::shaderSetGeneral()
     vec3 pos = n->getNodePosition();
     vec3 dir = l->direction();
 
-    float intensity = l->intensity();
+    //convert rgb to 256.
+    
+    int Red   = col.x * 255;
+    int Green = col.y * 255;
+    int Blue  = col.z * 255;
+
+    int col256 = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255);
+
+    float intensity = l->intensity() + 0.001 * col256;
     float angle     = l->angle();
 
-    vec4 lcol(col.x, col.y, col.z, 0);
     vec4 lpos(pos.x, pos.y, pos.z, intensity);
     vec4 ldir(dir.x, dir.y, dir.z, angle);
 
