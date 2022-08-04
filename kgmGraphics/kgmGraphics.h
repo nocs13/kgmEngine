@@ -86,6 +86,7 @@ public:
     ShaderShadowDraw,
     ShaderEnvCube,
     ShaderEnvPlane,
+    ShaderPhong,
     ShaderEnd = 12,
   };
 

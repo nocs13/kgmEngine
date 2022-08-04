@@ -1,67 +1,108 @@
+#version 120
 
-varying vec4   lights[12];
+struct Light
+{
+  vec4   pos;
+  vec4   dir;
+};
+
+#define MAX_LIGHTS 16
+
+uniform mat4   g_mView;
+uniform mat4   g_mProj;
+uniform mat4   g_mTran;
+uniform vec4   g_vColor;
+uniform vec4   g_vSpecular;
+uniform vec4   g_vClipPlane;
+uniform vec3   g_vUp;
+uniform vec3   g_vEye;
+uniform vec3   g_vLook;
+uniform float  g_fTime;
+uniform float  g_fShine;
+uniform float  g_fRandom;
+uniform float  g_fAmbient;
+uniform float  g_fLightPower;
+uniform int    g_iClipping = 0;
+
+uniform Light  g_sLights[MAX_LIGHTS];
+
+varying vec3   v_P;
+varying vec3   v_N;
+varying vec3   v_V;
+varying vec3   v_Y;
+varying vec2   v_UV;
+varying float  v_I;
+varying float  v_shine;
+varying vec4   v_color;
+varying vec4   v_specular;
+
+attribute vec3 a_Vertex;
+attribute vec3 a_Normal;
+attribute vec4 a_Color;
+attribute vec2 a_UV;              ;
+
+void process(out vec4 pos)
+{
+  v_UV = a_UV;
+  v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
+  v_N  = vec3(g_mTran * vec4(a_Normal, 1));
+  pos = g_mProj * g_mView * vec4(v_P, 1);
+  v_color    = g_vColor * a_Color;
+  v_specular = g_vSpecular;
+}
 
 void main(void)
 {
-  vec4 pos = g_mTran * vec4(g_Vertex, 1.0);
-
-  position = vec3(pos);
-  normal   = normalize(g_Normal);
-
-  shininess    = g_fShine;
-  eye          = g_vEye;
-  light.xyz    = vec3(g_vLight.xyz - pos.xyz);
-  light.w      = g_vLight.w / length(light.xyz);
-
-  for(int i = 0; i < g_iLights; i++)
-  {
-    vec3 ldir = pos.xyz - g_vLights[i].xyz;
-    lights[i].w = g_vLights[i].w / length(ldir);
-    lights[i].xyz = normalize(ldir);
-  }
-
-  gl_Position  = g_mProj * g_mView * pos;
-  texcoord     = g_Texcoord;
+  vec4 pos;
+  process(pos);
+  gl_Position = pos;
 }
 
 //Fragment Shader
-varying vec4      light;
-varying vec4      lights[12];
+#version 120
 
+struct Light
+{
+  vec4   pos;
+  vec4   dir;
+};
+
+#ifdef GL_ES
+precision lowp float;
+#endif
+
+#define MAX_LIGHTS 16
+
+uniform Light  g_sLights[MAX_LIGHTS];
+
+uniform sampler2D g_txColor;
+uniform sampler2D g_txNormal;
+uniform sampler2D g_txSpecular;
+
+varying vec3   v_P;
+varying vec3   v_N;
+varying vec3   v_V;
+varying vec3   v_Y;
+varying vec2   v_UV;
+varying float  v_I;
+varying float  v_shine;
+varying vec4   v_color;
+varying vec4   v_specular;
+
+varying vec4  position;
+varying float clipping;
+
+void process(out vec4 col)
+{
+  if (clipping < 0.0)
+    discard;
+
+  col = v_color * texture2D(g_txColor, v_UV);
+}
 
 void main( void )
 {
-  vec4 tcolor     = texture2D(g_txColor,    texcoord);
-  vec4 tnormal    = texture2D(g_txNormal,   texcoord);
-  vec4 tspecular  = texture2D(g_txSpecular, texcoord);
-  vec4 spec       = vec4(0.0);
-
-  vec3 b = normalize(tnormal.xyz * 2.0 - 1.0);
-  vec3 n = normalize(tnormal.xyz + normalize(normal));
-  vec3 e = normalize(eye);
-  vec3 l = normalize(light.xyz);
-
-
-  float intensity = light.w * max(dot(n,l), 0.1);
-
-
-  for(int i = 0; i < g_iLights; i++)
-  {
-    vec3  l  = normalize(lights[i].xyz);
-    float sh = dot(l, eye);
-
-    intensity += (lights[i].w) * max(dot(normal,l), 0.01);
-  }
-
-
-  {
-    vec3 h = normalize(l + e);
-    float kspec = max(dot(h, n), 0.0);
-    spec = tspecular * pow(kspec, shininess * 100.0);
-  }
-
-  vec4 fcolor = vec4(0,0,0,0);
-  fcolor.xyz  = intensity * tcolor.xyz + spec.xyz;
-  fcolor.w     = tcolor.w;
-  gl_FragColor = fcolor;
+    vec4 col;
+    process(col);
+    gl_FragColor = col;
 }

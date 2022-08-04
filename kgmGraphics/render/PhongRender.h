@@ -1,3 +1,4 @@
+#pragma once
 #include "BaseRender.h"
 
 class PhongRender: public BaseRender

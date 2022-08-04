@@ -232,8 +232,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
     m_shaders[ShaderColor]    = rc->getShader("color.glsl");
     m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
-    m_shaders[ShaderEnd + kgmMaterial::TypePhong] = rc->getShader("phong.glsl");
-    m_shaders[ShaderEnd + kgmMaterial::TypeLambert] = rc->getShader("lambert.glsl");
+    m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
   }
 
   //m_rnd_base        = new BaseRender(this);
@@ -548,8 +547,8 @@ void kgmGraphics::render()
 
   lighting = true;
 
-  //if (m_rnd_lights)
-  //  m_rnd_lights->render();
+  if (m_rnd_phong)
+    m_rnd_phong->render();
 
   //m_rnd_lights->lightmap();
 
@@ -561,9 +560,7 @@ void kgmGraphics::render()
 
   //draw terrain
   if (m_terrain)
-  {
     //m_rnd_terrain->render();
-  }
   
   //draw particles
   //ParticlesRender pr(this);
