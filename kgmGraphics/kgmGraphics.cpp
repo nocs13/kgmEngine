@@ -541,8 +541,8 @@ void kgmGraphics::render()
   //draw scene only lights
   set((kgmMaterial*)null);
 
-  //if (m_rnd_color)
-  //  m_rnd_color->render();
+  if (m_rnd_color)
+    m_rnd_color->render();
 
   lighting = true;
 
@@ -1311,8 +1311,8 @@ s32 kgmGraphics::getShaderId(kgmString s)
 
 u32 kgmGraphics::collectLights(kgmCamera* cam, kgmArray<INode*>& nodes, u32 max)
 {
-  const s32 max_lights = 64;
-  const f32 min_lforce = 0.05;
+  const s32 max_lights = MAX_LIGHTS;
+  const f32 min_lforce = 0.000001;
 
   if (!cam || nodes.length() < max)
     return 0;

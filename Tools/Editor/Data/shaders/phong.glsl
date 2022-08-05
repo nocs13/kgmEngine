@@ -111,31 +111,35 @@ int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
 
 void process(out vec4 col)
 {
-  vec3 col_base = vec3( v_color * texture2D(g_txColor, v_UV) );
+  vec3 cbase = vec3( v_color * texture2D(g_txColor, v_UV) );
+  vec3 shade = vec3(0.0, 0.0, 0.0);
+  vec3 shine = vec3(0.0, 0.0, 0.0);
 
-  //for (int i = 0; i < g_iLights; i++)
-  for (int i = 0; i < 1; i++)
+  for (int i = 0; i < g_iLights; i++)
+  //for (int i = 0; i < 1; i++)
   {
-    vec3 lpos = vec3(1.0, 1.0, 10);//g_sLights[i].pos);
-    vec3 ldir = vec3(0, 0, 0); //g_sLights[i].dir);
+    vec3 lpos = g_sLights[i].pos.xyz;
+    vec3 ldir = g_sLights[i].dir.xyz;
+    vec3 lcol = g_sLights[i].col.rgb;
 
-    float power = 1.0;//g_sLights[i].pos.w;
+    float power = g_sLights[i].pos.w;
     float angle = g_sLights[i].dir.w;
+    float dsize = abs( length(lpos - v_P) );
 
-    vec3 lcol  = vec3(g_sLights[i].col);
 
     //if (angle > M_PI)
     {
       ldir = normalize(lpos - v_P);
     }
 
-    float r1 = normalize(dot(ldir, v_N));
+    float r1 = dot(ldir, v_N) * (power / dsize);
 
     r1 = max(r1, 0.0);
 
-    col.rgb += (col_base * r1 );
+    shade.rgb += (lcol * r1);
   }
 
+  col.rgb = cbase * shade;
   col.w = 1.0;
 }
 
