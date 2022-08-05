@@ -87,7 +87,7 @@ bool kgmGameMap::save(kgmString path)
     if (!n)
       continue;
 
-    
+
     switch(n->getNodeType())
     {
     case kgmIGraphics::NodeLight:
@@ -682,7 +682,7 @@ kgmUnit* kgmGameMap::next()
         node->setName(id);
 
         kgmGNode* n = new kgmGNode(node, p, kgmIGraphics::NodeParticles);
-        
+
         node->setNode(n);
 
         if(m_xml->hasattr("material"))
@@ -764,7 +764,7 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        //node->getNode()->scale(v);
+        node->scale(v);
       }
       else if(id == "Color")
       {

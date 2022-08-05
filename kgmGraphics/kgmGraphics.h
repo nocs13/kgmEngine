@@ -178,7 +178,6 @@ protected:
 
   LightData m_light_data;
 
-//  INode*  m_a_light   = null;
   INode*  m_def_light = null;
 
   kgmList<kgmResource*> m_resources;
@@ -232,7 +231,7 @@ protected:
   BaseRender*        m_rnd_base = null;
   ColorRender*       m_rnd_color = null;
   LightRender*       m_rnd_lights = null;
-  PhongRender*       m_rnd_phong = null;      
+  PhongRender*       m_rnd_phong = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;
   Render::Terrain*   m_rnd_terrain = null;

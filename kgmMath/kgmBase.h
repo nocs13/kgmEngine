@@ -3,6 +3,8 @@
 #include <float.h>
 #include "../kgmBase/kgmTypes.h"
 
+#define KGM_PI 3.1415926535897932384626433832795
+
 #define PI          3.1415926535f
 #define SQR(x)      ((x) * (x))
 #define DEGTORAD(x) ((x) * PI / 180.0)

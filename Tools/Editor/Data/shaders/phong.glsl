@@ -4,6 +4,7 @@ struct Light
 {
   vec4   pos;
   vec4   dir;
+  vec4   col;
 };
 
 #define MAX_LIGHTS 16
@@ -46,7 +47,8 @@ void process(out vec4 pos)
 {
   v_UV = a_UV;
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
-  v_N  = vec3(g_mTran * vec4(a_Normal, 1));
+  //v_N  = vec3(g_mTran * vec4(a_Normal, 1));
+  v_N = a_Normal;
   pos = g_mProj * g_mView * vec4(v_P, 1);
   v_color    = g_vColor;// * a_Color;
   v_specular = g_vSpecular;
@@ -66,6 +68,7 @@ struct Light
 {
   vec4   pos;
   vec4   dir;
+  vec4   col;
 };
 
 #ifdef GL_ES
@@ -73,6 +76,7 @@ precision lowp float;
 #endif
 
 #define MAX_LIGHTS 16
+#define M_PI 3.14159265359
 
 uniform int    g_iLights;
 uniform Light  g_sLights[MAX_LIGHTS];
@@ -94,35 +98,51 @@ varying vec4   v_specular;
 varying vec4  position;
 varying float clipping;
 
+/*
 void col256torgb(in int c256, out vec3 crgb)
 {
   crgb.r = (c256 >> 5) * 255 / 7;
   crgb.g = ((c256 >> 2) & 0x07) * 255 / 7;
   crgb.b = (c256 & 0x03) * 255 / 3;
 }
+8bit Color = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255)
+int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
+*/
 
 void process(out vec4 col)
 {
-  vec3 col_light = vec3(0, 0, 0);
+  vec3 col_base = vec3( v_color * texture2D(g_txColor, v_UV) );
 
-  for (int i = 0; i < g_iLigts; i++)
+  //for (int i = 0; i < g_iLights; i++)
+  for (int i = 0; i < 1; i++)
   {
-    vec3 lpos = vec3(g_sLights[i].pos);
-    vec3 ldir = vec3(g_sLights[i].dir);
+    vec3 lpos = vec3(1.0, 1.0, 10);//g_sLights[i].pos);
+    vec3 ldir = vec3(0, 0, 0); //g_sLights[i].dir);
 
-    int power = int(g_sLights[i].pos.w);
-    //8bit Color = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255)
-    int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
-    vec3 lcol  = vec3();
-    col256torgb(ilcol, lcol);
+    float power = 1.0;//g_sLights[i].pos.w;
+    float angle = g_sLights[i].dir.w;
+
+    vec3 lcol  = vec3(g_sLights[i].col);
+
+    //if (angle > M_PI)
+    {
+      ldir = normalize(lpos - v_P);
+    }
+
+    float r1 = normalize(dot(ldir, v_N));
+
+    r1 = max(r1, 0.0);
+
+    col.rgb += (col_base * r1 );
   }
 
-  col = v_color * texture2D(g_txColor, v_UV);
+  col.w = 1.0;
 }
 
 void main( void )
 {
     vec4 col;
     process(col);
+    //col = vec4(1, 0, 0, 1);
     gl_FragColor = col;
 }

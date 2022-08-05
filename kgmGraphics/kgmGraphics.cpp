@@ -225,13 +225,13 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    m_shaders[ShaderTest]     = rc->getShader("test.glsl");
+    //m_shaders[ShaderTest]     = rc->getShader("test.glsl");
     m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
-    m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
-    m_shaders[ShaderNone]     = rc->getShader("none.glsl");
+    //m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
+    //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
     m_shaders[ShaderColor]    = rc->getShader("color.glsl");
-    m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
+    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
   }
 
@@ -536,15 +536,13 @@ void kgmGraphics::render()
     m_a_light_count = 1;
   }
 
-  //m_a_light = m_a_lights[0];
-
   m_a_particles_count = collectParticles(m_camera, m_a_particles, 128);
 
   //draw scene only lights
   set((kgmMaterial*)null);
 
-  if (m_rnd_color)
-    m_rnd_color->render();
+  //if (m_rnd_color)
+  //  m_rnd_color->render();
 
   lighting = true;
 
@@ -560,9 +558,9 @@ void kgmGraphics::render()
   //m_rnd_environment->render();
 
   //draw terrain
-  if (m_terrain)
-    //m_rnd_terrain->render();
-  
+  //if (m_terrain)
+  //  m_rnd_terrain->render();
+
   //draw particles
   //ParticlesRender pr(this);
   //pr.render();
@@ -1190,8 +1188,10 @@ void kgmGraphics::shaderSetGeneral()
   s->set("g_vEye",            m_camera->mPos);
   s->set("g_vLook",           m_camera->mDir);
   s->set("g_iClipping",       0);
+  s->set("g_iLights",         (m_a_light_count > MAX_LIGHTS) ? (MAX_LIGHTS) : (m_a_light_count));
 
-  s8 lposition[] = "g_sLights[  ].pos";
+  s8 lcolor[]     = "g_sLights[  ].col";
+  s8 lposition[]  = "g_sLights[  ].pos";
   s8 ldirection[] = "g_sLights[  ].dir";
 
 
@@ -1199,11 +1199,12 @@ void kgmGraphics::shaderSetGeneral()
   {
     kgmIGraphics::INode* n = m_a_lights[i];
 
-    if (!n)
+    if (!n || i > MAX_LIGHTS)
       break;
 
     kgmLight* l = (kgmLight*) n->getNodeObject();
 
+    sprintf(lcolor, "g_sLights[%d].col", i);
     sprintf(lposition, "g_sLights[%d].pos", i);
     sprintf(ldirection, "g_sLights[%d].dir", i);
 
@@ -1212,19 +1213,19 @@ void kgmGraphics::shaderSetGeneral()
     vec3 dir = l->direction();
 
     //convert rgb to 256.
-    
-    int Red   = col.x * 255;
-    int Green = col.y * 255;
-    int Blue  = col.z * 255;
+    //int Red   = col.x * 255;
+    //int Green = col.y * 255;
+    //int Blue  = col.z * 255;
+    //int col256 = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255);
 
-    int col256 = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255);
-
-    float intensity = l->intensity() + 0.001 * col256;
+    float intensity = l->intensity();
     float angle     = l->angle();
 
     vec4 lpos(pos.x, pos.y, pos.z, intensity);
     vec4 ldir(dir.x, dir.y, dir.z, angle);
+    vec4 lcol(col.x, col.y, col.z, 1.0);
 
+     s->set((const char*) lcolor,     lcol);
      s->set((const char*) lposition,  lpos);
      s->set((const char*) ldirection, ldir);
   }
@@ -1537,7 +1538,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
     {
       cx = (float)clip.x;
       cy += fheight;
-      
+
       continue;
     }
 
@@ -1558,7 +1559,7 @@ void kgmGraphics::gcDrawText(kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
       v[1].pos = vec3(cx, cy+fheight, 0),        v[1].col = fcolor, v[1].uv = vec2(tx + 0.001,     ty - tdy);
       v[2].pos = vec3(cx+fwidth, cy, 0),         v[2].col = fcolor, v[2].uv = vec2(tx+tdx - 0.001, ty - 0.001);
       v[3].pos = vec3(cx+fwidth, cy+fheight, 0), v[3].col = fcolor, v[3].uv = vec2(tx+tdx - 0.001, ty - tdy);
-      
+
       gc->gcDraw(gcpmt_trianglestrip, gcv_xyz | gcv_col | gcv_uv0, sizeof(V), 4, v, 0, 0, 0);
     }
 

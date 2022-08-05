@@ -247,6 +247,16 @@ public:
     m_transform.from_euler(r.x, r.y, r.z);
   }
 
+  vec3 scale()
+  {
+    return m_transform.scaled();
+  }
+
+  void scale(vec3& s)
+  {
+    m_transform.scale(s);
+  }
+
   mtx4 transform()
   {
     return m_transform;

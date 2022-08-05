@@ -90,6 +90,10 @@ void kgm_free(void* p)
       fprintf(stderr, "kgm_memory_free [%p, %d].\n", p, i);
       #endif
 
+      if (i == 127 || i == 128) {
+        s32 k = 0;
+      }
+
       g_objects[i] = null;
 
       break;
@@ -98,7 +102,7 @@ void kgm_free(void* p)
 }
 
 /*
-template <class T> 
+template <class T>
 T* kgm_new()
 {
   T* p = new T();
@@ -130,7 +134,7 @@ T* kgm_new()
 }
 */
 
-template <class T, class... Args> 
+template <class T, class... Args>
 T* kgm_new(Args... args)
 {
   T* p = new T(args...);
@@ -161,7 +165,7 @@ T* kgm_new(Args... args)
   return p;
 }
 
-template <class T> 
+template <class T>
 void kgm_delete(T* p)
 {
 #ifdef DEBUG

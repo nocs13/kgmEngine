@@ -44,7 +44,7 @@ public:
     m_color = vec3(1, 1, 1);
 
     m_intensity = 1.0f;
-    m_angle     = 0.0f;
+    m_angle     = PI * 2.0f;
 
     m_shadows = false;
     m_active  = true;
