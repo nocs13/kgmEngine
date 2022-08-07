@@ -275,6 +275,12 @@ void kgmGameBase::initResources()
   m_resources = (kgmGameResources*) kgmGameResources::generate(getGC(), getAudio());
 
   kgmString s = m_settings->get((char*)"Data");
+
+  if (!s.data()) {
+    kgm_log() << "Error: No 'Data' in settings.";
+    return;
+  }
+  
   char* tok = strtok((char*) s.data(), ":");
 
   while(tok) {
