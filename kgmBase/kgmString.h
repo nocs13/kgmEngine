@@ -226,7 +226,7 @@ public:
     return false; 
   } 
  
-  int index(T& t) 
+  int index(T t) 
   { 
     for(u32 i = 0; i <= kgmArray<T>::m_length; i++) 
       if(kgmArray<T>::m_data[i] == t) 

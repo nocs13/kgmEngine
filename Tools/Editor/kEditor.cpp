@@ -949,6 +949,14 @@ void kEditor::onMapOpen()
 
   dir = getSettings()->get((char*) "Data");
 
+  s32 i = dir.index(':');
+
+  if (i > -1) {
+    kgmString a(dir.data(), i);
+
+    dir = a;
+  }
+
   dir += kgmSystem::getPathDelim();
 
   dir += "maps";

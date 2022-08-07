@@ -1229,7 +1229,6 @@ void kgmGraphics::shaderSetGeneral()
      s->set((const char*) lposition,  lpos);
      s->set((const char*) ldirection, ldir);
   }
-
 }
 
 void kgmGraphics::shaderSetPrivate()

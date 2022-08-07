@@ -274,7 +274,13 @@ void kgmGameBase::initResources()
 {
   m_resources = (kgmGameResources*) kgmGameResources::generate(getGC(), getAudio());
 
-  m_resources->addPath(m_settings->get((char*)"Data"));
+  kgmString s = m_settings->get((char*)"Data");
+  char* tok = strtok((char*) s.data(), ":");
+
+  while(tok) {
+    m_resources->addPath(tok);
+    tok = strtok(nullptr, ":");
+  }
 }
 
 void kgmGameBase::initGraphycs()
