@@ -9,6 +9,11 @@ IconRender::IconRender(kgmGraphics* g)
 
 void IconRender::render()
 {
+  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderBase];
+
+  if (!s)
+    return;
+
   mtx4 mtx;
   mtx.identity();
   gr->setWorldMatrix(mtx);
@@ -28,7 +33,9 @@ void IconRender::render()
       gr->gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       mtl.setTexColor(icon->getIcon());
       gr->set(&mtl);
-      gr->set(gr->m_shaders[kgmMaterial::TypeBase]);
+      gr->set(s);
+      gr->shaderSetGeneral();
+      gr->shaderSetPrivate();
       gr->draw(icon);
       gr->set((kgmShader*)null);
       gr->set((kgmMaterial*)null);
@@ -43,7 +50,11 @@ void IconRender::render()
     {
       kgmIGraphics::INode* nl = gr->m_a_lights[i - 1];
       li->setPosition(nl->getNodePosition());
+      gr->set(s);
+      gr->shaderSetGeneral();
+      gr->shaderSetPrivate();
       render(li);
+      gr->set((kgmShader*)null);
     }
   }
 }
@@ -88,5 +99,7 @@ void IconRender::render(kgmIcon* icon)
   points[2].col = points[3].col =
   points[4].col = points[5].col = kgmColor::toVector(0xffffffff);
 
+  gr->gc->gcSetTexture(0, icon->getIcon()->texture());
   gr->gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
+  gr->gc->gcSetTexture(0, 0);
 }

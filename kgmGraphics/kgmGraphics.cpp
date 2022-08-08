@@ -100,9 +100,6 @@ mtx4*      g_mtx_joints = null;
 
 u32        g_mtx_joints_count = 0;
 
-//vec4       g_vec_light   = vec4(0, 0, 0, 1);
-//vec4       g_vec_ambient = vec4(1, 1, 1, 1);
-
 vec4       g_vec_color    = vec4(1, 1, 1, 1);
 vec4       g_vec_specular = vec4(1, 1, 1, 1);
 

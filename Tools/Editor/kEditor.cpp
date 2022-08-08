@@ -159,7 +159,7 @@ void kEditor::init()
     item->add(ME_VIEW_FRONT, "Front");
     item->add(ME_VIEW_BACK, "Left");
     item->add(ME_VIEW_TOP, "Top");
-    
+
     guiAdd(menu);
     menu->show();
 
@@ -279,6 +279,7 @@ void kEditor::select(int x, int y)
 
   while(kgmUnit* un = i->next())
   {
+    vec3 upos = un->position();
     vec3  c, n_x, n_y, n_z;
     plane3 pln_x, pln_y, pln_z;
 
@@ -286,64 +287,64 @@ void kEditor::select(int x, int y)
     n_y = vec3(0, 1, 0);
     n_z = vec3(0, 0, 1);
 
-    pln_x = plane3(n_x, un->position());
-    pln_y = plane3(n_y, un->position());
-    pln_z = plane3(n_z, un->position());
+    pln_x = plane3(n_x, upos);
+    pln_y = plane3(n_y, upos);
+    pln_z = plane3(n_z, upos);
 
 
-    if(pln_x.intersect(ray, c) && (un->position().distance(c) < 1.0))
+    if(pln_x.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = un;
-        distance = cam.mPos.distance(un->position());
+        distance = cam.mPos.distance(upos);
       }
       else
       {
-        if (distance > cam.mPos.distance(un->position()))
+        if (distance > cam.mPos.distance(upos))
         {
           peeked   = un;
-          distance = cam.mPos.distance(un->position());
+          distance = cam.mPos.distance(upos);
         }
       }
 
       pv_delta = un->position().distance(c);
     }
-    else if(pln_y.intersect(ray, c) && (un->position().distance(c) < 1.0))
+    else if(pln_y.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = un;
-        distance = cam.mPos.distance(un->position());
+        distance = cam.mPos.distance(upos);
       }
       else
       {
-        if (distance > cam.mPos.distance(un->position()))
+        if (distance > cam.mPos.distance(upos))
         {
           peeked   = un;
-          distance = cam.mPos.distance(un->position());
+          distance = cam.mPos.distance(upos);
         }
       }
 
-      pv_delta = un->position().distance(c);
+      pv_delta = upos.distance(c);
     }
-    else if(pln_z.intersect(ray, c) && (un->position().distance(c) < 1.0))
+    else if(pln_z.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
       if(distance < 0.0)
       {
         peeked = un;
-        distance = cam.mPos.distance(un->position());
+        distance = cam.mPos.distance(upos);
       }
       else
       {
-        if (distance > cam.mPos.distance(un->position()))
+        if (distance > cam.mPos.distance(upos))
         {
           peeked   = un;
-          distance = cam.mPos.distance(un->position());
+          distance = cam.mPos.distance(upos);
         }
       }
 
-      pv_delta = un->position().distance(c);
+      pv_delta = upos.distance(c);
     }
   }
 
@@ -1094,7 +1095,7 @@ void kEditor::onEditOptions()
   s32 type = 0;
   if (selected->getNode())
     type = selected->getNode()->getNodeType();
-  /*  
+  /*
   switch(selected->type())
   {
   case kgmUnit::Light:

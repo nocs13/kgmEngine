@@ -134,7 +134,7 @@ void process(out vec4 col)
 
     //if (angle > M_PI)
     {
-      dsize = 1.0;
+      //dsize = 1.0;
       ldir = normalize(v_P - lpos);
     }
 
@@ -144,7 +144,7 @@ void process(out vec4 col)
 
     shade.rgb += (lcol * lambert);
 
-    if (lambert > 0.0) 
+    if (lambert > 0.0)
     {
       vec3 R = reflect(ldir, vnor);      // Reflected light vector
       vec3 V = normalize(v_P - v_Y);           // Vector to viewer
@@ -157,7 +157,7 @@ void process(out vec4 col)
 
   //shine = normalize(shine);
 
-  col.rgb = cbase * shade + shine * sbase;
+  col.rgb = cbase * shade;// + shine * sbase;
   //col.rgb = shine;
   //col.rgb = shade;
   //col.w = 1.0;
