@@ -87,12 +87,9 @@ kEditor::~kEditor()
 
   pivot->release();
   gridline->release();
-  textData->release();
 
   mtlLines->release();
   mtlPivot->release();
-
-  text->release();
 }
 
 void kEditor::clear()
@@ -175,11 +172,6 @@ void kEditor::init()
     pivot = new kPivot();
     pivot->rebuild();
 
-    textData = new kgmText();
-    textData->rect(uRect(600, 200, 300, 100));
-    text     = new kgmVisual();
-    text->set(textData);
-
     m_graphics->setBgColor(0xff222222);
 
     kgmUnit* u = new kgmUnit(this);
@@ -206,9 +198,6 @@ void kEditor::select(kgmString name)
   if(node)
   {
     selected = node;
-
-    textData->m_text =  "Selected: ";
-    textData->m_text += name;
 
     if(pivot && selected)
     {
@@ -434,6 +423,7 @@ bool kEditor::mapOpen(kgmString s)
 
   u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
   u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
+  u->setName("gridline");
 
   gAppend(u);
 
@@ -441,6 +431,7 @@ bool kEditor::mapOpen(kgmString s)
 
   u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
   u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
+  u->setName("pivot");
 
   gAppend(u);
 

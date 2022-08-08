@@ -42,9 +42,6 @@ private:
 
   kGridline* gridline = null;
   kPivot*    pivot    = null;
-  kgmText*   textData = null;
-
-  kgmVisual *text     = null;
 
   vec3  pv_pos;
   vec3  pv_rot;
@@ -61,8 +58,6 @@ private:
 
   kgmMaterial* mtlLines = null;
   kgmMaterial* mtlPivot = null;
-
-  kgmVisual*     logView = null;
 
   bool  move_camera;
 
