@@ -169,8 +169,15 @@ void kEditor::init()
     gridline = new kGridline(100);
     gridline->rebuild();
 
-    pivot = new kPivot();
-    pivot->rebuild();
+    auto pvt = new kPivot();
+    pvt->rebuild();
+
+    pivot = new kgmUnit(this);
+    pivot->setNode(new kgmGNode(pivot, pvt, kgmIGraphics::NodeMesh));
+    pivot->setName("pivot");
+
+    gAppend(pivot);
+    pivot->increment();
 
     m_graphics->setBgColor(0xff222222);
 
@@ -182,13 +189,9 @@ void kEditor::init()
 
     gAppend(u);
 
-    u = new kgmUnit(this);
-
-    u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
-
-    u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
-
-    gAppend(u);
+    //u = new kgmUnit(this);
+    //u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+    //u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
 }
 
 void kEditor::select(kgmString name)
@@ -201,7 +204,8 @@ void kEditor::select(kgmString name)
 
     if(pivot && selected)
     {
-      pivot->setPos(node->position());
+      vec3 v = node->position();
+      pivot->position(v);
     }
   }
 }
@@ -346,10 +350,18 @@ void kEditor::select(int x, int y)
     dragging = peeked;
 
     if(pivot)
-      pivot->peekAxis(ray);
+      ((kPivot*)pivot->getNode()->getNodeObject())->peekAxis(ray);
   }
   else
   {
+    vec3 c(0, 0, 0);
+    plane3 pln_z(vec3(0, 0, 1), vec3(0, 0, 0));
+
+    pln_z.intersect(ray, c);
+
+    if (pivot)
+      pivot->position(c);
+
     dragging = null;
   }
 }
@@ -427,13 +439,8 @@ bool kEditor::mapOpen(kgmString s)
 
   gAppend(u);
 
-  u = new kgmUnit(this);
-
-  u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
-  u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
-  u->setName("pivot");
-
-  gAppend(u);
+  gAppend(pivot);
+  pivot->increment();
 
   selected = null;
 
@@ -633,7 +640,7 @@ void kEditor::onMsMove(int k, int x, int y)
   if(getRender())
   {
     if (pivot)
-      paxes = pivot->getAxis();
+      paxes = ((kPivot*)pivot->getNode()->getNodeObject())->getAxis();
   }
 
   if(getRender() && move_camera)
@@ -770,35 +777,35 @@ void kEditor::onMsMove(int k, int x, int y)
 
     kgmCamera& cam = getRender()->camera();
 
-    vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->pos);
-    vec3 pr, tm, nd;
+    vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->position());
+    vec3 pr, tm, nd, pv = pivot->position();
     line lax;
     float prdist;
 
     switch(paxes)
     {
     case kPivot::AXIS_X:
-      tm = pivot->pos + vec3(1, 0, 0);
-      lax = line(pivot->pos, tm);
+      tm = pivot->position() + vec3(1, 0, 0);
+      lax = line(pv, tm);
       nd.set(1, 0, 0);
       break;
     case kPivot::AXIS_Y:
-      tm = pivot->pos + vec3(0, 1, 0);
-      lax = line(pivot->pos, tm);
+      tm = pivot->position() + vec3(0, 1, 0);
+      lax = line(pv, tm);
       nd.set(0, 1, 0);
       break;
     case kPivot::AXIS_Z:
-      tm = pivot->pos + vec3(0, 0, 1);
-      lax = line(pivot->pos, tm);
+      tm = pivot->position() + vec3(0, 0, 1);
+      lax = line(pv, tm);
       nd.set(0, 0, 1);
       break;
     }
 
     pr = lax.projection(pt);
-    prdist = pivot->pos.distance(pr);
+    prdist = pivot->position().distance(pr);
     //prdist *= 2;
 
-    vec3 dir = pr - pivot->pos;
+    vec3 dir = pr - pivot->position();
     dir.normalize();
 
     //selected->setPosition(selected->pos + dir * prdist);
@@ -808,7 +815,7 @@ void kEditor::onMsMove(int k, int x, int y)
     mtx4 m;
     m.identity();
     m.translate(pos);
-    pivot->setPos(pos);
+    pivot->position(pos);
   }
 }
 

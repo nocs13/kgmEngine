@@ -15,7 +15,6 @@ public:
   };
 
 public:
-  vec3 pos, rot;
   vec3 vprj;
 
 private:
@@ -29,13 +28,6 @@ public:
   u32 getAxis() const
   {
     return axis;
-  }
-
-  mtx4 getTransform();
-
-  void setPos(vec3 v)
-  {
-    pos = v;
   }
 };
 

@@ -41,7 +41,8 @@ private:
   vec3 cam_dir_bk;
 
   kGridline* gridline = null;
-  kPivot*    pivot    = null;
+  //kPivot*    pivot    = null;
+  kgmUnit*   pivot    = null;
 
   vec3  pv_pos;
   vec3  pv_rot;

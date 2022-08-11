@@ -26,15 +26,14 @@ kPivot::kPivot()
 
   m_rtype = kgmMesh::RT_LINE;
 
-  pos = vec3(0, 0, 0);
-  rot = vec3(0, 0, 0);
-
   axis = AXIS_NONE;
 }
 
 u32 kPivot::peekAxis(ray3 r)
 {
   mtx4 mtr, mrt, mmv;
+  vec3 pos(0, 0, 0), rot(0, 0, 0);
+  
   mmv.translate(pos);
   mrt.rotate(rot);
   mtr = mrt * mmv;
@@ -140,13 +139,4 @@ u32 kPivot::peekAxis(ray3 r)
   axis = AXIS_NONE;
 
   return AXIS_NONE;
-}
-
-mtx4 kPivot::getTransform()
-{
-  mtx4 m;
-  m.identity();
-  m.translate(pos);
-
-  return m;
 }
