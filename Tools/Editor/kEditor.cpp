@@ -637,7 +637,7 @@ void kEditor::onMsMove(int k, int x, int y)
 {
   u32 paxes = kPivot::AXIS_NONE;
 
-  if(getRender())
+  if(getRender() && selected)
   {
     if (pivot)
       paxes = ((kPivot*)pivot->getNode()->getNodeObject())->getAxis();
