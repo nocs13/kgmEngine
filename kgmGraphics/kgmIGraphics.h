@@ -25,7 +25,6 @@ public:
     NodeText,
     NodeLight,
     NodeSprite,
-    NodeVisual,
     NodeCamera,
     NodeSkinned,
     NodeTerrain,
@@ -36,6 +35,21 @@ public:
   {
     ShadingNone,
     ShadingFull
+  };
+
+  enum NodeShader
+  {
+    ShaderNone,
+    ShaderGui,
+    ShaderBase,
+    ShaderLines,
+    ShaderColor,
+    ShaderPhong,
+    ShaderShadowKeep,
+    ShaderShadowDraw,
+    ShaderEnvCube,
+    ShaderEnvPlane,
+    ShaderEnd = 12,
   };
 
   class INode
@@ -53,6 +67,9 @@ public:
 
     virtual void         setNodeMaterial(kgmMaterial*) = 0;
     virtual kgmMaterial* getNodeMaterial()             = 0;
+
+    virtual void         setNodeShader(NodeShader) = 0;
+    virtual NodeShader   getNodeShader()           = 0;
 
     virtual void         setNodeShading(NodeShading)   = 0;
     virtual NodeShading  getNodeShading()              = 0;

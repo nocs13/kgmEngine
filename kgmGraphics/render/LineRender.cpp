@@ -1,21 +1,23 @@
-#include "PhongRender.h"
-#include "../../kgmGraphics/kgmLight.h"
-#include "../../kgmGraphics/kgmMaterial.h"
+#include "LineRender.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
+#define MAX_LIGHTS 8
 
-PhongRender::PhongRender(kgmGraphics* g)
+const u32 g_res = 512;
+
+LineRender::LineRender(kgmGraphics* g)
   :BaseRender(g)
 {
 }
 
-PhongRender::~PhongRender()
+LineRender::~LineRender()
 {
 }
 
-void PhongRender::render()
+
+void LineRender::render()
 {
-  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderPhong];
+  kgmShader* s = gr->m_shaders[kgmIGraphics::ShaderLines];
 
   if (!s)
     return;
@@ -33,10 +35,7 @@ void PhongRender::render()
 
     mtx4     m = nod->getNodeTransform();
 
-    if (nod->getNodeShading() != kgmIGraphics::ShadingFull)
-      continue;
-
-    if (nod->getNodeShader() != kgmIGraphics::ShaderPhong)
+    if (nod->getNodeShader() != kgmIGraphics::ShaderLines)
       continue;
 
     gr->setWorldMatrix(m);
@@ -44,5 +43,5 @@ void PhongRender::render()
 
     gr->shaderSetPrivate();
     draw(msh);
-  }    
+  }
 }

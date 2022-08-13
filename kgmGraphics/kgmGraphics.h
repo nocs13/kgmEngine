@@ -30,8 +30,8 @@
 #include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
+#include "render/LineRender.h"
 #include "render/ColorRender.h"
-#include "render/LightRender.h"
 #include "render/PhongRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
@@ -51,6 +51,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class FpsRender;
   friend class GuiRender;
   friend class IconRender;
+  friend class LineRender;
   friend class LightRender;
   friend class ColorRender;
   friend class PhongRender;
@@ -71,23 +72,6 @@ public:
     GraphicsQualityMedium,
     GraphicsQualityHight,
     GraphicsQualitySuper
-  };
-
-  enum Shader
-  {
-    ShaderNone,
-    ShaderTest,
-    ShaderGui,
-    ShaderLines,
-    ShaderBase,
-    ShaderColor,
-    ShaderLight,
-    ShaderShadowKeep,
-    ShaderShadowDraw,
-    ShaderEnvCube,
-    ShaderEnvPlane,
-    ShaderPhong,
-    ShaderEnd = 12,
   };
 
   static GraphicsQuality textureQuality;
@@ -229,8 +213,8 @@ protected:
   gchandle m_rnd_target = null;
 
   BaseRender*        m_rnd_base = null;
+  LineRender*        m_rnd_lines = null;
   ColorRender*       m_rnd_color = null;
-  LightRender*       m_rnd_lights = null;
   PhongRender*       m_rnd_phong = null;
   ShadowRender*      m_rnd_shadows = null;
   EnvironmentRender* m_rnd_environment = null;

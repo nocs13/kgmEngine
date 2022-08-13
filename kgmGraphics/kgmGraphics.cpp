@@ -222,17 +222,17 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    //m_shaders[ShaderTest]     = rc->getShader("test.glsl");
-    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
-    //m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
+    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
+    m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
     m_shaders[ShaderBase]     = rc->getShader("base.glsl");
     m_shaders[ShaderColor]    = rc->getShader("color.glsl");
     //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
     m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
   }
 
-  //m_rnd_base        = new BaseRender(this);
+  m_rnd_base        = new BaseRender(this);
+  m_rnd_lines       = new LineRender(this);
   m_rnd_color       = new ColorRender(this);
   //m_rnd_phong       = new PhongRender(this);
   m_rnd_phong       = new PhongRender(this);
@@ -263,7 +263,7 @@ kgmGraphics::~kgmGraphics()
 
   kgmObject::Release(m_rnd_terrain);
   kgmObject::Release(m_rnd_color);
-  kgmObject::Release(m_rnd_lights);
+  kgmObject::Release(m_rnd_lines);
   kgmObject::Release(m_rnd_shadows);
   kgmObject::Release(m_rnd_environment);
   kgmObject::Release(m_rnd_phong);
@@ -573,6 +573,9 @@ void kgmGraphics::render()
     lighting = false;
   }
 
+  if(m_rnd_lines)
+    m_rnd_lines->render();
+
   render_3d();
 
   gc->gcCull(gccull_back);
@@ -672,7 +675,7 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
 
     if (op.light)
     {
-      m_rnd_lights->render(&cam, nod);
+      //m_rnd_lights->render(&cam, nod);
     }
     else
     {

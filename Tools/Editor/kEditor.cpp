@@ -175,6 +175,7 @@ void kEditor::init()
     pivot = new kgmUnit(this);
     pivot->setNode(new kgmGNode(pivot, pvt, kgmIGraphics::NodeMesh));
     pivot->setName("pivot");
+    ((kgmIGraphics::INode*)pivot->getNode())->setNodeShader(kgmIGraphics::ShaderLines);
 
     gAppend(pivot);
     pivot->increment();

@@ -6,6 +6,8 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
+/*
+
 #define MAX_LIGHTS 8
 
 const u32 g_res = 512;
@@ -34,7 +36,7 @@ void LightRender::render()
 
   gr->setWorldMatrix(m4_identity);
 
-  kgmShader* sh = gr->m_shaders[kgmGraphics::ShaderLight];
+  kgmShader* sh = gr->m_shaders[kgmIGraphics::ShaderBase];
 
   Light lights[MAX_LIGHTS];
 
@@ -114,7 +116,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
     return;
 
-  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderLight];
+  kgmShader* s = gr->m_shaders[kgmGraphics::ShaderBase];
   kgmMesh*     msh = (kgmMesh*) nod->getNodeObject();
   kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
@@ -541,3 +543,5 @@ void LightRender::lightmap()
   if (!m_lightmap)
     m_lightmap = true;
 }
+
+*/
