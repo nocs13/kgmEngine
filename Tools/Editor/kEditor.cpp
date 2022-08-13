@@ -349,8 +349,11 @@ void kEditor::select(int x, int y)
 
     dragging = peeked;
 
+    vec3 v = peeked->position();
+    vec3 r = vec3(0, 0, 0); //peeked->rotation();
+
     if(pivot)
-      ((kPivot*)pivot->getNode()->getNodeObject())->peekAxis(ray);
+      ((kPivot*)pivot->getNode()->getNodeObject())->peekAxis(ray, v , r);
   }
   else
   {

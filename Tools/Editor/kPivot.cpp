@@ -29,11 +29,10 @@ kPivot::kPivot()
   axis = AXIS_NONE;
 }
 
-u32 kPivot::peekAxis(ray3 r)
+u32 kPivot::peekAxis(ray3 r, vec3 pos, vec3 rot)
 {
   mtx4 mtr, mrt, mmv;
-  vec3 pos(0, 0, 0), rot(0, 0, 0);
-  
+
   mmv.translate(pos);
   mrt.rotate(rot);
   mtr = mrt * mmv;
