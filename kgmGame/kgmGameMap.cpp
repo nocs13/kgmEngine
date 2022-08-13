@@ -502,6 +502,7 @@ kgmUnit* kgmGameMap::next()
           m_xml->attribute("material", v);
 
           node->getNode()->setNodeMaterial(getGameMaterial(v));
+          node->getNode()->setNodeShader(kgmIGraphics::ShaderPhong);
         }
 
         closed = false;

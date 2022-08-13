@@ -234,7 +234,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_rnd_base        = new BaseRender(this);
   m_rnd_lines       = new LineRender(this);
   m_rnd_color       = new ColorRender(this);
-  //m_rnd_phong       = new PhongRender(this);
   m_rnd_phong       = new PhongRender(this);
   //m_rnd_lights      = new LightRender(this);
   //m_rnd_shadows     = new ShadowRender(this);

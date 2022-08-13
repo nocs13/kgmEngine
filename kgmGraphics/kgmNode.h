@@ -30,6 +30,7 @@ class kgmNode: public kgmIGraphics::INode, public kgmObject
 
       m_type = t;
       m_shading = kgmIGraphics::ShadingFull;
+      m_shader = kgmIGraphics::ShaderNone;
 
       m_transform.identity();
     }

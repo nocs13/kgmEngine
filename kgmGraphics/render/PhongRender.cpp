@@ -36,7 +36,9 @@ void PhongRender::render()
     if (nod->getNodeShading() != kgmIGraphics::ShadingFull)
       continue;
 
-    if (nod->getNodeShader() != kgmIGraphics::ShaderPhong)
+    kgmIGraphics::NodeShader ns = nod->getNodeShader();
+
+    if (ns != kgmIGraphics::ShaderPhong && ns != kgmIGraphics::ShaderBase)
       continue;
 
     gr->setWorldMatrix(m);
