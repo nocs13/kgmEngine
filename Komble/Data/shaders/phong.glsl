@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 struct Light
 {
@@ -48,8 +48,11 @@ void process(out vec4 pos)
   v_UV = a_UV;
   v_Y  = g_vEye;
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
-  //v_N  = vec3(g_mTran * vec4(a_Normal, 1));
-  v_N  = normalize(a_Normal);
+  mat3 m_N = mat3(g_mTran);
+  m_N = inverse(m_N);
+  m_N = transpose(m_N);
+  v_N  = normalize( m_N * a_Normal );
+  //v_N  = normalize(a_Normal);
   v_V  = vec3(g_mView * vec4(v_P, 1));
   pos  = g_mProj * vec4(v_V, 1);
   v_color    = g_vColor;// * a_Color;
@@ -65,7 +68,7 @@ void main(void)
 }
 
 //Fragment Shader
-#version 120
+#version 130
 
 struct Light
 {
