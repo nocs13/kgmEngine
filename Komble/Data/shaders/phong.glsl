@@ -43,6 +43,36 @@ attribute vec3 a_Normal;
 attribute vec4 a_Color;
 attribute vec2 a_UV;
 
+float det(mat2 m) {
+    return m[0].x * m[1].y - m[0].y * m[1].x;
+}
+
+mat3 inverse(mat3 m) {
+    vec3 r0 = m[0];
+    vec3 r1 = m[1];
+    vec3 r2 = m[2];
+
+    vec3 m0 = vec3(
+        det(mat2(r1.y, r1.z, r2.y, r2.z)),
+        det(mat2(r1.z, r1.x, r2.z, r2.x)),
+        det(mat2(r1.x, r1.y, r2.x, r2.y))
+    );
+    vec3 m1 = vec3(
+        det(mat2(r2.y, r2.z, r0.y, r0.z)),
+        det(mat2(r2.z, r2.x, r0.z, r0.x)),
+        det(mat2(r2.x, r2.y, r0.x, r0.y))
+    );
+    vec3 m2 = vec3(
+        det(mat2(r0.y, r0.z, r1.y, r1.z)),
+        det(mat2(r0.z, r0.x, r1.z, r1.x)),
+        det(mat2(r0.x, r0.y, r1.x, r1.y))
+    );
+
+    mat3 adj = transpose(mat3(m0, m1, m2));
+
+    return (1.0 / dot(r0, m0)) * adj;
+}
+
 void process(out vec4 pos)
 {
   v_UV = a_UV;
