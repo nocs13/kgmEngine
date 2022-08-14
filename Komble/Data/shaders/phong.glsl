@@ -50,10 +50,10 @@ void process(out vec4 pos)
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
   //v_N  = vec3(g_mTran * vec4(a_Normal, 1));
   v_N  = normalize(a_Normal);
-  vec4 vV4 = g_mView * g_mTran * vec4(a_Vertex, 1);
-  v_V  = vV4.xyz / vV4.w;
+  v_V  = vec3(g_mView * vec4(v_P, 1));
   pos  = g_mProj * vec4(v_V, 1);
   v_color    = g_vColor;// * a_Color;
+  v_shine    = g_fShine;
   v_specular = g_vSpecular;
 }
 
@@ -147,21 +147,21 @@ void process(out vec4 col)
 
     if (lambert > 0.0)
     {
-      vec3 R = reflect(ldir, vnor);      // Reflected light vector
+      vec3 R = reflect(ldir, vnor);            // Reflected light vector
       vec3 V = normalize(v_P - v_Y);           // Vector to viewer
       // Compute the specular term
-      float angle = max(dot(R, -V), 0.5);
-      float specular = pow(angle, v_shine);
+      float angle = max(dot(R, -V), 0.0);
+      float specular = pow(angle, 1000.0 * (v_shine / 1000.0));
       shine += specular;
     }
   }
 
   //shine = normalize(shine);
 
-  col.rgb = cbase * shade;// + shine * sbase;
+  col.rgb = cbase * shade + shine * sbase;
   //col.rgb = shine;
   //col.rgb = shade;
-  //col.w = 1.0;
+  col.w = 1.0;
 }
 
 void main( void )
