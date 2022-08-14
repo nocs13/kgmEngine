@@ -1224,10 +1224,10 @@ void kEditor::onAddUnit()
 void kEditor::onAddLight()
 {
   kgmUnit* light = new kgmUnit(this);
+  vec3 pos(1, 1, 4);
   light->setNode(new kgmGNode(light, new kgmLight(), kgmIGraphics::NodeLight));
-  selected = light;
-
   light->setName(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
+  light->position(pos);
 
   add(selected);
 }

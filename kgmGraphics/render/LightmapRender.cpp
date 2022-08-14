@@ -1,18 +1,13 @@
-#include "LightRender.h"
+#include "LightmapRender.h"
 #include "../../kgmBase/kgmTime.h"
 #include "../../kgmGraphics/kgmIGraphics.h"
 #include "../../kgmGraphics/kgmLight.h"
-#include "../../kgmGraphics/kgmVisual.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
-/*
-
-#define MAX_LIGHTS 8
-
 const u32 g_res = 512;
 
-LightRender::LightRender(kgmGraphics* g)
+LightmapRender::LightmapRender(kgmGraphics* g)
   :BaseRender(g)
 {
   m_target = gc->gcGenTarget(g_res, g_res, true, false);
@@ -22,14 +17,14 @@ LightRender::LightRender(kgmGraphics* g)
   m_tx_lightmap = gc->gcGenTexture(null, g_res, g_res, gctex_fmt24, gctype_tex2d);
 }
 
-LightRender::~LightRender()
+LightmapRender::~LightmapRender()
 {
   gc->gcFreeTarget(m_target);
   gc->gcFreeTexture(m_tx_lightmap);
 }
 
 
-void LightRender::render()
+void LightmapRender::render()
 {
   mtx4 m4_identity;
   m4_identity.identity();
@@ -111,7 +106,7 @@ void LightRender::render()
   gr->wired(false);
 }
 
-void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
+void LightmapRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
 {
   if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
     return;
@@ -250,7 +245,7 @@ void LightRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   gc->gcSetTexture(3, 0);
 }
 
-void LightRender::material(kgmMaterial* m)
+void LightmapRender::material(kgmMaterial* m)
 {
   if(!m)
   {
@@ -350,7 +345,7 @@ void LightRender::material(kgmMaterial* m)
   }
 }
 
-void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod,
+void LightmapRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod,
                          Light* lights, u32 lcount)
 {
   if(!s)
@@ -409,7 +404,7 @@ void LightRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmIGra
   }
 }
 
-u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light* lights)
+u32 LightmapRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light* lights)
 {
   if (!cam || !nod || nod->getNodeType() != kgmIGraphics::NodeMesh)
     return 0;
@@ -450,7 +445,7 @@ u32 LightRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light* lights
   return count;
 }
 
-void LightRender::lightmap()
+void LightmapRender::lightmap()
 {
   kgmShader* s = null;
 
@@ -543,5 +538,3 @@ void LightRender::lightmap()
   if (!m_lightmap)
     m_lightmap = true;
 }
-
-*/

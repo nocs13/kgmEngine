@@ -29,8 +29,8 @@ uniform int    g_iLights;
 uniform Light  g_sLights[MAX_LIGHTS];
 
 varying vec3   v_P;
-varying vec3   v_N;
 varying vec3   v_V;
+varying vec3   v_N;
 varying vec3   v_Y;
 varying vec2   v_UV;
 varying float  v_I;
@@ -46,12 +46,13 @@ attribute vec2 a_UV;
 void process(out vec4 pos)
 {
   v_UV = a_UV;
+  v_Y  = g_vEye;
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
-  v_N  = vec3(g_mTran * vec4(a_Normal, 1));
-  //v_N = a_Normal;
-  v_V = vec3(g_mView * vec4(v_P, 1));
-  v_Y = g_vEye;
-  pos = g_mProj * vec4(v_V, 1);
+  //v_N  = vec3(g_mTran * vec4(a_Normal, 1));
+  v_N  = normalize(a_Normal);
+  vec4 vV4 = g_mView * g_mTran * vec4(a_Vertex, 1);
+  v_V  = vV4.xyz / vV4.w;
+  pos  = g_mProj * vec4(v_V, 1);
   v_color    = g_vColor;// * a_Color;
   v_specular = g_vSpecular;
 }
@@ -89,8 +90,8 @@ uniform sampler2D g_txNormal;
 uniform sampler2D g_txSpecular;
 
 varying vec3   v_P;
-varying vec3   v_N;
 varying vec3   v_V;
+varying vec3   v_N;
 varying vec3   v_Y;
 varying vec2   v_UV;
 varying float  v_I;
@@ -138,9 +139,9 @@ void process(out vec4 col)
       ldir = normalize(v_P - lpos);
     }
 
-    float lambert = dot(ldir, -vnor) * (power / dsize);
+    float lambert = dot(-ldir, vnor) * (power / dsize);
 
-    lambert = max(lambert, 0.0);
+    //lambert = max(lambert, 0.0);
 
     shade.rgb += (lcol * lambert);
 

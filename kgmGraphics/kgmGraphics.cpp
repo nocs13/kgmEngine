@@ -29,8 +29,8 @@
 #include "../kgmSystem/kgmMemory.h"
 
 #include "render/Terrain.h"
-#include "render/LightRender.h"
 #include "render/ColorRender.h"
+#include "render/LightmapRender.h"
 #include "render/ParticlesRender.h"
 
 #include <stdlib.h>

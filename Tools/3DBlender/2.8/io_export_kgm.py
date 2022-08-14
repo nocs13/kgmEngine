@@ -488,8 +488,8 @@ class kgmLight:
     self.name = o.name
     self.pos = o.matrix_local.to_translation()
     self.rot = o.matrix_local.to_euler()
-    self.intensity = lamp.energy
-    self.shadows = 'No' if lamp.shadow_method == 'NOSHADOW' else 'Yes'
+    self.intensity = lamp.energy / 200.0
+    self.shadows = 'No' if lamp.use_shadow == False else 'Yes'
     self.range = 2 * lamp.distance
     self.color = lamp.color
 
@@ -650,8 +650,8 @@ class kgmMesh:
           vi = face.vertices[j]
           c = mesh.vertices[vi].co
           n = face.normal
-          v.v = [round(c[0], 4), round(c[1], 4), round(c[2], 4)]
-          v.n = [round(n[0], 4), round(n[1], 4), round(n[2], 4)]
+          v.v = [c[0], c[1], c[2]]
+          v.n = [n[0], n[1], n[2]]
 
           if self.hasvgroups == True:
             for g in range(0, len(mesh.vertices[vi].groups)):
@@ -671,7 +671,6 @@ class kgmMesh:
           self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 
   def addVertex(self, vx, vsmooth = True):
-    print(f'add vertex smooth: {vsmooth}')
     iv = -1
     nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
 
@@ -681,20 +680,11 @@ class kgmMesh:
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
         nc = Vector((v.n[0], v.n[1], v.n[2]))
-        print(f'add vertex match to: {i}')
 
-        if vsmooth is False:
-          if nx == nc:
-            iv = i
-        else:
-          n = nc + nx
-          n.normalize()
-          v.n = n
-
-          self.vertices[i] = v
+        if nx == nc:
           iv = i
 
-        break
+          break
 
     if iv < 0:
       self.vertices.append(vx)
@@ -1332,7 +1322,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     else:
       self.objects = [ob for ob in scene.objects if ob.visible_get()]
 
-    objects = self.objects
+    #objects = self.objects
 
     #cFrame = bpy.context.scene.frame_current
 
@@ -1360,7 +1350,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
 
     '''meshes     = [kgmMesh(ob) for ob in objects if ob.type == 'MESH' and self.exp_meshes and ob.collision.use != True and ob.proxy is None]
     obstacles  = [kgmObstacle(ob) for ob in objects if ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
-    lights     = [kgmLight(ob) for ob in objects if ob.type == 'LAMP' and self.exp_lights]
+    lights     = [kgmLight(ob) for ob in objects if ob.type == 'LIGHT' and self.exp_lights]
     cameras    = [kgmCamera(ob) for ob in objects if ob.type == 'CAMERA' and self.exp_cameras]
     skeletons  = [kgmSkeleton(ob) for ob in objects if ob.type == 'ARMATURE' and self.exp_armatures]
     #gobjects   = [kgmObject(ob) for ob in objects if ob.type == 'EMPTY' and self.exp_kgmobjects and ob.get('kgm')]
@@ -1535,7 +1525,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
                       ob.type == 'MESH' and self.exp_obstacles and ob.collision.use == True]
 
   def collect_lights(self):
-    self.lights = [kgmLight(ob) for ob in self.objects if ob.type == 'LAMP' and self.exp_lights]
+    print('Collect Lights')
+    self.lights = [kgmLight(ob) for ob in self.objects if ob.type == 'LIGHT' and self.exp_lights]
 
   def collect_cameras(self):
     self.cameras = [kgmCamera(ob) for ob in self.objects if ob.type == 'CAMERA' and self.exp_cameras]

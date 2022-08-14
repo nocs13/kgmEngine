@@ -35,6 +35,7 @@
 #include "render/PhongRender.h"
 #include "render/SpriteRender.h"
 #include "render/ShadowRender.h"
+#include "render/LightmapRender.h"
 #include "render/EnvironmentRender.h"
 #include "render/Terrain.h"
 
@@ -52,11 +53,11 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class GuiRender;
   friend class IconRender;
   friend class LineRender;
-  friend class LightRender;
   friend class ColorRender;
   friend class PhongRender;
   friend class SpriteRender;
   friend class ShadowRender;
+  friend class LightmapRender;
   friend class ParticlesRender;
   friend class EnvironmentRender;
   friend class Render::Terrain;
@@ -217,6 +218,7 @@ protected:
   ColorRender*       m_rnd_color = null;
   PhongRender*       m_rnd_phong = null;
   ShadowRender*      m_rnd_shadows = null;
+  LightmapRender*    m_rnd_lightmap = null;
   EnvironmentRender* m_rnd_environment = null;
   Render::Terrain*   m_rnd_terrain = null;
 

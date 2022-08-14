@@ -181,6 +181,12 @@ public:
     width = height = bpp = 0;
     pdata = 0;
 
+    if (!mem || !size)
+      return false;
+
+    if (size < 18)
+      return false;
+
     memcpy(&idl, pm, 1);	pm += 1;
     memcpy(&cmp, pm, 1);	pm += 1;
     memcpy(&dt, pm, 1);	pm += 1;
@@ -200,6 +206,10 @@ public:
         return false;
 
     u32 r_size = w * h * (btcnt/8);
+
+    if (r_size > size)
+      return false;
+
     pm += idl;
     pdata = (u8*)kgm_alloc(sizeof(char) * r_size);
     memcpy(pdata, pm, r_size);

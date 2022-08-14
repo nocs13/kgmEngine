@@ -1,12 +1,9 @@
-#ifndef LIGHTRENDER_H
-#define LIGHTRENDER_H
+#pragma once
 
 #include "../../kgmBase/kgmIGC.h"
-#include "../kgmGui.h"
-#include "../kgmIGraphics.h"
 #include "BaseRender.h"
 
-class LightRender: public BaseRender
+class LightmapRender: public BaseRender
 {
   struct Light
   {
@@ -22,8 +19,8 @@ public:
   bool m_lightmap = false;
 
 public:
-  LightRender(kgmGraphics* gr);
-  ~LightRender();
+  LightmapRender(kgmGraphics* gr);
+  ~LightmapRender();
 
   void render();
   void render(kgmCamera*, kgmIGraphics::INode*);
@@ -44,5 +41,3 @@ private:
   void shader(kgmShader*, kgmCamera*, kgmMaterial*, kgmIGraphics::INode*, Light*, u32);
   u32  collect(kgmCamera*, kgmIGraphics::INode*, Light[8]);
 };
-
-#endif // LIGHTRENDER_H
