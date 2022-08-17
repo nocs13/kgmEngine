@@ -184,7 +184,7 @@ void process(out vec4 col)
       vec3 V = normalize(v_P - v_Y);           // Vector to viewer
       // Compute the specular term
       float angle = max(dot(R, -V), 0.0);
-      float specular = pow(angle, 1000.0 * (v_shine / 1000.0));
+      float specular = pow(angle, 1000.0);// * (v_shine / 1000.0));
       shine += specular;
     }
   }

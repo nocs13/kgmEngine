@@ -35,6 +35,8 @@ import xml.etree.ElementTree
 def toGrad(a):
   return a * 180.0 / 3.1415
 
+def toRad(a):
+  return a * 3.1415 / 180.0
 
 def toSnum(a):
   return str("%.6f" % a)
@@ -43,11 +45,11 @@ def toSnum(a):
 kgm_animaniacs = [( "Unit",    "Unit",    "kgmUnit"    ),
                   ( "Actor",   "Actor",   "kgmActor"   )]
 
-
-
 kgm_project_parameters = ''
 kgm_unit_types = [('a1', 'a1 a1', 'a1 a1 a1'), ('a2', 'a2 a2', 'a2 a2 a2')]
 kgm_actor_types = [('u1', 'a1 u1', 'a1 a1 u1'), ('u2', 'a1 u2', 'a1 a1 u2')]
+
+kgm_mesh_smooth_angle = toRad(30)
 
 def hasModifier(o, mname):
   if o is None:
@@ -408,9 +410,8 @@ scene_materials = []
 class kgmMaterial:
   def __init__(self, mtl):
     self.name     = mtl.name
-
+    print('Converting material ' + mtl.name)
     self.diffuse  = [1.0, 1.0, 1.0, 1.0]
-    self.specular = [1.0, 1.0, 1.0, 1.0]
     self.shine    = 1.0
     self.alpha    = 1.0
     self.map_color = ''
@@ -437,16 +438,29 @@ class kgmMaterial:
     self.distortion  = 0.0
 
     self.diffuse  = mtl.diffuse_color
-    self.specular = mtl.specular_color * mtl.specular_intensity
-    self.shine    = mtl.specular_intensity * mtl.metallic
+    self.shine    = 1000.0 * mtl.specular_intensity * (1.0 - mtl.roughness);
     self.alpha    = 1.0
+
+    try:
+      node = mtl.node_tree.nodes['Principled BSDF']
+
+      col = node.inputs['Base Color'].default_value
+      self.diffuse[0] = col[0]
+      self.diffuse[1] = col[1]
+      self.diffuse[2] = col[2]
+      spc = node.inputs['Specular'].default_value
+      rgn = node.inputs['Roughness'].default_value
+      self.shine = 1000.0 * (spc * (1.0 - rgn))
+      self.alpha = node.inputs['Alpha'].default_value
+    except Exception as e:
+      print('Error of collect colors: ' + str(e))
 
     if mtl.shadow_method != "NONE":
       self.sh_off  = True
       self.sh_recv = True
 
     if mtl.blend_method == 'OPAQUE':
-      pass
+      self.blend = None
     elif mtl.blend_method == 'BLEND':
       self.blend = 'Mix'
 
@@ -589,6 +603,7 @@ class kgmFace:
 class kgmMesh:
   def __init__(self, o):
     #  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
+    print('Smooth mesh angle is: ' + str(kgm_mesh_smooth_angle))
     mesh = o.data
     mtx  = o.matrix_local
 
@@ -665,12 +680,12 @@ class kgmMesh:
 
           v.idx = vi
 
-          iface.append(self.addVertex(v, vsmooth=fsmooth))
+          iface.append(self.addVertex(v))
 
         for k in range(2, len(iface)):
           self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 
-  def addVertex(self, vx, vsmooth = True):
+  def addVertex(self, vx):
     iv = -1
     nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
 
@@ -683,8 +698,15 @@ class kgmMesh:
 
         if nx == nc:
           iv = i
-
           break
+        else:
+          a = math.acos( nx.dot(nc))
+          if a < kgm_mesh_smooth_angle:
+            nn = nc + nx
+            nn.normalize()
+            self.vertices[i].n = [nn.x, nn.y, nn.z]
+            iv = i
+            break
 
     if iv < 0:
       self.vertices.append(vx)
@@ -1009,8 +1031,6 @@ def export_material(file, o):
   file.write(" <Material name='" + o.name + "'>\n")
   file.write("  <Color value='" + str("%.5f" % o.diffuse[0]) + " " + str("%.5f" % o.diffuse[1]) + " " + str(
     "%.5f" % o.diffuse[2]) + "'/>\n")
-  file.write("  <Specular value='" + str("%.5f" % o.specular[0]) + " " + str("%.5f" % o.specular[1]) + " " + str(
-    "%.5f" % o.specular[2]) + "'/>\n")
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
   file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
   file.write("  <Shadow shadeless='" + str(o.sh_off) + "' cast='" + str(o.sh_cast) + "' receive='" + str(o.sh_recv) + "'/>\n")
@@ -1294,6 +1314,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   exp_obstacles  : BoolProperty(name="Export Obstacles", description="", default=False)
   exp_kgmobjects : BoolProperty(name="Export Units", description="", default=False)
   is_selection   : BoolProperty(name="Selected only", description="", default=False)
+  smooth_mesh    : FloatProperty(name="Smooth mesh", description="", default=30, min = 0, max = 45)
 
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
                                 name="Format", description="Choose between two items", default='OPT_A')
@@ -1310,6 +1331,8 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     # Bug, currently isnt working
     # if not self.is_property_set("filepath"):
     # raise Exception("filename not set")
+
+    kgm_mesh_smooth_angle = toRad( self.smooth_mesh )
 
     scene = context.scene
     for o in scene.objects:
