@@ -1332,6 +1332,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     # if not self.is_property_set("filepath"):
     # raise Exception("filename not set")
 
+    global kgm_mesh_smooth_angle
     kgm_mesh_smooth_angle = toRad( self.smooth_mesh )
 
     scene = context.scene
