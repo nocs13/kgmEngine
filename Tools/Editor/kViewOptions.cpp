@@ -300,29 +300,6 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   y_coord += 23;
 
   g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
-  g->setText("Specular");
-  g = new kgmGuiText(tmaterial, 51, y_coord, 30, 20);
-  g->setSid("SpecularR");
-  g->setText(kgmConvert::toString((s32)(mtl->m_specular.r * 255)));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularR.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularR, &((kgmGuiText*)g)->sigChange);
-  g = new kgmGuiText(tmaterial, 83, y_coord, 30, 20);
-  g->setSid("SpecularG");
-  g->setText(kgmConvert::toString((s32)(mtl->m_specular.g * 255)));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularG.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularG, &((kgmGuiText*)g)->sigChange);
-  g = new kgmGuiText(tmaterial, 115, y_coord, 30, 20);
-  g->setSid("SpecularB");
-  g->setText(kgmConvert::toString((s32)(mtl->m_specular.b * 255)));
-  ((kgmGuiText*)g)->setEditable(true);
-  ((kgmGuiText*)g)->setNumeric(true);
-  slotSpecularB.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onSpecularB, &((kgmGuiText*)g)->sigChange);
-
-  y_coord += 23;
-
-  g = new kgmGuiLabel(tmaterial, 0, y_coord, 50, 20);
   g->setText("TexColor");
   g = guiTextTexColor = new kgmGuiText(tmaterial, 51, y_coord, 70, 20);
   g->setSid("TexColor");
@@ -480,36 +457,6 @@ void kViewOptionsForMaterial::onColorB(kgmString c)
   u32 color = (u32)kgmConvert::toInteger(c);
   color = clamp<u32>(color, 0, 255);
   mtl->m_color.b = (float) color / 255.0f;
-}
-
-void kViewOptionsForMaterial::onSpecularR(kgmString c)
-{
-  if(c.length() < 1)
-    return;
-
-  u32 color = (u32)kgmConvert::toInteger(c);
-  color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.r = (float) color / 255.0f;
-}
-
-void kViewOptionsForMaterial::onSpecularG(kgmString c)
-{
-  if(c.length() < 1)
-    return;
-
-  u32 color = (u32)kgmConvert::toInteger(c);
-  color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.g = (float) color / 255.0f;
-}
-
-void kViewOptionsForMaterial::onSpecularB(kgmString c)
-{
-  if(c.length() < 1)
-    return;
-
-  u32 color = (u32)kgmConvert::toInteger(c);
-  color = clamp<u32>(color, 0, 255);
-  mtl->m_specular.b = (float) color / 255.0f;
 }
 
 void kViewOptionsForMaterial::onBlending(kgmString c)

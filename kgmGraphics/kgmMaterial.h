@@ -173,7 +173,7 @@ private:
   vec3        m_move;
 
 public:
-  Color  m_color, m_specular;
+  Color  m_color;
 
   u32  m_flags;
 
@@ -391,13 +391,6 @@ public:
   vec4 color()
   {
     vec4 col = m_color.get();
-
-    return col;
-  }
-
-  vec4 specular()
-  {
-    vec4 col = m_specular.get();
 
     return col;
   }

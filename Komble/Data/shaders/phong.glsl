@@ -13,7 +13,6 @@ uniform mat4   g_mView;
 uniform mat4   g_mProj;
 uniform mat4   g_mTran;
 uniform vec4   g_vColor;
-uniform vec4   g_vSpecular;
 uniform vec4   g_vClipPlane;
 uniform vec3   g_vUp;
 uniform vec3   g_vEye;
@@ -36,7 +35,6 @@ varying vec2   v_UV;
 varying float  v_I;
 varying float  v_shine;
 varying vec4   v_color;
-varying vec4   v_specular;
 
 attribute vec3 a_Vertex;
 attribute vec3 a_Normal;
@@ -87,7 +85,6 @@ void process(out vec4 pos)
   pos  = g_mProj * vec4(v_V, 1);
   v_color    = g_vColor;// * a_Color;
   v_shine    = g_fShine;
-  v_specular = g_vSpecular;
 }
 
 void main(void)
@@ -130,7 +127,6 @@ varying vec2   v_UV;
 varying float  v_I;
 varying float  v_shine;
 varying vec4   v_color;
-varying vec4   v_specular;
 
 varying vec4  position;
 varying float clipping;
@@ -149,7 +145,7 @@ int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
 void process(out vec4 col)
 {
   vec3 cbase = vec3( v_color * texture2D(g_txColor, v_UV) );
-  vec3 sbase = vec3( v_specular * texture2D(g_txSpecular, v_UV) );
+  vec3 sbase = vec3( v_color * texture2D(g_txSpecular, v_UV) );
   vec3 shade = vec3(0.0, 0.0, 0.0);
   vec3 shine = vec3(0.0, 0.0, 0.0);
 

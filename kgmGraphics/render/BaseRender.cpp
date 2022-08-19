@@ -42,7 +42,6 @@ void BaseRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   mtx4 m        = nod->getNodeTransform();
   float shine   = mtl->shininess();
   vec4 color    = mtl->m_color.get();
-  vec4 specular = mtl->m_specular.get();
 
   gchandle tcolor = null;
 
@@ -64,7 +63,6 @@ void BaseRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   s->set("g_mView",           cam->mView);
   s->set("g_mTran",           m);
   s->set("g_vColor",          color);
-  s->set("g_vSpecular",       specular);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
 
@@ -345,7 +343,6 @@ void BaseRender::shader(kgmShader* shd, kgmCamera* cam, kgmMaterial* mtl, kgmIGr
   float random    = (float)rand() / (float)RAND_MAX;
   mtx4  transform = nod->getNodeTransform();
   vec4 color      = mtl->m_color.get();
-  vec4 specular   = mtl->m_specular.get();
   f32  shininess  = mtl->shininess();
   f32  time       = kgmTime::getTime();
 
@@ -357,7 +354,6 @@ void BaseRender::shader(kgmShader* shd, kgmCamera* cam, kgmMaterial* mtl, kgmIGr
   shd->set("g_mView",           cam->mView);
   shd->set("g_mTran",           transform);
   shd->set("g_vColor",          color);
-  shd->set("g_vSpecular",       specular);
   shd->set("g_vLight",          v_light);
   shd->set("g_vLightColor",     v_light_color);
   shd->set("g_vLightDirection", v_light_direction);

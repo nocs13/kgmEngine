@@ -74,7 +74,6 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   vec3 nr = mesh->normal();
 
   vec4 col  = mtl->color();
-  vec4 spec = mtl->specular();
 
   kgmShader* sh = null;
   gchandle   tx = null;

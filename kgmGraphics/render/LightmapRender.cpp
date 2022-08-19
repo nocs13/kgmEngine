@@ -175,7 +175,6 @@ void LightmapRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   }
 
   vec4 color     = mtl->m_color.get();
-  vec4 specular  = mtl->m_specular.get();
   f32  shininess = mtl->shininess();
 
   gchandle tcolor = null;
@@ -225,7 +224,6 @@ void LightmapRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
   s->set("g_mView",           cam->mView);
   s->set("g_mTran",           m);
   s->set("g_vColor",          color);
-  s->set("g_vSpecular",       specular);
   s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
@@ -363,7 +361,6 @@ void LightmapRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmI
   float random = (float)rand() / (float)RAND_MAX;
   mtx4  transform = nod->getNodeTransform();
   vec4 color = mtl->m_color.get();
-  vec4 specular = mtl->m_specular.get();
   f32  shininess = mtl->shininess();
   f32  time = kgmTime::getTime();
 
@@ -375,7 +372,6 @@ void LightmapRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmI
   s->set("g_mView",           cam->mView);
   s->set("g_mTran",           transform);
   s->set("g_vColor",          color);
-  s->set("g_vSpecular",       specular);
   s->set("g_vUp",             cam->mUp);
   s->set("g_vEye",            cam->mPos);
   s->set("g_vLook",           cam->mDir);
@@ -489,7 +485,6 @@ void LightmapRender::lightmap()
 
     mtx4 m = nod->getNodeTransform();
     vec4 color = vec4(1, 1, 1, 1);
-    vec4 specular = mtl->specular();
     f32  shininess = mtl->shininess();
 
     gc->gcSetTexture(0, tcolor);
@@ -503,7 +498,6 @@ void LightmapRender::lightmap()
     s->set("g_mView",           cam->mView);
     s->set("g_mTran",           m);
     s->set("g_vColor",          color);
-    s->set("g_vSpecular",       specular);
     s->set("g_vUp",             cam->mUp);
     s->set("g_vEye",            cam->mPos);
     s->set("g_vLook",           cam->mDir);

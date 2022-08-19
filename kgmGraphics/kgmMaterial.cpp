@@ -7,7 +7,6 @@ kgmMaterial::kgmMaterial()
   m_flags = MF_Textures | MF_Depth | MF_Color;
 
   m_color        = Color(1.0f, 1.0f, 1.0f, 1.0f);
-  m_specular     = Color(1.0f, 1.0f, 1.0f, 1.0f);
 
   m_distortion = 0.0;
   m_shininess  = 0.0;
@@ -25,7 +24,6 @@ kgmMaterial::kgmMaterial()
 kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
 {
   m_color     = mtl.m_color;
-  m_specular  = mtl.m_specular;
   m_shininess = mtl.m_shininess;
 
   m_gc = mtl.m_gc;

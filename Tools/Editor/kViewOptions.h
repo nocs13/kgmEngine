@@ -99,9 +99,6 @@ class kViewOptionsForMaterial : public kgmGuiFrame
   Slot<kViewOptionsForMaterial, kgmString> slotColorR;
   Slot<kViewOptionsForMaterial, kgmString> slotColorG;
   Slot<kViewOptionsForMaterial, kgmString> slotColorB;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularR;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularG;
-  Slot<kViewOptionsForMaterial, kgmString> slotSpecularB;
   Slot<kViewOptionsForMaterial, kgmString> slotBlending;
 
   Slot<kViewOptionsForMaterial, u32> slotShininess;

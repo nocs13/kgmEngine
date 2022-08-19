@@ -101,7 +101,6 @@ mtx4*      g_mtx_joints = null;
 u32        g_mtx_joints_count = 0;
 
 vec4       g_vec_color    = vec4(1, 1, 1, 1);
-vec4       g_vec_specular = vec4(1, 1, 1, 1);
 
 f32        g_fShine = 0.0f;
 f32        g_fAmbient = 0.1f;
@@ -157,7 +156,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
   m_def_material = new kgmMaterial();
   m_def_material->m_color = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
-  m_def_material->m_specular = kgmMaterial::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
   u32 scr_size[2] = {0};
 
@@ -994,7 +992,6 @@ void kgmGraphics::set(kgmMaterial* m)
   }
 
   g_vec_color    = m->m_color.get();
-  g_vec_specular = m->m_specular.get();
   g_fShine       = m->shininess();
 
   if(m->blend())
@@ -1099,7 +1096,6 @@ void kgmGraphics::set(kgmMaterial* m)
   if (0)
   {
     m_shd_active->set("g_vColor",    g_vec_color);
-    m_shd_active->set("g_vSpecular", g_vec_specular);
     m_shd_active->set("g_fShine",    g_fShine);
   }
 
@@ -1245,7 +1241,6 @@ void kgmGraphics::shaderSetPrivate()
   s->set("g_fRandom",         random);
   s->set("g_fShine",          g_fShine);
   s->set("g_vColor",          g_vec_color);
-  s->set("g_vSpecular",       g_vec_specular);
 
   if(tcolor)
     s->set("g_txColor", 0);
