@@ -75,6 +75,12 @@ public:
     virtual NodeShading  getNodeShading()              = 0;
   };
 
+  class IModifier
+  {
+    public:
+    virtual ~IModifier(){}
+  };
+
 public:
   virtual void clear()  = 0;
   virtual void render() = 0;
