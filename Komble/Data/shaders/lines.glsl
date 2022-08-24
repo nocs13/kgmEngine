@@ -1,17 +1,16 @@
 #version 120
 
-uniform mat4   g_mView;           
-uniform mat4   g_mProj;           
-uniform mat4   g_mTran;           
-uniform vec4   g_vColor;          
-uniform vec4   g_vSpecular;       
-uniform vec4   g_vClipPlane;      
+uniform mat4   g_mView;
+uniform mat4   g_mProj;
+uniform mat4   g_mTran;
+uniform vec4   g_vColor;
+uniform vec4   g_vClipPlane;
 
-varying vec3   v_N;               
-varying vec3   v_V;               
+varying vec3   v_N;
+varying vec3   v_V;
 
-attribute vec3 a_Vertex;          
-attribute vec4 a_Color;           
+attribute vec3 a_Vertex;
+attribute vec4 a_Color;
 
 varying vec4  position;
 varying vec4  color;
@@ -22,12 +21,12 @@ void process(out vec4 pos)
    pos = g_mProj * g_mView * position;
 }
 
-void main(void)                    
-{                                  
-   vec4 position;                  
-   color = a_Color;   
-   process(position);             
-   gl_Position = position;        
+void main(void)
+{
+   vec4 position;
+   color = a_Color;
+   process(position);
+   gl_Position = position;
 }
 
 //Fragment Shader
@@ -36,5 +35,5 @@ varying vec4  color;
 
 void main( void )
 {
-  gl_FragColor = color; 
+  gl_FragColor = color;
 }

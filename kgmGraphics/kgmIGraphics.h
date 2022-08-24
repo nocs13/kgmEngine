@@ -31,7 +31,7 @@ public:
     NodeParticles
   };
 
-  enum NodeShading 
+  enum NodeShading
   {
     ShadingNone,
     ShadingFull
@@ -50,6 +50,12 @@ public:
     ShaderEnvCube,
     ShaderEnvPlane,
     ShaderEnd = 12,
+  };
+
+  class IModifier
+  {
+    public:
+    virtual ~IModifier(){}
   };
 
   class INode
@@ -73,12 +79,6 @@ public:
 
     virtual void         setNodeShading(NodeShading)   = 0;
     virtual NodeShading  getNodeShading()              = 0;
-  };
-
-  class IModifier
-  {
-    public:
-    virtual ~IModifier(){}
   };
 
 public:
