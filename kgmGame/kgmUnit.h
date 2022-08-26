@@ -1,12 +1,10 @@
-#ifndef KGMGAMEOBJECT_H
-#define KGMGAMEOBJECT_H
+#pragma once
 
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmVariable.h"
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmPhysics/kgmObstacle.h"
-#include "../kgmGraphics/kgmVisual.h"
 
 #include "../kgmGraphics/kgmIGraphics.h"
 #include "../kgmPhysics/kgmIPhysics.h"
@@ -266,7 +264,4 @@ public:
   {
     return m_birth;
   }
-
 };
-
-#endif // KGMGAMEOBJECT_H

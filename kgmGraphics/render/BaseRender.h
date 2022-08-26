@@ -6,9 +6,9 @@
 #include "../kgmIGraphics.h"
 
 class kgmGraphics;
-class kgmVisual;
 class kgmLight;
 class kgmMesh;
+class kgmText;
 class kgmIcon;
 class kgmShader;
 class kgmMaterial;
@@ -53,7 +53,7 @@ public:
 
 protected:
   void draw(kgmMesh*);
-  void draw(kgmVisual*);
+  void draw(kgmText*);
   void draw(kgmParticles*);
   void draw(kgmIcon*, kgmCamera*);
 

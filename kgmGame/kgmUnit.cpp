@@ -1,5 +1,6 @@
 #include "kgmUnit.h"
 #include "kgmIGame.h"
+#include "../kgmSystem/kgmTime.h"
 
 kgmUnit::kgmUnit(kgmIGame* g)
 {

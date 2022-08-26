@@ -4,7 +4,7 @@
 #include "kgmSystem.h"
 #include "kgmThread.h"
 #include "../kgmBase/kgmIResources.h"
-#include "../kgmBase/kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 #include "../kgmGame/kgmIGame.h"
 #include "../kgmSystem/kgmApp.h"
 

@@ -1,5 +1,5 @@
 #include "LightmapRender.h"
-#include "../../kgmBase/kgmTime.h"
+#include "../../kgmSystem/kgmTime.h"
 #include "../../kgmGraphics/kgmIGraphics.h"
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmMaterial.h"

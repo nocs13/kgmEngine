@@ -4,6 +4,7 @@
 #include "../../kgmGame/kgmGameApp.h"
 #include "../../kgmGame/kgmGameBase.h"
 #include "../../kgmGame/kgmUnit.h"
+#include "../../kgmGraphics/kgmParticles.h"
 #include "kViewObjects.h"
 #include "kEditor.h"
 

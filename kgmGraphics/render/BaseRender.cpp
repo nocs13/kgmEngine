@@ -1,12 +1,13 @@
 #include "BaseRender.h"
+#include "../../kgmSystem/kgmTime.h"
 #include "../../kgmGraphics/kgmMesh.h"
 #include "../../kgmGraphics/kgmIcon.h"
 #include "../../kgmGraphics/kgmText.h"
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmCamera.h"
-#include "../../kgmGraphics/kgmVisual.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
+#include "../../kgmGraphics/kgmParticles.h"
 
 BaseRender::BaseRender(kgmGraphics* g)
 {
@@ -89,50 +90,11 @@ void BaseRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
 
 }
 
-void BaseRender::draw(kgmVisual* visual)
+void BaseRender::draw(kgmText *text)
 {
-  if(!visual)
-    return;
-
-  switch(visual->type())
-  {
-  case kgmVisual::TypeNone:
-  case kgmVisual::TypeMesh:
-  {
-    kgmMesh* msh = visual->getMesh();
-
-    u32  pmt;
-
-    if(!msh)
-      return;
-
-    switch(msh->rtype())
-    {
-    case kgmMesh::RT_LINE:
-      pmt = gcpmt_lines;
-      break;
-    case kgmMesh::RT_POINT:
-      pmt = gcpmt_points;
-      break;
-    default:
-      pmt = gcpmt_triangles;
-    };
-
-    gc->gcDraw(pmt, msh->fvf(),
-               msh->vsize(), msh->vcount(), msh->vertices(),
-               2, 3 * msh->fcount(), msh->faces());
-
-  }
-    break;
-  case kgmVisual::TypeText:
-  {
-    kgmText* text = visual->getText();
     kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
                     text->m_rect.w, text->m_rect.h);
     gr->gcDrawText(gr->font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
-  }
-    break;
-  }
 }
 
 void BaseRender::draw(kgmMesh *m)

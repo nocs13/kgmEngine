@@ -1,8 +1,8 @@
 #include "kgmAlsa.h"
 #include "../kgmBase/kgmLog.h"
-#include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmPointer.h"
 #include "../kgmBase/kgmFunction.h"
+#include "../kgmSystem/kgmTime.h"
 
 #undef DEBUG
 

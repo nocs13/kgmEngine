@@ -8,6 +8,7 @@
 #include "../../kgmGame/kgmGameMap.h"
 
 #include "../../kgmGraphics/kgmShape.h"
+#include "../../kgmGraphics/kgmParticles.h"
 
 static float cam_scale = 1.0;
 

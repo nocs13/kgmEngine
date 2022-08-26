@@ -2,9 +2,9 @@
 #include <time.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include "kgmTime.h"
 #include "kgmString.h"
 #include "kgmConvert.h"
+#include "../kgmSystem/kgmTime.h"
 
 class kgmLog;
 class kgmLogError;

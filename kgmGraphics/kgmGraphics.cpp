@@ -1,6 +1,6 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmMath/kgmBase.h"
-#include "../kgmBase/kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 
 #include "kgmGraphics.h"
 #include "kgmGuiProgress.h"
@@ -21,6 +21,7 @@
 #include "kgmFrustum.h"
 #include "kgmCamera.h"
 #include "kgmTerrain.h"
+#include "kgmParticles.h"
 
 #include "../kgmGame/kgmGameApp.h"
 #include "../kgmGame/kgmGameBase.h"
@@ -842,73 +843,6 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcSetTarget(null);
 }
 */
-void kgmGraphics::draw(kgmVisual* visual)
-{
-  if(!visual)
-    return;
-
-  if(visual->m_tm_joints)
-  {
-    g_mtx_joints       = visual->m_tm_joints;
-    g_mtx_joints_count = visual->m_skeleton->m_joints.size();
-  }
-
-  switch(visual->type())
-  {
-  case kgmVisual::TypeNone:
-  case kgmVisual::TypeMesh:
-  case kgmVisual::TypeShape:
-  {
-    kgmMesh* msh = visual->getMesh();
-
-    u32  pmt;
-
-    if(!msh) {
-      msh = (kgmMesh*) visual->getShape();
-
-      if(!msh)
-        return;
-    }
-
-    switch(msh->rtype())
-    {
-    case kgmMesh::RT_LINE:
-      pmt = gcpmt_lines;
-      break;
-    case kgmMesh::RT_POINT:
-      pmt = gcpmt_points;
-      break;
-    case kgmMesh::RT_TRIANGLESTRIP:
-      pmt = gcpmt_trianglestrip;
-      break;
-    default:
-      pmt = gcpmt_triangles;
-    };
-
-    gc->gcDraw(pmt, msh->fvf(),
-               msh->vsize(), msh->vcount(), msh->vertices(),
-               2, 3 * msh->fcount(), msh->faces());
-
-    g_mtx_joints       = null;
-    g_mtx_joints_count = 0;
-  }
-    break;
-  case kgmVisual::TypeText:
-  {
-    kgmText* text = visual->getText();
-    kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
-                    text->m_rect.w, text->m_rect.h);
-    gcDrawText(font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
-  }
-    break;
-  case kgmVisual::TypeParticles:
-    setWorldMatrix(m_g_mtx_iden);
-    set(m_shd_active);
-    draw(visual->getParticles());
-    setWorldMatrix(visual->getTransform());
-    break;
-  }
-}
 
 void kgmGraphics::draw(kgmParticles* particles)
 {

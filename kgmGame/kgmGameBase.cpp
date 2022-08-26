@@ -1,7 +1,6 @@
 #include "../kgmBase/kgmObject.h"
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmFile.h"
-#include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmBase.h"
 #include "../kgmBase/kgmLog.h"
 
@@ -13,6 +12,7 @@
 #include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmOAL.h"
 #include "../kgmSystem/kgmOSL.h"
+#include "../kgmSystem/kgmTime.h"
 #include "../kgmSystem/kgmVulkan.h"
 #include "../kgmSystem/kgmGCNone.h"
 
@@ -992,7 +992,7 @@ bool kgmGameBase::loadXml(kgmString& path)
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
   kgmActor*       act = 0;
-  kgmVisual*      vis = 0;
+//  kgmVisual*      vis = 0;
 
   u32             vts = 0;
 

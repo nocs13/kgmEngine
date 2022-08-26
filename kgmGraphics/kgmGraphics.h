@@ -22,7 +22,6 @@
 #include "kgmLight.h"
 #include "kgmSprite.h"
 #include "kgmCamera.h"
-#include "kgmVisual.h"
 #include "kgmMaterial.h"
 
 #include "kgmNode.h"
@@ -254,7 +253,6 @@ protected:
   void render(kgmCamera &cam, Options &op);
 
   void draw(kgmMesh*);
-  void draw(kgmVisual*);
   void draw(kgmParticles*);
   void draw(kgmIcon*);
 

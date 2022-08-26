@@ -12,6 +12,7 @@
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmLight.h"
 #include "../kgmGraphics/kgmTerrain.h"
+#include "../kgmGraphics/kgmParticles.h"
 
 kgmGameMap::kgmGameMap(kgmGameBase* g, OpenType ot)
 {
@@ -207,7 +208,7 @@ bool kgmGameMap::addMesh(kgmUnit* n)
     node->m_name = "Mesh";
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
 
-    kgmVisual* vis = (kgmVisual*) n->getNode()->getNodeObject();
+    kgmMesh* vis = (kgmMesh*) n->getNode()->getNodeObject();
 
     if (!vis)
       return false;
@@ -230,7 +231,7 @@ bool kgmGameMap::addMesh(kgmUnit* n)
       node->m_attributes.add(new kgmXml::Attribute("size", kgmConvert::toString((s32)vis->getParticles()->size())));
       node->m_attributes.add(new kgmXml::Attribute("esize", kgmConvert::toString((s32)vis->getParticles()->esize())));*/
 
-    kgmMaterial* mtl = vis->getMaterial();
+    kgmMaterial* mtl = n->getNode()->getNodeMaterial();
 
     if(mtl)
     {

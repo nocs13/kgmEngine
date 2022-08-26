@@ -1,14 +1,15 @@
 #pragma once
 #include "../kgmBase/kgmTab.h"
-#include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmString.h"
 
-#include "../kgmGraphics/kgmVisual.h"
+#include "../kgmSystem/kgmTime.h"
+
 #include "../kgmGraphics/kgmMesh.h"
 #include "../kgmGraphics/kgmPolygon.h"
 #include "../kgmGraphics/kgmTexture.h"
 #include "../kgmGraphics/kgmShader.h"
 #include "../kgmGraphics/kgmMaterial.h"
+#include "../kgmGraphics/kgmSkeleton.h"
 
 #include "../kgmGraphics/kgmAnimation.h"
 #include "../kgmGraphics/kgmDummy.h"

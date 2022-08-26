@@ -202,9 +202,6 @@ void gcDraw(kgmIGC* gc, kgmMesh* m)
              2, 3 * m->fcount(), m->faces());
 }
 
-void gcDraw(kgmIGC* gc, kgmVisual* visual)
-{}
-
 void gcDraw(kgmIGC* gc, kgmSprite* sprite)
 {
   struct Point{ vec3 pos; vec4 col; vec2 uv; };

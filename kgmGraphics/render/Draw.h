@@ -13,7 +13,6 @@ class kgmIcon;
 class kgmFont;
 class kgmMesh;
 class kgmSprite;
-class kgmVisual;
 class kgmTexture;
 class kgmParticles;
 

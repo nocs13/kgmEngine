@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "kgmDSound.h"
-#include "../kgmBase/kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 #include "../kgmBase/kgmLog.h"
 
 #ifdef WIN32

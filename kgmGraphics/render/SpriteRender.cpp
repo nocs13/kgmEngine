@@ -24,30 +24,6 @@ void SpriteRender::render()
   gr->gc3DMode();
 }
 
-void SpriteRender::render(kgmVisual* visual)
-{
-  if(!visual)
-    return;
-
-  switch(visual->type())
-  {
-  case kgmVisual::TypeText:
-  {
-    kgmText* text = visual->getText();
-    kgmGui::Rect rc(text->m_rect.x, text->m_rect.y,
-                    text->m_rect.w, text->m_rect.h);
-
-    gcDrawText(gr->gc, gr->font, text->m_size / 2, text->m_size, text->m_color, rc, text->m_text);
-  }
-    break;
-  case kgmVisual::TypeSprite:
-  {
-    render(visual->getSprite());
-  }
-    break;
-  }
-}
-
 void SpriteRender::render(kgmSprite* sprite)
 {
   struct Point{ vec3 pos; u32 col; vec2 uv; };

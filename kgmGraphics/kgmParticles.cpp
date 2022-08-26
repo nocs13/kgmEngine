@@ -2,7 +2,7 @@
 #include "kgmMaterial.h"
 #include "kgmCamera.h"
 #include "kgmMesh.h"
-#include "../kgmBase/kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 
 inline void init_point(kgmMesh::Vertex_P_C_T& v, vec3 pos, u32 col, vec2 uv)
 {

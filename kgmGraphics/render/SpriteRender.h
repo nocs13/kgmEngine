@@ -5,7 +5,6 @@
 #include "BaseRender.h"
 
 class kgmGraphics;
-class kgmVisual;
 class kgmSprite;
 
 class SpriteRender: public BaseRender
@@ -16,7 +15,6 @@ public:
   SpriteRender(kgmGraphics* gr);
 
   void render();
-  void render(kgmVisual*);
   void render(kgmSprite*);
 };
 

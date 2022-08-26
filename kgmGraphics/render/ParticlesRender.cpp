@@ -2,6 +2,7 @@
 #include "../../kgmGraphics/kgmLight.h"
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
+#include "../../kgmGraphics/kgmParticles.h"
 
 ParticlesRender::ParticlesRender(kgmGraphics* g)
   :BaseRender(g)

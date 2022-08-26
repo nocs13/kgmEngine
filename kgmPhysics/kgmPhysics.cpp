@@ -1,6 +1,6 @@
 #include "kgmPhysics.h"
 #include "../kgmBase/kgmLog.h"
-#include "../kgmBase/kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 
 #ifdef WIN32
 #include <windows.h>

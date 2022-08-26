@@ -1,5 +1,5 @@
 #include "kgmEncryptor.h"
-#include "kgmTime.h"
+#include "../kgmSystem/kgmTime.h"
 #include <math.h>
 
 #define MAX_S32  2147483647

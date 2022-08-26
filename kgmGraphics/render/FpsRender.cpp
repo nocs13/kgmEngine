@@ -2,6 +2,7 @@
 #include "Draw.h"
 
 #include "../kgmGraphics.h"
+#include "../../kgmSystem/kgmTime.h"
 
 FpsRender::FpsRender(kgmGraphics* gr)
   :BaseRender(gr)

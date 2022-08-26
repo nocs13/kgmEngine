@@ -1,6 +1,6 @@
 #include "kgmGameThreader.h"
-#include "../kgmBase/kgmTime.h"
 #include "../kgmBase/kgmLog.h"
+#include "../kgmSystem/kgmTime.h"
 
 #define KGM_FPS 30
 #define KGM_TPF 1000 / KGM_FPS

@@ -7,6 +7,7 @@
 #include "../kgmEffect.h"
 #include "../kgmGameResources.h"
 #include "../../kgmGraphics/kgmMaterial.h"
+#include "../../kgmGraphics/kgmParticles.h"
 
 class kgmResult: public kgmUnit
 {
@@ -147,7 +148,6 @@ class kgmIonNozzle: public kgmEffect
   kgmMaterial*   mtl;
   kgmParticles*  ptl;
 
-  kgmVisual*     visual;
   kgmMesh*       mesh;
 
 public:
@@ -155,7 +155,6 @@ public:
     :kgmEffect(g)
   {
     game     = g;
-    //m_visual = new kgmVisual();
 
     mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
     mtl->cull(false);
@@ -174,7 +173,6 @@ public:
     ptl->divspeed(0.95);
     ptl->build();
 
-    visual = new kgmVisual();
     mesh = new kgmMesh();
     Vertex* v = (Vertex*)mesh->vAlloc(18, kgmMesh::FVF_P_C_T);
 
@@ -198,11 +196,6 @@ public:
     v[15]  = { {-0.5, 0, 0.1},  0xffffffff, {1, 0} };
     v[16]  = { {-0.5, 0, -0.1}, 0xffffffff, {1, 1} };
     v[17]  = { {0, 0, -0.1},  0xffffffff, {0.5, 1} };
-
-    //m_visual->set(mesh);
-    //m_visual->set(mtl);
-    visual->set(ptl);
-    visual->set(mtl);
   }
 
   ~kgmIonNozzle()
@@ -213,9 +206,6 @@ public:
   {
     if(!valid())
       return;
-
-    //visual->getTransform() = m_visual->getTransform();
-    visual->update();
   }
 
   void event(kgmObject* o, kgmString arg)
