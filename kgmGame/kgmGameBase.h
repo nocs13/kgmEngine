@@ -3,7 +3,6 @@
 #include "kgmIGame.h"
 #include "kgmGameResources.h"
 #include "kgmGameGraphics.h"
-#include "kgmGameThreader.h"
 #include "kgmGamePhysics.h"
 #include "kgmGameScript.h"
 #include "kgmGameInput.h"
@@ -78,7 +77,6 @@ protected:
 
   u32              m_fps;
   u32              m_tpf;
-  //kgmGameThreader* m_threader;
 
 private:
   struct UnitIterator: public kgmIGame::Iterator
@@ -177,7 +175,6 @@ public:
   void  initInput();
   bool  initScript();
   void  initGC();
-  void  initThreader();
 
   void guiAdd(kgmGui* g);
 

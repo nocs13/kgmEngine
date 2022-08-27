@@ -98,8 +98,6 @@ kgmGameBase::kgmGameBase()
 
   m_messenger = null;
 
-  //m_threader  = null;
-
   m_font = null;
 
   m_fps = 1;
@@ -119,16 +117,6 @@ kgmGameBase::kgmGameBase()
 
 kgmGameBase::~kgmGameBase()
 {
-  log("stop threader...");
-
-  /*
-  if (m_threader)
-  {
-    m_threader->finish();
-    delete m_threader;
-  }
-  */
-
   log("free scene...");
 
   gUnload();
@@ -330,9 +318,6 @@ bool kgmGameBase::initScript()
   if (!m_script->getStatus())
     return false;
 
-  //if (m_threader)
-  //  m_threader->add((kgmGameThreader::THREADER_FUNCTION) kgmGameBase::doScript, this);
-
   return true;
 }
 
@@ -365,12 +350,6 @@ void kgmGameBase::initGC()
 void kgmGameBase::initSettings()
 {
   m_settings = new kgmGameSettings();
-}
-
-void kgmGameBase::initThreader()
-{
-  //if (!m_threader)
-  //  m_threader = new kgmGameThreader();
 }
 
 void kgmGameBase::log(const char* msg)
@@ -589,9 +568,6 @@ int kgmGameBase::gInit()
     return 0;
 
   //m_state = State_Idle;
-
-  //log("open workers...");
-  //initThreader();
 
   log("open settings...");
   initSettings();
