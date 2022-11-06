@@ -53,7 +53,7 @@ class kgmIAI
     kgmString  state;
   };
 
-private:
+protected:
   struct UnitType
   {
     kgmString type;
