@@ -11,11 +11,10 @@ class kgmSound;
 class kgmAnimation;
 struct Action;
 
-class kgmAI: public kgmObject
+class kgmIAI
 {
-  KGM_OBJECT(kgmAI);
-
-  typedef void (*ActionCallback)(kgmIGame*, kgmAI*, Action*);
+  /*
+  typedef void (*ActionCallback)(kgmIGame*, kgmIAI*, Action*);
 
   struct Action
   {
@@ -27,11 +26,12 @@ class kgmAI: public kgmObject
 
     ActionCallback callback = null;
   };
-
+  */
+ public:
   struct State
   {
     kgmString id;
-    kgmString type;
+    kgmString action;
     kgmString switchto;
     kgmString switchfrom;
 
@@ -41,8 +41,6 @@ class kgmAI: public kgmObject
     kgmSound*      sound     = null;
     kgmAnimation*  animation = null;
     u32           fstart, fend;
-
-    Action action;
   };
 
   struct Input
@@ -55,12 +53,13 @@ class kgmAI: public kgmObject
     kgmString  state;
   };
 
+private:
   struct UnitType
   {
     kgmString type;
 
-    kgmList<State*>     m_states;
-    kgmList<Input>      m_inputs;
+    kgmList<State> m_states;
+    kgmList<Input> m_inputs;
   };
 
   struct Unit
@@ -74,17 +73,11 @@ class kgmAI: public kgmObject
 
 public:
 
-  kgmAI()
-  {
-
-  }
-
-  ~kgmAI()
-  {
-
-  }
-
-  void update();
+  virtual void update() = 0;
+  virtual bool addType(kgmString) = 0;
+  virtual bool addState(kgmString, State) = 0;
+  virtual bool addInput(kgmString, Input) = 0;
+  virtual bool addUnit(kgmUnit*) = 0;
 };
 
 #endif // KGMIAI_H
