@@ -114,6 +114,31 @@ bool kgmGameAI::addUnit(kgmUnit* unit)
   return true;
 }
 
+kgmGameAI::UnitType* kgmGameAI::getType(kgmString type)
+{
+  auto i = m_types.begin();
+
+  while(!i.end()) {
+    if ((*i).type == type) {
+      return &(*i);
+    }
+
+    i.next();
+  }
+
+  return null;
+}
+
+kgmGameAI::State* kgmGameAI::getState(Unit* u, kgmString s)
+{
+  return null;
+}
+
+kgmGameAI::Input*  kgmGameAI::getInput(Unit*, kgmString)
+{
+  return null;
+}
+
 int kgmGameAI::fn_thread(void* m)
 {
   while(((kgmGameAI*)m)->m_active)

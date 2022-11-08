@@ -28,4 +28,8 @@ public:
 
 private:
   static int fn_thread(void* m);
+
+  UnitType* getType(kgmString);
+  State*    getState(Unit*, kgmString);
+  Input*    getInput(Unit*, kgmString);
 };
