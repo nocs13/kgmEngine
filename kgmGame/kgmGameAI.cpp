@@ -69,7 +69,7 @@ bool kgmGameAI::addState(kgmString type, kgmIAI::State state)
   return true;
 }
 
-bool kgmGameAI::addInput(kgmString type, kgmIAI::Input inpout)
+bool kgmGameAI::addInput(kgmString type, kgmIAI::Input input)
 {
   return true;
 }
