@@ -40,7 +40,7 @@ class kgmIAI
 
     kgmSound*      sound     = null;
     kgmAnimation*  animation = null;
-    u32           fstart, fend;
+    u32            fstart, fend;
   };
 
   struct Input
@@ -58,8 +58,8 @@ protected:
   {
     kgmString type;
 
-    kgmList<State> m_states;
-    kgmList<Input> m_inputs;
+    kgmList<State> states;
+    kgmList<Input> inputs;
   };
 
   struct Unit
@@ -73,6 +73,7 @@ protected:
 
 public:
 
+  virtual void clean() = 0;
   virtual void update() = 0;
   virtual bool addType(kgmString) = 0;
   virtual bool addState(kgmString, State) = 0;

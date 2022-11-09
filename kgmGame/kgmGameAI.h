@@ -20,6 +20,7 @@ public:
   bool start();
   bool finish();
   
+  void clean();
   void update();
   bool addType(kgmString type);
   bool addState(kgmString type, State state);
@@ -30,6 +31,6 @@ private:
   static int fn_thread(void* m);
 
   UnitType* getType(kgmString);
-  State*    getState(Unit*, kgmString);
-  Input*    getInput(Unit*, kgmString);
+  State*    getState(UnitType*, kgmString);
+  Input*    getInput(UnitType*, u32);
 };

@@ -40,6 +40,13 @@ bool kgmGameAI::finish()
   return true;
 }
 
+void kgmGameAI::clean()
+{
+  finish();
+
+  m_units.clear();
+}
+
 void kgmGameAI::update()
 {
 
@@ -47,13 +54,8 @@ void kgmGameAI::update()
 
 bool kgmGameAI::addType(kgmString type)
 {
-  auto i = m_types.begin();
-
-  while(!i.end()) {
-    if ((*i).type == type)
-      return false;
-    i.next();
-  }
+  if (getType(type))
+    return false;
 
   kgmIAI::UnitType ut;
 
@@ -66,11 +68,35 @@ bool kgmGameAI::addType(kgmString type)
 
 bool kgmGameAI::addState(kgmString type, kgmIAI::State state)
 {
+  UnitType* ut = getType(type);
+
+  if (!ut)
+    return false;
+
+  State* st = getState(ut, state.id);
+
+  if (st)
+    return false;
+  
+  ut->states.add(state);
+
   return true;
 }
 
 bool kgmGameAI::addInput(kgmString type, kgmIAI::Input input)
 {
+  UnitType* ut = getType(type);
+
+  if (!ut)
+    return false;
+
+  Input* i = getInput(ut, input.input);
+
+  if (i)
+    return false;
+  
+  ut->inputs.add(input);
+  
   return true;
 }
 
@@ -129,13 +155,35 @@ kgmGameAI::UnitType* kgmGameAI::getType(kgmString type)
   return null;
 }
 
-kgmGameAI::State* kgmGameAI::getState(Unit* u, kgmString s)
+kgmGameAI::State* kgmGameAI::getState(UnitType* ut, kgmString s)
 {
+  if (!ut)
+    return null;
+  
+  auto i = ut->states.begin();
+
+  while(!i.end()) {
+    if ((*i).id == s)
+      return &(*i);
+    i.next();
+  }
+
   return null;
 }
 
-kgmGameAI::Input*  kgmGameAI::getInput(Unit*, kgmString)
+kgmGameAI::Input*  kgmGameAI::getInput(UnitType* ut, u32 in)
 {
+  if (!ut)
+    return null;
+
+  auto i = ut->inputs.begin();
+
+  while(!i.end()) {
+    if ((*i).input1 == in)
+      return &(*i);
+    i.next();
+  }
+  
   return null;
 }
 
