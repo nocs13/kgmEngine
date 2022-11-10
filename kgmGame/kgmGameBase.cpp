@@ -23,7 +23,6 @@
 #include "kgmGameResources.h"
 
 #include "kgmUnit.h"
-#include "kgmActor.h"
 
 #include "../kgmGraphics/kgmGuiTab.h"
 #include "../kgmGraphics/kgmGraphics.h"
@@ -92,6 +91,7 @@ kgmGameBase::kgmGameBase()
   m_input     = null;
   m_audio     = null;
   m_gc        = null;
+  m_ai        = null;
 
   m_retention = null;
   m_settings  = null;
@@ -129,6 +129,11 @@ kgmGameBase::~kgmGameBase()
   log("free messenger...");
   if (m_messenger)
     m_messenger->release();
+
+  log("free ai...");
+
+  if(m_ai)
+    delete m_ai;
 
   log("free logic...");
 
@@ -185,8 +190,6 @@ kgmGameBase::~kgmGameBase()
   if (m_retention)
     delete m_retention;
 
-  kgmActor::g_actions.clear();
-
 #ifdef DEBUG
     kgm_log() << "kgmGameBase::~kgmGameBase [" << (void*)this << "]\n";
 #endif
@@ -196,6 +199,11 @@ kgmGameBase::~kgmGameBase()
 kgmIGC* kgmGameBase::getGC()
 {
   return m_game->m_gc;
+}
+
+kgmIAI* kgmGameBase::getAI()
+{
+  return m_game->m_ai;
 }
 
 kgmIPhysics* kgmGameBase::getPhysics()
@@ -268,7 +276,7 @@ void kgmGameBase::initResources()
     kgm_log() << "Error: No 'Data' in settings.";
     return;
   }
-  
+
   char* tok = strtok((char*) s.data(), ":");
 
   while(tok) {
@@ -319,6 +327,11 @@ bool kgmGameBase::initScript()
     return false;
 
   return true;
+}
+
+void kgmGameBase::initAI()
+{
+  m_ai = new kgmGameAI(this);
 }
 
 void kgmGameBase::initGC()
@@ -811,9 +824,7 @@ bool kgmGameBase::gAppend(kgmUnit* node)
 
   if(m_logic)
   {
-    if(node->isClass(kgmActor::cClass()))
-      m_logic->add((kgmActor*)node);
-    else if(node->isClass(kgmSensor::cClass()))
+    if(node->isClass(kgmSensor::cClass()))
       m_logic->add((kgmSensor*)node);
     else if(node->isClass(kgmTrigger::cClass()))
       m_logic->add((kgmTrigger*)node);
@@ -927,7 +938,7 @@ bool kgmGameBase::loadXml(kgmString& path)
 #define TypeCamera     2
 #define TypeLight      3
 #define TypeMesh       4
-#define TypeActor      5
+#define TypeUnit       5
 #define TypeCollision  6
 #define TypeGameObject 7
 
@@ -967,8 +978,6 @@ bool kgmGameBase::loadXml(kgmString& path)
   kgmMesh*        msh = 0;
   kgmLight*       lgt = 0;
   kgmMaterial*    mtl = 0;
-  kgmActor*       act = 0;
-//  kgmVisual*      vis = 0;
 
   u32             vts = 0;
 
@@ -1030,27 +1039,24 @@ bool kgmGameBase::loadXml(kgmString& path)
       }
       else if(id == "Actor")
       {
-        type = TypeActor;
+        type = TypeUnit;
         kgmString s, sgrp;
 
         xml.attribute("object", s);
         xml.attribute("group", sgrp);
 
-        gob = act = (kgmActor*) gSpawn(s);
+        gob = gSpawn(s);
 
-        if(act)
+        if(gob)
         {
           xml.attribute("name", s);
-          act->setName(s);
+          gob->setName(s);
           xml.attribute("player", s);
 
-          if(s == "on")
-            act->m_gameplayer = true;
+          //if(s == "on")
+          //  act->m_gameplayer = true;
 
-          if(sgrp.length() > 0)
-            act->setGroup(kgmConvert::toInteger(sgrp));
-
-          gAppend((kgmActor*)act);
+          gAppend(gob);
         }
       }
       else if(id == "Unit")
@@ -1187,9 +1193,9 @@ bool kgmGameBase::loadXml(kgmString& path)
         xml.attribute("value", value);
         sscanf(value.data(), "%f %f %f", &v.x, &v.y, &v.z);
 
-        if(act && type == TypeActor)
+        if(gob && type == TypeUnit)
         {
-          act->rotation(v);
+          gob->rotation(v);
         }
         else if(type == TypeLight)
         {
@@ -1210,15 +1216,15 @@ bool kgmGameBase::loadXml(kgmString& path)
         kgmString s;
         xml.attribute("value", s);
 
-        if(act && type == TypeActor)
-          act->setState(s);
+        //if(gob && type == TypeUnit)
+          //gob->setState(s);
       }
       else
       {
         kgmString s;
 
-        if(act && type == TypeActor && xml.attribute("value", s))
-          act->setOption(id, s);
+        if(gob && type == TypeUnit && xml.attribute("value", s))
+          gob->setOption(id, s);
       }
     }
     else if(xstate == kgmXml::XML_TAG_DATA)
@@ -1293,8 +1299,8 @@ bool kgmGameBase::loadXml(kgmString& path)
 
 kgmUnit* kgmGameBase::gSpawn(kgmString a)
 {
-  kgmActor*       actor = 0;
-  kgmString       type = a;
+  kgmUnit*       actor = 0;
+  kgmString      type = a;
   kgmArray<u8>   mem;
 
 #ifdef DEBUG
@@ -1339,7 +1345,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
   a_node->attribute("type", stype);
 
-  actor = new kgmActor(this);
+  actor = new kgmUnit(this);
 
   if(!actor)
     return null;
@@ -1592,7 +1598,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("status",  val);  sscanf(val, "%i", &stat);
       a_node->node(i)->attribute("state",   state);
 
-      actor->add(btn, stat, state, btn1, btn2);
+      //actor->add(btn, stat, state, btn1, btn2);
     }
     else if(id == "InputActive")
     {
@@ -1606,22 +1612,21 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
       a_node->node(i)->attribute("button2", val);  sscanf(val, "%i", &btn2);
       a_node->node(i)->attribute("state",   state);
 
-      actor->add(btn, stat, state, btn1, btn2, true);
+      //actor->add(btn, stat, state, btn1, btn2, true);
     }
     else if(id == "State")
     {
       kgmString s;
-      kgmActor::State* state = new kgmActor::State();
+      kgmIAI::State state;
 
-      a_node->node(i)->attribute("id", state->id);
-      a_node->node(i)->attribute("type", state->type);
-      a_node->node(i)->attribute("switch", state->switchto);
+      a_node->node(i)->attribute("id", state.id);
+      a_node->node(i)->attribute("switch", state.switchto);
 
       a_node->node(i)->attribute("time", s);
-      if(s.length() > 0) sscanf(s, "%i", &state->timeout);
+      if(s.length() > 0) sscanf(s, "%i", &state.timeout);
 
       a_node->node(i)->attribute("priority", s);
-      if(s.length() > 0) sscanf(s, "%i", &state->priopity);
+      if(s.length() > 0) sscanf(s, "%i", &state.priopity);
 
       for(int j = 0; j < a_node->node(i)->nodes(); j++)
       {
@@ -1633,16 +1638,16 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
         if(id == "Sound")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->sound = kgm_ptr<kgmSound>(m_resources->getSound(s));
+          state.sound = m_resources->getSound(s);
         }
         else if(id == "Animation")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->animation = m_resources->getAnimation(s);
+          state.animation = m_resources->getAnimation(s);
           a_node->node(i)->node(j)->attribute("start", s);
-          if(s.length() > 0) sscanf(s, "%i", &state->fstart);
+          if(s.length() > 0) sscanf(s, "%i", &state.fstart);
           a_node->node(i)->node(j)->attribute("end", s);
-          if(s.length() > 0) sscanf(s, "%i", &state->fend);
+          if(s.length() > 0) sscanf(s, "%i", &state.fend);
         }
         else if(id == "Option")
         {
@@ -1652,7 +1657,8 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
           //state->options.add(k,v);
         }
       }
-      actor->m_states.add(state);
+
+      m_ai->addState(actor->getClass(), state);
     }
     else
     {
@@ -1660,7 +1666,7 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
 
       if(a_node->node(i)->attribute("value", val))
       {
-        actor->m_options.set(id, val);
+        //actor->m_options.set(id, val);
       }
     }
   }

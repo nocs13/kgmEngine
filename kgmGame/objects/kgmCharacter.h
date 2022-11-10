@@ -1,12 +1,12 @@
 #ifndef KGMCHARACTER_H
 #define KGMCHARACTER_H
 
-#include "../kgmActor.h"
+#include "../kgmUnit.h"
 
 class kgmGui;
 class kgmIGame;
 
-class kgmCharacter : public kgmActor
+class kgmCharacter : public kgmUnit
 {
   KGM_OBJECT(kgmCharacter);
   KGM_UNIT(kgmCharacter);

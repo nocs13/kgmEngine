@@ -5,6 +5,8 @@ class kgmGameAI: public kgmIAI, public kgmObject
 {
   KGM_OBJECT(kgmGameAI);
 
+  kgmIGame* m_game;
+
   kgmList<Unit>     m_units;
   kgmList<UnitType> m_types;
 
@@ -19,7 +21,7 @@ public:
 
   bool start();
   bool finish();
-  
+
   void clean();
   void update();
   bool addType(kgmString type);

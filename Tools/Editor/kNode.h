@@ -7,7 +7,6 @@
 #include "../../kgmGraphics/kgmMaterial.h"
 #include "../../kgmGraphics/kgmGraphics.h"
 
-#include "../../kgmGame/kgmActor.h"
 #include "../../kgmGame/kgmSensor.h"
 #include "../../kgmGame/kgmTrigger.h"
 
@@ -28,8 +27,8 @@ public:
   union
   {
     kgmMesh*      msh;
+    kgmUnit*      act;
     kgmLight*     lgt;
-    kgmActor*     act;
     kgmSensor*    sns;
     kgmTrigger*   trg;
     kgmMaterial*  mtl;
@@ -60,7 +59,7 @@ public:
     lgt = l;
   }
 
-  kNode(kgmActor* a)
+  kNode(kgmUnit* a)
   {
     typ = ACTOR;
     act = a;

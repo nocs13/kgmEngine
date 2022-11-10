@@ -1079,7 +1079,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int 
   g->setText("State");
   g = guiState = new kgmGuiText(tactor, 51, y_coord, 70, 20);
 
-  kgmString state = ((kgmActor*)node)->getState();
+  kgmString state = "";//((kgmUnit*)node)->getState();
 
   if(state.length())
     g->setText(state);
@@ -1092,7 +1092,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int 
 
   kgmGuiCheck* enable = new kgmGuiCheck(tactor, 1, y_coord, 150, 20);
   enable->setText("Player");
-  enable->setCheck(node == kgmGameApp::gameApp()->game()->getLogic()->getPlayer());
+  //enable->setCheck(node == kgmGameApp::gameApp()->game()->getLogic()->getPlayer());
   //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
 
   y_coord += 23;
@@ -1113,7 +1113,7 @@ void kViewOptionsForActor::showStates()
 
 void kViewOptionsForActor::onState(kgmString state)
 {
-  ((kgmActor*)node)->setState(state);
+  //((kgmUnit*)node)->setState(state);
 
   guiState->setText(state);
 

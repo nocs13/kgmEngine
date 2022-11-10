@@ -3,6 +3,7 @@
 
 kgmGameAI::kgmGameAI(kgmIGame* g)
 {
+  m_game = g;
   m_mutex = kgmThread::mutex_create();
   m_active = false;
 }
@@ -77,7 +78,7 @@ bool kgmGameAI::addState(kgmString type, kgmIAI::State state)
 
   if (st)
     return false;
-  
+
   ut->states.add(state);
 
   return true;
@@ -94,9 +95,9 @@ bool kgmGameAI::addInput(kgmString type, kgmIAI::Input input)
 
   if (i)
     return false;
-  
+
   ut->inputs.add(input);
-  
+
   return true;
 }
 
@@ -159,7 +160,7 @@ kgmGameAI::State* kgmGameAI::getState(UnitType* ut, kgmString s)
 {
   if (!ut)
     return null;
-  
+
   auto i = ut->states.begin();
 
   while(!i.end()) {
@@ -183,7 +184,7 @@ kgmGameAI::Input*  kgmGameAI::getInput(UnitType* ut, u32 in)
       return &(*i);
     i.next();
   }
-  
+
   return null;
 }
 

@@ -1,7 +1,7 @@
 #include "kgmCar.h"
 
 kgmCar::kgmCar(kgmIGame* g)
-  :kgmActor(g)
+  :kgmUnit(g)
 {
 
 }

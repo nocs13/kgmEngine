@@ -10,7 +10,6 @@
 #include "../kgmGraphics/kgmMaterial.h"
 
 #include "kgmUnit.h"
-#include "kgmActor.h"
 #include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
@@ -60,7 +59,7 @@ private:
   bool addUnit(kgmUnit* n);
   bool addMesh(kgmUnit* n);
   bool addLight(kgmUnit* n);
-  bool addActor(kgmActor* n);
+  bool addActor(kgmUnit* n);
   bool addCamera(kgmUnit* n);
   bool addEffect(kgmEffect* n);
   bool addSensor(kgmSensor* n);

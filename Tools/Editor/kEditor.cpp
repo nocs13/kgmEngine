@@ -518,7 +518,7 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
   if(!fdd || fdd->getFile().empty())
     return false;
 
-  kgmActor* actor = new kgmActor(this);
+  kgmUnit* actor = new kgmUnit(this);
 
   actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 

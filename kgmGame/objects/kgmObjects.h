@@ -3,7 +3,6 @@
 
 #include "../kgmIGame.h"
 #include "../kgmUnit.h"
-#include "../kgmActor.h"
 #include "../kgmEffect.h"
 #include "../kgmGameResources.h"
 #include "../../kgmGraphics/kgmMaterial.h"

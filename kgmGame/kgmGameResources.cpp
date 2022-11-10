@@ -11,8 +11,6 @@
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmSystem/kgmProcess.h"
 
-#include "kgmActor.h"
-
 #ifdef ANDROID
   #include <android/asset_manager.h>
   #include <android/asset_manager_jni.h>
@@ -33,7 +31,7 @@ kgmIResources*  kgmGameResources::generate(kgmIGC* gc, kgmIAudio* audio)
     return kgmIResources::m_manager;
 
   kgmIResources::m_manager = new kgmGameResources(gc, audio);
-  
+
   return kgmIResources::m_manager;
 }
 

@@ -105,8 +105,6 @@ void kgmGameLogic::update(u32 milliseconds)
 
 void kgmGameLogic::input(int btn, int state)
 {
-  if(m_gameplayer)
-    m_gameplayer->input(btn, state);
 }
 
 void kgmGameLogic::collide(kgmUnit* src, kgmUnit* dst)

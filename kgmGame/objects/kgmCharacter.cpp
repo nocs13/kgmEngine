@@ -7,7 +7,7 @@
 #include "../../kgmBase/kgmLog.h"
 
 kgmCharacter::kgmCharacter(kgmIGame *g)
-  :kgmActor(g)
+  :kgmUnit(g)
 {
   roll      = 0.0;
   yaaw      = 0.0;
@@ -20,7 +20,7 @@ kgmCharacter::kgmCharacter(kgmIGame *g)
 
 void kgmCharacter::update(u32 ms)
 {
-  kgmActor::update(ms);
+  kgmUnit::update(ms);
 
   /*if(m_visual)
   {
@@ -63,47 +63,6 @@ void kgmCharacter::update(u32 ms)
   if(pos.y >  3000) pos.y = -3000;
 
   //bodyPosition(pos);
-
-  if(m_state)
-  {
-    bool ainput = false;
-
-    if(m_state->id == "idle")
-    {
-      for(int i = 0; i < m_ainputs.size(); i++)
-      {
-        Input inp = m_ainputs[i];
-
-        if(gbtns[inp.input])
-        {
-          ainput = true;
-          setState(inp.state);
-        }
-      }
-    }
-    else if(m_state->id == "walk")
-    {
-    }
-    else if(m_state->id == "jump")
-    {
-    }
-    else if(m_state->id == "die")
-    {
-    }
-
-    if(m_health < 1 && m_state->id != "dying")
-    {
-      setState("dying", true);
-
-      for(int i = 0; i < m_dummies.size(); i++)
-      {
-        kgmUnit* go = (kgmUnit*)m_dummies[i]->linked();
-
-        go->event(this, "die");
-        m_dummies[i]->detach();
-      }
-    }
-  }
 }
 
 void kgmCharacter::action(kgmString &a)

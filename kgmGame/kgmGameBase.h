@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kgmIGame.h"
+#include "kgmGameAI.h"
 #include "kgmGameResources.h"
 #include "kgmGameGraphics.h"
 #include "kgmGamePhysics.h"
@@ -12,7 +13,6 @@
 #include "kgmGameRetention.h"
 
 #include "kgmUnit.h"
-#include "kgmActor.h"
 
 #include "kgmGameSettings.h"
 
@@ -39,6 +39,7 @@ public:
 protected:
   kgmIGC*           m_gc;
   kgmIVideo*        m_video;
+  kgmGameAI*        m_ai;
   kgmGameAudio*     m_audio;
   kgmGameInput*     m_input;
   kgmGameScript*    m_script;
@@ -110,6 +111,7 @@ public:
   ~kgmGameBase();
 
   kgmIGC*            getGC();
+  kgmIAI*            getAI();
   kgmIPhysics*       getPhysics();
   kgmISpawner*       getSpawner();
   kgmIAudio*         getAudio();
@@ -175,6 +177,7 @@ public:
   void  initInput();
   bool  initScript();
   void  initGC();
+  void  initAI();
 
   void guiAdd(kgmGui* g);
 

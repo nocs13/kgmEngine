@@ -6,8 +6,10 @@
 #include "../kgmBase/kgmIGC.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmArrayStream.h"
+#include "../kgmBase/kgmVariable.h"
 #include "../kgmMath/kgmRect2d.h"
 #include "../kgmMedia/kgmSound.h"
+#include "../kgmGraphics/kgmDummy.h"
 #include "../kgmGraphics/kgmPicture.h"
 #include "../kgmGraphics/kgmGraphics.h"
 #include "../kgmGraphics/kgmParticles.h"
@@ -18,9 +20,12 @@
 
 #include "../kgmUtils/kgmTga.h"
 
+#include "../kgmAI/kgmIAI.h"
+
 #include "kgmGameApp.h"
 #include "kgmGameScript.h"
-#include "kgmActor.h"
+
+#include "kgmUnit.h"
 
 kgmGameTools::kgmGameTools()
 {
@@ -1892,7 +1897,7 @@ kgmSkeleton* kgmGameTools::parseSkeleton(kgmXml::Node& node)
   return null;
 }
 
-bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmString id)
+bool kgmGameTools::initActor(kgmIGame* game, kgmUnit *actor, kgmString id)
 {
   kgmArray<u8> mem;
 
@@ -1905,7 +1910,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmString id)
   return kgmGameTools::initActor(game, actor, xml);
 }
 
-bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
+bool kgmGameTools::initActor(kgmIGame* game, kgmUnit *actor, kgmXml &xml)
 {
   if(!game || !actor || !xml.m_node)
     return false;
@@ -2154,7 +2159,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
       a_node->node(i)->attribute("status",  val);  sscanf(val, "%i", &stat);
       a_node->node(i)->attribute("state",   state);
 
-      actor->add(btn, stat, state, btn1, btn2);
+      //actor->add(btn, stat, state, btn1, btn2);
     }
     else if(id == "InputActive")
     {
@@ -2168,22 +2173,21 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
       a_node->node(i)->attribute("button2", val);  sscanf(val, "%i", &btn2);
       a_node->node(i)->attribute("state",   state);
 
-      actor->add(btn, stat, state, btn1, btn2, true);
+      //actor->add(btn, stat, state, btn1, btn2, true);
     }
     else if(id == "State")
     {
       kgmString s;
-      kgmActor::State* state = new kgmActor::State();
+      kgmIAI::State state;
 
-      a_node->node(i)->attribute("id", state->id);
-      a_node->node(i)->attribute("type", state->type);
-      a_node->node(i)->attribute("switch", state->switchto);
+      a_node->node(i)->attribute("id", state.id);
+      a_node->node(i)->attribute("switch", state.switchto);
 
       a_node->node(i)->attribute("time", s);
-      if(s.length() > 0) sscanf(s, "%i", &state->timeout);
+      if(s.length() > 0) sscanf(s, "%i", &state.timeout);
 
       a_node->node(i)->attribute("priority", s);
-      if(s.length() > 0) sscanf(s, "%i", &state->priopity);
+      if(s.length() > 0) sscanf(s, "%i", &state.priopity);
 
       for(int j = 0; j < a_node->node(i)->nodes(); j++)
       {
@@ -2195,17 +2199,17 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         if(id == "Sound")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->sound = null;
-          state->sound = game->getResources()->getSound(s);
+          state.sound = null;
+          state.sound = game->getResources()->getSound(s);
         }
         else if(id == "Animation")
         {
           a_node->node(i)->node(j)->attribute("value", s);
-          state->animation = game->getResources()->getAnimation(s);
+          state.animation = game->getResources()->getAnimation(s);
           a_node->node(i)->node(j)->attribute("start", s);
-          if(s.length() > 0) sscanf(s, "%i", &state->fstart);
+          if(s.length() > 0) sscanf(s, "%i", &state.fstart);
           a_node->node(i)->node(j)->attribute("end", s);
-          if(s.length() > 0) sscanf(s, "%i", &state->fend);
+          if(s.length() > 0) sscanf(s, "%i", &state.fend);
         }
         else if(id == "Option")
         {
@@ -2215,7 +2219,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
         }
         else if(id == "Action")
         {
-          a_node->node(i)->node(j)->attribute("value", state->action.id);
+          //a_node->node(i)->node(j)->attribute("value", state->action.id);
 
           for(int k = 0; k < a_node->node(i)->node(j)->nodes(); k++)
           {
@@ -2255,14 +2259,14 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
                   v= kgmVariable(name, value);
                 }
 
-                state->action.variables.add(v);
+                //state->action.variables.add(v);
               }
             }
           }
         }
       }
 
-      actor->m_states.add(state);
+      //actor->m_states.add(state);
     }
     else
     {
@@ -2270,7 +2274,7 @@ bool kgmGameTools::initActor(kgmIGame* game, kgmActor *actor, kgmXml &xml)
 
       if(a_node->node(i)->attribute("value", val))
       {
-        actor->m_options.set(id, val);
+        //actor->m_options.set(id, val);
       }
     }
   }

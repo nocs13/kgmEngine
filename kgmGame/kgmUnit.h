@@ -6,7 +6,11 @@
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmPhysics/kgmObstacle.h"
 
+#include "../kgmGraphics/kgmSkeleton.h"
+#include "../kgmGraphics/kgmAnimation.h"
+#include "../kgmGraphics/kgmDummy.h"
 #include "../kgmGraphics/kgmIGraphics.h"
+
 #include "../kgmPhysics/kgmIPhysics.h"
 
 #include "kgmPBody.h"
@@ -27,21 +31,6 @@ class kgmUnit : public kgmObject
   KGM_OBJECT(kgmUnit);
 
 public:
-  struct Action;
-
-  typedef void (*ActionCallback)(kgmIGame*, kgmUnit*, Action*);
-
-  struct Action
-  {
-    kgmString id;
-    u32       time;
-    u32       state;
-
-    kgmList<kgmVariable> variables;
-
-    ActionCallback callback = null;
-  };
-
   kgmList<kgmVariable> m_variables;
 
 private:
@@ -67,8 +56,14 @@ private:
 
   kgmUnit* m_parent;
 
-protected:
+  kgmList<kgmDummy*>  m_dummies;
+  kgmTab<kgmString, kgmString> m_options;
 
+  kgmAnimation*       m_animation;
+  kgmSkeleton*        m_skeleton;
+  bool                m_gameplayer;
+
+protected:
   kgmPBody* m_body = null;
   kgmGNode* m_node = null;
 
@@ -263,5 +258,48 @@ public:
   u32 birth()
   {
     return m_birth;
+  }
+
+  void add(kgmDummy* m)
+  {
+    if(m)
+    {
+      m_dummies.add(m);
+    }
+  }
+
+  kgmDummy* dummy(kgmString id)
+  {
+    for(int i = 0; i < m_dummies.length(); i++)
+    {
+      if(m_dummies[i]->m_id == id)
+        return m_dummies[i];
+    }
+
+    return null;
+  }
+
+  void setAnimation(kgmAnimation* a)
+  {
+    if(a)
+    {
+      m_animation = a;
+    }
+  }
+
+  // options
+  void setOption(kgmString key, kgmString value)
+  {
+    m_options.set(key, value);
+  }
+
+  kgmString getOption(kgmString key)
+  {
+    kgmTab<kgmString, kgmString>::iterator i = m_options.get(key);
+
+    if (i.isEnd())
+      return kgmString();
+
+    return i.data();
   }
 };

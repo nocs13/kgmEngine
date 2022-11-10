@@ -1,10 +1,10 @@
 #ifndef KGMCAR_H
 #define KGMCAR_H
 
-#include "../kgmActor.h"
+#include "../kgmUnit.h"
 
 
-class kgmCar: public kgmActor
+class kgmCar: public kgmUnit
 {
   KGM_OBJECT(kgmCar);
   KGM_UNIT(kgmCar);

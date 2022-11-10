@@ -103,7 +103,7 @@ public:
 
     for(u32 i = 0; i < head.entries; i++)
     {
-      Entry entry = {{0}};
+      Entry entry = {0};
       archive.read(entry.name,    64);
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);

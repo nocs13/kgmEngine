@@ -18,7 +18,7 @@
 #include "../kgmPhysics/kgmShapeCollision.h"
 
 class kgmPicture;
-class kgmActor;
+class kgmUnit;
 class kgmGameMap;
 class kgmParticles;
 class kgmIPhysics;
@@ -32,7 +32,7 @@ class kgmGameTools
 public:
  kgmGameTools();
  virtual ~kgmGameTools();
-//  DRAWING 
+//  DRAWING
 // static void gcDrawRect(kgmIGC* gc, int x, int y, int w, int h, u32 col, void* tex);
 // static void gcDrawText(kgmIGC* gc, kgmFont* font, int fw, int fh, int x, int y, int w, int h, u32 col, kgmString& text);
 
@@ -84,6 +84,6 @@ public:
  static kgmSkeleton* parseSkeleton(kgmXml::Node& node);
 
  //UNIT TOOLS
- static bool initActor(kgmIGame* g, kgmActor *a, kgmXml &xml);
- static bool initActor(kgmIGame* g, kgmActor *a, kgmString id);
+ static bool initActor(kgmIGame* g, kgmUnit *a, kgmXml &xml);
+ static bool initActor(kgmIGame* g, kgmUnit *a, kgmString id);
 };

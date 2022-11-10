@@ -59,7 +59,7 @@ bool kgmGameMap::save(kgmString path)
   open(xml);
 
   kgmList<kgmUnit*> units;
-  kgmList<kgmActor*> actors;
+  kgmList<kgmUnit*> actors;
   kgmList<kgmEffect*> effects;
   kgmList<kgmSensor*> sensors;
   kgmList<kgmTrigger*> triggers;
@@ -73,7 +73,7 @@ bool kgmGameMap::save(kgmString path)
     if((*i)->isClass("kgmUnit"))
       units.add((kgmUnit*) (*i));
     else if((*i)->isClass("kgmActor"))
-      actors.add((kgmActor*) (*i));
+      actors.add((kgmUnit*) (*i));
     else if((*i)->isClass("kgmEffect"))
       effects.add((kgmEffect*) (*i));
     else if((*i)->isClass("kgmSensor"))
@@ -105,7 +105,7 @@ bool kgmGameMap::save(kgmString path)
     }
   }
 
-  for(kgmList<kgmActor*>::iterator i = actors.begin(); !i.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = actors.begin(); !i.end(); ++i)
     addActor(*i);
 
   for(kgmList<kgmEffect*>::iterator i = effects.begin(); !i.end(); ++i)
@@ -251,7 +251,7 @@ bool kgmGameMap::addMesh(kgmUnit* n)
   return true;
 }
 
-bool kgmGameMap::addActor(kgmActor* n)
+bool kgmGameMap::addActor(kgmUnit* n)
 {
   if(m_type == OpenRead || !n)
     return false;
@@ -264,10 +264,10 @@ bool kgmGameMap::addActor(kgmActor* n)
     node->m_attributes.add(new kgmXml::Attribute("name", n->getName()));
     node->m_attributes.add(new kgmXml::Attribute("type", "*"));
 
-    if(n->m_gameplayer)
-    {
-      node->m_attributes.add(new kgmXml::Attribute("player", "on"));
-    }
+    //if(n->m_gameplayer)
+    //{
+    //  node->m_attributes.add(new kgmXml::Attribute("player", "on"));
+    //}
 
     addPosition(*node, n->position());
     addRotation(*node, n->rotation());
@@ -582,15 +582,15 @@ kgmUnit* kgmGameMap::next()
         m_xml->attribute("actor", ini);
         m_xml->attribute("player", plr);
 
-        node = new kgmActor(m_game);
+        node = new kgmUnit(m_game);
 
         //kgmGameTools::initActor(m_game, act, ini);
 
         node->setName(id);
         //node.ini = ini;
 
-        if(plr == "on")
-          ((kgmActor*)node)->m_gameplayer = true;
+        //if(plr == "on")
+        //  ((kgmActor*)node)->m_gameplayer = true;
 
         data = null;
 

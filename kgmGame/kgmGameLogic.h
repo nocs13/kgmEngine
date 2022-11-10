@@ -6,7 +6,6 @@
 #include "../kgmBase/kgmObject.h"
 #include "kgmILogic.h"
 #include "kgmUnit.h"
-#include "kgmActor.h"
 #include "kgmEffect.h"
 #include "kgmSensor.h"
 #include "kgmTrigger.h"
@@ -14,12 +13,10 @@
 class kgmGameLogic : public kgmILogic, public kgmObject
 {
 
-  kgmActor* m_gameplayer = null;
-
 public:
   kgmTab<kgmString, kgmUnit*> m_objects;
   //kgmMap<kgmString, kgmUnit*> m_maps;
-
+  kgmUnit* m_gameplayer;
   s32 gcount;
 
 public:
@@ -38,16 +35,6 @@ public:
   virtual void collide(kgmUnit*, kgmUnit*);
 
   virtual kgmUnit* getObject(kgmString&);
-
-  void  setPlayer(kgmActor* gp)
-  {
-    m_gameplayer = gp;
-  }
-
-  kgmActor* getPlayer()
-  {
-    return m_gameplayer;
-  }
 
 private:
   void trush();
