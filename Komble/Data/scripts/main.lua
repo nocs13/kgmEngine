@@ -117,17 +117,15 @@ function main_onfree()
   kgmDelRetention(retent)
 end
 
-function main_onupdate()
-  if state == State_Play then
-    if cam ~= nil then
-      cam:update()
-    end
+function main_onplay()
+  if cam ~= nil then
+    cam:update()
   end
 end
 
 function main_onload()
   kgm_log('On game map load')
-  
+
   c = kgmGameCamera()
 
   if c ~= nil then
@@ -160,7 +158,7 @@ end
 
 function main_onunload()
   kgm_log('On game map unload, clearing map level data')
-  
+
   units  = {}
   player = nil
   cam    = nil
@@ -195,7 +193,7 @@ end
 
 function main_onbutton(key, btn, down)
   state = kgmGameState()
-  
+
   kgm_log('got input event')
   kgm_log('Game state is ' .. tostring(state))
 

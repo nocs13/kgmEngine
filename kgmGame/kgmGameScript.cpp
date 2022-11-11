@@ -146,8 +146,8 @@ void kgmGameScript::clear()
 
 void kgmGameScript::update()
 {
-  if (status)
-    handler->call("main_onupdate", "i", game->timeUpdate());
+  if (status && game->gState() == kgmIGame::State_Play)
+    handler->call("main_onplay", "");
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
@@ -236,6 +236,8 @@ void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
 
 __stdcall void kgmGameScript::onQuit()
 {
+  if (status && handler)
+    handler->call("main_onquit", "");
 }
 
 __stdcall void kgmGameScript::onLoad()
@@ -1152,7 +1154,7 @@ s32 kgmGameScript::kgmRunProcess(void*)
     static kgmString s = proc.out();
 
     game->getScript()->resl("is", 1, s.data());
-  } 
+  }
   else
   {
     game->getScript()->resl("i", -1);
