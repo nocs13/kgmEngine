@@ -121,6 +121,8 @@ function main_onplay()
   if cam ~= nil then
     cam:update()
   end
+
+  kgm_log("lua on play.");
 end
 
 function main_onload()

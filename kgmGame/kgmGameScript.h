@@ -23,11 +23,6 @@ class kgmGameScript: public kgmObject
 
   static char* value;
 
-  kgmThread::Mutex  mutex;
-  kgmThread::TID    mlocker;
-  kgmThread::Thread mworker;
-  bool              mactive;
-
   bool log_lock = true;
   s32  locks[2] = {0};
 
@@ -50,9 +45,6 @@ class kgmGameScript: public kgmObject
     return status;
   }
 
-  void lock();
-  void unlock();
-
   void onButton(s32 key, s32 btn, s32 down);
 
   __stdcall void onQuit();
@@ -68,11 +60,7 @@ class kgmGameScript: public kgmObject
   __stdcall void onSlotGuiButton(kgmGui*, int);
 
  private:
-  static int __worker(kgmGameScript*);
-
   void clear();
-
-  bool locked();
 
   static s32 kgmLog(void*);
 

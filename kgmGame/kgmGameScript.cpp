@@ -35,41 +35,16 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
   handler = new kgmLuaScript(g->getResources());
 
   handler->setX(this);
-
-  mutex = kgmThread::mutex_create(true);
-
-  mworker = kgmThread::Thread(0);
-
-  mactive = false;
 }
 
 kgmGameScript::~kgmGameScript()
 {
   clear();
 
-  kgmThread::mutex_free(mutex);
-
   for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); !i.end(); ++i)
     delete (*i);
 
   delete handler;
-}
-
-int kgmGameScript::__worker(kgmGameScript* gs)
-{
-  while(true) {
-    gs->update();
-    kgmThread::sleep(50);
-
-    kgmThread::mutex_lock(gs->mutex);
-    if (!gs->mactive) {
-      kgmThread::mutex_unlock(gs->mutex);
-      break;
-    }
-    kgmThread::mutex_unlock(gs->mutex);
-  }
-
-  return 0;
 }
 
 void kgmGameScript::init()
@@ -125,23 +100,14 @@ void kgmGameScript::init()
 
   status = handler->load("main");
 
-  if (status) {
+  if (status) 
     handler->call("main_oninit", "");
-    mactive = true;
-    mworker = kgmThread::thread_create((kgmThread::Thread_Function) kgmGameScript::__worker, this);
-  }
 }
 
 void kgmGameScript::clear()
 {
-  if (status) {
-    kgmThread::mutex_lock(mutex);
-    mactive = false;
-    kgmThread::mutex_unlock(mutex);
-
-    kgmThread::thread_join(mworker);
+  if (status) 
     handler->call("main_onfree", "");
-  }
 }
 
 void kgmGameScript::update()
@@ -166,72 +132,10 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
   }
 }
 
-void kgmGameScript::lock()
-{
-  kgmThread::TID thread = kgmThread::id();
-
-  if (mlocker == thread)
-    return;
-
-#ifdef DEBUG2
-  kgm_log() << "kgmGameScript::locking...\n";
-#endif
-
-  kgmThread::mutex_lock(mutex);
-
-#ifdef DEBUG2
-  kgm_log() << "kgmGameScript::locked.\n";
-#endif
-
-  mlocker = kgmThread::id();
-}
-
-void kgmGameScript::unlock()
-{
-  kgmThread::TID thread = kgmThread::id();
-
-  if (mlocker != thread)
-    return;
-
-
-#ifdef DEBUG2
-  kgm_log() << "kgmGameScript::unlocked.\n";
-#endif
-
-  mlocker = -1;
-  kgmThread::mutex_unlock(mutex);
-}
-
-bool kgmGameScript::locked()
-{
-  if (kgmThread::mutex_locked(mutex))
-  {
-    kgm_log() << "Game script Thread is locked.\n";
-
-    return true;
-  }
-
-  kgm_log() << "Game script Thread not locked.\n";
-
-  return false;
-}
-
 void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
 {
-  kgmThread::TID ctd = kgmThread::id();
-
-  if (ctd == mlocker)
-    return;
-
-  lock();
-  locks[0] ++;
-
-
   if (status && handler)
     handler->call("main_onbutton", "iii", key, btn, down);
-
-  unlock();
-  locks[0] --;
 }
 
 __stdcall void kgmGameScript::onQuit()
@@ -326,13 +230,7 @@ __stdcall void kgmGameScript::onSlotGuiButton(kgmGui* s, int n)
   if (!i.isValid())
     return;
 
-  lock();
-  locks[0] ++;
-
   handler->call(i.data(), "i", n);
-
-  unlock();
-  locks[0] --;
 }
 
 s32 kgmGameScript::kgmLog(void*)
