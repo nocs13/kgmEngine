@@ -26,8 +26,8 @@ bool kgmGameAI::start()
   if (m_active)
     return false;
 
-  m_active = true;
   m_thread = kgmThread::thread_create((kgmThread::Thread_Function) fn_thread, this);
+
   return true;
 }
 
@@ -201,6 +201,8 @@ kgmGameAI::Input*  kgmGameAI::getInput(UnitType* ut, u32 in)
 int kgmGameAI::fn_thread(void* m)
 {
   u32 ms = 50;
+
+  ((kgmGameAI*)m)->m_active = true;
 
   while(((kgmGameAI*)m)->m_active)
   {

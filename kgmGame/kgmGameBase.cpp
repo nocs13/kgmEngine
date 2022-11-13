@@ -718,6 +718,9 @@ int kgmGameBase::gLoad(kgmString s)
   if (m_script)
     m_script->onLoad();
 
+  if (m_ai)
+    m_ai->start();
+
   m_state = State_Play;
 
   return m_state;
@@ -726,6 +729,9 @@ int kgmGameBase::gLoad(kgmString s)
 int kgmGameBase::gUnload()
 {
   m_state = State_Clean;
+
+  if (m_ai)
+    m_ai->clean();
 
   if(m_physics)
     m_physics->clear();
