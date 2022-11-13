@@ -126,6 +126,7 @@ kgmGameBase::~kgmGameBase()
     delete m_script;
 
   log("free messenger...");
+
   if (m_messenger)
     m_messenger->release();
 
@@ -575,14 +576,8 @@ int kgmGameBase::gInit()
   log("init game audio...");
   initAudio();
 
-  if (m_audio == null)
-    return 0;
-
   log("open graphics...");
   initGC();
-
-  if (m_gc == null)
-    return 0;
 
   log("init resources...");
   initResources();
@@ -622,6 +617,9 @@ int kgmGameBase::gInit()
 
   if (!initScript())
     return 0;
+
+  log("init ai...");
+  initAI();
 
   m_state = State_Idle;
 

@@ -9,6 +9,7 @@ kgmGameAI::kgmGameAI(kgmIGame* g)
   m_game = g;
   m_mutex = kgmThread::mutex_create();
   m_active = false;
+  m_thread = NULL;
 }
 
 kgmGameAI::~kgmGameAI()
@@ -35,7 +36,8 @@ bool kgmGameAI::finish()
 {
   m_active = false;
 
-  kgmThread::thread_join(m_thread);
+  if ((m_thread != NULL)  && kgmThread::thread_join(m_thread))
+    kgmThread::thread_join(m_thread);
 
   m_thread = NULL;
 
@@ -58,7 +60,7 @@ void kgmGameAI::update()
 
     auto st = m_game->gState();
 
-    if (st == kgmIGame::State_Play)
+    if (s && (st == kgmIGame::State_Play))
       s->call("main_onplay", "");
   }
 }
@@ -218,7 +220,7 @@ int kgmGameAI::fn_thread(void* m)
 
     if (d < ms)
       kgmThread::sleep(ms - d);
-    else 
+    else
       kgmThread::sleep(0);
   }
 

@@ -3,7 +3,7 @@
 #include "../kgmBase/kgmLog.h"
 #include <stdarg.h>
 
-extern "C" 
+extern "C"
 {
   #include <lua/lua.h>
   #include <lua/lualib.h>
@@ -261,7 +261,6 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
 
 void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
 {
-  //fprintf(stderr, "kgmLuaScript::call [%s][%s].\n", name .data(), fmt.data());
   s32 ssize = lua_gettop(handler);
 
   lua_getglobal(handler, name.data());
