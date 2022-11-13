@@ -7,7 +7,6 @@
 #include "kgmGamePhysics.h"
 #include "kgmGameScript.h"
 #include "kgmGameInput.h"
-#include "kgmGameLogic.h"
 #include "kgmGameAudio.h"
 #include "kgmGameMessenger.h"
 #include "kgmGameRetention.h"
@@ -67,7 +66,6 @@ protected:
   s32  m_state;
   bool m_result;
 
-  kgmGameLogic*    m_logic;
   kgmGameGraphics* m_graphics;
 
   kgmList<kgmGui*>    m_guis;
@@ -116,7 +114,6 @@ public:
   kgmISpawner*       getSpawner();
   kgmIAudio*         getAudio();
   kgmIVideo*         getVideo();
-  kgmILogic*         getLogic();
   kgmIInput*         getInput();
   kgmIScript*        getScript();
   kgmIGraphics*      getGraphics();
@@ -173,7 +170,6 @@ public:
   void  initPhysics();
   void  initSystem();
   void  initAudio();
-  void  initLogic();
   void  initInput();
   bool  initScript();
   void  initGC();

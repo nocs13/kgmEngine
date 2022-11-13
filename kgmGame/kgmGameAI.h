@@ -1,3 +1,5 @@
+#pragma once 
+
 #include "../kgmAI/kgmIAI.h"
 #include "../kgmSystem/kgmThread.h"
 
@@ -5,7 +7,7 @@ class kgmGameAI: public kgmIAI, public kgmObject
 {
   KGM_OBJECT(kgmGameAI);
 
-  kgmIGame* m_game;
+  kgmIGame* m_game = null;
 
   kgmList<Unit>     m_units;
   kgmList<UnitType> m_types;

@@ -1,6 +1,5 @@
 #include "kgmTrigger.h"
 #include "kgmIGame.h"
-#include "kgmILogic.h"
 #include "kgmGameApp.h"
 
 kgmTrigger::kgmTrigger(kgmIGame* g)

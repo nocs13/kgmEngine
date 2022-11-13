@@ -1057,7 +1057,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, in
 
   g = new kgmGuiText(tsensor, 51, y_coord, 70, 20);
 
-  g->setText(((kgmSensor*)node)->getTarget());
+  //g->setText(((kgmSensor*)node)->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
 
@@ -1066,7 +1066,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, in
 
 void kViewOptionsForSensor::setTarget(kgmString s)
 {
-  ((kgmSensor*)node)->setTarget(s);
+  //((kgmSensor*)node)->setTarget(s);
 }
 
 kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int h)
@@ -1123,10 +1123,10 @@ void kViewOptionsForActor::onState(kgmString state)
 
 void kViewOptionsForActor::onPlayer(bool state)
 {
-  if(state)
-    kgmGameApp::gameApp()->game()->getLogic()->setPlayer(((kgmActor*)node));
-  else
-    kgmGameApp::gameApp()->game()->getLogic()->setPlayer(null);
+  //if(state)
+  //  kgmGameApp::gameApp()->game()->getLogic()->setPlayer(((kgmActor*)node));
+  //else
+  //  kgmGameApp::gameApp()->game()->getLogic()->setPlayer(null);
 }
 
 kViewOptionsForEffect::kViewOptionsForEffect(kgmUnit* n, int x, int y, int w, int h)
@@ -1147,7 +1147,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, 
 
   g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
-  g->setText(kgmConvert::toString((s32)((kgmTrigger*)node)->getCount()));
+  //g->setText(kgmConvert::toString((s32)((kgmTrigger*)node)->getCount()));
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setChanels));
 
@@ -1158,7 +1158,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, 
 
   g = new kgmGuiText(ttrigger, 51, y_coord, 70, 20);
 
-  g->setText(((kgmTrigger*)node)->getTarget());
+  //g->setText(((kgmTrigger*)node)->getTarget());
   ((kgmGuiText*)g)->setEditable(true);
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setTarget));
 
@@ -1169,12 +1169,12 @@ void kViewOptionsForTrigger::setChanels(kgmString s)
 {
   u32 ch = kgmConvert::toDouble(s);
 
-  ((kgmTrigger*)node)->setCount(ch);
+  //((kgmTrigger*)node)->setCount(ch);
 }
 
 void kViewOptionsForTrigger::setTarget(kgmString s)
 {
-  ((kgmTrigger*)node)->setTarget(s);
+  //((kgmTrigger*)node)->setTarget(s);
 }
 
 kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int w, int h)

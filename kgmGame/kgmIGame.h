@@ -136,7 +136,6 @@ class kgmVisual;
 class kgmIGC;
 class kgmIAudio;
 class kgmIVideo;
-class kgmILogic;
 class kgmIInput;
 class kgmIScript;
 class kgmISpawner;
@@ -236,7 +235,6 @@ public:
   virtual kgmIPhysics*    getPhysics() = 0;
   virtual kgmIAudio*      getAudio() = 0;
   virtual kgmIVideo*      getVideo() = 0;
-  virtual kgmILogic*      getLogic() = 0;
   virtual kgmIInput*      getInput() = 0;
   virtual kgmIScript*     getScript() = 0;
   virtual kgmIGraphics*   getGraphics() = 0;
@@ -254,6 +252,5 @@ protected:
   virtual void  initPhysics() = 0;
   virtual void  initSystem() = 0;
   virtual void  initAudio() = 0;
-  virtual void  initLogic() = 0;
 };
 

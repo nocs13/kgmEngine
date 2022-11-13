@@ -4,7 +4,6 @@
 #include "../kgmBase/kgmConvert.h"
 
 #include "kgmIGame.h"
-#include "kgmILogic.h"
 #include "kgmGameBase.h"
 #include "kgmGameResources.h"
 #include "kgmGameTerrain.h"
@@ -65,8 +64,6 @@ bool kgmGameMap::save(kgmString path)
   kgmList<kgmTrigger*> triggers;
 
   kgmList<kgmUnit*> nodes;
-
-  //m_game->getLogic()->getObjects(nodes);
 
   for(kgmList<kgmUnit*>::iterator i = nodes.begin(); !i.end(); ++i)
   {

@@ -87,7 +87,6 @@ kgmGameBase::kgmGameBase()
   m_graphics  = null;
   m_system    = null;
   m_script    = null;
-  m_logic     = null;
   m_input     = null;
   m_audio     = null;
   m_gc        = null;
@@ -134,11 +133,6 @@ kgmGameBase::~kgmGameBase()
 
   if(m_ai)
     delete m_ai;
-
-  log("free logic...");
-
-  if(m_logic)
-    delete m_logic;
 
   log("free physics...");
 
@@ -221,11 +215,6 @@ kgmIVideo*  kgmGameBase::getVideo()
   return m_game->m_video;
 }
 
-kgmILogic*  kgmGameBase::getLogic()
-{
-  return m_game->m_logic;
-}
-
 kgmIInput*  kgmGameBase::getInput()
 {
   return m_game->m_input;
@@ -305,11 +294,6 @@ void kgmGameBase::initSystem()
 void kgmGameBase::initAudio()
 {
   m_audio = new kgmGameAudio();
-}
-
-void kgmGameBase::initLogic()
-{
-  //m_logic = new kgmGameLogic();
 }
 
 void kgmGameBase::initInput()
@@ -610,9 +594,6 @@ int kgmGameBase::gInit()
   m_graphics = new kgmGameGraphics(m_gc, m_resources);
   m_graphics->resize(m_width, m_height);
 
-  log("init game logic...");
-  initLogic();
-
   log("init game input...");
   initInput();
 
@@ -720,9 +701,6 @@ int kgmGameBase::gLoad(kgmString s)
 
       kgmGraphics::INode* n = u->getNode();
 
-      if (m_logic)
-        m_logic->add(u);
-
       if (m_graphics)
         m_graphics->add(u->getNode());
 
@@ -730,9 +708,6 @@ int kgmGameBase::gLoad(kgmString s)
         m_physics->add(u->getBody());
     }
   }
-
-  if(m_logic)
-    m_logic->build();
 
   if(m_graphics)
     m_graphics->build();
@@ -751,9 +726,6 @@ int kgmGameBase::gLoad(kgmString s)
 int kgmGameBase::gUnload()
 {
   m_state = State_Clean;
-
-  if(m_logic)
-    m_logic->clear();
 
   if(m_physics)
     m_physics->clear();
@@ -821,16 +793,6 @@ bool kgmGameBase::gAppend(kgmUnit* node)
 
   if(m_physics)
     m_physics->add(node->getBody());
-
-  if(m_logic)
-  {
-    if(node->isClass(kgmSensor::cClass()))
-      m_logic->add((kgmSensor*)node);
-    else if(node->isClass(kgmTrigger::cClass()))
-      m_logic->add((kgmTrigger*)node);
-    else if(node->isClass(kgmUnit::cClass()))
-      m_logic->add((kgmUnit*)node);
-  }
 
   m_units.add(node);
 

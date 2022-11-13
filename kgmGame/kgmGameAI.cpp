@@ -1,5 +1,8 @@
 #include "kgmGameAI.h"
 #include "kgmUnit.h"
+#include "kgmGameBase.h"
+
+#include "../kgmSystem/kgmTime.h"
 
 kgmGameAI::kgmGameAI(kgmIGame* g)
 {
@@ -50,7 +53,14 @@ void kgmGameAI::clean()
 
 void kgmGameAI::update()
 {
+  if (m_game) {
+    auto s = m_game->getScript();
 
+    auto st = m_game->gState();
+
+    if (st == kgmIGame::State_Play)
+      s->call("main_onplay", "");
+  }
 }
 
 bool kgmGameAI::addType(kgmString type)
@@ -190,12 +200,24 @@ kgmGameAI::Input*  kgmGameAI::getInput(UnitType* ut, u32 in)
 
 int kgmGameAI::fn_thread(void* m)
 {
+  u32 ms = 50;
+
   while(((kgmGameAI*)m)->m_active)
   {
+    u32 t = kgmTime::getTicks();
+
     kgmThread::mutex_lock(((kgmGameAI*)m)->m_mutex);
+
     ((kgmGameAI*)m)->update();
+
     kgmThread::mutex_unlock(((kgmGameAI*)m)->m_mutex);
-    kgmThread::sleep(0);
+
+    u32 d = kgmTime::getTicks() - t;
+
+    if (d < ms)
+      kgmThread::sleep(ms - d);
+    else 
+      kgmThread::sleep(0);
   }
 
   return 0;

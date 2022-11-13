@@ -1,6 +1,5 @@
 #include "kgmSensor.h"
 #include "kgmIGame.h"
-#include "kgmILogic.h"
 #include "kgmGameApp.h"
 
 kgmSensor::kgmSensor(kgmIGame* g)
