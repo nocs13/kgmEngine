@@ -119,10 +119,16 @@ end
 
 function main_onplay()
   if player ~= nil then
-    --player.input()
+    player:input()
   end
 
   kgm_log("lua on play.");
+end
+
+function main_onpause()
+  guiShowPause()
+
+  kgm_log("lua on pause.");
 end
 
 function main_onload()
@@ -190,34 +196,4 @@ function main_onremove(u)
       units[i] = nil
     end
   end
-end
-
-function main_onbutton(key, btn, down)
-  state = kgmGameState()
-
-  kgm_log('got input event')
-  kgm_log('Game state is ' .. tostring(state))
-
-  if key == KEY_ESCAPE and down == 0 then
-    if state == State_Play then
-      kgm_log('State is play')
-
-      kgmGamePause()
-
-      state = kgmGameState()
-
-      if state == State_Pause then
-        kgm_log('gui show pause')
-        guiShowPause()
-      end
-    end
-  end
-
-  if down ~= 0 then
-    inputkey = key
-  elseif down == 0 then
-    inputkey = 0
-  end
-
-  kgm_log('Setting camera state depend of input.')
 end

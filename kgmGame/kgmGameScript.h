@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../kgmScript/kgmIScript.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmObject.h"
@@ -45,10 +47,10 @@ class kgmGameScript: public kgmObject
     return status;
   }
 
-  void onButton(s32 key, s32 btn, s32 down);
-
   __stdcall void onQuit();
   __stdcall void onLoad();
+  __stdcall void onPlay();
+  __stdcall void onPause();
   __stdcall void onUnload();
   __stdcall void onInsert(kgmUnit*);
   __stdcall void onRemove(kgmUnit*);

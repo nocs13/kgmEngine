@@ -13,7 +13,9 @@ public:
   virtual bool  args(kgmString fmt, ...)  = 0;
   virtual bool  resl(kgmString fmt, ...)  = 0;
   virtual bool  reslarr(kgmString fmt, void*, s32 cnt)   = 0;
-  virtual void* call(kgmString name, kgmString fmt, ...) = 0;
+
+  // For evade string alloc/delete.
+  virtual void* call(const s8* name, const s8* fmt, ...) = 0;
 
   virtual void  setX(void*) = 0;
   virtual void* getX()      = 0;

@@ -433,8 +433,8 @@ void kgmGameBase::onKeyUp(int k)
 
   m_keys[k] = 0;
 
-  if (m_script)
-    m_script->onButton(k, m_keymap[k], 0);
+  if (m_script && (k == KEY_ESCAPE))
+    m_script->onPause();
 }
 
 void kgmGameBase::onKeyDown(int k)
@@ -450,9 +450,6 @@ void kgmGameBase::onKeyDown(int k)
     return;
 
   m_keys[k] = 1;
-
-  if (m_script)
-    m_script->onButton(k, m_keymap[k], 1);
 }
 
 void kgmGameBase::onMsLeftUp(int k, int x, int y)

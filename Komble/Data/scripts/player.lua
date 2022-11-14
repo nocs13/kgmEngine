@@ -34,8 +34,10 @@ end
 function Player:input()
   if kgmKeyState(KEY_UP) == 1 then
     self.c:move(1)
+    kgm_log("move forward.");
   elseif kgmKeyState(KEY_DOWN) == 1 then
     self.c:move(-1)
+    kgm_log("move backward.");
   elseif kgmKeyState(KEY_LEFT) == 1 then
     self.c:turn(1)
   elseif kgmKeyState(KEY_RIGHT) == 1 then

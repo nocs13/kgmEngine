@@ -259,18 +259,18 @@ bool kgmLuaScript::reslarr(kgmString fmt, void *a, s32 c)
   return true;
 }
 
-void* kgmLuaScript::call(kgmString name, kgmString fmt, ...)
+void* kgmLuaScript::call(const s8* name, const s8* fmt, ...)
 {
   s32 ssize = lua_gettop(handler);
 
-  lua_getglobal(handler, name.data());
+  lua_getglobal(handler, name);
 
   if( !lua_isfunction(handler, -1) )
     return (void *) -1;
 
   int args = 0;
   int nres = 0;
-  char* f = fmt.data();
+  char* f = (char*) fmt;
   va_list vl;
   va_start(vl, fmt);
 

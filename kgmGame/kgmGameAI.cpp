@@ -1,6 +1,7 @@
 #include "kgmGameAI.h"
 #include "kgmUnit.h"
 #include "kgmGameBase.h"
+#include "kgmGameScript.h"
 
 #include "../kgmSystem/kgmTime.h"
 
@@ -56,12 +57,14 @@ void kgmGameAI::clean()
 void kgmGameAI::update()
 {
   if (m_game) {
-    auto s = m_game->getScript();
+    auto s = (kgmGameScript*) m_game->getScript();
 
     auto st = m_game->gState();
 
     if (s && (st == kgmIGame::State_Play))
-      s->call("main_onplay", "");
+    {
+      s->onPlay();
+    }
   }
 }
 

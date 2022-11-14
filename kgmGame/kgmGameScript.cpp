@@ -100,13 +100,13 @@ void kgmGameScript::init()
 
   status = handler->load("main");
 
-  if (status) 
+  if (status)
     handler->call("main_oninit", "");
 }
 
 void kgmGameScript::clear()
 {
-  if (status) 
+  if (status)
     handler->call("main_onfree", "");
 }
 
@@ -132,12 +132,6 @@ void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
   }
 }
 
-void kgmGameScript::onButton(s32 key, s32 btn, s32 down)
-{
-  if (status && handler)
-    handler->call("main_onbutton", "iii", key, btn, down);
-}
-
 __stdcall void kgmGameScript::onQuit()
 {
   if (status && handler)
@@ -148,6 +142,20 @@ __stdcall void kgmGameScript::onLoad()
 {
   if (status && handler)
     handler->call("main_onload", "");
+}
+
+__stdcall void kgmGameScript::onPlay()
+{
+  if (handler)
+  {
+    handler->call("main_onplay", "");
+  }
+}
+
+__stdcall void kgmGameScript::onPause()
+{
+  if (status && handler)
+    handler->call("main_onpause", "");
 }
 
 __stdcall void kgmGameScript::onUnload()
