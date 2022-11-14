@@ -12,9 +12,9 @@ maps   = {}
 units  = {}
 iunit  = 0
 
-player = nil
 
 cam = nil
+player = nil
 
 state = 0
 
@@ -118,8 +118,8 @@ function main_onfree()
 end
 
 function main_onplay()
-  if cam ~= nil then
-    cam:update()
+  if player ~= nil then
+    --player.input()
   end
 
   kgm_log("lua on play.");
@@ -128,12 +128,11 @@ end
 function main_onload()
   kgm_log('On game map load')
 
-  c = kgmGameCamera()
+  cam = Camera:new(kgmGameCamera())
 
-  if c ~= nil then
-    kgm_log('Map have camera')
-    cam = Camera:new(c)
-  end
+  player = Player:new(nil, nil)
+
+  player:setCamera(cam)
 
   it = kgmUnitIterator()
 
@@ -221,9 +220,4 @@ function main_onbutton(key, btn, down)
   end
 
   kgm_log('Setting camera state depend of input.')
-
-  if cam ~= nil and state == State_Play then
-    kgm_log('Have camera.')
-    cam:button(key, down)
-  end
 end
