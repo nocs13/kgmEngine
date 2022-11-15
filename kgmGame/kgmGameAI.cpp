@@ -57,13 +57,13 @@ void kgmGameAI::clean()
 void kgmGameAI::update()
 {
   if (m_game) {
-    auto s = (kgmGameScript*) m_game->getScript();
+    kgmIScript* s = m_game->getScript();
 
     auto st = m_game->gState();
 
     if (s && (st == kgmIGame::State_Play))
     {
-      s->onPlay();
+      s->call("main_onplay", "");
     }
   }
 }

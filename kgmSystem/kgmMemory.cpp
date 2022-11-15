@@ -1,8 +1,8 @@
 #include "kgmMemory.h"
 #include "../kgmBase/kgmLog.h"
 
-//#undef DEBUG
-#undef DEBUG_XXX
+#undef DEBUG
+//#undef DEBUG_XXX
 
 #define ADDOBJS 128
 

@@ -112,8 +112,6 @@ void kgmGameScript::clear()
 
 void kgmGameScript::update()
 {
-  if (status && game->gState() == kgmIGame::State_Play)
-    handler->call("main_onplay", "");
 }
 
 void kgmGameScript::setSlot(kgmGui* gui, kgmString call)
