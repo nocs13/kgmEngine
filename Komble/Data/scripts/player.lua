@@ -32,15 +32,20 @@ function Player:getCamera(c)
 end
 
 function Player:input()
-  if kgmKeyState(KEY_UP) == 1 then
+  if (kgmKeyState(KEY_UP) == 1) or (kgmKeyState(KEY_W) == 1) then
     self.c:move(1)
     kgm_log("move forward.");
-  elseif kgmKeyState(KEY_DOWN) == 1 then
+  end
+  if (kgmKeyState(KEY_DOWN) == 1) or (kgmKeyState(KEY_S) == 1) then
     self.c:move(-1)
     kgm_log("move backward.");
-  elseif kgmKeyState(KEY_LEFT) == 1 then
+  end
+  if (kgmKeyState(KEY_LEFT) == 1)  or (kgmKeyState(KEY_A) == 1) then
     self.c:turn(1)
-  elseif kgmKeyState(KEY_RIGHT) == 1 then
+    kgm_log("turn left.");
+  end
+  if (kgmKeyState(KEY_RIGHT) == 1)  or (kgmKeyState(KEY_D) == 1) then
     self.c:turn(-1)
+    kgm_log("turn right.");
   end
 end
