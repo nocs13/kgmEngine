@@ -3,6 +3,9 @@
  #include <windows.h>
  #include <GL/gl.h>
  #include <GL/glext.h>
+#elif defined DARWIN
+ #include <GL/gl.h>
+ #include <GL/glext.h>
 #elif defined LINUX
  #include <X11/Xlib.h>
  #include <X11/keysym.h>
@@ -28,6 +31,9 @@
  #define GLEXT_FN(func, type)
 #endif
 
+#ifdef DARWIN
+ #define GLEXT_FN(func, type)
+#endif
 
 #ifndef GL_FRAMEBUFFER_COMPLETE
  #define GL_FRAMEBUFFER_COMPLETE GL_FRAMEBUFFER_COMPLETE_EXT

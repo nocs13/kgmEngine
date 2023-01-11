@@ -137,6 +137,7 @@ bool kgmThread::thread_priority(kgmThread::Thread th, kgmThread::Priority pr)
 
   SetThreadPriority(th, policy);
 
+#elif defined DARWIN
 #else
   int policy = 0;
   int prio = 0;

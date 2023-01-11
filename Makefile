@@ -45,10 +45,10 @@ $(objects) : %.o : %.cpp %.h
 $(OUT_A): $(objects)
 	$(AR) -r -c -s $(OUT_A) $(objects)
 
-$(OUT_SO): $(OUT_A)
-	$(CC) -shared -o $(OUT_SO) -Wl,--whole-archive $(OUT_A) -Wl,--no-whole-archive $(FLGS) $(DEFS) $(DIRS) $(LIBS)
-#$(OUT_SO): $(objects)
-#	$(CC) -shared -o $(OUT_SO) $(objects) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+#$(OUT_SO): $(OUT_A)
+#	$(CC) -shared -o $(OUT_SO) -Wl,--whole-archive $(OUT_A) -Wl,--no-whole-archive $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+$(OUT_SO): $(objects)
+	$(CC) -shared -o $(OUT_SO) $(objects) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 android_static:
 	echo 'Start android static library build'

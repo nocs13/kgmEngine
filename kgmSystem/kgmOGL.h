@@ -32,6 +32,19 @@
 
 typedef u32 GLu32;
 
+#elif defined DARWIN
+
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+#ifndef GL_OBJECT_COMPILE_STATUS
+#define GL_OBJECT_COMPILE_STATUS GL_OBJECT_COMPILE_STATUS_ARB
+#endif
+
+#ifndef GL_OBJECT_LINK_STATUS
+#define GL_OBJECT_LINK_STATUS GL_OBJECT_LINK_STATUS_ARB
+#endif
+
 #else
 
 #include <GL/gl.h>
@@ -43,8 +56,8 @@ typedef u32 GLu32;
 
 #ifndef GL_OBJECT_LINK_STATUS
 #define GL_OBJECT_LINK_STATUS GL_OBJECT_LINK_STATUS_ARB
-
 #endif
+
 #endif
 
 #ifdef ANDROID
@@ -123,6 +136,7 @@ private:
   EGLContext context;
   EGLDisplay display;
 
+#elif defined(DARWIN)
 #else
 
   GLXContext   m_glctx  = null;

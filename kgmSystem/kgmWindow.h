@@ -24,6 +24,8 @@ void kgmUnregisterWindowClass();
 #include <android/keycodes.h>
 u16 keyTranslate(int key);
 
+#elif defined DARWIN
+
 #else
 
 #include <unistd.h>
@@ -67,6 +69,9 @@ public:
   void* m_wnd;
   int   m_wRect[4];
 
+#elif defined(DARWIN)
+  void* m_wnd;
+  int   m_wRect[4];
 #else
 
   Display             *m_dpy;
@@ -113,6 +118,7 @@ public:
 #ifdef WIN32
   static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
 #elif defined(ANDROID)
+#elif defined(DARWIN)
 #else
   static int WndProc(kgmWindow*, XEvent*);
 #endif

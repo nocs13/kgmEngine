@@ -6,7 +6,7 @@
 #include "kgmLib.h"
 
 #ifndef VULKAN
-#define VULKAN
+//#define VULKAN
 #endif
 
 #ifdef VULKAN

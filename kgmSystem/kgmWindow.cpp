@@ -6,6 +6,7 @@
 #include "../kgmBase/kgmLog.h"
 
 #ifdef WIN32
+
 inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
 {
   int mx = LOWORD(lPar);
@@ -697,6 +698,8 @@ kgmWindow::kgmWindow()
 
   #elif defined(ANDROID)
 
+  #elif defined(DARWIN)
+  
   #else
 
   m_dpy = null;
@@ -733,6 +736,14 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
 #elif defined(ANDROID)
 
+  kgm_log() << "Init window rect: " << w << " " << h << ".";
+  m_wRect[0] = x;
+  m_wRect[1] = y;
+  m_wRect[2] = w;
+  m_wRect[3] = h;
+
+#elif defined(DARWIN)
+  
   kgm_log() << "Init window rect: " << w << " " << h << ".";
   m_wRect[0] = x;
   m_wRect[1] = y;
@@ -897,6 +908,8 @@ kgmWindow::~kgmWindow()
 
 #elif defined(ANDROID)
 
+#elif defined(DARWIN)
+  
 #else
 
   /*XDestroyWindow(m_dpy, m_wnd);
@@ -996,6 +1009,8 @@ void kgmWindow::fullscreen(bool fs)
 
 #elif defined(ANDROID)
 
+#elif defined(DARWIN)
+  
 #else
 
   XEvent xev;
@@ -1036,6 +1051,7 @@ void kgmWindow::show(bool sh)
 
 #elif defined(ANDROID)
 
+#elif defined(DARWIN)
 #else
 
   if(sh)
@@ -1073,6 +1089,7 @@ void kgmWindow::loop()
 
 #elif defined(ANDROID)
 
+#elif defined(DARWIN)
 #else
 
   XEvent evt;
@@ -1124,6 +1141,7 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h)
   w = m_wRect[2];
   h = m_wRect[3];
 
+#elif defined(DARWIN)
 #elif defined(LINUX)
 
   unsigned int  width, height, border, depth;
@@ -1151,6 +1169,7 @@ void kgmWindow::setRect(int x, int y, int w, int h)
   m_wRect[3] = h;
   onResize(w, h);
 
+#elif defined(DARWIN)
 #else
 
   XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
@@ -1171,7 +1190,7 @@ void kgmWindow::setMouse(int x, int y)
   SetCursorPos(pt.x, pt.y);
 
 #elif defined(ANDROID)
-
+#elif defined(DARWIN)
 #else
 
   int cx, cy, w, h;
@@ -1191,7 +1210,7 @@ void kgmWindow::getMouse(int& x, int& y)
   // ScreenToClient(m_hWnd, &pt);
   // SetCursorPos(pt.x, pt.y);
 #elif defined(ANDROID)
-
+#elif defined(DARWIN)
 #else
 
 #endif
@@ -1205,6 +1224,7 @@ void kgmWindow::setTitle(char* title)
 
 #elif defined(ANDROID)
 
+#elif defined(DARWIN)
 #else
 
   XStoreName(m_dpy, m_wnd, title);

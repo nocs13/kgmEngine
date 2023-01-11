@@ -330,14 +330,16 @@ void kgmGameBase::initGC()
   kgm_log() << "Choosed GC is " << (char*) v << ".\n";
 
   if (v == "VK") {
+    #ifndef DARWIN
     m_gc = new kgmVulkan(this);
 
     if(m_gc->gcError()) {
       kgm_log() << "Vulkan initialization failed.\n";
       delete m_gc;
-
+      
       m_gc = nullptr;
     }
+    #endif
   } else if (v == "OGL") {
     m_gc = new kgmOGL(this);
   } else {

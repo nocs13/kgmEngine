@@ -28,5 +28,5 @@ android: clean
 	make -C android
 
 shaders:
-	#./Data/shaders/glsl2spirv.sh
+#	./Data/shaders/glsl2spirv.sh
 	echo ""

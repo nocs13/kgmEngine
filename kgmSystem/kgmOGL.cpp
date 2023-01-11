@@ -146,6 +146,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
   //eglSwapBuffers(display, surface);
 
+#elif defined(DARWIN)
 #else
 
   int rx, ry, rw, rh;
@@ -319,6 +320,7 @@ kgmOGL::~kgmOGL()
   context = EGL_NO_CONTEXT;
   surface = EGL_NO_SURFACE;
 
+#elif defined(DARWIN)
 #else
 
   if (m_glctx)
@@ -504,6 +506,7 @@ void kgmOGL::gcRender()
 
   eglSwapBuffers(m_wnd->display, m_wnd->surface);
 
+#elif defined(DARWIN)
 #else
 
   glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);

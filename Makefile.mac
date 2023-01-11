@@ -24,6 +24,12 @@ ifeq ($(OS), Linux)
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	LIBS = -llua -lpthread -lX11 -lGL -ldl
 	RM = rm -f
+else ($(OS), Darwin)
+	OS = Darwin
+	DEFS =  -DDEBUG -DDARWIN -DGPUSHADERS
+	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
+	LIBS = -llua -lpthread -ldl -framework OpenGL
+	RM = rm -f
 else
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
 	CC   = ccache g++

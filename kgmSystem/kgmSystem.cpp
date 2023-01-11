@@ -32,6 +32,14 @@
 #include <pwd.h>
 #endif
 
+#ifdef DARWIN
+#include <unistd.h>
+#include <dirent.h>
+#include <pwd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 #ifndef S_ISDIR
 #define S_ISDIR(mode)  (((mode) & _S_IFMT) == _S_IFDIR)
 #endif
@@ -275,7 +283,7 @@ int kgmSystem::getProcessPath(kgmString &path)
 
 #ifdef _WIN32
 #include <windows.h>
-#elif MACOS
+#elif DARWIN
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #else
@@ -290,7 +298,7 @@ int getNumCpuCores()
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
     cores = sysinfo.dwNumberOfProcessors;
-#elif MACOS
+#elif DARWIN
     int nm[2];
     size_t len = 4;
     uint32_t count;
@@ -347,6 +355,7 @@ bool kgmSystem::getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h)
   bool result = true;
 
 #ifdef WIN32
+#elif defined(DARWIN)
 #else
   Display *display;
   Atom     actual_type;
