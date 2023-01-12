@@ -55,6 +55,9 @@ public:
   //DEPTH
   void  gcDepth(bool en, bool mask, u32 mode);
 
+  // SCISSOR
+  void  gcScissor(bool on, int x, int y, int w, int h);
+
   //CLIP PLANE
   void  gcClipPlane(bool, u32 id, f64 plane[4]);
 

@@ -64,6 +64,10 @@ void kgmGCNone::gcDepth(bool depth, bool mask, u32 mode)
 {
 }
 
+void  kgmGCNone::gcScissor(bool on, int x, int y, int w, int h)
+{
+}
+
 gchandle kgmGCNone::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
 {
   return null;

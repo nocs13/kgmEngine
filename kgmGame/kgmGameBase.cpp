@@ -9,10 +9,11 @@
 
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmSystem/kgmThread.h"
-#include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmOAL.h"
 #include "../kgmSystem/kgmOSL.h"
 #include "../kgmSystem/kgmTime.h"
+#include "../kgmSystem/kgmOGL.h"
+#include "../kgmSystem/kgmMetal.h"
 #include "../kgmSystem/kgmVulkan.h"
 #include "../kgmSystem/kgmGCNone.h"
 
@@ -329,8 +330,22 @@ void kgmGameBase::initGC()
 
   kgm_log() << "Choosed GC is " << (char*) v << ".\n";
 
+  #ifdef DARWIN
+  
+  if (v == "MT") {
+    m_gc = new kgmMetal(this);
+
+    if(m_gc->gcError()) {
+      kgm_log() << "Metal initialization failed.\n";
+      delete m_gc;
+      
+      m_gc = nullptr;
+    }
+  }
+    
+  #else
+    
   if (v == "VK") {
-    #ifndef DARWIN
     m_gc = new kgmVulkan(this);
 
     if(m_gc->gcError()) {
@@ -339,12 +354,14 @@ void kgmGameBase::initGC()
       
       m_gc = nullptr;
     }
-    #endif
   } else if (v == "OGL") {
     m_gc = new kgmOGL(this);
-  } else {
-    //m_gc = new kgmGCNone(this);
   }
+  
+  #endif
+
+  if (m_gc == nullptr)
+    m_gc = new kgmGCNone();
 }
 
 void kgmGameBase::initSettings()
