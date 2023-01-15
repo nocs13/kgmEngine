@@ -26,12 +26,14 @@ NSLeftMouseDown: NSEventTypeLeftMouseDown
 NSLeftMouseDownMask: NSEventMaskLeftMouseDown
 NSLeftMouseDragged: NSEventTypeLeftMouseDragged
 NSLeftMouseUp: NSEventTypeLeftMouseUp
-NSMiniaturizableWindowMask: NSWindowStyleMaskMiniaturizable
+NSMiniaturizableWindowMask: NSWindowStyleMaskMinia[Oturizable
 NSMiniControlSize: NSControlSizeMini
 NSMouseEntered: NSEventTypeMouseEntered
 NSMouseExited: NSEventTypeMouseExited
 NSMouseMoved: NSEventTypeMouseMoved
 */
+
+NSWindow* __mainWnd = nil;
 
 @interface KView : NSView    // interface of KView class
 {                               // (subclass of NSView class)
@@ -49,18 +51,30 @@ NSMouseMoved: NSEventTypeMouseMoved
 }
 @end
 
-void* __kgmOpenWindow(const char* title, int x, int y, int w, int h)
+@interface KWcontrol: NSObject<NSApplicationDelegate, NSWindowDelegate>
 {
-  NSRect frame = NSMakeRect(0, 0, 200, 200);
-//  NSWindow* wnd  = [[[NSWindow alloc] initWithContentRect:frame
-//                      styleMask:NSBorderlessWindowMask
-//                      backing:NSBackingStoreBuffered
-//                      defer:NO] autorelease];
+}
+@end
+
+@implementation KWcontrol         // implementation of window control class
+-(void)windowWillClose:(NSNotification *)notification
+{
+    [NSApp terminate:self];
+}
+@end
+
+void* __kgmOpenMainWindow(const char* title, int x, int y, int w, int h)
+{
+  if (__mainWnd != nil)
+    return __mainWnd;
+  
+  NSRect frame = NSMakeRect(x, y, w, h);
   NSWindow* wnd = [ [NSWindow alloc]              // create the window
 		    initWithContentRect: frame
                     styleMask:NSWindowStyleMaskTitled 
                     |NSWindowStyleMaskClosable
 		    |NSWindowStyleMaskMiniaturizable
+                    |NSWindowStyleMaskResizable						  
                     backing:NSBackingStoreBuffered
                     defer:NO ];
   NSString* str = [NSString stringWithUTF8String:title];
@@ -71,9 +85,23 @@ void* __kgmOpenWindow(const char* title, int x, int y, int w, int h)
   NSView* view = [[[KView alloc] initWithFrame:frame] autorelease];
 
   [wnd setContentView:view ];    // set window's view
-  //[wnd setDelegate:view ];       // set window's delegate  
-  [wnd makeKeyAndOrderFront:NSApp];
-  [wnd setIsVisible:true];
+
+  KWcontrol* cwnd = [[[KWcontrol alloc] init] autorelease];
+  [wnd setDelegate:cwnd ];       // set window's delegate
+  
+  [wnd makeKeyAndOrderFront:nil];
+  [wnd setIsVisible:YES];
+
+  __mainWnd = wnd;
   
   return (void*) wnd;
+}
+
+
+void __kgmAlert(const char* msg)
+{
+  NSAlert* alert = [[[NSAlert alloc] init] autorelease];
+  NSString* str = [[NSString stringWithUTF8String:msg] autorelease];
+  [alert setMessageText:str];
+  [alert runModal];
 }
