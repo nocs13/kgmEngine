@@ -59,7 +59,8 @@ NSWindow* __mainWnd = nil;
 @implementation KWcontrol         // implementation of window control class
 -(void)windowWillClose:(NSNotification *)notification
 {
-    [NSApp terminate:self];
+    //[NSApp terminate:self];
+    [NSApp stop:self];
 }
 @end
 
