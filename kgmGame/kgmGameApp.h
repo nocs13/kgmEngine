@@ -77,6 +77,12 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_##proj##_##proj##Lib_onGyroscope(JNIEn
 }
 #endif
 
+#ifdef DARWIN
+void kgm_darwin_init(int width, int height);
+void kgm_darwin_idle();
+void kgm_darwin_quit();
+#endif
+
 
 class kgmGameApp: public kgmApp
 {
@@ -138,5 +144,8 @@ public:
   void android_onTouch(JNIEnv* env, jobject obj,  jint act, jint x, jint y);
   void android_onCompass(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z);
   void android_onGyroscope(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z);
+#endif
+  
+#ifdef DARWIN
 #endif
 };
