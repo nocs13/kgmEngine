@@ -198,33 +198,3 @@ void kgm_android_init(JNIEnv * env, jobject am)
 }
 
 #endif
-
-#ifdef DARWIN
-#include "kgmGameBase.h"
-
-static kgmIGame* g_game = null;
-
-void kgm_darwin_init(int width, int height)
-{
-  if (g_game != null)
-    return;
-
-  g_game = new kgmGameBase();
-  
-  if(g_game)
-    g_game->getWindow()->setRect(0, 0, width, height);
-}
-
-void kgm_darwin_idle()
-{
-  if (g_game)
-    g_game->getWindow()->onIdle();
-}
-
-void kgm_darwin_quit()
-{
-  delete g_game;
-
-  g_game = null;
-}
-#endif

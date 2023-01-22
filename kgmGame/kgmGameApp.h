@@ -77,13 +77,6 @@ JNIEXPORT void JNICALL Java_com_kgmEngine_##proj##_##proj##Lib_onGyroscope(JNIEn
 }
 #endif
 
-#ifdef DARWIN
-void kgm_darwin_init(int width, int height);
-void kgm_darwin_idle();
-void kgm_darwin_quit();
-#endif
-
-
 class kgmGameApp: public kgmApp
 {
 public:

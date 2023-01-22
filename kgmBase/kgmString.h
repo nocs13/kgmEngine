@@ -318,7 +318,7 @@ public:
     hexStr.alloc(bufLen * 2);
 
     for (int i = 0; i < bufLen; i++)
-      sprintf(&hexStr.data()[2 * i], "%.2x", (u8) buf[i]);
+      snprintf(&hexStr.data()[2 * i], sizeof(T) * 2, "%.2x", (u8) buf[i]);
  
     return true; 
   } 

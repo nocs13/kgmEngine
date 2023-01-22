@@ -127,8 +127,8 @@ public:
 
     text.alloc(30);
 
-    sprintf(text.data(), "%.8s %07.3f", string + 11,
-                (double) tv.tv_usec / 1000);
+    snprintf(text.data(), 29, "%.8s %07.3f", string + 11,
+	     (double) tv.tv_usec / 1000);
 
     return text;
   }

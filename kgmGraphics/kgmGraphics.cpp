@@ -1133,9 +1133,9 @@ void kgmGraphics::shaderSetGeneral()
 
     kgmLight* l = (kgmLight*) n->getNodeObject();
 
-    sprintf(lcolor, "g_sLights[%d].col", i);
-    sprintf(lposition, "g_sLights[%d].pos", i);
-    sprintf(ldirection, "g_sLights[%d].dir", i);
+    snprintf(lcolor, sizeof(lcolor) - 1, "g_sLights[%d].col", i);
+    snprintf(lposition, sizeof(lposition) - 1, "g_sLights[%d].pos", i);
+    snprintf(ldirection, sizeof(ldirection) - 1, "g_sLights[%d].dir", i);
 
     vec3 col = l->color();
     vec3 pos = n->getNodePosition();

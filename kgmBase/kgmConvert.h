@@ -36,11 +36,12 @@ class kgmConvert: public kgmObject
     char* a = new char[64];
     memset(a, 0, 64);
     if(hex)
-      sprintf(a, "%x", i);
+      snprintf(a, 63, "%x", i);
     else
-      sprintf(a, "%i", i);
+      snprintf(a, 63, "%i", i);
     kgmString s(a, strlen(a));
     delete [] a;
+    
     return s;
   }
 
@@ -48,20 +49,23 @@ class kgmConvert: public kgmObject
   {
     char* a = new char[64];
     memset(a, 0, 64);
+    
     if(hex)
-      sprintf(a, "%x", i);
+      snprintf(a, 63, "%x", i);
     else
-      sprintf(a, "%u", i);
+      snprintf(a, 63, "%u", i);
+    
     kgmString s(a, strlen(a));
     delete [] a;
+    
     return s;
   }
 
   static kgmString toString(f64 i)
   {
-    char* a = new char[65];
-    memset(a, 0, 65);
-    sprintf(a, "%f", i);
+    char* a = new char[64];
+    memset(a, 0, 64);
+    snprintf(a, 63, "%f", i);
     a[64] = '\0';
     kgmString s(a, strlen(a));
     delete [] a;
@@ -81,7 +85,7 @@ class kgmConvert: public kgmObject
     char* a = new char[24];
 
     memset(a, 0, 24);
-    sprintf(a, "%p", p);
+    snprintf(a, 23, "%p", p);
 
     kgmString s(a, strlen(a));
     delete [] a;

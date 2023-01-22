@@ -4985,17 +4985,17 @@ void* kgmVulkan::uniformLocation(Shader* s, char* u)
   {
     for (u32 i = 0; i < VK_MAX_LIGHTS; i++)
     {
-      sprintf(lbuf, "g_vLightPos[%d]", i);
+      snprintf(lbuf, 31, "g_vLightPos[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLightPos[i];
 
-      sprintf(lbuf, "g_vLightDir[%d]", i);
+      snprintf(lbuf, 31, "g_vLightDir[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLightDir[i];
 
-      sprintf(lbuf, "g_vLightCol[%d]", i);
+      snprintf(lbuf, 31, "g_vLightCol[%d]", i);
 
       if (!strcmp(u, lbuf))
         return &s->ubo.g_vLightCol[i];
