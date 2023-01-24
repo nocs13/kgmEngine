@@ -27,6 +27,12 @@ run:
 android: clean
 	make -C android
 
+macos: ../MacOS/game.bin
+	cp ../MacOS/game.bin Komble
+
+../MacOS/game.bin:
+	make -C ../MacOS
+
 shaders:
 #	./Data/shaders/glsl2spirv.sh
 	echo ""

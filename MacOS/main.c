@@ -8,14 +8,16 @@ void updateFrame()
   if (game)
     game->getWindow()->onIdle();
   
-  printf("updateFrame.\n");
+//  printf("updateFrame.\n");
 }
 
 int main() {
-  __kgmLog("Starting app");
+  __kgmLog("Starting app.");
   __kgmStartApp();
   
   void* w = __kgmOpenMainWindow("kgm", 0, 0, 500, 500);
+  
+  __kgmLog("Initializing metal.");
   int res = __kgmInitMetal(w);
 
   if (res != 0) {

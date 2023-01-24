@@ -18,8 +18,6 @@ OUT_A  = libkgmEngine_s.a
 all: extern debug
 #	echo $(subdirs)
 #	echo $(sources)
-#	make -C Test
-	make -C Komble
 	make -C Tools/Editor
 
 extern:
@@ -47,16 +45,16 @@ $(OUT_A): $(objects)
 
 #$(OUT_SO): $(OUT_A)
 #	$(CC) -shared -o $(OUT_SO) -Wl,--whole-archive $(OUT_A) -Wl,--no-whole-archive $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+
 $(OUT_SO): $(objects)
 	$(CC) -shared -o $(OUT_SO) $(objects) $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
-android_static:
-	echo 'Start android static library build'
+android:
+	echo 'Start android library build.'
 	make -C android
 
-android: android_static
-	echo 'Start android applibuild'
-	make -C Test android
+macos:
+	make -C MacOS
 
 sdk: $(OUT_A)  $(OUT_SO)
 	mkdir -p sdk
@@ -65,12 +63,8 @@ sdk: $(OUT_A)  $(OUT_SO)
 
 clean:
 	make -C kgmExtern clean
-#	make -C Test clean
-	make -C Komble clean
 	make -C Tools/Editor clean
 	$(RM) $(objects)
-
-distclean: clean
 	$(RM) $(OUT_SO) $(OUT_A)
 
 run:
