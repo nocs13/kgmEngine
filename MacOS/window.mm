@@ -66,8 +66,13 @@ NSWindow* __mainWnd = nil;
 
 void* __kgmOpenMainWindow(const char* title, int x, int y, int w, int h)
 {
-  if (__mainWnd != nil)
+  NSLog(@"Main window generating.\n");
+  
+  if (__mainWnd != nil) {
+    NSLog(@"Main window already exists.\n");
+    
     return __mainWnd;
+  }
   
   NSRect frame = NSMakeRect(x, y, w, h);
   NSWindow* wnd = [ [NSWindow alloc]              // create the window
@@ -78,6 +83,9 @@ void* __kgmOpenMainWindow(const char* title, int x, int y, int w, int h)
                     |NSWindowStyleMaskResizable						  
                     backing:NSBackingStoreBuffered
                     defer:NO ];
+
+  NSLog(@"Main window already generated.\n");
+  
   NSString* str = [NSString stringWithUTF8String:title];
   [wnd setTitle:str];
   [wnd setBackgroundColor:[NSColor blueColor]];

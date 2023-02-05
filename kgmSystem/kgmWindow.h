@@ -66,11 +66,11 @@ public:
 
 #elif defined(ANDROID)
 
-  void* m_wnd;
+  void* m_hanle;
   int   m_wRect[4];
 
 #elif defined(DARWIN)
-  void* m_wnd;
+  void* m_handle;
   int   m_wRect[4];
 #else
 
@@ -144,4 +144,6 @@ public:
 
     kgmEvent::onEvent(e);
   }
+
+  void setHandle(void*);
 };

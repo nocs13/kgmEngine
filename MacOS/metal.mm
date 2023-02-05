@@ -11,24 +11,35 @@ static id<MTLBuffer> _vertexBuffer = nil;
 static id<MTLBuffer> _uniformBuffer = nil;
 static id<MTLCommandQueue> _commandQueue = nil;
 
-void __kgmPrepareMetal()
+void prepareMetal()
 {
-  NSLog(@"Preparing metal.");
+  NSLog(@"Preparing metal.\n");
   
-  if (_window != nil) {
-    NSLog(@"Have window seems metal already initialized.");
+  if (_window == nil) {
+    NSLog(@"No window.\n");
+    
+    return;
+  }
+
+  if (_device != nil) {
+    NSLog(@"Seems metal already initialized.\n");
     
     return;
   }
 
   NSError* error = nil;
   
-  NSRect frame = NSMakeRect(0, 0, 640, 480);
+  //NSRect frame = NSMakeRect(0, 0, 640, 480);
+  
+  NSSize size = [[_window contentView] frame].size;
+  NSRect frame = NSMakeRect(0, 0, size.width, size.height);  
   
   _device = MTLCreateSystemDefaultDevice();
 
   MTKView* view = [[MTKView alloc] initWithFrame:frame  device:_device];
 
+  [_window setContentView:view];
+  
   // Metal setup: Library
     
   NSString* librarySrc = [NSString stringWithContentsOfFile:@"shaders/base.metal" encoding:NSUTF8StringEncoding error:&error];
@@ -67,21 +78,23 @@ void __kgmPrepareMetal()
 
 int __kgmInitMetal(void* w)
 {
+  NSLog(@"Initializing metal.\n");
+  
   NSWindow* wnd = (NSWindow*) w;
-
+  
   if (wnd == nil)
     return -1;
-
-  NSSize size = [[wnd contentView] frame].size;
   
-  NSRect frame = NSMakeRect(0, 0, size.width, size.height);
+  NSLog(@"Window for metal is valid.\n");
 
-  if (_device == nil)
-    _device = MTLCreateSystemDefaultDevice();
-
-  MTKView* view = [[MTKView alloc] initWithFrame:frame  device:_device];
-
-  [wnd setContentView:view];
+  //if (_device == nil)
+  //  _device = MTLCreateSystemDefaultDevice();
+  //MTKView* view = [[MTKView alloc] initWithFrame:frame  device:_device];
+  //[wnd setContentView:view];
+  
+  _window = wnd;
+  
+  prepareMetal();
   
   return 0;
 }

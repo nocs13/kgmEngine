@@ -2,12 +2,18 @@
 
 #ifdef DARWIN
 
+extern void* __kgmGetMainWindow();
+extern void  __kgmInitMetal(void*);
+
 kgmMetal::kgmMetal()
 {
 }
 
 kgmMetal::kgmMetal(kgmWindow *wnd)
 {
+  //void* w = __kgmGetMainWindow();
+
+  //__kgmInitMetal(w);
 }
 
 kgmMetal::~kgmMetal()

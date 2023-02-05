@@ -332,7 +332,7 @@ void kgmGameBase::initGC()
 
   #ifdef DARWIN
   
-  if (v == "MT") {
+  //if (v == "MT") {
     m_gc = new kgmMetal(this);
 
     if(m_gc->gcError()) {
@@ -341,7 +341,7 @@ void kgmGameBase::initGC()
       
       m_gc = nullptr;
     }
-  }
+  //}
     
   #else
     

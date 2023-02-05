@@ -692,6 +692,8 @@ kgmWindow::kgmWindow()
   m_msf = false;
   m_fs = false;
 
+  setHandle(null);
+  
   #ifdef WIN32
 
   m_wnd = NULL;
@@ -707,6 +709,7 @@ kgmWindow::kgmWindow()
   m_screen = 0;
 
   #endif
+
 }
 
 kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp, bool fs)
@@ -717,6 +720,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_fs = false;
 
   kgmLog::log("Init screen");
+  
+  setHandle(null);
 
 #ifdef WIN32
 
@@ -1235,6 +1240,15 @@ void kgmWindow::setTitle(char* title)
 kgmIGC* kgmWindow::getGC()
 {
   return null;
+}
+
+void kgmWindow::setHandle(void* h)
+{
+  #ifdef ANDROID
+  m_handle = h;
+  #elsif defined(DARWIN)
+  m_handle = h;
+  #endif
 }
 
 /* X11 borderless window example.
