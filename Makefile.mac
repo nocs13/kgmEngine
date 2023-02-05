@@ -1,9 +1,15 @@
-OS := $(shell uname -s)
+#OS := $(shell uname -s)
 #OS = $(cat OS)
+
+ifeq ($(OS),Windows_NT)
+	cOS := Windows
+else
+	cOS := $(shell uname)
+endif
 
 RM =
 
-CC = ccache g++
+#CC = ccache g++
 #CC = ccache clang++
 AR = ar
 DSND = -OAL
@@ -18,20 +24,21 @@ DIRS += -L./kgmSystem/lib
 LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
-ifeq ($(OS), Linux)
+ifeq ($(cOS),Linux)
+	CC = ccache clang++
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	LIBS = -llua -lpthread -lX11 -lGL -ldl
 	RM = rm -f
-else ifeq ($(OS), Darwin)
+else ifeq ($(cOS),Darwin)
 	CC   = ccache clang++
 	OS = Darwin
 	DEFS =  -DDEBUG -DDARWIN -DGPUSHADERS
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
 	LIBS = -llua -lpthread -ldl -framework OpenGL
 	RM = rm -f
-else
+else ifeq ($(cOS),Windows)
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
 	CC   = ccache g++
 	OS   = Windows
