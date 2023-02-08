@@ -38,7 +38,6 @@ kgmIGC* kgmCreateOGLContext(kgmWindow* w)
 static void __onDebugMessage(GLenum source,GLenum type,GLint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam)
 {
   kgm_log() << "OGL Debug log: " << message << ".\n";
-  //fprintf(stderr, "OGL Debug log: %s.\n", message);
 }
 
 kgmOGL::kgmOGL(kgmWindow *wnd)

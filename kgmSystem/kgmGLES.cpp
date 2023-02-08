@@ -25,6 +25,7 @@ kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 #define GLX_CONTEXT_CORE_PROFILE_BIT_ARB   0x00000001
 
 PFNGLDEBUGMESSAGECALLBACKKHRPROC eglDebugMessageCallbackKHR = null;
+PFNGLCREATEPROGRAMPROC           glesCreateProgram = null;
 
 GLint*         g_egl_compressed_format = null;
 GLint          g_egl_num_compressed_format = 0;
@@ -49,6 +50,15 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   EGLint    numConfigs;
   EGLConfig config;
 
+  if (!eglBindAPI(EGL_OPENGL_ES_API))
+  {
+    kgm_log() << "Error: Unable Bind gles api, error is " << (s32) eglGetError() << ".\n";
+
+    m_error = 1;
+
+    return;
+  }
+
   m_display = EGL_NO_DISPLAY;
   m_context = EGL_NO_CONTEXT;
   m_surface = EGL_NO_SURFACE;
@@ -65,7 +75,7 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     return;
   }
 
-  EGLint egl_version_major = 2, egl_version_minor = 0;
+  EGLint egl_version_major = 0, egl_version_minor = 0;
 
   eglInitialize(m_display, &egl_version_major, &egl_version_minor);
 
@@ -74,14 +84,23 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   eglBindAPI(EGL_OPENGL_ES_API);
 
   EGLint egl_config_constraints[] = {
-    EGL_RED_SIZE, 8,
-    EGL_GREEN_SIZE, 8,
-    EGL_BLUE_SIZE, 8,
-    EGL_ALPHA_SIZE, 0,
-    //EGL_DEPTH_SIZE, 16,
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    EGL_CONFIG_CAVEAT, EGL_NONE,
-    EGL_NONE
+    EGL_COLOR_BUFFER_TYPE,     EGL_RGB_BUFFER,
+    EGL_BUFFER_SIZE,           32,
+    EGL_RED_SIZE,              8,
+    EGL_GREEN_SIZE,            8,
+    EGL_BLUE_SIZE,             8,
+    EGL_ALPHA_SIZE,            8,
+
+    EGL_DEPTH_SIZE,            24,
+    EGL_STENCIL_SIZE,          8,
+
+    EGL_SAMPLE_BUFFERS,        0,
+    EGL_SAMPLES,               0,
+
+    EGL_SURFACE_TYPE,          EGL_WINDOW_BIT,
+    EGL_RENDERABLE_TYPE,       EGL_OPENGL_ES2_BIT,
+
+    EGL_NONE,
   };
 
   EGLConfig egl_conf;
@@ -95,6 +114,8 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     return ;
   }
 
+  kgm_log() << "Choose config count: " <<  num_config << ".\n";
+
   if (num_config != 1)
   {
     kgm_log() <<"Error: Didn't get exactly one config, but " << num_config << ".\n";
@@ -103,7 +124,12 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     return;
   }
 
-  m_surface = eglCreateWindowSurface(m_display, egl_conf, wnd->m_wnd, NULL);
+  const EGLint egl_surface_attribs[] = {
+    EGL_RENDER_BUFFER, EGL_BACK_BUFFER,
+    EGL_NONE,
+  };
+
+  m_surface = eglCreateWindowSurface(m_display, egl_conf, wnd->m_wnd, egl_surface_attribs);
 
   if (m_surface == EGL_NO_SURFACE)
   {
@@ -113,25 +139,29 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     return;
   }
 
-  //eglBindAPI(EGL_OPENGL_ES_API);
-
   EGLint ctxattr[] =
   {
     EGL_CONTEXT_CLIENT_VERSION, 2,
-    EGL_NONE
+    EGL_NONE,
   };
 
   m_context = eglCreateContext(m_display, egl_conf, EGL_NO_CONTEXT, ctxattr);
 
   if (m_context == EGL_NO_CONTEXT)
   {
-    kgm_log() << "Unable to create EGL context (eglError: " << eglGetError() << ").\n";
+    kgm_log() << "Error: Unable to create EGL context (eglError: " << eglGetError() << ").\n";
     m_error = 1;
 
     return;
   }
 
-  eglMakeCurrent(m_display, m_surface, m_surface, m_context);
+  if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
+  {
+    kgm_log() << "Error: Unable to make EGL context current (eglError: " << eglGetError() << ").\n";
+    m_error = 1;
+
+    return;
+  }
 
   EGLint queriedRenderBuffer;
   if (eglQueryContext(m_display, m_context, EGL_RENDER_BUFFER, &queriedRenderBuffer))
@@ -187,15 +217,6 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
   kgm_log() << "GLES2 surface w: " << w << ", h: " << h << "\n";
 
-  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-  //glEnable(GL_CULL_FACE);
-  //glShadeModel(GL_SMOOTH);
-  //glDisable(GL_DEPTH_TEST);
-  //glClearColor(1, 1, 1, 1);
-  //glClear(GL_COLOR_BUFFER_BIT);
-
-  //eglSwapBuffers(display, surface);
-
 
 #ifdef DEBUG
   kgm_log() << "GLES Version: " << (char*) glGetString(GL_VERSION) << "\n";
@@ -247,6 +268,8 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
 #endif
 
+  glesCreateProgram = (PFNGLCREATEPROGRAMPROC) eglGetProcAddress("glCreateProgram");
+
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS
   glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &g_egl_num_compressed_format);
 
@@ -268,19 +291,26 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   kgm_log() << "GLES Max texture units: " << (s32) max_image_units << "\n";
 
   //init local values
-  //glEnable(GL_TEXTURE_2D);
-  //glPolygonOffset (1.0f, 1.0f);
-  //glEnable(GL_TEXTURE_CUBE_MAP);
-  //glEnable(GL_TEXTURE_2D);
-  //glEnable(GL_DEPTH_TEST);
-  //glDepthFunc(GL_LEQUAL);
-  //glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
   m_renderbuffer = 0;
 
   m_min_filter = GL_LINEAR;
   m_mag_filter = GL_LINEAR;
+
+  kgm_log() << "gcGenShader: egl client apis " << (s8*) eglQueryString(m_display, EGL_CLIENT_APIS) << "\n";
+  kgm_log() << "gcGenShader: egl vendor " << (s8*) eglQueryString(m_display, EGL_VENDOR) << "\n";
+  kgm_log() << "gcGenShader: egl version " << (s8*) eglQueryString(m_display, EGL_VERSION) << "\n";
+
+  GLint param = 0;
+
+  if (eglQueryContext(m_display, m_context, EGL_CONTEXT_CLIENT_VERSION, &param))
+  {
+    kgm_log() << "gcGenShader: Context client version " << (s32) param << "\n";
+  }
 
   kgm_log() << "GLES Initialized.\n";
 }
@@ -313,9 +343,9 @@ kgmGLES::~kgmGLES()
   m_context = EGL_NO_CONTEXT;
   m_surface = EGL_NO_SURFACE;
 
-  #ifdef DEBUG
+#ifdef DEBUG
   kgm_log() << "kgmGLES::~kgmGLES.\n";
-  #endif
+#endif
 }
 
 void kgmGLES::gcSet(u32 param, void* value)
@@ -1432,17 +1462,11 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
     }
   }
 
-  kgm_log() << "gcGenShader: Create program pointer " << (void*) glCreateProgram << "\n";
-
-  EGLContext ctx = eglGetCurrentContext();
-  kgm_log() << "gcGenShader: egl client apis " << (s8*) eglQueryString(m_display, EGL_CLIENT_APIS) << "\n";
-  kgm_log() << "gcGenShader: egl vendor " << (s8*) eglQueryString(m_display, EGL_VENDOR) << "\n";
-  kgm_log() << "gcGenShader: egl venrsion " << (s8*) eglQueryString(m_display, EGL_VERSION) << "\n";
-  //kgm_log() << "gcGenShader: egl extentions " << (s8*) eglQueryString(m_display, EGL_EXTENSIONS) << "\n";
-
-  //if (eglQueryContext)
-
-  if (glCreateProgram != null)
+  if (glesCreateProgram != null)
+  {
+    prog = glesCreateProgram();
+  }
+  else
   {
     prog = glCreateProgram();
   }
@@ -1561,7 +1585,6 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
     glDeleteProgram(prog);
 
     return null;
-
   }
 
   kgm_log() << "gcGenShader: Shader program valid id is " << (s32) prog << ".\n";
@@ -1584,13 +1607,30 @@ void kgmGLES::gcFreeShader(gchandle s)
 void kgmGLES::gcSetShader(gchandle s)
 {
 #ifdef DEBUG
-  kgm_log() << "gcSetShader: Shader program id is " << (s32) (size_t) s << "\n";
+  //kgm_log() << "gcSetShader: Shader program id is " << (s32) (size_t) s << "\n";
 #endif
+
+  if (s == 0)
+  {
+    glUseProgram(0);
+    m_shader = 0;
+
+    return;
+  }
+
+  GLint prog = 0;
+
+  glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+
+  if (prog == (GLint) (size_t) s)
+  {
+    return;
+  }
 
   if (glIsProgram((GLuint) (size_t) s) != GL_TRUE)
   {
 #ifdef DEBUG
-    kgm_log() << "gcSetShader: Shader program is invalid " << glGetError() << "\n";
+    kgm_log() << "gcSetShader: Shader program " << (s32) (size_t) s << " is invalid as " << glGetError() << ".\n";
 #endif
     return;
   }
