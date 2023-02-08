@@ -43,7 +43,7 @@ else ifeq ($(cOS),Windows)
 	CC   = ccache g++
 	OS   = Windows
 	DSEP = \\
-	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DGPUSHADERS -DDSOUND -DVULKAN
+	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DOGL -DGPUSHADERS -DDSOUND -DVULKAN
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	LIBS = -llua -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound
 	RM = rm -f
@@ -51,4 +51,4 @@ else ifeq ($(cOS),Windows)
 	#ifeq($(ARCH), I32)
 	#	FLGS += -fPic
 	#endif
-endif
+endif  
