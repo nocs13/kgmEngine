@@ -339,6 +339,10 @@ void kgmUnregisterWindowClass(){
 #endif
 
 #ifdef LINUX
+
+#ifdef GLES_2
+#else
+#include <GL/glx.h>
 /* attributes for a single buffered visual in RGBA format with at least
  * 4 bits per color and a 16 bit depth buffer */
 static int attrSgl[] = {
@@ -359,6 +363,7 @@ static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
                          GLX_DEPTH_SIZE, 8,
                          None
                        };
+#endif
 
 u16 keyTranslate(KeySym key)
 {
@@ -693,7 +698,7 @@ kgmWindow::kgmWindow()
   m_fs = false;
 
   setHandle(null);
-  
+
   #ifdef WIN32
 
   m_wnd = NULL;
@@ -701,7 +706,7 @@ kgmWindow::kgmWindow()
   #elif defined(ANDROID)
 
   #elif defined(DARWIN)
-  
+
   #else
 
   m_dpy = null;
@@ -720,7 +725,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_fs = false;
 
   kgmLog::log("Init screen");
-  
+
   setHandle(null);
 
 #ifdef WIN32
@@ -748,7 +753,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_wRect[3] = h;
 
 #elif defined(DARWIN)
-  
+
   kgm_log() << "Init window rect: " << w << " " << h << ".";
   m_wRect[0] = x;
   m_wRect[1] = y;
@@ -777,11 +782,19 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
   bool m_gl_need = true;
 
+  #ifdef GLES_2
+
+  #elif defined(OGL)
+
   if (m_gl_need)
   {
-    GLint majorGLX, minorGLX = 0;
+    kgm_log() << "Init OGL for window.\n";
+
+    s32 majorGLX, minorGLX = 0;
 
     glXQueryVersion(m_dpy, &majorGLX, &minorGLX);
+
+    kgm_log() << "GLX version: " << majorGLX << "." << minorGLX << ".\n";
 
     if ((majorGLX > 1) || (majorGLX == 1 && minorGLX >= 2))
     {
@@ -854,6 +867,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     }
   }
 
+#endif
+
   if (vi && vi->screen == m_screen)
   {
     XSetWindowAttributes windowAttribs;
@@ -914,7 +929,7 @@ kgmWindow::~kgmWindow()
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
-  
+
 #else
 
   /*XDestroyWindow(m_dpy, m_wnd);
@@ -1015,7 +1030,7 @@ void kgmWindow::fullscreen(bool fs)
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
-  
+
 #else
 
   XEvent xev;

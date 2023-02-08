@@ -18,14 +18,28 @@
 #pragma comment(lib, "glu32.lib")
 #endif
 
-GLint*         g_compressed_format = null;
-GLint          g_num_compressed_format = 0;
+GLint* g_compressed_format = null;
+GLint  g_num_compressed_format = 0;
 
-#ifdef ANDROID
-EGLDisplay  m_display       = EGL_NO_DISPLAY;
-EGLSurface  m_renderSurface = EGL_NO_SURFACE;
-EGLContext  m_context       = EGL_NO_CONTEXT;
-#endif
+kgmIGC* kgmCreateOGLContext(kgmWindow* w)
+{
+  #ifdef OGL
+  return new kgmOGL(w);
+  #else
+  return null;
+  #endif
+}
+
+#ifdef OGL
+
+#define GL_DEBUG_OUTPUT_KHR               0x92E0
+#define GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR   0x8242
+
+static void __onDebugMessage(GLenum source,GLenum type,GLint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam)
+{
+  kgm_log() << "OGL Debug log: " << message << ".\n";
+  //fprintf(stderr, "OGL Debug log: %s.\n", message);
+}
 
 kgmOGL::kgmOGL(kgmWindow *wnd)
 {
@@ -78,112 +92,21 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   SendMessage(wnd->m_wnd, WM_ACTIVATE, 0, 0);
   SendMessage(wnd->m_wnd, WM_PAINT, 0, 0);
 
-#elif defined(ANDROID)
-
-  const EGLint RGBX_888_ATTRIBS[] =
-  {
-#ifdef GLES_2
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#endif
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 8, EGL_GREEN_SIZE, 8,
-    EGL_RED_SIZE, 8, EGL_DEPTH_SIZE, 8, EGL_NONE
-  };
-
-  const EGLint RGB_565_ATTRIBS[] =
-  {
-#ifdef GLES_2
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#endif
-    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-    EGL_BLUE_SIZE, 5, EGL_GREEN_SIZE, 6,
-    EGL_RED_SIZE, 5, EGL_DEPTH_SIZE, 8, EGL_NONE
-  };
-
-  //EGLint    dummy;
-  EGLint    format;
-  EGLint    numConfigs;
-  EGLConfig config;
-
-  display = EGL_NO_DISPLAY;
-  context = EGL_NO_CONTEXT;
-  surface = EGL_NO_SURFACE;
-
-  display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  eglInitialize(display, 0, 0);
-
-  if(eglChooseConfig(display, RGBX_888_ATTRIBS, &config, 1, &numConfigs) == 0)
-  {
-    if(eglChooseConfig(display, RGB_565_ATTRIBS, &config, 1, &numConfigs) == 0)
-    {
-      return;
-    }
-  }
-
-  eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-  //ANativeWindow_setBuffersGeometry((ANativeWindow*)kgmApp::application()->m_nativeWindow, 0, 0, format);
-  //surface = eglCreateWindowSurface(display, config, (ANativeWindow*)kgmApp::application()->m_nativeWindow, NULL);
-  context = eglCreateContext(display, config, NULL, NULL);
-
-  if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
-  {
-#ifdef DEBUG
-    kgm_log() << "kgmEngine: Unable to eglMakeCurrent \n";
-#endif
-
-    return;
-  }
-
-  eglQuerySurface(display, surface, EGL_WIDTH, &w);
-  eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-
-  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-  //glEnable(GL_CULL_FACE);
-  //glShadeModel(GL_SMOOTH);
-  //glDisable(GL_DEPTH_TEST);
-  //glClearColor(1, 1, 1, 1);
-  //glClear(GL_COLOR_BUFFER_BIT);
-
-  //eglSwapBuffers(display, surface);
-
 #elif defined(DARWIN)
+
 #else
 
   int rx, ry, rw, rh;
 
   wnd->getRect(rx, ry, rw, rh);
-  /*
-  //Get a pointer to the GL 3.0 context creation
-  PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribs = (PFNGLXCREATECONTEXTATTRIBSARBPROC) glXGetProcAddress((GLubyte*)"glXCreateContextAttribsARB");
-
-  if (glXCreateContextAttribs)
-  {
-    s32 attribs[] =
-    {
-      GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
-      GLX_CONTEXT_MINOR_VERSION_ARB, 2,
-      //GLX_CONTEXT_PROFILE_MASK_ARB,
-      //GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
-      GLX_CONTEXT_FLAGS_ARB,
-      GLX_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-      0
-    };
-
-    GLXFBConfig    *fbConfigs;
-    int numReturned;
-
-    fbConfigs = glXGetFBConfigs( wnd->m_dpy, DefaultScreen(wnd->m_dpy),
-                                       &numReturned );
-
-    m_glctx = glXCreateContextAttribs(wnd->m_dpy, *fbConfigs, null, true, &attribs[0]);
-  }
-  */
 
   if (!m_glctx && wnd->m_visual)
       m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
 
   if (!m_glctx)
   {
+    kgm_log() << "Error: Cannot create ogl context.\n";
+
     m_error = 1;
 
     return;
@@ -205,16 +128,16 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
 #endif
 
-  GLubyte* oglVersion = (GLubyte*)glGetString(GL_VERSION);
-
 #ifdef DEBUG
-  kgm_log() << "OpenGL Version: " << (char*)oglVersion << "\n";
-  fprintf(stderr, "OpenGL Version: %s\n", (char*)oglVersion);
-#else
-  (void)oglVersion;
+  kgm_log() << "OpenGL Version: " << (char*) glGetString(GL_VERSION) << "\n";
+  kgm_log() << "GLSL   Version: " << (char*) glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+  kgm_log() << "OpenGL Vendor: " << (char*) glGetString(GL_VENDOR) << "\n";
+  kgm_log() << "OpenGL Render: " << (char*) glGetString(GL_RENDERER) << "\n";
 #endif
 
+
   glInitExt();
+
   glEnable(GL_TEXTURE_CUBE_MAP);
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_DEPTH_TEST);
@@ -222,15 +145,13 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
 
-#ifdef GL_SMOOTH
   glShadeModel(GL_SMOOTH);
-#endif
 
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
-  //const GLubyte* ext = glGetString(GL_SHADING_LANGUAGE_VERSION);
-  //FILE* f = fopen("/tmp/glext", "w");
-  //fprintf(f, "%s", ext);
-  //fclose(f);
+
+#ifdef DEBUG
+  kgm_log() << "OGL Extentions: " << (s8*) ext << ".\n";
+#endif
 
   if (!ext)
   {
@@ -246,6 +167,23 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   {
     m_error = 3;
   }
+
+
+#ifdef DEBUG
+
+  if (glDebugMessageCallbackKHR != null)
+  {
+    kgm_log() << "Enabling GL Debuging.\n";
+
+    glEnable(GL_DEBUG_OUTPUT_KHR);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR);
+
+    glDebugMessageCallbackKHR( (GLDEBUGPROCKHR) __onDebugMessage, this);
+
+    kgm_log() << "Enabling GL Debuging status " << glGetError() << ".\n";
+  }
+
+#endif
 
 #ifdef GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB
   glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, &g_num_compressed_format);
@@ -296,29 +234,6 @@ kgmOGL::~kgmOGL()
   wglDeleteContext(m_hrc);
   wglMakeCurrent(m_hdc, 0);
   ReleaseDC(m_wnd->m_wnd,m_hdc);
-
-#elif defined(ANDROID)
-
-  if (display != EGL_NO_DISPLAY)
-  {
-    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-
-    if (context != EGL_NO_CONTEXT)
-    {
-      eglDestroyContext(display, context);
-    }
-
-    if (surface != EGL_NO_SURFACE)
-    {
-      eglDestroySurface(display, surface);
-    }
-
-    eglTerminate(display);
-  }
-
-  display = EGL_NO_DISPLAY;
-  context = EGL_NO_CONTEXT;
-  surface = EGL_NO_SURFACE;
 
 #elif defined(DARWIN)
 #else
@@ -501,10 +416,6 @@ void kgmOGL::gcRender()
 #ifdef WIN32
 
   SwapBuffers(m_hdc);
-
-#elif defined(ANDROID)
-
-  eglSwapBuffers(m_wnd->display, m_wnd->surface);
 
 #elif defined(DARWIN)
 #else
@@ -1109,7 +1020,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_bn0)
   {
-#ifdef GLES_2
     ah = glGetAttribLocation(m_shader, "a_Weights");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
@@ -1118,7 +1028,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
-#else
     /*u32 k = ((u32)pM - (u32)v_pnt);
     float* f1 = (float*)pM;
     glClientActiveTexture(GL_TEXTURE1);
@@ -1131,7 +1040,6 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glTexCoordPointer(4, GL_FLOAT, v_size, pM);
     pM += (4 * sizeof(float));*/
-#endif
   }
 
   if(i_pnt && i_cnt)
@@ -1139,20 +1047,12 @@ void kgmOGL::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
     switch(i_size)
     {
     case 4:
-#ifdef ANDROID
-      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
-#else
       //glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_INT, i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_INT, i_pnt);
-#endif
       break;
     default:
-#ifdef ANDROID
-      glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
-#else
       //glDrawElements(gl_enum(pmt),i_cnt,GL_UNSIGNED_SHORT,i_pnt);
       glDrawRangeElements(gl_enum(pmt),0, v_cnt - 1, i_cnt,GL_UNSIGNED_SHORT, i_pnt);
-#endif
     }
   }
   else
@@ -1408,8 +1308,7 @@ void  kgmOGL::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt
 }
 
 // SHADERS
-//GLint v_shad;
-void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
+gchandle kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 {
   kgm_log() << "gcGenShader: Generating.\n";
 
@@ -1423,21 +1322,23 @@ void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
   int gerr = 0;
 
 #ifdef DEBUG
-  char tbuf[256];
+  char tbuf[512];
 #endif
 
-#ifdef GL_VERTEX_SHADER
-  glGetError();
+  kgm_log() << "gcGenShader: Creating program.\n";
 
   prog = glCreateProgramObject();
+
   gerr = glGetError();
+
+  kgm_log() << "gcGenShader: Creating program status " << gerr << ".\n";
 
   if(GL_NO_ERROR != gerr)
   {
     int s = gerr;
 
 #ifdef DEBUG
-  kgm_log() << "gcGenShader error is " << (s32)gerr << "\n";
+    kgm_log() << "gcGenShader: error is " << (s32) gerr << "\n";
 #endif
 
     return null;
@@ -1457,18 +1358,12 @@ void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
     if(stat[0] == GL_FALSE)
     {
 #ifdef DEBUG
-#ifdef ANDROID
-      glGetShaderInfoLog(vshad, 256, &size, tbuf);
-#else
-      glGetInfoLog(vshad, 256, &size, tbuf);
-#endif
-      kgm_log() << "VShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
-      fprintf(stderr, "VShader: %s.\n", (const char*)tbuf );
-      fflush(stderr);
+      glGetInfoLog(vshad, sizeof(tbuf), &size, tbuf);
+      kgm_log() << "gcGenShader: VShader> " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
 
       glDeleteObject(vshad);
-      fshad = 0;
+      vshad = 0;
     }
     else
     {
@@ -1489,15 +1384,12 @@ void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
     if(stat[0] == GL_FALSE)
     {
 #ifdef DEBUG
-#ifdef ANDROID
-      glGetShaderInfoLog(fshad, 256, &size, tbuf);
-#else
-      glGetInfoLog(fshad, 256, &size, tbuf);
+      glGetInfoLog(fshad, sizeof(tbuf), &size, tbuf);
+      kgm_log() << "gcGenShader: FShader> " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
 #endif
-      kgm_log() << "FShader: " << (char*)tbuf << " " << (s32)strlen(tbuf) << "\n";
-      fprintf(stderr, "FShader: %s.\n", (const char*)tbuf );
-      fflush(stderr);
-#endif
+
+      glDeleteObject(vshad);
+      fshad = 0;
     }
     else
     {
@@ -1512,13 +1404,15 @@ void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 
   glLinkProgram(prog);
 
-  glGetObjectParameteriv(prog, GL_OBJECT_LINK_STATUS, stat);
+  stat[0] = 0;
+
+  glGetObjectParameteriv(prog, GL_LINK_STATUS, stat);
 
   if(stat[0] == GL_FALSE)
   {
 #ifdef DEBUG
-    glGetInfoLog(prog, 256, &size, tbuf);
-    kgmLog::log(kgmString("LogARB: ") + kgmString(tbuf));
+    glGetInfoLog(prog, sizeof(tbuf), &size, tbuf);
+    kgm_log() << "gcGenShader: Link log> " << tbuf << "\n";
 #endif
 
     glDeleteObject(vshad);
@@ -1528,51 +1422,69 @@ void* kgmOGL::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
     return null;
   }
 
-#ifdef ANDROID
+  glValidateProgram(prog);
 
-#define glDetachObject glDetachShader
+  stat[0] = 0;
 
+  glGetObjectParameteriv(prog, GL_VALIDATE_STATUS, stat);
+
+  if(stat[0] == GL_FALSE)
+  {
+#ifdef DEBUG
+    glGetInfoLog(prog, sizeof(tbuf), &size, tbuf);
+    kgm_log() << "gcGenShader: Validate log> " << tbuf << "\n";
 #endif
 
-  //glDetachObject(prog, vshad);
-  glDeleteObject(vshad);
-  //glDetachObject(prog, fshad);
-  glDeleteObject(fshad);
+    glDeleteObject(vshad);
+    glDeleteObject(fshad);
+    glDeleteObject(prog);
 
-#endif
+    return null;
+  }
 
-  kgm_log() << "Generate shader " << (int) prog << ".\n";
+  kgm_log() << "gcGenShader: program id " << (s32) prog << ".\n";
 
-  return (void*) (size_t) prog;
+  return (gchandle) (size_t) prog;
 }
 
-void kgmOGL::gcFreeShader(void* s)
+void kgmOGL::gcFreeShader(gchandle s)
 {
-#ifdef GL_VERTEX_SHADER
-  size_t shader = (size_t)s;
-
-  if(shader)
+  if(glIsProgram((GLint) (size_t) s) != GL_TRUE)
   {
-    kgm_log() << "Delete shader " << (int) shader << ".\n";
-    glDeleteObject((GLhandle)shader);
-  }
+#ifdef DEBUG
+    kgm_log() << "gcFreeShader: Invalid shader program " << (s32) (size_t) s << "\n";
 #endif
+    return;
+  }
+
+#ifdef DEBUG
+  kgm_log() << "gcFreeShader: shader program id " << (s32) (size_t) s << ".\n";
+#endif
+
+  glDeleteObject((GLint) (size_t) s);
 }
 
-void kgmOGL::gcSetShader(void* s)
+void kgmOGL::gcSetShader(gchandle s)
 {
-  if(s)
-  {
-    glUseProgramObject((GLhandle)(size_t)s);
-
-    m_shader = (GLhandle)(size_t)s;
-  }
-  else
+  if (s == null)
   {
     glUseProgramObject(0);
 
-    m_shader = null;
+    return;
   }
+
+  GLint prog = 0;
+
+  glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
+
+  if (prog == (GLint) (size_t) s)
+  {
+    return;
+  }
+
+  glUseProgramObject((GLhandle)(size_t)s);
+
+  m_shader = (GLhandle)(size_t)s;
 }
 
 void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
@@ -1580,16 +1492,6 @@ void  kgmOGL::gcBindAttribute(void* s, int i, const char* attr)
   if(s)
   {
     glBindAttribLocation((GLhandle)(size_t)s, i, attr);
-#ifdef DEBUG
-#ifndef ANDROID
-    GLenum err = glGetError();
-
-    if(err != GL_NO_ERROR)
-    {
-      fprintf(stderr, "Error glBindAttribLocation: %d/%d.\n", err, i);
-    }
-#endif
-#endif
   }
 }
 
@@ -1639,7 +1541,6 @@ void kgmOGL::gcUniform(void* s, u32 type, u32 cnt, const char* par, void* val)
 
 void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* par, void* val)
 {
-#ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
 
   if(link < 0)
@@ -1657,27 +1558,23 @@ void kgmOGL::gcUniformMatrix(void* s, u32 type, u32 cnt, u32 trn, const char* pa
     glUniformMatrix4fv(link, cnt, (GLboolean)trn, (float*)val);
     break;
   }
-#endif
 }
 
 void kgmOGL::gcUniformSampler(void* s, const char* par, void* val)
 {
-#ifdef GL_VERTEX_SHADER
   GLint link = glGetUniformLocation((GLhandle)(size_t)s, par);
 
   if(link < 0)
     return;
 
   glUniform1i(link, (GLu32)(size_t)val);
-#endif
 }
 
 #ifdef DEBUG
 void kgmOGL::gcGetUniform(void* s, const char* par, void* val)
 {
-#ifdef GL_VERTEX_SHADER
   glGetUniformfv((GLhandle)(size_t)s, (GLint)(size_t)par, (float*)val);
-#endif
 }
 #endif
 
+#endif

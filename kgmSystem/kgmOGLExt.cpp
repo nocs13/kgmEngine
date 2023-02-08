@@ -1,7 +1,33 @@
 #include "kgmOGLExt.h"
 #include "../kgmBase/kgmLog.h"
 
-#ifndef ANDROID
+#ifdef OGL
+
+#ifdef WIN32
+ #define GLEXT_FN(func, type)  func = (type)wglGetProcAddress(#func)
+#endif
+
+#ifdef LINUX
+ #define GLEXT_FN(func, type)  func = (type)glXGetProcAddress((const GLubyte*)#func)
+#endif
+
+#ifdef ANDROID
+ #define GLEXT_FN(func, type)
+#endif
+
+#ifdef DARWIN
+ #define GLEXT_FN(func, type)
+#endif
+
+#else
+
+ #define GLEXT_FN(func, type)
+
+#endif
+
+//DEBUG
+PFNGLDEBUGMESSAGECALLBACKKHRPROC glDebugMessageCallbackKHR = 0;
+
 //DRAW ELEMENTS
 PFNGLDRAWRANGEELEMENTSPROC      glDrawRangeElements = 0;
 
@@ -34,6 +60,7 @@ PFNGLDELETERENDERBUFFERSEXTPROC     glDeleteRenderbuffersEXT = 0;
 //GLSL SHADER EXTENTIONS
 PFNGLCREATESHADEROBJECTARBPROC   glCreateShaderObjectARB = 0;
 PFNGLCREATEPROGRAMOBJECTARBPROC  glCreateProgramObjectARB = 0;
+PFNGLCREATEPROGRAMPROC           glCreateProgram = 0;
 PFNGLDELETEOBJECTARBPROC         glDeleteObjectARB = 0;
 PFNGLSHADERSOURCEARBPROC         glShaderSourceARB = 0;
 PFNGLCOMPILESHADERARBPROC        glCompileShaderARB = 0;
@@ -42,6 +69,7 @@ PFNGLDETACHOBJECTARBPROC         glDetachObjectARB = 0;
 PFNGLLINKPROGRAMARBPROC          glLinkProgramARB = 0;
 PFNGLVALIDATEPROGRAMARBPROC      glValidateProgramARB = 0;
 PFNGLUSEPROGRAMOBJECTARBPROC     glUseProgramObjectARB = 0;
+PFNGLISPROGRAMARBPROC            glIsProgramARB = 0;
 PFNGLGETOBJECTPARAMETERFVARBPROC glGetObjectParameterfvARB = 0;
 PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB = 0;
 PFNGLGETINFOLOGARBPROC           glGetInfoLogARB = 0;
@@ -66,11 +94,7 @@ PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB = 0;
 PFNGLVERTEXATTRIBPOINTERARBPROC     glVertexAttribPointerARB = 0;
 PFNGLGETATTRIBLOCATIONARBPROC     glGetAttribLocationARB = 0;
 
-PFNGLUSEPROGRAMPROC               glUseProgram = 0;
-PFNGLDELETESHADERPROC             glDeleteShader = 0;
-
 PFNGLBLENDEQUATIONEXTPROC         glBlendEquationEXT = 0;
-#endif
 
 #ifdef WIN32
  PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
@@ -81,7 +105,8 @@ PFNGLBLENDEQUATIONEXTPROC         glBlendEquationEXT = 0;
 
 
 bool glInitExt(){
-#ifndef ANDROID
+  GLEXT_FN(glDebugMessageCallbackKHR,		PFNGLDEBUGMESSAGECALLBACKKHRPROC);
+
   GLEXT_FN(glDrawRangeElements,		PFNGLDRAWRANGEELEMENTSPROC);
   GLEXT_FN(glActiveTextureARB,       PFNGLACTIVETEXTUREARBPROC);
   GLEXT_FN(glClientActiveTextureARB, PFNGLCLIENTACTIVETEXTUREARBPROC);
@@ -116,9 +141,10 @@ bool glInitExt(){
   GLEXT_FN(glLinkProgramARB,         PFNGLLINKPROGRAMARBPROC);
   GLEXT_FN(glValidateProgramARB,     PFNGLVALIDATEPROGRAMARBPROC);
   GLEXT_FN(glUseProgramObjectARB,    PFNGLUSEPROGRAMOBJECTARBPROC);
+  GLEXT_FN(glIsProgramARB,           PFNGLISPROGRAMARBPROC);
   GLEXT_FN(glGetObjectParameterfvARB,PFNGLGETOBJECTPARAMETERFVARBPROC);
   GLEXT_FN(glGetObjectParameterivARB,PFNGLGETOBJECTPARAMETERIVARBPROC);
-  GLEXT_FN(glGetInfoLogARB,			PFNGLGETINFOLOGARBPROC);
+  GLEXT_FN(glGetInfoLogARB,			     PFNGLGETINFOLOGARBPROC);
   GLEXT_FN(glGetUniformLocationARB,	PFNGLGETUNIFORMLOCATIONARBPROC);
   GLEXT_FN(glUniform1iARB,			PFNGLUNIFORM1IARBPROC);
   GLEXT_FN(glUniform1ivARB,			PFNGLUNIFORM1IVARBPROC);
@@ -140,11 +166,7 @@ bool glInitExt(){
   GLEXT_FN(glVertexAttribPointerARB, PFNGLVERTEXATTRIBPOINTERARBPROC);
   GLEXT_FN(glGetAttribLocationARB, PFNGLGETATTRIBLOCATIONARBPROC);
 
-  GLEXT_FN(glUseProgram,    PFNGLUSEPROGRAMPROC);
-  GLEXT_FN(glDeleteShader,  PFNGLDELETESHADERPROC);
-
   GLEXT_FN(glBlendEquation,  PFNGLBLENDEQUATIONEXTPROC);
-#endif
 
 #ifdef WIN32
  GLEXT_FN(wglSwapIntervalEXT,	PFNWGLSWAPINTERVALFARPROC);

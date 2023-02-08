@@ -1,34 +1,34 @@
-#version 120
+#version 100
 
-uniform mat4   g_mView;           
-uniform mat4   g_mProj;           
-uniform mat4   g_mTran;           
-uniform vec4   g_vColor;          
-uniform vec4   g_vSpecular;       
-uniform vec4   g_vClipPlane;      
-uniform vec3   g_vUp;             
-uniform vec3   g_vEye;            
-uniform vec3   g_vLook;           
-uniform float  g_fTime;           
-uniform float  g_fShine;          
-uniform float  g_fRandom;         
-uniform float  g_fAmbient;        
-uniform float  g_fLightPower;     
-uniform int    g_iClipping = 0;   
+uniform mat4   g_mView;
+uniform mat4   g_mProj;
+uniform mat4   g_mTran;
+uniform vec4   g_vColor;
+uniform vec4   g_vSpecular;
+uniform vec4   g_vClipPlane;
+uniform vec3   g_vUp;
+uniform vec3   g_vEye;
+uniform vec3   g_vLook;
+uniform float  g_fTime;
+uniform float  g_fShine;
+uniform float  g_fRandom;
+uniform float  g_fAmbient;
+uniform float  g_fLightPower;
+uniform int    g_iClipping;
 
-varying vec3   v_N;               
-varying vec3   v_V;               
-varying vec3   v_Y;               
-varying vec2   v_UV;              
-varying float  v_I;               
-varying float  v_shine;           
-varying vec4   v_color;           
-varying vec4   v_specular;        
+varying vec3   v_N;
+varying vec3   v_V;
+varying vec3   v_Y;
+varying vec2   v_UV;
+varying float  v_I;
+varying float  v_shine;
+varying vec4   v_color;
+varying vec4   v_specular;
 
-attribute vec3 a_Vertex;          
-attribute vec3 a_Normal;          
-attribute vec4 a_Color;           
-attribute vec2 a_UV;              ;
+attribute vec3 a_Vertex;
+attribute vec3 a_Normal;
+attribute vec4 a_Color;
+attribute vec2 a_UV;
 
 varying vec4  position;
 varying float clipping;
@@ -50,21 +50,21 @@ void process(out vec4 pos)
    }
 }
 
-void main(void)                    
-{                                  
-   vec4 position;                  
-   v_specular = g_vSpecular;       
-   v_color = g_vColor * a_Color;   
-   process(position);             
-   gl_Position = position;        
+void main(void)
+{
+   vec4 position;
+   v_specular = g_vSpecular;
+   v_color = g_vColor * a_Color;
+   process(position);
+   gl_Position = position;
 }
 
 //Fragment Shader
-#version 120
+#version 100
 
-#ifdef GL_ES         
+#ifdef GL_ES
 precision lowp float;
-#endif               
+#endif
 
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
@@ -77,7 +77,7 @@ varying vec2   v_UV;
 varying float  v_I;
 varying float  v_shine;
 varying vec4   v_color;
-varying vec4   v_specular;;
+varying vec4   v_specular;
 
 varying vec4  position;
 varying float clipping;
@@ -92,7 +92,7 @@ void process(out vec4 col)
 
 void main( void )
 {
-    vec4 color;                     
-    process(color);                
-    gl_FragColor = color; 
+    vec4 color;
+    process(color);
+    gl_FragColor = color;
 }

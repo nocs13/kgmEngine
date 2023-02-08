@@ -166,6 +166,22 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_map_light.m_col = null;
   m_map_light.m_dep = null;
 
+#ifdef DEBUG
+  kgm_log() << "Prepare shaders \n";
+#endif
+
+  if(rc != null)
+  {
+    memset(m_shaders, 0, sizeof(m_shaders));
+    //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
+    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
+    //m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
+    //m_shaders[ShaderBase]     = rc->getShader("base.glsl");
+    //m_shaders[ShaderColor]    = rc->getShader("color.glsl");
+    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
+    //m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
+  }
+
   if(gc)
   {
     char txd[16] = {0};
@@ -211,23 +227,6 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     //g->gcTexTarget(m_map_light.m_fbo, m_map_light.m_dep, gctype_texdepth);
     //m_map_light.m_res[0] = scr_size[0];
     //m_map_light.m_res[1] = scr_size[1];
-  }
-
-
-#ifdef DEBUG
-  kgm_log() << "Prepare shaders \n";
-#endif
-
-  if(rc != null)
-  {
-    memset(m_shaders, 0, sizeof(m_shaders));
-    //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
-    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
-    m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
-    m_shaders[ShaderBase]     = rc->getShader("base.glsl");
-    m_shaders[ShaderColor]    = rc->getShader("color.glsl");
-    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
-    m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
   }
 
   m_rnd_base        = new BaseRender(this);

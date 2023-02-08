@@ -18,22 +18,8 @@
 
 #ifndef ANDROID
 
-
-#ifdef WIN32
- #define GLEXT_FN(func, type)  func = (type)wglGetProcAddress(#func)
-#endif
-
-#ifdef LINUX
- #define GLEXT_FN(func, type)  func = (type)glXGetProcAddress((const GLubyte*)#func)
-#endif
-
-#ifdef ANDROID
- #define GLEXT_FN(func, type)
-#endif
-
-#ifdef DARWIN
- #define GLEXT_FN(func, type)
-#endif
+typedef void (*GLDEBUGPROCKHR)(GLenum source,GLenum type,GLint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
+typedef void (*PFNGLDEBUGMESSAGECALLBACKKHRPROC) (GLDEBUGPROCKHR callback, const void *userParam);
 
 #ifndef GL_FRAMEBUFFER_COMPLETE
  #define GL_FRAMEBUFFER_COMPLETE GL_FRAMEBUFFER_COMPLETE_EXT
@@ -43,6 +29,8 @@
  #define GL_FRAMEBUFFER_COMPLETE GL_FRAMEBUFFER_COMPLETE_EXT
 #endif
 
+//DEBUG
+extern PFNGLDEBUGMESSAGECALLBACKKHRPROC glDebugMessageCallbackKHR;
 //DRAW ELEMENTS
 extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 //TEXTURE EXTENTIONS
@@ -79,6 +67,7 @@ extern PFNGLCOMPILESHADERARBPROC        glCompileShaderARB;
 extern PFNGLATTACHOBJECTARBPROC         glAttachObjectARB;
 extern PFNGLDETACHOBJECTARBPROC         glDetachObjectARB;
 extern PFNGLLINKPROGRAMARBPROC          glLinkProgramARB;
+extern PFNGLISPROGRAMARBPROC            glIsProgramARB;
 extern PFNGLVALIDATEPROGRAMARBPROC      glValidateProgramARB;
 extern PFNGLUSEPROGRAMOBJECTARBPROC     glUseProgramObjectARB;
 extern PFNGLGETOBJECTPARAMETERFVARBPROC glGetObjectParameterfvARB;
@@ -104,9 +93,6 @@ extern PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
 extern PFNGLENABLEVERTEXATTRIBARRAYARBPROC  glEnableVertexAttribArrayARB;
 extern PFNGLVERTEXATTRIBPOINTERARBPROC      glVertexAttribPointerARB;
 extern PFNGLGETATTRIBLOCATIONARBPROC        glGetAttribLocationARB;
-
-extern PFNGLUSEPROGRAMPROC                  glUseProgram;
-extern PFNGLDELETESHADERPROC                glDeleteShader;
 
 extern PFNGLBLENDEQUATIONEXTPROC            glBlendEquationEXT;
 
@@ -138,6 +124,7 @@ extern PFNGLBLENDEQUATIONEXTPROC            glBlendEquationEXT;
 #define glAttachObject            glAttachObjectARB
 #define glDetachObject            glDetachObjectARB
 #define glLinkProgram             glLinkProgramARB
+#define glIsProgram               glIsProgramARB
 #define glValidateProgram         glValidateProgramARB
 #define glUseProgramObject        glUseProgramObjectARB
 #define glGetObjectParameterfv    glGetObjectParameterfvARB
@@ -163,8 +150,6 @@ extern PFNGLBLENDEQUATIONEXTPROC            glBlendEquationEXT;
 #define glEnableVertexAttribArray  glEnableVertexAttribArrayARB
 #define glVertexAttribPointer      glVertexAttribPointerARB
 #define glGetAttribLocation        glGetAttribLocationARB
-
-#define glUseProgram       glUseProgram
 
 #define glBlendEquation    glBlendEquationEXT
 

@@ -6,31 +6,11 @@
 #include "../kgmBase/kgmIGC.h"
 #include "kgmWindow.h"
 
+#ifdef OGL
+
 #ifdef WIN32
+
 #include <windows.h>
-#elif defined(ANDROID)
-#else
-#endif
-
-#ifdef ANDROID
-
-#include <unistd.h>
-
-#ifdef GLES_2
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <GLES2/gl2platform.h>
-#else
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-#include <GLES/glplatform.h>
-#endif
-
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglplatform.h>
-
-typedef u32 GLu32;
 
 #elif defined DARWIN
 
@@ -48,6 +28,7 @@ typedef u32 GLu32;
 #else
 
 #include <GL/gl.h>
+#include "inc/GL/glx.h"
 #include "inc/glext.h"
 
 #ifndef GL_OBJECT_COMPILE_STATUS
@@ -60,40 +41,8 @@ typedef u32 GLu32;
 
 #endif
 
-#ifdef ANDROID
-
-#ifdef GLES_2
-
-#define glClearDepth           glClearDepthf
-#define glCreateProgramObject  glCreateProgram
-#define glCreateShaderObject   glCreateShader
-#define glUseProgramObject     glUseProgram
-#define glDeleteObject         glDeleteShader
-#define glAttachObject         glAttachShader
-#define glGetInfoLog           glGetProgramInfoLog
-#define glGetObjectParameteriv glGetProgramiv
-
-#define GL_DEPTH_TEXTURE_MODE    GL_DEPTH_COMPONENT
-#define GL_OBJECT_COMPILE_STATUS GL_ATTACHED_SHADERS
-#define GL_OBJECT_LINK_STATUS    GL_LINK_STATUS
-#define GL_GENERATE_MIPMAP       GL_GENERATE_MIPMAP_HINT
-
-#endif
-
-#define GL_RED                   0x1903
-#define GL_BGR_EXT               GL_RGB
-#define GL_INTENSITY             GL_UNSIGNED_BYTE
-#define GL_CLAMP                 GL_CLAMP_TO_EDGE
-
-#define GLdouble  GLfloat
-#define GLhandle  GLuint
-#define GLcharARB GLchar
-
-#else
-
 #define GLhandle GLhandleARB
-
-#endif
+typedef u32 GLu32;
 
 class kgmOGLWindow;
 
@@ -129,12 +78,6 @@ private:
 
   HDC        m_hdc;
   HGLRC      m_hrc;
-
-#elif defined(ANDROID)
-
-  EGLSurface surface;
-  EGLContext context;
-  EGLDisplay display;
 
 #elif defined(DARWIN)
 #else
@@ -185,7 +128,7 @@ public:
   //RESIZE MAIN BUFFER
   void gcResize(u32 width, u32 height);
 
-  //DRAW  
+  //DRAW
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);
 
   //TEXTURE
@@ -319,3 +262,4 @@ public:
   }
 };
 
+#endif

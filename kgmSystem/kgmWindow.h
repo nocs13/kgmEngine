@@ -34,11 +34,11 @@ u16 keyTranslate(int key);
 #include "inc/X11/XKBlib.h"
 #include "inc/X11/keysym.h"
 #include "inc/X11/extensions/xf86vmode.h"
-//#include <X11/Xutil.h>
+#include <X11/Xutil.h>
 //#include <X11/XKBlib.h>
 //#include <X11/keysym.h>
 //#include <X11/extensions/xf86vmode.h>
-#include <GL/glx.h>
+//#include <GL/glx.h>
 
 u16 keyTranslate(KeySym);
 
@@ -83,7 +83,6 @@ public:
   s32                  m_screen;
 
 #endif
-
 
   kgmWindow* m_parent;
 

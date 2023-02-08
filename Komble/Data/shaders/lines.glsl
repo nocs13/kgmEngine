@@ -1,4 +1,4 @@
-#version 120
+#version 100
 
 uniform mat4   g_mView;
 uniform mat4   g_mProj;
@@ -30,6 +30,12 @@ void main(void)
 }
 
 //Fragment Shader
+#version 100
+
+#ifdef GL_ES
+precision lowp float;
+#endif
+
 varying vec4  position;
 varying vec4  color;
 

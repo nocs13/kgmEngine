@@ -25,9 +25,9 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(cOS),Linux)
-	CC = ccache clang++
-	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN
-	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS)
+	CC = ccache clang++ -v -g
+	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN -DOGL
+	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -fno-inline
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
 	LIBS = -llua -lpthread -lX11 -lGL -ldl
 	RM = rm -f

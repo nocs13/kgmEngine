@@ -12,7 +12,7 @@
 #include "../kgmSystem/kgmOAL.h"
 #include "../kgmSystem/kgmOSL.h"
 #include "../kgmSystem/kgmTime.h"
-#include "../kgmSystem/kgmOGL.h"
+//#include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmMetal.h"
 #include "../kgmSystem/kgmVulkan.h"
 #include "../kgmSystem/kgmGCNone.h"
@@ -40,6 +40,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+extern kgmIGC* kgmCreateOGLContext(kgmWindow* w);
+extern kgmIGC* kgmCreateGLESContext(kgmWindow* w);
 
 kgmGameBase* kgmGameBase::m_game;
 bool         kgmGameBase::m_need_editor = false;
@@ -331,33 +334,36 @@ void kgmGameBase::initGC()
   kgm_log() << "Choosed GC is " << (char*) v << ".\n";
 
   #ifdef DARWIN
-  
+
   //if (v == "MT") {
     m_gc = new kgmMetal(this);
 
     if(m_gc->gcError()) {
       kgm_log() << "Metal initialization failed.\n";
       delete m_gc;
-      
+
       m_gc = nullptr;
     }
   //}
-    
+
   #else
-    
+
   if (v == "VK") {
     m_gc = new kgmVulkan(this);
 
     if(m_gc->gcError()) {
       kgm_log() << "Vulkan initialization failed.\n";
       delete m_gc;
-      
+
       m_gc = nullptr;
     }
   } else if (v == "OGL") {
-    m_gc = new kgmOGL(this);
+    //new kgmOGL(this);
+    m_gc = kgmCreateOGLContext(this);
+  } else if (v == "EGL") {
+    m_gc = kgmCreateGLESContext(this);
   }
-  
+
   #endif
 
   if (m_gc == nullptr)

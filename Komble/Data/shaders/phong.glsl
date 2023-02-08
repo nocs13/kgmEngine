@@ -1,4 +1,4 @@
-#version 130
+#version 100
 
 struct Light
 {
@@ -22,7 +22,7 @@ uniform float  g_fShine;
 uniform float  g_fRandom;
 uniform float  g_fAmbient;
 uniform float  g_fLightPower;
-uniform int    g_iClipping = 0;
+uniform int    g_iClipping;
 uniform int    g_iLights;
 
 uniform Light  g_sLights[MAX_LIGHTS];
@@ -66,7 +66,7 @@ mat3 inverse(mat3 m) {
         det(mat2(r0.x, r0.y, r1.x, r1.y))
     );
 
-    mat3 adj = transpose(mat3(m0, m1, m2));
+    mat3 adj = mat3(0.0); //transpose(mat3(m0, m1, m2));
 
     return (1.0 / dot(r0, m0)) * adj;
 }
@@ -78,7 +78,7 @@ void process(out vec4 pos)
   v_P  = vec3(g_mTran * vec4(a_Vertex, 1));
   mat3 m_N = mat3(g_mTran);
   m_N = inverse(m_N);
-  m_N = transpose(m_N);
+  //m_N = transpose(m_N);
   v_N  = normalize( m_N * a_Normal );
   //v_N  = normalize(a_Normal);
   v_V  = vec3(g_mView * vec4(v_P, 1));
@@ -95,7 +95,12 @@ void main(void)
 }
 
 //Fragment Shader
-#version 130
+#version 100
+
+#ifdef GL_ES
+//precision lowp float;
+precision highp float;
+#endif
 
 struct Light
 {
@@ -103,11 +108,6 @@ struct Light
   vec4   dir;
   vec4   col;
 };
-
-#ifdef GL_ES
-//precision lowp float;
-#endif
- precision highp float;
 
 #define MAX_LIGHTS 16
 #define M_PI 3.14159265359
