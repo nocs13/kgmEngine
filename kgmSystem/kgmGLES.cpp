@@ -24,14 +24,14 @@ kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 #define GLX_CONTEXT_PROFILE_MASK_ARB       0x9126
 #define GLX_CONTEXT_CORE_PROFILE_BIT_ARB   0x00000001
 
-PFNGLDEBUGMESSAGECALLBACKKHRPROC glDebugMessageCallbackKHR = null;
+PFNGLDEBUGMESSAGECALLBACKKHRPROC eglDebugMessageCallbackKHR = null;
 
 GLint*         g_egl_compressed_format = null;
 GLint          g_egl_num_compressed_format = 0;
 
-static void __onDebugMessage(int source, int type, int id, int severity, char* message)
+static void __onDebugMessage(GLenum source,GLenum type,GLint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam)
 {
-  kgm_log() << "GLES Debug log: " << message << ".\n";
+  kgm_log() << "EGL Debug log: " << message << "\n";
 }
 
 kgmGLES::kgmGLES(kgmWindow *wnd)
@@ -53,7 +53,8 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   m_context = EGL_NO_CONTEXT;
   m_surface = EGL_NO_SURFACE;
 
-  m_display = eglGetDisplay((EGLNativeDisplayType) wnd->m_dpy);  //eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  //m_display = eglGetDisplay((EGLNativeDisplayType) wnd->m_dpy);  //eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
   if (m_display == EGL_NO_DISPLAY)
   {
@@ -70,7 +71,6 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
   kgm_log() << "EGL: Version: " << egl_version_major << "." << egl_version_minor << ".\n";
 
-  //eglBindAPI(EGL_OPENGL_API);
   eglBindAPI(EGL_OPENGL_ES_API);
 
   EGLint egl_config_constraints[] = {
@@ -79,7 +79,7 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     EGL_BLUE_SIZE, 8,
     EGL_ALPHA_SIZE, 0,
     //EGL_DEPTH_SIZE, 16,
-    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
     EGL_CONFIG_CAVEAT, EGL_NONE,
     EGL_NONE
   };
@@ -113,7 +113,7 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     return;
   }
 
-  eglBindAPI(EGL_OPENGL_ES_API);
+  //eglBindAPI(EGL_OPENGL_ES_API);
 
   EGLint ctxattr[] =
   {
@@ -198,24 +198,15 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
 
 #ifdef DEBUG
-  GLubyte* oglVersion = (GLubyte*) glGetString(GL_VERSION);
-  kgm_log() << "OpenGL Version: " << (char*) glGetString(GL_VERSION) << "\n";
-  kgm_log() << "OpenGL Vendor: " << (char*) glGetString(GL_VENDOR) << "\n";
-  kgm_log() << "OpenGL Render: " << (char*) glGetString(GL_RENDERER) << "\n";
+  kgm_log() << "GLES Version: " << (char*) glGetString(GL_VERSION) << "\n";
+  kgm_log() << "GLSL Version: " << (char*) glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+  kgm_log() << "GLES Vendor: " << (char*) glGetString(GL_VENDOR) << "\n";
+  kgm_log() << "GLES Render: " << (char*) glGetString(GL_RENDERER) << "\n";
 #endif
 
-  glEnable(GL_TEXTURE_CUBE_MAP);
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
   const GLubyte* ext = glGetString(GL_EXTENSIONS);
-  const GLubyte* svr = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
   kgm_log() << "GLES Extentions: " << (s8*) ext << "\n";
-  kgm_log() << "GLSL Version: " << (s8*) svr << "\n";
 
   if (!ext)
   {
@@ -240,16 +231,16 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
 #ifdef DEBUG
 
-  glDebugMessageCallbackKHR = (PFNGLDEBUGMESSAGECALLBACKKHRPROC) eglGetProcAddress("glDebugMessageCallbackKHR");
+  eglDebugMessageCallbackKHR = (PFNGLDEBUGMESSAGECALLBACKKHRPROC) eglGetProcAddress("glDebugMessageCallbackKHR");
 
-  if (glDebugMessageCallbackKHR != null)
+  if (eglDebugMessageCallbackKHR != null)
   {
     kgm_log() << "Enabling GL Debuging.\n";
 
     glEnable(GL_DEBUG_OUTPUT_KHR);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR);
 
-    glDebugMessageCallbackKHR( (GLDEBUGPROCKHR) __onDebugMessage, this);
+    eglDebugMessageCallbackKHR( (GLDEBUGPROCKHR) __onDebugMessage, this);
 
     kgm_log() << "Enabling GL Debuging status " << glGetError() << ".\n";
   }
@@ -277,9 +268,14 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   kgm_log() << "GLES Max texture units: " << (s32) max_image_units << "\n";
 
   //init local values
-  glEnable(GL_TEXTURE_2D);
-
-  glPolygonOffset (1.0f, 1.0f);
+  //glEnable(GL_TEXTURE_2D);
+  //glPolygonOffset (1.0f, 1.0f);
+  //glEnable(GL_TEXTURE_CUBE_MAP);
+  //glEnable(GL_TEXTURE_2D);
+  //glEnable(GL_DEPTH_TEST);
+  //glDepthFunc(GL_LEQUAL);
+  //glEnable(GL_CULL_FACE);
+  glCullFace(GL_BACK);
 
   m_renderbuffer = 0;
 
@@ -1363,11 +1359,11 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
   GLhandle prog = 0;
   GLhandle vshad = 0, fshad = 0;
   int stat[1] = {0};
-  int size = 256;
+  int size = 512;
   int gerr = 0;
 
 #ifdef DEBUG
-  char tbuf[256];
+  char tbuf[512];
 #endif
 
   //GL_VERTEX_SHADER
@@ -1396,10 +1392,13 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 
     if(stat[0] == GL_FALSE)
     {
+      kgm_log() << "gcGenShader: Compile vshader failed.\n";
       glDeleteShader(vshad);
       vshad = 0;
     }
   }
+
+  kgm_log() << "gcGenShader: Allocate fshader string.\n";
 
   //FRAGMENT_SHADER
   if(fsrc.data() && fsrc.length())
@@ -1427,19 +1426,26 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
 
     if(stat[0] == GL_FALSE)
     {
+      kgm_log() << "gcGenShader: Compile fshader failed.\n";
       glDeleteShader(fshad);
       fshad = 0;
     }
   }
 
-  if (vshad < 1 || fshad < 1)
+  kgm_log() << "gcGenShader: Create program pointer " << (void*) glCreateProgram << "\n";
+
+  EGLContext ctx = eglGetCurrentContext();
+  kgm_log() << "gcGenShader: egl client apis " << (s8*) eglQueryString(m_display, EGL_CLIENT_APIS) << "\n";
+  kgm_log() << "gcGenShader: egl vendor " << (s8*) eglQueryString(m_display, EGL_VENDOR) << "\n";
+  kgm_log() << "gcGenShader: egl venrsion " << (s8*) eglQueryString(m_display, EGL_VERSION) << "\n";
+  //kgm_log() << "gcGenShader: egl extentions " << (s8*) eglQueryString(m_display, EGL_EXTENSIONS) << "\n";
+
+  //if (eglQueryContext)
+
+  if (glCreateProgram != null)
   {
-    kgm_log() << "gcGenShader: Invalid shader.\n";
-
-    return null;
+    prog = glCreateProgram();
   }
-
-  prog = glCreateProgram();
 
   kgm_log() << "gcGenShader: Create program is " << (s32) prog << "\n";
 

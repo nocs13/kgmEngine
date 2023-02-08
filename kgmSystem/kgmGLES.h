@@ -5,7 +5,7 @@
 
 class kgmWindow;
 
-//#define GLES_2
+#define GLES_2
 
 #ifdef GLES_2
 
