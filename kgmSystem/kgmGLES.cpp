@@ -1,5 +1,7 @@
 #include "kgmGLES.h"
 
+#define GLES_2
+
 kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 {
   #ifdef GLES_2
@@ -23,6 +25,8 @@ kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 #define GL_DEPTH_STENCIL_ATTACHMENT_EXT    0x821A
 #define GLX_CONTEXT_PROFILE_MASK_ARB       0x9126
 #define GLX_CONTEXT_CORE_PROFILE_BIT_ARB   0x00000001
+
+PFNEGLBINDAPIPROC eglBindApi = null;
 
 PFNGLDEBUGMESSAGECALLBACKKHRPROC eglDebugMessageCallbackKHR = null;
 PFNGLCREATEPROGRAMPROC           glesCreateProgram = null;
@@ -1003,6 +1007,15 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
   if(!v_pnt)
     return;
 
+  GLint program = 0;
+
+  glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+  if (program == 0 || program != m_shader)
+  {
+    return;
+  }
+
   unsigned char *pM = (unsigned char*)v_pnt;
   unsigned int  uv_size = sizeof(float) * 2;
 
@@ -1013,7 +1026,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_xyz)
   {
-    ah = glGetAttribLocation(m_shader, "a_Vertex");
+    ah = glGetAttribLocation(program, "a_Vertex");
 
     if(ah != -1)
     {
@@ -1026,7 +1039,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_nor)
   {
-    ah = glGetAttribLocation(m_shader, "a_Normal");
+    ah = glGetAttribLocation(program, "a_Normal");
 
     if(ah != -1)
     {
@@ -1039,7 +1052,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_col)
   {
-    ah = glGetAttribLocation(m_shader, "a_Color");
+    ah = glGetAttribLocation(program, "a_Color");
 
     if(ah != -1)
     {
@@ -1052,7 +1065,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv0)
   {
-    ah = glGetAttribLocation(m_shader, "a_UV");
+    ah = glGetAttribLocation(program, "a_UV");
 
     if(ah != -1)
     {
@@ -1065,7 +1078,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv1)
   {
-    ah = glGetAttribLocation(m_shader, "a_UV2");
+    ah = glGetAttribLocation(program, "a_UV2");
     if(ah != -1)
     {
       glEnableVertexAttribArray(ah);
@@ -1077,7 +1090,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_uv2)
   {
-    ah = glGetAttribLocation(m_shader, "a_UV3");
+    ah = glGetAttribLocation(program, "a_UV3");
 
     if(ah != -1)
     {
@@ -1090,11 +1103,11 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 
   if(v_fmt & gcv_bn0)
   {
-    ah = glGetAttribLocation(m_shader, "a_Weights");
+    ah = glGetAttribLocation(program, "a_Weights");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
-    ah = glGetAttribLocation(m_shader, "a_Indices");
+    ah = glGetAttribLocation(program, "a_Indices");
     glEnableVertexAttribArray(ah);
     glVertexAttribPointer(ah, 4, GL_FLOAT, GL_FALSE, v_size, pM);
     pM += (4 * sizeof(float));
@@ -1125,7 +1138,7 @@ void kgmGLES::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt,
 }
 
 //VERTEX & INDEX BUFFER
-void* kgmGLES::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
+gchandle kgmGLES::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
 {
   VBO* vbo = new VBO;
   memset(vbo, 0, sizeof(VBO));
@@ -1149,10 +1162,10 @@ void* kgmGLES::gcGenVertexBuffer(void* vdata, u32 vsize, void* idata, u32 isize)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  return (void*)vbo;
+  return (gchandle) vbo;
 }
 
-void  kgmGLES::gcFreeVertexBuffer(void* b)
+void  kgmGLES::gcFreeVertexBuffer(gchandle b)
 {
   VBO* vbo = (VBO*)b;
 
@@ -1170,7 +1183,7 @@ void  kgmGLES::gcFreeVertexBuffer(void* b)
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
-void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt,
+void  kgmGLES::gcDrawVertexBuffer(gchandle b, u32 pmt, u32 vfmt, u32 vsize, u32 vcnt,
                                  u32 isize, u32 icnt, u32 ioff)
 {
   VBO* vbo = (VBO*)b;
@@ -1179,8 +1192,17 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
 
   int al = 0;
 
-  if(!vbo)
+  if (!vbo)
     return;
+
+   GLint program = 0;
+
+  glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+  if (program == 0 || program != m_shader)
+  {
+    return;
+  }
 
   //glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
@@ -1209,7 +1231,7 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
 
   if(vfmt & gcv_xyz)
   {
-    al = glGetAttribLocation(m_shader, "a_Vertex");
+    al = glGetAttribLocation(program, "a_Vertex");
 
     if(al != -1)
     {
@@ -1221,7 +1243,7 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
 
   if(vfmt & gcv_nor)
   {
-    al = glGetAttribLocation(m_shader, "a_Normal");
+    al = glGetAttribLocation(program, "a_Normal");
 
     if(al != -1)
     {
@@ -1233,7 +1255,7 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
 
   if(vfmt & gcv_col)
   {
-    al = glGetAttribLocation(m_shader, "a_Color");
+    al = glGetAttribLocation(program, "a_Color");
 
     if(al != -1)
     {
@@ -1245,7 +1267,7 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
 
   if(vfmt & gcv_uv0)
   {
-    al = glGetAttribLocation(m_shader, "a_UV");
+    al = glGetAttribLocation(program, "a_UV");
 
     if(al != -1)
     {
@@ -1255,65 +1277,7 @@ void  kgmGLES::gcDrawVertexBuffer(void* b, u32 pmt, u32 vfmt, u32 vsize, u32 vcn
     }
   }
 
-  /*
-  if(vfmt & gcv_uv1)
-  {
-    glClientActiveTexture(GL_TEXTURE1);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv2)
-  {
-    glClientActiveTexture(GL_TEXTURE2);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv3)
-  {
-    glClientActiveTexture(GL_TEXTURE3);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv4)
-  {
-    glClientActiveTexture(GL_TEXTURE4);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv5)
-  {
-    glClientActiveTexture(GL_TEXTURE5);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv6)
-  {
-    glClientActiveTexture(GL_TEXTURE6);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-
-  if(vfmt & gcv_uv7)
-  {
-    glClientActiveTexture(GL_TEXTURE7);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2,GL_FLOAT,vsize, (void*)offset);
-    offset = offset + sizeof(float) * uvt;
-  }
-  */
-
-  if(vbo->ib && icnt)
+    if(vbo->ib && icnt)
   {
     //  glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo->ib);
@@ -1507,7 +1471,7 @@ gchandle kgmGLES::gcGenShader(kgmArray<u8>& vsrc, kgmArray<u8>& fsrc)
   //glBindAttribLocation((GLhandle)prog, 0, "g_Vertex");
   //glBindAttribLocation((GLhandle)prog, 1, "g_Normal");
   //glBindAttribLocation((GLhandle)prog, 2, "g_Color");
-  //glBindAttribLocation((GLhandle)prog, 3, "g_Texcoord");
+  //glBindAttribLocation((GLhandle)prog, 3, "g_UV");
 
   glLinkProgram(prog);
 
