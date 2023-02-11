@@ -29,7 +29,7 @@ ifeq ($(cOS),Linux)
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN -DGLES_2
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -fno-inline
 #	LIBS = -lpthread -lXxf86vm -lX11 -lGL
-	LIBS = -llua -lpthread -lX11 -lEGL -lGLESv2 -ldl
+	LIBS = -llua -lpthread -lX11 -lGLX -ldl #-lGL -lGLX -lEGL -lGLESv2 -ldl
 	RM = rm -f
 else ifeq ($(cOS),Darwin)
 	CC   = ccache clang++

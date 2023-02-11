@@ -2,6 +2,7 @@
 #define KGMGLES_H
 
 #include "../kgmBase/kgmIGC.h"
+#include "kgmLib.h"
 
 class kgmWindow;
 
@@ -20,6 +21,9 @@ typedef size_t GLhandle;
 class kgmGLES : public kgmIGC
 {
   kgmWindow* m_wnd = null;
+
+  kgmLib m_egl;
+  kgmLib m_gles;
 
   EGLDisplay  m_display = EGL_NO_DISPLAY;
   EGLSurface  m_surface = EGL_NO_SURFACE;

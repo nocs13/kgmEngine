@@ -429,9 +429,9 @@ void kgmGraphics::add(INode* nod)
       gchandle map = null;
 
       if (mtl->envMapping() == kgmMaterial::EnvironmentMappingPlane)
-        map = gc->gcGenTexture(null, 256, 256, 3, gctype_tex2d);
+        map = gc->gcGenTexture(null, 256, 256, gctex_fmt24, gctype_tex2d);
       else if (mtl->envMapping() == kgmMaterial::EnvironmentMappingCube)
-        map = gc->gcGenTexture(null, 512, 512, 3, gctype_texcube);
+        map = gc->gcGenTexture(null, 512, 512, gctex_fmt24, gctype_texcube);
 
       if (map)
         m_environments.set(nod, map);

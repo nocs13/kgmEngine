@@ -19,9 +19,12 @@ bool kgmLib::open(char *p)
   handle = (void*)LoadLibrary(p);
 
   if (!handle)
-    kgm_log() << "Cannot load dll [" << p << "], error is " << (s32) GetLastError() << "\n";
+    kgm_log() << "Error: Unable load dll [" << p << "], error code is " << (s32) GetLastError() << "\n";
 #else
   handle = dlopen(p, RTLD_LAZY);
+
+  if(!handle)
+    kgm_log() << "Error: Unable load dll [" << p << "], error is " << (s8*) dlerror() << "\n";
 #endif
 
   return (handle)?(true):(false);
