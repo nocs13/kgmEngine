@@ -932,10 +932,10 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
     bypp = 4;
     break;
   case gctex_fmtdepth:
-    bypp = 2;
-    break;
-  case gctex_fmtdepten:
     bypp = 3;
+    break;
+  case gctex_fmtdepcil:
+    bypp = 4;
     break;
   default:
     bypp = 4;

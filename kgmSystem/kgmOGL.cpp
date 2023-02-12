@@ -552,7 +552,7 @@ gchandle kgmOGL::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     pic_fmt = GL_DEPTH_COMPONENT;
     int_fmt = GL_DEPTH_COMPONENT;
     break;
-  case gctex_fmtdepten:
+  case gctex_fmtdepcil:
     pic_fmt = GL_DEPTH_STENCIL_EXT;
     int_fmt = GL_DEPTH_STENCIL_EXT;
     break;
@@ -891,20 +891,6 @@ void kgmOGL::gcSetTarget(gchandle t)
     kgm_log() << "Error: Eid is " << (s32) err << ".\n";
   }
 #endif
-}
-
-//CLIP PLANE
-void kgmOGL::gcClipPlane(bool en, u32 id, f64 plane[4])
-{
-  if (!en)
-  {
-    glDisable(GL_CLIP_PLANE0 + id);
-  }
-  else
-  {
-    glEnable(GL_CLIP_PLANE0 + id);
-    glClipPlane(GL_CLIP_PLANE0 + id, plane);
-  }
 }
 
 //STENCIL

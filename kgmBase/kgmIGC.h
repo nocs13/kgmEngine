@@ -113,7 +113,7 @@ enum gc_enum
   gctex_fmt24,
   gctex_fmt32,
   gctex_fmtdepth,
-  gctex_fmtdepten,
+  gctex_fmtdepcil,
 
   gctype_tex2d,
   gctype_texcube,

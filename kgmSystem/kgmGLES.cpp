@@ -128,8 +128,14 @@ struct {
 
   PFNGLCREATEPROGRAMPROC           glesCreateProgram = null;
 
-GLint*         g_egl_compressed_format = null;
-GLint          g_egl_num_compressed_format = 0;
+static GLint*         g_egl_compressed_format = null;
+static GLint          g_egl_num_compressed_format = 0;
+
+static bool g_supp_depth_tex   = false;
+static bool g_supp_depth_tex24 = false;
+static bool g_supp_depth_tex32 = false;
+static bool g_supp_stencil_tex = false;
+static bool g_supp_depcil_tex  = false;
 
 static void __onDebugMessage(GLenum source,GLenum type,GLint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam)
 {
@@ -168,8 +174,7 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
   }
 
   #define EGLEXT_FN(func)  egl.func = (typeof( egl.func )) egl.eglGetProcAddress(#func)
-  //egl.eglBindAPI = (PFNEGLBINDAPIPROC) egl.eglGetProcAddress("eglBindAPI");
-  //egl.eglDebugMessageCallbackKHR = (PFNGLDEBUGMESSAGECALLBACKKHRPROC) egl.eglGetProcAddress("eglDebugMessageCallbackKHR");
+
   EGLEXT_FN(eglBindAPI);
   EGLEXT_FN(eglDebugMessageCallbackKHR);
   EGLEXT_FN(eglGetDisplay);
@@ -324,7 +329,7 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
   if (!egl.eglChooseConfig(m_display, egl_config_constraints, &egl_conf, 1, &num_config))
   {
-    kgm_log() << "Error: Failed to choose config (eglError: " <<  egl.eglGetError() << "0.\n";
+    kgm_log() << "Error: Failed to choose config (eglError: " <<  egl.eglGetError() << ".\n";
     m_error = 1;
 
     return ;
@@ -464,6 +469,31 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     m_error = 3;
 
     return;
+  }
+
+  if (strstr((s8*) ext, "GL_OES_depth_texture"))
+  {
+    g_supp_depth_tex = true;
+
+    if (strstr((s8*) ext, "GL_OES_depth24"))
+    {
+      g_supp_depth_tex24 = true;
+    }
+
+    if (strstr((s8*) ext, "GL_OES_depth32"))
+    {
+      g_supp_depth_tex32 = true;
+    }
+  }
+
+  if (strstr((s8*) ext, "GL_OES_texture_stencil8"))
+  {
+    g_supp_stencil_tex = true;
+  }
+
+  if (strstr((s8*) ext, "GL_OES_packed_depth_stencil"))
+  {
+    g_supp_depcil_tex = true;
   }
 
 #ifdef DEBUG
@@ -840,11 +870,21 @@ gchandle kgmGLES::gcGenTexture(void *pd, u32 w, u32 h, u32 fmt, u32 type)
     bpc = 4;
     break;
   case gctex_fmtdepth:
-    pic_fmt = GL_DEPTH_COMPONENT;
-    int_fmt = GL_DEPTH_COMPONENT;
-    tex_typ = GL_UNSIGNED_INT;
+    if (g_supp_depth_tex)
+    {
+      pic_fmt = GL_DEPTH_COMPONENT;
+      int_fmt = GL_DEPTH_COMPONENT;
+      tex_typ = GL_UNSIGNED_INT;
+    }
+    else
+    {
+      pic_fmt = GL_RGBA;
+      int_fmt = GL_RGBA;
+      tex_typ = GL_UNSIGNED_BYTE;
+    }
     break;
-  case gctex_fmtdepten:
+  case gctex_fmtdepcil:
+    if (g_supp_depcil_tex)
     pic_fmt = GL_DEPTH_STENCIL_OES;
     int_fmt = GL_DEPTH_STENCIL_OES;
     tex_typ = GL_UNSIGNED_INT;
@@ -980,66 +1020,28 @@ gchandle kgmGLES::gcGenTarget(u32 w, u32 h, bool d, bool s)
   u32 buffer = 0;
   gles.glGenFramebuffers(1, &buffer);
   gles.glBindFramebuffer(GL_FRAMEBUFFER, buffer);
-  //glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
 
-  /*
-  GLu32 texture = 0;
+  u32 color = 0;
 
-  switch (type)
-  {
-  case gctype_texcube:
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+0, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+1, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+2, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+3, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+4, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+5, 0, GL_RGBA8, w, h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-    break;
-  case gctype_texdepth:
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-    break;
-  case gctype_tex2d:
-  default:
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-  };
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-  */
+  gles.glGenRenderbuffers(1, &color);
+  gles.glBindRenderbuffer( GL_RENDERBUFFER, (GLuint)color);
+  gles.glRenderbufferStorage( GL_RENDERBUFFER, GL_RGBA, w, h );
+  gles.glBindRenderbuffer( GL_RENDERBUFFER, 0 );
 
   u32 depth = 0;
+  u32 stencil = 0;
 
   if (d)
   {
     gles.glGenRenderbuffers(1, &depth);
     gles.glBindRenderbuffer(GL_RENDERBUFFER, depth);
 
-    if (s)
+    if (g_supp_depcil_tex)
     {
-      //glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, w, h);
-      //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depth);
+      gles.glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, w, h);
+      gles.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+      gles.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth);
+      stencil = depth;
     }
     else
     {
@@ -1048,19 +1050,13 @@ gchandle kgmGLES::gcGenTarget(u32 w, u32 h, bool d, bool s)
     }
   }
 
-  u32 stencil = 0;
-
-  /*
-  switch (type)
+  if (!stencil)
   {
-  case gctype_texdepth:
-    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, texture, 0);
-    break;
-  case gctype_tex2d:
-  default:
-    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, texture, 0);
-  };
-  */
+    gles.glGenRenderbuffers(1, &stencil);
+    gles.glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+    gles.glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+    gles.glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, w, h);
+  }
 
 #ifdef DEBUG
   GLenum status;
@@ -1068,7 +1064,7 @@ gchandle kgmGLES::gcGenTarget(u32 w, u32 h, bool d, bool s)
 
   if(status != GL_FRAMEBUFFER_COMPLETE)
   {
-    kgm_log() << "Error: cannot use framebuffer object!\n";
+    kgm_log() << "Error: Cannot use framebuffer object!\n";
     return null;
   }
 #endif
@@ -1079,7 +1075,7 @@ gchandle kgmGLES::gcGenTarget(u32 w, u32 h, bool d, bool s)
   RenderBuffer* rb = (RenderBuffer*) kgm_alloc(sizeof(RenderBuffer));
 
   rb->frame   = buffer;
-  rb->color   = 0;
+  rb->color   = color;
   rb->depth   = depth;
   rb->stencil = stencil;
   rb->width   = w;
@@ -1091,25 +1087,27 @@ gchandle kgmGLES::gcGenTarget(u32 w, u32 h, bool d, bool s)
 
 bool kgmGLES::gcTexTarget(gchandle tar, gchandle tex, u32 type)
 {
+
   RenderBuffer* rb = static_cast<RenderBuffer*>(tar);
 
   if(!rb)
     return false;
 
   gles.glBindFramebuffer(GL_FRAMEBUFFER, rb->frame);
-  //glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  gles.glBindRenderbuffer(GL_RENDERBUFFER, rb->depth);
 
   switch (type)
   {
   case gctype_texdepth:
+    gles.glBindRenderbuffer(GL_RENDERBUFFER, rb->depth);
     gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,  (GLint) (size_t) tex, 0);
     break;
   case gctype_tex2d:
-    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
+    gles.glBindRenderbuffer(GL_RENDERBUFFER, rb->color);
+    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
     break;
   case gctype_texcube:
-    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT,
+    gles.glBindRenderbuffer(GL_RENDERBUFFER, rb->color);
+    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                 GL_TEXTURE_CUBE_MAP_POSITIVE_X + m_cubemapside, (GLint) (size_t) tex, 0);
 
     ++rb->cmside;
@@ -1118,11 +1116,8 @@ bool kgmGLES::gcTexTarget(gchandle tar, gchandle tex, u32 type)
       rb->cmside = 0;
     break;
   default:
-    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, (GLint)            0, 0);
+    gles.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, (GLint) (size_t) tex, 0);
   };
-
-  rb->type = type;
-  rb->color = (GLint) (size_t) tex;
 
 #ifdef DEBUG
   GLenum status = gles.glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1145,6 +1140,12 @@ void kgmGLES::gcFreeTarget(gchandle t)
 
   if(!rb)
     return;
+
+  if (rb->color)
+    gles.glDeleteRenderbuffers(1, &rb->color);
+
+  if (rb->stencil != rb->depth)
+    gles.glDeleteRenderbuffers(1, &rb->stencil);
 
   if (rb->depth)
     gles.glDeleteRenderbuffers(1, &rb->depth);
@@ -1170,33 +1171,15 @@ void kgmGLES::gcSetTarget(gchandle t)
   }
 
   gles.glBindFramebuffer(GL_FRAMEBUFFER, rb->frame);
-  //glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  //glBindRenderbuffer(GL_RENDERBUFFER_EXT, rb->depth);
 
   m_renderbuffer = rb->frame;
 
 #ifdef DEBUG
   GLenum err = gles.glGetError();
 
-  if (err != GL_NO_ERROR) {
-    kgm_log() << "Error: Cannot set framebuffer.\n";
-    kgm_log() << "Error: Eid is " << (s32) err << ".\n";
-  }
+  if (err != GL_NO_ERROR)
+    kgm_log() << "Error: Cannot set framebuffer, error is " << err << ".\n";
 #endif
-}
-
-//CLIP PLANE
-void kgmGLES::gcClipPlane(bool en, u32 id, f64 plane[4])
-{
-  if (!en)
-  {
-    //glDisable(GL_CLIP_PLANE0 + id);
-  }
-  else
-  {
-    //glEnable(GL_CLIP_PLANE0 + id);
-    //glClipPlane(GL_CLIP_PLANE0 + id, plane);
-  }
 }
 
 //STENCIL
