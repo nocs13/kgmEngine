@@ -117,3 +117,5 @@ inline void kgm_log_print(const char* s)
 #define KGM_DBG_MSG(x) fprintf(stderr, "%s", x)
 #define KGM_LOG() (kgm_log() << __FILE__ << ":" << __LINE__ << ":")
 
+//#define sc_log(ctx, format, args...)   sc_do_log(ctx, SC_LOG_DEBUG_NORMAL, __FILE__, __LINE__, __FUNCTION__, format , ## args)
+
