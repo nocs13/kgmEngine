@@ -100,7 +100,9 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   wnd->getRect(rx, ry, rw, rh);
 
   if (!m_glctx && wnd->m_visual)
-      m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+  {
+    m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+  }
 
   if (!m_glctx)
   {

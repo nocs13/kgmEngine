@@ -339,7 +339,7 @@ void kgmUnregisterWindowClass(){
 #endif
 
 #ifdef LINUX
-
+ #include <dlfcn.h>
 #ifdef GLES_2
 #else
 #include <GL/glx.h>
@@ -761,6 +761,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_wRect[3] = h;
 
 #else
+  typedef XVisualInfo* (*XGETVISUALINFO)(Display *display, long vinfo_mask, XVisualInfo *vinfo_template, int *nitems_return);
 
   m_dpy    = null;
   m_wnd    = {0};
@@ -768,6 +769,15 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_visual = nullptr;
 
   XVisualInfo* vi = nullptr;
+
+  XGETVISUALINFO PfnXGetVisualInfo = NULL;
+
+  {
+    void* handle = dlopen(NULL, RTLD_LAZY);
+
+    if (handle)
+      PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(handle, "XGetVisualInfo");
+  }
 
   //XInitThreads();
 
@@ -780,94 +790,29 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   if (m_screen < 0)
     m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
-  bool m_gl_need = true;
+  XWindowAttributes xattr;
 
-  #ifdef GLES_2
+  Window wroot = RootWindow(m_dpy, m_screen);
 
-  #elif defined(OGL)
+  XGetWindowAttributes(m_dpy, wroot, &xattr);
 
-  if (m_gl_need)
+  XVisualInfo vinfo;
+  vinfo.screen = m_screen;
+  vinfo.visualid = XVisualIDFromVisual(xattr.visual);
+  s32 n;
+
+  vi = PfnXGetVisualInfo(m_dpy, VisualScreenMask | VisualIDMask, &vinfo, &n);
+
+  if (vi)
   {
-    kgm_log() << "Init OGL for window.\n";
-
-    s32 majorGLX, minorGLX = 0;
-
-    glXQueryVersion(m_dpy, &majorGLX, &minorGLX);
-
-    kgm_log() << "GLX version: " << majorGLX << "." << minorGLX << ".\n";
-
-    if ((majorGLX > 1) || (majorGLX == 1 && minorGLX >= 2))
-    {
-      GLint glx_attribs[] = {
-          GLX_X_RENDERABLE    , True,
-          GLX_DRAWABLE_TYPE   , GLX_WINDOW_BIT,
-          GLX_RENDER_TYPE     , GLX_RGBA_BIT,
-          GLX_X_VISUAL_TYPE   , GLX_TRUE_COLOR,
-          GLX_RED_SIZE        , 8,
-          GLX_GREEN_SIZE      , 8,
-          GLX_BLUE_SIZE       , 8,
-          GLX_ALPHA_SIZE      , 8,
-          GLX_DEPTH_SIZE      , 24,
-          GLX_STENCIL_SIZE    , 8,
-          GLX_DOUBLEBUFFER    , True,
-          None
-        };
-
-      s32 fbcount;
-
-      GLXFBConfig* fbc = glXChooseFBConfig(m_dpy, m_screen, glx_attribs, &fbcount);
-
-      if (fbc != nullptr)
-      {
-        s32 best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
-
-        for (int i = 0; i < fbcount; ++i)
-        {
-          XVisualInfo *vi = glXGetVisualFromFBConfig(m_dpy, fbc[i]);
-
-          if ( vi != 0)
-          {
-            int samp_buf, samples;
-
-            glXGetFBConfigAttrib(m_dpy, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
-            glXGetFBConfigAttrib(m_dpy, fbc[i], GLX_SAMPLES       , &samples);
-
-            if (best_fbc < 0 || (samp_buf && samples > best_num_samp) )
-            {
-              best_fbc = i;
-
-              best_num_samp = samples;
-            }
-
-            if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
-              worst_fbc = i;
-
-            worst_num_samp = samples;
-          }
-
-          XFree( vi );
-        }
-
-        GLXFBConfig bestFbc = fbc[ best_fbc ];
-
-        vi = glXGetVisualFromFBConfig(m_dpy, bestFbc);
-
-        XFree(fbc);
-
-        fbc = null;
-      }
-      else
-      {
-        kgm_log() << "Failed to retrieve framebuffer.\n";
-      }
-    }
-    else
-    {
-      kgm_log() << "GLX 1.2 or greater is required.\n";
-    }
+    kgm_log() << "VisualInfo depth: " << vi->depth << ".\n";
+  }
+  else
+  {
+    kgm_log() << "VisualInfo error: No visual info " << n << ".\n";
   }
 
-#endif
+  bool m_gl_need = false;
 
   if (vi && vi->screen == m_screen)
   {
@@ -889,25 +834,16 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
                                 x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
   }
 
-  //m_wnd = XCreateWindow(m_dpy, DefaultRootWindow(m_dpy), x, y, w, h, 0,
-  //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
-  //                      cmask, &swa);
-  //m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, 0), x, y, w, h, 0,
-  //                      DefaultDepth(m_dpy, 0), InputOutput, DefaultVisual(m_dpy, 0),
-  //                      cmask, &swa);
-
   Atom delWindow = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
 
   XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
 
   XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
                ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | ButtonMotionMask);
+
   XMapWindow(m_dpy, m_wnd);
   XStoreName(m_dpy, m_wnd, wname);
   XFlush(m_dpy);
-
-  //Bool b_ret;
-  //XkbSetDetectableAutoRepeat(m_dpy, True, &b_ret);
 
 #endif
 }
@@ -932,25 +868,8 @@ kgmWindow::~kgmWindow()
 
 #else
 
-  /*XDestroyWindow(m_dpy, m_wnd);
-
-  if(!m_parent)
-  {
-    XCloseDisplay(m_dpy);
-
-    m_dpy = null;
-  }*/
-
   if (m_visual)
   {
-    /*if (m_visual->visual)
-    {
-      if (m_visual->visual->ext_data)
-        XFree(m_visual->visual->ext_data);
-
-      //XFree(m_visual->visual);
-    }*/
-
     XFree(m_visual);
 
     m_visual = null;
