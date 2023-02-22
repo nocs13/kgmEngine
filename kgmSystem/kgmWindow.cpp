@@ -336,34 +336,9 @@ void kgmUnregisterWindowClass(){
   if(GetClassInfo(0, cWndClass, &wcl))
     UnregisterClass(cWndClass, 0);
 }
-#endif
+#elif defined(LINUX)
 
-#ifdef LINUX
- #include <dlfcn.h>
-#ifdef GLES_2
-#else
-#include <GL/glx.h>
-/* attributes for a single buffered visual in RGBA format with at least
- * 4 bits per color and a 16 bit depth buffer */
-static int attrSgl[] = {
-  GLX_RGBA,
-  GLX_RED_SIZE, 4,
-  GLX_GREEN_SIZE, 4,
-  GLX_BLUE_SIZE, 4,
-  GLX_DEPTH_SIZE, 16,
-  None
-};
-
-/* attributes for a double buffered visual in RGBA format with at least
- * 4 bits per color and a 16 bit depth buffer */
-static int attrDbl[] = { GLX_RGBA, GLX_DOUBLEBUFFER,
-                         GLX_RED_SIZE, 4,
-                         GLX_GREEN_SIZE, 4,
-                         GLX_BLUE_SIZE, 4,
-                         GLX_DEPTH_SIZE, 8,
-                         None
-                       };
-#endif
+#include <dlfcn.h>
 
 u16 keyTranslate(KeySym key)
 {
@@ -641,9 +616,8 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt)
 
   return 1;
 }
-#endif
 
-#ifdef ANDROID
+#elif defined(ANDROID)
 
 u16 keyTranslate(int key)
 {
@@ -763,6 +737,8 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 #else
   typedef XVisualInfo* (*XGETVISUALINFO)(Display *display, long vinfo_mask, XVisualInfo *vinfo_template, int *nitems_return);
 
+  void* x11lib = null;
+
   m_dpy    = null;
   m_wnd    = {0};
   m_screen = -1;
@@ -773,16 +749,11 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   XGETVISUALINFO PfnXGetVisualInfo = NULL;
 
   {
-    void* handle = dlopen(NULL, RTLD_LAZY);
+    x11lib = dlopen(NULL, RTLD_LAZY);
 
-    if (handle)
-      PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(handle, "XGetVisualInfo");
+    if (x11lib)
+      PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(x11lib, "XGetVisualInfo");
   }
-
-  //XInitThreads();
-
-  //XSetWindowAttributes   swa;
-  //s32 cmask   = CWColormap | CWBorderPixel | CWEventMask | CWOverrideRedirect;
 
   if (!m_dpy)
     m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
@@ -801,7 +772,18 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   vinfo.visualid = XVisualIDFromVisual(xattr.visual);
   s32 n;
 
-  vi = PfnXGetVisualInfo(m_dpy, VisualScreenMask | VisualIDMask, &vinfo, &n);
+  if (PfnXGetVisualInfo)
+  {
+    vi = PfnXGetVisualInfo(m_dpy, VisualScreenMask | VisualIDMask, &vinfo, &n);
+  }
+
+  if (x11lib)
+  {
+    dlclose(x11lib);
+
+    PfnXGetVisualInfo = null;
+    x11lib = null;
+  }
 
   if (vi)
   {
@@ -811,8 +793,6 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   {
     kgm_log() << "VisualInfo error: No visual info " << n << ".\n";
   }
-
-  bool m_gl_need = false;
 
   if (vi && vi->screen == m_screen)
   {
@@ -884,24 +864,6 @@ kgmWindow::~kgmWindow()
 
   m_dpy = null;
   m_wnd = 0;
-
-  //XEvent ev;
-  /*XClientMessageEvent ev;
-
-  memset(&ev, 0, sizeof (ev));
-
-  ev.type = ClientMessage;
-  ev.window = m_wnd;
-  ev.format = 32;
-  XSendEvent(m_dpy, m_wnd, 0, 0, (XEvent*)&ev);*/
-
-  /*ev.xclient.type = ClientMessage;
- ev.xclient.window = m_wnd;
- ev.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", false);
- ev.xclient.format = 32;
- ev.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", false);
- ev.xclient.data.l[1] = CurrentTime;
- XSendEvent(m_dpy, m_wnd, False, NoEventMask, &ev);*/
 
 #endif
 

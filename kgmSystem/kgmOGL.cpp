@@ -99,9 +99,86 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
 
   wnd->getRect(rx, ry, rw, rh);
 
-  if (!m_glctx && wnd->m_visual)
+  if (!m_glctx)
   {
-    m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+    if (wnd->m_visual)
+    {
+      m_glctx = glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+    }
+    else
+    {
+      GLint glx_attribs[] = {
+          GLX_X_RENDERABLE    , True,
+          GLX_DRAWABLE_TYPE   , GLX_WINDOW_BIT,
+          GLX_RENDER_TYPE     , GLX_RGBA_BIT,
+          GLX_X_VISUAL_TYPE   , GLX_TRUE_COLOR,
+          GLX_RED_SIZE        , 8,
+          GLX_GREEN_SIZE      , 8,
+          GLX_BLUE_SIZE       , 8,
+          GLX_ALPHA_SIZE      , 8,
+          GLX_DEPTH_SIZE      , 24,
+          GLX_STENCIL_SIZE    , 8,
+          GLX_DOUBLEBUFFER    , True,
+          None
+      };
+
+      s32 fbcount;
+
+      GLXFBConfig* fbc = glXChooseFBConfig(wnd->m_dpy, wnd->m_screen, glx_attribs, &fbcount);
+
+      kgm_log() << "kgmOGL: FB config count " << fbcount << ".\n";
+
+      XVisualInfo *vi = null;
+
+      if (fbc != nullptr)
+      {
+        s32 best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+
+        for (int i = 0; i < fbcount; ++i)
+        {
+          XVisualInfo *vi = glXGetVisualFromFBConfig(wnd->m_dpy, fbc[i]);
+
+          if (vi != 0)
+          {
+            int samp_buf, samples;
+
+            glXGetFBConfigAttrib(wnd->m_dpy, fbc[i], GLX_SAMPLE_BUFFERS, &samp_buf);
+            glXGetFBConfigAttrib(wnd->m_dpy, fbc[i], GLX_SAMPLES       , &samples);
+
+            if (best_fbc < 0 || (samp_buf && samples > best_num_samp))
+            {
+              best_fbc = i;
+
+              best_num_samp = samples;
+            }
+
+            if (worst_fbc < 0 || !samp_buf || samples < worst_num_samp)
+              worst_fbc = i;
+
+            worst_num_samp = samples;
+          }
+
+          XFree( vi );
+        }
+
+        kgm_log() << "kgmOGL: FB config best match " << best_fbc << ".\n";
+
+        GLXFBConfig bestFbc = fbc[best_fbc];
+
+        vi = glXGetVisualFromFBConfig(wnd->m_dpy, bestFbc);
+
+        XFree(fbc);
+
+        fbc = null;
+
+        if (vi)
+        {
+          m_glctx = glXCreateContext(wnd->m_dpy, vi, 0, GL_TRUE);
+          XFree(vi);
+          vi = null;
+        }
+      }
+    }
   }
 
   if (!m_glctx)
