@@ -749,7 +749,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   XGETVISUALINFO PfnXGetVisualInfo = NULL;
 
   {
-    x11lib = dlopen(NULL, RTLD_LAZY);
+     x11lib = dlopen(NULL, RTLD_LAZY);
 
     if (x11lib)
       PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(x11lib, "XGetVisualInfo");

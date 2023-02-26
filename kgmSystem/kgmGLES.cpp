@@ -126,7 +126,7 @@ struct {
   PFNGLGETUNIFORMFVPROC glGetUniformfv = null;
 } gles;
 
-  PFNGLCREATEPROGRAMPROC           glesCreateProgram = null;
+//PFNGLCREATEPROGRAMPROC           glesCreateProgram = null;
 
 static GLint*         g_egl_compressed_format = null;
 static GLint          g_egl_num_compressed_format = 0;

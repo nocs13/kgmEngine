@@ -5,6 +5,7 @@
 
 #include "../kgmBase/kgmIGC.h"
 #include "kgmWindow.h"
+#include "kgmLib.h"
 
 #ifdef OGL
 
@@ -81,6 +82,8 @@ private:
 
 #elif defined(DARWIN)
 #else
+
+  kgmLib m_glx;
 
   GLXContext   m_glctx  = null;
 
