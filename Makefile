@@ -18,7 +18,6 @@ OUT_A  = libkgmEngine_s.a
 all: extern debug
 #	echo $(subdirs)
 #	echo $(sources)
-#	make -C Tools/Editor
 
 extern:
 	make -C kgmExtern
@@ -26,7 +25,6 @@ extern:
 #debug: set_debug $(OUT_SO) $(OUT_A)
 debug: set_debug $(OUT_A)
 	echo 'debug finished.'
-	make -C Tools/Packer
 
 set_debug:
 	$(eval DEFS += -DDEBUG)
@@ -64,7 +62,6 @@ sdk: $(OUT_A)  $(OUT_SO)
 
 clean:
 	make -C kgmExtern clean
-	make -C Tools/Editor clean
 	$(RM) $(objects)
 	$(RM) $(OUT_SO) $(OUT_A)
 
