@@ -48,9 +48,9 @@ enum MENUEVENT
   ME_HELP_ABOUT
 };
 
-kEditor::kEditor()
+kEditor::kEditor(GtkWidget* w)
 {
-  setMsAbsolute(true);
+  //setMsAbsolute(true);
 
   ms_click[0] = ms_click[1] = ms_click[2] = false;
 

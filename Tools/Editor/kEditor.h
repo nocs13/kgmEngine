@@ -14,13 +14,13 @@
 #include "kViewObjects.h"
 #include "kViewOptions.h"
 
+#include <gtk/gtk.h>
+
 /*
  * Deprecated. Should move as independent script based engine editor.
 */
 
-class kgmGameBase;
-
-class kEditor: public kgmGameBase
+class kEditor: public kgmObject
 {
 private:
 
@@ -76,8 +76,13 @@ private:
   Slot<kEditor, kgmString>         slotSelect;
 
 public:
-  kEditor();
+  kEditor(GtkWidget* w);
   ~kEditor();
+
+  void gInit() {}
+  void gLoad() {}
+  void gUnload() {}
+  void gAppend() {}
 
   void clear();
   void init();

@@ -2,6 +2,8 @@
 #include "../../kgmBase/kgmLog.h"
 #include "../../kgmSystem/kgmSystem.h"
 
+#include <gtk/gtk.h>
+
 kApp::kApp()
 {
   m_game = null;
@@ -59,12 +61,43 @@ void kApp::main()
   editor->loop();
 }
 
+static void activate(GtkApplication* app)
+{
+  GtkWidget* w;
+
+  u32 dw, dh;
+
+  kgmSystem::getDesktopDimension(dw, dh);
+
+  w = gtk_application_window_new(app);
+  gtk_window_set_title (GTK_WINDOW (w), "kEditor");
+  gtk_window_set_default_size (GTK_WINDOW (w), dw, dh);
+
+  gtk_window_present (GTK_WINDOW (w));
+
+  kEditor* e = new kEditor(w);
+}
+
 int main(int argc, char** argv)
 {
-  kApp app;
+  //kApp app;
+  //int res = app.exec(argc, argv);
 
-  int res = app.exec(argc, argv);
+  GtkApplication *app;
+  int status;
 
-  return res;
+  app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
+  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+  status = g_application_run (G_APPLICATION (app), argc, argv);
+  g_object_unref (app);
+
+  //gtk_init(&argc, &argv);
+
+  //printf("GTK+ version: %d.%d.%d\n", gtk_major_version,
+  //          gtk_minor_version, gtk_micro_version);
+  //printf("Glib version: %d.%d.%d\n", glib_major_version,
+  //          glib_minor_version, glib_micro_version);
+
+  return 0;
 }
 
