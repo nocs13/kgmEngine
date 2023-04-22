@@ -42,15 +42,54 @@ protected:
     else
       compare = compare_default;
 
-    for (u32 i = 0; i < (len - 1); i++) {
-      for (u32 j = i + 1; j < len; j++) {
-        if (compare(data[j], data[i])) {
+    u32 i = 0;
+    u32 j = len - 1;
+
+    while(i < j)
+    {
+      T min = data[i], max = data[j];
+      u32 imin = i, imax = j;
+
+      for(u32 ii = i; ii <= j; ii++)
+      {
+        if (compare(data[ii], min)) {
+          imin = ii;
+          min = data[ii];
+        } else if(compare(max, data[ii])) {
+          imax = ii;
+          max = data[ii];
+        }
+      }
+
+      if (imin != i)
+      {
+        T m = data[imin];
+        data[imin] = data[i];
+        data[i] = m;
+      }
+
+      if (imax != j)
+      {
+        T m = data[imax];
+        data[imax] = data[j];
+        data[j] = m;
+      }
+
+      i++;
+      j--;
+    }
+    /*for (u32 i = 0; i < (len - 1); i++)
+    {
+      for (u32 j = i + 1; j < len; j++)
+      {
+        if (compare(data[j], data[i]))
+        {
           T t = data[j];
           data[j] = data[i];
           data[i] = t;
         }
       }
-    }
+    }*/
   }
 
   static bool compare_default(T& a, T& b)

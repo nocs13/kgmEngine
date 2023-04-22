@@ -2,6 +2,7 @@
 
 #include "../../kgmBase/kgmLog.h"
 #include "../../kgmBase/kgmConvert.h"
+#include "../../kgmSystem/kgmOGL.h"
 #include "../../kgmSystem/kgmSystem.h"
 #include "../../kgmSystem/kgmThread.h"
 #include "../../kgmGame/kgmGameBase.h"
@@ -9,6 +10,7 @@
 
 #include "../../kgmGraphics/kgmShape.h"
 #include "../../kgmGraphics/kgmParticles.h"
+#include "../../kgmGraphics/kgmGraphics.h"
 
 static float cam_scale = 1.0;
 
@@ -50,7 +52,11 @@ enum MENUEVENT
 
 kEditor::kEditor(GtkWidget* w)
 {
-  //setMsAbsolute(true);
+  m_wnd = new kWindow(w);
+
+  m_settings = new kgmSettings();
+
+  setMsAbsolute(true);
 
   ms_click[0] = ms_click[1] = ms_click[2] = false;
 
@@ -77,6 +83,10 @@ kEditor::kEditor(GtkWidget* w)
 
   m_isVisual = true;
   m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
+
+  m_gc = new kgmOGL(m_wnd);
+  m_resources = new kgmGameResources(m_gc, null);
+  m_graphics = new kgmGraphics(m_gc, m_resources);
 }
 
 kEditor::~kEditor()
@@ -118,7 +128,7 @@ void kEditor::init()
   if(!m_graphics)
     return;
 
-    m_graphics->showLights(true);
+    //m_graphics->showLights(true);
 
     menu = new kgmGuiMenu(null);
     menu->setSid("main_menu");
@@ -158,7 +168,6 @@ void kEditor::init()
     item->add(ME_VIEW_BACK, "Left");
     item->add(ME_VIEW_TOP, "Top");
 
-    guiAdd(menu);
     menu->show();
 
     mtlLines = new kgmMaterial();
@@ -173,7 +182,7 @@ void kEditor::init()
     auto pvt = new kPivot();
     pvt->rebuild();
 
-    pivot = new kgmUnit(this);
+    pivot = new kgmUnit();
     pivot->setNode(new kgmGNode(pivot, pvt, kgmIGraphics::NodeMesh));
     pivot->setName("pivot");
     ((kgmIGraphics::INode*)pivot->getNode())->setNodeShader(kgmIGraphics::ShaderLines);
@@ -181,9 +190,9 @@ void kEditor::init()
     gAppend(pivot);
     pivot->increment();
 
-    m_graphics->setBgColor(0xff222222);
+    //m_graphics->setBgColor(0xff222222);
 
-    kgmUnit* u = new kgmUnit(this);
+    kgmUnit* u = new kgmUnit();
 
     u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
 
@@ -196,9 +205,14 @@ void kEditor::init()
     //u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
 }
 
+//kgmISettings* kEditor::getSettings()
+//{
+//  return m_settings;
+//}
+
 void kEditor::select(kgmString name)
 {
-  kgmUnit* node = gUnit(name);
+  kgmUnit* node = null;//gUnit(name);
 
   if(node)
   {
@@ -216,7 +230,7 @@ void kEditor::select(int x, int y)
 {
   kgmCamera& cam = getRender()->camera();
 
-  iRect vp = getRender()->viewport();
+  iRect vp;// = cam.viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -270,10 +284,11 @@ void kEditor::select(int x, int y)
 
   kgmList<kgmUnit*> nodes;
 
-  kgmIGame::Iterator* i = gUnits();
+  auto i = units.begin();
 
-  while(kgmUnit* un = i->next())
+  do
   {
+    kgmUnit* un = (*i);
     vec3 upos = un->position();
     vec3  c, n_x, n_y, n_z;
     plane3 pln_x, pln_y, pln_z;
@@ -341,9 +356,7 @@ void kEditor::select(int x, int y)
 
       pv_delta = upos.distance(c);
     }
-  }
-
-  delete i;
+  }  while(i.next());
 
   if(peeked)
   {
@@ -375,7 +388,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
   kgmCamera& cam = getRender()->camera();
 
-  iRect vp = getRender()->viewport();
+  iRect vp;// = getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
@@ -436,7 +449,7 @@ bool kEditor::mapOpen(kgmString s)
 {
   gLoad(s);
 
-  kgmUnit* u = new kgmUnit(this);
+  kgmUnit* u = new kgmUnit(null);
 
   u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
   u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
@@ -476,12 +489,12 @@ bool kEditor::fdAddMesh(kgmGuiFileDialog* fd)
 
 bool kEditor::addMesh(kgmString name)
 {
-  kgmMesh* mesh = getResources()->getMesh(name);
+  kgmMesh* mesh = m_resources->getMesh(name);
 
   if(!mesh)
     return false;
 
-  kgmUnit* visual = new kgmUnit(this);
+  kgmUnit* visual = new kgmUnit(null);
 
   if(!visual)
     return false;
@@ -502,7 +515,7 @@ bool kEditor::addUnit(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmUnit* unit = new kgmUnit(this);
+  kgmUnit* unit = new kgmUnit(null);
 
   unit->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -518,7 +531,7 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
   if(!fdd || fdd->getFile().empty())
     return false;
 
-  kgmUnit* actor = new kgmUnit(this);
+  kgmUnit* actor = new kgmUnit(null);
 
   actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -534,7 +547,7 @@ bool kEditor::addEffect(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmEffect* effect = new kgmEffect(this);
+  kgmEffect* effect = new kgmEffect(null);
 
   effect->setName(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -550,7 +563,7 @@ bool kEditor::addSensor(kgmString type)
   if(type.length() < 1)
     return false;
 
-  kgmSensor* sensor = new kgmSensor(this);
+  kgmSensor* sensor = new kgmSensor(null);
 
   sensor->setName(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
@@ -578,13 +591,10 @@ void kEditor::onIdle()
   {
     ctick = kgmTime::getTicks();
   }
-
-  kgmGameBase::onIdle();
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
 {
-  kgmGameBase::onEvent(e);
 }
 
 void kEditor::onKeyUp(int k)
@@ -966,7 +976,6 @@ void kEditor::onMapOpen()
   dir += "maps";
 
   fdd->showHidden(false);
-  guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -992,7 +1001,6 @@ void kEditor::onMapSave()
   dir += "maps";
 
   fdd->showHidden(false);
-  guiAdd(fdd);
 
   fdd->setFilter(".map");
   fdd->changeLocation(false);
@@ -1129,7 +1137,6 @@ void kEditor::onEditOptions()
   */
   if(vop)
   {
-    guiAdd(vop);
     vop->show();
   }
 }
@@ -1142,7 +1149,7 @@ void kEditor::onAddBox()
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(this);
+  kgmUnit* unit = new kgmUnit(null);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1161,7 +1168,7 @@ void kEditor::onAddPlane()
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(this);
+  kgmUnit* unit = new kgmUnit(null);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1193,7 +1200,6 @@ void kEditor::onAddMesh()
   slotOpenFile.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdAddMesh, &fdd->sigSelect);
 
   fdd->showHidden(false);
-  guiAdd(fdd);
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
@@ -1214,7 +1220,7 @@ void kEditor::onAddUnit()
 
   guiAdd(vs);*/
 
-  kgmUnit* unit = new kgmUnit(this);
+  kgmUnit* unit = new kgmUnit(null);
   selected = unit;
 
   selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
@@ -1224,7 +1230,7 @@ void kEditor::onAddUnit()
 
 void kEditor::onAddLight()
 {
-  kgmUnit* light = new kgmUnit(this);
+  kgmUnit* light = new kgmUnit(null);
   vec3 pos(1, 1, 4);
   light->setNode(new kgmGNode(light, new kgmLight(), kgmIGraphics::NodeLight));
   light->setName(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
@@ -1245,8 +1251,6 @@ void kEditor::onAddActor()
   fdd->setFilter(".act");
   fdd->changeLocation(false);
   fdd->forOpen(getSettings()->get((char*)"Path"));
-
-  guiAdd(fdd);
 }
 
 void kEditor::onAddEffect()
@@ -1258,8 +1262,6 @@ void kEditor::onAddEffect()
 
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
-
-  guiAdd(vo);
 }
 
 void kEditor::onAddSensor()
@@ -1272,8 +1274,6 @@ void kEditor::onAddSensor()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addSensor, &vo->sigSelect);
   //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
-
-  guiAdd(vo);
 }
 
 void kEditor::onAddTrigger()
@@ -1292,7 +1292,7 @@ void kEditor::onAddParticles()
 
   m_objects.add(p);
 
-  kgmUnit* pr = new kgmUnit(this);
+  kgmUnit* pr = new kgmUnit(null);
 
   pr->setNode(new kgmGNode(pr, p, kgmIGraphics::NodeParticles));
 
@@ -1315,7 +1315,6 @@ void kEditor::onAddMaterial()
 
   if(vop)
   {
-    guiAdd(vop);
     vop->show();
   }
 }
@@ -1350,14 +1349,13 @@ void kEditor::onViewObjects()
   Slot<kEditor, kgmString> slotSelect;
   slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
 
-  kgmIGame::Iterator* i = gUnits();
+  auto i = units.begin();
 
-  while(kgmUnit* un = i->next())
-      vo->addItem(un->getName());
+  do {
+    kgmUnit* un = (*i);
 
-  delete i;
-
-  guiAdd(vo);
+    vo->addItem(un->getName());
+  } while(i.next());
 }
 
 void kEditor::onViewMaterials()
@@ -1381,8 +1379,6 @@ void kEditor::onViewMaterials()
 
     ++i;
   }
-
-  guiAdd(vo);
 }
 
 void kEditor::onViewPerspective()
@@ -1466,7 +1462,6 @@ void kEditor::onSelectMaterial(kgmString id)
 
   if(vop)
   {
-    guiAdd(vop);
     vop->show();
   }
 }

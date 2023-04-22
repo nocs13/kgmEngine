@@ -16,49 +16,18 @@ kApp::~kApp()
 
 void kApp::gameInit()
 {
-    u32 w, h;
-    kgmSystem::getDesktopDimension(w, h);
-
-    editor = new kEditor();
-
-    m_game = static_cast<kgmIGame*> (editor);
-
-    setMainWindow(editor);
-
-    if (editor && !editor->gInit())
-    {
-      failed = true;
-    }
-
-    editor->init();
 }
 
 void kApp::gameLoop()
 {
-    if(editor != null && failed != true)
-    {
-      editor->loop();
-    }
 }
 
 void kApp::gameFree()
 {
-    if(editor)
-    {
-      editor->release();
-
-      m_game = editor = null;
-    }
 }
 
 void kApp::main()
 {
-  kgm_log() << "Start\n";
-
-  editor = new kEditor();
-  m_game = editor;
-
-  editor->loop();
 }
 
 static void activate(GtkApplication* app)

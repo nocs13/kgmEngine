@@ -43,8 +43,9 @@ protected:
   kgmGameInput*     m_input;
   kgmGameScript*    m_script;
   kgmGamePhysics*   m_physics;
-  kgmGameResources* m_resources;
+  kgmGameGraphics*  m_graphics;
   kgmGameSettings*  m_settings;
+  kgmGameResources* m_resources;
   kgmGameMessenger* m_messenger;
   kgmGameRetention* m_retention;
 
@@ -65,8 +66,6 @@ protected:
 
   s32  m_state;
   bool m_result;
-
-  kgmGameGraphics* m_graphics;
 
   kgmList<kgmGui*>    m_guis;
   kgmList<kgmUnit*>   m_units;

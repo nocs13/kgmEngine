@@ -1,6 +1,8 @@
 #ifndef KEDITOR_H
 #define KEDITOR_H
 
+#include "../../kgmBase/kgmSettings.h"
+
 #include "../../kgmGame/kgmGameBase.h"
 #include "../../kgmGame/kgmGameGraphics.h"
 #include "../../kgmSystem/kgmThread.h"
@@ -13,6 +15,8 @@
 #include "kGridline.h"
 #include "kViewObjects.h"
 #include "kViewOptions.h"
+#include "kResources.h"
+#include "kWindow.h"
 
 #include <gtk/gtk.h>
 
@@ -40,6 +44,8 @@ private:
   vec3 cam_pos_bk;
   vec3 cam_dir_bk;
 
+  kgmList<kgmUnit*> units;
+
   kGridline* gridline = null;
   //kPivot*    pivot    = null;
   kgmUnit*   pivot    = null;
@@ -60,6 +66,7 @@ private:
   kgmMaterial* mtlLines = null;
   kgmMaterial* mtlPivot = null;
 
+  kgmCamera* camera = null;
   bool  move_camera;
 
   bool mode_play;
@@ -75,20 +82,40 @@ private:
   Slot<kEditor, kgmGuiFileDialog*> slotOpenFile;
   Slot<kEditor, kgmString>         slotSelect;
 
+  kgmIGC*        m_gc;
+  kgmIGraphics*  m_graphics;
+  kgmIResources* m_resources;
+  kgmISettings*  m_settings;
+
+  kWindow*       m_wnd;
+
 public:
   kEditor(GtkWidget* w);
   ~kEditor();
 
-  void gInit() {}
-  void gLoad() {}
-  void gUnload() {}
-  void gAppend() {}
+  int            gQuit();
+  int            gInit();
+  int            gLoad(kgmString);
+  int            gUnload();
+  int            gButton(game_button);
+  u32            gState();
+  int            gSwitch(u32);
+  int            gAppend(kgmUnit*);
+  void           gPause(bool);
+
+  void setMsAbsolute(bool) {}
+  kgmIGraphics* getRender() { return m_graphics; }
 
   void clear();
   void init();
+  void loop() {}
+  void close() {}
 
   void select(int x, int y);
   void select(kgmString name);
+
+  s32 getKeyState(u8 key)  { return 0; }
+
 
   kgmRay3d<float> getPointRay(int x, int y);
 
@@ -104,8 +131,14 @@ public:
   bool mapOpen(kgmString);
   bool addMesh(kgmString);
 
+  void initResources() {}
+  void initGraphycs() {}
   void initPhysics();
+  void initSystem() {}
   void initLogic();
+  void initAudio() {}
+
+  u32        timeUpdate() { return 1; }
 
   void onIdle();
   void onEvent(kgmEvent::Event*);
