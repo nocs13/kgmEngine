@@ -513,8 +513,13 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
     kgmArray<u8> vmem, fmem;
 
-    kgmString vid = prev + kgmString(id) + ".vspv";
-    kgmString fid = prev + kgmString(id) + ".fspv";
+    //kgmString vid = prev + kgmString(id) + ".vspv";
+    //kgmString fid = prev + kgmString(id) + ".fspv";
+    kgmString vid = kgmString(id) + ".vert";
+    kgmString fid = kgmString(id) + ".frag";
+
+    kgm_log() << "Shader vulkan vertex for " << vid.data() << "\n";
+    kgm_log() << "Shader vulkan fragment for " << fid.data() << "\n";
 
     if(getRFile(vid, RSHADER, vmem) && getRFile(fid, RSHADER, fmem))
     {
