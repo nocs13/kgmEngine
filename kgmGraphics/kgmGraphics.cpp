@@ -173,13 +173,9 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   if(rc != null)
   {
     memset(m_shaders, 0, sizeof(m_shaders));
-    //m_shaders[ShaderNone]     = rc->getShader("none.glsl");
-    m_shaders[ShaderGui]      = rc->getShader("gui.glsl");
-    //m_shaders[ShaderLines]    = rc->getShader("lines.glsl");
-    //m_shaders[ShaderBase]     = rc->getShader("base.glsl");
-    //m_shaders[ShaderColor]    = rc->getShader("color.glsl");
-    //m_shaders[ShaderLight]    = rc->getShader("lights.glsl");
-    //m_shaders[ShaderPhong]    = rc->getShader("phong.glsl");
+    m_shaders[ShaderGui]   = rc->getShader("gui.glsl");
+    m_shaders[ShaderBase]  = rc->getShader("base.glsl");
+    m_shaders[ShaderPhong] = rc->getShader("phong.glsl");
   }
 
   if(gc)

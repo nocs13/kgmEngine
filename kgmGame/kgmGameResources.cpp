@@ -12,20 +12,20 @@
 #include "../kgmSystem/kgmProcess.h"
 
 #ifdef ANDROID
-  #include <android/asset_manager.h>
-  #include <android/asset_manager_jni.h>
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 #endif
 
-#define RMESH       "meshes"
-#define RIMAGE      "images"
-#define RSOUND      "sounds"
-#define RSHADER     "shaders"
-#define RCONVEX     "convexes"
-#define RMATERIAL   "materials"
-#define RSKELETON   "skeletons"
-#define RANIMATION  "animations"
+#define RMESH "meshes"
+#define RIMAGE "images"
+#define RSOUND "sounds"
+#define RSHADER "shaders"
+#define RCONVEX "convexes"
+#define RMATERIAL "materials"
+#define RSKELETON "skeletons"
+#define RANIMATION "animations"
 
-kgmIResources*  kgmGameResources::generate(kgmIGC* gc, kgmIAudio* audio)
+kgmIResources *kgmGameResources::generate(kgmIGC *gc, kgmIAudio *audio)
 {
   if (kgmIResources::m_manager != null)
     return kgmIResources::m_manager;
@@ -35,9 +35,9 @@ kgmIResources*  kgmGameResources::generate(kgmIGC* gc, kgmIAudio* audio)
   return kgmIResources::m_manager;
 }
 
-kgmGameResources::kgmGameResources(kgmIGC* gc, kgmIAudio* audio)
+kgmGameResources::kgmGameResources(kgmIGC *gc, kgmIAudio *audio)
 {
-  m_gc    = gc;
+  m_gc = gc;
   m_audio = audio;
 }
 
@@ -45,7 +45,7 @@ kgmGameResources::~kgmGameResources()
 {
   clear();
 
-  for(int i = 0; i < m_paths.size(); i++)
+  for (int i = 0; i < m_paths.size(); i++)
     delete m_paths[i];
 
   m_paths.clear();
@@ -56,81 +56,80 @@ void kgmGameResources::add(kgmResource *r)
   if (!r)
     return;
 
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); !i.end(); ++i)
     if (r == (*i))
       return;
 
   m_resources.add(r);
 
-  //kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
+  // kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
 
-  //if (i.isEnd())
-  //  m_resources.set(r->id(), r);
+  // if (i.isEnd())
+  //   m_resources.set(r->id(), r);
 }
 
-kgmResource* kgmGameResources::get(const char* id)
+kgmResource *kgmGameResources::get(const char *id)
 {
-  if(!id)
+  if (!id)
     return null;
 
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); !i.end(); ++i)
     if ((*i)->id() == id)
       return (*i);
 
   return null;
 
-  //kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(id);
+  // kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(id);
 
-  //if (i.isEnd())
-  //  return null;
+  // if (i.isEnd())
+  //   return null;
 
-  //return (*i);
+  // return (*i);
 }
 
-kgmResource* kgmGameResources::get(kgmString& id)
+kgmResource *kgmGameResources::get(kgmString &id)
 {
   return get((char *)id);
 }
 
 void kgmGameResources::reset()
 {
-
 }
 
 void kgmGameResources::clear()
 {
-  kgmList<kgmResource*>::iterator i;
+  kgmList<kgmResource *>::iterator i;
 
-  for(i = m_resources.begin(); !i.end(); ++i)
+  for (i = m_resources.begin(); !i.end(); ++i)
   {
-    kgmResource* r = (*i);
+    kgmResource *r = (*i);
 
     if (r->references() > 1)
       continue;
 
-    if(r->isClass(kgmTexture::cClass()))
+    if (r->isClass(kgmTexture::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmTexture*)r)->texture());
+      m_gc->gcFreeTexture(((kgmTexture *)r)->texture());
 
-      delete (kgmTexture*) r;
+      delete (kgmTexture *)r;
     }
-    else if(r->isClass(kgmShader::cClass()))
+    else if (r->isClass(kgmShader::cClass()))
     {
-      m_gc->gcFreeShader(((kgmShader*)r)->m_shader);
+      m_gc->gcFreeShader(((kgmShader *)r)->m_shader);
 
-      delete (kgmShader*) r;
+      delete (kgmShader *)r;
     }
-    else if(r->isClass(kgmSound::cClass()))
+    else if (r->isClass(kgmSound::cClass()))
     {
-      m_audio->remove(((kgmSound*)r)->getSound());
+      m_audio->remove(((kgmSound *)r)->getSound());
 
-      delete (kgmSound*) r;
+      delete (kgmSound *)r;
     }
-    else if(r->isClass(kgmFont::cClass()))
+    else if (r->isClass(kgmFont::cClass()))
     {
-      gchandle tn = ((kgmFont*)r)->texture(12);
-      gchandle ts = ((kgmFont*)r)->texture(10);
-      gchandle tl = ((kgmFont*)r)->texture(22);
+      gchandle tn = ((kgmFont *)r)->texture(12);
+      gchandle ts = ((kgmFont *)r)->texture(10);
+      gchandle tl = ((kgmFont *)r)->texture(22);
 
       if (tn)
         m_gc->gcFreeTexture(tn);
@@ -143,25 +142,25 @@ void kgmGameResources::clear()
 
       tn = tl = ts = null;
 
-      delete (kgmFont*) r;
+      delete (kgmFont *)r;
     }
-    else if(r->isClass(kgmMesh::cClass()))
+    else if (r->isClass(kgmMesh::cClass()))
     {
-      delete (kgmMesh*) r;
+      delete (kgmMesh *)r;
     }
 
-    //i = m_resources.erase(i);
+    // i = m_resources.erase(i);
   }
 
   m_resources.clear();
 }
 
-void kgmGameResources::remove(kgmResource* r)
+void kgmGameResources::remove(kgmResource *r)
 {
   r->release();
 }
 
-bool kgmGameResources::exists(kgmResource* r)
+bool kgmGameResources::exists(kgmResource *r)
 {
   if (!r)
     return false;
@@ -169,15 +168,15 @@ bool kgmGameResources::exists(kgmResource* r)
   if (get(r->id()) == null)
     return false;
 
-  //kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
+  // kgmTab<const char*, kgmResource*>::iterator i = m_resources.get(r->id());
 
-  //if (i.isEnd())
-  //  return false;
+  // if (i.isEnd())
+  //   return false;
 
   return true;
 }
 
-bool kgmGameResources::fileFromData(kgmArray<u8>& mem, kgmString path)
+bool kgmGameResources::fileFromData(kgmArray<u8> &mem, kgmString path)
 {
   if (!mem.data() || !path.data())
     return false;
@@ -223,15 +222,15 @@ bool kgmGameResources::dataFromFile(kgmString path, kgmArray<u8> &mem)
 
 void kgmGameResources::addPath(kgmString s)
 {
-  Path* path = 0;
+  Path *path = 0;
 
-  if(kgmSystem::isDirectory(s))
+  if (kgmSystem::isDirectory(s))
   {
     path = new Path();
     path->type = 2;
     path->path = s;
   }
-  else if(kgmSystem::isFile(s))
+  else if (kgmSystem::isFile(s))
   {
     path = new Path();
     path->type = 1;
@@ -239,26 +238,26 @@ void kgmGameResources::addPath(kgmString s)
     path->archive.open(s);
   }
 
-  if(path)
+  if (path)
     m_paths.add(path);
 }
 
-bool kgmGameResources::getFile(const char* id, kgmArray<u8>& m)
+bool kgmGameResources::getFile(const char *id, kgmArray<u8> &m)
 {
   return getRFile(id, null, m);
 }
 
-bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& m)
+bool kgmGameResources::getRFile(const char *id, const char *type, kgmArray<u8> &m)
 {
   kgmString path;
 
-  if(!id)
+  if (!id)
     return false;
 
 #ifdef WIN32
-  const kgmString delim((const char*)"\\", 1);
+  const kgmString delim((const char *)"\\", 1);
 #else
-  const kgmString delim((const char*)"/", 1);
+  const kgmString delim((const char *)"/", 1);
 #endif
 
 #ifdef ANDROID
@@ -267,7 +266,7 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
   kgm_log() << "\nkgmEngine android loading file " << id << "\n";
 #endif
 
-  AAsset* asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *) id, AASSET_MODE_UNKNOWN);
+  AAsset *asset = AAssetManager_open(kgm_android_getAssetManager(), (const char *)id, AASSET_MODE_UNKNOWN);
 
   if (NULL == asset)
   {
@@ -280,7 +279,7 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
 
   long size = AAsset_getLength(asset);
   m.alloc(size);
-  AAsset_read (asset, m.data(), size);
+  AAsset_read(asset, m.data(), size);
 #ifdef DEBUG
   kgm_log() << "\nkgmEngine android file size: " << (s32)size << "\n";
 #endif
@@ -290,18 +289,18 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
 
 #else
 
-  for(s32 i = 0; i < m_paths.size(); i++)
+  for (s32 i = 0; i < m_paths.size(); i++)
   {
     kgmFile file;
 
-    if(m_paths[i]->type == 2)
+    if (m_paths[i]->type == 2)
     {
       if (type)
         path = m_paths[i]->path + delim + kgmString(type, strlen(type)) + delim + kgmString(id, strlen(id));
       else
         path = m_paths[i]->path + delim + kgmString(id, strlen(id));
 
-      if(kgmGameApp::gameApp()->game()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
+      if (kgmGameApp::gameApp()->game()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
       {
         m.alloc(file.length());
         file.read(m.data(), file.length());
@@ -310,7 +309,7 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
         return true;
       }
     }
-    else if(m_paths[i]->type == 1)
+    else if (m_paths[i]->type == 1)
     {
       kgmString sid;
 
@@ -319,7 +318,7 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
       else
         sid = kgmString(id);
 
-      if(m_paths[i]->archive.copy(sid, m))
+      if (m_paths[i]->archive.copy(sid, m))
       {
         return true;
       }
@@ -335,25 +334,25 @@ bool kgmGameResources::getRFile(const char* id, const char *type, kgmArray<u8>& 
   return false;
 }
 
-kgmPicture* kgmGameResources::getPicture(const char* id)
+kgmPicture *kgmGameResources::getPicture(const char *id)
 {
 #ifdef DEBUG
   kgm_log() << "kgmGameResources::getPicture: " << id << "\n";
 #endif
 
-  kgmPicture* picture = (kgmPicture *)get(id);
+  kgmPicture *picture = (kgmPicture *)get(id);
 
-  if(picture)
+  if (picture)
     return picture;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RIMAGE, mem))
+  if (!getRFile(id, RIMAGE, mem))
     return 0;
 
   picture = m_tools.genPicture(mem);
 
-  if(picture)
+  if (picture)
   {
     picture->m_id = id;
     lock(picture);
@@ -364,25 +363,25 @@ kgmPicture* kgmGameResources::getPicture(const char* id)
   return picture;
 }
 
-kgmTexture* kgmGameResources::getTexture(const char* id)
+kgmTexture *kgmGameResources::getTexture(const char *id)
 {
 #ifdef DEBUG
   kgm_log() << "kgmGameResources::getTexture: " << id << "\n";
 #endif
 
-  kgmTexture* texture = (kgmTexture*)get(id);
+  kgmTexture *texture = (kgmTexture *)get(id);
 
-  if(texture)
+  if (texture)
     return texture;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RIMAGE, mem))
+  if (!getRFile(id, RIMAGE, mem))
     return 0;
 
   texture = m_tools.genTexture(m_gc, mem);
 
-  if(texture)
+  if (texture)
   {
     texture->m_id = id;
     lock(texture);
@@ -393,15 +392,15 @@ kgmTexture* kgmGameResources::getTexture(const char* id)
   return texture;
 }
 
-kgmShader* kgmGameResources::getShader(const char* id)
+kgmShader *kgmGameResources::getShader(const char *id)
 {
 #ifdef DEBUG
   kgm_log() << "kgmGameResources::getShader: " << id << "\n";
 #endif
 
-  kgmShader* shader = (kgmShader*)get(id);
+  kgmShader *shader = (kgmShader *)get(id);
 
-  if(shader)
+  if (shader)
     return shader;
 
   kgmString sid = id;
@@ -410,99 +409,8 @@ kgmShader* kgmGameResources::getShader(const char* id)
 
   name = id;
 
-
   if (m_gc->gcGetBase() == gc_vulkan)
   {
-    /*kgmString cmd;
-
-    #ifdef WIN32
-    cmd = "..\\Tools\\Spirv\\win32\\glslc.exe ";
-    #else
-    cmd = "../Tools/Spirv/nix/glslc";
-    #endif
-
-    kgmString tmp;
-
-    kgmSystem::getTemporaryDirectory(tmp);
-
-    #ifdef DEBUG
-    kgm_log() << "Temporary folder is " << (char *) tmp << "\n";
-    #endif
-
-    kgmString args;
-
-    kgmArray<u8> data;
-
-    if (!getFile(kgmString("shaders") + kgmSystem::getPathDelim() + id + ".vert", data))
-      return null;
-
-    if (!fileFromData(data, tmp + id + ".vert"))
-      return null;
-
-    data.clear();
-
-    if (!getFile(kgmString("shaders") + kgmSystem::getPathDelim() + id + ".frag", data))
-      return null;
-
-    if (!fileFromData(data, tmp + id + ".frag"))
-      return null;
-
-    data.clear();
-
-    kgmProcess proc;
-
-    args = kgmString("-V ") + tmp + id + ".vert -o " + tmp + id + ".vert.spv";
-
-    kgmString cline = cmd + " " + args;
-
-    #ifdef DEBUG
-    kgm_log() << "Command_v line is: " << (char *) cline << "\n";
-    #endif
-
-    //proc.run(cmd, args);
-    proc.run(kgmString(), cline);
-    proc.wait();
-
-    args = kgmString("-V ") + tmp + id + ".frag -o " + tmp + id + ".frag.spv";
-
-    cline = cmd + " " + args;
-
-    #ifdef DEBUG
-    kgm_log() << "Command_f line is: " << (char *) cline << "\n";
-    #endif
-
-    //proc.run(cmd, args);
-    proc.run(kgmString(), cline);
-    proc.wait();
-
-    kgmArray<u8> vmem, fmem;
-
-    kgmString vname = tmp + id + ".vert.spv";
-    kgmString fname = tmp + id + ".frag.spv";
-
-    if(dataFromFile(vname, vmem) && dataFromFile(fname, fmem))
-    {
-      shader = m_tools.genShader(m_gc, vmem, fmem);
-    }
-    else
-    {
-      #ifdef DEBUG
-      kgm_log() << "Shader spirv not loaded for " << id << "\n";
-      #endif
-    }
-
-    #ifndef DEBUG
-    cline = tmp + id + ".vert";
-    kgmSystem::removeFile(cline);
-    cline = tmp + id + ".frag";
-    kgmSystem::removeFile(cline);
-    cline = tmp + id + ".vert.spv";
-    kgmSystem::removeFile(cline);
-    cline = tmp + id + ".frag.spv";
-    kgmSystem::removeFile(cline);
-    #endif
-    */
-
     kgmString prev;
 
 #if defined(_WIN32)
@@ -511,40 +419,54 @@ kgmShader* kgmGameResources::getShader(const char* id)
     prev = "nix/";
 #endif
 
-    kgmArray<u8> vmem, fmem;
+    kgmArray<u8> mem;
+    kgmString kid = kgmString(id) + ".vk";
 
-    //kgmString vid = prev + kgmString(id) + ".vspv";
-    //kgmString fid = prev + kgmString(id) + ".fspv";
-    kgmString vid = kgmString(id) + ".vert";
-    kgmString fid = kgmString(id) + ".frag";
-
-    kgm_log() << "Shader vulkan vertex for " << vid.data() << "\n";
-    kgm_log() << "Shader vulkan fragment for " << fid.data() << "\n";
-
-    if(getRFile(vid, RSHADER, vmem) && getRFile(fid, RSHADER, fmem))
+    if (getRFile(kid, RSHADER, mem))
     {
-      shader = m_tools.genShader(m_gc, vmem, fmem);
+      kgmString s((const char *)mem.data(), mem.length());
+
+      shader = m_tools.genShader(m_gc, s);
     }
     else
     {
-      #ifdef DEBUG
-      kgm_log() << "Shader spirv not loaded for " << id << "\n";
-      #endif
+      kgm_log() << "Shader vulkan not loaded for " << kid.data() << "\n";
+    }
+
+    if (!shader)
+    {
+      kgmArray<u8> vmem, fmem;
+
+      kgmString vid = prev + kgmString(id) + ".vspv";
+      kgmString fid = prev + kgmString(id) + ".fspv";
+
+      if (getRFile(vid, RSHADER, vmem) && getRFile(fid, RSHADER, fmem))
+      {
+        shader = m_tools.genShader(m_gc, vmem, fmem);
+      }
+      else
+      {
+#ifdef DEBUG
+        kgm_log() << "Shader vulkan vertex for " << vid.data() << "\n";
+        kgm_log() << "Shader vulkan fragment for " << fid.data() << "\n";
+        kgm_log() << "Shader vulkan not loaded for " << id << "\n";
+#endif
+      }
     }
   }
   else
   {
     kgmArray<u8> mem;
 
-    if(getRFile(name, RSHADER, mem))
+    if (getRFile(name, RSHADER, mem))
     {
-      kgmString s((const char*)mem.data(), mem.length());
+      kgmString s((const char *)mem.data(), mem.length());
 
       shader = m_tools.genShader(m_gc, s);
     }
   }
 
-  if(shader)
+  if (shader)
   {
     shader->m_id = id;
     lock(shader);
@@ -555,24 +477,24 @@ kgmShader* kgmGameResources::getShader(const char* id)
   return shader;
 }
 
-kgmMaterial* kgmGameResources::getMaterial(const char* id)
+kgmMaterial *kgmGameResources::getMaterial(const char *id)
 {
   kgm_log() << "Resources: get shader " << id << "\n";
 
-  kgmMaterial* material = (kgmMaterial*)get(id);
+  kgmMaterial *material = (kgmMaterial *)get(id);
 
-  if(material)
+  if (material)
     return material;
 
   kgmCString name;
   name = kgmString(id) + ".mtl";
   kgmArray<u8> mem;
 
-  if(getRFile(name, RMATERIAL, mem))
+  if (getRFile(name, RMATERIAL, mem))
   {
     kgmXml xml(mem);
 
-    if(!xml.m_node)
+    if (!xml.m_node)
     {
       return null;
     }
@@ -580,7 +502,7 @@ kgmMaterial* kgmGameResources::getMaterial(const char* id)
     material = m_tools.genMaterial(xml);
   }
 
-  if(material)
+  if (material)
   {
     material->m_id = id;
     lock(material);
@@ -591,28 +513,28 @@ kgmMaterial* kgmGameResources::getMaterial(const char* id)
   return material;
 }
 
-kgmAnimation* kgmGameResources::getAnimation(const char* id)
+kgmAnimation *kgmGameResources::getAnimation(const char *id)
 {
-  kgmAnimation* animation = (kgmAnimation*)get(id);
+  kgmAnimation *animation = (kgmAnimation *)get(id);
 
-  if(animation)
+  if (animation)
     return animation;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RANIMATION, mem))
+  if (!getRFile(id, RANIMATION, mem))
     return 0;
 
   kgmXml xml(mem);
 
-  if(!xml.m_node)
+  if (!xml.m_node)
   {
     return 0;
   }
 
   animation = m_tools.genAnimation(xml);
 
-  if(animation)
+  if (animation)
   {
     animation->m_id = id;
     lock(animation);
@@ -623,21 +545,21 @@ kgmAnimation* kgmGameResources::getAnimation(const char* id)
   return animation;
 }
 
-kgmSound* kgmGameResources::getSound(const char* id)
+kgmSound *kgmGameResources::getSound(const char *id)
 {
-  kgmSound* sound = (kgmSound*)get(id);
+  kgmSound *sound = (kgmSound *)get(id);
 
-  if(sound)
+  if (sound)
     return sound;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RSOUND, mem))
+  if (!getRFile(id, RSOUND, mem))
     return 0;
 
   sound = m_tools.genSound(kgmGameApp::gameApp()->game()->getAudio(), mem);
 
-  if(sound)
+  if (sound)
   {
     sound->m_id = id;
     lock(sound);
@@ -648,29 +570,29 @@ kgmSound* kgmGameResources::getSound(const char* id)
   return sound;
 }
 
-kgmMesh* kgmGameResources::getMesh(const char* id)
+kgmMesh *kgmGameResources::getMesh(const char *id)
 {
-  kgmMesh* mesh = (kgmMesh*)get(id);
+  kgmMesh *mesh = (kgmMesh *)get(id);
 
-  if(mesh)
+  if (mesh)
     return mesh;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RMESH, mem))
+  if (!getRFile(id, RMESH, mem))
     return 0;
 
   kgmXml xml(mem);
 
-  if(!xml.m_node)
+  if (!xml.m_node)
   {
     return 0;
   }
 
-  //mesh = m_tools.genMesh(mem);
+  // mesh = m_tools.genMesh(mem);
   mesh = m_tools.genMesh(xml);
 
-  if(mesh)
+  if (mesh)
   {
     mesh->m_id = id;
     lock(mesh);
@@ -681,26 +603,26 @@ kgmMesh* kgmGameResources::getMesh(const char* id)
   return mesh;
 }
 
-kgmSkeleton* kgmGameResources::getSkeleton(const char* id)
+kgmSkeleton *kgmGameResources::getSkeleton(const char *id)
 {
-  kgmSkeleton* skeleton = (kgmSkeleton*)get(id);
+  kgmSkeleton *skeleton = (kgmSkeleton *)get(id);
 
-  if(skeleton)
+  if (skeleton)
     return skeleton;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RSKELETON, mem))
+  if (!getRFile(id, RSKELETON, mem))
     return null;
 
   kgmXml xml(mem);
 
-  if(!xml.m_node)
+  if (!xml.m_node)
     return null;
 
   skeleton = m_tools.genSkeleton(xml);
 
-  if(skeleton)
+  if (skeleton)
   {
     skeleton->m_id = id;
     lock(skeleton);
@@ -711,21 +633,21 @@ kgmSkeleton* kgmGameResources::getSkeleton(const char* id)
   return skeleton;
 }
 
-kgmFont* kgmGameResources::getFont(const char* id, u32 r, u32 c)
+kgmFont *kgmGameResources::getFont(const char *id, u32 r, u32 c)
 {
-  kgmFont* font = (kgmFont*)get(id);
+  kgmFont *font = (kgmFont *)get(id);
 
-  if(font)
+  if (font)
     return font;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RIMAGE, mem))
+  if (!getRFile(id, RIMAGE, mem))
     return 0;
 
   font = m_tools.genFont(m_gc, 10, 10, r, c, mem);
 
-  if(font)
+  if (font)
   {
     font->m_id = id;
     lock(font);
@@ -736,27 +658,28 @@ kgmFont* kgmGameResources::getFont(const char* id, u32 r, u32 c)
   return font;
 }
 
-kgmShapeCollision* kgmGameResources::getShapeCollision(const char* id)
+kgmShapeCollision *kgmGameResources::getShapeCollision(const char *id)
 {
-  kgmShapeCollision* shape = (kgmShapeCollision*)get(id);
+  kgmShapeCollision *shape = (kgmShapeCollision *)get(id);
 
-  if(shape)
+  if (shape)
     return shape;
 
   kgmArray<u8> mem;
 
-  if(!getRFile(id, RCONVEX, mem))
+  if (!getRFile(id, RCONVEX, mem))
     return null;
 
   kgmXml xml(mem);
 
-  if(!xml.m_node){
+  if (!xml.m_node)
+  {
     return null;
   }
 
   shape = m_tools.genShapeCollision(xml);
 
-  if(shape)
+  if (shape)
   {
     shape->m_id = id;
     lock(shape);

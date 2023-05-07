@@ -52,6 +52,8 @@ enum MENUEVENT
 
 kEditor::kEditor(GtkWidget* w)
 {
+  m_settings = new kgmSettings();
+
   m_wnd = new kWindow(w);
 
   m_settings = new kgmSettings();
@@ -519,7 +521,7 @@ bool kEditor::addUnit(kgmString type)
 
   unit->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
-  gAppend(unit);
+  //gAppend(unit);
 
   selected = unit;
 
@@ -535,7 +537,7 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
 
   actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
-  gAppend(actor);
+  //gAppend(actor);
 
   selected = actor;
 
@@ -551,7 +553,7 @@ bool kEditor::addEffect(kgmString type)
 
   effect->setName(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
-  gAppend(effect);
+  //gAppend(effect);
 
   selected = effect;
 
@@ -567,7 +569,7 @@ bool kEditor::addSensor(kgmString type)
 
   sensor->setName(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
-  gAppend(sensor);
+  //gAppend(sensor);
 
   selected = sensor;
 
@@ -1326,7 +1328,7 @@ void kEditor::onRunPlay()
 
   mode_play = true;
 
-  gSwitch(kgmIGame::State_Play);
+  //gSwitch(kgmIGame::State_Play);
 }
 
 void kEditor::onRunStop()
@@ -1336,7 +1338,7 @@ void kEditor::onRunStop()
 
   mode_play = false;
 
-  gSwitch(kgmIGame::State_Pause);
+  //gSwitch(kgmIGame::State_Pause);
 }
 
 void kEditor::onViewObjects()
@@ -1471,7 +1473,7 @@ void kEditor::add(kgmUnit* node)
   if(!node)
     return;
 
-  gAppend(node);
+  //gAppend(node);
 
   select(node->getName());
 }

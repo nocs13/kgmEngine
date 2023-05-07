@@ -95,12 +95,12 @@ public:
 
   int            gQuit();
   int            gInit();
-  int            gLoad(kgmString);
-  int            gUnload();
+  int            gLoad(kgmString){}
+  int            gUnload(){}
   int            gButton(game_button);
   u32            gState();
   int            gSwitch(u32);
-  int            gAppend(kgmUnit*);
+  int            gAppend(kgmUnit*) {}
   void           gPause(bool);
 
   void setMsAbsolute(bool) {}
@@ -138,7 +138,8 @@ public:
   void initLogic();
   void initAudio() {}
 
-  u32        timeUpdate() { return 1; }
+  u32  timeUpdate() { return 1; }
+  kgmISettings* getSettings() { return m_settings; }
 
   void onIdle();
   void onEvent(kgmEvent::Event*);
