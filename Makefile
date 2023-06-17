@@ -22,8 +22,8 @@ all: extern debug
 extern:
 	make -C kgmExtern
 
-#debug: set_debug $(OUT_SO) $(OUT_A)
-debug: set_debug $(OUT_A)
+debug: set_debug $(OUT_SO) $(OUT_A)
+#debug: set_debug $(OUT_A)
 	echo 'debug finished.'
 
 set_debug:
@@ -42,8 +42,8 @@ $(objects) : %.o : %.cpp %.h
 $(OUT_A): $(objects)
 	$(AR) -r -c -s $(OUT_A) $(objects)
 
-#$(OUT_SO): $(OUT_A)
-#	$(CC) -shared -o $(OUT_SO) -Wl,--whole-archive $(OUT_A) -Wl,--no-whole-archive $(FLGS) $(DEFS) $(DIRS) $(LIBS)
+$(OUT_SO): $(OUT_A)
+	$(CC) -shared -o $(OUT_SO) -Wl,--whole-archive $(OUT_A) -Wl,--no-whole-archive $(FLGS) $(DEFS) $(DIRS) $(LIBS)
 
 #$(OUT_SO): $(objects)
 #	$(CC) -shared -o $(OUT_SO) $(objects) $(FLGS) $(DEFS) $(DIRS) $(LIBS)

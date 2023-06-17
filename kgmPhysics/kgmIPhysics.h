@@ -5,7 +5,7 @@
 class kgmBody;
 class kgmObstacle;
 
-class kgmIPhysics
+class kgmIPhysics: public kgmInterface
 {
 public:
   enum BodyShape

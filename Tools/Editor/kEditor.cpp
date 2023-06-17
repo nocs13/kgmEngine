@@ -3,6 +3,7 @@
 #include "../../kgmBase/kgmLog.h"
 #include "../../kgmBase/kgmConvert.h"
 #include "../../kgmSystem/kgmOGL.h"
+#include "../../kgmSystem/kgmVulkan.h"
 #include "../../kgmSystem/kgmSystem.h"
 #include "../../kgmSystem/kgmThread.h"
 #include "../../kgmGame/kgmGameBase.h"
@@ -16,47 +17,12 @@ static float cam_scale = 1.0;
 
 kLine g_line;
 
-enum MENUEVENT
+kEditor::kEditor(kWindow *w, void* glctx)
 {
-  ME_QUIT,
-  ME_MAP_NEW,
-  ME_MAP_OPEN,
-  ME_MAP_SAVE,
-  ME_EDIT_CLONE,
-  ME_EDIT_REMOVE,
-  ME_EDIT_OPTIONS,
-  ME_ADD_BOX,
-  ME_ADD_PLANE,
-  ME_ADD_SPHERE,
-  ME_ADD_CYLINDER,
-  ME_ADD_MESH,
-  ME_ADD_UNIT,
-  ME_ADD_LIGHT,
-  ME_ADD_ACTOR,
-  ME_ADD_EFFECT,
-  ME_ADD_SENSOR,
-  ME_ADD_TRIGGER,
-  ME_ADD_PARTICLES,
-  ME_ADD_MATERIAL,
-  ME_RUN_PLAY,
-  ME_RUN_STOP,
-  ME_VIEW_OBJECTS,
-  ME_VIEW_MATERIALS,
-  ME_VIEW_PERSPECTIVE,
-  ME_VIEW_FRONT,
-  ME_VIEW_BACK,
-  ME_VIEW_TOP,
-  ME_OPTIONS_DATABASE,
-  ME_HELP_ABOUT
-};
+  m_wnd = w;
 
-kEditor::kEditor(GtkWidget* w)
-{
-  m_settings = new kgmSettings();
-
-  m_wnd = new kWindow(w);
-
-  m_settings = new kgmSettings();
+  if (!w)
+    return;
 
   setMsAbsolute(true);
 
@@ -74,7 +40,7 @@ kEditor::kEditor(GtkWidget* w)
   view_mode = ViewPerspective;
 
   gridline = null;
-  pivot    = null;
+  pivot = null;
 
   mtlLines = null;
   mtlPivot = null;
@@ -86,9 +52,39 @@ kEditor::kEditor(GtkWidget* w)
   m_isVisual = true;
   m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
 
-  m_gc = new kgmOGL(m_wnd);
+  m_settings = new kgmGameSettings();
+  m_gc = new kgmOGL(m_wnd, glctx);
+  //m_gc = new kgmVulkan(m_wnd);
   m_resources = new kgmGameResources(m_gc, null);
+
+  kgmString s = m_settings->get((char*)"Data");
+
+  if (!s.data())
+  {
+    kgm_log() << "Error: No 'Data' in settings.\n";
+  }
+  else
+  {
+    kgm_log() << "Data folder list: " << s.data() << "\n";
+  }
+
+  s8* tok = strtok((char*) s.data(), ":");
+
+  while(tok)
+  {
+    kgm_log() << "Data folder: " << tok << "\n";
+    m_resources->addPath(tok);
+    tok = strtok(nullptr, ":");
+  }
+
   m_graphics = new kgmGraphics(m_gc, m_resources);
+
+  kgmFont* font = m_resources->getFont("font.tga", 16, 16);
+
+  m_graphics->setDefaultFont(font);
+
+  init();
+  prepare();
 }
 
 kEditor::~kEditor()
@@ -103,16 +99,30 @@ kEditor::~kEditor()
 
   mtlLines->release();
   mtlPivot->release();
+
+  if (m_graphics)
+    delete m_graphics;
+
+  if (m_resources)
+    delete m_resources;
+
+  if (m_gc)
+    delete m_gc;
+
+  if (m_settings)
+    delete m_settings;
 }
 
 void kEditor::clear()
 {
-  if(mode_play)
-    onRunStop();
+  m_graphics->clear();
 
-  gUnload();
+  for (auto i = units.begin(); !i.end(); i.next())
+    (*i)->release();
 
-  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); i.next())
+  units.clear();
+
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); i.next())
     (*i)->release();
 
   m_objects.clear();
@@ -127,117 +137,142 @@ void kEditor::clear()
 
 void kEditor::init()
 {
-  if(!m_graphics)
+  if (!m_graphics)
     return;
 
-    //m_graphics->showLights(true);
+  m_graphics->showLights(true);
+  /*
+  menu = new kgmGuiMenu(null);
+  menu->setSid("main_menu");
+  slotMenu.connect(this, (Slot<kEditor, u32>::FN) & kEditor::onMenu, &menu->sigChoose);
 
-    menu = new kgmGuiMenu(null);
-    menu->setSid("main_menu");
-    slotMenu.connect(this, (Slot<kEditor, u32>::FN) &kEditor::onMenu, &menu->sigChoose);
+  kgmGuiMenu::Item *item = menu->add("Map");
+  // item->add(ME_MAP_NEW, "New");
+  item->add(ME_MAP_OPEN, "Open");
+  // item->add(ME_MAP_SAVE, "Save");
+  item->add(ME_QUIT, "Quit");
+  item = menu->add("Edit");
+  item->add(ME_EDIT_CLONE, "Clone");
+  item->add(ME_EDIT_REMOVE, "Remove");
+  item->add(ME_EDIT_OPTIONS, "Options");
+  item = menu->add("Add");
+  item->add(ME_ADD_BOX, "Box");
+  item->add(ME_ADD_PLANE, "Plane");
+  item->add(ME_ADD_SPHERE, "Sphere");
+  item->add(ME_ADD_CYLINDER, "Cylinder");
+  item->add(ME_ADD_MESH, "Mesh");
+  item->add(ME_ADD_UNIT, "Unit");
+  item->add(ME_ADD_LIGHT, "Light");
+  item->add(ME_ADD_ACTOR, "Actor");
+  item->add(ME_ADD_EFFECT, "Effect");
+  item->add(ME_ADD_SENSOR, "Sensor");
+  item->add(ME_ADD_TRIGGER, "Trigger");
+  item->add(ME_ADD_PARTICLES, "Particles");
+  item->add(ME_ADD_MATERIAL, "Material");
+  item = menu->add("Run");
+  item->add(ME_RUN_PLAY, "Play");
+  item->add(ME_RUN_STOP, "Stop");
+  item = menu->add("View");
+  item->add(ME_VIEW_OBJECTS, "Objects");
+  item->add(ME_VIEW_MATERIALS, "Materials");
+  item->add(ME_VIEW_PERSPECTIVE, "Perspective");
+  item->add(ME_VIEW_FRONT, "Front");
+  item->add(ME_VIEW_BACK, "Left");
+  item->add(ME_VIEW_TOP, "Top");
 
-    kgmGuiMenu::Item* item = menu->add("Map");
-    //item->add(ME_MAP_NEW, "New");
-    item->add(ME_MAP_OPEN, "Open");
-    //item->add(ME_MAP_SAVE, "Save");
-    item->add(ME_QUIT, "Quit");
-    item = menu->add("Edit");
-    item->add(ME_EDIT_CLONE, "Clone");
-    item->add(ME_EDIT_REMOVE, "Remove");
-    item->add(ME_EDIT_OPTIONS, "Options");
-    item = menu->add("Add");
-    item->add(ME_ADD_BOX, "Box");
-    item->add(ME_ADD_PLANE, "Plane");
-    item->add(ME_ADD_SPHERE, "Sphere");
-    item->add(ME_ADD_CYLINDER, "Cylinder");
-    item->add(ME_ADD_MESH, "Mesh");
-    item->add(ME_ADD_UNIT, "Unit");
-    item->add(ME_ADD_LIGHT, "Light");
-    item->add(ME_ADD_ACTOR, "Actor");
-    item->add(ME_ADD_EFFECT, "Effect");
-    item->add(ME_ADD_SENSOR, "Sensor");
-    item->add(ME_ADD_TRIGGER, "Trigger");
-    item->add(ME_ADD_PARTICLES, "Particles");
-    item->add(ME_ADD_MATERIAL, "Material");
-    item = menu->add("Run");
-    item->add(ME_RUN_PLAY, "Play");
-    item->add(ME_RUN_STOP, "Stop");
-    item = menu->add("View");
-    item->add(ME_VIEW_OBJECTS, "Objects");
-    item->add(ME_VIEW_MATERIALS, "Materials");
-    item->add(ME_VIEW_PERSPECTIVE, "Perspective");
-    item->add(ME_VIEW_FRONT, "Front");
-    item->add(ME_VIEW_BACK, "Left");
-    item->add(ME_VIEW_TOP, "Top");
+  menu->show();
+  */
+  mtlLines = new kgmMaterial();
+  mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
 
-    menu->show();
+  mtlPivot = new kgmMaterial();
+  mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
 
-    mtlLines = new kgmMaterial();
-    mtlLines->m_color = kgmMaterial::Color((u32)100, (u32)100, (u32)100, (u32)255);
+  gridline = new kGridline(100);
+  gridline->rebuild();
 
-    mtlPivot = new kgmMaterial();
-    mtlLines->m_color = kgmMaterial::Color((u32)200, (u32)150, (u32)100, (u32)255);
-
-    gridline = new kGridline(100);
-    gridline->rebuild();
-
-    auto pvt = new kPivot();
-    pvt->rebuild();
-
-    pivot = new kgmUnit();
-    pivot->setNode(new kgmGNode(pivot, pvt, kgmIGraphics::NodeMesh));
-    pivot->setName("pivot");
-    ((kgmIGraphics::INode*)pivot->getNode())->setNodeShader(kgmIGraphics::ShaderLines);
-
-    gAppend(pivot);
-    pivot->increment();
-
-    //m_graphics->setBgColor(0xff222222);
-
-    kgmUnit* u = new kgmUnit();
-
-    u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
-
-    u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
-
-    gAppend(u);
-
-    //u = new kgmUnit(this);
-    //u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
-    //u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
+  pivot = new kPivot();
+  pivot->rebuild();
 }
 
-//kgmISettings* kEditor::getSettings()
+void kEditor::prepare()
+{
+  m_graphics->setBgColor(0xff222222);
+
+  kgmUnit* u = new kgmUnit();
+  u->setNode(new kgmGNode(u, pivot, kgmIGraphics::NodeMesh));
+  u->setName("pivot");
+
+  m_graphics->add(u->getNode());
+  units.add(u);
+
+  u = new kgmUnit();
+
+  u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
+  u->setName("gridline");
+
+  m_graphics->add(u->getNode());
+  units.add(u);
+
+  onViewPerspective();
+}
+
+void kEditor::resize(float w, float h)
+{
+  if(m_graphics)
+    m_graphics->resize(w, h);
+}
+
+kgmUnit* kEditor::unit(kgmString n)
+{
+  for (auto i = units.begin(); !i.end(); i.next())
+  {
+    if ((*i)->getName() == n)
+      return (*i);
+  }
+
+  return null;
+}
+
+void kEditor::append(kgmUnit* u)
+{
+  units.add(u);
+  m_graphics->add(u->getNode());
+}
+
+// kgmISettings* kEditor::getSettings()
 //{
-//  return m_settings;
-//}
+//   return m_settings;
+// }
 
 void kEditor::select(kgmString name)
 {
-  kgmUnit* node = null;//gUnit(name);
+  kgmUnit *node = unit(name);
 
-  if(node)
+  if (node)
   {
     selected = node;
 
-    if(pivot && selected)
+    auto pv = unit("pivot");
+
+    if (pv && selected)
     {
       vec3 v = node->position();
-      pivot->position(v);
+      pv->position(v);
     }
   }
 }
 
 void kEditor::select(int x, int y)
 {
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
-  iRect vp;// = cam.viewport();
+  iRect vp; // = cam.viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     unit_x *= cam_scale;
     unit_y *= cam_scale;
@@ -258,7 +293,7 @@ void kEditor::select(int x, int y)
   v = v * vL;
   h = h * hL;
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     v.normalize();
     h.normalize();
@@ -270,7 +305,7 @@ void kEditor::select(int x, int y)
 
   g_line.set(cam.mPos, ms);
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     ray = kgmRay3d<float>(ms, cam.mDir);
   }
@@ -279,20 +314,20 @@ void kEditor::select(int x, int y)
     ray = kgmRay3d<float>(cam.mPos, md);
   }
 
-  //kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
-  //kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
+  // kgm_log() << "Ray s: " << ray.s.x << " " << ray.s.y << " " << ray.s.z << "\n";
+  // kgm_log() << "Ray d: " << ray.d.x << " " << ray.d.y << " " << ray.d.z << "\n\n";
   float distance = -1.0f;
-  kgmUnit* peeked = null;
+  kgmUnit *peeked = null;
 
-  kgmList<kgmUnit*> nodes;
+  kgmList<kgmUnit *> nodes;
 
   auto i = units.begin();
 
   do
   {
-    kgmUnit* un = (*i);
+    kgmUnit *un = (*i);
     vec3 upos = un->position();
-    vec3  c, n_x, n_y, n_z;
+    vec3 c, n_x, n_y, n_z;
     plane3 pln_x, pln_y, pln_z;
 
     n_x = vec3(1, 0, 0);
@@ -303,10 +338,9 @@ void kEditor::select(int x, int y)
     pln_y = plane3(n_y, upos);
     pln_z = plane3(n_z, upos);
 
-
-    if(pln_x.intersect(ray, c) && (upos.distance(c) < 1.0))
+    if (pln_x.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
-      if(distance < 0.0)
+      if (distance < 0.0)
       {
         peeked = un;
         distance = cam.mPos.distance(upos);
@@ -315,16 +349,16 @@ void kEditor::select(int x, int y)
       {
         if (distance > cam.mPos.distance(upos))
         {
-          peeked   = un;
+          peeked = un;
           distance = cam.mPos.distance(upos);
         }
       }
 
       pv_delta = un->position().distance(c);
     }
-    else if(pln_y.intersect(ray, c) && (upos.distance(c) < 1.0))
+    else if (pln_y.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
-      if(distance < 0.0)
+      if (distance < 0.0)
       {
         peeked = un;
         distance = cam.mPos.distance(upos);
@@ -333,16 +367,16 @@ void kEditor::select(int x, int y)
       {
         if (distance > cam.mPos.distance(upos))
         {
-          peeked   = un;
+          peeked = un;
           distance = cam.mPos.distance(upos);
         }
       }
 
       pv_delta = upos.distance(c);
     }
-    else if(pln_z.intersect(ray, c) && (upos.distance(c) < 1.0))
+    else if (pln_z.intersect(ray, c) && (upos.distance(c) < 1.0))
     {
-      if(distance < 0.0)
+      if (distance < 0.0)
       {
         peeked = un;
         distance = cam.mPos.distance(upos);
@@ -351,26 +385,26 @@ void kEditor::select(int x, int y)
       {
         if (distance > cam.mPos.distance(upos))
         {
-          peeked   = un;
+          peeked = un;
           distance = cam.mPos.distance(upos);
         }
       }
 
       pv_delta = upos.distance(c);
     }
-  }  while(i.next());
+  } while (i.next());
 
-  if(peeked)
+  if (peeked)
   {
     select(peeked->getName());
 
     dragging = peeked;
 
     vec3 v = peeked->position();
-    vec3 r = vec3(0, 0, 0); //peeked->rotation();
+    vec3 r = vec3(0, 0, 0); // peeked->rotation();
 
-    if(pivot)
-      ((kPivot*)pivot->getNode()->getNodeObject())->peekAxis(ray, v , r);
+    if (pivot)
+      pivot->peekAxis(ray, v, r);
   }
   else
   {
@@ -379,8 +413,10 @@ void kEditor::select(int x, int y)
 
     pln_z.intersect(ray, c);
 
-    if (pivot)
-      pivot->position(c);
+    auto pv = unit("pivot");
+
+    if (pv)
+      pv->position(c);
 
     dragging = null;
   }
@@ -388,14 +424,14 @@ void kEditor::select(int x, int y)
 
 kgmRay3d<float> kEditor::getPointRay(int x, int y)
 {
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
-  iRect vp;// = getRender()->viewport();
+  iRect vp; // = getRender()->viewport();
 
   float unit_x = (2.0f * ((float)(x - vp.x) / (vp.w - vp.x))) - 1.0f,
         unit_y = (2.0f * ((float)(y - vp.y) / (vp.h - vp.y))) - 1.0f;
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     unit_x *= cam_scale;
     unit_y *= cam_scale;
@@ -416,7 +452,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   v = v * vL;
   h = h * hL;
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     v.normalize();
     h.normalize();
@@ -426,7 +462,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   md = ms - cam.mPos;
   md.normalize();
 
-  if(cam.isOrthogonal())
+  if (cam.isOrthogonal())
   {
     ray = kgmRay3d<float>(ms, cam.mDir);
   }
@@ -438,7 +474,7 @@ kgmRay3d<float> kEditor::getPointRay(int x, int y)
   return ray;
 }
 
-bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
+bool kEditor::fdMapOpen(kgmGuiFileDialog *fd)
 {
   kgmString s = fd->getFile();
 
@@ -449,25 +485,10 @@ bool kEditor::fdMapOpen(kgmGuiFileDialog* fd)
 
 bool kEditor::mapOpen(kgmString s)
 {
-  gLoad(s);
-
-  kgmUnit* u = new kgmUnit(null);
-
-  u->setNode(new kgmGNode(u, gridline, kgmIGraphics::NodeMesh));
-  u->getNode()->setNodeShading(kgmIGraphics::ShadingNone);
-  u->setName("gridline");
-
-  gAppend(u);
-
-  gAppend(pivot);
-  pivot->increment();
-
-  selected = null;
-
   return true;
 }
 
-bool kEditor::fdMapSave(kgmGuiFileDialog* fd)
+bool kEditor::fdMapSave(kgmGuiFileDialog *fd)
 {
   kgmString s = fd->getPath();
 
@@ -476,29 +497,29 @@ bool kEditor::fdMapSave(kgmGuiFileDialog* fd)
 
 bool kEditor::mapSave(kgmString s)
 {
-  kgmXml     xml;
-  kgmGameMap map((kgmGameBase*)this, kgmGameMap::OpenWrite);
+  kgmXml xml;
+  kgmGameMap map((kgmGameBase *)this, kgmGameMap::OpenWrite);
 
   map.open(xml);
 
   return map.save(s);
 }
 
-bool kEditor::fdAddMesh(kgmGuiFileDialog* fd)
+bool kEditor::fdAddMesh(kgmGuiFileDialog *fd)
 {
   return addMesh(fd->getFile());
 }
 
 bool kEditor::addMesh(kgmString name)
 {
-  kgmMesh* mesh = m_resources->getMesh(name);
+  kgmMesh *mesh = m_resources->getMesh(name);
 
-  if(!mesh)
+  if (!mesh)
     return false;
 
-  kgmUnit* visual = new kgmUnit(null);
+  kgmUnit *visual = new kgmUnit(null);
 
-  if(!visual)
+  if (!visual)
     return false;
 
   visual->setNode(new kgmGNode(visual, mesh, kgmIGraphics::NodeMesh));
@@ -507,37 +528,37 @@ bool kEditor::addMesh(kgmString name)
 
   selected = visual;
 
-  gAppend(visual);
+  append(visual);
 
   return true;
 }
 
 bool kEditor::addUnit(kgmString type)
 {
-  if(type.length() < 1)
+  if (type.length() < 1)
     return false;
 
-  kgmUnit* unit = new kgmUnit(null);
+  kgmUnit *unit = new kgmUnit(null);
 
   unit->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
 
-  //gAppend(unit);
+  // gAppend(unit);
 
   selected = unit;
 
   return true;
 }
 
-bool kEditor::addActor(kgmGuiFileDialog* fdd)
+bool kEditor::addActor(kgmGuiFileDialog *fdd)
 {
-  if(!fdd || fdd->getFile().empty())
+  if (!fdd || fdd->getFile().empty())
     return false;
 
-  kgmUnit* actor = new kgmUnit(null);
+  kgmUnit *actor = new kgmUnit(null);
 
   actor->setName(kgmString("Actor_") + kgmConvert::toString((s32)(++oquered)));
 
-  //gAppend(actor);
+  // gAppend(actor);
 
   selected = actor;
 
@@ -546,14 +567,14 @@ bool kEditor::addActor(kgmGuiFileDialog* fdd)
 
 bool kEditor::addEffect(kgmString type)
 {
-  if(type.length() < 1)
+  if (type.length() < 1)
     return false;
 
-  kgmEffect* effect = new kgmEffect(null);
+  kgmEffect *effect = new kgmEffect(null);
 
   effect->setName(kgmString("Effect_") + kgmConvert::toString((s32)(++oquered)));
 
-  //gAppend(effect);
+  // gAppend(effect);
 
   selected = effect;
 
@@ -562,14 +583,14 @@ bool kEditor::addEffect(kgmString type)
 
 bool kEditor::addSensor(kgmString type)
 {
-  if(type.length() < 1)
+  if (type.length() < 1)
     return false;
 
-  kgmSensor* sensor = new kgmSensor(null);
+  kgmSensor *sensor = new kgmSensor(null);
 
   sensor->setName(kgmString("Sensor_") + kgmConvert::toString((s32)(++oquered)));
 
-  //gAppend(sensor);
+  // gAppend(sensor);
 
   selected = sensor;
 
@@ -586,13 +607,8 @@ void kEditor::initLogic()
 
 void kEditor::onIdle()
 {
-  static u32 ctick = 0;
-  static u32 cdel  = 50;
-
-  if(kgmTime::getTicks() - ctick > cdel)
-  {
-    ctick = kgmTime::getTicks();
-  }
+  if (m_graphics)
+    m_graphics->render();
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)
@@ -601,7 +617,7 @@ void kEditor::onEvent(kgmEvent::Event *e)
 
 void kEditor::onKeyUp(int k)
 {
-  if(k == KEY_LCTRL)
+  if (k == KEY_LCTRL)
   {
     move_camera = false;
     setMsAbsolute(true);
@@ -612,7 +628,7 @@ void kEditor::onKeyUp(int k)
 
 void kEditor::onKeyDown(int k)
 {
-  if(k == KEY_LCTRL)
+  if (k == KEY_LCTRL)
   {
     move_camera = true;
     setMsAbsolute(false);
@@ -634,7 +650,7 @@ void kEditor::onMsLeftDown(int k, int x, int y)
 {
   ms_click[0] = true;
 
-  if(move_camera)
+  if (move_camera)
     return;
 
   select(x, y);
@@ -654,43 +670,43 @@ void kEditor::onMsMove(int k, int x, int y)
 {
   u32 paxes = kPivot::AXIS_NONE;
 
-  if(getRender() && selected)
+  if (getRender() && selected)
   {
     if (pivot)
-      paxes = ((kPivot*)pivot->getNode()->getNodeObject())->getAxis();
+      paxes = pivot->getAxis();
   }
 
-  if(getRender() && move_camera)
+  if (getRender() && move_camera)
   {
-    if(ms_click[0])
+    if (ms_click[0])
     {
-      kgmCamera& cam = getRender()->camera();
+      kgmCamera &cam = getRender()->camera();
 
-      if(view_mode == ViewPerspective)
+      if (view_mode == ViewPerspective)
       {
         cam_rot += 0.001 * x;
 
-        if(cam_rot > 2 * PI)
+        if (cam_rot > 2 * PI)
           cam_rot = 0;
 
-        if(cam_rot < -2 * PI)
+        if (cam_rot < -2 * PI)
           cam_rot = 0;
 
         cam.mDir = vec3(cos(cam_rot), sin(cam_rot), 0.0);
         cam.mDir.normalize();
         cam.mPos = cam.mPos + cam.mDir * 0.1 * y;
       }
-      else if(view_mode == ViewFront)
+      else if (view_mode == ViewFront)
       {
         cam.mPos.y -= 0.1 * x;
         cam.mPos.z += 0.1 * y;
       }
-      else if(view_mode == ViewLeft)
+      else if (view_mode == ViewLeft)
       {
         cam.mPos.x += 0.1 * x;
         cam.mPos.z += 0.1 * y;
       }
-      else if(view_mode == ViewTop)
+      else if (view_mode == ViewTop)
       {
         cam.mPos.y += 0.1 * y;
         cam.mPos.x -= 0.1 * x;
@@ -698,17 +714,17 @@ void kEditor::onMsMove(int k, int x, int y)
 
       cam.update();
     }
-    else if(ms_click[1])
+    else if (ms_click[1])
     {
-      if(getKeyState(KEY_Z) && selected)
+      if (getKeyState(KEY_Z) && selected)
       {
-        kgmCamera& cam = getRender()->camera();
+        kgmCamera &cam = getRender()->camera();
 
         vec3 pos = selected->position();
 
-        if(cam.isOrthogonal())
+        if (cam.isOrthogonal())
         {
-          switch(view_mode)
+          switch (view_mode)
           {
           case ViewFront:
             pos.y += x * cam_scale;
@@ -736,48 +752,48 @@ void kEditor::onMsMove(int k, int x, int y)
         m.identity();
         m.translate(pos);
 
-        if(selected->isClass("kgmGameVisual"))
+        if (selected->isClass("kgmGameVisual"))
         {
-          //selected->visual()->set(m);
+          // selected->visual()->set(m);
         }
-        else if(selected->isClass("kgmGameLight"))
+        else if (selected->isClass("kgmGameLight"))
         {
-          //selected->light()->position = selected->position();
+          // selected->light()->position = selected->position();
         }
       }
       else
       {
-        kgmCamera& cam = getRender()->camera();
+        kgmCamera &cam = getRender()->camera();
 
-        if(view_mode == ViewPerspective)
+        if (view_mode == ViewPerspective)
         {
           cam.mPos.z += 0.01 * -y;
         }
-        else if(view_mode == ViewFront)
+        else if (view_mode == ViewFront)
         {
           cam_scale += 0.1 * y;
 
-          if(cam_scale < 1.0)
+          if (cam_scale < 1.0)
             cam_scale = 1.0;
 
           cam.scale(cam_scale);
           cam.mPos.x = cam_scale;
         }
-        else if(view_mode == ViewLeft)
+        else if (view_mode == ViewLeft)
         {
           cam_scale += 0.1 * y;
 
-          if(cam_scale < 1.0)
+          if (cam_scale < 1.0)
             cam_scale = 1.0;
 
           cam.scale(cam_scale);
           cam.mPos.y = cam_scale;
         }
-        else if(view_mode == ViewTop)
+        else if (view_mode == ViewTop)
         {
           cam_scale += 0.1 * y;
 
-          if(cam_scale < 1.0)
+          if (cam_scale < 1.0)
             cam_scale = 1.0;
 
           cam.scale(cam_scale);
@@ -788,18 +804,20 @@ void kEditor::onMsMove(int k, int x, int y)
       }
     }
   }
-  else if(dragging && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !dragging->lock())
+  else if (dragging && pivot && paxes != kPivot::AXIS_NONE && ms_click[0] && !dragging->lock())
   {
     kgmRay3d<float> ray = getPointRay(x, y);
 
-    kgmCamera& cam = getRender()->camera();
+    kgmCamera &cam = getRender()->camera();
+
+    kgmUnit* pivot = unit("pivot");
 
     vec3 pt = ray.s + ray.d * cam.mPos.distance(pivot->position());
     vec3 pr, tm, nd, pv = pivot->position();
     line lax;
     float prdist;
 
-    switch(paxes)
+    switch (paxes)
     {
     case kPivot::AXIS_X:
       tm = pivot->position() + vec3(1, 0, 0);
@@ -820,12 +838,12 @@ void kEditor::onMsMove(int k, int x, int y)
 
     pr = lax.projection(pt);
     prdist = pivot->position().distance(pr);
-    //prdist *= 2;
+    // prdist *= 2;
 
     vec3 dir = pr - pivot->position();
     dir.normalize();
 
-    //selected->setPosition(selected->pos + dir * prdist);
+    // selected->setPosition(selected->pos + dir * prdist);
     vec3 pos = pr - nd * pv_delta;
     dragging->position(pos);
 
@@ -850,7 +868,8 @@ void kEditor::update()
 
 void kEditor::onMenu(u32 id)
 {
-  switch (id) {
+  switch (id)
+  {
   case ME_QUIT:
     onQuit();
     break;
@@ -918,22 +937,22 @@ void kEditor::onMenu(u32 id)
     onRunStop();
     break;
   case ME_VIEW_OBJECTS:
-      onViewObjects();
+    onViewObjects();
     break;
   case ME_VIEW_MATERIALS:
-      onViewMaterials();
+    onViewMaterials();
     break;
   case ME_VIEW_PERSPECTIVE:
-      onViewPerspective();
+    onViewPerspective();
     break;
   case ME_VIEW_FRONT:
-      onViewFront();
+    onViewFront();
     break;
   case ME_VIEW_BACK:
-      onViewLeft();
+    onViewLeft();
     break;
   case ME_VIEW_TOP:
-      onViewTop();
+    onViewTop();
     break;
   case ME_OPTIONS_DATABASE:
     break;
@@ -952,22 +971,26 @@ void kEditor::onQuit()
 void kEditor::onMapNew()
 {
   clear();
+  prepare();
+
+  kgm_log() << __FUNCTION__ << "\n";
 }
 
 void kEditor::onMapOpen()
 {
   kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
 
-  if(!fdd)
+  if (!fdd)
     return;
 
   kgmString dir;
 
-  dir = getSettings()->get((char*) "Data");
+  dir = getSettings()->get((char *)"Data");
 
   s32 i = dir.index(':');
 
-  if (i > -1) {
+  if (i > -1)
+  {
     kgmString a(dir.data(), i);
 
     dir = a;
@@ -984,19 +1007,19 @@ void kEditor::onMapOpen()
   fdd->forOpen(dir);
 
   slotMapOpen.reset();
-  slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapOpen, &fdd->sigSelect);
+  slotMapOpen.connect(this, (Slot<kEditor, kgmGuiFileDialog *>::FN) & kEditor::fdMapOpen, &fdd->sigSelect);
 }
 
 void kEditor::onMapSave()
 {
   kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
 
-  if(!fdd)
+  if (!fdd)
     return;
 
   kgmString dir;
 
-  dir = getSettings()->get((char*) "Data");
+  dir = getSettings()->get((char *)"Data");
 
   dir += kgmSystem::getPathDelim();
 
@@ -1009,12 +1032,12 @@ void kEditor::onMapSave()
   fdd->forSave(dir);
 
   slotMapOpen.reset();
-  slotMapSave.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdMapSave, &fdd->sigSelect);
+  slotMapSave.connect(this, (Slot<kEditor, kgmGuiFileDialog *>::FN) & kEditor::fdMapSave, &fdd->sigSelect);
 }
 
 void kEditor::onEditClone()
 {
-  if(!selected)
+  if (!selected)
     return;
 
   /*kNode* node = (kNode*) selected->clone();
@@ -1089,7 +1112,7 @@ void kEditor::onEditClone()
 
 void kEditor::onEditRemove()
 {
-  if(!selected)
+  if (!selected)
     return;
 
   remove(selected);
@@ -1097,13 +1120,12 @@ void kEditor::onEditRemove()
   selected = null;
 }
 
-
 void kEditor::onEditOptions()
 {
-  if(!selected)
+  if (!selected)
     return;
 
-  kViewOptions* vop = null;
+  kViewOptions *vop = null;
 
   s32 type = 0;
   if (selected->getNode())
@@ -1137,7 +1159,7 @@ void kEditor::onEditOptions()
     break;
   }
   */
-  if(vop)
+  if (vop)
   {
     vop->show();
   }
@@ -1147,11 +1169,11 @@ void kEditor::onAddBox()
 {
   kgm_log() << "kEditor::onAddBox";
 
-  kgmShape* s = new kgmShape(1.f, 1.f, 1.f);
+  kgmShape *s = new kgmShape(1.f, 1.f, 1.f);
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(null);
+  kgmUnit *unit = new kgmUnit(null);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1166,11 +1188,11 @@ void kEditor::onAddPlane()
 {
   kgm_log() << "kEditor::onAddPlane";
 
-  kgmShape* s = new kgmShape(1.f, 1.f);
+  kgmShape *s = new kgmShape(1.f, 1.f);
 
   m_objects.add(s);
 
-  kgmUnit* unit = new kgmUnit(null);
+  kgmUnit *unit = new kgmUnit(null);
 
   unit->setNode(new kgmGNode(unit, s, kgmIGraphics::NodeNone));
 
@@ -1195,17 +1217,17 @@ void kEditor::onAddMesh()
 {
   kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
 
-  if(!fdd)
+  if (!fdd)
     return;
 
   slotOpenFile.reset();
-  slotOpenFile.connect(this, (Slot<kEditor, kgmGuiFileDialog*>::FN) &kEditor::fdAddMesh, &fdd->sigSelect);
+  slotOpenFile.connect(this, (Slot<kEditor, kgmGuiFileDialog *>::FN) & kEditor::fdAddMesh, &fdd->sigSelect);
 
   fdd->showHidden(false);
 
   fdd->setFilter(".msh");
   fdd->changeLocation(false);
-  fdd->forOpen(getSettings()->get((char*)"Data"));
+  fdd->forOpen(getSettings()->get((char *)"Data"));
 }
 
 void kEditor::onAddUnit()
@@ -1222,7 +1244,7 @@ void kEditor::onAddUnit()
 
   guiAdd(vs);*/
 
-  kgmUnit* unit = new kgmUnit(null);
+  kgmUnit *unit = new kgmUnit(null);
   selected = unit;
 
   selected->setName(kgmString("Unit_") + kgmConvert::toString((s32)(++oquered)));
@@ -1232,7 +1254,7 @@ void kEditor::onAddUnit()
 
 void kEditor::onAddLight()
 {
-  kgmUnit* light = new kgmUnit(null);
+  kgmUnit *light = new kgmUnit(null);
   vec3 pos(1, 1, 4);
   light->setNode(new kgmGNode(light, new kgmLight(), kgmIGraphics::NodeLight));
   light->setName(kgmString("Light_") + kgmConvert::toString((s32)(++oquered)));
@@ -1245,42 +1267,42 @@ void kEditor::onAddActor()
 {
   kgmGuiFileDialog *fdd = kgmGuiFileDialog::getDialog();
 
-  if(!fdd)
+  if (!fdd)
     return;
 
   fdd->showHidden(false);
 
   fdd->setFilter(".act");
   fdd->changeLocation(false);
-  fdd->forOpen(getSettings()->get((char*)"Path"));
+  fdd->forOpen(getSettings()->get((char *)"Path"));
 }
 
 void kEditor::onAddEffect()
 {
-  kViewObjects* vo = kViewObjects::getDialog();
+  kViewObjects *vo = kViewObjects::getDialog();
 
-  if(!vo)
+  if (!vo)
     return;
 
   Slot<kEditor, kgmString> slotSelect;
-  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addEffect, &vo->sigSelect);
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) & kEditor::addEffect, &vo->sigSelect);
 }
 
 void kEditor::onAddSensor()
 {
-  kViewObjects* vo = kViewObjects::getDialog();
+  kViewObjects *vo = kViewObjects::getDialog();
 
-  if(!vo)
+  if (!vo)
     return;
 
   Slot<kEditor, kgmString> slotSelect;
-  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::addSensor, &vo->sigSelect);
-  //vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) & kEditor::addSensor, &vo->sigSelect);
+  // vs->setSelectCallback(kViewObjects::SelectCallback(this, (kViewObjects::SelectCallback::Function)&kEditor::addSensor));
 }
 
 void kEditor::onAddTrigger()
 {
-  kgmTrigger* tr = new kgmTrigger();
+  kgmTrigger *tr = new kgmTrigger();
 
   selected = tr;
   selected->setName(kgmString("Trigger_") + kgmConvert::toString((s32)(++oquered)));
@@ -1290,14 +1312,13 @@ void kEditor::onAddTrigger()
 
 void kEditor::onAddParticles()
 {
-  kgmParticles* p = new kgmParticles();
+  kgmParticles *p = new kgmParticles();
 
   m_objects.add(p);
 
-  kgmUnit* pr = new kgmUnit(null);
+  kgmUnit *pr = new kgmUnit(null);
 
   pr->setNode(new kgmGNode(pr, p, kgmIGraphics::NodeParticles));
-
 
   selected = pr;
   selected->setName(kgmString("Particle_") + kgmConvert::toString((s32)(++oquered)));
@@ -1307,15 +1328,15 @@ void kEditor::onAddParticles()
 
 void kEditor::onAddMaterial()
 {
-  kgmMaterial* m = new kgmMaterial();
+  kgmMaterial *m = new kgmMaterial();
 
   m_objects.add(m);
 
   m->setId(kgmString("Material_") + kgmConvert::toString((s32)(++oquered)));
 
-  kViewOptionsForMaterial* vop = kViewOptionsForMaterial::getDialog(m, 50, 50, 250, 350);
+  kViewOptionsForMaterial *vop = kViewOptionsForMaterial::getDialog(m, 50, 50, 250, 350);
 
-  if(vop)
+  if (vop)
   {
     vop->show();
   }
@@ -1323,60 +1344,55 @@ void kEditor::onAddMaterial()
 
 void kEditor::onRunPlay()
 {
-  if(mode_play)
+  if (mode_play)
     return;
 
   mode_play = true;
 
-  //gSwitch(kgmIGame::State_Play);
+  // gSwitch(kgmIGame::State_Play);
 }
 
 void kEditor::onRunStop()
 {
-  if(!mode_play)
-    return;
-
-  mode_play = false;
-
-  //gSwitch(kgmIGame::State_Pause);
 }
 
 void kEditor::onViewObjects()
 {
-  kViewObjects* vo = kViewObjects::getDialog();
+  kViewObjects *vo = kViewObjects::getDialog();
 
-  if(!vo)
+  if (!vo)
     return;
 
   Slot<kEditor, kgmString> slotSelect;
-  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectObject, &vo->sigSelect);
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) & kEditor::onSelectObject, &vo->sigSelect);
 
   auto i = units.begin();
 
-  do {
-    kgmUnit* un = (*i);
+  do
+  {
+    kgmUnit *un = (*i);
 
     vo->addItem(un->getName());
-  } while(i.next());
+  } while (i.next());
 }
 
 void kEditor::onViewMaterials()
 {
-  kViewObjects* vo = kViewObjects::getDialog();
+  kViewObjects *vo = kViewObjects::getDialog();
 
-  if(!vo)
+  if (!vo)
     return;
 
   slotSelect.reset();
-  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) &kEditor::onSelectMaterial, &vo->sigSelect);
+  slotSelect.connect(this, (Slot<kEditor, kgmString>::FN) & kEditor::onSelectMaterial, &vo->sigSelect);
 
-  kgmList<kgmObject*>::iterator i = m_objects.begin();
+  kgmList<kgmObject *>::iterator i = m_objects.begin();
 
-  while(!i.end())
+  while (!i.end())
   {
     if (kgmString((*i)->vClass()) == "kgmMaterial")
     {
-      vo->addItem(((kgmMaterial*)(*i))->id());
+      vo->addItem(((kgmMaterial *)(*i))->id());
     }
 
     ++i;
@@ -1386,11 +1402,11 @@ void kEditor::onViewMaterials()
 void kEditor::onViewPerspective()
 {
   view_mode = ViewPerspective;
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
   cam.mPos = vec3(-1, -1, 1);
-  cam.mDir = vec3( 0.5, 0.5, -0.3).normal();
-  cam.mUp  = vec3(0, 0, 1);
+  cam.mDir = vec3(0.5, 0.5, -0.3).normal();
+  cam.mUp = vec3(0, 0, 1);
   cam.setOrthogonal(false);
   cam.update();
 
@@ -1400,10 +1416,10 @@ void kEditor::onViewPerspective()
 void kEditor::onViewFront()
 {
   view_mode = ViewFront;
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
   cam.mDir = vec3(-1, 0, 0);
-  cam.mUp  = vec3(0, 0, 1);
+  cam.mUp = vec3(0, 0, 1);
   cam.setOrthogonal(true);
   cam.update();
 }
@@ -1411,10 +1427,10 @@ void kEditor::onViewFront()
 void kEditor::onViewLeft()
 {
   view_mode = ViewLeft;
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
   cam.mDir = vec3(0, -1, 0);
-  cam.mUp  = vec3(0, 0, 1);
+  cam.mUp = vec3(0, 0, 1);
   cam.setOrthogonal(true);
   cam.update();
 }
@@ -1422,19 +1438,19 @@ void kEditor::onViewLeft()
 void kEditor::onViewTop()
 {
   view_mode = ViewTop;
-  kgmCamera& cam = getRender()->camera();
+  kgmCamera &cam = getRender()->camera();
 
   cam.mDir = vec3(0, 0, -1);
-  cam.mUp  = vec3(0, 1,  0);
+  cam.mUp = vec3(0, 1, 0);
   cam.setOrthogonal(true);
   cam.update();
 }
 
 void kEditor::onOptionsDatabase()
 {
-  kgmString loc = getSettings()->get((char*)"Path");
+  kgmString loc = getSettings()->get((char *)"Path");
 
-  if(!loc.length())
+  if (!loc.length())
   {
     kgmString cwd;
     kgmSystem::getCurrentDirectory(cwd);
@@ -1451,36 +1467,36 @@ void kEditor::onSelectObject(kgmString id)
 
 void kEditor::onSelectMaterial(kgmString id)
 {
-  kViewOptionsForMaterial* vop = null;
+  kViewOptionsForMaterial *vop = null;
 
-  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
-    if (kgmString((*i)->vClass()) == "kgmMaterial" && ((kgmMaterial*)(*i))->id() == id)
+    if (kgmString((*i)->vClass()) == "kgmMaterial" && ((kgmMaterial *)(*i))->id() == id)
     {
-      vop = kViewOptionsForMaterial::getDialog(((kgmMaterial*)(*i)), 50, 50, 250, 350);
+      vop = kViewOptionsForMaterial::getDialog(((kgmMaterial *)(*i)), 50, 50, 250, 350);
       break;
     }
   }
 
-  if(vop)
+  if (vop)
   {
     vop->show();
   }
 }
 
-void kEditor::add(kgmUnit* node)
+void kEditor::add(kgmUnit *node)
 {
-  if(!node)
+  if (!node)
     return;
 
-  //gAppend(node);
+  // gAppend(node);
 
   select(node->getName());
 }
 
-void kEditor::remove(kgmUnit* node)
+void kEditor::remove(kgmUnit *node)
 {
-  if(!node)
+  if (!node)
     return;
 
   node->remove();
@@ -1488,9 +1504,9 @@ void kEditor::remove(kgmUnit* node)
 
 int kEditor::doVisUpdate(void *v)
 {
-  kEditor* e = (kEditor*)v;
+  kEditor *e = (kEditor *)v;
 
-  while(e->m_isVisual)
+  while (e->m_isVisual)
   {
     e->update();
 
@@ -1500,21 +1516,20 @@ int kEditor::doVisUpdate(void *v)
   return 1;
 }
 
-kgmMaterial* kEditor::getMaterial(kgmString id)
+kgmMaterial *kEditor::getMaterial(kgmString id)
 {
-  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); ++i)
   {
     kgmString s1 = (*i)->vClass();
 
-    if(kgmString((*i)->vClass()) == "kgmMaterial")
+    if (kgmString((*i)->vClass()) == "kgmMaterial")
     {
-      if (((kgmMaterial*)(*i))->id() == id)
+      if (((kgmMaterial *)(*i))->id() == id)
       {
-        return (kgmMaterial*)(*i);
+        return (kgmMaterial *)(*i);
       }
     }
   }
 
   return null;
 }
-

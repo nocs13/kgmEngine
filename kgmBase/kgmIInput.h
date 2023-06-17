@@ -2,7 +2,7 @@
 #include "kgmTypes.h"
 #include "kgmInterface.h"
 
-class kgmIInput
+class kgmIInput: public kgmInterface
 {
 public:
   struct Point { s32 x, y, z; };

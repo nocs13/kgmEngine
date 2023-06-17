@@ -111,7 +111,7 @@ private:
   u32 m_error = 0;
 
 public:
-  kgmOGL(kgmWindow* wnd);
+  kgmOGL(kgmWindow* wnd, void* ctx = null);
   virtual ~kgmOGL();
 
   //BASE

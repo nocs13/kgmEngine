@@ -149,7 +149,7 @@ enum gc_enum
 
 #define GC_MAX_TERTURE_UNITS 8
 
-class kgmIGC: public kgmObject
+class kgmIGC: public kgmInterface
 {
 public:
   struct ClipPlane {bool on; u32 id; f32 plane[4]; };

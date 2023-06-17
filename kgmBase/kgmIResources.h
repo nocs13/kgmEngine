@@ -1,5 +1,7 @@
 #pragma once
+
 #include "kgmTypes.h"
+#include "kgmInterface.h"
 
 class kgmMesh;
 class kgmAnimation;
@@ -17,11 +19,11 @@ class kgmShapeCollision;
 
 template<class T> class kgmArray;
 
-class kgmIResources
+class kgmIResources: public kgmInterface
 {
 protected:
   static kgmIResources* m_manager;
-  
+
   void lock(kgmResource* r);
   void unlock(kgmResource* r);
 

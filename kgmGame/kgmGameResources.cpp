@@ -16,13 +16,13 @@
 #include <android/asset_manager_jni.h>
 #endif
 
-#define RMESH "meshes"
-#define RIMAGE "images"
-#define RSOUND "sounds"
-#define RSHADER "shaders"
-#define RCONVEX "convexes"
-#define RMATERIAL "materials"
-#define RSKELETON "skeletons"
+#define RMESH      "meshes"
+#define RIMAGE     "images"
+#define RSOUND     "sounds"
+#define RSHADER    "shaders"
+#define RCONVEX    "convexes"
+#define RMATERIAL  "materials"
+#define RSKELETON  "skeletons"
 #define RANIMATION "animations"
 
 kgmIResources *kgmGameResources::generate(kgmIGC *gc, kgmIAudio *audio)
@@ -239,7 +239,11 @@ void kgmGameResources::addPath(kgmString s)
   }
 
   if (path)
+  {
     m_paths.add(path);
+
+    kgm_log() << __FUNCTION__ << ": add path is " << path->path.data() << "\n";
+  }
 }
 
 bool kgmGameResources::getFile(const char *id, kgmArray<u8> &m)
@@ -293,6 +297,9 @@ bool kgmGameResources::getRFile(const char *id, const char *type, kgmArray<u8> &
   {
     kgmFile file;
 
+    kgm_log() << __FUNCTION__ << ": path type is " << m_paths[i]->type << "\n";
+    kgm_log() << __FUNCTION__ << ": path is " << m_paths[i]->path.data() << "\n";
+
     if (m_paths[i]->type == 2)
     {
       if (type)
@@ -300,7 +307,9 @@ bool kgmGameResources::getRFile(const char *id, const char *type, kgmArray<u8> &
       else
         path = m_paths[i]->path + delim + kgmString(id, strlen(id));
 
-      if (kgmGameApp::gameApp()->game()->getSystem()->isFile(path) && file.open(path, kgmFile::Read))
+      kgm_log() << __FUNCTION__ << ": path is " << m_paths[i]->path.data() << "\n";
+
+      if (kgmSystem::isFile(path) && file.open(path, kgmFile::Read))
       {
         m.alloc(file.length());
         file.read(m.data(), file.length());
@@ -557,7 +566,7 @@ kgmSound *kgmGameResources::getSound(const char *id)
   if (!getRFile(id, RSOUND, mem))
     return 0;
 
-  sound = m_tools.genSound(kgmGameApp::gameApp()->game()->getAudio(), mem);
+  sound = m_tools.genSound(m_audio, mem);
 
   if (sound)
   {

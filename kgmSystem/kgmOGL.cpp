@@ -133,6 +133,7 @@ struct {
   Bool (*glXQueryVersion)(Display *dpy, int *major, int *minor);
   void (*glXDestroyContext)(Display *dpy, GLXContext ctx);
   void* (*glXGetProcAddress)(const s8*);
+  GLXContext (*glXGetCurrentContext)();
 } glx;
 
 
@@ -234,7 +235,7 @@ static void __onDebugMessage(GLenum source,GLenum type,GLint id,GLenum severity,
   kgm_log() << "OGL Debug log: " << message << ".\n";
 }
 
-kgmOGL::kgmOGL(kgmWindow *wnd)
+kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 {
   if(!wnd)
     return;
@@ -318,6 +319,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   GLX_FN(glXDestroyContext);
   GLX_FN(glXCreateContextAttribsARB);
   GLX_FN(glXQueryVersion);
+  GLX_FN(glXGetCurrentContext);
 
   #define GL_FN(func)  ogl.func = (typeof( ogl.func )) glx.glXGetProcAddress(#func)
 
@@ -404,6 +406,33 @@ kgmOGL::kgmOGL(kgmWindow *wnd)
   GL_FN(glPolygonOffsetEXT);
   GL_FN(glDrawArraysEXT);
   GL_FN(glCheckFramebufferStatusEXT);
+
+  if (ctx != null)
+  {
+    m_glctx = (GLXContext) ctx;
+  }
+  else if (glx.glXGetCurrentContext)
+  {
+    GLXContext ctx = glx.glXGetCurrentContext();
+
+    if (ctx != NULL)
+    {
+      int glx_major = 0, glx_minor = 0;
+
+      glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+
+      kgm_log() << "GLX predefined version: " << glx_major << "." << glx_minor << ".\n";
+
+      if ((glx_major < GL_VER_MAJ) || ((glx_major == GL_VER_MAJ) && (glx_minor < GL_VER_MIN)))
+      {
+        glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, NULL);
+      }
+      else
+      {
+        m_glctx = ctx;
+      }
+    }
+  }
 
   if (!m_glctx)
   {

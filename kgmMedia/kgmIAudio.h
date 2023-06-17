@@ -11,9 +11,9 @@
   frequency.
 */
 
-class kgmIAudio: public kgmObject
+class kgmIAudio: public kgmInterface
 {
-public: 
+public:
   enum Volume
   {
     VolMin = 0,

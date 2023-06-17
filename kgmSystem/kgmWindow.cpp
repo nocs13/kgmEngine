@@ -686,6 +686,7 @@ kgmWindow::kgmWindow()
   m_dpy = null;
   m_wnd = {0};
   m_screen = 0;
+  m_visual = null;
 
   #endif
 

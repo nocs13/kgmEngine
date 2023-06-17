@@ -606,7 +606,6 @@ void kgmGraphics::render()
   render_2d();
 
 #ifdef DEBUG
-  set((kgmShader*) null);
   m_r_fps->render();
 #endif
 

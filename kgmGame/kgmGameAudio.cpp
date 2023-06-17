@@ -33,5 +33,5 @@ kgmGameAudio::~kgmGameAudio()
 #endif
 
   if (m_audio)
-    m_audio->release();
+    delete m_audio;
 }

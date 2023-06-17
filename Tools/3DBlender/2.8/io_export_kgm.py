@@ -30,7 +30,7 @@ import math
 import bpy
 from mathutils import *
 import xml.etree.ElementTree
-
+from bpy.app.handlers import persistent
 
 def toGrad(a):
   return a * 180.0 / 3.1415
@@ -41,13 +41,14 @@ def toRad(a):
 def toSnum(a):
   return str("%.6f" % a)
 
-
 kgm_animaniacs = [( "Unit",    "Unit",    "kgmUnit"    ),
                   ( "Actor",   "Actor",   "kgmActor"   )]
 
 kgm_project_parameters = ''
 kgm_unit_types = [('a1', 'a1 a1', 'a1 a1 a1'), ('a2', 'a2 a2', 'a2 a2 a2')]
 kgm_actor_types = [('u1', 'a1 u1', 'a1 a1 u1'), ('u2', 'a1 u2', 'a1 a1 u2')]
+
+kgm_configs = None
 
 kgm_mesh_smooth_angle = toRad(30)
 
@@ -64,7 +65,6 @@ def hasModifier(o, mname):
 
   return False
 
-
 def getModifier(o, mname):
   if o is None:
     return None
@@ -78,6 +78,18 @@ def getModifier(o, mname):
 
   return None
 
+@persistent
+def load_post_handler(dummy):
+  print("Event: load_post", bpy.data.filepath)
+  try:
+    el = ElementTree.parse(bpy.context.scene['kgm_config']).getroot()
+
+    if el.tag != 'kgm_configs':
+      kgm_configs = None
+    else:
+      kgm_configs = el
+  except:
+    kgm_configs = None
 
 def choose_unit_types(self, context):
   print('choosing unit type')
@@ -93,7 +105,6 @@ def choose_unit_types(self, context):
 
 class kgm_unit_settings(bpy.types.PropertyGroup):
   kgm_unit = bpy.props.BoolProperty()
-  kgm_player = bpy.props.BoolProperty()
   kgm_type = bpy.props.EnumProperty(name='kgm unit', items=kgm_animaniacs, description='select kgm unit')
   kgm_state = bpy.props.StringProperty()
   kgm_object = bpy.props.StringProperty()
@@ -206,7 +217,6 @@ class kgm_unit(bpy.types.Operator):
     bpy.types.Object.kgm_unit = bpy.props.BoolProperty()
     bpy.types.Object.kgm_type = bpy.props.StringProperty()
     bpy.types.Object.kgm_state = bpy.props.StringProperty()
-    bpy.types.Object.kgm_player = bpy.props.BoolProperty()
 
     bpy.types.Object.kgm_capture = bpy.props.StringProperty()
 
@@ -605,11 +615,11 @@ class kgmMesh:
     #  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
     print('Smooth mesh angle is: ' + str(kgm_mesh_smooth_angle))
     mesh = o.data
-    mtx  = o.matrix_local
+    #mtx  = o.matrix_local
 
-    self.position = mtx.to_translation()
-    self.rotation = mtx.to_euler()
-    self.scale    = mtx.to_scale()
+    #self.position = mtx.to_translation()
+    #self.rotation = mtx.to_euler()
+    #self.scale    = mtx.to_scale()
 
     self.mtl_name = ""
 
@@ -1005,7 +1015,6 @@ class kgmTerrain:
               self.uv_scale_v = ts.scale[1]
 
 
-
 class kgmThread(threading.Thread):
   def __init__(self, c):
     self.context = c
@@ -1113,20 +1122,20 @@ def export_terrain(file, o):
   file.write(" </Terrain>\n")
 
 def export_mesh_data(file, o):
-  v = o.position
-  r = o.rotation
-  s = o.scale
+  #v = o.position
+  #r = o.rotation
+  #s = o.scale
 
-  file.write(" <Mesh name='" + o.name + "'")
+  file.write(" <MeshData name='" + o.name + "'")
 
   if o.mtl_name != "":
     file.write(" material='" + o.mtl_name + "'")
 
   file.write(">\n");
 
-  file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
-  file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
-  file.write("  <Scale value='"    + str("%.5f" % s.x) + " " + str("%.5f" % s.y) + " " + str("%.5f" % s.z) + "'/>\n")
+  #file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
+  #file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
+  #file.write("  <Scale value='"    + str("%.5f" % s.x) + " " + str("%.5f" % s.y) + " " + str("%.5f" % s.z) + "'/>\n")
 
   file.write("  <Vertices length='" + str(len(o.vertices)) + "'>\n")
   for v in o.vertices:
@@ -1148,7 +1157,7 @@ def export_mesh_data(file, o):
       file.write(" " + str(v.wb[0]) + " " + str(v.wb[1]) + " " + str(v.wb[2]) + " " + str(v.wb[3]))
       file.write("\n")
     file.write("  </Skin>\n")
-  file.write(" </Mesh>\n")
+  file.write(" </MeshData>\n")
 
 
 def export_mesh_node(file, o):
@@ -1157,14 +1166,14 @@ def export_mesh_node(file, o):
   v = mtx.to_translation()
   r = mtx.to_euler()
   s = mtx.to_scale()
-  file.write(" <Visual type='mesh' name='" + o.name + "' proxy='" + o.data.name + "'>\n")
+  file.write(" <Mesh name='" + o.name + "' data='" + o.data.name + "'>\n")
   for m in o.data.materials:
     file.write("  <Material name='" + m.name + "'/>\n")
 
   file.write("  <Position value='" + str("%.5f" % v.x) + " " + str("%.5f" % v.y) + " " + str("%.5f" % v.z) + "'/>\n")
   file.write("  <Rotation value='" + str("%.5f" % r.x) + " " + str("%.5f" % r.y) + " " + str("%.5f" % r.z) + "'/>\n")
   file.write("  <Scale value='"    + str("%.5f" % s.x) + " " + str("%.5f" % s.y) + " " + str("%.5f" % s.z) + "'/>\n")
-  file.write(" </Visual>\n")
+  file.write(" </Mesh>\n")
   pass
 
 
@@ -1249,48 +1258,8 @@ def export_kgmobject(file, o):
 
 
 from bpy.props import *
-from bpy_extras.io_utils import ImportHelper
-
-
-class kgmImport(bpy.types.Operator, ImportHelper):
-  '''Kgm settings import'''
-  bl_idname = "import_scene.kgm_settings"
-  bl_label = "Import Kgm settings"
-
-  filename_ext = ".kgs"
-  filter_glob = StringProperty(default="*.kgs", maxlen=1024, options={'HIDDEN'}, )
-
-  @classmethod
-  def poll(cls, context):
-    return context.active_object != None
-
-  def execute(self, context):
-    from xml.dom.minidom import parse
-    global kgm_project_parameters
-
-    print("Kgm settings file: " + self.filepath)
-
-    try:
-      # kgm_project_parameters = xml.etree.ElementTree.parse(self.filepath).getroot()
-      kgs_dom = parse(self.filepath)
-      kgs_dom_root = kgs_dom.firstChild
-      print('kgs_dom' + str(kgs_dom))
-      print('kgs_dom root tag ' + str(kgs_dom_root.nodeName))
-      for node in kgs_dom_root.childNodes:
-        if node.nodeType is xml.dom.Node.ELEMENT_NODE:
-          print('kgs nodes ' + str(node))
-    except xml.parsers.expat.ExpatError as err:
-      print('xml error: ' + str(err))
-      return {'FINISHED'}
-    except Exception as err:
-      print('kgs load error ' + str(err))
-      print('cannot load ' + self.filepath)
-
-    kgm_project_parameters = kgs_dom_root
-    return {'FINISHED'}
-
 from bpy_extras.io_utils import ExportHelper
-
+from bpy_extras.io_utils import ImportHelper
 
 class kgmExport(bpy.types.Operator, ExportHelper):
   ''' Kgm scene export '''
@@ -1452,9 +1421,9 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       for o in self.mesh_datas:
         export_mesh_data(file, o)
 
-    #print("Export mesh nodes")
-    #for o in self.mesh_nodes:
-    #  export_mesh_node(file, o)
+    print("Export mesh nodes")
+    for o in self.mesh_nodes:
+      export_mesh_node(file, o)
 
     # skeletons
     for o in self.skeletons:
@@ -1525,7 +1494,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       print("Export meshes are not enabled.")
       return
 
-    self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True]
+    self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True and ob.parent == None]
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
     terrains = []
@@ -1540,7 +1509,14 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       self.terrain = kgmTerrain(terrains[-1])
 
     for n in self.mesh_nodes:
-      self.mesh_datas.append(kgmMesh(n))
+      mname = n.data.name
+      exists = False
+      for m in self.mesh_datas:
+        if mname == m.name:
+          exists = True
+          break
+      if exists is False:
+        self.mesh_datas.append(kgmMesh(n))
 
     print("Collected mesh datas: " + str(len(self.mesh_datas)))
 
@@ -1924,31 +1900,111 @@ def menu_func_a(self, context):
     self.layout.operator(kgm_unit.bl_idname, text="kgmUnit", icon='OUTLINER_OB_EMPTY')
     self.layout.operator(kgm_dummy.bl_idname, text="kgmDummy", icon='OUTLINER_OB_EMPTY')
 
+class KgmUnitAddButtonOperator(bpy.types.Operator):
+    bl_idname = "scene.kgm_unit_add_button_operator"
+    bl_label = "Unit"
+
+    id = bpy.props.IntProperty()
+
+    def execute(self, context):
+        #amode = bpy.context.object.mode
+        o = bpy.data.objects.new( "empty", None )
+
+        o.name = "kgmUnit"
+
+        o['kgm_unit']  = True
+        o['kgm_type']  = "kgmUnit";
+        o['kgm_state'] = "Idle"
+
+        o.empty_display_size = 1
+        o.empty_display_type = 'PLAIN_AXES'
+
+        bpy.context.scene.collection.objects.link(o)
+
+        #bpy.ops.object.mode_set(mode=amode)
+        print("Pressed add unit button ", self.id)
+        return {'FINISHED'}
+
+class KgmConfigButtonOperator(bpy.types.Operator, ImportHelper):
+    bl_idname = "scene.kgm_config_button_operator"
+    bl_label = "Kgm config"
+
+    path = bpy.props.StringProperty(name = 'file path', default="*.kgmconf", subtype = 'DIR_PATH')
+
+    def execute(self, context):
+        config = self.filepath
+
+        print("Execute kgm config button ", config)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        print("Invoke kgm config button")
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+    def load_configs(path):
+      el = ElementTree.parse(path).getroot()
+
+      if el.tag != 'kgm_configs':
+        return
+
+      bpy.context.scene['kgm_config'] = path
+      kgm_configs = el
+
+class KgmUnitPanel(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Kgm Panel"
+    bl_idname = "OBJECT_PT_kgm_unit"
+
+    bl_space_type  = 'VIEW_3D'
+    bl_region_type = 'UI'
+
+    def draw(self, context):
+        layout = self.layout
+
+        obj = context.object
+
+        row = layout.row()
+        row.label(text="Load configs", icon='WORLD_DATA')
+
+        row = layout.row()
+        row.operator("scene.kgm_config_button_operator")
+
+        row = layout.row()
+        row.label(text="Add unit", icon='WORLD_DATA')
+
+        row = layout.row()
+        row.operator("scene.kgm_unit_add_button_operator")
+
+        print("Panel add kgm unit.")
+
 classes = [
     kgmExport,
     KgmTerrainNodeTree,
     KgmTerrainNodeGroup,
     KgmMaterialNodeGroup,
-    KgmTerrainNodeTreePanel
+    KgmTerrainNodeTreePanel,
+    KgmUnitAddButtonOperator,
+    KgmConfigButtonOperator,
+    KgmUnitPanel
 ]
 
 def register():
     print("Registering kgm module.")
 
+    bpy.app.handlers.load_post.append(load_post_handler)
+
     for c in classes:
       bpy.utils.register_class(c)
 
     bpy.types.TOPBAR_MT_file_export.append(menu_func)
-    #bpy.types.TOPBAR_MT_file_import.append(menu_kgm_imp_set_func)
-    #bpy.types.TOPBAR_MT_add.append(menu_func_a)
 
 def unregister():
+    bpy.app.handlers.load_post.remove(load_post_handler)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
     for c in reversed(classes):
       bpy.utils.unregister_class(c)
-    #bpy.types.TOPBAR_MT_file_import.remove(menu_kgm_imp_set_func)
-    #bpy.types.TOPBAR_MT_add.remove(menu_func_a)
 
 
 if __name__ == "__main__":

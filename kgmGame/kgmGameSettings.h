@@ -3,8 +3,9 @@
 #include "../kgmBase/kgmXml.h"
 #include "../kgmBase/kgmString.h"
 #include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmSettings.h"
 
-class kgmGameSettings: public kgmObject
+class kgmGameSettings: public kgmSettings
 {
   kgmXml* m_xml;
 
