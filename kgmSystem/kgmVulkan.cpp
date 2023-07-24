@@ -16,6 +16,7 @@
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
 //#define SWAPCHAIN_IMAGES 2
+//#define VK_DYNAMIC_STATE_DEPTH_BOUNDS 5
 
 static int SWAPCHAIN_IMAGES = 2;
 
@@ -1708,10 +1709,10 @@ void  kgmVulkan::gcSetViewport(int x, int y, int w, int h, float n, float f)
   m_viewport.y = y;
   m_viewport.width = w;
   m_viewport.height = h;
-  //m_viewport.minDepth = n;
-  //m_viewport.maxDepth = f;
-  m_viewport.minDepth = 0.0;
-  m_viewport.maxDepth = 1.0;
+  m_viewport.minDepth = n;
+  m_viewport.maxDepth = f;
+  //m_viewport.minDepth = 0.0;
+  //m_viewport.maxDepth = 1.0;
 }
 
 //BLEND
@@ -4860,14 +4861,14 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineDepthStencilStateCreateInfo.minDepthBounds = 0.0f;
   pipelineDepthStencilStateCreateInfo.maxDepthBounds = 0.0f;
 
-  VkDynamicState dynamicStates[3] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR,
-                                      VK_DYNAMIC_STATE_BLEND_CONSTANTS };
+  VkDynamicState dynamicStates[4] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR,
+                                      VK_DYNAMIC_STATE_BLEND_CONSTANTS, VK_DYNAMIC_STATE_DEPTH_BOUNDS };
 
   VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo;
 
   ZeroObject(dynamicStateCreateInfo);
   dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  dynamicStateCreateInfo.dynamicStateCount = 3;
+  dynamicStateCreateInfo.dynamicStateCount = 4;
   dynamicStateCreateInfo.pDynamicStates = dynamicStates;
 
   VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo;

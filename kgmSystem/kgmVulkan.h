@@ -110,6 +110,7 @@ class kgmVulkan: public kgmIGC
 
     VK_EXPORTED_FUNCTION(vkCreatePipelineLayout);
     VK_EXPORTED_FUNCTION(vkDestroyPipelineLayout);
+
     VK_EXPORTED_FUNCTION(vkCreatePipelineCache);
     VK_EXPORTED_FUNCTION(vkDestroyPipelineCache);
 
@@ -609,6 +610,7 @@ class kgmVulkan: public kgmIGC
   Texture* m_textures[4] = { null };
 
   ActualPipelines* m_pipelines = null;
+  VkPipelineCache* m_pipelineCache = null;
 
   s32 m_rect[4];
   f32 m_bgColor[4];
