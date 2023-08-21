@@ -32,3 +32,6 @@ lib/
 obj/
 nbproject/
 kgmEngine.*
+Komble/Data
+Komble/Data/*
+
