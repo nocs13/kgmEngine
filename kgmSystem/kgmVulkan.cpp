@@ -141,6 +141,10 @@ kgmVulkan::~kgmVulkan()
 
   if (m_device)
   {
+    kgm_log() << "Vulkan: API version major is " << VK_VERSION_MAJOR(m_deviceProperties.apiVersion) << ".\n";
+    kgm_log() << "Vulkan: API version minor is " << VK_VERSION_MINOR(m_deviceProperties.apiVersion) << ".\n";
+    kgm_log() << "Vulkan: API version patch is " << VK_VERSION_PATCH(m_deviceProperties.apiVersion) << ".\n";
+
     m_vk.vkDeviceWaitIdle(m_device);
 
     //m_vk.vkWaitForFences(m_device, SWAPCHAIN_IMAGES, m_fences, VK_TRUE, timeout);
@@ -2297,9 +2301,9 @@ bool kgmVulkan::initInstance()
   appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
   appInfo.pNext = nullptr;
   appInfo.pApplicationName = "kgmEngine";
-  appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);;
+  appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.pEngineName = "kgmEngine";
-  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);;
+  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.apiVersion = VK_API_VERSION_1_0;
 
   uint32_t layerPropertyCount = 0;
@@ -2610,6 +2614,23 @@ bool kgmVulkan::listDevices()
   m_vk.vkGetPhysicalDeviceProperties(m_physicalDevice, &m_deviceProperties);
 
   kgm_log() << "Vulkan: Physical device choosen\n";
+
+  kgm_log() << "Vulkan: API version major is " << VK_VERSION_MAJOR(m_deviceProperties.apiVersion) << ".\n";
+  kgm_log() << "Vulkan: API version minor is " << VK_VERSION_MINOR(m_deviceProperties.apiVersion) << ".\n";
+  kgm_log() << "Vulkan: API version patch is " << VK_VERSION_PATCH(m_deviceProperties.apiVersion) << ".\n";
+
+
+  if ((VK_VERSION_MAJOR(m_deviceProperties.apiVersion) < 1) ||
+      ((VK_VERSION_MAJOR(m_deviceProperties.apiVersion) ==  1) && (VK_VERSION_MINOR(m_deviceProperties.apiVersion) < 1)))
+  {
+    kgm_log() << "Vulkan: Version is low.\n";
+
+    return false;
+  }
+
+  m_api_version_major = VK_VERSION_MAJOR(m_deviceProperties.apiVersion);
+  m_api_version_minor = VK_VERSION_MINOR(m_deviceProperties.apiVersion);
+  m_api_version_patch = VK_VERSION_PATCH(m_deviceProperties.apiVersion);
 
   m_uboSize = m_deviceProperties.limits.nonCoherentAtomSize;
 

@@ -532,9 +532,13 @@ class kgmVulkan: public kgmIGC
   VkSurfaceKHR m_surface  = 0;
   VkDevice     m_device   = 0;
 
+  s32 m_api_version_major = -1;
+  s32 m_api_version_minor = -1;
+  s32 m_api_version_patch = -1;
+
   VkPhysicalDeviceProperties m_deviceProperties;
 
-  int m_uboSize = 0;
+  s32 m_uboSize = 0;
 
   kgmArray<VkExtensionProperties> m_extensionProperties;
   kgmArray<const s8*>             m_extensionNames;
