@@ -103,6 +103,7 @@ function main_oninit()
   maps[3] = 'map02.map'
   maps[4] = 'map03.map'
   maps[5] = 'map04.map'
+  maps[6] = 'map05.map'
 
   retent = kgmGenRetention('.komble')
 
@@ -197,3 +198,4 @@ function main_onremove(u)
     end
   end
 end
+

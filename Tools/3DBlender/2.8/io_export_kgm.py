@@ -590,7 +590,9 @@ class kgmSkeleton:
       self.collect(o)
 
   def collect(self, o):
-    self.bones.append(kgmBone(o, self.name))
+    if o.use_deform == True:
+      self.bones.append(kgmBone(o, self.name))
+
     for bone in o.children:
       self.collect(bone)
 
@@ -1178,12 +1180,12 @@ def export_mesh_node(file, o):
 
 
 def export_sceleton(file, o):
-  file.write(" <Skeleton name='" + s.name +
-             "' position='" + str("%.5f" % s.pos.x) + " " + str("%.5f" % s.pos.y) + " " + str("%.5f" % s.pos.z) +
-             "' quaternion='" + str("%.5f" % s.quat.x) + " " + str("%.5f" % s.quat.y) + " " + str("%.5f" % s.quat.z) + " " + str("%.5f" % s.quat.w) +
-             "' scale='" + str("%.5f" % s.scale.x) + " " + str("%.5f" % s.scale.y) + " " + str("%.5f" % s.scale.z) +
+  file.write(" <Skeleton name='" + o.name +
+             "' position='" + str("%.5f" % o.pos.x) + " " + str("%.5f" % o.pos.y) + " " + str("%.5f" % o.pos.z) +
+             "' quaternion='" + str("%.5f" % o.quat.x) + " " + str("%.5f" % o.quat.y) + " " + str("%.5f" % o.quat.z) + " " + str("%.5f" % o.quat.w) +
+             "' scale='" + str("%.5f" % o.scale.x) + " " + str("%.5f" % o.scale.y) + " " + str("%.5f" % o.scale.z) +
              "'>\n")
-  for b in s.bones:
+  for b in o.bones:
     file.write("  <Bone name='" + b.name + "' parent='" + b.parent + "'")
     file.write(" position='" + str("%.5f" % b.pos.x) + " " + str("%.5f" % b.pos.y) + " " + str("%.5f" % b.pos.z) + "'")
     # file.write(" rotation='" + str(b.rot.x) + " " + str(b.rot.y) + " " + str(b.rot.z) + "'")
