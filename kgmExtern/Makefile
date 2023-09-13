@@ -12,6 +12,7 @@ all:
 	make -C $(LUA) $(ARCH)
 	make -C $(LUA) install
 	pwd
+	mkdir -p ../kgmSystem/inc/lua
 	cp -r $(LUA)/include/*.h ../kgmSystem/inc/lua/.
 	cp $(LUA)/lib/liblua.a ../kgmSystem/lib/.
 #	cp $(LUA)/lib/liblualib.a ../kgmSystem/lib/.

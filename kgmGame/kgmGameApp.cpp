@@ -34,7 +34,7 @@ s32 kgmGameApp::exec(s32 argc, s8 **argv)
       break;
     case 'm':
       break;
-    case v:
+    case 'v':
       break;
     }
   }
