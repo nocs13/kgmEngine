@@ -24,17 +24,23 @@ s32 kgmGameApp::exec(s32 argc, s8 **argv)
   }
   */
 
+  kgm_log() << "Paring args, count is " << argc << ".\n";
+
   s32 opt = 0;
 
-  while((opt = getopt(argc, argv, "mt")))
+  while ((opt = getopt(argc, argv, "mtv")) != -1)
   {
-    switch(opt)
+    switch (opt)
     {
     case 't':
       break;
     case 'm':
       break;
     case 'v':
+      kgm_log() << "kgm version is: 0.1.\n";
+      return 0;
+      break;
+    default:
       break;
     }
   }
@@ -58,15 +64,15 @@ void kgmGameApp::abort()
 
 #ifdef ANDROID
 
-static AAssetManager* g_assetManager = NULL;
-static kgmIGame*      g_game = null;
-static JavaVM*        jvm = null;
+static AAssetManager *g_assetManager = NULL;
+static kgmIGame *g_game = null;
+static JavaVM *jvm = null;
 
-void kgmGameApp::android_init(JNIEnv* env, jobject obj, jint width, jint height, jobject am, jobject surface)
+void kgmGameApp::android_init(JNIEnv *env, jobject obj, jint width, jint height, jobject am, jobject surface)
 {
   LOGI("Game init\n");
   LOGI("args %p %p\n", am, env);
-  AAssetManager* mgr = AAssetManager_fromJava(env, am);
+  AAssetManager *mgr = AAssetManager_fromJava(env, am);
   g_assetManager = mgr;
   env->NewGlobalRef(am);
   LOGI("Game init asset manager\n");
@@ -78,7 +84,7 @@ void kgmGameApp::android_init(JNIEnv* env, jobject obj, jint width, jint height,
   kgmString spath;
   g_game = kgmGameApp::gameApplication()->android_init_game();
 
-  if(g_game)
+  if (g_game)
   {
     g_game->getWindow()->setRect(0, 0, width, height);
 
@@ -86,11 +92,11 @@ void kgmGameApp::android_init(JNIEnv* env, jobject obj, jint width, jint height,
   }
 }
 
-void kgmGameApp::android_quit(JNIEnv* env, jobject obj)
+void kgmGameApp::android_quit(JNIEnv *env, jobject obj)
 {
   LOGI("Game quit\n");
 
-  if(g_game)
+  if (g_game)
   {
     g_game->getWindow()->onClose();
   }
@@ -102,32 +108,32 @@ void kgmGameApp::android_exit()
 {
   LOGI("kgmEngine send quit request\n");
 
-  JNIEnv* env;
+  JNIEnv *env;
   jvm->AttachCurrentThread(&env, NULL);
   jclass cls = env->FindClass(kgm_android_classname());
   jmethodID mid = env->GetStaticMethodID(cls, "kgmAppFinish", "()V");
   env->CallStaticVoidMethod(cls, mid);
 }
 
-void kgmGameApp::android_idle(JNIEnv* env, jobject obj)
+void kgmGameApp::android_idle(JNIEnv *env, jobject obj)
 {
-  if(g_game)
+  if (g_game)
   {
     g_game->getWindow()->onIdle();
   }
 }
 
-void kgmGameApp::android_onKeyboard(JNIEnv* env, jobject obj, jint a, jint key)
+void kgmGameApp::android_onKeyboard(JNIEnv *env, jobject obj, jint a, jint key)
 {
 #ifdef DEBUG
   LOGI("Game onKeyboard %i %i\n", a, key);
 #endif
 
-  if(g_game)
+  if (g_game)
   {
     kgmEvent::Event evt;
 
-    switch(a)
+    switch (a)
     {
     case 0:
       evt.event = evtKeyDown;
@@ -145,24 +151,24 @@ void kgmGameApp::android_onKeyboard(JNIEnv* env, jobject obj, jint a, jint key)
   }
 }
 
-void kgmGameApp::android_onTouch(JNIEnv* env, jobject obj,  jint a, jint x, jint y)
+void kgmGameApp::android_onTouch(JNIEnv *env, jobject obj, jint a, jint x, jint y)
 {
-  static int  prev_x = 0, prev_y = 0;
+  static int prev_x = 0, prev_y = 0;
 
 #ifdef DEBUG
   LOGI("Game onTouch %i %i %i\n", a, x, y);
 #endif
 
-  if(g_game)
+  if (g_game)
   {
     kgmEvent::Event evt;
 
-    switch(a)
+    switch (a)
     {
     case 0:
       evt.event = evtMsMove;
 
-      if(kgmGameApp::gameApplication()->game()->getWindow()->getMsAbsolute())
+      if (kgmGameApp::gameApplication()->game()->getWindow()->getMsAbsolute())
       {
         evt.msx = x - prev_x;
         evt.msy = y - prev_y;
@@ -194,24 +200,21 @@ void kgmGameApp::android_onTouch(JNIEnv* env, jobject obj,  jint a, jint x, jint
   }
 }
 
-void kgmGameApp::android_onCompass(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z)
+void kgmGameApp::android_onCompass(JNIEnv *env, jobject obj, jfloat x, jfloat y, jfloat z)
 {
-
 }
 
-void kgmGameApp::android_onGyroscope(JNIEnv* env, jobject obj, jfloat x, jfloat y, jfloat z)
+void kgmGameApp::android_onGyroscope(JNIEnv *env, jobject obj, jfloat x, jfloat y, jfloat z)
 {
-
 }
 
-AAssetManager* kgm_android_getAssetManager()
+AAssetManager *kgm_android_getAssetManager()
 {
   return g_assetManager;
 }
 
-void kgm_android_init(JNIEnv * env, jobject am)
+void kgm_android_init(JNIEnv *env, jobject am)
 {
-
 }
 
 #endif

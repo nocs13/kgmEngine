@@ -113,8 +113,6 @@ kgmGameBase::kgmGameBase()
 
   getRect(rc[0], rc[1], rc[2], rc[3]);
 
-  //onResize(rc[2], rc[3]);
-
   m_state = -1;
 }
 
