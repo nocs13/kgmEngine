@@ -17,6 +17,8 @@ class kgmLuaScript: public kgmIScript
 
   s32 m_carg = 0;
 
+  f64 r_number = 0.0;
+
  public:
   kgmLuaScript(kgmIResources *);
   ~kgmLuaScript();

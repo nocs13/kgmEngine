@@ -18,3 +18,5 @@
   #define KGM_DECL_IMPORT     __attribute__((visibility("default")))
   #define KGM_DECL_HIDDEN     __attribute__((visibility("hidden")))
 #endif
+
+#define kgm_fatal(msg) { fprintf(stderr, "!!! FATAL: %s %d: %s.\n", __FILE__, __LINE__, msg); exit(-1); }

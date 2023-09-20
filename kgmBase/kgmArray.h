@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -7,7 +7,7 @@
 #include "../kgmSystem/kgmMemory.h"
 
 ////////// Array
-template <class T> 
+template <class T>
 class kgmArray
 {
 protected:
@@ -31,6 +31,9 @@ public:
 
   kgmArray(const kgmArray& a)
   {
+    m_data = null;
+    m_length = 0;
+
     alloc(a.m_data, a.m_length);
   }
 
@@ -51,7 +54,7 @@ public:
     return *this;
   }
 
-  T& operator[](const s32 i) const 
+  T& operator[](const s32 i) const
   {
    return m_data[i];
   }

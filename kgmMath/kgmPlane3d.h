@@ -1,7 +1,9 @@
 #pragma once
 
-//PLANE 3D
-template <class T> class kgmPlane3d{
+// PLANE 3D
+template <class T>
+class kgmPlane3d
+{
 public:
   T x, y, z, w;
 
@@ -16,7 +18,7 @@ public:
     x = a, y = b, z = c, w = d;
   }
 
-  kgmPlane3d(const kgmVector3d<T>& n, const kgmVector3d<T>& v)
+  kgmPlane3d(const kgmVector3d<T> &n, const kgmVector3d<T> &v)
   {
     w = -(n.x * v.x + n.y * v.y + n.z * v.z);
     x = n.x, y = n.y, z = n.z;
@@ -26,10 +28,10 @@ public:
   {
     kgmVector3d<T> v1, v2, nor;
     v1 = b - a;
-    v2 = c - a; //c - b;
+    v2 = c - a; // c - b;
     nor = v1.cross(v2);
     nor.normalize();
-    w = -(nor.x*a.x + nor.y*a.y + nor.z*a.z);
+    w = -(nor.x * a.x + nor.y * a.y + nor.z * a.z);
     x = nor.x, y = nor.y, z = nor.z;
   }
 
@@ -38,7 +40,7 @@ public:
     x = a, y = b, z = c, w = d;
   }
 
-  void set(const kgmVector3d<T>& n, const kgmVector3d<T>& v)
+  void set(const kgmVector3d<T> &n, const kgmVector3d<T> &v)
   {
     w = -(n.x * v.x + n.y * v.y + n.z * v.z);
     x = n.x, y = n.y, z = n.z;
@@ -48,10 +50,10 @@ public:
   {
     kgmVector3d<T> v1, v2, nor;
     v1 = b - a;
-    v2 = c - a; //c - b;
+    v2 = c - a; // c - b;
     nor = v1.cross(v2);
     nor.normalize();
-    w = -(nor.x*a.x + nor.y*a.y + nor.z*a.z);
+    w = -(nor.x * a.x + nor.y * a.y + nor.z * a.z);
     x = nor.x, y = nor.y, z = nor.z;
   }
 
@@ -65,15 +67,15 @@ public:
 
   T distance(kgmVector3d<T> v)
   {
-    T mr = (x*v.x + y*v.y + z*v.z + w);
-    T mn = (T)sqrt(x*x + y*y + z*z);
+    T mr = (x * v.x + y * v.y + z * v.z + w);
+    T mn = (T)sqrt(x * x + y * y + z * z);
 
-    if(mn == 0)
+    if (mn == 0)
     {
       return 99999999999999999999999999999.9;
     }
 
-    return  (mr / mn);
+    return (mr / mn);
   }
 
   kgmVector3d<T> projection(kgmVector3d<T> v)
@@ -93,12 +95,12 @@ public:
     numer = -(x * l.s.x + y * l.s.y + z * l.s.z + w);
     denom = (x * dl.x + y * dl.y + z * dl.z);
 
-    if(denom == 0)
+    if (denom == 0)
       return false;
 
     t = numer / denom;
 
-    if((t < 0.0) || (t > 1.0))
+    if ((t < 0.0) || (t > 1.0))
       return false;
 
     v.x = l.s.x + t * dl.x;
@@ -111,15 +113,15 @@ public:
   bool intersect(kgmRay3d<T> &r, kgmVector3d<T> &v)
   {
     T numer, denom, dist;
-    numer = r.s.x*x + r.s.y*y + r.s.z*z + w;
-    denom = r.d.x*x + r.d.y*y + r.d.z*z;
+    numer = r.s.x * x + r.s.y * y + r.s.z * z + w;
+    denom = r.d.x * x + r.d.y * y + r.d.z * z;
 
-    if(denom == 0)
+    if (denom == 0)
       return false;
 
     dist = -(numer / denom);
 
-    if(dist < 0)
+    if (dist < 0)
       return false;
 
     v.x = r.s.x + dist * r.d.x;

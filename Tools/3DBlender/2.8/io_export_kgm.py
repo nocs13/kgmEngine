@@ -28,6 +28,7 @@ import threading
 from math import radians
 import math
 import bpy
+import bmesh
 from mathutils import *
 import xml.etree.ElementTree
 from bpy.app.handlers import persistent
@@ -611,24 +612,96 @@ class kgmFace:
   def __init__(self, a, b, c):
     self.f = [a, b, c]
 
+class kgmBlendShape:
+  def __init__(self, name):
+    self.name = name
+    self.verts = []
+
+  def addVertex(self, v, idx):
+    v = [v, idx]
+    self.verts.append(v)
+
 
 class kgmMesh:
   def __init__(self, o):
-    #  mesh = o.to_mesh(bpy.context.scene, False, "PREVIEW")
-    print('Smooth mesh angle is: ' + str(kgm_mesh_smooth_angle))
-    mesh = o.data
-    #mtx  = o.matrix_local
 
-    #self.position = mtx.to_translation()
-    #self.rotation = mtx.to_euler()
-    #self.scale    = mtx.to_scale()
+    print('Current mesh: ' + o.data.name)
 
+    self.collectMesh(o, o.data)
+    self.collectShapes(o, o.data)
+
+  def addVertex(self, vx):
+    iv = -1
+
+    # check if such vertex already exist
+    # check by co, normal, uv.
+
+    for i in range(0, len(self.vertices)):
+      v = self.vertices[i]
+      if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]) and \
+         (v.n[0] == vx.n[0]) and (v.n[1] == vx.n[1]) and (v.n[2] == vx.n[2]) and \
+         (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
+        iv = i
+        break
+
+    if iv < 0:
+      self.vertices.append(vx)
+      iv = (len(self.vertices) - 1)
+
+    return iv
+
+  def skinVertex(self, o, m, v):
+    armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+    if armatures:
+      armature = armatures[0].object
+      bones = armature.data.bones
+
+  def skin(self, o, m):
+    armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
+    if armatures:
+      armature = armatures[0].object
+      bones = armature.data.bones
+      poseBones = armature.pose.bones
+      maxInfluences = 0
+      usedBones = set()
+      vertexGroups = {}
+
+      for v in m.vertices:
+        boneInfluences = [poseBones[o.vertex_groups[group.group].name] for group in v.goups if
+                          o.vertex_groups[group.group].name in poseBones]
+        if len(boneInfluences) > maxInfuences:
+          maxInfluennces = len(boneInfluences)
+        for bone in boneInfluences:
+          usedBones.add(bone)
+
+  def getBoneIndex(self, name):
+    if self.armature == None:
+      return -1
+
+    for i in range(0, len(self.armature.data.bones)):
+      if name == self.armature.data.bones[i].name:
+        return i
+
+    return -1
+
+  def getVertexIndex(self, v):
+    idx = []
+
+    for i in range(0, len(self.vertices)):
+      vx = self.vertices[i]
+      vec = Vector((vx.v[0], vx.v[1], vx.v[2]))
+
+      if (vec - v).length < 0.0001:
+        idx.append(i)
+
+    return idx
+
+  def collectMesh(self, o, mesh):
     self.mtl_name = ""
 
     if len(mesh.materials) > 0:
         self.mtl_name = mesh.materials[0].name
 
-    print('Current mesh: ' + mesh.name)
     self.name = mesh.name
     self.vertices = []
     self.faces = []
@@ -697,69 +770,44 @@ class kgmMesh:
         for k in range(2, len(iface)):
           self.faces.append(kgmFace(iface[0], iface[k - 1], iface[k]))
 
-  def addVertex(self, vx):
-    iv = -1
-    nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
+  def collectShapes(self, o, mesh):
+    #bm = bmesh.new()   # create an empty BMesh
+    #bm.from_mesh(me)   # fill it in from a Mesh
+    #https://docs.blender.org/api/current/bmesh.html
 
-    # check if such vertex already exist
+    self.bshapes = []
 
-    for i in range(0, len(self.vertices)):
-      v = self.vertices[i]
-      if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]):
-        nc = Vector((v.n[0], v.n[1], v.n[2]))
+    count = 0
 
-        if nx == nc:
-          iv = i
-          break
-        else:
-          a = math.acos( nx.dot(nc))
-          if a < kgm_mesh_smooth_angle:
-            nn = nc + nx
-            nn.normalize()
-            self.vertices[i].n = [nn.x, nn.y, nn.z]
-            iv = i
-            break
+    try:
+      count = len( mesh.shape_keys.key_blocks )
+    except:
+      return
 
-    if iv < 0:
-      self.vertices.append(vx)
-      iv = (len(self.vertices) - 1)
+    if count < 2:
+      return
 
-    return iv
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
 
-  def skinVertex(self, o, m, v):
-    armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
-    if armatures:
-      armature = armatures[0].object
-      bones = armature.data.bones
+    base_lay = bm.verts.layers.shape["Basis"]
 
-  def skin(self, o, m):
-    armatures = [modifier for modifier in o.modifiers if modifier.type == 'ARMATURE']
-    if armatures:
-      armature = armatures[0].object
-      bones = armature.data.bones
-      poseBones = armature.pose.bones
-      maxInfluences = 0
-      usedBones = set()
-      vertexGroups = {}
+    for i in range(1, count):
+      bs = kgmBlendShape(mesh.shape_keys.key_blocks[i].name)
 
-      for v in m.vertices:
-        boneInfluences = [poseBones[o.vertex_groups[group.group].name] for group in v.goups if
-                          o.vertex_groups[group.group].name in poseBones]
-        if len(boneInfluences) > maxInfuences:
-          maxInfluennces = len(boneInfluences)
-        for bone in boneInfluences:
-          usedBones.add(bone)
+      shape_lay = bm.verts.layers.shape[i]
 
-  def getBoneIndex(self, name):
-    if self.armature == None:
-      return -1
+      for v in bm.verts:
+        shape = v[shape_lay]
+        base  = v[base_lay]
 
-    for i in range(0, len(self.armature.data.bones)):
-      if name == self.armature.data.bones[i].name:
-        return i
+        if (shape - base).length > 0.002:
+          idx = self.getVertexIndex(base)
 
-    return -1
+          if len(idx) > 0:
+            bs.addVertex(shape, idx)
 
+      self.bshapes.append(bs)
 
 class kgmFrame:
   def __init__(self, t, x, y, z, rx, ry, rz, rw):
@@ -1159,6 +1207,22 @@ def export_mesh_data(file, o):
       file.write(" " + str(v.wb[0]) + " " + str(v.wb[1]) + " " + str(v.wb[2]) + " " + str(v.wb[3]))
       file.write("\n")
     file.write("  </Skin>\n")
+
+  if len(o.bshapes) > 0:
+    file.write("  <Shapes count='" + str(len(o.bshapes)) + "'>\n")
+    for bs in o.bshapes:
+      file.write("   <Shape name='" + bs.name + "'>\n")
+      for bv in bs.verts:
+        v = bv[0]
+        ids = bv[1]
+        file.write("    <ShapeVertex>" + str(v.x) + " " + str(v.y) + " " + str(v.z) + "</ShapeVertex>\n")
+        file.write("    <ShapeIndices> ")
+        for i in ids:
+          file.write(str(i) + " ")
+        file.write("</ShapeIndices>\n")
+    file.write("   <Shape'>\n")
+    file.write("  </Shapes>\n")
+
   file.write(" </MeshData>\n")
 
 

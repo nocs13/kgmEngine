@@ -2,6 +2,7 @@
 
 kgmBody::kgmBody()
 {
+  m_type = 0;
   m_mass = 1.0f;
   m_friction = 0.0f;
 //  m_force = 0.0f;
@@ -19,8 +20,8 @@ kgmBody::kgmBody()
   m_intersect = false;
 #endif
 
-  m_position = vec3(0, 0, 0);
-  m_direction = vec3(1, 0, 0);
+  m_position.set(0, 0, 0);
+  m_direction.set(1, 0, 0);
 
   m_shape = ShapeBox;
 

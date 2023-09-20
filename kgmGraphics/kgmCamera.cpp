@@ -2,8 +2,6 @@
 
 kgmCamera::kgmCamera()
 {
-  memset(&ortho, 0, sizeof(Ortho));
-
   ortho.scale = 1.0;
 
   set(0.16 * PI, 1.0, .01, 100000.0, vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 0, 1));

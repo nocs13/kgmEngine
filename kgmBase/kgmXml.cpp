@@ -123,23 +123,27 @@ bool kgmXml::Node::hasattr(kgmString id)
 kgmXml::kgmXml()
 {
   m_node = 0;
+  m_spaces = 0;
   m_position = null;
 }
 
 kgmXml::kgmXml(void* mem, int size){
   m_node = 0;
+  m_spaces = 0;
   m_position = null;
   m_node = parse(mem, size);
 }
 
 kgmXml::kgmXml(kgmArray<u8>& m){
   m_node = 0;
+  m_spaces = 0;
   m_position = null;
   m_node = parse(m.data(), m.length());
 }
 
 kgmXml::kgmXml(kgmString& s){
   m_node = 0;
+  m_spaces = 0;
   m_position = null;
   m_node = parse(s.data(), s.length());
 }

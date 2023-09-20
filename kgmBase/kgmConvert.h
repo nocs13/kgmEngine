@@ -41,7 +41,7 @@ class kgmConvert: public kgmObject
       snprintf(a, 63, "%i", i);
     kgmString s(a, strlen(a));
     delete [] a;
-    
+
     return s;
   }
 
@@ -49,15 +49,15 @@ class kgmConvert: public kgmObject
   {
     char* a = new char[64];
     memset(a, 0, 64);
-    
+
     if(hex)
       snprintf(a, 63, "%x", i);
     else
       snprintf(a, 63, "%u", i);
-    
+
     kgmString s(a, strlen(a));
     delete [] a;
-    
+
     return s;
   }
 
@@ -66,7 +66,7 @@ class kgmConvert: public kgmObject
     char* a = new char[64];
     memset(a, 0, 64);
     snprintf(a, 63, "%f", i);
-    a[64] = '\0';
+    a[63] = '\0';
     kgmString s(a, strlen(a));
     delete [] a;
     return s;
@@ -92,5 +92,4 @@ class kgmConvert: public kgmObject
 
     return s;
   }
-
 };

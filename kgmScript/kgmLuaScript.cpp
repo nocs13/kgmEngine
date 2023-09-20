@@ -73,7 +73,7 @@ bool kgmLuaScript::load(kgmString s)
   #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
     res = luaL_dostring(handler, script.data());
   #else
-    res = lua_dostring(handler, script.data()));
+    res = lua_dostring(handler, script.data());
   #endif
 
   if(res)
@@ -138,6 +138,8 @@ bool kgmLuaScript::args(kgmString fmt, ...)
       m_carg = args + 1;
   }
 
+  va_end(vl);
+
   return true;
 }
 
@@ -169,6 +171,8 @@ bool kgmLuaScript::resl(kgmString fmt, ...)
     f++;
     args++;
   }
+
+  va_end(vl);
 
   return true;
 }
@@ -296,14 +300,14 @@ void* kgmLuaScript::call(const s8* name, const s8* fmt, ...)
     args++;
   }
 
+  va_end(vl);
+
   lua_call(handler, args, nres);
 
   s32 rnum = lua_gettop(handler) - ssize;
 
   if (rnum < 1)
     return (void *) -1;
-
-  f64 r_number;
 
   r_call = null;
 

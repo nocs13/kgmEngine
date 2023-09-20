@@ -2,7 +2,7 @@
 
 kgmIntersection::kgmIntersection()
 {
-
+	m_intersection = false;
 }
 
 kgmIntersection::~kgmIntersection()
@@ -78,8 +78,8 @@ bool kgmIntersection::intersection(line3& ln, box3& bx)
 
 bool kgmIntersection::intersection(line3& ln, cylinder3& cyl)
 {
- line ln_proj; 
-	  ln_proj.s = ln.s; 
+ line ln_proj;
+	  ln_proj.s = ln.s;
 	  ln_proj.e = ln.e;
 	  ln_proj.s.z = ln_proj.e.z = cyl.position.z;
  vec3 v_proj = ln_proj.projection(cyl.position);

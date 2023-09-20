@@ -17,16 +17,24 @@ public:
   {
     bool  on;
 
-    float scale;
-    float width;
-    float height;
+    f32 scale;
+    f32 width;
+    f32 height;
+
+    Ortho()
+    {
+      on = false;
+      scale = 0.0f;
+      width = 0.0f;
+      height = 0.0f;
+    }
   };
 
 public:
   vec3  mPos, mDir, mUp;
   float mFov, mAspect, mNear, mFar;
   mtx4  mProj, mView, mVwPj;
-  
+
   vec3 mRot;
 
   Ortho ortho;
@@ -40,7 +48,7 @@ public:
 
   void move(float x, float y, float z);
   void look(float x, float y, float z);
-  
+
   void rotate(float pitch, float yaw);
   void update();
   void viewport(float width, float height);

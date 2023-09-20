@@ -95,6 +95,7 @@ public:
     kgmVector3d<T> pts[8];
 
     points(pts);
+
     plane[0] = kgmPlane3d<T>(pts[0], pts[2], pts[1]);
     plane[1] = kgmPlane3d<T>(pts[0], pts[4], pts[3]);
     plane[2] = kgmPlane3d<T>(pts[1], pts[2], pts[5]);

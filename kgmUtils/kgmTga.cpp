@@ -5,6 +5,7 @@
 kgmTga::kgmTga()
 {
   memset(&header, 0, sizeof(Header));
+  ppBytes = 0;
 }
 
 kgmTga::~kgmTga()

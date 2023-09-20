@@ -22,6 +22,13 @@ public:
     bool     position, rotation, scale;
     vec3     offset;
     kgmBody* body;
+
+    Constraint()
+    {
+      position = rotation = scale = false;
+      offset.set(0, 0, 0);
+      body = null;
+    }
   };
 
 //protected:
@@ -49,7 +56,7 @@ public:
 
   box3     m_bound;       //bound box
 
-  Constraint         m_constraint;
+  Constraint m_constraint;
 
   kgmList<triangle3> m_convex; //convex shape sides for simulation(collision, ...)
 

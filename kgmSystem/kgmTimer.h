@@ -42,6 +42,8 @@ private:
 
 public:
   kgmTimer();
+  kgmTimer(const kgmTimer&) = delete;
+  kgmTimer & operator = (const kgmTimer &) = delete;
   ~kgmTimer();
 
   bool add(Function fn, void* ob, u32 dy);

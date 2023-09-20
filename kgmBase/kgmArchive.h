@@ -103,7 +103,9 @@ public:
 
     for(u32 i = 0; i < head.entries; i++)
     {
-      Entry entry = {0};
+      Entry entry;
+      memset(&entry, 0, sizeof(Entry));
+
       archive.read(entry.name,    64);
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);
@@ -226,7 +228,9 @@ public:
 
     for(u32 i = 0; i < head.entries; i++)
     {
-      Entry entry = {{0}};
+      Entry entry;
+      memset(&entry, 0, sizeof(Entry));
+
       archive.read(entry.name,    sizeof(entry.name));
       archive.read(&entry.size,   4);
       archive.read(&entry.offset, 4);
@@ -270,7 +274,9 @@ public:
     else
       pn = f;
 
-    Entry e = {{0}};
+    Entry e;
+    memset(&e, 0, sizeof(Entry));
+
     strcpy(e.name, pn);
     e.size = ff.length();
     e.valid = true;

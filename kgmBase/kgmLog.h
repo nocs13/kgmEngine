@@ -28,7 +28,7 @@ public:
 
     kgmLog(const char* path)
     {
-      f_path = path;
+      f_path.init(path);
     }
 
     ~kgmLog()
@@ -38,25 +38,25 @@ public:
     kgmLog& operator << (kgmString& s)
     {
       log_(s);
- 
+
       return *this;
     }
 
     kgmLog& operator << (kgmString s)
     {
       log_(s);
-    
+
       return *this;
     }
-    
+
     kgmLog& operator << (const char* s)
     {
       log_(s);
-      
+
       return *this;
     }
-    
-    
+
+
     kgmLog& operator << (char* s)
     {
       log_(s);
@@ -81,7 +81,7 @@ public:
     kgmLog& operator << (f64 s)
     {
       log_(kgmConvert::toString(s));
-      
+
       return *this;
     }
 

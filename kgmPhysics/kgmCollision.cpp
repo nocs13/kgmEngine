@@ -82,6 +82,7 @@ inline bool crossEllipticPolygon(vec3& pt, float rx, float ry, float rz, vec3* p
 //Constructor & Desctructor
 kgmCollision::kgmCollision()
 {
+  m_collision = false;
 }
 
 kgmCollision::~kgmCollision()
@@ -356,7 +357,7 @@ bool kgmCollision::collision(vec3& start, vec3& end, float rx, float ry, float r
 }
 
 //collision move sphere with cylinder
-bool kgmCollision::collision(vec3& start, vec3& end, float radius, 
+bool kgmCollision::collision(vec3& start, vec3& end, float radius,
                              kgmCylinder3d<float>& cyl, vec3& rpt)
 {
   kgmLine3d<float> line(start, end);
@@ -381,7 +382,7 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius,
 }
 
 //collision move cylinder to static cylinder
-bool kgmCollision::collision(vec3& start, vec3& end, 
+bool kgmCollision::collision(vec3& start, vec3& end,
                              kgmCylinder3d<float>& cyl,
                              kgmCylinder3d<float>& scyl,
                              vec3& rpt)
@@ -414,7 +415,7 @@ bool kgmCollision::collision(vec3& start, vec3& end,
 }
 
 //collision move sphere with box
-bool kgmCollision::collision(vec3& start, vec3& end, float radius, 
+bool kgmCollision::collision(vec3& start, vec3& end, float radius,
                              box& b, mtx4& btr)
 {
   int i = 0;
@@ -485,7 +486,7 @@ bool kgmCollision::collision(vec3& start, vec3& end, float radius,
 }
 
 //collision move box to static box
-bool kgmCollision::collision(vec3& start, vec3& end, 
+bool kgmCollision::collision(vec3& start, vec3& end,
                              kgmBox3d<float>& mbox,
                              kgmBox3d<float>& sbox,
                              vec3& rpt)

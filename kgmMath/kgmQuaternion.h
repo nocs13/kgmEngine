@@ -8,12 +8,12 @@ public:
 
   kgmQuaternion()
   {
-    x = y = z = 0, w = 1;
+    set(T(0), T(0), T(0), T(1));
   }
 
   kgmQuaternion(T a, T b, T c, T d)
   {
-    x = a, y = b, z = c, w = d;
+    set(a, b, c, d);
   }
 
   kgmQuaternion(kgmVector3d<T> &r)
@@ -29,21 +29,7 @@ public:
 
   kgmQuaternion(kgmVector3d<T> &v, T a)
   {
-    T l = (T)v.length();
-
-    if(l != 0)
-    {
-      l = 1 / l;
-      T sina = (T)sin(a * 0.5f);
-      x = v.x * l * sina,
-      y = v.y * l * sina,
-      z = v.z * l * sina,
-      w = (T)cos(a * 0.5f);
-    }
-    else
-    {
-      x = y = z = 0, w = 1;
-    }
+    set(v, a);
   }
 
   kgmQuaternion<T> operator+(const kgmQuaternion<T>& q) const
@@ -64,6 +50,30 @@ public:
     r.z = w * q.z + z * q.w + x * q.y - y * q.x;
     r.w = w * q.w - x * q.x - y * q.y - z * q.z;
     return r;
+  }
+
+  void set(T a, T b, T c, T d)
+  {
+    x = a; y = b; z = c; w = d;
+  }
+
+  void set(kgmVector3d<T> &v, T a)
+  {
+    T l = (T)v.length();
+
+    if(l != 0)
+    {
+      l = 1 / l;
+      T sina = (T)sin(a * 0.5f);
+      x = v.x * l * sina,
+      y = v.y * l * sina,
+      z = v.z * l * sina,
+      w = (T)cos(a * 0.5f);
+    }
+    else
+    {
+      x = y = z = 0, w = 1;
+    }
   }
 
   void normalize()

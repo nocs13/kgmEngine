@@ -9,6 +9,9 @@
 kgmProcess::kgmProcess()
 {
   m_process = 0;
+
+  m_err = false;
+
   m_out.clear();
 }
 
@@ -51,7 +54,7 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
   const char* parg[128] = {nullptr};
 
   kgmString cargs = args;
-    
+
   bool isstr = false;
   char srsym = 0;
 
@@ -63,9 +66,9 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
 
   parg[iarg++] = cmd.data();
 
-    while(*p) 
+    while(*p)
     {
-      if (*p == ' ' || *p == '\t') 
+      if (*p == ' ' || *p == '\t')
       {
         if (!isstr && a)
         {
@@ -77,10 +80,10 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
         p++;
 
         continue;
-      } 
+      }
       else if (*p == '\'' || *p == '"')
       {
-        if (isstr && (srsym == *p)) 
+        if (isstr && (srsym == *p))
         {
           isstr = false;
 
@@ -93,7 +96,7 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
           p++;
 
           continue;
-        } 
+        }
         else if ((a == nullptr) && !isstr)
         {
           a = p++;
@@ -144,20 +147,20 @@ bool kgmProcess::run(kgmString cmd, kgmString args)
     m_out.clear();
 
     close(fd[1]);
-    
-    while(0 != (nbytes = read(fd[0], buf, 1023))) 
+
+    while(0 != (nbytes = read(fd[0], buf, 1023)))
     {
       buf[nbytes] = '\0';
       m_out += buf;
     }
 
-    kgm_free(buf);    
+    kgm_free(buf);
 
     close(fd[0]);
-    
+
     while(pid != waitpid(pid, &stat, 0))
     {
-      
+
     }
 
     ret = true;

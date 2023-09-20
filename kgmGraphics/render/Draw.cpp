@@ -133,7 +133,7 @@ void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, 
   gc->gcSetTexture(0, 0);
 }
 
-void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, box b, u32 col)
+void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, const box& b, u32 col)
 {
   mtx4 mv, mp, m;
   vec3 rv, uv;

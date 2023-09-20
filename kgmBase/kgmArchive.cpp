@@ -13,6 +13,7 @@ kgmArchive::kgmArchive()
   memset(&head, 0, sizeof(head));
   toc.clear();
   changed = false;
+  start = 0;
 }
 
 kgmArchive::~kgmArchive()

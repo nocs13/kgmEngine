@@ -69,8 +69,9 @@ protected:
   public:
     Slot()
     {
-      this->t = null;
-      this->f = null;
+      this->t      = null;
+      this->f      = null;
+      this->sender = null;
     }
 
     bool connect(T* t, FN f, Signal<Args...> *s)
@@ -105,8 +106,9 @@ protected:
 
     void reset()
     {
-      this->t = null;
-      this->f = null;
+      this->t      = null;
+      this->f      = null;
+      this->sender = null;
     }
 
   private:

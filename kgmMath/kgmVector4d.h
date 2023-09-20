@@ -9,17 +9,22 @@ public:
 public:
   kgmVector4d()
   {
-    x = y = z = w = 0;
+    set(T(0), T(0), T(0), T(0));
   }
 
   kgmVector4d(T a, T b, T c, T d)
   {
-    x = a, y = b, z = c, w = d;
+    set(a, b, c, d);
   }
 
   kgmVector4d(const kgmVector4d<T>& v)
   {
-    x = v.x, y = v.y, z = v.z, w = v.w;
+    set(v.x, v.y, v.z, v.w);
+  }
+
+  void set(T a, T b, T c, T d)
+  {
+    x = a, y = b, z = c, w = d;
   }
 
   kgmVector4d<T> normalize()

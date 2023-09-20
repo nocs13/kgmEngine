@@ -91,6 +91,8 @@ private:
 
 public:
  kgmThread();
+ kgmThread(const kgmThread&) = delete;
+ kgmThread & operator = (const kgmThread &) = delete;
  ~kgmThread();
 
  bool start();

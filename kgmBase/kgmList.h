@@ -1,12 +1,11 @@
-#pragma once 
+#pragma once
+#include "kgmBase.h"
 #include "kgmArray.h"
-
-typedef unsigned int u32;
 
 template <class T> class kgmList;
 template <class T> class kgmArray;
 
-template <class T> 
+template <class T>
 class kgmList
 {
 private:
@@ -27,7 +26,7 @@ private:
 
     inline void  operator delete(void *p)
     {
-      if(p) 
+      if(p)
         kgm_free(p);
     }
   };
@@ -145,6 +144,11 @@ public:
     {
       node = node->next;
       i--;
+    }
+
+    if (node == null)
+    {
+      kgm_fatal("Invalid start node.");
     }
 
     return node->data;
@@ -273,7 +277,7 @@ public:
 
     if (!csize && _First)
     {
-      exit(EXIT_FAILURE);
+      kgm_fatal("Invalid node for delete.");
     }
   }
 
@@ -309,7 +313,7 @@ public:
 
     if (!csize && _First)
     {
-      exit(EXIT_FAILURE);
+      kgm_fatal("Invalid node for delete.");
     }
   }
 

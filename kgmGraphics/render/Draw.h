@@ -22,7 +22,7 @@ void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex);
 
 void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor, kgmGui::Rect clip, kgmString& text);
 
-void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, box b, u32 col);
+void gcDrawBillboard(kgmIGC* gc, kgmCamera* cam, const box& b, u32 col);
 
 //void gcDraw(kgmGui*);
 void gcDraw(kgmIGC*, kgmMesh*);

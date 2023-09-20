@@ -10,6 +10,7 @@ kgmResource::kgmResource()
   m_uid = 0;
   m_type = 0;
   m_group = 0;
+  m_resource = null;
 }
 
 kgmResource::~kgmResource()

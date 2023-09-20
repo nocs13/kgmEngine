@@ -8,6 +8,10 @@
 
 kgmPhysics::kgmPhysics()
 {
+  m_gravity = 0.0;
+  m_active = false;
+  m_isgravity = false;
+
   m_time_update = kgmTime::getTicks();
   m_worker = kgmThread::Thread(0);
   m_mutex  = kgmThread::mutex_create();
