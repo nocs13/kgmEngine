@@ -37,8 +37,8 @@ public:
 
 protected:
   kgmIGC*           m_gc;
-  kgmIVideo*        m_video;
   kgmGameAI*        m_ai;
+  kgmIVideo*        m_video;
   kgmGameAudio*     m_audio;
   kgmGameInput*     m_input;
   kgmGameScript*    m_script;

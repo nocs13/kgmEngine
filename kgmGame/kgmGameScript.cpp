@@ -26,6 +26,8 @@
 
 char* kgmGameScript::value = null;
 
+kgmString option;
+
 kgmGameScript::kgmGameScript(kgmIGame* g)
 {
   game = g;
@@ -70,8 +72,16 @@ void kgmGameScript::init()
   handler->set("kgmUnitId", kgmGameScript::kgmUnitId);
   handler->set("kgmUnitName", kgmGameScript::kgmUnitName);
   handler->set("kgmUnitClass", kgmGameScript::kgmUnitClass);
-  handler->set("kgmUnitIterator", kgmGameScript::kgmUnitIterator);
+  handler->set("kgmUnitCreate", kgmGameScript::kgmUnitCreate);
+  handler->set("kgmUnitRemove", kgmGameScript::kgmUnitRemove);
+  handler->set("kgmUnitGetValue", kgmGameScript::kgmUnitGetValue);
+  handler->set("kgmUnitSetValue", kgmGameScript::kgmUnitSetValue);
+  handler->set("kgmUnitGetPosition", kgmGameScript::kgmUnitGetPosition);
+  handler->set("kgmUnitSetPosition", kgmGameScript::kgmUnitSetPosition);
+  handler->set("kgmUnitGetRotation", kgmGameScript::kgmUnitGetRotation);
+  handler->set("kgmUnitSetRotation", kgmGameScript::kgmUnitSetRotation);
 
+  handler->set("kgmUnitIterator", kgmGameScript::kgmUnitIterator);
   handler->set("kgmUnitIterNext", kgmGameScript::kgmUnitIterNext);
   handler->set("kgmUnitIterFree", kgmGameScript::kgmUnitIterFree);
 
@@ -605,6 +615,128 @@ s32 kgmGameScript::kgmUnitClass(void*)
   game->getScript()->resl("s", u->getClass().data());
 
   return 1;
+}
+
+s32 kgmGameScript::kgmUnitCreate(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  const char *name = null, *type = null;
+  game->getScript()->args("ss", &name, &type);
+
+  kgmUnit* u = new kgmUnit(game);
+
+  u->setClass(type);
+  u->setName(name);
+
+  if (game->gAppend(u) != true) {
+    u->release();
+
+    return 0;
+  }
+
+  game->getScript()->resl("p", u);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitRemove(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  u->remove();
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmUnitGetValue(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  const char* id = null;
+
+  game->getScript()->args("ps", &u, &id);
+
+  if (!u || !id)
+    return 0;
+
+  option = u->getOption(id);
+
+  game->getScript()->resl("s", option.data());
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitSetValue(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  const char* id = null;
+  const char* val = null;
+
+  game->getScript()->args("pss", &u, &id, &val);
+
+  if (!u || !id || !val)
+    return 0;
+
+  u->setOption(id, val);
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmUnitAddMesh(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  const char* id = null;
+
+  game->getScript()->args("ps", &u, &id);
+
+  if (!u || !id)
+    return 0;
+
+  kgmMesh* m = game->getResources()->getMesh(id);
+
+  if (m) {
+    kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
+    kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
+    u->setNode(n);
+
+    if (tn)
+        tn->release();
+  }
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmUnitRemMesh(void*)
+{
+  return 0;
 }
 
 s32 kgmGameScript::kgmGenRetention(void*)

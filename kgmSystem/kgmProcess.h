@@ -20,7 +20,7 @@ class kgmProcess: public kgmObject
 public:
   kgmProcess();
   kgmProcess(const kgmProcess&) = delete;
-  kgmProcess & operator = (const kgmProcess &) = delete;
+  kgmProcess & operator = (const kgmProcess&) = delete;
   ~kgmProcess();
 
   bool run(kgmString cmd, kgmString args);

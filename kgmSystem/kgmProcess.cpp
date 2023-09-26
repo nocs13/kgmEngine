@@ -14,6 +14,10 @@ kgmProcess::kgmProcess()
 
   m_out.clear();
 }
+kgmProcess::~kgmProcess()
+{
+
+}
 
 bool kgmProcess::run(kgmString cmd, kgmString args)
 {

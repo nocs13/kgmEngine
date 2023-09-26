@@ -33,10 +33,12 @@ function kgm_log(s)
 end
 
 function main_quit()
-   kgmGameExit()
+  kgm_log('Quiting...')
+  kgmGameExit()
 end
 
 function main_resume()
+  kgm_log('Resuming...')
   state = kgmGameState()
 
   if state ~= State_Pause then
@@ -47,50 +49,34 @@ function main_resume()
 end
 
 function main_unload()
-  state = kgmGameState()
-
-  if state ~= State_Play and state ~= State_Pause then
-    kgm_log('Invalid state to unload.')
-  end
-
-  if state == State_Play then
-    kgm_log('Pause game before unload.')
-
-    kgmGamePause()
-  end
-
+  kgm_log('Unloading...')
   return kgmGameUnload()
 end
 
 function main_load_new()
-  state = kgmGameState()
-
-  if state ~= State_Idle then
-    kgm_log('Invalid state to load map.')
-
-    return 0
-  end
-
-  kgm_log('Loading first map.')
-
-  state = kgmGameLoad(maps[1])
-
-  if state ~= State_Play then
-    state = 0
-  end
-
-  return state
+  kgm_log('Loading new...')
+  kgmGameUnload()
+  return kgmGameLoad(maps[1])
 end
 
 function main_load_test()
-  kgm_log('Loading test mode.')
+  kgm_log('Loading test...')
 
   kgmGameUnload()
-  kgmGameLoad('EMPTY')
+  guiShowMain(false)
 
-  state = kgmGameState()
+  p = kgmUnitCreate('Player', 'Player')
 
-  return state
+  if p ~= nil then
+    cam = Camera:new(kgmGameCamera())
+
+    player = Player:new(nil)
+
+    player:setUnit(p)
+    player:setCamera(cam)
+  end
+
+  return kgmGameState()
 end
 
 function main_oninit()
@@ -128,7 +114,6 @@ end
 
 function main_onpause()
   guiShowPause()
-
   kgm_log("lua on pause.");
 end
 
@@ -195,6 +180,7 @@ function main_onremove(u)
   for i = 1, iunit do
     if units[i] == u then
       units[i] = nil
+      table.remove(units, i)
     end
   end
 end

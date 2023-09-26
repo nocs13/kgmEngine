@@ -132,11 +132,6 @@ kgmGameBase::~kgmGameBase()
   if (m_messenger)
     m_messenger->release();
 
-  log("free ai...");
-
-  if(m_ai)
-    delete m_ai;
-
   log("free physics...");
 
   if(m_physics)
@@ -200,7 +195,7 @@ kgmIGC* kgmGameBase::getGC()
 
 kgmIAI* kgmGameBase::getAI()
 {
-  return m_game->m_ai;
+  return nullptr;
 }
 
 kgmIPhysics* kgmGameBase::getPhysics()
@@ -318,7 +313,7 @@ bool kgmGameBase::initScript()
 
 void kgmGameBase::initAI()
 {
-  m_ai = new kgmGameAI(this);
+  //m_ai = new kgmGameAI(this);
 }
 
 void kgmGameBase::initGC()
@@ -412,6 +407,13 @@ void kgmGameBase::onIdle()
   {
   case State_Play:
   case State_Edit:
+    if (m_script) {
+      static u32 s_tick = kgmTime::getTicks();
+      if ((kgmTime::getTicks() - s_tick) > 50) {
+        m_script->onPlay();
+        s_tick = kgmTime::getTicks();
+      }
+    }
     break;
   }
 
@@ -666,65 +668,60 @@ int kgmGameBase::gQuit()
 
 int kgmGameBase::gLoad(kgmString s)
 {
-  gUnload();
-
 #ifdef DEBUG
   kgm_log() << "Loading game map " << (char*)s << "..." << "\n";
 #endif
 
   m_state = State_Load;
 
-  if (s == (const char*) "EMPTY")
+  if (s.length() < 1 || s == "")
   {
     #ifdef DEBUG
       kgm_log() << " " << "Loading empty test map." << "\n";
     #endif
 
-    m_state = State_Play;
+    m_state = State_Idle;
 
     return m_state;
   }
 
-  //loadXml(s);
+  kgmGameMap map(this);
+
+  kgmArray<u8> mem;
+
+  kgmString sf = kgmString("maps");
+
+  sf += (kgmSystem::getPathDelim() + s);
+
+  if(!getResources()->getFile(sf, mem))
   {
-    kgmGameMap map(this);
+    m_state = State_Idle;
 
-    kgmArray<u8> mem;
+    return m_state;
+  }
 
-    kgmString sf = kgmString("maps");
+  kgmXml xml;
 
-    sf += (kgmSystem::getPathDelim() + s);
+  if(kgmXml::XML_ERROR == xml.open(mem))
+  {
+    m_state = State_Idle;
 
-    if(!getResources()->getFile(sf, mem))
-    {
-      m_state = State_Idle;
+    return m_state;
+  }
 
-      return m_state;
-    }
+  map.open(xml);
 
-    kgmXml xml;
+  while(kgmUnit* u = map.next())
+  {
+    m_units.add(u);
 
-    if(kgmXml::XML_ERROR == xml.open(mem))
-    {
-      m_state = State_Idle;
+    kgmGraphics::INode* n = u->getNode();
 
-      return m_state;
-    }
+    if (m_graphics && u->getNode())
+      m_graphics->add(u->getNode());
 
-    map.open(xml);
-
-    while(kgmUnit* u = map.next())
-    {
-      m_units.add(u);
-
-      kgmGraphics::INode* n = u->getNode();
-
-      if (m_graphics)
-        m_graphics->add(u->getNode());
-
-      if (m_physics)
-        m_physics->add(u->getBody());
-    }
+    if (m_physics && u->getBody())
+      m_physics->add(u->getBody());
   }
 
   if(m_graphics)
@@ -736,9 +733,6 @@ int kgmGameBase::gLoad(kgmString s)
   if (m_script)
     m_script->onLoad();
 
-  if (m_ai)
-    m_ai->start();
-
   m_state = State_Play;
 
   return m_state;
@@ -747,9 +741,6 @@ int kgmGameBase::gLoad(kgmString s)
 int kgmGameBase::gUnload()
 {
   m_state = State_Clean;
-
-  if (m_ai)
-    m_ai->clean();
 
   if(m_physics)
     m_physics->clear();
@@ -1643,8 +1634,6 @@ kgmUnit* kgmGameBase::gSpawn(kgmString a)
           //state->options.add(k,v);
         }
       }
-
-      m_ai->addState(actor->getClass(), state);
     }
     else
     {

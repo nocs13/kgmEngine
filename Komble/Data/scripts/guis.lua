@@ -101,6 +101,14 @@ function onGuiCreditsBack()
   gui_main:show()
 end
 
+function guiShowMain(v)
+  if v == true then
+    gui_main:show()
+  else
+    gui_main:hide()
+  end
+end
+
 function guiShowPause()
   gui_pause:show()
 end

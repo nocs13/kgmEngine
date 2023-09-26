@@ -2,7 +2,6 @@
 
 #include "../kgmBase/kgmTab.h"
 #include "../kgmBase/kgmObject.h"
-#include "../kgmBase/kgmVariable.h"
 #include "../kgmPhysics/kgmBody.h"
 #include "../kgmPhysics/kgmObstacle.h"
 
@@ -31,7 +30,20 @@ class kgmUnit : public kgmObject
   KGM_OBJECT(kgmUnit);
 
 public:
-  kgmList<kgmVariable> m_variables;
+  struct State
+  {
+    kgmString id;
+    kgmString switchto;
+    kgmString switchfrom;
+
+    u32       priopity;
+    u32       timeout;
+    u32       stime;
+
+    kgmSound*      sound     = null;
+    kgmAnimation*  animation = null;
+    u32            astart, aend;
+  };
 
 private:
   kgmIGame* m_game = null;

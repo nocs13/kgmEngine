@@ -19,6 +19,7 @@ class kgmGameScript: public kgmObject
   kgmIGame*   game;
 
   bool status = false;
+  bool play   = false;
 
   kgmMap< kgmGui*, kgmString > slotters;
   kgmList< Slot<kgmGameScript>* > slots;
@@ -46,6 +47,9 @@ class kgmGameScript: public kgmObject
   {
     return status;
   }
+
+  void setPlay(bool p) { play = p; }
+  bool getPlay()       { return play; }
 
   __stdcall void onQuit();
   __stdcall void onLoad();
@@ -85,8 +89,20 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitId(void*);
   static s32 kgmUnitName(void*);
   static s32 kgmUnitClass(void*);
-  static s32 kgmUnitIterator(void*);
+  static s32 kgmUnitCreate(void*);
+  static s32 kgmUnitRemove(void*);
+  static s32 kgmUnitSetState(void*);
+  static s32 kgmUnitGetState(void*);
+  static s32 kgmUnitSetValue(void*);
+  static s32 kgmUnitGetValue(void*);
+  static s32 kgmUnitAddMesh(void*);
+  static s32 kgmUnitRemMesh(void*);
+  static s32 kgmUnitSetPosition(void*);
+  static s32 kgmUnitGetPosition(void*);
+  static s32 kgmUnitSetRotation(void*);
+  static s32 kgmUnitGetRotation(void*);
 
+  static s32 kgmUnitIterator(void*);
   static s32 kgmUnitIterNext(void*);
   static s32 kgmUnitIterFree(void*);
 
