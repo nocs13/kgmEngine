@@ -76,6 +76,12 @@ function main_load_test()
     player:setCamera(cam)
   end
 
+  u = kgmUnitCreate('Sky')
+
+  if u == nil then
+    kgm_log('Failed create unit...')
+  end
+
   return kgmGameState()
 end
 

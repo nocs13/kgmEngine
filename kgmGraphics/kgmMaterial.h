@@ -395,6 +395,14 @@ public:
     return col;
   }
 
+  void color(float r, float g, float b, float a)
+  {
+    m_color.r = r;
+    m_color.g = g;
+    m_color.b = b;
+    m_color.a = a;
+  }
+
   static kgmString blendToString(Blend Blend);
   static Blend     stringToBlend(kgmString blend);
   static kgmString typeToString(Type type);

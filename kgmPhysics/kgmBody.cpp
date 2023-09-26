@@ -5,11 +5,7 @@ kgmBody::kgmBody()
   m_type = 0;
   m_mass = 1.0f;
   m_friction = 0.0f;
-//  m_force = 0.0f;
   m_velocity      = 0.0f;
-  //m_speed_forward = 0.0f;
-  //m_speed_side    = 0.0f;
-  //m_speed_up      = 0.0f;
 
   m_valid     = true;
   m_remove    = false;
@@ -34,6 +30,18 @@ kgmBody::~kgmBody()
   m_convex.clear();
 }
 
+void kgmBody::setShape(box3& b)
+{
+  m_shape = ShapeBox;
+
+}
+
+void kgmBody::setShape(sphere3& s)
+{
+  m_shape = ShapeSphere;
+
+}
+
 void kgmBody::collision(kgmBody* body)
 {
 }
@@ -50,3 +58,5 @@ void kgmBody::addShapeSide(vec3 v[])
 //  m_direction.normalize();
 //  m_rotation.z = (float)asin(m_direction.x);
 //}
+
+

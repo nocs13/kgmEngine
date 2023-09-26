@@ -86,6 +86,14 @@ class kgmGameScript: public kgmObject
   static s32 kgmCamPosition(void*);
   static s32 kgmCamDirection(void*);
 
+  static s32 kgmMtlGet(void*);
+  static s32 kgmMtlSetType(void*);
+  static s32 kgmMtlSetMaps(void*);
+  static s32 kgmMtlSetAlpha(void*);
+  static s32 kgmMtlSetColor(void*);
+
+  static s32 kgmMeshGet(void*);
+
   static s32 kgmUnitId(void*);
   static s32 kgmUnitName(void*);
   static s32 kgmUnitClass(void*);
@@ -95,12 +103,15 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitGetState(void*);
   static s32 kgmUnitSetValue(void*);
   static s32 kgmUnitGetValue(void*);
+  static s32 kgmUnitSetBody(void*);
+  static s32 kgmUnitSetMesh(void*);
   static s32 kgmUnitAddMesh(void*);
   static s32 kgmUnitRemMesh(void*);
   static s32 kgmUnitSetPosition(void*);
   static s32 kgmUnitGetPosition(void*);
   static s32 kgmUnitSetRotation(void*);
   static s32 kgmUnitGetRotation(void*);
+  static s32 kgmUnitSetMaterial(void*);
 
   static s32 kgmUnitIterator(void*);
   static s32 kgmUnitIterNext(void*);

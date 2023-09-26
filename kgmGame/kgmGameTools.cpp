@@ -50,7 +50,7 @@ kgmPicture* kgmGameTools::genPicture(kgmArray<u8>& m)
   if(!memcmp(&id_tga, m.data(), 4) || !memcmp(&id_tga_comp, m.data(), 4))
     return genPictureFromTga(m);
 
-  return 0;
+  return null;
 }
 
 kgmPicture* kgmGameTools::genPictureFromBmp(kgmArray<u8>& m)

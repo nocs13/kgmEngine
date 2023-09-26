@@ -69,17 +69,27 @@ void kgmGameScript::init()
   handler->set("kgmCamMove", kgmGameScript::kgmCamMove);
   handler->set("kgmCamLook", kgmGameScript::kgmCamLook);
 
+  handler->set("kgmMtlCreate", kgmGameScript::kgmMtlGet);
+  handler->set("kgmMtlSetType", kgmGameScript::kgmMtlSetType);
+  handler->set("kgmMtlSetMaps", kgmGameScript::kgmMtlSetMaps);
+  handler->set("kgmMtlSetAlpha", kgmGameScript::kgmMtlSetAlpha);
+  handler->set("kgmMtlSetColor", kgmGameScript::kgmMtlSetColor);
+
+  handler->set("kgmMeshGet", kgmGameScript::kgmMeshGet);
+
   handler->set("kgmUnitId", kgmGameScript::kgmUnitId);
   handler->set("kgmUnitName", kgmGameScript::kgmUnitName);
   handler->set("kgmUnitClass", kgmGameScript::kgmUnitClass);
   handler->set("kgmUnitCreate", kgmGameScript::kgmUnitCreate);
   handler->set("kgmUnitRemove", kgmGameScript::kgmUnitRemove);
+  handler->set("kgmUnitSetMesh", kgmGameScript::kgmUnitSetMesh);
   handler->set("kgmUnitGetValue", kgmGameScript::kgmUnitGetValue);
   handler->set("kgmUnitSetValue", kgmGameScript::kgmUnitSetValue);
   handler->set("kgmUnitGetPosition", kgmGameScript::kgmUnitGetPosition);
   handler->set("kgmUnitSetPosition", kgmGameScript::kgmUnitSetPosition);
   handler->set("kgmUnitGetRotation", kgmGameScript::kgmUnitGetRotation);
   handler->set("kgmUnitSetRotation", kgmGameScript::kgmUnitSetRotation);
+  handler->set("kgmUnitSetMaterial", kgmGameScript::kgmUnitSetMaterial);
 
   handler->set("kgmUnitIterator", kgmGameScript::kgmUnitIterator);
   handler->set("kgmUnitIterNext", kgmGameScript::kgmUnitIterNext);
@@ -560,6 +570,141 @@ s32 kgmGameScript::kgmCamDirection(void*)
   return 3;
 }
 
+s32 kgmGameScript::kgmMtlGet(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  const char *id = null;
+
+  game->getScript()->args("s", &id);
+
+  kgmMaterial* m = new kgmMaterial();
+
+  m->setId((id == null) ? ("") : (id));
+
+  game->getScript()->resl("p", m);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmMtlSetMaps(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmMaterial* m = null;
+  const char *c = null, *s = null, *n = null;
+
+  game->getScript()->args("psss", &m, &c, &n, &s);
+
+
+  if (c != null && strlen(c) > 0)
+    m->setTexColor(game->getResources()->getTexture(c));
+  if (n != null && strlen(n) > 0)
+    m->setTexNormal(game->getResources()->getTexture(n));
+  if (s != null && strlen(s) > 0)
+    m->setTexSpecular(game->getResources()->getTexture(s));
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmMtlSetColor(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmMaterial* m = null;
+  double r, g, b;
+
+  game->getScript()->args("pddd", &m, &r, &g, &b);
+
+  if (!m)
+    return 0;
+
+  m->color(r, g, b, 1.0);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmMtlSetAlpha(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmMaterial* m = null;
+  double a;
+
+  game->getScript()->args("pd", &m, &a);
+
+  if (!m)
+    return 0;
+
+  m->transparency(a);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmMtlSetType(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmMaterial* m = null;
+  s32 t;
+
+  game->getScript()->args("pi", &m, &t);
+
+  if (!m || !t)
+    return 0;
+
+  m->type(static_cast<kgmMaterial::Type>(t));
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmMeshGet(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  const char *id = null;
+
+  game->getScript()->args("s", &id);
+
+  if (!id)
+    return 0;
+
+  kgmMesh* m = game->getResources()->getMesh(id);
+
+  if (!m)
+    return 0;
+
+  game->getScript()->resl("p", m);
+
+  return 1;
+}
+
 s32 kgmGameScript::kgmUnitId(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
@@ -705,6 +850,64 @@ s32 kgmGameScript::kgmUnitSetValue(void*)
   return 0;
 }
 
+s32 kgmGameScript::kgmUnitSetBody(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  const char* id = null;
+
+  game->getScript()->args("ps", &u, &id);
+
+  if (!u || !id)
+    return 0;
+
+  kgmMesh* m = game->getResources()->getMesh(id);
+
+  if (m) {
+    kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
+    kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
+    u->setNode(n);
+
+    if (tn)
+        tn->release();
+  }
+
+  return 0;
+}
+
+s32 kgmGameScript::kgmUnitSetMesh(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  const char* id = null;
+
+  game->getScript()->args("ps", &u, &id);
+
+  if (!u || !id)
+    return 0;
+
+  kgmMesh* m = game->getResources()->getMesh(id);
+
+  if (m) {
+    kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
+    kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
+    u->setNode(n);
+
+    if (tn)
+        tn->release();
+  }
+
+  return 0;
+}
+
 s32 kgmGameScript::kgmUnitAddMesh(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
@@ -737,6 +940,38 @@ s32 kgmGameScript::kgmUnitAddMesh(void*)
 s32 kgmGameScript::kgmUnitRemMesh(void*)
 {
   return 0;
+}
+
+s32 kgmGameScript::kgmUnitSetMaterial(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  kgmMaterial* m = null;
+
+  game->getScript()->args("pp", &u, &m);
+
+  if (!u || !m)
+    return 0;
+
+  kgmGNode* n = static_cast<kgmGNode*>(u->getNode());
+
+  if (!n)
+    return 0;
+
+  kgmMaterial* tm = n->getNodeMaterial();
+
+  if (tm)
+    tm->release();
+
+  n->setNodeMaterial(m);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmGenRetention(void*)
