@@ -2,6 +2,7 @@
 #include "kgmIGame.h"
 #include "kgmGameApp.h"
 #include "kgmGameTools.h"
+#include "kgmGameGraphics.h"
 #include "kgmGameRetention.h"
 #include "kgmUnit.h"
 #include "kgmGameInput.h"
@@ -63,17 +64,22 @@ void kgmGameScript::init()
   handler->set("kgmGameState",  kgmGameScript::kgmGameState);
   handler->set("kgmGameUnload", kgmGameScript::kgmGameUnload);
   handler->set("kgmGameCamera", kgmGameScript::kgmGameCamera);
+  handler->set("kgmGameSetState",  kgmGameScript::kgmGameSetState);
 
   handler->set("kgmCamPosition", kgmGameScript::kgmCamPosition);
   handler->set("kgmCamDirection", kgmGameScript::kgmCamDirection);
   handler->set("kgmCamMove", kgmGameScript::kgmCamMove);
   handler->set("kgmCamLook", kgmGameScript::kgmCamLook);
 
-  handler->set("kgmMtlCreate", kgmGameScript::kgmMtlGet);
+  handler->set("kgmMtlGet", kgmGameScript::kgmMtlGet);
   handler->set("kgmMtlSetType", kgmGameScript::kgmMtlSetType);
   handler->set("kgmMtlSetMaps", kgmGameScript::kgmMtlSetMaps);
   handler->set("kgmMtlSetAlpha", kgmGameScript::kgmMtlSetAlpha);
   handler->set("kgmMtlSetColor", kgmGameScript::kgmMtlSetColor);
+
+  handler->set("kgmLightGet", kgmGameScript::kgmLightGet);
+  handler->set("kgmLightSetForce", kgmGameScript::kgmLightSetForce);
+  handler->set("kgmLightSetColor", kgmGameScript::kgmLightSetColor);
 
   handler->set("kgmMeshGet", kgmGameScript::kgmMeshGet);
 
@@ -83,6 +89,7 @@ void kgmGameScript::init()
   handler->set("kgmUnitCreate", kgmGameScript::kgmUnitCreate);
   handler->set("kgmUnitRemove", kgmGameScript::kgmUnitRemove);
   handler->set("kgmUnitSetMesh", kgmGameScript::kgmUnitSetMesh);
+  handler->set("kgmUnitSetLight", kgmGameScript::kgmUnitSetLight);
   handler->set("kgmUnitGetValue", kgmGameScript::kgmUnitGetValue);
   handler->set("kgmUnitSetValue", kgmGameScript::kgmUnitSetValue);
   handler->set("kgmUnitGetPosition", kgmGameScript::kgmUnitGetPosition);
@@ -110,6 +117,8 @@ void kgmGameScript::init()
   handler->set("kgmDelRetention",  kgmGameScript::kgmDelRetention);
   handler->set("kgmGetRetention",  kgmGameScript::kgmGetRetention);
   handler->set("kgmSetRetention",  kgmGameScript::kgmSetRetention);
+
+  handler->set("kgmGcSetBgColor",  kgmGameScript::kgmGcSetBgColor);
 
   handler->set("kgmScreenResolution",  kgmGameScript::kgmScreenResolution);
 
@@ -369,6 +378,24 @@ s32 kgmGameScript::kgmGameState(void*)
   return 1;
 }
 
+s32 kgmGameScript::kgmGameSetState(void*)
+{
+  s32 state = 0;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  game->getScript()->args("i", &state);
+
+  game->gSwitch(state);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
 s32 kgmGameScript::kgmGameLoad(void *)
 {
   s32 state = 0;
@@ -602,6 +629,8 @@ s32 kgmGameScript::kgmMtlSetMaps(void*)
 
   game->getScript()->args("psss", &m, &c, &n, &s);
 
+  if (!m)
+    return 0;
 
   if (c != null && strlen(c) > 0)
     m->setTexColor(game->getResources()->getTexture(c));
@@ -675,6 +704,71 @@ s32 kgmGameScript::kgmMtlSetType(void*)
     return 0;
 
   m->type(static_cast<kgmMaterial::Type>(t));
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmLightGet(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  s32 tp = null;
+
+  game->getScript()->args("i", &tp);
+
+  kgmLight* lt = new kgmLight();
+
+  lt->type(static_cast<kgmLight::Type>(tp));
+
+  game->getScript()->resl("p", lt);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmLightSetForce(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmLight* lt = null;
+  double f;
+
+  game->getScript()->args("pd", &lt, &f);
+
+  if (!lt)
+    return 0;
+
+  lt->intensity(f);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmLightSetColor(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmLight* lt = null;
+  double r, g, b;
+
+  game->getScript()->args("pddd", &lt, &r, &g, &b);
+
+  if (!lt)
+    return 0;
+
+  vec3 v(r, g, b);
+  lt->color(v);
 
   game->getScript()->resl("i", 1);
 
@@ -865,18 +959,44 @@ s32 kgmGameScript::kgmUnitSetBody(void*)
   if (!u || !id)
     return 0;
 
-  kgmMesh* m = game->getResources()->getMesh(id);
+  if (u->getBody()) {
+    kgmPBody* b = static_cast<kgmPBody*>(u->getBody());
 
-  if (m) {
-    kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
-    kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
-    u->setNode(n);
-
-    if (tn)
-        tn->release();
+    b->release();
   }
 
+  //kgmPBody* b = new kgmPBody(u);
+
+  //u->setBody(b);
+
   return 0;
+}
+
+s32 kgmGameScript::kgmUnitSetLight(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  kgmLight* l = null;
+
+  game->getScript()->args("pp", &u, &l);
+
+  if (!u || !l)
+    return 0;
+
+  kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
+  kgmGNode* n = new kgmGNode(u, l, kgmIGraphics::NodeLight);
+  u->setNode(n);
+
+  if (tn)
+    tn->release();
+
+  game->getScript()->resl("s", option.data());
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmUnitSetMesh(void*)
@@ -972,6 +1092,96 @@ s32 kgmGameScript::kgmUnitSetMaterial(void*)
   game->getScript()->resl("i", 1);
 
   return 1;
+}
+
+s32 kgmGameScript::kgmUnitSetPosition(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  double x, y, z;
+
+  game->getScript()->args("pddd", &u, &x, &y, &z);
+
+  if (!u)
+    return 0;
+
+  vec3 v(x, y, z);
+
+  u->position(v);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitGetPosition(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  vec3 v = u->position();
+
+  game->getScript()->resl("ddd", v.x, v.y, v.z);
+
+  return 3;
+}
+
+s32 kgmGameScript::kgmUnitSetRotation(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  double x, y, z;
+
+  game->getScript()->args("pddd", &u, &x, &y, &z);
+
+  if (!u)
+    return 0;
+
+  vec3 v(x, y, z);
+
+  u->rotation(v);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitGetRotation(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  vec3 v = u->rotation();
+
+  game->getScript()->resl("ddd", v.x, v.y, v.z);
+
+  return 3;
 }
 
 s32 kgmGameScript::kgmGenRetention(void*)
@@ -1337,6 +1547,33 @@ s32 kgmGameScript::kgmGuiSetWindow(void*)
   g->setWindow(game->getWindow());
 
   return 0;
+}
+
+s32 kgmGameScript::kgmGcSetBgColor(void*)
+{
+  kgmGui* gui  = null;
+
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  double r, g, b;
+
+  game->getScript()->args("ddd", &r, &g, &b);
+
+  kgmGameGraphics* gc = static_cast<kgmGameGraphics*>(game->getGraphics());
+
+  if (!gc)
+    return 0;
+
+  vec4 v(r, g, b, 1.0);
+
+  gc->setBgColor(v);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
 }
 
 s32 kgmGameScript::kgmScreenResolution(void*)

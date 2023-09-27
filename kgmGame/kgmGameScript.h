@@ -80,6 +80,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmGameState(void*);
   static s32 kgmGameUnload(void*);
   static s32 kgmGameCamera(void*);
+  static s32 kgmGameSetState(void*);
 
   static s32 kgmCamMove(void*);
   static s32 kgmCamLook(void*);
@@ -91,6 +92,11 @@ class kgmGameScript: public kgmObject
   static s32 kgmMtlSetMaps(void*);
   static s32 kgmMtlSetAlpha(void*);
   static s32 kgmMtlSetColor(void*);
+
+  static s32 kgmLightGet(void*);
+  static s32 kgmLightSetType(void*);
+  static s32 kgmLightSetForce(void*);
+  static s32 kgmLightSetColor(void*);
 
   static s32 kgmMeshGet(void*);
 
@@ -107,6 +113,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitSetMesh(void*);
   static s32 kgmUnitAddMesh(void*);
   static s32 kgmUnitRemMesh(void*);
+  static s32 kgmUnitSetLight(void*);
   static s32 kgmUnitSetPosition(void*);
   static s32 kgmUnitGetPosition(void*);
   static s32 kgmUnitSetRotation(void*);
@@ -121,6 +128,8 @@ class kgmGameScript: public kgmObject
   static s32 kgmDelRetention(void*);
   static s32 kgmGetRetention(void*);
   static s32 kgmSetRetention(void*);
+
+  static s32 kgmGcSetBgColor(void*);
 
   static s32 kgmGuiLoad(void*);
   static s32 kgmGuiShow(void*);

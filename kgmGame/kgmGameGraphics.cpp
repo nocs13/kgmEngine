@@ -20,3 +20,9 @@ void kgmGameGraphics::render_3d()
 void kgmGameGraphics::render_2d()
 {
 }
+
+void kgmGameGraphics::setBgColor(kgmColor c)
+{
+  m_bg_color = c.color;
+}
+

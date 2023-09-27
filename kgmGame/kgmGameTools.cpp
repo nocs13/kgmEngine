@@ -1112,11 +1112,12 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
   kgmXml::Node* mnode = 0;
 
-  if(!x.m_node || !(mnode = x.m_node->node("kgmMesh")))
+  if(!x.m_node || !(mnode = x.m_node->node("MeshData")))
     return null;
 
   m = new kgmMesh();
-  mnode->attribute("id", m->m_id);
+
+  mnode->attribute("name", m->m_id);
 
   for(int i = 0; i < mnode->nodes(); i++)
   {

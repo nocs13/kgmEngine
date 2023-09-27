@@ -3,6 +3,8 @@ kgmImport('camera')
 kgmImport('player')
 kgmImport('guis')
 kgmImport('keys')
+kgmImport('light')
+kgmImport('sky')
 
 retent = nil
 
@@ -76,13 +78,22 @@ function main_load_test()
     player:setCamera(cam)
   end
 
-  u = kgmUnitCreate('Sky')
+  s = sky_generate()
 
-  if u == nil then
-    kgm_log('Failed create unit...')
+  if s ~= nil then
+    s:setCamera(player:getCamera())
+    table.insert(units, s)
   end
 
-  return kgmGameState()
+  l = light_generate()
+
+  if l ~= nil then
+    table.insert(units, l)
+  end
+
+  kgmGcSetBgColor(0.0, 0.0, 1.0)
+
+  return kgmGameSetState(State_Play)
 end
 
 function main_oninit()
@@ -164,6 +175,8 @@ function main_onunload()
 
   kgm_log('Switch to idle state')
   state = State_Idle
+
+  kgmGcSetBgColor(0.0, 0.0, 0.0)
 end
 
 function main_oninsert(u)

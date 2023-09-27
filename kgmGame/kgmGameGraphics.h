@@ -26,4 +26,6 @@ public:
 
   void render_3d();
   void render_2d();
+
+  void setBgColor(kgmColor c);
 };
