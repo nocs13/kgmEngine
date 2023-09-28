@@ -500,7 +500,8 @@ void kgmGraphics::render()
   gc->gcSetTarget(null);
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 
-  gc->gcCull(1);
+  //gc->gcCull(1);
+  gc->gcCull(0);
 
   setProjMatrix(m_camera->mProj);
   setViewMatrix(m_camera->mView);

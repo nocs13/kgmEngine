@@ -96,7 +96,6 @@ void kgmGameScript::init()
   handler->set("kgmUnitSetPosition", kgmGameScript::kgmUnitSetPosition);
   handler->set("kgmUnitGetRotation", kgmGameScript::kgmUnitGetRotation);
   handler->set("kgmUnitSetRotation", kgmGameScript::kgmUnitSetRotation);
-  handler->set("kgmUnitSetMaterial", kgmGameScript::kgmUnitSetMaterial);
 
   handler->set("kgmUnitIterator", kgmGameScript::kgmUnitIterator);
   handler->set("kgmUnitIterNext", kgmGameScript::kgmUnitIterNext);
@@ -991,8 +990,12 @@ s32 kgmGameScript::kgmUnitSetLight(void*)
   kgmGNode* n = new kgmGNode(u, l, kgmIGraphics::NodeLight);
   u->setNode(n);
 
-  if (tn)
+  game->getGraphics()->add(n);
+
+  if (tn) {
+    tn->setValidity(false);
     tn->release();
+  }
 
   game->getScript()->resl("s", option.data());
 
@@ -1007,22 +1010,25 @@ s32 kgmGameScript::kgmUnitSetMesh(void*)
     return 0;
 
   kgmUnit* u = null;
-  const char* id = null;
+  kgmMesh* m = null;
+  kgmMaterial* t = null;
 
-  game->getScript()->args("ps", &u, &id);
+  game->getScript()->args("ppp", &u, &m, &t);
 
-  if (!u || !id)
+  if (!u || !m || !t)
     return 0;
 
-  kgmMesh* m = game->getResources()->getMesh(id);
+  kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
+  kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
+  n->setNodeShader(kgmIGraphics::ShaderPhong);
+  n->setNodeMaterial(t);
+  u->setNode(n);
 
-  if (m) {
-    kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
-    kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
-    u->setNode(n);
+  game->getGraphics()->add(n);
 
-    if (tn)
-        tn->release();
+  if (tn) {
+    tn->setValidity(false);
+    tn->release();
   }
 
   return 0;
@@ -1060,38 +1066,6 @@ s32 kgmGameScript::kgmUnitAddMesh(void*)
 s32 kgmGameScript::kgmUnitRemMesh(void*)
 {
   return 0;
-}
-
-s32 kgmGameScript::kgmUnitSetMaterial(void*)
-{
-  kgmIGame* game = kgmGameApp::gameApplication()->game();
-
-  if (!game)
-    return 0;
-
-  kgmUnit* u = null;
-  kgmMaterial* m = null;
-
-  game->getScript()->args("pp", &u, &m);
-
-  if (!u || !m)
-    return 0;
-
-  kgmGNode* n = static_cast<kgmGNode*>(u->getNode());
-
-  if (!n)
-    return 0;
-
-  kgmMaterial* tm = n->getNodeMaterial();
-
-  if (tm)
-    tm->release();
-
-  n->setNodeMaterial(m);
-
-  game->getScript()->resl("i", 1);
-
-  return 1;
 }
 
 s32 kgmGameScript::kgmUnitSetPosition(void*)

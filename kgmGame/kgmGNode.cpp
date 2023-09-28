@@ -5,10 +5,16 @@ kgmGNode::kgmGNode(kgmUnit* u, kgmObject* n, kgmIGraphics::TypeNode t)
 : kgmNode(n, t)
 {
   m_unit = u;
+  m_valid = true;
 }
 
 kgmGNode::~kgmGNode()
 {
+}
+
+bool kgmGNode::isNodeValid()
+{
+  return m_valid;
 }
 
 box3 kgmGNode::getNodeBound()
@@ -24,4 +30,9 @@ vec3 kgmGNode::getNodePosition()
 mtx4 kgmGNode::getNodeTransform()
 {
   return m_unit->transform();
+}
+
+void kgmGNode::setValidity(bool v)
+{
+  m_valid = v;
 }

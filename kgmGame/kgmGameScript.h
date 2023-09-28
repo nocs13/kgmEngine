@@ -118,7 +118,6 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitGetPosition(void*);
   static s32 kgmUnitSetRotation(void*);
   static s32 kgmUnitGetRotation(void*);
-  static s32 kgmUnitSetMaterial(void*);
 
   static s32 kgmUnitIterator(void*);
   static s32 kgmUnitIterNext(void*);
