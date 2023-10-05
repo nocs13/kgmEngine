@@ -14,8 +14,8 @@ kgmUnit::kgmUnit(kgmIGame* g)
   m_birth   = kgmTime::getTicks();
   m_living  = -1;
 
-  m_name  = "None";
-  m_class = "None";
+  m_name = "None";
+  m_type = "None";
 }
 
 kgmUnit::~kgmUnit()

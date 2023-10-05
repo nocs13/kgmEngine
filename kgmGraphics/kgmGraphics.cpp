@@ -175,6 +175,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     memset(m_shaders, 0, sizeof(m_shaders));
     m_shaders[ShaderGui]   = rc->getShader("gui.glsl");
     m_shaders[ShaderBase]  = rc->getShader("base.glsl");
+    m_shaders[ShaderColor] = rc->getShader("base.glsl");
     m_shaders[ShaderPhong] = rc->getShader("phong.glsl");
   }
 
@@ -500,8 +501,8 @@ void kgmGraphics::render()
   gc->gcSetTarget(null);
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 
-  //gc->gcCull(1);
-  gc->gcCull(0);
+  gc->gcCull(1);
+  //gc->gcCull(0);
 
   setProjMatrix(m_camera->mProj);
   setViewMatrix(m_camera->mView);

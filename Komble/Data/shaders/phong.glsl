@@ -190,7 +190,7 @@ void process(out vec4 col)
   col.rgb = cbase * shade + shine * sbase;
   //col.rgb = shine;
   //col.rgb = shade;
-  col.w = 1.0;
+  col.w = v_color.w * texture2D(g_txColor, v_UV).w;
 }
 
 void main( void )

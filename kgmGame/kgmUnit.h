@@ -50,7 +50,8 @@ private:
 
   u32       m_id;
   kgmString m_name;
-  kgmString m_class;
+  kgmString m_type;
+  kgmString m_group;
 
   bool m_lock;
   bool m_valid;
@@ -58,7 +59,6 @@ private:
   bool m_culled;
   bool m_visible;
 
-  u32 m_group;
   u32 m_birth;
   u32 m_living;
 
@@ -202,22 +202,22 @@ public:
     return m_name;
   }
 
-  void setClass(kgmString s)
+  void setType(kgmString s)
   {
-    m_class = s;
+    m_type = s;
   }
 
-  kgmString getClass()
+  kgmString getType()
   {
-    return m_class;
+    return m_type;
   }
 
-  void setGroup(u32 g)
+  void setGroup(kgmString g)
   {
     m_group = g;
   }
 
-  u32 getGroup()
+  kgmString getGroup()
   {
     return m_group;
   }

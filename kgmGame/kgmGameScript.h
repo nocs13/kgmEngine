@@ -89,6 +89,7 @@ class kgmGameScript: public kgmObject
 
   static s32 kgmMtlGet(void*);
   static s32 kgmMtlSetType(void*);
+  static s32 kgmMtlSetCull(void*);
   static s32 kgmMtlSetMaps(void*);
   static s32 kgmMtlSetAlpha(void*);
   static s32 kgmMtlSetColor(void*);
@@ -102,7 +103,8 @@ class kgmGameScript: public kgmObject
 
   static s32 kgmUnitId(void*);
   static s32 kgmUnitName(void*);
-  static s32 kgmUnitClass(void*);
+  static s32 kgmUnitType(void*);
+  static s32 kgmUnitGroup(void*);
   static s32 kgmUnitCreate(void*);
   static s32 kgmUnitRemove(void*);
   static s32 kgmUnitSetState(void*);
@@ -114,6 +116,8 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitAddMesh(void*);
   static s32 kgmUnitRemMesh(void*);
   static s32 kgmUnitSetLight(void*);
+  static s32 kgmUnitSetScale(void*);
+  static s32 kgmUnitGetScale(void*);
   static s32 kgmUnitSetPosition(void*);
   static s32 kgmUnitGetPosition(void*);
   static s32 kgmUnitSetRotation(void*);

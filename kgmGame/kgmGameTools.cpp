@@ -19,6 +19,7 @@
 #include "../kgmGraphics/kgmGuiLayout.h"
 
 #include "../kgmUtils/kgmTga.h"
+#include "../kgmUtils/kgmBmp.h"
 
 #include "../kgmAI/kgmIAI.h"
 
@@ -58,6 +59,18 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmArray<u8>& m)
   if(m.empty())
     return 0;
 
+  kgmBmp* bmp = new kgmBmp();
+
+  if (!bmp->create(m))
+    return null;
+
+  kgmPicture* pic = bmp->toPicture();
+
+  delete bmp;
+
+  return pic;
+
+  /*
   u16 f_type = 0;
   u32 f_size = 0;
   u16 f_res0 = 0, f_res1 = 0;
@@ -140,6 +153,7 @@ kgmPicture* kgmGameTools::genPictureFromBmp(kgmArray<u8>& m)
   }
 
   return new kgmPicture(width, height, bpp, frames, pdata);
+  */
 }
 
 kgmPicture* kgmGameTools::genPictureFromTga(kgmArray<u8>& m)
@@ -147,218 +161,16 @@ kgmPicture* kgmGameTools::genPictureFromTga(kgmArray<u8>& m)
   if(m.empty())
     return 0;
 
-  {
-    kgmTga* tga = new kgmTga();
+  kgmTga* tga = new kgmTga();
 
-    if (!tga->create(m))
-      return null;
+  if (!tga->create(m))
+    return null;
 
-    kgmPicture* pic = tga->toPicture();
+  kgmPicture* pic = tga->toPicture();
 
-    delete tga;
+  delete tga;
 
-    return pic;
-  }
-
-  uchar idl, cmp, dt, btcnt, dsc;
-  uchar clmap[5];
-  u16   xorgn, yorgn, w, h;
-  u8*   pm = (u8*)m.data();
-
-  int   width = 0;
-  int   height = 0;
-  int   bpp = 0;
-  int   frames = 0;
-  u8*   pdata = 0;
-
-  memcpy(&idl,   pm, 1);  pm += 1;
-  memcpy(&cmp,   pm, 1);  pm += 1;
-  memcpy(&dt,    pm, 1);  pm += 1;
-  memcpy(&clmap, pm, 5);  pm += 5;
-  memcpy(&xorgn, pm, 2);  pm += 2;
-  memcpy(&yorgn, pm, 2);  pm += 2;
-  memcpy(&w,     pm, 2);  pm += 2;
-  memcpy(&h,     pm, 2);  pm += 2;
-  memcpy(&btcnt, pm, 1);  pm += 1;
-  memcpy(&dsc,   pm, 1);  pm += 1;
-
-  bool compr;
-
-  if(dt == 2)
-    compr = false;
-  else if (dt == 10)
-    compr = true;
-  else
-    return 0;
-
-  if((btcnt != 16) && (btcnt != 24) && (btcnt != 32))
-    return 0;
-
-  u32 bt_pp = btcnt / 8;
-
-  if (bt_pp < 3)
-    bt_pp = 3;
-
-  u32 r_size = w * h * bt_pp;
-  pm += idl;
-  pdata = (u8*) kgm_alloc(sizeof(char) * r_size);
-  //memcpy(pdata, pm, r_size);
-
-  u32 pixels = w * h;
-
-  if (compr)
-  {
-    u8* ptm = pm;
-
-    typedef u8 pixel_t[4];
-
-    u32 i = 0;
-
-    while(i < pixels)
-    {
-      u8 rle = ptm[0]; ptm += 1;
-      u8 cnt = rle & 0x7f;
-
-      pixel_t t_px;
-
-      memcpy(t_px, ptm, bt_pp);
-
-      switch(bt_pp)
-      {
-      case 2:
-        pdata[3 * i + 0] = ( ptm[0] & 0x1f) << 3;
-        pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
-        pdata[3 * i + 2] = ( ptm[1] & 0x7c) << 1;
-        break;
-      case 3:
-        pdata[3 * i + 0] = ptm[0];
-        pdata[3 * i + 1] = ptm[1];
-        pdata[3 * i + 2] = ptm[2];
-        break;
-      case 4:
-        pdata[4 * i + 0] = ptm[0];
-        pdata[4 * i + 1] = ptm[1];
-        pdata[4 * i + 2] = ptm[2];
-        pdata[4 * i + 3] = ptm[3];
-        break;
-      }
-
-      i++;
-
-      if (cnt == 0)
-      {
-        ptm += bt_pp;
-        continue;
-      }
-
-      if (rle & 0x80)
-      {
-        for (u32 k = 0; k < cnt; k++)
-        {
-          switch(bt_pp)
-          {
-          case 2:
-            pdata[3 * i + 0] = ( ptm[0] & 0x1f) << 3;
-            pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
-            pdata[3 * i + 2] = ( ptm[1] & 0x7c) << 1;
-            break;
-          case 3:
-            pdata[3 * i + 0] = ptm[0];
-            pdata[3 * i + 1] = ptm[1];
-            pdata[3 * i + 2] = ptm[2];
-            break;
-          case 4:
-            pdata[4 * i + 0] = ptm[0];
-            pdata[4 * i + 1] = ptm[1];
-            pdata[4 * i + 2] = ptm[2];
-            pdata[4 * i + 3] = ptm[3];
-            break;
-          }
-
-          i++;
-        }
-
-        ptm += bt_pp;
-      }
-      else
-      {
-        for (u32 k = 0; k < cnt; k++)
-        {
-          memcpy(t_px, ptm, bt_pp);
-
-          switch(bt_pp)
-          {
-          case 2:
-            pdata[3 * i + 0] =  (ptm[0] & 0x1f) << 3;
-            pdata[3 * i + 1] = ((ptm[0] & 0xe0) >> 2) | ((ptm[1] & 0x03) << 6);
-            pdata[3 * i + 2] =  (ptm[1] & 0x7c) << 1;
-            break;
-          case 3:
-            pdata[3 * i + 0] = ptm[0];
-            pdata[3 * i + 1] = ptm[1];
-            pdata[3 * i + 2] = ptm[2];
-            break;
-          case 4:
-            pdata[3 * i + 0] = ptm[0];
-            pdata[3 * i + 1] = ptm[1];
-            pdata[3 * i + 2] = ptm[2];
-            pdata[3 * i + 3] = ptm[3];
-            break;
-          }
-
-          i++;
-          ptm += bt_pp;
-        }
-      }
-    }
-  }
-  else
-  {
-    if (btcnt == 16)
-    {
-      for(u32 i = 0; i < pixels; i++)
-      {
-        pdata[3 * i + 0] = ( pm[2 * i + 0] & 0x1f) << 3;
-        pdata[3 * i + 1] = ((pm[2 * i + 0] & 0xe0) >> 2) | ((pm[2 * i + 1] & 0x03) << 6);
-        pdata[3 * i + 2] = ( pm[2 * i + 1] & 0x7c) << 1;
-      }
-    }
-    else
-    {
-      memcpy(pdata, pm, r_size);
-    }
-  }
-
-  width  = w;
-  height = h;
-  bpp    = btcnt;
-
-  u32 order = (dsc & 0x20);
-
-  if(order)
-  {
-    for(int i = (w * h); i > 0; i--)
-    {
-      char* pt = (char*)(((char*)pdata) + (i - 1) * bt_pp);
-      char  t  = pt[0];
-
-      pt[0] = pt[2];
-      pt[2] = t;
-    }
-  }
-  else
-  {
-    for(int i = 0; i < (w * h); i++)
-    {
-      char* pt = (char*)(((char*)pdata) + i * bt_pp);
-      char  t  = pt[0];
-
-      pt[0] = pt[2];
-      pt[2] = t;
-    }
-  }
-
-  return new kgmPicture(width, height, bpp, frames, pdata);
+  return pic;
 }
 
 kgmTexture* kgmGameTools::genTexture(kgmIGC* gc, kgmArray<u8>& m)

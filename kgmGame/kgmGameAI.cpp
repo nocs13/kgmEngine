@@ -129,7 +129,7 @@ bool kgmGameAI::addUnit(kgmUnit* unit)
     i.next();
   }
 
-  kgmString st = unit->getClass();
+  kgmString st = unit->getType();
   UnitType* ut = null;
 
   auto j = m_types.begin();

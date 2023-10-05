@@ -409,7 +409,7 @@ void kgmGameBase::onIdle()
   case State_Edit:
     if (m_script) {
       static u32 s_tick = kgmTime::getTicks();
-      if ((kgmTime::getTicks() - s_tick) > 50) {
+      if ((kgmTime::getTicks() - s_tick) > 33) {
         m_script->onPlay();
         s_tick = kgmTime::getTicks();
       }
@@ -1047,7 +1047,7 @@ bool kgmGameBase::loadXml(kgmString& path)
         gob = gSpawn(s);
 
         if(sgrp.length() > 0)
-          gob->setGroup(kgmConvert::toInteger(sgrp));
+          gob->setGroup(sgrp);
 
         gAppend((kgmUnit*)gob);
       }

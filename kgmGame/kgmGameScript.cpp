@@ -73,6 +73,7 @@ void kgmGameScript::init()
 
   handler->set("kgmMtlGet", kgmGameScript::kgmMtlGet);
   handler->set("kgmMtlSetType", kgmGameScript::kgmMtlSetType);
+  handler->set("kgmMtlSetCull", kgmGameScript::kgmMtlSetCull);
   handler->set("kgmMtlSetMaps", kgmGameScript::kgmMtlSetMaps);
   handler->set("kgmMtlSetAlpha", kgmGameScript::kgmMtlSetAlpha);
   handler->set("kgmMtlSetColor", kgmGameScript::kgmMtlSetColor);
@@ -85,13 +86,16 @@ void kgmGameScript::init()
 
   handler->set("kgmUnitId", kgmGameScript::kgmUnitId);
   handler->set("kgmUnitName", kgmGameScript::kgmUnitName);
-  handler->set("kgmUnitClass", kgmGameScript::kgmUnitClass);
+  handler->set("kgmUnitType", kgmGameScript::kgmUnitType);
+  handler->set("kgmUnitGroup", kgmGameScript::kgmUnitGroup);
   handler->set("kgmUnitCreate", kgmGameScript::kgmUnitCreate);
   handler->set("kgmUnitRemove", kgmGameScript::kgmUnitRemove);
   handler->set("kgmUnitSetMesh", kgmGameScript::kgmUnitSetMesh);
   handler->set("kgmUnitSetLight", kgmGameScript::kgmUnitSetLight);
   handler->set("kgmUnitGetValue", kgmGameScript::kgmUnitGetValue);
   handler->set("kgmUnitSetValue", kgmGameScript::kgmUnitSetValue);
+  handler->set("kgmUnitSetScale", kgmGameScript::kgmUnitSetScale);
+  handler->set("kgmUnitGetScale", kgmGameScript::kgmUnitGetScale);
   handler->set("kgmUnitGetPosition", kgmGameScript::kgmUnitGetPosition);
   handler->set("kgmUnitSetPosition", kgmGameScript::kgmUnitSetPosition);
   handler->set("kgmUnitGetRotation", kgmGameScript::kgmUnitGetRotation);
@@ -643,6 +647,28 @@ s32 kgmGameScript::kgmMtlSetMaps(void*)
   return 1;
 }
 
+s32 kgmGameScript::kgmMtlSetCull(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmMaterial* m = null;
+  s32 c;
+
+  game->getScript()->args("pi", &m, &c);
+
+  if (!m)
+    return 0;
+
+  m->cull((c == 0) ? (false) : (true));
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
 s32 kgmGameScript::kgmMtlSetColor(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
@@ -702,7 +728,9 @@ s32 kgmGameScript::kgmMtlSetType(void*)
   if (!m || !t)
     return 0;
 
-  m->type(static_cast<kgmMaterial::Type>(t));
+  kgmMaterial::Type type = static_cast<kgmMaterial::Type>(t);
+
+  m->type(type);
 
   game->getScript()->resl("i", 1);
 
@@ -836,7 +864,7 @@ s32 kgmGameScript::kgmUnitName(void*)
   return 1;
 }
 
-s32 kgmGameScript::kgmUnitClass(void*)
+s32 kgmGameScript::kgmUnitType(void*)
 {
   kgmIGame* game = kgmGameApp::gameApplication()->game();
 
@@ -850,7 +878,26 @@ s32 kgmGameScript::kgmUnitClass(void*)
   if (!u)
     return 0;
 
-  game->getScript()->resl("s", u->getClass().data());
+  game->getScript()->resl("s", u->getType().data());
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitGroup(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  game->getScript()->resl("s", u->getGroup().data());
 
   return 1;
 }
@@ -867,7 +914,7 @@ s32 kgmGameScript::kgmUnitCreate(void*)
 
   kgmUnit* u = new kgmUnit(game);
 
-  u->setClass(type);
+  u->setType(type);
   u->setName(name);
 
   if (game->gAppend(u) != true) {
@@ -1020,7 +1067,18 @@ s32 kgmGameScript::kgmUnitSetMesh(void*)
 
   kgmGNode* tn = static_cast<kgmGNode*>(u->getNode());
   kgmGNode* n = new kgmGNode(u, m, kgmIGraphics::NodeMesh);
-  n->setNodeShader(kgmIGraphics::ShaderPhong);
+  switch (t->type())
+  {
+    case kgmMaterial::TypePhong:
+    case kgmMaterial::TypeLambert:
+      n->setNodeShader(kgmIGraphics::ShaderPhong);
+      break;
+    case kgmMaterial::TypeBase:
+    default:
+      n->setNodeShader(kgmIGraphics::ShaderColor);
+      n->setNodeShading(kgmIGraphics::ShadingNone);
+  };
+
   n->setNodeMaterial(t);
   u->setNode(n);
 
@@ -1066,6 +1124,51 @@ s32 kgmGameScript::kgmUnitAddMesh(void*)
 s32 kgmGameScript::kgmUnitRemMesh(void*)
 {
   return 0;
+}
+
+s32 kgmGameScript::kgmUnitSetScale(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+  double x, y, z;
+
+  game->getScript()->args("pddd", &u, &x, &y, &z);
+
+  if (!u)
+    return 0;
+
+  vec3 v(x, y, z);
+
+  u->scale(v);
+
+  game->getScript()->resl("i", 1);
+
+  return 1;
+}
+
+s32 kgmGameScript::kgmUnitGetScale(void*)
+{
+  kgmIGame* game = kgmGameApp::gameApplication()->game();
+
+  if (!game)
+    return 0;
+
+  kgmUnit* u = null;
+
+  game->getScript()->args("p", &u);
+
+  if (!u)
+    return 0;
+
+  vec3 v = u->scale();
+
+  game->getScript()->resl("ddd", v.x, v.y, v.z);
+
+  return 3;
 }
 
 s32 kgmGameScript::kgmUnitSetPosition(void*)

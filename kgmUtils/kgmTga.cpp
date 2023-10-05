@@ -22,6 +22,8 @@ bool kgmTga::create(kgmArray<u8>& m)
     return false;
   }
 
+  data.clear();
+
   memcpy(&header.idl,    pm, 1); pm += 1;
   memcpy(&header.cmap,   pm, 1); pm += 1;
   memcpy(&header.type,   pm, 1); pm += 1;
@@ -166,6 +168,13 @@ void kgmTga::fromUncompressed(u8* pdata, u32 pixels)
   }
   else if (header.bpp > 16)
   {
-    memcpy(data.data(), pdata, pixels * ppBytes);
+    //memcpy(data.data(), pdata, pixels * ppBytes);
+    for(u32 i = 0; i < pixels; i++)
+    {
+      data.data()[4 * i + 0] = pdata[4 * i + 2];
+      data.data()[4 * i + 1] = pdata[4 * i + 1];
+      data.data()[4 * i + 2] = pdata[4 * i + 0];
+      data.data()[4 * i + 3] = pdata[4 * i + 3];
+    }
   }
 }
