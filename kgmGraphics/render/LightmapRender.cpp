@@ -263,17 +263,17 @@ void LightmapRender::material(kgmMaterial* m)
   {
     switch(m->blend())
     {
-    case kgmMaterial::Blend_Add:
+    case kgmMaterial::BlendAdd:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
       //gc->gcBlend(true, gcblend_one, gcblend_one);
       break;
-    case kgmMaterial::Blend_Mul:
+    case kgmMaterial::BlendMul:
       gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
       break;
-    case kgmMaterial::Blend_Sub:
+    case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
-    case kgmMaterial::Blend_Inter:
+    /*case kgmMaterial::Blend_Inter:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       break;
     case kgmMaterial::Blend_CBurn:
@@ -296,7 +296,7 @@ void LightmapRender::material(kgmMaterial* m)
       break;
     case kgmMaterial::Blend_Lighten:
       gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
-      break;
+      break;*/
     }
   }
   else if(m->transparency() > 0.0f)

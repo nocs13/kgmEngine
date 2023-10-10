@@ -1,5 +1,6 @@
 kgmImport('vector3')
 kgmImport('camera')
+kgmImport('gambit')
 kgmImport('unit')
 kgmImport('player')
 kgmImport('guis')
@@ -32,6 +33,10 @@ State_Load  = 3
 State_Clean = 4
 State_Pause = 5
 State_Edit  = 6
+
+local function haveKey(table, key)
+  return table[key] ~= nil
+end
 
 function kgm_log(s)
   kgmLog(s)

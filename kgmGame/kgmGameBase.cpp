@@ -1113,7 +1113,7 @@ bool kgmGameBase::loadXml(kgmString& path)
       }*/
       else if(id == "Cull")
       {
-        mtl->cull(true);
+        mtl->cull(kgmMaterial::CullBack);
       }
       else if(id == "map_color")
       {

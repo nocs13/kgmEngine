@@ -813,7 +813,7 @@ kgmUnit* kgmGameMap::next()
       else if(id == "Cull")
       {
         xmlAttr(m_xml, "value", vint);
-        ((kgmMaterial*)data)->cull((vint != 0));
+        ((kgmMaterial*)data)->cull((vint != 0) ? (kgmMaterial::CullBack) : (kgmMaterial::CullNone));
       }
       else if(id == "Depth")
       {
@@ -852,7 +852,7 @@ kgmUnit* kgmGameMap::next()
           ((kgmMaterial*)data)->envType(kgmMaterial::EnvironmentTypeImage);
 
           xmlAttr(m_xml, "image", vtext);
-          ((kgmMaterial*)data)->setTexEnvironment(m_game->getResources()->getTexture(vtext));
+          //((kgmMaterial*)data)->setTexEnvironment(m_game->getResources()->getTexture(vtext));
         }
         else
         {
@@ -880,12 +880,12 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "cast", vtext);
 
         if (vtext == "True" ||  vtext == "true")
-          ((kgmMaterial*)data)->shade_cast(true);
+          ((kgmMaterial*)data)->shadow_drop(true);
 
         xmlAttr(m_xml, "receive", vtext);
 
         if (vtext == "True" ||  vtext == "true")
-          ((kgmMaterial*)data)->shade_receive(true);
+          ((kgmMaterial*)data)->shadow_recv(true);
       }
       else if (id == "Type")
       {

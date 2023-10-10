@@ -4,6 +4,8 @@
 #include "../../kgmBase/kgmIGC.h"
 #include "../kgmGui.h"
 #include "../kgmIGraphics.h"
+#include "../kgmMaterial.h"
+#include "../kgmFont.h"
 
 class kgmGraphics;
 class kgmLight;
@@ -17,16 +19,31 @@ class kgmCamera;
 
 class BaseRender: public kgmObject
 {
+  public:
+
   struct ClipPlane
   {
     bool on     = false;
     vec4 plane  = vec4(0, 0, 1, 0);
   };
 
+  struct OLight
+  {
+    kgmIGraphics::INode* l;
+    f32    f;
+  };
+
+  struct OMesh
+  {
+    kgmIGraphics::INode* l;
+    f32    d;
+  };
+
 protected:
   kgmGraphics* gr;
   kgmIGC*      gc;
   kgmTexture*  font;
+  kgmMaterial  mtl;
 
   ClipPlane  m_clip_planes[1];
 
@@ -56,6 +73,11 @@ protected:
   void draw(kgmText*);
   void draw(kgmParticles*);
   void draw(kgmIcon*, kgmCamera*);
+
+  void gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex);
+  void gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex);
+  void gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
+                  kgmGui::Rect clip, kgmString& text);
 
   void material(kgmMaterial*);
   void shader(kgmShader* shd, kgmCamera* cam, kgmMaterial* mtl, kgmIGraphics::INode* nod);

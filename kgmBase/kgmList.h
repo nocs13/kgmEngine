@@ -51,12 +51,14 @@ public:
 
     void operator++()
     {
-      if(_Ptr) _Ptr = _Ptr->next;
+      if(_Ptr && _Ptr->next)
+        _Ptr = _Ptr->next;
     }
 
     void operator--()
     {
-      if(_Ptr) _Ptr = _Ptr->prev;
+      if(_Ptr && _Ptr->prev)
+        _Ptr = _Ptr->prev;
     }
 
     bool operator!=(iterator i)
@@ -71,29 +73,32 @@ public:
 
     bool next()
     {
-      if(_Ptr)
+      if (_Ptr && _Ptr->next) {
         _Ptr = _Ptr->next;
 
-      if(_Ptr)
         return true;
+      }
 
       return false;
     }
 
     bool prev()
     {
-      if(_Ptr)
+      if (_Ptr && _Ptr->prev) {
         _Ptr = _Ptr->prev;
 
-      if(_Ptr)
         return true;
+      }
 
       return false;
     }
 
     bool end()
     {
-      return (_Ptr == null);
+      if (_Ptr && (_Ptr->next == null))
+        return true;
+
+      return false;
     }
 
     bool haveNext()
@@ -107,6 +112,8 @@ public:
 
 protected:
   _Node* _First;
+  _Node* _Last;
+
   u32    csize;
 
   _Node *_first()
@@ -116,18 +123,13 @@ protected:
 
   _Node *_last()
   {
-    _Node *node = _First;
-
-    while(node && node->next)
-      node = node->next;
-
-    return node;
+    return _Last;
   }
 
 public:
   kgmList():_First(NULL),csize(0)
   {
-    _First = NULL;
+    _First = _Last = NULL;
     csize  = 0;
   }
 
@@ -179,12 +181,13 @@ public:
 
     if(!lnode)
     {
-      _First = node;
+      _First = _Last = node;
     }
     else
     {
       node->prev = lnode;
-      lnode->next = node;
+
+      lnode->next = _Last = node;
     }
 
     csize++;
@@ -192,23 +195,7 @@ public:
 
   void append(T t)
   {
-    _Node *node = new _Node();
-
-    node->data = t;
-
-    _Node *lnode = _last();
-
-    if(!lnode)
-    {
-      _First = node;
-    }
-    else
-    {
-      node->prev = lnode;
-      lnode->next = node;
-    }
-
-    csize++;
+    add(t);
   }
 
   iterator erase(iterator i)
@@ -228,15 +215,17 @@ public:
       next->prev = prev;
 
     delete i._Ptr;
-
-    if(i._Ptr == _First)
-      _First = i._Ptr = next;
-    else
-      i._Ptr = next;
-
     csize--;
 
-    if (!csize && _First)
+    i._Ptr = next;
+
+    if (!prev)
+      _First = i._Ptr;
+
+    if (!next)
+      _Last = i._Ptr;
+
+    if (!csize && (_First || _Last))
     {
       exit(EXIT_FAILURE);
     }
@@ -270,12 +259,17 @@ public:
         _First = _First->next;
       }
 
+      if(node == _Last)
+      {
+        _Last = _Last->prev;
+      }
+
       delete node;
 
       csize--;
     }
 
-    if (!csize && _First)
+    if (!csize && (_First || _Last))
     {
       kgm_fatal("Invalid node for delete.");
     }
@@ -306,12 +300,17 @@ public:
         _First = _First->next;
       }
 
+      if(node == _Last)
+      {
+        _Last = _Last->prev;
+      }
+
       delete node;
 
       csize--;
     }
 
-    if (!csize && _First)
+    if (!csize && (_First || _Last))
     {
       kgm_fatal("Invalid node for delete.");
     }
@@ -329,7 +328,7 @@ public:
       delete prev;
     }
 
-    _First = 0;
+    _First = _Last = 0;
     csize = 0;
   }
 
@@ -341,9 +340,18 @@ public:
     return i;
   }
 
+  iterator end()
+  {
+    iterator i;
+    i._Ptr = _Last;
+
+    return i;
+  }
+
   iterator get(T val)
   {
     iterator i;
+
     i._Ptr = _First;
 
     do {

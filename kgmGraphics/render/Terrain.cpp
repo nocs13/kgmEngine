@@ -10,10 +10,7 @@
 #include "../kgmTerrain.h"
 
 #include "../kgmBase/kgmLog.h"
-
-namespace Render
-{
-
+/*
   void Terrain::Thread::run()
   {
     if (!tr)
@@ -23,7 +20,7 @@ namespace Render
 
     while(valid)
     {
-      kgmTerrain*  ter = (kgmTerrain*) tr->gr->m_terrain->getNodeObject();
+      kgmTerrain*  ter = null;//(kgmTerrain*) tr->gr->m_terrain->getNodeObject();
 
       if (ter)
       {
@@ -67,7 +64,7 @@ namespace Render
     m_thread->stop();
     m_thread->wait();
   }
-  
+
   void Terrain::render()
   {
     if(!m_thread->active())
@@ -94,7 +91,7 @@ namespace Render
     m_thread->lock();
 
     kgmMesh*     msh = (kgmMesh*) ter->mesh();
-    
+
     kgmMaterial* mtl = (nod->getNodeMaterial()) ? (nod->getNodeMaterial()) : (gr->m_def_material);
 
     sphere3 sbound(gr->m_camera->mPos, 1000);
@@ -191,7 +188,6 @@ namespace Render
     shader(null, null, null, null);
   }
 
-  /*
   void Terrain::lightmap(bool blend)
   {
     kgmShader* sh = m_sh_lmap;
@@ -313,5 +309,3 @@ namespace Render
     shader(null, null, null, null);
   }
   */
-
-} /* namespace Render */

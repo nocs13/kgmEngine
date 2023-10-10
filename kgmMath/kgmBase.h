@@ -12,6 +12,12 @@
 #define MIN(x,y)    (x<y)?(x):(y)
 #define MAX(x,y)    (x>y)?(x):(y)
 
+template <typename T>
+T CLAMP(const T value, const T low, const T high)
+{
+  return value < low ? low : (value > high ? high : value);
+}
+
 template <class T> class kgmVector2d;
 template <class T> class kgmVector3d;
 template <class T> class kgmVector4d;

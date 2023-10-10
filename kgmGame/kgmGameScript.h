@@ -98,6 +98,11 @@ class kgmGameScript: public kgmObject
   static s32 kgmLightSetType(void*);
   static s32 kgmLightSetForce(void*);
   static s32 kgmLightSetColor(void*);
+  static s32 kgmLightSetActivity(void*);
+
+  static s32 kgmAnimationGet(void*);
+
+  static s32 kgmSoundGet(void*);
 
   static s32 kgmMeshGet(void*);
 
@@ -116,6 +121,7 @@ class kgmGameScript: public kgmObject
   static s32 kgmUnitAddMesh(void*);
   static s32 kgmUnitRemMesh(void*);
   static s32 kgmUnitSetLight(void*);
+  static s32 kgmUnitSetBound(void*);
   static s32 kgmUnitSetScale(void*);
   static s32 kgmUnitGetScale(void*);
   static s32 kgmUnitSetPosition(void*);

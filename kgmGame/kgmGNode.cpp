@@ -19,7 +19,21 @@ bool kgmGNode::isNodeValid()
 
 box3 kgmGNode::getNodeBound()
 {
-  return m_unit->getBound();
+  mtx4 m;
+
+  vec3 v = m_unit->transform().position();
+  vec3 s = m_unit->transform().scaled();
+
+  m.identity();
+  m.translate(v);
+  m.scale(s);
+
+  box3 b = m_unit->getBound();
+
+  b.min = m * b.min;
+  b.max = m * b.max;
+
+  return b;
 }
 
 vec3 kgmGNode::getNodePosition()

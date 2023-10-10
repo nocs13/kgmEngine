@@ -26,6 +26,7 @@
 
 #include "kgmNode.h"
 
+#include "render/Render.h"
 #include "render/FpsRender.h"
 #include "render/GuiRender.h"
 #include "render/IconRender.h"
@@ -48,6 +49,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   KGM_OBJECT(kgmGraphics)
 
   friend class BaseRender;
+  friend class Render;
   friend class FpsRender;
   friend class GuiRender;
   friend class IconRender;
@@ -59,7 +61,7 @@ class kgmGraphics: public kgmObject, public kgmIGraphics
   friend class LightmapRender;
   friend class ParticlesRender;
   friend class EnvironmentRender;
-  friend class Render::Terrain;
+  friend class Terrain;
 
 #define MAX_LIGHTS   8
 #define MAX_SHADOWS  2
@@ -140,6 +142,7 @@ protected:
 
   kgmList<kgmGui*>     m_guis;
   kgmList<kgmIcon*>    m_icons;
+  kgmList<kgmSprite*>  m_sprites;
 
   kgmList<INode*>      m_lights;
   kgmList<INode*>      m_meshes;
@@ -159,6 +162,10 @@ protected:
   u32  m_a_meshes_count    = 0;
   u32  m_a_bmeshes_count   = 0;
   u32  m_a_particles_count = 0;
+
+  kgmList<BaseRender::OLight> m_o_lights;
+  kgmList<BaseRender::OMesh>  m_o_meshes;
+  kgmList<BaseRender::OMesh>  m_o_bmeshes;
 
   LightData m_light_data;
 
@@ -212,6 +219,7 @@ protected:
 
   gchandle m_rnd_target = null;
 
+  Render*            m_render = null;
   BaseRender*        m_rnd_base = null;
   LineRender*        m_rnd_lines = null;
   ColorRender*       m_rnd_color = null;
@@ -219,7 +227,7 @@ protected:
   ShadowRender*      m_rnd_shadows = null;
   LightmapRender*    m_rnd_lightmap = null;
   EnvironmentRender* m_rnd_environment = null;
-  Render::Terrain*   m_rnd_terrain = null;
+  Terrain*           m_rnd_terrain = null;
 
   //BaseRender*        m_rnd_list[];
 
@@ -281,6 +289,9 @@ protected:
   u32 collectLights(kgmCamera*, kgmArray<INode*>&, u32);
   u32 collectMeshes(kgmCamera*, kgmArray<INode*>&, u32);
   u32 collectParticles(kgmCamera*, kgmArray<INode*>&, u32);
+
+  void collectOLights(kgmCamera& cam, kgmList<BaseRender::OLight>& nodes);
+  void collectOMeshes(kgmCamera& cam, kgmList<BaseRender::OMesh> &meshes, kgmList<BaseRender::OMesh> &bmeshes);
 
   void shaderSetGeneral();
   void shaderSetPrivate();

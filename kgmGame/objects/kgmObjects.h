@@ -156,9 +156,9 @@ public:
     game     = g;
 
     mtl = kgm_ptr<kgmMaterial>(new kgmMaterial());
-    mtl->cull(false);
+    mtl->cull(kgmMaterial::CullNone);
     mtl->depth(false);
-    mtl->blend(kgmMaterial::Blend_Add);
+    mtl->blend(kgmMaterial::BlendAdd);
     mtl->setTexColor(g->getResources()->getTexture((char*)"point_d.tga"));
 
     ptl = kgm_ptr<kgmParticles>(new kgmParticles());

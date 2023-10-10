@@ -226,6 +226,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     //m_map_light.m_res[1] = scr_size[1];
   }
 
+  m_render = new Render(this);
+
   m_rnd_base        = new BaseRender(this);
   m_rnd_lines       = new LineRender(this);
   m_rnd_color       = new ColorRender(this);
@@ -254,6 +256,8 @@ kgmGraphics::~kgmGraphics()
 
   if (m_map_light.m_fbo)
     gc->gcFreeTarget(m_map_light.m_fbo);
+
+  kgmObject::Release(m_render);
 
   kgmObject::Release(m_rnd_terrain);
   kgmObject::Release(m_rnd_color);
@@ -470,12 +474,14 @@ void kgmGraphics::render()
     vec3  l = bound.max - bound.min;
     vec3  v = (bound.min + bound.max) * 0.5;
 
-    //if(!m_camera->isSphereCross(v, 0.5 * l.length()))
-    //  continue;
+    if(!m_camera->isSphereCross(v, 0.5 * l.length())) {
+      if (!bound.isin(m_camera->mPos))
+        continue;
+    }
 
     kgmMaterial* m = (*i)->getNodeMaterial();
 
-    if(m && (m->blend() != kgmMaterial::Blend_None || m->transparency() > 0.0f))
+    if(m && (m->blend() != kgmMaterial::BlendNone || m->transparency() > 0.0f))
     {
       if (m_a_bmeshes_count == m_a_bmeshes.length())
         m_a_bmeshes.realloc(m_a_bmeshes_count + 1024);
@@ -658,7 +664,7 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
     if (!mtl)
       mtl = m_def_material;
 
-    if(mtl && (mtl->blend() != kgmMaterial::Blend_None || mtl->transparency() > 0.0f))
+    if(mtl && (mtl->blend() != kgmMaterial::BlendNone || mtl->transparency() > 0.0f))
     {
       continue;
     }
@@ -840,6 +846,150 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 }
 */
 
+void kgmGraphics::collectOLights(kgmCamera& cam, kgmList<BaseRender::OLight>& olights)
+{
+  if (olights.length() > 0)
+    olights.clear();
+
+  const f32 min_lforce = 0.000001;
+
+  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
+  {
+    INode* node = (*i);
+
+    if(!node->isNodeValid())
+      continue;
+
+    vec3 pos = node->getNodePosition();
+
+    kgmLight* light = static_cast<kgmLight*>( node->getNodeObject() );
+
+    f32 force = light->intensity() / (1.0 + pos.distance(cam.mPos));
+
+    if (force > 1.0)
+      force = 1.0;
+
+    bool isdir = false;
+
+    if (light->angle() < 0.001 && light->direction().length() > 0.9)
+    {
+      isdir = true;
+
+      force = 1.0;
+    }
+
+    if(!isdir && (force < min_lforce || !m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * light->intensity())))
+      continue;
+
+    olights.add(BaseRender::OLight{node, force});
+  }
+
+  auto f = olights.begin();
+  auto l = olights.end();
+
+  while(f != l)
+  {
+    auto i = f;
+    auto min = i;
+    auto max = i;
+
+    i.next();
+
+    while(i != l)
+    {
+      if ((*i).f > (*max).f)
+        max = i;
+
+      if ((*i).f < (*min).f)
+        min = i;
+    }
+
+    auto ol = (*f);
+    (*f) = (*max);
+    (*max) = ol;
+     ol = (*l);
+    (*l) = (*min);
+    (*min) = ol;
+
+    f.next();
+    l.prev();
+  }
+}
+
+void kgmGraphics::collectOMeshes(kgmCamera& cam, kgmList<BaseRender::OMesh> &meshes, kgmList<BaseRender::OMesh> &bmeshes)
+{
+  const f32 min_mforce = 0.01;
+
+  if (meshes.length() > 0)
+    meshes.clear();
+
+  if (bmeshes.length() > 0)
+    bmeshes.clear();
+
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  {
+    INode* node = (*i);
+
+    if (!node->isNodeValid())
+      continue;
+
+    box3 bound = node->getNodeBound();
+
+    vec3  pos = node->getNodePosition();
+
+    f32   l = bound.min.distance(bound.max);
+    vec3  v = (bound.min + bound.max) * 0.5;
+
+    f32 distance = pos.distance(cam.mPos);
+    f32 mforce = l / (1.0 + pos.distance(cam.mPos));
+
+    if(mforce < min_mforce || !m_camera->isSphereCross(v, 0.5 * l))
+      continue;
+
+    kgmMaterial* m = (*i)->getNodeMaterial();
+
+    if(m && (m->blend() != kgmMaterial::BlendNone || m->transparency() > 0.0f))
+    {
+      bmeshes.add(BaseRender::OMesh{(*i), distance});
+    }
+    else
+    {
+      meshes.add(BaseRender::OMesh{(*i), distance});
+    }
+  }
+
+  auto f = bmeshes.begin();
+  auto l = bmeshes.end();
+
+  while (f != l)
+  {
+    auto i = f;
+    auto min = i;
+    auto max = i;
+
+    i.next();
+
+    while (i != l)
+    {
+      if ((*i).d > (*max).d)
+        max = i;
+
+      if ((*i).d < (*min).d)
+        min = i;
+    }
+
+    auto ol = (*f);
+    (*f) = (*min);
+    (*min) = ol;
+     ol = (*l);
+    (*l) = (*max);
+    (*max) = ol;
+
+    f.next();
+    l.prev();
+  }
+}
+
 void kgmGraphics::draw(kgmParticles* particles)
 {
   if(!particles || !particles->getMesh())
@@ -928,17 +1078,17 @@ void kgmGraphics::set(kgmMaterial* m)
   {
     switch(m->blend())
     {
-    case kgmMaterial::Blend_Add:
+    case kgmMaterial::BlendAdd:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
       //gc->gcBlend(true, gcblend_one, gcblend_one);
       break;
-    case kgmMaterial::Blend_Mul:
+    case kgmMaterial::BlendMul:
       gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
       break;
-    case kgmMaterial::Blend_Sub:
+    case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
-    case kgmMaterial::Blend_Inter:
+    /* case kgmMaterial::Blend_Inter:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       break;
     case kgmMaterial::Blend_CBurn:
@@ -961,7 +1111,7 @@ void kgmGraphics::set(kgmMaterial* m)
       break;
     case kgmMaterial::Blend_Lighten:
       gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
-      break;
+      break; */
     }
 
     m_alpha = true;
@@ -978,7 +1128,7 @@ void kgmGraphics::set(kgmMaterial* m)
     m_depth = false;
   }
 
-  if(!m->cull())
+  if(m->cull() == kgmMaterial::CullNone)
   {
     gc->gcCull(0);
     m_culling = false;

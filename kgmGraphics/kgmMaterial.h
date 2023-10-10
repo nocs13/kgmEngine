@@ -31,18 +31,11 @@ public:
 
   enum Blend
   {
-    Blend_None,
-    Blend_Add,
-    Blend_Mul,
-    Blend_Sub,
-    Blend_Inter,
-    Blend_CBurn,
-    Blend_LBurn,
-    Blend_CDodge,
-    Blend_LDodge,
-    Blend_Screen,
-    Blend_Darken,
-    Blend_Lighten,
+    BlendNone,
+    BlendMix,
+    BlendAdd,
+    BlendMul,
+    BlendSub
   };
 
   enum Type
@@ -51,6 +44,13 @@ public:
     TypePhong,
     TypeLambert,
     TypeRefract
+  };
+
+  enum Cull
+  {
+    CullNone,
+    CullBack,
+    CullFront
   };
 
   enum Environment
@@ -146,24 +146,25 @@ public:
   };
 
 private:
-  bool  m_cull  = true;
-  bool  m_depth = true;
+  Cull m_cull  = CullBack;
 
-  bool m_shading       = true;
-  bool m_shade_cast    = false;
-  bool m_shade_receive = false;
+  bool m_depth   = true;
+  bool m_shading = true;
+
+  bool m_shadow_recv = false;
+  bool m_shadow_drop = false;
 
   Type  m_type  = TypeBase;
-  Blend m_blend = Blend_None;
+  Blend m_blend = BlendNone;
 
   f32  m_distortion;
   f32  m_shininess;
   f32  m_fresnel;
+  f32  m_reflect;
 
   kgmTexture* m_tex_color = null;
   kgmTexture* m_tex_normal = null;
   kgmTexture* m_tex_specular = null;
-  kgmTexture* m_tex_environment = null;
 
   Environment m_env_type = EnvironmentTypeNone;
   Environment m_env_mapping = EnvironmentMappingPlane;
@@ -187,19 +188,14 @@ public:
   void setTexColor(kgmTexture* t);
   void setTexNormal(kgmTexture* t);
   void setTexSpecular(kgmTexture* t);
-  void setTexEnvironment(kgmTexture* t);
 
   bool hasTexColor();
   bool hasTexNormal();
   bool hasTexSpecular();
-  bool hasTexEnvironment();
 
   kgmTexture* getTexColor();
   kgmTexture* getTexNormal();
   kgmTexture* getTexSpecular();
-  kgmTexture* getTexEnvironment();
-
-  void setShader(kgmShader* shader);
 
   static u32 toRgba(float x, float y, float z)
   {
@@ -278,6 +274,16 @@ public:
     m_fresnel = f;
   }
 
+  f32 reflect() const
+  {
+    return m_reflect;
+  }
+
+  void reflect(f32 f)
+  {
+    m_reflect = f;
+  }
+
   bool depth() const
   {
     return m_depth;
@@ -308,32 +314,32 @@ public:
     m_shading = s;
   }
 
-  bool shade_cast() const
+  void shadow_recv(bool s)
   {
-    return m_shade_cast;
+    m_shadow_recv = s;
   }
 
-  void shade_cast(bool s)
+  bool shadow_recv() const
   {
-    m_shade_cast = s;
+    return m_shadow_recv;
   }
 
-  bool shade_receive() const
+  void shadow_drop(bool s)
   {
-    return m_shade_receive;
+    m_shadow_drop = s;
   }
 
-  void shade_receive(bool s)
+  bool shadow_drop() const
   {
-    m_shade_receive = s;
+    return m_shadow_drop;
   }
 
-  bool cull() const
+  Cull cull() const
   {
     return m_cull;
   }
 
-  void cull(bool c)
+  void cull(Cull c)
   {
     m_cull = c;
   }

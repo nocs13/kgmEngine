@@ -485,7 +485,7 @@ kgmMaterial* kgmGameTools::genMaterial(kgmXml& x){
     }*/
     else if(id == "Cull")
     {
-      mtl->cull(true);
+      mtl->cull(kgmMaterial::CullBack);
     }
     else if(id == "map_color")
     {

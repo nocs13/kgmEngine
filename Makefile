@@ -9,8 +9,13 @@ sources += $(wildcard kgmGraphics/render/*.cpp)
 sources += $(wildcard kgmGame/actions/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
 sources += $(wildcard kgmGame/editor/*.cpp)
+headers := $(wildcard $(addsuffix *.cpp,$(subdirs)))
+headers += $(wildcard kgmGraphics/render/*.cpp)
+headers += $(wildcard kgmGame/actions/*.cpp)
+headers += $(wildcard kgmGame/objects/*.cpp)
+headers += $(wildcard kgmGame/editor/*.cpp)
 
-objects := $(patsubst %.cpp,%.o,$(sources))
+objects := $(patsubst %.cpp,%.o,$(sources),$(headers))
 
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine_s.a

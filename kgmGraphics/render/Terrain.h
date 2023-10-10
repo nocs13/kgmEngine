@@ -15,9 +15,6 @@ class kgmGraphics;
 
 class kgmShader;
 
-namespace Render
-{
-
 class Terrain: public BaseRender
 {
   friend class Thread;
@@ -73,7 +70,7 @@ class Terrain: public BaseRender
   kgmShader* m_sh_lmap;
 
   Thread*    m_thread = null;
-  
+
 public:
   Terrain(kgmGraphics* gr);
   ~Terrain();
@@ -82,7 +79,5 @@ public:
   //void lightmap(bool blend = false);
   void clear();
 };
-
-} /* namespace Render */
 
 #endif /* KGMGRAPHICS_RENDER_TERRAIN_H_ */

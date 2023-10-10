@@ -1,4 +1,6 @@
 #include "BaseRender.h"
+#include "Draw.h"
+
 #include "../../kgmSystem/kgmTime.h"
 #include "../../kgmGraphics/kgmMesh.h"
 #include "../../kgmGraphics/kgmIcon.h"
@@ -189,6 +191,31 @@ void BaseRender::draw(kgmIcon* icon, kgmCamera* c)
   gc->gcDraw(gcpmt_triangles, gcv_xyz|gcv_col|gcv_uv0, sizeof(kgmMesh::Vertex_P_C_T), 6, points, 0, 0, 0);
 }
 
+void BaseRender::gcDrawRect(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
+  mtl.m_color = kgmMaterial::Color(col);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
+  ::gcDrawRect(gc, rc, 0xffffffff, tex);
+}
+
+void BaseRender::gcDrawBorder(kgmIGC* gc, kgmGui::Rect rc, u32 col, kgmTexture* tex)
+{
+  mtl.m_color = kgmMaterial::Color(col);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
+  ::gcDrawBorder(gc, rc, 0xffffffff, gr->m_tex_white);
+}
+
+void BaseRender::gcDrawText(kgmIGC* gc, kgmFont* font, u32 fwidth, u32 fheight, u32 fcolor,
+                           kgmGui::Rect clip, kgmString& text)
+{
+  mtl.m_color = kgmMaterial::Color(fcolor);
+  gr->set(&mtl);
+  gr->shaderSetPrivate();
+  ::gcDrawText(gc, font, fwidth, fheight, 0xffffffff, clip, text);
+}
+
 void BaseRender::material(kgmMaterial* m)
 {
   if(!m)
@@ -209,39 +236,15 @@ void BaseRender::material(kgmMaterial* m)
   {
     switch(m->blend())
     {
-    case kgmMaterial::Blend_Add:
+    case kgmMaterial::BlendAdd:
       //gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
       gc->gcBlend(true, 0, gcblend_one, gcblend_one);
       break;
-    case kgmMaterial::Blend_Mul:
+    case kgmMaterial::BlendMul:
       gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
       break;
-    case kgmMaterial::Blend_Sub:
+    case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
-      break;
-    case kgmMaterial::Blend_Inter:
-      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
-      break;
-    case kgmMaterial::Blend_CBurn:
-      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
-      break;
-    case kgmMaterial::Blend_LBurn:
-      gc->gcBlend(true, 0, gcblend_one, gcblend_one);
-      break;
-    case kgmMaterial::Blend_CDodge:
-      gc->gcBlend(true, 0, gcblend_dstcol, gcblend_zero);
-      break;
-    case kgmMaterial::Blend_LDodge:
-      gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_one);
-      break;
-    case kgmMaterial::Blend_Screen:
-      gc->gcBlend(true, 0, gcblend_one, gcblend_srcicol);
-      break;
-    case kgmMaterial::Blend_Darken:
-      gc->gcBlend(true, gcblend_eqmin, gcblend_one, gcblend_one);
-      break;
-    case kgmMaterial::Blend_Lighten:
-      gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
       break;
     }
   }

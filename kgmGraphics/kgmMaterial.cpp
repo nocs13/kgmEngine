@@ -12,13 +12,13 @@ kgmMaterial::kgmMaterial()
   m_shininess  = 0.0;
   m_fresnel    = 0.0;
 
-  //m_alpha  = false;
   m_depth  = true;
-  m_cull   = true;
+
+  m_cull   = CullBack;
 
   m_move = vec3(0, 0, 0);
 
-  m_blend  = Blend_None;
+  m_blend  = BlendNone;
 }
 
 kgmMaterial::kgmMaterial(const kgmMaterial& mtl)
@@ -65,10 +65,10 @@ void kgmMaterial::setTexSpecular(kgmTexture* t)
   m_tex_specular = t;
 }
 
-void kgmMaterial::setTexEnvironment(kgmTexture* t)
+/*void kgmMaterial::setTexEnvironment(kgmTexture* t)
 {
   m_tex_environment = t;
-}
+}*/
 
 bool kgmMaterial::hasTexColor()
 {
@@ -85,10 +85,10 @@ bool kgmMaterial::hasTexSpecular()
   return (m_tex_specular && m_tex_specular->texture());
 }
 
-bool kgmMaterial::hasTexEnvironment()
+/*bool kgmMaterial::hasTexEnvironment()
 {
   return (m_tex_environment && m_tex_environment->texture());
-}
+}*/
 
 kgmTexture* kgmMaterial::getTexColor()
 {
@@ -105,24 +105,26 @@ kgmTexture* kgmMaterial::getTexSpecular()
   return m_tex_specular;
 }
 
-kgmTexture* kgmMaterial::getTexEnvironment()
+/*kgmTexture* kgmMaterial::getTexEnvironment()
 {
   return m_tex_environment;
-}
+}*/
 
 kgmString kgmMaterial::blendToString(Blend blend)
 {
   switch(blend)
   {
-  case Blend_None:
+  case BlendNone:
     return "none";
-  case Blend_Add:
+  case BlendMix:
+    return "mix";
+  case BlendAdd:
     return "add";
-  case Blend_Mul:
+  case BlendMul:
     return "mul";
-  case Blend_Sub:
+  case BlendSub:
     return "sub";
-  case Blend_Inter:
+  /*case Blend_Inter:
     return "inter";
   case Blend_CBurn:
     return "cburn";
@@ -137,7 +139,7 @@ kgmString kgmMaterial::blendToString(Blend blend)
   case Blend_Darken:
     return "darken";
   case Blend_Lighten:
-    return "lighten";
+    return "lighten";*/
   }
 
   return "";
@@ -146,14 +148,16 @@ kgmString kgmMaterial::blendToString(Blend blend)
 kgmMaterial::Blend kgmMaterial::stringToBlend(kgmString blend)
 {
   if(blend == "none")
-    return Blend_None;
+    return BlendNone;
+  else if(blend == "mix")
+    return BlendMix;
   else if(blend == "add")
-    return Blend_Add;
+    return BlendAdd;
   else if(blend == "mul")
-    return Blend_Mul;
+    return BlendMul;
   else if(blend == "sub")
-    return Blend_Sub;
-  else if(blend == "inter")
+    return BlendSub;
+  /*else if(blend == "inter")
     return Blend_Inter;
   else if(blend == "cburn")
     return Blend_CBurn;
@@ -168,9 +172,9 @@ kgmMaterial::Blend kgmMaterial::stringToBlend(kgmString blend)
   else if(blend == "darken")
     return Blend_Darken;
   else if(blend == "lighten")
-    return Blend_Lighten;
+    return Blend_Lighten;*/
 
-  return Blend_None;
+  return BlendNone;
 }
 
 kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
