@@ -27,6 +27,7 @@ import os
 import threading
 from math import radians
 import math
+import types
 import bpy
 import bmesh
 from mathutils import *
@@ -51,7 +52,6 @@ kgm_actor_types = [('u1', 'a1 u1', 'a1 a1 u1'), ('u2', 'a1 u2', 'a1 a1 u2')]
 
 kgm_configs = None
 
-kgm_mesh_smooth_angle = toRad(30)
 
 def hasModifier(o, mname):
   if o is None:
@@ -423,6 +423,7 @@ class kgmMaterial:
     self.name     = mtl.name
     print('Converting material ' + mtl.name)
     self.diffuse  = [1.0, 1.0, 1.0, 1.0]
+    self.specular = 0.0
     self.shine    = 1.0
     self.alpha    = 1.0
     self.map_color = ''
@@ -449,7 +450,8 @@ class kgmMaterial:
     self.distortion  = 0.0
 
     self.diffuse  = mtl.diffuse_color
-    self.shine    = 1000.0 * mtl.specular_intensity * (1.0 - mtl.roughness);
+    self.specular  = mtl.specular_intensity
+    self.shine    = 256.0 * (1.0 - mtl.roughness);
     self.alpha    = 1.0
 
     try:
@@ -459,9 +461,9 @@ class kgmMaterial:
       self.diffuse[0] = col[0]
       self.diffuse[1] = col[1]
       self.diffuse[2] = col[2]
-      spc = node.inputs['Specular'].default_value
+      self.specular = node.inputs['Specular'].default_value
       rgn = node.inputs['Roughness'].default_value
-      self.shine = 1000.0 * (spc * (1.0 - rgn))
+      self.shine = 256.0 * (1.0 - rgn)
       self.alpha = node.inputs['Alpha'].default_value
     except Exception as e:
       print('Error of collect colors: ' + str(e))
@@ -513,7 +515,7 @@ class kgmLight:
     self.name = o.name
     self.pos = o.matrix_local.to_translation()
     self.rot = o.matrix_local.to_euler()
-    self.intensity = lamp.energy / 200.0
+    self.intensity = lamp.energy
     self.shadows = 'No' if lamp.use_shadow == False else 'Yes'
     self.range = 2 * lamp.distance
     self.color = lamp.color
@@ -630,19 +632,37 @@ class kgmMesh:
     self.collectMesh(o, o.data)
     self.collectShapes(o, o.data)
 
+    print('Mesh convert finished.')
+
   def addVertex(self, vx):
     iv = -1
-
+    nx = Vector((vx.n[0], vx.n[1], vx.n[2]))
+    nx.normalize()
     # check if such vertex already exist
     # check by co, normal, uv.
 
     for i in range(0, len(self.vertices)):
       v = self.vertices[i]
       if (v.v[0] == vx.v[0]) and (v.v[1] == vx.v[1]) and (v.v[2] == vx.v[2]) and \
-         (v.n[0] == vx.n[0]) and (v.n[1] == vx.n[1]) and (v.n[2] == vx.n[2]) and \
          (v.uv[0] == vx.uv[0]) and (v.uv[1] == vx.uv[1]):
-        iv = i
-        break
+        nv = Vector((v.n[0], v.n[1], v.n[2]))
+        nv.normalize()
+        angle = 180
+        try:
+          angle = math.acos( nx.dot(nv) )
+        except:
+          print("x %f, y %f, z %f" % (nx.x, nx.y, nx.z))
+          print("x %f, y %f, z %f" % (nv.x, nv.y, nv.z))
+        #(v.n[0] == vx.n[0]) and (v.n[1] == vx.n[1]) and (v.n[2] == vx.n[2]) and \
+        nr = nv - nx
+        if (nv - nx).length < 0.001:
+          iv = i
+          break
+        elif (self.auto_smooth == True) and (angle < self.auto_smooth_angle):
+          ns = nv + nx
+          ns.normalize()
+          self.vertices[i].n = [ns.x, ns.y, ns.z]
+          iv = i
 
     if iv < 0:
       self.vertices.append(vx)
@@ -703,11 +723,15 @@ class kgmMesh:
         self.mtl_name = mesh.materials[0].name
 
     self.name = mesh.name
+    self.auto_smooth_angle = mesh.auto_smooth_angle
+    self.auto_smooth = mesh.use_auto_smooth
     self.vertices = []
     self.faces = []
     self.skin = False
     self.mtls = []
     self.hasvgroups = True if len(o.vertex_groups) > 0 else False
+
+    print("auto smooth angle is %f" % (self.auto_smooth_angle))
 
     if self.hasvgroups:
       self.vgroups = o.vertex_groups
@@ -738,9 +762,10 @@ class kgmMesh:
     mesh_faces = mesh.polygons
 
     if mesh_faces:
-      print('Faces: ' + str(len(mesh_faces)))
+      #print('Faces: ' + str(len(mesh_faces)))
 
       for i in range(0, len(mesh_faces)):
+        #print("Converting face %i" % (i))
         face = mesh_faces[i]
         iface = []
         fsmooth = mesh_faces[i].use_smooth
@@ -1090,10 +1115,10 @@ def export_material(file, o):
   file.write(" <Material name='" + o.name + "'>\n")
   file.write("  <Color value='" + str("%.5f" % o.diffuse[0]) + " " + str("%.5f" % o.diffuse[1]) + " " + str(
     "%.5f" % o.diffuse[2]) + "'/>\n")
+  file.write("  <Specular value='" + str("%.5f" % o.specular) + "'/>\n")
   file.write("  <Shininess value='" + str("%.5f" % o.shine) + "'/>\n")
   file.write("  <Alpha value='" + str("%.5f" % o.alpha) + "'/>\n")
   file.write("  <Shadow shadeless='" + str(o.sh_off) + "' cast='" + str(o.sh_cast) + "' receive='" + str(o.sh_recv) + "'/>\n")
-  file.write("  <Fresnel mirror='" + str(o.mir_fresnel) + "' transparency='" + str(o.trn_fresnel) + "'/>\n")
 
   if o.depth is False:
     file.write("  <Depth value='0'/>\n")
@@ -1106,9 +1131,6 @@ def export_material(file, o):
 
   if o.distortion > 0.0:
     file.write("  <Distortion value='" + str(o.distortion) + "'/>\n")
-
-  if (hasattr(o, 'shader')):
-    file.write("  <Shader value='" + o.shader + "'/>\n")
 
   if o.map_color != "":
     file.write("  <map_color value='" + o.map_color + "'/>\n")
@@ -1232,7 +1254,9 @@ def export_mesh_node(file, o):
   v = mtx.to_translation()
   r = mtx.to_euler()
   s = mtx.to_scale()
+
   file.write(" <Mesh name='" + o.name + "' data='" + o.data.name + "'>\n")
+
   for m in o.data.materials:
     file.write("  <Material name='" + m.name + "'/>\n")
 
@@ -1263,7 +1287,6 @@ def export_sceleton(file, o):
 
 
 def export_obstacle(file, o):
-
   file.write(" <Obstacle polygons='" + str(len(o.faces)) + "' absorption='" + toSnum(o.absorption) + "'>\n")
   for face in o.faces:
     file.write("  <Polygon vertices='" + str(len(face)) + "'>\n")
@@ -1348,8 +1371,7 @@ class kgmExport(bpy.types.Operator, ExportHelper):
   exp_particles  : BoolProperty(name="Export Particles", description="", default=False)
   exp_obstacles  : BoolProperty(name="Export Obstacles", description="", default=False)
   exp_kgmobjects : BoolProperty(name="Export Units", description="", default=False)
-  is_selection   : BoolProperty(name="Selected only", description="", default=False)
-  smooth_mesh    : FloatProperty(name="Smooth mesh", description="", default=30, min = 0, max = 45)
+  is_selection   : BoolProperty(name="Selected Only", description="", default=False)
 
   type = bpy.props.EnumProperty(items=(('OPT_A', "Xml", "Xml format"), ('OPT_B', "Bin", "Binary format")),
                                 name="Format", description="Choose between two items", default='OPT_A')
@@ -1367,9 +1389,6 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     # if not self.is_property_set("filepath"):
     # raise Exception("filename not set")
 
-    global kgm_mesh_smooth_angle
-    kgm_mesh_smooth_angle = toRad( self.smooth_mesh )
-
     scene = context.scene
     for o in scene.objects:
       print(o.name + ':' + o.type)
@@ -1377,9 +1396,11 @@ class kgmExport(bpy.types.Operator, ExportHelper):
     self.objects = []
 
     if self.is_selection:
-      self.objects = [ob for ob in scene.objects if ob.visible_get() and ob.select]
+      self.objects = [ob for ob in context.selected_objects if ob.visible_get()]
     else:
       self.objects = [ob for ob in scene.objects if ob.visible_get()]
+
+    print("Export nodes count: " + str(len(self.objects)))
 
     #objects = self.objects
 
@@ -1556,23 +1577,33 @@ class kgmExport(bpy.types.Operator, ExportHelper):
       return self.execute(context)
 
   def collect_meshes(self):
+    print("Collecting mesh nodes from objects: " + str(len(self.objects)))
+
     if self.exp_meshes is not True:
       print("Export meshes are not enabled.")
       return
 
-    self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision.use != True and ob.parent == None]
+    #self.mesh_nodes = [ob for ob in self.objects if ob.type == 'MESH' and ob.collision != None and ob.collision.use != True and ob.parent == None]
+    for ob in self.objects:
+      o = ob.name
+      t = ob.type
+      print("object name %s, type %s" % (o, t))
+      if ob.type == 'MESH':
+        #if isinstance(ob.collision, types.NoneType) is True:
+          self.mesh_nodes.append(ob)
+
     print("Collected mesh nodes: " + str(len(self.mesh_nodes)))
 
-    terrains = []
+    #terrains = []
 
-    for i in reversed(range(len(self.mesh_nodes))):
-      if hasModifier(self.mesh_nodes[i], 'Displace') is True:
-        print("Removing mesh: " + self.mesh_nodes[i].name + " as had displace modifier.")
-        terrains.append(self.mesh_nodes[i])
-        del self.mesh_nodes[i]
+    #for i in reversed(range(len(self.mesh_nodes))):
+    #  if hasModifier(self.mesh_nodes[i], 'Displace') is True:
+    #    print("Removing mesh: " + self.mesh_nodes[i].name + " as had displace modifier.")
+    #    terrains.append(self.mesh_nodes[i])
+    #    del self.mesh_nodes[i]
 
-    if len(terrains) > 0:
-      self.terrain = kgmTerrain(terrains[-1])
+    #if len(terrains) > 0:
+    #  self.terrain = kgmTerrain(terrains[-1])
 
     for n in self.mesh_nodes:
       mname = n.data.name

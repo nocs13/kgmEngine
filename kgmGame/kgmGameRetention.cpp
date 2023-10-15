@@ -55,7 +55,7 @@ bool kgmGameRetention::load()
   {
     auto i = root->m_nodes.begin();
 
-    while(!i.end())
+    while(i != root->m_nodes.end())
     {
       if ((*i)->hasattr("key") && (*i)->hasattr("value"))
       {

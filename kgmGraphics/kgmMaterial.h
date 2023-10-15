@@ -29,6 +29,13 @@ public:
     MF_Textures  = 1 << 6L,
   };
 
+  enum Type
+  {
+    TypeBase,
+    TypePhong,
+    TypeRefract
+  };
+
   enum Blend
   {
     BlendNone,
@@ -36,14 +43,6 @@ public:
     BlendAdd,
     BlendMul,
     BlendSub
-  };
-
-  enum Type
-  {
-    TypeBase,
-    TypePhong,
-    TypeLambert,
-    TypeRefract
   };
 
   enum Cull
@@ -159,7 +158,7 @@ private:
 
   f32  m_distortion;
   f32  m_shininess;
-  f32  m_fresnel;
+  f32  m_specular;
   f32  m_reflect;
 
   kgmTexture* m_tex_color = null;
@@ -264,14 +263,14 @@ public:
     m_shininess = s;
   }
 
-  f32 fresnel() const
+  f32 specular() const
   {
-    return m_fresnel;
+    return m_specular;
   }
 
-  void fresnel(f32 f)
+  void specular(f32 s)
   {
-    m_fresnel = f;
+    m_specular = s;
   }
 
   f32 reflect() const

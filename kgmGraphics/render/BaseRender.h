@@ -27,18 +27,6 @@ class BaseRender: public kgmObject
     vec4 plane  = vec4(0, 0, 1, 0);
   };
 
-  struct OLight
-  {
-    kgmIGraphics::INode* l;
-    f32    f;
-  };
-
-  struct OMesh
-  {
-    kgmIGraphics::INode* l;
-    f32    d;
-  };
-
 protected:
   kgmGraphics* gr;
   kgmIGC*      gc;

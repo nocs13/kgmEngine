@@ -123,7 +123,7 @@ bool kgmGameAI::addUnit(kgmUnit* unit)
 
   auto i = m_units.begin();
 
-  while(!i.end()) {
+  while(i != m_units.end()) {
     if ((*i).unit == unit)
       return false;
     i.next();
@@ -134,7 +134,7 @@ bool kgmGameAI::addUnit(kgmUnit* unit)
 
   auto j = m_types.begin();
 
-  while(!j.end()) {
+  while(j != m_types.end()) {
     if ((*j).type == st) {
       ut = &(*j);
       break;
@@ -160,7 +160,7 @@ kgmGameAI::UnitType* kgmGameAI::getType(kgmString type)
 {
   auto i = m_types.begin();
 
-  while(!i.end()) {
+  while(i != m_types.end()) {
     if ((*i).type == type) {
       return &(*i);
     }
@@ -178,7 +178,7 @@ kgmGameAI::State* kgmGameAI::getState(UnitType* ut, kgmString s)
 
   auto i = ut->states.begin();
 
-  while(!i.end()) {
+  while(i != ut->states.end()) {
     if ((*i).id == s)
       return &(*i);
     i.next();
@@ -194,7 +194,7 @@ kgmGameAI::Input*  kgmGameAI::getInput(UnitType* ut, u32 in)
 
   auto i = ut->inputs.begin();
 
-  while(!i.end()) {
+  while(i != ut->inputs.end()) {
     if ((*i).input1 == in)
       return &(*i);
     i.next();

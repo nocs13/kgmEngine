@@ -63,7 +63,7 @@ void kgmGuiContainer::update()
 
   auto i = _cells.begin();
 
-  while(!i.end()) {
+  while(i != _cells.end()) {
     if (cols >= (u32) CellSize_5) {
       row ++;
       cols = 0;

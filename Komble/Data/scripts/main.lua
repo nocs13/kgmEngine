@@ -60,6 +60,7 @@ end
 
 function main_unload()
   kgm_log('Unloading...')
+  iunit = 0
   return kgmGameUnload()
 end
 
@@ -104,7 +105,8 @@ function main_oninit()
 
   guis_init()
 
-  maps[1] = 'map00.map'
+  --maps[1] = 'map00.map'
+  maps[1] = 'map_01.map'
   maps[2] = 'map01.map'
   maps[3] = 'map02.map'
   maps[4] = 'map03.map'
@@ -153,26 +155,17 @@ function main_onload()
 
   player:setCamera(cam)
 
-  it = kgmUnitIterator()
+  table.insert(units, player)
 
-  if it ~= nil then
-    while 1 do
-      u = nil
-      u = kgmUnitIterNext(it)
+  s = nil --sky_generate()
 
-      if not u then
-        break
-      end
-
-      table.insert(units, u)
-    end
+  if s ~= nil then
+    s:setCamera(player:getCamera())
+    table.insert(units, s)
   end
 
-  kgmUnitIterFree(it);
-
-  it = nil
-
   kgm_log('Switch to play state')
+
   state = State_Play
 end
 
@@ -183,6 +176,8 @@ function main_onunload()
   player = nil
   cam    = nil
 
+  iunit = 0
+
   kgm_log('Switch to idle state')
   state = State_Idle
 
@@ -190,14 +185,16 @@ function main_onunload()
 end
 
 function main_oninsert(u)
+  kgm_log('Insert unit ...')
   if u ~= nil then
     iunit = iunit + 1
-    units[iunit] = u
 
     nm = kgmUnitName(u)
-    cl = kgmUnitClass(u)
+    cl = kgmUnitType(u)
 
-    kgm_log('Insert unit name: ' .. nm .. ' class: ' .. cl)
+    units[iunit] = Unit_assign(u)
+
+    kgm_log('Insert unit name: ' .. nm .. ' type: ' .. cl)
   end
 end
 

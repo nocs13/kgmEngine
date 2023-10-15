@@ -144,7 +144,7 @@ kgmGameBase::~kgmGameBase()
 
   log("free gui...");
 
-  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); !i.end(); ++i)
+  for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); i++)
     delete (*i);
 
   m_guis.clear();
@@ -351,7 +351,6 @@ void kgmGameBase::initGC()
       m_gc = nullptr;
     }
   } else if (v == "OGL") {
-    //new kgmOGL(this);
     m_gc = kgmCreateOGLContext(this);
   } else if (v == "EGL") {
     m_gc = kgmCreateGLESContext(this);
@@ -458,8 +457,11 @@ void kgmGameBase::onKeyUp(int k)
 
   m_keys[k] = 0;
 
-  if (m_script && (k == KEY_ESCAPE))
+  if (m_script && (k == KEY_ESCAPE) && (m_state == State_Play))
+  {
+    m_state = State_Pause;
     m_script->onPause();
+  }
 }
 
 void kgmGameBase::onKeyDown(int k)
@@ -543,7 +545,7 @@ void kgmGameBase::onEvent(kgmEvent::Event* e)
   if (e->event == evtKeyDown)
     count = 0;
 
-  for(auto i = m_guis.begin(); !i.end(); i.next())
+  for(auto i = m_guis.begin(); i != m_guis.end(); i.next())
   {
     kgmGui* gui = (*i);
 
@@ -722,6 +724,9 @@ int kgmGameBase::gLoad(kgmString s)
 
     if (m_physics && u->getBody())
       m_physics->add(u->getBody());
+
+    if (m_script)
+      m_script->onInsert(u);
   }
 
   if(m_graphics)
@@ -751,7 +756,7 @@ int kgmGameBase::gUnload()
   if (m_script)
     m_script->onUnload();
 
-  for(kgmList<kgmUnit*>::iterator i = m_units.begin(); !i.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = m_units.begin(); i != m_units.end(); i++)
   {
     if (m_script)
       m_script->onRemove((*i));
@@ -759,7 +764,7 @@ int kgmGameBase::gUnload()
     (*i)->release();
   }
 
-  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); !i.end(); ++i)
+  for(kgmList<kgmObject*>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
     (*i)->release();
 
   m_units.clear();
@@ -818,9 +823,7 @@ kgmUnit* kgmGameBase::gUnit(kgmString id)
 {
   kgmUnit* un = null;
 
-  kgmList<kgmUnit*>::iterator i = m_units.begin();
-
-  for (; !i.end(); ++i)
+  for (auto i = m_units.begin(); i != m_units.end(); i++)
   {
     if ((*i)->getName() == id)
     {

@@ -20,7 +20,7 @@ void kgmTimer::Thread::run()
   {
     lock();
 
-    for(auto i = timer->list.begin(); !i.end(); i.next())
+    for(auto i = timer->list.begin(); i != timer->list.end(); i.next())
     {
       kgmTimer::Chunk c = (*i);
 
@@ -82,7 +82,7 @@ bool kgmTimer::add(Function fn, void *ob, u32 dy)
 
 void kgmTimer::remove(Function fn)
 {
-  for(auto i = list.begin(); !i.end(); i.next())
+  for(auto i = list.begin(); i != list.end(); i.next())
   {
     if ((*i).fn == fn)
     {

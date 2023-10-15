@@ -92,12 +92,12 @@ private:
 
     kgmUnit* next()
     {
-      if (i.end())
+      if (i == game->m_units.end())
         return null;
 
       kgmUnit* u = (*i);
 
-      ++i;
+      i++;
 
       return u;
     }

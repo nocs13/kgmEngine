@@ -44,7 +44,7 @@ kgmGameScript::~kgmGameScript()
 {
   clear();
 
-  for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); !i.end(); ++i)
+  for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); i != slots.end(); i++)
     delete (*i);
 
   delete handler;
@@ -1146,7 +1146,6 @@ s32 kgmGameScript::kgmUnitSetMesh(void*)
   switch (t->type())
   {
     case kgmMaterial::TypePhong:
-    case kgmMaterial::TypeLambert:
       n->setNodeShader(kgmIGraphics::ShaderPhong);
       break;
     case kgmMaterial::TypeBase:

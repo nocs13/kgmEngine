@@ -350,7 +350,7 @@ kgmXml::XmlState kgmXml::next()
   m_tagData.clear();
   m_tagName.clear();
 
-  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); i.next())
+  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); i.next())
   {
     delete (*i);
   }
@@ -556,7 +556,7 @@ kgmXml::XmlState kgmXml::close()
   m_tagData.clear();
   m_tagName.clear();
 
-  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); i.next())
+  for (kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); i.next())
   {
     delete (*i);
   }
@@ -588,7 +588,7 @@ bool kgmXml::attribute(int i, kgmString& key, kgmString& value)
 
 bool kgmXml::attribute(kgmString key, kgmString& value)
 {
-  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); ++i)
+  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); i++)
   {
 
     if(key == (*i)->m_name)
@@ -604,7 +604,7 @@ bool kgmXml::attribute(kgmString key, kgmString& value)
 
 bool kgmXml::hasattr(kgmString id)
 {
-  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); !i.end(); ++i)
+  for(kgmList<Attribute*>::iterator i = m_attributes.begin(); i != m_attributes.end(); i++)
   {
     if(id == (*i)->m_name)
     {

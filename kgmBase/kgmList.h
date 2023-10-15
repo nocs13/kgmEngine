@@ -36,12 +36,18 @@ public:
   class iterator
   {
     friend class kgmList<T>;
+
     _Node* _Ptr;
+
+    _Node*      _prev;
+    kgmList<T>* _list;
 
   public:
     iterator()
     {
       _Ptr = NULL;
+      _prev = null;
+      _list = null;
     }
 
     T& operator*()
@@ -49,31 +55,42 @@ public:
       return _Ptr->data;
     }
 
-    void operator++()
+    void operator++(int)
     {
-      if(_Ptr && _Ptr->next)
+      if(_Ptr) {
+        _prev = _Ptr;
         _Ptr = _Ptr->next;
+      }
     }
 
     void operator--()
     {
-      if(_Ptr && _Ptr->prev)
-        _Ptr = _Ptr->prev;
+      if(_Ptr && _Ptr->prev) {
+        _Ptr  = _Ptr->prev;
+        _prev = _Ptr->prev;
+      }
     }
 
     bool operator!=(iterator i)
     {
+      if (i._list != _list)
+        kgm_fatal("Not valid list sources.");
+
       return (_Ptr != i._Ptr);
     }
 
     bool operator==(iterator i)
     {
+      if (i._list != _list)
+        kgm_fatal("Not valid list sources.");
+
       return (_Ptr == i._Ptr);
     }
 
     bool next()
     {
-      if (_Ptr && _Ptr->next) {
+      if (_Ptr) {
+        _prev = _Ptr;
         _Ptr = _Ptr->next;
 
         return true;
@@ -86,6 +103,7 @@ public:
     {
       if (_Ptr && _Ptr->prev) {
         _Ptr = _Ptr->prev;
+        _prev = _Ptr->prev;
 
         return true;
       }
@@ -93,13 +111,15 @@ public:
       return false;
     }
 
+    /*
     bool end()
     {
-      if (_Ptr && (_Ptr->next == null))
+      if (!_Ptr)
         return true;
 
       return false;
     }
+    */
 
     bool haveNext()
     {
@@ -227,7 +247,7 @@ public:
 
     if (!csize && (_First || _Last))
     {
-      exit(EXIT_FAILURE);
+      kgm_fatal("Invalid iterator for erase.");
     }
 
     return i;
@@ -335,7 +355,19 @@ public:
   iterator begin()
   {
     iterator i;
+
     i._Ptr = _First;
+    i._list = this;
+
+    return i;
+  }
+
+  iterator last()
+  {
+    iterator i;
+
+    i._Ptr = _Last;
+    i._list = this;
 
     return i;
   }
@@ -343,7 +375,10 @@ public:
   iterator end()
   {
     iterator i;
-    i._Ptr = _Last;
+
+    i._Ptr  = null;
+    i._list = this;
+    i._prev = _Last;
 
     return i;
   }

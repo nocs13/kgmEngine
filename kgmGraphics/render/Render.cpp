@@ -23,14 +23,105 @@ void Render::render()
 {
 }
 
-void Render::renderMeshes(kgmCamera& cam, kgmList<OLight>& olights, kgmList<OMesh>& meshes)
+void Render::renderMeshes(kgmCamera& cam, kgmList<kgmIGraphics::INode*>& olights,
+                          kgmList<kgmIGraphics::INode*>& meshes, kgmList<kgmIGraphics::INode*>& bmeshes)
 {
+  kgmShader* s = null;
 
-}
+  kgmList<kgmIGraphics::INode*> nreflects;
+  kgmList<kgmIGraphics::INode*> nshadows;
 
-void Render::renderBMeshes(kgmCamera& cam, kgmList<OLight>& olights, kgmList<OMesh>& bmeshes)
-{
+  // Render non transparent meshes.
 
+  for (auto i = meshes.begin(); i != meshes.end(); i++)
+  {
+    kgmIGraphics::INode* node = (*i);
+
+    kgmMesh*     msh = static_cast<kgmMesh*>( node->getNodeObject() );
+    kgmMaterial* mtl = (node->getNodeMaterial()) ? (node->getNodeMaterial()) : (gr->m_def_material);
+
+    mtx4     m = node->getNodeTransform();
+
+    switch(mtl->type())
+    {
+      case kgmMaterial::TypeBase:
+        s = gr->m_shaders[kgmGraphics::ShaderBase];
+      break;
+      case kgmMaterial::TypePhong:
+        s = gr->m_shaders[kgmGraphics::ShaderPhong];
+      break;
+      default:
+        s = gr->m_shaders[kgmGraphics::ShaderColor];
+    };
+
+    s = gr->m_shaders[kgmGraphics::ShaderPhong];
+
+    gr->setWorldMatrix(m);
+    gr->set(mtl);
+
+    gr->set(s);
+    gr->shaderSetGeneral();
+
+    shaderSetLights(s, olights);
+
+    gr->shaderSetPrivate();
+
+    gc->gcBlend(false, 0, gcblend_srcalpha, gcblend_srcialpha);
+
+    draw(msh);
+  }
+
+  // Render transparent meshes.
+
+  for (auto i = bmeshes.begin(); i != bmeshes.end(); i++)
+  {
+    kgmIGraphics::INode* node = (*i);
+
+    kgmIGraphics::TypeNode type = node->getNodeType();
+
+    if (type != kgmIGraphics::NodeMesh)
+      continue;
+
+    kgmMesh*     msh = static_cast<kgmMesh*>( node->getNodeObject() );
+    kgmMaterial* mtl = node->getNodeMaterial();
+
+    if (!mtl)
+      continue;
+
+    mtx4     m = node->getNodeTransform();
+
+    switch(mtl->type())
+    {
+      case kgmMaterial::TypeBase:
+        s = gr->m_shaders[kgmGraphics::ShaderBase];
+      break;
+      case kgmMaterial::TypePhong:
+        s = gr->m_shaders[kgmGraphics::ShaderPhong];
+      break;
+      default:
+        s = gr->m_shaders[kgmGraphics::ShaderColor];
+    };
+
+    gr->setWorldMatrix(m);
+    gr->set(mtl);
+
+    gr->set(s);
+    gr->shaderSetGeneral();
+
+    shaderSetLights(s, olights);
+
+    gr->shaderSetPrivate();
+
+    gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
+
+    draw(msh);
+
+    gr->set((kgmMaterial*) null);
+    gr->set((kgmShader*) null);
+  }
+
+  // Group reflect meshes and prepare general reflect cube map.
+  // Blend draw cube on reflected meshes using stencil.
 }
 
 void Render::renderGuis(kgmList<kgmGui*>& guis)
@@ -48,7 +139,7 @@ void Render::renderGuis(kgmList<kgmGui*>& guis)
   gr->shaderSetGeneral();
   gr->shaderSetPrivate();
 
-  for(auto i = guis.begin(); i != guis.end(); ++i)
+  for(auto i = guis.begin(); i != guis.end(); i++)
   {
     kgmGui* gui = (*i);
 
@@ -72,7 +163,7 @@ void Render::renderGui(kgmGui* gui)
   kgmGui::Rect rect;
   kgmString    text;
 
-  if(!gui)
+  if(!gui || !gui->visible())
     return;
 
   gui->getRect(rect, true);
@@ -339,11 +430,8 @@ void Render::renderGui(kgmGui* gui)
   if(gui->alpha())
     gr->gc->gcBlend(false, 0, gcblend_zero, gcblend_zero);
 
-  for(int i = 0; i < gui->m_childs.length(); i++)
-  {
-    if(gui->m_childs[i]->m_view)
-      renderGui(gui->m_childs[i]);
-  }
+  for(auto i = gui->m_childs.begin(); i != gui->m_childs.end(); i++)
+    renderGui((*i));
 }
 
 void Render::renderGuiMenuItem(kgmGui* m, void *i)
@@ -421,4 +509,99 @@ void Render::renderFPS()
   gr->shaderSetPrivate();
 
   gcDrawText(gr->gc, gr->font, 10, 15, 0xffffffff, kgmGui::Rect(gr->m_viewport.width() - 200, 1, 90, 20), text);
+}
+
+void Render::shaderSetLights(kgmShader* s, kgmList<kgmIGraphics::INode*>& olights)
+{
+  const s32 maxLights = 12;
+
+  if (!s || olights.length() < 1) {
+    shaderSetDefaultLight(s);
+
+    return;
+  }
+
+  s32 lcount = olights.length() - 1;
+
+  s->set("g_iLights", (lcount > maxLights) ? (maxLights) : (lcount));
+
+  kgmIGraphics::INode* n = static_cast<kgmIGraphics::INode*>(olights[0]);
+
+  kgmLight* l = static_cast<kgmLight*>(n->getNodeObject());
+
+  vec3 col = l->color();
+  vec3 pos = n->getNodePosition();
+  vec3 dir = l->direction();
+
+  float intensity = l->intensity();
+  float angle     = l->angle();
+
+  if (dir.length() < 0.1) {
+    dir.set(1, 1, -1);
+    dir.normalize();
+  }
+
+  s->set("g_sLight.col", col);
+  s->set("g_sLight.pos", pos);
+  s->set("g_sLight.dir", dir);
+  s->set("g_sLight.force", intensity);
+
+  s8 lcolor[]     = "g_sOmnies[  ].col";
+  s8 lposition[]  = "g_sOmnies[  ].pos";
+  s8 lforce[]     = "g_sOmnies[  ].force";
+
+  auto i = olights.begin();
+  i++;
+
+  s32 ii = 0;
+
+  for(; i != olights.end(); i++)
+  {
+    n = (*i);
+
+    if (!n || ii > MAX_LIGHTS)
+      break;
+
+    l = (kgmLight*) n->getNodeObject();
+
+    snprintf(lcolor, sizeof(lcolor) - 1, "g_sOmnies[%d].col", ii);
+    snprintf(lposition, sizeof(lposition) - 1, "g_sOmnies[%d].pos", ii);
+    snprintf(lforce, sizeof(lcolor) - 1, "g_sOmnies[%d].force", ii);
+
+    intensity = l->intensity();
+    angle     = l->angle();
+
+    s->set((const char*) lcolor,     col);
+    s->set((const char*) lposition,  pos);
+    s->set((const char*) lforce, intensity);
+
+    ii++;
+  }
+}
+
+void Render::shaderSetDefaultLight(kgmShader* s)
+{
+  if (!s)
+    return;
+
+  kgmIGraphics::INode* n = static_cast<kgmIGraphics::INode*>(gr->m_def_light);
+
+  kgmLight* l = static_cast<kgmLight*>(n->getNodeObject());
+
+  vec3 col = l->color();
+  vec3 pos = n->getNodePosition();
+  vec3 dir = l->direction();
+
+  float intensity = l->intensity();
+  float angle     = l->angle();
+
+  if (dir.length() < 0.1) {
+    dir.set(1, 1, -1);
+    dir.normalize();
+  }
+
+  s->set("g_sLight.col", col);
+  s->set("g_sLight.pos", pos);
+  s->set("g_sLight.dir", dir);
+  s->set("g_sLight.force", intensity);
 }

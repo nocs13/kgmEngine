@@ -40,13 +40,14 @@ private:
   kgmXml*         m_xml;
   kgmArray<u8>*   m_mem;
 
+  kgmList<kgmMesh*> m_meshes;
+
   kgmGameBase*    m_game;
+
 
 public:
   kgmGameMap(kgmGameBase* g, OpenType ot = OpenRead);
-  ~kgmGameMap()
-  {
-  }
+  ~kgmGameMap();
 
   void close();
 

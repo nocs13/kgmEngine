@@ -105,6 +105,7 @@ vec4       g_vec_color    = vec4(1, 1, 1, 1);
 
 f32        g_fShine = 0.0f;
 f32        g_fAmbient = 0.1f;
+f32        g_fSpecular = 0.1f;
 
 void*      g_tex_black = null;
 void*      g_tex_white = null;
@@ -151,6 +152,7 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   m_bg_color    = 0xFF000000;
 
   m_wired       = false;
+  m_2dmode      = false;
 
   gui_style = new kgmGuiStyle();
 
@@ -204,7 +206,15 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
     kgmLight* l = new kgmLight();
 
-    m_def_light = (INode*) new kgmNode(l, kgmIGraphics::NodeLight);
+    vec3 ldir(1, 1, -1);
+    ldir.normalize();
+    l->direction(ldir);
+    l->color(vec3(1, 1, 1));
+    l->intensity(-1);
+
+    kgmNode* ln = new kgmNode(l, kgmIGraphics::NodeLight);
+    ln->setPos(vec3(0, 0, 1000));
+    m_def_light = (INode*) ln;
 
     l->release();
 
@@ -307,7 +317,7 @@ void kgmGraphics::clear()
   if (m_rnd_terrain)
     m_rnd_terrain->clear();
 
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
   {
     (*i)->release();
   }
@@ -342,7 +352,7 @@ bool kgmGraphics::resource(kgmResource* r)
 
 kgmResource* kgmGraphics::resource(kgmString id)
 {
-  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
   {
     if (id == (*i)->id())
       return (*i);
@@ -456,6 +466,91 @@ void kgmGraphics::render()
 {
   mtx4 m;
 
+  kgmList<INode*> lights;
+  kgmList<INode*>  meshes;
+  kgmList<INode*>  bmeshes;
+
+  collectOLights(*m_camera, lights);
+  collectOMeshes(*m_camera, meshes, bmeshes);
+
+  gc->gcSetTarget(null);
+  gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
+
+  gc->gcCull(1);
+
+  setProjMatrix(m_camera->mProj);
+  setViewMatrix(m_camera->mView);
+  m_g_mtx_world.identity();
+
+  m_2dmode = false;
+
+  gc->gcBegin();
+  gc->gcDepth(true, true, gccmp_lequal);
+  gc->gcClear(gcflag_color | gcflag_depth, m_bg_color, 1, 0);
+  gc->gcBlend(false, 0, null, null);
+
+  set((kgmMaterial*) null);
+
+  gc->gcDepth(true, true, gccmp_lequal);
+
+  gc->gcSetShader(null);
+
+  m_render->renderMeshes(*m_camera, lights, meshes, bmeshes);
+
+  render_3d();
+
+  gc->gcCull(gccull_back);
+
+  set((kgmShader*) null);
+
+  set(m_def_material);
+  set((kgmShader*) null);
+
+  gc->gcSetShader(null);
+  gc->gcDepth(false, false, gccmp_lequal);
+  gc->gcCull(gc_none);
+
+  gc2DMode();
+
+  m.identity();
+  setWorldMatrix(m);
+
+  set(m_def_material);
+
+  render_2d();
+
+  set(m_shaders[kgmGraphics::ShaderGui]);
+
+  shaderSetGeneral();
+  shaderSetPrivate();
+
+  for (auto i = m_guis.begin(); i != m_guis.end(); i++)
+  {
+    kgmGui* g = (*i);
+
+    if (!g) {
+      m_guis.erase(i);
+    } else if (g->visible()) {
+      m_render->renderGui(g);
+    }
+  }
+
+#ifdef DEBUG
+  m_render->renderFPS();
+#endif
+
+  gc->gcEnd();
+  gc->gcRender();
+
+  lights.clear();
+  meshes.clear();
+  bmeshes.clear();
+}
+
+void kgmGraphics::render_a()
+{
+  mtx4 m;
+
   bool lighting = false;
 
   m_a_meshes_count    = 0;
@@ -464,7 +559,7 @@ void kgmGraphics::render()
 
   m_light_data.count = 0;
 
-  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); i != m_meshes.end(); i.next())
   {
     if (!(*i)->isNodeValid())
       continue;
@@ -643,7 +738,7 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
 
   gc->gcBlend(false, 0, null, null);
 
-  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); i != m_meshes.end(); i.next())
   {
     kgmIGraphics::INode* nod = (*i);
 
@@ -846,14 +941,20 @@ void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 }
 */
 
-void kgmGraphics::collectOLights(kgmCamera& cam, kgmList<BaseRender::OLight>& olights)
+void kgmGraphics::collectOLights(kgmCamera& cam, kgmList<INode*>& lights)
 {
-  if (olights.length() > 0)
-    olights.clear();
+  if (lights.length() > 0)
+    lights.clear();
+
+  kgmArray<OLight> olights;
+
+  olights.alloc(128);
+
+  s32 index = 0;
 
   const f32 min_lforce = 0.000001;
 
-  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
     INode* node = (*i);
 
@@ -866,57 +967,49 @@ void kgmGraphics::collectOLights(kgmCamera& cam, kgmList<BaseRender::OLight>& ol
 
     f32 force = light->intensity() / (1.0 + pos.distance(cam.mPos));
 
-    if (force > 1.0)
-      force = 1.0;
-
     bool isdir = false;
 
     if (light->angle() < 0.001 && light->direction().length() > 0.9)
     {
       isdir = true;
 
-      force = 1.0;
+      force = 999.0;
     }
 
-    if(!isdir && (force < min_lforce || !m_camera->isSphereCross(pos, kgmLight::LIGHT_RANGE * light->intensity())))
+    if((!m_camera->isSphereCross(pos, 10 * kgmLight::LIGHT_RANGE * light->intensity())))
       continue;
 
-    olights.add(BaseRender::OLight{node, force});
+    if (index < olights.length()) {
+      OLight o{node, force};
+      olights[index] = o;
+
+      index++;
+    }
   }
 
-  auto f = olights.begin();
-  auto l = olights.end();
+  if (index < 1) {
+    lights.add(m_def_light);
 
-  while(f != l)
-  {
-    auto i = f;
-    auto min = i;
-    auto max = i;
+    return;
+  }
 
-    i.next();
-
-    while(i != l)
-    {
-      if ((*i).f > (*max).f)
-        max = i;
-
-      if ((*i).f < (*min).f)
-        min = i;
+  for (s32 i = 0; i < index; i++) {
+    for (s32 j = i + 1; j < index; j++) {
+      if (olights[i].force < olights[j].force) {
+        auto o = olights[i];
+        olights[i] = olights[j];
+        olights[j] = o;
+      }
     }
+  }
 
-    auto ol = (*f);
-    (*f) = (*max);
-    (*max) = ol;
-     ol = (*l);
-    (*l) = (*min);
-    (*min) = ol;
-
-    f.next();
-    l.prev();
+  for (s32 i = 0; i < index; i++){
+    auto o = olights[i];
+    lights.add(o.node);
   }
 }
 
-void kgmGraphics::collectOMeshes(kgmCamera& cam, kgmList<BaseRender::OMesh> &meshes, kgmList<BaseRender::OMesh> &bmeshes)
+void kgmGraphics::collectOMeshes(kgmCamera& cam, kgmList<INode*> &meshes, kgmList<INode*> &bmeshes)
 {
   const f32 min_mforce = 0.01;
 
@@ -926,68 +1019,91 @@ void kgmGraphics::collectOMeshes(kgmCamera& cam, kgmList<BaseRender::OMesh> &mes
   if (bmeshes.length() > 0)
     bmeshes.clear();
 
-  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  kgmArray<OMesh> omeshes;
+
+  omeshes.alloc(256);
+
+  s32 index = 0;
+
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); i != m_meshes.end(); i++)
   {
     INode* node = (*i);
 
     if (!node->isNodeValid())
       continue;
 
+    kgmMesh* mh = static_cast<kgmMesh*>( node->getNodeObject() );
+    kgmString id = (mh != null) ? (mh->id()) : ("");
+
     box3 bound = node->getNodeBound();
 
     vec3  pos = node->getNodePosition();
 
     f32   l = bound.min.distance(bound.max);
-    vec3  v = (bound.min + bound.max) * 0.5;
+    //vec3  v = (bound.min + bound.max) * 0.5;
+    vec3  v = pos;
 
     f32 distance = pos.distance(cam.mPos);
     f32 mforce = l / (1.0 + pos.distance(cam.mPos));
 
-    if(mforce < min_mforce || !m_camera->isSphereCross(v, 0.5 * l))
+    bool cross = m_camera->isSphereCross(v, 0.5 * l);
+
+    if((mforce < min_mforce) || (!cross))
       continue;
 
     kgmMaterial* m = (*i)->getNodeMaterial();
 
-    if(m && (m->blend() != kgmMaterial::BlendNone || m->transparency() > 0.0f))
+    if(m && (m->transparency() > 0.01f))
     {
-      bmeshes.add(BaseRender::OMesh{(*i), distance});
+      bmeshes.add((*i));
+      if (index < omeshes.length()) {
+        omeshes[index] = OMesh{(*i), distance};
+        index++;
+      }
     }
     else
     {
-      meshes.add(BaseRender::OMesh{(*i), distance});
+      meshes.add((*i));
     }
   }
 
-  auto f = bmeshes.begin();
-  auto l = bmeshes.end();
+  return;
 
-  while (f != l)
+  if (index < 1)
+    return;
+
+  auto f = 0;
+  auto l = index;
+
+  while (f < l)
   {
-    auto i = f;
-    auto min = i;
-    auto max = i;
-
-    i.next();
+    auto i   = f;
+    auto max = f;
+    auto min = f;
 
     while (i != l)
     {
-      if ((*i).d > (*max).d)
-        max = i;
+      i++;
 
-      if ((*i).d < (*min).d)
+      if (omeshes[i].distance > omeshes[max].distance)
+        max = i;
+      if (omeshes[i].distance < omeshes[min].distance)
         min = i;
     }
 
-    auto ol = (*f);
-    (*f) = (*min);
-    (*min) = ol;
-     ol = (*l);
-    (*l) = (*max);
-    (*max) = ol;
+    auto ol = l;
+    omeshes[l] = omeshes[max];
+    omeshes[max] = omeshes[ol];
+    ol = f;
+    omeshes[f] = omeshes[min];
+    omeshes[min] = omeshes[ol];
 
-    f.next();
-    l.prev();
+    f++;
+    l--;
   }
+
+  for (s32 i = 0; i <= index; i++)
+    bmeshes.add(omeshes[i].node);
 }
 
 void kgmGraphics::draw(kgmParticles* particles)
@@ -1062,6 +1178,7 @@ void kgmGraphics::set(kgmMaterial* m)
 
     g_vec_color = vec4(1, 1, 1, 1);
     g_fShine    = 0.0f;
+    g_fSpecular = 0.0f;
     m_alpha     = false;
     m_depth     = true;
     m_culling   = true;
@@ -1073,6 +1190,7 @@ void kgmGraphics::set(kgmMaterial* m)
 
   g_vec_color    = m->m_color.get();
   g_fShine       = m->shininess();
+  g_fSpecular    = m->specular();
 
   if(m->blend())
   {
@@ -1164,19 +1282,12 @@ void kgmGraphics::set(kgmMaterial* m)
   else
   {
     gc->gcSetTexture(2, g_tex_white);
-    tspecular = g_tex_white;
+    tspecular = g_tex_black;
   }
 
   if (m->envType() != kgmMaterial::EnvironmentTypeNone)
   {
 
-  }
-
-  //if (m_shd_active)
-  if (0)
-  {
-    m_shd_active->set("g_vColor",    g_vec_color);
-    m_shd_active->set("g_fShine",    g_fShine);
   }
 
   m_mtl_active = m;
@@ -1193,58 +1304,9 @@ void kgmGraphics::set(kgmShader* s)
   }
 
   //send default parameters
-  vec4 v_light(0, 0, 0, 10);
-  vec4 v_light_color(1, 1, 1, 1);
-  vec4 v_light_direction(0, 0, 1, 0);
-
-  /*
-  if(m_a_light)
-  {
-    kgmLight* l   = (kgmLight*) m_a_light->getNodeObject();
-    vec3      pos = m_a_light->getNodePosition();
-
-    v_light           = vec4(pos.x, pos.y, pos.z, l->intensity());
-    v_light_direction = vec4(l->direction().x, l->direction().y, l->direction().z, l->angle());
-    //v_light_color     = vec4(1, 1, 1, 1); //l->color;
-    v_light_color     = vec4(l->color().x, l->color().y, l->color().z, 1.0);
-  }
-  */
-
-  float random = (float)rand()/(float)RAND_MAX;
 
   s->start();
-  /*
-  s->set("g_fTime",           kgmTime::getTime());
-  s->set("g_fRandom",         random);
-  s->set("g_fShine",          g_fShine);
-  s->set("g_fAmbient",        g_fAmbient);
-  s->set("g_mProj",           m_g_mtx_proj);
-  s->set("g_mView",           m_g_mtx_view);
-  s->set("g_mTran",           m_g_mtx_world);
-  s->set("g_mNorm",           m_g_mtx_normal);
-  s->set("g_vColor",          g_vec_color);
-  s->set("g_vSpecular",       g_vec_specular);
-  s->set("g_vEye",            m_camera->mPos);
-  s->set("g_vLook",           m_camera->mDir);
-  s->set("g_iClipping",       0);
 
-  if(tcolor)
-    s->set("g_txColor", 0);
-
-  if(tnormal)
-    s->set("g_txNormal", 1);
-
-  if(tspecular)
-    s->set("g_txSpecular", 2);
-
-  if(g_mtx_joints)
-  {
-    s->set("g_mJoints", g_mtx_joints[0], g_mtx_joints_count);
-  }
-
-  if (gc->gcGetBase() == gc_vulkan)
-    s->start();
-  */
   m_shd_active = s;
 }
 
@@ -1263,47 +1325,6 @@ void kgmGraphics::shaderSetGeneral()
   s->set("g_vEye",            m_camera->mPos);
   s->set("g_vLook",           m_camera->mDir);
   s->set("g_iClipping",       0);
-  s->set("g_iLights",         (m_a_light_count > MAX_LIGHTS) ? (MAX_LIGHTS) : (m_a_light_count));
-
-  s8 lcolor[]     = "g_sLights[  ].col";
-  s8 lposition[]  = "g_sLights[  ].pos";
-  s8 ldirection[] = "g_sLights[  ].dir";
-
-
-  for(u32 i = 0; i < m_a_light_count; i++)
-  {
-    kgmIGraphics::INode* n = m_a_lights[i];
-
-    if (!n || i > MAX_LIGHTS)
-      break;
-
-    kgmLight* l = (kgmLight*) n->getNodeObject();
-
-    snprintf(lcolor, sizeof(lcolor) - 1, "g_sLights[%d].col", i);
-    snprintf(lposition, sizeof(lposition) - 1, "g_sLights[%d].pos", i);
-    snprintf(ldirection, sizeof(ldirection) - 1, "g_sLights[%d].dir", i);
-
-    vec3 col = l->color();
-    vec3 pos = n->getNodePosition();
-    vec3 dir = l->direction();
-
-    //convert rgb to 256.
-    //int Red   = col.x * 255;
-    //int Green = col.y * 255;
-    //int Blue  = col.z * 255;
-    //int col256 = (Red * 7 / 255) << 5 + (Green * 7 / 255) << 2 + (Blue * 3 / 255);
-
-    float intensity = l->intensity();
-    float angle     = l->angle();
-
-    vec4 lpos(pos.x, pos.y, pos.z, intensity);
-    vec4 ldir(dir.x, dir.y, dir.z, angle);
-    vec4 lcol(col.x, col.y, col.z, 1.0);
-
-     s->set((const char*) lcolor,     lcol);
-     s->set((const char*) lposition,  lpos);
-     s->set((const char*) ldirection, ldir);
-  }
 }
 
 void kgmGraphics::shaderSetPrivate()
@@ -1320,6 +1341,7 @@ void kgmGraphics::shaderSetPrivate()
   s->set("g_fTime",           kgmTime::getTime());
   s->set("g_fRandom",         random);
   s->set("g_fShine",          g_fShine);
+  s->set("g_fSpecular",       g_fSpecular);
   s->set("g_vColor",          g_vec_color);
 
   if(tcolor)
@@ -1395,7 +1417,7 @@ u32 kgmGraphics::collectLights(kgmCamera* cam, kgmArray<INode*>& nodes, u32 max)
 
   u32 count = 0;
 
-  for(kgmList<INode*>::iterator i = m_lights.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_lights.begin(); i != m_lights.end(); i.next())
   {
     INode* lnod = (*i);
 
@@ -1470,7 +1492,7 @@ u32 kgmGraphics::collectMeshes(kgmCamera *cam, kgmArray<INode *> &nodes, u32 max
 
   u32 count = 0;
 
-  for(kgmList<INode*>::iterator i = m_meshes.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_meshes.begin(); i != m_meshes.end(); i.next())
   {
     INode* mnod = (*i);
 
@@ -1503,7 +1525,7 @@ u32 kgmGraphics::collectParticles(kgmCamera* cam, kgmArray<INode*>& array, u32 m
 {
   u32 count = 0;
 
-  for(kgmList<INode*>::iterator i = m_particles.begin(); !i.end(); i.next())
+  for(kgmList<INode*>::iterator i = m_particles.begin(); i != m_particles.end(); i.next())
   {
     if(!(*i)->isNodeValid())
       continue;
@@ -1524,14 +1546,24 @@ u32 kgmGraphics::collectParticles(kgmCamera* cam, kgmArray<INode*>& array, u32 m
 //*************** VIEW MODE *************
 void kgmGraphics::gc2DMode()
 {
+  if (m_2dmode)
+    return;
+
   setProjMatrix(m_g_mtx_orto);
   setViewMatrix(m_g_mtx_iden);
+
+  m_2dmode = true;
 }
 
 void kgmGraphics::gc3DMode()
 {
+  if (!m_2dmode)
+    return;
+
   setProjMatrix(m_camera->mProj);
   setViewMatrix(m_camera->mView);
+
+  m_2dmode = false;
 }
 
 //*************** DRAWING ***************

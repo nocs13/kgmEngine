@@ -10,7 +10,7 @@ kgmMaterial::kgmMaterial()
 
   m_distortion = 0.0;
   m_shininess  = 0.0;
-  m_fresnel    = 0.0;
+  m_specular    = 0.0;
 
   m_depth  = true;
 
@@ -182,7 +182,6 @@ kgmString kgmMaterial::typeToString(kgmMaterial::Type type)
 #define s_text(x) if(x == type) return #x
   s_text(TypeBase);
   s_text(TypePhong);
-  s_text(TypeLambert);
   s_text(TypeRefract);
 #undef s_text
 
@@ -197,7 +196,6 @@ kgmMaterial::Type kgmMaterial::stringToType(kgmString str)
 #define s_type(x) if(strcmp(str, #x) == 0) return x
   s_type(TypeBase);
   s_type(TypePhong);
-  s_type(TypeLambert);
   s_type(TypeRefract);
 #undef s_type
 

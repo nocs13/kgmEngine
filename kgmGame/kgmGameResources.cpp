@@ -56,7 +56,7 @@ void kgmGameResources::add(kgmResource *r)
   if (!r)
     return;
 
-  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
     if (r == (*i))
       return;
 
@@ -73,7 +73,7 @@ kgmResource *kgmGameResources::get(const char *id)
   if (!id)
     return null;
 
-  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); !i.end(); ++i)
+  for (kgmList<kgmResource *>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
     if ((*i)->id() == id)
       return (*i);
 
@@ -100,7 +100,7 @@ void kgmGameResources::clear()
 {
   kgmList<kgmResource *>::iterator i;
 
-  for (i = m_resources.begin(); !i.end(); ++i)
+  for (i = m_resources.begin(); i != m_resources.end(); i++)
   {
     kgmResource *r = (*i);
 
@@ -148,8 +148,6 @@ void kgmGameResources::clear()
     {
       delete (kgmMesh *)r;
     }
-
-    // i = m_resources.erase(i);
   }
 
   m_resources.clear();
@@ -479,8 +477,8 @@ kgmShader *kgmGameResources::getShader(const char *id)
   {
     shader->m_id = id;
     lock(shader);
-
     add(shader);
+    unlock(shader);
   }
 
   return shader;

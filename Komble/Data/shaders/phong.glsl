@@ -1,13 +1,21 @@
 #version 100
 
-struct Light
+struct MLight
 {
-  vec4   pos;
-  vec4   dir;
-  vec4   col;
+  vec3   pos;
+  vec3   dir;
+  vec3   col;
+  float  force;
 };
 
-#define MAX_LIGHTS 16
+struct PLight
+{
+  vec3   pos;
+  vec3   col;
+  float  force;
+};
+
+#define MAX_LIGHTS 12
 
 uniform mat4   g_mView;
 uniform mat4   g_mProj;
@@ -21,11 +29,13 @@ uniform float  g_fTime;
 uniform float  g_fShine;
 uniform float  g_fRandom;
 uniform float  g_fAmbient;
+uniform float  g_fSpecular;
 uniform float  g_fLightPower;
 uniform int    g_iClipping;
 uniform int    g_iLights;
 
-uniform Light  g_sLights[MAX_LIGHTS];
+uniform MLight g_sLight;
+uniform PLight g_sOmnies[MAX_LIGHTS];
 
 varying vec3   v_P;
 varying vec3   v_V;
@@ -33,6 +43,7 @@ varying vec3   v_N;
 varying vec3   v_Y;
 varying vec2   v_UV;
 varying float  v_I;
+varying float  v_spec;
 varying float  v_shine;
 varying vec4   v_color;
 
@@ -79,12 +90,13 @@ void process(out vec4 pos)
   mat3 m_N = mat3(g_mTran);
   m_N = inverse(m_N);
   //m_N = transpose(m_N);
-  v_N  = normalize( m_N * a_Normal );
-  //v_N  = normalize(a_Normal);
+  //v_N  = normalize( m_N * a_Normal );
+  v_N  = normalize(a_Normal);
   v_V  = vec3(g_mView * vec4(v_P, 1));
   pos  = g_mProj * vec4(v_V, 1);
   v_color    = g_vColor;// * a_Color;
   v_shine    = g_fShine;
+  v_spec     = g_fSpecular;
 }
 
 void main(void)
@@ -102,18 +114,28 @@ void main(void)
 precision highp float;
 #endif
 
-struct Light
+struct MLight
 {
-  vec4   pos;
-  vec4   dir;
-  vec4   col;
+  vec3   pos;
+  vec3   dir;
+  vec3   col;
+  float  force;
 };
 
-#define MAX_LIGHTS 16
+struct PLight
+{
+  vec3   pos;
+  vec3   col;
+  float  force;
+};
+
+#define MAX_LIGHTS 12
 #define M_PI 3.14159265359
 
 uniform int    g_iLights;
-uniform Light  g_sLights[MAX_LIGHTS];
+
+uniform MLight g_sLight;
+uniform PLight g_sOmnies[MAX_LIGHTS];
 
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;
@@ -125,6 +147,7 @@ varying vec3   v_N;
 varying vec3   v_Y;
 varying vec2   v_UV;
 varying float  v_I;
+varying float  v_spec;
 varying float  v_shine;
 varying vec4   v_color;
 
@@ -145,58 +168,41 @@ int  ilcol = 1000 * int(g_sLights[i].pos.w - power);
 void process(out vec4 col)
 {
   vec3 cbase = vec3( v_color * texture2D(g_txColor, v_UV) );
-  vec3 sbase = vec3( v_color * texture2D(g_txSpecular, v_UV) );
+  vec3 sbase = vec3( texture2D(g_txSpecular, v_UV) );
+  vec3 nbase = vec3( texture2D(g_txNormal, v_UV) );
+
   vec3 shade = vec3(0.0, 0.0, 0.0);
   vec3 shine = vec3(0.0, 0.0, 0.0);
 
   vec3 vnor = normalize(v_N);
 
+  vec3 lpos = g_sLight.pos;
+  vec3 ldir = normalize(lpos - v_P);
+
+  vec3 vdir = normalize(v_Y - v_P);
+  vec3 rdir = reflect(-ldir, vnor);
+
+  float spec = v_spec * pow(max(dot(vdir, rdir), 0.0), v_shine);
+
+  vec3 diff = g_sLight.col * max(dot(vnor, ldir), 0.01);
+
   for (int i = 0; i < g_iLights; i++)
   {
-    vec3 lpos = g_sLights[i].pos.xyz;
-    vec3 ldir = g_sLights[i].dir.xyz;
-    vec3 lcol = g_sLights[i].col.rgb;
+    vec3 lpos = g_sOmnies[i].pos;
+    vec3 ldir = normalize(lpos - v_P);
 
-    float power = g_sLights[i].pos.w;
-    float angle = g_sLights[i].dir.w;
-    float dsize = abs( length(lpos - v_P) );
+    vec3 odiff = g_sOmnies[i].col * max(dot(vnor, ldir), 0.01);
 
-
-    //if (angle > M_PI)
-    {
-      //dsize = 1.0;
-      ldir = normalize(v_P - lpos);
-    }
-
-    float lambert = dot(-ldir, vnor) * (power / dsize);
-
-    lambert = max(lambert, 0.0);
-
-    shade.rgb += (lcol * lambert);
-
-    if (lambert > 0.0 && v_shine > 0.0)
-    {
-      vec3 R = reflect(ldir, vnor);            // Reflected light vector
-      vec3 V = normalize(v_P - v_Y);           // Vector to viewer
-      // Compute the specular term
-      float angle = max(dot(R, -V), 0.0);
-      float specular = pow(angle, v_shine);
-      shine += (specular / dsize);
-    }
+    diff += (odiff / (.1 + length(lpos - v_P)));
   }
 
-  //shine = normalize(shine);
-
-  col.rgb = cbase * shade + shine * sbase;
-  //col.rgb = shine;
-  //col.rgb = shade;
+  col.rgb = cbase * diff + g_sLight.col * spec + sbase * spec;
   col.w = v_color.w * texture2D(g_txColor, v_UV).w;
 }
 
 void main( void )
 {
-    vec4 col;
-    process(col);
-    //col = vec4(1, 0, 0, 1);
-    gl_FragColor = col;
+  vec4 col;
+  process(col);
+  gl_FragColor = col;
 }

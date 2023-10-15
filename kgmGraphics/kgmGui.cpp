@@ -194,7 +194,7 @@ kgmGui* kgmGui::getById(u32 id)
   if(m_id == id)
     return this;
 
-  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); !i.end(); ++i)
+  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
   {
     kgmGui* g = (*i)->getById(id);
 
@@ -210,7 +210,7 @@ kgmGui* kgmGui::getBySid(kgmString sid)
   if(m_sid == sid)
     return this;
 
-  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); !i.end(); ++i)
+  for(kgmList<kgmGui*>::iterator i = m_childs.begin(); i != m_childs.end(); i++)
   {
     kgmGui* g = (*i)->getBySid(sid);
 
@@ -248,7 +248,7 @@ bool kgmGui::isChild(kgmGui* g)
 
   auto i = m_childs.begin();
 
-  for (; !i.end(); i.next()) {
+  for (; i != m_childs.end(); i.next()) {
     if ((*i) == g)
       return true;
     if ((*i)->isChild(g))
@@ -339,7 +339,7 @@ void kgmGui::onMsLeftDown(int k, int x, int y)
 {
   if(!m_view || m_freeze)
     return;
-  
+
   if(!m_parent)
   {
     x = x - m_rect.x;
@@ -376,7 +376,7 @@ void kgmGui::onMsLeftUp(int k, int x, int y)
 {
   if(!m_view || m_freeze)
     return;
-  
+
   if(!m_parent)
   {
     x = x - m_rect.x;
@@ -403,7 +403,7 @@ void kgmGui::onMsRightDown(int k, int x, int y)
 {
   if(!m_view || m_freeze)
     return;
-  
+
   if(!m_parent)
   {
     x = x - m_rect.x;
@@ -465,7 +465,7 @@ void kgmGui::onKeyDown(int k)
 {
   if(!m_view || m_freeze)
     return;
-  
+
   if(m_focus && m_focus != this && !m_focus->m_freeze)
     m_focus->onKeyDown(k);
 }
@@ -474,7 +474,7 @@ void kgmGui::onKeyUp(int k)
 {
   if(!m_view || m_freeze)
     return;
-  
+
   if(m_focus && m_focus != this && !m_focus->m_freeze)
     m_focus->onKeyUp(k);
 }
@@ -523,7 +523,7 @@ void kgmGui::delChild(kgmGui *e)
   if(!e || !isChild(e))
     return;
 
-  for(Guis::iterator i = m_childs.begin(); !i.end(); ++i)
+  for(Guis::iterator i = m_childs.begin(); i != m_childs.end(); i++)
   {
     if(e == *i)
     {

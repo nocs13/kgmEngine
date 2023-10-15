@@ -22,6 +22,18 @@ kgmGameMap::kgmGameMap(kgmGameBase* g, OpenType ot)
   m_mem = null;
 }
 
+kgmGameMap::~kgmGameMap()
+{
+  for (auto i = m_meshes.begin(); i != m_meshes.end(); i++)
+  {
+    if ((*i))
+      (*i)->release();
+  }
+
+  m_meshes.clear();
+}
+
+
 bool kgmGameMap::open(kgmXml& xml)
 {
   if(m_mem)
@@ -65,7 +77,7 @@ bool kgmGameMap::save(kgmString path)
 
   kgmList<kgmUnit*> nodes;
 
-  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); !i.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = nodes.begin(); i != nodes.end(); i++)
   {
     if((*i)->isClass("kgmUnit"))
       units.add((kgmUnit*) (*i));
@@ -79,7 +91,7 @@ bool kgmGameMap::save(kgmString path)
       triggers.add((kgmTrigger*) (*i));
   }
 
-  for(kgmList<kgmUnit*>::iterator i = units.begin(); !i.end(); ++i) {
+  for(kgmList<kgmUnit*>::iterator i = units.begin(); i != units.end(); i++) {
     kgmIGraphics::INode* n = (*i)->getNode();
 
     if (!n)
@@ -102,17 +114,19 @@ bool kgmGameMap::save(kgmString path)
     }
   }
 
-  for(kgmList<kgmUnit*>::iterator i = actors.begin(); !i.end(); ++i)
+  for(kgmList<kgmUnit*>::iterator i = actors.begin(); i != actors.end(); i++)
     addActor(*i);
 
-  for(kgmList<kgmEffect*>::iterator i = effects.begin(); !i.end(); ++i)
+  /*
+  for(kgmList<kgmEffect*>::iterator i = effects.begin(); !i.end(); i++)
     addEffect(*i);
 
-  for(kgmList<kgmSensor*>::iterator i = sensors.begin(); !i.end(); ++i)
+  for(kgmList<kgmSensor*>::iterator i = sensors.begin(); !i.end(); i++)
     addSensor(*i);
 
-  for(kgmList<kgmTrigger*>::iterator i = triggers.begin(); !i.end(); ++i)
+  for(kgmList<kgmTrigger*>::iterator i = triggers.begin(); !i.end(); i++)
     addTrigger(*i);
+  */
 
   triggers.clear();
   sensors.clear();
@@ -388,7 +402,6 @@ kgmUnit* kgmGameMap::next()
   kgmUnit*   node = null;
   kgmObject* data = null;
 
-
   bool closed   = true;
 
   s32       vint;
@@ -481,11 +494,18 @@ kgmUnit* kgmGameMap::next()
         }
         else
         {
-          m = new kgmMesh();
+          kgmString data;
+          m_xml->attribute("data", data);
 
-          //m_game->m_objects.add(m);
+          for (auto i = m_meshes.begin(); i != m_meshes.end(); i++)
+          {
+            if ((*i)->id() == data)
+            {
+              m = (*i);
 
-          data = m;
+              break;
+            }
+          }
         }
 
         node = new kgmUnit(m_game);
@@ -504,6 +524,18 @@ kgmUnit* kgmGameMap::next()
         }
 
         closed = false;
+      }
+      else if(id == "MeshData")
+      {
+        kgmMesh*  m = new kgmMesh();
+
+        kgmString id;
+        m_xml->attribute("name", id);
+
+        m->setId(id);
+
+        data = m;
+        m_meshes.add(m);
       }
       else if(id == "Light")
       {
@@ -793,16 +825,11 @@ kgmUnit* kgmGameMap::next()
         xmlAttr(m_xml, "value", vfloat);
         ((kgmMaterial*)data)->transparency(1.0f - vfloat);
       }
-      else if(id == "Fresnel")
+      else if(id == "Specular")
       {
-        f32 fm = 0.0, ft = 0.0;
+        xmlAttr(m_xml, "value", vfloat);
 
-        xmlAttr(m_xml, "mirror", vfloat);
-        fm = vfloat;
-        xmlAttr(m_xml, "transparency", vfloat);
-        ft = vfloat;
-
-        ((kgmMaterial*)data)->fresnel(fm + ft);
+        ((kgmMaterial*)data)->specular(vfloat);
       }
       else if(id == "Blend")
       {
@@ -1005,8 +1032,11 @@ kgmUnit* kgmGameMap::next()
         {
           kgmMesh* m = (kgmMesh*) node->getNode()->getNodeObject();
 
-          if (m)
+          if (m) {
             m->rebuild();
+            box3 b = m->bound();
+            node->setBound(b);
+          }
 
           closed = true;
 
@@ -1183,7 +1213,7 @@ kgmUnit* kgmGameMap::next()
 
 kgmMesh* kgmGameMap::getGameMesh(kgmString id)
 {
-  for(kgmList<kgmObject*>::iterator i = m_game->m_objects.begin(); !i.end(); ++i)
+  for(kgmList<kgmObject*>::iterator i = m_game->m_objects.begin(); i != m_game->m_objects.end(); i++)
   {
     kgmObject* o = (*i);
 
@@ -1201,7 +1231,7 @@ kgmMesh* kgmGameMap::getGameMesh(kgmString id)
 
 kgmMaterial* kgmGameMap::getGameMaterial(kgmString id)
 {
-  for(kgmList<kgmObject*>::iterator i = m_game->m_objects.begin(); !i.end(); ++i)
+  for(kgmList<kgmObject*>::iterator i = m_game->m_objects.begin(); i != m_game->m_objects.end(); i++)
   {
     kgmObject* o = (*i);
 

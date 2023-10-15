@@ -61,7 +61,7 @@ void IconRender::render()
 
 void IconRender::render(kgmList<kgmLight*>& lights)
 {
-  for(kgmList<kgmLight*>::iterator i = lights.begin(); !i.end(); ++i) {
+  for(kgmList<kgmLight*>::iterator i = lights.begin(); i != lights.end(); i++) {
   }
 }
 

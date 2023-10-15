@@ -477,7 +477,7 @@ class kgmVulkan: public kgmIGC
 
         bool have = false;
 
-        while(!gi.end())
+        while(gi != groups.end())
         {
           if ((*gi)->pipeline == p)
           {
@@ -511,7 +511,7 @@ class kgmVulkan: public kgmIGC
     {
       kgmList<DrawGroup*>::iterator i = groups.begin();
 
-      while(!i.end())
+      while(i != groups.end())
       {
         delete (*i);
 

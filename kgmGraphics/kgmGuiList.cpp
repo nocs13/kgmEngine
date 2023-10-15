@@ -65,7 +65,7 @@ int kgmGuiList::getItem(kgmString n)
 {
   int ci = 0;
 
-  for(Items::iterator i = m_items.begin(); !i.end(); ++i)
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
   {
     if((*i) == n)
       return ci;
@@ -156,9 +156,9 @@ void kgmGuiList::clear()
 
 void kgmGuiList::sort()
 {
-  for(Items::iterator i = m_items.begin(); !i.end(); ++i)
+  for(Items::iterator i = m_items.begin(); i != m_items.end(); i++)
   {
-    for(Items::iterator j = i; !j.end(); ++j)
+    for(Items::iterator j = i; j != m_items.end(); j++)
     {
       if(*i == *j)
         continue;

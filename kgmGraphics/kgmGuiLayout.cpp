@@ -65,7 +65,7 @@ void kgmGuiLayout::onAddChild(kgmGui *c)
 
 void kgmGuiLayout::onDelChild(kgmGui *c)
 {
-  for (auto ci = m_guis.begin(); !ci.end(); ci.next())
+  for (auto ci = m_guis.begin(); ci != m_guis.end(); ci.next())
   {
     if (c == (*ci).gui)
     {
@@ -126,7 +126,7 @@ void kgmGuiLayout::realign()
 
 void kgmGuiLayout::rescale()
 {
-  for (auto ci = m_childs.begin(); !ci.end(); ci.next())
+  for (auto ci = m_childs.begin(); ci != m_childs.end(); ci.next())
   {
     kgmGui* g = (*ci);
 
@@ -160,7 +160,7 @@ void kgmGuiLayout::setHAlign(u32 a)
 
 kgmGuiLayout::Gui kgmGuiLayout::find(kgmGui *g)
 {
-  for (auto ci = m_guis.begin(); !ci.end(); ci.next())
+  for (auto ci = m_guis.begin(); ci != m_guis.end(); ci.next())
   {
     if (g == (*ci).gui)
     {

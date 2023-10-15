@@ -15,7 +15,8 @@ headers += $(wildcard kgmGame/actions/*.cpp)
 headers += $(wildcard kgmGame/objects/*.cpp)
 headers += $(wildcard kgmGame/editor/*.cpp)
 
-objects := $(patsubst %.cpp,%.o,$(sources),$(headers))
+objects := $(patsubst %.cpp,%.o,$(sources))
+#objects := $(patsubst %.cpp,%.o,$(sources),$(headers))
 
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine_s.a

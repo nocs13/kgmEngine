@@ -4004,7 +4004,7 @@ void kgmVulkan::fillCommands()
 
     kgmList<DrawGroup*>::iterator ig = m_drawGroups.groups.begin();
 
-    for(; !ig.end(); ig.next())
+    for(; ig != m_drawGroups.groups.end(); ig.next())
     {
       kgmList<Draw*>::iterator di = (*ig)->draws.begin();
 
@@ -4012,7 +4012,7 @@ void kgmVulkan::fillCommands()
 
       m_vk.vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
 
-      for (; !di.end(); di.next())
+      for (; di != (*ig)->draws.end(); di.next())
       {
         Draw* draw = (*di);
 
@@ -5068,11 +5068,11 @@ void kgmVulkan::clearDraws()
 {
   auto i = m_drawGroups.groups.begin();
 
-  while(!i.end())
+  while(i != m_drawGroups.groups.end())
   {
     auto j = (*i)->draws.begin();
     int n = 0;
-    while(!j.end())
+    while(j != (*i)->draws.end())
     {
       clear((*j));
       n++;

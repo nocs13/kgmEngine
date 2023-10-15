@@ -1,13 +1,5 @@
 #version 100
 
-struct Light
-{
-  vec4   pos;
-  vec4   dir;
-};
-
-#define MAX_LIGHTS 16
-
 uniform mat4   g_mView;
 uniform mat4   g_mProj;
 uniform mat4   g_mTran;
@@ -23,8 +15,6 @@ uniform float  g_fRandom;
 uniform float  g_fAmbient;
 uniform float  g_fLightPower;
 uniform int    g_iClipping;
-
-uniform Light  g_sLights[MAX_LIGHTS];
 
 varying vec3   v_N;
 varying vec3   v_V;
@@ -75,12 +65,6 @@ void main(void)
 #ifdef GL_ES
 precision lowp float;
 #endif
-
-struct Light
-{
-  vec4   pos;
-  vec4   dir;
-};
 
 uniform sampler2D g_txColor;
 uniform sampler2D g_txNormal;

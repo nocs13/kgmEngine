@@ -403,7 +403,7 @@ kgmAlsa::kgmAlsa()
 
         kgmThread::thread_priority(m_thread, kgmThread::PrLow);
         kgmThread::thread_priority(m_render, kgmThread::PrLow);
-        
+
         m_proceed = true;
 
         m_mutex = kgmThread::mutex_create();
@@ -652,7 +652,7 @@ int kgmAlsa::proceed()
 
     u32 t1 = kgmTime::getTicks();
 
-    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); !i.end(); ++i)
+    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i++)
     {
       _Sound* sound = (*i);
 

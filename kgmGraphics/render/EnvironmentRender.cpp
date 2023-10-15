@@ -142,7 +142,6 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
 
   f32 force = mtl->envIntensity();
   f32 random = (f32) rand() / (f32) RAND_MAX;
-  f32 fresnel = mtl->fresnel();
   f32 distortion = 0.02 + mtl->distortion();
 
   gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
@@ -159,7 +158,6 @@ void EnvironmentRender::render(kgmIGraphics::INode* n)
   sh->set("g_vColor",  col);
   sh->set("g_vMove",   move);
   sh->set("g_fRandom", random);
-  sh->set("g_fFresnel", fresnel);
   sh->set("g_fForce",   force);
   sh->set("g_fDistort", distortion);
 

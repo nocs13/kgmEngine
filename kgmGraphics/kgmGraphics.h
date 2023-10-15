@@ -131,6 +131,18 @@ public:
     u32      m_res[2];
   };
 
+    struct OLight
+  {
+    kgmIGraphics::INode* node;
+    f32    force;
+  };
+
+  struct OMesh
+  {
+    kgmIGraphics::INode* node;
+    f32    distance;
+  };
+
 protected:
   kgmIGC* gc;
   kgmIResources* rc;
@@ -163,9 +175,9 @@ protected:
   u32  m_a_bmeshes_count   = 0;
   u32  m_a_particles_count = 0;
 
-  kgmList<BaseRender::OLight> m_o_lights;
-  kgmList<BaseRender::OMesh>  m_o_meshes;
-  kgmList<BaseRender::OMesh>  m_o_bmeshes;
+  kgmList<OLight> m_o_lights;
+  kgmList<OMesh>  m_o_meshes;
+  kgmList<OMesh>  m_o_bmeshes;
 
   LightData m_light_data;
 
@@ -192,8 +204,8 @@ protected:
   bool  m_depth;
   bool  m_alpha;
   bool  m_culling;
-
   bool  m_wired;
+  bool  m_2dmode;
 
   u32   m_max_faces;
   u32   m_bg_color;
@@ -245,6 +257,7 @@ public:
 
   void build();
   void render();
+  void render_a();
   void update();
   void resize(float, float);
 
@@ -290,8 +303,8 @@ protected:
   u32 collectMeshes(kgmCamera*, kgmArray<INode*>&, u32);
   u32 collectParticles(kgmCamera*, kgmArray<INode*>&, u32);
 
-  void collectOLights(kgmCamera& cam, kgmList<BaseRender::OLight>& nodes);
-  void collectOMeshes(kgmCamera& cam, kgmList<BaseRender::OMesh> &meshes, kgmList<BaseRender::OMesh> &bmeshes);
+  void collectOLights(kgmCamera& cam, kgmList<INode*>& nodes);
+  void collectOMeshes(kgmCamera& cam, kgmList<INode*> &meshes, kgmList<INode*> &bmeshes);
 
   void shaderSetGeneral();
   void shaderSetPrivate();
@@ -333,7 +346,7 @@ public:
 
   void remove(kgmGui* g)
   {
-    for(kgmList<kgmGui*>::iterator i = m_guis.begin(); !i.end(); ++i)
+    for(kgmList<kgmGui*>::iterator i = m_guis.begin(); i != m_guis.end(); i++)
     {
       if((*i) == g)
       {
@@ -346,7 +359,7 @@ public:
 
   void remove(kgmIcon* c)
   {
-    for(kgmList<kgmIcon*>::iterator i = m_icons.begin(); !i.end(); ++i)
+    for(kgmList<kgmIcon*>::iterator i = m_icons.begin(); i != m_icons.end(); i++)
     {
       if((*i) == c)
       {

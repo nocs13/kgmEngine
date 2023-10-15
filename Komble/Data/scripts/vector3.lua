@@ -5,7 +5,7 @@ Vector3 = {x=0, y=0, z=0}
 
 function Vector3:new(x, y, z)
   local obj = {x=x, y=y, z=z}
-  
+
   --settag(obj, tag(Vector3))
   setmetatable(obj, self)
   self.__index = self
@@ -16,6 +16,12 @@ function Vector3:add(x, y, z)
   self.x = self.x + x
   self.y = self.z + y
   self.z = self.z + z
+end
+
+function Vector3:vadd(v)
+  self.x = self.x + v.x
+  self.y = self.z + v.y
+  self.z = self.z + v.z
 end
 
 function Vector3:mul(a)
@@ -35,7 +41,7 @@ end
 function Vector3:nor()
   l = self:length()
 
-  if l == 0.0 then
+  if l == 0.0000000001 then
     return Vector3:new(0, 0, 0)
   end
 

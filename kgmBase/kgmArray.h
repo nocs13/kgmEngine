@@ -3,28 +3,34 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
-#include "kgmTypes.h"
+
+#include "kgmBase.h"
 #include "../kgmSystem/kgmMemory.h"
 
 ////////// Array
 template <class T>
 class kgmArray
 {
+private:
+  s32 m_reserve;
+
 protected:
   T   *m_data;
-  u32  m_length;
+  s32  m_length;
 
 public:
   kgmArray()
   {
     m_data = null;
     m_length = 0;
+    m_reserve = 0;
   }
 
   kgmArray(u32 len)
   {
     m_data = null;
     m_length = 0;
+    m_reserve = 0;
 
     alloc(len);
   }
@@ -33,6 +39,7 @@ public:
   {
     m_data = null;
     m_length = 0;
+    m_reserve = 0;
 
     alloc(a.m_data, a.m_length);
   }
@@ -56,7 +63,10 @@ public:
 
   T& operator[](const s32 i) const
   {
-   return m_data[i];
+    if (i >= m_length)
+      kgm_fatal("Invalid array index income.");
+
+    return m_data[i];
   }
 
   operator T *()
@@ -66,9 +76,17 @@ public:
 
   void add(const T& el)
   {
-    realloc(m_length + 1);
+    if (m_length == m_reserve)
+    {
+      reserve(m_length + m_length / 4);
+    }
+    else if (m_length == 0)
+    {
+      reserve(16);
+    }
 
-    m_data[m_length - 1] = el;
+    m_data[m_length] = el;
+    m_length++;
   }
 
   void clear()
@@ -77,7 +95,7 @@ public:
       kgm_free(m_data);
 
     m_data = null;
-    m_length = 0;
+    m_length = m_reserve = 0;
   }
 
   bool empty()
@@ -85,7 +103,7 @@ public:
     return (m_length == 0);
   }
 
-  int length()
+  s32 length()
   {
     return m_length;
   }
@@ -95,7 +113,7 @@ public:
     return m_data;
   }
 
-  bool alloc(u32 len)
+  bool alloc(s32 len)
   {
     clear();
 
@@ -103,12 +121,12 @@ public:
       return false;
 
     m_data = (T*) kgm_alloc(sizeof(T) * len);
-    m_length = len;
+    m_length = m_reserve = len;
 
     return true;
   }
 
-  bool alloc(T* data, u32 len)
+  bool alloc(T* data, s32 len)
   {
     clear();
 
@@ -118,17 +136,28 @@ public:
     m_data = (T*)kgm_alloc(sizeof(T) * len);
     memcpy(m_data, data, sizeof(T) * len);
 
-    m_length = len;
+    m_length = m_reserve = len;
 
     return true;
   }
 
-  void realloc(u32 len)
+  void realloc(s32 len)
   {
     T*   old  = m_data;
 
     m_data   = (T*) kgm_realloc(old, sizeof(T) * len);
-    m_length = len;
+    m_length = m_reserve = len;
+  }
+
+  void reserve(s32 size)
+  {
+    T* old  = m_data;
+    m_data   = (T*) kgm_realloc(old, sizeof(T) * size);
+
+    m_reserve = size;
+
+    if (m_length > m_reserve)
+      m_length = m_reserve;
   }
 
   void zero()

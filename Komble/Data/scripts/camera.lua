@@ -18,7 +18,7 @@ function Camera:new(c)
 
   local d = Vector3:new(x, y, z)
 
-  local obj = {cam = c, pos = p, dir = d, state = 0}
+  local obj = { cam = c, pos = p, dir = d, state = 0, angle = 0.0 }
 
   --settag(obj, tag(Camera))
   setmetatable(obj, self)
@@ -28,26 +28,28 @@ function Camera:new(c)
 end
 
 function Camera:turn(d)
-  local a = 0.5
+  local a = 0.1
 
-  angle = angle + (d * a)
+  self.angle = self.angle + (d * a)
 
-  local x = math.cos(angle)
-  local y = math.sin(angle)
+  local x = math.cos(self.angle)
+  local y = math.sin(self.angle)
 
-  self.dir:add(x, y, 0)
+  dir = Vector3:new(x, y, 0)
 
-  local l = self.dir:length()
+  local l = dir:length()
 
-  self.dir:normalize()
+  dir:normalize()
 
-  local n = self.dir
+  local n = dir
+
+  self.dir = dir
 
   kgmCamLook(self.cam, n.x, n.y, n.z)
 end
 
 function Camera:move(d)
-  local l = 0.05 * d
+  local l = 1 * d
 
   n = self.dir:nor()
 
@@ -56,11 +58,18 @@ function Camera:move(d)
 
   self.pos:add(x, y, 0.0)
 
+  --p = Vector3:new(kgmCamPosition())
+  --d = Vector3:new(kgmCamDirection())
+
+  --d:mul(2)
+  --p:vadd(d)
+
   kgmCamMove(self.cam, self.pos.x, self.pos.y, self.pos.z)
+  --kgmCamMove(self.cam, p.x, p.y, p.z)
 end
 
 function Camera:jump(d)
-  local l = 0.05 * d
+  local l = 1 * d
 
   self.pos:add(0.0, 0.0, l)
 

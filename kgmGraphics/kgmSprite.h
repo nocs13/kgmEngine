@@ -9,8 +9,10 @@ class kgmSprite: public kgmObject
 
 public:
   uRect  m_rect;
-  bool   m_alpha;
   color  m_color;
+
+private:
+  s32    m_order;
 
 public:
   kgmSprite()
@@ -23,4 +25,7 @@ public:
   {
     m_rect = uRect(x, y, w, h);
   }
+
+  s32 order() const { return m_order; }
+  void order(s32 o) { m_order = o; }
 };

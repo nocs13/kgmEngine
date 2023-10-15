@@ -19,19 +19,11 @@ bool kgmGNode::isNodeValid()
 
 box3 kgmGNode::getNodeBound()
 {
-  mtx4 m;
-
-  vec3 v = m_unit->transform().position();
-  vec3 s = m_unit->transform().scaled();
-
-  m.identity();
-  m.translate(v);
-  m.scale(s);
-
   box3 b = m_unit->getBound();
+  vec3 s = m_unit->scale();
 
-  b.min = m * b.min;
-  b.max = m * b.max;
+  b.min.set(b.min.x * s.x, b.min.y * s.y, b.min.z * s.z);
+  b.max.set(b.max.x * s.x, b.max.y * s.y, b.max.z * s.z);
 
   return b;
 }

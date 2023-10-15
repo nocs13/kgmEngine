@@ -97,7 +97,7 @@ void kgmPhysics::add(kgmObstacle *o)
 
 void kgmPhysics::remove(kgmObstacle* o)
 {
-  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); !i.end(); ++i)
+  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); i++)
   {
     if(o == (*i))
     {
@@ -119,7 +119,7 @@ void kgmPhysics::add(kgmPhysics::IBody* body)
 
 void kgmPhysics::remove(kgmPhysics::IBody* body)
 {
-  for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
+  for(kgmList<IBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); i++)
   {
     if(body == (*i))
     {
@@ -186,7 +186,7 @@ void kgmPhysics::doCollision(f32 dtime)
   triangle3  triangles[max_triangles];
   IBody*     bodies[max_bodies];
 
-  for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
+  for(kgmList<IBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); i++)
   {
     if(*i == null)
     {
@@ -536,7 +536,7 @@ u32 kgmPhysics::getTriangles(triangle3 triangles[], u32 max, sphere& s)
 {
   u32 count = 0;
 
-  for(kgmList<triangle3>::iterator i = m_triangles.begin(); !i.end(); ++i)
+  for(kgmList<triangle3>::iterator i = m_triangles.begin(); i != m_triangles.end(); i++)
   {
     if(count >= max)
       break;
@@ -561,7 +561,7 @@ u32 kgmPhysics::getTriangles(triangle3 triangles[], u32 max, sphere& s)
       triangles[count++] = t;
   }
 
-  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); !i.end(); ++i)
+  for(kgmList<kgmObstacle*>::iterator i = m_obstacles.begin(); i != m_obstacles.end(); i++)
   {
     if(count >= max)
       break;
@@ -599,7 +599,7 @@ u32 kgmPhysics::getBodies(IBody* bodies[], u32 max, sphere& s)
 {
   u32 count = 0;
 
-  for(kgmList<IBody*>::iterator i = m_bodies.begin(); !i.end(); ++i)
+  for(kgmList<IBody*>::iterator i = m_bodies.begin(); i != m_bodies.end(); i++)
   {
     if(count >= max)
       break;

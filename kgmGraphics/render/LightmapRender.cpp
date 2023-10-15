@@ -128,7 +128,7 @@ void LightmapRender::render(kgmCamera* cam, kgmIGraphics::INode* nod)
 
   kgmIGraphics::INode* light = null;
 
-  for(kgmList<kgmIGraphics::INode*>::iterator i = gr->m_lights.begin(); !i.end(); i.next())
+  for(kgmList<kgmIGraphics::INode*>::iterator i = gr->m_lights.begin(); i != gr->m_lights.end(); i.next())
   {
     if(!(*i)->isNodeValid())
       continue;
@@ -411,7 +411,7 @@ u32 LightmapRender::collect(kgmCamera* cam, kgmIGraphics::INode* nod, Light* lig
 
   vec3 pos = nod->getNodePosition();
 
-  for(kgmList<kgmGraphics::INode*>::iterator i = gr->m_lights.begin(); !i.end(); i.next())
+  for(kgmList<kgmGraphics::INode*>::iterator i = gr->m_lights.begin(); i != gr->m_lights.end(); i.next())
   {
     memset(&lights[count], 0, sizeof(Light));
 
