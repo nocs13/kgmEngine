@@ -31,7 +31,7 @@ import types
 import bpy
 import bmesh
 from mathutils import *
-import xml.etree.ElementTree
+from xml.etree import ElementTree
 from bpy.app.handlers import persistent
 
 def toGrad(a):
@@ -2009,16 +2009,20 @@ class KgmUnitAddButtonOperator(bpy.types.Operator):
 
         o.name = "kgmUnit"
 
-        o['kgm_unit']  = True
-        o['kgm_type']  = "kgmUnit";
-        o['kgm_state'] = "Idle"
+        o.kgm_props['KgmType'] =  'Unit'
+        o.kgm_props['KgmState'] = 'Idle'
+
+        #o['kgm_unit']  = True
+        #o['kgm_type']  = "kgmUnit";
+        #o['kgm_state'] = "Idle"
 
         o.empty_display_size = 1
         o.empty_display_type = 'PLAIN_AXES'
 
         bpy.context.scene.collection.objects.link(o)
 
-        #bpy.ops.object.mode_set(mode=amode)
+        o = bpy.data.objects[o.name]
+
         print("Pressed add unit button ", self.id)
         return {'FINISHED'}
 
@@ -2052,6 +2056,7 @@ class KgmUnitPanel(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Kgm Panel"
     bl_idname = "OBJECT_PT_kgm_unit"
+    bl_category = "Kgm"
 
     bl_space_type  = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -2075,6 +2080,27 @@ class KgmUnitPanel(bpy.types.Panel):
 
         print("Panel add kgm unit.")
 
+class KgmUnitPropertyGroup(bpy.types.PropertyGroup):
+    KgmType: bpy.props.StringProperty(name="KgmType", default='Unit')
+    KgmState: bpy.props.StringProperty(name="KgmState", default='Idle')
+
+class KgmUnitPropertyPanel(bpy.types.Panel):
+    bl_label = "Kgm unit"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+
+        props = obj.kgm_props
+        row = layout.row()
+        row.prop(props, "KgmType")
+        row = layout.row()
+        row.prop(props, "KgmState")
+
+
 classes = [
     kgmExport,
     KgmTerrainNodeTree,
@@ -2083,12 +2109,13 @@ classes = [
     KgmTerrainNodeTreePanel,
     KgmUnitAddButtonOperator,
     KgmConfigButtonOperator,
-    KgmUnitPanel
+    KgmUnitPanel,
+    KgmUnitPropertyGroup,
+    KgmUnitPropertyPanel
 ]
 
 def register():
     print("Registering kgm module.")
-
     bpy.app.handlers.load_post.append(load_post_handler)
 
     for c in classes:
@@ -2096,12 +2123,16 @@ def register():
 
     bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
+    bpy.types.Object.kgm_props = bpy.props.PointerProperty(type=KgmUnitPropertyGroup)
+
 def unregister():
     bpy.app.handlers.load_post.remove(load_post_handler)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
     for c in reversed(classes):
       bpy.utils.unregister_class(c)
+
+    del bpy.types.Object.kgm_props
 
 
 if __name__ == "__main__":
