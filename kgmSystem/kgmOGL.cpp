@@ -17,6 +17,10 @@
 #pragma comment(lib, "glu32.lib")
 #endif
 
+#ifndef GLint 
+typedef int GLint;
+#endif
+
 GLint* g_compressed_format = null;
 GLint  g_num_compressed_format = 0;
 
@@ -296,9 +300,15 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
   if (!m_glx.open("libGLX.so"))
   {
-    m_error = 1;
+    if (!m_glx.open("libGLX.so.0"))
+    {
+      if (!m_glx.open("libGLX.so.1"))
+      {
+        m_error = 1;
 
-    return;
+        return;
+      }
+    }
   }
 
   glx.glXGetProcAddress = (void* (*)(const s8*)) m_glx.get("glXGetProcAddress");

@@ -168,9 +168,10 @@ public:
   void  initGraphycs();
   void  initPhysics();
   void  initSystem();
+  bool  initScript();
   void  initAudio();
   void  initInput();
-  bool  initScript();
+  void  initFont();
   void  initGC();
   void  initAI();
 

@@ -2,6 +2,10 @@
 
 #define GLES_2
 
+#ifndef GLint 
+typedef int GLint;
+#endif
+
 kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 {
   #ifdef GLES_2
@@ -159,9 +163,15 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
 
   if (!m_egl.open("libEGL.so"))
   {
-    m_error = 1;
+    if (!m_egl.open("libEGL.so.0"))
+    {
+      if (!m_egl.open("libEGL.so.1"))
+      {
+        m_error = 1;
 
-    return;
+        return;
+      }
+    }
   }
 
   egl.eglGetProcAddress = (PFNEGLGETPROCADDRESSPROC) m_egl.get("eglGetProcAddress");

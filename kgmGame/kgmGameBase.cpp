@@ -618,6 +618,8 @@ int kgmGameBase::gInit()
 
   if(!m_font)
   {
+    kgmString fontid = m_settings->get("Font");
+    
     m_font = m_resources->getFont("font.tga", 16, 16);
 
     if (!m_font)
