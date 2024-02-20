@@ -32,6 +32,13 @@ lib/
 obj/
 nbproject/
 kgmEngine.*
-Komble/Data
-Komble/Data/*
+Komble/Data/animations/*
+Komble/Data/guis/*
+Komble/Data/images/*
+Komble/Data/meshes/*
+Komble/Data/maps/*
+Komble/Data/sounds/*
+Komble/Data/skeletons/*
+Komble/Data/tmp/*
+
 
