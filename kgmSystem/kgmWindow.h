@@ -26,6 +26,10 @@ u16 keyTranslate(int key);
 
 #elif defined DARWIN
 
+#elif defined WAYLAND
+
+#include "inc/wayland/wayland-client.h"
+
 #else
 
 #include <unistd.h>
@@ -72,6 +76,13 @@ public:
 #elif defined(DARWIN)
   void* m_handle;
   int   m_wRect[4];
+#elif defined(WAYLAND)
+  struct wl_compositor* m_compositor = nullptr;
+  struct wl_display*    m_display = nullptr;
+  struct wl_pointer*    m_pointer = nullptr;
+  struct wl_seat*       m_seat = nullptr;
+  struct wl_shell*      m_shell = nullptr;
+  struct wl_shm*        m_shm = nullptr;
 #else
 
   Display             *m_dpy;
@@ -118,6 +129,13 @@ public:
   static long CALLBACK WndProc(HWND, u32, WPARAM, LPARAM);
 #elif defined(ANDROID)
 #elif defined(DARWIN)
+#elif defined(WAYLAND)
+  static void onRemoveRegistry(void* a, struct wl_registry* b, uint32_t c);
+  static void onRegistry(void* data,
+                        struct wl_registry* registry,
+                        uint32_t name,
+                        const char* interface,
+                        uint32_t version);
 #else
   static int WndProc(kgmWindow*, XEvent*);
 #endif

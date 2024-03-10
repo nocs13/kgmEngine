@@ -6,6 +6,8 @@
 
 #include "kgmUnit.h"
 
+#include <getopt.h>
+
 s32 kgmGameApp::exec(s32 argc, s8 **argv)
 {
   memset(&m_options, 0, sizeof(Options));

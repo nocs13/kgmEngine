@@ -1,8 +1,12 @@
 
 #include "kgmWindow.h"
 
-class kgmWindowWayland: kgmWindow 
+#include "inc/wayland/wayland-client.h"
+
+class kgmWindowWayland: kgmWindow
 {
+  KGM_OBJECT(kgmWindowWayland);
+private:
 public:
 
 };

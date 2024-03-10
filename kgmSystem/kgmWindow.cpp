@@ -336,6 +336,39 @@ void kgmUnregisterWindowClass(){
   if(GetClassInfo(0, cWndClass, &wcl))
     UnregisterClass(cWndClass, 0);
 }
+#elif defined(WAYLAND)
+
+  void kgmWindow::onRemoveRegistry(void* a, struct wl_registry* b, uint32_t c)
+  {
+
+  }
+
+  void kgmWindow::onRegistry(void* data, struct wl_registry* registry, uint32_t name,
+                             const char* interface, uint32_t version)
+  {
+    kgmWindow* me = static_cast<kgmWindow*>(data);
+
+    if (!strcmp(interface, wl_compositor_interface.name)) {
+      me->m_compositor = static_cast<wl_compositor*>(
+          wl_registry_bind(registry, name, &wl_compositor_interface, version));
+    } else if (!strcmp(interface, wl_shm_interface.name)) {
+      me->m_shm = static_cast<wl_shm*>(
+          wl_registry_bind(registry, name, &wl_shm_interface, version));
+    } else if (!strcmp(interface, wl_shell_interface.name)) {
+      me->m_shell = static_cast<wl_shell*>(
+          wl_registry_bind(registry, name, &wl_shell_interface, version));
+    } else if (!strcmp(interface, wl_seat_interface.name)) {
+      me->m_seat = static_cast<wl_seat*>(
+          wl_registry_bind(registry, name, &wl_seat_interface, version));
+      me->m_pointer = wl_seat_get_pointer(me->seat_);
+      const struct wl_pointer_listener pointer_listener = {
+          OnPointerEnter, OnPointerLeave, OnPointerMotion, OnPointerButton,
+          OnPointerAxis};
+      wl_pointer_add_listener(me->m_pointer, &pointer_listener, data);
+    }
+
+  }
+
 #elif defined(LINUX)
 
 #include <dlfcn.h>
@@ -681,6 +714,15 @@ kgmWindow::kgmWindow()
 
   #elif defined(DARWIN)
 
+  #elif defined(WAYLAND)
+
+  m_compositor = nullptr;
+  m_display    = nullptr;
+  m_pointer    = nullptr;
+  m_seat       = nullptr;
+  m_shell      = nullptr;
+  m_shm        = nullptr;
+
   #else
 
   m_dpy = null;
@@ -734,6 +776,29 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_wRect[1] = y;
   m_wRect[2] = w;
   m_wRect[3] = h;
+
+#elif defined(WAYLAND)
+
+    m_display = wl_display_connect(nullptr);
+
+    if (!m_display)
+    {
+      kgm_log() << "Cannot open display.\n";
+    }
+
+    struct wl_registry* registry = wl_display_get_registry(m_display);
+
+    const struct wl_registry_listener registry_listener = {
+        WaylandClient::OnRegistry, WaylandClient::OnRemoveRegistry
+    };
+
+    wl_registry_add_listener(registry, &registry_listener, this);
+
+    wl_display_roundtrip(m_display);
+
+    wl_registry_destroy(registry);
+
+    m_loop = true;
 
 #else
   typedef XVisualInfo* (*XGETVISUALINFO)(Display *display, long vinfo_mask, XVisualInfo *vinfo_template, int *nitems_return);
@@ -846,6 +911,15 @@ kgmWindow::~kgmWindow()
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
+
+  wl_pointer_destroy(m_pointer);
+  wl_seat_destroy(m_seat);
+  wl_shell_destroy(m_shell);
+  wl_shm_destroy(m_shm);
+  wl_compositor_destroy(m_compositor);
+  wl_display_disconnect(m_display);
 
 #else
 
