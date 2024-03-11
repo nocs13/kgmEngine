@@ -368,6 +368,8 @@ int kgmVulkan::vkInit()
 
 #ifdef WIN32
   m_vk.vkCreateWin32SurfaceKHR = (typeof m_vk.vkCreateWin32SurfaceKHR) vk_lib.get((char*) "vkCreateWin32SurfaceKHR");
+#elif defined(WAYLAND)
+  m_vk.vkCreateWaylandSurfaceKHR = (typeof m_vk.vkCreateWaylandSurfaceKHR) vk_lib.get((char*) "vkCreateWaylandSurfaceKHR");
 #else
   m_vk.vkCreateXlibSurfaceKHR = (typeof m_vk.vkCreateXlibSurfaceKHR) vk_lib.get((char*) "vkCreateXlibSurfaceKHR");
 #endif
@@ -2849,7 +2851,7 @@ bool kgmVulkan::initSurface()
     createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
     createInfo.pNext = NULL;
     createInfo.display = m_window->m_display;
-    createInfo.surface = m_window->m_window;
+    createInfo.surface = m_window->m_surface;
     result = m_vk.vkCreateWaylandSurfaceKHR(m_instance, &createInfo, NULL, &m_surface);
 #elif defined(XCB)
     VkXcbSurfaceCreateInfoKHR createInfo = {};

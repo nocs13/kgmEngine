@@ -79,6 +79,7 @@ public:
 #elif defined(WAYLAND)
   struct wl_compositor* m_compositor = nullptr;
   struct wl_display*    m_display = nullptr;
+  struct wl_surface*    m_surface = nullptr;
   struct wl_pointer*    m_pointer = nullptr;
   struct wl_seat*       m_seat = nullptr;
   struct wl_shell*      m_shell = nullptr;
@@ -136,6 +137,36 @@ public:
                         uint32_t name,
                         const char* interface,
                         uint32_t version);
+  static void onPointerEnter(void* data,
+                             struct wl_pointer* wl_pointer,
+                             uint32_t serial,
+                             struct wl_surface* surface,
+                             wl_fixed_t surface_x,
+                             wl_fixed_t surface_y);
+  static void onPointerLeave(void* data,
+                             struct wl_pointer* wl_pointer,
+                             uint32_t serial,
+                             struct wl_surface* wl_surface);
+
+  static void onPointerMotion(void* data,
+                              struct wl_pointer* wl_pointer,
+                              uint32_t time,
+                              wl_fixed_t surface_x,
+                              wl_fixed_t surface_y);
+
+  static void onPointerButton(void* data,
+                              struct wl_pointer* wl_pointer,
+                              uint32_t serial,
+                              uint32_t time,
+                              uint32_t button,
+                              uint32_t state);
+
+  static void onPointerAxis(void* data,
+                            struct wl_pointer* wl_pointer,
+                            uint32_t time,
+                            uint32_t axis,
+                            wl_fixed_t value);
+
 #else
   static int WndProc(kgmWindow*, XEvent*);
 #endif

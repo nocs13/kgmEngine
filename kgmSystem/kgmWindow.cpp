@@ -360,14 +360,54 @@ void kgmUnregisterWindowClass(){
     } else if (!strcmp(interface, wl_seat_interface.name)) {
       me->m_seat = static_cast<wl_seat*>(
           wl_registry_bind(registry, name, &wl_seat_interface, version));
-      me->m_pointer = wl_seat_get_pointer(me->seat_);
+      me->m_pointer = wl_seat_get_pointer(me->m_seat);
       const struct wl_pointer_listener pointer_listener = {
-          OnPointerEnter, OnPointerLeave, OnPointerMotion, OnPointerButton,
-          OnPointerAxis};
+          kgmWindow::onPointerEnter, kgmWindow::onPointerLeave, kgmWindow::onPointerMotion, kgmWindow::onPointerButton,
+          kgmWindow::onPointerAxis};
       wl_pointer_add_listener(me->m_pointer, &pointer_listener, data);
     }
-
   }
+
+  void kgmWindow::onPointerEnter(void* data,
+                             struct wl_pointer* wl_pointer,
+                             uint32_t serial,
+                             struct wl_surface* surface,
+                             wl_fixed_t surface_x,
+                             wl_fixed_t surface_y)
+  {}
+
+  void kgmWindow::onPointerLeave(void* data,
+                             struct wl_pointer* wl_pointer,
+                             uint32_t serial,
+                             struct wl_surface* wl_surface)
+  {}
+
+  void kgmWindow::onPointerMotion(void* data,
+                              struct wl_pointer* wl_pointer,
+                              uint32_t time,
+                              wl_fixed_t surface_x,
+                              wl_fixed_t surface_y)
+  {}
+
+  // Program exits if clicking any mouse buttons.
+  void kgmWindow::onPointerButton(void* data,
+                              struct wl_pointer* wl_pointer,
+                              uint32_t serial,
+                              uint32_t time,
+                              uint32_t button,
+                              uint32_t state)
+  {
+    kgmWindow* me = static_cast<kgmWindow*>(data);
+    //me->m_loop = false;
+  }
+
+  void kgmWindow::onPointerAxis(void* data,
+                            struct wl_pointer* wl_pointer,
+                            uint32_t time,
+                            uint32_t axis,
+                            wl_fixed_t value)
+                            {}
+
 
 #elif defined(LINUX)
 
@@ -718,6 +758,7 @@ kgmWindow::kgmWindow()
 
   m_compositor = nullptr;
   m_display    = nullptr;
+  m_surface    = nullptr;
   m_pointer    = nullptr;
   m_seat       = nullptr;
   m_shell      = nullptr;
@@ -784,12 +825,14 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     if (!m_display)
     {
       kgm_log() << "Cannot open display.\n";
+
+      return;
     }
 
     struct wl_registry* registry = wl_display_get_registry(m_display);
 
     const struct wl_registry_listener registry_listener = {
-        WaylandClient::OnRegistry, WaylandClient::OnRemoveRegistry
+        kgmWindow::onRegistry, kgmWindow::onRemoveRegistry
     };
 
     wl_registry_add_listener(registry, &registry_listener, this);
@@ -987,6 +1030,8 @@ void kgmWindow::fullscreen(bool fs)
 
 #elif defined(DARWIN)
 
+#elif defined(WAYLAND)
+
 #else
 
   XEvent xev;
@@ -1028,6 +1073,8 @@ void kgmWindow::show(bool sh)
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
   if(sh)
@@ -1066,6 +1113,8 @@ void kgmWindow::loop()
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
   XEvent evt;
@@ -1118,7 +1167,9 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h)
   h = m_wRect[3];
 
 #elif defined(DARWIN)
-#elif defined(LINUX)
+
+#elif defined(WAYLAND)
+#elif defined(X11)
 
   unsigned int  width, height, border, depth;
   Window dummy;
@@ -1146,6 +1197,8 @@ void kgmWindow::setRect(int x, int y, int w, int h)
   onResize(w, h);
 
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
   XMoveResizeWindow(m_dpy, m_wnd, x, y, w, h);
@@ -1167,6 +1220,8 @@ void kgmWindow::setMouse(int x, int y)
 
 #elif defined(ANDROID)
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
   int cx, cy, w, h;
@@ -1187,6 +1242,8 @@ void kgmWindow::getMouse(int& x, int& y)
   // SetCursorPos(pt.x, pt.y);
 #elif defined(ANDROID)
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
 #endif
@@ -1201,6 +1258,8 @@ void kgmWindow::setTitle(char* title)
 #elif defined(ANDROID)
 
 #elif defined(DARWIN)
+
+#elif defined(WAYLAND)
 #else
 
   XStoreName(m_dpy, m_wnd, title);

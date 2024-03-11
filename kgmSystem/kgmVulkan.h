@@ -19,6 +19,8 @@
 
 #define VK_USE_PLATFORM_WIN32_KHR
 
+#elif defined(WAYLAND)
+  #define VK_USE_PLATFORM_WAYLAND_KHR
 #else
 
 #define VK_USE_PLATFORM_XLIB_KHR
@@ -150,6 +152,8 @@ class kgmVulkan: public kgmIGC
 
 #ifdef WIN32
     VkResult (VKAPI_PTR *vkCreateWin32SurfaceKHR)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+#elif defined(WAYLAND)
+    VkResult (VKAPI_PTR *vkCreateWaylandSurfaceKHR)(VkInstance instance, const VkWaylandSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #else
     VkResult (VKAPI_PTR *vkCreateXlibSurfaceKHR)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 #endif

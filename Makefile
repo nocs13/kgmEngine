@@ -28,8 +28,8 @@ all: extern debug
 extern:
 	make -C kgmExtern
 
-debug: set_debug $(OUT_SO) $(OUT_A)
-#debug: set_debug $(OUT_A)
+#debug: set_debug $(OUT_SO) $(OUT_A)
+debug: set_debug $(OUT_A)
 	echo 'debug finished.'
 
 set_debug:

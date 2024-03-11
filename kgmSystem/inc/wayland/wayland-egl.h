@@ -1,5 +1,6 @@
 /*
- * Copyright © 2012 Intel Corporation
+ * Copyright © 2011 Kristian Høgsberg
+ * Copyright © 2011 Benjamin Franzke
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -23,12 +24,10 @@
  * SOFTWARE.
  */
 
-#ifndef WAYLAND_VERSION_H
-#define WAYLAND_VERSION_H
+#ifndef WAYLAND_EGL_H
+#define WAYLAND_EGL_H
 
-#define WAYLAND_VERSION_MAJOR 1
-#define WAYLAND_VERSION_MINOR 18
-#define WAYLAND_VERSION_MICRO 0
-#define WAYLAND_VERSION "1.18.0"
+#include <wayland-client.h>
+#include "wayland-egl-core.h"
 
 #endif

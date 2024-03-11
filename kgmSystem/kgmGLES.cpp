@@ -2,7 +2,7 @@
 
 #define GLES_2
 
-#ifndef GLint 
+#ifndef GLint
 typedef int GLint;
 #endif
 
@@ -360,7 +360,10 @@ kgmGLES::kgmGLES(kgmWindow *wnd)
     EGL_NONE,
   };
 
-  m_surface = egl.eglCreateWindowSurface(m_display, egl_conf, wnd->m_wnd, egl_surface_attribs);
+  #ifdef WAYLAND
+  #else
+    m_surface = egl.eglCreateWindowSurface(m_display, egl_conf, wnd->m_wnd, egl_surface_attribs);
+  #endif
 
   if (m_surface == EGL_NO_SURFACE)
   {

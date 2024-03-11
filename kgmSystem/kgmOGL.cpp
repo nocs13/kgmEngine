@@ -17,7 +17,7 @@
 #pragma comment(lib, "glu32.lib")
 #endif
 
-#ifndef GLint 
+#ifndef GLint
 typedef int GLint;
 #endif
 
@@ -429,13 +429,19 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
     {
       int glx_major = 0, glx_minor = 0;
 
-      glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+      #ifdef WAYLAND
+      #else
+        glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+      #endif
 
       kgm_log() << "GLX predefined version: " << glx_major << "." << glx_minor << ".\n";
 
       if ((glx_major < GL_VER_MAJ) || ((glx_major == GL_VER_MAJ) && (glx_minor < GL_VER_MIN)))
       {
-        glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, NULL);
+        #ifdef WAYLAND
+        #else
+          glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, NULL);
+        #endif
       }
       else
       {
@@ -446,16 +452,24 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
   if (!m_glctx)
   {
+    #ifdef WAYLAND
+    #else
+
     if (wnd->m_visual)
     {
-      m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+        m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
     }
+
+    #endif
 
     if (m_glctx && GL_VER_MAJ > 2)
     {
       int glx_major = 0, glx_minor = 0;
 
-      glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+      #ifdef WAYLAND
+      #else
+        glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+      #endif
 
       kgm_log() << "GLX version: " << glx_major << "." << glx_minor << ".\n";
 
@@ -472,6 +486,9 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
                                          int *nelements);
 
       glXChooseFBConfig = (typeof glXChooseFBConfig) glx.glXGetProcAddress((s8 *) "glXChooseFBConfig");
+
+      #ifdef WAYLAND
+      #else
 
       if (!glXChooseFBConfig
           || !(framebuffer_config =
@@ -491,6 +508,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
           m_glctx = ctx;
         }
       }
+
+      #endif
     }
   }
 
@@ -502,6 +521,9 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
     return;
   }
+
+  #ifdef WAYLAND
+  #else
 
   if(!glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, m_glctx))
   {
@@ -516,6 +538,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
     kgm_log() << "Direct Rendering!\n";
   else
     kgm_log() << "Not direct Rendering!\n";
+
+  #endif
 
 #endif
 
@@ -613,10 +637,15 @@ kgmOGL::~kgmOGL()
 
   if (m_glctx)
   {
+    #ifdef WAYLAND
+    #else
+
     if(!glx.glXMakeCurrent(m_wnd->m_dpy, None, NULL))
       kgmLog::log("Could not release drawing context.\n");
 
     glx.glXDestroyContext(m_wnd->m_dpy, m_glctx);
+
+    #endif
 
     m_glctx = NULL;
   }
@@ -791,6 +820,7 @@ void kgmOGL::gcRender()
   SwapBuffers(m_hdc);
 
 #elif defined(DARWIN)
+#elif defined(WAYLAND)
 #else
 
   glx.glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);

@@ -23,12 +23,15 @@ LWIN = -lX11
 WSys=${WIN}
 
 ifeq ($(WSys),Wayland)
-	LWIN =  -lwayland-client
+	LWIN =  -lwayland-cursor -lwayland-client
+	#LWIN =  -lwayland-client
+	#LWIN=$(pkg-config --cflags --libs wayland-client)
 	DWIN =  -DWAYLAND
 endif
 
 FLGS =
 DIRS =  -I./ -I./kgmBase -I./kgmMath -I./kgmNet -I./kgmGame -I./kgmSystem/inc -I./kgmGraphics -I./kgmPhysics
+DIRS += -I./kgmSystem/inc/wayland -I./kgmSystem/inc/wayland/generated
 DIRS += -L./kgmSystem/lib
 
 LIBS =

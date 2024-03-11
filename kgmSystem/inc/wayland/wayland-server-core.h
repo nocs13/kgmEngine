@@ -261,8 +261,8 @@ wl_global_destroy(struct wl_global *global);
  * A filter function enables the server to decide which globals to
  * advertise to each client.
  *
- * When a wl_global filter is set, the given callback function will be
- * called during wl_global advertisement and binding.
+ * When a wl_global filter is set, the given callback funtion will be
+ * called during wl_global advertisment and binding.
  *
  * This function should return true if the global object should be made
  * visible to the client or false otherwise.
@@ -278,16 +278,6 @@ wl_display_set_global_filter(struct wl_display *display,
 
 const struct wl_interface *
 wl_global_get_interface(const struct wl_global *global);
-
-uint32_t
-wl_global_get_name(const struct wl_global *global,
-                   const struct wl_client *client);
-
-uint32_t
-wl_global_get_version(const struct wl_global *global);
-
-struct wl_display *
-wl_global_get_display(const struct wl_global *global);
 
 void *
 wl_global_get_user_data(const struct wl_global *global);
@@ -333,14 +323,6 @@ wl_client_add_destroy_listener(struct wl_client *client,
 struct wl_listener *
 wl_client_get_destroy_listener(struct wl_client *client,
 			       wl_notify_func_t notify);
-
-void
-wl_client_add_destroy_late_listener(struct wl_client *client,
-				    struct wl_listener *listener);
-
-struct wl_listener *
-wl_client_get_destroy_late_listener(struct wl_client *client,
-				    wl_notify_func_t notify);
 
 struct wl_resource *
 wl_client_get_object(struct wl_client *client, uint32_t id);
@@ -495,9 +477,6 @@ wl_signal_emit(struct wl_signal *signal, void *data)
 	wl_list_for_each_safe(l, next, &signal->listener_list, link)
 		l->notify(l, data);
 }
-
-void
-wl_signal_emit_mutable(struct wl_signal *signal, void *data);
 
 typedef void (*wl_resource_destroy_func_t)(struct wl_resource *resource);
 

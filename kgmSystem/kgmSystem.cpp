@@ -79,7 +79,7 @@ void kgmSystem::getDesktopDimension(u32& w, u32& h)
   CloseHandle(desktop);
 #endif
 
-#ifdef LINUX
+#if (defined LINUX && defined X11)
   Display* dpy = XOpenDisplay(0);
   int   screen = DefaultScreen(dpy);
   Window  root = RootWindow(dpy, screen);
@@ -290,7 +290,7 @@ int kgmSystem::getProcessPath(kgmString &path)
 #include <unistd.h>
 #endif
 
-int getNumCpuCores() 
+int getNumCpuCores()
 {
   int cores = 1;
 
@@ -356,6 +356,7 @@ bool kgmSystem::getDesktopWorkaround(u32 &x, u32 &y, u32 &w, u32 &h)
 
 #ifdef WIN32
 #elif defined(DARWIN)
+#elif defined(WAYLAND)
 #else
   Display *display;
   Atom     actual_type;
