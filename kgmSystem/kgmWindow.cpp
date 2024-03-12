@@ -824,7 +824,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
     if (!m_display)
     {
-      kgm_log() << "Cannot open display.\n";
+      kgm_log() << "WL: Cannot open display.\n";
 
       return;
     }
@@ -837,9 +837,28 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
     wl_registry_add_listener(registry, &registry_listener, this);
 
+    wl_display_dispatch(m_display);
     wl_display_roundtrip(m_display);
-
     wl_registry_destroy(registry);
+
+    if (!m_compositor)
+    {
+      kgm_log() << "WL: No compositor.\n";
+
+      return;
+    }
+
+    m_surface = wl_compositor_create_surface(m_compositor);
+
+    if (!m_surface)
+    {
+      kgm_log() << "WL: No surface.\n";
+
+      return;
+    }
+
+    wl_surface_commit(m_surface);
+    wl_display_roundtrip(m_display);
 
     m_loop = true;
 
@@ -1115,6 +1134,9 @@ void kgmWindow::loop()
 #elif defined(DARWIN)
 
 #elif defined(WAYLAND)
+  while(m_loop && wl_display_dispatch(m_display))
+  {
+  }
 #else
 
   XEvent evt;
