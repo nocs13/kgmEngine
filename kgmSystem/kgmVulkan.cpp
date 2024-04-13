@@ -4532,9 +4532,13 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.pPoolSizes = &poolSize;
   poolInfo.maxSets = SWAPCHAIN_IMAGES;
 
-  if (m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool) != VK_SUCCESS)
+  result = m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool);
+
+  if (result != VK_SUCCESS)
   {
     kgm_log() << "Vulkan error: Failed to create descriptor pool.\n";
+
+    printResult(result);
 
     freePipeline(pipeline);
 
@@ -4555,9 +4559,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   {
     kgm_log() << "Vulkan error: Failed to create descriptor set.\n";
 
-    freePipeline(pipeline);
-
     printResult(result);
+
+    freePipeline(pipeline);
 
     return null;
   }
@@ -5167,7 +5171,7 @@ void kgmVulkan::printResult(VkResult result)
     kgm_log() << "Vulkan result: Error invalid shaders.\n";
   break;
   default:
-    kgm_log() << "Vulkan result: Error unknown.\n";
+    kgm_log() << "Vulkan result: Error unknown(" << (int) result << ").\n";
   }
 }
 

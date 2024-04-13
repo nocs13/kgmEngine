@@ -76,13 +76,13 @@ public:
 
   void add(const T& el)
   {
-    if (m_length == m_reserve)
-    {
-      reserve(m_length + m_length / 4);
-    }
-    else if (m_length == 0)
+    if (m_length == 0 && m_reserve == 0)
     {
       reserve(16);
+    }
+    else if (m_length == m_reserve)
+    {
+      reserve(m_length + m_length / 4);
     }
 
     m_data[m_length] = el;
