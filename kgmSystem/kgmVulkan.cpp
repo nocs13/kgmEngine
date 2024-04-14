@@ -4444,7 +4444,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   if (!m_shader)
     return null;
 
-  VkResult result;
+  VkResult result = VK_SUCCESS;
 
   Pipeline* pipeline = new Pipeline;
 
@@ -4500,7 +4500,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     return null;
   }
 
-  /*VkDescriptorPoolSize poolSizes[2];
+  VkDescriptorPoolSize poolSizes[2];
 
   ZeroObject(poolSizes[0]);
   poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -4514,11 +4514,11 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
-  //poolInfo.poolSizeCount = 2;
-  poolInfo.pPoolSizes = poolSizes;
-  poolInfo.maxSets = 1;*/
+  poolInfo.poolSizeCount = 2;
+  //poolInfo.pPoolSizes = poolSizes;
+  poolInfo.maxSets = 1;
 
-  VkDescriptorPoolSize poolSize;
+  /*VkDescriptorPoolSize poolSize;
 
   ZeroObject(poolSize);
   poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -4543,7 +4543,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     freePipeline(pipeline);
 
     return null;
-  }
+  }*/
 
   VkDescriptorSetAllocateInfo allocInfo;
 
@@ -5169,6 +5169,9 @@ void kgmVulkan::printResult(VkResult result)
   break;
   case VK_ERROR_INVALID_SHADER_NV:
     kgm_log() << "Vulkan result: Error invalid shaders.\n";
+  break;
+  case VK_ERROR_OUT_OF_POOL_MEMORY:
+    kgm_log() << "Vulkan result: Error out of pool memory.\n";
   break;
   default:
     kgm_log() << "Vulkan result: Error unknown(" << (int) result << ").\n";
