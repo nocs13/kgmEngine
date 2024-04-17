@@ -20,9 +20,9 @@ ERRS= -Wall -Wextra -pedantic
 DWIN = -DX11
 LWIN = -lX11
 
-WSys=${WIN}
+WSys=${XDG_SESSION_TYPE}
 
-ifeq ($(WSys),Wayland)
+ifeq ($(WSys),wayland)
 	LWIN =  -lwayland-cursor -lwayland-client
 	#LWIN =  -lwayland-client
 	#LWIN=$(pkg-config --cflags --libs wayland-client)
