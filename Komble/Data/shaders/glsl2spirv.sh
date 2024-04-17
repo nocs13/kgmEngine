@@ -12,35 +12,36 @@ else
   SDR='win'
 fi
 
-BWD=$(pwd)
+for f in *.vk; do
+    echo "Current file: " ${f}
+    
+    #[ ! -e $f ] || continue
+    
+    file=`echo $f | rev | cut -c4- | rev`
+    
+    echo "Current module: " ${file}
 
-echo "Current working folder is $BWD"
+    csplit -z $f /\/\/Fragment\ Shader/ '{*}'
 
-echo "Target folder is $sdr"
-
-CWD=$(dirname `which $0`)
-
-echo "need to go $CWD"
-
-cd $CWD
-
-for f in *; do
-    echo "Current file: $f"
-
-    ext=`echo $f | awk -F. '{print $3}'`
-    file=`echo $f | awk -F. '{print $1"."$2}'`
-    echo "Current ext: $ext"
-    echo "Current file part: $file"
-
-    [ ! -z "$ext" ] || continue
-
-    if [ $ext == 'vert' ]; then
-      glslangValidator -V $f -o "$SDR/$file.vspv"
-    elif [ $ext == 'frag' ]; then
-      glslangValidator -V $f -o "$SDR/$file.fspv"
+    if [[ $? -eq 0 ]]; then
+	echo "Split succeeded"
     else
-      echo "Wrong extention!"
+	echo "Split failed"
+	continue
     fi
+    
+    [ ! -z xx00 ] || continue
+    [ ! -z xx01 ] || continue
+
+    mv xx00 xx00.vert
+    mv xx01 xx01.frag
+
+    glslangValidator -V 'xx00.vert' -o "$file.$SDR.vspv"
+    glslangValidator -V 'xx01.frag' -o "$file.$SDR.fspv"
+    
+    rm -f xx00.vert xx01.frag
 done
+
+rm -f xx00* xx01*
 
 cd $BWD

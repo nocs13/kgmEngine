@@ -8,6 +8,8 @@
 #include "../kgmGame/kgmIGame.h"
 #include "../kgmSystem/kgmApp.h"
 
+#define VULKAN
+
 #ifdef VULKAN
 
 #include "inc/vk/vulkan.h"
@@ -4082,7 +4084,7 @@ void kgmVulkan::fillCommands()
               descriptorWritesCount++;
             }
 
-            m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
+            //m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
           }
 
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
@@ -4456,12 +4458,17 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(uboLayoutBinding);
   uboLayoutBinding.binding = 0;
-  uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  uboLayoutBinding.descriptorCount = 1;
-  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-
+  uboLayoutBinding.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  uboLayoutBinding.stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
   layoutBindings.add(uboLayoutBinding);
 
+  ZeroObject(uboLayoutBinding);
+  uboLayoutBinding.binding = 1;
+  uboLayoutBinding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  uboLayoutBinding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
+  layoutBindings.add(uboLayoutBinding);
+
+  /*
   for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
   {
     VkDescriptorSetLayoutBinding samplerLayoutBinding;
@@ -4479,6 +4486,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
     layoutBindings.add(samplerLayoutBinding);
   }
+  */
 
   VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
 
@@ -4505,6 +4513,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   ZeroObject(poolSizes[0]);
   poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   poolSizes[0].descriptorCount = 1;
+
   ZeroObject(poolSizes[1]);
   poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   poolSizes[1].descriptorCount = 1;
@@ -4513,12 +4522,12 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
+  //poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
   poolInfo.poolSizeCount = 2;
-  //poolInfo.pPoolSizes = poolSizes;
+  poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 1;
 
-  /*VkDescriptorPoolSize poolSize;
+  /* VkDescriptorPoolSize poolSize;
 
   ZeroObject(poolSize);
   poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -4530,7 +4539,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   poolInfo.poolSizeCount = 1;
   poolInfo.pPoolSizes = &poolSize;
-  poolInfo.maxSets = SWAPCHAIN_IMAGES;
+  poolInfo.maxSets = SWAPCHAIN_IMAGES; */
 
   result = m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool);
 
@@ -4543,7 +4552,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     freePipeline(pipeline);
 
     return null;
-  }*/
+  }
 
   VkDescriptorSetAllocateInfo allocInfo;
 

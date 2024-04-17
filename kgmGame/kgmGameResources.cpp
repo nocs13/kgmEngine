@@ -421,11 +421,12 @@ kgmShader *kgmGameResources::getShader(const char *id)
     kgmString prev;
 
 #if defined(_WIN32)
-    prev = "win\\";
+    prev = ".win";
 #elif defined(__unix__)
-    prev = "nix/";
+    prev = ".nix";
 #endif
 
+    /*
     kgmArray<u8> mem;
     kgmString kid = kgmString(id) + ".vk";
 
@@ -439,13 +440,14 @@ kgmShader *kgmGameResources::getShader(const char *id)
     {
       kgm_log() << "Shader vulkan not loaded for " << kid.data() << "\n";
     }
+    */
 
     if (!shader)
     {
       kgmArray<u8> vmem, fmem;
 
-      kgmString vid = prev + kgmString(id) + ".vspv";
-      kgmString fid = prev + kgmString(id) + ".fspv";
+      kgmString vid = kgmString(id) + prev + ".vspv";
+      kgmString fid = kgmString(id) + prev + ".fspv";
 
       if (getRFile(vid, RSHADER, vmem) && getRFile(fid, RSHADER, fmem))
       {
