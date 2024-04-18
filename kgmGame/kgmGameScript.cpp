@@ -304,6 +304,8 @@ s32 kgmGameScript::kgmImport(void*)
 
   if (script)
   {
+    kgm_log() << __FILE__ << " " << __LINE__ << " importing script " << script << "\n";
+    
     game->getScript()->load(script);
   }
 

@@ -26,7 +26,9 @@ s32 kgmGameApp::exec(s32 argc, s8 **argv)
   }
   */
 
-  kgm_log() << "Paring args, count is " << argc << ".\n";
+  kgm_set_loglevel(kgmLog::DL_Debug);
+  
+  kgm_log(kgmLog::DL_Debug) << "Paring args, count is " << argc << ".\n";
 
   s32 opt = 0;
 

@@ -14,23 +14,18 @@
 #endif
 
 kgmLog kgmLog::LOG;
+kgmLog kgmLog::EMPTY(kgmLog::DL_None);
 
 void kgmLog::log(kgmString s)
 {
+  if (level == DL_None)
+    return;
+  
 #ifdef ANDROID
     LOGI("kgmEngine: %s\n", (char*)s);
 #else
-    printf("kgmEngine: %s\n", (char*) s);
-#endif
-}
-
-void kgmLog::log_(kgmString s)
-{
-#ifdef ANDROID
-    LOGI("%s", (char*) s);
-#else
-    printf("%s", (char*) s);
-    fflush(stdout);
+    fprintf(stderr, "kgmEngine: %s", (char*) s);
+    fflush(stderr);
 #endif
 }
 

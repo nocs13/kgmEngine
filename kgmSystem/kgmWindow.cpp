@@ -348,6 +348,11 @@ void kgmUnregisterWindowClass(){
   {
     kgmWindow* me = static_cast<kgmWindow*>(data);
 
+    if (interface != NULL)
+    {
+      kgm_log() << "kgmWindow: onRegistry wayland interface " << interface << "\n";
+    }
+
     if (!strcmp(interface, wl_compositor_interface.name)) {
       me->m_compositor = static_cast<wl_compositor*>(
           wl_registry_bind(registry, name, &wl_compositor_interface, version));
@@ -782,7 +787,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   m_msf = false;
   m_fs = false;
 
-  kgmLog::log("Init screen");
+  kgm_log() << "Init screen.\n";
 
   setHandle(null);
 
@@ -826,6 +831,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     {
       kgm_log() << "WL: Cannot open display.\n";
 
+      exit(EXIT_FAILURE);
       return;
     }
 
@@ -837,7 +843,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
     wl_registry_add_listener(registry, &registry_listener, this);
 
-    wl_display_dispatch(m_display);
+    //wl_display_dispatch(m_display);
     wl_display_roundtrip(m_display);
     wl_registry_destroy(registry);
 
@@ -845,6 +851,7 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     {
       kgm_log() << "WL: No compositor.\n";
 
+      exit(EXIT_FAILURE);
       return;
     }
 
@@ -854,10 +861,12 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     {
       kgm_log() << "WL: No surface.\n";
 
+      exit(EXIT_FAILURE);
       return;
     }
-
+   
     wl_surface_commit(m_surface);
+    
     wl_display_roundtrip(m_display);
 
     m_loop = true;
@@ -1134,7 +1143,7 @@ void kgmWindow::loop()
 #elif defined(DARWIN)
 
 #elif defined(WAYLAND)
-  while(m_loop && wl_display_dispatch(m_display))
+  while(wl_display_dispatch(m_display))
   {
   }
 #else

@@ -85,8 +85,8 @@ public:
   struct wl_shell*      m_shell = nullptr;
   struct wl_shm*        m_shm = nullptr;
 
-  struct xdg_surface*   m_xdg_surface;
-  struct xdg_toplevel*  m_xdg_toplevel;  
+  //struct xdg_surface*   m_xdg_surface;
+  //struct xdg_toplevel*  m_xdg_toplevel;  
 #else
 
   Display             *m_dpy;

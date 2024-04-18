@@ -970,7 +970,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
         p = (char*)((size_t)p + rd);
       }
 #ifdef DEBUG
-      kgmLog::log("\nEnd vertices");
+      kgm_log() << "\nEnd vertices";
 #endif
     }
     else if(id == "Faces")
@@ -995,7 +995,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
         p = (char*)((size_t)p + rd);
       }
 #ifdef DEBUG
-      kgmLog::log("\nEnd faces");
+      kgm_log() << "\nEnd faces";
 #endif
     }
     else if(id == "Skin")
@@ -1040,7 +1040,7 @@ kgmMesh* kgmGameTools::genMesh(kgmXml& x)
 
       delete [] v;
 #ifdef DEBUG
-      kgmLog::log("\nEnd skin");
+      kgm_log() << "\nEnd skin";
 #endif
     }
   }

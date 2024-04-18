@@ -7,111 +7,129 @@
 #include "../kgmSystem/kgmTime.h"
 
 class kgmLog;
-class kgmLogError;
-class kgmLogDebug;
-class kgmLogWarning;
 
 class kgmLog
 {
 public:
-    static kgmLog LOG;
-
-    kgmString f_path;
-
+  enum Level
+  {
+    DL_None,
+    DL_Error,
+    DL_Warning,
+    DL_Info,
+    DL_Debug,
+    DL_Verbose
+  };
+  
+  static kgmLog LOG;
+  static kgmLog EMPTY;
 private:
-    kgmTime time;
-
+  kgmTime time;
+  
+  Level level;
+  
 public:
-    kgmLog()
-    {
-    }
+  kgmLog()
+  {
+    level = DL_Error;
+  }
+  
+  kgmLog(Level l)
+  {
+    level = l;
+  }
+  
+  ~kgmLog()
+  {
+  }
 
-    kgmLog(const char* path)
-    {
-      f_path.init(path);
-    }
+  kgmLog& operator << (kgmString& s)
+  {
+    log(s);
+    
+    return *this;
+  }
 
-    ~kgmLog()
-    {
-    }
+  kgmLog& operator << (kgmString s)
+  {
+    log(s);
 
-    kgmLog& operator << (kgmString& s)
-    {
-      log_(s);
+    return *this;
+  }
 
-      return *this;
-    }
+  kgmLog& operator << (const char* s)
+  {
+    log(s);
 
-    kgmLog& operator << (kgmString s)
-    {
-      log_(s);
-
-      return *this;
-    }
-
-    kgmLog& operator << (const char* s)
-    {
-      log_(s);
-
-      return *this;
-    }
+    return *this;
+  }
 
 
-    kgmLog& operator << (char* s)
-    {
-      log_(s);
+  kgmLog& operator << (char* s)
+  {
+    log(s);
 
-      return *this;
-    }
+    return *this;
+  }
 
-    kgmLog& operator << (s32 s)
-    {
-      log_(kgmConvert::toString(s));
+  kgmLog& operator << (s32 s)
+  {
+    log(kgmConvert::toString(s));
 
-      return *this;
-    }
+    return *this;
+  }
 
-    kgmLog& operator << (u32 s)
-    {
-      log_(kgmConvert::toString(s));
+  kgmLog& operator << (u32 s)
+  {
+    log(kgmConvert::toString(s));
 
-      return *this;
-    }
+    return *this;
+  }
 
-    kgmLog& operator << (f64 s)
-    {
-      log_(kgmConvert::toString(s));
+  kgmLog& operator << (f64 s)
+  {
+    log(kgmConvert::toString(s));
 
-      return *this;
-    }
+    return *this;
+  }
 
-    kgmLog& operator << (void* p)
-    {
-      log_(kgmConvert::toString(p));
+  kgmLog& operator << (void* p)
+  {
+    log(kgmConvert::toString(p));
 
-      return *this;
-    }
+    return *this;
+  }
 
-    static void log(kgmString s);
-    static const char* kgm_log_label();
-
-private:
-    static void log_(kgmString s);
-
+  void setLevel(Level level)
+  {
+    this->level = level;
+  }
+  
+  Level getLevel()
+  {
+    return this->level;
+  }
+  
+  void log(kgmString s);
+  
+  static const char* kgm_log_label();
 };
 
-inline kgmLog& kgm_log()
+inline kgmLog& kgm_log(kgmLog::Level level = kgmLog::DL_Error)
 {
-  printf("kgmEngine [%s]: ", kgmLog::kgm_log_label());
+  if ((kgmLog::LOG.getLevel() == kgmLog::DL_None) || ( level > kgmLog::LOG.getLevel()))
+  {
+    return kgmLog::EMPTY;
+  }
+
+  fprintf(stderr, "kgmEngine [%s]: ", kgmLog::kgm_log_label());
 
   return kgmLog::LOG;
 }
 
-inline void kgm_log_print(const char* s)
+inline void kgm_set_loglevel(kgmLog::Level level)
 {
-#ifdef DEBUG
-  fprintf(stderr, "%s\n", s);
-#endif
+  kgmLog::LOG.setLevel(level);
 }
 
 #define KGM_DBG_MSG(x) fprintf(stderr, "%s", x)
