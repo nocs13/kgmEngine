@@ -270,7 +270,7 @@ class kgmVulkan: public kgmIGC
     VkPipelineLayout layout;
     VkPipelineCache  cache;
 
-    VkDescriptorSetLayout setlayout;
+    VkDescriptorSetLayout setlayout[2];
     VkDescriptorPool      setpool;
     VkDescriptorSet       descriptor;
 

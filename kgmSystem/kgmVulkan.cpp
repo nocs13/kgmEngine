@@ -22,6 +22,7 @@
 
 static int SWAPCHAIN_IMAGES = 2;
 
+
 //https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
 
 u32           kgmVulkan::g_vulkans = 0;
@@ -905,6 +906,9 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
   if (!pipeline)
   {
     pipeline = createPipeline();
+
+    if (!pipeline)
+      exit(EXIT_FAILURE);
 
     m_pipelines->add(pipeline);
   }
@@ -2459,7 +2463,12 @@ bool kgmVulkan::initDebug()
 {
 #ifdef DEBUG
 
-  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");;
+  m_vk.vkCreateDebugReportCallbackEXT = (typeof m_vk.vkCreateDebugReportCallbackEXT) m_vk.vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");
+
+  if (m_vk.vkCreateDebugReportCallbackEXT == NULL)
+  {
+    kgm_log() << "Vulkan DEBUG: No debug report callback found.\n";
+  }
 
   VkDebugReportCallbackCreateInfoEXT debugReportCallbackCreateInfo;
 
@@ -4057,9 +4066,9 @@ void kgmVulkan::fillCommands()
               imageInfoCount++;
             }
 
-            VkWriteDescriptorSet descriptorWrites[1 + VK_MAX_TEXTURES];
+            VkWriteDescriptorSet descriptorWrites[2];
 
-            u32 descriptorWritesCount = 1;
+            u32 descriptorWritesCount = 2;
 
             ZeroObject(descriptorWrites[0]);
             descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -4070,21 +4079,16 @@ void kgmVulkan::fillCommands()
             descriptorWrites[0].descriptorCount = 1;
             descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-            for (u32 i = 0; i < imageInfoCount; i++)
-            {
-              ZeroObject(descriptorWrites[1 + i]);
-              descriptorWrites[1 + i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-              descriptorWrites[1 + i].dstSet = pipeline->descriptor;
-              descriptorWrites[1 + i].dstBinding = 1 + i;
-              descriptorWrites[1 + i].dstArrayElement = 0;
-              descriptorWrites[1 + i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-              descriptorWrites[1 + i].descriptorCount = 1;
-              descriptorWrites[1 + i].pImageInfo = &imageInfo[i];
+            ZeroObject(descriptorWrites[1]);
+	    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	    descriptorWrites[1].dstSet = pipeline->descriptor;
+	    descriptorWrites[1].dstBinding = 1;
+	    descriptorWrites[1].dstArrayElement = 0;
+	    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	    descriptorWrites[1].descriptorCount = VK_MAX_TEXTURES;
+	    descriptorWrites[1].pImageInfo = imageInfo;
 
-              descriptorWritesCount++;
-            }
-
-            //m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
+            m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
           }
 
           m_vk.vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->layout,
@@ -4464,29 +4468,10 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(uboLayoutBinding);
   uboLayoutBinding.binding = 1;
+  uboLayoutBinding.descriptorCount = VK_MAX_TEXTURES;
   uboLayoutBinding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   uboLayoutBinding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
   layoutBindings.add(uboLayoutBinding);
-
-  /*
-  for (u32 i = 0; i < VK_MAX_TEXTURES; i++)
-  {
-    VkDescriptorSetLayoutBinding samplerLayoutBinding;
-
-    ZeroObject(samplerLayoutBinding);
-
-    if (m_textures[i] == null)
-      break;
-
-    samplerLayoutBinding.binding = 1 + i;
-    samplerLayoutBinding.descriptorCount = 1;
-    samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    samplerLayoutBinding.pImmutableSamplers = nullptr;
-    samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-    layoutBindings.add(samplerLayoutBinding);
-  }
-  */
 
   VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
 
@@ -4507,7 +4492,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
     return null;
   }
-
+  /*
   VkDescriptorPoolSize poolSizes[2];
 
   ZeroObject(poolSizes[0]);
@@ -4526,8 +4511,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 1;
-
-  /* VkDescriptorPoolSize poolSize;
+  */
+  VkDescriptorPoolSize poolSize;
 
   ZeroObject(poolSize);
   poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -4539,7 +4524,6 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   poolInfo.poolSizeCount = 1;
   poolInfo.pPoolSizes = &poolSize;
-  poolInfo.maxSets = SWAPCHAIN_IMAGES; */
 
   result = m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool);
 
@@ -4559,7 +4543,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   ZeroObject(allocInfo);
   allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   allocInfo.descriptorPool = pipeline->setpool;
-  allocInfo.descriptorSetCount = 1;
+  allocInfo.descriptorSetCount = 2;
   allocInfo.pSetLayouts = &pipeline->setlayout;
 
   result = m_vk.vkAllocateDescriptorSets(m_device, &allocInfo, &pipeline->descriptor);
@@ -4599,9 +4583,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
     imageInfoCount++;
   }
 
-  VkWriteDescriptorSet descriptorWrites[1 + VK_MAX_TEXTURES];
+  VkWriteDescriptorSet descriptorWrites[2];
 
-  u32 descriptorWritesCount = 1;
+  u32 descriptorWritesCount = 2;
 
   ZeroObject(descriptorWrites[0]);
   descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -4612,22 +4596,13 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[0].descriptorCount = 1;
   descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-  if ((layoutCreateInfo.bindingCount > 1) && m_textures[0])
-  {
-    for (u32 i = 0; i < imageInfoCount; i++)
-    {
-      ZeroObject(descriptorWrites[1 + i]);
-      descriptorWrites[1 + i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      descriptorWrites[1 + i].dstSet = pipeline->descriptor;
-      descriptorWrites[1 + i].dstBinding = 1;
-      descriptorWrites[1 + i].dstArrayElement = 0;
-      descriptorWrites[1 + i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      descriptorWrites[1 + i].descriptorCount = 1;
-      descriptorWrites[1 + i].pImageInfo = &imageInfo[i];
-
-      descriptorWritesCount++;
-    }
-  }
+  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites[1].dstSet = pipeline->descriptor;
+  descriptorWrites[1].dstBinding = 1;
+  descriptorWrites[1].dstArrayElement = 0;
+  descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  descriptorWrites[1].descriptorCount = VK_MAX_TEXTURES;
+  descriptorWrites[1].pImageInfo = imageInfo;
 
   m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
 
