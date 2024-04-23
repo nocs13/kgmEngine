@@ -3,13 +3,13 @@
 
 #define MAX_LIGHTS 8
 
-layout(binding = 0) uniform UniformBufferObject 
+layout(binding = 0) uniform UniformBufferObject
 {
- mat4   g_mView;           
- mat4   g_mProj;           
- mat4   g_mTran;           
- vec4   g_vColor;          
- vec4   g_vSpecular;       
+ mat4   g_mView;
+ mat4   g_mProj;
+ mat4   g_mTran;
+ vec4   g_vColor;
+ vec4   g_vSpecular;
  vec4   g_vClipPlane;
 
  vec4   g_vLightPos[MAX_LIGHTS];
@@ -17,13 +17,13 @@ layout(binding = 0) uniform UniformBufferObject
  vec4   g_vLightCol[MAX_LIGHTS];
 
  vec3   g_vUp;
- vec3   g_vEye;            
- vec3   g_vLook;           
- float  g_fTime;           
- float  g_fShine;          
- float  g_fRandom;         
- float  g_fAmbient;        
- float  g_fLightPower;     
+ vec3   g_vEye;
+ vec3   g_vLook;
+ float  g_fTime;
+ float  g_fShine;
+ float  g_fRandom;
+ float  g_fAmbient;
+ float  g_fLightPower;
  int    g_iClipping;
  int    g_iLights;
 } ubo;
@@ -43,7 +43,7 @@ layout(location = 0) out vec4  color;
 layout(location = 1) out vec4  position;
 layout(location = 2) out float clipping;
 
-void main() 
+void main()
 {
   color = cb.color;
 
@@ -64,9 +64,13 @@ void main()
 //Fragment Shader
 #version 450
 
-layout(set = 0, binding = 1) uniform sampler2D txColor;
-layout(set = 0, binding = 2) uniform sampler2D txNormal;
-layout(set = 0, binding = 3) uniform sampler2D txSpecular;
+#define MAX_TEXTURES 4
+
+#define TEX_COLOR    0
+#define TEX_NORMAL   1
+#define TEX_SPECULAR 2
+
+layout(set = 0, binding = 1) uniform sampler2D textures[MAX_TEXTURES];
 
 layout(location = 0) in vec4  color;
 

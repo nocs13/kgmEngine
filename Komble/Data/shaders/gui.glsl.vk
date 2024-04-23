@@ -1,25 +1,25 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-layout(binding = 0) uniform UniformBufferObject 
+layout(binding = 0) uniform UniformBufferObject
 {
- mat4   g_mView;           
- mat4   g_mProj;           
- mat4   g_mTran;           
- vec4   g_vColor;          
- vec4   g_vSpecular;       
- vec4   g_vLight;          
- vec4   g_vLightColor;     
- vec4   g_vLightDirection; 
- vec4   g_vClipPlane;      
- vec3   g_vUp;             
- vec3   g_vEye;            
- vec3   g_vLook;           
- float  g_fTime;           
- float  g_fShine;          
- float  g_fRandom;         
- float  g_fAmbient;        
- float  g_fLightPower;     
+ mat4   g_mView;
+ mat4   g_mProj;
+ mat4   g_mTran;
+ vec4   g_vColor;
+ vec4   g_vSpecular;
+ vec4   g_vLight;
+ vec4   g_vLightColor;
+ vec4   g_vLightDirection;
+ vec4   g_vClipPlane;
+ vec3   g_vUp;
+ vec3   g_vEye;
+ vec3   g_vLook;
+ float  g_fTime;
+ float  g_fShine;
+ float  g_fRandom;
+ float  g_fAmbient;
+ float  g_fLightPower;
  int    g_iClipping;
 } ubo;
 
@@ -37,7 +37,7 @@ layout(location = 2) in vec2 a_UV;
 layout(location = 0) out vec4 color;
 layout(location = 1) out vec2 uv0;
 
-void main() 
+void main()
 {
   vec4 v_col = vec4((a_Color & 0x000000FF) >> 0, (a_Color & 0x0000FF00) >> 8,
                     (a_Color & 0x00FF0000) >> 16, (a_Color & 0xFF000000)>> 24);
@@ -47,9 +47,9 @@ void main()
   //color = vec4(v_col.g);
 
   uv0   = a_UV;
-  
+
   vec4 pos = ubo.g_mProj * vec4(a_Vertex, 1.0);
-  
+
   pos.y *= -1;
 
   gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
@@ -58,9 +58,13 @@ void main()
 //Fragment Shader
 #version 450
 
-layout(set = 0, binding = 1) uniform sampler2D texColor;
-layout(set = 0, binding = 2) uniform sampler2D txNormal;
-layout(set = 0, binding = 3) uniform sampler2D txSpecular;
+#define MAX_TEXTURES 4
+
+#define TEX_COLOR    0
+#define TEX_NORMAL   1
+#define TEX_SPECULAR 2
+
+layout(set = 0, binding = 1) uniform sampler2D textures[MAX_TEXTURES];
 
 layout(location = 0) in vec4 color;
 layout(location = 1) in vec2 uv0;
@@ -69,5 +73,5 @@ layout(location = 0) out vec4 fragColor;
 
 void main()
 {
-    fragColor = color * texture(texColor, uv0);
+    fragColor = color * texture(textures[TEX_COLOR], uv0);
 }

@@ -2585,6 +2585,8 @@ bool kgmVulkan::listDevices()
 
   m_physicalDevices.alloc(count);
 
+  //count = 1;
+
   result = m_vk.vkEnumeratePhysicalDevices(m_instance, &count, m_physicalDevices.data());
 
   if (result != VK_SUCCESS)
@@ -2605,9 +2607,22 @@ bool kgmVulkan::listDevices()
     return false;
   }
 
-  for (int i = count; i > 0; i--)
+  kgm_log() << "Vulkan Info: List devices.\n";
+
+  for (int i = 0; i < count; i++)
   {
-    auto& dev = m_physicalDevices[i - 1];
+    auto& dev = m_physicalDevices[i];
+
+    kgm_log() << "Vulkan Info: Suitable device check index " << i << ".\n";
+
+    isDeviceSuitable(dev);
+  }
+
+  kgm_log() << "Vulkan Info: Choose device.\n";
+
+  for (int i = 0; i < count; i++)
+  {
+    auto& dev = m_physicalDevices[i];
 
     if (isDeviceSuitable(dev))
     {
@@ -3722,11 +3737,17 @@ bool kgmVulkan::isDeviceSuitable(VkPhysicalDevice dev)
   VkPhysicalDeviceProperties deviceProperties;
   VkPhysicalDeviceFeatures deviceFeatures;
 
+  ZeroObject(deviceProperties);
+  ZeroObject(deviceFeatures);
+
   m_vk.vkGetPhysicalDeviceProperties(dev, &deviceProperties);
   m_vk.vkGetPhysicalDeviceFeatures(dev, &deviceFeatures);
 
-  return ((deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && deviceFeatures.geometryShader);
-  //return deviceFeatures.geometryShader;
+  kgm_log() << "Vulkan Info: device type is " << (int) deviceProperties.deviceType << "\n.";
+  kgm_log() << "Vulkan Info: device name is " << deviceProperties.deviceName << "\n.";
+
+  //return ((deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) && deviceFeatures.geometryShader);
+  return deviceFeatures.geometryShader;
 }
 
 bool kgmVulkan::destroyDevice()
@@ -4590,7 +4611,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[1].dstBinding = 1;
   descriptorWrites[1].dstArrayElement = 0;
   descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = imageInfoCount;//VK_MAX_TEXTURES;
+  descriptorWrites[1].descriptorCount = imageInfoCount;
   descriptorWrites[1].pImageInfo = imageInfo;
 
   m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);

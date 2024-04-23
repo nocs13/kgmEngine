@@ -55,6 +55,15 @@ void main()
 
 //Fragment Shader
 #version 450
+
+#define MAX_TEXTURES 4
+
+#define TEX_COLOR    0
+#define TEX_NORMAL   1
+#define TEX_SPECULAR 2
+
+layout(set = 0, binding = 1) uniform sampler2D textures[MAX_TEXTURES];
+
 layout(location = 0) in vec4 color;
 
 layout(location = 0) out vec4 oColor;
