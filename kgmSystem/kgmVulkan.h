@@ -270,7 +270,7 @@ class kgmVulkan: public kgmIGC
     VkPipelineLayout layout;
     VkPipelineCache  cache;
 
-    VkDescriptorSetLayout setlayout[2];
+    VkDescriptorSetLayout setlayout;
     VkDescriptorPool      setpool;
     VkDescriptorSet       descriptor;
 
@@ -659,7 +659,7 @@ public:
   void  gcRender();
   void  gcSetTarget(void*  rt);
 
-  void gcResize(u32 width, u32 height);
+  void  gcResize(u32 width, u32 height);
 
   // DRAWING
   void  gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, u32 i_size, u32 i_cnt, void *i_pnt);

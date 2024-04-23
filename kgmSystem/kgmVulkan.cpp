@@ -17,10 +17,10 @@
 
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
-//#define SWAPCHAIN_IMAGES 2
+#define SWAPCHAIN_IMAGES (2)
 //#define VK_DYNAMIC_STATE_DEPTH_BOUNDS 5
 
-static int SWAPCHAIN_IMAGES = 2;
+//static int SWAPCHAIN_IMAGES = 2;
 
 
 //https://gist.github.com/Overv/7ac07356037592a121225172d7d78f2d
@@ -908,7 +908,7 @@ void  kgmVulkan::gcDraw(u32 pmt, u32 v_fmt, u32 v_size, u32 v_cnt, void *v_pnt, 
     pipeline = createPipeline();
 
     if (!pipeline)
-      exit(EXIT_FAILURE);
+      return;
 
     m_pipelines->add(pipeline);
   }
@@ -3012,8 +3012,8 @@ bool kgmVulkan::initSurface()
     return false;
   }
 
-  if (SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount)
-    SWAPCHAIN_IMAGES = m_surfaceCapabilities.minImageCount;
+  //if (SWAPCHAIN_IMAGES < m_surfaceCapabilities.minImageCount)
+  //  SWAPCHAIN_IMAGES = m_surfaceCapabilities.minImageCount;
 
   u32 surfaceFormatsCount = 0;
 
@@ -4080,13 +4080,13 @@ void kgmVulkan::fillCommands()
             descriptorWrites[0].pBufferInfo = &bufferInfo;
 
             ZeroObject(descriptorWrites[1]);
-	    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	    descriptorWrites[1].dstSet = pipeline->descriptor;
-	    descriptorWrites[1].dstBinding = 1;
-	    descriptorWrites[1].dstArrayElement = 0;
-	    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	    descriptorWrites[1].descriptorCount = VK_MAX_TEXTURES;
-	    descriptorWrites[1].pImageInfo = imageInfo;
+	          descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	          descriptorWrites[1].dstSet = pipeline->descriptor;
+	          descriptorWrites[1].dstBinding = 1;
+	          descriptorWrites[1].dstArrayElement = 0;
+	          descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	          descriptorWrites[1].descriptorCount = 1; //VK_MAX_TEXTURES;
+	          descriptorWrites[1].pImageInfo = imageInfo;
 
             m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
           }
@@ -4462,6 +4462,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(uboLayoutBinding);
   uboLayoutBinding.binding = 0;
+  uboLayoutBinding.descriptorCount = 1;
   uboLayoutBinding.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   uboLayoutBinding.stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
   layoutBindings.add(uboLayoutBinding);
@@ -4480,6 +4481,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   layoutCreateInfo.bindingCount = layoutBindings.length();
   layoutCreateInfo.pBindings = layoutBindings.data();
 
+  kgm_log() << "Vulkan info: layoutBinding count " << layoutCreateInfo.bindingCount << ".\n";
+
   result = m_vk.vkCreateDescriptorSetLayout(m_device, &layoutCreateInfo, null, &pipeline->setlayout);
 
   if(result != VkResult::VK_SUCCESS)
@@ -4492,7 +4495,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
     return null;
   }
-  /*
+
   VkDescriptorPoolSize poolSizes[2];
 
   ZeroObject(poolSizes[0]);
@@ -4501,7 +4504,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolSizes[1]);
   poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  poolSizes[1].descriptorCount = 1;
+  poolSizes[1].descriptorCount = VK_MAX_TEXTURES;
 
   VkDescriptorPoolCreateInfo poolInfo;
 
@@ -4510,8 +4513,9 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   //poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
   poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes = poolSizes;
-  poolInfo.maxSets = 1;
-  */
+  poolInfo.maxSets = 2;
+
+ /*
   VkDescriptorPoolSize poolSize;
 
   ZeroObject(poolSize);
@@ -4524,7 +4528,8 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
   poolInfo.poolSizeCount = 1;
   poolInfo.pPoolSizes = &poolSize;
-
+  poolInfo.maxSets = 1;
+  */
   result = m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool);
 
   if (result != VK_SUCCESS)
@@ -4543,7 +4548,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   ZeroObject(allocInfo);
   allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   allocInfo.descriptorPool = pipeline->setpool;
-  allocInfo.descriptorSetCount = 2;
+  allocInfo.descriptorSetCount = 1;
   allocInfo.pSetLayouts = &pipeline->setlayout;
 
   result = m_vk.vkAllocateDescriptorSets(m_device, &allocInfo, &pipeline->descriptor);
@@ -4601,7 +4606,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[1].dstBinding = 1;
   descriptorWrites[1].dstArrayElement = 0;
   descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = VK_MAX_TEXTURES;
+  descriptorWrites[1].descriptorCount = 1;//VK_MAX_TEXTURES;
   descriptorWrites[1].pImageInfo = imageInfo;
 
   m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
