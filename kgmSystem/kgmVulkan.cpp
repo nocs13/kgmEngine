@@ -4085,7 +4085,7 @@ void kgmVulkan::fillCommands()
 	          descriptorWrites[1].dstBinding = 1;
 	          descriptorWrites[1].dstArrayElement = 0;
 	          descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	          descriptorWrites[1].descriptorCount = 1; //VK_MAX_TEXTURES;
+	          descriptorWrites[1].descriptorCount = imageInfoCount;
 	          descriptorWrites[1].pImageInfo = imageInfo;
 
             m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
@@ -4510,26 +4510,10 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
 
   ZeroObject(poolInfo);
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  //poolInfo.poolSizeCount = layoutCreateInfo.bindingCount;
   poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes = poolSizes;
   poolInfo.maxSets = 2;
 
- /*
-  VkDescriptorPoolSize poolSize;
-
-  ZeroObject(poolSize);
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = SWAPCHAIN_IMAGES;
-
-  VkDescriptorPoolCreateInfo poolInfo;
-
-  ZeroObject(poolInfo);
-  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 1;
-  poolInfo.pPoolSizes = &poolSize;
-  poolInfo.maxSets = 1;
-  */
   result = m_vk.vkCreateDescriptorPool(m_device, &poolInfo, null, &pipeline->setpool);
 
   if (result != VK_SUCCESS)
@@ -4606,7 +4590,7 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   descriptorWrites[1].dstBinding = 1;
   descriptorWrites[1].dstArrayElement = 0;
   descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = 1;//VK_MAX_TEXTURES;
+  descriptorWrites[1].descriptorCount = imageInfoCount;//VK_MAX_TEXTURES;
   descriptorWrites[1].pImageInfo = imageInfo;
 
   m_vk.vkUpdateDescriptorSets(m_device, descriptorWritesCount, descriptorWrites, 0, nullptr);
