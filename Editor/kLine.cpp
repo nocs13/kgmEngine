@@ -1,5 +1,5 @@
 #include "kLine.h"
-#include "../../kgmGraphics/kgmColor.h"
+#include "../kgmGraphics/kgmColor.h"
 
 kLine::kLine(u32 color)
 {

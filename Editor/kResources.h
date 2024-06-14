@@ -1,4 +1,4 @@
-#include "../../kgmBase/kgmIResources.h"
+#include "../kgmBase/kgmIResources.h"
 
 class kResources: public kgmIResources
 {

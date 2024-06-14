@@ -1,9 +1,9 @@
 #ifndef KVIEWOBJECTS_H
 #define KVIEWOBJECTS_H
 
-#include "../../kgmGraphics/kgmGuiFrame.h"
-#include "../../kgmGraphics/kgmGuiList.h"
-#include "../../kgmGraphics/kgmGuiButton.h"
+#include "../kgmGraphics/kgmGuiFrame.h"
+#include "../kgmGraphics/kgmGuiList.h"
+#include "../kgmGraphics/kgmGuiButton.h"
 
 class kViewObjects : public kgmGuiFrame
 {

@@ -1,17 +1,17 @@
 #include "kEditor.h"
 
-#include "../../kgmBase/kgmLog.h"
-#include "../../kgmBase/kgmConvert.h"
-#include "../../kgmSystem/kgmOGL.h"
-#include "../../kgmSystem/kgmVulkan.h"
-#include "../../kgmSystem/kgmSystem.h"
-#include "../../kgmSystem/kgmThread.h"
-#include "../../kgmGame/kgmGameBase.h"
-#include "../../kgmGame/kgmGameMap.h"
+#include "../kgmBase/kgmLog.h"
+#include "../kgmBase/kgmConvert.h"
+#include "../kgmSystem/kgmOGL.h"
+#include "../kgmSystem/kgmVulkan.h"
+#include "../kgmSystem/kgmSystem.h"
+#include "../kgmSystem/kgmThread.h"
+#include "../kgmGame/kgmGameBase.h"
+#include "../kgmGame/kgmGameMap.h"
 
-#include "../../kgmGraphics/kgmShape.h"
-#include "../../kgmGraphics/kgmParticles.h"
-#include "../../kgmGraphics/kgmGraphics.h"
+#include "../kgmGraphics/kgmShape.h"
+#include "../kgmGraphics/kgmParticles.h"
+#include "../kgmGraphics/kgmGraphics.h"
 
 static float cam_scale = 1.0;
 

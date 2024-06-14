@@ -1,4 +1,4 @@
-#include "../../kgmSystem/kgmWindow.h"
+#include "../kgmSystem/kgmWindow.h"
 
 class kWindow: public kgmWindow
 {

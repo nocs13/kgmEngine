@@ -1,14 +1,14 @@
 #ifndef KNODE_H
 #define KNODE_H
 
-#include "../../kgmBase/kgmObject.h"
-#include "../../kgmGraphics/kgmMesh.h"
-#include "../../kgmGraphics/kgmLight.h"
-#include "../../kgmGraphics/kgmMaterial.h"
-#include "../../kgmGraphics/kgmGraphics.h"
+#include "../kgmBase/kgmObject.h"
+#include "../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmLight.h"
+#include "../kgmGraphics/kgmMaterial.h"
+#include "../kgmGraphics/kgmGraphics.h"
 
-#include "../../kgmGame/kgmSensor.h"
-#include "../../kgmGame/kgmTrigger.h"
+#include "../kgmGame/kgmSensor.h"
+#include "../kgmGame/kgmTrigger.h"
 
 class kNode : public kgmObject
 {

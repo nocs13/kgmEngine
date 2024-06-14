@@ -1,6 +1,6 @@
 #include "kNode.h"
 #include "kEditor.h"
-#include "../../kgmGame/kgmGameApp.h"
+#include "../kgmGame/kgmGameApp.h"
 
 void kNode::setPosition(vec3 v)
 {

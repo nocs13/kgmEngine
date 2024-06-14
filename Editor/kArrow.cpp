@@ -1,5 +1,5 @@
 #include "kArrow.h"
-#include "../../kgmGraphics/kgmColor.h"
+#include "../kgmGraphics/kgmColor.h"
 
 kArrow::kArrow(f32 length, u32 color)
 {

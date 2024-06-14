@@ -1,8 +1,8 @@
 #ifndef KMAPIO_H
 #define KMAPIO_H
 
-#include "../../kgmBase/kgmObject.h"
-#include "../../kgmBase/kgmString.h"
+#include "../kgmBase/kgmObject.h"
+#include "../kgmBase/kgmString.h"
 
 class kMapIO : public kgmObject
 {

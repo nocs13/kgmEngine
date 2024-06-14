@@ -1,6 +1,6 @@
 #ifndef KAPP_H
 #define KAPP_H
-#include "../../kgmGame/kgmGameApp.h"
+#include "../kgmGame/kgmGameApp.h"
 #include "kEditor.h"
 
 class kApp : public kgmGameApp

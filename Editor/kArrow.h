@@ -1,7 +1,7 @@
 #ifndef KARROW_H
 #define KARROW_H
 
-#include "../../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmMesh.h"
 
 class kArrow : public kgmMesh
 {

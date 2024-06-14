@@ -1,7 +1,7 @@
 #ifndef KGMGRIDLINE_H
 #define KGMGRIDLINE_H
 
-#include "../../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmMesh.h"
 
 class kGridline: public kgmMesh
 {

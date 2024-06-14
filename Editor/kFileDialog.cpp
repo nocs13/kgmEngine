@@ -1,5 +1,5 @@
 #include "kFileDialog.h"
-#include "../../kgmSystem/kgmSystem.h"
+#include "../kgmSystem/kgmSystem.h"
 #include <dirent.h>
 
 kgmString kFileDialog::DIRCON = "/";

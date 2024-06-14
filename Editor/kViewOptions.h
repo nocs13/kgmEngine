@@ -1,14 +1,14 @@
 #ifndef KVIEWOPTIONS_H
 #define KVIEWOPTIONS_H
 
-#include "../../kgmGraphics/kgmLight.h"
-#include "../../kgmGraphics/kgmGuiFrame.h"
-#include "../../kgmGraphics/kgmGuiTab.h"
-#include "../../kgmGraphics/kgmGuiLabel.h"
-#include "../../kgmGraphics/kgmGuiCheck.h"
-#include "../../kgmGraphics/kgmGuiSelect.h"
-#include "../../kgmGraphics/kgmGuiFileDialog.h"
-#include "../../kgmGame/kgmUnit.h"
+#include "../kgmGraphics/kgmLight.h"
+#include "../kgmGraphics/kgmGuiFrame.h"
+#include "../kgmGraphics/kgmGuiTab.h"
+#include "../kgmGraphics/kgmGuiLabel.h"
+#include "../kgmGraphics/kgmGuiCheck.h"
+#include "../kgmGraphics/kgmGuiSelect.h"
+#include "../kgmGraphics/kgmGuiFileDialog.h"
+#include "../kgmGame/kgmUnit.h"
 
 class kViewObjects;
 

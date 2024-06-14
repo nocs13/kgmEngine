@@ -1,7 +1,7 @@
 #ifndef KLINE_H
 #define KLINE_H
 
-#include "../../kgmGraphics/kgmMesh.h"
+#include "../kgmGraphics/kgmMesh.h"
 
 class kLine : public kgmMesh
 {

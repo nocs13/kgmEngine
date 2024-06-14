@@ -1,14 +1,14 @@
 #ifndef KEDITOR_H
 #define KEDITOR_H
 
-#include "../../kgmBase/kgmSettings.h"
+#include "../kgmBase/kgmSettings.h"
 
-#include "../../kgmGame/kgmGameBase.h"
-#include "../../kgmGame/kgmGameGraphics.h"
-#include "../../kgmSystem/kgmThread.h"
-#include "../../kgmSystem/kgmOGL.h"
-#include "../../kgmGraphics/kgmGuiMenu.h"
-#include "../../kgmGraphics/kgmGuiFileDialog.h"
+#include "../kgmGame/kgmGameBase.h"
+#include "../kgmGame/kgmGameGraphics.h"
+#include "../kgmSystem/kgmThread.h"
+#include "../kgmSystem/kgmOGL.h"
+#include "../kgmGraphics/kgmGuiMenu.h"
+#include "../kgmGraphics/kgmGuiFileDialog.h"
 
 #include "kLine.h"
 #include "kArrow.h"

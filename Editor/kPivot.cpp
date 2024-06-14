@@ -1,6 +1,6 @@
 #include "kPivot.h"
-#include "../../kgmBase/kgmLog.h"
-#include "../../kgmGraphics/kgmColor.h"
+#include "../kgmBase/kgmLog.h"
+#include "../kgmGraphics/kgmColor.h"
 
 kPivot::kPivot()
 {
