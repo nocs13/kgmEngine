@@ -27,3 +27,10 @@ void kApp::gameFree()
 void kApp::main()
 {
 }
+
+int main(int argc, char** argv)
+{
+  kApp app;
+
+  return  app.exec(argc, argv);
+}

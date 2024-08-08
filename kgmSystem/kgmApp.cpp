@@ -8,11 +8,17 @@
 #ifdef WIN32
 #include <windows.h>
 #else
+#include <execinfo.h>
 #include <unistd.h>
 #include <sys/types.h>
+
+static char stack_body[64*1024];
+static stack_t sigseg_stack;
+static struct sigaction sigseg_handler;
+
 #endif
 
-static void kgm_signal_handler(int s);
+static void kgm_register_signals();
 static void kgm_sigterm_handler(int s);
 
 extern void kgm_memory_init();
@@ -27,9 +33,13 @@ static bool aborting = false;
 //Application object, unique only
 kgmApp* kgmApp::m_app = 0;
 
+kgmString kgmApp::m_execPath;
+
 kgmApp::kgmApp()
 {
   m_app = this;
+
+  kgm_register_signals();
 
   kgm_memory_init();
 }
@@ -44,6 +54,11 @@ kgmApp::~kgmApp()
 
 s32 kgmApp::exec(s32 argc, s8 **argv)
 {
+  if (argc > 0)
+  {
+    kgmApp::m_execPath = argv[0];
+  }
+
   return 0;
 }
 
@@ -63,7 +78,7 @@ void kgmApp::exit(s32 e)
   exit(e);
 }
 
-void kgm_app_abort()
+void kgmApp::Abort()
 {
 #ifdef WIN32
   TerminateProcess((HANDLE) GetCurrentProcess(), -1);
@@ -74,14 +89,51 @@ void kgm_app_abort()
 
 void kgm_sigterm_handler(int s)
 {
-  //goto *exit_target;
+  void *array[1024];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 1024);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "\n============ Error: signal %d =============\n", s);
+
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+
+  fprintf(stderr, "\n===========================================\n");
+
+  signal(s, SIG_DFL);
+  kill(getpid(), s);
 }
 
-void kgm_signal_handler(int s)
+void kgm_register_signals()
 {
-  printf("Caught signal %d\n",s);
-  exit(1);
+  #ifdef WIN32
+
+  #else
+
+  //signal(SIGINT,   kgm_sigterm_handler);
+  //signal(SIGILL,   kgm_sigterm_handler);
+  //signal(SIGTERM,  kgm_sigterm_handler);
+  //signal(SIGSEGV,  kgm_sigterm_handler);
+  //signal(SIGABRT,  kgm_sigterm_handler);
+  //signal(SIGBREAK, kgm_sigterm_handler);
+
+  sigseg_stack.ss_sp = stack_body;
+  sigseg_stack.ss_flags = SS_ONSTACK;
+  sigseg_stack.ss_size = sizeof(stack_body);
+  assert(!sigaltstack(&sigseg_stack, nullptr));
+  sigseg_handler.sa_flags = SA_ONSTACK;
+  sigseg_handler.sa_handler = kgm_sigterm_handler;
+
+  assert(!sigaction(SIGINT, &sigseg_handler, nullptr));
+  assert(!sigaction(SIGTERM, &sigseg_handler, nullptr));
+  assert(!sigaction(SIGSEGV, &sigseg_handler, nullptr));
+  assert(!sigaction(SIGABRT, &sigseg_handler, nullptr));
+
+  #endif
 }
+
 /*
 //FOR WINDOWS
 #if defined WIN32

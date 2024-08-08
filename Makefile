@@ -21,12 +21,13 @@ objects := $(patsubst %.cpp,%.o,$(sources))
 OUT_SO = libkgmEngine.so
 OUT_A  = libkgmEngine_s.a
 
-all: extern debug editor
+all: extern debug
 #	echo $(subdirs)
 #	echo $(sources)
 
-editor:
+edit: all
 	make -C Editor
+	cd Editor && ./Editor
 
 extern:
 	make -C kgmExtern

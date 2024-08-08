@@ -1,18 +1,22 @@
 #pragma once
 
 #include "../kgmBase/kgmIApp.h"
+#include "../kgmBase/kgmString.h"
+
 #include <stdlib.h>
 
 class kgmEvent;
 class kgmWindow;
 class kgmEnvironment;
 
-void kgm_app_abort();
+//void kgm_app_abort();
 
 class kgmApp: public kgmIApp
 {
 private:
   static kgmApp* m_app;
+
+  static kgmString m_execPath;
 
   void* m_mainWindow;
 
@@ -43,4 +47,6 @@ public:
   }
 
   static void exit(s32 e);
+
+  static void Abort();
 };

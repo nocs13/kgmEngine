@@ -117,12 +117,12 @@ void kEditor::clear()
 {
   m_graphics->clear();
 
-  for (auto i = units.begin(); !i.end(); i.next())
+  for (auto i = units.begin(); i != units.end(); i.next())
     (*i)->release();
 
   units.clear();
 
-  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); i.next())
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); i != m_objects.end(); i.next())
     (*i)->release();
 
   m_objects.clear();
@@ -225,7 +225,7 @@ void kEditor::resize(float w, float h)
 
 kgmUnit* kEditor::unit(kgmString n)
 {
-  for (auto i = units.begin(); !i.end(); i.next())
+  for (auto i = units.begin(); i != units.end(); i.next())
   {
     if ((*i)->getName() == n)
       return (*i);
@@ -1388,14 +1388,14 @@ void kEditor::onViewMaterials()
 
   kgmList<kgmObject *>::iterator i = m_objects.begin();
 
-  while (!i.end())
+  while (i != m_objects.end())
   {
     if (kgmString((*i)->vClass()) == "kgmMaterial")
     {
       vo->addItem(((kgmMaterial *)(*i))->id());
     }
 
-    ++i;
+    i.next();
   }
 }
 
@@ -1469,7 +1469,7 @@ void kEditor::onSelectMaterial(kgmString id)
 {
   kViewOptionsForMaterial *vop = null;
 
-  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); ++i)
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
   {
     if (kgmString((*i)->vClass()) == "kgmMaterial" && ((kgmMaterial *)(*i))->id() == id)
     {
@@ -1518,7 +1518,7 @@ int kEditor::doVisUpdate(void *v)
 
 kgmMaterial *kEditor::getMaterial(kgmString id)
 {
-  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); !i.end(); ++i)
+  for (kgmList<kgmObject *>::iterator i = m_objects.begin(); i != m_objects.end(); i++)
   {
     kgmString s1 = (*i)->vClass();
 

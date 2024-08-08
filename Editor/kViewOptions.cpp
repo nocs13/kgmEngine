@@ -225,7 +225,7 @@ void kViewOptions::onShowMaterials(int s)
 
   kgmList<kgmObject*> &ms = editor->getObjects();
 
-  for(kgmList<kgmObject*>::iterator i = ms.begin(); !i.end(); ++i)
+  for(kgmList<kgmObject*>::iterator i = ms.begin(); i != ms.end(); i++)
   {
     if(kgmString((*i)->vClass()) == "kgmMaterial")
       vo->addItem(((kgmMaterial*)(*i))->id());
@@ -400,7 +400,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g->setText("Blending");
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
   g->setSid("Blending");
-  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_None));
+  /* ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_None));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Add));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Mul));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Sub));
@@ -411,7 +411,7 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_LDodge));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Screen));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Darken));
-  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Lighten));
+  ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Lighten)); */
   ((kgmGuiSelect*)g)->select(mtl->blendToString(mtl->blend()));
   slotBlending.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlending, &((kgmGuiSelect*)g)->sigSelect);
 
@@ -642,7 +642,7 @@ void kViewOptionsForMaterial::onCull(bool a)
   if(!mtl)
     return;
 
-  mtl->cull(a);
+  //mtl->cull(a);
 }
 
 kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, int h)
@@ -896,7 +896,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
   slotListActions.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListActions, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
-
+  /*
   if(((kgmUnit*)node)->m_variables.length() > 0)
     y_coord += 23;
 
@@ -934,6 +934,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
     if(y_coord > m_rect.height())
       m_rect.h = y_coord + 20;
   }
+  */
 }
 
 void kViewOptionsForUnit::onSelectCollision(bool s)
