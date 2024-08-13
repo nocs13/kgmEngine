@@ -87,6 +87,76 @@ void kgmApp::Abort()
 #endif
 }
 
+#ifdef WIN32
+void kgm_print_backstack( void )
+{
+  unsigned int  i;
+  void         *stack[ 100 ];
+  unsigned short frames;
+  SYMBOL_INFO  *symbol;
+  HANDLE        process;
+
+  process = GetCurrentProcess();
+
+  SymInitialize( process, NULL, TRUE );
+
+  frames               = CaptureStackBackTrace( 0, 100, stack, NULL );
+  symbol               = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
+  symbol->MaxNameLen   = 255;
+  symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+
+  for( i = 0; i < frames; i++ )
+  {
+    SymFromAddr( process, ( DWORD64 )( stack[ i ] ), 0, symbol );
+
+    fprintf( stderr, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address );
+  }
+
+  free( symbol );
+}
+
+LONG WINAPI kgm_TopLevelExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
+{
+  fprintf(stderr, "TopLevelExceptionHandler: code %x, offset %llx.\n",
+          pExceptionInfo->ExceptionRecord->ExceptionCode,
+          pExceptionInfo->ExceptionRecord->ExceptionAddress);
+
+  EXCEPTION_RECORD *rec = pExceptionInfo->ExceptionRecord->ExceptionRecord;
+
+  while(rec)
+  {
+    fprintf(stderr, "  TopLevelExceptionHandler: code %x, offset %llx.\n",
+            rec->ExceptionCode,  rec->ExceptionAddress);
+
+    rec = rec->ExceptionRecord;
+  }
+
+  kgm_print_backstack();
+
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+
+LONG WINAPI kgm_VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
+{
+  fprintf(stderr, "VectoredExceptionHandler: code %x, offset %llx.\n",
+          pExceptionInfo->ExceptionRecord->ExceptionCode,
+          pExceptionInfo->ExceptionRecord->ExceptionAddress);
+
+  EXCEPTION_RECORD *rec = pExceptionInfo->ExceptionRecord->ExceptionRecord;
+
+  while(rec)
+  {
+    fprintf(stderr, "  VectoredExceptionHandler: code %x, offset %llx.\n",
+            rec->ExceptionCode,  rec->ExceptionAddress);
+
+    rec = rec->ExceptionRecord;
+  }
+
+  kgm_print_backstack();
+
+  return EXCEPTION_CONTINUE_SEARCH;
+}
+#else
 void kgm_sigterm_handler(int s)
 {
   void *array[1024];
@@ -105,11 +175,24 @@ void kgm_sigterm_handler(int s)
   signal(s, SIG_DFL);
   kill(getpid(), s);
 }
+#endif
 
 void kgm_register_signals()
 {
   #ifdef WIN32
+  DWORD options = SymGetOptions();
 
+  options |= SYMOPT_LOAD_LINES | SYMOPT_DEFERRED_LOADS;
+
+  SymSetOptions(options);
+
+  if (SymInitialize(GetCurrentProcess(), NULL, 1) == 0)
+  {
+    fprintf(stderr, "XXX Cannot initialize access to symbols.\n");
+  }
+
+  AddVectoredExceptionHandler(0, kgmTopLevelExceptionHandler);
+  SetUnhandledExceptionFilter(kgmVectoredExceptionHandler);
   #else
 
   //signal(SIGINT,   kgm_sigterm_handler);
