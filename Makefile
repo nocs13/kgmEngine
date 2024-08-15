@@ -38,7 +38,7 @@ debug: set_debug $(OUT_SO) $(OUT_A)
 
 set_debug:
 	$(eval DEFS += -DDEBUG)
-	$(eval FLGS += -g -rdynamic)
+	$(eval FLGS += -g)
 
 release: set_release  $(OUT_SO)
 	echo 'release finished.'

@@ -8,8 +8,6 @@
 #include "../kgmGame/kgmIGame.h"
 #include "../kgmSystem/kgmApp.h"
 
-#define VULKAN
-
 #ifdef VULKAN
 
 #include "inc/vk/vulkan.h"

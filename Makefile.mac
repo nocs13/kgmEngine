@@ -54,7 +54,7 @@ else ifeq ($(cOS),Darwin)
 	RM = rm -f
 else ifeq ($(cOS),Windows)
 	ARCH = (echo %PROCESSOR_ARCHITECTURE%)
-	CC   = ccache g++
+	CC   = g++
 	OS   = Windows
 	DSEP = \\
 	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DOGL -DGPUSHADERS -DDSOUND -DVULKAN
