@@ -1,6 +1,8 @@
 
 #include "kgmWindow.h"
 
+#ifdef WAYLAN
+
 #include "inc/wayland/wayland-client.h"
 
 class kgmWindowWayland: kgmWindow
@@ -11,3 +13,5 @@ private:
 public:
 
 };
+
+#endif

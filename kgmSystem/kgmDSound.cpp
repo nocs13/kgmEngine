@@ -421,8 +421,8 @@ int kgmDSound::proceed(int p)
     m_mixer.clean();
 
     u32 t1 = kgmTime::getTicks();
-
-    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); !i.end(); ++i)
+	
+    for(kgmList<_Sound*>::iterator i = m_sounds.begin(); i != m_sounds.end(); i.next())
     {
       _Sound* sound = (*i);
 

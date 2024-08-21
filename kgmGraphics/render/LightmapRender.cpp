@@ -390,13 +390,17 @@ void LightmapRender::shader(kgmShader* s, kgmCamera* cam, kgmMaterial* mtl, kgmI
   for(u32 i = 0; i < lcount; i++)
   {
     char c = '0' + (char) i;
-    lcolor[12] = c;
-    lposition[12] = c;
-    ldirection[12] = c;
-
-     s->set(lcolor,     lights[i].color);
-     s->set(lposition,  lights[i].position);
-     s->set(ldirection, lights[i].direction);
+    //lcolor[12] = c;
+    //lposition[12] = c;
+    //ldirection[12] = c;
+	
+	memcpy(&((char*)lcolor.data())[12], (void*) &c, 1);
+	memcpy(&((char*)lposition.data())[12], (void*) &c, 1);
+	memcpy(&((char*)ldirection.data())[12], (void*) &c, 1);
+	
+    s->set(lcolor,     lights[i].color);
+    s->set(lposition,  lights[i].position);
+    s->set(ldirection, lights[i].direction);
   }
 }
 
@@ -510,13 +514,18 @@ void LightmapRender::lightmap()
     for(u32 i = 0; i < 8; i++)
     {
       char c = '0' + (char) i;
-      lcolor[10] = c;
-      lposition[10] = c;
-      ldirection[10] = c;
+      //lcolor[10] = c;
+      //lposition[10] = c;
+      //ldirection[10] = c;
+	  
+      memcpy(&((char*)lcolor.data())[12], (void*) &c, 1);
+	  memcpy(&((char*)lposition.data())[12], (void*) &c, 1);
+	  memcpy(&((char*)ldirection.data())[12], (void*) &c, 1);
 
-       s->set(lcolor, lights[i].color);
-       s->set(lposition, lights[i].position);
-       s->set(ldirection, lights[i].direction);
+
+      s->set(lcolor, lights[i].color);
+      s->set(lposition, lights[i].position);
+      s->set(ldirection, lights[i].direction);
     }
 
     draw(msh);

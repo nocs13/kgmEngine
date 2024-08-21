@@ -5,6 +5,10 @@
 
 #include <stdlib.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 class kgmEvent;
 class kgmWindow;
 class kgmEnvironment;
@@ -19,6 +23,10 @@ private:
   static kgmString m_execPath;
 
   void* m_mainWindow;
+  
+  #ifdef WIN32
+  HMODULE m_hDbg;
+  #endif
 
 private:
   void* operator new(size_t s);

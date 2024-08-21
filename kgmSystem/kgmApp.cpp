@@ -6,7 +6,41 @@
 #include <signal.h>
 
 #ifdef WIN32
-#include <windows.h>
+
+#define SYMOPT_LOAD_LINES 0x10
+#define SYMOPT_DEFERRED_LOADS 0x4
+
+typedef struct _SYMBOL_INFO {
+  ULONG   SizeOfStruct;
+  ULONG   TypeIndex;
+  ULONG64 Reserved[2];
+  ULONG   Index;
+  ULONG   Size;
+  ULONG64 ModBase;
+  ULONG   Flags;
+  ULONG64 Value;
+  ULONG64 Address;
+  ULONG   Register;
+  ULONG   Scope;
+  ULONG   Tag;
+  ULONG   NameLen;
+  ULONG   MaxNameLen;
+  CHAR    Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+
+typedef USHORT __stdcall (*FN_RtlCaptureStackBackTrace)(ULONG, ULONG, PVOID*, PULONG);
+
+typedef BOOL __stdcall (*FN_SymInitialize)(HANDLE, PCSTR, BOOL);
+typedef DWORD __stdcall (*FN_SymSetOptions)(DWORD);
+typedef DWORD __stdcall (*FN_SymGetOptions)();
+typedef BOOL __stdcall (*FN_SymFromAddr)(HANDLE, DWORD64, PDWORD64, PSYMBOL_INFO);
+
+FN_RtlCaptureStackBackTrace RtlCaptureStackBackTrace = NULL; 
+
+FN_SymGetOptions SymGetOptions = NULL;
+FN_SymSetOptions SymSetOptions = NULL;
+FN_SymInitialize SymInitialize = NULL;
+FN_SymFromAddr   SymFromAddr = NULL;
 #else
 #include <execinfo.h>
 #include <unistd.h>
@@ -38,6 +72,23 @@ kgmString kgmApp::m_execPath;
 kgmApp::kgmApp()
 {
   m_app = this;
+  
+  #ifdef WIN32
+  m_hDbg = LoadLibrary("dbghelp.dll");
+  
+  if (m_hDbg == NULL)
+  {
+	fprintf(stderr, "Error: Unable load dbghelp.dll. [%x]", GetLastError());
+  }
+  
+  SymGetOptions = (FN_SymGetOptions) GetProcAddress(m_hDbg, "SymGetOptions");
+  SymSetOptions = (FN_SymSetOptions) GetProcAddress(m_hDbg, "SymSetOptions");
+  SymInitialize = (FN_SymInitialize) GetProcAddress(m_hDbg, "SymInitialize");
+  SymFromAddr   = (FN_SymFromAddr)   GetProcAddress(m_hDbg, "SymFromAddr");
+  
+  RtlCaptureStackBackTrace = (FN_RtlCaptureStackBackTrace) GetProcAddress(NULL, "RtlCaptureStackBackTrace");
+  #endif
+
 
   kgm_register_signals();
 
@@ -47,6 +98,13 @@ kgmApp::kgmApp()
 kgmApp::~kgmApp()
 {
   m_app = null;
+
+  #ifdef WIN32
+  if (m_hDbg != NULL)
+  {
+	FreeLibrary(m_hDbg);
+  }
+  #endif
 
   kgmObject::kgm_objects_cleanup();
   kgm_memory_cleanup();
@@ -100,7 +158,7 @@ void kgm_print_backstack( void )
 
   SymInitialize( process, NULL, TRUE );
 
-  frames               = CaptureStackBackTrace( 0, 100, stack, NULL );
+  frames               = RtlCaptureStackBackTrace( 0, 100, stack, NULL );
   symbol               = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
   symbol->MaxNameLen   = 255;
   symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
@@ -180,6 +238,7 @@ void kgm_sigterm_handler(int s)
 void kgm_register_signals()
 {
   #ifdef WIN32
+
   DWORD options = SymGetOptions();
 
   options |= SYMOPT_LOAD_LINES | SYMOPT_DEFERRED_LOADS;
@@ -191,8 +250,8 @@ void kgm_register_signals()
     fprintf(stderr, "XXX Cannot initialize access to symbols.\n");
   }
 
-  AddVectoredExceptionHandler(0, kgmTopLevelExceptionHandler);
-  SetUnhandledExceptionFilter(kgmVectoredExceptionHandler);
+  AddVectoredExceptionHandler(0, kgm_TopLevelExceptionHandler);
+  SetUnhandledExceptionFilter(kgm_VectoredExceptionHandler);
   #else
 
   //signal(SIGINT,   kgm_sigterm_handler);

@@ -101,9 +101,11 @@ bool kgmThread::thread_join(kgmThread::Thread th)
 bool kgmThread::thread_active(kgmThread::Thread th)
 {
 #ifdef WIN32
-  DWORD id = GetThreadId(th);
+  DWORD ecode = 0;
+  
+  BOOL res = GetExitCodeThread(th, &ecode);
 
-  if (id && !GetLastError())
+  if (!res && GetLastError() == STILL_ACTIVE)
     return true;
 #else
   if(pthread_kill(th, 0) == 0)

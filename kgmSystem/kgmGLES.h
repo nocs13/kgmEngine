@@ -6,8 +6,6 @@
 
 class kgmWindow;
 
-//#define GLES_2
-
 #ifdef GLES_2
 
 #include <EGL/egl.h>

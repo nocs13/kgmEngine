@@ -129,6 +129,8 @@ extern PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 #define GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR   0x8242
 
 struct {
+#ifdef WIN32
+#else
   void (*glXSwapBuffers)(Display *dpy, GLXDrawable drawable);
   GLXContext (*glXCreateContext)(Display *dpy, XVisualInfo *vis, GLXContext share_list, Bool direct);
   GLXContext (*glXCreateContextAttribsARB) (Display *, GLXFBConfig, GLXContext, Bool, const int *);
@@ -138,6 +140,7 @@ struct {
   void (*glXDestroyContext)(Display *dpy, GLXContext ctx);
   void* (*glXGetProcAddress)(const s8*);
   GLXContext (*glXGetCurrentContext)();
+#endif
 } glx;
 
 

@@ -12,6 +12,10 @@
 #ifdef WIN32
 
 #include <windows.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+#define GL_OBJECT_COMPILE_STATUS GL_OBJECT_COMPILE_STATUS_ARB
 
 #elif defined DARWIN
 

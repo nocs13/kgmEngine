@@ -1,7 +1,5 @@
 #include "kgmGLES.h"
 
-#define GLES_2
-
 #ifndef GLint
 typedef int GLint;
 #endif
