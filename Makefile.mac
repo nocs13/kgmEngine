@@ -38,8 +38,8 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(cOS),Linux)
-#	CC = ccache clang++ -v -g
-	CC = g++
+	CC = clang++ -v -g
+#	CC = g++
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN -DGLES_2 -DOGL $(DWIN)
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -rdynamic -fno-inline -static-libgcc -static-libstdc++
 	LIBS = -llua -lpthread -ldl $(LWIN)

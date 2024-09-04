@@ -9,8 +9,10 @@
 
 #include "lprefix.h"
 
-
+#ifdef WIN32
 #include <io.h>
+#endif
+
 #include <errno.h>
 #include <locale.h>
 #include <stdlib.h>
