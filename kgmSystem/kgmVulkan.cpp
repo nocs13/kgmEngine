@@ -974,7 +974,7 @@ void* kgmVulkan::gcGenTexture(void *m, u32 w, u32 h, u32 bpp, u32 type)
   u32 size  = count * 4;
 
   if (type == gctype_texcube)
-    size * 6;
+    size = count * 6;
 
   if (!createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -3097,7 +3097,7 @@ bool kgmVulkan::initSurface()
   for (u32 i = 0; i < presentModeCount; i++)
   {
     if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
-      m_presentMode == presentModes[i];
+      m_presentMode = presentModes[i];
   }
 
   return true;
@@ -4846,7 +4846,6 @@ kgmVulkan::Pipeline* kgmVulkan::createPipeline()
   pipelineColorBlendStateCreateInfo.logicOp = VkLogicOp::VK_LOGIC_OP_CLEAR;
   pipelineColorBlendStateCreateInfo.attachmentCount = 1;
   pipelineColorBlendStateCreateInfo.pAttachments = &pipelineColorBlendAttachmentState;
-  pipelineColorBlendStateCreateInfo.blendConstants;
   pipelineColorBlendStateCreateInfo.blendConstants[0] = 1.0f;
   pipelineColorBlendStateCreateInfo.blendConstants[1] = 1.0f;
   pipelineColorBlendStateCreateInfo.blendConstants[2] = 1.0f;

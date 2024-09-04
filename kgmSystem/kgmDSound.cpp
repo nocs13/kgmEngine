@@ -404,7 +404,7 @@ int kgmDSound::proceed(int p)
 {
   static u32 max_sounds = 10;
 
-  (void*) (size_t) p;
+  //(void*) (size_t) p;
 
   m_proceed = true;
 

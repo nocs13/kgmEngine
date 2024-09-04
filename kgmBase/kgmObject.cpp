@@ -19,7 +19,7 @@ void* kgmObject::kgm_object_alloc(size_t size)
       g_objects[i] = p;
 
     #ifdef DEBUG
-    fprintf(stderr, "kgmObject::kgm_object_alloc [%p %ld]\n", p, size);
+    fprintf(stderr, "kgmObject::kgm_object_alloc [%p %lld]\n", p, size);
     #endif
 
       return p;
@@ -38,7 +38,7 @@ void* kgmObject::kgm_object_alloc(size_t size)
   g_objects[len] = p;
 
   #ifdef DEBUG
-  fprintf(stderr, "kgmObject::kgm_object_alloc [%p %d]\n", p, size);
+  fprintf(stderr, "kgmObject::kgm_object_alloc [%p %lld]\n", p, size);
   #endif
 
   return p;

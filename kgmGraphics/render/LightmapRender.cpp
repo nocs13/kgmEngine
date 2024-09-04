@@ -273,6 +273,9 @@ void LightmapRender::material(kgmMaterial* m)
     case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
+    case kgmMaterial::BlendMix:
+    default:
+      break;
     /*case kgmMaterial::Blend_Inter:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       break;

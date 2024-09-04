@@ -3,16 +3,32 @@
 
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
 
+# Convenience platforms targets.
+PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
+
 # Your platform. See PLATS for possible values.
 PLAT= none
+
+ifeq ($(OS), Linux)
+  PLAT=posix
+else
+  PLAT=mingw
+endif
+
 
 # Where to install. The installation starts in the src and doc directories,
 # so take care if INSTALL_TOP is not an absolute path. See the local target.
 # You may want to make INSTALL_LMOD and INSTALL_CMOD consistent with
 # LUA_ROOT, LUA_LDIR, and LUA_CDIR in luaconf.h.
 INSTALL_TOP= ..
+
 INSTALL_INC= $(INSTALL_TOP)/include
 INSTALL_LIB= $(INSTALL_TOP)/lib
+
+ifeq ($(PALT), mingw)
+INSTALL_INC= $(INSTALL_TOP)\\include
+INSTALL_LIB= $(INSTALL_TOP)\\lib
+endif
 
 # How to install. If your install program does not support "-p", then
 # you may have to run ranlib on the installed liblua.a.
@@ -30,9 +46,6 @@ MKDIR= mkdir -p
 RM= rm -f
 
 # == END OF USER SETTINGS -- NO NEED TO CHANGE ANYTHING BELOW THIS LINE =======
-
-# Convenience platforms targets.
-PLATS= aix bsd c89 freebsd generic linux macosx mingw posix solaris
 
 # What to install.
 TO_BIN= lua luac
@@ -52,6 +65,9 @@ all:	$(PLAT)
 
 $(PLATS) clean:
 	cd src && $(MAKE) $@
+
+distclean: clean uninstall
+	echo ""
 
 test:	dummy
 	src/lua -v

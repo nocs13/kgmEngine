@@ -52,7 +52,7 @@ void ShadowRender::render()
 
     m_shadows[0].mv = mv;
     m_shadows[0].mp = mp;
-    m_shadows[0].mvp = \/*mb *\/ mv * mp;
+    m_shadows[0].mvp = mb * mv * mp;
   }
   */
 

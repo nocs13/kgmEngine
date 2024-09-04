@@ -246,6 +246,9 @@ void BaseRender::material(kgmMaterial* m)
     case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
+    case kgmMaterial::BlendMix:
+    default:
+      break;
     }
   }
   else if(m->transparency() > 0.0f)

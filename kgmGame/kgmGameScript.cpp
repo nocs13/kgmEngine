@@ -47,7 +47,7 @@ kgmGameScript::~kgmGameScript()
   for(kgmList< Slot<kgmGameScript>* >::iterator i = slots.begin(); i != slots.end(); i++)
     delete (*i);
 
-  delete handler;
+  delete (kgmLuaScript*) handler;
 }
 
 void kgmGameScript::init()

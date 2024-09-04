@@ -23,7 +23,7 @@ all:
 	cp $(ZLIB)/libz.a ../kgmSystem/lib/.
 
 clean:
-	make -C $(LUA) clean
+	make -C $(LUA) distclean
 	make -C $(ZLIB) distclean
 	rm -f $(LUA)/include/*
 	rm -f $(LUA)/lib/*

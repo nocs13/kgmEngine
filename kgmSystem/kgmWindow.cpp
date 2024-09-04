@@ -1298,7 +1298,7 @@ void kgmWindow::setHandle(void* h)
 {
   #ifdef ANDROID
   m_handle = h;
-  #elsif defined(DARWIN)
+  #elif defined(DARWIN)
   m_handle = h;
   #endif
 }

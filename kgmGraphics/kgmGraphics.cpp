@@ -459,6 +459,14 @@ void kgmGraphics::add(INode* nod)
       ((kgmParticles*)nod->getNodeObject())->camera(m_camera);
     }
     break;
+  case NodeTerrain:
+  case NodeSkinned:
+  case NodeCamera:
+  case NodeSprite:
+  case NodeText:
+  case NodeNone:
+  deafult:
+    break;
   }
 }
 
@@ -1206,7 +1214,12 @@ void kgmGraphics::set(kgmMaterial* m)
     case kgmMaterial::BlendSub:
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
-    /* case kgmMaterial::Blend_Inter:
+    case kgmMaterial::BlendMix:
+    case kgmMaterial::BlendNone:      
+    default:
+      break;
+/*
+    case kgmMaterial::Blend_Inter:
       gc->gcBlend(true, 0, gcblend_srcalpha, gcblend_srcialpha);
       break;
     case kgmMaterial::Blend_CBurn:
@@ -1229,7 +1242,8 @@ void kgmGraphics::set(kgmMaterial* m)
       break;
     case kgmMaterial::Blend_Lighten:
       gc->gcBlend(true, gcblend_eqmax, gcblend_one, gcblend_one);
-      break; */
+      break;
+*/
     }
 
     m_alpha = true;
@@ -1375,7 +1389,7 @@ void kgmGraphics::draw(kgmMesh *m)
     ibs = 1;
     break;
   case kgmMesh::RT_TRIANGLESTRIP:
-    gcpmt_trianglestrip;
+    pmt = gcpmt_trianglestrip;
     ibs = 3;
     break;
   default:

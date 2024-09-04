@@ -7,6 +7,9 @@
 
 #ifdef WIN32
 
+#include <dbghelp.h>
+
+/*
 #define SYMOPT_LOAD_LINES 0x10
 #define SYMOPT_DEFERRED_LOADS 0x4
 
@@ -41,6 +44,8 @@ FN_SymGetOptions SymGetOptions = NULL;
 FN_SymSetOptions SymSetOptions = NULL;
 FN_SymInitialize SymInitialize = NULL;
 FN_SymFromAddr   SymFromAddr = NULL;
+*/
+
 #else
 #include <execinfo.h>
 #include <unistd.h>
@@ -74,6 +79,7 @@ kgmApp::kgmApp()
   m_app = this;
   
   #ifdef WIN32
+  /*
   m_hDbg = LoadLibrary("dbghelp.dll");
   
   if (m_hDbg == NULL)
@@ -87,6 +93,7 @@ kgmApp::kgmApp()
   SymFromAddr   = (FN_SymFromAddr)   GetProcAddress(m_hDbg, "SymFromAddr");
   
   RtlCaptureStackBackTrace = (FN_RtlCaptureStackBackTrace) GetProcAddress(NULL, "RtlCaptureStackBackTrace");
+  */
   #endif
 
 
@@ -167,7 +174,7 @@ void kgm_print_backstack( void )
   {
     SymFromAddr( process, ( DWORD64 )( stack[ i ] ), 0, symbol );
 
-    fprintf( stderr, "%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address );
+    fprintf( stderr, "%i: %s - 0x%0llx\n", frames - i - 1, symbol->Name, symbol->Address );
   }
 
   free( symbol );
@@ -175,7 +182,7 @@ void kgm_print_backstack( void )
 
 LONG WINAPI kgm_TopLevelExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 {
-  fprintf(stderr, "TopLevelExceptionHandler: code %x, offset %llx.\n",
+  fprintf(stderr, "TopLevelExceptionHandler: code %lx, offset %p.\n",
           pExceptionInfo->ExceptionRecord->ExceptionCode,
           pExceptionInfo->ExceptionRecord->ExceptionAddress);
 
@@ -183,7 +190,7 @@ LONG WINAPI kgm_TopLevelExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 
   while(rec)
   {
-    fprintf(stderr, "  TopLevelExceptionHandler: code %x, offset %llx.\n",
+    fprintf(stderr, "  TopLevelExceptionHandler: code %lx, offset %p.\n",
             rec->ExceptionCode,  rec->ExceptionAddress);
 
     rec = rec->ExceptionRecord;
@@ -196,7 +203,7 @@ LONG WINAPI kgm_TopLevelExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 
 LONG WINAPI kgm_VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 {
-  fprintf(stderr, "VectoredExceptionHandler: code %x, offset %llx.\n",
+  fprintf(stderr, "VectoredExceptionHandler: code %lx, offset %p.\n",
           pExceptionInfo->ExceptionRecord->ExceptionCode,
           pExceptionInfo->ExceptionRecord->ExceptionAddress);
 
@@ -204,7 +211,7 @@ LONG WINAPI kgm_VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 
   while(rec)
   {
-    fprintf(stderr, "  VectoredExceptionHandler: code %x, offset %llx.\n",
+    fprintf(stderr, "  VectoredExceptionHandler: code %lx, offset %p.\n",
             rec->ExceptionCode,  rec->ExceptionAddress);
 
     rec = rec->ExceptionRecord;
