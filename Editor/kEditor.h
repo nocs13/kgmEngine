@@ -128,8 +128,8 @@ public:
 
   int quit();
   int gInit();
-  int gLoad(kgmString) {}
-  int gUnload() {}
+  int gLoad(kgmString) { return 0; }
+  int gUnload() { return 0; }
   int gButton(game_button);
   u32 gState();
   int gSwitch(u32);

@@ -15,15 +15,20 @@ void kNode::setPosition(vec3 v)
     //lgt->position = v;
     break;
   case MESH:
-  {
-    mtx4 mrot, mpos, mtrn;
-
-    mrot.rotate(rot);
-    mpos.translate(pos);
-    mtrn = mrot * mpos;
-
-    //((kEditor*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
-  }
+    {
+      mtx4 mrot, mpos, mtrn;
+      
+      mrot.rotate(rot);
+      mpos.translate(pos);
+      mtrn = mrot * mpos;
+      
+      //((kEditor*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
+    }
+    break;
+  case ACTOR:
+  case SENSOR:
+  case NONE:
+  default:
     break;
   }
 }
@@ -37,15 +42,20 @@ void kNode::setRotation(vec3 r)
   case LIGHT:
     break;
   case MESH:
-  {
-    mtx4 mrot, mpos, mtrn;
-
-    mrot.rotate(rot);
-    mpos.translate(pos);
-    mtrn = mrot * mpos;
-
-    //((kEditor*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
-  }
+    {
+      mtx4 mrot, mpos, mtrn;
+      
+      mrot.rotate(rot);
+      mpos.translate(pos);
+      mtrn = mrot * mpos;
+      
+      //((kEditor*)kgmGameApp::gameApplication()->game())->getRender()->set(msh, mtrn);
+    }
+    break;
+  case ACTOR:
+  case SENSOR:
+  case NONE:
+  default:
     break;
   }
 }

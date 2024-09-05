@@ -3,5 +3,5 @@
 class kWindow: public kgmWindow
 {
   public:
-  kWindow(Display* d,  Window w);
+  kWindow();
 };

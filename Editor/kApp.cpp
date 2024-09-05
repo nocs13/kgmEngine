@@ -4,23 +4,10 @@
 
 kApp::kApp()
 {
-  m_game = null;
   editor = null;
 }
 
 kApp::~kApp()
-{
-}
-
-void kApp::gameInit()
-{
-}
-
-void kApp::gameLoop()
-{
-}
-
-void kApp::gameFree()
 {
 }
 
