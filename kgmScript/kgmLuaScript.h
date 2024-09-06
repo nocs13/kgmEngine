@@ -5,8 +5,10 @@
 struct lua_State;
 class kgmIResources;
 
-class kgmLuaScript: public kgmIScript
+class kgmLuaScript:  public kgmObject, public kgmIScript
 {
+  KGM_OBJECT(kgmLuaScript)
+
   lua_State* handler = null;
 
   kgmIResources* resources = null;
@@ -20,10 +22,12 @@ class kgmLuaScript: public kgmIScript
   f64 r_number = 0.0;
 
  public:
+  kgmLuaScript();
   kgmLuaScript(kgmIResources *);
   ~kgmLuaScript();
 
   bool load(kgmString id);
+  bool run(kgmString spt);
   bool set(kgmString name,  FN);
   bool args(kgmString fmt, ...);
   bool resl(kgmString fmt, ...);
@@ -43,4 +47,6 @@ private:
   void pop(double* arg);
   void pop(char** arg);
   void pop(void** arg);
+
+  void init();
 };

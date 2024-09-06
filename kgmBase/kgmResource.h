@@ -16,13 +16,15 @@ public:
   enum  Type
   {
     TypeNone,
+    TypeFile,
     TypeFont,
-    TypeTexture,
-    TypeShader,
     TypeMesh,
     TypeSound,
-    TypeAnimation,
+    TypeBuffer,
+    TypeShader,
+    TypeTexture,
     TypeSkeleton,
+    TypeAnimation,
   };
 
   kgmObject* m_resource;

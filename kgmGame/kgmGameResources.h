@@ -24,7 +24,6 @@ class kgmGameResources: public kgmObject, public kgmIResources
 protected:
   struct Path
   {
-
     u32       type;
     kgmString  path;
     kgmFile    file;

@@ -5,6 +5,7 @@
 
 class kApp : public kgmApp
 {
+  KGM_OBJECT(kApp)
   kEditor* editor = null;
   bool failed = false;
 
@@ -12,7 +13,7 @@ public:
   kApp();
   ~kApp();
 
-  void main();
+  s32  exec(s32, s8**);
 
   void abort() { }
 };

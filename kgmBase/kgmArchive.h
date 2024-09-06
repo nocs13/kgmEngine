@@ -13,7 +13,8 @@
 #define   KGMPAK_SIG  "kgmpak"
 #define   KGMPAK_VER  0x0101
 
-class kgmArchive{
+class kgmArchive: public kgmObject
+{
  //kgmArchive descriptor: kgmArchive
  /*
  10 - bytes: kgmArchive

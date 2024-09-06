@@ -10,28 +10,16 @@ extern "C"
   #include <lua/lauxlib.h>
 }
 
+kgmLuaScript::kgmLuaScript()
+{
+  init();
+}
+
 kgmLuaScript::kgmLuaScript(kgmIResources *r)
 {
   resources = r;
 
-#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
-  handler = luaL_newstate();
-#else
-  handler = lua_open(0);
-#endif
-
-  if(!handler)
-    return;
-
-#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
-  luaL_openlibs(handler);
-#else
-  lua_baselibopen (handler);
-  lua_iolibopen (handler);
-  lua_strlibopen (handler);
-  lua_mathlibopen (handler);
-  lua_dblibopen (handler);
-#endif
+  init();
 }
 
 kgmLuaScript::~kgmLuaScript()
@@ -85,6 +73,30 @@ bool kgmLuaScript::load(kgmString s)
     lua_pop(handler, 1);
 
     kgm_log() << "Lua loading script: " << s.data() << " failed.\n";
+
+    return false;
+  }
+
+  return true;
+}
+
+bool kgmLuaScript::run(kgmString spt)
+{
+  s32 res = 0;
+
+  #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+    res = luaL_dostring(handler, spt.data());
+  #else
+    res = lua_dostring(handler, spt.data());
+  #endif
+
+  if(res)
+  {
+    const char* err = lua_tostring(handler, -1);
+
+    kgm_log() << "run Lua dostring error: " << err << "\n";
+
+    lua_pop(handler, 1);
 
     return false;
   }
@@ -375,4 +387,26 @@ void kgmLuaScript::pop(void** arg)
 {
   if(lua_isuserdata(handler, m_carg))
     *arg = (void*) lua_touserdata(handler, m_carg);
+}
+
+void kgmLuaScript::init()
+{
+#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+  handler = luaL_newstate();
+#else
+  handler = lua_open(0);
+#endif
+
+  if(!handler)
+    return;
+
+#if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
+  luaL_openlibs(handler);
+#else
+  lua_baselibopen (handler);
+  lua_iolibopen (handler);
+  lua_strlibopen (handler);
+  lua_mathlibopen (handler);
+  lua_dblibopen (handler);
+#endif
 }
