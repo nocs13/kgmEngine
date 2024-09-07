@@ -30,7 +30,7 @@ kgmSettings::kgmSettings(const char* path)
 kgmSettings::~kgmSettings()
 {
   if(m_xml)
-    delete m_xml;
+    kgmObject::Release(m_xml);
 }
 
 void kgmSettings::load()

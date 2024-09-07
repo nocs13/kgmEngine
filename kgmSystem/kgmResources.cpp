@@ -243,6 +243,8 @@ bool kgmResources::getRFile(const char *id, const char *type, kgmArray<u8> &m)
 {
   kgmString path;
 
+  kgmFile file;
+
   if (!id)
     return false;
 
@@ -279,8 +281,6 @@ bool kgmResources::getRFile(const char *id, const char *type, kgmArray<u8> &m)
 
   for (s32 i = 0; i < m_paths.size(); i++)
   {
-    kgmFile file;
-
     kgm_log() << __FUNCTION__ << ": path type is " << m_paths[i]->type << "\n";
     kgm_log() << __FUNCTION__ << ": path is " << m_paths[i]->path.data() << "\n";
 
@@ -316,6 +316,17 @@ bool kgmResources::getRFile(const char *id, const char *type, kgmArray<u8> &m)
         return true;
       }
     }
+  }
+
+  path = id;
+
+  if (kgmSystem::isFile(path) && file.open(path, kgmFile::Read))
+  {
+    m.alloc(file.length());
+    file.read(m.data(), file.length());
+    file.close();
+
+    return true;
   }
 
 #endif
@@ -395,6 +406,9 @@ kgmShader *kgmResources::getShader(const char *id)
 
   if (shader)
     return shader;
+
+  if (!m_gc)
+    return null;
 
   kgmString sid = id;
 

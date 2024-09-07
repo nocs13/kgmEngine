@@ -2,6 +2,7 @@
 #include "../kgmBase/kgmLog.h"
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmScript/kgmLuaScript.h"
+#include "../kgmScript/libscript/lua_main.h"
 #include "../kgmGame/kgmGameResources.h"
 
 kApp::kApp()
@@ -18,6 +19,30 @@ s32 kApp::exec(s32, s8**)
   fprintf(stderr, "XXX\n");
 
   kgmLuaScript* script = new kgmLuaScript();
+
+  kgmLibScript::kgm_lua_init(script->getCore());
+
+  kgmIResources* res = kgmApp::application()->getResources();
+
+  kgmCString path = "Data/scripts/main.lua";
+
+  kgmArray<u8> m;
+
+  if (res->getFile(path, m))
+  {
+    kgmCString sc((char*) m.data(), m.length());
+
+    //fprintf(stderr, "{[%s]}", sc.data());
+
+    if (script->load(sc))
+    {
+      script->call("main", "");
+    }
+    else
+    {
+      kgm_log() << "Error: unable load " << (char*) path << " script.\n";
+    }
+  }
 
   script->release();
 

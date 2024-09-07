@@ -59,3 +59,7 @@ end
 
 function main_onbutton(key, btn, down)
 end
+
+function main()
+  kgmLog('FUCK UUUUUUUUUUUUUUUUUUUU XXXXXXXXXXXX')
+end

@@ -3,7 +3,6 @@
 #include "../kgmBase/kgmString.h"
 
 struct lua_State;
-class kgmIResources;
 
 class kgmLuaScript:  public kgmObject, public kgmIScript
 {
@@ -11,7 +10,7 @@ class kgmLuaScript:  public kgmObject, public kgmIScript
 
   lua_State* handler = null;
 
-  kgmIResources* resources = null;
+  bool need_close = false;
 
   void* r_call = null;
 
@@ -23,11 +22,10 @@ class kgmLuaScript:  public kgmObject, public kgmIScript
 
  public:
   kgmLuaScript();
-  kgmLuaScript(kgmIResources *);
+  kgmLuaScript(lua_State *);
   ~kgmLuaScript();
 
-  bool load(kgmString id);
-  bool run(kgmString spt);
+  bool load(kgmString sc);
   bool set(kgmString name,  FN);
   bool args(kgmString fmt, ...);
   bool resl(kgmString fmt, ...);
@@ -37,6 +35,8 @@ class kgmLuaScript:  public kgmObject, public kgmIScript
 
   void  setX(void* x);
   void* getX();
+
+  void* getCore() const { return handler; }
 
 private:
   void push(int arg);

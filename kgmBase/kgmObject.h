@@ -218,6 +218,7 @@ private:
 
 private:
   static void* kgm_object_alloc(size_t size);
+  static bool kgm_object_valid(void* p);
   static void kgm_object_free(void* p);
 
 protected:

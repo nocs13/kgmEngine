@@ -5,11 +5,13 @@
 #include "kgmList.h"
 #include "kgmString.h"
 #include "kgmArray.h"
+#include "kgmObject.h"
 
 typedef unsigned int u32;
 
-class kgmXml
+class kgmXml: public kgmObject
 {
+  KGM_OBJECT(kgmXml);
 public:
   enum XmlState
   {

@@ -2,6 +2,7 @@
 
 #include "../kgmBase/kgmIApp.h"
 #include "../kgmBase/kgmString.h"
+#include "../kgmBase/kgmObject.h"
 
 #include <stdlib.h>
 
@@ -15,6 +16,9 @@ class kgmEnvironment;
 
 //void kgm_app_abort();
 
+class kgmISettings;
+class kgmIResources;
+
 class kgmApp: public kgmIApp
 {
 private:
@@ -23,11 +27,11 @@ private:
   static kgmString m_execPath;
 
   void* m_mainWindow;
-  
-  #ifdef WIN32
-  HMODULE m_hDbg;
-  #endif
 
+
+  kgmISettings*  m_settings;
+  kgmIResources* m_resources;
+  
 private:
   void* operator new(size_t s);
 
@@ -46,6 +50,16 @@ public:
   void* getMainWindow()
   {
     return m_mainWindow;
+  }
+
+  kgmIResources* getResources()
+  {
+    return m_resources;
+  }
+
+  kgmISettings* getSettings()
+  {
+    return m_settings;
   }
 
   //static

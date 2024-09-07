@@ -177,7 +177,8 @@ public:
 
     kgmArray<T>::m_length = len;
     kgmArray<T>::m_data   = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
-    kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+    //kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+    memset(kgmArray<T>::m_data, 0, sizeof(T) * (len + 1));
   }
 
   void alloc(T* m, u32 len)
@@ -189,8 +190,9 @@ public:
 
     kgmArray<T>::m_length = len;
     kgmArray<T>::m_data = (T*)kgm_alloc(sizeof(T) * (kgmArray<T>::m_length + 1));
+    memset(kgmArray<T>::m_data, 0, sizeof(T) * (len + 1));
     memcpy(kgmArray<T>::m_data, m, kgmArray<T>::m_length);
-    kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
+    //kgmArray<T>::m_data[kgmArray<T>::m_length] = T(0);
   }
 
   void toUpper()

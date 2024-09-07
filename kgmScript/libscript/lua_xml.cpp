@@ -1,7 +1,7 @@
 #include "../kgmIScript.h"
 #include "../../kgmBase/kgmXml.h"
 
-namespace kgmXmlScript
+namespace kgmLibScript
 {
   static kgmIScript* script = nullptr;
 

@@ -35,7 +35,7 @@ kgmGameScript::kgmGameScript(kgmIGame* g)
 
   status = false;
 
-  handler = new kgmLuaScript(g->getResources());
+  handler = new kgmLuaScript();
 
   handler->setX(this);
 }

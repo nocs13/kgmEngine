@@ -4,16 +4,18 @@ subdirs := $(wildcard kgm*/)
 subdirs += $(wildcard kgmGraphics/render)
 subdirs += $(wildcard kgmGame/actors)
 subdirs += $(wildcard kgmGame/objects)
+subdirs += $(wildcard kgmScript/libscript)
 sources := $(wildcard $(addsuffix *.cpp,$(subdirs)))
 sources += $(wildcard kgmGraphics/render/*.cpp)
 sources += $(wildcard kgmGame/actions/*.cpp)
 sources += $(wildcard kgmGame/objects/*.cpp)
 sources += $(wildcard kgmGame/editor/*.cpp)
-headers := $(wildcard $(addsuffix *.cpp,$(subdirs)))
-headers += $(wildcard kgmGraphics/render/*.cpp)
-headers += $(wildcard kgmGame/actions/*.cpp)
-headers += $(wildcard kgmGame/objects/*.cpp)
-headers += $(wildcard kgmGame/editor/*.cpp)
+sources += $(wildcard kgmScript/libscript/*.cpp)
+headers := $(wildcard $(addsuffix *.h,$(subdirs)))
+headers += $(wildcard kgmGraphics/render/*.h)
+headers += $(wildcard kgmGame/actions/*.h)
+headers += $(wildcard kgmGame/objects/*.h)
+headers += $(wildcard kgmGame/editor/*.h)
 
 objects := $(patsubst %.cpp,%.o,$(sources))
 #objects := $(patsubst %.cpp,%.o,$(sources),$(headers))
@@ -46,7 +48,7 @@ release: set_release  $(OUT_SO)
 set_release:
 	$(eval DEFS += -DRELEASE)
 
-$(objects) : %.o : %.cpp %.h
+$(objects) : %.o : %.cpp
 	$(CC) $(FLGS) $(DEFS) -c $< -o $@ $(DIRS)
 
 $(OUT_A): $(objects)

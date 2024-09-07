@@ -1,7 +1,9 @@
 #include "kgmApp.h"
 #include "kgmWindow.h"
+#include "kgmResources.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmArray.h"
+#include "../kgmBase/kgmSettings.h"
 
 #include <signal.h>
 
@@ -78,41 +80,29 @@ kgmApp::kgmApp()
 {
   m_app = this;
   
-  #ifdef WIN32
-  /*
-  m_hDbg = LoadLibrary("dbghelp.dll");
-  
-  if (m_hDbg == NULL)
-  {
-	fprintf(stderr, "Error: Unable load dbghelp.dll. [%x]", GetLastError());
-  }
-  
-  SymGetOptions = (FN_SymGetOptions) GetProcAddress(m_hDbg, "SymGetOptions");
-  SymSetOptions = (FN_SymSetOptions) GetProcAddress(m_hDbg, "SymSetOptions");
-  SymInitialize = (FN_SymInitialize) GetProcAddress(m_hDbg, "SymInitialize");
-  SymFromAddr   = (FN_SymFromAddr)   GetProcAddress(m_hDbg, "SymFromAddr");
-  
-  RtlCaptureStackBackTrace = (FN_RtlCaptureStackBackTrace) GetProcAddress(NULL, "RtlCaptureStackBackTrace");
-  */
-  #endif
-
-
   kgm_register_signals();
 
   kgm_memory_init();
+
+  m_settings = new kgmSettings();
+
+  m_resources = new kgmResources(null, null);
+
+  m_settings->load();
+
+  ((kgmResources*)m_resources)->addPath(m_settings->get((s8*) "Data"));
 }
 
 kgmApp::~kgmApp()
 {
   m_app = null;
 
-  #ifdef WIN32
-  if (m_hDbg != NULL)
-  {
-	FreeLibrary(m_hDbg);
-  }
-  #endif
+  if (m_resources)
+    ((kgmResources*)m_resources)->release();
 
+  if (m_settings) 
+    ((kgmSettings*)m_settings)->release();
+  
   kgmObject::kgm_objects_cleanup();
   kgm_memory_cleanup();
 }
@@ -260,13 +250,6 @@ void kgm_register_signals()
   AddVectoredExceptionHandler(0, kgm_TopLevelExceptionHandler);
   SetUnhandledExceptionFilter(kgm_VectoredExceptionHandler);
   #else
-
-  //signal(SIGINT,   kgm_sigterm_handler);
-  //signal(SIGILL,   kgm_sigterm_handler);
-  //signal(SIGTERM,  kgm_sigterm_handler);
-  //signal(SIGSEGV,  kgm_sigterm_handler);
-  //signal(SIGABRT,  kgm_sigterm_handler);
-  //signal(SIGBREAK, kgm_sigterm_handler);
 
   sigseg_stack.ss_sp = stack_body;
   sigseg_stack.ss_flags = SS_ONSTACK;

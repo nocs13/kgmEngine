@@ -53,13 +53,35 @@ void kgmObject::kgm_object_free(void* p)
   fprintf(stderr, "kgmObject::kgm_object_free [%p]\n", p);
   #endif
 
-  for (s32 i = 0; i < g_objects.length(); i++) {
-    if (g_objects[i] == p) {
+  for (s32 i = 0; i < g_objects.length(); i++) 
+  {
+    if (g_objects[i] == p) 
+    {
       free(p);
 
       g_objects[i] = null;
     }
   }
+}
+
+bool kgmObject::kgm_object_valid(void* p)
+{
+  if (!p)
+    return false;
+
+  #ifdef DEBUG
+  fprintf(stderr, "kgmObject::kgm_object_valid [%p]\n", p);
+  #endif
+
+  for (s32 i = 0; i < g_objects.length(); i++) 
+  {
+    if (g_objects[i] == p) 
+    {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 void kgmObject::kgm_objects_cleanup()
@@ -103,6 +125,6 @@ bool kgmObject::isClass(const char* o)
 
 void kgmObject::Release(kgmObject* o)
 {
-  if (o != nullptr)
+  if (kgm_object_valid(o))
     o->release();
 }

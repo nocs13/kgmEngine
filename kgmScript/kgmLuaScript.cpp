@@ -12,19 +12,28 @@ extern "C"
 
 kgmLuaScript::kgmLuaScript()
 {
+  need_close = false;
+
   init();
 }
 
-kgmLuaScript::kgmLuaScript(kgmIResources *r)
+kgmLuaScript::kgmLuaScript(lua_State *h)
 {
-  resources = r;
+  need_close = false;
 
-  init();
+  if (h)
+  {
+    handler = h;
+  }
+  else
+  {
+    init();
+  }
 }
 
 kgmLuaScript::~kgmLuaScript()
 {
-  if(handler)
+  if(handler && need_close)
     lua_close(handler);
 }
 
@@ -38,6 +47,7 @@ void* kgmLuaScript::getX()
   return X;
 }
 
+/*
 bool kgmLuaScript::load(kgmString s)
 {
   if (!resources)
@@ -79,22 +89,24 @@ bool kgmLuaScript::load(kgmString s)
 
   return true;
 }
+*/
 
-bool kgmLuaScript::run(kgmString spt)
+bool kgmLuaScript::load(kgmString sc)
 {
   s32 res = 0;
 
   #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
-    res = luaL_dostring(handler, spt.data());
+    res = luaL_dostring(handler, sc.data());
   #else
-    res = lua_dostring(handler, spt.data());
+    res = lua_dostring(handler, sc.data());
   #endif
 
   if(res)
   {
     const char* err = lua_tostring(handler, -1);
 
-    kgm_log() << "run Lua dostring error: " << err << "\n";
+    //kgm_log() << "run Lua dostring error: " << err << "\n";
+    fprintf(stderr, "run Lua dostring error: %s\n", err);
 
     lua_pop(handler, 1);
 
@@ -399,6 +411,8 @@ void kgmLuaScript::init()
 
   if(!handler)
     return;
+
+  need_close = true;
 
 #if defined(LUA_VERSION_NUM) && (LUA_VERSION_NUM >= 501)
   luaL_openlibs(handler);
