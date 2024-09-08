@@ -274,7 +274,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   if(!m_hdc)
     return;
 
-  int pf = ChoosePixelFormat(m_hdc,&pfd);
+  int pf = ChoosePixelFormat(m_hdc, &pfd);
 
   if(!pf)
     return;

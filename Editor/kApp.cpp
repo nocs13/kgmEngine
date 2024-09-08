@@ -16,7 +16,8 @@ kApp::~kApp()
 
 s32 kApp::exec(s32, s8**)
 {
-  fprintf(stderr, "XXX\n");
+  fprintf(stderr, "XXX.\n");
+  fflush(stderr);
 
   kgmLuaScript* script = new kgmLuaScript();
 

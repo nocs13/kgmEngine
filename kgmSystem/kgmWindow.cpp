@@ -5,6 +5,17 @@
 #include "kgmSystem.h"
 #include "../kgmBase/kgmLog.h"
 
+#include "kgmOGL.h"
+
+#ifdef WIN32
+typedef unsigned short GLushort;
+typedef unsigned int   GLuint;
+
+#include <GL/gl.h>
+#include <GL/wgl.h>
+#include <GL/wglext.h>
+#endif
+
 #ifdef WIN32
 
 inline void msCoord(bool abs, kgmEvent::Event& e, LPARAM lPar, int& x, int &y)
@@ -199,7 +210,7 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
   GetCursorPos(&msPoint);
 
   switch(msg){
-  case WM_DESTROY:
+  case WM_CLOSE:
     evt.event = evtClose;
     break;
   case WM_SIZE:
@@ -315,7 +326,6 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
 
   return 1;
 }
-
 
 void kgmRegisterWindowClass(){
   WNDCLASS *wcl = (WNDCLASS*)kgm_alloc(sizeof(WNDCLASS));
@@ -742,7 +752,6 @@ kgmWindow::kgmWindow()
   m_parent = 0;
   m_msAbs = true;
   m_msf = false;
-  m_fs = false;
 
   setHandle(null);
 
@@ -775,12 +784,11 @@ kgmWindow::kgmWindow()
 
 }
 
-kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp, bool fs)
+kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h, int bpp)
 {
   m_parent = wp;
   m_msAbs = true;
   m_msf = false;
-  m_fs = false;
 
   kgmLog::log("Init screen");
 
@@ -794,9 +802,9 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     kgmRegisterWindowClass();
 
   m_wnd = CreateWindow(cWndClass, wname,
-                       (fs)?(WS_POPUP|WS_VISIBLE):(WS_OVERLAPPEDWINDOW|WS_VISIBLE),
+                       WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                        x, y, w, h,
-                       (wp)?(wp->m_wnd):(0), 0, 0, 0);
+                       (wp) ? (wp->m_wnd) : (0), 0, 0, 0);
 
   SetWindowLongPtr(m_wnd, GWLP_USERDATA, (LONG_PTR) this);
   ShowWindow(m_wnd, SW_SHOW);
@@ -1011,9 +1019,6 @@ kgmWindow::~kgmWindow()
 
 void kgmWindow::fullscreen(bool fs)
 {
-  if(m_fs == fs)
-    return;
-
 #ifdef WIN32
 
   u32 iWidth, iHeight;
@@ -1069,8 +1074,6 @@ void kgmWindow::fullscreen(bool fs)
   XSendEvent(m_dpy, DefaultRootWindow(m_dpy), False, SubstructureNotifyMask, &xev);
 
 #endif
-
-  m_fs = fs;
 }
 
 void kgmWindow::show(bool sh)
@@ -1150,13 +1153,12 @@ void kgmWindow::loop()
       WndProc(this, &evt);
 
       if(!m_dpy)
-        return;
+        break;
     }
 
     if(!m_loop || !m_dpy)
       break;
 
-    //else
     onIdle();
     usleep(0);
   }
@@ -1168,8 +1170,10 @@ void kgmWindow::loop()
 
 void kgmWindow::close()
 {
-  if(m_loop)
-    m_loop = false;
+  #ifdef WIN32
+  SendMessage(m_wnd, WM_CLOSE, 0, 0);
+  #else
+  #endif
 }
 
 void kgmWindow::getRect(int& x, int& y, int& w, int& h)
@@ -1177,9 +1181,10 @@ void kgmWindow::getRect(int& x, int& y, int& w, int& h)
 #ifdef WIN32
 
   RECT r;
+
   GetClientRect(m_wnd, (LPRECT)&r);
+
   x = r.left, y = r.top, w = r.right - x, h = r.bottom - y;
-  //kgm_log() << "wrc: " << (s32)w << " " << (s32)h << "\n";
 
 #elif defined(ANDROID)
 
@@ -1291,7 +1296,7 @@ void kgmWindow::setTitle(char* title)
 
 kgmIGC* kgmWindow::getGC()
 {
-  return null;
+  return m_gc;
 }
 
 void kgmWindow::setHandle(void* h)
@@ -1302,6 +1307,29 @@ void kgmWindow::setHandle(void* h)
   m_handle = h;
   #endif
 }
+
+kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
+{
+  kgmWindow* wnd = null;
+
+  #ifdef WIN32
+  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
+  kgmOGL* gl = new kgmOGL(wnd);
+  #else
+  #endif
+
+  return wnd;
+}
+
+kgmWindow* kgmWindow::createVKWindow(kgmString wname, int widht, int height)
+{
+  #ifdef WIN32
+  #else
+  #endif
+  
+  return null;
+}
+
 
 /* X11 borderless window example.
 

@@ -243,11 +243,7 @@ public:
 
   void release()
   {
-    if(m_references > 0)
-      m_references--;
-
-    if (m_references == 0)
-      delete this;
+    kgmObject::Release(this);
   }
 
   void assign(kgmObject** o)
@@ -273,5 +269,5 @@ public:
     kgm_object_free(p);
   }
 
-  static void Release(kgmObject* o);
+  static void Release(kgmObject *o);
 };

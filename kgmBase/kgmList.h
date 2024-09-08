@@ -389,12 +389,13 @@ public:
 
     i._Ptr = _First;
 
-    do {
+    do 
+    {
       if (i._Ptr->data == val)
         break;
 
       i._Ptr = i._Ptr->next;
-    } while(!i.end());
+    } while(i.haveNext());
 
     return i;
   }

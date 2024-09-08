@@ -123,8 +123,18 @@ bool kgmObject::isClass(const char* o)
   return !strcmp(this->vClass(), o);
 }
 
-void kgmObject::Release(kgmObject* o)
+void kgmObject::Release(kgmObject *o)
 {
   if (kgm_object_valid(o))
-    o->release();
+  {
+    if(o->m_references > 0)
+      o->m_references--;
+
+    if (o->m_references == 0)
+    {
+      delete o;
+
+      o = null;
+    }
+  }
 }

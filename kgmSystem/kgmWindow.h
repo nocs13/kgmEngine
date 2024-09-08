@@ -100,8 +100,8 @@ public:
 #endif
 
   kgmWindow* m_parent;
+  kgmIGC*    m_gc;
 
-  bool m_fs;
   bool m_msAbs;
   bool m_msf;
 
@@ -110,8 +110,11 @@ private:
 
 public:
   kgmWindow();
-  kgmWindow(kgmWindow*, kgmString, int, int, int, int, int, bool);
+  kgmWindow(kgmWindow*, kgmString, int, int, int, int, int);
   ~kgmWindow();
+
+  static kgmWindow* createGLWindow(kgmString, int, int);
+  static kgmWindow* createVKWindow(kgmString, int, int);
 
   void   loop();
   void   close();
@@ -125,7 +128,6 @@ public:
 
   bool   getMsAbsolute(){ return m_msAbs; }
   void   setMsAbsolute(bool s){ m_msAbs = s; }
-
 
   virtual kgmIGC* getGC();
 
@@ -197,4 +199,7 @@ public:
   }
 
   void setHandle(void*);
+
+  private:
+
 };

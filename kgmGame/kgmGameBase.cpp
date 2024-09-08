@@ -82,7 +82,7 @@ kgmIGame::~kgmIGame()
 
 //                kgmGameBase
 kgmGameBase::kgmGameBase()
-  :kgmWindow(nullptr, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24, false)
+  :kgmWindow(nullptr, "kgmGameWindow", 0, 0, BWIDTH, BHEIGHT, 24)
 {
   m_game = this;
 

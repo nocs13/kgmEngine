@@ -134,6 +134,9 @@ public:
     void* xparam;	     //additional parameter
   } Event;
 
+private:
+  kgmList<kgmEvent*> m_handlers;
+
 public:
   kgmEvent()
   {
@@ -141,8 +144,40 @@ public:
 
   ~kgmEvent();
 
+  bool addHandler(kgmEvent* e)
+  {
+    if (!e || m_handlers.has(e))
+    {
+      return false;
+    }
+
+    m_handlers.add(e);
+
+    return true;
+  }
+
+  bool remHandler(kgmEvent* e)
+  {
+    if (!e || !m_handlers.has(e))
+    {
+      return false;
+    }
+
+    auto i = m_handlers.get(e);
+
+    if (i != m_handlers.end())
+      m_handlers.erase(i);
+
+    return true;
+  }
+
   virtual void onEvent(kgmEvent::Event* e)
   {
+    for(auto i = m_handlers.begin(); i != m_handlers.end(); i.next())
+    {
+      (*i)->onEvent(e);
+    }
+
     switch(e->event)
     {
     case evtCreate:
