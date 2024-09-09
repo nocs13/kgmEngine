@@ -10,6 +10,10 @@ namespace kgmLibScript
   s32 xmlFree(void*);
   s32 xmlInit(void*);
 
+  s32 kgmCreateWindow(void* lh);
+  s32 kgmCloseWindow(void* lh);
+  s32 kgmLoopWindow(void* lh);
+
   s32 kgmImport(void* lh)
   {
     if (!lh)
@@ -77,5 +81,9 @@ namespace kgmLibScript
 
     sc.set("kgmXmlInit",  xmlInit);
     sc.set("kgmXmlFree",  xmlFree);
+
+    sc.set("kgmCreateWindow", kgmCreateWindow);
+    sc.set("kgmCloseWindow",  kgmCloseWindow);
+    sc.set("kgmLoopWindow",   kgmLoopWindow);
   }
 };

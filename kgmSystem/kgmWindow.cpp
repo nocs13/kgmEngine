@@ -683,11 +683,6 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt)
     break;
   case ClientMessage:
     m_evt.event = evtClose;
-    //if(evt->xclient.data.l[0] == wnd->m_wmDelete)
-    //  wnd->m_loop = false;
-    //        if (*XGetAtomName(wnd->m_dpy, (Atom)&evt->xclient.message_type) == *"WM_PROTOCOLS")
-    //          m_evt.event = evtClose;
-    kgm_log() << "got close event" << "\n";
     break;
   default:
     m_evt.event = evtNone;
@@ -950,9 +945,9 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
                                 x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
   }
 
-  Atom delWindow = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
+  m_wmDelete = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
 
-  XSetWMProtocols(m_dpy, m_wnd, &delWindow, 1);
+  XSetWMProtocols(m_dpy, m_wnd, &m_wmDelete, 1);
 
   XSelectInput(m_dpy, m_wnd, ExposureMask | KeyPressMask | KeyReleaseMask |  ButtonPressMask |
                ButtonReleaseMask | PointerMotionMask | StructureNotifyMask | ButtonMotionMask);
@@ -1152,6 +1147,13 @@ void kgmWindow::loop()
 
       WndProc(this, &evt);
 
+      if (evt.type == ClientMessage &&
+          evt.xclient.data.l[0] == m_wmDelete) {
+        m_loop = 0;
+
+        break;
+      }
+
       if(!m_dpy)
         break;
     }
@@ -1173,6 +1175,14 @@ void kgmWindow::close()
   #ifdef WIN32
   SendMessage(m_wnd, WM_CLOSE, 0, 0);
   #else
+  XEvent event;
+  event.xclient.type = ClientMessage;
+  event.xclient.window = m_wnd;
+  event.xclient.message_type = XInternAtom(m_dpy, "WM_PROTOCOLS", 1);
+  event.xclient.format = 32;
+  event.xclient.data.l[0] = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
+  event.xclient.data.l[1] = CurrentTime;
+  XSendEvent(m_dpy, m_wnd, False, NoEventMask, &event);
   #endif
 }
 
@@ -1315,7 +1325,11 @@ kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
   #ifdef WIN32
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
   kgmOGL* gl = new kgmOGL(wnd);
+  wnd->m_gc = gl;
   #else
+  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
+  kgmOGL* gl = new kgmOGL(wnd);
+  wnd->m_gc = gl;
   #endif
 
   return wnd;
@@ -1326,7 +1340,7 @@ kgmWindow* kgmWindow::createVKWindow(kgmString wname, int widht, int height)
   #ifdef WIN32
   #else
   #endif
-  
+
   return null;
 }
 

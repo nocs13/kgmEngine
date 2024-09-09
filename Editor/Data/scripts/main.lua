@@ -62,4 +62,11 @@ end
 
 function main()
   kgmLog('FUCK UUUUUUUUUUUUUUUUUUUU XXXXXXXXXXXX')
+  w = kgmCreateWindow('kEditor', 800, 600)
+
+  if w == nil then
+    kgmLog('Window failed.')
+  else
+    kgmLoopWindow(w)
+  end
 end

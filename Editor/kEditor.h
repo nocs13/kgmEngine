@@ -5,8 +5,11 @@
 
 #include "../kgmGame/kgmGameBase.h"
 #include "../kgmGame/kgmGameGraphics.h"
-#include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmOGL.h"
+#include "../kgmSystem/kgmThread.h"
+#include "../kgmSystem/kgmWindow.h"
+#include "../kgmSystem/kgmResources.h"
+
 #include "../kgmGraphics/kgmGuiMenu.h"
 #include "../kgmGraphics/kgmGuiFileDialog.h"
 
@@ -17,7 +20,6 @@
 #include "kViewObjects.h"
 #include "kViewOptions.h"
 #include "kResources.h"
-#include "kWindow.h"
 
 /*
  * Deprecated. Should move as independent script based engine editor.
@@ -115,15 +117,16 @@ private:
   Slot<kEditor, kgmGuiFileDialog *> slotOpenFile;
   Slot<kEditor, kgmString> slotSelect;
 
-  kgmIGC *m_gc;
-  kgmGameResources *m_resources;
-  kgmSettings *m_settings;
-  kgmGraphics *m_graphics;
+  kgmIGC       *m_gc;
 
-  kWindow *m_wnd;
+  kgmResources *m_resources;
+  kgmSettings  *m_settings;
+  kgmGraphics  *m_graphics;
+
+  kgmWindow *m_wnd;
 
 public:
-  kEditor(kWindow *w, void *glctx = null);
+  kEditor(kgmWindow *w);
   ~kEditor();
 
   int quit();

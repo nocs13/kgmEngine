@@ -66,7 +66,7 @@ public:
 
   kgmTString<T>& operator+=(const kgmTString<T>& s)
   {
-    u32 len = kgmArray<T>::m_length + s.m_length;
+    s32 len = kgmArray<T>::m_length + s.m_length;
 
     if(len <= kgmArray<T>::m_length)
       return *this;
@@ -113,7 +113,7 @@ public:
 
     u32 len = strlen((char*) s);
 
-    if (kgmArray<T>::m_length != len)
+    if (kgmArray<T>::m_length != (s32) len)
       return false;
 
     return !memcmp(kgmArray<T>::m_data, s, sizeof(T) * (kgmArray<T>::m_length + 1));

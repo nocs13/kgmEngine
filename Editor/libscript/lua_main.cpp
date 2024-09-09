@@ -1,8 +1,8 @@
 #include "../../kgmScript/kgmLuaScript.h"
+#include "lua_main.h"
 
-namespace kEditor
+namespace Editor
 {
-
   void kgm_lua_init(void* lh)
   {
     if (!lh)
@@ -10,10 +10,7 @@ namespace kEditor
 
     kgmLuaScript sc((lua_State*) lh);
 
-    sc.set("kgmLog",  kgmLog);
-    sc.set("kgmImport",  kgmImport);
-
-    sc.set("kgmXmlInit",  xmlInit);
-    sc.set("kgmXmlFree",  xmlFree);
+    sc.set("kCreateEditor", kCreateEditor);
+    sc.set("kCloseEditor",  kCloseEditor);
   }
 };

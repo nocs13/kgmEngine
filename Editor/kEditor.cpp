@@ -2,6 +2,7 @@
 
 #include "../kgmBase/kgmLog.h"
 #include "../kgmBase/kgmConvert.h"
+#include "../kgmSystem/kgmApp.h"
 #include "../kgmSystem/kgmOGL.h"
 #include "../kgmSystem/kgmVulkan.h"
 #include "../kgmSystem/kgmSystem.h"
@@ -17,7 +18,7 @@ static float cam_scale = 1.0;
 
 kLine g_line;
 
-kEditor::kEditor(kWindow *w, void* glctx)
+kEditor::kEditor(kgmWindow *w)
 {
   m_wnd = w;
 
@@ -53,9 +54,10 @@ kEditor::kEditor(kWindow *w, void* glctx)
   m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
 
   m_settings = new kgmGameSettings();
-  m_gc = new kgmOGL(m_wnd, glctx);
+  m_gc = m_wnd->getGC();
+  //m_gc = new kgmOGL(m_wnd, glctx);
   //m_gc = new kgmVulkan(m_wnd);
-  m_resources = new kgmGameResources(m_gc, null);
+  m_resources = (kgmResources*) kgmApp::application()->getResources();
 
   kgmString s = m_settings->get((char*)"Data");
 
