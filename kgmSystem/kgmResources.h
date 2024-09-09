@@ -78,6 +78,9 @@ public:
   kgmFont*           getFont(const char* id, u32 r, u32 c);
   kgmShapeCollision* getShapeCollision(const char* id);
 
+  void set(kgmIGC* g)    { if (g && !m_gc) m_gc = g; };
+  void set(kgmIAudio* a) { if (a && !m_audio) m_audio = a; };
+
 private:
   kgmResource*       get(const char* id);
   kgmResource*       get(kgmString& id);

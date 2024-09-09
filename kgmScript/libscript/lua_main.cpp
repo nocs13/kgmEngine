@@ -12,6 +12,7 @@ namespace kgmLibScript
 
   s32 kgmCreateWindow(void* lh);
   s32 kgmCloseWindow(void* lh);
+  s32 kgmFreeWindow(void* lh);
   s32 kgmLoopWindow(void* lh);
 
   s32 kgmImport(void* lh)
@@ -84,6 +85,7 @@ namespace kgmLibScript
 
     sc.set("kgmCreateWindow", kgmCreateWindow);
     sc.set("kgmCloseWindow",  kgmCloseWindow);
+    sc.set("kgmFreeWindow",   kgmFreeWindow);
     sc.set("kgmLoopWindow",   kgmLoopWindow);
   }
 };

@@ -3,7 +3,7 @@
 
 namespace Editor
 {
-  void kgm_lua_init(void* lh)
+  void lua_init(void* lh)
   {
     if (!lh)
       return;

@@ -9,7 +9,6 @@
 #include "../kgmSystem/kgmThread.h"
 #include "../kgmSystem/kgmWindow.h"
 #include "../kgmSystem/kgmResources.h"
-
 #include "../kgmGraphics/kgmGuiMenu.h"
 #include "../kgmGraphics/kgmGuiFileDialog.h"
 
@@ -25,7 +24,7 @@
  * Deprecated. Should move as independent script based engine editor.
  */
 
-class kEditor : public kgmObject
+class kEditor : public kgmEvent
 {
 public:
 enum MENUEVENT
@@ -182,6 +181,7 @@ public:
 
   void onIdle();
   void onEvent(kgmEvent::Event *);
+  void onResize(int w, int h);
   void onAction(kgmEvent *, int);
   void onKeyUp(int k);
   void onKeyDown(int k);

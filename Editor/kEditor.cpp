@@ -53,11 +53,12 @@ kEditor::kEditor(kgmWindow *w)
   m_isVisual = true;
   m_thVisual = kgmThread::thread_create(kEditor::doVisUpdate, this);
 
-  m_settings = new kgmGameSettings();
+  m_settings = (kgmSettings*) kgmApp::application()->getSettings();
+
   m_gc = m_wnd->getGC();
-  //m_gc = new kgmOGL(m_wnd, glctx);
-  //m_gc = new kgmVulkan(m_wnd);
+
   m_resources = (kgmResources*) kgmApp::application()->getResources();
+  m_resources->set(m_gc);
 
   kgmString s = m_settings->get((char*)"Data");
 
@@ -85,6 +86,8 @@ kEditor::kEditor(kgmWindow *w)
 
   m_graphics->setDefaultFont(font);
 
+  m_wnd->addHandler(this);
+
   init();
   prepare();
 }
@@ -92,6 +95,8 @@ kEditor::kEditor(kgmWindow *w)
 kEditor::~kEditor()
 {
   clear();
+
+  m_wnd->remHandler(this);
 
   m_isVisual = false;
   kgmThread::thread_join(m_thVisual);
@@ -103,16 +108,7 @@ kEditor::~kEditor()
   mtlPivot->release();
 
   if (m_graphics)
-    delete m_graphics;
-
-  if (m_resources)
-    delete m_resources;
-
-  if (m_gc)
-    delete m_gc;
-
-  if (m_settings)
-    delete m_settings;
+    m_graphics->release();
 }
 
 void kEditor::clear()
@@ -617,6 +613,12 @@ void kEditor::onEvent(kgmEvent::Event *e)
 {
 }
 
+void kEditor::onResize(int w, int h)
+{
+  if (m_graphics)
+    m_graphics->resize(w, h);
+}
+
 void kEditor::onKeyUp(int k)
 {
   if (k == KEY_LCTRL)
@@ -866,6 +868,7 @@ void kEditor::onAction(kgmEvent *gui, int id)
 
 void kEditor::update()
 {
+
 }
 
 void kEditor::onMenu(u32 id)

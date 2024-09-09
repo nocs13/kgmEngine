@@ -4,6 +4,7 @@
 #include "../kgmScript/kgmLuaScript.h"
 #include "../kgmScript/libscript/lua_main.h"
 #include "../kgmGame/kgmGameResources.h"
+#include "libscript/lua_main.h"
 
 kApp::kApp()
 {
@@ -22,6 +23,8 @@ s32 kApp::exec(s32, s8**)
   kgmLuaScript* script = new kgmLuaScript();
 
   kgmLibScript::kgm_lua_init(script->getCore());
+  Editor::lua_init(script->getCore());
+
 
   kgmIResources* res = kgmApp::application()->getResources();
 

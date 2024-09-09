@@ -18,7 +18,7 @@ namespace kgmLibScript
 
     if (name)
     {
-      kgm_log() << "Creating: Window " << name << ".\n";
+      kgm_log() << "Creating: Window [" << name << "].\n";
 
       kgmWindow* wnd = kgmWindow::createGLWindow(name, width, height);
 
@@ -50,10 +50,28 @@ namespace kgmLibScript
     {
       kgm_log() << "Closing: Window.\n";
 
-      if (w)
-      {
-        w->close();
-      }
+      w->close();
+    }
+
+    return 0;
+  }
+
+  s32 kgmFreeWindow(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kgmWindow* w = null;
+
+    ls.args("p", &w);
+
+    if (w)
+    {
+      kgm_log() << "Free: Window.\n";
+
+      w->release();
     }
 
     return 0;
