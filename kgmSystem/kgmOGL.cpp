@@ -460,7 +460,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
     if (wnd->m_visual)
     {
-        m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+      m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
     }
 
     #endif

@@ -21,6 +21,7 @@ namespace kgmLibScript
       kgm_log() << "Creating: Window [" << name << "].\n";
 
       kgmWindow* wnd = kgmWindow::createGLWindow(name, width, height);
+      //kgmWindow* wnd = kgmWindow::createVKWindow(name, width, height);
 
       if (wnd)
       {

@@ -143,7 +143,6 @@ public:
   void clear();
   void init();
   void loop() {}
-  void close() {}
   void prepare();
   void resize(float w, float h);
 

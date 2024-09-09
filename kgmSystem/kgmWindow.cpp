@@ -5,7 +5,9 @@
 #include "kgmSystem.h"
 #include "../kgmBase/kgmLog.h"
 
-#include "kgmOGL.h"
+kgmIGC* kgmCreateGLESContext(kgmWindow* w);
+kgmIGC* kgmCreateOGLContext(kgmWindow* w);
+kgmIGC* kgmCreateVKContext(kgmWindow* w);
 
 #ifdef WIN32
 typedef unsigned short GLushort;
@@ -1318,18 +1320,31 @@ void kgmWindow::setHandle(void* h)
   #endif
 }
 
+/*
+void kgmWindow::onEvent(kgmEvent::Event* e)
+{
+  kgmEvent::onEvent(e);
+}
+*/
+
 kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
 {
   kgmWindow* wnd = null;
 
   #ifdef WIN32
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
-  kgmOGL* gl = new kgmOGL(wnd);
   wnd->m_gc = gl;
   #else
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
-  kgmOGL* gl = new kgmOGL(wnd);
-  wnd->m_gc = gl;
+  kgmIGC* gc = kgmCreateGLESContext(wnd);
+
+  if (!gc)
+  {
+    gc = kgmCreateOGLContext(wnd);
+  }
+
+  wnd->m_gc = gc;
+
   #endif
 
   return wnd;
@@ -1337,11 +1352,21 @@ kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
 
 kgmWindow* kgmWindow::createVKWindow(kgmString wname, int widht, int height)
 {
+  kgmWindow* wnd = null;
+
   #ifdef WIN32
+  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
+  kgmVulkan* vk = new kgmVulkan(wnd);
+  wnd->m_gc = vk;
   #else
+  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
+  kgmIGC* gc = kgmCreateVKContext(wnd);
+
+  if (gc)
+    wnd->m_gc = gc;
   #endif
 
-  return null;
+  return wnd;
 }
 
 

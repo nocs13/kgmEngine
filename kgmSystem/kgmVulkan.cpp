@@ -16,6 +16,16 @@
 #define ZeroObject(o) memset(&o, 0, sizeof(typeof o))
 
 #define SWAPCHAIN_IMAGES (2)
+
+kgmIGC* kgmCreateVKContext(kgmWindow* w)
+{
+  #ifdef VULKAN
+  return new kgmVulkan(w);
+  #else
+  return null;
+  #endif
+}
+
 //#define VK_DYNAMIC_STATE_DEPTH_BOUNDS 5
 
 //static int SWAPCHAIN_IMAGES = 2;
@@ -687,6 +697,11 @@ void  kgmVulkan::gcRender()
 
     printResult(result);
 
+    return;
+  }
+
+  if (swapChainImage >=m_commandBuffers.length())
+  {
     return;
   }
 
@@ -3865,8 +3880,11 @@ bool kgmVulkan::refreshSwapchain()
 
   for (size_t i = 0; i < m_swapChainImages.length(); i++)
   {
-    m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
-    m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
+    if (i < m_commandBuffers.length())
+      m_vk.vkResetCommandBuffer(m_commandBuffers[i], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+
+    if (i < m_frameBuffers.length())
+      m_vk.vkDestroyFramebuffer(m_device, m_frameBuffers[i], nullptr);
   }
 
   if (m_commandPool)
@@ -3940,7 +3958,12 @@ void kgmVulkan::fillCommands()
 
   s32 i = m_currentFrame;
 
-  for (i = 0; i < m_swapChainImages.length(); i++)
+  s32 max_frames = m_swapChainImages.length();
+
+  if (m_commandBuffers.length() < max_frames)
+    max_frames = m_commandBuffers.length();
+
+  for (i = 0; i < max_frames; i++)
   {
     auto &commandBuffer = m_commandBuffers[i];
     auto &image         = m_swapChainImages[i];

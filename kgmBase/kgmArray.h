@@ -64,7 +64,11 @@ public:
   T& operator[](const s32 i) const
   {
     if (i >= m_length)
-      kgm_fatal("Invalid array index income.");
+    {
+      fprintf(stderr, "Try index %d, with length: %d.\n", i, m_length);
+
+      kgm_fatal("Invalid array index income. index");
+    }
 
     return m_data[i];
   }

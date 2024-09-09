@@ -86,7 +86,7 @@ public:
   struct wl_shm*        m_shm = nullptr;
 
   struct xdg_surface*   m_xdg_surface;
-  struct xdg_toplevel*  m_xdg_toplevel;  
+  struct xdg_toplevel*  m_xdg_toplevel;
 #else
 
   Display             *m_dpy;
@@ -176,27 +176,7 @@ public:
   static int WndProc(kgmWindow*, XEvent*);
 #endif
 
-  // Virtual Functions
-  virtual void onClose()
-  {
-    close();
-  }
-
-  virtual void onIdle()
-  {
-  }
-
-  virtual void onMenu(int id)
-  {
-  }
-
-  virtual void onEvent(kgmEvent::Event* e)
-  {
-    if(!e)
-      return;
-
-    kgmEvent::onEvent(e);
-  }
+  //void onEvent(kgmEvent::Event* e);
 
   void setHandle(void*);
 

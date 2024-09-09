@@ -69,15 +69,15 @@ kEditor::kEditor(kgmWindow *w)
   else
   {
     kgm_log() << "Data folder list: " << s.data() << "\n";
-  }
 
-  s8* tok = strtok((char*) s.data(), ":");
+    s8* tok = strtok((char*) s.data(), ":");
 
-  while(tok)
-  {
-    kgm_log() << "Data folder: " << tok << "\n";
-    m_resources->addPath(tok);
-    tok = strtok(nullptr, ":");
+    while(tok)
+    {
+      kgm_log() << "Data folder: " << tok << "\n";
+      m_resources->addPath(tok);
+      tok = strtok(nullptr, ":");
+    }
   }
 
   m_graphics = new kgmGraphics(m_gc, m_resources);
@@ -611,6 +611,7 @@ void kEditor::onIdle()
 
 void kEditor::onEvent(kgmEvent::Event *e)
 {
+  kgmEvent::onEvent(e);
 }
 
 void kEditor::onResize(int w, int h)
@@ -970,7 +971,6 @@ void kEditor::onMenu(u32 id)
 
 void kEditor::onQuit()
 {
-  close();
 }
 
 void kEditor::onMapNew()

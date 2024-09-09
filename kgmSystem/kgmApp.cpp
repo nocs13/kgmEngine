@@ -40,7 +40,7 @@ typedef DWORD __stdcall (*FN_SymSetOptions)(DWORD);
 typedef DWORD __stdcall (*FN_SymGetOptions)();
 typedef BOOL __stdcall (*FN_SymFromAddr)(HANDLE, DWORD64, PDWORD64, PSYMBOL_INFO);
 
-FN_RtlCaptureStackBackTrace RtlCaptureStackBackTrace = NULL; 
+FN_RtlCaptureStackBackTrace RtlCaptureStackBackTrace = NULL;
 
 FN_SymGetOptions SymGetOptions = NULL;
 FN_SymSetOptions SymSetOptions = NULL;
@@ -79,7 +79,7 @@ kgmString kgmApp::m_execPath;
 kgmApp::kgmApp()
 {
   m_app = this;
-  
+
   kgm_register_signals();
 
   kgm_memory_init();
@@ -90,7 +90,12 @@ kgmApp::kgmApp()
 
   m_settings->load();
 
-  ((kgmResources*)m_resources)->addPath(m_settings->get((s8*) "Data"));
+  kgmString datas = m_settings->get((s8*) "Data");
+
+  fprintf(stderr, "kgmApp: Setting Data is [%s].\n", datas.data());
+  fflush(stderr);
+
+  ((kgmResources*)m_resources)->addPath(datas);
 }
 
 kgmApp::~kgmApp()
@@ -100,9 +105,9 @@ kgmApp::~kgmApp()
   if (m_resources)
     ((kgmResources*)m_resources)->release();
 
-  if (m_settings) 
+  if (m_settings)
     ((kgmSettings*)m_settings)->release();
-  
+
   kgmObject::kgm_objects_cleanup();
   kgm_memory_cleanup();
 }

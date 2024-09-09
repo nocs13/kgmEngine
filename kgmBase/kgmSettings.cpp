@@ -10,6 +10,8 @@ kgmSettings::kgmSettings()
   m_gsid = 0xf0f0;
   m_mouse_camera = true;
 
+  m_name = DEFAULT_NAME;
+
   load();
 }
 
@@ -47,7 +49,7 @@ void kgmSettings::load()
   file.close();
 
   if(m_xml)
-    delete m_xml;
+    m_xml->release();
 
   m_xml = new kgmXml(m);
 }

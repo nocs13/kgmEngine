@@ -219,12 +219,20 @@ public:
     }
   }
 
-  virtual void onAction(kgmEvent*, int)
+  virtual void onAction(kgmEvent* e, int id)
   {
+    for(auto i = m_handlers.begin(); i != m_handlers.end(); i.next())
+    {
+      (*i)->onAction(e, id);
+    }
   }
 
   virtual void onIdle()
   {
+    for(auto i = m_handlers.begin(); i != m_handlers.end(); i.next())
+    {
+      (*i)->onIdle();
+    }
   }
 
 protected:
