@@ -19,11 +19,22 @@
 
 kgmIGC* kgmCreateVKContext(kgmWindow* w)
 {
+  kgmIGC* gc = null;
+
   #ifdef VULKAN
-  return new kgmVulkan(w);
-  #else
-  return null;
+  kgmVulkan* vk = new kgmVulkan(w);
+
+  if (vk->gcError())
+  {
+    vk->release();
+
+    return null;
+  }
+
+  gc = vk;
   #endif
+
+  return gc;
 }
 
 //#define VK_DYNAMIC_STATE_DEPTH_BOUNDS 5

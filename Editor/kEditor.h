@@ -179,6 +179,7 @@ public:
   kgmISettings *getSettings() { return m_settings; }
 
   void onIdle();
+  void onClose();
   void onEvent(kgmEvent::Event *);
   void onResize(int w, int h);
   void onAction(kgmEvent *, int);

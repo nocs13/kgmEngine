@@ -26,11 +26,22 @@ GLint  g_num_compressed_format = 0;
 
 kgmIGC* kgmCreateOGLContext(kgmWindow* w)
 {
+  kgmIGC* gc = null;
+
   #ifdef OGL
-  return new kgmOGL(w);
-  #else
-  return null;
+  kgmOGL* ogl = new kgmOGL(w);
+
+  if (ogl->gcError())
+  {
+    ogl->release();
+
+    return null;
+  }
+
+  gc = ogl;
   #endif
+
+  return gc;
 }
 
 #ifdef OGL
@@ -424,6 +435,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   {
     m_glctx = (GLXContext) ctx;
   }
+  /*
   else if (glx.glXGetCurrentContext)
   {
     GLXContext ctx = glx.glXGetCurrentContext();
@@ -452,6 +464,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
       }
     }
   }
+  */
 
   if (!m_glctx)
   {
@@ -465,6 +478,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
     #endif
 
+    /*
     if (m_glctx && GL_VER_MAJ > 2)
     {
       int glx_major = 0, glx_minor = 0;
@@ -480,7 +494,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
                       GLX_CONTEXT_MINOR_VERSION_ARB,  GL_VER_MIN,
                       0 };
 
-      /* Create a GL 3.x context */
+      // Create a GL 3.x context
       GLXFBConfig *framebuffer_config = NULL;
       int fbcount = 0;
       GLXFBConfig *(*glXChooseFBConfig) (Display * disp,
@@ -514,6 +528,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
       #endif
     }
+    */
   }
 
   if (!m_glctx)
@@ -574,12 +589,12 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
     return;
   }
 
-  if(strstr((char*)ext, "GL_ARB_shader_objects"))
+  if(!strstr((char*)ext, "GL_ARB_shader_objects"))
   {
     m_error = 2;
   }
 
-  if(strstr((char*)ext, "GL_ARB_framebuffer_object"))
+  if(!strstr((char*)ext, "GL_ARB_framebuffer_object"))
   {
     m_error = 3;
   }
@@ -620,6 +635,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
   m_min_filter = GL_LINEAR;
   m_mag_filter = GL_LINEAR;
+
+  m_error = 0;
 }
 
 kgmOGL::~kgmOGL()
@@ -806,6 +823,13 @@ void kgmOGL::gcClear(u32 flag, u32 col, float depth, u32 sten)
   }
 
   ogl.glClear(cl);
+
+  GLenum err = ogl.glGetError();
+
+  if (err != GL_NO_ERROR)
+  {
+    kgm_log() << "ERROR: Ogl clear error " << (s32) err << ".\n";
+  }
 }
 
 void kgmOGL::gcBegin()
@@ -819,15 +843,13 @@ void kgmOGL::gcEnd()
 void kgmOGL::gcRender()
 {
 #ifdef WIN32
-
   SwapBuffers(m_hdc);
-
 #elif defined(DARWIN)
 #elif defined(WAYLAND)
 #else
+  GLXContext ctx = glx.glXGetCurrentContext();
 
   glx.glXSwapBuffers(m_wnd->m_dpy, m_wnd->m_wnd);
-
 #endif
 }
 

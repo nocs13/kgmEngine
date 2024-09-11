@@ -16,8 +16,9 @@ class kgmWindow;
 typedef size_t GLhandle;
 #endif
 
-class kgmGLES : public kgmIGC
+class kgmGLES : public kgmObject, public kgmIGC
 {
+  KGM_OBJECT(kgmGLES)
   kgmWindow* m_wnd = null;
 
   kgmLib m_egl;
@@ -64,7 +65,7 @@ public:
   };
 public:
   kgmGLES(kgmWindow* wnd);
-  virtual ~kgmGLES();
+  ~kgmGLES();
 
   //BASE
   gc_enum gcGetBase() { return gc_opengl; }

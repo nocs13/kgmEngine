@@ -113,7 +113,8 @@ kEditor::~kEditor()
 
 void kEditor::clear()
 {
-  m_graphics->clear();
+  if (m_graphics)
+    m_graphics->clear();
 
   for (auto i = units.begin(); i != units.end(); i.next())
     (*i)->release();
@@ -321,7 +322,7 @@ void kEditor::select(int x, int y)
 
   auto i = units.begin();
 
-  do
+  for (; i != units.end(); i.next())
   {
     kgmUnit *un = (*i);
     vec3 upos = un->position();
@@ -390,7 +391,7 @@ void kEditor::select(int x, int y)
 
       pv_delta = upos.distance(c);
     }
-  } while (i.next());
+  }
 
   if (peeked)
   {
@@ -607,6 +608,14 @@ void kEditor::onIdle()
 {
   if (m_graphics)
     m_graphics->render();
+}
+
+void kEditor::onClose()
+{
+  if (m_graphics)
+    m_graphics->release();
+
+  m_graphics = null;
 }
 
 void kEditor::onEvent(kgmEvent::Event *e)

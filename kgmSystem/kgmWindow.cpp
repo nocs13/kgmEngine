@@ -3,6 +3,7 @@
 #include "kgmWindow.h"
 #include "kgmApp.h"
 #include "kgmSystem.h"
+#include "kgmOGL.h"
 #include "../kgmBase/kgmLog.h"
 
 kgmIGC* kgmCreateGLESContext(kgmWindow* w);
@@ -881,12 +882,10 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
   XGETVISUALINFO PfnXGetVisualInfo = NULL;
 
-  {
-     x11lib = dlopen(NULL, RTLD_LAZY);
+  x11lib = dlopen(NULL, RTLD_LAZY);
 
-    if (x11lib)
-      PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(x11lib, "XGetVisualInfo");
-  }
+  if (x11lib)
+    PfnXGetVisualInfo = (XGETVISUALINFO) dlsym(x11lib, "XGetVisualInfo");
 
   if (!m_dpy)
     m_dpy    = (wp) ? (wp->m_dpy) : XOpenDisplay(NULL);
@@ -894,18 +893,74 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
   if (m_screen < 0)
     m_screen = (wp) ? (wp->m_screen) : DefaultScreen(m_dpy);
 
+  kgmGLX glx;
+
+  if (glx.glXGetProcAddress != null)
+  {
+    int visualData[] = {
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_DOUBLEBUFFER, True,
+        GLX_RED_SIZE, 8,
+        GLX_GREEN_SIZE, 8,
+        GLX_BLUE_SIZE, 8,
+        GLX_ALPHA_SIZE, 8,
+        GLX_DEPTH_SIZE, 24,
+        GLX_STENCIL_SIZE, 8,
+        None
+    };
+
+    int numfbconfigs;
+    int best_fbc = -1, worst_fbc = -1, best_num_samp = -1, worst_num_samp = 999;
+    GLXFBConfig fbconfig = 0, *fbconfigs = glx.glXChooseFBConfig(m_dpy, DefaultScreen(m_dpy), visualData, &numfbconfigs);
+
+    for (int i = 0; i < numfbconfigs; i++)
+    {
+      vi = (XVisualInfo*) glx.glXGetVisualFromFBConfig(m_dpy, fbconfigs[i]);
+
+      if (!vi)
+        continue;
+
+      int samp_buf, samples;
+
+      glx.glXGetFBConfigAttrib( m_dpy, fbconfigs[i], GLX_SAMPLE_BUFFERS, &samp_buf );
+      glx.glXGetFBConfigAttrib( m_dpy, fbconfigs[i], GLX_SAMPLES       , &samples  );
+
+      if ( best_fbc < 0 || samp_buf && samples > best_num_samp )
+        best_fbc = i, best_num_samp = samples;
+      if ( worst_fbc < 0 || !samp_buf || samples < worst_num_samp )
+        worst_fbc = i, worst_num_samp = samples;
+    }
+
+    fbconfig = fbconfigs[best_fbc];
+
+    vi = glx.glXGetVisualFromFBConfig(m_dpy, fbconfig);
+
+    if (vi)
+    {
+      m_screen = vi->screen;
+    }
+  }
+
   XWindowAttributes xattr;
 
   Window wroot = RootWindow(m_dpy, m_screen);
 
-  XGetWindowAttributes(m_dpy, wroot, &xattr);
+  if (vi != null)
+  {
+
+  }
+  else
+  {
+    XGetWindowAttributes(m_dpy, wroot, &xattr);
+  }
 
   XVisualInfo vinfo;
   vinfo.screen = m_screen;
-  vinfo.visualid = XVisualIDFromVisual(xattr.visual);
+  //vinfo.visualid = XVisualIDFromVisual(xattr.visual);
   s32 n;
 
-  if (PfnXGetVisualInfo)
+  if (!vi && PfnXGetVisualInfo)
   {
     vi = PfnXGetVisualInfo(m_dpy, VisualScreenMask | VisualIDMask, &vinfo, &n);
   }
@@ -936,7 +991,10 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
     windowAttribs.colormap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
     windowAttribs.event_mask = ExposureMask;
 
-    m_wnd = XCreateWindow(m_dpy, RootWindow(m_dpy, m_screen), x, y, w, h, 0, vi->depth, InputOutput, vi->visual,
+    m_wnd = XCreateWindow(m_dpy,
+                          RootWindow(m_dpy, m_screen),
+                          //DefaultRootWindow(m_dpy),
+                          x, y, w, h, 0, vi->depth, InputOutput, vi->visual,
                           CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
     m_visual = vi;
@@ -965,7 +1023,7 @@ kgmWindow::~kgmWindow()
 {
   //Prepare to close window
 #ifdef DEBUG
-  //kgm_log() << "Prepare to close window.\n";
+  kgm_log() << "Prepare to destroy window.\n";
 #endif
 
 #ifdef WIN32
@@ -990,6 +1048,9 @@ kgmWindow::~kgmWindow()
 
 #else
 
+  if (m_gc)
+    kgmObject::Release((kgmObject*) m_gc);
+
   if (m_visual)
   {
     XFree(m_visual);
@@ -1005,7 +1066,8 @@ kgmWindow::~kgmWindow()
   }
 
   m_dpy = null;
-  m_wnd = 0;
+  m_wnd = null;
+  m_gc  = null;
 
 #endif
 
@@ -1336,11 +1398,11 @@ kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
   wnd->m_gc = gl;
   #else
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
-  kgmIGC* gc = kgmCreateGLESContext(wnd);
+  kgmIGC* gc = kgmCreateOGLContext(wnd);
 
   if (!gc)
   {
-    gc = kgmCreateOGLContext(wnd);
+    gc = kgmCreateGLESContext(wnd);
   }
 
   wnd->m_gc = gc;
