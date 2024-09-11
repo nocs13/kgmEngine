@@ -136,6 +136,8 @@ void kEditor::clear()
 
 void kEditor::init()
 {
+  menu = null;
+
   if (!m_graphics)
     return;
 
@@ -635,8 +637,12 @@ void kEditor::onKeyUp(int k)
   {
     move_camera = false;
     setMsAbsolute(true);
-    menu->show();
-    menu->freeze(false);
+
+    if (menu)
+    {
+      menu->show();
+      menu->freeze(false);
+    }
   }
 }
 
@@ -646,8 +652,12 @@ void kEditor::onKeyDown(int k)
   {
     move_camera = true;
     setMsAbsolute(false);
-    menu->hide();
-    menu->freeze(true);
+
+    if (menu)
+    {
+      menu->hide();
+      menu->freeze(true);
+    }
   }
 }
 

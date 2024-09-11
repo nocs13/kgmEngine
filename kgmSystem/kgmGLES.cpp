@@ -6,14 +6,9 @@ typedef int GLint;
 
 kgmIGC* kgmCreateGLESContext(kgmWindow* w)
 {
-  #ifdef GLES_2
-  return new kgmGLES(w);
-  #else
-  return null;
-  #endif
   kgmIGC* gc = null;
 
-  #ifdef OGL
+  #ifdef GLES_2
   kgmGLES* gles = new kgmGLES(w);
 
   if (gles->gcError())

@@ -327,6 +327,13 @@ long CALLBACK kgmWindow::WndProc(HWND hWnd, u32 msg, WPARAM wPar, LPARAM lPar)
   if(evt.event)
     wnd->onEvent(&evt);
 
+  if ((evt.event == evtClose) && (hWnd == wnd->m_wnd))
+  {
+    DestroyWindow(hWnd);
+
+    wnd->m_wnd = null;
+  }
+
   return 1;
 }
 
