@@ -11,6 +11,22 @@ kgmIGC* kgmCreateGLESContext(kgmWindow* w)
   #else
   return null;
   #endif
+  kgmIGC* gc = null;
+
+  #ifdef OGL
+  kgmGLES* gles = new kgmGLES(w);
+
+  if (gles->gcError())
+  {
+    gles->release();
+
+    return null;
+  }
+
+  gc = gles;
+  #endif
+
+  return gc;
 }
 
 #ifdef GLES_2

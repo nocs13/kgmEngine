@@ -35,8 +35,10 @@
 
 //struct VkXlibSurfaceCreateInfoKHR;
 
-class kgmVulkan: public kgmIGC
+class kgmVulkan: public kgmObject, public kgmIGC
 {
+  KGM_OBJECT(kgmVulkan)
+
   struct vk
   {
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;

@@ -253,7 +253,7 @@ protected:
 
 public:
   kgmGraphics(kgmIGC*, kgmIResources*);
-  virtual ~kgmGraphics();
+  ~kgmGraphics();
 
   void build();
   void render();

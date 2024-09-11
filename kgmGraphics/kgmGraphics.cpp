@@ -262,7 +262,11 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
-  gc->gcFreeTarget(g_fbo);
+  if (gc == null)
+    return;
+
+  if (g_fbo)
+    gc->gcFreeTarget(g_fbo);
 
   if (m_map_light.m_fbo)
     gc->gcFreeTarget(m_map_light.m_fbo);
@@ -304,6 +308,9 @@ kgmGraphics::~kgmGraphics()
   kgmObject::Release(g_def_style_texture);
   kgmObject::Release(gui_style);
   kgmObject::Release(m_camera);
+
+  gc = null;
+  rc = null;
 }
 
 kgmShader* s_def = null;
@@ -1215,7 +1222,7 @@ void kgmGraphics::set(kgmMaterial* m)
       gc->gcBlend(true, gcblend_eqsub, gcblend_dstcol, gcblend_zero);
       break;
     case kgmMaterial::BlendMix:
-    case kgmMaterial::BlendNone:      
+    case kgmMaterial::BlendNone:
     default:
       break;
 /*

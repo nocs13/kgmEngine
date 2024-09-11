@@ -65,15 +65,19 @@ function main()
   w = kgmCreateWindow('kEditor', 800, 600)
 
   if w == nil then
-    kgmLog('Window failed.')
+    kgmLog('Window create failed.')
   else
     e = kCreateEditor(w)
+
     if e == nil then
+      kgmLog('Editor create failed.')
+
       kgmCloseWindow(w)
     else
       kgmLoopWindow(w)
 
       kCloseEditor(e)
+
       kgmFreeWindow(w)
     end
   end
