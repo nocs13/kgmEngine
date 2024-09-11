@@ -79,15 +79,15 @@ public:
 
 private:
 
+  kgmLib m_glx;
+
 #ifdef WIN32
 
   HDC        m_hdc;
-  HGLRC      m_hrc;
+  HGLRC      m_glctx = null;
 
 #elif defined(DARWIN)
 #else
-
-  kgmLib m_glx;
 
   GLXContext   m_glctx  = null;
 

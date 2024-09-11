@@ -1331,21 +1331,14 @@ kgmWindow* kgmWindow::createGLWindow(kgmString wname, int widht, int height)
 {
   kgmWindow* wnd = null;
 
-  #ifdef WIN32
-  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
-  wnd->m_gc = gl;
-  #else
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
   kgmIGC* gc = kgmCreateGLESContext(wnd);
 
   if (!gc)
-  {
     gc = kgmCreateOGLContext(wnd);
-  }
 
-  wnd->m_gc = gc;
-
-  #endif
+  if (gc)
+    wnd->m_gc = gc;
 
   return wnd;
 }
@@ -1354,17 +1347,11 @@ kgmWindow* kgmWindow::createVKWindow(kgmString wname, int widht, int height)
 {
   kgmWindow* wnd = null;
 
-  #ifdef WIN32
-  wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
-  kgmVulkan* vk = new kgmVulkan(wnd);
-  wnd->m_gc = vk;
-  #else
   wnd = new kgmWindow(null, wname, 0, 0, widht, height, 32);
   kgmIGC* gc = kgmCreateVKContext(wnd);
 
   if (gc)
     wnd->m_gc = gc;
-  #endif
 
   return wnd;
 }

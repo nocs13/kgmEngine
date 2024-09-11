@@ -32,7 +32,7 @@ namespace kgmLibScript
     {
       kgm_log() << "Importing: " << id << " script.\n";
 
-      kgmCString path = "Data/scripts/";
+      kgmCString path = "scripts/";
 
       path += id;
       path += ".lua";

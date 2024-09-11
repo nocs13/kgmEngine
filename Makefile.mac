@@ -60,7 +60,8 @@ else ifeq ($(cOS),Windows)
 	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DOGL -DGPUSHADERS -DDSOUND -DVULKAN
 #	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror -Wno-error=unused-command-line-argument
-	LIBS = -llua -lopengl32 -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound -ldbghelp
+# -lopengl32	
+	LIBS = -llua -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound -ldbghelp
 	RM = rm -f
 
 	#ifeq($(ARCH), I32)

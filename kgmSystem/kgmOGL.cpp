@@ -130,6 +130,11 @@ extern PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI;
 
 struct {
 #ifdef WIN32
+  void* (CALLBACK *wglGetProcAddress)(const s8*);
+  HGLRC (__stdcall *wglGetCurrentContext)();
+  HGLRC (__stdcall *wglCreateContext)(HDC);
+  BOOL  (__stdcall *wglMakeCurrent)(HDC, HGLRC);
+  BOOL  (__stdcall *wglDeleteContext)(HGLRC);
 #else
   void (*glXSwapBuffers)(Display *dpy, GLXDrawable drawable);
   GLXContext (*glXCreateContext)(Display *dpy, XVisualInfo *vis, GLXContext share_list, Bool direct);
@@ -176,6 +181,8 @@ struct {
 //DEBUG
   //PFNGLDEBUGMESSAGECALLBACKKHRPROC glDebugMessageCallbackKHR;
 //FRAME BUFFER EXTENTIONS
+  PFNGLPOLYGONOFFSETEXTPROC            glPolygonOffset;
+
   PFNGLGENFRAMEBUFFERSEXTPROC          glGenFramebuffersEXT;
   PFNGLDELETEFRAMEBUFFERSEXTPROC       glDeleteFramebuffersEXT;
   PFNGLBINDFRAMEBUFFEREXTPROC          glBindFramebufferEXT;
@@ -187,7 +194,6 @@ struct {
   PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC  glFramebufferRenderbufferEXT;
   PFNGLDELETERENDERBUFFERSEXTPROC      glDeleteRenderbuffersEXT;
   PFNGLBLENDEQUATIONEXTPROC            glBlendEquationEXT;
-  PFNGLPOLYGONOFFSETEXTPROC            glPolygonOffsetEXT;
   PFNGLDRAWARRAYSEXTPROC               glDrawArraysEXT;
 //TEXTURE EXTENTIONS
   PFNGLACTIVETEXTUREARBPROC		glActiveTextureARB;
@@ -249,11 +255,13 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
 
   this->m_wnd = wnd;
 
-#ifdef DEBUG
+  #ifdef DEBUG
   kgm_log() << "init OGL.\n";
-#endif
+  #endif
+  
+  m_error = 1;
 
-#ifdef WIN32
+  #ifdef WIN32
 
   PIXELFORMATDESCRIPTOR pfd = {0};
   pfd.nSize = sizeof(pfd);
@@ -263,8 +271,8 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
                 PFD_DOUBLEBUFFER;// |
   //				  PFD_GENERIC_ACCELERATED |
   //				   PFD_SWAP_LAYER_BUFFERS;
-  pfd.cColorBits = 24;
-  pfd.cDepthBits = 16;
+  pfd.cColorBits = 32;
+  pfd.cDepthBits = 24;
   pfd.cStencilBits = 8;
   pfd.iPixelType = PFD_TYPE_RGBA;
   pfd.iLayerType = PFD_MAIN_PLANE;
@@ -282,20 +290,58 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   if(!SetPixelFormat(m_hdc,pf,&pfd))
     return;
 
-  m_hrc = wglCreateContext(m_hdc);
-
-  if(!m_hrc)
+  if (!m_glx.open((char*) "opengl32.dll"))
     return;
 
-  if(!wglMakeCurrent(m_hdc,m_hrc))
+  #define GLX_FN(func)  glx.func = (typeof( glx.func )) m_glx.get((char*) #func)
+
+  glx.wglGetProcAddress = (void* (*)(const s8*)) m_glx.get((char*) "wglGetProcAddress");
+
+  if (glx.wglGetProcAddress == null)
     return;
 
-  SendMessage(wnd->m_wnd, WM_ACTIVATE, 0, 0);
-  SendMessage(wnd->m_wnd, WM_PAINT, 0, 0);
+  GLX_FN(wglCreateContext);
+  GLX_FN(wglMakeCurrent);
+  GLX_FN(wglDeleteContext);
+  GLX_FN(wglGetCurrentContext);
 
-#elif defined(DARWIN)
+  if (ctx != null)
+  {
+    m_glctx = (HGLRC) ctx;
+  }
+  else
+  {
+    HGLRC ctx = null;
 
-#else
+    ctx = glx.wglGetCurrentContext();
+
+    if (ctx != NULL)
+      m_glctx = ctx;
+
+    if (m_glctx == null)        
+      m_glctx = glx.wglCreateContext(m_hdc);
+
+    if(!m_glctx)
+      return;
+
+    if(!glx.wglMakeCurrent(m_hdc, m_glctx))
+      return;
+  }
+
+  //m_glctx = wglCreateContext(m_hdc);
+
+  //if(!m_glctx)
+  //  return;
+
+  //if(!wglMakeCurrent(m_hdc, m_glctx))
+  //  return;
+
+  //SendMessage(wnd->m_wnd, WM_ACTIVATE, 0, 0);
+  //SendMessage(wnd->m_wnd, WM_PAINT, 0, 0);
+  
+  #elif defined(DARWIN)
+
+  #else
 
   int rx, ry, rw, rh;
 
@@ -334,7 +380,111 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   GLX_FN(glXQueryVersion);
   GLX_FN(glXGetCurrentContext);
 
+  if (ctx != null)
+  {
+    m_glctx = (GLXContext) ctx;
+  }
+  else
+  {
+    GLXContext ctx = glx.glXGetCurrentContext();
+
+    if (ctx != NULL)
+    {
+      int glx_major = 0, glx_minor = 0;
+
+        glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+
+      kgm_log() << "GLX predefined version: " << glx_major << "." << glx_minor << ".\n";
+
+      if ((glx_major < GL_VER_MAJ) || ((glx_major == GL_VER_MAJ) && (glx_minor < GL_VER_MIN)))
+      {
+          glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, NULL);
+      }
+      else
+      {
+        m_glctx = ctx;
+      }
+    }
+
+    if (!m_glctx)
+    {
+      if (wnd->m_visual)
+        m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
+    }
+  }
+
+  if (!m_glctx)
+  {
+    if (m_glctx && GL_VER_MAJ > 2)
+    {
+      int glx_major = 0, glx_minor = 0;
+
+      glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
+
+      kgm_log() << "GLX version: " << glx_major << "." << glx_minor << ".\n";
+
+      int attrs[] = { GLX_CONTEXT_MAJOR_VERSION_ARB,  GL_VER_MAJ,
+                      GLX_CONTEXT_MINOR_VERSION_ARB,  GL_VER_MIN,
+                      0 };
+
+      /* Create a GL 3.x context */
+      GLXFBConfig *framebuffer_config = NULL;
+      int fbcount = 0;
+      GLXFBConfig *(*glXChooseFBConfig) (Display * disp,
+                                         int screen,
+                                         const int *attrib_list,
+                                         int *nelements);
+
+      glXChooseFBConfig = (typeof glXChooseFBConfig) glx.glXGetProcAddress((s8 *) "glXChooseFBConfig");
+
+      if (!glXChooseFBConfig
+          || !(framebuffer_config =
+               glXChooseFBConfig(wnd->m_dpy, wnd->m_screen, NULL, &fbcount)))
+      {
+
+        kgm_log() << "No good framebuffers found. GL 3.x disabled.\n";
+      }
+      else
+      {
+        GLXContext ctx = glx.glXCreateContextAttribsARB(m_wnd->m_dpy, framebuffer_config[0],  NULL, True, attrs);
+
+        if (ctx != NULL)
+        {
+          glx.glXDestroyContext(m_wnd->m_dpy, m_glctx);
+
+          m_glctx = ctx;
+        }
+      }
+    }
+  }
+
+  if (!m_glctx)
+  {
+    kgm_log() << "Error: Cannot create ogl context.\n";
+
+    return;
+  }
+
+
+  if(!glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, m_glctx))
+  {
+    kgm_log() << "Error: Cannot activate ogl context.\n";
+
+    return;
+  }
+
+  if(glx.glXIsDirect(wnd->m_dpy, m_glctx))
+    kgm_log() << "Direct Rendering!\n";
+  else
+    kgm_log() << "Not direct Rendering!\n";
+
+  #endif
+
+  #ifdef WIN32
+  #define GL_FN(func)  ogl.func = (typeof( ogl.func )) glx.wglGetProcAddress(#func)
+  #else
   #define GL_FN(func)  ogl.func = (typeof( ogl.func )) glx.glXGetProcAddress(#func)
+  #endif
 
   GL_FN(glGetString);
   GL_FN(glEnable);
@@ -360,6 +510,7 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   GL_FN(glClipPlane);
   GL_FN(glDrawElements);
   GL_FN(glScissor);
+  GL_FN(glPolygonOffset);
 
   GL_FN(glActiveTextureARB);
   GL_FN(glClientActiveTextureARB);
@@ -416,142 +567,15 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   GL_FN(glFramebufferRenderbufferEXT);
   GL_FN(glDeleteRenderbuffersEXT);
   GL_FN(glBlendEquationEXT);
-  GL_FN(glPolygonOffsetEXT);
   GL_FN(glDrawArraysEXT);
   GL_FN(glCheckFramebufferStatusEXT);
 
-  if (ctx != null)
-  {
-    m_glctx = (GLXContext) ctx;
-  }
-  else if (glx.glXGetCurrentContext)
-  {
-    GLXContext ctx = glx.glXGetCurrentContext();
-
-    if (ctx != NULL)
-    {
-      int glx_major = 0, glx_minor = 0;
-
-      #ifdef WAYLAND
-      #else
-        glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
-      #endif
-
-      kgm_log() << "GLX predefined version: " << glx_major << "." << glx_minor << ".\n";
-
-      if ((glx_major < GL_VER_MAJ) || ((glx_major == GL_VER_MAJ) && (glx_minor < GL_VER_MIN)))
-      {
-        #ifdef WAYLAND
-        #else
-          glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, NULL);
-        #endif
-      }
-      else
-      {
-        m_glctx = ctx;
-      }
-    }
-  }
-
-  if (!m_glctx)
-  {
-    #ifdef WAYLAND
-    #else
-
-    if (wnd->m_visual)
-    {
-      m_glctx = glx.glXCreateContext(wnd->m_dpy, wnd->m_visual, 0, GL_TRUE);
-    }
-
-    #endif
-
-    if (m_glctx && GL_VER_MAJ > 2)
-    {
-      int glx_major = 0, glx_minor = 0;
-
-      #ifdef WAYLAND
-      #else
-        glx.glXQueryVersion(wnd -> m_dpy, &glx_major, &glx_minor);
-      #endif
-
-      kgm_log() << "GLX version: " << glx_major << "." << glx_minor << ".\n";
-
-      int attrs[] = { GLX_CONTEXT_MAJOR_VERSION_ARB,  GL_VER_MAJ,
-                      GLX_CONTEXT_MINOR_VERSION_ARB,  GL_VER_MIN,
-                      0 };
-
-      /* Create a GL 3.x context */
-      GLXFBConfig *framebuffer_config = NULL;
-      int fbcount = 0;
-      GLXFBConfig *(*glXChooseFBConfig) (Display * disp,
-                                         int screen,
-                                         const int *attrib_list,
-                                         int *nelements);
-
-      glXChooseFBConfig = (typeof glXChooseFBConfig) glx.glXGetProcAddress((s8 *) "glXChooseFBConfig");
-
-      #ifdef WAYLAND
-      #else
-
-      if (!glXChooseFBConfig
-          || !(framebuffer_config =
-               glXChooseFBConfig(wnd->m_dpy, wnd->m_screen, NULL, &fbcount)))
-      {
-
-        kgm_log() << "No good framebuffers found. GL 3.x disabled.\n";
-      }
-      else
-      {
-        GLXContext ctx = glx.glXCreateContextAttribsARB(m_wnd->m_dpy, framebuffer_config[0],  NULL, True, attrs);
-
-        if (ctx != NULL)
-        {
-          glx.glXDestroyContext(m_wnd->m_dpy, m_glctx);
-
-          m_glctx = ctx;
-        }
-      }
-
-      #endif
-    }
-  }
-
-  if (!m_glctx)
-  {
-    kgm_log() << "Error: Cannot create ogl context.\n";
-
-    m_error = 1;
-
-    return;
-  }
-
-  #ifdef WAYLAND
-  #else
-
-  if(!glx.glXMakeCurrent(wnd->m_dpy, wnd->m_wnd, m_glctx))
-  {
-    kgm_log() << "Error: Cannot activate ogl context.\n";
-
-    m_error = 1;
-
-    return;
-  }
-
-  if(glx.glXIsDirect(wnd->m_dpy, m_glctx))
-    kgm_log() << "Direct Rendering!\n";
-  else
-    kgm_log() << "Not direct Rendering!\n";
-
-  #endif
-
-#endif
-
-#ifdef DEBUG
+  #ifdef DEBUG
   kgm_log() << "OpenGL Version: " << (char*) ogl.glGetString(GL_VERSION) << "\n";
   kgm_log() << "GLSL   Version: " << (char*) ogl.glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
   kgm_log() << "OpenGL Vendor: " << (char*) ogl.glGetString(GL_VENDOR) << "\n";
   kgm_log() << "OpenGL Render: " << (char*) ogl.glGetString(GL_RENDERER) << "\n";
-#endif
+  #endif
 
 
   //glInitExt();
@@ -574,12 +598,12 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
     return;
   }
 
-  if(strstr((char*)ext, "GL_ARB_shader_objects"))
+  if(!strstr((char*)ext, "GL_ARB_shader_objects"))
   {
     m_error = 2;
   }
 
-  if(strstr((char*)ext, "GL_ARB_framebuffer_object"))
+  if(!strstr((char*)ext, "GL_ARB_framebuffer_object"))
   {
     m_error = 3;
   }
@@ -591,12 +615,6 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   g_compressed_format = (GLint*)kgm_alloc(g_num_compressed_format * sizeof(GLint));
 
   ogl.glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS_ARB, g_compressed_format);
-
-  for(int i = 0; i < g_num_compressed_format; i++)
-  {
-    int k = g_compressed_format[i];
-    int a = 0;
-  }
 #endif
 
 #ifdef WIN32
@@ -614,12 +632,14 @@ kgmOGL::kgmOGL(kgmWindow *wnd, void* ctx)
   //init local values
   ogl.glEnable(GL_TEXTURE_2D);
 
-  ogl.glPolygonOffsetEXT(1.0f, 1.0f);
+  ogl.glPolygonOffset(1.0f, 1.0f);
 
   m_renderbuffer = 0;
 
   m_min_filter = GL_LINEAR;
   m_mag_filter = GL_LINEAR;
+
+  m_error = 0;
 }
 
 kgmOGL::~kgmOGL()
@@ -631,9 +651,9 @@ kgmOGL::~kgmOGL()
 
 #ifdef WIN32
 
-  wglDeleteContext(m_hrc);
-  wglMakeCurrent(m_hdc, 0);
-  ReleaseDC(m_wnd->m_wnd,m_hdc);
+  glx.wglDeleteContext(m_glctx);
+  glx.wglMakeCurrent(m_hdc, 0);
+  ReleaseDC(m_wnd->m_wnd, m_hdc);
 
 #elif defined(DARWIN)
 #else

@@ -28,7 +28,7 @@ s32 kApp::exec(s32, s8**)
 
   kgmIResources* res = kgmApp::application()->getResources();
 
-  kgmCString path = "Data/scripts/main.lua";
+  kgmCString path = "scripts/main.lua";
 
   kgmArray<u8> m;
 
