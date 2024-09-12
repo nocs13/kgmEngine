@@ -38,8 +38,8 @@ LIBS =
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
 
 ifeq ($(cOS),Linux)
-	CC = clang++ -v -g
-#	CC = g++
+#	CC = clang++ -v -g
+	CC = g++ -g
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN -DGLES_2 -DOGL $(DWIN)
 	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -rdynamic -fno-inline -static-libgcc -static-libstdc++
 	LIBS = -llua -lpthread -ldl $(LWIN)
@@ -60,7 +60,7 @@ else ifeq ($(cOS),Windows)
 	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DOGL -DGPUSHADERS -DDSOUND -DVULKAN
 #	FLGS = -O0 -mwindows -std=gnu++11 -Werror
 	FLGS = -O0 -mwindows -std=gnu++11 -Werror -Wno-error=unused-command-line-argument
-# -lopengl32	
+# -lopengl32
 	LIBS = -llua -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound -ldbghelp
 	RM = rm -f
 

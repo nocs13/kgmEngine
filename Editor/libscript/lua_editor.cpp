@@ -24,7 +24,7 @@ namespace Editor
 
       if (wnd)
       {
-        ls.resl("p", wnd);
+        ls.resl("p", e);
 
         return 1;
       }

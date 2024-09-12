@@ -640,12 +640,7 @@ kgmOGL::~kgmOGL()
   {
     #ifdef WAYLAND
     #else
-
-    if(!glx.glXMakeCurrent(m_wnd->m_dpy, None, NULL))
-      kgmLog::log("Could not release drawing context.\n");
-
     glx.glXDestroyContext(m_wnd->m_dpy, m_glctx);
-
     #endif
 
     m_glctx = NULL;

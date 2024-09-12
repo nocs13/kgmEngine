@@ -74,7 +74,9 @@ public:
     bool operator!=(iterator i)
     {
       if (i._list != _list)
-        kgm_fatal("Not valid list sources.");
+      {
+        //kgm_fatal("Not valid list sources.");
+      }
 
       return (_Ptr != i._Ptr);
     }
@@ -389,7 +391,7 @@ public:
 
     i._Ptr = _First;
 
-    do 
+    do
     {
       if (i._Ptr->data == val)
         break;

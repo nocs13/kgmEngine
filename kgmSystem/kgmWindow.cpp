@@ -692,7 +692,10 @@ int kgmWindow::WndProc(kgmWindow* wnd, XEvent* evt)
     m_evt.key = ksym;
     break;
   case ClientMessage:
-    m_evt.event = evtClose;
+    if (evt->xclient.data.l[0] == wnd->m_wmDelete)
+      m_evt.event = evtClose;
+    else
+      m_evt.event = evtNone;
     break;
   default:
     m_evt.event = evtNone;
@@ -991,25 +994,27 @@ kgmWindow::kgmWindow(kgmWindow* wp, kgmString wname, int x, int y, int w, int h,
 
   if (vi && vi->screen == m_screen)
   {
-    XSetWindowAttributes windowAttribs;
-    windowAttribs.border_pixel = BlackPixel(m_dpy, m_screen);
-    windowAttribs.background_pixel = WhitePixel(m_dpy, m_screen);
-    windowAttribs.override_redirect = True;
-    windowAttribs.colormap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
-    windowAttribs.event_mask = ExposureMask;
+    m_xswa.border_pixel = BlackPixel(m_dpy, m_screen);
+    m_xswa.background_pixel = WhitePixel(m_dpy, m_screen);
+    m_xswa.override_redirect = True;
+    m_xswa.colormap = XCreateColormap(m_dpy, RootWindow(m_dpy, m_screen), vi->visual, AllocNone);
+    m_xswa.event_mask = ExposureMask;
 
     m_wnd = XCreateWindow(m_dpy,
                           RootWindow(m_dpy, m_screen),
                           //DefaultRootWindow(m_dpy),
                           x, y, w, h, 0, vi->depth, InputOutput, vi->visual,
-                          CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+                          CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &m_xswa);
 
     m_visual = vi;
   }
   else
   {
-    m_wnd = XCreateSimpleWindow(m_dpy, (wp)?(wp->m_wnd):RootWindow(m_dpy, 0),
-                                x, y, w, h, 0, BlackPixel(m_dpy, 0), BlackPixel(m_dpy, 0));
+    kgm_fatal("Unable create opengl compatile window.\n");
+
+    XCloseDisplay(m_dpy);
+
+    m_dpy = null;
   }
 
   m_wmDelete = XInternAtom(m_dpy, "WM_DELETE_WINDOW", 0);
@@ -1056,7 +1061,13 @@ kgmWindow::~kgmWindow()
 #else
 
   if (m_gc)
-    kgmObject::Release((kgmObject*) m_gc);
+  {
+    kgmObject* o = dynamic_cast<kgmObject*>(m_gc);
+
+    //kgmOGL* ogl = static_cast<kgmOGL*>(m_gc);
+
+    kgmObject::Release(o);
+  }
 
   if (m_visual)
   {
@@ -1067,6 +1078,9 @@ kgmWindow::~kgmWindow()
 
   if (m_dpy)
   {
+    //XUnmapWindow(m_dpy, m_wnd);
+    XFreeColormap(m_dpy, m_xswa.colormap);
+
     XDestroyWindow(m_dpy, m_wnd);
 
     XCloseDisplay(m_dpy);
