@@ -198,6 +198,11 @@ public:
     return m_gc;
   }
 
+  void* shader() const
+  {
+    return m_shader;
+  }
+
 private:
   void setValue(const char* id, TypeValue type, void* data, u32 count = 1, bool local = true);
 };

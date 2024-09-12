@@ -97,17 +97,17 @@ void kgmResources::clear()
     if (r->references() > 1)
       continue;
 
+    r->release();
+  }
+  /*
+  {
     if (r->isClass(kgmTexture::cClass()))
     {
-      m_gc->gcFreeTexture(((kgmTexture *)r)->texture());
-
-      delete (kgmTexture *)r;
+      r->release();
     }
     else if (r->isClass(kgmShader::cClass()))
     {
-      m_gc->gcFreeShader(((kgmShader *)r)->m_shader);
-
-      delete (kgmShader *)r;
+      r->release();
     }
     else if (r->isClass(kgmSound::cClass()))
     {
@@ -139,6 +139,7 @@ void kgmResources::clear()
       delete (kgmMesh *)r;
     }
   }
+  */
 
   m_resources.clear();
 }
@@ -697,4 +698,34 @@ kgmShapeCollision *kgmResources::getShapeCollision(const char *id)
   }
 
   return shape;
+}
+
+kgmResource* kgmResources::getResource(kgmResources::Iterator i)
+{
+  kgmList<kgmResource*>::iterator* it = static_cast< kgmList<kgmResource*>::iterator* >(i);
+
+  if (it == nullptr)
+    return nullptr;
+
+  if ((*it) == m_resources.end())
+  {
+    delete it;
+
+    return nullptr;
+  }
+
+  kgmResource* rc = (*(*it));
+
+  it->next();
+
+  return rc;
+}
+
+kgmResources::Iterator kgmResources::getIterator()
+{
+  kgmList<kgmResource*>::iterator* i = new kgmList<kgmResource*>::iterator();
+
+  *i = m_resources.begin();
+
+  return (Iterator) i;
 }

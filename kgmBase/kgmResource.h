@@ -58,6 +58,11 @@ public:
     m_group = group;
   }
 
+  Type type() const
+  {
+    return (Type) m_type;
+  }
+
 protected:
   ~kgmResource();
 };

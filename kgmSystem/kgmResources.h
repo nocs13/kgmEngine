@@ -51,20 +51,22 @@ protected:
 
 
 public:
+  typedef void*  Iterator;
+
   static kgmIResources* generate(kgmIGC* gc, kgmIAudio* audio);
 
   kgmResources(kgmIGC* gc, kgmIAudio* audio);
   ~kgmResources();
 
-  void               reset();
   void               clear();
+  void               reset();
+
   void               add(kgmResource*);
   void               remove(kgmResource*);
   bool               exists(kgmResource*);
 
   void               addPath(kgmString s);
   bool               getFile(const char* id, kgmArray<u8>& m);
-
   bool               getRFile(const char* id, const char *type, kgmArray<u8>& m);
 
   kgmPicture*        getPicture(const char* id);
@@ -80,6 +82,9 @@ public:
 
   void set(kgmIGC* g)    { if (g && !m_gc) m_gc = g; };
   void set(kgmIAudio* a) { if (a && !m_audio) m_audio = a; };
+
+  kgmResource*       getResource(Iterator);
+  Iterator           getIterator();
 
 private:
   kgmResource*       get(const char* id);

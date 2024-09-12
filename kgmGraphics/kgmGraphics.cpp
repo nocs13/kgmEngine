@@ -28,6 +28,7 @@
 
 #include "../kgmSystem/kgmSystem.h"
 #include "../kgmSystem/kgmMemory.h"
+#include "../kgmSystem/kgmResources.h"
 
 #include "render/Terrain.h"
 #include "render/ColorRender.h"
@@ -262,14 +263,62 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
 
 kgmGraphics::~kgmGraphics()
 {
-  if (gc == null)
-    return;
+  if (gc != null)
+  {
+    if (g_fbo)
+      gc->gcFreeTarget(g_fbo);
 
-  if (g_fbo)
-    gc->gcFreeTarget(g_fbo);
+    if (m_map_light.m_fbo)
+      gc->gcFreeTarget(m_map_light.m_fbo);
 
-  if (m_map_light.m_fbo)
-    gc->gcFreeTarget(m_map_light.m_fbo);
+    if(g_tex_black)
+      gc->gcFreeTexture(g_tex_black);
+
+    if(g_tex_white)
+      gc->gcFreeTexture(g_tex_white);
+
+    if(g_tex_gray)
+      gc->gcFreeTexture(g_tex_gray);
+
+    kgmResources* res = static_cast<kgmResources*> (rc);
+
+    auto it = res->getIterator();
+
+    kgmResource* r = nullptr;
+
+    while((r = res->getResource(it)) != nullptr)
+    { 
+      if (r->type() == kgmResource::TypeTexture)
+      {
+        kgmTexture* tex = static_cast<kgmTexture*>(r);
+
+        gc->gcFreeTexture(tex->texture());
+      }
+      else if (r->type() == kgmResource::TypeShader)
+      {
+        kgmShader* shad = static_cast<kgmShader*>(r);
+
+        gc->gcFreeShader(shad->shader());
+      }
+      else if (r->type() == kgmResource::TypeFont)
+      {
+        kgmFont* f = static_cast<kgmFont*>(r);
+
+        gchandle tn = f->texture(12);
+        gchandle ts = f->texture(10);
+        gchandle tl = f->texture(22);
+
+        if (tn)
+          gc->gcFreeTexture(tn);
+
+        if (ts && ts != tn)
+          gc->gcFreeTexture(ts);
+
+        if (tl && tl != tn && tl != ts)
+          gc->gcFreeTexture(tl);
+      }
+    }
+  }
 
   kgmObject::Release(m_render);
 
@@ -292,15 +341,6 @@ kgmGraphics::~kgmGraphics()
   kgmObject::Release(m_icon_light);
   kgmObject::Release(m_def_material);
   kgmObject::Release((kgmNode*)m_def_light);
-
-  if(g_tex_black)
-    gc->gcFreeTexture(g_tex_black);
-
-  if(g_tex_white)
-    gc->gcFreeTexture(g_tex_white);
-
-  if(g_tex_gray)
-    gc->gcFreeTexture(g_tex_gray);
 
   kgmObject::Release(m_tex_white);
   kgmObject::Release(m_tex_black);
