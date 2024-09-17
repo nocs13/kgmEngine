@@ -3,8 +3,13 @@ kgmImport('camera')
 kgmImport('player')
 kgmImport('guis')
 kgmImport('keys')
+kgmImport('event')
 
 retent = nil
+
+editor = nil
+window = nil
+eventHandler = nil
 
 mapId  = ''
 maps   = {}
@@ -62,23 +67,30 @@ end
 
 function main()
   kgmLog('FUCK UUUUUUUUUUUUUUUUUUUU XXXXXXXXXXXX')
-  w = kgmCreateWindow('kEditor', 800, 600)
+  window = kgmCreateWindow('kEditor', 800, 600)
 
-  if w == nil then
+  if window == nil then
     kgmLog('Window create failed.')
   else
-    e = kCreateEditor(w)
+    editor = kCreateEditor(window)
 
-    if e == nil then
+    if editor == nil then
       kgmLog('Editor create failed.')
 
-      kgmCloseWindow(w)
+      kgmCloseWindow(window)
     else
-      kgmLoopWindow(w)
+      ev = kgmNewEvent('eventHandler')
 
-      kCloseEditor(e)
+      if ev ~= nil then
+        eventHandler = Event:new(ev)
+        kEditorAddHandler(editor, ev)
+      end
 
-      kgmFreeWindow(w)
+      kgmLoopWindow(window)
+
+      kCloseEditor(editor)
+
+      kgmFreeWindow(window)
     end
   end
 end

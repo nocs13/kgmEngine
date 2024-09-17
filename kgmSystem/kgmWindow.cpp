@@ -1078,7 +1078,6 @@ kgmWindow::~kgmWindow()
 
   if (m_dpy)
   {
-    //XUnmapWindow(m_dpy, m_wnd);
     XFreeColormap(m_dpy, m_xswa.colormap);
 
     XDestroyWindow(m_dpy, m_wnd);

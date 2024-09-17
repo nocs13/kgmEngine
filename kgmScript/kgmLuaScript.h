@@ -32,6 +32,7 @@ class kgmLuaScript:  public kgmObject, public kgmIScript
   bool reslarr(kgmString fmt, void* a, s32 c);
 
   void* call(const s8* name, const s8* fmt, ...);
+  void* ccall(const s8* name, const s8* method, const s8* fmt, ...);
 
   void  setX(void* x);
   void* getX();

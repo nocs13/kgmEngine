@@ -53,4 +53,44 @@ namespace Editor
 
     return 0;
   }
+
+  s32 kEditorAddHandler(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+    kgmEvent* ev = null;
+
+    ls.args("pp", &e, &ev);
+
+    if (e && ev)
+    {
+      e->addHandler(ev);
+    }
+
+    return 0;
+  }
+
+  s32 kEditorDelHandler(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+    kgmEvent* ev = null;
+
+    ls.args("pp", &e, &ev);
+
+    if (e && ev)
+    {
+      e->remHandler(ev);
+    }
+
+    return 0;
+  }
 };

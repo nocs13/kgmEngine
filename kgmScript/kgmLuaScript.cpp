@@ -353,6 +353,72 @@ void* kgmLuaScript::call(const s8* name, const s8* fmt, ...)
   return r_call;
 }
 
+void* kgmLuaScript::ccall(const s8* name, const s8* method, const s8* fmt, ...)
+{
+  s32 ssize = lua_gettop(handler);
+
+  lua_getglobal(handler, name);
+
+  lua_getfield(handler, -1, method);
+  lua_pushvalue(handler, -2);
+
+  int args = 0;
+  int nres = 0;
+  char* f = (char*) fmt;
+  va_list vl;
+  va_start(vl, fmt);
+
+  while((f) && (*f != '\0') && (args < 128))
+  {
+    switch(*f)
+    {
+    case 's':
+      push((char*) va_arg(vl, char*));
+      break;
+    case 'i':
+      push((int)va_arg(vl, int));
+      break;
+    case 'd':
+      push((double)va_arg(vl, double));
+      break;
+    case 'p':
+      push((void*)va_arg(vl, void*));
+      break;
+    }
+
+    f++;
+    args++;
+  }
+
+  va_end(vl);
+
+  lua_call(handler, args + 1, nres);
+
+  s32 rnum = lua_gettop(handler) - ssize;
+
+  if (rnum < 1)
+    return (void *) -1;
+
+  r_call = null;
+
+  if(lua_isnumber(handler, -1))
+  {
+    r_number = (f64) lua_tonumber(handler, -1);
+
+    r_call = &r_number;
+  }
+  else if(lua_isstring(handler, -1))
+  {
+    r_call = (char *) lua_tostring(handler, -1);
+  }
+  else if(lua_isuserdata(handler, -1))
+  {
+    r_call = (void *) lua_topointer(handler, -1);
+  }
+
+  return r_call;
+}
+
 void kgmLuaScript::push(int arg)
 {
   lua_pushnumber(handler, arg);
