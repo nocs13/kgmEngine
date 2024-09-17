@@ -10,9 +10,6 @@ namespace Editor
 
     kgmLuaScript sc((lua_State*) lh);
 
-    sc.set("kgmNewEvent", kgmNewEvent);
-    sc.set("kgmEventDelete",  kgmEventDelete);
-
     sc.set("kCreateEditor", kCreateEditor);
     sc.set("kCloseEditor",  kCloseEditor);
 

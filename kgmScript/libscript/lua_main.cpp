@@ -10,6 +10,13 @@ namespace kgmLibScript
   s32 xmlFree(void*);
   s32 xmlInit(void*);
 
+  s32 kgmNewEvent(void *lh);
+  s32 kgmEventDelete(void *lh);
+
+  s32 kgmGuiMenuCreate(void* lh);
+  s32 kgmGuiMenuItemCreate(void* lh);
+  s32 kgmGuiMenuItemAdd(void* lh);
+
   s32 kgmCreateWindow(void* lh);
   s32 kgmCloseWindow(void* lh);
   s32 kgmFreeWindow(void* lh);
@@ -87,5 +94,13 @@ namespace kgmLibScript
     sc.set("kgmCloseWindow",  kgmCloseWindow);
     sc.set("kgmFreeWindow",   kgmFreeWindow);
     sc.set("kgmLoopWindow",   kgmLoopWindow);
+
+    sc.set("kgmNewEvent",     kgmNewEvent);
+    sc.set("kgmEventDelete",  kgmEventDelete);
+
+    sc.set("kgmGuiMenuCreate",     kgmGuiMenuCreate);
+    sc.set("kgmGuiMenuItemCreate", kgmGuiMenuItemCreate);
+    sc.set("kgmGuiMenuItemAdd",    kgmGuiMenuItemAdd);
+
   }
 };

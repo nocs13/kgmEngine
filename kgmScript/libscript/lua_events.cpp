@@ -1,18 +1,17 @@
 #include "../../kgmScript/kgmLuaScript.h"
 #include "../../kgmSystem/kgmWindow.h"
 #include "../../kgmBase/kgmEvent.h"
-#include "../kEditor.h"
 
-namespace Editor
+namespace kgmLibScript
 {
-  class kgmLuaEvent : public kgmEvent
+  class luaEvent : public kgmEvent
   {
-    KGM_OBJECT(kgmLuaEvent)
+    KGM_OBJECT(luaEvent)
     lua_State *lua;
     s8* name;
   public:
-    kgmLuaEvent(lua_State* l, const s8* n) { lua = l; name = (s8*) n; }
-    ~kgmLuaEvent() {}
+    luaEvent(lua_State* l, const s8* n) { lua = l; name = (s8*) n; }
+    ~luaEvent() {}
 
     void onEvent(kgmEvent::Event *e)
     {
@@ -76,7 +75,7 @@ namespace Editor
 
     if (n)
     {
-      kgmLuaEvent* le = new kgmLuaEvent((lua_State *) lh, n);
+      luaEvent* le = new luaEvent((lua_State *) lh, n);
 
       ls.resl("p", le);
 
@@ -93,7 +92,7 @@ namespace Editor
 
     kgmLuaScript ls((lua_State *)lh);
 
-    kgmLuaEvent *le = null;
+    luaEvent *le = null;
 
     ls.args("s", &le);
 

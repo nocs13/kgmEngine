@@ -1,11 +1,7 @@
---Gui = settag({}, newtag())
---settagmethod(tag(Gui), "index", function(t, f) return %Gui[f] end)
 Gui = {o=nil}
 
 function Gui:new(w, h)
   local g = { o = nil }
-
-  --settag(g, tag(Gui))
 
   g.o = kgmGuiCreate(w, h)
   kgmGuiSetWindow(g.o)
