@@ -112,4 +112,34 @@ namespace kgmLibScript
 
     return 0;
   }
+
+  s32 kgmGuiShow(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    void* p = null;
+    kgmGui* g = null;
+    s32 s = 0;
+
+    ls.args("pi", &p, &s);
+
+    g = static_cast<kgmGui*>(p);
+
+    if (g)
+    {
+      if (s)
+        g->show();
+      else
+        g->hide();
+
+      ls.resl("i", 1);
+
+      return 1;
+    }
+
+    return 0;
+  }
 }

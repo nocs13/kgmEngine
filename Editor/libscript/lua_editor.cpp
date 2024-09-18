@@ -93,4 +93,30 @@ namespace Editor
 
     return 0;
   }
+
+  s32 kEditorGuiAdd(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+    kgmGui* g = null;
+
+    ls.args("pp", &e, &g);
+
+    if (e && g)
+    {
+      if (e->addGui(g))
+      {
+        ls.resl("i", 1);
+
+        return 1;
+
+      }
+    }
+
+    return 0;
+  }
 };

@@ -15,5 +15,7 @@ namespace Editor
 
     sc.set("kEditorAddHandler",  kEditorAddHandler);
     sc.set("kEditorDelHandler",  kEditorDelHandler);
+
+    sc.set("kEditorGuiAdd",  kEditorGuiAdd);
   }
 };

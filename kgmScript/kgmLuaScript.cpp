@@ -445,8 +445,12 @@ void kgmLuaScript::push(void* arg)
 
 void kgmLuaScript::pop(int* arg)
 {
+  double dd = 0.0;
+
   if(lua_isnumber(handler, m_carg))
-    *arg = lua_tonumber(handler, m_carg);
+    dd = lua_tonumber(handler, m_carg);
+
+  *arg = (int) dd;
 }
 
 void kgmLuaScript::pop(double* arg)
@@ -463,8 +467,13 @@ void kgmLuaScript::pop(char** arg)
 
 void kgmLuaScript::pop(void** arg)
 {
+  void* pp = null;
+
   if(lua_isuserdata(handler, m_carg))
-    *arg = (void*) lua_touserdata(handler, m_carg);
+//    pp = (void*) lua_touserdata(handler, m_carg);
+    pp = (void*) lua_topointer(handler, m_carg);
+
+  *arg = pp;
 }
 
 void kgmLuaScript::init()

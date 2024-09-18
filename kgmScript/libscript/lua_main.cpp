@@ -13,6 +13,8 @@ namespace kgmLibScript
   s32 kgmNewEvent(void *lh);
   s32 kgmEventDelete(void *lh);
 
+  s32 kgmGuiShow(void* lh);
+
   s32 kgmGuiMenuCreate(void* lh);
   s32 kgmGuiMenuItemCreate(void* lh);
   s32 kgmGuiMenuItemAdd(void* lh);
@@ -97,6 +99,8 @@ namespace kgmLibScript
 
     sc.set("kgmNewEvent",     kgmNewEvent);
     sc.set("kgmEventDelete",  kgmEventDelete);
+
+    sc.set("kgmGuiShow",      kgmGuiShow);
 
     sc.set("kgmGuiMenuCreate",     kgmGuiMenuCreate);
     sc.set("kgmGuiMenuItemCreate", kgmGuiMenuItemCreate);

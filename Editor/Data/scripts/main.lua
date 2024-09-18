@@ -6,7 +6,7 @@ kgmImport('keys')
 kgmImport('event')
 
 retent = nil
-
+gbmenu = nil
 editor = nil
 window = nil
 eventHandler = nil
@@ -84,6 +84,10 @@ function main()
       if ev ~= nil then
         eventHandler = Event:new(ev)
         kEditorAddHandler(editor, ev)
+
+        gbmenu = GuiMenu:new('gbmenu')
+        kEditorGuiAdd(editor, gbmenu)
+        gbmenu:show()
       end
 
       kgmLoopWindow(window)

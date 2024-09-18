@@ -1,4 +1,6 @@
 kgmImport('gui')
+kgmImport('guimenu')
+
 VALIGN_LEFT   = 1
 VALIGN_RIGHT  = 2
 VALIGN_CENTER = 3

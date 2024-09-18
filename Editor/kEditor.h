@@ -108,6 +108,7 @@ private:
   bool m_isVisual;
   kgmThread::Thread m_thVisual;
 
+  kgmList<kgmGui *> m_guis;
   kgmList<kgmObject *> m_objects;
 
   Slot<kEditor, u32> slotMenu;
@@ -159,6 +160,8 @@ public:
   __stdcall bool fdMapSave(kgmGuiFileDialog *);
   __stdcall bool fdMapOpen(kgmGuiFileDialog *);
   __stdcall bool fdAddMesh(kgmGuiFileDialog *);
+
+  __stdcall bool addGui(kgmGui* g);
   __stdcall bool addUnit(kgmString);
   __stdcall bool addActor(kgmGuiFileDialog *);
   __stdcall bool addEffect(kgmString);

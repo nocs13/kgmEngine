@@ -241,11 +241,6 @@ void kEditor::append(kgmUnit* u)
   m_graphics->add(u->getNode());
 }
 
-// kgmISettings* kEditor::getSettings()
-//{
-//   return m_settings;
-// }
-
 void kEditor::select(kgmString name)
 {
   kgmUnit *node = unit(name);
@@ -511,6 +506,18 @@ bool kEditor::fdAddMesh(kgmGuiFileDialog *fd)
   return addMesh(fd->getFile());
 }
 
+bool kEditor::addGui(kgmGui* g)
+{
+  if (g && m_graphics)
+  {
+    g->increment();
+    m_graphics->add(g);
+    m_guis.add(g);
+  }
+
+  return true;
+}
+
 bool kEditor::addMesh(kgmString name)
 {
   kgmMesh *mesh = m_resources->getMesh(name);
@@ -623,6 +630,11 @@ void kEditor::onClose()
 void kEditor::onEvent(kgmEvent::Event *e)
 {
   kgmEvent::onEvent(e);
+
+  for (auto i = m_guis.begin(); i != m_guis.end(); i.next())
+  {
+    (*i)->onEvent(e);
+  }
 }
 
 void kEditor::onResize(int w, int h)
