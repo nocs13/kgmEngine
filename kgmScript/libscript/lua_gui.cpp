@@ -6,7 +6,7 @@ namespace kgmLibScript
 {
   class luaGuiMenu: public kgmGuiMenu
   {
-    KGM_OBJECT(luaGuiMenu)
+    //KGM_OBJECT(luaGuiMenu)
 
     lua_State* lua = null;
     const s8* oname = null;
@@ -56,6 +56,8 @@ namespace kgmLibScript
 
     if (menu)
     {
+      menu->setRect(0, 0, 300, 20);
+
       ls.resl("p", menu);
 
       return 1;
@@ -74,7 +76,7 @@ namespace kgmLibScript
     kgmGuiMenu* menu = null;
     const s8* sid = null;
 
-    ls.args("pp", &menu, &sid);
+    ls.args("ps", &menu, &sid);
 
     if (menu && sid)
     {
@@ -99,7 +101,7 @@ namespace kgmLibScript
     const s8* sid = null;
     s8 id = 0;
 
-    ls.args("ppi", &item, &sid, &id);
+    ls.args("psi", &item, &sid, &id);
 
     if (item && id)
     {

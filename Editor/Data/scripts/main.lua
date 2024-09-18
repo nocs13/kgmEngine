@@ -86,8 +86,9 @@ function main()
         kEditorAddHandler(editor, ev)
 
         gbmenu = GuiMenu:new('gbmenu')
-        kEditorGuiAdd(editor, gbmenu)
+        gbmenu:init()
         gbmenu:show()
+        kEditorGuiAdd(editor, gbmenu.o)
       end
 
       kgmLoopWindow(window)
