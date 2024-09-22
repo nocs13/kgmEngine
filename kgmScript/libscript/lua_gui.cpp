@@ -99,7 +99,7 @@ namespace kgmLibScript
 
     kgmGuiMenu::Item* item = null;
     const s8* sid = null;
-    s8 id = 0;
+    s32 id = 0;
 
     ls.args("psi", &item, &sid, &id);
 

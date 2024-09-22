@@ -55,5 +55,11 @@ void kgmGuiMenu::onMsMove(int key, int x, int y)
   if(!m_view || m_freeze)
     return;
 
-  root->movePointer(x, y);
+  //root->movePointer(x, y);
+  root->havePointer(x, y);
 }
+
+void kgmGuiMenu::showItems(int x, int y)
+{
+}
+

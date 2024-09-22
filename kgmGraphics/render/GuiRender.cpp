@@ -218,17 +218,19 @@ void GuiRender::render(kgmGui* gui)
   else if(gui->isClass(kgmGuiMenu::cClass()))
   {
     kgmGuiMenu* menu = (kgmGuiMenu*)gui;
+    kgmGuiMenu::Item* root = menu->getItem();
 
-    if(menu->getItem())
-      renderGuiMenuItem(menu, menu->getItem());
-  }
-  else if(gui->isClass(kgmGuiTab::cClass()))
-  {
-    //render((kgmGuiTab*)gui);
+    if (!root)
+      return;
+
+    for (int i = 0; i < root->getItemsCount(); i++)
+    {
+      renderGuiMenuItem(menu, root->getItem(i));
+    }
   }
   else if(gui->isClass(kgmGuiProgress::cClass()))
   {
-    //render((kgmGuiProgress*)gui);
+    render((kgmGuiProgress*)gui);
   }
   else if(gui->isClass(kgmGuiLabel::cClass()))
   {
@@ -334,10 +336,29 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
   menu->getRect(prect, true);
 
+  if (!item)
+    return;
+
+  kgmString& title = item->getTitle();
+
+  kgmGui::Rect rc = item->getRect();
+
+  gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
+
+  gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
+
+  gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, rc, title);
+
+  if (!item->active())
+    return;
+
+
   for(int i = 0; i < item->getItemsCount(); i++)
   {
-    kgmGuiMenu::Item* citem = item->getItem(i);
+    kgmGuiMenu::Item* it = item->getItem(i);
+      renderGuiMenuItem(menu, it);
 
+    /*
     kgmGui::Rect rc = item->getRect(i);
 
     rc.x += prect.x;
@@ -349,8 +370,8 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
     {
       gcDrawRect(gr->gc, rc, gr->gui_style->smenu.ac_color, gr->gui_style->gui_image);
     }
-    else if(item->getSelected() == i)
-    //else if(item->getSelected() == item->getId())
+    //else if(item->getSelected() == i)
+    else if(item->getSelected() == item->getId())
     {
       if(citem->getType() == kgmGuiMenu::Item::TypeMenu)
         renderGuiMenuItem(menu, citem);
@@ -359,18 +380,8 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
     }
     else
     {
-      gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
     }
-
-    gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
-
-    kgmString& title = citem->getTitle();
-
-    kgmGui::Rect trc = rc;
-
-    trc.x++;
-
-    gcDrawText(gr->gc, gr->font, 8, 19, gr->gui_style->smenu.tx_color, trc, title);
+    */
   }
 }
 

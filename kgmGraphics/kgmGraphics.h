@@ -232,6 +232,7 @@ protected:
   gchandle m_rnd_target = null;
 
   Render*            m_render = null;
+  GuiRender*         m_rnd_gui = null;
   BaseRender*        m_rnd_base = null;
   LineRender*        m_rnd_lines = null;
   ColorRender*       m_rnd_color = null;

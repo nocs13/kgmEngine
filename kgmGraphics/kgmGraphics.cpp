@@ -31,6 +31,7 @@
 #include "../kgmSystem/kgmResources.h"
 
 #include "render/Terrain.h"
+#include "render/GuiRender.h"
 #include "render/ColorRender.h"
 #include "render/LightmapRender.h"
 #include "render/ParticlesRender.h"
@@ -248,6 +249,8 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
   //m_rnd_environment = new EnvironmentRender(this);
   //m_rnd_terrain     = new Render::Terrain(this);
 
+  m_rnd_gui        = new GuiRender(this);
+
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   m_g_mtx_iden.identity();
@@ -287,7 +290,7 @@ kgmGraphics::~kgmGraphics()
     kgmResource* r = nullptr;
 
     while((r = res->getResource(it)) != nullptr)
-    { 
+    {
       if (r->type() == kgmResource::TypeTexture)
       {
         kgmTexture* tex = static_cast<kgmTexture*>(r);
@@ -586,7 +589,8 @@ void kgmGraphics::render()
     if (!g) {
       m_guis.erase(i);
     } else if (g->visible()) {
-      m_render->renderGui(g);
+      //m_render->renderGui(g);
+      m_rnd_gui->render();
     }
   }
 

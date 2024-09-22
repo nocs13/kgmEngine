@@ -4,6 +4,8 @@
 
 #include "../kgmBase/kgmCallback.h"
 
+#define PIX_IN  2
+
 class kgmGuiMenu: public kgmGui
 {
   KGM_OBJECT(kgmGuiMenu)
@@ -35,6 +37,8 @@ public:
     bool       popup;
     bool       vertical;
 
+    bool       m_active;
+
     s32        selected;
     f32        xscale, yscale;
 
@@ -52,8 +56,10 @@ public:
 
       type  = TypeMenu;
 
-      popup = false;
+      popup = true;
       vertical = !horizontal;
+
+      m_active = false;
 
       selected = -1;
 
@@ -76,7 +82,10 @@ public:
       type  = TypeItem;
 
       popup = false;
+      m_active = false;
       vertical = !horizontal;
+
+      m_active = false;
 
       selected = -1;
 
@@ -114,6 +123,21 @@ public:
         selected = -1;
     }
 
+    bool active() const
+    {
+      return m_active;
+    }
+
+    void active(bool a)
+    {
+      m_active = a;
+    }
+
+    bool ispopup() const
+    {
+      return popup;
+    }
+
     Item* add(kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
@@ -133,12 +157,12 @@ public:
             items[i]->rect.w = swidth;
         }
 
-        item->rect.y += ItemHeight * (1 + items.length());
+        item->rect.y += (ItemHeight * (1 + items.length()) - PIX_IN);
       }
       else
       {
         for(int i = 0; i < items.length(); i++)
-          item->rect.x += items[i]->rect.w;
+          item->rect.x += (items[i]->rect.w - PIX_IN);
       }
 
       items.add(item);
@@ -170,12 +194,12 @@ public:
         }
 
         item->rect.x = rect.x;
-        item->rect.y += ItemHeight * (1 + items.length());
+        item->rect.y += (ItemHeight * (1 + items.length()) - PIX_IN);
       }
       else
       {
         for(int i = 0; i < items.length(); i++)
-          item->rect.x += items[i]->rect.w;
+          item->rect.x += (items[i]->rect.w - PIX_IN);
       }
 
       items.add(item);
@@ -269,6 +293,28 @@ public:
 
       return null;
     }
+
+    bool havePointer(int x, int y)
+    {
+      if (rect.inside(x, y))
+      {
+        m_active = true;
+        return true;
+      }
+
+      for (int i = 0; i < items.length(); i++)
+      {
+        if (items[i]->havePointer(x, y))
+        {
+          m_active = true;
+          return true;
+        }
+      }
+
+      m_active = false;
+
+      return false;
+    }
   };
 
 protected:
@@ -287,6 +333,9 @@ public:
 
   void onMsMove(int k, int x, int y);
   void onMsLeftUp(int k, int x, int y);
+
+  void showItems(int x, int y);
+
 
   Item* getItem() const
   {
