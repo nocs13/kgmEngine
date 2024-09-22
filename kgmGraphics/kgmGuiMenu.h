@@ -39,6 +39,8 @@ public:
 
     bool       m_active;
 
+    Item*      m_selected;
+
     s32        selected;
     f32        xscale, yscale;
 
@@ -61,6 +63,8 @@ public:
 
       m_active = false;
 
+      m_selected = null;
+
       selected = -1;
 
       xscale = yscale = 1.0f;
@@ -82,10 +86,11 @@ public:
       type  = TypeItem;
 
       popup = false;
-      m_active = false;
       vertical = !horizontal;
 
       m_active = false;
+
+      m_selected = null;
 
       selected = -1;
 
@@ -116,6 +121,16 @@ public:
     s32 getSelected() { return selected; }
     s32 getItemsCount() { return items.length(); }
 
+    Item* getRoot()
+    {
+      Item* res = parent;
+
+      while(res->parent)
+        res = res->parent;
+
+      return res;
+    }
+
     void select(bool s) {
       if (s)
         selected = id;
@@ -136,6 +151,11 @@ public:
     bool ispopup() const
     {
       return popup;
+    }
+
+    bool isSelected(Item* it)
+    {
+      return (it == m_selected);
     }
 
     Item* add(kgmString title, kgmTexture* icon = null)
@@ -299,6 +319,12 @@ public:
       if (rect.inside(x, y))
       {
         m_active = true;
+
+        Item* root = getRoot();
+
+        if (root)
+          root->m_selected = this;
+
         return true;
       }
 
@@ -345,6 +371,14 @@ public:
   Item* getChoose() const
   {
     return choose;
+  }
+
+  bool isSelected(Item* m)
+  {
+    if (!m )
+      return false;
+
+    return root->isSelected(m);
   }
 
   static u32 fontWidth()

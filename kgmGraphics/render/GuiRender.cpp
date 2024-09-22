@@ -343,7 +343,10 @@ void GuiRender::renderGuiMenuItem(kgmGui* m, void *i)
 
   kgmGui::Rect rc = item->getRect();
 
-  gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
+  if (menu->isSelected(item))
+    gcDrawRect(gr->gc, rc, gr->gui_style->smenu.fg_color, gr->gui_style->gui_image);
+  else
+    gcDrawRect(gr->gc, rc, gr->gui_style->smenu.bg_color, gr->gui_style->gui_image);
 
   gcDrawBorder(gr->gc, rc, gr->gui_style->gui_border, gr->m_tex_white);
 
