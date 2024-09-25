@@ -27,11 +27,10 @@ namespace kgmLibScript
       if(!m_view || m_freeze)
         return;
 
-      Item* selected = root->clickPointer(x, y);
+      Item* selected = root->getItemSelected();
 
-      if(selected && selected->getType() == Item::TypeItem)
+      if(selected && !selected->ispopup() && selected->getId() > 0)
       {
-        //sigChoose(selected->getId());
         kgmLuaScript ls(lua);
 
         ls.ccall(oname, "onMenu", "is", selected->getId(), selected->getTitle().data());
@@ -50,7 +49,7 @@ namespace kgmLibScript
     const s8* sid = null;
     const s8* name = null;
 
-    ls.args("ppp", &gui, &sid, &name);
+    ls.args("pss", &gui, &sid, &name);
 
     luaGuiMenu* menu = new luaGuiMenu(gui, sid, name, (lua_State*) lh);
 

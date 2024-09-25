@@ -28,7 +28,7 @@ class kViewOptions: public kgmGuiFrame
 protected:
   static kViewOptions* single;
 
-  kgmGuiTab*  tab;
+  kgmGui*  tab;
 
   kgmUnit*  node;
   u32     y_coord;
@@ -79,7 +79,7 @@ class kViewOptionsForMaterial : public kgmGuiFrame
 
   Mode mode;
 
-  kgmGuiTab*  tab;
+  kgmGui*  tab;
 
   u32     y_coord;
 

@@ -335,10 +335,10 @@ void Render::renderGui(kgmGui* gui)
     if(menu->getItem())
       renderGuiMenuItem(menu, menu->getItem());
   }
-  else if(gui->isClass(kgmGuiTab::cClass()))
-  {
-    //render((kgmGuiTab*)gui);
-  }
+  //else if(gui->isClass(kgmGuiTab::cClass()))
+  //{
+  //  render((kgmGuiTab*)gui);
+  //}
   else if(gui->isClass(kgmGuiProgress::cClass()))
   {
     //render((kgmGuiProgress*)gui);

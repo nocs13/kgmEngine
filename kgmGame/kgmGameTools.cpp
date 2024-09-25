@@ -1466,10 +1466,10 @@ kgmGui* kgmGameTools::genGui(kgmGameScript* gs, kgmXml &xml)
       {
         gui = new kgmGuiLayout(gui, x, y, w, h);
       }
-      else if(id == "kgmGuiTab")
-      {
-        gui = new kgmGuiTab(gui, x, y, w, h);
-      }
+      //else if(id == "kgmGuiTab")
+      //{
+      //  gui = new kgmGuiTab(gui, x, y, w, h);
+      //}
       else if(id == "kgmGuiMenu")
       {
         gui = new kgmGuiMenu(gui);

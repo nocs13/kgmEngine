@@ -1,5 +1,5 @@
 #include "kgmGuiTab.h"
-
+/*
 kgmGuiTab::kgmGuiTab()
 {
   m_index  = 0;
@@ -35,7 +35,7 @@ u32 kgmGuiTab::set(u32 k)
 {
   if(k >= (u32) client->m_childs.length())
     return m_index;
-  
+
   for(s32 i = 0; i < client->m_childs.length(); i++)
   {
     if((u32) i == k)
@@ -108,3 +108,4 @@ void kgmGuiTab::select(u32 i)
 
   set(i);
 }
+*/

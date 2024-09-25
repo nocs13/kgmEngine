@@ -23,6 +23,7 @@ kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
 
   kgmGui* g;
 
+  /*
   tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
 
   kgmGui* tgeneral = tab->addTab("General");
@@ -105,6 +106,7 @@ kViewOptions::kViewOptions(kgmUnit* n, int x, int y, int w, int h)
   slotLock.connect(this, (Slot<kViewOptions, bool>::FN) &kViewOptions::onLock, &lock->sigClick);
   //lock->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptions::onSelectLock));
   y_coord += 23;
+  */
 
   /*g = new kgmGuiLabel(tgeneral, 0, y_coord, 50, 20);
     g->setText("RotX");
@@ -256,6 +258,7 @@ void kViewOptions::onSelectMaterial(kgmString id)
 kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, int w, int h)
   : kgmGuiFrame("Options", x, y, w, h)
 {
+  /*
   tab = new kgmGuiTab(getClient(), 0, 0, getClient()->getRect().width(), getClient()->getRect().height());
 
   kgmGui* tmaterial = tab->addTab("Material");
@@ -400,6 +403,8 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   g->setText("Blending");
   g = new kgmGuiSelect(tmaterial, 62, y_coord, 60, 20);
   g->setSid("Blending");
+  */
+
   /* ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_None));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Add));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Mul));
@@ -412,10 +417,10 @@ kViewOptionsForMaterial::kViewOptionsForMaterial(kgmMaterial* m, int x, int y, i
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Screen));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Darken));
   ((kgmGuiSelect*)g)->add(mtl->blendToString(kgmMaterial::Blend_Lighten)); */
-  ((kgmGuiSelect*)g)->select(mtl->blendToString(mtl->blend()));
-  slotBlending.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlending, &((kgmGuiSelect*)g)->sigSelect);
+  //((kgmGuiSelect*)g)->select(mtl->blendToString(mtl->blend()));
+  //slotBlending.connect(this, (Slot<kViewOptionsForMaterial, kgmString>::FN) &kViewOptionsForMaterial::onBlending, &((kgmGuiSelect*)g)->sigSelect);
 
-  y_coord += 23;
+  //y_coord += 23;
 }
 
 void kViewOptionsForMaterial::onReset(int)
@@ -648,6 +653,7 @@ void kViewOptionsForMaterial::onCull(bool a)
 kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  /*
   kgmGui* tobstacle = tab->addTab("Obstacle");
   y_coord = 3;
 
@@ -678,12 +684,14 @@ kViewOptionsForVisual::kViewOptionsForVisual(kgmUnit* n, int x, int y, int w, in
   ((kgmGuiText*)g)->setEditable(true);
   ((kgmGuiText*)g)->setNumeric(true);
   y_coord += 23;
+*/
 }
 
 
 kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  /*
   kgmLight* light = ((kgmLight*)node->getNode()->getNodeObject());
   kgmGui* tlight = tab->addTab("Light");
   y_coord = 1;
@@ -727,6 +735,7 @@ kViewOptionsForLight::kViewOptionsForLight(kgmUnit* n, int x, int y, int w, int 
   slotShadows.connect(this, (Slot<kViewOptionsForLight, bool>::FN) &kViewOptionsForLight::setShadows, &check->sigClick);
 
   y_coord += 23;
+  */
 }
 
 void kViewOptionsForLight::setIntencity(kgmString s)
@@ -774,6 +783,7 @@ void kViewOptionsForLight::onColorB(kgmString c)
 kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  /*
   kgmGui* gcollision = tab->addTab("Body");
   y_coord = 1;
 
@@ -896,6 +906,7 @@ kViewOptionsForUnit::kViewOptionsForUnit(kgmUnit* n, int x, int y, int w, int h)
   slotListActions.connect(this, (Slot<kViewOptionsForUnit, int>::FN) &kViewOptionsForUnit::onListActions, &((kgmGuiButton*)g)->sigClick);
 
   y_coord += 23;
+  */
   /*
   if(((kgmUnit*)node)->m_variables.length() > 0)
     y_coord += 23;
@@ -1050,6 +1061,7 @@ void kViewOptionsForUnit::updateVariable(kgmString id, kgmString data)
 kViewOptionsForSensor::kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptionsForUnit(n, x, y, w, h)
 {
+  /*
   kgmGui* tsensor = tab->addTab("Sensor");
   y_coord = 1;
 
@@ -1063,6 +1075,7 @@ kViewOptionsForSensor::kViewOptionsForSensor(kgmUnit* n, int x, int y, int w, in
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForSensor::setTarget));
 
   y_coord += 23;
+  */
 }
 
 void kViewOptionsForSensor::setTarget(kgmString s)
@@ -1073,6 +1086,7 @@ void kViewOptionsForSensor::setTarget(kgmString s)
 kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  /*
   kgmGui* tactor = tab->addTab("Actor");
   y_coord = 1;
 
@@ -1097,6 +1111,7 @@ kViewOptionsForActor::kViewOptionsForActor(kgmUnit* n, int x, int y, int w, int 
   //enable->setClickCallback(kgmGuiCheck::ClickEventCallback(this, (kgmGuiCheck::ClickEventCallback::Function)&kViewOptionsForActor::onPlayer));
 
   y_coord += 23;
+  */
 }
 
 void kViewOptionsForActor::showStates()
@@ -1140,6 +1155,7 @@ kViewOptionsForEffect::kViewOptionsForEffect(kgmUnit* n, int x, int y, int w, in
 kViewOptionsForTrigger::kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, int h)
 :kViewOptions(n, x, y, w, h)
 {
+  /*
   kgmGui* ttrigger = tab->addTab("Trigger");
   y_coord = 1;
 
@@ -1164,6 +1180,7 @@ kViewOptionsForTrigger::kViewOptionsForTrigger(kgmUnit* n, int x, int y, int w, 
   //((kgmGuiText*)g)->setChangeEventCallback(kgmGuiText::ChangeEventCallback(this, (kgmGuiText::ChangeEventCallback::Function)&kViewOptionsForTrigger::setTarget));
 
   y_coord += 23;
+  */
 }
 
 void kViewOptionsForTrigger::setChanels(kgmString s)
@@ -1182,7 +1199,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
 :kViewOptions(n, x, y, w, h)
 {
   kgmParticles* pr = (kgmParticles*) n->getNode()->getNodeObject();
-
+  /*
   kgmGui* tparticles = tab->addTab("Particles");
   y_coord = 1;
 
@@ -1306,6 +1323,7 @@ kViewOptionsForParticles::kViewOptionsForParticles(kgmUnit* n, int x, int y, int
   slotFade.connect(this, (Slot<kViewOptionsForParticles, bool>::FN) &kViewOptionsForParticles::onFade, &((kgmGuiCheck*)g)->sigClick);
 
   y_coord += 23;
+  */
 }
 
 void kViewOptionsForParticles::onLoop(bool s)

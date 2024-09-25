@@ -125,6 +125,9 @@ public:
     {
       Item* res = parent;
 
+      if (!res)
+        return null;
+
       while(res->parent)
         res = res->parent;
 
@@ -158,6 +161,16 @@ public:
       return (it == m_selected);
     }
 
+    Item* getItemSelected()
+    {
+      Item* item = null;
+
+      if (m_selected && m_selected->active())
+        item = m_selected;
+
+      return item;
+    }
+
     Item* add(kgmString title, kgmTexture* icon = null)
     {
       if(type != TypeMenu || title.length() < 1)
@@ -186,6 +199,12 @@ public:
       }
 
       items.add(item);
+
+      if ((this->parent == null) && (this->title.length() < 1))
+      {
+        rect.h = (kgmGuiMenu::ItemHeight < item->rect.h) ? (item->rect.h) : (kgmGuiMenu::ItemHeight);
+        rect.w += item->rect.w;
+      }
 
       return item;
     }
@@ -223,6 +242,12 @@ public:
       }
 
       items.add(item);
+
+      if ((this->parent == null) && (this->title.length() == 0))
+      {
+        rect.h = (kgmGuiMenu::ItemHeight < item->rect.h) ? (item->rect.h) : (kgmGuiMenu::ItemHeight);
+        rect.w += item->rect.w;
+      }
 
       return item;
     }
@@ -267,7 +292,7 @@ public:
 
       return rc;
     }
-
+    /*
     void movePointer(int x, int y)
     {
       for(s32 i = 0; i < items.length(); i++)
@@ -313,34 +338,8 @@ public:
 
       return null;
     }
-
-    bool havePointer(int x, int y)
-    {
-      if (rect.inside(x, y))
-      {
-        m_active = true;
-
-        Item* root = getRoot();
-
-        if (root)
-          root->m_selected = this;
-
-        return true;
-      }
-
-      for (int i = 0; i < items.length(); i++)
-      {
-        if (items[i]->havePointer(x, y))
-        {
-          m_active = true;
-          return true;
-        }
-      }
-
-      m_active = false;
-
-      return false;
-    }
+    */
+    bool havePointer(int x, int y);
   };
 
 protected:

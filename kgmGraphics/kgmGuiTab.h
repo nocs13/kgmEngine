@@ -2,6 +2,7 @@
 #include "kgmGui.h"
 #include "kgmGuiMenu.h"
 
+/*
 class kgmGuiTab: public kgmGui
 {
   KGM_OBJECT(kgmGuiTab);
@@ -61,3 +62,4 @@ public:
 
  __stdcall void select(u32);
 };
+*/

@@ -59,7 +59,7 @@ else ifeq ($(cOS),Windows)
 	DSEP = \\
 	DEFS =  -DDEBUG -DWIN32  -D_WIN32_WINNT=0x0600 -DOGL -DGPUSHADERS -DDSOUND -DVULKAN
 #	FLGS = -O0 -mwindows -std=gnu++11 -Werror
-	FLGS = -O0 -mwindows -std=gnu++11 -Werror -Wno-error=unused-command-line-argument
+	FLGS = -O0 -mwindows -std=gnu++11 -Werror -Wno-error=unused-command-line-argument -Wfatal-errors -fmax-errors=1
 # -lopengl32
 	LIBS = -llua -luser32 -lkernel32 -lgdi32 -lWinmm -lwsock32 -ldsound -ldbghelp
 	RM = rm -f

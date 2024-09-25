@@ -1082,7 +1082,7 @@ kgmWindow::~kgmWindow()
 
     XDestroyWindow(m_dpy, m_wnd);
 
-    XCloseDisplay(m_dpy);
+    // XCloseDisplay(m_dpy);
   }
 
   m_dpy = null;

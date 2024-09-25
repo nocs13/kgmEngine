@@ -65,6 +65,12 @@ end
 function main_onbutton(key, btn, down)
 end
 
+function main_close_window()
+  if window ~= nil then
+    kgmCloseWindow(window)
+  end
+end
+
 function main()
   kgmLog('FUCK UUUUUUUUUUUUUUUUUUUU XXXXXXXXXXXX')
   window = kgmCreateWindow('kEditor', 800, 600)
