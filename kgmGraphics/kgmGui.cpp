@@ -566,3 +566,14 @@ kgmGui* kgmGui::getPointed()
 
   return null;
 }
+
+void kgmGui::erase()
+{
+  m_erase = true;
+}
+
+bool kgmGui::erased()
+{
+  return m_erase;
+}
+

@@ -119,4 +119,81 @@ namespace Editor
 
     return 0;
   }
+
+  s32 kEditorSetViewTop(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+
+    ls.args("p", &e);
+
+    if (e)
+    {
+      e->onViewTop();
+    }
+
+    return 0;
+  }
+
+  s32 kEditorSetViewLeft(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+
+    ls.args("p", &e);
+
+    if (e)
+    {
+      e->onViewLeft();
+    }
+
+    return 0;
+  }
+
+  s32 kEditorSetViewFront(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+
+    ls.args("p", &e);
+
+    if (e)
+    {
+      e->onViewFront();
+    }
+
+    return 0;
+  }
+
+  s32 kEditorSetViewPerspective(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kEditor* e = null;
+
+    ls.args("p", &e);
+
+    if (e)
+    {
+      e->onViewPerspective();
+    }
+
+    return 0;
+  }
+
 };

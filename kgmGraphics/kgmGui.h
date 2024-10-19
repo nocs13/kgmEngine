@@ -98,8 +98,8 @@ public:
 
   Rect getRect() const  { return m_rect; }
 
-  void         erase() { m_erase = true; }
-  bool         erased(){ return m_erase; }
+  void erase();
+  bool erased();
 
   void         setText(kgmString s) { m_text = s;    }
   kgmString&   getText()            { return m_text; }

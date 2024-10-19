@@ -38,6 +38,7 @@
 #include "render/LightmapRender.h"
 #include "render/EnvironmentRender.h"
 #include "render/Terrain.h"
+#include "render/SceneRenderBasic.h"
 
 #ifdef DEBUG
 #include "../kgmPhysics/kgmBody.h"

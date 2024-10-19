@@ -7,6 +7,8 @@
 
 namespace kgmLibScript
 {
+  void _lua_gui_init(void* lh);
+
   s32 xmlFree(void*);
   s32 xmlInit(void*);
 
@@ -83,6 +85,8 @@ namespace kgmLibScript
   {
     if (!lh)
       return;
+
+    _lua_gui_init(lh);
 
     kgmLuaScript sc((lua_State*) lh);
 

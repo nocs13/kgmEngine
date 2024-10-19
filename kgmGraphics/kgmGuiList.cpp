@@ -1,5 +1,7 @@
 #include "kgmGuiList.h"
 
+#define SCROLL_WIDTH 20
+
 kgmGuiList::kgmGuiList()
   :kgmGui()
 {
@@ -17,7 +19,7 @@ kgmGuiList::kgmGuiList()
 kgmGuiList::kgmGuiList(kgmGui *par, int x, int y, int w, int h)
   :kgmGui(par, x, y, w, h)
 {
-  m_scroll = new kgmGuiScroll(this, x + w - 10, 0, 10, h);
+  m_scroll = new kgmGuiScroll(this, x + w - SCROLL_WIDTH, 0, SCROLL_WIDTH, h);
   m_scroll->show();
   m_scroll->setRange(1);
   slotScroll.connect(this, (Slot<kgmGuiList, u32>::FN) &kgmGuiList::onScroll, &m_scroll->sigChange);

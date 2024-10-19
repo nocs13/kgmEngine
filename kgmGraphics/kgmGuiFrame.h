@@ -25,7 +25,6 @@ public:
   void onMsMove(int k, int x, int y);
   void onMsLeftDown(int k, int x, int y);
   void onResize(int w, int h);
-  void onClose();
 
   __stdcall void onFrameClose();
 

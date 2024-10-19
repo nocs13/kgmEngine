@@ -359,6 +359,13 @@ void* kgmLuaScript::ccall(const s8* name, const s8* method, const s8* fmt, ...)
 
   lua_getglobal(handler, name);
 
+  if (lua_isnil(handler, -1))
+  {
+    fprintf(stderr, "%s error: Object %s is nil.\n", __FUNCTION__, name);
+
+    return null;
+  }
+
   lua_getfield(handler, -1, method);
   lua_pushvalue(handler, -2);
 

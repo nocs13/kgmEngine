@@ -33,7 +33,7 @@ kgmGuiFileDialog::kgmGuiFileDialog()
   DIRCON = "\\";
 #endif
 
-  m_text = "guiFileDialog";
+  m_text = m_sid = "guiFileDialog";
 }
 
 kgmGuiFileDialog::~kgmGuiFileDialog()
@@ -110,6 +110,8 @@ void kgmGuiFileDialog::onOpenSelect(int i)
 {
   sigSelect(this);
 
+  onOpen();
+
   close();
 }
 
@@ -117,12 +119,16 @@ void kgmGuiFileDialog::onSaveSelect(int i)
 {
   sigSelect(this);
 
+  onSave();
+
   close();
 }
 
 void kgmGuiFileDialog::onFailSelect()
 {
   sigFail(this);
+
+  onFail();
 
   close();
 }

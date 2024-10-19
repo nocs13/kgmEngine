@@ -4,6 +4,7 @@ kgmImport('player')
 kgmImport('guis')
 kgmImport('keys')
 kgmImport('event')
+kgmImport('editor')
 
 retent = nil
 gbmenu = nil
@@ -38,7 +39,7 @@ function kgm_log(s)
 end
 
 function main_quit()
-   kgmGameExit()
+  main_close_window()
 end
 
 function main_oninit()
@@ -71,6 +72,26 @@ function main_close_window()
   end
 end
 
+function main_open_request()
+  guifd = GuiFD:new('guifd', '', 0)
+
+  if guifd:gui() ~= nil then
+    editor:guiAdd(guifd:gui())
+  end
+end
+
+function main_save_request()
+  guifd = GuiFD:new('guifd', '', 1)
+
+  if guifd:gui() ~= nil then
+    editor:guiAdd(guifd.o)
+  end
+end
+
+function main_guifd_close()
+  guifd = nil
+end
+
 function main()
   kgmLog('FUCK UUUUUUUUUUUUUUUUUUUU XXXXXXXXXXXX')
   window = kgmCreateWindow('kEditor', 800, 600)
@@ -78,28 +99,32 @@ function main()
   if window == nil then
     kgmLog('Window create failed.')
   else
-    editor = kCreateEditor(window)
+    e = kCreateEditor(window)
 
-    if editor == nil then
+    if e == nil then
       kgmLog('Editor create failed.')
 
       kgmCloseWindow(window)
     else
+      editor = Editor:new(e)
+
       ev = kgmNewEvent('eventHandler')
 
       if ev ~= nil then
         eventHandler = Event:new(ev)
-        kEditorAddHandler(editor, ev)
+
+        editor:addHandler(ev)
 
         gbmenu = GuiMenu:new('gbmenu')
         gbmenu:init()
         gbmenu:show()
-        kEditorGuiAdd(editor, gbmenu.o)
+
+        editor:guiAdd(gbmenu.o)
       end
 
       kgmLoopWindow(window)
 
-      kCloseEditor(editor)
+      editor:close()
 
       kgmFreeWindow(window)
     end

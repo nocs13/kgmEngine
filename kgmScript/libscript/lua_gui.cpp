@@ -1,13 +1,13 @@
 #include "lua_main.h"
 #include "../kgmLuaScript.h"
+#include "../../kgmSystem/kgmSystem.h"
 #include "../../kgmGraphics/kgmGuiMenu.h"
+#include "../../kgmGraphics/kgmGuiFileDialog.h"
 
 namespace kgmLibScript
 {
   class luaGuiMenu: public kgmGuiMenu
   {
-    //KGM_OBJECT(luaGuiMenu)
-
     lua_State* lua = null;
     const s8* oname = null;
 
@@ -36,6 +36,68 @@ namespace kgmLibScript
         ls.ccall(oname, "onMenu", "is", selected->getId(), selected->getTitle().data());
       }
     }
+  };
+
+  class luaGuiFileDialog: public kgmGuiFileDialog
+  {
+    lua_State* lua = null;
+
+    kgmString oname;
+    Slot<kgmGuiFileDialog, int> slotSelect;
+
+
+    public:
+      luaGuiFileDialog(const s8* name, const s8* flt, bool save, lua_State* l)
+      {
+        lua = l;
+
+        oname = name;
+
+        kgmString dir; kgmSystem::getCurrentDirectory(dir);
+
+        if (save)
+          forSave(dir);
+        else
+          forOpen(dir);
+
+        setFilter(flt);
+      }
+
+      void onOpen()
+      {
+        kgmLuaScript ls(lua);
+
+        kgmString file = getFile();
+
+        if (oname.length() > 0)
+          ls.ccall(oname, "onOpen", "s", file.data());
+      }
+
+      void onSave()
+      {
+        kgmLuaScript ls(lua);
+
+        kgmString file = getFile();
+
+        if (oname.length() > 0)
+          ls.ccall(oname, "onSave", "s", file.data());
+      }
+
+      void onFail()
+      {
+        kgmLuaScript ls(lua);
+
+        if (oname.length() > 0)
+          ls.ccall(oname, "onFail", "");
+      }
+
+      void onClose()
+      {
+        kgmLuaScript ls(lua);
+
+        if (oname.length() > 0)
+          ls.ccall(oname, "onClose", "");
+      }
   };
 
   s32 kgmGuiMenuCreate(void* lh)
@@ -142,5 +204,67 @@ namespace kgmLibScript
     }
 
     return 0;
+  }
+
+  s32 kgmGuiFileDialogCreate(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    luaGuiFileDialog* gui = null;
+
+    const s8* flt = null;
+    const s8* name = null;
+    s32 save = 0;
+
+    ls.args("ssi", &name, &flt, &save);
+
+    gui = new luaGuiFileDialog(name, flt, (save!=0)?(true):(false), (lua_State*) lh);
+
+    if (gui)
+    {
+      ls.resl("p", gui);
+
+      return 1;
+    }
+
+    return 0;
+  }
+
+  s32 kgmGuiClose(void* lh)
+  {
+    if (!lh)
+      return 0;
+
+    kgmLuaScript ls((lua_State*) lh);
+
+    kgmGui* gui = null;
+
+    ls.args("p", &gui);
+
+    if (gui)
+    {
+      gui->close();
+
+      ls.resl("i", 1);
+
+      return 1;
+    }
+
+    return 0;
+  }
+
+  void _lua_gui_init(void* lh)
+  {
+    if (!lh)
+      return;
+
+    kgmLuaScript sc((lua_State*) lh);
+
+    sc.set("kgmGuiClose",  kgmGuiClose);
+
+    sc.set("kgmGuiFileDialogCreate",  kgmGuiFileDialogCreate);
   }
 }

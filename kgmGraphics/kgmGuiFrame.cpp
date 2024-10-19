@@ -59,7 +59,3 @@ void kgmGuiFrame::onFrameClose()
 {
   close();
 }
-
-void kgmGuiFrame::onClose()
-{
-}

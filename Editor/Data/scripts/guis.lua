@@ -1,4 +1,5 @@
 kgmImport('gui')
+kgmImport('guifd')
 kgmImport('guimenu')
 
 VALIGN_LEFT   = 1

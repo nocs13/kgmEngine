@@ -26,15 +26,13 @@ void GuiRender::render()
   gr->shaderSetGeneral();
   gr->shaderSetPrivate();
 
-  for(int i = gr->m_guis.size(); i > 0; i--)
-  {
-    kgmGui* gui = gr->m_guis[i - 1];
+  auto i = gr->m_guis.begin();
 
-    if(!gui)
-    {
-      gr->m_guis.erase(i - 1);
-    }
-    else if(gui->visible())
+  for(; i != gr->m_guis.end(); i.next())
+  {
+    kgmGui* gui = (*i);
+
+    if(gui && gui->visible())
     {
       render(gui);
     }

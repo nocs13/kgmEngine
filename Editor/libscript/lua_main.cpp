@@ -3,6 +3,11 @@
 
 namespace Editor
 {
+  s32 kEditorSetViewTop(void* lh);
+  s32 kEditorSetViewLeft(void* lh);
+  s32 kEditorSetViewFront(void* lh);
+  s32 kEditorSetViewPerspective(void* lh);
+
   void lua_init(void* lh)
   {
     if (!lh)
@@ -17,5 +22,10 @@ namespace Editor
     sc.set("kEditorDelHandler",  kEditorDelHandler);
 
     sc.set("kEditorGuiAdd",  kEditorGuiAdd);
+
+    sc.set("kEditorSetViewTop",  kEditorSetViewTop);
+    sc.set("kEditorSetViewLeft",  kEditorSetViewLeft);
+    sc.set("kEditorSetViewFront",  kEditorSetViewFront);
+    sc.set("kEditorSetViewPerspective",  kEditorSetViewPerspective);
   }
 };

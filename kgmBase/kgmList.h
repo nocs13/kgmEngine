@@ -145,6 +145,9 @@ protected:
 
   _Node *_last()
   {
+    if (!_Last && _First)
+      _Last = _First;
+
     return _Last;
   }
 
@@ -172,7 +175,7 @@ public:
 
     if (node == null)
     {
-      kgm_fatal("Invalid start node.");
+      //kgm_fatal("Invalid start node.");
     }
 
     return node->data;

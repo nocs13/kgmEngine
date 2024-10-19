@@ -582,17 +582,19 @@ void kgmGraphics::render()
   shaderSetGeneral();
   shaderSetPrivate();
 
-  for (auto i = m_guis.begin(); i != m_guis.end(); i++)
+  for (auto i = m_guis.begin(); i != m_guis.end(); i.next())
   {
     kgmGui* g = (*i);
 
     if (!g) {
       m_guis.erase(i);
-    } else if (g->visible()) {
-      //m_render->renderGui(g);
-      m_rnd_gui->render();
+    } else if (g->erased()) {
+      i = m_guis.erase(i);
+      g->release();
     }
   }
+
+  m_rnd_gui->render();
 
 #ifdef DEBUG
   m_render->renderFPS();
