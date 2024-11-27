@@ -238,27 +238,23 @@ kgmGraphics::kgmGraphics(kgmIGC *g, kgmIResources* r)
     //m_map_light.m_res[1] = scr_size[1];
   }
 
-  m_render = new Render(this);
-
-  m_rnd_base        = new BaseRender(this);
-  m_rnd_lines       = new LineRender(this);
-  m_rnd_color       = new ColorRender(this);
-  m_rnd_phong       = new PhongRender(this);
+  //m_render = new Render(this);
+  //m_rnd_base        = new BaseRender(this);
+  //m_rnd_lines       = new LineRender(this);
+  //m_rnd_color       = new ColorRender(this);
+  //m_rnd_phong       = new PhongRender(this);
   //m_rnd_lights      = new LightRender(this);
   //m_rnd_shadows     = new ShadowRender(this);
   //m_rnd_environment = new EnvironmentRender(this);
   //m_rnd_terrain     = new Render::Terrain(this);
 
-  m_rnd_gui        = new GuiRender(this);
+  m_rnd_scene_basic = new SceneRenderBasic(this);
+  m_rnd_gui         = new GuiRender(this);
+  m_rnd_fps         = new FpsRender(this);
 
   m_camera = new kgmCamera();
   m_camera->set(PI / 6, 1, 0.0001, 1000.0, vec3(0, 0, 1), vec3(-1, 0, 0), vec3(0, 0, 1));
   m_g_mtx_iden.identity();
-
-  m_r_fps    = new FpsRender(this);
-  m_r_gui    = new GuiRender(this);
-  m_r_icon   = new IconRender(this);
-  //m_r_sprite = new SpriteRender(this);
 
   m_a_lights.alloc(MAX_LIGHTS);
   m_a_meshes.alloc(128);
@@ -323,17 +319,9 @@ kgmGraphics::~kgmGraphics()
     }
   }
 
-  kgmObject::Release(m_render);
-
-  kgmObject::Release(m_rnd_terrain);
-  kgmObject::Release(m_rnd_color);
-  kgmObject::Release(m_rnd_lines);
-  kgmObject::Release(m_rnd_shadows);
-  kgmObject::Release(m_rnd_environment);
-  kgmObject::Release(m_rnd_phong);
-  kgmObject::Release(m_r_fps);
-  kgmObject::Release(m_r_icon);
-  kgmObject::Release(m_r_sprite);
+  kgmObject::Release(m_rnd_scene_basic);
+  kgmObject::Release(m_rnd_gui);
+  kgmObject::Release(m_rnd_fps);
 
   m_particles.clear();
   m_meshes.clear();
@@ -364,9 +352,6 @@ void kgmGraphics::build()
 
 void kgmGraphics::clear()
 {
-  if (m_rnd_terrain)
-    m_rnd_terrain->clear();
-
   for (kgmList<kgmResource*>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
   {
     (*i)->release();
@@ -376,8 +361,6 @@ void kgmGraphics::clear()
   m_meshes.clear();
   m_lights.clear();
   m_particles.clear();
-
-  //m_a_light = m_def_light;
 
   m_a_light_count  = 0;
   m_a_meshes_count = 0;
@@ -553,7 +536,7 @@ void kgmGraphics::render()
 
   gc->gcSetShader(null);
 
-  m_render->renderMeshes(*m_camera, lights, meshes, bmeshes);
+  //m_render->renderMeshes(*m_camera, lights, meshes, bmeshes);
 
   render_3d();
 
@@ -597,7 +580,7 @@ void kgmGraphics::render()
   m_rnd_gui->render();
 
 #ifdef DEBUG
-  m_render->renderFPS();
+  m_rnd_fps->render();
 #endif
 
   gc->gcEnd();
@@ -608,6 +591,7 @@ void kgmGraphics::render()
   bmeshes.clear();
 }
 
+/*
 void kgmGraphics::render_a()
 {
   mtx4 m;
@@ -787,7 +771,9 @@ void kgmGraphics::render_a()
   gc->gcSetTexture(2, 0);
   gc->gcSetTexture(3, 0);
 }
+*/
 
+/*
 void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
 {
   //prepare for render
@@ -845,7 +831,6 @@ void kgmGraphics::render(kgmCamera &cam, kgmGraphics::Options &op)
   gc->gcSetViewport(0, 0, m_viewport.width(), m_viewport.height(), m_camera->mNear, m_camera->mFar);
 }
 
-/*
 void kgmGraphics::render(gchandle buf, kgmCamera &cam, kgmGraphics::Options &op)
 {
   //prepare for render

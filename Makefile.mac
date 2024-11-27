@@ -35,13 +35,15 @@ DIRS += -I./kgmSystem/inc/wayland -I./kgmSystem/inc/wayland/generated
 DIRS += -L./kgmSystem/lib
 
 LIBS =
+
 #OBJS = kgmBase/*.o kgmMath/*.o kgmNet/*.o kgmSystem/*.o kgmGraphics/*.o kgmPhysics/*.o kgmGame/*.o
+#-fsanitize=leak
 
 ifeq ($(cOS),Linux)
 #	CC = clang++ -v -g
 	CC = g++ -g
 	DEFS =  -DDEBUG -DLINUX -DALSA -DGPUSHADERS -DVULKAN -DGLES_2 -DOGL $(DWIN)
-	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -rdynamic -fno-inline -static-libgcc -static-libstdc++
+	FLGS = -fPIC -O0 -std=gnu++11 $(ERRS) -g3 -ggdb3 -rdynamic -fno-inline -static-libgcc -static-libstdc++ -fsanitize=address
 	LIBS = -llua -lpthread -ldl $(LWIN)
 
 	RM = rm -f

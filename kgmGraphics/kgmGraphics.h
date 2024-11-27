@@ -211,8 +211,6 @@ protected:
   u32   m_max_faces;
   u32   m_bg_color;
 
-  FpsRender*    m_r_fps;
-  GuiRender*    m_r_gui = null;
   IconRender*   m_r_icon;
   SpriteRender* m_r_sprite = null;
 
@@ -232,16 +230,19 @@ protected:
 
   gchandle m_rnd_target = null;
 
-  Render*            m_render = null;
+  //Render*            m_render = null;
   GuiRender*         m_rnd_gui = null;
-  BaseRender*        m_rnd_base = null;
-  LineRender*        m_rnd_lines = null;
-  ColorRender*       m_rnd_color = null;
-  PhongRender*       m_rnd_phong = null;
-  ShadowRender*      m_rnd_shadows = null;
-  LightmapRender*    m_rnd_lightmap = null;
-  EnvironmentRender* m_rnd_environment = null;
-  Terrain*           m_rnd_terrain = null;
+  FpsRender*         m_rnd_fps = null;
+  //BaseRender*        m_rnd_base = null;
+  //LineRender*        m_rnd_lines = null;
+  //ColorRender*       m_rnd_color = null;
+  //PhongRender*       m_rnd_phong = null;
+  //ShadowRender*      m_rnd_shadows = null;
+  //LightmapRender*    m_rnd_lightmap = null;
+  //EnvironmentRender* m_rnd_environment = null;
+  //Terrain*           m_rnd_terrain = null;
+
+  SceneRenderBasic*  m_rnd_scene_basic = null;
 
   //BaseRender*        m_rnd_list[];
 
