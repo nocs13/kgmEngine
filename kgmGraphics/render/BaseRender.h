@@ -17,6 +17,10 @@ class kgmMaterial;
 class kgmParticles;
 class kgmCamera;
 
+#define MAX_LIGHTS   8
+#define MAX_SHADOWS  2
+#define MAX_RENDERS  24
+
 class BaseRender: public kgmObject
 {
   public:
@@ -26,6 +30,7 @@ class BaseRender: public kgmObject
     bool on     = false;
     vec4 plane  = vec4(0, 0, 1, 0);
   };
+
 
 protected:
   kgmGraphics* gr;
@@ -55,6 +60,24 @@ public:
     m_clip_planes[id].on = st;
     m_clip_planes[id].plane = cp;
   }
+
+  void setProjMatrix(mtx4& in, mtx4& out)
+  {
+    out = in;
+  }
+
+void setViewMatrix(mtx4& in, mtx4& vout, mtx3& nout)
+{
+  vout = in;
+
+  mtx4 im = in;
+
+  im.invert();
+  nout[0] = im[0], nout[1] = im[1], nout[2] = im[2];
+  nout[3] = im[4], nout[4] = im[5], nout[5] = im[6];
+  nout[6] = im[8], nout[7] = im[9], nout[8] = im[10];
+}
+
 
 protected:
   void draw(kgmMesh*);

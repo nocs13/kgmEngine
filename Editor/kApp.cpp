@@ -1,3 +1,14 @@
+#include <qdatastream.h>
+#include <qtextstream.h>
+#include <qmetatype.h>
+
+#include <QApplication>
+#include <QtWidgets>
+#include <QOpenGLWindow>
+
+#include <X11/Xlib.h>
+
+/*
 #include "kApp.h"
 #include "../kgmBase/kgmLog.h"
 #include "../kgmSystem/kgmSystem.h"
@@ -5,6 +16,7 @@
 #include "../kgmScript/libscript/lua_main.h"
 #include "../kgmGame/kgmGameResources.h"
 #include "libscript/lua_main.h"
+
 
 kApp::kApp()
 {
@@ -52,10 +64,36 @@ s32 kApp::exec(s32, s8**)
 
   return 0;
 }
+*/
+class kWindow: public QOpenGLWindow
+{
+  //Q_OBJECT
+public:
+  kWindow()
+  {
+    fprintf(stderr, "XXX ccc\n");
+
+    void* w = (void*) winId();
+
+    fprintf(stderr, "XXX ccc %p\n", w);
+  }
+  virtual ~kWindow()
+  {
+
+  }
+};
 
 int main(int argc, char** argv)
 {
-  kApp app;
+  //kApp app;
 
-  return  app.exec(argc, argv);
+  //return  app.exec(argc, argv);
+
+  QApplication a(argc, argv);
+
+  kWindow window;
+  window.resize(320, 240);
+  window.show();
+
+  return a.exec();
 }
